@@ -42,14 +42,13 @@ public class SearchIteratorTag<R> extends SearchPaginatorTag<R> {
 	@Override
 	protected void include(String page) throws Exception {
 		Thread currentThread = Thread.currentThread();
-		
-		ClassLoader contextClassLoader = 
-			currentThread.getContextClassLoader();
 
-		try {			
+		ClassLoader contextClassLoader = currentThread.getContextClassLoader();
+
+		try {
 			currentThread.setContextClassLoader(
 				PortalClassLoaderUtil.getClassLoader());
-			
+
 			super.include(page);
 		}
 		catch (Exception e) {
