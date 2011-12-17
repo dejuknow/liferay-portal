@@ -51,7 +51,7 @@ public class SearchIteratorTag<R> extends SearchPaginatorTag<R> {
 
 			super.include(page);
 		}
-		catch (Exception e) {
+		finally {
 			currentThread.setContextClassLoader(contextClassLoader);
 		}
 	}
