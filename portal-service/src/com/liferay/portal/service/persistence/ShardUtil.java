@@ -93,13 +93,6 @@ public class ShardUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static Shard remove(Shard shard) throws SystemException {
-		return getPersistence().remove(shard);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static Shard update(Shard shard, boolean merge)

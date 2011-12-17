@@ -165,36 +165,36 @@ public class NodeImpl implements Node {
 		return _node.isReadOnly();
 	}
 
-	public boolean matches(String xpathExpression) {
-		return _node.matches(xpathExpression);
+	public boolean matches(String xPathExpression) {
+		return _node.matches(xPathExpression);
 	}
 
-	public Number numberValueOf(String xpathExpression) {
-		return _node.numberValueOf(xpathExpression);
+	public Number numberValueOf(String xPathExpression) {
+		return _node.numberValueOf(xPathExpression);
 	}
 
-	public List<Node> selectNodes(String xpathExpression) {
-		return SAXReaderImpl.toNewNodes(_node.selectNodes(xpathExpression));
+	public List<Node> selectNodes(String xPathExpression) {
+		return SAXReaderImpl.toNewNodes(_node.selectNodes(xPathExpression));
 	}
 
 	public List<Node> selectNodes(
-		String xpathExpression, String comparisonXPathExpression) {
+		String xPathExpression, String comparisonXPathExpression) {
 
 		return SAXReaderImpl.toNewNodes(
-			_node.selectNodes(xpathExpression, comparisonXPathExpression));
+			_node.selectNodes(xPathExpression, comparisonXPathExpression));
 	}
 
 	public List<Node> selectNodes(
-		String xpathExpression, String comparisonXPathExpression,
+		String xPathExpression, String comparisonXPathExpression,
 		boolean removeDuplicates) {
 
 		return SAXReaderImpl.toNewNodes(
 			_node.selectNodes(
-				xpathExpression, comparisonXPathExpression, removeDuplicates));
+				xPathExpression, comparisonXPathExpression, removeDuplicates));
 	}
 
-	public Object selectObject(String xpathExpression) {
-		Object obj = _node.selectObject(xpathExpression);
+	public Object selectObject(String xPathExpression) {
+		Object obj = _node.selectObject(xPathExpression);
 
 		if (obj == null) {
 			return null;
@@ -207,8 +207,8 @@ public class NodeImpl implements Node {
 		}
 	}
 
-	public Node selectSingleNode(String xpathExpression) {
-		org.dom4j.Node node = _node.selectSingleNode(xpathExpression);
+	public Node selectSingleNode(String xPathExpression) {
+		org.dom4j.Node node = _node.selectSingleNode(xPathExpression);
 
 		if (node == null) {
 			return null;
@@ -238,8 +238,8 @@ public class NodeImpl implements Node {
 		return _node.toString();
 	}
 
-	public String valueOf(String xpathExpression) {
-		return _node.valueOf(xpathExpression);
+	public String valueOf(String xPathExpression) {
+		return _node.valueOf(xPathExpression);
 	}
 
 	public void write(Writer writer) throws IOException {

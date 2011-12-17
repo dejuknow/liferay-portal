@@ -204,8 +204,8 @@ public class AssetLinkLocalServiceImpl extends AssetLinkLocalServiceBaseImpl {
 	 * entry ID.
 	 *
 	 * @param  entryId the primary key of the asset entry
-	 * @return the asset links whose first or second entry ID is the given
-	 *         entry ID
+	 * @return the asset links whose first or second entry ID is the given entry
+	 *         ID
 	 * @throws SystemException if a system exception occurred
 	 */
 	public List<AssetLink> getLinks(long entryId) throws SystemException {

@@ -94,15 +94,6 @@ public class WorkflowDefinitionLinkUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static WorkflowDefinitionLink remove(
-		WorkflowDefinitionLink workflowDefinitionLink)
-		throws SystemException {
-		return getPersistence().remove(workflowDefinitionLink);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static WorkflowDefinitionLink update(

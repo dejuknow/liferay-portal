@@ -204,6 +204,23 @@ public class LayoutSetPersistenceImpl extends BasePersistenceImpl<LayoutSet>
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 
+		clearUniqueFindersCache(layoutSet);
+	}
+
+	@Override
+	public void clearCache(List<LayoutSet> layoutSets) {
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+
+		for (LayoutSet layoutSet : layoutSets) {
+			EntityCacheUtil.removeResult(LayoutSetModelImpl.ENTITY_CACHE_ENABLED,
+				LayoutSetImpl.class, layoutSet.getPrimaryKey());
+
+			clearUniqueFindersCache(layoutSet);
+		}
+	}
+
+	protected void clearUniqueFindersCache(LayoutSet layoutSet) {
 		FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_G_P,
 			new Object[] {
 				Long.valueOf(layoutSet.getGroupId()),
@@ -229,20 +246,6 @@ public class LayoutSetPersistenceImpl extends BasePersistenceImpl<LayoutSet>
 	/**
 	 * Removes the layout set with the primary key from the database. Also notifies the appropriate model listeners.
 	 *
-	 * @param primaryKey the primary key of the layout set
-	 * @return the layout set that was removed
-	 * @throws com.liferay.portal.NoSuchModelException if a layout set with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public LayoutSet remove(Serializable primaryKey)
-		throws NoSuchModelException, SystemException {
-		return remove(((Long)primaryKey).longValue());
-	}
-
-	/**
-	 * Removes the layout set with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
 	 * @param layoutSetId the primary key of the layout set
 	 * @return the layout set that was removed
 	 * @throws com.liferay.portal.NoSuchLayoutSetException if a layout set with the primary key could not be found
@@ -250,24 +253,38 @@ public class LayoutSetPersistenceImpl extends BasePersistenceImpl<LayoutSet>
 	 */
 	public LayoutSet remove(long layoutSetId)
 		throws NoSuchLayoutSetException, SystemException {
+		return remove(Long.valueOf(layoutSetId));
+	}
+
+	/**
+	 * Removes the layout set with the primary key from the database. Also notifies the appropriate model listeners.
+	 *
+	 * @param primaryKey the primary key of the layout set
+	 * @return the layout set that was removed
+	 * @throws com.liferay.portal.NoSuchLayoutSetException if a layout set with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public LayoutSet remove(Serializable primaryKey)
+		throws NoSuchLayoutSetException, SystemException {
 		Session session = null;
 
 		try {
 			session = openSession();
 
 			LayoutSet layoutSet = (LayoutSet)session.get(LayoutSetImpl.class,
-					Long.valueOf(layoutSetId));
+					primaryKey);
 
 			if (layoutSet == null) {
 				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + layoutSetId);
+					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchLayoutSetException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
-					layoutSetId);
+					primaryKey);
 			}
 
-			return layoutSetPersistence.remove(layoutSet);
+			return remove(layoutSet);
 		}
 		catch (NoSuchLayoutSetException nsee) {
 			throw nsee;
@@ -278,18 +295,6 @@ public class LayoutSetPersistenceImpl extends BasePersistenceImpl<LayoutSet>
 		finally {
 			closeSession(session);
 		}
-	}
-
-	/**
-	 * Removes the layout set from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param layoutSet the layout set
-	 * @return the layout set that was removed
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public LayoutSet remove(LayoutSet layoutSet) throws SystemException {
-		return super.remove(layoutSet);
 	}
 
 	@Override
@@ -311,19 +316,7 @@ public class LayoutSetPersistenceImpl extends BasePersistenceImpl<LayoutSet>
 			closeSession(session);
 		}
 
-		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
-		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
-
-		LayoutSetModelImpl layoutSetModelImpl = (LayoutSetModelImpl)layoutSet;
-
-		FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_G_P,
-			new Object[] {
-				Long.valueOf(layoutSetModelImpl.getGroupId()),
-				Boolean.valueOf(layoutSetModelImpl.getPrivateLayout())
-			});
-
-		EntityCacheUtil.removeResult(LayoutSetModelImpl.ENTITY_CACHE_ENABLED,
-			LayoutSetImpl.class, layoutSet.getPrimaryKey());
+		clearCache(layoutSet);
 
 		return layoutSet;
 	}
@@ -446,6 +439,8 @@ public class LayoutSetPersistenceImpl extends BasePersistenceImpl<LayoutSet>
 		layoutSetImpl.setLayoutSetId(layoutSet.getLayoutSetId());
 		layoutSetImpl.setGroupId(layoutSet.getGroupId());
 		layoutSetImpl.setCompanyId(layoutSet.getCompanyId());
+		layoutSetImpl.setCreateDate(layoutSet.getCreateDate());
+		layoutSetImpl.setModifiedDate(layoutSet.getModifiedDate());
 		layoutSetImpl.setPrivateLayout(layoutSet.isPrivateLayout());
 		layoutSetImpl.setLogo(layoutSet.isLogo());
 		layoutSetImpl.setLogoId(layoutSet.getLogoId());
@@ -1531,7 +1526,7 @@ public class LayoutSetPersistenceImpl extends BasePersistenceImpl<LayoutSet>
 	 */
 	public void removeByGroupId(long groupId) throws SystemException {
 		for (LayoutSet layoutSet : findByGroupId(groupId)) {
-			layoutSetPersistence.remove(layoutSet);
+			remove(layoutSet);
 		}
 	}
 
@@ -1545,7 +1540,7 @@ public class LayoutSetPersistenceImpl extends BasePersistenceImpl<LayoutSet>
 		throws SystemException {
 		for (LayoutSet layoutSet : findByLayoutSetPrototypeUuid(
 				layoutSetPrototypeUuid)) {
-			layoutSetPersistence.remove(layoutSet);
+			remove(layoutSet);
 		}
 	}
 
@@ -1560,7 +1555,7 @@ public class LayoutSetPersistenceImpl extends BasePersistenceImpl<LayoutSet>
 		throws NoSuchLayoutSetException, SystemException {
 		LayoutSet layoutSet = findByG_P(groupId, privateLayout);
 
-		layoutSetPersistence.remove(layoutSet);
+		remove(layoutSet);
 	}
 
 	/**
@@ -1570,7 +1565,7 @@ public class LayoutSetPersistenceImpl extends BasePersistenceImpl<LayoutSet>
 	 */
 	public void removeAll() throws SystemException {
 		for (LayoutSet layoutSet : findAll()) {
-			layoutSetPersistence.remove(layoutSet);
+			remove(layoutSet);
 		}
 	}
 

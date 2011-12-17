@@ -95,13 +95,6 @@ public class DLFolderUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static DLFolder remove(DLFolder dlFolder) throws SystemException {
-		return getPersistence().remove(dlFolder);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static DLFolder update(DLFolder dlFolder, boolean merge)

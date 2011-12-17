@@ -95,14 +95,6 @@ public class DLContentUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static DLContent remove(DLContent dlContent)
-		throws SystemException {
-		return getPersistence().remove(dlContent);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static DLContent update(DLContent dlContent, boolean merge)

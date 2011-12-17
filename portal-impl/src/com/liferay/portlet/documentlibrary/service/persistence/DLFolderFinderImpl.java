@@ -97,8 +97,7 @@ public class DLFolderFinderImpl
 			groupId, folderId, status, mimeTypes, includeMountFolders, true);
 	}
 
-	public int filterCountFE_ByG_F_S(
-			long groupId, long folderId, int status)
+	public int filterCountFE_ByG_F_S(long groupId, long folderId, int status)
 		throws SystemException {
 
 		return doCountFE_ByG_F_S(groupId, folderId, status, true);
@@ -119,8 +118,7 @@ public class DLFolderFinderImpl
 			long groupId, long folderId, int status, int start, int end)
 		throws SystemException {
 
-		return doFindFE_FS_ByG_F_S(
-			groupId, folderId, status, start, end, true);
+		return doFindFE_FS_ByG_F_S(groupId, folderId, status, start, end, true);
 	}
 
 	public List<Object> findF_FE_FS_ByG_F_S(

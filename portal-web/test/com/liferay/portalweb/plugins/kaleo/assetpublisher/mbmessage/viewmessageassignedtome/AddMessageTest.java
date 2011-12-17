@@ -98,7 +98,26 @@ public class AddMessageTest extends BaseTestCase {
 
 		selenium.clickAt("link=Message Boards Home",
 			RuntimeVariables.replace("Message Boards Home"));
-		selenium.waitForPageToLoad("30000");
+
+		for (int second = 0;; second++) {
+			if (second >= 90) {
+				fail("timeout");
+			}
+
+			try {
+				if (RuntimeVariables.replace(
+							"There are no threads in this category.")
+										.equals(selenium.getText(
+								"//div[@class='portlet-msg-info']"))) {
+					break;
+				}
+			}
+			catch (Exception e) {
+			}
+
+			Thread.sleep(1000);
+		}
+
 		assertEquals(RuntimeVariables.replace(
 				"There are no threads in this category."),
 			selenium.getText("//div[@class='portlet-msg-info']"));
@@ -124,6 +143,6 @@ public class AddMessageTest extends BaseTestCase {
 			RuntimeVariables.replace("Asset Publisher Page"));
 		selenium.waitForPageToLoad("30000");
 		assertEquals(RuntimeVariables.replace("There are no results."),
-			selenium.getText("//p"));
+			selenium.getText("//div[@class='portlet-msg-info']"));
 	}
 }

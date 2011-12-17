@@ -54,6 +54,17 @@ import java.util.Set;
 public class PollerRequestHandlerImpl
 	implements PollerRequestHandler, MessageListener {
 
+	public PollerHeader getPollerHeader(String pollerRequestString) {
+		if (Validator.isNull(pollerRequestString)) {
+			return null;
+		}
+
+		Map<String, Object>[] pollerRequestChunks =
+			parsePollerRequestParameters(pollerRequestString);
+
+		return parsePollerRequestHeader(pollerRequestChunks);
+	}
+
 	public JSONObject processRequest(String path, String pollerRequestString)
 		throws Exception {
 
@@ -114,8 +125,7 @@ public class PollerRequestHandlerImpl
 		String pollerSessionId = getPollerSessionId(pollerHeader);
 
 		synchronized (_pollerSessions) {
-			PollerSession pollerSession = _pollerSessions.get(
-				pollerSessionId);
+			PollerSession pollerSession = _pollerSessions.get(pollerSessionId);
 
 			if ((pollerSession != null) &&
 				pollerSession.completePortletProcessing(
@@ -245,8 +255,7 @@ public class PollerRequestHandlerImpl
 		JSONObject pollerResponseHeaderJSONObject =
 			JSONFactoryUtil.createJSONObject();
 
-		pollerResponseHeaderJSONObject.put(
-			"userId", pollerHeader.getUserId());
+		pollerResponseHeaderJSONObject.put("userId", pollerHeader.getUserId());
 		pollerResponseHeaderJSONObject.put(
 			"initialRequest", pollerHeader.isInitialRequest());
 		pollerResponseHeaderJSONObject.put("suspendPolling", suspendPolling);

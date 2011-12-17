@@ -95,13 +95,6 @@ public class MBThreadUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static MBThread remove(MBThread mbThread) throws SystemException {
-		return getPersistence().remove(mbThread);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static MBThread update(MBThread mbThread, boolean merge)

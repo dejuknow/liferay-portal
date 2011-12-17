@@ -35,7 +35,7 @@ String type = displayTerms.getType();
 		<aui:input name="<%= displayTerms.NAME %>" size="20" type="text" value="<%= displayTerms.getName() %>" />
 
 		<aui:select name="<%= displayTerms.TYPE %>">
-			<aui:option label="any" selected="<%= (displayTerms.getType() == null) %>" />
+			<aui:option value=""></aui:option>
 
 			<%
 			for (String curType : PropsValues.ORGANIZATIONS_TYPES) {
@@ -56,7 +56,7 @@ String type = displayTerms.getType();
 
 		<aui:select label="region" name="<%= displayTerms.REGION_ID %>" />
 
-		<aui:input name="<%= displayTerms.ZIP %>" size="20" type="text" value="<%= displayTerms.getZip() %>" />
+		<aui:input label="postal-code" name="<%= displayTerms.ZIP %>" size="20" type="text" value="<%= displayTerms.getZip() %>" />
 	</aui:fieldset>
 </liferay-ui:search-toggle>
 

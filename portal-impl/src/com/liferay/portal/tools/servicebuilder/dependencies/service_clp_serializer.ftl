@@ -1,7 +1,11 @@
 package ${packagePath}.service;
 
+<#assign entitiesHaveColumns = false>
+
 <#list entities as entity>
 	<#if entity.hasColumns()>
+		<#assign entitiesHaveColumns = true>
+
 		import ${packagePath}.model.${entity.name}Clp;
 	</#if>
 </#list>
@@ -78,17 +82,19 @@ public class ClpSerializer {
 	}
 
 	public static Object translateInput(BaseModel<?> oldModel) {
-		Class<?> oldModelClass = oldModel.getClass();
+		<#if entitiesHaveColumns>
+			Class<?> oldModelClass = oldModel.getClass();
 
-		String oldModelClassName = oldModelClass.getName();
+			String oldModelClassName = oldModelClass.getName();
 
-		<#list entities as entity>
-			<#if entity.hasColumns()>
-				if (oldModelClassName.equals(${entity.name}Clp.class.getName())) {
-					return translateInput${entity.name}(oldModel);
-				}
-			</#if>
-		</#list>
+			<#list entities as entity>
+				<#if entity.hasColumns()>
+					if (oldModelClassName.equals(${entity.name}Clp.class.getName())) {
+						return translateInput${entity.name}(oldModel);
+					}
+				</#if>
+			</#list>
+		</#if>
 
 		return oldModel;
 	}
@@ -182,17 +188,19 @@ public class ClpSerializer {
 	}
 
 	public static Object translateOutput(BaseModel<?> oldModel) {
-		Class<?> oldModelClass = oldModel.getClass();
+		<#if entitiesHaveColumns>
+			Class<?> oldModelClass = oldModel.getClass();
 
-		String oldModelClassName = oldModelClass.getName();
+			String oldModelClassName = oldModelClass.getName();
 
-		<#list entities as entity>
-			<#if entity.hasColumns()>
-				if (oldModelClassName.equals("${packagePath}.model.impl.${entity.name}Impl")) {
-					return translateOutput${entity.name}(oldModel);
-				}
-			</#if>
-		</#list>
+			<#list entities as entity>
+				<#if entity.hasColumns()>
+					if (oldModelClassName.equals("${packagePath}.model.impl.${entity.name}Impl")) {
+						return translateOutput${entity.name}(oldModel);
+					}
+				</#if>
+			</#list>
+		</#if>
 
 		return oldModel;
 	}
@@ -296,7 +304,11 @@ public class ClpSerializer {
 
 	private static Log _log = LogFactoryUtil.getLog(ClpSerializer.class);
 
+	<#if !entitiesHaveColumns>
+		@SuppressWarnings("unused")
+	</#if>
 	private static ClassLoader _classLoader;
+
 	private static String _servletContextName;
 
 }

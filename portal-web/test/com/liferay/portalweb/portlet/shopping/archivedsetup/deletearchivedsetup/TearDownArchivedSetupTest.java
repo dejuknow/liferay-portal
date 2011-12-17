@@ -48,6 +48,9 @@ public class TearDownArchivedSetupTest extends BaseTestCase {
 				selenium.clickAt("link=Shopping Test Page",
 					RuntimeVariables.replace("Shopping Test Page"));
 				selenium.waitForPageToLoad("30000");
+				Thread.sleep(5000);
+				assertEquals(RuntimeVariables.replace("Options"),
+					selenium.getText("//strong/a"));
 				selenium.clickAt("//strong/a",
 					RuntimeVariables.replace("Options"));
 
@@ -104,6 +107,7 @@ public class TearDownArchivedSetupTest extends BaseTestCase {
 				}
 
 				selenium.selectFrame("//iframe");
+				Thread.sleep(5000);
 				assertEquals(RuntimeVariables.replace("Actions"),
 					selenium.getText("//tr[3]/td[4]/span/ul/li/strong/a"));
 				selenium.clickAt("//tr[3]/td[4]/span/ul/li/strong/a",
@@ -148,6 +152,7 @@ public class TearDownArchivedSetupTest extends BaseTestCase {
 				}
 
 				selenium.selectFrame("//iframe");
+				Thread.sleep(5000);
 				assertEquals(RuntimeVariables.replace("Actions"),
 					selenium.getText("//tr[3]/td[4]/span/ul/li/strong/a"));
 				selenium.clickAt("//tr[3]/td[4]/span/ul/li/strong/a",
@@ -192,6 +197,7 @@ public class TearDownArchivedSetupTest extends BaseTestCase {
 				}
 
 				selenium.selectFrame("//iframe");
+				Thread.sleep(5000);
 				assertEquals(RuntimeVariables.replace("Actions"),
 					selenium.getText("//tr[3]/td[4]/span/ul/li/strong/a"));
 				selenium.clickAt("//tr[3]/td[4]/span/ul/li/strong/a",
@@ -236,6 +242,7 @@ public class TearDownArchivedSetupTest extends BaseTestCase {
 				}
 
 				selenium.selectFrame("//iframe");
+				Thread.sleep(5000);
 				assertEquals(RuntimeVariables.replace("Actions"),
 					selenium.getText("//tr[3]/td[4]/span/ul/li/strong/a"));
 				selenium.clickAt("//tr[3]/td[4]/span/ul/li/strong/a",
@@ -280,6 +287,7 @@ public class TearDownArchivedSetupTest extends BaseTestCase {
 				}
 
 				selenium.selectFrame("//iframe");
+				Thread.sleep(5000);
 				assertEquals(RuntimeVariables.replace("Actions"),
 					selenium.getText("//tr[3]/td[4]/span/ul/li/strong/a"));
 				selenium.clickAt("//tr[3]/td[4]/span/ul/li/strong/a",

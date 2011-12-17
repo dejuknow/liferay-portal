@@ -95,14 +95,6 @@ public class RatingsStatsUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static RatingsStats remove(RatingsStats ratingsStats)
-		throws SystemException {
-		return getPersistence().remove(ratingsStats);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static RatingsStats update(RatingsStats ratingsStats, boolean merge)

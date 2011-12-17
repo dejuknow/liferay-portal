@@ -44,7 +44,7 @@ boolean male = ParamUtil.getBoolean(request, "male", true);
 
 	<liferay-ui:error exception="<%= AddressCityException.class %>" message="please-enter-a-valid-city" />
 	<liferay-ui:error exception="<%= AddressStreetException.class %>" message="please-enter-a-valid-street" />
-	<liferay-ui:error exception="<%= AddressZipException.class %>" message="please-enter-a-valid-zip" />
+	<liferay-ui:error exception="<%= AddressZipException.class %>" message="please-enter-a-valid-postal-code" />
 	<liferay-ui:error exception="<%= CaptchaMaxChallengesException.class %>" message="maximum-number-of-captcha-attempts-exceeded" />
 	<liferay-ui:error exception="<%= CaptchaTextException.class %>" message="text-verification-failed" />
 	<liferay-ui:error exception="<%= CompanyMaxUsersException.class %>" message="unable-to-create-user-account-because-the-maximum-number-of-users-has-been-reached" />
@@ -121,7 +121,11 @@ boolean male = ParamUtil.getBoolean(request, "male", true);
 				<aui:input model="<%= User.class %>" name="screenName" />
 			</c:if>
 
-			<aui:input model="<%= User.class %>" name="emailAddress" />
+			<aui:input model="<%= User.class %>" name="emailAddress">
+				<c:if test="<%= PrefsPropsUtil.getBoolean(company.getCompanyId(), PropsKeys.USERS_EMAIL_ADDRESS_REQUIRED, PropsValues.USERS_EMAIL_ADDRESS_REQUIRED) %>">
+					<aui:validator name="required" />
+				</c:if>
+			</aui:input>
 		</aui:column>
 
 		<aui:column>

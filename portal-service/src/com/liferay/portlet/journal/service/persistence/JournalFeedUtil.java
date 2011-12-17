@@ -95,14 +95,6 @@ public class JournalFeedUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static JournalFeed remove(JournalFeed journalFeed)
-		throws SystemException {
-		return getPersistence().remove(journalFeed);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static JournalFeed update(JournalFeed journalFeed, boolean merge)

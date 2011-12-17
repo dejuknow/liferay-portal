@@ -14,6 +14,8 @@
 
 package com.liferay.portal.kernel.json;
 
+import java.util.List;
+
 /**
  * @author Brian Wing Shun Chan
  */
@@ -33,6 +35,13 @@ public class JSONFactoryUtil {
 
 	public static String convertXMLtoJSONMLObject(String xml) {
 		return getJSONFactory().convertXMLtoJSONMLObject(xml);
+	}
+
+	public static JSONTransformer createJavaScriptNormalizerJSONTransformer(
+		List<String> javaScriptAttributes) {
+
+		return getJSONFactory().createJavaScriptNormalizerJSONTransformer(
+			javaScriptAttributes);
 	}
 
 	public static JSONArray createJSONArray() {
@@ -101,6 +110,13 @@ public class JSONFactoryUtil {
 
 	public static String looseSerializeDeep(Object object) {
 		return getJSONFactory().looseSerializeDeep(object);
+	}
+
+	public static String looseSerializeDeep(
+		Object object, JSONTransformer jsonTransformer, Class<?> clazz) {
+
+		return getJSONFactory().looseSerializeDeep(
+			object, jsonTransformer, clazz);
 	}
 
 	public static String serialize(Object object) {

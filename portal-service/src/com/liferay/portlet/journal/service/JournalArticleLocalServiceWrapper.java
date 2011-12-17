@@ -674,6 +674,14 @@ public class JournalArticleLocalServiceWrapper
 		return _journalArticleLocalService.getDisplayArticle(groupId, articleId);
 	}
 
+	public com.liferay.portlet.journal.model.JournalArticle getDisplayArticleByUrlTitle(
+		long groupId, java.lang.String urlTitle)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _journalArticleLocalService.getDisplayArticleByUrlTitle(groupId,
+			urlTitle);
+	}
+
 	public com.liferay.portlet.journal.model.JournalArticle getLatestArticle(
 		long resourcePrimKey)
 		throws com.liferay.portal.kernel.exception.PortalException,
@@ -995,11 +1003,12 @@ public class JournalArticleLocalServiceWrapper
 	public com.liferay.portlet.journal.model.JournalArticle updateArticleTranslation(
 		long groupId, java.lang.String articleId, double version,
 		java.util.Locale locale, java.lang.String title,
-		java.lang.String description, java.lang.String content)
+		java.lang.String description, java.lang.String content,
+		java.util.Map<java.lang.String, byte[]> images)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException {
 		return _journalArticleLocalService.updateArticleTranslation(groupId,
-			articleId, version, locale, title, description, content);
+			articleId, version, locale, title, description, content, images);
 	}
 
 	public void updateAsset(long userId,

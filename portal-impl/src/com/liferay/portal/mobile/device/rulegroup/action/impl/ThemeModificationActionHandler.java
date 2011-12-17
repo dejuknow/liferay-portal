@@ -78,9 +78,7 @@ public class ThemeModificationActionHandler implements ActionHandler {
 		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
-		String contextPath = PortalUtil.getPathContext();
-
-		themeDisplay.setLookAndFeel(contextPath, theme, colorScheme);
+		themeDisplay.setLookAndFeel(theme, colorScheme);
 	}
 
 	public Collection<String> getPropertyNames() {

@@ -81,8 +81,6 @@ public abstract class BaseIndexer implements Indexer {
 	public static final int INDEX_FILTER_SEARCH_LIMIT = GetterUtil.getInteger(
 		PropsUtil.get(PropsKeys.INDEX_FILTER_SEARCH_LIMIT));
 
-	private static final boolean _FILTER_SEARCH = false;
-
 	public void delete(long companyId, String uid) throws SearchException {
 		try {
 			SearchEngineUtil.deleteDocument(companyId, uid);
@@ -204,7 +202,13 @@ public abstract class BaseIndexer implements Indexer {
 	}
 
 	public String getSortField(String orderByCol) {
-		return doGetSortField(orderByCol);
+		String sortField = doGetSortField(orderByCol);
+
+		if (DocumentImpl.isSortableTextField(sortField)) {
+			return DocumentImpl.getSortableFieldName(sortField);
+		}
+
+		return sortField;
 	}
 
 	public Summary getSummary(
@@ -245,6 +249,14 @@ public abstract class BaseIndexer implements Indexer {
 		return _FILTER_SEARCH;
 	}
 
+	public boolean isIndexerEnabled() {
+		return _INDEXER_ENABLED;
+	}
+
+	public boolean isPermissionAware() {
+		return _PERMISSION_AWARE;
+	}
+
 	public boolean isStagingAware() {
 		return _stagingAware;
 	}
@@ -273,7 +285,7 @@ public abstract class BaseIndexer implements Indexer {
 
 	public void reindex(Object obj) throws SearchException {
 		try {
-			if (SearchEngineUtil.isIndexReadOnly()) {
+			if (SearchEngineUtil.isIndexReadOnly() || !isIndexerEnabled()) {
 				return;
 			}
 
@@ -289,7 +301,7 @@ public abstract class BaseIndexer implements Indexer {
 
 	public void reindex(String className, long classPK) throws SearchException {
 		try {
-			if (SearchEngineUtil.isIndexReadOnly()) {
+			if (SearchEngineUtil.isIndexReadOnly() || !isIndexerEnabled()) {
 				return;
 			}
 
@@ -310,7 +322,7 @@ public abstract class BaseIndexer implements Indexer {
 
 	public void reindex(String[] ids) throws SearchException {
 		try {
-			if (SearchEngineUtil.isIndexReadOnly()) {
+			if (SearchEngineUtil.isIndexReadOnly() || !isIndexerEnabled()) {
 				return;
 			}
 
@@ -577,7 +589,7 @@ public abstract class BaseIndexer implements Indexer {
 
 		fullQuery.add(contextQuery, BooleanClauseOccur.MUST);
 
-		if (!searchQuery.clauses().isEmpty()) {
+		if (searchQuery.hasClauses()) {
 			fullQuery.add(searchQuery, BooleanClauseOccur.MUST);
 		}
 
@@ -684,7 +696,8 @@ public abstract class BaseIndexer implements Indexer {
 
 				if ((indexer.isFilterSearch() && indexer.hasPermission(
 						permissionChecker, entryClassPK, ActionKeys.VIEW)) ||
-					!indexer.isFilterSearch()) {
+					!indexer.isFilterSearch() ||
+					!indexer.isPermissionAware()) {
 
 					docs.add(document);
 					scores.add(hits.score(i));
@@ -917,6 +930,12 @@ public abstract class BaseIndexer implements Indexer {
 	protected void setStagingAware(boolean stagingAware) {
 		_stagingAware = stagingAware;
 	}
+
+	private static final boolean _FILTER_SEARCH = false;
+
+	private static final boolean _INDEXER_ENABLED = true;
+
+	private static final boolean _PERMISSION_AWARE = true;
 
 	private static Log _log = LogFactoryUtil.getLog(BaseIndexer.class);
 

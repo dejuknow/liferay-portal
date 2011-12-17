@@ -15,11 +15,20 @@
 package com.liferay.portlet.documentlibrary.util;
 
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.repository.model.FileVersion;
 
 /**
  * @author Mika Koivisto
  */
 public class DLProcessorRegistryUtil {
+
+	public static void cleanUp(FileEntry fileEntry) {
+		getDLProcessorRegistry().cleanUp(fileEntry);
+	}
+
+	public static void cleanUp(FileVersion fileVersion) {
+		getDLProcessorRegistry().cleanUp(fileVersion);
+	}
 
 	public static DLProcessorRegistry getDLProcessorRegistry() {
 		return _dlProcessorRegistry;

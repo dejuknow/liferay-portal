@@ -4,8 +4,8 @@ insert into Group_ values (${group.groupId}, ${companyId}, ${defaultUserId}, ${g
 
 ${sampleSQLBuilder.insertSecurity("com.liferay.portal.model.Group", group.groupId)}
 
-insert into LayoutSet values (${counter.get()}, ${group.groupId}, ${companyId}, TRUE, FALSE, 0, 'classic', '01', '', '', '', ${privateLayouts?size}, '', '', FALSE);
-insert into LayoutSet values (${counter.get()}, ${group.groupId}, ${companyId}, FALSE, FALSE, 0, 'classic', '01', '', '', '', ${publicLayouts?size}, '', '', FALSE);
+insert into LayoutSet values (${counter.get()}, ${group.groupId}, ${companyId}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, TRUE, FALSE, 0, 'classic', '01', '', '', '', ${privateLayouts?size}, '', '', FALSE);
+insert into LayoutSet values (${counter.get()}, ${group.groupId}, ${companyId}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, FALSE, FALSE, 0, 'classic', '01', '', '', '', ${publicLayouts?size}, '', '', FALSE);
 
 <#list privateLayouts as layout>
 	insert into Layout values ('${portalUUIDUtil.generate()}', ${layout.plid}, ${group.groupId}, ${companyId}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, TRUE, ${layout.getLayoutId()}, 0, '<?xml version="1.0"?>\n\n<root>\n<name>${layout.name}</name>\n</root>', '', '', 'portlet', '${layout.typeSettings}', FALSE, '${layout.friendlyURL}', FALSE, 0, '', '', '', '', '', 0, '', FALSE, '');

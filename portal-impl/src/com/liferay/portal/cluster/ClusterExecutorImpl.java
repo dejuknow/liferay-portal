@@ -377,8 +377,12 @@ public class ClusterExecutorImpl
 		ObjectValuePair<Address, ClusterNode> liveInstance =
 			new ObjectValuePair<Address, ClusterNode>(address, clusterNode);
 
-		Long oldExpirationTime = _liveInstances.put(
-			liveInstance, expirationTime);
+		// Go through the extra step of removing, and then putting the new
+		// expiration time. See LPS-23463.
+
+		Long oldExpirationTime = _liveInstances.remove(liveInstance);
+
+		_liveInstances.put(liveInstance, expirationTime);
 
 		if ((oldExpirationTime != null) ||
 			((_localAddress != null) && _localAddress.equals(address))) {
@@ -512,8 +516,7 @@ public class ClusterExecutorImpl
 			_log.error(
 				"Unable to send multicast message " + clusterRequest, ce);
 
-			throw new SystemException(
-				"Unable to send multicast request", ce);
+			throw new SystemException("Unable to send multicast request", ce);
 		}
 	}
 
@@ -532,8 +535,7 @@ public class ClusterExecutorImpl
 				_log.error(
 					"Unable to send unicast message " + clusterRequest, ce);
 
-				throw new SystemException(
-					"Unable to send unicast request", ce);
+				throw new SystemException("Unable to send unicast request", ce);
 			}
 		}
 	}

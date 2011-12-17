@@ -79,7 +79,7 @@ public class WikiUtil {
 			page, viewPageURL, editPageURL, attachmentURLPrefix);
 	}
 
-	public static String diffHtml (
+	public static String diffHtml(
 			WikiPage sourcePage, WikiPage targetPage, PortletURL viewPageURL,
 			PortletURL editPageURL, String attachmentURLPrefix)
 		throws Exception {
@@ -89,7 +89,7 @@ public class WikiUtil {
 
 		if (sourcePage != null) {
 			sourceContent = WikiUtil.convert(
-				sourcePage, viewPageURL, editPageURL,attachmentURLPrefix);
+				sourcePage, viewPageURL, editPageURL, attachmentURLPrefix);
 		}
 
 		if (targetPage != null) {
@@ -378,8 +378,7 @@ public class WikiUtil {
 		return content;
 	}
 
-	public static boolean validate(
-			long nodeId, String content, String format)
+	public static boolean validate(long nodeId, String content, String format)
 		throws WikiFormatException {
 
 		return _instance._validate(nodeId, content, format);

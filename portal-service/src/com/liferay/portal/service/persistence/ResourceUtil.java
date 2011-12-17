@@ -94,13 +94,6 @@ public class ResourceUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static Resource remove(Resource resource) throws SystemException {
-		return getPersistence().remove(resource);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static Resource update(Resource resource, boolean merge)

@@ -68,7 +68,9 @@ public class EditPreferencesAction extends PortletAction {
 		}
 
 		SessionMessages.add(
-			actionRequest, portletConfig.getPortletName() + ".doEdit");
+			actionRequest,
+			portletConfig.getPortletName() +
+				SessionMessages.KEY_SUFFIX_UPDATED_PREFERENCES);
 	}
 
 	@Override

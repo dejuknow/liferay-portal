@@ -32,8 +32,6 @@ import javax.servlet.http.HttpSession;
  */
 public class SessionErrors {
 
-	public static final String KEY = SessionErrors.class.getName();
-
 	public static void add(HttpServletRequest request, String key) {
 		add(request.getSession(), key);
 	}
@@ -314,12 +312,13 @@ public class SessionErrors {
 		Map<String, Object> errors = null;
 
 		try {
-			errors = (Map<String, Object>)session.getAttribute(KEY);
+			errors = (Map<String, Object>)session.getAttribute(
+				SessionErrors.class.getName());
 
 			if ((errors == null) && createIfAbsent) {
 				errors = new LinkedHashMap<String, Object>();
 
-				session.setAttribute(KEY, errors);
+				session.setAttribute(SessionErrors.class.getName(), errors);
 			}
 		}
 		catch (IllegalStateException ise) {
@@ -337,12 +336,14 @@ public class SessionErrors {
 		Map<String, Object> errors = null;
 
 		try {
-			errors = (Map<String, Object>)portletSession.getAttribute(KEY);
+			errors = (Map<String, Object>)portletSession.getAttribute(
+				SessionErrors.class.getName());
 
 			if ((errors == null) && createIfAbsent) {
 				errors = new LinkedHashMap<String, Object>();
 
-				portletSession.setAttribute(KEY, errors);
+				portletSession.setAttribute(
+					SessionErrors.class.getName(), errors);
 			}
 		}
 		catch (IllegalStateException ise) {

@@ -164,8 +164,7 @@ public class GroupImpl extends GroupBaseImpl {
 
 		try {
 			if (_liveGroup == null) {
-				_liveGroup = GroupLocalServiceUtil.getGroup(
-					getLiveGroupId());
+				_liveGroup = GroupLocalServiceUtil.getGroup(getLiveGroupId());
 			}
 
 			return _liveGroup;
@@ -192,6 +191,16 @@ public class GroupImpl extends GroupBaseImpl {
 		return 0;
 	}
 
+	public Group getParentGroup() throws SystemException, PortalException {
+		long parentGroupId = getParentGroupId();
+
+		if (parentGroupId <= 0) {
+			return null;
+		}
+
+		return GroupLocalServiceUtil.getGroup(parentGroupId);
+	}
+
 	public String getPathFriendlyURL(
 		boolean privateLayout, ThemeDisplay themeDisplay) {
 
@@ -216,7 +225,7 @@ public class GroupImpl extends GroupBaseImpl {
 				getGroupId(), true);
 		}
 		catch (Exception e) {
-			_log.error(e);
+			_log.error(e, e);
 		}
 
 		return layoutSet;
@@ -226,10 +235,21 @@ public class GroupImpl extends GroupBaseImpl {
 		try {
 			LayoutSet layoutSet = getPrivateLayoutSet();
 
-			return layoutSet.getPageCount();
+			int pageCount = layoutSet.getPageCount();
+
+			if (isUser()) {
+				List<UserGroup> userGroups =
+					UserGroupLocalServiceUtil.getUserUserGroups(getClassPK());
+
+				for (UserGroup userGroup : userGroups) {
+					pageCount += userGroup.getPrivateLayoutsPageCount();
+				}
+			}
+
+			return pageCount;
 		}
 		catch (Exception e) {
-			_log.error(e);
+			_log.error(e, e);
 		}
 
 		return 0;
@@ -243,7 +263,7 @@ public class GroupImpl extends GroupBaseImpl {
 				getGroupId(), false);
 		}
 		catch (Exception e) {
-			_log.error(e);
+			_log.error(e, e);
 		}
 
 		return layoutSet;
@@ -253,10 +273,21 @@ public class GroupImpl extends GroupBaseImpl {
 		try {
 			LayoutSet layoutSet = getPublicLayoutSet();
 
-			return layoutSet.getPageCount();
+			int pageCount = layoutSet.getPageCount();
+
+			if (isUser()) {
+				List<UserGroup> userGroups =
+					UserGroupLocalServiceUtil.getUserUserGroups(getClassPK());
+
+				for (UserGroup userGroup : userGroups) {
+					pageCount += userGroup.getPublicLayoutsPageCount();
+				}
+			}
+
+			return pageCount;
 		}
 		catch (Exception e) {
-			_log.error(e);
+			_log.error(e, e);
 		}
 
 		return 0;
@@ -410,6 +441,17 @@ public class GroupImpl extends GroupBaseImpl {
 	}
 
 	public boolean isStagedPortlet(String portletId) {
+		try {
+			if (isLayout()) {
+				Group parentGroup = GroupLocalServiceUtil.getGroup(
+					getParentGroupId());
+
+				return parentGroup.isStagedPortlet(portletId);
+			}
+		}
+		catch (Exception e) {
+		}
+
 		portletId = PortletConstants.getRootPortletId(portletId);
 
 		String typeSettingsProperty = getTypeSettingsProperty(

@@ -49,29 +49,6 @@
 		</ant>
 	</target>
 
-	<target name="test-${test.ant.script.command}-jetty-mysql-firefox">
-		<antcall target="prepare-mysql">
-			${test.ant.script.file.properties}
-		</antcall>
-
-		<ant antfile="build-test-jetty.xml" target="run-selenium-jetty">
-			${test.ant.script.file.plugin.hooks}
-			${test.ant.script.file.plugin.portlets}
-			${test.ant.script.file.plugin.themes}
-			${test.ant.script.file.plugin.webs}
-			<property name="test.name" value="${test.ant.script.suite.1}" />
-		</ant>
-
-		<ant antfile="build-test-jetty.xml" target="run-selenium-jetty">
-			${test.ant.script.file.plugin.hooks}
-			${test.ant.script.file.plugin.portlets}
-			${test.ant.script.file.plugin.themes}
-			${test.ant.script.file.plugin.webs}
-			<property name="skip.delete-selenium-output" value="true" />
-			<property name="test.name" value="${test.ant.script.suite.2}" />
-		</ant>
-	</target>
-
 	<target name="test-${test.ant.script.command}-jboss-mysql-firefox">
 		<antcall target="prepare-mysql">
 			${test.ant.script.file.properties}
@@ -86,6 +63,29 @@
 		</ant>
 
 		<ant antfile="build-test-jboss.xml" target="run-selenium-jboss">
+			${test.ant.script.file.plugin.hooks}
+			${test.ant.script.file.plugin.portlets}
+			${test.ant.script.file.plugin.themes}
+			${test.ant.script.file.plugin.webs}
+			<property name="skip.delete-selenium-output" value="true" />
+			<property name="test.name" value="${test.ant.script.suite.2}" />
+		</ant>
+	</target>
+
+	<target name="test-${test.ant.script.command}-jetty-mysql-firefox">
+		<antcall target="prepare-mysql">
+			${test.ant.script.file.properties}
+		</antcall>
+
+		<ant antfile="build-test-jetty.xml" target="run-selenium-jetty">
+			${test.ant.script.file.plugin.hooks}
+			${test.ant.script.file.plugin.portlets}
+			${test.ant.script.file.plugin.themes}
+			${test.ant.script.file.plugin.webs}
+			<property name="test.name" value="${test.ant.script.suite.1}" />
+		</ant>
+
+		<ant antfile="build-test-jetty.xml" target="run-selenium-jetty">
 			${test.ant.script.file.plugin.hooks}
 			${test.ant.script.file.plugin.portlets}
 			${test.ant.script.file.plugin.themes}
@@ -123,7 +123,7 @@
 			<param name="build.war" value="false" />
 			<param name="skip.prepare-bundle" value="true" />
 			<param name="vm.vmdk.suffix" value="db2-9.7" />
-			<param name="vm.host" value="${vm.host.db}" />
+			<param name="vm.host" value="${vm.db.host}" />
 		</antcall>
 
 		<antcall target="prepare-db2">
@@ -148,7 +148,7 @@
 		</ant>
 
 		<antcall target="stop-vm">
-			<param name="vm.host" value="${vm.host.db}" />
+			<param name="vm.host" value="${vm.db.host}" />
 		</antcall>
 	</target>
 
@@ -253,7 +253,7 @@
 			<param name="build.war" value="false" />
 			<param name="skip.prepare-bundle" value="true" />
 			<param name="vm.vmdk.suffix" value="oracle-10.2.0.1.0" />
-			<param name="vm.host" value="${vm.host.db}" />
+			<param name="vm.host" value="${vm.db.host}" />
 		</antcall>
 
 		<antcall target="prepare-oracle">
@@ -278,7 +278,7 @@
 		</ant>
 
 		<antcall target="stop-vm">
-			<param name="vm.host" value="${vm.host.db}" />
+			<param name="vm.host" value="${vm.db.host}" />
 		</antcall>
 	</target>
 
@@ -287,7 +287,7 @@
 			<param name="build.war" value="false" />
 			<param name="skip.prepare-bundle" value="true" />
 			<param name="vm.vmdk.suffix" value="postgresql-8.4.2-1" />
-			<param name="vm.host" value="${vm.host.db}" />
+			<param name="vm.host" value="${vm.db.host}" />
 		</antcall>
 
 		<antcall target="prepare-postgresql">
@@ -312,7 +312,7 @@
 		</ant>
 
 		<antcall target="stop-vm">
-			<param name="vm.host" value="${vm.host.db}" />
+			<param name="vm.host" value="${vm.db.host}" />
 		</antcall>
 	</target>
 
@@ -321,7 +321,7 @@
 			<param name="build.war" value="false" />
 			<param name="skip.prepare-bundle" value="true" />
 			<param name="vm.vmdk.suffix" value="sql-server-2005-sp2" />
-			<param name="vm.host" value="${vm.host.db}" />
+			<param name="vm.host" value="${vm.db.host}" />
 		</antcall>
 
 		<antcall target="prepare-sql-server">
@@ -346,7 +346,7 @@
 		</ant>
 
 		<antcall target="stop-vm">
-			<param name="vm.host" value="${vm.host.db}" />
+			<param name="vm.host" value="${vm.db.host}" />
 		</antcall>
 	</target>
 
@@ -355,7 +355,7 @@
 			<param name="build.war" value="false" />
 			<param name="skip.prepare-bundle" value="true" />
 			<param name="vm.vmdk.suffix" value="sybase-15.0.2" />
-			<param name="vm.host" value="${vm.host.db}" />
+			<param name="vm.host" value="${vm.db.host}" />
 		</antcall>
 
 		<antcall target="prepare-sybase">
@@ -380,7 +380,7 @@
 		</ant>
 
 		<antcall target="stop-vm">
-			<param name="vm.host" value="${vm.host.db}" />
+			<param name="vm.host" value="${vm.db.host}" />
 		</antcall>
 	</target>
 
@@ -424,6 +424,21 @@
 		</ant>
 
 		<ant antfile="build-test-websphere-7.0.xml" target="run-selenium-websphere-7.0">
+			<property name="skip.delete-selenium-output" value="true" />
+			<property name="test.name" value="${test.ant.script.suite.2}" />
+		</ant>
+	</target>
+
+	<target name="test-${test.ant.script.command}-websphere-8.0-mysql-firefox">
+		<antcall target="prepare-mysql">
+			${test.ant.script.file.properties}
+		</antcall>
+
+		<ant antfile="build-test-websphere-8.0.xml" target="run-selenium-websphere-8.0">
+			<property name="test.name" value="${test.ant.script.suite.1}" />
+		</ant>
+
+		<ant antfile="build-test-websphere-8.0.xml" target="run-selenium-websphere-8.0">
 			<property name="skip.delete-selenium-output" value="true" />
 			<property name="test.name" value="${test.ant.script.suite.2}" />
 		</ant>

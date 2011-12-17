@@ -628,8 +628,7 @@ public class MBUtil {
 
 		int maxPosts = 0;
 
-		Group group = GroupLocalServiceUtil.getGroup(
-			statsUser.getGroupId());
+		Group group = GroupLocalServiceUtil.getGroup(statsUser.getGroupId());
 
 		long companyId = group.getCompanyId();
 
@@ -779,8 +778,7 @@ public class MBUtil {
 					companyId, entityValue);
 
 			if (OrganizationLocalServiceUtil.hasUserOrganization(
-					userId, organization.getOrganizationId(), false, true,
-					false)) {
+					userId, organization.getOrganizationId(), false, false)) {
 
 				return true;
 			}

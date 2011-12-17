@@ -10,6 +10,14 @@
 		</init-param>
 	</filter>
 	<filter>
+		<filter-name>Atom Servlet Filter</filter-name>
+		<filter-class>com.liferay.portal.servlet.filters.secure.SecureFilter</filter-class>
+		<init-param>
+			<param-name>portal_property_prefix</param-name>
+			<param-value>atom.servlet.</param-value>
+		</init-param>
+	</filter>
+	<filter>
 		<filter-name>Audit Filter</filter-name>
 		<filter-class>com.liferay.portal.servlet.filters.audit.AuditFilter</filter-class>
 		<init-param>
@@ -20,6 +28,14 @@
 	<filter>
 		<filter-name>Auto Login Filter</filter-name>
 		<filter-class>com.liferay.portal.servlet.filters.autologin.AutoLoginFilter</filter-class>
+	</filter>
+	<filter>
+		<filter-name>Axis Servlet Filter</filter-name>
+		<filter-class>com.liferay.portal.servlet.filters.secure.SecureFilter</filter-class>
+		<init-param>
+			<param-name>portal_property_prefix</param-name>
+			<param-value>axis.servlet.</param-value>
+		</init-param>
 	</filter>
 	<filter>
 		<filter-name>Cache Filter - Friendly</filter-name>
@@ -150,7 +166,7 @@
 		</init-param>
 		<init-param>
 			<param-name>Cache-Control</param-name>
-			<param-value>max-age=315360000, public</param-value>
+			<param-value>max-age=315360000, no-cache="Set-Cookie", public</param-value>
 		</init-param>
 		<init-param>
 			<param-name>Expires</param-name>
@@ -176,6 +192,22 @@
 	<filter>
 		<filter-name>I18n Filter</filter-name>
 		<filter-class>com.liferay.portal.servlet.filters.i18n.I18nFilter</filter-class>
+	</filter>
+	<filter>
+		<filter-name>JSON Servlet Filter</filter-name>
+		<filter-class>com.liferay.portal.servlet.filters.secure.SecureFilter</filter-class>
+		<init-param>
+			<param-name>portal_property_prefix</param-name>
+			<param-value>json.servlet.</param-value>
+		</init-param>
+	</filter>
+	<filter>
+		<filter-name>JSON Web Service Servlet Filter</filter-name>
+		<filter-class>com.liferay.portal.servlet.filters.secure.SecureFilter</filter-class>
+		<init-param>
+			<param-name>portal_property_prefix</param-name>
+			<param-value>jsonws.servlet.</param-value>
+		</init-param>
 	</filter>
 	<filter>
 		<filter-name>Language Filter</filter-name>
@@ -206,11 +238,79 @@
 		<filter-class>com.liferay.portal.servlet.filters.monitoring.MonitoringFilter</filter-class>
 	</filter>
 	<filter>
+		<filter-name>Remoting Servlet Filter</filter-name>
+		<filter-class>com.liferay.portal.servlet.filters.secure.SecureFilter</filter-class>
+		<init-param>
+			<param-name>portal_property_prefix</param-name>
+			<param-value>spring.remoting.servlet.</param-value>
+		</init-param>
+	</filter>
+	<filter>
+		<filter-name>Secure Atom Servlet Filter</filter-name>
+		<filter-class>com.liferay.portal.servlet.filters.secure.SecureFilter</filter-class>
+		<init-param>
+			<param-name>basic_auth</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<init-param>
+			<param-name>portal_property_prefix</param-name>
+			<param-value>atom.servlet.</param-value>
+		</init-param>
+	</filter>
+	<filter>
+		<filter-name>Secure Axis Servlet Filter</filter-name>
+		<filter-class>com.liferay.portal.servlet.filters.secure.SecureFilter</filter-class>
+		<init-param>
+			<param-name>basic_auth</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<init-param>
+			<param-name>portal_property_prefix</param-name>
+			<param-value>axis.servlet.</param-value>
+		</init-param>
+	</filter>
+	<filter>
+		<filter-name>Secure JSON Servlet Filter</filter-name>
+		<filter-class>com.liferay.portal.servlet.filters.secure.SecureFilter</filter-class>
+		<init-param>
+			<param-name>basic_auth</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<init-param>
+			<param-name>portal_property_prefix</param-name>
+			<param-value>json.servlet.</param-value>
+		</init-param>
+	</filter>
+	<filter>
+		<filter-name>Secure JSON Web Service Servlet Filter</filter-name>
+		<filter-class>com.liferay.portal.servlet.filters.secure.SecureFilter</filter-class>
+		<init-param>
+			<param-name>basic_auth</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<init-param>
+			<param-name>portal_property_prefix</param-name>
+			<param-value>jsonws.servlet.</param-value>
+		</init-param>
+	</filter>
+	<filter>
 		<filter-name>Secure Main Servlet Filter</filter-name>
 		<filter-class>com.liferay.portal.servlet.filters.secure.SecureFilter</filter-class>
 		<init-param>
 			<param-name>portal_property_prefix</param-name>
 			<param-value>main.servlet.</param-value>
+		</init-param>
+	</filter>
+	<filter>
+		<filter-name>Secure Remoting Servlet Filter</filter-name>
+		<filter-class>com.liferay.portal.servlet.filters.secure.SecureFilter</filter-class>
+		<init-param>
+			<param-name>basic_auth</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<init-param>
+			<param-name>portal_property_prefix</param-name>
+			<param-value>spring.remoting.servlet.</param-value>
 		</init-param>
 	</filter>
 	<filter>
@@ -230,6 +330,30 @@
 		</init-param>
 	</filter>
 	<filter>
+		<filter-name>Secure Tunnel Servlet Filter</filter-name>
+		<filter-class>com.liferay.portal.servlet.filters.secure.SecureFilter</filter-class>
+		<init-param>
+			<param-name>basic_auth</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<init-param>
+			<param-name>portal_property_prefix</param-name>
+			<param-value>tunnel.servlet.</param-value>
+		</init-param>
+	</filter>
+	<filter>
+		<filter-name>Secure WebDAV Servlet Filter</filter-name>
+		<filter-class>com.liferay.portal.servlet.filters.secure.SecureFilter</filter-class>
+		<init-param>
+			<param-name>digest_auth</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<init-param>
+			<param-name>portal_property_prefix</param-name>
+			<param-value>webdav.servlet.</param-value>
+		</init-param>
+	</filter>
+	<filter>
 		<filter-name>Servlet Context Include Filter</filter-name>
 		<filter-class>com.liferay.portal.servlet.filters.servletcontextinclude.ServletContextIncludeFilter</filter-class>
 		<init-param>
@@ -240,6 +364,22 @@
 	<filter>
 		<filter-name>Session Id Filter</filter-name>
 		<filter-class>com.liferay.portal.servlet.filters.sessionid.SessionIdFilter</filter-class>
+	</filter>
+	<filter>
+		<filter-name>Sharepoint Filter</filter-name>
+		<filter-class>com.liferay.portal.sharepoint.SharepointFilter</filter-class>
+		<init-param>
+			<param-name>digest_auth</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<init-param>
+			<param-name>portal_property_prefix</param-name>
+			<param-value>webdav.servlet.</param-value>
+		</init-param>
+		<init-param>
+			<param-name>url-regex-ignore-pattern</param-name>
+			<param-value>^/html/.+\.(css|gif|html|ico|jpg|js|png)(\?.*)?$</param-value>
+		</init-param>
 	</filter>
 	<filter>
 		<filter-name>SSO CAS Filter</filter-name>
@@ -262,6 +402,10 @@
 		<filter-class>com.liferay.portal.servlet.filters.strip.StripFilter</filter-class>
 	</filter>
 	<filter>
+		<filter-name>Theme Preview Filter</filter-name>
+		<filter-class>com.liferay.portal.servlet.filters.themepreview.ThemePreviewFilter</filter-class>
+	</filter>
+	<filter>
 		<filter-name>Thread Dump Filter</filter-name>
 		<filter-class>com.liferay.portal.servlet.filters.threaddump.ThreadDumpFilter</filter-class>
 		<init-param>
@@ -278,36 +422,16 @@
 		</init-param>
 	</filter>
 	<filter>
-		<filter-name>UnsyncPrintWriter Pool Filter</filter-name>
-		<filter-class>com.liferay.portal.servlet.filters.unsyncprintwriterpool.UnsyncPrintWriterPoolFilter</filter-class>
-	</filter>
-	<filter>
-		<filter-name>Virtual Host Filter</filter-name>
-		<filter-class>com.liferay.portal.servlet.filters.virtualhost.VirtualHostFilter</filter-class>
-		<init-param>
-			<param-name>url-regex-ignore-pattern</param-name>
-			<param-value>^/html/.+\.(css|gif|html|ico|jpg|js|png)(\?.*)?$</param-value>
-		</init-param>
-	</filter>
-	<filter>
-		<filter-name>Sharepoint Filter</filter-name>
-		<filter-class>com.liferay.portal.sharepoint.SharepointFilter</filter-class>
-		<init-param>
-			<param-name>digest_auth</param-name>
-			<param-value>true</param-value>
-		</init-param>
+		<filter-name>Tunnel Servlet Filter</filter-name>
+		<filter-class>com.liferay.portal.servlet.filters.secure.SecureFilter</filter-class>
 		<init-param>
 			<param-name>portal_property_prefix</param-name>
-			<param-value>webdav.servlet.</param-value>
-		</init-param>
-		<init-param>
-			<param-name>url-regex-ignore-pattern</param-name>
-			<param-value>^/html/.+\.(css|gif|html|ico|jpg|js|png)(\?.*)?$</param-value>
+			<param-value>tunnel.servlet.</param-value>
 		</init-param>
 	</filter>
 	<filter>
-		<filter-name>Theme Preview Filter</filter-name>
-		<filter-class>com.liferay.portal.servlet.filters.themepreview.ThemePreviewFilter</filter-class>
+		<filter-name>UnsyncPrintWriter Pool Filter</filter-name>
+		<filter-class>com.liferay.portal.servlet.filters.unsyncprintwriterpool.UnsyncPrintWriterPoolFilter</filter-class>
 	</filter>
 	<filter>
 		<filter-name>URL Rewrite Filter</filter-name>
@@ -328,6 +452,22 @@
 	<filter>
 		<filter-name>Valid Html Filter</filter-name>
 		<filter-class>com.liferay.portal.servlet.filters.validhtml.ValidHtmlFilter</filter-class>
+	</filter>
+	<filter>
+		<filter-name>Virtual Host Filter</filter-name>
+		<filter-class>com.liferay.portal.servlet.filters.virtualhost.VirtualHostFilter</filter-class>
+		<init-param>
+			<param-name>url-regex-ignore-pattern</param-name>
+			<param-value>^/html/.+\.(css|gif|html|ico|jpg|js|png)(\?.*)?$</param-value>
+		</init-param>
+	</filter>
+	<filter>
+		<filter-name>WebDAV Servlet Filter</filter-name>
+		<filter-class>com.liferay.portal.servlet.filters.secure.SecureFilter</filter-class>
+		<init-param>
+			<param-name>portal_property_prefix</param-name>
+			<param-value>webdav.servlet.</param-value>
+		</init-param>
 	</filter>
 	<filter-mapping>
 		<filter-name>Ignore Filter - FTL</filter-name>
@@ -931,5 +1071,61 @@
 		<url-pattern>/web/*</url-pattern>
 		<dispatcher>FORWARD</dispatcher>
 		<dispatcher>REQUEST</dispatcher>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>Atom Servlet Filter</filter-name>
+		<url-pattern>/api/atom/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>Axis Servlet Filter</filter-name>
+		<url-pattern>/api/axis/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>JSON Servlet Filter</filter-name>
+		<url-pattern>/api/json/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>JSON Web Service Servlet Filter</filter-name>
+		<url-pattern>/api/jsonws/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>Remoting Servlet Filter</filter-name>
+		<url-pattern>/api/spring/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>Tunnel Servlet Filter</filter-name>
+		<url-pattern>/api/liferay/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>WebDAV Servlet Filter</filter-name>
+		<url-pattern>/api/webdav/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>Secure Atom Servlet Filter</filter-name>
+		<url-pattern>/api/secure/atom/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>Secure Axis Servlet Filter</filter-name>
+		<url-pattern>/api/secure/axis/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>Secure JSON Servlet Filter</filter-name>
+		<url-pattern>/api/secure/json/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>Secure JSON Web Service Servlet Filter</filter-name>
+		<url-pattern>/api/secure/jsonws/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>Secure Remoting Servlet Filter</filter-name>
+		<url-pattern>/api/secure/spring/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>Secure Tunnel Servlet Filter</filter-name>
+		<url-pattern>/api/secure/liferay/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>Secure WebDAV Servlet Filter</filter-name>
+		<url-pattern>/api/secure/webdav/*</url-pattern>
 	</filter-mapping>
 </web-app>

@@ -95,14 +95,6 @@ public class MBMessageUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static MBMessage remove(MBMessage mbMessage)
-		throws SystemException {
-		return getPersistence().remove(mbMessage);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static MBMessage update(MBMessage mbMessage, boolean merge)

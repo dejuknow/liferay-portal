@@ -142,10 +142,10 @@ public class UserGroupFinderImpl
 			qPos.add(companyId);
 			qPos.add(name);
 
-			List<UserGroup> list = q.list();
+			List<UserGroup> userGroups = q.list();
 
-			if (!list.isEmpty()) {
-				return list.get(0);
+			if (!userGroups.isEmpty()) {
+				return userGroups.get(0);
 			}
 		}
 		catch (Exception e) {
@@ -200,8 +200,7 @@ public class UserGroupFinderImpl
 			qPos.add(description);
 			qPos.add(description);
 
-			return (List<UserGroup>)QueryUtil.list(
-				q, getDialect(), start, end);
+			return (List<UserGroup>)QueryUtil.list(q, getDialect(), start, end);
 		}
 		catch (Exception e) {
 			throw new SystemException(e);

@@ -17,20 +17,30 @@ package com.liferay.portal.xml;
 import com.liferay.portal.kernel.xml.Node;
 import com.liferay.portal.kernel.xml.XPath;
 import com.liferay.portal.xml.xpath.LiferayFunctionContext;
+import com.liferay.portal.xml.xpath.LiferayNamespaceContext;
 
 import java.util.List;
+import java.util.Map;
 
 import org.jaxen.FunctionContext;
+import org.jaxen.NamespaceContext;
 
 /**
  * @author Brian Wing Shun Chan
  */
 public class XPathImpl implements XPath {
 
-	public XPathImpl(org.dom4j.XPath xPath) {
+	public XPathImpl(
+		org.dom4j.XPath xPath, Map<String, String> namespaceContextMap) {
+
 		_xPath = xPath;
 
 		_xPath.setFunctionContext(_functionContext);
+
+		NamespaceContext namespaceContext = new LiferayNamespaceContext(
+			namespaceContextMap);
+
+		_xPath.setNamespaceContext(namespaceContext);
 	}
 
 	public boolean booleanValueOf(Object context) {
@@ -101,6 +111,9 @@ public class XPathImpl implements XPath {
 		if (node == null) {
 			return null;
 		}
+		else if (node instanceof org.dom4j.Element) {
+			return new ElementImpl((org.dom4j.Element)node);
+		}
 		else {
 			return new NodeImpl(node);
 		}
@@ -167,7 +180,7 @@ public class XPathImpl implements XPath {
 		}
 	}
 
-	private static final FunctionContext _functionContext =
+	private static FunctionContext _functionContext =
 		new LiferayFunctionContext();
 
 	private org.dom4j.XPath _xPath;

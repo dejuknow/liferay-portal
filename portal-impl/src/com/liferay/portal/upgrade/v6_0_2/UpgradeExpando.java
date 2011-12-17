@@ -114,7 +114,7 @@ public class UpgradeExpando extends UpgradeProcess {
 
 			ps = con.prepareStatement(
 				"select count(*) from ExpandoRow where companyId = ? and " +
-					"tableId = ?  and classPK = ?");
+					"tableId = ? and classPK = ?");
 
 			ps.setLong(1, companyId);
 			ps.setLong(2, tableId);
@@ -220,8 +220,7 @@ public class UpgradeExpando extends UpgradeProcess {
 		}
 	}
 
-	protected void updateRows(
-			String tableName, long tableId, String columnName)
+	protected void updateRows(String tableName, long tableId, String columnName)
 		throws Exception {
 
 		Connection con = null;

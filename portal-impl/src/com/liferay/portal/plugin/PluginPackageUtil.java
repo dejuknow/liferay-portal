@@ -90,8 +90,7 @@ import org.apache.commons.lang.time.StopWatch;
  */
 public class PluginPackageUtil {
 
-	public static final String REPOSITORY_XML_FILENAME_EXTENSION =
-		"xml";
+	public static final String REPOSITORY_XML_FILENAME_EXTENSION = "xml";
 
 	public static final String REPOSITORY_XML_FILENAME_PREFIX =
 		"liferay-plugin-repository";
@@ -432,8 +431,7 @@ public class PluginPackageUtil {
 		return null;
 	}
 
-	private RemotePluginPackageRepository _getRepository(
-			String repositoryURL)
+	private RemotePluginPackageRepository _getRepository(String repositoryURL)
 		throws PortalException, SystemException {
 
 		RemotePluginPackageRepository repository = _repositoryCache.get(
@@ -1348,8 +1346,7 @@ public class PluginPackageUtil {
 		return indexer.search(searchContext);
 	}
 
-	private void _unregisterInstalledPluginPackage(
-			PluginPackage pluginPackage)
+	private void _unregisterInstalledPluginPackage(PluginPackage pluginPackage)
 		throws PortalException, SystemException {
 
 		_installedPluginPackages.removePluginPackage(pluginPackage);

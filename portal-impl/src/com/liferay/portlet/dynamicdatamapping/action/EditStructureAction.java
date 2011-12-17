@@ -33,6 +33,7 @@ import com.liferay.portlet.dynamicdatamapping.StructureDuplicateElementException
 import com.liferay.portlet.dynamicdatamapping.StructureNameException;
 import com.liferay.portlet.dynamicdatamapping.StructureXsdException;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
+import com.liferay.portlet.dynamicdatamapping.model.DDMStructureConstants;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureServiceUtil;
 
 import java.util.Locale;
@@ -69,9 +70,6 @@ public class EditStructureAction extends PortletAction {
 		try {
 			if (cmd.equals(Constants.ADD) || cmd.equals(Constants.UPDATE)) {
 				structure = updateStructure(actionRequest);
-			}
-			else if (cmd.equals(Constants.COPY)) {
-				structure = copyStructure(actionRequest);
 			}
 			else if (cmd.equals(Constants.DELETE)) {
 				deleteStructure(actionRequest);
@@ -164,18 +162,6 @@ public class EditStructureAction extends PortletAction {
 				"portlet.dynamic_data_mapping.edit_structure"));
 	}
 
-	protected DDMStructure copyStructure(ActionRequest actionRequest)
-		throws Exception {
-
-		long structureId = ParamUtil.getLong(actionRequest, "structureId");
-
-		ServiceContext serviceContext = ServiceContextFactory.getInstance(
-			DDMStructure.class.getName(), actionRequest);
-
-		return DDMStructureServiceUtil.copyStructure(
-			structureId, serviceContext);
-	}
-
 	protected void deleteStructure(ActionRequest actionRequest)
 		throws Exception {
 
@@ -241,7 +227,8 @@ public class EditStructureAction extends PortletAction {
 		if (cmd.equals(Constants.ADD)) {
 			structure = DDMStructureServiceUtil.addStructure(
 				groupId, classNameId, null, nameMap, descriptionMap, xsd,
-				storageType, serviceContext);
+				storageType, DDMStructureConstants.TYPE_DEFAULT,
+				serviceContext);
 		}
 		else if (cmd.equals(Constants.UPDATE)) {
 			structure = DDMStructureServiceUtil.updateStructure(

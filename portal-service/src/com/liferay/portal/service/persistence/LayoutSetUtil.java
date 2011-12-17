@@ -94,14 +94,6 @@ public class LayoutSetUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static LayoutSet remove(LayoutSet layoutSet)
-		throws SystemException {
-		return getPersistence().remove(layoutSet);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static LayoutSet update(LayoutSet layoutSet, boolean merge)

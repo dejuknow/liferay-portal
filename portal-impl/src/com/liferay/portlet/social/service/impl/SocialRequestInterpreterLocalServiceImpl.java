@@ -26,19 +26,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The social request interpreter local service. Social request interpreters
- * are responsible for translating social requests into human readable form as
- * well as handling social request confirmations and rejections. This service
- * holds a list of interpreters and provides methods to add or remove items
- * from this list.
+ * The social request interpreter local service. Social request interpreters are
+ * responsible for translating social requests into human readable form as well
+ * as handling social request confirmations and rejections. This service holds a
+ * list of interpreters and provides methods to add or remove items from this
+ * list.
  *
  * <p>
  * Social request interpreters use the language files to get text fragments
- * based on the request's type. An interpreter is created for a specific
- * request type and is only capable of handling requests of that type. As an
- * example, there is an interpreter FriendsRequestInterpreter in the social
- * networking portlet can only translate and handle interpretation,
- * confirmation, and rejection of friend requests.
+ * based on the request's type. An interpreter is created for a specific request
+ * type and is only capable of handling requests of that type. As an example,
+ * there is an interpreter FriendsRequestInterpreter in the social networking
+ * portlet can only translate and handle interpretation, confirmation, and
+ * rejection of friend requests.
  * </p>
  *
  * @author Brian Wing Shun Chan

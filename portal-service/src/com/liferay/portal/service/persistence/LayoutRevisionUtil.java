@@ -94,14 +94,6 @@ public class LayoutRevisionUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static LayoutRevision remove(LayoutRevision layoutRevision)
-		throws SystemException {
-		return getPersistence().remove(layoutRevision);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static LayoutRevision update(LayoutRevision layoutRevision,

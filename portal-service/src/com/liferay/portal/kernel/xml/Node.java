@@ -62,22 +62,22 @@ public interface Node extends Serializable {
 
 	public boolean isReadOnly();
 
-	public boolean matches(String xpathExpression);
+	public boolean matches(String xPathExpression);
 
-	public Number numberValueOf(String xpathExpression);
+	public Number numberValueOf(String xPathExpression);
 
-	public List<Node> selectNodes(String xpathExpression);
-
-	public List<Node> selectNodes(
-		String xpathExpression, String comparisonXPathExpression);
+	public List<Node> selectNodes(String xPathExpression);
 
 	public List<Node> selectNodes(
-		String xpathExpression, String comparisonXPathExpression,
+		String xPathExpression, String comparisonXPathExpression);
+
+	public List<Node> selectNodes(
+		String xPathExpression, String comparisonXPathExpression,
 		boolean removeDuplicates);
 
-	public Object selectObject(String xpathExpression);
+	public Object selectObject(String xPathExpression);
 
-	public Node selectSingleNode(String xpathExpression);
+	public Node selectSingleNode(String xPathExpression);
 
 	public void setName(String name);
 
@@ -85,7 +85,7 @@ public interface Node extends Serializable {
 
 	public boolean supportsParent();
 
-	public String valueOf(String xpathExpression);
+	public String valueOf(String xPathExpression);
 
 	public void write(Writer writer) throws IOException;
 

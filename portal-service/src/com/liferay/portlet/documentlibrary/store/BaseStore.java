@@ -89,7 +89,7 @@ public abstract class BaseStore implements Store {
 	 * @param  repositoryId the primary key of the data repository (optionally
 	 *         {@link CompanyConstants#SYSTEM})
 	 * @param  fileName the file name
-	 * @param  file the files's data
+	 * @param  file Name the file name
 	 * @throws PortalException if the file's information was invalid
 	 * @throws SystemException if a system exception occurred
 	 */
@@ -147,8 +147,9 @@ public abstract class BaseStore implements Store {
 	 * Creates a new copy of the file version.
 	 *
 	 * <p>
-	 * This method should be overrided if a more optimized approach can be
-	 * used (e.g., {@link FileSystemStore#copyFileVersion(long, long, String, String, String, String)}).
+	 * This method should be overrided if a more optimized approach can be used
+	 * (e.g., {@link FileSystemStore#copyFileVersion(long, long, String, String,
+	 * String, String)}).
 	 * </p>
 	 *
 	 * @param  companyId the primary key of the company
@@ -223,8 +224,8 @@ public abstract class BaseStore implements Store {
 	 * This method is useful when optimizing low-level file operations like
 	 * copy. The client must not delete or change the returned {@link File}
 	 * object in any way. This method is only supported in certain stores. If
-	 * not supported, this method will throw an
-	 * {@link UnsupportedOperationException}.
+	 * not supported, this method will throw an {@link
+	 * UnsupportedOperationException}.
 	 * </p>
 	 *
 	 * @param  companyId the primary key of the company
@@ -234,8 +235,6 @@ public abstract class BaseStore implements Store {
 	 * @return Returns the {@link File} object with the file's name
 	 * @throws PortalException if the file's information was invalid
 	 * @throws SystemException if a system exception occurred
-	 * @throws UnsupportedOperationException if the method is unsupported by the
-	 *         storage implementation
 	 */
 	public File getFile(long companyId, long repositoryId, String fileName)
 		throws PortalException, SystemException {
@@ -250,13 +249,13 @@ public abstract class BaseStore implements Store {
 	 * This method is useful when optimizing low-level file operations like
 	 * copy. The client must not delete or change the returned {@link File}
 	 * object in any way. This method is only supported in certain stores. If
-	 * not supported, this method will throw an
-	 * {@link UnsupportedOperationException}.
+	 * not supported, this method will throw an {@link
+	 * UnsupportedOperationException}.
 	 * </p>
 	 *
 	 * <p>
-	 * This method should be overrided if a more optimized approach can be
-	 * used (e.g., {@link FileSystemStore#getFile(long, long, String, String)}).
+	 * This method should be overrided if a more optimized approach can be used
+	 * (e.g., {@link FileSystemStore#getFile(long, long, String, String)}).
 	 * </p>
 	 *
 	 * @param  companyId the primary key of the company
@@ -267,8 +266,6 @@ public abstract class BaseStore implements Store {
 	 * @return Returns the {@link File} object with the file's name
 	 * @throws PortalException if the file's information was invalid
 	 * @throws SystemException if a system exception occurred
-	 * @throws UnsupportedOperationException if the method is unsupported by the
-	 *         storage implementation
 	 */
 	public File getFile(
 			long companyId, long repositoryId, String fileName,
@@ -523,7 +520,7 @@ public abstract class BaseStore implements Store {
 	 *         {@link CompanyConstants#SYSTEM})
 	 * @param  fileName the file name
 	 * @param  versionLabel the file's new version label
-	 * @param  file the new file's data
+	 * @param  file Name the file name
 	 * @throws PortalException if the file's information was invalid
 	 * @throws SystemException if a system exception occurred
 	 */
@@ -572,9 +569,9 @@ public abstract class BaseStore implements Store {
 		throws PortalException, SystemException;
 
 	/**
-	 * Update's a file version label. Similar to {@link
-	 * #copyFileVersion(long, long, String, String, String, String)} except that
-	 * the old file version is deleted.
+	 * Update's a file version label. Similar to {@link #copyFileVersion(long,
+	 * long, String, String, String, String)} except that the old file version
+	 * is deleted.
 	 *
 	 * @param  companyId the primary key of the company
 	 * @param  repositoryId the primary key of the data repository (optionally
@@ -582,7 +579,6 @@ public abstract class BaseStore implements Store {
 	 * @param  fileName the file's name
 	 * @param  fromVersionLabel the file's version label
 	 * @param  toVersionLabel the file's new version label
-	 * @param  sourceFileName the new file's original name
 	 * @throws PortalException if the file's information was invalid
 	 * @throws SystemException if a system exception occurred
 	 */
@@ -594,11 +590,9 @@ public abstract class BaseStore implements Store {
 		InputStream is = getFileAsStream(
 			companyId, repositoryId, fileName, fromVersionLabel);
 
-		updateFile(
-			companyId, repositoryId, fileName, toVersionLabel, is);
+		updateFile(companyId, repositoryId, fileName, toVersionLabel, is);
 
-		deleteFile(
-			companyId, repositoryId, fileName, fromVersionLabel);
+		deleteFile(companyId, repositoryId, fileName, fromVersionLabel);
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(BaseStore.class);

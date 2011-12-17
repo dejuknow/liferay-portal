@@ -724,11 +724,11 @@ public class FileImpl implements com.liferay.portal.kernel.util.File {
 			mkdirs(file.getParent());
 		}
 
-		FileOutputStream fos = new FileOutputStream(file);
+		FileOutputStream fileOutputStream = new FileOutputStream(file);
 
-		fos.write(bytes, offset, length);
+		fileOutputStream.write(bytes, offset, length);
 
-		fos.close();
+		fileOutputStream.close();
 	}
 
 	public void write(File file, InputStream is) throws IOException {
@@ -751,6 +751,10 @@ public class FileImpl implements com.liferay.portal.kernel.util.File {
 
 	public void write(File file, String s, boolean lazy, boolean append)
 		throws IOException {
+
+		if (s == null) {
+			return;
+		}
 
 		if (file.getParent() != null) {
 			mkdirs(file.getParent());

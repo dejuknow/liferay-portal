@@ -36,6 +36,8 @@ AUI().add(
 		var Layout = {
 			EMPTY_COLUMNS: {},
 
+			INITIALIZED: false,
+
 			OVER_NESTED_PORTLET: false,
 
 			PROXY_NODE: A.Node.create('<div class="lfr-portlet-proxy aui-portal-layout-proxy"></div>'),
@@ -179,6 +181,8 @@ AUI().add(
 
 				Liferay.after('closePortlet', Layout._afterPortletClose);
 				Liferay.on('closePortlet', Layout._onPortletClose);
+
+				Layout.INITIALIZED = true;
 			},
 
 			bindDragDropListeners: function() {
@@ -240,10 +244,10 @@ AUI().add(
 				var portletBoundary = Layout.options.portletBoundary;
 				var portlets = dropColumn.all('>' + portletBoundary);
 				var firstPortlet = portlets.item(0);
+				var referencePortlet = null;
 
 				if (firstPortlet) {
 					var lastStatic = null;
-					var referencePortlet = null;
 					var firstPortletStatic = firstPortlet.isStatic;
 
 					if (!firstPortletStatic || (firstPortletStatic == 'end')) {
@@ -405,6 +409,15 @@ AUI().add(
 				var position = Layout.findIndex(portletNode);
 
 				if (Layout.hasMoved(portletNode)) {
+					Liferay.fire(
+						'portletMoved',
+						{
+							portlet: portletNode,
+							portletId: portletId,
+							position: position
+						}
+					);
+
 					Layout.saveLayout(
 						{
 							cmd: 'move',
@@ -419,7 +432,8 @@ AUI().add(
 			saveLayout: function(options) {
 				var data = {
 					doAsUserId: themeDisplay.getDoAsUserIdEncoded(),
-					p_l_id: themeDisplay.getPlid()
+					p_l_id: themeDisplay.getPlid(),
+					p_v_g_id: themeDisplay.getParentGroupId()
 				};
 
 				A.mix(data, options);
@@ -544,7 +558,7 @@ AUI().add(
 				Layout.updateCurrentPortletInfo(portlet);
 
 				if (portlet.test('.portlet-nested-portlets')) {
-					Layout.closeNestedPortlets(portlet);					
+					Layout.closeNestedPortlets(portlet);
 				}
 
 				event.column = column;

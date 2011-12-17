@@ -14,6 +14,7 @@
 
 package com.liferay.portal.scheduler;
 
+import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.bean.IdentifiableBean;
 import com.liferay.portal.kernel.cluster.Address;
 import com.liferay.portal.kernel.cluster.ClusterEvent;
@@ -53,6 +54,7 @@ import com.liferay.portal.util.PropsValues;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -85,6 +87,10 @@ public class ClusterSchedulerEngine
 
 	@Clusterable
 	public void delete(String groupName) throws SchedulerException {
+		if (!PropsValues.SCHEDULER_ENABLED) {
+			return;
+		}
+
 		try {
 			if (isMemorySchedulerSlave(groupName)) {
 				removeMemoryClusteredJobs(groupName);
@@ -112,6 +118,10 @@ public class ClusterSchedulerEngine
 	@Clusterable
 	public void delete(String jobName, String groupName)
 		throws SchedulerException {
+
+		if (!PropsValues.SCHEDULER_ENABLED) {
+			return;
+		}
 
 		try {
 			if (isMemorySchedulerSlave(groupName)) {
@@ -146,6 +156,10 @@ public class ClusterSchedulerEngine
 	public SchedulerResponse getScheduledJob(String jobName, String groupName)
 		throws SchedulerException {
 
+		if (!PropsValues.SCHEDULER_ENABLED) {
+			return null;
+		}
+
 		try {
 			if (isMemorySchedulerSlave(groupName)) {
 				return (SchedulerResponse)callMaster(
@@ -172,6 +186,10 @@ public class ClusterSchedulerEngine
 	public List<SchedulerResponse> getScheduledJobs()
 		throws SchedulerException {
 
+		if (!PropsValues.SCHEDULER_ENABLED) {
+			return Collections.emptyList();
+		}
+
 		try {
 			if (isMemorySchedulerSlave()) {
 				return (List<SchedulerResponse>)callMaster(
@@ -194,6 +212,10 @@ public class ClusterSchedulerEngine
 
 	public List<SchedulerResponse> getScheduledJobs(String groupName)
 		throws SchedulerException {
+
+		if (!PropsValues.SCHEDULER_ENABLED) {
+			return Collections.emptyList();
+		}
 
 		try {
 			if (isMemorySchedulerSlave(groupName)) {
@@ -218,6 +240,10 @@ public class ClusterSchedulerEngine
 
 	@Clusterable
 	public void pause(String groupName) throws SchedulerException {
+		if (!PropsValues.SCHEDULER_ENABLED) {
+			return;
+		}
+
 		try {
 			if (isMemorySchedulerSlave(groupName)) {
 				updateMemoryClusteredJobs(groupName, TriggerState.PAUSED);
@@ -245,6 +271,10 @@ public class ClusterSchedulerEngine
 	@Clusterable
 	public void pause(String jobName, String groupName)
 		throws SchedulerException {
+
+		if (!PropsValues.SCHEDULER_ENABLED) {
+			return;
+		}
 
 		try {
 			if (isMemorySchedulerSlave(groupName)) {
@@ -275,6 +305,10 @@ public class ClusterSchedulerEngine
 
 	@Clusterable
 	public void resume(String groupName) throws SchedulerException {
+		if (!PropsValues.SCHEDULER_ENABLED) {
+			return;
+		}
+
 		try {
 			if (isMemorySchedulerSlave(groupName)) {
 				updateMemoryClusteredJobs(groupName, TriggerState.NORMAL);
@@ -302,6 +336,10 @@ public class ClusterSchedulerEngine
 	@Clusterable
 	public void resume(String jobName, String groupName)
 		throws SchedulerException {
+
+		if (!PropsValues.SCHEDULER_ENABLED) {
+			return;
+		}
 
 		try {
 			if (isMemorySchedulerSlave(groupName)) {
@@ -335,6 +373,10 @@ public class ClusterSchedulerEngine
 			Trigger trigger, String description, String destinationName,
 			Message message)
 		throws SchedulerException {
+
+		if (!PropsValues.SCHEDULER_ENABLED) {
+			return;
+		}
 
 		String groupName = trigger.getGroupName();
 		String jobName = trigger.getJobName();
@@ -383,6 +425,10 @@ public class ClusterSchedulerEngine
 	}
 
 	public void shutdown() throws SchedulerException {
+		if (!PropsValues.SCHEDULER_ENABLED) {
+			return;
+		}
+
 		try {
 			ClusterExecutorUtil.removeClusterEventListener(
 				_clusterEventListener);
@@ -399,6 +445,10 @@ public class ClusterSchedulerEngine
 	}
 
 	public void start() throws SchedulerException {
+		if (!PropsValues.SCHEDULER_ENABLED) {
+			return;
+		}
+
 		try {
 			ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
 
@@ -410,8 +460,7 @@ public class ClusterSchedulerEngine
 
 			_clusterEventListener = new MemorySchedulerClusterEventListener();
 
-			ClusterExecutorUtil.addClusterEventListener(
-				_clusterEventListener);
+			ClusterExecutorUtil.addClusterEventListener(_clusterEventListener);
 
 			if (!isMemorySchedulerClusterLockOwner(
 					lockMemorySchedulerCluster(null))) {
@@ -429,6 +478,10 @@ public class ClusterSchedulerEngine
 	@Clusterable
 	public void suppressError(String jobName, String groupName)
 		throws SchedulerException {
+
+		if (!PropsValues.SCHEDULER_ENABLED) {
+			return;
+		}
 
 		try {
 			if (isMemorySchedulerSlave(groupName)) {
@@ -456,6 +509,10 @@ public class ClusterSchedulerEngine
 
 	@Clusterable
 	public void unschedule(String groupName) throws SchedulerException {
+		if (!PropsValues.SCHEDULER_ENABLED) {
+			return;
+		}
+
 		try {
 			if (isMemorySchedulerSlave(groupName)) {
 				removeMemoryClusteredJobs(groupName);
@@ -483,6 +540,10 @@ public class ClusterSchedulerEngine
 	@Clusterable
 	public void unschedule(String jobName, String groupName)
 		throws SchedulerException {
+
+		if (!PropsValues.SCHEDULER_ENABLED) {
+			return;
+		}
 
 		try {
 			if (isMemorySchedulerSlave(groupName)) {
@@ -512,6 +573,10 @@ public class ClusterSchedulerEngine
 
 	@Clusterable
 	public void update(Trigger trigger) throws SchedulerException {
+		if (!PropsValues.SCHEDULER_ENABLED) {
+			return;
+		}
+
 		String jobName = trigger.getJobName();
 		String groupName = trigger.getGroupName();
 
@@ -581,6 +646,15 @@ public class ClusterSchedulerEngine
 		Lock lock = updateMemorySchedulerClusterMaster();
 
 		Address address = (Address)getDeserializedObject(lock.getOwner());
+
+		if (address.equals(ClusterExecutorUtil.getLocalClusterNodeAddress())) {
+			if (methodKey == _getScheduledJobsMethodKey3) {
+				return methodHandler.invoke(false);
+			}
+			else {
+				return methodHandler.invoke(schedulerEngine);
+			}
+		}
 
 		ClusterRequest clusterRequest = ClusterRequest.createUnicastRequest(
 			methodHandler, address);
@@ -749,16 +823,32 @@ public class ClusterSchedulerEngine
 	protected Lock lockMemorySchedulerCluster(String owner) throws Exception {
 		Lock lock = null;
 
-		if (owner == null) {
-			lock = LockLocalServiceUtil.lock(
-				_LOCK_CLASS_NAME, _LOCK_CLASS_NAME, _localClusterNodeAddress,
-				PropsValues.MEMORY_CLUSTER_SCHEDULER_LOCK_CACHE_ENABLED);
-		}
-		else {
-			lock = LockLocalServiceUtil.lock(
-				_LOCK_CLASS_NAME, _LOCK_CLASS_NAME, owner,
-				_localClusterNodeAddress,
-				PropsValues.MEMORY_CLUSTER_SCHEDULER_LOCK_CACHE_ENABLED);
+		while (true) {
+			try {
+				if (owner == null) {
+					lock = LockLocalServiceUtil.lock(
+						_LOCK_CLASS_NAME, _LOCK_CLASS_NAME,
+						_localClusterNodeAddress,
+						PropsValues.
+							MEMORY_CLUSTER_SCHEDULER_LOCK_CACHE_ENABLED);
+				}
+				else {
+					lock = LockLocalServiceUtil.lock(
+						_LOCK_CLASS_NAME, _LOCK_CLASS_NAME, owner,
+						_localClusterNodeAddress,
+						PropsValues.
+							MEMORY_CLUSTER_SCHEDULER_LOCK_CACHE_ENABLED);
+				}
+
+				break;
+			}
+			catch (Exception e) {
+				if (_log.isWarnEnabled()) {
+					_log.warn(
+						"Unable to obtain memory scheduler cluster lock. " +
+							"Trying again.");
+				}
+			}
 		}
 
 		if (!lock.isNew()) {
@@ -818,8 +908,7 @@ public class ClusterSchedulerEngine
 			ObjectValuePair<SchedulerResponse, TriggerState>
 				memoryClusteredJob = entry.getValue();
 
-			SchedulerResponse schedulerResponse =
-				memoryClusteredJob.getKey();
+			SchedulerResponse schedulerResponse = memoryClusteredJob.getKey();
 
 			if (groupName.equals(schedulerResponse.getGroupName())) {
 				itr.remove();
@@ -859,14 +948,17 @@ public class ClusterSchedulerEngine
 		for (ObjectValuePair<SchedulerResponse, TriggerState>
 				memoryClusteredJob : _memoryClusteredJobs.values()) {
 
-			SchedulerResponse schedulerResponse =
-				memoryClusteredJob.getKey();
+			SchedulerResponse schedulerResponse = memoryClusteredJob.getKey();
 
 			if (groupName.equals(schedulerResponse.getGroupName())) {
 				memoryClusteredJob.setValue(triggerState);
 			}
 		}
 	}
+
+	@BeanReference(
+		name="com.liferay.portal.scheduler.ClusterSchedulerEngineService")
+	protected SchedulerEngine schedulerEngine;
 
 	private static final String _LOCK_CLASS_NAME =
 		SchedulerEngine.class.getName();

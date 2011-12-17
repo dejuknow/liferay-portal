@@ -58,7 +58,7 @@ double version = ParamUtil.getDouble(request, "version");
 
 		headerNames.clear();
 
-		headerNames.add("name");
+		headerNames.add("title");
 		headerNames.add("display-date");
 		headerNames.add("author");
 
@@ -171,7 +171,7 @@ double version = ParamUtil.getDouble(request, "version");
 
 			rowTextEntry = (TextSearchEntry)rowTextEntry.clone();
 
-			rowTextEntry.setName(HtmlUtil.escape(article.getTitle(locale)));
+			rowTextEntry.setName(article.getTitle(locale));
 
 			row.addText(rowTextEntry);
 

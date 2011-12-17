@@ -94,14 +94,6 @@ public class UserGroupUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static UserGroup remove(UserGroup userGroup)
-		throws SystemException {
-		return getPersistence().remove(userGroup);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static UserGroup update(UserGroup userGroup, boolean merge)

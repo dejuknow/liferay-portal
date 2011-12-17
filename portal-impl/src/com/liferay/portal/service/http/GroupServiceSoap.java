@@ -48,8 +48,8 @@ import java.rmi.RemoteException;
  *
  * <p>
  * You can see a list of services at
- * http://localhost:8080/tunnel-web/secure/axis. Set the property
- * <b>tunnel.servlet.hosts.allowed</b> in portal.properties to configure
+ * http://localhost:8080/api/secure/axis. Set the property
+ * <b>axis.servlet.hosts.allowed</b> in portal.properties to configure
  * security.
  * </p>
  *
@@ -78,8 +78,8 @@ public class GroupServiceSoap {
 	* @param site whether the group is to be associated with a main site
 	* @param active whether the group is active
 	* @param serviceContext the service context to be applied (optionally
-	<code>null</code>). Can specify the group's asset category IDs,
-	asset tag names, and whether the group is for staging
+	<code>null</code>). Can set the asset category IDs and asset tag
+	names for the group, and can set whether the group is for staging
 	* @return the group
 	* @throws PortalException if the user did not have permission to add the
 	group, if a creator could not be found, if the group's
@@ -118,8 +118,8 @@ public class GroupServiceSoap {
 	* @param site whether the group is to be associated with a main site
 	* @param active whether the group is active
 	* @param serviceContext the service context to be applied (optionally
-	<code>null</code>). Can specify the group's asset category IDs,
-	asset tag names, and whether the group is for staging
+	<code>null</code>). Can set asset category IDs and asset tag
+	names for the group, and can set whether the group is for staging
 	* @return the group
 	* @throws PortalException if the user did not have permission to add the
 	group, if a creator could not be found, if the group's
@@ -150,8 +150,8 @@ public class GroupServiceSoap {
 	*
 	* @param roleId the primary key of the role
 	* @param groupIds the primary keys of the groups
-	* @throws PortalException if the user did not have permission to update
-	the role
+	* @throws PortalException if the user did not have permission to update the
+	role
 	* @throws SystemException if a system exception occurred
 	*/
 	public static void addRoleGroups(long roleId, long[] groupIds)
@@ -177,10 +177,9 @@ public class GroupServiceSoap {
 	* </p>
 	*
 	* @param groupId the primary key of the group
-	* @throws PortalException if the user did not have permission to delete
-	the group or its assets or resources, if a group with the
-	primary key could not be found, or if the group was a system
-	group
+	* @throws PortalException if the user did not have permission to delete the
+	group or its assets or resources, if a group with the primary key
+	could not be found, or if the group was a system group
 	* @throws SystemException if a system exception occurred
 	*/
 	public static void deleteGroup(long groupId) throws RemoteException {
@@ -200,7 +199,8 @@ public class GroupServiceSoap {
 	* @param groupId the primary key of the group
 	* @return the group with the primary key
 	* @throws PortalException if a group with the primary key could not be
-	found
+	found or if the current user did not have permission to view the
+	group
 	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.GroupSoap getGroup(long groupId)
@@ -223,7 +223,8 @@ public class GroupServiceSoap {
 	* @param companyId the primary key of the company
 	* @param name the group's name
 	* @return the group with the name
-	* @throws PortalException if a matching group could not be found
+	* @throws PortalException if a matching group could not be found or if the
+	current user did not have permission to view the group
 	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.GroupSoap getGroup(long companyId,
@@ -274,6 +275,8 @@ public class GroupServiceSoap {
 	*
 	* @param organizations the organizations
 	* @return the groups associated with the organizations
+	* @throws PortalException if a portal exception occurred
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.GroupSoap[] getOrganizationsGroups(
 		com.liferay.portal.model.OrganizationSoap[] organizations)
@@ -297,7 +300,8 @@ public class GroupServiceSoap {
 	* @param companyId the primary key of the company
 	* @param userId the primary key of the user
 	* @return the group associated with the user
-	* @throws PortalException if a matching group could not be found
+	* @throws PortalException if a matching group could not be found or if the
+	current user did not have permission to view the group
 	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.GroupSoap getUserGroup(
@@ -320,8 +324,8 @@ public class GroupServiceSoap {
 	*
 	* @param userGroups the user groups
 	* @return the groups associated with the user groups
-	* @throws PortalException if any one of the user group's group could not
-	be found
+	* @throws PortalException if any one of the user group's group could not be
+	found
 	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.GroupSoap[] getUserGroupsGroups(
@@ -342,8 +346,8 @@ public class GroupServiceSoap {
 
 	/**
 	* Returns the range of all groups associated with the user's organization
-	* groups, including the ancestors of the organization groups, unless
-	* portal property <code>organizations.membership.strict</code> is set to
+	* groups, including the ancestors of the organization groups, unless portal
+	* property <code>organizations.membership.strict</code> is set to
 	* <code>true</code>.
 	*
 	* <p>
@@ -352,8 +356,8 @@ public class GroupServiceSoap {
 	* primary keys, they are indexes in the result set. Thus, <code>0</code>
 	* refers to the first result in the set. Setting both <code>start</code>
 	* and <code>end</code> to {@link
-	* com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the
-	* full result set.
+	* com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full
+	* result set.
 	* </p>
 	*
 	* @param userId the primary key of the user
@@ -361,8 +365,8 @@ public class GroupServiceSoap {
 	* @param end the upper bound of the range of groups to consider (not
 	inclusive)
 	* @return the range of groups associated with the user's organizations
-	* @throws PortalException if a user with the primary key could not be
-	found or if another portal exception occurred
+	* @throws PortalException if a user with the primary key could not be found
+	or if another portal exception occurred
 	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.GroupSoap[] getUserOrganizationsGroups(
@@ -380,19 +384,53 @@ public class GroupServiceSoap {
 		}
 	}
 
+	public static com.liferay.portal.model.GroupSoap[] getUserPlaces(
+		long userId, java.lang.String[] classNames,
+		boolean includeControlPanel, int max) throws RemoteException {
+		try {
+			java.util.List<com.liferay.portal.model.Group> returnValue = GroupServiceUtil.getUserPlaces(userId,
+					classNames, includeControlPanel, max);
+
+			return com.liferay.portal.model.GroupSoap.toSoapModels(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
 	/**
-	* Returns the guest or current user's layout set group, organization
-	* groups, inherited organization groups, and site groups.
+	* Returns the user's group &quot;places&quot; associated with the group
+	* entity class names, including the control panel group if the user is
+	* permitted to view the control panel.
 	*
-	* @return the user's layout set group, organization groups, and inherited
-	organization groups, and site groups
+	* <p>
+	* <ul> <li> Class name &quot;User&quot; includes the user's layout set
+	* group. </li> <li> Class name &quot;Organization&quot; includes the user's
+	* immediate organization groups and inherited organization groups. </li>
+	* <li> Class name &quot;Group&quot; includes the user's immediate
+	* organization groups and site groups. </li> <li> A <code>classNames</code>
+	* value of <code>null</code> includes the user's layout set group,
+	* organization groups, inherited organization groups, and site groups.
+	* </li> </ul>
+	* </p>
+	*
+	* @param userId the primary key of the user
+	* @param classNames the group entity class names (optionally
+	<code>null</code>). For more information see {@link
+	#getUserPlaces(long, String[], int)}
+	* @param max the maximum number of groups to return
+	* @return the user's group &quot;places&quot;
 	* @throws PortalException if a portal exception occurred
 	* @throws SystemException if a system exception occurred
 	*/
-	public static com.liferay.portal.model.GroupSoap[] getUserSites()
+	public static com.liferay.portal.model.GroupSoap[] getUserPlaces(
+		long userId, java.lang.String[] classNames, int max)
 		throws RemoteException {
 		try {
-			java.util.List<com.liferay.portal.model.Group> returnValue = GroupServiceUtil.getUserSites();
+			java.util.List<com.liferay.portal.model.Group> returnValue = GroupServiceUtil.getUserPlaces(userId,
+					classNames, max);
 
 			return com.liferay.portal.model.GroupSoap.toSoapModels(returnValue);
 		}
@@ -410,13 +448,13 @@ public class GroupServiceSoap {
 	*
 	* <p>
 	* <ul> <li> Class name &quot;User&quot; includes the user's layout set
-	* group. </li> <li> Class name &quot;Organization&quot; includes the
-	* user's immediate organization groups and inherited organization groups.
-	* </li> <li> Class name &quot;Group&quot; includes the user's immediate
-	* organization groups and site groups. </li> <li> A
-	* <code>classNames</code> value of <code>null</code> includes the user's
-	* layout set group, organization groups, inherited organization groups,
-	* and site groups. </li> </ul>
+	* group. </li> <li> Class name &quot;Organization&quot; includes the user's
+	* immediate organization groups and inherited organization groups. </li>
+	* <li> Class name &quot;Group&quot; includes the user's immediate
+	* organization groups and site groups. </li> <li> A <code>classNames</code>
+	* value of <code>null</code> includes the user's layout set group,
+	* organization groups, inherited organization groups, and site groups.
+	* </li> </ul>
 	* </p>
 	*
 	* @param classNames the group entity class names (optionally
@@ -443,36 +481,18 @@ public class GroupServiceSoap {
 	}
 
 	/**
-	* Returns the user's group &quot;places&quot; associated with the group
-	* entity class names, including the control panel group if the user is
-	* permitted to view the control panel.
+	* Returns the guest or current user's layout set group, organization
+	* groups, inherited organization groups, and site groups.
 	*
-	* <p>
-	* <ul> <li> Class name &quot;User&quot; includes the user's layout set
-	* group. </li> <li> Class name &quot;Organization&quot; includes the
-	* user's immediate organization groups and inherited organization groups.
-	* </li> <li> Class name &quot;Group&quot; includes the user's immediate
-	* organization groups and site groups. </li> <li> A
-	* <code>classNames</code> value of <code>null</code> includes the user's
-	* layout set group, organization groups, inherited organization groups,
-	* and site groups. </li> </ul>
-	* </p>
-	*
-	* @param userId the primary key of the user
-	* @param classNames the group entity class names (optionally
-	<code>null</code>). For more information see {@link
-	#getUserPlaces(long, String[], int)}
-	* @param max the maximum number of groups to return
-	* @return the user's group &quot;places&quot;
+	* @return the user's layout set group, organization groups, and inherited
+	organization groups, and site groups
 	* @throws PortalException if a portal exception occurred
 	* @throws SystemException if a system exception occurred
 	*/
-	public static com.liferay.portal.model.GroupSoap[] getUserPlaces(
-		long userId, java.lang.String[] classNames, int max)
+	public static com.liferay.portal.model.GroupSoap[] getUserSites()
 		throws RemoteException {
 		try {
-			java.util.List<com.liferay.portal.model.Group> returnValue = GroupServiceUtil.getUserPlaces(userId,
-					classNames, max);
+			java.util.List<com.liferay.portal.model.Group> returnValue = GroupServiceUtil.getUserSites();
 
 			return com.liferay.portal.model.GroupSoap.toSoapModels(returnValue);
 		}
@@ -520,8 +540,8 @@ public class GroupServiceSoap {
 	* primary keys, they are indexes in the result set. Thus, <code>0</code>
 	* refers to the first result in the set. Setting both <code>start</code>
 	* and <code>end</code> to {@link
-	* com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the
-	* full result set.
+	* com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full
+	* result set.
 	* </p>
 	*
 	* @param companyId the primary key of the company
@@ -529,15 +549,16 @@ public class GroupServiceSoap {
 	* @param description the group's description (optionally
 	<code>null</code>)
 	* @param params the finder params (optionally <code>null</code>). To
-	include the user's inherited organizations and user groups in
-	the search, add entries having &quot;usersGroups&quot; and
-	&quot;inherit&quot; as keys mapped to the the user's ID. For
-	more information see {@link
+	include the user's inherited organizations and user groups in the
+	search, add entries having &quot;usersGroups&quot; and
+	&quot;inherit&quot; as keys mapped to the the user's ID. For more
+	information see {@link
 	com.liferay.portal.service.persistence.GroupFinder}
 	* @param start the lower bound of the range of groups to return
 	* @param end the upper bound of the range of groups to return (not
 	inclusive)
 	* @return the matching groups ordered by name
+	* @throws PortalException if a portal exception occurred
 	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.GroupSoap[] search(long companyId,
@@ -567,10 +588,10 @@ public class GroupServiceSoap {
 	* @param description the group's description (optionally
 	<code>null</code>)
 	* @param params the finder params (optionally <code>null</code>). To
-	include the user's inherited organizations and user groups in
-	the search, add entries having &quot;usersGroups&quot; and
-	&quot;inherit&quot; as keys mapped to the the user's ID. For
-	more information see {@link
+	include the user's inherited organizations and user groups in the
+	search, add entries having &quot;usersGroups&quot; and
+	&quot;inherit&quot; as keys mapped to the the user's ID. For more
+	information see {@link
 	com.liferay.portal.service.persistence.GroupFinder}
 	* @return the number of matching groups
 	* @throws SystemException if a system exception occurred
@@ -618,8 +639,8 @@ public class GroupServiceSoap {
 	*
 	* @param roleId the primary key of the role
 	* @param groupIds the primary keys of the groups
-	* @throws PortalException if the user did not have permission to update
-	the role
+	* @throws PortalException if the user did not have permission to update the
+	role
 	* @throws SystemException if a system exception occurred
 	*/
 	public static void unsetRoleGroups(long roleId, long[] groupIds)
@@ -641,9 +662,9 @@ public class GroupServiceSoap {
 	* @param friendlyURL the group's new friendlyURL (optionally
 	<code>null</code>)
 	* @return the group
-	* @throws PortalException if the user did not have permission to update
-	the group, if a group with the primary key could not be found,
-	or if a valid friendly URL could not be created for the group
+	* @throws PortalException if the user did not have permission to update the
+	group, if a group with the primary key could not be found, or if
+	a valid friendly URL could not be created for the group
 	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.GroupSoap updateFriendlyURL(
@@ -668,8 +689,8 @@ public class GroupServiceSoap {
 	* @param typeSettings the group's new type settings (optionally
 	<code>null</code>)
 	* @return the group
-	* @throws PortalException if the user did not have permission to update
-	the group or if a group with the primary key could not be found
+	* @throws PortalException if the user did not have permission to update the
+	group or if a group with the primary key could not be found
 	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.GroupSoap updateGroup(long groupId,
@@ -700,12 +721,12 @@ public class GroupServiceSoap {
 	<code>null</code>)
 	* @param active whether the group is active
 	* @param serviceContext the service context to be applied (optionally
-	<code>null</code>). Can specify the group's replacement asset
-	category IDs and replacement asset tag names
+	<code>null</code>). Can set the asset category IDs and asset tag
+	names for the group.
 	* @return the group
-	* @throws PortalException if the user did not have permission to update
-	the group, if a group with the primary key could not be found,
-	if the friendly URL was invalid or could one not be created
+	* @throws PortalException if the user did not have permission to update the
+	group, if a group with the primary key could not be found, if the
+	friendly URL was invalid or could one not be created
 	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.GroupSoap updateGroup(long groupId,

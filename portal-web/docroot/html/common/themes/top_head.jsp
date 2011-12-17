@@ -28,39 +28,49 @@
 <%-- Available Translations --%>
 
 <%
-boolean canonicalAlternate = GetterUtil.getBoolean(layout.getTypeSettingsProperties().get("canonical-alternate"), false);
+if (!themeDisplay.isSignedIn() && layout.isPublicLayout()) {
+	String completeURL = PortalUtil.getCurrentCompleteURL(request);
 
-if (canonicalAlternate) {
-	Locale[] availableLocales = LanguageUtil.getAvailableLocales();
-
-	if ((availableLocales.length > 1) && layout.isPublicLayout()) {
-		Locale defaultLocale = LocaleUtil.getDefault();
-
-		String canonicalURL = PortalUtil.getCanonicalURL(request);
+	String canonicalURL = PortalUtil.getCanonicalURL(completeURL, themeDisplay);
 %>
 
-		<link href="<%= canonicalURL %>" rel="canonical" />
+	<link href="<%= canonicalURL %>" rel="canonical" />
 
-<%
-		if (locale.equals(defaultLocale)) {
-			for (Locale curLocale : availableLocales) {
-				if (!curLocale.equals(defaultLocale)) {
-					String canonicalAlternateURL = PortalUtil.getCanonicalAlternateURL(request, canonicalURL, curLocale);
-%>
+	<%
+	Locale defaultLocale = LocaleUtil.getDefault();
+	%>
 
-					<link href="<%= canonicalAlternateURL %>" hreflang="<%= LocaleUtil.toW3cLanguageId(curLocale) %>" rel="alternate" title="<%= layout.getHTMLTitle(curLocale) %>" />
+	<c:if test="<%= locale.equals(defaultLocale) %>">
 
-<%
+		<%
+		boolean showAlternateLinks = GetterUtil.getBoolean(layout.getTypeSettingsProperties().get("show-alternate-links"), true);
+
+		if (showAlternateLinks) {
+			Locale[] availableLocales = LanguageUtil.getAvailableLocales();
+
+			if (availableLocales.length > 1) {
+				for (Locale curLocale : availableLocales) {
+					if (!curLocale.equals(defaultLocale)) {
+		%>
+
+						<link href="<%= PortalUtil.getAlternateURL(request, canonicalURL, curLocale) %>" hreflang="<%= LocaleUtil.toW3cLanguageId(curLocale) %>" rel="alternate" />
+
+		<%
+					}
 				}
 			}
 		}
-	}
+		%>
+
+	</c:if>
+
+<%
 }
 %>
 
 <%-- Portal CSS --%>
 
-<link href="<%= HtmlUtil.escape(PortalUtil.getStaticResourceURL(request, themeDisplay.getCDNHost() + themeDisplay.getPathContext() + "/html/portal/css.jsp")) %>" rel="stylesheet" type="text/css" />
+<link href="<%= HtmlUtil.escape(PortalUtil.getStaticResourceURL(request, themeDisplay.getCDNHost() + themeDisplay.getPathContext() + "/html/css/main.css")) %>" rel="stylesheet" type="text/css" />
 
 <%
 List<Portlet> portlets = null;
@@ -155,17 +165,6 @@ StringBundler pageTopSB = (StringBundler)request.getAttribute(WebKeys.PAGE_TOP);
 
 <style type="text/css">
 	/* <![CDATA[ */
-		<c:if test="<%= !themeDisplay.getCompanyLogo().equals(StringPool.BLANK) %>">
-			#heading .logo {
-				background: url(<%= HtmlUtil.escape(themeDisplay.getCompanyLogo()) %>) no-repeat;
-				display: block;
-				font-size: 0;
-				height: <%= themeDisplay.getCompanyLogoHeight() %>px;
-				text-indent: -9999px;
-				width: <%= themeDisplay.getCompanyLogoWidth() %>px;
-			}
-		</c:if>
-
 		<c:if test="<%= BrowserSnifferUtil.isIe(request) && (BrowserSnifferUtil.getMajorVersion(request) < 7) %>">
 			img, .png {
 				position: relative;

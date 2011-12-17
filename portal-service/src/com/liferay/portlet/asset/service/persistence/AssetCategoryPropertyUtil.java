@@ -95,14 +95,6 @@ public class AssetCategoryPropertyUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static AssetCategoryProperty remove(
-		AssetCategoryProperty assetCategoryProperty) throws SystemException {
-		return getPersistence().remove(assetCategoryProperty);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static AssetCategoryProperty update(

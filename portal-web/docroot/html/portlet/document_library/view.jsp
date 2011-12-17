@@ -72,7 +72,7 @@ request.setAttribute("view.jsp-repositoryId", String.valueOf(repositoryId));
 %>
 
 <div id="<portlet:namespace />documentLibraryContainer">
-	<aui:layout cssClass="view">
+	<aui:layout cssClass="lfr-app-column-view">
 		<aui:column columnWidth="<%= 20 %>" cssClass="navigation-pane" first="<%= true %>">
 			<liferay-util:include page="/html/portlet/document_library/view_folders.jsp" />
 
@@ -180,10 +180,10 @@ if (folder != null) {
 
 			var actionsButton = A.one('#<portlet:namespace />actionsButtonContainer');
 
-			var disabled = (Liferay.Util.listCheckedExcept(document.<portlet:namespace />fm2, '<portlet:namespace /><%= RowChecker.ALL_ROW_IDS %>Checkbox').length == 0);
+			var hide = (Liferay.Util.listCheckedExcept(document.<portlet:namespace />fm2, '<portlet:namespace /><%= RowChecker.ALL_ROW_IDS %>Checkbox').length == 0);
 
 			if (actionsButton) {
-				actionsButton.toggleClass('disabled', disabled);
+				actionsButton.toggle(!hide);
 			}
 		},
 		['liferay-util-list-fields']

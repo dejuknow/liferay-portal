@@ -4,6 +4,10 @@
 	<import file="build-test.xml" />
 
 	<target name="run-geronimo">
+		<antcall target="clean-up-logs" />
+
+		<record action="start" name="log" />
+
 		<antcall target="run-simple-server">
 			<param name="simple.server.dir" value="${app.server.geronimo.dir}" />
 			<param name="simple.server.bin.dir" value="${app.server.geronimo.bin.dir}" />
@@ -15,6 +19,10 @@
 			<param name="simple.server.stop.executable" value="geronimo${file.suffix.bat}" />
 			<param name="simple.server.stop.executable.arg.line" value="stop --user system --password manager" />
 		</antcall>
+
+		<record action="stop" name="log" />
+
+		<antcall target="evaluate-logs" />
 	</target>
 
 	<target name="run-selenium-geronimo">

@@ -95,14 +95,6 @@ public class SCProductVersionUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static SCProductVersion remove(SCProductVersion scProductVersion)
-		throws SystemException {
-		return getPersistence().remove(scProductVersion);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static SCProductVersion update(SCProductVersion scProductVersion,

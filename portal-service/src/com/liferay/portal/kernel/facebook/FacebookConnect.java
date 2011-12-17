@@ -22,8 +22,12 @@ import javax.portlet.PortletRequest;
 /**
  * @author Wilson Man
  * @author Brian Wing Shun Chan
+ * @author Mika Koivisto
  */
 public interface FacebookConnect {
+
+	public String getAccessToken(long companyId, String redirect, String code)
+		throws SystemException;
 
 	public String getAccessTokenURL(long companyId) throws SystemException;
 
@@ -43,5 +47,8 @@ public interface FacebookConnect {
 	public String getRedirectURL(long companyId) throws SystemException;
 
 	public boolean isEnabled(long companyId) throws SystemException;
+
+	public boolean isVerifiedAccountRequired(long companyId)
+		throws SystemException;
 
 }

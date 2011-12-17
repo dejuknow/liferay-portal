@@ -305,7 +305,7 @@ public abstract class BaseCommandReceiver implements CommandReceiver {
 
 		List<Organization> userOrgs =
 			OrganizationLocalServiceUtil.getUserOrganizations(
-				commandArgument.getUserId(), true);
+				commandArgument.getUserId());
 
 		for (Organization organization : userOrgs) {
 			groups.add(0, organization.getGroup());
@@ -350,8 +350,7 @@ public abstract class BaseCommandReceiver implements CommandReceiver {
 					folderElement.setAttribute(
 						"name",
 						stagingGroup.getGroupId() + " - " +
-							HtmlUtil.escape(
-								stagingGroup.getDescriptiveName()));
+							HtmlUtil.escape(stagingGroup.getDescriptiveName()));
 
 					setNameAttribute = true;
 				}

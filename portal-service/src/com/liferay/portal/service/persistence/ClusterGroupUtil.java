@@ -94,14 +94,6 @@ public class ClusterGroupUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static ClusterGroup remove(ClusterGroup clusterGroup)
-		throws SystemException {
-		return getPersistence().remove(clusterGroup);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static ClusterGroup update(ClusterGroup clusterGroup, boolean merge)

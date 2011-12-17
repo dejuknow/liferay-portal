@@ -89,7 +89,7 @@ public class SearchPermissionCheckerImpl implements SearchPermissionChecker {
 
 			Indexer indexer = IndexerRegistryUtil.getIndexer(className);
 
-			if (!indexer.isFilterSearch()) {
+			if (!indexer.isPermissionAware()) {
 				return;
 			}
 
@@ -230,24 +230,36 @@ public class SearchPermissionCheckerImpl implements SearchPermissionChecker {
 		List<Role> roles = ResourceActionsUtil.getRoles(
 			companyId, group, className, null);
 
+		long[] roleIdsArray = new long[roles.size()];
+
+		for (int i = 0; i < roleIdsArray.length; i++) {
+			Role role = roles.get(i);
+
+			roleIdsArray[i] = role.getRoleId();
+		}
+
+		boolean[] hasResourcePermissions =
+			ResourcePermissionLocalServiceUtil.hasResourcePermissions(
+				companyId, className, ResourceConstants.SCOPE_INDIVIDUAL,
+				classPK, roleIdsArray, ActionKeys.VIEW);
+
 		List<Long> roleIds = new ArrayList<Long>();
 		List<String> groupRoleIds = new ArrayList<String>();
 
-		for (Role role : roles) {
-			long roleId = role.getRoleId();
+		for (int i = 0; i < hasResourcePermissions.length; i++) {
+			if (!hasResourcePermissions[i]) {
+				continue;
+			}
 
-			if (ResourcePermissionLocalServiceUtil.hasResourcePermission(
-					companyId, className, ResourceConstants.SCOPE_INDIVIDUAL,
-					classPK, roleId, ActionKeys.VIEW)) {
+			Role role = roles.get(i);
 
-				if ((role.getType() == RoleConstants.TYPE_ORGANIZATION) ||
-					(role.getType() == RoleConstants.TYPE_SITE)) {
+			if ((role.getType() == RoleConstants.TYPE_ORGANIZATION) ||
+				(role.getType() == RoleConstants.TYPE_SITE)) {
 
-					groupRoleIds.add(groupId + StringPool.DASH + roleId);
-				}
-				else {
-					roleIds.add(roleId);
-				}
+				groupRoleIds.add(groupId + StringPool.DASH + role.getRoleId());
+			}
+			else {
+				roleIds.add(role.getRoleId());
 			}
 		}
 
@@ -294,10 +306,8 @@ public class SearchPermissionCheckerImpl implements SearchPermissionChecker {
 
 		List<Group> groups = new UniqueList<Group>();
 		List<Role> roles = new UniqueList<Role>();
-		List<UserGroupRole> userGroupRoles =
-			new UniqueList<UserGroupRole>();
-		Map<Long, List<Role>> groupIdsToRoles =
-			new HashMap<Long, List<Role>>();
+		List<UserGroupRole> userGroupRoles = new UniqueList<UserGroupRole>();
+		Map<Long, List<Role>> groupIdsToRoles = new HashMap<Long, List<Role>>();
 
 		roles.addAll(permissionCheckerBag.getRoles());
 
@@ -330,8 +340,7 @@ public class SearchPermissionCheckerImpl implements SearchPermissionChecker {
 
 		if (advancedPermissionChecker.isSignedIn()) {
 			roles.add(
-				RoleLocalServiceUtil.getRole(
-					companyId, RoleConstants.GUEST));
+				RoleLocalServiceUtil.getRole(companyId, RoleConstants.GUEST));
 		}
 
 		for (Group group : groups) {
@@ -405,8 +414,7 @@ public class SearchPermissionCheckerImpl implements SearchPermissionChecker {
 
 		BooleanQuery groupsQuery = BooleanQueryFactoryUtil.create(
 			searchContext);
-		BooleanQuery rolesQuery = BooleanQueryFactoryUtil.create(
-			searchContext);
+		BooleanQuery rolesQuery = BooleanQueryFactoryUtil.create(searchContext);
 
 		for (Role role : roles) {
 			String roleName = role.getName();
@@ -465,11 +473,11 @@ public class SearchPermissionCheckerImpl implements SearchPermissionChecker {
 					userGroupRole.getRoleId());
 		}
 
-		if (!groupsQuery.clauses().isEmpty()) {
+		if (groupsQuery.hasClauses()) {
 			permissionQuery.add(groupsQuery, BooleanClauseOccur.SHOULD);
 		}
 
-		if (!rolesQuery.clauses().isEmpty()) {
+		if (rolesQuery.hasClauses()) {
 			permissionQuery.add(rolesQuery, BooleanClauseOccur.SHOULD);
 		}
 
@@ -499,8 +507,7 @@ public class SearchPermissionCheckerImpl implements SearchPermissionChecker {
 
 		BooleanQuery groupsQuery = BooleanQueryFactoryUtil.create(
 			searchContext);
-		BooleanQuery rolesQuery = BooleanQueryFactoryUtil.create(
-			searchContext);
+		BooleanQuery rolesQuery = BooleanQueryFactoryUtil.create(searchContext);
 
 		for (Role role : roles) {
 			String roleName = role.getName();
@@ -566,11 +573,11 @@ public class SearchPermissionCheckerImpl implements SearchPermissionChecker {
 					userGroupRole.getRoleId());
 		}
 
-		if (!groupsQuery.clauses().isEmpty()) {
+		if (groupsQuery.hasClauses()) {
 			permissionQuery.add(groupsQuery, BooleanClauseOccur.SHOULD);
 		}
 
-		if (!rolesQuery.clauses().isEmpty()) {
+		if (rolesQuery.hasClauses()) {
 			permissionQuery.add(rolesQuery, BooleanClauseOccur.SHOULD);
 		}
 

@@ -261,13 +261,13 @@ public class SocialActivityLocalServiceWrapper
 	* Records an activity with the given time in the database.
 	*
 	* <p>
-	* This method records a social activity done on an asset, identified by
-	* its class name and class primary key, in the database. Additional
-	* information (such as the original message ID for a reply to a forum
-	* post) is passed in via the <code>extraData</code> in JSON format. For
-	* activities affecting another user, a mirror activity is generated that
-	* describes the action from the user's point of view. The target user's ID
-	* is passed in via the <code>receiverUserId</code>.
+	* This method records a social activity done on an asset, identified by its
+	* class name and class primary key, in the database. Additional information
+	* (such as the original message ID for a reply to a forum post) is passed
+	* in via the <code>extraData</code> in JSON format. For activities
+	* affecting another user, a mirror activity is generated that describes the
+	* action from the user's point of view. The target user's ID is passed in
+	* via the <code>receiverUserId</code>.
 	* </p>
 	*
 	* <p>
@@ -275,9 +275,9 @@ public class SocialActivityLocalServiceWrapper
 	* boards post, the reply action is stored in the database with the
 	* <code>receiverUserId</code> being the ID of the author of the original
 	* message. The <code>extraData</code> contains the ID of the original
-	* message in JSON format. A mirror activity is generated with the values
-	* of the <code>userId</code> and the <code>receiverUserId</code> swapped.
-	* This mirror activity basically describes a "replied to" event.
+	* message in JSON format. A mirror activity is generated with the values of
+	* the <code>userId</code> and the <code>receiverUserId</code> swapped. This
+	* mirror activity basically describes a "replied to" event.
 	* </p>
 	*
 	* <p>
@@ -407,6 +407,19 @@ public class SocialActivityLocalServiceWrapper
 	}
 
 	/**
+	* Removes stored activities for the asset identified by the class name and
+	* class primary key.
+	*
+	* @param className the target asset's class name
+	* @param classPK the primary key of the target asset
+	* @throws SystemException if a system exception occurred
+	*/
+	public void deleteActivities(java.lang.String className, long classPK)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		_socialActivityLocalService.deleteActivities(className, classPK);
+	}
+
+	/**
 	* Removes the stored activity from the database.
 	*
 	* @param activityId the primary key of the stored activity
@@ -457,8 +470,8 @@ public class SocialActivityLocalServiceWrapper
 	* primary keys, they are indexes in the result set. Thus, <code>0</code>
 	* refers to the first result in the set. Setting both <code>start</code>
 	* and <code>end</code> to {@link
-	* com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the
-	* full result set.
+	* com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full
+	* result set.
 	* </p>
 	*
 	* @param classNameId the target asset's class name ID
@@ -474,8 +487,8 @@ public class SocialActivityLocalServiceWrapper
 	}
 
 	/**
-	* Returns a range of all the activities done on the asset identified by
-	* the class name ID and class primary key that are mirrors of the activity
+	* Returns a range of all the activities done on the asset identified by the
+	* class name ID and class primary key that are mirrors of the activity
 	* identified by the mirror activity ID.
 	*
 	* <p>
@@ -484,8 +497,8 @@ public class SocialActivityLocalServiceWrapper
 	* primary keys, they are indexes in the result set. Thus, <code>0</code>
 	* refers to the first result in the set. Setting both <code>start</code>
 	* and <code>end</code> to {@link
-	* com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the
-	* full result set.
+	* com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full
+	* result set.
 	* </p>
 	*
 	* @param mirrorActivityId the primary key of the mirror activity
@@ -504,9 +517,9 @@ public class SocialActivityLocalServiceWrapper
 	}
 
 	/**
-	* Returns a range of all the activities done on the asset identified by
-	* the class name and the class primary key that are mirrors of the
-	* activity identified by the mirror activity ID.
+	* Returns a range of all the activities done on the asset identified by the
+	* class name and the class primary key that are mirrors of the activity
+	* identified by the mirror activity ID.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end -
@@ -514,8 +527,8 @@ public class SocialActivityLocalServiceWrapper
 	* primary keys, they are indexes in the result set. Thus, <code>0</code>
 	* refers to the first result in the set. Setting both <code>start</code>
 	* and <code>end</code> to {@link
-	* com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the
-	* full result set.
+	* com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full
+	* result set.
 	* </p>
 	*
 	* @param mirrorActivityId the primary key of the mirror activity
@@ -544,8 +557,8 @@ public class SocialActivityLocalServiceWrapper
 	* primary keys, they are indexes in the result set. Thus, <code>0</code>
 	* refers to the first result in the set. Setting both <code>start</code>
 	* and <code>end</code> to {@link
-	* com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the
-	* full result set.
+	* com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full
+	* result set.
 	* </p>
 	*
 	* @param className the target asset's class name
@@ -610,8 +623,7 @@ public class SocialActivityLocalServiceWrapper
 	}
 
 	/**
-	* Returns the number of activities done on assets identified by class
-	* name.
+	* Returns the number of activities done on assets identified by class name.
 	*
 	* @param className the target asset's class name
 	* @return the number of matching activities
@@ -650,8 +662,8 @@ public class SocialActivityLocalServiceWrapper
 	* primary keys, they are indexes in the result set. Thus, <code>0</code>
 	* refers to the first result in the set. Setting both <code>start</code>
 	* and <code>end</code> to {@link
-	* com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the
-	* full result set.
+	* com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full
+	* result set.
 	* </p>
 	*
 	* @param groupId the primary key of the group
@@ -697,8 +709,8 @@ public class SocialActivityLocalServiceWrapper
 	* primary keys, they are indexes in the result set. Thus, <code>0</code>
 	* refers to the first result in the set. Setting both <code>start</code>
 	* and <code>end</code> to {@link
-	* com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the
-	* full result set.
+	* com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full
+	* result set.
 	* </p>
 	*
 	* @param groupId the primary key of the group
@@ -756,8 +768,8 @@ public class SocialActivityLocalServiceWrapper
 	* primary keys, they are indexes in the result set. Thus, <code>0</code>
 	* refers to the first result in the set. Setting both <code>start</code>
 	* and <code>end</code> to {@link
-	* com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the
-	* full result set.
+	* com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full
+	* result set.
 	* </p>
 	*
 	* @param organizationId the primary key of the organization
@@ -796,8 +808,8 @@ public class SocialActivityLocalServiceWrapper
 	* primary keys, they are indexes in the result set. Thus, <code>0</code>
 	* refers to the first result in the set. Setting both <code>start</code>
 	* and <code>end</code> to {@link
-	* com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the
-	* full result set.
+	* com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full
+	* result set.
 	* </p>
 	*
 	* @param organizationId the primary key of the organization
@@ -833,11 +845,11 @@ public class SocialActivityLocalServiceWrapper
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end -
 	* start</code> instances. <code>start</code> and <code>end</code> are not
-	* primary keys, they are indexes in the result set. Thus, <>0</code>
-	* refers to the first result in the set. Setting both <code>start</code>
-	* and <code>end</code> to {@link
-	* com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the
-	* full result set.
+	* primary keys, they are indexes in the result set. Thus, <>0</code> refers
+	* to the first result in the set. Setting both <code>start</code> and
+	* <code>end</code> to {@link
+	* com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full
+	* result set.
 	* </p>
 	*
 	* @param userId the primary key of the user
@@ -864,8 +876,8 @@ public class SocialActivityLocalServiceWrapper
 	* primary keys, they are indexes in the result set. Thus, <code>0</code>
 	* refers to the first result in the set. Setting both <code>start</code>
 	* and <code>end</code> to {@link
-	* com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the
-	* full result set.
+	* com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full
+	* result set.
 	* </p>
 	*
 	* @param userId the primary key of the user
@@ -883,8 +895,8 @@ public class SocialActivityLocalServiceWrapper
 	}
 
 	/**
-	* Returns the number of activities done by users in a relationship with
-	* the user identified by userId.
+	* Returns the number of activities done by users in a relationship with the
+	* user identified by userId.
 	*
 	* @param userId the primary key of the user
 	* @return the number of matching activities
@@ -920,8 +932,8 @@ public class SocialActivityLocalServiceWrapper
 	* primary keys, they are indexes in the result set. Thus, <code>0</code>
 	* refers to the first result in the set. Setting both <code>start</code>
 	* and <code>end</code> to {@link
-	* com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the
-	* full result set.
+	* com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full
+	* result set.
 	* </p>
 	*
 	* @param userId the primary key of the user
@@ -958,8 +970,8 @@ public class SocialActivityLocalServiceWrapper
 	* primary keys, they are indexes in the result set. Thus, <code>0</code>
 	* refers to the first result in the set. Setting both <code>start</code>
 	* and <code>end</code> to {@link
-	* com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the
-	* full result set.
+	* com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full
+	* result set.
 	* </p>
 	*
 	* @param userId the primary key of the user
@@ -998,8 +1010,8 @@ public class SocialActivityLocalServiceWrapper
 	* primary keys, they are indexes in the result set. Thus, <code>0</code>
 	* refers to the first result in the set. Setting both <code>start</code>
 	* and <code>end</code> to {@link
-	* com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the
-	* full result set.
+	* com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full
+	* result set.
 	* </p>
 	*
 	* @param userId the primary key of the user
@@ -1016,8 +1028,8 @@ public class SocialActivityLocalServiceWrapper
 	}
 
 	/**
-	* Returns the number of activities done in user's groups and
-	* organizations. This method only counts activities without mirrors.
+	* Returns the number of activities done in user's groups and organizations.
+	* This method only counts activities without mirrors.
 	*
 	* @param userId the primary key of the user
 	* @return the number of matching activities
@@ -1038,8 +1050,8 @@ public class SocialActivityLocalServiceWrapper
 	* primary keys, they are indexes in the result set. Thus, <code>0</code>
 	* refers to the first result in the set. Setting both <code>start</code>
 	* and <code>end</code> to {@link
-	* com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the
-	* full result set.
+	* com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full
+	* result set.
 	* </p>
 	*
 	* @param userId the primary key of the user

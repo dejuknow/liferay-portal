@@ -94,14 +94,6 @@ public class LayoutPrototypeUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static LayoutPrototype remove(LayoutPrototype layoutPrototype)
-		throws SystemException {
-		return getPersistence().remove(layoutPrototype);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static LayoutPrototype update(LayoutPrototype layoutPrototype,

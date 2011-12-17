@@ -95,14 +95,6 @@ public class DLFileEntryUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static DLFileEntry remove(DLFileEntry dlFileEntry)
-		throws SystemException {
-		return getPersistence().remove(dlFileEntry);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static DLFileEntry update(DLFileEntry dlFileEntry, boolean merge)

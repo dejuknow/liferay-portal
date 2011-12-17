@@ -35,7 +35,7 @@ public class DDMStructureCacheModel implements CacheModel<DDMStructure>,
 	Serializable {
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(29);
+		StringBundler sb = new StringBundler(31);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -65,6 +65,8 @@ public class DDMStructureCacheModel implements CacheModel<DDMStructure>,
 		sb.append(xsd);
 		sb.append(", storageType=");
 		sb.append(storageType);
+		sb.append(", type=");
+		sb.append(type);
 		sb.append("}");
 
 		return sb.toString();
@@ -143,7 +145,13 @@ public class DDMStructureCacheModel implements CacheModel<DDMStructure>,
 			ddmStructureImpl.setStorageType(storageType);
 		}
 
+		ddmStructureImpl.setType(type);
+
 		ddmStructureImpl.resetOriginalValues();
+
+		ddmStructureImpl.setDocument(_document);
+
+		ddmStructureImpl.setFieldsMap(_fieldsMap);
 
 		return ddmStructureImpl;
 	}
@@ -162,4 +170,7 @@ public class DDMStructureCacheModel implements CacheModel<DDMStructure>,
 	public String description;
 	public String xsd;
 	public String storageType;
+	public int type;
+	public com.liferay.portal.kernel.xml.Document _document;
+	public java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.String>> _fieldsMap;
 }

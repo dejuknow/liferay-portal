@@ -85,6 +85,16 @@ public class JournalContentPortletDataHandlerImpl
 	}
 
 	@Override
+	public boolean isAlwaysExportable() {
+		return _ALWAYS_EXPORTABLE;
+	}
+
+	@Override
+	public boolean isAlwaysStaged() {
+		return _ALWAYS_STAGED;
+	}
+
+	@Override
 	public boolean isPublishToLiveByDefault() {
 		return _PUBLISH_TO_LIVE_BY_DEFAULT;
 	}
@@ -148,10 +158,15 @@ public class JournalContentPortletDataHandlerImpl
 				articleGroupId, articleId, WorkflowConstants.STATUS_APPROVED);
 		}
 		catch (NoSuchArticleException nsae) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(
-					"No approved article found with group id " +
-						articleGroupId + " and article id " + articleId);
+		}
+
+		if (article == null) {
+			try {
+				article = JournalArticleLocalServiceUtil.getLatestArticle(
+					articleGroupId, articleId,
+					WorkflowConstants.STATUS_EXPIRED);
+			}
+			catch (NoSuchArticleException nsae) {
 			}
 		}
 
@@ -295,6 +310,10 @@ public class JournalContentPortletDataHandlerImpl
 
 		return portletPreferences;
 	}
+
+	private static final boolean _ALWAYS_EXPORTABLE = true;
+
+	private static final boolean _ALWAYS_STAGED = true;
 
 	private static final String _NAMESPACE = "journal";
 

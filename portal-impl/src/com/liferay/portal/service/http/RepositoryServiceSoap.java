@@ -48,8 +48,8 @@ import java.rmi.RemoteException;
  *
  * <p>
  * You can see a list of services at
- * http://localhost:8080/tunnel-web/secure/axis. Set the property
- * <b>tunnel.servlet.hosts.allowed</b> in portal.properties to configure
+ * http://localhost:8080/api/secure/axis. Set the property
+ * <b>axis.servlet.hosts.allowed</b> in portal.properties to configure
  * security.
  * </p>
  *
@@ -68,6 +68,18 @@ public class RepositoryServiceSoap {
 		throws RemoteException {
 		try {
 			RepositoryServiceUtil.checkRepository(repositoryId);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static void deleteRepository(long repositoryId)
+		throws RemoteException {
+		try {
+			RepositoryServiceUtil.deleteRepository(repositoryId);
 		}
 		catch (Exception e) {
 			_log.error(e, e);
@@ -125,30 +137,6 @@ public class RepositoryServiceSoap {
 			com.liferay.portal.kernel.util.UnicodeProperties returnValue = RepositoryServiceUtil.getTypeSettingsProperties(repositoryId);
 
 			return returnValue;
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-
-			throw new RemoteException(e.getMessage());
-		}
-	}
-
-	public static void unmountRepositories(long groupId)
-		throws RemoteException {
-		try {
-			RepositoryServiceUtil.unmountRepositories(groupId);
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-
-			throw new RemoteException(e.getMessage());
-		}
-	}
-
-	public static void unmountRepository(long repositoryId)
-		throws RemoteException {
-		try {
-			RepositoryServiceUtil.unmountRepository(repositoryId);
 		}
 		catch (Exception e) {
 			_log.error(e, e);

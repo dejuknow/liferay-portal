@@ -95,14 +95,6 @@ public class MBDiscussionUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static MBDiscussion remove(MBDiscussion mbDiscussion)
-		throws SystemException {
-		return getPersistence().remove(mbDiscussion);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static MBDiscussion update(MBDiscussion mbDiscussion, boolean merge)

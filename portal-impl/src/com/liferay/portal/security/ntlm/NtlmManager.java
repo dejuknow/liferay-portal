@@ -45,8 +45,7 @@ public class NtlmManager {
 			servicePassword);
 	}
 
-	public NtlmUserAccount authenticate(
-			byte[] material, byte[] serverChallenge)
+	public NtlmUserAccount authenticate(byte[] material, byte[] serverChallenge)
 		throws IOException, NoSuchAlgorithmException, NtlmLogonException {
 
 		Type3Message type3Message = new Type3Message(material);
@@ -145,7 +144,7 @@ public class NtlmManager {
 	protected byte[] getTargetInformation() throws UnsupportedEncodingException{
 		byte[] computerName = getAVPairBytes(
 			1, _ntlmServiceAccount.getComputerName());
-		byte[] domainName =  getAVPairBytes(2, _domain);
+		byte[] domainName = getAVPairBytes(2, _domain);
 
 		byte[] targetInformation = ArrayUtil.append(computerName, domainName);
 

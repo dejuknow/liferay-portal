@@ -94,14 +94,6 @@ public class LayoutBranchUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static LayoutBranch remove(LayoutBranch layoutBranch)
-		throws SystemException {
-		return getPersistence().remove(layoutBranch);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static LayoutBranch update(LayoutBranch layoutBranch, boolean merge)

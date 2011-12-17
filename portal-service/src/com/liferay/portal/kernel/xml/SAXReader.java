@@ -47,15 +47,15 @@ public interface SAXReader {
 
 	public Entity createEntity(String name, String text);
 
+	public Namespace createNamespace(String uri);
+
+	public Namespace createNamespace(String prefix, String uri);
+
 	public ProcessingInstruction createProcessingInstruction(
 		String target, Map<String, String> data);
 
 	public ProcessingInstruction createProcessingInstruction(
 		String target, String data);
-
-	public Namespace createNamespace(String uri);
-
-	public Namespace createNamespace(String prefix, String uri);
 
 	public QName createQName(String localName);
 
@@ -63,7 +63,13 @@ public interface SAXReader {
 
 	public Text createText(String text);
 
-	public XPath createXPath(String xpathExpression);
+	public XPath createXPath(String xPathExpression);
+
+	public XPath createXPath(
+		String xPathExpression, Map<String, String> namespaceContextMap);
+
+	public XPath createXPath(
+		String xPathExpression, String prefix, String namespace);
 
 	public Document read(File file) throws DocumentException;
 
@@ -96,13 +102,13 @@ public interface SAXReader {
 		throws DocumentException, MalformedURLException;
 
 	public List<Node> selectNodes(
-		String xpathFilterExpression, List<Node> nodes);
+		String xPathFilterExpression, List<Node> nodes);
 
-	public List<Node> selectNodes(String xpathFilterExpression, Node node);
+	public List<Node> selectNodes(String xPathFilterExpression, Node node);
 
-	public void sort(List<Node> nodes, String xpathExpression);
+	public void sort(List<Node> nodes, String xPathExpression);
 
 	public void sort(
-		List<Node> nodes, String xpathExpression, boolean distinct);
+		List<Node> nodes, String xPathExpression, boolean distinct);
 
 }

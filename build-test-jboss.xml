@@ -4,6 +4,10 @@
 	<import file="build-test.xml" />
 
 	<target name="run-jboss">
+		<antcall target="clean-up-logs" />
+
+		<record action="start" name="log" />
+
 		<antcall target="run-simple-server">
 			<param name="simple.server.dir" value="${app.server.jboss.dir}" />
 			<param name="simple.server.bin.dir" value="${app.server.jboss.bin.dir}" />
@@ -15,6 +19,10 @@
 			<param name="simple.server.stop.executable" value="jboss-admin${file.suffix.bat}" />
 			<param name="simple.server.stop.executable.arg.line" value="--connect command=:shutdown" />
 		</antcall>
+
+		<record action="stop" name="log" />
+
+		<antcall target="evaluate-logs" />
 	</target>
 
 	<target name="run-selenium-jboss">

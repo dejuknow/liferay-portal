@@ -52,8 +52,8 @@ public class ImportExportCommunityLARWikiUseCaseTest extends BaseTestCase {
 			RuntimeVariables.replace("Search"));
 		selenium.waitForPageToLoad("30000");
 		assertEquals(RuntimeVariables.replace("Actions"),
-			selenium.getText("//td[6]/span/ul/li/strong/a/span"));
-		selenium.clickAt("//td[6]/span/ul/li/strong/a/span",
+			selenium.getText("//span[@title='Actions']/ul/li/strong/a/span"));
+		selenium.clickAt("//span[@title='Actions']/ul/li/strong/a/span",
 			RuntimeVariables.replace("Actions"));
 
 		for (int second = 0;; second++) {
@@ -116,10 +116,6 @@ public class ImportExportCommunityLARWikiUseCaseTest extends BaseTestCase {
 		selenium.clickAt("//input[@id='_156_CATEGORIESCheckbox']",
 			RuntimeVariables.replace("Categories"));
 		assertTrue(selenium.isChecked("//input[@id='_156_CATEGORIESCheckbox']"));
-		assertTrue(selenium.isPartialText("//div[@id='_156_importMoreDiv']/a",
-				"More Options"));
-		selenium.clickAt("//div[@id='_156_importMoreDiv']/a",
-			RuntimeVariables.replace("More Options"));
 
 		for (int second = 0;; second++) {
 			if (second >= 90) {

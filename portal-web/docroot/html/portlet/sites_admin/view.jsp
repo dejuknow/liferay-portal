@@ -111,7 +111,11 @@ pageContext.setAttribute("portletURL", portletURL);
 	}
 
 	headerNames.add("active");
-	headerNames.add("pending-requests");
+
+	if (permissionChecker.isGroupAdmin(themeDisplay.getScopeGroupId())) {
+		headerNames.add("pending-requests");
+	}
+
 	headerNames.add("tags");
 
 	headerNames.add(StringPool.BLANK);
@@ -148,6 +152,78 @@ pageContext.setAttribute("portletURL", portletURL);
 
 			sb.append("<br />");
 			sb.append(LanguageUtil.format(pageContext, "belongs-to-an-organization-of-type-x", LanguageUtil.get(pageContext, organization.getType())));
+		}
+		else {
+			boolean organizationUser = false;
+
+			LinkedHashMap organizationParams = new LinkedHashMap();
+
+			organizationParams.put("organizationsGroups", new Long(group.getGroupId()));
+
+			List<Organization> organizationsGroups = OrganizationLocalServiceUtil.search(company.getCompanyId(), OrganizationConstants.ANY_PARENT_ORGANIZATION_ID, searchTerms.getKeywords(), null, null, null, organizationParams, QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+
+			List<String> names = new ArrayList<String>();
+
+			for (Organization organization : organizationsGroups) {
+				for (long userOrganizationId : user.getOrganizationIds()) {
+					if (userOrganizationId == organization.getOrganizationId()) {
+						names.add(organization.getName());
+
+						organizationUser = true;
+					}
+				}
+			}
+
+			row.setParameter("organizationUser", organizationUser);
+
+			boolean userGroupUser = false;
+
+			LinkedHashMap userGroupParams = new LinkedHashMap();
+
+			userGroupParams.put("userGroupsGroups", new Long(group.getGroupId()));
+
+			List<UserGroup> userGroupsGroups = UserGroupLocalServiceUtil.search(company.getCompanyId(), null, null, userGroupParams, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+
+			for (UserGroup userGroup : userGroupsGroups) {
+				for (long userGroupId : user.getUserGroupIds()) {
+					if (userGroupId == userGroup.getUserGroupId()) {
+						names.add(userGroup.getName());
+
+						userGroupUser = true;
+					}
+				}
+			}
+
+			row.setParameter("userGroupUser", userGroupUser);
+
+			String message = StringPool.BLANK;
+
+			if (organizationUser || userGroupUser) {
+				StringBundler namesSB = new StringBundler();
+
+				for (int j = 0; j < (names.size() - 1); j++) {
+					namesSB.append(names.get(j));
+
+					if (j < (names.size() - 2)) {
+						namesSB.append(", ");
+					}
+				}
+
+				if (names.size() == 1) {
+					message = LanguageUtil.format(pageContext, "you-are-a-member-of-x-because-you-belong-to-x", new Object[] {HtmlUtil.escape(group.getDescriptiveName()), names.get(0)});
+				}
+				else {
+					message = LanguageUtil.format(pageContext, "you-are-a-member-of-x-because-you-belong-to-x-and-x", new Object[] {HtmlUtil.escape(group.getDescriptiveName()), namesSB, names.get(names.size() - 1)});
+				}
+	%>
+
+				<liferay-util:buffer var="iconHelp">
+					<liferay-ui:icon-help message="<%= message %>" />
+				</liferay-util:buffer>
+
+	<%
+				sb.append(iconHelp);
+			}
 		}
 
 		row.addText(sb.toString());
@@ -215,13 +291,15 @@ pageContext.setAttribute("portletURL", portletURL);
 
 		// Restricted number of petitions
 
-		if ((group.getType() == GroupConstants.TYPE_SITE_RESTRICTED) && permissionChecker.isGroupAdmin(group.getGroupId())) {
-			int pendingRequests = MembershipRequestLocalServiceUtil.searchCount(group.getGroupId(), MembershipRequestConstants.STATUS_PENDING);
+		if (permissionChecker.isGroupAdmin(themeDisplay.getScopeGroupId())) {
+			if (group.getType() == GroupConstants.TYPE_SITE_RESTRICTED) {
+				int pendingRequests = MembershipRequestLocalServiceUtil.searchCount(group.getGroupId(), MembershipRequestConstants.STATUS_PENDING);
 
-			row.addText(String.valueOf(pendingRequests));
-		}
-		else {
-			row.addText(StringPool.BLANK);
+				row.addText(String.valueOf(pendingRequests));
+			}
+			else {
+				row.addText(StringPool.BLANK);
+			}
 		}
 	%>
 

@@ -94,14 +94,6 @@ public class UserTrackerUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static UserTracker remove(UserTracker userTracker)
-		throws SystemException {
-		return getPersistence().remove(userTracker);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static UserTracker update(UserTracker userTracker, boolean merge)

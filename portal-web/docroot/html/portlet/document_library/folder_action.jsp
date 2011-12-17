@@ -160,6 +160,7 @@ if (row == null && (portletName.equals(PortletKeys.DOCUMENT_LIBRARY_DISPLAY) || 
 					<liferay-security:permissionsURL
 						modelResource="<%= modelResource %>"
 						modelResourceDescription="<%= HtmlUtil.escape(modelResourceDescription) %>"
+						redirect="<%= currentURL %>"
 						resourcePrimKey="<%= resourcePrimKey %>"
 						var="permissionsURL"
 					/>
@@ -214,20 +215,6 @@ if (row == null && (portletName.equals(PortletKeys.DOCUMENT_LIBRARY_DISPLAY) || 
 						image="add_folder"
 						message='<%= (folder != null) ? "add-subfolder" : "add-folder" %>'
 						url="<%= addFolderURL %>"
-					/>
-				</c:if>
-
-				<c:if test="<%= showActions && folder.isDefaultRepository() && DLFolderPermission.contains(permissionChecker, scopeGroupId, folderId, ActionKeys.ADD_FOLDER) %>">
-					<portlet:renderURL var="addRepositoryURL">
-						<portlet:param name="struts_action" value="/document_library/edit_repository" />
-						<portlet:param name="redirect" value="<%= currentURL %>" />
-						<portlet:param name="folderId" value="<%= String.valueOf(folderId) %>" />
-					</portlet:renderURL>
-
-					<liferay-ui:icon
-						image="add_drive"
-						message="add-repository"
-						url="<%= addRepositoryURL %>"
 					/>
 				</c:if>
 			</c:when>
@@ -438,7 +425,7 @@ if (row == null && (portletName.equals(PortletKeys.DOCUMENT_LIBRARY_DISPLAY) || 
 			%>
 
 			<liferay-ui:input-resource
-				url='<%= themeDisplay.getPortalURL() + "/tunnel-web/secure/webdav" + group.getFriendlyURL() + "/document_library" + sb.toString() %>'
+				url='<%= themeDisplay.getPortalURL() + "/api/secure/webdav" + group.getFriendlyURL() + "/document_library" + sb.toString() %>'
 			/>
 		</div>
 	</div>

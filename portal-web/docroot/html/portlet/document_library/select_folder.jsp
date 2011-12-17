@@ -22,7 +22,7 @@ Folder folder = (Folder)request.getAttribute(WebKeys.DOCUMENT_LIBRARY_FOLDER);
 long folderId = BeanParamUtil.getLong(folder, request, "folderId", DLFolderConstants.DEFAULT_PARENT_FOLDER_ID);
 
 long repositoryId = scopeGroupId;
-String folderName = LanguageUtil.get(pageContext, "documents-home");
+String folderName = LanguageUtil.get(pageContext, "home");
 
 if (folder != null) {
 	repositoryId = folder.getRepositoryId();
@@ -34,7 +34,7 @@ if (folder != null) {
 
 <aui:form method="post" name="fm">
 	<liferay-ui:header
-		title="documents-home"
+		title="home"
 	/>
 
 	<liferay-ui:breadcrumb showGuestGroup="<%= false %>" showLayout="<%= false %>" showParentGroups="<%= false %>" />
@@ -83,14 +83,21 @@ if (folder != null) {
 		sb.append("<img align=\"left\" border=\"0\" src=\"");
 		sb.append(themeDisplay.getPathThemeImages());
 
-		List<Long> subfolderIds = DLAppServiceUtil.getSubfolderIds(curFolder.getRepositoryId(), curFolder.getFolderId(), false);
+		int foldersCount = 0;
+		int fileEntriesCount = 0;
 
-		int foldersCount = subfolderIds.size();
+		try {
+			List<Long> subfolderIds = DLAppServiceUtil.getSubfolderIds(curFolder.getRepositoryId(), curFolder.getFolderId(), false);
 
-		subfolderIds.clear();
-		subfolderIds.add(curFolder.getFolderId());
+			foldersCount = subfolderIds.size();
 
-		int fileEntriesCount = DLAppServiceUtil.getFoldersFileEntriesCount(curFolder.getRepositoryId(), subfolderIds, WorkflowConstants.STATUS_APPROVED);
+			subfolderIds.clear();
+			subfolderIds.add(curFolder.getFolderId());
+
+			fileEntriesCount = DLAppServiceUtil.getFoldersFileEntriesCount(curFolder.getRepositoryId(), subfolderIds, WorkflowConstants.STATUS_APPROVED);
+		}
+		catch (com.liferay.portal.kernel.repository.RepositoryException re) {
+		}
 
 		if ((foldersCount + fileEntriesCount) > 0) {
 			sb.append("/common/folder_full_document.png\">");
@@ -147,7 +154,7 @@ if (folder != null) {
 		</c:if>
 
 		<%
-		String taglibSelectOnClick = "opener." + renderResponse.getNamespace() + "selectFolder('" + folderId + "','" + folderName + "','" + ((folder != null) ? folder.isSupportsMetadata() : Boolean.TRUE.toString()) + "','" + ((folder != null) ? folder.isSupportsSocial() : Boolean.TRUE.toString()) + "');window.close();";
+		String taglibSelectOnClick = "opener." + renderResponse.getNamespace() + "selectFolder('" + folderId + "','" + folderName + "','" + ((folder != null) ? folder.isSupportsMetadata() : Boolean.TRUE.toString()) + "','" + ((folder != null) ? folder.isSupportsSocial() : Boolean.TRUE.toString()) + "'); window.close();";
 		%>
 
 		<aui:button onClick="<%= taglibSelectOnClick %>" value="choose-this-folder" />

@@ -95,14 +95,6 @@ public class PollsQuestionUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static PollsQuestion remove(PollsQuestion pollsQuestion)
-		throws SystemException {
-		return getPersistence().remove(pollsQuestion);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static PollsQuestion update(PollsQuestion pollsQuestion,

@@ -94,14 +94,6 @@ public class OrgGroupPermissionUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static OrgGroupPermission remove(
-		OrgGroupPermission orgGroupPermission) throws SystemException {
-		return getPersistence().remove(orgGroupPermission);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static OrgGroupPermission update(

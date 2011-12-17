@@ -38,7 +38,7 @@ if (Validator.isNotNull(portletResource)) {
 		portletResourceLabel = LanguageUtil.get(pageContext, "general");
 	}
 	else {
-		portletResourceLabel = PortalUtil.getPortletTitle(portlet, application, locale);
+		portletResourceLabel = PortalUtil.getPortletLongTitle(portlet, application, locale);
 	}
 }
 
@@ -57,19 +57,12 @@ portletURL.setParameter("tabs1", tabs1);
 portletURL.setParameter("tabs2", tabs2);
 portletURL.setParameter("roleId", String.valueOf(role.getRoleId()));
 
-PortletURL viewPermissionsURL = renderResponse.createRenderURL();
-
-viewPermissionsURL.setParameter("struts_action", "/roles_admin/edit_role_permissions");
-viewPermissionsURL.setParameter(Constants.CMD, Constants.VIEW);
-viewPermissionsURL.setParameter("tabs1", "roles");
-viewPermissionsURL.setParameter("roleId", String.valueOf(role.getRoleId()));
-
 PortletURL editPermissionsURL = renderResponse.createRenderURL();
 
 editPermissionsURL.setParameter("struts_action", "/roles_admin/edit_role_permissions");
 editPermissionsURL.setParameter(Constants.CMD, Constants.EDIT);
 editPermissionsURL.setParameter("tabs1", "roles");
-editPermissionsURL.setParameter("redirect", viewPermissionsURL.toString());
+editPermissionsURL.setParameter("redirect", backURL);
 editPermissionsURL.setParameter("roleId", String.valueOf(role.getRoleId()));
 %>
 
@@ -186,6 +179,16 @@ editPermissionsURL.setParameter("roleId", String.valueOf(role.getRoleId()));
 		var permissionsURL = field.value;
 
 		if (permissionsURL == '') {
+
+			<%
+			PortletURL viewPermissionsURL = renderResponse.createRenderURL();
+
+			viewPermissionsURL.setParameter("struts_action", "/roles_admin/edit_role_permissions");
+			viewPermissionsURL.setParameter(Constants.CMD, Constants.VIEW);
+			viewPermissionsURL.setParameter("tabs1", "roles");
+			viewPermissionsURL.setParameter("roleId", String.valueOf(role.getRoleId()));
+			%>
+
 			permissionsURL = '<%= viewPermissionsURL %>';
 		}
 

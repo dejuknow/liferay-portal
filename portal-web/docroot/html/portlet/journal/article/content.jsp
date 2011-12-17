@@ -48,10 +48,14 @@ if (structure != null) {
 	structureXSD = structure.getMergedXsd();
 }
 
-List<JournalTemplate> templates = new ArrayList();
+List<JournalTemplate> templates = new ArrayList<JournalTemplate>();
 
 if (structure != null) {
-	templates = JournalTemplateServiceUtil.getStructureTemplates(structureGroupId, structureId);
+	templates.addAll(JournalTemplateServiceUtil.getStructureTemplates(structureGroupId, structureId));
+
+	if (groupId != structureGroupId) {
+		templates.addAll(JournalTemplateServiceUtil.getStructureTemplates(groupId, structureId));
+	}
 }
 
 String templateId = BeanParamUtil.getString(article, request, "templateId");
@@ -351,7 +355,7 @@ if (Validator.isNotNull(content)) {
 							<label for="<portlet:namespace />defaultLanguageId"><liferay-ui:message key="web-content-default-language" /></label>:
 
 							<span class="lfr-translation-manager-selector nobr">
-								<span class="article-default-language journal-article-default-translation" id="<portlet:namespace />textLanguageId">
+								<span class="article-default-language lfr-token lfr-token-primary" id="<portlet:namespace />textLanguageId">
 									<img alt="" src='<%= themeDisplay.getPathThemeImages() + "/language/" + defaultLanguageId + ".png" %>' />
 
 									<%= LocaleUtil.fromLanguageId(defaultLanguageId).getDisplayName(locale) %>
@@ -399,7 +403,7 @@ if (Validator.isNotNull(content)) {
 											}
 
 											String taglibEditArticleURL = HttpUtil.addParameter(editArticleRenderPopUpURL.toString(), renderResponse.getNamespace() + "toLanguageId", LocaleUtil.toLanguageId(locales[i]));
-											String taglibEditURL = "javascript:Liferay.Util.openWindow({id: '" + renderResponse.getNamespace() + LocaleUtil.toLanguageId(locales[i]) + "', title: '" + LanguageUtil.get(pageContext, "web-content-translation") + "', uri: '" + taglibEditArticleURL + "'});";
+											String taglibEditURL = "javascript:Liferay.Util.openWindow({cache: false, id: '" + renderResponse.getNamespace() + LocaleUtil.toLanguageId(locales[i]) + "', title: '" + LanguageUtil.get(pageContext, "web-content-translation") + "', uri: '" + taglibEditArticleURL + "'});";
 										%>
 
 											<liferay-ui:icon
@@ -454,7 +458,7 @@ if (Validator.isNotNull(content)) {
 											String editTranslationURL = HttpUtil.addParameter(editArticleRenderPopUpURL.toString(), renderResponse.getNamespace() + "toLanguageId", translations[i]);
 										%>
 
-										<a class="journal-article-translation journal-article-translation-<%= translations[i] %>" href="javascript:;" onClick="Liferay.Util.openWindow({id: '<portlet:namespace /><%= translations[i] %>', title: '<%= LanguageUtil.get(pageContext, "web-content-translation") %>', uri: '<%= editTranslationURL %>'});">
+										<a class="lfr-token journal-article-translation-<%= translations[i] %>" href="javascript:;" onClick="Liferay.Util.openWindow({id: '<portlet:namespace /><%= translations[i] %>', title: '<%= LanguageUtil.get(pageContext, "web-content-translation") %>', uri: '<%= editTranslationURL %>'});">
 											<img alt="" src='<%= themeDisplay.getPathThemeImages() + "/language/" + translations[i] + ".png" %>' />
 
 											<%= LocaleUtil.fromLanguageId(translations[i]).getDisplayName(locale) %>
@@ -474,7 +478,11 @@ if (Validator.isNotNull(content)) {
 		</table>
 
 		<div class="journal-article-general-fields">
-			<aui:input languageId="<%= Validator.isNotNull(toLanguageId) ? toLanguageId : defaultLanguageId %>" name="title" />
+			<aui:input languageId="<%= Validator.isNotNull(toLanguageId) ? toLanguageId : defaultLanguageId %>" name="title">
+				<c:if test="<%= classNameId == 0 %>">
+					<aui:validator name="required" />
+				</c:if>
+			</aui:input>
 		</div>
 
 		<div class="journal-article-container" id="<portlet:namespace />journalArticleContainer">
@@ -528,7 +536,7 @@ if (Validator.isNotNull(content)) {
 							for (int i = 0; i < availableLocales.length ; i++) {
 					%>
 
-								<input name="<portlet:namespace />available_locales" type="hidden" value="<%= HtmlUtil.escapeAttribute(availableLocales[i]) %>" />
+								<input id= "<portlet:namespace />availableLocales<%= HtmlUtil.escapeAttribute(availableLocales[i]) %>" name="<portlet:namespace />available_locales" type="hidden" value="<%= HtmlUtil.escapeAttribute(availableLocales[i]) %>" />
 
 					<%
 							}
@@ -537,7 +545,7 @@ if (Validator.isNotNull(content)) {
 						if (Validator.isNotNull(toLanguageId)) {
 					%>
 
-							<input name="<portlet:namespace />available_locales" type="hidden" value="<%= languageId %>" />
+							<input id="<portlet:namespace />availableLocales<%= languageId %>" name="<portlet:namespace />available_locales" type="hidden" value="<%= languageId %>" />
 
 					<%
 						}
@@ -546,7 +554,7 @@ if (Validator.isNotNull(content)) {
 						contentDoc = SAXReaderUtil.createDocument(SAXReaderUtil.createElement("root"));
 					%>
 
-						<input name="<portlet:namespace />available_locales" type="hidden" value="<%= HtmlUtil.escapeAttribute(defaultLanguageId) %>" />
+						<input id="<portlet:namespace />availableLocales<%= HtmlUtil.escapeAttribute(defaultLanguageId) %>" name="<portlet:namespace />available_locales" type="hidden" value="<%= HtmlUtil.escapeAttribute(defaultLanguageId) %>" />
 
 					<%
 					}
@@ -604,21 +612,25 @@ if (Validator.isNotNull(content)) {
 
 			versionNode.html(newVersion);
 
-			statusNode.removeClass('workflow-status-approved');
-			statusNode.addClass('workflow-status-draft');
-			statusNode.html('<%= LanguageUtil.get(pageContext, "draft") %>');
-
-			availableTranslationContainer.addClass('contains-translations');
-			availableTranslationsLinks.show();
-			translationsMessage.show();
-
 			var translationLink = availableTranslationContainer.one('.journal-article-translation-' + newLanguageId);
 
 			if (cmd == '<%= Constants.DELETE_TRANSLATION %>') {
-				translationLink.hide();
+				var availableLocales = A.one('#<portlet:namespace />availableLocales' + newLanguageId);
+
+				availableLocales.remove();
+
+				translationLink.remove();
 			}
 			else if (!translationLink) {
-				var TPL_TRANSLATION = '<a class="journal-article-translation journal-article-translation-{newLanguageId}" href="javascript:;"><img alt="" src="<%= themeDisplay.getPathThemeImages() %>/language/{newLanguageId}.png" />{newLanguage}</a>';
+				statusNode.removeClass('workflow-status-approved');
+				statusNode.addClass('workflow-status-draft');
+				statusNode.html('<%= LanguageUtil.get(pageContext, "draft") %>');
+
+				availableTranslationContainer.addClass('contains-translations');
+				availableTranslationsLinks.show();
+				translationsMessage.show();
+
+				var TPL_TRANSLATION = '<a class="lfr-token journal-article-translation-{newLanguageId}" href="javascript:;"><img alt="" src="<%= themeDisplay.getPathThemeImages() %>/language/{newLanguageId}.png" />{newLanguage}</a>';
 
 				translationLinkTpl = A.Lang.sub(
 					TPL_TRANSLATION,
@@ -668,10 +680,9 @@ if (Validator.isNotNull(content)) {
 				Liferay.Util.openWindow(
 					{
 						dialog: {
-							stack: false,
 							width:680
 						},
-						title: '<liferay-ui:message key="template" />',
+						title: '<%= UnicodeLanguageUtil.get(pageContext, "template") %>',
 						uri: '<portlet:renderURL windowState="<%= LiferayWindowState.POP_UP.toString() %>"><portlet:param name="struts_action" value="/journal/select_template" /><portlet:param name="groupId" value="<%= String.valueOf(groupId) %>" /><portlet:param name="structureId" value="<%= String.valueOf(structureId) %>" /></portlet:renderURL>'
 					}
 				);
@@ -863,7 +874,7 @@ private void _format(long groupId, Element contentParentElement, Element xsdPare
 
 			String elContent = GetterUtil.getString(contentElement.elementText("dynamic-content"));
 
-			if (!elType.equals("document_library") && !elType.equals("image_gallery") && !elType.equals("text") && !elType.equals("text_area") && !elType.equals("text_box")) {
+			if (!elType.equals("document_library") && !elType.equals("image") && !elType.equals("image_gallery") && !elType.equals("text") && !elType.equals("text_area") && !elType.equals("text_box")) {
 				elContent = HtmlUtil.toInputSafe(elContent);
 			}
 

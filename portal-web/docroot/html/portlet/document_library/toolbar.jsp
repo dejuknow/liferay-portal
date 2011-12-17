@@ -27,9 +27,11 @@ String orderByCol = ParamUtil.getString(request, "orderByCol");
 String orderByType = ParamUtil.getString(request, "orderByType");
 %>
 
-<aui:input cssClass="select-documents aui-state-default" inline="<%= true %>" label="" name='<%= RowChecker.ALL_ROW_IDS %>' type="checkbox" />
+<c:if test="<%= !user.isDefaultUser() %>">
+	<aui:input cssClass="select-documents aui-state-default" inline="<%= true %>" label="" name='<%= RowChecker.ALL_ROW_IDS %>' type="checkbox" />
+</c:if>
 
-<liferay-ui:icon-menu align="left" cssClass="actions-button" direction="down" disabled="<%= true %>" icon="" id="actionsButtonContainer" message="actions" showExpanded="<%= false %>" showWhenSingleIcon="<%= true %>">
+<liferay-ui:icon-menu align="left" cssClass="actions-button aui-helper-hidden" direction="down" icon="" id="actionsButtonContainer" message="actions" showExpanded="<%= false %>" showWhenSingleIcon="<%= true %>">
 
 	<%
 	Group scopeGroup = themeDisplay.getScopeGroup();
@@ -97,28 +99,30 @@ String orderByType = ParamUtil.getString(request, "orderByType");
 </span>
 
 <span class="manage-button">
-	<liferay-ui:icon-menu align="left" direction="down" icon="" message="manage" showExpanded="<%= false %>" showWhenSingleIcon="<%= true %>">
+	<c:if test="<%= !user.isDefaultUser() %>">
+		<liferay-ui:icon-menu align="left" direction="down" icon="" message="manage" showExpanded="<%= false %>" showWhenSingleIcon="<%= true %>">
 
-		<%
-		String taglibUrl = "javascript:" + renderResponse.getNamespace() + "openFileEntryTypeView()";
-		%>
+			<%
+			String taglibUrl = "javascript:" + renderResponse.getNamespace() + "openFileEntryTypeView()";
+			%>
 
-		<liferay-ui:icon
-			image="copy"
-			message="document-types"
-			url="<%= taglibUrl %>"
-		/>
+			<liferay-ui:icon
+				image="copy"
+				message="document-types"
+				url="<%= taglibUrl %>"
+			/>
 
-		<%
-		taglibUrl = "javascript:" + renderResponse.getNamespace() + "openDDMStructureView()";
-		%>
+			<%
+			taglibUrl = "javascript:" + renderResponse.getNamespace() + "openDDMStructureView()";
+			%>
 
-		<liferay-ui:icon
-			image="copy"
-			message="metadata-sets"
-			url="<%= taglibUrl %>"
-		/>
-	</liferay-ui:icon-menu>
+			<liferay-ui:icon
+				image="copy"
+				message="metadata-sets"
+				url="<%= taglibUrl %>"
+			/>
+		</liferay-ui:icon-menu>
+	</c:if>
 </span>
 
 <aui:script>
@@ -128,7 +132,7 @@ String orderByType = ParamUtil.getString(request, "orderByType");
 				dialog: {
 					width:820
 				},
-				title: '<liferay-ui:message key="document-types" />',
+				title: '<%= UnicodeLanguageUtil.get(pageContext, "document-types") %>',
 				uri: '<liferay-portlet:renderURL windowState="<%= LiferayWindowState.POP_UP.toString() %>"><portlet:param name="struts_action" value="/document_library/view_file_entry_type" /><portlet:param name="redirect" value="<%= currentURL %>" /></liferay-portlet:renderURL>'
 			}
 		);
@@ -137,15 +141,16 @@ String orderByType = ParamUtil.getString(request, "orderByType");
 	function <portlet:namespace />openDDMStructureView() {
 		Liferay.Util.openDDMPortlet(
 			{
+				ddmResource: '<%= ddmResource %>',
 				dialog: {
-					width:820
+					width: 820
 				},
 				showGlobalScope: 'true',
 				showManageTemplates: 'false',
 				storageType: 'xml',
 				structureName: 'metadata-set',
 				structureType: 'com.liferay.portlet.documentlibrary.model.DLFileEntryMetadata',
-				title: '<liferay-ui:message key="metadata-sets" />'
+				title: '<%= UnicodeLanguageUtil.get(pageContext, "metadata-sets") %>'
 			}
 		);
 	}

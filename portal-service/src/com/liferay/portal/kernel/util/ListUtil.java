@@ -322,11 +322,18 @@ public class ListUtil {
 		return list;
 	}
 
+	/**
+	 * @see {@link ArrayUtil#toString(Object[], Accessor)}
+	 */
 	public static <T, V> String toString(
 		List<T> list, Accessor<T, V> accessor) {
+
 		return toString(list, accessor, StringPool.COMMA);
 	}
 
+	/**
+	 * @see {@link ArrayUtil#toString(Object[], Accessor, String)}
+	 */
 	public static <T, V> String toString(
 		List<T> list, Accessor<T, V> accessor, String delimiter) {
 
@@ -353,10 +360,16 @@ public class ListUtil {
 		return sb.toString();
 	}
 
+	/**
+	 * @see {@link ArrayUtil#toString(Object[], String)}
+	 */
 	public static String toString(List<?> list, String param) {
 		return toString(list, param, StringPool.COMMA);
 	}
 
+	/**
+	 * @see {@link ArrayUtil#toString(Object[], String, String)}
+	 */
 	public static String toString(
 		List<?> list, String param, String delimiter) {
 

@@ -44,7 +44,6 @@ import com.liferay.portal.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portlet.asset.service.persistence.AssetEntryPersistence;
 import com.liferay.portlet.messageboards.service.persistence.MBThreadPersistence;
 import com.liferay.portlet.social.service.persistence.SocialActivityPersistence;
-import com.liferay.portlet.social.service.persistence.SocialEquityLogPersistence;
 
 import java.io.Serializable;
 
@@ -239,6 +238,23 @@ public class SubscriptionPersistenceImpl extends BasePersistenceImpl<Subscriptio
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 
+		clearUniqueFindersCache(subscription);
+	}
+
+	@Override
+	public void clearCache(List<Subscription> subscriptions) {
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+
+		for (Subscription subscription : subscriptions) {
+			EntityCacheUtil.removeResult(SubscriptionModelImpl.ENTITY_CACHE_ENABLED,
+				SubscriptionImpl.class, subscription.getPrimaryKey());
+
+			clearUniqueFindersCache(subscription);
+		}
+	}
+
+	protected void clearUniqueFindersCache(Subscription subscription) {
 		FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_C_U_C_C,
 			new Object[] {
 				Long.valueOf(subscription.getCompanyId()),
@@ -266,20 +282,6 @@ public class SubscriptionPersistenceImpl extends BasePersistenceImpl<Subscriptio
 	/**
 	 * Removes the subscription with the primary key from the database. Also notifies the appropriate model listeners.
 	 *
-	 * @param primaryKey the primary key of the subscription
-	 * @return the subscription that was removed
-	 * @throws com.liferay.portal.NoSuchModelException if a subscription with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public Subscription remove(Serializable primaryKey)
-		throws NoSuchModelException, SystemException {
-		return remove(((Long)primaryKey).longValue());
-	}
-
-	/**
-	 * Removes the subscription with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
 	 * @param subscriptionId the primary key of the subscription
 	 * @return the subscription that was removed
 	 * @throws com.liferay.portal.NoSuchSubscriptionException if a subscription with the primary key could not be found
@@ -287,25 +289,38 @@ public class SubscriptionPersistenceImpl extends BasePersistenceImpl<Subscriptio
 	 */
 	public Subscription remove(long subscriptionId)
 		throws NoSuchSubscriptionException, SystemException {
+		return remove(Long.valueOf(subscriptionId));
+	}
+
+	/**
+	 * Removes the subscription with the primary key from the database. Also notifies the appropriate model listeners.
+	 *
+	 * @param primaryKey the primary key of the subscription
+	 * @return the subscription that was removed
+	 * @throws com.liferay.portal.NoSuchSubscriptionException if a subscription with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public Subscription remove(Serializable primaryKey)
+		throws NoSuchSubscriptionException, SystemException {
 		Session session = null;
 
 		try {
 			session = openSession();
 
 			Subscription subscription = (Subscription)session.get(SubscriptionImpl.class,
-					Long.valueOf(subscriptionId));
+					primaryKey);
 
 			if (subscription == null) {
 				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
-						subscriptionId);
+					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchSubscriptionException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
-					subscriptionId);
+					primaryKey);
 			}
 
-			return subscriptionPersistence.remove(subscription);
+			return remove(subscription);
 		}
 		catch (NoSuchSubscriptionException nsee) {
 			throw nsee;
@@ -316,19 +331,6 @@ public class SubscriptionPersistenceImpl extends BasePersistenceImpl<Subscriptio
 		finally {
 			closeSession(session);
 		}
-	}
-
-	/**
-	 * Removes the subscription from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param subscription the subscription
-	 * @return the subscription that was removed
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public Subscription remove(Subscription subscription)
-		throws SystemException {
-		return super.remove(subscription);
 	}
 
 	@Override
@@ -350,21 +352,7 @@ public class SubscriptionPersistenceImpl extends BasePersistenceImpl<Subscriptio
 			closeSession(session);
 		}
 
-		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
-		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
-
-		SubscriptionModelImpl subscriptionModelImpl = (SubscriptionModelImpl)subscription;
-
-		FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_C_U_C_C,
-			new Object[] {
-				Long.valueOf(subscriptionModelImpl.getCompanyId()),
-				Long.valueOf(subscriptionModelImpl.getUserId()),
-				Long.valueOf(subscriptionModelImpl.getClassNameId()),
-				Long.valueOf(subscriptionModelImpl.getClassPK())
-			});
-
-		EntityCacheUtil.removeResult(SubscriptionModelImpl.ENTITY_CACHE_ENABLED,
-			SubscriptionImpl.class, subscription.getPrimaryKey());
+		clearCache(subscription);
 
 		return subscription;
 	}
@@ -2002,7 +1990,7 @@ public class SubscriptionPersistenceImpl extends BasePersistenceImpl<Subscriptio
 	 */
 	public void removeByUserId(long userId) throws SystemException {
 		for (Subscription subscription : findByUserId(userId)) {
-			subscriptionPersistence.remove(subscription);
+			remove(subscription);
 		}
 	}
 
@@ -2016,7 +2004,7 @@ public class SubscriptionPersistenceImpl extends BasePersistenceImpl<Subscriptio
 	public void removeByU_C(long userId, long classNameId)
 		throws SystemException {
 		for (Subscription subscription : findByU_C(userId, classNameId)) {
-			subscriptionPersistence.remove(subscription);
+			remove(subscription);
 		}
 	}
 
@@ -2032,7 +2020,7 @@ public class SubscriptionPersistenceImpl extends BasePersistenceImpl<Subscriptio
 		throws SystemException {
 		for (Subscription subscription : findByC_C_C(companyId, classNameId,
 				classPK)) {
-			subscriptionPersistence.remove(subscription);
+			remove(subscription);
 		}
 	}
 
@@ -2050,7 +2038,7 @@ public class SubscriptionPersistenceImpl extends BasePersistenceImpl<Subscriptio
 		Subscription subscription = findByC_U_C_C(companyId, userId,
 				classNameId, classPK);
 
-		subscriptionPersistence.remove(subscription);
+		remove(subscription);
 	}
 
 	/**
@@ -2060,7 +2048,7 @@ public class SubscriptionPersistenceImpl extends BasePersistenceImpl<Subscriptio
 	 */
 	public void removeAll() throws SystemException {
 		for (Subscription subscription : findAll()) {
-			subscriptionPersistence.remove(subscription);
+			remove(subscription);
 		}
 	}
 
@@ -2516,8 +2504,6 @@ public class SubscriptionPersistenceImpl extends BasePersistenceImpl<Subscriptio
 	protected MBThreadPersistence mbThreadPersistence;
 	@BeanReference(type = SocialActivityPersistence.class)
 	protected SocialActivityPersistence socialActivityPersistence;
-	@BeanReference(type = SocialEquityLogPersistence.class)
-	protected SocialEquityLogPersistence socialEquityLogPersistence;
 	private static final String _SQL_SELECT_SUBSCRIPTION = "SELECT subscription FROM Subscription subscription";
 	private static final String _SQL_SELECT_SUBSCRIPTION_WHERE = "SELECT subscription FROM Subscription subscription WHERE ";
 	private static final String _SQL_COUNT_SUBSCRIPTION = "SELECT COUNT(subscription) FROM Subscription subscription";

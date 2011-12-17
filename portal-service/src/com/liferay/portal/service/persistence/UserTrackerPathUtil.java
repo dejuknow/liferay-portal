@@ -94,14 +94,6 @@ public class UserTrackerPathUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static UserTrackerPath remove(UserTrackerPath userTrackerPath)
-		throws SystemException {
-		return getPersistence().remove(userTrackerPath);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static UserTrackerPath update(UserTrackerPath userTrackerPath,

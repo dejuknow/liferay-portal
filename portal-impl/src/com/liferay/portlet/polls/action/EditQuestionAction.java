@@ -131,6 +131,11 @@ public class EditQuestionAction extends PortletAction {
 					 e instanceof QuestionTitleException) {
 
 				SessionErrors.add(actionRequest, e.getClass().getName());
+
+				SessionMessages.add(
+					actionRequest,
+					portletConfig.getPortletName() +
+						SessionMessages.KEY_SUFFIX_HIDE_DEFAULT_ERROR_MESSAGE);
 			}
 			else if (e instanceof QuestionExpiredException) {
 			}
@@ -194,7 +199,9 @@ public class EditQuestionAction extends PortletAction {
 		preferences.store();
 
 		SessionMessages.add(
-			portletRequest, portletConfig.getPortletName() + ".doRefresh",
+			portletRequest,
+			portletConfig.getPortletName() +
+				SessionMessages.KEY_SUFFIX_REFRESH_PORTLET,
 			referringPortletResource);
 	}
 
@@ -215,8 +222,7 @@ public class EditQuestionAction extends PortletAction {
 		Map<Locale, String> titleMap = LocalizationUtil.getLocalizationMap(
 			actionRequest, "title");
 		Map<Locale, String> descriptionMap =
-			LocalizationUtil.getLocalizationMap(
-				actionRequest, "description");
+			LocalizationUtil.getLocalizationMap(actionRequest, "description");
 
 		int expirationDateMonth = ParamUtil.getInteger(
 			actionRequest, "expirationDateMonth");

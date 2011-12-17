@@ -83,6 +83,7 @@
 		<column name="description" type="String" localized="true" />
 		<column name="xsd" type="String" />
 		<column name="storageType" type="String" />
+		<column name="type" type="int" />
 
 		<!-- Finder methods -->
 
@@ -106,7 +107,7 @@
 
 		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLFileEntryType" />
 	</entity>
-	<entity name="DDMStructureLink" local-service="true" remote-service="true">
+	<entity name="DDMStructureLink" local-service="true" remote-service="false">
 
 		<!-- PK fields -->
 
@@ -192,6 +193,7 @@
 		<exception>StorageFieldRequired</exception>
 		<exception>StructureDuplicateElement</exception>
 		<exception>StructureDuplicateStructureKey</exception>
+		<exception>StructureField</exception>
 		<exception>StructureName</exception>
 		<exception>StructureXsd</exception>
 		<exception>TemplateName</exception>

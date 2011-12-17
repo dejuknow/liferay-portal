@@ -95,14 +95,6 @@ public class PollsVoteUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static PollsVote remove(PollsVote pollsVote)
-		throws SystemException {
-		return getPersistence().remove(pollsVote);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static PollsVote update(PollsVote pollsVote, boolean merge)

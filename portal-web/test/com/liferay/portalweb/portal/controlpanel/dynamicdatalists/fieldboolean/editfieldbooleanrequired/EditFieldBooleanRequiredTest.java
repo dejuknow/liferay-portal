@@ -132,6 +132,7 @@ public class EditFieldBooleanRequiredTest extends BaseTestCase {
 		selenium.click(RuntimeVariables.replace(
 				"//div[@class='lfr-component lfr-menu-list']/ul/li[1]/a"));
 		selenium.waitForPageToLoad("30000");
+		Thread.sleep(5000);
 		assertEquals(RuntimeVariables.replace("Boolean"),
 			selenium.getText(
 				"//div[@class='aui-diagram-builder-drop-container']/div[1]/div/label"));
@@ -158,10 +159,10 @@ public class EditFieldBooleanRequiredTest extends BaseTestCase {
 		}
 
 		assertEquals(RuntimeVariables.replace("Required"),
-			selenium.getText("//tr[4]/td[1]/div"));
+			selenium.getText("//tr[5]/td[1]/div"));
 		assertEquals(RuntimeVariables.replace("No"),
-			selenium.getText("//tr[4]/td[2]/div"));
-		selenium.doubleClickAt("//tr[4]/td[2]/div",
+			selenium.getText("//tr[5]/td[2]/div"));
+		selenium.doubleClickAt("//tr[5]/td[2]/div",
 			RuntimeVariables.replace("No"));
 
 		for (int second = 0;; second++) {
@@ -185,7 +186,7 @@ public class EditFieldBooleanRequiredTest extends BaseTestCase {
 		selenium.clickAt("//button[@type='submit']",
 			RuntimeVariables.replace("Save"));
 		assertEquals(RuntimeVariables.replace("Yes"),
-			selenium.getText("//tr[4]/td[2]/div"));
+			selenium.getText("//tr[5]/td[2]/div"));
 		assertTrue(selenium.isVisible(
 				"//span[@class='aui-form-builder-required']"));
 		selenium.clickAt("//input[@value='Save']",

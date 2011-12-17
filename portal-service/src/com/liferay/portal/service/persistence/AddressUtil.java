@@ -94,13 +94,6 @@ public class AddressUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static Address remove(Address address) throws SystemException {
-		return getPersistence().remove(address);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static Address update(Address address, boolean merge)

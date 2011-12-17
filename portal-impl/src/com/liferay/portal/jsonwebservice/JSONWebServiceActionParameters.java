@@ -127,6 +127,8 @@ public class JSONWebServiceActionParameters {
 		for (String parameterName : parameterNames) {
 			String value = jsonRpcRequest.getParameter(parameterName);
 
+			parameterName = CamelCaseUtil.normalizeCamelCase(parameterName);
+
 			_parameters.put(parameterName, value);
 		}
 	}
@@ -165,7 +167,7 @@ public class JSONWebServiceActionParameters {
 				value = pathParametersParts[i];
 			}
 
-			name = jodd.util.StringUtil.wordsToCamelCase(name, CharPool.DASH);
+			name = CamelCaseUtil.toCamelCase(name);
 
 			_parameters.put(name, value);
 
@@ -190,7 +192,7 @@ public class JSONWebServiceActionParameters {
 			if ((uploadServletRequest != null) &&
 				!uploadServletRequest.isFormField(parameterName)) {
 
-				value = uploadServletRequest.getFile(parameterName);
+				value = uploadServletRequest.getFile(parameterName, true);
 			}
 			else {
 				String[] parameterValues = request.getParameterValues(
@@ -203,6 +205,8 @@ public class JSONWebServiceActionParameters {
 					value = parameterValues;
 				}
 			}
+
+			parameterName = CamelCaseUtil.normalizeCamelCase(parameterName);
 
 			_parameters.put(parameterName, value);
 		}
@@ -348,7 +352,7 @@ public class JSONWebServiceActionParameters {
 
 				value = null;
 			}
-			else  if (key.startsWith(StringPool.PLUS)) {
+			else if (key.startsWith(StringPool.PLUS)) {
 				key = key.substring(1);
 
 				int pos = key.indexOf(CharPool.COLON);

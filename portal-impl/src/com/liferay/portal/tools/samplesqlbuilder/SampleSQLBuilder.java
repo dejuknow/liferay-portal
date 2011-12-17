@@ -167,6 +167,7 @@ public class SampleSQLBuilder {
 				) + 1;
 
 			_counter = new SimpleCounter(counterOffset);
+			_dlDateCounter = new SimpleCounter();
 			_permissionCounter = new SimpleCounter();
 			_resourceCounter = new SimpleCounter();
 			_resourceCodeCounter = new SimpleCounter();
@@ -177,8 +178,9 @@ public class SampleSQLBuilder {
 
 			_dataFactory = new DataFactory(
 				baseDir, _maxGroupCount, _maxUserToGroupCount, _counter,
-				_permissionCounter, _resourceCounter, _resourceCodeCounter,
-				_resourcePermissionCounter, _socialActivityCounter);
+				_dlDateCounter, _permissionCounter, _resourceCounter,
+				_resourceCodeCounter, _resourcePermissionCounter,
+				_socialActivityCounter);
 
 			_db = DBFactoryUtil.getDB(_dbType);
 
@@ -197,7 +199,7 @@ public class SampleSQLBuilder {
 
 			_tempDir.mkdirs();
 
-			final CharPipe charPipe = new CharPipe(_WRITER_BUFFER_SIZE * 4);
+			final CharPipe charPipe = new CharPipe(_PIPE_BUFFER_SIZE);
 
 			generateSQL(charPipe);
 
@@ -470,7 +472,7 @@ public class SampleSQLBuilder {
 			public void run() {
 				try {
 					_writerSampleSQL = new UnsyncTeeWriter(
-						writer, createFileWriter(_outputDir +  "/sample.sql"));
+						writer, createFileWriter(_outputDir + "/sample.sql"));
 
 					createSample();
 
@@ -488,6 +490,7 @@ public class SampleSQLBuilder {
 				_writerCompanyCSV = getWriter("company.csv");
 				_writerDocumentLibraryCSV = getWriter("document_library.csv");
 				_writerMessageBoardsCSV = getWriter("message_boards.csv");
+				_writerRepositoryCSV = getWriter("repository.csv");
 				_writerUsersCSV = getWriter("users.csv");
 				_writerWikiCSV = getWriter("wiki.csv");
 
@@ -499,6 +502,7 @@ public class SampleSQLBuilder {
 				_writerCompanyCSV.close();
 				_writerDocumentLibraryCSV.close();
 				_writerMessageBoardsCSV.close();
+				_writerRepositoryCSV.close();
 				_writerUsersCSV.close();
 				_writerWikiCSV.close();
 			}
@@ -546,6 +550,7 @@ public class SampleSQLBuilder {
 		put(context, "writerCompanyCSV", _writerCompanyCSV);
 		put(context, "writerDocumentLibraryCSV", _writerDocumentLibraryCSV);
 		put(context, "writerMessageBoardsCSV", _writerMessageBoardsCSV);
+		put(context, "writerRepositoryCSV", _writerRepositoryCSV);
 		put(context, "writerUsersCSV", _writerUsersCSV);
 		put(context, "writerWikiCSV", _writerWikiCSV);
 
@@ -658,7 +663,9 @@ public class SampleSQLBuilder {
 
 	private static final int _OPTIMIZE_BUFFER_SIZE = 8192;
 
-	private static final int _WRITER_BUFFER_SIZE = 16 * 1024 * 1024;
+	private static final int _PIPE_BUFFER_SIZE = 16 * 1024 * 1024;
+
+	private static final int _WRITER_BUFFER_SIZE = 16 * 1024;
 
 	private static final String _TPL_ROOT =
 		"com/liferay/portal/tools/samplesqlbuilder/dependencies/";
@@ -667,6 +674,7 @@ public class SampleSQLBuilder {
 	private DataFactory _dataFactory;
 	private DB _db;
 	private String _dbType;
+	private SimpleCounter _dlDateCounter;
 	private int _dlFileEntrySize;
 	private Map<String, StringBundler> _insertSQLs =
 		new ConcurrentHashMap<String, StringBundler>();
@@ -714,6 +722,7 @@ public class SampleSQLBuilder {
 	private Writer _writerCompanyCSV;
 	private Writer _writerDocumentLibraryCSV;
 	private Writer _writerMessageBoardsCSV;
+	private Writer _writerRepositoryCSV;
 	private Writer _writerSampleSQL;
 	private Writer _writerUsersCSV;
 	private Writer _writerWikiCSV;

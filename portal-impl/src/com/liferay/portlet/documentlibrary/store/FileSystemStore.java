@@ -128,6 +128,11 @@ public class FileSystemStore extends BaseStore {
 
 		FileUtil.deltree(dirNameDir);
 
+		RepositoryDirKey repositoryDirKey = new RepositoryDirKey(
+			companyId, repositoryId);
+
+		_repositoryDirs.remove(repositoryDirKey);
+
 		deleteEmptyAncestors(parentFile);
 	}
 
@@ -145,7 +150,7 @@ public class FileSystemStore extends BaseStore {
 
 		FileUtil.deltree(fileNameDir);
 
-		deleteEmptyAncestors(parentFile);
+		deleteEmptyAncestors(companyId, repositoryId, parentFile);
 	}
 
 	@Override
@@ -165,7 +170,7 @@ public class FileSystemStore extends BaseStore {
 
 		fileNameVersionFile.delete();
 
-		deleteEmptyAncestors(parentFile);
+		deleteEmptyAncestors(companyId, repositoryId, parentFile);
 	}
 
 	@Override
@@ -292,49 +297,41 @@ public class FileSystemStore extends BaseStore {
 	public void updateFile(
 			long companyId, long repositoryId, long newRepositoryId,
 			String fileName)
-		throws SystemException {
+		throws PortalException {
 
-		try {
-			File fileNameDir = getFileNameDir(
-				companyId, repositoryId, fileName);
-			File newFileNameDir = getFileNameDir(
-				companyId, newRepositoryId, fileName);
+		File fileNameDir = getFileNameDir(companyId, repositoryId, fileName);
+		File newFileNameDir = getFileNameDir(
+			companyId, newRepositoryId, fileName);
 
-			FileUtil.copyDirectory(fileNameDir, newFileNameDir);
-
-			File parentFile = fileNameDir.getParentFile();
-
-			FileUtil.deltree(fileNameDir);
-
-			deleteEmptyAncestors(parentFile);
+		if (newFileNameDir.exists()) {
+			throw new DuplicateFileException(fileName);
 		}
-		catch (IOException ioe) {
-			throw new SystemException(ioe);
-		}
+
+		File parentFile = fileNameDir.getParentFile();
+
+		fileNameDir.renameTo(newFileNameDir);
+
+		deleteEmptyAncestors(companyId, repositoryId, parentFile);
 	}
 
 	public void updateFile(
 			long companyId, long repositoryId, String fileName,
 			String newFileName)
-		throws SystemException {
+		throws PortalException {
 
-		try {
-			File fileNameDir = getFileNameDir(
-				companyId, repositoryId, fileName);
-			File newFileNameDir = getFileNameDir(
-				companyId, repositoryId, newFileName);
+		File fileNameDir = getFileNameDir(companyId, repositoryId, fileName);
+		File newFileNameDir = getFileNameDir(
+			companyId, repositoryId, newFileName);
 
-			FileUtil.copyDirectory(fileNameDir, newFileNameDir);
-
-			File parentFile = fileNameDir.getParentFile();
-
-			FileUtil.deltree(fileNameDir);
-
-			deleteEmptyAncestors(parentFile);
+		if (newFileNameDir.exists()) {
+			throw new DuplicateFileException(newFileName);
 		}
-		catch (IOException ioe) {
-			throw new SystemException(ioe);
-		}
+
+		File parentFile = fileNameDir.getParentFile();
+
+		fileNameDir.renameTo(newFileNameDir);
+
+		deleteEmptyAncestors(companyId, repositoryId, parentFile);
 	}
 
 	@Override
@@ -378,14 +375,31 @@ public class FileSystemStore extends BaseStore {
 	}
 
 	protected void deleteEmptyAncestors(File file) {
+		deleteEmptyAncestors(-1, -1, file);
+	}
+
+	protected void deleteEmptyAncestors(
+		long companyId, long repositoryId, File file) {
+
 		String[] fileNames = file.list();
 
 		if (fileNames.length == 0) {
+			String fileName = file.getName();
+
+			if ((repositoryId > 0) &&
+				fileName.equals(String.valueOf(repositoryId))) {
+
+				RepositoryDirKey repositoryDirKey = new RepositoryDirKey(
+					companyId, repositoryId);
+
+				_repositoryDirs.remove(repositoryDirKey);
+			}
+
 			File parentFile = file.getParentFile();
 
 			file.delete();
 
-			deleteEmptyAncestors(parentFile);
+			deleteEmptyAncestors(companyId, repositoryId, parentFile);
 		}
 	}
 
@@ -450,8 +464,8 @@ public class FileSystemStore extends BaseStore {
 	}
 
 	protected File getRepositoryDir(long companyId, long repositoryId) {
-		RepositoryDirKey repositoryDirKey =
-			new RepositoryDirKey(companyId, repositoryId);
+		RepositoryDirKey repositoryDirKey = new RepositoryDirKey(
+			companyId, repositoryId);
 
 		File repositoryDir = _repositoryDirs.get(repositoryDirKey);
 

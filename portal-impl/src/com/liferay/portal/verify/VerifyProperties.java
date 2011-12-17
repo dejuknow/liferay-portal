@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.SystemProperties;
 import com.liferay.portal.util.PropsUtil;
+import com.liferay.portlet.documentlibrary.store.StoreFactory;
 
 /**
  * @author Brian Wing Shun Chan
@@ -59,6 +60,8 @@ public class VerifyProperties extends VerifyProcess {
 		for (String key : _OBSOLETE_PORTAL_KEYS) {
 			verifyObsoletePortalProperty(key);
 		}
+
+		StoreFactory.checkProperties();
 	}
 
 	protected void verifyMigratedSystemProperty(String oldKey, String newKey)
@@ -186,6 +189,7 @@ public class VerifyProperties extends VerifyProcess {
 		"jbi.workflow.url",
 		"lucene.analyzer",
 		"message.boards.thread.locking.enabled",
+		"portal.security.manager.enable",
 		"shard.available.names",
 		"webdav.storage.class",
 		"webdav.storage.show.edit.url",

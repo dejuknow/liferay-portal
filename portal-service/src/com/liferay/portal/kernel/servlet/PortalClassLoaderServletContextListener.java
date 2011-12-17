@@ -14,8 +14,6 @@
 
 package com.liferay.portal.kernel.servlet;
 
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.PortletClassLoaderUtil;
 import com.liferay.portal.kernel.util.BasePortalLifecycle;
 import com.liferay.portal.kernel.util.PortalClassLoaderUtil;
@@ -76,7 +74,7 @@ public abstract class PortalClassLoaderServletContextListener
 	}
 
 	@Override
-	protected void doPortalInit() {
+	protected void doPortalInit() throws Exception {
 		PortletClassLoaderUtil.setClassLoader(_portletClassLoader);
 		PortletClassLoaderUtil.setServletContextName(_servletContextName);
 
@@ -92,18 +90,12 @@ public abstract class PortalClassLoaderServletContextListener
 
 			_servletContextListener.contextInitialized(_servletContextEvent);
 		}
-		catch (Exception e) {
-			_log.error(e, e);
-		}
 		finally {
 			currentThread.setContextClassLoader(contextClassLoader);
 		}
 	}
 
 	protected abstract ServletContextListener getInstance() throws Exception;
-
-	private static Log _log = LogFactoryUtil.getLog(
-		PortalClassLoaderServletContextListener.class);
 
 	private ServletContextEvent _servletContextEvent;
 	private ServletContextListener _servletContextListener;

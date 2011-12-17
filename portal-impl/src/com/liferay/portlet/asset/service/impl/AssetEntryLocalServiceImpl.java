@@ -40,7 +40,6 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.User;
-import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PortletKeys;
@@ -106,7 +105,6 @@ public class AssetEntryLocalServiceImpl extends AssetEntryLocalServiceBaseImpl {
 		// Social
 
 		socialActivityLocalService.deleteActivities(entry);
-		socialEquityLogLocalService.deactivateEquityLogs(entry.getEntryId());
 	}
 
 	public void deleteEntry(long entryId)
@@ -336,7 +334,7 @@ public class AssetEntryLocalServiceImpl extends AssetEntryLocalServiceBaseImpl {
 	@BufferedIncrement(incrementClass = NumberIncrement.class)
 	public AssetEntry incrementViewCounter(
 			long userId, String className, long classPK, int increment)
-		throws PortalException, SystemException {
+		throws SystemException {
 
 		if (!PropsValues.ASSET_ENTRY_INCREMENT_VIEW_COUNTER_ENABLED) {
 			return null;
@@ -359,13 +357,6 @@ public class AssetEntryLocalServiceImpl extends AssetEntryLocalServiceBaseImpl {
 
 		assetEntryPersistence.update(entry, false);
 
-		// Social
-
-		if ((userId > 0) && (entry.getUserId() != userId)) {
-			socialEquityLogLocalService.addEquityLogs(
-				userId, entry.getEntryId(), ActionKeys.VIEW, StringPool.BLANK);
-		}
-
 		return entry;
 	}
 
@@ -384,8 +375,7 @@ public class AssetEntryLocalServiceImpl extends AssetEntryLocalServiceBaseImpl {
 			int start, int end)
 		throws SystemException {
 
-		return search(
-			companyId, groupIds, 0, className, keywords, start, end);
+		return search(companyId, groupIds, 0, className, keywords, start, end);
 	}
 
 	public Hits search(

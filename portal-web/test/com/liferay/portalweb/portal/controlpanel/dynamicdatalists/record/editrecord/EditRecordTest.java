@@ -99,10 +99,10 @@ public class EditRecordTest extends BaseTestCase {
 				"//div[@class='aui-fieldset-content ']/div[3]/span/span/label"));
 		selenium.type("//div[@class='aui-fieldset-content ']/div[3]/span/span/span/input",
 			RuntimeVariables.replace("8.910"));
-		assertEquals(RuntimeVariables.replace("Document Library"),
+		assertEquals(RuntimeVariables.replace("Documents and Media"),
 			selenium.getText(
-				"//div[@class='aui-fieldset-content ']/div[4]/div/label"));
-		selenium.clickAt("//div[@class='aui-fieldset-content ']/div[4]/div/span/span/input",
+				"//div[@class='aui-fieldset-content ']/div[4]/div/span/span/label"));
+		selenium.clickAt("//div[@class='aui-fieldset-content ']/div[4]/div/div/span/span/input",
 			RuntimeVariables.replace("Select"));
 
 		for (int second = 0;; second++) {
@@ -129,7 +129,7 @@ public class EditRecordTest extends BaseTestCase {
 			}
 
 			try {
-				if (selenium.isVisible("//tr[4]/td[1]")) {
+				if (selenium.isVisible("//input[@value='Choose']")) {
 					break;
 				}
 			}
@@ -139,11 +139,30 @@ public class EditRecordTest extends BaseTestCase {
 			Thread.sleep(1000);
 		}
 
-		assertTrue(selenium.isPartialText("//tr[4]/td[1]", "File Upload"));
-		assertTrue(selenium.isVisible("//tr[4]/td[5]/input"));
-		selenium.clickAt("//tr[4]/td[5]/input",
+		selenium.clickAt("//input[@value='Choose']",
 			RuntimeVariables.replace("Choose"));
 		selenium.selectFrame("relative=top");
+
+		for (int second = 0;; second++) {
+			if (second >= 90) {
+				fail("timeout");
+			}
+
+			try {
+				if (RuntimeVariables.replace("document.txt")
+										.equals(selenium.getValue(
+								"//div[4]/div/span/span/span/input"))) {
+					break;
+				}
+			}
+			catch (Exception e) {
+			}
+
+			Thread.sleep(1000);
+		}
+
+		assertEquals("document.txt",
+			selenium.getValue("//div[4]/div/span/span/span/input"));
 		assertTrue(selenium.isPartialText(
 				"//div[@class='aui-fieldset-content ']/div[5]/span/span/label",
 				"File Upload"));

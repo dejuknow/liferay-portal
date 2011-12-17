@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.servlet.ServletResponseConstants;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.upload.UploadException;
@@ -44,32 +45,39 @@ import com.liferay.portal.struts.ActionConstants;
 import com.liferay.portal.struts.PortletAction;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
+import com.liferay.portal.util.PortletKeys;
 import com.liferay.portal.util.PrefsPropsUtil;
 import com.liferay.portal.util.WebKeys;
+import com.liferay.portlet.PortletPreferencesFactoryUtil;
 import com.liferay.portlet.asset.AssetCategoryException;
 import com.liferay.portlet.asset.AssetTagException;
 import com.liferay.portlet.assetpublisher.util.AssetPublisherUtil;
 import com.liferay.portlet.documentlibrary.DuplicateFileException;
 import com.liferay.portlet.documentlibrary.DuplicateFolderNameException;
 import com.liferay.portlet.documentlibrary.FileExtensionException;
+import com.liferay.portlet.documentlibrary.FileMimeTypeException;
 import com.liferay.portlet.documentlibrary.FileNameException;
 import com.liferay.portlet.documentlibrary.FileSizeException;
 import com.liferay.portlet.documentlibrary.NoSuchFileEntryException;
+import com.liferay.portlet.documentlibrary.NoSuchFileVersionException;
 import com.liferay.portlet.documentlibrary.NoSuchFolderException;
 import com.liferay.portlet.documentlibrary.SourceFileNameException;
 import com.liferay.portlet.documentlibrary.model.DLFileEntry;
 import com.liferay.portlet.documentlibrary.service.DLAppServiceUtil;
+import com.liferay.portlet.documentlibrary.util.DLUtil;
 
 import java.io.File;
 import java.io.InputStream;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletConfig;
 import javax.portlet.PortletContext;
+import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequestDispatcher;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
@@ -115,7 +123,7 @@ public class EditFileEntryAction extends PortletAction {
 			else if (cmd.equals(Constants.ADD) || cmd.equals(Constants.UPDATE)
 				|| cmd.equals(Constants.UPDATE_AND_CHECKIN)) {
 
-				updateFileEntry(actionRequest, actionResponse);
+				updateFileEntry(portletConfig, actionRequest, actionResponse);
 			}
 			else if (cmd.equals(Constants.ADD_MULTIPLE)) {
 				addMultipleFileEntries(actionRequest, actionResponse);
@@ -186,10 +194,19 @@ public class EditFileEntryAction extends PortletAction {
 			else if (e instanceof DuplicateFileException ||
 					 e instanceof DuplicateFolderNameException ||
 					 e instanceof FileExtensionException ||
+					 e instanceof FileMimeTypeException ||
 					 e instanceof FileNameException ||
 					 e instanceof FileSizeException ||
 					 e instanceof NoSuchFolderException ||
 					 e instanceof SourceFileNameException) {
+
+				if (!cmd.equals(Constants.ADD_MULTIPLE) &&
+					!cmd.equals(Constants.ADD_TEMP)) {
+
+					SessionErrors.add(actionRequest, e.getClass().getName());
+
+					return;
+				}
 
 				if (e instanceof DuplicateFileException) {
 					HttpServletResponse response =
@@ -244,6 +261,7 @@ public class EditFileEntryAction extends PortletAction {
 		}
 		catch (Exception e) {
 			if (e instanceof NoSuchFileEntryException ||
+				e instanceof NoSuchFileVersionException ||
 				e instanceof PrincipalException) {
 
 				SessionErrors.add(renderRequest, e.getClass().getName());
@@ -281,8 +299,7 @@ public class EditFileEntryAction extends PortletAction {
 		throws Exception {
 
 		List<String> validFileNames = new ArrayList<String>();
-		List<KeyValuePair> invalidFileNameKVPs =
-			new ArrayList<KeyValuePair>();
+		List<KeyValuePair> invalidFileNameKVPs = new ArrayList<KeyValuePair>();
 
 		String[] selectedFileNames = ParamUtil.getParameterValues(
 			actionRequest, "selectedFileName");
@@ -584,11 +601,15 @@ public class EditFileEntryAction extends PortletAction {
 	}
 
 	protected void updateFileEntry(
-			ActionRequest actionRequest, ActionResponse actionResponse)
+			PortletConfig portletConfig, ActionRequest actionRequest,
+			ActionResponse actionResponse)
 		throws Exception {
 
 		UploadPortletRequest uploadPortletRequest =
 			PortalUtil.getUploadPortletRequest(actionRequest);
+
+		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
+			WebKeys.THEME_DISPLAY);
 
 		String cmd = ParamUtil.getString(uploadPortletRequest, Constants.CMD);
 
@@ -607,14 +628,52 @@ public class EditFileEntryAction extends PortletAction {
 		boolean majorVersion = ParamUtil.getBoolean(
 			uploadPortletRequest, "majorVersion");
 
+		if (folderId > 0) {
+			Folder folder = DLAppServiceUtil.getFolder(folderId);
+
+			if (folder.getGroupId() != themeDisplay.getScopeGroupId()) {
+				throw new NoSuchFolderException();
+			}
+		}
+
 		InputStream inputStream = null;
 
 		try {
-			inputStream = uploadPortletRequest.getFileAsStream("file");
-
 			String contentType = uploadPortletRequest.getContentType("file");
 
 			long size = uploadPortletRequest.getSize("file");
+
+			if (cmd.equals(Constants.ADD) && (size == 0)) {
+				contentType = MimeTypesUtil.getContentType(title);
+			}
+
+			if (cmd.equals(Constants.ADD) || (size > 0)) {
+				String portletName = portletConfig.getPortletName();
+
+				if (portletName.equals(PortletKeys.MEDIA_GALLERY_DISPLAY)) {
+					String portletResource = ParamUtil.getString(
+						actionRequest, "portletResource");
+
+					PortletPreferences portletPreferences = null;
+
+					if (Validator.isNotNull(portletResource)) {
+						PortletPreferencesFactoryUtil.getPortletSetup(
+							actionRequest, portletResource);
+					}
+					else {
+						portletPreferences = actionRequest.getPreferences();
+					}
+
+					String[] mimeTypes = DLUtil.getMediaGalleryMimeTypes(
+						portletPreferences, actionRequest);
+
+					if (Arrays.binarySearch(mimeTypes, contentType) < 0) {
+						throw new FileMimeTypeException(contentType);
+					}
+				}
+			}
+
+			inputStream = uploadPortletRequest.getFileAsStream("file");
 
 			ServiceContext serviceContext = ServiceContextFactory.getInstance(
 				DLFileEntry.class.getName(), actionRequest);

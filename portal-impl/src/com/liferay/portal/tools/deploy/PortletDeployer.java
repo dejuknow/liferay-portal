@@ -54,8 +54,7 @@ public class PortletDeployer extends BaseDeployer {
 	public static final String JSF_STANDARD =
 		"javax.portlet.faces.GenericFacesPortlet";
 
-	public static final String JSF_SUN =
-		"com.sun.faces.portlet.FacesPortlet";
+	public static final String JSF_SUN = "com.sun.faces.portlet.FacesPortlet";
 
 	public static final String LIFERAY_RENDER_KIT_FACTORY =
 		"com.liferay.util.jsf.sun.faces.renderkit.LiferayRenderKitFactoryImpl";
@@ -222,7 +221,7 @@ public class PortletDeployer extends BaseDeployer {
 			sb.append(portletClass);
 			sb.append("</param-value>");
 			sb.append("</init-param>");
-			sb.append("<load-on-startup>0</load-on-startup>");
+			sb.append("<load-on-startup>1</load-on-startup>");
 			sb.append("</servlet>");
 
 			sb.append("<servlet-mapping>");

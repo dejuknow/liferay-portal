@@ -95,15 +95,6 @@ public class JournalArticleResourceUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static JournalArticleResource remove(
-		JournalArticleResource journalArticleResource)
-		throws SystemException {
-		return getPersistence().remove(journalArticleResource);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static JournalArticleResource update(

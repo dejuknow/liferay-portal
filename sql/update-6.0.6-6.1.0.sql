@@ -127,7 +127,8 @@ create table DDMStructure (
 	name STRING null,
 	description STRING null,
 	xsd TEXT null,
-	storageType VARCHAR(75) null
+	storageType VARCHAR(75) null,
+	type_ INTEGER
 );
 
 create table DDMStructureLink (
@@ -229,6 +230,7 @@ update DLFileShortcut set repositoryId = groupId;
 drop index IX_B413F1EC on DLFileVersion;
 drop index IX_94E784D2 on DLFileVersion;
 drop index IX_2F8FED9C on DLFileVersion;
+alter table DLFileVersion add modifiedDate DATE null;
 alter table DLFileVersion add repositoryId LONG;
 alter table DLFileVersion add fileEntryId LONG;
 alter table DLFileVersion add mimeType VARCHAR(75) null;
@@ -236,6 +238,7 @@ alter table DLFileVersion add fileEntryTypeId LONG;
 
 COMMIT_TRANSACTION;
 
+update DLFileVersion set modifiedDate = statusDate;
 update DLFileVersion set repositoryId = groupId;
 
 alter table DLFolder add repositoryId LONG;
@@ -254,10 +257,13 @@ create table DLSync (
 	createDate DATE null,
 	modifiedDate DATE null,
 	fileId LONG,
+	fileUuid VARCHAR(75) null,
 	repositoryId LONG,
 	parentFolderId LONG,
+	name VARCHAR(255) null,
 	event VARCHAR(75) null,
-	type_ VARCHAR(75) null
+	type_ VARCHAR(75) null,
+	version VARCHAR(75) null
 );
 
 alter table Group_ add site BOOLEAN;
@@ -286,7 +292,7 @@ alter table Layout add keywords STRING null;
 alter table Layout add robots STRING null;
 alter table Layout add layoutPrototypeUuid VARCHAR(75) null;
 alter table Layout add layoutPrototypeLinkEnabled BOOLEAN null;
-alter table Layout add templateLayoutUuid VARCHAR(75) null;
+alter table Layout add sourcePrototypeLayoutUuid VARCHAR(75) null;
 alter table Layout drop column layoutPrototypeId;
 alter table Layout drop column dlFolderId;
 
@@ -344,7 +350,18 @@ create table LayoutRevision (
 	statusDate DATE null
 );
 
+alter table LayoutSet add createDate DATE null;
+alter table LayoutSet add modifiedDate DATE null;
+alter table LayoutSet add layoutSetPrototypeUuid VARCHAR(75) null;
+alter table LayoutSet add layoutSetPrototypeLinkEnabled BOOLEAN null;
+alter table LayoutSet drop column layoutSetPrototypeId;
+
 drop index IX_5ABC2905 on LayoutSet;
+
+COMMIT_TRANSACTION;
+
+update LayoutSet set createDate = CURRENT_TIMESTAMP;
+update LayoutSet set modifiedDate = CURRENT_TIMESTAMP;
 
 create table LayoutSetBranch (
 	layoutSetBranchId LONG not null primary key,
@@ -360,7 +377,14 @@ create table LayoutSetBranch (
 	master BOOLEAN
 );
 
+alter table LayoutSetPrototype add createDate DATE null;
+alter table LayoutSetPrototype add modifiedDate DATE null;
 alter table LayoutSetPrototype add uuid_ VARCHAR(75) null;
+
+COMMIT_TRANSACTION;
+
+update LayoutSetPrototype set createDate = CURRENT_TIMESTAMP;
+update LayoutSetPrototype set modifiedDate = CURRENT_TIMESTAMP;
 
 alter table MBCategory add displayStyle VARCHAR(75) null;
 
@@ -467,9 +491,12 @@ create table PortalPreferences (
 );
 
 create table Repository (
+	uuid_ VARCHAR(75) null,
 	repositoryId LONG not null primary key,
 	groupId LONG,
 	companyId LONG,
+	userId LONG,
+	userName VARCHAR(75) null,
 	createDate DATE null,
 	modifiedDate DATE null,
 	classNameId LONG,
@@ -562,8 +589,6 @@ create table SocialActivitySetting (
 	value VARCHAR(1024) null
 );
 
-alter table SocialEquityLog add extraData VARCHAR(255) null;
-
 update Role_ set name = 'Site Administrator' where name = 'Community Administrator';
 update Role_ set name = 'Site Member' where name = 'Community Member';
 update Role_ set name = 'Site Owner' where name = 'Community Owner';
@@ -587,8 +612,6 @@ update User_ set status = 5 where active_ = FALSE;
 
 alter table User_ drop column active_;
 
-alter table UserGroup add publicLayoutSetPrototypeId LONG;
-alter table UserGroup add privateLayoutSetPrototypeId LONG;
 alter table UserGroup add addedByLDAPImport BOOLEAN;
 
 create table UserGroups_Teams (
@@ -608,8 +631,6 @@ create table UserNotificationEvent (
 	payload TEXT null,
 	archived BOOLEAN
 );
-
-alter table UserNotificationEvent add archived BOOLEAN;
 
 create table VirtualHost (
 	virtualHostId LONG not null primary key,

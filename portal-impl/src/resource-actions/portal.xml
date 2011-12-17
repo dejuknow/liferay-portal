@@ -33,6 +33,7 @@
 				<action-key>ADD_USER_GROUP</action-key>
 				<action-key>CONFIGURATION</action-key>
 				<action-key>EXPORT_USER</action-key>
+				<action-key>UNLINK_LAYOUT_SET_PROTOTYPE</action-key>
 				<action-key>VIEW_CONTROL_PANEL</action-key>
 			</supports>
 			<site-member-defaults />
@@ -294,6 +295,7 @@
 				<action-key>ADD_LAYOUT_SET_BRANCH</action-key>
 				<action-key>ASSIGN_MEMBERS</action-key>
 				<action-key>ASSIGN_USER_ROLES</action-key>
+				<action-key>CONFIGURE_PORTLETS</action-key>
 				<action-key>DELETE</action-key>
 				<action-key>EXPORT_IMPORT_LAYOUTS</action-key>
 				<action-key>EXPORT_IMPORT_PORTLET_INFO</action-key>
@@ -306,6 +308,7 @@
 				<action-key>PUBLISH_STAGING</action-key>
 				<action-key>PUBLISH_TO_REMOTE</action-key>
 				<action-key>UPDATE</action-key>
+				<action-key>VIEW</action-key>
 				<action-key>VIEW_MEMBERS</action-key>
 				<action-key>VIEW_STAGING</action-key>
 			</supports>
@@ -329,6 +332,7 @@
 				<action-key>PUBLISH_STAGING</action-key>
 				<action-key>PUBLISH_TO_REMOTE</action-key>
 				<action-key>UPDATE</action-key>
+				<action-key>VIEW</action-key>
 				<action-key>VIEW_MEMBERS</action-key>
 				<action-key>VIEW_STAGING</action-key>
 			</guest-unsupported>

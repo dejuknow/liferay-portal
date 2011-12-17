@@ -40,6 +40,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -54,12 +55,16 @@ public class LayoutSetLocalServiceImpl extends LayoutSetLocalServiceBaseImpl {
 
 		Group group = groupPersistence.findByPrimaryKey(groupId);
 
+		Date now = new Date();
+
 		long layoutSetId = counterLocalService.increment();
 
 		LayoutSet layoutSet = layoutSetPersistence.create(layoutSetId);
 
 		layoutSet.setGroupId(groupId);
 		layoutSet.setCompanyId(group.getCompanyId());
+		layoutSet.setCreateDate(now);
+		layoutSet.setModifiedDate(now);
 		layoutSet.setPrivateLayout(privateLayout);
 
 		if (group.isStagingGroup()) {
@@ -199,6 +204,20 @@ public class LayoutSetLocalServiceImpl extends LayoutSetLocalServiceBaseImpl {
 			layoutSetPrototypeUuid);
 	}
 
+	public void updateLayoutSetPrototypeLinkEnabled(
+			long groupId, boolean privateLayout,
+			boolean layoutSetPrototypeLinkEnabled)
+		throws PortalException, SystemException {
+
+		LayoutSet layoutSet = layoutSetPersistence.findByG_P(
+			groupId, privateLayout);
+
+		layoutSet.setLayoutSetPrototypeLinkEnabled(
+			layoutSetPrototypeLinkEnabled);
+
+		layoutSetPersistence.update(layoutSet, false);
+	}
+
 	public void updateLogo(
 			long groupId, boolean privateLayout, boolean logo, File file)
 		throws PortalException, SystemException {
@@ -232,6 +251,7 @@ public class LayoutSetLocalServiceImpl extends LayoutSetLocalServiceBaseImpl {
 		LayoutSet layoutSet = layoutSetPersistence.findByG_P(
 			groupId, privateLayout);
 
+		layoutSet.setModifiedDate(new Date());
 		layoutSet.setLogo(logo);
 
 		if (logo) {
@@ -262,8 +282,7 @@ public class LayoutSetLocalServiceImpl extends LayoutSetLocalServiceBaseImpl {
 
 		updateLookAndFeel(
 			groupId, false, themeId, colorSchemeId, css, wapTheme);
-		updateLookAndFeel(
-			groupId, true, themeId, colorSchemeId, css, wapTheme);
+		updateLookAndFeel(groupId, true, themeId, colorSchemeId, css, wapTheme);
 	}
 
 	public LayoutSet updateLookAndFeel(
@@ -273,6 +292,8 @@ public class LayoutSetLocalServiceImpl extends LayoutSetLocalServiceBaseImpl {
 
 		LayoutSet layoutSet = layoutSetPersistence.findByG_P(
 			groupId, privateLayout);
+
+		layoutSet.setModifiedDate(new Date());
 
 		if (Validator.isNull(themeId)) {
 			themeId = ThemeImpl.getDefaultRegularThemeId(
@@ -325,6 +346,7 @@ public class LayoutSetLocalServiceImpl extends LayoutSetLocalServiceBaseImpl {
 		LayoutSet layoutSet = layoutSetPersistence.findByG_P(
 			groupId, privateLayout);
 
+		layoutSet.setModifiedDate(new Date());
 		layoutSet.setPageCount(pageCount);
 
 		layoutSetPersistence.update(layoutSet, false);
@@ -339,6 +361,7 @@ public class LayoutSetLocalServiceImpl extends LayoutSetLocalServiceBaseImpl {
 		LayoutSet layoutSet = layoutSetPersistence.findByG_P(
 			groupId, privateLayout);
 
+		layoutSet.setModifiedDate(new Date());
 		layoutSet.setSettings(settings);
 
 		layoutSetPersistence.update(layoutSet, false);

@@ -94,14 +94,6 @@ public class UserNotificationEventUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static UserNotificationEvent remove(
-		UserNotificationEvent userNotificationEvent) throws SystemException {
-		return getPersistence().remove(userNotificationEvent);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static UserNotificationEvent update(

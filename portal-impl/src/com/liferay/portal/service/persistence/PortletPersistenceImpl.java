@@ -183,6 +183,23 @@ public class PortletPersistenceImpl extends BasePersistenceImpl<Portlet>
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 
+		clearUniqueFindersCache(portlet);
+	}
+
+	@Override
+	public void clearCache(List<Portlet> portlets) {
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+
+		for (Portlet portlet : portlets) {
+			EntityCacheUtil.removeResult(PortletModelImpl.ENTITY_CACHE_ENABLED,
+				PortletImpl.class, portlet.getPrimaryKey());
+
+			clearUniqueFindersCache(portlet);
+		}
+	}
+
+	protected void clearUniqueFindersCache(Portlet portlet) {
 		FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_C_P,
 			new Object[] {
 				Long.valueOf(portlet.getCompanyId()),
@@ -209,20 +226,6 @@ public class PortletPersistenceImpl extends BasePersistenceImpl<Portlet>
 	/**
 	 * Removes the portlet with the primary key from the database. Also notifies the appropriate model listeners.
 	 *
-	 * @param primaryKey the primary key of the portlet
-	 * @return the portlet that was removed
-	 * @throws com.liferay.portal.NoSuchModelException if a portlet with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public Portlet remove(Serializable primaryKey)
-		throws NoSuchModelException, SystemException {
-		return remove(((Long)primaryKey).longValue());
-	}
-
-	/**
-	 * Removes the portlet with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
 	 * @param id the primary key of the portlet
 	 * @return the portlet that was removed
 	 * @throws com.liferay.portal.NoSuchPortletException if a portlet with the primary key could not be found
@@ -230,24 +233,37 @@ public class PortletPersistenceImpl extends BasePersistenceImpl<Portlet>
 	 */
 	public Portlet remove(long id)
 		throws NoSuchPortletException, SystemException {
+		return remove(Long.valueOf(id));
+	}
+
+	/**
+	 * Removes the portlet with the primary key from the database. Also notifies the appropriate model listeners.
+	 *
+	 * @param primaryKey the primary key of the portlet
+	 * @return the portlet that was removed
+	 * @throws com.liferay.portal.NoSuchPortletException if a portlet with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public Portlet remove(Serializable primaryKey)
+		throws NoSuchPortletException, SystemException {
 		Session session = null;
 
 		try {
 			session = openSession();
 
-			Portlet portlet = (Portlet)session.get(PortletImpl.class,
-					Long.valueOf(id));
+			Portlet portlet = (Portlet)session.get(PortletImpl.class, primaryKey);
 
 			if (portlet == null) {
 				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + id);
+					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchPortletException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
-					id);
+					primaryKey);
 			}
 
-			return portletPersistence.remove(portlet);
+			return remove(portlet);
 		}
 		catch (NoSuchPortletException nsee) {
 			throw nsee;
@@ -258,18 +274,6 @@ public class PortletPersistenceImpl extends BasePersistenceImpl<Portlet>
 		finally {
 			closeSession(session);
 		}
-	}
-
-	/**
-	 * Removes the portlet from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param portlet the portlet
-	 * @return the portlet that was removed
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public Portlet remove(Portlet portlet) throws SystemException {
-		return super.remove(portlet);
 	}
 
 	@Override
@@ -290,20 +294,7 @@ public class PortletPersistenceImpl extends BasePersistenceImpl<Portlet>
 			closeSession(session);
 		}
 
-		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
-		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
-
-		PortletModelImpl portletModelImpl = (PortletModelImpl)portlet;
-
-		FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_C_P,
-			new Object[] {
-				Long.valueOf(portletModelImpl.getCompanyId()),
-				
-			portletModelImpl.getPortletId()
-			});
-
-		EntityCacheUtil.removeResult(PortletModelImpl.ENTITY_CACHE_ENABLED,
-			PortletImpl.class, portlet.getPrimaryKey());
+		clearCache(portlet);
 
 		return portlet;
 	}
@@ -1125,7 +1116,7 @@ public class PortletPersistenceImpl extends BasePersistenceImpl<Portlet>
 	 */
 	public void removeByCompanyId(long companyId) throws SystemException {
 		for (Portlet portlet : findByCompanyId(companyId)) {
-			portletPersistence.remove(portlet);
+			remove(portlet);
 		}
 	}
 
@@ -1140,7 +1131,7 @@ public class PortletPersistenceImpl extends BasePersistenceImpl<Portlet>
 		throws NoSuchPortletException, SystemException {
 		Portlet portlet = findByC_P(companyId, portletId);
 
-		portletPersistence.remove(portlet);
+		remove(portlet);
 	}
 
 	/**
@@ -1150,7 +1141,7 @@ public class PortletPersistenceImpl extends BasePersistenceImpl<Portlet>
 	 */
 	public void removeAll() throws SystemException {
 		for (Portlet portlet : findAll()) {
-			portletPersistence.remove(portlet);
+			remove(portlet);
 		}
 	}
 

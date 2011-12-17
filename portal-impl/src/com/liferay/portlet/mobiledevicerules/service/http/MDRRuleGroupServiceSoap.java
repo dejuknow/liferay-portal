@@ -49,8 +49,8 @@ import java.rmi.RemoteException;
  *
  * <p>
  * You can see a list of services at
- * http://localhost:8080/tunnel-web/secure/axis. Set the property
- * <b>tunnel.servlet.hosts.allowed</b> in portal.properties to configure
+ * http://localhost:8080/api/secure/axis. Set the property
+ * <b>axis.servlet.hosts.allowed</b> in portal.properties to configure
  * security.
  * </p>
  *
@@ -83,42 +83,10 @@ public class MDRRuleGroupServiceSoap {
 		}
 	}
 
-	public static com.liferay.portlet.mobiledevicerules.model.MDRRuleGroupSoap copyRuleGroup(
-		com.liferay.portlet.mobiledevicerules.model.MDRRuleGroupSoap ruleGroup,
-		long groupId, com.liferay.portal.service.ServiceContext serviceContext)
-		throws RemoteException {
-		try {
-			com.liferay.portlet.mobiledevicerules.model.MDRRuleGroup returnValue =
-				MDRRuleGroupServiceUtil.copyRuleGroup(com.liferay.portlet.mobiledevicerules.model.impl.MDRRuleGroupModelImpl.toModel(
-						ruleGroup), groupId, serviceContext);
-
-			return com.liferay.portlet.mobiledevicerules.model.MDRRuleGroupSoap.toSoapModel(returnValue);
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-
-			throw new RemoteException(e.getMessage());
-		}
-	}
-
 	public static void deleteRuleGroup(long ruleGroupId)
 		throws RemoteException {
 		try {
 			MDRRuleGroupServiceUtil.deleteRuleGroup(ruleGroupId);
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-
-			throw new RemoteException(e.getMessage());
-		}
-	}
-
-	public static void deleteRuleGroup(
-		com.liferay.portlet.mobiledevicerules.model.MDRRuleGroupSoap ruleGroup)
-		throws RemoteException {
-		try {
-			MDRRuleGroupServiceUtil.deleteRuleGroup(com.liferay.portlet.mobiledevicerules.model.impl.MDRRuleGroupModelImpl.toModel(
-					ruleGroup));
 		}
 		catch (Exception e) {
 			_log.error(e, e);

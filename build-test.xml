@@ -38,7 +38,7 @@
 				<property name="test.ant.script.plugin.hooks" value="audit-hook,default-site-templates-hook,default-web-content-hook,sevencogs-hook" />
 				<property name="test.ant.script.plugin.layouttpls" value="1-2-1-columns-layouttpl,1-3-1-columns-layouttpl,1-3-2-columns-layouttpl,2-1-2-columns-layouttpl,3-2-3-columns-layouttpl" />
 				<property name="test.ant.script.plugin.portlets" value="audit-portlet,chat-portlet,flash-portlet,google-adsense-portlet,google-maps-portlet,ip-geocoder-portlet,knowledge-base-portlet,mail-portlet,netvibes-widget-portlet,opensocial-portlet,social-coding-portlet,social-networking-portlet,twitter-portlet,weather-portlet,web-form-portlet,wsrp-portlet" />
-				<property name="test.ant.script.plugin.themes" value="sevencogs-mobile-theme,sevencogs-theme" />
+				<property name="test.ant.script.plugin.themes" value="sevencogs-theme" />
 				<property name="test.ant.script.plugin.webs" value="drools-web,jasperreports-web,kaleo-web" />
 			</then>
 			<elseif>
@@ -58,6 +58,16 @@
 			</then>
 			<else>
 				<property name="test.ant.script.file.database.minimal" value=" " />
+			</else>
+		</if>
+
+		<if>
+			<isset property="test.ant.script.evaluate.logs" />
+			<then>
+				<property name="test.ant.script.file.evaluate.logs" value="&lt;property name=&quot;test.evaluate.logs&quot; value=&quot;true&quot; /&gt;" />
+			</then>
+			<else>
+				<property name="test.ant.script.file.evaluate.logs" value=" " />
 			</else>
 		</if>
 
@@ -137,6 +147,16 @@
 	</target>
 
 	<target name="build-test-ant-script-db-upgrade">
+		<if>
+			<isset property="test.ant.script.evaluate.logs" />
+			<then>
+				<property name="test.ant.script.file.evaluate.logs" value="&lt;param name=&quot;test.evaluate.logs&quot; value=&quot;true&quot; /&gt;" />
+			</then>
+			<else>
+				<property name="test.ant.script.file.evaluate.logs" value=" " />
+			</else>
+		</if>
+
 		<for list="${test.ant.script.versions}" param="test.ant.script.version">
 			<sequential>
 				<if>
@@ -191,6 +211,16 @@
 	</target>
 
 	<target name="build-test-ant-script-db-upgrade-smoke">
+		<if>
+			<isset property="test.ant.script.evaluate.logs" />
+			<then>
+				<property name="test.ant.script.file.evaluate.logs" value="&lt;param name=&quot;test.evaluate.logs&quot; value=&quot;true&quot; /&gt;" />
+			</then>
+			<else>
+				<property name="test.ant.script.file.evaluate.logs" value=" " />
+			</else>
+		</if>
+
 		<for list="${test.ant.script.versions}" param="test.ant.script.version">
 			<sequential>
 				<if>
@@ -235,7 +265,7 @@
 	</target>
 
 	<target name="build-test-ant-scripts">
-		<property name="build-test-ant-scripts.version" value="0" />
+		<property name="build-test-ant-scripts.version" value="3" />
 
 		<if>
 			<available file="portal-web/test-ant-scripts/version" />
@@ -602,6 +632,12 @@
 			<param name="test.ant.script.versions" value="5.2.3,6.0.6,6.0.12" />
 		</antcall>
 
+		<antcall target="build-test-ant-script-db-upgrade-smoke">
+			<param name="test.ant.script.command" value="db-upgrade-smoke" />
+			<param name="test.ant.script.evaluate.logs" value="true" />
+			<param name="test.ant.script.versions" value="5.2.3,6.0.6,6.0.12,latest" />
+		</antcall>
+
 		<antcall target="build-test-ant-script-db-upgrade">
 			<param name="test.ant.script.command" value="db-upgrade-social" />
 			<param name="test.ant.script.plugin.portlets" value="social-networking-portlet" />
@@ -639,15 +675,22 @@
 			<param name="test.ant.script.versions" value="5.2.3,6.0.6,6.0.12" />
 		</antcall>
 
-		<antcall target="build-test-ant-script-db-upgrade-smoke">
-			<param name="test.ant.script.command" value="db-upgrade-smoke" />
-			<param name="test.ant.script.versions" value="5.2.3,6.0.6,6.0.12,latest" />
-		</antcall>
-
 		<antcall target="build-test-ant-script">
 			<param name="test.ant.script.command" value="kaleo-asset-publisher" />
 			<param name="test.ant.script.plugin.webs" value="kaleo-web" />
 			<param name="test.ant.script.suite" value="KaleoAssetPublisherTestSuite" />
+		</antcall>
+
+		<antcall target="build-test-ant-script">
+			<param name="test.ant.script.command" value="kaleo-blogs" />
+			<param name="test.ant.script.plugin.webs" value="kaleo-web" />
+			<param name="test.ant.script.suite" value="KaleoBlogsTestSuite" />
+		</antcall>
+
+		<antcall target="build-test-ant-script">
+			<param name="test.ant.script.command" value="kaleo-message-boards" />
+			<param name="test.ant.script.plugin.webs" value="kaleo-web" />
+			<param name="test.ant.script.suite" value="KaleoMessageBoardsTestSuite" />
 		</antcall>
 
 		<antcall target="build-test-ant-script">
@@ -663,6 +706,12 @@
 		</antcall>
 
 		<antcall target="build-test-ant-script">
+			<param name="test.ant.script.command" value="kaleo-page-comments" />
+			<param name="test.ant.script.plugin.webs" value="kaleo-web" />
+			<param name="test.ant.script.suite" value="KaleoPageCommentsTestSuite" />
+		</antcall>
+
+		<antcall target="build-test-ant-script">
 			<param name="test.ant.script.command" value="kaleo-web-content" />
 			<param name="test.ant.script.plugin.webs" value="kaleo-web" />
 			<param name="test.ant.script.suite" value="KaleoWebContentTestSuite" />
@@ -672,6 +721,12 @@
 			<param name="test.ant.script.command" value="kaleo-web-content-display" />
 			<param name="test.ant.script.plugin.webs" value="kaleo-web" />
 			<param name="test.ant.script.suite" value="KaleoWebContentDisplayTestSuite" />
+		</antcall>
+
+		<antcall target="build-test-ant-script">
+			<param name="test.ant.script.command" value="kaleo-wiki" />
+			<param name="test.ant.script.plugin.webs" value="kaleo-web" />
+			<param name="test.ant.script.suite" value="KaleoWikiTestSuite" />
 		</antcall>
 
 		<antcall target="build-test-ant-script">
@@ -958,19 +1013,19 @@
 		<antcall target="build-test-ant-script">
 			<param name="test.ant.script.command" value="plugins-sample-icefaces-jsf-1.1-myfaces-jsp" />
 			<param name="test.ant.script.plugin.portlets" value="sample-icefaces-jsf-1.1-myfaces-jsp-portlet" />
-			<param name="test.ant.script.suite" value="PluginsSampleIcefacesJSF11SunFaceletsTestSuite" />
+			<param name="test.ant.script.suite" value="PluginsSampleIcefacesJSF11SunMyfacesJSPTestSuite" />
 		</antcall>
 
 		<antcall target="build-test-ant-script">
 			<param name="test.ant.script.command" value="plugins-sample-icefaces-jsf-1.1-sun-facelets" />
 			<param name="test.ant.script.plugin.portlets" value="sample-icefaces-jsf-1.1-sun-facelets-portlet" />
-			<param name="test.ant.script.suite" value="PluginsSampleIcefacesJSF11SunJSPTestSuite" />
+			<param name="test.ant.script.suite" value="PluginsSampleIcefacesJSF11SunFaceletsTestSuite" />
 		</antcall>
 
 		<antcall target="build-test-ant-script">
 			<param name="test.ant.script.command" value="plugins-sample-icefaces-jsf-1.1-sun-jsp" />
 			<param name="test.ant.script.plugin.portlets" value="sample-icefaces-jsf-1.1-sun-jsp-portlet" />
-			<param name="test.ant.script.suite" value="PluginsSampleIcefacesJSF11SunMyfacesJSPTestSuite" />
+			<param name="test.ant.script.suite" value="PluginsSampleIcefacesJSF11SunJSPTestSuite" />
 		</antcall>
 
 		<antcall target="build-test-ant-script">
@@ -1186,6 +1241,7 @@
 		<antcall target="build-test-ant-script">
 			<param name="test.ant.script.command" value="plugins-test-misc" />
 			<param name="test.ant.script.plugin.portlets" value="test-misc-portlet" />
+			<param name="test.ant.script.properties" value="mime.types.content.disposition.inline=pdf" />
 			<param name="test.ant.script.suite" value="PluginsTestMiscTestSuite" />
 		</antcall>
 
@@ -1199,6 +1255,12 @@
 			<param name="test.ant.script.command" value="plugins-test-workflow" />
 			<param name="test.ant.script.plugin.portlets" value="test-workflow-portlet" />
 			<param name="test.ant.script.suite" value="PluginsTestWorkflowTestSuite" />
+		</antcall>
+
+		<antcall target="build-test-ant-script">
+			<param name="test.ant.script.command" value="plugins-today-in-christian-history" />
+			<param name="test.ant.script.plugin.portlets" value="tich-portlet" />
+			<param name="test.ant.script.suite" value="PluginsTodayinChristianHistoryTestSuite" />
 		</antcall>
 
 		<antcall target="build-test-ant-script">
@@ -1517,6 +1579,12 @@
 		</antcall>
 
 		<antcall target="build-test-ant-script">
+			<param name="test.ant.script.command" value="properties-layout-types" />
+			<param name="test.ant.script.properties" value="layout.types=portlet,panel,embedded,article,url,link_to_layout" />
+			<param name="test.ant.script.suite" value="PropertiesLayoutTypesTestSuite" />
+		</antcall>
+
+		<antcall target="build-test-ant-script">
 			<param name="test.ant.script.command" value="properties-mail-integration" />
 			<param name="test.ant.script.properties" value="pop.server.notifications.enabled=true$${line.separator}pop.server.notifications.interval=1$${line.separator}pop.server.subdomain=" />
 			<param name="test.ant.script.suite" value="PropertiesMailIntegrationTestSuite" />
@@ -1529,13 +1597,20 @@
 		</antcall>
 
 		<antcall target="build-test-ant-script">
+			<param name="test.ant.script.command" value="session-smoke" />
+			<param name="test.ant.script.suite" value="SessionSmokeTestSuite" />
+		</antcall>
+
+		<antcall target="build-test-ant-script">
 			<param name="test.ant.script.command" value="sevencogs-smoke" />
+			<param name="test.ant.script.evaluate.logs" value="true" />
 			<param name="test.ant.script.sevencogs" value="true" />
 			<param name="test.ant.script.suite" value="SevencogsSmokeTestSuite" />
 		</antcall>
 
 		<antcall target="build-test-ant-script">
 			<param name="test.ant.script.command" value="smoke-test" />
+			<param name="test.ant.script.evaluate.logs" value="true" />
 			<param name="test.ant.script.suite" value="SmokeTestSuite" />
 		</antcall>
 
@@ -1666,6 +1741,7 @@
 
 		<antcall target="build-test-ant-script">
 			<param name="test.ant.script.command" value="staging-community-blogs" />
+			<param name="test.ant.script.plugin.webs" value="kaleo-web" />
 			<param name="test.ant.script.suite" value="StagingCommunityBlogsTestSuite" />
 		</antcall>
 
@@ -1686,6 +1762,7 @@
 
 		<antcall target="build-test-ant-script">
 			<param name="test.ant.script.command" value="staging-organization-blogs" />
+			<param name="test.ant.script.plugin.webs" value="kaleo-web" />
 			<param name="test.ant.script.suite" value="StagingOrganizationBlogsTestSuite" />
 		</antcall>
 
@@ -1808,6 +1885,11 @@
 		</for>
 	</target>
 
+	<target name="clean-up-logs">
+		<delete file="log" />
+		<delete file="portal-web/test-ant-scripts/log" />
+	</target>
+
 	<target name="clean-up-vms">
 		<if>
 			<available file="${vm.drive}\${vm.host}\${vm.host}.vmdk.lck" />
@@ -1817,19 +1899,19 @@
 		</if>
 
 		<if>
-			<available file="${vm.drive}\${vm.host.cluster-node-2}\${vm.host.cluster-node-2}.vmdk.lck" />
+			<available file="${vm.drive}\${vm.cluster-node-2.host}\${vm.cluster-node-2.host}.vmdk.lck" />
 			<then>
 				<antcall target="stop-vm">
-					<param name="vm.host" value="${vm.host.cluster-node-2}" />
+					<param name="vm.host" value="${vm.cluster-node-2.host}" />
 				</antcall>
 			</then>
 		</if>
 
 		<if>
-			<available file="${vm.drive}\${vm.host.db}\${vm.host.db}.vmdk.lck" />
+			<available file="${vm.drive}\${vm.db.host}\${vm.db.host}.vmdk.lck" />
 			<then>
 				<antcall target="stop-vm">
-					<param name="vm.host" value="${vm.host.db}" />
+					<param name="vm.host" value="${vm.db.host}" />
 				</antcall>
 			</then>
 		</if>
@@ -1843,6 +1925,41 @@
 		</loadfile>
 
 		<echo file="portal-web/test-ant-scripts/${ant.script.file.name}">${template.content}</echo>
+	</target>
+
+	<target name="evaluate-logs">
+		<if>
+			<available file="portal-web/test-ant-scripts/log" />
+			<then>
+				<move file="portal-web/test-ant-scripts/log" todir="." />
+			</then>
+		</if>
+
+		<if>
+			<isset property="print.logs" />
+			<then>
+				<loadfile property="log.content" srcfile="log">
+					<filterchain>
+						<expandproperties />
+					</filterchain>
+				</loadfile>
+
+				<echo>Displaying Logs:</echo>
+				<echo></echo>
+				<echo>${log.content}</echo>
+			</then>
+		</if>
+
+		<if>
+			<isset property="test.evaluate.logs" />
+			<then>
+				<ant dir="portal-web" target="test-class" inheritAll="false">
+					<property name="class" value="EvaluateLogTestSuite" />
+				</ant>
+			</then>
+		</if>
+
+		<antcall target="clean-up-logs" />
 	</target>
 
 	<target name="execute-remote-command">
@@ -1859,6 +1976,34 @@
 		</exec>
 
 		<delete file="execute-remote-command.bat" />
+	</target>
+
+	<target name="install-vm-java">
+		<if>
+			<not>
+				<available file="${java.jdk.local.dir}${java.jdk.zip}" />
+			</not>
+			<then>
+				<delete dir="${java.jdk.local.dir}" failonerror="false" />
+
+				<copy file="${java.jdk.remote.dir}${java.jdk.zip}" tofile="${java.jdk.local.dir}${java.jdk.zip}" />
+			</then>
+		</if>
+
+		<exec executable="${pscp.executable}">
+			<arg line="-pw ${vm.password} ${java.jdk.local.dir}${java.jdk.zip} ${vm.username}@${vm.host}:/" />
+		</exec>
+
+		<echo file="execute-remote-command.bat">
+			if not exist C:\Java\jdk-1.6.0_23 ${unzip.executable} -oq C:\${java.jdk.zip} -d C:\Java
+			${setx.executable} /m JAVA_HOME C:\Java\jdk-1.6.0_23
+			${setx.executable} /m JAVA_OPTS "-Xmx1024m -XX:MaxPermSize=256m"
+			if not %PATH:~0,7%==C:\Java ${setx.executable} /m PATH "C:\Java\jdk-1.6.0_23\bin;%PATH%"
+		</echo>
+
+		<antcall target="execute-remote-command">
+			<param name="vm.host" value="${vm.host}" />
+		</antcall>
 	</target>
 
 	<target name="kill-java-process">
@@ -1958,6 +2103,8 @@ captcha.max.challenges=0
 browser.launcher.url=
 
 index.on.startup=true
+
+setup.wizard.enabled=false
 
 mail.session.jndi.name=
 
@@ -2067,7 +2214,13 @@ wiki.page.titles.remove.regexp=([/\\\\\\[\\]%&amp;?@]+)
 
 users.last.name.required=true
 
+portal.security.manager.strategy=liferay
+
+layout.types=portlet,panel,embedded,article,url,link_to_layout
+
 editor.wysiwyg.portal-web.docroot.html.portlet.message_boards.edit_message.bb_code.jsp=bbcode
+
+setup.wizard.enabled=false
 
 discussion.subscribe.by.default=false
 
@@ -2117,7 +2270,13 @@ wiki.page.titles.remove.regexp=([/\\\\\\[\\]%&amp;?@]+)
 
 users.last.name.required=true
 
+portal.security.manager.strategy=liferay
+
+layout.types=portlet,panel,embedded,article,url,link_to_layout
+
 editor.wysiwyg.portal-web.docroot.html.portlet.message_boards.edit_message.bb_code.jsp=bbcode
+
+setup.wizard.enabled=false
 
 discussion.subscribe.by.default=false
 
@@ -2128,6 +2287,7 @@ message.boards.subscribe.by.default=false</echo>
 				<or>
 					<equals arg1="${sql.version}" arg2="6.0.5" />
 					<equals arg1="${sql.version}" arg2="6.0.6" />
+					<equals arg1="${sql.version}" arg2="6.0.12" />
 				</or>
 				<then>
 					<echo file="portal-impl/src/portal-ext.properties" append="true">
@@ -2138,7 +2298,13 @@ message.boards.subscribe.by.default=false</echo>
 
 users.last.name.required=true
 
+portal.security.manager.strategy=liferay
+
+layout.types=portlet,panel,embedded,article,url,link_to_layout
+
 editor.wysiwyg.portal-web.docroot.html.portlet.message_boards.edit_message.bb_code.jsp=bbcode
+
+setup.wizard.enabled=false
 
 discussion.subscribe.by.default=false
 
@@ -2146,6 +2312,17 @@ message.boards.subscribe.by.default=false</echo>
 				</then>
 			</elseif>
 		</if>
+
+		<if>
+			<equals arg1="${sql.version}" arg2="6.0.12" />
+			<then>
+				<echo file="portal-impl/src/portal-ext.properties" append="true">
+
+upgrade.processes=\
+	com.liferay.portal.upgrade.UpgradeProcess_6_0_12_to_6_1_0</echo>
+			</then>
+		</if>
+
 		<if>
 			<or>
 				<equals arg1="${vm.vmdk.suffix}" arg2="websphere-6.1.0.27" />
@@ -2155,6 +2332,14 @@ message.boards.subscribe.by.default=false</echo>
 				<echo file="portal-impl/src/portal-ext.properties" append="true">
 
 auto.deploy.dest.dir=${resource.repositories.root}/websphere-deploy</echo>
+			</then>
+		</if>
+
+		<if>
+			<isset property="set.permission.algorithm.6" />
+			<then>
+				<replace file="portal-impl/src/portal-ext.properties" token="permissions.user.check.algorithm=5" value=""/>
+				<replace file="portal-impl/src/portal-ext.properties" token="permissions.view.dynamic.inheritance=false" value=""/>
 			</then>
 		</if>
 	</target>
@@ -2248,6 +2433,141 @@ svn --username ${svn.username} --password ${svn.password} update -r ${svn.info.r
 </Context>]]></echo>
 	</target>
 
+	<target name="prepare-selenium">
+		<if>
+			<not>
+				<isset property="selenium.executable.zip" />
+			</not>
+			<then>
+				<fail>
+.
+
+Please set "selenium.executable.zip" in test.properties to point to the Selenium
+executable ZIP file.
+				</fail>
+			</then>
+		</if>
+
+		<if>
+			<or>
+				<not>
+					<available file="${selenium.nanny.executable}" />
+				</not>
+				<uptodate
+					srcfile="${selenium.nanny.executable}"
+					targetfile="${selenium.executable.zip}"
+				/>
+			</or>
+			<then>
+				<delete>
+					<fileset
+						dir="${project.dir}/tools/selenium"
+						includes="*.exe"
+					/>
+				</delete>
+
+				<unzip
+					dest="${project.dir}/tools/selenium"
+					src="${selenium.executable.zip}"
+				/>
+
+				<touch file="${selenium.nanny.executable}" />
+			</then>
+		</if>
+
+		<if>
+			<isset property="selenium.output.dir" />
+			<then>
+				<replace
+					file="portal-web/test/test-portal-web.properties"
+					token="output.dir=H:\\selenium-output\\"
+					value="output.dir=${selenium.output.dir}"
+				/>
+			</then>
+			<else>
+				<property name="selenium.output.dir" value="H:\\selenium-output\\" />
+			</else>
+		</if>
+
+		<if>
+			<not>
+				<isset property="skip.delete-selenium-output" />
+			</not>
+			<then>
+				<delete dir="${selenium.output.dir}" />
+
+				<mkdir dir="${selenium.output.dir}" />
+			</then>
+		</if>
+
+		<if>
+			<isset property="test.browser" />
+			<then>
+				<replace
+					file="portal-web/test/test-portal-web.properties"
+					token="browser.type=*chrome"
+					value="browser.type=*${test.browser}"
+				/>
+			</then>
+			<else>
+				<property name="test.browser" value="chrome" />
+			</else>
+		</if>
+
+		<if>
+			<or>
+				<equals arg1="${test.browser}" arg2="chrome" />
+				<equals arg1="${test.browser}" arg2="firefox" />
+			</or>
+			<then>
+				<replace
+					file="portal-web/test/test-portal-web.properties"
+					token="#selenium.executable.dir="
+					value="selenium.executable.dir=${basedir.unix}/tools/selenium/"
+				/>
+				<replace
+					file="portal-web/test/test-portal-web.properties"
+					token="#selenium.download.file.executable="
+					value="selenium.download.file.executable=selenium_download_file_ff.exe"
+				/>
+				<replace
+					file="portal-web/test/test-portal-web.properties"
+					token="#selenium.set.browser.option.executable="
+					value="selenium.set.browser.option.executable=selenium_set_browser_option_ff.exe"
+				/>
+			</then>
+			<elseif>
+				<or>
+					<equals arg1="${test.browser}" arg2="iehta" />
+					<equals arg1="${test.browser}" arg2="iexplorer" />
+				</or>
+				<then>
+					<replace
+						file="portal-web/test/test-portal-web.properties"
+						token="#selenium.executable.dir="
+						value="selenium.executable.dir=${basedir.unix}/tools/selenium/"
+					/>
+					<replace
+						file="portal-web/test/test-portal-web.properties"
+						token="#selenium.download.file.executable="
+						value="selenium.download.file.executable=selenium_download_file_ie.exe"
+					/>
+				</then>
+			</elseif>
+		</if>
+
+		<if>
+			<isset property="test.database.minimal" />
+			<then>
+				<replace
+					file="portal-web/test/test-portal-web.properties"
+					token="test.database.minimal=false"
+					value="test.database.minimal=true"
+				/>
+			</then>
+		</if>
+	</target>
+
 	<target name="prepare-sql-server">
 		<echo file="test.${user.name}.properties">db.type=sql-server</echo>
 
@@ -2328,7 +2648,7 @@ svn --username ${svn.username} --password ${svn.password} update -r ${svn.info.r
 			</not>
 			<then>
 				<exec executable="${pscp.executable}">
-					<arg line="-pw ${vm.password} hosts dist\liferay-portal-${lp.version}.war tunnel-web\tunnel-web.war ${vm.username}@${vm.host}:/" />
+					<arg line="-pw ${vm.password} hosts dist\liferay-portal-${lp.version}.war ${vm.username}@${vm.host}:/" />
 				</exec>
 
 				<delete file="hosts" />
@@ -2851,134 +3171,12 @@ file.
 	</target>
 
 	<target name="run-simple-server">
-		<if>
-			<not>
-				<isset property="selenium.executable.zip" />
-			</not>
-			<then>
-				<fail>
-.
-
-Please set "selenium.executable.zip" in test.properties to point to the Selenium
-executable ZIP file.
-				</fail>
-			</then>
-		</if>
-
-		<if>
-			<or>
-				<not>
-					<available file="${selenium.nanny.executable}" />
-				</not>
-				<uptodate
-					srcfile="${selenium.nanny.executable}"
-					targetfile="${selenium.executable.zip}"
-				/>
-			</or>
-			<then>
-				<delete>
-					<fileset
-						dir="${project.dir}/tools/selenium"
-						includes="*.exe"
-					/>
-				</delete>
-
-				<unzip
-					dest="${project.dir}/tools/selenium"
-					src="${selenium.executable.zip}"
-				/>
-
-				<touch file="${selenium.nanny.executable}" />
-			</then>
-		</if>
-
-		<if>
-			<isset property="selenium.output.dir" />
-			<then>
-				<replace
-					file="portal-web/test/test-portal-web.properties"
-					token="output.dir=H:\\selenium-output\\"
-					value="output.dir=${selenium.output.dir}"
-				/>
-			</then>
-			<else>
-				<property name="selenium.output.dir" value="H:\\selenium-output\\" />
-			</else>
-		</if>
-
-		<if>
-			<not>
-				<isset property="skip.delete-selenium-output" />
-			</not>
-			<then>
-				<delete dir="${selenium.output.dir}" />
-
-				<mkdir dir="${selenium.output.dir}" />
-			</then>
-		</if>
-
-		<if>
-			<isset property="test.browser" />
-			<then>
-				<replace
-					file="portal-web/test/test-portal-web.properties"
-					token="browser.type=*chrome"
-					value="browser.type=*${test.browser}"
-				/>
-			</then>
-			<else>
-				<property name="test.browser" value="chrome" />
-			</else>
-		</if>
-
-		<if>
-			<or>
-				<equals arg1="${test.browser}" arg2="chrome" />
-				<equals arg1="${test.browser}" arg2="firefox" />
-			</or>
-			<then>
-				<replace
-					file="portal-web/test/test-portal-web.properties"
-					token="#selenium.executable.dir="
-					value="selenium.executable.dir=${basedir.unix}/tools/selenium/"
-				/>
-				<replace
-					file="portal-web/test/test-portal-web.properties"
-					token="#selenium.download.file.executable="
-					value="selenium.download.file.executable=selenium_download_file_ff.exe"
-				/>
-				<replace
-					file="portal-web/test/test-portal-web.properties"
-					token="#selenium.set.browser.option.executable="
-					value="selenium.set.browser.option.executable=selenium_set_browser_option_ff.exe"
-				/>
-			</then>
-			<elseif>
-				<or>
-					<equals arg1="${test.browser}" arg2="iehta" />
-					<equals arg1="${test.browser}" arg2="iexplorer" />
-				</or>
-				<then>
-					<replace
-						file="portal-web/test/test-portal-web.properties"
-						token="#selenium.executable.dir="
-						value="selenium.executable.dir=${basedir.unix}/tools/selenium/"
-					/>
-					<replace
-						file="portal-web/test/test-portal-web.properties"
-						token="#selenium.download.file.executable="
-						value="selenium.download.file.executable=selenium_download_file_ie.exe"
-					/>
-				</then>
-			</elseif>
-		</if>
-
 		<antcall target="rebuild-database" inheritAll="false" />
 
 		<delete includeemptydirs="true" failonerror="false">
 			<fileset
 				dir="${simple.server.deploy.dir}"
-				excludes=",*.dodeploy,*.rar,*.sar/**,*.xml,.autodeploystatus/**,liferay-portal.war/**,security/**,ROOT/**,ROOT.war/**,tunnel-web/**,tunnel-web.war/**"
+				excludes=",*.dodeploy,*.rar,*.sar/**,*.xml,.autodeploystatus/**,liferay-portal.war/**,security/**,root/**,ROOT/**,ROOT.war/**,tunnel-web/**,tunnel-web.war/**"
 			/>
 		</delete>
 
@@ -3088,6 +3286,8 @@ executable ZIP file.
 			</then>
 		</if>
 
+		<antcall target="prepare-selenium" />
+
 		<if>
 			<or>
 				<equals arg1="${test.browser}" arg2="iehta" />
@@ -3111,6 +3311,7 @@ executable ZIP file.
 				<if>
 					<or>
 						<contains string="${simple.server.dir}" substring="glassfish" />
+						<contains string="${simple.server.dir}" substring="jonas" />
 						<isset property="hook.plugins.includes" />
 						<isset property="portlet.plugins.includes" />
 						<isset property="theme.plugins.includes" />

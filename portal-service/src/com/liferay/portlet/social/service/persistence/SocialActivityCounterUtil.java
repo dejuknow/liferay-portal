@@ -95,14 +95,6 @@ public class SocialActivityCounterUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static SocialActivityCounter remove(
-		SocialActivityCounter socialActivityCounter) throws SystemException {
-		return getPersistence().remove(socialActivityCounter);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static SocialActivityCounter update(

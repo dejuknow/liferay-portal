@@ -95,8 +95,7 @@ public class IndexAccessorImpl implements IndexAccessor {
 			_indexWriter.close();
 		}
 		catch (Exception e) {
-			_log.error(
-				"Closing Lucene writer failed for " + _companyId, e);
+			_log.error("Closing Lucene writer failed for " + _companyId, e);
 		}
 	}
 
@@ -140,7 +139,7 @@ public class IndexAccessorImpl implements IndexAccessor {
 	}
 
 	public long getLastGeneration() {
-		if (_countDownLatch.getCount() >  0) {
+		if (_countDownLatch.getCount() > 0) {
 			return DEFAULT_LAST_GENERATION;
 		}
 

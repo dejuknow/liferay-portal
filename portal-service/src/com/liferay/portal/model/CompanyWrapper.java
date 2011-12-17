@@ -376,6 +376,12 @@ public class CompanyWrapper implements Company, ModelWrapper<Company> {
 		return _company.getName();
 	}
 
+	public java.lang.String getPortalURL(long groupId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _company.getPortalURL(groupId);
+	}
+
 	public java.lang.String getShardName()
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException {

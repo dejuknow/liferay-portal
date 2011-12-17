@@ -16,6 +16,7 @@ package com.liferay.portlet.dynamicdatamapping.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
@@ -30,34 +31,41 @@ import java.util.Map;
  * @author Brian Wing Shun Chan
  * @author Bruno Basto
  */
-public class DDMStructureServiceImpl
-	extends DDMStructureServiceBaseImpl {
+public class DDMStructureServiceImpl extends DDMStructureServiceBaseImpl {
 
 	public DDMStructure addStructure(
 			long groupId, long classNameId, String structureKey,
 			Map<Locale, String> nameMap, Map<Locale, String> descriptionMap,
-			String xsd, String storageType, ServiceContext serviceContext)
+			String xsd, String storageType, int type,
+			ServiceContext serviceContext)
 		throws PortalException, SystemException {
+
+		String ddmResource = GetterUtil.getString(
+			serviceContext.getAttribute("ddmResource"));
 
 		DDMPermission.check(
 			getPermissionChecker(), serviceContext.getScopeGroupId(),
-			ActionKeys.ADD_STRUCTURE);
+			ddmResource, ActionKeys.ADD_STRUCTURE);
 
 		return ddmStructureLocalService.addStructure(
 			getUserId(), groupId, classNameId, structureKey, nameMap,
-			descriptionMap, xsd, storageType, serviceContext);
+			descriptionMap, xsd, storageType, type, serviceContext);
 	}
 
 	public DDMStructure copyStructure(
-			long structureId, ServiceContext serviceContext)
+			long structureId, Map<Locale, String> nameMap,
+			Map<Locale, String> descriptionMap, ServiceContext serviceContext)
 		throws PortalException, SystemException {
+
+		String ddmResource = GetterUtil.getString(
+			serviceContext.getAttribute("ddmResource"));
 
 		DDMPermission.check(
 			getPermissionChecker(), serviceContext.getScopeGroupId(),
-			ActionKeys.ADD_STRUCTURE);
+			ddmResource, ActionKeys.ADD_STRUCTURE);
 
 		return ddmStructureLocalService.copyStructure(
-			getUserId(), structureId, serviceContext);
+			getUserId(), structureId, nameMap, descriptionMap, serviceContext);
 	}
 
 	public void deleteStructure(long structureId)

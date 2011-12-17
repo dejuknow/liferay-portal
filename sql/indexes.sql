@@ -54,6 +54,7 @@ create index IX_12851A89 on AssetLink (entryId2);
 create index IX_91F132C on AssetLink (entryId2, type_);
 
 create index IX_7C9E46BA on AssetTag (groupId);
+create index IX_D63322F9 on AssetTag (groupId, name);
 
 create index IX_DFF1F063 on AssetTagProperty (companyId);
 create index IX_13805BF7 on AssetTagProperty (companyId, key_);
@@ -354,7 +355,7 @@ create index IX_705F5AA3 on Layout (groupId, privateLayout);
 create unique index IX_BC2C4231 on Layout (groupId, privateLayout, friendlyURL);
 create unique index IX_7162C27C on Layout (groupId, privateLayout, layoutId);
 create index IX_6DE88B06 on Layout (groupId, privateLayout, parentLayoutId);
-create index IX_D18D85F6 on Layout (groupId, privateLayout, templateLayoutUuid);
+create index IX_8CE8C0D9 on Layout (groupId, privateLayout, sourcePrototypeLayoutUuid);
 create index IX_1A1B61D2 on Layout (groupId, privateLayout, type_);
 create index IX_23922F7D on Layout (iconImageId);
 create index IX_D0822724 on Layout (uuid_);
@@ -394,6 +395,7 @@ create index IX_C5D69B24 on LayoutSetPrototype (uuid_);
 create index IX_2932DD37 on ListType (type_);
 
 create index IX_228562AD on Lock_ (className, key_);
+create unique index IX_DD635956 on Lock_ (className, key_, owner);
 create index IX_E3F1286B on Lock_ (expirationDate);
 create index IX_13C5CD3A on Lock_ (uuid_);
 
@@ -559,6 +561,8 @@ create index IX_11FB3E42 on Region (countryId, active_);
 create index IX_8BD6BCA7 on Release_ (servletContextName);
 
 create index IX_5253B1FA on Repository (groupId);
+create index IX_74C17B04 on Repository (uuid_);
+create unique index IX_11641E26 on Repository (uuid_, groupId);
 
 create index IX_B7034B27 on RepositoryEntry (repositoryId);
 create unique index IX_9BDCF489 on RepositoryEntry (repositoryId, mappedId);
@@ -676,6 +680,7 @@ create index IX_1F00C374 on SocialActivity (mirrorActivityId, classNameId, class
 create index IX_121CA3CB on SocialActivity (receiverUserId);
 create index IX_3504B8BC on SocialActivity (userId);
 
+create index IX_E14B1F1 on SocialActivityAchievement (groupId);
 create index IX_83E16F2F on SocialActivityAchievement (groupId, firstInGroup);
 create index IX_8F6408F0 on SocialActivityAchievement (groupId, name);
 create index IX_C8FD892B on SocialActivityAchievement (groupId, userId);
@@ -693,27 +698,6 @@ create unique index IX_F1C1A617 on SocialActivityLimit (groupId, userId, classNa
 create index IX_384788CD on SocialActivitySetting (groupId, activityType);
 create index IX_1E9CF33B on SocialActivitySetting (groupId, classNameId, activityType);
 create index IX_D984AABA on SocialActivitySetting (groupId, classNameId, activityType, name);
-
-create unique index IX_22F6B5CB on SocialEquityAssetEntry (assetEntryId);
-
-create unique index IX_E4F84168 on SocialEquityGroupSetting (groupId, classNameId, type_);
-
-create index IX_AC18D8F8 on SocialEquityLog (assetEntryId, actionId, actionDate, active_, type_, extraData);
-create index IX_541BDA0F on SocialEquityLog (assetEntryId, actionId, active_, extraData);
-create index IX_E8DA181D on SocialEquityLog (assetEntryId, type_, active_);
-create index IX_3C8A04B2 on SocialEquityLog (userId);
-create index IX_18F55CAF on SocialEquityLog (userId, actionId, actionDate, active_, type_, extraData);
-create unique index IX_A0FA597E on SocialEquityLog (userId, assetEntryId, actionId, actionDate, active_, type_, extraData);
-create index IX_DAE54B49 on SocialEquityLog (userId, assetEntryId, actionId, active_, extraData);
-
-create index IX_F3AAD60D on SocialEquitySetting (groupId, classNameId, actionId);
-create unique index IX_903C1B28 on SocialEquitySetting (groupId, classNameId, actionId, type_);
-
-create index IX_6B42B3E7 on SocialEquityUser (groupId);
-create index IX_945E27C7 on SocialEquityUser (groupId, rank);
-create unique index IX_D65D3521 on SocialEquityUser (groupId, userId);
-create index IX_166A8F03 on SocialEquityUser (rank);
-create index IX_6ECBD5D on SocialEquityUser (userId);
 
 create index IX_61171E99 on SocialRelation (companyId);
 create index IX_95135D1C on SocialRelation (companyId, type_);

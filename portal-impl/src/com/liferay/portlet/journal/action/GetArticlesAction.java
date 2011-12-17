@@ -184,12 +184,12 @@ public class GetArticlesAction extends Action {
 			Document articleDoc = SAXReaderUtil.read(
 				article.getContentByLocale(languageId));
 
-			resultEl.content().add(
-				articleDoc.getRootElement().createCopy());
+			resultEl.content().add(articleDoc.getRootElement().createCopy());
 
 			resultEl = resultEl.element("root");
 
-			JournalUtil.addAllReservedEls(resultEl, tokens, article);
+			JournalUtil.addAllReservedEls(
+				resultEl, tokens, article, languageId);
 		}
 
 		return DDMXMLUtil.formatXML(resultsDoc).getBytes(StringPool.UTF8);

@@ -210,8 +210,7 @@ public class PermissionLocalServiceImpl extends PermissionLocalServiceBaseImpl {
 	 * @param  userId the primary key of the user
 	 * @param  actionIds the primary keys of the actions
 	 * @param  resourceId the primary key of the resource
-	 * @throws PortalException if a user with the primary key could not be
-	 *         found
+	 * @throws PortalException if a user with the primary key could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public void addUserPermissions(
@@ -395,6 +394,12 @@ public class PermissionLocalServiceImpl extends PermissionLocalServiceBaseImpl {
 		throws SystemException {
 
 		return rolePersistence.getPermissions(roleId);
+	}
+
+	public List<Permission> getRolePermissions(long roleId, int[] scopes)
+		throws SystemException {
+
+		return permissionFinder.findByR_S(roleId, scopes);
 	}
 
 	/**
@@ -730,8 +735,8 @@ public class PermissionLocalServiceImpl extends PermissionLocalServiceBaseImpl {
 	 *
 	 * @param  name the resource name
 	 * @param  roleName the role name. Supported role names include {@link
-	 *         com.liferay.portal.model.RoleConstants#ORGANIZATION_USER},
-	 *         {@link com.liferay.portal.model.RoleConstants#OWNER}, and {@link
+	 *         com.liferay.portal.model.RoleConstants#ORGANIZATION_USER}, {@link
+	 *         com.liferay.portal.model.RoleConstants#OWNER}, and {@link
 	 *         com.liferay.portal.model.RoleConstants#SITE_MEMBER}.
 	 * @param  actionId the action's ID
 	 * @throws PortalException if a matching role could not be found or if a
@@ -838,8 +843,8 @@ public class PermissionLocalServiceImpl extends PermissionLocalServiceBaseImpl {
 	 *         permissions
 	 * @param  actionIds the primary keys of the actions
 	 * @param  resourceId the primary key of the resource
-	 * @throws PortalException if an organization with the primary key could
-	 *         not be found
+	 * @throws PortalException if an organization with the primary key could not
+	 *         be found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public void setOrgGroupPermissions(
@@ -946,9 +951,9 @@ public class PermissionLocalServiceImpl extends PermissionLocalServiceBaseImpl {
 	}
 
 	/**
-	 * Sets the role's permissions to perform the actions on the named
-	 * resource, replacing the role's existing permission for each of these
-	 * actions on the resource.
+	 * Sets the role's permissions to perform the actions on the named resource,
+	 * replacing the role's existing permission for each of these actions on the
+	 * resource.
 	 *
 	 * @param  roleId the primary key of the role
 	 * @param  companyId the primary key of the company
@@ -978,8 +983,7 @@ public class PermissionLocalServiceImpl extends PermissionLocalServiceBaseImpl {
 	 * @param  roleId the primary key of the role
 	 * @param  actionIds the primary keys of the actions
 	 * @param  resourceId the primary key of the resource
-	 * @throws PortalException if a role with the primary key could not be
-	 *         found
+	 * @throws PortalException if a role with the primary key could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public void setRolePermissions(
@@ -1090,8 +1094,7 @@ public class PermissionLocalServiceImpl extends PermissionLocalServiceBaseImpl {
 	 * @param  userId the primary key of the user
 	 * @param  actionIds the primary keys of the actions
 	 * @param  resourceId the primary key of the resource
-	 * @throws PortalException if a user with the primary key could not be
-	 *         found
+	 * @throws PortalException if a user with the primary key could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public void setUserPermissions(
@@ -1151,8 +1154,7 @@ public class PermissionLocalServiceImpl extends PermissionLocalServiceBaseImpl {
 		throws SystemException {
 
 		ResourceCode resourceCode =
-			resourceCodeLocalService.getResourceCode(
-				companyId, name, scope);
+			resourceCodeLocalService.getResourceCode(companyId, name, scope);
 
 		Resource resource = resourcePersistence.fetchByC_P(
 			resourceCode.getCodeId(), primKey);
@@ -1313,8 +1315,7 @@ public class PermissionLocalServiceImpl extends PermissionLocalServiceBaseImpl {
 
 		addRolePermissions(RoleConstants.OWNER, permission);
 
-		SearchEngineUtil.updatePermissionFields(
-			resource.getResourceId());
+		SearchEngineUtil.updatePermissionFields(resource.getResourceId());
 	}
 
 	protected boolean hasUserPermissions_1(

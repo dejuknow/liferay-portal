@@ -263,8 +263,7 @@ public class JournalFeedLocalServiceImpl
 	public int searchCount(long companyId, long groupId, String keywords)
 		throws SystemException {
 
-		return journalFeedFinder.countByKeywords(
-			companyId, groupId, keywords);
+		return journalFeedFinder.countByKeywords(companyId, groupId, keywords);
 	}
 
 	public int searchCount(
@@ -340,12 +339,12 @@ public class JournalFeedLocalServiceImpl
 				JournalStructure structure =
 					journalStructurePersistence.findByG_S(groupId, structureId);
 
-				Document doc = SAXReaderUtil.read(structure.getXsd());
+				Document document = SAXReaderUtil.read(structure.getXsd());
 
-				XPath xpathSelector = SAXReaderUtil.createXPath(
+				XPath xPathSelector = SAXReaderUtil.createXPath(
 					"//dynamic-element[@name='"+ contentField + "']");
 
-				Node node = xpathSelector.selectSingleNode(doc);
+				Node node = xPathSelector.selectSingleNode(document);
 
 				if (node != null) {
 					return true;

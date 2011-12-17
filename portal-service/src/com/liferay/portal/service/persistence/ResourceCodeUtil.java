@@ -94,14 +94,6 @@ public class ResourceCodeUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static ResourceCode remove(ResourceCode resourceCode)
-		throws SystemException {
-		return getPersistence().remove(resourceCode);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static ResourceCode update(ResourceCode resourceCode, boolean merge)

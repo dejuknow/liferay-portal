@@ -72,6 +72,14 @@ public class DLAppHelperLocalServiceUtil {
 		getService().addFolder(folder, serviceContext);
 	}
 
+	public static void checkAssetEntry(long userId,
+		com.liferay.portal.kernel.repository.model.FileEntry fileEntry,
+		com.liferay.portal.kernel.repository.model.FileVersion fileVersion)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		getService().checkAssetEntry(userId, fileEntry, fileVersion);
+	}
+
 	public static void deleteFileEntry(
 		com.liferay.portal.kernel.repository.model.FileEntry fileEntry)
 		throws com.liferay.portal.kernel.exception.PortalException,
@@ -89,8 +97,7 @@ public class DLAppHelperLocalServiceUtil {
 	public static void getFileAsStream(long userId,
 		com.liferay.portal.kernel.repository.model.FileEntry fileEntry,
 		boolean incrementCounter)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getService().getFileAsStream(userId, fileEntry, incrementCounter);
 	}
 
@@ -107,6 +114,20 @@ public class DLAppHelperLocalServiceUtil {
 
 	public static java.util.List<com.liferay.portal.kernel.repository.model.FileEntry> getNoAssetFileEntries() {
 		return getService().getNoAssetFileEntries();
+	}
+
+	public static void moveFileEntry(
+		com.liferay.portal.kernel.repository.model.FileEntry fileEntry)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		getService().moveFileEntry(fileEntry);
+	}
+
+	public static void moveFolder(
+		com.liferay.portal.kernel.repository.model.Folder folder)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		getService().moveFolder(folder);
 	}
 
 	public static com.liferay.portlet.asset.model.AssetEntry updateAsset(
@@ -131,6 +152,16 @@ public class DLAppHelperLocalServiceUtil {
 		return getService()
 				   .updateAsset(userId, fileEntry, fileVersion,
 			assetCategoryIds, assetTagNames, assetLinkEntryIds);
+	}
+
+	public static void updateFileEntry(long userId,
+		com.liferay.portal.kernel.repository.model.FileEntry fileEntry,
+		com.liferay.portal.kernel.repository.model.FileVersion fileVersion,
+		long assetClassPk)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		getService()
+			.updateFileEntry(userId, fileEntry, fileVersion, assetClassPk);
 	}
 
 	public static void updateFileEntry(long userId,

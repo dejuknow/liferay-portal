@@ -153,12 +153,6 @@
 	<import class="com.liferay.portlet.social.model.SocialActivityInterpreter" />
 	<import class="com.liferay.portlet.social.model.SocialActivityLimit" />
 	<import class="com.liferay.portlet.social.model.SocialActivitySetting" />
-	<import class="com.liferay.portlet.social.model.SocialEquityAssetEntry" />
-	<import class="com.liferay.portlet.social.model.SocialEquityGroupSetting" />
-	<import class="com.liferay.portlet.social.model.SocialEquityHistory" />
-	<import class="com.liferay.portlet.social.model.SocialEquityLog" />
-	<import class="com.liferay.portlet.social.model.SocialEquitySetting" />
-	<import class="com.liferay.portlet.social.model.SocialEquityUser" />
 	<import class="com.liferay.portlet.social.model.SocialRelation" />
 	<import class="com.liferay.portlet.social.model.SocialRequest" />
 	<import class="com.liferay.portlet.social.model.SocialRequestInterpreter" />
@@ -386,7 +380,7 @@
 		<property name="priority" type="com.liferay.portal.dao.orm.hibernate.IntegerType" />
 		<property name="layoutPrototypeUuid" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="layoutPrototypeLinkEnabled" type="com.liferay.portal.dao.orm.hibernate.BooleanType" />
-		<property name="templateLayoutUuid" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="sourcePrototypeLayoutUuid" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 	</class>
 	<class name="com.liferay.portal.model.impl.LayoutBranchImpl" table="LayoutBranch">
 		<cache usage="read-write" />
@@ -458,6 +452,8 @@
 		</id>
 		<property name="groupId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
 		<property name="companyId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="createDate" type="org.hibernate.type.TimestampType" />
+		<property name="modifiedDate" type="org.hibernate.type.TimestampType" />
 		<property name="privateLayout" type="com.liferay.portal.dao.orm.hibernate.BooleanType" />
 		<property name="logo" type="com.liferay.portal.dao.orm.hibernate.BooleanType" />
 		<property name="logoId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
@@ -494,6 +490,8 @@
 		</id>
 		<property name="uuid" type="com.liferay.portal.dao.orm.hibernate.StringType" column="uuid_" />
 		<property name="companyId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="createDate" type="org.hibernate.type.TimestampType" />
+		<property name="modifiedDate" type="org.hibernate.type.TimestampType" />
 		<property name="name" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="description" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="settings" type="com.liferay.portal.dao.orm.hibernate.StringType" column="settings_" />
@@ -757,8 +755,11 @@
 		<id name="repositoryId" type="long">
 			<generator class="assigned" />
 		</id>
+		<property name="uuid" type="com.liferay.portal.dao.orm.hibernate.StringType" column="uuid_" />
 		<property name="groupId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
 		<property name="companyId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="userId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="userName" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="createDate" type="org.hibernate.type.TimestampType" />
 		<property name="modifiedDate" type="org.hibernate.type.TimestampType" />
 		<property name="classNameId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
@@ -976,8 +977,6 @@
 		<property name="parentUserGroupId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
 		<property name="name" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="description" type="com.liferay.portal.dao.orm.hibernate.StringType" />
-		<property name="publicLayoutSetPrototypeId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
-		<property name="privateLayoutSetPrototypeId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
 		<property name="addedByLDAPImport" type="com.liferay.portal.dao.orm.hibernate.BooleanType" />
 	</class>
 	<class name="com.liferay.portal.model.impl.UserGroupGroupRoleImpl" table="UserGroupGroupRole">
@@ -1515,6 +1514,7 @@
 		<property name="userId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
 		<property name="userName" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="createDate" type="org.hibernate.type.TimestampType" />
+		<property name="modifiedDate" type="org.hibernate.type.TimestampType" />
 		<property name="repositoryId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
 		<property name="folderId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
 		<property name="fileEntryId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
@@ -1562,10 +1562,13 @@
 		<property name="createDate" type="org.hibernate.type.TimestampType" />
 		<property name="modifiedDate" type="org.hibernate.type.TimestampType" />
 		<property name="fileId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="fileUuid" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="repositoryId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
 		<property name="parentFolderId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="name" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="event" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="type" type="com.liferay.portal.dao.orm.hibernate.StringType" column="type_" />
+		<property name="version" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 	</class>
 	<class name="com.liferay.portlet.dynamicdatalists.model.impl.DDLRecordImpl" table="DDLRecord">
 		<cache usage="read-write" />
@@ -1669,6 +1672,7 @@
 		<property name="description" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="xsd" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="storageType" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="type" type="com.liferay.portal.dao.orm.hibernate.IntegerType" column="type_" />
 	</class>
 	<class name="com.liferay.portlet.dynamicdatamapping.model.impl.DDMStructureLinkImpl" table="DDMStructureLink">
 		<cache usage="read-write" />
@@ -2421,86 +2425,6 @@
 		<property name="activityType" type="com.liferay.portal.dao.orm.hibernate.IntegerType" />
 		<property name="name" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="value" type="com.liferay.portal.dao.orm.hibernate.StringType" />
-	</class>
-	<class name="com.liferay.portlet.social.model.impl.SocialEquityAssetEntryImpl" table="SocialEquityAssetEntry">
-		<cache usage="read-write" />
-		<id name="equityAssetEntryId" type="long">
-			<generator class="assigned" />
-		</id>
-		<property name="groupId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
-		<property name="companyId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
-		<property name="userId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
-		<property name="assetEntryId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
-		<property name="informationK" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
-		<property name="informationB" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
-	</class>
-	<class name="com.liferay.portlet.social.model.impl.SocialEquityGroupSettingImpl" table="SocialEquityGroupSetting">
-		<cache usage="read-write" />
-		<id name="equityGroupSettingId" type="long">
-			<generator class="assigned" />
-		</id>
-		<property name="groupId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
-		<property name="companyId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
-		<property name="classNameId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
-		<property name="type" type="com.liferay.portal.dao.orm.hibernate.IntegerType" column="type_" />
-		<property name="enabled" type="com.liferay.portal.dao.orm.hibernate.BooleanType" />
-	</class>
-	<class name="com.liferay.portlet.social.model.impl.SocialEquityHistoryImpl" table="SocialEquityHistory">
-		<cache usage="read-write" />
-		<id name="equityHistoryId" type="long">
-			<generator class="assigned" />
-		</id>
-		<property name="groupId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
-		<property name="companyId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
-		<property name="userId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
-		<property name="createDate" type="org.hibernate.type.TimestampType" />
-		<property name="personalEquity" type="com.liferay.portal.dao.orm.hibernate.IntegerType" />
-	</class>
-	<class name="com.liferay.portlet.social.model.impl.SocialEquityLogImpl" table="SocialEquityLog">
-		<cache usage="read-write" />
-		<id name="equityLogId" type="long">
-			<generator class="assigned" />
-		</id>
-		<property name="groupId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
-		<property name="companyId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
-		<property name="userId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
-		<property name="assetEntryId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
-		<property name="actionId" type="com.liferay.portal.dao.orm.hibernate.StringType" />
-		<property name="actionDate" type="com.liferay.portal.dao.orm.hibernate.IntegerType" />
-		<property name="active" type="com.liferay.portal.dao.orm.hibernate.BooleanType" column="active_" />
-		<property name="expiration" type="com.liferay.portal.dao.orm.hibernate.IntegerType" />
-		<property name="type" type="com.liferay.portal.dao.orm.hibernate.IntegerType" column="type_" />
-		<property name="value" type="com.liferay.portal.dao.orm.hibernate.IntegerType" />
-		<property name="extraData" type="com.liferay.portal.dao.orm.hibernate.StringType" />
-	</class>
-	<class name="com.liferay.portlet.social.model.impl.SocialEquitySettingImpl" table="SocialEquitySetting">
-		<cache usage="read-write" />
-		<id name="equitySettingId" type="long">
-			<generator class="assigned" />
-		</id>
-		<property name="groupId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
-		<property name="companyId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
-		<property name="classNameId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
-		<property name="actionId" type="com.liferay.portal.dao.orm.hibernate.StringType" />
-		<property name="dailyLimit" type="com.liferay.portal.dao.orm.hibernate.IntegerType" />
-		<property name="lifespan" type="com.liferay.portal.dao.orm.hibernate.IntegerType" />
-		<property name="type" type="com.liferay.portal.dao.orm.hibernate.IntegerType" column="type_" />
-		<property name="uniqueEntry" type="com.liferay.portal.dao.orm.hibernate.BooleanType" />
-		<property name="value" type="com.liferay.portal.dao.orm.hibernate.IntegerType" />
-	</class>
-	<class name="com.liferay.portlet.social.model.impl.SocialEquityUserImpl" table="SocialEquityUser">
-		<cache usage="read-write" />
-		<id name="equityUserId" type="long">
-			<generator class="assigned" />
-		</id>
-		<property name="groupId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
-		<property name="companyId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
-		<property name="userId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
-		<property name="contributionK" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
-		<property name="contributionB" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
-		<property name="participationK" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
-		<property name="participationB" type="com.liferay.portal.dao.orm.hibernate.DoubleType" />
-		<property name="rank" type="com.liferay.portal.dao.orm.hibernate.IntegerType" />
 	</class>
 	<class name="com.liferay.portlet.social.model.impl.SocialRelationImpl" table="SocialRelation">
 		<cache usage="read-write" />

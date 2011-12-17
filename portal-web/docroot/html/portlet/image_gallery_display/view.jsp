@@ -17,7 +17,7 @@
 <%@ include file="/html/portlet/image_gallery_display/init.jsp" %>
 
 <%
-String topLink = ParamUtil.getString(request, "topLink", "images-home");
+String topLink = ParamUtil.getString(request, "topLink", "home");
 
 Folder folder = (Folder)request.getAttribute(WebKeys.DOCUMENT_LIBRARY_FOLDER);
 
@@ -46,30 +46,27 @@ if (permissionChecker.isCompanyAdmin() || permissionChecker.isGroupAdmin(scopeGr
 	status = WorkflowConstants.STATUS_ANY;
 }
 
-int foldersCount = DLAppServiceUtil.getFoldersCount(repositoryId, folderId);
-int imagesCount = DLAppServiceUtil.getFileEntriesAndFileShortcutsCount(repositoryId, folderId, status);
+long assetCategoryId = ParamUtil.getLong(request, "categoryId");
+String assetTagName = ParamUtil.getString(request, "tag");
 
-long categoryId = ParamUtil.getLong(request, "categoryId");
-String tagName = ParamUtil.getString(request, "tag");
+String assetCategoryTitle = null;
+String assetVocabularyTitle = null;
 
-String categoryTitle = null;
-String vocabularyTitle = null;
-
-if (categoryId != 0) {
-	AssetCategory assetCategory = AssetCategoryLocalServiceUtil.getAssetCategory(categoryId);
+if (assetCategoryId != 0) {
+	AssetCategory assetCategory = AssetCategoryLocalServiceUtil.getAssetCategory(assetCategoryId);
 
 	assetCategory = assetCategory.toEscapedModel();
 
-	categoryTitle = assetCategory.getTitle(locale);
+	assetCategoryTitle = assetCategory.getTitle(locale);
 
 	AssetVocabulary assetVocabulary = AssetVocabularyLocalServiceUtil.getAssetVocabulary(assetCategory.getVocabularyId());
 
 	assetVocabulary = assetVocabulary.toEscapedModel();
 
-	vocabularyTitle = assetVocabulary.getTitle(locale);
+	assetVocabularyTitle = assetVocabulary.getTitle(locale);
 }
 
-boolean useAssetEntryQuery = (categoryId > 0) || Validator.isNotNull(tagName);
+boolean useAssetEntryQuery = (assetCategoryId > 0) || Validator.isNotNull(assetTagName);
 
 PortletURL portletURL = renderResponse.createRenderURL();
 
@@ -96,17 +93,26 @@ request.setAttribute("view.jsp-portletURL", portletURL);
 
 <c:choose>
 	<c:when test="<%= useAssetEntryQuery %>">
-		<c:if test="<%= Validator.isNotNull(categoryTitle) %>">
-			<h1 class="entry-title">
-				<%= LanguageUtil.format(pageContext, "images-with-x-x", new String[] {vocabularyTitle, categoryTitle}) %>
-			</h1>
-		</c:if>
+		<c:choose>
+			<c:when test="<%= Validator.isNotNull(assetCategoryTitle) && Validator.isNotNull(assetTagName) %>">
+				<h1 class="entry-title">
+					<liferay-ui:message arguments="<%= new String[] {assetVocabularyTitle, assetCategoryTitle, assetTagName} %>" key="images-with-x-x-and-tag-x" />
+				</h1>
+			</c:when>
+			<c:otherwise>
+				<c:if test="<%= Validator.isNotNull(assetCategoryTitle) %>">
+					<h1 class="entry-title">
+						<liferay-ui:message arguments="<%= new String[] {assetVocabularyTitle, assetCategoryTitle} %>" key="images-with-x-x" />
+					</h1>
+				</c:if>
 
-		<c:if test="<%= Validator.isNotNull(tagName) %>">
-			<h1 class="entry-title">
-				<%= LanguageUtil.format(pageContext, "images-with-tag-x", HtmlUtil.escape(tagName)) %>
-			</h1>
-		</c:if>
+				<c:if test="<%= Validator.isNotNull(assetTagName) %>">
+					<h1 class="entry-title">
+						<liferay-ui:message arguments="<%= assetTagName %>" key="images-with-tag-x" />
+					</h1>
+				</c:if>
+			</c:otherwise>
+		</c:choose>
 
 		<%
 		SearchContainer searchContainer = new SearchContainer(renderRequest, null, null, "cur2", SearchContainer.DEFAULT_DELTA, portletURL, null, null);
@@ -132,13 +138,13 @@ request.setAttribute("view.jsp-portletURL", portletURL);
 
 		<%
 		if (portletName.equals(PortletKeys.MEDIA_GALLERY_DISPLAY)) {
-			PortalUtil.addPageKeywords(tagName, request);
-			PortalUtil.addPageKeywords(categoryTitle, request);
+			PortalUtil.addPageKeywords(assetTagName, request);
+			PortalUtil.addPageKeywords(assetCategoryTitle, request);
 		}
 		%>
 
 	</c:when>
-	<c:when test='<%= topLink.equals("images-home") %>'>
+	<c:when test='<%= topLink.equals("home") %>'>
 		<aui:layout>
 			<c:if test="<%= folder != null %>">
 				<liferay-ui:header
@@ -146,6 +152,26 @@ request.setAttribute("view.jsp-portletURL", portletURL);
 					title="<%= folder.getName() %>"
 				/>
 			</c:if>
+
+			<%
+			SearchContainer searchContainer = new SearchContainer(renderRequest, null, null, "cur2", SearchContainer.DEFAULT_DELTA, portletURL, null, null);
+
+			String[] mediaGalleryMimeTypes = DLUtil.getMediaGalleryMimeTypes(preferences, renderRequest);
+
+			int foldersCount = DLAppServiceUtil.getFoldersCount(repositoryId, folderId, false);
+
+			int total = DLAppServiceUtil.getFoldersAndFileEntriesAndFileShortcutsCount(repositoryId, folderId, status, mediaGalleryMimeTypes, false);
+
+			int imagesCount = total - foldersCount;
+
+			searchContainer.setTotal(total);
+
+			List results = DLAppServiceUtil.getFoldersAndFileEntriesAndFileShortcuts(repositoryId, folderId, status, mediaGalleryMimeTypes, false, searchContainer.getStart(), searchContainer.getEnd(), searchContainer.getOrderByComparator());
+
+			searchContainer.setResults(results);
+
+			List scores = null;
+			%>
 
 			<aui:column columnWidth="<%= showFolderMenu ? 75 : 100 %>" cssClass="lfr-asset-column lfr-asset-column-details" first="<%= true %>">
 				<div id="<portlet:namespace />imageGalleryAssetInfo">
@@ -178,20 +204,6 @@ request.setAttribute("view.jsp-portletURL", portletURL);
 						</liferay-ui:custom-attributes-available>
 					</c:if>
 
-					<%
-					SearchContainer searchContainer = new SearchContainer(renderRequest, null, null, "cur2", SearchContainer.DEFAULT_DELTA, portletURL, null, null);
-
-					int total = DLAppServiceUtil.getFoldersAndFileEntriesAndFileShortcutsCount(repositoryId, folderId, status, mimeTypes, false);
-
-					searchContainer.setTotal(total);
-
-					List results = DLAppServiceUtil.getFoldersAndFileEntriesAndFileShortcuts(repositoryId, folderId, status, mimeTypes, false, searchContainer.getStart(), searchContainer.getEnd(), searchContainer.getOrderByComparator());
-
-					searchContainer.setResults(results);
-
-					List scores = null;
-					%>
-
 					<%@ include file="/html/portlet/image_gallery_display/view_images.jspf" %>
 
 				</div>
@@ -202,12 +214,12 @@ request.setAttribute("view.jsp-portletURL", portletURL);
 					<div class="lfr-asset-summary">
 						<liferay-ui:icon
 							cssClass="lfr-asset-avatar"
-							image='<%= "../file_system/large/" + (((foldersCount + imagesCount) > 0) ? "folder_full_image" : "folder_empty") %>'
-							message='<%= (folder != null) ? folder.getName() : LanguageUtil.get(pageContext, "images-home") %>'
+							image='<%= "../file_system/large/" + ((total > 0) ? "folder_full_image" : "folder_empty") %>'
+							message='<%= (folder != null) ? folder.getName() : LanguageUtil.get(pageContext, "home") %>'
 						/>
 
 						<div class="lfr-asset-name">
-							<h4><%= (folder != null) ? folder.getName() : LanguageUtil.get(pageContext, "images-home") %></h4>
+							<h4><%= (folder != null) ? folder.getName() : LanguageUtil.get(pageContext, "home") %></h4>
 						</div>
 					</div>
 
@@ -232,12 +244,12 @@ request.setAttribute("view.jsp-portletURL", portletURL);
 		%>
 
 	</c:when>
-	<c:when test='<%= topLink.equals("my-images") || topLink.equals("recent-images") %>'>
+	<c:when test='<%= topLink.equals("mine") || topLink.equals("recent") %>'>
 
 		<%
 		long groupImagesUserId = 0;
 
-		if (topLink.equals("my-images") && themeDisplay.isSignedIn()) {
+		if (topLink.equals("mine") && themeDisplay.isSignedIn()) {
 			groupImagesUserId = user.getUserId();
 		}
 

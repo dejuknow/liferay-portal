@@ -220,6 +220,25 @@ public class SCProductScreenshotPersistenceImpl extends BasePersistenceImpl<SCPr
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 
+		clearUniqueFindersCache(scProductScreenshot);
+	}
+
+	@Override
+	public void clearCache(List<SCProductScreenshot> scProductScreenshots) {
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+
+		for (SCProductScreenshot scProductScreenshot : scProductScreenshots) {
+			EntityCacheUtil.removeResult(SCProductScreenshotModelImpl.ENTITY_CACHE_ENABLED,
+				SCProductScreenshotImpl.class,
+				scProductScreenshot.getPrimaryKey());
+
+			clearUniqueFindersCache(scProductScreenshot);
+		}
+	}
+
+	protected void clearUniqueFindersCache(
+		SCProductScreenshot scProductScreenshot) {
 		FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_THUMBNAILID,
 			new Object[] { Long.valueOf(scProductScreenshot.getThumbnailId()) });
 
@@ -251,20 +270,6 @@ public class SCProductScreenshotPersistenceImpl extends BasePersistenceImpl<SCPr
 	/**
 	 * Removes the s c product screenshot with the primary key from the database. Also notifies the appropriate model listeners.
 	 *
-	 * @param primaryKey the primary key of the s c product screenshot
-	 * @return the s c product screenshot that was removed
-	 * @throws com.liferay.portal.NoSuchModelException if a s c product screenshot with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public SCProductScreenshot remove(Serializable primaryKey)
-		throws NoSuchModelException, SystemException {
-		return remove(((Long)primaryKey).longValue());
-	}
-
-	/**
-	 * Removes the s c product screenshot with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
 	 * @param productScreenshotId the primary key of the s c product screenshot
 	 * @return the s c product screenshot that was removed
 	 * @throws com.liferay.portlet.softwarecatalog.NoSuchProductScreenshotException if a s c product screenshot with the primary key could not be found
@@ -272,25 +277,38 @@ public class SCProductScreenshotPersistenceImpl extends BasePersistenceImpl<SCPr
 	 */
 	public SCProductScreenshot remove(long productScreenshotId)
 		throws NoSuchProductScreenshotException, SystemException {
+		return remove(Long.valueOf(productScreenshotId));
+	}
+
+	/**
+	 * Removes the s c product screenshot with the primary key from the database. Also notifies the appropriate model listeners.
+	 *
+	 * @param primaryKey the primary key of the s c product screenshot
+	 * @return the s c product screenshot that was removed
+	 * @throws com.liferay.portlet.softwarecatalog.NoSuchProductScreenshotException if a s c product screenshot with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public SCProductScreenshot remove(Serializable primaryKey)
+		throws NoSuchProductScreenshotException, SystemException {
 		Session session = null;
 
 		try {
 			session = openSession();
 
 			SCProductScreenshot scProductScreenshot = (SCProductScreenshot)session.get(SCProductScreenshotImpl.class,
-					Long.valueOf(productScreenshotId));
+					primaryKey);
 
 			if (scProductScreenshot == null) {
 				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
-						productScreenshotId);
+					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchProductScreenshotException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
-					productScreenshotId);
+					primaryKey);
 			}
 
-			return scProductScreenshotPersistence.remove(scProductScreenshot);
+			return remove(scProductScreenshot);
 		}
 		catch (NoSuchProductScreenshotException nsee) {
 			throw nsee;
@@ -301,19 +319,6 @@ public class SCProductScreenshotPersistenceImpl extends BasePersistenceImpl<SCPr
 		finally {
 			closeSession(session);
 		}
-	}
-
-	/**
-	 * Removes the s c product screenshot from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param scProductScreenshot the s c product screenshot
-	 * @return the s c product screenshot that was removed
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public SCProductScreenshot remove(SCProductScreenshot scProductScreenshot)
-		throws SystemException {
-		return super.remove(scProductScreenshot);
 	}
 
 	@Override
@@ -335,29 +340,7 @@ public class SCProductScreenshotPersistenceImpl extends BasePersistenceImpl<SCPr
 			closeSession(session);
 		}
 
-		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
-		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
-
-		SCProductScreenshotModelImpl scProductScreenshotModelImpl = (SCProductScreenshotModelImpl)scProductScreenshot;
-
-		FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_THUMBNAILID,
-			new Object[] {
-				Long.valueOf(scProductScreenshotModelImpl.getThumbnailId())
-			});
-
-		FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_FULLIMAGEID,
-			new Object[] {
-				Long.valueOf(scProductScreenshotModelImpl.getFullImageId())
-			});
-
-		FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_P_P,
-			new Object[] {
-				Long.valueOf(scProductScreenshotModelImpl.getProductEntryId()),
-				Integer.valueOf(scProductScreenshotModelImpl.getPriority())
-			});
-
-		EntityCacheUtil.removeResult(SCProductScreenshotModelImpl.ENTITY_CACHE_ENABLED,
-			SCProductScreenshotImpl.class, scProductScreenshot.getPrimaryKey());
+		clearCache(scProductScreenshot);
 
 		return scProductScreenshot;
 	}
@@ -1499,7 +1482,7 @@ public class SCProductScreenshotPersistenceImpl extends BasePersistenceImpl<SCPr
 		throws SystemException {
 		for (SCProductScreenshot scProductScreenshot : findByProductEntryId(
 				productEntryId)) {
-			scProductScreenshotPersistence.remove(scProductScreenshot);
+			remove(scProductScreenshot);
 		}
 	}
 
@@ -1513,7 +1496,7 @@ public class SCProductScreenshotPersistenceImpl extends BasePersistenceImpl<SCPr
 		throws NoSuchProductScreenshotException, SystemException {
 		SCProductScreenshot scProductScreenshot = findByThumbnailId(thumbnailId);
 
-		scProductScreenshotPersistence.remove(scProductScreenshot);
+		remove(scProductScreenshot);
 	}
 
 	/**
@@ -1526,7 +1509,7 @@ public class SCProductScreenshotPersistenceImpl extends BasePersistenceImpl<SCPr
 		throws NoSuchProductScreenshotException, SystemException {
 		SCProductScreenshot scProductScreenshot = findByFullImageId(fullImageId);
 
-		scProductScreenshotPersistence.remove(scProductScreenshot);
+		remove(scProductScreenshot);
 	}
 
 	/**
@@ -1541,7 +1524,7 @@ public class SCProductScreenshotPersistenceImpl extends BasePersistenceImpl<SCPr
 		SCProductScreenshot scProductScreenshot = findByP_P(productEntryId,
 				priority);
 
-		scProductScreenshotPersistence.remove(scProductScreenshot);
+		remove(scProductScreenshot);
 	}
 
 	/**
@@ -1551,7 +1534,7 @@ public class SCProductScreenshotPersistenceImpl extends BasePersistenceImpl<SCPr
 	 */
 	public void removeAll() throws SystemException {
 		for (SCProductScreenshot scProductScreenshot : findAll()) {
-			scProductScreenshotPersistence.remove(scProductScreenshot);
+			remove(scProductScreenshot);
 		}
 	}
 

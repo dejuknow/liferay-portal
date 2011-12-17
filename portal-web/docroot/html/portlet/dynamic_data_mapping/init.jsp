@@ -23,11 +23,13 @@ page import="com.liferay.portlet.dynamicdatalists.model.DDLRecordSet" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.NoSuchStructureException" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.RequiredStructureException" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.StructureDuplicateElementException" %><%@
+page import="com.liferay.portlet.dynamicdatamapping.StructureFieldException" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.StructureNameException" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.StructureXsdException" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.TemplateNameException" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.TemplateScriptException" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.model.DDMStructure" %><%@
+page import="com.liferay.portlet.dynamicdatamapping.model.DDMStructureConstants" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.model.DDMTemplate" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.model.DDMTemplateConstants" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.search.StructureDisplayTerms" %><%@
@@ -47,19 +49,18 @@ page import="com.liferay.portlet.dynamicdatamapping.util.DDMXSDUtil" %>
 <%
 PortalPreferences portalPreferences = PortletPreferencesFactoryUtil.getPortalPreferences(request);
 
-boolean showGlobalScope = ParamUtil.getBoolean(request, "showGlobalScope");
-boolean showManageTemplates = ParamUtil.getBoolean(request, "showManageTemplates", true);
-boolean showToolbar = ParamUtil.getBoolean(request, "showToolbar", true);
-
+String chooseCallback = ParamUtil.getString(request, "chooseCallback");
+String ddmResource = ParamUtil.getString(request, "ddmResource");
+String saveCallback = ParamUtil.getString(request, "saveCallback");
 String scopeAvailableFields = ParamUtil.getString(request, "scopeAvailableFields");
 String scopeStorageType = ParamUtil.getString(request, "scopeStorageType");
 String scopeStructureName = ParamUtil.getString(request, "scopeStructureName");
 String scopeStructureType = ParamUtil.getString(request, "scopeStructureType");
 String scopeTemplateMode = ParamUtil.getString(request, "scopeTemplateMode");
 String scopeTemplateType = ParamUtil.getString(request, "scopeTemplateType");
-
-String chooseCallback = ParamUtil.getString(request, "chooseCallback");
-String saveCallback = ParamUtil.getString(request, "saveCallback");
+boolean showGlobalScope = ParamUtil.getBoolean(request, "showGlobalScope");
+boolean showManageTemplates = ParamUtil.getBoolean(request, "showManageTemplates", true);
+boolean showToolbar = ParamUtil.getBoolean(request, "showToolbar", true);
 
 long classNameId = PortalUtil.getClassNameId(scopeStructureType);
 

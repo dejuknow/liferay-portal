@@ -63,9 +63,9 @@ for (String portletId : PropsValues.DOCKBAR_ADD_PORTLETS) {
 								<li class="last common-items">
 									<div class="aui-menugroup">
 										<div class="aui-menugroup-content">
-											<span class="aui-menu-label"><liferay-ui:message key="applications" /></span>
-
 											<c:if test="<%= LayoutPermissionUtil.contains(permissionChecker, layout, ActionKeys.UPDATE) || (layoutTypePortlet.isCustomizable() && layoutTypePortlet.isCustomizedView() && LayoutPermissionUtil.contains(permissionChecker, layout, ActionKeys.CUSTOMIZE)) %>">
+												<span class="aui-menu-label"><liferay-ui:message key="applications" /></span>
+
 												<ul>
 
 													<%
@@ -113,7 +113,7 @@ for (String portletId : PropsValues.DOCKBAR_ADD_PORTLETS) {
 			</li>
 		</c:if>
 
-		<c:if test="<%= !group.isControlPanel() && (themeDisplay.isShowLayoutTemplatesIcon() || themeDisplay.isShowPageSettingsIcon() || themeDisplay.isShowSiteContentIcon() || themeDisplay.isShowSiteMapSettingsIcon() || themeDisplay.isShowSiteSettingsIcon()) && (!group.hasStagingGroup() || group.isStagingGroup()) %>">
+		<c:if test="<%= !group.isControlPanel() && (themeDisplay.isShowLayoutTemplatesIcon() || themeDisplay.isShowManageSiteMembershipsIcon() || themeDisplay.isShowPageSettingsIcon() || themeDisplay.isShowSiteContentIcon() || themeDisplay.isShowSiteMapSettingsIcon() || themeDisplay.isShowSiteSettingsIcon()) %>">
 			<li class="manage-content has-submenu" id="<portlet:namespace />manageContent">
 				<a class="menu-button" href="javascript:;">
 					<span>
@@ -136,13 +136,13 @@ for (String portletId : PropsValues.DOCKBAR_ADD_PORTLETS) {
 								</li>
 							</c:if>
 
-							<c:if test="<%= themeDisplay.isShowPageCustomizationIcon()  && !group.isLayoutSetPrototype() %>">
+							<c:if test="<%= themeDisplay.isShowPageCustomizationIcon() %>">
 								<li class="manage-page-customization">
 									<aui:a cssClass='<%= themeDisplay.isFreeformLayout() ? "disabled" : StringPool.BLANK %>' href='<%= themeDisplay.isFreeformLayout() ? null : "javascript:;" %>' id="manageCustomization" label='<%= group.isLayoutPrototype() ? "page-modifications" : "page-customizations" %>' title='<%= themeDisplay.isFreeformLayout() ? "it-is-not-possible-to-specify-customization-settings-for-freeform-layouts" : null %>' />
 								</li>
 							</c:if>
 
-							<c:if test="<%= themeDisplay.isShowSiteSettingsIcon() && !group.isLayoutPrototype() %>">
+							<c:if test="<%= themeDisplay.isShowSiteSettingsIcon() %>">
 								<li class="settings use-dialog full-dialog">
 									<aui:a href="<%= themeDisplay.getURLSiteSettings().toString() %>" label="site-settings" title="edit-site-settings" />
 								</li>
@@ -154,14 +154,14 @@ for (String portletId : PropsValues.DOCKBAR_ADD_PORTLETS) {
 								</li>
 							</c:if>
 
-							<c:if test="<%= themeDisplay.isShowManageSiteMembershipsIcon() && !group.isLayoutPrototype() %>">
-								<li class="manage-site-memberships use-dialog">
+							<c:if test="<%= themeDisplay.isShowManageSiteMembershipsIcon() %>">
+								<li class="manage-site-memberships use-dialog full-dialog">
 									<aui:a href="<%= themeDisplay.getURLManageSiteMemberships().toString() %>" label="site-memberships" title="manage-site-memberships" />
 								</li>
 							</c:if>
 
 							<c:if test="<%= themeDisplay.isShowSiteContentIcon() %>">
-								<li class="manage-site-content use-dialog">
+								<li class="manage-site-content use-dialog full-dialog">
 									<aui:a href="<%= themeDisplay.getURLSiteContent() %>" label="site-content" title="manage-site-content" />
 								</li>
 							</c:if>
@@ -170,7 +170,7 @@ for (String portletId : PropsValues.DOCKBAR_ADD_PORTLETS) {
 				</div>
 			</li>
 
-			<c:if test="<%= themeDisplay.isShowPageCustomizationIcon()  && !group.isLayoutSetPrototype() %>">
+			<c:if test="<%= themeDisplay.isShowPageCustomizationIcon() %>">
 				<div class="aui-helper-hidden layout-customizable-controls" id="<portlet:namespace />layout-customizable-controls">
 					<span title='<liferay-ui:message key="customizable-help" />'>
 						<aui:input helpMessage='<%= group.isLayoutPrototype() ? "modifiable-help" : "customizable-help" %>' inputCssClass="layout-customizable-checkbox" id="TypeSettingsProperties--[COLUMN_ID]-customizable--" label='<%= (group.isLayoutSetPrototype() || group.isLayoutPrototype()) ? "modifiable" : "customizable" %>' name="TypeSettingsProperties--[COLUMN_ID]-customizable--" type="checkbox" useNamespace="<%= false %>" />
@@ -198,28 +198,31 @@ for (String portletId : PropsValues.DOCKBAR_ADD_PORTLETS) {
 			String backURL = null;
 
 			if (themeDisplay.getRefererPlid() > 0) {
-				Layout refererLayout = LayoutLocalServiceUtil.getLayout(themeDisplay.getRefererPlid());
+				Layout refererLayout = LayoutLocalServiceUtil.fetchLayout(themeDisplay.getRefererPlid());
 
-				Group refererGroup = refererLayout.getGroup();
+				if (refererLayout != null) {
+					Group refererGroup = refererLayout.getGroup();
 
-				refererGroupDescriptiveName = refererGroup.getDescriptiveName();
+					refererGroupDescriptiveName = refererGroup.getDescriptiveName();
 
-				if (refererGroup.isUser() && (refererGroup.getClassPK() == user.getUserId())) {
-					if (refererLayout.isPublicLayout()) {
-						refererGroupDescriptiveName = LanguageUtil.get(pageContext, "my-public-pages");
+					if (refererGroup.isUser() && (refererGroup.getClassPK() == user.getUserId())) {
+						if (refererLayout.isPublicLayout()) {
+							refererGroupDescriptiveName = LanguageUtil.get(pageContext, "my-public-pages");
+						}
+						else {
+							refererGroupDescriptiveName = LanguageUtil.get(pageContext, "my-private-pages");
+						}
 					}
-					else {
-						refererGroupDescriptiveName = LanguageUtil.get(pageContext, "my-private-pages");
+
+					backURL = PortalUtil.getLayoutURL(refererLayout, themeDisplay);
+
+					if (!CookieKeys.hasSessionId(request)) {
+						backURL = PortalUtil.getURLWithSessionId(backURL, session.getId());
 					}
-				}
-
-				backURL = PortalUtil.getLayoutURL(refererLayout, themeDisplay);
-
-				if (!CookieKeys.hasSessionId(request)) {
-					backURL = PortalUtil.getURLWithSessionId(backURL, session.getId());
 				}
 			}
-			else {
+
+			if (Validator.isNull(refererGroupDescriptiveName) || Validator.isNull(backURL)) {
 				refererGroupDescriptiveName = themeDisplay.getAccount().getName();
 				backURL = themeDisplay.getURLHome();
 			}
@@ -361,7 +364,22 @@ for (String portletId : PropsValues.DOCKBAR_ADD_PORTLETS) {
 	</c:if>
 </div>
 
-<c:if test="<%= !(group.isLayoutPrototype() || group.isLayoutSetPrototype()) && layoutTypePortlet.isCustomizable() && LayoutPermissionUtil.contains(permissionChecker, layout, ActionKeys.CUSTOMIZE) %>">
+<c:if test="<%= !SitesUtil.isLayoutUpdateable(layout) %>">
+	<div class="page-customization-bar">
+		<img alt="" class="customized-icon" src="<%= themeDisplay.getPathThemeImages() %>/common/site_icon.png" />
+
+		<c:choose>
+			<c:when test="<%= layout instanceof VirtualLayout %>">
+				<liferay-ui:message key="this-page-belongs-to-a-user-group" />
+			</c:when>
+			<c:otherwise>
+				<liferay-ui:message key="this-page-is-linked-to-a-site-template-which-does-not-allow-modifications-to-it" />
+			</c:otherwise>
+		</c:choose>
+	</div>
+</c:if>
+
+<c:if test="<%= !(group.isLayoutPrototype() || group.isLayoutSetPrototype() || group.isUserGroup()) && layoutTypePortlet.isCustomizable() && LayoutPermissionUtil.contains(permissionChecker, layout, ActionKeys.CUSTOMIZE) %>">
 	<div class="page-customization-bar">
 		<img alt="" class="customized-icon" src="<%= themeDisplay.getPathThemeImages() %>/common/guest_icon.png" />
 
@@ -436,14 +454,6 @@ for (String portletId : PropsValues.DOCKBAR_ADD_PORTLETS) {
 			);
 		}
 	</aui:script>
-</c:if>
-
-<c:if test="<%= themeDisplay.isShowPageSettingsIcon() && SitesUtil.isLayoutLocked(layoutTypePortlet) %>">
-	<div class="page-customization-bar">
-		<img alt="" class="customized-icon" src="<%= themeDisplay.getPathThemeImages() %>/common/site_icon.png" />
-
-		<liferay-ui:message key="this-page-is-locked-by-the-template" />
-	</div>
 </c:if>
 
 <aui:script position="inline" use="liferay-dockbar">

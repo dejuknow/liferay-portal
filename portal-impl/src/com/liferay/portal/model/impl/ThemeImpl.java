@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.servlet.ServletContextPool;
+import com.liferay.portal.kernel.util.ContextPathUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringPool;
@@ -154,7 +155,7 @@ public class ThemeImpl extends PluginBaseImpl implements Theme {
 		Map<String, ThemeSetting> configurableSettings =
 			new LinkedHashMap<String, ThemeSetting>();
 
-		for (Map.Entry<String,ThemeSetting> entry :
+		for (Map.Entry<String, ThemeSetting> entry :
 				_themeSettingsMap.entrySet()) {
 
 			ThemeSetting themeSetting = entry.getValue();
@@ -178,7 +179,7 @@ public class ThemeImpl extends PluginBaseImpl implements Theme {
 			ServletContext servletContext = ServletContextPool.get(
 				servletContextName);
 
-			return servletContext.getContextPath();
+			return ContextPathUtil.getContextPath(servletContext);
 		}
 
 		return StringPool.SLASH.concat(servletContextName);
@@ -623,9 +624,9 @@ public class ThemeImpl extends PluginBaseImpl implements Theme {
 	private boolean _loadFromServletContext;
 	private String _name;
 	private Map<String, Boolean> _resourceExistsMap =
-		new ConcurrentHashMap<String,Boolean>();
+		new ConcurrentHashMap<String, Boolean>();
 	private Map<String, String> _resourcePathsMap =
-		new ConcurrentHashMap<String,String>();
+		new ConcurrentHashMap<String, String>();
 	private String _rootPath = "/";
 	private String _servletContextName = StringPool.BLANK;
 	private Map<String, ThemeSetting> _themeSettingsMap =

@@ -78,18 +78,11 @@ print AdminConfig.save()
 
 print AdminApp.list()
 
-print AdminApp.install('C:/tunnel-web.war', '[-appname liferay-tunnel-web -contextroot /tunnel-web]')
-
-print AdminConfig.save()
-
-print AdminApp.list()
-
 appManager = AdminControl.queryNames('type=ApplicationManager,process=server1,*')
 
 print appManager
 
-print AdminControl.invoke(appManager, 'startApplication', 'liferay-portal')
-print AdminControl.invoke(appManager, 'startApplication', 'liferay-tunnel-web')</echo>
+print AdminControl.invoke(appManager, 'startApplication', 'liferay-portal')</echo>
 
 		<exec executable="${pscp.executable}">
 			<arg line="-pw ${vm.password} wsadmin.py ${vm.username}@${vm.host}:/" />
@@ -222,6 +215,8 @@ print AdminControl.invoke(appManager, 'startApplication', 'liferay-tunnel-web')<
 			value="${vm.host}:9080"
 		/>
 
+		<antcall target="prepare-selenium" />
+
 		<antcall target="start-selenium" />
 
 		<antcall target="run-websphere-7.0">
@@ -247,5 +242,15 @@ print AdminControl.invoke(appManager, 'startApplication', 'liferay-tunnel-web')<
 		<exec executable="${plink.executable}">
 			<arg line="-pw ${vm.password} ${vm.username}@${vm.host} cmd.exe /c C:\Progra~1\IBM\WebSphere\AppServer\profiles\AppSrv01\bin\stopServer.bat server1" />
 		</exec>
+
+		<antcall target="clean-up-logs" />
+
+		<exec executable="${pscp.executable}">
+			<arg line="-pw ${vm.password} ${vm.username}@${vm.host}:Progra~1/IBM/WebSphere/AppServer/profiles/AppSrv01/logs/server1/SystemOut.log log" />
+		</exec>
+
+		<antcall target="evaluate-logs">
+			<param name="print.logs" value="true" />
+		</antcall>
 	</target>
 </project>

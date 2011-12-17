@@ -95,14 +95,6 @@ public class AssetCategoryUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static AssetCategory remove(AssetCategory assetCategory)
-		throws SystemException {
-		return getPersistence().remove(assetCategory);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static AssetCategory update(AssetCategory assetCategory,
@@ -2038,6 +2030,10 @@ public class AssetCategoryUtil {
 	public static void rebuildTree(long groupId, boolean force)
 		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().rebuildTree(groupId, force);
+	}
+
+	public static void setRebuildTreeEnabled(boolean rebuildTreeEnabled) {
+		getPersistence().setRebuildTreeEnabled(rebuildTreeEnabled);
 	}
 
 	public static AssetCategoryPersistence getPersistence() {

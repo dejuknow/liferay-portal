@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.Type;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.model.ResourcePermission;
 import com.liferay.portal.model.impl.ResourcePermissionImpl;
@@ -46,6 +47,9 @@ public class ResourcePermissionFinderImpl
 
 	public static String FIND_BY_RESOURCE =
 		ResourcePermissionFinder.class.getName() + ".findByResource";
+
+	public static String FIND_BY_C_P =
+		ResourcePermissionFinder.class.getName() + ".findByC_P";
 
 	public static String FIND_BY_R_S =
 		ResourcePermissionFinder.class.getName() + ".findByR_S";
@@ -186,10 +190,39 @@ public class ResourcePermissionFinderImpl
 			qPos.add(companyId);
 			qPos.add(name);
 			qPos.add(primKey);
-			qPos.add(groupId);
+			qPos.add(String.valueOf(groupId));
 
 			return (List<ResourcePermission>)QueryUtil.list(
 				q, getDialect(), QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+		}
+		catch (Exception e) {
+			throw new SystemException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	public List<ResourcePermission> findByC_P(long companyId, String primKey)
+		throws SystemException {
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			String sql = CustomSQLUtil.get(FIND_BY_C_P);
+
+			SQLQuery q = session.createSQLQuery(sql);
+
+			q.addEntity("ResourcePermission", ResourcePermissionImpl.class);
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(companyId);
+			qPos.add(primKey);
+
+			return q.list(true);
 		}
 		catch (Exception e) {
 			throw new SystemException(e);
@@ -262,24 +295,27 @@ public class ResourcePermissionFinderImpl
 		}
 	}
 
+	/**
+	 * @see {@link PermissionFinderImpl#getScopes(int[])}
+	 */
 	protected String getScopes(int[] scopes) {
-		StringBuilder sb = new StringBuilder();
-
-		if (scopes.length > 0) {
-			sb.append("(");
+		if (scopes.length == 0) {
+			return StringPool.BLANK;
 		}
 
+		StringBundler sb = new StringBundler(scopes.length * 2 + 1);
+
+		sb.append("(");
+
 		for (int i = 0; i < scopes.length; i++) {
-			sb.append("scope = ? ");
+			sb.append("ResourcePermission.scope = ? ");
 
 			if ((i + 1) != scopes.length) {
 				sb.append("OR ");
 			}
 		}
 
-		if (scopes.length > 0) {
-			sb.append(")");
-		}
+		sb.append(")");
 
 		return sb.toString();
 	}

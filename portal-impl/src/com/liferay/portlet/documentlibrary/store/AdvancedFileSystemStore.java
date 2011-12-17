@@ -14,7 +14,7 @@
 
 package com.liferay.portlet.documentlibrary.store;
 
-import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.StringBundler;
@@ -61,7 +61,7 @@ public class AdvancedFileSystemStore extends FileSystemStore {
 	public void updateFile(
 			long companyId, long repositoryId, String fileName,
 			String newFileName)
-		throws SystemException {
+		throws PortalException {
 
 		super.updateFile(companyId, repositoryId, fileName, newFileName);
 
@@ -255,8 +255,7 @@ public class AdvancedFileSystemStore extends FileSystemStore {
 			int y = versionLabelFragment.lastIndexOf(CharPool.PERIOD);
 
 			if (x > -1) {
-				versionLabelFragment = versionLabelFragment.substring(
-					x + 1, y);
+				versionLabelFragment = versionLabelFragment.substring(x + 1, y);
 			}
 
 			String versionLabel = versionLabelFragment;

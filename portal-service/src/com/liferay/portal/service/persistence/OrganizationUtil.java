@@ -94,14 +94,6 @@ public class OrganizationUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static Organization remove(Organization organization)
-		throws SystemException {
-		return getPersistence().remove(organization);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static Organization update(Organization organization, boolean merge)

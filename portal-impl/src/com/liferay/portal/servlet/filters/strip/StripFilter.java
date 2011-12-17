@@ -37,7 +37,6 @@ import com.liferay.portal.servlet.filters.dynamiccss.DynamicCSSUtil;
 import com.liferay.portal.util.MinifierUtil;
 import com.liferay.portal.util.PropsValues;
 
-import java.io.IOException;
 import java.io.Writer;
 
 import java.nio.CharBuffer;
@@ -186,7 +185,7 @@ public class StripFilter extends BasePortalFilter {
 
 	protected void outputCloseTag(
 			CharBuffer charBuffer, Writer writer, String closeTag)
-		throws IOException {
+		throws Exception {
 
 		writer.write(closeTag);
 
@@ -196,8 +195,8 @@ public class StripFilter extends BasePortalFilter {
 	}
 
 	protected void outputOpenTag(
-		CharBuffer charBuffer, Writer writer, char[] openTag)
-		throws IOException {
+			CharBuffer charBuffer, Writer writer, char[] openTag)
+		throws Exception {
 
 		writer.write(openTag);
 
@@ -207,7 +206,7 @@ public class StripFilter extends BasePortalFilter {
 	protected void processCSS(
 			HttpServletRequest request, HttpServletResponse response,
 			CharBuffer charBuffer, Writer writer)
-		throws IOException {
+		throws Exception {
 
 		outputOpenTag(charBuffer, writer, _MARKER_STYLE_OPEN);
 
@@ -238,20 +237,23 @@ public class StripFilter extends BasePortalFilter {
 			minifiedContent = _minifierCache.get(key);
 
 			if (minifiedContent == null) {
-				try {
-					content = DynamicCSSUtil.parseSass(request, key, content);
-				}
-				catch (ScriptingException se) {
-					_log.error("Unable to parse SASS on CSS " + key, se);
-
-					if (_log.isDebugEnabled()) {
-						_log.debug(content);
+				if (PropsValues.STRIP_CSS_SASS_ENABLED) {
+					try {
+						content = DynamicCSSUtil.parseSass(
+							request, key, content);
 					}
+					catch (ScriptingException se) {
+						_log.error("Unable to parse SASS on CSS " + key, se);
 
-					if (response != null) {
-						response.setHeader(
-							HttpHeaders.CACHE_CONTROL,
-							HttpHeaders.CACHE_CONTROL_NO_CACHE_VALUE);
+						if (_log.isDebugEnabled()) {
+							_log.debug(content);
+						}
+
+						if (response != null) {
+							response.setHeader(
+								HttpHeaders.CACHE_CONTROL,
+								HttpHeaders.CACHE_CONTROL_NO_CACHE_VALUE);
+						}
 					}
 				}
 
@@ -341,7 +343,7 @@ public class StripFilter extends BasePortalFilter {
 	}
 
 	protected void processInput(CharBuffer oldCharBuffer, Writer writer)
-		throws IOException {
+		throws Exception {
 
 		int length = KMPSearch.search(
 			oldCharBuffer, _MARKER_INPUT_OPEN.length + 1, _MARKER_INPUT_CLOSE,
@@ -368,7 +370,7 @@ public class StripFilter extends BasePortalFilter {
 
 	protected void processJavaScript(
 			CharBuffer charBuffer, Writer writer, char[] openTag)
-		throws IOException {
+		throws Exception {
 
 		int endPos = openTag.length + 1;
 
@@ -489,7 +491,7 @@ public class StripFilter extends BasePortalFilter {
 	}
 
 	protected void processPre(CharBuffer oldCharBuffer, Writer writer)
-		throws IOException {
+		throws Exception {
 
 		int length = KMPSearch.search(
 			oldCharBuffer, _MARKER_PRE_OPEN.length + 1, _MARKER_PRE_CLOSE,
@@ -515,7 +517,7 @@ public class StripFilter extends BasePortalFilter {
 	}
 
 	protected void processTextArea(CharBuffer oldCharBuffer, Writer writer)
-		throws IOException {
+		throws Exception {
 
 		int length = KMPSearch.search(
 			oldCharBuffer, _MARKER_TEXTAREA_OPEN.length + 1,
@@ -541,7 +543,7 @@ public class StripFilter extends BasePortalFilter {
 
 	protected boolean skipWhiteSpace(
 			CharBuffer charBuffer, Writer writer, boolean appendSeparator)
-		throws IOException {
+		throws Exception {
 
 		boolean skipped = false;
 
@@ -572,7 +574,7 @@ public class StripFilter extends BasePortalFilter {
 	protected void strip(
 			HttpServletRequest request, HttpServletResponse response,
 			CharBuffer charBuffer, Writer writer)
-		throws IOException {
+		throws Exception {
 
 		skipWhiteSpace(charBuffer, writer, false);
 
@@ -626,7 +628,7 @@ public class StripFilter extends BasePortalFilter {
 
 	private static final String _MARKER_INPUT_CLOSE = "/>";
 
-	private static final int [] _MARKER_INPUT_CLOSE_NEXTS =
+	private static final int[] _MARKER_INPUT_CLOSE_NEXTS =
 		KMPSearch.generateNexts(_MARKER_INPUT_CLOSE);
 
 	private static final char[] _MARKER_INPUT_OPEN = "input".toCharArray();

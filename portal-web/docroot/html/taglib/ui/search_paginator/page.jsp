@@ -26,6 +26,8 @@ PortletURL iteratorURL = searchContainer.getIteratorURL();
 String url = StringPool.BLANK;
 
 if (iteratorURL != null) {
+	iteratorURL.setParameter("resetCur", Boolean.FALSE.toString());
+
 	url = HttpUtil.removeParameter(iteratorURL.toString(), namespace + searchContainer.getCurParam());
 }
 %>

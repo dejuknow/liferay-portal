@@ -95,13 +95,6 @@ public class CalEventUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static CalEvent remove(CalEvent calEvent) throws SystemException {
-		return getPersistence().remove(calEvent);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static CalEvent update(CalEvent calEvent, boolean merge)

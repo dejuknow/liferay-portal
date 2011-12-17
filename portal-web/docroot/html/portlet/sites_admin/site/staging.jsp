@@ -22,6 +22,8 @@ long liveGroupId = ((Long)request.getAttribute("site.liveGroupId")).longValue();
 UnicodeProperties liveGroupTypeSettings = (UnicodeProperties)request.getAttribute("site.liveGroupTypeSettings");
 %>
 
+<liferay-ui:error-marker key="errorSection" value="staging" />
+
 <c:choose>
 	<c:when test="<%= GroupPermissionUtil.contains(permissionChecker, liveGroupId, ActionKeys.MANAGE_STAGING) %>">
 		<liferay-ui:error exception="<%= SystemException.class %>">
@@ -41,7 +43,17 @@ UnicodeProperties liveGroupTypeSettings = (UnicodeProperties)request.getAttribut
 			</aui:field-wrapper>
 		</div>
 
-		<div class="<%= (liveGroup.isStaged() && liveGroup.isStagedRemotely() ? StringPool.BLANK : "aui-helper-hidden") %> staging-section" id="<portlet:namespace />remoteStagingOptions">
+		<%
+		boolean showRemoteOptions = liveGroup.isStaged() && liveGroup.isStagedRemotely();
+
+		int stagingType = ParamUtil.getInteger(request, "stagingType");
+
+		if (stagingType == StagingConstants.TYPE_REMOTE_STAGING) {
+			showRemoteOptions = true;
+		}
+		%>
+
+		<div class="<%= showRemoteOptions ? StringPool.BLANK : "aui-helper-hidden" %> staging-section" id="<portlet:namespace />remoteStagingOptions">
 			<br />
 
 			<liferay-ui:error exception="<%= RemoteExportException.class %>">
@@ -56,6 +68,10 @@ UnicodeProperties liveGroupTypeSettings = (UnicodeProperties)request.getAttribut
 
 				<c:if test="<%= ree.getType() == RemoteExportException.NO_GROUP %>">
 					<liferay-ui:message arguments="<%= ree.getGroupId() %>" key="no-site-exists-on-the-remote-server-with-site-id-x" />
+				</c:if>
+
+				<c:if test="<%= ree.getType() == RemoteExportException.NO_PERMISSIONS %>">
+					<liferay-ui:message arguments="<%= ree.getGroupId() %>" key="you-do-not-have-permissions-to-edit-the-site-with-id-x-on-the-remote-server" />
 				</c:if>
 			</liferay-ui:error>
 
@@ -138,7 +154,11 @@ UnicodeProperties liveGroupTypeSettings = (UnicodeProperties)request.getAttribut
 						continue;
 					}
 
-					boolean isStaged = GetterUtil.getBoolean(liveGroupTypeSettings.getProperty(StagingConstants.STAGED_PORTLET + curPortlet.getRootPortletId()), portletDataHandler.isPublishToLiveByDefault());
+					boolean staged = GetterUtil.getBoolean(liveGroupTypeSettings.getProperty(StagingConstants.STAGED_PORTLET + curPortlet.getRootPortletId()), portletDataHandler.isPublishToLiveByDefault());
+
+					if (portletDataHandler.isAlwaysStaged()) {
+						staged = true;
+					}
 
 					String includedInEveryPublish = StringPool.BLANK;
 
@@ -147,7 +167,7 @@ UnicodeProperties liveGroupTypeSettings = (UnicodeProperties)request.getAttribut
 					}
 				%>
 
-					<aui:input inlineLabel="right" label="<%= PortalUtil.getPortletTitle(curPortlet, application, locale) + includedInEveryPublish %>" name='<%= StagingConstants.STAGED_PORTLET + curPortlet.getRootPortletId() %>' type="checkbox" value="<%= isStaged %>" />
+					<aui:input disabled="<%= portletDataHandler.isAlwaysStaged() %>" inlineLabel="right" label="<%= PortalUtil.getPortletTitle(curPortlet, application, locale) + includedInEveryPublish %>" name='<%= StagingConstants.STAGED_PORTLET + curPortlet.getRootPortletId() %>' type="checkbox" value="<%= staged %>" />
 
 				<%
 				}

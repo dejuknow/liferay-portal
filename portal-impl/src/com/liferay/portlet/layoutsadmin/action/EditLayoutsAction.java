@@ -38,6 +38,7 @@ import com.liferay.portal.kernel.upload.UploadPortletRequest;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PropertiesParamUtil;
@@ -140,6 +141,7 @@ public class EditLayoutsAction extends PortletAction {
 		String cmd = ParamUtil.getString(actionRequest, Constants.CMD);
 
 		try {
+			String redirect = ParamUtil.getString(actionRequest, "redirect");
 			String closeRedirect = ParamUtil.getString(
 				actionRequest, "closeRedirect");
 
@@ -153,6 +155,8 @@ public class EditLayoutsAction extends PortletAction {
 				layout = (Layout)returnValue[0];
 				oldFriendlyURL = (String)returnValue[1];
 
+				redirect = updateCloseRedirect(
+					redirect, null, layout, oldFriendlyURL);
 				closeRedirect = updateCloseRedirect(
 					closeRedirect, null, layout, oldFriendlyURL);
 			}
@@ -162,6 +166,12 @@ public class EditLayoutsAction extends PortletAction {
 
 				Group group = (Group)returnValue[0];
 				oldFriendlyURL = (String)returnValue[1];
+				long newRefererPlid = (Long)returnValue[2];
+
+				redirect = updateCloseRedirect(
+					redirect, group, null, oldFriendlyURL);
+				redirect = HttpUtil.setParameter(
+					redirect, "refererPlid", newRefererPlid);
 
 				closeRedirect = updateCloseRedirect(
 					closeRedirect, group, null, oldFriendlyURL);
@@ -223,12 +233,11 @@ public class EditLayoutsAction extends PortletAction {
 				updateLayoutRevision(actionRequest);
 			}
 
-			String redirect = ParamUtil.getString(actionRequest, "redirect");
-
 			if (Validator.isNotNull(closeRedirect)) {
 				SessionMessages.add(
 					actionRequest,
-					portletConfig.getPortletName() + ".doCloseRedirect",
+					portletConfig.getPortletName() +
+						SessionMessages.KEY_SUFFIX_CLOSE_REDIRECT,
 					closeRedirect);
 			}
 
@@ -598,15 +607,13 @@ public class EditLayoutsAction extends PortletAction {
 		for (String key : configurableSettings.keySet()) {
 			ThemeSetting themeSetting = configurableSettings.get(key);
 
-			String type = GetterUtil.getString(
-				themeSetting.getType(), "text");
+			String type = GetterUtil.getString(themeSetting.getType(), "text");
 
 			String property =
 				device + "ThemeSettingsProperties--" + key +
 					StringPool.DOUBLE_DASH;
 
-			String value = ParamUtil.getString(
-				actionRequest, property);
+			String value = ParamUtil.getString(actionRequest, property);
 
 			if (type.equals("checkbox")) {
 				value = String.valueOf(GetterUtil.getBoolean(value));
@@ -632,8 +639,7 @@ public class EditLayoutsAction extends PortletAction {
 		InputStream inputStream = null;
 
 		try {
-			inputStream = uploadPortletRequest.getFileAsStream(
-				iconFileName);
+			inputStream = uploadPortletRequest.getFileAsStream(iconFileName);
 
 			if (inputStream != null) {
 				return FileUtil.getBytes(inputStream);
@@ -704,7 +710,9 @@ public class EditLayoutsAction extends PortletAction {
 		String closeRedirect, Group group, Layout layout,
 		String oldLayoutFriendlyURL) {
 
-		if (Validator.isNull(oldLayoutFriendlyURL)) {
+		if (Validator.isNull(closeRedirect) ||
+			Validator.isNull(oldLayoutFriendlyURL)) {
+
 			return closeRedirect;
 		}
 
@@ -712,15 +720,13 @@ public class EditLayoutsAction extends PortletAction {
 			String oldPath = oldLayoutFriendlyURL;
 			String newPath = layout.getFriendlyURL();
 
-			return PortalUtil.updateRedirect(
-				closeRedirect, oldPath, newPath);
+			return PortalUtil.updateRedirect(closeRedirect, oldPath, newPath);
 		}
 		else if (group != null) {
 			String oldPath = group.getFriendlyURL() + oldLayoutFriendlyURL;
-			String newPath =  group.getFriendlyURL();
+			String newPath = group.getFriendlyURL();
 
-			return PortalUtil.updateRedirect(
-				closeRedirect, oldPath, newPath);
+			return PortalUtil.updateRedirect(closeRedirect, oldPath, newPath);
 		}
 
 		return closeRedirect;
@@ -782,7 +788,6 @@ public class EditLayoutsAction extends PortletAction {
 		boolean iconImage = ParamUtil.getBoolean(
 			uploadPortletRequest, "iconImage");
 		byte[] iconBytes = getIconBytes(uploadPortletRequest, "iconFileName");
-		boolean locked = ParamUtil.getBoolean(uploadPortletRequest, "locked");
 		long layoutPrototypeId = ParamUtil.getLong(
 			uploadPortletRequest, "layoutPrototypeId");
 
@@ -793,7 +798,8 @@ public class EditLayoutsAction extends PortletAction {
 			uploadPortletRequest, "copyLayoutId");
 
 		String layoutTemplateId = ParamUtil.getString(
-			uploadPortletRequest, "layoutTemplateId");
+			uploadPortletRequest, "layoutTemplateId",
+			PropsValues.DEFAULT_LAYOUT_TEMPLATE_ID);
 
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(
 			Layout.class.getName(), actionRequest);
@@ -813,7 +819,7 @@ public class EditLayoutsAction extends PortletAction {
 				layout = LayoutServiceUtil.addLayout(
 					groupId, privateLayout, parentLayoutId, nameMap,
 					titleMap, descriptionMap, keywordsMap, robotsMap,
-					parentLayout.getType(), hidden, friendlyURL, locked,
+					parentLayout.getType(), hidden, friendlyURL,
 					serviceContext);
 
 				LayoutServiceUtil.updateLayout(
@@ -837,7 +843,7 @@ public class EditLayoutsAction extends PortletAction {
 				layout = LayoutServiceUtil.addLayout(
 					groupId, privateLayout, parentLayoutId, nameMap,
 					titleMap, descriptionMap, keywordsMap, robotsMap,
-					layoutPrototypeLayout.getType(), false, friendlyURL, locked,
+					layoutPrototypeLayout.getType(), hidden, friendlyURL,
 					serviceContext);
 
 				LayoutServiceUtil.updateLayout(
@@ -860,7 +866,7 @@ public class EditLayoutsAction extends PortletAction {
 				layout = LayoutServiceUtil.addLayout(
 					groupId, privateLayout, parentLayoutId, nameMap,
 					titleMap, descriptionMap, keywordsMap, robotsMap, type,
-					hidden, friendlyURL, locked, serviceContext);
+					hidden, friendlyURL, serviceContext);
 			}
 
 			layoutTypeSettingsProperties = layout.getTypeSettingsProperties();
@@ -878,7 +884,7 @@ public class EditLayoutsAction extends PortletAction {
 				groupId, privateLayout, layoutId, layout.getParentLayoutId(),
 				nameMap, titleMap, descriptionMap, keywordsMap, robotsMap,
 				type, hidden, friendlyURL, Boolean.valueOf(iconImage),
-				iconBytes, locked, serviceContext);
+				iconBytes, serviceContext);
 
 			layoutTypeSettingsProperties = layout.getTypeSettingsProperties();
 

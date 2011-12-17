@@ -17,7 +17,7 @@
 <%@ include file="/html/portlet/document_library/init.jsp" %>
 
 <%
-String navigation = ParamUtil.getString(request, "navigation", "documents-home");
+String navigation = ParamUtil.getString(request, "navigation", "home");
 
 Folder folder = (Folder)request.getAttribute(WebKeys.DOCUMENT_LIBRARY_FOLDER);
 
@@ -80,7 +80,11 @@ for (String headerName : entryColumns) {
 
 searchContainer.setHeaderNames(headerNames);
 
-searchContainer.setRowChecker(new EntriesChecker(liferayPortletRequest, liferayPortletResponse));
+EntriesChecker entriesChecker = new EntriesChecker(liferayPortletRequest, liferayPortletResponse);
+
+entriesChecker.setCssClass("document-selector");
+
+searchContainer.setRowChecker(entriesChecker);
 
 Map<String, String> orderableHeaders = new HashMap<String, String>();
 
@@ -152,7 +156,7 @@ if (fileEntryTypeId >= 0) {
 	total = results.size();
 }
 else {
-	if (navigation.equals("documents-home")) {
+	if (navigation.equals("home")) {
 		if (useAssetEntryQuery) {
 			long[] classNameIds = {PortalUtil.getClassNameId(DLFileEntryConstants.getClassName()), PortalUtil.getClassNameId(DLFileShortcut.class.getName())};
 
@@ -168,10 +172,10 @@ else {
 			total = DLAppServiceUtil.getFoldersAndFileEntriesAndFileShortcutsCount(repositoryId, folderId, status, false);
 		}
 	}
-	else if (navigation.equals("my-documents") || navigation.equals("recent-documents")) {
+	else if (navigation.equals("mine") || navigation.equals("recent")) {
 		long groupFileEntriesUserId = 0;
 
-		if (navigation.equals("my-documents") && themeDisplay.isSignedIn()) {
+		if (navigation.equals("mine") && themeDisplay.isSignedIn()) {
 			groupFileEntriesUserId = user.getUserId();
 		}
 
@@ -187,23 +191,9 @@ request.setAttribute("view_entries.jsp-total", String.valueOf(total));
 %>
 
 <c:if test="<%= results.isEmpty() %>">
-	<c:choose>
-		<c:when test="<%= dlFileEntryTypeName.equals(DLFileEntryTypeConstants.NAME_IMAGE) %>">
-			<div class="portlet-msg-info">
-				<liferay-ui:message key="there-are-no-images-in-this-folder" />
-			</div>
-		</c:when>
-		<c:when test="<%= dlFileEntryTypeName.equals(DLFileEntryTypeConstants.NAME_VIDEO) %>">
-			<div class="portlet-msg-info">
-				<liferay-ui:message key="there-are-no-videos-in-this-folder" />
-			</div>
-		</c:when>
-		<c:otherwise>
-			<div class="portlet-msg-info">
-				<%= LanguageUtil.get(pageContext, "there-are-no-documents-or-media-files-in-this-folder") %>
-			</div>
-		</c:otherwise>
-	</c:choose>
+	<div class="portlet-msg-info">
+		<%= LanguageUtil.get(pageContext, "there-are-no-documents-or-media-files-in-this-folder") %>
+	</div>
 </c:if>
 
 <%
@@ -293,7 +283,23 @@ for (int i = 0; i < results.size(); i++) {
 					<%
 					List resultRows = searchContainer.getResultRows();
 
-					ResultRow row = new ResultRow(fileEntry, fileEntry.getFileEntryId(), i);
+					ResultRow row = null;
+
+					if (fileShortcut == null) {
+						row = new ResultRow(fileEntry, fileEntry.getFileEntryId(), i);
+					}
+					else {
+						row = new ResultRow(fileShortcut, fileShortcut.getFileShortcutId(), i);
+					}
+
+					row.setClassName("document-display-style");
+
+					Map<String, Object> data = new HashMap<String, Object>();
+
+					data.put("draggable", DLFileEntryPermission.contains(permissionChecker, fileEntry, ActionKeys.DELETE) || DLFileEntryPermission.contains(permissionChecker, fileEntry, ActionKeys.UPDATE));
+					data.put("title", fileEntry.getTitle());
+
+					row.setData(data);
 
 					for (String columnName : entryColumns) {
 						if (columnName.equals("action")) {
@@ -423,6 +429,17 @@ for (int i = 0; i < results.size(); i++) {
 
 					ResultRow row = new ResultRow(curFolder, curFolder.getPrimaryKey(), i);
 
+					row.setClassName("document-display-style");
+
+					Map<String, Object> data = new HashMap<String, Object>();
+
+					data.put("draggable", DLFolderPermission.contains(permissionChecker, curFolder, ActionKeys.DELETE) || DLFolderPermission.contains(permissionChecker, curFolder, ActionKeys.UPDATE));
+					data.put("folder", true);
+					data.put("folder-id", curFolder.getFolderId());
+					data.put("title", curFolder.getName());
+
+					row.setData(data);
+
 					for (String columnName : entryColumns) {
 						if (columnName.equals("action")) {
 							row.addJSP("/html/portlet/document_library/folder_action.jsp");
@@ -433,7 +450,7 @@ for (int i = 0; i < results.size(); i++) {
 						}
 
 						if (columnName.equals("downloads")) {
-							row.addText(String.valueOf(0));
+							row.addText("--");
 						}
 
 						if (columnName.equals("modified-date")) {
@@ -449,7 +466,7 @@ for (int i = 0; i < results.size(); i++) {
 						}
 
 						if (columnName.equals("size")) {
-							row.addText(String.valueOf(0) + "k");
+							row.addText("--");
 						}
 					}
 

@@ -94,14 +94,6 @@ public class ClassNameUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static ClassName remove(ClassName className)
-		throws SystemException {
-		return getPersistence().remove(className);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static ClassName update(ClassName className, boolean merge)

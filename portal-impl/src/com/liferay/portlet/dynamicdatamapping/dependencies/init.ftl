@@ -1,6 +1,7 @@
 <#-- Tag libraries -->
 
-<#assign aui = PortalJspTagLibs["/WEB-INF/tld/liferay-aui.tld"] />
+<#assign aui = PortalJspTagLibs["/WEB-INF/tld/aui.tld"] />
+<#assign liferay_portlet = PortalJspTagLibs["/WEB-INF/tld/liferay-portlet.tld"] />
 <#assign liferay_ui = PortalJspTagLibs["/WEB-INF/tld/liferay-ui.tld"] />
 
 <#-- CSS class -->
@@ -73,9 +74,9 @@
 <#function getFileEntry fileJSONObject>
 	<#assign fileEntryUUID = fileJSONObject.getString("uuid")>
 
-	<#return dlAppServiceUtil.getFileEntryByUuidAndGroupId(fileEntryUUID, scopeGroupId)>
+	<#return dlAppServiceUtil.getFileEntryByUuidAndGroupId(fileEntryUUID, scopeGroupId)!"">
 </#function>
 
 <#function getFileEntryURL fileEntry>
-	<#return themeDisplay.getPathContext() + "/documents/" + scopeGroupId?c + "/" + (fileEntry.getFolderId())?c + "/" +  httpUtil.encodeURL(htmlUtil.unescape(fileEntry.getTitle()))>
+	<#return themeDisplay.getPathContext() + "/documents/" + fileEntry.getRepositoryId()?c + "/" + fileEntry.getFolderId()?c + "/" +  httpUtil.encodeURL(htmlUtil.unescape(fileEntry.getTitle()), true)>
 </#function>

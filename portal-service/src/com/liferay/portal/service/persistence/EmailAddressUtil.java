@@ -94,14 +94,6 @@ public class EmailAddressUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static EmailAddress remove(EmailAddress emailAddress)
-		throws SystemException {
-		return getPersistence().remove(emailAddress);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static EmailAddress update(EmailAddress emailAddress, boolean merge)

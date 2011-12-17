@@ -95,14 +95,6 @@ public class SocialActivityUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static SocialActivity remove(SocialActivity socialActivity)
-		throws SystemException {
-		return getPersistence().remove(socialActivity);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static SocialActivity update(SocialActivity socialActivity,

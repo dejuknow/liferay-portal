@@ -16,7 +16,8 @@ package com.liferay.portal.jsonwebservice;
 
 import com.liferay.portal.kernel.jsonwebservice.JSONWebServiceActionMapping;
 import com.liferay.portal.kernel.util.CharPool;
-import com.liferay.portal.kernel.util.MethodParameterNamesResolverUtil;
+import com.liferay.portal.kernel.util.MethodParameter;
+import com.liferay.portal.kernel.util.MethodParametersResolverUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 
 import java.lang.reflect.Method;
@@ -29,38 +30,38 @@ public class JSONWebServiceActionConfig
 	JSONWebServiceActionMapping {
 
 	public JSONWebServiceActionConfig(
-		String servletContextName, Class<?> actionClass, Method actionMethod,
+		String servletContextPath, Class<?> actionClass, Method actionMethod,
 		String path, String method) {
 
-		_servletContextName = servletContextName;
+		_servletContextPath = servletContextPath;
 		_actionClass = actionClass;
 		_actionMethod = actionMethod;
 		_path = path;
 		_method = method;
 
-		_parameterNames =
-			MethodParameterNamesResolverUtil.resolveParameterNames(
-				actionMethod);
-		_parameterTypes = actionMethod.getParameterTypes();
+		_methodParameters =
+			MethodParametersResolverUtil.resolveMethodParameters(actionMethod);
 
-		StringBundler sb = new StringBundler(_parameterNames.length * 2 + 4);
+		_fullPath = _servletContextPath + _path;
 
-		sb.append(_path);
+		StringBundler sb = new StringBundler(_methodParameters.length * 2 + 4);
+
+		sb.append(_fullPath);
 		sb.append(CharPool.MINUS);
-		sb.append(_parameterNames.length);
+		sb.append(_methodParameters.length);
 
-		for (String parameterName : _parameterNames) {
+		for (MethodParameter methodParameter : _methodParameters) {
 			sb.append(CharPool.MINUS);
-			sb.append(parameterName);
+			sb.append(methodParameter.getName());
 		}
 
-		_fullPath = sb.toString();
+		_signature = sb.toString();
 	}
 
 	public int compareTo(
 		JSONWebServiceActionConfig jsonWebServiceActionConfig) {
 
-		return _fullPath.compareTo(jsonWebServiceActionConfig._fullPath);
+		return _signature.compareTo(jsonWebServiceActionConfig._signature);
 	}
 
 	public Class<?> getActionClass() {
@@ -71,33 +72,33 @@ public class JSONWebServiceActionConfig
 		return _actionMethod;
 	}
 
+	public String getFullPath() {
+		return _fullPath;
+	}
+
 	public String getMethod() {
 		return _method;
 	}
 
-	public String[] getParameterNames() {
-		return _parameterNames;
-	}
-
-	public Class<?>[] getParameterTypes() {
-		return _parameterTypes;
+	public MethodParameter[] getMethodParameters() {
+		return _methodParameters;
 	}
 
 	public String getPath() {
 		return _path;
 	}
 
-	public String getServletContextName() {
-		return _servletContextName;
+	public String getServletContextPath() {
+		return _servletContextPath;
 	}
 
 	public String getSignature() {
-		return _fullPath;
+		return _signature;
 	}
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(11);
+		StringBundler sb = new StringBundler(17);
 
 		sb.append("{actionClass=");
 		sb.append(_actionClass);
@@ -107,12 +108,14 @@ public class JSONWebServiceActionConfig
 		sb.append(_fullPath);
 		sb.append(", method=");
 		sb.append(_method);
-		sb.append(", parameterNames=");
-		sb.append(_parameterNames);
-		sb.append(", parameterTypes=");
-		sb.append(_parameterTypes);
+		sb.append(", methodParameters=");
+		sb.append(_methodParameters);
 		sb.append(", path=");
 		sb.append(_path);
+		sb.append(", servletContextPath=");
+		sb.append(_servletContextPath);
+		sb.append(", signature=");
+		sb.append(_signature);
 		sb.append("}");
 
 		return sb.toString();
@@ -122,9 +125,9 @@ public class JSONWebServiceActionConfig
 	private Method _actionMethod;
 	private String _fullPath;
 	private String _method;
-	private String[] _parameterNames;
-	private Class<?>[] _parameterTypes;
+	private MethodParameter[] _methodParameters;
 	private String _path;
-	private String _servletContextName;
+	private String _servletContextPath;
+	private String _signature;
 
 }

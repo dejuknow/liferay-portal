@@ -36,6 +36,7 @@ import com.liferay.portal.service.ServiceContextThreadLocal;
 import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portlet.expando.model.ExpandoBridge;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import java.util.ArrayList;
@@ -48,10 +49,13 @@ import java.util.Set;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 
+import org.springframework.core.annotation.Order;
+
 /**
  * @author Raymond Augé
  * @author Brian Wing Shun Chan
  */
+@Order(1)
 public class LayoutLocalServiceStagingAdvice
 	extends LayoutLocalServiceImpl implements MethodInterceptor {
 
@@ -82,9 +86,7 @@ public class LayoutLocalServiceStagingAdvice
 
 		boolean showIncomplete = false;
 
-		if (!_layoutLocalServiceStagingAdviceMethodNames.contains(
-				methodName)) {
-
+		if (!_layoutLocalServiceStagingAdviceMethodNames.contains(methodName)) {
 			return wrapReturnValue(methodInvocation.proceed(), showIncomplete);
 		}
 
@@ -96,7 +98,7 @@ public class LayoutLocalServiceStagingAdvice
 				(ServiceContext)arguments[2]);
 		}
 		else if (methodName.equals("updateLayout") &&
-				 (arguments.length == 16)) {
+				 (arguments.length == 15)) {
 
 			returnValue = updateLayout(
 				(Long)arguments[0], (Boolean)arguments[1], (Long)arguments[2],
@@ -107,7 +109,7 @@ public class LayoutLocalServiceStagingAdvice
 				(Map<Locale, String>)arguments[8], (String)arguments[9],
 				(Boolean)arguments[10], (String)arguments[11],
 				(Boolean)arguments[12], (byte[])arguments[13],
-				(Boolean)arguments[14], (ServiceContext)arguments[15]);
+				(ServiceContext)arguments[14]);
 		}
 		else if (methodName.equals("getLayouts")) {
 			if (arguments.length == 6) {
@@ -124,6 +126,9 @@ public class LayoutLocalServiceStagingAdvice
 					methodName, method.getParameterTypes());
 
 				returnValue = localMethod.invoke(this, arguments);
+			}
+			catch (InvocationTargetException ite) {
+				throw ite.getTargetException();
 			}
 			catch (NoSuchMethodException nsme) {
 				throw new SystemException(nsme);
@@ -142,7 +147,7 @@ public class LayoutLocalServiceStagingAdvice
 			Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
 			Map<Locale, String> keywordsMap, Map<Locale, String> robotsMap,
 			String type, boolean hidden, String friendlyURL, Boolean iconImage,
-			byte[] iconBytes, boolean locked, ServiceContext serviceContext)
+			byte[] iconBytes, ServiceContext serviceContext)
 		throws PortalException, SystemException {
 
 		// Layout
@@ -170,7 +175,7 @@ public class LayoutLocalServiceStagingAdvice
 			return super.updateLayout(
 				groupId, privateLayout, layoutId, parentLayoutId, nameMap,
 				titleMap, descriptionMap, keywordsMap, robotsMap, type, hidden,
-				friendlyURL, iconImage, iconBytes, locked, serviceContext);
+				friendlyURL, iconImage, iconBytes, serviceContext);
 		}
 
 		if (parentLayoutId != layout.getParentLayoutId()) {

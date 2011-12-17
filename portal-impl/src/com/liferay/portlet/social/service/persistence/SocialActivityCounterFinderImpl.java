@@ -34,8 +34,6 @@ import com.liferay.portlet.social.model.impl.SocialActivityCounterImpl;
 import com.liferay.portlet.social.util.SocialCounterPeriodUtil;
 import com.liferay.util.dao.orm.CustomSQLUtil;
 
-import java.io.Serializable;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -106,10 +104,11 @@ public class SocialActivityCounterFinderImpl
 	}
 
 	public List<SocialActivityCounter> findAC_ByG_N_S_E_1(
-			long groupId, String name, int startPeriod, int endPeriod)
+			long groupId, String name, int startPeriod, int endPeriod,
+			int periodLength)
 		throws SystemException {
 
-		StringBundler sb = new StringBundler(8);
+		StringBundler sb = new StringBundler(9);
 
 		sb.append(groupId);
 		sb.append(StringPool.POUND);
@@ -119,12 +118,13 @@ public class SocialActivityCounterFinderImpl
 		sb.append(StringPool.POUND);
 		sb.append(endPeriod);
 		sb.append(StringPool.POUND);
+		sb.append(periodLength);
 
 		String key = sb.toString();
 
 		List<SocialActivityCounter> activityCounters = null;
 
-		if (startPeriod != SocialCounterPeriodUtil.getStartPeriod()) {
+		if (endPeriod < SocialCounterPeriodUtil.getActivityDay()) {
 			activityCounters =
 				(List<SocialActivityCounter>)_activityCounters.get(key);
 		}
@@ -148,6 +148,8 @@ public class SocialActivityCounterFinderImpl
 			qPos.add(name);
 			qPos.add(startPeriod);
 			qPos.add(endPeriod);
+			qPos.add(periodLength);
+			qPos.add(endPeriod);
 
 			activityCounters = new ArrayList<SocialActivityCounter>();
 
@@ -159,14 +161,11 @@ public class SocialActivityCounterFinderImpl
 				SocialActivityCounter activityCounter =
 					new SocialActivityCounterImpl();
 
-				activityCounter.setName(
-					GetterUtil.getString((Serializable)array[0]));
+				activityCounter.setName(GetterUtil.getString(array[0]));
 				activityCounter.setCurrentValue(
-					GetterUtil.getInteger((Serializable)array[1]));
-				activityCounter.setStartPeriod(
-					GetterUtil.getInteger((Serializable)array[2]));
-				activityCounter.setEndPeriod(
-					GetterUtil.getInteger((Serializable)array[3]));
+					GetterUtil.getInteger(array[1]));
+				activityCounter.setStartPeriod(GetterUtil.getInteger(array[2]));
+				activityCounter.setEndPeriod(GetterUtil.getInteger(array[3]));
 
 				activityCounters.add(activityCounter);
 			}
@@ -179,7 +178,7 @@ public class SocialActivityCounterFinderImpl
 				_activityCounters.remove(key);
 			}
 			else {
-				if (startPeriod != SocialCounterPeriodUtil.getStartPeriod()) {
+				if (endPeriod < SocialCounterPeriodUtil.getActivityDay()) {
 					_activityCounters.put(key, activityCounters);
 				}
 			}
@@ -191,7 +190,8 @@ public class SocialActivityCounterFinderImpl
 	}
 
 	public List<SocialActivityCounter> findAC_ByG_N_S_E_2(
-			long groupId, String counterName, int startPeriod, int endPeriod)
+			long groupId, String counterName, int startPeriod, int endPeriod,
+			int periodLength)
 		throws SystemException {
 
 		Session session = null;
@@ -209,6 +209,8 @@ public class SocialActivityCounterFinderImpl
 			qPos.add(counterName);
 			qPos.add(startPeriod);
 			qPos.add(endPeriod);
+			qPos.add(periodLength);
+			qPos.add(endPeriod);
 
 			List<SocialActivityCounter> activityCounters =
 				new ArrayList<SocialActivityCounter>();
@@ -221,12 +223,10 @@ public class SocialActivityCounterFinderImpl
 				SocialActivityCounter activityCounter =
 					new SocialActivityCounterImpl();
 
-				activityCounter.setClassNameId(
-					GetterUtil.getLong((Serializable)array[0]));
-				activityCounter.setName(
-					GetterUtil.getString((Serializable)array[1]));
+				activityCounter.setClassNameId(GetterUtil.getLong(array[0]));
+				activityCounter.setName(GetterUtil.getString(array[1]));
 				activityCounter.setCurrentValue(
-					GetterUtil.getInteger((Serializable)array[2]));
+					GetterUtil.getInteger(array[2]));
 
 				activityCounters.add(activityCounter);
 			}
@@ -263,15 +263,13 @@ public class SocialActivityCounterFinderImpl
 
 			SQLQuery q = session.createSQLQuery(sql);
 
+			q.addEntity(
+				"SocialActivityCounter", SocialActivityCounterImpl.class);
+
 			QueryPos qPos = QueryPos.getInstance(q);
 
 			qPos.add(groupId);
 			qPos.add(PortalUtil.getClassNameId(User.class.getName()));
-			qPos.add(SocialCounterPeriodUtil.getPeriodLength());
-			qPos.add(SocialCounterPeriodUtil.getActivityDay());
-
-			q.addEntity(
-				"SocialActivityCounter", SocialActivityCounterImpl.class);
 
 			return (List<SocialActivityCounter>)QueryUtil.list(
 				q, getDialect(), start, end);
@@ -303,15 +301,15 @@ public class SocialActivityCounterFinderImpl
 
 			SQLQuery q = session.createSQLQuery(sql);
 
+			q.addScalar("classPK", Type.LONG);
+
 			QueryPos qPos = QueryPos.getInstance(q);
 
 			qPos.add(groupId);
 			qPos.add(PortalUtil.getClassNameId(User.class.getName()));
-			qPos.add(SocialCounterPeriodUtil.getPeriodLength());
-			qPos.add(SocialCounterPeriodUtil.getActivityDay());
+			qPos.add(SocialCounterPeriodUtil.getStartPeriod());
 
-			return (List<Long>)QueryUtil.list(
-				q, getDialect(), start, end);
+			return (List<Long>)QueryUtil.list(q, getDialect(), start, end);
 		}
 		catch (Exception e) {
 			throw new SystemException(e);

@@ -42,55 +42,138 @@ public class ServerDetector {
 
 	public static final String WEBSPHERE_ID = "websphere";
 
+	public static ServerDetector getInstance() {
+		if (_instance == null) {
+			_instance = new ServerDetector();
+
+			_instance._init();
+		}
+
+		return _instance;
+	}
+
 	public static String getServerId() {
-		return _instance._serverId;
+		return getInstance()._serverId;
+	}
+
+	public static void init(String serverId) {
+		ServerDetector serverDetector = new ServerDetector();
+
+		serverDetector._serverId = serverId;
+
+		if (serverId.equals(GERONIMO_ID)) {
+			serverDetector._geronimo = true;
+		}
+		else if (serverId.equals(GLASSFISH_ID)) {
+			serverDetector._glassfish = true;
+		}
+		else if (serverId.equals(JBOSS_ID)) {
+			serverDetector._jBoss = true;
+		}
+		else if (serverId.equals(JETTY_ID)) {
+			serverDetector._jetty = true;
+		}
+		else if (serverId.equals(JONAS_ID)) {
+			serverDetector._jonas = true;
+		}
+		else if (serverId.equals(OC4J_ID)) {
+			serverDetector._oc4j = true;
+		}
+		else if (serverId.equals(RESIN_ID)) {
+			serverDetector._resin = true;
+		}
+		else if (serverId.equals(TOMCAT_ID)) {
+			serverDetector._tomcat = true;
+		}
+		else if (serverId.equals(WEBLOGIC_ID)) {
+			serverDetector._webLogic = true;
+		}
+		else if (serverId.equals(WEBSPHERE_ID)) {
+			serverDetector._webSphere = true;
+		}
+		else {
+			serverDetector._init();
+		}
+
+		_instance = serverDetector;
 	}
 
 	public static boolean isGeronimo() {
-		return _instance._geronimo;
+		return getInstance()._geronimo;
 	}
 
 	public static boolean isGlassfish() {
-		return _instance._glassfish;
+		return getInstance()._glassfish;
 	}
 
 	public static boolean isJBoss() {
-		return _instance._jBoss;
+		return getInstance()._jBoss;
 	}
 
 	public static boolean isJetty() {
-		return _instance._jetty;
+		return getInstance()._jetty;
 	}
 
 	public static boolean isJOnAS() {
-		return _instance._jonas;
+		return getInstance()._jonas;
 	}
 
 	public static boolean isOC4J() {
-		return _instance._oc4j;
+		return getInstance()._oc4j;
 	}
 
 	public static boolean isResin() {
-		return _instance._resin;
+		return getInstance()._resin;
 	}
 
 	public static boolean isSupportsComet() {
-		return _instance._supportsComet;
+		return getInstance()._supportsComet;
 	}
 
 	public static boolean isTomcat() {
-		return _instance._tomcat;
+		return getInstance()._tomcat;
 	}
 
 	public static boolean isWebLogic() {
-		return _instance._webLogic;
+		return getInstance()._webLogic;
 	}
 
 	public static boolean isWebSphere() {
-		return _instance._webSphere;
+		return getInstance()._webSphere;
 	}
 
-	private ServerDetector() {
+	private boolean _detect(String className) {
+		try {
+			ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
+
+			systemClassLoader.loadClass(className);
+
+			return true;
+		}
+		catch (ClassNotFoundException cnfe) {
+			Class<?> clazz = getClass();
+
+			if (clazz.getResource(className) != null) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+	}
+
+	private boolean _hasSystemProperty(String key) {
+		String value = System.getProperty(key);
+
+		if (value != null) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	private void _init() {
 		if (_isGeronimo()) {
 			_serverId = GERONIMO_ID;
 			_geronimo = true;
@@ -151,38 +234,6 @@ public class ServerDetector {
 		}*/
 	}
 
-	private boolean _detect(String className) {
-		try {
-			ClassLoader systemClassLoader =
-				ClassLoader.getSystemClassLoader();
-
-			systemClassLoader.loadClass(className);
-
-			return true;
-		}
-		catch (ClassNotFoundException cnfe) {
-			Class<?> clazz = getClass();
-
-			if (clazz.getResource(className) != null) {
-				return true;
-			}
-			else {
-				return false;
-			}
-		}
-	}
-
-	private boolean _hasSystemProperty(String key) {
-		String value = System.getProperty(key);
-
-		if (value != null) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-
 	private boolean _isGeronimo() {
 		return _hasSystemProperty("org.apache.geronimo.home.dir");
 	}
@@ -220,15 +271,13 @@ public class ServerDetector {
 	}
 
 	private boolean _isWebSphere() {
-		return _detect(
-			"/com/ibm/websphere/product/VersionInfo.class");
+		return _detect("/com/ibm/websphere/product/VersionInfo.class");
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(ServerDetector.class);
 
-	private static ServerDetector _instance = new ServerDetector();
+	private static ServerDetector _instance;
 
-	private String _serverId;
 	private boolean _geronimo;
 	private boolean _glassfish;
 	private boolean _jBoss;
@@ -236,6 +285,7 @@ public class ServerDetector {
 	private boolean _jonas;
 	private boolean _oc4j;
 	private boolean _resin;
+	private String _serverId;
 	private boolean _supportsComet;
 	private boolean _tomcat;
 	private boolean _webLogic;

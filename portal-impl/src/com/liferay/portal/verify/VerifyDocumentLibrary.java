@@ -21,9 +21,13 @@ import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portal.repository.liferayrepository.model.LiferayFileEntry;
 import com.liferay.portal.repository.liferayrepository.model.LiferayFileVersion;
 import com.liferay.portlet.documentlibrary.model.DLFileEntry;
+import com.liferay.portlet.documentlibrary.model.DLFileEntryType;
+import com.liferay.portlet.documentlibrary.model.DLFileEntryTypeConstants;
 import com.liferay.portlet.documentlibrary.service.DLAppHelperLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalServiceUtil;
+import com.liferay.portlet.documentlibrary.service.DLFileEntryTypeLocalServiceUtil;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -34,31 +38,54 @@ public class VerifyDocumentLibrary extends VerifyProcess {
 
 	@Override
 	protected void doVerify() throws Exception {
+		checkFileEntryType();
 		removeOrphanedFileEntries();
 		updateAssets();
 	}
 
+	protected void checkFileEntryType() throws Exception {
+		DLFileEntryType dlFileEntryType =
+			DLFileEntryTypeLocalServiceUtil.fetchDLFileEntryType(
+				DLFileEntryTypeConstants.FILE_ENTRY_TYPE_ID_BASIC_DOCUMENT);
+
+		if (dlFileEntryType != null) {
+			return;
+		}
+
+		Date now = new Date();
+
+		dlFileEntryType = DLFileEntryTypeLocalServiceUtil.createDLFileEntryType(
+			DLFileEntryTypeConstants.FILE_ENTRY_TYPE_ID_BASIC_DOCUMENT);
+
+		dlFileEntryType.setCreateDate(now);
+		dlFileEntryType.setModifiedDate(now);
+		dlFileEntryType.setName(DLFileEntryTypeConstants.NAME_BASIC_DOCUMENT);
+
+		DLFileEntryTypeLocalServiceUtil.updateDLFileEntryType(
+			dlFileEntryType, false);
+	}
+
 	protected void removeOrphanedFileEntries() throws Exception {
-		List<DLFileEntry> fileEntries =
+		List<DLFileEntry> dlFileEntries =
 			DLFileEntryLocalServiceUtil.getOrphanedFileEntries();
 
 		if (_log.isDebugEnabled()) {
 			_log.debug(
-				"Processing " + fileEntries.size() +
+				"Processing " + dlFileEntries.size() +
 					" file entries with no group");
 		}
 
-		for (DLFileEntry fileEntry : fileEntries) {
+		for (DLFileEntry dlFileEntry : dlFileEntries) {
 			try {
 				DLFileEntryLocalServiceUtil.deleteFileEntry(
-					fileEntry.getFileEntryId());
+					dlFileEntry.getFileEntryId());
 			}
 			catch (Exception e) {
 				if (_log.isWarnEnabled()) {
 					_log.warn(
 						"Unable to remove file entry " +
-							fileEntry.getFileEntryId() + " with group " +
-								fileEntry.getGroupId() + ": " + e.getMessage());
+							dlFileEntry.getFileEntryId() + ": " +
+								e.getMessage());
 				}
 			}
 		}

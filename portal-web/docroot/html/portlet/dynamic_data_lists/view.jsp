@@ -117,12 +117,12 @@ portletURL.setParameter("struts_action", "/dynamic_data_lists/view");
 					],
 					centered: true,
 					modal: true,
-					title: '<liferay-ui:message key="export" />',
+					title: '<%= UnicodeLanguageUtil.get(pageContext, "export") %>',
 					width: 400
 				}
 			).render();
 
 		},
-		['aui-base']
+		['aui-dialog']
 	);
 </aui:script>

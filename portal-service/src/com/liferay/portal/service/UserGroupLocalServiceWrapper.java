@@ -288,21 +288,16 @@ public class UserGroupLocalServiceWrapper implements UserGroupLocalService,
 	* @param companyId the primary key of the user group's company
 	* @param name the user group's name
 	* @param description the user group's description
-	* @param publicLayoutSetPrototypeId the primary key of the user group's
-	public layout set
-	* @param privateLayoutSetPrototypeId the primary key of the user group's
-	private layout set
 	* @return the user group
 	* @throws PortalException if the user group's information was invalid
 	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.UserGroup addUserGroup(long userId,
-		long companyId, java.lang.String name, java.lang.String description,
-		long publicLayoutSetPrototypeId, long privateLayoutSetPrototypeId)
+		long companyId, java.lang.String name, java.lang.String description)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException {
 		return _userGroupLocalService.addUserGroup(userId, companyId, name,
-			description, publicLayoutSetPrototypeId, privateLayoutSetPrototypeId);
+			description);
 	}
 
 	/**
@@ -327,9 +322,10 @@ public class UserGroupLocalServiceWrapper implements UserGroupLocalService,
 	*
 	* @param userGroupId the primary key of the user group
 	* @param userIds the primary keys of the users
-	* @throws PortalException if any one of the users could not be found or if
-	a portal exception occurred
+	* @throws PortalException if any one of the users could not be found or
+	if a portal exception occurred
 	* @throws SystemException if a system exception occurred
+	* @deprecated
 	*/
 	public void copyUserGroupLayouts(long userGroupId, long[] userIds)
 		throws com.liferay.portal.kernel.exception.PortalException,
@@ -345,6 +341,7 @@ public class UserGroupLocalServiceWrapper implements UserGroupLocalService,
 	* @throws PortalException if a user with the primary key could not be
 	found or if a portal exception occurred
 	* @throws SystemException if a system exception occurred
+	* @deprecated
 	*/
 	public void copyUserGroupLayouts(long[] userGroupIds, long userId)
 		throws com.liferay.portal.kernel.exception.PortalException,
@@ -360,6 +357,7 @@ public class UserGroupLocalServiceWrapper implements UserGroupLocalService,
 	* @throws PortalException if a user with the primary key could not be
 	found or if a portal exception occurred
 	* @throws SystemException if a system exception occurred
+	* @deprecated
 	*/
 	public void copyUserGroupLayouts(long userGroupId, long userId)
 		throws com.liferay.portal.kernel.exception.PortalException,
@@ -424,8 +422,7 @@ public class UserGroupLocalServiceWrapper implements UserGroupLocalService,
 	}
 
 	/**
-	* Returns <code>true</code> if the user group is associated with the
-	* group.
+	* Returns <code>true</code> if the user group is associated with the group.
 	*
 	* @param groupId the primary key of the group
 	* @param userGroupId the primary key of the user group
@@ -462,16 +459,16 @@ public class UserGroupLocalServiceWrapper implements UserGroupLocalService,
 	* primary keys, they are indexes in the result set. Thus, <code>0</code>
 	* refers to the first result in the set. Setting both <code>start</code>
 	* and <code>end</code> to {@link
-	* com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the
-	* full result set.
+	* com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full
+	* result set.
 	* </p>
 	*
 	* @param companyId the primary key of the user group's company
 	* @param name the user group's name (optionally <code>null</code>)
 	* @param description the user group's description (optionally
 	<code>null</code>)
-	* @param params the finder params (optionally <code>null</code>). For
-	more information see {@link
+	* @param params the finder params (optionally <code>null</code>). For more
+	information see {@link
 	com.liferay.portal.service.persistence.UserGroupFinder}
 	* @param start the lower bound of the range of user groups to return
 	* @param end the upper bound of the range of user groups to return (not
@@ -498,8 +495,8 @@ public class UserGroupLocalServiceWrapper implements UserGroupLocalService,
 	* @param name the user group's name (optionally <code>null</code>)
 	* @param description the user group's description (optionally
 	<code>null</code>)
-	* @param params the finder params (optionally <code>null</code>). For
-	more information see {@link
+	* @param params the finder params (optionally <code>null</code>). For more
+	information see {@link
 	com.liferay.portal.service.persistence.UserGroupFinder}
 	* @return the number of matching user groups
 	* @throws SystemException if a system exception occurred
@@ -560,23 +557,17 @@ public class UserGroupLocalServiceWrapper implements UserGroupLocalService,
 	* @param userGroupId the primary key of the user group
 	* @param name the user group's name
 	* @param description the user group's description
-	* @param publicLayoutSetPrototypeId the primary key of the user group's
-	public layout set
-	* @param privateLayoutSetPrototypeId the primary key of the user group's
-	private layout set
 	* @return the user group
-	* @throws PortalException if a user group with the primary key could not
-	be found or if the new information was invalid
+	* @throws PortalException if a user group with the primary key could not be
+	found or if the new information was invalid
 	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.UserGroup updateUserGroup(long companyId,
-		long userGroupId, java.lang.String name, java.lang.String description,
-		long publicLayoutSetPrototypeId, long privateLayoutSetPrototypeId)
+		long userGroupId, java.lang.String name, java.lang.String description)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException {
 		return _userGroupLocalService.updateUserGroup(companyId, userGroupId,
-			name, description, publicLayoutSetPrototypeId,
-			privateLayoutSetPrototypeId);
+			name, description);
 	}
 
 	/**

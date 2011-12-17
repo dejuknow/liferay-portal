@@ -31,7 +31,24 @@ import javax.servlet.http.HttpSession;
  */
 public class SessionMessages {
 
-	public static final String KEY = SessionMessages.class.getName();
+	public static final String KEY_SUFFIX_CLOSE_REDIRECT = ".closeRedirect";
+
+	public static final String KEY_SUFFIX_HIDE_DEFAULT_ERROR_MESSAGE =
+		".hideDefaultErrorMessage";
+
+	public static final String KEY_SUFFIX_PORTLET_NOT_AJAXABLE =
+		".portletNotAjaxable";
+
+	public static final String KEY_SUFFIX_REFRESH_PORTLET = ".refreshPortlet";
+
+	public static final String KEY_SUFFIX_REFRESH_PORTLET_DATA =
+		".refreshPortletData";
+
+	public static final String KEY_SUFFIX_UPDATED_CONFIGURATION =
+		".updatedConfiguration";
+
+	public static final String KEY_SUFFIX_UPDATED_PREFERENCES =
+		".updatedPreferences";
 
 	public static void add(HttpServletRequest request, String key) {
 		add(request.getSession(), key);
@@ -283,12 +300,13 @@ public class SessionMessages {
 		Map<String, Object> messages = null;
 
 		try {
-			messages = (Map<String, Object>)session.getAttribute(KEY);
+			messages = (Map<String, Object>)session.getAttribute(
+				SessionMessages.class.getName());
 
 			if ((messages == null) && createIfAbsent) {
 				messages = new LinkedHashMap<String, Object>();
 
-				session.setAttribute(KEY, messages);
+				session.setAttribute(SessionMessages.class.getName(), messages);
 			}
 		}
 		catch (IllegalStateException ise) {
@@ -306,12 +324,14 @@ public class SessionMessages {
 		Map<String, Object> messages = null;
 
 		try {
-			messages = (Map<String, Object>)portletSession.getAttribute(KEY);
+			messages = (Map<String, Object>)portletSession.getAttribute(
+				SessionMessages.class.getName());
 
 			if ((messages == null) && createIfAbsent) {
 				messages = new LinkedHashMap<String, Object>();
 
-				portletSession.setAttribute(KEY, messages);
+				portletSession.setAttribute(
+					SessionMessages.class.getName(), messages);
 			}
 		}
 		catch (IllegalStateException ise) {

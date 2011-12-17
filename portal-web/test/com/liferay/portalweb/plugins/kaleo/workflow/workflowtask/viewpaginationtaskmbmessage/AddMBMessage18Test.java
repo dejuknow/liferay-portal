@@ -47,8 +47,8 @@ public class AddMBMessage18Test extends BaseTestCase {
 			RuntimeVariables.replace("Message Boards"));
 		selenium.waitForPageToLoad("30000");
 		assertEquals(RuntimeVariables.replace("MB Category Name"),
-			selenium.getText("//a/strong"));
-		selenium.clickAt("//a/strong",
+			selenium.getText("//td[2]/a/strong"));
+		selenium.clickAt("//td[2]/a/strong",
 			RuntimeVariables.replace("MB Category Name"));
 		selenium.waitForPageToLoad("30000");
 		selenium.clickAt("//input[@value='Post New Thread']",
@@ -88,9 +88,32 @@ public class AddMBMessage18Test extends BaseTestCase {
 		assertEquals(RuntimeVariables.replace(
 				"MB Category Thread18 Message Subject"),
 			selenium.getText("//div[@class='subject']/a/strong"));
+		assertEquals(RuntimeVariables.replace("Status: Pending (Review)"),
+			selenium.getText("//span[@class='workflow-status']"));
 		assertEquals(RuntimeVariables.replace(
 				"MB Category Thread18 Message Body"),
 			selenium.getText("//div[@class='thread-body']"));
+		selenium.open("/web/guest/home/");
+
+		for (int second = 0;; second++) {
+			if (second >= 90) {
+				fail("timeout");
+			}
+
+			try {
+				if (selenium.isElementPresent("link=Control Panel")) {
+					break;
+				}
+			}
+			catch (Exception e) {
+			}
+
+			Thread.sleep(1000);
+		}
+
+		selenium.clickAt("link=Control Panel",
+			RuntimeVariables.replace("Control Panel"));
+		selenium.waitForPageToLoad("30000");
 		selenium.clickAt("link=My Submissions",
 			RuntimeVariables.replace("My Submissions"));
 		selenium.waitForPageToLoad("30000");

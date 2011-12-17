@@ -49,8 +49,8 @@ import java.rmi.RemoteException;
  *
  * <p>
  * You can see a list of services at
- * http://localhost:8080/tunnel-web/secure/axis. Set the property
- * <b>tunnel.servlet.hosts.allowed</b> in portal.properties to configure
+ * http://localhost:8080/api/secure/axis. Set the property
+ * <b>axis.servlet.hosts.allowed</b> in portal.properties to configure
  * security.
  * </p>
  *
@@ -107,20 +107,6 @@ public class MDRRuleGroupInstanceServiceSoap {
 		throws RemoteException {
 		try {
 			MDRRuleGroupInstanceServiceUtil.deleteRuleGroupInstance(ruleGroupInstanceId);
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-
-			throw new RemoteException(e.getMessage());
-		}
-	}
-
-	public static void deleteRuleGroupInstance(
-		com.liferay.portlet.mobiledevicerules.model.MDRRuleGroupInstanceSoap ruleGroupInstance)
-		throws RemoteException {
-		try {
-			MDRRuleGroupInstanceServiceUtil.deleteRuleGroupInstance(com.liferay.portlet.mobiledevicerules.model.impl.MDRRuleGroupInstanceModelImpl.toModel(
-					ruleGroupInstance));
 		}
 		catch (Exception e) {
 			_log.error(e, e);

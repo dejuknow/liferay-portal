@@ -18,6 +18,8 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 
+import java.sql.SQLException;
+
 /**
  * @author Brian Wing Shun Chan
  * @author Bruno Farache
@@ -66,8 +68,11 @@ public class CustomSQLUtil {
 	}
 
 	public static String[] keywords(String[] keywordsArray, boolean lowerCase) {
-		return _instance._customSQL.keywords(
-			keywordsArray, lowerCase);
+		return _instance._customSQL.keywords(keywordsArray, lowerCase);
+	}
+
+	public static void reloadCustomSQL() throws SQLException {
+		_instance._customSQL.reloadCustomSQL();
 	}
 
 	public static String removeGroupBy(String sql) {
@@ -79,8 +84,7 @@ public class CustomSQLUtil {
 	}
 
 	public static String replaceAndOperator(String sql, boolean andOperator) {
-		return _instance._customSQL.replaceAndOperator(
-			sql, andOperator);
+		return _instance._customSQL.replaceAndOperator(sql, andOperator);
 	}
 
 	public static String replaceIsNull(String sql) {

@@ -16,7 +16,6 @@ package com.liferay.portal.tools;
 
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.xml.Document;
-import com.liferay.portal.kernel.xml.DocumentException;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.liferay.portal.tools.servicebuilder.ServiceBuilder;
@@ -35,6 +34,7 @@ import java.io.IOException;
 
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -57,25 +57,18 @@ public class InstanceWrapperBuilder {
 		try {
 			File file = new File(xml);
 
-			Document doc = null;
+			Document document = SAXReaderUtil.read(file);
 
-			try {
-				doc = SAXReaderUtil.read(file);
-			}
-			catch (DocumentException de) {
-				de.printStackTrace();
-			}
+			Element rootElement = document.getRootElement();
 
-			Element root = doc.getRootElement();
+			List<Element> instanceWrapperElements = rootElement.elements(
+				"instance-wrapper");
 
-			Iterator<Element> itr = root.elements(
-				"instance-wrapper").iterator();
-
-			while (itr.hasNext()) {
-				Element instanceWrapper = itr.next();
-
-				String parentDir = instanceWrapper.attributeValue("parent-dir");
-				String srcFile = instanceWrapper.attributeValue("src-file");
+			for (Element instanceWrapperElement : instanceWrapperElements) {
+				String parentDir = instanceWrapperElement.attributeValue(
+					"parent-dir");
+				String srcFile = instanceWrapperElement.attributeValue(
+					"src-file");
 
 				_createIW(parentDir, srcFile);
 			}
@@ -90,7 +83,7 @@ public class InstanceWrapperBuilder {
 
 		JavaClass javaClass = _getJavaClass(parentDir, srcFile);
 
-		JavaMethod[] methods = javaClass.getMethods();
+		JavaMethod[] javaMethods = javaClass.getMethods();
 
 		StringBuilder sb = new StringBuilder();
 
@@ -108,9 +101,7 @@ public class InstanceWrapperBuilder {
 		sb.append("return _instance;");
 		sb.append("}\n");
 
-		for (int i = 0; i < methods.length; i++) {
-			JavaMethod javaMethod = methods[i];
-
+		for (JavaMethod javaMethod : javaMethods) {
 			String methodName = javaMethod.getName();
 
 			if (!javaMethod.isPublic() || !javaMethod.isStatic()) {
@@ -134,15 +125,27 @@ public class InstanceWrapperBuilder {
 			TypeVariable[] typeParameters = javaMethod.getTypeParameters();
 
 			if (typeParameters.length > 0) {
-				sb.append(" " + typeParameters[0].getGenericValue() + " ");
+				sb.append(" <");
+
+				for (int i = 0; i < typeParameters.length; i++) {
+					TypeVariable typeParameter = typeParameters[i];
+
+					sb.append(typeParameter.getName());
+
+					if ((i + 1) != typeParameters.length) {
+						sb.append(", ");
+					}
+				}
+				
+				sb.append("> ");
 			}
 
 			sb.append(_getTypeGenericsName(javaMethod.getReturns()) + " " + methodName + "(");
 
-			JavaParameter[] parameters = javaMethod.getParameters();
+			JavaParameter[] javaParameters = javaMethod.getParameters();
 
-			for (int j = 0; j < parameters.length; j++) {
-				JavaParameter javaParameter = parameters[j];
+			for (int i = 0; i < javaParameters.length; i++) {
+				JavaParameter javaParameter = javaParameters[i];
 
 				sb.append(_getTypeGenericsName(javaParameter.getType()));
 
@@ -152,7 +155,7 @@ public class InstanceWrapperBuilder {
 
 				sb.append(" " + javaParameter.getName());
 
-				if ((j + 1) != parameters.length) {
+				if ((i + 1) != javaParameters.length) {
 					sb.append(", ");
 				}
 			}
@@ -191,12 +194,12 @@ public class InstanceWrapperBuilder {
 
 			sb.append(javaClass.getName() + "." + javaMethod.getName() + "(");
 
-			for (int j = 0; j < parameters.length; j++) {
-				JavaParameter javaParameter = parameters[j];
+			for (int j = 0; j < javaParameters.length; j++) {
+				JavaParameter javaParameter = javaParameters[j];
 
 				sb.append(javaParameter.getName());
 
-				if ((j + 1) != parameters.length) {
+				if ((j + 1) != javaParameters.length) {
 					sb.append(", ");
 				}
 			}

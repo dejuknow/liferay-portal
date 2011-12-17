@@ -122,8 +122,7 @@ public class PortletLocalServiceImpl extends PortletLocalServiceBaseImpl {
 		PortletCategory newPortletCategory = new PortletCategory(categoryName);
 
 		if (newPortletCategory.getParentCategory() == null) {
-			PortletCategory rootPortletCategory =
-				new PortletCategory();
+			PortletCategory rootPortletCategory = new PortletCategory();
 
 			rootPortletCategory.addCategory(newPortletCategory);
 		}
@@ -540,6 +539,25 @@ public class PortletLocalServiceImpl extends PortletLocalServiceBaseImpl {
 	}
 
 	@Skip
+	public List<Portlet> getScopablePortlets() {
+		Map<String, Portlet> portletsPool = _getPortletsPool();
+
+		List<Portlet> portlets = ListUtil.fromMapValues(portletsPool);
+
+		Iterator<Portlet> itr = portlets.iterator();
+
+		while (itr.hasNext()) {
+			Portlet portlet = itr.next();
+
+			if (!portlet.isScopeable()) {
+				itr.remove();
+			}
+		}
+
+		return portlets;
+	}
+
+	@Skip
 	public PortletCategory getWARDisplay(String servletContextName, String xml)
 		throws SystemException {
 
@@ -769,8 +787,7 @@ public class PortletLocalServiceImpl extends PortletLocalServiceBaseImpl {
 			portletsPool.put(portlet.getPortletId(), portlet);
 		}
 
-		List<Portlet> portlets = portletPersistence.findByCompanyId(
-			companyId);
+		List<Portlet> portlets = portletPersistence.findByCompanyId(companyId);
 
 		for (Portlet portlet : portlets) {
 			Portlet portletModel = portletsPool.get(portlet.getPortletId());
@@ -919,13 +936,19 @@ public class PortletLocalServiceImpl extends PortletLocalServiceBaseImpl {
 
 		List<Portlet> portlets = new ArrayList<Portlet>();
 
+		String servletContextNameSuffix = servletContextName;
+
+		if (Validator.isNotNull(servletContextName)) {
+			servletContextNameSuffix = PortalUtil.getJsSafePortletId(
+				PortletConstants.WAR_SEPARATOR.concat(servletContextName));
+		}
+
 		for (Map.Entry<String, Portlet> entry : portletsPool.entrySet()) {
 			String portletId = entry.getKey();
 			Portlet portlet = entry.getValue();
 
-			if (Validator.isNotNull(servletContextName)) {
-				if (portletId.endsWith(
-						PortletConstants.WAR_SEPARATOR + servletContextName)) {
+			if (Validator.isNotNull(servletContextNameSuffix)) {
+				if (portletId.endsWith(servletContextNameSuffix)) {
 
 					portlets.add(portlet);
 				}
@@ -1445,8 +1468,7 @@ public class PortletLocalServiceImpl extends PortletLocalServiceBaseImpl {
 				portletElement.elementText("ajaxable"),
 				portletModel.isAjaxable()));
 
-		List<String> headerPortalCssList =
-			portletModel.getHeaderPortalCss();
+		List<String> headerPortalCssList = portletModel.getHeaderPortalCss();
 
 		for (Element headerPortalCssElement :
 				portletElement.elements("header-portal-css")) {

@@ -43,6 +43,7 @@ import com.liferay.portal.util.PropsValues;
 import java.text.ParseException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -155,7 +156,7 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
 		throws SchedulerException {
 
 		if (!PropsValues.SCHEDULER_ENABLED) {
-			return null;
+			return Collections.emptyList();
 		}
 
 		try {
@@ -187,7 +188,7 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
 		throws SchedulerException {
 
 		if (!PropsValues.SCHEDULER_ENABLED) {
-			return null;
+			return Collections.emptyList();
 		}
 
 		try {
@@ -583,8 +584,7 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
 		groupName = fixMaxLength(
 			getOriginalGroupName(groupName), GROUP_NAME_MAX_LENGTH);
 
-		JobDetail jobDetail = scheduler.getJobDetail(
-			jobName, groupName);
+		JobDetail jobDetail = scheduler.getJobDetail(jobName, groupName);
 
 		if (jobDetail == null) {
 			return null;
@@ -639,11 +639,8 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
 						cronTrigger.getEndTime(),
 						cronTrigger.getCronExpression()));
 			}
-			else if (SimpleTrigger.class.isAssignableFrom(
-						trigger.getClass())) {
-
-				SimpleTrigger simpleTrigger = SimpleTrigger.class.cast(
-					trigger);
+			else if (SimpleTrigger.class.isAssignableFrom(trigger.getClass())) {
+				SimpleTrigger simpleTrigger = SimpleTrigger.class.cast(trigger);
 
 				schedulerResponse = new SchedulerResponse();
 
@@ -711,17 +708,26 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
 
 		Properties properties = PropsUtil.getProperties(propertiesPrefix, true);
 
-		if (useQuartzCluster && PropsValues.CLUSTER_LINK_ENABLED) {
+		if (useQuartzCluster) {
 			DB db = DBFactoryUtil.getDB();
 
 			String dbType = db.getType();
 
-			if (dbType.equals(DB.TYPE_HYPERSONIC)) {
-				_log.error("Unable to cluster scheduler on Hypersonic");
+			if (dbType.equals(DB.TYPE_SQLSERVER)) {
+				properties.setProperty(
+					"org.quartz.jobStore.selectWithLockSQL",
+					"SELECT * FROM {0}LOCKS UPDLOCK WHERE LOCK_NAME = ?");
 			}
-			else {
-				properties.put(
-					"org.quartz.jobStore.isClustered", Boolean.TRUE.toString());
+
+			if (PropsValues.CLUSTER_LINK_ENABLED) {
+				if (dbType.equals(DB.TYPE_HYPERSONIC)) {
+					_log.error("Unable to cluster scheduler on Hypersonic");
+				}
+				else {
+					properties.put(
+						"org.quartz.jobStore.isClustered",
+						Boolean.TRUE.toString());
+				}
 			}
 		}
 
@@ -731,7 +737,7 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
 	}
 
 	protected void initJobState() throws Exception {
-		String [] groupNames = _persistedScheduler.getJobGroupNames();
+		String[] groupNames = _persistedScheduler.getJobGroupNames();
 
 		for (String groupName : groupNames) {
 			String[] jobNames = _persistedScheduler.getJobNames(groupName);

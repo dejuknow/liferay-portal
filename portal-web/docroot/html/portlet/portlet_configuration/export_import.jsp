@@ -90,6 +90,25 @@ if (layout.isTypeControlPanel()) {
 		<liferay-ui:error exception="<%= NoSuchLayoutException.class %>" message="an-error-occurred-because-the-live-group-does-not-have-the-current-page" />
 		<liferay-ui:error exception="<%= PortletIdException.class %>" message="please-import-a-lar-file-for-the-current-portlet" />
 
+		<liferay-ui:error exception="<%= PortletDataException.class %>">
+
+			<%
+			PortletDataException pde = (PortletDataException)errorException;
+			%>
+
+			<c:if test="<%= pde.getType() == PortletDataException.FUTURE_END_DATE %>">
+				<liferay-ui:message key="please-enter-a-valid-end-date-that-is-in-the-past" />
+			</c:if>
+
+			<c:if test="<%= pde.getType() == PortletDataException.FUTURE_START_DATE %>">
+				<liferay-ui:message key="please-enter-a-valid-start-date-that-is-in-the-past" />
+			</c:if>
+
+			<c:if test="<%= pde.getType() == PortletDataException.START_DATE_AFTER_END_DATE %>">
+				<liferay-ui:message key="please-enter-a-start-date-that-comes-before-the-end-date" />
+			</c:if>
+		</liferay-ui:error>
+
 		<portlet:actionURL var="exportImportPagesURL">
 			<portlet:param name="struts_action" value="/portlet_configuration/export_import" />
 		</portlet:actionURL>
@@ -106,11 +125,7 @@ if (layout.isTypeControlPanel()) {
 			<c:choose>
 				<c:when test='<%= tabs2.equals("export") %>'>
 				<aui:fieldset>
-					<aui:input label="export-the-selected-data-to-the-given-lar-file-name" name="exportFileName" size="50" value='<%= StringUtil.replace(selPortlet.getDisplayName(), " ", "_") + "-" + Time.getShortTimestamp() + ".portlet.lar" %>' />
-
-					<aui:field-wrapper label="what-would-you-like-to-export">
-						<%@ include file="/html/portlet/portlet_configuration/export_import_options.jspf" %>
-					</aui:field-wrapper>
+					<%@ include file="/html/portlet/portlet_configuration/export_import_options.jspf" %>
 
 					<aui:button-row>
 						<aui:button onClick='<%= renderResponse.getNamespace() + "exportData();" %>' value="export" />
@@ -121,11 +136,7 @@ if (layout.isTypeControlPanel()) {
 				</c:when>
 				<c:when test='<%= tabs2.equals("import") %>'>
 					<aui:fieldset>
-						<aui:input label="import-a-lar-file-to-overwrite-the-selected-data" name="importFileName" size="50" type="file" />
-
-						<aui:field-wrapper label="what-would-you-like-to-import">
-							<%@ include file="/html/portlet/portlet_configuration/export_import_options.jspf" %>
-						</aui:field-wrapper>
+						<%@ include file="/html/portlet/portlet_configuration/export_import_options.jspf" %>
 
 						<aui:button-row>
 							<aui:button onClick='<%= renderResponse.getNamespace() + "importData();" %>' value="import" />
@@ -188,9 +199,7 @@ if (layout.isTypeControlPanel()) {
 					<c:choose>
 						<c:when test="<%= Validator.isNull(errorMessageKey) %>">
 							<aui:fieldset>
-								<aui:field-wrapper label="what-would-you-like-to-copy-from-live-or-publish-to-live">
-									<%@ include file="/html/portlet/portlet_configuration/export_import_options.jspf" %>
-								</aui:field-wrapper>
+								<%@ include file="/html/portlet/portlet_configuration/export_import_options.jspf" %>
 
 								<c:if test="<%= (themeDisplay.getURLPublishToLive() != null) || controlPanel %>">
 									<aui:button-row>
@@ -208,41 +217,6 @@ if (layout.isTypeControlPanel()) {
 				</c:when>
 			</c:choose>
 		</aui:form>
-
-		<aui:script use="aui-base,selector-css3">
-			var toggleHandlerControl = function(item, index, collection) {
-				var container = item.ancestor('.<portlet:namespace />handler-control').one('ul');
-
-				if (container) {
-					var action = 'hide';
-
-					if (item.get('checked')) {
-						action = 'show';
-					}
-
-					container[action]();
-				}
-			};
-
-			var checkboxes = A.all('.<portlet:namespace />handler-control input[type=checkbox]');
-
-			if (checkboxes) {
-				var uncheckedBoxes = checkboxes.filter(':not(:checked)');
-
-				if (uncheckedBoxes) {
-					uncheckedBoxes.each(toggleHandlerControl);
-				}
-
-				checkboxes.detach('click');
-
-				checkboxes.on(
-					'click',
-					function(event) {
-						toggleHandlerControl(event.currentTarget);
-					}
-				);
-			}
-		</aui:script>
 	</c:when>
 	<c:otherwise>
 		<%= LanguageUtil.format(locale, "the-x-portlet-does-not-have-any-data-that-can-be-exported-or-does-not-include-support-for-it", HtmlUtil.escape(PortalUtil.getPortletTitle(selPortlet, application, locale))) %>
@@ -281,31 +255,4 @@ if (layout.isTypeControlPanel()) {
 			submitForm(document.<portlet:namespace />fm);
 		}
 	}
-
-	Liferay.provide(
-		window,
-		'<portlet:namespace />toggleChildren',
-		function(checkbox, parentDivId) {
-			var A = AUI();
-
-			var parentDiv = A.one('#' + parentDivId);
-
-			var enabled = checkbox.checked;
-
-			if (parentDiv) {
-				parentDiv.all('input').each(
-					function(item, index, collection) {
-						var disabled = !enabled;
-
-						if (enabled && item.hasClass('disabled')) {
-							disabled = true;
-						}
-
-						item.set('disabled', disabled);
-					}
-				);
-			}
-		},
-		['aui-base']
-	);
 </aui:script>

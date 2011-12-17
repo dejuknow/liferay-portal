@@ -556,6 +556,24 @@ public class DDMStructureWrapper implements DDMStructure,
 		_ddmStructure.setStorageType(storageType);
 	}
 
+	/**
+	* Returns the type of this d d m structure.
+	*
+	* @return the type of this d d m structure
+	*/
+	public int getType() {
+		return _ddmStructure.getType();
+	}
+
+	/**
+	* Sets the type of this d d m structure.
+	*
+	* @param type the type of this d d m structure
+	*/
+	public void setType(int type) {
+		_ddmStructure.setType(type);
+	}
+
 	public boolean isNew() {
 		return _ddmStructure.isNew();
 	}
@@ -638,21 +656,24 @@ public class DDMStructureWrapper implements DDMStructure,
 		return _ddmStructure.getDefaultLocale();
 	}
 
-	public java.lang.String getFieldDataType(java.lang.String fieldName) {
+	public com.liferay.portal.kernel.xml.Document getDocument() {
+		return _ddmStructure.getDocument();
+	}
+
+	public java.lang.String getFieldDataType(java.lang.String fieldName)
+		throws com.liferay.portlet.dynamicdatamapping.StructureFieldException {
 		return _ddmStructure.getFieldDataType(fieldName);
 	}
 
-	public boolean getFieldDisplayChildLabelAsValue(java.lang.String fieldName) {
-		return _ddmStructure.getFieldDisplayChildLabelAsValue(fieldName);
-	}
-
 	public java.lang.String getFieldLabel(java.lang.String fieldName,
-		java.util.Locale locale) {
+		java.util.Locale locale)
+		throws com.liferay.portlet.dynamicdatamapping.StructureFieldException {
 		return _ddmStructure.getFieldLabel(fieldName, locale);
 	}
 
 	public java.lang.String getFieldLabel(java.lang.String fieldName,
-		java.lang.String locale) {
+		java.lang.String locale)
+		throws com.liferay.portlet.dynamicdatamapping.StructureFieldException {
 		return _ddmStructure.getFieldLabel(fieldName, locale);
 	}
 
@@ -661,16 +682,19 @@ public class DDMStructureWrapper implements DDMStructure,
 	}
 
 	public java.lang.String getFieldProperty(java.lang.String fieldName,
-		java.lang.String property) {
+		java.lang.String property)
+		throws com.liferay.portlet.dynamicdatamapping.StructureFieldException {
 		return _ddmStructure.getFieldProperty(fieldName, property);
 	}
 
 	public java.lang.String getFieldProperty(java.lang.String fieldName,
-		java.lang.String property, java.lang.String locale) {
+		java.lang.String property, java.lang.String locale)
+		throws com.liferay.portlet.dynamicdatamapping.StructureFieldException {
 		return _ddmStructure.getFieldProperty(fieldName, property, locale);
 	}
 
-	public boolean getFieldRequired(java.lang.String fieldName) {
+	public boolean getFieldRequired(java.lang.String fieldName)
+		throws com.liferay.portlet.dynamicdatamapping.StructureFieldException {
 		return _ddmStructure.getFieldRequired(fieldName);
 	}
 
@@ -696,12 +720,22 @@ public class DDMStructureWrapper implements DDMStructure,
 		return _ddmStructure.getFieldsMap(locale);
 	}
 
-	public java.lang.String getFieldType(java.lang.String fieldName) {
+	public java.lang.String getFieldType(java.lang.String fieldName)
+		throws com.liferay.portlet.dynamicdatamapping.StructureFieldException {
 		return _ddmStructure.getFieldType(fieldName);
 	}
 
 	public boolean hasField(java.lang.String fieldName) {
 		return _ddmStructure.hasField(fieldName);
+	}
+
+	public void setDocument(com.liferay.portal.kernel.xml.Document document) {
+		_ddmStructure.setDocument(document);
+	}
+
+	public void setFieldsMap(
+		java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.String>> fieldsMap) {
+		_ddmStructure.setFieldsMap(fieldsMap);
 	}
 
 	/**

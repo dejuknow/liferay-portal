@@ -47,5 +47,7 @@ long listDDMTemplateId = GetterUtil.getLong(preferences.getValue("listDDMTemplat
 boolean editable = GetterUtil.getBoolean(preferences.getValue("editable", Boolean.TRUE.toString()));
 boolean spreadsheet = GetterUtil.getBoolean(preferences.getValue("spreadsheet", Boolean.FALSE.toString()));
 
+String ddmResource = portletConfig.getInitParameter("ddm-resource");
+
 Format dateFormatDateTime = FastDateFormatFactoryUtil.getDateTime(locale, timeZone);
 %>

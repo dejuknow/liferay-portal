@@ -392,10 +392,9 @@ if (feed != null) {
 		Liferay.Util.openWindow(
 			{
 				dialog: {
-					stack: false,
 					width: 680
 				},
-				title: '<liferay-ui:message key="structure" />',
+				title: '<%= UnicodeLanguageUtil.get(pageContext, "structure") %>',
 				uri: '<portlet:renderURL windowState="<%= LiferayWindowState.POP_UP.toString() %>"><portlet:param name="struts_action" value="/journal/select_structure" /><portlet:param name="groupId" value="<%= String.valueOf(groupId) %>" /></portlet:renderURL>'
 			}
 		);
@@ -405,10 +404,9 @@ if (feed != null) {
 		Liferay.Util.openWindow(
 			{
 				dialog: {
-					stack: false,
 					width: 680
 				},
-				title: '<liferay-ui:message key="template" />',
+				title: '<%= UnicodeLanguageUtil.get(pageContext, "template") %>',
 				uri: '<portlet:renderURL windowState="<%= LiferayWindowState.POP_UP.toString() %>"><portlet:param name="struts_action" value="/journal/select_template" /><portlet:param name="groupId" value="<%= String.valueOf(groupId) %>" /></portlet:renderURL>'
 			}
 		);

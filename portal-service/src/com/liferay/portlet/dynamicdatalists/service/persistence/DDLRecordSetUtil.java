@@ -95,14 +95,6 @@ public class DDLRecordSetUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static DDLRecordSet remove(DDLRecordSet ddlRecordSet)
-		throws SystemException {
-		return getPersistence().remove(ddlRecordSet);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static DDLRecordSet update(DDLRecordSet ddlRecordSet, boolean merge)

@@ -41,21 +41,25 @@ public class DDMStructureServiceUtil {
 		long groupId, long classNameId, java.lang.String structureKey,
 		java.util.Map<java.util.Locale, java.lang.String> nameMap,
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
-		java.lang.String xsd, java.lang.String storageType,
+		java.lang.String xsd, java.lang.String storageType, int type,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException {
 		return getService()
 				   .addStructure(groupId, classNameId, structureKey, nameMap,
-			descriptionMap, xsd, storageType, serviceContext);
+			descriptionMap, xsd, storageType, type, serviceContext);
 	}
 
 	public static com.liferay.portlet.dynamicdatamapping.model.DDMStructure copyStructure(
 		long structureId,
+		java.util.Map<java.util.Locale, java.lang.String> nameMap,
+		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException {
-		return getService().copyStructure(structureId, serviceContext);
+		return getService()
+				   .copyStructure(structureId, nameMap, descriptionMap,
+			serviceContext);
 	}
 
 	public static void deleteStructure(long structureId)

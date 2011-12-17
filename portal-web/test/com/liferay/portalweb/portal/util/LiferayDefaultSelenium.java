@@ -56,11 +56,11 @@ public class LiferayDefaultSelenium
 
 			Runtime runtime = Runtime.getRuntime();
 
-			Thread.sleep(1000);
+			Thread.sleep(5000);
 
 			runtime.exec(commands);
 
-			Thread.sleep(10000);
+			Thread.sleep(30000);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -68,18 +68,15 @@ public class LiferayDefaultSelenium
 	}
 
 	public String getCurrentDay() {
-		return commandProcessor.getString(
-			"getCurrentDay", new String[0]);
+		return commandProcessor.getString("getCurrentDay", new String[0]);
 	}
 
 	public String getCurrentMonth() {
-		return commandProcessor.getString(
-			"getCurrentMonth", new String[0]);
+		return commandProcessor.getString("getCurrentMonth", new String[0]);
 	}
 
 	public String getCurrentYear() {
-		return commandProcessor.getString(
-			"getCurrentYear", new String[0]);
+		return commandProcessor.getString("getCurrentYear", new String[0]);
 	}
 
 	public String getFirstNumber(String locator) {
@@ -174,8 +171,7 @@ public class LiferayDefaultSelenium
 				 className.startsWith("com.liferay.portalweb.properties")) &&
 				 className.endsWith("Test")) {
 
-				String dirName = className.substring(
-					22, className.length());
+				String dirName = className.substring(22, className.length());
 
 				dirName = StringUtil.replace(dirName, ".", "/") + "/";
 

@@ -35,8 +35,8 @@ import java.util.List;
  * Activity interpreters use the language files to get text fragments based on
  * the activity's type and the type of asset on which the activity was done.
  * Interpreters are created for specific asset types and are only capable of
- * translating activities done on assets of those types. As an example, there
- * is an interpreter BlogsActivityInterpreter that can only translate activity
+ * translating activities done on assets of those types. As an example, there is
+ * an interpreter BlogsActivityInterpreter that can only translate activity
  * records for blog entries.
  * </p>
  *
@@ -57,8 +57,7 @@ public class SocialActivityInterpreterLocalServiceImpl
 	}
 
 	/**
-	 * Removes the activity interpreter from the list of available
-	 * interpreters.
+	 * Removes the activity interpreter from the list of available interpreters.
 	 *
 	 * @param activityInterpreter the activity interpreter
 	 */
@@ -76,8 +75,8 @@ public class SocialActivityInterpreterLocalServiceImpl
 	 *
 	 * <p>
 	 * This method finds the appropriate interpreter for the activity by going
-	 * through the available interpreters and asking them if they can handle
-	 * the asset type of the activity.
+	 * through the available interpreters and asking them if they can handle the
+	 * asset type of the activity.
 	 * </p>
 	 *
 	 * @param  activity the activity to be translated to human readable form

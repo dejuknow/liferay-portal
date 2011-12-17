@@ -95,13 +95,6 @@ public class WikiPageUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static WikiPage remove(WikiPage wikiPage) throws SystemException {
-		return getPersistence().remove(wikiPage);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static WikiPage update(WikiPage wikiPage, boolean merge)

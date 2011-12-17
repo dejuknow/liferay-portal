@@ -22,8 +22,16 @@ import javax.portlet.PortletRequest;
 /**
  * @author Wilson Man
  * @author Brian Wing Shun Chan
+ * @author Mika Koivisto
  */
 public class FacebookConnectUtil {
+
+	public static String getAccessToken(
+			long companyId, String redirect, String code)
+		throws SystemException {
+
+		return getFacebookConnect().getAccessToken(companyId, redirect, code);
+	}
 
 	public static String getAccessTokenURL(long companyId)
 		throws SystemException {
@@ -68,6 +76,12 @@ public class FacebookConnectUtil {
 
 	public static boolean isEnabled(long companyId) throws SystemException {
 		return getFacebookConnect().isEnabled(companyId);
+	}
+
+	public static boolean isVerifiedAccountRequired(long companyId)
+		throws SystemException {
+
+		return getFacebookConnect().isVerifiedAccountRequired(companyId);
 	}
 
 	public void setFacebookConnect(FacebookConnect facebookConnect) {

@@ -234,6 +234,25 @@ public class SocialActivitySettingPersistenceImpl extends BasePersistenceImpl<So
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 
+		clearUniqueFindersCache(socialActivitySetting);
+	}
+
+	@Override
+	public void clearCache(List<SocialActivitySetting> socialActivitySettings) {
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+
+		for (SocialActivitySetting socialActivitySetting : socialActivitySettings) {
+			EntityCacheUtil.removeResult(SocialActivitySettingModelImpl.ENTITY_CACHE_ENABLED,
+				SocialActivitySettingImpl.class,
+				socialActivitySetting.getPrimaryKey());
+
+			clearUniqueFindersCache(socialActivitySetting);
+		}
+	}
+
+	protected void clearUniqueFindersCache(
+		SocialActivitySetting socialActivitySetting) {
 		FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_G_C_A_N,
 			new Object[] {
 				Long.valueOf(socialActivitySetting.getGroupId()),
@@ -262,20 +281,6 @@ public class SocialActivitySettingPersistenceImpl extends BasePersistenceImpl<So
 	/**
 	 * Removes the social activity setting with the primary key from the database. Also notifies the appropriate model listeners.
 	 *
-	 * @param primaryKey the primary key of the social activity setting
-	 * @return the social activity setting that was removed
-	 * @throws com.liferay.portal.NoSuchModelException if a social activity setting with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public SocialActivitySetting remove(Serializable primaryKey)
-		throws NoSuchModelException, SystemException {
-		return remove(((Long)primaryKey).longValue());
-	}
-
-	/**
-	 * Removes the social activity setting with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
 	 * @param activitySettingId the primary key of the social activity setting
 	 * @return the social activity setting that was removed
 	 * @throws com.liferay.portlet.social.NoSuchActivitySettingException if a social activity setting with the primary key could not be found
@@ -283,25 +288,38 @@ public class SocialActivitySettingPersistenceImpl extends BasePersistenceImpl<So
 	 */
 	public SocialActivitySetting remove(long activitySettingId)
 		throws NoSuchActivitySettingException, SystemException {
+		return remove(Long.valueOf(activitySettingId));
+	}
+
+	/**
+	 * Removes the social activity setting with the primary key from the database. Also notifies the appropriate model listeners.
+	 *
+	 * @param primaryKey the primary key of the social activity setting
+	 * @return the social activity setting that was removed
+	 * @throws com.liferay.portlet.social.NoSuchActivitySettingException if a social activity setting with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public SocialActivitySetting remove(Serializable primaryKey)
+		throws NoSuchActivitySettingException, SystemException {
 		Session session = null;
 
 		try {
 			session = openSession();
 
 			SocialActivitySetting socialActivitySetting = (SocialActivitySetting)session.get(SocialActivitySettingImpl.class,
-					Long.valueOf(activitySettingId));
+					primaryKey);
 
 			if (socialActivitySetting == null) {
 				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
-						activitySettingId);
+					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchActivitySettingException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
-					activitySettingId);
+					primaryKey);
 			}
 
-			return socialActivitySettingPersistence.remove(socialActivitySetting);
+			return remove(socialActivitySetting);
 		}
 		catch (NoSuchActivitySettingException nsee) {
 			throw nsee;
@@ -312,19 +330,6 @@ public class SocialActivitySettingPersistenceImpl extends BasePersistenceImpl<So
 		finally {
 			closeSession(session);
 		}
-	}
-
-	/**
-	 * Removes the social activity setting from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param socialActivitySetting the social activity setting
-	 * @return the social activity setting that was removed
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public SocialActivitySetting remove(
-		SocialActivitySetting socialActivitySetting) throws SystemException {
-		return super.remove(socialActivitySetting);
 	}
 
 	@Override
@@ -346,24 +351,7 @@ public class SocialActivitySettingPersistenceImpl extends BasePersistenceImpl<So
 			closeSession(session);
 		}
 
-		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
-		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
-
-		SocialActivitySettingModelImpl socialActivitySettingModelImpl = (SocialActivitySettingModelImpl)socialActivitySetting;
-
-		FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_G_C_A_N,
-			new Object[] {
-				Long.valueOf(socialActivitySettingModelImpl.getGroupId()),
-				Long.valueOf(socialActivitySettingModelImpl.getClassNameId()),
-				Integer.valueOf(
-					socialActivitySettingModelImpl.getActivityType()),
-				
-			socialActivitySettingModelImpl.getName()
-			});
-
-		EntityCacheUtil.removeResult(SocialActivitySettingModelImpl.ENTITY_CACHE_ENABLED,
-			SocialActivitySettingImpl.class,
-			socialActivitySetting.getPrimaryKey());
+		clearCache(socialActivitySetting);
 
 		return socialActivitySetting;
 	}
@@ -1667,7 +1655,7 @@ public class SocialActivitySettingPersistenceImpl extends BasePersistenceImpl<So
 		throws SystemException {
 		for (SocialActivitySetting socialActivitySetting : findByG_A(groupId,
 				activityType)) {
-			socialActivitySettingPersistence.remove(socialActivitySetting);
+			remove(socialActivitySetting);
 		}
 	}
 
@@ -1683,7 +1671,7 @@ public class SocialActivitySettingPersistenceImpl extends BasePersistenceImpl<So
 		throws SystemException {
 		for (SocialActivitySetting socialActivitySetting : findByG_C_A(
 				groupId, classNameId, activityType)) {
-			socialActivitySettingPersistence.remove(socialActivitySetting);
+			remove(socialActivitySetting);
 		}
 	}
 
@@ -1702,7 +1690,7 @@ public class SocialActivitySettingPersistenceImpl extends BasePersistenceImpl<So
 		SocialActivitySetting socialActivitySetting = findByG_C_A_N(groupId,
 				classNameId, activityType, name);
 
-		socialActivitySettingPersistence.remove(socialActivitySetting);
+		remove(socialActivitySetting);
 	}
 
 	/**
@@ -1712,7 +1700,7 @@ public class SocialActivitySettingPersistenceImpl extends BasePersistenceImpl<So
 	 */
 	public void removeAll() throws SystemException {
 		for (SocialActivitySetting socialActivitySetting : findAll()) {
-			socialActivitySettingPersistence.remove(socialActivitySetting);
+			remove(socialActivitySetting);
 		}
 	}
 
@@ -2001,18 +1989,6 @@ public class SocialActivitySettingPersistenceImpl extends BasePersistenceImpl<So
 	protected SocialActivityLimitPersistence socialActivityLimitPersistence;
 	@BeanReference(type = SocialActivitySettingPersistence.class)
 	protected SocialActivitySettingPersistence socialActivitySettingPersistence;
-	@BeanReference(type = SocialEquityAssetEntryPersistence.class)
-	protected SocialEquityAssetEntryPersistence socialEquityAssetEntryPersistence;
-	@BeanReference(type = SocialEquityGroupSettingPersistence.class)
-	protected SocialEquityGroupSettingPersistence socialEquityGroupSettingPersistence;
-	@BeanReference(type = SocialEquityHistoryPersistence.class)
-	protected SocialEquityHistoryPersistence socialEquityHistoryPersistence;
-	@BeanReference(type = SocialEquityLogPersistence.class)
-	protected SocialEquityLogPersistence socialEquityLogPersistence;
-	@BeanReference(type = SocialEquitySettingPersistence.class)
-	protected SocialEquitySettingPersistence socialEquitySettingPersistence;
-	@BeanReference(type = SocialEquityUserPersistence.class)
-	protected SocialEquityUserPersistence socialEquityUserPersistence;
 	@BeanReference(type = SocialRelationPersistence.class)
 	protected SocialRelationPersistence socialRelationPersistence;
 	@BeanReference(type = SocialRequestPersistence.class)

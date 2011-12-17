@@ -81,6 +81,7 @@ public class SourceFormatter {
 						_checkPersistenceTestSuite();
 						_formatJSP();
 						_formatAntXML();
+						_formatDDLStructuresXML();
 						_formatFriendlyURLRoutesXML();
 						_formatSH();
 						_formatWebXML();
@@ -555,6 +556,72 @@ public class SourceFormatter {
 		}
 	}
 
+	private static void _formatDDLStructuresXML()
+		throws DocumentException, IOException {
+
+		String basedir =
+			"./portal-impl/src/com/liferay/portal/events/dependencies/";
+
+		if (!_fileUtil.exists(basedir)) {
+			return;
+		}
+
+		DirectoryScanner directoryScanner = new DirectoryScanner();
+
+		directoryScanner.setBasedir(basedir);
+		directoryScanner.setIncludes(new String[] {"**\\*structures.xml"});
+
+		List<String> fileNames = _sourceFormatterHelper.scanForFiles(
+			directoryScanner);
+
+		for (String fileName : fileNames) {
+			File file = new File(basedir + fileName);
+
+			String content = _fileUtil.read(file);
+
+			String newContent = _formatDDLStructuresXML(content);
+
+			if ((newContent != null) && !content.equals(newContent)) {
+				_fileUtil.write(file, newContent);
+
+				_sourceFormatterHelper.printError(fileName, file);
+			}
+		}
+	}
+
+	private static String _formatDDLStructuresXML(String content)
+		throws DocumentException, IOException {
+
+		Document document = _saxReaderUtil.read(content);
+
+		Element rootElement = document.getRootElement();
+
+		rootElement.sortAttributes(true);
+
+		rootElement.sortElementsByChildElement("structure", "name");
+
+		List<Element> structureElements = rootElement.elements("structure");
+
+		for (Element structureElement : structureElements) {
+			Element structureRootElement = structureElement.element("root");
+
+			structureRootElement.sortElementsByAttribute(
+				"dynamic-element", "name");
+
+			List<Element> dynamicElementElements =
+				structureRootElement.elements("dynamic-element");
+
+			for (Element dynamicElementElement : dynamicElementElements) {
+				Element metaDataElement = dynamicElementElement.element(
+					"meta-data");
+
+				metaDataElement.sortElementsByAttribute("entry", "name");
+			}
+		}
+
+		return document.formattedString();
+	}
+
 	private static void _formatFriendlyURLRoutesXML()
 		throws DocumentException, IOException {
 
@@ -890,7 +957,9 @@ public class SourceFormatter {
 					"if(",
 					"for(",
 					"while(",
+					"List <",
 					"){\n",
+					"]{\n",
 					"\n\n\n"
 				},
 				new String[] {
@@ -899,7 +968,9 @@ public class SourceFormatter {
 					"if (",
 					"for (",
 					"while (",
+					"List<",
 					") {\n",
+					"] {\n",
 					"\n\n"
 				});
 
@@ -943,6 +1014,10 @@ public class SourceFormatter {
 
 		String line = null;
 
+		String previousLine = StringPool.BLANK;
+
+		int lineToSkipIfEmpty = 0;
+
 		while ((line = unsyncBufferedReader.readLine()) != null) {
 			lineCount++;
 
@@ -964,8 +1039,73 @@ public class SourceFormatter {
 			line = _replacePrimitiveWrapperInstantiation(
 				fileName, line, lineCount);
 
-			sb.append(line);
-			sb.append("\n");
+			String trimmedLine = StringUtil.trimLeading(line);
+
+			if (!trimmedLine.contains(StringPool.DOUBLE_SLASH) &&
+				!trimmedLine.startsWith(StringPool.STAR)) {
+
+				while (trimmedLine.contains(StringPool.TAB)) {
+					line = StringUtil.replaceLast(
+						line, StringPool.TAB, StringPool.SPACE);
+
+					trimmedLine = StringUtil.replaceLast(
+						trimmedLine, StringPool.TAB, StringPool.SPACE);
+				}
+
+				while (trimmedLine.contains(StringPool.DOUBLE_SPACE) &&
+					   !trimmedLine.contains(
+						   StringPool.QUOTE + StringPool.DOUBLE_SPACE) &&
+					   !fileName.contains("Test")) {
+
+					line = StringUtil.replaceLast(
+						line, StringPool.DOUBLE_SPACE, StringPool.SPACE);
+
+					trimmedLine = StringUtil.replaceLast(
+						trimmedLine, StringPool.DOUBLE_SPACE, StringPool.SPACE);
+				}
+
+				if (!line.contains(StringPool.QUOTE)) {
+					if ((trimmedLine.startsWith("private ") ||
+						 trimmedLine.startsWith("protected ") ||
+						 trimmedLine.startsWith("public ")) &&
+						line.contains(" (")) {
+
+						line = StringUtil.replace(line, " (", "(");
+					}
+
+					if (line.contains(" [")) {
+						line = StringUtil.replace(line, " [", "[");
+					}
+
+					for (int x = -1;;) {
+						x = line.indexOf(StringPool.COMMA, x + 1);
+
+						if (x == -1) {
+							break;
+						}
+
+						if (line.length() > (x + 1)) {
+							char nextChar = line.charAt(x + 1);
+
+							if ((nextChar != CharPool.SPACE) && 
+								(nextChar != CharPool.APOSTROPHE)) {
+
+								line = StringUtil.insert(
+									line, StringPool.SPACE, x + 1);
+							}
+						}
+
+						if (x > 0) {
+							char previousChar = line.charAt(x - 1);
+
+							if (previousChar == CharPool.SPACE) {
+								line = line.substring(0, x - 1).concat(
+									line.substring(x));
+							}
+						}
+					}
+				}
+			}
 
 			if (line.contains("    ") && !line.matches("\\s*\\*.*")) {
 				if (!fileName.endsWith("StringPool.java")) {
@@ -974,45 +1114,10 @@ public class SourceFormatter {
 				}
 			}
 
-			String trimmedLine = StringUtil.trimLeading(line);
-
-			if (trimmedLine.contains(StringPool.TAB) &&
-				!trimmedLine.contains(StringPool.DOUBLE_SLASH) &&
-				!trimmedLine.startsWith(StringPool.STAR)) {
-
-				_sourceFormatterHelper.printError(
-					fileName, "tab: " + fileName + " " + lineCount);
-			}
-
 			if (line.contains("  {") && !line.matches("\\s*\\*.*")) {
 				_sourceFormatterHelper.printError(
 					fileName, "{:" + fileName + " " + lineCount);
 			}
-
-			StringBundler lineSB = new StringBundler();
-
-			int spacesPerTab = 4;
-
-			for (char c : line.toCharArray()) {
-				if (c == CharPool.TAB) {
-					for (int i = 0; i < spacesPerTab; i++) {
-						lineSB.append(CharPool.SPACE);
-					}
-
-					spacesPerTab = 4;
-				}
-				else {
-					lineSB.append(c);
-
-					spacesPerTab--;
-
-					if (spacesPerTab <= 0) {
-						spacesPerTab = 4;
-					}
-				}
-			}
-
-			line = lineSB.toString();
 
 			if (line.endsWith("private static Log _log =")) {
 				longLogFactoryUtil = true;
@@ -1027,7 +1132,9 @@ public class SourceFormatter {
 					StringUtil.replace(fileName, "\\", "/"));
 			}
 
-			if ((excluded == null) && (line.length() > 80) &&
+			String combinedLines = null;
+
+			if ((excluded == null) &&
 				!line.startsWith("import ") && !line.startsWith("package ") &&
 				!line.matches("\\s*\\*.*")) {
 
@@ -1041,18 +1148,45 @@ public class SourceFormatter {
 						 line.contains(" index IX_")) {
 				}
 				else {
-					_sourceFormatterHelper.printError(
-						fileName, "> 80: " + fileName + " " + lineCount);
+					if (_getLineLength(line) > 80) {
+						_sourceFormatterHelper.printError(
+							fileName, "> 80: " + fileName + " " + lineCount);
+					}
+					else {
+						combinedLines = _getCombinedLines(
+							trimmedLine, previousLine);
+					}
 				}
 			}
+
+			if (Validator.isNotNull(combinedLines)) {
+				previousLine = combinedLines;
+
+				if (line.endsWith(StringPool.OPEN_CURLY_BRACE)) {
+					lineToSkipIfEmpty = lineCount + 1;
+				}
+			}
+			else {
+				if ((lineCount > 1) &&
+					(Validator.isNotNull(previousLine) ||
+					 (lineToSkipIfEmpty != lineCount - 1))) {
+
+					sb.append(previousLine);
+					sb.append("\n");
+				}
+
+				previousLine = line;
+			}
 		}
+
+		sb.append(previousLine);
 
 		unsyncBufferedReader.close();
 
 		String newContent = sb.toString();
 
 		if (newContent.endsWith("\n")) {
-			newContent = newContent.substring(0, newContent.length() -1);
+			newContent = newContent.substring(0, newContent.length() - 1);
 		}
 
 		if (longLogFactoryUtil) {
@@ -1264,12 +1398,28 @@ public class SourceFormatter {
 
 			String trimmedLine = StringUtil.trimLeading(line);
 
-			if (trimmedLine.contains(StringPool.TAB) &&
-				!trimmedLine.contains(StringPool.DOUBLE_SLASH) &&
+			if (!trimmedLine.contains(StringPool.DOUBLE_SLASH) &&
 				!trimmedLine.startsWith(StringPool.STAR)) {
 
-				_sourceFormatterHelper.printError(
-					fileName, "tab: " + fileName + " " + lineCount);
+				while (trimmedLine.contains(StringPool.TAB)) {
+					line = StringUtil.replaceLast(
+						line, StringPool.TAB, StringPool.SPACE);
+
+					trimmedLine = StringUtil.replaceLast(
+						trimmedLine, StringPool.TAB, StringPool.SPACE);
+				}
+
+				while (trimmedLine.contains(StringPool.DOUBLE_SPACE) &&
+					   !trimmedLine.contains(
+						   StringPool.QUOTE + StringPool.DOUBLE_SPACE) &&
+					   !fileName.endsWith(".vm")) {
+
+					line = StringUtil.replaceLast(
+						line, StringPool.DOUBLE_SPACE, StringPool.SPACE);
+
+					trimmedLine = StringUtil.replaceLast(
+						trimmedLine, StringPool.DOUBLE_SPACE, StringPool.SPACE);
+				}
 			}
 
 			int x = line.indexOf("<%@ include file");
@@ -1513,6 +1663,55 @@ public class SourceFormatter {
 		}
 	}
 
+	private static String _getCombinedLines(String line, String previousLine) {
+		if (Validator.isNull(previousLine)) {
+			return null;
+		}
+
+		int previousLineLength = _getLineLength(previousLine);
+		String trimmedPreviousLine = StringUtil.trimLeading(previousLine);
+
+		if ((line.length() + previousLineLength) < 80) {
+			if (trimmedPreviousLine.startsWith("for ") &&
+				previousLine.endsWith(StringPool.COLON) &&
+				line.endsWith(StringPool.OPEN_CURLY_BRACE)) {
+
+				return previousLine + StringPool.SPACE + line;
+			}
+
+			if (previousLine.endsWith(StringPool.EQUAL) &&
+				line.endsWith(StringPool.SEMICOLON)) {
+
+				return previousLine + StringPool.SPACE + line;
+			}
+		}
+
+		if (!previousLine.endsWith(StringPool.OPEN_PARENTHESIS)) {
+			return null;
+		}
+
+		if ((line.length() + previousLineLength) > 80) {
+			return null;
+		}
+
+		if (line.endsWith(StringPool.SEMICOLON)) {
+			return previousLine + line;
+		}
+
+		if ((line.endsWith(StringPool.OPEN_CURLY_BRACE) ||
+			 line.endsWith(StringPool.CLOSE_PARENTHESIS)) &&
+			(trimmedPreviousLine.startsWith("else ") ||
+			 trimmedPreviousLine.startsWith("if ") ||
+			 trimmedPreviousLine.startsWith("private ") ||
+			 trimmedPreviousLine.startsWith("protected ") ||
+			 trimmedPreviousLine.startsWith("public "))) {
+
+			return previousLine + line;
+		}
+
+		return null;
+	}
+
 	private static String _getCopyright() throws IOException {
 		String copyright = _fileUtil.read("copyright.txt");
 
@@ -1576,6 +1775,33 @@ public class SourceFormatter {
 		}
 
 		return duplicateImports;
+	}
+
+	private static int _getLineLength(String line) {
+		int lineLength = 0;
+
+		int tabLength = 4;
+
+		for (char c : line.toCharArray()) {
+			if (c == CharPool.TAB) {
+				for (int i = 0; i < tabLength; i++) {
+					lineLength++;
+				}
+
+				tabLength = 4;
+			}
+			else {
+				lineLength++;
+
+				tabLength--;
+
+				if (tabLength <= 0) {
+					tabLength = 4;
+				}
+			}
+		}
+
+		return lineLength;
 	}
 
 	private static String _getOldCopyright() throws IOException {

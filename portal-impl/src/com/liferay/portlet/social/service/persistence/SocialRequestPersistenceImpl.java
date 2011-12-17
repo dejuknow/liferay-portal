@@ -392,6 +392,23 @@ public class SocialRequestPersistenceImpl extends BasePersistenceImpl<SocialRequ
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 
+		clearUniqueFindersCache(socialRequest);
+	}
+
+	@Override
+	public void clearCache(List<SocialRequest> socialRequests) {
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+
+		for (SocialRequest socialRequest : socialRequests) {
+			EntityCacheUtil.removeResult(SocialRequestModelImpl.ENTITY_CACHE_ENABLED,
+				SocialRequestImpl.class, socialRequest.getPrimaryKey());
+
+			clearUniqueFindersCache(socialRequest);
+		}
+	}
+
+	protected void clearUniqueFindersCache(SocialRequest socialRequest) {
 		FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_UUID_G,
 			new Object[] {
 				socialRequest.getUuid(),
@@ -430,20 +447,6 @@ public class SocialRequestPersistenceImpl extends BasePersistenceImpl<SocialRequ
 	/**
 	 * Removes the social request with the primary key from the database. Also notifies the appropriate model listeners.
 	 *
-	 * @param primaryKey the primary key of the social request
-	 * @return the social request that was removed
-	 * @throws com.liferay.portal.NoSuchModelException if a social request with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public SocialRequest remove(Serializable primaryKey)
-		throws NoSuchModelException, SystemException {
-		return remove(((Long)primaryKey).longValue());
-	}
-
-	/**
-	 * Removes the social request with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
 	 * @param requestId the primary key of the social request
 	 * @return the social request that was removed
 	 * @throws com.liferay.portlet.social.NoSuchRequestException if a social request with the primary key could not be found
@@ -451,24 +454,38 @@ public class SocialRequestPersistenceImpl extends BasePersistenceImpl<SocialRequ
 	 */
 	public SocialRequest remove(long requestId)
 		throws NoSuchRequestException, SystemException {
+		return remove(Long.valueOf(requestId));
+	}
+
+	/**
+	 * Removes the social request with the primary key from the database. Also notifies the appropriate model listeners.
+	 *
+	 * @param primaryKey the primary key of the social request
+	 * @return the social request that was removed
+	 * @throws com.liferay.portlet.social.NoSuchRequestException if a social request with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public SocialRequest remove(Serializable primaryKey)
+		throws NoSuchRequestException, SystemException {
 		Session session = null;
 
 		try {
 			session = openSession();
 
 			SocialRequest socialRequest = (SocialRequest)session.get(SocialRequestImpl.class,
-					Long.valueOf(requestId));
+					primaryKey);
 
 			if (socialRequest == null) {
 				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + requestId);
+					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchRequestException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
-					requestId);
+					primaryKey);
 			}
 
-			return socialRequestPersistence.remove(socialRequest);
+			return remove(socialRequest);
 		}
 		catch (NoSuchRequestException nsee) {
 			throw nsee;
@@ -479,19 +496,6 @@ public class SocialRequestPersistenceImpl extends BasePersistenceImpl<SocialRequ
 		finally {
 			closeSession(session);
 		}
-	}
-
-	/**
-	 * Removes the social request from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param socialRequest the social request
-	 * @return the social request that was removed
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public SocialRequest remove(SocialRequest socialRequest)
-		throws SystemException {
-		return super.remove(socialRequest);
 	}
 
 	@Override
@@ -513,28 +517,7 @@ public class SocialRequestPersistenceImpl extends BasePersistenceImpl<SocialRequ
 			closeSession(session);
 		}
 
-		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
-		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
-
-		SocialRequestModelImpl socialRequestModelImpl = (SocialRequestModelImpl)socialRequest;
-
-		FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_UUID_G,
-			new Object[] {
-				socialRequestModelImpl.getUuid(),
-				Long.valueOf(socialRequestModelImpl.getGroupId())
-			});
-
-		FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_U_C_C_T_R,
-			new Object[] {
-				Long.valueOf(socialRequestModelImpl.getUserId()),
-				Long.valueOf(socialRequestModelImpl.getClassNameId()),
-				Long.valueOf(socialRequestModelImpl.getClassPK()),
-				Integer.valueOf(socialRequestModelImpl.getType()),
-				Long.valueOf(socialRequestModelImpl.getReceiverUserId())
-			});
-
-		EntityCacheUtil.removeResult(SocialRequestModelImpl.ENTITY_CACHE_ENABLED,
-			SocialRequestImpl.class, socialRequest.getPrimaryKey());
+		clearCache(socialRequest);
 
 		return socialRequest;
 	}
@@ -4444,7 +4427,7 @@ public class SocialRequestPersistenceImpl extends BasePersistenceImpl<SocialRequ
 	 */
 	public void removeByUuid(String uuid) throws SystemException {
 		for (SocialRequest socialRequest : findByUuid(uuid)) {
-			socialRequestPersistence.remove(socialRequest);
+			remove(socialRequest);
 		}
 	}
 
@@ -4459,7 +4442,7 @@ public class SocialRequestPersistenceImpl extends BasePersistenceImpl<SocialRequ
 		throws NoSuchRequestException, SystemException {
 		SocialRequest socialRequest = findByUUID_G(uuid, groupId);
 
-		socialRequestPersistence.remove(socialRequest);
+		remove(socialRequest);
 	}
 
 	/**
@@ -4470,7 +4453,7 @@ public class SocialRequestPersistenceImpl extends BasePersistenceImpl<SocialRequ
 	 */
 	public void removeByCompanyId(long companyId) throws SystemException {
 		for (SocialRequest socialRequest : findByCompanyId(companyId)) {
-			socialRequestPersistence.remove(socialRequest);
+			remove(socialRequest);
 		}
 	}
 
@@ -4482,7 +4465,7 @@ public class SocialRequestPersistenceImpl extends BasePersistenceImpl<SocialRequ
 	 */
 	public void removeByUserId(long userId) throws SystemException {
 		for (SocialRequest socialRequest : findByUserId(userId)) {
-			socialRequestPersistence.remove(socialRequest);
+			remove(socialRequest);
 		}
 	}
 
@@ -4495,7 +4478,7 @@ public class SocialRequestPersistenceImpl extends BasePersistenceImpl<SocialRequ
 	public void removeByReceiverUserId(long receiverUserId)
 		throws SystemException {
 		for (SocialRequest socialRequest : findByReceiverUserId(receiverUserId)) {
-			socialRequestPersistence.remove(socialRequest);
+			remove(socialRequest);
 		}
 	}
 
@@ -4508,7 +4491,7 @@ public class SocialRequestPersistenceImpl extends BasePersistenceImpl<SocialRequ
 	 */
 	public void removeByU_S(long userId, int status) throws SystemException {
 		for (SocialRequest socialRequest : findByU_S(userId, status)) {
-			socialRequestPersistence.remove(socialRequest);
+			remove(socialRequest);
 		}
 	}
 
@@ -4522,7 +4505,7 @@ public class SocialRequestPersistenceImpl extends BasePersistenceImpl<SocialRequ
 	public void removeByR_S(long receiverUserId, int status)
 		throws SystemException {
 		for (SocialRequest socialRequest : findByR_S(receiverUserId, status)) {
-			socialRequestPersistence.remove(socialRequest);
+			remove(socialRequest);
 		}
 	}
 
@@ -4542,7 +4525,7 @@ public class SocialRequestPersistenceImpl extends BasePersistenceImpl<SocialRequ
 		SocialRequest socialRequest = findByU_C_C_T_R(userId, classNameId,
 				classPK, type, receiverUserId);
 
-		socialRequestPersistence.remove(socialRequest);
+		remove(socialRequest);
 	}
 
 	/**
@@ -4559,7 +4542,7 @@ public class SocialRequestPersistenceImpl extends BasePersistenceImpl<SocialRequ
 		int type, int status) throws SystemException {
 		for (SocialRequest socialRequest : findByU_C_C_T_S(userId, classNameId,
 				classPK, type, status)) {
-			socialRequestPersistence.remove(socialRequest);
+			remove(socialRequest);
 		}
 	}
 
@@ -4577,7 +4560,7 @@ public class SocialRequestPersistenceImpl extends BasePersistenceImpl<SocialRequ
 		long receiverUserId, int status) throws SystemException {
 		for (SocialRequest socialRequest : findByC_C_T_R_S(classNameId,
 				classPK, type, receiverUserId, status)) {
-			socialRequestPersistence.remove(socialRequest);
+			remove(socialRequest);
 		}
 	}
 
@@ -4588,7 +4571,7 @@ public class SocialRequestPersistenceImpl extends BasePersistenceImpl<SocialRequ
 	 */
 	public void removeAll() throws SystemException {
 		for (SocialRequest socialRequest : findAll()) {
-			socialRequestPersistence.remove(socialRequest);
+			remove(socialRequest);
 		}
 	}
 
@@ -5312,18 +5295,6 @@ public class SocialRequestPersistenceImpl extends BasePersistenceImpl<SocialRequ
 	protected SocialActivityLimitPersistence socialActivityLimitPersistence;
 	@BeanReference(type = SocialActivitySettingPersistence.class)
 	protected SocialActivitySettingPersistence socialActivitySettingPersistence;
-	@BeanReference(type = SocialEquityAssetEntryPersistence.class)
-	protected SocialEquityAssetEntryPersistence socialEquityAssetEntryPersistence;
-	@BeanReference(type = SocialEquityGroupSettingPersistence.class)
-	protected SocialEquityGroupSettingPersistence socialEquityGroupSettingPersistence;
-	@BeanReference(type = SocialEquityHistoryPersistence.class)
-	protected SocialEquityHistoryPersistence socialEquityHistoryPersistence;
-	@BeanReference(type = SocialEquityLogPersistence.class)
-	protected SocialEquityLogPersistence socialEquityLogPersistence;
-	@BeanReference(type = SocialEquitySettingPersistence.class)
-	protected SocialEquitySettingPersistence socialEquitySettingPersistence;
-	@BeanReference(type = SocialEquityUserPersistence.class)
-	protected SocialEquityUserPersistence socialEquityUserPersistence;
 	@BeanReference(type = SocialRelationPersistence.class)
 	protected SocialRelationPersistence socialRelationPersistence;
 	@BeanReference(type = SocialRequestPersistence.class)

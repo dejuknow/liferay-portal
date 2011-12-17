@@ -61,7 +61,7 @@ public class GetArticleAction extends Action {
 
 		try {
 			long groupId = ParamUtil.getLong(request, "groupId");
-			String articleId =  ParamUtil.getString(request, "articleId");
+			String articleId = ParamUtil.getString(request, "articleId");
 
 			String languageId = LanguageUtil.getLanguageId(request);
 
@@ -82,7 +82,7 @@ public class GetArticleAction extends Action {
 
 			addProcessingInstructions(doc, request, themeDisplay, article);
 
-			JournalUtil.addAllReservedEls(root, tokens, article);
+			JournalUtil.addAllReservedEls(root, tokens, article, languageId);
 
 			xml = DDMXMLUtil.formatXML(doc);
 

@@ -28,6 +28,7 @@ page import="com.liferay.portlet.journal.util.JournalUtil" %><%@
 page import="com.liferay.portlet.rss.util.RSSUtil" %>
 
 <%@ page import="com.sun.syndication.feed.synd.SyndContent" %><%@
+page import="com.sun.syndication.feed.synd.SyndEnclosure" %><%@
 page import="com.sun.syndication.feed.synd.SyndEntry" %><%@
 page import="com.sun.syndication.feed.synd.SyndFeed" %><%@
 page import="com.sun.syndication.feed.synd.SyndImage" %>

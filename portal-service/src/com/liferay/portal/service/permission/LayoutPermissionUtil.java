@@ -21,6 +21,7 @@ import com.liferay.portal.security.permission.PermissionChecker;
 
 /**
  * @author Brian Wing Shun Chan
+ * @author Raymond Augé
  */
 public class LayoutPermissionUtil {
 
@@ -48,11 +49,31 @@ public class LayoutPermissionUtil {
 	}
 
 	public static boolean contains(
+			PermissionChecker permissionChecker, Layout layout,
+			boolean checkViewableGroup, String actionId)
+		throws PortalException, SystemException {
+
+		return getLayoutPermission().contains(
+			permissionChecker, layout, checkViewableGroup, actionId);
+	}
+
+	public static boolean contains(
 			PermissionChecker permissionChecker, Layout layout, String actionId)
 		throws PortalException, SystemException {
 
 		return getLayoutPermission().contains(
 			permissionChecker, layout, actionId);
+	}
+
+	public static boolean contains(
+			PermissionChecker permissionChecker, Layout layout,
+			String controlPanelCategory, boolean checkViewableGroup,
+			String actionId)
+		throws PortalException, SystemException {
+
+		return getLayoutPermission().contains(
+			permissionChecker, layout, controlPanelCategory, checkViewableGroup,
+			actionId);
 	}
 
 	public static boolean contains(

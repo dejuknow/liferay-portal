@@ -73,8 +73,8 @@ Liferay.Service.registerClass(
 		getUserGroup: true,
 		getUserGroupsGroups: true,
 		getUserOrganizationsGroups: true,
-		getUserSites: true,
 		getUserPlaces: true,
+		getUserSites: true,
 		hasUserGroup: true,
 		search: true,
 		searchCount: true,
@@ -100,6 +100,7 @@ Liferay.Service.registerClass(
 		getDefaultPlid: true,
 		getLayoutName: true,
 		getLayoutReferences: true,
+		getLayouts: true,
 		setLayouts: true,
 		unschedulePublishToLive: true,
 		unschedulePublishToRemote: true,
@@ -141,6 +142,7 @@ Liferay.Service.registerClass(
 Liferay.Service.registerClass(
 	Liferay.Service.Portal, "LayoutSet",
 	{
+		updateLayoutSetPrototypeLinkEnabled: true,
 		updateLookAndFeel: true,
 		updateSettings: true,
 		updateVirtualHost: true
@@ -312,14 +314,13 @@ Liferay.Service.registerClass(
 	{
 		addRepository: true,
 		checkRepository: true,
+		deleteRepository: true,
 		getLocalRepositoryImpl: true,
 		getRepository: true,
 		getRepositoryImpl: true,
 		getSupportedConfigurations: true,
 		getSupportedParameters: true,
 		getTypeSettingsProperties: true,
-		unmountRepositories: true,
-		unmountRepository: true,
 		updateRepository: true
 	}
 );
@@ -844,19 +845,10 @@ Liferay.Service.registerClass(
 );
 
 Liferay.Service.registerClass(
-	Liferay.Service.DDM, "DDMStructureLink",
-	{
-		addStructureLink: true,
-		deleteStructureLink: true,
-		getStructureLink: true,
-		updateStructureLink: true
-	}
-);
-
-Liferay.Service.registerClass(
 	Liferay.Service.DDM, "DDMTemplate",
 	{
 		addTemplate: true,
+		copyTemplates: true,
 		deleteTemplate: true,
 		getTemplate: true,
 		getTemplates: true,
@@ -908,7 +900,10 @@ Liferay.Service.registerClass(
 		expireArticle: true,
 		getArticle: true,
 		getArticleByUrlTitle: true,
+		getArticlesByArticleId: true,
 		getArticlesByLayoutUuid: true,
+		getArticlesCountByArticleId: true,
+		getDisplayArticleByUrlTitle: true,
 		getLatestArticle: true,
 		removeArticleLocale: true,
 		search: true,
@@ -916,7 +911,6 @@ Liferay.Service.registerClass(
 		subscribe: true,
 		unsubscribe: true,
 		updateArticle: true,
-		updateArticleTranslation: true,
 		updateContent: true
 	}
 );

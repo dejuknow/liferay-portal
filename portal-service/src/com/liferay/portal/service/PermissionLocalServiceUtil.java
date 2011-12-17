@@ -336,8 +336,7 @@ public class PermissionLocalServiceUtil {
 	* @param userId the primary key of the user
 	* @param actionIds the primary keys of the actions
 	* @param resourceId the primary key of the resource
-	* @throws PortalException if a user with the primary key could not be
-	found
+	* @throws PortalException if a user with the primary key could not be found
 	* @throws SystemException if a system exception occurred
 	*/
 	public static void addUserPermissions(long userId,
@@ -465,6 +464,12 @@ public class PermissionLocalServiceUtil {
 	public static java.util.List<com.liferay.portal.model.Permission> getRolePermissions(
 		long roleId) throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().getRolePermissions(roleId);
+	}
+
+	public static java.util.List<com.liferay.portal.model.Permission> getRolePermissions(
+		long roleId, int[] scopes)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getRolePermissions(roleId, scopes);
 	}
 
 	/**
@@ -646,8 +651,8 @@ public class PermissionLocalServiceUtil {
 	*
 	* @param name the resource name
 	* @param roleName the role name. Supported role names include {@link
-	com.liferay.portal.model.RoleConstants#ORGANIZATION_USER},
-	{@link com.liferay.portal.model.RoleConstants#OWNER}, and {@link
+	com.liferay.portal.model.RoleConstants#ORGANIZATION_USER}, {@link
+	com.liferay.portal.model.RoleConstants#OWNER}, and {@link
 	com.liferay.portal.model.RoleConstants#SITE_MEMBER}.
 	* @param actionId the action's ID
 	* @throws PortalException if a matching role could not be found or if a
@@ -715,8 +720,8 @@ public class PermissionLocalServiceUtil {
 	permissions
 	* @param actionIds the primary keys of the actions
 	* @param resourceId the primary key of the resource
-	* @throws PortalException if an organization with the primary key could
-	not be found
+	* @throws PortalException if an organization with the primary key could not
+	be found
 	* @throws SystemException if a system exception occurred
 	*/
 	public static void setOrgGroupPermissions(long organizationId,
@@ -752,9 +757,9 @@ public class PermissionLocalServiceUtil {
 	}
 
 	/**
-	* Sets the role's permissions to perform the actions on the named
-	* resource, replacing the role's existing permission for each of these
-	* actions on the resource.
+	* Sets the role's permissions to perform the actions on the named resource,
+	* replacing the role's existing permission for each of these actions on the
+	* resource.
 	*
 	* @param roleId the primary key of the role
 	* @param companyId the primary key of the company
@@ -783,8 +788,7 @@ public class PermissionLocalServiceUtil {
 	* @param roleId the primary key of the role
 	* @param actionIds the primary keys of the actions
 	* @param resourceId the primary key of the resource
-	* @throws PortalException if a role with the primary key could not be
-	found
+	* @throws PortalException if a role with the primary key could not be found
 	* @throws SystemException if a system exception occurred
 	*/
 	public static void setRolePermissions(long roleId,
@@ -842,8 +846,7 @@ public class PermissionLocalServiceUtil {
 	* @param userId the primary key of the user
 	* @param actionIds the primary keys of the actions
 	* @param resourceId the primary key of the resource
-	* @throws PortalException if a user with the primary key could not be
-	found
+	* @throws PortalException if a user with the primary key could not be found
 	* @throws SystemException if a system exception occurred
 	*/
 	public static void setUserPermissions(long userId,

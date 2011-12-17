@@ -95,14 +95,6 @@ public class ExpandoRowUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static ExpandoRow remove(ExpandoRow expandoRow)
-		throws SystemException {
-		return getPersistence().remove(expandoRow);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static ExpandoRow update(ExpandoRow expandoRow, boolean merge)

@@ -95,14 +95,6 @@ public class DDMTemplateUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static DDMTemplate remove(DDMTemplate ddmTemplate)
-		throws SystemException {
-		return getPersistence().remove(ddmTemplate);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static DDMTemplate update(DDMTemplate ddmTemplate, boolean merge)

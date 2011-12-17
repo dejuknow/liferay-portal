@@ -95,14 +95,6 @@ public class RatingsEntryUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static RatingsEntry remove(RatingsEntry ratingsEntry)
-		throws SystemException {
-		return getPersistence().remove(ratingsEntry);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static RatingsEntry update(RatingsEntry ratingsEntry, boolean merge)

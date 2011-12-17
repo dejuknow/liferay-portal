@@ -86,7 +86,8 @@ public class EditLayoutSetAction extends EditLayoutsAction {
 			if (Validator.isNotNull(closeRedirect)) {
 				SessionMessages.add(
 					actionRequest,
-					portletConfig.getPortletName() + ".doCloseRedirect",
+					portletConfig.getPortletName() +
+						SessionMessages.KEY_SUFFIX_CLOSE_REDIRECT,
 					closeRedirect);
 			}
 
@@ -197,14 +198,16 @@ public class EditLayoutSetAction extends EditLayoutsAction {
 		try {
 			File file = uploadPortletRequest.getFile("logoFileName");
 
-			inputStream = new ByteArrayFileInputStream(file, 1024);
-
-			if (useLogo && (inputStream == null)) {
+			if (useLogo && !file.exists()) {
 				if (hasLogo) {
 					return;
 				}
 
 				throw new UploadException("No logo uploaded for use");
+			}
+
+			if (file.exists()) {
+				inputStream = new ByteArrayFileInputStream(file, 1024);
 			}
 
 			if (inputStream != null) {
@@ -290,6 +293,11 @@ public class EditLayoutSetAction extends EditLayoutsAction {
 				actionRequest, "TypeSettingsProperties--");
 
 		settingsProperties.putAll(typeSettingsProperties);
+
+		boolean showSiteName = ParamUtil.getBoolean(
+			actionRequest, "showSiteName");
+
+		settingsProperties.put("showSiteName", Boolean.toString(showSiteName));
 
 		LayoutSetServiceUtil.updateSettings(
 			liveGroupId, privateLayout, settingsProperties.toString());

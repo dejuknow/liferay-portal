@@ -95,14 +95,6 @@ public class ShoppingCouponUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static ShoppingCoupon remove(ShoppingCoupon shoppingCoupon)
-		throws SystemException {
-		return getPersistence().remove(shoppingCoupon);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static ShoppingCoupon update(ShoppingCoupon shoppingCoupon,

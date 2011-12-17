@@ -557,8 +557,7 @@ public abstract class BaseDB implements DB {
 
 					String includeFileName = line.substring(pos + 1);
 
-					File includeFile = new File(
-						sqlDir + "/" + includeFileName);
+					File includeFile = new File(sqlDir + "/" + includeFileName);
 
 					if (!includeFile.exists()) {
 						continue;
@@ -965,7 +964,7 @@ public abstract class BaseDB implements DB {
 	protected static String[] TEMPLATE = {
 		"##", "TRUE", "FALSE",
 		"'01/01/1970'", "CURRENT_TIMESTAMP",
-		" BLOB", " BOOLEAN", " DATE",
+		" BLOB", " SBLOB", " BOOLEAN", " DATE",
 		" DOUBLE", " INTEGER", " LONG",
 		" STRING", " TEXT", " VARCHAR",
 		" IDENTITY", "COMMIT_TRANSACTION"

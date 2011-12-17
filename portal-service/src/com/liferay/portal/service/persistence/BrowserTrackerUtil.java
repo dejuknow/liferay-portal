@@ -94,14 +94,6 @@ public class BrowserTrackerUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static BrowserTracker remove(BrowserTracker browserTracker)
-		throws SystemException {
-		return getPersistence().remove(browserTracker);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static BrowserTracker update(BrowserTracker browserTracker,

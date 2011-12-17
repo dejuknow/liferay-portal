@@ -25,6 +25,7 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
+import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.documentlibrary.model.DLFolderConstants;
 
 import java.util.List;
@@ -53,7 +54,7 @@ public class DLDisplayPortletDataHandlerImpl extends BasePortletDataHandler {
 
 	@Override
 	public boolean isPublishToLiveByDefault() {
-		return _PUBLISH_TO_LIVE_BY_DEFAULT;
+		return PropsValues.DL_PUBLISH_TO_LIVE_BY_DEFAULT;
 	}
 
 	@Override
@@ -140,8 +141,7 @@ public class DLDisplayPortletDataHandlerImpl extends BasePortletDataHandler {
 
 		Element rootElement = document.getRootElement();
 
-		Element fileEntryTypesElement = rootElement.element(
-			"file-entry-types");
+		Element fileEntryTypesElement = rootElement.element("file-entry-types");
 
 		List<Element> fileEntryTypeElements = fileEntryTypesElement.elements(
 			"file-entry-type");
@@ -211,8 +211,6 @@ public class DLDisplayPortletDataHandlerImpl extends BasePortletDataHandler {
 	}
 
 	private static final String _NAMESPACE = "document_library";
-
-	private static final boolean _PUBLISH_TO_LIVE_BY_DEFAULT = true;
 
 	private static PortletDataHandlerBoolean _comments =
 		new PortletDataHandlerBoolean(_NAMESPACE, "comments");

@@ -16,7 +16,6 @@ package com.liferay.portlet.wiki.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
@@ -38,7 +37,6 @@ import com.liferay.portal.kernel.workflow.WorkflowHandlerRegistryUtil;
 import com.liferay.portal.model.CompanyConstants;
 import com.liferay.portal.model.ResourceConstants;
 import com.liferay.portal.model.User;
-import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextUtil;
 import com.liferay.portal.util.Portal;
@@ -54,6 +52,7 @@ import com.liferay.portlet.documentlibrary.NoSuchDirectoryException;
 import com.liferay.portlet.documentlibrary.NoSuchFileException;
 import com.liferay.portlet.documentlibrary.store.DLStoreUtil;
 import com.liferay.portlet.expando.model.ExpandoBridge;
+import com.liferay.portlet.social.model.SocialActivityConstants;
 import com.liferay.portlet.wiki.DuplicatePageException;
 import com.liferay.portlet.wiki.NoSuchPageException;
 import com.liferay.portlet.wiki.NoSuchPageResourceException;
@@ -240,22 +239,23 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 			userId = page.getUserId();
 		}
 
-		long companyId = page.getCompanyId();
-		long repositoryId = CompanyConstants.SYSTEM;
-		String dirName = page.getAttachmentsDir();
+		socialActivityLocalService.addActivity(
+			userId, page.getGroupId(), WikiPage.class.getName(),
+			page.getResourcePrimKey(),
+			SocialActivityConstants.TYPE_ADD_ATTACHMENT,
+			page.getAttachmentsDir() + "/" + fileName, 0);
 
 		try {
-			DLStoreUtil.addDirectory(companyId, repositoryId, dirName);
+			DLStoreUtil.addDirectory(
+				page.getCompanyId(), CompanyConstants.SYSTEM,
+				page.getAttachmentsDir());
 		}
 		catch (DuplicateDirectoryException dde) {
 		}
 
-		socialEquityLogLocalService.addEquityLogs(
-			userId, WikiPage.class.getName(), page.getResourcePrimKey(),
-			ActionKeys.ADD_ATTACHMENT, dirName + "/" + fileName);
-
 		DLStoreUtil.addFile(
-			companyId, repositoryId, dirName + "/" + fileName, file);
+			page.getCompanyId(), CompanyConstants.SYSTEM,
+			page.getAttachmentsDir() + "/" + fileName, file);
 	}
 
 	public void addPageAttachment(
@@ -273,22 +273,23 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 			userId = page.getUserId();
 		}
 
-		long companyId = page.getCompanyId();
-		long repositoryId = CompanyConstants.SYSTEM;
-		String dirName = page.getAttachmentsDir();
+		socialActivityLocalService.addActivity(
+			userId, page.getGroupId(), WikiPage.class.getName(),
+			page.getResourcePrimKey(),
+			SocialActivityConstants.TYPE_ADD_ATTACHMENT,
+			page.getAttachmentsDir() + "/" + fileName, 0);
 
 		try {
-			DLStoreUtil.addDirectory(companyId, repositoryId, dirName);
+			DLStoreUtil.addDirectory(
+				page.getCompanyId(), CompanyConstants.SYSTEM,
+				page.getAttachmentsDir());
 		}
 		catch (DuplicateDirectoryException dde) {
 		}
 
-		socialEquityLogLocalService.addEquityLogs(
-			userId, WikiPage.class.getName(), page.getResourcePrimKey(),
-			ActionKeys.ADD_ATTACHMENT, dirName + "/" + fileName);
-
 		DLStoreUtil.addFile(
-			companyId, repositoryId, dirName + "/" + fileName, inputStream);
+			page.getCompanyId(), CompanyConstants.SYSTEM,
+			page.getAttachmentsDir() + "/" + fileName, inputStream);
 	}
 
 	public void addPageAttachment(
@@ -401,8 +402,7 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 
 		double version = page.getVersion();
 		String content = page.getContent();
-		String summary = LanguageUtil.format(
-			ServiceContextUtil.getLocale(serviceContext),
+		String summary = serviceContext.translate(
 			"changed-parent-from-x", originalParentTitle);
 		boolean minorEdit = false;
 		String format = page.getFormat();
@@ -557,10 +557,6 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 		}
 
 		WikiPage page = getPage(nodeId, title);
-
-		socialEquityLogLocalService.deactivateEquityLogs(
-			WikiPage.class.getName(), page.getResourcePrimKey(),
-			ActionKeys.ADD_ATTACHMENT, fileName.substring(1));
 
 		long companyId = page.getCompanyId();
 		long repositoryId = CompanyConstants.SYSTEM;
@@ -770,8 +766,7 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 			pages = wikiPagePersistence.findByN_T(nodeId, title, 0, 1);
 		}
 		else {
-			pages = wikiPagePersistence.findByN_T_H(
-				nodeId, title, head, 0, 1);
+			pages = wikiPagePersistence.findByN_T_H(nodeId, title, head, 0, 1);
 		}
 
 		if (!pages.isEmpty()) {
@@ -857,8 +852,7 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 			long nodeId, int start, int end, OrderByComparator obc)
 		throws SystemException {
 
-		return wikiPagePersistence.findByNodeId(
-			nodeId, start, end, obc);
+		return wikiPagePersistence.findByNodeId(nodeId, start, end, obc);
 	}
 
 	public List<WikiPage> getPages(
@@ -1242,8 +1236,7 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 		}
 
 		long resourcePrimKey =
-			wikiPageResourceLocalService.getPageResourcePrimKey(
-				nodeId, title);
+			wikiPageResourceLocalService.getPageResourcePrimKey(nodeId, title);
 		long groupId = oldPage.getGroupId();
 
 		WikiPage page = oldPage;
@@ -1413,20 +1406,14 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 			// Social
 
 			int activity = WikiActivityKeys.ADD_PAGE;
-			String actionId = ActionKeys.ADD_PAGE;
 
 			if (page.getVersion() > 1.1) {
 				activity = WikiActivityKeys.UPDATE_PAGE;
-				actionId = ActionKeys.UPDATE;
 			}
 
 			socialActivityLocalService.addActivity(
 				userId, page.getGroupId(), WikiPage.class.getName(),
 				page.getResourcePrimKey(), activity, StringPool.BLANK, 0);
-
-			socialEquityLogLocalService.addEquityLogs(
-				userId, WikiPage.class.getName(), page.getResourcePrimKey(),
-				actionId, StringPool.BLANK);
 
 			// Subscriptions
 
@@ -1699,11 +1686,13 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 		subscriptionSender.setCompanyId(page.getCompanyId());
 		subscriptionSender.setContextAttributes(
 			"[$DIFFS_URL$]", diffsURL, "[$NODE_NAME$]", node.getName(),
-			"[$PAGE_CONTENT$]", pageContent, "[$PAGE_DATE_UPDATE$]",
-			page.getModifiedDate(), "[$PAGE_DIFFS$]", replaceStyles(pageDiffs),
-			"[$PAGE_ID$]", page.getPageId(), "[$PAGE_SUMMARY$]",
-			page.getSummary(), "[$PAGE_TITLE$]", page.getTitle(),
-			"[$PAGE_URL$]", pageURL);
+			"[$PAGE_DATE_UPDATE$]", page.getModifiedDate(), "[$PAGE_ID$]",
+			page.getPageId(), "[$PAGE_SUMMARY$]", page.getSummary(),
+			"[$PAGE_TITLE$]", page.getTitle(), "[$PAGE_URL$]", pageURL);
+		subscriptionSender.setContextAttribute(
+			"[$PAGE_CONTENT$]", pageContent, false);
+		subscriptionSender.setContextAttribute(
+			"[$PAGE_DIFFS$]", replaceStyles(pageDiffs), false);
 		subscriptionSender.setContextUserPrefix("PAGE");
 		subscriptionSender.setFrom(fromAddress, fromName);
 		subscriptionSender.setHtmlFormat(true);
@@ -1712,6 +1701,7 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 		subscriptionSender.setPortletId(PortletKeys.WIKI);
 		subscriptionSender.setReplyToAddress(fromAddress);
 		subscriptionSender.setScopeGroupId(node.getGroupId());
+		subscriptionSender.setServiceContext(serviceContext);
 		subscriptionSender.setSubject(subject);
 		subscriptionSender.setUserId(page.getUserId());
 

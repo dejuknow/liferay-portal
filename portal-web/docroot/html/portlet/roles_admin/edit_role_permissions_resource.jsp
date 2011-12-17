@@ -40,7 +40,7 @@ if (role.getType() == RoleConstants.TYPE_REGULAR) {
 	headerNames.add(StringPool.BLANK);
 }
 
-SearchContainer searchContainer = new SearchContainer(renderRequest, null, null, SearchContainer.DEFAULT_CUR_PARAM, SearchContainer.DEFAULT_DELTA, renderResponse.createRenderURL(), headerNames, "there-are-no-actions-available-for-selection");
+SearchContainer searchContainer = new SearchContainer(renderRequest, null, null, SearchContainer.DEFAULT_CUR_PARAM, SearchContainer.DEFAULT_DELTA, renderResponse.createRenderURL(), headerNames, "there-are-no-actions");
 
 searchContainer.setRowChecker(new ResourceActionRowChecker(renderResponse));
 

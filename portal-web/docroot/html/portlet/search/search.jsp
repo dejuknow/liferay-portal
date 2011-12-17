@@ -17,6 +17,12 @@
 <%@ include file="/html/portlet/search/init.jsp" %>
 
 <%
+String redirect = ParamUtil.getString(request, "redirect");
+
+if (Validator.isNotNull(redirect)) {
+	portletDisplay.setURLBack(redirect);
+}
+
 String primarySearch = ParamUtil.getString(request, "primarySearch");
 
 if (Validator.isNotNull(primarySearch)) {

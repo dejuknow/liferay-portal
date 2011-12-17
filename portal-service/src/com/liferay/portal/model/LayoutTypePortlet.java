@@ -110,15 +110,15 @@ public interface LayoutTypePortlet extends LayoutType {
 
 	public List<Portlet> getPortlets() throws SystemException;
 
+	public Layout getSourcePrototypeLayout();
+
+	public String getSourcePrototypeLayoutProperty(String key);
+
 	public String getStateMax();
 
 	public String getStateMaxPortletId();
 
 	public String getStateMin();
-
-	public Layout getTemplateLayout();
-
-	public String getTemplateProperty(String key);
 
 	public boolean hasDefaultScopePortletId(long groupId, String portletId)
 		throws PortalException, SystemException;
@@ -144,6 +144,8 @@ public interface LayoutTypePortlet extends LayoutType {
 	public boolean hasPortletId(String portletId)
 		throws PortalException, SystemException;
 
+	public boolean hasSourcePrototypeLayout();
+
 	public boolean hasStateMax();
 
 	public boolean hasStateMaxPortletId(String portletId);
@@ -153,8 +155,6 @@ public interface LayoutTypePortlet extends LayoutType {
 	public boolean hasStateMinPortletId(String portletId);
 
 	public boolean hasStateNormalPortletId(String portletId);
-
-	public boolean hasTemplate();
 
 	public boolean hasUpdatePermission();
 

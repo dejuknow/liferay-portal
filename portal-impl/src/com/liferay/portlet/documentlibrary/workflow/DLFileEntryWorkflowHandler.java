@@ -26,6 +26,7 @@ import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.WorkflowDefinitionLinkLocalServiceUtil;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portlet.documentlibrary.model.DLFileEntry;
+import com.liferay.portlet.documentlibrary.model.DLFileEntryTypeConstants;
 import com.liferay.portlet.documentlibrary.model.DLFileVersion;
 import com.liferay.portlet.documentlibrary.model.DLFolder;
 import com.liferay.portlet.documentlibrary.model.DLFolderConstants;
@@ -41,6 +42,7 @@ import java.util.Map;
 /**
  * @author Bruno Farache
  * @author Jorge Ferrer
+ * @author Alexander Chow
  */
 public class DLFileEntryWorkflowHandler extends BaseWorkflowHandler {
 
@@ -77,14 +79,14 @@ public class DLFileEntryWorkflowHandler extends BaseWorkflowHandler {
 		try {
 			return WorkflowDefinitionLinkLocalServiceUtil.
 				getWorkflowDefinitionLink(
-					companyId, groupId, DLFolder.class.getName(), folderId, 0,
-					true);
+					companyId, groupId, DLFolder.class.getName(), folderId,
+					dlFileVersion.getFileEntryTypeId(), true);
 		}
 		catch (NoSuchWorkflowDefinitionLinkException nswdle) {
 			return WorkflowDefinitionLinkLocalServiceUtil.
 				getWorkflowDefinitionLink(
 					companyId, groupId, DLFolder.class.getName(), folderId,
-					dlFileVersion.getFileEntryTypeId(), true);
+					DLFileEntryTypeConstants.FILE_ENTRY_TYPE_ID_ALL, true);
 		}
 	}
 

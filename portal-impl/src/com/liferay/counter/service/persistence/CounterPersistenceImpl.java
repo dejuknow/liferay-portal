@@ -149,6 +149,17 @@ public class CounterPersistenceImpl extends BasePersistenceImpl<Counter>
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 	}
 
+	@Override
+	public void clearCache(List<Counter> counters) {
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+
+		for (Counter counter : counters) {
+			EntityCacheUtil.removeResult(CounterModelImpl.ENTITY_CACHE_ENABLED,
+				CounterImpl.class, counter.getPrimaryKey());
+		}
+	}
+
 	/**
 	 * Creates a new counter with the primary key. Does not add the counter to the database.
 	 *
@@ -167,20 +178,6 @@ public class CounterPersistenceImpl extends BasePersistenceImpl<Counter>
 	/**
 	 * Removes the counter with the primary key from the database. Also notifies the appropriate model listeners.
 	 *
-	 * @param primaryKey the primary key of the counter
-	 * @return the counter that was removed
-	 * @throws com.liferay.portal.NoSuchModelException if a counter with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public Counter remove(Serializable primaryKey)
-		throws NoSuchModelException, SystemException {
-		return remove((String)primaryKey);
-	}
-
-	/**
-	 * Removes the counter with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
 	 * @param name the primary key of the counter
 	 * @return the counter that was removed
 	 * @throws com.liferay.counter.NoSuchCounterException if a counter with the primary key could not be found
@@ -188,23 +185,37 @@ public class CounterPersistenceImpl extends BasePersistenceImpl<Counter>
 	 */
 	public Counter remove(String name)
 		throws NoSuchCounterException, SystemException {
+		return remove((Serializable)name);
+	}
+
+	/**
+	 * Removes the counter with the primary key from the database. Also notifies the appropriate model listeners.
+	 *
+	 * @param primaryKey the primary key of the counter
+	 * @return the counter that was removed
+	 * @throws com.liferay.counter.NoSuchCounterException if a counter with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public Counter remove(Serializable primaryKey)
+		throws NoSuchCounterException, SystemException {
 		Session session = null;
 
 		try {
 			session = openSession();
 
-			Counter counter = (Counter)session.get(CounterImpl.class, name);
+			Counter counter = (Counter)session.get(CounterImpl.class, primaryKey);
 
 			if (counter == null) {
 				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + name);
+					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchCounterException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
-					name);
+					primaryKey);
 			}
 
-			return counterPersistence.remove(counter);
+			return remove(counter);
 		}
 		catch (NoSuchCounterException nsee) {
 			throw nsee;
@@ -215,18 +226,6 @@ public class CounterPersistenceImpl extends BasePersistenceImpl<Counter>
 		finally {
 			closeSession(session);
 		}
-	}
-
-	/**
-	 * Removes the counter from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param counter the counter
-	 * @return the counter that was removed
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public Counter remove(Counter counter) throws SystemException {
-		return super.remove(counter);
 	}
 
 	@Override
@@ -247,11 +246,7 @@ public class CounterPersistenceImpl extends BasePersistenceImpl<Counter>
 			closeSession(session);
 		}
 
-		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
-		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
-
-		EntityCacheUtil.removeResult(CounterModelImpl.ENTITY_CACHE_ENABLED,
-			CounterImpl.class, counter.getPrimaryKey());
+		clearCache(counter);
 
 		return counter;
 	}
@@ -519,7 +514,7 @@ public class CounterPersistenceImpl extends BasePersistenceImpl<Counter>
 	 */
 	public void removeAll() throws SystemException {
 		for (Counter counter : findAll()) {
-			counterPersistence.remove(counter);
+			remove(counter);
 		}
 	}
 

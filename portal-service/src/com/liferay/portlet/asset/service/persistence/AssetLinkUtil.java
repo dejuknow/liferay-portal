@@ -95,14 +95,6 @@ public class AssetLinkUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static AssetLink remove(AssetLink assetLink)
-		throws SystemException {
-		return getPersistence().remove(assetLink);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static AssetLink update(AssetLink assetLink, boolean merge)

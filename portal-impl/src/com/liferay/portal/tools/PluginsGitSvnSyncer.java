@@ -187,6 +187,14 @@ public class PluginsGitSvnSyncer {
 		if (!ignores.isEmpty()) {
 			String[] ignoresArray = ignores.toArray(new String[ignores.size()]);
 
+			for (int i = 0; i < ignoresArray.length; i++) {
+				String ignore = ignoresArray[i];
+
+				if (Validator.isNotNull(ignore) && !ignore.startsWith("/")) {
+					ignoresArray[i] = "/" + ignore;
+				}
+			}
+
 			_fileUtil.write(
 				destDirName + dirName + ".gitignore",
 				StringUtil.merge(ignoresArray, "\n"));
@@ -243,6 +251,16 @@ public class PluginsGitSvnSyncer {
 		else {
 			ignores = ListUtil.fromFile(gitIgnoreFile);
 
+			for (int i = 0; i < ignores.size(); i++) {
+				String ignore = ignores.get(i);
+
+				if (ignore.startsWith("/")) {
+					ignore = ignore.substring(1);
+				}
+
+				ignores.set(i, ignore);
+			}
+
 			if (dirName.endsWith("/docroot/WEB-INF/")) {
 				if (!ignores.contains("classes")) {
 					ignores.add("classes");
@@ -277,8 +295,7 @@ public class PluginsGitSvnSyncer {
 		File tempFile = File.createTempFile("svn-ignores-", null, null);
 
 		try {
-			String[] ignoresArray = ignores.toArray(
-				new String[ignores.size()]);
+			String[] ignoresArray = ignores.toArray(new String[ignores.size()]);
 
 			_fileUtil.write(tempFile, StringUtil.merge(ignoresArray, "\n"));
 

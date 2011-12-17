@@ -93,13 +93,6 @@ public class TeamUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static Team remove(Team team) throws SystemException {
-		return getPersistence().remove(team);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static Team update(Team team, boolean merge)

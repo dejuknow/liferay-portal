@@ -89,17 +89,16 @@ public class LangBuilder {
 
 			ClassLoader classLoader = clazz.getClassLoader();
 
-			InputStream is = classLoader.getResourceAsStream(
+			InputStream inputStream = classLoader.getResourceAsStream(
 				"content/Language.properties");
 
-			_portalLanguageProperties.load(is);
+			_portalLanguageProperties.load(inputStream);
 		}
 
 		File renameKeysFile = new File(_langDir + "/rename.properties");
 
 		if (renameKeysFile.exists()) {
-			_renameKeys = PropertiesUtil.load(
-				FileUtil.read(renameKeysFile));
+			_renameKeys = PropertiesUtil.load(FileUtil.read(renameKeysFile));
 		}
 
 		String content = _orderProperties(
@@ -257,18 +256,22 @@ public class LangBuilder {
 					}
 				}
 
-				if ((translatedText != null) &&
-					((translatedText.indexOf("Babel Fish") != -1) ||
-					 (translatedText.indexOf("Yahoo! - 999") != -1))) {
+				if (translatedText != null) {
+					if (translatedText.contains("Babel Fish") ||
+						translatedText.contains("Yahoo! - 999")) {
 
-					translatedText = "";
+						translatedText = "";
+					}
+					else if (translatedText.endsWith(AUTOMATIC_COPY)) {
+						translatedText = value + AUTOMATIC_COPY;
+					}
 				}
 
 				if ((translatedText == null) || translatedText.equals("")) {
-					if (line.indexOf("{") != -1 || line.indexOf("<") != -1) {
+					if (line.contains("{") || line.contains("<")) {
 						translatedText = value + AUTOMATIC_COPY;
 					}
-					else if (line.indexOf("[") != -1) {
+					else if (line.contains("[")) {
 						pos = line.indexOf("[");
 
 						String baseKey = line.substring(0, pos);
@@ -328,27 +331,15 @@ public class LangBuilder {
 				}
 
 				if (Validator.isNotNull(translatedText)) {
-					if ((translatedText.indexOf("Babel Fish") != -1) ||
-						(translatedText.indexOf("Yahoo! - 999") != -1)) {
+					if (translatedText.contains("Babel Fish") ||
+						translatedText.contains("Yahoo! - 999")) {
 
 						throw new IOException(
 							"IP was blocked because of over usage. Please " +
 								"use another IP.");
 					}
 
-					if (translatedText.indexOf("&#39;") != -1) {
-						translatedText = StringUtil.replace(
-							translatedText, "&#39;", "\'");
-					}
-
-					translatedText = StringUtil.replace(
-						translatedText.trim(),
-						new String[] {
-							"  ", "<b>", "</b>", "<i>", "</i>"
-						},
-						new String[] {
-							" ", "<strong>", "</strong>", "<em>", "</em>"
-						});
+					translatedText = _fixTranslation(translatedText);
 
 					unsyncBufferedWriter.write(key + "=" + translatedText);
 
@@ -420,6 +411,35 @@ public class LangBuilder {
 		unsyncBufferedWriter.close();
 	}
 
+	private String _fixEnglishTranslation(String key, String value) {
+		if (value.contains(" this ")) {
+			if (value.contains(".") || value.contains("?") ||
+				value.contains(":") ||
+				key.equals("the-url-of-the-page-comparing-this-page-content-with-the-previous-version")) {
+			}
+			else {
+				value = StringUtil.replace(value, " this ", " This ");
+			}
+		}
+
+		return value;
+	}
+
+	private String _fixTranslation(String value) {
+		value = StringUtil.replace(
+			value.trim(),
+			new String[] {
+				"  ", "<b>", "</b>", "<i>", "</i>", " url ", "&#39;",
+				"&#39 ;", "&quot;", "&quot ;"
+			},
+			new String[] {
+				" ", "<strong>", "</strong>", "<em>", "</em>", " URL ", "\'",
+				"\'", "\"", "\""
+			});
+
+		return value;
+	}
+
 	private String _orderProperties(File propertiesFile) throws IOException {
 		if (!propertiesFile.exists()) {
 			return null;
@@ -443,7 +463,11 @@ public class LangBuilder {
 
 			if (pos != -1) {
 				String key = line.substring(0, pos);
-				String value = line.substring(pos + 1, line.length());
+
+				String value = _fixTranslation(
+					line.substring(pos + 1, line.length()));
+
+				value = _fixEnglishTranslation(key, value);
 
 				if (_portalLanguageProperties != null) {
 					String portalValue = String.valueOf(
@@ -558,9 +582,7 @@ public class LangBuilder {
 
 			toText = translation.getToText();
 
-			if ((toText != null) &&
-				(toText.indexOf("Babel Fish") != -1)) {
-
+			if ((toText != null) && toText.contains("Babel Fish")) {
 				toText = null;
 			}
 		}

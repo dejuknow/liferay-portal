@@ -14,10 +14,11 @@
 
 package com.liferay.portlet.documentlibrary.util;
 
-import com.liferay.portal.kernel.image.ImageProcessorUtil;
+import com.liferay.portal.image.ImageProcessorImpl;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 
+import com.xuggle.ferry.RefCounted;
 import com.xuggle.xuggler.Global;
 import com.xuggle.xuggler.IAudioResampler;
 import com.xuggle.xuggler.IAudioSamples.Format;
@@ -46,23 +47,58 @@ import javax.imageio.ImageIO;
  * @author Juan González
  * @author Sergio González
  * @author Brian Wing Shun Chan
+ * @author Alexander Chow
  */
 public abstract class LiferayConverter {
+
+	public abstract void convert() throws Exception;
+
+	protected void cleanUp(IPacket inputIPacket, IPacket outputIPacket) {
+		if (inputIPacket != null) {
+			inputIPacket.delete();
+		}
+
+		if (outputIPacket != null) {
+			outputIPacket.delete();
+		}
+	}
 
 	protected void cleanUp(
 		IStreamCoder[] inputIStreamCoders, IStreamCoder[] outputIStreamCoders) {
 
-		for (int i = 0; i < inputIStreamCoders.length; i++) {
-			IStreamCoder inputIStreamCoder = inputIStreamCoders[i];
-
-			if (inputIStreamCoder != null) {
-				inputIStreamCoder.close();
+		if (inputIStreamCoders != null) {
+			for (IStreamCoder iStreamCoder : inputIStreamCoders) {
+				if (iStreamCoder != null) {
+					iStreamCoder.close();
+				}
 			}
+		}
 
-			IStreamCoder outputIStreamCoder = outputIStreamCoders[i];
+		if (outputIStreamCoders != null) {
+			for (IStreamCoder iStreamCoder : outputIStreamCoders) {
+				if (iStreamCoder != null) {
+					iStreamCoder.close();
+				}
+			}
+		}
+	}
 
-			if (outputIStreamCoder != null) {
-				outputIStreamCoder.close();
+	protected void cleanUp(
+		RefCounted[] inputRefCountedArray, RefCounted[] outputRefCountedArray) {
+
+		if (inputRefCountedArray != null) {
+			for (RefCounted refCounted : inputRefCountedArray) {
+				if (refCounted != null) {
+					refCounted.delete();
+				}
+			}
+		}
+
+		if (outputRefCountedArray != null) {
+			for (RefCounted refCounted : outputRefCountedArray) {
+				if (refCounted != null) {
+					refCounted.delete();
+				}
 			}
 		}
 	}
@@ -87,7 +123,7 @@ public abstract class LiferayConverter {
 		IAudioResampler iAudioResampler = null;
 
 		Format inputSampleFormat = inputIStreamCoder.getSampleFormat();
-		Format outputSampleFormat = inputIStreamCoder.getSampleFormat();
+		Format outputSampleFormat = outputIStreamCoder.getSampleFormat();
 
 		if ((inputIStreamCoder.getChannels() ==
 				outputIStreamCoder.getChannels()) &&
@@ -202,64 +238,94 @@ public abstract class LiferayConverter {
 			int thumbnailWidth, long timeStampOffset)
 		throws Exception {
 
-		int value = inputIStreamCoder.decodeVideo(
-			inputIVideoPicture, inputIPacket, 0);
+		int offset = 0;
 
-		if (value <= 0) {
-			return value;
-		}
+		boolean stopDecoding = false;
 
-		updateVideoTimeStamp(inputIVideoPicture, timeStampOffset);
+		while (offset < inputIPacket.getSize()) {
+			int value = inputIStreamCoder.decodeVideo(
+				inputIVideoPicture, inputIPacket, offset);
 
-		if (!inputIVideoPicture.isComplete()) {
-			return 1;
-		}
-
-		if (thumbnailFile != null) {
-			BufferedImage bufferedImage = null;
-
-			if (_converterFactoryType == null) {
-				_converterFactoryType =
-					ConverterFactory.findRegisteredConverter(
-						ConverterFactory.XUGGLER_BGR_24);
+			if (value <= 0) {
+				return value;
 			}
 
-			if (_converterFactoryType == null) {
-				throw new UnsupportedOperationException(
-					"No converter found for " +
-						ConverterFactory.XUGGLER_BGR_24);
+			updateVideoTimeStamp(inputIVideoPicture, timeStampOffset);
+
+			offset += value;
+
+			// Workaround for FFmpeg bug. See
+			// http://comments.gmane.org/gmane.comp.video.ffmpeg.devel/135657
+
+			ICodec.ID iCodecID = inputIStreamCoder.getCodecID();
+
+			if (iCodecID.equals(ICodec.ID.CODEC_ID_MJPEG)) {
+				stopDecoding = true;
 			}
 
-			if (_videoIConverter == null) {
-				_videoIConverter = ConverterFactory.createConverter(
-					_converterFactoryType.getDescriptor(),
-					inputIVideoPicture);
+			if (!inputIVideoPicture.isComplete()) {
+				if (stopDecoding) {
+					return 1;
+				}
+				else {
+					continue;
+				}
 			}
 
-			bufferedImage = _videoIConverter.toImage(inputIVideoPicture);
+			if (thumbnailFile != null) {
+				BufferedImage bufferedImage = null;
 
-			thumbnailFile.createNewFile();
+				if (_converterFactoryType == null) {
+					_converterFactoryType =
+						ConverterFactory.findRegisteredConverter(
+							ConverterFactory.XUGGLER_BGR_24);
+				}
 
-			RenderedImage renderedImage = ImageProcessorUtil.scale(
-				bufferedImage, thumbnailHeight, thumbnailWidth);
+				if (_converterFactoryType == null) {
+					throw new UnsupportedOperationException(
+						"No converter found for " +
+							ConverterFactory.XUGGLER_BGR_24);
+				}
 
-			ImageIO.write(
-				renderedImage, thumbnailExtension,
-				new FileOutputStream(thumbnailFile));
+				if (_videoIConverter == null) {
+					_videoIConverter = ConverterFactory.createConverter(
+						_converterFactoryType.getDescriptor(),
+						inputIVideoPicture);
+				}
 
-			return DECODE_VIDEO_THUMBNAIL;
+				bufferedImage = _videoIConverter.toImage(inputIVideoPicture);
+
+				thumbnailFile.createNewFile();
+
+				ImageProcessorImpl imageProcessorImpl =
+					ImageProcessorImpl.getInstance();
+
+				RenderedImage renderedImage = imageProcessorImpl.scale(
+					bufferedImage, thumbnailHeight, thumbnailWidth);
+
+				ImageIO.write(
+					renderedImage, thumbnailExtension,
+					new FileOutputStream(thumbnailFile));
+
+				return DECODE_VIDEO_THUMBNAIL;
+			}
+
+			if ((outputIStreamCoder != null) && (outputIContainer != null)) {
+				IVideoPicture outputIVideoPicture = resampleVideo(
+					iVideoResampler, inputIVideoPicture,
+					resampledIVideoPicture);
+
+				outputIVideoPicture.setQuality(0);
+
+				encodeVideo(
+					outputIStreamCoder, outputIVideoPicture, outputIPacket,
+					outputIContainer);
+			}
+
+			if (stopDecoding) {
+				break;
+			}
 		}
-
-		IVideoPicture outputIVideoPicture = null;
-
-		outputIVideoPicture = resampleVideo(
-			iVideoResampler, inputIVideoPicture, resampledIVideoPicture);
-
-		outputIVideoPicture.setQuality(0);
-
-		encodeVideo(
-			outputIStreamCoder, outputIVideoPicture, outputIPacket,
-			outputIContainer);
 
 		return 1;
 	}
@@ -296,14 +362,17 @@ public abstract class LiferayConverter {
 			IPacket outputIPacket, IContainer outputIContainer)
 		throws Exception {
 
-		if (outputIStreamCoder.encodeVideo(
-				outputIPacket, outputIVideoPicture, 0) < 0) {
+		int value = outputIStreamCoder.encodeVideo(
+			outputIPacket, outputIVideoPicture, 0);
 
+		if (value < 0) {
 			throw new RuntimeException("Unable to encode video");
 		}
 
 		if (outputIPacket.isComplete()) {
-			if (outputIContainer.writePacket(outputIPacket, true) < 0) {
+			value = outputIContainer.writePacket(outputIPacket, true);
+
+			if (value < 0) {
 				throw new RuntimeException("Unable to write video packet");
 			}
 		}
@@ -319,19 +388,78 @@ public abstract class LiferayConverter {
 
 			IPacket iPacket = IPacket.make();
 
-			if (outputIStreamCoder.getCodecType() ==
-					ICodec.Type.CODEC_TYPE_AUDIO) {
+			flush(outputIStreamCoder, outputIContainer, iPacket);
 
-				outputIStreamCoder.encodeAudio(iPacket, null, 0);
-			}
-			else {
-				outputIStreamCoder.encodeVideo(iPacket, null, 0);
-			}
-
-			if (iPacket.isComplete()) {
-				outputIContainer.writePacket(iPacket, true);
+			while (iPacket.isComplete()) {
+				flush(outputIStreamCoder, outputIContainer, iPacket);
 			}
 		}
+	}
+
+	protected void flush(
+		IStreamCoder outputIStreamCoder, IContainer outputIContainer,
+		IPacket iPacket) {
+
+		if (outputIStreamCoder.getCodecType() == ICodec.Type.CODEC_TYPE_AUDIO) {
+			outputIStreamCoder.encodeAudio(iPacket, null, 0);
+		}
+		else {
+			outputIStreamCoder.encodeVideo(iPacket, null, 0);
+		}
+
+		if (iPacket.isComplete()) {
+			outputIContainer.writePacket(iPacket, true);
+		}
+	}
+
+	protected int getAudioEncodingChannels(
+		IContainer outputIContainer, int channels) {
+
+		if ((channels == 0) || (channels > 2)) {
+			channels = 2;
+		}
+
+		return channels;
+	}
+
+	protected ICodec getAudioEncodingICodec(IContainer outputIContainer) {
+		return null;
+	}
+
+	protected abstract IContainer getInputIContainer();
+
+	protected long getSeekTimeStamp(int percentage) throws Exception {
+		IContainer inputIContainer = getInputIContainer();
+
+		long seekTimeStamp = -1;
+
+		long videoSeconds = inputIContainer.getDuration() / 1000000L;
+
+		long seekSeconds = ((videoSeconds * percentage) / 100L);
+
+		for (int i = 0; i < inputIContainer.getNumStreams(); i++) {
+			IStream inputIStream = inputIContainer.getStream(i);
+
+			IStreamCoder inputIStreamCoder = inputIStream.getStreamCoder();
+
+			if (inputIStreamCoder.getCodecType() !=
+					ICodec.Type.CODEC_TYPE_VIDEO) {
+
+				continue;
+			}
+
+			IRational iRational = inputIStream.getTimeBase();
+
+			long timeStampOffset =
+				iRational.getDenominator() / iRational.getNumerator() *
+					seekSeconds;
+
+			seekTimeStamp = inputIContainer.getStartTime() + timeStampOffset;
+
+			break;
+		}
+
+		return seekTimeStamp;
 	}
 
 	protected long getStreamTimeStampOffset(IStream iStream) {
@@ -374,7 +502,9 @@ public abstract class LiferayConverter {
 		if (iCodecID.equals(ICodec.ID.CODEC_ID_MJPEG)) {
 			return true;
 		}
-		else if (iCodecID.equals(ICodec.ID.CODEC_ID_MPEG2VIDEO)) {
+		else if (iCodecID.equals(ICodec.ID.CODEC_ID_MPEG2VIDEO) ||
+				 iCodecID.equals(ICodec.ID.CODEC_ID_THEORA)) {
+
 			if (nonKeyAfterKeyCount != 1) {
 				return true;
 			}
@@ -411,8 +541,12 @@ public abstract class LiferayConverter {
 	protected void openStreamCoder(IStreamCoder iStreamCoder)
 		throws Exception {
 
-		if ((iStreamCoder != null) && (iStreamCoder.open() < 0)) {
-			throw new RuntimeException("Unable to open coder");
+		if ((iStreamCoder != null) &&
+			(iStreamCoder.getCodecType() != ICodec.Type.CODEC_TYPE_UNKNOWN)) {
+
+			if (iStreamCoder.open() < 0) {
+				throw new RuntimeException("Unable to open coder");
+			}
 		}
 	}
 
@@ -422,7 +556,7 @@ public abstract class LiferayConverter {
 			IAudioSamples[] outputIAudioSamples, IStreamCoder inputIStreamCoder,
 			IStreamCoder[] outputIStreamCoders, IContainer outputIContainer,
 			IStream[] outputIStreams, ICodec.Type inputICodecType,
-			String outputURL, int channels, int rate, int index)
+			String outputURL, int index)
 		throws Exception {
 
 		IStream outputIStream = outputIContainer.addNewStream(index);
@@ -433,11 +567,33 @@ public abstract class LiferayConverter {
 
 		outputIStreamCoders[index] = outputIStreamCoder;
 
-		outputIStreamCoder.setBitRate(inputIStreamCoder.getBitRate());
+		int bitRate = inputIStreamCoder.getBitRate();
+
+		if (_log.isInfoEnabled()) {
+			_log.info("Original audio bitrate " + bitRate);
+		}
+
+		if (bitRate == 0) {
+			bitRate = _AUDIO_BIT_RATE_DEFAULT;
+		}
+
+		if (_log.isInfoEnabled()) {
+			_log.info("Modified audio bitrate " + bitRate);
+		}
+
+		outputIStreamCoder.setBitRate(bitRate);
+
+		int channels = getAudioEncodingChannels(
+			outputIContainer, inputIStreamCoder.getChannels());
+
 		outputIStreamCoder.setChannels(channels);
 
-		ICodec iCodec = ICodec.guessEncodingCodec(
-			null, null, outputURL, null, inputICodecType);
+		ICodec iCodec = getAudioEncodingICodec(outputIContainer);
+
+		if (iCodec == null) {
+			iCodec = ICodec.guessEncodingCodec(
+				null, null, outputURL, null, inputICodecType);
+		}
 
 		if (iCodec == null) {
 			throw new RuntimeException(
@@ -448,7 +604,8 @@ public abstract class LiferayConverter {
 		outputIStreamCoder.setCodec(iCodec);
 
 		outputIStreamCoder.setGlobalQuality(0);
-		outputIStreamCoder.setSampleRate(rate);
+
+		outputIStreamCoder.setSampleRate(_AUDIO_SAMPLE_RATE_DEFAULT);
 
 		iAudioResamplers[index] = createIAudioResampler(
 			inputIStreamCoder, outputIStreamCoder);
@@ -495,6 +652,100 @@ public abstract class LiferayConverter {
 		return resampledIVideoPicture;
 	}
 
+	protected void rewind() throws Exception {
+		IContainer inputIContainer = getInputIContainer();
+
+		if (inputIContainer == null) {
+			return;
+		}
+
+		int value = 0;
+
+		for (int i = 0; i < inputIContainer.getNumStreams(); i++) {
+			IStream inputIStream = inputIContainer.getStream(i);
+
+			IStreamCoder inputIStreamCoder = inputIStream.getStreamCoder();
+
+			if (inputIStreamCoder.getCodecType() !=
+					ICodec.Type.CODEC_TYPE_VIDEO) {
+
+				continue;
+			}
+
+			value = rewind(i);
+
+			if (value < 0) {
+				throw new RuntimeException("Error while seeking file");
+			}
+
+			break;
+		}
+	}
+
+	protected int rewind(int index) throws Exception {
+		IContainer inputIContainer = getInputIContainer();
+
+		if (inputIContainer == null) {
+			return -1;
+		}
+
+		int value = inputIContainer.seekKeyFrame(index, -1, 0);
+
+		if (value < 0) {
+			throw new RuntimeException("Error while seeking file");
+		}
+
+		return value;
+	}
+
+	protected int seek(int index, long timeStamp) throws Exception {
+		IContainer inputIContainer = getInputIContainer();
+
+		if (inputIContainer == null) {
+			return -1;
+		}
+
+		int value = inputIContainer.seekKeyFrame(index, timeStamp, 0);
+
+		if (value < 0) {
+			throw new RuntimeException("Error while seeking file");
+		}
+
+		return value;
+	}
+
+	protected long seek(long timeStamp) throws Exception {
+		IContainer inputIContainer = getInputIContainer();
+
+		if (inputIContainer == null) {
+			return -1;
+		}
+
+		int value = 0;
+
+		for (int i = 0; i < inputIContainer.getNumStreams(); i++) {
+			IStream inputIStream = inputIContainer.getStream(i);
+
+			IStreamCoder inputIStreamCoder = inputIStream.getStreamCoder();
+
+			if (inputIStreamCoder.getCodecType() !=
+					ICodec.Type.CODEC_TYPE_VIDEO) {
+
+				continue;
+			}
+
+			value = seek(i, timeStamp);
+
+			if (value < 0) {
+				throw new RuntimeException("Error while seeking file");
+			}
+
+			break;
+		}
+
+		return value;
+	}
+
 	protected void updateAudioTimeStamp(
 		IAudioSamples inputAudioSample, long timeStampOffset) {
 
@@ -514,6 +765,10 @@ public abstract class LiferayConverter {
 	}
 
 	protected static final int DECODE_VIDEO_THUMBNAIL = 2;
+
+	private static final int _AUDIO_BIT_RATE_DEFAULT = 64000;
+
+	private static final int _AUDIO_SAMPLE_RATE_DEFAULT = 44100;
 
 	private static Log _log = LogFactoryUtil.getLog(LiferayConverter.class);
 

@@ -14,7 +14,6 @@
 
 package com.liferay.portal.service.persistence;
 
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.model.Lock;
 
 /**
@@ -347,6 +346,49 @@ public interface LockPersistence extends BasePersistence<Lock> {
 		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
+	* Returns the lock where className = &#63; and key = &#63; and owner = &#63; or throws a {@link com.liferay.portal.NoSuchLockException} if it could not be found.
+	*
+	* @param className the class name
+	* @param key the key
+	* @param owner the owner
+	* @return the matching lock
+	* @throws com.liferay.portal.NoSuchLockException if a matching lock could not be found
+	* @throws SystemException if a system exception occurred
+	*/
+	public com.liferay.portal.model.Lock findByC_K_O(
+		java.lang.String className, java.lang.String key, java.lang.String owner)
+		throws com.liferay.portal.NoSuchLockException,
+			com.liferay.portal.kernel.exception.SystemException;
+
+	/**
+	* Returns the lock where className = &#63; and key = &#63; and owner = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	*
+	* @param className the class name
+	* @param key the key
+	* @param owner the owner
+	* @return the matching lock, or <code>null</code> if a matching lock could not be found
+	* @throws SystemException if a system exception occurred
+	*/
+	public com.liferay.portal.model.Lock fetchByC_K_O(
+		java.lang.String className, java.lang.String key, java.lang.String owner)
+		throws com.liferay.portal.kernel.exception.SystemException;
+
+	/**
+	* Returns the lock where className = &#63; and key = &#63; and owner = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	*
+	* @param className the class name
+	* @param key the key
+	* @param owner the owner
+	* @param retrieveFromCache whether to use the finder cache
+	* @return the matching lock, or <code>null</code> if a matching lock could not be found
+	* @throws SystemException if a system exception occurred
+	*/
+	public com.liferay.portal.model.Lock fetchByC_K_O(
+		java.lang.String className, java.lang.String key,
+		java.lang.String owner, boolean retrieveFromCache)
+		throws com.liferay.portal.kernel.exception.SystemException;
+
+	/**
 	* Returns all the locks.
 	*
 	* @return the locks
@@ -418,6 +460,19 @@ public interface LockPersistence extends BasePersistence<Lock> {
 			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
+	* Removes the lock where className = &#63; and key = &#63; and owner = &#63; from the database.
+	*
+	* @param className the class name
+	* @param key the key
+	* @param owner the owner
+	* @throws SystemException if a system exception occurred
+	*/
+	public void removeByC_K_O(java.lang.String className, java.lang.String key,
+		java.lang.String owner)
+		throws com.liferay.portal.NoSuchLockException,
+			com.liferay.portal.kernel.exception.SystemException;
+
+	/**
 	* Removes all the locks from the database.
 	*
 	* @throws SystemException if a system exception occurred
@@ -457,6 +512,19 @@ public interface LockPersistence extends BasePersistence<Lock> {
 		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
+	* Returns the number of locks where className = &#63; and key = &#63; and owner = &#63;.
+	*
+	* @param className the class name
+	* @param key the key
+	* @param owner the owner
+	* @return the number of matching locks
+	* @throws SystemException if a system exception occurred
+	*/
+	public int countByC_K_O(java.lang.String className, java.lang.String key,
+		java.lang.String owner)
+		throws com.liferay.portal.kernel.exception.SystemException;
+
+	/**
 	* Returns the number of locks.
 	*
 	* @return the number of locks
@@ -464,6 +532,4 @@ public interface LockPersistence extends BasePersistence<Lock> {
 	*/
 	public int countAll()
 		throws com.liferay.portal.kernel.exception.SystemException;
-
-	public Lock remove(Lock lock) throws SystemException;
 }

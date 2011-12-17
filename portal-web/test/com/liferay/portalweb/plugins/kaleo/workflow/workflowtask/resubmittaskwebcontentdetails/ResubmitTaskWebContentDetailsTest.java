@@ -77,8 +77,8 @@ public class ResubmitTaskWebContentDetailsTest extends BaseTestCase {
 		assertEquals(RuntimeVariables.replace("No"),
 			selenium.getText("//td[contains(.,'No')]"));
 		assertEquals(RuntimeVariables.replace("Resubmit"),
-			selenium.getText("//tr[4]/td[4]/span/a/span"));
-		selenium.clickAt("//tr[4]/td[4]/span/a/span",
+			selenium.getText("//td[4]/span/a/span"));
+		selenium.clickAt("//td[4]/span/a/span",
 			RuntimeVariables.replace("Resubmit"));
 
 		for (int second = 0;; second++) {
@@ -124,7 +124,7 @@ public class ResubmitTaskWebContentDetailsTest extends BaseTestCase {
 		assertEquals(RuntimeVariables.replace("No"),
 			selenium.getText("xPath=(//td[contains(.,'No')])[1]"));
 		assertEquals(RuntimeVariables.replace(
-				"Task initially assigned to the Site Owner role."),
+				"Task initially assigned to the Administrator role."),
 			selenium.getText(
 				"xPath=(//div[@class='task-activity task-type-1'])[4]/div[2]"));
 		assertEquals(RuntimeVariables.replace("Assigned initial task."),

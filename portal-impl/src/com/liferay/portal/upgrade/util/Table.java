@@ -60,8 +60,7 @@ public class Table {
 	public static final int BATCH_SIZE = GetterUtil.getInteger(
 		PropsUtil.get("hibernate.jdbc.batch_size"));
 
-	public static final String SAFE_COMMA_CHARACTER =
-		"_SAFE_COMMA_CHARACTER_";
+	public static final String SAFE_COMMA_CHARACTER = "_SAFE_COMMA_CHARACTER_";
 
 	public static final String SAFE_NEWLINE_CHARACTER =
 		"_SAFE_NEWLINE_CHARACTER_";
@@ -479,7 +478,7 @@ public class Table {
 				if ((values.length) != (columns.length)) {
 					throw new UpgradeException(
 						"Column lengths differ between temp file and schema. " +
-							"Attempted to insert row " + line  + ".");
+							"Attempted to insert row " + line + ".");
 				}
 
 				if (count == 0) {

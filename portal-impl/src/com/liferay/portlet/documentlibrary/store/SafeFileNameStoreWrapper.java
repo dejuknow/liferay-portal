@@ -56,8 +56,7 @@ public class SafeFileNameStoreWrapper implements Store {
 
 		renameUnsafeFile(companyId, repositoryId, fileName, safeFileName);
 
-		_store.addFile(
-			companyId, repositoryId, safeFileName, bytes);
+		_store.addFile(companyId, repositoryId, safeFileName, bytes);
 	}
 
 	public void addFile(
@@ -254,8 +253,7 @@ public class SafeFileNameStoreWrapper implements Store {
 	public String[] getFileNames(long companyId, long repositoryId)
 		throws SystemException {
 
-		String[] fileNames = _store.getFileNames(
-			companyId, repositoryId);
+		String[] fileNames = _store.getFileNames(companyId, repositoryId);
 
 		String[] decodedFileNames = new String[fileNames.length];
 
@@ -292,8 +290,7 @@ public class SafeFileNameStoreWrapper implements Store {
 		return decodedFileNames;
 	}
 
-	public long getFileSize(
-			long companyId, long repositoryId, String fileName)
+	public long getFileSize(long companyId, long repositoryId, String fileName)
 		throws PortalException, SystemException {
 
 		String safeFileName = FileUtil.encodeSafeFileName(fileName);

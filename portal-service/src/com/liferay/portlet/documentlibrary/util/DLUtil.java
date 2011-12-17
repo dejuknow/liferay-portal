@@ -26,9 +26,11 @@ import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PrefsParamUtil;
 import com.liferay.portal.kernel.util.PrefsPropsUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -48,14 +50,17 @@ import com.liferay.portlet.documentlibrary.util.comparator.RepositoryModelNameCo
 import com.liferay.portlet.documentlibrary.util.comparator.RepositoryModelReadCountComparator;
 import com.liferay.portlet.documentlibrary.util.comparator.RepositoryModelSizeComparator;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.portlet.PortletPreferences;
+import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
 import javax.portlet.RenderResponse;
 
@@ -120,14 +125,13 @@ public class DLUtil {
 
 	public static void addPortletBreadcrumbEntries(
 			Folder folder, HttpServletRequest request,
-			LiferayPortletResponse liferayPortletResponse, boolean showGlobally)
+			LiferayPortletResponse liferayPortletResponse)
 		throws Exception {
 
 		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
-		PortletURL portletURL =
-			(PortletURL)liferayPortletResponse.createResourceURL();
+		PortletURL portletURL = liferayPortletResponse.createRenderURL();
 
 		portletURL.setParameter("struts_action", "/document_library/view");
 		portletURL.setParameter("showSiblings", Boolean.TRUE.toString());
@@ -136,8 +140,7 @@ public class DLUtil {
 		portletURL.setParameter(
 			"viewDisplayStyleButttons", Boolean.TRUE.toString());
 		portletURL.setParameter("viewEntries", Boolean.TRUE.toString());
-		portletURL.setParameter(
-			"viewFileEntrySearch", Boolean.TRUE.toString());
+		portletURL.setParameter("viewFileEntrySearch", Boolean.TRUE.toString());
 		portletURL.setParameter("viewFolders", Boolean.TRUE.toString());
 		portletURL.setParameter("viewSortButton", Boolean.TRUE.toString());
 
@@ -147,10 +150,10 @@ public class DLUtil {
 		data.put("refresh-folders", Boolean.TRUE.toString());
 
 		PortalUtil.addPortletBreadcrumbEntry(
-			request, themeDisplay.translate("documents-home"),
-			portletURL.toString(), data);
+			request, themeDisplay.translate("home"), portletURL.toString(),
+			data);
 
-		addPortletBreadcrumbEntries(folder, request, portletURL, showGlobally);
+		addPortletBreadcrumbEntries(folder, request, portletURL, false);
 	}
 
 	public static void addPortletBreadcrumbEntries(
@@ -223,8 +226,7 @@ public class DLUtil {
 			RenderResponse renderResponse, boolean showGlobally)
 		throws Exception {
 
-		String strutsAction = ParamUtil.getString(
-			request, "struts_action");
+		String strutsAction = ParamUtil.getString(request, "struts_action");
 
 		long groupId = ParamUtil.getLong(request, "groupId");
 
@@ -249,16 +251,9 @@ public class DLUtil {
 			data.put("folder-id", _getDefaultFolderId(request));
 			data.put("refresh-folders", Boolean.TRUE.toString());
 
-			if (strutsAction.equals("/image_gallery_display/select_folder")) {
-				PortalUtil.addPortletBreadcrumbEntry(
-					request, themeDisplay.translate("images-home"),
-					portletURL.toString(), data);
-			}
-			else {
-				PortalUtil.addPortletBreadcrumbEntry(
-					request, themeDisplay.translate("documents-home"),
-					portletURL.toString(), data);
-			}
+			PortalUtil.addPortletBreadcrumbEntry(
+				request, themeDisplay.translate("home"), portletURL.toString(),
+				data);
 		}
 		else {
 			portletURL.setParameter("struts_action", "/document_library/view");
@@ -314,6 +309,10 @@ public class DLUtil {
 		return 0;
 	}
 
+	public static Set<String> getAllMediaGalleryMimeTypes() {
+		return _instance._allMediaGalleryMimeTypes;
+	}
+
 	public static String getDividedPath(long id) {
 		StringBundler sb = new StringBundler(16);
 
@@ -362,6 +361,20 @@ public class DLUtil {
 		throws PortalException, SystemException {
 
 		return getGroupIds(themeDisplay.getScopeGroupId());
+	}
+
+	public static String[] getMediaGalleryMimeTypes(
+		PortletPreferences portletPreferences, PortletRequest portletRequest) {
+
+		String mimeTypes = PrefsParamUtil.getString(
+			portletPreferences, portletRequest, "mimeTypes",
+			_instance._allMediaGalleryMimeTypesString);
+
+		String[] mimeTypesArray = StringUtil.split(mimeTypes);
+
+		Arrays.sort(mimeTypesArray);
+
+		return mimeTypesArray;
 	}
 
 	public static OrderByComparator getRepositoryModelOrderByComparator(
@@ -433,6 +446,22 @@ public class DLUtil {
 	}
 
 	private DLUtil() {
+		_allMediaGalleryMimeTypes.addAll(
+			SetUtil.fromArray(
+				PropsUtil.getArray(
+					PropsKeys.DL_FILE_ENTRY_PREVIEW_AUDIO_MIME_TYPES)));
+		_allMediaGalleryMimeTypes.addAll(
+			SetUtil.fromArray(
+				PropsUtil.getArray(
+					PropsKeys.DL_FILE_ENTRY_PREVIEW_VIDEO_MIME_TYPES)));
+		_allMediaGalleryMimeTypes.addAll(
+			SetUtil.fromArray(
+				PropsUtil.getArray(
+					PropsKeys.DL_FILE_ENTRY_PREVIEW_IMAGE_MIME_TYPES)));
+
+		_allMediaGalleryMimeTypesString = StringUtil.merge(
+			_allMediaGalleryMimeTypes);
+
 		String[] fileIcons = null;
 
 		try {
@@ -499,12 +528,14 @@ public class DLUtil {
 
 	private static final String _DEFAULT_GENERIC_NAME = "default";
 
-	private static final long _DIVISOR = 256;
+	private static final long _DIVISOR = 256;;
 
 	private static Log _log = LogFactoryUtil.getLog(DLUtil.class);
 
 	private static DLUtil _instance = new DLUtil();
 
+	private Set<String> _allMediaGalleryMimeTypes = new TreeSet<String>();
+	private String _allMediaGalleryMimeTypesString;
 	private Set<String> _fileIcons = new HashSet<String>();
 	private Map<String, String> _genericNames = new HashMap<String, String>();
 

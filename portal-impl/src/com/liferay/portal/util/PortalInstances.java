@@ -135,8 +135,7 @@ public class PortalInstances {
 
 		long[] companyIds = new long[_companyIds.length + 1];
 
-		System.arraycopy(
-			_companyIds, 0, companyIds, 0, _companyIds.length);
+		System.arraycopy(_companyIds, 0, companyIds, 0, _companyIds.length);
 
 		companyIds[_companyIds.length] = companyId;
 
@@ -429,8 +428,9 @@ public class PortalInstances {
 			_log.debug("Check journal content search");
 		}
 
-		if (GetterUtil.getBoolean(PropsUtil.get(
-				PropsKeys.JOURNAL_SYNC_CONTENT_SEARCH_ON_STARTUP))) {
+		if (GetterUtil.getBoolean(
+				PropsUtil.get(
+					PropsKeys.JOURNAL_SYNC_CONTENT_SEARCH_ON_STARTUP))) {
 
 			try {
 				JournalContentSearchLocalServiceUtil.checkContentSearches(
@@ -515,11 +515,12 @@ public class PortalInstances {
 
 	private void _reload(ServletContext servletContext) {
 		_companyIds = new long[0];
+		_webIds = null;
 
 		String[] webIds = _getWebIds();
 
 		for (String webId : webIds) {
-			PortalInstances.initCompany(servletContext, webId);
+			_initCompany(servletContext, webId);
 		}
 	}
 

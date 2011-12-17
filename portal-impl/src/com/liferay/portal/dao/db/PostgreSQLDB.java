@@ -179,6 +179,9 @@ public class PostgreSQLDB extends BaseDB {
 					"alter table @table@ drop constraint @table@_pkey;",
 					"@table@", tokens[2]);
 			}
+			else if (line.indexOf("\\\'") != -1) {
+				line = StringUtil.replace(line, "\\\'", "\'\'");
+			}
 
 			sb.append(line);
 			sb.append("\n");
@@ -192,7 +195,7 @@ public class PostgreSQLDB extends BaseDB {
 	private static String[] _POSTGRESQL = {
 		"--", "true", "false",
 		"'01/01/1970'", "current_timestamp",
-		" oid", " bool", " timestamp",
+		" oid", " bytea", " bool", " timestamp",
 		" double precision", " integer", " bigint",
 		" text", " text", " varchar",
 		"", "commit"

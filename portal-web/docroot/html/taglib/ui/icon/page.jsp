@@ -26,6 +26,7 @@ if (Validator.isNotNull(cssClass)) {
 if (Validator.isNotNull(src) && themeDisplay.isThemeImagesFastLoad() && !auiImage) {
 	SpriteImage spriteImage = null;
 	String spriteFileName = null;
+	String spriteFileURL = null;
 
 	String imageFileName = StringUtil.replace(src, "common/../", "");
 
@@ -43,7 +44,7 @@ if (Validator.isNotNull(src) && themeDisplay.isThemeImagesFastLoad() && !auiImag
 				spriteFileName = StringUtil.replace(spriteFileName, ".png", ".gif");
 			}
 
-			spriteFileName = themeDisplay.getPathThemeImages().concat(spriteFileName);
+			spriteFileURL = PortalUtil.getPortalURL(request).concat(themeDisplay.getPathThemeImages()).concat(spriteFileName);
 		}
 	}
 
@@ -74,7 +75,7 @@ if (Validator.isNotNull(src) && themeDisplay.isThemeImagesFastLoad() && !auiImag
 					spriteFileName = StringUtil.replace(spriteFileName, ".png", ".gif");
 				}
 
-				spriteFileName = portlet.getStaticResourcePath().concat(spriteFileName);
+				spriteFileURL = portlet.getStaticResourcePath().concat(spriteFileName);
 			}
 		}
 	}
@@ -86,7 +87,7 @@ if (Validator.isNotNull(src) && themeDisplay.isThemeImagesFastLoad() && !auiImag
 
 		sb.append(details);
 		sb.append(" style=\"background-image: url('");
-		sb.append(spriteFileName);
+		sb.append(spriteFileURL);
 		sb.append("'); background-position: 50% -");
 		sb.append(spriteImage.getOffset());
 		sb.append("px; background-repeat: no-repeat; height: ");

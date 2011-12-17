@@ -62,8 +62,7 @@ public class MultiValueFacet extends BaseFacet {
 		}
 
 		String[] valuesParam = StringUtil.split(
-			GetterUtil.getString(
-				searchContext.getAttribute(getFieldName())));
+			GetterUtil.getString(searchContext.getAttribute(getFieldName())));
 
 		if (!isStatic() && (valuesParam != null) && (valuesParam.length > 0)) {
 			values = valuesParam;
@@ -95,7 +94,7 @@ public class MultiValueFacet extends BaseFacet {
 			}
 		}
 
-		if (facetQuery.clauses().isEmpty()) {
+		if (!facetQuery.hasClauses()) {
 			return null;
 		}
 
@@ -103,7 +102,6 @@ public class MultiValueFacet extends BaseFacet {
 			facetQuery, BooleanClauseOccur.MUST.getName());
 	}
 
-	private static final Log _log = LogFactoryUtil.getLog(
-		MultiValueFacet.class);
+	private static Log _log = LogFactoryUtil.getLog(MultiValueFacet.class);
 
 }

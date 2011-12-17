@@ -45,17 +45,11 @@ AssetEntry assetEntry = (AssetEntry)request.getAttribute("view_entry_content.jsp
 					<portlet:param name="urlTitle" value="<%= entry.getUrlTitle() %>" />
 				</portlet:renderURL>
 
-				<c:if test='<%= strutsAction.equals("/blogs/view_entry") %>'>
-					<portlet:renderURL var="blogsURL">
-						<portlet:param name="struts_action" value="/blogs/view" />
-					</portlet:renderURL>
-				</c:if>
-
-				<div class="entry-title">
-					<c:if test='<%= !strutsAction.equals("/blogs/view_entry") %>'>
+				<c:if test='<%= !strutsAction.equals("/blogs/view_entry") %>'>
+					<div class="entry-title">
 						<h2><aui:a href="<%= viewEntryURL %>"><%= HtmlUtil.escape(entry.getTitle()) %></aui:a></h2>
-					</c:if>
-				</div>
+					</div>
+				</c:if>
 
 				<div class="entry-date">
 					<%= dateFormatDateTime.format(entry.getDisplayDate()) %>
@@ -71,8 +65,8 @@ AssetEntry assetEntry = (AssetEntry)request.getAttribute("view_entry_content.jsp
 				<liferay-ui:social-bookmarks
 					displayStyle="<%= socialBookmarksDisplayStyle %>"
 					target="_blank"
-					title="<%= HtmlUtil.escape(entry.getTitle()) %>"
-					url="<%= bookmarkURL.toString() %>"
+					title="<%= entry.getTitle() %>"
+					url="<%= PortalUtil.getCanonicalURL(bookmarkURL.toString(), themeDisplay) %>"
 				/>
 			</c:if>
 
@@ -141,7 +135,22 @@ AssetEntry assetEntry = (AssetEntry)request.getAttribute("view_entry_content.jsp
 			<div class="entry-body">
 				<c:choose>
 					<c:when test='<%= pageDisplayStyle.equals(RSSUtil.DISPLAY_STYLE_ABSTRACT) && !strutsAction.equals("/blogs/view_entry") %>'>
-						<%= StringUtil.shorten(HtmlUtil.stripHtml(entry.getContent()), pageAbstractLength) %>
+						<%= StringUtil.shorten(HtmlUtil.stripHtml(entry.getDescription()), pageAbstractLength) %>
+
+						<c:if test="<%= entry.isSmallImage() %>">
+
+							<%
+							String src = StringPool.BLANK;
+
+							if (Validator.isNotNull(entry.getSmallImageURL())) {
+								src = entry.getSmallImageURL();
+							}
+							%>
+
+							<div class="asset-small-image">
+								<img alt="" class="asset-small-image" src="<%= HtmlUtil.escape(src) %>" width="150" />
+							</div>
+						</c:if>
 
 						<br />
 
@@ -234,6 +243,7 @@ AssetEntry assetEntry = (AssetEntry)request.getAttribute("view_entry_content.jsp
 					<c:if test="<%= enableRelatedAssets %>">
 						<div class="entry-links">
 							<liferay-ui:asset-links
+								assetEntryId="<%= (assetEntry != null) ? assetEntry.getEntryId() : 0 %>"
 								className="<%= BlogsEntry.class.getName() %>"
 								classPK="<%= entry.getEntryId() %>"
 							/>
@@ -244,8 +254,8 @@ AssetEntry assetEntry = (AssetEntry)request.getAttribute("view_entry_content.jsp
 						<liferay-ui:social-bookmarks
 							displayStyle="<%= socialBookmarksDisplayStyle %>"
 							target="_blank"
-							title="<%= HtmlUtil.escape(entry.getTitle()) %>"
-							url="<%= bookmarkURL.toString() %>"
+							title="<%= entry.getTitle() %>"
+							url="<%= PortalUtil.getCanonicalURL(bookmarkURL.toString(), themeDisplay) %>"
 						/>
 					</c:if>
 

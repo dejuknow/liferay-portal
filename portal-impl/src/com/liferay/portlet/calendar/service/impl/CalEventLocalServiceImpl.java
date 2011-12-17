@@ -288,8 +288,7 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 
 		CalEvent event = calEventPersistence.findByPrimaryKey(eventId);
 
-		addEventResources(
-			event, addGroupPermissions, addGuestPermissions);
+		addEventResources(event, addGroupPermissions, addGuestPermissions);
 	}
 
 	public void addEventResources(
@@ -895,8 +894,7 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 		Calendar recurrenceCal = (Calendar)tzICal.clone();
 		recurrenceCal.set(
 			Calendar.HOUR_OF_DAY, eventCal.get(Calendar.HOUR_OF_DAY));
-		recurrenceCal.set(
-			Calendar.MINUTE, eventCal.get(Calendar.MINUTE));
+		recurrenceCal.set(Calendar.MINUTE, eventCal.get(Calendar.MINUTE));
 		recurrenceCal.set(Calendar.SECOND, 0);
 		recurrenceCal.set(Calendar.MILLISECOND, 0);
 
@@ -928,8 +926,7 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 		return recurrenceCal;
 	}
 
-	protected void importICal4j(
-			long userId, long groupId, VEvent event)
+	protected void importICal4j(long userId, long groupId, VEvent event)
 		throws PortalException, SystemException {
 
 		User user = userPersistence.findByPrimaryKey(userId);
@@ -1240,7 +1237,7 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 					event.getTitle(),
 					fromAddress,
 					fromName,
-					company.getVirtualHostname(),
+					company.getPortalURL(event.getGroupId()),
 					portletName,
 					HtmlUtil.escape(toAddress),
 					HtmlUtil.escape(toName),
@@ -1265,7 +1262,7 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 					event.getTitle(),
 					fromAddress,
 					fromName,
-					company.getVirtualHostname(),
+					company.getPortalURL(event.getGroupId()),
 					portletName,
 					HtmlUtil.escape(toAddress),
 					HtmlUtil.escape(toName),

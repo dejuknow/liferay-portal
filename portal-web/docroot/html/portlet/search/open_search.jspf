@@ -29,15 +29,28 @@ List<Portlet> portlets = PortletLocalServiceUtil.getPortlets(company.getCompanyI
 
 portlets = ListUtil.sort(portlets, new PortletTitleComparator(application, locale));
 
-Iterator itr = portlets.iterator();
+Iterator<Portlet> itr = portlets.iterator();
 
 while (itr.hasNext()) {
-	Portlet portlet = (Portlet)itr.next();
+	Portlet portlet = itr.next();
 
-	if (Validator.isNull(portlet.getOpenSearchClass()) || portlet.getOpenSearchClass().startsWith("com.liferay")) {
+	if (Validator.isNull(portlet.getOpenSearchClass())) {
 		itr.remove();
 
 		continue;
+	}
+	else {
+		try {
+			ClassLoader classLoader = PortalClassLoaderUtil.getClassLoader();
+
+			Class<?> openSearchClazz = classLoader.loadClass(portlet.getOpenSearchClass());
+
+			itr.remove();
+
+			continue;
+		}
+		catch (ClassNotFoundException cnfe) {
+		}
 	}
 
 	OpenSearch openSearch = portlet.getOpenSearchInstance();
@@ -126,7 +139,7 @@ for (int i = 0; i < portlets.size(); i++) {
 
 		List<Element> entries = rootElement.elements("entry");
 
-		int total = GetterUtil.getInteger(rootElement.elementText(OpenSearchUtil.getQName("totalResults", OpenSearchUtil.OS_NAMESPACE)));
+		int openSearchSearchContainerTotal = GetterUtil.getInteger(rootElement.elementText(OpenSearchUtil.getQName("totalResults", OpenSearchUtil.OS_NAMESPACE)));
 
 		resultRows = openSearchSearchContainer.getResultRows();
 
@@ -159,7 +172,7 @@ for (int i = 0; i < portlets.size(); i++) {
 					}
 
 					if (!entryGroup.isActive()) {
-						total--;
+						openSearchSearchContainerTotal--;
 
 						continue;
 					}
@@ -272,11 +285,11 @@ for (int i = 0; i < portlets.size(); i++) {
 			catch (Exception e) {
 				_log.error("Error retrieving individual search result of type " + portlet.getOpenSearchClass(), e);
 
-				total--;
+				openSearchSearchContainerTotal--;
 			}
 		}
 
-		openSearchSearchContainer.setTotal(total);
+		openSearchSearchContainer.setTotal(openSearchSearchContainerTotal);
 	}
 	catch (Exception e) {
 		_log.error("Error displaying content of type " + portlet.getOpenSearchClass(), e);

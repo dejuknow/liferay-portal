@@ -95,14 +95,6 @@ public class MDRRuleGroupUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static MDRRuleGroup remove(MDRRuleGroup mdrRuleGroup)
-		throws SystemException {
-		return getPersistence().remove(mdrRuleGroup);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static MDRRuleGroup update(MDRRuleGroup mdrRuleGroup, boolean merge)

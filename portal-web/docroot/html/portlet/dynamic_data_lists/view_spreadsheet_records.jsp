@@ -64,13 +64,7 @@ DDMStructure ddmStructure = recordSet.getDDMStructure();
 		var a = recA.getValue(field);
 		var b = recB.getValue(field);
 
-		var sorted = A.ArraySort.compareIgnoreWhiteSpace(a, b, desc);
-
-		if (sorted === 0) {
-			sorted = A.ArraySort.compare(recA.get('id'), recB.get('id'), desc);
-		}
-
-		return sorted;
+		return A.ArraySort.compareIgnoreWhiteSpace(a, b, desc);
 	};
 
 	var keys = A.Array.map(
@@ -96,7 +90,7 @@ DDMStructure ddmStructure = recordSet.getDDMStructure();
 	int totalEmptyRecords = Math.max(recordSet.getMinDisplayRows(), records.size());
 	%>
 
-	var records = <%= DDLUtil.getRecordsJSONArray(records) %>;
+	var records = <%= DDLUtil.getRecordsJSONArray(records, themeDisplay) %>;
 
 	records.sort(
 		function(a, b) {
@@ -158,4 +152,5 @@ DDMStructure ddmStructure = recordSet.getDDMStructure();
 	</c:if>
 
 	window.<portlet:namespace />spreadSheet = spreadSheet;
+	window.<portlet:namespace />structure = structure;
 </aui:script>

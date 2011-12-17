@@ -65,8 +65,7 @@ public class PortletPreferencesLocalServiceImpl
 
 		if (Validator.isNull(defaultPreferences)) {
 			if (portlet == null) {
-				defaultPreferences =
-					PortletConstants.DEFAULT_PREFERENCES;
+				defaultPreferences = PortletConstants.DEFAULT_PREFERENCES;
 			}
 			else {
 				defaultPreferences = portlet.getDefaultPreferences();
@@ -170,6 +169,15 @@ public class PortletPreferencesLocalServiceImpl
 
 		return portletPreferencesPersistence.findByO_O_P_P(
 			ownerId, ownerType, plid, portletId);
+	}
+
+	public List<PortletPreferences> getPortletPreferences(
+			long companyId, long groupId, long ownerId, int ownerType,
+			String portletId, boolean privateLayout)
+		throws SystemException {
+
+		return portletPreferencesFinder.findByC_G_O_O_P_P(
+			companyId, groupId, ownerId, ownerType, portletId, privateLayout);
 	}
 
 	public List<PortletPreferences> getPortletPreferences(

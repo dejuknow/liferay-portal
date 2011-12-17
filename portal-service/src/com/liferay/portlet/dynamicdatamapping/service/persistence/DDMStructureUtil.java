@@ -95,14 +95,6 @@ public class DDMStructureUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static DDMStructure remove(DDMStructure ddmStructure)
-		throws SystemException {
-		return getPersistence().remove(ddmStructure);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static DDMStructure update(DDMStructure ddmStructure, boolean merge)

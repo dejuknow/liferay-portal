@@ -94,7 +94,6 @@ import javax.portlet.PortletURL;
 import javax.portlet.WindowState;
 
 import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 
@@ -192,9 +191,7 @@ public class EditServerAction extends PortletAction {
 		String loggerName = ParamUtil.getString(actionRequest, "loggerName");
 		String priority = ParamUtil.getString(actionRequest, "priority");
 
-		Logger logger = Logger.getLogger(loggerName);
-
-		logger.setLevel(Level.toLevel(priority));
+		Log4JUtil.setLevel(loggerName, priority, true);
 	}
 
 	protected void cacheDb() throws Exception {
@@ -495,15 +492,13 @@ public class EditServerAction extends PortletAction {
 			ActionRequest actionRequest, PortletPreferences preferences)
 		throws Exception {
 
+		long dlFileEntryThumbnailMaxHeight = ParamUtil.getLong(
+			actionRequest, "dlFileEntryThumbnailMaxHeight");
+		long dlFileEntryThumbnailMaxWidth = ParamUtil.getLong(
+			actionRequest, "dlFileEntryThumbnailMaxWidth");
 		String dlFileExtensions = getFileExtensions(
 			actionRequest, "dlFileExtensions");
 		long dlFileMaxSize = ParamUtil.getLong(actionRequest, "dlFileMaxSize");
-		String igImageExtensions = getFileExtensions(
-			actionRequest, "igImageExtensions");
-		long igImageMaxSize = ParamUtil.getLong(
-			actionRequest, "igImageMaxSize");
-		long igThumbnailMaxDimension = ParamUtil.getLong(
-			actionRequest, "igImageThumbnailMaxDimensions");
 		String journalImageExtensions = getFileExtensions(
 			actionRequest, "journalImageExtensions");
 		long journalImageSmallMaxSize = ParamUtil.getLong(
@@ -530,16 +525,14 @@ public class EditServerAction extends PortletAction {
 			actionRequest, "usersImageMaxSize");
 
 		preferences.setValue(
-			PropsKeys.DL_FILE_EXTENSIONS, dlFileExtensions);
+			PropsKeys.DL_FILE_ENTRY_THUMBNAIL_MAX_HEIGHT,
+			String.valueOf(dlFileEntryThumbnailMaxHeight));
+		preferences.setValue(
+			PropsKeys.DL_FILE_ENTRY_THUMBNAIL_MAX_WIDTH,
+			String.valueOf(dlFileEntryThumbnailMaxWidth));
+		preferences.setValue(PropsKeys.DL_FILE_EXTENSIONS, dlFileExtensions);
 		preferences.setValue(
 			PropsKeys.DL_FILE_MAX_SIZE, String.valueOf(dlFileMaxSize));
-		preferences.setValue(
-			PropsKeys.IG_IMAGE_EXTENSIONS, igImageExtensions);
-		preferences.setValue(
-			PropsKeys.IG_IMAGE_MAX_SIZE, String.valueOf(igImageMaxSize));
-		preferences.setValue(
-			PropsKeys.IG_IMAGE_THUMBNAIL_MAX_DIMENSION,
-			String.valueOf(igThumbnailMaxDimension));
 		preferences.setValue(
 			PropsKeys.JOURNAL_IMAGE_EXTENSIONS, journalImageExtensions);
 		preferences.setValue(
@@ -597,7 +590,7 @@ public class EditServerAction extends PortletAction {
 				String priority = ParamUtil.getString(
 					actionRequest, name, Level.INFO.toString());
 
-				Log4JUtil.setLevel(loggerName, priority);
+				Log4JUtil.setLevel(loggerName, priority, true);
 			}
 		}
 	}

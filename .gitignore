@@ -3,6 +3,9 @@
 *.bak
 *.iml
 *.swp
+.sass-cache/
+.sass_cache_*.css
+_sass_cache_*.css
 
 /*.ant-*
 /*.ipr
@@ -93,6 +96,8 @@
 
 /portal-web/docroot/html/ALLOY_ZIP
 
+/portal-web/docroot/html/css/portal/aui.css
+
 /portal-web/docroot/html/icons/_sprite.*
 
 /portal-web/docroot/html/js/aui
@@ -101,8 +106,6 @@
 /portal-web/docroot/html/js/editor/codepress
 /portal-web/docroot/html/js/editor/fckeditor
 /portal-web/docroot/html/js/editor/tiny_mce
-
-/portal-web/docroot/html/portal/aui
 
 /portal-web/docroot/html/themes/_unstyled/images/aui
 

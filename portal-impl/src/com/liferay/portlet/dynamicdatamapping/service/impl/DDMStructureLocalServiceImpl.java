@@ -14,6 +14,7 @@
 
 package com.liferay.portlet.dynamicdatamapping.service.impl;
 
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
@@ -64,7 +65,8 @@ public class DDMStructureLocalServiceImpl
 	public DDMStructure addStructure(
 			long userId, long groupId, long classNameId, String structureKey,
 			Map<Locale, String> nameMap, Map<Locale, String> descriptionMap,
-			String xsd, String storageType, ServiceContext serviceContext)
+			String xsd, String storageType, int type,
+			ServiceContext serviceContext)
 		throws PortalException, SystemException {
 
 		// Structure
@@ -103,6 +105,7 @@ public class DDMStructureLocalServiceImpl
 		structure.setDescriptionMap(descriptionMap);
 		structure.setXsd(xsd);
 		structure.setStorageType(storageType);
+		structure.setType(type);
 
 		ddmStructurePersistence.update(structure, false);
 
@@ -148,15 +151,16 @@ public class DDMStructureLocalServiceImpl
 	}
 
 	public DDMStructure copyStructure(
-			long userId, long structureId, ServiceContext serviceContext)
+			long userId, long structureId, Map<Locale, String> nameMap,
+			Map<Locale, String> descriptionMap, ServiceContext serviceContext)
 		throws PortalException, SystemException {
 
 		DDMStructure structure = getStructure(structureId);
 
 		return addStructure(
-			 userId, structure.getGroupId(), structure.getClassNameId(), null,
-			 structure.getNameMap(), structure.getDescriptionMap(),
-			 structure.getXsd(), structure.getStorageType(), serviceContext);
+			userId, structure.getGroupId(), structure.getClassNameId(), null,
+			nameMap, descriptionMap, structure.getXsd(),
+			structure.getStorageType(), structure.getType(), serviceContext);
 	}
 
 	public void deleteStructure(DDMStructure structure)
@@ -234,6 +238,15 @@ public class DDMStructureLocalServiceImpl
 			classNameId, start, end);
 	}
 
+	public List<DDMStructure> getClassStructures(
+			long classNameId, OrderByComparator orderByComparator)
+		throws SystemException {
+
+		return ddmStructurePersistence.findByClassNameId(
+			classNameId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+			orderByComparator);
+	}
+
 	public List<DDMStructure> getDLFileEntryTypeStructures(
 			long dlFileEntryTypeId)
 		throws SystemException {
@@ -294,13 +307,14 @@ public class DDMStructureLocalServiceImpl
 
 	public List<DDMStructure> search(
 			long companyId, long[] groupIds, long[] classNameIds, String name,
-			String description, String storageType, boolean andOperator,
-			int start, int end, OrderByComparator orderByComparator)
+			String description, String storageType, int type,
+			boolean andOperator, int start, int end,
+			OrderByComparator orderByComparator)
 		throws SystemException {
 
-		return ddmStructureFinder.findByC_G_C_N_D_S(
+		return ddmStructureFinder.findByC_G_C_N_D_S_T(
 			companyId, groupIds, classNameIds, name, description, storageType,
-			andOperator, start, end, orderByComparator);
+			type, andOperator, start, end, orderByComparator);
 	}
 
 	public int searchCount(
@@ -314,12 +328,13 @@ public class DDMStructureLocalServiceImpl
 
 	public int searchCount(
 			long companyId, long[] groupIds, long[] classNameIds, String name,
-			String description, String storageType, boolean andOperator)
+			String description, String storageType, int type,
+			boolean andOperator)
 		throws SystemException {
 
-		return ddmStructureFinder.countByC_G_C_N_D_S(
+		return ddmStructureFinder.countByC_G_C_N_D_S_T(
 			companyId, groupIds, classNameIds, name, description, storageType,
-			andOperator);
+			type, andOperator);
 	}
 
 	public DDMStructure updateStructure(
@@ -523,7 +538,7 @@ public class DDMStructureLocalServiceImpl
 			String type = element.attributeValue("type", StringPool.BLANK);
 
 			if (Validator.isNull(name) ||
-				name.startsWith(DDMStructureConstants.RESERVED)) {
+				name.startsWith(DDMStructureConstants.XSD_NAME_RESERVED)) {
 
 				throw new StructureXsdException();
 			}

@@ -23,58 +23,74 @@ showSearch = showSearch && !results.isEmpty();
 
 <c:if test="<%= showAddEntryButton || showPermissionsButton || showSearch %>">
 	<div class="portlet-toolbar search-form">
-		<c:if test="<%= showSearch %>">
-			<span class="aui-search-bar">
+		<div class="aui-search-bar">
+			<c:if test="<%= showSearch %>">
 				<aui:input inlineField="<%= true %>" label="" name="keywords" size="30" title="search-entries" type="text" />
 
 				<aui:button type="submit" value="search" />
-			</span>
-		</c:if>
+			</c:if>
 
-		<c:if test="<%= showAddEntryButton %>">
-			<portlet:renderURL var="editEntryURL">
-				<portlet:param name="struts_action" value="/blogs/edit_entry" />
-				<portlet:param name="redirect" value="<%= currentURL %>" />
-				<portlet:param name="backURL" value="<%= currentURL %>" />
-			</portlet:renderURL>
+			<c:if test="<%= showAddEntryButton %>">
+				<portlet:renderURL var="editEntryURL">
+					<portlet:param name="struts_action" value="/blogs/edit_entry" />
+					<portlet:param name="redirect" value="<%= currentURL %>" />
+					<portlet:param name="backURL" value="<%= currentURL %>" />
+				</portlet:renderURL>
 
-			<aui:button href="<%= editEntryURL %>" name="addEntryButton" value="add-blog-entry" />
-		</c:if>
+				<aui:button href="<%= editEntryURL %>" name="addEntryButton" value="add-blog-entry" />
+			</c:if>
 
-		<c:if test="<%= showPermissionsButton %>">
-			<liferay-security:permissionsURL
-				modelResource="com.liferay.portlet.blogs"
-				modelResourceDescription="<%= HtmlUtil.escape(themeDisplay.getScopeGroupName()) %>"
-				resourcePrimKey="<%= String.valueOf(scopeGroupId) %>"
-				var="permissionsURL"
-			/>
+			<c:if test="<%= showPermissionsButton %>">
+				<liferay-security:permissionsURL
+					modelResource="com.liferay.portlet.blogs"
+					modelResourceDescription="<%= HtmlUtil.escape(themeDisplay.getScopeGroupName()) %>"
+					resourcePrimKey="<%= String.valueOf(scopeGroupId) %>"
+					var="permissionsURL"
+				/>
 
-			<aui:button href="<%= permissionsURL %>" value="permissions" />
-		</c:if>
+				<aui:button href="<%= permissionsURL %>" value="permissions" />
+			</c:if>
+		</div>
 	</div>
 </c:if>
 
-<c:if test="<%= Validator.isNotNull(categoryTitle) %>">
-	<h1 class="entry-title">
-		<%= LanguageUtil.format(pageContext, "entries-with-x-x", new String[] {vocabularyTitle, categoryTitle}) %>
-	</h1>
+<c:choose>
+	<c:when test="<%= Validator.isNotNull(assetCategoryTitle) && Validator.isNotNull(assetTagName) %>">
+		<h1 class="entry-title">
+			<liferay-ui:message arguments="<%= new String[] {assetVocabularyTitle, assetCategoryTitle, assetTagName} %>" key="entries-with-x-x-and-tag-x" />
+		</h1>
 
-	<%
-	AssetUtil.addPortletBreadcrumbEntries(categoryId, request, portletURL);
-	%>
+		<%
+		AssetUtil.addPortletBreadcrumbEntries(assetCategoryId, request, portletURL);
 
-</c:if>
+		PortalUtil.addPortletBreadcrumbEntry(request, assetTagName, currentURL);
+		%>
 
-<c:if test="<%= Validator.isNotNull(tagName) %>">
-	<h1 class="entry-title">
-		<%= LanguageUtil.format(pageContext, "entries-with-tag-x", HtmlUtil.escape(tagName)) %>
-	</h1>
+	</c:when>
+	<c:otherwise>
+		<c:if test="<%= Validator.isNotNull(assetCategoryTitle) %>">
+			<h1 class="entry-title">
+				<liferay-ui:message arguments="<%= new String[] {assetVocabularyTitle, assetCategoryTitle} %>" key="entries-with-x-x" />
+			</h1>
 
-	<%
-	PortalUtil.addPortletBreadcrumbEntry(request, tagName, currentURL);
-	%>
+			<%
+			AssetUtil.addPortletBreadcrumbEntries(assetCategoryId, request, portletURL);
+			%>
 
-</c:if>
+		</c:if>
+
+		<c:if test="<%= Validator.isNotNull(assetTagName) %>">
+			<h1 class="entry-title">
+				<liferay-ui:message arguments="<%= assetTagName %>" key="entries-with-tag-x" />
+			</h1>
+
+			<%
+			PortalUtil.addPortletBreadcrumbEntry(request, assetTagName, currentURL);
+			%>
+
+		</c:if>
+	</c:otherwise>
+</c:choose>
 
 <%
 for (Object result : results) {
@@ -111,10 +127,9 @@ for (Object result : results) {
 <%
 }
 
-ResourceURL rssURL = new PortletURLImpl(request, PortletKeys.BLOGS, layout.getPlid(), PortletRequest.RESOURCE_PHASE);
+ResourceURL rssURL = liferayPortletResponse.createResourceURL();
 
 rssURL.setCacheability(ResourceURL.FULL);
-
 rssURL.setParameter("struts_action", "/blogs/rss");
 
 if ((rssDelta != SearchContainer.DEFAULT_DELTA) || !rssFormatType.equals(RSSUtil.TYPE_DEFAULT) || (rssFormatVersion != RSSUtil.VERSION_DEFAULT) || !rssDisplayStyle.equals(RSSUtil.DISPLAY_STYLE_FULL_CONTENT)) {

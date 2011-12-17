@@ -95,14 +95,6 @@ public class DLFileShortcutUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static DLFileShortcut remove(DLFileShortcut dlFileShortcut)
-		throws SystemException {
-		return getPersistence().remove(dlFileShortcut);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static DLFileShortcut update(DLFileShortcut dlFileShortcut,

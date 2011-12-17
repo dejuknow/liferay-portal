@@ -49,8 +49,8 @@ import java.rmi.RemoteException;
  *
  * <p>
  * You can see a list of services at
- * http://localhost:8080/tunnel-web/secure/axis. Set the property
- * <b>tunnel.servlet.hosts.allowed</b> in portal.properties to configure
+ * http://localhost:8080/api/secure/axis. Set the property
+ * <b>axis.servlet.hosts.allowed</b> in portal.properties to configure
  * security.
  * </p>
  *
@@ -112,11 +112,10 @@ public class DLFileEntryTypeServiceSoap {
 	}
 
 	public static com.liferay.portlet.documentlibrary.model.DLFileEntryTypeSoap[] getFileEntryTypes(
-		long[] groupIds, int start, int end) throws RemoteException {
+		long[] groupIds) throws RemoteException {
 		try {
 			java.util.List<com.liferay.portlet.documentlibrary.model.DLFileEntryType> returnValue =
-				DLFileEntryTypeServiceUtil.getFileEntryTypes(groupIds, start,
-					end);
+				DLFileEntryTypeServiceUtil.getFileEntryTypes(groupIds);
 
 			return com.liferay.portlet.documentlibrary.model.DLFileEntryTypeSoap.toSoapModels(returnValue);
 		}

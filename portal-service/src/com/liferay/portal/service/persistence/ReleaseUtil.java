@@ -94,13 +94,6 @@ public class ReleaseUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static Release remove(Release release) throws SystemException {
-		return getPersistence().remove(release);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static Release update(Release release, boolean merge)

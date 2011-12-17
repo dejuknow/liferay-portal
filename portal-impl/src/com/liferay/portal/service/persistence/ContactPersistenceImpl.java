@@ -167,6 +167,17 @@ public class ContactPersistenceImpl extends BasePersistenceImpl<Contact>
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 	}
 
+	@Override
+	public void clearCache(List<Contact> contacts) {
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+
+		for (Contact contact : contacts) {
+			EntityCacheUtil.removeResult(ContactModelImpl.ENTITY_CACHE_ENABLED,
+				ContactImpl.class, contact.getPrimaryKey());
+		}
+	}
+
 	/**
 	 * Creates a new contact with the primary key. Does not add the contact to the database.
 	 *
@@ -185,20 +196,6 @@ public class ContactPersistenceImpl extends BasePersistenceImpl<Contact>
 	/**
 	 * Removes the contact with the primary key from the database. Also notifies the appropriate model listeners.
 	 *
-	 * @param primaryKey the primary key of the contact
-	 * @return the contact that was removed
-	 * @throws com.liferay.portal.NoSuchModelException if a contact with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public Contact remove(Serializable primaryKey)
-		throws NoSuchModelException, SystemException {
-		return remove(((Long)primaryKey).longValue());
-	}
-
-	/**
-	 * Removes the contact with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
 	 * @param contactId the primary key of the contact
 	 * @return the contact that was removed
 	 * @throws com.liferay.portal.NoSuchContactException if a contact with the primary key could not be found
@@ -206,24 +203,37 @@ public class ContactPersistenceImpl extends BasePersistenceImpl<Contact>
 	 */
 	public Contact remove(long contactId)
 		throws NoSuchContactException, SystemException {
+		return remove(Long.valueOf(contactId));
+	}
+
+	/**
+	 * Removes the contact with the primary key from the database. Also notifies the appropriate model listeners.
+	 *
+	 * @param primaryKey the primary key of the contact
+	 * @return the contact that was removed
+	 * @throws com.liferay.portal.NoSuchContactException if a contact with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public Contact remove(Serializable primaryKey)
+		throws NoSuchContactException, SystemException {
 		Session session = null;
 
 		try {
 			session = openSession();
 
-			Contact contact = (Contact)session.get(ContactImpl.class,
-					Long.valueOf(contactId));
+			Contact contact = (Contact)session.get(ContactImpl.class, primaryKey);
 
 			if (contact == null) {
 				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + contactId);
+					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchContactException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
-					contactId);
+					primaryKey);
 			}
 
-			return contactPersistence.remove(contact);
+			return remove(contact);
 		}
 		catch (NoSuchContactException nsee) {
 			throw nsee;
@@ -234,18 +244,6 @@ public class ContactPersistenceImpl extends BasePersistenceImpl<Contact>
 		finally {
 			closeSession(session);
 		}
-	}
-
-	/**
-	 * Removes the contact from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param contact the contact
-	 * @return the contact that was removed
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public Contact remove(Contact contact) throws SystemException {
-		return super.remove(contact);
 	}
 
 	@Override
@@ -266,11 +264,7 @@ public class ContactPersistenceImpl extends BasePersistenceImpl<Contact>
 			closeSession(session);
 		}
 
-		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
-		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
-
-		EntityCacheUtil.removeResult(ContactModelImpl.ENTITY_CACHE_ENABLED,
-			ContactImpl.class, contact.getPrimaryKey());
+		clearCache(contact);
 
 		return contact;
 	}
@@ -936,7 +930,7 @@ public class ContactPersistenceImpl extends BasePersistenceImpl<Contact>
 	 */
 	public void removeByCompanyId(long companyId) throws SystemException {
 		for (Contact contact : findByCompanyId(companyId)) {
-			contactPersistence.remove(contact);
+			remove(contact);
 		}
 	}
 
@@ -947,7 +941,7 @@ public class ContactPersistenceImpl extends BasePersistenceImpl<Contact>
 	 */
 	public void removeAll() throws SystemException {
 		for (Contact contact : findAll()) {
-			contactPersistence.remove(contact);
+			remove(contact);
 		}
 	}
 

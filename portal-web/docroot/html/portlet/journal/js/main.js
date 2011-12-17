@@ -1249,7 +1249,6 @@ AUI().add(
 					{
 						dialog: {
 							align: Liferay.Util.Window.ALIGN_CENTER,
-							stack: false,
 							width: 680
 						},
 						title: title,
@@ -1303,6 +1302,20 @@ AUI().add(
 					if (confirm(Liferay.Language.get('you-should-save-the-structure-first'))) {
 						instance.openSaveStructureDialog();
 					}
+				}
+				else if (instance.hasStructure() && !instance.hasTemplate() && !instance.updateStructureDefaultValues()) {
+					var templateMessage = Liferay.Language.get('please-add-a-template-to-render-this-structure');
+
+					alert(templateMessage);
+
+					instance.showMessage(
+						'#selectTemplateMessage',
+						'info',
+						templateMessage,
+						30000
+					);
+
+					instance.getById('selectTemplateButton').focus();
 				}
 				else {
 					var defaultLocale = instance.getDefaultLocale();
@@ -2734,6 +2747,8 @@ AUI().add(
 				var fieldInstance = instance.getFieldInstance(source);
 
 				fieldInstance.set('localized', checkbox.get('checked'));
+
+                fieldInstance.setInstanceId(fieldInstance.get('instanceId'));
 			},
 
 			_updateOriginalStructureXSD: function() {

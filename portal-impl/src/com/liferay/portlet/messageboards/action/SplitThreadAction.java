@@ -162,12 +162,8 @@ public class SplitThreadAction extends PortletAction {
 
 			body = StringUtil.replace(
 				body,
-				new String[] {
-					"${newThreadURL}",
-				},
-				new String[] {
-					newThreadURL
-				});
+				new String[] {"${newThreadURL}", "[url=]"},
+				new String[] {newThreadURL, "[url=" + newThreadURL + "]"});
 
 			serviceContext.setAddGroupPermissions(true);
 			serviceContext.setAddGuestPermissions(true);
@@ -175,7 +171,7 @@ public class SplitThreadAction extends PortletAction {
 			MBMessageServiceUtil.addMessage(
 				message.getGroupId(), message.getCategoryId(), oldThreadId,
 				oldParentMessageId, subject, body, format,
-				Collections.<ObjectValuePair<String,InputStream>>emptyList(),
+				Collections.<ObjectValuePair<String, InputStream>>emptyList(),
 				false, MBThreadConstants.PRIORITY_NOT_GIVEN,
 				message.getAllowPingbacks(), serviceContext);
 		}

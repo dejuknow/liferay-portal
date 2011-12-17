@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.Base64;
 import com.liferay.portal.kernel.util.CharPool;
+import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
@@ -26,14 +27,17 @@ import com.liferay.portal.model.CacheField;
 import com.liferay.portal.model.Company;
 import com.liferay.portal.model.CompanyConstants;
 import com.liferay.portal.model.Group;
+import com.liferay.portal.model.LayoutSet;
 import com.liferay.portal.model.Shard;
 import com.liferay.portal.model.User;
 import com.liferay.portal.model.VirtualHost;
 import com.liferay.portal.service.AccountLocalServiceUtil;
 import com.liferay.portal.service.GroupLocalServiceUtil;
+import com.liferay.portal.service.LayoutSetLocalServiceUtil;
 import com.liferay.portal.service.ShardLocalServiceUtil;
 import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.service.VirtualHostLocalServiceUtil;
+import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PrefsPropsUtil;
 import com.liferay.portal.util.PropsValues;
 
@@ -123,6 +127,40 @@ public class CompanyImpl extends CompanyBaseImpl {
 
 	public String getName() throws PortalException, SystemException {
 		return getAccount().getName();
+	}
+
+	public String getPortalURL(long groupId)
+		throws PortalException, SystemException {
+
+		String portalURL = PortalUtil.getPortalURL(
+			getVirtualHostname(), Http.HTTP_PORT, false);
+
+		if (groupId <= 0) {
+			return portalURL;
+		}
+
+		Group group = GroupLocalServiceUtil.getGroup(groupId);
+
+		if (group.hasPublicLayouts()) {
+			LayoutSet layoutSet = LayoutSetLocalServiceUtil.getLayoutSet(
+				groupId, false);
+
+			if (Validator.isNotNull(layoutSet.getVirtualHostname())) {
+				portalURL = PortalUtil.getPortalURL(
+					layoutSet.getVirtualHostname(), Http.HTTP_PORT, false);
+			}
+		}
+		else if (group.hasPrivateLayouts()) {
+			LayoutSet layoutSet = LayoutSetLocalServiceUtil.getLayoutSet(
+				groupId, true);
+
+			if (Validator.isNotNull(layoutSet.getVirtualHostname())) {
+				portalURL = PortalUtil.getPortalURL(
+					layoutSet.getVirtualHostname(), Http.HTTP_PORT, false);
+			}
+		}
+
+		return portalURL;
 	}
 
 	public String getShardName() throws PortalException, SystemException {

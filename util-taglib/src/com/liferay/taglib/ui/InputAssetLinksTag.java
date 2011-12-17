@@ -14,23 +14,17 @@
 
 package com.liferay.taglib.ui;
 
-import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.taglib.util.IncludeTag;
+import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portlet.asset.model.AssetEntry;
+import com.liferay.portlet.asset.service.AssetEntryLocalServiceUtil;
 
 import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Juan Fernández
+ * @author Shuyang Zhou
  */
-public class InputAssetLinksTag extends IncludeTag {
-
-	public String getClassName() {
-		return _className;
-	}
-
-	public long getClassPK() {
-		return _classPK;
-	}
+public class InputAssetLinksTag extends AssetLinksTag {
 
 	@Override
 	protected String getPage() {
@@ -39,30 +33,29 @@ public class InputAssetLinksTag extends IncludeTag {
 
 	@Override
 	protected void setAttributes(HttpServletRequest request) {
+		long assetEntryId = getAssetEntryId();
+		String className = getClassName();
+		long classPK = getClassPK();
+
+		if ((assetEntryId <= 0) && (classPK > 0)) {
+			try {
+				AssetEntry assetEntry = AssetEntryLocalServiceUtil.fetchEntry(
+					className, classPK);
+
+				if (assetEntry != null) {
+					assetEntryId = assetEntry.getEntryId();
+				}
+			}
+			catch (SystemException se) {
+			}
+		}
+
 		request.setAttribute(
-			"liferay-ui:input-asset-links:className", _className);
-		request.setAttribute(
-			"liferay-ui:input-asset-links:classPK", String.valueOf(_classPK));
-	}
-
-	public void setClassName(String className) {
-		_className = className;
-	}
-
-	public void setClassPK(long classPK) {
-		_classPK = classPK;
-	}
-
-	@Override
-	protected void cleanUp() {
-		_className = StringPool.BLANK;
-		_classPK = 0;
+			"liferay-ui:input-asset-links:assetEntryId",
+			String.valueOf(assetEntryId));
 	}
 
 	private static final String _PAGE =
 		"/html/taglib/ui/input_asset_links/page.jsp";
-
-	private String _className = StringPool.BLANK;
-	private long _classPK;
 
 }

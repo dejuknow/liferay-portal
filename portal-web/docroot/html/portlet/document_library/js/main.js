@@ -34,6 +34,8 @@ AUI().add(
 
 		var DISPLAY_STYLE_TOOLBAR = 'displayStyleToolbar';
 
+		var DOCUMENT_DRAGGABLE = '[data-draggable]';
+
 		var DOCUMENT_LIBRARY_GROUP = 'document-library';
 
 		var REFRESH_FOLDERS = 'refreshFolders';
@@ -64,8 +66,6 @@ AUI().add(
 
 		var STR_FOLDER_START = 'folderStart';
 
-		var STR_ICON = 'icon';
-
 		var STR_TOGGLE_ACTIONS_BUTTON = 'toggleActionsButton';
 
 		var STR_ROW_IDS_FILE_SHORTCUT_CHECKBOX = 'rowIdsDLFileShortcutCheckbox';
@@ -81,6 +81,8 @@ AUI().add(
 		var SRC_ENTRIES_PAGINATOR = 1;
 
 		var SRC_HISTORY = 2;
+
+		var TOUCH = A.UA.touch;
 
 		var VIEW_ADD_BREADCRUMB = 'viewBreadcrumb';
 
@@ -443,7 +445,13 @@ AUI().add(
 						var instance = this;
 
 						if (!Lang.isValue(page)) {
-							page = (paginator.get('page') - 1) || 0;
+							page = 0;
+
+							var curPage = paginator.get('page') - 1;
+
+							if (curPage > 0) {
+								page = curPage;
+							}
 						}
 
 						if (!Lang.isValue(rowsPerPage)) {
@@ -462,7 +470,7 @@ AUI().add(
 						var ddHandler = new A.DD.Delegate(
 							{
 								container: instance._documentLibraryContainer,
-								nodes: CSS_DOCUMENT_DISPLAY_STYLE_SELECTABLE,
+								nodes: DOCUMENT_DRAGGABLE,
 								on: {
 									'drag:drophit': A.bind(instance._onDragDropHit, instance),
 									'drag:enter': A.bind(instance._onDragEnter, instance),
@@ -478,7 +486,7 @@ AUI().add(
 
 						dd.removeInvalid('a');
 
-						dd.set('groups', DOCUMENT_LIBRARY_GROUP);
+						dd.set('groups', [DOCUMENT_LIBRARY_GROUP]);
 
 						dd.plug(
 							[
@@ -497,6 +505,25 @@ AUI().add(
 							]
 						);
 
+						if (TOUCH) {
+							instance._dragTask = A.debounce(
+								function(entryLink){
+									if (entryLink) {
+										entryLink.simulate('click');
+									}
+								},
+								A.DD.DDM.get('clickTimeThresh')
+							);
+
+							dd.after(
+								'afterMouseDown',
+								function(event){
+									instance._dragTask(event.target.get('node').one('.document-link'));
+								},
+								instance
+							);
+						}
+
 						instance._initDropTargets();
 
 						instance._ddHandler = ddHandler;
@@ -507,10 +534,15 @@ AUI().add(
 
 						var items = instance._documentLibraryContainer.all('[data-folder="true"]');
 
-						items.plug(
-							A.Plugin.Drop,
-							{
-								groups: DOCUMENT_LIBRARY_GROUP
+						items.each(
+							function(item, index, collection) {
+								item.plug(
+									A.Plugin.Drop,
+									{
+										groups: [DOCUMENT_LIBRARY_GROUP],
+										padding: '-1px'
+									}
+								);
 							}
 						);
 					},
@@ -677,7 +709,7 @@ AUI().add(
 
 							var moveText = instance._getMoveText(selectedItemsCount, true);
 
-							var itemTitle = Lang.trim(dropTarget.one('.entry-title').text());
+							var itemTitle = Lang.trim(dropTarget.attr('data-title'));
 
 							proxyNode.html(Lang.sub(moveText, [selectedItemsCount, itemTitle]));
 						}
@@ -703,6 +735,10 @@ AUI().add(
 
 					_onDragStart: function(event) {
 						var instance = this;
+
+						if (instance._dragTask) {
+							instance._dragTask.cancel();
+						}
 
 						var target = event.target;
 
@@ -901,6 +937,8 @@ AUI().add(
 						if (sortButton) {
 							var sortButtonContainer = instance.byId('sortButtonContainer');
 
+							sortButtonContainer.plug(A.Plugin.ParseContent);
+
 							sortButtonContainer.setContent(sortButton);
 						}
 					},
@@ -1062,7 +1100,11 @@ AUI().add(
 						var instance = this;
 
 						if (instance._getDisplayStyle(DISPLAY_STYLE_LIST)) {
-							node.attr(ATTR_CHECKED, !node.attr(ATTR_CHECKED));
+							if (!preventUpdate) {
+								var input = node.one('input') || node;
+
+								input.attr(ATTR_CHECKED, !node.attr(ATTR_CHECKED));
+							}
 						}
 						else {
 							node = node.ancestor(CSS_DOCUMENT_DISPLAY_STYLE) || node;
@@ -1074,9 +1116,9 @@ AUI().add(
 
 								Liferay.Util.updateCheckboxValue(selectElement);
 							}
-
-							node.toggleClass(CSS_SELECTED);
 						}
+
+						node.toggleClass(CSS_SELECTED);
 					},
 
 					_unselectAllEntries: function() {

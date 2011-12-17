@@ -95,14 +95,6 @@ public class AssetVocabularyUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static AssetVocabulary remove(AssetVocabulary assetVocabulary)
-		throws SystemException {
-		return getPersistence().remove(assetVocabulary);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static AssetVocabulary update(AssetVocabulary assetVocabulary,

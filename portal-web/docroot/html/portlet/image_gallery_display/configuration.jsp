@@ -49,9 +49,9 @@ String redirect = ParamUtil.getString(request, "redirect");
 
 					List leftList = new ArrayList();
 
-					for (int i = 0; i < mimeTypes.length; i++) {
-						String mimeType = mimeTypes[i];
+					String[] mediaGalleryMimeTypes = DLUtil.getMediaGalleryMimeTypes(preferences, renderRequest);
 
+					for (String mimeType : mediaGalleryMimeTypes) {
 						leftList.add(new KeyValuePair(mimeType, LanguageUtil.get(pageContext, mimeType)));
 					}
 
@@ -59,19 +59,13 @@ String redirect = ParamUtil.getString(request, "redirect");
 
 					List rightList = new ArrayList();
 
-					Arrays.sort(mimeTypes);
+					Set<String> allMediaGalleryMimeTypes = DLUtil.getAllMediaGalleryMimeTypes();
 
-					Iterator itr = _allMimeTypes.iterator();
-
-					while (itr.hasNext()) {
-						String mimeType = (String)itr.next();
-
-						if (Arrays.binarySearch(mimeTypes, mimeType) < 0) {
+					for (String mimeType : allMediaGalleryMimeTypes) {
+						if (Arrays.binarySearch(mediaGalleryMimeTypes, mimeType) < 0) {
 							rightList.add(new KeyValuePair(mimeType, LanguageUtil.get(pageContext, mimeType)));
 						}
 					}
-
-					rightList = ListUtil.sort(rightList, new KeyValuePairComparator(false, true));
 					%>
 
 					<liferay-ui:input-move-boxes
@@ -99,7 +93,11 @@ String redirect = ParamUtil.getString(request, "redirect");
 
 					<aui:button name="openFolderSelectorButton" onClick='<%= renderResponse.getNamespace() + "openFolderSelector();" %>' value="select" />
 
-					<aui:button disabled="<%= rootFolderId <= 0 %>" name="removeFolderButton" onClick='<%= renderResponse.getNamespace() + "removeFolder();" %>' value="remove" />
+					<%
+					String taglibRemoveFolder = "Liferay.Util.removeFolderSelection('rootFolderId', 'rootFolderName', '" + renderResponse.getNamespace() + "');";
+					%>
+
+					<aui:button disabled="<%= rootFolderId <= 0 %>" name="removeFolderButton" onClick="<%= taglibRemoveFolder %>" value="remove" />
 				</aui:field-wrapper>
 			</aui:fieldset>
 		</liferay-ui:panel>
@@ -117,22 +115,15 @@ String redirect = ParamUtil.getString(request, "redirect");
 		folderWindow.focus();
 	}
 
-	function <portlet:namespace />removeFolder() {
-		document.<portlet:namespace />fm.<portlet:namespace />rootFolderId.value = "<%= DLFolderConstants.DEFAULT_PARENT_FOLDER_ID %>";
-
-		var nameEl = document.getElementById("<portlet:namespace />rootFolderName");
-
-		nameEl.href = "";
-		nameEl.innerHTML = "";
-	}
-
 	function <%= PortalUtil.getPortletNamespace(portletResource) %>selectFolder(rootFolderId, rootFolderName) {
-		document.<portlet:namespace />fm.<portlet:namespace />rootFolderId.value = rootFolderId;
+		var folderData = {
+			idString: 'rootFolderId',
+			idValue: rootFolderId,
+			nameString: 'rootFolderName',
+			nameValue: rootFolderName
+		};
 
-		var nameEl = document.getElementById("<portlet:namespace />rootFolderName");
-
-		nameEl.href = "<liferay-portlet:renderURL portletName="<%= portletResource %>"><portlet:param name="struts_action" value='<%= "/image_gallery_display/view" %>' /></liferay-portlet:renderURL>&<portlet:namespace />folderId=" + rootFolderId;
-		nameEl.innerHTML = rootFolderName + "&nbsp;";
+		Liferay.Util.selectFolder(folderData, '<liferay-portlet:renderURL portletName="<%= portletResource %>"><portlet:param name="struts_action" value='<%= "/image_gallery_display/view" %>' /></liferay-portlet:renderURL>', '<portlet:namespace />');
 	}
 
 	Liferay.provide(

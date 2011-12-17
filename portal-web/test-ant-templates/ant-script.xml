@@ -9,6 +9,7 @@
 		</antcall>
 
 		<ant antfile="build-test-geronimo.xml" target="run-selenium-geronimo">
+			${test.ant.script.file.evaluate.logs}
 			${test.ant.script.file.plugin.hooks}
 			${test.ant.script.file.plugin.layouttpls}
 			${test.ant.script.file.plugin.portlets}
@@ -25,6 +26,7 @@
 
 		<ant antfile="build-test-geronimo.xml" target="run-selenium-geronimo">
 			<property name="test.database.minimal" value="true" />
+			${test.ant.script.file.evaluate.logs}
 			${test.ant.script.file.plugin.hooks}
 			${test.ant.script.file.plugin.layouttpls}
 			${test.ant.script.file.plugin.portlets}
@@ -40,6 +42,7 @@
 		</antcall>
 
 		<ant antfile="build-test-glassfish.xml" target="run-selenium-glassfish">
+			${test.ant.script.file.evaluate.logs}
 			${test.ant.script.file.plugin.hooks}
 			${test.ant.script.file.plugin.layouttpls}
 			${test.ant.script.file.plugin.portlets}
@@ -56,6 +59,7 @@
 
 		<ant antfile="build-test-glassfish.xml" target="run-selenium-glassfish">
 			<property name="test.database.minimal" value="true" />
+			${test.ant.script.file.evaluate.logs}
 			${test.ant.script.file.plugin.hooks}
 			${test.ant.script.file.plugin.layouttpls}
 			${test.ant.script.file.plugin.portlets}
@@ -71,6 +75,7 @@
 		</antcall>
 
 		<ant antfile="build-test-jboss.xml" target="run-selenium-jboss">
+			${test.ant.script.file.evaluate.logs}
 			${test.ant.script.file.plugin.hooks}
 			${test.ant.script.file.plugin.layouttpls}
 			${test.ant.script.file.plugin.portlets}
@@ -87,6 +92,7 @@
 
 		<ant antfile="build-test-jboss.xml" target="run-selenium-jboss">
 			<property name="test.database.minimal" value="true" />
+			${test.ant.script.file.evaluate.logs}
 			${test.ant.script.file.plugin.hooks}
 			${test.ant.script.file.plugin.layouttpls}
 			${test.ant.script.file.plugin.portlets}
@@ -102,6 +108,7 @@
 		</antcall>
 
 		<ant antfile="build-test-jetty.xml" target="run-selenium-jetty">
+			${test.ant.script.file.evaluate.logs}
 			${test.ant.script.file.plugin.hooks}
 			${test.ant.script.file.plugin.layouttpls}
 			${test.ant.script.file.plugin.portlets}
@@ -118,6 +125,7 @@
 
 		<ant antfile="build-test-jetty.xml" target="run-selenium-jetty">
 			<property name="test.database.minimal" value="true" />
+			${test.ant.script.file.evaluate.logs}
 			${test.ant.script.file.plugin.hooks}
 			${test.ant.script.file.plugin.layouttpls}
 			${test.ant.script.file.plugin.portlets}
@@ -133,6 +141,7 @@
 		</antcall>
 
 		<ant antfile="build-test-jonas.xml" target="run-selenium-jonas">
+			${test.ant.script.file.evaluate.logs}
 			${test.ant.script.file.plugin.hooks}
 			${test.ant.script.file.plugin.layouttpls}
 			${test.ant.script.file.plugin.portlets}
@@ -149,6 +158,7 @@
 
 		<ant antfile="build-test-jonas.xml" target="run-selenium-jonas">
 			<property name="test.database.minimal" value="true" />
+			${test.ant.script.file.evaluate.logs}
 			${test.ant.script.file.plugin.hooks}
 			${test.ant.script.file.plugin.layouttpls}
 			${test.ant.script.file.plugin.portlets}
@@ -163,7 +173,7 @@
 			<param name="build.war" value="false" />
 			<param name="skip.prepare-bundle" value="true" />
 			<param name="vm.vmdk.suffix" value="db2-9.7" />
-			<param name="vm.host" value="${vm.host.db}" />
+			<param name="vm.host" value="${vm.db.host}" />
 		</antcall>
 
 		<antcall target="prepare-db2">
@@ -171,6 +181,7 @@
 		</antcall>
 
 		<ant antfile="build-test-tomcat.xml" target="run-selenium-tomcat">
+			${test.ant.script.file.evaluate.logs}
 			${test.ant.script.file.plugin.hooks}
 			${test.ant.script.file.plugin.layouttpls}
 			${test.ant.script.file.plugin.portlets}
@@ -180,7 +191,7 @@
 		</ant>
 
 		<antcall target="stop-vm">
-			<param name="vm.host" value="${vm.host.db}" />
+			<param name="vm.host" value="${vm.db.host}" />
 		</antcall>
 	</target>
 
@@ -189,7 +200,7 @@
 			<param name="build.war" value="false" />
 			<param name="skip.prepare-bundle" value="true" />
 			<param name="vm.vmdk.suffix" value="db2-9.7" />
-			<param name="vm.host" value="${vm.host.db}" />
+			<param name="vm.host" value="${vm.db.host}" />
 		</antcall>
 
 		<antcall target="prepare-db2">
@@ -198,6 +209,7 @@
 
 		<ant antfile="build-test-tomcat.xml" target="run-selenium-tomcat">
 			<property name="test.database.minimal" value="true" />
+			${test.ant.script.file.evaluate.logs}
 			${test.ant.script.file.plugin.hooks}
 			${test.ant.script.file.plugin.layouttpls}
 			${test.ant.script.file.plugin.portlets}
@@ -207,7 +219,7 @@
 		</ant>
 
 		<antcall target="stop-vm">
-			<param name="vm.host" value="${vm.host.db}" />
+			<param name="vm.host" value="${vm.db.host}" />
 		</antcall>
 	</target>
 
@@ -217,6 +229,7 @@
 		</antcall>
 
 		<ant antfile="build-test-tomcat.xml" target="run-selenium-tomcat">
+			${test.ant.script.file.evaluate.logs}
 			${test.ant.script.file.plugin.hooks}
 			${test.ant.script.file.plugin.layouttpls}
 			${test.ant.script.file.plugin.portlets}
@@ -233,6 +246,7 @@
 
 		<ant antfile="build-test-tomcat.xml" target="run-selenium-tomcat">
 			<property name="test.database.minimal" value="true" />
+			${test.ant.script.file.evaluate.logs}
 			${test.ant.script.file.plugin.hooks}
 			${test.ant.script.file.plugin.layouttpls}
 			${test.ant.script.file.plugin.portlets}
@@ -248,6 +262,7 @@
 		</antcall>
 
 		<ant antfile="build-test-tomcat.xml" target="run-selenium-tomcat">
+			${test.ant.script.file.evaluate.logs}
 			${test.ant.script.file.plugin.hooks}
 			${test.ant.script.file.plugin.layouttpls}
 			${test.ant.script.file.plugin.portlets}
@@ -263,6 +278,7 @@
 		</antcall>
 
 		<ant antfile="build-test-tomcat.xml" target="run-selenium-tomcat">
+			${test.ant.script.file.evaluate.logs}
 			${test.ant.script.file.plugin.hooks}
 			${test.ant.script.file.plugin.layouttpls}
 			${test.ant.script.file.plugin.portlets}
@@ -279,6 +295,7 @@
 		</antcall>
 
 		<ant antfile="build-test-tomcat.xml" target="run-selenium-tomcat">
+			${test.ant.script.file.evaluate.logs}
 			${test.ant.script.file.plugin.hooks}
 			${test.ant.script.file.plugin.layouttpls}
 			${test.ant.script.file.plugin.portlets}
@@ -296,6 +313,7 @@
 
 		<ant antfile="build-test-tomcat.xml" target="run-selenium-tomcat">
 			<property name="test.database.minimal" value="true" />
+			${test.ant.script.file.evaluate.logs}
 			${test.ant.script.file.plugin.hooks}
 			${test.ant.script.file.plugin.layouttpls}
 			${test.ant.script.file.plugin.portlets}
@@ -312,6 +330,7 @@
 
 		<ant antfile="build-test-tomcat.xml" target="run-selenium-tomcat">
 			<property name="test.database.minimal" value="true" />
+			${test.ant.script.file.evaluate.logs}
 			${test.ant.script.file.plugin.hooks}
 			${test.ant.script.file.plugin.layouttpls}
 			${test.ant.script.file.plugin.portlets}
@@ -329,6 +348,7 @@
 
 		<ant antfile="build-test-tomcat.xml" target="run-selenium-tomcat">
 			<property name="test.database.minimal" value="true" />
+			${test.ant.script.file.evaluate.logs}
 			${test.ant.script.file.plugin.hooks}
 			${test.ant.script.file.plugin.layouttpls}
 			${test.ant.script.file.plugin.portlets}
@@ -344,7 +364,7 @@
 			<param name="build.war" value="false" />
 			<param name="skip.prepare-bundle" value="true" />
 			<param name="vm.vmdk.suffix" value="oracle-10.2.0.1.0" />
-			<param name="vm.host" value="${vm.host.db}" />
+			<param name="vm.host" value="${vm.db.host}" />
 		</antcall>
 
 		<antcall target="prepare-oracle">
@@ -352,6 +372,7 @@
 		</antcall>
 
 		<ant antfile="build-test-tomcat.xml" target="run-selenium-tomcat">
+			${test.ant.script.file.evaluate.logs}
 			${test.ant.script.file.plugin.hooks}
 			${test.ant.script.file.plugin.layouttpls}
 			${test.ant.script.file.plugin.portlets}
@@ -361,7 +382,7 @@
 		</ant>
 
 		<antcall target="stop-vm">
-			<param name="vm.host" value="${vm.host.db}" />
+			<param name="vm.host" value="${vm.db.host}" />
 		</antcall>
 	</target>
 
@@ -370,7 +391,7 @@
 			<param name="build.war" value="false" />
 			<param name="skip.prepare-bundle" value="true" />
 			<param name="vm.vmdk.suffix" value="oracle-10.2.0.1.0" />
-			<param name="vm.host" value="${vm.host.db}" />
+			<param name="vm.host" value="${vm.db.host}" />
 		</antcall>
 
 		<antcall target="prepare-oracle">
@@ -379,6 +400,7 @@
 
 		<ant antfile="build-test-tomcat.xml" target="run-selenium-tomcat">
 			<property name="test.database.minimal" value="true" />
+			${test.ant.script.file.evaluate.logs}
 			${test.ant.script.file.plugin.hooks}
 			${test.ant.script.file.plugin.layouttpls}
 			${test.ant.script.file.plugin.portlets}
@@ -388,7 +410,7 @@
 		</ant>
 
 		<antcall target="stop-vm">
-			<param name="vm.host" value="${vm.host.db}" />
+			<param name="vm.host" value="${vm.db.host}" />
 		</antcall>
 	</target>
 
@@ -397,7 +419,7 @@
 			<param name="build.war" value="false" />
 			<param name="skip.prepare-bundle" value="true" />
 			<param name="vm.vmdk.suffix" value="postgresql-8.4.2-1" />
-			<param name="vm.host" value="${vm.host.db}" />
+			<param name="vm.host" value="${vm.db.host}" />
 		</antcall>
 
 		<antcall target="prepare-postgresql">
@@ -405,6 +427,7 @@
 		</antcall>
 
 		<ant antfile="build-test-tomcat.xml" target="run-selenium-tomcat">
+			${test.ant.script.file.evaluate.logs}
 			${test.ant.script.file.plugin.hooks}
 			${test.ant.script.file.plugin.layouttpls}
 			${test.ant.script.file.plugin.portlets}
@@ -414,7 +437,7 @@
 		</ant>
 
 		<antcall target="stop-vm">
-			<param name="vm.host" value="${vm.host.db}" />
+			<param name="vm.host" value="${vm.db.host}" />
 		</antcall>
 	</target>
 
@@ -423,7 +446,7 @@
 			<param name="build.war" value="false" />
 			<param name="skip.prepare-bundle" value="true" />
 			<param name="vm.vmdk.suffix" value="postgresql-8.4.2-1" />
-			<param name="vm.host" value="${vm.host.db}" />
+			<param name="vm.host" value="${vm.db.host}" />
 		</antcall>
 
 		<antcall target="prepare-postgresql">
@@ -432,6 +455,7 @@
 
 		<ant antfile="build-test-tomcat.xml" target="run-selenium-tomcat">
 			<property name="test.database.minimal" value="true" />
+			${test.ant.script.file.evaluate.logs}
 			${test.ant.script.file.plugin.hooks}
 			${test.ant.script.file.plugin.layouttpls}
 			${test.ant.script.file.plugin.portlets}
@@ -441,7 +465,7 @@
 		</ant>
 
 		<antcall target="stop-vm">
-			<param name="vm.host" value="${vm.host.db}" />
+			<param name="vm.host" value="${vm.db.host}" />
 		</antcall>
 	</target>
 
@@ -450,7 +474,7 @@
 			<param name="build.war" value="false" />
 			<param name="skip.prepare-bundle" value="true" />
 			<param name="vm.vmdk.suffix" value="sql-server-2005-sp2" />
-			<param name="vm.host" value="${vm.host.db}" />
+			<param name="vm.host" value="${vm.db.host}" />
 		</antcall>
 
 		<antcall target="prepare-sql-server">
@@ -458,6 +482,7 @@
 		</antcall>
 
 		<ant antfile="build-test-tomcat.xml" target="run-selenium-tomcat">
+			${test.ant.script.file.evaluate.logs}
 			${test.ant.script.file.plugin.hooks}
 			${test.ant.script.file.plugin.layouttpls}
 			${test.ant.script.file.plugin.portlets}
@@ -467,7 +492,7 @@
 		</ant>
 
 		<antcall target="stop-vm">
-			<param name="vm.host" value="${vm.host.db}" />
+			<param name="vm.host" value="${vm.db.host}" />
 		</antcall>
 	</target>
 
@@ -476,7 +501,7 @@
 			<param name="build.war" value="false" />
 			<param name="skip.prepare-bundle" value="true" />
 			<param name="vm.vmdk.suffix" value="sql-server-2005-sp2" />
-			<param name="vm.host" value="${vm.host.db}" />
+			<param name="vm.host" value="${vm.db.host}" />
 		</antcall>
 
 		<antcall target="prepare-sql-server">
@@ -485,6 +510,7 @@
 
 		<ant antfile="build-test-tomcat.xml" target="run-selenium-tomcat">
 			<property name="test.database.minimal" value="true" />
+			${test.ant.script.file.evaluate.logs}
 			${test.ant.script.file.plugin.hooks}
 			${test.ant.script.file.plugin.layouttpls}
 			${test.ant.script.file.plugin.portlets}
@@ -494,7 +520,7 @@
 		</ant>
 
 		<antcall target="stop-vm">
-			<param name="vm.host" value="${vm.host.db}" />
+			<param name="vm.host" value="${vm.db.host}" />
 		</antcall>
 	</target>
 
@@ -503,7 +529,7 @@
 			<param name="build.war" value="false" />
 			<param name="skip.prepare-bundle" value="true" />
 			<param name="vm.vmdk.suffix" value="sybase-15.0.2" />
-			<param name="vm.host" value="${vm.host.db}" />
+			<param name="vm.host" value="${vm.db.host}" />
 		</antcall>
 
 		<antcall target="prepare-sybase">
@@ -511,6 +537,7 @@
 		</antcall>
 
 		<ant antfile="build-test-tomcat.xml" target="run-selenium-tomcat">
+			${test.ant.script.file.evaluate.logs}
 			${test.ant.script.file.plugin.hooks}
 			${test.ant.script.file.plugin.layouttpls}
 			${test.ant.script.file.plugin.portlets}
@@ -520,7 +547,7 @@
 		</ant>
 
 		<antcall target="stop-vm">
-			<param name="vm.host" value="${vm.host.db}" />
+			<param name="vm.host" value="${vm.db.host}" />
 		</antcall>
 	</target>
 
@@ -529,7 +556,7 @@
 			<param name="build.war" value="false" />
 			<param name="skip.prepare-bundle" value="true" />
 			<param name="vm.vmdk.suffix" value="sybase-15.0.2" />
-			<param name="vm.host" value="${vm.host.db}" />
+			<param name="vm.host" value="${vm.db.host}" />
 		</antcall>
 
 		<antcall target="prepare-sybase">
@@ -538,6 +565,7 @@
 
 		<ant antfile="build-test-tomcat.xml" target="run-selenium-tomcat">
 			<property name="test.database.minimal" value="true" />
+			${test.ant.script.file.evaluate.logs}
 			${test.ant.script.file.plugin.hooks}
 			${test.ant.script.file.plugin.layouttpls}
 			${test.ant.script.file.plugin.portlets}
@@ -547,7 +575,7 @@
 		</ant>
 
 		<antcall target="stop-vm">
-			<param name="vm.host" value="${vm.host.db}" />
+			<param name="vm.host" value="${vm.db.host}" />
 		</antcall>
 	</target>
 
@@ -557,6 +585,7 @@
 		</antcall>
 
 		<ant antfile="build-test-weblogic-10.3.xml" target="run-selenium-weblogic-10.3">
+			${test.ant.script.file.evaluate.logs}
 			${test.ant.script.file.plugin.hooks}
 			${test.ant.script.file.plugin.layouttpls}
 			${test.ant.script.file.plugin.portlets}
@@ -573,6 +602,7 @@
 
 		<ant antfile="build-test-weblogic-10.3.xml" target="run-selenium-weblogic-10.3">
 			<property name="test.database.minimal" value="true" />
+			${test.ant.script.file.evaluate.logs}
 			${test.ant.script.file.plugin.hooks}
 			${test.ant.script.file.plugin.layouttpls}
 			${test.ant.script.file.plugin.portlets}
@@ -589,6 +619,7 @@
 		</antcall>
 
 		<ant antfile="build-test-websphere-6.1.xml" target="run-selenium-websphere-6.1">
+			${test.ant.script.file.evaluate.logs}
 			${test.ant.script.file.plugin.hooks}
 			${test.ant.script.file.plugin.layouttpls}
 			${test.ant.script.file.plugin.portlets}
@@ -606,6 +637,7 @@
 
 		<ant antfile="build-test-websphere-6.1.xml" target="run-selenium-websphere-6.1">
 			<property name="test.database.minimal" value="true" />
+			${test.ant.script.file.evaluate.logs}
 			${test.ant.script.file.plugin.hooks}
 			${test.ant.script.file.plugin.layouttpls}
 			${test.ant.script.file.plugin.portlets}
@@ -622,6 +654,24 @@
 		</antcall>
 
 		<ant antfile="build-test-websphere-7.0.xml" target="run-selenium-websphere-7.0">
+			${test.ant.script.file.evaluate.logs}
+			${test.ant.script.file.plugin.hooks}
+			${test.ant.script.file.plugin.layouttpls}
+			${test.ant.script.file.plugin.portlets}
+			${test.ant.script.file.plugin.themes}
+			${test.ant.script.file.plugin.webs}
+			<property name="test.name" value="${test.ant.script.suite}" />
+		</ant>
+	</target>
+
+	<target name="test-${test.ant.script.command}-websphere-8.0-mysql-firefox">
+		<antcall target="prepare-mysql">
+			${test.ant.script.file.properties}
+			<param name="vm.vmdk.suffix" value="websphere-8.0.0.0" />
+		</antcall>
+
+		<ant antfile="build-test-websphere-8.0.xml" target="run-selenium-websphere-8.0">
+			${test.ant.script.file.evaluate.logs}
 			${test.ant.script.file.plugin.hooks}
 			${test.ant.script.file.plugin.layouttpls}
 			${test.ant.script.file.plugin.portlets}
@@ -639,6 +689,25 @@
 
 		<ant antfile="build-test-websphere-7.0.xml" target="run-selenium-websphere-7.0">
 			<property name="test.database.minimal" value="true" />
+			${test.ant.script.file.evaluate.logs}
+			${test.ant.script.file.plugin.hooks}
+			${test.ant.script.file.plugin.layouttpls}
+			${test.ant.script.file.plugin.portlets}
+			${test.ant.script.file.plugin.themes}
+			${test.ant.script.file.plugin.webs}
+			<property name="test.name" value="${test.ant.script.suite}" />
+		</ant>
+	</target>
+
+	<target name="test-${test.ant.script.command}-websphere-8.0-mysql-minimal-firefox">
+		<antcall target="prepare-mysql">
+			${test.ant.script.file.properties}
+			<param name="vm.vmdk.suffix" value="websphere-8.0.0.0" />
+		</antcall>
+
+		<ant antfile="build-test-websphere-8.0.xml" target="run-selenium-websphere-8.0">
+			<property name="test.database.minimal" value="true" />
+			${test.ant.script.file.evaluate.logs}
 			${test.ant.script.file.plugin.hooks}
 			${test.ant.script.file.plugin.layouttpls}
 			${test.ant.script.file.plugin.portlets}

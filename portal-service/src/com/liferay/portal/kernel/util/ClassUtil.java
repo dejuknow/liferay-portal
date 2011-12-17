@@ -275,15 +275,14 @@ public class ClassUtil {
 				_ANNOTATION_PARAMETERS_REGEXP.matcher(s);
 
 			if (annotationParametersMatcher.matches()) {
-				String annotationName =
-					annotationParametersMatcher.group(1);
+				String annotationName = annotationParametersMatcher.group(1);
 				String annotationParameters =
 					annotationParametersMatcher.group(2);
 
 				tokens.add(annotationName.replace("@", ""));
 
 				tokens = _processAnnotationParameters(
-					annotationParameters,tokens);
+					annotationParameters, tokens);
 			}
 		}
 

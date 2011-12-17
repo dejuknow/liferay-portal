@@ -95,14 +95,6 @@ public class AnnouncementsDeliveryUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static AnnouncementsDelivery remove(
-		AnnouncementsDelivery announcementsDelivery) throws SystemException {
-		return getPersistence().remove(announcementsDelivery);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static AnnouncementsDelivery update(

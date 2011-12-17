@@ -24,7 +24,6 @@ import com.liferay.portal.service.permission.GroupPermissionUtil;
 import com.liferay.portal.service.permission.LayoutBranchPermissionUtil;
 
 /**
- *
  * @author Brian Wing Shun Chan
  * @author Julio Camarero
  */

@@ -14,9 +14,12 @@
 
 package com.liferay.portlet.dynamicdatamapping.storage;
 
+import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.theme.ThemeDisplay;
+import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 
-import java.io.Serializable;
+import java.util.Map;
 
 /**
  * @author Bruno Basto
@@ -24,10 +27,41 @@ import java.io.Serializable;
 public class StringFieldRenderer extends BaseFieldRenderer {
 
 	@Override
-	protected String doRender(
-		ThemeDisplay themeDisplay, Serializable fieldValue) {
+	protected String doRender(ThemeDisplay themeDisplay, Field field)
+		throws Exception {
 
-		return String.valueOf(fieldValue);
+		String value = String.valueOf(field.getValue());
+
+		DDMStructure ddmStructure = field.getDDMStructure();
+
+		String fieldType = ddmStructure.getFieldType(field.getName());
+
+		if (!fieldType.equals("radio") && !fieldType.equals("select")) {
+			return value;
+		}
+
+		String[] values = StringUtil.split(value);
+
+		StringBundler sb = new StringBundler(values.length * 2);
+
+		for (int i = 0; i < values.length; i++) {
+			Map<String, String> fields = ddmStructure.getFields(
+				field.getName(), FieldConstants.VALUE, values[i]);
+
+			if (fields == null) {
+				continue;
+			}
+
+			sb.append(fields.get(FieldConstants.LABEL));
+
+			if ((i + 1) < values.length) {
+				sb.append(", ");
+			}
+		}
+
+		value = sb.toString();
+
+		return value;
 	}
 
 }

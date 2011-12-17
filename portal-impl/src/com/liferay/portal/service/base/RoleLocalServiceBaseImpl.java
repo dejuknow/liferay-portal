@@ -97,6 +97,7 @@ import com.liferay.portal.service.QuartzLocalService;
 import com.liferay.portal.service.RegionService;
 import com.liferay.portal.service.ReleaseLocalService;
 import com.liferay.portal.service.RepositoryEntryLocalService;
+import com.liferay.portal.service.RepositoryLocalService;
 import com.liferay.portal.service.RepositoryService;
 import com.liferay.portal.service.ResourceActionLocalService;
 import com.liferay.portal.service.ResourceBlockLocalService;
@@ -158,6 +159,7 @@ import com.liferay.portal.service.persistence.LayoutSetBranchPersistence;
 import com.liferay.portal.service.persistence.LayoutSetPersistence;
 import com.liferay.portal.service.persistence.LayoutSetPrototypePersistence;
 import com.liferay.portal.service.persistence.ListTypePersistence;
+import com.liferay.portal.service.persistence.LockFinder;
 import com.liferay.portal.service.persistence.LockPersistence;
 import com.liferay.portal.service.persistence.MembershipRequestPersistence;
 import com.liferay.portal.service.persistence.OrgGroupPermissionFinder;
@@ -1591,6 +1593,24 @@ public abstract class RoleLocalServiceBaseImpl implements RoleLocalService,
 	}
 
 	/**
+	 * Returns the lock finder.
+	 *
+	 * @return the lock finder
+	 */
+	public LockFinder getLockFinder() {
+		return lockFinder;
+	}
+
+	/**
+	 * Sets the lock finder.
+	 *
+	 * @param lockFinder the lock finder
+	 */
+	public void setLockFinder(LockFinder lockFinder) {
+		this.lockFinder = lockFinder;
+	}
+
+	/**
 	 * Returns the membership request local service.
 	 *
 	 * @return the membership request local service
@@ -2500,6 +2520,25 @@ public abstract class RoleLocalServiceBaseImpl implements RoleLocalService,
 	 */
 	public void setReleasePersistence(ReleasePersistence releasePersistence) {
 		this.releasePersistence = releasePersistence;
+	}
+
+	/**
+	 * Returns the repository local service.
+	 *
+	 * @return the repository local service
+	 */
+	public RepositoryLocalService getRepositoryLocalService() {
+		return repositoryLocalService;
+	}
+
+	/**
+	 * Sets the repository local service.
+	 *
+	 * @param repositoryLocalService the repository local service
+	 */
+	public void setRepositoryLocalService(
+		RepositoryLocalService repositoryLocalService) {
+		this.repositoryLocalService = repositoryLocalService;
 	}
 
 	/**
@@ -4129,6 +4168,8 @@ public abstract class RoleLocalServiceBaseImpl implements RoleLocalService,
 	protected LockLocalService lockLocalService;
 	@BeanReference(type = LockPersistence.class)
 	protected LockPersistence lockPersistence;
+	@BeanReference(type = LockFinder.class)
+	protected LockFinder lockFinder;
 	@BeanReference(type = MembershipRequestLocalService.class)
 	protected MembershipRequestLocalService membershipRequestLocalService;
 	@BeanReference(type = MembershipRequestService.class)
@@ -4227,6 +4268,8 @@ public abstract class RoleLocalServiceBaseImpl implements RoleLocalService,
 	protected ReleaseLocalService releaseLocalService;
 	@BeanReference(type = ReleasePersistence.class)
 	protected ReleasePersistence releasePersistence;
+	@BeanReference(type = RepositoryLocalService.class)
+	protected RepositoryLocalService repositoryLocalService;
 	@BeanReference(type = RepositoryService.class)
 	protected RepositoryService repositoryService;
 	@BeanReference(type = RepositoryPersistence.class)

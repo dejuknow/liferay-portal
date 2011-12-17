@@ -18,6 +18,12 @@
 		<put name="selectable" value="false" />
 	</definition>
 
+	<definition name="portal.api.jsonws" extends="portal">
+		<put name="pop_up" value="true" />
+		<put name="title" value="json-web-services-api" />
+		<put name="content" value="/portal/api/jsonws/index.jsp" />
+	</definition>
+
 	<definition name="portal.error" extends="portal">
 		<put name="title" value="error" />
 		<put name="content" value="/portal/error.jsp" />
@@ -56,6 +62,7 @@
 	</definition>
 
 	<definition name="portal.setup_wizard" extends="portal">
+		<put name="pop_up" value="true" />
 		<put name="title" value="basic-configuration" />
 		<put name="content" value="/portal/setup_wizard.jsp" />
 	</definition>
@@ -533,6 +540,10 @@
 
 	<definition name="portlet.dynamic_data_mapping" extends="portlet" />
 
+	<definition name="portlet.dynamic_data_mapping.copy_structure" extends="portlet.dynamic_data_mapping">
+		<put name="portlet_content" value="/portlet/dynamic_data_mapping/copy_structure.jsp" />
+	</definition>
+
 	<definition name="portlet.dynamic_data_mapping.edit_structure" extends="portlet.dynamic_data_mapping">
 		<put name="portlet_content" value="/portlet/dynamic_data_mapping/edit_structure.jsp" />
 	</definition>
@@ -576,6 +587,14 @@
 	<!-- Flags -->
 
 	<definition name="portlet.flags.edit_entry" path="/portlet/flags/edit_entry.jsp" />
+
+	<!-- Group Statistics -->
+
+	<definition name="portlet.group_statistics" extends="portlet" />
+
+	<definition name="portlet.group_statistics.add_activity_counter" extends="portlet.group_statistics">
+		<put name="portlet_content" value="/portlet/group_statistics/add_activity_counter.jsp" />
+	</definition>
 
 	<!-- IFrame -->
 
@@ -1470,12 +1489,12 @@
 		<put name="portlet_content" value="/portlet/shopping/view_item.jsp" />
 	</definition>
 
-	<!-- Social Equity Admin -->
+	<!-- Social Activity -->
 
-	<definition name="portlet.social_equity_admin" extends="portlet" />
+	<definition name="portlet.social_activity" extends="portlet" />
 
-	<definition name="portlet.social_equity_admin.view" extends="portlet.social_equity_admin">
-		<put name="portlet_content" value="/portlet/social_equity_admin/view.jsp" />
+	<definition name="portlet.social_activity.view" extends="portlet.social_activity">
+		<put name="portlet_content" value="/portlet/social_activity/view.jsp" />
 	</definition>
 
 	<!-- Staging Bar -->
@@ -1528,6 +1547,14 @@
 
 	<definition name="portlet.user_groups_admin.view" extends="portlet.user_groups_admin">
 		<put name="portlet_content" value="/portlet/user_groups_admin/view.jsp" />
+	</definition>
+
+	<!-- User Statistics -->
+
+	<definition name="portlet.user_statistics" extends="portlet" />
+
+	<definition name="portlet.user_statistics.add_activity_counter" extends="portlet.user_statistics">
+		<put name="portlet_content" value="/portlet/user_statistics/add_activity_counter.jsp" />
 	</definition>
 
 	<!-- Users Admin -->

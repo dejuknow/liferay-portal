@@ -14,6 +14,8 @@
 
 package com.liferay.portal.servlet.filters.minifier;
 
+import com.liferay.portal.kernel.cache.key.CacheKeyGenerator;
+import com.liferay.portal.kernel.cache.key.CacheKeyGeneratorUtil;
 import com.liferay.portal.kernel.configuration.Filter;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -59,20 +61,10 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class MinifierFilter extends BasePortalFilter {
 
-	@Override
-	public void init(FilterConfig filterConfig) {
-		super.init(filterConfig);
-
-		_servletContext = filterConfig.getServletContext();
-		_servletContextName = GetterUtil.getString(
-			_servletContext.getServletContextName());
-
-		if (Validator.isNull(_servletContextName)) {
-			_tempDir += "/portal";
-		}
-	}
-
-	protected String aggregateCss(String dir, String content)
+	/**
+	 * @see {@link DynamicCSSUtil#_propagateQueryString(String, String)}
+	 */
+	public static String aggregateCss(String dir, String content)
 		throws IOException {
 
 		StringBuilder sb = new StringBuilder(content.length());
@@ -169,6 +161,37 @@ public class MinifierFilter extends BasePortalFilter {
 		return sb.toString();
 	}
 
+	@Override
+	public void init(FilterConfig filterConfig) {
+		super.init(filterConfig);
+
+		_servletContext = filterConfig.getServletContext();
+		_servletContextName = GetterUtil.getString(
+			_servletContext.getServletContextName());
+
+		if (Validator.isNull(_servletContextName)) {
+			_tempDir += "/portal";
+		}
+	}
+
+	protected String getCacheFileName(HttpServletRequest request) {
+		CacheKeyGenerator cacheKeyGenerator =
+			CacheKeyGeneratorUtil.getCacheKeyGenerator(
+				MinifierFilter.class.getName());
+
+		cacheKeyGenerator.append(request.getRequestURI());
+
+		String queryString = request.getQueryString();
+
+		if (queryString != null) {
+			cacheKeyGenerator.append(sterilizeQueryString(queryString));
+		}
+
+		String cacheKey = String.valueOf(cacheKeyGenerator.finish());
+
+		return _tempDir.concat(StringPool.SLASH).concat(cacheKey);
+	}
+
 	protected Object getMinifiedBundleContent(
 			HttpServletRequest request, HttpServletResponse response)
 		throws IOException {
@@ -195,19 +218,7 @@ public class MinifierFilter extends BasePortalFilter {
 			return null;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_tempDir);
-		sb.append(request.getRequestURI());
-
-		String queryString = request.getQueryString();
-
-		if (queryString != null) {
-			sb.append(_QUESTION_SEPARATOR);
-			sb.append(sterilizeQueryString(queryString));
-		}
-
-		String cacheFileName = sb.toString();
+		String cacheFileName = getCacheFileName(request);
 
 		String[] fileNames = JavaScriptBundleUtil.getFileNames(
 			minifierBundleId);
@@ -245,7 +256,7 @@ public class MinifierFilter extends BasePortalFilter {
 			minifiedContent = StringPool.BLANK;
 		}
 		else {
-			sb = new StringBundler(fileNames.length * 2);
+			StringBundler sb = new StringBundler(fileNames.length * 2);
 
 			for (String fileName : fileNames) {
 				String content = FileUtil.read(
@@ -309,19 +320,7 @@ public class MinifierFilter extends BasePortalFilter {
 			return null;
 		}
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_tempDir);
-		sb.append(requestURI);
-
-		String queryString = request.getQueryString();
-
-		if (queryString != null) {
-			sb.append(_QUESTION_SEPARATOR);
-			sb.append(sterilizeQueryString(queryString));
-		}
-
-		String cacheCommonFileName = sb.toString();
+		String cacheCommonFileName = getCacheFileName(request);
 
 		File cacheContentTypeFile = new File(
 			cacheCommonFileName + "_E_CONTENT_TYPE");
@@ -416,8 +415,7 @@ public class MinifierFilter extends BasePortalFilter {
 		String cssRealPath, String content) {
 
 		try {
-			content = DynamicCSSUtil.parseSass(
-				request, cssRealPath, content);
+			content = DynamicCSSUtil.parseSass(request, cssRealPath, content);
 		}
 		catch (Exception e) {
 			_log.error("Unable to parse SASS on CSS " + cssRealPath, e);
@@ -498,8 +496,6 @@ public class MinifierFilter extends BasePortalFilter {
 	private static final String _JAVASCRIPT_EXTENSION = ".js";
 
 	private static final String _JSP_EXTENSION = ".jsp";
-
-	private static final String _QUESTION_SEPARATOR = "_Q_";
 
 	private static final String _TEMP_DIR =
 		SystemProperties.get(SystemProperties.TMP_DIR) + "/liferay/minifier";

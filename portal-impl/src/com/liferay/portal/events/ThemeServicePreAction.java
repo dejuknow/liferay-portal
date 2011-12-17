@@ -26,7 +26,6 @@ import com.liferay.portal.model.impl.ColorSchemeImpl;
 import com.liferay.portal.model.impl.ThemeImpl;
 import com.liferay.portal.service.ThemeLocalServiceUtil;
 import com.liferay.portal.theme.ThemeDisplay;
-import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.WebKeys;
 
 import javax.servlet.http.HttpServletRequest;
@@ -107,8 +106,7 @@ public class ThemeServicePreAction extends Action {
 		request.setAttribute(WebKeys.THEME, theme);
 		request.setAttribute(WebKeys.COLOR_SCHEME, colorScheme);
 
-		themeDisplay.setLookAndFeel(
-			PortalUtil.getPathContext(), theme, colorScheme);
+		themeDisplay.setLookAndFeel(theme, colorScheme);
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(

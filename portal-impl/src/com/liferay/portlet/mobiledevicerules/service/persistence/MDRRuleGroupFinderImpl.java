@@ -18,10 +18,13 @@ import com.liferay.portal.kernel.dao.orm.QueryPos;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.SQLQuery;
 import com.liferay.portal.kernel.dao.orm.Session;
+import com.liferay.portal.kernel.dao.orm.Type;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portlet.mobiledevicerules.model.MDRRuleGroup;
+import com.liferay.portlet.mobiledevicerules.model.impl.MDRRuleGroupImpl;
 import com.liferay.util.dao.orm.CustomSQLUtil;
 
 import java.util.Iterator;
@@ -29,6 +32,7 @@ import java.util.List;
 
 /**
  * @author Edward Han
+ * @author Eduardo Lundgren
  */
 public class MDRRuleGroupFinderImpl extends BasePersistenceImpl<MDRRuleGroup>
 	implements MDRRuleGroupFinder {
@@ -39,8 +43,34 @@ public class MDRRuleGroupFinderImpl extends BasePersistenceImpl<MDRRuleGroup>
 	public static String FIND_BY_G_N =
 		MDRRuleGroupFinder.class.getName() + ".findByG_N";
 
-	public int countByG_N(long groupId, String name) throws SystemException {
+	public int countByKeywords(long groupId, String keywords)
+		throws SystemException {
+
+		String[] names = null;
+		boolean andOperator = false;
+
+		if (Validator.isNotNull(keywords)) {
+			names = CustomSQLUtil.keywords(keywords);
+		}
+		else {
+			andOperator = true;
+		}
+
+		return countByG_N(groupId, names, andOperator);
+	}
+
+	public int countByG_N(long groupId, String name, boolean andOperator)
+		throws SystemException {
+
 		String[] names = CustomSQLUtil.keywords(name);
+
+		return countByG_N(groupId, names, andOperator);
+	}
+
+	public int countByG_N(long groupId, String[] names, boolean andOperator)
+		throws SystemException {
+
+		names = CustomSQLUtil.keywords(names);
 
 		Session session = null;
 
@@ -54,6 +84,8 @@ public class MDRRuleGroupFinderImpl extends BasePersistenceImpl<MDRRuleGroup>
 			sql = CustomSQLUtil.replaceAndOperator(sql, false);
 
 			SQLQuery q = session.createSQLQuery(sql);
+
+			q.addScalar(COUNT_COLUMN_NAME, Type.LONG);
 
 			QueryPos qPos = QueryPos.getInstance(q);
 
@@ -80,17 +112,46 @@ public class MDRRuleGroupFinderImpl extends BasePersistenceImpl<MDRRuleGroup>
 		}
 	}
 
-	public List<MDRRuleGroup> findByG_N(long groupId, String name)
+	public List<MDRRuleGroup> findByKeywords(
+			long groupId, String keywords, int start, int end)
 		throws SystemException {
 
-		return findByG_N(groupId, name, QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+		String[] names = null;
+		boolean andOperator = false;
+
+		if (Validator.isNotNull(keywords)) {
+			names = CustomSQLUtil.keywords(keywords);
+		}
+		else {
+			andOperator = true;
+		}
+
+		return findByG_N(groupId, names, andOperator, start, end);
 	}
 
 	public List<MDRRuleGroup> findByG_N(
-			long groupId, String name, int start, int end)
+			long groupId, String name, boolean andOperator)
+		throws SystemException {
+
+		return findByG_N(
+			groupId, name, andOperator, QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+	}
+
+	public List<MDRRuleGroup> findByG_N(
+			long groupId, String name, boolean andOperator, int start, int end)
 		throws SystemException {
 
 		String[] names = CustomSQLUtil.keywords(name);
+
+		return findByG_N(groupId, names, andOperator, start, end);
+	}
+
+	public List<MDRRuleGroup> findByG_N(
+			long groupId, String[] names, boolean andOperator, int start,
+			int end)
+		throws SystemException {
+
+		names = CustomSQLUtil.keywords(names);
 
 		Session session = null;
 
@@ -101,11 +162,11 @@ public class MDRRuleGroupFinderImpl extends BasePersistenceImpl<MDRRuleGroup>
 
 			sql = CustomSQLUtil.replaceKeywords(
 				sql, "lower(name)", StringPool.LIKE, true, names);
-			sql = CustomSQLUtil.replaceAndOperator(sql, false);
+			sql = CustomSQLUtil.replaceAndOperator(sql, andOperator);
 
 			SQLQuery q = session.createSQLQuery(sql);
 
-			q.addEntity("MDRRuleGroup", MDRRuleGroup.class);
+			q.addEntity("MDRRuleGroup", MDRRuleGroupImpl.class);
 
 			QueryPos qPos = QueryPos.getInstance(q);
 

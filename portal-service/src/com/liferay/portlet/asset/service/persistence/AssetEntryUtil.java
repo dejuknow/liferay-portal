@@ -95,14 +95,6 @@ public class AssetEntryUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static AssetEntry remove(AssetEntry assetEntry)
-		throws SystemException {
-		return getPersistence().remove(assetEntry);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static AssetEntry update(AssetEntry assetEntry, boolean merge)

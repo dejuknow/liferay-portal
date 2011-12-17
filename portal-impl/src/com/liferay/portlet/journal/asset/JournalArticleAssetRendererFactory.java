@@ -40,10 +40,9 @@ import com.liferay.portlet.journal.service.permission.JournalArticlePermission;
 import com.liferay.portlet.journal.service.permission.JournalPermission;
 import com.liferay.portlet.journal.service.permission.JournalStructurePermission;
 
-import java.io.Serializable;
-
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.portlet.PortletRequest;
@@ -77,16 +76,25 @@ public class JournalArticleAssetRendererFactory
 				JournalArticleResourceLocalServiceUtil.getArticleResource(
 					classPK);
 
-			int status = WorkflowConstants.STATUS_ANY;
+			boolean approvedArticleAvailable = true;
 
 			if (type == TYPE_LATEST_APPROVED) {
-				status = WorkflowConstants.STATUS_APPROVED;
+				try {
+					article = JournalArticleLocalServiceUtil.getDisplayArticle(
+						articleResource.getGroupId(),
+						articleResource.getArticleId());
+				}
+				catch (NoSuchArticleException nsae1) {
+					approvedArticleAvailable = false;
+				}
 			}
 
-			article =
-				JournalArticleLocalServiceUtil.getLatestArticle(
+			if ((type != TYPE_LATEST_APPROVED) || !approvedArticleAvailable) {
+				article = JournalArticleLocalServiceUtil.getLatestArticle(
 					articleResource.getGroupId(),
-					articleResource.getArticleId(), status);
+					articleResource.getArticleId(),
+					WorkflowConstants.STATUS_ANY);
+			}
 		}
 
 		return new JournalArticleAssetRenderer(article);
@@ -96,8 +104,9 @@ public class JournalArticleAssetRendererFactory
 	public AssetRenderer getAssetRenderer(long groupId, String urlTitle)
 		throws PortalException, SystemException {
 
-		JournalArticle article = JournalArticleServiceUtil.getArticleByUrlTitle(
-			groupId, urlTitle);
+		JournalArticle article =
+			JournalArticleServiceUtil.getDisplayArticleByUrlTitle(
+				groupId, urlTitle);
 
 		return new JournalArticleAssetRenderer(article);
 	}
@@ -107,7 +116,9 @@ public class JournalArticleAssetRendererFactory
 	}
 
 	@Override
-	public Map<Long, String> getClassTypes(long[] groupIds) throws Exception {
+	public Map<Long, String> getClassTypes(long[] groupIds, Locale locale)
+		throws Exception {
+
 		Map<Long, String> classTypes = new HashMap<Long, String>();
 
 		for (long groupId : groupIds) {
@@ -115,7 +126,7 @@ public class JournalArticleAssetRendererFactory
 				JournalStructureLocalServiceUtil.getStructures(groupId);
 
 			for (JournalStructure structure : structures) {
-				classTypes.put(structure.getId(), structure.getName());
+				classTypes.put(structure.getId(), structure.getName(locale));
 			}
 		}
 
@@ -146,7 +157,7 @@ public class JournalArticleAssetRendererFactory
 		}
 
 		long classTypeId = GetterUtil.getLong(
-			(Serializable)liferayPortletRequest.getAttribute(
+			liferayPortletRequest.getAttribute(
 				WebKeys.ASSET_RENDERER_FACTORY_CLASS_TYPE_ID));
 
 		if ((classTypeId > 0) &&

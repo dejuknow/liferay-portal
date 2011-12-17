@@ -29,7 +29,7 @@ UserGroup userGroup = (UserGroup)row.getObject();
 <liferay-ui:icon-menu>
 	<c:if test="<%= UserGroupPermissionUtil.contains(permissionChecker, userGroup.getUserGroupId(), ActionKeys.UPDATE) %>">
 		<portlet:renderURL var="editURL">
-			<portlet:param name="struts_action" value="/user_groups_admin/edit_user_group" />
+			<portlet:param name="struts_action" value="/users_admin/edit_user_group" />
 			<portlet:param name="redirect" value="<%= redirect %>" />
 			<portlet:param name="userGroupId" value="<%= String.valueOf(userGroup.getUserGroupId()) %>" />
 		</portlet:renderURL>
@@ -54,9 +54,74 @@ UserGroup userGroup = (UserGroup)row.getObject();
 		/>
 	</c:if>
 
+	<c:if test="<%= UserGroupPermissionUtil.contains(permissionChecker, userGroup.getUserGroupId(), ActionKeys.PERMISSIONS) %>">
+		<liferay-security:permissionsURL
+			modelResource="<%= Group.class.getName() %>"
+			modelResourceDescription='<%= LanguageUtil.format(pageContext, "site-for-user-group-x", userGroup.getName()) %>'
+			resourcePrimKey="<%= String.valueOf(userGroup.getGroup().getGroupId()) %>"
+			var="permissionsURL"
+		/>
+
+		<liferay-ui:icon
+			image="permissions"
+			message="site-permissions"
+			url="<%= permissionsURL %>"
+		/>
+	</c:if>
+
+	<%
+	Group userGroupGroup = userGroup.getGroup();
+	%>
+
+	<c:if test="<%= GroupPermissionUtil.contains(permissionChecker, userGroupGroup.getGroupId(), ActionKeys.MANAGE_LAYOUTS) %>">
+		<portlet:renderURL var="managePagesURL">
+			<portlet:param name="struts_action" value="/users_admin/edit_layouts" />
+			<portlet:param name="redirect" value="<%= redirect %>" />
+			<portlet:param name="groupId" value="<%= String.valueOf(userGroupGroup.getGroupId()) %>" />
+		</portlet:renderURL>
+
+		<liferay-ui:icon
+			image="pages"
+			message="manage-site-pages"
+			url="<%= managePagesURL %>"
+		/>
+	</c:if>
+
+	<c:if test="<%= (userGroupGroup.getPublicLayoutsPageCount() > 0) && GroupPermissionUtil.contains(permissionChecker, userGroupGroup.getGroupId(), ActionKeys.VIEW) %>">
+		<portlet:actionURL var="viewPublicPagesURL">
+			<portlet:param name="struts_action" value="/sites_admin/page" />
+			<portlet:param name="redirect" value="<%= currentURL %>" />
+			<portlet:param name="groupId" value="<%= String.valueOf(userGroupGroup.getGroupId()) %>" />
+			<portlet:param name="privateLayout" value="<%= Boolean.FALSE.toString() %>" />
+		</portlet:actionURL>
+
+		<liferay-ui:icon
+			image="view"
+			message="go-to-the-site's-public-pages"
+			target="_blank"
+			url="<%= viewPublicPagesURL %>"
+		/>
+	</c:if>
+
+	<c:if test="<%= (userGroupGroup.getPrivateLayoutsPageCount() > 0) && GroupPermissionUtil.contains(permissionChecker, userGroupGroup.getGroupId(), ActionKeys.VIEW) %>">
+		<portlet:actionURL var="viewPrivatePagesURL">
+			<portlet:param name="struts_action" value="/sites_admin/page" />
+			<portlet:param name="redirect" value="<%= currentURL %>" />
+			<portlet:param name="groupId" value="<%= String.valueOf(userGroupGroup.getGroupId()) %>" />
+			<portlet:param name="privateLayout" value="<%= Boolean.TRUE.toString() %>" />
+		</portlet:actionURL>
+
+		<liferay-ui:icon
+			image="view"
+			message="go-to-the-site's-private-pages"
+			target="_blank"
+			url="<%= viewPrivatePagesURL %>"
+		/>
+	</c:if>
+
 	<c:if test="<%= UserGroupPermissionUtil.contains(permissionChecker, userGroup.getUserGroupId(), ActionKeys.ASSIGN_MEMBERS) %>">
 		<portlet:renderURL var="assignURL">
-			<portlet:param name="struts_action" value="/user_groups_admin/edit_user_group_assignments" />
+			<portlet:param name="struts_action" value="/users_admin/edit_user_group_assignments" />
 			<portlet:param name="redirect" value="<%= redirect %>" />
 			<portlet:param name="userGroupId" value="<%= String.valueOf(userGroup.getUserGroupId()) %>" />
 		</portlet:renderURL>
@@ -67,20 +132,6 @@ UserGroup userGroup = (UserGroup)row.getObject();
 			url="<%= assignURL %>"
 		/>
 	</c:if>
-
-	<portlet:renderURL var="viewUsersURL">
-		<portlet:param name="struts_action" value="/user_groups_admin/view_users" />
-		<portlet:param name="viewUsersRedirect" value="<%= currentURL %>" />
-		<portlet:param name="userGroupId" value="<%= String.valueOf(userGroup.getUserGroupId()) %>" />
-		<portlet:param name="usersListView" value="<%= UserConstants.LIST_VIEW_FLAT_USERS %>" />
-	</portlet:renderURL>
-
-	<liferay-ui:icon
-		image="view_users"
-		message="view-users"
-		method="get"
-		url="<%= viewUsersURL %>"
-	/>
 
 	<c:if test="<%= UserGroupPermissionUtil.contains(permissionChecker, userGroup.getUserGroupId(), ActionKeys.DELETE) %>">
 

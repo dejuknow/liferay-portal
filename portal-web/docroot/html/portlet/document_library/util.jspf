@@ -27,11 +27,11 @@ private static final String _getFileEntryImage(FileEntry fileEntry, ThemeDisplay
 	return sb.toString();
 }
 
-private static final String _getPreviewURL(FileEntry fileEntry, String version, ThemeDisplay themeDisplay, String queryString) {
-	return _getPreviewURL(fileEntry, version, themeDisplay, queryString, true);
+private static final String _getPreviewURL(FileEntry fileEntry, FileVersion fileVersion, ThemeDisplay themeDisplay, String queryString) {
+	return _getPreviewURL(fileEntry, fileVersion, themeDisplay, queryString, true);
 }
 
-private static final String _getPreviewURL(FileEntry fileEntry, String version, ThemeDisplay themeDisplay, String queryString, boolean appendToken) {
+private static final String _getPreviewURL(FileEntry fileEntry, FileVersion fileVersion, ThemeDisplay themeDisplay, String queryString, boolean appendToken) {
 	StringBundler sb = new StringBundler(13);
 
 	sb.append(themeDisplay.getPortalURL());
@@ -41,17 +41,26 @@ private static final String _getPreviewURL(FileEntry fileEntry, String version, 
 	sb.append(StringPool.SLASH);
 	sb.append(fileEntry.getFolderId());
 	sb.append(StringPool.SLASH);
-	sb.append(HttpUtil.encodeURL(HtmlUtil.unescape(fileEntry.getTitle())));
+	sb.append(HttpUtil.encodeURL(HtmlUtil.unescape(fileEntry.getTitle()), true));
 	sb.append("?version=");
-	sb.append(version);
+	sb.append(fileVersion.getVersion());
 
 	if (appendToken) {
 		sb.append("&t=");
-		sb.append(WebServerServletTokenUtil.getToken(fileEntry.getFileEntryId()));
+
+		Date modifiedDate = fileVersion.getModifiedDate();
+
+		sb.append(modifiedDate.getTime());
 	}
 
 	sb.append(queryString);
 
-	return sb.toString();
+	String previewURL = sb.toString();
+
+	if (themeDisplay.isAddSessionIdToURL()) {
+		return PortalUtil.getURLWithSessionId(previewURL, themeDisplay.getSessionId());
+	}
+
+	return previewURL;
 }
 %>

@@ -94,13 +94,6 @@ public class MBBanUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static MBBan remove(MBBan mbBan) throws SystemException {
-		return getPersistence().remove(mbBan);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static MBBan update(MBBan mbBan, boolean merge)

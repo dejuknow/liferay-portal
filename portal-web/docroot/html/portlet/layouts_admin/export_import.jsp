@@ -82,16 +82,12 @@ for (Portlet alwaysExportablePortlet : alwaysExportablePortlets) {
 portletsList = ListUtil.sort(portletsList, new PortletTitleComparator(application, locale));
 %>
 
-<aui:form method="post" name="fm1">
+<aui:form cssClass="lfr-export-dialog" method="post" name="fm1">
 	<aui:input name="<%= Constants.CMD %>" type="hidden" value="<%= cmd %>" />
 
 	<c:choose>
 		<c:when test="<%= cmd.equals(Constants.EXPORT) %>">
-			<aui:input label="export-the-selected-data-to-the-given-lar-file-name" name="exportFileName" size="50" value='<%= HtmlUtil.escape(StringUtil.replace(rootNodeName, " ", "_")) + "-" + Time.getShortTimestamp() + ".lar" %>' />
-
-			<aui:field-wrapper label="what-would-you-like-to-export">
-				<%@ include file="/html/portlet/layouts_admin/export_import_options.jspf" %>
-			</aui:field-wrapper>
+			<%@ include file="/html/portlet/layouts_admin/export_import_options.jspf" %>
 
 			<aui:button-row>
 				<aui:button type="submit" value="export" />
@@ -104,11 +100,7 @@ portletsList = ListUtil.sort(portletsList, new PortletTitleComparator(applicatio
 
 			<c:choose>
 				<c:when test="<%= (layout.getGroupId() != groupId) || (layout.isPrivateLayout() != privateLayout) %>">
-					<aui:input label="import-a-lar-file-to-overwrite-the-selected-data" name="importFileName" size="50" type="file" />
-
-					<aui:field-wrapper label="what-would-you-like-to-import">
-						<%@ include file="/html/portlet/layouts_admin/export_import_options.jspf" %>
-					</aui:field-wrapper>
+					<%@ include file="/html/portlet/layouts_admin/export_import_options.jspf" %>
 
 					<aui:button-row>
 						<aui:button type="submit" value="import" />
@@ -121,6 +113,23 @@ portletsList = ListUtil.sort(portletsList, new PortletTitleComparator(applicatio
 		</c:when>
 	</c:choose>
 </aui:form>
+
+<c:if test='<%= cmd.equals(Constants.IMPORT) && SessionMessages.contains(renderRequest, "request_processed") %>'>
+	<aui:script>
+		var opener = Liferay.Util.getOpener();
+
+		if (opener.<portlet:namespace />saveLayoutset) {
+			Liferay.fire(
+				'closeWindow',
+				{
+					id: '<portlet:namespace />importDialog'
+				}
+			);
+
+			opener.<portlet:namespace />saveLayoutset();
+		}
+	</aui:script>
+</c:if>
 
 <aui:script use="aui-base,aui-loading-mask,selector-css3">
 	var form = A.one('#<portlet:namespace />fm1');
@@ -142,9 +151,8 @@ portletsList = ListUtil.sort(portletsList, new PortletTitleComparator(applicatio
 					submitForm(form, '<%= exportPagesURL + "&etag=0" %>', false);
 				</c:when>
 				<c:otherwise>
-					<portlet:actionURL windowState="<%= redirectWindowState %>" var="importPagesURL">
+					<portlet:actionURL var="importPagesURL">
 						<portlet:param name="struts_action" value="/layouts_admin/import_layouts" />
-						<portlet:param name="redirect" value="<%= redirect %>" />
 						<portlet:param name="groupId" value="<%= String.valueOf(groupId) %>" />
 						<portlet:param name="privateLayout" value="<%= String.valueOf(privateLayout) %>" />
 					</portlet:actionURL>
@@ -158,35 +166,27 @@ portletsList = ListUtil.sort(portletsList, new PortletTitleComparator(applicatio
 	);
 
 	var toggleHandlerControl = function(item, index, collection) {
-		var container = item.ancestor('.<portlet:namespace />handler-control').one('ul');
+		var container = item.ancestor('.handler-control').one('ul');
 
 		if (container) {
-			var action = 'hide';
+			var checked = item.get('checked');
 
-			if (item.get('checked')) {
-				action = 'show';
-			}
+			container.toggle(checked);
 
-			container[action]();
+			container.all(':checkbox').attr('checked', checked);
 		}
 	};
 
-	var checkboxes = A.all('.<portlet:namespace />handler-control input[type=checkbox]');
+	var checkboxes = A.all('.handler-control :checkbox');
 
-	if (checkboxes) {
-		var uncheckedBoxes = checkboxes.filter(':not(:checked)');
+	checkboxes.filter(':not(:checked)').each(toggleHandlerControl);
 
-		if (uncheckedBoxes) {
-			uncheckedBoxes.each(toggleHandlerControl);
+	checkboxes.detach('click');
+
+	checkboxes.on(
+		'click',
+		function(event) {
+			toggleHandlerControl(event.currentTarget);
 		}
-
-		checkboxes.detach('click');
-
-		checkboxes.on(
-			'click',
-			function(event) {
-				toggleHandlerControl(event.currentTarget);
-			}
-		);
-	}
+	);
 </aui:script>

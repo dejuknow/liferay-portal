@@ -333,7 +333,7 @@ definePermissionsURL.setParameter(Constants.CMD, Constants.VIEW);
 						currentGroupTemplateActions = ResourceActionsUtil.getActions(permissions);
 					}
 					catch (NoSuchResourceException nsre) {
-						currentGroupTemplateActions = new ArrayList();
+						currentGroupTemplateActions = new ArrayList<String>();
 					}
 
 					try {
@@ -344,7 +344,7 @@ definePermissionsURL.setParameter(Constants.CMD, Constants.VIEW);
 						currentCompanyActions = ResourceActionsUtil.getActions(permissions);
 					}
 					catch (NoSuchResourceException nsre) {
-						currentCompanyActions = new ArrayList();
+						currentCompanyActions = new ArrayList<String>();
 					}
 				}
 
@@ -420,7 +420,7 @@ definePermissionsURL.setParameter(Constants.CMD, Constants.VIEW);
 
 						if (Validator.isNotNull(preselectedMsg)) {
 							buffer.append("onclick=\"return false;\" onmouseover=\"Liferay.Portal.ToolTip.show(this, '");
-							buffer.append(UnicodeLanguageUtil.format(pageContext, preselectedMsg, new Object[] {HtmlUtil.escape(role.getTitle(locale)), ResourceActionsUtil.getAction(pageContext, action), ResourceActionsUtil.getModelResource(locale, resource.getName()), HtmlUtil.escape(group.getDescriptiveName())}));
+							buffer.append(UnicodeLanguageUtil.format(pageContext, preselectedMsg, new Object[] {HtmlUtil.escape(role.getTitle(locale)), ResourceActionsUtil.getAction(pageContext, action), Validator.isNull(modelResource) ? selResourceDescription : ResourceActionsUtil.getModelResource(locale, resource.getName()), HtmlUtil.escape(group.getDescriptiveName())}));
 							buffer.append("'); return false;\" ");
 						}
 

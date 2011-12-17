@@ -23,8 +23,10 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.Contact;
+import com.liferay.portal.model.Image;
 import com.liferay.portal.model.User;
 import com.liferay.portal.model.UserGroup;
+import com.liferay.portal.service.ImageLocalServiceUtil;
 import com.liferay.portal.util.PrefsPropsUtil;
 import com.liferay.portlet.expando.model.ExpandoBridge;
 import com.liferay.portlet.expando.util.ExpandoConverterUtil;
@@ -59,6 +61,8 @@ public class BasePortalToLDAPConverter implements PortalToLDAPConverter {
 		_reservedUserFieldNames.put(
 			UserConverterKeys.PASSWORD, UserConverterKeys.PASSWORD);
 		_reservedUserFieldNames.put(
+			UserConverterKeys.PORTRAIT, UserConverterKeys.PORTRAIT);
+		_reservedUserFieldNames.put(
 			UserConverterKeys.SCREEN_NAME, UserConverterKeys.SCREEN_NAME);
 	}
 
@@ -83,8 +87,7 @@ public class BasePortalToLDAPConverter implements PortalToLDAPConverter {
 		sb.append(userGroup.getName());
 		sb.append(StringPool.COMMA);
 		sb.append(
-			PortalLDAPUtil.getGroupsDN(
-				ldapServerId, userGroup.getCompanyId()));
+			PortalLDAPUtil.getGroupsDN(ldapServerId, userGroup.getCompanyId()));
 
 		return sb.toString();
 	}
@@ -209,6 +212,9 @@ public class BasePortalToLDAPConverter implements PortalToLDAPConverter {
 		addAttributeMapping(
 			userMappings.getProperty(UserConverterKeys.JOB_TITLE),
 			user.getJobTitle(), attributes);
+		addAttributeMapping(
+			userMappings.getProperty(UserConverterKeys.PORTRAIT),
+			getUserPortrait(user), attributes);
 
 		return attributes;
 	}
@@ -275,6 +281,15 @@ public class BasePortalToLDAPConverter implements PortalToLDAPConverter {
 			}
 		}
 
+		String portraitKey = userMappings.getProperty(
+			UserConverterKeys.PORTRAIT);
+
+		if (Validator.isNotNull(portraitKey)) {
+			addModificationItem(
+				new BasicAttribute(portraitKey, getUserPortrait(user)),
+				modifications);
+		}
+
 		populateCustomAttributeModifications(
 			user, user.getExpandoBridge(), userExpandoAttributes,
 			userExpandoMappings, modifications);
@@ -325,6 +340,14 @@ public class BasePortalToLDAPConverter implements PortalToLDAPConverter {
 		for (String reservedUserFieldName : reservedUserFieldNames) {
 			_reservedUserFieldNames.put(
 				reservedUserFieldName, reservedUserFieldName);
+		}
+	}
+
+	protected void addAttributeMapping(
+		String attributeName, Object attributeValue, Attributes attributes) {
+
+		if (Validator.isNotNull(attributeName) && (attributeValue != null)) {
+			attributes.put(attributeName, attributeValue);
 		}
 	}
 
@@ -393,6 +416,33 @@ public class BasePortalToLDAPConverter implements PortalToLDAPConverter {
 		}
 
 		return modifications;
+	}
+
+	protected byte[] getUserPortrait(User user) {
+		byte[] bytes = null;
+
+		if (user.getPortraitId() == 0) {
+			return bytes;
+		}
+
+		Image image = null;
+
+		try {
+			image = ImageLocalServiceUtil.getImage(user.getPortraitId());
+
+			if (image != null) {
+				bytes = image.getTextObj();
+			}
+		}
+		catch (Exception e) {
+			if (_log.isWarnEnabled()) {
+				_log.warn(
+					"Unable to get the portrait for user " + user.getUserId(),
+					e);
+			}
+		}
+
+		return bytes;
 	}
 
 	protected void populateCustomAttributeModifications(

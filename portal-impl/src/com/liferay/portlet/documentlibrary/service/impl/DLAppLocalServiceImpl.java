@@ -36,6 +36,7 @@ import com.liferay.portlet.documentlibrary.model.DLFileShortcut;
 import com.liferay.portlet.documentlibrary.model.DLFolder;
 import com.liferay.portlet.documentlibrary.model.DLFolderConstants;
 import com.liferay.portlet.documentlibrary.service.base.DLAppLocalServiceBaseImpl;
+import com.liferay.portlet.documentlibrary.util.DLProcessorRegistryUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -60,7 +61,7 @@ import java.util.List;
  * primary key of the specific repository. If the repository is a default
  * Liferay repository, the <code>repositoryId</code> is the <code>groupId</code>
  * or <code>scopeGroupId</code>. Otherwise, the <code>repositoryId</code> will
- * correspond to values obtained from {@link RepositoryServiceUtil}.
+ * correspond to values obtained from {@link RepositoryLocalServiceUtil}.
  * </p>
  *
  * @author Alexander Chow
@@ -91,23 +92,15 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 	 * @param  description the file's description
 	 * @param  changeLog the file's version change log
 	 * @param  bytes the file's data (optionally <code>null</code>)
-	 * @param  serviceContext the service context to be applied. Can specify the
-	 *         file entry's asset category IDs, asset tag names, and expando
-	 *         bridge attributes. In a Liferay repository, it may include:
-	 *
-	 *         <ul>
-	 *         <li>
-	 *         fileEntryTypeId - ID for a custom file entry type
-	 *         </li>
-	 *         <li>
-	 *         fieldsMap - mapping for fields associated with a custom file
-	 *         entry type
-	 *         </li>
-	 *         </ul>
-	 *
+	 * @param  serviceContext the service context to be applied. Can set the
+	 *         asset category IDs, asset tag names, and expando bridge
+	 *         attributes for the file entry. In a Liferay repository, it may
+	 *         include:  <ul> <li> fileEntryTypeId - ID for a custom file entry
+	 *         type </li> <li> fieldsMap - mapping for fields associated with a
+	 *         custom file entry type </li> </ul>
 	 * @return the file entry
-	 * @throws PortalException if the parent folder could not be
-	 *         found or if the file entry's information was invalid
+	 * @throws PortalException if the parent folder could not be found or if the
+	 *         file entry's information was invalid
 	 * @throws SystemException if a system exception occurred
 	 */
 	public FileEntry addFileEntry(
@@ -158,23 +151,15 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 	 * @param  description the file's description
 	 * @param  changeLog the file's version change log
 	 * @param  file the file's data (optionally <code>null</code>)
-	 * @param  serviceContext the service context to be applied. Can specify the
-	 *         file entry's asset category IDs, asset tag names, and expando
-	 *         bridge attributes. In a Liferay repository, it may include:
-	 *
-	 *         <ul>
-	 *         <li>
-	 *         fileEntryTypeId - ID for a custom file entry type
-	 *         </li>
-	 *         <li>
-	 *         fieldsMap - mapping for fields associated with a custom file
-	 *         entry type
-	 *         </li>
-	 *         </ul>
-	 *
+	 * @param  serviceContext the service context to be applied. Can set the
+	 *         asset category IDs, asset tag names, and expando bridge
+	 *         attributes for the file entry. In a Liferay repository, it may
+	 *         include:  <ul> <li> fileEntryTypeId - ID for a custom file entry
+	 *         type </li> <li> fieldsMap - mapping for fields associated with a
+	 *         custom file entry type </li> </ul>
 	 * @return the file entry
-	 * @throws PortalException if the parent folder could not be
-	 *         found or if the file entry's information was invalid
+	 * @throws PortalException if the parent folder could not be found or if the
+	 *         file entry's information was invalid
 	 * @throws SystemException if a system exception occurred
 	 */
 	public FileEntry addFileEntry(
@@ -226,23 +211,15 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 	 * @param  changeLog the file's version change log
 	 * @param  is the file's data (optionally <code>null</code>)
 	 * @param  size the file's size (optionally <code>0</code>)
-	 * @param  serviceContext the service context to be applied. Can specify the
-	 *         file entry's asset category IDs, asset tag names, and expando
-	 *         bridge attributes. In a Liferay repository, it may include:
-	 *
-	 *         <ul>
-	 *         <li>
-	 *         fileEntryTypeId - ID for a custom file entry type
-	 *         </li>
-	 *         <li>
-	 *         fieldsMap - mapping for fields associated with a custom file
-	 *         entry type
-	 *         </li>
-	 *         </ul>
-	 *
+	 * @param  serviceContext the service context to be applied. Can set the
+	 *         asset category IDs, asset tag names, and expando bridge
+	 *         attributes for the file entry. In a Liferay repository, it may
+	 *         include:  <ul> <li> fileEntryTypeId - ID for a custom file entry
+	 *         type </li> <li> fieldsMap - mapping for fields associated with a
+	 *         custom file entry type </li> </ul>
 	 * @return the file entry
-	 * @throws PortalException if the parent folder could not
-	 *         be found or if the file entry's information was invalid
+	 * @throws PortalException if the parent folder could not be found or if the
+	 *         file entry's information was invalid
 	 * @throws SystemException if a system exception occurred
 	 */
 	public FileEntry addFileEntry(
@@ -298,9 +275,9 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 	 * @param  repositoryId the primary key of the repository
 	 * @param  folderId the primary key of the file shortcut's parent folder
 	 * @param  toFileEntryId the primary key of the file entry to point to
-	 * @param  serviceContext the service context to be applied. Can specify the
-	 *         file entry's asset category IDs, asset tag names, and expando
-	 *         bridge attributes.
+	 * @param  serviceContext the service context to be applied. Can set the
+	 *         asset category IDs, asset tag names, and expando bridge
+	 *         attributes for the file entry.
 	 * @return the file shortcut
 	 * @throws PortalException if the parent folder or file entry could not be
 	 *         found, or if the file shortcut's information was invalid
@@ -328,8 +305,8 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 	 *         specifying whether the folder is a facade for mounting a
 	 *         third-party repository
 	 * @return the folder
-	 * @throws PortalException if the parent folder could not
-	 *         be found or if the new folder's information was invalid
+	 * @throws PortalException if the parent folder could not be found or if the
+	 *         new folder's information was invalid
 	 * @throws SystemException if a system exception occurred
 	 */
 	public Folder addFolder(
@@ -348,8 +325,7 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 	 * supported by the Liferay repository.
 	 *
 	 * @param  repositoryId the primary key of the data's repository
-	 * @throws PortalException if the repository could not be
-	 *         found
+	 * @throws PortalException if the repository could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public void deleteAll(long repositoryId)
@@ -364,8 +340,7 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 	 * Deletes the file entry.
 	 *
 	 * @param  fileEntryId the primary key of the file entry
-	 * @throws PortalException if the file entry could not be
-	 *         found
+	 * @throws PortalException if the file entry could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public void deleteFileEntry(long fileEntryId)
@@ -423,8 +398,7 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 	 * repository.
 	 *
 	 * @param  fileShortcutId the primary key of the file shortcut
-	 * @throws PortalException if the file shortcut could not
-	 *         be found
+	 * @throws PortalException if the file shortcut could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public void deleteFileShortcut(long fileShortcutId)
@@ -438,7 +412,8 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 	 * only supported by the Liferay repository.
 	 *
 	 * @param  toFileEntryId the primary key of the associated file entry
-	 * @throws PortalException if the file shortcut for the file entry could not be found
+	 * @throws PortalException if the file shortcut for the file entry could not
+	 *         be found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public void deleteFileShortcuts(long toFileEntryId)
@@ -451,8 +426,7 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 	 * Deletes the folder and all of its subfolders and file entries.
 	 *
 	 * @param  folderId the primary key of the folder
-	 * @throws PortalException if the folder could not be
-	 *         found
+	 * @throws PortalException if the folder could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public void deleteFolder(long folderId)
@@ -469,8 +443,7 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 	 * @param  repositoryId the primary key of the file entry's repository
 	 * @param  folderId the primary key of the file entry's folder
 	 * @return the file entries in the folder
-	 * @throws PortalException if the folder could not be
-	 *         found
+	 * @throws PortalException if the folder could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public List<FileEntry> getFileEntries(long repositoryId, long folderId)
@@ -498,8 +471,7 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 	 * @param  start the lower bound of the range of results
 	 * @param  end the upper bound of the range of results (not inclusive)
 	 * @return the range of file entries in the folder
-	 * @throws PortalException if the folder could not be
-	 *         found
+	 * @throws PortalException if the folder could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public List<FileEntry> getFileEntries(
@@ -530,8 +502,7 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 	 *         <code>null</code>)
 	 * @return the range of file entries in the folder ordered by comparator
 	 *         <code>obc</code>
-	 * @throws PortalException if the folder could not be
-	 *         found
+	 * @throws PortalException if the folder could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public List<FileEntry> getFileEntries(
@@ -563,8 +534,7 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 	 * @param  start the lower bound of the range of results
 	 * @param  end the upper bound of the range of results (not inclusive)
 	 * @return the range of file entries and shortcuts in the folder
-	 * @throws PortalException if the folder could not be
-	 *         found
+	 * @throws PortalException if the folder could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public List<Object> getFileEntriesAndFileShortcuts(
@@ -585,8 +555,7 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 	 * @param  folderId the primary key of the folder
 	 * @param  status the workflow status
 	 * @return the number of file entries and shortcuts in the folder
-	 * @throws PortalException if the folder could not be
-	 *         found
+	 * @throws PortalException if the folder could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public int getFileEntriesAndFileShortcutsCount(
@@ -605,8 +574,7 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 	 * @param  repositoryId the primary key of the file entry's repository
 	 * @param  folderId the primary key of the file entry's folder
 	 * @return the number of file entries in the folder
-	 * @throws PortalException if the folder could not be
-	 *         found
+	 * @throws PortalException if the folder could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public int getFileEntriesCount(long repositoryId, long folderId)
@@ -622,8 +590,7 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 	 *
 	 * @param  fileEntryId the primary key of the file entry
 	 * @return the file entry with the primary key
-	 * @throws PortalException if the file entry could not be
-	 *         found
+	 * @throws PortalException if the file entry could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public FileEntry getFileEntry(long fileEntryId)
@@ -728,8 +695,7 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 	 *
 	 * @param  fileShortcutId the primary key of the file shortcut
 	 * @return the file shortcut with the primary key
-	 * @throws PortalException if the file shortcut could not
-	 *         be found
+	 * @throws PortalException if the file shortcut could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public DLFileShortcut getFileShortcut(long fileShortcutId)
@@ -743,8 +709,7 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 	 *
 	 * @param  fileVersionId the primary key of the file version
 	 * @return the file version with the primary key
-	 * @throws PortalException if the file version could not
-	 *         be found
+	 * @throws PortalException if the file version could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public FileVersion getFileVersion(long fileVersionId)
@@ -761,8 +726,7 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 	 *
 	 * @param  folderId the primary key of the folder
 	 * @return the folder with the primary key
-	 * @throws PortalException if the folder could not be
-	 *         found
+	 * @throws PortalException if the folder could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public Folder getFolder(long folderId)
@@ -783,8 +747,7 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 	 * @throws PortalException if the folder could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
-	public Folder getFolder(
-			long repositoryId, long parentFolderId, String name)
+	public Folder getFolder(long repositoryId, long parentFolderId, String name)
 		throws PortalException, SystemException {
 
 		LocalRepository localRepository = getLocalRepository(repositoryId);
@@ -849,8 +812,7 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 	 * @param  start the lower bound of the range of results
 	 * @param  end the upper bound of the range of results (not inclusive)
 	 * @return the range of immediate subfolders of the parent folder
-	 * @throws PortalException if the parent folder could not be
-	 *         found
+	 * @throws PortalException if the parent folder could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public List<Folder> getFolders(
@@ -887,8 +849,7 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 	 *         <code>null</code>)
 	 * @return the range of immediate subfolders of the parent folder ordered by
 	 *         comparator <code>obc</code>
-	 * @throws PortalException if the parent folder could not be
-	 *         found
+	 * @throws PortalException if the parent folder could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public List<Folder> getFolders(
@@ -920,8 +881,7 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 	 * @param  start the lower bound of the range of results
 	 * @param  end the upper bound of the range of results (not inclusive)
 	 * @return the range of immediate subfolders of the parent folder
-	 * @throws PortalException if the parent folder could not be
-	 *         found
+	 * @throws PortalException if the parent folder could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public List<Folder> getFolders(
@@ -953,8 +913,7 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 	 *         <code>null</code>)
 	 * @return the range of immediate subfolders of the parent folder ordered by
 	 *         comparator <code>obc</code>
-	 * @throws PortalException if the parent folder could not be
-	 *         found
+	 * @throws PortalException if the parent folder could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public List<Folder> getFolders(
@@ -991,8 +950,7 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 	 * @return the range of immediate subfolders, file entries, and file
 	 *         shortcuts in the parent folder ordered by comparator
 	 *         <code>obc</code>
-	 * @throws PortalException if the folder could not be
-	 *         found
+	 * @throws PortalException if the folder could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public List<Object> getFoldersAndFileEntriesAndFileShortcuts(
@@ -1029,8 +987,7 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 	 *         third-party repositories
 	 * @return the number of immediate subfolders, file entries, and file
 	 *         shortcuts in the parent folder
-	 * @throws PortalException if the folder could not be
-	 *         found
+	 * @throws PortalException if the folder could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public int getFoldersAndFileEntriesAndFileShortcutsCount(
@@ -1059,8 +1016,7 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 	 * @param  repositoryId the primary key of the folder's repository
 	 * @param  parentFolderId the primary key of the folder's parent folder
 	 * @return the number of immediate subfolders of the parent folder
-	 * @throws PortalException if the parent folder could not
-	 *         be found
+	 * @throws PortalException if the parent folder could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public int getFoldersCount(long repositoryId, long parentFolderId)
@@ -1078,8 +1034,7 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 	 * @param  includeMountFolders whether to include mount folders for
 	 *         third-party repositories
 	 * @return the number of immediate subfolders of the parent folder
-	 * @throws PortalException if the parent folder could not
-	 *         be found
+	 * @throws PortalException if the parent folder could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public int getFoldersCount(
@@ -1102,8 +1057,7 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 	 * @param  status the workflow status
 	 * @return the number of immediate subfolders and file entries across the
 	 *         folders
-	 * @throws PortalException if the repository could not be
-	 *         found
+	 * @throws PortalException if the repository could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public int getFoldersFileEntriesCount(
@@ -1121,7 +1075,8 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 	 *
 	 * @param  repositoryId the primary key of the repository
 	 * @return the folder used for mounting third-party repositories
-	 * @throws PortalException if the repository or mount folder could not be found
+	 * @throws PortalException if the repository or mount folder could not be
+	 *         found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public Folder getMountFolder(long repositoryId)
@@ -1141,8 +1096,8 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 	 * @param  parentFolderId the primary key of the folder's parent folder
 	 * @return the immediate subfolders of the parent folder that are used for
 	 *         mounting third-party repositories
-	 * @throws PortalException if the repository or parent
-	 *         folder could not be found
+	 * @throws PortalException if the repository or parent folder could not be
+	 *         found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public List<Folder> getMountFolders(long repositoryId, long parentFolderId)
@@ -1173,8 +1128,8 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 	 * @param  end the upper bound of the range of results (not inclusive)
 	 * @return the range of immediate subfolders of the parent folder that are
 	 *         used for mounting third-party repositories
-	 * @throws PortalException if the repository or parent
-	 *         folder could not be found
+	 * @throws PortalException if the repository or parent folder could not be
+	 *         found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public List<Folder> getMountFolders(
@@ -1208,8 +1163,8 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 	 * @return the range of immediate subfolders of the parent folder that are
 	 *         used for mounting third-party repositories ordered by comparator
 	 *         <code>obc</code>
-	 * @throws PortalException if the repository or parent
-	 *         folder could not be found
+	 * @throws PortalException if the repository or parent folder could not be
+	 *         found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public List<Folder> getMountFolders(
@@ -1231,8 +1186,8 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 	 * @param  parentFolderId the primary key of the parent folder
 	 * @return the number of folders of the parent folder that are used for
 	 *         mounting third-party repositories
-	 * @throws PortalException if the repository or parent
-	 *         folder could not be found
+	 * @throws PortalException if the repository or parent folder could not be
+	 *         found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public int getMountFoldersCount(long repositoryId, long parentFolderId)
@@ -1270,8 +1225,12 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 
 			// Move file entries within repository
 
-			return fromLocalRepository.moveFileEntry(
+			FileEntry fileEntry = fromLocalRepository.moveFileEntry(
 				userId, fileEntryId, newFolderId, serviceContext);
+
+			dlAppHelperLocalService.moveFileEntry(fileEntry);
+
+			return fileEntry;
 		}
 
 		// Move file entries between repositories
@@ -1328,29 +1287,20 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 	 *         <code>null</code>)
 	 * @param  mimeType the file's MIME type (optionally <code>null</code>)
 	 * @param  title the new name to be assigned to the file (optionally <code>
-	 *         null</code>)
+	 *         <code>null</code></code>)
 	 * @param  description the file's new description
 	 * @param  changeLog the file's version change log (optionally
 	 *         <code>null</code>)
 	 * @param  majorVersion whether the new file version is a major version
 	 * @param  bytes the file's data (optionally <code>null</code>)
-	 * @param  serviceContext the service context to be applied. Can specify the
-	 *         file entry's asset category IDs, asset tag names, and expando
-	 *         bridge attributes. In a Liferay repository, it may include:
-	 *
-	 *         <ul>
-	 *         <li>
-	 *         fileEntryTypeId - ID for a custom file entry type
-	 *         </li>
-	 *         <li>
-	 *         fieldsMap - mapping for fields associated with a custom file
-	 *         entry type
-	 *         </li>
-	 *         </ul>
-	 *
+	 * @param  serviceContext the service context to be applied. Can set the
+	 *         asset category IDs, asset tag names, and expando bridge
+	 *         attributes for the file entry. In a Liferay repository, it may
+	 *         include:  <ul> <li> fileEntryTypeId - ID for a custom file entry
+	 *         type </li> <li> fieldsMap - mapping for fields associated with a
+	 *         custom file entry type </li> </ul>
 	 * @return the file entry
-	 * @throws PortalException if the file entry could not be
-	 *         found
+	 * @throws PortalException if the file entry could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public FileEntry updateFileEntry(
@@ -1398,29 +1348,20 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 	 *         <code>null</code>)
 	 * @param  mimeType the file's MIME type (optionally <code>null</code>)
 	 * @param  title the new name to be assigned to the file (optionally <code>
-	 *         null</code>)
+	 *         <code>null</code></code>)
 	 * @param  description the file's new description
 	 * @param  changeLog the file's version change log (optionally
 	 *         <code>null</code>)
 	 * @param  majorVersion whether the new file version is a major version
 	 * @param  file EntryId the primary key of the file entry
-	 * @param  serviceContext the service context to be applied. Can specify the
-	 *         file entry's asset category IDs, asset tag names, and expando
-	 *         bridge attributes. In a Liferay repository, it may include:
-	 *
-	 *         <ul>
-	 *         <li>
-	 *         fileEntryTypeId - ID for a custom file entry type
-	 *         </li>
-	 *         <li>
-	 *         fieldsMap - mapping for fields associated with a custom file
-	 *         entry type
-	 *         </li>
-	 *         </ul>
-	 *
+	 * @param  serviceContext the service context to be applied. Can set the
+	 *         asset category IDs, asset tag names, and expando bridge
+	 *         attributes for the file entry. In a Liferay repository, it may
+	 *         include:  <ul> <li> fileEntryTypeId - ID for a custom file entry
+	 *         type </li> <li> fieldsMap - mapping for fields associated with a
+	 *         custom file entry type </li> </ul>
 	 * @return the file entry
-	 * @throws PortalException if the file entry could not be
-	 *         found
+	 * @throws PortalException if the file entry could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public FileEntry updateFileEntry(
@@ -1440,6 +1381,8 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 		FileEntry fileEntry = localRepository.updateFileEntry(
 			userId, fileEntryId, sourceFileName, mimeType, title, description,
 			changeLog, majorVersion, file, serviceContext);
+
+		DLProcessorRegistryUtil.cleanUp(fileEntry.getLatestFileVersion());
 
 		dlAppHelperLocalService.updateFileEntry(
 			userId, fileEntry, fileEntry.getFileVersion(), serviceContext);
@@ -1467,30 +1410,21 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 	 *         <code>null</code>)
 	 * @param  mimeType the file's MIME type (optionally <code>null</code>)
 	 * @param  title the new name to be assigned to the file (optionally <code>
-	 *         null</code>)
+	 *         <code>null</code></code>)
 	 * @param  description the file's new description
 	 * @param  changeLog the file's version change log (optionally
 	 *         <code>null</code>)
 	 * @param  majorVersion whether the new file version is a major version
 	 * @param  is the file's data (optionally <code>null</code>)
 	 * @param  size the file's size (optionally <code>0</code>)
-	 * @param  serviceContext the service context to be applied. Can specify the
-	 *         file entry's asset category IDs, asset tag names, and expando
-	 *         bridge attributes. In a Liferay repository, it may include:
-	 *
-	 *         <ul>
-	 *         <li>
-	 *         fileEntryTypeId - ID for a custom file entry type
-	 *         </li>
-	 *         <li>
-	 *         fieldsMap - mapping for fields associated with a custom file
-	 *         entry type
-	 *         </li>
-	 *         </ul>
-	 *
+	 * @param  serviceContext the service context to be applied. Can set the
+	 *         asset category IDs, asset tag names, and expando bridge
+	 *         attributes for the file entry. In a Liferay repository, it may
+	 *         include:  <ul> <li> fileEntryTypeId - ID for a custom file entry
+	 *         type </li> <li> fieldsMap - mapping for fields associated with a
+	 *         custom file entry type </li> </ul>
 	 * @return the file entry
-	 * @throws PortalException if the file entry could not be
-	 *         found
+	 * @throws PortalException if the file entry could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public FileEntry updateFileEntry(
@@ -1505,6 +1439,10 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 		FileEntry fileEntry = localRepository.updateFileEntry(
 			userId, fileEntryId, sourceFileName, mimeType, title, description,
 			changeLog, majorVersion, is, size, serviceContext);
+
+		if (is != null) {
+			DLProcessorRegistryUtil.cleanUp(fileEntry.getLatestFileVersion());
+		}
 
 		dlAppHelperLocalService.updateFileEntry(
 			userId, fileEntry, fileEntry.getFileVersion(), serviceContext);
@@ -1541,9 +1479,9 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 	 * @param  fileShortcutId the primary key of the file shortcut
 	 * @param  folderId the primary key of the file shortcut's parent folder
 	 * @param  toFileEntryId the primary key of the file shortcut's file entry
-	 * @param  serviceContext the service context to be applied. Can specify the
-	 *         file entry's asset category IDs, asset tag names, and expando
-	 *         bridge attributes.
+	 * @param  serviceContext the service context to be applied. Can set the
+	 *         asset category IDs, asset tag names, and expando bridge
+	 *         attributes for the file entry.
 	 * @return the file shortcut
 	 * @throws PortalException if the file shortcut, folder, or file entry could
 	 *         not be found
@@ -1584,34 +1522,19 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 	 * @param  name the folder's new name
 	 * @param  description the folder's new description
 	 * @param  serviceContext the service context to be applied. In a Liferay
-	 *         repository, it may include:
-	 *
-	 *         <ul>
-	 *         <li>
-	 *         defaultFileEntryTypeId - the file entry type to default all
-	 *         Liferay file entries to
-	 *         </li>
-	 *         <li>
-	 *         fileEntryTypeSearchContainerPrimaryKeys - a comma-delimited list
-	 *         of file entry type primary keys allowed in the given folder and
-	 *         all descendants
-	 *         </li>
-	 *         <li>
-	 *         mountPoint - boolean specifying whether folder is a facade for
-	 *         mounting a third-party repository
-	 *         </li>
-	 *         <li>
-	 *         overrideFileEntryTypes - boolean specifying whether to override
-	 *         ancestral folder's restriction of file entry types allowed
-	 *         </li>
-	 *         <li>
-	 *         workflowDefinitionXYZ - the workflow definition name specified
-	 *         per file entry type. The parameter name must be the string
-	 *         <code>workflowDefinition</code> appended by the
-	 *         <code>fileEntryTypeId</code> (optionally <code>0</code>).
-	 *         </li>
-	 *         </ul>
-	 *
+	 *         repository, it may include:  <ul> <li> defaultFileEntryTypeId -
+	 *         the file entry type to default all Liferay file entries to </li>
+	 *         <li> fileEntryTypeSearchContainerPrimaryKeys - a comma-delimited
+	 *         list of file entry type primary keys allowed in the given folder
+	 *         and all descendants </li> <li> mountPoint - boolean specifying
+	 *         whether folder is a facade for mounting a third-party repository
+	 *         </li> <li> overrideFileEntryTypes - boolean specifying whether to
+	 *         override ancestral folder's restriction of file entry types
+	 *         allowed </li> <li> workflowDefinitionXYZ - the workflow
+	 *         definition name specified per file entry type. The parameter name
+	 *         must be the string <code>workflowDefinition</code> appended by
+	 *         the <code>fileEntryTypeId</code> (optionally <code>0</code>).
+	 *         </li> </ul>
 	 * @return the folder
 	 * @throws PortalException if the current or new parent folder could not be
 	 *         found, or if the new parent folder's information was invalid
@@ -1665,7 +1588,7 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 				toLocalRepository.deleteFileEntry(
 					destinationFileEntry.getFileEntryId());
 
-				throw  pe;
+				throw pe;
 			}
 		}
 
@@ -1705,14 +1628,14 @@ public class DLAppLocalServiceImpl extends DLAppLocalServiceBaseImpl {
 	protected LocalRepository getLocalRepository(long repositoryId)
 		throws PortalException, SystemException {
 
-		return repositoryService.getLocalRepositoryImpl(repositoryId);
+		return repositoryLocalService.getLocalRepositoryImpl(repositoryId);
 	}
 
 	protected LocalRepository getLocalRepository(
 			long folderId, long fileEntryId, long fileVersionId)
 		throws PortalException, SystemException {
 
-		return repositoryService.getLocalRepositoryImpl(
+		return repositoryLocalService.getLocalRepositoryImpl(
 			folderId, fileEntryId, fileVersionId);
 	}
 

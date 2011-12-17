@@ -29,6 +29,9 @@ import com.liferay.portal.service.ServiceContextFactory;
 import com.liferay.portal.util.PortletKeys;
 import com.liferay.portlet.layoutsadmin.action.EditLayoutsAction;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletConfig;
@@ -74,8 +77,19 @@ public class EditLayoutSetBranchAction extends EditLayoutsAction {
 			if (SessionErrors.isEmpty(actionRequest)) {
 				SessionMessages.add(
 					actionRequest,
-					portletConfig.getPortletName() + ".doRefresh",
+					portletConfig.getPortletName() +
+						SessionMessages.KEY_SUFFIX_REFRESH_PORTLET,
 					PortletKeys.STAGING_BAR);
+
+				Map<String, String> data = new HashMap<String, String>();
+
+				data.put("preventNotification", Boolean.TRUE.toString());
+
+				SessionMessages.add(
+					actionRequest,
+					portletConfig.getPortletName() +
+						SessionMessages.KEY_SUFFIX_REFRESH_PORTLET_DATA,
+					data);
 			}
 
 			sendRedirect(actionRequest, actionResponse);
@@ -149,7 +163,8 @@ public class EditLayoutSetBranchAction extends EditLayoutsAction {
 		if (layoutSetBranchId == currentLayoutBranchId) {
 			SessionMessages.add(
 				actionRequest,
-				portletConfig.getPortletName() + ".notAjaxable");
+				portletConfig.getPortletName() +
+					SessionMessages.KEY_SUFFIX_PORTLET_NOT_AJAXABLE);
 		}
 
 		LayoutSetBranchServiceUtil.deleteLayoutSetBranch(layoutSetBranchId);

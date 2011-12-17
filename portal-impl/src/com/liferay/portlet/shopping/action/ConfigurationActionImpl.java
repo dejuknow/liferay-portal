@@ -81,11 +81,15 @@ public class ConfigurationActionImpl extends DefaultConfigurationAction {
 			preferences.store();
 
 			SessionMessages.add(
-				actionRequest, portletConfig.getPortletName() + ".doConfigure");
+				actionRequest,
+				portletConfig.getPortletName() +
+					SessionMessages.KEY_SUFFIX_REFRESH_PORTLET,
+				PortletKeys.SHOPPING);
 
 			SessionMessages.add(
-				actionRequest, portletConfig.getPortletName() + ".doRefresh",
-				PortletKeys.SHOPPING);
+				actionRequest,
+				portletConfig.getPortletName() +
+					SessionMessages.KEY_SUFFIX_UPDATED_CONFIGURATION);
 		}
 	}
 

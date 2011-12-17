@@ -232,7 +232,8 @@ public class MBPortletDataHandlerImpl extends BasePortletDataHandler {
 				MBThreadFlag threadFlag =
 					(MBThreadFlag)portletDataContext.getZipEntryAsObject(path);
 
-				importThreadFlag(portletDataContext, threadFlag);
+				importThreadFlag(
+					portletDataContext, threadFlagElement, threadFlag);
 			}
 		}
 
@@ -423,6 +424,15 @@ public class MBPortletDataHandlerImpl extends BasePortletDataHandler {
 		Element threadFlagElement = threadFlagsElement.addElement(
 			"thread-flag");
 
+		MBThread thread = MBThreadLocalServiceUtil.getThread(
+			threadFlag.getThreadId());
+
+		MBMessage rootMessage = MBMessageLocalServiceUtil.getMessage(
+			thread.getRootMessageId());
+
+		threadFlagElement.addAttribute(
+			"root-message-uuid", rootMessage.getUuid());
+
 		portletDataContext.addClassedModel(
 			threadFlagElement, path, threadFlag, _NAMESPACE);
 	}
@@ -445,8 +455,7 @@ public class MBPortletDataHandlerImpl extends BasePortletDataHandler {
 
 		for (Element attachmentElement : attachmentElements) {
 			String name = attachmentElement.attributeValue("name");
-			String binPath = attachmentElement.attributeValue(
-				"bin-path");
+			String binPath = attachmentElement.attributeValue("bin-path");
 
 			InputStream inputStream =
 				portletDataContext.getZipEntryAsInputStream(binPath);
@@ -475,8 +484,7 @@ public class MBPortletDataHandlerImpl extends BasePortletDataHandler {
 			(categoryId != MBCategoryConstants.DISCUSSION_CATEGORY_ID) &&
 			(categoryId == message.getCategoryId())) {
 
-			String path = getImportCategoryPath(
-				portletDataContext, categoryId);
+			String path = getImportCategoryPath(portletDataContext, categoryId);
 
 			MBCategory category =
 				(MBCategory)portletDataContext.getZipEntryAsObject(path);
@@ -799,7 +807,8 @@ public class MBPortletDataHandlerImpl extends BasePortletDataHandler {
 	}
 
 	protected void importThreadFlag(
-			PortletDataContext portletDataContext, MBThreadFlag threadFlag)
+			PortletDataContext portletDataContext, Element threadFlagElement,
+			MBThreadFlag threadFlag)
 		throws Exception {
 
 		long userId = portletDataContext.getUserId(threadFlag.getUserUuid());
@@ -811,7 +820,23 @@ public class MBPortletDataHandlerImpl extends BasePortletDataHandler {
 		long threadId = MapUtil.getLong(
 			messagePKs, threadFlag.getThreadId(), threadFlag.getThreadId());
 
-		MBThread thread = MBThreadUtil.findByPrimaryKey(threadId);
+		MBThread thread = MBThreadUtil.fetchByPrimaryKey(threadId);
+
+		if (thread == null) {
+			String rootMessageUuid = threadFlagElement.attributeValue(
+				"root-message-uuid");
+
+			MBMessage rootMessage = MBMessageUtil.fetchByUUID_G(
+				rootMessageUuid, portletDataContext.getScopeGroupId());
+
+			if (rootMessage != null) {
+				thread = rootMessage.getThread();
+			}
+		}
+
+		if (thread == null) {
+			return;
+		}
 
 		MBThreadFlagLocalServiceUtil.addThreadFlag(userId, thread);
 	}

@@ -101,6 +101,18 @@ public class SAXReaderUtil {
 		return getSAXReader().createXPath(xPathExpression);
 	}
 
+	public static XPath createXPath(
+		String xPathExpression, Map<String, String> namespaceContextMap) {
+
+		return getSAXReader().createXPath(xPathExpression, namespaceContextMap);
+	}
+
+	public static XPath createXPath(
+		String xPathExpression, String prefix, String namespace) {
+
+		return getSAXReader().createXPath(xPathExpression, prefix, namespace);
+	}
+
 	public static SAXReader getSAXReader() {
 		return _saxReader;
 	}
@@ -168,26 +180,26 @@ public class SAXReaderUtil {
 	}
 
 	public static List<Node> selectNodes(
-		String xpathFilterExpression, List<Node> nodes) {
+		String xPathFilterExpression, List<Node> nodes) {
 
-		return getSAXReader().selectNodes(xpathFilterExpression, nodes);
+		return getSAXReader().selectNodes(xPathFilterExpression, nodes);
 	}
 
 	public static List<Node> selectNodes(
-		String xpathFilterExpression, Node node) {
+		String xPathFilterExpression, Node node) {
 
-		return getSAXReader().selectNodes(xpathFilterExpression, node);
+		return getSAXReader().selectNodes(xPathFilterExpression, node);
 	}
 
-	public static void sort(List<Node> nodes, String xpathExpression) {
+	public static void sort(List<Node> nodes, String xPathExpression) {
 
-		getSAXReader().sort(nodes, xpathExpression);
+		getSAXReader().sort(nodes, xPathExpression);
 	}
 
 	public static void sort(
-		List<Node> nodes, String xpathExpression, boolean distinct) {
+		List<Node> nodes, String xPathExpression, boolean distinct) {
 
-		getSAXReader().sort(nodes, xpathExpression, distinct);
+		getSAXReader().sort(nodes, xPathExpression, distinct);
 	}
 
 	public void setSAXReader(SAXReader saxReader) {

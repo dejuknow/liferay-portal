@@ -48,8 +48,8 @@ import java.rmi.RemoteException;
  *
  * <p>
  * You can see a list of services at
- * http://localhost:8080/tunnel-web/secure/axis. Set the property
- * <b>tunnel.servlet.hosts.allowed</b> in portal.properties to configure
+ * http://localhost:8080/api/secure/axis. Set the property
+ * <b>axis.servlet.hosts.allowed</b> in portal.properties to configure
  * security.
  * </p>
  *
@@ -65,10 +65,12 @@ import java.rmi.RemoteException;
  */
 public class MembershipRequestServiceSoap {
 	public static com.liferay.portal.model.MembershipRequestSoap addMembershipRequest(
-		long groupId, java.lang.String comments) throws RemoteException {
+		long groupId, java.lang.String comments,
+		com.liferay.portal.service.ServiceContext serviceContext)
+		throws RemoteException {
 		try {
 			com.liferay.portal.model.MembershipRequest returnValue = MembershipRequestServiceUtil.addMembershipRequest(groupId,
-					comments);
+					comments, serviceContext);
 
 			return com.liferay.portal.model.MembershipRequestSoap.toSoapModel(returnValue);
 		}
@@ -107,11 +109,12 @@ public class MembershipRequestServiceSoap {
 	}
 
 	public static void updateStatus(long membershipRequestId,
-		java.lang.String reviewComments, int statusId)
+		java.lang.String reviewComments, int statusId,
+		com.liferay.portal.service.ServiceContext serviceContext)
 		throws RemoteException {
 		try {
 			MembershipRequestServiceUtil.updateStatus(membershipRequestId,
-				reviewComments, statusId);
+				reviewComments, statusId, serviceContext);
 		}
 		catch (Exception e) {
 			_log.error(e, e);

@@ -30,26 +30,6 @@
 		<priority value="ERROR" />
 	</category>
 
-	<category name="com.liferay.documentlibrary">
-		<priority value="ERROR" />
-	</category>
-
-	<category name="com.liferay.documentlibrary.util">
-		<priority value="ERROR" />
-	</category>
-
-	<category name="com.liferay.documentlibrary.util.CMISHook">
-		<priority value="INFO" />
-	</category>
-
-	<category name="com.liferay.documentlibrary.util.DLIndexer">
-		<priority value="ERROR" />
-	</category>
-
-	<category name="com.liferay.documentlibrary.util.HookFactory">
-		<priority value="ERROR" />
-	</category>
-
 	<category name="com.liferay.jdbc">
 		<priority value="ERROR" />
 	</category>
@@ -422,7 +402,7 @@
 		<priority value="INFO" />
 	</category>
 
-	<category name="com.liferay.portal.security.permission.ResourceActionsUtil">
+	<category name="com.liferay.portal.security.permission.ResourceActionsImpl">
 		<priority value="WARN" />
 	</category>
 
@@ -528,6 +508,18 @@
 
 	<category name="com.liferay.portal.servlet.filters.doubleclick">
 		<priority value="ERROR" />
+	</category>
+
+	<category name="com.liferay.portal.servlet.filters.dynamiccss">
+		<priority value="ERROR" />
+	</category>
+
+	<category name="com.liferay.portal.servlet.filters.dynamiccss.DynamicCSSFilter">
+		<priority value="ERROR" />
+	</category>
+
+	<category name="com.liferay.portal.servlet.filters.dynamiccss.DynamicCSSUtil">
+		<priority value="DEBUG" />
 	</category>
 
 	<category name="com.liferay.portal.servlet.filters.fragment">
@@ -770,8 +762,16 @@
 		<priority value="WARN" />
 	</category>
 
+	<category name="com.liferay.portlet.documentlibrary.store.StoreFactory">
+		<priority value="WARN" />
+	</category>
+
 	<category name="com.liferay.portlet.documentlibrary.util">
 		<priority value="WARN" />
+	</category>
+
+	<category name="com.liferay.portlet.documentlibrary.util.DLIndexer">
+		<priority value="ERROR" />
 	</category>
 
 	<category name="com.liferay.portlet.documentlibrary.webdav">
@@ -1064,6 +1064,10 @@
 
 	<category name="org.springframework">
 		<priority value="ERROR" />
+	</category>
+
+	<category name="org.springframework.aop.support.AopUtils">
+		<priority value="INFO" />
 	</category>
 
 	<category name="portal-web.docroot.errors.404.jsp">

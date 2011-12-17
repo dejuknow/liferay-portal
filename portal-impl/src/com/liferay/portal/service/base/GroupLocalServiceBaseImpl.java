@@ -97,6 +97,7 @@ import com.liferay.portal.service.QuartzLocalService;
 import com.liferay.portal.service.RegionService;
 import com.liferay.portal.service.ReleaseLocalService;
 import com.liferay.portal.service.RepositoryEntryLocalService;
+import com.liferay.portal.service.RepositoryLocalService;
 import com.liferay.portal.service.RepositoryService;
 import com.liferay.portal.service.ResourceActionLocalService;
 import com.liferay.portal.service.ResourceBlockLocalService;
@@ -158,6 +159,7 @@ import com.liferay.portal.service.persistence.LayoutSetBranchPersistence;
 import com.liferay.portal.service.persistence.LayoutSetPersistence;
 import com.liferay.portal.service.persistence.LayoutSetPrototypePersistence;
 import com.liferay.portal.service.persistence.ListTypePersistence;
+import com.liferay.portal.service.persistence.LockFinder;
 import com.liferay.portal.service.persistence.LockPersistence;
 import com.liferay.portal.service.persistence.MembershipRequestPersistence;
 import com.liferay.portal.service.persistence.OrgGroupPermissionFinder;
@@ -221,8 +223,12 @@ import com.liferay.portal.service.persistence.WorkflowInstanceLinkPersistence;
 
 import com.liferay.portlet.asset.service.AssetEntryLocalService;
 import com.liferay.portlet.asset.service.AssetEntryService;
+import com.liferay.portlet.asset.service.AssetVocabularyLocalService;
+import com.liferay.portlet.asset.service.AssetVocabularyService;
 import com.liferay.portlet.asset.service.persistence.AssetEntryFinder;
 import com.liferay.portlet.asset.service.persistence.AssetEntryPersistence;
+import com.liferay.portlet.asset.service.persistence.AssetVocabularyFinder;
+import com.liferay.portlet.asset.service.persistence.AssetVocabularyPersistence;
 import com.liferay.portlet.blogs.service.BlogsEntryLocalService;
 import com.liferay.portlet.blogs.service.BlogsEntryService;
 import com.liferay.portlet.blogs.service.BlogsStatsUserLocalService;
@@ -239,6 +245,10 @@ import com.liferay.portlet.calendar.service.persistence.CalEventFinder;
 import com.liferay.portlet.calendar.service.persistence.CalEventPersistence;
 import com.liferay.portlet.documentlibrary.service.DLAppLocalService;
 import com.liferay.portlet.documentlibrary.service.DLAppService;
+import com.liferay.portlet.documentlibrary.service.DLFileEntryTypeLocalService;
+import com.liferay.portlet.documentlibrary.service.DLFileEntryTypeService;
+import com.liferay.portlet.documentlibrary.service.persistence.DLFileEntryTypeFinder;
+import com.liferay.portlet.documentlibrary.service.persistence.DLFileEntryTypePersistence;
 import com.liferay.portlet.journal.service.JournalArticleLocalService;
 import com.liferay.portlet.journal.service.JournalArticleService;
 import com.liferay.portlet.journal.service.JournalStructureLocalService;
@@ -1661,6 +1671,24 @@ public abstract class GroupLocalServiceBaseImpl implements GroupLocalService,
 	}
 
 	/**
+	 * Returns the lock finder.
+	 *
+	 * @return the lock finder
+	 */
+	public LockFinder getLockFinder() {
+		return lockFinder;
+	}
+
+	/**
+	 * Sets the lock finder.
+	 *
+	 * @param lockFinder the lock finder
+	 */
+	public void setLockFinder(LockFinder lockFinder) {
+		this.lockFinder = lockFinder;
+	}
+
+	/**
 	 * Returns the membership request local service.
 	 *
 	 * @return the membership request local service
@@ -2570,6 +2598,25 @@ public abstract class GroupLocalServiceBaseImpl implements GroupLocalService,
 	 */
 	public void setReleasePersistence(ReleasePersistence releasePersistence) {
 		this.releasePersistence = releasePersistence;
+	}
+
+	/**
+	 * Returns the repository local service.
+	 *
+	 * @return the repository local service
+	 */
+	public RepositoryLocalService getRepositoryLocalService() {
+		return repositoryLocalService;
+	}
+
+	/**
+	 * Sets the repository local service.
+	 *
+	 * @param repositoryLocalService the repository local service
+	 */
+	public void setRepositoryLocalService(
+		RepositoryLocalService repositoryLocalService) {
+		this.repositoryLocalService = repositoryLocalService;
 	}
 
 	/**
@@ -4099,6 +4146,82 @@ public abstract class GroupLocalServiceBaseImpl implements GroupLocalService,
 	}
 
 	/**
+	 * Returns the asset vocabulary local service.
+	 *
+	 * @return the asset vocabulary local service
+	 */
+	public AssetVocabularyLocalService getAssetVocabularyLocalService() {
+		return assetVocabularyLocalService;
+	}
+
+	/**
+	 * Sets the asset vocabulary local service.
+	 *
+	 * @param assetVocabularyLocalService the asset vocabulary local service
+	 */
+	public void setAssetVocabularyLocalService(
+		AssetVocabularyLocalService assetVocabularyLocalService) {
+		this.assetVocabularyLocalService = assetVocabularyLocalService;
+	}
+
+	/**
+	 * Returns the asset vocabulary remote service.
+	 *
+	 * @return the asset vocabulary remote service
+	 */
+	public AssetVocabularyService getAssetVocabularyService() {
+		return assetVocabularyService;
+	}
+
+	/**
+	 * Sets the asset vocabulary remote service.
+	 *
+	 * @param assetVocabularyService the asset vocabulary remote service
+	 */
+	public void setAssetVocabularyService(
+		AssetVocabularyService assetVocabularyService) {
+		this.assetVocabularyService = assetVocabularyService;
+	}
+
+	/**
+	 * Returns the asset vocabulary persistence.
+	 *
+	 * @return the asset vocabulary persistence
+	 */
+	public AssetVocabularyPersistence getAssetVocabularyPersistence() {
+		return assetVocabularyPersistence;
+	}
+
+	/**
+	 * Sets the asset vocabulary persistence.
+	 *
+	 * @param assetVocabularyPersistence the asset vocabulary persistence
+	 */
+	public void setAssetVocabularyPersistence(
+		AssetVocabularyPersistence assetVocabularyPersistence) {
+		this.assetVocabularyPersistence = assetVocabularyPersistence;
+	}
+
+	/**
+	 * Returns the asset vocabulary finder.
+	 *
+	 * @return the asset vocabulary finder
+	 */
+	public AssetVocabularyFinder getAssetVocabularyFinder() {
+		return assetVocabularyFinder;
+	}
+
+	/**
+	 * Sets the asset vocabulary finder.
+	 *
+	 * @param assetVocabularyFinder the asset vocabulary finder
+	 */
+	public void setAssetVocabularyFinder(
+		AssetVocabularyFinder assetVocabularyFinder) {
+		this.assetVocabularyFinder = assetVocabularyFinder;
+	}
+
+	/**
 	 * Returns the blogs entry local service.
 	 *
 	 * @return the blogs entry local service
@@ -4393,6 +4516,82 @@ public abstract class GroupLocalServiceBaseImpl implements GroupLocalService,
 	 */
 	public void setDLAppService(DLAppService dlAppService) {
 		this.dlAppService = dlAppService;
+	}
+
+	/**
+	 * Returns the document library file entry type local service.
+	 *
+	 * @return the document library file entry type local service
+	 */
+	public DLFileEntryTypeLocalService getDLFileEntryTypeLocalService() {
+		return dlFileEntryTypeLocalService;
+	}
+
+	/**
+	 * Sets the document library file entry type local service.
+	 *
+	 * @param dlFileEntryTypeLocalService the document library file entry type local service
+	 */
+	public void setDLFileEntryTypeLocalService(
+		DLFileEntryTypeLocalService dlFileEntryTypeLocalService) {
+		this.dlFileEntryTypeLocalService = dlFileEntryTypeLocalService;
+	}
+
+	/**
+	 * Returns the document library file entry type remote service.
+	 *
+	 * @return the document library file entry type remote service
+	 */
+	public DLFileEntryTypeService getDLFileEntryTypeService() {
+		return dlFileEntryTypeService;
+	}
+
+	/**
+	 * Sets the document library file entry type remote service.
+	 *
+	 * @param dlFileEntryTypeService the document library file entry type remote service
+	 */
+	public void setDLFileEntryTypeService(
+		DLFileEntryTypeService dlFileEntryTypeService) {
+		this.dlFileEntryTypeService = dlFileEntryTypeService;
+	}
+
+	/**
+	 * Returns the document library file entry type persistence.
+	 *
+	 * @return the document library file entry type persistence
+	 */
+	public DLFileEntryTypePersistence getDLFileEntryTypePersistence() {
+		return dlFileEntryTypePersistence;
+	}
+
+	/**
+	 * Sets the document library file entry type persistence.
+	 *
+	 * @param dlFileEntryTypePersistence the document library file entry type persistence
+	 */
+	public void setDLFileEntryTypePersistence(
+		DLFileEntryTypePersistence dlFileEntryTypePersistence) {
+		this.dlFileEntryTypePersistence = dlFileEntryTypePersistence;
+	}
+
+	/**
+	 * Returns the document library file entry type finder.
+	 *
+	 * @return the document library file entry type finder
+	 */
+	public DLFileEntryTypeFinder getDLFileEntryTypeFinder() {
+		return dlFileEntryTypeFinder;
+	}
+
+	/**
+	 * Sets the document library file entry type finder.
+	 *
+	 * @param dlFileEntryTypeFinder the document library file entry type finder
+	 */
+	public void setDLFileEntryTypeFinder(
+		DLFileEntryTypeFinder dlFileEntryTypeFinder) {
+		this.dlFileEntryTypeFinder = dlFileEntryTypeFinder;
 	}
 
 	/**
@@ -5436,6 +5635,8 @@ public abstract class GroupLocalServiceBaseImpl implements GroupLocalService,
 	protected LockLocalService lockLocalService;
 	@BeanReference(type = LockPersistence.class)
 	protected LockPersistence lockPersistence;
+	@BeanReference(type = LockFinder.class)
+	protected LockFinder lockFinder;
 	@BeanReference(type = MembershipRequestLocalService.class)
 	protected MembershipRequestLocalService membershipRequestLocalService;
 	@BeanReference(type = MembershipRequestService.class)
@@ -5534,6 +5735,8 @@ public abstract class GroupLocalServiceBaseImpl implements GroupLocalService,
 	protected ReleaseLocalService releaseLocalService;
 	@BeanReference(type = ReleasePersistence.class)
 	protected ReleasePersistence releasePersistence;
+	@BeanReference(type = RepositoryLocalService.class)
+	protected RepositoryLocalService repositoryLocalService;
 	@BeanReference(type = RepositoryService.class)
 	protected RepositoryService repositoryService;
 	@BeanReference(type = RepositoryPersistence.class)
@@ -5698,6 +5901,14 @@ public abstract class GroupLocalServiceBaseImpl implements GroupLocalService,
 	protected AssetEntryPersistence assetEntryPersistence;
 	@BeanReference(type = AssetEntryFinder.class)
 	protected AssetEntryFinder assetEntryFinder;
+	@BeanReference(type = AssetVocabularyLocalService.class)
+	protected AssetVocabularyLocalService assetVocabularyLocalService;
+	@BeanReference(type = AssetVocabularyService.class)
+	protected AssetVocabularyService assetVocabularyService;
+	@BeanReference(type = AssetVocabularyPersistence.class)
+	protected AssetVocabularyPersistence assetVocabularyPersistence;
+	@BeanReference(type = AssetVocabularyFinder.class)
+	protected AssetVocabularyFinder assetVocabularyFinder;
 	@BeanReference(type = BlogsEntryLocalService.class)
 	protected BlogsEntryLocalService blogsEntryLocalService;
 	@BeanReference(type = BlogsEntryService.class)
@@ -5730,6 +5941,14 @@ public abstract class GroupLocalServiceBaseImpl implements GroupLocalService,
 	protected DLAppLocalService dlAppLocalService;
 	@BeanReference(type = DLAppService.class)
 	protected DLAppService dlAppService;
+	@BeanReference(type = DLFileEntryTypeLocalService.class)
+	protected DLFileEntryTypeLocalService dlFileEntryTypeLocalService;
+	@BeanReference(type = DLFileEntryTypeService.class)
+	protected DLFileEntryTypeService dlFileEntryTypeService;
+	@BeanReference(type = DLFileEntryTypePersistence.class)
+	protected DLFileEntryTypePersistence dlFileEntryTypePersistence;
+	@BeanReference(type = DLFileEntryTypeFinder.class)
+	protected DLFileEntryTypeFinder dlFileEntryTypeFinder;
 	@BeanReference(type = JournalArticleLocalService.class)
 	protected JournalArticleLocalService journalArticleLocalService;
 	@BeanReference(type = JournalArticleService.class)

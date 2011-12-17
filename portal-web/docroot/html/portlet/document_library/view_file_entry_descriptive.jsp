@@ -36,7 +36,7 @@ boolean showCheckBox = DLFileEntryPermission.contains(permissionChecker, fileEnt
 
 <%@ include file="/html/portlet/document_library/document_thumbnail.jspf" %>
 
-<div class="document-display-style descriptive <%= showCheckBox ? "selectable" : StringPool.BLANK %>">
+<div class="document-display-style display-descriptive <%= showCheckBox ? "selectable" : StringPool.BLANK %>" data-draggable="<%= showCheckBox ? Boolean.TRUE.toString() : Boolean.FALSE.toString() %>" data-title="<%= StringUtil.shorten(fileEntry.getTitle(), 60) %>">
 	<a class="document-link" data-folder="<%= Boolean.FALSE.toString() %>" href="<%= tempRowURL.toString() %>" title="<%= HtmlUtil.escapeAttribute(HtmlUtil.unescape(fileEntry.getTitle()) + " - " + HtmlUtil.unescape(fileEntry.getDescription())) %>">
 		<span class="document-thumbnail">
 			<img alt="" border="no" src="<%= thumbnailSrc %>" style="<%= thumbnailStyle %>" />
@@ -70,6 +70,17 @@ boolean showCheckBox = DLFileEntryPermission.contains(permissionChecker, fileEnt
 	<liferay-util:include page="/html/portlet/document_library/file_entry_action.jsp" />
 
 	<c:if test="<%= showCheckBox %>">
-		<aui:input cssClass="overlay document-selector" label="" name="<%= RowChecker.ROW_IDS + FileEntry.class.getSimpleName() %>" type="checkbox" value="<%= fileEntry.getFileEntryId() %>" />
+
+		<%
+		String rowCheckerName = FileEntry.class.getSimpleName();
+		long rowCheckerId = fileEntry.getFileEntryId();
+
+		if (fileShortcut != null) {
+			rowCheckerName = DLFileShortcut.class.getSimpleName();
+			rowCheckerId = fileShortcut.getFileShortcutId();
+		}
+		%>
+
+		<aui:input cssClass="overlay document-selector" label="" name="<%= RowChecker.ROW_IDS + rowCheckerName %>" type="checkbox" value="<%= rowCheckerId %>" />
 	</c:if>
 </div>

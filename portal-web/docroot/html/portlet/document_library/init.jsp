@@ -29,6 +29,7 @@ page import="com.liferay.portal.kernel.search.Indexer" %><%@
 page import="com.liferay.portal.kernel.search.IndexerRegistryUtil" %><%@
 page import="com.liferay.portal.kernel.search.SearchContext" %><%@
 page import="com.liferay.portal.kernel.search.SearchContextFactory" %><%@
+page import="com.liferay.portal.kernel.util.MimeTypesUtil" %><%@
 page import="com.liferay.portal.kernel.workflow.WorkflowDefinition" %><%@
 page import="com.liferay.portal.kernel.workflow.WorkflowDefinitionManagerUtil" %><%@
 page import="com.liferay.portal.kernel.workflow.WorkflowEngineManagerUtil" %><%@
@@ -44,6 +45,7 @@ page import="com.liferay.portlet.documentlibrary.DuplicateFileException" %><%@
 page import="com.liferay.portlet.documentlibrary.DuplicateFolderNameException" %><%@
 page import="com.liferay.portlet.documentlibrary.DuplicateRepositoryNameException" %><%@
 page import="com.liferay.portlet.documentlibrary.FileExtensionException" %><%@
+page import="com.liferay.portlet.documentlibrary.FileMimeTypeException" %><%@
 page import="com.liferay.portlet.documentlibrary.FileNameException" %><%@
 page import="com.liferay.portlet.documentlibrary.FileShortcutPermissionException" %><%@
 page import="com.liferay.portlet.documentlibrary.FileSizeException" %><%@
@@ -82,6 +84,7 @@ page import="com.liferay.portlet.documentlibrary.util.ImageProcessor" %><%@
 page import="com.liferay.portlet.documentlibrary.util.PDFProcessor" %><%@
 page import="com.liferay.portlet.documentlibrary.util.VideoProcessor" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.NoSuchStructureException" %><%@
+page import="com.liferay.portlet.dynamicdatamapping.RequiredStructureException" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.StructureDuplicateElementException" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.model.DDMStructure" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.search.StructureSearch" %><%@
@@ -90,6 +93,7 @@ page import="com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalSer
 page import="com.liferay.portlet.dynamicdatamapping.storage.Fields" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.storage.StorageEngineUtil" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.util.DDMXSDUtil" %><%@
+page import="com.liferay.portlet.dynamicdatamapping.util.comparator.StructureStructureKeyComparator" %><%@
 page import="com.liferay.portlet.usersadmin.search.GroupSearch" %><%@
 page import="com.liferay.portlet.usersadmin.search.GroupSearchTerms" %>
 
@@ -166,6 +170,8 @@ else if (!portletId.equals(PortletKeys.DOCUMENT_LIBRARY) && !ArrayUtil.contains(
 }
 
 boolean enableCommentRatings = GetterUtil.getBoolean(preferences.getValue("enableCommentRatings", null), true);
+
+String ddmResource = portletConfig.getInitParameter("ddm-resource");
 
 Format dateFormatDateTime = FastDateFormatFactoryUtil.getDateTime(locale, timeZone);
 %>

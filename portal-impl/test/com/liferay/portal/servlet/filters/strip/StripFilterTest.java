@@ -17,7 +17,6 @@ package com.liferay.portal.servlet.filters.strip;
 import com.liferay.portal.kernel.test.TestCase;
 import com.liferay.portal.util.MinifierUtil;
 
-import java.io.IOException;
 import java.io.StringWriter;
 
 import java.nio.CharBuffer;
@@ -67,7 +66,7 @@ public class StripFilterTest extends TestCase {
 		assertEquals(0, charBuffer.position());
 	}
 
-	public void testProcessCSS() throws IOException {
+	public void testProcessCSS() throws Exception {
 		StripFilter stripFilter = new StripFilter();
 
 		// Missing close tag
@@ -135,7 +134,7 @@ public class StripFilterTest extends TestCase {
 		assertEquals(code.length() + 34, charBuffer.position());
 	}
 
-	public void testProcessJavaScript() throws IOException {
+	public void testProcessJavaScript() throws Exception {
 		StripFilter stripFilter = new StripFilter();
 
 		// Missing close tag
@@ -201,7 +200,7 @@ public class StripFilterTest extends TestCase {
 		assertEquals(code.length() + 20, charBuffer.position());
 	}
 
-	public void testProcessPre() throws IOException {
+	public void testProcessPre() throws Exception {
 		StripFilter stripFilter = new StripFilter();
 
 		// Missing close tag
@@ -235,7 +234,7 @@ public class StripFilterTest extends TestCase {
 		assertEquals(18, charBuffer.position());
 	}
 
-	public void testProcessTextArea() throws IOException {
+	public void testProcessTextArea() throws Exception {
 		StripFilter stripFilter = new StripFilter();
 
 		// Missing close tag
@@ -269,7 +268,7 @@ public class StripFilterTest extends TestCase {
 		assertEquals(29, charBuffer.position());
 	}
 
-	public void testSkipWhiteSpace() throws IOException {
+	public void testSkipWhiteSpace() throws Exception {
 		StripFilter stripFilter = new StripFilter();
 
 		// Empty buffer

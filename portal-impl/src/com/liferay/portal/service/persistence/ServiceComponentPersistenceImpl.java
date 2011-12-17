@@ -189,6 +189,23 @@ public class ServiceComponentPersistenceImpl extends BasePersistenceImpl<Service
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 
+		clearUniqueFindersCache(serviceComponent);
+	}
+
+	@Override
+	public void clearCache(List<ServiceComponent> serviceComponents) {
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+
+		for (ServiceComponent serviceComponent : serviceComponents) {
+			EntityCacheUtil.removeResult(ServiceComponentModelImpl.ENTITY_CACHE_ENABLED,
+				ServiceComponentImpl.class, serviceComponent.getPrimaryKey());
+
+			clearUniqueFindersCache(serviceComponent);
+		}
+	}
+
+	protected void clearUniqueFindersCache(ServiceComponent serviceComponent) {
 		FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_BNS_BNU,
 			new Object[] {
 				serviceComponent.getBuildNamespace(),
@@ -214,20 +231,6 @@ public class ServiceComponentPersistenceImpl extends BasePersistenceImpl<Service
 	/**
 	 * Removes the service component with the primary key from the database. Also notifies the appropriate model listeners.
 	 *
-	 * @param primaryKey the primary key of the service component
-	 * @return the service component that was removed
-	 * @throws com.liferay.portal.NoSuchModelException if a service component with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public ServiceComponent remove(Serializable primaryKey)
-		throws NoSuchModelException, SystemException {
-		return remove(((Long)primaryKey).longValue());
-	}
-
-	/**
-	 * Removes the service component with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
 	 * @param serviceComponentId the primary key of the service component
 	 * @return the service component that was removed
 	 * @throws com.liferay.portal.NoSuchServiceComponentException if a service component with the primary key could not be found
@@ -235,25 +238,38 @@ public class ServiceComponentPersistenceImpl extends BasePersistenceImpl<Service
 	 */
 	public ServiceComponent remove(long serviceComponentId)
 		throws NoSuchServiceComponentException, SystemException {
+		return remove(Long.valueOf(serviceComponentId));
+	}
+
+	/**
+	 * Removes the service component with the primary key from the database. Also notifies the appropriate model listeners.
+	 *
+	 * @param primaryKey the primary key of the service component
+	 * @return the service component that was removed
+	 * @throws com.liferay.portal.NoSuchServiceComponentException if a service component with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public ServiceComponent remove(Serializable primaryKey)
+		throws NoSuchServiceComponentException, SystemException {
 		Session session = null;
 
 		try {
 			session = openSession();
 
 			ServiceComponent serviceComponent = (ServiceComponent)session.get(ServiceComponentImpl.class,
-					Long.valueOf(serviceComponentId));
+					primaryKey);
 
 			if (serviceComponent == null) {
 				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
-						serviceComponentId);
+					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchServiceComponentException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
-					serviceComponentId);
+					primaryKey);
 			}
 
-			return serviceComponentPersistence.remove(serviceComponent);
+			return remove(serviceComponent);
 		}
 		catch (NoSuchServiceComponentException nsee) {
 			throw nsee;
@@ -264,19 +280,6 @@ public class ServiceComponentPersistenceImpl extends BasePersistenceImpl<Service
 		finally {
 			closeSession(session);
 		}
-	}
-
-	/**
-	 * Removes the service component from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param serviceComponent the service component
-	 * @return the service component that was removed
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public ServiceComponent remove(ServiceComponent serviceComponent)
-		throws SystemException {
-		return super.remove(serviceComponent);
 	}
 
 	@Override
@@ -298,19 +301,7 @@ public class ServiceComponentPersistenceImpl extends BasePersistenceImpl<Service
 			closeSession(session);
 		}
 
-		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
-		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
-
-		ServiceComponentModelImpl serviceComponentModelImpl = (ServiceComponentModelImpl)serviceComponent;
-
-		FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_BNS_BNU,
-			new Object[] {
-				serviceComponentModelImpl.getBuildNamespace(),
-				Long.valueOf(serviceComponentModelImpl.getBuildNumber())
-			});
-
-		EntityCacheUtil.removeResult(ServiceComponentModelImpl.ENTITY_CACHE_ENABLED,
-			ServiceComponentImpl.class, serviceComponent.getPrimaryKey());
+		clearCache(serviceComponent);
 
 		return serviceComponent;
 	}
@@ -1184,7 +1175,7 @@ public class ServiceComponentPersistenceImpl extends BasePersistenceImpl<Service
 		throws SystemException {
 		for (ServiceComponent serviceComponent : findByBuildNamespace(
 				buildNamespace)) {
-			serviceComponentPersistence.remove(serviceComponent);
+			remove(serviceComponent);
 		}
 	}
 
@@ -1200,7 +1191,7 @@ public class ServiceComponentPersistenceImpl extends BasePersistenceImpl<Service
 		ServiceComponent serviceComponent = findByBNS_BNU(buildNamespace,
 				buildNumber);
 
-		serviceComponentPersistence.remove(serviceComponent);
+		remove(serviceComponent);
 	}
 
 	/**
@@ -1210,7 +1201,7 @@ public class ServiceComponentPersistenceImpl extends BasePersistenceImpl<Service
 	 */
 	public void removeAll() throws SystemException {
 		for (ServiceComponent serviceComponent : findAll()) {
-			serviceComponentPersistence.remove(serviceComponent);
+			remove(serviceComponent);
 		}
 	}
 

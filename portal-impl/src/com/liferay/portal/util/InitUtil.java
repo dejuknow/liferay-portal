@@ -91,10 +91,7 @@ public class InitUtil {
 
 			ClassLoader classLoader = InitUtil.class.getClassLoader();
 
-			Log4JUtil.configureLog4J(
-				classLoader.getResource("META-INF/portal-log4j.xml"));
-			Log4JUtil.configureLog4J(
-				classLoader.getResource("META-INF/portal-log4j-ext.xml"));
+			Log4JUtil.configureLog4J(classLoader);
 		}
 
 		// Shared log

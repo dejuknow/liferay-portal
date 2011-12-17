@@ -94,13 +94,6 @@ public class OrgLaborUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static OrgLabor remove(OrgLabor orgLabor) throws SystemException {
-		return getPersistence().remove(orgLabor);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static OrgLabor update(OrgLabor orgLabor, boolean merge)

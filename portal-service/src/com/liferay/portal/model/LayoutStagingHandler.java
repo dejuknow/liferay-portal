@@ -112,9 +112,7 @@ public class LayoutStagingHandler implements InvocationHandler {
 		_layoutRevision = layoutRevision;
 	}
 
-	private LayoutStagingHandler(
-		Layout layout, LayoutRevision layoutRevision) {
-
+	private LayoutStagingHandler(Layout layout, LayoutRevision layoutRevision) {
 		_layout = layout;
 
 		try {
@@ -235,6 +233,8 @@ public class LayoutStagingHandler implements InvocationHandler {
 				LayoutBranchConstants.MASTER_BRANCH_DESCRIPTION, true,
 				serviceContext);
 		}
+
+		serviceContext.setWorkflowAction(WorkflowConstants.ACTION_SAVE_DRAFT);
 
 		layoutRevision = LayoutRevisionLocalServiceUtil.addLayoutRevision(
 			serviceContext.getUserId(), layoutSetBranchId,

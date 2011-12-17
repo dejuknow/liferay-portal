@@ -22,6 +22,7 @@ import com.liferay.portal.security.permission.PermissionChecker;
 /**
  * @author Charles May
  * @author Brian Wing Shun Chan
+ * @author Raymond Augé
  */
 public interface LayoutPermission {
 
@@ -39,7 +40,18 @@ public interface LayoutPermission {
 		throws PortalException, SystemException;
 
 	public boolean contains(
+			PermissionChecker permissionChecker, Layout layout,
+			boolean checkViewableGroup, String actionId)
+		throws PortalException, SystemException;
+
+	public boolean contains(
 			PermissionChecker permissionChecker, Layout layout, String actionId)
+		throws PortalException, SystemException;
+
+	public boolean contains(
+			PermissionChecker permissionChecker, Layout layout,
+			String controlPanelCategory, boolean checkViewableGroup,
+			String actionId)
 		throws PortalException, SystemException;
 
 	public boolean contains(

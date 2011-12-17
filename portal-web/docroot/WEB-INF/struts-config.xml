@@ -31,6 +31,8 @@
 
 		<!-- Portal -->
 
+		<action path="/portal/api/jsonws" forward="portal.api.jsonws" />
+
 		<action path="/portal/emoticons" forward="/portal/emoticons.jsp" />
 
 		<action path="/portal/error" forward="portal.error" />
@@ -118,6 +120,8 @@
 		</action>
 
 		<!-- Activities -->
+
+		<action path="/activities/rss" type="com.liferay.portlet.activities.action.RSSAction" />
 
 		<action path="/activities/view" forward="portlet.activities.view" />
 
@@ -583,6 +587,8 @@
 
 		<action path="/dynamic_data_list_display/edit_record_file" type="com.liferay.portlet.dynamicdatalists.action.EditRecordFileAction" />
 
+		<action path="/dynamic_data_list_display/get_file_upload" type="com.liferay.portlet.dynamicdatalists.action.GetFileUploadAction" />
+
 		<action path="/dynamic_data_list_display/view" forward="portlet.dynamic_data_list_display.view" />
 
 		<action path="/dynamic_data_list_display/view_record" type="com.liferay.portlet.dynamicdatalists.action.EditRecordAction">
@@ -611,6 +617,8 @@
 
 		<action path="/dynamic_data_lists/export" type="com.liferay.portlet.dynamicdatalists.action.ExportRecordSetAction" />
 
+		<action path="/dynamic_data_lists/get_file_upload" type="com.liferay.portlet.dynamicdatalists.action.GetFileUploadAction" />
+
 		<action path="/dynamic_data_lists/view" forward="portlet.dynamic_data_lists.view" />
 
 		<action path="/dynamic_data_lists/view_record" type="com.liferay.portlet.dynamicdatalists.action.EditRecordAction">
@@ -629,6 +637,11 @@
 		</action>
 
 		<!-- Dynamic Data Mapping -->
+
+		<action path="/dynamic_data_mapping/copy_structure" type="com.liferay.portlet.dynamicdatamapping.action.CopyStructureAction">
+			<forward name="portlet.dynamic_data_mapping.copy_structure" path="portlet.dynamic_data_mapping.copy_structure" />
+			<forward name="portlet.dynamic_data_mapping.error" path="portlet.dynamic_data_mapping.error" />
+		</action>
 
 		<action path="/dynamic_data_mapping/edit_structure" type="com.liferay.portlet.dynamicdatamapping.action.EditStructureAction">
 			<forward name="portlet.dynamic_data_mapping.edit_structure" path="portlet.dynamic_data_mapping.edit_structure" />
@@ -1175,10 +1188,14 @@
 			<forward name="portlet.mobile_device_rules.error" path="portlet.mobile_device_rules.error" />
 		</action>
 
+		<action path="/mobile_device_rules/edit_action_editor" type="com.liferay.portlet.mobiledevicerules.action.EditActionAction" />
+
 		<action path="/mobile_device_rules/edit_rule" type="com.liferay.portlet.mobiledevicerules.action.EditRuleAction">
 			<forward name="portlet.mobile_device_rules.edit_rule" path="portlet.mobile_device_rules.edit_rule" />
 			<forward name="portlet.mobile_device_rules.error" path="portlet.mobile_device_rules.error" />
 		</action>
+
+		<action path="/mobile_device_rules/edit_rule_editor" type="com.liferay.portlet.mobiledevicerules.action.EditRuleAction" />
 
 		<action path="/mobile_device_rules/edit_rule_group" type="com.liferay.portlet.mobiledevicerules.action.EditRuleGroupAction">
 			<forward name="portlet.mobile_device_rules.edit_rule_group" path="portlet.mobile_device_rules.edit_rule_group" />
@@ -1190,17 +1207,13 @@
 			<forward name="portlet.mobile_device_rules.error" path="portlet.mobile_device_rules.error" />
 		</action>
 
-		<action path="/mobile_device_rules/edit_action_editor" type="com.liferay.portlet.mobiledevicerules.action.EditActionAction" />
-
-		<action path="/mobile_device_rules/edit_rule_editor" type="com.liferay.portlet.mobiledevicerules.action.EditRuleAction" />
-
 		<action path="/mobile_device_rules/edit_rule_group_instance_editor" type="com.liferay.portlet.mobiledevicerules.action.EditRuleGroupInstanceAction" />
+
+		<action path="/mobile_device_rules/site_url_layouts" type="com.liferay.portlet.mobiledevicerules.action.SiteURLLayoutsAction" />
 
 		<action path="/mobile_device_rules/view" forward="portlet.mobile_device_rules.view" />
 
 		<action path="/mobile_device_rules/view_actions" forward="portlet.mobile_device_rules.view_actions" />
-
-		<action path="/mobile_device_rules/view_group_layouts" type="com.liferay.portlet.mobiledevicerules.action.SiteResourceAction" />
 
 		<action path="/mobile_device_rules/view_rules" forward="portlet.mobile_device_rules.view_rules" />
 
@@ -1414,6 +1427,12 @@
 			<forward name="portlet.polls_display.view" path="portlet.polls_display.view" />
 		</action>
 
+        <action path="/polls_display/vote_question" type="com.liferay.portlet.polls.action.ViewQuestionAction" >
+            <forward name="portlet.polls.edit_question" path="portlet.polls_display.view" />
+            <forward name="portlet.polls.error" path="portlet.polls_display.error" />
+            <forward name="portlet.polls_display.view" path="portlet.polls_display.view" />
+		</action>
+
 		<!-- Portal Settings -->
 
 		<action path="/portal_settings/edit_company" type="com.liferay.portlet.portalsettings.action.EditCompanyAction">
@@ -1446,6 +1465,10 @@
 		<!-- Portlet Configuration -->
 
 		<action path="/portlet_configuration/add_asset_redirect" forward="portlet.asset_publisher.add_asset_redirect" />
+
+		<action path="/portlet_configuration/add_group_statistics_activity_counter" forward="portlet.group_statistics.add_activity_counter" />
+
+		<action path="/portlet_configuration/add_user_statistics_activity_counter" forward="portlet.user_statistics.add_activity_counter" />
 
 		<action path="/portlet_configuration/edit_archived_setups" type="com.liferay.portlet.portletconfiguration.action.EditArchivedSetupsAction">
 			<forward name="portlet.portlet_configuration.edit_archived_setups" path="portlet.portlet_configuration.edit_archived_setups" />
@@ -1731,10 +1754,10 @@
 
 		<action path="/sites_admin/view_teams" forward="portlet.sites_admin.view_teams" />
 
-		<!-- Social Equity Admin -->
+		<!-- Social Activity -->
 
-		<action path="/social_equity_admin/view" type="com.liferay.portlet.socialequityadmin.action.ViewAction">
-			<forward name="portlet.social_equity_admin.view" path="portlet.social_equity_admin.view" />
+		<action path="/social_activity/view" type="com.liferay.portlet.socialactivity.action.ViewAction">
+			<forward name="portlet.social_activity.view" path="portlet.social_activity.view" />
 		</action>
 
 		<!-- Software Catalog -->
@@ -1841,6 +1864,8 @@
 			<forward name="portlet.layouts_admin.export_layouts" path="portlet.layouts_admin.export_layouts" />
 		</action>
 
+		<action path="/user_groups_admin/page" type="com.liferay.portlet.myplaces.action.ViewAction" />
+
 		<action path="/user_groups_admin/select_user_group" forward="portlet.user_groups_admin.select_user_group" />
 
 		<action path="/user_groups_admin/view" forward="portlet.user_groups_admin.view" />
@@ -1916,6 +1941,8 @@
 
 		<action path="/users_admin/select_site_role" forward="portlet.roles_admin.select_site_role" />
 
+        <action path="/users_admin/select_user_group" forward="portlet.user_groups_admin.select_user_group" />
+
 		<action path="/users_admin/view" forward="portlet.users_admin.view" />
 
 		<action path="/users_admin/view_teams" forward="portlet.sites_admin.view_teams" />
@@ -1990,8 +2017,8 @@
 		<action path="/wiki/view" type="com.liferay.portlet.wiki.action.ViewPageAction">
 			<forward name="portlet.wiki.error" path="portlet.wiki.error" />
 			<forward name="portlet.wiki.view_categorized_pages" path="portlet.wiki.view_categorized_pages" />
-			<forward name="portlet.wiki.view_tagged_pages" path="portlet.wiki.view_tagged_pages" />
 			<forward name="portlet.wiki.view_page" path="portlet.wiki.view" />
+			<forward name="portlet.wiki.view_tagged_pages" path="portlet.wiki.view_tagged_pages" />
 		</action>
 
 		<action path="/wiki/view_all_pages" type="com.liferay.portlet.wiki.action.ViewNodeAction">
@@ -2030,6 +2057,7 @@
 		<action path="/wiki/view_page_details" type="com.liferay.portlet.wiki.action.ViewPageAction">
 			<forward name="portlet.wiki.error" path="portlet.wiki.error" />
 			<forward name="portlet.wiki.view_categorized_pages" path="portlet.wiki.view_categorized_pages" />
+			<forward name="portlet.wiki.view_tagged_pages" path="portlet.wiki.view_tagged_pages" />
 			<forward name="portlet.wiki.view_page" path="portlet.wiki.view_page_details" />
 		</action>
 

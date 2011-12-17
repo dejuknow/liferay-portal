@@ -111,8 +111,7 @@ public class S3Store extends BaseStore {
 	}
 
 	@Override
-	public void deleteFile(
-			long companyId, long repositoryId, String fileName)
+	public void deleteFile(long companyId, long repositoryId, String fileName)
 		throws SystemException {
 
 		try {
@@ -229,8 +228,7 @@ public class S3Store extends BaseStore {
 	}
 
 	@Override
-	public long getFileSize(
-			long companyId, long repositoryId, String fileName)
+	public long getFileSize(long companyId, long repositoryId, String fileName)
 		throws PortalException, SystemException {
 
 		try {
@@ -316,8 +314,7 @@ public class S3Store extends BaseStore {
 				String newKey =
 					newPrefix + oldKey.substring(x + 1, oldKey.length());
 
-				S3Object newS3Object = new S3Object(
-					_s3Bucket, newKey);
+				S3Object newS3Object = new S3Object(_s3Bucket, newKey);
 
 				newS3Object.setDataInputStream(is);
 
@@ -370,8 +367,7 @@ public class S3Store extends BaseStore {
 				String newKey =
 					newPrefix + oldKey.substring(x + 1, oldKey.length());
 
-				S3Object newS3Object = new S3Object(
-					_s3Bucket, newKey);
+				S3Object newS3Object = new S3Object(_s3Bucket, newKey);
 
 				newS3Object.setDataInputStream(is);
 

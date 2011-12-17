@@ -24,6 +24,7 @@ import com.liferay.portal.service.base.RoleServiceBaseImpl;
 import com.liferay.portal.service.permission.PortalPermissionUtil;
 import com.liferay.portal.service.permission.RolePermissionUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -71,9 +72,9 @@ public class RoleServiceImpl extends RoleServiceBaseImpl {
 	 *
 	 * @param  userId the primary key of the user
 	 * @param  roleIds the primary keys of the roles
-	 * @throws PortalException if a user with the primary key could not be
-	 *         found or if the user did not have permission to assign members
-	 *         to one of the roles
+	 * @throws PortalException if a user with the primary key could not be found
+	 *         or if the user did not have permission to assign members to one
+	 *         of the roles
 	 * @throws SystemException if a system exception occurred
 	 */
 	public void addUserRoles(long userId, long[] roleIds)
@@ -88,10 +89,10 @@ public class RoleServiceImpl extends RoleServiceBaseImpl {
 	 * Deletes the role with the primary key and its associated permissions.
 	 *
 	 * @param  roleId the primary key of the role
-	 * @throws PortalException if the user did not have permission to delete
-	 *         the role, if a role with the primary key could not be found, if
-	 *         the role is a default system role, or if the role's resource
-	 *         could not be found
+	 * @throws PortalException if the user did not have permission to delete the
+	 *         role, if a role with the primary key could not be found, if the
+	 *         role is a default system role, or if the role's resource could
+	 *         not be found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public void deleteRole(long roleId)
@@ -108,10 +109,15 @@ public class RoleServiceImpl extends RoleServiceBaseImpl {
 	 *
 	 * @param  groupId the primary key of the group
 	 * @return the roles associated with the group
+	 * @throws PortalException if a portal exception occurred
 	 * @throws SystemException if a system exception occurred
 	 */
-	public List<Role> getGroupRoles(long groupId) throws SystemException {
-		return roleLocalService.getGroupRoles(groupId);
+	public List<Role> getGroupRoles(long groupId)
+		throws PortalException, SystemException {
+
+		List<Role> roles = roleLocalService.getGroupRoles(groupId);
+
+		return filterRoles(roles);
 	}
 
 	/**
@@ -119,8 +125,8 @@ public class RoleServiceImpl extends RoleServiceBaseImpl {
 	 *
 	 * @param  roleId the primary key of the role
 	 * @return the role with the primary key
-	 * @throws PortalException if a role with the primary key could not be
-	 *         found or if the user did not have permission to view the role
+	 * @throws PortalException if a role with the primary key could not be found
+	 *         or if the user did not have permission to view the role
 	 * @throws SystemException if a system exception occurred
 	 */
 	public Role getRole(long roleId)
@@ -137,16 +143,14 @@ public class RoleServiceImpl extends RoleServiceBaseImpl {
 	 *
 	 * <p>
 	 * The method searches the system roles map first for default roles. If a
-	 * role with the name is not found, then the method will query the
-	 * database.
+	 * role with the name is not found, then the method will query the database.
 	 * </p>
 	 *
 	 * @param  companyId the primary key of the company
 	 * @param  name the role's name
 	 * @return the role with the name
-	 * @throws PortalException if a role with the name could not be found in
-	 *         the company or if the user did not have permission to view the
-	 *         role
+	 * @throws PortalException if a role with the name could not be found in the
+	 *         company or if the user did not have permission to view the role
 	 * @throws SystemException if a system exception occurred
 	 */
 	public Role getRole(long companyId, String name)
@@ -166,12 +170,16 @@ public class RoleServiceImpl extends RoleServiceBaseImpl {
 	 * @param  userId the primary key of the user
 	 * @param  groupId the primary key of the group
 	 * @return the user's roles within the user group
+	 * @throws PortalException if a portal exception occurred
 	 * @throws SystemException if a system exception occurred
 	 */
 	public List<Role> getUserGroupGroupRoles(long userId, long groupId)
-		throws SystemException {
+		throws PortalException, SystemException {
 
-		return roleLocalService.getUserGroupGroupRoles(userId, groupId);
+		List<Role> roles = roleLocalService.getUserGroupGroupRoles(
+			userId, groupId);
+
+		return filterRoles(roles);
 	}
 
 	/**
@@ -180,12 +188,15 @@ public class RoleServiceImpl extends RoleServiceBaseImpl {
 	 * @param  userId the primary key of the user
 	 * @param  groupId the primary key of the group
 	 * @return the user's roles within the user group
+	 * @throws PortalException if a portal exception occurred
 	 * @throws SystemException if a system exception occurred
 	 */
 	public List<Role> getUserGroupRoles(long userId, long groupId)
-		throws SystemException {
+		throws PortalException, SystemException {
 
-		return roleLocalService.getUserGroupRoles(userId, groupId);
+		List<Role> roles = roleLocalService.getUserGroupRoles(userId, groupId);
+
+		return filterRoles(roles);
 	}
 
 	/**
@@ -194,12 +205,15 @@ public class RoleServiceImpl extends RoleServiceBaseImpl {
 	 * @param  userId the primary key of the user
 	 * @param  groups the groups (optionally <code>null</code>)
 	 * @return the union of all the user's roles within the groups
+	 * @throws PortalException if a portal exception occurred
 	 * @throws SystemException if a system exception occurred
 	 */
 	public List<Role> getUserRelatedRoles(long userId, List<Group> groups)
-		throws SystemException {
+		throws PortalException, SystemException {
 
-		return roleLocalService.getUserRelatedRoles(userId, groups);
+		List<Role> roles = roleLocalService.getUserRelatedRoles(userId, groups);
+
+		return filterRoles(roles);
 	}
 
 	/**
@@ -207,10 +221,15 @@ public class RoleServiceImpl extends RoleServiceBaseImpl {
 	 *
 	 * @param  userId the primary key of the user
 	 * @return the roles associated with the user
+	 * @throws PortalException if a portal exception occurred
 	 * @throws SystemException if a system exception occurred
 	 */
-	public List<Role> getUserRoles(long userId) throws SystemException {
-		return roleLocalService.getUserRoles(userId);
+	public List<Role> getUserRoles(long userId)
+		throws PortalException, SystemException {
+
+		List<Role> roles = roleLocalService.getUserRoles(userId);
+
+		return filterRoles(roles);
 	}
 
 	/**
@@ -224,9 +243,8 @@ public class RoleServiceImpl extends RoleServiceBaseImpl {
 	 *         search
 	 * @return <code>true</code> if the user is associated with the regular
 	 *         role; <code>false</code> otherwise
-	 * @throws PortalException if a role with the name could not be found in
-	 *         the company or if a default user for the company could not be
-	 *         found
+	 * @throws PortalException if a role with the name could not be found in the
+	 *         company or if a default user for the company could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public boolean hasUserRole(
@@ -267,9 +285,9 @@ public class RoleServiceImpl extends RoleServiceBaseImpl {
 	 * @param  userId the primary key of the user
 	 * @param  roleIds the primary keys of the roles
 	 * @throws PortalException if a user with the primary key could not be
-	 *         found, if the user did not have permission to remove members
-	 *         from a role, or if a role with any one of the primary keys could
-	 *         not be found
+	 *         found, if the user did not have permission to remove members from
+	 *         a role, or if a role with any one of the primary keys could not
+	 *         be found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public void unsetUserRoles(long userId, long[] roleIds)
@@ -291,9 +309,9 @@ public class RoleServiceImpl extends RoleServiceBaseImpl {
 	 *         <code>null</code>) to replace those existing for the role
 	 * @param  subtype the role's new subtype (optionally <code>null</code>)
 	 * @return the role with the primary key
-	 * @throws PortalException if the user did not have permission to update
-	 *         the role, if a role with the primary could not be found, or if
-	 *         the role's name was invalid
+	 * @throws PortalException if the user did not have permission to update the
+	 *         role, if a role with the primary could not be found, or if the
+	 *         role's name was invalid
 	 * @throws SystemException if a system exception occurred
 	 */
 	public Role updateRole(
@@ -315,6 +333,21 @@ public class RoleServiceImpl extends RoleServiceBaseImpl {
 			RolePermissionUtil.check(
 				getPermissionChecker(), roleIds[i], ActionKeys.ASSIGN_MEMBERS);
 		}
+	}
+
+	protected List<Role> filterRoles(List<Role> roles) throws PortalException {
+		List<Role> filteredRoles = new ArrayList<Role>();
+
+		for (Role role : roles) {
+			if (RolePermissionUtil.contains(
+					getPermissionChecker(), role.getRoleId(),
+					ActionKeys.VIEW)) {
+
+				filteredRoles.add(role);
+			}
+		}
+
+		return filteredRoles;
 	}
 
 }

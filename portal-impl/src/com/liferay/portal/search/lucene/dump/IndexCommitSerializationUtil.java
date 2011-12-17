@@ -83,8 +83,7 @@ public class IndexCommitSerializationUtil {
 					directory.createOutput(segment.getFileName()));
 			}
 
-			writeSegmentsGen(
-				directory, indexCommitMetaInfo.getGeneration());
+			writeSegmentsGen(directory, indexCommitMetaInfo.getGeneration());
 		}
 		finally {
 			if (objectInputStream != null) {
@@ -189,8 +188,7 @@ public class IndexCommitSerializationUtil {
 		}
 	}
 
-	private static void writeSegmentsGen(
-			Directory directory, long generation)
+	private static void writeSegmentsGen(Directory directory, long generation)
 		throws IOException {
 
 		if (_log.isDebugEnabled()) {

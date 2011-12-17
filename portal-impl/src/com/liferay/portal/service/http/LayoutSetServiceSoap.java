@@ -48,8 +48,8 @@ import java.rmi.RemoteException;
  *
  * <p>
  * You can see a list of services at
- * http://localhost:8080/tunnel-web/secure/axis. Set the property
- * <b>tunnel.servlet.hosts.allowed</b> in portal.properties to configure
+ * http://localhost:8080/api/secure/axis. Set the property
+ * <b>axis.servlet.hosts.allowed</b> in portal.properties to configure
  * security.
  * </p>
  *
@@ -64,6 +64,20 @@ import java.rmi.RemoteException;
  * @generated
  */
 public class LayoutSetServiceSoap {
+	public static void updateLayoutSetPrototypeLinkEnabled(long groupId,
+		boolean privateLayout, boolean layoutSetPrototypeLinkEnabled)
+		throws RemoteException {
+		try {
+			LayoutSetServiceUtil.updateLayoutSetPrototypeLinkEnabled(groupId,
+				privateLayout, layoutSetPrototypeLinkEnabled);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
 	public static com.liferay.portal.model.LayoutSetSoap updateLookAndFeel(
 		long groupId, boolean privateLayout, java.lang.String themeId,
 		java.lang.String colorSchemeId, java.lang.String css, boolean wapTheme)

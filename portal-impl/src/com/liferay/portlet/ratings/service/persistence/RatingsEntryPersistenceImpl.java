@@ -48,7 +48,6 @@ import com.liferay.portlet.ratings.model.RatingsEntry;
 import com.liferay.portlet.ratings.model.impl.RatingsEntryImpl;
 import com.liferay.portlet.ratings.model.impl.RatingsEntryModelImpl;
 import com.liferay.portlet.social.service.persistence.SocialActivityPersistence;
-import com.liferay.portlet.social.service.persistence.SocialEquityLogPersistence;
 
 import java.io.Serializable;
 
@@ -223,6 +222,23 @@ public class RatingsEntryPersistenceImpl extends BasePersistenceImpl<RatingsEntr
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 
+		clearUniqueFindersCache(ratingsEntry);
+	}
+
+	@Override
+	public void clearCache(List<RatingsEntry> ratingsEntries) {
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+
+		for (RatingsEntry ratingsEntry : ratingsEntries) {
+			EntityCacheUtil.removeResult(RatingsEntryModelImpl.ENTITY_CACHE_ENABLED,
+				RatingsEntryImpl.class, ratingsEntry.getPrimaryKey());
+
+			clearUniqueFindersCache(ratingsEntry);
+		}
+	}
+
+	protected void clearUniqueFindersCache(RatingsEntry ratingsEntry) {
 		FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_U_C_C,
 			new Object[] {
 				Long.valueOf(ratingsEntry.getUserId()),
@@ -249,20 +265,6 @@ public class RatingsEntryPersistenceImpl extends BasePersistenceImpl<RatingsEntr
 	/**
 	 * Removes the ratings entry with the primary key from the database. Also notifies the appropriate model listeners.
 	 *
-	 * @param primaryKey the primary key of the ratings entry
-	 * @return the ratings entry that was removed
-	 * @throws com.liferay.portal.NoSuchModelException if a ratings entry with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public RatingsEntry remove(Serializable primaryKey)
-		throws NoSuchModelException, SystemException {
-		return remove(((Long)primaryKey).longValue());
-	}
-
-	/**
-	 * Removes the ratings entry with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
 	 * @param entryId the primary key of the ratings entry
 	 * @return the ratings entry that was removed
 	 * @throws com.liferay.portlet.ratings.NoSuchEntryException if a ratings entry with the primary key could not be found
@@ -270,24 +272,38 @@ public class RatingsEntryPersistenceImpl extends BasePersistenceImpl<RatingsEntr
 	 */
 	public RatingsEntry remove(long entryId)
 		throws NoSuchEntryException, SystemException {
+		return remove(Long.valueOf(entryId));
+	}
+
+	/**
+	 * Removes the ratings entry with the primary key from the database. Also notifies the appropriate model listeners.
+	 *
+	 * @param primaryKey the primary key of the ratings entry
+	 * @return the ratings entry that was removed
+	 * @throws com.liferay.portlet.ratings.NoSuchEntryException if a ratings entry with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public RatingsEntry remove(Serializable primaryKey)
+		throws NoSuchEntryException, SystemException {
 		Session session = null;
 
 		try {
 			session = openSession();
 
 			RatingsEntry ratingsEntry = (RatingsEntry)session.get(RatingsEntryImpl.class,
-					Long.valueOf(entryId));
+					primaryKey);
 
 			if (ratingsEntry == null) {
 				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + entryId);
+					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchEntryException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
-					entryId);
+					primaryKey);
 			}
 
-			return ratingsEntryPersistence.remove(ratingsEntry);
+			return remove(ratingsEntry);
 		}
 		catch (NoSuchEntryException nsee) {
 			throw nsee;
@@ -298,19 +314,6 @@ public class RatingsEntryPersistenceImpl extends BasePersistenceImpl<RatingsEntr
 		finally {
 			closeSession(session);
 		}
-	}
-
-	/**
-	 * Removes the ratings entry from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param ratingsEntry the ratings entry
-	 * @return the ratings entry that was removed
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public RatingsEntry remove(RatingsEntry ratingsEntry)
-		throws SystemException {
-		return super.remove(ratingsEntry);
 	}
 
 	@Override
@@ -332,20 +335,7 @@ public class RatingsEntryPersistenceImpl extends BasePersistenceImpl<RatingsEntr
 			closeSession(session);
 		}
 
-		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
-		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
-
-		RatingsEntryModelImpl ratingsEntryModelImpl = (RatingsEntryModelImpl)ratingsEntry;
-
-		FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_U_C_C,
-			new Object[] {
-				Long.valueOf(ratingsEntryModelImpl.getUserId()),
-				Long.valueOf(ratingsEntryModelImpl.getClassNameId()),
-				Long.valueOf(ratingsEntryModelImpl.getClassPK())
-			});
-
-		EntityCacheUtil.removeResult(RatingsEntryModelImpl.ENTITY_CACHE_ENABLED,
-			RatingsEntryImpl.class, ratingsEntry.getPrimaryKey());
+		clearCache(ratingsEntry);
 
 		return ratingsEntry;
 	}
@@ -1609,7 +1599,7 @@ public class RatingsEntryPersistenceImpl extends BasePersistenceImpl<RatingsEntr
 	public void removeByC_C(long classNameId, long classPK)
 		throws SystemException {
 		for (RatingsEntry ratingsEntry : findByC_C(classNameId, classPK)) {
-			ratingsEntryPersistence.remove(ratingsEntry);
+			remove(ratingsEntry);
 		}
 	}
 
@@ -1625,7 +1615,7 @@ public class RatingsEntryPersistenceImpl extends BasePersistenceImpl<RatingsEntr
 		throws NoSuchEntryException, SystemException {
 		RatingsEntry ratingsEntry = findByU_C_C(userId, classNameId, classPK);
 
-		ratingsEntryPersistence.remove(ratingsEntry);
+		remove(ratingsEntry);
 	}
 
 	/**
@@ -1639,7 +1629,7 @@ public class RatingsEntryPersistenceImpl extends BasePersistenceImpl<RatingsEntr
 	public void removeByC_C_S(long classNameId, long classPK, double score)
 		throws SystemException {
 		for (RatingsEntry ratingsEntry : findByC_C_S(classNameId, classPK, score)) {
-			ratingsEntryPersistence.remove(ratingsEntry);
+			remove(ratingsEntry);
 		}
 	}
 
@@ -1650,7 +1640,7 @@ public class RatingsEntryPersistenceImpl extends BasePersistenceImpl<RatingsEntr
 	 */
 	public void removeAll() throws SystemException {
 		for (RatingsEntry ratingsEntry : findAll()) {
-			ratingsEntryPersistence.remove(ratingsEntry);
+			remove(ratingsEntry);
 		}
 	}
 
@@ -1926,8 +1916,6 @@ public class RatingsEntryPersistenceImpl extends BasePersistenceImpl<RatingsEntr
 	protected BlogsStatsUserPersistence blogsStatsUserPersistence;
 	@BeanReference(type = SocialActivityPersistence.class)
 	protected SocialActivityPersistence socialActivityPersistence;
-	@BeanReference(type = SocialEquityLogPersistence.class)
-	protected SocialEquityLogPersistence socialEquityLogPersistence;
 	private static final String _SQL_SELECT_RATINGSENTRY = "SELECT ratingsEntry FROM RatingsEntry ratingsEntry";
 	private static final String _SQL_SELECT_RATINGSENTRY_WHERE = "SELECT ratingsEntry FROM RatingsEntry ratingsEntry WHERE ";
 	private static final String _SQL_COUNT_RATINGSENTRY = "SELECT COUNT(ratingsEntry) FROM RatingsEntry ratingsEntry";

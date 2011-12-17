@@ -95,14 +95,6 @@ public class BlogsEntryUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static BlogsEntry remove(BlogsEntry blogsEntry)
-		throws SystemException {
-		return getPersistence().remove(blogsEntry);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static BlogsEntry update(BlogsEntry blogsEntry, boolean merge)

@@ -95,14 +95,6 @@ public class MBMailingListUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static MBMailingList remove(MBMailingList mbMailingList)
-		throws SystemException {
-		return getPersistence().remove(mbMailingList);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static MBMailingList update(MBMailingList mbMailingList,

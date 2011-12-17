@@ -23,7 +23,7 @@ try {
 	feed = (SyndFeed)ovp.getValue();
 
 	if (Validator.isNull(title)) {
-		title = HtmlUtil.escape(feed.getTitle());
+		title = feed.getTitle();
 	}
 }
 catch (Exception e) {
@@ -78,7 +78,7 @@ catch (Exception e) {
 
 			<c:if test="<%= showFeedTitle %>">
 				<div class="feed-title">
-					<aui:a href="<%= feedLink %>" target="_new"><%= title %></aui:a>
+					<aui:a href="<%= feedLink %>" target="_new"><%= HtmlUtil.escape(title) %></aui:a>
 				</div>
 			</c:if>
 
@@ -126,6 +126,28 @@ catch (Exception e) {
 					else {
 						contents.add(content);
 					}
+
+					List <SyndEnclosure> enclosures = (List<SyndEnclosure>)entry.getEnclosures();
+
+					String enclosureLink = StringPool.BLANK;
+					String enclosureLinkTitle = entry.getTitle();
+
+					for (SyndEnclosure enclosure : enclosures) {
+						if (Validator.isNotNull(enclosure.getUrl())) {
+							enclosureLink = enclosure.getUrl();
+
+							int pos = enclosureLink.lastIndexOf(StringPool.FORWARD_SLASH);
+
+							if (pos > -1) {
+								enclosureLinkTitle = enclosureLink.substring(pos + 1);
+							}
+							else {
+								enclosureLinkTitle = enclosureLink;
+							}
+
+							break;
+						}
+					}
 				%>
 
 					<div class="feed-entry">
@@ -142,6 +164,10 @@ catch (Exception e) {
 
 							<c:if test="<%= showFeedItemAuthor && Validator.isNotNull(author) %>">
 								<span class="feed-entry-author"><%= author %></span>
+							</c:if>
+
+							<c:if test="<%= Validator.isNotNull(enclosureLink) %>">
+								<span class="feed-entry-enclosure"><aui:a href="<%= enclosureLink %>" target="_new"><%= enclosureLinkTitle %></aui:a></span>
 							</c:if>
 
 							<%
@@ -187,7 +213,7 @@ catch (Exception e) {
 	</c:when>
 	<c:otherwise>
 		<div class="portlet-msg-error">
-			<%= LanguageUtil.format(pageContext, "cannot-be-found", urls[i], false) %>
+			<%= LanguageUtil.format(pageContext, "cannot-be-found", HtmlUtil.escape(urls[i]), false) %>
 		</div>
 	</c:otherwise>
 </c:choose>

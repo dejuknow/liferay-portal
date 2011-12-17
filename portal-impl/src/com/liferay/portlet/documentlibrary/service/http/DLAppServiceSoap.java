@@ -40,8 +40,8 @@ import java.rmi.RemoteException;
  *
  * <p>
  * You can see a list of services at
- * http://localhost:8080/tunnel-web/secure/axis. Set the property
- * <b>tunnel.servlet.hosts.allowed</b> in portal.properties to configure
+ * http://localhost:8080/api/secure/axis. Set the property
+ * <b>axis.servlet.hosts.allowed</b> in portal.properties to configure
  * security.
  * </p>
  *
@@ -62,9 +62,9 @@ public class DLAppServiceSoap {
 	* @param repositoryId the primary key of the repository
 	* @param folderId the primary key of the file shortcut's parent folder
 	* @param toFileEntryId the primary key of the file shortcut's file entry
-	* @param serviceContext the service context to be applied. Can specify the
-	file entry's asset category IDs, asset tag names, and expando
-	bridge attributes.
+	* @param serviceContext the service context to be applied. Can set the
+	asset category IDs, asset tag names, and expando bridge
+	attributes for the file entry.
 	* @return the file shortcut
 	* @throws PortalException if the parent folder or file entry could not be
 	found, or if the file shortcut's information was invalid
@@ -810,9 +810,9 @@ public class DLAppServiceSoap {
 	* @param fileShortcutId the primary key of the file shortcut
 	* @param folderId the primary key of the file shortcut's parent folder
 	* @param toFileEntryId the primary key of the file shortcut's file entry
-	* @param serviceContext the service context to be applied. Can specify the
-	file entry's asset category IDs, asset tag names, and expando
-	bridge attributes.
+	* @param serviceContext the service context to be applied. Can set the
+	asset category IDs, asset tag names, and expando bridge
+	attributes for the file entry.
 	* @return the file shortcut
 	* @throws PortalException if the file shortcut, folder, or file entry could
 	not be found

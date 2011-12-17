@@ -14,7 +14,7 @@
 
 package com.liferay.util.mail;
 
-import com.liferay.mail.model.Attachment;
+import com.liferay.mail.model.FileAttachment;
 import com.liferay.mail.service.MailServiceUtil;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayInputStream;
@@ -157,12 +157,12 @@ public class MailEngine {
 			InternetAddress[] bcc, InternetAddress[] bulkAddresses,
 			String subject, String body, boolean htmlFormat,
 			InternetAddress[] replyTo, String messageId, String inReplyTo,
-			List<Attachment> attachments)
+			List<FileAttachment> fileAttachments)
 		throws MailEngineException {
 
 		send(
 			from, to, cc, bcc, bulkAddresses, subject, body, htmlFormat,
-			replyTo, messageId, inReplyTo, attachments, null);
+			replyTo, messageId, inReplyTo, fileAttachments, null);
 	}
 
 	public static void send(
@@ -170,7 +170,7 @@ public class MailEngine {
 			InternetAddress[] bcc, InternetAddress[] bulkAddresses,
 			String subject, String body, boolean htmlFormat,
 			InternetAddress[] replyTo, String messageId, String inReplyTo,
-			List<Attachment> attachments, SMTPAccount smtpAccount)
+			List<FileAttachment> fileAttachments, SMTPAccount smtpAccount)
 		throws MailEngineException {
 
 		StopWatch stopWatch = null;
@@ -192,11 +192,11 @@ public class MailEngine {
 			_log.debug("Message ID: " + messageId);
 			_log.debug("In Reply To: " + inReplyTo);
 
-			if ((attachments != null) && _log.isDebugEnabled()) {
-				for (int i = 0; i < attachments.size(); i++) {
-					Attachment attachment = attachments.get(i);
+			if ((fileAttachments != null) && _log.isDebugEnabled()) {
+				for (int i = 0; i < fileAttachments.size(); i++) {
+					FileAttachment fileAttachment = fileAttachments.get(i);
 
-					File file = attachment.getFile();
+					File file = fileAttachment.getFile();
 
 					if (file == null) {
 						continue;
@@ -204,7 +204,7 @@ public class MailEngine {
 
 					_log.debug(
 						"Attachment " + i + " file " + file.getAbsolutePath() +
-							" and file name " + attachment.getFileName());
+							" and file name " + fileAttachment.getFileName());
 				}
 			}
 		}
@@ -236,7 +236,7 @@ public class MailEngine {
 
 			message.setSubject(subject);
 
-			if ((attachments != null) && (attachments.size() > 0)) {
+			if ((fileAttachments != null) && (fileAttachments.size() > 0)) {
 				MimeMultipart rootMultipart = new MimeMultipart(
 					_MULTIPART_TYPE_MIXED);
 
@@ -264,10 +264,10 @@ public class MailEngine {
 					messageMultipart.addBodyPart(bodyPart);
 				}
 
-				for (int i = 0; i < attachments.size(); i++) {
-					Attachment attachment = attachments.get(i);
+				for (int i = 0; i < fileAttachments.size(); i++) {
+					FileAttachment fileAttachment = fileAttachments.get(i);
 
-					File file = attachment.getFile();
+					File file = fileAttachment.getFile();
 
 					if (file == null) {
 						continue;
@@ -280,8 +280,8 @@ public class MailEngine {
 					mimeBodyPart.setDataHandler(new DataHandler(dataSource));
 					mimeBodyPart.setDisposition(Part.ATTACHMENT);
 
-					if (attachment.getFileName() != null) {
-						mimeBodyPart.setFileName(attachment.getFileName());
+					if (fileAttachment.getFileName() != null) {
+						mimeBodyPart.setFileName(fileAttachment.getFileName());
 					}
 					else {
 						mimeBodyPart.setFileName(file.getName());
@@ -393,7 +393,7 @@ public class MailEngine {
 			mailMessage.getSubject(), mailMessage.getBody(),
 			mailMessage.isHTMLFormat(), mailMessage.getReplyTo(),
 			mailMessage.getMessageId(), mailMessage.getInReplyTo(),
-			mailMessage.getAttachments(), mailMessage.getSMTPAccount());
+			mailMessage.getFileAttachments(), mailMessage.getSMTPAccount());
 	}
 
 	public static void send(String from, String to, String subject, String body)

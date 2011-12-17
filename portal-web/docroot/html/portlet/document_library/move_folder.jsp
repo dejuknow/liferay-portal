@@ -85,7 +85,11 @@ long parentFolderId = BeanParamUtil.getLong(folder, request, "parentFolderId", D
 
 			<aui:button onClick='<%= taglibOpenFolderWindow %>' value="select" />
 
-			<aui:button name="removeFolderButton" onClick='<%= renderResponse.getNamespace() + "removeFolder();" %>' value="remove" />
+			<%
+			String taglibRemoveFolder = "Liferay.Util.removeFolderSelection('parentFolderId', 'parentFolderName', '" + renderResponse.getNamespace() + "');";
+			%>
+
+			<aui:button name="removeFolderButton" onClick="<%= taglibRemoveFolder %>" value="remove" />
 		</aui:field-wrapper>
 		<aui:button-row>
 			<aui:button type="submit" value="move" />
@@ -96,26 +100,19 @@ long parentFolderId = BeanParamUtil.getLong(folder, request, "parentFolderId", D
 </aui:form>
 
 <aui:script>
-	function <portlet:namespace />removeFolder() {
-		document.<portlet:namespace />fm.<portlet:namespace />parentFolderId.value = "<%= rootFolderId %>";
-
-		var nameEl = document.getElementById("<portlet:namespace />parentFolderName");
-
-		nameEl.href = "";
-		nameEl.innerHTML = "";
-	}
-
 	function <portlet:namespace />saveFolder() {
 		submitForm(document.<portlet:namespace />fm);
 	}
 
 	function <portlet:namespace />selectFolder(parentFolderId, parentFolderName) {
-		document.<portlet:namespace />fm.<portlet:namespace />parentFolderId.value = parentFolderId;
+		var folderData = {
+			idString: 'parentFolderId',
+			idValue: parentFolderId,
+			nameString: 'parentFolderName',
+			nameValue: parentFolderName
+		};
 
-		var nameEl = document.getElementById("<portlet:namespace />parentFolderName");
-
-		nameEl.href = "javascript:location = '<portlet:renderURL><portlet:param name="struts_action" value="/document_library/view" /></portlet:renderURL>&<portlet:namespace />folderId=" + parentFolderId + "'; void('');";
-		nameEl.innerHTML = parentFolderName + "&nbsp;";
+		Liferay.Util.selectFolder(folderData, '<portlet:renderURL><portlet:param name="struts_action" value="/document_library/view" /></portlet:renderURL>', '<portlet:namespace />');
 	}
 
 	<c:if test="<%= windowState.equals(WindowState.MAXIMIZED) %>">

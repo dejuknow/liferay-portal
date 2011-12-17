@@ -19,11 +19,15 @@ import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.util.LocaleThreadLocal;
 import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portlet.social.model.SocialActivityCounterDefinition;
 import com.liferay.portlet.social.model.SocialActivityDefinition;
 import com.liferay.portlet.social.service.base.SocialActivitySettingServiceBaseImpl;
+import com.liferay.portlet.social.util.comparator.SocialActivityDefinitionNameComparator;
+
+import edu.emory.mathcs.backport.java.util.Collections;
 
 import java.util.List;
 
@@ -37,11 +41,7 @@ public class SocialActivitySettingServiceImpl
 			long groupId, String className, int activityType)
 		throws PortalException, SystemException {
 
-		PermissionChecker permissionChecker = getPermissionChecker();
-
-		if (!permissionChecker.isGroupAdmin(groupId)) {
-			throw new PrincipalException();
-		}
+		checkPermission(groupId);
 
 		return socialActivitySettingLocalService.getActivityDefinition(
 			groupId, className, activityType);
@@ -51,25 +51,27 @@ public class SocialActivitySettingServiceImpl
 			long groupId, String className)
 		throws PortalException, SystemException {
 
-		PermissionChecker permissionChecker = getPermissionChecker();
-
-		if (!permissionChecker.isGroupAdmin(groupId)) {
-			throw new PrincipalException();
-		}
+		checkPermission(groupId);
 
 		return socialActivitySettingLocalService.getActivityDefinitions(
 			groupId, className);
 	}
 
-	public JSONArray getJSONActivityDefinitions(
-			long groupId, String className)
+	public JSONArray getJSONActivityDefinitions(long groupId, String className)
 		throws PortalException, SystemException {
+
+		checkPermission(groupId);
 
 		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
 
 		List<SocialActivityDefinition> activityDefinitions =
 			socialActivitySettingLocalService.getActivityDefinitions(
 				groupId, className);
+
+		Collections.sort(
+			activityDefinitions,
+			new SocialActivityDefinitionNameComparator(
+				LocaleThreadLocal.getThemeDisplayLocale()));
 
 		for (SocialActivityDefinition activityDefinition :
 				activityDefinitions) {
@@ -106,29 +108,42 @@ public class SocialActivitySettingServiceImpl
 			long groupId, String className, boolean enabled)
 		throws PortalException, SystemException {
 
-		PermissionChecker permissionChecker = getPermissionChecker();
-
-		if (!permissionChecker.isGroupAdmin(groupId)) {
-			throw new PrincipalException();
-		}
+		checkPermission(groupId);
 
 		socialActivitySettingLocalService.updateActivitySetting(
 			groupId, className, enabled);
 	}
 
-	public void updateActivitySettings(
+	public void updateActivitySetting(
 			long groupId, String className, int activityType,
-			List<SocialActivityCounterDefinition> counters)
+			SocialActivityCounterDefinition activityCounterDefinition)
 		throws PortalException, SystemException {
 
-		PermissionChecker permissionChecker = getPermissionChecker();
+		checkPermission(groupId);
 
-		if (!permissionChecker.isGroupAdmin(groupId)) {
-			throw new PrincipalException();
-		}
+		socialActivitySettingLocalService.updateActivitySetting(
+			groupId, className, activityType, activityCounterDefinition);
+	}
+
+	public void updateActivitySettings(
+			long groupId, String className, int activityType,
+			List<SocialActivityCounterDefinition> activityCounterDefinitions)
+		throws PortalException, SystemException {
+
+		checkPermission(groupId);
 
 		socialActivitySettingLocalService.updateActivitySettings(
-			groupId, className, activityType, counters);
+			groupId, className, activityType, activityCounterDefinitions);
+	}
+
+	protected void checkPermission(long groupId) throws PortalException {
+		PermissionChecker permissionChecker = getPermissionChecker();
+
+		if (!permissionChecker.isGroupAdmin(groupId) &&
+			!permissionChecker.isGroupOwner(groupId)) {
+
+			throw new PrincipalException();
+		}
 	}
 
 }

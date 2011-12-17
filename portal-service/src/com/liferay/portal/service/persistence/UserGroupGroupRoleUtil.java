@@ -94,14 +94,6 @@ public class UserGroupGroupRoleUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static UserGroupGroupRole remove(
-		UserGroupGroupRole userGroupGroupRole) throws SystemException {
-		return getPersistence().remove(userGroupGroupRole);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static UserGroupGroupRole update(

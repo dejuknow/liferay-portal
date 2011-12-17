@@ -95,6 +95,10 @@ public class IndexerWrapper implements Indexer {
 		return _indexer.isFilterSearch();
 	}
 
+	public boolean isPermissionAware() {
+		return _indexer.isPermissionAware();
+	}
+
 	public boolean isStagingAware() {
 		return _indexer.isStagingAware();
 	}

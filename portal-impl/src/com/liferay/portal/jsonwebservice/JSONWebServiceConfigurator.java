@@ -22,11 +22,13 @@ import com.liferay.portal.kernel.jsonwebservice.JSONWebServiceMode;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.CharPool;
+import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StreamUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.util.PortalUtil;
+import com.liferay.portal.util.PropsValues;
 
 import java.io.File;
 import java.io.InputStream;
@@ -40,6 +42,7 @@ import java.net.URLDecoder;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import jodd.io.findfile.ClassFinder;
 import jodd.io.findfile.FindFile;
@@ -56,26 +59,28 @@ import org.objectweb.asm.ClassReader;
  */
 public class JSONWebServiceConfigurator extends ClassFinder {
 
-	public JSONWebServiceConfigurator(String servletContextName) {
+	public JSONWebServiceConfigurator(String servletContextPath) {
 		setIncludedJars(
 			"*portal-impl.jar", "*portal-service.jar", "*_wl_cls_gen.jar",
-			"*-portlet-service.jar");
+			"*-portlet-service*.jar");
 
-		_servletContextName = servletContextName;
+		_servletContextPath = servletContextPath;
 	}
 
 	public void clean() {
 		int count =
 			JSONWebServiceActionsManagerUtil.unregisterJSONWebServiceActions(
-				_servletContextName);
+				_servletContextPath);
 
 		_registeredActionsCount -= count;
 
 		if (_log.isDebugEnabled()) {
-			_log.debug(
-				"Removed " + count +
-					" existing JSON Web Service actions that belonged to " +
-						_servletContextName);
+			if (count != 0) {
+				_log.debug(
+					"Removed " + count +
+						" existing JSON Web Service actions that belonged to " +
+							_servletContextPath);
+			}
 		}
 	}
 
@@ -124,7 +129,7 @@ public class JSONWebServiceConfigurator extends ClassFinder {
 
 			classPathFiles[0] = classPathFile;
 
-			FindFile findFile = new WildcardFindFile("*-portlet-service.jar");
+			FindFile findFile = new WildcardFindFile("*-portlet-service*.jar");
 
 			findFile.searchPath(libDir);
 
@@ -374,6 +379,10 @@ public class JSONWebServiceConfigurator extends ClassFinder {
 		String httpMethod = _jsonWebServiceMappingResolver.resolveHttpMethod(
 			method);
 
+		if (_invalidHttpMethods.contains(httpMethod)) {
+			return;
+		}
+
 		Class<?> utilClass = _loadUtilClass(implementationClass);
 
 		try {
@@ -385,7 +394,7 @@ public class JSONWebServiceConfigurator extends ClassFinder {
 		}
 
 		JSONWebServiceActionsManagerUtil.registerJSONWebServiceAction(
-			_servletContextName, method.getDeclaringClass(), method, path,
+			_servletContextPath, method.getDeclaringClass(), method, path,
 			httpMethod);
 
 		_registeredActionsCount++;
@@ -395,12 +404,14 @@ public class JSONWebServiceConfigurator extends ClassFinder {
 		JSONWebServiceConfigurator.class);
 
 	private ClassLoader _classLoader;
+	private Set<String> _invalidHttpMethods = SetUtil.fromArray(
+		PropsValues.JSONWS_WEB_SERVICE_INVALID_HTTP_METHODS);
 	private byte[] _jsonWebServiceAnnotationBytes =
 		getTypeSignatureBytes(JSONWebService.class);
 	private JSONWebServiceMappingResolver _jsonWebServiceMappingResolver =
 		new JSONWebServiceMappingResolver();
 	private int _registeredActionsCount;
-	private String _servletContextName;
+	private String _servletContextPath;
 	private Map<Class<?>, Class<?>> _utilClasses =
 		new HashMap<Class<?>, Class<?>>();
 

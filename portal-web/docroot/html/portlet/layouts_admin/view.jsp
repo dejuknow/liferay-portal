@@ -18,9 +18,32 @@
 
 <%@ include file="/html/portlet/layouts_admin/init_attributes.jspf" %>
 
+<%
+SitesUtil.addPortletBreadcrumbEntries(group, pagesName, redirectURL, request, renderResponse);
+%>
+
+<liferay-ui:error exception="<%= LayoutTypeException.class %>">
+
+	<%
+	LayoutTypeException lte = (LayoutTypeException)errorException;
+
+	String type = BeanParamUtil.getString(selLayout, request, "type");
+	%>
+
+	<c:if test="<%= lte.getType() == LayoutTypeException.FIRST_LAYOUT %>">
+		<liferay-ui:message arguments="<%= Validator.isNull(lte.getLayoutType()) ? type : lte.getLayoutType() %>" key="the-first-page-cannot-be-of-type-x" />
+	</c:if>
+
+	<c:if test="<%= lte.getType() == LayoutTypeException.NOT_PARENTABLE %>">
+		<liferay-ui:message arguments="<%= type %>" key="pages-of-type-x-cannot-have-child-pages" />
+	</c:if>
+</liferay-ui:error>
+
+<liferay-ui:error exception="<%= LayoutNameException.class %>" message="please-enter-a-valid-name" />
+
 <c:choose>
-	<c:when test="<%= portletName.equals(PortletKeys.COMMUNITIES) || portletName.equals(PortletKeys.GROUP_PAGES) || portletName.equals(PortletKeys.MY_PAGES) || portletName.equals(PortletKeys.SITES_ADMIN) || portletName.equals(PortletKeys.USER_GROUPS_ADMIN) || portletName.equals(PortletKeys.USERS_ADMIN) %>">
-		<c:if test="<%= portletName.equals(PortletKeys.COMMUNITIES) || portletName.equals(PortletKeys.GROUP_PAGES) || portletName.equals(PortletKeys.SITES_ADMIN) || portletName.equals(PortletKeys.USER_GROUPS_ADMIN) || portletName.equals(PortletKeys.USERS_ADMIN) %>">
+	<c:when test="<%= portletName.equals(PortletKeys.MY_SITES) || portletName.equals(PortletKeys.GROUP_PAGES) || portletName.equals(PortletKeys.MY_PAGES) || portletName.equals(PortletKeys.SITES_ADMIN) || portletName.equals(PortletKeys.USER_GROUPS_ADMIN) || portletName.equals(PortletKeys.USERS_ADMIN) %>">
+		<c:if test="<%= portletName.equals(PortletKeys.MY_SITES) || portletName.equals(PortletKeys.GROUP_PAGES) || portletName.equals(PortletKeys.SITES_ADMIN) || portletName.equals(PortletKeys.USER_GROUPS_ADMIN) || portletName.equals(PortletKeys.USERS_ADMIN) %>">
 			<liferay-ui:header
 				backURL="<%= backURL %>"
 				localizeTitle="<%= false %>"
@@ -76,37 +99,38 @@
 	</c:otherwise>
 </c:choose>
 
-<%
-if ((selLayout != null) && !group.isLayoutPrototype()) {
-	redirectURL.setParameter("selPlid", String.valueOf(selLayout.getPlid()));
-
-	PortalUtil.addPortletBreadcrumbEntry(request, selLayout.getName(locale), redirectURL.toString());
-}
-%>
-
 <aui:layout cssClass="manage-view lfr-app-column-view">
 	<c:if test="<%= !group.isLayoutPrototype() %>">
 		<aui:column columnWidth="25" cssClass="manage-sitemap">
 			<div class="lfr-header-row">
 				<div class="lfr-header-row-content">
-
-					<%
-					long layoutSetBranchId = ParamUtil.getLong(request, "layoutSetBranchId");
-
-					if (layoutSetBranchId <= 0) {
-						layoutSetBranchId = StagingUtil.getRecentLayoutSetBranchId(user, selLayoutSet.getLayoutSetId());
-					}
-
-					LayoutSetBranch layoutSetBranch = null;
-
-					if (layoutSetBranchId > 0) {
-						layoutSetBranch = LayoutSetBranchLocalServiceUtil.getLayoutSetBranch(layoutSetBranchId);
-					}
-					%>
-
-					<c:if test="<%= (stagingGroup != null) && (layoutSetBranch != null) %>">
+					<c:if test="<%= stagingGroup != null %>">
 
 						<%
+						long layoutSetBranchId = ParamUtil.getLong(request, "layoutSetBranchId");
+
+						if (layoutSetBranchId <= 0) {
+							layoutSetBranchId = StagingUtil.getRecentLayoutSetBranchId(user, selLayoutSet.getLayoutSetId());
+						}
+
+						LayoutSetBranch layoutSetBranch = null;
+
+						if (layoutSetBranchId > 0) {
+							try {
+								layoutSetBranch = LayoutSetBranchLocalServiceUtil.getLayoutSetBranch(layoutSetBranchId);
+							}
+							catch (NoSuchLayoutSetBranchException nslsbe) {
+							}
+						}
+
+						if (layoutSetBranch == null) {
+							try {
+								layoutSetBranch = LayoutSetBranchLocalServiceUtil.getMasterLayoutSetBranch(stagingGroup.getGroupId(), privateLayout);
+							}
+							catch (NoSuchLayoutSetBranchException nslsbe) {
+							}
+						}
+
 						List<LayoutSetBranch> layoutSetBranches = LayoutSetBranchLocalServiceUtil.getLayoutSetBranches(stagingGroup.getGroupId(), privateLayout);
 						%>
 
@@ -148,7 +172,7 @@ if ((selLayout != null) && !group.isLayoutPrototype()) {
 									cssClass="layoutset-branch"
 									image="../dock/staging"
 									label="<%= true %>"
-									message='<%= (layoutSetBranches.size() == 1) ? "staging" : layoutSetBranch.getName() %>'
+									message='<%= (layoutSetBranch == null || (layoutSetBranches.size() == 1)) ? "staging" : layoutSetBranch.getName() %>'
 								/>
 							</c:otherwise>
 						</c:choose>

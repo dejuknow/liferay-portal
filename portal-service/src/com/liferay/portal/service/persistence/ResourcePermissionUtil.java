@@ -94,14 +94,6 @@ public class ResourcePermissionUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static ResourcePermission remove(
-		ResourcePermission resourcePermission) throws SystemException {
-		return getPersistence().remove(resourcePermission);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static ResourcePermission update(

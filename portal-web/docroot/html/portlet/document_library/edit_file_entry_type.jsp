@@ -49,7 +49,7 @@ if (fileEntryType != null) {
 	}
 }
 
-String scopeAvailableFields = ParamUtil.getString(request, "scopeAvailableFields");
+String scopeAvailableFields = ParamUtil.getString(request, "scopeAvailableFields", "Liferay.FormBuilder.AVAILABLE_FIELDS.DDM_STRUCTURE");
 %>
 
 <liferay-util:buffer var="removeStructureIcon">
@@ -88,47 +88,49 @@ String scopeAvailableFields = ParamUtil.getString(request, "scopeAvailableFields
 
 		<aui:input name="description" />
 
-		<h3><liferay-ui:message key="metadata-sets" /></h3>
+		<liferay-ui:panel collapsible="<%= true %>" extended="<%= false %>" id="mainMetadataFields" persistState="<%= true %>" title="main-metadata-fields">
+			<%@ include file="/html/portlet/dynamic_data_mapping/form_builder.jspf" %>
+		</liferay-ui:panel>
 
-		<liferay-ui:search-container
-			id='<%= renderResponse.getNamespace() + "ddmStructuresSearchContainer" %>'
-			headerNames='<%= (fileEntryType == null) ? "name,null" : "name" %>'
-		>
-			<liferay-ui:search-container-results
-				results="<%= ddmStructures %>"
-				total="<%= ddmStructures != null ? ddmStructures.size() : 0 %>"
-			/>
-
-			<liferay-ui:search-container-row
-				className="com.liferay.portlet.dynamicdatamapping.model.DDMStructure"
-				escapedModel="<%= true %>"
-				keyProperty="structureId"
-				modelVar="curDDMStructure"
+		<liferay-ui:panel collapsible="<%= true %>" extended="<%= false %>" id="additionalMetadataFields" persistState="<%= true %>" title="additional-metadata-fields">
+			<liferay-ui:search-container
+				id='<%= renderResponse.getNamespace() + "ddmStructuresSearchContainer" %>'
+				headerNames='<%= (fileEntryType == null) ? "name,null" : "name" %>'
 			>
-				<liferay-ui:search-container-column-text
-					name="name"
-					value="<%= curDDMStructure.getName(locale) %>"
+				<liferay-ui:search-container-results
+					results="<%= ddmStructures %>"
+					total="<%= ddmStructures != null ? ddmStructures.size() : 0 %>"
 				/>
 
-				<liferay-ui:search-container-column-text>
-					<a class="modify-link" data-rowId="<%= curDDMStructure.getStructureId() %>" href="javascript:;"><%= removeStructureIcon %></a>
-				</liferay-ui:search-container-column-text>
-			</liferay-ui:search-container-row>
+				<liferay-ui:search-container-row
+					className="com.liferay.portlet.dynamicdatamapping.model.DDMStructure"
+					escapedModel="<%= true %>"
+					keyProperty="structureId"
+					modelVar="curDDMStructure"
+				>
+					<liferay-ui:search-container-column-text
+						name="name"
+						value="<%= curDDMStructure.getName(locale) %>"
+					/>
 
-			<liferay-ui:search-iterator paginate="<%= false %>" />
-		</liferay-ui:search-container>
+					<liferay-ui:search-container-column-text>
+						<a class="modify-link" data-rowId="<%= curDDMStructure.getStructureId() %>" href="javascript:;"><%= removeStructureIcon %></a>
+					</liferay-ui:search-container-column-text>
+				</liferay-ui:search-container-row>
 
-		<liferay-ui:icon
-			cssClass="modify-link select-metadata"
-			image="add"
-			label="<%= true %>"
-			message="select"
-			url='<%= "javascript:" + renderResponse.getNamespace() + "openDDMStructureSelector();" %>'
-		/>
+				<liferay-ui:search-iterator paginate="<%= false %>" />
+			</liferay-ui:search-container>
+
+			<liferay-ui:icon
+				cssClass="modify-link select-metadata"
+				image="add"
+				label="<%= true %>"
+				message="select-metadata-set"
+				url='<%= "javascript:" + renderResponse.getNamespace() + "openDDMStructureSelector();" %>'
+			/>
+		</liferay-ui:panel>
 	</aui:fieldset>
 </aui:form>
-
-<%@ include file="/html/portlet/dynamic_data_mapping/form_builder.jspf" %>
 
 <aui:button-row>
 	<aui:button onClick='<%= renderResponse.getNamespace() + "saveStructure();" %>' type="submit" />
@@ -140,17 +142,19 @@ String scopeAvailableFields = ParamUtil.getString(request, "scopeAvailableFields
 	function <portlet:namespace />openDDMStructureSelector() {
 		Liferay.Util.openDDMPortlet(
 			{
+				ddmResource: '<%= ddmResource %>',
 				dialog: {
 					width:680
 				},
 				saveCallback: '<%= renderResponse.getNamespace() + "selectDDMStructure" %>',
+				showGlobalScope: true,
 				showManageTemplates: false,
 				showToolbar: true,
 				storageType: 'xml',
-				structureName: '<liferay-ui:message key="metadata-sets" />',
+				structureName: '<%= UnicodeLanguageUtil.get(pageContext, "metadata-sets") %>',
 				structureType: 'com.liferay.portlet.documentlibrary.model.DLFileEntryMetadata',
 				struts_action: '/dynamic_data_mapping/select_structure',
-				title: '<liferay-ui:message key="metadata-sets" />'
+				title: '<%= UnicodeLanguageUtil.get(pageContext, "metadata-sets") %>'
 			}
 		);
 	}

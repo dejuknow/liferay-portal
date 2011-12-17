@@ -95,14 +95,6 @@ public class AssetTagStatsUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static AssetTagStats remove(AssetTagStats assetTagStats)
-		throws SystemException {
-		return getPersistence().remove(assetTagStats);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static AssetTagStats update(AssetTagStats assetTagStats,

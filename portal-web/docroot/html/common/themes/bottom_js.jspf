@@ -16,11 +16,17 @@
 
 <%@ include file="/html/portal/layout/view/portlet_js.jspf" %>
 
+<%@ page import="com.liferay.portlet.sites.util.SitesUtil" %>
+
 <aui:script position="inline">
 	Liferay.Util.addInputFocus();
 
+	<%
+	String controlPanelCategory = ParamUtil.getString(request, "controlPanelCategory");
+	%>
+
 	<c:choose>
-		<c:when test="<%= themeDisplay.isStatePopUp() %>">
+		<c:when test="<%= themeDisplay.isStatePopUp() || Validator.isNotNull(controlPanelCategory) %>">
 			Liferay.Util.getTop().Liferay.fire(
 				'popupReady',
 				{
@@ -70,7 +76,7 @@ if (layout != null) {
 }
 %>
 
-<c:if test="<%= !themeDisplay.isStatePopUp() && (layout != null) && (!group.hasStagingGroup() || group.isStagingGroup()) && (GroupPermissionUtil.contains(permissionChecker, scopeGroupId, ActionKeys.ADD_LAYOUT) || LayoutPermissionUtil.contains(permissionChecker, layout, ActionKeys.UPDATE) || (layoutTypePortlet.isCustomizable() && LayoutPermissionUtil.contains(permissionChecker, layout, ActionKeys.CUSTOMIZE))) %>">
+<c:if test="<%= !themeDisplay.isStatePopUp() && !group.isControlPanel() && (layout != null) && (!group.hasStagingGroup() || group.isStagingGroup()) && (GroupPermissionUtil.contains(permissionChecker, scopeGroupId, ActionKeys.ADD_LAYOUT) || LayoutPermissionUtil.contains(permissionChecker, layout, ActionKeys.UPDATE) || (layoutTypePortlet.isCustomizable() && LayoutPermissionUtil.contains(permissionChecker, layout, ActionKeys.CUSTOMIZE))) %>">
 	<aui:script use="liferay-layout,liferay-navigation">
 		var layoutOptions = {};
 
@@ -134,7 +140,7 @@ if (layout != null) {
 						</c:if>
 
 						navBlock: navBlock,
-						hasPermission: <%= GroupPermissionUtil.contains(permissionChecker, scopeGroupId, ActionKeys.MANAGE_LAYOUTS) %>
+						hasPermission: <%= GroupPermissionUtil.contains(permissionChecker, scopeGroupId, ActionKeys.MANAGE_LAYOUTS) && SitesUtil.isLayoutSetPrototypeUpdateable(layout.getLayoutSet()) %>
 					}
 				);
 			}
@@ -163,15 +169,6 @@ if (layout != null) {
 	}
 
 	<c:if test="<%= themeDisplay.isSignedIn() %>">
-		<c:choose>
-			<c:when test="<%= (group != null) && group.isControlPanel() && !LayoutPermissionUtil.contains(permissionChecker, layout, ActionKeys.UPDATE) && !(layoutTypePortlet.isCustomizable() && layoutTypePortlet.isCustomizedView() && LayoutPermissionUtil.contains(permissionChecker, layout, ActionKeys.CUSTOMIZE)) %>">
-				Liferay._editControlsState = 'visible';
-			</c:when>
-			<c:otherwise>
-				Liferay._editControlsState = '<%= GetterUtil.getString(SessionClicks.get(request, "liferay_toggle_controls", null), "visible") %>';
-			</c:otherwise>
-		</c:choose>
-
 		Liferay.Poller.init(
 			{
 				encryptedUserId: '<%= Encryptor.encrypt(company.getKeyObj(), String.valueOf(themeDisplay.getUserId())) %>',

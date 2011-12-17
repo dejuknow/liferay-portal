@@ -49,8 +49,6 @@ public class PortletKeys {
 
 	public static final String CHAT = "1_WAR_chatportlet";
 
-	public static final String COMMUNITIES = "29";
-
 	public static final String CONTROL_PANEL_MENU = "160";
 
 	public static final String CURRENCY_CONVERTER = "16";
@@ -78,6 +76,8 @@ public class PortletKeys {
 	public static final String FLAGS = "142";
 
 	public static final String GROUP_PAGES = "156";
+
+	public static final String GROUP_STATISTICS = "181";
 
 	public static final String IFRAME = "48";
 
@@ -124,7 +124,7 @@ public class PortletKeys {
 
 	public static final String MY_PAGES = "140";
 
-	public static final String MY_SITES = "49";
+	public static final String MY_SITES = "29";
 
 	public static final String MY_WORKFLOW_INSTANCES = "158";
 
@@ -166,7 +166,7 @@ public class PortletKeys {
 
 	public static final int PREFS_OWNER_TYPE_LAYOUT = 3;
 
-	public static final int PREFS_OWNER_TYPE_ORGANIZATION  = 6;
+	public static final int PREFS_OWNER_TYPE_ORGANIZATION = 6;
 
 	public static final int PREFS_OWNER_TYPE_USER = 4;
 
@@ -192,6 +192,8 @@ public class PortletKeys {
 
 	public static final String SITE_MEMBERSHIPS_ADMIN = "174";
 
+	public static final String SITE_REDIRECTOR = "49";
+
 	public static final String SITE_SETTINGS = "165";
 
 	public static final String SITES_ADMIN = "134";
@@ -212,8 +214,6 @@ public class PortletKeys {
 
 	public static final String TAGS_ENTRIES_NAVIGATION = "141";
 
-	public static final String TOP_USERS = "159";
-
 	public static final String TRANSLATOR = "26";
 
 	public static final String UNIT_CONVERTER = "27";
@@ -221,6 +221,8 @@ public class PortletKeys {
 	public static final String UPDATE_MANAGER = "104";
 
 	public static final String USER_GROUPS_ADMIN = "127";
+
+	public static final String USER_STATISTICS = "180";
 
 	public static final String USERS_ADMIN = "125";
 

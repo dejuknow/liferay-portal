@@ -49,7 +49,8 @@ public class AddGadgetTest extends BaseTestCase {
 			}
 
 			try {
-				if (selenium.isElementPresent("link=OpenSocial")) {
+				if (selenium.isElementPresent(
+							"link=OpenSocial Gadget Publisher")) {
 					break;
 				}
 			}
@@ -59,8 +60,8 @@ public class AddGadgetTest extends BaseTestCase {
 			Thread.sleep(1000);
 		}
 
-		selenium.clickAt("link=OpenSocial",
-			RuntimeVariables.replace("OpenSocial"));
+		selenium.clickAt("link=OpenSocial Gadget Publisher",
+			RuntimeVariables.replace("OpenSocial Gadget Publisher"));
 		selenium.waitForPageToLoad("30000");
 
 		for (int second = 0;; second++) {
@@ -107,5 +108,13 @@ public class AddGadgetTest extends BaseTestCase {
 		selenium.clickAt("//input[@value='Save']",
 			RuntimeVariables.replace("Save"));
 		selenium.waitForPageToLoad("30000");
+		assertEquals(RuntimeVariables.replace(
+				"Your request completed successfully."),
+			selenium.getText("//div[@class='portlet-msg-success']"));
+		assertEquals(RuntimeVariables.replace("Hello World!"),
+			selenium.getText("//tr[3]/td"));
+		assertEquals(RuntimeVariables.replace(
+				"http://opensocial-resources.googlecode.com/svn/samples/tutorial/tags/api-0.8/helloworld.xml"),
+			selenium.getText("//td[2]/a"));
 	}
 }

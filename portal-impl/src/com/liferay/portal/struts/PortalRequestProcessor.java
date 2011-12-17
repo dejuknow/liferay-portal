@@ -121,6 +121,7 @@ public class PortalRequestProcessor extends TilesRequestProcessor {
 		_publicPaths = new HashSet<String>();
 
 		_publicPaths.add(_PATH_C);
+		_publicPaths.add(_PATH_PORTAL_API_JSONWS);
 		_publicPaths.add(_PATH_PORTAL_EE_LICENSE);
 		_publicPaths.add(_PATH_PORTAL_FLASH);
 		_publicPaths.add(_PATH_PORTAL_J_LOGIN);
@@ -413,7 +414,11 @@ public class PortalRequestProcessor extends TilesRequestProcessor {
 			return sb.toString();
 		}
 
-		LastPath lastPath = (LastPath)session.getAttribute(WebKeys.LAST_PATH);
+		LastPath lastPath = (LastPath)request.getAttribute(WebKeys.LAST_PATH);
+
+		if (lastPath == null) {
+			lastPath = (LastPath)session.getAttribute(WebKeys.LAST_PATH);
+		}
 
 		if (lastPath == null) {
 			return sb.toString();
@@ -668,7 +673,7 @@ public class PortalRequestProcessor extends TilesRequestProcessor {
 
 		// Setup wizard
 
-		if (!SetupWizardUtil.isSetupFinished(request)) {
+		if (!SetupWizardUtil.isSetupFinished()) {
 			return _PATH_PORTAL_SETUP_WIZARD;
 		}
 		else if (path.equals(_PATH_PORTAL_SETUP_WIZARD)) {
@@ -750,7 +755,8 @@ public class PortalRequestProcessor extends TilesRequestProcessor {
 			}
 
 			if ((user != null) && !user.isEmailAddressVerified() &&
-				emailAddressVerificationRequired) {
+				emailAddressVerificationRequired &&
+				!path.equals(_PATH_PORTAL_UPDATE_EMAIL_ADDRESS)) {
 
 				return _PATH_PORTAL_VERIFY_EMAIL_ADDRESS;
 			}
@@ -957,6 +963,8 @@ public class PortalRequestProcessor extends TilesRequestProcessor {
 
 	private static String _PATH_PORTAL = "/portal";
 
+	private static String _PATH_PORTAL_API_JSONWS = "/portal/api/jsonws";
+
 	private static String _PATH_PORTAL_EE_LICENSE = "/portal/ee/license";
 
 	private static String _PATH_PORTAL_ERROR = "/portal/error";
@@ -984,8 +992,7 @@ public class PortalRequestProcessor extends TilesRequestProcessor {
 	private static String _PATH_PORTAL_RENDER_PORTLET =
 		"/portal/render_portlet";
 
-	private static String _PATH_PORTAL_SETUP_WIZARD =
-		"/portal/setup_wizard";
+	private static String _PATH_PORTAL_SETUP_WIZARD = "/portal/setup_wizard";
 
 	private static String _PATH_PORTAL_TCK = "/portal/tck";
 

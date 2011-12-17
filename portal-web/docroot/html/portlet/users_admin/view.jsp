@@ -92,7 +92,7 @@ String portletURLString = portletURL.toString();
 	function <portlet:namespace />doDeleteOrganization(className, id) {
 		var ids = id;
 
-		var status = <%= WorkflowConstants.STATUS_INACTIVE %>
+		var status = <%= WorkflowConstants.STATUS_INACTIVE %>;
 
 		<portlet:namespace />getUsersCount(
 			className, ids, status,
@@ -146,6 +146,12 @@ String portletURLString = portletURL.toString();
 		document.<portlet:namespace />fm.<portlet:namespace />redirect.value = document.<portlet:namespace />fm.<portlet:namespace />organizationsRedirect.value;
 		document.<portlet:namespace />fm.<portlet:namespace />deleteOrganizationIds.value = organizationIds;
 		submitForm(document.<portlet:namespace />fm, "<portlet:actionURL><portlet:param name="struts_action" value="/users_admin/edit_organization" /></portlet:actionURL>");
+	}
+
+	function <portlet:namespace />search() {
+		document.<portlet:namespace />fm.method = "get";
+		document.<portlet:namespace />fm.<portlet:namespace /><%= Constants.CMD %>.value = "";
+		submitForm(document.<portlet:namespace />fm, '<%= portletURLString %>');
 	}
 
 	Liferay.provide(

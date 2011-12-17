@@ -190,11 +190,34 @@ public class JournalArticleServiceWrapper implements JournalArticleService,
 			languageId, themeDisplay);
 	}
 
+	public java.util.List<com.liferay.portlet.journal.model.JournalArticle> getArticlesByArticleId(
+		long groupId, java.lang.String articleId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator obc)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return _journalArticleService.getArticlesByArticleId(groupId,
+			articleId, start, end, obc);
+	}
+
 	public java.util.List<com.liferay.portlet.journal.model.JournalArticle> getArticlesByLayoutUuid(
 		long groupId, java.lang.String layoutUuid)
 		throws com.liferay.portal.kernel.exception.SystemException {
 		return _journalArticleService.getArticlesByLayoutUuid(groupId,
 			layoutUuid);
+	}
+
+	public int getArticlesCountByArticleId(long groupId,
+		java.lang.String articleId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return _journalArticleService.getArticlesCountByArticleId(groupId,
+			articleId);
+	}
+
+	public com.liferay.portlet.journal.model.JournalArticle getDisplayArticleByUrlTitle(
+		long groupId, java.lang.String urlTitle)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _journalArticleService.getDisplayArticleByUrlTitle(groupId,
+			urlTitle);
 	}
 
 	public com.liferay.portlet.journal.model.JournalArticle getLatestArticle(
@@ -386,11 +409,12 @@ public class JournalArticleServiceWrapper implements JournalArticleService,
 	public com.liferay.portlet.journal.model.JournalArticle updateArticleTranslation(
 		long groupId, java.lang.String articleId, double version,
 		java.util.Locale locale, java.lang.String title,
-		java.lang.String description, java.lang.String content)
+		java.lang.String description, java.lang.String content,
+		java.util.Map<java.lang.String, byte[]> images)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException {
 		return _journalArticleService.updateArticleTranslation(groupId,
-			articleId, version, locale, title, description, content);
+			articleId, version, locale, title, description, content, images);
 	}
 
 	public com.liferay.portlet.journal.model.JournalArticle updateContent(

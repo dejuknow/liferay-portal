@@ -106,6 +106,27 @@ catch (NoSuchLayoutException nsle) {
 }
 
 if (selLayout != null) {
+	try {
+		if (SitesUtil.isLayoutToBeUpdatedFromSourcePrototype(selLayout)) {
+			Layout sourcePrototypeLayout = LayoutTypePortletImpl.getSourcePrototypeLayout(selLayout);
+
+			SitesUtil.copyLayout(user.getUserId(), sourcePrototypeLayout, selLayout, new ServiceContext());
+
+			selLayout = LayoutLocalServiceUtil.getLayout(selLayout.getPlid());
+
+			UnicodeProperties typeSettings = selLayout.getTypeSettingsProperties();
+
+			typeSettings.put("layoutSetPrototypeLastCopyDate", String.valueOf((new Date()).getTime()));
+
+			LayoutLocalServiceUtil.updateLayout(selLayout);
+		}
+	}
+	catch (Exception e) {
+		if (_log.isWarnEnabled()) {
+			_log.warn("Unable to process dynamic site templates", e);
+		}
+	}
+
 	layoutId = selLayout.getLayoutId();
 }
 
@@ -156,10 +177,16 @@ LayoutSet selLayoutSet = LayoutSetLocalServiceUtil.getLayoutSet(groupId, private
 
 LayoutLister layoutLister = new LayoutLister();
 
-String pagesName = "public-pages";
+String pagesName = null;
 
-if (privateLayout) {
+if (liveGroup.isLayoutPrototype() || liveGroup.isLayoutSetPrototype() || liveGroup.isUserGroup()) {
+	pagesName = "pages";
+}
+else if (privateLayout) {
 	pagesName = "private-pages";
+}
+else {
+	pagesName = "public-pages";
 }
 
 String rootNodeName = LanguageUtil.get(pageContext, pagesName);
@@ -199,21 +226,6 @@ request.setAttribute(WebKeys.LAYOUT_LISTER_LIST, layoutList);
 </liferay-portlet:resourceURL>
 
 <%
-if ((renderResponse != null) && !portletName.equals(PortletKeys.GROUP_PAGES) && !portletName.equals(PortletKeys.MY_PAGES)) {
-	if (group.isLayoutPrototype()) {
-		PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(pageContext, "page-template"), null);
-
-		PortalUtil.addPortletBreadcrumbEntry(request, group.getDescriptiveName(), redirectURL.toString());
-	}
-	else {
-		PortalUtil.addPortletBreadcrumbEntry(request, group.getDescriptiveName(), null);
-	}
-
-	if (!group.isLayoutPrototype()) {
-		PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(pageContext, pagesName), redirectURL.toString());
-	}
-}
-
 request.setAttribute("edit_pages.jsp-group", group);
 request.setAttribute("edit_pages.jsp-selGroup", selGroup);
 request.setAttribute("edit_pages.jsp-liveGroup", liveGroup);
@@ -235,4 +247,8 @@ request.setAttribute("edit_pages.jsp-layoutList", layoutList);
 
 request.setAttribute("edit_pages.jsp-portletURL", portletURL);
 request.setAttribute("edit_pages.jsp-redirectURL", redirectURL);
+%>
+
+<%!
+private static Log _log = LogFactoryUtil.getLog("portal-web.docroot.html.portlet.layout_admin.init_attributes_jsp");
 %>

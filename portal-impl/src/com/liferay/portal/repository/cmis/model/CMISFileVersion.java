@@ -21,12 +21,16 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portal.kernel.util.FileUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.MimeTypesUtil;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.User;
 import com.liferay.portal.repository.cmis.CMISRepository;
 import com.liferay.portal.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.service.CMISRepositoryLocalServiceUtil;
 import com.liferay.portal.service.UserLocalServiceUtil;
+import com.liferay.portlet.documentlibrary.NoSuchFileEntryException;
 import com.liferay.portlet.documentlibrary.model.DLFileVersion;
 import com.liferay.portlet.documentlibrary.service.DLAppHelperLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.util.DLUtil;
@@ -38,11 +42,14 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 
 /**
  * @author Alexander Chow
@@ -97,7 +104,21 @@ public class CMISFileVersion extends CMISModel implements FileVersion {
 	}
 
 	public String getExtension() {
-		return FileUtil.getExtension(getTitle());
+		String extension = FileUtil.getExtension(getTitle());
+
+		if (Validator.isNotNull(extension)) {
+			return extension;
+		}
+
+		Set<String> extensions = MimeTypesUtil.getExtensions(getMimeType());
+
+		if (extensions.isEmpty()) {
+			return extension;
+		}
+
+		Iterator<String> iterator = extensions.iterator();
+
+		return iterator.next();
 	}
 
 	public String getExtraSettings() {
@@ -107,13 +128,18 @@ public class CMISFileVersion extends CMISModel implements FileVersion {
 	public FileEntry getFileEntry() throws PortalException, SystemException {
 		Document document = null;
 
-		List<Document> allVersions = _document.getAllVersions();
+		try {
+			List<Document> allVersions = _document.getAllVersions();
 
-		if (allVersions.isEmpty()) {
-			document = _document;
+			if (allVersions.isEmpty()) {
+				document = _document;
+			}
+			else {
+				document = allVersions.get(0);
+			}
 		}
-		else {
-			document = allVersions.get(0);
+		catch (CmisObjectNotFoundException confe) {
+			throw new NoSuchFileEntryException(confe);
 		}
 
 		return CMISRepositoryLocalServiceUtil.toFileEntry(
@@ -123,6 +149,8 @@ public class CMISFileVersion extends CMISModel implements FileVersion {
 	public long getFileEntryId() {
 		try {
 			return getFileEntry().getFileEntryId();
+		}
+		catch (NoSuchFileEntryException nsfee) {
 		}
 		catch (Exception e) {
 			_log.error(e, e);
@@ -144,7 +172,13 @@ public class CMISFileVersion extends CMISModel implements FileVersion {
 	}
 
 	public String getMimeType() {
-		return _document.getContentStreamMimeType();
+		String mimeType = _document.getContentStreamMimeType();
+
+		if (Validator.isNotNull(mimeType)) {
+			return mimeType;
+		}
+
+		return MimeTypesUtil.getContentType(getTitle());
 	}
 
 	public Object getModel() {
@@ -222,8 +256,7 @@ public class CMISFileVersion extends CMISModel implements FileVersion {
 
 	public String getUserUuid() {
 		try {
-			User user = UserLocalServiceUtil.getDefaultUser(
-				getCompanyId());
+			User user = UserLocalServiceUtil.getDefaultUser(getCompanyId());
 
 			return user.getUserUuid();
 		}
@@ -233,7 +266,7 @@ public class CMISFileVersion extends CMISModel implements FileVersion {
 	}
 
 	public String getVersion() {
-		return _document.getVersionLabel();
+		return GetterUtil.getString(_document.getVersionLabel());
 	}
 
 	public boolean isApproved() {

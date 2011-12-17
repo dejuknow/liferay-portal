@@ -34,16 +34,23 @@ if (fileEntry.getVersion().equals(fileVersion.getVersion())) {
 <c:if test="<%= fileVersion.isApproved() %>">
 	<div class="asset-resource-info">
 		<c:choose>
+			<c:when test="<%= showThumbnail && ImageProcessor.hasImages(fileVersion) %>">
+				<div>
+					<img src="<%= _getPreviewURL(fileEntry, fileVersion, themeDisplay, "&imageThumbnail=1") %>" />
+
+					<%= fileVersion.getTitle() %>
+				</div>
+			</c:when>
 			<c:when test="<%= showThumbnail && PDFProcessor.hasImages(fileVersion) %>">
 				<div>
-					<img src="<%= _getPreviewURL(fileEntry, fileVersion.getVersion(), themeDisplay, "&documentThumbnail=1") %>" />
+					<img src="<%= _getPreviewURL(fileEntry, fileVersion, themeDisplay, "&documentThumbnail=1") %>" />
 
 					<%= fileVersion.getTitle() %>
 				</div>
 			</c:when>
 			<c:when test="<%= showThumbnail && VideoProcessor.hasVideo(fileVersion) %>">
 				<div>
-					<img src="<%= _getPreviewURL(fileEntry, fileVersion.getVersion(), themeDisplay, "&videoThumbnail=1") %>" />
+					<img src="<%= _getPreviewURL(fileEntry, fileVersion, themeDisplay, "&videoThumbnail=1") %>" />
 
 					<%= fileVersion.getTitle() %>
 				</div>
@@ -53,7 +60,7 @@ if (fileEntry.getVersion().equals(fileVersion.getVersion())) {
 					image='<%= "../file_system/small/" + fileVersion.getIcon() %>'
 					label="<%= true %>"
 					message="<%= HtmlUtil.escape(fileVersion.getTitle()) %>"
-					url='<%= themeDisplay.getPortalURL() + themeDisplay.getPathContext() + "/documents/" + fileVersion.getRepositoryId() + StringPool.SLASH + fileEntry.getFolderId() + StringPool.SLASH + HttpUtil.encodeURL(HtmlUtil.unescape(fileEntry.getTitle())) + "?version=" + fileVersion.getVersion() %>'
+					url="<%= _getPreviewURL(fileEntry, fileVersion, themeDisplay, StringPool.BLANK) %>"
 				/>
 			</c:otherwise>
 		</c:choose>

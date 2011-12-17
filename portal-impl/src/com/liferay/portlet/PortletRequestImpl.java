@@ -25,6 +25,7 @@ import com.liferay.portal.kernel.servlet.ProtectedPrincipal;
 import com.liferay.portal.kernel.servlet.ServletContextPool;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ContentTypes;
+import com.liferay.portal.kernel.util.ContextPathUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.JavaConstants;
 import com.liferay.portal.kernel.util.LocaleUtil;
@@ -74,6 +75,7 @@ import javax.portlet.WindowState;
 import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 /**
  * @author Brian Wing Shun Chan
@@ -189,7 +191,7 @@ public abstract class PortletRequestImpl implements LiferayPortletRequest {
 		if (ServletContextPool.containsKey(servletContextName)) {
 			servletContext = ServletContextPool.get(servletContextName);
 
-			return servletContext.getContextPath();
+			return ContextPathUtil.getContextPath(servletContext);
 		}
 
 		return StringPool.SLASH.concat(_portletContext.getPortletContextName());
@@ -400,7 +402,19 @@ public abstract class PortletRequestImpl implements LiferayPortletRequest {
 	}
 
 	public String getRequestedSessionId() {
-		return _request.getSession().getId();
+		if (_session != null) {
+			return _session.getId();
+		}
+		else {
+			HttpSession session = _request.getSession(false);
+
+			if (session == null) {
+				return StringPool.BLANK;
+			}
+			else {
+				return session.getId();
+			}
+		}
 	}
 
 	public String getResponseContentType() {
@@ -602,7 +616,7 @@ public abstract class PortletRequestImpl implements LiferayPortletRequest {
 
 		String ppid = ParamUtil.getString(request, "p_p_id");
 
-		boolean windowStateRestoreCurrentView =  ParamUtil.getBoolean(
+		boolean windowStateRestoreCurrentView = ParamUtil.getBoolean(
 			request, "p_p_state_rcv");
 
 		if (_portletName.equals(ppid) &&

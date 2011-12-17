@@ -34,6 +34,10 @@ import java.util.regex.Pattern;
  */
 public class SQLTransformer {
 
+	public static void reloadSQLTransformer() {
+		_instance._reloadSQLTransformer();
+	}
+
 	public static String transform(String sql) {
 		return _instance._transform(sql);
 	}
@@ -47,6 +51,30 @@ public class SQLTransformer {
 	}
 
 	private SQLTransformer() {
+		_reloadSQLTransformer();
+	}
+
+	private void _reloadSQLTransformer() {
+		if (_transformedSqls == null) {
+			_transformedSqls = new ConcurrentHashMap<String, String>();
+		}
+		else {
+			_transformedSqls.clear();
+		}
+
+		_vendorDB2 = false;
+		_vendorDerby = false;
+		_vendorFirebird = false;
+		//_vendorHypersonic = false;
+		_vendorInformix = false;
+		_vendorIngres = false;
+		_vendorInterbase = false;
+		_vendorMySQL = false;
+		_vendorOracle = false;
+		_vendorPostgreSQL = false;
+		_vendorSQLServer = false;
+		_vendorSybase = false;
+
 		DB db = DBFactoryUtil.getDB();
 
 		String dbType = db.getType();
@@ -63,7 +91,7 @@ public class SQLTransformer {
 			_vendorFirebird = true;
 		}
 		else if (dbType.equals(DB.TYPE_HYPERSONIC)) {
-			_vendorHypersonic = true;
+			//_vendorHypersonic = true;
 		}
 		else if (dbType.equals(DB.TYPE_INFORMIX)) {
 			_vendorInformix = true;
@@ -134,10 +162,7 @@ public class SQLTransformer {
 	private String _replaceBitwiseCheck(String sql) {
 		Matcher matcher = _bitwiseCheckPattern.matcher(sql);
 
-		if (_vendorDB2 || _vendorHypersonic || _vendorOracle) {
-			return matcher.replaceAll("BITAND($1, $2)");
-		}
-		else if (_vendorDerby) {
+		if (_vendorDerby) {
 			return matcher.replaceAll("MOD($1 / $2, 2) != 0");
 		}
 		else if (_vendorInformix || _vendorIngres) {
@@ -145,6 +170,11 @@ public class SQLTransformer {
 		}
 		else if (_vendorFirebird || _vendorInterbase) {
 			return matcher.replaceAll("BIN_AND($1, $2)");
+		}
+		else if (_vendorMySQL || _vendorPostgreSQL || _vendorSQLServer ||
+				 _vendorSybase) {
+
+			return matcher.replaceAll("($1 & $2)");
 		}
 		else {
 			return sql;
@@ -158,11 +188,25 @@ public class SQLTransformer {
 			new String[] {_db.getTemplateFalse(), _db.getTemplateTrue()});
 	}
 
+	private String _replaceCastLong(String sql) {
+		Matcher matcher = _castLongPattern.matcher(sql);
+
+		if (_vendorSybase) {
+			return matcher.replaceAll("CONVERT(BIGINT, $1)");
+		}
+		else {
+			return matcher.replaceAll("$1");
+		}
+	}
+
 	private String _replaceCastText(String sql) {
 		Matcher matcher = _castTextPattern.matcher(sql);
 
 		if (_vendorDB2 || _vendorDerby) {
 			return matcher.replaceAll("CAST($1 AS CHAR(254))");
+		}
+		else if (_vendorOracle) {
+			return matcher.replaceAll("CAST($1 AS VARCHAR(4000))");
 		}
 		else if (_vendorPostgreSQL) {
 			return matcher.replaceAll("CAST($1 AS TEXT)");
@@ -171,7 +215,7 @@ public class SQLTransformer {
 			return matcher.replaceAll("CAST($1 AS NVARCHAR(MAX))");
 		}
 		else if (_vendorSybase) {
-			return matcher.replaceAll("CAST($1 AS NVARCHAR)");
+			return matcher.replaceAll("CAST($1 AS NVARCHAR(16384))");
 		}
 		else {
 			return matcher.replaceAll("$1");
@@ -223,6 +267,7 @@ public class SQLTransformer {
 
 		newSQL = _replaceBitwiseCheck(newSQL);
 		newSQL = _replaceBoolean(newSQL);
+		newSQL = _replaceCastLong(newSQL);
 		newSQL = _replaceCastText(newSQL);
 		newSQL = _replaceIntegerDivision(newSQL);
 
@@ -266,8 +311,7 @@ public class SQLTransformer {
 
 		newSQL = _transformPositionalParams(newSQL);
 
-		newSQL = StringUtil.replace(
-			newSQL, _HQL_NOT_EQUALS, _JPQL_NOT_EQUALS);
+		newSQL = StringUtil.replace(newSQL, _HQL_NOT_EQUALS, _JPQL_NOT_EQUALS);
 		newSQL = StringUtil.replace(
 			newSQL, _HQL_COMPOSITE_ID_MARKER, _JPQL_DOT_SEPARTOR);
 
@@ -344,7 +388,9 @@ public class SQLTransformer {
 	private static SQLTransformer _instance = new SQLTransformer();
 
 	private static Pattern _bitwiseCheckPattern = Pattern.compile(
-		"\\(\\((.+?) & (.+?)\\)\\)");
+		"BITAND\\((.+?),(.+?)\\)");
+	private static Pattern _castLongPattern = Pattern.compile(
+		"CAST_LONG\\((.+?)\\)", Pattern.CASE_INSENSITIVE);
 	private static Pattern _castTextPattern = Pattern.compile(
 		"CAST_TEXT\\((.+?)\\)", Pattern.CASE_INSENSITIVE);
 	private static Pattern _integerDivisionPattern = Pattern.compile(
@@ -355,16 +401,15 @@ public class SQLTransformer {
 		"MOD\\((.+?),(.+?)\\)", Pattern.CASE_INSENSITIVE);
 	private static Pattern _negativeComparisonPattern = Pattern.compile(
 		"(!=)?( -([0-9]+)?)", Pattern.CASE_INSENSITIVE);
-	private static Map<String, String> _transformedSqls =
-		new ConcurrentHashMap<String, String>();
 	private static Pattern _unionAllPattern = Pattern.compile(
 		"SELECT \\* FROM(.*)TEMP_TABLE(.*)", Pattern.CASE_INSENSITIVE);
 
 	private DB _db;
+	private Map<String, String> _transformedSqls;
 	private boolean _vendorDB2;
 	private boolean _vendorDerby;
 	private boolean _vendorFirebird;
-	private boolean _vendorHypersonic;
+	//private boolean _vendorHypersonic;
 	private boolean _vendorInformix;
 	private boolean _vendorIngres;
 	private boolean _vendorInterbase;

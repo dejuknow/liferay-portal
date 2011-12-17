@@ -216,7 +216,7 @@ public class LayoutExporter {
 			parameterMap, PortletDataHandlerKeys.THEME_REFERENCE);
 		boolean layoutSetPrototypeInherited = MapUtil.getBoolean(
 			parameterMap,
-			PortletDataHandlerKeys.LAYOUT_SET_PROTOTYPE_INHERITED);
+			PortletDataHandlerKeys.LAYOUT_SET_PROTOTYPE_LINK_ENABLED);
 		boolean publishToRemote = MapUtil.getBoolean(
 			parameterMap, PortletDataHandlerKeys.PUBLISH_TO_REMOTE);
 		boolean updateLastPublishDate = MapUtil.getBoolean(
@@ -235,8 +235,24 @@ public class LayoutExporter {
 			_log.debug("Export theme " + exportTheme);
 		}
 
+		LayoutSet layoutSet = LayoutSetLocalServiceUtil.getLayoutSet(
+			groupId, privateLayout);
+
+		long companyId = layoutSet.getCompanyId();
+		long defaultUserId = UserLocalServiceUtil.getDefaultUserId(companyId);
+
 		ServiceContext serviceContext =
 			ServiceContextThreadLocal.getServiceContext();
+
+		if (serviceContext == null) {
+			serviceContext = new ServiceContext();
+
+			serviceContext.setCompanyId(companyId);
+			serviceContext.setSignedIn(false);
+			serviceContext.setUserId(defaultUserId);
+
+			ServiceContextThreadLocal.pushServiceContext(serviceContext);
+		}
 
 		serviceContext.setAttribute("exporting", Boolean.TRUE);
 
@@ -265,12 +281,6 @@ public class LayoutExporter {
 		}
 
 		LayoutCache layoutCache = new LayoutCache();
-
-		LayoutSet layoutSet = LayoutSetLocalServiceUtil.getLayoutSet(
-			groupId, privateLayout);
-
-		long companyId = layoutSet.getCompanyId();
-		long defaultUserId = UserLocalServiceUtil.getDefaultUserId(companyId);
 
 		ZipWriter zipWriter = ZipWriterFactoryUtil.getZipWriter();
 
@@ -655,8 +665,7 @@ public class LayoutExporter {
 				String.valueOf(layoutRevision.getLayoutBranch().getName()));
 		}
 
-		layoutElement.addAttribute(
-			"layout-uuid", layout.getUuid());
+		layoutElement.addAttribute("layout-uuid", layout.getUuid());
 		layoutElement.addAttribute(
 			"layout-id", String.valueOf(layout.getLayoutId()));
 

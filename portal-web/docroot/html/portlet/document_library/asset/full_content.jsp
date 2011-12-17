@@ -29,18 +29,25 @@ if (fileEntry.getVersion().equals(fileVersion.getVersion())) {
 %>
 
 <div class="asset-resource-info">
-	<aui:a href='<%= themeDisplay.getPortalURL() + themeDisplay.getPathContext() + "/documents/" + fileVersion.getRepositoryId() + StringPool.SLASH + fileEntry.getFolderId() + StringPool.SLASH + HttpUtil.encodeURL(HtmlUtil.unescape(fileEntry.getTitle())) + "?version=" + fileVersion.getVersion() %>'>
+	<aui:a href="<%= _getPreviewURL(fileEntry, fileVersion, themeDisplay, StringPool.BLANK) %>">
 		<c:choose>
+			<c:when test="<%= showThumbnail && ImageProcessor.hasImages(fileVersion) %>">
+				<div>
+					<img src="<%= _getPreviewURL(fileEntry, fileVersion, themeDisplay, "&imageThumbnail=1") %>" />
+
+					<%= fileVersion.getTitle() %>
+				</div>
+			</c:when>
 			<c:when test="<%= showThumbnail && PDFProcessor.hasImages(fileVersion) %>">
 				<div>
-					<img src="<%= _getPreviewURL(fileEntry, fileVersion.getVersion(), themeDisplay, "&documentThumbnail=1") %>" />
+					<img src="<%= _getPreviewURL(fileEntry, fileVersion, themeDisplay, "&documentThumbnail=1") %>" />
 
 					<%= fileVersion.getTitle() %>
 				</div>
 			</c:when>
 			<c:when test="<%= showThumbnail && VideoProcessor.hasVideo(fileVersion) %>">
 				<div>
-					<img src="<%= _getPreviewURL(fileEntry, fileVersion.getVersion(), themeDisplay, "&videoThumbnail=1") %>" />
+					<img src="<%= _getPreviewURL(fileEntry, fileVersion, themeDisplay, "&videoThumbnail=1") %>" />
 
 					<%= fileVersion.getTitle() %>
 				</div>

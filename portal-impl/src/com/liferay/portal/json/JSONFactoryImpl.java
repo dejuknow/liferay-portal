@@ -14,6 +14,7 @@
 
 package com.liferay.portal.json;
 
+import com.liferay.alloy.util.json.StringTransformer;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONDeserializer;
 import com.liferay.portal.kernel.json.JSONException;
@@ -25,6 +26,8 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 
 import java.lang.reflect.InvocationTargetException;
+
+import java.util.List;
 
 import org.jabsorb.serializer.MarshallException;
 
@@ -98,6 +101,16 @@ public class JSONFactoryImpl implements JSONFactory {
 
 			throw new IllegalStateException("Unable to convert to JSONML", e);
 		}
+	}
+
+	public JSONTransformer createJavaScriptNormalizerJSONTransformer(
+		List<String> javaScriptAttributes) {
+
+		StringTransformer stringTransformer = new StringTransformer();
+
+		stringTransformer.setJavaScriptAttributes(javaScriptAttributes);
+
+		return stringTransformer;
 	}
 
 	public JSONArray createJSONArray() {
@@ -184,6 +197,16 @@ public class JSONFactoryImpl implements JSONFactory {
 
 	public String looseSerializeDeep(Object object) {
 		JSONSerializer jsonSerializer = createJSONSerializer();
+
+		return jsonSerializer.serializeDeep(object);
+	}
+
+	public String looseSerializeDeep(
+		Object object, JSONTransformer jsonTransformer, Class<?> clazz) {
+
+		JSONSerializer jsonSerializer = createJSONSerializer();
+
+		jsonSerializer.transform(jsonTransformer, clazz);
 
 		return jsonSerializer.serializeDeep(object);
 	}

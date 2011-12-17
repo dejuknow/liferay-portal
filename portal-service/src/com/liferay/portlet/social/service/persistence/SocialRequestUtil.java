@@ -95,14 +95,6 @@ public class SocialRequestUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static SocialRequest remove(SocialRequest socialRequest)
-		throws SystemException {
-		return getPersistence().remove(socialRequest);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static SocialRequest update(SocialRequest socialRequest,

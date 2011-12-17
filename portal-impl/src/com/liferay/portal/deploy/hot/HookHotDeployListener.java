@@ -186,6 +186,9 @@ public class HookHotDeployListener
 		"auto.login.hooks",
 		"captcha.check.portal.create_account",
 		"captcha.engine.impl",
+		"company.settings.form.configuration",
+		"company.settings.form.identification",
+		"company.settings.form.miscellaneous",
 		"control.panel.entry.class.default",
 		"convert.processes",
 		"default.landing.page.path",
@@ -194,14 +197,18 @@ public class HookHotDeployListener
 		"dl.repository.impl",
 		"dl.store.antivirus.impl",
 		"dl.store.impl",
-		"dl.webdav.hold.lock",
-		"dl.webdav.save.to.single.version",
 		"dockbar.add.portlets",
 		"field.enable.com.liferay.portal.model.Contact.birthday",
 		"field.enable.com.liferay.portal.model.Contact.male",
 		"field.enable.com.liferay.portal.model.Organization.status",
 		"hot.deploy.listeners",
 		"javascript.fast.load",
+		"journal.article.form.add",
+		"journal.article.form.translate",
+		"journal.article.form.update",
+		"layout.form.add",
+		"layout.form.update",
+		"layout.set.form.update",
 		"layout.static.portlets.all",
 		"layout.template.cache.enabled",
 		"layout.types",
@@ -225,6 +232,12 @@ public class HookHotDeployListener
 		"my.sites.show.public.sites.with.no.layouts",
 		"my.sites.show.user.private.sites.with.no.layouts",
 		"my.sites.show.user.public.sites.with.no.layouts",
+		"organizations.form.add.identification",
+		"organizations.form.add.main",
+		"organizations.form.add.miscellaneous",
+		"organizations.form.update.identification",
+		"organizations.form.update.main",
+		"organizations.form.update.miscellaneous",
 		"passwords.passwordpolicytoolkit.generator",
 		"passwords.passwordpolicytoolkit.static",
 		"portlet.add.default.resource.check.enabled",
@@ -237,6 +250,12 @@ public class HookHotDeployListener
 		"servlet.service.events.pre",
 		"session.phishing.protected.attributes",
 		"session.store.password",
+		"sites.form.add.advanced",
+		"sites.form.add.main",
+		"sites.form.add.seo",
+		"sites.form.update.advanced",
+		"sites.form.update.main",
+		"sites.form.update.seo",
 		"social.bookmark.*",
 		"terms.of.use.required",
 		"theme.css.fast.load",
@@ -247,7 +266,7 @@ public class HookHotDeployListener
 		"theme.portlet.sharing.default",
 		"theme.shortcut.icon",
 		"upgrade.processes",
-		"user.notification.hotDeployEvent.confirmation.enabled",
+		"user.notification.event.confirmation.enabled",
 		"users.email.address.generator",
 		"users.email.address.required",
 		"users.form.add.identification",
@@ -551,7 +570,16 @@ public class HookHotDeployListener
 				Properties portalProperties =
 					portalPropertiesConfiguration.getProperties();
 
-				if (portalProperties.size() > 0) {
+				if (!portalProperties.isEmpty()) {
+					Properties unfilteredPortalProperties =
+						(Properties)portalProperties.clone();
+
+					portalProperties.remove(
+						PropsKeys.RELEASE_INFO_BUILD_NUMBER);
+					portalProperties.remove(
+						PropsKeys.RELEASE_INFO_PREVIOUS_BUILD_NUMBER);
+					portalProperties.remove(PropsKeys.UPGRADE_PROCESSES);
+
 					_portalPropertiesMap.put(
 						servletContextName, portalProperties);
 
@@ -562,7 +590,7 @@ public class HookHotDeployListener
 
 					initPortalProperties(
 						servletContextName, portletClassLoader,
-						portalProperties);
+						portalProperties, unfilteredPortalProperties);
 					initAuthFailures(
 						servletContextName, portletClassLoader,
 						portalProperties);
@@ -666,7 +694,7 @@ public class HookHotDeployListener
 
 			getCustomJsps(servletContext, webDir, customJspDir, customJsps);
 
-			if (customJsps.size() > 0) {
+			if (!customJsps.isEmpty()) {
 				CustomJspBag customJspBag = new CustomJspBag(
 					customJspDir, customJspGlobal, customJsps);
 
@@ -1178,8 +1206,7 @@ public class HookHotDeployListener
 				portletClassLoader, Authenticator.class,
 				authenticatorClassName);
 
-			authenticatorsContainer.registerAuthenticator(
-				key, authenticator);
+			authenticatorsContainer.registerAuthenticator(key, authenticator);
 		}
 	}
 
@@ -1528,7 +1555,7 @@ public class HookHotDeployListener
 
 	protected void initPortalProperties(
 			String servletContextName, ClassLoader portletClassLoader,
-			Properties portalProperties)
+			Properties portalProperties, Properties unfilteredPortalProperties)
 		throws Exception {
 
 		PropsUtil.addProperties(portalProperties);
@@ -1758,11 +1785,14 @@ public class HookHotDeployListener
 			ScreenNameValidatorFactory.setInstance(screenNameValidator);
 		}
 
-		if (portalProperties.containsKey(PropsKeys.RELEASE_INFO_BUILD_NUMBER) ||
-			portalProperties.containsKey(PropsKeys.UPGRADE_PROCESSES)) {
+		if (unfilteredPortalProperties.containsKey(
+				PropsKeys.RELEASE_INFO_BUILD_NUMBER) ||
+			unfilteredPortalProperties.containsKey(
+				PropsKeys.UPGRADE_PROCESSES)) {
 
 			updateRelease(
-				servletContextName, portletClassLoader, portalProperties);
+				servletContextName, portletClassLoader,
+				unfilteredPortalProperties);
 		}
 	}
 
@@ -2054,8 +2084,7 @@ public class HookHotDeployListener
 					return;
 				}
 
-				value = StringUtil.split(
-					portalProperties.getProperty(key));
+				value = StringUtil.split(portalProperties.getProperty(key));
 			}
 			else {
 				value = PropsUtil.getArray(key);
@@ -2071,11 +2100,12 @@ public class HookHotDeployListener
 
 	protected void updateRelease(
 			String servletContextName, ClassLoader portletClassLoader,
-			Properties portalProperties)
+			Properties unfilteredPortalProperties)
 		throws Exception {
 
 		int buildNumber = GetterUtil.getInteger(
-			portalProperties.getProperty(PropsKeys.RELEASE_INFO_BUILD_NUMBER));
+			unfilteredPortalProperties.getProperty(
+				PropsKeys.RELEASE_INFO_BUILD_NUMBER));
 
 		if (buildNumber <= 0) {
 			_log.error(
@@ -2093,7 +2123,7 @@ public class HookHotDeployListener
 		}
 		catch (PortalException pe) {
 			int previousBuildNumber = GetterUtil.getInteger(
-				portalProperties.getProperty(
+				unfilteredPortalProperties.getProperty(
 					PropsKeys.RELEASE_INFO_PREVIOUS_BUILD_NUMBER),
 				buildNumber);
 
@@ -2115,7 +2145,8 @@ public class HookHotDeployListener
 		}
 		else {
 			String[] upgradeProcessClassNames = StringUtil.split(
-				portalProperties.getProperty(PropsKeys.UPGRADE_PROCESSES));
+				unfilteredPortalProperties.getProperty(
+					PropsKeys.UPGRADE_PROCESSES));
 
 			UpgradeProcessUtil.upgradeProcess(
 				release.getBuildNumber(), upgradeProcessClassNames,
@@ -2144,8 +2175,6 @@ public class HookHotDeployListener
 		"auth.forward.by.last.path",
 		"captcha.check.portal.create_account",
 		"dl.file.entry.drafts.enabled",
-		"dl.webdav.hold.lock",
-		"dl.webdav.save.to.single.version",
 		"field.enable.com.liferay.portal.model.Contact.birthday",
 		"field.enable.com.liferay.portal.model.Contact.male",
 		"field.enable.com.liferay.portal.model.Organization.status",
@@ -2173,7 +2202,7 @@ public class HookHotDeployListener
 		"theme.loader.new.theme.id.on.import",
 		"theme.portlet.decorate.default",
 		"theme.portlet.sharing.default",
-		"user.notification.hotDeployEvent.confirmation.enabled",
+		"user.notification.event.confirmation.enabled",
 		"users.email.address.required",
 		"users.screen.name.always.autogenerate"
 	};
@@ -2192,13 +2221,34 @@ public class HookHotDeployListener
 			"admin.default.role.names",
 			"admin.default.user.group.names",
 			"asset.publisher.display.styles",
+			"company.settings.form.configuration",
+			"company.settings.form.identification",
+			"company.settings.form.miscellaneous",
 			"convert.processes",
 			"dockbar.add.portlets",
+			"journal.article.form.add",
+			"journal.article.form.translate",
+			"journal.article.form.update",
+			"layout.form.add",
+			"layout.form.update",
+			"layout.set.form.update",
 			"layout.static.portlets.all",
 			"layout.types",
+			"organizations.form.add.identification",
+			"organizations.form.add.main",
+			"organizations.form.add.miscellaneous",
+			"organizations.form.update.identification",
+			"organizations.form.update.main",
+			"organizations.form.update.miscellaneous",
 			"portlet.add.default.resource.check.whitelist",
 			"portlet.add.default.resource.check.whitelist.actions",
 			"session.phishing.protected.attributes",
+			"sites.form.add.advanced",
+			"sites.form.add.main",
+			"sites.form.add.seo",
+			"sites.form.update.advanced",
+			"sites.form.update.main",
+			"sites.form.update.seo",
 			"users.form.add.identification",
 			"users.form.add.main",
 			"users.form.add.miscellaneous",

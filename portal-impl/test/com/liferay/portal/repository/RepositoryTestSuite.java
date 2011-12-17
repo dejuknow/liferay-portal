@@ -14,6 +14,8 @@
 
 package com.liferay.portal.repository;
 
+import com.liferay.portal.repository.cmis.search.CMISQueryBuilderTest;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -25,7 +27,10 @@ public class RepositoryTestSuite extends TestSuite {
 	public static Test suite() {
 		TestSuite testSuite = new TestSuite();
 
+		testSuite.addTestSuite(CheckInCheckOutTest.class);
 		testSuite.addTestSuite(RepositoryTest.class);
+
+		testSuite.addTestSuite(CMISQueryBuilderTest.class);
 
 		return new RepositoryTestSetup(testSuite);
 	}

@@ -210,6 +210,23 @@ public class DDMStorageLinkPersistenceImpl extends BasePersistenceImpl<DDMStorag
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 
+		clearUniqueFindersCache(ddmStorageLink);
+	}
+
+	@Override
+	public void clearCache(List<DDMStorageLink> ddmStorageLinks) {
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+
+		for (DDMStorageLink ddmStorageLink : ddmStorageLinks) {
+			EntityCacheUtil.removeResult(DDMStorageLinkModelImpl.ENTITY_CACHE_ENABLED,
+				DDMStorageLinkImpl.class, ddmStorageLink.getPrimaryKey());
+
+			clearUniqueFindersCache(ddmStorageLink);
+		}
+	}
+
+	protected void clearUniqueFindersCache(DDMStorageLink ddmStorageLink) {
 		FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_CLASSPK,
 			new Object[] { Long.valueOf(ddmStorageLink.getClassPK()) });
 	}
@@ -236,20 +253,6 @@ public class DDMStorageLinkPersistenceImpl extends BasePersistenceImpl<DDMStorag
 	/**
 	 * Removes the d d m storage link with the primary key from the database. Also notifies the appropriate model listeners.
 	 *
-	 * @param primaryKey the primary key of the d d m storage link
-	 * @return the d d m storage link that was removed
-	 * @throws com.liferay.portal.NoSuchModelException if a d d m storage link with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public DDMStorageLink remove(Serializable primaryKey)
-		throws NoSuchModelException, SystemException {
-		return remove(((Long)primaryKey).longValue());
-	}
-
-	/**
-	 * Removes the d d m storage link with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
 	 * @param storageLinkId the primary key of the d d m storage link
 	 * @return the d d m storage link that was removed
 	 * @throws com.liferay.portlet.dynamicdatamapping.NoSuchStorageLinkException if a d d m storage link with the primary key could not be found
@@ -257,24 +260,38 @@ public class DDMStorageLinkPersistenceImpl extends BasePersistenceImpl<DDMStorag
 	 */
 	public DDMStorageLink remove(long storageLinkId)
 		throws NoSuchStorageLinkException, SystemException {
+		return remove(Long.valueOf(storageLinkId));
+	}
+
+	/**
+	 * Removes the d d m storage link with the primary key from the database. Also notifies the appropriate model listeners.
+	 *
+	 * @param primaryKey the primary key of the d d m storage link
+	 * @return the d d m storage link that was removed
+	 * @throws com.liferay.portlet.dynamicdatamapping.NoSuchStorageLinkException if a d d m storage link with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public DDMStorageLink remove(Serializable primaryKey)
+		throws NoSuchStorageLinkException, SystemException {
 		Session session = null;
 
 		try {
 			session = openSession();
 
 			DDMStorageLink ddmStorageLink = (DDMStorageLink)session.get(DDMStorageLinkImpl.class,
-					Long.valueOf(storageLinkId));
+					primaryKey);
 
 			if (ddmStorageLink == null) {
 				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + storageLinkId);
+					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchStorageLinkException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
-					storageLinkId);
+					primaryKey);
 			}
 
-			return ddmStorageLinkPersistence.remove(ddmStorageLink);
+			return remove(ddmStorageLink);
 		}
 		catch (NoSuchStorageLinkException nsee) {
 			throw nsee;
@@ -285,19 +302,6 @@ public class DDMStorageLinkPersistenceImpl extends BasePersistenceImpl<DDMStorag
 		finally {
 			closeSession(session);
 		}
-	}
-
-	/**
-	 * Removes the d d m storage link from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param ddmStorageLink the d d m storage link
-	 * @return the d d m storage link that was removed
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public DDMStorageLink remove(DDMStorageLink ddmStorageLink)
-		throws SystemException {
-		return super.remove(ddmStorageLink);
 	}
 
 	@Override
@@ -319,16 +323,7 @@ public class DDMStorageLinkPersistenceImpl extends BasePersistenceImpl<DDMStorag
 			closeSession(session);
 		}
 
-		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
-		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
-
-		DDMStorageLinkModelImpl ddmStorageLinkModelImpl = (DDMStorageLinkModelImpl)ddmStorageLink;
-
-		FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_CLASSPK,
-			new Object[] { Long.valueOf(ddmStorageLinkModelImpl.getClassPK()) });
-
-		EntityCacheUtil.removeResult(DDMStorageLinkModelImpl.ENTITY_CACHE_ENABLED,
-			DDMStorageLinkImpl.class, ddmStorageLink.getPrimaryKey());
+		clearCache(ddmStorageLink);
 
 		return ddmStorageLink;
 	}
@@ -1509,7 +1504,7 @@ public class DDMStorageLinkPersistenceImpl extends BasePersistenceImpl<DDMStorag
 	 */
 	public void removeByUuid(String uuid) throws SystemException {
 		for (DDMStorageLink ddmStorageLink : findByUuid(uuid)) {
-			ddmStorageLinkPersistence.remove(ddmStorageLink);
+			remove(ddmStorageLink);
 		}
 	}
 
@@ -1523,7 +1518,7 @@ public class DDMStorageLinkPersistenceImpl extends BasePersistenceImpl<DDMStorag
 		throws NoSuchStorageLinkException, SystemException {
 		DDMStorageLink ddmStorageLink = findByClassPK(classPK);
 
-		ddmStorageLinkPersistence.remove(ddmStorageLink);
+		remove(ddmStorageLink);
 	}
 
 	/**
@@ -1534,7 +1529,7 @@ public class DDMStorageLinkPersistenceImpl extends BasePersistenceImpl<DDMStorag
 	 */
 	public void removeByStructureId(long structureId) throws SystemException {
 		for (DDMStorageLink ddmStorageLink : findByStructureId(structureId)) {
-			ddmStorageLinkPersistence.remove(ddmStorageLink);
+			remove(ddmStorageLink);
 		}
 	}
 
@@ -1545,7 +1540,7 @@ public class DDMStorageLinkPersistenceImpl extends BasePersistenceImpl<DDMStorag
 	 */
 	public void removeAll() throws SystemException {
 		for (DDMStorageLink ddmStorageLink : findAll()) {
-			ddmStorageLinkPersistence.remove(ddmStorageLink);
+			remove(ddmStorageLink);
 		}
 	}
 

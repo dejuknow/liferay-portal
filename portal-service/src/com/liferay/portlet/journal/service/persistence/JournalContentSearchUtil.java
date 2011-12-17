@@ -95,14 +95,6 @@ public class JournalContentSearchUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static JournalContentSearch remove(
-		JournalContentSearch journalContentSearch) throws SystemException {
-		return getPersistence().remove(journalContentSearch);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static JournalContentSearch update(

@@ -67,16 +67,19 @@ public class EditPublicRenderParametersAction extends EditConfigurationAction {
 		updatePreferences(actionRequest, portlet);
 
 		if (SessionErrors.isEmpty(actionRequest)) {
-			SessionMessages.add(
-				actionRequest,
-				portletConfig.getPortletName() + ".doConfigure");
-
 			String portletResource = ParamUtil.getString(
 				actionRequest, "portletResource");
 
 			SessionMessages.add(
-				actionRequest, portletConfig.getPortletName() + ".doRefresh",
+				actionRequest,
+				portletConfig.getPortletName() +
+					SessionMessages.KEY_SUFFIX_REFRESH_PORTLET,
 				portletResource);
+
+			SessionMessages.add(
+				actionRequest,
+				portletConfig.getPortletName() +
+					SessionMessages.KEY_SUFFIX_UPDATED_CONFIGURATION);
 
 			String redirect = PortalUtil.escapeRedirect(
 				ParamUtil.getString(actionRequest, "redirect"));

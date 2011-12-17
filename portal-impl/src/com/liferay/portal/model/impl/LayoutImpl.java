@@ -24,7 +24,6 @@ import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
@@ -50,7 +49,6 @@ import com.liferay.portal.util.CookieKeys;
 import com.liferay.portal.util.LayoutClone;
 import com.liferay.portal.util.LayoutCloneFactory;
 import com.liferay.portal.util.PortalUtil;
-import com.liferay.portal.util.PropsUtil;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.util.WebKeys;
 import com.liferay.portlet.PortletURLImpl;
@@ -98,7 +96,7 @@ public class LayoutImpl extends LayoutBaseImpl {
 		for (char c : friendlyURL.toCharArray()) {
 			if ((!Validator.isChar(c)) && (!Validator.isDigit(c)) &&
 				(c != CharPool.DASH) && (c != CharPool.PERCENT) &&
-				(c != CharPool.PERIOD)  && (c != CharPool.PLUS) &&
+				(c != CharPool.PERIOD) && (c != CharPool.PLUS) &&
 				(c != CharPool.SLASH) && (c != CharPool.STAR) &&
 				(c != CharPool.UNDERLINE)) {
 
@@ -112,13 +110,10 @@ public class LayoutImpl extends LayoutBaseImpl {
 	public static void validateFriendlyURLKeyword(String friendlyURL)
 		throws LayoutFriendlyURLException {
 
-		String[] keywords = PropsUtil.getArray(
-			PropsKeys.LAYOUT_FRIENDLY_URL_KEYWORDS);
-
-		for (String keyword : keywords) {
-			if ((friendlyURL.indexOf(
-					StringPool.SLASH + keyword + StringPool.SLASH) != -1) ||
-				(friendlyURL.endsWith(StringPool.SLASH + keyword))) {
+		for (String keyword : PropsValues.LAYOUT_FRIENDLY_URL_KEYWORDS) {
+			if (friendlyURL.contains(
+					StringUtil.quote(keyword, StringPool.SLASH)) ||
+				friendlyURL.endsWith(StringPool.SLASH + keyword)) {
 
 				LayoutFriendlyURLException lfurle =
 					new LayoutFriendlyURLException(
@@ -752,9 +747,13 @@ public class LayoutImpl extends LayoutBaseImpl {
 			}
 		}
 
+		String portalURL = PortalUtil.getPortalURL(request);
+
 		String url = PortalUtil.getLayoutURL(this, themeDisplay);
 
-		if (!CookieKeys.hasSessionId(request)) {
+		if (!CookieKeys.hasSessionId(request) &&
+			(url.startsWith(portalURL) || url.startsWith(StringPool.SLASH))) {
+
 			url = PortalUtil.getURLWithSessionId(
 				url, request.getSession().getId());
 		}

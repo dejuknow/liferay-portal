@@ -95,14 +95,6 @@ public class MDRActionUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static MDRAction remove(MDRAction mdrAction)
-		throws SystemException {
-		return getPersistence().remove(mdrAction);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static MDRAction update(MDRAction mdrAction, boolean merge)

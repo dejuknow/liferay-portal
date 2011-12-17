@@ -69,20 +69,32 @@ public abstract class DLPreviewableProcessor implements DLProcessor {
 		}
 	}
 
-	public static void deleteFiles(FileEntry fileEntry) {
+	public static void deleteFiles(FileEntry fileEntry, String thumbnailType) {
 		deleteFiles(
 			fileEntry.getCompanyId(), fileEntry.getRepositoryId(),
-			fileEntry.getFileEntryId(), -1);
+			fileEntry.getFileEntryId(), -1, thumbnailType);
 	}
 
-	public static void deleteFiles(FileVersion fileVersion) {
+	public static void deleteFiles(
+		FileVersion fileVersion, String thumbnailType) {
+
 		deleteFiles(
 			fileVersion.getCompanyId(), fileVersion.getRepositoryId(),
-			fileVersion.getFileEntryId(), fileVersion.getFileVersionId());
+			fileVersion.getFileEntryId(), fileVersion.getFileVersionId(),
+			thumbnailType);
+	}
+
+	public boolean isSupported(FileVersion fileVersion) {
+		if (fileVersion == null) {
+			return false;
+		}
+
+		return isSupported(fileVersion.getMimeType());
 	}
 
 	protected static void deleteFiles(
-		long companyId, long groupId, long fileEntryId, long fileVersionId) {
+		long companyId, long groupId, long fileEntryId, long fileVersionId,
+		String thumbnailType) {
 
 		try {
 			DLStoreUtil.deleteDirectory(
@@ -93,9 +105,15 @@ public abstract class DLPreviewableProcessor implements DLProcessor {
 		}
 
 		try {
-			DLStoreUtil.deleteDirectory(
-				companyId, REPOSITORY_ID,
-				getPathSegment(groupId, fileEntryId, fileVersionId, false));
+			String dirName = getPathSegment(
+				groupId, fileEntryId, fileVersionId, false);
+
+			if (fileVersionId > 0) {
+				dirName = dirName.concat(StringPool.PERIOD);
+				dirName = dirName.concat(thumbnailType);
+			}
+
+			DLStoreUtil.deleteDirectory(companyId, REPOSITORY_ID, dirName);
 		}
 		catch (Exception e) {
 		}

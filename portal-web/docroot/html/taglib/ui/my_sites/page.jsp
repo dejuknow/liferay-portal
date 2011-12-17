@@ -16,8 +16,6 @@
 
 <%@ include file="/html/taglib/init.jsp" %>
 
-<%@ page import="com.liferay.portal.service.permission.PortalPermissionUtil" %>
-
 <%
 int max = GetterUtil.getInteger((String)request.getAttribute("liferay-ui:my_sites:max"));
 
@@ -25,14 +23,14 @@ if (max <= 0) {
 	max = PropsValues.MY_SITES_MAX_ELEMENTS;
 }
 
-List<Group> mySites = user.getMySites(max);
+List<Group> mySites = user.getMySites(true, max);
 %>
 
 <c:if test="<%= !mySites.isEmpty() %>">
 	<ul class="taglib-my-sites">
 
 		<%
-		PortletURL portletURL = new PortletURLImpl(request, PortletKeys.MY_SITES, plid, PortletRequest.ACTION_PHASE);
+		PortletURL portletURL = new PortletURLImpl(request, PortletKeys.SITE_REDIRECTOR, plid, PortletRequest.ACTION_PHASE);
 
 		portletURL.setWindowState(WindowState.NORMAL);
 		portletURL.setPortletMode(PortletMode.VIEW);
@@ -48,7 +46,7 @@ List<Group> mySites = user.getMySites(max);
 			String privateAddPageHREF = null;
 
 			if (mySite.isRegularSite() && GroupPermissionUtil.contains(permissionChecker, mySite.getGroupId(), ActionKeys.ADD_LAYOUT)) {
-				PortletURL addPageURL = new PortletURLImpl(request, PortletKeys.MY_SITES, plid, PortletRequest.ACTION_PHASE);
+				PortletURL addPageURL = new PortletURLImpl(request, PortletKeys.SITE_REDIRECTOR, plid, PortletRequest.ACTION_PHASE);
 
 				addPageURL.setWindowState(WindowState.NORMAL);
 				addPageURL.setPortletMode(PortletMode.VIEW);
@@ -104,6 +102,12 @@ List<Group> mySites = user.getMySites(max);
 
 			boolean hasPowerUserRole = RoleLocalServiceUtil.hasUserRole(user.getUserId(), user.getCompanyId(), RoleConstants.POWER_USER, true);
 
+			Layout defaultLayout = null;
+
+			if (mySite.getDefaultPublicPlid() > 0) {
+				defaultLayout = LayoutLocalServiceUtil.getLayout(mySite.getDefaultPublicPlid());
+			}
+
 			if (mySite.getPublicLayoutsPageCount() == 0) {
 				if (mySite.isRegularSite()) {
 					showPublicSite = PropsValues.MY_SITES_SHOW_PUBLIC_SITES_WITH_NO_LAYOUTS;
@@ -116,8 +120,15 @@ List<Group> mySites = user.getMySites(max);
 					}
 				}
 			}
+			else if ((defaultLayout != null ) && !LayoutPermissionUtil.contains(permissionChecker, defaultLayout, true, ActionKeys.VIEW)) {
+				showPublicSite = false;
+			}
 
 			boolean showPrivateSite = true;
+
+			if (mySite.getDefaultPrivatePlid() > 0) {
+				defaultLayout = LayoutLocalServiceUtil.getLayout(mySite.getDefaultPrivatePlid());
+			}
 
 			if (mySite.getPrivateLayoutsPageCount() == 0) {
 				if (mySite.isRegularSite()) {
@@ -130,6 +141,9 @@ List<Group> mySites = user.getMySites(max);
 						showPrivateSite = false;
 					}
 				}
+			}
+			else if ((defaultLayout != null ) && !LayoutPermissionUtil.contains(permissionChecker, defaultLayout, true, ActionKeys.VIEW)) {
+				showPrivateSite = false;
 			}
 		%>
 

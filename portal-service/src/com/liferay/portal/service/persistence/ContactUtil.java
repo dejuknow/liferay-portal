@@ -94,13 +94,6 @@ public class ContactUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static Contact remove(Contact contact) throws SystemException {
-		return getPersistence().remove(contact);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static Contact update(Contact contact, boolean merge)

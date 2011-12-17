@@ -229,7 +229,7 @@ public class PortletPreferencesFactoryImpl
 			WebKeys.THEME_DISPLAY);
 
 		long scopeGroupId = PortalUtil.getScopeGroupId(
-			request, portletId);
+			request, portletId, true);
 		long userId = PortalUtil.getUserId(request);
 		LayoutTypePortlet layoutTypePortlet =
 			themeDisplay.getLayoutTypePortlet();
@@ -372,7 +372,8 @@ public class PortletPreferencesFactoryImpl
 		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
-		long scopeGroupId = PortalUtil.getScopeGroupId(request, portletId);
+		long scopeGroupId = PortalUtil.getScopeGroupId(
+			request, portletId, true);
 
 		return getPortletSetup(
 			scopeGroupId, themeDisplay.getLayout(), portletId,
@@ -464,6 +465,34 @@ public class PortletPreferencesFactoryImpl
 			portletRequest);
 
 		return getPortletSetup(request, portletId);
+	}
+
+	public Map<Long, PortletPreferences> getPortletSetupMap(
+			long companyId, long groupId, long ownerId, int ownerType,
+			String portletId, boolean privateLayout)
+		throws SystemException {
+
+		Map<Long, PortletPreferences> portletSetupMap =
+			new HashMap<Long, PortletPreferences>();
+
+		List<com.liferay.portal.model.PortletPreferences>
+			portletPreferencesList =
+				PortletPreferencesLocalServiceUtil.getPortletPreferences(
+					companyId, groupId, ownerId, ownerType, portletId,
+					privateLayout);
+
+		for (com.liferay.portal.model.PortletPreferences portletPreferences :
+				portletPreferencesList) {
+
+			PortletPreferences portletSetup =
+				PortletPreferencesLocalServiceUtil.getPreferences(
+					companyId, ownerId, ownerType, portletPreferences.getPlid(),
+					portletId);
+
+			portletSetupMap.put(portletPreferences.getPlid(), portletSetup);
+		}
+
+		return portletSetupMap;
 	}
 
 	public PortletPreferences getPreferences(HttpServletRequest request) {

@@ -80,7 +80,7 @@ public class DDMPortletDataHandlerImpl extends BasePortletDataHandler {
 		DDMStructure importedStructure = null;
 
 		if (portletDataContext.isDataStrategyMirror()) {
-			DDMStructure existingStructure =  DDMStructureUtil.fetchByUUID_G(
+			DDMStructure existingStructure = DDMStructureUtil.fetchByUUID_G(
 				structure.getUuid(), portletDataContext.getScopeGroupId());
 
 			if (existingStructure == null) {
@@ -91,7 +91,7 @@ public class DDMPortletDataHandlerImpl extends BasePortletDataHandler {
 					structure.getClassNameId(), structure.getStructureKey(),
 					structure.getNameMap(), structure.getDescriptionMap(),
 					structure.getXsd(), structure.getStorageType(),
-					serviceContext);
+					structure.getType(), serviceContext);
 			}
 			else {
 				importedStructure =
@@ -106,7 +106,8 @@ public class DDMPortletDataHandlerImpl extends BasePortletDataHandler {
 				userId, portletDataContext.getScopeGroupId(),
 				structure.getClassNameId(), structure.getStructureKey(),
 				structure.getNameMap(), structure.getDescriptionMap(),
-				structure.getXsd(), structure.getStorageType(), serviceContext);
+				structure.getXsd(), structure.getStorageType(),
+				structure.getType(), serviceContext);
 		}
 
 		portletDataContext.importClassedModel(
@@ -203,7 +204,7 @@ public class DDMPortletDataHandlerImpl extends BasePortletDataHandler {
 		DDMTemplate importedTemplate = null;
 
 		if (portletDataContext.isDataStrategyMirror()) {
-			DDMTemplate existingTemplate =  DDMTemplateUtil.fetchByUUID_G(
+			DDMTemplate existingTemplate = DDMTemplateUtil.fetchByUUID_G(
 				template.getUuid(), portletDataContext.getScopeGroupId());
 
 			if (existingTemplate == null) {

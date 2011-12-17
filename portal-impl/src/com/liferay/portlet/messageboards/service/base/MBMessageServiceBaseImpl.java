@@ -40,6 +40,7 @@ import com.liferay.portal.service.base.PrincipalBean;
 import com.liferay.portal.service.persistence.CompanyPersistence;
 import com.liferay.portal.service.persistence.GroupFinder;
 import com.liferay.portal.service.persistence.GroupPersistence;
+import com.liferay.portal.service.persistence.LockFinder;
 import com.liferay.portal.service.persistence.LockPersistence;
 import com.liferay.portal.service.persistence.PortletPreferencesFinder;
 import com.liferay.portal.service.persistence.PortletPreferencesPersistence;
@@ -95,10 +96,8 @@ import com.liferay.portlet.ratings.service.RatingsStatsLocalService;
 import com.liferay.portlet.ratings.service.persistence.RatingsStatsFinder;
 import com.liferay.portlet.ratings.service.persistence.RatingsStatsPersistence;
 import com.liferay.portlet.social.service.SocialActivityLocalService;
-import com.liferay.portlet.social.service.SocialEquityLogLocalService;
 import com.liferay.portlet.social.service.persistence.SocialActivityFinder;
 import com.liferay.portlet.social.service.persistence.SocialActivityPersistence;
-import com.liferay.portlet.social.service.persistence.SocialEquityLogPersistence;
 import com.liferay.portlet.wiki.service.WikiPageLocalService;
 import com.liferay.portlet.wiki.service.WikiPageService;
 import com.liferay.portlet.wiki.service.persistence.WikiPageFinder;
@@ -749,6 +748,24 @@ public abstract class MBMessageServiceBaseImpl extends PrincipalBean
 	 */
 	public void setLockPersistence(LockPersistence lockPersistence) {
 		this.lockPersistence = lockPersistence;
+	}
+
+	/**
+	 * Returns the lock finder.
+	 *
+	 * @return the lock finder
+	 */
+	public LockFinder getLockFinder() {
+		return lockFinder;
+	}
+
+	/**
+	 * Sets the lock finder.
+	 *
+	 * @param lockFinder the lock finder
+	 */
+	public void setLockFinder(LockFinder lockFinder) {
+		this.lockFinder = lockFinder;
 	}
 
 	/**
@@ -1477,44 +1494,6 @@ public abstract class MBMessageServiceBaseImpl extends PrincipalBean
 	}
 
 	/**
-	 * Returns the social equity log local service.
-	 *
-	 * @return the social equity log local service
-	 */
-	public SocialEquityLogLocalService getSocialEquityLogLocalService() {
-		return socialEquityLogLocalService;
-	}
-
-	/**
-	 * Sets the social equity log local service.
-	 *
-	 * @param socialEquityLogLocalService the social equity log local service
-	 */
-	public void setSocialEquityLogLocalService(
-		SocialEquityLogLocalService socialEquityLogLocalService) {
-		this.socialEquityLogLocalService = socialEquityLogLocalService;
-	}
-
-	/**
-	 * Returns the social equity log persistence.
-	 *
-	 * @return the social equity log persistence
-	 */
-	public SocialEquityLogPersistence getSocialEquityLogPersistence() {
-		return socialEquityLogPersistence;
-	}
-
-	/**
-	 * Sets the social equity log persistence.
-	 *
-	 * @param socialEquityLogPersistence the social equity log persistence
-	 */
-	public void setSocialEquityLogPersistence(
-		SocialEquityLogPersistence socialEquityLogPersistence) {
-		this.socialEquityLogPersistence = socialEquityLogPersistence;
-	}
-
-	/**
 	 * Returns the wiki page local service.
 	 *
 	 * @return the wiki page local service
@@ -1706,6 +1685,8 @@ public abstract class MBMessageServiceBaseImpl extends PrincipalBean
 	protected LockLocalService lockLocalService;
 	@BeanReference(type = LockPersistence.class)
 	protected LockPersistence lockPersistence;
+	@BeanReference(type = LockFinder.class)
+	protected LockFinder lockFinder;
 	@BeanReference(type = PortletPreferencesLocalService.class)
 	protected PortletPreferencesLocalService portletPreferencesLocalService;
 	@BeanReference(type = PortletPreferencesService.class)
@@ -1784,10 +1765,6 @@ public abstract class MBMessageServiceBaseImpl extends PrincipalBean
 	protected SocialActivityPersistence socialActivityPersistence;
 	@BeanReference(type = SocialActivityFinder.class)
 	protected SocialActivityFinder socialActivityFinder;
-	@BeanReference(type = SocialEquityLogLocalService.class)
-	protected SocialEquityLogLocalService socialEquityLogLocalService;
-	@BeanReference(type = SocialEquityLogPersistence.class)
-	protected SocialEquityLogPersistence socialEquityLogPersistence;
 	@BeanReference(type = WikiPageLocalService.class)
 	protected WikiPageLocalService wikiPageLocalService;
 	@BeanReference(type = WikiPageService.class)

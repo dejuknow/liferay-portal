@@ -95,14 +95,6 @@ public class ShoppingCartUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static ShoppingCart remove(ShoppingCart shoppingCart)
-		throws SystemException {
-		return getPersistence().remove(shoppingCart);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static ShoppingCart update(ShoppingCart shoppingCart, boolean merge)

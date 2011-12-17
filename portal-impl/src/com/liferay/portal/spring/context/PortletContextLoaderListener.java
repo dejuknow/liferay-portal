@@ -21,6 +21,7 @@ import com.liferay.portal.kernel.concurrent.LockRegistry;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.PortletClassLoaderUtil;
+import com.liferay.portal.kernel.util.ContextPathUtil;
 import com.liferay.portal.kernel.util.MethodCache;
 import com.liferay.portal.kernel.util.StringPool;
 
@@ -43,7 +44,9 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 public class PortletContextLoaderListener extends ContextLoaderListener {
 
 	public static String getLockKey(ServletContext servletContext) {
-		return getLockKey(servletContext.getContextPath());
+		String contextPath = ContextPathUtil.getContextPath(servletContext);
+
+		return getLockKey(contextPath);
 	}
 
 	public static String getLockKey(String contextPath) {

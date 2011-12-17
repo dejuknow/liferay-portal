@@ -141,7 +141,7 @@ public class ChannelImpl extends BaseChannelImpl {
 		}
 	}
 
-	public void deleteUserNotificiationEvent (String notificationEventUuid)
+	public void deleteUserNotificiationEvent(String notificationEventUuid)
 		throws ChannelException {
 
 		try {
@@ -155,7 +155,7 @@ public class ChannelImpl extends BaseChannelImpl {
 		}
 	}
 
-	public void deleteUserNotificiationEvents (
+	public void deleteUserNotificiationEvents(
 			Collection<String> notificationEventUuids)
 		throws ChannelException {
 
@@ -365,9 +365,7 @@ public class ChannelImpl extends BaseChannelImpl {
 			while (itr1.hasNext()) {
 				NotificationEvent notificationEvent = itr1.next();
 
-				if (isRemoveNotificationEvent(
-						notificationEvent, currentTime)) {
-
+				if (isRemoveNotificationEvent(notificationEvent, currentTime)) {
 					itr1.remove();
 				}
 			}
@@ -386,8 +384,7 @@ public class ChannelImpl extends BaseChannelImpl {
 				unconfirmedNotificationEventsSet.iterator();
 
 			while (itr2.hasNext()) {
-				Map.Entry<String, NotificationEvent> entry =
-					itr2.next();
+				Map.Entry<String, NotificationEvent> entry = itr2.next();
 
 				NotificationEvent notificationEvent = entry.getValue();
 

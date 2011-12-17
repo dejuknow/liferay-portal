@@ -392,11 +392,13 @@
 		<!-- References -->
 
 		<reference package-path="com.liferay.portlet.asset" entity="AssetEntry" />
+		<reference package-path="com.liferay.portlet.asset" entity="AssetVocabulary" />
 		<reference package-path="com.liferay.portlet.blogs" entity="BlogsEntry" />
 		<reference package-path="com.liferay.portlet.blogs" entity="BlogsStatsUser" />
 		<reference package-path="com.liferay.portlet.bookmarks" entity="BookmarksFolder" />
 		<reference package-path="com.liferay.portlet.calendar" entity="CalEvent" />
 		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLApp" />
+		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLFileEntryType" />
 		<reference package-path="com.liferay.portlet.journal" entity="JournalArticle" />
 		<reference package-path="com.liferay.portlet.journal" entity="JournalStructure" />
 		<reference package-path="com.liferay.portlet.journal" entity="JournalTemplate" />
@@ -486,7 +488,7 @@
 		<column name="priority" type="int" />
 		<column name="layoutPrototypeUuid" type="String" />
 		<column name="layoutPrototypeLinkEnabled" type="boolean" />
-		<column name="templateLayoutUuid" type="String" />
+		<column name="sourcePrototypeLayoutUuid" type="String" />
 
 		<!-- Order -->
 
@@ -530,10 +532,10 @@
 			<finder-column name="privateLayout" />
 			<finder-column name="type" />
 		</finder>
-		<finder name="G_P_TLU" return-type="Layout">
+		<finder name="G_P_SPLU" return-type="Layout">
 			<finder-column name="groupId" />
 			<finder-column name="privateLayout" />
-			<finder-column name="templateLayoutUuid" />
+			<finder-column name="sourcePrototypeLayoutUuid" />
 		</finder>
 
 		<!-- References -->
@@ -720,6 +722,8 @@
 		<!-- Audit fields -->
 
 		<column name="companyId" type="long" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
 
 		<!-- Other fields -->
 
@@ -804,6 +808,8 @@
 		<!-- Audit fields -->
 
 		<column name="companyId" type="long" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
 
 		<!-- Other fields -->
 
@@ -875,6 +881,11 @@
 		<finder name="C_K" return-type="Lock">
 			<finder-column name="className" />
 			<finder-column name="key" />
+		</finder>
+		<finder name="C_K_O" return-type="Lock" unique="true">
+			<finder-column name="className" />
+			<finder-column name="key" />
+			<finder-column name="owner" />
 		</finder>
 	</entity>
 	<entity name="MembershipRequest" local-service="true" remote-service="true">
@@ -1459,7 +1470,7 @@
 			<finder-column name="servletContextName" />
 		</finder>
 	</entity>
-	<entity name="Repository" local-service="false" remote-service="true">
+	<entity name="Repository" uuid="true" local-service="true" remote-service="true">
 
 		<!-- PK fields -->
 
@@ -1472,6 +1483,8 @@
 		<!-- Audit fields -->
 
 		<column name="companyId" type="long" />
+		<column name="userId" type="long" />
+		<column name="userName" type="String" />
 		<column name="createDate" type="Date" />
 		<column name="modifiedDate" type="Date" />
 
@@ -1922,7 +1935,6 @@
 		<reference package-path="com.liferay.portlet.asset" entity="AssetEntry" />
 		<reference package-path="com.liferay.portlet.messageboards" entity="MBThread" />
 		<reference package-path="com.liferay.portlet.social" entity="SocialActivity" />
-		<reference package-path="com.liferay.portlet.social" entity="SocialEquityLog" />
 	</entity>
 	<entity name="Team" local-service="true" remote-service="true">
 
@@ -2113,8 +2125,6 @@
 		<reference package-path="com.liferay.portlet.messageboards" entity="MBThreadFlag" />
 		<reference package-path="com.liferay.portlet.shopping" entity="ShoppingCart" />
 		<reference package-path="com.liferay.portlet.social" entity="SocialActivity" />
-		<reference package-path="com.liferay.portlet.social" entity="SocialEquityLog" />
-		<reference package-path="com.liferay.portlet.social" entity="SocialEquityUser" />
 		<reference package-path="com.liferay.portlet.social" entity="SocialRequest" />
 	</entity>
 	<entity name="UserGroup" local-service="true" remote-service="true">
@@ -2132,8 +2142,6 @@
 		<column name="parentUserGroupId" type="long" />
 		<column name="name" type="String" accessor="true" />
 		<column name="description" type="String" />
-		<column name="publicLayoutSetPrototypeId" type="long" />
-		<column name="privateLayoutSetPrototypeId" type="long" />
 		<column name="addedByLDAPImport" type="boolean" />
 
 		<!-- Relationships -->

@@ -32,6 +32,7 @@ import com.liferay.portal.kernel.search.OpenSearch;
 import com.liferay.portal.kernel.servlet.ServletContextPool;
 import com.liferay.portal.kernel.servlet.URLEncoder;
 import com.liferay.portal.kernel.util.ContentTypes;
+import com.liferay.portal.kernel.util.ContextPathUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -138,7 +139,7 @@ public class PortletImpl extends PortletBaseImpl {
 		String icon, String virtualPath, String strutsPath,
 		String parentStrutsPath, String portletName, String displayName,
 		String portletClass, String configurationActionClass,
-		List <String> indexerClasses, String openSearchClass,
+		List<String> indexerClasses, String openSearchClass,
 		List<SchedulerEntry> schedulerEntries, String portletURLClass,
 		String friendlyURLMapperClass, String friendlyURLMapping,
 		String friendlyURLRoutes, String urlEncoderClass,
@@ -1275,9 +1276,6 @@ public class PortletImpl extends PortletBaseImpl {
 
 	/**
 	 * Sets the name of the permission propagator class of the portlet.
-	 *
-	 * @param pollerProcessorClass the name of the permission propagator class
-	 *        of the portlet
 	 */
 	public void setPermissionPropagatorClass(String permissionPropagatorClass) {
 		_permissionPropagatorClass = permissionPropagatorClass;
@@ -3005,7 +3003,7 @@ public class PortletImpl extends PortletBaseImpl {
 			ServletContext servletContext = ServletContextPool.get(
 				servletContextName);
 
-			return servletContext.getContextPath();
+			return ContextPathUtil.getContextPath(servletContext);
 		}
 
 		return StringPool.SLASH.concat(servletContextName);

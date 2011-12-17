@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.io.DummyWriter;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.StreamUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -43,16 +44,20 @@ public class TikaRawMetadataProcessor extends XugglerRawMetadataProcessor {
 			String extension, String mimeType, File file)
 		throws SystemException {
 
-		Metadata metadata = super.extractMetadata(
-			extension, mimeType, file);
+		Metadata metadata = super.extractMetadata(extension, mimeType, file);
+
+		InputStream inputStream = null;
 
 		try {
-			InputStream inputStream = new FileInputStream(file);
+			inputStream = new FileInputStream(file);
 
 			return extractMetadata(inputStream, metadata);
 		}
 		catch (IOException ioe) {
 			throw new SystemException(ioe);
+		}
+		finally {
+			StreamUtil.cleanUp(inputStream);
 		}
 	}
 

@@ -36,6 +36,16 @@ public class StringUtil_IW {
 		return StringUtil.add(s, add, delimiter, allowDuplicates);
 	}
 
+	public java.lang.String appendParentheticalSuffix(java.lang.String s,
+		int suffix) {
+		return StringUtil.appendParentheticalSuffix(s, suffix);
+	}
+
+	public java.lang.String appendParentheticalSuffix(java.lang.String s,
+		java.lang.String suffix) {
+		return StringUtil.appendParentheticalSuffix(s, suffix);
+	}
+
 	public java.lang.String bytesToHexString(byte[] bytes) {
 		return StringUtil.bytesToHexString(bytes);
 	}
@@ -59,6 +69,10 @@ public class StringUtil_IW {
 
 	public boolean endsWith(java.lang.String s, java.lang.String end) {
 		return StringUtil.endsWith(s, end);
+	}
+
+	public java.lang.String extract(java.lang.String s, char[] chars) {
+		return StringUtil.extract(s, chars);
 	}
 
 	public java.lang.String extractChars(java.lang.String s) {
@@ -148,6 +162,14 @@ public class StringUtil_IW {
 	public java.lang.String merge(java.util.Collection<?> col,
 		java.lang.String delimiter) {
 		return StringUtil.merge(col, delimiter);
+	}
+
+	public java.lang.String merge(char[] array) {
+		return StringUtil.merge(array);
+	}
+
+	public java.lang.String merge(char[] array, java.lang.String delimiter) {
+		return StringUtil.merge(array, delimiter);
 	}
 
 	public java.lang.String merge(double[] array) {

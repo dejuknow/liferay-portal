@@ -95,14 +95,6 @@ public class BookmarksEntryUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static BookmarksEntry remove(BookmarksEntry bookmarksEntry)
-		throws SystemException {
-		return getPersistence().remove(bookmarksEntry);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static BookmarksEntry update(BookmarksEntry bookmarksEntry,

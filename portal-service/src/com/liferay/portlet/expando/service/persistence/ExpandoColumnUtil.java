@@ -95,14 +95,6 @@ public class ExpandoColumnUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static ExpandoColumn remove(ExpandoColumn expandoColumn)
-		throws SystemException {
-		return getPersistence().remove(expandoColumn);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static ExpandoColumn update(ExpandoColumn expandoColumn,

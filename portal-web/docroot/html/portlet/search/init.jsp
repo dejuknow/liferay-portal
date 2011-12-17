@@ -37,6 +37,7 @@ page import="com.liferay.portal.kernel.search.facet.config.FacetConfigurationUti
 page import="com.liferay.portal.kernel.search.facet.util.FacetFactoryUtil" %><%@
 page import="com.liferay.portal.kernel.search.facet.util.RangeParserUtil" %><%@
 page import="com.liferay.portal.kernel.util.DateFormatFactoryUtil" %><%@
+page import="com.liferay.portal.kernel.util.PortalClassLoaderUtil" %><%@
 page import="com.liferay.portal.kernel.xml.Element" %><%@
 page import="com.liferay.portal.kernel.xml.SAXReaderUtil" %><%@
 page import="com.liferay.portal.security.permission.comparator.ModelResourceComparator" %><%@
@@ -69,7 +70,7 @@ if (Validator.isNotNull(portletResource)) {
 	portletPreferences = PortletPreferencesFactoryUtil.getPortletSetup(request, portletResource);
 }
 
-boolean advancedConfiguration = GetterUtil.getBoolean(portletPreferences.getValue("advancedConfiguration", null), false);
+boolean advancedConfiguration = GetterUtil.getBoolean(portletPreferences.getValue("advancedConfiguration", null));
 boolean displayAssetTypeFacet = GetterUtil.getBoolean(portletPreferences.getValue("displayAssetTypeFacet", null), true);
 boolean displayAssetTagsFacet = GetterUtil.getBoolean(portletPreferences.getValue("displayAssetTagsFacet", null), true);
 boolean displayAssetCategoriesFacet = GetterUtil.getBoolean(portletPreferences.getValue("displayAssetCategoriesFacet", null), true);
@@ -83,7 +84,7 @@ if (!permissionChecker.isCompanyAdmin()) {
 
 boolean viewInContext = GetterUtil.getBoolean(portletPreferences.getValue("viewInContext", null), true);
 boolean displayMainQuery = GetterUtil.getBoolean(portletPreferences.getValue("displayMainQuery", null));
-boolean displayOpenSearchResults = GetterUtil.getBoolean(portletPreferences.getValue("displayOpenSearchResults", null), true);
+boolean displayOpenSearchResults = GetterUtil.getBoolean(portletPreferences.getValue("displayOpenSearchResults", null));
 
 String searchConfiguration = portletPreferences.getValue("searchConfiguration", StringPool.BLANK);
 

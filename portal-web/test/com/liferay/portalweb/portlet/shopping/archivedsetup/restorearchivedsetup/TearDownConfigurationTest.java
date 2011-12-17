@@ -27,6 +27,7 @@ public class TearDownConfigurationTest extends BaseTestCase {
 		while (label >= 1) {
 			switch (label) {
 			case 1:
+				selenium.selectFrame("relative=top");
 				selenium.open("/web/guest/home/");
 
 				for (int second = 0;; second++) {
@@ -48,6 +49,9 @@ public class TearDownConfigurationTest extends BaseTestCase {
 				selenium.clickAt("link=Shopping Test Page",
 					RuntimeVariables.replace("Shopping Test Page"));
 				selenium.waitForPageToLoad("30000");
+				Thread.sleep(5000);
+				assertEquals(RuntimeVariables.replace("Options"),
+					selenium.getText("//strong/a"));
 				selenium.clickAt("//strong/a",
 					RuntimeVariables.replace("Options"));
 

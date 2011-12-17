@@ -192,9 +192,13 @@ UnicodeProperties typeSettingsProperties = layout.getTypeSettingsProperties();
 
 String defaultAssetPublisherPortletId = typeSettingsProperties.getProperty(LayoutTypePortletConstants.DEFAULT_ASSET_PUBLISHER_PORTLET_ID, StringPool.BLANK);
 
-if (defaultAssetPublisherPortletId.equals(portletDisplay.getId())) {
+if (defaultAssetPublisherPortletId.equals(portletDisplay.getId()) || defaultAssetPublisherPortletId.equals(portletResource)) {
 	defaultAssetPublisher = true;
 }
+
+boolean enablePermissions = GetterUtil.getBoolean(preferences.getValue("enablePermissions", null));
+
+assetEntryQuery.setEnablePermissions(enablePermissions);
 
 boolean enableRelatedAssets = GetterUtil.getBoolean(preferences.getValue("enableRelatedAssets", null), true);
 boolean enableRatings = GetterUtil.getBoolean(preferences.getValue("enableRatings", null));
@@ -230,6 +234,8 @@ boolean viewInContext = assetLinkBehavior.equals("viewInPortlet");
 boolean showPortletWithNoResults = false;
 boolean groupByClass = (assetVocabularyId == -1);
 boolean allowEmptyResults = false;
+
+Map<String, PortletURL> addPortletURLs = null;
 
 Format dateFormatDate = FastDateFormatFactoryUtil.getDate(locale, timeZone);
 %>

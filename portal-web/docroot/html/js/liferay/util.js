@@ -532,10 +532,10 @@
 					document.selection.createRange().text='\t';
 				}
 
-		        el.scrollTop = oldscroll;
+				el.scrollTop = oldscroll;
 
 				return false;
-		    }
+			}
 		},
 
 		toCharCode: A.cached(
@@ -1087,9 +1087,10 @@
 
 			ddmURL.setEscapeXML(false);
 
-            ddmURL.setDoAsGroupId(config.doAsGroupId || themeDisplay.getScopeGroupId());
+			ddmURL.setDoAsGroupId(config.doAsGroupId || themeDisplay.getScopeGroupId());
 
 			ddmURL.setParameter('chooseCallback', config.chooseCallback);
+			ddmURL.setParameter('ddmResource', config.ddmResource);
 			ddmURL.setParameter('saveCallback', config.saveCallback);
 			ddmURL.setParameter('scopeAvailableFields', config.availableFields);
 			ddmURL.setParameter('scopeStorageType', config.storageType);
@@ -1184,11 +1185,34 @@
 
 	Liferay.provide(
 		Util,
+		'removeFolderSelection',
+		function(folderIdString, folderNameString, namespace) {
+			A.byIdNS(namespace, folderIdString).val(0);
+
+			var nameEl = A.byIdNS(namespace, folderNameString);
+
+			nameEl.attr('href', '');
+
+			nameEl.empty();
+
+			var button = A.byIdNS(namespace, 'removeFolderButton');
+
+			if (button) {
+				button.attr('disabled', true);
+
+				button.ancestor('.aui-button').addClass('aui-button-disabled');
+			}
+		},
+		['aui-base']
+	);
+
+	Liferay.provide(
+		Util,
 		'removeItem',
 		function(box, value) {
 			box = A.one(box);
 
-			var selectedIndex =  box.get('selectedIndex');
+			var selectedIndex = box.get('selectedIndex');
 
 			if (!value) {
 				box.all('option').item(selectedIndex).remove(true);
@@ -1377,6 +1401,31 @@
 
 	Liferay.provide(
 		Util,
+		'selectFolder',
+		function(folderData, folderHref, namespace) {
+			A.byIdNS(namespace, folderData['idString']).val(folderData['idValue']);
+
+			var nameEl = A.byIdNS(namespace, folderData['nameString']);
+
+			Liferay.Util.addParams(namespace + 'folderId=' + folderData['idValue'], folderHref);
+
+			nameEl.attr('href', folderHref);
+
+			nameEl.setContent(folderData['nameValue'] + '&nbsp;');
+
+			var button = A.byIdNS(namespace, 'removeFolderButton');
+
+			if (button) {
+				button.set('disabled', false);
+
+				button.ancestor('.aui-button').removeClass('aui-button-disabled');
+			}
+		},
+		['aui-base']
+	);
+
+	Liferay.provide(
+		Util,
 		'setSelectedValue',
 		function(col, value) {
 			var option = A.one(col).one('option[value=' + value + ']');
@@ -1530,26 +1579,27 @@
 			var radioButton = A.one('#' + radioId);
 			var showBox = A.one('#' + showBoxId);
 
-			if (radioButton && showBox) {
+			if (radioButton) {
 				var checked = radioButton.get('checked');
 
-				showBox.toggle(checked);
+				if (showBox) {
+					showBox.toggle(checked);
+				}
 
 				radioButton.on(
 					'change',
 					function() {
-						showBox.show();
-
-						var hideBox;
-
-						if (isArray(hideBoxIds)) {
-							hideBox = A.all('#' + hideBoxIds.join(',#'));
-						}
-						else {
-							hideBox = A.one('#' + hideBoxIds);
+						if (showBox) {
+							showBox.show();
 						}
 
-						hideBox.hide();
+						if (Lang.isValue(hideBoxIds)) {
+							if (Lang.isArray(hideBoxIds)) {
+								hideBoxIds = hideBoxIds.join(',#');
+							}
+
+							A.all('#' + hideBoxIds).hide();
+						}
 					}
 				);
 			}

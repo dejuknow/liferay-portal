@@ -36,8 +36,6 @@ import com.liferay.portal.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.util.dao.orm.CustomSQLUtil;
 
-import java.io.Serializable;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -373,8 +371,7 @@ public class GroupFinderImpl
 		}
 
 		Long userId = (Long)params.get("usersGroups");
-		boolean inherit = GetterUtil.getBoolean(
-			(Serializable)params.get("inherit"), true);
+		boolean inherit = GetterUtil.getBoolean(params.get("inherit"), true);
 
 		boolean doUnion = Validator.isNotNull(userId) && inherit;
 
@@ -523,10 +520,10 @@ public class GroupFinderImpl
 			qPos.add(companyId);
 			qPos.add(name);
 
-			List<Group> list = q.list();
+			List<Group> groups = q.list();
 
-			if (!list.isEmpty()) {
-				return list.get(0);
+			if (!groups.isEmpty()) {
+				return groups.get(0);
 			}
 		}
 		catch (Exception e) {
@@ -555,7 +552,7 @@ public class GroupFinderImpl
 
 		return findByC_C_N_D(
 			companyId, _getGroupOrganizationClassNameIds(), name, realName,
-			description,params, start, end, obc);
+			description, params, start, end, obc);
 	}
 
 	public List<Group> findByC_C_N_D(
@@ -572,8 +569,7 @@ public class GroupFinderImpl
 		}
 
 		Long userId = (Long)params.get("usersGroups");
-		boolean inherit = GetterUtil.getBoolean(
-			(Serializable)params.get("inherit"), true);
+		boolean inherit = GetterUtil.getBoolean(params.get("inherit"), true);
 
 		boolean doUnion = Validator.isNotNull(userId) && inherit;
 
@@ -1209,10 +1205,8 @@ public class GroupFinderImpl
 			"rolePermissions_6_block",
 			_getCondition(
 				CustomSQLUtil.get(JOIN_BY_ROLE_RESOURCE_TYPE_PERMISSIONS)));
-		whereMap.put(
-			"site", _getCondition(CustomSQLUtil.get(JOIN_BY_SITE)));
-		whereMap.put(
-			"type", _getCondition(CustomSQLUtil.get(JOIN_BY_TYPE)));
+		whereMap.put("site", _getCondition(CustomSQLUtil.get(JOIN_BY_SITE)));
+		whereMap.put("type", _getCondition(CustomSQLUtil.get(JOIN_BY_TYPE)));
 		whereMap.put(
 			"userGroupRole",
 			_getCondition(CustomSQLUtil.get(JOIN_BY_USER_GROUP_ROLE)));

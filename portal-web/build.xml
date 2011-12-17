@@ -63,6 +63,7 @@
 				<!-- Prepare -->
 
 				<delete dir="docroot/html/ALLOY_ZIP" />
+				<delete dir="docroot/html/css/portal/aui.css" />
 				<delete dir="docroot/html/js/aui" />
 				<delete dir="docroot/html/portal/aui" />
 				<delete dir="docroot/html/themes/_unstyled/images/aui/" />
@@ -143,7 +144,7 @@
 					</sequential>
 				</for>
 
-				<replaceregexp match="url\(([^)]+)\)" replace="url(&lt;%= themeImagesPath %&gt;/aui/\1)" flags="g" byline="false">
+				<replaceregexp match="url\(([^)]+)\)" replace="url(@theme_image_path@/aui/\1)" flags="g" byline="false">
 					<fileset
 						dir="docroot/html/ALLOY_ZIP/build/aui-skins/tmp/"
 						includes="alloy.css"
@@ -160,7 +161,7 @@
 
 				<copy
 					file="docroot/html/ALLOY_ZIP/build/aui-skins/tmp/alloy.css"
-					tofile="docroot/html/portal/aui/css.jspf"
+					tofile="docroot/html/css/portal/aui.css"
 					overwrite="true"
 				/>
 
@@ -345,102 +346,16 @@
 	</target>
 
 	<target name="build-css">
-		<for param="css.file">
-			<path>
-				<fileset
-					dir="docroot/html/themes/_styled/css"
-					excludes="custom.css,main.css"
-				/>
-				<fileset
-					dir="docroot/html/themes/_unstyled/css"
-					excludes="custom.css,main.css"
-				/>
-				<fileset
-					dir="docroot/html/themes"
-					excludes="**/classic/_diffs/css/custom.css"
-					includes="**/_diffs/css/*.css"
-				/>
-				<fileset
-					dir="docroot/html/themes"
-					excludes="**/control_panel/_diffs/css/custom.css"
-					includes="**/_diffs/css/*.css"
-				/>
-			</path>
-			<sequential>
-				<antcall target="build-css-cmd">
-					<param name="css.file" value="@{css.file}" />
-				</antcall>
-			</sequential>
-		</for>
-	</target>
-
-	<target name="build-css-cmd">
-		<loadfile property="css.content" srcfile="${css.file}" />
-
-		<antelope:post
-			append="false"
-			property="css.formatted"
-			to="http://teenage.cz/acidofil/tools/cssformat.php"
-			verbose="false"
-		>
-			<antelope:prop name="css" value="${css.content}" />
-			<antelope:prop name="akce" value="format" />
-			<antelope:prop name="sortclasses" value="0" />
-			<antelope:prop name="sortattrs" value="1" />
-			<antelope:prop name="stripcomms" value="0" />
-			<antelope:prop name="textarea" value="1" />
-			<antelope:prop name="mergeclasses" value="0" />
-			<antelope:prop name="mergeattrs" value="1" />
-			<antelope:prop name="shortcolors" value="1" />
-			<antelope:prop name="shortattrs" value="1" />
-		</antelope:post>
-
-		<!--
-		<textarea rows="12" cols="100">
-		-->
-
-		<antelope:stringutil string="${css.formatted}" property="css.formatted.beginindex">
-			<indexof string="textarea rows" />
-		</antelope:stringutil>
-
-		<math
-			datatype="int"
-			operand1="${css.formatted.beginindex}"
-			operand2="31"
-			operation="+"
-			result="css.formatted.beginindex"
-		/>
-
-		<!--
-		</textarea>
-		-->
-
-		<antelope:stringutil string="${css.formatted}" property="css.formatted.endindex">
-			<indexof string="/textarea" fromindex="${css.formatted.beginindex}" />
-		</antelope:stringutil>
-
-		<math
-			datatype="int"
-			operand1="${css.formatted.endindex}"
-			operand2="3"
-			operation="-"
-			result="css.formatted.endindex"
-		/>
-
-		<antelope:stringutil string="${css.formatted}" property="css.formatted">
-			<substring beginindex="${css.formatted.beginindex}" endindex="${css.formatted.endindex}" />
-		</antelope:stringutil>
-
-		<echo message="${css.formatted}" file="${css.file}" />
-
 		<java
-			classname="com.liferay.portal.tools.CSSFormatter"
+			classname="com.liferay.portal.tools.SassToCssBuilder"
 			classpathref="project.classpath"
 			fork="true"
 			newenvironment="true"
 		>
-			<jvmarg value="-Dexternal-properties=com/liferay/portal/tools/dependencies/portal-tools.properties" />
-			<arg line="${css.file}" />
+			<jvmarg value="-Dliferay.lib.portal.dir=${basedir}/../lib/portal" />
+			<arg value="sass.dir.0=${basedir}/docroot/html/css" />
+			<arg value="sass.dir.1=${basedir}/docroot/html/portlet" />
+			<arg value="sass.dir.2=${basedir}/docroot/html/themes" />
 		</java>
 	</target>
 
@@ -904,7 +819,10 @@ var defaultTypes = []]>
 		<delete dir="test-classes" />
 		<delete dir="test-results" />
 
-		<delete>
+		<delete includeemptydirs="true">
+			<fileset dir="docroot/html/css" includes="**/.sass-cache/**,**/.sass_cache_*.css,**/_sass_cache_*.css" />
+			<fileset dir="docroot/html/portlet" includes="**/.sass-cache/**,**/.sass_cache_*.css,**/_sass_cache_*.css" />
+			<fileset dir="docroot/html/themes" includes="**/.sass-cache/**,**/.sass_cache_*.css,**/_sass_cache_*.css" />
 			<fileset dir="docroot/WEB-INF/tld" includes="liferay*.tld" />
 		</delete>
 
@@ -973,6 +891,15 @@ var defaultTypes = []]>
 			nowarn="on"
 			srcdir="${jspc.classes.dir}"
 		/>
+
+		<java
+			classname="com.liferay.portal.tools.jspc.common.TimestampUpdater"
+			classpathref="project.classpath"
+			fork="true"
+			newenvironment="true"
+		>
+			<arg line="${jspc.classes.dir}" />
+		</java>
 	</target>
 
 	<target name="compile-jonas">
@@ -1011,6 +938,8 @@ Please set the property "jdk.6.home" in build.properties.
 			<pathelement location="${env.JAVA_HOME}/lib/tools.jar" />
 			<path refid="jspc.common.classpath" />
 			<pathelement location="${app.server.dir}/lib/resin.jar" />
+			<pathelement location="${project.dir}/lib/portal/abdera.jar" />
+			<pathelement location="${project.dir}/lib/portal/axis.jar" />
 			<pathelement location="${project.dir}/lib/portal/commons-beanutils.jar" />
 			<pathelement location="${project.dir}/lib/portal/commons-configuration.jar" />
 			<pathelement location="${project.dir}/lib/portal/commons-digester.jar" />
@@ -1023,11 +952,14 @@ Please set the property "jdk.6.home" in build.properties.
 			<pathelement location="${project.dir}/lib/portal/spring-core.jar" />
 			<pathelement location="${project.dir}/lib/portal/spring-expression.jar" />
 			<pathelement location="${project.dir}/lib/portal/spring-web.jar" />
+			<pathelement location="${project.dir}/lib/portal/spring-web-servlet.jar" />
 			<pathelement location="${project.dir}/lib/portal/struts-el.jar" />
 			<pathelement location="${project.dir}/lib/portal/tika-core.jar" />
 		</path>
 
 		<delete dir="${jspc.classes.dir}" quiet="true" />
+
+		<delete file="jspc_error" />
 
 		<java
 			classname="com.liferay.portal.tools.jspc.resin.BatchJspCompiler"
@@ -1039,6 +971,15 @@ Please set the property "jdk.6.home" in build.properties.
 		>
 			<arg line="docroot ${jspc.classes.dir}" />
 		</java>
+
+		<if>
+			<available file="jspc_error" />
+			<then>
+				<loadfile property="jspc_error.content" srcfile="jspc_error" />
+
+				<fail>${jspc_error.content}</fail>
+			</then>
+		</if>
 
 		<delete dir="resin-data" quiet="true" />
 	</target>
@@ -1086,6 +1027,8 @@ Please set the property "jdk.6.home" in build.properties.
 		<antcall target="build-tinymce" />
 		<antcall target="build-vaadin" />
 
+		<antcall target="build-css" />
+
 		<copy todir="docroot/WEB-INF/lib" file="${project.dir}/portal-client/portal-client.jar" failonerror="false" />
 
 		<antcall target="build-common-web.deploy" />
@@ -1098,7 +1041,7 @@ Please set the property "jdk.6.home" in build.properties.
 					<then>
 						<antcall target="compile-jonas" />
 
-						<copy todir="${app.server.dir}/work/jonas/localhost/_">
+						<copy todir="${app.server.dir}/work/jonas/localhost/_" preservelastmodified="true">
 							<fileset dir="classes/${app.server.type}">
 								<exclude name="**/*.jspc_error" />
 								<exclude name="**/*.java" />
@@ -1110,7 +1053,7 @@ Please set the property "jdk.6.home" in build.properties.
 						<then>
 							<antcall target="compile-resin" />
 
-							<copy todir="${app.server.portal.dir}/WEB-INF/work">
+							<copy todir="${app.server.portal.dir}/WEB-INF/work" preservelastmodified="true">
 								<fileset dir="classes/${app.server.type}">
 									<exclude name="**/*.jspc_error" />
 									<exclude name="**/*.java" />
@@ -1123,7 +1066,7 @@ Please set the property "jdk.6.home" in build.properties.
 						<then>
 							<antcall target="compile-tomcat" />
 
-							<copy todir="${app.server.dir}/work/Catalina/localhost/_">
+							<copy todir="${app.server.dir}/work/Catalina/localhost/_" preservelastmodified="true">
 								<fileset dir="classes/${app.server.type}">
 									<exclude name="**/*.jspc_error" />
 									<exclude name="**/*.java" />
@@ -1158,6 +1101,7 @@ Please set the property "jdk.6.home" in build.properties.
 						<include name="**/*.properties" />
 						<include name="**/*.tld" />
 						<include name="**/*.vm" />
+						<include name="**/*.wsdd" />
 						<include name="**/*.xml" />
 					</fileset>
 				</copy>

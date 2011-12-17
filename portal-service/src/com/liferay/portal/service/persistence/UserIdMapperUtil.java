@@ -94,14 +94,6 @@ public class UserIdMapperUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static UserIdMapper remove(UserIdMapper userIdMapper)
-		throws SystemException {
-		return getPersistence().remove(userIdMapper);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static UserIdMapper update(UserIdMapper userIdMapper, boolean merge)

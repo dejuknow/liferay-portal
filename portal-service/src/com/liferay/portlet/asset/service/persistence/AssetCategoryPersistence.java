@@ -14,7 +14,6 @@
 
 package com.liferay.portlet.asset.service.persistence;
 
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.service.persistence.BasePersistence;
 
 import com.liferay.portlet.asset.model.AssetCategory;
@@ -1672,6 +1671,5 @@ public interface AssetCategoryPersistence extends BasePersistence<AssetCategory>
 	public void rebuildTree(long groupId, boolean force)
 		throws com.liferay.portal.kernel.exception.SystemException;
 
-	public AssetCategory remove(AssetCategory assetCategory)
-		throws SystemException;
+	public void setRebuildTreeEnabled(boolean rebuildTreeEnabled);
 }

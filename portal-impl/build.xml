@@ -413,7 +413,7 @@ public class Creole10Parser]]></replacevalue>
 			<arg value="service.api.dir=${basedir}/../portal-service/src" />
 			<arg value="service.impl.dir=${basedir}/src" />
 			<arg value="service.json.file=${basedir}/../portal-web/docroot/html/js/liferay/service.js" />
-			<arg value="service.remoting.file=${basedir}/../tunnel-web/docroot/WEB-INF/remoting-servlet.xml" />
+			<arg value="service.remoting.file=${basedir}/../portal-web/docroot/WEB-INF/remoting-servlet.xml" />
 			<arg value="service.sql.dir=${basedir}/../sql" />
 			<arg value="service.sql.file=portal-tables.sql" />
 			<arg value="service.sql.indexes.file=indexes.sql" />
@@ -699,7 +699,7 @@ public class Creole10Parser]]></replacevalue>
 			<jvmarg value="-Dexternal-properties=com/liferay/portal/tools/dependencies/portal-tools.properties" />
 			<jvmarg value="-Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.Log4JLogger" />
 			<arg value="wsdd.output.path=src/" />
-			<arg value="wsdd.server.config.file=${basedir}/../tunnel-web/docroot/WEB-INF/server-config.wsdd" />
+			<arg value="wsdd.server.config.file=${basedir}/../portal-web/docroot/WEB-INF/server-config.wsdd" />
 			<arg value="wsdd.service.namespace=Portlet" />
 			<arg value="wsdd.input.file=${service.file}" />
 		</java>

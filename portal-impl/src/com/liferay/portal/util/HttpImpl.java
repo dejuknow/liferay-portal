@@ -99,12 +99,9 @@ public class HttpImpl implements Http {
 		if (Validator.isNotNull(_NON_PROXY_HOSTS)) {
 			String nonProxyHostsRegEx = _NON_PROXY_HOSTS;
 
-			nonProxyHostsRegEx = nonProxyHostsRegEx.replaceAll(
-				"\\.", "\\\\.");
-			nonProxyHostsRegEx = nonProxyHostsRegEx.replaceAll(
-				"\\*", ".*?");
-			nonProxyHostsRegEx = nonProxyHostsRegEx.replaceAll(
-				"\\|", ")|(");
+			nonProxyHostsRegEx = nonProxyHostsRegEx.replaceAll("\\.", "\\\\.");
+			nonProxyHostsRegEx = nonProxyHostsRegEx.replaceAll("\\*", ".*?");
+			nonProxyHostsRegEx = nonProxyHostsRegEx.replaceAll("\\|", ")|(");
 
 			nonProxyHostsRegEx = "(" + nonProxyHostsRegEx + ")";
 
@@ -208,9 +205,9 @@ public class HttpImpl implements Http {
 	}
 
 	public String decodePath(String path) {
-		path =  StringUtil.replace(path, StringPool.SLASH, _TEMP_SLASH);
+		path = StringUtil.replace(path, StringPool.SLASH, _TEMP_SLASH);
 		path = decodeURL(path, true);
-		path =  StringUtil.replace(path, _TEMP_SLASH, StringPool.SLASH);
+		path = StringUtil.replace(path, _TEMP_SLASH, StringPool.SLASH);
 
 		return path;
 	}
@@ -766,10 +763,10 @@ public class HttpImpl implements Http {
 
 	public String removeProtocol(String url) {
 		if (url.startsWith(Http.HTTP_WITH_SLASH)) {
-			return url.substring(Http.HTTP_WITH_SLASH.length() , url.length());
+			return url.substring(Http.HTTP_WITH_SLASH.length(), url.length());
 		}
 		else if (url.startsWith(Http.HTTPS_WITH_SLASH)) {
-			return url.substring(Http.HTTPS_WITH_SLASH.length() , url.length());
+			return url.substring(Http.HTTPS_WITH_SLASH.length(), url.length());
 		}
 		else {
 			return url;

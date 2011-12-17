@@ -14,6 +14,7 @@
 
 package com.liferay.portal.tools;
 
+import com.liferay.portal.dao.orm.common.SQLTransformer;
 import com.liferay.portal.events.StartupHelperUtil;
 import com.liferay.portal.kernel.cache.CacheRegistryUtil;
 import com.liferay.portal.kernel.cache.MultiVMPoolUtil;
@@ -32,6 +33,7 @@ import com.liferay.portal.service.ReleaseLocalServiceUtil;
 import com.liferay.portal.service.ResourceActionLocalServiceUtil;
 import com.liferay.portal.service.ResourceCodeLocalServiceUtil;
 import com.liferay.portal.util.InitUtil;
+import com.liferay.util.dao.orm.CustomSQLUtil;
 
 import org.apache.commons.lang.time.StopWatch;
 
@@ -102,6 +104,11 @@ public class DBUpgrader {
 
 			throw new RuntimeException(msg);
 		}
+
+		// Reload SQL
+
+		CustomSQLUtil.reloadCustomSQL();
+		SQLTransformer.reloadSQLTransformer();
 
 		// Upgrade build
 

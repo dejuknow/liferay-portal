@@ -26,12 +26,6 @@ import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.plugin.PluginPackage;
-import com.liferay.portal.kernel.scheduler.SchedulerEngineUtil;
-import com.liferay.portal.kernel.scheduler.SchedulerEntry;
-import com.liferay.portal.kernel.scheduler.SchedulerEntryImpl;
-import com.liferay.portal.kernel.scheduler.StorageType;
-import com.liferay.portal.kernel.scheduler.TimeUnit;
-import com.liferay.portal.kernel.scheduler.TriggerType;
 import com.liferay.portal.kernel.servlet.PortalSessionThreadLocal;
 import com.liferay.portal.kernel.servlet.PortletSessionTracker;
 import com.liferay.portal.kernel.servlet.ProtectedServletRequest;
@@ -77,6 +71,7 @@ import com.liferay.portal.service.ThemeLocalServiceUtil;
 import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.servlet.filters.absoluteredirects.AbsoluteRedirectsResponse;
 import com.liferay.portal.servlet.filters.i18n.I18nFilter;
+import com.liferay.portal.setup.SetupWizardUtil;
 import com.liferay.portal.struts.PortletRequestProcessor;
 import com.liferay.portal.struts.StrutsUtil;
 import com.liferay.portal.util.ExtRegistry;
@@ -93,7 +88,6 @@ import com.liferay.portlet.PortletConfigFactoryUtil;
 import com.liferay.portlet.PortletFilterFactory;
 import com.liferay.portlet.PortletInstanceFactoryUtil;
 import com.liferay.portlet.PortletURLListenerFactory;
-import com.liferay.portlet.social.messaging.CheckEquityLogMessageListener;
 import com.liferay.portlet.social.util.SocialConfigurationUtil;
 import com.liferay.util.ContentUtil;
 import com.liferay.util.servlet.DynamicServletRequest;
@@ -279,19 +273,6 @@ public class MainServlet extends ActionServlet {
 			_log.error(e, e);
 		}
 
-		if (PropsValues.SOCIAL_EQUITY_EQUITY_LOG_ENABLED) {
-			if (_log.isDebugEnabled()) {
-				_log.debug("Initialize social equity log scheduler");
-			}
-
-			try {
-				initSocialEquityLogScheduler();
-			}
-			catch (Exception e) {
-				_log.error(e, e);
-			}
-		}
-
 		if (_log.isDebugEnabled()) {
 			_log.debug("Initialize web settings");
 		}
@@ -367,10 +348,6 @@ public class MainServlet extends ActionServlet {
 		}
 		catch (Exception e) {
 			_log.error(e, e);
-		}
-
-		if (PropsValues.SETUP_WIZARD_ENABLED) {
-			servletContext.setAttribute(WebKeys.SETUP_WIZARD_FINISHED, false);
 		}
 
 		servletContext.setAttribute(WebKeys.STARTUP_FINISHED, true);
@@ -680,11 +657,9 @@ public class MainServlet extends ActionServlet {
 		}
 
 		try {
-			Company company = CompanyLocalServiceUtil.getCompanyById(
-				companyId);
+			Company company = CompanyLocalServiceUtil.getCompanyById(companyId);
 
-			request = new EncryptedServletRequest(
-				request, company.getKeyObj());
+			request = new EncryptedServletRequest(request, company.getKeyObj());
 		}
 		catch (Exception e) {
 		}
@@ -700,9 +675,7 @@ public class MainServlet extends ActionServlet {
 		return PortalUtil.getUserPassword(request);
 	}
 
-	protected String getRemoteUser(
-		HttpServletRequest request, long userId) {
-
+	protected String getRemoteUser(HttpServletRequest request, long userId) {
 		String remoteUser = request.getRemoteUser();
 
 		if (!PropsValues.PORTAL_JAAS_ENABLE) {
@@ -826,14 +799,19 @@ public class MainServlet extends ActionServlet {
 			servletContext);
 	}
 
+	/**
+	 * @see {@link SetupWizardUtil#_initPlugins}
+	 */
 	protected void initPlugins() throws Exception {
 
 		// See LEP-2885. Don't flush hot deploy events until after the portal
 		// has initialized.
 
-		HotDeployUtil.setCapturePrematureEvents(false);
+		if (SetupWizardUtil.isSetupFinished()) {
+			HotDeployUtil.setCapturePrematureEvents(false);
 
-		PortalLifecycleUtil.flushInits();
+			PortalLifecycleUtil.flushInits();
+		}
 	}
 
 	protected void initPortletApp(
@@ -998,21 +976,6 @@ public class MainServlet extends ActionServlet {
 		SocialConfigurationUtil.read(classLoader, xmls);
 	}
 
-	protected void initSocialEquityLogScheduler() throws Exception {
-		SchedulerEntry socialEquityLogSchedulerEntry = new SchedulerEntryImpl();
-
-		socialEquityLogSchedulerEntry.setEventListenerClass(
-			CheckEquityLogMessageListener.class.getName());
-		socialEquityLogSchedulerEntry.setTimeUnit(TimeUnit.MINUTE);
-		socialEquityLogSchedulerEntry.setTriggerType(TriggerType.SIMPLE);
-		socialEquityLogSchedulerEntry.setTriggerValue(
-			PropsValues.SOCIAL_EQUITY_EQUITY_LOG_CHECK_INTERVAL);
-
-		SchedulerEngineUtil.schedule(
-			socialEquityLogSchedulerEntry, StorageType.MEMORY_CLUSTERED,
-			PortalClassLoaderUtil.getClassLoader(), 0);
-	}
-
 	protected void initThemes(
 			PluginPackage pluginPackage, List<Portlet> portlets)
 		throws Exception {
@@ -1143,8 +1106,7 @@ public class MainServlet extends ActionServlet {
 		String html = ContentUtil.get(
 			"com/liferay/portal/dependencies/inactive.html");
 
-		html = StringUtil.replace(
-			html, "[$MESSAGE$]", message);
+		html = StringUtil.replace(html, "[$MESSAGE$]", message);
 
 		ServletOutputStream servletOutputStream = response.getOutputStream();
 
@@ -1179,7 +1141,9 @@ public class MainServlet extends ActionServlet {
 			_log.error(e, e);
 		}
 
-		if (_HTTP_HEADER_VERSION_VERBOSITY_PARTIAL) {
+		if (_HTTP_HEADER_VERSION_VERBOSITY_DEFAULT) {
+		}
+		else if (_HTTP_HEADER_VERSION_VERBOSITY_PARTIAL) {
 			response.addHeader(
 				_LIFERAY_PORTAL_REQUEST_HEADER, ReleaseInfo.getName());
 		}
@@ -1322,9 +1286,13 @@ public class MainServlet extends ActionServlet {
 		DynamicServletRequest dynamicRequest = new DynamicServletRequest(
 			request);
 
-		// Reset p_l_id or there will be an infinite loop
+		// Reset layout params or there will be an infinite loop
 
 		dynamicRequest.setParameter("p_l_id", StringPool.BLANK);
+
+		dynamicRequest.setParameter("groupId", StringPool.BLANK);
+		dynamicRequest.setParameter("layoutId", StringPool.BLANK);
+		dynamicRequest.setParameter("privateLayout", StringPool.BLANK);
 
 		PortalUtil.sendError(status, (Exception)t, dynamicRequest, response);
 	}
@@ -1352,6 +1320,10 @@ public class MainServlet extends ActionServlet {
 
 		PrincipalThreadLocal.setPassword(password);
 	}
+
+	private static final boolean _HTTP_HEADER_VERSION_VERBOSITY_DEFAULT =
+		PropsValues.HTTP_HEADER_VERSION_VERBOSITY.equalsIgnoreCase(
+			ReleaseInfo.getName());
 
 	private static final boolean _HTTP_HEADER_VERSION_VERBOSITY_PARTIAL =
 		PropsValues.HTTP_HEADER_VERSION_VERBOSITY.equalsIgnoreCase("partial");

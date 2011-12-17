@@ -75,7 +75,7 @@ public class PooledMemcachePortalCache implements PortalCache {
 		Map<String, Object> values = null;
 
 		try {
-			Future<Map<String,Object>> future = null;
+			Future<Map<String, Object>> future = null;
 
 			try {
 				future = memcachedClient.asyncGetBulk(processedKeys);
@@ -279,8 +279,7 @@ public class PooledMemcachePortalCache implements PortalCache {
 		}
 	}
 
-	private static Log _log = LogFactoryUtil.getLog(
-		MemcachePortalCache.class);
+	private static Log _log = LogFactoryUtil.getLog(MemcachePortalCache.class);
 
 	private MemcachedClientFactory _memcachedClientFactory;
 	private String _name;

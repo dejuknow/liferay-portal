@@ -392,7 +392,7 @@ public class BaseDeployer implements Deployer {
 
 		if (Validator.isNotNull(auiTaglibDTD)) {
 			FileUtil.copyFile(
-				auiTaglibDTD, srcFile + "/WEB-INF/tld/liferay-aui.tld", true);
+				auiTaglibDTD, srcFile + "/WEB-INF/tld/aui.tld", true);
 		}
 
 		if (Validator.isNotNull(portletTaglibDTD)) {
@@ -923,8 +923,8 @@ public class BaseDeployer implements Deployer {
 		String prefix = "auto.deploy." + ServerDetector.getServerId() + ".jee.";
 
 		String dmId = PropsUtil.get(prefix + "dm.id");
-		String dmUser =  PropsUtil.get(prefix + "dm.user");
-		String dmPassword =  PropsUtil.get(prefix + "dm.passwd");
+		String dmUser = PropsUtil.get(prefix + "dm.user");
+		String dmPassword = PropsUtil.get(prefix + "dm.passwd");
 		String dfClassName = PropsUtil.get(prefix + "df.classname");
 
 		return new DeploymentHandler(dmId, dmUser, dmPassword, dfClassName);
@@ -993,6 +993,17 @@ public class BaseDeployer implements Deployer {
 			}
 		}
 
+		sb.append("<servlet>");
+		sb.append("<servlet-name>");
+		sb.append("Set Portlet Class Loader Servlet");
+		sb.append("</servlet-name>");
+		sb.append("<servlet-class>");
+		sb.append("com.liferay.portal.kernel.servlet.");
+		sb.append("SetPortletClassLoaderServlet");
+		sb.append("</servlet-class>");
+		sb.append("<load-on-startup>0</load-on-startup>");
+		sb.append("</servlet>");
+
 		boolean hasTaglib = false;
 
 		if (Validator.isNotNull(auiTaglibDTD) ||
@@ -1014,7 +1025,7 @@ public class BaseDeployer implements Deployer {
 			sb.append("<taglib>");
 			sb.append("<taglib-uri>http://liferay.com/tld/aui</taglib-uri>");
 			sb.append("<taglib-location>");
-			sb.append("/WEB-INF/tld/liferay-aui.tld");
+			sb.append("/WEB-INF/tld/aui.tld");
 			sb.append("</taglib-location>");
 			sb.append("</taglib>");
 		}
@@ -1698,6 +1709,19 @@ public class BaseDeployer implements Deployer {
 		int y = webXmlContent.lastIndexOf("</filter-mapping>");
 
 		if ((x == -1) || (y == -1)) {
+			return webXmlContent;
+		}
+
+		boolean liferayWebXmlEnabled = true;
+
+		Properties properties = getPluginPackageProperties(srcFile);
+
+		if (properties != null) {
+			liferayWebXmlEnabled = GetterUtil.getBoolean(
+				properties.getProperty("liferay-web-xml-enabled"), true);
+		}
+
+		if (!liferayWebXmlEnabled) {
 			return webXmlContent;
 		}
 

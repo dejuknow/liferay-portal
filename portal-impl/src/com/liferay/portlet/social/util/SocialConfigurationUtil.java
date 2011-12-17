@@ -14,7 +14,6 @@
 
 package com.liferay.portlet.social.util;
 
-import com.liferay.portal.kernel.bean.BeanPropertiesUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -31,12 +30,11 @@ import com.liferay.portlet.social.model.SocialActivityCounterConstants;
 import com.liferay.portlet.social.model.SocialActivityCounterDefinition;
 import com.liferay.portlet.social.model.SocialActivityDefinition;
 import com.liferay.portlet.social.model.SocialActivityProcessor;
+import com.liferay.util.UniqueList;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -46,12 +44,26 @@ import java.util.Set;
  */
 public class SocialConfigurationUtil {
 
-	public static Collection<String> getActivityCounterNames() {
-		return getActivityCounterNames(SocialActivityCounterConstants.TYPE_ALL);
+	public static List<String> getActivityCounterNames() {
+		return getActivityCounterNames(
+			SocialActivityCounterConstants.TYPE_ALL, false);
 	}
 
-	public static Collection<String> getActivityCounterNames(int ownerType) {
-		Set<String> activityCounterNames = new HashSet<String>();
+	public static List<String> getActivityCounterNames(
+		boolean transientCounter) {
+
+		return getActivityCounterNames(
+			SocialActivityCounterConstants.TYPE_ALL, transientCounter);
+	}
+
+	public static List<String> getActivityCounterNames(int ownerType) {
+		return getActivityCounterNames(ownerType, false);
+	}
+
+	public static List<String> getActivityCounterNames(
+		int ownerType, boolean transientCounter) {
+
+		List<String> activityCounterNames = new UniqueList<String>();
 
 		for (Map<Integer, SocialActivityDefinition> activityDefinitions :
 				_activityDefinitions.values()) {
@@ -62,10 +74,12 @@ public class SocialConfigurationUtil {
 				for (SocialActivityCounterDefinition activityCounterDefinition :
 						activityDefinition.getActivityCounterDefinitions()) {
 
-					if ((ownerType ==
+					if ((activityCounterDefinition.isTransient() ==
+							transientCounter) &&
+						((ownerType ==
 							SocialActivityCounterConstants.TYPE_ALL) ||
-						(ownerType ==
-							activityCounterDefinition.getOwnerType())) {
+						 (ownerType ==
+							activityCounterDefinition.getOwnerType()))) {
 
 						activityCounterNames.add(
 							activityCounterDefinition.getName());
@@ -184,6 +198,8 @@ public class SocialConfigurationUtil {
 			_readAchievementProperty(achievement, propertyElement);
 		}
 
+		achievement.initialize(activityDefinition);
+
 		List<SocialAchievement> achievements =
 			activityDefinition.getAchievements();
 
@@ -197,12 +213,11 @@ public class SocialConfigurationUtil {
 	private static void _readAchievementProperty(
 		SocialAchievement achievement, Element propertyElement) {
 
-		String name = GetterUtil.getString(
-			propertyElement.elementText("name"));
+		String name = GetterUtil.getString(propertyElement.elementText("name"));
 		String value = GetterUtil.getString(
 			propertyElement.elementText("value"));
 
-		BeanPropertiesUtil.setProperty(achievement, name, value);
+		achievement.setProperty(name, value);
 	}
 
 	private static void _readActivity(
@@ -293,40 +308,53 @@ public class SocialConfigurationUtil {
 
 		Element contributionValueElement = activityElement.element(
 			"contribution-value");
-
-		if (contributionValueElement == null) {
-			return;
-		}
-
-		SocialActivityCounterDefinition contributionActivityCounterDefinition =
-			new SocialActivityCounterDefinition();
-
-		contributionActivityCounterDefinition.setName(
-			SocialActivityCounterConstants.NAME_CONTRIBUTION);
-		contributionActivityCounterDefinition.setOwnerType(
-			SocialActivityCounterConstants.TYPE_CREATOR);
-
-		int increment = GetterUtil.getInteger(
-			contributionValueElement.getText());
-
-		contributionActivityCounterDefinition.setIncrement(increment);
-
 		Element contributionLimitElement = activityElement.element(
 			"contribution-limit");
 
+		if ((contributionValueElement == null) &&
+			(contributionLimitElement == null)) {
+
+			return;
+		}
+
+		SocialActivityCounterDefinition activityCounterDefinition =
+			new SocialActivityCounterDefinition();
+
+		activityCounterDefinition.setName(
+			SocialActivityCounterConstants.NAME_CONTRIBUTION);
+		activityCounterDefinition.setOwnerType(
+			SocialActivityCounterConstants.TYPE_CREATOR);
+
+		if (contributionValueElement != null) {
+			int increment = GetterUtil.getInteger(
+				contributionValueElement.getText());
+
+			activityCounterDefinition.setIncrement(increment);
+		}
+
 		if (contributionLimitElement != null) {
+			String limitEnabled = contributionLimitElement.attributeValue(
+				"enabled");
+
+			if (Validator.isNotNull(limitEnabled)) {
+				activityCounterDefinition.setLimitEnabled(
+					GetterUtil.getBoolean(limitEnabled));
+			}
+
 			String limitPeriod = contributionLimitElement.attributeValue(
 				"period");
 
-			contributionActivityCounterDefinition.setLimitPeriod(limitPeriod);
+			if (Validator.isNotNull(limitPeriod)) {
+				activityCounterDefinition.setLimitPeriod(limitPeriod);
+			}
 
 			int limitValue = GetterUtil.getInteger(
 				contributionLimitElement.getText());
 
-			contributionActivityCounterDefinition.setLimitValue(limitValue);
+			activityCounterDefinition.setLimitValue(limitValue);
 		}
 
-		activityDefinition.addCounter(contributionActivityCounterDefinition);
+		activityDefinition.addCounter(activityCounterDefinition);
 
 		SocialActivityCounterDefinition popularityActivityCounterDefinition =
 			new SocialActivityCounterDefinition();
@@ -336,11 +364,13 @@ public class SocialConfigurationUtil {
 		popularityActivityCounterDefinition.setOwnerType(
 			SocialActivityCounterConstants.TYPE_ASSET);
 		popularityActivityCounterDefinition.setIncrement(
-			contributionActivityCounterDefinition.getIncrement());
+			activityCounterDefinition.getIncrement());
+		popularityActivityCounterDefinition.setLimitEnabled(
+			activityCounterDefinition.isLimitEnabled());
 		popularityActivityCounterDefinition.setLimitPeriod(
-			contributionActivityCounterDefinition.getLimitPeriod());
+			activityCounterDefinition.getLimitPeriod());
 		popularityActivityCounterDefinition.setLimitValue(
-			contributionActivityCounterDefinition.getLimitValue());
+			activityCounterDefinition.getLimitValue());
 
 		activityDefinition.addCounter(popularityActivityCounterDefinition);
 	}
@@ -350,8 +380,12 @@ public class SocialConfigurationUtil {
 
 		Element participationValueElement = activityElement.element(
 			"participation-value");
+		Element participationLimitElement = activityElement.element(
+			"participation-limit");
 
-		if (participationValueElement == null) {
+		if ((participationValueElement == null) &&
+			(participationLimitElement == null)) {
+
 			return;
 		}
 
@@ -363,19 +397,28 @@ public class SocialConfigurationUtil {
 		activityCounterDefinition.setOwnerType(
 			SocialActivityCounterConstants.TYPE_ACTOR);
 
-		int increment = GetterUtil.getInteger(
-			participationValueElement.getText());
+		if (participationValueElement != null) {
+			int increment = GetterUtil.getInteger(
+				participationValueElement.getText());
 
-		activityCounterDefinition.setIncrement(increment);
-
-		Element participationLimitElement = activityElement.element(
-			"participation-limit");
+			activityCounterDefinition.setIncrement(increment);
+		}
 
 		if (participationLimitElement != null) {
+			String limitEnabled = participationLimitElement.attributeValue(
+				"enabled");
+
+			if (Validator.isNotNull(limitEnabled)) {
+				activityCounterDefinition.setLimitEnabled(
+					GetterUtil.getBoolean(limitEnabled));
+			}
+
 			String limitPeriod = participationLimitElement.attributeValue(
 				"period");
 
-			activityCounterDefinition.setLimitPeriod(limitPeriod);
+			if (Validator.isNotNull(limitPeriod)) {
+				activityCounterDefinition.setLimitPeriod(limitPeriod);
+			}
 
 			int limitValue = GetterUtil.getInteger(
 				participationLimitElement.getText());
@@ -393,6 +436,16 @@ public class SocialConfigurationUtil {
 		SocialActivityCounterDefinition activityCounterDefinition =
 			new SocialActivityCounterDefinition();
 
+		int increment = GetterUtil.getInteger(
+			counterElement.elementText("increment"), 1);
+
+		activityCounterDefinition.setIncrement(increment);
+
+		boolean enabled = GetterUtil.getBoolean(
+			counterElement.elementText("enabled"), true);
+
+		activityCounterDefinition.setEnabled(enabled);
+
 		String name = GetterUtil.getString(counterElement.elementText("name"));
 
 		activityCounterDefinition.setName(name);
@@ -402,15 +455,10 @@ public class SocialConfigurationUtil {
 
 		activityCounterDefinition.setOwnerType(ownerType);
 
-		int increment = GetterUtil.getInteger(
-			counterElement.elementText("increment"), 1);
-
-		activityCounterDefinition.setIncrement(increment);
-
 		if (activityCounterDefinition.getOwnerType() == 0) {
 			if (_log.isWarnEnabled()) {
 				_log.warn(
-					"Invalid owner type " + ownerType + " for  model " +
+					"Invalid owner type " + ownerType + " for model " +
 						activityDefinition.getModelName());
 			}
 

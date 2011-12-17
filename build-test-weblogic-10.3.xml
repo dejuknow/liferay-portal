@@ -39,13 +39,7 @@
 			</then>
 		</if>
 
-		<echo file="execute-remote-command.bat">
-			if not exist C:\Java\jdk-1.6.0_23 ${unzip.executable} -oq ${java.jdk.zip} -d C:\Java
-			${setx.executable} /m JAVA_HOME C:\Java\jdk-1.6.0_23
-			if not %PATH:~0,7%==C:\Java ${setx.executable} /m PATH "C:\Java\jdk-1.6.0_23\bin;%PATH%"
-		</echo>
-
-		<antcall target="execute-remote-command" />
+		<antcall target="install-vm-java" />
 
 		<exec executable="${pscp.executable}">
 			<arg line="-pw ${vm.password} ${tstamp.value}\*.jar ${vm.username}@${vm.host}:/oracle/middleware/user_projects/domains/base_domain/lib" />
@@ -98,28 +92,10 @@
 				</exec>
 
 				<exec executable="${plink.executable}">
-					<arg line="-pw ${vm.password} ${vm.username}@${vm.host} C:\Java\jdk-1.6.0_23\bin\java.exe -cp C:\Oracle\Middleware\wlserver_10.3\server\lib\weblogic.jar -Xmx256m weblogic.Deployer -adminurl t3://localhost:7001 -user system -password password1 -deploy -upload C:\tunnel-web.war" />
-				</exec>
-
-				<exec executable="${plink.executable}">
 					<arg line="-pw ${vm.password} ${vm.username}@${vm.host} cmd.exe /c C:\oracle\middleware\user_projects\domains\base_domain\bin\stopWebLogic.cmd" />
 				</exec>
 			</sequential>
 		</parallel>
-
-		<antcall target="revert-test-properties" />
-
-		<replace
-			file="portal-impl/test/test-portal-impl.properties"
-			token="localhost:8080"
-			value="${vm.host}:7001"
-		/>
-
-		<replace
-			file="portal-web/test/test-portal-web.properties"
-			token="localhost:8080"
-			value="${vm.host}:7001"
-		/>
 
 		<if>
 			<isset property="hook.plugins.includes" />
@@ -192,11 +168,35 @@
 			</then>
 		</if>
 
+		<antcall target="revert-test-properties" />
+
+		<replace
+			file="portal-impl/test/test-portal-impl.properties"
+			token="localhost:8080"
+			value="${vm.host}:7001"
+		/>
+
+		<replace
+			file="portal-web/test/test-portal-web.properties"
+			token="localhost:8080"
+			value="${vm.host}:7001"
+		/>
+
+		<antcall target="prepare-selenium" />
+
 		<antcall target="start-selenium" />
+
+		<antcall target="clean-up-logs" />
+
+		<record action="start" name="log" />
 
 		<antcall target="run-weblogic-10.3">
 			<param name="test.class" value="${test.name}" />
 		</antcall>
+
+		<record action="stop" name="log" />
+
+		<antcall target="evaluate-logs" />
 
 		<antcall target="stop-selenium" />
 

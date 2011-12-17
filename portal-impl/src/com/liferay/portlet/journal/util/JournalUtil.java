@@ -100,7 +100,7 @@ public class JournalUtil {
 
 	public static void addAllReservedEls(
 		Element rootElement, Map<String, String> tokens,
-		JournalArticle article) {
+		JournalArticle article, String languageId) {
 
 		JournalUtil.addReservedEl(
 			rootElement, tokens, JournalStructureConstants.RESERVED_ARTICLE_ID,
@@ -114,7 +114,7 @@ public class JournalUtil {
 		JournalUtil.addReservedEl(
 			rootElement, tokens,
 			JournalStructureConstants.RESERVED_ARTICLE_TITLE,
-			article.getTitle());
+			article.getTitle(languageId));
 
 		JournalUtil.addReservedEl(
 			rootElement, tokens,
@@ -124,7 +124,7 @@ public class JournalUtil {
 		JournalUtil.addReservedEl(
 			rootElement, tokens,
 			JournalStructureConstants.RESERVED_ARTICLE_DESCRIPTION,
-			article.getDescription());
+			article.getDescription(languageId));
 
 		JournalUtil.addReservedEl(
 			rootElement, tokens,
@@ -1008,7 +1008,7 @@ public class JournalUtil {
 			themeDisplay, tokens, viewMode, languageId, xml, script, langType);
 	}
 
-	private static void _addElementOptions (
+	private static void _addElementOptions(
 		Element curContentElement, Element newContentElement) {
 
 		List<Element> newElementOptions = newContentElement.elements("option");

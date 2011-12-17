@@ -17,13 +17,15 @@ package com.liferay.portal.osgi;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 
+import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkEvent;
 
 /**
  * @author Raymond Augé
  */
-public class FrameworkListener extends BaseListener
-	implements org.osgi.framework.FrameworkListener {
+public class FrameworkListener implements org.osgi.framework.FrameworkListener {
+
+	private static Log _log = LogFactoryUtil.getLog(FrameworkListener.class);
 
 	public void frameworkEvent(FrameworkEvent frameworkEvent) {
 		try {
@@ -68,110 +70,162 @@ public class FrameworkListener extends BaseListener
 	protected void frameworkEventError(FrameworkEvent frameworkEvent)
 		throws Exception {
 
-		_log.error(
-			getLogMessage("[ERROR]", frameworkEvent.getSource()),
+		Bundle bundle = frameworkEvent.getBundle();
+
+		Log log = LogFactoryUtil.getLog(bundle.getSymbolicName());
+
+		if (!log.isErrorEnabled()) {
+			return;
+		}
+
+		log.error(
+			"[ERROR] " + frameworkEvent.getSource(),
 			frameworkEvent.getThrowable());
 	}
 
 	protected void frameworkEventInfo(FrameworkEvent frameworkEvent)
 		throws Exception {
 
-		if (!_log.isInfoEnabled()) {
+		Bundle bundle = frameworkEvent.getBundle();
+
+		Log log = LogFactoryUtil.getLog(bundle.getSymbolicName());
+
+		if (!log.isInfoEnabled()) {
 			return;
 		}
 
-		_log.info(getLogMessage("[INFO]", frameworkEvent.getSource()));
+		log.info("[INFO] " + frameworkEvent.getSource());
 	}
 
 	protected void frameworkEventPackagesRefreshed(
 			FrameworkEvent frameworkEvent)
 		throws Exception {
 
-		if (!_log.isInfoEnabled()) {
+		Bundle bundle = frameworkEvent.getBundle();
+
+		Log log = LogFactoryUtil.getLog(bundle.getSymbolicName());
+
+		if (!log.isInfoEnabled()) {
 			return;
 		}
 
-		_log.info(
-			getLogMessage("[PACKAGES_REFRESHED]", frameworkEvent.getSource()));
+		log.info(
+			"[PACKAGES_REFRESHED] " + frameworkEvent.getSource(),
+			frameworkEvent.getThrowable());
 	}
 
 	protected void frameworkEventStarted(FrameworkEvent frameworkEvent)
 		throws Exception {
 
-		if (!_log.isInfoEnabled()) {
+		Bundle bundle = frameworkEvent.getBundle();
+
+		Log log = LogFactoryUtil.getLog(bundle.getSymbolicName());
+
+		if (!log.isInfoEnabled()) {
 			return;
 		}
 
-		_log.info(getLogMessage("[STARTED]", frameworkEvent.getSource()));
+		log.info(
+			"[STARTED] " + frameworkEvent.getSource(),
+			frameworkEvent.getThrowable());
 	}
 
 	protected void frameworkEventStartLevelChanged(
 			FrameworkEvent frameworkEvent)
 		throws Exception {
 
-		if (!_log.isInfoEnabled()) {
+		Bundle bundle = frameworkEvent.getBundle();
+
+		Log log = LogFactoryUtil.getLog(bundle.getSymbolicName());
+
+		if (!log.isInfoEnabled()) {
 			return;
 		}
 
-		_log.info(
-			getLogMessage("[STARTLEVEL_CHANGED]", frameworkEvent.getSource()));
+		log.info(
+			"[STARTLEVEL_CHANGED] " + frameworkEvent.getSource(),
+			frameworkEvent.getThrowable());
 	}
 
 	protected void frameworkEventStopped(FrameworkEvent frameworkEvent)
 		throws Exception {
 
-		if (!_log.isInfoEnabled()) {
+		Bundle bundle = frameworkEvent.getBundle();
+
+		Log log = LogFactoryUtil.getLog(bundle.getSymbolicName());
+
+		if (!log.isInfoEnabled()) {
 			return;
 		}
 
-		_log.info(getLogMessage("[STOPPED]", frameworkEvent.getSource()));
+		log.info(
+			"[STOPPED] " + frameworkEvent.getSource(),
+			frameworkEvent.getThrowable());
 	}
 
 	protected void frameworkEventStoppedBootClasspathModified(
 			FrameworkEvent frameworkEvent)
 		throws Exception {
 
-		if (!_log.isInfoEnabled()) {
+		Bundle bundle = frameworkEvent.getBundle();
+
+		Log log = LogFactoryUtil.getLog(bundle.getSymbolicName());
+
+		if (!log.isInfoEnabled()) {
 			return;
 		}
 
-		_log.info(
-			getLogMessage(
-				"[STOPPED_BOOTCLASSPATH_MODIFIED]",
-				frameworkEvent.getSource()));
+		log.info(
+			"[STOPPED_BOOTCLASSPATH_MODIFIED] " + frameworkEvent.getSource(),
+			frameworkEvent.getThrowable());
 	}
 
 	protected void frameworkEventStoppedUpdate(FrameworkEvent frameworkEvent)
 		throws Exception {
 
-		if (!_log.isInfoEnabled()) {
+		Bundle bundle = frameworkEvent.getBundle();
+
+		Log log = LogFactoryUtil.getLog(bundle.getSymbolicName());
+
+		if (!log.isInfoEnabled()) {
 			return;
 		}
 
-		_log.info(
-			getLogMessage("[STOPPED_UPDATE]", frameworkEvent.getSource()));
+		log.info(
+			"[STOPPED_UPDATE] " + frameworkEvent.getSource(),
+			frameworkEvent.getThrowable());
 	}
 
 	protected void frameworkEventWaitTimedout(FrameworkEvent frameworkEvent)
 		throws Exception {
 
-		if (!_log.isInfoEnabled()) {
+		Bundle bundle = frameworkEvent.getBundle();
+
+		Log log = LogFactoryUtil.getLog(bundle.getSymbolicName());
+
+		if (!log.isInfoEnabled()) {
 			return;
 		}
 
-		_log.info(getLogMessage("[WAIT_TIMEDOUT]", frameworkEvent.getSource()));
+		log.info(
+			"[WAIT_TIMEDOUT] " + frameworkEvent.getSource(),
+			frameworkEvent.getThrowable());
 	}
 
 	protected void frameworkEventWarning(FrameworkEvent frameworkEvent)
 		throws Exception {
 
-		if (!_log.isInfoEnabled()) {
+		Bundle bundle = frameworkEvent.getBundle();
+
+		Log log = LogFactoryUtil.getLog(bundle.getSymbolicName());
+
+		if (!log.isWarnEnabled()) {
 			return;
 		}
 
-		_log.info(getLogMessage("[WARNING]", frameworkEvent.getSource()));
+		log.warn(
+			"[WARNING] " + frameworkEvent.getSource(),
+			frameworkEvent.getThrowable());
 	}
-
-	private static Log _log = LogFactoryUtil.getLog(FrameworkListener.class);
 
 }

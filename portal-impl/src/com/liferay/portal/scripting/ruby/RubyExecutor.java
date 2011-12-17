@@ -120,8 +120,11 @@ public class RubyExecutor extends BaseScriptingExecutor {
 		}
 
 		try {
+			LocalContextProvider localContextProvider =
+				_scriptingContainer.getProvider();
+
 			RubyInstanceConfig rubyInstanceConfig =
-				_scriptingContainer.getProvider().getRubyInstanceConfig();
+				localContextProvider.getRubyInstanceConfig();
 
 			rubyInstanceConfig.setCurrentDirectory(_basePath);
 			rubyInstanceConfig.setLoadPaths(_loadPaths);

@@ -64,9 +64,13 @@ else {
 
 <h3><liferay-ui:message key="addresses" /></h3>
 
+<div class="portlet-msg-info">
+	<liferay-ui:message key="street-1-and-city-are-required-fields.-postal-code-could-be-required-in-some-countries" />
+</div>
+
 <liferay-ui:error exception="<%= AddressCityException.class %>" message="please-enter-a-valid-city" />
 <liferay-ui:error exception="<%= AddressStreetException.class %>" message="please-enter-a-valid-street" />
-<liferay-ui:error exception="<%= AddressZipException.class %>" message="please-enter-a-valid-zip" />
+<liferay-ui:error exception="<%= AddressZipException.class %>" message="please-enter-a-valid-postal-code" />
 <liferay-ui:error exception="<%= NoSuchCountryException.class %>" message="please-select-a-country" />
 <liferay-ui:error key="<%= NoSuchListTypeException.class.getName() + className + ListTypeConstants.ADDRESS %>" message="please-select-a-type" />
 <liferay-ui:error exception="<%= NoSuchRegionException.class %>" message="please-select-a-region" />
@@ -102,11 +106,11 @@ else {
 				</aui:column>
 
 				<aui:column columnWidth="50">
-					<aui:select label="type" name='<%= "addressTypeId" + addressesIndex %>' listType="<%= className + ListTypeConstants.ADDRESS %>" />
+					<aui:select label="type" listType="<%= className + ListTypeConstants.ADDRESS %>" name='<%= "addressTypeId" + addressesIndex %>' />
 
-					<aui:input name="zip" fieldParam='<%= "addressZip" + addressesIndex %>' />
+					<aui:input fieldParam='<%= "addressZip" + addressesIndex %>' label="postal-code" name="zip" />
 
-					<aui:input name="city" fieldParam='<%= "addressCity" + addressesIndex %>' />
+					<aui:input fieldParam='<%= "addressCity" + addressesIndex %>' name="city" />
 
 					<aui:input checked="<%= address.isPrimary() %>" cssClass="primary-ctrl" id='<%= "addressPrimary" + addressesIndex %>' inlineLabel="left" label="primary" name="addressPrimary" type="radio" value="<%= addressesIndex %>" />
 

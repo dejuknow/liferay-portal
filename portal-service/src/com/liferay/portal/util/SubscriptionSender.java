@@ -14,11 +14,10 @@
 
 package com.liferay.portal.util;
 
-import com.liferay.mail.model.Attachment;
+import com.liferay.mail.model.FileAttachment;
 import com.liferay.mail.service.MailServiceUtil;
 import com.liferay.portal.NoSuchUserException;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.mail.MailMessage;
@@ -40,6 +39,7 @@ import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.security.permission.PermissionCheckerFactoryUtil;
 import com.liferay.portal.service.CompanyLocalServiceUtil;
 import com.liferay.portal.service.GroupLocalServiceUtil;
+import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.SubscriptionLocalServiceUtil;
 import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.service.permission.SubscriptionPermissionUtil;
@@ -63,22 +63,22 @@ import javax.mail.internet.InternetAddress;
  */
 public class SubscriptionSender implements Serializable {
 
-	public void addAttachment(File file) {
-		addAttachment(file, null);
+	public void addFileAttachment(File file) {
+		addFileAttachment(file, null);
 	}
 
-	public void addAttachment(File file, String fileName) {
+	public void addFileAttachment(File file, String fileName) {
 		if (file == null) {
 			return;
 		}
 
-		if (attachments == null) {
-			attachments = new ArrayList<Attachment>();
+		if (fileAttachments == null) {
+			fileAttachments = new ArrayList<FileAttachment>();
 		}
 
-		Attachment attachment = new Attachment(file, fileName);
+		FileAttachment attachment = new FileAttachment(file, fileName);
 
-		attachments.add(attachment);
+		fileAttachments.add(attachment);
 	}
 
 	public void addPersistedSubscribers(String className, long classPK) {
@@ -90,7 +90,8 @@ public class SubscriptionSender implements Serializable {
 
 	public void addRuntimeSubscribers(String toAddress, String toName) {
 		ObjectValuePair<String, String> ovp =
-			new ObjectValuePair<String, String>(toAddress, toName);
+			new ObjectValuePair<String, String>(
+				toAddress, HtmlUtil.escape(toName));
 
 		_runtimeSubscribersOVPs.add(ovp);
 	}
@@ -196,7 +197,7 @@ public class SubscriptionSender implements Serializable {
 		return _context.get(key);
 	}
 
-	public void initialize() throws PortalException, SystemException {
+	public void initialize() throws Exception {
 		if (_initialized) {
 			return;
 		}
@@ -208,7 +209,7 @@ public class SubscriptionSender implements Serializable {
 		setContextAttribute("[$COMPANY_ID$]", company.getCompanyId());
 		setContextAttribute("[$COMPANY_MX$]", company.getMx());
 		setContextAttribute("[$COMPANY_NAME$]", company.getName());
-		setContextAttribute("[$PORTAL_URL$]", company.getVirtualHostname());
+		setContextAttribute("[$PORTAL_URL$]", getPortalURL(company));
 
 		if (groupId > 0) {
 			Group group = GroupLocalServiceUtil.getGroup(groupId);
@@ -247,7 +248,16 @@ public class SubscriptionSender implements Serializable {
 	}
 
 	public void setContextAttribute(String key, Object value) {
-		_context.put(key, HtmlUtil.escape(String.valueOf(value)));
+		setContextAttribute(key, value, true);
+	}
+
+	public void setContextAttribute(String key, Object value, boolean escaped) {
+		if (escaped) {
+			_context.put(key, HtmlUtil.escape(String.valueOf(value)));
+		}
+		else {
+			_context.put(key, String.valueOf(value));
+		}
 	}
 
 	public void setContextAttributes(Object... values) {
@@ -292,7 +302,7 @@ public class SubscriptionSender implements Serializable {
 		_mailIdIds = ids;
 	}
 
-	public  void setPortletId(String portletId) {
+	public void setPortletId(String portletId) {
 		this.portletId = portletId;
 	}
 
@@ -321,6 +331,10 @@ public class SubscriptionSender implements Serializable {
 		this.scopeGroupId = scopeGroupId;
 	}
 
+	public void setServiceContext(ServiceContext serviceContext) {
+		this.serviceContext = serviceContext;
+	}
+
 	public void setSMTPAccount(SMTPAccount smtpAccount) {
 		this.smtpAccount = smtpAccount;
 	}
@@ -338,6 +352,18 @@ public class SubscriptionSender implements Serializable {
 
 		SubscriptionLocalServiceUtil.deleteSubscription(
 			subscription.getSubscriptionId());
+	}
+
+	protected String getPortalURL(Company company) throws Exception {
+		if (serviceContext != null) {
+			String portalURL = serviceContext.getPortalURL();
+
+			if (Validator.isNotNull(portalURL)) {
+				return portalURL;
+			}
+		}
+
+		return company.getPortalURL(groupId);
 	}
 
 	protected boolean hasPermission(Subscription subscription, User user)
@@ -375,8 +401,7 @@ public class SubscriptionSender implements Serializable {
 
 		if (_sentEmailAddresses.contains(emailAddress)) {
 			if (_log.isDebugEnabled()) {
-				_log.debug(
-					"Do not send a duplicate email to " + emailAddress);
+				_log.debug("Do not send a duplicate email to " + emailAddress);
 			}
 
 			return;
@@ -501,6 +526,19 @@ public class SubscriptionSender implements Serializable {
 				content, "[$PORTLET_NAME$]", portletName);
 		}
 
+		Company company = CompanyLocalServiceUtil.getCompany(companyId);
+
+		content = StringUtil.replace(
+			content,
+			new String[] {
+				"href=\"/",
+				"src=\"/"
+			},
+			new String[] {
+				"href=\"" + getPortalURL(company) + "/",
+				"src=\"" + getPortalURL(company) + "/"
+			});
+
 		return content;
 	}
 
@@ -550,10 +588,10 @@ public class SubscriptionSender implements Serializable {
 		MailMessage mailMessage = new MailMessage(
 			from, to, processedSubject, processedBody, htmlFormat);
 
-		if (attachments != null) {
-			for (Attachment attachment : attachments) {
-				mailMessage.addAttachment(
-					attachment.getFile(), attachment.getFileName());
+		if (fileAttachments != null) {
+			for (FileAttachment fileAttachment : fileAttachments) {
+				mailMessage.addFileAttachment(
+					fileAttachment.getFile(), fileAttachment.getFileName());
 			}
 		}
 
@@ -588,10 +626,11 @@ public class SubscriptionSender implements Serializable {
 		MailServiceUtil.sendEmail(mailMessage);
 	}
 
-	protected List<Attachment> attachments = new ArrayList<Attachment>();
 	protected String body;
 	protected boolean bulk;
 	protected long companyId;
+	protected List<FileAttachment> fileAttachments =
+		new ArrayList<FileAttachment>();
 	protected String fromAddress;
 	protected String fromName;
 	protected long groupId;
@@ -602,6 +641,7 @@ public class SubscriptionSender implements Serializable {
 	protected String mailId;
 	protected String portletId;
 	protected String replyToAddress;
+	protected ServiceContext serviceContext;
 	protected long scopeGroupId;
 	protected SMTPAccount smtpAccount;
 	protected String subject;

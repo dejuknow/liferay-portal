@@ -2279,22 +2279,40 @@ AUI().add(
 
 				prototype: {
 					_findCategoryByName: function(event) {
+						var instance = this;
+
+						var result = false;
+
 						var dragNode = event.drag.get(NODE).get(PARENT_NODE);
-						var dropNode = event.drop.get(NODE).get(PARENT_NODE);
 
 						var dragTreeNode = Widget.getByNode(dragNode);
-						var dropTreeNode = Widget.getByNode(dropNode);
 
-						var categoryName = dragTreeNode.get(LABEL);
+						if (dragTreeNode) {
+							var categoryName = dragTreeNode.get(LABEL);
 
-						var children = dropTreeNode.get('children');
+							var dropAction = instance.dropAction;
 
-						return A.some(
-							children,
-							function(item, index, collection){
-								return (item.get(LABEL) === categoryName);
+							var dropNode = event.drop.get(NODE).get(PARENT_NODE);
+
+							if (dropAction !== 'append') {
+								dropNode = dropNode.get('parentNode.parentNode');
 							}
-						);
+
+							var dropTreeNode = Widget.getByNode(dropNode);
+
+							if (dropTreeNode) {
+								var children = dropTreeNode.get('children');
+
+								result = A.some(
+									children,
+									function(item, index, collection){
+										return (item.get(LABEL) === categoryName);
+									}
+								);
+							}
+						}
+
+						return result;
 					},
 
 					_onDropHit: function(event) {
@@ -2302,6 +2320,8 @@ AUI().add(
 
 						if (instance._findCategoryByName(event)) {
 							event.halt();
+
+							instance._resetState(instance.nodeContent);
 						}
 						else {
 							CategoriesTree.superclass._onDropHit.apply(instance, arguments);
@@ -2311,17 +2331,16 @@ AUI().add(
 					_updateNodeState: function(event) {
 						var instance = this;
 
-						if (instance._findCategoryByName(event)) {
-							event.halt();
+						var dropNode = event.drop.get(NODE);
+
+						if (dropNode && dropNode.hasClass('vocabulary-category')) {
+							instance._appendState(dropNode);
 						}
 						else {
-							var dropNode = event.drop.get(NODE);
+							CategoriesTree.superclass._updateNodeState.apply(instance, arguments);
 
-							if (dropNode && dropNode.hasClass('vocabulary-category')) {
-								instance._appendState(dropNode);
-							}
-							else {
-								CategoriesTree.superclass._updateNodeState.apply(instance, arguments);
+							if (instance._findCategoryByName(event)) {
+								instance._resetState(instance.nodeContent);
 							}
 						}
 					}

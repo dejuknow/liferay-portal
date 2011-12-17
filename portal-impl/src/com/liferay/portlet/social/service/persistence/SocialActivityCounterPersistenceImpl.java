@@ -37,6 +37,7 @@ import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.ModelListener;
 import com.liferay.portal.service.persistence.BatchSessionUtil;
 import com.liferay.portal.service.persistence.GroupPersistence;
+import com.liferay.portal.service.persistence.LockPersistence;
 import com.liferay.portal.service.persistence.ResourcePersistence;
 import com.liferay.portal.service.persistence.UserPersistence;
 import com.liferay.portal.service.persistence.impl.BasePersistenceImpl;
@@ -277,6 +278,25 @@ public class SocialActivityCounterPersistenceImpl extends BasePersistenceImpl<So
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 
+		clearUniqueFindersCache(socialActivityCounter);
+	}
+
+	@Override
+	public void clearCache(List<SocialActivityCounter> socialActivityCounters) {
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+
+		for (SocialActivityCounter socialActivityCounter : socialActivityCounters) {
+			EntityCacheUtil.removeResult(SocialActivityCounterModelImpl.ENTITY_CACHE_ENABLED,
+				SocialActivityCounterImpl.class,
+				socialActivityCounter.getPrimaryKey());
+
+			clearUniqueFindersCache(socialActivityCounter);
+		}
+	}
+
+	protected void clearUniqueFindersCache(
+		SocialActivityCounter socialActivityCounter) {
 		FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_G_C_C_N_O_S,
 			new Object[] {
 				Long.valueOf(socialActivityCounter.getGroupId()),
@@ -318,20 +338,6 @@ public class SocialActivityCounterPersistenceImpl extends BasePersistenceImpl<So
 	/**
 	 * Removes the social activity counter with the primary key from the database. Also notifies the appropriate model listeners.
 	 *
-	 * @param primaryKey the primary key of the social activity counter
-	 * @return the social activity counter that was removed
-	 * @throws com.liferay.portal.NoSuchModelException if a social activity counter with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public SocialActivityCounter remove(Serializable primaryKey)
-		throws NoSuchModelException, SystemException {
-		return remove(((Long)primaryKey).longValue());
-	}
-
-	/**
-	 * Removes the social activity counter with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
 	 * @param activityCounterId the primary key of the social activity counter
 	 * @return the social activity counter that was removed
 	 * @throws com.liferay.portlet.social.NoSuchActivityCounterException if a social activity counter with the primary key could not be found
@@ -339,25 +345,38 @@ public class SocialActivityCounterPersistenceImpl extends BasePersistenceImpl<So
 	 */
 	public SocialActivityCounter remove(long activityCounterId)
 		throws NoSuchActivityCounterException, SystemException {
+		return remove(Long.valueOf(activityCounterId));
+	}
+
+	/**
+	 * Removes the social activity counter with the primary key from the database. Also notifies the appropriate model listeners.
+	 *
+	 * @param primaryKey the primary key of the social activity counter
+	 * @return the social activity counter that was removed
+	 * @throws com.liferay.portlet.social.NoSuchActivityCounterException if a social activity counter with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public SocialActivityCounter remove(Serializable primaryKey)
+		throws NoSuchActivityCounterException, SystemException {
 		Session session = null;
 
 		try {
 			session = openSession();
 
 			SocialActivityCounter socialActivityCounter = (SocialActivityCounter)session.get(SocialActivityCounterImpl.class,
-					Long.valueOf(activityCounterId));
+					primaryKey);
 
 			if (socialActivityCounter == null) {
 				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
-						activityCounterId);
+					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchActivityCounterException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
-					activityCounterId);
+					primaryKey);
 			}
 
-			return socialActivityCounterPersistence.remove(socialActivityCounter);
+			return remove(socialActivityCounter);
 		}
 		catch (NoSuchActivityCounterException nsee) {
 			throw nsee;
@@ -368,19 +387,6 @@ public class SocialActivityCounterPersistenceImpl extends BasePersistenceImpl<So
 		finally {
 			closeSession(session);
 		}
-	}
-
-	/**
-	 * Removes the social activity counter from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param socialActivityCounter the social activity counter
-	 * @return the social activity counter that was removed
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public SocialActivityCounter remove(
-		SocialActivityCounter socialActivityCounter) throws SystemException {
-		return super.remove(socialActivityCounter);
 	}
 
 	@Override
@@ -402,36 +408,7 @@ public class SocialActivityCounterPersistenceImpl extends BasePersistenceImpl<So
 			closeSession(session);
 		}
 
-		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
-		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
-
-		SocialActivityCounterModelImpl socialActivityCounterModelImpl = (SocialActivityCounterModelImpl)socialActivityCounter;
-
-		FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_G_C_C_N_O_S,
-			new Object[] {
-				Long.valueOf(socialActivityCounterModelImpl.getGroupId()),
-				Long.valueOf(socialActivityCounterModelImpl.getClassNameId()),
-				Long.valueOf(socialActivityCounterModelImpl.getClassPK()),
-				
-			socialActivityCounterModelImpl.getName(),
-				Integer.valueOf(socialActivityCounterModelImpl.getOwnerType()),
-				Integer.valueOf(socialActivityCounterModelImpl.getStartPeriod())
-			});
-
-		FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_G_C_C_N_O_E,
-			new Object[] {
-				Long.valueOf(socialActivityCounterModelImpl.getGroupId()),
-				Long.valueOf(socialActivityCounterModelImpl.getClassNameId()),
-				Long.valueOf(socialActivityCounterModelImpl.getClassPK()),
-				
-			socialActivityCounterModelImpl.getName(),
-				Integer.valueOf(socialActivityCounterModelImpl.getOwnerType()),
-				Integer.valueOf(socialActivityCounterModelImpl.getEndPeriod())
-			});
-
-		EntityCacheUtil.removeResult(SocialActivityCounterModelImpl.ENTITY_CACHE_ENABLED,
-			SocialActivityCounterImpl.class,
-			socialActivityCounter.getPrimaryKey());
+		clearCache(socialActivityCounter);
 
 		return socialActivityCounter;
 	}
@@ -2043,7 +2020,7 @@ public class SocialActivityCounterPersistenceImpl extends BasePersistenceImpl<So
 		throws SystemException {
 		for (SocialActivityCounter socialActivityCounter : findByC_C(
 				classNameId, classPK)) {
-			socialActivityCounterPersistence.remove(socialActivityCounter);
+			remove(socialActivityCounter);
 		}
 	}
 
@@ -2060,7 +2037,7 @@ public class SocialActivityCounterPersistenceImpl extends BasePersistenceImpl<So
 		int ownerType) throws SystemException {
 		for (SocialActivityCounter socialActivityCounter : findByG_C_C_O(
 				groupId, classNameId, classPK, ownerType)) {
-			socialActivityCounterPersistence.remove(socialActivityCounter);
+			remove(socialActivityCounter);
 		}
 	}
 
@@ -2081,7 +2058,7 @@ public class SocialActivityCounterPersistenceImpl extends BasePersistenceImpl<So
 		SocialActivityCounter socialActivityCounter = findByG_C_C_N_O_S(groupId,
 				classNameId, classPK, name, ownerType, startPeriod);
 
-		socialActivityCounterPersistence.remove(socialActivityCounter);
+		remove(socialActivityCounter);
 	}
 
 	/**
@@ -2101,7 +2078,7 @@ public class SocialActivityCounterPersistenceImpl extends BasePersistenceImpl<So
 		SocialActivityCounter socialActivityCounter = findByG_C_C_N_O_E(groupId,
 				classNameId, classPK, name, ownerType, endPeriod);
 
-		socialActivityCounterPersistence.remove(socialActivityCounter);
+		remove(socialActivityCounter);
 	}
 
 	/**
@@ -2111,7 +2088,7 @@ public class SocialActivityCounterPersistenceImpl extends BasePersistenceImpl<So
 	 */
 	public void removeAll() throws SystemException {
 		for (SocialActivityCounter socialActivityCounter : findAll()) {
-			socialActivityCounterPersistence.remove(socialActivityCounter);
+			remove(socialActivityCounter);
 		}
 	}
 
@@ -2510,24 +2487,14 @@ public class SocialActivityCounterPersistenceImpl extends BasePersistenceImpl<So
 	protected SocialActivityLimitPersistence socialActivityLimitPersistence;
 	@BeanReference(type = SocialActivitySettingPersistence.class)
 	protected SocialActivitySettingPersistence socialActivitySettingPersistence;
-	@BeanReference(type = SocialEquityAssetEntryPersistence.class)
-	protected SocialEquityAssetEntryPersistence socialEquityAssetEntryPersistence;
-	@BeanReference(type = SocialEquityGroupSettingPersistence.class)
-	protected SocialEquityGroupSettingPersistence socialEquityGroupSettingPersistence;
-	@BeanReference(type = SocialEquityHistoryPersistence.class)
-	protected SocialEquityHistoryPersistence socialEquityHistoryPersistence;
-	@BeanReference(type = SocialEquityLogPersistence.class)
-	protected SocialEquityLogPersistence socialEquityLogPersistence;
-	@BeanReference(type = SocialEquitySettingPersistence.class)
-	protected SocialEquitySettingPersistence socialEquitySettingPersistence;
-	@BeanReference(type = SocialEquityUserPersistence.class)
-	protected SocialEquityUserPersistence socialEquityUserPersistence;
 	@BeanReference(type = SocialRelationPersistence.class)
 	protected SocialRelationPersistence socialRelationPersistence;
 	@BeanReference(type = SocialRequestPersistence.class)
 	protected SocialRequestPersistence socialRequestPersistence;
 	@BeanReference(type = GroupPersistence.class)
 	protected GroupPersistence groupPersistence;
+	@BeanReference(type = LockPersistence.class)
+	protected LockPersistence lockPersistence;
 	@BeanReference(type = ResourcePersistence.class)
 	protected ResourcePersistence resourcePersistence;
 	@BeanReference(type = UserPersistence.class)

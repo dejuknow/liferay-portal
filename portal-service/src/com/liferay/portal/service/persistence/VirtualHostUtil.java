@@ -94,14 +94,6 @@ public class VirtualHostUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static VirtualHost remove(VirtualHost virtualHost)
-		throws SystemException {
-		return getPersistence().remove(virtualHost);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static VirtualHost update(VirtualHost virtualHost, boolean merge)

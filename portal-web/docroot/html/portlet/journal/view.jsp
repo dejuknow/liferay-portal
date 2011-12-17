@@ -95,14 +95,13 @@ portletURL.setParameter("tabs1", tabs1);
 			for (int i = 0; i < results.size(); i++) {
 				JournalArticle article = results.get(i);
 
-				article = article.toEscapedModel();
-
 				ResultRow row = new ResultRow(article, article.getArticleId(), i);
 
 				PortletURL rowURL = renderResponse.createRenderURL();
 
 				rowURL.setParameter("struts_action", "/journal/edit_article");
 				rowURL.setParameter("redirect", currentURL);
+				rowURL.setParameter("originalRedirect", currentURL);
 				rowURL.setParameter("groupId", String.valueOf(article.getGroupId()));
 				rowURL.setParameter("articleId", article.getArticleId());
 			%>
@@ -218,7 +217,7 @@ portletURL.setParameter("tabs1", tabs1);
 			<liferay-ui:error exception="<%= RequiredTemplateException.class %>">
 				<liferay-ui:message key="required-templates-could-not-be-deleted" />
 
-				<liferay-ui:message key="they-are-are-referenced-by-web-contents" />
+				<liferay-ui:message key="they-are-referenced-by-web-contents" />
 			</liferay-ui:error>
 
 			<%

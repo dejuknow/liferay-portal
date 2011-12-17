@@ -137,7 +137,7 @@ public class UpgradeDocumentLibrary extends UpgradeProcess {
 					",extraSettings VARCHAR(75) null",
 					",title VARCHAR(75) null"
 				},
-				new String [] {
+				new String[] {
 					",extraSettings STRING null",
 					",title VARCHAR(255) null"
 				}));
@@ -245,7 +245,7 @@ public class UpgradeDocumentLibrary extends UpgradeProcess {
 
 			ps = con.prepareStatement(
 				"update DLFileVersion set extension = ?, title = ?, " +
-					"description = ?,  extraSettings = ? where fileVersionId " +
+					"description = ?, extraSettings = ? where fileVersionId " +
 						"= ?");
 
 			ps.setString(1, extension);

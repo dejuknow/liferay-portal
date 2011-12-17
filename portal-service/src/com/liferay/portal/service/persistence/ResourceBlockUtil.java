@@ -94,14 +94,6 @@ public class ResourceBlockUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static ResourceBlock remove(ResourceBlock resourceBlock)
-		throws SystemException {
-		return getPersistence().remove(resourceBlock);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static ResourceBlock update(ResourceBlock resourceBlock,

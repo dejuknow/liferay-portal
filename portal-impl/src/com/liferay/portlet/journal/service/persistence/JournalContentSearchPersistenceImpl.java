@@ -343,6 +343,25 @@ public class JournalContentSearchPersistenceImpl extends BasePersistenceImpl<Jou
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 
+		clearUniqueFindersCache(journalContentSearch);
+	}
+
+	@Override
+	public void clearCache(List<JournalContentSearch> journalContentSearchs) {
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+
+		for (JournalContentSearch journalContentSearch : journalContentSearchs) {
+			EntityCacheUtil.removeResult(JournalContentSearchModelImpl.ENTITY_CACHE_ENABLED,
+				JournalContentSearchImpl.class,
+				journalContentSearch.getPrimaryKey());
+
+			clearUniqueFindersCache(journalContentSearch);
+		}
+	}
+
+	protected void clearUniqueFindersCache(
+		JournalContentSearch journalContentSearch) {
 		FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_G_P_L_P_A,
 			new Object[] {
 				Long.valueOf(journalContentSearch.getGroupId()),
@@ -373,20 +392,6 @@ public class JournalContentSearchPersistenceImpl extends BasePersistenceImpl<Jou
 	/**
 	 * Removes the journal content search with the primary key from the database. Also notifies the appropriate model listeners.
 	 *
-	 * @param primaryKey the primary key of the journal content search
-	 * @return the journal content search that was removed
-	 * @throws com.liferay.portal.NoSuchModelException if a journal content search with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public JournalContentSearch remove(Serializable primaryKey)
-		throws NoSuchModelException, SystemException {
-		return remove(((Long)primaryKey).longValue());
-	}
-
-	/**
-	 * Removes the journal content search with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
 	 * @param contentSearchId the primary key of the journal content search
 	 * @return the journal content search that was removed
 	 * @throws com.liferay.portlet.journal.NoSuchContentSearchException if a journal content search with the primary key could not be found
@@ -394,25 +399,38 @@ public class JournalContentSearchPersistenceImpl extends BasePersistenceImpl<Jou
 	 */
 	public JournalContentSearch remove(long contentSearchId)
 		throws NoSuchContentSearchException, SystemException {
+		return remove(Long.valueOf(contentSearchId));
+	}
+
+	/**
+	 * Removes the journal content search with the primary key from the database. Also notifies the appropriate model listeners.
+	 *
+	 * @param primaryKey the primary key of the journal content search
+	 * @return the journal content search that was removed
+	 * @throws com.liferay.portlet.journal.NoSuchContentSearchException if a journal content search with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public JournalContentSearch remove(Serializable primaryKey)
+		throws NoSuchContentSearchException, SystemException {
 		Session session = null;
 
 		try {
 			session = openSession();
 
 			JournalContentSearch journalContentSearch = (JournalContentSearch)session.get(JournalContentSearchImpl.class,
-					Long.valueOf(contentSearchId));
+					primaryKey);
 
 			if (journalContentSearch == null) {
 				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
-						contentSearchId);
+					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchContentSearchException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
-					contentSearchId);
+					primaryKey);
 			}
 
-			return journalContentSearchPersistence.remove(journalContentSearch);
+			return remove(journalContentSearch);
 		}
 		catch (NoSuchContentSearchException nsee) {
 			throw nsee;
@@ -423,19 +441,6 @@ public class JournalContentSearchPersistenceImpl extends BasePersistenceImpl<Jou
 		finally {
 			closeSession(session);
 		}
-	}
-
-	/**
-	 * Removes the journal content search from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param journalContentSearch the journal content search
-	 * @return the journal content search that was removed
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public JournalContentSearch remove(
-		JournalContentSearch journalContentSearch) throws SystemException {
-		return super.remove(journalContentSearch);
 	}
 
 	@Override
@@ -457,25 +462,7 @@ public class JournalContentSearchPersistenceImpl extends BasePersistenceImpl<Jou
 			closeSession(session);
 		}
 
-		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
-		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
-
-		JournalContentSearchModelImpl journalContentSearchModelImpl = (JournalContentSearchModelImpl)journalContentSearch;
-
-		FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_G_P_L_P_A,
-			new Object[] {
-				Long.valueOf(journalContentSearchModelImpl.getGroupId()),
-				Boolean.valueOf(
-					journalContentSearchModelImpl.getPrivateLayout()),
-				Long.valueOf(journalContentSearchModelImpl.getLayoutId()),
-				
-			journalContentSearchModelImpl.getPortletId(),
-				
-			journalContentSearchModelImpl.getArticleId()
-			});
-
-		EntityCacheUtil.removeResult(JournalContentSearchModelImpl.ENTITY_CACHE_ENABLED,
-			JournalContentSearchImpl.class, journalContentSearch.getPrimaryKey());
+		clearCache(journalContentSearch);
 
 		return journalContentSearch;
 	}
@@ -3514,7 +3501,7 @@ public class JournalContentSearchPersistenceImpl extends BasePersistenceImpl<Jou
 	public void removeByArticleId(String articleId) throws SystemException {
 		for (JournalContentSearch journalContentSearch : findByArticleId(
 				articleId)) {
-			journalContentSearchPersistence.remove(journalContentSearch);
+			remove(journalContentSearch);
 		}
 	}
 
@@ -3529,7 +3516,7 @@ public class JournalContentSearchPersistenceImpl extends BasePersistenceImpl<Jou
 		throws SystemException {
 		for (JournalContentSearch journalContentSearch : findByG_P(groupId,
 				privateLayout)) {
-			journalContentSearchPersistence.remove(journalContentSearch);
+			remove(journalContentSearch);
 		}
 	}
 
@@ -3544,7 +3531,7 @@ public class JournalContentSearchPersistenceImpl extends BasePersistenceImpl<Jou
 		throws SystemException {
 		for (JournalContentSearch journalContentSearch : findByG_A(groupId,
 				articleId)) {
-			journalContentSearchPersistence.remove(journalContentSearch);
+			remove(journalContentSearch);
 		}
 	}
 
@@ -3560,7 +3547,7 @@ public class JournalContentSearchPersistenceImpl extends BasePersistenceImpl<Jou
 		throws SystemException {
 		for (JournalContentSearch journalContentSearch : findByG_P_L(groupId,
 				privateLayout, layoutId)) {
-			journalContentSearchPersistence.remove(journalContentSearch);
+			remove(journalContentSearch);
 		}
 	}
 
@@ -3576,7 +3563,7 @@ public class JournalContentSearchPersistenceImpl extends BasePersistenceImpl<Jou
 		String articleId) throws SystemException {
 		for (JournalContentSearch journalContentSearch : findByG_P_A(groupId,
 				privateLayout, articleId)) {
-			journalContentSearchPersistence.remove(journalContentSearch);
+			remove(journalContentSearch);
 		}
 	}
 
@@ -3593,7 +3580,7 @@ public class JournalContentSearchPersistenceImpl extends BasePersistenceImpl<Jou
 		long layoutId, String portletId) throws SystemException {
 		for (JournalContentSearch journalContentSearch : findByG_P_L_P(
 				groupId, privateLayout, layoutId, portletId)) {
-			journalContentSearchPersistence.remove(journalContentSearch);
+			remove(journalContentSearch);
 		}
 	}
 
@@ -3613,7 +3600,7 @@ public class JournalContentSearchPersistenceImpl extends BasePersistenceImpl<Jou
 		JournalContentSearch journalContentSearch = findByG_P_L_P_A(groupId,
 				privateLayout, layoutId, portletId, articleId);
 
-		journalContentSearchPersistence.remove(journalContentSearch);
+		remove(journalContentSearch);
 	}
 
 	/**
@@ -3623,7 +3610,7 @@ public class JournalContentSearchPersistenceImpl extends BasePersistenceImpl<Jou
 	 */
 	public void removeAll() throws SystemException {
 		for (JournalContentSearch journalContentSearch : findAll()) {
-			journalContentSearchPersistence.remove(journalContentSearch);
+			remove(journalContentSearch);
 		}
 	}
 

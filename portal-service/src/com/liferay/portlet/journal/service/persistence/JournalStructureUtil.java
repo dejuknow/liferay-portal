@@ -95,14 +95,6 @@ public class JournalStructureUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static JournalStructure remove(JournalStructure journalStructure)
-		throws SystemException {
-		return getPersistence().remove(journalStructure);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static JournalStructure update(JournalStructure journalStructure,

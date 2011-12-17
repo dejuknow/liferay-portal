@@ -51,6 +51,8 @@ GroupSearchTerms searchTerms = (GroupSearchTerms)searchContainer.getSearchTerms(
 
 LinkedHashMap groupParams = new LinkedHashMap();
 
+groupParams.put("site", Boolean.TRUE);
+
 if (tabs3.equals("current")) {
 	groupParams.put("groupsRoles", new Long(role.getRoleId()));
 }

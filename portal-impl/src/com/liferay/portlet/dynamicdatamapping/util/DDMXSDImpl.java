@@ -36,12 +36,13 @@ import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.dynamicdatamapping.storage.Fields;
+import com.liferay.util.freemarker.FreeMarkerTaglibFactoryUtil;
 
-import freemarker.ext.jsp.TaglibFactory;
 import freemarker.ext.servlet.HttpRequestHashModel;
 import freemarker.ext.servlet.ServletContextHashModel;
 
 import freemarker.template.ObjectWrapper;
+import freemarker.template.TemplateHashModel;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -262,8 +263,7 @@ public class DDMXSDImpl implements DDMXSD {
 				jsonObject.put(attribute.getName(), attribute.getValue());
 			}
 
-			jsonObject.put(
-				"id", dynamicElementElement.attributeValue("name"));
+			jsonObject.put("id", dynamicElementElement.attributeValue("name"));
 
 			String type = jsonObject.getString("type");
 
@@ -306,7 +306,7 @@ public class DDMXSDImpl implements DDMXSD {
 
 		Element metadataElement =
 			(Element)dynamicElementElement.selectSingleNode(
-				"meta-data[@locale='" + languageId  + "']");
+				"meta-data[@locale='" + languageId + "']");
 
 		Map<String, Object> field = new HashMap<String, Object>();
 
@@ -370,8 +370,7 @@ public class DDMXSDImpl implements DDMXSD {
 
 		// FreeMarker variables
 
-		FreeMarkerVariablesUtil.insertVariables(
-			freeMarkerContext, request);
+		FreeMarkerVariablesUtil.insertVariables(freeMarkerContext, request);
 
 		// Tag libraries
 
@@ -382,8 +381,9 @@ public class DDMXSDImpl implements DDMXSD {
 
 		// Portal JSP tag library factory
 
-		TaglibFactory portalTaglib = new TaglibFactory(
-			pageContext.getServletContext());
+		TemplateHashModel portalTaglib =
+			FreeMarkerTaglibFactoryUtil.createTaglibFactory(
+				pageContext.getServletContext());
 
 		freeMarkerContext.put("PortalJspTagLibs", portalTaglib);
 

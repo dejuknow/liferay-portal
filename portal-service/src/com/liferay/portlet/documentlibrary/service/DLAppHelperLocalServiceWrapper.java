@@ -67,6 +67,14 @@ public class DLAppHelperLocalServiceWrapper implements DLAppHelperLocalService,
 		_dlAppHelperLocalService.addFolder(folder, serviceContext);
 	}
 
+	public void checkAssetEntry(long userId,
+		com.liferay.portal.kernel.repository.model.FileEntry fileEntry,
+		com.liferay.portal.kernel.repository.model.FileVersion fileVersion)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_dlAppHelperLocalService.checkAssetEntry(userId, fileEntry, fileVersion);
+	}
+
 	public void deleteFileEntry(
 		com.liferay.portal.kernel.repository.model.FileEntry fileEntry)
 		throws com.liferay.portal.kernel.exception.PortalException,
@@ -84,8 +92,7 @@ public class DLAppHelperLocalServiceWrapper implements DLAppHelperLocalService,
 	public void getFileAsStream(long userId,
 		com.liferay.portal.kernel.repository.model.FileEntry fileEntry,
 		boolean incrementCounter)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
+		throws com.liferay.portal.kernel.exception.SystemException {
 		_dlAppHelperLocalService.getFileAsStream(userId, fileEntry,
 			incrementCounter);
 	}
@@ -107,6 +114,20 @@ public class DLAppHelperLocalServiceWrapper implements DLAppHelperLocalService,
 		return _dlAppHelperLocalService.getNoAssetFileEntries();
 	}
 
+	public void moveFileEntry(
+		com.liferay.portal.kernel.repository.model.FileEntry fileEntry)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_dlAppHelperLocalService.moveFileEntry(fileEntry);
+	}
+
+	public void moveFolder(
+		com.liferay.portal.kernel.repository.model.Folder folder)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_dlAppHelperLocalService.moveFolder(folder);
+	}
+
 	public com.liferay.portlet.asset.model.AssetEntry updateAsset(long userId,
 		com.liferay.portal.kernel.repository.model.FileEntry fileEntry,
 		com.liferay.portal.kernel.repository.model.FileVersion fileVersion,
@@ -126,6 +147,16 @@ public class DLAppHelperLocalServiceWrapper implements DLAppHelperLocalService,
 			com.liferay.portal.kernel.exception.SystemException {
 		return _dlAppHelperLocalService.updateAsset(userId, fileEntry,
 			fileVersion, assetCategoryIds, assetTagNames, assetLinkEntryIds);
+	}
+
+	public void updateFileEntry(long userId,
+		com.liferay.portal.kernel.repository.model.FileEntry fileEntry,
+		com.liferay.portal.kernel.repository.model.FileVersion fileVersion,
+		long assetClassPk)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_dlAppHelperLocalService.updateFileEntry(userId, fileEntry,
+			fileVersion, assetClassPk);
 	}
 
 	public void updateFileEntry(long userId,

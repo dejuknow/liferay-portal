@@ -129,6 +129,26 @@ public class UserNotificationEventLocalServiceImpl
 			userId, archived, start, end);
 	}
 
+	public List<UserNotificationEvent> getUserNotificationEvents(
+			long userId, int start, int end)
+		throws SystemException {
+
+		return userNotificationEventPersistence.findByUserId(
+			userId, start, end);
+	}
+
+	public int getUserNotificationEventsCount(long userId)
+		throws SystemException {
+
+		return userNotificationEventPersistence.countByUserId(userId);
+	}
+
+	public int getUserNotificationEventsCount(long userId, boolean archived)
+		throws SystemException {
+
+		return userNotificationEventPersistence.countByU_A(userId, archived);
+	}
+
 	public UserNotificationEvent updateUserNotificationEvent(
 			String uuid, boolean archive)
 		throws SystemException {

@@ -19,9 +19,11 @@ import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.FileUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
@@ -40,6 +42,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Brian Wing Shun Chan
@@ -54,6 +57,15 @@ public class DocumentImpl implements Document {
 			languageId);
 
 		return localizedName;
+	}
+
+	public static String getSortableFieldName(String name) {
+		return name.concat(StringPool.UNDERLINE).concat(
+			_SORTABLE_TEXT_FIELD_SUFFIX);
+	}
+
+	public static boolean isSortableTextField(String name) {
+		return _sortableTextFields.contains(name);
 	}
 
 	public void add(Field field) {
@@ -332,12 +344,12 @@ public class DocumentImpl implements Document {
 		addNumber(name, String.valueOf(value));
 	}
 
-	public void addNumber(String name, Integer value) {
-		addNumber(name, String.valueOf(value));
-	}
-
 	public void addNumber(String name, int[] values) {
 		addNumber(name, ArrayUtil.toStringArray(values));
+	}
+
+	public void addNumber(String name, Integer value) {
+		addNumber(name, String.valueOf(value));
 	}
 
 	public void addNumber(String name, Integer[] values) {
@@ -383,12 +395,25 @@ public class DocumentImpl implements Document {
 	}
 
 	public void addText(String name, String value) {
-		if (Validator.isNotNull(value)) {
-			Field field = new Field(name, value);
+		if (Validator.isNull(value)) {
+			return;
+		}
 
-			field.setTokenized(true);
+		Field field = new Field(name, value);
 
-			_fields.put(name, field);
+		field.setTokenized(true);
+
+		_fields.put(name, field);
+
+		if (_sortableTextFields.contains(name)) {
+			String truncatedValue = value;
+
+			if (value.length() > _SORTABLE_TEXT_FIELDS_TRUNCATED_LENGTH) {
+				truncatedValue = value.substring(
+					0, _SORTABLE_TEXT_FIELDS_TRUNCATED_LENGTH);
+			}
+
+			addKeyword(getSortableFieldName(name), truncatedValue);
 		}
 	}
 
@@ -408,9 +433,7 @@ public class DocumentImpl implements Document {
 		addUID(portletId, String.valueOf(field1));
 	}
 
-	public void addUID(
-		String portletId, long field1, String field2) {
-
+	public void addUID(String portletId, long field1, String field2) {
 		addUID(portletId, String.valueOf(field1), field2);
 	}
 
@@ -418,9 +441,7 @@ public class DocumentImpl implements Document {
 		addUID(portletId, field1.longValue());
 	}
 
-	public void addUID(
-		String portletId, Long field1, String field2) {
-
+	public void addUID(String portletId, Long field1, String field2) {
 		addUID(portletId, field1.longValue(), field2);
 	}
 
@@ -428,9 +449,7 @@ public class DocumentImpl implements Document {
 		addUID(portletId, field1, null);
 	}
 
-	public void addUID(
-		String portletId, String field1, String field2) {
-
+	public void addUID(String portletId, String field1, String field2) {
 		addUID(portletId, field1, field2, null);
 	}
 
@@ -489,7 +508,7 @@ public class DocumentImpl implements Document {
 
 	public Date getDate(String name) throws ParseException {
 		DateFormat dateFormat = DateFormatFactoryUtil.getSimpleDateFormat(
-			_DATE_FORMAT_PATTERN);
+			_INDEX_DATE_FORMAT_PATTERN);
 
 		return dateFormat.parse(get(name));
 	}
@@ -561,15 +580,25 @@ public class DocumentImpl implements Document {
 		return sb.toString();
 	}
 
-	private static final String _DATE_FORMAT_PATTERN = PropsUtil.get(
+	private static final String _INDEX_DATE_FORMAT_PATTERN = PropsUtil.get(
 		PropsKeys.INDEX_DATE_FORMAT_PATTERN);
+
+	private static final String _SORTABLE_TEXT_FIELD_SUFFIX = "sortable";
+
+	private static final int _SORTABLE_TEXT_FIELDS_TRUNCATED_LENGTH =
+		GetterUtil.getInteger(
+			PropsUtil.get(
+				PropsKeys.INDEX_SORTABLE_TEXT_FIELDS_TRUNCATED_LENGTH));
 
 	private static final String _UID_FIELD = "_FIELD_";
 
 	private static final String _UID_PORTLET = "_PORTLET_";
 
-	private Format _dateFormat = FastDateFormatFactoryUtil.getSimpleDateFormat(
-		_DATE_FORMAT_PATTERN);
+	private static Format _dateFormat =
+		FastDateFormatFactoryUtil.getSimpleDateFormat(
+			_INDEX_DATE_FORMAT_PATTERN);
+	private static Set<String> _sortableTextFields = SetUtil.fromArray(
+		PropsUtil.getArray(PropsKeys.INDEX_SORTABLE_TEXT_FIELDS));
 
 	private Map<String, Field> _fields = new HashMap<String, Field>();
 

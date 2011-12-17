@@ -338,8 +338,7 @@ public class ShoppingUtil {
 					category.getCompanyId(), category.getGroupId());
 			}
 
-			ShoppingItemPrice itemPrice =
-				_getItemPrice(item, count.intValue());
+			ShoppingItemPrice itemPrice = _getItemPrice(item, count.intValue());
 
 			subtotal += calculateActualPrice(itemPrice) * count.intValue();
 		}
@@ -937,8 +936,7 @@ public class ShoppingUtil {
 	public static String getPayPalReturnURL(
 		PortletURL portletURL, ShoppingOrder order) {
 
-		portletURL.setParameter(
-			"struts_action", "/shopping/checkout");
+		portletURL.setParameter("struts_action", "/shopping/checkout");
 		portletURL.setParameter(Constants.CMD, Constants.VIEW);
 		portletURL.setParameter("orderId", String.valueOf(order.getOrderId()));
 
@@ -1001,7 +999,7 @@ public class ShoppingUtil {
 		if (!item.isFields()) {
 			int stockQuantity = item.getStockQuantity();
 
-			if ((stockQuantity > 0)  &&
+			if ((stockQuantity > 0) &&
 				(stockQuantity >= orderedQuantity.intValue())) {
 
 				return true;

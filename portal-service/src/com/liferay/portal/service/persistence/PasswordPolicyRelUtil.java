@@ -94,14 +94,6 @@ public class PasswordPolicyRelUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static PasswordPolicyRel remove(PasswordPolicyRel passwordPolicyRel)
-		throws SystemException {
-		return getPersistence().remove(passwordPolicyRel);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static PasswordPolicyRel update(

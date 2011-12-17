@@ -128,7 +128,9 @@ public class UploadServletRequestImpl
 
 			request.setAttribute(WebKeys.UPLOAD_EXCEPTION, uploadException);
 
-			_log.error(e, e);
+			if (_log.isDebugEnabled()) {
+				_log.debug(e, e);
+			}
 		}
 	}
 
@@ -410,8 +412,7 @@ public class UploadServletRequestImpl
 			String[] values = new String[
 				parentValues.length + liferayFileItems.length];
 
-			System.arraycopy(
-				parentValues, 0, values, 0, parentValues.length);
+			System.arraycopy(parentValues, 0, values, 0, parentValues.length);
 
 			for (int i = parentValues.length; i < values.length; i++) {
 				values[i] =

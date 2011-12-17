@@ -54,11 +54,21 @@ String parentStructureName = StringPool.BLANK;
 if (Validator.isNotNull(parentStructureId)) {
 	try {
 		parentStructure = JournalStructureLocalServiceUtil.getStructure(groupId, parentStructureId);
-
-		parentStructureName = parentStructure.getName(locale);
 	}
 	catch (NoSuchStructureException nsse) {
 	}
+}
+
+if ((parentStructure == null) && (groupId != themeDisplay.getCompanyGroupId())) {
+	try {
+		parentStructure = JournalStructureLocalServiceUtil.getStructure(themeDisplay.getCompanyGroupId(), parentStructureId);
+	}
+	catch (NoSuchStructureException nsse) {
+	}
+}
+
+if (parentStructure != null) {
+	parentStructureName = parentStructure.getName(locale);
 }
 
 String xsd = ParamUtil.getString(request, "xsd");
@@ -171,7 +181,7 @@ int tabIndex = 1;
 
 			<c:if test="<%= portletDisplay.isWebDAVEnabled() %>">
 				<aui:field-wrapper label="webdav-url">
-					<liferay-ui:input-resource url='<%= themeDisplay.getPortalURL() + "/tunnel-web/secure/webdav" + group.getFriendlyURL() + "/journal/Structures/" + structureId %>' />
+					<liferay-ui:input-resource url='<%= themeDisplay.getPortalURL() + "/api/secure/webdav" + group.getFriendlyURL() + "/journal/Structures/" + structureId %>' />
 				</aui:field-wrapper>
 			</c:if>
 		</c:if>
@@ -388,10 +398,9 @@ int tabIndex = 1;
 		Liferay.Util.openWindow(
 			{
 				dialog: {
-					stack: false,
 					width: 680
 				},
-				title: '<liferay-ui:message key="structure" />',
+				title: '<%= UnicodeLanguageUtil.get(pageContext, "structure") %>',
 				uri: '<portlet:renderURL windowState="<%= LiferayWindowState.POP_UP.toString() %>"><portlet:param name="struts_action" value="/journal/select_structure" /><portlet:param name="groupId" value="<%= String.valueOf(groupId) %>" /></portlet:renderURL>'
 			}
 		);
@@ -473,7 +482,7 @@ int tabIndex = 1;
 			},
 			id: '<portlet:namespace />xsdContentIFrame',
 			textarea: '<portlet:namespace />xsdContent',
-			title: '<liferay-ui:message key="editor" />',
+			title: '<%= UnicodeLanguageUtil.get(pageContext, "editor") %>',
 			uri: '<portlet:renderURL windowState="<%= LiferayWindowState.POP_UP.toString() %>"><portlet:param name="struts_action" value="/journal/edit_template_xsl" /><portlet:param name="langType" value="xsd" /><portlet:param name="editorContentInputElement" value='<%= "#" + renderResponse.getNamespace() + "xsd" %>' /><portlet:param name="editorContentOutputElement" value='<%= "#" + renderResponse.getNamespace() + "xsd" %>' /></portlet:renderURL>'
 		}
 	);

@@ -26,12 +26,12 @@ public class PortalClassLoaderUtil {
 		return _classLoader;
 	}
 
-	public static void setClassLoader(ClassLoader contextClassLoader) {
+	public static void setClassLoader(ClassLoader classLoader) {
 		if (ServerDetector.isJOnAS() && JavaProps.isJDK6()) {
-			_classLoader = new URLClassLoader(new URL[0], contextClassLoader);
+			_classLoader = new URLClassLoader(new URL[0], classLoader);
 		}
 		else {
-			_classLoader = contextClassLoader;
+			_classLoader = classLoader;
 		}
 	}
 

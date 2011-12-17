@@ -97,6 +97,7 @@ import com.liferay.portal.service.QuartzLocalService;
 import com.liferay.portal.service.RegionService;
 import com.liferay.portal.service.ReleaseLocalService;
 import com.liferay.portal.service.RepositoryEntryLocalService;
+import com.liferay.portal.service.RepositoryLocalService;
 import com.liferay.portal.service.RepositoryService;
 import com.liferay.portal.service.ResourceActionLocalService;
 import com.liferay.portal.service.ResourceBlockLocalService;
@@ -158,6 +159,7 @@ import com.liferay.portal.service.persistence.LayoutSetBranchPersistence;
 import com.liferay.portal.service.persistence.LayoutSetPersistence;
 import com.liferay.portal.service.persistence.LayoutSetPrototypePersistence;
 import com.liferay.portal.service.persistence.ListTypePersistence;
+import com.liferay.portal.service.persistence.LockFinder;
 import com.liferay.portal.service.persistence.LockPersistence;
 import com.liferay.portal.service.persistence.MembershipRequestPersistence;
 import com.liferay.portal.service.persistence.OrgGroupPermissionFinder;
@@ -228,10 +230,8 @@ import com.liferay.portlet.messageboards.service.MBThreadService;
 import com.liferay.portlet.messageboards.service.persistence.MBThreadFinder;
 import com.liferay.portlet.messageboards.service.persistence.MBThreadPersistence;
 import com.liferay.portlet.social.service.SocialActivityLocalService;
-import com.liferay.portlet.social.service.SocialEquityLogLocalService;
 import com.liferay.portlet.social.service.persistence.SocialActivityFinder;
 import com.liferay.portlet.social.service.persistence.SocialActivityPersistence;
-import com.liferay.portlet.social.service.persistence.SocialEquityLogPersistence;
 
 import java.io.Serializable;
 
@@ -1614,6 +1614,24 @@ public abstract class SubscriptionLocalServiceBaseImpl
 	}
 
 	/**
+	 * Returns the lock finder.
+	 *
+	 * @return the lock finder
+	 */
+	public LockFinder getLockFinder() {
+		return lockFinder;
+	}
+
+	/**
+	 * Sets the lock finder.
+	 *
+	 * @param lockFinder the lock finder
+	 */
+	public void setLockFinder(LockFinder lockFinder) {
+		this.lockFinder = lockFinder;
+	}
+
+	/**
 	 * Returns the membership request local service.
 	 *
 	 * @return the membership request local service
@@ -2523,6 +2541,25 @@ public abstract class SubscriptionLocalServiceBaseImpl
 	 */
 	public void setReleasePersistence(ReleasePersistence releasePersistence) {
 		this.releasePersistence = releasePersistence;
+	}
+
+	/**
+	 * Returns the repository local service.
+	 *
+	 * @return the repository local service
+	 */
+	public RepositoryLocalService getRepositoryLocalService() {
+		return repositoryLocalService;
+	}
+
+	/**
+	 * Sets the repository local service.
+	 *
+	 * @param repositoryLocalService the repository local service
+	 */
+	public void setRepositoryLocalService(
+		RepositoryLocalService repositoryLocalService) {
+		this.repositoryLocalService = repositoryLocalService;
 	}
 
 	/**
@@ -4181,44 +4218,6 @@ public abstract class SubscriptionLocalServiceBaseImpl
 		this.socialActivityFinder = socialActivityFinder;
 	}
 
-	/**
-	 * Returns the social equity log local service.
-	 *
-	 * @return the social equity log local service
-	 */
-	public SocialEquityLogLocalService getSocialEquityLogLocalService() {
-		return socialEquityLogLocalService;
-	}
-
-	/**
-	 * Sets the social equity log local service.
-	 *
-	 * @param socialEquityLogLocalService the social equity log local service
-	 */
-	public void setSocialEquityLogLocalService(
-		SocialEquityLogLocalService socialEquityLogLocalService) {
-		this.socialEquityLogLocalService = socialEquityLogLocalService;
-	}
-
-	/**
-	 * Returns the social equity log persistence.
-	 *
-	 * @return the social equity log persistence
-	 */
-	public SocialEquityLogPersistence getSocialEquityLogPersistence() {
-		return socialEquityLogPersistence;
-	}
-
-	/**
-	 * Sets the social equity log persistence.
-	 *
-	 * @param socialEquityLogPersistence the social equity log persistence
-	 */
-	public void setSocialEquityLogPersistence(
-		SocialEquityLogPersistence socialEquityLogPersistence) {
-		this.socialEquityLogPersistence = socialEquityLogPersistence;
-	}
-
 	public void afterPropertiesSet() {
 		persistedModelLocalServiceRegistry.register("com.liferay.portal.model.Subscription",
 			subscriptionLocalService);
@@ -4394,6 +4393,8 @@ public abstract class SubscriptionLocalServiceBaseImpl
 	protected LockLocalService lockLocalService;
 	@BeanReference(type = LockPersistence.class)
 	protected LockPersistence lockPersistence;
+	@BeanReference(type = LockFinder.class)
+	protected LockFinder lockFinder;
 	@BeanReference(type = MembershipRequestLocalService.class)
 	protected MembershipRequestLocalService membershipRequestLocalService;
 	@BeanReference(type = MembershipRequestService.class)
@@ -4492,6 +4493,8 @@ public abstract class SubscriptionLocalServiceBaseImpl
 	protected ReleaseLocalService releaseLocalService;
 	@BeanReference(type = ReleasePersistence.class)
 	protected ReleasePersistence releasePersistence;
+	@BeanReference(type = RepositoryLocalService.class)
+	protected RepositoryLocalService repositoryLocalService;
 	@BeanReference(type = RepositoryService.class)
 	protected RepositoryService repositoryService;
 	@BeanReference(type = RepositoryPersistence.class)
@@ -4670,10 +4673,6 @@ public abstract class SubscriptionLocalServiceBaseImpl
 	protected SocialActivityPersistence socialActivityPersistence;
 	@BeanReference(type = SocialActivityFinder.class)
 	protected SocialActivityFinder socialActivityFinder;
-	@BeanReference(type = SocialEquityLogLocalService.class)
-	protected SocialEquityLogLocalService socialEquityLogLocalService;
-	@BeanReference(type = SocialEquityLogPersistence.class)
-	protected SocialEquityLogPersistence socialEquityLogPersistence;
 	@BeanReference(type = PersistedModelLocalServiceRegistry.class)
 	protected PersistedModelLocalServiceRegistry persistedModelLocalServiceRegistry;
 	private static Log _log = LogFactoryUtil.getLog(SubscriptionLocalServiceBaseImpl.class);

@@ -40,8 +40,7 @@ public class StoreWrapper implements Store {
 			long companyId, long repositoryId, String fileName, byte[] bytes)
 		throws PortalException, SystemException {
 
-		_store.addFile(
-			companyId, repositoryId, fileName, bytes);
+		_store.addFile(companyId, repositoryId, fileName, bytes);
 	}
 
 	public void addFile(
@@ -152,8 +151,7 @@ public class StoreWrapper implements Store {
 		return _store.getFileNames(companyId, repositoryId, dirName);
 	}
 
-	public long getFileSize(
-			long companyId, long repositoryId, String fileName)
+	public long getFileSize(long companyId, long repositoryId, String fileName)
 		throws PortalException, SystemException {
 
 		return _store.getFileSize(companyId, repositoryId, fileName);

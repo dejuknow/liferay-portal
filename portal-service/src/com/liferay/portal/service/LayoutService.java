@@ -80,15 +80,16 @@ public interface LayoutService {
 	normalized when accessed see {@link
 	com.liferay.portal.kernel.util.FriendlyURLNormalizerUtil#normalize(
 	String)}.
-	* @param locked whether the layout is locked
-	* @param serviceContext the service context. Must specify the replacement
-	universally unique identifier and can specify the replacement
-	create date, replacement modified date and the new expando
-	bridge attributes.
+	* @param serviceContext the service context. Must set the universally
+	unique identifier (UUID) for the layout. Can set the creation
+	date, modification date and the expando bridge attributes for the
+	layout. For layouts that belong to a layout set prototype, an
+	attribute named 'layoutUpdateable' can be used to specify whether
+	site administrators can modify this page within their site.
 	* @return the layout
 	* @throws PortalException if a group with the primary key could not be
-	found, if the group did not have permission to manage the
-	layouts involved, or if layout values were invalid
+	found, if the group did not have permission to manage the layouts
+	involved, or if layout values were invalid
 	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Layout addLayout(long groupId,
@@ -99,7 +100,7 @@ public interface LayoutService {
 		java.util.Map<java.util.Locale, java.lang.String> keywordsMap,
 		java.util.Map<java.util.Locale, java.lang.String> robotsMap,
 		java.lang.String type, boolean hidden, java.lang.String friendlyURL,
-		boolean locked, com.liferay.portal.service.ServiceContext serviceContext)
+		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException;
 
@@ -139,22 +140,23 @@ public interface LayoutService {
 	normalized when accessed see {@link
 	com.liferay.portal.kernel.util.FriendlyURLNormalizerUtil#normalize(
 	String)}.
-	* @param locked whether the layout is locked
-	* @param serviceContext the service context. Must specify the replacement
-	universally unique identifier and can specify the replacement
-	create date, replacement modified date and the new expando
-	bridge attributes.
+	* @param serviceContext the service context. Must set the universally
+	unique identifier (UUID) for the layout. Can specify the creation
+	date, modification date and the expando bridge attributes for the
+	layout. For layouts that belong to a layout set prototype, an
+	attribute named 'layoutUpdateable' can be used to specify whether
+	site administrators can modify this page within their site.
 	* @return the layout
 	* @throws PortalException if a group with the primary key could not be
-	found, if the group did not have permission to manage the
-	layouts involved, or if layout values were invalid
+	found, if the group did not have permission to manage the layouts
+	involved, or if layout values were invalid
 	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Layout addLayout(long groupId,
 		boolean privateLayout, long parentLayoutId, java.lang.String name,
 		java.lang.String title, java.lang.String description,
 		java.lang.String type, boolean hidden, java.lang.String friendlyURL,
-		boolean locked, com.liferay.portal.service.ServiceContext serviceContext)
+		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException;
 
@@ -164,9 +166,9 @@ public interface LayoutService {
 	*
 	* @param plid the primary key of the layout
 	* @param serviceContext the service context
-	* @throws PortalException if the user did not have permission to delete
-	the layout, if a layout with the primary key could not be found
-	, or if some other portal exception occurred
+	* @throws PortalException if the user did not have permission to delete the
+	layout, if a layout with the primary key could not be found , or
+	if some other portal exception occurred
 	* @throws SystemException if a system exception occurred
 	*/
 	public void deleteLayout(long plid,
@@ -175,15 +177,15 @@ public interface LayoutService {
 			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
-	* Deletes the layout with the primary key, also deleting the layout's
-	* child layouts, and associated resources.
+	* Deletes the layout with the primary key, also deleting the layout's child
+	* layouts, and associated resources.
 	*
 	* @param groupId the primary key of the group
 	* @param privateLayout whether the layout is private to the group
 	* @param layoutId the primary key of the layout
 	* @param serviceContext the service context
-	* @throws PortalException if the user did not have permission to delete
-	the layout, if a matching layout could not be found , or if some
+	* @throws PortalException if the user did not have permission to delete the
+	layout, if a matching layout could not be found , or if some
 	other portal exception occurred
 	* @throws SystemException if a system exception occurred
 	*/
@@ -376,14 +378,20 @@ public interface LayoutService {
 		java.lang.String preferencesKey, java.lang.String preferencesValue)
 		throws com.liferay.portal.kernel.exception.SystemException;
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public java.util.List<com.liferay.portal.model.Layout> getLayouts(
+		long groupId, boolean privateLayout)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
+
 	/**
 	* Imports the layouts from the byte array.
 	*
 	* @param groupId the primary key of the group
 	* @param privateLayout whether the layout is private to the group
 	* @param parameterMap the mapping of parameters indicating which
-	information will be imported. For information on the keys used
-	in the map see {@link
+	information will be imported. For information on the keys used in
+	the map see {@link
 	com.liferay.portal.kernel.lar.PortletDataHandlerKeys}.
 	* @param bytes the byte array with the data
 	* @throws PortalException if a group with the primary key could not be
@@ -404,13 +412,13 @@ public interface LayoutService {
 	* @param groupId the primary key of the group
 	* @param privateLayout whether the layout is private to the group
 	* @param parameterMap the mapping of parameters indicating which
-	information will be imported. For information on the keys used
-	in the map see {@link
+	information will be imported. For information on the keys used in
+	the map see {@link
 	com.liferay.portal.kernel.lar.PortletDataHandlerKeys}.
 	* @param file the LAR file with the data
 	* @throws PortalException if a group with the primary key could not be
-	found, if the group did not have permission to manage the
-	layouts and publish, or if some other portal exception occurred
+	found, if the group did not have permission to manage the layouts
+	and publish, or if some other portal exception occurred
 	* @throws SystemException if a system exception occurred
 	* @see com.liferay.portal.lar.LayoutImporter
 	*/
@@ -426,8 +434,8 @@ public interface LayoutService {
 	* @param groupId the primary key of the group
 	* @param privateLayout whether the layout is private to the group
 	* @param parameterMap the mapping of parameters indicating which
-	information will be imported. For information on the keys used
-	in the map see {@link
+	information will be imported. For information on the keys used in
+	the map see {@link
 	com.liferay.portal.kernel.lar.PortletDataHandlerKeys}.
 	* @param is the input stream
 	* @throws PortalException if a group with the primary key could not be
@@ -450,8 +458,8 @@ public interface LayoutService {
 	* @param groupId the primary key of the group
 	* @param portletId the primary key of the portlet
 	* @param parameterMap the mapping of parameters indicating which
-	information will be imported. For information on the keys used
-	in the map see {@link
+	information will be imported. For information on the keys used in
+	the map see {@link
 	com.liferay.portal.kernel.lar.PortletDataHandlerKeys}.
 	* @param file the LAR file with the data
 	* @throws PortalException if a group, layout, or portlet with the primary
@@ -474,13 +482,13 @@ public interface LayoutService {
 	* @param groupId the primary key of the group
 	* @param portletId the primary key of the portlet
 	* @param parameterMap the mapping of parameters indicating which
-	information will be imported. For information on the keys used
-	in the map see {@link
+	information will be imported. For information on the keys used in
+	the map see {@link
 	com.liferay.portal.kernel.lar.PortletDataHandlerKeys}.
 	* @param is the input stream
 	* @throws PortalException if a group, portlet, or layout with the primary
-	key could not be found or if the group did not have permission
-	to manage the layouts
+	key could not be found or if the group did not have permission to
+	manage the layouts
 	* @throws SystemException if a system exception occurred
 	*/
 	public void importPortletInfo(long plid, long groupId,
@@ -497,19 +505,17 @@ public interface LayoutService {
 	* @param targetGroupId the primary key of the target group
 	* @param privateLayout whether the layout is private to the group
 	* @param layoutIdMap the layouts considered for publishing, specified by
-	the layout IDs and booleans indicating whether they have
-	children
+	the layout IDs and booleans indicating whether they have children
 	* @param parameterMap the mapping of parameters indicating which
 	information will be used. See {@link
 	com.liferay.portal.kernel.lar.PortletDataHandlerKeys}
-	* @param scope the scope of the pages. It can be <code>all-pages</code>
-	or <code>selected-pages</code>.
+	* @param scope the scope of the pages. It can be <code>all-pages</code> or
+	<code>selected-pages</code>.
 	* @param startDate the start date
 	* @param endDate the end date
 	* @param groupName the group name (optionally {@link
 	com.liferay.portal.kernel.messaging.DestinationNames#LAYOUTS_LOCAL_PUBLISHER}).
-	See {@link
-	com.liferay.portal.kernel.messaging.DestinationNames}.
+	See {@link com.liferay.portal.kernel.messaging.DestinationNames}.
 	* @param cronText the cron text. See {@link
 	com.liferay.portal.kernel.cal.RecurrenceSerializer #toCronText}
 	* @param schedulerStartDate the scheduler start date
@@ -536,8 +542,7 @@ public interface LayoutService {
 	* @param sourceGroupId the primary key of the source group
 	* @param privateLayout whether the layout is private to the group
 	* @param layoutIdMap the layouts considered for publishing, specified by
-	the layout IDs and booleans indicating whether they have
-	children
+	the layout IDs and booleans indicating whether they have children
 	* @param parameterMap the mapping of parameters indicating which
 	information will be used. See {@link
 	com.liferay.portal.kernel.lar.PortletDataHandlerKeys}
@@ -550,8 +555,7 @@ public interface LayoutService {
 	* @param endDate the end date
 	* @param groupName the group name. Optionally {@link
 	com.liferay.portal.kernel.messaging.DestinationNames#LAYOUTS_LOCAL_PUBLISHER}).
-	See {@link
-	com.liferay.portal.kernel.messaging.DestinationNames}.
+	See {@link com.liferay.portal.kernel.messaging.DestinationNames}.
 	* @param cronText the cron text. See {@link
 	com.liferay.portal.kernel.cal.RecurrenceSerializer #toCronText}
 	* @param schedulerStartDate the scheduler start date
@@ -575,8 +579,8 @@ public interface LayoutService {
 			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
-	* Sets the layouts for the group, replacing and prioritizing all layouts
-	* of the parent layout.
+	* Sets the layouts for the group, replacing and prioritizing all layouts of
+	* the parent layout.
 	*
 	* @param groupId the primary key of the group
 	* @param privateLayout whether the layout is private to the group
@@ -603,10 +607,9 @@ public interface LayoutService {
 	* @param jobName the job name
 	* @param groupName the group name (optionally {@link
 	com.liferay.portal.kernel.messaging.DestinationNames#LAYOUTS_LOCAL_PUBLISHER}).
-	See {@link
-	com.liferay.portal.kernel.messaging.DestinationNames}.
-	* @throws PortalException if the group did not permission to manage
-	staging and publish
+	See {@link com.liferay.portal.kernel.messaging.DestinationNames}.
+	* @throws PortalException if the group did not permission to manage staging
+	and publish
 	* @throws SystemException if a system exception occurred
 	*/
 	public void unschedulePublishToLive(long groupId, java.lang.String jobName,
@@ -621,8 +624,7 @@ public interface LayoutService {
 	* @param jobName the job name
 	* @param groupName the group name (optionally {@link
 	com.liferay.portal.kernel.messaging.DestinationNames#LAYOUTS_LOCAL_PUBLISHER}).
-	See {@link
-	com.liferay.portal.kernel.messaging.DestinationNames}.
+	See {@link com.liferay.portal.kernel.messaging.DestinationNames}.
 	* @throws PortalException if a group with the primary key could not be
 	found or if the group did not have permission to publish
 	* @throws SystemException if a system exception occurred
@@ -663,9 +665,8 @@ public interface LayoutService {
 	String)}.
 	* @param iconImage whether the icon image will be updated
 	* @param iconBytes the byte array of the layout's new icon image
-	* @param locked whether the layout is locked
-	* @param serviceContext the service context. Can specify the replacement
-	modified date and new expando bridge attributes.
+	* @param serviceContext the service context. Can set the modification date
+	and expando bridge attributes for the layout.
 	* @return the updated layout
 	* @throws PortalException if a group or layout with the primary key could
 	not be found, if the user did not have permission to update the
@@ -682,7 +683,7 @@ public interface LayoutService {
 		java.util.Map<java.util.Locale, java.lang.String> keywordsMap,
 		java.util.Map<java.util.Locale, java.lang.String> robotsMap,
 		java.lang.String type, boolean hidden, java.lang.String friendlyURL,
-		java.lang.Boolean iconImage, byte[] iconBytes, boolean locked,
+		java.lang.Boolean iconImage, byte[] iconBytes,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException;
@@ -697,8 +698,8 @@ public interface LayoutService {
 	See {@link com.liferay.portal.kernel.util.UnicodeProperties
 	#fastLoad(String)}.
 	* @return the updated layout
-	* @throws PortalException if a matching layout could not be found or if
-	the user did not have permission to update the layout
+	* @throws PortalException if a matching layout could not be found or if the
+	user did not have permission to update the layout
 	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Layout updateLayout(long groupId,
@@ -769,8 +770,8 @@ public interface LayoutService {
 			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
-	* Updates the parent layout ID of the layout matching the group, layout
-	* ID, and privacy.
+	* Updates the parent layout ID of the layout matching the group, layout ID,
+	* and privacy.
 	*
 	* @param groupId the primary key of the group
 	* @param privateLayout whether the layout is private to the group
@@ -789,8 +790,8 @@ public interface LayoutService {
 			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
-	* Updates the parent layout ID of the layout matching the primary key. If
-	* a layout matching the parent primary key is found, the layout ID of that
+	* Updates the parent layout ID of the layout matching the primary key. If a
+	* layout matching the parent primary key is found, the layout ID of that
 	* layout is assigned, otherwise {@link
 	* com.liferay.portal.model.LayoutConstants#DEFAULT_PARENT_LAYOUT_ID} is
 	* assigned.
@@ -817,8 +818,8 @@ public interface LayoutService {
 	* @param layoutId the primary key of the layout
 	* @param priority the layout's new priority
 	* @return the updated layout
-	* @throws PortalException if a matching layout could not be found or if
-	the user did not have permission to update the layout
+	* @throws PortalException if a matching layout could not be found or if the
+	user did not have permission to update the layout
 	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Layout updatePriority(long groupId,

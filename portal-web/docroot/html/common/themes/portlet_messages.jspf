@@ -74,7 +74,7 @@ else if (group.isStagingGroup()) {
 			</c:otherwise>
 		</c:choose>
 
-		<c:if test='<%= SessionMessages.contains(renderRequest, portletConfig.getPortletName() + ".doCloseRedirect") %>'>
+		<c:if test='<%= themeDisplay.isStatePopUp() && SessionMessages.contains(renderRequest, portletName + SessionMessages.KEY_SUFFIX_CLOSE_REDIRECT) %>'>
 
 			<%
 			String taglibMessage = "class=\"lfr-hide-dialog\" href=\"javascript:;\"";
@@ -85,7 +85,9 @@ else if (group.isStagingGroup()) {
 	</div>
 </c:if>
 
-<liferay-ui:success key='<%= portletName + ".doConfigure" %>' message="you-have-successfully-updated-the-setup" />
-<liferay-ui:success key='<%= portletName + ".doEdit" %>' message="you-have-successfully-updated-your-preferences" />
+<liferay-ui:success key="<%= portletName + SessionMessages.KEY_SUFFIX_UPDATED_CONFIGURATION %>" message="you-have-successfully-updated-the-setup" />
+<liferay-ui:success key="<%= portletName + SessionMessages.KEY_SUFFIX_UPDATED_PREFERENCES %>" message="you-have-successfully-updated-your-preferences" />
 
-<liferay-ui:error />
+<c:if test="<%= !SessionMessages.contains(renderRequest, portletName + SessionMessages.KEY_SUFFIX_HIDE_DEFAULT_ERROR_MESSAGE) %>">
+	<liferay-ui:error />
+</c:if>

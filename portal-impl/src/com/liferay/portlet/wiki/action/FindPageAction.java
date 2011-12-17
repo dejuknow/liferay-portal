@@ -51,12 +51,25 @@ public class FindPageAction extends FindAction {
 	protected String getStrutsAction(
 		HttpServletRequest request, String portletId) {
 
-		return "/wiki/view";
+		if (portletId.equals(PortletKeys.WIKI_ADMIN)) {
+			return "/wiki_admin/view";
+		}
+		else if (portletId.equals(PortletKeys.WIKI)) {
+			return "/wiki/view";
+		}
+		else {
+			return "/wiki_display/view";
+		}
 	}
 
 	@Override
 	protected String[] initPortletIds() {
-		return new String[] {PortletKeys.WIKI, PortletKeys.WIKI_DISPLAY};
+
+		// Order is important. See LPS-23770.
+
+		return new String[] {
+			PortletKeys.WIKI_ADMIN, PortletKeys.WIKI, PortletKeys.WIKI_DISPLAY
+		};
 	}
 
 	@Override

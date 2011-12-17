@@ -17,25 +17,38 @@ package com.liferay.portlet.documentlibrary.util;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.DestinationNames;
+import com.liferay.portal.kernel.messaging.MessageBusException;
 import com.liferay.portal.kernel.messaging.MessageBusUtil;
+import com.liferay.portal.kernel.process.ClassPathUtil;
+import com.liferay.portal.kernel.process.ProcessCallable;
+import com.liferay.portal.kernel.process.ProcessException;
+import com.liferay.portal.kernel.process.ProcessExecutor;
 import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.ServerDetector;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.log.Log4jLogFactoryImpl;
 import com.liferay.portal.repository.liferayrepository.model.LiferayFileVersion;
 import com.liferay.portal.util.PrefsPropsUtil;
+import com.liferay.portal.util.PropsUtil;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.documentlibrary.NoSuchFileEntryException;
 import com.liferay.portlet.documentlibrary.store.DLStoreUtil;
+import com.liferay.util.log4j.Log4JUtil;
 
 import java.io.File;
 import java.io.InputStream;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+
+import org.apache.commons.lang.time.StopWatch;
 
 /**
  * @author Juan González
@@ -51,7 +64,7 @@ public class AudioProcessor extends DefaultPreviewableProcessor {
 	}
 
 	public static Set<String> getAudioMimeTypes() {
-		return _audioMimeTypes;
+		return _instance._audioMimeTypes;
 	}
 
 	public static InputStream getPreviewAsStream(FileVersion fileVersion)
@@ -72,7 +85,7 @@ public class AudioProcessor extends DefaultPreviewableProcessor {
 		try {
 			hasAudio = _instance._hasAudio(fileVersion);
 
-			if (!hasAudio) {
+			if (!hasAudio && _instance.isSupported(fileVersion)) {
 				_instance._queueGeneration(fileVersion);
 			}
 		}
@@ -83,12 +96,34 @@ public class AudioProcessor extends DefaultPreviewableProcessor {
 		return hasAudio;
 	}
 
-	public static boolean isSupportedAudio(String mimeType) {
-		return _instance._isSupportedAudio(mimeType);
+	public static boolean isAudioSupported(FileVersion fileVersion) {
+		return _instance.isSupported(fileVersion);
+	}
+
+	public static boolean isAudioSupported(String mimeType) {
+		return _instance.isSupported(mimeType);
 	}
 
 	public AudioProcessor() {
 		FileUtil.mkdirs(PREVIEW_TMP_PATH);
+	}
+
+	public boolean isSupported(String mimeType) {
+		if (Validator.isNull(mimeType)) {
+			return false;
+		}
+
+		try {
+			if (PrefsPropsUtil.getBoolean(
+					PropsKeys.XUGGLER_ENABLED, PropsValues.XUGGLER_ENABLED)) {
+
+				return _audioMimeTypes.contains(mimeType);
+			}
+		}
+		catch (Exception e) {
+		}
+
+		return false;
 	}
 
 	public void trigger(FileVersion fileVersion) {
@@ -161,13 +196,24 @@ public class AudioProcessor extends DefaultPreviewableProcessor {
 			FileVersion fileVersion, File srcFile, File destFile)
 		throws Exception {
 
-		try {
-			LiferayAudioConverter liferayAudioConverter =
-				new LiferayAudioConverter(
-					srcFile.getCanonicalPath(), destFile.getCanonicalPath(),
-					_SAMPLE_RATE);
+		StopWatch stopWatch = null;
 
-			liferayAudioConverter.convert();
+		if (_log.isInfoEnabled()) {
+			stopWatch = new StopWatch();
+
+			stopWatch.start();
+		}
+
+		try {
+			ProcessCallable<String> processCallable =
+				new LiferayAudioProcessCallable(
+					ServerDetector.getServerId(),
+					PropsUtil.get(PropsKeys.LIFERAY_HOME),
+					Log4JUtil.getCustomLogSettings(),
+					srcFile.getCanonicalPath(), destFile.getCanonicalPath());
+
+			ProcessExecutor.execute(
+				processCallable, ClassPathUtil.getPortalClassPath());
 		}
 		catch (Exception e) {
 			_log.error(e, e);
@@ -180,7 +226,7 @@ public class AudioProcessor extends DefaultPreviewableProcessor {
 		if (_log.isInfoEnabled()) {
 			_log.info(
 				"Xuggler generated a preview audio for " +
-					fileVersion.getFileVersionId());
+					fileVersion.getTitle() + " in " + stopWatch);
 		}
 	}
 
@@ -210,7 +256,7 @@ public class AudioProcessor extends DefaultPreviewableProcessor {
 	}
 
 	private boolean _hasAudio(FileVersion fileVersion) throws Exception {
-		if (!_isSupportedAudio(fileVersion)) {
+		if (!isSupported(fileVersion)) {
 			return false;
 		}
 
@@ -241,39 +287,84 @@ public class AudioProcessor extends DefaultPreviewableProcessor {
 		}
 	}
 
-	private boolean _isSupportedAudio(FileVersion fileVersion) {
-		if (fileVersion == null) {
-			return false;
-		}
-
-		return _isSupportedAudio(fileVersion.getMimeType());
-	}
-
-	private boolean _isSupportedAudio(String mimeType) {
-		return _audioMimeTypes.contains(mimeType);
-	}
-
 	private void _queueGeneration(FileVersion fileVersion) {
 		if (_fileVersionIds.contains(fileVersion.getFileVersionId()) ||
-			!_isSupportedAudio(fileVersion)) {
+			!isSupported(fileVersion)) {
 
 			return;
 		}
 
 		_fileVersionIds.add(fileVersion.getFileVersionId());
 
-		MessageBusUtil.sendMessage(
-			DestinationNames.DOCUMENT_LIBRARY_AUDIO_PROCESSOR, fileVersion);
+		if (PropsValues.DL_FILE_ENTRY_PROCESSORS_TRIGGER_SYNCHRONOUSLY) {
+			try {
+				MessageBusUtil.sendSynchronousMessage(
+					DestinationNames.DOCUMENT_LIBRARY_AUDIO_PROCESSOR,
+					fileVersion);
+			}
+			catch (MessageBusException mbe) {
+				if (_log.isWarnEnabled()) {
+					_log.warn(mbe, mbe);
+				}
+			}
+		}
+		else {
+			MessageBusUtil.sendMessage(
+				DestinationNames.DOCUMENT_LIBRARY_AUDIO_PROCESSOR, fileVersion);
+		}
 	}
-
-	private static int _SAMPLE_RATE = 44100;
 
 	private static Log _log = LogFactoryUtil.getLog(AudioProcessor.class);
 
 	private static AudioProcessor _instance = new AudioProcessor();
 
-	private static Set<String> _audioMimeTypes = SetUtil.fromArray(
+	private Set<String> _audioMimeTypes = SetUtil.fromArray(
 		PropsValues.DL_FILE_ENTRY_PREVIEW_AUDIO_MIME_TYPES);
-	private static List<Long> _fileVersionIds = new Vector<Long>();
+	private List<Long> _fileVersionIds = new Vector<Long>();
+
+	private static class LiferayAudioProcessCallable
+		implements ProcessCallable<String> {
+
+		public LiferayAudioProcessCallable(
+			String serverId, String liferayHome,
+			Map<String, String> customLogSettings, String inputURL,
+			String outputURL) {
+
+			_serverId = serverId;
+			_liferayHome = liferayHome;
+			_customLogSettings = customLogSettings;
+			_inputURL = inputURL;
+			_outputURL = outputURL;
+		}
+
+		public String call() throws ProcessException {
+			Class<?> clazz = getClass();
+
+			ClassLoader classLoader = clazz.getClassLoader();
+
+			Log4JUtil.initLog4J(
+				_serverId, _liferayHome, classLoader, new Log4jLogFactoryImpl(),
+				_customLogSettings);
+
+			try {
+				LiferayConverter liferayConverter = new LiferayAudioConverter(
+					_inputURL, _outputURL);
+
+				liferayConverter.convert();
+			}
+			catch (Exception e) {
+				throw new ProcessException(e);
+			}
+
+			return StringPool.BLANK;
+		}
+
+		private Map<String, String> _customLogSettings;
+		private String _inputURL;
+		private String _liferayHome;
+		private String _outputURL;
+		private String _serverId;
+
+	}
 
 }

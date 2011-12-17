@@ -4,7 +4,7 @@
 	<import file="../build-common-java.xml" />
 
 	<property name="jar.file" value="${ant.project.name}" />
-	<property name="client.url" value="http://localhost:8080/tunnel-web/axis" />
+	<property name="client.url" value="http://localhost:8080/api/axis" />
 
 	<target name="build-client" depends="clean">
 		<echo message="Make sure the server is listening on ${client.url}." />
@@ -28,7 +28,7 @@
 			newenvironment="true"
 		>
 			<jvmarg value="-Dexternal-properties=com/liferay/portal/tools/dependencies/portal-tools.properties" />
-			<arg value="${project.dir}/tunnel-web/docroot/WEB-INF/server-config.wsdd" />
+			<arg value="${project.dir}/portal-web/docroot/WEB-INF/server-config.wsdd" />
 			<arg value="src" />
 			<arg value="namespace-mapping.properties" />
 			<arg value="${client.url}" />

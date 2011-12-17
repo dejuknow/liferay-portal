@@ -94,14 +94,6 @@ public class PasswordTrackerUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static PasswordTracker remove(PasswordTracker passwordTracker)
-		throws SystemException {
-		return getPersistence().remove(passwordTracker);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static PasswordTracker update(PasswordTracker passwordTracker,

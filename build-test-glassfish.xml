@@ -4,6 +4,10 @@
 	<import file="build-test.xml" />
 
 	<target name="run-glassfish">
+		<antcall target="clean-up-logs" />
+
+		<record action="start" name="log" />
+
 		<antcall target="run-simple-server">
 			<param name="simple.server.dir" value="${app.server.glassfish.dir}" />
 			<param name="simple.server.bin.dir" value="${app.server.glassfish.bin.dir}" />
@@ -15,6 +19,10 @@
 			<param name="simple.server.stop.executable" value="asadmin${file.suffix.bat}" />
 			<param name="simple.server.stop.executable.arg.line" value="stop-domain" />
 		</antcall>
+
+		<record action="stop" name="log" />
+
+		<antcall target="evaluate-logs" />
 	</target>
 
 	<target name="run-selenium-glassfish">

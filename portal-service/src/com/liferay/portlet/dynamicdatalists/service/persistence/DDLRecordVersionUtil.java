@@ -95,14 +95,6 @@ public class DDLRecordVersionUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static DDLRecordVersion remove(DDLRecordVersion ddlRecordVersion)
-		throws SystemException {
-		return getPersistence().remove(ddlRecordVersion);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static DDLRecordVersion update(DDLRecordVersion ddlRecordVersion,

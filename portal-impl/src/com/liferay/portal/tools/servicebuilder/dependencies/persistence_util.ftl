@@ -76,13 +76,6 @@ public class ${entity.name}Util {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static ${entity.name} remove(${entity.name} ${entity.varName}) throws SystemException {
-		return getPersistence().remove(${entity.varName});
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static ${entity.name} update(${entity.name} ${entity.varName}, boolean merge) throws SystemException {

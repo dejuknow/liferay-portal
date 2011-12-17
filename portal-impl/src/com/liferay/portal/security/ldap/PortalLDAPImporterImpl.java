@@ -210,8 +210,7 @@ public class PortalLDAPImporterImpl implements PortalLDAPImporter {
 		Properties userMappings = LDAPSettingsUtil.getUserMappings(
 			ldapServerId, companyId);
 		Properties userExpandoMappings =
-			LDAPSettingsUtil.getUserExpandoMappings(
-				ldapServerId, companyId);
+			LDAPSettingsUtil.getUserExpandoMappings(ldapServerId, companyId);
 		Properties contactMappings = LDAPSettingsUtil.getContactMappings(
 			ldapServerId, companyId);
 		Properties contactExpandoMappings =
@@ -414,8 +413,7 @@ public class PortalLDAPImporterImpl implements PortalLDAPImporter {
 				companyId, ldapGroup.getGroupName());
 		}
 		catch (NoSuchRoleException nsre) {
-			User defaultUser = UserLocalServiceUtil.getDefaultUser(
-				companyId);
+			User defaultUser = UserLocalServiceUtil.getDefaultUser(companyId);
 
 			Map<Locale, String> descriptionMap = new HashMap<Locale, String>();
 
@@ -439,8 +437,7 @@ public class PortalLDAPImporterImpl implements PortalLDAPImporter {
 			role.getRoleId(), new long[] {group.getGroupId()});
 	}
 
-	protected User addUser(
-			long companyId, LDAPUser ldapUser, String password)
+	protected User addUser(long companyId, LDAPUser ldapUser, String password)
 		throws Exception {
 
 		if (_log.isDebugEnabled()) {
@@ -474,7 +471,7 @@ public class PortalLDAPImporterImpl implements PortalLDAPImporter {
 		int birthdayDay = birthdayCal.get(Calendar.DAY_OF_MONTH);
 		int birthdayYear = birthdayCal.get(Calendar.YEAR);
 
-		return UserLocalServiceUtil.addUser(
+		User user = UserLocalServiceUtil.addUser(
 			ldapUser.getCreatorUserId(), companyId, autoPassword, password,
 			password, ldapUser.isAutoScreenName(), ldapUser.getScreenName(),
 			ldapUser.getEmailAddress(), 0, StringPool.BLANK,
@@ -485,6 +482,17 @@ public class PortalLDAPImporterImpl implements PortalLDAPImporter {
 			ldapUser.getOrganizationIds(), ldapUser.getRoleIds(),
 			ldapUser.getUserGroupIds(), ldapUser.isSendEmail(),
 			ldapUser.getServiceContext());
+
+		if (ldapUser.isUpdatePortrait()) {
+			byte[] portraitBytes = ldapUser.getPortraitBytes();
+
+			if ((portraitBytes != null) && (portraitBytes.length > 0)) {
+				user = UserLocalServiceUtil.updatePortrait(
+					user.getUserId(), portraitBytes);
+			}
+		}
+
+		return user;
 	}
 
 	protected void addUserGroupsNotAddedByLDAPImport(
@@ -865,7 +873,7 @@ public class PortalLDAPImporterImpl implements PortalLDAPImporter {
 				user = addUser(companyId, ldapUser, password);
 			}
 
-			String modifiedDate = LDAPUtil.getAttributeValue(
+			String modifiedDate = LDAPUtil.getAttributeString(
 				attributes, "modifyTimestamp");
 
 			user = updateUser(
@@ -900,7 +908,7 @@ public class PortalLDAPImporterImpl implements PortalLDAPImporter {
 
 			UserGroupLocalServiceUtil.updateUserGroup(
 				companyId, userGroup.getUserGroupId(), ldapGroup.getGroupName(),
-				ldapGroup.getDescription(), 0, 0);
+				ldapGroup.getDescription());
 		}
 		catch (NoSuchUserGroupException nsuge) {
 			if (_log.isDebugEnabled()) {
@@ -916,7 +924,7 @@ public class PortalLDAPImporterImpl implements PortalLDAPImporter {
 			try {
 				userGroup = UserGroupLocalServiceUtil.addUserGroup(
 					defaultUserId, companyId, ldapGroup.getGroupName(),
-					ldapGroup.getDescription(), 0, 0);
+					ldapGroup.getDescription());
 			}
 			catch (Exception e) {
 				if (_log.isWarnEnabled()) {
@@ -1042,7 +1050,7 @@ public class PortalLDAPImporterImpl implements PortalLDAPImporter {
 		ExpandoBridge contactExpandoBridge = contact.getExpandoBridge();
 
 		populateExpandoAttributes(
-			contactExpandoBridge , ldapUser.getContactExpandoAttributes());
+			contactExpandoBridge, ldapUser.getContactExpandoAttributes());
 	}
 
 	protected User updateUser(
@@ -1160,6 +1168,18 @@ public class PortalLDAPImporterImpl implements PortalLDAPImporter {
 		if (ldapUserModifiedDate != null) {
 			user = UserLocalServiceUtil.updateModifiedDate(
 				user.getUserId(), ldapUserModifiedDate);
+		}
+
+		if (ldapUser.isUpdatePortrait()) {
+			byte[] portraitBytes = ldapUser.getPortraitBytes();
+
+			if ((portraitBytes != null) && (portraitBytes.length > 0)) {
+				UserLocalServiceUtil.updatePortrait(
+					user.getUserId(), portraitBytes);
+			}
+			else {
+				UserLocalServiceUtil.deletePortrait(user.getUserId());
+			}
 		}
 
 		return user;

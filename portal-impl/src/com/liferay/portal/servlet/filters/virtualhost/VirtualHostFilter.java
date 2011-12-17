@@ -61,6 +61,27 @@ public class VirtualHostFilter extends BasePortalFilter {
 		super.init(filterConfig);
 
 		_servletContext = filterConfig.getServletContext();
+
+		_slashedKeywords =
+			new String[PropsValues.LAYOUT_FRIENDLY_URL_KEYWORDS.length];
+
+		for (int i = 0; i < PropsValues.LAYOUT_FRIENDLY_URL_KEYWORDS.length;
+				i++) {
+
+			String keyword = PropsValues.LAYOUT_FRIENDLY_URL_KEYWORDS[i];
+
+			if (keyword.contains(StringPool.PERIOD) ||
+				keyword.equals("_vti_") || keyword.equals("display_chart") ||
+				keyword.equals("software_catalog")) {
+
+				keyword = StringPool.SLASH + keyword;
+			}
+			else {
+				keyword = StringPool.SLASH + keyword + StringPool.SLASH;
+			}
+
+			_slashedKeywords[i] = keyword;
+		}
 	}
 
 	@Override
@@ -81,39 +102,17 @@ public class VirtualHostFilter extends BasePortalFilter {
 		friendlyURL = friendlyURL.toLowerCase();
 
 		if (PortalInstances.isVirtualHostsIgnorePath(friendlyURL) ||
-			friendlyURL.startsWith(
-				_PRIVATE_GROUP_SERVLET_MAPPING + StringPool.SLASH) ||
-			friendlyURL.startsWith(
-				_PUBLIC_GROUP_SERVLET_MAPPING + StringPool.SLASH) ||
-			friendlyURL.startsWith(
-				_PRIVATE_USER_SERVLET_MAPPING + StringPool.SLASH) ||
-			friendlyURL.startsWith(_PATH_C) ||
-			friendlyURL.startsWith(_PATH_COMBO) ||
-			friendlyURL.startsWith(_PATH_DELEGATE) ||
-			friendlyURL.startsWith(_PATH_DISPLAY_CHART) ||
-			friendlyURL.startsWith(_PATH_DTD) ||
-			friendlyURL.startsWith(_PATH_ELOQUA) ||
-			friendlyURL.startsWith(_PATH_FACEBOOK) ||
-			friendlyURL.startsWith(_PATH_GOOGLE_GADGET) ||
-			friendlyURL.startsWith(_PATH_HTML) ||
-			friendlyURL.startsWith(_PATH_IMAGE) ||
-			friendlyURL.startsWith(_PATH_LANGUAGE) ||
-			friendlyURL.startsWith(_PATH_LUCENE) ||
-			friendlyURL.startsWith(_PATH_NETVIBES) ||
-			friendlyURL.startsWith(_PATH_OSGI) ||
-			friendlyURL.startsWith(_PATH_PBHS) ||
-			friendlyURL.startsWith(_PATH_POLLER) ||
-			friendlyURL.startsWith(_PATH_REST) ||
-			friendlyURL.startsWith(_PATH_ROBOTS_TXT) ||
-			friendlyURL.startsWith(_PATH_SHAREPOINT) ||
-			friendlyURL.startsWith(_PATH_SITEMAP_XML) ||
-			friendlyURL.startsWith(_PATH_SOFTWARE_CATALOG) ||
-			friendlyURL.startsWith(_PATH_VTI) ||
-			friendlyURL.startsWith(_PATH_WAP) ||
-			friendlyURL.startsWith(_PATH_WIDGET) ||
-			friendlyURL.startsWith(_PATH_XMLRPC)) {
+			friendlyURL.startsWith(_PRIVATE_GROUP_SERVLET_MAPPING_SLASH) ||
+			friendlyURL.startsWith(_PRIVATE_USER_SERVLET_MAPPING_SLASH) ||
+			friendlyURL.startsWith(_PUBLIC_GROUP_SERVLET_MAPPING_SLASH)) {
 
 			return false;
+		}
+
+		for (String keyword : _slashedKeywords) {
+			if (friendlyURL.startsWith(keyword)) {
+				return false;
+			}
 		}
 
 		int code = LayoutImpl.validateFriendlyURL(friendlyURL);
@@ -308,69 +307,29 @@ public class VirtualHostFilter extends BasePortalFilter {
 		}
 	}
 
-	private static final String _PATH_C = "/c/";
-
-	private static final String _PATH_COMBO = "/combo/";
-
-	private static final String _PATH_DELEGATE = "/delegate/";
-
-	private static final String _PATH_DISPLAY_CHART = "/display_chart";
-
 	private static final String _PATH_DOCUMENTS = "/documents/";
-
-	private static final String _PATH_DTD = "/dtd/";
-
-	private static final String _PATH_ELOQUA = "/elqNow/";
-
-	private static final String _PATH_FACEBOOK = "/facebook/";
-
-	private static final String _PATH_GOOGLE_GADGET = "/google_gadget/";
-
-	private static final String _PATH_HTML = "/html/";
-
-	private static final String _PATH_IMAGE = "/image/";
-
-	private static final String _PATH_LANGUAGE = "/language/";
-
-	private static final String _PATH_LUCENE = "/lucene/";
-
-	private static final String _PATH_NETVIBES = "/netvibes/";
-
-	private static final String _PATH_OSGI = "/osgi/";
-
-	private static final String _PATH_PBHS = "/pbhs/";
-
-	private static final String _PATH_POLLER = "/poller/";
-
-	private static final String _PATH_REST = "/rest/";
-
-	private static final String _PATH_ROBOTS_TXT = "/robots.txt";
-
-	private static final String _PATH_SHAREPOINT = "/sharepoint/";
-
-	private static final String _PATH_SITEMAP_XML = "/sitemap.xml";
-
-	private static final String _PATH_SOFTWARE_CATALOG = "/software_catalog";
-
-	private static final String _PATH_VTI = "/_vti_";
-
-	private static final String _PATH_WAP = "/wap/";
-
-	private static final String _PATH_WIDGET = "/widget/";
-
-	private static final String _PATH_XMLRPC = "/xmlrpc/";
 
 	private static final String _PRIVATE_GROUP_SERVLET_MAPPING =
 		PropsValues.LAYOUT_FRIENDLY_URL_PRIVATE_GROUP_SERVLET_MAPPING;
 
+	private static final String _PRIVATE_GROUP_SERVLET_MAPPING_SLASH =
+		_PRIVATE_GROUP_SERVLET_MAPPING + StringPool.SLASH;
+
 	private static final String _PRIVATE_USER_SERVLET_MAPPING =
 		PropsValues.LAYOUT_FRIENDLY_URL_PRIVATE_USER_SERVLET_MAPPING;
+
+	private static final String _PRIVATE_USER_SERVLET_MAPPING_SLASH =
+		_PRIVATE_USER_SERVLET_MAPPING + StringPool.SLASH;
 
 	private static final String _PUBLIC_GROUP_SERVLET_MAPPING =
 		PropsValues.LAYOUT_FRIENDLY_URL_PUBLIC_SERVLET_MAPPING;
 
+	private static final String _PUBLIC_GROUP_SERVLET_MAPPING_SLASH =
+		_PUBLIC_GROUP_SERVLET_MAPPING + StringPool.SLASH;
+
 	private static Log _log = LogFactoryUtil.getLog(VirtualHostFilter.class);
 
 	private ServletContext _servletContext;
+	private String[] _slashedKeywords;
 
 }

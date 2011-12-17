@@ -95,14 +95,6 @@ public class WikiPageResourceUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static WikiPageResource remove(WikiPageResource wikiPageResource)
-		throws SystemException {
-		return getPersistence().remove(wikiPageResource);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static WikiPageResource update(WikiPageResource wikiPageResource,

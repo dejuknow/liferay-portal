@@ -95,14 +95,6 @@ public class MBThreadFlagUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static MBThreadFlag remove(MBThreadFlag mbThreadFlag)
-		throws SystemException {
-		return getPersistence().remove(mbThreadFlag);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static MBThreadFlag update(MBThreadFlag mbThreadFlag, boolean merge)

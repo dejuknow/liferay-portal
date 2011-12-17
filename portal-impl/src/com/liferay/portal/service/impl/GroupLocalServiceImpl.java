@@ -59,6 +59,7 @@ import com.liferay.portal.model.Organization;
 import com.liferay.portal.model.Portlet;
 import com.liferay.portal.model.Resource;
 import com.liferay.portal.model.ResourceConstants;
+import com.liferay.portal.model.ResourcePermission;
 import com.liferay.portal.model.Role;
 import com.liferay.portal.model.RoleConstants;
 import com.liferay.portal.model.User;
@@ -92,8 +93,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The group local service is responsible for accessing, creating, modifying
- * and deleting groups.
+ * The group local service is responsible for accessing, creating, modifying and
+ * deleting groups.
  *
  * <p>
  * Groups are mostly used in Liferay as a resource container for permissioning
@@ -195,8 +196,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 	 * @param  site whether the group is to be associated with a main site
 	 * @param  active whether the group is active
 	 * @param  serviceContext the service context to be applied (optionally
-	 *         <code>null</code>). Can specify the group's asset category IDs,
-	 *         asset tag names, and whether the group is for staging
+	 *         <code>null</code>). Can set asset category IDs and asset tag
+	 *         names for the group, and whether the group is for staging.
 	 * @return the group
 	 * @throws PortalException if a creator could not be found, if the group's
 	 *         information was invalid, if a layout could not be found, or if a
@@ -366,8 +367,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 	 * @param  site whether the group is to be associated with a main site
 	 * @param  active whether the group is active
 	 * @param  serviceContext the service context to be applied (optionally
-	 *         <code>null</code>). Can specify the group's asset category IDs,
-	 *         asset tag names, and whether the group is for staging
+	 *         <code>null</code>). Can set asset category IDs and asset tag
+	 *         names for the group, and whether the group is for staging.
 	 * @return the group
 	 * @throws PortalException if a creator could not be found, if the group's
 	 *         information was invalid, if a layout could not be found, or if a
@@ -422,8 +423,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 	 * @param  companyId the primary key of the company
 	 * @throws PortalException if a default user for the company could not be
 	 *         found, if the group's information was invalid, if a layout could
-	 *         not be found, or if a valid friendly URL could not be created
-	 *         for the group
+	 *         not be found, or if a valid friendly URL could not be created for
+	 *         the group
 	 * @throws SystemException if a system exception occurred
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
@@ -445,9 +446,9 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 	}
 
 	/**
-	 * Creates systems groups and other related data needed by the system on
-	 * the very first startup. Also takes care of creating the control panel
-	 * groups and layouts.
+	 * Creates systems groups and other related data needed by the system on the
+	 * very first startup. Also takes care of creating the control panel groups
+	 * and layouts.
 	 *
 	 * @param  companyId the primary key of the company
 	 * @throws PortalException if a new system group could not be created
@@ -638,6 +639,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 				Group.class.getName(), group.getGroupId());
 		}
 
+		assetVocabularyLocalService.deleteVocabularies(group.getGroupId());
+
 		// Blogs
 
 		blogsEntryLocalService.deleteEntries(group.getGroupId());
@@ -653,7 +656,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 
 		// Document library
 
-		repositoryService.unmountRepositories(group.getGroupId());
+		dlFileEntryTypeLocalService.deleteFileEntryTypes(group.getGroupId());
+		repositoryLocalService.deleteRepositories(group.getGroupId());
 
 		// Journal
 
@@ -690,11 +694,23 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 
 		// Resources
 
-		List<Resource> resources = resourceFinder.findByC_P(
-			group.getCompanyId(), String.valueOf(group.getGroupId()));
+		if (PropsValues.PERMISSIONS_USER_CHECK_ALGORITHM == 6) {
+			List<ResourcePermission> resourcePermissions =
+				resourcePermissionFinder.findByC_P(
+					group.getCompanyId(), String.valueOf(group.getGroupId()));
 
-		for (Resource resource : resources) {
-			resourceLocalService.deleteResource(resource);
+			for (ResourcePermission resourcePermission : resourcePermissions) {
+				resourcePermissionLocalService.deleteResourcePermission(
+					resourcePermission);
+			}
+		}
+		else {
+			List<Resource> resources = resourceFinder.findByC_P(
+				group.getCompanyId(), String.valueOf(group.getGroupId()));
+
+			for (Resource resource : resources) {
+				resourceLocalService.deleteResource(resource);
+			}
 		}
 
 		if (!group.isStagingGroup() &&
@@ -734,8 +750,7 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 	 * @param  groupId the primary key of the group
 	 * @throws PortalException if a group with the primary key could not be
 	 *         found, if the group was a system group, or if the user did not
-	 *         have permission to delete the group, its assets, or its
-	 *         resources
+	 *         have permission to delete the group, its assets, or its resources
 	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
@@ -816,8 +831,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 	 * primary keys, they are indexes in the result set. Thus, <code>0</code>
 	 * refers to the first result in the set. Setting both <code>start</code>
 	 * and <code>end</code> to {@link
-	 * com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the
-	 * full result set.
+	 * com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full
+	 * result set.
 	 * </p>
 	 *
 	 * @param  companyId the primary key of the company
@@ -850,8 +865,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 	 * @param  companyId the primary key of the company
 	 * @param  friendlyURL the group's friendlyURL
 	 * @return the group with the friendly URL
-	 * @throws PortalException if a matching group could not be found, or if
-	 *         the friendly URL was invalid
+	 * @throws PortalException if a matching group could not be found, or if the
+	 *         friendly URL was invalid
 	 * @throws SystemException if a system exception occurred
 	 */
 	public Group getFriendlyURLGroup(long companyId, String friendlyURL)
@@ -1002,8 +1017,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 	 * primary keys, they are indexes in the result set. Thus, <code>0</code>
 	 * refers to the first result in the set. Setting both <code>start</code>
 	 * and <code>end</code> to {@link
-	 * com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the
-	 * full result set.
+	 * com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full
+	 * result set.
 	 * </p>
 	 *
 	 * @param  className the entity's class name
@@ -1169,8 +1184,7 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 	 *
 	 * @param  userId the primary key of the user
 	 * @return the user's groups and organization groups
-	 * @throws PortalException if a user with the primary key could not be
-	 *         found
+	 * @throws PortalException if a user with the primary key could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public List<Group> getUserGroups(long userId)
@@ -1188,8 +1202,7 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 	 * @param  inherit whether to include the user's inherited organization
 	 *         groups and user groups
 	 * @return the user's groups and immediate organization groups
-	 * @throws PortalException if a user with the primary key could not be
-	 *         found
+	 * @throws PortalException if a user with the primary key could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public List<Group> getUserGroups(long userId, boolean inherit)
@@ -1211,8 +1224,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 	 * primary keys, they are indexes in the result set. Thus, <code>0</code>
 	 * refers to the first result in the set. Setting both <code>start</code>
 	 * and <code>end</code> to {@link
-	 * com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the
-	 * full result set.
+	 * com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full
+	 * result set.
 	 * </p>
 	 *
 	 * @param  userId the primary key of the user
@@ -1223,8 +1236,7 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 	 *         inclusive)
 	 * @return the range of the user's groups and immediate organization groups
 	 *         ordered by name
-	 * @throws PortalException if a user with the primary key could not be
-	 *         found
+	 * @throws PortalException if a user with the primary key could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public List<Group> getUserGroups(
@@ -1257,18 +1269,17 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 	 * primary keys, they are indexes in the result set. Thus, <code>0</code>
 	 * refers to the first result in the set. Setting both <code>start</code>
 	 * and <code>end</code> to {@link
-	 * com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the
-	 * full result set.
+	 * com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full
+	 * result set.
 	 * </p>
 	 *
 	 * @param  userId the primary key of the user
 	 * @param  start the lower bound of the range of groups to return
 	 * @param  end the upper bound of the range of groups to return (not
 	 *         inclusive)
-	 * @return the range of the user's groups and organization groups ordered
-	 *         by name
-	 * @throws PortalException if a user with the primary key could not be
-	 *         found
+	 * @return the range of the user's groups and organization groups ordered by
+	 *         name
+	 * @throws PortalException if a user with the primary key could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public List<Group> getUserGroups(long userId, int start, int end)
@@ -1282,8 +1293,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 	 *
 	 * @param  userGroups the user groups
 	 * @return the groups associated with the user groups
-	 * @throws PortalException if any one of the user group's group could not
-	 *         be found
+	 * @throws PortalException if any one of the user group's group could not be
+	 *         found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public List<Group> getUserGroupsGroups(List<UserGroup> userGroups)
@@ -1328,8 +1339,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 
 	/**
 	 * Returns the range of all groups associated with the user's organization
-	 * groups, including the ancestors of the organization groups, unless
-	 * portal property <code>organizations.membership.strict</code> is set to
+	 * groups, including the ancestors of the organization groups, unless portal
+	 * property <code>organizations.membership.strict</code> is set to
 	 * <code>true</code>.
 	 *
 	 * <p>
@@ -1338,8 +1349,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 	 * primary keys, they are indexes in the result set. Thus, <code>0</code>
 	 * refers to the first result in the set. Setting both <code>start</code>
 	 * and <code>end</code> to {@link
-	 * com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the
-	 * full result set.
+	 * com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full
+	 * result set.
 	 * </p>
 	 *
 	 * @param  userId the primary key of the user
@@ -1348,8 +1359,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 	 *         inclusive)
 	 * @return the range of groups associated with the user's organization
 	 *         groups
-	 * @throws PortalException if a user with the primary key could not be
-	 *         found or if another portal exception occurred
+	 * @throws PortalException if a user with the primary key could not be found
+	 *         or if another portal exception occurred
 	 * @throws SystemException if a system exception occurred
 	 */
 	public List<Group> getUserOrganizationsGroups(
@@ -1359,8 +1370,7 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 		List<Group> userOrgsGroups = new UniqueList<Group>();
 
 		List<Organization> userOrgs =
-			organizationLocalService.getUserOrganizations(
-				userId, true, start, end);
+			organizationLocalService.getUserOrganizations(userId, start, end);
 
 		for (Organization organization : userOrgs) {
 			userOrgsGroups.add(0, organization.getGroup());
@@ -1433,8 +1443,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 	 *
 	 * @param  userId the primary key of the user
 	 * @param  groupId the primary key of the group
-	 * @param  inherit whether to include organization groups and user groups
-	 *         to which the user belongs in the determination
+	 * @param  inherit whether to include organization groups and user groups to
+	 *         which the user belongs in the determination
 	 * @return <code>true</code> if the user is associated with the group;
 	 *         <code>false</code> otherwise
 	 * @throws SystemException if a system exception occurred
@@ -1483,22 +1493,22 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 	 * primary keys, they are indexes in the result set. Thus, <code>0</code>
 	 * refers to the first result in the set. Setting both <code>start</code>
 	 * and <code>end</code> to {@link
-	 * com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the
-	 * full result set.
+	 * com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full
+	 * result set.
 	 * </p>
 	 *
 	 * @param  companyId the primary key of the company
-	 * @param  classNameIds the class names of entities to include in the
-	 *         search (optionally <code>null</code>)
+	 * @param  classNameIds the class names of entities to include in the search
+	 *         (optionally <code>null</code>)
 	 * @param  name the group's name (optionally <code>null</code>)
 	 * @param  description the group's description (optionally
 	 *         <code>null</code>)
 	 * @param  params the finder params (optionally <code>null</code>). To
-	 *         include a user's organizations, inherited organizations, and
-	 *         user groups in the search, add an entry with key
-	 *         &quot;usersGroups&quot; mapped to the user's ID and an entry
-	 *         with key &quot;inherit&quot; mapped to a non-<code>null</code>
-	 *         object. For more information see {@link
+	 *         include a user's organizations, inherited organizations, and user
+	 *         groups in the search, add an entry with key
+	 *         &quot;usersGroups&quot; mapped to the user's ID and an entry with
+	 *         key &quot;inherit&quot; mapped to a non-<code>null</code> object.
+	 *         For more information see {@link
 	 *         com.liferay.portal.service.persistence.GroupFinder}
 	 *         com.liferay.portal.service.persistence.GroupFinder}
 	 * @param  start the lower bound of the range of groups to return
@@ -1519,8 +1529,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 	}
 
 	/**
-	 * Returns an ordered range of all the groups that match the class name
-	 * IDs, name, and description, optionally including the user's inherited
+	 * Returns an ordered range of all the groups that match the class name IDs,
+	 * name, and description, optionally including the user's inherited
 	 * organization groups and user groups. System and staged groups are not
 	 * included.
 	 *
@@ -1530,8 +1540,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 	 * primary keys, they are indexes in the result set. Thus, <code>0</code>
 	 * refers to the first result in the set. Setting both <code>start</code>
 	 * and <code>end</code> to {@link
-	 * com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the
-	 * full result set.
+	 * com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full
+	 * result set.
 	 * </p>
 	 *
 	 * @param  companyId the primary key of the company
@@ -1541,11 +1551,11 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 	 * @param  description the group's description (optionally
 	 *         <code>null</code>)
 	 * @param  params the finder params (optionally <code>null</code>). To
-	 *         include a user's organizations, inherited organizations, and
-	 *         user groups in the search, add an entry with key
-	 *         &quot;usersGroups&quot; mapped to the user's ID and an entry
-	 *         with key &quot;inherit&quot; mapped to a non-<code>null</code>
-	 *         object. For more information see {@link
+	 *         include a user's organizations, inherited organizations, and user
+	 *         groups in the search, add an entry with key
+	 *         &quot;usersGroups&quot; mapped to the user's ID and an entry with
+	 *         key &quot;inherit&quot; mapped to a non-<code>null</code> object.
+	 *         For more information see {@link
 	 *         com.liferay.portal.service.persistence.GroupFinder}
 	 * @param  start the lower bound of the range of groups to return
 	 * @param  end the upper bound of the range of groups to return (not
@@ -1584,8 +1594,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 	 * primary keys, they are indexes in the result set. Thus, <code>0</code>
 	 * refers to the first result in the set. Setting both <code>start</code>
 	 * and <code>end</code> to {@link
-	 * com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the
-	 * full result set.
+	 * com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full
+	 * result set.
 	 * </p>
 	 *
 	 * @param  companyId the primary key of the company
@@ -1593,10 +1603,10 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 	 * @param  description the group's description (optionally
 	 *         <code>null</code>)
 	 * @param  params the finder params (optionally <code>null</code>). To
-	 *         include the user's inherited organizations and user groups in
-	 *         the search, add entries having &quot;usersGroups&quot; and
-	 *         &quot;inherit&quot; as keys mapped to the the user's ID. For
-	 *         more information see {@link
+	 *         include the user's inherited organizations and user groups in the
+	 *         search, add entries having &quot;usersGroups&quot; and
+	 *         &quot;inherit&quot; as keys mapped to the the user's ID. For more
+	 *         information see {@link
 	 *         com.liferay.portal.service.persistence.GroupFinder}
 	 * @param  start the lower bound of the range of groups to return
 	 * @param  end the upper bound of the range of groups to return (not
@@ -1624,8 +1634,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 	 * primary keys, they are indexes in the result set. Thus, <code>0</code>
 	 * refers to the first result in the set. Setting both <code>start</code>
 	 * and <code>end</code> to {@link
-	 * com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the
-	 * full result set.
+	 * com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full
+	 * result set.
 	 * </p>
 	 *
 	 * @param  companyId the primary key of the company
@@ -1633,10 +1643,10 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 	 * @param  description the group's description (optionally
 	 *         <code>null</code>)
 	 * @param  params the finder params (optionally <code>null</code>). To
-	 *         include the user's inherited organizations and user groups in
-	 *         the search, add entries having &quot;usersGroups&quot; and
-	 *         &quot;inherit&quot; as keys mapped to the the user's ID. For
-	 *         more information see {@link
+	 *         include the user's inherited organizations and user groups in the
+	 *         search, add entries having &quot;usersGroups&quot; and
+	 *         &quot;inherit&quot; as keys mapped to the the user's ID. For more
+	 *         information see {@link
 	 *         com.liferay.portal.service.persistence.GroupFinder}
 	 * @param  start the lower bound of the range of groups to return
 	 * @param  end the upper bound of the range of groups to return (not
@@ -1668,16 +1678,16 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 	 * groups and user groups. System and staged groups are not included.
 	 *
 	 * @param  companyId the primary key of the company
-	 * @param  classNameIds the class names of entities to include in the
-	 *         search (optionally <code>null</code>)
+	 * @param  classNameIds the class names of entities to include in the search
+	 *         (optionally <code>null</code>)
 	 * @param  name the group's name (optionally <code>null</code>)
 	 * @param  description the group's description (optionally
 	 *         <code>null</code>)
 	 * @param  params the finder params (optionally <code>null</code>). To
 	 *         include the user's inherited organization groups and user groups
 	 *         in the search, add entries having &quot;usersGroups&quot; and
-	 *         &quot;inherit&quot; as keys mapped to the the user's ID. For
-	 *         more information see {@link
+	 *         &quot;inherit&quot; as keys mapped to the the user's ID. For more
+	 *         information see {@link
 	 *         com.liferay.portal.service.persistence.GroupFinder}
 	 * @return the number of matching groups
 	 * @throws SystemException if a system exception occurred
@@ -1695,10 +1705,10 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 	}
 
 	/**
-	 * Returns the number of groups and immediate organization groups that
-	 * match the name and description, optionally including the user's
-	 * inherited organization groups and user groups. System and staged groups
-	 * are not included.
+	 * Returns the number of groups and immediate organization groups that match
+	 * the name and description, optionally including the user's inherited
+	 * organization groups and user groups. System and staged groups are not
+	 * included.
 	 *
 	 * @param  companyId the primary key of the company
 	 * @param  name the group's name (optionally <code>null</code>)
@@ -1707,8 +1717,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 	 * @param  params the finder params (optionally <code>null</code>). To
 	 *         include the user's inherited organization groups and user groups
 	 *         in the search, add entries having &quot;usersGroups&quot; and
-	 *         &quot;inherit&quot; as keys mapped to the the user's ID. For
-	 *         more information see {@link
+	 *         &quot;inherit&quot; as keys mapped to the the user's ID. For more
+	 *         information see {@link
 	 *         com.liferay.portal.service.persistence.GroupFinder}
 	 * @return the number of matching groups
 	 * @throws SystemException if a system exception occurred
@@ -1781,8 +1791,7 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 	 * @param  assetCategoryIds the primary keys of the asset categories
 	 *         (optionally <code>null</code>)
 	 * @param  assetTagNames the asset tag names (optionally <code>null</code>)
-	 * @throws PortalException if a user with the primary key could not be
-	 *         found
+	 * @throws PortalException if a user with the primary key could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public void updateAsset(
@@ -1882,8 +1891,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 	 *         <code>null</code>)
 	 * @param  active whether the group is active
 	 * @param  serviceContext the service context to be applied (optionally
-	 *         <code>null</code>). Can specify the group's replacement asset
-	 *         category IDs and replacement asset tag names
+	 *         <code>null</code>). Can set asset category IDs and asset tag
+	 *         names for the group.
 	 * @return the group
 	 * @throws PortalException if a group with the primary key could not be
 	 *         found or if the friendly URL was invalid or could one not be
@@ -2000,7 +2009,7 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID,
 			PropsValues.CONTROL_PANEL_LAYOUT_NAME, StringPool.BLANK,
 			StringPool.BLANK, LayoutConstants.TYPE_CONTROL_PANEL, false,
-			friendlyURL, false, serviceContext);
+			friendlyURL, serviceContext);
 	}
 
 	protected void addDefaultGuestPublicLayoutByProperties(Group group)
@@ -2018,7 +2027,7 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID,
 			PropsValues.DEFAULT_GUEST_PUBLIC_LAYOUT_NAME, StringPool.BLANK,
 			StringPool.BLANK, LayoutConstants.TYPE_PORTLET, false, friendlyURL,
-			false, serviceContext);
+			serviceContext);
 
 		LayoutTypePortlet layoutTypePortlet =
 			(LayoutTypePortlet)layout.getLayoutType();

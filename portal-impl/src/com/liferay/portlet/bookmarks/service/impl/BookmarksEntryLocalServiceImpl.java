@@ -94,8 +94,7 @@ public class BookmarksEntryLocalServiceImpl
 
 		// Indexer
 
-		Indexer indexer = IndexerRegistryUtil.getIndexer(
-			BookmarksEntry.class);
+		Indexer indexer = IndexerRegistryUtil.getIndexer(BookmarksEntry.class);
 
 		indexer.reindex(entry);
 
@@ -170,8 +169,7 @@ public class BookmarksEntryLocalServiceImpl
 			groupId, folderId, start, end, orderByComparator);
 	}
 
-	public int getEntriesCount(
-			long groupId, long folderId)
+	public int getEntriesCount(long groupId, long folderId)
 		throws SystemException {
 
 		return bookmarksEntryPersistence.countByG_F(groupId, folderId);
@@ -301,8 +299,7 @@ public class BookmarksEntryLocalServiceImpl
 
 		// Indexer
 
-		Indexer indexer = IndexerRegistryUtil.getIndexer(
-			BookmarksEntry.class);
+		Indexer indexer = IndexerRegistryUtil.getIndexer(BookmarksEntry.class);
 
 		indexer.reindex(entry);
 

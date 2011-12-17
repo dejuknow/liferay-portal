@@ -66,7 +66,6 @@ import com.liferay.portlet.messageboards.model.impl.MBMessageImpl;
 import com.liferay.portlet.messageboards.model.impl.MBMessageModelImpl;
 import com.liferay.portlet.ratings.service.persistence.RatingsStatsPersistence;
 import com.liferay.portlet.social.service.persistence.SocialActivityPersistence;
-import com.liferay.portlet.social.service.persistence.SocialEquityLogPersistence;
 import com.liferay.portlet.wiki.service.persistence.WikiPagePersistence;
 
 import java.io.Serializable;
@@ -737,6 +736,23 @@ public class MBMessagePersistenceImpl extends BasePersistenceImpl<MBMessage>
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 
+		clearUniqueFindersCache(mbMessage);
+	}
+
+	@Override
+	public void clearCache(List<MBMessage> mbMessages) {
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+
+		for (MBMessage mbMessage : mbMessages) {
+			EntityCacheUtil.removeResult(MBMessageModelImpl.ENTITY_CACHE_ENABLED,
+				MBMessageImpl.class, mbMessage.getPrimaryKey());
+
+			clearUniqueFindersCache(mbMessage);
+		}
+	}
+
+	protected void clearUniqueFindersCache(MBMessage mbMessage) {
 		FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_UUID_G,
 			new Object[] {
 				mbMessage.getUuid(), Long.valueOf(mbMessage.getGroupId())
@@ -765,20 +781,6 @@ public class MBMessagePersistenceImpl extends BasePersistenceImpl<MBMessage>
 	/**
 	 * Removes the message-boards message with the primary key from the database. Also notifies the appropriate model listeners.
 	 *
-	 * @param primaryKey the primary key of the message-boards message
-	 * @return the message-boards message that was removed
-	 * @throws com.liferay.portal.NoSuchModelException if a message-boards message with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public MBMessage remove(Serializable primaryKey)
-		throws NoSuchModelException, SystemException {
-		return remove(((Long)primaryKey).longValue());
-	}
-
-	/**
-	 * Removes the message-boards message with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
 	 * @param messageId the primary key of the message-boards message
 	 * @return the message-boards message that was removed
 	 * @throws com.liferay.portlet.messageboards.NoSuchMessageException if a message-boards message with the primary key could not be found
@@ -786,24 +788,38 @@ public class MBMessagePersistenceImpl extends BasePersistenceImpl<MBMessage>
 	 */
 	public MBMessage remove(long messageId)
 		throws NoSuchMessageException, SystemException {
+		return remove(Long.valueOf(messageId));
+	}
+
+	/**
+	 * Removes the message-boards message with the primary key from the database. Also notifies the appropriate model listeners.
+	 *
+	 * @param primaryKey the primary key of the message-boards message
+	 * @return the message-boards message that was removed
+	 * @throws com.liferay.portlet.messageboards.NoSuchMessageException if a message-boards message with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public MBMessage remove(Serializable primaryKey)
+		throws NoSuchMessageException, SystemException {
 		Session session = null;
 
 		try {
 			session = openSession();
 
 			MBMessage mbMessage = (MBMessage)session.get(MBMessageImpl.class,
-					Long.valueOf(messageId));
+					primaryKey);
 
 			if (mbMessage == null) {
 				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + messageId);
+					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchMessageException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
-					messageId);
+					primaryKey);
 			}
 
-			return mbMessagePersistence.remove(mbMessage);
+			return remove(mbMessage);
 		}
 		catch (NoSuchMessageException nsee) {
 			throw nsee;
@@ -814,18 +830,6 @@ public class MBMessagePersistenceImpl extends BasePersistenceImpl<MBMessage>
 		finally {
 			closeSession(session);
 		}
-	}
-
-	/**
-	 * Removes the message-boards message from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param mbMessage the message-boards message
-	 * @return the message-boards message that was removed
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public MBMessage remove(MBMessage mbMessage) throws SystemException {
-		return super.remove(mbMessage);
 	}
 
 	@Override
@@ -847,19 +851,7 @@ public class MBMessagePersistenceImpl extends BasePersistenceImpl<MBMessage>
 			closeSession(session);
 		}
 
-		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
-		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
-
-		MBMessageModelImpl mbMessageModelImpl = (MBMessageModelImpl)mbMessage;
-
-		FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_UUID_G,
-			new Object[] {
-				mbMessageModelImpl.getUuid(),
-				Long.valueOf(mbMessageModelImpl.getGroupId())
-			});
-
-		EntityCacheUtil.removeResult(MBMessageModelImpl.ENTITY_CACHE_ENABLED,
-			MBMessageImpl.class, mbMessage.getPrimaryKey());
+		clearCache(mbMessage);
 
 		return mbMessage;
 	}
@@ -14664,7 +14656,7 @@ public class MBMessagePersistenceImpl extends BasePersistenceImpl<MBMessage>
 	 */
 	public void removeByUuid(String uuid) throws SystemException {
 		for (MBMessage mbMessage : findByUuid(uuid)) {
-			mbMessagePersistence.remove(mbMessage);
+			remove(mbMessage);
 		}
 	}
 
@@ -14679,7 +14671,7 @@ public class MBMessagePersistenceImpl extends BasePersistenceImpl<MBMessage>
 		throws NoSuchMessageException, SystemException {
 		MBMessage mbMessage = findByUUID_G(uuid, groupId);
 
-		mbMessagePersistence.remove(mbMessage);
+		remove(mbMessage);
 	}
 
 	/**
@@ -14690,7 +14682,7 @@ public class MBMessagePersistenceImpl extends BasePersistenceImpl<MBMessage>
 	 */
 	public void removeByGroupId(long groupId) throws SystemException {
 		for (MBMessage mbMessage : findByGroupId(groupId)) {
-			mbMessagePersistence.remove(mbMessage);
+			remove(mbMessage);
 		}
 	}
 
@@ -14702,7 +14694,7 @@ public class MBMessagePersistenceImpl extends BasePersistenceImpl<MBMessage>
 	 */
 	public void removeByCompanyId(long companyId) throws SystemException {
 		for (MBMessage mbMessage : findByCompanyId(companyId)) {
-			mbMessagePersistence.remove(mbMessage);
+			remove(mbMessage);
 		}
 	}
 
@@ -14714,7 +14706,7 @@ public class MBMessagePersistenceImpl extends BasePersistenceImpl<MBMessage>
 	 */
 	public void removeByThreadId(long threadId) throws SystemException {
 		for (MBMessage mbMessage : findByThreadId(threadId)) {
-			mbMessagePersistence.remove(mbMessage);
+			remove(mbMessage);
 		}
 	}
 
@@ -14726,7 +14718,7 @@ public class MBMessagePersistenceImpl extends BasePersistenceImpl<MBMessage>
 	 */
 	public void removeByThreadReplies(long threadId) throws SystemException {
 		for (MBMessage mbMessage : findByThreadReplies(threadId)) {
-			mbMessagePersistence.remove(mbMessage);
+			remove(mbMessage);
 		}
 	}
 
@@ -14738,7 +14730,7 @@ public class MBMessagePersistenceImpl extends BasePersistenceImpl<MBMessage>
 	 */
 	public void removeByUserId(long userId) throws SystemException {
 		for (MBMessage mbMessage : findByUserId(userId)) {
-			mbMessagePersistence.remove(mbMessage);
+			remove(mbMessage);
 		}
 	}
 
@@ -14752,7 +14744,7 @@ public class MBMessagePersistenceImpl extends BasePersistenceImpl<MBMessage>
 	public void removeByG_U(long groupId, long userId)
 		throws SystemException {
 		for (MBMessage mbMessage : findByG_U(groupId, userId)) {
-			mbMessagePersistence.remove(mbMessage);
+			remove(mbMessage);
 		}
 	}
 
@@ -14766,7 +14758,7 @@ public class MBMessagePersistenceImpl extends BasePersistenceImpl<MBMessage>
 	public void removeByG_C(long groupId, long categoryId)
 		throws SystemException {
 		for (MBMessage mbMessage : findByG_C(groupId, categoryId)) {
-			mbMessagePersistence.remove(mbMessage);
+			remove(mbMessage);
 		}
 	}
 
@@ -14779,7 +14771,7 @@ public class MBMessagePersistenceImpl extends BasePersistenceImpl<MBMessage>
 	 */
 	public void removeByG_S(long groupId, int status) throws SystemException {
 		for (MBMessage mbMessage : findByG_S(groupId, status)) {
-			mbMessagePersistence.remove(mbMessage);
+			remove(mbMessage);
 		}
 	}
 
@@ -14793,7 +14785,7 @@ public class MBMessagePersistenceImpl extends BasePersistenceImpl<MBMessage>
 	public void removeByC_S(long companyId, int status)
 		throws SystemException {
 		for (MBMessage mbMessage : findByC_S(companyId, status)) {
-			mbMessagePersistence.remove(mbMessage);
+			remove(mbMessage);
 		}
 	}
 
@@ -14807,7 +14799,7 @@ public class MBMessagePersistenceImpl extends BasePersistenceImpl<MBMessage>
 	public void removeByU_C(long userId, long classNameId)
 		throws SystemException {
 		for (MBMessage mbMessage : findByU_C(userId, classNameId)) {
-			mbMessagePersistence.remove(mbMessage);
+			remove(mbMessage);
 		}
 	}
 
@@ -14821,7 +14813,7 @@ public class MBMessagePersistenceImpl extends BasePersistenceImpl<MBMessage>
 	public void removeByC_C(long classNameId, long classPK)
 		throws SystemException {
 		for (MBMessage mbMessage : findByC_C(classNameId, classPK)) {
-			mbMessagePersistence.remove(mbMessage);
+			remove(mbMessage);
 		}
 	}
 
@@ -14835,7 +14827,7 @@ public class MBMessagePersistenceImpl extends BasePersistenceImpl<MBMessage>
 	public void removeByT_P(long threadId, long parentMessageId)
 		throws SystemException {
 		for (MBMessage mbMessage : findByT_P(threadId, parentMessageId)) {
-			mbMessagePersistence.remove(mbMessage);
+			remove(mbMessage);
 		}
 	}
 
@@ -14849,7 +14841,7 @@ public class MBMessagePersistenceImpl extends BasePersistenceImpl<MBMessage>
 	public void removeByT_A(long threadId, boolean answer)
 		throws SystemException {
 		for (MBMessage mbMessage : findByT_A(threadId, answer)) {
-			mbMessagePersistence.remove(mbMessage);
+			remove(mbMessage);
 		}
 	}
 
@@ -14863,7 +14855,7 @@ public class MBMessagePersistenceImpl extends BasePersistenceImpl<MBMessage>
 	public void removeByT_S(long threadId, int status)
 		throws SystemException {
 		for (MBMessage mbMessage : findByT_S(threadId, status)) {
-			mbMessagePersistence.remove(mbMessage);
+			remove(mbMessage);
 		}
 	}
 
@@ -14877,7 +14869,7 @@ public class MBMessagePersistenceImpl extends BasePersistenceImpl<MBMessage>
 	public void removeByTR_S(long threadId, int status)
 		throws SystemException {
 		for (MBMessage mbMessage : findByTR_S(threadId, status)) {
-			mbMessagePersistence.remove(mbMessage);
+			remove(mbMessage);
 		}
 	}
 
@@ -14892,7 +14884,7 @@ public class MBMessagePersistenceImpl extends BasePersistenceImpl<MBMessage>
 	public void removeByG_U_S(long groupId, long userId, int status)
 		throws SystemException {
 		for (MBMessage mbMessage : findByG_U_S(groupId, userId, status)) {
-			mbMessagePersistence.remove(mbMessage);
+			remove(mbMessage);
 		}
 	}
 
@@ -14907,7 +14899,7 @@ public class MBMessagePersistenceImpl extends BasePersistenceImpl<MBMessage>
 	public void removeByG_C_T(long groupId, long categoryId, long threadId)
 		throws SystemException {
 		for (MBMessage mbMessage : findByG_C_T(groupId, categoryId, threadId)) {
-			mbMessagePersistence.remove(mbMessage);
+			remove(mbMessage);
 		}
 	}
 
@@ -14922,7 +14914,7 @@ public class MBMessagePersistenceImpl extends BasePersistenceImpl<MBMessage>
 	public void removeByG_C_S(long groupId, long categoryId, int status)
 		throws SystemException {
 		for (MBMessage mbMessage : findByG_C_S(groupId, categoryId, status)) {
-			mbMessagePersistence.remove(mbMessage);
+			remove(mbMessage);
 		}
 	}
 
@@ -14937,7 +14929,7 @@ public class MBMessagePersistenceImpl extends BasePersistenceImpl<MBMessage>
 	public void removeByU_C_C(long userId, long classNameId, long classPK)
 		throws SystemException {
 		for (MBMessage mbMessage : findByU_C_C(userId, classNameId, classPK)) {
-			mbMessagePersistence.remove(mbMessage);
+			remove(mbMessage);
 		}
 	}
 
@@ -14952,7 +14944,7 @@ public class MBMessagePersistenceImpl extends BasePersistenceImpl<MBMessage>
 	public void removeByU_C_S(long userId, long classNameId, int status)
 		throws SystemException {
 		for (MBMessage mbMessage : findByU_C_S(userId, classNameId, status)) {
-			mbMessagePersistence.remove(mbMessage);
+			remove(mbMessage);
 		}
 	}
 
@@ -14967,7 +14959,7 @@ public class MBMessagePersistenceImpl extends BasePersistenceImpl<MBMessage>
 	public void removeByC_C_S(long classNameId, long classPK, int status)
 		throws SystemException {
 		for (MBMessage mbMessage : findByC_C_S(classNameId, classPK, status)) {
-			mbMessagePersistence.remove(mbMessage);
+			remove(mbMessage);
 		}
 	}
 
@@ -14984,7 +14976,7 @@ public class MBMessagePersistenceImpl extends BasePersistenceImpl<MBMessage>
 		boolean answer) throws SystemException {
 		for (MBMessage mbMessage : findByG_C_T_A(groupId, categoryId, threadId,
 				answer)) {
-			mbMessagePersistence.remove(mbMessage);
+			remove(mbMessage);
 		}
 	}
 
@@ -15001,7 +14993,7 @@ public class MBMessagePersistenceImpl extends BasePersistenceImpl<MBMessage>
 		int status) throws SystemException {
 		for (MBMessage mbMessage : findByG_C_T_S(groupId, categoryId, threadId,
 				status)) {
-			mbMessagePersistence.remove(mbMessage);
+			remove(mbMessage);
 		}
 	}
 
@@ -15018,7 +15010,7 @@ public class MBMessagePersistenceImpl extends BasePersistenceImpl<MBMessage>
 		int status) throws SystemException {
 		for (MBMessage mbMessage : findByU_C_C_S(userId, classNameId, classPK,
 				status)) {
-			mbMessagePersistence.remove(mbMessage);
+			remove(mbMessage);
 		}
 	}
 
@@ -15029,7 +15021,7 @@ public class MBMessagePersistenceImpl extends BasePersistenceImpl<MBMessage>
 	 */
 	public void removeAll() throws SystemException {
 		for (MBMessage mbMessage : findAll()) {
-			mbMessagePersistence.remove(mbMessage);
+			remove(mbMessage);
 		}
 	}
 
@@ -17429,8 +17421,6 @@ public class MBMessagePersistenceImpl extends BasePersistenceImpl<MBMessage>
 	protected RatingsStatsPersistence ratingsStatsPersistence;
 	@BeanReference(type = SocialActivityPersistence.class)
 	protected SocialActivityPersistence socialActivityPersistence;
-	@BeanReference(type = SocialEquityLogPersistence.class)
-	protected SocialEquityLogPersistence socialEquityLogPersistence;
 	@BeanReference(type = WikiPagePersistence.class)
 	protected WikiPagePersistence wikiPagePersistence;
 	private static final String _SQL_SELECT_MBMESSAGE = "SELECT mbMessage FROM MBMessage mbMessage";

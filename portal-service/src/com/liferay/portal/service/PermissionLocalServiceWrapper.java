@@ -328,8 +328,7 @@ public class PermissionLocalServiceWrapper implements PermissionLocalService,
 	* @param userId the primary key of the user
 	* @param actionIds the primary keys of the actions
 	* @param resourceId the primary key of the resource
-	* @throws PortalException if a user with the primary key could not be
-	found
+	* @throws PortalException if a user with the primary key could not be found
 	* @throws SystemException if a system exception occurred
 	*/
 	public void addUserPermissions(long userId, java.lang.String[] actionIds,
@@ -458,6 +457,12 @@ public class PermissionLocalServiceWrapper implements PermissionLocalService,
 	public java.util.List<com.liferay.portal.model.Permission> getRolePermissions(
 		long roleId) throws com.liferay.portal.kernel.exception.SystemException {
 		return _permissionLocalService.getRolePermissions(roleId);
+	}
+
+	public java.util.List<com.liferay.portal.model.Permission> getRolePermissions(
+		long roleId, int[] scopes)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return _permissionLocalService.getRolePermissions(roleId, scopes);
 	}
 
 	/**
@@ -639,8 +644,8 @@ public class PermissionLocalServiceWrapper implements PermissionLocalService,
 	*
 	* @param name the resource name
 	* @param roleName the role name. Supported role names include {@link
-	com.liferay.portal.model.RoleConstants#ORGANIZATION_USER},
-	{@link com.liferay.portal.model.RoleConstants#OWNER}, and {@link
+	com.liferay.portal.model.RoleConstants#ORGANIZATION_USER}, {@link
+	com.liferay.portal.model.RoleConstants#OWNER}, and {@link
 	com.liferay.portal.model.RoleConstants#SITE_MEMBER}.
 	* @param actionId the action's ID
 	* @throws PortalException if a matching role could not be found or if a
@@ -709,8 +714,8 @@ public class PermissionLocalServiceWrapper implements PermissionLocalService,
 	permissions
 	* @param actionIds the primary keys of the actions
 	* @param resourceId the primary key of the resource
-	* @throws PortalException if an organization with the primary key could
-	not be found
+	* @throws PortalException if an organization with the primary key could not
+	be found
 	* @throws SystemException if a system exception occurred
 	*/
 	public void setOrgGroupPermissions(long organizationId, long groupId,
@@ -745,9 +750,9 @@ public class PermissionLocalServiceWrapper implements PermissionLocalService,
 	}
 
 	/**
-	* Sets the role's permissions to perform the actions on the named
-	* resource, replacing the role's existing permission for each of these
-	* actions on the resource.
+	* Sets the role's permissions to perform the actions on the named resource,
+	* replacing the role's existing permission for each of these actions on the
+	* resource.
 	*
 	* @param roleId the primary key of the role
 	* @param companyId the primary key of the company
@@ -775,8 +780,7 @@ public class PermissionLocalServiceWrapper implements PermissionLocalService,
 	* @param roleId the primary key of the role
 	* @param actionIds the primary keys of the actions
 	* @param resourceId the primary key of the resource
-	* @throws PortalException if a role with the primary key could not be
-	found
+	* @throws PortalException if a role with the primary key could not be found
 	* @throws SystemException if a system exception occurred
 	*/
 	public void setRolePermissions(long roleId, java.lang.String[] actionIds,
@@ -833,8 +837,7 @@ public class PermissionLocalServiceWrapper implements PermissionLocalService,
 	* @param userId the primary key of the user
 	* @param actionIds the primary keys of the actions
 	* @param resourceId the primary key of the resource
-	* @throws PortalException if a user with the primary key could not be
-	found
+	* @throws PortalException if a user with the primary key could not be found
 	* @throws SystemException if a system exception occurred
 	*/
 	public void setUserPermissions(long userId, java.lang.String[] actionIds,

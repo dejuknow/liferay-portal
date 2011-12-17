@@ -94,14 +94,6 @@ public class MembershipRequestUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static MembershipRequest remove(MembershipRequest membershipRequest)
-		throws SystemException {
-		return getPersistence().remove(membershipRequest);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static MembershipRequest update(

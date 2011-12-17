@@ -95,14 +95,6 @@ public class MBCategoryUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static MBCategory remove(MBCategory mbCategory)
-		throws SystemException {
-		return getPersistence().remove(mbCategory);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static MBCategory update(MBCategory mbCategory, boolean merge)

@@ -42,7 +42,7 @@ String languageId = LanguageUtil.getLanguageId(request);
 
 Map<String, Map<String, String>> fieldsMap = ddmStructure.getFieldsMap(languageId);
 
-List<String> headerNames = new ArrayList();
+List<String> headerNames = new ArrayList<String>();
 
 for (Map<String, String> fields : fieldsMap.values()) {
 	String label = fields.get(FieldConstants.LABEL);
@@ -104,14 +104,6 @@ for (int i = 0; i < results.size(); i++) {
 			com.liferay.portlet.dynamicdatamapping.storage.Field field = fieldsModel.get(name);
 
 			value = field.getRenderedValue(themeDisplay);
-
-			if (ddmStructure.getFieldDisplayChildLabelAsValue(name)) {
-				Map<String, String> childFields = ddmStructure.getFields(name, FieldConstants.VALUE, value);
-
-				if (childFields != null) {
-					value = childFields.get(FieldConstants.LABEL);
-				}
-			}
 		}
 		else {
 			value = StringPool.BLANK;

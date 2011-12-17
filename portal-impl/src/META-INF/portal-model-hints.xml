@@ -265,7 +265,7 @@
 		<field name="priority" type="int" />
 		<field name="layoutPrototypeUuid" type="String" />
 		<field name="layoutPrototypeLinkEnabled" type="boolean" />
-		<field name="templateLayoutUuid" type="String" />
+		<field name="sourcePrototypeLayoutUuid" type="String" />
 	</model>
 	<model name="com.liferay.portal.model.LayoutBranch">
 		<field name="LayoutBranchId" type="long" />
@@ -347,6 +347,8 @@
 		<field name="layoutSetId" type="long" />
 		<field name="groupId" type="long" />
 		<field name="companyId" type="long" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
 		<field name="privateLayout" type="boolean" />
 		<field name="logo" type="boolean" />
 		<field name="logoId" type="long" />
@@ -386,6 +388,8 @@
 		<field name="uuid" type="String" />
 		<field name="layoutSetPrototypeId" type="long" />
 		<field name="companyId" type="long" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
 		<field name="name" type="String" localized="true">
 			<hint name="max-length">4000</hint>
 			<validator name="required" />
@@ -415,7 +419,7 @@
 			<hint name="max-length">200</hint>
 		</field>
 		<field name="owner" type="String">
-			<hint name="max-length">300</hint>
+			<hint name="max-length">255</hint>
 		</field>
 		<field name="inheritable" type="boolean" />
 		<field name="expirationDate" type="Date" />
@@ -648,9 +652,12 @@
 		</field>
 	</model>
 	<model name="com.liferay.portal.model.Repository">
+		<field name="uuid" type="String" />
 		<field name="repositoryId" type="long" />
 		<field name="groupId" type="long" />
 		<field name="companyId" type="long" />
+		<field name="userId" type="long" />
+		<field name="userName" type="String" />
 		<field name="createDate" type="Date" />
 		<field name="modifiedDate" type="Date" />
 		<field name="classNameId" type="long" />
@@ -873,8 +880,6 @@
 		<field name="description" type="String">
 			<hint-collection name="TEXTAREA" />
 		</field>
-		<field name="publicLayoutSetPrototypeId" type="long" />
-		<field name="privateLayoutSetPrototypeId" type="long" />
 		<field name="addedByLDAPImport" type="boolean" />
 	</model>
 	<model name="com.liferay.portal.model.UserGroupGroupRole">
@@ -1089,10 +1094,10 @@
 		<field name="title" type="String" localized="true">
 			<hint name="max-length">4000</hint>
 		</field>
-		<field name="description" type="String">
+		<field name="description" type="String" localized="true">
 			<hint-collection name="TEXTAREA" />
 		</field>
-		<field name="summary" type="String">
+		<field name="summary" type="String" localized="true">
 			<hint-collection name="TEXTAREA" />
 		</field>
 		<field name="url" type="String">
@@ -1197,7 +1202,10 @@
 		</field>
 		<field name="smallImage" type="boolean" />
 		<field name="smallImageId" type="long" />
-		<field name="smallImageURL" type="String" />
+		<field name="smallImageURL" type="String">
+			<hint-collection name="URL" />
+			<hint name="display-width">150</hint>
+		</field>
 		<field name="status" type="int" />
 		<field name="statusByUserId" type="long" />
 		<field name="statusByUserName" type="String" />
@@ -1397,6 +1405,7 @@
 		<field name="userId" type="long" />
 		<field name="userName" type="String" />
 		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
 		<field name="repositoryId" type="long" />
 		<field name="folderId" type="long" />
 		<field name="fileEntryId" type="long" />
@@ -1449,10 +1458,15 @@
 		<field name="createDate" type="Date" />
 		<field name="modifiedDate" type="Date" />
 		<field name="fileId" type="long" />
+		<field name="fileUuid" type="String" />
 		<field name="repositoryId" type="long" />
 		<field name="parentFolderId" type="long" />
+		<field name="name" type="String">
+			<hint name="max-length">255</hint>
+		</field>
 		<field name="event" type="String" />
 		<field name="type" type="String" />
+		<field name="version" type="String" />
 	</model>
 	<model name="com.liferay.portlet.dynamicdatalists.model.DDLRecord">
 		<field name="uuid" type="String" />
@@ -1560,6 +1574,7 @@
 			<hint-collection name="CLOB" />
 		</field>
 		<field name="storageType" type="String" />
+		<field name="type" type="int" />
 	</model>
 	<model name="com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink">
 		<field name="structureLinkId" type="long" />
@@ -2370,70 +2385,6 @@
 		<field name="value" type="String">
 			<hint name="max-length">1024</hint>
 		</field>
-	</model>
-	<model name="com.liferay.portlet.social.model.SocialEquityAssetEntry">
-		<field name="equityAssetEntryId" type="long" />
-		<field name="groupId" type="long" />
-		<field name="companyId" type="long" />
-		<field name="userId" type="long" />
-		<field name="assetEntryId" type="long" />
-		<field name="informationK" type="double" />
-		<field name="informationB" type="double" />
-	</model>
-	<model name="com.liferay.portlet.social.model.SocialEquityGroupSetting">
-		<field name="equityGroupSettingId" type="long" />
-		<field name="groupId" type="long" />
-		<field name="companyId" type="long" />
-		<field name="classNameId" type="long" />
-		<field name="type" type="int" />
-		<field name="enabled" type="boolean" />
-	</model>
-	<model name="com.liferay.portlet.social.model.SocialEquityHistory">
-		<field name="equityHistoryId" type="long" />
-		<field name="groupId" type="long" />
-		<field name="companyId" type="long" />
-		<field name="userId" type="long" />
-		<field name="createDate" type="Date" />
-		<field name="personalEquity" type="int" />
-	</model>
-	<model name="com.liferay.portlet.social.model.SocialEquityLog">
-		<field name="equityLogId" type="long" />
-		<field name="groupId" type="long" />
-		<field name="companyId" type="long" />
-		<field name="userId" type="long" />
-		<field name="assetEntryId" type="long" />
-		<field name="actionId" type="String" />
-		<field name="actionDate" type="int" />
-		<field name="active" type="boolean" />
-		<field name="expiration" type="int" />
-		<field name="type" type="int" />
-		<field name="value" type="int" />
-		<field name="extraData" type="String">
-			<hint name="max-length">255</hint>
-		</field>
-	</model>
-	<model name="com.liferay.portlet.social.model.SocialEquitySetting">
-		<field name="equitySettingId" type="long" />
-		<field name="groupId" type="long" />
-		<field name="companyId" type="long" />
-		<field name="classNameId" type="long" />
-		<field name="actionId" type="String" />
-		<field name="dailyLimit" type="int" />
-		<field name="lifespan" type="int" />
-		<field name="type" type="int" />
-		<field name="uniqueEntry" type="boolean" />
-		<field name="value" type="int" />
-	</model>
-	<model name="com.liferay.portlet.social.model.SocialEquityUser">
-		<field name="equityUserId" type="long" />
-		<field name="groupId" type="long" />
-		<field name="companyId" type="long" />
-		<field name="userId" type="long" />
-		<field name="contributionK" type="double" />
-		<field name="contributionB" type="double" />
-		<field name="participationK" type="double" />
-		<field name="participationB" type="double" />
-		<field name="rank" type="int" />
 	</model>
 	<model name="com.liferay.portlet.social.model.SocialRelation">
 		<field name="uuid" type="String" />

@@ -144,7 +144,7 @@ public class PortletDataContextImpl implements PortletDataContext {
 		_scopeGroupId = groupId;
 		_parameterMap = parameterMap;
 		_primaryKeys = primaryKeys;
-		_dataStrategy =  null;
+		_dataStrategy = null;
 		_userIdStrategy = null;
 		_startDate = startDate;
 		_endDate = endDate;
@@ -164,7 +164,7 @@ public class PortletDataContextImpl implements PortletDataContext {
 		_scopeGroupId = groupId;
 		_parameterMap = parameterMap;
 		_primaryKeys = primaryKeys;
-		_dataStrategy =  MapUtil.getString(
+		_dataStrategy = MapUtil.getString(
 			parameterMap, PortletDataHandlerKeys.DATA_STRATEGY,
 			PortletDataHandlerKeys.DATA_STRATEGY_MIRROR);
 		_userIdStrategy = userIdStrategy;
@@ -668,8 +668,7 @@ public class PortletDataContextImpl implements PortletDataContext {
 	}
 
 	public long[] getAssetCategoryIds(Class<?> clazz, long classPK) {
-		return _assetCategoryIdsMap.get(
-			getPrimaryKeyString(clazz, classPK));
+		return _assetCategoryIdsMap.get(getPrimaryKeyString(clazz, classPK));
 	}
 
 	public Map<String, long[]> getAssetCategoryIdsMap() {
@@ -1055,8 +1054,7 @@ public class PortletDataContextImpl implements PortletDataContext {
 			lock.isInheritable(), expirationTime);
 	}
 
-	public void importPermissions(
-			Class<?> clazz, long classPK, long newClassPK)
+	public void importPermissions(Class<?> clazz, long classPK, long newClassPK)
 		throws PortalException, SystemException {
 
 		importPermissions(clazz.getName(), classPK, newClassPK);
@@ -1306,8 +1304,7 @@ public class PortletDataContextImpl implements PortletDataContext {
 
 		if (isResourceMain(classedModel)) {
 			if (getBooleanParameter(namespace, "categories")) {
-				long[] assetCategoryIds = getAssetCategoryIds(
-					clazz, classPK);
+				long[] assetCategoryIds = getAssetCategoryIds(clazz, classPK);
 
 				serviceContext.setAssetCategoryIds(assetCategoryIds);
 			}
@@ -1459,22 +1456,31 @@ public class PortletDataContextImpl implements PortletDataContext {
 	protected void validateDateRange(Date startDate, Date endDate)
 		throws PortletDataException {
 
-		if ((startDate == null) ^ (endDate == null)) {
+		if ((startDate == null) && (endDate != null)) {
 			throw new PortletDataException(
-				"Both start and end dates must have valid values or be null");
+				PortletDataException.END_DATE_IS_MISSING_START_DATE);
+		}
+		else if ((startDate != null) && (endDate == null)) {
+			throw new PortletDataException(
+				PortletDataException.START_DATE_IS_MISSING_END_DATE);
 		}
 
 		if (startDate != null) {
 			if (startDate.after(endDate) || startDate.equals(endDate)) {
 				throw new PortletDataException(
-					"The start date cannot be after the end date");
+					PortletDataException.START_DATE_AFTER_END_DATE);
 			}
 
 			Date now = new Date();
 
-			if (startDate.after(now) || endDate.after(now)) {
+			if (startDate.after(now)) {
 				throw new PortletDataException(
-					"Dates must not be in the future");
+					PortletDataException.FUTURE_START_DATE);
+			}
+
+			if (endDate.after(now)) {
+				throw new PortletDataException(
+					PortletDataException.FUTURE_END_DATE);
 			}
 		}
 	}

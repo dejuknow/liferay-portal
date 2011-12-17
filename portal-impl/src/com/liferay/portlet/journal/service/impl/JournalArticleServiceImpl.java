@@ -248,11 +248,40 @@ public class JournalArticleServiceImpl extends JournalArticleServiceBaseImpl {
 			groupId, articleId, null, languageId, themeDisplay);
 	}
 
+	public List<JournalArticle> getArticlesByArticleId(
+			long groupId, String articleId, int start, int end,
+			OrderByComparator obc)
+		throws SystemException {
+
+		return journalArticlePersistence.filterFindByG_A(
+			groupId, articleId, start, end, obc);
+	}
+
 	public List<JournalArticle> getArticlesByLayoutUuid(
 			long groupId, String layoutUuid)
 		throws SystemException {
 
 		return journalArticlePersistence.filterFindByG_L(groupId, layoutUuid);
+	}
+
+	public int getArticlesCountByArticleId(long groupId, String articleId)
+		throws SystemException {
+
+		return journalArticlePersistence.filterCountByG_A(groupId, articleId);
+	}
+
+	public JournalArticle getDisplayArticleByUrlTitle(
+			long groupId, String urlTitle)
+		throws PortalException, SystemException {
+
+		JournalArticle article =
+			journalArticleLocalService.getDisplayArticleByUrlTitle(
+				groupId, urlTitle);
+
+		JournalArticlePermission.check(
+			getPermissionChecker(), article, ActionKeys.VIEW);
+
+		return article;
 	}
 
 	public JournalArticle getLatestArticle(long resourcePrimKey)
@@ -472,7 +501,8 @@ public class JournalArticleServiceImpl extends JournalArticleServiceBaseImpl {
 
 	public JournalArticle updateArticleTranslation(
 			long groupId, String articleId, double version, Locale locale,
-			String title, String description, String content)
+			String title, String description, String content,
+			Map<String, byte[]> images)
 		throws PortalException, SystemException {
 
 		JournalArticlePermission.check(
@@ -480,7 +510,8 @@ public class JournalArticleServiceImpl extends JournalArticleServiceBaseImpl {
 			ActionKeys.UPDATE);
 
 		return journalArticleLocalService.updateArticleTranslation(
-			groupId, articleId, version, locale, title, description, content);
+			groupId, articleId, version, locale, title, description, content,
+			images);
 	}
 
 	public JournalArticle updateContent(

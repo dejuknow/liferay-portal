@@ -95,14 +95,6 @@ public class BookmarksFolderUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static BookmarksFolder remove(BookmarksFolder bookmarksFolder)
-		throws SystemException {
-		return getPersistence().remove(bookmarksFolder);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static BookmarksFolder update(BookmarksFolder bookmarksFolder,

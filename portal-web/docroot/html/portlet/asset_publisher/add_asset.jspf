@@ -15,7 +15,7 @@
 --%>
 
 <%
-Map<String, PortletURL> addPortletURLs = getAddPortletURLs(liferayPortletRequest, liferayPortletResponse, classNameIds, classTypeIds, assetEntryQuery.getAllCategoryIds(), allAssetTagNames);
+addPortletURLs = getAddPortletURLs(liferayPortletRequest, liferayPortletResponse, classNameIds, classTypeIds, assetEntryQuery.getAllCategoryIds(), allAssetTagNames);
 %>
 
 <c:if test="<%= !addPortletURLs.isEmpty() %>">
@@ -27,16 +27,19 @@ Map<String, PortletURL> addPortletURLs = getAddPortletURLs(liferayPortletRequest
 	>
 
 		<%
+		boolean hasDLFileEntrySubtype = hasSubtype(DLFileEntry.class.getName(), addPortletURLs);
+		boolean hasJournalArticleSubtype = hasSubtype(JournalArticle.class.getName(), addPortletURLs);
+
 		for (Map.Entry<String, PortletURL> entry : addPortletURLs.entrySet()) {
 			String className = entry.getKey();
 
 			String message = StringPool.BLANK;
 
 			if (className.equals(DLFileEntry.class.getName())) {
-				message = "document";
+				message = hasDLFileEntrySubtype ? "basic-document" : "document";
 			}
 			else if (className.equals(JournalArticle.class.getName())) {
-				message = "basic-web-content";
+				message = hasJournalArticleSubtype ? "basic-web-content" : "web-content";
 			}
 			else {
 				message = ResourceActionsUtil.getModelResourceNamePrefix() + className;
@@ -67,7 +70,7 @@ Map<String, PortletURL> addPortletURLs = getAddPortletURLs(liferayPortletRequest
 				addPortletURLString = HttpUtil.addParameter(addPortletURLString, "layoutUuid", layout.getUuid());
 			}
 
-			String taglibEditURL = "javascript:Liferay.Util.openWindow({dialog: {width: 960}, id: '" + liferayPortletResponse.getNamespace() + "', title: '" + ResourceActionsUtil.getModelResource(locale, className) + "', uri:'" + addPortletURLString + "'});";
+			String taglibEditURL = "javascript:Liferay.Util.openWindow({dialog: {width: 960}, id: '" + liferayPortletResponse.getNamespace() + "', title: '" + ResourceActionsUtil.getModelResource(locale, className) + "', uri:'" + HtmlUtil.escapeURL(addPortletURLString) + "'});";
 		%>
 
 			<liferay-ui:icon
@@ -111,7 +114,7 @@ public PortletURL getAddPortletURL(LiferayPortletRequest liferayPortletRequest, 
 
 	redirectURL.setParameter("struts_action", "/asset_publisher/add_asset_redirect");
 
-	addPortletURL.setParameter("redirect", HtmlUtil.escapeURL(redirectURL.toString()));
+	addPortletURL.setParameter("redirect", redirectURL.toString());
 
 	String referringPortletResource = ParamUtil.getString(liferayPortletRequest, "portletResource");
 
@@ -123,7 +126,30 @@ public PortletURL getAddPortletURL(LiferayPortletRequest liferayPortletRequest, 
 
 		addPortletURL.setParameter("referringPortletResource", portletDisplay.getId());
 
-		addPortletURL.setParameter("assetCategoryIds", StringUtil.merge(allAssetCategoryIds));
+		Map<Long, String> assetVocabularyAssetCategoryIds = new HashMap<Long, String>();
+
+		for (long assetCategoryId : allAssetCategoryIds) {
+			AssetCategory assetCategory = AssetCategoryLocalServiceUtil.getAssetCategory(assetCategoryId);
+
+			long assetVocabularyId = assetCategory.getVocabularyId();
+
+			if (assetVocabularyAssetCategoryIds.containsKey(assetVocabularyId)) {
+				String assetCategoryIds = assetVocabularyAssetCategoryIds.get(assetVocabularyId);
+
+				assetVocabularyAssetCategoryIds.put(assetVocabularyId, assetCategoryIds + StringPool.COMMA + assetCategoryId);
+			}
+			else {
+				assetVocabularyAssetCategoryIds.put(assetVocabularyId, String.valueOf(assetCategoryId));
+			}
+		}
+
+		for (Map.Entry<Long, String> entry : assetVocabularyAssetCategoryIds.entrySet()) {
+			long assetVocabularyId = entry.getKey();
+			String assetCategoryIds = entry.getValue();
+
+			addPortletURL.setParameter("assetCategoryIds" + StringPool.UNDERLINE + assetVocabularyId, assetCategoryIds);
+		}
+
 		addPortletURL.setParameter("assetTagNames", StringUtil.merge(allAssetTagNames));
 
 		if (classTypeId > 0) {
@@ -156,7 +182,7 @@ public Map<String, PortletURL> getAddPortletURLs(LiferayPortletRequest liferayPo
 
 		AssetRendererFactory assetRendererFactory = AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(className);
 
-		Map<Long, String> classTypes = assetRendererFactory.getClassTypes(new long[] {themeDisplay.getCompanyGroupId(), themeDisplay.getScopeGroupId()});
+		Map<Long, String> classTypes = assetRendererFactory.getClassTypes(new long[] {themeDisplay.getCompanyGroupId(), themeDisplay.getScopeGroupId()}, themeDisplay.getLocale());
 
 		if ((classTypeIds.length == 0) || (classTypes == null)) {
 			PortletURL addPortletURL = getAddPortletURL(liferayPortletRequest, liferayPortletResponse, className, 0, allAssetCategoryIds, allAssetTagNames);
@@ -182,6 +208,18 @@ public Map<String, PortletURL> getAddPortletURLs(LiferayPortletRequest liferayPo
 	}
 
 	return addPortletURLs;
+}
+
+public boolean hasSubtype(String subtypeClassName, Map<String, PortletURL> addPortletURLs) {
+	for (Map.Entry<String, PortletURL> entry : addPortletURLs.entrySet()) {
+		String className = entry.getKey();
+
+		if (className.startsWith(subtypeClassName) && !className.equals(subtypeClassName)) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 private static final String _CLASSNAME_SEPARATOR = "_CLASSNAME_";

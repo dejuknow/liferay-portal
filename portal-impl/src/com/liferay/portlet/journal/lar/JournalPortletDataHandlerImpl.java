@@ -484,6 +484,8 @@ public class JournalPortletDataHandlerImpl extends BasePortletDataHandler {
 			}
 		}
 
+		long structurePrimaryKey = 0;
+
 		if (Validator.isNotNull(article.getStructureId())) {
 			String structureUuid = articleElement.attributeValue(
 				"structure-uuid");
@@ -528,6 +530,8 @@ public class JournalPortletDataHandlerImpl extends BasePortletDataHandler {
 					return;
 				}
 			}
+
+			structurePrimaryKey = existingStructure.getPrimaryKey();
 
 			parentStructureId = existingStructure.getStructureId();
 		}
@@ -689,19 +693,20 @@ public class JournalPortletDataHandlerImpl extends BasePortletDataHandler {
 
 			if (existingArticle == null) {
 				importedArticle = JournalArticleLocalServiceUtil.addArticle(
-					userId, portletDataContext.getScopeGroupId(), 0, 0,
-					articleId, autoArticleId, article.getVersion(),
-					article.getTitleMap(), article.getDescriptionMap(),
-					article.getContent(), article.getType(), parentStructureId,
-					parentTemplateId, article.getLayoutUuid(), displayDateMonth,
-					displayDateDay, displayDateYear, displayDateHour,
-					displayDateMinute, expirationDateMonth, expirationDateDay,
-					expirationDateYear, expirationDateHour,
-					expirationDateMinute, neverExpire, reviewDateMonth,
-					reviewDateDay, reviewDateYear, reviewDateHour,
-					reviewDateMinute, neverReview, article.isIndexable(),
-					article.isSmallImage(), article.getSmallImageURL(),
-					smallFile, images, articleURL, serviceContext);
+					userId, portletDataContext.getScopeGroupId(),
+					article.getClassNameId(), structurePrimaryKey, articleId,
+					autoArticleId, article.getVersion(), article.getTitleMap(),
+					article.getDescriptionMap(), article.getContent(),
+					article.getType(), parentStructureId, parentTemplateId,
+					article.getLayoutUuid(), displayDateMonth, displayDateDay,
+					displayDateYear, displayDateHour, displayDateMinute,
+					expirationDateMonth, expirationDateDay, expirationDateYear,
+					expirationDateHour, expirationDateMinute, neverExpire,
+					reviewDateMonth, reviewDateDay, reviewDateYear,
+					reviewDateHour, reviewDateMinute, neverReview,
+					article.isIndexable(), article.isSmallImage(),
+					article.getSmallImageURL(), smallFile, images, articleURL,
+					serviceContext);
 			}
 			else {
 				importedArticle = JournalArticleLocalServiceUtil.updateArticle(
@@ -723,7 +728,8 @@ public class JournalPortletDataHandlerImpl extends BasePortletDataHandler {
 		}
 		else {
 			importedArticle = JournalArticleLocalServiceUtil.addArticle(
-				userId, portletDataContext.getScopeGroupId(), 0, 0, articleId,
+				userId, portletDataContext.getScopeGroupId(),
+				article.getClassNameId(), structurePrimaryKey, articleId,
 				autoArticleId, article.getVersion(), article.getTitleMap(),
 				article.getDescriptionMap(), article.getContent(),
 				article.getType(), parentStructureId, parentTemplateId,
@@ -1331,8 +1337,7 @@ public class JournalPortletDataHandlerImpl extends BasePortletDataHandler {
 
 			int endPos1 = content.indexOf(CharPool.APOSTROPHE, beginPos);
 			int endPos2 = content.indexOf(CharPool.CLOSE_BRACKET, beginPos);
-			int endPos3 = content.indexOf(
-				CharPool.CLOSE_PARENTHESIS, beginPos);
+			int endPos3 = content.indexOf(CharPool.CLOSE_PARENTHESIS, beginPos);
 			int endPos4 = content.indexOf(CharPool.LESS_THAN, beginPos);
 			int endPos5 = content.indexOf(CharPool.QUOTE, beginPos);
 			int endPos6 = content.indexOf(CharPool.SPACE, beginPos);
@@ -1385,6 +1390,12 @@ public class JournalPortletDataHandlerImpl extends BasePortletDataHandler {
 						map.put("folderId", new String[] {pathArray[3]});
 
 						String name = HttpUtil.decodeURL(pathArray[4]);
+
+						int pos = name.indexOf(StringPool.QUESTION);
+
+						if (pos != -1) {
+							name = name.substring(0, pos);
+						}
 
 						map.put("name", new String[] {name});
 					}
@@ -1939,7 +1950,8 @@ public class JournalPortletDataHandlerImpl extends BasePortletDataHandler {
 			sb.append(fileEntry.getFolderId());
 			sb.append(StringPool.SLASH);
 			sb.append(
-				HttpUtil.encodeURL(HtmlUtil.unescape(fileEntry.getTitle())));
+				HttpUtil.encodeURL(
+					HtmlUtil.unescape(fileEntry.getTitle()), true));
 
 			content = StringUtil.replace(content, dlReference, sb.toString());
 		}

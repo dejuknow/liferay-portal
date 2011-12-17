@@ -79,7 +79,7 @@ public class BrowseServerTest extends BaseTestCase {
 		selenium.clickAt("link=Next", RuntimeVariables.replace("Next"));
 		selenium.waitForPageToLoad("30000");
 		assertTrue(selenium.isTextPresent("Showing 21 - 40"));
-		assertTrue(selenium.isTextPresent("com.liferay.portal.cluster"));
+		assertTrue(selenium.isTextPresent("com.liferay.portal.convert"));
 		selenium.clickAt("link=Properties",
 			RuntimeVariables.replace("Properties"));
 		selenium.waitForPageToLoad("30000");
@@ -94,7 +94,9 @@ public class BrowseServerTest extends BaseTestCase {
 		selenium.clickAt("link=Next", RuntimeVariables.replace("Next"));
 		selenium.waitForPageToLoad("30000");
 		assertTrue(selenium.isTextPresent("Showing 21 - 40"));
-		assertTrue(selenium.isTextPresent("env.COMPUTERNAME"));
+		assertEquals(RuntimeVariables.replace("System Properties"),
+			selenium.getText(
+				"//ul[2]/li[contains(@class,'aui-selected')]/span/a"));
 		selenium.clickAt("link=Portal Properties",
 			RuntimeVariables.replace("Portal Properties"));
 		selenium.waitForPageToLoad("30000");

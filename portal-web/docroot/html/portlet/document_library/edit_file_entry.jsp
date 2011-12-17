@@ -28,6 +28,8 @@ String backURL = ParamUtil.getString(request, "backURL");
 
 String referringPortletResource = ParamUtil.getString(request, "referringPortletResource");
 
+String referringPortletResourceRootPortletId = PortletConstants.getRootPortletId(referringPortletResource);
+
 String uploadProgressId = "dlFileEntryUploadProgress";
 
 FileEntry fileEntry = (FileEntry)request.getAttribute(WebKeys.DOCUMENT_LIBRARY_FILE_ENTRY);
@@ -50,6 +52,15 @@ Folder folder = null;
 
 if (fileEntry != null) {
 	folder = fileEntry.getFolder();
+}
+
+if ((folder == null) && (folderId != DLFolderConstants.DEFAULT_PARENT_FOLDER_ID)) {
+	try {
+		folder = DLAppServiceUtil.getFolder(folderId);
+	}
+	catch (NoSuchFolderException nsfe) {
+		folderId = DLFolderConstants.DEFAULT_PARENT_FOLDER_ID;
+	}
 }
 
 FileVersion fileVersion = null;
@@ -176,6 +187,10 @@ else if (dlFileEntryType != null) {
 		<liferay-ui:message key="document-names-must-end-with-one-of-the-following-extensions" /> <%= StringUtil.merge(PrefsPropsUtil.getStringArray(PropsKeys.DL_FILE_EXTENSIONS, StringPool.COMMA), StringPool.COMMA_AND_SPACE) %>.
 	</liferay-ui:error>
 
+	<liferay-ui:error exception="<%= FileMimeTypeException.class %>">
+		<liferay-ui:message key="media-files-must-be-one-of-the-following-formats" /> <%= StringUtil.merge(DLUtil.getMediaGalleryMimeTypes(preferences, renderRequest), StringPool.COMMA_AND_SPACE) %>.
+	</liferay-ui:error>
+
 	<liferay-ui:error exception="<%= FileNameException.class %>" message="please-enter-a-file-with-a-valid-file-name" />
 	<liferay-ui:error exception="<%= NoSuchFolderException.class %>" message="please-enter-a-valid-folder" />
 
@@ -228,7 +243,7 @@ else if (dlFileEntryType != null) {
 			folderName = folder.getName();
 		}
 		else {
-			folderName = LanguageUtil.get(pageContext, "documents-home");
+			folderName = LanguageUtil.get(pageContext, "home");
 		}
 		%>
 
@@ -238,7 +253,17 @@ else if (dlFileEntryType != null) {
 		</portlet:renderURL>
 
 		<aui:field-wrapper label="folder">
-			<aui:a href="<%= viewFolderURL %>"><%= folderName %></aui:a>
+			<aui:a href="<%= viewFolderURL %>" id="folderName"><%= folderName %></aui:a>
+
+			<c:if test="<%= referringPortletResourceRootPortletId.equals(PortletKeys.ASSET_PUBLISHER) %>">
+				<aui:button name="openFolderSelectorButton" onClick='<%= renderResponse.getNamespace() + "openFolderSelector();" %>' value="select" />
+
+				<%
+				String taglibRemoveFolder = "Liferay.Util.removeFolderSelection('folderId', 'folderName', '" + renderResponse.getNamespace() + "');";
+				%>
+
+				<aui:button disabled="<%= folderId <= 0 %>" name="removeFolderButton" onClick="<%= taglibRemoveFolder %>" value="remove" />
+			</c:if>
 		</aui:field-wrapper>
 
 		<aui:input name="file" type="file">
@@ -261,7 +286,15 @@ else if (dlFileEntryType != null) {
 			<c:if test="<%= (folder == null) || (folder.getModel() instanceof DLFolder) %>">
 
 				<%
-				List<DLFileEntryType> dlFileEntryTypes = DLFileEntryTypeLocalServiceUtil.getFolderFileEntryTypes(DLUtil.getGroupIds(themeDisplay), folderId, true);
+				boolean inherited = false;
+
+				if (folder != null) {
+					DLFolder dlFolder = (DLFolder)folder.getModel();
+
+					inherited = !dlFolder.isOverrideFileEntryTypes();
+				}
+
+				List<DLFileEntryType> dlFileEntryTypes = DLFileEntryTypeLocalServiceUtil.getFolderFileEntryTypes(DLUtil.getGroupIds(themeDisplay), folderId, inherited);
 				%>
 
 				<c:choose>
@@ -444,6 +477,12 @@ else if (dlFileEntryType != null) {
 		submitForm(document.hrefFm, "<portlet:actionURL><portlet:param name="struts_action" value="/document_library/edit_file_entry" /><portlet:param name="<%= Constants.CMD %>" value="<%= Constants.CHECKOUT %>" /><portlet:param name="redirect" value="<%= redirect %>" /><portlet:param name="fileEntryId" value="<%= String.valueOf(fileEntryId) %>" /></portlet:actionURL>");
 	}
 
+	function <portlet:namespace />openFolderSelector() {
+		var folderWindow = window.open('<liferay-portlet:renderURL windowState="<%= LiferayWindowState.POP_UP.toString() %>"><portlet:param name="struts_action" value='<%= "/document_library/select_folder" %>' /></liferay-portlet:renderURL>', 'folder', 'directories=no,height=640,location=no,menubar=no,resizable=yes,scrollbars=yes,status=no,toolbar=no,width=830');
+
+		folderWindow.focus();
+	}
+
 	function <portlet:namespace />saveFileEntry(draft) {
 		<%= HtmlUtil.escape(uploadProgressId) %>.startProgress();
 
@@ -453,6 +492,17 @@ else if (dlFileEntryType != null) {
 
 		document.<portlet:namespace />fm.<portlet:namespace /><%= Constants.CMD %>.value = "<%= (fileEntry == null) ? Constants.ADD : Constants.UPDATE %>";
 		submitForm(document.<portlet:namespace />fm);
+	}
+
+	function <portlet:namespace />selectFolder(folderId, folderName) {
+		var folderData = {
+			idString: 'folderId',
+			idValue: folderId,
+			nameString: 'folderName',
+			nameValue: folderName
+		};
+
+		Liferay.Util.selectFolder(folderData, '<liferay-portlet:renderURL portletName="<%= portletResource %>"><portlet:param name="struts_action" value='<%= "/document_library/view" %>' /></liferay-portlet:renderURL>', '<portlet:namespace />');
 	}
 
 	<c:if test="<%= windowState.equals(WindowState.MAXIMIZED) %>">
@@ -472,6 +522,7 @@ else {
 	PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(pageContext, "add-file-entry"), currentURL);
 }
 %>
+
 <%!
 private static Log _log = LogFactoryUtil.getLog("portal-web.docroot.html.portlet.document_library.edit_file_entry_jsp");
 %>

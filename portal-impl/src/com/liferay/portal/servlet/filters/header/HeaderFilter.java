@@ -18,7 +18,6 @@ import com.liferay.portal.kernel.servlet.HttpHeaders;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HttpUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.TimeZoneUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.servlet.filters.BasePortalFilter;
@@ -97,21 +96,31 @@ public class HeaderFilter extends BasePortalFilter {
 				value = _dateFormat.format(cal.getTime());
 			}
 
-			// LEP-5895
+			// LEP-5895 and LPS-15802
 
 			boolean addHeader = true;
 
-			if (PropsValues.WEB_SERVER_PROXY_LEGACY_MODE) {
+			if (name.equalsIgnoreCase(HttpHeaders.CACHE_CONTROL) ||
+				name.equalsIgnoreCase(HttpHeaders.EXPIRES)) {
+
+				boolean newSession = false;
+
+				HttpSession session = request.getSession(false);
+
+				if ((session == null) || session.isNew()) {
+					newSession = true;
+				}
+
 				String contextPath = request.getContextPath();
 
-				if (name.equalsIgnoreCase(HttpHeaders.CACHE_CONTROL) &&
-					contextPath.equals(PortalUtil.getPathContext())) {
+				if (name.equalsIgnoreCase(HttpHeaders.EXPIRES) && newSession) {
+					addHeader = false;
+				}
+				else if (PropsValues.WEB_SERVER_PROXY_LEGACY_MODE &&
+						 newSession &&
+						 contextPath.equals(PortalUtil.getPathContext())) {
 
-					HttpSession session = request.getSession(false);
-
-					if ((session == null) || session.isNew()) {
-						addHeader = false;
-					}
+					addHeader = false;
 				}
 			}
 
@@ -143,7 +152,7 @@ public class HeaderFilter extends BasePortalFilter {
 
 	private static final String _EXPIRES = "Expires";
 
-	private static final String _TIME_ZONE = StringPool.UTC;
+	private static final String _TIME_ZONE = "GMT";
 
 	private static final String _URL_REGEX_PATTERN = "url-regex-pattern";
 

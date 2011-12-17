@@ -22,7 +22,7 @@ import com.liferay.portalweb.portal.util.RuntimeVariables;
  */
 public class ExportLARCPWikiUseCaseTest extends BaseTestCase {
 	public void testExportLARCPWikiUseCase() throws Exception {
-		selenium.open("/web/blogs-page-scope-community/");
+		selenium.open("/web/wiki-use-case-community/");
 
 		for (int second = 0;; second++) {
 			if (second >= 90) {
@@ -48,6 +48,7 @@ public class ExportLARCPWikiUseCaseTest extends BaseTestCase {
 		selenium.clickAt("//ul[@class='category-portlets']/li[11]/a",
 			RuntimeVariables.replace("Wiki"));
 		selenium.waitForPageToLoad("30000");
+		Thread.sleep(5000);
 		assertEquals(RuntimeVariables.replace("Options"),
 			selenium.getText("//menu/span/ul/li/strong/a"));
 		selenium.clickAt("//menu/span/ul/li/strong/a",

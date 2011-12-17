@@ -15,6 +15,10 @@
 		<to type="permanent-redirect">/web/guest/home/-/journal/rss/14/news</to>
 	</rule>
 	<rule>
+		<from>(.*)/tunnel-web(.*)</from>
+		<to type="permanent-redirect">$1/api$2</to>
+	</rule>
+	<rule>
 		<from>^/web/guest/community/forums/message_boards(.*)$</from>
 		<to type="permanent-redirect">/web/guest/community/forums/-/message_boards$1</to>
 	</rule>

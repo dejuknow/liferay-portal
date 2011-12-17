@@ -47,9 +47,9 @@
 		<delete file="app.server.${user.name}.properties" />
 
 		<antcall target="deploy-plugins">
-			<param name="deployer.dest.dir" value="${app.server.parent.dir}/jboss-${app.server.jboss.version}/server/default/deploy" />
+			<param name="deployer.dest.dir" value="${app.server.parent.dir}/jboss-${app.server.jboss.version}/standalone/deployments" />
 			<param name="deployer.app.server.type" value="jboss" />
-			<param name="deployer.app.server.lib.portal.dir" value="${app.server.parent.dir}/jboss-${app.server.jboss.version}/server/default/deploy/ROOT.war/WEB-INF/lib" />
+			<param name="deployer.app.server.lib.portal.dir" value="${app.server.parent.dir}/jboss-${app.server.jboss.version}/standalone/deployments/ROOT.war/WEB-INF/lib" />
 		</antcall>
 	</target>
 
@@ -162,6 +162,12 @@
 		</for>
 	</target>
 
+	<target name="build-dist-plugins">
+		<echo file="${lp.plugins.dir}/build.${user.name}.properties">plugins.includes=${lp.plugins.includes.required}</echo>
+
+		<ant dir="${lp.plugins.dir}" target="all" inheritAll="false" />
+	</target>
+
 	<target name="build-dist-resin">
 		<antcall target="unzip-resin" />
 
@@ -259,8 +265,6 @@
 			<fileset dir="${lp.plugins.dir}/dist" includes="*.war" />
 		</copy>
 
-		<copy file="tunnel-web/tunnel-web.war" tofile="${tcat.dir}/admin/tcat_init/webapps/${lp.version.tcat}/tunnel-web.war" />
-
 		<ant dir="${lp.plugins.dir}" target="clean" inheritAll="false" />
 
 		<echo file="${lp.plugins.dir}/build.${user.name}.properties">plugins.includes=${lp.plugins.includes.required}</echo>
@@ -270,7 +274,7 @@
 
 	<target name="build-dist-tcat-admin-webapps-portal">
 		<tstamp>
-			<format property="tstamp.value" pattern="yyyyMMdd" />
+			<format property="tstamp.value" pattern="yyyyMMddkkmmssSSS" />
 		</tstamp>
 
 		<mkdir dir="${tstamp.value}/META-INF" />
@@ -542,7 +546,7 @@ know what you are doing as it can cause loss of data.
 			<jvmarg value="-Ddeployer.base.dir=${lp.plugins.dir}/dist" />
 			<jvmarg value="-Ddeployer.dest.dir=${deployer.dest.dir}" />
 			<jvmarg value="-Ddeployer.app.server.type=${deployer.app.server.type}" />
-			<jvmarg value="-Ddeployer.aui.taglib.dtd=util-taglib/classes/META-INF/liferay-aui.tld" />
+			<jvmarg value="-Ddeployer.aui.taglib.dtd=util-taglib/classes/META-INF/aui.tld" />
 			<jvmarg value="-Ddeployer.portlet.taglib.dtd=util-taglib/classes/META-INF/liferay-portlet.tld" />
 			<jvmarg value="-Ddeployer.portlet-ext.taglib.dtd=util-taglib/classes/META-INF/liferay-portlet-ext.tld" />
 			<jvmarg value="-Ddeployer.security.taglib.dtd=util-taglib/classes/META-INF/liferay-security.tld" />
@@ -659,9 +663,7 @@ know what you are doing as it can cause loss of data.
 
 		<antcall target="zip-portal-war" />
 
-		<echo file="${lp.plugins.dir}/build.${user.name}.properties">plugins.includes=${lp.plugins.includes.required}</echo>
-
-		<ant dir="${lp.plugins.dir}" target="all" inheritAll="false" />
+		<antcall target="build-dist-plugins" />
 
 		<antcall target="build-dist-geronimo" />
 		<antcall target="build-dist-glassfish" />
@@ -686,8 +688,6 @@ know what you are doing as it can cause loss of data.
 		<antcall target="zip-src" />
 		<antcall target="zip-tcat" />
 		<antcall target="zip-tomcat" />
-
-		<copy file="tunnel-web/tunnel-web.war" tofile="dist/liferay-portal-tunnel-web-${lp.version}.war" />
 
 		<!--<antcall target="build-dist-sql-oracle" />-->
 
@@ -745,7 +745,7 @@ release was successful.</echo>
 
 	<target name="rename-dist-plugin-files">
 		<tstamp>
-			<format property="tstamp.value" pattern="yyyyMMdd" />
+			<format property="tstamp.value" pattern="yyyyMMddkkmmssSSS" />
 		</tstamp>
 
 		<for param="dist.plugin.file">
@@ -778,7 +778,7 @@ release was successful.</echo>
 
 	<target name="rename-dist-portal-files">
 		<tstamp>
-			<format property="tstamp.value" pattern="yyyyMMdd" />
+			<format property="tstamp.value" pattern="yyyyMMddkkmmssSSS" />
 		</tstamp>
 
 		<for param="dist.portal.file">
@@ -887,6 +887,44 @@ release was successful.</echo>
 			<replacetoken><![CDATA[org.xml.sax.helpers ${endorsed-standard-packages}]]></replacetoken>
 			<replacevalue><![CDATA[org.xml.sax.helpers, org.apache.felix.framework ${endorsed-standard-packages}]]></replacevalue>
 		</replace>
+
+		<if>
+			<equals arg1="${app.server.glassfish.version}" arg2="3.1.1" />
+			<then>
+
+				<!-- GLASSFISH-17242 -->
+
+				<zip
+					basedir="tools/servers/glassfish/patches/GLASSFISH-17242/classes"
+					destfile="${app.server.glassfish.dir}/modules/deployment-admin.jar"
+					includes="**/InstanceDeployCommand.class"
+					update="yes"
+				/>
+
+				<zip
+					basedir="tools/servers/glassfish/patches/GLASSFISH-17242/classes"
+					destfile="${app.server.glassfish.dir}/modules/deployment-common.jar"
+					includes="**/Util.class"
+					update="yes"
+				/>
+
+				<zip
+					basedir="tools/servers/glassfish/patches/GLASSFISH-17242/classes"
+					destfile="${app.server.glassfish.dir}/modules/kernel.jar"
+					includes="**/SnifferManagerImpl*.class"
+					update="yes"
+				/>
+
+				<!-- GRIZZLY-1060 -->
+
+				<zip
+					basedir="tools/servers/glassfish/patches/GRIZZLY-1060/classes"
+					destfile="${app.server.glassfish.dir}/modules/grizzly-utils.jar"
+					includes="**/OutputWriter.class"
+					update="yes"
+				/>
+			</then>
+		</if>
 	</target>
 
 	<target name="unzip-jboss">
@@ -923,6 +961,19 @@ release was successful.</echo>
 				<include name="*.sh"/>
 			</fileset>
 		</chmod>
+
+		<replace file="${app.server.jboss.dir}/modules/javax/activation/api/main/module.xml">
+			<replacetoken><![CDATA[<resources>]]></replacetoken>
+			<replacevalue><![CDATA[
+					<dependencies>
+						<module name="javax.api" />
+						<module name="javax.mail.api">
+							<imports><include path="META-INF" /></imports>
+						</module>
+					</dependencies>
+				<resources>]]>
+			</replacevalue>
+		</replace>
 
 		<replace file="${app.server.jboss.dir}/standalone/configuration/standalone.xml">
 			<replacetoken><![CDATA[enable-welcome-root="true"]]></replacetoken>
@@ -1166,7 +1217,7 @@ rerun this task.</echo>
 		/>
 
 		<tstamp>
-			<format property="tstamp.value" pattern="yyyyMMdd" />
+			<format property="tstamp.value" pattern="yyyyMMddkkmmssSSS" />
 		</tstamp>
 
 		<mkdir dir="${tstamp.value}" />
@@ -1361,12 +1412,37 @@ sh startWebLogic.sh</echo>
 		<if>
 			<available file="${zip.executable.dir}/../data" />
 			<then>
+				<zip
+					destfile="dist/${zip.executable.file}-${lp.version}.zip"
+				>
+					<zipfileset
+						dir="${zip.executable.dir}"
+						excludes="**/*.sh"
+						prefix="liferay-portal-${lp.version}/${zip.executable.dir.name}"
+					/>
+					<zipfileset
+						dir="${zip.executable.dir}"
+						filemode="744"
+						includes="**/*.sh"
+						prefix="liferay-portal-${lp.version}/${zip.executable.dir.name}"
+					/>
+					<zipfileset
+						dir="${zip.executable.dir}/../data"
+						prefix="liferay-portal-${lp.version}/data"
+					/>
+					<zipfileset
+						dir="tools/zip_tmpl"
+						prefix="liferay-portal-${lp.version}"
+					/>
+				</zip>
+
 				<delete dir="${zip.executable.dir}/../patching-tool" />
-				<mkdir dir="${zip.executable.dir}/../patching-tool" />
 
 				<if>
 					<available file="${patching.tool.source.dir}" type="dir" />
 					<then>
+						<mkdir dir="${zip.executable.dir}/../patching-tool" />
+
 						<copy todir="${zip.executable.dir}/../patching-tool">
 							<fileset
 								dir="${patching.tool.source.dir}/scripts"
@@ -1391,36 +1467,18 @@ sh startWebLogic.sh</echo>
 						<exec dir="${zip.executable.dir}/../patching-tool" executable="cmd.exe">
 							<arg line="/c patching-tool.bat auto-discovery" />
 						</exec>
+
+						<zip
+							destfile="dist/${zip.executable.file}-${lp.version}.zip"
+							update="yes"
+						>
+							<zipfileset
+								dir="${zip.executable.dir}/../patching-tool"
+								prefix="liferay-portal-${lp.version}/patching-tool"
+							/>
+						</zip>
 					</then>
 				</if>
-
-				<zip
-					destfile="dist/${zip.executable.file}-${lp.version}.zip"
-				>
-					<zipfileset
-						dir="${zip.executable.dir}"
-						excludes="**/*.sh"
-						prefix="liferay-portal-${lp.version}/${zip.executable.dir.name}"
-					/>
-					<zipfileset
-						dir="${zip.executable.dir}"
-						filemode="744"
-						includes="**/*.sh"
-						prefix="liferay-portal-${lp.version}/${zip.executable.dir.name}"
-					/>
-					<zipfileset
-						dir="${zip.executable.dir}/../data"
-						prefix="liferay-portal-${lp.version}/data"
-					/>
-					<zipfileset
-						dir="${zip.executable.dir}/../patching-tool"
-						prefix="liferay-portal-${lp.version}/patching-tool"
-					/>
-					<zipfileset
-						dir="tools/zip_tmpl"
-						prefix="liferay-portal-${lp.version}"
-					/>
-				</zip>
 			</then>
 			<else>
 

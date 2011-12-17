@@ -30,6 +30,7 @@ import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.servlet.HttpHeaders;
 import com.liferay.portal.kernel.servlet.PortalSessionThreadLocal;
+import com.liferay.portal.kernel.servlet.Range;
 import com.liferay.portal.kernel.servlet.ServletResponseUtil;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.ContentTypes;
@@ -278,7 +279,8 @@ public class WebServerServlet extends HttpServlet {
 			sb.append(dlFileEntry.getFolderId());
 			sb.append(StringPool.SLASH);
 			sb.append(
-				HttpUtil.encodeURL(HtmlUtil.unescape(dlFileEntry.getTitle())));
+				HttpUtil.encodeURL(
+					HtmlUtil.unescape(dlFileEntry.getTitle()), true));
 			sb.append("?version=");
 			sb.append(dlFileEntry.getVersion());
 
@@ -348,7 +350,7 @@ public class WebServerServlet extends HttpServlet {
 			long groupId = GetterUtil.getLong(pathArray[0]);
 			long folderId = GetterUtil.getLong(pathArray[1]);
 
-			String fileName = HttpUtil.decodeURL(pathArray[2], true);
+			String fileName = pathArray[2];
 
 			if (fileName.contains(StringPool.QUESTION)) {
 				fileName = fileName.substring(
@@ -359,8 +361,7 @@ public class WebServerServlet extends HttpServlet {
 		}
 	}
 
-	protected Image getImage(
-			HttpServletRequest request, boolean getDefault)
+	protected Image getImage(HttpServletRequest request, boolean getDefault)
 		throws PortalException, SystemException {
 
 		Image image = null;
@@ -561,7 +562,17 @@ public class WebServerServlet extends HttpServlet {
 					return -1;
 				}
 				else {
-					modifiedDate = fileEntry.getModifiedDate();
+					String version = ParamUtil.getString(request, "version");
+
+					if (Validator.isNotNull(version)) {
+						FileVersion fileVersion = fileEntry.getFileVersion(
+							version);
+
+						modifiedDate = fileVersion.getModifiedDate();
+					}
+					else {
+						modifiedDate = fileEntry.getModifiedDate();
+					}
 				}
 			}
 
@@ -633,6 +644,12 @@ public class WebServerServlet extends HttpServlet {
 			HttpServletRequest request, HttpServletResponse response, User user,
 			String path, String[] pathArray)
 		throws Exception {
+
+		if (!PropsValues.WEB_SERVER_SERVLET_DIRECTORY_INDEXING_ENABLED) {
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+
+			return;
+		}
 
 		long groupId = _getGroupId(user.getCompanyId(), pathArray[0]);
 		long folderId = DLFolderConstants.DEFAULT_PARENT_FOLDER_ID;
@@ -809,10 +826,51 @@ public class WebServerServlet extends HttpServlet {
 			converted = true;
 		}
 		else if (videoPreview) {
+			String type = ParamUtil.getString(request, "type");
+
 			fileName = FileUtil.stripExtension(fileName).concat(
-				StringPool.PERIOD).concat(VideoProcessor.PREVIEW_TYPE);
-			inputStream = VideoProcessor.getPreviewAsStream(fileVersion);
-			contentLength = VideoProcessor.getPreviewFileSize(fileVersion);
+				StringPool.PERIOD).concat(type);
+			inputStream = VideoProcessor.getPreviewAsStream(fileVersion, type);
+			contentLength = VideoProcessor.getPreviewFileSize(
+				fileVersion, type);
+
+			response.setHeader(
+				HttpHeaders.ACCEPT_RANGES,
+				HttpHeaders.ACCEPT_RANGES_BYTES_VALUE);
+
+			List<Range> ranges = null;
+
+			try {
+				ranges = ServletResponseUtil.getRanges(
+					request, response, contentLength);
+			}
+			catch (IOException ioe) {
+				if (_log.isErrorEnabled()) {
+					_log.error(ioe);
+				}
+
+				response.setHeader(
+					HttpHeaders.CONTENT_RANGE, "bytes */" + contentLength);
+
+				response.sendError(
+					HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);
+
+				return;
+			}
+
+			if ((ranges != null) && (ranges.size() > 0)) {
+				if (_log.isDebugEnabled()) {
+					_log.debug("Video range requested");
+				}
+
+				String contentType = MimeTypesUtil.getContentType(fileName);
+
+				ServletResponseUtil.write(
+					request, response, fileName, ranges, inputStream,
+					contentLength, contentType);
+
+				return;
+			}
 
 			converted = true;
 		}
@@ -877,6 +935,12 @@ public class WebServerServlet extends HttpServlet {
 	protected void sendGroups(
 			HttpServletResponse response, User user, String path)
 		throws Exception {
+
+		if (!PropsValues.WEB_SERVER_SERVLET_DIRECTORY_INDEXING_ENABLED) {
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+
+			return;
+		}
 
 		List<WebServerEntry> webServerEntries = new ArrayList<WebServerEntry>();
 
@@ -973,7 +1037,7 @@ public class WebServerServlet extends HttpServlet {
 		else {
 			long groupId = GetterUtil.getLong(pathArray[0]);
 			long folderId = GetterUtil.getLong(pathArray[1]);
-			String fileName = HttpUtil.decodeURL(pathArray[2], true);
+			String fileName = pathArray[2];
 
 			try {
 				DLAppLocalServiceUtil.getFileEntry(groupId, folderId, fileName);

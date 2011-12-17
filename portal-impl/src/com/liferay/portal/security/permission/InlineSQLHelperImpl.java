@@ -15,6 +15,7 @@
 package com.liferay.portal.security.permission;
 
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -437,23 +438,35 @@ public class InlineSQLHelperImpl implements InlineSQLHelper {
 
 		long userId = getUserId();
 
+		boolean hasPreviousViewableGroup = false;
+
 		for (int j = 0; j < groupIds.length; j++) {
 			long groupId = groupIds[j];
 
 			if (!permissionChecker.hasPermission(
 					groupId, className, 0, ActionKeys.VIEW)) {
 
-				if (j > 0) {
+				if ((j > 0) && hasPreviousViewableGroup) {
 					sb.append(" OR ");
 				}
 
+				hasPreviousViewableGroup = true;
+
 				sb.append("(");
+				sb.append(
+					classPKField.substring(
+						0, classPKField.lastIndexOf(CharPool.PERIOD)));
+				sb.append(".groupId = ");
+				sb.append(groupId);
+				sb.append(")");
 
 				long[] roleIds = getRoleIds(groupId);
 
 				if (roleIds.length == 0) {
 					roleIds = _NO_ROLE_IDS;
 				}
+
+				sb.append(" AND (");
 
 				for (int i = 0; i < roleIds.length; i++) {
 					if (i > 0) {
@@ -481,14 +494,8 @@ public class InlineSQLHelperImpl implements InlineSQLHelper {
 					}
 				}
 
-				sb.append(") AND ");
+				sb.append(")");
 			}
-
-			sb.append("(");
-			sb.append(classPKField.substring(0, classPKField.lastIndexOf('.')));
-			sb.append(".groupId = ");
-			sb.append(groupId);
-			sb.append(")");
 		}
 
 		sb.append("))");

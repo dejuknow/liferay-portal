@@ -39,7 +39,6 @@ DDMStructure structure = (DDMStructure)row.getObject();
 	<c:if test="<%= DDMStructurePermission.contains(permissionChecker, structure, ActionKeys.UPDATE) && showManageTemplates %>">
 		<portlet:renderURL var="manageViewURL">
 			<portlet:param name="struts_action" value="/dynamic_data_mapping/view_template" />
-			<portlet:param name="redirect" value="<%= currentURL %>" />
 			<portlet:param name="backURL" value="<%= currentURL %>" />
 			<portlet:param name="structureId" value="<%= String.valueOf(structure.getStructureId()) %>" />
 		</portlet:renderURL>
@@ -65,17 +64,27 @@ DDMStructure structure = (DDMStructure)row.getObject();
 		/>
 	</c:if>
 
-	<c:if test="<%= DDMPermission.contains(permissionChecker, scopeGroupId, ActionKeys.ADD_STRUCTURE) %>">
-		<portlet:actionURL var="copyURL">
-			<portlet:param name="struts_action" value="/dynamic_data_mapping/edit_structure" />
-			<portlet:param name="<%= Constants.CMD %>" value="<%= Constants.COPY %>" />
-			<portlet:param name="redirect" value="<%= currentURL %>" />
+	<c:if test="<%= DDMPermission.contains(permissionChecker, scopeGroupId, ddmResource, ActionKeys.ADD_STRUCTURE) %>">
+		<portlet:renderURL var="copyURL">
+			<portlet:param name="closeRedirect" value="<%= HttpUtil.encodeURL(currentURL) %>" />
+			<portlet:param name="struts_action" value="/dynamic_data_mapping/copy_structure" />
 			<portlet:param name="structureId" value="<%= String.valueOf(structure.getStructureId()) %>" />
-		</portlet:actionURL>
+		</portlet:renderURL>
+
+		<%
+		StringBundler sb = new StringBundler(6);
+
+		sb.append("javascript:");
+		sb.append(renderResponse.getNamespace());
+		sb.append("copyStructure");
+		sb.append("('");
+		sb.append(copyURL);
+		sb.append("');");
+		%>
 
 		<liferay-ui:icon
 			image="copy"
-			url="<%= copyURL %>"
+			url="<%= sb.toString() %>"
 		/>
 	</c:if>
 

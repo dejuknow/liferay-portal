@@ -110,40 +110,80 @@ public class ArrayUtil_IW {
 		return ArrayUtil.clone(array);
 	}
 
+	public boolean[] clone(boolean[] array, int from, int to) {
+		return ArrayUtil.clone(array, from, to);
+	}
+
 	public byte[] clone(byte[] array) {
 		return ArrayUtil.clone(array);
+	}
+
+	public byte[] clone(byte[] array, int from, int to) {
+		return ArrayUtil.clone(array, from, to);
 	}
 
 	public char[] clone(char[] array) {
 		return ArrayUtil.clone(array);
 	}
 
+	public char[] clone(char[] array, int from, int to) {
+		return ArrayUtil.clone(array, from, to);
+	}
+
 	public double[] clone(double[] array) {
 		return ArrayUtil.clone(array);
+	}
+
+	public double[] clone(double[] array, int from, int to) {
+		return ArrayUtil.clone(array, from, to);
 	}
 
 	public float[] clone(float[] array) {
 		return ArrayUtil.clone(array);
 	}
 
+	public float[] clone(float[] array, int from, int to) {
+		return ArrayUtil.clone(array, from, to);
+	}
+
 	public int[] clone(int[] array) {
 		return ArrayUtil.clone(array);
+	}
+
+	public int[] clone(int[] array, int from, int to) {
+		return ArrayUtil.clone(array, from, to);
 	}
 
 	public long[] clone(long[] array) {
 		return ArrayUtil.clone(array);
 	}
 
+	public long[] clone(long[] array, int from, int to) {
+		return ArrayUtil.clone(array, from, to);
+	}
+
 	public short[] clone(short[] array) {
 		return ArrayUtil.clone(array);
+	}
+
+	public short[] clone(short[] array, int from, int to) {
+		return ArrayUtil.clone(array, from, to);
 	}
 
 	public <T> T[] clone(T[] array) {
 		return ArrayUtil.clone(array);
 	}
 
+	public <T> T[] clone(T[] array, int from, int to) {
+		return ArrayUtil.clone(array, from, to);
+	}
+
 	public <T> T[][] clone(T[][] array) {
 		return ArrayUtil.clone(array);
+	}
+
+	public <T> T[][] clone(T[][] array, int from, int to) {
+		return ArrayUtil.clone(array, from, to);
 	}
 
 	public void combine(java.lang.Object[] array1, java.lang.Object[] array2,
@@ -350,6 +390,27 @@ public class ArrayUtil_IW {
 		return ArrayUtil.toLongArray(array);
 	}
 
+	public <T, V> java.lang.String toString(T[] list,
+		com.liferay.portal.kernel.util.Accessor<T, V> accessor) {
+		return ArrayUtil.toString(list, accessor);
+	}
+
+	public <T, V> java.lang.String toString(T[] list,
+		com.liferay.portal.kernel.util.Accessor<T, V> accessor,
+		java.lang.String delimiter) {
+		return ArrayUtil.toString(list, accessor, delimiter);
+	}
+
+	public java.lang.String toString(java.lang.Object[] array,
+		java.lang.String param) {
+		return ArrayUtil.toString(array, param);
+	}
+
+	public java.lang.String toString(java.lang.Object[] array,
+		java.lang.String param, java.lang.String delimiter) {
+		return ArrayUtil.toString(array, param, delimiter);
+	}
+
 	public java.lang.String[] toStringArray(boolean[] array) {
 		return ArrayUtil.toStringArray(array);
 	}
@@ -363,8 +424,8 @@ public class ArrayUtil_IW {
 	}
 
 	public java.lang.String[] toStringArray(java.util.Date[] array,
-		java.text.DateFormat df) {
-		return ArrayUtil.toStringArray(array, df);
+		java.text.DateFormat dateFormat) {
+		return ArrayUtil.toStringArray(array, dateFormat);
 	}
 
 	public java.lang.String[] toStringArray(double[] array) {

@@ -44,7 +44,7 @@ public class MDRRuleGroupInstanceServiceImpl
 			getPermissionChecker(), groupId,
 			ActionKeys.ADD_RULE_GROUP_INSTANCE);
 
-		return  mdrRuleGroupInstanceLocalService.addRuleGroupInstance(
+		return mdrRuleGroupInstanceLocalService.addRuleGroupInstance(
 			groupId, className, classPK, ruleGroupId, priority, serviceContext);
 	}
 
@@ -57,7 +57,7 @@ public class MDRRuleGroupInstanceServiceImpl
 			getPermissionChecker(), groupId,
 			ActionKeys.ADD_RULE_GROUP_INSTANCE);
 
-		return  mdrRuleGroupInstanceLocalService.addRuleGroupInstance(
+		return mdrRuleGroupInstanceLocalService.addRuleGroupInstance(
 			groupId, className, classPK, ruleGroupId, serviceContext);
 	}
 
@@ -67,12 +67,6 @@ public class MDRRuleGroupInstanceServiceImpl
 		MDRRuleGroupInstance ruleGroupInstance =
 			mdrRuleGroupInstancePersistence.findByPrimaryKey(
 				ruleGroupInstanceId);
-
-		deleteRuleGroupInstance(ruleGroupInstance);
-	}
-
-	public void deleteRuleGroupInstance(MDRRuleGroupInstance ruleGroupInstance)
-		throws PortalException, SystemException {
 
 		MDRRuleGroupInstancePermissionUtil.check(
 			getPermissionChecker(), ruleGroupInstance, ActionKeys.DELETE);

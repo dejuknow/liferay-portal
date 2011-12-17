@@ -94,13 +94,6 @@ public class PortletUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static Portlet remove(Portlet portlet) throws SystemException {
-		return getPersistence().remove(portlet);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static Portlet update(Portlet portlet, boolean merge)

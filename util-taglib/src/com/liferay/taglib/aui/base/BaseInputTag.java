@@ -133,8 +133,16 @@ public class BaseInputTag extends com.liferay.taglib.util.IncludeTag {
 		return _onClick;
 	}
 
+	public java.lang.String getPlaceholder() {
+		return _placeholder;
+	}
+
 	public java.lang.String getPrefix() {
 		return _prefix;
+	}
+
+	public boolean getShowRequiredLabel() {
+		return _showRequiredLabel;
 	}
 
 	public java.lang.String getSuffix() {
@@ -307,10 +315,22 @@ public class BaseInputTag extends com.liferay.taglib.util.IncludeTag {
 		setScopedAttribute("onClick", onClick);
 	}
 
+	public void setPlaceholder(java.lang.String placeholder) {
+		_placeholder = placeholder;
+
+		setScopedAttribute("placeholder", placeholder);
+	}
+
 	public void setPrefix(java.lang.String prefix) {
 		_prefix = prefix;
 
 		setScopedAttribute("prefix", prefix);
+	}
+
+	public void setShowRequiredLabel(boolean showRequiredLabel) {
+		_showRequiredLabel = showRequiredLabel;
+
+		setScopedAttribute("showRequiredLabel", showRequiredLabel);
 	}
 
 	public void setSuffix(java.lang.String suffix) {
@@ -370,7 +390,9 @@ public class BaseInputTag extends com.liferay.taglib.util.IncludeTag {
 		_name = null;
 		_onChange = null;
 		_onClick = null;
+		_placeholder = null;
 		_prefix = null;
+		_showRequiredLabel = true;
 		_suffix = null;
 		_title = null;
 		_type = null;
@@ -410,7 +432,9 @@ public class BaseInputTag extends com.liferay.taglib.util.IncludeTag {
 		setNamespacedAttribute(request, "name", _name);
 		setNamespacedAttribute(request, "onChange", _onChange);
 		setNamespacedAttribute(request, "onClick", _onClick);
+		setNamespacedAttribute(request, "placeholder", _placeholder);
 		setNamespacedAttribute(request, "prefix", _prefix);
+		setNamespacedAttribute(request, "showRequiredLabel", _showRequiredLabel);
 		setNamespacedAttribute(request, "suffix", _suffix);
 		setNamespacedAttribute(request, "title", _title);
 		setNamespacedAttribute(request, "type", _type);
@@ -448,7 +472,9 @@ public class BaseInputTag extends com.liferay.taglib.util.IncludeTag {
 	private java.lang.String _name = null;
 	private java.lang.String _onChange = null;
 	private java.lang.String _onClick = null;
+	private java.lang.String _placeholder = null;
 	private java.lang.String _prefix = null;
+	private boolean _showRequiredLabel = true;
 	private java.lang.String _suffix = null;
 	private java.lang.String _title = null;
 	private java.lang.String _type = null;

@@ -426,7 +426,7 @@ portletDisplay.setURLPortlet(themeDisplay.getCDNHost() + portletIcon);
 
 // URL close
 
-String urlClose = themeDisplay.getPathMain() + "/portal/update_layout?p_l_id=" + plid + "&p_p_id=" + portletDisplay.getId() + "&doAsUserId=" + HttpUtil.encodeURL(themeDisplay.getDoAsUserId()) + "&" + Constants.CMD + "=" + Constants.DELETE + "&referer=" + HttpUtil.encodeURL(themeDisplay.getPathMain() + "/portal/layout?p_l_id=" + plid + "&doAsUserId=" + themeDisplay.getDoAsUserId()) + "&refresh=1";
+String urlClose = themeDisplay.getPathMain() + "/portal/update_layout?p_l_id=" + plid + "&p_p_id=" + portletDisplay.getId() + "&p_v_l_s_g_id=" + themeDisplay.getParentGroupId() + "&doAsUserId=" + HttpUtil.encodeURL(themeDisplay.getDoAsUserId()) + "&" + Constants.CMD + "=" + Constants.DELETE + "&referer=" + HttpUtil.encodeURL(themeDisplay.getPathMain() + "/portal/layout?p_l_id=" + plid + "&doAsUserId=" + themeDisplay.getDoAsUserId()) + "&refresh=1";
 
 if (themeDisplay.isAddSessionIdToURL()) {
 	urlClose = PortalUtil.getURLWithSessionId(urlClose, themeDisplay.getSessionId());
@@ -614,7 +614,7 @@ portletDisplay.setURLMax(urlMax.toString());
 
 // URL min
 
-String urlMin = themeDisplay.getPathMain() + "/portal/update_layout?p_l_id=" + plid + "&p_p_id=" + portletDisplay.getId() + "&p_p_restore=" + portletDisplay.isStateMin() + "&doAsUserId=" + HttpUtil.encodeURL(themeDisplay.getDoAsUserId()) + "&" + Constants.CMD + "=minimize&referer=" + HttpUtil.encodeURL(themeDisplay.getPathMain() + "/portal/layout?p_l_id=" + plid + "&doAsUserId=" + themeDisplay.getDoAsUserId()) + "&refresh=1";
+String urlMin = themeDisplay.getPathMain() + "/portal/update_layout?p_l_id=" + plid + "&p_p_id=" + portletDisplay.getId() + "&p_p_restore=" + portletDisplay.isStateMin() + "&p_v_l_s_g_id=" + themeDisplay.getParentGroupId() + "&doAsUserId=" + HttpUtil.encodeURL(themeDisplay.getDoAsUserId()) + "&" + Constants.CMD + "=minimize&referer=" + HttpUtil.encodeURL(themeDisplay.getPathMain() + "/portal/layout?p_l_id=" + plid + "&doAsUserId=" + themeDisplay.getDoAsUserId()) + "&refresh=1";
 
 portletDisplay.setURLMin(urlMin);
 
@@ -847,7 +847,7 @@ if ((layout.isTypePanel() || layout.isTypeControlPanel()) && !portletDisplay.get
 	%>
 
 	<div id="p_p_id<%= HtmlUtil.escapeAttribute(renderResponseImpl.getNamespace()) %>" class="<%= cssClasses %>" <%= freeformStyles %>>
-		<a id="p_<%= HtmlUtil.escapeAttribute(portletId) %>"></a>
+		<span id="p_<%= HtmlUtil.escapeAttribute(portletId) %>"></span>
 
 		<div class="portlet-body">
 </c:if>
@@ -997,16 +997,7 @@ else {
 %>
 
 <c:if test="<%= !themeDisplay.isFacebook() && !themeDisplay.isStateExclusive() && !themeDisplay.isWapTheme() %>">
-
-			<%
-			String modules = StringPool.BLANK;
-
-			if (showConfigurationIcon) {
-				modules += "aui-editable";
-			}
-			%>
-
-			<aui:script position='<%= themeDisplay.isIsolated() ? "inline" : "auto" %>' use="<%= modules %>">
+			<aui:script position='<%= themeDisplay.isIsolated() ? "inline" : "auto" %>'>
 				Liferay.Portlet.onLoad(
 					{
 						canEditTitle: <%= showConfigurationIcon && portletDecorate %>,
@@ -1024,39 +1015,50 @@ else {
 
 <%
 if (themeDisplay.isStatePopUp()) {
-	String doRefreshPortletId = null;
+	String refreshPortletId = null;
 
-	if ((doRefreshPortletId = (String)SessionMessages.get(renderRequestImpl, portletConfig.getPortletName() + ".doRefresh")) != null) {
-		if (Validator.isNull(doRefreshPortletId) && (portletResourcePortlet != null)) {
-			doRefreshPortletId = portletResourcePortlet.getPortletId();
+	if ((refreshPortletId = (String)SessionMessages.get(renderRequestImpl, portletConfig.getPortletName() + SessionMessages.KEY_SUFFIX_REFRESH_PORTLET)) != null) {
+		if (Validator.isNull(refreshPortletId) && (portletResourcePortlet != null)) {
+			refreshPortletId = portletResourcePortlet.getPortletId();
 		}
+
+		Map<String, String> refreshPortletData = (Map<String, String>)SessionMessages.get(renderRequestImpl, portletConfig.getPortletName() + SessionMessages.KEY_SUFFIX_REFRESH_PORTLET_DATA);
 %>
 
 		<aui:script position="inline" use="aui-base">
 			if (window.parent) {
-				var data = null;
+				var data = {
+					portletAjaxable: <%= !((portletResourcePortlet != null && !portletResourcePortlet.isAjaxable()) || SessionMessages.contains(renderRequestImpl, portletConfig.getPortletName() + SessionMessages.KEY_SUFFIX_PORTLET_NOT_AJAXABLE)) %>
 
-				var curPortletBoundaryId = '#p_p_id_<%= doRefreshPortletId %>_';
+					<c:if test="<%= (refreshPortletData != null) && !refreshPortletData.isEmpty() %>">
 
-				<c:if test='<%= (portletResourcePortlet != null && !portletResourcePortlet.isAjaxable()) || SessionMessages.contains(renderRequestImpl, portletConfig.getPortletName() + ".notAjaxable") %>'>
-					data = {
-						portletAjaxable: false
-					};
-				</c:if>
+						<%
+						for (Map.Entry<String, String> entry : refreshPortletData.entrySet()) {
+						%>
 
-				Liferay.Util.getOpener().Liferay.Portlet.refresh(curPortletBoundaryId, data);
+							, '<%= entry.getKey() %>': <%= entry.getValue() %>
+
+						<%
+						}
+						%>
+
+					</c:if>
+
+				};
+
+				Liferay.Util.getOpener().Liferay.Portlet.refresh('#p_p_id_<%= refreshPortletId %>_', data);
 			}
 		</aui:script>
 
 <%
 	}
 
-	String doCloseRedirect = null;
+	String closeRedirect = null;
 
-	if ((doCloseRedirect = (String)SessionMessages.get(renderRequestImpl, portletConfig.getPortletName() + ".doCloseRedirect")) != null) {
+	if ((closeRedirect = (String)SessionMessages.get(renderRequestImpl, portletConfig.getPortletName() + SessionMessages.KEY_SUFFIX_CLOSE_REDIRECT)) != null) {
 %>
 
-		<aui:script use="aui-base,aui-loading-mask">
+		<aui:script use="aui-base">
 			var dialog = Liferay.Util.getWindow();
 
 			dialog.on(
@@ -1067,13 +1069,18 @@ if (themeDisplay.isStatePopUp()) {
 
 						var topA = refreshWindow.AUI();
 
-						new topA.LoadingMask(
-							{
-								target: topA.getBody()
+						topA.use(
+							'aui-loading-mask',
+							function(A) {
+								new A.LoadingMask(
+									{
+										target: A.getBody()
+									}
+								).show();
 							}
-						).show();
+						);
 
-						refreshWindow.location.href = '<%= doCloseRedirect %>';
+						refreshWindow.location.href = '<%= closeRedirect %>';
 					}
 				}
 			);

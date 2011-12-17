@@ -165,6 +165,17 @@ public class ListTypePersistenceImpl extends BasePersistenceImpl<ListType>
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 	}
 
+	@Override
+	public void clearCache(List<ListType> listTypes) {
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+
+		for (ListType listType : listTypes) {
+			EntityCacheUtil.removeResult(ListTypeModelImpl.ENTITY_CACHE_ENABLED,
+				ListTypeImpl.class, listType.getPrimaryKey());
+		}
+	}
+
 	/**
 	 * Creates a new list type with the primary key. Does not add the list type to the database.
 	 *
@@ -183,20 +194,6 @@ public class ListTypePersistenceImpl extends BasePersistenceImpl<ListType>
 	/**
 	 * Removes the list type with the primary key from the database. Also notifies the appropriate model listeners.
 	 *
-	 * @param primaryKey the primary key of the list type
-	 * @return the list type that was removed
-	 * @throws com.liferay.portal.NoSuchModelException if a list type with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public ListType remove(Serializable primaryKey)
-		throws NoSuchModelException, SystemException {
-		return remove(((Integer)primaryKey).intValue());
-	}
-
-	/**
-	 * Removes the list type with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
 	 * @param listTypeId the primary key of the list type
 	 * @return the list type that was removed
 	 * @throws com.liferay.portal.NoSuchListTypeException if a list type with the primary key could not be found
@@ -204,24 +201,38 @@ public class ListTypePersistenceImpl extends BasePersistenceImpl<ListType>
 	 */
 	public ListType remove(int listTypeId)
 		throws NoSuchListTypeException, SystemException {
+		return remove(Integer.valueOf(listTypeId));
+	}
+
+	/**
+	 * Removes the list type with the primary key from the database. Also notifies the appropriate model listeners.
+	 *
+	 * @param primaryKey the primary key of the list type
+	 * @return the list type that was removed
+	 * @throws com.liferay.portal.NoSuchListTypeException if a list type with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public ListType remove(Serializable primaryKey)
+		throws NoSuchListTypeException, SystemException {
 		Session session = null;
 
 		try {
 			session = openSession();
 
 			ListType listType = (ListType)session.get(ListTypeImpl.class,
-					Integer.valueOf(listTypeId));
+					primaryKey);
 
 			if (listType == null) {
 				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + listTypeId);
+					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchListTypeException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
-					listTypeId);
+					primaryKey);
 			}
 
-			return listTypePersistence.remove(listType);
+			return remove(listType);
 		}
 		catch (NoSuchListTypeException nsee) {
 			throw nsee;
@@ -232,18 +243,6 @@ public class ListTypePersistenceImpl extends BasePersistenceImpl<ListType>
 		finally {
 			closeSession(session);
 		}
-	}
-
-	/**
-	 * Removes the list type from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param listType the list type
-	 * @return the list type that was removed
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public ListType remove(ListType listType) throws SystemException {
-		return super.remove(listType);
 	}
 
 	@Override
@@ -264,11 +263,7 @@ public class ListTypePersistenceImpl extends BasePersistenceImpl<ListType>
 			closeSession(session);
 		}
 
-		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
-		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
-
-		EntityCacheUtil.removeResult(ListTypeModelImpl.ENTITY_CACHE_ENABLED,
-			ListTypeImpl.class, listType.getPrimaryKey());
+		clearCache(listType);
 
 		return listType;
 	}
@@ -932,7 +927,7 @@ public class ListTypePersistenceImpl extends BasePersistenceImpl<ListType>
 	 */
 	public void removeByType(String type) throws SystemException {
 		for (ListType listType : findByType(type)) {
-			listTypePersistence.remove(listType);
+			remove(listType);
 		}
 	}
 
@@ -943,7 +938,7 @@ public class ListTypePersistenceImpl extends BasePersistenceImpl<ListType>
 	 */
 	public void removeAll() throws SystemException {
 		for (ListType listType : findAll()) {
-			listTypePersistence.remove(listType);
+			remove(listType);
 		}
 	}
 

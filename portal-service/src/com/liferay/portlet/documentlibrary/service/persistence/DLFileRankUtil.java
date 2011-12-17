@@ -95,14 +95,6 @@ public class DLFileRankUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static DLFileRank remove(DLFileRank dlFileRank)
-		throws SystemException {
-		return getPersistence().remove(dlFileRank);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static DLFileRank update(DLFileRank dlFileRank, boolean merge)

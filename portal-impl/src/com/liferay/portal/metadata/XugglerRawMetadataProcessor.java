@@ -143,15 +143,18 @@ public class XugglerRawMetadataProcessor extends BaseRawMetadataProcessor {
 
 	protected boolean isSupported(String mimeType) throws SystemException {
 		if (PrefsPropsUtil.getBoolean(
-				PropsKeys.XUGGLER_ENABLED, PropsValues.XUGGLER_ENABLED) &&
-			(AudioProcessor.isSupportedAudio(mimeType) ||
-			 VideoProcessor.isSupportedVideo(mimeType))) {
+				PropsKeys.XUGGLER_ENABLED, PropsValues.XUGGLER_ENABLED)) {
 
-			return true;
+			if (AudioProcessor.isAudioSupported(mimeType)) {
+				return true;
+			}
+
+			if (VideoProcessor.isVideoSupported(mimeType)) {
+				return true;
+			}
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(

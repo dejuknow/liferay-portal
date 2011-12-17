@@ -32,8 +32,7 @@ import java.util.List;
  */
 public class TeamServiceImpl extends TeamServiceBaseImpl {
 
-	public Team addTeam(
-			long groupId, String name, String description)
+	public Team addTeam(long groupId, String name, String description)
 		throws PortalException, SystemException {
 
 		GroupPermissionUtil.check(
@@ -76,8 +75,7 @@ public class TeamServiceImpl extends TeamServiceBaseImpl {
 
 		Team team = teamLocalService.getTeam(groupId, name);
 
-		TeamPermissionUtil.check(
-			getPermissionChecker(), team, ActionKeys.VIEW);
+		TeamPermissionUtil.check(getPermissionChecker(), team, ActionKeys.VIEW);
 
 		return team;
 	}

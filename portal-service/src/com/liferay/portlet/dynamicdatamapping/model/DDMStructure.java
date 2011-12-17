@@ -35,25 +35,31 @@ public interface DDMStructure extends DDMStructureModel, PersistedModel {
 
 	public java.lang.String getDefaultLocale();
 
-	public java.lang.String getFieldDataType(java.lang.String fieldName);
+	public com.liferay.portal.kernel.xml.Document getDocument();
 
-	public boolean getFieldDisplayChildLabelAsValue(java.lang.String fieldName);
-
-	public java.lang.String getFieldLabel(java.lang.String fieldName,
-		java.util.Locale locale);
+	public java.lang.String getFieldDataType(java.lang.String fieldName)
+		throws com.liferay.portlet.dynamicdatamapping.StructureFieldException;
 
 	public java.lang.String getFieldLabel(java.lang.String fieldName,
-		java.lang.String locale);
+		java.util.Locale locale)
+		throws com.liferay.portlet.dynamicdatamapping.StructureFieldException;
+
+	public java.lang.String getFieldLabel(java.lang.String fieldName,
+		java.lang.String locale)
+		throws com.liferay.portlet.dynamicdatamapping.StructureFieldException;
 
 	public java.util.Set<java.lang.String> getFieldNames();
 
 	public java.lang.String getFieldProperty(java.lang.String fieldName,
-		java.lang.String property);
+		java.lang.String property)
+		throws com.liferay.portlet.dynamicdatamapping.StructureFieldException;
 
 	public java.lang.String getFieldProperty(java.lang.String fieldName,
-		java.lang.String property, java.lang.String locale);
+		java.lang.String property, java.lang.String locale)
+		throws com.liferay.portlet.dynamicdatamapping.StructureFieldException;
 
-	public boolean getFieldRequired(java.lang.String fieldName);
+	public boolean getFieldRequired(java.lang.String fieldName)
+		throws com.liferay.portlet.dynamicdatamapping.StructureFieldException;
 
 	public java.util.Map<java.lang.String, java.lang.String> getFields(
 		java.lang.String fieldName, java.lang.String attributeName,
@@ -68,9 +74,15 @@ public interface DDMStructure extends DDMStructureModel, PersistedModel {
 	public java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.String>> getFieldsMap(
 		java.lang.String locale);
 
-	public java.lang.String getFieldType(java.lang.String fieldName);
+	public java.lang.String getFieldType(java.lang.String fieldName)
+		throws com.liferay.portlet.dynamicdatamapping.StructureFieldException;
 
 	public boolean hasField(java.lang.String fieldName);
+
+	public void setDocument(com.liferay.portal.kernel.xml.Document document);
+
+	public void setFieldsMap(
+		java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.String>> fieldsMap);
 
 	public void setXsd(java.lang.String xsd);
 }

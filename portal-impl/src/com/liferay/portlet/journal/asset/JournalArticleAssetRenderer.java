@@ -16,6 +16,7 @@ package com.liferay.portlet.journal.asset;
 
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
+import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.security.permission.ActionKeys;
@@ -31,6 +32,7 @@ import com.liferay.portlet.journal.model.JournalArticle;
 import com.liferay.portlet.journal.model.JournalArticleConstants;
 import com.liferay.portlet.journal.service.permission.JournalArticlePermission;
 
+import java.util.Date;
 import java.util.Locale;
 
 import javax.portlet.PortletRequest;
@@ -159,7 +161,7 @@ public class JournalArticleAssetRenderer extends BaseAssetRenderer {
 
 		return groupFriendlyURL.concat(
 			JournalArticleConstants.CANONICAL_URL_SEPARATOR).concat(
-				_article.getUrlTitle());
+				HtmlUtil.escape(_article.getUrlTitle()));
 	}
 
 	public long getUserId() {
@@ -178,17 +180,36 @@ public class JournalArticleAssetRenderer extends BaseAssetRenderer {
 	@Override
 	public boolean hasEditPermission(PermissionChecker permissionChecker) {
 		return JournalArticlePermission.contains(
-			permissionChecker,_article, ActionKeys.UPDATE);
+			permissionChecker, _article, ActionKeys.UPDATE);
 	}
 
 	@Override
 	public boolean hasViewPermission(PermissionChecker permissionChecker) {
 		return JournalArticlePermission.contains(
-			permissionChecker,_article, ActionKeys.VIEW);
+			permissionChecker, _article, ActionKeys.VIEW);
 	}
 
 	@Override
 	public boolean isConvertible() {
+		return true;
+	}
+
+	@Override
+	public boolean isDisplayable() {
+		Date now = new Date();
+
+		Date displayDate = _article.getDisplayDate();
+
+		if ((displayDate != null) && displayDate.after(now)) {
+			return false;
+		}
+
+		Date expirationDate = _article.getExpirationDate();
+
+		if ((expirationDate != null) && expirationDate.before(now)) {
+			return false;
+		}
+
 		return true;
 	}
 

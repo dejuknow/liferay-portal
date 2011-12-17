@@ -95,14 +95,6 @@ public class JournalTemplateUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static JournalTemplate remove(JournalTemplate journalTemplate)
-		throws SystemException {
-		return getPersistence().remove(journalTemplate);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static JournalTemplate update(JournalTemplate journalTemplate,

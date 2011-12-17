@@ -94,14 +94,6 @@ public class SubscriptionUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static Subscription remove(Subscription subscription)
-		throws SystemException {
-		return getPersistence().remove(subscription);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static Subscription update(Subscription subscription, boolean merge)

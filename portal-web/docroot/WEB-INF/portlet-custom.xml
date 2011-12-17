@@ -244,6 +244,10 @@
 		<display-name>Documents and Media</display-name>
 		<portlet-class>com.liferay.portlet.StrutsPortlet</portlet-class>
 		<init-param>
+			<name>ddm-resource</name>
+			<value>com.liferay.portlet.documentlibrary</value>
+		</init-param>
+		<init-param>
 			<name>view-action</name>
 			<value>/document_library/view</value>
 		</init-param>
@@ -266,6 +270,7 @@
 			<role-name>user</role-name>
 		</security-role-ref>
 		<supported-public-render-parameter>categoryId</supported-public-render-parameter>
+		<supported-public-render-parameter>resetCur</supported-public-render-parameter>
 		<supported-public-render-parameter>tag</supported-public-render-parameter>
 	</portlet>
 	<portlet>
@@ -372,6 +377,7 @@
 			<role-name>user</role-name>
 		</security-role-ref>
 		<supported-public-render-parameter>categoryId</supported-public-render-parameter>
+		<supported-public-render-parameter>resetCur</supported-public-render-parameter>
 		<supported-public-render-parameter>tag</supported-public-render-parameter>
 	</portlet>
 	<portlet>
@@ -441,6 +447,7 @@
 			<role-name>user</role-name>
 		</security-role-ref>
 		<supported-public-render-parameter>categoryId</supported-public-render-parameter>
+		<supported-public-render-parameter>resetCur</supported-public-render-parameter>
 		<supported-public-render-parameter>tag</supported-public-render-parameter>
 	</portlet>
 	<portlet>
@@ -470,6 +477,7 @@
 			<role-name>user</role-name>
 		</security-role-ref>
 		<supported-public-render-parameter>categoryId</supported-public-render-parameter>
+		<supported-public-render-parameter>resetCur</supported-public-render-parameter>
 		<supported-public-render-parameter>tag</supported-public-render-parameter>
 	</portlet>
 	<portlet>
@@ -522,6 +530,7 @@
 		<supported-public-render-parameter>categoryId</supported-public-render-parameter>
 		<supported-public-render-parameter>nodeId</supported-public-render-parameter>
 		<supported-public-render-parameter>nodeName</supported-public-render-parameter>
+		<supported-public-render-parameter>resetCur</supported-public-render-parameter>
 		<supported-public-render-parameter>tag</supported-public-render-parameter>
 		<supported-public-render-parameter>title</supported-public-render-parameter>
 	</portlet>
@@ -636,7 +645,7 @@
 	</portlet>
 	<portlet>
 		<portlet-name>49</portlet-name>
-		<display-name>My Sites</display-name>
+		<display-name>Site Redirector</display-name>
 		<portlet-class>com.liferay.portlet.StrutsPortlet</portlet-class>
 		<init-param>
 			<name>view-action</name>
@@ -1360,6 +1369,7 @@
 			<role-name>user</role-name>
 		</security-role-ref>
 		<supported-public-render-parameter>categoryId</supported-public-render-parameter>
+		<supported-public-render-parameter>resetCur</supported-public-render-parameter>
 		<supported-public-render-parameter>tag</supported-public-render-parameter>
 	</portlet>
 	<portlet>
@@ -1498,6 +1508,7 @@
 			<role-name>user</role-name>
 		</security-role-ref>
 		<supported-public-render-parameter>categoryId</supported-public-render-parameter>
+		<supported-public-render-parameter>resetCur</supported-public-render-parameter>
 		<supported-public-render-parameter>tag</supported-public-render-parameter>
 	</portlet>
 	<portlet>
@@ -1705,6 +1716,7 @@
 			<role-name>user</role-name>
 		</security-role-ref>
 		<supported-public-render-parameter>categoryId</supported-public-render-parameter>
+		<supported-public-render-parameter>resetCur</supported-public-render-parameter>
 	</portlet>
 	<portlet>
 		<portlet-name>124</portlet-name>
@@ -1971,6 +1983,7 @@
 		<security-role-ref>
 			<role-name>user</role-name>
 		</security-role-ref>
+		<supported-public-render-parameter>resetCur</supported-public-render-parameter>
 		<supported-public-render-parameter>tag</supported-public-render-parameter>
 	</portlet>
 	<portlet>
@@ -2144,6 +2157,7 @@
 		<security-role-ref>
 			<role-name>user</role-name>
 		</security-role-ref>
+		<supported-public-render-parameter>resetCur</supported-public-render-parameter>
 		<supported-public-render-parameter>tag</supported-public-render-parameter>
 	</portlet>
 	<portlet>
@@ -2259,23 +2273,6 @@
 		</security-role-ref>
 	</portlet>
 	<portlet>
-		<portlet-name>155</portlet-name>
-		<display-name>Social Equity Admin</display-name>
-		<portlet-class>com.liferay.portlet.StrutsPortlet</portlet-class>
-		<init-param>
-			<name>view-action</name>
-			<value>/social_equity_admin/view</value>
-		</init-param>
-		<expiration-cache>0</expiration-cache>
-		<supports>
-			<mime-type>text/html</mime-type>
-		</supports>
-		<resource-bundle>com.liferay.portlet.StrutsResourceBundle</resource-bundle>
-		<security-role-ref>
-			<role-name>administrator</role-name>
-		</security-role-ref>
-	</portlet>
-	<portlet>
 		<portlet-name>156</portlet-name>
 		<display-name>Group Pages</display-name>
 		<portlet-class>com.liferay.portlet.StrutsPortlet</portlet-class>
@@ -2322,29 +2319,6 @@
 			<mime-type>text/html</mime-type>
 		</supports>
 		<resource-bundle>com.liferay.portlet.StrutsResourceBundle</resource-bundle>
-		<security-role-ref>
-			<role-name>power-user</role-name>
-		</security-role-ref>
-		<security-role-ref>
-			<role-name>user</role-name>
-		</security-role-ref>
-	</portlet>
-	<portlet>
-	<portlet-name>159</portlet-name>
-		<display-name>Top Users</display-name>
-		<portlet-class>com.liferay.util.bridges.mvc.MVCPortlet</portlet-class>
-		<init-param>
-			<name>view-jsp</name>
-			<value>/html/portlet/top_users/view.jsp</value>
-		</init-param>
-		<expiration-cache>0</expiration-cache>
-		<supports>
-			<mime-type>text/html</mime-type>
-		</supports>
-		<resource-bundle>com.liferay.portlet.StrutsResourceBundle</resource-bundle>
-		<security-role-ref>
-			<role-name>guest</role-name>
-		</security-role-ref>
 		<security-role-ref>
 			<role-name>power-user</role-name>
 		</security-role-ref>
@@ -2466,6 +2440,10 @@
 		<display-name>Dynamic Data Lists</display-name>
 		<portlet-class>com.liferay.portlet.StrutsPortlet</portlet-class>
 		<init-param>
+			<name>ddm-resource</name>
+			<value>com.liferay.portlet.dynamicdatalists</value>
+		</init-param>
+		<init-param>
 			<name>view-action</name>
 			<value>/dynamic_data_lists/view</value>
 		</init-param>
@@ -2485,6 +2463,10 @@
 		<portlet-name>169</portlet-name>
 		<display-name>Dynamic Data List Display</display-name>
 		<portlet-class>com.liferay.portlet.StrutsPortlet</portlet-class>
+		<init-param>
+			<name>ddm-resource</name>
+			<value>com.liferay.portlet.dynamicdatalists</value>
+		</init-param>
 		<init-param>
 			<name>view-action</name>
 			<value>/dynamic_data_list_display/view</value>
@@ -2589,6 +2571,7 @@
 			<role-name>user</role-name>
 		</security-role-ref>
 		<supported-public-render-parameter>categoryId</supported-public-render-parameter>
+		<supported-public-render-parameter>resetCur</supported-public-render-parameter>
 		<supported-public-render-parameter>tag</supported-public-render-parameter>
 	</portlet>
 	<portlet>
@@ -2645,6 +2628,7 @@
 			<role-name>user</role-name>
 		</security-role-ref>
 		<supported-public-render-parameter>categoryId</supported-public-render-parameter>
+		<supported-public-render-parameter>resetCur</supported-public-render-parameter>
 		<supported-public-render-parameter>tag</supported-public-render-parameter>
 	</portlet>
 	<portlet>
@@ -2697,6 +2681,107 @@
 			<mime-type>text/html</mime-type>
 		</supports>
 		<resource-bundle>com.liferay.portlet.StrutsResourceBundle</resource-bundle>
+		<security-role-ref>
+			<role-name>power-user</role-name>
+		</security-role-ref>
+		<security-role-ref>
+			<role-name>user</role-name>
+		</security-role-ref>
+	</portlet>
+	<portlet>
+		<portlet-name>179</portlet-name>
+		<display-name>Social Activity</display-name>
+		<portlet-class>com.liferay.portlet.StrutsPortlet</portlet-class>
+		<init-param>
+			<name>view-action</name>
+			<value>/social_activity/view</value>
+		</init-param>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+		</supports>
+		<resource-bundle>com.liferay.portlet.StrutsResourceBundle</resource-bundle>
+		<security-role-ref>
+			<role-name>administrator</role-name>
+		</security-role-ref>
+	</portlet>
+	<portlet>
+		<portlet-name>180</portlet-name>
+		<display-name>User Statistics</display-name>
+		<portlet-class>com.liferay.util.bridges.mvc.MVCPortlet</portlet-class>
+		<init-param>
+			<name>view-jsp</name>
+			<value>/html/portlet/user_statistics/view.jsp</value>
+		</init-param>
+		<init-param>
+			<name>config-jsp</name>
+			<value>/html/portlet/user_statistics/configuration.jsp</value>
+		</init-param>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+		</supports>
+		<resource-bundle>com.liferay.portlet.StrutsResourceBundle</resource-bundle>
+		<portlet-preferences>
+			<preference>
+				<name>displayActivityCounterName0</name>
+				<value>user.achievements</value>
+			</preference>
+			<preference>
+				<name>displayActivityCounterNameIndexes</name>
+				<value>0</value>
+			</preference>
+			<preference>
+				<name>displayAdditionalActivityCounters</name>
+				<value>true</value>
+			</preference>
+			<preference>
+				<name>rankByContribution</name>
+				<value>true</value>
+			</preference>
+			<preference>
+				<name>rankByParticipation</name>
+				<value>true</value>
+			</preference>
+			<preference>
+				<name>showHeaderText</name>
+				<value>true</value>
+			</preference>
+			<preference>
+				<name>showTotals</name>
+				<value>true</value>
+			</preference>
+		</portlet-preferences>
+		<security-role-ref>
+			<role-name>guest</role-name>
+		</security-role-ref>
+		<security-role-ref>
+			<role-name>power-user</role-name>
+		</security-role-ref>
+		<security-role-ref>
+			<role-name>user</role-name>
+		</security-role-ref>
+	</portlet>
+	<portlet>
+		<portlet-name>181</portlet-name>
+		<display-name>Group Statistics</display-name>
+		<portlet-class>com.liferay.util.bridges.mvc.MVCPortlet</portlet-class>
+		<init-param>
+			<name>view-jsp</name>
+			<value>/html/portlet/group_statistics/view.jsp</value>
+		</init-param>
+		<init-param>
+			<name>config-jsp</name>
+			<value>/html/portlet/group_statistics/configuration.jsp</value>
+		</init-param>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+		</supports>
+		<resource-bundle>com.liferay.portlet.StrutsResourceBundle</resource-bundle>
+		<security-role-ref>
+			<role-name>guest</role-name>
+		</security-role-ref>
 		<security-role-ref>
 			<role-name>power-user</role-name>
 		</security-role-ref>
@@ -2924,6 +3009,10 @@
 	<public-render-parameter>
 		<identifier>categoryId</identifier>
 		<qname xmlns:x="http://www.liferay.com/public-render-parameters">x:categoryId</qname>
+	</public-render-parameter>
+	<public-render-parameter>
+		<identifier>resetCur</identifier>
+		<qname xmlns:w="http://www.liferay.com/public-render-parameters">w:resetCur</qname>
 	</public-render-parameter>
 	<public-render-parameter>
 		<identifier>tag</identifier>

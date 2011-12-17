@@ -94,14 +94,6 @@ public class WebDAVPropsUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static WebDAVProps remove(WebDAVProps webDAVProps)
-		throws SystemException {
-		return getPersistence().remove(webDAVProps);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static WebDAVProps update(WebDAVProps webDAVProps, boolean merge)

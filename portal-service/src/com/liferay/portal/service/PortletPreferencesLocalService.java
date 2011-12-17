@@ -272,6 +272,12 @@ public interface PortletPreferencesLocalService
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public java.util.List<com.liferay.portal.model.PortletPreferences> getPortletPreferences(
+		long companyId, long groupId, long ownerId, int ownerType,
+		java.lang.String portletId, boolean privateLayout)
+		throws com.liferay.portal.kernel.exception.SystemException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public java.util.List<com.liferay.portal.model.PortletPreferences> getPortletPreferences(
 		long plid, java.lang.String portletId)
 		throws com.liferay.portal.kernel.exception.SystemException;
 

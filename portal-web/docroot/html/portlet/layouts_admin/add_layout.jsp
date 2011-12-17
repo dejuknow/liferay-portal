@@ -17,6 +17,8 @@
 <%@ include file="/html/portlet/layouts_admin/init.jsp" %>
 
 <%
+String closeRedirect = ParamUtil.getString(request, "closeRedirect");
+
 Group group = (Group)request.getAttribute("edit_pages.jsp-group");
 long groupId = ((Long)request.getAttribute("edit_pages.jsp-groupId")).longValue();
 long liveGroupId = ((Long)request.getAttribute("edit_pages.jsp-liveGroupId")).longValue();
@@ -41,6 +43,7 @@ List<LayoutPrototype> layoutPrototypes = LayoutPrototypeServiceUtil.search(compa
 	<aui:form action="<%= editPageURL %>" enctype="multipart/form-data" method="post" name="fm2">
 		<aui:input id="addLayoutCmd" name="<%= Constants.CMD %>" type="hidden" value="<%= Constants.ADD %>" />
 		<aui:input id="addLayoutRedirect" name="redirect" type="hidden" value='<%= HttpUtil.addParameter(redirectURL.toString(), liferayPortletResponse.getNamespace() + "selPlid", selPlid) %>' />
+		<aui:input id="addLayoutCloseRedirect" name="closeRedirect" type="hidden" value="<%= closeRedirect %>" />
 		<aui:input id="addLayoutGroupId" name="groupId" type="hidden" value="<%= groupId %>" />
 		<aui:input id="addLayoutLiveGroupId" name="liveGroupId" type="hidden" value="<%= liveGroupId %>" />
 		<aui:input id="addLayoutStagingGroupId" name="stagingGroupId" type="hidden" value="<%= stagingGroupId %>" />
@@ -72,13 +75,15 @@ List<LayoutPrototype> layoutPrototypes = LayoutPrototypeServiceUtil.search(compa
 				<aui:select id="addLayoutType" name="type">
 
 					<%
+					boolean firstLayout = ParamUtil.getBoolean(request, "firstLayout");
+
 					for (int i = 0; i < PropsValues.LAYOUT_TYPES.length; i++) {
 						if (PropsValues.LAYOUT_TYPES[i].equals("article") && (group.isLayoutPrototype() || group.isLayoutSetPrototype())) {
 							continue;
 						}
 					%>
 
-						<aui:option label='<%= LanguageUtil.get(pageContext, "layout.types." + PropsValues.LAYOUT_TYPES[i]) %>' value="<%= PropsValues.LAYOUT_TYPES[i] %>" />
+						<aui:option disabled="<%= firstLayout && !PortalUtil.isLayoutFirstPageable(PropsValues.LAYOUT_TYPES[i]) %>" label='<%= LanguageUtil.get(pageContext, "layout.types." + PropsValues.LAYOUT_TYPES[i]) %>' value="<%= PropsValues.LAYOUT_TYPES[i] %>" />
 
 					<%
 					}
@@ -86,12 +91,12 @@ List<LayoutPrototype> layoutPrototypes = LayoutPrototypeServiceUtil.search(compa
 
 				</aui:select>
 
-				<aui:input id="addLayoutHidden" name="hidden" />
-
 				<c:if test="<%= (selLayout != null) && selLayout.isTypePortlet() %>">
 					<aui:input label="copy-parent" name="inheritFromParentLayoutId" type="checkbox" />
 				</c:if>
 			</div>
+
+			<aui:input id="addLayoutHidden" name="hidden" />
 		</aui:fieldset>
 
 		<aui:button-row>

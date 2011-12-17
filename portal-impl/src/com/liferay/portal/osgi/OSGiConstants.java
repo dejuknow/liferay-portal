@@ -19,19 +19,16 @@ package com.liferay.portal.osgi;
  */
 public class OSGiConstants {
 
-	public static final String PORTAL_SERVICE = "portal.service";
+	public static final String BEAN_ID = "bean.id";
 
-	public static final String PORTAL_SERVICE_BEAN_NAME =
-		"portal.service.bean.name";
+	public static final String ORIGINAL_BEAN = "original.bean";
 
-	public static final String PORTAL_SERVICE_CORE = "portal.service.core";
+	public static final String OSGI_BUNDLE = "osgi-bundle";
 
-	public static final String PORTAL_SERVICE_PREVIOUS =
-		"portal.service.previous";
+	public static final String OSGI_BUNDLECONTEXT = "osgi-bundlecontext";
 
-	public static final String PORTAL_SERVICE_TYPE = "portal.service.type";
+	public static final String SERVICE_VENDOR = "service.vendor";
 
-	public static final String PORTAL_SERVICE_WRAPPER =
-		"portal.service.wrapper";
+	public static final String WEB_CONTEXTPATH = "Web-ContextPath";
 
 }

@@ -95,14 +95,6 @@ public class ShoppingItemUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static ShoppingItem remove(ShoppingItem shoppingItem)
-		throws SystemException {
-		return getPersistence().remove(shoppingItem);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static ShoppingItem update(ShoppingItem shoppingItem, boolean merge)

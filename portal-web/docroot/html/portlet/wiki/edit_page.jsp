@@ -319,15 +319,15 @@ if (Validator.isNull(redirect)) {
 					resourcePrimKey = templatePage.getResourcePrimKey();
 				}
 
+				long assetEntryId = 0;
 				long classPK = resourcePrimKey;
 
 				if (!newPage && !wikiPage.isApproved() && (wikiPage.getVersion() != WikiPageConstants.VERSION_DEFAULT)) {
-					try {
-						AssetEntryLocalServiceUtil.getEntry(WikiPage.class.getName(), wikiPage.getPrimaryKey());
+					AssetEntry assetEntry = AssetEntryLocalServiceUtil.fetchEntry(WikiPage.class.getName(), wikiPage.getPrimaryKey());
 
+					if (assetEntry != null) {
+						assetEntryId = assetEntry.getEntryId();
 						classPK = wikiPage.getPrimaryKey();
-					}
-					catch (NoSuchEntryException nsee) {
 					}
 				}
 				%>
@@ -361,6 +361,7 @@ if (Validator.isNull(redirect)) {
 				<liferay-ui:panel defaultState="closed" extended="<%= false %>" id="wikiPageAssetLinksPanel" persistState="<%= true %>" title="related-assets">
 					<aui:fieldset>
 						<liferay-ui:input-asset-links
+							assetEntryId="<%= assetEntryId %>"
 							className="<%= WikiPage.class.getName() %>"
 							classPK="<%= classPK %>"
 						/>
@@ -440,7 +441,7 @@ if (Validator.isNull(redirect)) {
 
 		var newFormat = formatSelect.options[formatSelect.selectedIndex].text;
 
-		var confirmMessage = '<liferay-ui:message key="you-may-lose-formatting-when-switching-from-x-to-x" />';
+		var confirmMessage = '<%= UnicodeLanguageUtil.get(pageContext, "you-may-lose-formatting-when-switching-from-x-to-x") %>';
 
 		confirmMessage = AUI().Lang.sub(confirmMessage, [currentFormat, newFormat]);
 

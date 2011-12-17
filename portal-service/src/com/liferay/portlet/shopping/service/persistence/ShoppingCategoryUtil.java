@@ -95,14 +95,6 @@ public class ShoppingCategoryUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static ShoppingCategory remove(ShoppingCategory shoppingCategory)
-		throws SystemException {
-		return getPersistence().remove(shoppingCategory);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static ShoppingCategory update(ShoppingCategory shoppingCategory,

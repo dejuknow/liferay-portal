@@ -94,14 +94,6 @@ public class PluginSettingUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static PluginSetting remove(PluginSetting pluginSetting)
-		throws SystemException {
-		return getPersistence().remove(pluginSetting);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static PluginSetting update(PluginSetting pluginSetting,

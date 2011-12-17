@@ -17,6 +17,7 @@ package com.liferay.portal.kernel.spring.context;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.servlet.PortalClassLoaderServletContextListener;
+import com.liferay.portal.kernel.util.ContextPathUtil;
 import com.liferay.portal.kernel.util.PortalClassInvoker;
 import com.liferay.portal.kernel.util.PortalClassLoaderUtil;
 
@@ -30,7 +31,9 @@ public class PortletContextLoaderListener
 	extends PortalClassLoaderServletContextListener {
 
 	public static String getLockKey(ServletContext servletContext) {
-		return getLockKey(servletContext.getContextPath());
+		String contextPath = ContextPathUtil.getContextPath(servletContext);
+
+		return getLockKey(contextPath);
 	}
 
 	public static String getLockKey(String contextPath) {

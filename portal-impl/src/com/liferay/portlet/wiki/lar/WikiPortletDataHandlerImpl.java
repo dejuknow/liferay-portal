@@ -20,7 +20,6 @@ import com.liferay.portal.kernel.lar.PortletDataContext;
 import com.liferay.portal.kernel.lar.PortletDataException;
 import com.liferay.portal.kernel.lar.PortletDataHandlerBoolean;
 import com.liferay.portal.kernel.lar.PortletDataHandlerControl;
-import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.StreamUtil;
 import com.liferay.portal.kernel.util.StringBundler;
@@ -354,17 +353,24 @@ public class WikiPortletDataHandlerImpl extends BasePortletDataHandler {
 					_NAMESPACE, "attachments") &&
 				page.isHead()) {
 
-				for (String attachment : page.getAttachmentsFiles()) {
-					int pos = attachment.lastIndexOf(CharPool.SLASH);
+				String[] attachmentsFiles = page.getAttachmentsFiles();
+
+				for (int i = 0; i < attachmentsFiles.length; i++) {
+					String attachment = attachmentsFiles[i];
+
+					Element attachmentElement = pageElement.addElement(
+						"attachment");
+
+					int pos = attachment.lastIndexOf(StringPool.SLASH);
 
 					String name = attachment.substring(pos + 1);
+
+					attachmentElement.addAttribute("name", name);
+
 					String binPath = getPageAttachementBinPath(
-						portletDataContext, page, name);
+						portletDataContext, page, i);
 
-					Element attachmentEl = pageElement.addElement("attachment");
-
-					attachmentEl.addAttribute("name", name);
-					attachmentEl.addAttribute("bin-path", binPath);
+					attachmentElement.addAttribute("bin-path", binPath);
 
 					byte[] bytes = DLStoreUtil.getFileAsBytes(
 						portletDataContext.getCompanyId(),
@@ -417,16 +423,16 @@ public class WikiPortletDataHandlerImpl extends BasePortletDataHandler {
 	}
 
 	protected static String getPageAttachementBinPath(
-		PortletDataContext portletDataContext, WikiPage page,
-		String attachment) {
+		PortletDataContext portletDataContext, WikiPage page, int count) {
 
-		StringBundler sb = new StringBundler(5);
+		StringBundler sb = new StringBundler(6);
 
 		sb.append(portletDataContext.getPortletPath(PortletKeys.WIKI));
 		sb.append("/bin/");
 		sb.append(page.getPageId());
 		sb.append(StringPool.SLASH);
-		sb.append(attachment);
+		sb.append("attachement");
+		sb.append(count);
 
 		return sb.toString();
 	}

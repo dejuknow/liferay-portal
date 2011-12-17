@@ -17,6 +17,8 @@
 <%@ include file="/html/portlet/journal/init.jsp" %>
 
 <%
+String originalRedirect = ParamUtil.getString(request, "originalRedirect");
+
 JournalArticle article = (JournalArticle)request.getAttribute(WebKeys.JOURNAL_ARTICLE);
 
 long classNameId = BeanParamUtil.getLong(article, request, "classNameId");
@@ -40,23 +42,23 @@ if ((article != null) && article.isDraft()) {
 			activeState: false,
 			boundingBox: '#<portlet:namespace />articleToobar',
 			children: [
-				<c:if test="<%= Validator.isNotNull(structureId) && (classNameId == 0) %>">
+				<c:if test="<%= (article != null) && Validator.isNotNull(structureId) && (classNameId == 0) %>">
 					{
-						icon: 'search',
+						icon: 'preview',
 						id: '<portlet:namespace />previewArticleButton',
-						label: '<liferay-ui:message key="preview" />'
+						label: '<%= UnicodeLanguageUtil.get(pageContext, "preview") %>'
 					},
 				</c:if>
 
-				<c:if test="<%= Validator.isNotNull(structureId) %>">
+				<c:if test="<%= (article != null) && Validator.isNotNull(structureId) %>">
 					{
-						icon: 'arrowreturnthick-1-b',
+						icon: 'download',
 						id: '<portlet:namespace />downloadArticleContentButton',
-						label: '<liferay-ui:message key="download" />'
+						label: '<%= UnicodeLanguageUtil.get(pageContext, "download") %>'
 					},
 				</c:if>
 
-				<c:if test="<%= article != null && JournalArticlePermission.contains(permissionChecker, article, ActionKeys.PERMISSIONS) %>">
+				<c:if test="<%= (article != null) && JournalArticlePermission.contains(permissionChecker, article, ActionKeys.PERMISSIONS) %>">
 					<liferay-security:permissionsURL windowState="<%= LiferayWindowState.POP_UP.toString() %>"
 						modelResource="<%= JournalArticle.class.getName() %>"
 						modelResourceDescription="<%= article.getTitle(locale) %>"
@@ -67,14 +69,14 @@ if ((article != null) && article.isDraft()) {
 					{
 					handler: function(event) {
 						if (!permissionPopUp) {
-							permissionPopUp = Liferay.Util._openWindow(
+							permissionPopUp = Liferay.Util.openWindow(
 								{
 									dialog: {
 										centered: true,
 										cssClass: 'portlet-asset-categories-admin-dialog permissions-change',
 										width: 700
 									},
-									title: '<liferay-ui:message key="permissions" />',
+									title: '<%= UnicodeLanguageUtil.get(pageContext, "permissions") %>',
 									uri: '<%= permissionsURL %>'
 								}
 							);
@@ -87,8 +89,8 @@ if ((article != null) && article.isDraft()) {
 						permissionPopUp.centered();
 
 					},
-					icon: 'key',
-					label: '<liferay-ui:message key="permissions" />'
+					icon: 'permissions',
+					label: '<%= UnicodeLanguageUtil.get(pageContext, "permissions") %>'
 				},
 				</c:if>
 
@@ -97,8 +99,8 @@ if ((article != null) && article.isDraft()) {
 						handler: function() {
 							<portlet:namespace />expireArticle();
 						},
-						icon: 'minusthick',
-						label: '<liferay-ui:message key="expire-this-version" />'
+						icon: 'expire',
+						label: '<%= UnicodeLanguageUtil.get(pageContext, "expire-this-version") %>'
 					},
 				</c:if>
 
@@ -107,7 +109,7 @@ if ((article != null) && article.isDraft()) {
 						handler: function() {
 							<portlet:namespace />deleteArticle();
 						},
-						icon: 'circle-minus',
+						icon: 'delete',
 						label: '<liferay-ui:message key="<%= deleteButtonLabel %>" />'
 					},
 				</c:if>
@@ -116,6 +118,7 @@ if ((article != null) && article.isDraft()) {
 					<portlet:renderURL var="viewHistoryURL">
 						<portlet:param name="struts_action" value="/journal/view_article_history" />
 						<portlet:param name="redirect" value="<%= currentURL %>" />
+						<portlet:param name="originalRedirect" value="<%= originalRedirect %>" />
 						<portlet:param name="groupId" value="<%= String.valueOf(article.getGroupId()) %>" />
 						<portlet:param name="articleId" value="<%= article.getArticleId() %>" />
 					</portlet:renderURL>
@@ -124,8 +127,8 @@ if ((article != null) && article.isDraft()) {
 						handler: function (event) {
 							window.location = '<%= viewHistoryURL %>';
 						},
-						icon: 'clock',
-						label: '<liferay-ui:message key="view-history" />'
+						icon: 'history',
+						label: '<%= UnicodeLanguageUtil.get(pageContext, "view-history") %>'
 					}
 				</c:if>
 			]

@@ -30,6 +30,8 @@ import com.liferay.portal.kernel.lar.PortletDataHandlerKeys;
 import com.liferay.portal.kernel.lar.UserIdStrategy;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.search.Indexer;
+import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.staging.StagingUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.CharPool;
@@ -227,14 +229,14 @@ public class LayoutImporter {
 			parameterMap, PortletDataHandlerKeys.THEME);
 		boolean importThemeSettings = MapUtil.getBoolean(
 			parameterMap, PortletDataHandlerKeys.THEME_REFERENCE);
-		boolean layoutSetPrototypeInherited = MapUtil.getBoolean(
+		boolean layoutSetPrototypeLinkEnabled = MapUtil.getBoolean(
 			parameterMap,
-			PortletDataHandlerKeys.LAYOUT_SET_PROTOTYPE_INHERITED);
+			PortletDataHandlerKeys.LAYOUT_SET_PROTOTYPE_LINK_ENABLED, true);
 		boolean publishToRemote = MapUtil.getBoolean(
 			parameterMap, PortletDataHandlerKeys.PUBLISH_TO_REMOTE);
 		String layoutsImportMode = MapUtil.getString(
 			parameterMap, PortletDataHandlerKeys.LAYOUTS_IMPORT_MODE,
-			PortletDataHandlerKeys.LAYOUTS_IMPORT_MODE_MERGE_BY_LAYOUT_ID);
+			PortletDataHandlerKeys.LAYOUTS_IMPORT_MODE_MERGE_BY_LAYOUT_UUID);
 		String portletsMergeMode = MapUtil.getString(
 			parameterMap, PortletDataHandlerKeys.PORTLETS_MERGE_MODE,
 			PortletDataHandlerKeys.PORTLETS_MERGE_MODE_REPLACE);
@@ -350,7 +352,7 @@ public class LayoutImporter {
 			ServiceContextThreadLocal.getServiceContext();
 
 		if (Validator.isNotNull(layoutSetPrototypeUuid)) {
-			if (layoutSetPrototypeInherited) {
+			if (layoutSetPrototypeLinkEnabled) {
 				if (publishToRemote) {
 					importLayoutSetPrototype(
 						portletDataContext, user, layoutSetPrototypeUuid,
@@ -360,7 +362,7 @@ public class LayoutImporter {
 
 			layoutSet.setLayoutSetPrototypeUuid(layoutSetPrototypeUuid);
 			layoutSet.setLayoutSetPrototypeLinkEnabled(
-				layoutSetPrototypeInherited);
+				layoutSetPrototypeLinkEnabled);
 
 			LayoutSetLocalServiceUtil.updateLayoutSet(layoutSet);
 		}
@@ -435,6 +437,34 @@ public class LayoutImporter {
 
 		List<Layout> previousLayouts = LayoutUtil.findByG_P(
 			groupId, privateLayout);
+
+		// Remove layouts that were deleted from the layout set prototype
+
+		if (Validator.isNotNull(layoutSetPrototypeUuid) &&
+			layoutSetPrototypeLinkEnabled) {
+
+			LayoutSetPrototype layoutSetPrototype =
+				LayoutSetPrototypeLocalServiceUtil.getLayoutSetPrototypeByUuid(
+					layoutSetPrototypeUuid);
+
+			Group group = layoutSetPrototype.getGroup();
+
+			for (Layout layout : previousLayouts) {
+				String sourcePrototypeLayoutUuid =
+					layout.getSourcePrototypeLayoutUuid();
+
+				if (Validator.isNull(layout.getSourcePrototypeLayoutUuid())) {
+					continue;
+				}
+
+				Layout sourcePrototypeLayout = LayoutUtil.fetchByUUID_G(
+					sourcePrototypeLayoutUuid, group.getGroupId());
+
+				if (sourcePrototypeLayout == null) {
+					LayoutLocalServiceUtil.deleteLayout(layout);
+				}
+			}
+		}
 
 		List<Layout> newLayouts = new ArrayList<Layout>();
 
@@ -580,6 +610,17 @@ public class LayoutImporter {
 				null, portletElement, importPortletSetup,
 				importPortletArchivedSetups, importPortletUserPreferences,
 				false);
+		}
+
+		if (importPermissions) {
+			if ((userId > 0) &&
+				((PropsValues.PERMISSIONS_USER_CHECK_ALGORITHM == 5) ||
+				 (PropsValues.PERMISSIONS_USER_CHECK_ALGORITHM == 6))) {
+
+				Indexer indexer = IndexerRegistryUtil.getIndexer(User.class);
+
+				indexer.reindex(userId);
+			}
 		}
 
 		// Asset links
@@ -828,13 +869,13 @@ public class LayoutImporter {
 					PortletDataHandlerKeys.
 						LAYOUTS_IMPORT_MODE_CREATED_FROM_PROTOTYPE)) {
 
-			existingLayout = LayoutUtil.fetchByG_P_TLU(
+			existingLayout = LayoutUtil.fetchByG_P_SPLU(
 				groupId, privateLayout, layout.getUuid());
 		}
 		else {
 
 			// The default behaviour of import mode is
-			// PortletDataHandlerKeys.LAYOUTS_IMPORT_MODE_MERGE_BY_LAYOUT_ID
+			// PortletDataHandlerKeys.LAYOUTS_IMPORT_MODE_MERGE_BY_LAYOUT_UUID
 
 			existingLayout = LayoutUtil.fetchByUUID_G(
 				layout.getUuid(), groupId);
@@ -874,7 +915,7 @@ public class LayoutImporter {
 					PortletDataHandlerKeys.
 						LAYOUTS_IMPORT_MODE_CREATED_FROM_PROTOTYPE)) {
 
-				importedLayout.setTemplateLayoutUuid(layout.getUuid());
+				importedLayout.setSourcePrototypeLayoutUuid(layout.getUuid());
 			}
 			else {
 				importedLayout.setUuid(layout.getUuid());
@@ -894,7 +935,7 @@ public class LayoutImporter {
 
 			boolean addGroupPermissions = true;
 
-			Group group = layout.getGroup();
+			Group group = importedLayout.getGroup();
 
 			if (privateLayout && group.isUser()) {
 				addGroupPermissions = false;
@@ -1164,7 +1205,7 @@ public class LayoutImporter {
 					user.getUserId(), user.getCompanyId(),
 					layoutSetPrototype.getNameMap(),
 					layoutSetPrototype.getDescription(),
-					layoutSetPrototype.getActive(), true, true, serviceContext);
+					layoutSetPrototype.getActive(), true, serviceContext);
 		}
 
 		InputStream inputStream = portletDataContext.getZipEntryAsInputStream(

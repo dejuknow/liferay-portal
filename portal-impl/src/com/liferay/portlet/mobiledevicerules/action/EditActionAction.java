@@ -186,8 +186,7 @@ public class EditActionAction extends EditRuleAction {
 	protected void registerEditorJSP(Class<?> clazz, String jspPrefix) {
 		_editorJSPs.put(
 			clazz,
-			"/html/portlet/mobile_device_rules/action/" + jspPrefix +
-				"_action.jsp");
+			"/html/portlet/mobile_device_rules/action/" + jspPrefix + ".jsp");
 	}
 
 	protected void updateAction(ActionRequest actionRequest) throws Exception {
@@ -198,8 +197,7 @@ public class EditActionAction extends EditRuleAction {
 		Map<Locale, String> nameMap = LocalizationUtil.getLocalizationMap(
 			actionRequest, "name");
 		Map<Locale, String> descriptionMap =
-			LocalizationUtil.getLocalizationMap(
-				actionRequest, "description");
+			LocalizationUtil.getLocalizationMap(actionRequest, "description");
 		String type = ParamUtil.getString(actionRequest, "type");
 
 		ActionHandler actionHandler = ActionHandlerManagerUtil.getActionHandler(

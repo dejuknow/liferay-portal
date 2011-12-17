@@ -34,10 +34,10 @@ import java.io.InputStream;
  * used by other portlets like Wiki and Message Boards to store file
  * attachments. For the Document Library portlet, the <code>repositoryId</code>
  * can be obtained by calling {@link
- * com.liferay.portlet.documentlibrary.model.DLFolderConstants#getDataRepositoryId(long,long)}.
- * For all other portlets, the <code>repositoryId</code> should be set to
- * {@link CompanyConstants#SYSTEM}. These methods can be used in plugins and
- * other portlets, as shown below.
+ * com.liferay.portlet.documentlibrary.model.DLFolderConstants#getDataRepositoryId(
+ * long,long)}. For all other portlets, the <code>repositoryId</code> should be
+ * set to {@link CompanyConstants#SYSTEM}. These methods can be used in plugins
+ * and other portlets, as shown below.
  * </p>
  *
  * <pre>
@@ -59,7 +59,7 @@ import java.io.InputStream;
  * @author Brian Wing Shun Chan
  * @author Alexander Chow
  * @author Edward Han
- * @see DLStoreImpl
+ * @see    DLStoreImpl
  */
 public class DLStoreUtil {
 
@@ -110,7 +110,7 @@ public class DLStoreUtil {
 	 *         {@link CompanyConstants#SYSTEM})
 	 * @param  fileName the file name
 	 * @param  validateFileExtension whether to validate the file's extension
-	 * @param  file the files's data
+	 * @param  file Name the file name
 	 * @throws PortalException if the file's information was invalid or is found
 	 *         to contain a virus
 	 * @throws SystemException if a system exception occurred
@@ -174,7 +174,7 @@ public class DLStoreUtil {
 	 * @param  repositoryId the primary key of the data repository (optionally
 	 *         {@link CompanyConstants#SYSTEM})
 	 * @param  fileName the file name
-	 * @param  file the files's data
+	 * @param  file Name the file name
 	 * @throws PortalException if the file's information was invalid or is found
 	 *         to contain a virus
 	 * @throws SystemException if a system exception occurred
@@ -300,8 +300,8 @@ public class DLStoreUtil {
 	 * This method is useful when optimizing low-level file operations like
 	 * copy. The client must not delete or change the returned {@link File}
 	 * object in any way. This method is only supported in certain stores. If
-	 * not supported, this method will throw an
-	 * {@link UnsupportedOperationException}.
+	 * not supported, this method will throw an {@link
+	 * UnsupportedOperationException}.
 	 * </p>
 	 *
 	 * @param  companyId the primary key of the company
@@ -311,8 +311,6 @@ public class DLStoreUtil {
 	 * @return Returns the {@link File} object with the file's name
 	 * @throws PortalException if the file's information was invalid
 	 * @throws SystemException if a system exception occurred
-	 * @throws UnsupportedOperationException if the method is unsupported by the
-	 *         storage implementation
 	 */
 	public static File getFile(
 			long companyId, long repositoryId, String fileName)
@@ -328,8 +326,8 @@ public class DLStoreUtil {
 	 * This method is useful when optimizing low-level file operations like
 	 * copy. The client must not delete or change the returned {@link File}
 	 * object in any way. This method is only supported in certain stores. If
-	 * not supported, this method will throw an
-	 * {@link UnsupportedOperationException}.
+	 * not supported, this method will throw an {@link
+	 * UnsupportedOperationException}.
 	 * </p>
 	 *
 	 * @param  companyId the primary key of the company
@@ -340,8 +338,6 @@ public class DLStoreUtil {
 	 * @return Returns the {@link File} object with the file's name
 	 * @throws PortalException if the file's information was invalid
 	 * @throws SystemException if a system exception occurred
-	 * @throws UnsupportedOperationException if the method is unsupported by the
-	 *         storage implementation
 	 */
 	public static File getFile(
 			long companyId, long repositoryId, String fileName,
@@ -608,7 +604,7 @@ public class DLStoreUtil {
 	 * @param  validateFileExtension whether to validate the file's extension
 	 * @param  versionLabel the file's new version label
 	 * @param  sourceFileName the new file's original name
-	 * @param  file the file's new data
+	 * @param  file Name the file name
 	 * @throws PortalException if the file's information was invalid or is found
 	 *         to contain a virus
 	 * @throws SystemException if a system exception occurred
@@ -652,9 +648,9 @@ public class DLStoreUtil {
 	}
 
 	/**
-	 * Update's a file version label. Similar to {@link
-	 * #copyFileVersion(long, long, String, String, String, String)} except that
-	 * the old file version is deleted.
+	 * Update's a file version label. Similar to {@link #copyFileVersion(long,
+	 * long, String, String, String, String)} except that the old file version
+	 * is deleted.
 	 *
 	 * @param  companyId the primary key of the company
 	 * @param  repositoryId the primary key of the data repository (optionally
@@ -710,7 +706,7 @@ public class DLStoreUtil {
 	 *
 	 * @param  fileName the file's name
 	 * @param  validateFileExtension whether to validate the file's extension
-	 * @param  file the file's data (optionally <code>null</code>)
+	 * @param  file Name the file's name
 	 * @throws PortalException if the file's information was invalid
 	 * @throws SystemException if a system exception occurred
 	 */
@@ -744,7 +740,7 @@ public class DLStoreUtil {
 	 * @param  fileExtension the file's extension
 	 * @param  sourceFileName the file's original name
 	 * @param  validateFileExtension whether to validate the file's extension
-	 * @param  file the file's data (optionally <code>null</code>)
+	 * @param  file Name the file's name
 	 * @throws PortalException if the file's information was invalid
 	 * @throws SystemException if a system exception occurred
 	 */

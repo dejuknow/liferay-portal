@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.CompanyConstants;
 import com.liferay.portal.model.Lock;
 import com.liferay.portal.model.User;
@@ -233,6 +234,10 @@ public abstract class CMISRepositoryHandler extends BaseRepositoryImpl {
 	public String getLogin() throws SystemException {
 		String login = PrincipalThreadLocal.getName();
 
+		if (Validator.isNull(login)) {
+			return login;
+		}
+
 		try {
 			String authType =
 				companyLocalService.getCompany(getCompanyId()).getAuthType();
@@ -266,8 +271,7 @@ public abstract class CMISRepositoryHandler extends BaseRepositoryImpl {
 	public int getMountFoldersCount(long parentFolderId)
 		throws SystemException {
 
-		return _baseCmisRepository.getMountFoldersCount(
-			parentFolderId);
+		return _baseCmisRepository.getMountFoldersCount(parentFolderId);
 	}
 
 	public String getObjectName(String objectId)
@@ -470,8 +474,7 @@ public abstract class CMISRepositoryHandler extends BaseRepositoryImpl {
 	public boolean verifyInheritableLock(long folderId, String lockUuid)
 		throws PortalException, SystemException {
 
-		return _baseCmisRepository.verifyInheritableLock(
-			folderId, lockUuid);
+		return _baseCmisRepository.verifyInheritableLock(folderId, lockUuid);
 	}
 
 	private BaseCmisRepository _baseCmisRepository;

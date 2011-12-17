@@ -94,13 +94,6 @@ public class AccountUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static Account remove(Account account) throws SystemException {
-		return getPersistence().remove(account);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static Account update(Account account, boolean merge)

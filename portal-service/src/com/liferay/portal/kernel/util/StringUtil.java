@@ -82,8 +82,30 @@ public class StringUtil {
 		return s;
 	}
 
+	public static String appendParentheticalSuffix(String s, int suffix) {
+		if (Pattern.matches(".* \\(" + String.valueOf(suffix - 1) + "\\)", s)) {
+			int pos = s.lastIndexOf(" (");
+
+			s = s.substring(0, pos);
+		}
+
+		return appendParentheticalSuffix(s, String.valueOf(suffix));
+	}
+
+	public static String appendParentheticalSuffix(String s, String suffix) {
+		StringBundler sb = new StringBundler(5);
+
+		sb.append(s);
+		sb.append(StringPool.SPACE);
+		sb.append(StringPool.OPEN_PARENTHESIS);
+		sb.append(suffix);
+		sb.append(StringPool.CLOSE_PARENTHESIS);
+
+		return sb.toString();
+	}
+
 	public static String bytesToHexString(byte[] bytes) {
-		StringBuilder sb = new StringBuilder(bytes.length * 2);
+		StringBundler sb = new StringBundler(bytes.length * 2);
 
 		for (byte b : bytes) {
 			String hex = Integer.toHexString(
@@ -170,12 +192,32 @@ public class StringUtil {
 		}
 	}
 
+	public static String extract(String s, char[] chars) {
+		if (s == null) {
+			return StringPool.BLANK;
+		}
+
+		StringBundler sb = new StringBundler();
+
+		for (char c1 : s.toCharArray()) {
+			for (char c2 : chars) {
+				if (c1 == c2) {
+					sb.append(c1);
+
+					break;
+				}
+			}
+		}
+
+		return sb.toString();
+	}
+
 	public static String extractChars(String s) {
 		if (s == null) {
 			return StringPool.BLANK;
 		}
 
-		StringBuilder sb = new StringBuilder();
+		StringBundler sb = new StringBundler();
 
 		char[] chars = s.toCharArray();
 
@@ -193,7 +235,7 @@ public class StringUtil {
 			return StringPool.BLANK;
 		}
 
-		StringBuilder sb = new StringBuilder();
+		StringBundler sb = new StringBundler();
 
 		char[] chars = s.toCharArray();
 
@@ -762,7 +804,7 @@ public class StringUtil {
 		// The number 5 is arbitrary and is used as extra padding to reduce
 		// buffer expansion
 
-		StringBuilder sb = new StringBuilder(s.length() + 5 * newSub.length());
+		StringBundler sb = new StringBundler(s.length() + 5 * newSub.length());
 
 		char[] chars = s.toCharArray();
 
@@ -1364,7 +1406,7 @@ public class StringUtil {
 
 				lastIndex = returnIndex + 1;
 			}
-			else  if (newLineIndex < returnIndex) {
+			else if (newLineIndex < returnIndex) {
 				lines.add(s.substring(lastIndex, newLineIndex));
 
 				lastIndex = newLineIndex + 1;
@@ -1449,7 +1491,7 @@ public class StringUtil {
 
 		int y = 0;
 
-		StringBuilder sb = new StringBuilder(s.length());
+		StringBundler sb = new StringBundler(s.length());
 
 		while (x >= 0) {
 			sb.append(s.subSequence(y, x));
@@ -1469,7 +1511,7 @@ public class StringUtil {
 			return s;
 		}
 
-		StringBuilder sb = new StringBuilder(s.length());
+		StringBundler sb = new StringBundler(s.length());
 
 		int pos = 0;
 

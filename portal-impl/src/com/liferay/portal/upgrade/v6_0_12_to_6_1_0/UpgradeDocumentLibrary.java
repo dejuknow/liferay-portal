@@ -111,7 +111,7 @@ public class UpgradeDocumentLibrary extends UpgradeProcess {
 
 		}
 		finally {
-			DataAccess.cleanUp(con,ps, rs);
+			DataAccess.cleanUp(con, ps, rs);
 		}
 	}
 
@@ -134,7 +134,7 @@ public class UpgradeDocumentLibrary extends UpgradeProcess {
 			sb.append("groupId, DLFolder.companyId as companyId, ");
 			sb.append("DLFolder.createDate as createDate, ");
 			sb.append("DLFolder.parentFolderId as parentFolderId, 'folder' ");
-			sb.append("as type  from DLFolder");
+			sb.append("as type from DLFolder");
 
 			String sql = sb.toString();
 
@@ -229,6 +229,6 @@ public class UpgradeDocumentLibrary extends UpgradeProcess {
 	}
 
 	private static Set<String> _imageMimeTypes = SetUtil.fromArray(
-		PropsValues.IG_IMAGE_THUMBNAIL_MIME_TYPES);
+		PropsValues.DL_FILE_ENTRY_PREVIEW_IMAGE_MIME_TYPES);
 
 }

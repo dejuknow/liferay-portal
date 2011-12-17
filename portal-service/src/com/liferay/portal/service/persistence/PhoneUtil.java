@@ -93,13 +93,6 @@ public class PhoneUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static Phone remove(Phone phone) throws SystemException {
-		return getPersistence().remove(phone);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static Phone update(Phone phone, boolean merge)

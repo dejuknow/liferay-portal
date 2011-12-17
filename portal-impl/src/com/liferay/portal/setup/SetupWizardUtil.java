@@ -21,26 +21,36 @@ import com.liferay.portal.kernel.cache.CacheRegistryUtil;
 import com.liferay.portal.kernel.cache.MultiVMPoolUtil;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.dao.jdbc.DataSourceFactoryUtil;
+import com.liferay.portal.kernel.deploy.hot.HotDeployUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.CalendarFactoryUtil;
 import com.liferay.portal.kernel.util.CentralizedThreadLocal;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalLifecycleUtil;
 import com.liferay.portal.kernel.util.PropertiesParamUtil;
 import com.liferay.portal.kernel.util.PropertiesUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.UnicodeProperties;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.webcache.WebCachePoolUtil;
+import com.liferay.portal.model.Account;
+import com.liferay.portal.model.Company;
+import com.liferay.portal.model.Contact;
 import com.liferay.portal.model.User;
 import com.liferay.portal.security.auth.FullNameGenerator;
 import com.liferay.portal.security.auth.FullNameGeneratorFactory;
 import com.liferay.portal.security.auth.ScreenNameGenerator;
 import com.liferay.portal.security.auth.ScreenNameGeneratorFactory;
+import com.liferay.portal.service.AccountLocalServiceUtil;
+import com.liferay.portal.service.CompanyLocalServiceUtil;
 import com.liferay.portal.service.QuartzLocalServiceUtil;
+import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalInstances;
@@ -52,11 +62,11 @@ import java.io.IOException;
 
 import java.sql.Connection;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -75,23 +85,26 @@ public class SetupWizardUtil {
 	public static final String PROPERTIES_FILE_NAME =
 		"portal-setup-wizard.properties";
 
-	public static boolean isSetupFinished(HttpServletRequest request) {
-		if (!PropsValues.SETUP_WIZARD_ENABLED) {
-			return true;
-		}
+	public static boolean isDefaultDatabase(HttpServletRequest request) {
+		boolean hsqldb = ParamUtil.getBoolean(
+			request, "defaultDatabase",
+			PropsValues.JDBC_DEFAULT_URL.contains("hsqldb"));
 
-		HttpSession session = request.getSession();
+		boolean jndi = Validator.isNotNull(PropsValues.JDBC_DEFAULT_JNDI_NAME);
 
-		ServletContext servletContext = session.getServletContext();
+		return hsqldb && !jndi;
+	}
 
-		Boolean setupWizardFinished = (Boolean)servletContext.getAttribute(
-			WebKeys.SETUP_WIZARD_FINISHED);
-
-		if (setupWizardFinished != null) {
-			return setupWizardFinished;
+	public static boolean isSetupFinished() {
+		if (PropsValues.SETUP_WIZARD_ENABLED) {
+			return _setupFinished;
 		}
 
 		return true;
+	}
+
+	public static void setSetupFinished(boolean setupFinished) {
+		_setupFinished = setupFinished;
 	}
 
 	public static void testDatabase(HttpServletRequest request)
@@ -100,8 +113,7 @@ public class SetupWizardUtil {
 		String driverClassName = _getParameter(
 			request, PropsKeys.JDBC_DEFAULT_DRIVER_CLASS_NAME,
 			PropsValues.JDBC_DEFAULT_DRIVER_CLASS_NAME);
-		String url = _getParameter(
-			request, PropsKeys.JDBC_DEFAULT_URL, null);
+		String url = _getParameter(request, PropsKeys.JDBC_DEFAULT_URL, null);
 		String userName = _getParameter(
 			request, PropsKeys.JDBC_DEFAULT_USERNAME, null);
 		String password = _getParameter(
@@ -152,7 +164,8 @@ public class SetupWizardUtil {
 		boolean databaseConfigured = _isDatabaseConfigured(unicodeProperties);
 
 		_processAdminProperties(request, unicodeProperties);
-		_processDatabaseProperties(request, unicodeProperties);
+		_processDatabaseProperties(
+			request, unicodeProperties, databaseConfigured);
 
 		updateLanguage(request, response);
 
@@ -173,7 +186,10 @@ public class SetupWizardUtil {
 			_reloadServletContext(request, unicodeProperties);
 		}
 
-		_resetAdminPassword(request);
+		_updateCompany();
+		_updateAdminUser(request);
+
+		_initPlugins();
 	}
 
 	private static String _getParameter(
@@ -184,6 +200,15 @@ public class SetupWizardUtil {
 		return ParamUtil.getString(request, name, defaultValue);
 	}
 
+	/**
+	 * @see {@link com.liferay.portal.servlet.MainServlet#initPlugins}
+	 */
+	private static void _initPlugins() {
+		HotDeployUtil.setCapturePrematureEvents(false);
+
+		PortalLifecycleUtil.flushInits();
+	}
+
 	private static boolean _isDatabaseConfigured(
 		UnicodeProperties unicodeProperties) {
 
@@ -191,8 +216,7 @@ public class SetupWizardUtil {
 			PropsKeys.JDBC_DEFAULT_DRIVER_CLASS_NAME);
 		String defaultPassword = unicodeProperties.get(
 			PropsKeys.JDBC_DEFAULT_PASSWORD);
-		String defaultURL = unicodeProperties.get(
-			PropsKeys.JDBC_DEFAULT_URL);
+		String defaultURL = unicodeProperties.get(PropsKeys.JDBC_DEFAULT_URL);
 		String defaultUsername = unicodeProperties.get(
 			PropsKeys.JDBC_DEFAULT_USERNAME);
 
@@ -212,9 +236,10 @@ public class SetupWizardUtil {
 			HttpServletRequest request, UnicodeProperties unicodeProperties)
 		throws Exception {
 
-		String webId = _getParameter(
-			request, PropsKeys.COMPANY_DEFAULT_WEB_ID, "liferay.com");
-		PropsValues.COMPANY_DEFAULT_WEB_ID = webId;
+		String companyName = _getParameter(
+			request, PropsKeys.COMPANY_DEFAULT_NAME, "Liferay");
+
+		PropsValues.COMPANY_DEFAULT_NAME = companyName;
 
 		FullNameGenerator fullNameGenerator =
 			FullNameGeneratorFactory.getInstance();
@@ -229,49 +254,48 @@ public class SetupWizardUtil {
 
 		PropsValues.DEFAULT_ADMIN_LAST_NAME = lastName;
 
-		String adminEmailFromName = fullNameGenerator.getFullName(
+		String fullName = fullNameGenerator.getFullName(
 			firstName, null, lastName);
 
-		PropsValues.ADMIN_EMAIL_FROM_NAME = adminEmailFromName;
+		PropsValues.ADMIN_EMAIL_FROM_NAME = fullName;
 
-		unicodeProperties.put(
-			PropsKeys.ADMIN_EMAIL_FROM_NAME, adminEmailFromName);
+		unicodeProperties.put(PropsKeys.ADMIN_EMAIL_FROM_NAME, fullName);
 
-		String defaultAdminEmailAddress = _getParameter(
+		String emailAddress = _getParameter(
 			request, PropsKeys.ADMIN_EMAIL_FROM_ADDRESS, "test@liferay.com");
 
-		unicodeProperties.put(
-			PropsKeys.DEFAULT_ADMIN_EMAIL_ADDRESS, defaultAdminEmailAddress);
+		PropsValues.ADMIN_EMAIL_FROM_ADDRESS = emailAddress;
+		PropsValues.DEFAULT_ADMIN_EMAIL_ADDRESS = emailAddress;
 
-		PropsValues.DEFAULT_ADMIN_EMAIL_ADDRESS = defaultAdminEmailAddress;
+		unicodeProperties.put(
+			PropsKeys.DEFAULT_ADMIN_EMAIL_ADDRESS, emailAddress);
 
 		ScreenNameGenerator screenNameGenerator =
 			ScreenNameGeneratorFactory.getInstance();
 
-		String defaultAdminScreenName = null;
+		String screenName = null;
 
 		try {
-			defaultAdminScreenName = screenNameGenerator.generate(
-				0, 0, defaultAdminEmailAddress);
+			screenName = screenNameGenerator.generate(0, 0, emailAddress);
 		}
 		catch (Exception e) {
-			defaultAdminScreenName = "test";
+			screenName = "test";
 		}
 
-		PropsValues.DEFAULT_ADMIN_SCREEN_NAME = defaultAdminScreenName;
+		PropsValues.DEFAULT_ADMIN_SCREEN_NAME = screenName;
 
-		unicodeProperties.put(
-			PropsKeys.DEFAULT_ADMIN_SCREEN_NAME, defaultAdminScreenName);
+		unicodeProperties.put(PropsKeys.DEFAULT_ADMIN_SCREEN_NAME, screenName);
 	}
 
 	private static void _processDatabaseProperties(
-			HttpServletRequest request, UnicodeProperties unicodeProperties)
+			HttpServletRequest request, UnicodeProperties unicodeProperties,
+			boolean databaseConfigured)
 		throws Exception {
 
 		boolean defaultDatabase = ParamUtil.getBoolean(
 			request, "defaultDatabase", true);
 
-		if (defaultDatabase) {
+		if (defaultDatabase || databaseConfigured) {
 			unicodeProperties.remove(PropsKeys.JDBC_DEFAULT_URL);
 			unicodeProperties.remove(PropsKeys.JDBC_DEFAULT_DRIVER_CLASS_NAME);
 			unicodeProperties.remove(PropsKeys.JDBC_DEFAULT_USERNAME);
@@ -302,45 +326,21 @@ public class SetupWizardUtil {
 		WebCachePoolUtil.clear();
 		CentralizedThreadLocal.clearShortLivedThreadLocals();
 
-		// Startup
+		// Quartz
 
 		QuartzLocalServiceUtil.checkQuartzTables();
+
+		// Startup
 
 		StartupAction startupAction = new StartupAction();
 
 		startupAction.run(null);
 
+		// Servlet context
+
 		HttpSession session = request.getSession();
 
 		PortalInstances.reload(session.getServletContext());
-	}
-
-	private static void _resetAdminPassword(HttpServletRequest request)
-		throws Exception {
-
-		String defaultAdminEmailAddress = _getParameter(
-			request, PropsKeys.ADMIN_EMAIL_FROM_ADDRESS, "test@liferay.com");
-
-		User user = null;
-
-		try {
-			user = UserLocalServiceUtil.getUserByEmailAddress(
-				PortalUtil.getDefaultCompanyId(), defaultAdminEmailAddress);
-		}
-		catch (NoSuchUserException nsue) {
-			user = UserLocalServiceUtil.getUserByEmailAddress(
-				PortalUtil.getDefaultCompanyId(), "test@liferay.com");
-
-			UserLocalServiceUtil.updateEmailAddress(
-				user.getUserId(), StringPool.BLANK,
-				defaultAdminEmailAddress, defaultAdminEmailAddress);
-		}
-
-		UserLocalServiceUtil.updatePasswordReset(user.getUserId(), true);
-
-		HttpSession session = request.getSession();
-
-		session.setAttribute(WebKeys.SETUP_WIZARD_PASSWORD_UPDATED, true);
 	}
 
 	private static void _testConnection(
@@ -360,6 +360,87 @@ public class SetupWizardUtil {
 		}
 		finally {
 			DataAccess.cleanUp(connection);
+		}
+	}
+
+	private static void _updateAdminUser(HttpServletRequest request)
+		throws Exception {
+
+		// Email address
+
+		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
+			WebKeys.THEME_DISPLAY);
+
+		User user = null;
+
+		try {
+			user = UserLocalServiceUtil.getUserByEmailAddress(
+				PortalUtil.getDefaultCompanyId(),
+				PropsValues.ADMIN_EMAIL_FROM_ADDRESS);
+		}
+		catch (NoSuchUserException nsue) {
+			user = UserLocalServiceUtil.getUserByEmailAddress(
+				PortalUtil.getDefaultCompanyId(), "test@liferay.com");
+
+			user = UserLocalServiceUtil.updateEmailAddress(
+				user.getUserId(), StringPool.BLANK,
+				PropsValues.ADMIN_EMAIL_FROM_ADDRESS,
+				PropsValues.ADMIN_EMAIL_FROM_ADDRESS);
+		}
+
+		// First and last name
+
+		String greeting = LanguageUtil.format(
+			themeDisplay.getLocale(), "welcome-x",
+			" " + PropsValues.ADMIN_EMAIL_FROM_NAME, false);
+
+		Contact contact = user.getContact();
+
+		Calendar birthdayCal = CalendarFactoryUtil.getCalendar();
+
+		birthdayCal.setTime(contact.getBirthday());
+
+		int birthdayMonth = birthdayCal.get(Calendar.MONTH);
+		int birthdayDay = birthdayCal.get(Calendar.DAY_OF_MONTH);
+		int birthdayYear = birthdayCal.get(Calendar.YEAR);
+
+		user = UserLocalServiceUtil.updateUser(
+			user.getUserId(), StringPool.BLANK, StringPool.BLANK,
+			StringPool.BLANK, false, user.getReminderQueryQuestion(),
+			user.getReminderQueryAnswer(), user.getScreenName(),
+			user.getEmailAddress(), user.getFacebookId(), user.getOpenId(),
+			user.getLanguageId(), user.getTimeZoneId(), greeting,
+			user.getComments(), PropsValues.DEFAULT_ADMIN_FIRST_NAME,
+			user.getMiddleName(), PropsValues.DEFAULT_ADMIN_LAST_NAME,
+			contact.getPrefixId(), contact.getSuffixId(), contact.isMale(),
+			birthdayMonth, birthdayDay, birthdayYear, contact.getSmsSn(),
+			contact.getAimSn(), contact.getFacebookSn(), contact.getIcqSn(),
+			contact.getJabberSn(), contact.getMsnSn(), contact.getMySpaceSn(),
+			contact.getSkypeSn(), contact.getTwitterSn(), contact.getYmSn(),
+			contact.getJobTitle(), null, null, null, null, null,
+			new ServiceContext());
+
+		// Password
+
+		user = UserLocalServiceUtil.updatePasswordReset(user.getUserId(), true);
+
+		HttpSession session = request.getSession();
+
+		session.setAttribute(WebKeys.SETUP_WIZARD_PASSWORD_UPDATED, true);
+	}
+
+	private static void _updateCompany() throws Exception {
+		Company company = CompanyLocalServiceUtil.getCompanyById(
+			PortalInstances.getDefaultCompanyId());
+
+		Account account = company.getAccount();
+
+		String name = account.getName();
+
+		if (!name.equals(PropsValues.COMPANY_DEFAULT_NAME)) {
+			account.setName(PropsValues.COMPANY_DEFAULT_NAME);
+
+			AccountLocalServiceUtil.updateAccount(account);
 		}
 	}
 
@@ -383,5 +464,7 @@ public class SetupWizardUtil {
 	private final static String _PROPERTIES_PREFIX = "properties--";
 
 	private static Log _log = LogFactoryUtil.getLog(SetupWizardUtil.class);
+
+	private static boolean _setupFinished = false;
 
 }

@@ -81,6 +81,7 @@ portletURL.setParameter("tabs1", tabs1);
 		<liferay-ui:search-container-column-text
 			href="<%= rowHREF %>"
 			name="name"
+			value="<%= structure.getName(locale) %>"
 		/>
 
 		<c:if test="<%= Validator.isNull(storageTypeValue) %>">
@@ -125,3 +126,20 @@ portletURL.setParameter("tabs1", tabs1);
 
 	<liferay-ui:search-iterator />
 </liferay-ui:search-container>
+
+<aui:script>
+	function <portlet:namespace />copyStructure(uri) {
+		Liferay.Util.openWindow(
+			{
+				dialog: {
+					centered: true,
+					constrain: true,
+					width: 600
+				},
+				refreshWindow: window,
+				title: '<%= UnicodeLanguageUtil.get(pageContext, "copy-structure") %>',
+				uri: uri
+			}
+		);
+	}
+</aui:script>

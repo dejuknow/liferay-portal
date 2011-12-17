@@ -95,14 +95,6 @@ public class DLFileEntryMetadataUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static DLFileEntryMetadata remove(
-		DLFileEntryMetadata dlFileEntryMetadata) throws SystemException {
-		return getPersistence().remove(dlFileEntryMetadata);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static DLFileEntryMetadata update(

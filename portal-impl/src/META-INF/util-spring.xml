@@ -314,9 +314,9 @@
 			<bean class="com.liferay.portal.util.LocalizationImpl" />
 		</property>
 	</bean>
-	<bean id="com.liferay.portal.kernel.util.MethodParameterNamesResolverUtil" class="com.liferay.portal.kernel.util.MethodParameterNamesResolverUtil">
-		<property name="methodParameterNamesResolver">
-			<bean class="com.liferay.portal.util.MethodParameterNamesResolverImpl" />
+	<bean id="com.liferay.portal.kernel.util.MethodParameterNamesResolverUtil" class="com.liferay.portal.kernel.util.MethodParametersResolverUtil">
+		<property name="methodParametersResolver">
+			<bean class="com.liferay.portal.util.MethodParametersResolverImpl" />
 		</property>
 	</bean>
 	<bean id="com.liferay.portal.kernel.util.MimeTypesUtil" class="com.liferay.portal.kernel.util.MimeTypesUtil">
@@ -576,6 +576,9 @@
 				</entry>
 				<entry key="document-library">
 					<bean class="com.liferay.portlet.dynamicdatamapping.storage.DocumentLibraryFieldRenderer" />
+				</entry>
+				<entry key="file-upload">
+					<bean class="com.liferay.portlet.dynamicdatamapping.storage.FileUploadFieldRenderer" />
 				</entry>
 				<entry key="string">
 					<bean class="com.liferay.portlet.dynamicdatamapping.storage.StringFieldRenderer" />

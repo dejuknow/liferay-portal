@@ -139,6 +139,8 @@ public class ActionKeys {
 
 	public static final String CONFIGURATION = "CONFIGURATION";
 
+	public static final String CONFIGURE_PORTLETS = "CONFIGURE_PORTLETS";
+
 	public static final String CUSTOMIZE = "CUSTOMIZE";
 
 	public static final String DEFINE_PERMISSIONS = "DEFINE_PERMISSIONS";
@@ -219,6 +221,9 @@ public class ActionKeys {
 	public static final String SUBSCRIBE = "SUBSCRIBE";
 
 	public static final String SUBMIT = "SUBMIT";
+
+	public static final String UNLINK_LAYOUT_SET_PROTOTYPE =
+		"UNLINK_LAYOUT_SET_PROTOTYPE";
 
 	public static final String UPDATE = "UPDATE";
 

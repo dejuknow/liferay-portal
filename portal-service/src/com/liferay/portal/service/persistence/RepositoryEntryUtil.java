@@ -94,14 +94,6 @@ public class RepositoryEntryUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static RepositoryEntry remove(RepositoryEntry repositoryEntry)
-		throws SystemException {
-		return getPersistence().remove(repositoryEntry);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static RepositoryEntry update(RepositoryEntry repositoryEntry,

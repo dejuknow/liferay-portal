@@ -46,6 +46,9 @@ public class Member_AssertUpdateDocumentTypeTest extends BaseTestCase {
 		selenium.clickAt("link=Documents and Media",
 			RuntimeVariables.replace("Documents and Media"));
 		selenium.waitForPageToLoad("30000");
+		Thread.sleep(5000);
+		assertEquals(RuntimeVariables.replace("Manage"),
+			selenium.getText("//span[@title='Manage']/ul/li/strong/a"));
 		selenium.clickAt("//span[@title='Manage']/ul/li/strong/a",
 			RuntimeVariables.replace("Manage"));
 
@@ -95,7 +98,29 @@ public class Member_AssertUpdateDocumentTypeTest extends BaseTestCase {
 			}
 
 			try {
-				if (selenium.isVisible("//tr[3]/td[2]")) {
+				if (selenium.isVisible("//input[@id='_20_keywords']")) {
+					break;
+				}
+			}
+			catch (Exception e) {
+			}
+
+			Thread.sleep(1000);
+		}
+
+		selenium.type("//input[@id='_20_keywords']",
+			RuntimeVariables.replace("Name"));
+		selenium.clickAt("//input[@value='Search']",
+			RuntimeVariables.replace("Search"));
+		Thread.sleep(5000);
+
+		for (int second = 0;; second++) {
+			if (second >= 90) {
+				fail("timeout");
+			}
+
+			try {
+				if (selenium.isVisible("//tr[3]/td[1]")) {
 					break;
 				}
 			}
@@ -106,10 +131,10 @@ public class Member_AssertUpdateDocumentTypeTest extends BaseTestCase {
 		}
 
 		assertEquals(RuntimeVariables.replace("Document Type Name"),
-			selenium.getText("//tr[3]/td[2]"));
+			selenium.getText("//tr[3]/td[1]"));
 		assertEquals(RuntimeVariables.replace("Edit"),
-			selenium.getText("//tr[3]/td[4]/span/a/span"));
-		selenium.clickAt("//tr[3]/td[4]/span/a/span",
+			selenium.getText("//tr[3]/td[3]/span/a/span"));
+		selenium.clickAt("//tr[3]/td[3]/span/a/span",
 			RuntimeVariables.replace("Edit"));
 		selenium.waitForPageToLoad("30000");
 		selenium.type("//input[@id='_20_name']",

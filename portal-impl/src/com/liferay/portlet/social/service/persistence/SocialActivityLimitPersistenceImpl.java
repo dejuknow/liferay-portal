@@ -210,6 +210,25 @@ public class SocialActivityLimitPersistenceImpl extends BasePersistenceImpl<Soci
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 
+		clearUniqueFindersCache(socialActivityLimit);
+	}
+
+	@Override
+	public void clearCache(List<SocialActivityLimit> socialActivityLimits) {
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+
+		for (SocialActivityLimit socialActivityLimit : socialActivityLimits) {
+			EntityCacheUtil.removeResult(SocialActivityLimitModelImpl.ENTITY_CACHE_ENABLED,
+				SocialActivityLimitImpl.class,
+				socialActivityLimit.getPrimaryKey());
+
+			clearUniqueFindersCache(socialActivityLimit);
+		}
+	}
+
+	protected void clearUniqueFindersCache(
+		SocialActivityLimit socialActivityLimit) {
 		FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_G_U_C_C_A_A,
 			new Object[] {
 				Long.valueOf(socialActivityLimit.getGroupId()),
@@ -240,20 +259,6 @@ public class SocialActivityLimitPersistenceImpl extends BasePersistenceImpl<Soci
 	/**
 	 * Removes the social activity limit with the primary key from the database. Also notifies the appropriate model listeners.
 	 *
-	 * @param primaryKey the primary key of the social activity limit
-	 * @return the social activity limit that was removed
-	 * @throws com.liferay.portal.NoSuchModelException if a social activity limit with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public SocialActivityLimit remove(Serializable primaryKey)
-		throws NoSuchModelException, SystemException {
-		return remove(((Long)primaryKey).longValue());
-	}
-
-	/**
-	 * Removes the social activity limit with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
 	 * @param activityLimitId the primary key of the social activity limit
 	 * @return the social activity limit that was removed
 	 * @throws com.liferay.portlet.social.NoSuchActivityLimitException if a social activity limit with the primary key could not be found
@@ -261,25 +266,38 @@ public class SocialActivityLimitPersistenceImpl extends BasePersistenceImpl<Soci
 	 */
 	public SocialActivityLimit remove(long activityLimitId)
 		throws NoSuchActivityLimitException, SystemException {
+		return remove(Long.valueOf(activityLimitId));
+	}
+
+	/**
+	 * Removes the social activity limit with the primary key from the database. Also notifies the appropriate model listeners.
+	 *
+	 * @param primaryKey the primary key of the social activity limit
+	 * @return the social activity limit that was removed
+	 * @throws com.liferay.portlet.social.NoSuchActivityLimitException if a social activity limit with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public SocialActivityLimit remove(Serializable primaryKey)
+		throws NoSuchActivityLimitException, SystemException {
 		Session session = null;
 
 		try {
 			session = openSession();
 
 			SocialActivityLimit socialActivityLimit = (SocialActivityLimit)session.get(SocialActivityLimitImpl.class,
-					Long.valueOf(activityLimitId));
+					primaryKey);
 
 			if (socialActivityLimit == null) {
 				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
-						activityLimitId);
+					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchActivityLimitException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
-					activityLimitId);
+					primaryKey);
 			}
 
-			return socialActivityLimitPersistence.remove(socialActivityLimit);
+			return remove(socialActivityLimit);
 		}
 		catch (NoSuchActivityLimitException nsee) {
 			throw nsee;
@@ -290,19 +308,6 @@ public class SocialActivityLimitPersistenceImpl extends BasePersistenceImpl<Soci
 		finally {
 			closeSession(session);
 		}
-	}
-
-	/**
-	 * Removes the social activity limit from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param socialActivityLimit the social activity limit
-	 * @return the social activity limit that was removed
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public SocialActivityLimit remove(SocialActivityLimit socialActivityLimit)
-		throws SystemException {
-		return super.remove(socialActivityLimit);
 	}
 
 	@Override
@@ -324,24 +329,7 @@ public class SocialActivityLimitPersistenceImpl extends BasePersistenceImpl<Soci
 			closeSession(session);
 		}
 
-		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
-		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
-
-		SocialActivityLimitModelImpl socialActivityLimitModelImpl = (SocialActivityLimitModelImpl)socialActivityLimit;
-
-		FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_G_U_C_C_A_A,
-			new Object[] {
-				Long.valueOf(socialActivityLimitModelImpl.getGroupId()),
-				Long.valueOf(socialActivityLimitModelImpl.getUserId()),
-				Long.valueOf(socialActivityLimitModelImpl.getClassNameId()),
-				Long.valueOf(socialActivityLimitModelImpl.getClassPK()),
-				Integer.valueOf(socialActivityLimitModelImpl.getActivityType()),
-				
-			socialActivityLimitModelImpl.getActivityCounterName()
-			});
-
-		EntityCacheUtil.removeResult(SocialActivityLimitModelImpl.ENTITY_CACHE_ENABLED,
-			SocialActivityLimitImpl.class, socialActivityLimit.getPrimaryKey());
+		clearCache(socialActivityLimit);
 
 		return socialActivityLimit;
 	}
@@ -1272,7 +1260,7 @@ public class SocialActivityLimitPersistenceImpl extends BasePersistenceImpl<Soci
 		throws SystemException {
 		for (SocialActivityLimit socialActivityLimit : findByC_C(classNameId,
 				classPK)) {
-			socialActivityLimitPersistence.remove(socialActivityLimit);
+			remove(socialActivityLimit);
 		}
 	}
 
@@ -1294,7 +1282,7 @@ public class SocialActivityLimitPersistenceImpl extends BasePersistenceImpl<Soci
 		SocialActivityLimit socialActivityLimit = findByG_U_C_C_A_A(groupId,
 				userId, classNameId, classPK, activityType, activityCounterName);
 
-		socialActivityLimitPersistence.remove(socialActivityLimit);
+		remove(socialActivityLimit);
 	}
 
 	/**
@@ -1304,7 +1292,7 @@ public class SocialActivityLimitPersistenceImpl extends BasePersistenceImpl<Soci
 	 */
 	public void removeAll() throws SystemException {
 		for (SocialActivityLimit socialActivityLimit : findAll()) {
-			socialActivityLimitPersistence.remove(socialActivityLimit);
+			remove(socialActivityLimit);
 		}
 	}
 
@@ -1541,18 +1529,6 @@ public class SocialActivityLimitPersistenceImpl extends BasePersistenceImpl<Soci
 	protected SocialActivityLimitPersistence socialActivityLimitPersistence;
 	@BeanReference(type = SocialActivitySettingPersistence.class)
 	protected SocialActivitySettingPersistence socialActivitySettingPersistence;
-	@BeanReference(type = SocialEquityAssetEntryPersistence.class)
-	protected SocialEquityAssetEntryPersistence socialEquityAssetEntryPersistence;
-	@BeanReference(type = SocialEquityGroupSettingPersistence.class)
-	protected SocialEquityGroupSettingPersistence socialEquityGroupSettingPersistence;
-	@BeanReference(type = SocialEquityHistoryPersistence.class)
-	protected SocialEquityHistoryPersistence socialEquityHistoryPersistence;
-	@BeanReference(type = SocialEquityLogPersistence.class)
-	protected SocialEquityLogPersistence socialEquityLogPersistence;
-	@BeanReference(type = SocialEquitySettingPersistence.class)
-	protected SocialEquitySettingPersistence socialEquitySettingPersistence;
-	@BeanReference(type = SocialEquityUserPersistence.class)
-	protected SocialEquityUserPersistence socialEquityUserPersistence;
 	@BeanReference(type = SocialRelationPersistence.class)
 	protected SocialRelationPersistence socialRelationPersistence;
 	@BeanReference(type = SocialRequestPersistence.class)

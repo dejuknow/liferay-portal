@@ -95,14 +95,6 @@ public class AnnouncementsFlagUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static AnnouncementsFlag remove(AnnouncementsFlag announcementsFlag)
-		throws SystemException {
-		return getPersistence().remove(announcementsFlag);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static AnnouncementsFlag update(

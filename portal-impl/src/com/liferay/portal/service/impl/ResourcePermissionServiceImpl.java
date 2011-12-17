@@ -23,12 +23,12 @@ import com.liferay.portal.service.base.ResourcePermissionServiceBaseImpl;
 import java.util.Map;
 
 /**
- * Manages the creation and upkeep of resource permissions, and provides
- * methods for granting, revoking, and checking permissions.
+ * Manages the creation and upkeep of resource permissions, and provides methods
+ * for granting, revoking, and checking permissions.
  *
  * <p>
- * Before attempting to read any of the documentation for this class, first
- * read {@link com.liferay.portal.model.impl.ResourcePermissionImpl} for an
+ * Before attempting to read any of the documentation for this class, first read
+ * {@link com.liferay.portal.model.impl.ResourcePermissionImpl} for an
  * explanation of scoping.
  * </p>
  *
@@ -52,9 +52,9 @@ public class ResourcePermissionServiceImpl
 	 * If a company scope permission is granted to resources that the role
 	 * already had group scope permissions to, the group scope permissions are
 	 * deleted. Likewise, if a group scope permission is granted to resources
-	 * that the role already had company scope permissions to, the company
-	 * scope permissions are deleted. Be aware that this latter behavior can
-	 * result in an overall reduction in permissions for the role.
+	 * that the role already had company scope permissions to, the company scope
+	 * permissions are deleted. Be aware that this latter behavior can result in
+	 * an overall reduction in permissions for the role.
 	 * </p>
 	 *
 	 * <p>
@@ -74,8 +74,8 @@ public class ResourcePermissionServiceImpl
 	 * @param  actionId the action ID
 	 * @throws PortalException if the user did not have permission to add
 	 *         resource permissions, or if scope was set to individual scope or
-	 *         if a role with the primary key or a resource action with the
-	 *         name and action ID could not be found
+	 *         if a role with the primary key or a resource action with the name
+	 *         and action ID could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
 	public void addResourcePermission(
@@ -92,8 +92,8 @@ public class ResourcePermissionServiceImpl
 
 	/**
 	 * Revokes permission at the scope from the role to perform the action on
-	 * resources of the type. For example, this method could be used to revoke
-	 * a group scope permission to edit blog posts.
+	 * resources of the type. For example, this method could be used to revoke a
+	 * group scope permission to edit blog posts.
 	 *
 	 * <p>
 	 * Depending on the scope, the value of <code>primKey</code> will have
@@ -157,9 +157,8 @@ public class ResourcePermissionServiceImpl
 	}
 
 	/**
-	 * Updates the role's permissions at the scope, setting the actions that
-	 * can be performed on resources of the type. Existing actions are
-	 * replaced.
+	 * Updates the role's permissions at the scope, setting the actions that can
+	 * be performed on resources of the type. Existing actions are replaced.
 	 *
 	 * <p>
 	 * This method can be used to set permissions at any scope, but it is
@@ -198,9 +197,8 @@ public class ResourcePermissionServiceImpl
 	}
 
 	/**
-	 * Updates the role's permissions at the scope, setting the actions that
-	 * can be performed on resources of the type. Existing actions are
-	 * replaced.
+	 * Updates the role's permissions at the scope, setting the actions that can
+	 * be performed on resources of the type. Existing actions are replaced.
 	 *
 	 * <p>
 	 * This method can be used to set permissions at any scope, but it is
@@ -219,8 +217,7 @@ public class ResourcePermissionServiceImpl
 	 * @param  name the resource's name, which can be either a class name or a
 	 *         portlet ID
 	 * @param  primKey the primary key
-	 * @param  roleIdsToActionIds a map of role IDs to action IDs of the
-	 *         actions
+	 * @param  roleIdsToActionIds a map of role IDs to action IDs of the actions
 	 * @throws PortalException if the user did not have permission to set
 	 *         resource permissions, or if a role with the primary key or a
 	 *         resource action with the name and action ID could not be found

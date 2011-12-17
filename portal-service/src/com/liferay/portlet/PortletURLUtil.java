@@ -18,6 +18,8 @@ import com.liferay.portal.kernel.portlet.LiferayPortletURL;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
@@ -41,6 +43,7 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Brian Wing Shun Chan
+ * @author Miguel Pastor
  */
 public class PortletURLUtil {
 
@@ -139,8 +142,7 @@ public class PortletURLUtil {
 
 		sb.append(plid);
 
-		Portlet portlet = (Portlet)request.getAttribute(
-			WebKeys.RENDER_PORTLET);
+		Portlet portlet = (Portlet)request.getAttribute(WebKeys.RENDER_PORTLET);
 
 		String portletId = portlet.getPortletId();
 
@@ -214,13 +216,16 @@ public class PortletURLUtil {
 		String ppid = ParamUtil.getString(request, "p_p_id");
 
 		if (ppid.equals(portletId)) {
+			String namespace = PortalUtil.getPortletNamespace(portletId);
+
 			Map<String, String[]> parameters = request.getParameterMap();
 
 			for (Map.Entry<String, String[]> entry : parameters.entrySet()) {
 				String name = entry.getKey();
 
 				if (!PortalUtil.isReservedParameter(name) &&
-					!name.equals("currentURL")) {
+					!name.equals("currentURL") &&
+					!isRefreshURLReservedParameter(name, namespace)) {
 
 					String[] values = entry.getValue();
 
@@ -246,6 +251,33 @@ public class PortletURLUtil {
 		return sb.toString();
 	}
 
+	protected static boolean isRefreshURLReservedParameter(
+		String parameter, String namespace) {
+
+		if ((_PORTLET_URL_REFRESH_URL_RESERVED_PARAMETERS == null) ||
+			(_PORTLET_URL_REFRESH_URL_RESERVED_PARAMETERS.length == 0)) {
+
+			return false;
+		}
+
+		for (int i = 0; i < _PORTLET_URL_REFRESH_URL_RESERVED_PARAMETERS.length;
+				i++) {
+
+			String reservedParameter = namespace.concat(
+				_PORTLET_URL_REFRESH_URL_RESERVED_PARAMETERS[i]);
+
+			if (parameter.equals(reservedParameter)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	private static final int _CURRENT_URL_PARAMETER_THRESHOLD = 32768;
+
+	private static String[] _PORTLET_URL_REFRESH_URL_RESERVED_PARAMETERS =
+		PropsUtil.getArray(
+			PropsKeys.PORTLET_URL_REFRESH_URL_RESERVED_PARAMETERS);
 
 }

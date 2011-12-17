@@ -42,7 +42,6 @@ import com.liferay.portlet.documentlibrary.model.DLFileVersion;
 import com.liferay.portlet.documentlibrary.model.DLSyncConstants;
 import com.liferay.portlet.documentlibrary.service.base.DLAppHelperLocalServiceBaseImpl;
 import com.liferay.portlet.documentlibrary.social.DLActivityKeys;
-import com.liferay.portlet.documentlibrary.util.DLPreviewableProcessor;
 import com.liferay.portlet.documentlibrary.util.DLProcessorRegistryUtil;
 
 import java.io.Serializable;
@@ -99,9 +98,69 @@ public class DLAppHelperLocalServiceImpl
 
 		if (!isStagingGroup(folder.getGroupId())) {
 			dlSyncLocalService.addSync(
-				folder.getFolderId(), folder.getCompanyId(),
+				folder.getFolderId(), folder.getUuid(), folder.getCompanyId(),
 				folder.getRepositoryId(), folder.getParentFolderId(),
-				DLSyncConstants.TYPE_FOLDER);
+				folder.getName(), DLSyncConstants.TYPE_FOLDER, "-1");
+		}
+	}
+
+	public void checkAssetEntry(
+			long userId, FileEntry fileEntry, FileVersion fileVersion)
+		throws PortalException, SystemException {
+
+		AssetEntry fileEntryAssetEntry = assetEntryLocalService.fetchEntry(
+			DLFileEntryConstants.getClassName(), fileEntry.getFileEntryId());
+
+		long[] assetCategoryIds = new long[0];
+		String[] assetTagNames = new String[0];
+
+		long fileEntryTypeId = getFileEntryTypeId(fileEntry);
+
+		if (fileEntryAssetEntry == null) {
+			fileEntryAssetEntry = assetEntryLocalService.updateEntry(
+				userId, fileEntry.getGroupId(),
+				DLFileEntryConstants.getClassName(),
+				fileEntry.getFileEntryId(), fileEntry.getUuid(),
+				fileEntryTypeId, assetCategoryIds, assetTagNames, false, null,
+				null, null, null, fileEntry.getMimeType(), fileEntry.getTitle(),
+				fileEntry.getDescription(), null, null, null, 0, 0, null,
+				false);
+		}
+
+		AssetEntry fileVersionAssetEntry = assetEntryLocalService.fetchEntry(
+			DLFileEntryConstants.getClassName(),
+			fileVersion.getFileVersionId());
+
+		if ((fileVersionAssetEntry == null) && !fileVersion.isApproved() &&
+			!fileVersion.getVersion().equals(
+				DLFileEntryConstants.VERSION_DEFAULT)) {
+
+			assetCategoryIds = assetCategoryLocalService.getCategoryIds(
+				DLFileEntryConstants.getClassName(),
+				fileEntry.getFileEntryId());
+			assetTagNames = assetTagLocalService.getTagNames(
+				DLFileEntryConstants.getClassName(),
+				fileEntry.getFileEntryId());
+
+			fileVersionAssetEntry = assetEntryLocalService.updateEntry(
+				userId, fileEntry.getGroupId(),
+				DLFileEntryConstants.getClassName(),
+				fileVersion.getFileVersionId(), fileEntry.getUuid(),
+				fileEntryTypeId, assetCategoryIds, assetTagNames, false, null,
+				null, null, null, fileEntry.getMimeType(), fileEntry.getTitle(),
+				fileEntry.getDescription(), null, null, null, 0, 0, null,
+				false);
+
+			List<AssetLink> assetLinks = assetLinkLocalService.getDirectLinks(
+				fileEntryAssetEntry.getEntryId());
+
+			long[] assetLinkIds = StringUtil.split(
+				ListUtil.toString(assetLinks, AssetLink.ENTRY_ID2_ACCESSOR),
+				0L);
+
+			assetLinkLocalService.updateLinks(
+				userId, fileVersionAssetEntry.getEntryId(), assetLinkIds,
+				AssetLinkConstants.TYPE_RELATED);
 		}
 	}
 
@@ -110,7 +169,7 @@ public class DLAppHelperLocalServiceImpl
 
 		// File previews
 
-		DLPreviewableProcessor.deleteFiles(fileEntry);
+		DLProcessorRegistryUtil.cleanUp(fileEntry);
 
 		// File ranks
 
@@ -127,7 +186,8 @@ public class DLAppHelperLocalServiceImpl
 		if (!isStagingGroup(fileEntry.getGroupId())) {
 			dlSyncLocalService.updateSync(
 				fileEntry.getFileEntryId(), fileEntry.getFolderId(),
-				DLSyncConstants.EVENT_DELETE);
+				fileEntry.getTitle(), DLSyncConstants.EVENT_DELETE,
+				fileEntry.getVersion());
 		}
 
 		// Asset
@@ -152,13 +212,13 @@ public class DLAppHelperLocalServiceImpl
 		if (!isStagingGroup(folder.getGroupId())) {
 			dlSyncLocalService.updateSync(
 				folder.getFolderId(), folder.getParentFolderId(),
-				DLSyncConstants.EVENT_DELETE);
+				folder.getName(), DLSyncConstants.EVENT_DELETE, "-1");
 		}
 	}
 
 	public void getFileAsStream(
 			long userId, FileEntry fileEntry, boolean incrementCounter)
-		throws PortalException, SystemException {
+		throws SystemException {
 
 		// File rank
 
@@ -194,8 +254,7 @@ public class DLAppHelperLocalServiceImpl
 		return dlFileShortcutPersistence.findByG_F_S(groupId, folderId, status);
 	}
 
-	public int getFileShortcutsCount(
-			long groupId, long folderId, int status)
+	public int getFileShortcutsCount(long groupId, long folderId, int status)
 		throws SystemException {
 
 		return dlFileShortcutPersistence.countByG_F_S(
@@ -204,6 +263,23 @@ public class DLAppHelperLocalServiceImpl
 
 	public List<FileEntry> getNoAssetFileEntries() {
 		return null;
+	}
+
+	public void moveFileEntry(FileEntry fileEntry)
+		throws PortalException, SystemException {
+
+		dlSyncLocalService.updateSync(
+			fileEntry.getFileEntryId(), fileEntry.getFolderId(),
+			fileEntry.getTitle(), DLSyncConstants.EVENT_UPDATE,
+			fileEntry.getVersion());
+	}
+
+	public void moveFolder(Folder folder)
+		throws PortalException, SystemException {
+
+		dlSyncLocalService.updateSync(
+			folder.getFolderId(), folder.getParentFolderId(),
+			folder.getName(), DLSyncConstants.EVENT_UPDATE, "-1");
 	}
 
 	public AssetEntry updateAsset(
@@ -308,6 +384,26 @@ public class DLAppHelperLocalServiceImpl
 
 	public void updateFileEntry(
 			long userId, FileEntry fileEntry, FileVersion fileVersion,
+			long assetClassPk)
+		throws PortalException, SystemException {
+
+		boolean updateAsset = true;
+
+		if (fileEntry instanceof LiferayFileEntry &&
+			fileEntry.getVersion().equals(fileVersion.getVersion())) {
+
+			updateAsset = false;
+		}
+
+		if (updateAsset) {
+			updateAsset(userId, fileEntry, fileVersion, assetClassPk);
+		}
+
+		registerDLProcessorCallback(fileEntry);
+	}
+
+	public void updateFileEntry(
+			long userId, FileEntry fileEntry, FileVersion fileVersion,
 			ServiceContext serviceContext)
 		throws PortalException, SystemException {
 
@@ -326,7 +422,7 @@ public class DLAppHelperLocalServiceImpl
 		if (!isStagingGroup(folder.getGroupId())) {
 			dlSyncLocalService.updateSync(
 				folder.getFolderId(), folder.getParentFolderId(),
-				DLSyncConstants.EVENT_UPDATE);
+				folder.getName(), DLSyncConstants.EVENT_UPDATE, "-1");
 		}
 	}
 
@@ -404,14 +500,16 @@ public class DLAppHelperLocalServiceImpl
 
 				if (event.equals(DLSyncConstants.EVENT_ADD)) {
 					dlSyncLocalService.addSync(
-						fileEntry.getFileEntryId(), fileEntry.getCompanyId(),
-						fileEntry.getRepositoryId(), fileEntry.getFolderId(),
-						DLSyncConstants.TYPE_FILE);
+						fileEntry.getFileEntryId(), fileEntry.getUuid(),
+						fileEntry.getCompanyId(), fileEntry.getRepositoryId(),
+						fileEntry.getFolderId(), fileEntry.getTitle(),
+						DLSyncConstants.TYPE_FILE, fileEntry.getVersion());
 				}
 				else if (event.equals(DLSyncConstants.EVENT_UPDATE)) {
 					dlSyncLocalService.updateSync(
 						fileEntry.getFileEntryId(), fileEntry.getFolderId(),
-						DLSyncConstants.EVENT_UPDATE);
+						fileEntry.getTitle(), DLSyncConstants.EVENT_UPDATE,
+						fileEntry.getVersion());
 				}
 			}
 

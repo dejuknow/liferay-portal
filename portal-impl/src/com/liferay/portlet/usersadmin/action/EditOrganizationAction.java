@@ -136,6 +136,16 @@ public class EditOrganizationAction extends PortletAction {
 					String redirect = PortalUtil.escapeRedirect(
 						ParamUtil.getString(actionRequest, "redirect"));
 
+					long organizationId = ParamUtil.getLong(
+						actionRequest, "organizationId");
+
+					if (organizationId > 0) {
+						redirect = HttpUtil.setParameter(
+							redirect,
+							actionResponse.getNamespace() + "organizationId",
+							organizationId);
+					}
+
 					if (Validator.isNotNull(redirect)) {
 						actionResponse.sendRedirect(redirect);
 					}

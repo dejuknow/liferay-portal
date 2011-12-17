@@ -14,6 +14,7 @@
 
 package com.liferay.portal.kernel.util;
 
+import com.liferay.portal.kernel.bean.BeanPropertiesUtil;
 import com.liferay.portal.kernel.json.JSONArray;
 
 import java.lang.reflect.Array;
@@ -354,10 +355,30 @@ public class ArrayUtil {
 		return newArray;
 	}
 
+	public static boolean[] clone(boolean[] array, int from, int to) {
+		boolean[] newArray = new boolean[to - from];
+
+		System.arraycopy(
+			array, from, newArray, 0,
+			Math.min(array.length - from, newArray.length));
+
+		return newArray;
+	}
+
 	public static byte[] clone(byte[] array) {
 		byte[] newArray = new byte[array.length];
 
 		System.arraycopy(array, 0, newArray, 0, array.length);
+
+		return newArray;
+	}
+
+	public static byte[] clone(byte[] array, int from, int to) {
+		byte[] newArray = new byte[to - from];
+
+		System.arraycopy(
+			array, from, newArray, 0,
+			Math.min(array.length - from, newArray.length));
 
 		return newArray;
 	}
@@ -370,10 +391,30 @@ public class ArrayUtil {
 		return newArray;
 	}
 
+	public static char[] clone(char[] array, int from, int to) {
+		char[] newArray = new char[to - from];
+
+		System.arraycopy(
+			array, from, newArray, 0,
+			Math.min(array.length - from, newArray.length));
+
+		return newArray;
+	}
+
 	public static double[] clone(double[] array) {
 		double[] newArray = new double[array.length];
 
 		System.arraycopy(array, 0, newArray, 0, array.length);
+
+		return newArray;
+	}
+
+	public static double[] clone(double[] array, int from, int to) {
+		double[] newArray = new double[to - from];
+
+		System.arraycopy(
+			array, from, newArray, 0,
+			Math.min(array.length - from, newArray.length));
 
 		return newArray;
 	}
@@ -386,10 +427,30 @@ public class ArrayUtil {
 		return newArray;
 	}
 
+	public static float[] clone(float[] array, int from, int to) {
+		float[] newArray = new float[to - from];
+
+		System.arraycopy(
+			array, from, newArray, 0,
+			Math.min(array.length - from, newArray.length));
+
+		return newArray;
+	}
+
 	public static int[] clone(int[] array) {
 		int[] newArray = new int[array.length];
 
 		System.arraycopy(array, 0, newArray, 0, array.length);
+
+		return newArray;
+	}
+
+	public static int[] clone(int[] array, int from, int to) {
+		int[] newArray = new int[to - from];
+
+		System.arraycopy(
+			array, from, newArray, 0,
+			Math.min(array.length - from, newArray.length));
 
 		return newArray;
 	}
@@ -402,10 +463,30 @@ public class ArrayUtil {
 		return newArray;
 	}
 
+	public static long[] clone(long[] array, int from, int to) {
+		long[] newArray = new long[to - from];
+
+		System.arraycopy(
+			array, from, newArray, 0,
+			Math.min(array.length - from, newArray.length));
+
+		return newArray;
+	}
+
 	public static short[] clone(short[] array) {
 		short[] newArray = new short[array.length];
 
 		System.arraycopy(array, 0, newArray, 0, array.length);
+
+		return newArray;
+	}
+
+	public static short[] clone(short[] array, int from, int to) {
+		short[] newArray = new short[to - from];
+
+		System.arraycopy(
+			array, from, newArray, 0,
+			Math.min(array.length - from, newArray.length));
 
 		return newArray;
 	}
@@ -421,6 +502,19 @@ public class ArrayUtil {
 		return newArray;
 	}
 
+	public static <T> T[] clone(T[] array, int from, int to) {
+		Class<?> arrayClass = array.getClass();
+
+		T[] newArray = (T[])Array.newInstance(
+			arrayClass.getComponentType(), to - from);
+
+		System.arraycopy(
+			array, from, newArray, 0,
+			Math.min(array.length - from, newArray.length));
+
+		return newArray;
+	}
+
 	public static <T> T[][] clone(T[][] array) {
 		Class<?> arrayClass = array.getClass();
 
@@ -428,6 +522,19 @@ public class ArrayUtil {
 			arrayClass.getComponentType(), array.length);
 
 		System.arraycopy(array, 0, newArray, 0, array.length);
+
+		return newArray;
+	}
+
+	public static <T> T[][] clone(T[][] array, int from, int to) {
+		Class<?> arrayClass = array.getClass();
+
+		T[][] newArray = (T[][])Array.newInstance(
+			arrayClass.getComponentType(), to - from);
+
+		System.arraycopy(
+			array, from, newArray, 0,
+			Math.min(array.length - from, newArray.length));
 
 		return newArray;
 	}
@@ -445,135 +552,126 @@ public class ArrayUtil {
 		if ((array == null) || (array.length == 0)) {
 			return false;
 		}
-		else {
-			for (int i = 0; i < array.length; i++) {
-				if (value == array[i]) {
-					return true;
-				}
-			}
 
-			return false;
+		for (int i = 0; i < array.length; i++) {
+			if (value == array[i]) {
+				return true;
+			}
 		}
+
+		return false;
 	}
 
 	public static boolean contains(byte[] array, byte value) {
 		if ((array == null) || (array.length == 0)) {
 			return false;
 		}
-		else {
-			for (int i = 0; i < array.length; i++) {
-				if (value == array[i]) {
-					return true;
-				}
-			}
 
-			return false;
+		for (int i = 0; i < array.length; i++) {
+			if (value == array[i]) {
+				return true;
+			}
 		}
+
+		return false;
 	}
 
 	public static boolean contains(char[] array, char value) {
 		if ((array == null) || (array.length == 0)) {
 			return false;
 		}
-		else {
-			for (int i = 0; i < array.length; i++) {
-				if (value == array[i]) {
-					return true;
-				}
-			}
 
-			return false;
+		for (int i = 0; i < array.length; i++) {
+			if (value == array[i]) {
+				return true;
+			}
 		}
+
+		return false;
 	}
 
 	public static boolean contains(double[] array, double value) {
 		if ((array == null) || (array.length == 0)) {
 			return false;
 		}
-		else {
-			for (int i = 0; i < array.length; i++) {
-				if (value == array[i]) {
-					return true;
-				}
-			}
 
-			return false;
+		for (int i = 0; i < array.length; i++) {
+			if (value == array[i]) {
+				return true;
+			}
 		}
+
+		return false;
 	}
 
 	public static boolean contains(float[] array, float value) {
 		if ((array == null) || (array.length == 0)) {
 			return false;
 		}
-		else {
-			for (int i = 0; i < array.length; i++) {
-				if (value == array[i]) {
-					return true;
-				}
-			}
 
-			return false;
+		for (int i = 0; i < array.length; i++) {
+			if (value == array[i]) {
+				return true;
+			}
 		}
+
+		return false;
 	}
 
 	public static boolean contains(int[] array, int value) {
 		if ((array == null) || (array.length == 0)) {
 			return false;
 		}
-		else {
-			for (int i = 0; i < array.length; i++) {
-				if (value == array[i]) {
-					return true;
-				}
-			}
 
-			return false;
+		for (int i = 0; i < array.length; i++) {
+			if (value == array[i]) {
+				return true;
+			}
 		}
+
+		return false;
 	}
 
 	public static boolean contains(long[] array, long value) {
 		if ((array == null) || (array.length == 0)) {
 			return false;
 		}
-		else {
-			for (int i = 0; i < array.length; i++) {
-				if (value == array[i]) {
-					return true;
-				}
-			}
 
-			return false;
+		for (int i = 0; i < array.length; i++) {
+			if (value == array[i]) {
+				return true;
+			}
 		}
+
+		return false;
 	}
 
 	public static boolean contains(Object[] array, Object value) {
 		if ((array == null) || (array.length == 0) || (value == null)) {
 			return false;
 		}
-		else {
-			for (int i = 0; i < array.length; i++) {
-				if (value.equals(array[i])) {
-					return true;
-				}
-			}
 
-			return false;
+		for (int i = 0; i < array.length; i++) {
+			if (value.equals(array[i])) {
+				return true;
+			}
 		}
+
+		return false;
 	}
 
 	public static boolean contains(short[] array, short value) {
 		if ((array == null) || (array.length == 0)) {
 			return false;
 		}
-		else {
-			for (int i = 0; i < array.length; i++) {
-				if (value == array[i]) {
-					return true;
-				}
-			}
 
-			return false;
+		for (int i = 0; i < array.length; i++) {
+			if (value == array[i]) {
+				return true;
+			}
 		}
+
+		return false;
 	}
 
 	public static String[] distinct(String[] array) {
@@ -1025,6 +1123,78 @@ public class ArrayUtil {
 		return newArray;
 	}
 
+	/**
+	 * @see {@link ListUtil#toString(List, Accessor)}
+	 */
+	public static <T, V> String toString(T[] list, Accessor<T, V> accessor) {
+		return toString(list, accessor, StringPool.COMMA);
+	}
+
+	/**
+	 * @see {@link ListUtil#toString(List, Accessor, String)}
+	 */
+	public static <T, V> String toString(
+		T[] list, Accessor<T, V> accessor, String delimiter) {
+
+		if ((list == null) || (list.length == 0)) {
+			return StringPool.BLANK;
+		}
+
+		StringBundler sb = new StringBundler(2 * list.length - 1);
+
+		for (int i = 0; i < list.length; i++) {
+			T bean = list[i];
+
+			V value = accessor.get(bean);
+
+			if (value != null) {
+				sb.append(value);
+			}
+
+			if ((i + 1) != list.length) {
+				sb.append(delimiter);
+			}
+		}
+
+		return sb.toString();
+	}
+
+	/**
+	 * @see {@link ListUtil#toString(List, String)}
+	 */
+	public static String toString(Object[] array, String param) {
+		return toString(array, param, StringPool.COMMA);
+	}
+
+	/**
+	 * @see {@link ListUtil#toString(List, String, String)}
+	 */
+	public static String toString(
+		Object[] array, String param, String delimiter) {
+
+		if ((array == null) || (array.length == 0)) {
+			return StringPool.BLANK;
+		}
+
+		StringBundler sb = new StringBundler(2 * array.length - 1);
+
+		for (int i = 0; i < array.length; i++) {
+			Object bean = array[i];
+
+			Object value = BeanPropertiesUtil.getObject(bean, param);
+
+			if (value != null) {
+				sb.append(value);
+			}
+
+			if ((i + 1) != array.length) {
+				sb.append(delimiter);
+			}
+		}
+
+		return sb.toString();
+	}
+
 	public static String[] toStringArray(boolean[] array) {
 		String[] newArray = new String[array.length];
 
@@ -1055,11 +1225,11 @@ public class ArrayUtil {
 		return newArray;
 	}
 
-	public static String[] toStringArray(Date[] array, DateFormat df) {
+	public static String[] toStringArray(Date[] array, DateFormat dateFormat) {
 		String[] newArray = new String[array.length];
 
 		for (int i = 0; i < array.length; i++) {
-			newArray[i] = df.format(array[i]);
+			newArray[i] = dateFormat.format(array[i]);
 		}
 
 		return newArray;

@@ -47,8 +47,7 @@ public class DLFileEntryMetadataLocalServiceImpl
 		}
 	}
 
-	public DLFileEntryMetadata getFileEntryMetadata(
-			long fileEntryMetadataId)
+	public DLFileEntryMetadata getFileEntryMetadata(long fileEntryMetadataId)
 		throws PortalException, SystemException {
 
 		return dlFileEntryMetadataPersistence.findByPrimaryKey(
@@ -141,8 +140,7 @@ public class DLFileEntryMetadataLocalServiceImpl
 			long fileEntryMetadataId = counterLocalService.increment();
 
 			DLFileEntryMetadata fileEntryMetadata =
-				dlFileEntryMetadataPersistence.create(
-					fileEntryMetadataId);
+				dlFileEntryMetadataPersistence.create(fileEntryMetadataId);
 
 			long ddmStorageId = StorageEngineUtil.create(
 				companyId, ddmStructure.getStructureId(), fields,
@@ -150,14 +148,12 @@ public class DLFileEntryMetadataLocalServiceImpl
 
 			fileEntryMetadata.setDDMStorageId(ddmStorageId);
 
-			fileEntryMetadata.setDDMStructureId(
-				ddmStructure.getStructureId());
+			fileEntryMetadata.setDDMStructureId(ddmStructure.getStructureId());
 			fileEntryMetadata.setFileEntryTypeId(fileEntryTypeId);
 			fileEntryMetadata.setFileEntryId(fileEntryId);
 			fileEntryMetadata.setFileVersionId(fileVersionId);
 
-			dlFileEntryMetadataPersistence.update(
-				fileEntryMetadata, false);
+			dlFileEntryMetadataPersistence.update(fileEntryMetadata, false);
 
 			// Dynamic data mapping structure link
 

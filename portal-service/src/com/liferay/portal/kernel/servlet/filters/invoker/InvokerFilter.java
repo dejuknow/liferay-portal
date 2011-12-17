@@ -15,9 +15,12 @@
 package com.liferay.portal.kernel.servlet.filters.invoker;
 
 import com.liferay.portal.kernel.concurrent.ConcurrentLRUCache;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.BasePortalLifecycle;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.JavaConstants;
+import com.liferay.portal.kernel.util.PortalClassLoaderUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.StringPool;
@@ -68,10 +71,30 @@ public class InvokerFilter extends BasePortalLifecycle implements Filter {
 		invokerFilterChain.doFilter(servletRequest, servletResponse);
 	}
 
-	public void init(FilterConfig filterConfig) {
+	public void init(FilterConfig filterConfig) throws ServletException {
 		_filterConfig = filterConfig;
 
-		registerPortalLifecycle();
+		ServletContext servletContext = _filterConfig.getServletContext();
+
+		_contextPath = servletContext.getContextPath();
+
+		Thread currentThread = Thread.currentThread();
+
+		ClassLoader contextClassLoader = currentThread.getContextClassLoader();
+
+		if (contextClassLoader != PortalClassLoaderUtil.getClassLoader()) {
+			registerPortalLifecycle();
+		}
+		else {
+			try {
+				doPortalInit();
+			}
+			catch (Exception e) {
+				_log.error(e, e);
+
+				throw new ServletException(e);
+			}
+		}
 	}
 
 	protected void clearFilterChainsCache() {
@@ -114,11 +137,11 @@ public class InvokerFilter extends BasePortalLifecycle implements Filter {
 		if (invokerFilterHelper == null) {
 			invokerFilterHelper = new InvokerFilterHelper();
 
-			invokerFilterHelper.readLiferayFilterWebXML(
-				servletContext, "/WEB-INF/liferay-web.xml");
-
 			servletContext.setAttribute(
 				InvokerFilterHelper.class.getName(), invokerFilterHelper);
+
+			invokerFilterHelper.readLiferayFilterWebXML(
+				servletContext, "/WEB-INF/liferay-web.xml");
 		}
 
 		_invokerFilterHelper = invokerFilterHelper;
@@ -183,18 +206,19 @@ public class InvokerFilter extends BasePortalLifecycle implements Filter {
 			uri = request.getRequestURI();
 		}
 
-		String contextPath = request.getContextPath();
+		if (Validator.isNotNull(_contextPath) &&
+			!_contextPath.equals(StringPool.SLASH) &&
+			uri.startsWith(_contextPath)) {
 
-		if (Validator.isNotNull(contextPath) &&
-			!contextPath.equals(StringPool.SLASH) &&
-			uri.startsWith(contextPath)) {
-
-			uri = uri.substring(contextPath.length());
+			uri = uri.substring(_contextPath.length());
 		}
 
 		return uri;
 	}
 
+	private static Log _log = LogFactoryUtil.getLog(InvokerFilter.class);
+
+	private String _contextPath;
 	private Dispatcher _dispatcher;
 	private ConcurrentLRUCache<Integer, InvokerFilterChain> _filterChains;
 	private FilterConfig _filterConfig;

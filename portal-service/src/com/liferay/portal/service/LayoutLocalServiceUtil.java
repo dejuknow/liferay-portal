@@ -309,11 +309,12 @@ public class LayoutLocalServiceUtil {
 	normalized when accessed see {@link
 	com.liferay.portal.kernel.util.FriendlyURLNormalizerUtil#normalize(
 	String)}.
-	* @param locked whether the layout is locked
-	* @param serviceContext the service context. Must specify the replacement
-	universally unique identifier and can specify the replacement
-	create date, replacement modified date and the new expando bridge
-	attributes.
+	* @param serviceContext the service context. Must set the universally
+	unique identifier (UUID) for the layout. Can set the creation
+	date, modification date and the expando bridge attributes for the
+	layout. For layouts that belong to a layout set prototype, an
+	attribute named 'layoutUpdateable' can be set to specify whether
+	site administrators can modify this page within their site.
 	* @return the layout
 	* @throws PortalException if a group or user with the primary key could not
 	be found, or if layout values were invalid
@@ -327,13 +328,13 @@ public class LayoutLocalServiceUtil {
 		java.util.Map<java.util.Locale, java.lang.String> keywordsMap,
 		java.util.Map<java.util.Locale, java.lang.String> robotsMap,
 		java.lang.String type, boolean hidden, java.lang.String friendlyURL,
-		boolean locked, com.liferay.portal.service.ServiceContext serviceContext)
+		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException {
 		return getService()
 				   .addLayout(userId, groupId, privateLayout, parentLayoutId,
 			nameMap, titleMap, descriptionMap, keywordsMap, robotsMap, type,
-			hidden, friendlyURL, locked, serviceContext);
+			hidden, friendlyURL, serviceContext);
 	}
 
 	/**
@@ -380,10 +381,12 @@ public class LayoutLocalServiceUtil {
 	normalized when accessed see {@link
 	com.liferay.portal.kernel.util.FriendlyURLNormalizerUtil#normalize(
 	String)}.
-	* @param locked whether the layout is locked
-	* @param serviceContext the service context. Must specify the universally
-	unique identifier and can specify the create date and modified
-	date.
+	* @param serviceContext the service context. Must set the universally
+	unique identifier (UUID) for the layout. Can set the creation
+	date and modification date for the layout. For layouts that
+	belong to a layout set prototype, an attribute named
+	'layoutUpdateable' can be set to specify whether site
+	administrators can modify this page within their site.
 	* @return the layout
 	* @throws PortalException if a group or user with the primary key could not
 	be found
@@ -393,14 +396,13 @@ public class LayoutLocalServiceUtil {
 		long groupId, boolean privateLayout, long parentLayoutId,
 		java.lang.String name, java.lang.String title,
 		java.lang.String description, java.lang.String type, boolean hidden,
-		java.lang.String friendlyURL, boolean locked,
+		java.lang.String friendlyURL,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException {
 		return getService()
 				   .addLayout(userId, groupId, privateLayout, parentLayoutId,
-			name, title, description, type, hidden, friendlyURL, locked,
-			serviceContext);
+			name, title, description, type, hidden, friendlyURL, serviceContext);
 	}
 
 	/**
@@ -422,23 +424,6 @@ public class LayoutLocalServiceUtil {
 	}
 
 	/**
-	* Deletes the layout with the plid, also deleting the layout's child
-	* layouts, and associated resources.
-	*
-	* @param plid the primary key of the layout
-	* @param serviceContext the service context
-	* @throws PortalException if a layout with the primary key could not be
-	found , or if some other portal exception occurred
-	* @throws SystemException if a system exception occurred
-	*/
-	public static void deleteLayout(long plid,
-		com.liferay.portal.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
-		getService().deleteLayout(plid, serviceContext);
-	}
-
-	/**
 	* Deletes the layout with the primary key, also deleting the layout's child
 	* layouts, and associated resources.
 	*
@@ -456,6 +441,23 @@ public class LayoutLocalServiceUtil {
 			com.liferay.portal.kernel.exception.SystemException {
 		getService()
 			.deleteLayout(groupId, privateLayout, layoutId, serviceContext);
+	}
+
+	/**
+	* Deletes the layout with the plid, also deleting the layout's child
+	* layouts, and associated resources.
+	*
+	* @param plid the primary key of the layout
+	* @param serviceContext the service context
+	* @throws PortalException if a layout with the primary key could not be
+	found , or if some other portal exception occurred
+	* @throws SystemException if a system exception occurred
+	*/
+	public static void deleteLayout(long plid,
+		com.liferay.portal.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		getService().deleteLayout(plid, serviceContext);
 	}
 
 	/**
@@ -616,6 +618,13 @@ public class LayoutLocalServiceUtil {
 		return getService()
 				   .exportPortletInfoAsFile(plid, groupId, portletId,
 			parameterMap, startDate, endDate);
+	}
+
+	public static com.liferay.portal.model.Layout fetchFirstLayout(
+		long groupId, boolean privateLayout, long parentLayoutId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService()
+				   .fetchFirstLayout(groupId, privateLayout, parentLayoutId);
 	}
 
 	/**
@@ -1121,9 +1130,8 @@ public class LayoutLocalServiceUtil {
 	String)}.
 	* @param iconImage whether the icon image will be updated
 	* @param iconBytes the byte array of the layout's new icon image
-	* @param locked whether the layout is locked
-	* @param serviceContext the service context. Can specify the replacement
-	modified date and new expando bridge attributes.
+	* @param serviceContext the service context. Can set the modification date
+	and expando bridge attributes for the layout.
 	* @return the updated layout
 	* @throws PortalException if a group or layout with the primary key could
 	not be found, if a unique friendly URL could not be generated, if
@@ -1139,14 +1147,14 @@ public class LayoutLocalServiceUtil {
 		java.util.Map<java.util.Locale, java.lang.String> keywordsMap,
 		java.util.Map<java.util.Locale, java.lang.String> robotsMap,
 		java.lang.String type, boolean hidden, java.lang.String friendlyURL,
-		java.lang.Boolean iconImage, byte[] iconBytes, boolean locked,
+		java.lang.Boolean iconImage, byte[] iconBytes,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException {
 		return getService()
 				   .updateLayout(groupId, privateLayout, layoutId,
 			parentLayoutId, nameMap, titleMap, descriptionMap, keywordsMap,
-			robotsMap, type, hidden, friendlyURL, iconImage, iconBytes, locked,
+			robotsMap, type, hidden, friendlyURL, iconImage, iconBytes,
 			serviceContext);
 	}
 
@@ -1352,6 +1360,17 @@ public class LayoutLocalServiceUtil {
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException {
 		return getService().updatePriority(plid, priority);
+	}
+
+	public static void updateScopedPortletNames(long groupId,
+		boolean privateLayout, long layoutId,
+		java.util.Map<java.util.Locale, java.lang.String> nameMap,
+		java.util.List<java.util.Locale> nameMapModifiedLocales)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		getService()
+			.updateScopedPortletNames(groupId, privateLayout, layoutId,
+			nameMap, nameMapModifiedLocales);
 	}
 
 	/**

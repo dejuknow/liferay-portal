@@ -20,12 +20,20 @@ import com.liferay.portal.kernel.image.ImageProcessorUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.DestinationNames;
+import com.liferay.portal.kernel.messaging.MessageBusException;
 import com.liferay.portal.kernel.messaging.MessageBusUtil;
+import com.liferay.portal.kernel.process.ClassPathUtil;
+import com.liferay.portal.kernel.process.ProcessCallable;
+import com.liferay.portal.kernel.process.ProcessException;
+import com.liferay.portal.kernel.process.ProcessExecutor;
 import com.liferay.portal.kernel.repository.model.FileVersion;
+import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.FileUtil;
+import com.liferay.portal.kernel.util.MimeTypesUtil;
 import com.liferay.portal.kernel.util.OSDetector;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.repository.liferayrepository.model.LiferayFileVersion;
 import com.liferay.portal.util.PrefsPropsUtil;
@@ -42,20 +50,22 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.imageio.ImageIO;
 
 import javax.portlet.PortletPreferences;
 
+import org.apache.commons.lang.time.StopWatch;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.PDPage;
 
-import org.im4java.core.ConvertCmd;
 import org.im4java.core.IMOperation;
-import org.im4java.process.ProcessStarter;
 
 /**
  * @author Alexander Chow
@@ -142,7 +152,7 @@ public class PDFProcessor extends DefaultPreviewableProcessor {
 		try {
 			hasImages = _instance._hasImages(fileVersion);
 
-			if (!hasImages) {
+			if (!hasImages && _instance.isSupported(fileVersion)) {
 				_instance._queueGeneration(fileVersion);
 			}
 		}
@@ -151,6 +161,14 @@ public class PDFProcessor extends DefaultPreviewableProcessor {
 		}
 
 		return hasImages;
+	}
+
+	public static boolean isDocumentSupported(FileVersion fileVersion) {
+		return _instance.isSupported(fileVersion);
+	}
+
+	public static boolean isDocumentSupported(String mimeType) {
+		return _instance.isSupported(mimeType);
 	}
 
 	public static boolean isImageMagickEnabled() throws Exception {
@@ -176,14 +194,7 @@ public class PDFProcessor extends DefaultPreviewableProcessor {
 
 	public static void reset() throws Exception {
 		if (isImageMagickEnabled()) {
-			String globalSearchPath = getGlobalSearchPath();
-
-			ProcessStarter.setGlobalSearchPath(globalSearchPath);
-
-			_convertCmd = new ConvertCmd();
-		}
-		else {
-			_convertCmd = null;
+			_globalSearchPath = getGlobalSearchPath();
 		}
 	}
 
@@ -197,6 +208,35 @@ public class PDFProcessor extends DefaultPreviewableProcessor {
 		catch (Exception e) {
 			_log.warn(e, e);
 		}
+	}
+
+	public boolean isSupported(String mimeType) {
+		if (Validator.isNull(mimeType)) {
+			return false;
+		}
+
+		if (mimeType.equals(ContentTypes.APPLICATION_PDF) ||
+			mimeType.equals(ContentTypes.APPLICATION_X_PDF)) {
+
+			return true;
+		}
+
+		if (DocumentConversionUtil.isEnabled()) {
+			Set<String> extensions = MimeTypesUtil.getExtensions(mimeType);
+
+			for (String extension : extensions) {
+				extension = extension.substring(1);
+
+				String[] targetExtensions =
+					DocumentConversionUtil.getConversions(extension);
+
+				if (Arrays.binarySearch(targetExtensions, "pdf") >= 0) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	public void trigger(FileVersion fileVersion) {
@@ -289,35 +329,54 @@ public class PDFProcessor extends DefaultPreviewableProcessor {
 		throws Exception {
 
 		if (_isGeneratePreview(fileVersion)) {
+			StopWatch stopWatch = null;
+
+			if (_log.isInfoEnabled()) {
+				stopWatch = new StopWatch();
+
+				stopWatch.start();
+			}
+
 			_generateImagesIM(
 				fileVersion, file,
 				PropsValues.DL_FILE_ENTRY_PREVIEW_DOCUMENT_DEPTH,
 				PropsValues.DL_FILE_ENTRY_PREVIEW_DOCUMENT_DPI,
-				PropsValues.DL_FILE_ENTRY_PREVIEW_DOCUMENT_HEIGHT,
-				PropsValues.DL_FILE_ENTRY_PREVIEW_DOCUMENT_WIDTH, false);
+				PropsValues.DL_FILE_ENTRY_PREVIEW_DOCUMENT_MAX_HEIGHT,
+				PropsValues.DL_FILE_ENTRY_PREVIEW_DOCUMENT_MAX_WIDTH, false);
 
 			if (_log.isInfoEnabled()) {
 				int previewFileCount = getPreviewFileCount(fileVersion);
 
 				_log.info(
 					"ImageMagick generated " + previewFileCount +
-						" preview pages for " +
-							fileVersion.getFileVersionId());
+						" preview pages for " + fileVersion.getTitle() +
+							" in " + stopWatch);
 			}
 		}
 
 		if (_isGenerateThumbnail(fileVersion)) {
+			StopWatch stopWatch = null;
+
+			if (_log.isInfoEnabled()) {
+				stopWatch = new StopWatch();
+
+				stopWatch.start();
+			}
+
 			_generateImagesIM(
 				fileVersion, file,
-				PropsValues.DL_FILE_ENTRY_THUMBNAIL_DEPTH,
-				PropsValues.DL_FILE_ENTRY_THUMBNAIL_DPI,
-				PropsValues.DL_FILE_ENTRY_THUMBNAIL_HEIGHT,
-				PropsValues.DL_FILE_ENTRY_THUMBNAIL_WIDTH, true);
+				PropsValues.DL_FILE_ENTRY_THUMBNAIL_DOCUMENT_DEPTH,
+				PropsValues.DL_FILE_ENTRY_THUMBNAIL_DOCUMENT_DPI,
+				PrefsPropsUtil.getInteger(
+					PropsKeys.DL_FILE_ENTRY_THUMBNAIL_MAX_HEIGHT),
+				PrefsPropsUtil.getInteger(
+					PropsKeys.DL_FILE_ENTRY_THUMBNAIL_MAX_WIDTH),
+				true);
 
 			if (_log.isInfoEnabled()) {
 				_log.info(
 					"ImageMagick generated a thumbnail for " +
-						fileVersion.getFileVersionId());
+						fileVersion.getTitle() + " in " + stopWatch);
 			}
 		}
 	}
@@ -356,7 +415,16 @@ public class PDFProcessor extends DefaultPreviewableProcessor {
 			imOperation.addImage(getPreviewTempFilePath(tempFileId, -1));
 		}
 
-		_convertCmd.run(imOperation);
+		if (_log.isInfoEnabled()) {
+			_log.info("Excecuting command 'convert " + imOperation + "'");
+		}
+
+		ProcessCallable<String> processCallable =
+			new ImageMagickProcessCallable(
+				_globalSearchPath, imOperation.getCmdArgs());
+
+		ProcessExecutor.execute(
+			processCallable, ClassPathUtil.getPortalClassPath());
 
 		// Store images
 
@@ -445,9 +513,12 @@ public class PDFProcessor extends DefaultPreviewableProcessor {
 				if (generateThumbnail && (i == 0)) {
 					_generateImagesPB(
 						fileVersion, pdPage,
-						PropsValues.DL_FILE_ENTRY_THUMBNAIL_DPI,
-						PropsValues.DL_FILE_ENTRY_THUMBNAIL_HEIGHT,
-						PropsValues.DL_FILE_ENTRY_THUMBNAIL_WIDTH, true, 0);
+						PropsValues.DL_FILE_ENTRY_THUMBNAIL_DOCUMENT_DPI,
+						PrefsPropsUtil.getInteger(
+							PropsKeys.DL_FILE_ENTRY_THUMBNAIL_MAX_HEIGHT),
+						PrefsPropsUtil.getInteger(
+							PropsKeys.DL_FILE_ENTRY_THUMBNAIL_MAX_WIDTH),
+						true, 0);
 
 					if (_log.isInfoEnabled()) {
 						_log.info(
@@ -463,8 +534,8 @@ public class PDFProcessor extends DefaultPreviewableProcessor {
 				_generateImagesPB(
 					fileVersion, pdPage,
 					PropsValues.DL_FILE_ENTRY_PREVIEW_DOCUMENT_DPI,
-					PropsValues.DL_FILE_ENTRY_PREVIEW_DOCUMENT_HEIGHT,
-					PropsValues.DL_FILE_ENTRY_PREVIEW_DOCUMENT_WIDTH, false,
+					PropsValues.DL_FILE_ENTRY_PREVIEW_DOCUMENT_MAX_HEIGHT,
+					PropsValues.DL_FILE_ENTRY_PREVIEW_DOCUMENT_MAX_WIDTH, false,
 					i + 1);
 			}
 
@@ -492,7 +563,7 @@ public class PDFProcessor extends DefaultPreviewableProcessor {
 
 		RenderedImage renderedImage = pdPage.convertToImage(
 			BufferedImage.TYPE_INT_RGB,
-			PropsValues.DL_FILE_ENTRY_THUMBNAIL_DPI);
+			PropsValues.DL_FILE_ENTRY_THUMBNAIL_DOCUMENT_DPI);
 
 		if (height != 0) {
 			renderedImage = ImageProcessorUtil.scale(
@@ -557,7 +628,7 @@ public class PDFProcessor extends DefaultPreviewableProcessor {
 				return true;
 			}
 		}
-		else  if (PropsValues.DL_FILE_ENTRY_PREVIEW_ENABLED && previewExists) {
+		else if (PropsValues.DL_FILE_ENTRY_PREVIEW_ENABLED && previewExists) {
 			return true;
 		}
 		else if (PropsValues.DL_FILE_ENTRY_THUMBNAIL_ENABLED &&
@@ -629,8 +700,23 @@ public class PDFProcessor extends DefaultPreviewableProcessor {
 		if (generateImages) {
 			_fileVersionIds.add(fileVersion.getFileVersionId());
 
-			MessageBusUtil.sendMessage(
-				DestinationNames.DOCUMENT_LIBRARY_PDF_PROCESSOR, fileVersion);
+			if (PropsValues.DL_FILE_ENTRY_PROCESSORS_TRIGGER_SYNCHRONOUSLY) {
+				try {
+					MessageBusUtil.sendSynchronousMessage(
+						DestinationNames.DOCUMENT_LIBRARY_PDF_PROCESSOR,
+						fileVersion);
+				}
+				catch (MessageBusException mbe) {
+					if (_log.isWarnEnabled()) {
+						_log.warn(mbe, mbe);
+					}
+				}
+			}
+			else {
+				MessageBusUtil.sendMessage(
+					DestinationNames.DOCUMENT_LIBRARY_PDF_PROCESSOR,
+					fileVersion);
+			}
 		}
 	}
 
@@ -638,8 +724,34 @@ public class PDFProcessor extends DefaultPreviewableProcessor {
 
 	private static PDFProcessor _instance = new PDFProcessor();
 
-	private static ConvertCmd _convertCmd;
-	private static List<Long> _fileVersionIds = new Vector<Long>();
+	private List<Long> _fileVersionIds = new Vector<Long>();
+	private static String _globalSearchPath;
 	private static boolean _warned;
+
+	private static class ImageMagickProcessCallable
+		implements ProcessCallable<String> {
+
+		public ImageMagickProcessCallable(
+			String globalSearchPath, LinkedList<String> commandArguments) {
+
+			_globalSearchPath = globalSearchPath;
+			_commandArguments = commandArguments;
+		}
+
+		public String call() throws ProcessException {
+			try {
+				LiferayConvertCmd.run(_globalSearchPath, _commandArguments);
+			}
+			catch (Exception e) {
+				throw new ProcessException(e);
+			}
+
+			return StringPool.BLANK;
+		}
+
+		private LinkedList<String> _commandArguments;
+		private String _globalSearchPath;
+
+	}
 
 }

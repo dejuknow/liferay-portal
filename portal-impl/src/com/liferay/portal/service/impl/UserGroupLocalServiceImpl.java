@@ -29,7 +29,6 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.model.Group;
-import com.liferay.portal.model.LayoutSetPrototype;
 import com.liferay.portal.model.ResourceConstants;
 import com.liferay.portal.model.Team;
 import com.liferay.portal.model.User;
@@ -51,7 +50,6 @@ import java.util.Map;
  * The implementation of the user group local service.
  *
  * @author Charles May
- * @author Miguel Pastor
  */
 public class UserGroupLocalServiceImpl extends UserGroupLocalServiceBaseImpl {
 
@@ -99,17 +97,12 @@ public class UserGroupLocalServiceImpl extends UserGroupLocalServiceBaseImpl {
 	 * @param  companyId the primary key of the user group's company
 	 * @param  name the user group's name
 	 * @param  description the user group's description
-	 * @param  publicLayoutSetPrototypeId the primary key of the user group's
-	 *         public layout set
-	 * @param  privateLayoutSetPrototypeId the primary key of the user group's
-	 *         private layout set
 	 * @return the user group
 	 * @throws PortalException if the user group's information was invalid
 	 * @throws SystemException if a system exception occurred
 	 */
 	public UserGroup addUserGroup(
-			long userId, long companyId, String name, String description,
-			long publicLayoutSetPrototypeId, long privateLayoutSetPrototypeId)
+			long userId, long companyId, String name, String description)
 		throws PortalException, SystemException {
 
 		// User Group
@@ -125,8 +118,6 @@ public class UserGroupLocalServiceImpl extends UserGroupLocalServiceBaseImpl {
 			UserGroupConstants.DEFAULT_PARENT_USER_GROUP_ID);
 		userGroup.setName(name);
 		userGroup.setDescription(description);
-		userGroup.setPublicLayoutSetPrototypeId(publicLayoutSetPrototypeId);
-		userGroup.setPrivateLayoutSetPrototypeId(privateLayoutSetPrototypeId);
 		userGroup.setAddedByLDAPImport(
 			LDAPUserGroupTransactionThreadLocal.isOriginatesFromLDAP());
 
@@ -168,11 +159,12 @@ public class UserGroupLocalServiceImpl extends UserGroupLocalServiceBaseImpl {
 	 * Copies the user group's layouts to the users who are not already members
 	 * of the user group.
 	 *
-	 * @param  userGroupId the primary key of the user group
-	 * @param  userIds the primary keys of the users
-	 * @throws PortalException if any one of the users could not be found or if
-	 *         a portal exception occurred
-	 * @throws SystemException if a system exception occurred
+	 * @param      userGroupId the primary key of the user group
+	 * @param      userIds the primary keys of the users
+	 * @throws     PortalException if any one of the users could not be found or
+	 *             if a portal exception occurred
+	 * @throws     SystemException if a system exception occurred
+	 * @deprecated
 	 */
 	public void copyUserGroupLayouts(long userGroupId, long userIds[])
 		throws PortalException, SystemException {
@@ -202,11 +194,12 @@ public class UserGroupLocalServiceImpl extends UserGroupLocalServiceBaseImpl {
 	/**
 	 * Copies the user groups' layouts to the user.
 	 *
-	 * @param  userGroupIds the primary keys of the user groups
-	 * @param  userId the primary key of the user
-	 * @throws PortalException if a user with the primary key could not be
-	 *         found or if a portal exception occurred
-	 * @throws SystemException if a system exception occurred
+	 * @param      userGroupIds the primary keys of the user groups
+	 * @param      userId the primary key of the user
+	 * @throws     PortalException if a user with the primary key could not be
+	 *             found or if a portal exception occurred
+	 * @throws     SystemException if a system exception occurred
+	 * @deprecated
 	 */
 	public void copyUserGroupLayouts(long userGroupIds[], long userId)
 		throws PortalException, SystemException {
@@ -221,11 +214,12 @@ public class UserGroupLocalServiceImpl extends UserGroupLocalServiceBaseImpl {
 	/**
 	 * Copies the user group's layout to the user.
 	 *
-	 * @param  userGroupId the primary key of the user group
-	 * @param  userId the primary key of the user
-	 * @throws PortalException if a user with the primary key could not be
-	 *         found or if a portal exception occurred
-	 * @throws SystemException if a system exception occurred
+	 * @param      userGroupId the primary key of the user group
+	 * @param      userId the primary key of the user
+	 * @throws     PortalException if a user with the primary key could not be
+	 *             found or if a portal exception occurred
+	 * @throws     SystemException if a system exception occurred
+	 * @deprecated
 	 */
 	public void copyUserGroupLayouts(long userGroupId, long userId)
 		throws PortalException, SystemException {
@@ -252,8 +246,8 @@ public class UserGroupLocalServiceImpl extends UserGroupLocalServiceBaseImpl {
 	 * Deletes the user group.
 	 *
 	 * @param  userGroupId the primary key of the user group
-	 * @throws PortalException if a user group with the primary key could not
-	 *         be found or if the user group had a workflow in approved status
+	 * @throws PortalException if a user group with the primary key could not be
+	 *         found or if the user group had a workflow in approved status
 	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
@@ -320,8 +314,8 @@ public class UserGroupLocalServiceImpl extends UserGroupLocalServiceBaseImpl {
 	 *
 	 * @param  userGroupId the primary key of the user group
 	 * @return Returns the user group with the primary key
-	 * @throws PortalException if a user group with the primary key could not
-	 *         be found
+	 * @throws PortalException if a user group with the primary key could not be
+	 *         found
 	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
@@ -396,8 +390,7 @@ public class UserGroupLocalServiceImpl extends UserGroupLocalServiceBaseImpl {
 	}
 
 	/**
-	 * Returns <code>true</code> if the user group is associated with the
-	 * group.
+	 * Returns <code>true</code> if the user group is associated with the group.
 	 *
 	 * @param  groupId the primary key of the group
 	 * @param  userGroupId the primary key of the user group
@@ -436,16 +429,16 @@ public class UserGroupLocalServiceImpl extends UserGroupLocalServiceBaseImpl {
 	 * primary keys, they are indexes in the result set. Thus, <code>0</code>
 	 * refers to the first result in the set. Setting both <code>start</code>
 	 * and <code>end</code> to {@link
-	 * com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the
-	 * full result set.
+	 * com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full
+	 * result set.
 	 * </p>
 	 *
 	 * @param  companyId the primary key of the user group's company
 	 * @param  name the user group's name (optionally <code>null</code>)
 	 * @param  description the user group's description (optionally
 	 *         <code>null</code>)
-	 * @param  params the finder params (optionally <code>null</code>). For
-	 *         more information see {@link
+	 * @param  params the finder params (optionally <code>null</code>). For more
+	 *         information see {@link
 	 *         com.liferay.portal.service.persistence.UserGroupFinder}
 	 * @param  start the lower bound of the range of user groups to return
 	 * @param  end the upper bound of the range of user groups to return (not
@@ -473,8 +466,8 @@ public class UserGroupLocalServiceImpl extends UserGroupLocalServiceBaseImpl {
 	 * @param  name the user group's name (optionally <code>null</code>)
 	 * @param  description the user group's description (optionally
 	 *         <code>null</code>)
-	 * @param  params the finder params (optionally <code>null</code>). For
-	 *         more information see {@link
+	 * @param  params the finder params (optionally <code>null</code>). For more
+	 *         information see {@link
 	 *         com.liferay.portal.service.persistence.UserGroupFinder}
 	 * @return the number of matching user groups
 	 * @throws SystemException if a system exception occurred
@@ -559,18 +552,13 @@ public class UserGroupLocalServiceImpl extends UserGroupLocalServiceBaseImpl {
 	 * @param  userGroupId the primary key of the user group
 	 * @param  name the user group's name
 	 * @param  description the user group's description
-	 * @param  publicLayoutSetPrototypeId the primary key of the user group's
-	 *         public layout set
-	 * @param  privateLayoutSetPrototypeId the primary key of the user group's
-	 *         private layout set
 	 * @return the user group
-	 * @throws PortalException if a user group with the primary key could not
-	 *         be found or if the new information was invalid
+	 * @throws PortalException if a user group with the primary key could not be
+	 *         found or if the new information was invalid
 	 * @throws SystemException if a system exception occurred
 	 */
 	public UserGroup updateUserGroup(
-			long companyId, long userGroupId, String name, String description,
-			long publicLayoutSetPrototypeId, long privateLayoutSetPrototypeId)
+			long companyId, long userGroupId, String name, String description)
 		throws PortalException, SystemException {
 
 		validate(userGroupId, companyId, name);
@@ -580,8 +568,6 @@ public class UserGroupLocalServiceImpl extends UserGroupLocalServiceBaseImpl {
 
 		userGroup.setName(name);
 		userGroup.setDescription(description);
-		userGroup.setPublicLayoutSetPrototypeId(publicLayoutSetPrototypeId);
-		userGroup.setPrivateLayoutSetPrototypeId(privateLayoutSetPrototypeId);
 
 		userGroupPersistence.update(userGroup, false);
 
@@ -594,28 +580,19 @@ public class UserGroupLocalServiceImpl extends UserGroupLocalServiceBaseImpl {
 
 		File[] files = new File[2];
 
-		UserGroup userGroup = userGroupLocalService.getUserGroup(userGroupId);
+		UserGroup userGroup = userGroupPersistence.findByPrimaryKey(
+			userGroupId);
 
-		if (userGroup.getPrivateLayoutSetPrototypeId() > 0) {
-			LayoutSetPrototype layoutSetPrototype =
-				layoutSetPrototypeLocalService.getLayoutSetPrototype(
-					userGroup.getPrivateLayoutSetPrototypeId());
+		Group group = userGroup.getGroup();
 
-			Group group = layoutSetPrototype.getGroup();
-
+		if (userGroup.hasPrivateLayouts()) {
 			files[0] = layoutLocalService.exportLayoutsAsFile(
 				group.getGroupId(), true, null, parameterMap, null, null);
 		}
 
-		if (userGroup.getPublicLayoutSetPrototypeId() > 0) {
-			LayoutSetPrototype layoutSetPrototype =
-				layoutSetPrototypeLocalService.getLayoutSetPrototype(
-					userGroup.getPublicLayoutSetPrototypeId());
-
-			Group group = layoutSetPrototype.getGroup();
-
+		if (userGroup.hasPublicLayouts()) {
 			files[1] = layoutLocalService.exportLayoutsAsFile(
-				group.getGroupId(), true, null, parameterMap, null, null);
+				group.getGroupId(), false, null, parameterMap, null, null);
 		}
 
 		return files;
@@ -640,7 +617,7 @@ public class UserGroupLocalServiceImpl extends UserGroupLocalServiceBaseImpl {
 		parameterMap.put(
 			PortletDataHandlerKeys.LAYOUTS_IMPORT_MODE,
 			new String[] {PortletDataHandlerKeys.
-				LAYOUTS_IMPORT_MODE_MERGE_BY_LAYOUT_NAME});
+				LAYOUTS_IMPORT_MODE_CREATED_FROM_PROTOTYPE});
 		parameterMap.put(
 			PortletDataHandlerKeys.PERMISSIONS,
 			new String[] {Boolean.TRUE.toString()});

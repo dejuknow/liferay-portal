@@ -19,6 +19,7 @@ import com.liferay.portal.NoSuchPortletPreferencesException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.staging.StagingUtil;
+import com.liferay.portal.kernel.util.AutoResetThreadLocal;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -44,7 +45,7 @@ public class LayoutRevisionLocalServiceImpl
 
 	public LayoutRevision addLayoutRevision(
 			long userId, long layoutSetBranchId, long layoutBranchId,
-			long parentLayoutRevisionId, boolean head,  long plid,
+			long parentLayoutRevisionId, boolean head, long plid,
 			boolean privateLayout, String name, String title,
 			String description, String keywords, String robots,
 			String typeSettings, boolean iconImage, long iconImageId,
@@ -350,7 +351,9 @@ public class LayoutRevisionLocalServiceImpl
 
 		int workflowAction = serviceContext.getWorkflowAction();
 
-		if (workflowAction != WorkflowConstants.ACTION_PUBLISH) {
+		if ((workflowAction != WorkflowConstants.ACTION_PUBLISH) &&
+			(_layoutRevisionId.get() <= 0)) {
+
 			long newLayoutRevisionId = counterLocalService.increment();
 
 			layoutRevision = layoutRevisionPersistence.create(
@@ -392,6 +395,8 @@ public class LayoutRevisionLocalServiceImpl
 			layoutRevision.setStatusDate(serviceContext.getModifiedDate(now));
 
 			layoutRevisionPersistence.update(layoutRevision, false);
+
+			_layoutRevisionId.set(layoutRevision.getLayoutRevisionId());
 
 			// Portlet preferences
 
@@ -574,5 +579,9 @@ public class LayoutRevisionLocalServiceImpl
 
 		return layoutRevision;
 	}
+
+	private static ThreadLocal<Long> _layoutRevisionId =
+		new AutoResetThreadLocal<Long>(
+			LayoutRevisionLocalServiceImpl.class + "._layoutRevisionId", 0L);
 
 }

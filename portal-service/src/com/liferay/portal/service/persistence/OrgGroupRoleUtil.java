@@ -94,14 +94,6 @@ public class OrgGroupRoleUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static OrgGroupRole remove(OrgGroupRole orgGroupRole)
-		throws SystemException {
-		return getPersistence().remove(orgGroupRole);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static OrgGroupRole update(OrgGroupRole orgGroupRole, boolean merge)

@@ -20,7 +20,9 @@ package com.liferay.portlet.social.model;
  */
 public class SocialActivityCounterConstants {
 
-	public static final String NAME_ASSET_ACTIVITY = "asset.activity";
+	public static final int END_PERIOD_UNDEFINED = -1;
+
+	public static final String NAME_ASSET_ACTIVITIES = "asset.activities";
 
 	public static final String NAME_CONTRIBUTION = "contribution";
 
@@ -28,11 +30,13 @@ public class SocialActivityCounterConstants {
 
 	public static final String NAME_POPULARITY = "popularity";
 
-	public static final String NAME_USER_ACHIEVEMENT = "user.achievement";
+	public static final String NAME_USER_ACHIEVEMENTS = "user.achievements";
 
-	public static final String NAME_USER_ACTIVITY = "user.activity";
+	public static final String NAME_USER_ACTIVITIES = "user.activities";
 
-	public static final int END_PERIOD_UNDEFINED = -1;
+	public static final int PERIOD_LENGTH_INFINITE = -1;
+
+	public static final int PERIOD_LENGTH_SYSTEM = 0;
 
 	public static final int TYPE_ACTOR = 1;
 

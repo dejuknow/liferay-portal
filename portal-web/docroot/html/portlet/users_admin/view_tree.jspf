@@ -80,7 +80,7 @@ int organizationsCount = OrganizationLocalServiceUtil.searchCount(company.getCom
 			<span class="aui-search-bar">
 				<aui:input inlineField="<%= true %>" label="" name="keywords" size="30" title="search-users-and-organizations" type="text" />
 
-				<aui:button type="submit" value="search" />
+				<aui:button onClick='<%= "javascript:" + renderResponse.getNamespace() + "search();" %>' value="search" />
 			</span>
 		</c:otherwise>
 	</c:choose>
@@ -173,8 +173,6 @@ int organizationsCount = OrganizationLocalServiceUtil.searchCount(company.getCom
 	</liferay-util:buffer>
 
 	<liferay-util:buffer var="organizationsTree">
-		<aui:input name="deleteOrganizationIds" type="hidden" />
-		<aui:input name="organizationsRedirect" type="hidden" value="<%= portletURL.toString() %>" />
 
 		<%
 		SearchContainer organizationSearch = new OrganizationSearch(renderRequest, currentURLObj);
@@ -199,7 +197,7 @@ int organizationsCount = OrganizationLocalServiceUtil.searchCount(company.getCom
 				<c:when test="<%= !searchTerms.hasSearchTerms() %>">
 					<liferay-ui:search-container-results>
 						<c:choose>
-							<c:when test="<%= PropsValues.ORGANIZATIONS_SEARCH_WITH_INDEX %>">
+							<c:when test="<%= PropsValues.ORGANIZATIONS_INDEXER_ENABLED && PropsValues.ORGANIZATIONS_SEARCH_WITH_INDEX %>">
 								<%@ include file="/html/portlet/users_admin/organization_search_results_index.jspf" %>
 							</c:when>
 							<c:otherwise>
@@ -224,7 +222,7 @@ int organizationsCount = OrganizationLocalServiceUtil.searchCount(company.getCom
 						%>
 
 						<c:choose>
-							<c:when test="<%= PropsValues.ORGANIZATIONS_SEARCH_WITH_INDEX %>">
+							<c:when test="<%= PropsValues.ORGANIZATIONS_INDEXER_ENABLED && PropsValues.ORGANIZATIONS_SEARCH_WITH_INDEX %>">
 								<%@ include file="/html/portlet/users_admin/organization_search_results_index.jspf" %>
 							</c:when>
 							<c:otherwise>
@@ -305,6 +303,9 @@ int organizationsCount = OrganizationLocalServiceUtil.searchCount(company.getCom
 				}
 			}
 			%>
+
+			<aui:input name="deleteOrganizationIds" type="hidden" />
+			<aui:input name="organizationsRedirect" type="hidden" value="<%= portletURL.toString() %>" />
 
 			<c:if test="<%= showOrganizations %>">
 				<liferay-util:buffer var="organizationsPanelTitle">
@@ -452,6 +453,7 @@ private Long[][] _filterSuborganizations(Long[][]leftAndRightOrganizationIds, Lo
 	return leftAndRightParentOrganizationIds;
 }
 %>
+
 <c:if test="<%= organization == null %>">
 	<aui:script use="liferay-panel">
 		var panelContainer = Liferay.Panel.get('usersAdminOrganizationPanelContainer');

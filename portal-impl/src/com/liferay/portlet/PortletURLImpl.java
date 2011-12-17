@@ -23,7 +23,6 @@ import com.liferay.portal.kernel.portlet.LiferayPortletURL;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.PortletModeFactory;
 import com.liferay.portal.kernel.portlet.WindowStateFactory;
-import com.liferay.portal.kernel.servlet.BrowserSnifferUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.Base64;
 import com.liferay.portal.kernel.util.CharPool;
@@ -42,6 +41,7 @@ import com.liferay.portal.model.Layout;
 import com.liferay.portal.model.Portlet;
 import com.liferay.portal.model.PortletApp;
 import com.liferay.portal.model.PublicRenderParameter;
+import com.liferay.portal.model.impl.VirtualLayout;
 import com.liferay.portal.security.auth.AuthTokenUtil;
 import com.liferay.portal.service.LayoutLocalServiceUtil;
 import com.liferay.portal.service.PortletLocalServiceUtil;
@@ -127,6 +127,14 @@ public class PortletURLImpl
 				portletApp.getContainerRuntimeOptions(),
 				LiferayPortletConfig.RUNTIME_OPTION_ESCAPE_XML,
 				PropsValues.PORTLET_URL_ESCAPE_XML);
+		}
+
+		Layout layout = (Layout)request.getAttribute(WebKeys.LAYOUT);
+
+		if ((layout != null) && (layout.getPlid() == _plid) &&
+			(layout instanceof VirtualLayout)) {
+
+			_layout = layout;
 		}
 	}
 
@@ -1067,9 +1075,7 @@ public class PortletURLImpl
 			result = HtmlUtil.escape(result);
 		}
 
-		if (BrowserSnifferUtil.isIe(_request) &&
-			(result.length() > _URL_IE_MAXIMUM_LENGTH)) {
-
+		if (result.length() > _URL_MAXIMUM_LENGTH) {
 			result = shortenURL(result, 2);
 		}
 
@@ -1354,7 +1360,7 @@ public class PortletURLImpl
 		return sb.toString();
 	}
 
-	private static final long _URL_IE_MAXIMUM_LENGTH = 2083;
+	private static final long _URL_MAXIMUM_LENGTH = 2083;
 
 	private static Log _log = LogFactoryUtil.getLog(PortletURLImpl.class);
 

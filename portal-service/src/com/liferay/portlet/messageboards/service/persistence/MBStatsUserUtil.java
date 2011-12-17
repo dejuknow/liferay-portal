@@ -95,14 +95,6 @@ public class MBStatsUserUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static MBStatsUser remove(MBStatsUser mbStatsUser)
-		throws SystemException {
-		return getPersistence().remove(mbStatsUser);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static MBStatsUser update(MBStatsUser mbStatsUser, boolean merge)

@@ -21,9 +21,13 @@ import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.service.GroupLocalServiceUtil;
+import com.liferay.portlet.asset.model.AssetEntry;
+import com.liferay.portlet.asset.service.AssetEntryLocalServiceUtil;
 import com.liferay.portlet.blogs.model.BlogsEntry;
+import com.liferay.portlet.blogs.service.BlogsEntryLocalServiceUtil;
 import com.liferay.portlet.blogs.service.permission.BlogsPermission;
 import com.liferay.portlet.journal.model.JournalArticle;
+import com.liferay.portlet.journal.service.JournalArticleLocalServiceUtil;
 import com.liferay.portlet.journal.service.permission.JournalPermission;
 import com.liferay.portlet.messageboards.model.MBCategory;
 import com.liferay.portlet.messageboards.model.MBThread;
@@ -59,12 +63,41 @@ public class SubscriptionPermissionImpl implements SubscriptionPermission {
 		}
 
 		if (className.equals(BlogsEntry.class.getName())) {
+			AssetEntry assetEntry = AssetEntryLocalServiceUtil.fetchEntry(
+				className, classPK);
+
+			if (assetEntry == null) {
+				return false;
+			}
+
+			long groupId = classPK;
+
+			String classPKString = String.valueOf(classPK);
+
+			if (!classPKString.equals(assetEntry.getTitle())) {
+				BlogsEntry blogsEntry =
+					BlogsEntryLocalServiceUtil.getBlogsEntry(classPK);
+
+				groupId = blogsEntry.getGroupId();
+			}
+
 			return BlogsPermission.contains(
-				permissionChecker, classPK, ActionKeys.SUBSCRIBE);
+				permissionChecker, groupId, ActionKeys.SUBSCRIBE);
 		}
 		else if (className.equals(JournalArticle.class.getName())) {
+			long groupId = classPK;
+
+			Group group = GroupLocalServiceUtil.fetchGroup(groupId);
+
+			if (group == null) {
+				JournalArticle journalArticle =
+					JournalArticleLocalServiceUtil.getLatestArticle(classPK);
+
+				groupId = journalArticle.getGroupId();
+			}
+
 			return JournalPermission.contains(
-				permissionChecker, classPK, ActionKeys.SUBSCRIBE);
+				permissionChecker, groupId, ActionKeys.SUBSCRIBE);
 		}
 		else if (className.equals(MBCategory.class.getName())) {
 			Group group = GroupLocalServiceUtil.fetchGroup(classPK);
@@ -79,10 +112,10 @@ public class SubscriptionPermissionImpl implements SubscriptionPermission {
 			}
 		}
 		else if (className.equals(MBThread.class.getName())) {
-			MBThread thread = MBThreadLocalServiceUtil.fetchThread(classPK);
+			MBThread mbThread = MBThreadLocalServiceUtil.fetchThread(classPK);
 
 			return MBMessagePermission.contains(
-				permissionChecker, thread.getRootMessageId(),
+				permissionChecker, mbThread.getRootMessageId(),
 				ActionKeys.SUBSCRIBE);
 		}
 		else if (className.equals(WikiNode.class.getName())) {

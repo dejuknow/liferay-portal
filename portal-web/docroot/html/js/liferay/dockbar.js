@@ -745,7 +745,8 @@ AUI().add(
 				var data = {
 					cmd: 'update_type_settings',
 					doAsUserId: themeDisplay.getDoAsUserIdEncoded(),
-					p_l_id: themeDisplay.getPlid()
+					p_l_id: themeDisplay.getPlid(),
+					p_v_g_id: themeDisplay.getParentGroupId()
 				};
 
 				var checkboxName = checkbox.attr('name');

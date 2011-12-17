@@ -94,14 +94,6 @@ public class PermissionUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
-	 */
-	public static Permission remove(Permission permission)
-		throws SystemException {
-		return getPersistence().remove(permission);
-	}
-
-	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
 	 */
 	public static Permission update(Permission permission, boolean merge)

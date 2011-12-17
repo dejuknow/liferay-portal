@@ -75,16 +75,16 @@ public class PortletContextListener
 
 			try {
 				context.lookup(_JNDI_JDBC_LIFERAY_POOL);
+				context.unbind(_JNDI_JDBC_LIFERAY_POOL);
 			}
 			catch (NamingException ne) {
-				context.unbind(_JNDI_JDBC_LIFERAY_POOL);
 			}
 
 			try {
 				context.lookup(_JNDI_JDBC);
+				context.destroySubcontext(_JNDI_JDBC);
 			}
 			catch (NamingException ne) {
-				context.destroySubcontext(_JNDI_JDBC);
 			}
 		}
 		catch (Exception e) {
@@ -97,33 +97,33 @@ public class PortletContextListener
 	}
 
 	@Override
-	protected void doPortalInit() {
+	protected void doPortalInit() throws Exception {
 		HotDeployUtil.fireDeployEvent(
 			new HotDeployEvent(_servletContext, _portletClassLoader));
 
-		try {
-			if (ServerDetector.isGlassfish()) {
-				return;
-			}
+		if (ServerDetector.isGlassfish() || ServerDetector.isJOnAS()) {
+			return;
+		}
 
+		if (_log.isDebugEnabled()) {
+			_log.debug("Dynamically binding the Liferay data source");
+		}
+
+		DataSource dataSource = InfrastructureUtil.getDataSource();
+
+		if (dataSource == null) {
 			if (_log.isDebugEnabled()) {
-				_log.debug("Dynamically binding the Liferay data source");
+				_log.debug(
+					"Abort dynamically binding the Liferay data source " +
+						"because it is not available");
 			}
 
-			DataSource dataSource = InfrastructureUtil.getDataSource();
+			return;
+		}
 
-			if (dataSource == null) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(
-						"Abort dynamically binding the Liferay data source " +
-							"because it is not available");
-				}
+		Context context = new InitialContext();
 
-				return;
-			}
-
-			Context context = new InitialContext();
-
+		try {
 			try {
 				context.lookup(_JNDI_JDBC);
 			}
@@ -136,8 +136,9 @@ public class PortletContextListener
 			}
 			catch (NamingException ne) {
 				try {
-					Method method = dataSource.getClass().getMethod(
-						"getTargetDataSource");
+					Class<?> clazz = dataSource.getClass();
+
+					Method method = clazz.getMethod("getTargetDataSource");
 
 					dataSource = (DataSource)method.invoke(dataSource);
 				}
@@ -152,8 +153,8 @@ public class PortletContextListener
 		catch (Exception e) {
 			if (_log.isWarnEnabled()) {
 				_log.warn(
-					"Unable to dynamically bind the Liferay data source: "
-						+ e.getMessage());
+					"Unable to dynamically bind the Liferay data source: " +
+						e.getMessage());
 			}
 		}
 	}

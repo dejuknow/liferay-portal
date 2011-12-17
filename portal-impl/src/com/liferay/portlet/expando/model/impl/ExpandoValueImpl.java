@@ -58,7 +58,7 @@ public class ExpandoValueImpl extends ExpandoValueBaseImpl {
 		long columnId = getColumnId();
 
 		if (columnId <= 0) {
-			return  null;
+			return null;
 		}
 
 		return ExpandoColumnLocalServiceUtil.getColumn(columnId);
@@ -308,6 +308,22 @@ public class ExpandoValueImpl extends ExpandoValueBaseImpl {
 		throws PortalException, SystemException {
 
 		validate(ExpandoColumnConstants.LONG_ARRAY);
+
+		setData(StringUtil.merge(data));
+	}
+
+	public void setNumber(Number data)
+		throws PortalException, SystemException {
+
+		validate(ExpandoColumnConstants.NUMBER);
+
+		setData(String.valueOf(data));
+	}
+
+	public void setNumberArray(Number[] data)
+		throws PortalException, SystemException {
+
+		validate(ExpandoColumnConstants.NUMBER_ARRAY);
 
 		setData(StringUtil.merge(data));
 	}

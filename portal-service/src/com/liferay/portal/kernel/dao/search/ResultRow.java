@@ -180,18 +180,6 @@ public class ResultRow {
 			path, servletContext, request, response);
 	}
 
-	public void addScore(float score) {
-		addScore(_searchEntries.size(), score);
-	}
-
-	public void addScore(int index, float score) {
-		ScoreSearchEntry scoreSearchEntry = new ScoreSearchEntry();
-
-		scoreSearchEntry.setScore(score);
-
-		_searchEntries.add(index, scoreSearchEntry);
-	}
-
 	public void addSearchEntry(int index, SearchEntry searchEntry) {
 		_searchEntries.add(index, searchEntry);
 	}
@@ -290,9 +278,7 @@ public class ResultRow {
 		addText(_searchEntries.size(), name, href);
 	}
 
-	public void addText(
-		String align, String valign, int colspan, String name) {
-
+	public void addText(String align, String valign, int colspan, String name) {
 		addText(_searchEntries.size(), align, valign, colspan, name);
 	}
 
@@ -323,8 +309,7 @@ public class ResultRow {
 	public void addText(
 		String align, String valign, String name, PortletURL portletURL) {
 
-		addText(
-			align, valign, SearchEntry.DEFAULT_COLSPAN, name, portletURL);
+		addText(align, valign, SearchEntry.DEFAULT_COLSPAN, name, portletURL);
 	}
 
 	public void addText(String align, String valign, String name, String href) {
@@ -347,6 +332,10 @@ public class ResultRow {
 
 	public String getClassName() {
 		return _className;
+	}
+
+	public Map<String, Object> getData() {
+		return _data;
 	}
 
 	public List<SearchEntry> getEntries() {
@@ -401,6 +390,10 @@ public class ResultRow {
 		_className = className;
 	}
 
+	public void setData(Map<String, Object> data) {
+		_data = data;
+	}
+
 	public void setObject(Object obj) {
 		_obj = obj;
 	}
@@ -428,6 +421,7 @@ public class ResultRow {
 	private boolean _bold;
 	private String _classHoverName;
 	private String _className;
+	private Map<String, Object> _data;
 	private List<SearchEntry> _searchEntries;
 	private Object _obj;
 	private Map<String, Object> _params;

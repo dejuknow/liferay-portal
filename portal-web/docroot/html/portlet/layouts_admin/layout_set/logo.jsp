@@ -66,6 +66,20 @@ LayoutSet selLayoutSet = ((LayoutSet)request.getAttribute("edit_pages.jsp-selLay
 			<img alt="<liferay-ui:message key="logo" />" src="<%= themeDisplay.getPathImage() %>/layout_set_logo?img_id=<%= selLayoutSet.getLogoId() %>&t=<%= WebServerServletTokenUtil.getToken(selLayoutSet.getLogoId()) %>" />
 		</div>
 	</c:if>
+
+	<%
+	Group guestGroup = GroupLocalServiceUtil.getGroup(company.getCompanyId(), GroupConstants.GUEST);
+	%>
+
+	<c:if test="<%= liveGroup.getGroupId() != guestGroup.getGroupId() %>">
+
+		<%
+		boolean showSiteName = GetterUtil.getBoolean(selLayoutSet.getSettingsProperty("showSiteName"), true);
+		%>
+
+		<aui:input label="show-site-name" name="showSiteName" type="checkbox" checked='<%= showSiteName %>' />
+	</c:if>
+
 </aui:fieldset>
 
 <aui:script use="aui-base">

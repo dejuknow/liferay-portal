@@ -158,6 +158,23 @@ public class TicketPersistenceImpl extends BasePersistenceImpl<Ticket>
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 
+		clearUniqueFindersCache(ticket);
+	}
+
+	@Override
+	public void clearCache(List<Ticket> tickets) {
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+
+		for (Ticket ticket : tickets) {
+			EntityCacheUtil.removeResult(TicketModelImpl.ENTITY_CACHE_ENABLED,
+				TicketImpl.class, ticket.getPrimaryKey());
+
+			clearUniqueFindersCache(ticket);
+		}
+	}
+
+	protected void clearUniqueFindersCache(Ticket ticket) {
 		FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_KEY,
 			new Object[] { ticket.getKey() });
 	}
@@ -180,20 +197,6 @@ public class TicketPersistenceImpl extends BasePersistenceImpl<Ticket>
 	/**
 	 * Removes the ticket with the primary key from the database. Also notifies the appropriate model listeners.
 	 *
-	 * @param primaryKey the primary key of the ticket
-	 * @return the ticket that was removed
-	 * @throws com.liferay.portal.NoSuchModelException if a ticket with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public Ticket remove(Serializable primaryKey)
-		throws NoSuchModelException, SystemException {
-		return remove(((Long)primaryKey).longValue());
-	}
-
-	/**
-	 * Removes the ticket with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
 	 * @param ticketId the primary key of the ticket
 	 * @return the ticket that was removed
 	 * @throws com.liferay.portal.NoSuchTicketException if a ticket with the primary key could not be found
@@ -201,24 +204,37 @@ public class TicketPersistenceImpl extends BasePersistenceImpl<Ticket>
 	 */
 	public Ticket remove(long ticketId)
 		throws NoSuchTicketException, SystemException {
+		return remove(Long.valueOf(ticketId));
+	}
+
+	/**
+	 * Removes the ticket with the primary key from the database. Also notifies the appropriate model listeners.
+	 *
+	 * @param primaryKey the primary key of the ticket
+	 * @return the ticket that was removed
+	 * @throws com.liferay.portal.NoSuchTicketException if a ticket with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public Ticket remove(Serializable primaryKey)
+		throws NoSuchTicketException, SystemException {
 		Session session = null;
 
 		try {
 			session = openSession();
 
-			Ticket ticket = (Ticket)session.get(TicketImpl.class,
-					Long.valueOf(ticketId));
+			Ticket ticket = (Ticket)session.get(TicketImpl.class, primaryKey);
 
 			if (ticket == null) {
 				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + ticketId);
+					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchTicketException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
-					ticketId);
+					primaryKey);
 			}
 
-			return ticketPersistence.remove(ticket);
+			return remove(ticket);
 		}
 		catch (NoSuchTicketException nsee) {
 			throw nsee;
@@ -229,18 +245,6 @@ public class TicketPersistenceImpl extends BasePersistenceImpl<Ticket>
 		finally {
 			closeSession(session);
 		}
-	}
-
-	/**
-	 * Removes the ticket from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param ticket the ticket
-	 * @return the ticket that was removed
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public Ticket remove(Ticket ticket) throws SystemException {
-		return super.remove(ticket);
 	}
 
 	@Override
@@ -261,16 +265,7 @@ public class TicketPersistenceImpl extends BasePersistenceImpl<Ticket>
 			closeSession(session);
 		}
 
-		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
-		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
-
-		TicketModelImpl ticketModelImpl = (TicketModelImpl)ticket;
-
-		FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_KEY,
-			new Object[] { ticketModelImpl.getKey() });
-
-		EntityCacheUtil.removeResult(TicketModelImpl.ENTITY_CACHE_ENABLED,
-			TicketImpl.class, ticket.getPrimaryKey());
+		clearCache(ticket);
 
 		return ticket;
 	}
@@ -716,7 +711,7 @@ public class TicketPersistenceImpl extends BasePersistenceImpl<Ticket>
 		throws NoSuchTicketException, SystemException {
 		Ticket ticket = findByKey(key);
 
-		ticketPersistence.remove(ticket);
+		remove(ticket);
 	}
 
 	/**
@@ -726,7 +721,7 @@ public class TicketPersistenceImpl extends BasePersistenceImpl<Ticket>
 	 */
 	public void removeAll() throws SystemException {
 		for (Ticket ticket : findAll()) {
-			ticketPersistence.remove(ticket);
+			remove(ticket);
 		}
 	}
 

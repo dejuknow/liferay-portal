@@ -167,6 +167,23 @@ public class PortalPreferencesPersistenceImpl extends BasePersistenceImpl<Portal
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 
+		clearUniqueFindersCache(portalPreferences);
+	}
+
+	@Override
+	public void clearCache(List<PortalPreferences> portalPreferenceses) {
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+
+		for (PortalPreferences portalPreferences : portalPreferenceses) {
+			EntityCacheUtil.removeResult(PortalPreferencesModelImpl.ENTITY_CACHE_ENABLED,
+				PortalPreferencesImpl.class, portalPreferences.getPrimaryKey());
+
+			clearUniqueFindersCache(portalPreferences);
+		}
+	}
+
+	protected void clearUniqueFindersCache(PortalPreferences portalPreferences) {
 		FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_O_O,
 			new Object[] {
 				Long.valueOf(portalPreferences.getOwnerId()),
@@ -192,20 +209,6 @@ public class PortalPreferencesPersistenceImpl extends BasePersistenceImpl<Portal
 	/**
 	 * Removes the portal preferences with the primary key from the database. Also notifies the appropriate model listeners.
 	 *
-	 * @param primaryKey the primary key of the portal preferences
-	 * @return the portal preferences that was removed
-	 * @throws com.liferay.portal.NoSuchModelException if a portal preferences with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public PortalPreferences remove(Serializable primaryKey)
-		throws NoSuchModelException, SystemException {
-		return remove(((Long)primaryKey).longValue());
-	}
-
-	/**
-	 * Removes the portal preferences with the primary key from the database. Also notifies the appropriate model listeners.
-	 *
 	 * @param portalPreferencesId the primary key of the portal preferences
 	 * @return the portal preferences that was removed
 	 * @throws com.liferay.portal.NoSuchPreferencesException if a portal preferences with the primary key could not be found
@@ -213,25 +216,38 @@ public class PortalPreferencesPersistenceImpl extends BasePersistenceImpl<Portal
 	 */
 	public PortalPreferences remove(long portalPreferencesId)
 		throws NoSuchPreferencesException, SystemException {
+		return remove(Long.valueOf(portalPreferencesId));
+	}
+
+	/**
+	 * Removes the portal preferences with the primary key from the database. Also notifies the appropriate model listeners.
+	 *
+	 * @param primaryKey the primary key of the portal preferences
+	 * @return the portal preferences that was removed
+	 * @throws com.liferay.portal.NoSuchPreferencesException if a portal preferences with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public PortalPreferences remove(Serializable primaryKey)
+		throws NoSuchPreferencesException, SystemException {
 		Session session = null;
 
 		try {
 			session = openSession();
 
 			PortalPreferences portalPreferences = (PortalPreferences)session.get(PortalPreferencesImpl.class,
-					Long.valueOf(portalPreferencesId));
+					primaryKey);
 
 			if (portalPreferences == null) {
 				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
-						portalPreferencesId);
+					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchPreferencesException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
-					portalPreferencesId);
+					primaryKey);
 			}
 
-			return portalPreferencesPersistence.remove(portalPreferences);
+			return remove(portalPreferences);
 		}
 		catch (NoSuchPreferencesException nsee) {
 			throw nsee;
@@ -242,19 +258,6 @@ public class PortalPreferencesPersistenceImpl extends BasePersistenceImpl<Portal
 		finally {
 			closeSession(session);
 		}
-	}
-
-	/**
-	 * Removes the portal preferences from the database. Also notifies the appropriate model listeners.
-	 *
-	 * @param portalPreferences the portal preferences
-	 * @return the portal preferences that was removed
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public PortalPreferences remove(PortalPreferences portalPreferences)
-		throws SystemException {
-		return super.remove(portalPreferences);
 	}
 
 	@Override
@@ -276,19 +279,7 @@ public class PortalPreferencesPersistenceImpl extends BasePersistenceImpl<Portal
 			closeSession(session);
 		}
 
-		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
-		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
-
-		PortalPreferencesModelImpl portalPreferencesModelImpl = (PortalPreferencesModelImpl)portalPreferences;
-
-		FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_O_O,
-			new Object[] {
-				Long.valueOf(portalPreferencesModelImpl.getOwnerId()),
-				Integer.valueOf(portalPreferencesModelImpl.getOwnerType())
-			});
-
-		EntityCacheUtil.removeResult(PortalPreferencesModelImpl.ENTITY_CACHE_ENABLED,
-			PortalPreferencesImpl.class, portalPreferences.getPrimaryKey());
+		clearCache(portalPreferences);
 
 		return portalPreferences;
 	}
@@ -743,7 +734,7 @@ public class PortalPreferencesPersistenceImpl extends BasePersistenceImpl<Portal
 		throws NoSuchPreferencesException, SystemException {
 		PortalPreferences portalPreferences = findByO_O(ownerId, ownerType);
 
-		portalPreferencesPersistence.remove(portalPreferences);
+		remove(portalPreferences);
 	}
 
 	/**
@@ -753,7 +744,7 @@ public class PortalPreferencesPersistenceImpl extends BasePersistenceImpl<Portal
 	 */
 	public void removeAll() throws SystemException {
 		for (PortalPreferences portalPreferences : findAll()) {
-			portalPreferencesPersistence.remove(portalPreferences);
+			remove(portalPreferences);
 		}
 	}
 

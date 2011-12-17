@@ -23,7 +23,7 @@
 
 	var TPL_BUTTON = '<div class="aui-field-labels-inline">' +
 						'<input type="button" value="<liferay-ui:message key="select" />" />' +
-					 '<div>';
+					'<div>';
 
 	var TPL_PARAGRAPH = '<p></p>';
 
@@ -70,7 +70,7 @@
 								collection[index] = {
 									attributeName: attributeName,
 									editor: new A.DateCellEditor(),
-									name: '<liferay-ui:message key="predefined-value" />'
+									name: '<%= UnicodeLanguageUtil.get(pageContext, "predefined-value") %>'
 								};
 							}
 						}
@@ -121,6 +121,11 @@
 				},
 				fieldNamespace: {
 					value: 'ddm'
+				},
+				name: {
+					valueFn: function() {
+						return A.FormBuilderField.buildFieldName('documents-and-media');
+					}
 				}
 			},
 
@@ -137,8 +142,13 @@
 					A.Array.each(
 						model,
 						function(item, index, collection) {
-							if (item.attributeName === 'predefinedValue') {
+							var attributeName = item.attributeName;
+
+							if (attributeName === 'predefinedValue') {
 								item.editor = false;
+							}
+							else if (attributeName === 'type') {
+								item.formatter = instance._defaultFormatter;
 							}
 						}
 					);
@@ -146,80 +156,20 @@
 					return model;
 				},
 
+				_defaultFormatter: function() {
+					var instance = this;
+
+					return 'documents-and-media';
+				},
+
 				_uiSetValue: function() {
-					return '<liferay-ui:message key="select" />';
+					return '<%= UnicodeLanguageUtil.get(pageContext, "select") %>';
 				}
 
 			}
 
 		}
 	);
-
-	var DLFolderCellEditor = A.Component.create({
-		NAME: 'document-library-folder-cell-editor',
-
-		EXTENDS: A.BaseCellEditor,
-
-		prototype: {
-			ELEMENT_TEMPLATE: '<div><label></label></div>',
-
-			initializer: function() {
-				var instance = this;
-
-				Liferay.provide(
-					window,
-					'<%= PortalUtil.getPortletNamespace(PortletKeys.DOCUMENT_LIBRARY) %>selectFolder',
-					A.bind(instance._selectFolder, instance),
-					[]
-				);
-			},
-
-			getElementsValue: function() {
-				var instance = this;
-
-				return instance.get('value');
-			},
-
-			_defInitToolbarFn: function() {
-				var instance = this;
-
-				DLFolderCellEditor.superclass._defInitToolbarFn.apply(instance, arguments);
-
-				instance.toolbar.add(
-					{
-						handler: A.bind(instance._handleChooseEvent, instance),
-						label: '<liferay-ui:message key="choose" />'
-					},
-					1
-				);
-			},
-
-			_handleChooseEvent: function(event) {
-				var folderWindow = window.open('<liferay-portlet:renderURL windowState="<%= LiferayWindowState.POP_UP.toString() %>" portletName='<%= PortletKeys.DOCUMENT_LIBRARY %>'><portlet:param name="struts_action" value="/document_library/select_folder" /></liferay-portlet:renderURL>', 'folder', 'directories=no,height=640,location=no,menubar=no,resizable=yes,scrollbars=yes,status=no,toolbar=no,width=830');
-
-				folderWindow.focus();
-			},
-
-			_selectFolder: function(folderId, folderName) {
-				var instance = this;
-
-				instance.set(
-					'value',
-					{
-						folderId: folderId,
-						folderName: folderName
-					}
-				);
-			},
-
-			_uiSetValue: function(val) {
-				var instance = this;
-
-				instance.elements.one('label').setContent(val.folderName);
-			}
-
-		}
-	});
 
 	var DDMFileUploadField = A.Component.create(
 		{
@@ -232,7 +182,7 @@
 					value: '<%= StringUtil.merge(PrefsPropsUtil.getStringArray(PropsKeys.DL_FILE_EXTENSIONS, StringPool.COMMA)) %>'
 				},
 				dataType: {
-					value: 'document-library'
+					value: 'file-upload'
 				},
 				fieldNamespace: {
 					value: 'ddm'
@@ -247,7 +197,7 @@
 					},
 					value: {
 						folderId: <%= DLFolderConstants.DEFAULT_PARENT_FOLDER_ID %>,
-						folderName: '<liferay-ui:message key="documents-home" />'
+						folderName: '<%= UnicodeLanguageUtil.get(pageContext, "home") %>'
 					}
 				},
 				tip: {
@@ -273,17 +223,7 @@
 					model.push(
 						{
 							attributeName: 'acceptFiles',
-							name: '<liferay-ui:message key="allowed-file-extensions" />'
-						},
-						{
-							attributeName: 'folder',
-							editor: new DLFolderCellEditor(),
-							formatter: function(o) {
-								var data = o.record.get('data');
-
-								return data.value.folderName;
-							},
-							name: '<liferay-ui:message key="folder" />'
+							name: '<%= UnicodeLanguageUtil.get(pageContext, "allowed-file-extensions") %>'
 						}
 					);
 
@@ -317,7 +257,7 @@
 
 			ATTRS: {
 				dataType: {
-					value: 'double'
+					value: 'number'
 				}
 			}
 		}
@@ -359,17 +299,17 @@
 						{
 							attributeName: 'type',
 							editor: false,
-							name: '<liferay-ui:message key="type" />'
+							name: '<%= UnicodeLanguageUtil.get(pageContext, "type") %>'
 						},
 						{
 							attributeName: 'label',
 							editor: new A.TextAreaCellEditor(),
-							name: '<liferay-ui:message key="text" />'
+							name: '<%= UnicodeLanguageUtil.get(pageContext, "text") %>'
 						},
 						{
 							attributeName: 'style',
 							editor: new A.TextAreaCellEditor(),
-							name: '<liferay-ui:message key="style" />'
+							name: '<%= UnicodeLanguageUtil.get(pageContext, "style") %>'
 						}
 					];
 				},
@@ -435,7 +375,7 @@
 						{
 							attributeName: 'type',
 							editor: false,
-							name: '<liferay-ui:message key="type" />'
+							name: '<%= UnicodeLanguageUtil.get(pageContext, "type") %>'
 						}
 					];
 				}
