@@ -24,65 +24,83 @@
 
 		<execute action="Home#assertClick" locator-key1="PAGE" value1="${pageName}" />
 
-		<execute action="PGStaging#assertClick" locator-key1="STAGING_DROP_DOWN_BUTTON" value1="Staging" />
-		<execute action="PGStaging#assertClick" locator-key1="STAGING_MENU_SUBMIT_FOR_PUBLICATION_BUTTON" value1="Submit for Publication" />
-		<execute action="PGStaging#assertTextEquals" locator-key1="STAGING_MENU_STATUS" value1="${workflowStatus}" />
+		<if>
+			<condition action="PGStaging#isElementNotPresent" locator-key1="STAGING_MENU_SUBMIT_FOR_PUBLICATION" />
+			<then>
+				<execute action="PGStaging#click" locator-key1="STAGING_DROP_DOWN_BUTTON" />
+				<execute action="PGStaging#assertElementPresent" locator-key1="STAGING_MENU_SUBMIT_FOR_PUBLICATION" />
+			</then>
+		</if>
+
+		<execute action="PGStaging#assertClick" locator-key1="STAGING_MENU_SUBMIT_FOR_PUBLICATION" value1="Submit for Publication" />
+		<execute action="PGStaging#assertElementPresent" locator-key1="STAGING_MENU_SUBMIT_FOR_PUBLICATION_DISABLED" />
+
+		<if>
+			<condition action="PGStaging#isTextEqual" locator-key1="STAGING_MENU_STATUS" value1="Pending (Created)" />
+			<then>
+				<execute action="PGStaging#assertTextEquals" locator-key1="STAGING_MENU_STATUS" value1="Pending (Created)" />
+			</then>
+			<else>
+				<execute action="PGStaging#assertTextEquals" locator-key1="STAGING_MENU_STATUS" value1="${workflowStatus}" />
+			</else>
+		</if>
+	</command>
+
+	<command name="gotoCmdCP">
+		<execute macro="Page#openURL" />
+
+		<execute action="Dockbar#assertClick" locator-key1="ADMIN" value1="Admin" />
+		<execute action="Dockbar#assertClick" locator-key1="${portletCategoryKey}" value1="${portletCategoryName}" />
+
+		<if>
+			<isset var="siteScopeName" />
+			<then>
+				<execute action="Home#click" locator-key1="SCOPE_SELECTOR" />
+
+				<var name="key_siteScopeName" value="${siteScopeName}" />
+
+				<execute action="Home#click" locator-key1="SCOPE_SELECTOR_MENULIST_ITEM" />
+			</then>
+		</if>
+
+		<var name="key_portletCategoryName" value="${portletCategoryName}" />
+
+		<if>
+			<condition action="Home#isElementPresent" locator-key1="SITE_ADMINISTRATION_CATEGORY_COLLAPSED" value1="${portletCategoryName}" />
+			<then>
+				<execute action="Home#assertClick" locator-key1="SITE_ADMINISTRATION_CATEGORY_COLLAPSED" value1="${portletCategoryName}" />
+
+				<execute action="Home#assertTextEquals" locator-key1="SITE_ADMINISTRATION_CATEGORY_EXPANDED" value1="${portletCategoryName}" />
+			</then>
+		</if>
+
+
+		<if>
+			<not>
+				<contains string="${portletName}" substring="{portletName}" />
+			</not>
+			<then>
+				<var name="key_portletName" value="${portletName}" />
+
+				<execute action="Home#assertClick" locator-key1="SITE_ADMINISTRATION_NAVIGATION" value1="${portletName}" />
+			</then>
+		</if>
 	</command>
 
 	<command name="gotoConfigurationCP">
-		<execute macro="Page#openURL" />
-
-		<execute action="Dockbar#assertClick" locator-key1="ADMIN" value1="Admin" />
-		<execute action="Dockbar#assertClick" locator-key1="ADMIN_SITE_ADMINISTRATION_CONFIGURATION" value1="Configuration" />
-
-		<if>
-			<isset var="siteScopeName" />
-			<then>
-				<execute action="Home#click" locator-key1="SCOPE_SELECTOR" />
-
-				<var name="key_siteScopeName" value="${siteScopeName}" />
-
-				<execute action="Home#click" locator-key1="SCOPE_SELECTOR_MENULIST_ITEM" />
-			</then>
-		</if>
-
-		<execute action="Home#click" locator1="//ul[@class='category-portlets']/li[contains(.,'${portletName}')]/a" />
+		<execute macro="Page#gotoCmdCP">
+			<var name="portletCategoryKey" value="ADMIN_SITE_ADMINISTRATION_CONFIGURATION" />
+			<var name="portletCategoryName" value="Configuration" />
+			<var name="portletName" value="${portletName}" />
+		</execute>
 	</command>
 
 	<command name="gotoContentCP">
-		<execute macro="Page#openURL" />
-
-		<execute action="Dockbar#assertClick" locator-key1="ADMIN" value1="Admin" />
-		<execute action="Dockbar#assertClick" locator-key1="ADMIN_SITE_ADMINISTRATION_CONTENT" value1="Content" />
-
-		<if>
-			<isset var="siteScopeName" />
-			<then>
-				<execute action="Home#click" locator-key1="SCOPE_SELECTOR" />
-
-				<var name="key_siteScopeName" value="${siteScopeName}" />
-
-				<execute action="Home#click" locator-key1="SCOPE_SELECTOR_MENULIST_ITEM" />
-			</then>
-		</if>
-
-		<if>
-			<isset var="contentScopeName" />
-			<then>
-				<execute action="Home#click" locator-key1="CONTENT_SCOPE_SELECTOR" />
-
-				<var name="key_contentScopeName" value="${contentScopeName}" />
-
-				<execute action="Home#click" locator-key1="CONTENT_SCOPE_SELECTOR_MENULIST_ITEM" />
-			</then>
-		</if>
-
-		<if>
-			<condition action="Home#isElementPresent" locator1="//ul[@class='category-portlets']/li[contains(.,'${portletName}')]/a" />
-			<then>
-				<execute action="Home#click" locator1="//ul[@class='category-portlets']/li[contains(.,'${portletName}')]/a" />
-			</then>
-		</if>
+		<execute macro="Page#gotoCmdCP">
+			<var name="portletCategoryKey" value="ADMIN_SITE_ADMINISTRATION_CONTENT" />
+			<var name="portletCategoryName" value="Content" />
+			<var name="portletName" value="${portletName}" />
+		</execute>
 	</command>
 
 	<command name="gotoCP">
@@ -91,7 +109,14 @@
 		<execute action="Dockbar#assertClick" locator-key1="ADMIN" value1="Admin" />
 		<execute action="Dockbar#assertClick" locator-key1="ADMIN_CONTROL_PANEL" value1="Control Panel" />
 
-		<execute action="Home#click" locator1="//ul[@class='unstyled']/li/span/a[contains(.,'${portletName}')]" />
+		<if>
+			<isset var="portletName" />
+			<then>
+				<var name="key_portletName" value="${portletName}" />
+
+				<execute action="Home#click" locator-key1="CONTROL_PANEL_NAVIGATION" />
+			</then>
+		</if>
 	</command>
 
 	<command name="gotoMyDashboard">
@@ -111,6 +136,23 @@
 		<execute action="Myaccount#assertClick" locator1="//ul[@class='nav control-panel-bar-secondary nav-pills']//a[contains(.,'${portletName}')]" value1="${portletName}" />
 	</command>
 
+	<command name="gotoPagesCP">
+        <execute macro="Page#openURL" />
+
+        <execute action="Dockbar#assertClick" locator-key1="ADMIN" value1="Admin" />
+        <execute action="Dockbar#assertClick" locator-key1="ADMIN_SITE_ADMINISTRATION_PAGES" value1="Pages" />
+
+        <if>
+           <isset var="siteScopeName" />
+           <then>
+              <execute action="Home#click" locator-key1="SCOPE_SELECTOR" />
+                  <var name="key_siteScopeName" value="${siteScopeName}" />
+               <execute action="Home#click" locator-key1="SCOPE_SELECTOR_MENULIST_ITEM" />
+           </then>
+        </if>
+        <execute action="Home#click" locator1="//ul[@class='category-portlets']/li[contains(.,'${portletName}')]/a" />
+     </command>
+
 	<command name="gotoPG">
 		<execute macro="Page#openURL" />
 
@@ -118,23 +160,11 @@
 	</command>
 
 	<command name="gotoUsersCP">
-		<execute macro="Page#openURL" />
-
-		<execute action="Dockbar#assertClick" locator-key1="ADMIN" value1="Admin" />
-		<execute action="Dockbar#assertClick" locator-key1="ADMIN_SITE_ADMINISTRATION_USERS" value1="Users" />
-
-		<if>
-			<isset var="siteScopeName" />
-			<then>
-				<execute action="Home#click" locator-key1="SCOPE_SELECTOR" />
-
-				<var name="key_siteScopeName" value="${siteScopeName}" />
-
-				<execute action="Home#click" locator-key1="SCOPE_SELECTOR_MENULIST_ITEM" />
-			</then>
-		</if>
-
-		<execute action="Home#click" locator1="//ul[@class='category-portlets']/li[contains(.,'${portletName}')]/a" />
+		<execute macro="Page#gotoCmdCP">
+			<var name="portletCategoryKey" value="ADMIN_SITE_ADMINISTRATION_USERS" />
+			<var name="portletCategoryName" value="Users" />
+			<var name="portletName" value="${portletName}" />
+		</execute>
 	</command>
 
 	<command name="isPresent">

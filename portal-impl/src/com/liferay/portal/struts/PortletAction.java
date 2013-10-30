@@ -39,6 +39,8 @@ import com.liferay.portal.service.PortletLocalServiceUtil;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.WebKeys;
+import com.liferay.portlet.PortletPreferencesFactoryUtil;
+import com.liferay.portlet.StrictPortletPreferencesImpl;
 
 import java.io.IOException;
 
@@ -49,6 +51,7 @@ import javax.portlet.EventResponse;
 import javax.portlet.MimeResponse;
 import javax.portlet.PortletConfig;
 import javax.portlet.PortletContext;
+import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletRequestDispatcher;
 import javax.portlet.PortletResponse;
@@ -250,6 +253,38 @@ public class PortletAction extends Action {
 
 	protected MessageResources getResources(PortletRequest portletRequest) {
 		return getResources();
+	}
+
+	protected PortletPreferences getStrictPortletSetup(
+			Layout layout, String portletId)
+		throws PortalException, SystemException {
+
+		if (Validator.isNull(portletId)) {
+			return null;
+		}
+
+		PortletPreferences portletPreferences =
+			PortletPreferencesFactoryUtil.getStrictPortletSetup(
+				layout, portletId);
+
+		if (portletPreferences instanceof StrictPortletPreferencesImpl) {
+			throw new PrincipalException();
+		}
+
+		return portletPreferences;
+	}
+
+	protected PortletPreferences getStrictPortletSetup(
+			PortletRequest portletRequest)
+		throws PortalException, SystemException {
+
+		String portletResource = ParamUtil.getString(
+			portletRequest, "portletResource");
+
+		ThemeDisplay themeDisplay = (ThemeDisplay)portletRequest.getAttribute(
+			WebKeys.THEME_DISPLAY);
+
+		return getStrictPortletSetup(themeDisplay.getLayout(), portletResource);
 	}
 
 	/**

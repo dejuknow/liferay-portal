@@ -183,14 +183,16 @@ public class SecurityPortletContainerWrapper implements PortletContainer {
 			return;
 		}
 
-		if (portlet.isUndeployedPortlet()) {
-			return;
-		}
-
 		if (!isValidPortletId(portlet.getPortletId())) {
-			_log.warn("Invalid portlet id " + portlet.getPortletId());
+			if (_log.isWarnEnabled()) {
+				_log.warn("Invalid portlet id " + portlet.getPortletId());
+			}
 
 			throw new PrincipalException();
+		}
+
+		if (portlet.isUndeployedPortlet()) {
+			return;
 		}
 
 		Layout layout = (Layout)request.getAttribute(WebKeys.LAYOUT);
@@ -224,17 +226,14 @@ public class SecurityPortletContainerWrapper implements PortletContainer {
 			HttpServletRequest request, Portlet portlet)
 		throws PortalException {
 
-		if (!PropsValues.AUTH_TOKEN_CHECK_ENABLED) {
-			return;
-		}
-
 		Map<String, String> initParams = portlet.getInitParams();
 
 		boolean checkAuthToken = GetterUtil.getBoolean(
 			initParams.get("check-auth-token"), true);
 
 		if (checkAuthToken) {
-			AuthTokenUtil.check(request);
+			AuthTokenUtil.checkCSRFToken(
+				request, SecurityPortletContainerWrapper.class.getName());
 		}
 	}
 
@@ -620,9 +619,11 @@ public class SecurityPortletContainerWrapper implements PortletContainer {
 
 		String url = getOriginalURL(request);
 
-		_log.warn(
-			"Reject process action for " + url + " on " +
-				portlet.getPortletId());
+		if (_log.isWarnEnabled()) {
+			_log.warn(
+				"Reject process action for " + url + " on " +
+					portlet.getPortletId());
+		}
 
 		return ActionResult.EMPTY_ACTION_RESULT;
 	}
@@ -667,9 +668,11 @@ public class SecurityPortletContainerWrapper implements PortletContainer {
 
 		response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 
-		_log.warn(
-			"Reject serveResource for " + url + " on " +
-				portlet.getPortletId());
+		if (_log.isWarnEnabled()) {
+			_log.warn(
+				"Reject serveResource for " + url + " on " +
+					portlet.getPortletId());
+		}
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(

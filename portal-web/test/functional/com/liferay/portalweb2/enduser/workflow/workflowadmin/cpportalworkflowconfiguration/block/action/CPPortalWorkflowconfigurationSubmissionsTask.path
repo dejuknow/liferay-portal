@@ -20,7 +20,7 @@
 </tr>
 <tr>
 	<td>SUCCESS_MESSAGE</td>
-	<td>//div[@class='alert alert-success']</td>
+	<td>//div[contains(@class,'alert') and contains(@class,'alert-success')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -41,7 +41,7 @@
 <!--MENU-->
 <tr>
 	<td>MENU_WITHDRAW_SUBMISSION</td>
-	<td>//a[@id='_151_kldx_menu_withdraw-submission_1']</td>
+	<td>//a[contains(@id,'_menu_withdraw-submission_1')]</td>
 	<td></td>
 </tr>
 <tr>

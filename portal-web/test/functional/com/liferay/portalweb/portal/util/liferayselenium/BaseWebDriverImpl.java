@@ -25,7 +25,11 @@ import com.liferay.portalweb.portal.util.TestPropsValues;
 
 import java.io.File;
 
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
+
+import net.jsourcerer.webdriver.jserrorcollector.JavaScriptError;
 
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
@@ -94,6 +98,57 @@ public abstract class BaseWebDriverImpl
 		throws Exception {
 
 		LiferaySeleniumHelper.assertEmailSubject(this, index, subject);
+	}
+
+	@Override
+	public void assertJavaScriptErrors() throws Exception {
+		if (!TestPropsValues.TEST_ASSSERT_JAVASCRIPT_ERRORS) {
+			return;
+		}
+
+		String pageSource = getPageSource();
+
+		if (pageSource.contains(
+				"html id=\"feedHandler\" xmlns=" +
+					"\"http://www.w3.org/1999/xhtml\"")) {
+
+			return;
+		}
+
+		WebElement webElement = getWebElement("//body");
+
+		WrapsDriver wrapsDriver = (WrapsDriver)webElement;
+
+		WebDriver webDriver = wrapsDriver.getWrappedDriver();
+
+		List<JavaScriptError> javaScriptErrors = JavaScriptError.readErrors(
+			webDriver);
+
+		if (!javaScriptErrors.isEmpty()) {
+			for (JavaScriptError javaScriptError : javaScriptErrors) {
+				String javaScriptErrorValue = javaScriptError.toString();
+
+				System.out.println("JS_ERROR: " + javaScriptErrorValue);
+
+				// LPS-41634
+
+				if (javaScriptErrorValue.contains(
+						"TypeError: d.config.doc.defaultView is null")) {
+
+					continue;
+				}
+
+				// LPS-41634
+
+				if (javaScriptErrorValue.contains(
+						"NS_ERROR_NOT_INITIALIZED:")) {
+
+					continue;
+				}
+
+				throw new Exception(javaScriptErrorValue);
+			}
+		}
 	}
 
 	@Override
@@ -355,7 +410,11 @@ public abstract class BaseWebDriverImpl
 			return false;
 		}
 
-		return !pattern.equals(getSelectedLabel(selectLocator, "1"));
+		String[] selectedLabels = getSelectedLabels(selectLocator);
+
+		List<String> selectedLabelsList = Arrays.asList(selectedLabels);
+
+		return !selectedLabelsList.contains(pattern);
 	}
 
 	@Override
@@ -514,6 +573,11 @@ public abstract class BaseWebDriverImpl
 	}
 
 	@Override
+	public boolean sendActionLogger(String command, String[] params) {
+		return true;
+	}
+
+	@Override
 	public void sendEmail(String to, String subject, String content)
 		throws Exception {
 
@@ -575,7 +639,13 @@ public abstract class BaseWebDriverImpl
 
 	@Override
 	public void uploadTempFile(String location, String value) {
-		uploadFile(location, TestPropsValues.OUTPUT_DIR + value);
+		String slash = "/";
+
+		if (OSDetector.isWindows()) {
+			slash = "\\";
+		}
+
+		uploadFile(location, TestPropsValues.OUTPUT_DIR + slash + value);
 	}
 
 	@Override

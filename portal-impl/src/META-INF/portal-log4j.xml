@@ -302,6 +302,10 @@
 		<priority value="ERROR" />
 	</category>
 
+	<category name="com.liferay.portal.kernel.messaging.proxy.ProxyMessageListener">
+		<priority value="WARN" />
+	</category>
+
 	<category name="com.liferay.portal.kernel.portlet.RestrictPortletServletRequest">
 		<priority value="ERROR" />
 	</category>
@@ -752,6 +756,10 @@
 
 	<category name="com.liferay.portal.servlet.filters.virtualhost.VirtualHostFilter">
 		<priority value="ERROR" />
+	</category>
+
+	<category name="com.liferay.portal.setup.SetupWizardSampleDataUtil">
+		<priority value="INFO" />
 	</category>
 
 	<category name="com.liferay.portal.sharepoint">

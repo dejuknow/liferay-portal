@@ -26,7 +26,8 @@ public class WebKeys implements com.liferay.portal.kernel.util.WebKeys {
 
 	public static final String ADDRESS = "ADDRESS";
 
-	public static final String ANNOUNCEMENTS_ENTRY = "ANNOUNCEMENTS_ENTRY";
+	@Distributed
+	public static final String ANNOUNCEMENTS_ENTRY = "LIFERAY_SHARED_ANNOUNCEMENTS_ENTRY";
 
 	public static final String ASSET_CATEGORY = "ASSET_CATEGORY";
 
@@ -344,8 +345,6 @@ public class WebKeys implements com.liferay.portal.kernel.util.WebKeys {
 	public static final String PORTLET_PARALLEL_RENDER = "PORTLET_PARALLEL_RENDER";
 
 	public static final String PORTLET_RENDER_PARAMETERS = "PORTLET_RENDER_PARAMETERS_";
-
-	public static final String PORTLET_SESSION_TRACKER = "PORTLET_SESSION_TRACKER";
 
 	public static final String PORTLET_STRUTS_ACTION = "PORTLET_STRUTS_ACTION";
 

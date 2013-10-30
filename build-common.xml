@@ -422,6 +422,51 @@ Please set the environment variable ANT_OPTS to the recommended value of
 		</then>
 	</if>
 
+	<macrodef name="baseline-jar-macro">
+		<attribute name="bndRootFile" />
+		<attribute name="file" />
+		<attribute name="outputPath" />
+		<attribute name="rootProjectDir" />
+		<attribute name="sourcePath" />
+
+		<sequential>
+			<trycatch>
+				<try>
+					<taskdef
+						classname="com.liferay.util.ant.bnd.BaselineJarTask"
+						classpathref="project.classpath"
+						name="baseline-jar"
+					/>
+				</try>
+				<catch>
+					<ant antfile="${project.dir}/portal-service/build.xml" target="compile" inheritAll="false" />
+					<ant antfile="${project.dir}/util-java/build.xml" target="compile" inheritAll="false" />
+
+					<taskdef
+						classname="com.liferay.util.ant.bnd.BaselineJarTask"
+						classpathref="project.classpath"
+						name="baseline-jar"
+					/>
+				</catch>
+			</trycatch>
+
+			<manifest-helper />
+
+			<bndexpand propertyfile="@{bndRootFile}" />
+
+			<baseline-jar
+				bndRootFile="@{bndRootFile}"
+				file="@{file}"
+				outputPath="@{outputPath}"
+				sourcePath="@{sourcePath}"
+			>
+				<classpath>
+					<pathelement location="@{sourcePath}/classes" />
+				</classpath>
+			</baseline-jar>
+		</sequential>
+	</macrodef>
+
 	<macrodef name="manifest-helper">
 		<attribute name="analyze" default="false" />
 
@@ -454,6 +499,41 @@ Please set the environment variable ANT_OPTS to the recommended value of
 		</sequential>
 	</macrodef>
 
+	<macrodef name="release-to-repo-macro">
+		<attribute name="bndRootFile" />
+		<attribute name="file" />
+
+		<sequential>
+			<trycatch>
+				<try>
+					<taskdef
+						classname="com.liferay.util.ant.bnd.ReleaseToRepoTask"
+						classpathref="project.classpath"
+						name="release-to-repo"
+					/>
+				</try>
+				<catch>
+					<ant antfile="${project.dir}/portal-service/build.xml" target="compile" inheritAll="false" />
+					<ant antfile="${project.dir}/util-java/build.xml" target="compile" inheritAll="false" />
+
+					<taskdef
+						classname="com.liferay.util.ant.bnd.ReleaseToRepoTask"
+						classpathref="project.classpath"
+						name="release-to-repo"
+					/>
+				</catch>
+			</trycatch>
+
+			<bndexpand propertyfile="@{bndRootFile}" />
+
+			<release-to-repo
+				bndRootFile="@{bndRootFile}"
+				deployRepo="baselinerepo"
+				file="@{file}"
+			/>
+		</sequential>
+	</macrodef>
+
 	<target name="compile">
 	</target>
 
@@ -480,9 +560,9 @@ Please set the environment variable ANT_OPTS to the recommended value of
 				<mkdir dir="test-classes/${test.type}" />
 				<mkdir dir="test-results/${test.type}" />
 
-				<copy todir="test-classes/${test.type}">
+				<copy todir="test-classes/${test.type}" preservelastmodified="true">
 					<fileset dir="test" includes="*.properties,META-INF/*.dtd,META-INF/*.xml" />
-					<fileset dir="test/${test.type}" includes="**/*.properties,**/dependencies/**,META-INF/*.xml" />
+					<fileset dir="test/${test.type}" includes="**/*.policy,**/*.properties,**/dependencies/**,META-INF/*.xml" />
 				</copy>
 
 				<javac
@@ -849,38 +929,105 @@ Please set the environment variable ANT_OPTS to the recommended value of
 		</if>
 
 		<if>
-			<available file="test/${test.type}" type="dir" />
+			<available file="test/${test.dir}" type="dir" />
 			<then>
-				<junit dir="${project.dir}" fork="on" forkmode="${junit.forkmode}" haltonfailure="${junit.halt.on.failure}" outputtoformatters="false" printsummary="on" showoutput="true">
-					<sysproperty key="junit.aspectj.dump" file="woven-classes" />
-					<sysproperty key="junit.cobertura.agent" value="${junit.cobertura.agent}" />
-					<sysproperty key="junit.code.coverage" value="${junit.code.coverage}" />
-					<sysproperty key="junit.debug" value="${junit.debug}" />
-					<sysproperty key="net.sourceforge.cobertura.datafile" file="test-coverage/${test.type}/cobertura.ser" />
-					<jvmarg line="${junit.cobertura.agent}" />
-					<jvmarg line="${junit.debug.jpda}" />
-					<jvmarg value="-Xmx${junit.java.mx}" />
-					<jvmarg value="-XX:MaxPermSize=${junit.java.maxpermsize}" />
-					<jvmarg value="-Dexternal-properties=${test.properties}" />
-					<jvmarg value="-Dfile.encoding=UTF-8" />
-					<jvmarg value="-Djava.net.preferIPv4Stack=true" />
-					<jvmarg value="-Duser.timezone=GMT" />
-					<classpath location="test-coverage" />
-					<classpath refid="test.classpath" />
-					<formatter type="brief" usefile="false" />
-					<formatter type="xml" />
-					<batchtest todir="test-results/${test.type}">
-						<fileset dir="test-classes/${test.dir}" includes="**/${test.class}.class">
-							<exclude name="**/DLAppServiceHttpTest.class" />
-							<exclude name="**/DLAppServiceJsonTest.class" />
-							<exclude name="**/DLAppServiceSoapTest.class" />
-							<exclude name="**/UserServiceHttpTest.class" />
-							<exclude name="**/UserServiceSoapTest.class" />
-							<exclude name="${test.excludes}" />
-							<filename regex="${junit.test.excludes}" negate="true" />
-						</fileset>
-					</batchtest>
-				</junit>
+				<resourcecount property="test.with.security.count">
+					<fileset
+						dir="test-classes/${test.dir}"
+						includes="**/${test.class}.class"
+					>
+						<filename regex=".*/pacl/test/[\w]+Test.class" negate="false" />
+					</fileset>
+				</resourcecount>
+
+				<if>
+					<not>
+						<equals arg1="${test.with.security.count}" arg2="0" />
+					</not>
+					<then>
+						<junit dir="${project.dir}" fork="on" forkmode="${junit.forkmode}" haltonfailure="${junit.halt.on.failure}" outputtoformatters="false" printsummary="on" showoutput="true">
+							<sysproperty key="junit.aspectj.dump" file="woven-classes" />
+							<sysproperty key="junit.cobertura.agent" value="${junit.cobertura.agent}" />
+							<sysproperty key="junit.code.coverage" value="${junit.code.coverage}" />
+							<sysproperty key="junit.debug" value="${junit.debug}" />
+							<sysproperty key="net.sourceforge.cobertura.datafile" file="test-coverage/${test.type}/cobertura.ser" />
+							<jvmarg line="${junit.cobertura.agent}" />
+							<jvmarg line="${junit.debug.jpda}" />
+							<jvmarg value="-Xmx${junit.java.mx}" />
+							<jvmarg value="-XX:MaxPermSize=${junit.java.maxpermsize}" />
+							<jvmarg value="-Dexternal-properties=${test.properties}" />
+							<jvmarg value="-Dfile.encoding=UTF-8" />
+							<jvmarg value="-Djava.net.preferIPv4Stack=true" />
+							<jvmarg value="-Djava.security.manager" />
+							<jvmarg value="-Djava.security.policy=${basedir}/test-classes/${test.type}/com/liferay/portal/security/pacl/security.policy" />
+							<jvmarg value="-Duser.timezone=GMT" />
+							<classpath location="test-coverage" />
+							<classpath refid="test.classpath" />
+							<formatter type="brief" usefile="false" />
+							<formatter type="xml" />
+							<batchtest todir="test-results/${test.type}">
+								<fileset dir="test-classes/${test.dir}" includes="**/${test.class}.class">
+									<exclude name="**/DLAppServiceHttpTest.class" />
+									<exclude name="**/DLAppServiceJsonTest.class" />
+									<exclude name="**/DLAppServiceSoapTest.class" />
+									<exclude name="**/UserServiceHttpTest.class" />
+									<exclude name="**/UserServiceSoapTest.class" />
+									<exclude name="${test.excludes}" />
+									<filename regex="${junit.test.excludes}" negate="true" />
+									<filename regex=".*/pacl/test/[\w]+Test.class" negate="false" />
+								</fileset>
+							</batchtest>
+						</junit>
+					</then>
+				</if>
+
+				<resourcecount property="test.without.security.count">
+					<fileset
+						dir="test-classes/${test.dir}"
+						includes="**/${test.class}.class"
+					>
+						<filename regex=".*/pacl/test/[\w]+Test.class" negate="true" />
+					</fileset>
+				</resourcecount>
+
+				<if>
+					<not>
+						<equals arg1="${test.without.security.count}" arg2="0" />
+					</not>
+					<then>
+						<junit dir="${project.dir}" fork="on" forkmode="${junit.forkmode}" haltonfailure="${junit.halt.on.failure}" outputtoformatters="false" printsummary="on" showoutput="true">
+							<sysproperty key="junit.aspectj.dump" file="woven-classes" />
+							<sysproperty key="junit.cobertura.agent" value="${junit.cobertura.agent}" />
+							<sysproperty key="junit.code.coverage" value="${junit.code.coverage}" />
+							<sysproperty key="junit.debug" value="${junit.debug}" />
+							<sysproperty key="net.sourceforge.cobertura.datafile" file="test-coverage/${test.type}/cobertura.ser" />
+							<jvmarg line="${junit.cobertura.agent}" />
+							<jvmarg line="${junit.debug.jpda}" />
+							<jvmarg value="-Xmx${junit.java.mx}" />
+							<jvmarg value="-XX:MaxPermSize=${junit.java.maxpermsize}" />
+							<jvmarg value="-Dexternal-properties=${test.properties}" />
+							<jvmarg value="-Dfile.encoding=UTF-8" />
+							<jvmarg value="-Djava.net.preferIPv4Stack=true" />
+							<jvmarg value="-Duser.timezone=GMT" />
+							<classpath location="test-coverage" />
+							<classpath refid="test.classpath" />
+							<formatter type="brief" usefile="false" />
+							<formatter type="xml" />
+							<batchtest todir="test-results/${test.type}">
+								<fileset dir="test-classes/${test.dir}" includes="**/${test.class}.class">
+									<exclude name="**/DLAppServiceHttpTest.class" />
+									<exclude name="**/DLAppServiceJsonTest.class" />
+									<exclude name="**/DLAppServiceSoapTest.class" />
+									<exclude name="**/UserServiceHttpTest.class" />
+									<exclude name="**/UserServiceSoapTest.class" />
+									<exclude name="${test.excludes}" />
+									<filename regex="${junit.test.excludes}" negate="true" />
+									<filename regex=".*/pacl/test/[\w]+Test.class" negate="true" />
+								</fileset>
+							</batchtest>
+						</junit>
+					</then>
+				</if>
 			</then>
 		</if>
 	</target>
@@ -938,7 +1085,7 @@ Please set the environment variable ANT_OPTS to the recommended value of
 		</junit>
 	</target>
 
-	<target name="test-package">
+	<target name="test-package" depends="compile,compile-test">
 		<if>
 			<not>
 				<isset property="test.package" />
@@ -951,14 +1098,97 @@ Please set the environment variable ANT_OPTS to the recommended value of
 		<propertyregex
 			global="true"
 			input="${test.package}"
-			property="test.class"
+			property="test.package.dir"
 			regexp="\."
 			replace="/"
 		/>
 
-		<ant target="test-class">
-			<property name="test.class" value="${test.class}/*Test" />
-		</ant>
+		<if>
+			<available file="test/integration" type="dir" />
+			<then>
+				<resourcecount property="test.integration.other.count">
+					<fileset
+						dir="test/integration"
+						excludes="**/${test.package.dir}/*PersistenceTest.java"
+						includes="**/${test.package.dir}/*Test.java"
+					/>
+				</resourcecount>
+
+				<if>
+					<not>
+						<equals arg1="${test.integration.other.count}" arg2="0" />
+					</not>
+					<then>
+						<var name="test.class" value="**/${test.package.dir}/*Test" />
+
+						<ant target="test-cmd">
+							<property name="junit.forkmode" value="once" />
+							<property name="test.excludes" value="**/*PersistenceTest.class" />
+							<property name="test.type" value="integration" />
+						</ant>
+
+						<antcall target="report-test-coverage">
+							<param name="test.type" value="integration" />
+						</antcall>
+					</then>
+				</if>
+
+				<resourcecount property="test.integration.persistence.count">
+					<fileset
+						dir="test/integration"
+						includes="**/${test.package.dir}/*PersistenceTest.java"
+					/>
+				</resourcecount>
+
+				<if>
+					<not>
+						<equals arg1="${test.integration.persistence.count}" arg2="0" />
+					</not>
+					<then>
+						<var name="test.class" value="**/${test.package.dir}/*PersistenceTest" />
+
+						<ant target="test-cmd">
+							<property name="junit.forkmode" value="once" />
+							<property name="test.type" value="integration" />
+						</ant>
+
+						<antcall target="report-test-coverage">
+							<param name="test.type" value="integration" />
+						</antcall>
+					</then>
+				</if>
+			</then>
+		</if>
+
+		<if>
+			<available file="test/unit" type="dir" />
+			<then>
+				<resourcecount property="test.unit.count">
+					<fileset
+						dir="test/unit"
+						includes="**/${test.package.dir}/*Test.java"
+					/>
+				</resourcecount>
+
+				<if>
+					<not>
+						<equals arg1="${test.unit.count}" arg2="0" />
+					</not>
+					<then>
+						<var name="test.class" value="**/${test.package.dir}/*Test" />
+
+						<ant target="test-cmd">
+							<property name="junit.forkmode" value="perTest" />
+							<property name="test.type" value="unit" />
+						</ant>
+
+						<antcall target="report-test-coverage" >
+							<param name="test.type" value="unit" />
+						</antcall>
+					</then>
+				</if>
+			</then>
+		</if>
 	</target>
 
 	<target name="test-unit" depends="compile,compile-test-unit">

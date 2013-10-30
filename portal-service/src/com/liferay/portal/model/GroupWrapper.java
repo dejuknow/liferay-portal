@@ -768,6 +768,11 @@ public class GroupWrapper implements Group, ModelWrapper<Group> {
 	}
 
 	@Override
+	public void clearStagingGroup() {
+		_group.clearStagingGroup();
+	}
+
+	@Override
 	public java.util.List<com.liferay.portal.model.Group> getAncestors()
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException {

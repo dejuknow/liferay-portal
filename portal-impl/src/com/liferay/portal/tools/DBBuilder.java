@@ -65,7 +65,6 @@ public class DBBuilder {
 
 			if (!sqlDir.endsWith("/WEB-INF/sql")) {
 				_buildSQLFile(sqlDir, "portal");
-				_buildSQLFile(sqlDir, "portal-minimal");
 				_buildSQLFile(sqlDir, "portal-tables");
 			}
 			else {
@@ -119,7 +118,7 @@ public class DBBuilder {
 					db.buildCreateFile(sqlDir, _databaseName);
 				}
 				else {
-					db.buildCreateFile(sqlDir, _databaseName, DB.POPULATED);
+					db.buildCreateFile(sqlDir, _databaseName, DB.DEFAULT);
 				}
 			}
 		}

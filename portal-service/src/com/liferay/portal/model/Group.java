@@ -33,6 +33,8 @@ public interface Group extends GroupModel, PersistedModel {
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException;
 
+	public void clearStagingGroup();
+
 	public java.util.List<com.liferay.portal.model.Group> getAncestors()
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException;

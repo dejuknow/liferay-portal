@@ -14,6 +14,8 @@
 
 package com.liferay.portal.kernel.resiliency.spi;
 
+import com.liferay.portal.kernel.resiliency.PortalResiliencyException;
+
 import java.rmi.RemoteException;
 
 import java.util.Set;
@@ -25,15 +27,21 @@ public interface SPIRegistry {
 
 	public void addExcludedPortletId(String portletId);
 
+	public SPI getErrorSPI();
+
 	public Set<String> getExcludedPortletIds();
 
-	public SPI getPortletSPI(String portletId);
+	public SPI getPortletSPI(String portletId) throws PortalResiliencyException;
 
-	public SPI getServletContextSPI(String servletContextName);
+	public SPI getServletContextSPI(String servletContextName)
+		throws PortalResiliencyException;
 
 	public void registerSPI(SPI spi) throws RemoteException;
 
 	public void removeExcludedPortletId(String portletId);
+
+	public void setSPIRegistryValidator(
+		SPIRegistryValidator spiRegistryValidator);
 
 	public void unregisterSPI(SPI spi);
 

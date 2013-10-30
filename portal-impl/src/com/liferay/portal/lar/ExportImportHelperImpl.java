@@ -200,13 +200,14 @@ public class ExportImportHelperImpl implements ExportImportHelper {
 	@Override
 	public DateRange getDateRange(
 			PortletRequest portletRequest, long groupId, boolean privateLayout,
-			long plid, String portletId)
+			long plid, String portletId, String defaultRange)
 		throws Exception {
 
 		Date startDate = null;
 		Date endDate = null;
 
-		String range = ParamUtil.getString(portletRequest, "range");
+		String range = ParamUtil.getString(
+			portletRequest, "range", defaultRange);
 
 		if (range.equals("dateRange")) {
 			Calendar startCalendar = getCalendar(
@@ -219,6 +220,8 @@ public class ExportImportHelperImpl implements ExportImportHelper {
 			endDate = endCalendar.getTime();
 		}
 		else if (range.equals("fromLastPublishDate")) {
+			long lastPublishDate = 0;
+
 			if (Validator.isNotNull(portletId) && (plid > 0)) {
 				Layout layout = LayoutLocalServiceUtil.getLayout(plid);
 
@@ -226,28 +229,22 @@ public class ExportImportHelperImpl implements ExportImportHelper {
 					PortletPreferencesFactoryUtil.getPortletSetup(
 						layout, portletId, StringPool.BLANK);
 
-				long lastPublishDate = GetterUtil.getLong(
+				lastPublishDate = GetterUtil.getLong(
 					preferences.getValue(
 						"last-publish-date", StringPool.BLANK));
-
-				if (lastPublishDate > 0) {
-					endDate = new Date();
-
-					startDate = new Date(lastPublishDate);
-				}
 			}
 			else {
 				LayoutSet layoutSet = LayoutSetLocalServiceUtil.getLayoutSet(
 					groupId, privateLayout);
 
-				long lastPublishDate = GetterUtil.getLong(
+				lastPublishDate = GetterUtil.getLong(
 					layoutSet.getSettingsProperty("last-publish-date"));
+			}
 
-				if (lastPublishDate > 0) {
-					endDate = new Date();
+			if (lastPublishDate > 0) {
+				endDate = new Date();
 
-					startDate = new Date(lastPublishDate);
-				}
+				startDate = new Date(lastPublishDate);
 			}
 		}
 		else if (range.equals("last")) {
@@ -455,12 +452,14 @@ public class ExportImportHelperImpl implements ExportImportHelper {
 				dynamicQuery.add(
 					classNameIdProperty.eq(stagedModelType.getClassNameId()));
 
-				Property referrerClassNameIdProperty =
-					PropertyFactoryUtil.forName("referrerClassNameId");
+				if (stagedModelType.getReferrerClassNameId() >= 0) {
+					Property referrerClassNameIdProperty =
+						PropertyFactoryUtil.forName("referrerClassNameId");
 
-				dynamicQuery.add(
-					referrerClassNameIdProperty.eq(
-						stagedModelType.getReferrerClassNameId()));
+					dynamicQuery.add(
+						referrerClassNameIdProperty.eq(
+							stagedModelType.getReferrerClassNameId()));
+				}
 
 				Property typeProperty = PropertyFactoryUtil.forName("type");
 
@@ -571,8 +570,7 @@ public class ExportImportHelperImpl implements ExportImportHelper {
 					portletDataContext, content,
 					beginPos + contextPath.length(), endPos);
 
-			FileEntry fileEntry = getFileEntry(
-				portletDataContext, dlReferenceParameters);
+			FileEntry fileEntry = getFileEntry(dlReferenceParameters);
 
 			if (fileEntry == null) {
 				endPos = beginPos - 1;
@@ -599,6 +597,8 @@ public class ExportImportHelperImpl implements ExportImportHelper {
 				String path = ExportImportPathUtil.getModelPath(fileEntry);
 
 				sb.replace(beginPos, endPos, "[$dl-reference=" + path + "$]");
+
+				deleteTimestampParameters(sb, beginPos);
 			}
 			catch (Exception e) {
 				if (_log.isDebugEnabled()) {
@@ -1507,6 +1507,29 @@ public class ExportImportHelperImpl implements ExportImportHelper {
 		}
 	}
 
+	protected void deleteTimestampParameters(StringBuilder sb, int beginPos) {
+		beginPos = sb.indexOf(StringPool.CLOSE_BRACKET, beginPos);
+
+		if ((beginPos == -1) || (beginPos == (sb.length() - 1)) ||
+			(sb.charAt(beginPos + 1) != CharPool.QUESTION)) {
+
+			return;
+		}
+
+		int endPos = StringUtil.indexOfAny(
+			sb.toString(), _DL_REFERENCE_LEGACY_STOP_CHARS, beginPos + 2);
+
+		if (endPos == -1) {
+			return;
+		}
+
+		String urlParams = sb.substring(beginPos + 1, endPos);
+
+		urlParams = HttpUtil.removeParameter(urlParams, "t");
+
+		sb.replace(beginPos + 1, endPos, urlParams);
+	}
+
 	protected Map<String, String[]> getDLReferenceParameters(
 		PortletDataContext portletDataContext, String content, int beginPos,
 		int endPos) {
@@ -1579,9 +1602,7 @@ public class ExportImportHelperImpl implements ExportImportHelper {
 		return map;
 	}
 
-	protected FileEntry getFileEntry(
-		PortletDataContext portletDataContext, Map<String, String[]> map) {
-
+	protected FileEntry getFileEntry(Map<String, String[]> map) {
 		if (map == null) {
 			return null;
 		}
@@ -1844,6 +1865,10 @@ public class ExportImportHelperImpl implements ExportImportHelper {
 
 				PortletDataHandler portletDataHandler =
 					portlet.getPortletDataHandlerInstance();
+
+				if (portletDataHandler == null) {
+					return;
+				}
 
 				String[] configurationPortletOptions = StringUtil.split(
 					element.attributeValue("portlet-configuration"));

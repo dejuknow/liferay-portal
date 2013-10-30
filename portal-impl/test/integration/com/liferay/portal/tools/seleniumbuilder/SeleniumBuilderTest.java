@@ -994,22 +994,6 @@ public class SeleniumBuilderTest {
 	}
 
 	@Test
-	public void testMacroContainsElement1006_1() throws Exception {
-		test(
-			"MacroContainsElement1006_1.macro",
-			"Error 1006: Invalid string attribute value in " + _DIR_NAME +
-				"/MacroContainsElement1006_1.macro:4");
-	}
-
-	@Test
-	public void testMacroContainsElement1006_2() throws Exception {
-		test(
-			"MacroContainsElement1006_2.macro",
-			"Error 1006: Invalid substring attribute value in " + _DIR_NAME +
-				"/MacroContainsElement1006_2.macro:4");
-	}
-
-	@Test
 	public void testMacroDefinitionElement1000() throws Exception {
 		test(
 			"MacroDefinitionElement1000.macro",
@@ -1047,14 +1031,6 @@ public class SeleniumBuilderTest {
 			"MacroEchoElement1005.macro",
 			"Error 1005: Invalid message-fail attribute in " + _DIR_NAME +
 				"/MacroEchoElement1005.macro:3");
-	}
-
-	@Test
-	public void testMacroEchoElement1006() throws Exception {
-		test(
-			"MacroEchoElement1006.macro",
-			"Error 1006: Invalid message attribute value in " + _DIR_NAME +
-				"/MacroEchoElement1006.macro:3");
 	}
 
 	@Test
@@ -1153,22 +1129,6 @@ public class SeleniumBuilderTest {
 			"MacroEqualsElement1005.macro",
 			"Error 1005: Invalid fail attribute in " + _DIR_NAME +
 				"/MacroEqualsElement1005.macro:4");
-	}
-
-	@Test
-	public void testMacroEqualsElement1006_1() throws Exception {
-		test(
-			"MacroEqualsElement1006_1.macro",
-			"Error 1006: Invalid arg1 attribute value in " + _DIR_NAME +
-				"/MacroEqualsElement1006_1.macro:4");
-	}
-
-	@Test
-	public void testMacroEqualsElement1006_2() throws Exception {
-		test(
-			"MacroEqualsElement1006_2.macro",
-			"Error 1006: Invalid arg2 attribute value in " + _DIR_NAME +
-				"/MacroEqualsElement1006_2.macro:4");
 	}
 
 	@Test
@@ -1281,14 +1241,6 @@ public class SeleniumBuilderTest {
 			"MacroFailElement1005.macro",
 			"Error 1005: Invalid message-fail attribute in " + _DIR_NAME +
 				"/MacroFailElement1005.macro:3");
-	}
-
-	@Test
-	public void testMacroFailElement1006() throws Exception {
-		test(
-			"MacroFailElement1006.macro",
-			"Error 1006: Invalid message attribute value in " + _DIR_NAME +
-				"/MacroFailElement1006.macro:3");
 	}
 
 	@Test
@@ -1530,11 +1482,59 @@ public class SeleniumBuilderTest {
 	}
 
 	@Test
-	public void testMacroVarElement1005() throws Exception {
+	public void testMacroVarElement1004_4() throws Exception {
 		test(
-			"MacroVarElement1005.macro",
+			"MacroVarElement1004_4.macro",
+			"Error 1004: Missing (path) attribute in " + _DIR_NAME +
+				"/MacroVarElement1004_4.macro:2");
+	}
+
+	@Test
+	public void testMacroVarElement1005_1() throws Exception {
+		test(
+			"MacroVarElement1005_1.macro",
 			"Error 1005: Invalid fail attribute in " + _DIR_NAME +
-				"/MacroVarElement1005.macro:2");
+				"/MacroVarElement1005_1.macro:2");
+	}
+
+	@Test
+	public void testMacroVarElement1005_2() throws Exception {
+		test(
+			"MacroVarElement1005_2.macro",
+			"Error 1005: Invalid value attribute in " + _DIR_NAME +
+				"/MacroVarElement1005_2.macro:2");
+	}
+
+	@Test
+	public void testMacroVarElement1005_3() throws Exception {
+		test(
+			"MacroVarElement1005_3.macro",
+			"Error 1005: Invalid path attribute in " + _DIR_NAME +
+				"/MacroVarElement1005_3.macro:2");
+	}
+
+	@Test
+	public void testMacroVarElement1005_4() throws Exception {
+		test(
+			"MacroVarElement1005_4.macro",
+			"Error 1005: Invalid value attribute in " + _DIR_NAME +
+				"/MacroVarElement1005_4.macro:2");
+	}
+
+	@Test
+	public void testMacroVarElement1005_5() throws Exception {
+		test(
+			"MacroVarElement1005_5.macro",
+			"Error 1005: Invalid value attribute in " + _DIR_NAME +
+				"/MacroVarElement1005_5.macro:2");
+	}
+
+	@Test
+	public void testMacroVarElement1005_6() throws Exception {
+		test(
+			"MacroVarElement1005_6.macro",
+			"Error 1005: Invalid value attribute in " + _DIR_NAME +
+				"/MacroVarElement1005_6.macro:2");
 	}
 
 	@Test
@@ -1570,6 +1570,14 @@ public class SeleniumBuilderTest {
 	}
 
 	@Test
+	public void testMacroVarElement1006_5() throws Exception {
+		test(
+			"MacroVarElement1006_5.macro",
+			"Error 1006: Invalid attribute attribute value in " + _DIR_NAME +
+				"/MacroVarElement1006_5.macro:2");
+	}
+
+	@Test
 	public void testMacroVarElement1007() throws Exception {
 		test(
 			"MacroVarElement1007.macro",
@@ -1589,24 +1597,27 @@ public class SeleniumBuilderTest {
 	public void testMacroWhileElement1001_1() throws Exception {
 		test(
 			"MacroWhileElement1001_1.macro",
-			"Error 1001: Missing (condition|then) child element in " +
-				_DIR_NAME + "/MacroWhileElement1001_1.macro:3");
+			"Error 1001: Missing (and|condition|contains|equals|isset|not|or)" +
+				" child element in " + _DIR_NAME +
+				"/MacroWhileElement1001_1.macro:3");
 	}
 
 	@Test
 	public void testMacroWhileElement1001_2() throws Exception {
 		test(
 			"MacroWhileElement1001_2.macro",
-			"Error 1001: Missing (condition|then) child element in " +
-				_DIR_NAME + "/MacroWhileElement1001_2.macro:3");
+			"Error 1001: Missing (then)" +
+				" child element in " + _DIR_NAME +
+				"/MacroWhileElement1001_2.macro:3");
 	}
 
 	@Test
 	public void testMacroWhileElement1001_3() throws Exception {
 		test(
 			"MacroWhileElement1001_3.macro",
-			"Error 1001: Missing (condition|then) child element in " +
-				_DIR_NAME + "/MacroWhileElement1001_3.macro:3");
+			"Error 1001: Missing (and|condition|contains|equals|isset|not|or)" +
+				" child element in " + _DIR_NAME +
+				"/MacroWhileElement1001_3.macro:3");
 	}
 
 	@Test
@@ -1756,11 +1767,35 @@ public class SeleniumBuilderTest {
 	}
 
 	@Test
-	public void testTestCaseCommandElement1006() throws Exception {
+	public void testTestCaseCommandElement1003_3() throws Exception {
 		test(
-			"TestCaseCommandElement1006.testcase",
+			"TestCaseCommandElement1003_3.testcase",
+			"Error 1003: Missing priority attribute in " + _DIR_NAME +
+				"/TestCaseCommandElement1003_3.testcase:2");
+	}
+
+	@Test
+	public void testTestCaseCommandElement1006_1() throws Exception {
+		test(
+			"TestCaseCommandElement1006_1.testcase",
 			"Error 1006: Invalid name attribute value in " + _DIR_NAME +
-				"/TestCaseCommandElement1006.testcase:2");
+				"/TestCaseCommandElement1006_1.testcase:2");
+	}
+
+	@Test
+	public void testTestCaseCommandElement1006_2() throws Exception {
+		test(
+			"TestCaseCommandElement1006_2.testcase",
+			"Error 1006: Invalid priority attribute value in " + _DIR_NAME +
+				"/TestCaseCommandElement1006_2.testcase:2");
+	}
+
+	@Test
+	public void testTestCaseCommandElement1006_3() throws Exception {
+		test(
+			"TestCaseCommandElement1006_3.testcase",
+			"Error 1006: Invalid priority attribute value in " + _DIR_NAME +
+				"/TestCaseCommandElement1006_3.testcase:2");
 	}
 
 	@Test
@@ -2025,134 +2060,6 @@ public class SeleniumBuilderTest {
 			"TestCaseVarElement1007.testcase",
 			"Error 1007: Poorly formed XML in " + _DIR_NAME +
 				"/TestCaseVarElement1007.testcase");
-	}
-
-	@Test
-	public void testTestSuite() throws Exception {
-		test("TestSuite.testsuite");
-	}
-
-	@Test
-	public void testTestSuiteDefinitionElement1000() throws Exception {
-		test(
-			"TestSuiteDefinitionElement1000.testsuite",
-			"Error 1000: Invalid root element in " + _DIR_NAME +
-				"/TestSuiteDefinitionElement1000.testsuite:1");
-	}
-
-	@Test
-	public void testTestSuiteDefinitionElement1001() throws Exception {
-		test(
-			"TestSuiteDefinitionElement1001.testsuite",
-			"Error 1001: Missing (execute) child element in " + _DIR_NAME +
-				"/TestSuiteDefinitionElement1001.testsuite:1");
-	}
-
-	@Test
-	public void testTestSuiteDefinitionElement1002() throws Exception {
-		test(
-			"TestSuiteDefinitionElement1002.testsuite",
-			"Error 1002: Invalid command element in " + _DIR_NAME +
-				"/TestSuiteDefinitionElement1002.testsuite:2");
-	}
-
-	@Test
-	public void testTestSuiteDefinitionElement1007() throws Exception {
-		test(
-			"TestSuiteDefinitionElement1007.testsuite",
-			"Error 1007: Poorly formed XML in " + _DIR_NAME +
-				"/TestSuiteDefinitionElement1007.testsuite");
-	}
-
-	@Test
-	public void testTestSuiteExecuteElement1002() throws Exception {
-		test(
-			"TestSuiteExecuteElement1002.testsuite",
-			"Error 1002: Invalid var element in " + _DIR_NAME +
-				"/TestSuiteExecuteElement1002.testsuite:3");
-	}
-
-	@Test
-	public void testTestSuiteExecuteElement1004_1() throws Exception {
-		test(
-			"TestSuiteExecuteElement1004_1.testsuite",
-			"Error 1004: Missing (test-case|test-case-command|test-class|" +
-				"test-suite) attribute in " + _DIR_NAME +
-					"/TestSuiteExecuteElement1004_1.testsuite:2");
-	}
-
-	@Test
-	public void testTestSuiteExecuteElement1004_2() throws Exception {
-		test(
-			"TestSuiteExecuteElement1004_2.testsuite",
-			"Error 1004: Missing (test-case|test-case-command|test-class|" +
-				"test-suite) attribute in " + _DIR_NAME +
-					"/TestSuiteExecuteElement1004_2.testsuite:2");
-	}
-
-	@Test
-	public void testTestSuiteExecuteElement1004_3() throws Exception {
-		test(
-			"TestSuiteExecuteElement1004_3.testsuite",
-			"Error 1004: Missing (test-case|test-case-command|test-class|" +
-				"test-suite) attribute in " + _DIR_NAME +
-					"/TestSuiteExecuteElement1004_3.testsuite:2");
-	}
-
-	@Test
-	public void testTestSuiteExecuteElement1005_1() throws Exception {
-		test(
-			"TestSuiteExecuteElement1005_1.testsuite",
-			"Error 1005: Invalid fail attribute in " + _DIR_NAME +
-				"/TestSuiteExecuteElement1005_1.testsuite:2");
-	}
-
-	@Test
-	public void testTestSuiteExecuteElement1005_2() throws Exception {
-		test(
-			"TestSuiteExecuteElement1005_2.testsuite",
-			"Error 1005: Invalid test-suite attribute in " + _DIR_NAME +
-				"/TestSuiteExecuteElement1005_2.testsuite:2");
-	}
-
-	@Test
-	public void testTestSuiteExecuteElement1005_3() throws Exception {
-		test(
-			"TestSuiteExecuteElement1005_3.testsuite",
-			"Error 1005: Invalid fail attribute in " + _DIR_NAME +
-				"/TestSuiteExecuteElement1005_3.testsuite:2");
-	}
-
-	@Test
-	public void testTestSuiteExecuteElement1006_1() throws Exception {
-		test(
-			"TestSuiteExecuteElement1006_1.testsuite",
-			"Error 1006: Invalid test-case attribute value in " + _DIR_NAME +
-				"/TestSuiteExecuteElement1006_1.testsuite:2");
-	}
-
-	@Test
-	public void testTestSuiteExecuteElement1006_2() throws Exception {
-		test(
-			"TestSuiteExecuteElement1006_2.testsuite",
-			"Error 1006: Invalid test-suite attribute value in " + _DIR_NAME +
-				"/TestSuiteExecuteElement1006_2.testsuite:2");
-	}
-
-	@Test
-	public void testTestSuiteExecuteElement1006_3() throws Exception {
-		test(
-			"TestSuiteExecuteElement1006_3.testsuite",
-			"Error 1006: Invalid test-class attribute value in " + _DIR_NAME +
-				"/TestSuiteExecuteElement1006_3.testsuite:2");
-	}
-
-	@Test
-	public void testTestSuiteExecuteElement1007() throws Exception {
-		test(
-			"TestSuiteExecuteElement1007.testsuite",
-			"Error 1007: Poorly formed XML in " + _DIR_NAME +
-				"/TestSuiteExecuteElement1007.testsuite");
 	}
 
 	protected void test(String fileName) throws Exception {

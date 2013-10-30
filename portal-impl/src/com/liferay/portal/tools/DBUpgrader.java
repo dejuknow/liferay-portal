@@ -36,6 +36,7 @@ import com.liferay.portal.service.ClassNameLocalServiceUtil;
 import com.liferay.portal.service.ReleaseLocalServiceUtil;
 import com.liferay.portal.service.ResourceActionLocalServiceUtil;
 import com.liferay.portal.spring.aop.ServiceBeanAopCacheManager;
+import com.liferay.portal.spring.aop.ServiceBeanAopCacheManagerUtil;
 import com.liferay.portal.util.InitUtil;
 import com.liferay.portal.util.PropsUtil;
 import com.liferay.portal.util.PropsValues;
@@ -229,8 +230,15 @@ public class DBUpgrader {
 			_disableTransactions();
 		}
 
+		boolean newBuildNumber = false;
+
+		if (ReleaseInfo.getBuildNumber() > release.getBuildNumber()) {
+			newBuildNumber = true;
+		}
+
 		try {
-			StartupHelperUtil.verifyProcess(release.isVerified());
+			StartupHelperUtil.verifyProcess(
+				newBuildNumber, release.isVerified());
 		}
 		catch (Exception e) {
 			_updateReleaseState(ReleaseConstants.STATE_VERIFY_FAILURE);
@@ -360,6 +368,8 @@ public class DBUpgrader {
 
 		field.set(
 			null, new ConcurrentHashMap<MethodInvocation, Annotation[]>());
+
+		ServiceBeanAopCacheManagerUtil.reset();
 	}
 
 	private static int _getReleaseState() throws Exception {

@@ -20,22 +20,22 @@
 </tr>
 <tr>
 	<td>SUCCESS_MESSAGE</td>
-	<td>//div[@class='alert alert-success']</td>
+	<td>//div[contains(@class,'alert') and contains(@class,'alert-success')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>ERROR_MESSAGE_1</td>
-	<td>xPath=(//div[@class='alert alert-error'])[1]</td>
+	<td>xPath=(//div[contains(@class,'alert') and contains(@class,'alert-error')])[1]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>ERROR_MESSAGE_2</td>
-	<td>xPath=(//div[@class='alert alert-error'])[2]</td>
+	<td>xPath=(//div[contains(@class,'alert') and contains(@class,'alert-error')])[2]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>DRAFT_STATUS</td>
-	<td>//strong[@class='label workflow-status-draft label-info workflow-value']</td>
+	<td>//strong[contains(@class,'workflow-status-draft') and contains(@class,'label-info') and contains(@class,'workflow-value')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -56,6 +56,37 @@
 <tr>
 	<td>PUBLISH_BUTTON</td>
 	<td>//button[@id='_33_publishButton']</td>
+	<td></td>
+</tr>
+<tr>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<!--TAGS-->
+<tr>
+	<td>TAGS_FIELD</td>
+	<td>//input[@title='Add Tags']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>TAGS_ADD_BUTTON</td>
+	<td>//button[@title='Add Tags']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>TAG_ENTRY_REMOVE</td>
+	<td>//li[contains(.,'${key_tagName}')]/span/span/i[contains(@class,'icon') and contains(@class,'icon-remove')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>TAGS_SELECT_BUTTON</td>
+	<td>//button[@title='Select Tags']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>TAGS_SUGGESTIONS_BUTTON</td>
+	<td>//button[@title='Suggestions']</td>
 	<td></td>
 </tr>
 </tbody>

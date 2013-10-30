@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.BaseStagedModelDataHandler;
 import com.liferay.portal.kernel.lar.ExportImportPathUtil;
 import com.liferay.portal.kernel.lar.PortletDataContext;
+import com.liferay.portal.kernel.lar.PortletDataException;
 import com.liferay.portal.kernel.lar.StagedModelDataHandlerUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
@@ -31,6 +32,7 @@ import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructureConstants;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
 
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -58,30 +60,6 @@ public class DDMStructureStagedModelDataHandler
 	}
 
 	@Override
-	public void doImportCompanyStagedModel(
-			PortletDataContext portletDataContext, DDMStructure structure)
-		throws Exception {
-
-		DDMStructure existingStructure =
-			DDMStructureLocalServiceUtil.fetchDDMStructureByUuidAndGroupId(
-				structure.getUuid(), portletDataContext.getCompanyGroupId());
-
-		Map<Long, Long> structureIds =
-			(Map<Long, Long>)portletDataContext.getNewPrimaryKeysMap(
-				DDMStructure.class);
-
-		structureIds.put(
-			structure.getStructureId(), existingStructure.getStructureId());
-
-		Map<String, String> structureKeys =
-			(Map<String, String>)portletDataContext.getNewPrimaryKeysMap(
-				DDMStructure.class + ".ddmStructureKey");
-
-		structureKeys.put(
-			structure.getStructureKey(), existingStructure.getStructureKey());
-	}
-
-	@Override
 	public String[] getClassNames() {
 		return CLASS_NAMES;
 	}
@@ -89,6 +67,76 @@ public class DDMStructureStagedModelDataHandler
 	@Override
 	public String getDisplayName(DDMStructure structure) {
 		return structure.getNameCurrentValue();
+	}
+
+	@Override
+	public Map<String, String> getReferenceAttributes(
+		PortletDataContext portletDataContext, DDMStructure structure) {
+
+		Map<String, String> referenceAttributes = new HashMap<String, String>();
+
+		referenceAttributes.put(
+			"class-name-id", String.valueOf(structure.getClassNameId()));
+		referenceAttributes.put("structure-key", structure.getStructureKey());
+
+		long defaultUserId = 0;
+
+		try {
+			defaultUserId = UserLocalServiceUtil.getDefaultUserId(
+				structure.getCompanyId());
+		}
+		catch (Exception e) {
+			return referenceAttributes;
+		}
+
+		boolean preloaded = false;
+
+		if (defaultUserId == structure.getUserId()) {
+			preloaded = true;
+		}
+
+		referenceAttributes.put("preloaded", String.valueOf(preloaded));
+
+		return referenceAttributes;
+	}
+
+	@Override
+	public void importCompanyStagedModel(
+			PortletDataContext portletDataContext, Element element)
+		throws PortletDataException {
+
+		String uuid = element.attributeValue("uuid");
+		long classNameId = GetterUtil.getLong(
+			element.attributeValue("class-name-id"));
+		String structureKey = element.attributeValue("structure-key");
+		boolean preloaded = GetterUtil.getBoolean(
+			element.attributeValue("preloaded"));
+
+		DDMStructure existingStructure = null;
+
+		try {
+			existingStructure = getExistingStructure(
+				uuid, portletDataContext.getCompanyGroupId(), classNameId,
+				structureKey, preloaded);
+		}
+		catch (Exception e) {
+			throw new PortletDataException(e);
+		}
+
+		Map<Long, Long> structureIds =
+			(Map<Long, Long>)portletDataContext.getNewPrimaryKeysMap(
+				DDMStructure.class);
+
+		long structureId = GetterUtil.getLong(
+			element.attributeValue("class-pk"));
+
+		structureIds.put(structureId, existingStructure.getStructureId());
+
+		Map<String, String> structureKeys =
+			(Map<String, String>)portletDataContext.getNewPrimaryKeysMap(
+				DDMStructure.class + ".ddmStructureKey");
+
+		structureKeys.put(structureKey, existingStructure.getStructureKey());
 	}
 
 	@Override
@@ -135,13 +183,9 @@ public class DDMStructureStagedModelDataHandler
 		if (structure.getParentStructureId() !=
 				DDMStructureConstants.DEFAULT_PARENT_STRUCTURE_ID) {
 
-			Element structureElement =
-				portletDataContext.getReferenceDataElement(
-					structure, DDMStructure.class,
-					structure.getParentStructureId());
-
-			StagedModelDataHandlerUtil.importStagedModel(
-				portletDataContext, structureElement);
+			StagedModelDataHandlerUtil.importReferenceStagedModel(
+				portletDataContext, structure, DDMStructure.class,
+				structure.getParentStructureId());
 		}
 
 		Map<Long, Long> structureIds =
@@ -168,20 +212,10 @@ public class DDMStructureStagedModelDataHandler
 			boolean preloaded = GetterUtil.getBoolean(
 				element.attributeValue("preloaded"));
 
-			DDMStructure existingStructure = null;
-
-			if (!preloaded) {
-				existingStructure =
-					DDMStructureLocalServiceUtil.
-						fetchDDMStructureByUuidAndGroupId(
-							structure.getUuid(),
-							portletDataContext.getScopeGroupId());
-			}
-			else {
-				existingStructure = DDMStructureLocalServiceUtil.fetchStructure(
-					portletDataContext.getScopeGroupId(),
-					structure.getClassNameId(), structure.getStructureKey());
-			}
+			DDMStructure existingStructure = getExistingStructure(
+				structure.getUuid(), portletDataContext.getScopeGroupId(),
+				structure.getClassNameId(), structure.getStructureKey(),
+				preloaded);
 
 			if (existingStructure == null) {
 				serviceContext.setUuid(structure.getUuid());
@@ -215,6 +249,26 @@ public class DDMStructureStagedModelDataHandler
 
 		structureKeys.put(
 			structure.getStructureKey(), importedStructure.getStructureKey());
+	}
+
+	protected DDMStructure getExistingStructure(
+			String uuid, long groupId, long classNameId, String structureKey,
+			boolean preloaded)
+		throws Exception {
+
+		DDMStructure existingStructure = null;
+
+		if (!preloaded) {
+			existingStructure =
+				DDMStructureLocalServiceUtil.fetchDDMStructureByUuidAndGroupId(
+					uuid, groupId);
+		}
+		else {
+			existingStructure = DDMStructureLocalServiceUtil.fetchStructure(
+				groupId, classNameId, structureKey);
+		}
+
+		return existingStructure;
 	}
 
 	protected void prepareLanguagesForImport(DDMStructure structure)

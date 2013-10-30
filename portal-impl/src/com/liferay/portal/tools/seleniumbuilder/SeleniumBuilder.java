@@ -113,20 +113,6 @@ public class SeleniumBuilder {
 			}
 		}
 
-		if (types.contains("testsuite")) {
-			TestSuiteConverter testSuiteConverter = new TestSuiteConverter(
-				seleniumBuilderContext);
-
-			Set<String> testSuiteNames =
-				seleniumBuilderContext.getTestSuiteNames();
-
-			for (String testSuiteName : testSuiteNames) {
-				seleniumBuilderContext.validateTestSuiteElements(testSuiteName);
-
-				testSuiteConverter.convert(testSuiteName);
-			}
-		}
-
 		SeleniumBuilderFileUtil seleniumBuilderFileUtil =
 			new SeleniumBuilderFileUtil(baseDir);
 
@@ -152,13 +138,14 @@ public class SeleniumBuilder {
 			testCaseCount += commandElements.size();
 		}
 
+		String testCaseMethodNamesString = StringUtil.merge(
+			testCaseMethodNames.toArray(
+				new String[testCaseMethodNames.size()]),
+			StringPool.SPACE);
+
 		seleniumBuilderFileUtil.writeFile(
-			"../../../test-case-method-names",
-			StringUtil.merge(
-				testCaseMethodNames.toArray(
-					new String[testCaseMethodNames.size()]),
-				StringPool.SPACE),
-			false);
+			"../../../test.case.method.names.properties",
+			"TEST_CASE_METHOD_NAMES=" + testCaseMethodNamesString, false);
 
 		System.out.println("\nThere are " + testCaseCount + " test cases.");
 	}

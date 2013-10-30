@@ -84,7 +84,7 @@ userGroupRoles.addAll(siteRoles);
 <c:if test="<%= !portletName.equals(PortletKeys.MY_ACCOUNT) %>">
 	<liferay-ui:icon
 		cssClass="modify-link"
-		iconClass="icon-search"
+		iconCssClass="icon-search"
 		id="selectRegularRoleLink"
 		label="<%= true %>"
 		linkCssClass="btn"
@@ -116,8 +116,6 @@ userGroupRoles.addAll(siteRoles);
 		);
 	</aui:script>
 </c:if>
-
-<br /><br />
 
 <h3><liferay-ui:message key="inherited-roles" /></h3>
 
@@ -168,8 +166,6 @@ userGroupRoles.addAll(siteRoles);
 
 	<liferay-ui:search-iterator paginate="<%= false %>" />
 </liferay-ui:search-container>
-
-<br /><br />
 
 <h3><liferay-ui:message key="organization-roles" /></h3>
 
@@ -254,7 +250,7 @@ userGroupRoles.addAll(siteRoles);
 <c:if test="<%= !organizations.isEmpty() && !portletName.equals(PortletKeys.MY_ACCOUNT) %>">
 	<liferay-ui:icon
 		cssClass="modify-link"
-		iconClass="icon-search"
+		iconCssClass="icon-search"
 		id="selectOrganizationRoleLink"
 		label="<%= true %>"
 		linkCssClass="btn"
@@ -284,8 +280,6 @@ userGroupRoles.addAll(siteRoles);
 		);
 	</aui:script>
 </c:if>
-
-<br /><br />
 
 <h3><liferay-ui:message key="site-roles" /></h3>
 
@@ -349,7 +343,7 @@ userGroupRoles.addAll(siteRoles);
 		<c:if test="<%= !portletName.equals(PortletKeys.MY_ACCOUNT) %>">
 			<liferay-ui:icon
 				cssClass="modify-link"
-				iconClass="icon-search"
+				iconCssClass="icon-search"
 				id="selectSiteRoleLink"
 				label="<%= true %>"
 				linkCssClass="btn"

@@ -9,8 +9,8 @@
 				<equals arg1="${plugins.deployed}" arg2="true" />
 			</not>
 			<then>
-				<delete dir="${user.home}/liferay/data" />
-				<delete dir="${user.home}/liferay/deploy" />
+				<delete dir="${liferay.home}/data" />
+				<delete dir="${liferay.home}/logs" />
 			</then>
 		</if>
 
@@ -23,7 +23,7 @@ app.server.deploy.dir=${app.server.dir}/profiles/liferay/wsadmin-deploy
 app.server.lib.global.dir=${app.server.dir}/lib/ext
 app.server.portal.dir=${app.server.dir}/profiles/liferay/installedApps/liferay-cell/liferay-portal.ear/liferay-portal.war
 
-auto.deploy.dir=$${user.home}/liferay/deploy
+auto.deploy.dir=${liferay.home}/deploy
 
 plugins.includes=${plugins.includes}</echo>
 			</then>
@@ -32,7 +32,7 @@ plugins.includes=${plugins.includes}</echo>
 app.server.lib.global.dir=${simple.server.lib.global.dir}
 app.server.portal.dir=${simple.server.portal.dir}
 
-auto.deploy.dir=$${user.home}/liferay/deploy
+auto.deploy.dir=${liferay.home}/deploy
 
 plugins.includes=${plugins.includes}</echo>
 			</else>
@@ -45,10 +45,27 @@ plugins.includes=${plugins.includes}</echo>
 			</then>
 		</if>
 
-		<ant dir="${lp.plugins.dir}/${plugin.types}" inheritAll="false">
-			<target name="clean" />
-			<target name="deploy" />
-		</ant>
+		<if>
+			<matches pattern="http" string="${test.build.plugins.war.zip.url}" />
+			<then>
+				<for list="${plugins.includes}" param="plugin.includes">
+					<sequential>
+						<copy todir="${liferay.home}/deploy">
+							<fileset
+								dir="plugins"
+								includes="@{plugin.includes}*.war"
+							/>
+						</copy>
+					</sequential>
+				</for>
+			</then>
+			<else>
+				<ant dir="${lp.plugins.dir}/${plugin.types}" inheritAll="false">
+					<target name="clean" />
+					<target name="deploy" />
+				</ant>
+			</else>
+		</if>
 
 		<delete dir="${lp.plugins.dir}/dist" />
 		<mkdir dir="${lp.plugins.dir}/dist" />
@@ -74,7 +91,7 @@ plugins.includes=${plugins.includes}</echo>
 			</else>
 		</if>
 
-		<copy todir="${user.home}/liferay/deploy">
+		<copy todir="${liferay.home}/deploy">
 			<fileset
 				dir="${hudson.plugin.dependencies.dir}/${file.dir}"
 				includes="${plugins.includes}"

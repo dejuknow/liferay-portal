@@ -25,12 +25,12 @@
 </tr>
 <tr>
 	<td>SUCCESS_MESSAGE</td>
-	<td>//div[@class='alert alert-success']</td>
+	<td>//div[contains(@class,'alert') and contains(@class,'alert-success')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>INFO_MESSAGE</td>
-	<td>//div[@class='alert alert-info']</td>
+	<td>//div[contains(@class,'alert') and contains(@class,'alert-info')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -73,6 +73,27 @@
 <tr>
 	<td>CONTROL_PANEL_GENERAL_PERMISSIONS</td>
 	<td>//div[contains(.,'Control Panel') and contains(@class,'permission-navigation-item-header')]/following-sibling::div//span[contains(@class,'permission-navigation-item')]/a[contains(.,'General Permissions')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<!--CONTROL_PANEL_USERS-->
+<tr>
+	<td>CONTROL_PANEL_USERS_USERS_AND_ORGANIZATIONS</td>
+	<td>//div[contains(.,'Users') and contains(@class,'permission-navigation-item-header')]/following-sibling::*//span[contains(@class,'permission-navigation-item')]/a[contains(.,'Users and Organizations')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CONTROL_PANEL_USERS_USER_GROUPS</td>
+	<td>//div[contains(.,'Users') and contains(@class,'permission-navigation-item-header')]/following-sibling::*//span[contains(@class,'permission-navigation-item')]/a[contains(.,'User Groups')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CONTROL_PANEL_USERS_ROLES</td>
+	<td>//div[contains(.,'Users') and contains(@class,'permission-navigation-item-header')]/following-sibling::*//span[contains(@class,'permission-navigation-item')]/a[contains(.,'Roles')]</td>
 	<td></td>
 </tr>
 <tr>

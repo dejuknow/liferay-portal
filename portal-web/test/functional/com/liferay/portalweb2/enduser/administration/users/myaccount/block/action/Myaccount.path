@@ -20,12 +20,22 @@
 </tr>
 <tr>
 	<td>MY_ACCOUNT_IFRAME</td>
-	<td>//iframe[contains(@src,'controlPanelCategory=my')]</td>
+	<td>//iframe[@class='dialog-iframe-node ']</td>
 	<td></td>
 </tr>
 <tr>
 	<td>SUCCESS_MESSAGE</td>
-	<td>//div[@class='alert alert-success']</td>
+	<td>//div[contains(@class,'alert') and contains(@class,'alert-success')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ERROR_MESSAGE_1</td>
+	<td>xpath=(//div[contains(@class,'alert') and contains(@class,'alert-error')])[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ERROR_MESSAGE_2</td>
+	<td>xpath=(//div[contains(@class,'alert') and contains(@class,'alert-error')])[2]</td>
 	<td></td>
 </tr>
 <tr>
@@ -111,6 +121,11 @@
 	<td></td>
 </tr>
 <!--PASSWORD-->
+<tr>
+	<td>PASSWORD_CURRENT_PASSWORD_FIELD</td>
+	<td>//input[@id='_2_password0']</td>
+	<td></td>
+</tr>
 <tr>
 	<td>PASSWORD_NEW_PASSWORD_FIELD</td>
 	<td>//input[@id='_2_password1']</td>

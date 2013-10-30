@@ -18,6 +18,7 @@ import com.liferay.portal.action.JSONServiceAction;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.servlet.PluginContextListener;
+import com.liferay.portal.kernel.servlet.ServletResponseUtil;
 import com.liferay.portal.security.ac.AccessControlThreadLocal;
 import com.liferay.portal.struts.JSONAction;
 import com.liferay.portal.util.ClassLoaderUtil;
@@ -47,7 +48,6 @@ public class JSONServlet extends HttpServlet {
 	}
 
 	@Override
-	@SuppressWarnings("unused")
 	public void service(
 			HttpServletRequest request, HttpServletResponse response)
 		throws IOException, ServletException {
@@ -72,6 +72,11 @@ public class JSONServlet extends HttpServlet {
 				finally {
 					ClassLoaderUtil.setContextClassLoader(contextClassLoader);
 				}
+			}
+		}
+		catch (IOException ioe) {
+			if (!ServletResponseUtil.isClientAbortException(ioe)) {
+				throw ioe;
 			}
 		}
 		catch (SecurityException se) {

@@ -682,6 +682,12 @@ public class DLFileEntryTypeLocalServiceUtil {
 		return getService().fetchFileEntryType(fileEntryTypeId);
 	}
 
+	public static com.liferay.portlet.documentlibrary.model.DLFileEntryType fetchFileEntryType(
+		long groupId, java.lang.String fileEntryTypeKey)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().fetchFileEntryType(groupId, fileEntryTypeKey);
+	}
+
 	public static long getDefaultFileEntryTypeId(long folderId)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException {

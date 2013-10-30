@@ -50,6 +50,11 @@ body.portlet {
 				color: #FFF;
 			}
 		}
+
+		.portlet-options .lfr-icon-menu-text {
+			color: transparent;
+			font-size: 0;
+		}
 	}
 }
 
@@ -174,6 +179,11 @@ body.portlet {
 		.lfr-icon-action-configuration a {
 			background-image: url(../images/common/configuration_white.png);
 		}
+	}
+
+	.lfr-url-error {
+		display: inline-block;
+		white-space: normal;
 	}
 }
 

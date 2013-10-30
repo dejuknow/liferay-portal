@@ -1,7 +1,21 @@
 <definition>
 	<command name="assertClick">
 		<case locator-key1="PUBLISH_BUTTON">
-			<execute function="AssertClick#assertTextClickAtAndWait" />
+			<execute function="AssertClick#assertTextClickAtAndWaitCKEditor" />
+		</case>
+
+		<case comparator="startsWith" locator-key1="ADD_TRANSLATION_MENULIST">
+			<execute function="AssertClick#assertTextClickAtCKEditor" />
+		</case>
+
+		<case comparator="startsWith" locator-key1="MENU_">
+			<execute function="AssertClick#assertTextClickAtCKEditor" />
+		</case>
+	</command>
+
+	<command name="assertTextEquals">
+		<case locator-key1="AVAILABLE_TRANSLATION">
+			<execute function="AssertTextEquals#assertTextWaitForCKEditor" />
 		</case>
 	</command>
 
@@ -12,6 +26,10 @@
 
 		<case locator-key1="WEB_CONTENT_TRANSLATION_IFRAME_CONTENT_FIELD">
 			<execute function="Type#typeFrameWaitForCKEditor" />
+		</case>
+
+		<case locator-key1="WEB_CONTENT_TRANSLATION_IFRAME_TITLE_FIELD">
+			<execute function="Type#typeWaitForCKEditor" />
 		</case>
 	</command>
 </definition>

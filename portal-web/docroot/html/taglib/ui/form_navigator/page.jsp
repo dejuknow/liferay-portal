@@ -160,7 +160,7 @@ if (Validator.isNotNull(historyKey)) {
 
 					<c:if test="<%= showButtons %>">
 						<aui:button-row>
-							<aui:button cssClass="btn-primary" type="submit" />
+							<aui:button primary="<%= true %>" type="submit" />
 
 							<aui:button href="<%= backURL %>" type="cancel" />
 						</aui:button-row>
@@ -329,6 +329,8 @@ if (Validator.isNotNull(historyKey)) {
 					formNode.delegate('change', updateSectionStatus, 'input, select, textarea');
 
 					formNode.on('blur', updateSectionError, 'input, select, textarea');
+
+					formNode.on('autofields:update', updateSectionError);
 				}
 			</aui:script>
 		</c:otherwise>

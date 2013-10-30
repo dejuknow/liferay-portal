@@ -32,7 +32,7 @@ else {
 %>
 
 <span class="entry-action overlay">
-	<liferay-ui:icon-menu direction="down" extended="<%= false %>" icon="<%= StringPool.BLANK %>" message="<%= StringPool.BLANK %>" showWhenSingleIcon="<%= true %>">
+	<liferay-ui:icon-menu direction="down" extended="<%= false %>" icon="<%= StringPool.BLANK %>" message="<%= StringPool.BLANK %>" showWhenSingleIcon="<%= true %>" triggerCssClass="btn">
 		<c:if test="<%= JournalArticlePermission.contains(permissionChecker, article, ActionKeys.UPDATE) %>">
 			<portlet:renderURL var="editURL">
 				<portlet:param name="struts_action" value="/journal/edit_article" />
@@ -66,6 +66,7 @@ else {
 				url="<%= moveURL %>"
 			/>
 		</c:if>
+
 		<c:if test="<%= JournalArticlePermission.contains(permissionChecker, article, ActionKeys.PERMISSIONS) %>">
 			<liferay-security:permissionsURL
 				modelResource="<%= JournalArticle.class.getName() %>"
@@ -92,7 +93,7 @@ else {
 			</liferay-portlet:renderURL>
 
 			<%
-			String taglibOnClick = "Liferay.fire('previewArticle', {title: '" + article.getTitle(locale) + "', uri: '" + previewArticleContentURL.toString() + "'});";
+			String taglibOnClick = "Liferay.fire('previewArticle', {title: '" + HtmlUtil.escapeJS(article.getTitle(locale)) + "', uri: '" + HtmlUtil.escapeJS(previewArticleContentURL.toString()) + "'});";
 			%>
 
 			<liferay-ui:icon
@@ -100,6 +101,21 @@ else {
 				onClick="<%= taglibOnClick %>"
 				url="javascript:;"
 			/>
+
+			<c:if test="<%= JournalArticlePermission.contains(permissionChecker, article, ActionKeys.UPDATE) %>">
+				<portlet:renderURL var="viewHistoryURL">
+					<portlet:param name="struts_action" value="/journal/view_article_history" />
+					<portlet:param name="redirect" value="<%= currentURL %>" />
+					<portlet:param name="referringPortletResource" value="<%= referringPortletResource %>" />
+					<portlet:param name="articleId" value="<%= article.getArticleId() %>" />
+				</portlet:renderURL>
+
+				<liferay-ui:icon
+					image="time"
+					message="view-history"
+					url="<%= viewHistoryURL.toString() %>"
+				/>
+			</c:if>
 
 			<c:if test="<%= JournalPermission.contains(permissionChecker, scopeGroupId, ActionKeys.ADD_ARTICLE) %>">
 				<portlet:renderURL var="copyURL">
@@ -126,7 +142,10 @@ else {
 				<portlet:param name="articleId" value="<%= article.getArticleId() %>" />
 			</portlet:actionURL>
 
-			<liferay-ui:icon image="time" message="expire" url="<%= expireURL %>" />
+			<liferay-ui:icon
+				image="expire"
+				url="<%= expireURL %>"
+			/>
 		</c:if>
 
 		<c:if test="<%= JournalArticlePermission.contains(permissionChecker, article, ActionKeys.DELETE) %>">
@@ -138,7 +157,10 @@ else {
 				<portlet:param name="articleId" value="<%= article.getArticleId() %>" />
 			</portlet:actionURL>
 
-			<liferay-ui:icon-delete trash="<%= TrashUtil.isTrashEnabled(scopeGroupId) %>" url="<%= deleteURL %>" />
+			<liferay-ui:icon-delete
+				trash="<%= TrashUtil.isTrashEnabled(scopeGroupId) %>"
+				url="<%= deleteURL %>"
+			/>
 		</c:if>
 	</liferay-ui:icon-menu>
 </span>

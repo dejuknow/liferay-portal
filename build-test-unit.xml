@@ -34,9 +34,7 @@
 			<param name="database" value="mysql" />
 		</antcall>
 
-		<antcall target="rebuild-database">
-			<param name="test.database.minimal" value="true" />
-		</antcall>
+		<antcall target="rebuild-database" />
 
 		<ant antfile="build-test-plugins.xml" target="test-build-plugins-release" inheritAll="false" />
 		<ant antfile="build-test-plugins.xml" target="test-create" inheritAll="false" />
@@ -54,9 +52,7 @@
 
 		<antcall target="prepare-database-jars" />
 
-		<antcall target="rebuild-database">
-			<param name="test.database.minimal" value="true" />
-		</antcall>
+		<antcall target="rebuild-database" />
 
 		<antcall target="revert-test-properties" />
 

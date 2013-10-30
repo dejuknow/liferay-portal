@@ -20,7 +20,7 @@
 </tr>
 <tr>
 	<td>SUCCESS_MESSAGE</td>
-	<td>//div[@class='alert alert-success']</td>
+	<td>//div[contains(@class,'alert') and contains(@class,'alert-success')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -59,6 +59,11 @@
 <tr>
 	<td>WIKI_PAGE_BODY</td>
 	<td>//div[@class='wiki-body']/p</td>
+	<td></td>
+</tr>
+<tr>
+	<td>WIKI_PAGE_TAG</td>
+	<td>//div[@class='page-tags']/span/a</td>
 	<td></td>
 </tr>
 <tr>

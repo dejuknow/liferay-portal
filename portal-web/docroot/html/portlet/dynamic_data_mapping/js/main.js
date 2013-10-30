@@ -661,12 +661,10 @@ AUI.add(
 				},
 
 				normalizeKey: function(str) {
-					str = A.Text.AccentFold.fold(str);
-
 					A.each(
 						str,
 						function(item, index, collection) {
-							if (!A.Text.Unicode.test(item, 'L') && !A.Text.Unicode.test(item, 'N')) {
+							if (!A.Text.Unicode.test(item, 'L') && !A.Text.Unicode.test(item, 'N') && !A.Text.Unicode.test(item,'Pd')) {
 								str = str.replace(item, STR_SPACE);
 							}
 						}
@@ -677,7 +675,7 @@ AUI.add(
 			}
 		);
 
-		LiferayFormBuilder.DEFAULT_ICON_CLASS = 'form-builder-field-icon form-builder-field-icon-default';
+		LiferayFormBuilder.DEFAULT_ICON_CLASS = 'icon-fb-custom-field';
 
 		var AVAILABLE_FIELDS = {
 			DEFAULT: [
@@ -752,7 +750,7 @@ AUI.add(
 				},
 				{
 					hiddenAttributes: MAP_HIDDEN_FIELD_ATTRS.DEFAULT,
-					iconClass: 'icon-align-justify',
+					iconClass: 'icon-edit-sign',
 					label: Liferay.Language.get('html'),
 					type: 'ddm-text-html'
 				},
@@ -803,19 +801,19 @@ AUI.add(
 			DDM_TEMPLATE: [
 				{
 					hiddenAttributes: MAP_HIDDEN_FIELD_ATTRS.DEFAULT,
-					iconClass: 'form-builder-field-icon form-builder-field-icon-paragraph',
+					iconClass: 'icon-fb-paragraph',
 					label: Liferay.Language.get('paragraph'),
 					type: 'ddm-paragraph'
 				},
 				{
 					hiddenAttributes: MAP_HIDDEN_FIELD_ATTRS.DEFAULT,
-					iconClass: 'form-builder-field-icon form-builder-field-icon-separator',
+					iconClass: 'icon-fb-separator',
 					label: Liferay.Language.get('separator'),
 					type: 'ddm-separator'
 				},
 				{
 					hiddenAttributes: MAP_HIDDEN_FIELD_ATTRS.DEFAULT,
-					iconClass: 'form-builder-field-icon form-builder-field-icon-fieldset',
+					iconClass: 'icon-fb-fieldset',
 					label: Liferay.Language.get('fieldset'),
 					type: 'fieldset'
 				}

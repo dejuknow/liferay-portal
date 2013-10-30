@@ -72,12 +72,13 @@ if (ddmStructureId > 0) {
 }
 else if (Validator.isNotNull(structureId)) {
 	try {
-		ddmStructure = DDMStructureLocalServiceUtil.getStructure(themeDisplay.getSiteGroupId(), PortalUtil.getClassNameId(JournalArticle.class), structureId);
+		ddmStructure = DDMStructureLocalServiceUtil.getStructure(themeDisplay.getSiteGroupId(), PortalUtil.getClassNameId(JournalArticle.class), structureId, true);
 	}
 	catch (NoSuchStructureException nsse) {
-		ddmStructure = DDMStructureLocalServiceUtil.getStructure(themeDisplay.getCompanyGroupId(), PortalUtil.getClassNameId(JournalArticle.class), structureId);
 	}
 }
+
+String templateId = BeanParamUtil.getString(article, request, "templateId");
 
 DDMTemplate ddmTemplate = null;
 
@@ -88,6 +89,13 @@ if (ddmTemplateId > 0) {
 		ddmTemplate = DDMTemplateLocalServiceUtil.getTemplate(ddmTemplateId);
 	}
 	catch (NoSuchTemplateException nste) {
+	}
+}
+else if (Validator.isNotNull(templateId)) {
+	try {
+		ddmTemplate = DDMTemplateLocalServiceUtil.getTemplate(groupId, PortalUtil.getClassNameId(DDMStructure.class), templateId, true);
+	}
+	catch (NoSuchStructureException nste) {
 	}
 }
 
@@ -328,8 +336,8 @@ request.setAttribute("edit_article.jsp-toLanguageId", toLanguageId);
 		Liferay.fire(
 			'previewArticle',
 			{
-				title: '<%= article.getTitle(locale) %>',
-				uri: '<%= previewArticleContentURL.toString() %>'
+				title: '<%= HtmlUtil.escapeJS(article.getTitle(locale)) %>',
+				uri: '<%= HtmlUtil.escapeJS(previewArticleContentURL.toString()) %>'
 			}
 		);
 	</aui:script>

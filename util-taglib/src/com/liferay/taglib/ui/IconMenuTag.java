@@ -100,6 +100,7 @@ public class IconMenuTag extends BaseBodyTagSupport implements BodyTag {
 				_showExpanded = false;
 				_showWhenSingleIcon = false;
 				_startPage = null;
+				_triggerCssClass = null;
 			}
 		}
 	}
@@ -222,6 +223,14 @@ public class IconMenuTag extends BaseBodyTagSupport implements BodyTag {
 		_startPage = startPage;
 	}
 
+	public void setTriggerCssClass(String triggerCssClass) {
+		_triggerCssClass = triggerCssClass;
+	}
+
+	public void setUseIconCaret(boolean useIconCaret) {
+		_useIconCaret = useIconCaret;
+	}
+
 	protected String getEndPage() {
 		if (Validator.isNull(_endPage)) {
 			return _END_PAGE;
@@ -305,6 +314,10 @@ public class IconMenuTag extends BaseBodyTagSupport implements BodyTag {
 						jspWriter.write(" select");
 					}
 
+					if (Validator.isNotNull(_triggerCssClass)) {
+						jspWriter.write(StringPool.SPACE + _triggerCssClass);
+					}
+
 					String message = _message;
 
 					if (_localizeMessage) {
@@ -318,7 +331,15 @@ public class IconMenuTag extends BaseBodyTagSupport implements BodyTag {
 					jspWriter.write("\">");
 
 					if (_showArrow && _direction.equals("left")) {
-						jspWriter.write("<i class=\"caret\"></i> ");
+						String caret = "caret";
+
+						if (_useIconCaret) {
+							caret = "icon-caret-left";
+						}
+
+						jspWriter.write("<i class=\"");
+						jspWriter.write(caret);
+						jspWriter.write("\"></i> ");
 					}
 
 					boolean auiImage = false;
@@ -346,7 +367,15 @@ public class IconMenuTag extends BaseBodyTagSupport implements BodyTag {
 					}
 
 					if (_showArrow && !_direction.equals("left")) {
-						jspWriter.write(" <i class=\"caret\"></i>");
+						String caret = "caret";
+
+						if (_useIconCaret) {
+							caret = "icon-caret-" + _direction;
+						}
+
+						jspWriter.write("<i class=\"");
+						jspWriter.write(caret);
+						jspWriter.write("\"></i> ");
 					}
 
 					jspWriter.write("</a>");
@@ -422,5 +451,7 @@ public class IconMenuTag extends BaseBodyTagSupport implements BodyTag {
 	private boolean _showExpanded;
 	private boolean _showWhenSingleIcon;
 	private String _startPage;
+	private String _triggerCssClass;
+	private boolean _useIconCaret;
 
 }

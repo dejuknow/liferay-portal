@@ -240,6 +240,16 @@ public class DLFileEntryTypeLocalServiceImpl
 	}
 
 	@Override
+	public DLFileEntryType fetchFileEntryType(
+			long groupId, String fileEntryTypeKey)
+		throws SystemException {
+
+		fileEntryTypeKey = StringUtil.toUpperCase(fileEntryTypeKey.trim());
+
+		return dlFileEntryTypePersistence.fetchByG_F(groupId, fileEntryTypeKey);
+	}
+
+	@Override
 	public long getDefaultFileEntryTypeId(long folderId)
 		throws PortalException, SystemException {
 

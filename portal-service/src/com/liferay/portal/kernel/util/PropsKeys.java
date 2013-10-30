@@ -189,6 +189,8 @@ public interface PropsKeys {
 
 	public static final String AUTH_TOKEN_IGNORE_ACTIONS = "auth.token.ignore.actions";
 
+	public static final String AUTH_TOKEN_IGNORE_ORIGINS = "auth.token.ignore.origins";
+
 	public static final String AUTH_TOKEN_IGNORE_PORTLETS = "auth.token.ignore.portlets";
 
 	public static final String AUTH_TOKEN_IMPL = "auth.token.impl";
@@ -619,6 +621,8 @@ public interface PropsKeys {
 
 	public static final String DISCUSSION_THREAD_VIEW = "discussion.thread.view";
 
+	public static final String DL_CHAR_BLACKLIST_REGEXP = "dl.char.blacklist.regexp";
+
 	public static final String DL_COMPARABLE_FILE_EXTENSIONS = "dl.comparable.file.extensions";
 
 	public static final String DL_DEFAULT_DISPLAY_VIEW = "dl.default.display.view";
@@ -738,6 +742,8 @@ public interface PropsKeys {
 	public static final String DL_FILE_RANK_ENABLED = "dl.file.rank.enabled";
 
 	public static final String DL_FILE_RANK_MAX_SIZE = "dl.file.rank.max.size";
+
+	public static final String DL_NAME_BLACKLIST = "dl.name.blacklist";
 
 	public static final String DL_PUBLISH_TO_LIVE_BY_DEFAULT = "dl.publish.to.live.by.default";
 
@@ -886,6 +892,8 @@ public interface PropsKeys {
 	public static final String FREEMARKER_ENGINE_RESTRICTED_CLASSES = "freemarker.engine.restricted.classes";
 
 	public static final String FREEMARKER_ENGINE_RESTRICTED_PACKAGES = "freemarker.engine.restricted.packages";
+
+	public static final String FREEMARKER_ENGINE_RESTRICTED_VARIABLES = "freemarker.engine.restricted.variables";
 
 	public static final String FREEMARKER_ENGINE_TEMPLATE_EXCEPTION_HANDLER = "freemarker.engine.template.exception.handler";
 
@@ -1197,11 +1205,7 @@ public interface PropsKeys {
 
 	public static final String JOURNAL_SYNC_CONTENT_SEARCH_ON_STARTUP = "journal.sync.content.search.on.startup";
 
-	public static final String JOURNAL_TEMPLATE_FREEMARKER_RESTRICTED_VARIABLES = "journal.template.freemarker.restricted.variables";
-
 	public static final String JOURNAL_TEMPLATE_LANGUAGE_CONTENT = "journal.template.language.content";
-
-	public static final String JOURNAL_TEMPLATE_VELOCITY_RESTRICTED_VARIABLES = "journal.template.velocity.restricted.variables";
 
 	public static final String JOURNAL_TRANSFORMER_LISTENER = "journal.transformer.listener";
 
@@ -1224,6 +1228,8 @@ public interface PropsKeys {
 	public static final String JSON_SERVICE_AUTH_TOKEN_HOSTS_ALLOWED = "json.service.auth.token.hosts.allowed";
 
 	public static final String JSON_SERVICE_INVALID_CLASS_NAMES = "json.service.invalid.class.names";
+
+	public static final String JSON_SERVICE_INVALID_METHOD_NAMES = "json.service.invalid.method.names";
 
 	public static final String JSON_WEB_SERVICE_ENABLED = "json.web.service.enabled";
 
@@ -1515,6 +1521,8 @@ public interface PropsKeys {
 
 	public static final String LUCENE_MERGE_POLICY = "lucene.merge.policy";
 
+	public static final String LUCENE_MERGE_SCHEDULER = "lucene.merge.scheduler";
+
 	public static final String LUCENE_REPLICATE_WRITE = "lucene.replicate.write";
 
 	public static final String LUCENE_STORE_TYPE = "lucene.store.type";
@@ -1672,6 +1680,8 @@ public interface PropsKeys {
 	public static final String MOBILE_DEVICE_STYLING_WAP_ENABLED = "mobile.device.styling.wap.enabled";
 
 	public static final String MODEL_HINTS_CONFIGS = "model.hints.configs";
+
+	public static final String MODEL_TREE_REBUILD_QUERY_RESULTS_BATCH_SIZE = "model.tree.rebuild.query.results.batch.size";
 
 	public static final String MODULE_FRAMEWORK_AUTO_DEPLOY_DIRS = "module.framework.auto.deploy.dirs";
 
@@ -2116,8 +2126,6 @@ public interface PropsKeys {
 	public static final String SCHEDULER_JOB_NAME_MAX_LENGTH = "scheduler.job.name.max.length";
 
 	public static final String SCHEMA_RUN_ENABLED = "schema.run.enabled";
-
-	public static final String SCHEMA_RUN_MINIMAL = "schema.run.minimal";
 
 	public static final String SCRIPTING_FORBIDDEN_CLASSES = "scripting.forbidden.classes";
 
@@ -2564,6 +2572,8 @@ public interface PropsKeys {
 	public static final String VELOCITY_ENGINE_RESTRICTED_CLASSES = "velocity.engine.restricted.classes";
 
 	public static final String VELOCITY_ENGINE_RESTRICTED_PACKAGES = "velocity.engine.restricted.packages";
+
+	public static final String VELOCITY_ENGINE_RESTRICTED_VARIABLES = "velocity.engine.restricted.variables";
 
 	public static final String VELOCITY_ENGINE_VELOCIMACRO_LIBRARY = "velocity.engine.velocimacro.library";
 

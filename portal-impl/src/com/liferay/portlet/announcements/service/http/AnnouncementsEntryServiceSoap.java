@@ -149,16 +149,18 @@ public class AnnouncementsEntryServiceSoap {
 		long entryId, java.lang.String title, java.lang.String content,
 		java.lang.String url, java.lang.String type, int displayDateMonth,
 		int displayDateDay, int displayDateYear, int displayDateHour,
-		int displayDateMinute, int expirationDateMonth, int expirationDateDay,
-		int expirationDateYear, int expirationDateHour,
-		int expirationDateMinute, int priority) throws RemoteException {
+		int displayDateMinute, boolean displayImmediately,
+		int expirationDateMonth, int expirationDateDay, int expirationDateYear,
+		int expirationDateHour, int expirationDateMinute, int priority)
+		throws RemoteException {
 		try {
 			com.liferay.portlet.announcements.model.AnnouncementsEntry returnValue =
 				AnnouncementsEntryServiceUtil.updateEntry(entryId, title,
 					content, url, type, displayDateMonth, displayDateDay,
 					displayDateYear, displayDateHour, displayDateMinute,
-					expirationDateMonth, expirationDateDay, expirationDateYear,
-					expirationDateHour, expirationDateMinute, priority);
+					displayImmediately, expirationDateMonth, expirationDateDay,
+					expirationDateYear, expirationDateHour,
+					expirationDateMinute, priority);
 
 			return com.liferay.portlet.announcements.model.AnnouncementsEntrySoap.toSoapModel(returnValue);
 		}

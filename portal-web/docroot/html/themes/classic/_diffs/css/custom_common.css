@@ -1,9 +1,8 @@
+@import "aui/alloy-font-awesome/scss/mixins-alloy";
+@import "aui/alloy-font-awesome/scss/variables";
 @import "compass";
 @import "compass/css3/user-interface";
 @import "mixins";
-
-@import "aui/alloy-font-awesome/scss/mixins-alloy";
-@import "aui/alloy-font-awesome/scss/variables";
 
 @import url(custom_responsive.css);
 
@@ -63,10 +62,6 @@
 		}
 	}
 
-	form fieldset.fieldset {
-		min-width: 100%;
-	}
-
 	input[type="color"], input[type="date"], input[type="datetime"], input[type="datetime-local"], input[type="email"], input[type="month"], input[type="number"], input[type="password"], input[type="search"], input[type="tel"], input[type="text"], input[type="time"], input[type="url"], input[type="week"], select, textarea, .uneditable-input {
 		border: 1px solid #DDD;
 		color: #8D8D8D;
@@ -122,6 +117,7 @@
 		text-decoration: none;
 
 		&:focus, &:hover {
+			color: #009AE5;
 			text-decoration: none;
 		}
 
@@ -147,7 +143,13 @@
 		padding-right: 12px;
 	}
 
-	.tree-node-selected .tree-label {
+	.navbar .nav > li > a {
+		&:focus, &:hover {
+			color: #009AE5;
+		}
+	}
+
+	.lfr-tree .tree-node .tree-node-selected .tree-label {
 		background: #E4F5FC;
 	}
 
@@ -310,7 +312,7 @@
 						font-size: 0.9em;
 						font-weight: 300;
 
-						&:hover {
+						&:focus, &:hover {
 							background: #2FA4F5;
 							@include filter-gradient(#2FA4F5, #2FA4F5, vertical);
 						}
@@ -361,7 +363,7 @@
 	}
 
 	.app-view-taglib .lfr-header-row-content .select-all-entries {
-		left: 15px;
+		left: 7px;
 		top: 14px;
 	}
 
@@ -522,7 +524,7 @@
 
 	/* ---------- Hidden accessible ---------- */
 
-	#banner h2, #banner h3, .site-breadcrumbs h1, #skip-to-content {
+	#banner h2, #banner h3, .site-breadcrumbs h1 {
 		clip: rect(0 0 0 0);
 		position: absolute;
 	}
@@ -740,7 +742,7 @@
 			.lfr-content-item {
 				color: #009AE5;
 
-				&:hover {
+				&:focus, &:hover {
 					background-color: #E5F5FC;
 				}
 
@@ -778,8 +780,9 @@
 
 	.lfr-add-panel, .lfr-device-preview-panel, .lfr-edit-layout-panel {
 		&.lfr-admin-panel h1 {
-			color: #3EA9DB;
+			color: #009AE5;
 			font-size: 26px;
+			font-weight: normal;
 			line-height: 26px;
 		}
 	}
@@ -807,7 +810,9 @@
 	}
 
 	.nav-header {
-		background-image: linear-gradient(#FFF, #F2F2F2);
+		background-color: #FFF;
+
+		@include background-image(linear-gradient(#FFF 0%, #F2F2F2 100%));
 	}
 
 	.portlet-options {
@@ -829,6 +834,10 @@
 		&:focus {
 			@include box-shadow(inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6));
 		}
+	}
+
+	input.search-query {
+		border-radius: 15px;
 	}
 
 	.tagselector-focused .tagselector-content .textboxlistentry-holder {

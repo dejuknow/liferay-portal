@@ -37,6 +37,8 @@ public interface LiferaySelenium extends Selenium {
 	public void assertEmailSubject(String index, String subject)
 		throws Exception;
 
+	public void assertJavaScriptErrors() throws Exception;
+
 	public void assertLocation(String pattern);
 
 	public void assertNotAlert(String pattern);
@@ -61,7 +63,7 @@ public interface LiferaySelenium extends Selenium {
 		throws Exception;
 
 	public void assertSelectedLabel(String selectLocator, String pattern)
-			throws Exception;
+		throws Exception;
 
 	public void assertText(String locator, String pattern) throws Exception;
 
@@ -161,6 +163,8 @@ public interface LiferaySelenium extends Selenium {
 	public void saveScreenshotAndSource() throws Exception;
 
 	public void selectAndWait(String selectLocator, String optionLocator);
+
+	public boolean sendActionLogger(String command, String[] params);
 
 	public void sendEmail(String to, String subject, String content)
 		throws Exception;

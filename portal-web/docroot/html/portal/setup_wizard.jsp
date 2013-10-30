@@ -16,8 +16,6 @@
 
 <%@ include file="/html/portal/init.jsp" %>
 
-<%@ page import="com.liferay.portal.setup.SetupWizardUtil" %>
-
 <style>
 	<%@ include file="/html/portal/setup_wizard_css.jspf" %>
 </style>
@@ -92,6 +90,8 @@
 								</aui:select>
 
 								<aui:button cssClass="change-language" name="changeLanguageButton" value="change" />
+
+								<aui:input name="addSampleData" type="checkbox" value="<%= true %>" />
 							</aui:fieldset>
 
 							<aui:fieldset cssClass="column-last span6" label="administrator-user">

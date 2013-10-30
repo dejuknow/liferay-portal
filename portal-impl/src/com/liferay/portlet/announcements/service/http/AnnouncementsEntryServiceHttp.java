@@ -217,9 +217,9 @@ public class AnnouncementsEntryServiceHttp {
 		HttpPrincipal httpPrincipal, long entryId, java.lang.String title,
 		java.lang.String content, java.lang.String url, java.lang.String type,
 		int displayDateMonth, int displayDateDay, int displayDateYear,
-		int displayDateHour, int displayDateMinute, int expirationDateMonth,
-		int expirationDateDay, int expirationDateYear, int expirationDateHour,
-		int expirationDateMinute, int priority)
+		int displayDateHour, int displayDateMinute, boolean displayImmediately,
+		int expirationDateMonth, int expirationDateDay, int expirationDateYear,
+		int expirationDateHour, int expirationDateMinute, int priority)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException {
 		try {
@@ -229,8 +229,8 @@ public class AnnouncementsEntryServiceHttp {
 			MethodHandler methodHandler = new MethodHandler(methodKey, entryId,
 					title, content, url, type, displayDateMonth,
 					displayDateDay, displayDateYear, displayDateHour,
-					displayDateMinute, expirationDateMonth, expirationDateDay,
-					expirationDateYear, expirationDateHour,
+					displayDateMinute, displayImmediately, expirationDateMonth,
+					expirationDateDay, expirationDateYear, expirationDateHour,
 					expirationDateMinute, priority);
 
 			Object returnObj = null;
@@ -283,7 +283,7 @@ public class AnnouncementsEntryServiceHttp {
 	private static final Class<?>[] _updateEntryParameterTypes4 = new Class[] {
 			long.class, java.lang.String.class, java.lang.String.class,
 			java.lang.String.class, java.lang.String.class, int.class, int.class,
-			int.class, int.class, int.class, int.class, int.class, int.class,
-			int.class, int.class, int.class
+			int.class, int.class, int.class, boolean.class, int.class, int.class,
+			int.class, int.class, int.class, int.class
 		};
 }

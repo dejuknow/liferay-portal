@@ -30,16 +30,9 @@ if (bodyContent != null) {
 
 <c:if test="<%= !dropdown || Validator.isNotNull(bodyContentString.trim()) %>">
 	<li class="<%= cssClass %><%= selected ? " active " : StringPool.SPACE %><%= state %>" id="<%= id %>" role="presentation" <%= AUIUtil.buildData(data) %> <%= InlineUtil.buildDynamicAttributes(dynamicAttributes) %>>
-		<c:if test="<%= Validator.isNotNull(iconClass) || Validator.isNotNull(label) %>">
+		<c:if test="<%= Validator.isNotNull(iconCssClass) || Validator.isNotNull(label) %>">
 			<c:if test="<%= Validator.isNotNull(href) %>">
-				<c:choose>
-					<c:when test="<%= Validator.isNull(ariaLabel) %>">
-						<a aria-labelledby="<%= id %>" class="<%= anchorCssClass %>" <%= AUIUtil.buildData(anchorData) %> href="<%= href %>" id="<%= anchorId %>" role="<%= Validator.isNull(ariaRole) ? "menuitem" : ariaRole %>" title="<liferay-ui:message key="<%= title %>" />">
-					</c:when>
-					<c:otherwise>
-						<a aria-label="<%= ariaLabel %>" class="<%= anchorCssClass %>" <%= AUIUtil.buildData(anchorData) %> href="<%= href %>" id="<%= anchorId %>" role="<%= Validator.isNull(ariaRole) ? "menuitem" : ariaRole %>" title="<liferay-ui:message key="<%= title %>" />">
-					</c:otherwise>
-				</c:choose>
+				<a <%= Validator.isNotNull(ariaLabel) ? "aria-label=\"" + ariaLabel + "\"" : StringPool.BLANK %> class="<%= anchorCssClass %>" <%= AUIUtil.buildData(anchorData) %> href="<%= href %>" id="<%= anchorId %>" role="<%= Validator.isNull(ariaRole) ? "menuitem" : ariaRole %>" title="<liferay-ui:message key="<%= title %>" />">
 
 				<c:if test="<%= useDialog %>">
 					<aui:script>
@@ -47,8 +40,8 @@ if (bodyContent != null) {
 					</aui:script>
 				</c:if>
 			</c:if>
-					<c:if test="<%= Validator.isNotNull(iconClass) %>">
-						<i class="<%= iconClass %>"></i>
+					<c:if test="<%= Validator.isNotNull(iconCssClass) %>">
+						<i class="<%= iconCssClass %>"></i>
 					</c:if>
 
 					<span class="nav-item-label">
@@ -77,8 +70,6 @@ if (bodyContent != null) {
 						currentTarget.once(
 							'gesturemoveend',
 							function(event) {
-								var eventOutside = event._event.type + 'outside';
-
 								container.toggleClass('open');
 
 								var menuOpen = container.hasClass('open');
@@ -87,25 +78,33 @@ if (bodyContent != null) {
 									<c:when test="<%= !toggle %>">
 										var handle = Liferay.Data['<%= id %>Handle'];
 
-											if (menuOpen && !handle) {
-												handle = currentTarget.on(
-													eventOutside,
-													function(event) {
-														if (!event.target.ancestor('#<%= id %>')) {
-															Liferay.Data['<%= id %>Handle'] = null;
+										if (menuOpen && !handle) {
+											var eventOutside = event._event.type;
 
-															handle.detach();
+											if (eventOutside === 'MSPointerUp') {
+												eventOutside = 'mouseup';
+											}
 
-															container.removeClass('open');
-														}
+											eventOutside = eventOutside + 'outside';
+
+											handle = currentTarget.on(
+												eventOutside,
+												function(event) {
+													if (!event.target.ancestor('#<%= id %>')) {
+														Liferay.Data['<%= id %>Handle'] = null;
+
+														handle.detach();
+
+														container.removeClass('open');
 													}
-												);
-											}
-											else if (handle) {
-												handle.detach();
+												}
+											);
+										}
+										else if (handle) {
+											handle.detach();
 
-												handle = null;
-											}
+											handle = null;
+										}
 
 										Liferay.Data['<%= id %>Handle'] = handle;
 									</c:when>

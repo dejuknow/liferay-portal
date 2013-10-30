@@ -85,21 +85,18 @@ $dockbarOpenGradientStart: #0EA6F9;
 									color: #FFF;
 								}
 							}
-
-							&:hover {
-								background-color: #2FA4F5;
-							}
 						}
 
-						&.site-variations .dropdown-menu {
-							background-color: #026ED2;
+						&.staging-toggle .dropdown-menu {
+							background-color: #55B8EC;
 						}
 					}
 				}
 
 				> li {
 					> a {
-						padding: 6px 15px;
+						margin: 0 5px 0 0;
+						padding: 6px 10px;
 
 						&:hover {
 							background-color: #2FA4F5;
@@ -109,13 +106,26 @@ $dockbarOpenGradientStart: #0EA6F9;
 			}
 		}
 
+		.info-button {
+			top: 9px;
+
+			a {
+				margin-top: -4px;
+
+				&:hover {
+					color: #FFF;
+				}
+			}
+		}
+
 		.staging-bar {
-			.site-variations {
+			.staging-toggle {
 				color: #FFF;
 
 				li a {
 					color: #FFF;
-					font-weight: 400;
+					font-weight: 300;
+					text-decoration: none;
 				}
 
 				.btn-link {
@@ -124,57 +134,100 @@ $dockbarOpenGradientStart: #0EA6F9;
 				}
 			}
 		}
+
+		.page-customization-bar .btn {
+			border-color: transparent;
+
+			&:hover, &:focus {
+				background: transparent;
+				text-decoration: underline;
+			}
+		}
 	}
 
-	.dockbar-split .dockbar .navbar-inner {
-		.nav {
-			background-color: $dockbarGradientEnd;
+	.dockbar, .dockbar-split .dockbar {
+		.navbar-inner {
+			background-color: $dockbarGradientStart;
 
-			li.dropdown.open {
-				> .dropdown-toggle {
-					background-color: $dockbarOpenGradientEnd;
+			@include background-image(linear-gradient($dockbarGradientStart 0%, $dockbarGradientStart 47%, $dockbarGradientEnd 100%));
+
+			.nav {
+				> li {
+					background-color: $dockbarGradientStart;
+
+					@include background-image(linear-gradient($dockbarGradientStart 0%, $dockbarGradientStart 47%, $dockbarGradientEnd 100%));
 				}
 			}
 		}
+	}
 
-		.nav-account-controls {
-			border-top: 1px solid #00AEFF;
-
-			&.nav-account-controls-notice {
-				margin-top: 10px;
-				top: 50px;
-			}
+	.dockbar-split .dockbar {
+		.info-button {
+			top: 9px;
 		}
 
-		.nav-add-controls {
-			background: transparent;
-			border-top-width: 0;
+		.navbar-inner {
+			.nav-account-controls {
+				border-top: 1px solid #00AEFF;
 
-			&.nav-add-controls-notice {
-				top: 70px;
+				&.nav-account-controls-notice {
+					margin-top: 10px;
+					top: 50px;
+				}
 			}
 
-			> li {
-				> a {
-					background: #45CBF5;
-					line-height: inherit;
-					padding: 6px 8px;
+			.nav-add-controls {
+				background: transparent;
+				border-top-width: 0;
 
-					@include respond-to(phone, tablet) {
-						background: transparent;
-					}
+				&.nav-add-controls-notice {
+					top: 70px;
+				}
 
-					&:hover {
-						background: #5BBAE8;
-					}
+				> li {
+					background-color: transparent;
 
-					&.toggle-controls-link {
-						background: #92F545;
+					@include background-image(none);
+
+					> a {
+						background: #45CBF5;
+						line-height: inherit;
+						padding: 6px 8px;
 
 						@include respond-to(phone, tablet) {
 							background: transparent;
 						}
+
+						&:hover {
+							background: #5BBAE8;
+						}
+
+						&.toggle-controls-link {
+							background: #92F545;
+
+							@include respond-to(phone, tablet) {
+								background: transparent;
+							}
+						}
 					}
+				}
+			}
+
+			.page-customization-bar {
+				background-color: #6DA4E4;
+				background-color: rgba(109, 168, 228, 0.9);
+				line-height: 20px;
+			}
+
+			.page-customization-bar-text {
+				height: 43px;
+			}
+
+			.staging-bar {
+				margin: 6px 0;
+
+				> li {
+					background: transparent;
 				}
 			}
 		}
@@ -296,12 +349,6 @@ $dockbarOpenGradientStart: #0EA6F9;
 		color: #FFF;
 		padding: 0;
 
-		.lfr-configurator-visibility & {
-			background-color: #7E7E7E;
-			border-color: #959595;
-			color: #222;
-		}
-
 		.portlet-title {
 			font-size: 1em;
 			font-weight: normal;
@@ -322,6 +369,10 @@ $dockbarOpenGradientStart: #0EA6F9;
 		}
 	}
 
+	.lfr-configurator-visibility .portlet-topper {
+		background-color: #A9A9A9;
+	}
+
 	.portlet-borderless-bar .portlet-options {
 		.dropdown-toggle {
 			background-image: url(../images/portlet/options_borderless.png);
@@ -330,15 +381,6 @@ $dockbarOpenGradientStart: #0EA6F9;
 
 	.signed-in.controls-visible .portlet-title {
 		padding-right: 80px;
-	}
-
-	.lfr-portlet-title-editable {
-		margin-top: -4px;
-		z-index: 9999;
-	}
-
-	.lfr-portlet-title-editable-content {
-		padding: 0;
 	}
 
 	.portlet-asset-publisher .asset-content, .portlet-asset-publisher .asset-summary, .portlet-asset-publisher .asset-title, .portlet-asset-publisher .header-title, .portlet-asset-publisher li.title-list, .portlet-blogs .entry-body, .portlet-blogs .entry-title, .portlet-blogs .header-title, .portlet-journal-content .journal-content-article, .portlet-message-boards .header-title, .portlet-message-boards .thread-body {
@@ -403,6 +445,36 @@ $dockbarOpenGradientStart: #0EA6F9;
 		}
 	}
 
+	.portlet-staging-bar {
+		.row-fluid .layout-revision-info {
+			.layout-revision-version {
+				label {
+					color: #B6DDF5;
+				}
+			}
+		}
+
+		.label-submit {
+			background-color: #469DE3;
+		}
+
+		.layout-branch-selector, .layout-set-branch-selector {
+			.icon-caret-down {
+				background-color: #469DE3;
+			}
+		}
+
+		.page-variations-options, .site-pages-variation-options {
+			.lfr-icon-menu {
+				background-color: #50AFE9;
+
+				.icon-globe, .icon-file {
+					background-color: #469DE3;
+				}
+			}
+		}
+	}
+
 	/* ---------- Footer ---------- */
 
 	#footer {
@@ -428,7 +500,7 @@ $dockbarOpenGradientStart: #0EA6F9;
 		}
 	}
 
-	/* ---------- Misc. ---------- */
+	/* ---------- Miscellaneous ---------- */
 
 	.lfr-panel-container {
 		background-color: transparent;
@@ -460,6 +532,8 @@ $dockbarOpenGradientStart: #0EA6F9;
 			}
 
 			> .active > a {
+				background-color: $dockbarGradientStart;
+
 				@include background-image(linear-gradient($dockbarGradientStart 0%, $dockbarGradientStart 47%, $dockbarGradientEnd 100%));
 				@include box-shadow(none);
 				@include filter-gradient($dockbarGradientStart, $dockbarGradientEnd, vertical);
@@ -527,10 +601,10 @@ $dockbarOpenGradientStart: #0EA6F9;
 
 	.portlet-topper {
 		@include border-radius(3px 3px 0 0);
+	}
 
-		.lfr-configurator-visibility & {
-			background-image: linear-gradient(#BABABA, #7E7E7E);
-		}
+	.dockbar .staging-bar .staging-toggle > a {
+		@include border-radius(3px);
 	}
 
 	.dockbar-split .dockbar {
@@ -539,24 +613,27 @@ $dockbarOpenGradientStart: #0EA6F9;
 			@include text-shadow(none);
 
 			@include respond-to(phone, tablet) {
+				background-color: $dockbarGradientStart;
+
 				@include background-image(linear-gradient($dockbarGradientStart, $dockbarGradientEnd));
 			}
 
 			.nav {
 				li.dropdown.open {
 					> .dropdown-toggle {
+						background-color: $dockbarOpenGradientStart;
+
 						@include background-image(linear-gradient($dockbarOpenGradientStart, $dockbarOpenGradientEnd));
 						@include box-shadow(none);
 					}
+				}
 
+				li.dropdown.active {
 					> .staging-link.dropdown-toggle {
-						@include background-image(linear-gradient(#0279E1, #0264CC));
+						background-color: #55B8EC;
+						background-image: none;
 					}
 				}
-			}
-
-			.nav-account-controls, .staging-bar {
-				@include background-image(linear-gradient($dockbarGradientStart 0%, $dockbarGradientStart 47%, $dockbarGradientEnd 100%));
 			}
 		}
 	}
@@ -571,6 +648,14 @@ $dockbarOpenGradientStart: #0EA6F9;
 			a, span {
 				@include text-shadow(-1px -1px #000);
 			}
+		}
+	}
+
+	/* ---------- IE8 ---------- */
+
+	&.ie8 {
+		.dockbar-split .dockbar .navbar-inner .info-button a {
+			margin-top: -2px;
 		}
 	}
 }

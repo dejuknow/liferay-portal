@@ -132,7 +132,7 @@ boolean viewPreview = ParamUtil.getBoolean(request, "viewPreview");
 						<aui:nav-item cssClass='<%= navItemCssClass %>'
 							data="<%= data %>"
 							href=""
-							iconClass='<%= displayStyle.equals("icon") ? "" : "icon-file" %>'
+							iconCssClass='<%= displayStyle.equals("icon") ? "" : "icon-file" %>'
 							label='<%= displayStyle.equals("list") ? title : "" %>'
 						>
 							<c:choose>
@@ -188,7 +188,7 @@ boolean viewPreview = ParamUtil.getBoolean(request, "viewPreview");
 			%>
 
 			<div id="<portlet:namespace />preview">
-				<liferay-util:include page="<%= assetRenderer.getPreviewPath(liferayPortletRequest, liferayPortletResponse) %>" portletId="<%= assetRendererFactory.getPortletId() %>" />
+				<liferay-util:include page="<%= assetRenderer.getPreviewPath(liferayPortletRequest, liferayPortletResponse) %>" portletId="<%= assetRendererFactory.getPortletId() %>" servletContext="<%= application %>" />
 			</div>
 		</c:if>
 	</c:when>

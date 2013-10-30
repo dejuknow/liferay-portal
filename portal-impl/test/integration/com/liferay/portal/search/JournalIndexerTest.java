@@ -712,6 +712,9 @@ public class JournalIndexerTest {
 			ServiceContext serviceContext = ServiceTestUtil.getServiceContext(
 				_group.getGroupId());
 
+			article = JournalArticleLocalServiceUtil.getArticle(
+				article.getId());
+
 			JournalArticleLocalServiceUtil.moveArticleFromTrash(
 				TestPropsValues.getUserId(), _group.getGroupId(), article,
 				folder2.getFolderId(), serviceContext);

@@ -43,7 +43,6 @@ import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.DateRange;
 import com.liferay.portal.kernel.util.DigesterUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.ObjectValuePair;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
@@ -105,7 +104,6 @@ import com.liferay.portlet.expando.model.ExpandoColumnConstants;
 import com.liferay.portlet.expando.model.ExpandoRow;
 import com.liferay.portlet.expando.model.ExpandoTable;
 import com.liferay.portlet.expando.util.ExpandoBridgeFactoryUtil;
-import com.liferay.portlet.trash.model.TrashVersion;
 
 import java.awt.image.RenderedImage;
 
@@ -119,7 +117,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Provides the local service for accessing, adding, checking in/out, deleting,
@@ -284,17 +281,6 @@ public class DLFileEntryLocalServiceImpl
 
 		removeFileVersion(dlFileEntry, dlFileVersion);
 
-		if (dlFileEntry.getFolderId() !=
-				DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
-
-			DLFolder dlFolder = dlFolderPersistence.findByPrimaryKey(
-				dlFileEntry.getFolderId());
-
-			dlFolder.setLastPostDate(new Date());
-
-			dlFolderPersistence.update(dlFolder);
-		}
-
 		return dlFileVersion;
 	}
 
@@ -395,25 +381,25 @@ public class DLFileEntryLocalServiceImpl
 
 			dlFileVersionPersistence.update(latestDLFileVersion);
 
+			// Folder
+
+			if (dlFileEntry.getFolderId() !=
+					DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
+
+				DLFolder dlFolder = dlFolderPersistence.findByPrimaryKey(
+					dlFileEntry.getFolderId());
+
+				dlFolder.setLastPostDate(latestDLFileVersion.getModifiedDate());
+
+				dlFolderPersistence.update(dlFolder);
+			}
+
 			// File
 
 			DLStoreUtil.updateFileVersion(
 				user.getCompanyId(), dlFileEntry.getDataRepositoryId(),
 				dlFileEntry.getName(),
 				DLFileEntryConstants.PRIVATE_WORKING_COPY_VERSION, version);
-		}
-
-		// Folder
-
-		if (dlFileEntry.getFolderId() !=
-				DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
-
-			DLFolder dlFolder = dlFolderPersistence.findByPrimaryKey(
-				dlFileEntry.getFolderId());
-
-			dlFolder.setLastPostDate(dlFileEntry.getModifiedDate());
-
-			dlFolderPersistence.update(dlFolder);
 		}
 
 		// Workflow
@@ -581,15 +567,16 @@ public class DLFileEntryLocalServiceImpl
 					existingDLFileVersion.getFileEntryTypeId(), null,
 					DLFileEntryConstants.PRIVATE_WORKING_COPY_VERSION,
 					existingDLFileVersion.getSize(),
-					WorkflowConstants.STATUS_DRAFT, new Date(), serviceContext);
+					WorkflowConstants.STATUS_DRAFT,
+					serviceContext.getModifiedDate(null), serviceContext);
 			}
 			else {
 				long oldDLFileVersionId = dlFileVersion.getFileVersionId();
 
 				dlFileVersion = addFileVersion(
-					user, dlFileEntry, new Date(), dlFileVersion.getExtension(),
-					dlFileVersion.getMimeType(), dlFileVersion.getTitle(),
-					dlFileVersion.getDescription(),
+					user, dlFileEntry, serviceContext.getModifiedDate(null),
+					dlFileVersion.getExtension(), dlFileVersion.getMimeType(),
+					dlFileVersion.getTitle(), dlFileVersion.getDescription(),
 					dlFileVersion.getChangeLog(),
 					dlFileVersion.getExtraSettings(),
 					dlFileVersion.getFileEntryTypeId(), null,
@@ -620,17 +607,6 @@ public class DLFileEntryLocalServiceImpl
 				dlFileEntry.getCompanyId(), dlFileVersion.getFileEntryTypeId(),
 				fileEntryId, dlFileVersionId, dlFileVersion.getFileVersionId(),
 				serviceContext);
-		}
-
-		if (dlFileEntry.getFolderId() !=
-				DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
-
-			DLFolder dlFolder = dlFolderPersistence.findByPrimaryKey(
-				dlFileEntry.getFolderId());
-
-			dlFolder.setLastPostDate(dlFileVersion.getModifiedDate());
-
-			dlFolderPersistence.update(dlFolder);
 		}
 
 		return dlFileEntry;
@@ -1291,8 +1267,8 @@ public class DLFileEntryLocalServiceImpl
 
 		if (checkedOut != hasLock) {
 			dlAppHelperLocalService.registerDLSyncEventCallback(
-				DLSyncConstants.EVENT_UPDATE, DLSyncConstants.TYPE_FILE,
-				fileEntryId);
+				DLSyncConstants.EVENT_UPDATE,
+				new LiferayFileEntry(dlFileEntry));
 		}
 
 		return hasLock;
@@ -1383,10 +1359,6 @@ public class DLFileEntryLocalServiceImpl
 			companyId, queryDefinition);
 
 		for (DLFileEntry dlFileEntry : dlFileEntries) {
-			if (dlFileEntry.isInTrashContainer()) {
-				continue;
-			}
-
 			dlFileEntry.setTreePath(dlFileEntry.buildTreePath());
 
 			dlFileEntryPersistence.update(dlFileEntry);
@@ -1597,22 +1569,6 @@ public class DLFileEntryLocalServiceImpl
 
 		int oldStatus = dlFileVersion.getStatus();
 
-		int oldDLFileVersionStatus = WorkflowConstants.STATUS_ANY;
-
-		List<ObjectValuePair<Long, Integer>> dlFileVersionStatusOVPs =
-			new ArrayList<ObjectValuePair<Long, Integer>>();
-
-		List<DLFileVersion> dlFileVersions =
-			(List<DLFileVersion>)workflowContext.get("dlFileVersions");
-
-		if ((dlFileVersions != null) && !dlFileVersions.isEmpty()) {
-			DLFileVersion oldDLFileVersion = dlFileVersions.get(0);
-
-			oldDLFileVersionStatus = oldDLFileVersion.getStatus();
-
-			dlFileVersionStatusOVPs = getDlFileVersionStatuses(dlFileVersions);
-		}
-
 		dlFileVersion.setStatus(status);
 		dlFileVersion.setStatusByUserId(user.getUserId());
 		dlFileVersion.setStatusByUserName(user.getFullName());
@@ -1677,58 +1633,6 @@ public class DLFileEntryLocalServiceImpl
 
 				indexer.delete(dlFileEntry);
 			}
-		}
-
-		// File versions
-
-		if (oldStatus == WorkflowConstants.STATUS_IN_TRASH) {
-
-			// Trash
-
-			List<TrashVersion> trashVersions =
-				(List<TrashVersion>)workflowContext.get("trashVersions");
-
-			for (TrashVersion trashVersion : trashVersions) {
-				DLFileVersion trashDLFileVersion =
-					dlFileVersionPersistence.findByPrimaryKey(
-						trashVersion.getClassPK());
-
-				trashDLFileVersion.setStatus(trashVersion.getStatus());
-
-				dlFileVersionPersistence.update(trashDLFileVersion);
-			}
-
-			trashEntryLocalService.deleteEntry(
-				DLFileEntryConstants.getClassName(),
-				dlFileEntry.getFileEntryId());
-
-			// Indexer
-
-			Indexer indexer = IndexerRegistryUtil.nullSafeGetIndexer(
-				DLFileEntry.class);
-
-			indexer.delete(dlFileEntry);
-		}
-		else if (status == WorkflowConstants.STATUS_IN_TRASH) {
-
-			// Trash
-
-			for (DLFileVersion curDLFileVersion : dlFileVersions) {
-				curDLFileVersion.setStatus(WorkflowConstants.STATUS_IN_TRASH);
-
-				dlFileVersionPersistence.update(curDLFileVersion);
-			}
-
-			UnicodeProperties typeSettingsProperties = new UnicodeProperties();
-
-			typeSettingsProperties.put("title", dlFileEntry.getTitle());
-
-			trashEntryLocalService.addTrashEntry(
-				userId, dlFileEntry.getGroupId(),
-				DLFileEntryConstants.getClassName(),
-				dlFileEntry.getFileEntryId(), dlFileEntry.getUuid(),
-				dlFileEntry.getClassName(), oldDLFileVersionStatus,
-				dlFileVersionStatusOVPs, typeSettingsProperties);
 		}
 
 		// App helper
@@ -1987,30 +1891,6 @@ public class DLFileEntryLocalServiceImpl
 		}
 	}
 
-	protected List<ObjectValuePair<Long, Integer>> getDlFileVersionStatuses(
-		List<DLFileVersion> dlFileVersions) {
-
-		List<ObjectValuePair<Long, Integer>> dlFileVersionStatusOVPs =
-			new ArrayList<ObjectValuePair<Long, Integer>>(
-				dlFileVersions.size());
-
-		for (DLFileVersion dlFileVersion : dlFileVersions) {
-			int status = dlFileVersion.getStatus();
-
-			if (status == WorkflowConstants.STATUS_PENDING) {
-				status = WorkflowConstants.STATUS_DRAFT;
-			}
-
-			ObjectValuePair<Long, Integer> dlFileVersionStatusOVP =
-				new ObjectValuePair<Long, Integer>(
-					dlFileVersion.getFileVersionId(), status);
-
-			dlFileVersionStatusOVPs.add(dlFileVersionStatusOVP);
-		}
-
-		return dlFileVersionStatusOVPs;
-	}
-
 	protected String getNextVersion(
 			DLFileEntry dlFileEntry, boolean majorVersion, int workflowAction)
 		throws PortalException, SystemException {
@@ -2050,12 +1930,6 @@ public class DLFileEntryLocalServiceImpl
 		throws PortalException, SystemException {
 
 		if (PropsValues.DL_FILE_ENTRY_VERSION_POLICY != 1) {
-			return false;
-		}
-
-		if (lastDLFileVersion.getFolderId() !=
-				latestDLFileVersion.getFolderId()) {
-
 			return false;
 		}
 
@@ -2113,67 +1987,24 @@ public class DLFileEntryLocalServiceImpl
 			Fields latestFields = StorageEngineUtil.getFields(
 				latestFileEntryMetadata.getDDMStorageId());
 
-			Set<String> lastFieldNames = lastFields.getNames();
-			Set<String> latestFieldNames = latestFields.getNames();
-
-			if (lastFieldNames.size() != latestFieldNames.size()) {
+			if (!Validator.equals(lastFields, latestFields)) {
 				return false;
-			}
-
-			for (String fieldName : lastFieldNames) {
-				com.liferay.portlet.dynamicdatamapping.storage.Field
-					lastField = lastFields.get(fieldName);
-				com.liferay.portlet.dynamicdatamapping.storage.Field
-					latestField = latestFields.get(fieldName);
-
-				if ((latestFieldNames == null) ||
-					(!lastField.equals(latestField) &&
-					 !lastField.isPrivate())) {
-
-					return false;
-				}
 			}
 		}
 
 		// Expando
 
-		ExpandoTable expandoTable = null;
+		ExpandoBridge lastExpandoBridge = lastDLFileVersion.getExpandoBridge();
+		ExpandoBridge latestExpandoBridge =
+			latestDLFileVersion.getExpandoBridge();
 
-		try {
-			expandoTable = expandoTableLocalService.getDefaultTable(
-				lastDLFileVersion.getCompanyId(), DLFileEntry.class.getName());
-		}
-		catch (NoSuchTableException nste) {
-		}
+		Map<String, Serializable> lastAttributes =
+			lastExpandoBridge.getAttributes();
+		Map<String, Serializable> latestAttributes =
+			latestExpandoBridge.getAttributes();
 
-		if (expandoTable != null) {
-			Date lastModifiedDate = null;
-
-			try {
-				ExpandoRow lastExpandoRow = expandoRowLocalService.getRow(
-					expandoTable.getTableId(),
-					lastDLFileVersion.getPrimaryKey());
-
-				lastModifiedDate = lastExpandoRow.getModifiedDate();
-			}
-			catch (NoSuchRowException nsre) {
-			}
-
-			Date latestModifiedDate = null;
-
-			try {
-				ExpandoRow latestExpandoRow = expandoRowLocalService.getRow(
-					expandoTable.getTableId(),
-					latestDLFileVersion.getPrimaryKey());
-
-				latestModifiedDate = latestExpandoRow.getModifiedDate();
-			}
-			catch (NoSuchRowException nsre) {
-			}
-
-			if (!Validator.equals(lastModifiedDate, latestModifiedDate)) {
-				return false;
-			}
+		if (!Validator.equals(lastAttributes, latestAttributes)) {
+			return false;
 		}
 
 		// Size
@@ -2425,8 +2256,9 @@ public class DLFileEntryLocalServiceImpl
 
 			// Folder
 
-			if (dlFileEntry.getFolderId() !=
-					DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
+			if (!checkedOut &&
+				(dlFileEntry.getFolderId() !=
+					DLFolderConstants.DEFAULT_PARENT_FOLDER_ID)) {
 
 				DLFolder dlFolder = dlFolderPersistence.findByPrimaryKey(
 					dlFileEntry.getFolderId());
@@ -2471,8 +2303,15 @@ public class DLFileEntryLocalServiceImpl
 			}
 
 			if (autoCheckIn) {
-				dlFileEntryService.checkInFileEntry(
-					fileEntryId, majorVersion, changeLog, serviceContext);
+				if (ExportImportThreadLocal.isImportInProcess()) {
+					checkInFileEntry(
+						userId, fileEntryId, majorVersion, changeLog,
+						serviceContext);
+				}
+				else {
+					dlFileEntryService.checkInFileEntry(
+						fileEntryId, majorVersion, changeLog, serviceContext);
+				}
 			}
 			else if (!checkedOut &&
 					 (serviceContext.getWorkflowAction() ==
@@ -2492,14 +2331,34 @@ public class DLFileEntryLocalServiceImpl
 		}
 		catch (PortalException pe) {
 			if (autoCheckIn) {
-				dlFileEntryService.cancelCheckOut(fileEntryId);
+				try {
+					if (ExportImportThreadLocal.isImportInProcess()) {
+						cancelCheckOut(userId, fileEntryId);
+					}
+					else {
+						dlFileEntryService.cancelCheckOut(fileEntryId);
+					}
+				}
+				catch (Exception e) {
+					_log.error(e, e);
+				}
 			}
 
 			throw pe;
 		}
 		catch (SystemException se) {
 			if (autoCheckIn) {
-				dlFileEntryService.cancelCheckOut(fileEntryId);
+				try {
+					if (ExportImportThreadLocal.isImportInProcess()) {
+						cancelCheckOut(userId, fileEntryId);
+					}
+					else {
+						dlFileEntryService.cancelCheckOut(fileEntryId);
+					}
+				}
+				catch (Exception e) {
+					_log.error(e, e);
+				}
 			}
 
 			throw se;

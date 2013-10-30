@@ -83,9 +83,9 @@
 	A.getBody().delegate(
 		'click',
 		function(event) {
-			var target = event.target;
+			var link = event.currentTarget.one('a');
 
-			<portlet:namespace />restoreDialog(target.attr('data-uri'));
+			<portlet:namespace />restoreDialog(link.attr('data-uri'));
 		},
 		'.trash-restore-link'
 	);
@@ -98,9 +98,11 @@
 				{
 					dialog: {
 						constrain: true,
+						destroyOnHide: true,
 						modal: true,
-						width: 680
+						width: 1024
 					},
+					eventName: '<portlet:namespace />selectFolder',
 					id: '<portlet:namespace />selectFolder',
 					title: '<liferay-ui:message key="warning" />',
 					uri: uri

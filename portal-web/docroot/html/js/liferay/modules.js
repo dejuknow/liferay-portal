@@ -14,6 +14,17 @@
 		comboBase: LiferayAUI.getComboPath(),
 		filter: Liferay.AUI.getFilter(),
 		groups: {
+			editor: {
+				base: PATH_JAVASCRIPT + '/editor/',
+				combine: COMBINE,
+				modules: {
+					'inline-editor-ckeditor': {
+						path: 'ckeditor/main.js'
+					}
+				},
+				root: PATH_JAVASCRIPT + '/editor/'
+			},
+
 			liferay: {
 				base: PATH_JAVASCRIPT + '/liferay/',
 				combine: COMBINE,
@@ -75,7 +86,6 @@
 							'array-extras',
 							'async-queue',
 							'aui-autocomplete-deprecated',
-							'aui-form-textfield-deprecated',
 							'aui-io-plugin-deprecated',
 							'aui-io-request',
 							'aui-live-search-deprecated',
@@ -221,6 +231,13 @@
 							'liferay-portlet-base',
 							'liferay-util-window',
 							'liferay-widget-size-animation-plugin'
+						]
+					},
+					'liferay-dockbar-keyboard-interaction': {
+						path: 'dockbar_keyboard_interaction.js',
+						requires: [
+							'node-focusmanager',
+							'plugin'
 						]
 					},
 					'liferay-dockbar-underlay': {
@@ -579,6 +596,12 @@
 						path: 'store.js',
 						requires: [
 							'aui-io-request'
+						]
+					},
+					'liferay-toggler-interaction': {
+						path: 'toggler_interaction.js',
+						requires: [
+							'liferay-toggler-key-filter'
 						]
 					},
 					'liferay-toggler-key-filter': {

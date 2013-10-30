@@ -287,7 +287,7 @@ public class VerifyProperties extends VerifyProcess {
 		"memory.cluster.scheduler.lock.cache.enabled",
 		"message.boards.thread.locking.enabled", "portal.ctx",
 		"portal.security.manager.enable", "permissions.user.check.algorithm",
-		"scheduler.classes", "shard.available.names",
+		"scheduler.classes", "schema.run.minimal", "shard.available.names",
 		"velocity.engine.resource.manager",
 		"velocity.engine.resource.manager.cache.enabled",
 		"webdav.storage.class", "webdav.storage.show.edit.url",
@@ -435,6 +435,14 @@ public class VerifyProperties extends VerifyProcess {
 		},
 		new String[] {
 			"journal.error.template.xsl", "journal.error.template[xsl]"
+		},
+		new String[] {
+			"journal.template.freemarker.restricted.variables",
+			"freemarker.engine.restricted.variables"
+		},
+		new String[] {
+			"journal.template.velocity.restricted.variables",
+			"velocity.engine.restricted.variables"
 		},
 		new String[] {
 			"referer.url.domains.allowed", "redirect.url.domains.allowed"

@@ -92,11 +92,6 @@ public class SPIAgentResponseTest {
 		Portlet portlet = new PortletImpl() {
 
 			@Override
-			public String getPortletId() {
-				return "portletId";
-			}
-
-			@Override
 			public String getContextName() {
 				return _SERVLET_CONTEXT_NAME;
 			}
@@ -114,7 +109,6 @@ public class SPIAgentResponseTest {
 
 		_mockHttpServletRequest.setAttribute(
 			WebKeys.SPI_AGENT_PORTLET, portlet);
-
 		_mockHttpServletRequest.setAttribute(
 			WebKeys.SPI_AGENT_REQUEST, new SPIAgentRequest(originalRequest));
 
@@ -253,7 +247,7 @@ public class SPIAgentResponseTest {
 		Assert.assertTrue(spiAgentResponse.portalResiliencyResponse);
 		Assert.assertNotNull(spiAgentResponse.metaData);
 		Assert.assertArrayEquals(
-			new byte[]{(byte)2, (byte)3}, spiAgentResponse.byteData);
+			new byte[] {(byte)2, (byte)3}, spiAgentResponse.byteData);
 		Assert.assertNull(spiAgentResponse.stringData);
 
 		// Portal resiliency action, char model output, empty

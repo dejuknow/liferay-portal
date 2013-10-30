@@ -17,7 +17,11 @@ package com.liferay.portal.resiliency.spi.agent;
 import com.liferay.portal.cache.MultiVMPoolImpl;
 import com.liferay.portal.cache.memory.MemoryPortalCacheManager;
 import com.liferay.portal.kernel.cache.MultiVMPoolUtil;
+import com.liferay.portal.kernel.process.ProcessExecutor;
+import com.liferay.portal.kernel.resiliency.spi.MockSPI;
+import com.liferay.portal.kernel.resiliency.spi.SPI;
 import com.liferay.portal.kernel.test.CodeCoverageAssertor;
+import com.liferay.portal.kernel.test.NewClassLoaderJUnitTestRunner;
 import com.liferay.portal.kernel.upload.FileItem;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.CookieUtil;
@@ -51,6 +55,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ConcurrentMap;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.Cookie;
@@ -60,9 +65,9 @@ import javax.servlet.http.HttpSession;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
@@ -70,14 +75,15 @@ import org.springframework.mock.web.MockHttpSession;
 /**
  * @author Shuyang Zhou
  */
+@RunWith(NewClassLoaderJUnitTestRunner.class)
 public class SPIAgentRequestTest {
 
 	@ClassRule
 	public static CodeCoverageAssertor codeCoverageAssertor =
 		new CodeCoverageAssertor();
 
-	@BeforeClass
-	public static void setUpClass() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		FileUtil fileUtil = new FileUtil();
 
 		fileUtil.setFile(
@@ -124,10 +130,7 @@ public class SPIAgentRequestTest {
 					SPIAgentRequestTest.class.getName(), "_threadLocal")));
 
 		threadLocalDistributor.afterPropertiesSet();
-	}
 
-	@Before
-	public void setUp() {
 		_mockHttpServletRequest = new MockHttpServletRequest() {
 
 			@Override
@@ -172,7 +175,10 @@ public class SPIAgentRequestTest {
 			_PARAMETER_NAME_2, _PARAMETER_VALUE_3);
 		_mockHttpServletRequest.addParameter(
 			_PARAMETER_NAME_2, _PARAMETER_VALUE_4);
-		_mockHttpServletRequest.setCookies(_cookie1, _cookie2);
+		_mockHttpServletRequest.setRemoteAddr(_REMOTE_ADDR);
+		_mockHttpServletRequest.setRemoteHost(_REMOTE_HOST);
+		_mockHttpServletRequest.setRemotePort(_REMOTE_PORT);
+		_mockHttpServletRequest.setRemoteUser(_REMOTE_USER);
 		_mockHttpServletRequest.setServerName(_SERVER_NAME);
 		_mockHttpServletRequest.setServerPort(_SERVER_PORT);
 
@@ -453,11 +459,20 @@ public class SPIAgentRequestTest {
 		HttpServletRequest populatedHttpServletRequest =
 			spiAgentRequest.populateRequest(new MockHttpServletRequest());
 
+		Assert.assertNull(populatedHttpServletRequest.getCookies());
+
+		_mockHttpServletRequest.setCookies(_cookie1, _cookie2);
+
+		spiAgentRequest = new SPIAgentRequest(_mockHttpServletRequest);
+
+		populatedHttpServletRequest = spiAgentRequest.populateRequest(
+			new MockHttpServletRequest());
+
 		Cookie[] cookies = populatedHttpServletRequest.getCookies();
 
 		Assert.assertEquals(2, cookies.length);
-		Assert.assertSame(_cookie1, cookies[0]);
-		Assert.assertSame(_cookie2, cookies[1]);
+		Assert.assertTrue(CookieUtil.equals(_cookie1, cookies[0]));
+		Assert.assertTrue(CookieUtil.equals(_cookie2, cookies[1]));
 
 		// Headers
 
@@ -544,9 +559,9 @@ public class SPIAgentRequestTest {
 			populatedHttpServletRequest.getParameterNames());
 
 		Assert.assertEquals(3, parameterNames.size());
-		Assert.assertEquals(_PARAMETER_NAME_1, parameterNames.get(0));
-		Assert.assertEquals(_PARAMETER_NAME_2, parameterNames.get(1));
-		Assert.assertEquals(_PARAMETER_NAME_3, parameterNames.get(2));
+		Assert.assertTrue(parameterNames.contains(_PARAMETER_NAME_1));
+		Assert.assertTrue(parameterNames.contains(_PARAMETER_NAME_2));
+		Assert.assertTrue(parameterNames.contains(_PARAMETER_NAME_3));
 
 		parameter1 = populatedHttpServletRequest.getParameterValues(
 			_PARAMETER_NAME_1);
@@ -566,6 +581,20 @@ public class SPIAgentRequestTest {
 			_PARAMETER_NAME_3);
 
 		Assert.assertEquals(0, parameter3.length);
+
+		// Remote address, host, port, and user
+
+		Assert.assertEquals(
+			_REMOTE_ADDR, populatedHttpServletRequest.getRemoteAddr());
+
+		Assert.assertEquals(
+			_REMOTE_HOST, populatedHttpServletRequest.getRemoteHost());
+
+		Assert.assertEquals(
+			_REMOTE_PORT, populatedHttpServletRequest.getRemotePort());
+
+		Assert.assertEquals(
+			_REMOTE_USER, populatedHttpServletRequest.getRemoteUser());
 
 		// Server name
 
@@ -676,6 +705,249 @@ public class SPIAgentRequestTest {
 	}
 
 	@Test
+	public void testPopulatePortletSessionAttributes1() {
+
+		// Not an SPI
+
+		MockHttpServletRequest mockHttpServletRequest =
+			new MockHttpServletRequest();
+
+		MockHttpSession mockHttpSession = new MockHttpSession();
+
+		SPIAgentRequest.populatePortletSessionAttributes(
+			mockHttpServletRequest, mockHttpSession);
+
+		Enumeration<String> enumeration =
+			mockHttpServletRequest.getAttributeNames();
+
+		Assert.assertFalse(enumeration.hasMoreElements());
+
+		enumeration = mockHttpSession.getAttributeNames();
+
+		Assert.assertFalse(enumeration.hasMoreElements());
+	}
+
+	@Test
+	public void testPopulatePortletSessionAttributes2() {
+
+		// SPI, already populated
+
+		ConcurrentMap<String, Object> attributes =
+			ProcessExecutor.ProcessContext.getAttributes();
+
+		attributes.put(SPI.SPI_INSTANCE_PUBLICATION_KEY, new MockSPI());
+
+		final List<String> names = new ArrayList<String>();
+
+		MockHttpServletRequest mockHttpServletRequest =
+			new MockHttpServletRequest() {
+
+				@Override
+				public Object getAttribute(String name) {
+					names.add(name);
+
+					return super.getAttribute(name);
+				}
+
+			};
+
+		MockHttpSession mockHttpSession = new MockHttpSession();
+
+		mockHttpServletRequest.setAttribute(
+			WebKeys.PORTLET_SESSION, mockHttpSession);
+
+		SPIAgentRequest.populatePortletSessionAttributes(
+			mockHttpServletRequest, mockHttpSession);
+
+		Assert.assertEquals(1, names.size());
+		Assert.assertEquals(WebKeys.PORTLET_SESSION, names.get(0));
+
+		Enumeration<String> enumeration =
+			mockHttpServletRequest.getAttributeNames();
+
+		Assert.assertTrue(enumeration.hasMoreElements());
+		Assert.assertEquals(WebKeys.PORTLET_SESSION, enumeration.nextElement());
+		Assert.assertFalse(enumeration.hasMoreElements());
+
+		enumeration = mockHttpSession.getAttributeNames();
+
+		Assert.assertFalse(enumeration.hasMoreElements());
+	}
+
+	@Test
+	public void testPopulatePortletSessionAttributes3() {
+
+		// SPI, not populated, no SPI agent request
+
+		ConcurrentMap<String, Object> attributes =
+			ProcessExecutor.ProcessContext.getAttributes();
+
+		attributes.put(SPI.SPI_INSTANCE_PUBLICATION_KEY, new MockSPI());
+
+		final List<String> names = new ArrayList<String>();
+
+		MockHttpServletRequest mockHttpServletRequest =
+			new MockHttpServletRequest() {
+
+				@Override
+				public Object getAttribute(String name) {
+					names.add(name);
+
+					return super.getAttribute(name);
+				}
+
+			};
+
+		MockHttpSession mockHttpSession = new MockHttpSession();
+
+		SPIAgentRequest.populatePortletSessionAttributes(
+			mockHttpServletRequest, mockHttpSession);
+
+		Assert.assertEquals(2, names.size());
+		Assert.assertEquals(WebKeys.PORTLET_SESSION, names.get(0));
+		Assert.assertEquals(WebKeys.SPI_AGENT_REQUEST, names.get(1));
+
+		Enumeration<String> enumeration =
+			mockHttpServletRequest.getAttributeNames();
+
+		Assert.assertFalse(enumeration.hasMoreElements());
+
+		enumeration = mockHttpSession.getAttributeNames();
+
+		Assert.assertFalse(enumeration.hasMoreElements());
+	}
+
+	@Test
+	public void testPopulatePortletSessionAttributes4() throws IOException {
+
+		// SPI, not populated, with an SPI agent request, no portlet session
+		// attributes
+
+		ConcurrentMap<String, Object> attributes =
+			ProcessExecutor.ProcessContext.getAttributes();
+
+		attributes.put(SPI.SPI_INSTANCE_PUBLICATION_KEY, new MockSPI());
+
+		MockHttpServletRequest mockHttpServletRequest =
+			new MockHttpServletRequest();
+
+		MockHttpServletRequest originalMockHttpServletRequest =
+			new MockHttpServletRequest();
+
+		final String servletContextName = "servletContextName";
+
+		Portlet portlet = new PortletImpl() {
+
+			@Override
+			public String getContextName() {
+				return servletContextName;
+			}
+
+		};
+
+		originalMockHttpServletRequest.setAttribute(
+			WebKeys.SPI_AGENT_PORTLET, portlet);
+
+		SPIAgentRequest spiAgentRequest = new SPIAgentRequest(
+			originalMockHttpServletRequest);
+
+		mockHttpServletRequest.setAttribute(
+			WebKeys.SPI_AGENT_REQUEST, spiAgentRequest);
+
+		MockHttpSession mockHttpSession = new MockHttpSession();
+
+		SPIAgentRequest.populatePortletSessionAttributes(
+			mockHttpServletRequest, mockHttpSession);
+
+		Assert.assertSame(
+			mockHttpSession,
+			mockHttpServletRequest.getAttribute(WebKeys.PORTLET_SESSION));
+
+		Enumeration<String> enumeration = mockHttpSession.getAttributeNames();
+
+		Assert.assertFalse(enumeration.hasMoreElements());
+	}
+
+	@Test
+	public void testPopulatePortletSessionAttributes5() throws IOException {
+
+		// SPI, not populated, with an SPI agent request, with portlet session
+		// attributes
+
+		ConcurrentMap<String, Object> attributes =
+			ProcessExecutor.ProcessContext.getAttributes();
+
+		attributes.put(SPI.SPI_INSTANCE_PUBLICATION_KEY, new MockSPI());
+
+		MockHttpServletRequest mockHttpServletRequest =
+			new MockHttpServletRequest();
+
+		MockHttpServletRequest originalMockHttpServletRequest =
+			new MockHttpServletRequest();
+
+		final String servletContextName = "servletContextName";
+
+		Portlet portlet = new PortletImpl() {
+
+			@Override
+			public String getContextName() {
+				return servletContextName;
+			}
+
+		};
+
+		originalMockHttpServletRequest.setAttribute(
+			WebKeys.SPI_AGENT_PORTLET, portlet);
+
+		MockHttpSession originalHttpSession = new MockHttpSession();
+
+		Map<String, Serializable> portletSessionAttributes =
+			new HashMap<String, Serializable>();
+
+		portletSessionAttributes.put("key1", "value1");
+		portletSessionAttributes.put("key2", "value2");
+		portletSessionAttributes.put("key3", "value3");
+
+		originalHttpSession.setAttribute(
+			WebKeys.PORTLET_SESSION_ATTRIBUTES.concat(servletContextName),
+			portletSessionAttributes);
+
+		originalMockHttpServletRequest.setSession(originalHttpSession);
+
+		SPIAgentRequest spiAgentRequest = new SPIAgentRequest(
+			originalMockHttpServletRequest);
+
+		mockHttpServletRequest.setAttribute(
+			WebKeys.SPI_AGENT_REQUEST, spiAgentRequest);
+
+		MockHttpSession mockHttpSession = new MockHttpSession();
+
+		mockHttpSession.setAttribute("key4", "value4");
+		mockHttpSession.setAttribute("key5", "value5");
+		mockHttpSession.setAttribute("key6", "value6");
+
+		SPIAgentRequest.populatePortletSessionAttributes(
+			mockHttpServletRequest, mockHttpSession);
+
+		Assert.assertSame(
+			mockHttpSession,
+			mockHttpServletRequest.getAttribute(WebKeys.PORTLET_SESSION));
+		Assert.assertEquals("value1", mockHttpSession.getAttribute("key1"));
+		Assert.assertEquals("value2", mockHttpSession.getAttribute("key2"));
+		Assert.assertEquals("value3", mockHttpSession.getAttribute("key3"));
+
+		Enumeration<String> enumeration = mockHttpSession.getAttributeNames();
+
+		Assert.assertTrue(enumeration.hasMoreElements());
+		Assert.assertNotNull(enumeration.nextElement());
+		Assert.assertTrue(enumeration.hasMoreElements());
+		Assert.assertNotNull(enumeration.nextElement());
+		Assert.assertTrue(enumeration.hasMoreElements());
+		Assert.assertNotNull(enumeration.nextElement());
+		Assert.assertFalse(enumeration.hasMoreElements());
+	}
+
+	@Test
 	public void testShowFooter() throws IOException {
 
 		// No theme display
@@ -751,6 +1023,14 @@ public class SPIAgentRequestTest {
 	private static final String _PARAMETER_VALUE_3 = "PARAMETER_VALUE_3";
 
 	private static final String _PARAMETER_VALUE_4 = "PARAMETER_VALUE_4";
+
+	private static final String _REMOTE_ADDR = "192.168.1.10";
+
+	private static final String _REMOTE_HOST = "192.168.1.10";
+
+	private static final int _REMOTE_PORT = 12345;
+
+	private static final String _REMOTE_USER = "testUser";
 
 	private static final String _SERVER_NAME = "SERVER_NAME";
 

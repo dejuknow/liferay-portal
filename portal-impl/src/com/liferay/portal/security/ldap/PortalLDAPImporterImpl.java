@@ -1092,8 +1092,8 @@ public class PortalLDAPImporterImpl implements PortalLDAPImporter {
 				continue;
 			}
 
-			if (!expandoMappings.containsKey(name) ||
-				_ldapUserIgnoreAttributes.contains(name)) {
+			if (expandoMappings.containsKey(name) &&
+				!_ldapUserIgnoreAttributes.contains(name)) {
 
 				int type = expandoBridge.getAttributeType(name);
 
@@ -1335,8 +1335,8 @@ public class PortalLDAPImporterImpl implements PortalLDAPImporter {
 	private static final String _USER_PASSWORD_SCREEN_NAME = "screenName";
 
 	private static final String[] _USER_PROPERTY_NAMES = {
-		"comments", "greeting", "jobTitle", "languageId", "middleName",
-		"openId", "timeZoneId"
+		"comments", "firstName", "greeting", "jobTitle", "languageId",
+		"lastName", "middleName", "openId", "timeZoneId"
 	};
 
 	private static Log _log = LogFactoryUtil.getLog(

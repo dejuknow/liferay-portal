@@ -21,6 +21,7 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.lar.MissingReference;
 import com.liferay.portal.kernel.lar.PortletDataContext;
 import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
+import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.workflow.WorkflowTask;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.model.Group;
@@ -54,6 +55,23 @@ public class StagingUtil {
 		return getStaging().buildRemoteURL(
 			remoteAddress, remotePort, remotePathContext, secureConnection,
 			remoteGroupId, privateLayout);
+	}
+
+	public static String buildRemoteURL(
+		UnicodeProperties typeSettingsProperties) {
+
+		return getStaging().buildRemoteURL(typeSettingsProperties);
+	}
+
+	public static void checkDefaultLayoutSetBranches(
+			long userId, Group liveGroup, boolean branchingPublic,
+			boolean branchingPrivate, boolean remote,
+			ServiceContext serviceContext)
+		throws PortalException, SystemException {
+
+		getStaging().checkDefaultLayoutSetBranches(
+			userId, liveGroup, branchingPublic, branchingPrivate, remote,
+			serviceContext);
 	}
 
 	public static void copyFromLive(PortletRequest PortletRequest)
@@ -96,7 +114,7 @@ public class StagingUtil {
 
 	public static void deleteLastImportSettings(
 			Group liveGroup, boolean privateLayout)
-		throws Exception {
+		throws PortalException, SystemException {
 
 		getStaging().deleteLastImportSettings(liveGroup, privateLayout);
 	}
@@ -118,8 +136,9 @@ public class StagingUtil {
 	}
 
 	/**
-	 * @deprecated As of 6.2.0, replaced by {@link #disableStaging(Group,
-	 *             ServiceContext)}
+	 * @deprecated As of 6.2.0, replaced by {@link
+	 *             com.liferay.portal.service.StagingLocalService#disableStaging(
+	 *             Group, ServiceContext)}
 	 */
 	public static void disableStaging(
 			Group scopeGroup, Group liveGroup, ServiceContext serviceContext)
@@ -128,6 +147,11 @@ public class StagingUtil {
 		getStaging().disableStaging(scopeGroup, liveGroup, serviceContext);
 	}
 
+	/**
+	 * @deprecated As of 6.2.0, replaced by {@link
+	 *             com.liferay.portal.service.StagingLocalService#disableStaging(
+	 *             Group, ServiceContext)}
+	 */
 	public static void disableStaging(
 			Group liveGroup, ServiceContext serviceContext)
 		throws Exception {
@@ -137,7 +161,8 @@ public class StagingUtil {
 
 	/**
 	 * @deprecated As of 6.2.0, replaced by {@link
-	 *             #disableStaging(PortletRequest, Group, ServiceContext)}
+	 *             com.liferay.portal.service.StagingLocalService#disableStaging(
+	 *             PortletRequest, Group, ServiceContext)}
 	 */
 	public static void disableStaging(
 			PortletRequest portletRequest, Group scopeGroup, Group liveGroup,
@@ -148,6 +173,11 @@ public class StagingUtil {
 			portletRequest, scopeGroup, liveGroup, serviceContext);
 	}
 
+	/**
+	 * @deprecated As of 6.2.0, replaced by {@link
+	 *             com.liferay.portal.service.StagingLocalService#disableStaging(
+	 *             PortletRequest, Group, ServiceContext)}
+	 */
 	public static void disableStaging(
 			PortletRequest portletRequest, Group liveGroup,
 			ServiceContext serviceContext)
@@ -156,6 +186,11 @@ public class StagingUtil {
 		getStaging().disableStaging(portletRequest, liveGroup, serviceContext);
 	}
 
+	/**
+	 * @deprecated As of 6.2.0, replaced by {@link
+	 *             com.liferay.portal.service.StagingLocalService#enableLocalStaging(
+	 *             long, Group, boolean, boolean, ServiceContext)}
+	 */
 	public static void enableLocalStaging(
 			long userId, Group scopeGroup, Group liveGroup,
 			boolean branchingPublic, boolean branchingPrivate,
@@ -167,6 +202,12 @@ public class StagingUtil {
 			serviceContext);
 	}
 
+	/**
+	 * @deprecated As of 6.2.0, replaced by {@link
+	 *             com.liferay.portal.service.StagingLocalService#enableRemoteStaging(
+	 *             long, Group, boolean, boolean, String, int, String, boolean,
+	 *             long, ServiceContext)}
+	 */
 	public static void enableRemoteStaging(
 			long userId, Group scopeGroup, Group liveGroup,
 			boolean branchingPublic, boolean branchingPrivate,
@@ -310,7 +351,7 @@ public class StagingUtil {
 			long userId, long sourceGroupId, long targetGroupId,
 			boolean privateLayout, long[] layoutIds,
 			Map<String, String[]> parameterMap, Date startDate, Date endDate)
-		throws Exception {
+		throws PortalException, SystemException {
 
 		getStaging().publishLayouts(
 			userId, sourceGroupId, targetGroupId, privateLayout, layoutIds,
@@ -321,7 +362,7 @@ public class StagingUtil {
 			long userId, long sourceGroupId, long targetGroupId,
 			boolean privateLayout, Map<Long, Boolean> layoutIdMap,
 			Map<String, String[]> parameterMap, Date startDate, Date endDate)
-		throws Exception {
+		throws PortalException, SystemException {
 
 		getStaging().publishLayouts(
 			userId, sourceGroupId, targetGroupId, privateLayout, layoutIdMap,
@@ -332,7 +373,7 @@ public class StagingUtil {
 			long userId, long sourceGroupId, long targetGroupId,
 			boolean privateLayout, Map<String, String[]> parameterMap,
 			Date startDate, Date endDate)
-		throws Exception {
+		throws PortalException, SystemException {
 
 		getStaging().publishLayouts(
 			userId, sourceGroupId, targetGroupId, privateLayout, parameterMap,
@@ -478,6 +519,16 @@ public class StagingUtil {
 		throws Exception {
 
 		getStaging().updateStaging(PortletRequest, liveGroup);
+	}
+
+	public static void validateRemote(
+			String remoteAddress, int remotePort, String remotePathContext,
+			boolean secureConnection, long remoteGroupId)
+		throws PortalException {
+
+		getStaging().validateRemote(
+			remoteAddress, remotePort, remotePathContext, secureConnection,
+			remoteGroupId);
 	}
 
 	public void setStaging(Staging staging) {

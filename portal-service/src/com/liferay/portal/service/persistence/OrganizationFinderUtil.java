@@ -89,12 +89,12 @@ public class OrganizationFinderUtil {
 		return getFinder().findByNoAssets();
 	}
 
-	public static java.util.List<com.liferay.portal.model.Organization> findByCompanyId(
-		long companyId,
-		java.util.LinkedHashMap<java.lang.String, java.lang.Object> params,
-		int start, int end, com.liferay.portal.kernel.util.OrderByComparator obc)
+	public static java.util.List<java.lang.Long> findByC_P(long companyId,
+		long parentOrganizationId, long previousOrganizationId, int size)
 		throws com.liferay.portal.kernel.exception.SystemException {
-		return getFinder().findByCompanyId(companyId, params, start, end, obc);
+		return getFinder()
+				   .findByC_P(companyId, parentOrganizationId,
+			previousOrganizationId, size);
 	}
 
 	public static java.util.List<com.liferay.portal.model.Organization> findByC_PO_N_T_S_C_Z_R_C(

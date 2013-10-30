@@ -34,7 +34,34 @@ if (stagedLocally) {
 	stagingGroup = liveGroup.getStagingGroup();
 	stagingGroupId = stagingGroup.getGroupId();
 }
+
+BackgroundTask lastCompletedInitialPublicationBackgroundTask = BackgroundTaskLocalServiceUtil.fetchFirstBackgroundTask(liveGroupId, LayoutStagingBackgroundTaskExecutor.class.getName(), true, new BackgroundTaskCreateDateComparator(false));
 %>
+
+<h3><liferay-ui:message key="staging" /></h3>
+
+<c:if test="<%= (lastCompletedInitialPublicationBackgroundTask != null) && (lastCompletedInitialPublicationBackgroundTask.getStatus() == BackgroundTaskConstants.STATUS_FAILED) %>">
+	<div class="alert alert-error">
+		<liferay-ui:message key="an-unexpected-error-occurred--with-the-initial-staging-publication" />
+
+		<liferay-portlet:actionURL portletName="<%= PortletKeys.GROUP_PAGES %>" var="deleteBackgroundTaskURL">
+			<portlet:param name="struts_action" value="/group_pages/delete_background_task" />
+			<portlet:param name="redirect" value="<%= currentURL %>" />
+			<portlet:param name="backgroundTaskId" value="<%= String.valueOf(lastCompletedInitialPublicationBackgroundTask.getBackgroundTaskId()) %>" />
+		</liferay-portlet:actionURL>
+
+		<liferay-ui:icon-delete
+			confirmation="are-you-sure-you-want-to-remove-the-initial-staging-publication"
+			label="true"
+			message="clear"
+			url="<%= deleteBackgroundTaskURL %>"
+		/>
+	</div>
+
+	<liferay-util:include page="/html/portlet/layouts_admin/publish_process_message_task_details.jsp">
+		<liferay-util:param name="backgroundTaskId" value="<%= String.valueOf(lastCompletedInitialPublicationBackgroundTask.getBackgroundTaskId()) %>" />
+	</liferay-util:include>
+</c:if>
 
 <c:if test="<%= stagedLocally && (BackgroundTaskLocalServiceUtil.getBackgroundTasksCount(liveGroupId, LayoutStagingBackgroundTaskExecutor.class.getName(), false) > 0) %>">
 	<liferay-portlet:renderURL portletName="<%= PortletKeys.LAYOUTS_ADMIN %>" var="publishProcessesURL" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
@@ -155,7 +182,7 @@ if (stagedLocally) {
 			</aui:fieldset>
 		</div>
 
-		<div class="<%= (liveGroup.isStaged() ? StringPool.BLANK : "hide") %> staging-section" id="<portlet:namespace />stagedPortlets">
+		<div class="<%= ((liveGroup.isStaged() || (stagingType != StagingConstants.TYPE_NOT_STAGED)) ? StringPool.BLANK : "hide") %> staging-section" id="<portlet:namespace />stagedPortlets">
 			<br />
 
 			<c:if test="<%= !liveGroup.isCompany() %>">

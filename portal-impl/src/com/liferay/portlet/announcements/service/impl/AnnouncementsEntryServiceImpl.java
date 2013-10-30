@@ -26,6 +26,7 @@ import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.service.permission.GroupPermissionUtil;
 import com.liferay.portal.service.permission.OrganizationPermissionUtil;
+import com.liferay.portal.service.permission.PortalPermissionUtil;
 import com.liferay.portal.service.permission.RolePermissionUtil;
 import com.liferay.portal.service.permission.UserGroupPermissionUtil;
 import com.liferay.portal.util.PortalUtil;
@@ -65,7 +66,9 @@ public class AnnouncementsEntryServiceImpl
 		}
 
 		if (classNameId == 0) {
-			if (!permissionChecker.isOmniadmin()) {
+			if (!PortalPermissionUtil.contains(
+					permissionChecker, ActionKeys.ADD_GENERAL_ANNOUNCEMENTS)) {
+
 				throw new PrincipalException();
 			}
 		}
@@ -180,7 +183,8 @@ public class AnnouncementsEntryServiceImpl
 	public AnnouncementsEntry updateEntry(
 			long entryId, String title, String content, String url, String type,
 			int displayDateMonth, int displayDateDay, int displayDateYear,
-			int displayDateHour, int displayDateMinute, int expirationDateMonth,
+			int displayDateHour, int displayDateMinute,
+			boolean displayImmediately, int expirationDateMonth,
 			int expirationDateDay, int expirationDateYear,
 			int expirationDateHour, int expirationDateMinute, int priority)
 		throws PortalException, SystemException {
@@ -191,8 +195,9 @@ public class AnnouncementsEntryServiceImpl
 		return announcementsEntryLocalService.updateEntry(
 			getUserId(), entryId, title, content, url, type, displayDateMonth,
 			displayDateDay, displayDateYear, displayDateHour, displayDateMinute,
-			expirationDateMonth, expirationDateDay, expirationDateYear,
-			expirationDateHour, expirationDateMinute, priority);
+			displayImmediately, expirationDateMonth, expirationDateDay,
+			expirationDateYear, expirationDateHour, expirationDateMinute,
+			priority);
 	}
 
 }

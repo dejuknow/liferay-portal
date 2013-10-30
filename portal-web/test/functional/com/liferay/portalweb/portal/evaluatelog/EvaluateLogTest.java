@@ -171,6 +171,17 @@ public class EvaluateLogTest extends BaseTestCase {
 				continue;
 			}
 
+			// LPS-41257
+
+			if (line.matches(
+					".*The web application \\[\\] created a ThreadLocal with " +
+						"key of type.*")) {
+
+				if (line.contains("[de.schlichtherle")) {
+					continue;
+				}
+			}
+
 			System.out.println("\nException Line:\n\n" + line + "\n");
 
 			return false;

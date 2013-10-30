@@ -29,6 +29,8 @@ QueryConfig queryConfig = new QueryConfig();
 queryConfig.setCollatedSpellCheckResultEnabled(collatedSpellCheckResultEnabled);
 queryConfig.setCollatedSpellCheckResultScoresThreshold(collatedSpellCheckResultDisplayThreshold);
 queryConfig.setHighlightEnabled(true);
+queryConfig.setQueryIndexingEnabled(queryIndexingEnabled);
+queryConfig.setQueryIndexingThreshold(queryIndexingThreshold);
 queryConfig.setQuerySuggestionEnabled(querySuggestionsEnabled);
 queryConfig.setQuerySuggestionScoresThreshold(querySuggestionsDisplayThreshold);
 queryConfig.setQuerySuggestionsMax(querySuggestionsMax);
@@ -107,12 +109,12 @@ boolean showMenu = advancedConfiguration || displayScopeFacet || displayAssetTyp
 							var facetValue = term.ancestor('.facet-value');
 
 							if (facetValue) {
-								var currentTerm = facetValue.hasClass('current-term');
+								var currentTerm = facetValue.hasClass('active');
 
-								facetValue.radioClass('current-term');
+								facetValue.radioClass('active');
 
 								if (!currentTerm) {
-									facetValue.radioClass('current-term');
+									facetValue.radioClass('active');
 
 									var searchFacet = facetValue.ancestor('.search-facet');
 

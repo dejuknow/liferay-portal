@@ -50,7 +50,7 @@ if (publicLayoutSetId != 0) {
 			<liferay-ui:error exception="<%= NoSuchFileException.class %>" message="an-unexpected-error-occurred-while-uploading-your-file" />
 			<liferay-ui:error exception="<%= UploadException.class %>" message="an-unexpected-error-occurred-while-uploading-your-file" />
 
-			<aui:fieldset>
+			<aui:fieldset cssClass="lfr-portrait-editor">
 				<aui:input autoFocus="<%= windowState.equals(WindowState.MAXIMIZED) %>" label="upload-a-logo-for-the-organization-pages-that-will-be-used-instead-of-the-default-enterprise-logo-in-both-public-and-private-pages" name="fileName" size="50" type="file" />
 
 				<div class="lfr-change-logo lfr-portrait-preview" id="<portlet:namespace />portraitPreview">
@@ -66,7 +66,7 @@ if (publicLayoutSetId != 0) {
 		</aui:form>
 
 		<aui:script use="liferay-logo-editor">
-			new Liferay.LogoEditor(
+			var logoEditor = new Liferay.LogoEditor(
 				{
 					maxFileSize: '<%= PrefsPropsUtil.getLong(PropsKeys.UPLOAD_SERVLET_REQUEST_IMPL_MAX_SIZE) / 1024 %>',
 					namespace: '<portlet:namespace />',
@@ -74,6 +74,14 @@ if (publicLayoutSetId != 0) {
 					uploadURL: '<portlet:actionURL><portlet:param name="struts_action" value="/users_admin/edit_organization_logo" /><portlet:param name="<%= Constants.CMD %>" value="<%= Constants.ADD_TEMP %>" /><portlet:param name="groupId" value="<%= String.valueOf(groupId) %>" /></portlet:actionURL>'
 				}
 			);
+
+			if (Liferay.Util.getTop() !== A.config.win) {
+				var dialog = Liferay.Util.getWindow();
+
+				if (dialog) {
+					dialog.on(['resize:end', 'resize:resize', 'resize:start'], logoEditor.resize, logoEditor);
+				}
+			}
 		</aui:script>
 	</c:otherwise>
 </c:choose>

@@ -280,7 +280,11 @@
 	</bean>
 	<bean id="com.liferay.portal.kernel.resiliency.spi.SPIRegistryUtil" class="com.liferay.portal.kernel.resiliency.spi.SPIRegistryUtil">
 		<property name="sPIRegistry">
-			<bean class="com.liferay.portal.resiliency.spi.SPIRegistryImpl" />
+			<bean class="com.liferay.portal.resiliency.spi.SPIRegistryImpl">
+				<property name="errorSPI">
+					<bean class="com.liferay.portal.resiliency.spi.ErrorSPI" />
+				</property>
+			</bean>
 		</property>
 	</bean>
 	<bean id="com.liferay.portal.kernel.resiliency.spi.agent.SPIAgentFactoryUtil" class="com.liferay.portal.kernel.resiliency.spi.agent.SPIAgentFactoryUtil">
@@ -979,9 +983,7 @@
 	<bean id="com.liferay.portlet.dynamicdatamapping.util.DDMXML" class="com.liferay.portlet.dynamicdatamapping.util.DDMXMLImpl">
 		<property name="XMLSchema">
 			<bean class="com.liferay.portal.xml.XMLSchemaImpl">
-				<property name="schemaLanguage">
-					<util:constant static-field="javax.xml.XMLConstants.XML_NS_URI" />
-				</property>
+				<property name="schemaLanguage" value="http://www.w3.org/2001/XMLSchema" />
 				<property name="systemId" value="http://www.liferay.com/dtd/liferay-ddm-structure_6_2_0.xsd" />
 			</bean>
 		</property>

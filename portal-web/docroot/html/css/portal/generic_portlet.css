@@ -76,8 +76,6 @@
 }
 
 .lfr-portrait-preview {
-	float: left;
-
 	&:after {
 		clear: both;
 		content: ".";
@@ -95,6 +93,14 @@
 
 .ie .float-container {
 	height: 1%;
+}
+
+.ie8 .lfr-portrait-preview {
+	float: left;
+}
+
+.gecko .lfr-portrait-editor {
+	display: table-column;
 }
 
 /* Skin */

@@ -25,7 +25,7 @@
 </tr>
 <tr>
 	<td>ENTRY_DRAFT_STATUS</td>
-	<td>//div[@class='entry draft']/div/h3</td>
+	<td>//div[contains(@class,'entry') and contains(@class,'draft')]/div/h3</td>
 	<td></td>
 </tr>
 <tr>
@@ -188,7 +188,7 @@
 <!--COMMENTS-->
 <tr>
 	<td>COMMENTS_SUCCESS</td>
-	<td>//div[@class='lfr-message-response alert alert-success']</td>
+	<td>//div[contains(@id,'_discussion-status-messages')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -198,7 +198,7 @@
 </tr>
 <tr>
 	<td>COMMENTS_ADD</td>
-	<td>//fieldset[@class='fieldset add-comment']/div/span/a/span</td>
+	<td>//fieldset[contains(@class,'fieldset') and contains(@class,'add-comment')]/div/span/a/span</td>
 	<td></td>
 </tr>
 <tr>
@@ -259,7 +259,7 @@
 </tr>
 <tr>
 	<td>COMMENT_EDIT_CANCEL_BUTTON</td>
-	<td>//div[@class='lfr-discussion-message' and contains(.,'${key_entryComment}')]//..//..//..//button[@class='btn btn-cancel']</td>
+	<td>//div[@class='lfr-discussion-message' and contains(.,'${key_entryComment}')]//..//..//..//button[contains(@class,'btn') and contains(@class,'btn-cancel')]</td>
 	<td></td>
 </tr>
 </tbody>

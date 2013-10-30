@@ -2707,6 +2707,9 @@
 		<field name="entryId" type="long" />
 		<field name="classNameId" type="long" />
 		<field name="classPK" type="long" />
+		<field name="typeSettings" type="String">
+			<hint-collection name="CLOB" />
+		</field>
 		<field name="status" type="int" />
 	</model>
 	<model name="com.liferay.portlet.wiki.model.WikiNode">

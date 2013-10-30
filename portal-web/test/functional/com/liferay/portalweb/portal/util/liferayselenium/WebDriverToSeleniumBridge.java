@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -986,6 +987,8 @@ public class WebDriverToSeleniumBridge
 	public void mouseDown(String locator) {
 		WebElement webElement = getWebElement(locator);
 
+		scrollWebElementIntoView(webElement);
+
 		WrapsDriver wrapsDriver = (WrapsDriver)webElement;
 
 		WebDriver webDriver = wrapsDriver.getWrappedDriver();
@@ -1019,6 +1022,8 @@ public class WebDriverToSeleniumBridge
 	public void mouseMove(String locator) {
 		WebElement webElement = getWebElement(locator);
 
+		scrollWebElementIntoView(webElement);
+
 		WrapsDriver wrapsDriver = (WrapsDriver)webElement;
 
 		WebDriver webDriver = wrapsDriver.getWrappedDriver();
@@ -1036,6 +1041,8 @@ public class WebDriverToSeleniumBridge
 	@Override
 	public void mouseMoveAt(String locator, String coordString) {
 		WebElement webElement = getWebElement(locator);
+
+		scrollWebElementIntoView(webElement);
 
 		WrapsDriver wrapsDriver = (WrapsDriver)webElement;
 
@@ -1066,6 +1073,8 @@ public class WebDriverToSeleniumBridge
 	public void mouseOut(String locator) {
 		WebElement webElement = getWebElement(locator);
 
+		scrollWebElementIntoView(webElement);
+
 		WrapsDriver wrapsDriver = (WrapsDriver)webElement;
 
 		WebDriver webDriver = wrapsDriver.getWrappedDriver();
@@ -1084,6 +1093,8 @@ public class WebDriverToSeleniumBridge
 	public void mouseOver(String locator) {
 		WebElement webElement = getWebElement(locator);
 
+		scrollWebElementIntoView(webElement);
+
 		WrapsDriver wrapsDriver = (WrapsDriver)webElement;
 
 		WebDriver webDriver = wrapsDriver.getWrappedDriver();
@@ -1100,6 +1111,8 @@ public class WebDriverToSeleniumBridge
 	@Override
 	public void mouseUp(String locator) {
 		WebElement webElement = getWebElement(locator);
+
+		scrollWebElementIntoView(webElement);
 
 		WrapsDriver wrapsDriver = (WrapsDriver)webElement;
 
@@ -1274,15 +1287,25 @@ public class WebDriverToSeleniumBridge
 		WebDriver.TargetLocator targetLocator = switchTo();
 
 		if (locator.equals("relative=parent")) {
-			throw new UnsupportedOperationException();
+			targetLocator.window(_defaultWindowHandle);
+
+			if (!_frameWebElements.isEmpty()) {
+				_frameWebElements.pop();
+
+				if (!_frameWebElements.isEmpty()) {
+					targetLocator.frame(_frameWebElements.peek());
+				}
+			}
 		}
 		else if (locator.equals("relative=top")) {
+			_frameWebElements = new Stack<WebElement>();
+
 			targetLocator.window(_defaultWindowHandle);
 		}
 		else {
-			WebElement webElement = getWebElement(locator);
+			_frameWebElements.push(getWebElement(locator));
 
-			targetLocator.frame(webElement);
+			targetLocator.frame(_frameWebElements.peek());
 		}
 	}
 
@@ -1872,6 +1895,7 @@ public class WebDriverToSeleniumBridge
 		WebDriverToSeleniumBridge.class);
 
 	private String _defaultWindowHandle;
+	private Stack<WebElement> _frameWebElements = new Stack<WebElement>();
 	private Keys[] _keysArray = new Keys[128];
 	private Map<String, String> _keysSpecialChars =
 		new HashMap<String, String>();

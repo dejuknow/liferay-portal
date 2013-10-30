@@ -24,6 +24,7 @@ import com.liferay.portal.kernel.lar.ExportImportPathUtil;
 import com.liferay.portal.kernel.lar.ExportImportThreadLocal;
 import com.liferay.portal.kernel.lar.PortletDataContext;
 import com.liferay.portal.kernel.lar.PortletDataContextFactoryUtil;
+import com.liferay.portal.kernel.lar.PortletDataException;
 import com.liferay.portal.kernel.lar.PortletDataHandler;
 import com.liferay.portal.kernel.lar.PortletDataHandlerKeys;
 import com.liferay.portal.kernel.log.Log;
@@ -198,6 +199,9 @@ public class PortletExporter {
 		try {
 			data = portletDataHandler.exportData(
 				portletDataContext, portletId, jxPortletPreferences);
+		}
+		catch (PortletDataException pde) {
+			throw pde;
 		}
 		catch (Exception e) {
 			throw new SystemException(e);
@@ -1238,7 +1242,9 @@ public class PortletExporter {
 		Element portletPreferencesElement = parentElement.addElement(
 			"portlet-preferences");
 
-		if (portlet != null) {
+		if ((portlet != null) &&
+			(portlet.getPortletDataHandlerInstance() != null)) {
+
 			Element exportDataRootElement =
 				portletDataContext.getExportDataRootElement();
 

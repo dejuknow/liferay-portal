@@ -230,6 +230,11 @@
 </tr>
 <!--PORTLET-->
 <tr>
+	<td>PORTLET_LOADING_ANIMATION</td>
+	<td>//div[contains(@class,'loading-animation') and contains(@class,'portlet-boundary')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>PORTLET_1</td>
 	<td>xpath=(//section)[1]</td>
 	<td></td>
@@ -242,6 +247,43 @@
 <tr>
 	<td>PORTLET_3</td>
 	<td>xpath=(//section)[3]</td>
+	<td></td>
+</tr>
+<tr>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<!--CONTROL_PANEL-->
+<tr>
+	<td>CONTROL_PANEL_INFO_MESSAGE</td>
+	<td>//div[contains(@class,'alert') and contains(@class,'alert-info')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CONTROL_PANEL_NAVIGATION</td>
+	<td>//a[contains(.,'${key_portletName}') and contains(@id,'_190_controlPanelPortletLink')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<!--SITE_ADMINISTRATION-->
+<tr>
+	<td>SITE_ADMINISTRATION_CATEGORY_COLLAPSED</td>
+	<td>//div[contains(@class,'toggler-header-collapsed')]/div[contains(.,'${key_portletCategoryName}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SITE_ADMINISTRATION_CATEGORY_EXPANDED</td>
+	<td>//div[contains(@class,'toggler-header-expanded')]/div[contains(.,'${key_portletCategoryName}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SITE_ADMINISTRATION_NAVIGATION</td>
+	<td>//ul[@class='category-portlets']/li[contains(.,'${key_portletName}')]/a</td>
 	<td></td>
 </tr>
 </tbody>

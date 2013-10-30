@@ -21,6 +21,7 @@ import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HttpUtil;
+import com.liferay.portal.kernel.util.MimeTypesUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.RandomAccessInputStream;
@@ -121,6 +122,19 @@ public class ServletResponseUtil {
 		}
 
 		return ranges;
+	}
+
+	public static boolean isClientAbortException(IOException ioe) {
+		Class<?> clazz = ioe.getClass();
+
+		String className = clazz.getName();
+
+		if (className.equals(_CLIENT_ABORT_EXCEPTION)) {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 
 	public static void sendFile(
@@ -598,19 +612,6 @@ public class ServletResponseUtil {
 		}
 	}
 
-	protected static boolean isClientAbortException(IOException ioe) {
-		Class<?> clazz = ioe.getClass();
-
-		String className = clazz.getName();
-
-		if (className.equals(_CLIENT_ABORT_EXCEPTION)) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-
 	protected static void setHeaders(
 		HttpServletRequest request, HttpServletResponse response,
 		String fileName, String contentType, String contentDispositionType) {
@@ -683,6 +684,10 @@ public class ServletResponseUtil {
 					mimeTypesContentDispositionInline, extension)) {
 
 				contentDispositionType = HttpHeaders.CONTENT_DISPOSITION_INLINE;
+
+				contentType = MimeTypesUtil.getContentType(fileName);
+
+				response.setContentType(contentType);
 			}
 			else {
 				contentDispositionType =
