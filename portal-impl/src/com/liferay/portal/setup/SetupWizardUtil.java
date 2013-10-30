@@ -225,7 +225,10 @@ public class SetupWizardUtil {
 
 		_initPlugins();
 
-		boolean propertiesFileCreated = _writePropertiesFile(unicodeProperties);
+		if (ParamUtil.getBoolean(request, "addSampleData")) {
+			SetupWizardSampleDataUtil.addSampleData(
+				PortalInstances.getDefaultCompanyId());
+		}
 
 		HttpSession session = request.getSession();
 
@@ -233,7 +236,7 @@ public class SetupWizardUtil {
 			WebKeys.SETUP_WIZARD_PROPERTIES, unicodeProperties);
 		session.setAttribute(
 			WebKeys.SETUP_WIZARD_PROPERTIES_FILE_CREATED,
-			propertiesFileCreated);
+			_writePropertiesFile(unicodeProperties));
 	}
 
 	private static String _getParameter(

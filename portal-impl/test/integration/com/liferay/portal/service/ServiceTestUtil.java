@@ -124,7 +124,7 @@ public class ServiceTestUtil {
 	}
 
 	public static void destroyServices() {
-		_deleteDLDirectories();
+		_deleteDirectories();
 	}
 
 	public static SearchContext getSearchContext() throws Exception {
@@ -189,24 +189,10 @@ public class ServiceTestUtil {
 	public static void initServices() {
 		InitUtil.initWithSpring();
 
-		_deleteDLDirectories();
-
 		// JCR
 
 		try {
 			JCRFactoryUtil.prepare();
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		// Lucene
-
-		try {
-			FileUtil.mkdirs(
-				PropsValues.LUCENE_DIR + TestPropsValues.getCompanyId());
-
-			LuceneHelperUtil.startup(TestPropsValues.getCompanyId());
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -315,6 +301,22 @@ public class ServiceTestUtil {
 		catch (Exception e) {
 			e.printStackTrace();
 		}
+
+		// Directories
+
+		_deleteDirectories();
+
+		// Lucene
+
+		try {
+			FileUtil.mkdirs(
+				PropsValues.LUCENE_DIR + TestPropsValues.getCompanyId());
+
+			LuceneHelperUtil.startup(TestPropsValues.getCompanyId());
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static Date newDate() throws Exception {
@@ -402,6 +404,10 @@ public class ServiceTestUtil {
 	}
 
 	public static void setUser(User user) throws Exception {
+		if (user == null) {
+			return;
+		}
+
 		PrincipalThreadLocal.setName(user.getUserId());
 
 		PermissionChecker permissionChecker =
@@ -442,7 +448,7 @@ public class ServiceTestUtil {
 		}
 	}
 
-	private static void _deleteDLDirectories() {
+	private static void _deleteDirectories() {
 		FileUtil.deltree(PropsValues.DL_STORE_FILE_SYSTEM_ROOT_DIR);
 
 		FileUtil.deltree(

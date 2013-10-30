@@ -155,8 +155,10 @@ public class BlogsEntryAssetRenderer
 			WindowState windowState)
 		throws Exception {
 
-		PortletURL portletURL = liferayPortletResponse.createLiferayPortletURL(
-			PortletKeys.BLOGS, PortletRequest.RENDER_PHASE);
+		AssetRendererFactory assetRendererFactory = getAssetRendererFactory();
+
+		PortletURL portletURL = assetRendererFactory.getURLView(
+			liferayPortletResponse, windowState);
 
 		portletURL.setParameter("struts_action", "/blogs/view_entry");
 		portletURL.setParameter("entryId", String.valueOf(_entry.getEntryId()));

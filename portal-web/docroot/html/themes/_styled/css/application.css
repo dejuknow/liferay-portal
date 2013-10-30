@@ -1,3 +1,4 @@
+@import "aui/alloy-font-awesome/scss/variables";
 @import "compass";
 
 /* ---------- Dragging/sorting indicators ---------- */
@@ -227,7 +228,7 @@
 	padding: 1px;
 }
 
-/* ---------- Misc. ---------- */
+/* ---------- Miscellaneous ---------- */
 
 .lfr-panel-container {
 	background: #FFF;
@@ -261,6 +262,10 @@
 .app-view-drop-active {
 	background-color: #00A2EA;
 	font-weight: bold;
+
+	.category-portlets & {
+		color: #FFF;
+	}
 }
 
 .basecelleditor [class~="form-validator-message"] {
@@ -386,6 +391,42 @@
 
 /* ---------- Tree view ---------- */
 
+.tree-node {
+	.icon-check {
+		padding-right: 2px;
+
+		&:before {
+			content: $check-empty;
+		}
+	}
+
+	.tree-node-checked {
+		.icon-check {
+			padding-right: 0;
+
+			&:before {
+				content: $check;
+			}
+		}
+	}
+
+	.tree-node-over .tree-label {
+		text-decoration: underline;
+	}
+
+	[class ^="icon-"] {
+		margin-right: 5px;
+	}
+
+	.tree-node-checkbox-container {
+		margin-right: 0;
+	}
+
+	.tree-node-selected .tree-label {
+		background: none;
+	}
+}
+
 .tree-node-content {
 	.tree-hitarea {
 		color: #999;
@@ -394,7 +435,7 @@
 	}
 
 	.tree-label {
-		margin-left: 5px;
+		margin-left: 3px;
 	}
 
 	.tree-node-hidden-hitarea {
@@ -404,7 +445,6 @@
 
 .tree-node-selected .tree-label {
 	background-color: transparent;
-	font-weight: bold;
 }
 
 /* ---------- Page customization ---------- */
@@ -537,6 +577,35 @@
 
 .lfr-editable-notice-close {
 	margin-left: 1em;
+}
+
+.lfr-portlet-title-editable {
+	margin-top: 0;
+	z-index: 9999;
+
+	.lfr-portlet-title-editable-content {
+		padding: 0;
+
+		.combobox-content {
+			.field-content .field-input-text {
+				display: block;
+				margin-bottom: 0;
+			}
+
+			.field-label.textfield-label {
+				display: none;
+			}
+
+			.toolbar-content {
+				margin-top: 0;
+				vertical-align: top;
+
+				.btn-group {
+					margin-top: 0;
+				}
+			}
+		}
+	}
 }
 
 .lfr-page-layouts .lfr-layout-template .layout-template-entry {

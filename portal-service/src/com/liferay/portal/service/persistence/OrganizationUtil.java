@@ -1401,6 +1401,273 @@ public class OrganizationUtil {
 	}
 
 	/**
+	* Returns all the organizations where companyId = &#63; and treePath LIKE &#63;.
+	*
+	* @param companyId the company ID
+	* @param treePath the tree path
+	* @return the matching organizations
+	* @throws SystemException if a system exception occurred
+	*/
+	public static java.util.List<com.liferay.portal.model.Organization> findByC_T(
+		long companyId, java.lang.String treePath)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence().findByC_T(companyId, treePath);
+	}
+
+	/**
+	* Returns a range of all the organizations where companyId = &#63; and treePath LIKE &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.model.impl.OrganizationModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param companyId the company ID
+	* @param treePath the tree path
+	* @param start the lower bound of the range of organizations
+	* @param end the upper bound of the range of organizations (not inclusive)
+	* @return the range of matching organizations
+	* @throws SystemException if a system exception occurred
+	*/
+	public static java.util.List<com.liferay.portal.model.Organization> findByC_T(
+		long companyId, java.lang.String treePath, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence().findByC_T(companyId, treePath, start, end);
+	}
+
+	/**
+	* Returns an ordered range of all the organizations where companyId = &#63; and treePath LIKE &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.model.impl.OrganizationModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param companyId the company ID
+	* @param treePath the tree path
+	* @param start the lower bound of the range of organizations
+	* @param end the upper bound of the range of organizations (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching organizations
+	* @throws SystemException if a system exception occurred
+	*/
+	public static java.util.List<com.liferay.portal.model.Organization> findByC_T(
+		long companyId, java.lang.String treePath, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .findByC_T(companyId, treePath, start, end, orderByComparator);
+	}
+
+	/**
+	* Returns the first organization in the ordered set where companyId = &#63; and treePath LIKE &#63;.
+	*
+	* @param companyId the company ID
+	* @param treePath the tree path
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching organization
+	* @throws com.liferay.portal.NoSuchOrganizationException if a matching organization could not be found
+	* @throws SystemException if a system exception occurred
+	*/
+	public static com.liferay.portal.model.Organization findByC_T_First(
+		long companyId, java.lang.String treePath,
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchOrganizationException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .findByC_T_First(companyId, treePath, orderByComparator);
+	}
+
+	/**
+	* Returns the first organization in the ordered set where companyId = &#63; and treePath LIKE &#63;.
+	*
+	* @param companyId the company ID
+	* @param treePath the tree path
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching organization, or <code>null</code> if a matching organization could not be found
+	* @throws SystemException if a system exception occurred
+	*/
+	public static com.liferay.portal.model.Organization fetchByC_T_First(
+		long companyId, java.lang.String treePath,
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .fetchByC_T_First(companyId, treePath, orderByComparator);
+	}
+
+	/**
+	* Returns the last organization in the ordered set where companyId = &#63; and treePath LIKE &#63;.
+	*
+	* @param companyId the company ID
+	* @param treePath the tree path
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching organization
+	* @throws com.liferay.portal.NoSuchOrganizationException if a matching organization could not be found
+	* @throws SystemException if a system exception occurred
+	*/
+	public static com.liferay.portal.model.Organization findByC_T_Last(
+		long companyId, java.lang.String treePath,
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchOrganizationException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .findByC_T_Last(companyId, treePath, orderByComparator);
+	}
+
+	/**
+	* Returns the last organization in the ordered set where companyId = &#63; and treePath LIKE &#63;.
+	*
+	* @param companyId the company ID
+	* @param treePath the tree path
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching organization, or <code>null</code> if a matching organization could not be found
+	* @throws SystemException if a system exception occurred
+	*/
+	public static com.liferay.portal.model.Organization fetchByC_T_Last(
+		long companyId, java.lang.String treePath,
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .fetchByC_T_Last(companyId, treePath, orderByComparator);
+	}
+
+	/**
+	* Returns the organizations before and after the current organization in the ordered set where companyId = &#63; and treePath LIKE &#63;.
+	*
+	* @param organizationId the primary key of the current organization
+	* @param companyId the company ID
+	* @param treePath the tree path
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next organization
+	* @throws com.liferay.portal.NoSuchOrganizationException if a organization with the primary key could not be found
+	* @throws SystemException if a system exception occurred
+	*/
+	public static com.liferay.portal.model.Organization[] findByC_T_PrevAndNext(
+		long organizationId, long companyId, java.lang.String treePath,
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchOrganizationException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .findByC_T_PrevAndNext(organizationId, companyId, treePath,
+			orderByComparator);
+	}
+
+	/**
+	* Returns all the organizations that the user has permission to view where companyId = &#63; and treePath LIKE &#63;.
+	*
+	* @param companyId the company ID
+	* @param treePath the tree path
+	* @return the matching organizations that the user has permission to view
+	* @throws SystemException if a system exception occurred
+	*/
+	public static java.util.List<com.liferay.portal.model.Organization> filterFindByC_T(
+		long companyId, java.lang.String treePath)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence().filterFindByC_T(companyId, treePath);
+	}
+
+	/**
+	* Returns a range of all the organizations that the user has permission to view where companyId = &#63; and treePath LIKE &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.model.impl.OrganizationModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param companyId the company ID
+	* @param treePath the tree path
+	* @param start the lower bound of the range of organizations
+	* @param end the upper bound of the range of organizations (not inclusive)
+	* @return the range of matching organizations that the user has permission to view
+	* @throws SystemException if a system exception occurred
+	*/
+	public static java.util.List<com.liferay.portal.model.Organization> filterFindByC_T(
+		long companyId, java.lang.String treePath, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence().filterFindByC_T(companyId, treePath, start, end);
+	}
+
+	/**
+	* Returns an ordered range of all the organizations that the user has permissions to view where companyId = &#63; and treePath LIKE &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.model.impl.OrganizationModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param companyId the company ID
+	* @param treePath the tree path
+	* @param start the lower bound of the range of organizations
+	* @param end the upper bound of the range of organizations (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching organizations that the user has permission to view
+	* @throws SystemException if a system exception occurred
+	*/
+	public static java.util.List<com.liferay.portal.model.Organization> filterFindByC_T(
+		long companyId, java.lang.String treePath, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .filterFindByC_T(companyId, treePath, start, end,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the organizations before and after the current organization in the ordered set of organizations that the user has permission to view where companyId = &#63; and treePath LIKE &#63;.
+	*
+	* @param organizationId the primary key of the current organization
+	* @param companyId the company ID
+	* @param treePath the tree path
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next organization
+	* @throws com.liferay.portal.NoSuchOrganizationException if a organization with the primary key could not be found
+	* @throws SystemException if a system exception occurred
+	*/
+	public static com.liferay.portal.model.Organization[] filterFindByC_T_PrevAndNext(
+		long organizationId, long companyId, java.lang.String treePath,
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchOrganizationException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .filterFindByC_T_PrevAndNext(organizationId, companyId,
+			treePath, orderByComparator);
+	}
+
+	/**
+	* Removes all the organizations where companyId = &#63; and treePath LIKE &#63; from the database.
+	*
+	* @param companyId the company ID
+	* @param treePath the tree path
+	* @throws SystemException if a system exception occurred
+	*/
+	public static void removeByC_T(long companyId, java.lang.String treePath)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getPersistence().removeByC_T(companyId, treePath);
+	}
+
+	/**
+	* Returns the number of organizations where companyId = &#63; and treePath LIKE &#63;.
+	*
+	* @param companyId the company ID
+	* @param treePath the tree path
+	* @return the number of matching organizations
+	* @throws SystemException if a system exception occurred
+	*/
+	public static int countByC_T(long companyId, java.lang.String treePath)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence().countByC_T(companyId, treePath);
+	}
+
+	/**
+	* Returns the number of organizations that the user has permission to view where companyId = &#63; and treePath LIKE &#63;.
+	*
+	* @param companyId the company ID
+	* @param treePath the tree path
+	* @return the number of matching organizations that the user has permission to view
+	* @throws SystemException if a system exception occurred
+	*/
+	public static int filterCountByC_T(long companyId, java.lang.String treePath)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence().filterCountByC_T(companyId, treePath);
+	}
+
+	/**
 	* Returns the organization where companyId = &#63; and name = &#63; or throws a {@link com.liferay.portal.NoSuchOrganizationException} if it could not be found.
 	*
 	* @param companyId the company ID
@@ -1471,6 +1738,267 @@ public class OrganizationUtil {
 	public static int countByC_N(long companyId, java.lang.String name)
 		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByC_N(companyId, name);
+	}
+
+	/**
+	* Returns all the organizations where organizationId &gt; &#63; and companyId = &#63; and parentOrganizationId = &#63;.
+	*
+	* @param organizationId the organization ID
+	* @param companyId the company ID
+	* @param parentOrganizationId the parent organization ID
+	* @return the matching organizations
+	* @throws SystemException if a system exception occurred
+	*/
+	public static java.util.List<com.liferay.portal.model.Organization> findByO_C_P(
+		long organizationId, long companyId, long parentOrganizationId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .findByO_C_P(organizationId, companyId, parentOrganizationId);
+	}
+
+	/**
+	* Returns a range of all the organizations where organizationId &gt; &#63; and companyId = &#63; and parentOrganizationId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.model.impl.OrganizationModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param organizationId the organization ID
+	* @param companyId the company ID
+	* @param parentOrganizationId the parent organization ID
+	* @param start the lower bound of the range of organizations
+	* @param end the upper bound of the range of organizations (not inclusive)
+	* @return the range of matching organizations
+	* @throws SystemException if a system exception occurred
+	*/
+	public static java.util.List<com.liferay.portal.model.Organization> findByO_C_P(
+		long organizationId, long companyId, long parentOrganizationId,
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .findByO_C_P(organizationId, companyId,
+			parentOrganizationId, start, end);
+	}
+
+	/**
+	* Returns an ordered range of all the organizations where organizationId &gt; &#63; and companyId = &#63; and parentOrganizationId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.model.impl.OrganizationModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param organizationId the organization ID
+	* @param companyId the company ID
+	* @param parentOrganizationId the parent organization ID
+	* @param start the lower bound of the range of organizations
+	* @param end the upper bound of the range of organizations (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching organizations
+	* @throws SystemException if a system exception occurred
+	*/
+	public static java.util.List<com.liferay.portal.model.Organization> findByO_C_P(
+		long organizationId, long companyId, long parentOrganizationId,
+		int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .findByO_C_P(organizationId, companyId,
+			parentOrganizationId, start, end, orderByComparator);
+	}
+
+	/**
+	* Returns the first organization in the ordered set where organizationId &gt; &#63; and companyId = &#63; and parentOrganizationId = &#63;.
+	*
+	* @param organizationId the organization ID
+	* @param companyId the company ID
+	* @param parentOrganizationId the parent organization ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching organization
+	* @throws com.liferay.portal.NoSuchOrganizationException if a matching organization could not be found
+	* @throws SystemException if a system exception occurred
+	*/
+	public static com.liferay.portal.model.Organization findByO_C_P_First(
+		long organizationId, long companyId, long parentOrganizationId,
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchOrganizationException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .findByO_C_P_First(organizationId, companyId,
+			parentOrganizationId, orderByComparator);
+	}
+
+	/**
+	* Returns the first organization in the ordered set where organizationId &gt; &#63; and companyId = &#63; and parentOrganizationId = &#63;.
+	*
+	* @param organizationId the organization ID
+	* @param companyId the company ID
+	* @param parentOrganizationId the parent organization ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching organization, or <code>null</code> if a matching organization could not be found
+	* @throws SystemException if a system exception occurred
+	*/
+	public static com.liferay.portal.model.Organization fetchByO_C_P_First(
+		long organizationId, long companyId, long parentOrganizationId,
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .fetchByO_C_P_First(organizationId, companyId,
+			parentOrganizationId, orderByComparator);
+	}
+
+	/**
+	* Returns the last organization in the ordered set where organizationId &gt; &#63; and companyId = &#63; and parentOrganizationId = &#63;.
+	*
+	* @param organizationId the organization ID
+	* @param companyId the company ID
+	* @param parentOrganizationId the parent organization ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching organization
+	* @throws com.liferay.portal.NoSuchOrganizationException if a matching organization could not be found
+	* @throws SystemException if a system exception occurred
+	*/
+	public static com.liferay.portal.model.Organization findByO_C_P_Last(
+		long organizationId, long companyId, long parentOrganizationId,
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchOrganizationException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .findByO_C_P_Last(organizationId, companyId,
+			parentOrganizationId, orderByComparator);
+	}
+
+	/**
+	* Returns the last organization in the ordered set where organizationId &gt; &#63; and companyId = &#63; and parentOrganizationId = &#63;.
+	*
+	* @param organizationId the organization ID
+	* @param companyId the company ID
+	* @param parentOrganizationId the parent organization ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching organization, or <code>null</code> if a matching organization could not be found
+	* @throws SystemException if a system exception occurred
+	*/
+	public static com.liferay.portal.model.Organization fetchByO_C_P_Last(
+		long organizationId, long companyId, long parentOrganizationId,
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .fetchByO_C_P_Last(organizationId, companyId,
+			parentOrganizationId, orderByComparator);
+	}
+
+	/**
+	* Returns all the organizations that the user has permission to view where organizationId &gt; &#63; and companyId = &#63; and parentOrganizationId = &#63;.
+	*
+	* @param organizationId the organization ID
+	* @param companyId the company ID
+	* @param parentOrganizationId the parent organization ID
+	* @return the matching organizations that the user has permission to view
+	* @throws SystemException if a system exception occurred
+	*/
+	public static java.util.List<com.liferay.portal.model.Organization> filterFindByO_C_P(
+		long organizationId, long companyId, long parentOrganizationId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .filterFindByO_C_P(organizationId, companyId,
+			parentOrganizationId);
+	}
+
+	/**
+	* Returns a range of all the organizations that the user has permission to view where organizationId &gt; &#63; and companyId = &#63; and parentOrganizationId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.model.impl.OrganizationModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param organizationId the organization ID
+	* @param companyId the company ID
+	* @param parentOrganizationId the parent organization ID
+	* @param start the lower bound of the range of organizations
+	* @param end the upper bound of the range of organizations (not inclusive)
+	* @return the range of matching organizations that the user has permission to view
+	* @throws SystemException if a system exception occurred
+	*/
+	public static java.util.List<com.liferay.portal.model.Organization> filterFindByO_C_P(
+		long organizationId, long companyId, long parentOrganizationId,
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .filterFindByO_C_P(organizationId, companyId,
+			parentOrganizationId, start, end);
+	}
+
+	/**
+	* Returns an ordered range of all the organizations that the user has permissions to view where organizationId &gt; &#63; and companyId = &#63; and parentOrganizationId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.model.impl.OrganizationModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param organizationId the organization ID
+	* @param companyId the company ID
+	* @param parentOrganizationId the parent organization ID
+	* @param start the lower bound of the range of organizations
+	* @param end the upper bound of the range of organizations (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching organizations that the user has permission to view
+	* @throws SystemException if a system exception occurred
+	*/
+	public static java.util.List<com.liferay.portal.model.Organization> filterFindByO_C_P(
+		long organizationId, long companyId, long parentOrganizationId,
+		int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .filterFindByO_C_P(organizationId, companyId,
+			parentOrganizationId, start, end, orderByComparator);
+	}
+
+	/**
+	* Removes all the organizations where organizationId &gt; &#63; and companyId = &#63; and parentOrganizationId = &#63; from the database.
+	*
+	* @param organizationId the organization ID
+	* @param companyId the company ID
+	* @param parentOrganizationId the parent organization ID
+	* @throws SystemException if a system exception occurred
+	*/
+	public static void removeByO_C_P(long organizationId, long companyId,
+		long parentOrganizationId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getPersistence()
+			.removeByO_C_P(organizationId, companyId, parentOrganizationId);
+	}
+
+	/**
+	* Returns the number of organizations where organizationId &gt; &#63; and companyId = &#63; and parentOrganizationId = &#63;.
+	*
+	* @param organizationId the organization ID
+	* @param companyId the company ID
+	* @param parentOrganizationId the parent organization ID
+	* @return the number of matching organizations
+	* @throws SystemException if a system exception occurred
+	*/
+	public static int countByO_C_P(long organizationId, long companyId,
+		long parentOrganizationId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .countByO_C_P(organizationId, companyId, parentOrganizationId);
+	}
+
+	/**
+	* Returns the number of organizations that the user has permission to view where organizationId &gt; &#63; and companyId = &#63; and parentOrganizationId = &#63;.
+	*
+	* @param organizationId the organization ID
+	* @param companyId the company ID
+	* @param parentOrganizationId the parent organization ID
+	* @return the number of matching organizations that the user has permission to view
+	* @throws SystemException if a system exception occurred
+	*/
+	public static int filterCountByO_C_P(long organizationId, long companyId,
+		long parentOrganizationId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .filterCountByO_C_P(organizationId, companyId,
+			parentOrganizationId);
 	}
 
 	/**

@@ -61,11 +61,11 @@ public class OrganizationFinderImpl
 	public static final String FIND_BY_NO_ASSETS =
 	OrganizationFinder.class.getName() + ".findByNoAssets";
 
-	public static final String FIND_BY_COMPANY_ID =
-		OrganizationFinder.class.getName() + ".findByCompanyId";
-
 	public static final String FIND_BY_GROUP_ID =
 		OrganizationFinder.class.getName() + ".findByGroupId";
+
+	public static final String FIND_BY_C_P =
+		OrganizationFinder.class.getName() + ".findByC_P";
 
 	public static final String FIND_BY_C_PO_N_S_C_Z_R_C =
 		OrganizationFinder.class.getName() + ".findByC_PO_N_S_C_Z_R_C";
@@ -353,62 +353,37 @@ public class OrganizationFinderImpl
 	}
 
 	@Override
-	public List<Organization> findByCompanyId(
-			long companyId, LinkedHashMap<String, Object> params, int start,
-			int end, OrderByComparator obc)
+	public List<Long> findByC_P(
+			long companyId, long parentOrganizationId,
+			long previousOrganizationId, int size)
 		throws SystemException {
-
-		if (params == null) {
-			params = new LinkedHashMap<String, Object>();
-		}
-
-		StringBundler sb = new StringBundler();
-
-		sb.append(StringPool.OPEN_PARENTHESIS);
-
-		String sql = CustomSQLUtil.get(FIND_BY_COMPANY_ID);
-
-		sql = StringUtil.replace(sql, "[$JOIN$]", getJoin(params));
-		sql = StringUtil.replace(sql, "[$WHERE$]", getWhere(params));
-
-		sb.append(sql);
-		sb.append(StringPool.CLOSE_PARENTHESIS);
-
-		sql = sb.toString();
-
-		sql = CustomSQLUtil.replaceAndOperator(sql, true);
-		sql = CustomSQLUtil.replaceOrderBy(sql, obc);
 
 		Session session = null;
 
 		try {
 			session = openSession();
 
+			String sql = CustomSQLUtil.get(FIND_BY_C_P);
+
+			if (previousOrganizationId == 0) {
+				sql = StringUtil.replace(
+					sql, "(organizationId > ?) AND", StringPool.BLANK);
+			}
+
 			SQLQuery q = session.createSQLQuery(sql);
 
-			q.addScalar("orgId", Type.LONG);
+			q.addScalar("organizationId", Type.LONG);
 
 			QueryPos qPos = QueryPos.getInstance(q);
 
-			setJoin(qPos, params);
-
-			qPos.add(companyId);
-
-			List<Organization> organizations = new ArrayList<Organization>();
-
-			Iterator<Long> itr = (Iterator<Long>)QueryUtil.iterate(
-				q, getDialect(), start, end);
-
-			while (itr.hasNext()) {
-				Long organizationId = itr.next();
-
-				Organization organization = OrganizationUtil.findByPrimaryKey(
-					organizationId.longValue());
-
-				organizations.add(organization);
+			if (previousOrganizationId > 0) {
+				qPos.add(previousOrganizationId);
 			}
 
-			return organizations;
+			qPos.add(companyId);
+			qPos.add(parentOrganizationId);
+
+			return (List<Long>)QueryUtil.list(q, getDialect(), 0, size);
 		}
 		catch (Exception e) {
 			throw new SystemException(e);

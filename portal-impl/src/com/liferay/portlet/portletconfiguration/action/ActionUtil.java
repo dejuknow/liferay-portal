@@ -221,8 +221,6 @@ public class ActionUtil {
 	protected static Portlet getPortlet(PortletRequest portletRequest)
 		throws Exception {
 
-		long companyId = PortalUtil.getCompanyId(portletRequest);
-
 		ThemeDisplay themeDisplay = (ThemeDisplay)portletRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
@@ -241,7 +239,8 @@ public class ActionUtil {
 			throw new PrincipalException();
 		}
 
-		return PortletLocalServiceUtil.getPortletById(companyId, portletId);
+		return PortletLocalServiceUtil.getPortletById(
+			themeDisplay.getCompanyId(), portletId);
 	}
 
 	protected static PortletPreferences getPortletPreferences(

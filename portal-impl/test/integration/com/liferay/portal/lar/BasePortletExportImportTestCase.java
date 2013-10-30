@@ -118,7 +118,7 @@ public class BasePortletExportImportTestCase extends BaseExportImportTestCase {
 
 		exportParameterMap.put(
 			PortletDataHandlerKeys.DELETIONS,
-			new String[]{ String.valueOf(true)});
+			new String[] {String.valueOf(true)});
 
 		exportImportPortlet(
 			getPortletId(), exportParameterMap, getImportParameterMap());
@@ -133,7 +133,7 @@ public class BasePortletExportImportTestCase extends BaseExportImportTestCase {
 
 		importParameterMap.put(
 			PortletDataHandlerKeys.DELETIONS,
-			new String[]{ String.valueOf(true)});
+			new String[] {String.valueOf(true)});
 
 		exportImportPortlet(
 			getPortletId(), exportParameterMap, importParameterMap);
@@ -254,7 +254,7 @@ public class BasePortletExportImportTestCase extends BaseExportImportTestCase {
 
 	protected void testExportImportAvailableLocales(
 			Locale[] sourceAvailableLocales, Locale[] targetAvailableLocales,
-			boolean fail)
+			boolean expectFailure)
 		throws Exception {
 
 		Portlet portlet = PortletLocalServiceUtil.getPortletById(
@@ -281,12 +281,12 @@ public class BasePortletExportImportTestCase extends BaseExportImportTestCase {
 		try {
 			exportImportPortlet(getPortletId());
 
-			if (fail) {
+			if (expectFailure) {
 				Assert.fail();
 			}
 		}
 		catch (LocaleException le) {
-			if (!fail) {
+			if (!expectFailure) {
 				Assert.fail();
 			}
 		}

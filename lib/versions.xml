@@ -90,7 +90,7 @@
 	</library>
 	<library>
 		<file-name>lib/development/catalina.jar</file-name>
-		<version>7.0.40</version>
+		<version>7.0.42</version>
 		<project-name>Tomcat</project-name>
 		<project-url>http://tomcat.apache.org</project-url>
 		<licenses>
@@ -281,7 +281,7 @@
 	</library>
 	<library>
 		<file-name>lib/development/jasper.jar</file-name>
-		<version>7.0.40</version>
+		<version>7.0.42</version>
 		<project-name>Tomcat</project-name>
 		<project-url>http://tomcat.apache.org</project-url>
 		<licenses>
@@ -822,7 +822,7 @@
 	</library>
 	<library>
 		<file-name>lib/development/tomcat-coyote.jar</file-name>
-		<version>7.0.40</version>
+		<version>7.0.42</version>
 		<project-name>Tomcat</project-name>
 		<project-url>http://tomcat.apache.org</project-url>
 		<licenses>
@@ -1137,13 +1137,27 @@
 	</library>
 	<library>
 		<file-name>lib/portal/bnd.jar</file-name>
-		<version>1.50.0</version>
+		<version>2.2.0</version>
 		<project-name>Bnd</project-name>
 		<project-url>http://www.aqute.biz/Bnd</project-url>
 		<licenses>
 			<license>
 				<license-name>Apache License 2.0</license-name>
 				<license-url>http://www.apache.org/licenses/LICENSE-2.0</license-url>
+			</license>
+		</licenses>
+		<comments>
+			Applied https://github.com/bndtools/bnd/pull/417.
+		</comments>
+	</library>
+	<library>
+		<file-name>lib/portal/bnd-repository.jar</file-name>
+		<version>2.1.0</version>
+		<project-name>Bndtools</project-name>
+		<project-url>http://bndtools.org/</project-url>
+		<licenses>
+			<license>
+				<license-name>Apache License 2.0</license-name>
 			</license>
 		</licenses>
 	</library>
@@ -1205,7 +1219,7 @@
 	</library>
 	<library>
 		<file-name>lib/portal/c3p0.jar</file-name>
-		<version>0.9.1.2</version>
+		<version>0.9.2.1</version>
 		<project-name>C3P0</project-name>
 		<project-url>http://sourceforge.net/projects/c3p0</project-url>
 		<licenses>
@@ -1731,7 +1745,7 @@
 	</library>
 	<library>
 		<file-name>lib/portal/flexjson.jar</file-name>
-		<version>2.1</version>
+		<version>3.1</version>
 		<project-name>Flexjson</project-name>
 		<project-url>http://flexjson.sourceforge.net</project-url>
 		<licenses>
@@ -2303,7 +2317,7 @@
 	</library>
 	<library>
 		<file-name>lib/portal/jodd.jar</file-name>
-		<version>3.4.2</version>
+		<version>3.4.8</version>
 		<project-name>Jodd</project-name>
 		<project-url>http://jodd.org</project-url>
 		<licenses>
@@ -2339,6 +2353,18 @@
 		<comments>
 			See the Ant target "build-ruby-gems-jar" in portal-impl/build.xml.
 		</comments>
+	</library>
+	<library>
+		<file-name>lib/portal/jserrorcollector.jar</file-name>
+		<version>c7d2d9161321e9aa09bbbf566bce2922d169b9dd</version>
+		<project-name>JSErrorCollector</project-name>
+		<project-url>https://github.com/mguillem/JSErrorCollector</project-url>
+		<licenses>
+			<license>
+				<license-name>Apache License 2.0</license-name>
+				<license-url>http://www.apache.org/licenses/LICENSE-2.0</license-url>
+			</license>
+		</licenses>
 	</library>
 	<library>
 		<file-name>lib/portal/json-java.jar</file-name>
@@ -2686,6 +2712,18 @@
 			<license>
 				<license-name>Apache License 2.0</license-name>
 				<license-url>http://www.apache.org/licenses/LICENSE-2.0</license-url>
+			</license>
+		</licenses>
+	</library>
+	<library>
+		<file-name>lib/portal/mchange-commons-java.jar</file-name>
+		<version>0.2.3.4</version>
+		<project-name>C3P0</project-name>
+		<project-url>http://sourceforge.net/projects/c3p0</project-url>
+		<licenses>
+			<license>
+				<license-name>LGPL 2.1</license-name>
+				<license-url>http://www.gnu.org/licenses/lgpl-2.1.html</license-url>
 			</license>
 		</licenses>
 	</library>
@@ -3471,7 +3509,7 @@
 	</library>
 	<library>
 		<file-name>lib/portal/tomcat-juli.jar</file-name>
-		<version>7.0.40</version>
+		<version>7.0.42</version>
 		<project-name>Tomcat</project-name>
 		<project-url>http://tomcat.apache.org</project-url>
 		<licenses>

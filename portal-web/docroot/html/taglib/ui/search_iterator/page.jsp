@@ -262,7 +262,7 @@ int sortColumnIndex = -1;
 			Map<String, Object> data = row.getData();
 		%>
 
-			<tr class="<%= rowIsChecked ? "info" : StringPool.BLANK %>" <%= AUIUtil.buildData(data) %>>
+			<tr class="<%= GetterUtil.getString(row.getClassName()) %> <%= rowIsChecked ? "info" : StringPool.BLANK %>" <%= AUIUtil.buildData(data) %>>
 
 			<%
 			for (int j = 0; j < entries.size(); j++) {

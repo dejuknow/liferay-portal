@@ -611,27 +611,6 @@ public class GroupServiceSoap {
 	}
 
 	/**
-	* @deprecated As of 6.2.0, replaced by {@link #getUserSitesGroups(long,
-	String[], String, boolean, boolean, int, int)}
-	*/
-	public static com.liferay.portal.model.GroupSoap[] getUserPlaces(
-		long userId, java.lang.String[] classNames, java.lang.String name,
-		boolean active, boolean includeControlPanel, int start, int end)
-		throws RemoteException {
-		try {
-			java.util.List<com.liferay.portal.model.Group> returnValue = GroupServiceUtil.getUserPlaces(userId,
-					classNames, name, active, includeControlPanel, start, end);
-
-			return com.liferay.portal.model.GroupSoap.toSoapModels(returnValue);
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-
-			throw new RemoteException(e.getMessage());
-		}
-	}
-
-	/**
 	* Returns the guest or current user's groups &quot;sites&quot; associated
 	* with the group entity class names, including the Control Panel group if
 	* the user is permitted to view the Control Panel.
@@ -799,23 +778,6 @@ public class GroupServiceSoap {
 		try {
 			java.util.List<com.liferay.portal.model.Group> returnValue = GroupServiceUtil.getUserSitesGroups(userId,
 					classNames, max);
-
-			return com.liferay.portal.model.GroupSoap.toSoapModels(returnValue);
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-
-			throw new RemoteException(e.getMessage());
-		}
-	}
-
-	public static com.liferay.portal.model.GroupSoap[] getUserSitesGroups(
-		long userId, java.lang.String[] classNames, java.lang.String name,
-		boolean active, boolean includeControlPanel, int start, int end)
-		throws RemoteException {
-		try {
-			java.util.List<com.liferay.portal.model.Group> returnValue = GroupServiceUtil.getUserSitesGroups(userId,
-					classNames, name, active, includeControlPanel, start, end);
 
 			return com.liferay.portal.model.GroupSoap.toSoapModels(returnValue);
 		}

@@ -55,6 +55,12 @@ public class BookmarksEntryTrashHandlerTest extends BaseTrashHandlerTestCase {
 	@Ignore()
 	@Override
 	@Test
+	public void testDeleteTrashVersions() throws Exception {
+	}
+
+	@Ignore()
+	@Override
+	@Test
 	public void testTrashAndDeleteDraft() throws Exception {
 	}
 
@@ -86,6 +92,12 @@ public class BookmarksEntryTrashHandlerTest extends BaseTrashHandlerTestCase {
 	@Override
 	@Test
 	public void testTrashVersionParentBaseModel() throws Exception {
+	}
+
+	@Ignore()
+	@Override
+	@Test
+	public void testTrashVersionParentBaseModelAndRestore() throws Exception {
 	}
 
 	@Override
@@ -153,7 +165,7 @@ public class BookmarksEntryTrashHandlerTest extends BaseTrashHandlerTestCase {
 
 	@Override
 	protected int getMineBaseModelsCount(long groupId, long userId)
-			throws Exception {
+		throws Exception {
 
 		return BookmarksEntryServiceUtil.getGroupEntriesCount(groupId, userId);
 	}

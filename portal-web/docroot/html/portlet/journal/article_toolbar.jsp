@@ -56,7 +56,18 @@ if ((article != null) && article.isDraft()) {
 				var unsavedChanges = formChanged;
 
 				if (!unsavedChanges && typeof CKEDITOR !== 'undefined') {
-					unsavedChanges = CKEDITOR.instances.<portlet:namespace />articleContent.checkDirty();
+					A.Object.some(
+						CKEDITOR.instances,
+						function(item, index, collection) {
+							var parentForm = A.one('#' + item.element.getId()).ancestor('form');
+
+							if (parentForm.compareTo(form)) {
+								unsavedChanges = item.checkDirty();
+
+								return unsavedChanges;
+							}
+						}
+					);
 				}
 
 				return unsavedChanges;
@@ -85,8 +96,8 @@ if ((article != null) && article.isDraft()) {
 								Liferay.fire(
 									'previewArticle',
 									{
-										title: '<%= article.getTitle(locale) %>',
-										uri: '<%= previewArticleContentURL.toString() %>'
+										title: '<%= HtmlUtil.escapeJS(article.getTitle(locale)) %>',
+										uri: '<%= HtmlUtil.escapeJS(previewArticleContentURL.toString()) %>'
 									}
 								);
 							}

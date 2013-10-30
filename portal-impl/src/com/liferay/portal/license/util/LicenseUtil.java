@@ -27,6 +27,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.Base64;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.Constants;
+import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Http;
@@ -45,15 +46,12 @@ import com.liferay.util.Encryptor;
 
 import java.io.File;
 import java.io.InputStream;
-import java.io.OutputStream;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
-import java.net.Proxy;
+import java.net.URI;
 import java.net.URL;
-import java.net.URLConnection;
 
 import java.security.Key;
 import java.security.KeyFactory;
@@ -79,6 +77,18 @@ import javax.crypto.KeyGenerator;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.params.ConnRoutePNames;
+import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.HttpParams;
 
 /**
  * @author Amos Fong
@@ -417,8 +427,7 @@ public class LicenseUtil {
 	}
 
 	public static String sendRequest(String request) throws Exception {
-		InputStream inputStream = null;
-		OutputStream outputStream = null;
+		DefaultHttpClient defaultHttpClient = new DefaultHttpClient();
 
 		try {
 			String serverURL = LICENSE_SERVER_URL;
@@ -429,9 +438,9 @@ public class LicenseUtil {
 
 			serverURL += "osb-portlet/license";
 
-			URL url = new URL(serverURL);
+			URI uri = new URI(serverURL);
 
-			URLConnection connection = null;
+			HttpPost httpPost = new HttpPost(uri);
 
 			if (Validator.isNotNull(_PROXY_URL)) {
 				if (_log.isInfoEnabled()) {
@@ -440,34 +449,37 @@ public class LicenseUtil {
 							_PROXY_PORT);
 				}
 
-				Proxy proxy = new Proxy(
-					Proxy.Type.HTTP,
-					new InetSocketAddress(_PROXY_URL, _PROXY_PORT));
+				HttpHost httpHost = new HttpHost(_PROXY_URL, _PROXY_PORT);
 
-				connection = url.openConnection(proxy);
+				HttpParams httpParams = defaultHttpClient.getParams();
+
+				httpParams.setParameter(
+					ConnRoutePNames.DEFAULT_PROXY, httpHost);
 
 				if (Validator.isNotNull(_PROXY_USER_NAME)) {
-					String login =
-						_PROXY_USER_NAME + StringPool.COLON + _PROXY_PASSWORD;
+					CredentialsProvider credentialsProvider =
+						defaultHttpClient.getCredentialsProvider();
 
-					String encodedLogin = Base64.encode(login.getBytes());
-
-					connection.setRequestProperty(
-						"Proxy-Authorization", "Basic " + encodedLogin);
+					credentialsProvider.setCredentials(
+						new AuthScope(_PROXY_URL, _PROXY_PORT),
+						new UsernamePasswordCredentials(
+							_PROXY_USER_NAME, _PROXY_PASSWORD));
 				}
 			}
-			else {
-				connection = url.openConnection();
-			}
 
-			connection.setDoOutput(true);
+			ByteArrayEntity byteArrayEntity = new ByteArrayEntity(
+				_encryptRequest(serverURL, request));
 
-			outputStream = connection.getOutputStream();
+			byteArrayEntity.setContentType(ContentTypes.APPLICATION_JSON);
 
-			outputStream.write(_encryptRequest(serverURL, request));
+			httpPost.setEntity(byteArrayEntity);
+
+			HttpResponse httpResponse = defaultHttpClient.execute(httpPost);
+
+			HttpEntity httpEntity = httpResponse.getEntity();
 
 			String response = _decryptResponse(
-				serverURL, connection.getInputStream());
+				serverURL, httpEntity.getContent());
 
 			if (_log.isDebugEnabled()) {
 				_log.debug("Server response: " + response);
@@ -480,21 +492,10 @@ public class LicenseUtil {
 			return response;
 		}
 		finally {
-			try {
-				if (inputStream != null) {
-					inputStream.close();
-				}
-			}
-			catch (Exception e) {
-			}
+			ClientConnectionManager clientConnectionManager =
+				defaultHttpClient.getConnectionManager();
 
-			try {
-				if (outputStream != null) {
-					outputStream.close();
-				}
-			}
-			catch (Exception e) {
-			}
+			clientConnectionManager.shutdown();
 		}
 	}
 

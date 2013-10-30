@@ -1,7 +1,7 @@
 <definition>
-	<command name="isElementNotPresent">
-		<case locator-key1="ADD_VOCABULARY_CHOOSE_ASSET_TYPE_SELECT">
-			<execute function="IsElementNotPresent#isNotVisible" />
+	<command name="isElementPresent">
+		<case locator-key1="CATEGORY_DETAILS_DROPDOWN_TREE">
+			<execute function="IsElementPresent#isVisible" />
 		</case>
 	</command>
 </definition>

@@ -89,6 +89,19 @@ public class RequiredPluginsMessageListener extends BaseMessageListener {
 				AutoDeployDir autoDeployDir = AutoDeployUtil.getDir(
 					AutoDeployDir.DEFAULT_NAME);
 
+				if (autoDeployDir == null) {
+
+					// This should never happen except during shutdown
+
+					if (_log.isDebugEnabled()) {
+						_log.debug(
+							"The autodeploy directory " +
+								AutoDeployDir.DEFAULT_NAME + " is null");
+					}
+
+					continue;
+				}
+
 				StreamUtil.transfer(
 					inputStream,
 					new FileOutputStream(

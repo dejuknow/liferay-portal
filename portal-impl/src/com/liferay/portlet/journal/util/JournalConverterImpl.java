@@ -94,6 +94,7 @@ public class JournalConverterImpl implements JournalConverter {
 		_journalTypesToDDMTypes.put("boolean", "checkbox");
 		_journalTypesToDDMTypes.put("document_library", "ddm-documentlibrary");
 		_journalTypesToDDMTypes.put("image", "wcm-image");
+		_journalTypesToDDMTypes.put("image_gallery", "ddm-documentlibrary");
 		_journalTypesToDDMTypes.put("link_to_layout", "ddm-link-to-page");
 		_journalTypesToDDMTypes.put("list", "select");
 		_journalTypesToDDMTypes.put("multi-list", "select");
@@ -262,29 +263,6 @@ public class JournalConverterImpl implements JournalConverter {
 		entryElement.addCDATA(value);
 	}
 
-	protected void getJournalMetadataElement(Element metadataElement) {
-		removeAttribute(metadataElement, "locale");
-
-		Element dynamicElementElement = metadataElement.getParent();
-
-		// Required
-
-		boolean required = GetterUtil.getBoolean(
-			dynamicElementElement.attributeValue("required"));
-
-		addMetadataEntry(metadataElement, "required", String.valueOf(required));
-
-		// Tooltip
-
-		Element tipElement = fetchMetadataEntry(metadataElement, "name", "tip");
-
-		if (tipElement != null) {
-			tipElement.addAttribute("name", "instructions");
-
-			addMetadataEntry(metadataElement, "displayAsTooltip", "true");
-		}
-	}
-
 	protected int countFieldRepetition(
 			Fields ddmFields, String fieldName, String parentFieldName,
 			int parentOffset)
@@ -385,7 +363,9 @@ public class JournalConverterImpl implements JournalConverter {
 			return jsonObject.toString();
 		}
 		catch (Exception e) {
-			_log.warn("Error retrieving file entry", e);
+			if (_log.isWarnEnabled()) {
+				_log.warn("Error retrieving file entry", e);
+			}
 		}
 
 		return null;
@@ -478,6 +458,29 @@ public class JournalConverterImpl implements JournalConverter {
 		}
 
 		return serializable;
+	}
+
+	protected void getJournalMetadataElement(Element metadataElement) {
+		removeAttribute(metadataElement, "locale");
+
+		Element dynamicElementElement = metadataElement.getParent();
+
+		// Required
+
+		boolean required = GetterUtil.getBoolean(
+			dynamicElementElement.attributeValue("required"));
+
+		addMetadataEntry(metadataElement, "required", String.valueOf(required));
+
+		// Tooltip
+
+		Element tipElement = fetchMetadataEntry(metadataElement, "name", "tip");
+
+		if (tipElement != null) {
+			tipElement.addAttribute("name", "instructions");
+
+			addMetadataEntry(metadataElement, "displayAsTooltip", "true");
+		}
 	}
 
 	protected void removeAttribute(Element element, String attributeName) {
@@ -588,8 +591,8 @@ public class JournalConverterImpl implements JournalConverter {
 
 		String parentType = parentElement.attributeValue("type");
 
-		if (Validator.equals(parentType, "list") || 
-				Validator.equals(parentType, "multi-list")) {
+		if (Validator.equals(parentType, "list") ||
+			Validator.equals(parentType, "multi-list")) {
 
 			String repeatable = parentElement.attributeValue("repeatable");
 
@@ -616,9 +619,9 @@ public class JournalConverterImpl implements JournalConverter {
 			dynamicElementElement.attributeValue("indexType"));
 
 		removeAttribute(dynamicElementElement, "indexType");
-		
+
 		dynamicElementElement.addAttribute("index-type", indexType);
-		
+
 		// Type
 
 		String type = dynamicElementElement.attributeValue("type");

@@ -25,17 +25,17 @@
 </tr>
 <tr>
 	<td>SUCCESS_MESSAGE</td>
-	<td>//div[@class='alert alert-success']</td>
+	<td>//div[contains(@class,'alert') and contains(@class,'alert-success')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>ASSIGNED_TO_ME_INFO_MESSAGE</td>
-	<td>//div[@id='workflowMyTasksPanel']//div[@class='alert alert-info']</td>
+	<td>//div[@id='workflowMyTasksPanel']//div[contains(@class,'alert') and contains(@class,'alert-info')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>ASSIGNED_TO_MY_ROLES_INFO_MESSAGE</td>
-	<td>//div[@id='workflowMyRolesTasksPanel']//div[@class='alert alert-info']</td>
+	<td>//div[@id='workflowMyRolesTasksPanel']//div[contains(@class,'alert') and contains(@class,'alert-info')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -46,12 +46,12 @@
 <!--NAVIGATION-->
 <tr>
 	<td>NAVIGATION_PENDING</td>
-	<td>//ul[@class='nav nav-tabs']/li/a[contains(.,'Pending')]</td>
+	<td>//ul[contains(@class,'nav') and contains(@class,'nav-tabs')]/li/a[contains(.,'Pending')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>NAVIGATION_COMPLETED</td>
-	<td>//ul[@class='nav nav-tabs']/li/a[contains(.,'Completed')]</td>
+	<td>//ul[contains(@class,'nav') and contains(@class,'nav-tabs')]/li/a[contains(.,'Completed')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -76,6 +76,17 @@
 	<td></td>
 </tr>
 <!--ADVANCED_SEARCH-->
+<tr>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<!--TABLE_GENERIC-->
+<tr>
+	<td>TABLE_GENERIC_ASSET_TITLE</td>
+	<td>//tr[contains(.,'${key_workflowAssetTitle}')]/td[2]/a</td>
+	<td></td>
+</tr>
 <tr>
 	<td></td>
 	<td></td>
@@ -126,6 +137,11 @@
 <tr>
 	<td>ASSIGNED_TO_ME_MENULIST_REJECT</td>
 	<td>//a[@role='menuitem' and contains(.,'Reject')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ASSIGNED_TO_ME_MENULIST_RESUBMIT</td>
+	<td>//a[@role='menuitem' and contains(.,'Resubmit')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -191,6 +207,16 @@
 	<td></td>
 </tr>
 <!--PANEL-->
+<tr>
+	<td>PANEL_DUE_DATE</td>
+	<td>//input[@id='_153_dueDate']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PANEL_DUE_DATE_TIME</td>
+	<td>//input[@id='_153_dueDateTime']</td>
+	<td></td>
+</tr>
 <tr>
 	<td>PANEL_COMMENT_FIELD</td>
 	<td>//textarea[@id='_153_comment']</td>

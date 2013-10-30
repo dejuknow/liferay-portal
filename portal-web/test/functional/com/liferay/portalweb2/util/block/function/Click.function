@@ -2,11 +2,15 @@
 	<command name="click">
 		<execute selenium="waitForVisible" />
 
+		<execute selenium="mouseOver" />
+
 		<execute selenium="click" />
 	</command>
 
 	<command name="clickAt">
 		<execute selenium="waitForVisible" />
+
+		<execute selenium="mouseOver" />
 
 		<execute selenium="clickAt" />
 	</command>
@@ -14,18 +18,59 @@
 	<command name="clickAtAndWait">
 		<execute selenium="waitForVisible" />
 
+		<execute selenium="mouseOver" />
+
 		<execute selenium="clickAtAndWait" />
 	</command>
 
+	<command name="clickAtAndWaitCPNavigation">
+		<execute selenium="waitForElementPresent" argument1="//script[contains(@src,'/html/js/liferay/message.js')]" />
+
+		<execute function="Click#clickAtAndWait" />
+	</command>
+
+	<command name="clickAtNavigation">
+		<execute selenium="pause" argument1="1000" />
+
+		<if>
+			<condition selenium="isElementPresent" argument1="//a[@id='_145_addPanel']" />
+			<then>
+				<execute selenium="clickAt" argument1="//nav[@id='navigation']" />
+
+				<execute selenium="waitForElementPresent" argument1="//script[contains(@src,'/html/js/aui/sortable/sortable-min.js')]" />
+
+				<execute selenium="mouseOver" />
+
+				<execute selenium="waitForElementPresent" argument1="//li[contains(@class,'lfr-nav-hover')]" />
+			</then>
+		</if>
+
+		<execute function="Click#clickAt" />
+
+		<execute selenium="pause" argument1="1000" />
+
+		<execute selenium="waitForElementPresent" argument1="//script[contains(@src,'/html/js/aui/aui-url/aui-url-min.js')]" />
+	</command>
+
 	<command name="clickAtSidebarClickAt">
+		<execute selenium="pause" argument1="1000" />
+
 		<execute selenium="clickAt" argument1="//ul[@class='nav nav-add-controls']" />
 
-		<execute selenium="waitForElementPresent" argument1="//script[contains(@src,'/aui/aui-editable-deprecated/aui-editable-deprecated-min.js')]" />
+		<execute selenium="waitForElementPresent" argument1="//script[contains(@src,'/html/js/liferay/node.js')]" />
 
 		<execute function="Click#clickAt" />
 	</command>
 
+	<command name="clickWaitForInlineCKEditor">
+		<execute selenium="waitForElementPresent" argument1="//script[contains(@src,'http://localhost:8080/html/js/editor/ckeditor/plugins/wsc/lang/en.js')]" />
+
+		<execute function="Click#click" />
+	</command>
+
 	<command name="makeVisibleClickAt">
+		<execute selenium="mouseOver" />
+
 		<execute selenium="makeVisible" />
 
 		<execute selenium="clickAt" />
@@ -34,13 +79,25 @@
 	<command name="partialTextClickAt">
 		<execute function="AssertTextEquals#assertPartialText" />
 
+		<execute selenium="mouseOver" />
+
 		<execute selenium="clickAt" />
 	</command>
 
 	<command name="partialTextClickAtAndWait">
 		<execute function="AssertTextEquals#assertPartialText" />
 
+		<execute selenium="mouseOver" />
+
 		<execute selenium="clickAtAndWait" />
+	</command>
+
+	<command name="pauseClickAt">
+		<execute selenium="pause" argument1="1000" />
+
+		<execute selenium="mouseOver" />
+
+		<execute function="Click#clickAt" />
 	</command>
 
 	<command name="pauseMakeVisibleClickAt">
@@ -64,11 +121,15 @@
 	<command name="textClick">
 		<execute function="AssertTextEquals#assertText" />
 
+		<execute selenium="mouseOver" />
+
 		<execute selenium="click" />
 	</command>
 
 	<command name="textClickAndWait">
 		<execute function="AssertTextEquals#assertText" />
+
+		<execute selenium="mouseOver" />
 
 		<execute selenium="clickAndWait" />
 	</command>
@@ -76,17 +137,21 @@
 	<command name="textClickAt">
 		<execute function="AssertTextEquals#assertText" />
 
+		<execute selenium="mouseOver" />
+
 		<execute selenium="clickAt" />
 	</command>
 
 	<command name="textClickAtAndWait">
 		<execute function="AssertTextEquals#assertText" />
 
+		<execute selenium="mouseOver" />
+
 		<execute selenium="clickAtAndWait" />
 	</command>
 
 	<command name="textClickAtAndWaitCKEditor">
-		<execute selenium="waitForVisible" argument1="//a[contains(@class,'cke_button cke_button__cut') and contains(@class,'cke_button_disabled')]" />
+		<execute selenium="waitForVisible" argument1="//a[contains(@class,'cke_button__unlink') and contains(@class,'cke_button_disabled')]" />
 
 		<execute function="Click#textClickAtAndWait" />
 	</command>
@@ -94,7 +159,7 @@
 	<command name="textClickAtClickDockbar">
 		<execute selenium="clickAt" argument1="//div[@id='_145_dockbar']" argument2="" />
 
-		<execute selenium="waitForElementPresent" argument1="//script[contains(@src,'/aui/aui-editable-deprecated/aui-editable-deprecated-min.js')]" />
+		<execute selenium="waitForElementPresent" argument1="//script[contains(@src,'/html/js/liferay/node.js')]" />
 
 		<execute function="Click#textClickAt" />
 	</command>
@@ -102,17 +167,21 @@
 	<command name="valueClickAt">
 		<execute function="AssertTextEquals#assertValue" />
 
+		<execute selenium="mouseOver" />
+
 		<execute selenium="clickAt" />
 	</command>
 
 	<command name="valueClickAtAndWait">
 		<execute function="AssertTextEquals#assertValue" />
 
+		<execute selenium="mouseOver" />
+
 		<execute selenium="clickAtAndWait" />
 	</command>
 
 	<command name="valueClickAtAndWaitCKEditor">
-		<execute selenium="waitForVisible" argument1="//a[contains(@class,'cke_button cke_button__cut') and contains(@class,'cke_button_disabled')]" />
+		<execute selenium="waitForVisible" argument1="//a[contains(@class,'cke_button__unlink') and contains(@class,'cke_button_disabled')]" />
 
 		<execute function="Click#valueClickAtAndWait" />
 	</command>

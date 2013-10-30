@@ -9,8 +9,9 @@
 		<execute macro="WikiPage#tearDownCP" />
 	</tear-down>
 
-	<command name="AkismetWikiIntegration">
+	<command name="AkismetWikiIntegration" priority="5">
 		<var name="wikiNodeName" value="Main" />
+		<var name="wikiPageContent" value="Wiki Page Content" />
 		<var name="wikiPageTitle" value="Akismet this" />
 
 		<execute macro="Page#gotoCP">
@@ -29,6 +30,7 @@
 
 		<execute macro="WikiPage#addPageCP">
 			<var name="wikiNodeName" value="${wikiNodeName}" />
+			<var name="wikiPageContent" value="${wikiPageContent}" />
 			<var name="wikiPageTitle" value="${wikiPageTitle}" />
 		</execute>
 
@@ -38,8 +40,7 @@
 
 		<var name="key_wikiPageTitle" value="${wikiPageTitle}" />
 
-		<execute action="CPWikiPageHistory#assertClick" locator-key1="WIKI_PAGE_HISTORY_ACTIVITY" value1="${wikiPageTitle}" />
-
+		<execute action="CPWikiWikipage#assertTextEquals" locator-key1="WIKI_PAGE_TITLE_HEADER" value1="${wikiPageTitle}" />
 		<execute action="CPWikiWikipage#assertClick" locator-key1="WIKI_PAGE_ACTIONS_MARK_AS_SPAM" value1="Mark as Spam" />
 		<execute action="CPWikiWikipage#assertTextEquals" locator-key1="SUCCESS_MESSAGE" value1="Version 1.0 was marked as spam." />
 
@@ -53,5 +54,16 @@
 		<execute action="CPSpamModerationWikis#confirm" locator-key1="CONFIRMATION" value1="Are you sure you want to mark the selected pages not spam?" />
 		<execute action="CPSpamModerationWikis#assertTextEquals" locator-key1="SUCCESS_MESSAGE" value1="Your request completed successfully." />
 		<execute action="CPSpamModerationWikis#assertTextEquals" locator-key1="INFO_MESSAGE" value1="There are no pages." />
+
+		<execute macro="Page#gotoContentCP">
+			<var name="portletName" value="Wiki" />
+		</execute>
+
+		<execute macro="WikiPage#moveToRecycleBinCP">
+			<var name="wikiNodeName" value="${wikiNodeName}" />
+			<var name="wikiPageTitle" value="${wikiPageTitle}" />
+		</execute>
+
+		<execute action="CPWikiAllpages#assertTextNotEquals" locator-key1="WIKI_PAGE_TABLE_PAGE" value1="${wikiPageTitle}" />
 	</command>
 </definition>

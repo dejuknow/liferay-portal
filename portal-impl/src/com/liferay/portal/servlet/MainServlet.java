@@ -29,9 +29,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.plugin.PluginPackage;
 import com.liferay.portal.kernel.servlet.DynamicServletRequest;
 import com.liferay.portal.kernel.servlet.PortalSessionThreadLocal;
-import com.liferay.portal.kernel.servlet.PortletSessionTracker;
 import com.liferay.portal.kernel.servlet.ProtectedServletRequest;
-import com.liferay.portal.kernel.servlet.ServletContextPool;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HttpUtil;
@@ -198,13 +196,6 @@ public class MainServlet extends ActionServlet {
 
 		if (_log.isDebugEnabled()) {
 			_log.debug("Initialize servlet context pool");
-		}
-
-		try {
-			initServletContextPool();
-		}
-		catch (Exception e) {
-			_log.error(e, e);
 		}
 
 		if (_log.isDebugEnabled()) {
@@ -413,7 +404,14 @@ public class MainServlet extends ActionServlet {
 			}
 		}
 		catch (Exception e) {
-			_log.error(e, e);
+			if (e instanceof NoSuchLayoutException) {
+				if (_log.isDebugEnabled()) {
+					_log.debug(e, e);
+				}
+			}
+			else {
+				_log.error(e, e);
+			}
 		}
 
 		if (_log.isDebugEnabled()) {
@@ -427,7 +425,6 @@ public class MainServlet extends ActionServlet {
 		}
 
 		checkServletContext(request);
-		checkPortletSessionTracker(request);
 		checkPortletRequestProcessor(request);
 		checkTilesDefinitionsFactory();
 
@@ -567,18 +564,6 @@ public class MainServlet extends ActionServlet {
 			servletContext.setAttribute(
 				WebKeys.PORTLET_STRUTS_PROCESSOR, portletReqProcessor);
 		}
-	}
-
-	protected void checkPortletSessionTracker(HttpServletRequest request) {
-		HttpSession session = request.getSession();
-
-		if (session.getAttribute(WebKeys.PORTLET_SESSION_TRACKER) != null) {
-			return;
-		}
-
-		session.setAttribute(
-			WebKeys.PORTLET_SESSION_TRACKER,
-			PortletSessionTracker.getInstance());
 	}
 
 	protected void checkServletContext(HttpServletRequest request) {
@@ -938,14 +923,6 @@ public class MainServlet extends ActionServlet {
 
 	protected void initServerDetector() throws Exception {
 		ServerCapabilitiesUtil.determineServerCapabilities(getServletContext());
-	}
-
-	protected void initServletContextPool() throws Exception {
-		ServletContext servletContext = getServletContext();
-
-		String contextPath = PortalUtil.getPathContext();
-
-		ServletContextPool.put(contextPath, servletContext);
 	}
 
 	protected void initSocial(PluginPackage pluginPackage) throws Exception {
@@ -1312,7 +1289,9 @@ public class MainServlet extends ActionServlet {
 				remoteUserId = JAASHelper.getJaasUserId(companyId, remoteUser);
 			}
 			catch (Exception e) {
-				_log.warn(e);
+				if (_log.isWarnEnabled()) {
+					_log.warn(e);
+				}
 			}
 
 			if (remoteUserId > 0) {

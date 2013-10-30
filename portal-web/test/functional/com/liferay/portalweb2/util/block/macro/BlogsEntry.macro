@@ -1,4 +1,38 @@
 <definition>
+	<command name="addCategoryCP">
+		<var name="key_entryTitle" value="${entryTitle}" />
+
+		<execute action="CPBlogs#assertTextEquals" locator-key1="ENTRY_TABLE_TITLE" value1="${entryTitle}" />
+		<execute action="CPBlogs#assertClick" locator-key1="ENTRY_TABLE_ACTIONS" value1="Actions" />
+		<execute action="CPBlogs#assertClick" locator-key1="ENTRY_MENULIST_EDIT" value1="Edit" />
+
+		<var name="key_categoryName" value="${categoryName}" />
+		<var name="key_vocabularyName" value="${vocabularyName}" />
+
+		<execute action="CPBlogsEdit#assertElementPresent" locator-key1="CONTENT_FIELD" />
+
+		<if>
+			<condition action="CPBlogsEdit#isElementNotPresent" locator-key1="CATEGORIZATION_TAGS_ADD_BUTTON" />
+			<then>
+				<execute action="CPBlogsEdit#assertClick" locator-key1="CATEGORIZATION_TOGGLE" value1="Categorization" />
+				<execute action="CPBlogsEdit#assertElementPresent" locator-key1="CATEGORIZATION_TAGS_ADD_BUTTON" />
+			</then>
+		</if>
+
+		<execute action="CPBlogsEdit#assertClick" locator-key1="CATEGORIZATION_SELECT_BUTTON" value1="Select" />
+		<execute action="CPBlogsEdit#assertClick" locator-key1="CATEGORIES_CATEGORY_UNSELECTED" value1="${categoryName}" />
+		<execute action="CPBlogsEdit#assertElementPresent" locator-key1="CATEGORIES_CATEGORY_SELECTED" value1="${categoryName}" />
+		<execute action="CPBlogsEdit#click" locator-key1="CATEGORIES_CLOSE_BUTTON" />
+		<execute action="CPBlogsEdit#assertTextEquals" locator-key1="CATEGORIZATION_CATEGORY" value1="${categoryName}" />
+		<execute action="CPBlogsEdit#assertClick" locator-key1="PUBLISH_BUTTON" value1="Publish" />
+
+		<execute action="CPBlogs#assertTextEquals" locator-key1="SUCCESS_MESSAGE" value1="Your request completed successfully." />
+		<execute action="CPBlogs#assertClick" locator-key1="ENTRY_TABLE_TITLE" value1="${entryTitle}" />
+
+		<execute action="CPBlogsEntry#assertTextEquals" locator-key1="ENTRY_VOCABULARY" value1="${vocabularyName}" />
+		<execute action="CPBlogsEntry#assertTextEquals" locator-key1="ENTRY_CATEGORY" value1="${categoryName}" />
+	</command>
+
 	<command name="addCP">
 		<execute action="CPBlogs#assertClick" locator-key1="ADD_ENTRY" value1="Add" />
 
@@ -128,18 +162,56 @@
 	</command>
 
 	<command name="addPGViaAP">
-		<execute action="PGAssetpublisher#assertClick" locator-key1="ADD_NEW_DROPDOWN" value1="Add New" />
-		<execute action="PGAssetpublisher#assertClick" locator-key1="ADD_NEW_MENULIST_BLOGS_ENTRY" value1="Blogs Entry" />
+		<if>
+			<isset var="scopeSiteType" />
+			<then>
+				<execute action="PGAssetpublisher#assertClick" locator-key1="ADD_NEW_DROPDOWN_SITE_NAME" value1="Add New in Site Name" />
+				<execute action="PGAssetpublisher#assertClick" locator-key1="ADD_NEW_IN_SITE_NAME_MENULIST_BLOGS_ENTRY" value1="Blogs Entry" />
+			</then>
+			<else>
+				<execute action="PGAssetpublisher#assertClick" locator-key1="ADD_NEW_DROPDOWN" value1="Add New" />
+				<execute action="PGAssetpublisher#assertClick" locator-key1="ADD_NEW_MENULIST_BLOGS_ENTRY" value1="Blogs Entry" />
+			</else>
+		</if>
 
 		<execute action="PGAssetpublisherAddnewblogsentry#selectFrame" locator-key1="BLOGS_ENTRY_IFRAME" />
 		<execute action="PGAssetpublisherAddnewblogsentry#type" locator-key1="TITLE_FIELD" value1="${entryTitle}" />
 		<execute action="PGAssetpublisherAddnewblogsentry#type" locator-key1="CONTENT_FIELD" value1="${entryContent}" />
-		<execute action="PGAssetpublisherAddnewblogsentry#selectFrame" locator-key1="BLOGS_ENTRY_IFRAME" />
 		<execute action="PGAssetpublisherAddnewblogsentry#assertClick" locator-key1="PUBLISH_BUTTON" value1="Publish" />
-
 		<execute action="PGAssetpublisher#selectFrame" value1="relative=top" />
+
 		<execute action="PGAssetpublisher#assertTextEquals" locator-key1="ASSET_TITLE_1" value1="${entryTitle}" />
 		<execute action="PGAssetpublisher#assertTextEquals" locator-key1="ASSET_SUMMARY_1" value1="${entryContent}" />
+	</command>
+
+	<command name="addTagCP">
+		<var name="key_entryTitle" value="${entryTitle}" />
+
+		<execute action="CPBlogs#assertTextEquals" locator-key1="ENTRY_TABLE_TITLE" value1="${entryTitle}" />
+		<execute action="CPBlogs#assertClick" locator-key1="ENTRY_TABLE_ACTIONS" value1="Actions" />
+		<execute action="CPBlogs#assertClick" locator-key1="ENTRY_MENULIST_EDIT" value1="Edit" />
+
+		<execute action="CPBlogsEdit#assertElementPresent" locator-key1="CONTENT_FIELD" />
+
+		<if>
+			<condition action="CPBlogsEdit#isElementNotPresent" locator-key1="CATEGORIZATION_TAGS_ADD_BUTTON" />
+			<then>
+				<execute action="CPBlogsEdit#assertClick" locator-key1="CATEGORIZATION_TOGGLE" value1="Categorization" />
+				<execute action="CPBlogsEdit#assertElementPresent" locator-key1="CATEGORIZATION_TAGS_ADD_BUTTON" />
+			</then>
+		</if>
+
+		<var name="key_tagName" value="${tagName}" />
+
+		<execute action="CPBlogsEdit#type" locator-key1="CATEGORIZATION_TAGS_FIELD" value1="${tagName}" />
+		<execute action="CPBlogsEdit#assertClick" locator-key1="CATEGORIZATION_TAGS_ADD_BUTTON" value1="Add" />
+		<execute action="CPBlogsEdit#assertTextEquals" locator-key1="CATEGORIZATION_TAG" value1="${tagName}" />
+		<execute action="CPBlogsEdit#assertClick" locator-key1="PUBLISH_BUTTON" value1="Publish" />
+
+		<execute action="CPBlogs#assertTextEquals" locator-key1="SUCCESS_MESSAGE" value1="Your request completed successfully." />
+		<execute action="CPBlogs#assertClick" locator-key1="ENTRY_TABLE_TITLE" value1="${entryTitle}" />
+
+		<execute action="CPBlogsEntry#assertTextEquals" locator-key1="ENTRY_TAG" value1="${tagName}" />
 	</command>
 
 	<command name="addWithWorkflowCP">
@@ -169,7 +241,6 @@
 		<execute action="PGAssetpublisherAddnewblogsentry#selectFrame" locator-key1="BLOGS_ENTRY_IFRAME" />
 		<execute action="PGAssetpublisherAddnewblogsentry#type" locator-key1="TITLE_FIELD" value1="${entryTitle}" />
 		<execute action="PGAssetpublisherAddnewblogsentry#type" locator-key1="CONTENT_FIELD" value1="${entryContent}" />
-		<execute action="PGAssetpublisherAddnewblogsentry#selectFrame" locator-key1="BLOGS_ENTRY_IFRAME" />
 		<execute action="PGAssetpublisherAddnewblogsentry#assertClick" locator-key1="SUBMIT_FOR_PUBLICATION_BUTTON" value1="Submit for Publication" />
 
 		<execute action="PGAssetpublisher#selectFrame" value1="relative=top" />
@@ -209,6 +280,9 @@
 		<execute action="PGBlogsEdit#assertClick" locator-key1="PUBLISH_BUTTON" value1="Publish" />
 
 		<execute action="PGBlogs#assertTextEquals" locator-key1="SUCCESS_MESSAGE" value1="Your request completed successfully." />
+
+		<var name="key_entryTitle" value="${entryTitleEdit}" />
+
 		<execute action="PGBlogs#assertTextEquals" locator-key1="ENTRY_TITLE" value1="${entryTitleEdit}" />
 		<execute action="PGBlogs#assertTextEquals" locator-key1="ENTRY_CONTENT" value1="${entryContentEdit}" />
 	</command>
@@ -384,7 +458,17 @@
 
 		<execute action="CPBlogs#assertElementPresent" locator-key1="ENTRY_TABLE_CHECKBOX" />
 		<execute action="CPBlogs#assertTextEquals" locator-key1="ENTRY_TABLE_TITLE" value1="${entryTitle}" />
-		<execute action="CPBlogs#assertTextEquals" locator-key1="ENTRY_TABLE_AUTHOR" value1="Test Test" />
+
+		<if>
+			<isset var="entryAuthor" />
+			<then>
+				<execute action="CPBlogs#assertTextEquals" locator-key1="ENTRY_TABLE_AUTHOR" value1="${entryAuthor}" />
+			</then>
+			<else>
+				<execute action="CPBlogs#assertTextEquals" locator-key1="ENTRY_TABLE_AUTHOR" value1="Test Test" />
+			</else>
+		</if>
+
 		<execute action="CPBlogs#assertElementPresent" locator-key1="ENTRY_TABLE_CREATE_DATE" />
 		<execute action="CPBlogs#assertTextEquals" locator-key1="ENTRY_TABLE_STATUS" value1="Approved" />
 		<execute action="CPBlogs#assertClick" locator-key1="ENTRY_TABLE_TITLE" value1="${entryTitle}" />
@@ -439,6 +523,7 @@
 
 		<execute action="Permissions#selectFrame" locator-key1="PERMISSIONS_IFRAME" />
 		<execute action="Permissions#assertTextEquals" locator-key1="HEADER_TITLE" value1="${entryTitle}" />
+		<execute action="Permissions#selectFrame" value1="relative=top" />
 	</command>
 
 	<command name="viewPermissionsNoPermissionPG">
@@ -521,6 +606,17 @@
 	</command>
 
 	<command name="viewViewCountCP">
+		<var name="key_portletName" value="Blogs" />
+
+		<execute action="Home#click" locator-key1="SITE_ADMINISTRATION_NAVIGATION" />
+
+		<var name="key_entryTitle" value="${entryTitle}" />
+
+		<execute action="CPBlogs#assertClick" locator-key1="ENTRY_TABLE_TITLE" value1="${entryTitle}" />
+
+		<var name="entryViewCount" path="CPBlogsEntry" locator-key="ENTRY_STATS_VIEW_COUNT" />
+		<var name="entryViewCount" value="${entryViewCount?getFirstNumber()}" />
+
 		<if>
 			<equals arg1="${entryViewCount}" arg2="1" />
 			<then>
@@ -530,9 +626,30 @@
 				<execute action="CPBlogsEntry#assertTextEquals" locator-key1="ENTRY_STATS_VIEW_COUNT" value1="${entryViewCount} Views," />
 			</else>
 		</if>
+
+		<execute action="Home#click" locator-key1="SITE_ADMINISTRATION_NAVIGATION" />
+
+		<execute action="CPBlogs#assertClick" locator-key1="ENTRY_TABLE_TITLE" value1="${entryTitle}" />
+
+		<var name="entryViewCount" value="${entryViewCount?increment()}" />
+
+		<execute action="CPBlogsEntry#assertTextEquals" locator-key1="ENTRY_STATS_VIEW_COUNT" value1="${entryViewCount} Views," />
 	</command>
 
 	<command name="viewViewCountPG">
+		<execute action="Home#click" locator1="link=${pageName}" />
+
+		<var name="key_entryTitle" value="${entryTitle}" />
+
+		<execute action="PGBlogs#assertClick" locator-key1="ENTRY_TITLE" value1="${entryTitle}" />
+
+		<execute action="Home#click" locator1="link=${pageName}" />
+
+		<execute action="PGBlogs#assertClick" locator-key1="ENTRY_TITLE" value1="${entryTitle}" />
+
+		<var name="entryViewCount" path="PGBlogsEntry" locator-key="ENTRY_STATS_VIEW_COUNT" />
+		<var name="entryViewCount" value="${entryViewCount?getFirstNumber()}" />
+
 		<if>
 			<equals arg1="${entryViewCount}" arg2="1" />
 			<then>
@@ -542,6 +659,14 @@
 				<execute action="PGBlogsEntry#assertTextEquals" locator-key1="ENTRY_STATS_VIEW_COUNT" value1="${entryViewCount} Views," />
 			</else>
 		</if>
+
+		<execute action="Home#click" locator1="link=${pageName}" />
+
+		<execute action="PGBlogs#assertClick" locator-key1="ENTRY_TITLE" value1="${entryTitle}" />
+
+		<var name="entryViewCount" value="${entryViewCount?increment()}" />
+
+		<execute action="PGBlogsEntry#assertTextEquals" locator-key1="ENTRY_STATS_VIEW_COUNT" value1="${entryViewCount} Views," />
 	</command>
 
 	<command name="viewWithWorkflowCP">

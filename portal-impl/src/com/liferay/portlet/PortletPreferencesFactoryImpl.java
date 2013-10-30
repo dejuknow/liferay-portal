@@ -417,7 +417,7 @@ public class PortletPreferencesFactoryImpl
 	@Override
 	public PortletPreferences getPortletSetup(
 			HttpServletRequest request, String portletId)
-		throws PortalException, SystemException {
+		throws SystemException {
 
 		return getPortletSetup(request, portletId, null);
 	}
@@ -426,7 +426,7 @@ public class PortletPreferencesFactoryImpl
 	public PortletPreferences getPortletSetup(
 			HttpServletRequest request, String portletId,
 			String defaultPreferences)
-		throws PortalException, SystemException {
+		throws SystemException {
 
 		PortletRequest portletRequest = (PortletRequest)request.getAttribute(
 			JavaConstants.JAVAX_PORTLET_REQUEST);
@@ -441,11 +441,8 @@ public class PortletPreferencesFactoryImpl
 		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
-		long scopeGroupId = PortalUtil.getScopeGroupId(
-			request, portletId, true);
-
 		return getPortletSetup(
-			scopeGroupId, themeDisplay.getLayout(), portletId,
+			themeDisplay.getScopeGroupId(), themeDisplay.getLayout(), portletId,
 			defaultPreferences);
 	}
 
@@ -471,7 +468,7 @@ public class PortletPreferencesFactoryImpl
 
 	@Override
 	public PortletPreferences getPortletSetup(PortletRequest portletRequest)
-		throws PortalException, SystemException {
+		throws SystemException {
 
 		String portletId = PortalUtil.getPortletId(portletRequest);
 
@@ -481,7 +478,7 @@ public class PortletPreferencesFactoryImpl
 	@Override
 	public PortletPreferences getPortletSetup(
 			PortletRequest portletRequest, String portletId)
-		throws PortalException, SystemException {
+		throws SystemException {
 
 		if (portletRequest instanceof ConfigurationPortletRequest) {
 			PortletRequestWrapper portletRequestWrapper =

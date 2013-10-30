@@ -777,9 +777,7 @@ public class JournalFolderLocalServiceImpl
 
 				JournalArticle article = (JournalArticle)object;
 
-				int oldStatus = article.getStatus();
-
-				if (oldStatus == WorkflowConstants.STATUS_IN_TRASH) {
+				if (article.getStatus() == WorkflowConstants.STATUS_IN_TRASH) {
 					continue;
 				}
 
@@ -814,7 +812,7 @@ public class JournalFolderLocalServiceImpl
 
 						trashVersionLocalService.addTrashVersion(
 							trashEntryId, JournalArticle.class.getName(),
-							article.getId(), status);
+							curArticle.getId(), status, null);
 					}
 
 					// Workflow
@@ -833,11 +831,9 @@ public class JournalFolderLocalServiceImpl
 
 				// Asset
 
-				if (oldStatus == WorkflowConstants.STATUS_APPROVED) {
-					assetEntryLocalService.updateVisible(
-						JournalArticle.class.getName(),
-						article.getResourcePrimKey(), false);
-				}
+				assetEntryLocalService.updateVisible(
+					JournalArticle.class.getName(),
+					article.getResourcePrimKey(), false);
 
 				// Indexer
 
@@ -867,7 +863,7 @@ public class JournalFolderLocalServiceImpl
 				if (oldStatus != WorkflowConstants.STATUS_APPROVED) {
 					trashVersionLocalService.addTrashVersion(
 						trashEntryId, JournalFolder.class.getName(),
-						folder.getFolderId(), oldStatus);
+						folder.getFolderId(), oldStatus, null);
 				}
 
 				// Folders and articles
@@ -935,7 +931,7 @@ public class JournalFolderLocalServiceImpl
 					trashVersion =
 						trashVersionLocalService.fetchVersion(
 							trashEntryId, JournalArticle.class.getName(),
-							article.getId());
+							curArticle.getId());
 
 					int curArticleOldStatus = WorkflowConstants.STATUS_APPROVED;
 

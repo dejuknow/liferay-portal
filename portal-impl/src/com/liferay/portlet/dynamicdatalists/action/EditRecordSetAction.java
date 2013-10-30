@@ -24,7 +24,6 @@ import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
 import com.liferay.portal.service.WorkflowDefinitionLinkLocalServiceUtil;
 import com.liferay.portal.struts.PortletAction;
-import com.liferay.portlet.PortletPreferencesFactoryUtil;
 import com.liferay.portlet.dynamicdatalists.NoSuchRecordSetException;
 import com.liferay.portlet.dynamicdatalists.RecordSetDDMStructureIdException;
 import com.liferay.portlet.dynamicdatalists.RecordSetNameException;
@@ -177,14 +176,10 @@ public class EditRecordSetAction extends PortletAction {
 			DDLRecordSet.class.getName(), recordSet.getRecordSetId(), 0,
 			workflowDefinition);
 
-		String portletResource = ParamUtil.getString(
-			actionRequest, "portletResource");
+		PortletPreferences portletPreferences = getStrictPortletSetup(
+			actionRequest);
 
-		if (Validator.isNotNull(portletResource)) {
-			PortletPreferences portletPreferences =
-				PortletPreferencesFactoryUtil.getPortletSetup(
-					actionRequest, portletResource);
-
+		if (portletPreferences != null) {
 			portletPreferences.reset("displayDDMTemplateId");
 			portletPreferences.reset("editable");
 			portletPreferences.reset("formDDMTemplateId");

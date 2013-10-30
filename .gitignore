@@ -18,6 +18,7 @@ cobertura.ser
 /*.iws
 /*.patch
 /*.sublime-*
+/.bnd
 /.checkstyle
 /.idea
 /.settings
@@ -27,6 +28,7 @@ cobertura.ser
 /ant.install.log
 /api
 /app.server.*.properties
+/baseline-reports
 /bin
 /build.*.properties
 /dist
@@ -183,7 +185,6 @@ cobertura.ser
 /sql/create
 /sql/create-bare
 /sql/create-sharded
-/sql/create-minimal
 /sql/indexes
 /sql/legacy
 /sql/log
@@ -197,7 +198,6 @@ cobertura.ser
 /sql/lportal*.properties
 /sql/lportal*.script
 /sql/portal
-/sql/portal-minimal
 /sql/portal-tables
 /sql/sequences
 /sql/sql.*.properties
@@ -205,11 +205,23 @@ cobertura.ser
 !/sql/update-*.sql
 /sql/velocity.log*
 
+/support-resin/*.iml
+/support-resin/*.ipr
+/support-resin/*.iws
+/support-resin/classes
+/support-resin/support-resin*.jar
+
 /support-tomcat/*.iml
 /support-tomcat/*.ipr
 /support-tomcat/*.iws
 /support-tomcat/classes
 /support-tomcat/support-tomcat*.jar
+
+/support-websphere/*.iml
+/support-websphere/*.ipr
+/support-websphere/*.iws
+/support-websphere/classes
+/support-websphere/support-websphere*.jar
 
 /test-coverage
 /test-results

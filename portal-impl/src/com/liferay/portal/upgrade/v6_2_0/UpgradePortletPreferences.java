@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 
 import java.sql.Connection;
@@ -68,7 +69,8 @@ public class UpgradePortletPreferences extends UpgradeProcess {
 			while (rs.next()) {
 				long portletPreferencesId = rs.getLong("portletPreferencesId");
 				String portletId = rs.getString("portletId");
-				String typeSettings = rs.getString("typeSettings");
+				String typeSettings = GetterUtil.getString(
+					rs.getString("typeSettings"));
 
 				if (typeSettings.contains(portletId)) {
 					continue;

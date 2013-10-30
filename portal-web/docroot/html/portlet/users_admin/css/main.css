@@ -92,6 +92,10 @@
 		}
 	}
 
+	.organization-details {
+		margin-left: 21px;
+	}
+
 	.organization-information {
 		overflow: hidden;
 	}
@@ -217,8 +221,6 @@
 	}
 
 	.lfr-permission-navigation-container {
-		width: 275px;
-
 		.search {
 			margin: 20px 0px;
 		}

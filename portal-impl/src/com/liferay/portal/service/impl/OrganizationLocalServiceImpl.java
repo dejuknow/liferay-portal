@@ -57,16 +57,19 @@ import com.liferay.portal.service.base.OrganizationLocalServiceBaseImpl;
 import com.liferay.portal.util.PropsUtil;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.util.comparator.OrganizationNameComparator;
+import com.liferay.util.dao.orm.CustomSQLUtil;
 
 import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -593,9 +596,7 @@ public class OrganizationLocalServiceImpl
 		while (iterator.hasNext()) {
 			Organization organization = iterator.next();
 
-			if ((organization.getCompanyId() != user.getCompanyId()) ||
-				(organization.getParentOrganization() == null)) {
-
+			if (organization.getCompanyId() != user.getCompanyId()) {
 				iterator.remove();
 			}
 		}
@@ -1005,48 +1006,55 @@ public class OrganizationLocalServiceImpl
 	public void rebuildTree(long companyId)
 		throws PortalException, SystemException {
 
-		List<Organization> organizations =
-			organizationPersistence.findByCompanyId(companyId);
+		Deque<Object[]> traces = new LinkedList<Object[]>();
 
-		for (Organization organization : organizations) {
-			organization.setTreePath(organization.buildTreePath());
+		traces.push(
+			new Object[] {
+				GetterUtil.getLong(
+					OrganizationConstants.DEFAULT_PARENT_ORGANIZATION_ID),
+				StringPool.SLASH, 0L
+			});
 
-			organizationPersistence.update(organization);
+		Object[] trace = null;
+
+		while ((trace = traces.poll()) != null) {
+			Long parentOrganizationId = (Long)trace[0];
+			String parentPath = (String)trace[1];
+			Long previousOrganizationId = (Long)trace[2];
+
+			List<Long> childOrganizationIds = organizationFinder.findByC_P(
+				companyId, parentOrganizationId, previousOrganizationId,
+				PropsValues.MODEL_TREE_REBUILD_QUERY_RESULTS_BATCH_SIZE);
+
+			if (childOrganizationIds.isEmpty()) {
+				continue;
+			}
+
+			if (childOrganizationIds.size() ==
+					PropsValues.MODEL_TREE_REBUILD_QUERY_RESULTS_BATCH_SIZE) {
+
+				trace[2] = childOrganizationIds.get(
+					childOrganizationIds.size() - 1);
+
+				traces.push(trace);
+			}
+
+			for (long childOrganizationId : childOrganizationIds) {
+				String path = parentPath.concat(
+					String.valueOf(childOrganizationId)).concat(
+						StringPool.SLASH);
+
+				Organization organization =
+					organizationPersistence.findByPrimaryKey(
+						childOrganizationId);
+
+				organization.setTreePath(path);
+
+				organizationPersistence.update(organization);
+
+				traces.push(new Object[] {childOrganizationId, path, 0L});
+			}
 		}
-	}
-
-	/**
-	 * Returns a range of all the organizations of the company.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end -
-	 * start</code> instances. <code>start</code> and <code>end</code> are not
-	 * primary keys, they are indexes in the result set. Thus, <code>0</code>
-	 * refers to the first result in the set. Setting both <code>start</code>
-	 * and <code>end</code> to {@link
-	 * com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full
-	 * result set.
-	 * </p>
-	 *
-	 * @param  companyId the primary key of the company
-	 * @param  params the finder parameters (optionally <code>null</code>). For
-	 *         more information see {@link
-	 *         com.liferay.portlet.usersadmin.util.OrganizationIndexer}
-	 * @param  start the lower bound of the range of organizations to return
-	 * @param  end the upper bound of the range of organizations to return (not
-	 *         inclusive)
-	 * @return the range of all the organizations of the company
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public List<Organization> search(
-			long companyId, LinkedHashMap<String, Object> params, int start,
-			int end)
-		throws SystemException {
-
-		return organizationFinder.findByCompanyId(
-			companyId, params, start, end,
-			new OrganizationNameComparator(true));
 	}
 
 	/**
@@ -1857,18 +1865,11 @@ public class OrganizationLocalServiceImpl
 	protected long[] getReindexOrganizationIds(Organization organization)
 		throws PortalException, SystemException {
 
-		List<Organization> organizationsTree = new ArrayList<Organization>();
-
-		organizationsTree.add(organization);
-
-		LinkedHashMap<String, Object> params =
-			new LinkedHashMap<String, Object>();
-
-		params.put("organizationsTree", organizationsTree);
-
-		List<Organization> organizations = search(
-			organization.getCompanyId(), params, QueryUtil.ALL_POS,
-			QueryUtil.ALL_POS);
+		List<Organization> organizations = organizationPersistence.findByC_T(
+			organization.getCompanyId(),
+			CustomSQLUtil.keywords(organization.getTreePath())[0],
+			QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+			new OrganizationNameComparator(true));
 
 		long[] organizationIds = new long[organizations.size()];
 

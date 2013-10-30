@@ -2118,6 +2118,7 @@ create table TrashVersion (
 	entryId LONG,
 	classNameId LONG,
 	classPK LONG,
+	typeSettings TEXT null,
 	status INTEGER
 );
 

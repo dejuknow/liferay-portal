@@ -21,7 +21,6 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.WebKeys;
-import com.liferay.portlet.journal.NoSuchArticleException;
 import com.liferay.portlet.journal.model.JournalArticle;
 import com.liferay.portlet.journal.model.JournalArticleDisplay;
 import com.liferay.portlet.journal.service.JournalArticleLocalServiceUtil;
@@ -55,11 +54,13 @@ public class ViewAction extends WebContentAction {
 		ThemeDisplay themeDisplay = (ThemeDisplay)renderRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
-		long groupId = ParamUtil.getLong(renderRequest, "groupId");
+		long articleGroupId = ParamUtil.getLong(
+			renderRequest, "articleGroupId");
 
-		if (groupId <= 0) {
-			groupId = GetterUtil.getLong(
-				portletPreferences.getValue("groupId", null));
+		if (articleGroupId <= 0) {
+			articleGroupId = GetterUtil.getLong(
+				portletPreferences.getValue(
+					"groupId", String.valueOf(themeDisplay.getScopeGroupId())));
 		}
 
 		String articleId = ParamUtil.getString(renderRequest, "articleId");
@@ -82,32 +83,29 @@ public class ViewAction extends WebContentAction {
 		JournalArticle article = null;
 		JournalArticleDisplay articleDisplay = null;
 
-		if ((groupId > 0) && Validator.isNotNull(articleId)) {
-			try {
-				article = JournalArticleLocalServiceUtil.getLatestArticle(
-					groupId, articleId, WorkflowConstants.STATUS_APPROVED);
-			}
-			catch (NoSuchArticleException nsae) {
-			}
+		if ((articleGroupId > 0) && Validator.isNotNull(articleId)) {
+			article = JournalArticleLocalServiceUtil.fetchLatestArticle(
+				articleGroupId, articleId, WorkflowConstants.STATUS_APPROVED);
 
 			try {
 				if (article == null) {
 					article = JournalArticleLocalServiceUtil.getLatestArticle(
-						groupId, articleId, WorkflowConstants.STATUS_ANY);
+						articleGroupId, articleId,
+						WorkflowConstants.STATUS_ANY);
 				}
 
 				double version = article.getVersion();
 
 				articleDisplay = JournalContentUtil.getDisplay(
-					groupId, articleId, version, ddmTemplateKey, viewMode,
-					languageId, themeDisplay, page, xmlRequest);
+					articleGroupId, articleId, version, ddmTemplateKey,
+					viewMode, languageId, themeDisplay, page, xmlRequest);
 			}
 			catch (Exception e) {
 				renderRequest.removeAttribute(WebKeys.JOURNAL_ARTICLE);
 
 				articleDisplay = JournalContentUtil.getDisplay(
-					groupId, articleId, ddmTemplateKey, viewMode, languageId,
-					themeDisplay, page, xmlRequest);
+					articleGroupId, articleId, ddmTemplateKey, viewMode,
+					languageId, themeDisplay, page, xmlRequest);
 			}
 		}
 

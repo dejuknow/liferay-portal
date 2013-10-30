@@ -14,13 +14,14 @@
 
 package com.liferay.osgi.bootstrap;
 
-import aQute.lib.osgi.Analyzer;
-import aQute.lib.osgi.Builder;
-import aQute.lib.osgi.Jar;
-import aQute.lib.osgi.Verifier;
-
-import aQute.libg.header.OSGiHeader;
-import aQute.libg.version.Version;
+import aQute.bnd.header.Attrs;
+import aQute.bnd.header.OSGiHeader;
+import aQute.bnd.header.Parameters;
+import aQute.bnd.osgi.Analyzer;
+import aQute.bnd.osgi.Builder;
+import aQute.bnd.osgi.Jar;
+import aQute.bnd.osgi.Verifier;
+import aQute.bnd.version.Version;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
@@ -50,6 +51,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
 
 import java.net.JarURLConnection;
 import java.net.URL;
@@ -177,10 +179,10 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 			String bundleSymbolicNameAttributeValue = attributes.getValue(
 				Constants.BUNDLE_SYMBOLICNAME);
 
-			Map<String, Map<String, String>> bundleSymbolicNameMap =
-				OSGiHeader.parseHeader(bundleSymbolicNameAttributeValue);
+			Parameters parameters = OSGiHeader.parseHeader(
+				bundleSymbolicNameAttributeValue);
 
-			Set<String> bundleSymbolicNameSet = bundleSymbolicNameMap.keySet();
+			Set<String> bundleSymbolicNameSet = parameters.keySet();
 
 			Iterator<String> bundleSymbolicNameIterator =
 				bundleSymbolicNameSet.iterator();
@@ -433,6 +435,12 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 		}
 
 		_framework.stop();
+
+		FrameworkEvent frameworkEvent = _framework.waitForStop(5000);
+
+		if (_log.isInfoEnabled()) {
+			_log.info(frameworkEvent);
+		}
 	}
 
 	@Override
@@ -524,6 +532,10 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 		properties.put(
 			Constants.FRAMEWORK_STORAGE,
 			PropsValues.MODULE_FRAMEWORK_STATE_DIR);
+
+		properties.put("eclipse.security", null);
+		properties.put("java.security.manager", null);
+		properties.put("org.osgi.framework.security", null);
 
 		ProtectionDomain protectionDomain = clazz.getProtectionDomain();
 
@@ -722,7 +734,22 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 
 		ClassLoader classLoader = ClassLoaderUtil.getPortalClassLoader();
 
+		PrintStream err = System.err;
+
 		try {
+			System.setErr(
+				new PrintStream(err) {
+
+					@Override
+					public void println(String string) {
+						if (_log.isDebugEnabled()) {
+							_log.debug(string);
+						}
+					}
+
+				}
+			);
+
 			Enumeration<URL> enu = classLoader.getResources(
 				"META-INF/MANIFEST.MF");
 
@@ -737,6 +764,9 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 		}
 		catch (IOException ioe) {
 			_log.error(ioe, ioe);
+		}
+		finally {
+			System.setErr(err);
 		}
 
 		_extraPackageMap = Collections.unmodifiableMap(_extraPackageMap);
@@ -779,10 +809,9 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 			return false;
 		}
 
-		Map<String, Map<String, String>> activationPolicyMap =
-			OSGiHeader.parseHeader(activationPolicy);
+		Parameters parameters = OSGiHeader.parseHeader(activationPolicy);
 
-		if (activationPolicyMap.containsKey(Constants.ACTIVATION_LAZY)) {
+		if (parameters.containsKey(Constants.ACTIVATION_LAZY)) {
 			return true;
 		}
 
@@ -936,12 +965,9 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 		String exportPackage = GetterUtil.getString(
 			attributes.getValue(Constants.EXPORT_PACKAGE));
 
-		Map<String, Map<String, String>> exportPackageMap =
-			OSGiHeader.parseHeader(exportPackage);
+		Parameters parameters = OSGiHeader.parseHeader(exportPackage);
 
-		for (Map.Entry<String, Map<String, String>> entry :
-				exportPackageMap.entrySet()) {
-
+		for (Map.Entry<String, Attrs> entry : parameters.entrySet()) {
 			String key = entry.getKey();
 
 			List<URL> urls = _extraPackageMap.get(key);
@@ -956,7 +982,7 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 
 			sb.append(key);
 
-			Map<String, String> value = entry.getValue();
+			Attrs value = entry.getValue();
 
 			if (value.containsKey("version")) {
 				sb.append(";version=\"");

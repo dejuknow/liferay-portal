@@ -100,8 +100,10 @@ public class OrganizationModelImpl extends BaseModelImpl<Organization>
 			true);
 	public static long COMPANYID_COLUMN_BITMASK = 1L;
 	public static long NAME_COLUMN_BITMASK = 2L;
-	public static long PARENTORGANIZATIONID_COLUMN_BITMASK = 4L;
-	public static long UUID_COLUMN_BITMASK = 8L;
+	public static long ORGANIZATIONID_COLUMN_BITMASK = 4L;
+	public static long PARENTORGANIZATIONID_COLUMN_BITMASK = 8L;
+	public static long TREEPATH_COLUMN_BITMASK = 16L;
+	public static long UUID_COLUMN_BITMASK = 32L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -363,7 +365,19 @@ public class OrganizationModelImpl extends BaseModelImpl<Organization>
 
 	@Override
 	public void setOrganizationId(long organizationId) {
+		_columnBitmask |= ORGANIZATIONID_COLUMN_BITMASK;
+
+		if (!_setOriginalOrganizationId) {
+			_setOriginalOrganizationId = true;
+
+			_originalOrganizationId = _organizationId;
+		}
+
 		_organizationId = organizationId;
+	}
+
+	public long getOriginalOrganizationId() {
+		return _originalOrganizationId;
 	}
 
 	@JSON
@@ -484,7 +498,17 @@ public class OrganizationModelImpl extends BaseModelImpl<Organization>
 
 	@Override
 	public void setTreePath(String treePath) {
+		_columnBitmask |= TREEPATH_COLUMN_BITMASK;
+
+		if (_originalTreePath == null) {
+			_originalTreePath = _treePath;
+		}
+
 		_treePath = treePath;
+	}
+
+	public String getOriginalTreePath() {
+		return GetterUtil.getString(_originalTreePath);
 	}
 
 	@JSON
@@ -699,6 +723,10 @@ public class OrganizationModelImpl extends BaseModelImpl<Organization>
 
 		organizationModelImpl._originalUuid = organizationModelImpl._uuid;
 
+		organizationModelImpl._originalOrganizationId = organizationModelImpl._organizationId;
+
+		organizationModelImpl._setOriginalOrganizationId = false;
+
 		organizationModelImpl._originalCompanyId = organizationModelImpl._companyId;
 
 		organizationModelImpl._setOriginalCompanyId = false;
@@ -706,6 +734,8 @@ public class OrganizationModelImpl extends BaseModelImpl<Organization>
 		organizationModelImpl._originalParentOrganizationId = organizationModelImpl._parentOrganizationId;
 
 		organizationModelImpl._setOriginalParentOrganizationId = false;
+
+		organizationModelImpl._originalTreePath = organizationModelImpl._treePath;
 
 		organizationModelImpl._originalName = organizationModelImpl._name;
 
@@ -927,6 +957,8 @@ public class OrganizationModelImpl extends BaseModelImpl<Organization>
 	private String _uuid;
 	private String _originalUuid;
 	private long _organizationId;
+	private long _originalOrganizationId;
+	private boolean _setOriginalOrganizationId;
 	private long _companyId;
 	private long _originalCompanyId;
 	private boolean _setOriginalCompanyId;
@@ -939,6 +971,7 @@ public class OrganizationModelImpl extends BaseModelImpl<Organization>
 	private long _originalParentOrganizationId;
 	private boolean _setOriginalParentOrganizationId;
 	private String _treePath;
+	private String _originalTreePath;
 	private String _name;
 	private String _originalName;
 	private String _type;

@@ -14,7 +14,9 @@
  */
 --%>
 
-<%@ include file="/html/taglib/ui/asset_tags_selector/init.jsp" %>
+<%@ include file="/html/taglib/init.jsp" %>
+
+<portlet:defineObjects />
 
 <%
 boolean autoFocus = GetterUtil.getBoolean((String)request.getAttribute("liferay-ui:asset-tags-selector:autoFocus"));
@@ -34,7 +36,7 @@ if (Validator.isNotNull(className) && (classPK > 0)) {
 
 String curTagsParam = request.getParameter(hiddenInput);
 
-if (curTagsParam != null) {
+if (Validator.isNotNull(curTagsParam)) {
 	curTags = curTagsParam;
 }
 %>
@@ -42,7 +44,7 @@ if (curTagsParam != null) {
 <div class="lfr-tags-selector-content" id="<%= namespace + id %>assetTagsSelector">
 	<aui:input name="<%= hiddenInput %>" type="hidden" />
 
-	<input class="lfr-tag-selector-input" id="<%= id %>assetTagNames" size="15" title="<liferay-ui:message key="add-tags" />" type="text" />
+	<input class="lfr-tag-selector-input" id="<%= id %>assetTagNames" maxlength="75" size="15" title="<liferay-ui:message key="add-tags" />" type="text" />
 </div>
 
 <aui:script use="liferay-asset-tags-selector">

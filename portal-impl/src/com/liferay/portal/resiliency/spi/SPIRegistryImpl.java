@@ -20,6 +20,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.resiliency.spi.SPI;
 import com.liferay.portal.kernel.resiliency.spi.SPIConfiguration;
 import com.liferay.portal.kernel.resiliency.spi.SPIRegistry;
+import com.liferay.portal.kernel.resiliency.spi.SPIRegistryValidator;
 import com.liferay.portal.model.Portlet;
 import com.liferay.portal.model.PortletApp;
 import com.liferay.portal.service.PortletLocalServiceUtil;
@@ -46,6 +47,11 @@ public class SPIRegistryImpl implements SPIRegistry {
 	}
 
 	@Override
+	public SPI getErrorSPI() {
+		return _errorSPI;
+	}
+
+	@Override
 	public Set<String> getExcludedPortletIds() {
 		return _excludedPortletIds;
 	}
@@ -56,12 +62,25 @@ public class SPIRegistryImpl implements SPIRegistry {
 			return null;
 		}
 
-		return _portletSPIs.get(portletId);
+		SPI spi = _portletSPIs.get(portletId);
+
+		if (_spiRegistryValidator != null) {
+			spi = _spiRegistryValidator.validatePortletSPI(portletId, spi);
+		}
+
+		return spi;
 	}
 
 	@Override
 	public SPI getServletContextSPI(String servletContextName) {
-		return _servletContextSPIs.get(servletContextName);
+		SPI spi = _servletContextSPIs.get(servletContextName);
+
+		if (_spiRegistryValidator != null) {
+			spi = _spiRegistryValidator.validateServletContextSPI(
+				servletContextName, spi);
+		}
+
+		return spi;
 	}
 
 	@Override
@@ -134,6 +153,17 @@ public class SPIRegistryImpl implements SPIRegistry {
 		_excludedPortletIds.remove(portletId);
 	}
 
+	public void setErrorSPI(SPI errorSPI) {
+		_errorSPI = errorSPI;
+	}
+
+	@Override
+	public void setSPIRegistryValidator(
+		SPIRegistryValidator spiRegistryValidator) {
+
+		_spiRegistryValidator = spiRegistryValidator;
+	}
+
 	@Override
 	public void unregisterSPI(SPI spi) {
 		_lock.lock();
@@ -162,6 +192,7 @@ public class SPIRegistryImpl implements SPIRegistry {
 
 	private static Log _log = LogFactoryUtil.getLog(SPIRegistryImpl.class);
 
+	private SPI _errorSPI;
 	private Set<String> _excludedPortletIds = new ConcurrentHashSet<String>();
 	private Lock _lock = new ReentrantLock();
 	private Map<SPI, String[]> _portletIds =
@@ -172,5 +203,6 @@ public class SPIRegistryImpl implements SPIRegistry {
 		new ConcurrentHashMap<SPI, String[]>();
 	private Map<String, SPI> _servletContextSPIs =
 		new ConcurrentHashMap<String, SPI>();
+	private SPIRegistryValidator _spiRegistryValidator;
 
 }

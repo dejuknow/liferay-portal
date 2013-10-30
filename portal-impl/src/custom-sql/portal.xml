@@ -33,10 +33,10 @@
 						ResourceBlockPermission resourceBlockPermission
 					WHERE
 						(resourceBlockPermission.roleId IN ([$ROLE_ID$]))
-				)
-				AND (resourceBlock.companyId = [$COMPANY_ID$])
-				AND (resourceBlock.groupId = [$GROUP_ID$])
-				AND (resourceBlock.name = '[$RESOURCE_BLOCK_NAME$]')
+				) AND
+				(resourceBlock.companyId = [$COMPANY_ID$]) AND
+				(resourceBlock.groupId = [$GROUP_ID$]) AND
+				(resourceBlock.name = '[$RESOURCE_BLOCK_NAME$]')
 		]]>
 	</sql>
 	<sql id="com.liferay.portal.security.permission.InlineSQLHelper.joinResourcePermission">
@@ -133,19 +133,24 @@
 	<sql id="com.liferay.portal.service.persistence.GroupFinder.countByLayouts">
 		<![CDATA[
 			SELECT
-				COUNT(DISTINCT Group_.groupId) AS COUNT_VALUE
+				COUNT(Group_.groupId) AS COUNT_VALUE
 			FROM
 				Group_
 			INNER JOIN
-				LayoutSet ON
-					LayoutSet.groupId = Group_.groupId
+				(
+					SELECT
+						DISTINCT groupId
+					FROM
+						LayoutSet
+					WHERE
+						LayoutSet.pageCount > 0
+				)
+				TEMP_TABLE ON
+					TEMP_TABLE.groupId = Group_.groupId
 			WHERE
 				(Group_.companyId = ?) AND
 				(Group_.parentGroupId = ?) AND
-				(Group_.site = ?) AND
-				(LayoutSet.pageCount > 0)
-			GROUP BY
-				Group_.groupId
+				(Group_.site = ?)
 		]]>
 	</sql>
 	<sql id="com.liferay.portal.service.persistence.GroupFinder.countByGroupId">
@@ -184,19 +189,24 @@
 	<sql id="com.liferay.portal.service.persistence.GroupFinder.findByLayouts">
 		<![CDATA[
 			SELECT
-				DISTINCT {Group_.*}
+				{Group_.*}
 			FROM
 				Group_
 			INNER JOIN
-				LayoutSet ON
-					LayoutSet.groupId = Group_.groupId
+				(
+					SELECT
+						DISTINCT groupId
+					FROM
+						LayoutSet
+					WHERE
+						LayoutSet.pageCount > 0
+				)
+				TEMP_TABLE ON
+					TEMP_TABLE.groupId = Group_.groupId
 			WHERE
 				(Group_.companyId = ?) AND
 				(Group_.parentGroupId = ?) AND
-				(Group_.site = ?) AND
-				(LayoutSet.pageCount > 0)
-			GROUP BY
-				Group_.groupId
+				(Group_.site = ?)
 		]]>
 	</sql>
 	<sql id="com.liferay.portal.service.persistence.GroupFinder.findByLiveGroups">
@@ -273,6 +283,20 @@
 				(Group_.classNameId = ?) AND
 				(Group_.liveGroupId = 0) AND
 				(Group_.type_ != 4)
+		]]>
+	</sql>
+	<sql id="com.liferay.portal.service.persistence.GroupFinder.findByC_P">
+		<![CDATA[
+			SELECT
+				groupId
+			FROM
+				Group_
+			WHERE
+				(groupId > ?) AND
+				(companyId = ?) AND
+				(parentGroupId = ?)
+			ORDER BY
+				groupId ASC
 		]]>
 	</sql>
 	<sql id="com.liferay.portal.service.persistence.GroupFinder.findByC_N">
@@ -643,19 +667,6 @@
 				))
 		]]>
 	</sql>
-	<sql id="com.liferay.portal.service.persistence.OrganizationFinder.findByCompanyId">
-		<![CDATA[
-			SELECT
-				DISTINCT Organization_.organizationId AS orgId, Organization_.name AS orgName
-			FROM
-				Organization_
-			[$JOIN$]
-			WHERE
-				[$WHERE$]
-				(Organization_.companyId = ?) AND
-				(Organization_.parentOrganizationId != -1)
-		]]>
-	</sql>
 	<sql id="com.liferay.portal.service.persistence.OrganizationFinder.findByGroupId">
 		<![CDATA[
 			SELECT
@@ -667,6 +678,20 @@
 					(Group_.classPK = Organization_.organizationId)
 			WHERE
 				(Group_.groupId = ?)
+		]]>
+	</sql>
+	<sql id="com.liferay.portal.service.persistence.OrganizationFinder.findByC_P">
+		<![CDATA[
+			SELECT
+				organizationId
+			FROM
+				Organization_
+			WHERE
+				(organizationId > ?) AND
+				(companyId = ?) AND
+				(parentOrganizationId = ?)
+			ORDER BY
+				organizationId ASC
 		]]>
 	</sql>
 	<sql id="com.liferay.portal.service.persistence.OrganizationFinder.findByC_PO_N_L_S_C_Z_R_C">

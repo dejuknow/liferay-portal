@@ -115,6 +115,11 @@
 							>
 
 								<%
+								TrashHandler curTrashHandler = TrashHandlerRegistryUtil.getTrashHandler(curTrashRenderer.getClassName());
+
+								int curContainerModelsCount = curTrashHandler.getTrashContainerModelsCount(curTrashRenderer.getClassPK());
+								int curBaseModelsCount = curTrashHandler.getTrashContainedModelsCount(curTrashRenderer.getClassPK());
+
 								PortletURL rowURL = renderResponse.createRenderURL();
 
 								rowURL.setParameter("struts_action", "/trash/view_content");
@@ -129,19 +134,20 @@
 									<liferay-ui:icon
 										label="<%= true %>"
 										message="<%= HtmlUtil.escape(curTrashRenderer.getTitle(locale)) %>"
+										method="get"
 										src="<%= curTrashRenderer.getIconPath(renderRequest) %>"
 										url="<%= rowURL.toString() %>"
 									/>
 								</liferay-ui:search-container-column-text>
 
 								<liferay-ui:search-container-column-text
-									name='<%= LanguageUtil.format(pageContext, "num-of-x", trashHandler.getTrashContainedModelName(), true) %>'
-									value="<%= String.valueOf(baseModelsCount) %>"
+									name='<%= LanguageUtil.format(pageContext, "num-of-x", curTrashHandler.getTrashContainedModelName(), true) %>'
+									value="<%= String.valueOf(curBaseModelsCount) %>"
 								/>
 
 								<liferay-ui:search-container-column-text
-									name='<%= LanguageUtil.format(pageContext, "num-of-x", trashHandler.getTrashContainerModelName(), true) %>'
-									value="<%= String.valueOf(containerModelsCount) %>"
+									name='<%= LanguageUtil.format(pageContext, "num-of-x", curTrashHandler.getTrashContainerModelName(), true) %>'
+									value="<%= String.valueOf(curContainerModelsCount) %>"
 								/>
 
 								<liferay-ui:search-container-column-jsp
@@ -187,6 +193,7 @@
 									<liferay-ui:icon
 										label="<%= true %>"
 										message="<%= HtmlUtil.escape(curTrashRenderer.getTitle(locale)) %>"
+										method="get"
 										src="<%= curTrashRenderer.getIconPath(renderRequest) %>"
 										url="<%= rowURL.toString() %>"
 									/>

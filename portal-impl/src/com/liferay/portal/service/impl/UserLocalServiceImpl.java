@@ -51,6 +51,9 @@ import com.liferay.portal.kernel.image.ImageToolUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.messaging.DestinationNames;
+import com.liferay.portal.kernel.messaging.Message;
+import com.liferay.portal.kernel.messaging.MessageBusUtil;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
@@ -982,8 +985,9 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 		workflowServiceContext.setAttribute("autoPassword", autoPassword);
 		workflowServiceContext.setAttribute("sendEmail", sendEmail);
 
-		startWorkflowInstance(
-			companyId, workflowUserId, userId, user, workflowServiceContext);
+		WorkflowHandlerRegistryUtil.startWorkflowInstance(
+			companyId, workflowUserId, User.class.getName(), userId, user,
+			workflowServiceContext);
 
 		if (serviceContext != null) {
 			String passwordUnencrypted = (String)serviceContext.getAttribute(
@@ -2189,6 +2193,24 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 		params.put("usersGroups", new Long(groupId));
 
 		return searchCount(group.getCompanyId(), null, status, params);
+	}
+
+	@Override
+	public List<User> getInheritedRoleUsers(
+			long roleId, int start, int end, OrderByComparator obc)
+		throws PortalException, SystemException {
+
+		Role role = rolePersistence.findByPrimaryKey(roleId);
+
+		LinkedHashMap<String, Object> params =
+			new LinkedHashMap<String, Object>();
+
+		params.put("inherit", Boolean.TRUE);
+		params.put("usersRoles", roleId);
+
+		return search(
+			role.getCompanyId(), null, WorkflowConstants.STATUS_APPROVED,
+			params, start, end, obc);
 	}
 
 	/**
@@ -3596,7 +3618,8 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 	 */
 	@Override
 	public void unsetGroupUsers(
-			long groupId, long[] userIds, ServiceContext serviceContext)
+			final long groupId, final long[] userIds,
+			ServiceContext serviceContext)
 		throws PortalException, SystemException {
 
 		userGroupRoleLocalService.deleteUserGroupRoles(
@@ -3611,6 +3634,25 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 		indexer.reindex(userIds);
 
 		PermissionCacheUtil.clearCache();
+
+		Callable<Void> callable = new Callable<Void>() {
+
+			@Override
+			public Void call() throws Exception {
+				Message message = new Message();
+
+				message.put("groupId", groupId);
+				message.put("userIds", userIds);
+
+				MessageBusUtil.sendMessage(
+					DestinationNames.SUBSCRIPTION_CLEAN_UP, message);
+
+				return null;
+			}
+
+		};
+
+		TransactionCommitCallbackRegistryUtil.registerCallback(callable);
 	}
 
 	/**
@@ -3622,13 +3664,14 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public void unsetOrganizationUsers(long organizationId, long[] userIds)
+	public void unsetOrganizationUsers(
+			long organizationId, final long[] userIds)
 		throws PortalException, SystemException {
 
 		Organization organization = organizationPersistence.findByPrimaryKey(
 			organizationId);
 
-		Group group = organization.getGroup();
+		final Group group = organization.getGroup();
 
 		userGroupRoleLocalService.deleteUserGroupRoles(
 			userIds, group.getGroupId(), RoleConstants.TYPE_ORGANIZATION);
@@ -3640,6 +3683,25 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 		indexer.reindex(userIds);
 
 		PermissionCacheUtil.clearCache();
+
+		Callable<Void> callable = new Callable<Void>() {
+
+			@Override
+			public Void call() throws Exception {
+				Message message = new Message();
+
+				message.put("groupId", group.getGroupId());
+				message.put("userIds", userIds);
+
+				MessageBusUtil.sendMessage(
+					DestinationNames.SUBSCRIPTION_CLEAN_UP, message);
+
+				return null;
+			}
+
+		};
+
+		TransactionCommitCallbackRegistryUtil.registerCallback(callable);
 	}
 
 	/**
@@ -5686,26 +5748,6 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 		user.setDigest(StringPool.BLANK);
 	}
 
-	protected void startWorkflowInstance(
-		final long companyId, final long workflowUserId, final long userId,
-		final User user, final ServiceContext workflowServiceContext) {
-
-		Callable<Void> callable = new ShardCallable<Void>(companyId) {
-
-			@Override
-			protected Void doCall() throws Exception {
-				WorkflowHandlerRegistryUtil.startWorkflowInstance(
-					companyId, workflowUserId, User.class.getName(), userId,
-					user, workflowServiceContext);
-
-				return null;
-			}
-
-		};
-
-		TransactionCommitCallbackRegistryUtil.registerCallback(callable);
-	}
-
 	protected void updateGroups(
 			long userId, long[] newGroupIds, ServiceContext serviceContext,
 			boolean indexingEnabled)
@@ -5826,9 +5868,7 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 			Organization organization =
 				organizationPersistence.findByPrimaryKey(organizationId);
 
-			Group organizationGroup = organization.getGroup();
-
-			organizationGroupIds[i] = organizationGroup.getGroupId();
+			organizationGroupIds[i] = organization.getGroupId();
 		}
 
 		validGroupIds = ArrayUtil.append(validGroupIds, organizationGroupIds);

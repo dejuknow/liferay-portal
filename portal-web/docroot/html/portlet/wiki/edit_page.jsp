@@ -439,7 +439,7 @@ if (Validator.isNull(redirect)) {
 
 					<aui:button name="previewButton" onClick='<%= renderResponse.getNamespace() + "previewPage();" %>' value="preview" />
 
-					<aui:button disabled="<%= pending %>" name="publishButton" onClick='<%= renderResponse.getNamespace() + "publishPage();" %>' value="<%= publishButtonLabel %>" />
+					<aui:button disabled="<%= pending %>" name="publishButton" onClick='<%= renderResponse.getNamespace() + "publishPage();" %>' primary="<%= true %>" value="<%= publishButtonLabel %>" />
 
 					<c:if test="<%= !newPage && WikiPagePermission.contains(permissionChecker, wikiPage, ActionKeys.DELETE) %>">
 						<c:choose>
@@ -501,12 +501,7 @@ if (Validator.isNull(redirect)) {
 	}
 
 	function <portlet:namespace />getSuggestionsContent() {
-		var content = '';
-
-		content += document.<portlet:namespace />fm.<portlet:namespace />title.value + ' ';
-		content += window.<portlet:namespace />editor.getHTML();
-
-		return content;
+		return document.<portlet:namespace />fm.<portlet:namespace />title.value + ' ' + window.<portlet:namespace />editor.getHTML();
 	}
 
 	function <portlet:namespace />moveToTrashPage() {

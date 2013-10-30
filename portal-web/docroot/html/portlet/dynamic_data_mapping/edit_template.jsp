@@ -18,6 +18,7 @@
 
 <%
 String redirect = ParamUtil.getString(request, "redirect");
+String closeRedirect = ParamUtil.getString(request, "closeRedirect");
 boolean showBackURL = ParamUtil.getBoolean(request, "showBackURL", true);
 
 String portletResource = ParamUtil.getString(request, "portletResource");
@@ -49,7 +50,9 @@ if (Validator.isNull(script)) {
 	TemplateHandler templateHandler = TemplateHandlerRegistryUtil.getTemplateHandler(classNameId);
 
 	if (templateHandler != null) {
-		script = ContentUtil.get(templateHandler.getTemplatesHelpPath(language));
+		Class<?> templateHandlerClass = templateHandler.getClass();
+
+		script = ContentUtil.get(templateHandlerClass.getClassLoader(), templateHandler.getTemplatesHelpPath(language));
 	}
 	else if ((structure != null) && Validator.equals(structure.getClassName(), JournalArticle.class.getName())) {
 		script = ContentUtil.get(PropsUtil.get(PropsKeys.JOURNAL_TEMPLATE_LANGUAGE_CONTENT, new Filter(language)));
@@ -79,6 +82,7 @@ if (Validator.isNotNull(structureAvailableFields)) {
 <aui:form action="<%= editTemplateURL %>" enctype="multipart/form-data" method="post" name="fm" onSubmit='<%= "event.preventDefault(); " + renderResponse.getNamespace() + "saveTemplate();" %>'>
 	<aui:input name="<%= Constants.CMD %>" type="hidden" value="<%= (template != null) ? Constants.UPDATE : Constants.ADD %>" />
 	<aui:input name="redirect" type="hidden" value="<%= redirect %>" />
+	<aui:input name="closeRedirect" type="hidden" value="<%= closeRedirect %>" />
 	<aui:input name="portletResource" type="hidden" value="<%= portletResource %>" />
 	<aui:input name="templateId" type="hidden" value="<%= templateId %>" />
 	<aui:input name="groupId" type="hidden" value="<%= groupId %>" />
@@ -140,7 +144,7 @@ if (Validator.isNotNull(structureAvailableFields)) {
 
 						<c:if test="<%= ((template == null) || (template.getClassPK() == 0)) %>">
 							<liferay-ui:icon
-								iconClass="icon-search"
+								iconCssClass="icon-search"
 								label="<%= true %>"
 								linkCssClass="btn"
 								message="select"

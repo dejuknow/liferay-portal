@@ -25,7 +25,7 @@
 </tr>
 <tr>
 	<td>SUCCESS_MESSAGE</td>
-	<td>//div[@class='alert alert-success']</td>
+	<td>//div[contains(@class,'alert') and contains(@class,'alert-success')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -50,8 +50,91 @@
 </tr>
 <!--CONTROL_PANEL_GENERAL_PERMISSIONS-->
 <tr>
+	<td>CONTROL_PANEL_GENERAL_PERMISSIONS_ADD_ORGANIZATION</td>
+	<td>//input[@value='90ADD_ORGANIZATION']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CONTROL_PANEL_GENERAL_PERMISSIONS_ADD_PAGE_TEMPLATE</td>
+	<td>//input[@value='90ADD_LAYOUT_PROTOTYPE']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CONTROL_PANEL_GENERAL_PERMISSIONS_ADD_ROLE</td>
+	<td>//input[@value='90ADD_ROLE']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CONTROL_PANEL_GENERAL_PERMISSIONS_ADD_SITE</td>
+	<td>//input[@value='90ADD_COMMUNITY']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CONTROL_PANEL_GENERAL_PERMISSIONS_ADD_SITE_TEMPLATE</td>
+	<td>//input[@value='90ADD_LAYOUT_SET_PROTOTYPE']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CONTROL_PANEL_GENERAL_PERMISSIONS_ADD_USER</td>
+	<td>//input[@value='90ADD_USER']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CONTROL_PANEL_GENERAL_PERMISSIONS_ADD_USER_GROUP</td>
+	<td>//input[@value='90ADD_USER_GROUP']</td>
+	<td></td>
+</tr>
+<tr>
 	<td>CONTROL_PANEL_GENERAL_PERMISSIONS_GO_TO_CONTROL_PANEL</td>
 	<td>//input[@value='90VIEW_CONTROL_PANEL']</td>
+	<td></td>
+</tr>
+<tr>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<!--CONTROL_PANEL_USERS_USERS_AND_ORGANIZATIONS-->
+<tr>
+	<td>CONTROL_PANEL_USERS_ROLES_ACCESS_IN_CONTROL_PANEL</td>
+	<td>//input[@value='128ACCESS_IN_CONTROL_PANEL']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CONTROL_PANEL_USERS_USERS_AND_ORGANIZATIONS_ACCESS_IN_CONTROL_PANEL</td>
+	<td>//input[@value='125ACCESS_IN_CONTROL_PANEL']</td>
+	<td></td>
+</tr>
+<tr>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<!--CONTROL_PANEL_USERS_USER_GROUPS-->
+<tr>
+	<td>CONTROL_PANEL_USERS_USER_GROUPS_ACCESS_IN_CONTROL_PANEL</td>
+	<td>//input[@value='127ACCESS_IN_CONTROL_PANEL']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CONTROL_PANEL_USERS_USER_GROUPS_USER_GROUP_VIEW</td>
+	<td>//input[@value='com.liferay.portal.model.UserGroupVIEW']</td>
+	<td></td>
+</tr>
+<tr>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<!--CONTROL_PANEL_USERS_ROLES-->
+<tr>
+	<td>CONTROL_PANEL_USERS_ROLES_ACCESS_IN_CONTROL_PANEL</td>
+	<td>//input[@value='128ACCESS_IN_CONTROL_PANEL']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CONTROL_PANEL_USERS_ROLES_ROLE_VIEW</td>
+	<td>//input[@value='com.liferay.portal.model.RoleVIEW']</td>
 	<td></td>
 </tr>
 <tr>
@@ -73,6 +156,11 @@
 <tr>
 	<td>CONTROL_PANEL_SITES_SITES_SITE_VIEW</td>
 	<td>//input[@value='com.liferay.portal.model.GroupVIEW']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CONTROL_PANEL_SITES_SITES_SITE_VIEW_STAGING</td>
+	<td>//input[@value='com.liferay.portal.model.GroupVIEW_STAGING']</td>
 	<td></td>
 </tr>
 <tr>
@@ -115,6 +203,37 @@
 <tr>
 	<td>SITE_ADMIN_CONTENT_WEB_CONTENT_GENERAL_ACCESS_IN_SITE_ADMINISTRATION</td>
 	<td>//input[@value='15ACCESS_IN_CONTROL_PANEL']</td>
+	<td></td>
+</tr>
+<tr>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<!--SITE_ADMIN_CONTENT_WEB_CONTENT_WEB_CONTENT-->
+<tr>
+	<td>SITE_ADMIN_CONTENT_WEB_CONTENT_WEB_CONTENT_ALL_CHECKBOX</td>
+	<td>xpath=(//input[@name='_128_allRowIds'])[2]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SITE_ADMIN_CONTENT_WEB_CONTENT_WEB_CONTENT_ADD_FOLDER</td>
+	<td>//input[@value='com.liferay.portlet.journalADD_FOLDER']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SITE_ADMIN_CONTENT_WEB_CONTENT_WEB_CONTENT_ADD_STRUCTURE</td>
+	<td>//input[@value='com.liferay.portlet.journalADD_STRUCTURE']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SITE_ADMIN_CONTENT_WEB_CONTENT_WEB_CONTENT_ADD_TEMPLATE</td>
+	<td>//input[@value='com.liferay.portlet.journalADD_TEMPLATE']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SITE_ADMIN_CONTENT_WEB_CONTENT_WEB_CONTENT_ADD_WEB_CONTENT</td>
+	<td>//input[@value='com.liferay.portlet.journalADD_ARTICLE']</td>
 	<td></td>
 </tr>
 <tr>

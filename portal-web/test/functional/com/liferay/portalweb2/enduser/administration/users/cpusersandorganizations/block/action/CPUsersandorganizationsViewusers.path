@@ -20,7 +20,7 @@
 </tr>
 <tr>
 	<td>SUCCESS_MESSAGE</td>
-	<td>//div[@class='alert alert-success']</td>
+	<td>//div[contains(@class,'alert') and contains(@class,'alert-success')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -40,7 +40,7 @@
 </tr>
 <tr>
 	<td>INFO_MESSAGE</td>
-	<td>//div[@class='alert alert-info']</td>
+	<td>//div[contains(@class,'alert') and contains(@class,'alert-info')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -122,28 +122,69 @@
 	<td></td>
 </tr>
 <tr>
-	<td>USER_TABLE_CHECKBOX_1</td>
-	<td>xpath=(//tr/td[1]/input[@name='_125_rowIds'])[1]</td>
+	<td>USER_TABLE_CHECKBOX</td>
+	<td>//tr[contains(.,'${key_userScreenName}')]/td[1]/input</td>
 	<td></td>
 </tr>
 <tr>
-	<td>USER_TABLE_FIRST_NAME_1</td>
-	<td>xpath=(//tr/td[2]/a)[1]</td>
+	<td>USER_TABLE_FIRST_NAME</td>
+	<td>//tr[contains(.,'${key_userScreenName}')]/td[2]/a</td>
 	<td></td>
 </tr>
 <tr>
-	<td>USER_TABLE_LAST_NAME_1</td>
-	<td>xpath=(//tr/td[3]/a)[1]</td>
+	<td>USER_TABLE_LAST_NAME</td>
+	<td>//tr[contains(.,'${key_userScreenName}')]/td[3]/a</td>
 	<td></td>
 </tr>
 <tr>
-	<td>USER_TABLE_SCREEN_NAME_1</td>
-	<td>xpath=(//tr/td[4]/a)[1]</td>
+	<td>USER_TABLE_SCREEN_NAME</td>
+	<td>//tr[contains(.,'${key_userScreenName}')]/td[4]/a</td>
 	<td></td>
 </tr>
 <tr>
-	<td>USER_TABLE_ACTIONS_1</td>
-	<td>xpath=(//tr/td[8]/div/a[@title='Actions'])[1]</td>
+	<td>USER_TABLE_ACTIONS</td>
+	<td>//tr[contains(.,'${key_userScreenName}')]/td[8]/div/a[@title='Actions']</td>
+	<td></td>
+</tr>
+<tr>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<!--USER_MENULIST-->
+<tr>
+	<td>USER_MENULIST_EDIT</td>
+	<td>//a[@role='menuitem' and contains(.,'Edit')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>USER_MENULIST_PERMISSIONS</td>
+	<td>//a[@role='menuitem' and contains(.,'Permissions')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>USER_MENULIST_MANAGE_PAGES</td>
+	<td>//a[@role='menuitem' and contains(.,'Manage Pages')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>USER_MENULIST_IMPERSONATE_USER</td>
+	<td>//a[@role='menuitem' and contains(.,'Impersonate User')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>USER_MENULIST_DEACTIVATE</td>
+	<td>//a[@role='menuitem' and contains(.,'Deactivate')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>USER_MENULIST_ACTIVATE</td>
+	<td>//a[@role='menuitem' and contains(.,'Activate')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>USER_MENULIST_DELETE</td>
+	<td>//a[@role='menuitem' and contains(.,'Delete')]</td>
 	<td></td>
 </tr>
 </tbody>

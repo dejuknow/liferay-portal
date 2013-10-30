@@ -245,7 +245,9 @@ public class ProcessExecutorTest {
 
 			ServerThread.exit(parentSocket);
 
-			_log.info("Waiting subprocess to exit...");
+			if (_log.isInfoEnabled()) {
+				_log.info("Waiting subprocess to exit...");
+			}
 
 			long startTime = System.currentTimeMillis();
 
@@ -253,9 +255,12 @@ public class ProcessExecutorTest {
 				Thread.sleep(10);
 
 				if (!ServerThread.isAlive(childSocket)) {
-					_log.info(
-						"Subprocess exited. Waited " +
-							(System.currentTimeMillis() - startTime) + " ms");
+					if (_log.isInfoEnabled()) {
+						_log.info(
+							"Subprocess exited. Waited " +
+								(System.currentTimeMillis() - startTime) +
+									" ms");
+					}
 
 					return;
 				}
@@ -911,6 +916,16 @@ public class ProcessExecutorTest {
 
 			_waitForSignalFile(signalFile, false);
 
+			Assert.assertTrue(signalFile.createNewFile());
+
+			thread.join();
+
+			Exception e = exceptionAtomicReference.get();
+
+			if (e != null) {
+				throw e;
+			}
+
 			String outByteArrayOutputStreamString =
 				outByteArrayOutputStream.toString();
 
@@ -922,15 +937,6 @@ public class ProcessExecutorTest {
 
 			Assert.assertTrue(
 				errByteArrayOutputStreamString.contains(logMessage));
-			Assert.assertTrue(signalFile.createNewFile());
-
-			thread.join();
-
-			Exception e = exceptionAtomicReference.get();
-
-			if (e != null) {
-				throw e;
-			}
 		}
 		finally {
 			System.setOut(oldOutPrintStream);

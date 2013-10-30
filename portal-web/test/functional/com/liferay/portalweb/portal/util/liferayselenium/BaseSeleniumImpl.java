@@ -82,6 +82,10 @@ public abstract class BaseSeleniumImpl
 	}
 
 	@Override
+	public void assertJavaScriptErrors() throws Exception {
+	}
+
+	@Override
 	public void assertLocation(String pattern) {
 		LiferaySeleniumHelper.assertLocation(this, pattern);
 	}
@@ -461,6 +465,11 @@ public abstract class BaseSeleniumImpl
 	public void selectAndWait(String selectLocator, String optionLocator) {
 		super.select(selectLocator, optionLocator);
 		super.waitForPageToLoad("30000");
+	}
+
+	@Override
+	public boolean sendActionLogger(String command, String[] params) {
+		return true;
 	}
 
 	@Override

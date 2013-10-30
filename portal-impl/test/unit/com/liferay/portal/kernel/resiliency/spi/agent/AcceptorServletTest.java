@@ -19,14 +19,19 @@ import com.liferay.portal.kernel.resiliency.spi.MockSPI;
 import com.liferay.portal.kernel.resiliency.spi.SPI;
 import com.liferay.portal.kernel.resiliency.spi.SPIUtil;
 import com.liferay.portal.kernel.test.CodeCoverageAssertor;
+import com.liferay.portal.kernel.test.JDKLoggerTestUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.util.PortalImpl;
 import com.liferay.portal.util.PortalUtil;
 
 import java.io.IOException;
 
+import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -59,7 +64,16 @@ public class AcceptorServletTest {
 	public void setUp() {
 		PortalUtil portalUtil = new PortalUtil();
 
-		portalUtil.setPortal(new PortalImpl());
+		portalUtil.setPortal(
+			new PortalImpl() {
+
+				@Override
+				public String getPathContext() {
+					return _pathContext;
+				}
+
+			}
+		);
 
 		ConcurrentMap<String, Object> attributes =
 			ProcessExecutor.ProcessContext.getAttributes();
@@ -145,7 +159,83 @@ public class AcceptorServletTest {
 		Assert.assertNull(_recordSPIAgent._exception);
 		Assert.assertTrue(_mockHttpSession.isInvalid());
 
+		_pathContext = "/liferay-portal";
+
+		mockServletContext.registerContext(_pathContext, mockServletContext);
+
+		acceptorServlet.service(
+			mockHttpServletRequest, mockHttpServletResponse);
+
+		Assert.assertEquals("/c/portal/resiliency", forwardPathReference.get());
+		Assert.assertSame(
+			mockHttpServletRequest, _recordSPIAgent._originalRequest1);
+		Assert.assertSame(
+			mockHttpServletRequest, _recordSPIAgent._originalRequest2);
+		Assert.assertSame(
+			mockHttpServletResponse, _recordSPIAgent._originalResponse);
+		Assert.assertNull(_recordSPIAgent._exception);
+		Assert.assertTrue(_mockHttpSession.isInvalid());
+
+		// IOException on prepare request
+
+		_recordSPIAgent.setIOExceptionOnPrepareRequest(true);
+
+		List<LogRecord> logRecords = JDKLoggerTestUtil.configureJDKLogger(
+			AcceptorServlet.class.getName(), Level.SEVERE);
+
+		try {
+			acceptorServlet.service(
+				mockHttpServletRequest, mockHttpServletResponse);
+
+			Assert.fail();
+		}
+		catch (IOException ioe) {
+			Assert.assertEquals(
+				"IOException on prepare request", ioe.getMessage());
+		}
+
+		Assert.assertEquals(1, logRecords.size());
+
+		LogRecord logRecord = logRecords.get(0);
+
+		Throwable throwable = logRecord.getThrown();
+
+		Assert.assertSame(IOException.class, throwable.getClass());
+		Assert.assertEquals(
+			"IOException on prepare request", throwable.getMessage());
+
+		// RuntimeException on prepare request
+
+		_recordSPIAgent.setIOExceptionOnPrepareRequest(false);
+		_recordSPIAgent.setRuntimeExceptionOnPrepareRequest(true);
+
+		logRecords = JDKLoggerTestUtil.configureJDKLogger(
+			AcceptorServlet.class.getName(), Level.SEVERE);
+
+		try {
+			acceptorServlet.service(
+				mockHttpServletRequest, mockHttpServletResponse);
+
+			Assert.fail();
+		}
+		catch (RuntimeException re) {
+			Assert.assertEquals(
+				"RuntimeException on prepare request", re.getMessage());
+		}
+
+		Assert.assertEquals(1, logRecords.size());
+
+		logRecord = logRecords.get(0);
+
+		throwable = logRecord.getThrown();
+
+		Assert.assertSame(RuntimeException.class, throwable.getClass());
+		Assert.assertEquals(
+			"RuntimeException on prepare request", throwable.getMessage());
+
 		// Unable to forward
+
+		_recordSPIAgent.setRuntimeExceptionOnPrepareRequest(false);
 
 		failOnForward.set(true);
 
@@ -164,6 +254,7 @@ public class AcceptorServletTest {
 	}
 
 	private MockHttpSession _mockHttpSession = new MockHttpSession();
+	private String _pathContext = StringPool.BLANK;
 	private RecordSPIAgent _recordSPIAgent = new RecordSPIAgent();
 
 	private class RecordSPIAgent extends MockSPIAgent {
@@ -173,7 +264,18 @@ public class AcceptorServletTest {
 		}
 
 		@Override
-		public HttpServletRequest prepareRequest(HttpServletRequest request) {
+		public HttpServletRequest prepareRequest(HttpServletRequest request)
+			throws IOException {
+
+			if (_ioExceptionOnPrepareRequest) {
+				throw new IOException("IOException on prepare request");
+			}
+
+			if (_runtimeExceptionOnPrepareRequest) {
+				throw new RuntimeException(
+					"RuntimeException on prepare request");
+			}
+
 			_originalRequest1 = request;
 
 			_preparedRequest = new MockHttpServletRequest();
@@ -195,6 +297,19 @@ public class AcceptorServletTest {
 			return _preparedResponse;
 		}
 
+		public void setIOExceptionOnPrepareRequest(
+			boolean ioExceptionOnPrepareRequest) {
+
+			_ioExceptionOnPrepareRequest = ioExceptionOnPrepareRequest;
+		}
+
+		public void setRuntimeExceptionOnPrepareRequest(
+			boolean runtimeExceptionOnPrepareRequest) {
+
+			_runtimeExceptionOnPrepareRequest =
+				runtimeExceptionOnPrepareRequest;
+		}
+
 		@Override
 		public void transferResponse(
 			HttpServletRequest request, HttpServletResponse response,
@@ -207,11 +322,13 @@ public class AcceptorServletTest {
 		}
 
 		private Exception _exception;
+		private boolean _ioExceptionOnPrepareRequest;
 		private HttpServletRequest _originalRequest1;
 		private HttpServletRequest _originalRequest2;
 		private HttpServletResponse _originalResponse;
 		private MockHttpServletRequest _preparedRequest;
 		private MockHttpServletResponse _preparedResponse;
+		private boolean _runtimeExceptionOnPrepareRequest;
 
 	}
 

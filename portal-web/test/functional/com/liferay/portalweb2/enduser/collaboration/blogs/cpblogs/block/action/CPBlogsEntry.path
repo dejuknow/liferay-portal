@@ -30,7 +30,7 @@
 </tr>
 <tr>
 	<td>ENTRY_DRAFT_STATUS</td>
-	<td>//div[@class='entry draft']/div/h3</td>
+	<td>//div[contains(@class,'entry') and contains(@class,'draft')]/div/h3</td>
 	<td></td>
 </tr>
 <tr>
@@ -51,6 +51,21 @@
 <tr>
 	<td>ENTRY_STATS_COMMENTS</td>
 	<td>//div[@class='stats']/span[@class='comments']/a</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ENTRY_VOCABULARY</td>
+	<td>//span[@class='taglib-asset-categories-summary' and contains(.,'${key_vocabularyName}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ENTRY_CATEGORY</td>
+	<td>//span[@class='entry-categories']/span/a[contains(.,'${key_categoryName}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ENTRY_TAG</td>
+	<td>//span[@class='entry-tags']/span/a[contains(.,'${key_tagName}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -193,22 +208,22 @@
 <!--COMMENTS-->
 <tr>
 	<td>COMMENTS_SUCCESS</td>
-	<td>//div[@class='lfr-message-response alert alert-success']</td>
+	<td>//div[contains(@class,'lfr-message-response alert alert-success')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>COMMENTS_NO_COMMENTS_YET</td>
-	<td>//fieldset[@class='fieldset add-comment']/div</td>
+	<td>//fieldset[contains(@class,'fieldset') and contains(@class,'add-comment')]/div</td>
 	<td></td>
 </tr>
 <tr>
 	<td>COMMENTS_BE_THE_FIRST</td>
-	<td>//fieldset[@class='fieldset add-comment']/div/a[contains(.,'Be the first')]</td>
+	<td>//fieldset[contains(@class,'fieldset') and contains(@class,'add-comment')]/div/a[contains(.,'Be the first')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>COMMENTS_ADD_COMMENT</td>
-	<td>//fieldset[@class='fieldset add-comment']/div/span/a[contains(.,'Add Comment')]</td>
+	<td>//fieldset[contains(@class,'fieldset') and contains(@class,'add-comment')]/div/span/a[contains(.,'Add Comment')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -270,7 +285,7 @@
 <!--COMMENT_EDIT_COMMENT-->
 <tr>
 	<td>COMMENT_EDIT_SUCCESS</td>
-	<td>//div[@class='lfr-message-response alert alert-success']</td>
+	<td>//div[contains(@id,'_discussion-status-messages')]</td>
 	<td></td>
 </tr>
 <tr>

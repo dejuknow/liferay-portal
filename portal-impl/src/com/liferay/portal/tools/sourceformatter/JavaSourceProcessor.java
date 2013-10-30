@@ -126,10 +126,7 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 			String content, String packageDir, String className)
 		throws IOException {
 
-		Pattern pattern = Pattern.compile(
-			"(^[ \t]*import\\s+.*;\n+)+", Pattern.MULTILINE);
-
-		Matcher matcher = pattern.matcher(content);
+		Matcher matcher = _importsPattern.matcher(content);
 
 		if (!matcher.find()) {
 			return content;
@@ -402,6 +399,51 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 		return ifClause;
 	}
 
+	protected void checkLogLevel(
+		String content, String fileName, String logLevel) {
+
+		if (fileName.contains("Log")) {
+			return;
+		}
+
+		Pattern pattern = Pattern.compile("\n(\t+)_log." + logLevel + "\\(");
+
+		Matcher matcher = pattern.matcher(content);
+
+		while (matcher.find()) {
+			int pos = matcher.start();
+
+			while (true) {
+				pos = content.lastIndexOf(
+					StringPool.NEW_LINE + StringPool.TAB, pos - 1);
+
+				char c = content.charAt(pos + 2);
+
+				if (c != CharPool.TAB) {
+					break;
+				}
+			}
+
+			String codeBlock = content.substring(pos, matcher.start());
+			String s =
+				"_log.is" + StringUtil.upperCaseFirstLetter(logLevel) +
+					"Enabled()";
+
+			if (!codeBlock.contains(s)) {
+				int lineCount = StringUtil.count(
+					content.substring(0, matcher.start(1)),
+					StringPool.NEW_LINE);
+
+				lineCount += 1;
+
+				processErrorMessage(
+					fileName, "Use " + s + ": " + fileName + " " + lineCount);
+			}
+		}
+
+		return;
+	}
+
 	protected void checkTestAnnotations(JavaTerm javaTerm, String fileName) {
 		int methodType = javaTerm.getType();
 
@@ -432,11 +474,8 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 		List<String> importedExceptionClassNames = null;
 		JavaDocBuilder javaDocBuilder = null;
 
-		Pattern catchExceptionPattern = Pattern.compile(
-			"\n(\t+)catch \\((.+Exception) (.+)\\) \\{\n");
-
 		for (int lineCount = 1;;) {
-			Matcher catchExceptionMatcher = catchExceptionPattern.matcher(
+			Matcher catchExceptionMatcher = _catchExceptionPattern.matcher(
 				content);
 
 			if (!catchExceptionMatcher.find()) {
@@ -597,6 +636,9 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 				newLine, StringPool.TAB, StringPool.TAB + whiteSpace);
 		}
 
+		newLine = StringUtil.replaceLast(
+			newLine, StringPool.FOUR_SPACES, StringPool.TAB);
+
 		return StringUtil.replace(ifClause, line, newLine);
 	}
 
@@ -607,9 +649,7 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 			return content;
 		}
 
-		Pattern pattern = Pattern.compile("\n\n(\t+)}\n");
-
-		Matcher matcher = pattern.matcher(content);
+		Matcher matcher = _incorrectCloseCurlyBracePattern.matcher(content);
 
 		while (matcher.find()) {
 			String tabs = matcher.group(1);
@@ -792,7 +832,7 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 
 	@Override
 	protected String format(String fileName) throws Exception {
-		if (fileName.endsWith("SourceProcessor.java")) {
+		if (fileName.contains("SourceProcessor")) {
 			return null;
 		}
 
@@ -811,7 +851,9 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 
 		String className = file.getName();
 
-		className = className.substring(0, className.length() - 5);
+		int pos = className.lastIndexOf(StringPool.PERIOD);
+
+		className = className.substring(0, pos);
 
 		String packagePath = fileName;
 
@@ -891,11 +933,8 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 				"while (", "List<", ") {\n", "] {\n"
 			});
 
-		Pattern pattern = Pattern.compile(
-			"\t(catch |else |finally |for |if |try |while ).*\\{\n\n\t+\\w");
-
 		while (true) {
-			Matcher matcher = pattern.matcher(newContent);
+			Matcher matcher = _incorrectLineBreakPattern.matcher(newContent);
 
 			if (!matcher.find()) {
 				break;
@@ -906,10 +945,7 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 				matcher.start());
 		}
 
-		pattern = Pattern.compile(
-			"Log _log = LogFactoryUtil.getLog\\(\n*\t*(.+)\\.class\\)");
-
-		Matcher matcher = pattern.matcher(newContent);
+		Matcher matcher = _logPattern.matcher(newContent);
 
 		if (matcher.find()) {
 			String logClassName = matcher.group(1);
@@ -975,6 +1011,10 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 				fileName, "edu.emory.mathcs.backport.java: " + fileName);
 		}
 
+		if (newContent.contains("import jodd.util.StringPool")) {
+			processErrorMessage(fileName, "jodd.util.StringPool: " + fileName);
+		}
+
 		// LPS-28266
 
 		for (int pos1 = -1;;) {
@@ -1038,6 +1078,13 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 				"Use SecureRandomUtil instead of java.security.SecureRandom: " +
 					fileName);
 		}
+
+		// LPS-41315
+
+		checkLogLevel(newContent, fileName, "debug");
+		checkLogLevel(newContent, fileName, "info");
+		checkLogLevel(newContent, fileName, "trace");
+		checkLogLevel(newContent, fileName, "warn");
 
 		String oldContent = newContent;
 
@@ -1246,7 +1293,9 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 					String newIfClause = checkIfClause(
 						ifClause, fileName, lineCount);
 
-					if (!ifClause.equals(newIfClause)) {
+					if (!ifClause.equals(newIfClause) &&
+						content.contains(ifClause)) {
+
 						return StringUtil.replace(
 							content, ifClause, newIfClause);
 					}
@@ -1647,12 +1696,16 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 							}
 						}
 
-						if (trimmedLine.startsWith("throws ") &&
-							(lineLeadingTabCount ==
-								previousLineLeadingTabCount)) {
+						if (trimmedLine.startsWith("throws ")) {
+							int diff =
+								lineLeadingTabCount -
+									previousLineLeadingTabCount;
 
-							processErrorMessage(
-								fileName, "tab: " + fileName + " " + lineCount);
+							if ((diff == 0) || (diff > 1)) {
+								processErrorMessage(
+									fileName,
+									"tab: " + fileName + " " + lineCount);
+							}
 						}
 
 						if ((previousLine.contains(" class " ) ||
@@ -1759,6 +1812,7 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 									 StringPool.CLOSE_PARENTHESIS) &&
 								 !trimmedLine.startsWith(
 									 StringPool.DOUBLE_SLASH) &&
+								 !trimmedLine.equals("*/") &&
 								 !trimmedLine.startsWith("catch ") &&
 								 !trimmedLine.startsWith("else ") &&
 								 !trimmedLine.startsWith("finally ") &&
@@ -2663,9 +2717,20 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 		return content;
 	}
 
+	private static Pattern _importsPattern = Pattern.compile(
+		"(^[ \t]*import\\s+.*;\n+)+", Pattern.MULTILINE);
+
+	private Pattern _catchExceptionPattern = Pattern.compile(
+		"\n(\t+)catch \\((.+Exception) (.+)\\) \\{\n");
 	private boolean _checkUnprocessedExceptions;
+	private Pattern _incorrectCloseCurlyBracePattern = Pattern.compile(
+		"\n\n(\t+)}\n");
+	private Pattern _incorrectLineBreakPattern = Pattern.compile(
+		"\t(catch |else |finally |for |if |try |while ).*\\{\n\n\t+\\w");
 	private Properties _javaTermSortExclusions;
 	private Properties _lineLengthExclusions;
+	private Pattern _logPattern = Pattern.compile(
+		"Log _log = LogFactoryUtil.getLog\\(\n*\t*(.+)\\.class\\)");
 	private Properties _staticLogVariableExclusions;
 	private Properties _upgradeServiceUtilExclusions;
 

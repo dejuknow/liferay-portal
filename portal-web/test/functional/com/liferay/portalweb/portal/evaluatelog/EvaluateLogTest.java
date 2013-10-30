@@ -171,6 +171,26 @@ public class EvaluateLogTest extends BaseTestCase {
 				continue;
 			}
 
+			// LPS-41257
+
+			if (line.matches(
+					".*The web application \\[\\] created a ThreadLocal with " +
+						"key of type.*")) {
+
+				if (line.contains("[de.schlichtherle")) {
+					continue;
+				}
+			}
+
+			// LPS-41863
+
+			if (line.contains(
+					"[org.hibernate.engine.jdbc.JdbcSupportLoader] (MSC " +
+						"service thread 1-15) Disabling contextual LOB ")) {
+
+				continue;
+			}
+
 			System.out.println("\nException Line:\n\n" + line + "\n");
 
 			return false;

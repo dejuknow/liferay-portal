@@ -52,7 +52,7 @@ public class SeleniumBuilderContext {
 		directoryScanner.setIncludes(
 			new String[] {
 				"**\\*.action", "**\\*.function", "**\\*.macro", "**\\*.path",
-				"**\\*.testcase", "**\\*.testsuite"
+				"**\\*.testcase"
 			});
 
 		directoryScanner.scan();
@@ -72,10 +72,7 @@ public class SeleniumBuilderContext {
 			String content = _seleniumBuilderFileUtil.getNormalizedContent(
 				seleniumFileName);
 
-			Pattern pattern = Pattern.compile(
-				"public [a-z]* [A-Za-z0-9_]*\\(.*?\\)");
-
-			Matcher matcher = pattern.matcher(content);
+			Matcher matcher = _pattern.matcher(content);
 
 			while (matcher.find()) {
 				String methodSignature = matcher.group();
@@ -240,35 +237,6 @@ public class SeleniumBuilderContext {
 
 			_testCaseSimpleClassNames.put(
 				testCaseName, _getSimpleClassName(fileName));
-		}
-		else if (fileName.endsWith(".testsuite")) {
-			String testSuiteName = _getName(fileName);
-
-			_testSuiteClassNames.put(testSuiteName, _getClassName(fileName));
-
-			_testSuiteFileNames.put(testSuiteName, fileName);
-
-			_testSuiteHTMLFileNames.put(
-				testSuiteName, _getHTMLFileName(fileName));
-
-			_testSuiteJavaFileNames.put(
-				testSuiteName, _getJavaFileName(fileName));
-
-			if (_testSuiteNames.contains(testSuiteName)) {
-				_seleniumBuilderFileUtil.throwValidationException(
-					1008, fileName, testSuiteName);
-			}
-
-			_testSuiteNames.add(testSuiteName);
-
-			_testSuitePackageNames.put(
-				testSuiteName, _getPackageName(fileName));
-
-			_testSuiteRootElements.put(
-				testSuiteName, _getRootElement(fileName));
-
-			_testSuiteSimpleClassNames.put(
-				testSuiteName, _getSimpleClassName(fileName));
 		}
 		else {
 			throw new IllegalArgumentException("Invalid file " + fileName);
@@ -508,38 +476,6 @@ public class SeleniumBuilderContext {
 		return _testCaseSimpleClassNames.get(testCaseName);
 	}
 
-	public String getTestSuiteClassName(String testSuiteName) {
-		return _testSuiteClassNames.get(testSuiteName);
-	}
-
-	public String getTestSuiteFileName(String testSuiteName) {
-		return _testSuiteFileNames.get(testSuiteName);
-	}
-
-	public String getTestSuiteHTMLFileName(String testSuiteName) {
-		return _testSuiteHTMLFileNames.get(testSuiteName);
-	}
-
-	public String getTestSuiteJavaFileName(String testSuiteName) {
-		return _testSuiteJavaFileNames.get(testSuiteName);
-	}
-
-	public Set<String> getTestSuiteNames() {
-		return _testSuiteNames;
-	}
-
-	public String getTestSuitePackageName(String testSuiteName) {
-		return _testSuitePackageNames.get(testSuiteName);
-	}
-
-	public Element getTestSuiteRootElement(String testSuiteName) {
-		return _testSuiteRootElements.get(testSuiteName);
-	}
-
-	public String getTestSuiteSimpleClassName(String testCaseName) {
-		return _testSuiteSimpleClassNames.get(testCaseName);
-	}
-
 	public void validateActionElements(String actionName) {
 		String actionFileName = getActionFileName(actionName);
 
@@ -606,9 +542,6 @@ public class SeleniumBuilderContext {
 		}
 		else if (fileName.endsWith(".testcase")) {
 			validateTestCaseElements(name);
-		}
-		else if (fileName.endsWith(".testsuite")) {
-			validateTestSuiteElements(name);
 		}
 	}
 
@@ -758,34 +691,6 @@ public class SeleniumBuilderContext {
 			}
 			else if (macro != null) {
 				_validateMacroElement(testCaseFileName, executeElement);
-			}
-		}
-	}
-
-	public void validateTestSuiteElements(String testSuiteName) {
-		Element rootElement = getTestSuiteRootElement(testSuiteName);
-
-		List<Element> executeElements =
-			_seleniumBuilderFileUtil.getAllChildElements(
-				rootElement, "execute");
-
-		String testSuiteFileName = getTestSuiteFileName(testSuiteName);
-
-		for (Element executeElement : executeElements) {
-			String testCase = executeElement.attributeValue("test-case");
-			String testCaseCommand = executeElement.attributeValue(
-				"test-case-command");
-			String testSuite = executeElement.attributeValue("test-suite");
-
-			if (testCase != null) {
-				_validateTestCaseElement(testSuiteFileName, executeElement);
-			}
-			else if (testCaseCommand != null) {
-				_validateTestCaseCommandElement(
-					testSuiteFileName, executeElement);
-			}
-			else if (testSuite != null) {
-				_validateTestSuiteElement(testSuiteFileName, executeElement);
 			}
 		}
 	}
@@ -954,34 +859,6 @@ public class SeleniumBuilderContext {
 	private boolean _isSeleniumCommand(String command) {
 		if (_seleniumParameterCounts.containsKey(command)) {
 			return true;
-		}
-
-		return false;
-	}
-
-	private boolean _isTestCaseCommand(
-		String testCaseName, String testCaseCommand) {
-
-		Set<String> commands = _testCaseCommandNames.get(testCaseName);
-
-		return commands.contains(testCaseCommand);
-	}
-
-	private boolean _isTestCaseName(String name) {
-		for (String testCaseName : _testCaseNames) {
-			if (testCaseName.equals(name)) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	private boolean _isTestSuiteName(String name) {
-		for (String testSuiteName : _testSuiteNames) {
-			if (testSuiteName.equals(name)) {
-				return true;
-			}
 		}
 
 		return false;
@@ -1156,46 +1033,8 @@ public class SeleniumBuilderContext {
 		}
 	}
 
-	private void _validateTestCaseCommandElement(
-		String fileName, Element element) {
-
-		String testCaseCommand = element.attributeValue("test-case-command");
-
-		int x = testCaseCommand.lastIndexOf("#");
-
-		String testCaseName = testCaseCommand.substring(0, x);
-
-		if (!_isTestCaseName(testCaseName)) {
-			_seleniumBuilderFileUtil.throwValidationException(
-				1016, fileName, element, "test-case-command", testCaseName);
-		}
-
-		String testCaseCommandName = testCaseCommand.substring(x + 1);
-
-		if (!_isTestCaseCommand(testCaseName, testCaseCommandName)) {
-			_seleniumBuilderFileUtil.throwValidationException(
-				1016, fileName, element, "test-case-command",
-				testCaseCommandName);
-		}
-	}
-
-	private void _validateTestCaseElement(String fileName, Element element) {
-		String testCase = element.attributeValue("test-case");
-
-		if (!_isTestCaseName(testCase)) {
-			_seleniumBuilderFileUtil.throwValidationException(
-				1011, fileName, element, "test-case", testCase);
-		}
-	}
-
-	private void _validateTestSuiteElement(String fileName, Element element) {
-		String testSuite = element.attributeValue("test-suite");
-
-		if (!_isTestSuiteName(testSuite)) {
-			_seleniumBuilderFileUtil.throwValidationException(
-				1011, fileName, element, "test-suite", testSuite);
-		}
-	}
+	private static Pattern _pattern = Pattern.compile(
+		"public [a-z]* [A-Za-z0-9_]*\\(.*?\\)");
 
 	private Map<String, String> _actionClassNames =
 		new HashMap<String, String>();
@@ -1270,21 +1109,6 @@ public class SeleniumBuilderContext {
 	private Map<String, Element> _testCaseRootElements =
 		new HashMap<String, Element>();
 	private Map<String, String> _testCaseSimpleClassNames =
-		new HashMap<String, String>();
-	private Map<String, String> _testSuiteClassNames =
-		new HashMap<String, String>();
-	private Map<String, String> _testSuiteFileNames =
-		new HashMap<String, String>();
-	private Map<String, String> _testSuiteHTMLFileNames =
-		new HashMap<String, String>();
-	private Map<String, String> _testSuiteJavaFileNames =
-		new HashMap<String, String>();
-	private Set<String> _testSuiteNames = new HashSet<String>();
-	private Map<String, String> _testSuitePackageNames =
-		new HashMap<String, String>();
-	private Map<String, Element> _testSuiteRootElements =
-		new HashMap<String, Element>();
-	private Map<String, String> _testSuiteSimpleClassNames =
 		new HashMap<String, String>();
 
 }

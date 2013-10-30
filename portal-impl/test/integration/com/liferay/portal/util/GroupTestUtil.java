@@ -31,6 +31,7 @@ import com.liferay.portal.service.GroupLocalServiceUtil;
 import com.liferay.portal.service.GroupServiceUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceTestUtil;
+import com.liferay.portal.service.StagingLocalServiceUtil;
 
 import java.util.Locale;
 import java.util.Map;
@@ -65,18 +66,12 @@ public class GroupTestUtil {
 			null);
 	}
 
-	public static Group addGroup(long parentGroupId, String name)
-		throws Exception {
-
-		return addGroup(parentGroupId, name, "This is a test group.");
-	}
-
 	public static Group addGroup(
-			long parentGroupId, String name, String description)
+			long companyId, long userId, long parentGroupId, String name,
+			String description)
 		throws Exception {
 
-		Group group = GroupLocalServiceUtil.fetchGroup(
-			TestPropsValues.getCompanyId(), name);
+		Group group = GroupLocalServiceUtil.fetchGroup(companyId, name);
 
 		if (group != null) {
 			return group;
@@ -92,10 +87,25 @@ public class GroupTestUtil {
 			GroupConstants.DEFAULT_MEMBERSHIP_RESTRICTION;
 
 		return GroupLocalServiceUtil.addGroup(
-			TestPropsValues.getUserId(), parentGroupId, null, 0,
+			userId, parentGroupId, null, 0,
 			GroupConstants.DEFAULT_LIVE_GROUP_ID, name, description, type,
 			manualMembership, membershipRestriction, friendlyURL, site, active,
 			ServiceTestUtil.getServiceContext());
+	}
+
+	public static Group addGroup(long parentGroupId, String name)
+		throws Exception {
+
+		return addGroup(parentGroupId, name, "This is a test group.");
+	}
+
+	public static Group addGroup(
+			long parentGroupId, String name, String description)
+		throws Exception {
+
+		return addGroup(
+			TestPropsValues.getCompanyId(), TestPropsValues.getUserId(),
+			parentGroupId, name, description);
 	}
 
 	public static Group addGroup(String name) throws Exception {
@@ -154,9 +164,8 @@ public class GroupTestUtil {
 				parameterName, parameters.get(parameterName)[0]);
 		}
 
-		StagingUtil.enableLocalStaging(
-			TestPropsValues.getUserId(), group, group, false, false,
-			serviceContext);
+		StagingLocalServiceUtil.enableLocalStaging(
+			TestPropsValues.getUserId(), group, false, false, serviceContext);
 	}
 
 	public static Group updateDisplaySettings(

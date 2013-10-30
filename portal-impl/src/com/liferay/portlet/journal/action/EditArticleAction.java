@@ -41,7 +41,6 @@ import com.liferay.portal.struts.PortletAction;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.WebKeys;
-import com.liferay.portlet.PortletPreferencesFactoryUtil;
 import com.liferay.portlet.PortletURLFactoryUtil;
 import com.liferay.portlet.PortletURLImpl;
 import com.liferay.portlet.asset.AssetCategoryException;
@@ -600,24 +599,10 @@ public class EditArticleAction extends PortletAction {
 		DDMStructure ddmStructure = null;
 
 		if (Validator.isNotNull(structureId)) {
-			try {
-				ddmStructure =
-					DDMStructureLocalServiceUtil.getStructure(
-						PortalUtil.getSiteGroupId(groupId),
-						PortalUtil.getClassNameId(JournalArticle.class),
-						structureId);
-			}
-			catch (NoSuchStructureException nsse) {
-				ThemeDisplay themeDisplay =
-					(ThemeDisplay)actionRequest.getAttribute(
-						WebKeys.THEME_DISPLAY);
-
-				ddmStructure =
-					DDMStructureLocalServiceUtil.getStructure(
-						themeDisplay.getCompanyGroupId(),
-						PortalUtil.getClassNameId(JournalArticle.class),
-						structureId);
-			}
+			ddmStructure = DDMStructureLocalServiceUtil.getStructure(
+				PortalUtil.getSiteGroupId(groupId),
+				PortalUtil.getClassNameId(JournalArticle.class), structureId,
+				true);
 
 			String languageId = toLanguageId;
 
@@ -855,19 +840,18 @@ public class EditArticleAction extends PortletAction {
 
 		// Journal content
 
-		String portletResource = ParamUtil.getString(
-			uploadPortletRequest, "portletResource");
+		PortletPreferences portletPreferences = getStrictPortletSetup(
+			actionRequest);
 
-		if (Validator.isNotNull(portletResource)) {
-			PortletPreferences portletPreferences =
-				PortletPreferencesFactoryUtil.getPortletSetup(
-					uploadPortletRequest, portletResource);
-
+		if (portletPreferences != null) {
 			portletPreferences.setValue(
 				"groupId", String.valueOf(article.getGroupId()));
 			portletPreferences.setValue("articleId", article.getArticleId());
 
 			portletPreferences.store();
+
+			String portletResource = ParamUtil.getString(
+				actionRequest, "portletResource");
 
 			updateContentSearch(
 				actionRequest, portletResource, article.getArticleId());

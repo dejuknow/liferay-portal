@@ -15,6 +15,7 @@
 package com.liferay.portal.kernel.lar;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.model.StagedModel;
 
 /**
  * @author Raymond Augé
@@ -29,9 +30,17 @@ public class PortletDataException extends PortalException {
 
 	public static final int FUTURE_START_DATE = 3;
 
-	public static final int START_DATE_AFTER_END_DATE = 4;
+	public static final int INVALID_GROUP = 4;
 
-	public static final int START_DATE_IS_MISSING_END_DATE = 5;
+	public static final int MISSING_DEPENDENCY = 5;
+
+	public static final int START_DATE_AFTER_END_DATE = 6;
+
+	public static final int START_DATE_IS_MISSING_END_DATE = 7;
+
+	public static final int STATUS_IN_TRASH = 8;
+
+	public static final int STATUS_UNAVAILABLE = 9;
 
 	public PortletDataException() {
 		super();
@@ -53,14 +62,23 @@ public class PortletDataException extends PortalException {
 		super(cause);
 	}
 
+	public StagedModel getStagedModel() {
+		return _stagedModel;
+	}
+
 	public int getType() {
 		return _type;
+	}
+
+	public void setStagedModel(StagedModel stagedModel) {
+		_stagedModel = stagedModel;
 	}
 
 	public void setType(int type) {
 		_type = type;
 	}
 
+	private StagedModel _stagedModel;
 	private int _type = DEFAULT;
 
 }

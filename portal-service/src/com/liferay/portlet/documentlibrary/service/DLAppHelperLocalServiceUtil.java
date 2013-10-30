@@ -151,6 +151,15 @@ public class DLAppHelperLocalServiceUtil {
 		return getService().getNoAssetFileEntries();
 	}
 
+	public static void moveDependentsToTrash(
+		java.util.List<java.lang.Object> dlFileEntriesAndDLFolders,
+		long trashEntryId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		getService()
+			.moveDependentsToTrash(dlFileEntriesAndDLFolders, trashEntryId);
+	}
+
 	public static void moveFileEntry(
 		com.liferay.portal.kernel.repository.model.FileEntry fileEntry)
 		throws com.liferay.portal.kernel.exception.PortalException,
@@ -250,9 +259,25 @@ public class DLAppHelperLocalServiceUtil {
 	}
 
 	public static void registerDLSyncEventCallback(java.lang.String event,
-		java.lang.String type, long typePK)
+		com.liferay.portal.kernel.repository.model.FileEntry fileEntry)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		getService().registerDLSyncEventCallback(event, fileEntry);
+	}
+
+	public static void registerDLSyncEventCallback(java.lang.String event,
+		com.liferay.portal.kernel.repository.model.Folder folder)
 		throws com.liferay.portal.kernel.exception.SystemException {
-		getService().registerDLSyncEventCallback(event, type, typePK);
+		getService().registerDLSyncEventCallback(event, folder);
+	}
+
+	public static void restoreDependentsFromTrash(
+		java.util.List<java.lang.Object> dlFileEntriesAndDLFolders,
+		long trashEntryId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		getService()
+			.restoreDependentsFromTrash(dlFileEntriesAndDLFolders, trashEntryId);
 	}
 
 	public static void restoreFileEntryFromTrash(long userId,
@@ -309,15 +334,6 @@ public class DLAppHelperLocalServiceUtil {
 		return getService()
 				   .updateAsset(userId, folder, assetCategoryIds,
 			assetTagNames, assetLinkEntryIds);
-	}
-
-	public static void updateDependentStatus(
-		com.liferay.portal.model.User user,
-		java.util.List<java.lang.Object> dlFileEntriesAndDLFolders, int status)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
-		getService()
-			.updateDependentStatus(user, dlFileEntriesAndDLFolders, status);
 	}
 
 	public static void updateFileEntry(long userId,

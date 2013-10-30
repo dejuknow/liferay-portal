@@ -37,10 +37,10 @@
 
 	<c:choose>
 		<c:when test="<%= layoutSetPrototypes.isEmpty() && !hasAddLayoutSetPrototypePermission %>">
-			<aui:nav-item href="<%= addSiteURL %>" iconClass="icon-plus" label="add" selected='<%= toolbarItem.equals("add") %>' />
+			<aui:nav-item href="<%= addSiteURL %>" iconCssClass="icon-plus" label="add" selected='<%= toolbarItem.equals("add") %>' />
 		</c:when>
 		<c:otherwise>
-			<aui:nav-item dropdown="<%= true %>" iconClass="icon-plus" label="add" selected='<%= toolbarItem.equals("add") %>'>
+			<aui:nav-item dropdown="<%= true %>" iconCssClass="icon-plus" label="add" selected='<%= toolbarItem.equals("add") %>'>
 
 				<%
 				addSiteURL.setParameter("showPrototypes", "0");
@@ -67,6 +67,8 @@
 						<portlet:param name="redirect" value="<%= viewSitesURL %>" />
 						<portlet:param name="backURL" value="<%= viewSitesURL %>" />
 					</liferay-portlet:renderURL>
+
+					<aui:nav-item cssClass="divider" />
 
 					<aui:nav-item href="<%= manageSiteTemplateURL.toString() %>" label="manage-site-template" />
 				</c:if>

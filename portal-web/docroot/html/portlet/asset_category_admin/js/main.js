@@ -628,6 +628,10 @@ AUI.add(
 							}
 						);
 
+						if (Liferay.Form.Placeholders) {
+							liveSearch.sendRequest('');
+						}
+
 						liveSearch.after(STR_QUERY, instance._processSearch, instance);
 
 						instance._searchInput.on('keydown', instance._onSearchInputKeyDown, instance);
@@ -716,8 +720,7 @@ AUI.add(
 								{
 									dialog: {
 										align: instance._dialogAlignConfig,
-										cssClass: 'portlet-asset-categories-admin-dialog permissions-change',
-										width: 600
+										cssClass: 'portlet-asset-categories-admin-dialog permissions-change'
 									},
 									title: Liferay.Language.get('edit-permissions'),
 									uri: 'about:blank'
@@ -2692,7 +2695,7 @@ AUI.add(
 
 							vocabularyPanelAdd._syncUIPosAlign();
 
-							var afterSuccess = A.bind('_initializeVocabularyPanelAdd', instance);
+							var afterSuccess = A.bind('_initializeVocabularyPanelAdd', instance, instance._focusVocabularyPanelAdd);
 
 							vocabularyPanelAdd.plug(
 								A.Plugin.IO,
@@ -2883,7 +2886,7 @@ AUI.add(
 							}
 						}
 						else {
-							dropNode.append(dragNode);
+							dropNode.appendChild(dragNode);
 						}
 					},
 
@@ -2988,6 +2991,6 @@ AUI.add(
 	},
 	'',
 	{
-		requires: ['aui-dialog-iframe-deprecated', 'aui-io-plugin-deprecated', 'aui-live-search-deprecated', 'aui-modal', 'aui-pagination', 'autocomplete-base', 'aui-tree-view', 'dd', 'escape', 'json', 'liferay-history-manager', 'liferay-portlet-url', 'liferay-util-window']
+		requires: ['aui-dialog-iframe-deprecated', 'aui-io-plugin-deprecated', 'aui-live-search-deprecated', 'aui-modal', 'aui-pagination', 'autocomplete-base', 'aui-tree-view', 'dd', 'escape', 'json', 'liferay-form', 'liferay-history-manager', 'liferay-portlet-url', 'liferay-util-window']
 	}
 );

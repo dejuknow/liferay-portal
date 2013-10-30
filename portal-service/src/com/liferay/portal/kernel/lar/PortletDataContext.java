@@ -145,9 +145,6 @@ public interface PortletDataContext extends Serializable {
 
 	public void addLocks(String className, String key, Lock lock);
 
-	public Element addMissingReferenceElement(
-		String portletId, ClassedModel classedModel);
-
 	public void addPermissions(Class<?> clazz, long classPK)
 		throws PortalException, SystemException;
 
@@ -283,6 +280,8 @@ public interface PortletDataContext extends Serializable {
 
 	public long getGroupId();
 
+	public Element getImportDataElement(StagedModel stagedModel);
+
 	public Element getImportDataElement(
 		String name, String attribute, String value);
 
@@ -331,13 +330,13 @@ public interface PortletDataContext extends Serializable {
 	public Map<String, List<RatingsEntry>> getRatingsEntries();
 
 	public Element getReferenceDataElement(
-		Element parentElement, Class<?> clazz, long classPk);
+		Element parentElement, Class<?> clazz, long classPK);
 
 	public Element getReferenceDataElement(
 		Element parentElement, Class<?> clazz, long groupId, String uuid);
 
 	public Element getReferenceDataElement(
-		StagedModel parentStagedModel, Class<?> clazz, long classPk);
+		StagedModel parentStagedModel, Class<?> clazz, long classPK);
 
 	public Element getReferenceDataElement(
 		StagedModel parentStagedModel, Class<?> clazz, long groupId,
@@ -354,6 +353,9 @@ public interface PortletDataContext extends Serializable {
 
 	public List<Element> getReferenceDataElements(
 		StagedModel parentStagedModel, Class<?> clazz, String referenceType);
+
+	public Element getReferenceElement(
+		StagedModel parentStagedModel, Class<?> clazz, long classPK);
 
 	public List<Element> getReferenceElements(
 		StagedModel parentStagedModel, Class<?> clazz);
@@ -529,6 +531,8 @@ public interface PortletDataContext extends Serializable {
 	public void setGroupId(long groupId);
 
 	public void setImportDataRootElement(Element importDataRootElement);
+
+	public void setManifestSummary(ManifestSummary manifestSummary);
 
 	public void setMissingReferencesElement(Element missingReferencesElement);
 

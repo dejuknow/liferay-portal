@@ -234,7 +234,9 @@ public class BrowserSnifferImpl implements BrowserSniffer {
 	public boolean isMobile(HttpServletRequest request) {
 		String userAgent = getUserAgent(request);
 
-		if (userAgent.contains("mobile")) {
+		if (userAgent.contains("mobile") ||
+			(isAndroid(request) && userAgent.contains("nexus"))) {
+
 			return true;
 		}
 

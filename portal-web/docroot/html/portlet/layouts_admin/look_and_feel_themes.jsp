@@ -204,12 +204,14 @@ Map<String, ThemeSetting> configurableSettings = selTheme.getConfigurableSetting
 				<c:if test="<%= permissionChecker.isOmniadmin() && PortletLocalServiceUtil.hasPortlet(themeDisplay.getCompanyId(), PortletKeys.MARKETPLACE_STORE) && PrefsPropsUtil.getBoolean(PropsKeys.AUTO_DEPLOY_ENABLED, PropsValues.AUTO_DEPLOY_ENABLED) %>">
 
 					<%
-					PortletURL marketplaceURL = PortletURLFactoryUtil.create(request, PortletKeys.MARKETPLACE_STORE, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE);
+					long controlPanelPlid = PortalUtil.getControlPanelPlid(company.getCompanyId());
+
+					PortletURL marketplaceURL = PortletURLFactoryUtil.create(request, PortletKeys.MARKETPLACE_STORE, controlPanelPlid, PortletRequest.RENDER_PHASE);
 					%>
 
 					<liferay-ui:icon
 						cssClass="manage-layout-set-branches-link pull-right"
-						iconClass="icon-inbox"
+						iconCssClass="icon-inbox"
 						id="installMore"
 						label="<%= true %>"
 						linkCssClass="btn"

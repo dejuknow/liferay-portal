@@ -32,9 +32,13 @@ import com.liferay.portal.kernel.io.unsync.UnsyncPrintWriter;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringReader;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.messaging.Destination;
+import com.liferay.portal.kernel.messaging.MessageBus;
+import com.liferay.portal.kernel.messaging.MessageBusUtil;
 import com.liferay.portal.kernel.messaging.proxy.MessageValuesThreadLocal;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.search.SearchEngineUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.MethodHandler;
@@ -53,7 +57,6 @@ import com.liferay.portal.util.PortalInstances;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PropsUtil;
 import com.liferay.portal.util.PropsValues;
-import com.liferay.util.lucene.KeywordsUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -245,27 +248,6 @@ public class LuceneHelperImpl implements LuceneHelper {
 
 			Query query = queryParser.parse(value);
 
-			try {
-				if (like && (query instanceof TermQuery)) {
-
-					// LUCENE-89
-
-					TermQuery termQuery = (TermQuery)query;
-
-					Term term = termQuery.getTerm();
-
-					value = term.text();
-					value = value.toLowerCase(queryParser.getLocale());
-
-					query = new TermQuery(term.createTerm(value));
-
-					query.setBoost(termQuery.getBoost());
-				}
-			}
-			catch (Exception e) {
-				query = queryParser.parse(KeywordsUtil.escape(value));
-			}
-
 			BooleanClause.Occur occur = null;
 
 			if (booleanClauseOccur.equals(BooleanClauseOccur.MUST)) {
@@ -278,7 +260,7 @@ public class LuceneHelperImpl implements LuceneHelper {
 				occur = BooleanClause.Occur.SHOULD;
 			}
 
-			_includeIfUnique(booleanQuery, query, occur, like);
+			_includeIfUnique(booleanQuery, like, queryParser, query, occur);
 		}
 		catch (Exception e) {
 			if (_log.isWarnEnabled()) {
@@ -687,6 +669,20 @@ public class LuceneHelperImpl implements LuceneHelper {
 				_loadIndexClusterEventListener);
 		}
 
+		MessageBus messageBus = MessageBusUtil.getMessageBus();
+
+		for (String searchEngineId : SearchEngineUtil.getSearchEngineIds()) {
+			String searchReaderDestinationName =
+				SearchEngineUtil.getSearchWriterDestinationName(searchEngineId);
+
+			Destination searchReaderDestination = messageBus.getDestination(
+				searchReaderDestinationName);
+
+			if (searchReaderDestination != null) {
+				searchReaderDestination.close(true);
+			}
+		}
+
 		for (IndexAccessor indexAccessor : _indexAccessors.values()) {
 			indexAccessor.close();
 		}
@@ -805,8 +801,8 @@ public class LuceneHelperImpl implements LuceneHelper {
 	}
 
 	private void _includeIfUnique(
-		BooleanQuery booleanQuery, Query query, BooleanClause.Occur occur,
-		boolean like) {
+		BooleanQuery booleanQuery, boolean like, QueryParser queryParser,
+		Query query, BooleanClause.Occur occur) {
 
 		if (query instanceof TermQuery) {
 			Set<Term> terms = new HashSet<Term>();
@@ -821,6 +817,8 @@ public class LuceneHelperImpl implements LuceneHelper {
 				String termValue = term.text();
 
 				if (like) {
+					termValue = termValue.toLowerCase(queryParser.getLocale());
+
 					term = term.createTerm(
 						StringPool.STAR.concat(termValue).concat(
 							StringPool.STAR));
@@ -853,8 +851,8 @@ public class LuceneHelperImpl implements LuceneHelper {
 
 			for (BooleanClause booleanClause : curBooleanQuery.getClauses()) {
 				_includeIfUnique(
-					containerBooleanQuery, booleanClause.getQuery(),
-					booleanClause.getOccur(), like);
+					containerBooleanQuery, like, queryParser,
+					booleanClause.getQuery(), booleanClause.getOccur());
 			}
 
 			if (containerBooleanQuery.getClauses().length > 0) {

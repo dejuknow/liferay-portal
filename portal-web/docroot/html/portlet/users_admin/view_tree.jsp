@@ -32,9 +32,7 @@ String viewUsersRedirect = GetterUtil.getString(request.getAttribute("view.jsp-v
 String keywords = ParamUtil.getString(request, "keywords");
 
 if (organization != null) {
-	Group organizationGroup = organization.getGroup();
-
-	organizationGroupId = organizationGroup.getGroupId();
+	organizationGroupId = organization.getGroupId();
 }
 
 LinkedHashMap<String, Object> organizationParams = new LinkedHashMap<String, Object>();
@@ -97,7 +95,7 @@ if (organization != null) {
 
 		<aui:nav-bar-search cssClass="pull-right">
 			<div class="form-search">
-				<liferay-ui:input-search />
+				<liferay-ui:input-search autoFocus="<%= windowState.equals(WindowState.MAXIMIZED) %>" />
 			</div>
 		</aui:nav-bar-search>
 	</aui:nav-bar>

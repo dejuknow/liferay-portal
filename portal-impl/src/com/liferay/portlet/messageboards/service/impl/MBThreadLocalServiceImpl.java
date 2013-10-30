@@ -448,7 +448,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 	 */
 	@Override
 	public int getGroupThreadsCount(long groupId, int status)
-			throws SystemException {
+		throws SystemException {
 
 		QueryDefinition queryDefinition = new QueryDefinition(status);
 
@@ -701,7 +701,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 			if (oldStatus != WorkflowConstants.STATUS_APPROVED) {
 				trashVersionLocalService.addTrashVersion(
 					trashEntryId, MBMessage.class.getName(),
-					message.getMessageId(), status);
+					message.getMessageId(), status, null);
 			}
 
 			// Asset

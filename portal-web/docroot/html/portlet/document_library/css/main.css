@@ -114,10 +114,6 @@
 		}
 	}
 
-	.document-container {
-		overflow: auto;
-	}
-
 	.document-container, .document-entries-pagination {
 		clear: both;
 	}
@@ -133,12 +129,6 @@
 
 	.folder.error:hover {
 		background-color: #FDD;
-	}
-
-	.expand-folder-container {
-		position: absolute;
-		right: 0;
-		top: 0;
 	}
 
 	.folder-search {

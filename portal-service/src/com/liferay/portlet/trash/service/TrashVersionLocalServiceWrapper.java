@@ -281,10 +281,19 @@ public class TrashVersionLocalServiceWrapper implements TrashVersionLocalService
 
 	@Override
 	public void addTrashVersion(long trashEntryId, java.lang.String className,
-		long classPK, int status)
+		long classPK, int status,
+		com.liferay.portal.kernel.util.UnicodeProperties typeSettingsProperties)
 		throws com.liferay.portal.kernel.exception.SystemException {
 		_trashVersionLocalService.addTrashVersion(trashEntryId, className,
-			classPK, status);
+			classPK, status, typeSettingsProperties);
+	}
+
+	@Override
+	public com.liferay.portlet.trash.model.TrashVersion deleteTrashVersion(
+		long entryId, java.lang.String className, long classPK)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return _trashVersionLocalService.deleteTrashVersion(entryId, className,
+			classPK);
 	}
 
 	@Override

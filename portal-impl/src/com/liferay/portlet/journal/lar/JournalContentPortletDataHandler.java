@@ -16,7 +16,7 @@ package com.liferay.portlet.journal.lar;
 
 import com.liferay.portal.kernel.lar.DataLevel;
 import com.liferay.portal.kernel.lar.PortletDataContext;
-import com.liferay.portal.kernel.lar.PortletDataHandlerControl;
+import com.liferay.portal.kernel.lar.PortletDataHandlerBoolean;
 import com.liferay.portal.kernel.lar.StagedModelDataHandlerUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -25,7 +25,6 @@ import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.model.Layout;
 import com.liferay.portal.service.LayoutLocalServiceUtil;
 import com.liferay.portal.util.PortalUtil;
@@ -38,7 +37,6 @@ import com.liferay.portlet.journal.service.JournalArticleLocalServiceUtil;
 import com.liferay.portlet.journal.service.JournalContentSearchLocalServiceUtil;
 import com.liferay.portlet.journal.service.permission.JournalPermission;
 
-import java.util.List;
 import java.util.Map;
 
 import javax.portlet.PortletPreferences;
@@ -76,7 +74,10 @@ public class JournalContentPortletDataHandler
 	public JournalContentPortletDataHandler() {
 		setDataLevel(DataLevel.PORTLET_INSTANCE);
 		setDataPortletPreferences("articleId", "ddmTemplateKey", "groupId");
-		setExportControls(new PortletDataHandlerControl[0]);
+		setExportControls(
+			new PortletDataHandlerBoolean(
+				NAMESPACE, "selected-web-content", true, true, null,
+				JournalArticle.class.getName()));
 		setPublishToLiveByDefault(
 			PropsValues.JOURNAL_CONTENT_PUBLISH_TO_LIVE_BY_DEFAULT);
 	}
@@ -197,35 +198,21 @@ public class JournalContentPortletDataHandler
 			portletDataContext.setScopeGroupId(portletDataContext.getGroupId());
 		}
 
-		Element ddmStructuresElement =
-			portletDataContext.getImportDataGroupElement(DDMStructure.class);
+		if (importGroupId ==
+				portletDataContext.getSourceCompanyGroupId()) {
 
-		List<Element> ddmStructureElements = ddmStructuresElement.elements();
-
-		for (Element ddmStructureElement : ddmStructureElements) {
-			StagedModelDataHandlerUtil.importReferenceStagedModel(
-				portletDataContext, ddmStructureElement);
+			portletDataContext.setScopeGroupId(
+				portletDataContext.getCompanyGroupId());
 		}
 
-		Element ddmTemplatesElement =
-			portletDataContext.getImportDataGroupElement(DDMTemplate.class);
+		StagedModelDataHandlerUtil.importReferenceStagedModels(
+			portletDataContext, DDMStructure.class);
 
-		List<Element> ddmTemplateElements = ddmTemplatesElement.elements();
+		StagedModelDataHandlerUtil.importReferenceStagedModels(
+			portletDataContext, DDMTemplate.class);
 
-		for (Element ddmTemplateElement : ddmTemplateElements) {
-			StagedModelDataHandlerUtil.importReferenceStagedModel(
-				portletDataContext, ddmTemplateElement);
-		}
-
-		Element articlesElement = portletDataContext.getImportDataGroupElement(
-			JournalArticle.class);
-
-		List<Element> articleElements = articlesElement.elements();
-
-		if (!articleElements.isEmpty()) {
-			StagedModelDataHandlerUtil.importReferenceStagedModel(
-				portletDataContext, articleElements.get(0));
-		}
+		StagedModelDataHandlerUtil.importReferenceStagedModels(
+			portletDataContext, JournalArticle.class);
 
 		String articleId = portletPreferences.getValue("articleId", null);
 

@@ -12,11 +12,60 @@
 		<execute action="CPUsersandorganizationsAdduser#type" locator-key1="DETAILS_LAST_NAME_FIELD" value1="${userLastName}" />
 		<execute action="CPUsersandorganizationsAdduser#assertClick" locator-key1="SAVE" value1="Save" />
 
-		<execute action="CPUsersandorganizationsUser#assertTextEquals" locator-key1="SUCCESS_MESSAGE" value1="Your request completed successfully." />
-		<execute action="CPUsersandorganizationsUser#assertTextEquals" locator-key1="DETAILS_SCREEN_NAME_FIELD" value1="${userScreenName}" />
-		<execute action="CPUsersandorganizationsUser#assertTextEquals" locator-key1="DETAILS_EMAIL_ADDRESS_FIELD" value1="${userEmailAddress}" />
-		<execute action="CPUsersandorganizationsUser#assertTextEquals" locator-key1="DETAILS_FIRST_NAME_FIELD" value1="${userFirstName}" />
-		<execute action="CPUsersandorganizationsUser#assertTextEquals" locator-key1="DETAILS_LAST_NAME_FIELD" value1="${userLastName}" />
+		<if>
+			<equals arg1="${userEmailAddressVariation}" arg2="At" />
+			<then>
+				<execute action="CPUsersandorganizationsAdduser#assertTextEquals" locator-key1="EMAIL_ADDRESS_FIELD_ALERT" value1="Please enter a valid email address." />
+			</then>
+			<elseif>
+				<equals arg1="${userEmailAddressVariation}" arg2="Period" />
+				<then>
+					<execute action="CPUsersandorganizationsAdduser#assertTextEquals" locator-key1="EMAIL_ADDRESS_FIELD_ALERT" value1="Please enter a valid email address." />
+				</then>
+			</elseif>
+			<elseif>
+				<equals arg1="${userScreenNameVariation}" arg2="Invalid" />
+				<then>
+					<execute action="CPUsersandorganizationsAdduser#assertTextEquals" locator-key1="ERROR_MESSAGE_1" value1="Your request failed to complete." />
+					<execute action="CPUsersandorganizationsAdduser#assertTextEquals" locator-key1="ERROR_MESSAGE_2" value1="Please enter a valid screen name." />
+				</then>
+			</elseif>
+			<else>
+				<execute action="CPUsersandorganizationsUser#assertTextEquals" locator-key1="SUCCESS_MESSAGE" value1="Your request completed successfully." />
+				<execute action="CPUsersandorganizationsUser#assertTextEquals" locator-key1="DETAILS_SCREEN_NAME_FIELD" value1="${userScreenName}" />
+				<execute action="CPUsersandorganizationsUser#assertTextEquals" locator-key1="DETAILS_EMAIL_ADDRESS_FIELD" value1="${userEmailAddress}" />
+				<execute action="CPUsersandorganizationsUser#assertTextEquals" locator-key1="DETAILS_FIRST_NAME_FIELD" value1="${userFirstName}" />
+				<execute action="CPUsersandorganizationsUser#assertTextEquals" locator-key1="DETAILS_LAST_NAME_FIELD" value1="${userLastName}" />
+			</else>
+		</if>
+	</command>
+
+	<command name="addReservedEmailAddressCP">
+		<execute action="CPUsersandorganizations#assertClick" locator-key1="ADD" value1="Add" />
+		<execute action="CPUsersandorganizations#assertClick" locator-key1="ADD_USER" value1="User" />
+
+		<execute action="CPUsersandorganizationsAdduser#type" locator-key1="DETAILS_SCREEN_NAME_FIELD" value1="${userScreenName}" />
+		<execute action="CPUsersandorganizationsAdduser#type" locator-key1="DETAILS_EMAIL_ADDRESS_FIELD" value1="${userEmailAddress}" />
+		<execute action="CPUsersandorganizationsAdduser#type" locator-key1="DETAILS_FIRST_NAME_FIELD" value1="${userFirstName}" />
+		<execute action="CPUsersandorganizationsAdduser#type" locator-key1="DETAILS_LAST_NAME_FIELD" value1="${userLastName}" />
+		<execute action="CPUsersandorganizationsAdduser#assertClick" locator-key1="SAVE" value1="Save" />
+
+		<execute action="CPUsersandorganizationsAdduser#assertTextEquals" locator-key1="ERROR_MESSAGE_1" value1="Your request failed to complete." />
+		<execute action="CPUsersandorganizationsAdduser#assertTextEquals" locator-key1="ERROR_MESSAGE_2" value1="The email address you requested is reserved." />
+	</command>
+
+	<command name="addReservedScreenNameCP">
+		<execute action="CPUsersandorganizations#assertClick" locator-key1="ADD" value1="Add" />
+		<execute action="CPUsersandorganizations#assertClick" locator-key1="ADD_USER" value1="User" />
+
+		<execute action="CPUsersandorganizationsAdduser#type" locator-key1="DETAILS_SCREEN_NAME_FIELD" value1="${userScreenName}" />
+		<execute action="CPUsersandorganizationsAdduser#type" locator-key1="DETAILS_EMAIL_ADDRESS_FIELD" value1="${userEmailAddress}" />
+		<execute action="CPUsersandorganizationsAdduser#type" locator-key1="DETAILS_FIRST_NAME_FIELD" value1="${userFirstName}" />
+		<execute action="CPUsersandorganizationsAdduser#type" locator-key1="DETAILS_LAST_NAME_FIELD" value1="${userLastName}" />
+		<execute action="CPUsersandorganizationsAdduser#assertClick" locator-key1="SAVE" value1="Save" />
+
+		<execute action="CPUsersandorganizationsAdduser#assertTextEquals" locator-key1="ERROR_MESSAGE_1" value1="Your request failed to complete." />
+		<execute action="CPUsersandorganizationsAdduser#assertTextEquals" locator-key1="ERROR_MESSAGE_2" value1="The screen name you requested is reserved." />
 	</command>
 
 	<command name="addScreenNameNumberSiteIdCP">
@@ -33,6 +82,213 @@
 		<execute action="CPUsersandorganizationsAdduser#assertTextEquals" locator-key1="ERROR_MESSAGE_2" value1="Please enter a valid screen name." />
 	</command>
 
+	<command name="advancedSearchCP">
+		<execute action="CPUsersandorganizations#assertClick" locator-key1="SEARCH_ALL_USERS" value1="All Users" />
+		<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="BASIC_SEARCH_ADVANCED" />
+
+		<if>
+			<equals arg1="${userAdvancedSearch}" arg2="First Name" />
+			<then>
+				<execute action="CPUsersandorganizationsViewusers#type" locator-key1="ADVANCED_SEARCH_FIRST_NAME_FIELD" value1="${userFirstName}" />
+				<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="BASIC_SEARCH_BUTTON" value1="Search" />
+
+				<var name="key_userScreenName" value="${userScreenName}" />
+
+				<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_FIRST_NAME" value1="${userFirstName}" />
+				<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_LAST_NAME" value1="${userLastName}" />
+				<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_SCREEN_NAME" value1="${userScreenName}" />
+
+				<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="BASIC_SEARCH_ADVANCED" />
+				<execute action="CPUsersandorganizationsViewusers#type" locator-key1="ADVANCED_SEARCH_FIRST_NAME_FIELD" value1="${userFirstName}1" />
+				<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="BASIC_SEARCH_BUTTON" value1="Search" />
+				<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="INFO_MESSAGE" value1="No users were found." />
+			</then>
+			<elseif>
+				<equals arg1="${userAdvancedSearch}" arg2="Middle Name" />
+				<then>
+					<execute action="CPUsersandorganizationsViewusers#type" locator-key1="ADVANCED_SEARCH_MIDDLE_NAME_FIELD" value1="${userMiddleName}" />
+					<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="BASIC_SEARCH_BUTTON" value1="Search" />
+
+					<var name="key_userScreenName" value="${userScreenName}" />
+
+					<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_FIRST_NAME" value1="${userFirstName}" />
+					<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_LAST_NAME" value1="${userLastName}" />
+					<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_SCREEN_NAME" value1="${userScreenName}" />
+
+					<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="BASIC_SEARCH_ADVANCED" />
+					<execute action="CPUsersandorganizationsViewusers#type" locator-key1="ADVANCED_SEARCH_MIDDLE_NAME_FIELD" value1="${userMiddleName}1" />
+					<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="BASIC_SEARCH_BUTTON" value1="Search" />
+					<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="INFO_MESSAGE" value1="No users were found." />
+				</then>
+			</elseif>
+			<elseif>
+				<equals arg1="${userAdvancedSearch}" arg2="Last Name" />
+				<then>
+					<execute action="CPUsersandorganizationsViewusers#type" locator-key1="ADVANCED_SEARCH_LAST_NAME_FIELD" value1="${userLastName}" />
+					<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="BASIC_SEARCH_BUTTON" value1="Search" />
+
+					<var name="key_userScreenName" value="${userScreenName}" />
+
+					<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_FIRST_NAME" value1="${userFirstName}" />
+					<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_LAST_NAME" value1="${userLastName}" />
+					<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_SCREEN_NAME" value1="${userScreenName}" />
+
+					<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="BASIC_SEARCH_ADVANCED" />
+					<execute action="CPUsersandorganizationsViewusers#type" locator-key1="ADVANCED_SEARCH_LAST_NAME_FIELD" value1="${userLastName}1" />
+					<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="BASIC_SEARCH_BUTTON" value1="Search" />
+					<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="INFO_MESSAGE" value1="No users were found." />
+				</then>
+			</elseif>
+			<elseif>
+				<equals arg1="${userAdvancedSearch}" arg2="Screen Name" />
+				<then>
+					<execute action="CPUsersandorganizationsViewusers#type" locator-key1="ADVANCED_SEARCH_SCREEN_NAME_FIELD" value1="${userScreenName}" />
+					<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="BASIC_SEARCH_BUTTON" value1="Search" />
+
+					<var name="key_userScreenName" value="${userScreenName}" />
+
+					<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_FIRST_NAME" value1="${userFirstName}" />
+					<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_LAST_NAME" value1="${userLastName}" />
+					<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_SCREEN_NAME" value1="${userScreenName}" />
+
+					<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="BASIC_SEARCH_ADVANCED" />
+					<execute action="CPUsersandorganizationsViewusers#type" locator-key1="ADVANCED_SEARCH_SCREEN_NAME_FIELD" value1="${userScreenName}1" />
+					<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="BASIC_SEARCH_BUTTON" value1="Search" />
+					<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="INFO_MESSAGE" value1="No users were found." />
+				</then>
+			</elseif>
+			<elseif>
+				<equals arg1="${userAdvancedSearch}" arg2="Email Address" />
+				<then>
+					<execute action="CPUsersandorganizationsViewusers#type" locator-key1="ADVANCED_SEARCH_EMAIL_ADDRESS_FIELD" value1="${userEmailAddress}" />
+					<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="BASIC_SEARCH_BUTTON" value1="Search" />
+
+					<var name="key_userScreenName" value="${userScreenName}" />
+
+					<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_FIRST_NAME" value1="${userFirstName}" />
+					<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_LAST_NAME" value1="${userLastName}" />
+					<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_SCREEN_NAME" value1="${userScreenName}" />
+
+					<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="BASIC_SEARCH_ADVANCED" />
+					<execute action="CPUsersandorganizationsViewusers#type" locator-key1="ADVANCED_SEARCH_EMAIL_ADDRESS_FIELD" value1="${userEmailAddress}1" />
+					<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="BASIC_SEARCH_BUTTON" value1="Search" />
+					<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="INFO_MESSAGE" value1="No users were found." />
+				</then>
+			</elseif>
+		</if>
+	</command>
+
+	<command name="basicSearchCP">
+		<if>
+			<equals arg1="${userBasicSearch}" arg2="Basic" />
+			<then>
+				<execute action="CPUsersandorganizations#type" locator-key1="SEARCH_FIELD" value1="user*" />
+				<execute action="CPUsersandorganizations#assertClick" locator-key1="SEARCH_BUTTON" value1="Search" />
+
+				<var name="key_userScreenName" value="${userScreenName}" />
+
+				<execute action="CPUsersandorganizations#assertTextEquals" locator-key1="USER_TABLE_FIRST_NAME" value1="${userFirstName}" />
+				<execute action="CPUsersandorganizations#assertTextEquals" locator-key1="USER_TABLE_LAST_NAME" value1="${userLastName}" />
+				<execute action="CPUsersandorganizations#assertTextEquals" locator-key1="USER_TABLE_SCREEN_NAME" value1="${userScreenName}" />
+
+				<execute action="CPUsersandorganizations#type" locator-key1="SEARCH_FIELD" value1="user1*" />
+				<execute action="CPUsersandorganizations#assertClick" locator-key1="SEARCH_BUTTON" value1="Search" />
+				<execute action="CPUsersandorganizations#assertTextEquals" locator-key1="INFO_MESSAGE" value1="No users were found." />
+			</then>
+			<elseif>
+				<equals arg1="${userBasicSearch}" arg2="Full Name" />
+				<then>
+					<var name="fullName"><![CDATA["${userFirstName} ${userLastName}"]]></var>
+
+					<execute action="CPUsersandorganizations#type" locator-key1="SEARCH_FIELD" value1="${fullName}" />
+					<execute action="CPUsersandorganizations#assertClick" locator-key1="SEARCH_BUTTON" value1="Search" />
+
+					<var name="key_userScreenName" value="${userScreenName}" />
+
+					<execute action="CPUsersandorganizations#assertTextEquals" locator-key1="USER_TABLE_FIRST_NAME" value1="${userFirstName}" />
+					<execute action="CPUsersandorganizations#assertTextEquals" locator-key1="USER_TABLE_LAST_NAME" value1="${userLastName}" />
+					<execute action="CPUsersandorganizations#assertTextEquals" locator-key1="USER_TABLE_SCREEN_NAME" value1="${userScreenName}" />
+
+					<var name="fullName"><![CDATA["${userFirstName} 1 ${userLastName}"]]></var>
+
+					<execute action="CPUsersandorganizations#type" locator-key1="SEARCH_FIELD" value1="${fullName}" />
+					<execute action="CPUsersandorganizations#assertClick" locator-key1="SEARCH_BUTTON" value1="Search" />
+					<execute action="CPUsersandorganizations#assertTextEquals" locator-key1="INFO_MESSAGE" value1="No users were found." />
+				</then>
+			</elseif>
+			<elseif>
+				<equals arg1="${userBasicSearch}" arg2="Quotes" />
+				<then>
+					<var name="quotes"><![CDATA["${userScreenName}"]]></var>
+
+					<execute action="CPUsersandorganizations#type" locator-key1="SEARCH_FIELD" value1="${quotes}" />
+					<execute action="CPUsersandorganizations#assertClick" locator-key1="SEARCH_BUTTON" value1="Search" />
+
+					<var name="key_userScreenName" value="${userScreenName}" />
+
+					<execute action="CPUsersandorganizations#assertTextEquals" locator-key1="USER_TABLE_FIRST_NAME" value1="${userFirstName}" />
+					<execute action="CPUsersandorganizations#assertTextEquals" locator-key1="USER_TABLE_LAST_NAME" value1="${userLastName}" />
+					<execute action="CPUsersandorganizations#assertTextEquals" locator-key1="USER_TABLE_SCREEN_NAME" value1="${userScreenName}" />
+				</then>
+			</elseif>
+		</if>
+	</command>
+
+	<command name="changePasswordCP">
+		<if>
+			<equals arg1="${userPassword}" arg2="Invalid" />
+			<then>
+				<execute action="Myaccount#assertClick" locator-key1="MENU_USER_INFORMATION_PASSWORD" value1="Password" />
+				<execute action="Myaccount#type" locator-key1="PASSWORD_CURRENT_PASSWORD_FIELD" value1="" />
+				<execute action="Myaccount#type" locator-key1="PASSWORD_NEW_PASSWORD_FIELD" value1="test1" />
+				<execute action="Myaccount#type" locator-key1="PASSWORD_ENTER_AGAIN_FIELD" value1="test1" />
+				<execute action="Myaccount#assertClick" locator-key1="SAVE_BUTTON" value1="Save" />
+
+				<execute action="Myaccount#assertTextEquals" locator-key1="ERROR_MESSAGE_1" value1="Your request failed to complete." />
+				<execute action="Myaccount#assertTextEquals" locator-key1="ERROR_MESSAGE_2" value1="That password is invalid. Please enter in a different password." />
+				<execute action="Myaccount#selectFrame" value1="relative=top" />
+
+				<execute macro="User#logoutPG" />
+
+				<execute macro="User#loginUserPG">
+					<var name="userEmailAddress" value="${userEmailAddress}" />
+					<var name="password" value="test" />
+				</execute>
+
+				<execute macro="User#logoutUserPG" />
+
+				<execute macro="User#loginPG">
+					<var name="userEmailAddress" value="test@liferay.com" />
+					<var name="password" value="test" />
+				</execute>
+			</then>
+			<else>
+				<execute action="Myaccount#assertClick" locator-key1="MENU_USER_INFORMATION_PASSWORD" value1="Password" />
+				<execute action="Myaccount#type" locator-key1="PASSWORD_CURRENT_PASSWORD_FIELD" value1="test" />
+				<execute action="Myaccount#type" locator-key1="PASSWORD_NEW_PASSWORD_FIELD" value1="test1" />
+				<execute action="Myaccount#type" locator-key1="PASSWORD_ENTER_AGAIN_FIELD" value1="test1" />
+				<execute action="Myaccount#assertClick" locator-key1="SAVE_BUTTON" value1="Save" />
+
+				<execute action="Myaccount#assertTextEquals" locator-key1="SUCCESS_MESSAGE" value1="Your request completed successfully." />
+				<execute action="Myaccount#selectFrame" value1="relative=top" />
+
+				<execute macro="User#logoutPG" />
+
+				<execute macro="User#loginUserPG">
+					<var name="userEmailAddress" value="${userEmailAddress}" />
+					<var name="password" value="test1" />
+				</execute>
+
+				<execute macro="User#logoutUserPG" />
+
+				<execute macro="User#loginPG">
+					<var name="userEmailAddress" value="test@liferay.com" />
+					<var name="password" value="test" />
+				</execute>
+			</else>
+		</if>
+	</command>
+
 	<command name="deactivateCP">
 		<execute action="CPUsersandorganizations#assertClick" locator-key1="SEARCH_ALL_USERS" value1="All Users" />
 
@@ -40,13 +296,35 @@
 		<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="BASIC_SEARCH_BUTTON" value1="Search" />
 
 		<if>
-			<condition action="CPUsersandorganizationsViewusers#isElementPresent" locator-key1="USER_TABLE_ALL_CHECKBOX" />
+			<equals arg1="${deactivateType}" arg2="Actions" />
 			<then>
-				<execute action="CPUsersandorganizationsViewusers#check" locator-key1="USER_TABLE_ALL_CHECKBOX"/>
-				<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="DEACTIVATE" value1="Deactivate" />
-				<execute action="CPUsersandorganizationsViewusers#confirm" locator-key1="CONFIRMATION" value1="Are you sure you want to deactivate the selected users?" />
+				<var name="key_userScreenName" value="${userScreenName}" />
+
+				<execute action="CPUsersandorganizationsViewusers#click" locator-key1="USER_TABLE_ACTIONS" value1="Actions" />
+				<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="USER_MENULIST_DEACTIVATE" value1="Deactivate" />
+				<execute action="CPUsersandorganizationsViewusers#confirm" locator-key1="CONFIRMATION" value1="Are you sure you want to deactivate this?" />
 				<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="SUCCESS_MESSAGE" value1="Your request completed successfully." />
 			</then>
+			<elseif>
+				<equals arg1="${deactivateType}" arg2="Deactivate Button" />
+				<then>
+					<var name="key_userScreenName" value="${userScreenName}" />
+
+					<execute action="CPUsersandorganizationsViewusers#check" locator-key1="USER_TABLE_ALL_CHECKBOX"/>
+					<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="DEACTIVATE" value1="Deactivate" />
+					<execute action="CPUsersandorganizationsViewusers#confirm" locator-key1="CONFIRMATION" value1="Are you sure you want to deactivate the selected users?" />
+					<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="SUCCESS_MESSAGE" value1="Your request completed successfully." />
+				</then>
+			</elseif>
+			<elseif>
+				<condition action="CPUsersandorganizationsViewusers#isElementPresent" locator-key1="USER_TABLE_ALL_CHECKBOX" />
+				<then>
+					<execute action="CPUsersandorganizationsViewusers#check" locator-key1="USER_TABLE_ALL_CHECKBOX"/>
+					<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="DEACTIVATE" value1="Deactivate" />
+					<execute action="CPUsersandorganizationsViewusers#confirm" locator-key1="CONFIRMATION" value1="Are you sure you want to deactivate the selected users?" />
+					<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="SUCCESS_MESSAGE" value1="Your request completed successfully." />
+				</then>
+			</elseif>
 		</if>
 
 		<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="INFO_MESSAGE" value1="No users were found." />
@@ -78,10 +356,12 @@
 	<command name="editPasswordCP">
 		<execute action="CPUsersandorganizations#assertClick" locator-key1="SEARCH_ALL_USERS" value1="All Users" />
 
+		<var name="key_userScreenName" value="${userScreenName}" />
+
 		<execute action="CPUsersandorganizationsViewusers#type" locator-key1="BASIC_SEARCH_FIELD" value1="${userScreenName}" />
 		<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="BASIC_SEARCH_BUTTON" value1="Search" />
-		<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_SCREEN_NAME_1" value1="${userScreenName}" />
-		<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="USER_TABLE_SCREEN_NAME_1" value1="${userScreenName}" />
+		<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_SCREEN_NAME" value1="${userScreenName}" />
+		<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="USER_TABLE_SCREEN_NAME" value1="${userScreenName}" />
 
 		<execute action="CPUsersandorganizationsUser#assertClick" locator-key1="MENU_USER_INFORMATION_PASSWORD" value1="Password" />
 		<execute action="CPUsersandorganizationsUser#type" locator-key1="PASSWORD_NEW_PASSWORD_FIELD" value1="password" />
@@ -104,6 +384,49 @@
 		</execute>
 	</command>
 
+	<command name="editUserSiteCP">
+		<execute action="CPUsersandorganizations#assertClick" locator-key1="SEARCH_ALL_USERS" value1="All Users" />
+
+		<var name="key_userScreenName" value="${userScreenName}" />
+
+		<execute action="CPUsersandorganizationsViewusers#type" locator-key1="BASIC_SEARCH_FIELD" value1="${userScreenName}" />
+		<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="BASIC_SEARCH_BUTTON" value1="Search" />
+		<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_SCREEN_NAME" value1="${userScreenName}" />
+		<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="USER_TABLE_SCREEN_NAME" value1="${userScreenName}" />
+
+		<var name="key_siteName" value="${siteName}" />
+
+		<execute action="CPUsersandorganizationsUser#assertClick" locator-key1="MENU_USER_INFORMATION_SITES" value1="Sites" />
+		<execute action="CPUsersandorganizationsUser#assertClick" locator-key1="SITES_SELECT_LINK" value1="Select" />
+		<execute action="CPUsersandorganizationsUser#selectFrame" locator-key1="SITES_SELECT_IFRAME" />
+
+		<execute action="CPUsersandorganizationsUser#type" locator-key1="SITES_SELECT_SEARCH_FIELD" value1="${siteName}" />
+		<execute action="CPUsersandorganizationsUser#assertClick" locator-key1="SITES_SELECT_SEARCH_BUTTON" value1="Search" />
+		<execute action="CPUsersandorganizationsUser#assertTextEquals" locator-key1="SITES_SELECT_TABLE_NAME" value1="${siteName}" />
+		<execute action="CPUsersandorganizationsUser#assertClick" locator-key1="SITES_SELECT_CHOOSE_BUTTON" value1="Choose" />
+
+		<execute action="CPUsersandorganizationsUser#selectFrame" value1="relative=top" />
+
+		<execute action="CPUsersandorganizationsUser#assertTextEquals" locator-key1="SITES_TABLE_NAME" value1="${siteName}" />
+		<execute action="CPUsersandorganizationsUser#assertClick" locator-key1="SAVE_BUTTON" value1="Save" />
+		<execute action="CPUsersandorganizationsUser#assertTextEquals" locator-key1="SUCCESS_MESSAGE" value1="Your request completed successfully." />
+	</command>
+
+	<command name="editUserMiddleNameCP">
+		<execute action="CPUsersandorganizations#assertClick" locator-key1="SEARCH_ALL_USERS" value1="All Users" />
+
+		<var name="key_userScreenName" value="${userScreenName}" />
+
+		<execute action="CPUsersandorganizationsViewusers#type" locator-key1="BASIC_SEARCH_FIELD" value1="${userScreenName}" />
+		<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="BASIC_SEARCH_BUTTON" value1="Search" />
+		<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_SCREEN_NAME" value1="${userScreenName}" />
+		<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="USER_TABLE_SCREEN_NAME" value1="${userScreenName}" />
+
+		<execute action="CPUsersandorganizationsUser#type" locator-key1="DETAILS_MIDDLE_NAME_FIELD" value1="${userMiddleName}" />
+		<execute action="CPUsersandorganizationsUser#assertClick" locator-key1="SAVE_BUTTON" value1="Save" />
+		<execute action="CPUsersandorganizationsUser#assertTextEquals" locator-key1="SUCCESS_MESSAGE" value1="Your request completed successfully." />
+	</command>
+
 	<command name="firstLoginPG">
 		<execute macro="Page#openURL" />
 
@@ -124,12 +447,12 @@
 
 		<execute action="PGLogin#type" locator-key1="EMAIL_ADDRESS_FIELD" value1="${userEmailAddress}" />
 		<execute action="PGLogin#type" locator-key1="PASSWORD_FIELD" value1="${password}" />
-		<execute action="PGLogin#click" locator-key1="SIGN_IN_BUTTON" />
+		<execute action="PGLogin#assertClick" locator-key1="SIGN_IN_BUTTON" value1="Sign In" />
 
 		<if>
-			<condition action="PGLoginTermsofservice#isElementPresent" locator-key1="I_AGREE_BUTTON" />
+			<condition action="PGLoginTermsofservice#isElementPresent" locator-key1="I_AGREE_BUTTON" value1="I Agree" />
 			<then>
-				<execute action="PGLoginTermsofservice#click" locator-key1="I_AGREE_BUTTON" />
+				<execute action="PGLoginTermsofservice#assertClick" locator-key1="I_AGREE_BUTTON" value1="I Agree" />
 			</then>
 		</if>
 
@@ -138,7 +461,7 @@
 			<then>
 				<execute action="PGLoginNewpassword#type" locator-key1="PASSWORD_FIELD" value1="test" />
 				<execute action="PGLoginNewpassword#type" locator-key1="ENTER_AGAIN_FIELD" value1="test" />
-				<execute action="PGLoginNewpassword#click" locator-key1="SAVE_BUTTON" />
+				<execute action="PGLoginNewpassword#assertClick" locator-key1="SAVE_BUTTON" value1="Save" />
 			</then>
 		</if>
 
@@ -146,7 +469,7 @@
 			<condition action="PGLoginPasswordreminder#isElementPresent" locator-key1="ANSWER_FIELD" />
 			<then>
 				<execute action="PGLoginPasswordreminder#type" locator-key1="ANSWER_FIELD" value1="test" />
-				<execute action="PGLoginPasswordreminder#click" locator-key1="SAVE_BUTTON" />
+				<execute action="PGLoginPasswordreminder#assertClick" locator-key1="SAVE_BUTTON" value1="Save" />
 			</then>
 		</if>
 	</command>
@@ -185,6 +508,17 @@
 		<execute action="PGLogin#click" locator-key1="SIGN_IN_BUTTON" />
 	</command>
 
+	<command name="loginUserInvalidPG">
+		<execute macro="Page#openURL" />
+
+		<execute action="PGLogin#type" locator-key1="EMAIL_ADDRESS_FIELD" value1="${userEmailAddress}" />
+		<execute action="PGLogin#type" locator-key1="PASSWORD_FIELD" value1="${password}" />
+		<execute action="PGLogin#click" locator-key1="SIGN_IN_BUTTON" />
+
+		<execute action="PGLogin#assertTextEquals" locator-key1="ERROR_MESSAGE_1" value1="Your request failed to complete." />
+		<execute action="PGLogin#assertTextEquals" locator-key1="ERROR_MESSAGE_2" value1="Authentication failed. Please try again." />
+	</command>
+
 	<command name="logoutUserPG">
 		<execute macro="Page#openURL" />
 
@@ -214,35 +548,61 @@
 	</command>
 
 	<command name="viewCP">
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Users and Organizations" />
-		</execute>
-
 		<execute action="CPUsersandorganizations#assertClick" locator-key1="SEARCH_ALL_USERS" value1="All Users" />
 
-		<execute action="CPUsersandorganizationsViewusers#type" locator-key1="BASIC_SEARCH_FIELD" value1="${userScreenName}" />
-		<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="BASIC_SEARCH_BUTTON" value1="Search" />
-		<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_FIRST_NAME_1" value1="${userFirstName}" />
-		<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_LAST_NAME_1" value1="${userLastName}" />
-		<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_SCREEN_NAME_1" value1="${userScreenName}" />
-		<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="USER_TABLE_FIRST_NAME_1" value1="${userFirstName}" />
+		<if>
+			<equals arg1="${userEmailAddressVariation}" arg2="At" />
+			<then>
+				<execute action="CPUsersandorganizationsViewusers#type" locator-key1="BASIC_SEARCH_FIELD" value1="${userEmailAddress}" />
+				<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="BASIC_SEARCH_BUTTON" value1="Search" />
+				<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="INFO_MESSAGE" value1="No users were found." />
+			</then>
+			<elseif>
+				<equals arg1="${userEmailAddressVariation}" arg2="Period" />
+				<then>
+					<execute action="CPUsersandorganizationsViewusers#type" locator-key1="BASIC_SEARCH_FIELD" value1="${userEmailAddress}" />
+					<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="BASIC_SEARCH_BUTTON" value1="Search" />
+					<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="INFO_MESSAGE" value1="No users were found." />
+				</then>
+			</elseif>
+			<elseif>
+				<equals arg1="${userScreenNameVariation}" arg2="Invalid" />
+				<then>
+					<execute action="CPUsersandorganizationsViewusers#type" locator-key1="BASIC_SEARCH_FIELD" value1="${userScreenName}" />
+					<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="BASIC_SEARCH_BUTTON" value1="Search" />
+					<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="INFO_MESSAGE" value1="No users were found." />
+				</then>
+			</elseif>
+			<else>
+				<var name="key_userScreenName" value="${userScreenName}" />
 
-		<execute action="CPUsersandorganizationsUser#assertTextEquals" locator-key1="DETAILS_SCREEN_NAME_FIELD" value1="${userScreenName}" />
-		<execute action="CPUsersandorganizationsUser#assertTextEquals" locator-key1="DETAILS_EMAIL_ADDRESS_FIELD" value1="${userEmailAddress}" />
-		<execute action="CPUsersandorganizationsUser#assertTextEquals" locator-key1="DETAILS_FIRST_NAME_FIELD" value1="${userFirstName}" />
-		<execute action="CPUsersandorganizationsUser#assertTextEquals" locator-key1="DETAILS_LAST_NAME_FIELD" value1="${userLastName}" />
-		<execute action="CPUsersandorganizationsUser#assertTextEquals" locator-key1="USER_NAME" value1="${userFirstName} ${userLastName}" />
+				<execute action="CPUsersandorganizationsViewusers#type" locator-key1="BASIC_SEARCH_FIELD" value1="${userScreenName}" />
+				<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="BASIC_SEARCH_BUTTON" value1="Search" />
+				<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_FIRST_NAME" value1="${userFirstName}" />
+				<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_LAST_NAME" value1="${userLastName}" />
+				<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_SCREEN_NAME" value1="${userScreenName}" />
+				<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="USER_TABLE_FIRST_NAME" value1="${userFirstName}" />
+
+				<execute action="CPUsersandorganizationsUser#assertTextEquals" locator-key1="DETAILS_SCREEN_NAME_FIELD" value1="${userScreenName}" />
+				<execute action="CPUsersandorganizationsUser#assertTextEquals" locator-key1="DETAILS_EMAIL_ADDRESS_FIELD" value1="${userEmailAddress}" />
+				<execute action="CPUsersandorganizationsUser#assertTextEquals" locator-key1="DETAILS_FIRST_NAME_FIELD" value1="${userFirstName}" />
+				<execute action="CPUsersandorganizationsUser#assertTextEquals" locator-key1="DETAILS_LAST_NAME_FIELD" value1="${userLastName}" />
+				<execute action="CPUsersandorganizationsUser#assertTextEquals" locator-key1="USER_NAME" value1="${userFirstName} ${userLastName}" />
+			</else>
+		</if>
 	</command>
 
 	<command name="viewUserInfomationOrganizationSitesCP">
 		<execute action="CPUsersandorganizations#assertClick" locator-key1="SEARCH_ALL_USERS" value1="All Users" />
 
+		<var name="key_userScreenName" value="${userScreenName}" />
+
 		<execute action="CPUsersandorganizationsViewusers#type" locator-key1="BASIC_SEARCH_FIELD" value1="${userScreenName}" />
 		<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="BASIC_SEARCH_BUTTON" value1="Search" />
-		<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_FIRST_NAME_1" value1="${userFirstName}" />
-		<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_LAST_NAME_1" value1="${userLastName}" />
-		<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_SCREEN_NAME_1" value1="${userScreenName}" />
-		<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="USER_TABLE_FIRST_NAME_1" value1="${userFirstName}" />
+		<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_FIRST_NAME" value1="${userFirstName}" />
+		<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_LAST_NAME" value1="${userLastName}" />
+		<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_SCREEN_NAME" value1="${userScreenName}" />
+		<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="USER_TABLE_FIRST_NAME" value1="${userFirstName}" />
 
 		<var name="key_siteName" value="${siteName}" />
 
@@ -253,12 +613,14 @@
 	<command name="viewUserInfomationRolesCP">
 		<execute action="CPUsersandorganizations#assertClick" locator-key1="SEARCH_ALL_USERS" value1="All Users" />
 
+		<var name="key_userScreenName" value="${userScreenName}" />
+
 		<execute action="CPUsersandorganizationsViewusers#type" locator-key1="BASIC_SEARCH_FIELD" value1="${userScreenName}" />
 		<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="BASIC_SEARCH_BUTTON" value1="Search" />
-		<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_FIRST_NAME_1" value1="${userFirstName}" />
-		<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_LAST_NAME_1" value1="${userLastName}" />
-		<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_SCREEN_NAME_1" value1="${userScreenName}" />
-		<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="USER_TABLE_FIRST_NAME_1" value1="${userFirstName}" />
+		<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_FIRST_NAME" value1="${userFirstName}" />
+		<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_LAST_NAME" value1="${userLastName}" />
+		<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_SCREEN_NAME" value1="${userScreenName}" />
+		<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="USER_TABLE_FIRST_NAME" value1="${userFirstName}" />
 
 		<var name="key_roleName" value="${roleName}" />
 
@@ -269,12 +631,14 @@
 	<command name="viewUserInfomationSitesCP">
 		<execute action="CPUsersandorganizations#assertClick" locator-key1="SEARCH_ALL_USERS" value1="All Users" />
 
+		<var name="key_userScreenName" value="${userScreenName}" />
+
 		<execute action="CPUsersandorganizationsViewusers#type" locator-key1="BASIC_SEARCH_FIELD" value1="${userScreenName}" />
 		<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="BASIC_SEARCH_BUTTON" value1="Search" />
-		<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_FIRST_NAME_1" value1="${userFirstName}" />
-		<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_LAST_NAME_1" value1="${userLastName}" />
-		<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_SCREEN_NAME_1" value1="${userScreenName}" />
-		<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="USER_TABLE_FIRST_NAME_1" value1="${userFirstName}" />
+		<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_FIRST_NAME" value1="${userFirstName}" />
+		<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_LAST_NAME" value1="${userLastName}" />
+		<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_SCREEN_NAME" value1="${userScreenName}" />
+		<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="USER_TABLE_FIRST_NAME" value1="${userFirstName}" />
 
 		<var name="key_siteName" value="${siteName}" />
 
@@ -285,16 +649,34 @@
 	<command name="viewUserInfomationUserGroupsCP">
 		<execute action="CPUsersandorganizations#assertClick" locator-key1="SEARCH_ALL_USERS" value1="All Users" />
 
+		<var name="key_userScreenName" value="${userScreenName}" />
+
 		<execute action="CPUsersandorganizationsViewusers#type" locator-key1="BASIC_SEARCH_FIELD" value1="${userScreenName}" />
 		<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="BASIC_SEARCH_BUTTON" value1="Search" />
-		<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_FIRST_NAME_1" value1="${userFirstName}" />
-		<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_LAST_NAME_1" value1="${userLastName}" />
-		<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_SCREEN_NAME_1" value1="${userScreenName}" />
-		<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="USER_TABLE_FIRST_NAME_1" value1="${userFirstName}" />
+		<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_FIRST_NAME" value1="${userFirstName}" />
+		<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_LAST_NAME" value1="${userLastName}" />
+		<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_SCREEN_NAME" value1="${userScreenName}" />
+		<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="USER_TABLE_FIRST_NAME" value1="${userFirstName}" />
 
 		<var name="key_userGroupName" value="${userGroupName}" />
 
 		<execute action="CPUsersandorganizationsUser#assertClick" locator-key1="MENU_USER_INFORMATION_USER_GROUPS" value1="User Groups" />
 		<execute action="CPUsersandorganizationsUser#assertTextEquals" locator-key1="USER_GROUPS_TABLE_NAME" value1="${userGroupName}" />
+	</command>
+
+	<command name="viewUserSiteCP">
+		<execute action="CPUsersandorganizations#assertClick" locator-key1="SEARCH_ALL_USERS" value1="All Users" />
+
+		<var name="key_userScreenName" value="${userScreenName}" />
+
+		<execute action="CPUsersandorganizationsViewusers#type" locator-key1="BASIC_SEARCH_FIELD" value1="${userScreenName}" />
+		<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="BASIC_SEARCH_BUTTON" value1="Search" />
+		<execute action="CPUsersandorganizationsViewusers#assertTextEquals" locator-key1="USER_TABLE_SCREEN_NAME" value1="${userScreenName}" />
+		<execute action="CPUsersandorganizationsViewusers#assertClick" locator-key1="USER_TABLE_SCREEN_NAME" value1="${userScreenName}" />
+
+		<var name="key_siteName" value="${siteName}" />
+
+		<execute action="CPUsersandorganizationsUser#assertClick" locator-key1="MENU_USER_INFORMATION_SITES" value1="Sites" />
+		<execute action="CPUsersandorganizationsUser#assertTextEquals" locator-key1="SITES_TABLE_NAME" value1="${siteName}" />
 	</command>
 </definition>

@@ -30,6 +30,7 @@ public class MissingReference implements Serializable {
 
 	public MissingReference(Element element) {
 		_className = element.attributeValue("class-name");
+		_classPK = element.attributeValue("class-pk");
 		_displayName = GetterUtil.getString(
 			element.attributeValue("display-name"));
 		_referrerClassName = element.attributeValue("referrer-class-name");
@@ -55,6 +56,10 @@ public class MissingReference implements Serializable {
 		return _className;
 	}
 
+	public String getClassPK() {
+		return _classPK;
+	}
+
 	public String getDisplayName() {
 		return _displayName;
 	}
@@ -76,6 +81,7 @@ public class MissingReference implements Serializable {
 	}
 
 	private String _className;
+	private String _classPK;
 	private String _displayName;
 	private String _referrerClassName;
 	private Map<String, String> _referrers = new HashMap<String, String>();

@@ -25,7 +25,7 @@
 </tr>
 <tr>
 	<td>SUCCESS_MESSAGE</td>
-	<td>//div[@class='alert alert-success']</td>
+	<td>//div[contains(@class,'alert') and contains(@class,'alert-success')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -82,6 +82,11 @@
 <tr>
 	<td>MENU_REJECT</td>
 	<td>//a[@id='_153_rejecttaskChangeStatusLink']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>MENU_RESUBMIT</td>
+	<td>//a[@id='_153_resubmittaskChangeStatusLink']</td>
 	<td></td>
 </tr>
 <tr>
@@ -191,6 +196,11 @@
 <tr>
 	<td>COMMENTS_REPLY_BUTTON</td>
 	<td>//button[contains(@id,'_postReplyButton0')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>COMMENTS_COMMENT</td>
+	<td>//div[@class='lfr-discussion-message' and contains(.,'${key_workflowComment}')]</td>
 	<td></td>
 </tr>
 </tbody>

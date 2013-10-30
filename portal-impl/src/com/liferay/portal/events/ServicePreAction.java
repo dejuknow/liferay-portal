@@ -376,7 +376,9 @@ public class ServicePreAction extends Action {
 				request.setAttribute(WebKeys.REQUESTED_LAYOUT, layout);
 			}
 
-			if (Validator.isNull(controlPanelCategory) &&
+			if ((Validator.isNull(controlPanelCategory) ||
+				 controlPanelCategory.equals(PortletCategoryKeys.MY) ||
+				 controlPanelCategory.equals(PortletCategoryKeys.PORTLET)) &&
 				Validator.isNotNull(ppid) &&
 				(LiferayWindowState.isPopUp(request) ||
 				 LiferayWindowState.isExclusive(request))) {
@@ -1294,7 +1296,10 @@ public class ServicePreAction extends Action {
 		// Control Panel redirects
 
 		if (group.isControlPanel() && Validator.isNotNull(ppid)) {
-			if (!PortletPermissionUtil.hasControlPanelAccessPermission(
+			boolean switchGroup = ParamUtil.getBoolean(request, "switchGroup");
+
+			if (switchGroup &&
+				!PortletPermissionUtil.hasControlPanelAccessPermission(
 					permissionChecker, scopeGroupId, ppid)) {
 
 				String redirect = HttpUtil.removeParameter(
@@ -1336,18 +1341,32 @@ public class ServicePreAction extends Action {
 				List<Portlet> portlets = PortalUtil.getControlPanelPortlets(
 					controlPanelCategory, themeDisplay);
 
+				Portlet firstPortlet = null;
+
 				for (Portlet portlet : portlets) {
 					if (PortletPermissionUtil.hasControlPanelAccessPermission(
 							permissionChecker, scopeGroupId, portlet)) {
 
-						String redirect = HttpUtil.setParameter(
-							currentURL, "p_p_id", portlet.getPortletId());
-
-						response.sendRedirect(
-							PortalUtil.getAbsoluteURL(request, redirect));
+						firstPortlet = portlet;
 
 						break;
 					}
+				}
+
+				if ((firstPortlet == null) &&
+					controlPanelCategory.startsWith(
+						PortletCategoryKeys.SITE_ADMINISTRATION)) {
+
+					firstPortlet = PortalUtil.getFirstSiteAdministrationPortlet(
+						themeDisplay);
+				}
+
+				if (firstPortlet != null) {
+					String redirect = HttpUtil.setParameter(
+						currentURL, "p_p_id", firstPortlet.getPortletId());
+
+					response.sendRedirect(
+						PortalUtil.getAbsoluteURL(request, redirect));
 				}
 			}
 		}
@@ -2132,7 +2151,7 @@ public class ServicePreAction extends Action {
 		// Parallel render
 
 		if (PropsValues.LAYOUT_PARALLEL_RENDER_ENABLE &&
-			ServerDetector.isTomcat()) {
+			ServerDetector.isTomcat() && !PropsValues.TCK_URL) {
 
 			boolean portletParallelRender = ParamUtil.getBoolean(
 				request, "p_p_parallel", true);

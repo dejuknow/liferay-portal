@@ -54,7 +54,7 @@ else {
 	<c:if test="<%= !layoutRevision.isIncomplete() %>">
 
 		<%
-		String taglibURL = "javascript:Liferay.fire('" + liferayPortletResponse.getNamespace() + "viewHistory', {layoutRevisionId: '" + layoutRevision.getLayoutRevisionId() + "', layoutSetBranchId: '" + layoutRevision.getLayoutSetBranchId() + "'});";
+		String taglibURL = "javascript:Liferay.fire('" + liferayPortletResponse.getNamespace() + "viewHistory', {layoutRevisionId: '" + layoutRevision.getLayoutRevisionId() + "', layoutSetBranchId: '" + layoutRevision.getLayoutSetBranchId() + "'}); void(0);";
 		%>
 
 		<liferay-ui:icon
@@ -70,7 +70,7 @@ else {
 		<c:if test="<%= !layoutRevision.isMajor() && (layoutRevision.getParentLayoutRevisionId() != LayoutRevisionConstants.DEFAULT_PARENT_LAYOUT_REVISION_ID) %>">
 
 			<%
-			String taglibURL = "javascript:Liferay.fire('" + liferayPortletResponse.getNamespace() + "undo', {layoutRevisionId: '" + layoutRevision.getLayoutRevisionId() + "', layoutSetBranchId: '" + layoutRevision.getLayoutSetBranchId() + "'});";
+			String taglibURL = "javascript:Liferay.fire('" + liferayPortletResponse.getNamespace() + "undo', {layoutRevisionId: '" + layoutRevision.getLayoutRevisionId() + "', layoutSetBranchId: '" + layoutRevision.getLayoutSetBranchId() + "'}); void(0);";
 			%>
 
 			<liferay-ui:icon
@@ -92,7 +92,7 @@ else {
 			%>
 
 				<%
-				String taglibURL = "javascript:Liferay.fire('" + liferayPortletResponse.getNamespace() + "redo', {layoutRevisionId: '" + firstChildLayoutRevision.getLayoutRevisionId() + "', layoutSetBranchId: '" + firstChildLayoutRevision.getLayoutSetBranchId() + "'});";
+				String taglibURL = "javascript:Liferay.fire('" + liferayPortletResponse.getNamespace() + "redo', {layoutRevisionId: '" + firstChildLayoutRevision.getLayoutRevisionId() + "', layoutSetBranchId: '" + firstChildLayoutRevision.getLayoutSetBranchId() + "'}); void(0);";
 				%>
 
 				<liferay-ui:icon
@@ -112,11 +112,24 @@ else {
 
 <div class="layout-revision-info <%= layoutRevision.isIncomplete() ? "incomplete" : "span7" %>">
 	<c:if test="<%= !layoutRevision.isIncomplete() %>">
-		<span class="layout-revision-version"><label><liferay-ui:message key="version" /></label>: <span class=""><%= layoutRevision.getLayoutRevisionId() %></span></span>
+		<span class="layout-revision-version"><label><liferay-ui:message key="version" />:</label> <span class=""><%= layoutRevision.getLayoutRevisionId() %></span></span>
 
 		<aui:model-context bean="<%= layoutRevision %>" model="<%= LayoutRevision.class %>" />
 
-		<aui:workflow-status helpMessage="<%= taglibHelpMessage %>" showIcon="<%= false %>" showLabel="<%= false %>" status="<%= layoutRevision.getStatus() %>" statusMessage='<%= layoutRevision.isHead() ? "ready-for-publication" : null %>' />
+		<aui:workflow-status showIcon="<%= false %>" showLabel="<%= false %>" status="<%= layoutRevision.getStatus() %>" statusMessage='<%= layoutRevision.isHead() ? "ready-for-publication" : null %>' />
+
+		<aui:script use="aui-base">
+			var taglibWorflowStatus = A.one('.layout-revision-info').one('.taglib-workflow-status');
+
+			if (taglibWorflowStatus) {
+				taglibWorflowStatus.on(
+					'mouseenter',
+					function(event) {
+						Liferay.Portal.ToolTip.show(taglibWorflowStatus, '<liferay-ui:message key="<%= taglibHelpMessage %>" />');
+					}
+				);
+			}
+		</aui:script>
 
 		<c:if test="<%= hasWorkflowTask %>">
 
@@ -194,14 +207,14 @@ else {
 			String taglibURL = null;
 
 			if (!workflowEnabled || pendingLayoutRevisions.isEmpty()) {
-				taglibURL = "javascript:Liferay.fire('" + liferayPortletResponse.getNamespace() + "submit', {incomplete: " + layoutRevision.isIncomplete() + ", publishURL: '" + publishURL + "', currentURL: '" + currentURL + "'});";
+				taglibURL = "javascript:Liferay.fire('" + liferayPortletResponse.getNamespace() + "submit', {incomplete: " + layoutRevision.isIncomplete() + ", publishURL: '" + publishURL + "', currentURL: '" + currentURL + "'}); void(0);";
 			}
 			%>
 
 			<liferay-ui:icon
-				cssClass="submit-link"
+				cssClass="label label-submit"
 				id="submitLink"
-				image="../aui/check"
+				image="../aui/ok"
 				label="<%= true %>"
 				message="<%= label %>"
 				url="<%= taglibURL %>"
@@ -219,14 +232,14 @@ else {
 				}
 				%>
 
-				<aui:script use="aui-base,event-mouseenter">
+				<aui:script use="aui-base">
 					var submitLink = A.one('.submit-link');
 
 					if (submitLink) {
 						submitLink.on(
 							'mouseenter',
 							function(event) {
-								Liferay.Portal.ToolTip.show(submitLink, '<liferay-ui:message key="<%= submitMessage %>" />')
+								Liferay.Portal.ToolTip.show(submitLink, '<liferay-ui:message key="<%= submitMessage %>" />');
 							}
 						);
 					}

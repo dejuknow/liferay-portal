@@ -44,8 +44,8 @@ public class ItemNameComparator extends OrderByComparator {
 		ShoppingItem item1 = (ShoppingItem)obj1;
 		ShoppingItem item2 = (ShoppingItem)obj2;
 
-		Long categoryId1 = new Long(item1.getCategoryId());
-		Long categoryId2 = new Long(item2.getCategoryId());
+		Long categoryId1 = item1.getCategoryId();
+		Long categoryId2 = item2.getCategoryId();
 
 		int value = categoryId1.compareTo(categoryId2);
 
@@ -54,6 +54,13 @@ public class ItemNameComparator extends OrderByComparator {
 			String name2 = StringUtil.toLowerCase(item2.getName());
 
 			value = name1.compareTo(name2);
+
+			if (value == 0) {
+				Long itemId1 = item1.getItemId();
+				Long itemId2 = item2.getItemId();
+
+				value = itemId1.compareTo(itemId2);
+			}
 		}
 
 		if (_ascending) {

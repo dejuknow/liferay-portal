@@ -29,14 +29,14 @@ import org.springframework.mock.web.MockHttpServletRequest;
 
 /**
  * @author Shuyang Zhou
+ * @author Iliyan Peych
  */
 public class BrowserSnifferImplTest {
 
 	@Test
 	public void testIsAndroid() throws IOException {
-		UnsyncBufferedReader unsyncBufferedReader = new UnsyncBufferedReader(
-			new InputStreamReader(getClass().getResourceAsStream(
-				"dependencies/user_agents.csv")));
+		UnsyncBufferedReader unsyncBufferedReader =
+			getResourceAsUnsyncBufferedReader("dependencies/user_agents.csv");
 
 		boolean android = false;
 		String line = null;
@@ -83,6 +83,54 @@ public class BrowserSnifferImplTest {
 	}
 
 	@Test
+	public void testIsMobile() throws IOException {
+		UnsyncBufferedReader unsyncBufferedReader =
+			getResourceAsUnsyncBufferedReader("dependencies/user_agents.csv");
+
+		boolean mobile = false;
+		String line = null;
+
+		while ((line = unsyncBufferedReader.readLine()) != null) {
+			line = line.trim();
+
+			if (line.isEmpty()) {
+				continue;
+			}
+
+			if (line.contains("Mobile")) {
+				mobile = true;
+
+				continue;
+			}
+
+			if (mobile && (line.charAt(0) == CharPool.POUND)) {
+				break;
+			}
+
+			if (mobile) {
+				MockHttpServletRequest mockHttpServletRequest =
+					new MockHttpServletRequest();
+
+				mockHttpServletRequest.addHeader(HttpHeaders.USER_AGENT, line);
+
+				Assert.assertTrue(
+					_browserSnifferImpl.isMobile(mockHttpServletRequest));
+			}
+		}
+
+		MockHttpServletRequest mockHttpServletRequest =
+			new MockHttpServletRequest();
+
+		mockHttpServletRequest.addHeader(
+			HttpHeaders.USER_AGENT,
+			"IE 6 var4, , 6.0, mozilla/5.0 (compatible; msie 6.0; windows" +
+				" nt 5.1)");
+
+		Assert.assertFalse(
+			_browserSnifferImpl.isMobile(mockHttpServletRequest));
+	}
+
+	@Test
 	public void testParseVersion() throws IOException {
 		UnsyncBufferedReader unsyncBufferedReader = new UnsyncBufferedReader(
 			new InputStreamReader(getClass().getResourceAsStream(
@@ -119,6 +167,16 @@ public class BrowserSnifferImplTest {
 		}
 
 		unsyncBufferedReader.close();
+	}
+
+	protected UnsyncBufferedReader getResourceAsUnsyncBufferedReader(
+		String name) {
+
+		Class<?> clazz = getClass();
+
+		return new UnsyncBufferedReader(
+			new InputStreamReader(
+				clazz.getResourceAsStream("dependencies/user_agents.csv")));
 	}
 
 	private BrowserSnifferImpl _browserSnifferImpl = new BrowserSnifferImpl();

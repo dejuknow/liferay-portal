@@ -370,7 +370,7 @@ AUI.add(
 								processSearchResults
 							);
 
-							var input = popup.searchField.get('node');
+							var input = popup.searchField;
 
 							input.on('keyup', searchCategoriesTask);
 
@@ -420,6 +420,8 @@ AUI.add(
 						};
 
 						entry[matchKey] = entryMatchKey;
+
+						entry.value = A.Lang.String.unescapeHTML(entry.value);
 
 						instance.entries.add(entry);
 					},
@@ -608,9 +610,7 @@ AUI.add(
 							instance._bindSearchHandle.detach();
 						}
 
-						var searchField = popup.searchField.get(BOUNDING_BOX);
-
-						instance._bindSearchHandle = searchField.once('focus', instance._initSearch, instance);
+						instance._bindSearchHandle = popup.searchField.once('focus', instance._initSearch, instance);
 					},
 
 					_vocabulariesIterator: function(item, index, collection) {

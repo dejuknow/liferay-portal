@@ -23,6 +23,7 @@ import com.liferay.portal.kernel.json.JSONSerializer;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.ClassUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -31,6 +32,7 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.security.ac.AccessControlThreadLocal;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextUtil;
 import com.liferay.portal.struts.JSONAction;
@@ -66,9 +68,16 @@ public class JSONServiceAction extends JSONAction {
 		_invalidClassNames = SetUtil.fromArray(
 			PropsValues.JSON_SERVICE_INVALID_CLASS_NAMES);
 
+		_invalidMethodNames = SetUtil.fromArray(
+			PropsValues.JSON_SERVICE_INVALID_METHOD_NAMES);
+
 		if (_log.isDebugEnabled()) {
 			for (String invalidClassName : _invalidClassNames) {
 				_log.debug("Invalid class name " + invalidClassName);
+			}
+
+			for (String invalidMethodName : _invalidMethodNames) {
+				_log.debug("Invalid method name " + invalidMethodName);
 			}
 		}
 	}
@@ -120,7 +129,18 @@ public class JSONServiceAction extends JSONAction {
 						" with args " + Arrays.toString(args));
 			}
 
-			Object returnObj = method.invoke(clazz, args);
+			Object returnObj = null;
+
+			boolean remoteAccess = AccessControlThreadLocal.isRemoteAccess();
+
+			try {
+				AccessControlThreadLocal.setRemoteAccess(true);
+
+				returnObj = method.invoke(clazz, args);
+			}
+			finally {
+				AccessControlThreadLocal.setRemoteAccess(remoteAccess);
+			}
 
 			if (returnObj != null) {
 				return getReturnValue(returnObj);
@@ -394,6 +414,32 @@ public class JSONServiceAction extends JSONAction {
 		}
 	}
 
+	/**
+	 * @see JSONWebServiceServiceAction#getCSRFOrigin(HttpServletRequest)
+	 */
+	@Override
+	protected String getCSRFOrigin(HttpServletRequest request) {
+		StringBundler sb = new StringBundler(6);
+
+		sb.append(ClassUtil.getClassName(this));
+		sb.append(StringPool.COLON);
+		sb.append(StringPool.SLASH);
+
+		String serviceClassName = ParamUtil.getString(
+			request, "serviceClassName");
+
+		sb.append(serviceClassName);
+
+		sb.append(StringPool.POUND);
+
+		String serviceMethodName = ParamUtil.getString(
+			request, "serviceMethodName");
+
+		sb.append(serviceMethodName);
+
+		return sb.toString();
+	}
+
 	protected Object[] getMethodAndParameterTypes(
 			Class<?> clazz, String methodName, String[] parameters,
 			String[] parameterTypes)
@@ -579,11 +625,13 @@ public class JSONServiceAction extends JSONAction {
 
 	protected boolean isValidRequest(HttpServletRequest request) {
 		String className = ParamUtil.getString(request, "serviceClassName");
+		String methodName = ParamUtil.getString(request, "serviceMethodName");
 
 		if (className.contains(".service.") &&
 			className.endsWith("ServiceUtil") &&
 			!className.endsWith("LocalServiceUtil") &&
-			!_invalidClassNames.contains(className)) {
+			!_invalidClassNames.contains(className) &&
+			!_invalidMethodNames.contains(methodName)) {
 
 			return true;
 		}
@@ -600,6 +648,7 @@ public class JSONServiceAction extends JSONAction {
 		"^(.*?)((\\[\\])*)$", Pattern.DOTALL);
 
 	private Set<String> _invalidClassNames;
+	private Set<String> _invalidMethodNames;
 	private Map<String, Object[]> _methodCache =
 		new HashMap<String, Object[]>();
 

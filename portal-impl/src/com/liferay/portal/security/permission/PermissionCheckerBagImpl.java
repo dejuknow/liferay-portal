@@ -152,9 +152,9 @@ public class PermissionCheckerBagImpl implements PermissionCheckerBag {
 		throws Exception {
 
 		for (Role role : _roles) {
-			String name = role.getName();
+			String roleName = role.getName();
 
-			if (name.equals(RoleConstants.SITE_MEMBER)) {
+			if (roleName.equals(RoleConstants.SITE_MEMBER)) {
 				return true;
 			}
 		}
@@ -282,9 +282,7 @@ public class PermissionCheckerBagImpl implements PermissionCheckerBag {
 					OrganizationLocalServiceUtil.getOrganization(
 						organizationId);
 
-				Group organizationGroup = organization.getGroup();
-
-				long organizationGroupId = organizationGroup.getGroupId();
+				long organizationGroupId = organization.getGroupId();
 
 				if (UserGroupRoleLocalServiceUtil.hasUserGroupRole(
 						_userId, organizationGroupId,
@@ -346,9 +344,7 @@ public class PermissionCheckerBagImpl implements PermissionCheckerBag {
 					OrganizationLocalServiceUtil.getOrganization(
 						organizationId);
 
-				Group organizationGroup = organization.getGroup();
-
-				long organizationGroupId = organizationGroup.getGroupId();
+				long organizationGroupId = organization.getGroupId();
 
 				if (UserGroupRoleLocalServiceUtil.hasUserGroupRole(
 						_userId, organizationGroupId,
@@ -376,9 +372,7 @@ public class PermissionCheckerBagImpl implements PermissionCheckerBag {
 		throws PortalException, SystemException {
 
 		while (organization != null) {
-			Group organizationGroup = organization.getGroup();
-
-			long organizationGroupId = organizationGroup.getGroupId();
+			long organizationGroupId = organization.getGroupId();
 
 			if (UserGroupRoleLocalServiceUtil.hasUserGroupRole(
 					_userId, organizationGroupId,
@@ -401,9 +395,7 @@ public class PermissionCheckerBagImpl implements PermissionCheckerBag {
 		throws PortalException, SystemException {
 
 		while (organization != null) {
-			Group organizationGroup = organization.getGroup();
-
-			long organizationGroupId = organizationGroup.getGroupId();
+			long organizationGroupId = organization.getGroupId();
 
 			if (UserGroupRoleLocalServiceUtil.hasUserGroupRole(
 					_userId, organizationGroupId,

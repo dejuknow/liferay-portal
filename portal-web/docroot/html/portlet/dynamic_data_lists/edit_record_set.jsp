@@ -83,7 +83,7 @@ if (ddmStructureId > 0) {
 			<liferay-ui:input-resource id="ddmStructureNameDisplay" url="<%= ddmStructureName %>" />
 
 			<liferay-ui:icon
-				iconClass="icon-search"
+				iconCssClass="icon-search"
 				label="<%= true %>"
 				linkCssClass="btn"
 				message="select"
@@ -124,6 +124,14 @@ if (ddmStructureId > 0) {
 				%>
 
 			</aui:select>
+		</c:if>
+
+		<c:if test="<%= recordSet == null %>">
+			<aui:field-wrapper label="permissions">
+				<liferay-ui:input-permissions
+					modelName="<%= DDLRecordSet.class.getName() %>"
+				/>
+			</aui:field-wrapper>
 		</c:if>
 
 		<aui:button-row>

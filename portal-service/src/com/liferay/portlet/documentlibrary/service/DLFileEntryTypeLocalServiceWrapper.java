@@ -751,6 +751,14 @@ public class DLFileEntryTypeLocalServiceWrapper
 	}
 
 	@Override
+	public com.liferay.portlet.documentlibrary.model.DLFileEntryType fetchFileEntryType(
+		long groupId, java.lang.String fileEntryTypeKey)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return _dlFileEntryTypeLocalService.fetchFileEntryType(groupId,
+			fileEntryTypeKey);
+	}
+
+	@Override
 	public long getDefaultFileEntryTypeId(long folderId)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException {

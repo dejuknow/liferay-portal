@@ -72,7 +72,12 @@
 <!--FIELDS-->
 <tr>
 	<td>FIELDS_LINK</td>
-	<td>//ul[@class='nav nav-tabs']/li/a[contains(.,'Fields')]</td>
+	<td>//ul[contains(@class,'nav') and contains(@class,'nav-tabs')]/li/a[contains(.,'Fields')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>FIELDS_NAME</td>
+	<td>//div[@class='tab-content']/div/ul/li[@title='${key_fieldName}']/div</td>
 	<td></td>
 </tr>
 <tr>
@@ -88,7 +93,7 @@
 <!--SETTINGS-->
 <tr>
 	<td>SETTINGS_LINK</td>
-	<td>//ul[@class='nav nav-tabs']/li/a[contains(.,'Settings')]</td>
+	<td>//ul[contains(@class,'nav') and contains(@class,'nav-tabs')]/li/a[contains(.,'Settings')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -168,6 +173,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>FORM_FIELDSET_FIELD_2</td>
+	<td>xpath=(//fieldset[contains(@class,'form-builder-fieldset-field-content')])[2]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>FORM_HTML_FIELD_1</td>
 	<td>xpath=(//div[contains(@class,'ddm-text-html-content')])[1]</td>
 	<td></td>
@@ -209,7 +219,7 @@
 </tr>
 <tr>
 	<td>FORM_TEXT_FIELD_1</td>
-	<td>xpath=(//div[@class='form-builder-field-content form-builder-text-field-content clearfix'])[1]</td>
+	<td>xpath=(//div[contains(@class,'form-builder-field-content') and contains(@class,'form-builder-text-field-content') and contains(@class,'clearfix')])[1]</td>
 	<td></td>
 </tr>
 <tr>

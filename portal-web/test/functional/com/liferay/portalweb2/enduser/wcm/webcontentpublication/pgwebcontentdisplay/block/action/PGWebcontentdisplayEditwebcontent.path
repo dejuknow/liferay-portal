@@ -20,12 +20,12 @@
 </tr>
 <tr>
 	<td>WORKFLOW_STATUS</td>
-	<td>//span[@class='workflow-status workflow-status-icon']/strong</td>
+	<td>//span[contains(@class,'workflow-status') and contains(@class,'workflow-status-icon')]/strong</td>
 	<td></td>
 </tr>
 <tr>
 	<td>SELECT_STRUCTURE</td>
-	<td>//fieldset[@class='fieldset article-structure-toolbar']/div/div/span/a/span</td>
+	<td>//fieldset[contains(@class,'fieldset') and contains(@class,'article-structure-toolbar')]/div/div/span/a/span</td>
 	<td></td>
 </tr>
 <tr>
@@ -36,6 +36,11 @@
 <tr>
 	<td>TITLE_FIELD</td>
 	<td>//input[@id='_15_title_en_US']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>AVAILABLE_TRANSLATION</td>
+	<td>//a[contains(@class,'journal-article-translation-') and contains(.,'${key_webContentTranslationLanguage}')]</td>
 	<td></td>
 </tr>
 <tr>
