@@ -926,21 +926,9 @@ public class DDMStructureWrapper implements DDMStructure,
 	}
 
 	@Override
-	public java.lang.String getCompleteXsd()
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
-		return _ddmStructure.getCompleteXsd();
-	}
-
-	@Override
 	public com.liferay.portlet.dynamicdatamapping.model.DDMForm getDDMForm()
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _ddmStructure.getDDMForm();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.xml.Document getDocument() {
-		return _ddmStructure.getDocument();
 	}
 
 	@Override
@@ -1073,6 +1061,13 @@ public class DDMStructureWrapper implements DDMStructure,
 	}
 
 	@Override
+	public com.liferay.portlet.dynamicdatamapping.model.DDMForm getFullHierarchyDDMForm()
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _ddmStructure.getFullHierarchyDDMForm();
+	}
+
+	@Override
 	public java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.String>>> getLocalizedFieldsMap() {
 		return _ddmStructure.getLocalizedFieldsMap();
 	}
@@ -1167,11 +1162,6 @@ public class DDMStructureWrapper implements DDMStructure,
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException {
 		return _ddmStructure.isFieldTransient(fieldName);
-	}
-
-	@Override
-	public void setDocument(com.liferay.portal.kernel.xml.Document document) {
-		_ddmStructure.setDocument(document);
 	}
 
 	@Override

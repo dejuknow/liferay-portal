@@ -15,7 +15,6 @@
 package com.liferay.portlet.journal.lar;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.lar.BaseStagedModelDataHandler;
@@ -24,6 +23,8 @@ import com.liferay.portal.kernel.lar.ExportImportPathUtil;
 import com.liferay.portal.kernel.lar.PortletDataContext;
 import com.liferay.portal.kernel.lar.PortletDataException;
 import com.liferay.portal.kernel.lar.StagedModelDataHandlerUtil;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.trash.TrashHandler;
 import com.liferay.portal.kernel.util.CalendarFactoryUtil;
 import com.liferay.portal.kernel.util.FileUtil;
@@ -77,7 +78,7 @@ public class JournalArticleStagedModelDataHandler
 	@Override
 	public void deleteStagedModel(
 			String uuid, long groupId, String className, String extraData)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		JournalArticleResource articleResource =
 			JournalArticleResourceLocalServiceUtil.fetchArticleResource(
@@ -130,12 +131,15 @@ public class JournalArticleStagedModelDataHandler
 
 		Map<String, String> referenceAttributes = new HashMap<String, String>();
 
-		String articleResourceUuid = StringPool.BLANK;
+		String articleResourceUuid = null;
 
 		try {
 			articleResourceUuid = article.getArticleResourceUuid();
 		}
 		catch (Exception e) {
+			throw new IllegalStateException(
+				"Unable to find article resource for article " +
+					article.getArticleId());
 		}
 
 		referenceAttributes.put("article-resource-uuid", articleResourceUuid);
@@ -193,7 +197,7 @@ public class JournalArticleStagedModelDataHandler
 				articleResourceUuid, liveGroupId, articleArticleId, null, 0.0,
 				preloaded);
 		}
-		catch (SystemException se) {
+		catch (Exception se) {
 			throw new PortletDataException(se);
 		}
 
@@ -250,7 +254,11 @@ public class JournalArticleStagedModelDataHandler
 
 			return true;
 		}
-		catch (SystemException se) {
+		catch (Exception se) {
+			if (_log.isInfoEnabled()) {
+				_log.info("Unable to validate reference", se);
+			}
+
 			return false;
 		}
 	}
@@ -746,10 +754,8 @@ public class JournalArticleStagedModelDataHandler
 	}
 
 	protected void exportArticleImage(
-			PortletDataContext portletDataContext,
-			JournalArticleImage articleImage, JournalArticle article,
-			Element articleElement)
-		throws SystemException {
+		PortletDataContext portletDataContext, JournalArticleImage articleImage,
+		JournalArticle article, Element articleElement) {
 
 		Image image = ImageLocalServiceUtil.fetchImage(
 			articleImage.getArticleImageId());
@@ -792,7 +798,7 @@ public class JournalArticleStagedModelDataHandler
 	protected JournalArticle fetchExistingArticle(
 			String articleResourceUuid, long groupId, String articleId,
 			String newArticleId, double version, boolean preloaded)
-		throws SystemException {
+		throws PortalException {
 
 		JournalArticleResource existingArticleResource = null;
 
@@ -823,7 +829,32 @@ public class JournalArticleStagedModelDataHandler
 				groupId, newArticleId, version);
 		}
 
+		if ((existingArticle == null) && Validator.isNull(newArticleId)) {
+			existingArticle = JournalArticleLocalServiceUtil.fetchArticle(
+				groupId, articleId, version);
+
+			if (existingArticle != null) {
+				StringBundler sb = new StringBundler(10);
+
+				sb.append("The article in the LAR file with article resource ");
+				sb.append("UUID ");
+				sb.append(articleResourceUuid);
+				sb.append(", article ID ");
+				sb.append(articleId);
+				sb.append(", and version ");
+				sb.append(version);
+				sb.append("conflicts with an article in the database with ");
+				sb.append("article resource UUID ");
+				sb.append(existingArticle.getArticleResourceUuid());
+
+				throw new PortletDataException(sb.toString());
+			}
+		}
+
 		return existingArticle;
 	}
+
+	private static Log _log = LogFactoryUtil.getLog(
+		JournalArticleStagedModelDataHandler.class);
 
 }

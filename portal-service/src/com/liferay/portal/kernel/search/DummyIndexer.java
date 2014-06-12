@@ -197,4 +197,8 @@ public class DummyIndexer implements Indexer {
 		IndexerPostProcessor indexerPostProcessor) {
 	}
 
+	@Override
+	public void updateFullQuery(SearchContext searchContext) {
+	}
+
 }

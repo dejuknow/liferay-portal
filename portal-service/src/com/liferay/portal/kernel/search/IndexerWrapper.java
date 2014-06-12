@@ -230,6 +230,11 @@ public class IndexerWrapper implements Indexer {
 		_indexer.unregisterIndexerPostProcessor(indexerPostProcessor);
 	}
 
+	@Override
+	public void updateFullQuery(SearchContext searchContext) {
+		_indexer.updateFullQuery(searchContext);
+	}
+
 	private Indexer _indexer;
 
 }

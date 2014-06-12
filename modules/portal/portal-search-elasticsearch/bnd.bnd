@@ -1,9 +1,7 @@
 Bundle-Name: Liferay Portal Elasticsearch Adapter
 Bundle-Version: ${plugin.full.version}
-
 libs: ${lsr;lib;*.jar}
-
-Import-Package: \
+Import-Package:\
 	com.liferay.portal.kernel.dao.orm.*,\
 	com.liferay.portal.kernel.log.*,\
 	com.liferay.portal.kernel.messaging.*,\
@@ -13,10 +11,8 @@ Import-Package: \
 	com.liferay.portal.service.*,\
 	com.liferay.portal.util.*,\
 	*;resolution:="optional"
-Include-Resource: \
+Include-Resource:\
 	${replace;${libs};^;@lib/},\
 	classes,\
  	META-INF/services=src/META-INF/services
-
-Private-Package: \
-	com.liferay.portal.search.elasticsearch.*
+Private-Package: com.liferay.portal.search.elasticsearch.*

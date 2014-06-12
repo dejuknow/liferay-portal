@@ -15,7 +15,7 @@
 package com.liferay.portal.kernel.repository;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.repository.capabilities.CapabilityProvider;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portal.kernel.repository.model.Folder;
@@ -30,89 +30,89 @@ import java.util.List;
 /**
  * @author Alexander Chow
  */
-public interface LocalRepository {
+public interface LocalRepository extends CapabilityProvider {
 
 	public FileEntry addFileEntry(
 			long userId, long folderId, String sourceFileName, String mimeType,
 			String title, String description, String changeLog, File file,
 			ServiceContext serviceContext)
-		throws PortalException, SystemException;
+		throws PortalException;
 
 	public FileEntry addFileEntry(
 			long userId, long folderId, String sourceFileName, String mimeType,
 			String title, String description, String changeLog, InputStream is,
 			long size, ServiceContext serviceContext)
-		throws PortalException, SystemException;
+		throws PortalException;
 
 	public Folder addFolder(
 			long userId, long parentFolderId, String title, String description,
 			ServiceContext serviceContext)
-		throws PortalException, SystemException;
+		throws PortalException;
 
-	public void deleteAll() throws PortalException, SystemException;
+	public void deleteAll() throws PortalException;
 
 	public void deleteFileEntry(long fileEntryId)
-		throws PortalException, SystemException;
+		throws PortalException;
 
 	public void deleteFolder(long folderId)
-		throws PortalException, SystemException;
+		throws PortalException;
 
 	public FileEntry getFileEntry(long fileEntryId)
-		throws PortalException, SystemException;
+		throws PortalException;
 
 	public FileEntry getFileEntry(long folderId, String title)
-		throws PortalException, SystemException;
+		throws PortalException;
 
 	public FileEntry getFileEntryByUuid(String uuid)
-		throws PortalException, SystemException;
+		throws PortalException;
 
 	public FileVersion getFileVersion(long fileVersionId)
-		throws PortalException, SystemException;
+		throws PortalException;
 
 	public Folder getFolder(long folderId)
-		throws PortalException, SystemException;
+		throws PortalException;
 
 	public Folder getFolder(long parentFolderId, String title)
-		throws PortalException, SystemException;
+		throws PortalException;
 
 	public List<FileEntry> getRepositoryFileEntries(
 			long rootFolderId, int start, int end, OrderByComparator obc)
-		throws PortalException, SystemException;
+		throws PortalException;
 
 	public long getRepositoryId();
 
 	public FileEntry moveFileEntry(
 			long userId, long fileEntryId, long newFolderId,
 			ServiceContext serviceContext)
-		throws PortalException, SystemException;
+		throws PortalException;
 
 	public Folder moveFolder(
 			long userId, long folderId, long parentFolderId,
 			ServiceContext serviceContext)
-		throws PortalException, SystemException;
+		throws PortalException;
 
 	public void updateAsset(
 			long userId, FileEntry fileEntry, FileVersion fileVersion,
 			long[] assetCategoryIds, String[] assetTagNames,
 			long[] assetLinkEntryIds)
-		throws PortalException, SystemException;
+		throws PortalException;
 
 	public FileEntry updateFileEntry(
 			long userId, long fileEntryId, String sourceFileName,
 			String mimeType, String title, String description, String changeLog,
 			boolean majorVersion, File file, ServiceContext serviceContext)
-		throws PortalException, SystemException;
+		throws PortalException;
 
 	public FileEntry updateFileEntry(
 			long userId, long fileEntryId, String sourceFileName,
 			String mimeType, String title, String description, String changeLog,
 			boolean majorVersion, InputStream is, long size,
 			ServiceContext serviceContext)
-		throws PortalException, SystemException;
+		throws PortalException;
 
 	public Folder updateFolder(
 			long folderId, long parentFolderId, String title,
 			String description, ServiceContext serviceContext)
-		throws PortalException, SystemException;
+		throws PortalException;
 
 }

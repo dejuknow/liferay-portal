@@ -14,6 +14,8 @@
 
 package com.liferay.portlet.dynamicdatamapping;
 
+import com.liferay.portal.json.JSONFactoryImpl;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
@@ -32,6 +34,8 @@ import com.liferay.portlet.dynamicdatamapping.model.impl.DDMStructureImpl;
 import com.liferay.portlet.dynamicdatamapping.model.impl.DDMTemplateImpl;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalServiceUtil;
+import com.liferay.portlet.dynamicdatamapping.util.DDMFormXSDDeserializerImpl;
+import com.liferay.portlet.dynamicdatamapping.util.DDMFormXSDDeserializerUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -54,8 +58,9 @@ import org.powermock.modules.junit4.PowerMockRunner;
  */
 @PrepareForTest(
 	{
-		DDMStructureLocalServiceUtil.class, DDMTemplateLocalServiceUtil.class,
-		HtmlUtil.class, LocaleUtil.class, LocalizationUtil.class,
+		DDMFormXSDDeserializerUtil.class, DDMStructureLocalServiceUtil.class,
+		DDMTemplateLocalServiceUtil.class, HtmlUtil.class,
+		JSONFactoryUtil.class, LocaleUtil.class, LocalizationUtil.class,
 		PropsUtil.class, SAXReaderUtil.class
 	})
 @RunWith(PowerMockRunner.class)
@@ -65,9 +70,11 @@ public class BaseDDMTest extends PowerMockito {
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
 
+		setUpDDMFormXSDDeserializer();
 		setUpDDMStructureLocalServiceUtil();
 		setUpDDMTemplateLocalServiceUtil();
 		setUpHtmlUtil();
+		setUpJSONFactoryUtil();
 		setUpLocaleUtil();
 		setUpLocalizationUtil();
 		setUpPropsUtil();
@@ -133,7 +140,7 @@ public class BaseDDMTest extends PowerMockito {
 
 		structure.setStructureId(RandomTestUtil.randomLong());
 		structure.setName(name);
-		structure.setDocument(document);
+		structure.setXsd(document.asXML());
 
 		_structures.put(structure.getStructureId(), structure);
 
@@ -176,6 +183,16 @@ public class BaseDDMTest extends PowerMockito {
 		catch (Exception e) {
 			return null;
 		}
+	}
+
+	protected void setUpDDMFormXSDDeserializer() {
+		spy(DDMFormXSDDeserializerUtil.class);
+
+		when(
+			DDMFormXSDDeserializerUtil.getDDMFormXSDDeserializer()
+		).thenReturn(
+			new DDMFormXSDDeserializerImpl()
+		);
 	}
 
 	protected void setUpDDMStructureLocalServiceUtil() {
@@ -231,6 +248,16 @@ public class BaseDDMTest extends PowerMockito {
 			HtmlUtil.getHtml()
 		).thenReturn(
 			new HtmlImpl()
+		);
+	}
+
+	protected void setUpJSONFactoryUtil() {
+		spy(JSONFactoryUtil.class);
+
+		when(
+			JSONFactoryUtil.getJSONFactory()
+		).thenReturn(
+			new JSONFactoryImpl()
 		);
 	}
 

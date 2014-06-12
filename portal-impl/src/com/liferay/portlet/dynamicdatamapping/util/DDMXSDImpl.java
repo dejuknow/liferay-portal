@@ -46,6 +46,7 @@ import com.liferay.portal.kernel.xml.Node;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.liferay.portal.kernel.xml.XPath;
 import com.liferay.portal.util.PortalUtil;
+import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplateConstants;
@@ -342,12 +343,12 @@ public class DDMXSDImpl implements DDMXSD {
 
 	@Override
 	public JSONArray getJSONArray(DDMStructure structure, String xsd)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		JSONArray jsonArray = null;
 
 		if (Validator.isNull(xsd)) {
-			jsonArray = getJSONArray(structure.getDocument());
+			jsonArray = getJSONArray(structure.getXsd());
 		}
 		else {
 			jsonArray = getJSONArray(xsd);
@@ -450,9 +451,7 @@ public class DDMXSDImpl implements DDMXSD {
 	}
 
 	@Override
-	public JSONArray getJSONArray(String xml)
-		throws PortalException, SystemException {
-
+	public JSONArray getJSONArray(String xml) throws PortalException {
 		try {
 			return getJSONArray(SAXReaderUtil.read(xml));
 		}
@@ -545,7 +544,7 @@ public class DDMXSDImpl implements DDMXSD {
 
 	@Override
 	public String getXSD(long classNameId, long classPK)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		if ((classNameId <= 0) || (classPK <= 0)) {
 			return null;
@@ -561,7 +560,9 @@ public class DDMXSDImpl implements DDMXSD {
 			DDMStructure structure = DDMStructureLocalServiceUtil.getStructure(
 				classPK);
 
-			return structure.getCompleteXsd();
+			DDMForm ddmForm = structure.getFullHierarchyDDMForm();
+
+			return DDMFormXSDSerializerUtil.serialize(ddmForm);
 		}
 		else if (classNameId == ddmTemplateClassNameId) {
 			DDMTemplate template = DDMTemplateLocalServiceUtil.getTemplate(

@@ -234,7 +234,7 @@
 
 	<target name="all">
 		<antcall target="clean" />
-		<antcall target="start" />
+		<antcall target="compile" />
 		<antcall target="deploy" />
 	</target>
 
@@ -388,6 +388,13 @@
 	</target>
 
 	<target name="compile">
+		<setup-sdk />
+
+		<ant-execute
+			ant.dir="${project.dir}/modules/core/registry-api"
+			ant.target="compile"
+		/>
+
 		<ant dir="portal-service" target="compile" inheritAll="false" />
 
 		<ant dir="util-bridges" target="compile" inheritAll="false" />
@@ -398,6 +405,19 @@
 		<ant dir="portal-impl" target="compile" inheritAll="false" />
 		<ant dir="portal-pacl" target="compile" inheritAll="false" />
 		<ant dir="portal-test" target="compile" inheritAll="false" />
+
+		<ant dir="util-taglib" target="jar" inheritAll="false" />
+
+		<ant dir="sql" target="build-db" inheritAll="false" />
+		<ant dir="sql" target="rebuild-hypersonic" inheritAll="false" />
+
+		<ant dir="portal-impl" target="build-themes" inheritAll="false" />
+
+		<antcall target="jar" />
+
+		<setup-jrebel />
+
+		<antcall target="print-current-time" />
 	</target>
 
 	<target name="compile-test">
@@ -1109,27 +1129,9 @@ print AdminControl.invoke(appManager, 'startApplication', 'liferay-portal')
 	</target>
 
 	<target name="start">
-		<setup-sdk />
-
-		<ant-execute
-			ant.dir="${project.dir}/modules/core/registry-api"
-			ant.target="compile"
-		/>
-
 		<antcall target="compile" />
 
-		<ant dir="util-taglib" target="jar" inheritAll="false" />
-
-		<ant dir="sql" target="build-db" inheritAll="false" />
-		<ant dir="sql" target="rebuild-hypersonic" inheritAll="false" />
-
-		<ant dir="portal-impl" target="build-themes" inheritAll="false" />
-
-		<antcall target="jar" />
-
-		<setup-jrebel />
-
-		<antcall target="print-current-time" />
+		<echo>The "start" target is now deprecated. Please use the "compile" target instead.</echo>
 	</target>
 
 	<target name="test">

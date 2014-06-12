@@ -19,7 +19,6 @@ import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Property;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.parsers.bbcode.BBCodeTranslatorUtil;
@@ -204,6 +203,15 @@ public class MBMessageIndexer extends BaseIndexer {
 			}
 
 			contextQuery.add(categoriesQuery, BooleanClauseOccur.MUST);
+		}
+	}
+
+	@Override
+	public void updateFullQuery(SearchContext searchContext) {
+		if (searchContext.isIncludeDiscussions()) {
+			searchContext.addFullQueryEntryClassName(MBMessage.class.getName());
+
+			searchContext.setAttribute("discussion", Boolean.TRUE);
 		}
 	}
 
@@ -407,7 +415,7 @@ public class MBMessageIndexer extends BaseIndexer {
 	}
 
 	protected void reindexCategories(final long companyId)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		ActionableDynamicQuery actionableDynamicQuery =
 			MBCategoryLocalServiceUtil.getActionableDynamicQuery();
@@ -418,7 +426,7 @@ public class MBMessageIndexer extends BaseIndexer {
 
 				@Override
 				public void performAction(Object object)
-					throws PortalException, SystemException {
+					throws PortalException {
 
 					MBCategory category = (MBCategory)object;
 
@@ -433,7 +441,7 @@ public class MBMessageIndexer extends BaseIndexer {
 	}
 
 	protected void reindexDiscussions(final long companyId)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		ActionableDynamicQuery actionableDynamicQuery =
 			GroupLocalServiceUtil.getActionableDynamicQuery();
@@ -444,7 +452,7 @@ public class MBMessageIndexer extends BaseIndexer {
 
 				@Override
 				public void performAction(Object object)
-					throws PortalException, SystemException {
+					throws PortalException {
 
 					Group group = (Group)object;
 
@@ -460,7 +468,7 @@ public class MBMessageIndexer extends BaseIndexer {
 
 	protected void reindexMessages(
 			long companyId, long groupId, final long categoryId)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		final ActionableDynamicQuery actionableDynamicQuery =
 			MBMessageLocalServiceUtil.getActionableDynamicQuery();
@@ -513,9 +521,7 @@ public class MBMessageIndexer extends BaseIndexer {
 		actionableDynamicQuery.performActions();
 	}
 
-	protected void reindexRoot(final long companyId)
-		throws PortalException, SystemException {
-
+	protected void reindexRoot(final long companyId) throws PortalException {
 		ActionableDynamicQuery actionableDynamicQuery =
 			GroupLocalServiceUtil.getActionableDynamicQuery();
 
@@ -525,7 +531,7 @@ public class MBMessageIndexer extends BaseIndexer {
 
 				@Override
 				public void performAction(Object object)
-					throws PortalException, SystemException {
+					throws PortalException {
 
 					Group group = (Group)object;
 

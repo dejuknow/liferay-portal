@@ -274,8 +274,7 @@ public class FinderCacheImpl
 		Serializable primaryKey) {
 
 		if (primaryKey instanceof List<?>) {
-			List<Serializable> primaryKeys =
-				(List<Serializable>)primaryKey;
+			List<Serializable> primaryKeys = (List<Serializable>)primaryKey;
 
 			if (primaryKeys.isEmpty()) {
 				return (Serializable)Collections.emptyList();

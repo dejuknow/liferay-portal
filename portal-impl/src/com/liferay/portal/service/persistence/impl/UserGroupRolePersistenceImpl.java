@@ -3214,7 +3214,6 @@ public class UserGroupRolePersistenceImpl extends BasePersistenceImpl<UserGroupR
 	}
 
 	private static final String _SQL_SELECT_USERGROUPROLE = "SELECT userGroupRole FROM UserGroupRole userGroupRole";
-	private static final String _SQL_SELECT_USERGROUPROLE_WHERE_PKS_IN = "SELECT userGroupRole FROM UserGroupRole userGroupRole WHERE userGroupRolePK IN (";
 	private static final String _SQL_SELECT_USERGROUPROLE_WHERE = "SELECT userGroupRole FROM UserGroupRole userGroupRole WHERE ";
 	private static final String _SQL_COUNT_USERGROUPROLE = "SELECT COUNT(userGroupRole) FROM UserGroupRole userGroupRole";
 	private static final String _SQL_COUNT_USERGROUPROLE_WHERE = "SELECT COUNT(userGroupRole) FROM UserGroupRole userGroupRole WHERE ";

@@ -122,4 +122,6 @@ public interface Indexer {
 	public void unregisterIndexerPostProcessor(
 		IndexerPostProcessor indexerPostProcessor);
 
+	public void updateFullQuery(SearchContext searchContext);
+
 }
