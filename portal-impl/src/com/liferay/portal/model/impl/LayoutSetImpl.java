@@ -37,12 +37,12 @@ import com.liferay.portal.util.PrefsPropsUtil;
 import java.io.IOException;
 
 /**
- * Represents a portal layout set, providing access to the layout set's color schemes,
- * groups, prototypes, themes, and more.
+ * Represents a portal layout set, providing access to the layout set's color
+ * schemes, groups, prototypes, themes, and more.
  *
  * <p>
- * Each {@link Group} in Liferay can have a public and a private layout set. This
- * keeps information common to all layouts (pages) in the layout set.
+ * Each {@link Group} in Liferay can have a public and a private layout set.
+ * This keeps information common to all layouts (pages) in the layout set.
  * </p>
  *
  * @author Brian Wing Shun Chan
@@ -63,7 +63,6 @@ public class LayoutSetImpl extends LayoutSetBaseImpl {
 	 * </p>
 	 *
 	 * @return the layout set's color scheme
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public ColorScheme getColorScheme() {
@@ -77,7 +76,6 @@ public class LayoutSetImpl extends LayoutSetBaseImpl {
 	 * @return the layout set's group
 	 * @throws PortalException if a group with the primary key could not be
 	 *         found
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public Group getGroup() throws PortalException {
@@ -85,18 +83,17 @@ public class LayoutSetImpl extends LayoutSetBaseImpl {
 	}
 
 	/**
-	 * Returns the layout set prototype's ID, or <code>0</code> if it has no layout
-	 * set prototype.
+	 * Returns the layout set prototype's ID, or <code>0</code> if it has no
+	 * layout set prototype.
 	 *
 	 * <p>
 	 * Prototype is Liferay's technical name for a site template.
 	 * </p>
 	 *
-	 * @return the layout set prototype's ID, or <code>0</code> if it has no layout
-	 *         set prototype
+	 * @return the layout set prototype's ID, or <code>0</code> if it has no
+	 *         layout set prototype
 	 * @throws PortalException if a matching layout set prototype could not be
 	 *         found
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public long getLayoutSetPrototypeId() throws PortalException {
@@ -219,8 +216,8 @@ public class LayoutSetImpl extends LayoutSetBaseImpl {
 	 * "/web/sitename" or "/group/sitename" can be omitted.
 	 * </p>
 	 *
-	 * @return the layout set's virtual host name, or an empty string if the layout
-	 *         set has no virtual host configured
+	 * @return the layout set's virtual host name, or an empty string if the
+	 *         layout set has no virtual host configured
 	 */
 	@Override
 	public String getVirtualHostname() {
@@ -294,7 +291,7 @@ public class LayoutSetImpl extends LayoutSetBaseImpl {
 	 * Sets the name of the layout set's virtual host.
 	 *
 	 * @param virtualHostname the name of the layout set's virtual host
-	 * @see #getVirtualHostname()
+	 * @see   #getVirtualHostname()
 	 */
 	@Override
 	public void setVirtualHostname(String virtualHostname) {

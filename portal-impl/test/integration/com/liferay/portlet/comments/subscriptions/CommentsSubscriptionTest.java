@@ -52,7 +52,7 @@ public class CommentsSubscriptionTest {
 	public void setUp() throws Exception {
 		_group = GroupTestUtil.addGroup();
 
-		_user = UserTestUtil.addOmniAdmin();
+		_user = UserTestUtil.addOmniAdminUser();
 	}
 
 	@Test

@@ -32,6 +32,7 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
+import com.liferay.portal.kernel.xml.Node;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.liferay.portal.service.ResourceLocalServiceUtil;
 import com.liferay.portal.util.PortalInstances;
@@ -84,41 +85,38 @@ public class VerifyJournal extends VerifyProcess {
 		verifyURLTitle();
 	}
 
-	protected void updateElements(List<Element> elements) {
-		for (Element element : elements) {
-			String type = element.attributeValue("type");
+	protected void updateDocumentLibraryElements(Element element) {
+		List<Element> dynamicElementElements = element.elements(
+			"dynamic-element");
 
-			if (!type.equals("document_library")) {
-				continue;
-			}
-
-			updateElements(element.elements("dynamic-element"));
-
-			Element dynamicContentElement = element.element("dynamic-content");
-
-			String path = dynamicContentElement.getStringValue();
-
-			String[] pathArray = StringUtil.split(path, CharPool.SLASH);
-
-			if (pathArray.length != 5) {
-				continue;
-			}
-
-			long groupId = GetterUtil.getLong(pathArray[2]);
-			long folderId = GetterUtil.getLong(pathArray[3]);
-			String title = HttpUtil.decodeURL(HtmlUtil.escape(pathArray[4]));
-
-			DLFileEntry dlFileEntry =
-				DLFileEntryLocalServiceUtil.fetchFileEntry(
-					groupId, folderId, title);
-
-			if (dlFileEntry == null) {
-				continue;
-			}
-
-			dynamicContentElement.setText(
-				path + StringPool.SLASH + dlFileEntry.getUuid());
+		for (Element dynamicElementElement : dynamicElementElements) {
+			updateDocumentLibraryElements(dynamicElementElement);
 		}
+
+		Element dynamicContentElement = element.element("dynamic-content");
+
+		String path = dynamicContentElement.getStringValue();
+
+		String[] pathArray = StringUtil.split(path, CharPool.SLASH);
+
+		if (pathArray.length != 5) {
+			return;
+		}
+
+		long groupId = GetterUtil.getLong(pathArray[2]);
+		long folderId = GetterUtil.getLong(pathArray[3]);
+		String title = HttpUtil.decodeURL(HtmlUtil.escape(pathArray[4]));
+
+		DLFileEntry dlFileEntry = DLFileEntryLocalServiceUtil.fetchFileEntry(
+			groupId, folderId, title);
+
+		if (dlFileEntry == null) {
+			return;
+		}
+
+		Node node = dynamicContentElement.node(0);
+
+		node.setText(path + StringPool.SLASH + dlFileEntry.getUuid());
 	}
 
 	protected void updateFolderAssets() throws Exception {
@@ -147,6 +145,22 @@ public class VerifyJournal extends VerifyProcess {
 		if (_log.isDebugEnabled()) {
 			_log.debug("Assets verified for folders");
 		}
+	}
+
+	protected void updateLinkToLayoutElements(long groupId, Element element) {
+		List<Element> dynamicElementElements = element.elements(
+			"dynamic-element");
+
+		for (Element dynamicElementElement : dynamicElementElements) {
+			updateLinkToLayoutElements(groupId, dynamicElementElement);
+		}
+
+		Element dynamicContentElement = element.element("dynamic-content");
+
+		Node node = dynamicContentElement.node(0);
+
+		node.setText(
+			dynamicContentElement.getStringValue() + StringPool.AT + groupId);
 	}
 
 	protected void updateURLTitle(
@@ -191,8 +205,9 @@ public class VerifyJournal extends VerifyProcess {
 			con = DataAccess.getUpgradeOptimizedConnection();
 
 			ps = con.prepareStatement(
-				"select id_ from JournalArticle where content like " +
-					"'%document_library%' and structureId != ''");
+				"select id_ from JournalArticle where (content like " +
+					"'%document_library%' or content like '%link_to_layout%')" +
+						" and structureId != ''");
 
 			rs = ps.executeQuery();
 
@@ -206,7 +221,17 @@ public class VerifyJournal extends VerifyProcess {
 
 				Element rootElement = document.getRootElement();
 
-				updateElements(rootElement.elements());
+				for (Element element : rootElement.elements()) {
+					String type = element.attributeValue("type");
+
+					if (type.equals("document_library")) {
+						updateDocumentLibraryElements(element);
+					}
+					else if (type.equals("link_to_layout")) {
+						updateLinkToLayoutElements(
+							article.getGroupId(), element);
+					}
+				}
 
 				article.setContent(document.asXML());
 

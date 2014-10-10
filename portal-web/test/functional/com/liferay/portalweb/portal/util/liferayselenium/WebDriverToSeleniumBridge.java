@@ -79,6 +79,7 @@ public class WebDriverToSeleniumBridge
 		initKeysSpecialChars();
 
 		WebDriverHelper.setDefaultWindowHandle(webDriver.getWindowHandle());
+		WebDriverHelper.setNavigationBarHeight(120);
 	}
 
 	@Override
@@ -369,13 +370,19 @@ public class WebDriverToSeleniumBridge
 
 	@Override
 	public void dragAndDrop(String locator, String coordString) {
-		WebElement webElement = getWebElement(locator);
-
 		try {
-			Point point = webElement.getLocation();
+			int x = WebDriverHelper.getElementPositionCenterX(this, locator);
 
-			int x = point.getX() + 45;
-			int y = point.getY() + 100;
+			x += WebDriverHelper.getFramePositionLeft(this);
+			x += WebDriverHelper.getWindowPositionLeft(this);
+			x -= WebDriverHelper.getScrollOffsetX(this);
+
+			int y = WebDriverHelper.getElementPositionCenterY(this, locator);
+
+			y += WebDriverHelper.getFramePositionTop(this);
+			y += WebDriverHelper.getNavigationBarHeight();
+			y += WebDriverHelper.getWindowPositionTop(this);
+			y -= WebDriverHelper.getScrollOffsetY(this);
 
 			Robot robot = new Robot();
 
@@ -407,24 +414,19 @@ public class WebDriverToSeleniumBridge
 		String locatorOfObjectToBeDragged,
 		String locatorOfDragDestinationObject) {
 
-		WebElement objectToBeDraggedWebElement = getWebElement(
-			locatorOfObjectToBeDragged);
+		int x = WebDriverHelper.getElementPositionCenterX(
+			this, locatorOfDragDestinationObject);
 
-		WrapsDriver wrapsDriver = (WrapsDriver)objectToBeDraggedWebElement;
+		x -= WebDriverHelper.getElementPositionCenterX(
+			this, locatorOfObjectToBeDragged);
 
-		WebDriver webDriver = wrapsDriver.getWrappedDriver();
+		int y = WebDriverHelper.getElementPositionCenterY(
+			this, locatorOfDragDestinationObject);
 
-		Actions actions = new Actions(webDriver);
+		y -= WebDriverHelper.getElementPositionCenterY(
+			this, locatorOfObjectToBeDragged);
 
-		WebElement dragDestinationObjectWebElement = getWebElement(
-			locatorOfDragDestinationObject);
-
-		actions.dragAndDrop(
-			objectToBeDraggedWebElement, dragDestinationObjectWebElement);
-
-		Action action = actions.build();
-
-		action.perform();
+		dragAndDrop(locatorOfObjectToBeDragged, x + "," + y);
 	}
 
 	@Override
