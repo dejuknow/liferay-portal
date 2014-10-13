@@ -48,6 +48,8 @@ public class SyncFile extends StateAwareModel {
 
 	public static final int STATE_SYNCED = 0;
 
+	public static final int STATE_UNSYNCED = 3;
+
 	public static final String TYPE_FILE = "file";
 
 	public static final String TYPE_FOLDER = "folder";
@@ -228,7 +230,7 @@ public class SyncFile extends StateAwareModel {
 	}
 
 	public boolean isFolder() {
-		return type.equals(TYPE_FOLDER);
+		return !isFile();
 	}
 
 	public boolean isSystem() {

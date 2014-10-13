@@ -127,7 +127,7 @@ public class GoogleDocsDLViewFileVersionDisplayContext
 		}
 
 		urlUIItem.setIcon("icon-edit");
-		urlUIItem.setKey(GoogleDocsMenuItemKeys.EDIT_IN_GOOGLE);
+		urlUIItem.setKey(GoogleDocsUIItemKeys.EDIT_IN_GOOGLE);
 
 		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
 			WebKeys.THEME_DISPLAY);

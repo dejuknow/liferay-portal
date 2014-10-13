@@ -29,7 +29,9 @@ import java.util.concurrent.TimeUnit;
 import net.jsourcerer.webdriver.jserrorcollector.JavaScriptError;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.internal.WrapsDriver;
@@ -156,6 +158,70 @@ public class WebDriverHelper {
 		return _defaultWindowHandle;
 	}
 
+	public static int getElementHeight(WebDriver webDriver, String locator) {
+		WebElement webElement = getWebElement(webDriver, locator, "1");
+
+		Dimension dimension = webElement.getSize();
+
+		return dimension.getHeight();
+	}
+
+	public static int getElementPositionBottom(
+		WebDriver webDriver, String locator) {
+
+		return getElementPositionTop(webDriver, locator) +
+			getElementHeight(webDriver, locator);
+	}
+
+	public static int getElementPositionCenterX(
+		WebDriver webDriver, String locator) {
+
+		return getElementPositionLeft(webDriver, locator) +
+			(getElementWidth(webDriver, locator) / 2);
+	}
+
+	public static int getElementPositionCenterY(
+		WebDriver webDriver, String locator) {
+
+		return getElementPositionTop(webDriver, locator) +
+			(getElementHeight(webDriver, locator) / 2);
+	}
+
+	public static int getElementPositionLeft(
+		WebDriver webDriver, String locator) {
+
+		WebElement webElement = getWebElement(webDriver, locator, "1");
+
+		Point point = webElement.getLocation();
+
+		return point.getX();
+	}
+
+	public static int getElementPositionRight(
+		WebDriver webDriver, String locator) {
+
+		return getElementPositionLeft(webDriver, locator) +
+			getElementWidth(webDriver, locator);
+	}
+
+	public static int getElementPositionTop(
+		WebDriver webDriver, String locator) {
+
+		WebElement webElement = getWebElement(webDriver, locator, "1");
+
+		Point point = webElement.getLocation();
+
+		return point.getY();
+	}
+
+	public static int getElementWidth(WebDriver webDriver, String locator) {
+		WebElement webElement = getWebElement(webDriver, locator, "1");
+
+		Dimension dimension = webElement.getSize();
+
+		return dimension.getWidth();
+	}
+
 	public static String getEval(WebDriver webDriver, String script) {
 		WebElement webElement = getWebElement(webDriver, "//body");
 
@@ -169,8 +235,82 @@ public class WebDriverHelper {
 		return (String)javascriptExecutor.executeScript(script);
 	}
 
+	public static Point getFramePoint(WebDriver webDriver) {
+		int x = 0;
+		int y = 0;
+
+		WebElement bodyWebElement = getWebElement(webDriver, "//body");
+
+		WrapsDriver wrapsDriver = (WrapsDriver)bodyWebElement;
+
+		WebDriver wrappedWebDriver = wrapsDriver.getWrappedDriver();
+
+		WebDriver.TargetLocator targetLocator = wrappedWebDriver.switchTo();
+
+		targetLocator.window(_defaultWindowHandle);
+
+		for (WebElement webElement : _frameWebElements) {
+			Point point = webElement.getLocation();
+
+			x += point.getX();
+			y += point.getY();
+
+			targetLocator.frame(webElement);
+		}
+
+		return new Point(x, y);
+	}
+
+	public static int getFramePositionLeft(WebDriver webDriver) {
+		Point point = getFramePoint(webDriver);
+
+		return point.getX();
+	}
+
+	public static int getFramePositionTop(WebDriver webDriver) {
+		Point point = getFramePoint(webDriver);
+
+		return point.getY();
+	}
+
 	public static String getLocation(WebDriver webDriver) {
 		return webDriver.getCurrentUrl();
+	}
+
+	public static int getNavigationBarHeight() {
+		return _navigationBarHeight;
+	}
+
+	public static int getScrollOffsetX(WebDriver webDriver) {
+		WebElement bodyWebElement = getWebElement(webDriver, "//body");
+
+		WrapsDriver wrapsDriver = (WrapsDriver)bodyWebElement;
+
+		WebDriver wrappedWebDriver = wrapsDriver.getWrappedDriver();
+
+		JavascriptExecutor javascriptExecutor =
+			(JavascriptExecutor)wrappedWebDriver;
+
+		Object pageXOffset = javascriptExecutor.executeScript(
+			"return window.pageXOffset;");
+
+		return GetterUtil.getInteger(pageXOffset);
+	}
+
+	public static int getScrollOffsetY(WebDriver webDriver) {
+		WebElement bodyWebElement = getWebElement(webDriver, "//body");
+
+		WrapsDriver wrapsDriver = (WrapsDriver)bodyWebElement;
+
+		WebDriver wrappedWebDriver = wrapsDriver.getWrappedDriver();
+
+		JavascriptExecutor javascriptExecutor =
+			(JavascriptExecutor)wrappedWebDriver;
+
+		Object pageYOffset = javascriptExecutor.executeScript(
+			"return window.pageYOffset;");
+
+		return GetterUtil.getInteger(pageYOffset);
 	}
 
 	public static String getText(
@@ -187,6 +327,32 @@ public class WebDriverHelper {
 		text = text.trim();
 
 		return text.replace("\n", " ");
+	}
+
+	public static Point getWindowPoint(WebDriver webDriver) {
+		WebElement bodyWebElement = getWebElement(webDriver, "//body");
+
+		WrapsDriver wrapsDriver = (WrapsDriver)bodyWebElement;
+
+		WebDriver wrappedWebDriver = wrapsDriver.getWrappedDriver();
+
+		WebDriver.Options options = wrappedWebDriver.manage();
+
+		WebDriver.Window window = options.window();
+
+		return window.getPosition();
+	}
+
+	public static int getWindowPositionLeft(WebDriver webDriver) {
+		Point point = getWindowPoint(webDriver);
+
+		return point.getX();
+	}
+
+	public static int getWindowPositionTop(WebDriver webDriver) {
+		Point point = getWindowPoint(webDriver);
+
+		return point.getY();
 	}
 
 	public static boolean isElementPresent(
@@ -355,6 +521,10 @@ public class WebDriverHelper {
 		_defaultWindowHandle = defaultWindowHandle;
 	}
 
+	public static void setNavigationBarHeight(int navigationBarHeight) {
+		_navigationBarHeight = navigationBarHeight;
+	}
+
 	public static void setTimeoutImplicit(WebDriver webDriver, String timeout) {
 		WebDriver.Options options = webDriver.manage();
 
@@ -472,5 +642,6 @@ public class WebDriverHelper {
 	private static String _defaultWindowHandle;
 	private static Stack<WebElement> _frameWebElements =
 		new Stack<WebElement>();
+	private static int _navigationBarHeight;
 
 }

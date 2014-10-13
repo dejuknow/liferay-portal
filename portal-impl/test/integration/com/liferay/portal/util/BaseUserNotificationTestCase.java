@@ -46,7 +46,7 @@ public abstract class BaseUserNotificationTestCase {
 
 	@Before
 	public void setUp() throws Exception {
-		user = UserTestUtil.addOmniAdmin();
+		user = UserTestUtil.addOmniAdminUser();
 
 		group = GroupTestUtil.addGroup();
 

@@ -4,7 +4,7 @@
 		module="parent"
 		revision="1.0.0"
 		status="release"
-		publication="20120512180609"
+		publication="20120512150609"
 	>
 		<description homepage="http://aries.apache.org">
 		Aries top-level parent pom

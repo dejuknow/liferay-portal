@@ -576,16 +576,6 @@
 		<css-class-wrapper>portlet-recent-documents</css-class-wrapper>
 	</portlet>
 	<portlet>
-		<portlet-name>70</portlet-name>
-		<icon>/html/icons/default.png</icon>
-		<struts-path>password_generator</struts-path>
-		<remoteable>true</remoteable>
-		<private-request-attributes>false</private-request-attributes>
-		<private-session-attributes>false</private-session-attributes>
-		<render-weight>50</render-weight>
-		<css-class-wrapper>portlet-password-generator</css-class-wrapper>
-	</portlet>
-	<portlet>
 		<portlet-name>71</portlet-name>
 		<icon>/html/icons/navigation.png</icon>
 		<struts-path>navigation</struts-path>
@@ -927,21 +917,6 @@
 		<render-weight>50</render-weight>
 		<header-portlet-css>/html/portlet/blogs_aggregator/css/main.css</header-portlet-css>
 		<css-class-wrapper>portlet-blogs-aggregator</css-class-wrapper>
-	</portlet>
-	<portlet>
-		<portlet-name>118</portlet-name>
-		<icon>/html/icons/default.png</icon>
-		<struts-path>nested_portlets</struts-path>
-		<configuration-action-class>com.liferay.portlet.nestedportlets.action.ConfigurationActionImpl</configuration-action-class>
-		<preferences-owned-by-group>true</preferences-owned-by-group>
-		<use-default-template>false</use-default-template>
-		<layout-cacheable>true</layout-cacheable>
-		<instanceable>true</instanceable>
-		<single-page-application>false</single-page-application>
-		<private-request-attributes>false</private-request-attributes>
-		<private-session-attributes>false</private-session-attributes>
-		<render-weight>50</render-weight>
-		<css-class-wrapper>portlet-nested-portlets</css-class-wrapper>
 	</portlet>
 	<portlet>
 		<portlet-name>119</portlet-name>

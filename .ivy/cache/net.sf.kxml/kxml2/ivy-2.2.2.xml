@@ -4,7 +4,7 @@
 		module="kxml2"
 		revision="2.2.2"
 		status="release"
-		publication="20070319210644"
+		publication="20070319180644"
 	>
 		<license name="The BSD License" url="http://www.opensource.org/licenses/bsd-license.html" />
 		<description homepage="http://kxml.sourceforge.net/kxml2">

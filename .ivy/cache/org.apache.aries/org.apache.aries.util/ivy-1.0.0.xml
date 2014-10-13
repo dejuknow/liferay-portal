@@ -4,7 +4,7 @@
 		module="org.apache.aries.util"
 		revision="1.0.0"
 		status="release"
-		publication="20120705170956"
+		publication="20120705140956"
 	>
 		<description homepage="">
 		This bundle contains the OSGi common util for Apache Aries

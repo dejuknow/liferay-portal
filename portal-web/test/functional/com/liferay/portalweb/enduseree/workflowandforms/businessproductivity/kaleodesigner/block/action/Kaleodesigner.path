@@ -49,6 +49,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>DRAFT_VERSION</td>
+	<td>//div[@class='control-group field-wrapper' and contains(.,'Draft Version')]/div[contains(.,'${key_draftVersion}')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>SAVE_AS_DRAFT_BUTTON</td>
 	<td>//div[contains(@class,'button-holder')]/button[contains(.,'Save as Draft')]</td>
 	<td></td>
@@ -56,6 +61,11 @@
 <tr>
 	<td>PUBLISH_BUTTON</td>
 	<td>//div[contains(@class,'button-holder')]/button[contains(.,'Publish')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CANCEL_BUTTON</td>
+	<td>//div[contains(@class,'button-holder')]/button[contains(.,'Cancel')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -71,6 +81,27 @@
 <tr>
 	<td>SOURCE_KALEO_XML_TAB</td>
 	<td>//ul[contains(@class,'nav-tabs')]/li/a[contains(.,'Source (Kaleo XML)')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<!-- DRAFT_HISTORY -->
+<tr>
+	<td>DRAFT_HISTORY_UNDO_BUTTON</td>
+	<td>//button[contains(@id,'undoButton')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>DRAFT_HISTORY_REDO_BUTTON</td>
+	<td>//button[contains(@id,'redoButton')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>DRAFT_HISTORY_LATEST_VERSION_BUTTON</td>
+	<td>//button[contains(@id,'latestButton')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -171,11 +202,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>SETTINGS_ASSIGNMENT_TYPE_SELECT</td>
-	<td>//select[@name='assignmentType']</td>
-	<td></td>
-</tr>
-<tr>
 	<td></td>
 	<td></td>
 	<td></td>
@@ -242,8 +268,18 @@
 	<td></td>
 </tr>
 <tr>
+	<td>SETTINGS_CELL_EDITOR_NOTIFICATION_TYPE_USER_NOTIFICATION_PNG</td>
+	<td>portal/screenshots/kaleodesigner/settings_cell_editor_notification_type_user_notification.png</td>
+	<td></td>
+</tr>
+<tr>
 	<td>SETTINGS_CELL_EDITOR_EXECUTION_TYPE_SELECT</td>
 	<td>//select[@name='executionType']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SETTINGS_CELL_EDITOR_ASSIGNMENT_TYPE_SELECT</td>
+	<td>//select[@name='assignmentType']</td>
 	<td></td>
 </tr>
 <tr>
@@ -256,25 +292,50 @@
 	<td></td>
 	<td></td>
 </tr>
-<!--SETTINGS_CELL_EDITOR_RECIPIENT_EDITOR-->
+<!--SETTINGS_CELL_EDITOR_NOTIFICATIONS_RECIPIENT_EDITOR-->
 <tr>
-	<td>SETTINGS_CELL_EDITOR_RECIPIENT_EDITOR_TYPE_SELECT</td>
+	<td>SETTINGS_CELL_EDITOR_NOTIFICATIONS_RECIPIENT_EDITOR_TYPE_SELECT</td>
 	<td>//select[@name='assignmentType']</td>
 	<td></td>
 </tr>
 <tr>
-	<td>SETTINGS_CELL_EDITOR_RECIPIENT_EDITOR_SAVE_BUTTON</td>
+	<td>SETTINGS_CELL_EDITOR_NOTIFICATIONS_RECIPIENT_EDITOR_SAVE_BUTTON</td>
 	<td>//div[contains(@class,'assignments-cell-editor')]//button[contains(.,'Save')]</td>
 	<td></td>
 </tr>
 <tr>
-	<td>SETTINGS_CELL_EDITOR_RECIPIENT_EDITOR_RESOURCE_ACTIONS</td>
-	<td>//textarea[@name='resourceActions']</td>
+	<td>SETTINGS_CELL_EDITOR_NOTIFICATIONS_RECIPIENT_EDITOR_ROLE_SEARCH</td>
+	<td>//input[contains(@name,'role')]</td>
 	<td></td>
 </tr>
 <tr>
-	<td>SETTINGS_CELL_EDITOR_RECIPIENT_EDITOR_ROLE</td>
-	<td>//label[.='Role']/../input</td>
+	<td>SETTINGS_CELL_EDITOR_NOTIFICATIONS_RECIPIENT_EDITOR_ROLE_NAME_SEARCH</td>
+	<td>//input[@name='roleName']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SETTINGS_CELL_EDITOR_NOTIFICATIONS_RECIPIENT_EDITOR_SEARCH_LIST_RESULT</td>
+	<td>//ul[@role='listbox']/li[@data-text='${key_roleName}' and contains(text(),'${key_roleName}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SETTINGS_CELL_EDITOR_NOTIFICATIONS_RECIPIENT_EDITOR_ROLE_TYPE_SELECT</td>
+	<td>//select[@name='roleType']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SETTINGS_CELL_EDITOR_NOTIFICATIONS_RECIPIENT_RECIPIENT_TYPE_PNG</td>
+	<td>portal/screenshots/kaleodesigner/settings_cell_editor_notifications_recipient_recipient_type.png</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SETTINGS_CELL_EDITOR_NOTIFICATIONS_RECIPIENT_ROLE_TYPE_PNG</td>
+	<td>portal/screenshots/kaleodesigner/settings_cell_editor_notifications_recipient_role_type.png</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SETTINGS_CELL_EDITOR_NOTIFICATIONS_RECIPIENT_ROLE_NAME_PNG</td>
+	<td>portal/screenshots/kaleodesigner/settings_cell_editor_notifications_recipient_role_name.png</td>
 	<td></td>
 </tr>
 <tr>
@@ -333,7 +394,7 @@
 <!--VIEW_FORM_ADD_NEW-->
 <tr>
 	<td>VIEW_FORM_ADD_NEW_NODE</td>
-	<td>//div[contains(@class,'diagram-node-suggest-connector')]//div[@class='diagram-builder-field-label' and contains(.,'${key_newNodeName}')]</td>
+	<td>//div[contains(@class,'diagram-node-suggest-connector')]//div[@class='diagram-builder-field-label' and contains(.,'${key_newNode}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -353,8 +414,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>SOURCE_KALEO_XML_CONTENT_TRANSITION_TAG_PNG</td>
-	<td>portal/screenshots/kaleodesigner/source_transition_tag.png</td>
+	<td>SOURCE_KALEO_XML_CONTENT_TAG_PNG</td>
+	<td>portal/screenshots/kaleodesigner/source_${key_linePNG}_tag.png</td>
 	<td></td>
 </tr>
 <tr>

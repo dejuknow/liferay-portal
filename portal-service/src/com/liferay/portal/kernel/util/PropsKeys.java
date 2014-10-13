@@ -895,6 +895,8 @@ public interface PropsKeys {
 
 	public static final String EHCACHE_CACHE_EVENT_LISTENER_FACTORY = "ehcache.cache.event.listener.factory";
 
+	public static final String EHCACHE_CACHE_MANAGER_PEER_LISTENER_FACTORY = "ehcache.cache.manager.peer.listener.factory";
+
 	public static final String EHCACHE_CACHE_MANAGER_PEER_PROVIDER_FACTORY = "ehcache.cache.manager.peer.provider.factory";
 
 	public static final String EHCACHE_CACHE_MANAGER_STATISTICS_THREAD_POOL_SIZE = "ehcache.cache.manager.statistics.thread.pool.size";
@@ -1294,6 +1296,8 @@ public interface PropsKeys {
 	public static final String JSON_SERVICE_INVALID_METHOD_NAMES = "json.service.invalid.method.names";
 
 	public static final String JSON_WEB_SERVICE_ENABLED = "json.web.service.enabled";
+
+	public static final String JSONWS_WEB_SERVICE_API_DISCOVERABLE = "jsonws.web.service.api.discoverable";
 
 	public static final String JSONWS_WEB_SERVICE_INVALID_HTTP_METHODS = "jsonws.web.service.invalid.http.methods";
 
@@ -1846,10 +1850,6 @@ public interface PropsKeys {
 	public static final String NAVIGATION_DISPLAY_STYLE_DEFAULT = "navigation.display.style.default";
 
 	public static final String NAVIGATION_DISPLAY_STYLE_OPTIONS = "navigation.display.style.options";
-
-	public static final String NESTED_PORTLETS_LAYOUT_TEMPLATE_DEFAULT = "nested.portlets.layout.template.default";
-
-	public static final String NESTED_PORTLETS_LAYOUT_TEMPLATE_UNSUPPORTED = "nested.portlets.layout.template.unsupported";
 
 	public static final String NET_SF_EHCACHE_CONFIGURATION_RESOURCE_NAME = "net.sf.ehcache.configurationResourceName";
 

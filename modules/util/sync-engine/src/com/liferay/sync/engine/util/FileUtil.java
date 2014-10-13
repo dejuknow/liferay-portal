@@ -15,6 +15,7 @@
 package com.liferay.sync.engine.util;
 
 import com.liferay.sync.engine.model.SyncFile;
+import com.liferay.sync.engine.service.SyncFileService;
 
 import java.io.File;
 import java.io.IOException;
@@ -136,17 +137,21 @@ public class FileUtil {
 	public static String getSanitizedFileName(String title, String extension) {
 		String fileName = title.replace("/", "_");
 
-		if ((extension != null) && !extension.equals("") &&
-			!fileName.endsWith("." + extension)) {
+		if ((extension != null) && !extension.equals("")) {
+			int pos = fileName.lastIndexOf(".");
 
-			fileName += "." + extension;
+			if ((pos == -1) ||
+				!extension.equalsIgnoreCase(fileName.substring(pos + 1))) {
+
+				fileName += "." + extension;
+			}
 		}
 
 		if (fileName.length() > 255) {
 			int x = fileName.length() - 1;
 
 			if ((extension != null) && !extension.equals("")) {
-				x = fileName.lastIndexOf("." + extension);
+				x = fileName.lastIndexOf(".");
 			}
 
 			int y = x - (fileName.length() - 255);
@@ -192,6 +197,18 @@ public class FileUtil {
 			(PropsValues.SYNC_FILE_IGNORE_HIDDEN &&
 			 Files.isHidden(filePath)) ||
 			Files.isSymbolicLink(filePath) || fileName.endsWith(".lnk")) {
+
+			return true;
+		}
+
+		SyncFile syncFile = SyncFileService.fetchSyncFile(filePath.toString());
+
+		if (syncFile == null) {
+			return isIgnoredFilePath(filePath.getParent());
+		}
+
+		if (!syncFile.isSystem() &&
+			(syncFile.getState() == SyncFile.STATE_UNSYNCED)) {
 
 			return true;
 		}
