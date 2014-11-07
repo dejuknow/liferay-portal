@@ -14,6 +14,7 @@
 
 package com.liferay.sync.engine.service;
 
+import com.liferay.sync.engine.model.ModelListener;
 import com.liferay.sync.engine.model.SyncUser;
 import com.liferay.sync.engine.service.persistence.SyncUserPersistence;
 
@@ -70,6 +71,18 @@ public class SyncUserService {
 		}
 	}
 
+	public static void registerModelListener(
+		ModelListener<SyncUser> modelListener) {
+
+		_syncUserPersistence.registerModelListener(modelListener);
+	}
+
+	public static void unregisterModelListener(
+		ModelListener<SyncUser> modelListener) {
+
+		_syncUserPersistence.unregisterModelListener(modelListener);
+	}
+
 	public static SyncUser update(SyncUser syncUser) {
 		try {
 			_syncUserPersistence.createOrUpdate(syncUser);
@@ -85,7 +98,7 @@ public class SyncUserService {
 		}
 	}
 
-	private static Logger _logger = LoggerFactory.getLogger(
+	private static final Logger _logger = LoggerFactory.getLogger(
 		SyncUserService.class);
 
 	private static SyncUserPersistence _syncUserPersistence =

@@ -84,9 +84,8 @@ public class ModelListenerRegistrationUtil {
 
 		Registry registry = RegistryUtil.getRegistry();
 
-		ServiceRegistration<?> serviceRegistration =
-			registry.registerService(
-				ModelListener.class.getName(), modelListener);
+		ServiceRegistration<?> serviceRegistration = registry.registerService(
+			ModelListener.class.getName(), modelListener);
 
 		_serviceRegistrations.put(className, serviceRegistration);
 	}
@@ -100,14 +99,16 @@ public class ModelListenerRegistrationUtil {
 		}
 	}
 
-	private static ModelListenerRegistrationUtil _instance =
+	private static final ModelListenerRegistrationUtil _instance =
 		new ModelListenerRegistrationUtil();
 
-	private ConcurrentMap<Class<?>, List<ModelListener<?>>> _modelListeners =
-		new ConcurrentHashMap<Class<?>, List<ModelListener<?>>>();
-	private Map<String, ServiceRegistration<?>> _serviceRegistrations =
+	private final ConcurrentMap<Class<?>, List<ModelListener<?>>>
+		_modelListeners =
+			new ConcurrentHashMap<Class<?>, List<ModelListener<?>>>();
+	private final Map<String, ServiceRegistration<?>> _serviceRegistrations =
 		new ConcurrentHashMap<String, ServiceRegistration<?>>();
-	private ServiceTracker<ModelListener<?>, ModelListener<?>> _serviceTracker;
+	private final ServiceTracker<ModelListener<?>, ModelListener<?>>
+		_serviceTracker;
 
 	private class ModelListenerTrackerCustomizer
 		implements

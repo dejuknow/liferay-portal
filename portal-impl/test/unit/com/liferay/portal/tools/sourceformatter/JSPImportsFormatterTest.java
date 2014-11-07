@@ -62,6 +62,7 @@ public class JSPImportsFormatterTest {
 		Assert.assertEquals(expected, formatted);
 	}
 
-	private ImportsFormatter _importsFormatter = new JSPImportsFormatter();
+	private final ImportsFormatter _importsFormatter =
+		new JSPImportsFormatter();
 
 }

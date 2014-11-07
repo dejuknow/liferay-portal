@@ -126,6 +126,8 @@ public class PluginIntegrationTestHotDeployListener
 			classes.add(clazz);
 		}
 
+		zipReader.close();
+
 		return classes;
 	}
 
@@ -197,7 +199,7 @@ public class PluginIntegrationTestHotDeployListener
 		}
 	}
 
-	private static Log _log = LogFactoryUtil.getLog(
+	private static final Log _log = LogFactoryUtil.getLog(
 		PluginIntegrationTestHotDeployListener.class);
 
 }

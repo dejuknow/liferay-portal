@@ -29,6 +29,7 @@ import com.liferay.portal.spring.context.PortalContextLoaderListener;
 import com.liferay.portal.struts.JSONAction;
 import com.liferay.portal.upload.UploadServletRequestImpl;
 import com.liferay.portal.util.PortalUtil;
+import com.liferay.portal.util.PropsValues;
 
 import java.io.IOException;
 
@@ -60,7 +61,8 @@ public class JSONWebServiceServlet extends JSONServlet {
 
 		String path = GetterUtil.getString(request.getPathInfo());
 
-		if ((!path.equals(StringPool.BLANK) &&
+		if (!PropsValues.JSONWS_WEB_SERVICE_API_DISCOVERABLE ||
+			(!path.equals(StringPool.BLANK) &&
 			 !path.equals(StringPool.SLASH)) ||
 			(request.getParameter("discover") != null)) {
 
@@ -141,7 +143,7 @@ public class JSONWebServiceServlet extends JSONServlet {
 		return jsonWebServiceServiceAction;
 	}
 
-	private static Log _log = LogFactoryUtil.getLog(
+	private static final Log _log = LogFactoryUtil.getLog(
 		JSONWebServiceServlet.class);
 
 }

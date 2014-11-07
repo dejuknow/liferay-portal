@@ -242,7 +242,6 @@ public class JSONWebServiceInvokerTest extends BaseJSONWebServiceTestCase {
 			invokerResult.getResult());
 	}
 
-
 	@Test
 	public void testFiltering() throws Exception {
 		Map<String, Object> map1 = new LinkedHashMap<String, Object>();

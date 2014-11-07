@@ -191,9 +191,8 @@ public class LayoutStagingHandler implements InvocationHandler, Serializable {
 			serviceContext, "layoutRevisionId");
 
 		if (layoutRevisionId > 0) {
-			layoutRevision =
-				LayoutRevisionLocalServiceUtil.fetchLayoutRevision(
-					layoutRevisionId);
+			layoutRevision = LayoutRevisionLocalServiceUtil.fetchLayoutRevision(
+				layoutRevisionId);
 		}
 
 		if ((layoutRevisionId <= 0) ||
@@ -202,9 +201,8 @@ public class LayoutStagingHandler implements InvocationHandler, Serializable {
 			layoutRevisionId = StagingUtil.getRecentLayoutRevisionId(
 				user, layoutSetBranchId, layout.getPlid());
 
-			layoutRevision =
-				LayoutRevisionLocalServiceUtil.fetchLayoutRevision(
-					layoutRevisionId);
+			layoutRevision = LayoutRevisionLocalServiceUtil.fetchLayoutRevision(
+				layoutRevisionId);
 		}
 
 		if ((layoutRevision != null) && !layoutRevision.isInactive()) {
@@ -302,9 +300,10 @@ public class LayoutStagingHandler implements InvocationHandler, Serializable {
 				_layout.toEscapedModel(), _layoutRevision.toEscapedModel()));
 	}
 
-	private static Log _log = LogFactoryUtil.getLog(LayoutStagingHandler.class);
+	private static final Log _log = LogFactoryUtil.getLog(
+		LayoutStagingHandler.class);
 
-	private static Set<String> _layoutRevisionMethodNames =
+	private static final Set<String> _layoutRevisionMethodNames =
 		new HashSet<String>();
 
 	static {
@@ -360,7 +359,7 @@ public class LayoutStagingHandler implements InvocationHandler, Serializable {
 		_layoutRevisionMethodNames.add("setWapThemeId");
 	}
 
-	private Layout _layout;
+	private final Layout _layout;
 	private LayoutRevision _layoutRevision;
 
 }

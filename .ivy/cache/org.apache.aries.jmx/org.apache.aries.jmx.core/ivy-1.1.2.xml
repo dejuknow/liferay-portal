@@ -4,7 +4,7 @@
 		module="org.apache.aries.jmx.core"
 		revision="1.1.2"
 		status="release"
-		publication="20140630122621"
+		publication="20140630092621"
 	>
 		<description homepage="">
 		This bundle contains the core implementation 

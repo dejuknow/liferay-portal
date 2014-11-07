@@ -17,7 +17,6 @@ package com.liferay.portlet.dynamicdatamapping.io;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portlet.dynamicdatamapping.BaseDDMTestCase;
 import com.liferay.portlet.dynamicdatamapping.model.Value;
@@ -39,7 +38,7 @@ import org.skyscreamer.jsonassert.JSONAssert;
 /**
  * @author Marcellus Tavares
  */
-@PrepareForTest({LanguageUtil.class, LocaleUtil.class})
+@PrepareForTest({LocaleUtil.class})
 public class DDMFormValuesJSONDeserializerTest extends BaseDDMTestCase {
 
 	@Before
@@ -59,7 +58,7 @@ public class DDMFormValuesJSONDeserializerTest extends BaseDDMTestCase {
 
 		DDMFormValues ddmFormValues =
 			DDMFormValuesJSONDeserializerUtil.deserialize(
-				serializedDDMFormValues);
+				null, serializedDDMFormValues);
 
 		List<DDMFormFieldValue> ddmFormFieldValues =
 			ddmFormValues.getDDMFormFieldValues();
@@ -90,7 +89,7 @@ public class DDMFormValuesJSONDeserializerTest extends BaseDDMTestCase {
 
 		DDMFormValues ddmFormValues =
 			DDMFormValuesJSONDeserializerUtil.deserialize(
-				serializedDDMFormValues);
+				null, serializedDDMFormValues);
 
 		List<DDMFormFieldValue> ddmFormFieldValues =
 			ddmFormValues.getDDMFormFieldValues();
@@ -110,7 +109,7 @@ public class DDMFormValuesJSONDeserializerTest extends BaseDDMTestCase {
 
 		DDMFormValues ddmFormValues =
 			DDMFormValuesJSONDeserializerUtil.deserialize(
-				serializedDDMFormValues);
+				null, serializedDDMFormValues);
 
 		testAvailableLocales(ddmFormValues);
 		testDefaultLocale(ddmFormValues);
@@ -136,7 +135,7 @@ public class DDMFormValuesJSONDeserializerTest extends BaseDDMTestCase {
 
 		DDMFormValues ddmFormValues =
 			DDMFormValuesJSONDeserializerUtil.deserialize(
-				serializedDDMFormValues);
+				null, serializedDDMFormValues);
 
 		List<DDMFormFieldValue> ddmFormFieldValues =
 			ddmFormValues.getDDMFormFieldValues();

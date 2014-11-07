@@ -4,7 +4,7 @@
 		module="org.apache.felix.eventadmin"
 		revision="1.4.2"
 		status="release"
-		publication="20140911041143"
+		publication="20140911011143"
 	>
 		<description homepage="">
 		This bundle provides an implementation of the OSGi R4 EventAdmin service.

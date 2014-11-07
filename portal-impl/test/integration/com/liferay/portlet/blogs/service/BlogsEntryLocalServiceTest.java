@@ -139,9 +139,8 @@ public class BlogsEntryLocalServiceTest {
 
 		BlogsEntry nextEntry = addEntry(false);
 
-		BlogsEntry[] entries =
-			BlogsEntryLocalServiceUtil.getEntriesPrevAndNext(
-				currentEntry.getEntryId());
+		BlogsEntry[] entries = BlogsEntryLocalServiceUtil.getEntriesPrevAndNext(
+			currentEntry.getEntryId());
 
 		Assert.assertNotNull(
 			"The previous entry relative to entry " +

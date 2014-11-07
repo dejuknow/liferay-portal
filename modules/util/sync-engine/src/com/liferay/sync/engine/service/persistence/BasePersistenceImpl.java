@@ -173,7 +173,7 @@ public class BasePersistenceImpl<TT extends BaseModel, TID>
 			return _connectionSource;
 		}
 
-		StringBuilder sb = new StringBuilder(5);
+		StringBuilder sb = new StringBuilder();
 
 		sb.append("jdbc:h2:");
 		sb.append(PropsValues.SYNC_CONFIGURATION_DIRECTORY);
@@ -183,7 +183,7 @@ public class BasePersistenceImpl<TT extends BaseModel, TID>
 		sb.append(fileSystem.getSeparator());
 
 		sb.append(PropsValues.SYNC_DATABASE_NAME);
-		sb.append(";AUTO_SERVER=TRUE");
+		sb.append(";AUTO_SERVER=TRUE;DB_CLOSE_ON_EXIT=FALSE");
 
 		_connectionSource = new JdbcPooledConnectionSource(sb.toString());
 
@@ -192,9 +192,9 @@ public class BasePersistenceImpl<TT extends BaseModel, TID>
 
 	private static ConnectionSource _connectionSource;
 
-	private List<ModelListener<TT>> _modelListeners =
+	private final List<ModelListener<TT>> _modelListeners =
 		new ArrayList<ModelListener<TT>>();
-	private Map<String, String[]> _syncNotificationFieldNames =
+	private final Map<String, String[]> _syncNotificationFieldNames =
 		new HashMap<String, String[]>();
 
 }

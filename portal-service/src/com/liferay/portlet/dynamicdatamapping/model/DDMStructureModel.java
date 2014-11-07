@@ -268,6 +268,21 @@ public interface DDMStructureModel extends BaseModel<DDMStructure>,
 	public void setStructureKey(String structureKey);
 
 	/**
+	 * Returns the version of this d d m structure.
+	 *
+	 * @return the version of this d d m structure
+	 */
+	@AutoEscape
+	public String getVersion();
+
+	/**
+	 * Sets the version of this d d m structure.
+	 *
+	 * @param version the version of this d d m structure
+	 */
+	public void setVersion(String version);
+
+	/**
 	 * Returns the name of this d d m structure.
 	 *
 	 * @return the name of this d d m structure
@@ -561,19 +576,20 @@ public interface DDMStructureModel extends BaseModel<DDMStructure>,
 	public Object clone();
 
 	@Override
-	public int compareTo(DDMStructure ddmStructure);
+	public int compareTo(
+		com.liferay.portlet.dynamicdatamapping.model.DDMStructure ddmStructure);
 
 	@Override
 	public int hashCode();
 
 	@Override
-	public CacheModel<DDMStructure> toCacheModel();
+	public CacheModel<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> toCacheModel();
 
 	@Override
-	public DDMStructure toEscapedModel();
+	public com.liferay.portlet.dynamicdatamapping.model.DDMStructure toEscapedModel();
 
 	@Override
-	public DDMStructure toUnescapedModel();
+	public com.liferay.portlet.dynamicdatamapping.model.DDMStructure toUnescapedModel();
 
 	@Override
 	public String toString();

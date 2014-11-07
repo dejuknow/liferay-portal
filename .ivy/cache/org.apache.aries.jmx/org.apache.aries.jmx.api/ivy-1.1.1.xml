@@ -4,7 +4,7 @@
 		module="org.apache.aries.jmx.api"
 		revision="1.1.1"
 		status="release"
-		publication="20140630121923"
+		publication="20140630091923"
 	>
 		<description homepage="">
 		This bundle contains the JMX 1.1.0 API

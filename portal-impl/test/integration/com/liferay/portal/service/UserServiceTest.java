@@ -556,9 +556,8 @@ public class UserServiceTest {
 
 			int initialInboxSize = MailServiceTestUtil.getInboxSize();
 
-			boolean sentPassword =
-				UserServiceUtil.sendPasswordByEmailAddress(
-					_user.getCompanyId(), _user.getEmailAddress());
+			boolean sentPassword = UserServiceUtil.sendPasswordByEmailAddress(
+				_user.getCompanyId(), _user.getEmailAddress());
 
 			Assert.assertTrue(sentPassword);
 			Assert.assertEquals(
@@ -574,9 +573,8 @@ public class UserServiceTest {
 
 			int initialInboxSize = MailServiceTestUtil.getInboxSize();
 
-			boolean sentPassword =
-				UserServiceUtil.sendPasswordByScreenName(
-					_user.getCompanyId(), _user.getScreenName());
+			boolean sentPassword = UserServiceUtil.sendPasswordByScreenName(
+				_user.getCompanyId(), _user.getScreenName());
 
 			Assert.assertTrue(sentPassword);
 			Assert.assertEquals(
@@ -609,9 +607,8 @@ public class UserServiceTest {
 
 			int initialInboxSize = MailServiceTestUtil.getInboxSize();
 
-			boolean sentPassword =
-				UserServiceUtil.sendPasswordByEmailAddress(
-					_user.getCompanyId(), _user.getEmailAddress());
+			boolean sentPassword = UserServiceUtil.sendPasswordByEmailAddress(
+				_user.getCompanyId(), _user.getEmailAddress());
 
 			Assert.assertFalse(sentPassword);
 			Assert.assertEquals(
@@ -627,9 +624,8 @@ public class UserServiceTest {
 
 			int initialInboxSize = MailServiceTestUtil.getInboxSize();
 
-			boolean sentPassword =
-				UserServiceUtil.sendPasswordByScreenName(
-					_user.getCompanyId(), _user.getScreenName());
+			boolean sentPassword = UserServiceUtil.sendPasswordByScreenName(
+				_user.getCompanyId(), _user.getScreenName());
 
 			Assert.assertFalse(sentPassword);
 			Assert.assertEquals(

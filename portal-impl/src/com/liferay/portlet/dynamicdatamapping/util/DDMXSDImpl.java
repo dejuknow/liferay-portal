@@ -214,9 +214,8 @@ public class DDMXSDImpl implements DDMXSD {
 
 		Document document = SAXReaderUtil.read(xsd);
 
-		String xPathExpression =
-			"//dynamic-element[@name=".concat(
-				HtmlUtil.escapeXPathAttribute(fieldName)).concat("]");
+		String xPathExpression = "//dynamic-element[@name=".concat(
+			HtmlUtil.escapeXPathAttribute(fieldName)).concat("]");
 
 		XPath xPathSelector = SAXReaderUtil.createXPath(xPathExpression);
 
@@ -540,9 +539,8 @@ public class DDMXSDImpl implements DDMXSD {
 
 		Document document = SAXReaderUtil.read(xsd);
 
-		String xPathExpression =
-			"//dynamic-element[@name=".concat(
-				HtmlUtil.escapeXPathAttribute(field.getName())).concat("]");
+		String xPathExpression = "//dynamic-element[@name=".concat(
+			HtmlUtil.escapeXPathAttribute(field.getName())).concat("]");
 
 		XPath xPathSelector = SAXReaderUtil.createXPath(xPathExpression);
 

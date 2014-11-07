@@ -87,12 +87,12 @@ public class LiferayTrashCapability implements TrashCapability {
 
 	@Override
 	public FileEntry moveFileEntryFromTrash(
-			long userId, FileEntry fileEntry, Folder destinationFolder,
+			long userId, FileEntry fileEntry, Folder newFolder,
 			ServiceContext serviceContext)
 		throws PortalException {
 
 		return DLAppHelperLocalServiceUtil.moveFileEntryFromTrash(
-			userId, fileEntry, destinationFolder.getFolderId(), serviceContext);
+			userId, fileEntry, newFolder.getFolderId(), serviceContext);
 	}
 
 	@Override

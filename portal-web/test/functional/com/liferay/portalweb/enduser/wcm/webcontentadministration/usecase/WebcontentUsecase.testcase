@@ -235,6 +235,96 @@
 		</execute>
 	</command>
 
+	<command known-issues="LPS-49842,LPS-50293,LPS-50660" name="AddWebContentWithGlobalStructureAndEditedDefaultValues" priority="4">
+		<execute macro="Page#gotoContentCP">
+			<var name="siteScopeName" value="Global" />
+		</execute>
+
+		<execute macro="WebContentStructures#addCP">
+			<var name="addRoleViewPermissions" value="Power User" />
+			<var name="structureDescription" value="Structure Description" />
+			<var name="structureFieldNames" value="Text" />
+			<var name="structureName" value="Global Structure" />
+		</execute>
+
+		<execute macro="Page#gotoContentCP">
+			<var name="portletName" value="Web Content" />
+			<var name="siteScopeName" value="Global" />
+		</execute>
+
+		<execute macro="WebContentTemplates#addCP">
+			<var name="addRoleViewPermissions" value="Power User" />
+			<var name="structureName" value="Global Structure" />
+			<var name="templateDescription" value="Template Description" />
+			<var name="templateName" value="Template Name" />
+		</execute>
+
+		<execute macro="Page#gotoContentCP">
+			<var name="portletName" value="Web Content" />
+			<var name="siteScopeName" value="Global" />
+		</execute>
+
+		<execute macro="WebContentStructures#editSubstructureDefaultValuesCP">
+			<var name="editSubstructureFieldNames" value="Text" />
+			<var name="substructureName" value="Global Structure" />
+		</execute>
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Users and Organizations" />
+		</execute>
+
+		<execute macro="User#addCP">
+			<var name="userEmailAddress" value="test1@liferay.com" />
+			<var name="userFirstName" value="test1" />
+			<var name="userLastName" value="test1" />
+			<var name="userScreenName" value="test1test" />
+		</execute>
+
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Users and Organizations" />
+		</execute>
+
+		<execute macro="User#editPasswordCP">
+			<var name="userEmailAddress" value="test1@liferay.com" />
+			<var name="userScreenName" value="test1test" />
+		</execute>
+
+		<execute macro="Page#gotoUsersCP">
+			<var name="portletName" value="Site Memberships" />
+		</execute>
+
+		<execute macro="Site#addMemberCP">
+			<var name="siteName" value="Liferay" />
+			<var name="userFirstName" value="test1" />
+			<var name="userLastName" value="test1" />
+			<var name="userScreenName" value="test1test" />
+		</execute>
+
+		<execute macro="Site#assignRoleCP">
+			<var name="roleName" value="Site Administrator" />
+			<var name="siteName" value="Liferay" />
+			<var name="userFirstName" value="test1" />
+			<var name="userLastName" value="test1" />
+			<var name="userScreenName" value="test1test" />
+		</execute>
+
+		<execute macro="User#logoutAndLoginPG">
+			<var name="userLoginEmailAddress" value="test1@liferay.com" />
+			<var name="userLoginFullName" value="test1 test1" />
+		</execute>
+
+		<execute macro="Page#gotoContentCP">
+			<var name="portletName" value="Web Content" />
+		</execute>
+
+		<execute macro="WebContent#addWithStructureCP">
+			<var name="saveAsDraft" value="true" />
+			<var name="structureName" value="Global Structure" />
+			<var name="webContentText" value="Web Content Text" />
+			<var name="webContentTitle" value="Web Content Title" />
+		</execute>
+	</command>
+
 	<command name="DeleteTemplateAndStructureWithReferencedWebContent" priority="5">
 		<execute macro="Page#gotoContentCP">
 			<var name="portletName" value="Web Content" />
@@ -744,41 +834,20 @@
 	</command>
 
 	<command name="WebContentAdministrationLocalization" priority="5">
-		<var name="localization1NameKey" value="fr_FR" />
-		<var name="localization2NameKey" value="zh_CN" />
-		<var name="localizedLanguage" value="French (France)" />
-		<var name="localizedText" value="WC contenu WebContent" />
-		<var name="localizedTitle" value="WC WebContent Titre" />
-		<var name="pageName" value="Web Content Display Page" />
-		<var name="portletName" value="Web Content Display" />
-		<var name="structureDescription" value="WC Structure Description" />
-		<var name="structureFieldNames" value="Text" />
-		<var name="structureName" value="WC Structure Name" />
-		<var name="structureNameLocalization1" value="nom de la structure de wc" />
-		<var name="structureNameLocalization2" value="wc 结构名称" />
-		<var name="templateDescription" value="WC Template Description" />
-		<var name="templateFieldNames" value="Text" />
-		<var name="templateLanguage" value="ftl" />
-		<var name="templateName" value="WC Template Name" />
-		<var name="templateNameLocalization1" value="nom de la template de wc" />
-		<var name="templateNameLocalization2" value="wc 模板名称" />
-		<var name="webContentText" value="WC WebContent Text" />
-		<var name="webContentTitle" value="WC WebContent Title" />
-
 		<execute macro="Page#addPG">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Web Content Display Page" />
 		</execute>
 
 		<execute macro="Page#gotoPG">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Web Content Display Page" />
 		</execute>
 
 		<execute macro="Portlet#addPG">
-			<var name="portletName" value="${portletName}" />
+			<var name="portletName" value="Web Content Display" />
 		</execute>
 
 		<execute macro="Page#gotoPG">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Web Content Display Page" />
 		</execute>
 
 		<execute macro="Portlet#addPG">
@@ -790,13 +859,13 @@
 		</execute>
 
 		<execute macro="WebContentStructures#addCP">
-			<var name="localization1Name" value="${structureNameLocalization1}" />
-			<var name="localization1NameKey" value="${localization1NameKey}" />
-			<var name="localization2Name" value="${structureNameLocalization2}" />
-			<var name="localization2NameKey" value="${localization2NameKey}" />
-			<var name="structureDescription" value="${structureDescription}" />
-			<var name="structureFieldNames" value="${structureFieldNames}" />
-			<var name="structureName" value="${structureName}" />
+			<var name="localization1Name" value="nom de la structure de wc" />
+			<var name="localization1NameKey" value="fr_FR" />
+			<var name="localization2Name" value="wc 结构名称" />
+			<var name="localization2NameKey" value="zh_CN" />
+			<var name="structureDescription" value="WC Structure Description" />
+			<var name="structureFieldNames" value="Text" />
+			<var name="structureName" value="WC Structure Name" />
 		</execute>
 
 		<execute macro="Page#gotoContentCP">
@@ -804,15 +873,15 @@
 		</execute>
 
 		<execute macro="WebContentTemplates#addCP">
-			<var name="localization1Name" value="${templateNameLocalization1}" />
-			<var name="localization1NameKey" value="${localization1NameKey}" />
-			<var name="localization2Name" value="${templateNameLocalization2}" />
-			<var name="localization2NameKey" value="${localization2NameKey}" />
-			<var name="structureName" value="${structureName}" />
-			<var name="templateDescription" value="${templateDescription}" />
-			<var name="templateFieldNames" value="${templateFieldNames}" />
-			<var name="templateLanguage" value="${templateLanguage}" />
-			<var name="templateName" value="${templateName}" />
+			<var name="localization1Name" value="nom de la template de wc" />
+			<var name="localization1NameKey" value="fr_FR" />
+			<var name="localization2Name" value="wc 模板名称" />
+			<var name="localization2NameKey" value="zh_CN" />
+			<var name="structureName" value="WC Structure Name" />
+			<var name="templateDescription" value="WC Template Description" />
+			<var name="templateFieldNames" value="Text" />
+			<var name="templateLanguage" value="ftl" />
+			<var name="templateName" value="WC Template Name" />
 		</execute>
 
 		<execute macro="Page#gotoContentCP">
@@ -820,33 +889,33 @@
 		</execute>
 
 		<execute macro="WebContent#addWithStructureCP">
-			<var name="structureName" value="${structureName}" />
-			<var name="templateName" value="${templateName}" />
-			<var name="webContentText" value="${webContentText}" />
-			<var name="webContentTitle" value="${webContentTitle}" />
+			<var name="structureName" value="WC Structure Name" />
+			<var name="templateName" value="WC Template Name" />
+			<var name="webContentText" value="WC WebContent Text" />
+			<var name="webContentTitle" value="WC WebContent Title" />
 		</execute>
 
 		<execute macro="WebContent#addTranslationCP">
-			<var name="localizedLanguage" value="${localizedLanguage}" />
-			<var name="localizedText" value="${localizedText}" />
-			<var name="localizedTitle" value="${localizedTitle}" />
-			<var name="webContentTitle" value="${webContentTitle}" />
+			<var name="localizedLanguage" value="French (France)" />
+			<var name="localizedText" value="WC contenu WebContent" />
+			<var name="localizedTitle" value="WC WebContent Titre" />
+			<var name="webContentTitle" value="WC WebContent Title" />
 		</execute>
 
 		<execute macro="Page#gotoPG">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Web Content Display Page" />
 		</execute>
 
 		<execute macro="WebContentDisplayPortlet#selectWebContent">
-			<var name="webContentTitle" value="${webContentTitle}" />
+			<var name="webContentTitle" value="WC WebContent Title" />
 		</execute>
 
 		<execute macro="Page#gotoPG">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Web Content Display Page" />
 		</execute>
 
 		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="${webContentText}" />
+			<var name="webContentContent" value="WC WebContent Text" />
 		</execute>
 
 		<execute macro="LanguagePortlet#selectLanguagePG">
@@ -854,20 +923,20 @@
 		</execute>
 
 		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="${localizedText}" />
+			<var name="webContentContent" value="WC contenu WebContent" />
 		</execute>
 
 		<execute macro="WebContent#viewTranslationPGViaWCD">
-			<var name="localizedText" value="${localizedText}" />
-			<var name="localizedTitle" value="${localizedTitle}" />
+			<var name="localizedText" value="WC contenu WebContent" />
+			<var name="localizedTitle" value="WC WebContent Titre" />
 			<var name="lowercaseLanguageCode" value="fr" />
-			<var name="structureLocalizationName" value="${structureNameLocalization1}" />
-			<var name="templateLocalizationName" value="${templateNameLocalization1}" />
+			<var name="structureLocalizationName" value="nom de la structure de wc" />
+			<var name="templateLocalizationName" value="nom de la template de wc" />
 			<var name="webContentTranslationLanguage" value="français (France)" />
 		</execute>
 
 		<execute macro="Page#gotoPG">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Web Content Display Page" />
 		</execute>
 
 		<execute macro="LanguagePortlet#selectLanguagePG">
@@ -875,16 +944,16 @@
 		</execute>
 
 		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="${webContentText}" />
+			<var name="webContentContent" value="WC WebContent Text" />
 		</execute>
 
 		<execute macro="WebContent#viewTranslationPGViaWCD">
-			<var name="structureLocalizationName" value="${structureNameLocalization2}" />
-			<var name="templateLocalizationName" value="${templateNameLocalization2}" />
+			<var name="structureLocalizationName" value="wc 结构名称" />
+			<var name="templateLocalizationName" value="wc 模板名称" />
 		</execute>
 
 		<execute macro="Page#gotoPG">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Web Content Display Page" />
 		</execute>
 
 		<execute macro="LanguagePortlet#selectLanguagePG">

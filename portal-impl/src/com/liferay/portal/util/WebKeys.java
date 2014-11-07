@@ -51,10 +51,6 @@ public class WebKeys implements com.liferay.portal.kernel.util.WebKeys {
 
 	public static final String BLOGS_ENTRY = "BLOGS_ENTRY";
 
-	public static final String BOOKMARKS_ENTRY = "BOOKMARKS_ENTRY";
-
-	public static final String BOOKMARKS_FOLDER = "BOOKMARKS_FOLDER";
-
 	public static final String CACHE_PORTLET_RESPONSES = "CACHE_PORTLET_RESPONSES";
 
 	public static final String CALENDAR_EVENT = "CALENDAR_EVENT";
@@ -295,10 +291,6 @@ public class WebKeys implements com.liferay.portal.kernel.util.WebKeys {
 	public static final String MOBILE_DEVICE_RULES_RULE_INSTANCE = "MOBILE_DEVICE_RULES_RULE_INSTANCE";
 
 	public static final String MOBILE_DEVICE_RULES_RULE_TYPE = "MOBILE_DEVICE_RULES_RULE_TYPE";
-
-	public static final String NESTED_PORTLET_VELOCITY_TEMPLATE_CONTENT = "NESTED_PORTLET_VELOCITY_TEMPLATE_CONTENT";
-
-	public static final String NESTED_PORTLET_VELOCITY_TEMPLATE_ID = "NESTED_PORTLET_VELOCITY_TEMPLATE_ID";
 
 	public static final String NETVIBES = "NETVIBES";
 

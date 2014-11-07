@@ -45,6 +45,21 @@ import java.util.Locale;
  */
 public class UserTestUtil {
 
+	public static User addCompanyAdminUser(Company company) throws Exception {
+		User user = addUser();
+
+		user.setCompanyId(company.getCompanyId());
+
+		UserLocalServiceUtil.updateUser(user);
+
+		Role role = RoleLocalServiceUtil.getRole(
+			company.getCompanyId(), RoleConstants.ADMINISTRATOR);
+
+		UserLocalServiceUtil.addRoleUser(role.getRoleId(), user);
+
+		return user;
+	}
+
 	public static User addGroupAdminUser(Group group) throws Exception {
 		return UserTestUtil.addGroupUser(
 			group, RoleConstants.SITE_ADMINISTRATOR);
@@ -71,22 +86,11 @@ public class UserTestUtil {
 		return groupUser;
 	}
 
-	public static User addOmniAdmin() throws Exception {
-		User user = addUser();
-
-		Company defaultCompany = CompanyLocalServiceUtil.getCompanyByMx(
+	public static User addOmniAdminUser() throws Exception {
+		Company company = CompanyLocalServiceUtil.getCompanyByMx(
 			PropsUtil.get(PropsKeys.COMPANY_DEFAULT_WEB_ID));
 
-		user.setCompanyId(defaultCompany.getCompanyId());
-
-		UserLocalServiceUtil.updateUser(user);
-
-		Role administratorRole = RoleLocalServiceUtil.getRole(
-			defaultCompany.getCompanyId(), RoleConstants.ADMINISTRATOR);
-
-		UserLocalServiceUtil.addRoleUser(administratorRole.getRoleId(), user);
-
-		return user;
+		return addCompanyAdminUser(company);
 	}
 
 	public static User addOrganizationAdminUser(Organization organization)
@@ -158,8 +162,7 @@ public class UserTestUtil {
 
 		if (secure) {
 			String emailAddress =
-				"UserServiceTest." + RandomTestUtil.nextLong() +
-					"@liferay.com";
+				"UserServiceTest." + RandomTestUtil.nextLong() + "@liferay.com";
 
 			return UserServiceUtil.addUser(
 				TestPropsValues.getCompanyId(), autoPassword, password1,

@@ -28,6 +28,10 @@ public class SyncEngineUtil {
 
 	public static final int SYNC_ENGINE_NOT_CONFIGURED = 0;
 
+	public static final int SYNC_ENGINE_STATE_PROCESSED = 6;
+
+	public static final int SYNC_ENGINE_STATE_PROCESSING = 5;
+
 	public static final int SYNC_ENGINE_STATE_STARTED = 1;
 
 	public static final int SYNC_ENGINE_STATE_STARTING = 2;
@@ -36,13 +40,13 @@ public class SyncEngineUtil {
 
 	public static final int SYNC_ENGINE_STATE_STOPPING = 4;
 
-	public static final int SYNC_ENGINE_UPDATE_AVAILABLE = 5;
+	public static final int SYNC_ENGINE_UPDATE_AVAILABLE = 7;
 
 	public static void fireSyncEngineStateChanged(final int syncEngineState) {
 		for (final SyncEngineListener syncEngineListener :
 				_syncEngineListeners) {
 
-			_executorService.submit(
+			_executorService.execute(
 				new Runnable() {
 
 					@Override
@@ -68,9 +72,9 @@ public class SyncEngineUtil {
 		_syncEngineListeners.remove(syncEngineListener);
 	}
 
-	private static ExecutorService _executorService =
+	private static final ExecutorService _executorService =
 		Executors.newSingleThreadScheduledExecutor();
-	private static List<SyncEngineListener> _syncEngineListeners =
+	private static final List<SyncEngineListener> _syncEngineListeners =
 		new ArrayList<SyncEngineListener>();
 
 }

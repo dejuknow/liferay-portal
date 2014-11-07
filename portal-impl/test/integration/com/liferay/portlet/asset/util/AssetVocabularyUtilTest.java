@@ -93,9 +93,8 @@ public class AssetVocabularyUtilTest {
 			unambiguousCompanyVocabularyTitle.contains(
 				_companyGroup.getDescriptiveName(_LOCALE)));
 
-		String unambiguousVocabularyTitle =
-			_vocabulary.getUnambiguousTitle(
-				vocabularies, _group.getGroupId(), _LOCALE);
+		String unambiguousVocabularyTitle = _vocabulary.getUnambiguousTitle(
+			vocabularies, _group.getGroupId(), _LOCALE);
 
 		Assert.assertEquals(_TITLE, unambiguousVocabularyTitle);
 	}

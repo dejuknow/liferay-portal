@@ -51,10 +51,13 @@ public class StAXReaderUtil {
 
 		xmlInputFactory.setProperty(
 			XMLInputFactory.IS_COALESCING, Boolean.TRUE);
+		xmlInputFactory.setProperty(
+			XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE);
 
 		return xmlInputFactory;
 	}
 
-	private static XMLInputFactory _xmlInputFactory = _createXMLInputFactory();
+	private static final XMLInputFactory _xmlInputFactory =
+		_createXMLInputFactory();
 
 }

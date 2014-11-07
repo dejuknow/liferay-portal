@@ -68,6 +68,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.hibernate.util.JDBCExceptionReporter;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
@@ -442,6 +443,68 @@ public class DLAppServiceTest extends BaseDLAppTestCase {
 		})
 	@RunWith(LiferayIntegrationJUnitTestRunner.class)
 	@Sync
+	public static class WhenCheckingInAFileEntry extends BaseDLAppTestCase {
+
+		@Test
+		public void shouldFireSyncEvent() throws Exception {
+			AtomicInteger counter = registerDLSyncEventProcessorMessageListener(
+				DLSyncConstants.EVENT_UPDATE);
+
+			FileEntry fileEntry = DLAppTestUtil.addFileEntry(
+				group.getGroupId(), parentFolder.getRepositoryId(),
+				parentFolder.getFolderId());
+
+			ServiceContext serviceContext =
+				ServiceContextTestUtil.getServiceContext(group.getGroupId());
+
+			DLAppServiceUtil.checkOutFileEntry(
+				fileEntry.getFileEntryId(), serviceContext);
+
+			DLAppServiceUtil.checkInFileEntry(
+				fileEntry.getFileEntryId(), false,
+				RandomTestUtil.randomString(), serviceContext);
+
+			Assert.assertEquals(2, counter.get());
+		}
+
+	}
+
+	@ExecutionTestListeners(
+		listeners = {
+			MainServletExecutionTestListener.class,
+			SynchronousDestinationExecutionTestListener.class
+		})
+	@RunWith(LiferayIntegrationJUnitTestRunner.class)
+	@Sync
+	public static class WhenCheckingOutAFileEntry extends BaseDLAppTestCase {
+
+		@Test
+		public void shouldFireSyncEvent() throws Exception {
+			AtomicInteger counter = registerDLSyncEventProcessorMessageListener(
+				DLSyncConstants.EVENT_UPDATE);
+
+			FileEntry fileEntry = DLAppTestUtil.addFileEntry(
+				group.getGroupId(), parentFolder.getRepositoryId(),
+				parentFolder.getFolderId());
+
+			ServiceContext serviceContext =
+				ServiceContextTestUtil.getServiceContext(group.getGroupId());
+
+			DLAppServiceUtil.checkOutFileEntry(
+				fileEntry.getFileEntryId(), serviceContext);
+
+			Assert.assertEquals(1, counter.get());
+		}
+
+	}
+
+	@ExecutionTestListeners(
+		listeners = {
+			MainServletExecutionTestListener.class,
+			SynchronousDestinationExecutionTestListener.class
+		})
+	@RunWith(LiferayIntegrationJUnitTestRunner.class)
+	@Sync
 	public static class WhenCopyingAFolder extends BaseDLAppTestCase {
 
 		@Test
@@ -712,6 +775,7 @@ public class DLAppServiceTest extends BaseDLAppTestCase {
 			search(fileEntry, false, "liferay", false);
 		}
 
+		@Ignore
 		@Test
 		public void shouldFindFileEntryByAssetTagNameAfterUpdate()
 			throws Exception {

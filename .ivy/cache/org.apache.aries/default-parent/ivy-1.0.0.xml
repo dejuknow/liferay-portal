@@ -4,7 +4,7 @@
 		module="default-parent"
 		revision="1.0.0"
 		status="release"
-		publication="20120512180617"
+		publication="20120512150617"
 	>
 		<description homepage="" />
 		<m:properties__organization.logo>http://www.apache.org/images/asf_logo_wide.gif</m:properties__organization.logo>

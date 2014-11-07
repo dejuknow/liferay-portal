@@ -17,8 +17,8 @@ package com.liferay.registry.collections;
 import com.liferay.registry.ServiceReference;
 
 /**
-* @author Carlos Sierra Andrés
-*/
+ * @author Carlos Sierra Andrés
+ */
 public class ServiceReferenceServiceTuple<SR, TS>
 	implements Comparable<ServiceReferenceServiceTuple<SR, TS>> {
 
@@ -67,7 +67,7 @@ public class ServiceReferenceServiceTuple<SR, TS>
 		return _serviceReference.hashCode();
 	}
 
-	private TS _service;
-	private ServiceReference<SR> _serviceReference;
+	private final TS _service;
+	private final ServiceReference<SR> _serviceReference;
 
 }

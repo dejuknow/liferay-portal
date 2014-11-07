@@ -30,11 +30,13 @@ public class DownloadFileEvent extends BaseEvent {
 		long syncAccountId, Map<String, Object> parameters) {
 
 		super(syncAccountId, _URL_PATH, parameters);
+
+		_handler = new DownloadFileHandler(this);
 	}
 
 	@Override
-	protected Handler<Void> getHandler() {
-		return new DownloadFileHandler(this);
+	public Handler<Void> getHandler() {
+		return _handler;
 	}
 
 	@Override
@@ -46,7 +48,7 @@ public class DownloadFileEvent extends BaseEvent {
 
 		SyncFileService.update(syncFile);
 
-		StringBuilder sb = new StringBuilder(9);
+		StringBuilder sb = new StringBuilder();
 
 		sb.append(_URL_PATH);
 		sb.append("/");
@@ -69,5 +71,7 @@ public class DownloadFileEvent extends BaseEvent {
 	}
 
 	private static final String _URL_PATH = "/sync-web/download";
+
+	private final Handler<Void> _handler;
 
 }

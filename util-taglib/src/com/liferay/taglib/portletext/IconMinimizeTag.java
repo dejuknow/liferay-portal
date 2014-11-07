@@ -54,9 +54,8 @@ public class IconMinimizeTag extends IconTag {
 		setImage("../aui/".concat(image));
 		setMessage(message);
 
-		String onClick =
-			"Liferay.Portlet.minimize('#p_p_id_".concat(
-				portletDisplay.getId()).concat("_', this); return false;");
+		String onClick = "Liferay.Portlet.minimize('#p_p_id_".concat(
+			portletDisplay.getId()).concat("_', this); return false;");
 
 		setOnClick(onClick);
 

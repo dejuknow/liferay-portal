@@ -217,9 +217,8 @@ public class WikiPortletDataHandler extends BasePortletDataHandler {
 			"hiddenNodes", null);
 
 		for (String hiddenNodeName : StringUtil.split(hiddenNodeNames)) {
-			WikiNode wikiNode =
-				WikiNodeLocalServiceUtil.getNode(
-					portletDataContext.getScopeGroupId(), hiddenNodeName);
+			WikiNode wikiNode = WikiNodeLocalServiceUtil.getNode(
+				portletDataContext.getScopeGroupId(), hiddenNodeName);
 
 			StagedModelDataHandlerUtil.exportReferenceStagedModel(
 				portletDataContext, portletId, wikiNode);
@@ -229,9 +228,8 @@ public class WikiPortletDataHandler extends BasePortletDataHandler {
 			"visibleNodes", null);
 
 		for (String visibleNodeName : StringUtil.split(visibleNodeNames)) {
-			WikiNode wikiNode =
-				WikiNodeLocalServiceUtil.getNode(
-					portletDataContext.getScopeGroupId(), visibleNodeName);
+			WikiNode wikiNode = WikiNodeLocalServiceUtil.getNode(
+				portletDataContext.getScopeGroupId(), visibleNodeName);
 
 			StagedModelDataHandlerUtil.exportReferenceStagedModel(
 				portletDataContext, portletId, wikiNode);

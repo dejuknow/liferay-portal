@@ -170,10 +170,6 @@ public class JournalUtil {
 
 		addReservedEl(
 			rootElement, tokens,
-			JournalStructureConstants.RESERVED_ARTICLE_TYPE, article.getType());
-
-		addReservedEl(
-			rootElement, tokens,
 			JournalStructureConstants.RESERVED_ARTICLE_CREATE_DATE,
 			article.getCreateDate());
 
@@ -505,18 +501,6 @@ public class JournalUtil {
 		return DiffHtmlUtil.diff(
 			new UnsyncStringReader(sourceArticleDisplay.getContent()),
 			new UnsyncStringReader(targetArticleDisplay.getContent()));
-	}
-
-	public static String doTransform(
-			ThemeDisplay themeDisplay, Map<String, String> tokens,
-			String viewMode, String languageId, Document document,
-			PortletRequestModel portletRequestModel, String script,
-			String langType)
-		throws Exception {
-
-		return _transformer.doTransform(
-			themeDisplay, tokens, viewMode, languageId, document,
-			portletRequestModel, script, langType);
 	}
 
 	public static String formatVM(String vm) {
@@ -1512,9 +1496,21 @@ public class JournalUtil {
 			String langType)
 		throws Exception {
 
+		return transform(
+			themeDisplay, tokens, viewMode, languageId, document,
+			portletRequestModel, script, langType, false);
+	}
+
+	public static String transform(
+			ThemeDisplay themeDisplay, Map<String, String> tokens,
+			String viewMode, String languageId, Document document,
+			PortletRequestModel portletRequestModel, String script,
+			String langType, boolean propagateException)
+		throws Exception {
+
 		return _transformer.transform(
 			themeDisplay, tokens, viewMode, languageId, document,
-			portletRequestModel, script, langType);
+			portletRequestModel, script, langType, propagateException);
 	}
 
 	private static void _addElementOptions(

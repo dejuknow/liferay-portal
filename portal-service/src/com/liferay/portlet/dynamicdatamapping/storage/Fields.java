@@ -93,6 +93,20 @@ public class Fields implements Iterable<Field>, Serializable {
 		return availableLocales;
 	}
 
+	public long getDDMStructureId() {
+		long ddmStructureId = 0;
+
+		Iterator<Field> itr = iterator();
+
+		if (itr.hasNext()) {
+			Field field = itr.next();
+
+			ddmStructureId = field.getDDMStructureId();
+		}
+
+		return ddmStructureId;
+	}
+
 	public Locale getDefaultLocale() {
 		Locale defaultLocale = LocaleUtil.getSiteDefault();
 
@@ -154,6 +168,6 @@ public class Fields implements Iterable<Field>, Serializable {
 		return fieldsList;
 	}
 
-	private Map<String, Field> _fieldsMap = new HashMap<String, Field>();
+	private final Map<String, Field> _fieldsMap = new HashMap<String, Field>();
 
 }

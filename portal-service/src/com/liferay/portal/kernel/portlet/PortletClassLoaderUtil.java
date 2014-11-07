@@ -17,7 +17,6 @@ package com.liferay.portal.kernel.portlet;
 import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
-import com.liferay.portal.kernel.servlet.PluginContextListener;
 import com.liferay.portal.kernel.util.AutoResetThreadLocal;
 import com.liferay.portal.kernel.util.ClassLoaderPool;
 
@@ -44,8 +43,7 @@ public class PortletClassLoaderUtil {
 
 		ServletContext servletContext = portletBag.getServletContext();
 
-		return (ClassLoader)servletContext.getAttribute(
-			PluginContextListener.PLUGIN_CLASS_LOADER);
+		return servletContext.getClassLoader();
 	}
 
 	public static String getServletContextName() {
@@ -66,7 +64,7 @@ public class PortletClassLoaderUtil {
 		_servletContextName.set(servletContextName);
 	}
 
-	private static ThreadLocal<String> _servletContextName =
+	private static final ThreadLocal<String> _servletContextName =
 		new AutoResetThreadLocal<String>(
 			PortletClassLoaderUtil.class + "._servletContextName");
 

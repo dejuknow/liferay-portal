@@ -22,10 +22,10 @@ import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.security.permission.BaseModelPermissionChecker;
 import com.liferay.portal.security.permission.PermissionChecker;
+import com.liferay.portal.security.permission.ResourcePermissionChecker;
 import com.liferay.portal.util.PortletKeys;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.wiki.NoSuchPageException;
-import com.liferay.portlet.wiki.NoSuchPageResourceException;
 import com.liferay.portlet.wiki.model.WikiNode;
 import com.liferay.portlet.wiki.model.WikiPage;
 import com.liferay.portlet.wiki.service.WikiPageLocalServiceUtil;
@@ -36,7 +36,8 @@ import com.liferay.portlet.wiki.service.WikiPageLocalServiceUtil;
 @OSGiBeanProperties(
 	property = {"model.class.name=com.liferay.portlet.wiki.model.WikiPage"}
 )
-public class WikiPagePermission implements BaseModelPermissionChecker {
+public class WikiPagePermission
+	implements BaseModelPermissionChecker, ResourcePermissionChecker {
 
 	public static void check(
 			PermissionChecker permissionChecker, long resourcePrimKey,
@@ -78,19 +79,16 @@ public class WikiPagePermission implements BaseModelPermissionChecker {
 	}
 
 	public static boolean contains(
-			PermissionChecker permissionChecker, long resourcePrimKey,
-			String actionId)
+			PermissionChecker permissionChecker, long classPK, String actionId)
 		throws PortalException {
 
-		try {
-			WikiPage page = WikiPageLocalServiceUtil.getPage(
-				resourcePrimKey, (Boolean)null);
+		WikiPage page = WikiPageLocalServiceUtil.fetchPage(classPK);
 
-			return contains(permissionChecker, page, actionId);
+		if (page == null) {
+			page = WikiPageLocalServiceUtil.getPageByPageId(classPK);
 		}
-		catch (NoSuchPageResourceException nspre) {
-			return false;
-		}
+
+		return contains(permissionChecker, page, actionId);
 	}
 
 	public static boolean contains(
@@ -206,6 +204,14 @@ public class WikiPagePermission implements BaseModelPermissionChecker {
 		throws PortalException {
 
 		check(permissionChecker, primaryKey, actionId);
+	}
+
+	@Override
+	public Boolean checkResource(
+			PermissionChecker permissionChecker, long classPK, String actionId)
+		throws PortalException {
+
+		return contains(permissionChecker, classPK, actionId);
 	}
 
 	private static boolean _hasPermission(

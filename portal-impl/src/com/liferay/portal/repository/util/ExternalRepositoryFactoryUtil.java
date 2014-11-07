@@ -27,9 +27,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ExternalRepositoryFactoryUtil {
 
 	/**
-	 *
 	 * @deprecated As of 7.0.0 replaced by {@link
-	 *             com.liferay.portal.repository.registry.RepositoryClassDefinitionCatalogUtil#getExternalRepositoryClassNames()}
+	 *             com.liferay.portal.repository.registry.RepositoryClassDefinitionCatalogUtil#getExternalRepositoryClassNames(
+	 *             )}
 	 */
 	@Deprecated
 	public static String[] getExternalRepositoryClassNames() {
@@ -68,7 +68,7 @@ public class ExternalRepositoryFactoryUtil {
 		externalRepositoryFactories.remove(className);
 	}
 
-	private static ConcurrentHashMap<String, ExternalRepositoryFactory>
+	private static final ConcurrentHashMap<String, ExternalRepositoryFactory>
 		externalRepositoryFactories =
 			new ConcurrentHashMap<String, ExternalRepositoryFactory>();
 

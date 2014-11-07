@@ -14,13 +14,12 @@
 
 package com.liferay.taglib.util;
 
-import com.liferay.kernel.servlet.taglib.DynamicIncludeUtil;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringWriter;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.servlet.JSPSupportServlet;
-import com.liferay.portal.kernel.servlet.PluginContextListener;
 import com.liferay.portal.kernel.servlet.ServletContextPool;
+import com.liferay.portal.kernel.servlet.taglib.DynamicIncludeUtil;
 import com.liferay.portal.kernel.template.Template;
 import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.template.TemplateManagerUtil;
@@ -144,8 +143,7 @@ public class ThemeUtil {
 		ClassLoader pluginClassLoader = null;
 
 		if (pluginServletContext != null) {
-			pluginClassLoader = (ClassLoader)pluginServletContext.getAttribute(
-				PluginContextListener.PLUGIN_CLASS_LOADER);
+			pluginClassLoader = pluginServletContext.getClassLoader();
 		}
 
 		Thread currentThread = Thread.currentThread();
@@ -326,7 +324,8 @@ public class ThemeUtil {
 		throws Exception {
 
 		DynamicIncludeUtil.include(
-			request, response, ThemeUtil.class.getName() + "#doIncludeJSP");
+			request, response, ThemeUtil.class.getName() + "#doIncludeJSP",
+			true);
 
 		if (theme.isWARFile()) {
 			ServletContext themeServletContext = servletContext.getContext(
@@ -482,6 +481,6 @@ public class ThemeUtil {
 		}
 	}
 
-	private static Log _log = LogFactoryUtil.getLog(ThemeUtil.class);
+	private static final Log _log = LogFactoryUtil.getLog(ThemeUtil.class);
 
 }

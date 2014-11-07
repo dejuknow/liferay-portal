@@ -14,6 +14,7 @@
 
 package com.liferay.portal.metadata;
 
+import com.liferay.portal.fabric.InputResource;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.io.DummyWriter;
 import com.liferay.portal.kernel.log.Log;
@@ -172,7 +173,7 @@ public class TikaRawMetadataProcessor extends XugglerRawMetadataProcessor {
 		}
 	}
 
-	private static Log _log = LogFactoryUtil.getLog(
+	private static final Log _log = LogFactoryUtil.getLog(
 		TikaRawMetadataProcessor.class);
 
 	private Parser _parser;
@@ -200,7 +201,9 @@ public class TikaRawMetadataProcessor extends XugglerRawMetadataProcessor {
 
 		private static final long serialVersionUID = 1L;
 
+		@InputResource
 		private final File _file;
+
 		private final Metadata _metadata;
 		private final Parser _parser;
 

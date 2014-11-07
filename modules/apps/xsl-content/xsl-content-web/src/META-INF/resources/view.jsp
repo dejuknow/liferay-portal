@@ -84,7 +84,7 @@ try {
 
 	XSLContentConfiguration xslContentConfiguration = (XSLContentConfiguration)request.getAttribute(XSLContentConfiguration.class.getName());
 
-	String content = XSLContentUtil.transform(new URL(xmlUrl), new URL(xslUrl), xslContentConfiguration);
+	String content = XSLContentUtil.transform(xslContentConfiguration, new URL(xmlUrl), new URL(xslUrl));
 %>
 
 	<%= content %>

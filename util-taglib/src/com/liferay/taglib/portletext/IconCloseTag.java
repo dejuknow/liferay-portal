@@ -41,9 +41,8 @@ public class IconCloseTag extends IconTag {
 		setImage("../aui/remove");
 		setMessage("remove");
 
-		String onClick =
-			"Liferay.Portlet.close('#p_p_id_".concat(
-				portletDisplay.getId()).concat("_'); return false;");
+		String onClick = "Liferay.Portlet.close('#p_p_id_".concat(
+			portletDisplay.getId()).concat("_'); return false;");
 
 		setOnClick(onClick);
 

@@ -22,9 +22,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.servlet.http.HttpSession;
 
 /**
- * @author Michael C. Han
+ * @author     Michael C. Han
  * @deprecated As of 7.0.0, with no direct replacement
  */
+@Deprecated
 public class SharedSessionAttributeCache implements Serializable {
 
 	public static SharedSessionAttributeCache getInstance(HttpSession session) {
@@ -65,6 +66,6 @@ public class SharedSessionAttributeCache implements Serializable {
 	private static final String _SESSION_KEY =
 		SharedSessionAttributeCache.class.getName();
 
-	private Map<String, Object> _attributes;
+	private final Map<String, Object> _attributes;
 
 }

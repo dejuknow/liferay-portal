@@ -135,10 +135,10 @@
 		<execute action="CPDynamicdatalistsListAddrecord#type" locator-key1="DECIMAL_FIELD" value1="${ddlRecordFieldData}" />
 	</command>
 
-	<command name="populateFieldDocumentsAndMedia">
+	<command name="populateFieldDocumentsAndMediaChooseFromDocumentLibrary">
 		<var name="key_fieldName" value="${fieldName}" />
 
-		<execute action="CPDynamicdatalistsListAddrecord#assertClick" locator-key1="DOCUMENTS_AND_MEDIA_SELECT" value1="Select" />
+		<execute action="CPDynamicdatalistsListAddrecord#assertClick" locator-key1="DOCUMENTS_AND_MEDIA_CHOOSE_FROM_DOCUMENT_LIBRARY" value1="Choose from Document Library" />
 
 		<execute action="CPDynamicdatalistsListAddrecordSelect#selectFrame" locator-key1="SELECT_DOCUMENT_IFRAME" />
 		<execute action="CPDynamicdatalistsListAddrecordSelect#assertClick" locator-key1="TOOLBAR_ADD" value1="Add" />
@@ -156,6 +156,18 @@
 
 		<execute action="CPDynamicdatalistsListAddrecord#selectFrame" value1="relative=top" />
 		<execute action="CPDynamicdatalistsListAddrecord#assertTextEquals" locator-key1="DOCUMENTS_AND_MEDIA_FIELD" value1="${ddlRecordFieldData}" />
+	</command>
+
+	<command name="populateFieldDocumentsAndMediaUpload">
+		<var name="key_fieldName" value="${fieldName}" />
+
+		<execute action="CPDynamicdatalistsListAddrecord#assertClick" locator-key1="DOCUMENTS_AND_MEDIA_UPLOAD" value1="Upload" />
+
+		<execute action="OS#sikuliClick" locator-key1="FILE_DIALOG_BOX_TYPE_FILE_NAME_ICON_PNG" />
+		<execute action="OS#sikuliUploadCommonFile" locator-key1="FILE_DIALOG_BOX_FILE_NAME_FIELD_PNG" value1="${document}" />
+		<execute action="Home#pause" locator1="5000" />
+
+		<execute action="CPDynamicdatalistsListAddrecord#assertTextEquals" locator-key1="DOCUMENTS_AND_MEDIA_FIELD" value1="${document}" />
 	</command>
 
 	<command name="populateFieldGeolocation">
@@ -342,12 +354,23 @@
 		<execute action="CPDynamicdatalists#click" locator-key1="LIST_TABLE_NAME_1" value1="${ddlListName}" />
 
 		<execute action="CPDynamicdatalistsList#assertTextEquals" locator-key1="HEADER_TITLE" value1="${ddlListName}" />
-		<execute action="CPDynamicdatalistsList#assertTextEquals" locator-key1="RECORD_TABLE_COLUMN_ONE_NAME" value1="Text" />
-		<execute action="CPDynamicdatalistsList#assertTextEquals" locator-key1="RECORD_TABLE_COLUMN_ONE_RECORD_1" value1="${ddlRecordText}" />
-		<execute action="CPDynamicdatalistsList#click" locator-key1="RECORD_TABLE_ACTIONS_1" />
+
+		<var name="key_ddlRecordFieldData" value="${ddlRecordFieldData}" />
+		<var name="key_fieldFieldLabel" value="${fieldFieldLabel}" />
+
+		<execute action="CPDynamicdatalistsList#assertTextEquals" locator-key1="RECORD_TABLE_ENTRY" value1="${ddlRecordFieldData}" />
+		<execute action="CPDynamicdatalistsList#click" locator-key1="RECORD_TABLE_ACTIONS" />
 		<execute action="CPDynamicdatalistsList#click" locator-key1="RECORD_MENULIST_VIEW" />
 
-		<execute action="CPDynamicdatalistsListRecord#assertTextEquals" locator-key1="FIELD_1" value1="Text ${ddlRecordText}" />
+		<if>
+			<equals arg1="${nestedField}" arg2="true" />
+			<then>
+				<execute action="CPDynamicdatalistsListRecord#assertTextEquals" locator-key1="FIELD_NESTED" value1="${fieldFieldLabel} ${ddlRecordFieldData}" />
+			</then>
+			<else>
+				<execute action="CPDynamicdatalistsListRecord#assertTextEquals" locator-key1="FIELD" value1="${fieldFieldLabel} ${ddlRecordFieldData}" />
+			</else>
+		</if>
 
 		<execute action="CPDynamicdatalists#selectFrameTop" />
 	</command>

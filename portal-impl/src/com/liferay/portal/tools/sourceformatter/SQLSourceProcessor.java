@@ -40,7 +40,7 @@ public class SQLSourceProcessor extends BaseSourceProcessor {
 
 		try (UnsyncBufferedReader unsyncBufferedReader =
 				new UnsyncBufferedReader(new UnsyncStringReader(content))) {
-			
+
 			String line = null;
 
 			String previousLineSqlCommand = StringPool.BLANK;
@@ -48,9 +48,9 @@ public class SQLSourceProcessor extends BaseSourceProcessor {
 			while ((line = unsyncBufferedReader.readLine()) != null) {
 				line = trimLine(line, false);
 
-				if (Validator.isNotNull(line) && 
+				if (Validator.isNotNull(line) &&
 					!line.startsWith(StringPool.TAB)) {
-					
+
 					String sqlCommand = StringUtil.split(
 						line, CharPool.SPACE)[0];
 

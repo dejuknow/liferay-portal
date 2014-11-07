@@ -19,7 +19,7 @@
 		<execute action="CPMyworkflowtasks#assertTextEquals" locator-key1="ASSIGNED_TO_ME_TABLE_ASSET_TYPE" value1="${workflowAssetType}" />
 		<execute action="CPMyworkflowtasks#assertElementPresent" locator-key1="ASSIGNED_TO_ME_TABLE_LAST_ACTIVITY_DATE" />
 		<execute action="CPMyworkflowtasks#assertElementPresent" locator-key1="ASSIGNED_TO_ME_TABLE_DUE_DATE" />
-		<execute action="CPMyworkflowtasks#assertClick" locator-key1="ASSIGNED_TO_ME_TABLE_ACTIONS" value1="Actions" />
+		<execute action="CPMyworkflowtasks#click" locator-key1="ASSIGNED_TO_ME_TABLE_ACTIONS" />
 		<execute action="CPMyworkflowtasks#assertClick" locator-key1="ASSIGNED_TO_ME_MENULIST_APPROVE" value1="Approve" />
 
 		<if>
@@ -108,9 +108,7 @@
 	</command>
 
 	<command name="approveTaskByNotifications">
-		<execute action="Myaccount#selectFrame" locator-key1="MY_ACCOUNT_IFRAME" />
-
-		<execute action="PGNotificationsdockbar#assertClick" locator-key1="COUNT" value1="${notificationCount}" />
+		<execute action="PGNotificationsdockbar#assertClick" locator-key1="COUNT_ALERT" value1="${notificationCount}" />
 		<execute action="PGNotificationsdockbar#assertClick" locator-key1="NOTIFICATIONS_CONTENT_GENERIC" value1="${notificationContent}" />
 
 		<execute action="CPMyworkflowtasksTask#selectFrame" locator-key1="MANAGE_MY_ACCOUNT_IFRAME" />
@@ -118,8 +116,6 @@
 		<execute action="CPMyworkflowtasksTask#assertClick" locator-key1="MENU_APPROVE" value1="Approve" />
 		<execute action="CPMyworkflowtasksTask#assertClick" locator-key1="DIALOG_BOX_OK_BUTTON" value1="OK" />
 		<execute action="CPMyworkflowtasksTask#assertTextEquals" locator-key1="SUCCESS_MESSAGE" value1="Your request completed successfully." />
-
-		<execute action="Myaccount#selectFrame" value1="relative=top" />
 	</command>
 
 	<command name="assignToMeTaskByActions">
@@ -225,9 +221,7 @@
 	</command>
 
 	<command name="assignToMeTaskByNotifications">
-		<execute action="Myaccount#selectFrame" locator-key1="MY_ACCOUNT_IFRAME" />
-
-		<execute action="PGNotificationsdockbar#assertClick" locator-key1="COUNT" value1="${notificationCount}" />
+		<execute action="PGNotificationsdockbar#assertClick" locator-key1="COUNT_ALERT" value1="${notificationCount}" />
 		<execute action="PGNotificationsdockbar#assertClick" locator-key1="NOTIFICATIONS_CONTENT_GENERIC" value1="${notificationContent}" />
 
 		<execute action="CPMyworkflowtasksTask#selectFrame" locator-key1="MANAGE_MY_ACCOUNT_IFRAME" />
@@ -235,8 +229,6 @@
 		<execute action="CPMyworkflowtasksTask#assertClick" locator-key1="MENU_ASSIGN_TO_ME" value1="Assign to Me" />
 		<execute action="CPMyworkflowtasksTask#assertClick" locator-key1="DIALOG_BOX_OK_BUTTON" value1="OK" />
 		<execute action="CPMyworkflowtasksTask#assertTextEquals" locator-key1="SUCCESS_MESSAGE" value1="Your request completed successfully." />
-
-		<execute action="Myaccount#selectFrame" value1="relative=top" />
 	</command>
 
 	<command name="configureDocumentsAndMediaWorkflow">
@@ -274,14 +266,20 @@
 	</command>
 
 	<command name="deactivateAddedWorkflowDefinition">
-		<execute action="CPPortalWorkflowconfiguration#assertClick" locator-key1="DEFINITION_TABLE_ADDED_DEFINITION_ACTIONS" value1="Actions" />
+		<execute action="CPPortalWorkflowconfiguration#click" locator-key1="DEFINITION_TABLE_ADDED_DEFINITION_ACTIONS" />
+
+		<execute macro="Workflow#deactivateWorkflowDefinitionCmd" />
+	</command>
+
+	<command name="deactivateSpecificWorkflowDefinition">
+		<var name="key_workflowDefinitionTitle" value="${workflowDefinitionTitle}" />
+
+		<execute action="CPPortalWorkflowconfiguration#assertClick" locator-key1="DEFINITION_TABLE_SPECIFIC_DEFINITION_ACTIONS" value1="Actions" />
 
 		<execute macro="Workflow#deactivateWorkflowDefinitionCmd" />
 	</command>
 
 	<command name="deactivateWorkflowDefinition">
-		<var name="key_workflowDefinitionTitle" value="${workflowDefinitionTitle}" />
-
 		<execute action="CPPortalWorkflowconfiguration#assertClick" locator-key1="DEFINITION_TABLE_ADDED_DEFINITION_ACTIONS" value1="Actions" />
 
 		<execute macro="Workflow#deactivateWorkflowDefinitionCmd" />
@@ -294,36 +292,17 @@
 	</command>
 
 	<command name="deleteWorkflowDefinition">
-		<execute action="CPPortalWorkflowconfiguration#assertClick" locator-key1="DEFINITION_TABLE_DEACTIVATED_DEFINITION_ACTIONS" value1="Actions" />
+		<execute action="CPPortalWorkflowconfiguration#click" locator-key1="DEFINITION_TABLE_DEACTIVATED_DEFINITION_ACTIONS" />
 		<execute action="CPPortalWorkflowconfiguration#assertClickNoError" locator-key1="DEFINITION_MENULIST_DELETE" value1="Delete" />
 		<execute action="CPPortalWorkflowconfiguration#confirm" locator-key1="CONFIRMATION" value1="Are you sure you want to delete this? It will be deleted immediately." />
 		<execute action="CPPortalWorkflowconfiguration#assertTextEquals" locator-key1="SUCCESS_MESSAGE" value1="Your request completed successfully." />
-	</command>
-
-	<command name="editWorkflowDefinitionTitleViaWorkflowCP">
-		<execute action="Kaleodesigner#type" locator-key1="TITLE_FIELD" value1="${workflowDefinitionTitle}" />
-	</command>
-
-	<command name="editWorkflowDefinitionViaWorkflowCP">
-		<var name="key_workflowDefinitionTitle" value="${workflowDefinitionTitle}" />
-
-		<execute action="CPPortalWorkflowconfiguration#assertClick" locator-key1="DEFINITION_TABLE_SPECIFIC_DEFINITION_ACTIONS" value1="Actions" />
-		<execute action="CPPortalWorkflowconfiguration#assertClick" locator-key1="DEFINITION_MENULIST_EDIT" value1="Edit" />
-
-		<execute action="Kaleodesigner#selectFrame" locator-key1="IFRAME" />
-	</command>
-
-	<command name="publishWorkflowDefinitionViaWorkflowCP">
-		<execute action="Kaleodesigner#assertClick" locator-key1="PUBLISH_BUTTON" value1="Publish" />
-		<execute action="Kaleodesigner#assertTextEquals" locator-key1="SUCCESS_MESSAGE" value1="Your request completed successfully." />
-		<execute action="Kaleodesigner#selectFrameTop" locator-key1="IFRAME" value1="relative=top" />
 	</command>
 
 	<command name="reactivateInactiveWorkflowDefinition">
 		<var name="key_workflowDefinitionName" value="${workflowDefinitionName}" />
 
 		<execute action="CPPortalWorkflowconfiguration#assertTextEquals" locator-key1="DEFINITION_TABLE_ACTIVE" value1="No" />
-		<execute action="CPPortalWorkflowconfiguration#assertClick" locator-key1="DEFINITION_TABLE_DEACTIVATED_DEFINITION_ACTIONS" value1="Actions" />
+		<execute action="CPPortalWorkflowconfiguration#click" locator-key1="DEFINITION_TABLE_DEACTIVATED_DEFINITION_ACTIONS" />
 		<execute action="CPPortalWorkflowconfiguration#assertClick" locator-key1="DEFINITION_MENULIST_ACTIVATE" value1="Activate" />
 		<execute action="CPPortalWorkflowconfiguration#assertTextEquals" locator-key1="SUCCESS_MESSAGE" value1="Your request completed successfully." />
 		<execute action="CPPortalWorkflowconfiguration#assertTextEquals" locator-key1="DEFINITION_TABLE_ACTIVE" value1="Yes" />
@@ -538,14 +517,34 @@
 		<while>
 			<condition action="CPPortalWorkflowconfiguration#isElementPresent" locator-key1="DEFINITION_TABLE_SPECIFIC_DEFINITION_ACTIONS" />
 			<then>
-				<execute macro="Workflow#deactivateWorkflowDefinition" />
+				<execute macro="Workflow#deactivateSpecificWorkflowDefinition" />
 
 				<execute macro="Workflow#deleteWorkflowDefinition" />
 			</then>
 		</while>
 	</command>
 
-	<command name="tearDownWorkflowDefinitions">
+	<command name="tearDownWorkflowDefinitionDraftsViaKDCP">
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Kaleo Designer" />
+		</execute>
+
+		<while>
+			<condition action="CPKaleodesignerconfiguration#isElementPresent" locator-key1="DEFINITION_TABLE_DEFINITION_DRAFT_ACTIONS" />
+			<then>
+				<execute macro="KaleoDesigner#deleteTableDefinitionDraftViaKDCP" />
+
+				<if>
+					<condition action="CPKaleodesignerconfiguration#isElementNotPresent" locator-key1="DEFINITION_TABLE_DEFINITION_DRAFT_ACTIONS" />
+					<then>
+						<execute macro="KaleoDesigner#viewNoWorkflowDefinitionsViaKDCP" />
+					</then>
+				</if>
+			</then>
+		</while>
+	</command>
+
+	<command name="tearDownWorkflowDefinitionsViaWorkflowCP">
 		<execute macro="Page#gotoCP">
 			<var name="portletName" value="Workflow" />
 		</execute>

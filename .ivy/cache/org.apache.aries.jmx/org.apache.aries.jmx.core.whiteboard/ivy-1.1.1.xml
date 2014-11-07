@@ -4,7 +4,7 @@
 		module="org.apache.aries.jmx.core.whiteboard"
 		revision="1.1.1"
 		status="release"
-		publication="20130208112735"
+		publication="20130208082735"
 	>
 		<description homepage="">
 		This bundle contains an implementation of the JMX Core specification which registers the

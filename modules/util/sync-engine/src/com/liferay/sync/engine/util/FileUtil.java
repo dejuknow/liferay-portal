@@ -15,6 +15,7 @@
 package com.liferay.sync.engine.util;
 
 import com.liferay.sync.engine.model.SyncFile;
+import com.liferay.sync.engine.service.SyncFileService;
 
 import java.io.File;
 import java.io.IOException;
@@ -136,17 +137,21 @@ public class FileUtil {
 	public static String getSanitizedFileName(String title, String extension) {
 		String fileName = title.replace("/", "_");
 
-		if ((extension != null) && !extension.equals("") &&
-			!fileName.endsWith("." + extension)) {
+		if ((extension != null) && !extension.equals("")) {
+			int x = fileName.lastIndexOf(".");
 
-			fileName += "." + extension;
+			if ((x == -1) ||
+				!extension.equalsIgnoreCase(fileName.substring(x + 1))) {
+
+				fileName += "." + extension;
+			}
 		}
 
 		if (fileName.length() > 255) {
 			int x = fileName.length() - 1;
 
 			if ((extension != null) && !extension.equals("")) {
-				x = fileName.lastIndexOf("." + extension);
+				x = fileName.lastIndexOf(".");
 			}
 
 			int y = x - (fileName.length() - 255);
@@ -185,13 +190,37 @@ public class FileUtil {
 		return !checksum.equals(syncFile.getChecksum());
 	}
 
-	public static boolean isIgnoredFilePath(Path filePath) throws Exception {
+	public static boolean isHidden(Path filePath) {
+		if (!Files.exists(filePath)) {
+			return false;
+		}
+
+		try {
+			return Files.isHidden(filePath);
+		}
+		catch (IOException ioe) {
+			return false;
+		}
+	}
+
+	public static boolean isIgnoredFilePath(Path filePath) {
 		String fileName = String.valueOf(filePath.getFileName());
 
 		if (_syncFileIgnoreNames.contains(fileName) ||
-			(PropsValues.SYNC_FILE_IGNORE_HIDDEN &&
-			 Files.isHidden(filePath)) ||
+			(PropsValues.SYNC_FILE_IGNORE_HIDDEN && isHidden(filePath)) ||
 			Files.isSymbolicLink(filePath) || fileName.endsWith(".lnk")) {
+
+			return true;
+		}
+
+		SyncFile syncFile = SyncFileService.fetchSyncFile(filePath.toString());
+
+		if (syncFile == null) {
+			return isIgnoredFilePath(filePath.getParent());
+		}
+
+		if (!syncFile.isSystem() &&
+			(syncFile.getState() == SyncFile.STATE_UNSYNCED)) {
 
 			return true;
 		}

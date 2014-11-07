@@ -34,7 +34,6 @@ Group group = GroupLocalServiceUtil.fetchGroup(groupId);
 
 		<%
 		String defaultLanguageId = (String)request.getAttribute("edit_article.jsp-defaultLanguageId");
-		String toLanguageId = (String)request.getAttribute("edit_article.jsp-toLanguageId");
 
 		String layoutUuid = BeanParamUtil.getString(article, request, "layoutUuid");
 
@@ -111,12 +110,12 @@ Group group = GroupLocalServiceUtil.fetchGroup(groupId);
 			<portlet:param name="eventName" value='<%= renderResponse.getNamespace() + "selectDisplayPage" %>' />
 		</liferay-portlet:renderURL>
 
-		<aui:script use="aui-base">
-			var displayPageItemContainer = A.one('#<portlet:namespace />displayPageItemContainer');
-			var displayPageNameInput = A.one('#<portlet:namespace />displayPageNameInput');
-			var pagesContainerInput = A.one('#<portlet:namespace />pagesContainerInput');
+		<aui:script sandbox="<%= true %>">
+			var displayPageItemContainer = $('#<portlet:namespace />displayPageItemContainer');
+			var displayPageNameInput = $('#<portlet:namespace />displayPageNameInput');
+			var pagesContainerInput = $('#<portlet:namespace />pagesContainerInput');
 
-			A.one('#<portlet:namespace />chooseDisplayPage').on(
+			$('#<portlet:namespace />chooseDisplayPage').on(
 				'click',
 				function(event) {
 					Liferay.Util.selectEntity(
@@ -136,18 +135,18 @@ Group group = GroupLocalServiceUtil.fetchGroup(groupId);
 
 							displayPageNameInput.html(event.layoutpath);
 
-							displayPageItemContainer.show();
+							displayPageItemContainer.removeClass('hide');
 						}
 					);
 				}
 			);
 
-			A.one('#<portlet:namespace />displayPageItemRemove').on(
+			$('#<portlet:namespace />displayPageItemRemove').on(
 				'click',
 				function(event) {
 					pagesContainerInput.val('');
 
-					displayPageItemContainer.hide();
+					displayPageItemContainer.addClass('hide');
 				}
 			);
 		</aui:script>

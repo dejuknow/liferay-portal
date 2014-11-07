@@ -158,6 +158,21 @@ public class WikiPageServiceImpl extends WikiPageServiceBaseImpl {
 			mimeType);
 	}
 
+	/**
+	 * @deprecated As of 7.0.0 replaced by {@link #addTempFileEntry(long,
+	 *             String, String, InputStream, String)}
+	 */
+	@Deprecated
+	@Override
+	public void addTempPageAttachment(
+			long nodeId, String fileName, String tempFolderName,
+			InputStream inputStream, String mimeType)
+		throws PortalException {
+
+		addTempFileEntry(
+			nodeId, tempFolderName, fileName, inputStream, mimeType);
+	}
+
 	@Override
 	public void changeNode(
 			long nodeId, String title, long newNodeId,
@@ -591,8 +606,9 @@ public class WikiPageServiceImpl extends WikiPageServiceBaseImpl {
 
 	/**
 	 * @deprecated As of 6.2.0, replaced by {@link #renamePage(long, String,
-	 *             String, ServiceContext)}
-	 **/
+	 *             String, ServiceContext)} *
+	 */
+	@Deprecated
 	@Override
 	public void movePage(
 			long nodeId, String title, String newTitle,

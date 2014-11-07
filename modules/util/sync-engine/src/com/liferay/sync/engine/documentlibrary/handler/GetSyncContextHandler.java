@@ -19,14 +19,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.liferay.sync.engine.documentlibrary.event.Event;
 import com.liferay.sync.engine.documentlibrary.model.SyncContext;
+import com.liferay.sync.engine.documentlibrary.util.FileEventUtil;
 import com.liferay.sync.engine.model.SyncAccount;
 import com.liferay.sync.engine.model.SyncUser;
 import com.liferay.sync.engine.service.SyncAccountService;
 import com.liferay.sync.engine.service.SyncUserService;
+import com.liferay.sync.engine.util.ConnectionRetryUtil;
 import com.liferay.sync.engine.util.ReleaseInfo;
-import com.liferay.sync.engine.util.RetryUtil;
 
 import java.util.Map;
+
+import org.apache.http.HttpStatus;
+import org.apache.http.client.HttpResponseException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Shinn Lok
@@ -47,6 +54,21 @@ public class GetSyncContextHandler extends BaseJSONHandler {
 		SyncAccount syncAccount = SyncAccountService.fetchSyncAccount(
 			getSyncAccountId());
 
+		SyncUser remoteSyncUser = syncContext.getSyncUser();
+
+		if (remoteSyncUser == null) {
+			throw new HttpResponseException(
+				HttpStatus.SC_UNAUTHORIZED, "Authenticated access required");
+		}
+
+		SyncUser localSyncUser = SyncUserService.fetchSyncUser(
+			syncAccount.getSyncAccountId());
+
+		remoteSyncUser.setSyncAccountId(localSyncUser.getSyncAccountId());
+		remoteSyncUser.setSyncUserId(localSyncUser.getSyncUserId());
+
+		SyncUserService.update(remoteSyncUser);
+
 		Map<String, String> portletPreferencesMap =
 			syncContext.getPortletPreferencesMap();
 
@@ -65,26 +87,29 @@ public class GetSyncContextHandler extends BaseJSONHandler {
 		syncAccount.setSocialOfficeInstalled(
 			syncContext.isSocialOfficeInstalled());
 
-		if (ReleaseInfo.isServerCompatible(syncContext)) {
-			syncAccount.setState(SyncAccount.STATE_CONNECTED);
+		if ((Boolean)getParameterValue("checkState")) {
+			if (ReleaseInfo.isServerCompatible(syncContext)) {
+				if (_logger.isDebugEnabled()) {
+					_logger.debug("Connected to {}", syncAccount.getUrl());
+				}
 
-			RetryUtil.resetRetryDelay(getSyncAccountId());
-		}
-		else {
-			syncAccount.setState(SyncAccount.STATE_DISCONNECTED);
-			syncAccount.setUiEvent(SyncAccount.UI_EVENT_SYNC_WEB_OUT_OF_DATE);
+				syncAccount.setState(SyncAccount.STATE_CONNECTED);
+
+				FileEventUtil.retryFileTransfers(getSyncAccountId());
+
+				ConnectionRetryUtil.resetRetryDelay(getSyncAccountId());
+			}
+			else {
+				syncAccount.setState(SyncAccount.STATE_DISCONNECTED);
+				syncAccount.setUiEvent(
+					SyncAccount.UI_EVENT_SYNC_WEB_OUT_OF_DATE);
+			}
 		}
 
 		SyncAccountService.update(syncAccount);
-
-		SyncUser remoteSyncUser = syncContext.getSyncUser();
-
-		SyncUser localSyncUser = SyncUserService.fetchSyncUser(
-			syncAccount.getSyncAccountId());
-
-		remoteSyncUser.setSyncAccountId(localSyncUser.getSyncAccountId());
-
-		SyncUserService.update(remoteSyncUser);
 	}
+
+	private static final Logger _logger = LoggerFactory.getLogger(
+		GetSyncContextHandler.class);
 
 }

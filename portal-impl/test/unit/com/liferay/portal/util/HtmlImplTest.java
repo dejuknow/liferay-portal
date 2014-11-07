@@ -269,6 +269,27 @@ public class HtmlImplTest {
 		Assert.assertNull(_htmlImpl.stripComments(null));
 	}
 
+	@Test
+	public void testUnescapeDoubleHtmlEncoding() {
+		Assert.assertEquals(
+			"&#034;", _htmlImpl.unescape(_htmlImpl.escape("&#034;")));
+	}
+
+	@Test
+	public void testUnescapeHtmlEncodingAmpersand() {
+		Assert.assertEquals("&", _htmlImpl.unescape("&amp;"));
+	}
+
+	@Test
+	public void testUnescapeHtmlEncodingAmpersandInBetween() {
+		Assert.assertEquals("You & Me", _htmlImpl.unescape("You &amp; Me"));
+	}
+
+	@Test
+	public void testUnescapeHtmlEncodingRightSingleQuote() {
+		Assert.assertEquals("\u2019", _htmlImpl.unescape("&rsquo;"));
+	}
+
 	protected void assertUnchangedEscape(String input) {
 		Assert.assertEquals(input, _htmlImpl.escape(input));
 	}

@@ -173,7 +173,7 @@ public class PropertiesSourceProcessor extends BaseSourceProcessor {
 		return content;
 	}
 
-	protected void formatSourceFormatterProperties (
+	protected void formatSourceFormatterProperties(
 			String fileName, String content)
 		throws Exception {
 

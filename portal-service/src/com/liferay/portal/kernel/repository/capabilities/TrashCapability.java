@@ -31,7 +31,7 @@ public interface TrashCapability extends Capability {
 	public boolean isInTrash(Folder folder) throws PortalException;
 
 	public FileEntry moveFileEntryFromTrash(
-			long userId, FileEntry fileEntry, Folder destinationFolder,
+			long userId, FileEntry fileEntry, Folder newFolder,
 			ServiceContext serviceContext)
 		throws PortalException;
 

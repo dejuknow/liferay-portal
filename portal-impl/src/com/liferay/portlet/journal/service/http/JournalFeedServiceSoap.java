@@ -68,9 +68,9 @@ public class JournalFeedServiceSoap {
 	public static com.liferay.portlet.journal.model.JournalFeedSoap addFeed(
 		long groupId, java.lang.String feedId, boolean autoFeedId,
 		java.lang.String name, java.lang.String description,
-		java.lang.String type, java.lang.String structureId,
-		java.lang.String templateId, java.lang.String rendererTemplateId,
-		int delta, java.lang.String orderByCol, java.lang.String orderByType,
+		java.lang.String ddmStructureKey, java.lang.String ddmTemplateKey,
+		java.lang.String ddmRendererTemplateKey, int delta,
+		java.lang.String orderByCol, java.lang.String orderByType,
 		java.lang.String targetLayoutFriendlyUrl,
 		java.lang.String targetPortletId, java.lang.String contentField,
 		java.lang.String feedType, double feedVersion,
@@ -78,8 +78,8 @@ public class JournalFeedServiceSoap {
 		throws RemoteException {
 		try {
 			com.liferay.portlet.journal.model.JournalFeed returnValue = JournalFeedServiceUtil.addFeed(groupId,
-					feedId, autoFeedId, name, description, type, structureId,
-					templateId, rendererTemplateId, delta, orderByCol,
+					feedId, autoFeedId, name, description, ddmStructureKey,
+					ddmTemplateKey, ddmRendererTemplateKey, delta, orderByCol,
 					orderByType, targetLayoutFriendlyUrl, targetPortletId,
 					contentField, feedType, feedVersion, serviceContext);
 
@@ -181,9 +181,9 @@ public class JournalFeedServiceSoap {
 
 	public static com.liferay.portlet.journal.model.JournalFeedSoap updateFeed(
 		long groupId, java.lang.String feedId, java.lang.String name,
-		java.lang.String description, java.lang.String type,
-		java.lang.String structureId, java.lang.String templateId,
-		java.lang.String rendererTemplateId, int delta,
+		java.lang.String description, java.lang.String ddmStructureKey,
+		java.lang.String ddmTemplateKey,
+		java.lang.String ddmRendererTemplateKey, int delta,
 		java.lang.String orderByCol, java.lang.String orderByType,
 		java.lang.String targetLayoutFriendlyUrl,
 		java.lang.String targetPortletId, java.lang.String contentField,
@@ -192,8 +192,8 @@ public class JournalFeedServiceSoap {
 		throws RemoteException {
 		try {
 			com.liferay.portlet.journal.model.JournalFeed returnValue = JournalFeedServiceUtil.updateFeed(groupId,
-					feedId, name, description, type, structureId, templateId,
-					rendererTemplateId, delta, orderByCol, orderByType,
+					feedId, name, description, ddmStructureKey, ddmTemplateKey,
+					ddmRendererTemplateKey, delta, orderByCol, orderByType,
 					targetLayoutFriendlyUrl, targetPortletId, contentField,
 					feedType, feedVersion, serviceContext);
 

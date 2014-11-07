@@ -107,8 +107,8 @@ public class ImportPackage implements Comparable<ImportPackage> {
 		_line = line;
 	}
 
-	private String _importString;
+	private final String _importString;
 	private boolean _isStatic;
-	private String _line;
+	private final String _line;
 
 }

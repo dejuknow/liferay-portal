@@ -10,6 +10,10 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd"
 >
 	<bean id="com.liferay.mail.util.DummyHook" class="com.liferay.mail.util.DummyHook" />
+	<bean class="com.liferay.portal.convert.ConvertDatabase" />
+	<bean class="com.liferay.portal.convert.ConvertDocumentLibrary" />
+	<bean class="com.liferay.portal.convert.ConvertDocumentLibraryExtraSettings" />
+	<bean class="com.liferay.portal.convert.ConvertWikiCreole" />
 	<bean id="com.liferay.portal.events.StartupHelperUtil" class="com.liferay.portal.events.StartupHelperUtil">
 		<property name="startupHelper">
 			<bean class="com.liferay.portal.events.StartupHelper" />
@@ -236,6 +240,11 @@
 	<bean id="com.liferay.portal.kernel.repository.RepositoryFactoryUtil" class="com.liferay.portal.kernel.repository.RepositoryFactoryUtil">
 		<property name="repositoryFactory">
 			<bean class="com.liferay.portal.repository.RepositoryFactoryImpl" depends-on="com.liferay.portal.model.ModelHintsUtil" />
+		</property>
+	</bean>
+	<bean id="com.liferay.portal.kernel.repository.util.RepositoryTrashUtil" class="com.liferay.portal.kernel.repository.util.RepositoryTrashUtil">
+		<property name="repositoryTrash">
+			<bean class="com.liferay.portal.repository.util.RepositoryTrashImpl" />
 		</property>
 	</bean>
 	<bean id="com.liferay.portal.kernel.resiliency.spi.SPIRegistryUtil" class="com.liferay.portal.kernel.resiliency.spi.SPIRegistryUtil">
@@ -600,6 +609,11 @@
 	<bean id="com.liferay.portal.security.auth.FamilyNameFirstFullNameGenerator" class="com.liferay.portal.security.auth.FamilyNameFirstFullNameGenerator" />
 	<bean id="com.liferay.portal.security.auth.FullNameGeneratorFactory" class="com.liferay.portal.security.auth.FullNameGeneratorFactory" />
 	<bean id="com.liferay.portal.security.auth.FullNameValidatorFactory" class="com.liferay.portal.security.auth.FullNameValidatorFactory" />
+	<bean id="com.liferay.portal.security.auth.InterruptedPortletRequestWhitelistUtil" class="com.liferay.portal.security.auth.InterruptedPortletRequestWhitelistUtil">
+		<property name="interruptedPortletRequestWhitelist">
+			<bean class="com.liferay.portal.security.auth.InterruptedPortletRequestWhitelistImpl" />
+		</property>
+	</bean>
 	<bean id="com.liferay.portal.security.auth.LiberalEmailAddressValidator" class="com.liferay.portal.security.auth.LiberalEmailAddressValidator" />
 	<bean id="com.liferay.portal.security.auth.LiberalScreenNameValidator" class="com.liferay.portal.security.auth.LiberalScreenNameValidator" />
 	<bean id="com.liferay.portal.security.auth.NtlmAutoLogin" class="com.liferay.portal.security.auth.NtlmAutoLogin" />
@@ -880,8 +894,6 @@
 		<property name="assetPublisher" ref="com.liferay.portlet.assetpublisher.util.AssetPublisher" />
 	</bean>
 	<bean id="com.liferay.portlet.blogs.service.permission.BlogsEntryPermission" class="com.liferay.portlet.blogs.service.permission.BlogsEntryPermission" />
-	<bean id="com.liferay.portlet.bookmarks.service.permission.BookmarksEntryPermission" class="com.liferay.portlet.bookmarks.service.permission.BookmarksEntryPermission" />
-	<bean id="com.liferay.portlet.bookmarks.service.permission.BookmarksFolderPermission" class="com.liferay.portlet.bookmarks.service.permission.BookmarksFolderPermission" />
 	<bean id="com.liferay.portlet.documentlibrary.antivirus.AntivirusScannerUtil" class="com.liferay.portlet.documentlibrary.antivirus.AntivirusScannerUtil">
 		<property name="antivirusScanner">
 			<bean class="com.liferay.portlet.documentlibrary.antivirus.AntivirusScannerImpl" />
@@ -889,6 +901,7 @@
 	</bean>
 	<bean id="com.liferay.portlet.documentlibrary.service.permission.DLFileEntryPermission" class="com.liferay.portlet.documentlibrary.service.permission.DLFileEntryPermission" />
 	<bean id="com.liferay.portlet.documentlibrary.service.permission.DLFolderPermission" class="com.liferay.portlet.documentlibrary.service.permission.DLFolderPermission" />
+	<bean id="com.liferay.portlet.documentlibrary.service.permission.DLPermission" class="com.liferay.portlet.documentlibrary.service.permission.DLPermission" />
 	<bean id="com.liferay.portlet.documentlibrary.store.DLStore" class="com.liferay.portlet.documentlibrary.store.DLStoreImpl" />
 	<bean id="com.liferay.portlet.documentlibrary.store.Store" class="com.liferay.portlet.documentlibrary.store.SafeFileNameStoreWrapper">
 		<constructor-arg>
@@ -966,6 +979,28 @@
 	<bean id="com.liferay.portlet.dynamicdatamapping.render.DDMFormFieldRendererRegistryUtil" class="com.liferay.portlet.dynamicdatamapping.render.DDMFormFieldRendererRegistryUtil">
 		<property name="DDMFormFieldRendererRegistry" ref="com.liferay.portlet.dynamicdatamapping.render.DDMFormFieldRendererRegistryImpl" />
 	</bean>
+	<bean id="com.liferay.portlet.dynamicdatamapping.render.DDMFormFieldValueRendererRegistryImpl" class="com.liferay.portlet.dynamicdatamapping.render.DDMFormFieldValueRendererRegistryImpl">
+		<property name="defaultDDMFormFieldValueRenderers">
+			<list>
+				<bean class="com.liferay.portlet.dynamicdatamapping.render.CheckboxDDMFormFieldValueRenderer" />
+				<bean class="com.liferay.portlet.dynamicdatamapping.render.DateDDMFormFieldValueRenderer" />
+				<bean class="com.liferay.portlet.dynamicdatamapping.render.DecimalDDMFormFieldValueRenderer" />
+				<bean class="com.liferay.portlet.dynamicdatamapping.render.DocumentLibraryDDMFormFieldValueRenderer" />
+				<bean class="com.liferay.portlet.dynamicdatamapping.render.GeolocationDDMFormFieldValueRenderer" />
+				<bean class="com.liferay.portlet.dynamicdatamapping.render.IntegerDDMFormFieldValueRenderer" />
+				<bean class="com.liferay.portlet.dynamicdatamapping.render.LinkToPageDDMFormFieldValueRenderer" />
+				<bean class="com.liferay.portlet.dynamicdatamapping.render.NumberDDMFormFieldValueRenderer" />
+				<bean class="com.liferay.portlet.dynamicdatamapping.render.RadioDDMFormFieldValueRenderer" />
+				<bean class="com.liferay.portlet.dynamicdatamapping.render.SelectDDMFormFieldValueRenderer" />
+				<bean class="com.liferay.portlet.dynamicdatamapping.render.TextAreaDDMFormFieldValueRenderer" />
+				<bean class="com.liferay.portlet.dynamicdatamapping.render.TextDDMFormFieldValueRenderer" />
+				<bean class="com.liferay.portlet.dynamicdatamapping.render.TextHTMLDDMFormFieldValueRenderer" />
+			</list>
+		</property>
+	</bean>
+	<bean id="com.liferay.portlet.dynamicdatamapping.render.DDMFormFieldValueRendererRegistryUtil" class="com.liferay.portlet.dynamicdatamapping.render.DDMFormFieldValueRendererRegistryUtil">
+		<property name="DDMFormFieldValueRendererRegistry" ref="com.liferay.portlet.dynamicdatamapping.render.DDMFormFieldValueRendererRegistryImpl" />
+	</bean>
 	<bean id="com.liferay.portlet.dynamicdatamapping.render.DDMFormRendererUtil" class="com.liferay.portlet.dynamicdatamapping.render.DDMFormRendererUtil">
 		<property name="DDMFormRenderer">
 			<bean class="com.liferay.portlet.dynamicdatamapping.render.DDMFormRendererImpl" />
@@ -997,23 +1032,23 @@
 			</map>
 		</property>
 	</bean>
-	<bean id="com.liferay.portlet.dynamicdatamapping.storage.StorageEngine" class="com.liferay.portlet.dynamicdatamapping.storage.StorageEngineImpl">
-		<property name="defaultStorageAdapter">
-			<bean class="com.liferay.portlet.dynamicdatamapping.storage.XMLStorageAdapter" />
-		</property>
+	<bean id="com.liferay.portlet.dynamicdatamapping.storage.StorageAdapterRegistry" class="com.liferay.portlet.dynamicdatamapping.storage.StorageAdapterRegistryImpl">
+		<property name="defaultStorageType" value="xml" />
 		<property name="storageAdapters">
-			<map>
-				<entry key="expando">
-					<bean class="com.liferay.portlet.dynamicdatamapping.storage.ExpandoStorageAdapter" />
-				</entry>
-				<entry key="xml">
-					<bean class="com.liferay.portlet.dynamicdatamapping.storage.XMLStorageAdapter" />
-				</entry>
-			</map>
+			<list>
+				<bean class="com.liferay.portlet.dynamicdatamapping.storage.ExpandoStorageAdapter" />
+				<bean class="com.liferay.portlet.dynamicdatamapping.storage.JSONStorageAdapter" />
+				<bean class="com.liferay.portlet.dynamicdatamapping.storage.XMLStorageAdapter" />
+			</list>
 		</property>
 	</bean>
+	<bean id="com.liferay.portlet.dynamicdatamapping.storage.StorageAdapterRegistryUtil" class="com.liferay.portlet.dynamicdatamapping.storage.StorageAdapterRegistryUtil">
+		<property name="storageAdapterRegistry" ref="com.liferay.portlet.dynamicdatamapping.storage.StorageAdapterRegistry" />
+	</bean>
 	<bean id="com.liferay.portlet.dynamicdatamapping.storage.StorageEngineUtil" class="com.liferay.portlet.dynamicdatamapping.storage.StorageEngineUtil">
-		<property name="storageEngine" ref="com.liferay.portlet.dynamicdatamapping.storage.StorageEngine" />
+		<property name="storageEngine">
+			<bean class="com.liferay.portlet.dynamicdatamapping.storage.StorageEngineImpl" />
+		</property>
 	</bean>
 	<bean id="com.liferay.portlet.dynamicdatamapping.storage.query.ConditionFactoryUtil" class="com.liferay.portlet.dynamicdatamapping.storage.query.ConditionFactoryUtil">
 		<property name="conditionFactory">
@@ -1078,13 +1113,14 @@
 	</bean>
 	<bean id="com.liferay.portlet.journal.service.permission.JournalArticlePermission" class="com.liferay.portlet.journal.service.permission.JournalArticlePermission" />
 	<bean id="com.liferay.portlet.journal.service.permission.JournalFeedPermission" class="com.liferay.portlet.journal.service.permission.JournalFeedPermission" />
+	<bean id="com.liferay.portlet.journal.service.permission.JournalPermission" class="com.liferay.portlet.journal.service.permission.JournalPermission" />
+	<bean id="com.liferay.portlet.journal.util.JournalContent" class="com.liferay.portlet.journal.util.JournalContentImpl" />
+	<bean id="com.liferay.portlet.journal.util.JournalContentUtil" class="com.liferay.portlet.journal.util.JournalContentUtil">
+		<property name="journalContent" ref="com.liferay.portlet.journal.util.JournalContent" />
+	</bean>
 	<bean id="com.liferay.portlet.journal.util.JournalConverter" class="com.liferay.portlet.journal.util.JournalConverterImpl" />
 	<bean id="com.liferay.portlet.journal.util.JournalConverterUtil" class="com.liferay.portlet.journal.util.JournalConverterUtil">
 		<property name="journalConverter" ref="com.liferay.portlet.journal.util.JournalConverter" />
-	</bean>
-	<bean id="com.liferay.portlet.journalcontent.util.JournalContent" class="com.liferay.portlet.journalcontent.util.JournalContentImpl" />
-	<bean id="com.liferay.portlet.journalcontent.util.JournalContentUtil" class="com.liferay.portlet.journalcontent.util.JournalContentUtil">
-		<property name="journalContent" ref="com.liferay.portlet.journalcontent.util.JournalContent" />
 	</bean>
 	<bean id="com.liferay.portlet.layoutsadmin.util.SitemapUtil" class="com.liferay.portlet.layoutsadmin.util.SitemapUtil">
 		<property name="sitemap">
@@ -1093,6 +1129,8 @@
 	</bean>
 	<bean id="com.liferay.portlet.messageboards.service.permission.MBCategoryPermission" class="com.liferay.portlet.messageboards.service.permission.MBCategoryPermission" />
 	<bean id="com.liferay.portlet.messageboards.service.permission.MBMessagePermission" class="com.liferay.portlet.messageboards.service.permission.MBMessagePermission" />
+	<bean id="com.liferay.portlet.messageboards.service.permission.MBThreadPermission" class="com.liferay.portlet.messageboards.service.permission.MBThreadPermission" />
+	<bean id="com.liferay.portlet.messageboards.service.permission.MBPermission" class="com.liferay.portlet.messageboards.service.permission.MBPermission" />
 	<bean id="com.liferay.portlet.mobiledevicerules.service.permission.MDRPermissionUtil" class="com.liferay.portlet.mobiledevicerules.service.permission.MDRPermissionUtil">
 		<property name="MDRPermission">
 			<bean class="com.liferay.portlet.mobiledevicerules.service.permission.MDRPermissionImpl" />

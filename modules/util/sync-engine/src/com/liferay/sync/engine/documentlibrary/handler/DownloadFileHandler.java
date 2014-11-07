@@ -105,6 +105,12 @@ public class DownloadFileHandler extends BaseHandler {
 
 		SyncFile syncFile = (SyncFile)getParameterValue("syncFile");
 
+		syncFile = SyncFileService.fetchSyncFile(syncFile.getSyncFileId());
+
+		if (syncFile.getState() == SyncFile.STATE_UNSYNCED) {
+			return;
+		}
+
 		Path filePath = Paths.get(syncFile.getFilePathName());
 
 		Watcher watcher = WatcherRegistry.getWatcher(getSyncAccountId());
@@ -157,6 +163,8 @@ public class DownloadFileHandler extends BaseHandler {
 			SyncFileService.update(syncFile);
 
 			SyncFileService.updateFileKeySyncFile(syncFile);
+
+			IODeltaUtil.checksums(syncFile);
 		}
 		catch (FileSystemException fse) {
 			downloadedFilePathNames.remove(filePath.toString());
@@ -175,7 +183,7 @@ public class DownloadFileHandler extends BaseHandler {
 		}
 	}
 
-	private static Logger _logger = LoggerFactory.getLogger(
+	private static final Logger _logger = LoggerFactory.getLogger(
 		DownloadFileHandler.class);
 
 }

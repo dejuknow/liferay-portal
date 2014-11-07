@@ -92,9 +92,8 @@ public class LogoSelectorTag extends IncludeTag {
 
 		if (_maxFileSize == 0) {
 			try {
-				_maxFileSize =
-					PrefsPropsUtil.getLong(
-						PropsKeys.UPLOAD_SERVLET_REQUEST_IMPL_MAX_SIZE);
+				_maxFileSize = PrefsPropsUtil.getLong(
+					PropsKeys.UPLOAD_SERVLET_REQUEST_IMPL_MAX_SIZE);
 			}
 			catch (SystemException se) {
 			}

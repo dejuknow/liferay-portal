@@ -17,9 +17,9 @@ package com.liferay.sync.engine.documentlibrary.handler;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.liferay.sync.engine.documentlibrary.event.DownloadFileEvent;
 import com.liferay.sync.engine.documentlibrary.event.Event;
 import com.liferay.sync.engine.documentlibrary.model.SyncDLObjectUpdate;
+import com.liferay.sync.engine.documentlibrary.util.FileEventUtil;
 import com.liferay.sync.engine.filesystem.Watcher;
 import com.liferay.sync.engine.filesystem.WatcherRegistry;
 import com.liferay.sync.engine.model.SyncFile;
@@ -38,9 +38,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,12 +81,8 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 		}
 	}
 
-	protected void deleteFile(SyncFile targetSyncFile, boolean trashed)
+	protected void deleteFile(SyncFile sourceSyncFile, boolean trashed)
 		throws Exception {
-
-		SyncFile sourceSyncFile = SyncFileService.fetchSyncFile(
-			targetSyncFile.getRepositoryId(), getSyncAccountId(),
-			targetSyncFile.getTypePK());
 
 		if (sourceSyncFile == null) {
 			return;
@@ -153,35 +146,50 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 	protected void downloadFile(
 		SyncFile syncFile, String sourceVersion, boolean patch) {
 
-		Map<String, Object> parameters = new HashMap<String, Object>();
-
-		parameters.put("syncFile", syncFile);
-
 		String targetVersion = syncFile.getVersion();
 
 		if (patch &&
 			(Double.valueOf(targetVersion) > Double.valueOf(sourceVersion))) {
 
-			parameters.put("patch", true);
-			parameters.put("sourceVersion", sourceVersion);
-			parameters.put("targetVersion", targetVersion);
+			FileEventUtil.downloadPatch(
+				sourceVersion, getSyncAccountId(), syncFile, targetVersion);
 		}
 		else {
-			parameters.put("patch", false);
+			FileEventUtil.downloadFile(getSyncAccountId(), syncFile);
 		}
-
-		DownloadFileEvent downloadFileEvent = new DownloadFileEvent(
-			getSyncAccountId(), parameters);
-
-		downloadFileEvent.run();
 	}
 
-	protected void moveFile(SyncFile targetSyncFile, String targetFilePathName)
-		throws Exception {
+	protected boolean hasFileChanged(
+			SyncFile sourceSyncFile, SyncFile targetSyncFile,
+			Path sourceFilePath)
+		throws IOException {
 
-		SyncFile sourceSyncFile = SyncFileService.fetchSyncFile(
-			targetSyncFile.getRepositoryId(), getSyncAccountId(),
-			targetSyncFile.getTypePK());
+		String sourceSyncFileChecksum = sourceSyncFile.getChecksum();
+		String targetSyncFileChecksum = targetSyncFile.getChecksum();
+
+		if (sourceSyncFileChecksum.equals("") ||
+			targetSyncFileChecksum.equals("")) {
+
+			return true;
+		}
+
+		return FileUtil.hasFileChanged(targetSyncFile, sourceFilePath);
+	}
+
+	protected boolean isIgnoredFilePath(
+		SyncFile syncFile, String filePathName) {
+
+		if (syncFile != null) {
+			filePathName = syncFile.getFilePathName();
+		}
+
+		return FileUtil.isIgnoredFilePath(FileUtil.getFilePath(filePathName));
+	}
+
+	protected void moveFile(
+			SyncFile sourceSyncFile, SyncFile targetSyncFile,
+			String targetFilePathName)
+		throws Exception {
 
 		if (sourceSyncFile == null) {
 			return;
@@ -218,10 +226,10 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 		SyncDLObjectUpdate syncDLObjectUpdate = objectMapper.readValue(
 			response, new TypeReference<SyncDLObjectUpdate>() {});
 
-		for (SyncFile syncFile : syncDLObjectUpdate.getSyncDLObjects()) {
+		for (SyncFile targetSyncFile : syncDLObjectUpdate.getSyncDLObjects()) {
 			SyncFile parentSyncFile = SyncFileService.fetchSyncFile(
-				syncFile.getRepositoryId(), getSyncAccountId(),
-				syncFile.getParentFolderId());
+				targetSyncFile.getRepositoryId(), getSyncAccountId(),
+				targetSyncFile.getParentFolderId());
 
 			if (parentSyncFile == null) {
 				continue;
@@ -233,27 +241,53 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 				filePathName = FileUtil.getFilePathName(
 					parentSyncFile.getFilePathName(),
 					FileUtil.getSanitizedFileName(
-						syncFile.getName(), syncFile.getExtension()));
+						targetSyncFile.getName(),
+						targetSyncFile.getExtension()));
 
-				String event = syncFile.getEvent();
+				SyncFile sourceSyncFile = SyncFileService.fetchSyncFile(
+					targetSyncFile.getRepositoryId(), getSyncAccountId(),
+					targetSyncFile.getTypePK());
+
+				if (isIgnoredFilePath(sourceSyncFile, filePathName) ||
+					((sourceSyncFile != null) &&
+					 (sourceSyncFile.getModifiedTime() ==
+						targetSyncFile.getModifiedTime()))) {
+
+					continue;
+				}
+
+				String event = targetSyncFile.getEvent();
 
 				if (event.equals(SyncFile.EVENT_ADD) ||
 					event.equals(SyncFile.EVENT_GET) ||
 					event.equals(SyncFile.EVENT_RESTORE)) {
 
-					addFile(syncFile, filePathName);
+					if (sourceSyncFile != null) {
+						updateFile(
+							sourceSyncFile, targetSyncFile, filePathName);
+
+						continue;
+					}
+
+					addFile(targetSyncFile, filePathName);
 				}
 				else if (event.equals(SyncFile.EVENT_DELETE)) {
-					deleteFile(syncFile, false);
+					deleteFile(sourceSyncFile, false);
 				}
 				else if (event.equals(SyncFile.EVENT_MOVE)) {
-					moveFile(syncFile, filePathName);
+					moveFile(sourceSyncFile, targetSyncFile, filePathName);
 				}
 				else if (event.equals(SyncFile.EVENT_TRASH)) {
-					deleteFile(syncFile, true);
+					deleteFile(sourceSyncFile, true);
 				}
 				else if (event.equals(SyncFile.EVENT_UPDATE)) {
-					updateFile(syncFile, filePathName);
+					if (sourceSyncFile == null) {
+						addFile(targetSyncFile, filePathName);
+
+						continue;
+					}
+
+					updateFile(sourceSyncFile, targetSyncFile, filePathName);
 				}
 			}
 			catch (Exception e) {
@@ -263,36 +297,30 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 					String message = e.getMessage();
 
 					if (message.contains("File name too long")) {
-						syncFile.setState(SyncFile.STATE_ERROR);
-						syncFile.setUiEvent(
+						targetSyncFile.setState(SyncFile.STATE_ERROR);
+						targetSyncFile.setUiEvent(
 							SyncFile.UI_EVENT_FILE_NAME_TOO_LONG);
 
-						SyncFileService.update(syncFile);
+						SyncFileService.update(targetSyncFile);
 					}
 				}
 			}
 		}
 
-		SyncSite syncSite = SyncSiteService.fetchSyncSite(
-			(Long)getParameterValue("repositoryId"), getSyncAccountId());
+		if (getParameterValue("parentFolderId") == null) {
+			SyncSite syncSite = SyncSiteService.fetchSyncSite(
+				(Long)getParameterValue("repositoryId"), getSyncAccountId());
 
-		syncSite.setRemoteSyncTime(syncDLObjectUpdate.getLastAccessTime());
+			syncSite.setRemoteSyncTime(syncDLObjectUpdate.getLastAccessTime());
 
-		SyncSiteService.update(syncSite);
+			SyncSiteService.update(syncSite);
+		}
 	}
 
-	protected void updateFile(SyncFile targetSyncFile, String filePathName)
+	protected void updateFile(
+			SyncFile sourceSyncFile, SyncFile targetSyncFile,
+			String filePathName)
 		throws Exception {
-
-		SyncFile sourceSyncFile = SyncFileService.fetchSyncFile(
-			targetSyncFile.getRepositoryId(), getSyncAccountId(),
-			targetSyncFile.getTypePK());
-
-		if (sourceSyncFile == null) {
-			addFile(targetSyncFile, filePathName);
-
-			return;
-		}
 
 		String sourceVersion = sourceSyncFile.getVersion();
 
@@ -332,7 +360,8 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 			}
 		}
 		else if (targetSyncFile.isFile() &&
-				 FileUtil.hasFileChanged(targetSyncFile, sourceFilePath)) {
+				 hasFileChanged(
+					 sourceSyncFile, targetSyncFile, sourceFilePath)) {
 
 			downloadFile(
 				sourceSyncFile, sourceVersion,
@@ -340,7 +369,7 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 		}
 	}
 
-	private static Logger _logger = LoggerFactory.getLogger(
+	private static final Logger _logger = LoggerFactory.getLogger(
 		GetSyncDLObjectUpdateHandler.class);
 
 }

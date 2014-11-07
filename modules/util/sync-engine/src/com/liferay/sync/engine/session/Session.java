@@ -38,6 +38,7 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
@@ -83,6 +84,12 @@ public class Session {
 			new UsernamePasswordCredentials(login, password));
 
 		httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+
+		RequestConfig.Builder builder = RequestConfig.custom();
+
+		builder.setStaleConnectionCheckEnabled(false);
+
+		httpClientBuilder.setDefaultRequestConfig(builder.build());
 
 		httpClientBuilder.setMaxConnPerRoute(maxConnections);
 		httpClientBuilder.setMaxConnTotal(maxConnections);
@@ -343,19 +350,21 @@ public class Session {
 			String.valueOf(value),
 			ContentType.create(
 				ContentType.TEXT_PLAIN.getMimeType(),
-				Charset.defaultCharset()));
+				Charset.forName("UTF-8")));
 	}
 
-	private static Logger _logger = LoggerFactory.getLogger(Session.class);
+	private static final Logger _logger = LoggerFactory.getLogger(
+		Session.class);
 
 	private static HttpRoutePlanner _httpRoutePlanner;
-	private static String _token;
 
 	private BasicHttpContext _basicHttpContext;
-	private ExecutorService _executorService;
-	private HttpClient _httpClient;
-	private HttpHost _httpHost;
-	private Set<String> _ignoredParameterKeys = new HashSet<String>(
-		Arrays.asList("filePath", "syncFile", "syncSite", "uiEvent"));
+	private final ExecutorService _executorService;
+	private final HttpClient _httpClient;
+	private final HttpHost _httpHost;
+	private final Set<String> _ignoredParameterKeys = new HashSet<String>(
+		Arrays.asList(
+			"checkState", "filePath", "syncFile", "syncSite", "uiEvent"));
+	private String _token;
 
 }

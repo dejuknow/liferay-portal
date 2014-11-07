@@ -44,6 +44,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>INFO_MESSAGE</td>
+	<td>//div[contains(@class,'alert-info')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>CHECKOUT_SUCCESS_MESSAGE</td>
 	<td>//div[contains(@class,'lfr-asset-column-details')]/div[contains(@class,'alert-success')]</td>
 	<td></td>
@@ -405,7 +410,12 @@
 </tr>
 <tr>
 	<td>COMMENTS_REPLY_BUTTON</td>
-	<td>//div[@class='taglib-discussion']/form/fieldset/div/div[2]/div[2]/button[contains(.,'Reply')]</td>
+	<td>//div[@id='_20_discussion-container']//button[contains(.,'Reply')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>COMMENTS_SUBSCRIBE_ME_CHECKBOX</td>
+	<td>//input[@id='_20_subscribe']</td>
 	<td></td>
 </tr>
 <tr>
@@ -415,7 +425,7 @@
 </tr>
 <tr>
 	<td>COMMENTS_CANCEL_BUTTON</td>
-	<td>//div[@class='taglib-discussion']/form/fieldset/div/div[2]/div[2]/button[contains(.,'Cancel')]</td>
+	<td>//div[@id='_20_discussion-container']//button[contains(.,'Cancel')]</td>
 	<td></td>
 </tr>
 <tr>

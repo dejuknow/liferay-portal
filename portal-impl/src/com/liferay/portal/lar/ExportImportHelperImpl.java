@@ -487,7 +487,12 @@ public class ExportImportHelperImpl implements ExportImportHelper {
 				group.getCompanyId(), groupId, parameterMap,
 				getUserIdStrategy(userId, userIdStrategy), zipReader);
 
-		return getManifestSummary(portletDataContext);
+		try {
+			return getManifestSummary(portletDataContext);
+		}
+		finally {
+			zipReader.close();
+		}
 	}
 
 	@Override
@@ -499,6 +504,7 @@ public class ExportImportHelperImpl implements ExportImportHelper {
 		File file = FileUtil.createTempFile("lar");
 		InputStream inputStream = DLFileEntryLocalServiceUtil.getFileAsStream(
 			fileEntry.getFileEntryId(), fileEntry.getVersion(), false);
+		ZipReader zipReader = null;
 
 		ManifestSummary manifestSummary = null;
 
@@ -508,7 +514,8 @@ public class ExportImportHelperImpl implements ExportImportHelper {
 			Group group = GroupLocalServiceUtil.getGroup(groupId);
 			String userIdStrategy = MapUtil.getString(
 				parameterMap, PortletDataHandlerKeys.USER_ID_STRATEGY);
-			ZipReader zipReader = ZipReaderFactoryUtil.getZipReader(file);
+
+			zipReader = ZipReaderFactoryUtil.getZipReader(file);
 
 			PortletDataContext portletDataContext =
 				PortletDataContextFactoryUtil.createImportPortletDataContext(
@@ -519,6 +526,10 @@ public class ExportImportHelperImpl implements ExportImportHelper {
 		}
 		finally {
 			StreamUtil.cleanUp(inputStream);
+
+			if (zipReader != null) {
+				zipReader.close();
+			}
 
 			FileUtil.delete(file);
 		}
@@ -1637,6 +1648,35 @@ public class ExportImportHelperImpl implements ExportImportHelper {
 		portletPreferences.setValues(key, newValues);
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link
+	 *             #validateMissingReferences(PortletDataContext)}
+	 */
+	@Deprecated
+	@Override
+	public MissingReferences validateMissingReferences(
+			long userId, long groupId, Map<String, String[]> parameterMap,
+			File file)
+		throws Exception {
+
+		Group group = GroupLocalServiceUtil.getGroup(groupId);
+		String userIdStrategy = MapUtil.getString(
+			parameterMap, PortletDataHandlerKeys.USER_ID_STRATEGY);
+		ZipReader zipReader = ZipReaderFactoryUtil.getZipReader(file);
+
+		PortletDataContext portletDataContext =
+			PortletDataContextFactoryUtil.createImportPortletDataContext(
+				group.getCompanyId(), groupId, parameterMap,
+				getUserIdStrategy(userId, userIdStrategy), zipReader);
+
+		try {
+			return validateMissingReferences(portletDataContext);
+		}
+		finally {
+			zipReader.close();
+		}
+	}
+
 	@Override
 	public MissingReferences validateMissingReferences(
 			final PortletDataContext portletDataContext)
@@ -1669,30 +1709,6 @@ public class ExportImportHelperImpl implements ExportImportHelper {
 				portletDataContext.getZipEntryAsInputStream("/manifest.xml")));
 
 		return missingReferences;
-	}
-
-	/**
-	 * @deprecated As of 7.0.0, replaced by {@link
-	 *             #validateMissingReferences(PortletDataContext)}
-	 */
-	@Deprecated
-	@Override
-	public MissingReferences validateMissingReferences(
-			long userId, long groupId, Map<String, String[]> parameterMap,
-			File file)
-		throws Exception {
-
-		Group group = GroupLocalServiceUtil.getGroup(groupId);
-		String userIdStrategy = MapUtil.getString(
-			parameterMap, PortletDataHandlerKeys.USER_ID_STRATEGY);
-		ZipReader zipReader = ZipReaderFactoryUtil.getZipReader(file);
-
-		PortletDataContext portletDataContext =
-			PortletDataContextFactoryUtil.createImportPortletDataContext(
-				group.getCompanyId(), groupId, parameterMap,
-				getUserIdStrategy(userId, userIdStrategy), zipReader);
-
-		return validateMissingReferences(portletDataContext);
 	}
 
 	@Override
@@ -2031,9 +2047,8 @@ public class ExportImportHelperImpl implements ExportImportHelper {
 				MapUtil.getBoolean(
 					parameterMap,
 					PortletDataHandlerKeys.PORTLET_ARCHIVED_SETUPS_ALL);
-			exportCurPortletSetup =
-				MapUtil.getBoolean(
-					parameterMap, PortletDataHandlerKeys.PORTLET_SETUP_ALL);
+			exportCurPortletSetup = MapUtil.getBoolean(
+				parameterMap, PortletDataHandlerKeys.PORTLET_SETUP_ALL);
 			exportCurPortletUserPreferences =
 				MapUtil.getBoolean(
 					parameterMap,
@@ -2097,9 +2112,8 @@ public class ExportImportHelperImpl implements ExportImportHelper {
 			long groupId = MapUtil.getLong(map, "groupId");
 
 			if (Validator.isNotNull(uuid)) {
-				fileEntry =
-					DLAppLocalServiceUtil.getFileEntryByUuidAndGroupId(
-						uuid, groupId);
+				fileEntry = DLAppLocalServiceUtil.getFileEntryByUuidAndGroupId(
+					uuid, groupId);
 			}
 			else {
 				if (map.containsKey("folderId")) {

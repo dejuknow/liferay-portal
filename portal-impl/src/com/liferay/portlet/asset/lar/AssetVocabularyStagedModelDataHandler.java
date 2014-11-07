@@ -156,9 +156,8 @@ public class AssetVocabularyStagedModelDataHandler
 
 		AssetVocabulary importedVocabulary = null;
 
-		AssetVocabulary existingVocabulary =
-			fetchStagedModelByUuidAndGroupId(
-				vocabulary.getUuid(), portletDataContext.getScopeGroupId());
+		AssetVocabulary existingVocabulary = fetchStagedModelByUuidAndGroupId(
+			vocabulary.getUuid(), portletDataContext.getScopeGroupId());
 
 		if (existingVocabulary == null) {
 			String name = getVocabularyName(

@@ -56,9 +56,8 @@ public class IntrabandBridgeDestination extends DestinationWrapper {
 
 		message.setDestinationName(getName());
 
-		MessageRoutingBag messageRoutingBag =
-			(MessageRoutingBag)message.get(
-				MessageRoutingBag.MESSAGE_ROUTING_BAG);
+		MessageRoutingBag messageRoutingBag = (MessageRoutingBag)message.get(
+			MessageRoutingBag.MESSAGE_ROUTING_BAG);
 
 		if (messageRoutingBag == null) {
 			messageRoutingBag = new MessageRoutingBag(message, true);

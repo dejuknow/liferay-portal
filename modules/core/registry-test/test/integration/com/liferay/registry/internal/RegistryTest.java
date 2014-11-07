@@ -713,10 +713,10 @@ public class RegistryTest {
 	}
 
 	@ArquillianResource
-	private Bundle _bundle;
+	private final Bundle _bundle;
 
 	@ArquillianResource
-	private BundleContext _bundleContext;
+	private final BundleContext _bundleContext;
 
 	private Registry _registry;
 
@@ -764,10 +764,10 @@ public class RegistryTest {
 			TrackedOne trackedOne) {
 		}
 
-		private InterfaceOne _interfaceOneA;
-		private InterfaceOne _interfaceOneB;
-		private AtomicReference<TrackedOne> _referenceA;
-		private AtomicReference<TrackedOne> _referenceB;
+		private final InterfaceOne _interfaceOneA;
+		private final InterfaceOne _interfaceOneB;
+		private final AtomicReference<TrackedOne> _referenceA;
+		private final AtomicReference<TrackedOne> _referenceB;
 
 	}
 
@@ -872,9 +872,8 @@ public class RegistryTest {
 				new AtomicReference<TrackedOne>();
 
 			ServiceTrackerCustomizer<InterfaceOne, TrackedOne>
-				serviceTrackerCustomizer =
-					new MockServiceTrackerCustomizer(
-						interfaceOneA, interfaceOneB, referenceA, referenceB);
+				serviceTrackerCustomizer = new MockServiceTrackerCustomizer(
+					interfaceOneA, interfaceOneB, referenceA, referenceB);
 
 			ServiceTracker<InterfaceOne, TrackedOne> serviceTracker =
 				getServiceTracker(serviceTrackerCustomizer);

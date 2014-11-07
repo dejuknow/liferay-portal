@@ -339,6 +339,9 @@ public class PortletDisplayTemplateImpl implements PortletDisplayTemplate {
 		DDMTemplate ddmTemplate = DDMTemplateLocalServiceUtil.getTemplate(
 			ddmTemplateId);
 
+		contextObjects.put(
+			TemplateConstants.CLASS_NAME_ID, ddmTemplate.getClassNameId());
+
 		String language = ddmTemplate.getLanguage();
 
 		TemplateHandler templateHandler =
@@ -517,10 +520,10 @@ public class PortletDisplayTemplateImpl implements PortletDisplayTemplate {
 		}
 	}
 
-	private static Log _log = LogFactoryUtil.getLog(
+	private static final Log _log = LogFactoryUtil.getLog(
 		PortletDisplayTemplateImpl.class);
 
-	private Transformer _transformer = new Transformer(
+	private final Transformer _transformer = new Transformer(
 		PropsKeys.DYNAMIC_DATA_LISTS_ERROR_TEMPLATE, true);
 
 }

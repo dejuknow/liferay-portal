@@ -32,7 +32,7 @@ public class UnlocalizedValue implements Value {
 
 	@Override
 	public void addString(Locale locale, String value) {
-		throw new UnsupportedOperationException();
+		_values.put(LocaleUtil.ROOT, value);
 	}
 
 	@Override
@@ -65,6 +65,6 @@ public class UnlocalizedValue implements Value {
 		throw new UnsupportedOperationException();
 	}
 
-	private Map<Locale, String> _values = new HashMap<Locale, String>();
+	private final Map<Locale, String> _values = new HashMap<Locale, String>();
 
 }

@@ -186,6 +186,7 @@ public class JavaImportsFormatterTest {
 		Assert.assertEquals(expected, formatted);
 	}
 
-	private ImportsFormatter _importsFormatter = new JavaImportsFormatter();
+	private final ImportsFormatter _importsFormatter =
+		new JavaImportsFormatter();
 
 }

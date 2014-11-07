@@ -15,23 +15,27 @@
 package com.liferay.xsl.content.web.util;
 
 import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayOutputStream;
-import com.liferay.portal.kernel.io.unsync.UnsyncStringReader;
 import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.xsl.content.web.configuration.XSLContentConfiguration;
 
-import java.io.IOException;
+import java.io.ByteArrayInputStream;
 
 import java.net.URL;
 
 import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
+
+import org.w3c.dom.Document;
 
 /**
  * @author Brian Wing Shun Chan
+ * @author Samuel Kong
  */
 public class XSLContentUtil {
 
@@ -40,15 +44,54 @@ public class XSLContentUtil {
 	public static final String DEFAULT_XSL_URL = "/example.xsl";
 
 	public static String transform(
-			URL xmlUrl, URL xslUrl,
+			XSLContentConfiguration xslContentConfiguration, URL xmlUrl,
+			URL xslUrl)
+		throws Exception {
+
+		TransformerFactory transformerFactory = getTransformerFactory(
+			xslContentConfiguration);
+
+		DocumentBuilder documentBuilder = getDocumentBuilder(
+			xslContentConfiguration);
+
+		Transformer transformer = transformerFactory.newTransformer(
+			getXslSource(documentBuilder, xslUrl));
+
+		UnsyncByteArrayOutputStream unsyncByteArrayOutputStream =
+			new UnsyncByteArrayOutputStream();
+
+		transformer.transform(
+			getXmlSource(documentBuilder, xmlUrl),
+			new StreamResult(unsyncByteArrayOutputStream));
+
+		return unsyncByteArrayOutputStream.toString();
+	}
+
+	protected static DocumentBuilder getDocumentBuilder(
 			XSLContentConfiguration xslContentConfiguration)
-		throws IOException, TransformerException {
+		throws Exception {
 
-		String xml = HttpUtil.URLtoString(xmlUrl);
-		String xsl = HttpUtil.URLtoString(xslUrl);
+		DocumentBuilderFactory documentBuilderFactory =
+			DocumentBuilderFactory.newInstance();
 
-		StreamSource xmlSource = new StreamSource(new UnsyncStringReader(xml));
-		StreamSource xslSource = new StreamSource(new UnsyncStringReader(xsl));
+		documentBuilderFactory.setFeature(
+			"http://apache.org/xml/features/disallow-doctype-decl",
+			!xslContentConfiguration.isXmlDoctypeDeclarationAllowed());
+		documentBuilderFactory.setFeature(
+			"http://xml.org/sax/features/external-general-entities",
+			xslContentConfiguration.isXmlExternalGeneralEntitiesAllowed());
+		documentBuilderFactory.setFeature(
+			"http://xml.org/sax/features/external-parameter-entities",
+			xslContentConfiguration.isXmlExternalGeneralEntitiesAllowed());
+
+		documentBuilderFactory.setNamespaceAware(true);
+
+		return documentBuilderFactory.newDocumentBuilder();
+	}
+
+	protected static TransformerFactory getTransformerFactory(
+			XSLContentConfiguration xslContentConfiguration)
+		throws Exception {
 
 		TransformerFactory transformerFactory =
 			TransformerFactory.newInstance();
@@ -57,15 +100,31 @@ public class XSLContentUtil {
 			XMLConstants.FEATURE_SECURE_PROCESSING,
 			xslContentConfiguration.isXslSecureProcessingEnabled());
 
-		Transformer transformer = transformerFactory.newTransformer(xslSource);
+		return transformerFactory;
+	}
 
-		UnsyncByteArrayOutputStream unsyncByteArrayOutputStream =
-			new UnsyncByteArrayOutputStream();
+	protected static Source getXmlSource(
+			DocumentBuilder documentBuilder, URL xmlUrl)
+		throws Exception {
 
-		transformer.transform(
-			xmlSource, new StreamResult(unsyncByteArrayOutputStream));
+		String xml = HttpUtil.URLtoString(xmlUrl);
 
-		return unsyncByteArrayOutputStream.toString();
+		Document xmlDocument = documentBuilder.parse(
+			new ByteArrayInputStream(xml.getBytes()));
+
+		return new DOMSource(xmlDocument);
+	}
+
+	protected static Source getXslSource(
+			DocumentBuilder documentBuilder, URL xslUrl)
+		throws Exception {
+
+		String xsl = HttpUtil.URLtoString(xslUrl);
+
+		Document xslDocument = documentBuilder.parse(
+			new ByteArrayInputStream(xsl.getBytes()));
+
+		return new DOMSource(xslDocument);
 	}
 
 }

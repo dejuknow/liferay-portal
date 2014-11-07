@@ -15,6 +15,7 @@
 package com.liferay.portal.cache.bootstrap;
 
 import com.liferay.portal.kernel.cache.PortalCache;
+import com.liferay.portal.kernel.cache.PortalCacheHelperUtil;
 import com.liferay.portal.kernel.cache.PortalCacheManager;
 import com.liferay.portal.kernel.cache.PortalCacheProvider;
 import com.liferay.portal.kernel.cluster.Address;
@@ -245,8 +246,9 @@ public class ClusterLinkBootstrapLoaderHelperUtil {
 					if (object instanceof CacheElement) {
 						CacheElement cacheElement = (CacheElement)object;
 
-						portalCache.putQuiet(
-							cacheElement.getKey(), cacheElement.getValue());
+						PortalCacheHelperUtil.putWithoutReplicator(
+							portalCache, cacheElement.getKey(),
+							cacheElement.getValue());
 					}
 					else if (object instanceof String) {
 						if (_COMMAND_SOCKET_CLOSE.equals(object)) {
@@ -292,18 +294,18 @@ public class ClusterLinkBootstrapLoaderHelperUtil {
 
 	private static final String _COMMAND_SOCKET_CLOSE = "${SOCKET_CLOSE}";
 
-	private static Log _log = LogFactoryUtil.getLog(
+	private static final Log _log = LogFactoryUtil.getLog(
 		ClusterLinkBootstrapLoaderHelperUtil.class);
 
-	private static MethodKey _createServerSocketFromClusterMethodKey =
+	private static final MethodKey _createServerSocketFromClusterMethodKey =
 		new MethodKey(
 			ClusterLinkBootstrapLoaderHelperUtil.class,
 			"createServerSocketFromCluster", String.class, List.class);
 	private static final Map<String, List<String>> _deferredPortalCaches =
 		new HashMap<String, List<String>>();
-	private static ServerSocketConfigurator _serverSocketConfigurator =
+	private static final ServerSocketConfigurator _serverSocketConfigurator =
 		new SocketCacheServerSocketConfiguration();
-	private static ThreadLocal<Boolean> _skipBootstrapLoaderThreadLocal =
+	private static final ThreadLocal<Boolean> _skipBootstrapLoaderThreadLocal =
 		new InitialThreadLocal<Boolean>(
 			ClusterLinkBootstrapLoaderHelperUtil.class +
 				"._skipBootstrapLoaderThreadLocal",
@@ -325,8 +327,8 @@ public class ClusterLinkBootstrapLoaderHelperUtil {
 			return _value;
 		}
 
-		private Serializable _key;
-		private Serializable _value;
+		private final Serializable _key;
+		private final Serializable _value;
 
 	}
 
@@ -429,9 +431,9 @@ public class ClusterLinkBootstrapLoaderHelperUtil {
 			}
 		}
 
-		private String _portalCacheManagerName;
-		private List<String> _portalCacheNames;
-		private ServerSocket _serverSocket;
+		private final String _portalCacheManagerName;
+		private final List<String> _portalCacheNames;
+		private final ServerSocket _serverSocket;
 
 	}
 

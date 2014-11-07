@@ -182,7 +182,6 @@ public class LayoutImpl extends LayoutBaseImpl {
 	 *
 	 * @return the layouts that are direct or indirect children of the current
 	 *         layout
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public List<Layout> getAllChildren() {
@@ -202,7 +201,6 @@ public class LayoutImpl extends LayoutBaseImpl {
 	 *
 	 * @return the ID of the topmost parent layout of the current layout
 	 * @throws PortalException if a matching layout could not be found
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public long getAncestorLayoutId() throws PortalException {
@@ -232,7 +230,6 @@ public class LayoutImpl extends LayoutBaseImpl {
 	 *
 	 * @return the plid of the topmost parent layout of the current layout
 	 * @throws PortalException if a matching layout could not be found
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public long getAncestorPlid() throws PortalException {
@@ -263,7 +260,6 @@ public class LayoutImpl extends LayoutBaseImpl {
 	 *
 	 * @return the current layout's list of parent layouts
 	 * @throws PortalException if a matching layout could not be found
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public List<Layout> getAncestors() throws PortalException {
@@ -287,7 +283,6 @@ public class LayoutImpl extends LayoutBaseImpl {
 	 * access permissions.
 	 *
 	 * @return the list of all child layouts
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public List<Layout> getChildren() {
@@ -303,7 +298,6 @@ public class LayoutImpl extends LayoutBaseImpl {
 	 * @return the list of all child layouts that the user has permission to
 	 *         access
 	 * @throws PortalException if a portal exception occurred
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public List<Layout> getChildren(PermissionChecker permissionChecker)
@@ -336,7 +330,6 @@ public class LayoutImpl extends LayoutBaseImpl {
 	 *         the color scheme  of the layout set that contains the current
 	 *         layout if no color scheme is configured
 	 * @throws PortalException if a portal exception occurred
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public ColorScheme getColorScheme() throws PortalException {
@@ -362,7 +355,6 @@ public class LayoutImpl extends LayoutBaseImpl {
 	 * @return the CSS text for the current layout, or for the layout set if no
 	 *         CSS text is configured in the current layout
 	 * @throws PortalException if a portal exception occurred
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public String getCssText() throws PortalException {
@@ -447,7 +439,6 @@ public class LayoutImpl extends LayoutBaseImpl {
 	 * Returns the friendly URLs for all configured locales.
 	 *
 	 * @return the friendly URLs for all configured locales
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public Map<Locale, String> getFriendlyURLMap() {
@@ -484,7 +475,6 @@ public class LayoutImpl extends LayoutBaseImpl {
 	 * @return the current layout's group
 	 * @throws PortalException if a group with the primary key could not be
 	 *         found
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public Group getGroup() throws PortalException {
@@ -548,7 +538,6 @@ public class LayoutImpl extends LayoutBaseImpl {
 	 *
 	 * @return the current layout's layout set
 	 * @throws PortalException if a portal exception occurred
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public LayoutSet getLayoutSet() throws PortalException {
@@ -579,7 +568,6 @@ public class LayoutImpl extends LayoutBaseImpl {
 	 *
 	 * @return the current layout's linked layout, or <code>null</code> if no
 	 *         linked layout could be found
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public Layout getLinkedToLayout() {
@@ -600,7 +588,6 @@ public class LayoutImpl extends LayoutBaseImpl {
 	 * @return the current layout's parent plid, or <code>0</code> if the
 	 *         current layout is the topmost parent layout
 	 * @throws PortalException if a matching layout could not be found
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public long getParentPlid() throws PortalException {
@@ -661,7 +648,6 @@ public class LayoutImpl extends LayoutBaseImpl {
 	 * @return the current layout's theme, or the layout set's theme if no
 	 *         layout theme is configured
 	 * @throws PortalException if a portal exception occurred
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public Theme getTheme() throws PortalException {
@@ -764,7 +750,6 @@ public class LayoutImpl extends LayoutBaseImpl {
 	 *         otherwise
 	 * @throws PortalException if any one of the current layout's acestors could
 	 *         not be retrieved
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public boolean hasAncestor(long layoutId) throws PortalException {
@@ -789,7 +774,6 @@ public class LayoutImpl extends LayoutBaseImpl {
 	 *
 	 * @return <code>true</code> if the current layout has child layouts,
 	 *         <code>false</code> otherwise
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public boolean hasChildren() {

@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SessionManager {
 
-	public static Session getSession(long syncAccountId) {
+	public static synchronized Session getSession(long syncAccountId) {
 		Session session = _sessions.get(syncAccountId);
 
 		if (session != null) {
@@ -70,9 +70,10 @@ public class SessionManager {
 		executorService.shutdownNow();
 	}
 
-	private static Logger _logger = LoggerFactory.getLogger(
+	private static final Logger _logger = LoggerFactory.getLogger(
 		SessionManager.class);
 
-	private static Map<Long, Session> _sessions = new HashMap<Long, Session>();
+	private static final Map<Long, Session> _sessions =
+		new HashMap<Long, Session>();
 
 }

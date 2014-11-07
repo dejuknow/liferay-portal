@@ -1044,7 +1044,7 @@
 			<var name="fieldName" value="Salary" />
 		</execute>
 
-		<execute macro="DDLRecord#populateFieldDocumentsAndMedia">
+		<execute macro="DDLRecord#populateFieldDocumentsAndMediaChooseFromDocumentLibrary">
 			<var name="ddlRecordFieldData" value="Document Title" />
 			<var name="document" value="Document_1.txt" />
 			<var name="fieldFieldLabel" value="Resume" />

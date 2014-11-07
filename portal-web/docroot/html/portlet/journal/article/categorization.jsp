@@ -21,15 +21,7 @@ String defaultLanguageId = (String)request.getAttribute("edit_article.jsp-defaul
 
 JournalArticle article = (JournalArticle)request.getAttribute(WebKeys.JOURNAL_ARTICLE);
 
-String type = BeanParamUtil.getString(article, request, "type");
-
-if (Validator.isNull(type)) {
-	type = "general";
-}
-
 DDMStructure ddmStructure = (DDMStructure)request.getAttribute("edit_article.jsp-structure");
-
-String toLanguageId = (String)request.getAttribute("edit_article.jsp-toLanguageId");
 %>
 
 <liferay-ui:error-marker key="errorSection" value="categorization" />
@@ -38,28 +30,11 @@ String toLanguageId = (String)request.getAttribute("edit_article.jsp-toLanguageI
 
 <h3><liferay-ui:message key="categorization" /></h3>
 
-<c:if test="<%= Validator.isNull(toLanguageId) %>">
-	<liferay-ui:asset-categories-error />
+<liferay-ui:asset-categories-error />
 
-	<liferay-ui:asset-tags-error />
-</c:if>
-
-<liferay-ui:error exception="<%= ArticleTypeException.class %>" message="please-select-a-type" />
+<liferay-ui:asset-tags-error />
 
 <aui:fieldset>
-	<aui:select name="type" showEmptyOption="<%= true %>">
-
-		<%
-		for (int i = 0; i < JournalArticleConstants.TYPES.length; i++) {
-		%>
-
-			<aui:option label="<%= JournalArticleConstants.TYPES[i] %>" selected="<%= type.equals(JournalArticleConstants.TYPES[i]) %>" />
-
-		<%
-		}
-		%>
-
-	</aui:select>
 
 	<%
 	long classPK = 0;

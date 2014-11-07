@@ -39,7 +39,7 @@ public class TabsTag extends IncludeTag {
 			request.setAttribute("liferay-ui:tabs:param", _param);
 			request.setAttribute("liferay-ui:tabs:value", _value);
 
-			include(getEndPage());
+			include(getEndPage(), false);
 
 			request.removeAttribute("liferay-ui:tabs:backLabel");
 			request.removeAttribute("liferay-ui:tabs:backURL");
@@ -204,7 +204,7 @@ public class TabsTag extends IncludeTag {
 
 			request.setAttribute("liferay-ui:tabs:value", _value);
 
-			include(getStartPage());
+			include(getStartPage(), true);
 
 			return EVAL_BODY_INCLUDE;
 		}
@@ -302,42 +302,82 @@ public class TabsTag extends IncludeTag {
 		_url = url;
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link #setUrls(String[])}
+	 */
+	@Deprecated
 	public void setUrl0(String url0) {
 		_url0 = url0;
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link #setUrls(String[])}
+	 */
+	@Deprecated
 	public void setUrl1(String url1) {
 		_url1 = url1;
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link #setUrls(String[])}
+	 */
+	@Deprecated
 	public void setUrl2(String url2) {
 		_url2 = url2;
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link #setUrls(String[])}
+	 */
+	@Deprecated
 	public void setUrl3(String url3) {
 		_url3 = url3;
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link #setUrls(String[])}
+	 */
+	@Deprecated
 	public void setUrl4(String url4) {
 		_url4 = url4;
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link #setUrls(String[])}
+	 */
+	@Deprecated
 	public void setUrl5(String url5) {
 		_url5 = url5;
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link #setUrls(String[])}
+	 */
+	@Deprecated
 	public void setUrl6(String url6) {
 		_url6 = url6;
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link #setUrls(String[])}
+	 */
+	@Deprecated
 	public void setUrl7(String url7) {
 		_url7 = url7;
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link #setUrls(String[])}
+	 */
+	@Deprecated
 	public void setUrl8(String url8) {
 		_url8 = url8;
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link #setUrls(String[])}
+	 */
+	@Deprecated
 	public void setUrl9(String url9) {
 		_url9 = url9;
 	}

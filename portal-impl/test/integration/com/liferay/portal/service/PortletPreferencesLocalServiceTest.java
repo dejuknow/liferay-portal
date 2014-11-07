@@ -1516,7 +1516,7 @@ public class PortletPreferencesLocalServiceTest {
 	private Group _group;
 
 	@DeleteAfterTestRun
-	private List<Group> _groups = new ArrayList<Group>();
+	private final List<Group> _groups = new ArrayList<Group>();
 
 	private Layout _layout;
 	private Portlet _portlet;
@@ -1557,7 +1557,7 @@ public class PortletPreferencesLocalServiceTest {
 			}
 		}
 
-		private boolean _strict;
+		private final boolean _strict;
 
 	}
 

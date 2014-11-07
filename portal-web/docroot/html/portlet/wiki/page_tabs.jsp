@@ -65,11 +65,11 @@ PortletURL viewPageActivitiesURL = PortletURLUtil.clone(viewPageDetailsURL, rend
 viewPageActivitiesURL.setParameter("struts_action", "/wiki/view_page_activities");
 
 String[] tabs1Names = {"details", "history", "incoming-links", "outgoing-links", "attachments"};
-String[] tabs1Urls = {viewPageDetailsURL.toString(), viewPageHistoryURL.toString(), viewPageIncomingLinksURL.toString(), viewPageOutgoingLinksURL.toString(), viewPageAttachmentsURL.toString()};
+String[] tabs1URLs = {viewPageDetailsURL.toString(), viewPageHistoryURL.toString(), viewPageIncomingLinksURL.toString(), viewPageOutgoingLinksURL.toString(), viewPageAttachmentsURL.toString()};
 
 if (WikiPagePermission.contains(permissionChecker, wikiPage, ActionKeys.UPDATE)) {
 	tabs1Names = ArrayUtil.append(new String[] {"content"}, tabs1Names);
-	tabs1Urls = ArrayUtil.append(new String[] {editPageURL.toString()}, tabs1Urls);
+	tabs1URLs = ArrayUtil.append(new String[] {editPageURL.toString()}, tabs1URLs);
 }
 %>
 
@@ -77,5 +77,5 @@ if (WikiPagePermission.contains(permissionChecker, wikiPage, ActionKeys.UPDATE))
 
 <liferay-ui:tabs
 	names="<%= StringUtil.merge(tabs1Names) %>"
-	urls="<%= tabs1Urls %>"
+	urls="<%= tabs1URLs %>"
 />

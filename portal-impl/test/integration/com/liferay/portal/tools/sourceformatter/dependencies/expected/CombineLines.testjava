@@ -14,10 +14,17 @@
 
 package com.liferay.portal.tools.sourceformatter.dependencies;
 
+import com.liferay.portal.kernel.util.StringPool;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Hugo Huijser
  */
 public class CombineLines extends SuperClass {
+
+	public static final String STRING_1;
 
 	public String getString(String test) {
 		return test;
@@ -36,10 +43,36 @@ public class CombineLines extends SuperClass {
 	public void method2() throws Exception {
 		String test1 = getString("test1");
 
+		String test2 = getString(
+			"test1", "test2", "test3", "test4", "test5", "test6");
+
+		String test3 = getString(
+			"test1", "test2", "test3", "test4", "test5", "test6", "test7");
+
+		String test4 =
+			getString("test1", "test2", "test3") + getString("test4", "test5");
+
 		List<String> testList = new ArrayList<String>();
 
 		for (String test2 : testList) {
 		}
+	}
+
+	public String method3() {
+		String test1 = getString(
+			"hello world" + "hello world" + "hello world" + "hello world");
+
+		String test2 =
+			"hello world" + "hello world" + "hello world" + "hello world";
+
+		return test1 + test2;
+	}
+
+	public String method4() {
+		String stringWithAFairlyMediumLongName =
+			StringPool.GREATER_THAN_OR_EQUAL;
+
+		return stringWithAFairlyMediumLongName;
 	}
 
 }

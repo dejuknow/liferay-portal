@@ -41,9 +41,8 @@ public class IconPortletCssTag extends IconTag {
 		setImage("../aui/picture");
 		setMessage("look-and-feel");
 
-		String onClick =
-			"Liferay.Portlet.loadCSSEditor('".concat(
-				portletDisplay.getId()).concat("'); return false;");
+		String onClick = "Liferay.Portlet.loadCSSEditor('".concat(
+			portletDisplay.getId()).concat("'); return false;");
 
 		setOnClick(onClick);
 

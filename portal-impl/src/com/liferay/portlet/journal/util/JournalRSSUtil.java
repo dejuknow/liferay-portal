@@ -64,22 +64,16 @@ public class JournalRSSUtil {
 		String description = null;
 		String content = null;
 
-		String type = feed.getType();
+		String ddmStructureKey = feed.getDDMStructureKey();
 
-		if (Validator.isNull(type)) {
-			type = null;
+		if (Validator.isNull(ddmStructureKey)) {
+			ddmStructureKey = null;
 		}
 
-		String structureId = feed.getStructureId();
+		String ddmTemplateKey = feed.getDDMTemplateKey();
 
-		if (Validator.isNull(structureId)) {
-			structureId = null;
-		}
-
-		String templateId = feed.getTemplateId();
-
-		if (Validator.isNull(templateId)) {
-			templateId = null;
+		if (Validator.isNull(ddmTemplateKey)) {
+			ddmTemplateKey = null;
 		}
 
 		Date displayDateGT = null;
@@ -104,7 +98,7 @@ public class JournalRSSUtil {
 		return JournalArticleLocalServiceUtil.search(
 			companyId, groupId, folderIds,
 			JournalArticleConstants.CLASSNAME_ID_DEFAULT, articleId, version,
-			title, description, content, type, structureId, templateId,
+			title, description, content, ddmStructureKey, ddmTemplateKey,
 			displayDateGT, displayDateLT, status, reviewDate, andOperator,
 			start, end, obc);
 	}
@@ -345,6 +339,6 @@ public class JournalRSSUtil {
 		return null;
 	}
 
-	private static Log _log = LogFactoryUtil.getLog(JournalRSSUtil.class);
+	private static final Log _log = LogFactoryUtil.getLog(JournalRSSUtil.class);
 
 }

@@ -172,9 +172,8 @@ public class EhcacheConfigurationUtilTest {
 	)
 	@Test
 	public void testClusterEnabled2() {
-		Configuration configuration =
-			EhcacheConfigurationUtil.getConfiguration(
-				_configurationURL, false, false);
+		Configuration configuration = EhcacheConfigurationUtil.getConfiguration(
+			_configurationURL, false, false);
 
 		_assertListenerConfigsEquals(_configuration, configuration);
 

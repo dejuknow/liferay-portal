@@ -406,6 +406,21 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 			groupId, userId, folderName, fileName, inputStream, mimeType);
 	}
 
+	/**
+	 * @deprecated As of 7.0.0 replaced by {@link #addTempFileEntry(long, long,
+	 *             String, String, InputStream, String)}
+	 */
+	@Deprecated
+	@Override
+	public void addTempPageAttachment(
+			long groupId, long userId, String fileName, String tempFolderName,
+			InputStream inputStream, String mimeType)
+		throws PortalException {
+
+		addTempFileEntry(
+			groupId, userId, tempFolderName, fileName, inputStream, mimeType);
+	}
+
 	@Override
 	public void changeNode(
 			long userId, long nodeId, String title, long newNodeId,
@@ -1778,8 +1793,8 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 		JSONObject extraDataJSONObject = JSONFactoryUtil.createJSONObject();
 
 		extraDataJSONObject.put("fileEntryId", fileEntry.getFileEntryId());
-		extraDataJSONObject.put("fileEntryTitle", TrashUtil.getOriginalTitle(
-			fileEntry.getTitle()));
+		extraDataJSONObject.put(
+			"fileEntryTitle", TrashUtil.getOriginalTitle(fileEntry.getTitle()));
 		extraDataJSONObject.put("title", page.getTitle());
 		extraDataJSONObject.put("version", page.getVersion());
 

@@ -37,9 +37,8 @@ public class ShardSpringSessionContext extends SpringSessionContext {
 	public Session currentSession() throws HibernateException {
 		try {
 			if (_sessionFactory == null) {
-				_sessionFactory =
-					(SessionFactory)PortalBeanLocatorUtil.locate(
-						"liferayHibernateSessionFactory");
+				_sessionFactory = (SessionFactory)PortalBeanLocatorUtil.locate(
+					"liferayHibernateSessionFactory");
 			}
 
 			return (Session)SessionFactoryUtils.doGetSession(

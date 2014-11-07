@@ -14,18 +14,13 @@
 
 package com.liferay.taglib.util;
 
-import com.liferay.kernel.servlet.taglib.DynamicIncludeUtil;
+import com.liferay.portal.kernel.servlet.taglib.DynamicIncludeUtil;
 import com.liferay.taglib.TagSupport;
+import com.liferay.taglib.servlet.JspWriterHttpServletResponse;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
 
 /**
  * @author Carlos Sierra Andrés
@@ -34,7 +29,8 @@ public class DynamicIncludeTag extends TagSupport {
 
 	@Override
 	public int doEndTag() throws JspException {
-		DynamicIncludeUtil.include(getRequest(), getResponse(), getKey());
+		DynamicIncludeUtil.include(
+			getRequest(), getResponse(), getKey(), _ascendingPriority);
 
 		return super.doEndTag();
 	}
@@ -48,8 +44,16 @@ public class DynamicIncludeTag extends TagSupport {
 		return EVAL_BODY_INCLUDE;
 	}
 
+	public boolean getAscendingPriority() {
+		return _ascendingPriority;
+	}
+
 	public String getKey() {
 		return _key;
+	}
+
+	public void setAscendingPriority(boolean ascendingPriority) {
+		_ascendingPriority = ascendingPriority;
 	}
 
 	public void setKey(String key) {
@@ -61,33 +65,10 @@ public class DynamicIncludeTag extends TagSupport {
 	}
 
 	protected HttpServletResponse getResponse() {
-		HttpServletResponse httpServletResponse =
-			(HttpServletResponse)pageContext.getResponse();
-
-		return new HttpServletResponseWrapper(httpServletResponse) {
-
-			@Override
-			public ServletOutputStream getOutputStream() {
-				return new ServletOutputStream() {
-
-					@Override
-					public void write(int b) throws IOException {
-						JspWriter jspWriter = pageContext.getOut();
-
-						jspWriter.write(b);
-					}
-
-				};
-			}
-
-			@Override
-			public PrintWriter getWriter() {
-				return new PrintWriter(pageContext.getOut(), true);
-			}
-
-		};
+		return new JspWriterHttpServletResponse(pageContext);
 	}
 
+	private boolean _ascendingPriority = true;
 	private String _key;
 
 }

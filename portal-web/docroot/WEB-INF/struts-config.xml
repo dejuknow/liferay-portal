@@ -248,7 +248,7 @@
 		<action path="/asset_publisher/add_asset_redirect" forward="portlet.asset_publisher.add_asset_redirect" />
 
 		<action path="/asset_publisher/edit_article_discussion" type="com.liferay.portlet.messageboards.action.EditDiscussionAction">
-			<forward name="portlet.message_boards.error" path="portlet.journal_content.error" />
+			<forward name="portlet.message_boards.error" path="portlet.journal.error" />
 		</action>
 
 		<action path="/asset_publisher/edit_entry_discussion" type="com.liferay.portlet.messageboards.action.EditDiscussionAction">
@@ -267,7 +267,7 @@
 
 		<action path="/asset_publisher/edit_subscription" type="com.liferay.portlet.assetpublisher.action.EditSubscriptionAction" />
 
-		<action path="/asset_publisher/export_journal_article" type="com.liferay.portlet.journalcontent.action.ExportArticleAction" />
+		<action path="/asset_publisher/export_journal_article" type="com.liferay.portlet.journal.action.ExportArticleAction" />
 
 		<action path="/asset_publisher/export_wiki_page" type="com.liferay.portlet.wiki.action.ExportPageAction" />
 
@@ -371,41 +371,6 @@
 		<action path="/blogs_aggregator/view_entry" type="com.liferay.portlet.blogs.action.EditEntryAction">
 			<forward name="portlet.blogs.edit_entry" path="portlet.blogs.view_entry" />
 			<forward name="portlet.blogs.error" path="portlet.blogs.error" />
-		</action>
-
-		<!-- Bookmarks -->
-
-		<action path="/bookmarks/edit_entry" type="com.liferay.portlet.bookmarks.action.EditEntryAction">
-			<forward name="portlet.bookmarks.edit_entry" path="portlet.bookmarks.edit_entry" />
-			<forward name="portlet.bookmarks.error" path="portlet.bookmarks.error" />
-		</action>
-
-		<action path="/bookmarks/edit_folder" type="com.liferay.portlet.bookmarks.action.EditFolderAction">
-			<forward name="portlet.bookmarks.edit_folder" path="portlet.bookmarks.edit_folder" />
-			<forward name="portlet.bookmarks.error" path="portlet.bookmarks.error" />
-		</action>
-
-		<action path="/bookmarks/find_entry" type="com.liferay.portlet.bookmarks.action.FindEntryAction" />
-
-		<action path="/bookmarks/find_folder" type="com.liferay.portlet.bookmarks.action.FindFolderAction" />
-
-		<action path="/bookmarks/open_entry" type="com.liferay.portlet.bookmarks.action.OpenEntryAction" />
-
-		<action path="/bookmarks/search" forward="portlet.bookmarks.search" />
-
-		<action path="/bookmarks/select_folder" type="com.liferay.portlet.bookmarks.action.EditFolderAction">
-			<forward name="portlet.bookmarks.edit_folder" path="portlet.bookmarks.select_folder" />
-			<forward name="portlet.bookmarks.error" path="portlet.bookmarks.error" />
-		</action>
-
-		<action path="/bookmarks/view" type="com.liferay.portlet.bookmarks.action.ViewAction">
-			<forward name="portlet.bookmarks.error" path="portlet.bookmarks.error" />
-			<forward name="portlet.bookmarks.view" path="portlet.bookmarks.view" />
-		</action>
-
-		<action path="/bookmarks/view_entry" type="com.liferay.portlet.bookmarks.action.EditEntryAction">
-			<forward name="portlet.bookmarks.edit_entry" path="portlet.bookmarks.view_entry" />
-			<forward name="portlet.bookmarks.error" path="portlet.bookmarks.error" />
 		</action>
 
 		<!-- Breadcrumb -->
@@ -586,7 +551,6 @@
 		<action path="/dynamic_data_list_display/edit_record" type="com.liferay.portlet.dynamicdatalists.action.EditRecordAction">
 			<forward name="portlet.dynamic_data_lists.edit_record" path="portlet.dynamic_data_lists.edit_record" />
 			<forward name="portlet.dynamic_data_lists.error" path="portlet.dynamic_data_lists.error" />
-			<forward name="portlet.dynamic_data_lists.update_translation_redirect" path="portlet.dynamic_data_lists.update_translation_redirect" />
 		</action>
 
 		<action path="/dynamic_data_list_display/view" forward="portlet.dynamic_data_list_display.view" />
@@ -611,7 +575,6 @@
 		<action path="/dynamic_data_lists/edit_record" type="com.liferay.portlet.dynamicdatalists.action.EditRecordAction">
 			<forward name="portlet.dynamic_data_lists.edit_record" path="portlet.dynamic_data_lists.edit_record" />
 			<forward name="portlet.dynamic_data_lists.error" path="portlet.dynamic_data_lists.error" />
-			<forward name="portlet.dynamic_data_lists.update_translation_redirect" path="portlet.dynamic_data_lists.update_translation_redirect" />
 		</action>
 
 		<action path="/dynamic_data_lists/edit_record_file" type="com.liferay.portlet.dynamicdatalists.action.EditRecordFileAction" />
@@ -857,7 +820,6 @@
 			<forward name="portlet.journal.asset.add_asset_redirect" path="portlet.journal.asset.add_asset_redirect" />
 			<forward name="portlet.journal.edit_article" path="portlet.journal.edit_article" />
 			<forward name="portlet.journal.error" path="portlet.journal.error" />
-			<forward name="portlet.journal.update_translation_redirect" path="portlet.journal.update_translation_redirect" />
 		</action>
 
 		<action path="/journal/edit_article_discussion" type="com.liferay.portlet.messageboards.action.EditDiscussionAction">
@@ -907,6 +869,8 @@
 
 		<action path="/journal/select_version" forward="portlet.journal.select_version" />
 
+		<action path="/journal/upload_file_entry" type="com.liferay.portlet.documentlibrary.action.EditFileEntryAction" />
+
 		<action path="/journal/view" type="com.liferay.portlet.journal.action.ViewAction">
 			<forward name="portlet.journal.error" path="portlet.journal.error" />
 			<forward name="portlet.journal.view" path="portlet.journal.view" />
@@ -946,7 +910,7 @@
 			<forward name="portlet.message_boards.error" path="portlet.journal_content.error" />
 		</action>
 
-		<action path="/journal_content/export_article" type="com.liferay.portlet.journalcontent.action.ExportArticleAction" />
+		<action path="/journal_content/export_article" type="com.liferay.portlet.journal.action.ExportArticleAction" />
 
 		<action path="/journal_content/view" type="com.liferay.portlet.journalcontent.action.ViewAction">
 			<forward name="portlet.journal_content.view" path="portlet.journal_content.view" />
@@ -1457,12 +1421,6 @@
 
 		<action path="/navigation/view" forward="portlet.navigation.view" />
 
-		<!-- Nested Portlets -->
-
-		<action path="/nested_portlets/view" type="com.liferay.portlet.nestedportlets.action.ViewAction">
-			<forward name="portlet.nested_portlets.view" path="portlet.nested_portlets.view" />
-		</action>
-
 		<!-- News -->
 
 		<action path="/news/edit" type="com.liferay.portlet.news.action.EditPreferencesAction">
@@ -1609,12 +1567,6 @@
 		<action path="/portlet_sharing/view" type="com.liferay.portlet.portletsharing.action.ViewAction">
 			<forward name="portlet.portlet_sharing.view" path="portlet.portlet_sharing.view" />
 		</action>
-
-		<!-- Quick Note -->
-
-		<action path="/quick_note/save" type="com.liferay.portlet.quicknote.action.SaveAction" />
-
-		<action path="/quick_note/view" forward="portlet.quick_note.view" />
 
 		<!-- Recent Documents -->
 

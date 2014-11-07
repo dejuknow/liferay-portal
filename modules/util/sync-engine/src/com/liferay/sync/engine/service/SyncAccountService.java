@@ -28,6 +28,8 @@ import com.liferay.sync.engine.util.OSDetector;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 import java.sql.SQLException;
 
@@ -94,15 +96,17 @@ public class SyncAccountService {
 
 		// Sync file
 
-		Path dataFilePath = Files.createDirectories(
-			FileUtil.getFilePath(filePathName, ".data"));
+		Path filePath = Paths.get(filePathName);
+
+		Path dataFilePath = Files.createDirectories(filePath.resolve(".data"));
 
 		if (OSDetector.isWindows()) {
 			Files.setAttribute(dataFilePath, "dos:hidden", true);
 		}
 
 		SyncFileService.addSyncFile(
-			null, null, null, filePathName, null, filePathName, 0, 0,
+			null, null, null, filePathName, null,
+			String.valueOf(filePath.getFileName()), 0, 0, SyncFile.STATE_SYNCED,
 			syncAccount.getSyncAccountId(), SyncFile.TYPE_SYSTEM);
 
 		// Sync sites
@@ -249,7 +253,7 @@ public class SyncAccountService {
 		_activeSyncAccountIds = null;
 	}
 
-	public static void setFilePathName(
+	public static SyncAccount setFilePathName(
 		long syncAccountId, String targetFilePathName) {
 
 		// Sync account
@@ -291,13 +295,16 @@ public class SyncAccountService {
 
 			SyncSiteService.update(syncSite);
 		}
+
+		return syncAccount;
 	}
 
 	public static SyncAccount synchronizeSyncAccount(
-		long syncAccountId, long delay) {
+		long syncAccountId, boolean checkState, long delay) {
 
 		Map<String, Object> parameters = new HashMap<String, Object>();
 
+		parameters.put("checkState", checkState);
 		parameters.put("uuid", null);
 
 		GetSyncContextEvent getSyncContextEvent = new GetSyncContextEvent(
@@ -330,11 +337,37 @@ public class SyncAccountService {
 		}
 	}
 
-	private static Logger _logger = LoggerFactory.getLogger(
+	public static void updateSyncAccountSyncFile(
+			Path filePath, long syncAccountId, boolean moveFile)
+		throws Exception {
+
+		SyncAccount syncAccount = SyncAccountService.fetchSyncAccount(
+			syncAccountId);
+
+		syncAccount.setActive(false);
+
+		SyncAccountService.update(syncAccount);
+
+		if (moveFile) {
+			Files.createDirectories(filePath);
+
+			Files.move(
+				Paths.get(syncAccount.getFilePathName()), filePath,
+				StandardCopyOption.REPLACE_EXISTING);
+		}
+
+		syncAccount = setFilePathName(syncAccountId, filePath.toString());
+
+		syncAccount.setActive(true);
+
+		SyncAccountService.update(syncAccount);
+	}
+
+	private static final Logger _logger = LoggerFactory.getLogger(
 		SyncAccountService.class);
 
 	private static Set<Long> _activeSyncAccountIds;
-	private static ScheduledExecutorService _scheduledExecutorService =
+	private static final ScheduledExecutorService _scheduledExecutorService =
 		Executors.newScheduledThreadPool(5);
 	private static SyncAccountPersistence _syncAccountPersistence =
 		getSyncAccountPersistence();

@@ -122,11 +122,11 @@ public class SourceFormatterHelper {
 		return fileNames;
 	}
 
-	private static FileImpl _fileUtil = FileImpl.getInstance();
+	private static final FileImpl _fileUtil = FileImpl.getInstance();
 
-	private Properties _properties = new Properties();
+	private final Properties _properties = new Properties();
 	private String _propertiesContent = StringPool.BLANK;
 	private File _propertiesFile;
-	private boolean _useProperties;
+	private final boolean _useProperties;
 
 }

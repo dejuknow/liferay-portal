@@ -4,7 +4,7 @@
 		module="org.apache.felix.configadmin"
 		revision="1.8.0"
 		status="release"
-		publication="20130925102108"
+		publication="20130925072108"
 	>
 		<description homepage="">
 		Implementation of the OSGi Configuration Admin Service Specification 1.5

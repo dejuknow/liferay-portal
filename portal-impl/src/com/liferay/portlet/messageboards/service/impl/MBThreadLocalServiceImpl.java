@@ -807,9 +807,8 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 
 			// Thread
 
-			TrashVersion trashVersion =
-				trashVersionLocalService.fetchVersion(
-					MBThread.class.getName(), thread.getThreadId());
+			TrashVersion trashVersion = trashVersionLocalService.fetchVersion(
+				MBThread.class.getName(), thread.getThreadId());
 
 			int status = WorkflowConstants.STATUS_APPROVED;
 

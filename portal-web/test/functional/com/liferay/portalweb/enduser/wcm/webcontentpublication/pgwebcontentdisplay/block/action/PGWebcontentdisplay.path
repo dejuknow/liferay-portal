@@ -30,7 +30,7 @@
 </tr>
 <tr>
 	<td>EDIT_WEB_CONTENT</td>
-	<td>//span[contains(@class,'lfr-icon-action')]/a[contains(.,'Edit')]</td>
+	<td>//i[@class='icon-pencil']</td>
 	<td></td>
 </tr>
 <tr>

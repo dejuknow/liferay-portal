@@ -297,7 +297,7 @@ public class LanguageImpl implements Language, Serializable {
 	public String format(
 		ResourceBundle resourceBundle, String pattern, Object argument) {
 
-		return format(resourceBundle, pattern, new Object[]{argument}, true);
+		return format(resourceBundle, pattern, new Object[] {argument}, true);
 	}
 
 	@Override

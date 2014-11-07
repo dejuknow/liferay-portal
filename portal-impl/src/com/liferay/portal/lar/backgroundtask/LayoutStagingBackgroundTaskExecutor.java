@@ -159,10 +159,10 @@ public class LayoutStagingBackgroundTaskExecutor
 			serviceContext);
 	}
 
-	private static Log _log = LogFactoryUtil.getLog(
+	private static final Log _log = LogFactoryUtil.getLog(
 		LayoutStagingBackgroundTaskExecutor.class);
 
-	private TransactionAttribute _transactionAttribute =
+	private final TransactionAttribute _transactionAttribute =
 		TransactionAttributeBuilder.build(
 			Propagation.REQUIRED, new Class<?>[] {Exception.class});
 
@@ -179,6 +179,9 @@ public class LayoutStagingBackgroundTaskExecutor
 
 				boolean privateLayout = MapUtil.getBoolean(
 					settingsMap, "privateLayout");
+
+				initThreadLocals(_sourceGroupId, privateLayout);
+
 				long[] layoutIds = GetterUtil.getLongValues(
 					settingsMap.get("layoutIds"));
 				Map<String, String[]> parameterMap =
@@ -214,13 +217,13 @@ public class LayoutStagingBackgroundTaskExecutor
 						_sourceGroupId);
 
 					if (!sourceGroup.hasStagingGroup()) {
-						StagingUtil.updateLastPublishDate(
-							_sourceGroupId, privateLayout,
+						ExportImportDateUtil.updateLastPublishDate(
+							_sourceGroupId, privateLayout, dateRange,
 							dateRange.getEndDate());
 					}
 					else {
-						StagingUtil.updateLastPublishDate(
-							_targetGroupId, privateLayout,
+						ExportImportDateUtil.updateLastPublishDate(
+							_targetGroupId, privateLayout, dateRange,
 							dateRange.getEndDate());
 					}
 				}
@@ -244,11 +247,11 @@ public class LayoutStagingBackgroundTaskExecutor
 			_userId = userId;
 		}
 
-		private long _backgroundTaskId;
-		private ExportImportConfiguration _exportImportConfiguration;
-		private long _sourceGroupId;
-		private long _targetGroupId;
-		private long _userId;
+		private final long _backgroundTaskId;
+		private final ExportImportConfiguration _exportImportConfiguration;
+		private final long _sourceGroupId;
+		private final long _targetGroupId;
+		private final long _userId;
 
 	}
 

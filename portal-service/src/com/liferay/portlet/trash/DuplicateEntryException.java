@@ -15,9 +15,7 @@
 package com.liferay.portlet.trash;
 
 /**
- * @author Brian Wing Shun Chan
- *
- *
+ * @author     Brian Wing Shun Chan
  * @deprecated As of 7.0.0, renamed to {@link RestoreEntryException}
  */
 @Deprecated
@@ -25,9 +23,9 @@ public class DuplicateEntryException extends RestoreEntryException {
 
 	@Override
 	public int getType() {
-		return _type;
+		return _TYPE;
 	}
 
-	private int _type = RestoreEntryException.DUPLICATE;
+	private static final int _TYPE = RestoreEntryException.DUPLICATE;
 
 }

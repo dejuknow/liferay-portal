@@ -570,47 +570,34 @@ public interface JournalArticleModel extends AttachedModel,
 	public void setContent(String content);
 
 	/**
-	 * Returns the type of this journal article.
+	 * Returns the d d m structure key of this journal article.
 	 *
-	 * @return the type of this journal article
+	 * @return the d d m structure key of this journal article
 	 */
 	@AutoEscape
-	public String getType();
+	public String getDDMStructureKey();
 
 	/**
-	 * Sets the type of this journal article.
+	 * Sets the d d m structure key of this journal article.
 	 *
-	 * @param type the type of this journal article
+	 * @param DDMStructureKey the d d m structure key of this journal article
 	 */
-	public void setType(String type);
+	public void setDDMStructureKey(String DDMStructureKey);
 
 	/**
-	 * Returns the structure ID of this journal article.
+	 * Returns the d d m template key of this journal article.
 	 *
-	 * @return the structure ID of this journal article
+	 * @return the d d m template key of this journal article
 	 */
-	public String getStructureId();
+	@AutoEscape
+	public String getDDMTemplateKey();
 
 	/**
-	 * Sets the structure ID of this journal article.
+	 * Sets the d d m template key of this journal article.
 	 *
-	 * @param structureId the structure ID of this journal article
+	 * @param DDMTemplateKey the d d m template key of this journal article
 	 */
-	public void setStructureId(String structureId);
-
-	/**
-	 * Returns the template ID of this journal article.
-	 *
-	 * @return the template ID of this journal article
-	 */
-	public String getTemplateId();
-
-	/**
-	 * Sets the template ID of this journal article.
-	 *
-	 * @param templateId the template ID of this journal article
-	 */
-	public void setTemplateId(String templateId);
+	public void setDDMTemplateKey(String DDMTemplateKey);
 
 	/**
 	 * Returns the layout uuid of this journal article.
@@ -988,19 +975,20 @@ public interface JournalArticleModel extends AttachedModel,
 	public Object clone();
 
 	@Override
-	public int compareTo(JournalArticle journalArticle);
+	public int compareTo(
+		com.liferay.portlet.journal.model.JournalArticle journalArticle);
 
 	@Override
 	public int hashCode();
 
 	@Override
-	public CacheModel<JournalArticle> toCacheModel();
+	public CacheModel<com.liferay.portlet.journal.model.JournalArticle> toCacheModel();
 
 	@Override
-	public JournalArticle toEscapedModel();
+	public com.liferay.portlet.journal.model.JournalArticle toEscapedModel();
 
 	@Override
-	public JournalArticle toUnescapedModel();
+	public com.liferay.portlet.journal.model.JournalArticle toUnescapedModel();
 
 	@Override
 	public String toString();

@@ -77,9 +77,8 @@ public class IconDeleteTag extends IconTag {
 		if (url.startsWith(Http.HTTP_WITH_SLASH) ||
 			url.startsWith(Http.HTTPS_WITH_SLASH)) {
 
-			url =
-				"submitForm(document.hrefFm, '".concat(
-					HttpUtil.encodeURL(url)).concat("');");
+			url = "submitForm(document.hrefFm, '".concat(
+				HttpUtil.encodeURL(url)).concat("');");
 		}
 
 		if (url.startsWith("wsrp_rewrite?")) {

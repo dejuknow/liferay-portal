@@ -227,9 +227,8 @@ public class AssetCategoryStagedModelDataHandler
 
 		AssetCategory importedCategory = null;
 
-		AssetCategory existingCategory =
-			fetchStagedModelByUuidAndGroupId(
-				category.getUuid(), portletDataContext.getScopeGroupId());
+		AssetCategory existingCategory = fetchStagedModelByUuidAndGroupId(
+			category.getUuid(), portletDataContext.getScopeGroupId());
 
 		if (existingCategory == null) {
 			String name = getCategoryName(

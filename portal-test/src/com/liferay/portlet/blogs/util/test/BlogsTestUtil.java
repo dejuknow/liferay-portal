@@ -139,9 +139,8 @@ public class BlogsTestUtil {
 
 				ClassLoader classLoader = clazz.getClassLoader();
 
-				InputStream inputStream =
-					classLoader.getResourceAsStream(
-						"com/liferay/portal/util/dependencies/test.jpg");
+				InputStream inputStream = classLoader.getResourceAsStream(
+					"com/liferay/portal/util/dependencies/test.jpg");
 
 				FileEntry fileEntry = null;
 

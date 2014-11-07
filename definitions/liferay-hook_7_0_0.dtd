@@ -6,8 +6,8 @@
 
 <!ELEMENT hook (portal-properties?, language-properties*, custom-jsp-dir?,
 custom-jsp-global?, dynamic-data-mapping-form-field-renderer*,
-indexer-post-processor*, service*, servlet-filter*, servlet-filter-mapping*,
-struts-action*)>
+dynamic-data-mapping-form-field-value-renderer*, indexer-post-processor*,
+service*, servlet-filter*, servlet-filter-mapping*, struts-action*)>
 
 <!--
 Not all portal properties can be overridden via a hook. The supported properties
@@ -43,7 +43,6 @@ company.settings.form.identification
 company.settings.form.miscellaneous
 company.settings.form.social
 control.panel.entry.class.default
-convert.processes
 default.landing.page.path
 default.regular.color.scheme.id
 default.regular.theme.id
@@ -103,6 +102,8 @@ phone.number.format.usa.regexp
 portlet.add.default.resource.check.enabled
 portlet.add.default.resource.check.whitelist
 portlet.add.default.resource.check.whitelist.actions
+portlet.interrupted.request.whitelist
+portlet.interrupted.request.whitelist.actions
 rss.feeds.enabled
 sanitizer.impl
 servlet.session.create.events
@@ -210,3 +211,5 @@ before-filter)?, url-pattern+, dispatcher*)>
 <!ELEMENT struts-action-impl (#PCDATA)>
 
 <!ELEMENT dynamic-data-mapping-form-field-renderer (#PCDATA)>
+
+<!ELEMENT dynamic-data-mapping-form-field-value-renderer (#PCDATA)>

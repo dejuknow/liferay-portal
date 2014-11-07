@@ -56,15 +56,12 @@ public class IODeltaUtil {
 			return null;
 		}
 
-		FileInputStream fileInputStream = null;
 		FileChannel fileChannel = null;
 		OutputStream outputStream = null;
 		WritableByteChannel writableByteChannel = null;
 
 		try {
-			fileInputStream = new FileInputStream(syncFile.getFilePathName());
-
-			fileChannel = fileInputStream.getChannel();
+			fileChannel = FileChannel.open(syncFilePath);
 
 			Path checksumsFilePath = getChecksumsFilePath(syncFile);
 
@@ -91,7 +88,6 @@ public class IODeltaUtil {
 			return null;
 		}
 		finally {
-			StreamUtil.cleanUp(fileInputStream);
 			StreamUtil.cleanUp(outputStream);
 			StreamUtil.cleanUp(fileChannel);
 			StreamUtil.cleanUp(writableByteChannel);
@@ -232,9 +228,10 @@ public class IODeltaUtil {
 		}
 	}
 
-	private static Logger _logger = LoggerFactory.getLogger(IODeltaUtil.class);
+	private static final Logger _logger = LoggerFactory.getLogger(
+		IODeltaUtil.class);
 
-	private static Set<String> _syncFilePatchingIgnoreFileExtensions =
+	private static final Set<String> _syncFilePatchingIgnoreFileExtensions =
 		new HashSet<String>(
 			Arrays.asList(
 				PropsValues.SYNC_FILE_PATCHING_IGNORE_FILE_EXTENSIONS));

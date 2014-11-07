@@ -30,6 +30,7 @@ import com.liferay.portal.kernel.util.PropsUtil;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,7 +45,9 @@ import java.util.Map;
 @ProviderType
 public class UpgradeProcessUtil {
 
-	public static String getDefaultLanguageId(long companyId) throws Exception {
+	public static String getDefaultLanguageId(long companyId)
+		throws SQLException {
+
 		String languageId = _languageIds.get(companyId);
 
 		if (languageId != null) {
@@ -196,9 +199,11 @@ public class UpgradeProcessUtil {
 	private static final boolean _INDEX_ON_UPGRADE = GetterUtil.getBoolean(
 		PropsUtil.get(PropsKeys.INDEX_ON_UPGRADE));
 
-	private static Log _log = LogFactoryUtil.getLog(UpgradeProcessUtil.class);
+	private static final Log _log = LogFactoryUtil.getLog(
+		UpgradeProcessUtil.class);
 
 	private static boolean _createIGImageDocumentType = false;
-	private static Map<Long, String> _languageIds = new HashMap<Long, String>();
+	private static final Map<Long, String> _languageIds =
+		new HashMap<Long, String>();
 
 }

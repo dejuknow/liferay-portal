@@ -87,14 +87,17 @@ public class RepositoryClassDefinition
 			Class<S> repositoryEventTypeClass, Class<T> modelClass,
 			RepositoryEventListener<S, T> repositoryEventListener) {
 
+		if (repositoryEventListener == null) {
+			throw new NullPointerException("Repository event listener is null");
+		}
+
 		Tuple key = new Tuple(repositoryEventTypeClass, modelClass);
 
 		Collection<RepositoryEventListener<?, ?>> repositoryEventListeners =
 			_repositoryEventListeners.get(key);
 
 		if (repositoryEventListeners == null) {
-			repositoryEventListeners =
-				new ArrayList<RepositoryEventListener<?, ?>>();
+			repositoryEventListeners = new ArrayList<>();
 
 			_repositoryEventListeners.put(key, repositoryEventListeners);
 		}
@@ -114,7 +117,7 @@ public class RepositoryClassDefinition
 
 	@Override
 	public <S extends RepositoryEventType, T> void trigger(
-			Class<S> repositoryEventTypeClass, Class<T> modelClass, T payload)
+			Class<S> repositoryEventTypeClass, Class<T> modelClass, T model)
 		throws PortalException {
 
 		Tuple key = new Tuple(repositoryEventTypeClass, modelClass);
@@ -127,13 +130,13 @@ public class RepositoryClassDefinition
 			for (RepositoryEventListener<S, T> repositoryEventListener :
 					repositoryEventListeners) {
 
-				repositoryEventListener.execute(payload);
+				repositoryEventListener.execute(model);
 			}
 		}
 	}
 
-	private RepositoryDefiner _repositoryDefiner;
-	private Map<Tuple, Collection<RepositoryEventListener<?, ?>>>
+	private final RepositoryDefiner _repositoryDefiner;
+	private final Map<Tuple, Collection<RepositoryEventListener<?, ?>>>
 		_repositoryEventListeners =
 			new HashMap<Tuple, Collection<RepositoryEventListener<?, ?>>>();
 	private RepositoryFactory _repositoryFactory;

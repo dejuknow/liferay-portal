@@ -62,6 +62,14 @@ public class DiffHtmlImpl implements DiffHtml {
 	 */
 	@Override
 	public String diff(Reader source, Reader target) throws Exception {
+		if (source == null) {
+			throw new NullPointerException("Source is null");
+		}
+
+		if (target == null) {
+			throw new NullPointerException("Target is null");
+		}
+
 		InputSource oldSource = new InputSource(source);
 		InputSource newSource = new InputSource(target);
 
@@ -118,7 +126,15 @@ public class DiffHtmlImpl implements DiffHtml {
 
 		unsyncStringWriter.flush();
 
-		return unsyncStringWriter.toString();
+		String string = unsyncStringWriter.toString();
+
+		if (string.startsWith("<?xml")) {
+			int index = string.indexOf("?>");
+
+			string = string.substring(index + 2);
+		}
+
+		return string;
 	}
 
 	@Override

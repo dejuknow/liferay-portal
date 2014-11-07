@@ -65,9 +65,8 @@ public class SyncAccountServiceTest extends BaseTestCase {
 			FileUtil.getFilePathName(syncSite.getFilePathName(), "test.txt"), 0,
 			_syncAccount.getSyncAccountId());
 
-		String targetFilePathName =
-			FileUtil.getFilePathName(
-				System.getProperty("user.home"), "liferay-sync-test2");
+		String targetFilePathName = FileUtil.getFilePathName(
+			System.getProperty("user.home"), "liferay-sync-test2");
 
 		SyncAccountService.setFilePathName(
 			_syncAccount.getSyncAccountId(), targetFilePathName);

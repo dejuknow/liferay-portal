@@ -22,6 +22,7 @@ import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.security.permission.BaseModelPermissionChecker;
 import com.liferay.portal.security.permission.PermissionChecker;
+import com.liferay.portal.security.permission.ResourcePermissionChecker;
 import com.liferay.portal.util.PortletKeys;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.journal.NoSuchFolderException;
@@ -40,7 +41,8 @@ import com.liferay.portlet.journal.service.JournalFolderLocalServiceUtil;
 		"model.class.name=com.liferay.portlet.journal.model.JournalArticle"
 	}
 )
-public class JournalArticlePermission implements BaseModelPermissionChecker {
+public class JournalArticlePermission
+	implements BaseModelPermissionChecker, ResourcePermissionChecker {
 
 	public static void check(
 			PermissionChecker permissionChecker, JournalArticle article,
@@ -180,12 +182,15 @@ public class JournalArticlePermission implements BaseModelPermissionChecker {
 	}
 
 	public static boolean contains(
-			PermissionChecker permissionChecker, long resourcePrimKey,
-			String actionId)
+			PermissionChecker permissionChecker, long classPK, String actionId)
 		throws PortalException {
 
 		JournalArticle article =
-			JournalArticleLocalServiceUtil.getLatestArticle(resourcePrimKey);
+			JournalArticleLocalServiceUtil.fetchLatestArticle(classPK);
+
+		if (article == null) {
+			article = JournalArticleLocalServiceUtil.getArticle(classPK);
+		}
 
 		return contains(permissionChecker, article, actionId);
 	}
@@ -231,6 +236,14 @@ public class JournalArticlePermission implements BaseModelPermissionChecker {
 		throws PortalException {
 
 		check(permissionChecker, primaryKey, actionId);
+	}
+
+	@Override
+	public Boolean checkResource(
+			PermissionChecker permissionChecker, long classPK, String actionId)
+		throws PortalException {
+
+		return contains(permissionChecker, classPK, actionId);
 	}
 
 }

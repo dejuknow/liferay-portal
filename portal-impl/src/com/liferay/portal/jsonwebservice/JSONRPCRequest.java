@@ -58,7 +58,12 @@ public class JSONRPCRequest {
 
 			JSONRPCRequest jsonrpcRequest = new JSONRPCRequest();
 
-			jsonrpcRequest._id = (Integer)requestBodyMap.get("id");
+			Number id = (Number)requestBodyMap.get("id");
+
+			if (id != null) {
+				jsonrpcRequest._id = Integer.valueOf(id.intValue());
+			}
+
 			jsonrpcRequest._jsonrpc = (String)requestBodyMap.get("jsonrpc");
 			jsonrpcRequest._method = (String)requestBodyMap.get("method");
 			jsonrpcRequest._parameters = (Map<String, ?>)requestBodyMap.get(
@@ -122,7 +127,7 @@ public class JSONRPCRequest {
 		_parameters = parameters;
 	}
 
-	private static Log _log = LogFactoryUtil.getLog(JSONRPCRequest.class);
+	private static final Log _log = LogFactoryUtil.getLog(JSONRPCRequest.class);
 
 	private Integer _id;
 	private String _jsonrpc;

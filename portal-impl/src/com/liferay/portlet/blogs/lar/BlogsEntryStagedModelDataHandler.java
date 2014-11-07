@@ -277,9 +277,8 @@ public class BlogsEntryStagedModelDataHandler
 		if (portletDataContext.isDataStrategyMirror()) {
 			serviceContext.setAttribute("urlTitle", entry.getUrlTitle());
 
-			BlogsEntry existingEntry =
-				fetchStagedModelByUuidAndGroupId(
-					entry.getUuid(), portletDataContext.getScopeGroupId());
+			BlogsEntry existingEntry = fetchStagedModelByUuidAndGroupId(
+				entry.getUuid(), portletDataContext.getScopeGroupId());
 
 			if (existingEntry == null) {
 				serviceContext.setUuid(entry.getUuid());

@@ -164,18 +164,18 @@ public class JournalContentPortletDataHandler
 		StagedModelDataHandlerUtil.exportReferenceStagedModel(
 			portletDataContext, portletId, article);
 
-		String defaultTemplateId = article.getTemplateId();
-		String preferenceTemplateId = portletPreferences.getValue(
+		String defaultDDMTemplateKey = article.getDDMTemplateKey();
+		String preferenceDDMTemplateKey = portletPreferences.getValue(
 			"ddmTemplateKey", null);
 
-		if (Validator.isNotNull(defaultTemplateId) &&
-			Validator.isNotNull(preferenceTemplateId) &&
-			!defaultTemplateId.equals(preferenceTemplateId)) {
+		if (Validator.isNotNull(defaultDDMTemplateKey) &&
+			Validator.isNotNull(preferenceDDMTemplateKey) &&
+			!defaultDDMTemplateKey.equals(preferenceDDMTemplateKey)) {
 
 			DDMTemplate ddmTemplate = DDMTemplateLocalServiceUtil.getTemplate(
 				article.getGroupId(),
 				PortalUtil.getClassNameId(DDMStructure.class),
-				preferenceTemplateId, true);
+				preferenceDDMTemplateKey, true);
 
 			StagedModelDataHandlerUtil.exportReferenceStagedModel(
 				portletDataContext, article, ddmTemplate,
@@ -265,7 +265,7 @@ public class JournalContentPortletDataHandler
 		return portletPreferences;
 	}
 
-	private static Log _log = LogFactoryUtil.getLog(
+	private static final Log _log = LogFactoryUtil.getLog(
 		JournalContentPortletDataHandler.class);
 
 }

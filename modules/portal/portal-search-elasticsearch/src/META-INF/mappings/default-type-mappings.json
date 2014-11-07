@@ -13,6 +13,29 @@
 				}
 			},
 			{
+				"template_assetCategoryTitles": {
+					"match": "assetCategoryTitles*",
+					"match_mapping_type": "string",
+					"mapping": {
+						"index": "analyzed",
+						"store": "true",
+						"term_vector": "with_positions_offsets",
+						"type": "string"
+					}
+				}
+			},
+			{
+				"template_ddm": {
+					"match": "ddm__*",
+					"match_mapping_type": "string",
+					"mapping": {
+						"index": "analyzed",
+						"store": "true",
+						"type": "string"
+					}
+				}
+			},
+			{
 				"template_expando": {
 					"match": "expando__*",
 					"match_mapping_type": "string",
@@ -25,8 +48,9 @@
 			},
 			{
 				"template_ar": {
-					"match": "*_ar_[A-Z]{2}*",
+					"match": "\\w+_ar\\b|\\w+_ar_[A-Z]{2}\\b",
 					"match_mapping_type": "string",
+					"match_pattern": "regex",
 					"mapping": {
 						"analyzer": "arabic",
 						"index": "analyzed",
@@ -38,8 +62,9 @@
 			},
 			{
 				"template_bg": {
-					"match": "*_bg_BG",
+					"match": "\\w+_bg\\b|\\w+_bg_[A-Z]{2}\\b",
 					"match_mapping_type": "string",
+					"match_pattern": "regex",
 					"mapping": {
 						"analyzer": "bulgarian",
 						"index": "analyzed",
@@ -51,7 +76,7 @@
 			},
 			{
 				"template_ca": {
-					"match": "\\w+_ca_[A-Z]{2}\\b",
+					"match": "\\w+_ca\\b|\\w+_ca_[A-Z]{2}\\b",
 					"match_mapping_type": "string",
 					"match_pattern": "regex",
 					"mapping": {
@@ -65,8 +90,9 @@
 			},
 			{
 				"template_cs": {
-					"match": "*_cs_CZ",
+					"match": "\\w+_cs\\b|\\w+_cs_[A-Z]{2}\\b",
 					"match_mapping_type": "string",
+					"match_pattern": "regex",
 					"mapping": {
 						"analyzer": "czech",
 						"index": "analyzed",
@@ -78,8 +104,9 @@
 			},
 			{
 				"template_da": {
-					"match": "*_da_DK",
+					"match": "\\w+_da\\b|\\w+_da_[A-Z]{2}\\b",
 					"match_mapping_type": "string",
+					"match_pattern": "regex",
 					"mapping": {
 						"analyzer": "danish",
 						"index": "analyzed",
@@ -91,8 +118,9 @@
 			},
 			{
 				"template_de": {
-					"match": "*_de_DE",
+					"match": "\\w+_de\\b|\\w+_de_[A-Z]{2}\\b",
 					"match_mapping_type": "string",
+					"match_pattern": "regex",
 					"mapping": {
 						"analyzer": "german",
 						"index": "analyzed",
@@ -104,8 +132,9 @@
 			},
 			{
 				"template_el": {
-					"match": "*_el_GR",
+					"match": "\\w+_el\\b|\\w+_el_[A-Z]{2}\\b",
 					"match_mapping_type": "string",
+					"match_pattern": "regex",
 					"mapping": {
 						"analyzer": "greek",
 						"index": "analyzed",
@@ -117,7 +146,7 @@
 			},
 			{
 				"template_en": {
-					"match": "\\w+_en_[A-Z]{2}\\b",
+					"match": "\\w+_en\\b|\\w+_en_[A-Z]{2}\\b",
 					"match_mapping_type": "string",
 					"match_pattern": "regex",
 					"mapping": {
@@ -131,7 +160,7 @@
 			},
 			{
 				"template_es": {
-					"match": "\\w+_es_[A-Z]{2}\\b",
+					"match": "\\w+_es\\b|\\w+_es_[A-Z]{2}\\b",
 					"match_mapping_type": "string",
 					"match_pattern": "regex",
 					"mapping": {
@@ -145,8 +174,9 @@
 			},
 			{
 				"template_eu": {
-					"match": "*_eu_ES",
+					"match": "\\w+_eu\\b|\\w+_eu_[A-Z]{2}\\b",
 					"match_mapping_type": "string",
+					"match_pattern": "regex",
 					"mapping": {
 						"analyzer": "basque",
 						"index": "analyzed",
@@ -157,22 +187,10 @@
 				}
 			},
 			{
-				"template_fa": {
-					"match": "*_fa_IR",
-					"match_mapping_type": "string",
-					"mapping": {
-						"analyzer": "persian",
-						"index": "analyzed",
-						"store": "true",
-						"term_vector": "with_positions_offsets",
-						"type": "string"
-					}
-				}
-			},
-			{
 				"template_fi": {
-					"match": "*_fi_FI",
+					"match": "\\w+_fi\\b|\\w+_fi_[A-Z]{2}\\b",
 					"match_mapping_type": "string",
+					"match_pattern": "regex",
 					"mapping": {
 						"analyzer": "finnish",
 						"index": "analyzed",
@@ -184,7 +202,7 @@
 			},
 			{
 				"template_fr": {
-					"match": "\\w+_fr_[A-Z]{2}\\b",
+					"match": "\\w+_fr\\b|\\w+_fr_[A-Z]{2}\\b",
 					"match_mapping_type": "string",
 					"match_pattern": "regex",
 					"mapping": {
@@ -198,8 +216,9 @@
 			},
 			{
 				"template_hi": {
-					"match": "*_hi_IN",
+					"match": "\\w+_hi\\b|\\w+_hi_[A-Z]{2}\\b",
 					"match_mapping_type": "string",
+					"match_pattern": "regex",
 					"mapping": {
 						"analyzer": "hindi",
 						"index": "analyzed",
@@ -211,8 +230,9 @@
 			},
 			{
 				"template_hu": {
-					"match": "*_hu_HU",
+					"match": "\\w+_hu\\b|\\w+_hu_[A-Z]{2}\\b",
 					"match_mapping_type": "string",
+					"match_pattern": "regex",
 					"mapping": {
 						"analyzer": "hungarian",
 						"index": "analyzed",
@@ -224,8 +244,9 @@
 			},
 			{
 				"template_hy": {
-					"match": "*_hy_AR",
+					"match": "\\w+_hy\\b|\\w+_hy_[A-Z]{2}\\b",
 					"match_mapping_type": "string",
+					"match_pattern": "regex",
 					"mapping": {
 						"analyzer": "armenian",
 						"index": "analyzed",
@@ -237,8 +258,9 @@
 			},
 			{
 				"template_id": {
-					"match": "*_id_ID",
+					"match": "\\w+_id\\b|\\w+_id_[A-Z]{2}\\b",
 					"match_mapping_type": "string",
+					"match_pattern": "regex",
 					"mapping": {
 						"analyzer": "indonesian",
 						"index": "analyzed",
@@ -250,8 +272,9 @@
 			},
 			{
 				"template_it": {
-					"match": "*_it_IT",
+					"match": "\\w+_it\\b|\\w+_it_[A-Z]{2}\\b",
 					"match_mapping_type": "string",
+					"match_pattern": "regex",
 					"mapping": {
 						"analyzer": "italian",
 						"index": "analyzed",
@@ -263,8 +286,9 @@
 			},
 			{
 				"template_ja": {
-					"match": "*_ja_JP",
+					"match": "\\w+_ja\\b|\\w+_ja_[A-Z]{2}\\b",
 					"match_mapping_type": "string",
+					"match_pattern": "regex",
 					"mapping": {
 						"analyzer": "cjk",
 						"index": "analyzed",
@@ -276,8 +300,9 @@
 			},
 			{
 				"template_ko": {
-					"match": "*_ko_KR",
+					"match": "\\w+_ko\\b|\\w+_ko_[A-Z]{2}\\b",
 					"match_mapping_type": "string",
+					"match_pattern": "regex",
 					"mapping": {
 						"analyzer": "cjk",
 						"index": "analyzed",
@@ -289,8 +314,9 @@
 			},
 			{
 				"template_nl": {
-					"match": "*_nl_NL",
+					"match": "\\w+_nl\\b|\\w+_nl_[A-Z]{2}\\b",
 					"match_mapping_type": "string",
+					"match_pattern": "regex",
 					"mapping": {
 						"analyzer": "dutch",
 						"index": "analyzed",
@@ -302,8 +328,9 @@
 			},
 			{
 				"template_no": {
-					"match": "*_nb_NO",
+					"match": "\\w+_nb\\b|\\w+_nb_[A-Z]{2}\\b",
 					"match_mapping_type": "string",
+					"match_pattern": "regex",
 					"mapping": {
 						"analyzer": "norwegian",
 						"index": "analyzed",
@@ -328,8 +355,9 @@
 			},
 			{
 				"template_pt": {
-					"match": "*_pt_PT",
+					"match": "\\w+_pt\\b|\\w+_pt_PT\\b",
 					"match_mapping_type": "string",
+					"match_pattern": "regex",
 					"mapping": {
 						"analyzer": "portuguese",
 						"index": "analyzed",
@@ -341,8 +369,9 @@
 			},
 			{
 				"template_ro": {
-					"match": "*_ro_RO",
+					"match": "\\w+_ro\\b|\\w+_ro_RO\\b",
 					"match_mapping_type": "string",
+					"match_pattern": "regex",
 					"mapping": {
 						"analyzer": "romanian",
 						"index": "analyzed",
@@ -354,8 +383,9 @@
 			},
 			{
 				"template_ru": {
-					"match": "*_ru_RU",
+					"match": "\\w+_ru\\b|\\w+_ru_RU\\b",
 					"match_mapping_type": "string",
+					"match_pattern": "regex",
 					"mapping": {
 						"analyzer": "russian",
 						"index": "analyzed",
@@ -367,8 +397,9 @@
 			},
 			{
 				"template_sv": {
-					"match": "*_sv_SE",
+					"match": "\\w+_sv\\b|\\w+_sv_[A-Z]{2}\\b",
 					"match_mapping_type": "string",
+					"match_pattern": "regex",
 					"mapping": {
 						"analyzer": "swedish",
 						"index": "analyzed",
@@ -380,8 +411,9 @@
 			},
 			{
 				"template_th": {
-					"match": "*_th_TH",
+					"match": "\\w+_th\\b|\\w+_th_TH\\b",
 					"match_mapping_type": "string",
+					"match_pattern": "regex",
 					"mapping": {
 						"analyzer": "thai",
 						"index": "analyzed",
@@ -393,8 +425,9 @@
 			},
 			{
 				"template_tr": {
-					"match": "*_tr_TR",
+					"match": "\\w+_tr\\b|\\w+_tr_TR\\b",
 					"match_mapping_type": "string",
+					"match_pattern": "regex",
 					"mapping": {
 						"analyzer": "turkish",
 						"index": "analyzed",
@@ -406,7 +439,7 @@
 			},
 			{
 				"template_zh": {
-					"match": "\\w+_zh_[A-Z]{2}\\b",
+					"match": "\\w+_zh\\b|\\w+_zh_[A-Z]{2}\\b",
 					"match_mapping_type": "string",
 					"match_pattern": "regex",
 					"mapping": {
@@ -425,7 +458,6 @@
 					"mapping": {
 						"index": "analyzed",
 						"store": "true",
-						"term_vector": "with_positions_offsets",
 						"type": "string"
 					}
 				}
@@ -442,15 +474,38 @@
 				"store": "yes",
 				"type": "string"
 			},
+			"assetTagNames": {
+				"index": "analyzed",
+				"store": "yes",
+				"term_vector": "with_positions_offsets",
+				"type": "string"
+			},
+			"assetVocabularyIds": {
+				"index": "not_analyzed",
+				"store": "yes",
+				"type": "string"
+			},
 			"createDate": {
 				"format" : "yyyyMMddHHmmss",
 				"index": "not_analyzed",
 				"store": "yes",
 				"type": "date"
 			},
+			"content": {
+				"index": "analyzed",
+				"store": "yes",
+				"term_vector": "with_positions_offsets",
+				"type": "string"
+			},
 			"companyId": {
 				"index": "not_analyzed",
 				"store": "yes",
+				"type": "string"
+			},
+			"description": {
+				"index": "analyzed",
+				"store": "yes",
+				"term_vector": "with_positions_offsets",
 				"type": "string"
 			},
 			"entryClassPK": {
@@ -474,6 +529,11 @@
 				"store": "yes",
 				"type": "string"
 			},
+			"groupRoleId": {
+				"index": "not_analyzed",
+				"store": "yes",
+				"type": "string"
+			},
 			"modified": {
 				"format" : "yyyyMMddHHmmss",
 				"index": "not_analyzed",
@@ -481,6 +541,11 @@
 				"type": "date"
 			},
 			"portletId": {
+				"index": "not_analyzed",
+				"store": "yes",
+				"type": "string"
+			},
+			"properties": {
 				"index": "not_analyzed",
 				"store": "yes",
 				"type": "string"
@@ -501,6 +566,11 @@
 				"index": "not_analyzed",
 				"type": "string"
 			},
+			"roleIds": {
+				"index": "not_analyzed",
+				"store": "yes",
+				"type": "string"
+			},
 			"rootEntryClassName": {
 				"index": "not_analyzed",
 				"store": "yes",
@@ -519,6 +589,17 @@
 			"status": {
 				"index": "not_analyzed",
 				"store": "yes",
+				"type": "string"
+			},
+			"subtitle": {
+				"index": "analyzed",
+				"store": "yes",
+				"type": "string"
+			},
+			"title": {
+				"index": "analyzed",
+				"store": "yes",
+				"term_vector": "with_positions_offsets",
 				"type": "string"
 			},
 			"type": {

@@ -18,7 +18,7 @@ import aQute.bnd.annotation.metatype.Configurable;
 
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.xsl.content.web.configuration.XSLContentConfiguration;
-import com.liferay.xsl.content.web.upgrade.XSLContentUpgrade;
+import com.liferay.xsl.content.web.upgrade.XSLContentWebUpgrade;
 
 import java.io.IOException;
 
@@ -57,6 +57,9 @@ import org.osgi.service.component.annotations.Reference;
 		"javax.portlet.resource-bundle=content.Language",
 		"javax.portlet.security-role-ref=administrator",
 		"javax.portlet.supported-public-render-parameter=tags",
+		"xml.doctype.declaration.allowed=false",
+		"xml.external.general.entities.allowed=false",
+		"xml.external.parameter.entities.allowed=false",
 		"xsl.secure.processing.enabled=true"
 	},
 	service = Portlet.class
@@ -87,7 +90,8 @@ public class XSLContentPortlet extends MVCPortlet {
 	}
 
 	@Reference(unbind = "-")
-	protected void setXSLContentUpgrade(XSLContentUpgrade xslContentUpgrade) {
+	protected void setXSLContentWebUpgrade(
+		XSLContentWebUpgrade xslContentWebUpgrade) {
 	}
 
 	private volatile XSLContentConfiguration _xslContentConfiguration;

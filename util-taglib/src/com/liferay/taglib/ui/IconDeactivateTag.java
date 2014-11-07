@@ -41,9 +41,8 @@ public class IconDeactivateTag extends IconTag {
 		if (url.startsWith(Http.HTTP_WITH_SLASH) ||
 			url.startsWith(Http.HTTPS_WITH_SLASH)) {
 
-			url =
-				"submitForm(document.hrefFm, '".concat(
-					HttpUtil.encodeURL(url)).concat("');");
+			url = "submitForm(document.hrefFm, '".concat(
+				HttpUtil.encodeURL(url)).concat("');");
 		}
 
 		StringBundler sb = new StringBundler(5);

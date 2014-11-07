@@ -19,13 +19,18 @@
 	<td></td>
 </tr>
 <tr>
+	<td>DISPLAY_PAGE_CONFIGURATION_IFRAME</td>
+	<td>//iframe[contains(@id,'selectDisplayPage')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>SELECT_PAGE_ALERT_MESSAGE</td>
 	<td>//div[contains(@id,'selectedPageMessage') and contains(@class,'alert-alert')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>SELECTED_PAGE_INFO_MESSAGE</td>
-	<td>//div[contains(@id,'selectedPageMessage') and contains(@class,'alert-info')]</td>
+	<td>//div[@class='alert alert-info']/span[@class='selected-page-message' and contains(.,'Public Pages > ${key_pageName}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -39,8 +44,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>OK_BUTTON</td>
-	<td>//button[contains(.,'OK')]</td>
+	<td>CHOOSE_BUTTON</td>
+	<td>//button[contains(.,'Choose')]</td>
 	<td></td>
 </tr>
 <tr>

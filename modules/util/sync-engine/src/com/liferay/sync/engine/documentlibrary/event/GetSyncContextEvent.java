@@ -30,26 +30,32 @@ public class GetSyncContextEvent extends BaseEvent {
 		long syncAccountId, Map<String, Object> parameters) {
 
 		super(syncAccountId, _URL_PATH, parameters);
+
+		_handler = new GetSyncContextHandler(this);
 	}
 
 	@Override
-	protected Handler<Void> getHandler() {
-		return new GetSyncContextHandler(this);
+	public Handler<Void> getHandler() {
+		return _handler;
 	}
 
 	@Override
 	protected void processRequest() throws Exception {
-		SyncAccount syncAccount = SyncAccountService.fetchSyncAccount(
-			getSyncAccountId());
+		if ((Boolean)getParameterValue("checkState")) {
+			SyncAccount syncAccount = SyncAccountService.fetchSyncAccount(
+				getSyncAccountId());
 
-		syncAccount.setState(SyncAccount.STATE_CONNECTING);
+			syncAccount.setState(SyncAccount.STATE_CONNECTING);
 
-		SyncAccountService.update(syncAccount);
+			SyncAccountService.update(syncAccount);
+		}
 
 		super.processRequest();
 	}
 
 	private static final String _URL_PATH =
 		"/sync-web.syncdlobject/get-sync-context";
+
+	private final Handler<Void> _handler;
 
 }

@@ -76,6 +76,14 @@ public class VerifyProperties extends VerifyProcess {
 			verifyObsoletePortalProperty(key);
 		}
 
+		for (String[] keys : _MODULARIZED_PORTAL_KEYS) {
+			String oldKey = keys[0];
+			String newKey = keys[1];
+			String moduleName = keys[2];
+
+			verifyModularizedPortalProperty(oldKey, newKey, moduleName);
+		}
+
 		// Document library
 
 		StoreFactory.checkProperties();
@@ -83,6 +91,16 @@ public class VerifyProperties extends VerifyProcess {
 		// LDAP
 
 		verifyLDAPProperties();
+	}
+
+	protected boolean isPortalProperty(String key) {
+		String value = PropsUtil.get(key);
+
+		if (value != null) {
+			return true;
+		}
+
+		return false;
 	}
 
 	protected void verifyLDAPProperties() throws Exception {
@@ -118,9 +136,7 @@ public class VerifyProperties extends VerifyProcess {
 	protected void verifyMigratedPortalProperty(String oldKey, String newKey)
 		throws Exception {
 
-		String value = PropsUtil.get(oldKey);
-
-		if (value != null) {
+		if (isPortalProperty(oldKey)) {
 			_log.error(
 				"Portal property \"" + oldKey +
 					"\" was migrated to the system property \"" + newKey +
@@ -141,10 +157,19 @@ public class VerifyProperties extends VerifyProcess {
 		}
 	}
 
-	protected void verifyObsoletePortalProperty(String key) throws Exception {
-		String value = PropsUtil.get(key);
+	protected void verifyModularizedPortalProperty(
+			String oldKey, String newKey, String moduleName)
+		throws Exception {
 
-		if (value != null) {
+		if (isPortalProperty(oldKey)) {
+			_log.error(
+				"Portal property \"" + oldKey + "\" was modularized to " +
+					moduleName + " as \"" + newKey);
+		}
+	}
+
+	protected void verifyObsoletePortalProperty(String key) throws Exception {
+		if (isPortalProperty(key)) {
 			_log.error("Portal property \"" + key + "\" is obsolete");
 		}
 	}
@@ -160,9 +185,7 @@ public class VerifyProperties extends VerifyProcess {
 	protected void verifyRenamedPortalProperty(String oldKey, String newKey)
 		throws Exception {
 
-		String value = PropsUtil.get(oldKey);
-
-		if (value != null) {
+		if (isPortalProperty(oldKey)) {
 			_log.error(
 				"Portal property \"" + oldKey + "\" was renamed to \"" +
 					newKey + "\"");
@@ -258,6 +281,71 @@ public class VerifyProperties extends VerifyProcess {
 		}
 	};
 
+	private static final String[][] _MODULARIZED_PORTAL_KEYS = {
+
+		// Bookmarks
+
+		new String[] {
+			"bookmarks.email.entry.added.body", "email.entry.added.body",
+			"com.liferay.bookmarks.service"
+		},
+		new String[] {
+			"bookmarks.email.entry.added.enabled", "email.entry.added.enabled",
+			"com.liferay.bookmarks.service"
+		},
+		new String[] {
+			"bookmarks.email.entry.added.subject", "email.entry.added.subject",
+			"com.liferay.bookmarks.service"
+		},
+		new String[] {
+			"bookmarks.email.entry.updated.body", "email.entry.updated.body",
+			"com.liferay.bookmarks.service"
+		},
+		new String[] {
+			"bookmarks.email.entry.updated.enabled",
+			"email.entry.updated.enabled", "com.liferay.bookmarks.service"
+		},
+		new String[] {
+			"bookmarks.email.entry.updated.subject",
+			"email.entry.updated.subject", "com.liferay.bookmarks.service"
+		},
+		new String[] {
+			"bookmarks.email.from.address", "email.from.address",
+			"com.liferay.bookmarks.service"
+		},
+		new String[] {
+			"bookmarks.email.from.name", "email.from.name",
+			"com.liferay.bookmarks.service"
+		},
+		new String[] {
+			"bookmarks.entry.columns", "entry.columns",
+			"com.liferay.bookmarks.service"
+		},
+		new String[] {
+			"bookmarks.folder.columns", "folder.columns",
+			"com.liferay.bookmarks.service"
+		},
+		new String[] {
+			"bookmarks.folders.search.visible", "folders.search.visible",
+			"com.liferay.bookmarks.service"
+		},
+		new String[] {
+			"bookmarks.related.assets.enabled", "related.assets.enabled",
+			"com.liferay.bookmarks.service"
+		},
+		new String[] {
+			"bookmarks.subfolders.visible", "subfolders.visible",
+			"com.liferay.bookmarks.service"
+		},
+
+		// Polls
+
+		new String[] {
+			"polls.publish.to.live.by.default", "publish.to.live.by.default",
+			"com.liferay.polls.service"
+		}
+	};
+
 	private static final String[] _OBSOLETE_PORTAL_KEYS = new String[] {
 		"amazon.access.key.id", "amazon.associate.tag",
 		"amazon.secret.access.key",
@@ -268,7 +356,8 @@ public class VerifyProperties extends VerifyProcess {
 		"com.liferay.filters.doubleclick.DoubleClickFilter",
 		"com.liferay.portal.servlet.filters.doubleclick.DoubleClickFilter",
 		"com.liferay.portal.servlet.filters.validhtml.ValidHtmlFilter",
-		"commons.pool.enabled", "dl.file.entry.read.count.enabled",
+		"commons.pool.enabled", "convert.processes",
+		"dl.file.entry.read.count.enabled",
 		"dynamic.data.lists.template.language.parser[ftl]",
 		"dynamic.data.lists.template.language.parser[vm]",
 		"dynamic.data.lists.template.language.parser[xsl]",
@@ -294,6 +383,7 @@ public class VerifyProperties extends VerifyProcess {
 		"invitation.email.max.recipients", "invitation.email.message.body",
 		"invitation.email.message.subject", "javax.persistence.validation.mode",
 		"jbi.workflow.url", "json.deserializer.strict.mode",
+		"journal.article.form.translate", "journal.article.types",
 		"journal.template.language.parser[css]",
 		"journal.template.language.parser[ftl]",
 		"journal.template.language.parser[vm]",
@@ -314,7 +404,9 @@ public class VerifyProperties extends VerifyProcess {
 		"memory.cluster.scheduler.lock.cache.enabled",
 		"message.boards.email.message.added.signature",
 		"message.boards.email.message.updated.signature",
-		"message.boards.thread.locking.enabled", "portal.ctx",
+		"message.boards.thread.locking.enabled",
+		"nested.portlets.layout.template.default",
+		"nested.portlets.layout.template.unsupported", "portal.ctx",
 		"portal.security.manager.enable", "permissions.list.filter",
 		"permissions.thread.local.cache.max.size",
 		"permissions.user.check.algorithm", "persistence.provider",
@@ -512,6 +604,7 @@ public class VerifyProperties extends VerifyProcess {
 		}
 	};
 
-	private static Log _log = LogFactoryUtil.getLog(VerifyProperties.class);
+	private static final Log _log = LogFactoryUtil.getLog(
+		VerifyProperties.class);
 
 }

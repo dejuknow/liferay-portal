@@ -19,8 +19,8 @@ import com.liferay.registry.ServiceReference;
 import java.util.Comparator;
 
 /**
-* @author Carlos Sierra Andrés
-*/
+ * @author Carlos Sierra Andrés
+ */
 public class ServiceReferenceServiceTupleComparator<S>
 	implements Comparator<ServiceReferenceServiceTuple<S, ?>> {
 
@@ -48,6 +48,6 @@ public class ServiceReferenceServiceTupleComparator<S>
 			serviceReferenceServiceTuple2.getServiceReference());
 	}
 
-	private Comparator<ServiceReference<S>> _comparator;
+	private final Comparator<ServiceReference<S>> _comparator;
 
 }

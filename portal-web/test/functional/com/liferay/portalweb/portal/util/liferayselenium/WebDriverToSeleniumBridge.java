@@ -79,6 +79,7 @@ public class WebDriverToSeleniumBridge
 		initKeysSpecialChars();
 
 		WebDriverHelper.setDefaultWindowHandle(webDriver.getWindowHandle());
+		WebDriverHelper.setNavigationBarHeight(120);
 	}
 
 	@Override
@@ -369,13 +370,19 @@ public class WebDriverToSeleniumBridge
 
 	@Override
 	public void dragAndDrop(String locator, String coordString) {
-		WebElement webElement = getWebElement(locator);
-
 		try {
-			Point point = webElement.getLocation();
+			int x = WebDriverHelper.getElementPositionCenterX(this, locator);
 
-			int x = point.getX() + 45;
-			int y = point.getY() + 100;
+			x += WebDriverHelper.getFramePositionLeft(this);
+			x += WebDriverHelper.getWindowPositionLeft(this);
+			x -= WebDriverHelper.getScrollOffsetX(this);
+
+			int y = WebDriverHelper.getElementPositionCenterY(this, locator);
+
+			y += WebDriverHelper.getFramePositionTop(this);
+			y += WebDriverHelper.getNavigationBarHeight();
+			y += WebDriverHelper.getWindowPositionTop(this);
+			y -= WebDriverHelper.getScrollOffsetY(this);
 
 			Robot robot = new Robot();
 

@@ -169,9 +169,8 @@ public class BackgroundTaskMessageListener extends BaseMessageListener {
 		ClassLoader classLoader) {
 
 		if (classLoader != ClassLoaderUtil.getPortalClassLoader()) {
-			backgroundTaskExecutor =
-				new ClassLoaderAwareBackgroundTaskExecutor(
-					backgroundTaskExecutor, classLoader);
+			backgroundTaskExecutor = new ClassLoaderAwareBackgroundTaskExecutor(
+				backgroundTaskExecutor, classLoader);
 		}
 
 		if (backgroundTaskExecutor.isSerial()) {
@@ -182,7 +181,7 @@ public class BackgroundTaskMessageListener extends BaseMessageListener {
 		return backgroundTaskExecutor;
 	}
 
-	private static Log _log = LogFactoryUtil.getLog(
+	private static final Log _log = LogFactoryUtil.getLog(
 		BackgroundTaskMessageListener.class);
 
 }

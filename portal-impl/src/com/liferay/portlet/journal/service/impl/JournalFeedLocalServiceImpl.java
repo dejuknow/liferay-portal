@@ -55,8 +55,8 @@ public class JournalFeedLocalServiceImpl
 	@Override
 	public JournalFeed addFeed(
 			long userId, long groupId, String feedId, boolean autoFeedId,
-			String name, String description, String type, String structureId,
-			String templateId, String rendererTemplateId, int delta,
+			String name, String description, String ddmStructureKey,
+			String ddmTemplateKey, String ddmRendererTemplateKey, int delta,
 			String orderByCol, String orderByType,
 			String targetLayoutFriendlyUrl, String targetPortletId,
 			String contentField, String feedFormat, double feedVersion,
@@ -70,8 +70,8 @@ public class JournalFeedLocalServiceImpl
 		Date now = new Date();
 
 		validate(
-			user.getCompanyId(), groupId, feedId, autoFeedId, name, structureId,
-			targetLayoutFriendlyUrl, contentField);
+			user.getCompanyId(), groupId, feedId, autoFeedId, name,
+			ddmStructureKey, targetLayoutFriendlyUrl, contentField);
 
 		if (autoFeedId) {
 			feedId = String.valueOf(counterLocalService.increment());
@@ -91,10 +91,9 @@ public class JournalFeedLocalServiceImpl
 		feed.setFeedId(feedId);
 		feed.setName(name);
 		feed.setDescription(description);
-		feed.setType(type);
-		feed.setStructureId(structureId);
-		feed.setTemplateId(templateId);
-		feed.setRendererTemplateId(rendererTemplateId);
+		feed.setDDMStructureKey(ddmStructureKey);
+		feed.setDDMTemplateKey(ddmTemplateKey);
+		feed.setDDMRendererTemplateKey(ddmRendererTemplateKey);
 		feed.setDelta(delta);
 		feed.setOrderByCol(orderByCol);
 		feed.setOrderByType(orderByType);
@@ -286,8 +285,8 @@ public class JournalFeedLocalServiceImpl
 	@Override
 	public JournalFeed updateFeed(
 			long groupId, String feedId, String name, String description,
-			String type, String structureId, String templateId,
-			String rendererTemplateId, int delta, String orderByCol,
+			String ddmStructureKey, String ddmTemplateKey,
+			String ddmRendererTemplateKey, int delta, String orderByCol,
 			String orderByType, String targetLayoutFriendlyUrl,
 			String targetPortletId, String contentField, String feedFormat,
 			double feedVersion, ServiceContext serviceContext)
@@ -298,16 +297,15 @@ public class JournalFeedLocalServiceImpl
 		JournalFeed feed = journalFeedPersistence.findByG_F(groupId, feedId);
 
 		validate(
-			feed.getCompanyId(), groupId, name, structureId,
+			feed.getCompanyId(), groupId, name, ddmStructureKey,
 			targetLayoutFriendlyUrl, contentField);
 
 		feed.setModifiedDate(serviceContext.getModifiedDate(null));
 		feed.setName(name);
 		feed.setDescription(description);
-		feed.setType(type);
-		feed.setStructureId(structureId);
-		feed.setTemplateId(templateId);
-		feed.setRendererTemplateId(rendererTemplateId);
+		feed.setDDMStructureKey(ddmStructureKey);
+		feed.setDDMTemplateKey(ddmTemplateKey);
+		feed.setDDMRendererTemplateKey(ddmRendererTemplateKey);
 		feed.setDelta(delta);
 		feed.setOrderByCol(orderByCol);
 		feed.setOrderByType(orderByType);
@@ -332,7 +330,7 @@ public class JournalFeedLocalServiceImpl
 	}
 
 	protected boolean isValidStructureField(
-		long groupId, String structureId, String contentField) {
+		long groupId, String ddmStructureKey, String contentField) {
 
 		if (contentField.equals(JournalFeedConstants.WEB_CONTENT_DESCRIPTION) ||
 			contentField.equals(JournalFeedConstants.RENDERED_WEB_CONTENT)) {
@@ -345,7 +343,7 @@ public class JournalFeedLocalServiceImpl
 				ddmStructureLocalService.getStructure(
 					groupId,
 					classNameLocalService.getClassNameId(JournalArticle.class),
-					structureId);
+					ddmStructureKey);
 
 			DDMForm ddmForm = ddmStructure.getDDMForm();
 
@@ -363,7 +361,7 @@ public class JournalFeedLocalServiceImpl
 
 	protected void validate(
 			long companyId, long groupId, String feedId, boolean autoFeedId,
-			String name, String structureId, String targetLayoutFriendlyUrl,
+			String name, String ddmStructureKey, String targetLayoutFriendlyUrl,
 			String contentField)
 		throws PortalException {
 
@@ -392,12 +390,12 @@ public class JournalFeedLocalServiceImpl
 		}
 
 		validate(
-			companyId, groupId, name, structureId, targetLayoutFriendlyUrl,
+			companyId, groupId, name, ddmStructureKey, targetLayoutFriendlyUrl,
 			contentField);
 	}
 
 	protected void validate(
-			long companyId, long groupId, String name, String structureId,
+			long companyId, long groupId, String name, String ddmStructureKey,
 			String targetLayoutFriendlyUrl, String contentField)
 		throws PortalException {
 
@@ -412,12 +410,12 @@ public class JournalFeedLocalServiceImpl
 			throw new FeedTargetLayoutFriendlyUrlException();
 		}
 
-		if (!isValidStructureField(groupId, structureId, contentField)) {
+		if (!isValidStructureField(groupId, ddmStructureKey, contentField)) {
 			throw new FeedContentFieldException();
 		}
 	}
 
-	private static Log _log = LogFactoryUtil.getLog(
+	private static final Log _log = LogFactoryUtil.getLog(
 		JournalFeedLocalServiceImpl.class);
 
 }

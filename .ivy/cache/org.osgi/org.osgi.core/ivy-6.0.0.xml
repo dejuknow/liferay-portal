@@ -4,7 +4,7 @@
 		module="org.osgi.core"
 		revision="6.0.0"
 		status="release"
-		publication="20140729234751"
+		publication="20140729204751"
 	>
 		<license name="Apache License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0" />
 		<description homepage="http://www.osgi.org">

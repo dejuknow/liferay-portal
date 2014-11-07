@@ -4,7 +4,7 @@
 		module="java5-parent"
 		revision="1.0.0"
 		status="release"
-		publication="20120512180620"
+		publication="20120512150620"
 	>
 		<description homepage="" />
 		<m:properties__organization.logo>http://www.apache.org/images/asf_logo_wide.gif</m:properties__organization.logo>

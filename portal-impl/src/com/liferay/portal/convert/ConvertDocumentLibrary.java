@@ -61,7 +61,7 @@ import java.util.List;
  * @author Alexander Chow
  * @author László Csontos
  */
-public class ConvertDocumentLibrary extends ConvertProcess {
+public class ConvertDocumentLibrary extends BaseConvertProcess {
 
 	@Override
 	public String getDescription() {
@@ -401,7 +401,7 @@ public class ConvertDocumentLibrary extends ConvertProcess {
 		JCRStore.class.getName(), S3Store.class.getName()
 	};
 
-	private static Log _log = LogFactoryUtil.getLog(
+	private static final Log _log = LogFactoryUtil.getLog(
 		ConvertDocumentLibrary.class);
 
 	private Store _sourceStore;

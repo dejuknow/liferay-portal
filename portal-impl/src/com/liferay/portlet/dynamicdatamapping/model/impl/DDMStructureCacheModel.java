@@ -41,7 +41,7 @@ public class DDMStructureCacheModel implements CacheModel<DDMStructure>,
 	Externalizable {
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(33);
+		StringBundler sb = new StringBundler(35);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -65,6 +65,8 @@ public class DDMStructureCacheModel implements CacheModel<DDMStructure>,
 		sb.append(classNameId);
 		sb.append(", structureKey=");
 		sb.append(structureKey);
+		sb.append(", version=");
+		sb.append(version);
 		sb.append(", name=");
 		sb.append(name);
 		sb.append(", description=");
@@ -127,6 +129,13 @@ public class DDMStructureCacheModel implements CacheModel<DDMStructure>,
 			ddmStructureImpl.setStructureKey(structureKey);
 		}
 
+		if (version == null) {
+			ddmStructureImpl.setVersion(StringPool.BLANK);
+		}
+		else {
+			ddmStructureImpl.setVersion(version);
+		}
+
 		if (name == null) {
 			ddmStructureImpl.setName(StringPool.BLANK);
 		}
@@ -161,6 +170,8 @@ public class DDMStructureCacheModel implements CacheModel<DDMStructure>,
 
 		ddmStructureImpl.setDDMForm(_ddmForm);
 
+		ddmStructureImpl.setFullHierarchyDDMForm(_fullHierarchyDDMForm);
+
 		return ddmStructureImpl;
 	}
 
@@ -178,6 +189,7 @@ public class DDMStructureCacheModel implements CacheModel<DDMStructure>,
 		parentStructureId = objectInput.readLong();
 		classNameId = objectInput.readLong();
 		structureKey = objectInput.readUTF();
+		version = objectInput.readUTF();
 		name = objectInput.readUTF();
 		description = objectInput.readUTF();
 		definition = objectInput.readUTF();
@@ -185,6 +197,7 @@ public class DDMStructureCacheModel implements CacheModel<DDMStructure>,
 		type = objectInput.readInt();
 
 		_ddmForm = (com.liferay.portlet.dynamicdatamapping.model.DDMForm)objectInput.readObject();
+		_fullHierarchyDDMForm = (com.liferay.portlet.dynamicdatamapping.model.DDMForm)objectInput.readObject();
 	}
 
 	@Override
@@ -221,6 +234,13 @@ public class DDMStructureCacheModel implements CacheModel<DDMStructure>,
 			objectOutput.writeUTF(structureKey);
 		}
 
+		if (version == null) {
+			objectOutput.writeUTF(StringPool.BLANK);
+		}
+		else {
+			objectOutput.writeUTF(version);
+		}
+
 		if (name == null) {
 			objectOutput.writeUTF(StringPool.BLANK);
 		}
@@ -252,6 +272,7 @@ public class DDMStructureCacheModel implements CacheModel<DDMStructure>,
 		objectOutput.writeInt(type);
 
 		objectOutput.writeObject(_ddmForm);
+		objectOutput.writeObject(_fullHierarchyDDMForm);
 	}
 
 	public String uuid;
@@ -265,10 +286,12 @@ public class DDMStructureCacheModel implements CacheModel<DDMStructure>,
 	public long parentStructureId;
 	public long classNameId;
 	public String structureKey;
+	public String version;
 	public String name;
 	public String description;
 	public String definition;
 	public String storageType;
 	public int type;
 	public com.liferay.portlet.dynamicdatamapping.model.DDMForm _ddmForm;
+	public com.liferay.portlet.dynamicdatamapping.model.DDMForm _fullHierarchyDDMForm;
 }

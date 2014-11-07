@@ -183,9 +183,8 @@ public class AppViewSearchEntryTag extends IncludeTag {
 
 	private static final boolean _CLEAN_UP_SET_ATTRIBUTES = true;
 
-	private static final boolean _HIGHLIGHT_ENABLED =
-		GetterUtil.getBoolean(
-			PropsUtil.get(PropsKeys.INDEX_SEARCH_HIGHLIGHT_ENABLED));
+	private static final boolean _HIGHLIGHT_ENABLED = GetterUtil.getBoolean(
+		PropsUtil.get(PropsKeys.INDEX_SEARCH_HIGHLIGHT_ENABLED));
 
 	private static final String _PAGE =
 		"/html/taglib/ui/app_view_search_entry/page.jsp";

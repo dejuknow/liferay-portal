@@ -570,7 +570,7 @@ public class ServiceTrackerCollectionTest {
 	}
 
 	@ArquillianResource
-	private Bundle _bundle;
+	private final Bundle _bundle;
 
 	private Registry _registry;
 
@@ -610,7 +610,7 @@ public class ServiceTrackerCollectionTest {
 			_counter.incrementAndGet();
 		}
 
-		private AtomicInteger _counter;
+		private final AtomicInteger _counter;
 
 	}
 

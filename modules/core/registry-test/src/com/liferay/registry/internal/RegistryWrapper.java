@@ -26,8 +26,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
-* @author Carlos Sierra Andrés
-*/
+ * @author Carlos Sierra Andrés
+ */
 public class RegistryWrapper implements Registry {
 
 	public RegistryWrapper(Registry registry) {
@@ -230,8 +230,8 @@ public class RegistryWrapper implements Registry {
 		return _registry.ungetService(serviceReference);
 	}
 
-	private Registry _registry;
-	private ConcurrentHashMap<ServiceReference<?>, AtomicInteger>
+	private final Registry _registry;
+	private final ConcurrentHashMap<ServiceReference<?>, AtomicInteger>
 		_serviceReferenceCountsMap =
 			new ConcurrentHashMap<ServiceReference<?>, AtomicInteger>();
 

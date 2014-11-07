@@ -42,6 +42,7 @@ import com.liferay.portal.model.PortletPreferencesIds;
 import com.liferay.portal.model.User;
 import com.liferay.portal.model.UserTracker;
 import com.liferay.portal.model.UserTrackerPath;
+import com.liferay.portal.security.auth.InterruptedPortletRequestWhitelistUtil;
 import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.security.permission.PermissionChecker;
@@ -721,10 +722,17 @@ public class PortalRequestProcessor extends TilesRequestProcessor {
 			return _PATH_PORTAL_ERROR;
 		}
 
+		long companyId = PortalUtil.getCompanyId(request);
+		String portletId = ParamUtil.getString(request, "p_p_id");
+
 		if (!path.equals(_PATH_PORTAL_JSON_SERVICE) &&
 			!path.equals(_PATH_PORTAL_RENDER_PORTLET) &&
 			!ParamUtil.getBoolean(request, "wsrp") &&
-			!themeDisplay.isImpersonated()) {
+			!themeDisplay.isImpersonated() &&
+			!InterruptedPortletRequestWhitelistUtil.
+				isPortletInvocationWhitelisted(
+					companyId, portletId,
+					PortalUtil.getStrutsAction(request))) {
 
 			// Authenticated users should agree to Terms of Use
 
@@ -797,9 +805,6 @@ public class PortalRequestProcessor extends TilesRequestProcessor {
 		if (isPortletPath(path)) {
 			try {
 				Portlet portlet = null;
-
-				long companyId = PortalUtil.getCompanyId(request);
-				String portletId = ParamUtil.getString(request, "p_p_id");
 
 				if (Validator.isNotNull(portletId)) {
 					portlet = PortletLocalServiceUtil.getPortletById(
@@ -1040,14 +1045,14 @@ public class PortalRequestProcessor extends TilesRequestProcessor {
 	private static final String _PATH_PORTAL_VERIFY_EMAIL_ADDRESS =
 		"/portal/verify_email_address";
 
-	private static Log _log = LogFactoryUtil.getLog(
+	private static final Log _log = LogFactoryUtil.getLog(
 		PortalRequestProcessor.class);
 
-	private static Pattern _strutsPortletIgnoredParamtersPattern =
+	private static final Pattern _strutsPortletIgnoredParamtersPattern =
 		Pattern.compile(PropsValues.STRUTS_PORTLET_IGNORED_PARAMETERS_REGEXP);
 
-	private Set<String> _lastPaths;
-	private Set<String> _publicPaths;
-	private Set<String> _trackerIgnorePaths;
+	private final Set<String> _lastPaths;
+	private final Set<String> _publicPaths;
+	private final Set<String> _trackerIgnorePaths;
 
 }

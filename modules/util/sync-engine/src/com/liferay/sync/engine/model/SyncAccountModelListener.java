@@ -59,7 +59,7 @@ public class SyncAccountModelListener implements ModelListener<SyncAccount> {
 			SessionManager.removeSession(syncAccount.getSyncAccountId());
 
 			SyncAccountService.synchronizeSyncAccount(
-				syncAccount.getSyncAccountId(), 0);
+				syncAccount.getSyncAccountId(), true, 0);
 		}
 	}
 
@@ -86,6 +86,7 @@ public class SyncAccountModelListener implements ModelListener<SyncAccount> {
 		}
 	}
 
-	private static Logger _logger = LoggerFactory.getLogger(SyncEngine.class);
+	private static final Logger _logger = LoggerFactory.getLogger(
+		SyncEngine.class);
 
 }

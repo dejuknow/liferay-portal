@@ -20,7 +20,7 @@
 </tr>
 <tr>
 	<td>GEOLOCATION_SHARE_LOCATION_BUTTON_PNG</td>
-	<td>\firefox\buttons\geolocation_share_location_button.png</td>
+	<td>/firefox/buttons/geolocation_share_location_button.png</td>
 	<td></td>
 </tr>
 <tr>
@@ -89,8 +89,13 @@
 	<td></td>
 </tr>
 <tr>
-	<td>DOCUMENTS_AND_MEDIA_SELECT</td>
-	<td>//div[@data-fieldname='${key_fieldName}']/div/button[contains(.,'Select')]</td>
+	<td>DOCUMENTS_AND_MEDIA_UPLOAD</td>
+	<td>//div[@data-fieldname='${key_fieldName}']/div/button[contains(.,'Upload')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>DOCUMENTS_AND_MEDIA_CHOOSE_FROM_DOCUMENT_LIBRARY</td>
+	<td>//div[@data-fieldname='${key_fieldName}']/div/button[contains(.,'Choose from Document Library')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -145,12 +150,12 @@
 </tr>
 <tr>
 	<td>RADIO_OPTION_LABEL</td>
-	<td>//div[@data-fieldname='${key_fieldName}']/label[contains(.,'${key_ddlRecordFieldData}')]</td>
+	<td>//div[@data-fieldname='${key_fieldName}']/div/label[contains(.,'${key_ddlRecordFieldData}')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>RADIO_OPTION_RADIO</td>
-	<td>//div[@data-fieldname='${key_fieldName}']/label[contains(.,'${key_ddlRecordFieldData}')]/input</td>
+	<td>//div[@data-fieldname='${key_fieldName}']/div/label[contains(.,'${key_ddlRecordFieldData}')]/input</td>
 	<td></td>
 </tr>
 <tr>

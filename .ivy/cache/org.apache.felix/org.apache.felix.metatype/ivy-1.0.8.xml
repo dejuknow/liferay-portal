@@ -4,7 +4,7 @@
 		module="org.apache.felix.metatype"
 		revision="1.0.8"
 		status="release"
-		publication="20130904033314"
+		publication="20130904003314"
 	>
 		<description homepage="">
 		Implementation of the OSGi Metatype Service Specification 1.2

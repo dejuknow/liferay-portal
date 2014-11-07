@@ -134,6 +134,7 @@ import com.liferay.portlet.dynamicdatamapping.model.DDMContentModel;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStorageLink;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStorageLinkModel;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
+import com.liferay.portlet.dynamicdatamapping.model.DDMStructureConstants;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructureLinkModel;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructureModel;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplateConstants;
@@ -1560,10 +1561,9 @@ public class DataFactory {
 		journalArticleModel.setUrlTitle(urlTitle);
 
 		journalArticleModel.setContent(_journalArticleContent);
-		journalArticleModel.setType("general");
-		journalArticleModel.setStructureId(
+		journalArticleModel.setDDMStructureKey(
 			_defaultJournalDDMStructureModel.getStructureKey());
-		journalArticleModel.setTemplateId(
+		journalArticleModel.setDDMTemplateKey(
 			_defaultJournalDDMTemplateModel.getTemplateKey());
 		journalArticleModel.setDisplayDate(new Date());
 		journalArticleModel.setExpirationDate(nextFutureDate());
@@ -2558,6 +2558,7 @@ public class DataFactory {
 		dDMStructureModel.setModifiedDate(nextFutureDate());
 		dDMStructureModel.setClassNameId(classNameId);
 		dDMStructureModel.setStructureKey(structureKey);
+		dDMStructureModel.setVersion(DDMStructureConstants.VERSION_DEFAULT);
 
 		StringBundler sb = new StringBundler(5);
 

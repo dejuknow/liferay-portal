@@ -134,9 +134,8 @@ public class SitesImpl implements Sites {
 		UnicodeProperties settingsProperties =
 			layoutSet.getSettingsProperties();
 
-		String mergeFailFriendlyURLLayouts =
-			settingsProperties.getProperty(
-				MERGE_FAIL_FRIENDLY_URL_LAYOUTS, StringPool.BLANK);
+		String mergeFailFriendlyURLLayouts = settingsProperties.getProperty(
+			MERGE_FAIL_FRIENDLY_URL_LAYOUTS, StringPool.BLANK);
 
 		mergeFailFriendlyURLLayouts = StringUtil.add(
 			mergeFailFriendlyURLLayouts, layout.getUuid());
@@ -1628,7 +1627,7 @@ public class SitesImpl implements Sites {
 	 * its linked layout set when it is first accessed.
 	 * </p>
 	 *
-	 * @param  layoutSet the site having its timestamp reset
+	 * @param layoutSet the site having its timestamp reset
 	 */
 	protected void doResetPrototype(LayoutSet layoutSet) {
 		UnicodeProperties settingsProperties =

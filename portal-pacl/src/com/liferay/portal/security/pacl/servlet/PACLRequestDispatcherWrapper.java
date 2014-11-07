@@ -14,7 +14,7 @@
 
 package com.liferay.portal.security.pacl.servlet;
 
-import com.liferay.portal.kernel.servlet.PluginContextListener;
+import com.liferay.portal.util.ClassLoaderUtil;
 
 import java.io.IOException;
 
@@ -61,16 +61,14 @@ public class PACLRequestDispatcherWrapper implements RequestDispatcher {
 			boolean include)
 		throws IOException, ServletException {
 
-		ClassLoader pluginClassLoader =
-			(ClassLoader)_servletContext.getAttribute(
-				PluginContextListener.PLUGIN_CLASS_LOADER);
+		ClassLoader pluginClassLoader = _servletContext.getClassLoader();
 
 		DispatchPrivilegedExceptionAction dispatchPrivilegedExceptionAction =
 			new DispatchPrivilegedExceptionAction(
 				_requestDispatcher, servletRequest, servletResponse, include);
 
 		try {
-			if (pluginClassLoader == null) {
+			if (pluginClassLoader == ClassLoaderUtil.getPortalClassLoader()) {
 				AccessController.doPrivileged(
 					dispatchPrivilegedExceptionAction);
 			}
@@ -90,7 +88,7 @@ public class PACLRequestDispatcherWrapper implements RequestDispatcher {
 	}
 
 	private RequestDispatcher _requestDispatcher;
-	private ServletContext _servletContext;
+	private final ServletContext _servletContext;
 
 	private class DispatchPrivilegedExceptionAction
 		implements PrivilegedExceptionAction<Void> {
@@ -117,10 +115,10 @@ public class PACLRequestDispatcherWrapper implements RequestDispatcher {
 			return null;
 		}
 
-		private boolean _include;
+		private final boolean _include;
 		private RequestDispatcher _requestDispatcher;
-		private ServletRequest _servletRequest;
-		private ServletResponse _servletResponse;
+		private final ServletRequest _servletRequest;
+		private final ServletResponse _servletResponse;
 
 	}
 

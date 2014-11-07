@@ -121,9 +121,8 @@ public class BaseSearchEngine implements SearchEngine {
 		}
 
 		try {
-			_termQueryFactory =
-				(TermQueryFactory)InstanceFactory.newInstance(
-					classLoader, className);
+			_termQueryFactory = (TermQueryFactory)InstanceFactory.newInstance(
+				classLoader, className);
 		}
 		catch (Exception e) {
 			_log.fatal("Unable to locate appropriate BooleanQueryFactory", e);
@@ -246,7 +245,8 @@ public class BaseSearchEngine implements SearchEngine {
 		_vendor = vendor;
 	}
 
-	private static Log _log = LogFactoryUtil.getLog(BaseSearchEngine.class);
+	private static final Log _log = LogFactoryUtil.getLog(
+		BaseSearchEngine.class);
 
 	private BooleanClauseFactory _booleanClauseFactory;
 	private BooleanQueryFactory _booleanQueryFactory;

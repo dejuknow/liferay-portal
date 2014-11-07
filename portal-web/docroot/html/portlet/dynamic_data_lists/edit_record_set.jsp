@@ -123,7 +123,7 @@ if (ddmStructureId > 0) {
 					}
 				%>
 
-					<aui:option label='<%= workflowDefinition.getName() + " (" + LanguageUtil.format(locale, "version-x", workflowDefinition.getVersion(), false) + ")" %>' selected="<%= selected %>" value="<%= workflowDefinition.getName() + StringPool.AT + workflowDefinition.getVersion() %>" />
+					<aui:option label='<%= HtmlUtil.escape(workflowDefinition.getName()) + " (" + LanguageUtil.format(locale, "version-x", workflowDefinition.getVersion(), false) + ")" %>' selected="<%= selected %>" value="<%= HtmlUtil.escapeAttribute(workflowDefinition.getName()) + StringPool.AT + workflowDefinition.getVersion() %>" />
 
 				<%
 				}
@@ -171,13 +171,9 @@ if (ddmStructureId > 0) {
 				title: '<%= UnicodeLanguageUtil.get(request, "data-definitions") %>'
 			},
 			function(event) {
-				var A = AUI();
+				AUI.$('#<portlet:namespace />ddmStructureId').val(event.ddmstructureid);
 
-				var name = A.Lang.String.unescapeEntities(event.name);
-
-				A.one('#<portlet:namespace />ddmStructureId').val(event.ddmstructureid);
-
-				A.one('#<portlet:namespace />ddmStructureNameDisplay').val(name);
+				AUI.$('#<portlet:namespace />ddmStructureNameDisplay').val(_.unescape(event.name));
 			}
 		);
 	}

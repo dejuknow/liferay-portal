@@ -21,7 +21,7 @@ import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalServiceUtil;
 /**
  * @author Alexander Chow
  */
-public class ConvertDocumentLibraryExtraSettings extends ConvertProcess {
+public class ConvertDocumentLibraryExtraSettings extends BaseConvertProcess {
 
 	@Override
 	public String getDescription() {
@@ -49,7 +49,7 @@ public class ConvertDocumentLibraryExtraSettings extends ConvertProcess {
 	protected void doConvert() throws Exception {
 	}
 
-	private static Log _log = LogFactoryUtil.getLog(
+	private static final Log _log = LogFactoryUtil.getLog(
 		ConvertDocumentLibraryExtraSettings.class);
 
 }

@@ -20,11 +20,13 @@ import com.liferay.portlet.dynamicdatamapping.io.DDMFormValuesJSONDeserializerTe
 import com.liferay.portlet.dynamicdatamapping.io.DDMFormValuesJSONSerializerTest;
 import com.liferay.portlet.dynamicdatamapping.io.DDMFormXSDDeserializerTest;
 import com.liferay.portlet.dynamicdatamapping.model.impl.DDMStructureImplTest;
+import com.liferay.portlet.dynamicdatamapping.render.DDMFormFieldValueRendererTest;
 import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValuesTest;
 import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValuesValidatorTest;
 import com.liferay.portlet.dynamicdatamapping.storage.GeolocationFieldRendererTest;
 import com.liferay.portlet.dynamicdatamapping.util.DDMFormTemplateSynchonizerTest;
 import com.liferay.portlet.dynamicdatamapping.util.DDMFormValuesToFieldsConverterTest;
+import com.liferay.portlet.dynamicdatamapping.util.DDMFormValuesTransformerTest;
 import com.liferay.portlet.dynamicdatamapping.util.DDMImplTest;
 import com.liferay.portlet.dynamicdatamapping.util.DDMXMLImplTest;
 import com.liferay.portlet.dynamicdatamapping.util.DDMXSDImplTest;
@@ -40,15 +42,15 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
 	{
-		DDMFormJSONDeserializerTest.class, DDMFormJSONSerializerTest.class,
-		DDMFormTemplateSynchonizerTest.class,
+		DDMFormFieldValueRendererTest.class, DDMFormJSONDeserializerTest.class,
+		DDMFormJSONSerializerTest.class, DDMFormTemplateSynchonizerTest.class,
 		DDMFormValuesJSONDeserializerTest.class,
 		DDMFormValuesJSONSerializerTest.class, DDMFormValuesTest.class,
 		DDMFormValuesToFieldsConverterTest.class,
-		DDMFormValuesValidatorTest.class, DDMFormXSDDeserializerTest.class,
-		DDMFormXSDDeserializerTest.class, DDMImplTest.class,
-		DDMStructureImplTest.class, DDMXMLImplTest.class, DDMXSDImplTest.class,
-		FieldsToDDMFormValuesConverterTest.class,
+		DDMFormValuesTransformerTest.class, DDMFormValuesValidatorTest.class,
+		DDMFormXSDDeserializerTest.class, DDMFormXSDDeserializerTest.class,
+		DDMImplTest.class, DDMStructureImplTest.class, DDMXMLImplTest.class,
+		DDMXSDImplTest.class, FieldsToDDMFormValuesConverterTest.class,
 		GeolocationFieldRendererTest.class
 	})
 public class DDMTestSuite {

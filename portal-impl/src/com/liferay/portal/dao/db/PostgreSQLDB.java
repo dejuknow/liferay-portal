@@ -158,7 +158,7 @@ public class PostgreSQLDB extends BaseDB {
 					String[] template = buildColumnNameTokens(line);
 
 					line = StringUtil.replace(
-						"alter table @table@ rename @old-column@ to" +
+						"alter table @table@ rename @old-column@ to " +
 							"@new-column@;", REWORD_TEMPLATE, template);
 				}
 				else if (line.startsWith(ALTER_COLUMN_TYPE)) {
@@ -209,6 +209,6 @@ public class PostgreSQLDB extends BaseDB {
 
 	private static final boolean _SUPPORTS_QUERYING_AFTER_EXCEPTION = false;
 
-	private static PostgreSQLDB _instance = new PostgreSQLDB();
+	private static final PostgreSQLDB _instance = new PostgreSQLDB();
 
 }

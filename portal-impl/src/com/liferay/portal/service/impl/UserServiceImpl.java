@@ -1098,9 +1098,8 @@ public class UserServiceImpl extends UserServiceBaseImpl {
 		UserGroupPermissionUtil.check(
 			getPermissionChecker(), userGroupId, ActionKeys.ASSIGN_MEMBERS);
 
-		Set<Long> unsetUserIds =
-			SetUtil.fromArray(
-				userGroupPersistence.getUserPrimaryKeys(userGroupId));
+		Set<Long> unsetUserIds = SetUtil.fromArray(
+			userGroupPersistence.getUserPrimaryKeys(userGroupId));
 
 		unsetUserIds.removeAll(SetUtil.fromArray(userIds));
 

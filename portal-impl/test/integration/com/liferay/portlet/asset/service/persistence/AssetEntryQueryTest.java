@@ -549,9 +549,8 @@ public class AssetEntryQueryTest {
 		for (int i = 0; i < assetEntries.size(); i++) {
 			AssetEntry assetEntry = assetEntries.get(i);
 
-			RatingsStats ratingsStats =
-				RatingsStatsLocalServiceUtil.getStats(
-					assetEntry.getClassName(), assetEntry.getClassPK());
+			RatingsStats ratingsStats = RatingsStatsLocalServiceUtil.getStats(
+				assetEntry.getClassName(), assetEntry.getClassPK());
 
 			Assert.assertEquals(
 				ratingsStats.getAverageScore(), orderedScores[i], 0);

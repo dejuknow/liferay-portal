@@ -20,11 +20,14 @@ package com.liferay.portlet.dynamicdatamapping.storage;
  */
 public enum StorageType {
 
-	EXPANDO("expando"), XML("xml");
+	EXPANDO("expando"), JSON("json"), XML("xml");
 
 	public static StorageType parse(String value) {
 		if (EXPANDO.getValue().equals(value)) {
 			return EXPANDO;
+		}
+		else if (JSON.getValue().equals(value)) {
+			return JSON;
 		}
 		else if (XML.getValue().equals(value)) {
 			return XML;
@@ -47,6 +50,6 @@ public enum StorageType {
 		_value = value;
 	}
 
-	private String _value;
+	private final String _value;
 
 }

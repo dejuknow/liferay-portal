@@ -19,6 +19,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>STATUS_LABEL</td>
+	<td>//span[contains(@class,'workflow-status')]/strong</td>
+	<td></td>
+</tr>
+<tr>
 	<td>SUCCESS_MESSAGE</td>
 	<td>//div[contains(@class,'alert') and contains(@class,'alert-success')]</td>
 	<td></td>
@@ -70,7 +75,7 @@
 </tr>
 <tr>
 	<td>TITLE_FIELD</td>
-	<td>//input[contains(@id,'_15_title') and contains(@id,'_en') and contains(@id,'_US')]</td>
+	<td>//input[contains(@id,'_15_title')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -263,8 +268,8 @@
 </tr>
 <!--DISPLAY_PAGE-->
 <tr>
-	<td>DISPLAY_PAGE_SELECT</td>
-	<td>//div[contains(@id,'displayPageToolbar')]/div/button[contains(.,'Select')]</td>
+	<td>DISPLAY_PAGE_CHOOSE</td>
+	<td>//div[contains(@id,'displayPage')]/div/button[contains(.,'Choose')]</td>
 	<td></td>
 </tr>
 <tr>

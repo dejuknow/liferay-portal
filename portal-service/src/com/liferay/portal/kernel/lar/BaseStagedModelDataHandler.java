@@ -136,9 +136,8 @@ public abstract class BaseStagedModelDataHandler<T extends StagedModel>
 			}
 
 			if (existingStagedModel == null) {
-				existingStagedModel =
-					fetchStagedModelByUuidAndCompanyId(
-						uuid, originalGroup.getCompanyId());
+				existingStagedModel = fetchStagedModelByUuidAndCompanyId(
+					uuid, originalGroup.getCompanyId());
 			}
 
 			return existingStagedModel;

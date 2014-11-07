@@ -20,7 +20,7 @@ feature or API will be dropped in an upcoming version.
 replaces an old API, in spite of the old API being kept in Liferay Portal for
 backwards compatibility.
 
-*This document has been reviewed through commit `80a3e7c`.*
+*This document has been reviewed through commit `a00a5c3`.*
 
 ## Breaking Changes Contribution Guidelines
 
@@ -519,8 +519,8 @@ com.liferay.portal.kernel.portlet.bridges.mvc.ActionCommand
 com.liferay.portal.kernel.portlet.bridges.mvc.BaseActionCommand
 ```
 
-In addition, `com.liferay.util.bridges.mvc.MVCPortlet` is a deprecated, but
-was made to extend `com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet`.
+In addition, `com.liferay.util.bridges.mvc.MVCPortlet` is deprecated, but was
+made to extend `com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet`.
 
 #### Who is affected?
 
@@ -535,7 +535,78 @@ Replace imports of `com.liferay.util.bridges.mvc.ActionCommand` with
 
 #### Why was this change made?
 
-This change was made in to avoid duplication of an implementable interface in
-the system. Duplication can cause `ClassCastException`s.
+This change was made to avoid duplication of an implementable interface in the
+system. Duplication can cause `ClassCastException`s.
+
+---------------------------------------
+
+### Convert Process Classes Are No Longer Specified via the `convert.processes` Portal Property, but Are Contributed as OSGi Modules
+- **Date:** 2014-Oct-09
+- **JIRA Ticket:** LPS-50604
+
+#### What changed?
+
+The implementation class `com.liferay.portal.convert.ConvertProcess` was renamed 
+`com.liferay.portal.convert.BaseConvertProcess`. An interface named
+`com.liferay.portal.convert.ConvertProcess` was created for it.
+
+The `convert.processes` key was removed from `portal.properties`.
+Consequentially, `ConvertProcess` implementations must register as OSGi
+components.
+
+#### Who is affected?
+
+This affects any implementations of the former `ConvertProcess` class, including
+`ConvertProcess` class implementations in EXT plugins. Until version 6.2, this
+type of service could only be implemented with an EXT plugin, given that the
+`ConvertProcess` class resided in `portal-impl`.
+
+#### How should I update my code?
+
+You should replace `extends com.liferay.portal.convert.ConvertProcess` with
+`extends com.liferay.portal.convert.BaseConvertProcess` and annotate the class
+with `@Component(service=ConvertProcess.class)`.
+
+Then turn your EXT plugin into an OSGi bundle and deploy it to the portal. You
+should see your convert process in the configuration UI.
+
+#### Why was this change made?
+
+This change was made as a part of the ongoing strategy to modularize Liferay
+Portal by means of an OSGi container. 
+
+---------------------------------------
+
+### Migration of the Field *Type* from the Journal Article API into a Vocabulary
+- **Date:** 2014-Oct-13
+- **JIRA Ticket:** LPS-50764
+
+#### What changed?
+
+The field *type* from the Journal Article entity has been removed. The Journal
+API no longer supports this parameter. A new vocabulary called *Web Content
+Types* is created when migrating from previous versions of Liferay, and the
+types from the existing articles are kept as categories of this vocabulary.
+
+#### Who is affected?
+
+This affects any caller of the removed methods `JournalArticle.getType()` and
+`JournalFeed.getType()`, and callers of `ArticleTypeException`'s methods, that
+attempt to use the former `type` parameter of the `JournalArticle` or
+`JournalFeed` service.
+
+#### How should I update my code?
+
+If your logic was not affected by the type, you can simply remove the `type`
+parameter from the Journal API call. If your logic was affected by the type, you
+should now use the `AssetCategoryService` to obtain the category of the journal
+articles.
+
+#### Why was this change made?
+
+Web Content Types had to be updated in a properties file and could not be
+translated easily. Categories provide a much more flexible behavior and a better
+UI. In addition, all the features, such as filters, developed for categories can
+be used now in asset publishers and faceted search.
 
 ---------------------------------------

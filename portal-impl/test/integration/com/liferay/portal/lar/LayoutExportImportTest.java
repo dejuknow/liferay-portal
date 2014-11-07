@@ -319,16 +319,14 @@ public class LayoutExportImportTest extends BaseExportImportTestCase {
 
 		exportImportLayouts(layoutIds, getImportParameterMap());
 
-		importedLayout1 =
-			LayoutLocalServiceUtil.fetchLayoutByUuidAndGroupId(
-				layout1.getUuid(), importedGroup.getGroupId(), false);
+		importedLayout1 = LayoutLocalServiceUtil.fetchLayoutByUuidAndGroupId(
+			layout1.getUuid(), importedGroup.getGroupId(), false);
 
 		Assert.assertEquals(
 			layout1.getPriority(), importedLayout1.getPriority());
 
-		importedLayout2 =
-			LayoutLocalServiceUtil.fetchLayoutByUuidAndGroupId(
-				layout2.getUuid(), importedGroup.getGroupId(), false);
+		importedLayout2 = LayoutLocalServiceUtil.fetchLayoutByUuidAndGroupId(
+			layout2.getUuid(), importedGroup.getGroupId(), false);
 
 		Assert.assertEquals(
 			layout2.getPriority(), importedLayout2.getPriority());

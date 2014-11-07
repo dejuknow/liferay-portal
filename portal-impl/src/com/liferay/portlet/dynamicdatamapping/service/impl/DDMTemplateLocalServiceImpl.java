@@ -402,7 +402,7 @@ public class DDMTemplateLocalServiceImpl
 					template.getCompanyId());
 
 				if (template.getGroupId() == companyGroup.getGroupId()) {
-					if (JournalArticleUtil.countByC_T(
+					if (JournalArticleUtil.countByC_DDMTK(
 							JournalArticleConstants.CLASSNAME_ID_DEFAULT,
 							template.getTemplateKey()) > 0) {
 
@@ -410,7 +410,7 @@ public class DDMTemplateLocalServiceImpl
 					}
 				}
 				else {
-					if (JournalArticleUtil.countByG_C_T(
+					if (JournalArticleUtil.countByG_C_DDMTK(
 							template.getGroupId(),
 							JournalArticleConstants.CLASSNAME_ID_DEFAULT,
 							template.getTemplateKey()) > 0) {
@@ -454,6 +454,18 @@ public class DDMTemplateLocalServiceImpl
 	public void deleteTemplates(long groupId) throws PortalException {
 		List<DDMTemplate> templates = ddmTemplatePersistence.findByGroupId(
 			groupId);
+
+		for (DDMTemplate template : templates) {
+			ddmTemplateLocalService.deleteTemplate(template);
+		}
+	}
+
+	@Override
+	public void deleteTemplates(long groupId, long classNameId)
+		throws PortalException {
+
+		List<DDMTemplate> templates = ddmTemplatePersistence.findByG_C(
+			groupId, classNameId);
 
 		for (DDMTemplate template : templates) {
 			ddmTemplateLocalService.deleteTemplate(template);

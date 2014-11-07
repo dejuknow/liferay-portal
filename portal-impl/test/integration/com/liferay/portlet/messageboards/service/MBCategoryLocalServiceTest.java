@@ -290,9 +290,8 @@ public class MBCategoryLocalServiceTest {
 			draftCategory.getUserId(), draftCategory.getCategoryId(),
 			WorkflowConstants.STATUS_DRAFT);
 
-		List<MBCategory> categories =
-			MBCategoryLocalServiceUtil.getCategories(
-				_group.getGroupId(), WorkflowConstants.STATUS_APPROVED);
+		List<MBCategory> categories = MBCategoryLocalServiceUtil.getCategories(
+			_group.getGroupId(), WorkflowConstants.STATUS_APPROVED);
 
 		AssertUtils.assertEquals(expectedCategories, categories);
 
@@ -336,9 +335,8 @@ public class MBCategoryLocalServiceTest {
 			draftCategory.getUserId(), draftCategory.getCategoryId(),
 			WorkflowConstants.STATUS_DRAFT);
 
-		List<MBCategory> categories =
-			MBCategoryLocalServiceUtil.getCategories(
-				_group.getGroupId(), WorkflowConstants.STATUS_APPROVED);
+		List<MBCategory> categories = MBCategoryLocalServiceUtil.getCategories(
+			_group.getGroupId(), WorkflowConstants.STATUS_APPROVED);
 
 		AssertUtils.assertEquals(expectedCategories, categories);
 

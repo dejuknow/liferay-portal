@@ -138,11 +138,17 @@ public class TemplateNode extends LinkedHashMap<String, Object> {
 			return StringPool.BLANK;
 		}
 
+		long groupId = getLayoutGroupId();
+
+		if (groupId == 0) {
+			groupId = _themeDisplay.getScopeGroupId();
+		}
+
 		boolean privateLayout = layoutType.startsWith("private");
 
 		try {
 			Layout layout = LayoutLocalServiceUtil.getLayout(
-				getLayoutGroupId(), privateLayout, getLayoutId());
+				groupId, privateLayout, getLayoutId());
 
 			return PortalUtil.getLayoutFriendlyURL(layout, _themeDisplay);
 		}
@@ -271,11 +277,11 @@ public class TemplateNode extends LinkedHashMap<String, Object> {
 
 	private static final String _LAYOUT_TYPE_PUBLIC = "public";
 
-	private static Log _log = LogFactoryUtil.getLog(TemplateNode.class);
+	private static final Log _log = LogFactoryUtil.getLog(TemplateNode.class);
 
-	private Map<String, TemplateNode> _childTemplateNodes =
+	private final Map<String, TemplateNode> _childTemplateNodes =
 		new LinkedHashMap<String, TemplateNode>();
-	private List<TemplateNode> _siblingTemplateNodes =
+	private final List<TemplateNode> _siblingTemplateNodes =
 		new ArrayList<TemplateNode>();
 	private ThemeDisplay _themeDisplay;
 

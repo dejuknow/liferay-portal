@@ -41,9 +41,8 @@ public class IconRefreshTag extends IconTag {
 		setImage("../aui/refresh");
 		setMessage("refresh");
 
-		String onClick =
-			"Liferay.Portlet.refresh('#p_p_id_".concat(
-				portletDisplay.getId()).concat("_'); return false;");
+		String onClick = "Liferay.Portlet.refresh('#p_p_id_".concat(
+			portletDisplay.getId()).concat("_'); return false;");
 
 		setOnClick(onClick);
 

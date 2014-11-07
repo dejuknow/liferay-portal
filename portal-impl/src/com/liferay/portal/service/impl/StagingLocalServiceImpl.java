@@ -20,6 +20,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayInputStream;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.lar.ExportImportDateUtil;
 import com.liferay.portal.kernel.lar.ExportImportThreadLocal;
 import com.liferay.portal.kernel.lar.MissingReferences;
 import com.liferay.portal.kernel.log.Log;
@@ -43,7 +44,6 @@ import com.liferay.portal.model.Group;
 import com.liferay.portal.model.GroupConstants;
 import com.liferay.portal.model.Layout;
 import com.liferay.portal.model.LayoutRevision;
-import com.liferay.portal.model.LayoutSet;
 import com.liferay.portal.model.LayoutSetBranch;
 import com.liferay.portal.model.LayoutSetBranchConstants;
 import com.liferay.portal.model.LayoutStagingHandler;
@@ -121,7 +121,7 @@ public class StagingLocalServiceImpl extends StagingLocalServiceBaseImpl {
 			deleteLayoutSetBranches(targetGroupId, false);
 		}
 		else if (layoutSetBranch != null) {
-			clearLastPublishDate(targetGroupId, false);
+			ExportImportDateUtil.clearLastPublishDate(targetGroupId, false);
 		}
 
 		layoutSetBranch = layoutSetBranchLocalService.fetchLayoutSetBranch(
@@ -136,7 +136,7 @@ public class StagingLocalServiceImpl extends StagingLocalServiceBaseImpl {
 			deleteLayoutSetBranches(targetGroupId, true);
 		}
 		else if (layoutSetBranch != null) {
-			clearLastPublishDate(targetGroupId, false);
+			ExportImportDateUtil.clearLastPublishDate(targetGroupId, true);
 		}
 	}
 
@@ -198,8 +198,10 @@ public class StagingLocalServiceImpl extends StagingLocalServiceBaseImpl {
 
 			long remoteGroupId = GetterUtil.getLong(
 				typeSettingsProperties.getProperty("remoteGroupId"));
+			boolean forceDisable = GetterUtil.getBoolean(
+				serviceContext.getAttribute("forceDisable"));
 
-			disableRemoteStaging(remoteURL, remoteGroupId);
+			disableRemoteStaging(remoteURL, remoteGroupId, forceDisable);
 		}
 
 		typeSettingsProperties.remove("branchingPrivate");
@@ -340,7 +342,7 @@ public class StagingLocalServiceImpl extends StagingLocalServiceBaseImpl {
 			if (!remoteURL.equals(oldRemoteURL) ||
 				(remoteGroupId != oldRemoteGroupId)) {
 
-				disableRemoteStaging(oldRemoteURL, oldRemoteGroupId);
+				disableRemoteStaging(oldRemoteURL, oldRemoteGroupId, false);
 
 				stagedRemotely = false;
 			}
@@ -542,21 +544,6 @@ public class StagingLocalServiceImpl extends StagingLocalServiceBaseImpl {
 			stagingTypeSettingsProperties.toString());
 	}
 
-	protected void clearLastPublishDate(long groupId, boolean privateLayout)
-		throws PortalException {
-
-		LayoutSet layoutSet = layoutSetLocalService.getLayoutSet(
-			groupId, privateLayout);
-
-		UnicodeProperties settingsProperties =
-			layoutSet.getSettingsProperties();
-
-		settingsProperties.remove("last-publish-date");
-
-		layoutSetLocalService.updateSettings(
-			groupId, privateLayout, settingsProperties.toString());
-	}
-
 	protected void deleteLayoutSetBranches(long groupId, boolean privateLayout)
 		throws PortalException {
 
@@ -616,7 +603,8 @@ public class StagingLocalServiceImpl extends StagingLocalServiceBaseImpl {
 			groupId, privateLayout, true);
 	}
 
-	protected void disableRemoteStaging(String remoteURL, long remoteGroupId)
+	protected void disableRemoteStaging(
+			String remoteURL, long remoteGroupId, boolean forceDisable)
 		throws PortalException {
 
 		PermissionChecker permissionChecker =
@@ -650,12 +638,18 @@ public class StagingLocalServiceImpl extends StagingLocalServiceBaseImpl {
 			throw rae;
 		}
 		catch (SystemException se) {
-			RemoteExportException ree = new RemoteExportException(
-				RemoteExportException.BAD_CONNECTION);
+			if (!forceDisable) {
+				RemoteExportException ree = new RemoteExportException(
+					RemoteExportException.BAD_CONNECTION);
 
-			ree.setURL(remoteURL);
+				ree.setURL(remoteURL);
 
-			throw ree;
+				throw ree;
+			}
+
+			if (_log.isWarnEnabled()) {
+				_log.warn("Forcibly disable remote staging");
+			}
 		}
 	}
 
@@ -898,7 +892,7 @@ public class StagingLocalServiceImpl extends StagingLocalServiceBaseImpl {
 
 	private static final String _ASSEMBLED_LAR_PREFIX = "assembled_";
 
-	private static Log _log = LogFactoryUtil.getLog(
+	private static final Log _log = LogFactoryUtil.getLog(
 		StagingLocalServiceImpl.class);
 
 }
