@@ -16,18 +16,22 @@ package com.liferay.portlet.usersadmin.util;
 
 import com.liferay.portal.kernel.configuration.Filter;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.security.pacl.DoPrivileged;
+import com.liferay.portal.kernel.util.Accessor;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.SetUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.Address;
@@ -95,6 +99,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.portlet.ActionRequest;
@@ -599,6 +604,21 @@ public class UsersAdminImpl implements UsersAdmin {
 	}
 
 	@Override
+	public long[] getGroupIds(PortletRequest portletRequest)
+		throws PortalException {
+
+		User user = PortalUtil.getSelectedUser(portletRequest);
+
+		if (user == null) {
+			return null;
+		}
+
+		return getRequestPrimaryKeys(
+			portletRequest, user.getGroupIds(), "addGroupIds",
+			"deleteGroupIds");
+	}
+
+	@Override
 	public OrderByComparator<Group> getGroupOrderByComparator(
 		String orderByCol, String orderByType) {
 
@@ -638,6 +658,21 @@ public class UsersAdminImpl implements UsersAdmin {
 		}
 
 		return organizationIds;
+	}
+
+	@Override
+	public long[] getOrganizationIds(PortletRequest portletRequest)
+		throws PortalException {
+
+		User user = PortalUtil.getSelectedUser(portletRequest);
+
+		if (user == null) {
+			return null;
+		}
+
+		return getRequestPrimaryKeys(
+			portletRequest, user.getOrganizationIds(), "addOrganizationIds",
+			"deleteOrganizationIds");
 	}
 
 	@Override
@@ -830,6 +865,20 @@ public class UsersAdminImpl implements UsersAdmin {
 	}
 
 	@Override
+	public long[] getRoleIds(PortletRequest portletRequest)
+		throws PortalException {
+
+		User user = PortalUtil.getSelectedUser(portletRequest);
+
+		if (user == null) {
+			return null;
+		}
+
+		return getRequestPrimaryKeys(
+			portletRequest, user.getRoleIds(), "addRoleIds", "deleteRoleIds");
+	}
+
+	@Override
 	public OrderByComparator<Role> getRoleOrderByComparator(
 		String orderByCol, String orderByType) {
 
@@ -855,6 +904,38 @@ public class UsersAdminImpl implements UsersAdmin {
 		}
 
 		return orderByComparator;
+	}
+
+	@Override
+	public <T> String getUserColumnText(
+		Locale locale, List<? extends T> list, Accessor<T, String> accessor,
+		int count) {
+
+		String result = ListUtil.toString(
+			list, accessor, StringPool.COMMA_AND_SPACE);
+
+		if (list.size() < count) {
+			result += StringPool.SPACE + LanguageUtil.format(
+				locale, "and-x-more", String.valueOf(count - list.size()),
+				false);
+		}
+
+		return result;
+	}
+
+	@Override
+	public long[] getUserGroupIds(PortletRequest portletRequest)
+		throws PortalException {
+
+		User user = PortalUtil.getSelectedUser(portletRequest);
+
+		if (user == null) {
+			return null;
+		}
+
+		return getRequestPrimaryKeys(
+			portletRequest, user.getUserGroupIds(), "addUserGroupIds",
+			"deleteUserGroupIds");
 	}
 
 	@Override
@@ -1410,6 +1491,28 @@ public class UsersAdminImpl implements UsersAdmin {
 				WebsiteServiceUtil.deleteWebsite(website.getWebsiteId());
 			}
 		}
+	}
+
+	protected long[] getRequestPrimaryKeys(
+		PortletRequest portletRequest, long[] currentPKs, String addParam,
+		String deleteParam) {
+
+		Set<Long> primaryKeys = SetUtil.fromArray(currentPKs);
+
+		long[] addPrimaryKeys = StringUtil.split(
+			ParamUtil.getString(portletRequest, addParam), 0L);
+		long[] deletePrimaryKeys = StringUtil.split(
+			ParamUtil.getString(portletRequest, deleteParam), 0L);
+
+		for (long addPrimaryKey : addPrimaryKeys) {
+			primaryKeys.add(addPrimaryKey);
+		}
+
+		for (long deletePrimaryKey : deletePrimaryKeys) {
+			primaryKeys.remove(deletePrimaryKey);
+		}
+
+		return ArrayUtil.toLongArray(primaryKeys);
 	}
 
 	protected Set<UserGroupRole> getUserGroupRoles(

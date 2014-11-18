@@ -20,7 +20,7 @@ feature or API will be dropped in an upcoming version.
 replaces an old API, in spite of the old API being kept in Liferay Portal for
 backwards compatibility.
 
-*This document has been reviewed through commit `a00a5c3`.*
+*This document has been reviewed through commit `6e26e7c`.*
 
 ## Breaking Changes Contribution Guidelines
 
@@ -608,5 +608,61 @@ Web Content Types had to be updated in a properties file and could not be
 translated easily. Categories provide a much more flexible behavior and a better
 UI. In addition, all the features, such as filters, developed for categories can
 be used now in asset publishers and faceted search.
+
+---------------------------------------
+
+### Removed the *Header Web Content* and *Footer Web Content* Preferences from the RSS Portlet
+- **Date:** 2014-Nov-12
+- **JIRA Ticket:** LPS-46984
+
+#### What changed?
+
+The *Header Web Content* and *Footer Web Content* preferences from the RSS
+portlet were removed. The portlet now supports Application Display Templates
+(ADT), which provide templating capabilities that cover the need to support
+these configuration preferences.
+
+#### Who is affected?
+
+This affects RSS portlets displayed on pages using these preferences. The
+preferences will no longer be used in the RSS portlet.
+
+#### How should I update my code?
+
+Even though these preferences were removed, an ADT can be created to obtain the
+same result. Liferay will publish this ADT so that it can be used in the RSS
+portlet.
+
+#### Why was this change made?
+
+The support for ADTs in the RSS portlet not only covers this use case, but many
+others, providing a much simpler way to create custom preferences.
+
+---------------------------------------
+
+### Method getClassNamePortletId(String) in PortalUtil has been removed
+- **Date:** 2014-Nov-11
+- **JIRA Ticket:** LPS-50604
+
+#### What changed?
+
+The method getClassNamePortletId(String) from the class PortalUtil has
+been removed. 
+
+#### Who is affected?
+
+This will affect any plugin using the method.
+
+#### How should I update my code?
+
+If you are using that method, you should implement it yourself in a
+private utility class. The code is fairly simple so you shoul not have
+any problems with it.
+
+#### Why was this change made?
+
+This change was needed in order to modularize the portal and it has been 
+decided not to provide this method any more because it is not being used 
+anywhere inside the portal.
 
 ---------------------------------------

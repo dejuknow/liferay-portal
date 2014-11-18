@@ -206,10 +206,10 @@ public class UserGroupRoleLocalServiceWrapper
 	}
 
 	/**
-	* Returns the number of rows that match the dynamic query.
+	* Returns the number of rows matching the dynamic query.
 	*
 	* @param dynamicQuery the dynamic query
-	* @return the number of rows that match the dynamic query
+	* @return the number of rows matching the dynamic query
 	*/
 	@Override
 	public long dynamicQueryCount(
@@ -218,11 +218,11 @@ public class UserGroupRoleLocalServiceWrapper
 	}
 
 	/**
-	* Returns the number of rows that match the dynamic query.
+	* Returns the number of rows matching the dynamic query.
 	*
 	* @param dynamicQuery the dynamic query
 	* @param projection the projection to apply to the query
-	* @return the number of rows that match the dynamic query
+	* @return the number of rows matching the dynamic query
 	*/
 	@Override
 	public long dynamicQueryCount(
@@ -304,6 +304,13 @@ public class UserGroupRoleLocalServiceWrapper
 	}
 
 	@Override
+	public java.util.List<com.liferay.portal.model.UserGroupRole> getUserGroupRoles(
+		long userId, long groupId, int start, int end) {
+		return _userGroupRoleLocalService.getUserGroupRoles(userId, groupId,
+			start, end);
+	}
+
+	@Override
 	public java.util.List<com.liferay.portal.model.UserGroupRole> getUserGroupRolesByGroup(
 		long groupId) {
 		return _userGroupRoleLocalService.getUserGroupRolesByGroup(groupId);
@@ -331,6 +338,11 @@ public class UserGroupRoleLocalServiceWrapper
 	@Override
 	public int getUserGroupRolesCount() {
 		return _userGroupRoleLocalService.getUserGroupRolesCount();
+	}
+
+	@Override
+	public int getUserGroupRolesCount(long userId, long groupId) {
+		return _userGroupRoleLocalService.getUserGroupRolesCount(userId, groupId);
 	}
 
 	@Override

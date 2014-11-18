@@ -24,9 +24,9 @@ List<WikiNode> nodes = WikiNodeServiceUtil.getNodes(scopeGroupId);
 boolean nodeInGroup = false;
 %>
 
-<liferay-portlet:actionURL portletConfiguration="true" var="configurationActionURL" />
+<liferay-portlet:actionURL portletConfiguration="<%= true %>" var="configurationActionURL" />
 
-<liferay-portlet:renderURL portletConfiguration="true" var="configurationRenderURL" />
+<liferay-portlet:renderURL portletConfiguration="<%= true %>" var="configurationRenderURL" />
 
 <aui:form action="<%= configurationActionURL %>" method="post" name="fm">
 	<aui:input name="<%= Constants.CMD %>" type="hidden" value="<%= Constants.UPDATE %>" />
@@ -66,7 +66,7 @@ boolean nodeInGroup = false;
 
 		<c:choose>
 			<c:when test="<%= nodeInGroup %>">
-				<div class="<portlet:namespace />pageSelectorContainer">
+				<div id="<portlet:namespace />pageSelectorContainer">
 					<aui:select label="page" name="preferences--title--">
 
 						<%
@@ -87,16 +87,16 @@ boolean nodeInGroup = false;
 					</aui:select>
 				</div>
 
-				<aui:script use="aui-base">
-					var nodeIdSelect = A.one('#<portlet:namespace/>nodeId');
-					var pageSelectorContainer = A.one('#<portlet:namespace />pageSelectorContainer');
+				<aui:script sandbox="<%= true %>">
+					var nodeIdSelect = $('#<portlet:namespace/>nodeId');
+					var pageSelectorContainer = $('#<portlet:namespace />pageSelectorContainer');
 
 					var nodeIdValue = nodeIdSelect.val();
 
 					nodeIdSelect.on(
 						'change',
 						function() {
-							pageSelectorContainer.toggle(nodeIdSelect.val() === nodeIdValue);
+							pageSelectorContainer.toggleClass('hide', nodeIdSelect.val() !== nodeIdValue);
 						}
 					);
 				</aui:script>

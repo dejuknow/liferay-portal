@@ -46,13 +46,21 @@
 		<sequential>
 			<fail message="Please set the property ${github.pull.request.number}." unless="github.pull.request.number" />
 
+			<propertyregex
+				input="@{github.post.comment.body}"
+				override="true"
+				property="github.post.comment.body"
+				regexp="&quot;"
+				replace="\\&quot;"
+			/>
+
 			<script classpathref="project.classpath" language="beanshell">
 				<![CDATA[
 					StringBuilder sb = new StringBuilder();
 
-					sb.append("{");
-					sb.append("\"body\":\"@{github.post.comment.body}\"");
-					sb.append("}");
+					sb.append("{\"body\":\"");
+					sb.append(project.getProperty("github.post.comment.body"));
+					sb.append("\"}");
 
 					project.setProperty("github.post.data", sb.toString());
 
@@ -70,7 +78,10 @@
 				]]>
 			</script>
 
-			<github-post />
+			<github-post
+				github.post.data="${github.post.data}"
+				github.post.url="${github.post.url}"
+			/>
 		</sequential>
 	</macrodef>
 
@@ -86,11 +97,9 @@
 				<![CDATA[
 					StringBuilder sb = new StringBuilder();
 
-					sb.append("{");
-					sb.append("\"description\":\"@{github.post.status.description}\",");
+					sb.append("{\"description\":\"@{github.post.status.description}\",");
 					sb.append("\"state\":\"@{github.post.status.state}\",");
-					sb.append("\"target_url\":\"@{github.post.status.url}\"");
-					sb.append("}");
+					sb.append("\"target_url\":\"@{github.post.status.url}\"}");
 
 					project.setProperty("github.post.data", sb.toString());
 
@@ -107,24 +116,131 @@
 				]]>
 			</script>
 
-			<github-post />
+			<github-post
+				github.post.data="${github.post.data}"
+				github.post.url="${github.post.url}"
+			/>
 		</sequential>
 	</macrodef>
 
 	<target name="github-post-comment-failure">
+		<fail message="Please set the property ${github.jenkins.failure.url.paths}" unless="github.jenkins.failure.url.paths" />
+		<fail message="Please set the property ${github.jenkins.url}" unless="github.jenkins.url" />
+
 		<script classpathref="project.classpath" language="beanshell">
 			<![CDATA[
+				import org.json.JSONObject;
+
+				public String fixURL(String url) {
+					if (url.contains("(")) {
+						url = url.replace("(", "%28");
+					}
+
+					if (url.contains(")")) {
+						url = url.replace(")", "%29");
+					}
+
+					if (url.contains("[")) {
+						url = url.replace("[", "%5B");
+					}
+
+					if (url.contains("]")) {
+						url = url.replace("]", "%5D");
+					}
+
+					return url;
+				}
+
+				public JSONObject toJSONObject(String url) {
+					StringBuilder sb = new StringBuilder();
+
+					URL urlObject = new URL(fixURL(url));
+
+					InputStreamReader inputStreamReader = new InputStreamReader(urlObject.openStream());
+
+					BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+					String line = null;
+
+					while ((line = bufferedReader.readLine()) != null) {
+						sb.append(line);
+					}
+
+					bufferedReader.close();
+
+					return new JSONObject(sb.toString());
+				}
+
 				StringBuilder sb = new StringBuilder();
 
-				sb.append("<h1>Some tests have FAILED!</h1>\\n");
+				sb.append("<h1>Some tests have FAILED!</h1>");
 
-				String targetURL = project.getProperty("jenkins.results.url");
+				String githubJenkinsResultsURL = project.getProperty("github.jenkins.results.url");
 
-				if (targetURL != null) {
-					sb.append("<p>Click <a href=\"");
-					sb.append(targetURL);
-					sb.append("\">here</a> for more information.</p>\\n");
+				if (githubJenkinsResultsURL != null) {
+					sb.append("<p>Click <a href=\\\"");
+					sb.append(githubJenkinsResultsURL);
+					sb.append("\\\">here</a> for more information.</p>");
 				}
+
+				sb.append("<h1>");
+
+				String githubJenkinsFailureURLPathsString = project.getProperty("github.jenkins.failure.url.paths");
+
+				String[] githubJenkinsFailureURLPaths = githubJenkinsFailureURLPathsString.split(" ");
+
+				sb.append(githubJenkinsFailureURLPaths.length);
+				sb.append(" Failure");
+
+				if (githubJenkinsFailureURLPaths.length != 1) {
+					sb.append("s");
+				}
+
+				sb.append(":</h1>");
+				sb.append("<ul>");
+
+				for (String githubJenkinsFailureURLPath : githubJenkinsFailureURLPaths) {
+					String githubJenkinsFailureURL = project.getProperty("github.jenkins.url") + githubJenkinsFailureURLPath;
+
+					JSONObject jsonObject = toJSONObject(githubJenkinsFailureURL + "/api/json");
+
+					if (jsonObject.has("result")) {
+						sb.append("<li>");
+						sb.append("<a href=\\\"");
+						sb.append(githubJenkinsFailureURL);
+						sb.append("\\\">");
+						sb.append(jsonObject.get("fullDisplayName"));
+						sb.append("</a>");
+						sb.append("<pre>RESULT: ");
+						sb.append(jsonObject.get("result"));
+						sb.append("</pre>");
+						sb.append("</li>");
+					}
+					else {
+						sb.append("<li>");
+						sb.append("<a href=\\\"");
+						sb.append(githubJenkinsFailureURL);
+						sb.append("\\\">");
+						sb.append(jsonObject.get("className"));
+						sb.append(".");
+						sb.append(jsonObject.get("name"));
+						sb.append("</a>");
+						sb.append("<pre>");
+						sb.append(jsonObject.get("errorDetails"));
+						sb.append("<br /><br />");
+
+						String errorStackTrace = jsonObject.get("errorStackTrace");
+
+						errorStackTrace = errorStackTrace.replaceAll("\n", "<br />");
+
+						sb.append(errorStackTrace);
+
+						sb.append("</pre>");
+						sb.append("</li>");
+					}
+				}
+
+				sb.append("</ul>");
 
 				project.setProperty("github.post.comment.body", sb.toString());
 			]]>
@@ -140,14 +256,14 @@
 			<![CDATA[
 				StringBuilder sb = new StringBuilder();
 
-				sb.append("<h1>All tests have PASSED!</h1>\\n");
+				sb.append("<h1>All tests have PASSED!</h1>");
 
-				String targetURL = project.getProperty("jenkins.results.url");
+				String githubJenkinsResultsURL = project.getProperty("github.jenkins.results.url");
 
-				if (targetURL != null) {
-					sb.append("<p>Click <a href=\"");
-					sb.append(targetURL);
-					sb.append("\">here</a> for more information.</p>\\n");
+				if (githubJenkinsResultsURL != null) {
+					sb.append("<p>Click <a href=\\\"");
+					sb.append(githubJenkinsResultsURL);
+					sb.append("\\\">here</a> for more information.</p>");
 				}
 
 				project.setProperty("github.post.comment.body", sb.toString());
@@ -163,7 +279,7 @@
 		<github-post-status
 			github.post.status.description="Some tests have FAILED!"
 			github.post.status.state="failure"
-			github.post.status.url="${jenkins.results.url}"
+			github.post.status.url="${github.jenkins.results.url}"
 		/>
 	</target>
 
@@ -171,7 +287,7 @@
 		<github-post-status
 			github.post.status.description="Tests are running on Jenkins."
 			github.post.status.state="pending"
-			github.post.status.url="${jenkins.results.url}"
+			github.post.status.url="${github.jenkins.results.url}"
 		/>
 	</target>
 
@@ -179,7 +295,7 @@
 		<github-post-status
 			github.post.status.description="All tests have PASSED!"
 			github.post.status.state="success"
-			github.post.status.url="${jenkins.results.url}"
+			github.post.status.url="${github.jenkins.results.url}"
 		/>
 	</target>
 </project>

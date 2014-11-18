@@ -82,7 +82,6 @@ import com.liferay.portal.struts.StrutsUtil;
 import com.liferay.portal.util.ClassLoaderUtil;
 import com.liferay.portal.util.ExtRegistry;
 import com.liferay.portal.util.MaintenanceUtil;
-import com.liferay.portal.util.Portal;
 import com.liferay.portal.util.PortalInstances;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PropsUtil;
@@ -855,19 +854,12 @@ public class MainServlet extends ActionServlet {
 
 		ServletContext servletContext = getServletContext();
 
-		String[] xmls = new String[] {
-			HttpUtil.URLtoString(
-				servletContext.getResource(
-					"/WEB-INF/" + Portal.PORTLET_XML_FILE_NAME_CUSTOM)),
-			HttpUtil.URLtoString(
-				servletContext.getResource("/WEB-INF/portlet-ext.xml")),
-			HttpUtil.URLtoString(
-				servletContext.getResource("/WEB-INF/liferay-portlet.xml")),
-			HttpUtil.URLtoString(
-				servletContext.getResource("/WEB-INF/liferay-portlet-ext.xml")),
-			HttpUtil.URLtoString(
-				servletContext.getResource("/WEB-INF/web.xml"))
-		};
+		String[] xmls = new String[PropsValues.PORTLET_CONFIGS.length];
+
+		for (int i = 0; i < PropsValues.PORTLET_CONFIGS.length; i++) {
+			xmls[i] = HttpUtil.URLtoString(
+				servletContext.getResource(PropsValues.PORTLET_CONFIGS[i]));
+		}
 
 		PortletLocalServiceUtil.initEAR(servletContext, xmls, pluginPackage);
 

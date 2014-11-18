@@ -196,10 +196,10 @@ public class UserGroupRoleLocalServiceUtil {
 	}
 
 	/**
-	* Returns the number of rows that match the dynamic query.
+	* Returns the number of rows matching the dynamic query.
 	*
 	* @param dynamicQuery the dynamic query
-	* @return the number of rows that match the dynamic query
+	* @return the number of rows matching the dynamic query
 	*/
 	public static long dynamicQueryCount(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
@@ -207,11 +207,11 @@ public class UserGroupRoleLocalServiceUtil {
 	}
 
 	/**
-	* Returns the number of rows that match the dynamic query.
+	* Returns the number of rows matching the dynamic query.
 	*
 	* @param dynamicQuery the dynamic query
 	* @param projection the projection to apply to the query
-	* @return the number of rows that match the dynamic query
+	* @return the number of rows matching the dynamic query
 	*/
 	public static long dynamicQueryCount(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery,
@@ -282,6 +282,11 @@ public class UserGroupRoleLocalServiceUtil {
 		return getService().getUserGroupRoles(userId, groupId);
 	}
 
+	public static java.util.List<com.liferay.portal.model.UserGroupRole> getUserGroupRoles(
+		long userId, long groupId, int start, int end) {
+		return getService().getUserGroupRoles(userId, groupId, start, end);
+	}
+
 	public static java.util.List<com.liferay.portal.model.UserGroupRole> getUserGroupRolesByGroup(
 		long groupId) {
 		return getService().getUserGroupRolesByGroup(groupId);
@@ -305,6 +310,10 @@ public class UserGroupRoleLocalServiceUtil {
 	*/
 	public static int getUserGroupRolesCount() {
 		return getService().getUserGroupRolesCount();
+	}
+
+	public static int getUserGroupRolesCount(long userId, long groupId) {
+		return getService().getUserGroupRolesCount(userId, groupId);
 	}
 
 	public static boolean hasUserGroupRole(long userId, long groupId,

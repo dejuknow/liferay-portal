@@ -513,6 +513,10 @@ public interface PropsKeys {
 
 	public static final String COOKIE_HTTP_ONLY_NAMES_EXCLUDES = "cookie.http.only.names.excludes";
 
+	public static final String COUNTER_DATA_CENTER_COUNT = "counter.data.center.count";
+
+	public static final String COUNTER_DATA_CENTER_DEPLOYMENT_ID = "counter.data.center.deployment.id";
+
 	public static final String COUNTER_INCREMENT = "counter.increment";
 
 	public static final String COUNTER_INCREMENT_PREFIX = "counter.increment.";
@@ -2119,6 +2123,8 @@ public interface PropsKeys {
 
 	public static final String PORTLET_ADD_DEFAULT_RESOURCE_CHECK_WHITELIST_ACTIONS = "portlet.add.default.resource.check.whitelist.actions";
 
+	public static final String PORTLET_CONFIGS = "portlet.configs";
+
 	public static final String PORTLET_CONTAINER_RESTRICT = "portlet.container.restrict";
 
 	public static final String PORTLET_CROSS_LAYOUT_INVOCATION_MODE = "portlet.cross.layout.invocation.mode";
@@ -2630,6 +2636,12 @@ public interface PropsKeys {
 	public static final String USER_GROUPS_SEARCH_WITH_INDEX = "user.groups.search.with.index";
 
 	public static final String USER_NOTIFICATION_EVENT_CONFIRMATION_ENABLED = "user.notification.event.confirmation.enabled";
+
+	public static final String USERS_ADMIN_ORGANIZATION_COLUMN_LIMIT = "users.admin.organization.column.limit";
+
+	public static final String USERS_ADMIN_ROLE_COLUMN_LIMIT = "users.admin.role.column.limit";
+
+	public static final String USERS_ADMIN_USER_GROUP_COLUMN_LIMIT = "users.admin.user.group.column.limit";
 
 	public static final String USERS_DELETE = "users.delete";
 

@@ -18,9 +18,9 @@
 
 <aui:row>
 	<aui:col width="<%= 50 %>">
-		<liferay-portlet:actionURL portletConfiguration="true" var="configurationActionURL" />
+		<liferay-portlet:actionURL portletConfiguration="<%= true %>" var="configurationActionURL" />
 
-		<liferay-portlet:renderURL portletConfiguration="true" var="configurationRenderURL" />
+		<liferay-portlet:renderURL portletConfiguration="<%= true %>" var="configurationRenderURL" />
 
 		<aui:form action="<%= configurationActionURL %>" method="post" name="fm">
 			<aui:input name="<%= Constants.CMD %>" type="hidden" value="<%= Constants.UPDATE %>" />
@@ -55,27 +55,27 @@
 	</aui:col>
 </aui:row>
 
-<aui:script use="aui-base">
-	var selectDisplayStyle = A.one('#<portlet:namespace />displayStyle');
-	var selectSites = A.one('#<portlet:namespace />sites');
+<aui:script sandbox="<%= true %>">
+	var form = $('#<portlet:namespace />fm');
 
-	var selects = A.all('#<portlet:namespace />fm select');
+	var selectDisplayStyle = form.fm('displayStyle');
+	var selectSites = form.fm('sites');
 
 	var curPortletBoundaryId = '#p_p_id_<%= HtmlUtil.escapeJS(portletResource) %>_';
 
-	var toggleCustomFields = function() {
-		var data = {};
+	form.on(
+		'change',
+		'select',
+		function() {
+			var data = Liferay.Util.ns(
+				'_<%= HtmlUtil.escapeJS(portletResource) %>_',
+				{
+					displayStyle: selectDisplayStyle.val(),
+					sites: selectSites.val()
+				}
+			);
 
-		var displayStyle = selectDisplayStyle.val();
-		var sites = selectSites.val();
-
-		data['_<%= HtmlUtil.escapeJS(portletResource) %>_displayStyle'] = displayStyle;
-		data['_<%= HtmlUtil.escapeJS(portletResource) %>_sites'] = sites;
-
-		Liferay.Portlet.refresh(curPortletBoundaryId, data);
-	}
-
-	selects.on('change', toggleCustomFields);
-
-	toggleCustomFields();
+			Liferay.Portlet.refresh(curPortletBoundaryId, data);
+		}
+	);
 </aui:script>
