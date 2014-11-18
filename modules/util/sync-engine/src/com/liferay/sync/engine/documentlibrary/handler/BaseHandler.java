@@ -26,6 +26,7 @@ import com.liferay.sync.engine.util.ConnectionRetryUtil;
 import java.io.FileNotFoundException;
 
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
 import java.util.Map;
@@ -35,6 +36,7 @@ import org.apache.http.HttpStatus;
 import org.apache.http.NoHttpResponseException;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpResponseException;
+import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.conn.HttpHostConnectException;
 
 import org.slf4j.Logger;
@@ -67,8 +69,10 @@ public class BaseHandler implements Handler<Void> {
 				SyncFileService.deleteSyncFile(syncFile);
 			}
 		}
-		else if ((e instanceof HttpHostConnectException) ||
+		else if ((e instanceof ConnectTimeoutException) ||
+				 (e instanceof HttpHostConnectException) ||
 				 (e instanceof NoHttpResponseException) ||
+				 (e instanceof SocketTimeoutException) ||
 				 (e instanceof SocketException) ||
 				 (e instanceof UnknownHostException)) {
 
