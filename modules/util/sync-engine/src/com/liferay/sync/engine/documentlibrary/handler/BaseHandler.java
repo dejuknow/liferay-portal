@@ -67,7 +67,17 @@ public class BaseHandler implements Handler<Void> {
 		if (e instanceof FileNotFoundException) {
 			SyncFile syncFile = (SyncFile)getParameterValue("syncFile");
 
-			if (syncFile.getVersion() == null) {
+			String message = e.getMessage();
+
+			if (message.contains("The process cannot access the file")) {
+				if (_logger.isTraceEnabled()) {
+					_logger.trace(
+						"Retrying event {} for sync file {}", _event, syncFile);
+				}
+
+				_event.run();
+			}
+			else if (syncFile.getVersion() == null) {
 				SyncFileService.deleteSyncFile(syncFile);
 			}
 		}
@@ -166,9 +176,11 @@ public class BaseHandler implements Handler<Void> {
 		}
 
 		if (syncSite != null) {
-			_logger.debug(
-				"Sync site {} was deactivated or removed.",
-				syncSite.getName());
+			if (_logger.isDebugEnabled()) {
+				_logger.debug(
+					"Sync site {} was deactivated or removed.",
+					syncSite.getName());
+			}
 
 			syncSite.setUiEvent(SyncSite.UI_EVENT_SYNC_SITE_DEACTIVATED);
 
