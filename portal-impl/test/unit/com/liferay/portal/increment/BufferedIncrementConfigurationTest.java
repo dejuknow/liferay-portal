@@ -22,7 +22,7 @@ import com.liferay.portal.kernel.test.NewEnv;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.test.AdviseWith;
-import com.liferay.portal.test.AspectJNewEnvMethodRule;
+import com.liferay.portal.test.AspectJNewEnvTestRule;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -46,8 +46,8 @@ import org.junit.Test;
 public class BufferedIncrementConfigurationTest {
 
 	@ClassRule
-	public static CodeCoverageAssertor codeCoverageAssertor =
-		new CodeCoverageAssertor();
+	public static final CodeCoverageAssertor codeCoverageAssertor =
+		CodeCoverageAssertor.INSTANCE;
 
 	@AdviseWith(adviceClasses = PropsUtilAdvice.class)
 	@Test
@@ -160,8 +160,8 @@ public class BufferedIncrementConfigurationTest {
 	}
 
 	@Rule
-	public final AspectJNewEnvMethodRule aspectJNewEnvMethodRule =
-		new AspectJNewEnvMethodRule();
+	public final AspectJNewEnvTestRule aspectJNewEnvTestRule =
+		AspectJNewEnvTestRule.INSTANCE;
 
 	@Aspect
 	public static class PropsUtilAdvice {

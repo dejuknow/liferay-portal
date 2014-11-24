@@ -34,7 +34,7 @@ import com.liferay.portal.kernel.resiliency.spi.SPI;
 import com.liferay.portal.kernel.resiliency.spi.SPIConfiguration;
 import com.liferay.portal.kernel.test.CodeCoverageAssertor;
 import com.liferay.portal.kernel.test.NewEnv;
-import com.liferay.portal.kernel.test.NewEnvMethodRule;
+import com.liferay.portal.kernel.test.NewEnvTestRule;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.util.ClassLoaderPool;
 import com.liferay.portal.kernel.util.StringPool;
@@ -62,8 +62,8 @@ import org.junit.Test;
 public class IntrabandBridgeDestinationTest {
 
 	@ClassRule
-	public static CodeCoverageAssertor codeCoverageAssertor =
-		new CodeCoverageAssertor();
+	public static final CodeCoverageAssertor codeCoverageAssertor =
+		CodeCoverageAssertor.INSTANCE;
 
 	@Before
 	public void setUp() {
@@ -391,7 +391,7 @@ public class IntrabandBridgeDestinationTest {
 	}
 
 	@Rule
-	public final NewEnvMethodRule newEnvMethodRule = new NewEnvMethodRule();
+	public final NewEnvTestRule newEnvTestRule = NewEnvTestRule.INSTANCE;
 
 	private static void _installSPIs(SPI... spis) throws RemoteException {
 		Map<String, Object> spiProviderContainers =

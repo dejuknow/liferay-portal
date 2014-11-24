@@ -42,7 +42,7 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.model.Portlet;
 import com.liferay.portal.model.impl.PortletImpl;
 import com.liferay.portal.test.AdviseWith;
-import com.liferay.portal.test.AspectJNewEnvMethodRule;
+import com.liferay.portal.test.AspectJNewEnvTestRule;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -81,8 +81,8 @@ import org.springframework.mock.web.MockHttpSession;
 public class SPIAgentSerializableTest {
 
 	@ClassRule
-	public static CodeCoverageAssertor codeCoverageAssertor =
-		new CodeCoverageAssertor();
+	public static final CodeCoverageAssertor codeCoverageAssertor =
+		CodeCoverageAssertor.INSTANCE;
 
 	@Before
 	public void setUp() {
@@ -702,8 +702,8 @@ public class SPIAgentSerializableTest {
 	}
 
 	@Rule
-	public final AspectJNewEnvMethodRule aspectJNewEnvMethodRule =
-		new AspectJNewEnvMethodRule();
+	public final AspectJNewEnvTestRule aspectJNewEnvTestRule =
+		AspectJNewEnvTestRule.INSTANCE;
 
 	@Aspect
 	public static class DeserializerAdvice {

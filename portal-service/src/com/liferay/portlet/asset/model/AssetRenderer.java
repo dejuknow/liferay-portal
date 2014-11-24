@@ -165,7 +165,7 @@ public interface AssetRenderer {
 		throws Exception;
 
 	public void setAddToPagePreferences(
-			PortletPreferences preferences, String portletId,
+			PortletPreferences portletPreferences, String portletId,
 			ThemeDisplay themeDisplay)
 		throws Exception;
 

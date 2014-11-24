@@ -14,7 +14,7 @@
 
 package com.liferay.portal.model.impl;
 
-import com.liferay.portal.kernel.test.ExecutionTestListeners;
+import com.liferay.portal.kernel.test.AggregateTestRule;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Layout;
 import com.liferay.portal.model.LayoutTemplate;
@@ -22,8 +22,8 @@ import com.liferay.portal.model.LayoutTypePortlet;
 import com.liferay.portal.model.Portlet;
 import com.liferay.portal.model.User;
 import com.liferay.portal.service.PortletLocalServiceUtil;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
-import com.liferay.portal.test.listeners.ResetDatabaseExecutionTestListener;
+import com.liferay.portal.test.MainServletTestRule;
+import com.liferay.portal.test.ResetDatabaseTestRule;
 import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
 import com.liferay.portal.util.test.GroupTestUtil;
 import com.liferay.portal.util.test.LayoutTestUtil;
@@ -36,19 +36,21 @@ import com.liferay.portlet.util.PortletKeys;
 import java.util.List;
 
 import org.junit.Assert;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
  * @author Raymond Augé
  */
-@ExecutionTestListeners(
-	listeners = {
-		MainServletExecutionTestListener.class,
-		ResetDatabaseExecutionTestListener.class
-	})
 @RunWith(LiferayIntegrationJUnitTestRunner.class)
 public class LayoutTypePortletTest {
+
+	@ClassRule
+	public static final AggregateTestRule aggregateTestRule =
+		new AggregateTestRule(
+			MainServletTestRule.INSTANCE, ResetDatabaseTestRule.INSTANCE);
 
 	@Test
 	public void testAddModeAboutPortletId() throws Exception {
@@ -305,6 +307,10 @@ public class LayoutTypePortletTest {
 
 		Assert.assertEquals(0, portlets.size());
 	}
+
+	@Rule
+	public final ResetDatabaseTestRule resetDatabaseTestRule =
+		ResetDatabaseTestRule.INSTANCE;
 
 	protected LayoutTypePortlet getLayoutTypePortlet() throws Exception {
 		Group group = GroupTestUtil.addGroup();

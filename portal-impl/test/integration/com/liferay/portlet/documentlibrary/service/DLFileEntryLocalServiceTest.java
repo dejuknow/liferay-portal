@@ -16,15 +16,14 @@ package com.liferay.portlet.documentlibrary.service;
 
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.search.SearchEngineUtil;
-import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.test.DeleteAfterTestRun;
+import com.liferay.portal.test.MainServletTestRule;
 import com.liferay.portal.test.Sync;
-import com.liferay.portal.test.SynchronousDestinationExecutionTestListener;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
+import com.liferay.portal.test.SynchronousDestinationTestRule;
 import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
 import com.liferay.portal.util.test.GroupTestUtil;
 import com.liferay.portal.util.test.RandomTestUtil;
@@ -44,20 +43,21 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
  * @author Michael C. Han
  */
-@ExecutionTestListeners(
-	listeners = {
-		MainServletExecutionTestListener.class,
-		SynchronousDestinationExecutionTestListener.class
-	})
 @RunWith(LiferayIntegrationJUnitTestRunner.class)
 @Sync
 public class DLFileEntryLocalServiceTest {
+
+	@ClassRule
+	public static final MainServletTestRule mainServletTestRule =
+		MainServletTestRule.INSTANCE;
 
 	@Before
 	public void setUp() throws Exception {
@@ -196,10 +196,7 @@ public class DLFileEntryLocalServiceTest {
 				DLFileEntryLocalServiceUtil.getOrphanedFileEntries();
 
 			Assert.assertEquals(1, dlFileEntries.size());
-
-			Assert.assertEquals(
-				dlFileEntry.getFileEntryId(),
-				dlFileEntries.get(0).getFileEntryId());
+			Assert.assertEquals(dlFileEntry, dlFileEntries.get(0));
 		}
 		finally {
 			if (dlFileEntry != null) {
@@ -210,6 +207,10 @@ public class DLFileEntryLocalServiceTest {
 			SearchEngineUtil.setIndexReadOnly(indexReadOnly);
 		}
 	}
+
+	@Rule
+	public final SynchronousDestinationTestRule synchronousDestinationTestRule =
+		SynchronousDestinationTestRule.INSTANCE;
 
 	@DeleteAfterTestRun
 	private Group _group;

@@ -31,7 +31,6 @@ import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.search.QueryConfig;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.test.AssertUtils;
-import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringPool;
@@ -42,9 +41,9 @@ import com.liferay.portal.security.permission.DoAsUserThread;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceTestUtil;
 import com.liferay.portal.test.DeleteAfterTestRun;
+import com.liferay.portal.test.MainServletTestRule;
 import com.liferay.portal.test.Sync;
-import com.liferay.portal.test.SynchronousDestinationExecutionTestListener;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
+import com.liferay.portal.test.SynchronousDestinationTestRule;
 import com.liferay.portal.test.log.ExpectedLog;
 import com.liferay.portal.test.log.ExpectedLogs;
 import com.liferay.portal.test.log.ExpectedType;
@@ -71,7 +70,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.hibernate.util.JDBCExceptionReporter;
 
 import org.junit.Assert;
+import org.junit.ClassRule;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
@@ -82,14 +83,13 @@ import org.junit.runner.RunWith;
 @RunWith(Enclosed.class)
 public class DLAppServiceTest extends BaseDLAppTestCase {
 
-	@ExecutionTestListeners(
-		listeners = {
-			MainServletExecutionTestListener.class,
-			SynchronousDestinationExecutionTestListener.class
-		})
 	@RunWith(LiferayIntegrationJUnitTestRunner.class)
 	@Sync
 	public static class WhenAddingAFileEntry extends BaseDLAppTestCase {
+
+		@ClassRule
+		public static final MainServletTestRule mainServletTestRule =
+			MainServletTestRule.INSTANCE;
 
 		@Test
 		public void assetTagsShouldBeOrdered() throws Exception {
@@ -316,6 +316,11 @@ public class DLAppServiceTest extends BaseDLAppTestCase {
 				StringPool.BLANK, null, 0, serviceContext);
 		}
 
+		@Rule
+		public final SynchronousDestinationTestRule
+			synchronousDestinationTestRule =
+				SynchronousDestinationTestRule.INSTANCE;
+
 		private long[] _fileEntryIds;
 
 		@DeleteAfterTestRun
@@ -402,14 +407,13 @@ public class DLAppServiceTest extends BaseDLAppTestCase {
 
 	}
 
-	@ExecutionTestListeners(
-		listeners = {
-			MainServletExecutionTestListener.class,
-			SynchronousDestinationExecutionTestListener.class
-		})
 	@RunWith(LiferayIntegrationJUnitTestRunner.class)
 	@Sync
 	public static class WhenAddingAFolder extends BaseDLAppTestCase {
+
+		@ClassRule
+		public static final MainServletTestRule mainServletTestRule =
+			MainServletTestRule.INSTANCE;
 
 		@Test
 		public void shouldAddAssetEntry() throws PortalException {
@@ -438,16 +442,20 @@ public class DLAppServiceTest extends BaseDLAppTestCase {
 			Assert.assertEquals(1, counter.get());
 		}
 
+		@Rule
+		public final SynchronousDestinationTestRule
+			synchronousDestinationTestRule =
+				SynchronousDestinationTestRule.INSTANCE;
+
 	}
 
-	@ExecutionTestListeners(
-		listeners = {
-			MainServletExecutionTestListener.class,
-			SynchronousDestinationExecutionTestListener.class
-		})
 	@RunWith(LiferayIntegrationJUnitTestRunner.class)
 	@Sync
 	public static class WhenCheckingInAFileEntry extends BaseDLAppTestCase {
+
+		@ClassRule
+		public static final MainServletTestRule mainServletTestRule =
+			MainServletTestRule.INSTANCE;
 
 		@Test
 		public void shouldCallWorkflowHandler() throws Exception {
@@ -517,16 +525,20 @@ public class DLAppServiceTest extends BaseDLAppTestCase {
 			Assert.assertEquals(2, counter.get());
 		}
 
+		@Rule
+		public final SynchronousDestinationTestRule
+			synchronousDestinationTestRule =
+				SynchronousDestinationTestRule.INSTANCE;
+
 	}
 
-	@ExecutionTestListeners(
-		listeners = {
-			MainServletExecutionTestListener.class,
-			SynchronousDestinationExecutionTestListener.class
-		})
 	@RunWith(LiferayIntegrationJUnitTestRunner.class)
 	@Sync
 	public static class WhenCheckingOutAFileEntry extends BaseDLAppTestCase {
+
+		@ClassRule
+		public static final MainServletTestRule mainServletTestRule =
+			MainServletTestRule.INSTANCE;
 
 		@Test
 		public void shouldFireSyncEvent() throws Exception {
@@ -545,16 +557,20 @@ public class DLAppServiceTest extends BaseDLAppTestCase {
 			Assert.assertEquals(1, counter.get());
 		}
 
+		@Rule
+		public final SynchronousDestinationTestRule
+			synchronousDestinationTestRule =
+				SynchronousDestinationTestRule.INSTANCE;
+
 	}
 
-	@ExecutionTestListeners(
-		listeners = {
-			MainServletExecutionTestListener.class,
-			SynchronousDestinationExecutionTestListener.class
-		})
 	@RunWith(LiferayIntegrationJUnitTestRunner.class)
 	@Sync
 	public static class WhenCopyingAFolder extends BaseDLAppTestCase {
+
+		@ClassRule
+		public static final MainServletTestRule mainServletTestRule =
+			MainServletTestRule.INSTANCE;
 
 		@Test
 		public void shouldCallWorkflowHandler() throws Exception {
@@ -617,16 +633,20 @@ public class DLAppServiceTest extends BaseDLAppTestCase {
 			Assert.assertEquals(4, counter.get());
 		}
 
+		@Rule
+		public final SynchronousDestinationTestRule
+			synchronousDestinationTestRule =
+				SynchronousDestinationTestRule.INSTANCE;
+
 	}
 
-	@ExecutionTestListeners(
-		listeners = {
-			MainServletExecutionTestListener.class,
-			SynchronousDestinationExecutionTestListener.class
-		})
 	@RunWith(LiferayIntegrationJUnitTestRunner.class)
 	@Sync
 	public static class WhenDeletingAFileEntry extends BaseDLAppTestCase {
+
+		@ClassRule
+		public static final MainServletTestRule mainServletTestRule =
+			MainServletTestRule.INSTANCE;
 
 		@Test
 		public void shouldFireSyncEvent() throws Exception {
@@ -641,16 +661,20 @@ public class DLAppServiceTest extends BaseDLAppTestCase {
 			Assert.assertEquals(1, counter.get());
 		}
 
+		@Rule
+		public final SynchronousDestinationTestRule
+			synchronousDestinationTestRule =
+				SynchronousDestinationTestRule.INSTANCE;
+
 	}
 
-	@ExecutionTestListeners(
-		listeners = {
-			MainServletExecutionTestListener.class,
-			SynchronousDestinationExecutionTestListener.class
-		})
 	@RunWith(LiferayIntegrationJUnitTestRunner.class)
 	@Sync
 	public static class WhenDeletingAFolder extends BaseDLAppTestCase {
+
+		@ClassRule
+		public static final MainServletTestRule mainServletTestRule =
+			MainServletTestRule.INSTANCE;
 
 		@Test
 		public void shouldDeleteImplicitlyTrashedChildFolder()
@@ -704,16 +728,20 @@ public class DLAppServiceTest extends BaseDLAppTestCase {
 			DLAppServiceUtil.getFolder(subfolder.getFolderId());
 		}
 
+		@Rule
+		public final SynchronousDestinationTestRule
+			synchronousDestinationTestRule =
+				SynchronousDestinationTestRule.INSTANCE;
+
 	}
 
-	@ExecutionTestListeners(
-		listeners = {
-			MainServletExecutionTestListener.class,
-			SynchronousDestinationExecutionTestListener.class
-		})
 	@RunWith(LiferayIntegrationJUnitTestRunner.class)
 	@Sync
 	public static class WhenDeletingAFolderByName extends BaseDLAppTestCase {
+
+		@ClassRule
+		public static final MainServletTestRule mainServletTestRule =
+			MainServletTestRule.INSTANCE;
 
 		@Test
 		public void shouldDeleteImplicitlyTrashedChildFolder()
@@ -762,16 +790,20 @@ public class DLAppServiceTest extends BaseDLAppTestCase {
 			DLAppServiceUtil.getFolder(subfolder.getFolderId());
 		}
 
+		@Rule
+		public final SynchronousDestinationTestRule
+			synchronousDestinationTestRule =
+				SynchronousDestinationTestRule.INSTANCE;
+
 	}
 
-	@ExecutionTestListeners(
-		listeners = {
-			MainServletExecutionTestListener.class,
-			SynchronousDestinationExecutionTestListener.class
-		})
 	@RunWith(LiferayIntegrationJUnitTestRunner.class)
 	@Sync
 	public static class WhenMovingAFileEntry extends BaseDLAppTestCase {
+
+		@ClassRule
+		public static final MainServletTestRule mainServletTestRule =
+			MainServletTestRule.INSTANCE;
 
 		@Test
 		public void shouldFireSyncEvent() throws Exception {
@@ -796,16 +828,20 @@ public class DLAppServiceTest extends BaseDLAppTestCase {
 			Assert.assertEquals(1, deleteCounter.get());
 		}
 
+		@Rule
+		public final SynchronousDestinationTestRule
+			synchronousDestinationTestRule =
+				SynchronousDestinationTestRule.INSTANCE;
+
 	}
 
-	@ExecutionTestListeners(
-		listeners = {
-			MainServletExecutionTestListener.class,
-			SynchronousDestinationExecutionTestListener.class
-		})
 	@RunWith(LiferayIntegrationJUnitTestRunner.class)
 	@Sync
 	public static class WhenMovingAFolder extends BaseDLAppTestCase {
+
+		@ClassRule
+		public static final MainServletTestRule mainServletTestRule =
+			MainServletTestRule.INSTANCE;
 
 		@Test
 		public void shouldFireSyncEvent() throws Exception {
@@ -829,16 +865,20 @@ public class DLAppServiceTest extends BaseDLAppTestCase {
 			Assert.assertEquals(1, deleteCounter.get());
 		}
 
+		@Rule
+		public final SynchronousDestinationTestRule
+			synchronousDestinationTestRule =
+				SynchronousDestinationTestRule.INSTANCE;
+
 	}
 
-	@ExecutionTestListeners(
-		listeners = {
-			MainServletExecutionTestListener.class,
-			SynchronousDestinationExecutionTestListener.class
-		})
 	@RunWith(LiferayIntegrationJUnitTestRunner.class)
 	@Sync
 	public static class WhenRevertingAFileEntry extends BaseDLAppTestCase {
+
+		@ClassRule
+		public static final MainServletTestRule mainServletTestRule =
+			MainServletTestRule.INSTANCE;
 
 		@Test
 		public void shouldCallWorkflowHandler() throws Exception {
@@ -906,16 +946,20 @@ public class DLAppServiceTest extends BaseDLAppTestCase {
 			Assert.assertEquals(4, updateCounter.get());
 		}
 
+		@Rule
+		public final SynchronousDestinationTestRule
+			synchronousDestinationTestRule =
+				SynchronousDestinationTestRule.INSTANCE;
+
 	}
 
-	@ExecutionTestListeners(
-		listeners = {
-			MainServletExecutionTestListener.class,
-			SynchronousDestinationExecutionTestListener.class
-		})
 	@RunWith(LiferayIntegrationJUnitTestRunner.class)
 	@Sync
 	public static class WhenSearchingFileEntries extends BaseDLAppTestCase {
+
+		@ClassRule
+		public static final MainServletTestRule mainServletTestRule =
+			MainServletTestRule.INSTANCE;
 
 		@Test
 		public void shouldFindFileEntryByAssetTagName() throws Exception {
@@ -986,16 +1030,20 @@ public class DLAppServiceTest extends BaseDLAppTestCase {
 			searchFile(group.getGroupId(), parentFolder.getFolderId());
 		}
 
+		@Rule
+		public final SynchronousDestinationTestRule
+			synchronousDestinationTestRule =
+				SynchronousDestinationTestRule.INSTANCE;
+
 	}
 
-	@ExecutionTestListeners(
-		listeners = {
-			MainServletExecutionTestListener.class,
-			SynchronousDestinationExecutionTestListener.class
-		})
 	@RunWith(LiferayIntegrationJUnitTestRunner.class)
 	@Sync
 	public static class WhenUpdatingAFileEntry extends BaseDLAppTestCase {
+
+		@ClassRule
+		public static final MainServletTestRule mainServletTestRule =
+			MainServletTestRule.INSTANCE;
 
 		@Test
 		public void assetTagsShouldBeOrdered() throws Exception {
@@ -1190,16 +1238,20 @@ public class DLAppServiceTest extends BaseDLAppTestCase {
 				serviceContext);
 		}
 
+		@Rule
+		public final SynchronousDestinationTestRule
+			synchronousDestinationTestRule =
+				SynchronousDestinationTestRule.INSTANCE;
+
 	}
 
-	@ExecutionTestListeners(
-		listeners = {
-			MainServletExecutionTestListener.class,
-			SynchronousDestinationExecutionTestListener.class
-		})
 	@RunWith(LiferayIntegrationJUnitTestRunner.class)
 	@Sync
 	public static class WhenUpdatingAFolder extends BaseDLAppTestCase {
+
+		@ClassRule
+		public static final MainServletTestRule mainServletTestRule =
+			MainServletTestRule.INSTANCE;
 
 		@Test
 		public void shouldFireSyncEvent() throws Exception {
@@ -1226,6 +1278,11 @@ public class DLAppServiceTest extends BaseDLAppTestCase {
 				RandomTestUtil.randomString(), StringPool.BLANK,
 				serviceContext);
 		}
+
+		@Rule
+		public final SynchronousDestinationTestRule
+			synchronousDestinationTestRule =
+				SynchronousDestinationTestRule.INSTANCE;
 
 	}
 

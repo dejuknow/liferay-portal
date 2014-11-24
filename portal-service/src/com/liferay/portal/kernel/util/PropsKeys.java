@@ -89,6 +89,8 @@ public interface PropsKeys {
 
 	public static final String APPLICATION_STARTUP_EVENTS = "application.startup.events";
 
+	public static final String ASSET_BROWSER_SEARCH_WITH_DATABASE = "asset.browser.search.with.database";
+
 	public static final String ASSET_CATEGORIES_NAVIGATION_DISPLAY_TEMPLATES_CONFIG = "asset.categories.navigation.display.templates.config";
 
 	public static final String ASSET_CATEGORIES_PROPERTIES_DEFAULT = "asset.categories.properties.default";
@@ -1186,8 +1188,6 @@ public interface PropsKeys {
 	public static final String JOURNAL_ARTICLE_VIEW_PERMISSION_CHECK_ENABLED = "journal.article.view.permission.check.enabled";
 
 	public static final String JOURNAL_ARTICLES_SEARCH_WITH_INDEX = "journal.articles.search.with.index";
-
-	public static final String JOURNAL_CONTENT_PUBLISH_TO_LIVE_BY_DEFAULT = "journal.content.publish.to.live.by.default";
 
 	public static final String JOURNAL_CONTENT_SEARCH_SHOW_LISTED = "journal.content.search.show.listed";
 

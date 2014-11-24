@@ -14,7 +14,7 @@
 
 package com.liferay.portal.util;
 
-import com.liferay.portal.kernel.test.ExecutionTestListeners;
+import com.liferay.portal.kernel.test.AggregateTestRule;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -25,8 +25,8 @@ import com.liferay.portal.model.Layout;
 import com.liferay.portal.model.User;
 import com.liferay.portal.service.CompanyLocalServiceUtil;
 import com.liferay.portal.service.GroupServiceUtil;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
-import com.liferay.portal.test.listeners.ResetDatabaseExecutionTestListener;
+import com.liferay.portal.test.MainServletTestRule;
+import com.liferay.portal.test.ResetDatabaseTestRule;
 import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
 import com.liferay.portal.util.test.GroupTestUtil;
 import com.liferay.portal.util.test.LayoutTestUtil;
@@ -38,19 +38,21 @@ import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
  * @author Eduardo Garcia
  */
-@ExecutionTestListeners(
-	listeners = {
-		MainServletExecutionTestListener.class,
-		ResetDatabaseExecutionTestListener.class
-	})
 @RunWith(LiferayIntegrationJUnitTestRunner.class)
 public class PortalImplGetSitesTest {
+
+	@ClassRule
+	public static final AggregateTestRule aggregateTestRule =
+		new AggregateTestRule(
+			MainServletTestRule.INSTANCE, ResetDatabaseTestRule.INSTANCE);
 
 	@Before
 	public void setUp() throws Exception {
@@ -126,6 +128,10 @@ public class PortalImplGetSitesTest {
 
 		Assert.assertFalse(set.size() < groupIds.length);
 	}
+
+	@Rule
+	public final ResetDatabaseTestRule resetDatabaseTestRule =
+		ResetDatabaseTestRule.INSTANCE;
 
 	protected long[] getSharedContentSiteGroupIds() throws Exception {
 		return PortalUtil.getSharedContentSiteGroupIds(

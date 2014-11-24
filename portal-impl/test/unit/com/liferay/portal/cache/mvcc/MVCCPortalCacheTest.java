@@ -25,7 +25,7 @@ import com.liferay.portal.kernel.test.CodeCoverageAssertor;
 import com.liferay.portal.kernel.test.NewEnv;
 import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.test.AdviseWith;
-import com.liferay.portal.test.AspectJNewEnvMethodRule;
+import com.liferay.portal.test.AspectJNewEnvTestRule;
 
 import java.io.Serializable;
 
@@ -47,8 +47,8 @@ import org.junit.Test;
 public class MVCCPortalCacheTest {
 
 	@ClassRule
-	public static CodeCoverageAssertor codeCoverageAssertor =
-		new CodeCoverageAssertor();
+	public static final CodeCoverageAssertor codeCoverageAssertor =
+		CodeCoverageAssertor.INSTANCE;
 
 	@Before
 	public void setUp() {
@@ -199,8 +199,8 @@ public class MVCCPortalCacheTest {
 	}
 
 	@Rule
-	public final AspectJNewEnvMethodRule aspectJNewEnvMethodRule =
-		new AspectJNewEnvMethodRule();
+	public final AspectJNewEnvTestRule aspectJNewEnvTestRule =
+		AspectJNewEnvTestRule.INSTANCE;
 
 	@Aspect
 	public static class MemoryPortalCacheAdvice {

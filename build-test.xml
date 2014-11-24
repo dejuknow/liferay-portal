@@ -1077,6 +1077,40 @@ create database lportal${database.index} character set utf8;</echo>
 		</if>
 	</target>
 
+	<target name="check-inet-address">
+		<if>
+			<and>
+				<equals arg1="${app.server.type}" arg2="jboss" />
+				<or>
+					<equals arg1="${app.server.jboss.version}" arg2="6.0.1" />
+					<equals arg1="${app.server.jboss.version}" arg2="6.1.0" />
+				</or>
+			</and>
+			<then>
+				<exec executable="/bin/bash" outputproperty="inet.address">
+					<arg value="-c" />
+					<arg value="ifconfig eth0:0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'" />
+				</exec>
+
+				<if>
+					<equals arg1="${inet.address}" arg2="127.0.0.1" />
+					<then>
+						<replace file="${app.server.jboss.instance.dir}/configuration/standalone.xml">
+							<replacefilter>
+								<replacetoken><![CDATA[<inet-address value="${jboss.bind.address:127.0.0.1}"/>]]></replacetoken>
+								<replacevalue><![CDATA[<nic name="eth0:0" />]]></replacevalue>
+							</replacefilter>
+							<replacefilter>
+								<replacetoken><![CDATA[<inet-address value="${jboss.bind.address.management:127.0.0.1}"/>]]></replacetoken>
+								<replacevalue><![CDATA[<nic name="eth0:0" />]]></replacevalue>
+							</replacefilter>
+						</replace>
+					</then>
+				</if>
+			</then>
+		</if>
+	</target>
+
 	<target name="clean-app-server-deploy-dir">
 		<delete includeemptydirs="true" failonerror="false">
 			<fileset
@@ -2307,6 +2341,13 @@ users.image.check.token=false</echo>
 				<echo file="portal-impl/src/portal-ext.properties" append="true">
 
 auto.deploy.dest.dir=C:/WINDOWS/system32/config/systemprofile/liferay/websphere-deploy</echo>
+			</then>
+		</if>
+
+		<if>
+			<isset property="captcha.max.challenges" />
+			<then>
+				<replace file="portal-impl/src/portal-ext.properties" token="captcha.max.challenges=-1" value="captcha.max.challenges=${captcha.max.challenges}" />
 			</then>
 		</if>
 
@@ -3657,6 +3698,29 @@ if (ppstate.equals("normal")) {
 		<echo file="test.package.names.properties">${test.package.names.properties.content}</echo>
 	</target>
 
+	<target name="replace-file">
+		<fail message="Please set the property ${file}." unless="file" />
+		<fail message="Please set the property ${token}." unless="token" />
+		<fail message="Please set the property ${value}." unless="value" />
+
+		<fail message="${token} not found in ${file}">
+			<condition>
+				<not>
+					<resourcecontains resource="${file}" substring="${token}" />
+				</not>
+			</condition>
+		</fail>
+
+		<echo>Replacing ${token} with ${value} in ${file}.</echo>
+
+		<replace file="${file}">
+			<replacefilter
+				token="${token}"
+				value="${value}"
+			/>
+		</replace>
+	</target>
+
 	<target name="revert-test-properties">
 		<execute>
 			<![CDATA[git checkout -- portal-impl/test/portal-test.properties]]>
@@ -3822,6 +3886,8 @@ if (ppstate.equals("normal")) {
 				<prepare-additional-bundles />
 			</then>
 		</if>
+
+		<antcall target="check-inet-address" />
 
 		<if>
 			<equals arg1="${cluster.enabled}" arg2="true" />

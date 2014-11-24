@@ -15,10 +15,9 @@
 package com.liferay.portlet.social.service;
 
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
-import com.liferay.portal.kernel.test.ExecutionTestListeners;
+import com.liferay.portal.test.MainServletTestRule;
 import com.liferay.portal.test.Sync;
-import com.liferay.portal.test.SynchronousDestinationExecutionTestListener;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
+import com.liferay.portal.test.SynchronousDestinationTestRule;
 import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
 import com.liferay.portlet.asset.model.AssetEntry;
 import com.liferay.portlet.social.model.SocialActivity;
@@ -29,20 +28,21 @@ import com.liferay.portlet.social.util.test.SocialActivityTestUtil;
 import java.util.List;
 
 import org.junit.Assert;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
  * @author Zsolt Berentey
  */
-@ExecutionTestListeners(
-	listeners = {
-		MainServletExecutionTestListener.class,
-		SynchronousDestinationExecutionTestListener.class
-	})
 @RunWith(LiferayIntegrationJUnitTestRunner.class)
 @Sync
 public class SocialActivityLocalServiceTest extends BaseSocialActivityTestCase {
+
+	@ClassRule
+	public static final MainServletTestRule mainServletTestRule =
+		MainServletTestRule.INSTANCE;
 
 	@Test
 	public void testActivityHierarchy() throws Exception {
@@ -77,5 +77,9 @@ public class SocialActivityLocalServiceTest extends BaseSocialActivityTestCase {
 			SocialActivityLocalServiceUtil.getGroupActivitiesCount(
 				_group.getGroupId()));
 	}
+
+	@Rule
+	public final SynchronousDestinationTestRule synchronousDestinationTestRule =
+		SynchronousDestinationTestRule.INSTANCE;
 
 }

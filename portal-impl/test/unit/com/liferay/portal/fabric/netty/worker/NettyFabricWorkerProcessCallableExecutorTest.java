@@ -29,7 +29,7 @@ import com.liferay.portal.kernel.test.CodeCoverageAssertor;
 import com.liferay.portal.kernel.test.NewEnv;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.test.AdviseWith;
-import com.liferay.portal.test.AspectJNewEnvMethodRule;
+import com.liferay.portal.test.AspectJNewEnvTestRule;
 
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.embedded.EmbeddedChannel;
@@ -49,8 +49,8 @@ import org.junit.Test;
 public class NettyFabricWorkerProcessCallableExecutorTest {
 
 	@ClassRule
-	public static CodeCoverageAssertor codeCoverageAssertor =
-		new CodeCoverageAssertor();
+	public static final CodeCoverageAssertor codeCoverageAssertor =
+		CodeCoverageAssertor.INSTANCE;
 
 	@AdviseWith(adviceClasses = NettyUtilAdvice.class)
 	@NewEnv(type = NewEnv.Type.CLASSLOADER)
@@ -116,7 +116,7 @@ public class NettyFabricWorkerProcessCallableExecutorTest {
 	}
 
 	@Rule
-	public final AspectJNewEnvMethodRule aspectJNewEnvMethodRule =
-		new AspectJNewEnvMethodRule();
+	public final AspectJNewEnvTestRule aspectJNewEnvTestRule =
+		AspectJNewEnvTestRule.INSTANCE;
 
 }

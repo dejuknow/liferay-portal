@@ -14,7 +14,6 @@
 
 package com.liferay.portlet.layoutprototypes.lar;
 
-import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.lar.BaseStagedModelDataHandlerTestCase;
 import com.liferay.portal.model.Group;
@@ -25,8 +24,8 @@ import com.liferay.portal.model.StagedModel;
 import com.liferay.portal.service.LayoutFriendlyURLLocalServiceUtil;
 import com.liferay.portal.service.LayoutLocalServiceUtil;
 import com.liferay.portal.service.LayoutPrototypeLocalServiceUtil;
-import com.liferay.portal.test.TransactionalMethodRule;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
+import com.liferay.portal.test.MainServletTestRule;
+import com.liferay.portal.test.TransactionalTestRule;
 import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
 import com.liferay.portal.util.test.LayoutTestUtil;
 import com.liferay.portal.util.test.RandomTestUtil;
@@ -36,16 +35,20 @@ import java.util.Map;
 
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.runner.RunWith;
 
 /**
  * @author Daniela Zapata Riesco
  */
-@ExecutionTestListeners(listeners = {MainServletExecutionTestListener.class})
 @RunWith(LiferayIntegrationJUnitTestRunner.class)
 public class LayoutPrototypeStagedModelDataHandlerTest
 	extends BaseStagedModelDataHandlerTestCase {
+
+	@ClassRule
+	public static final MainServletTestRule mainServletTestRule =
+		MainServletTestRule.INSTANCE;
 
 	@After
 	@Override
@@ -62,8 +65,8 @@ public class LayoutPrototypeStagedModelDataHandlerTest
 	}
 
 	@Rule
-	public TransactionalMethodRule transactionalMethodRule =
-		new TransactionalMethodRule();
+	public final TransactionalTestRule transactionalTestRule =
+		TransactionalTestRule.INSTANCE;
 
 	@Override
 	protected StagedModel addStagedModel(

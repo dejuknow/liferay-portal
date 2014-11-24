@@ -15,7 +15,6 @@
 package com.liferay.portlet.layoutsetprototypes.lar;
 
 import com.liferay.portal.kernel.lar.ExportImportPathUtil;
-import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.StreamUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
@@ -37,8 +36,8 @@ import com.liferay.portal.service.LayoutFriendlyURLLocalServiceUtil;
 import com.liferay.portal.service.LayoutLocalServiceUtil;
 import com.liferay.portal.service.LayoutPrototypeLocalServiceUtil;
 import com.liferay.portal.service.LayoutSetPrototypeLocalServiceUtil;
-import com.liferay.portal.test.TransactionalMethodRule;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
+import com.liferay.portal.test.MainServletTestRule;
+import com.liferay.portal.test.TransactionalTestRule;
 import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
 import com.liferay.portal.util.test.LayoutTestUtil;
 import com.liferay.portal.util.test.RandomTestUtil;
@@ -53,16 +52,20 @@ import java.util.Map;
 
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.runner.RunWith;
 
 /**
  * @author Daniela Zapata Riesco
  */
-@ExecutionTestListeners(listeners = {MainServletExecutionTestListener.class})
 @RunWith(LiferayIntegrationJUnitTestRunner.class)
 public class LayoutSetPrototypeStagedModelDataHandlerTest
 	extends BaseStagedModelDataHandlerTestCase {
+
+	@ClassRule
+	public static final MainServletTestRule mainServletTestRule =
+		MainServletTestRule.INSTANCE;
 
 	@After
 	@Override
@@ -88,8 +91,8 @@ public class LayoutSetPrototypeStagedModelDataHandlerTest
 	}
 
 	@Rule
-	public TransactionalMethodRule transactionalMethodRule =
-		new TransactionalMethodRule();
+	public final TransactionalTestRule transactionalTestRule =
+		TransactionalTestRule.INSTANCE;
 
 	protected void addLayout(Class<?> clazz, Layout layout) throws Exception {
 		List<Layout> layouts = _layouts.get(clazz.getSimpleName());

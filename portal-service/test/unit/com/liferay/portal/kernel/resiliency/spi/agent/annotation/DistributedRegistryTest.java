@@ -16,7 +16,7 @@ package com.liferay.portal.kernel.resiliency.spi.agent.annotation;
 
 import com.liferay.portal.kernel.test.CodeCoverageAssertor;
 import com.liferay.portal.kernel.test.NewEnv;
-import com.liferay.portal.kernel.test.NewEnvMethodRule;
+import com.liferay.portal.kernel.test.NewEnvTestRule;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 
 import java.util.Map;
@@ -33,8 +33,8 @@ import org.junit.Test;
 public class DistributedRegistryTest {
 
 	@ClassRule
-	public static CodeCoverageAssertor codeCoverageAssertor =
-		new CodeCoverageAssertor();
+	public static final CodeCoverageAssertor codeCoverageAssertor =
+		CodeCoverageAssertor.INSTANCE;
 
 	@Before
 	public void setUp() {
@@ -287,7 +287,7 @@ public class DistributedRegistryTest {
 	}
 
 	@Rule
-	public final NewEnvMethodRule newEnvMethodRule = new NewEnvMethodRule();
+	public final NewEnvTestRule newEnvTestRule = NewEnvTestRule.INSTANCE;
 
 	private Map<String, Direction> _exactDirections;
 	private Map<String, Direction> _postfixDirections;

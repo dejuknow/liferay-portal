@@ -22,7 +22,7 @@ import com.liferay.portal.kernel.test.CodeCoverageAssertor;
 import com.liferay.portal.kernel.test.NewEnv;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.test.AdviseWith;
-import com.liferay.portal.test.AspectJNewEnvMethodRule;
+import com.liferay.portal.test.AspectJNewEnvTestRule;
 
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -39,8 +39,8 @@ import org.junit.Test;
 public class WelderFactoryUtilTest {
 
 	@ClassRule
-	public static CodeCoverageAssertor codeCoverageAssertor =
-		new CodeCoverageAssertor();
+	public static final CodeCoverageAssertor codeCoverageAssertor =
+		CodeCoverageAssertor.INSTANCE;
 
 	@NewEnv(type = NewEnv.Type.NONE)
 	@Test
@@ -142,8 +142,8 @@ public class WelderFactoryUtilTest {
 	}
 
 	@Rule
-	public final AspectJNewEnvMethodRule aspectJNewEnvMethodRule =
-		new AspectJNewEnvMethodRule();
+	public final AspectJNewEnvTestRule aspectJNewEnvTestRule =
+		AspectJNewEnvTestRule.INSTANCE;
 
 	@Aspect
 	public static class FIFOUtilAdvice {

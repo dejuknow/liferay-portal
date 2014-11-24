@@ -18,7 +18,7 @@ import com.liferay.portal.kernel.memory.FinalizeManager.ReferenceFactory;
 import com.liferay.portal.kernel.test.CodeCoverageAssertor;
 import com.liferay.portal.kernel.test.GCUtil;
 import com.liferay.portal.kernel.test.NewEnv;
-import com.liferay.portal.kernel.test.NewEnvMethodRule;
+import com.liferay.portal.kernel.test.NewEnvTestRule;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.ThreadUtil;
@@ -42,8 +42,8 @@ import org.junit.Test;
 public class FinalizeManagerTest {
 
 	@ClassRule
-	public static CodeCoverageAssertor codeCoverageAssertor =
-		new CodeCoverageAssertor();
+	public static final CodeCoverageAssertor codeCoverageAssertor =
+		CodeCoverageAssertor.INSTANCE;
 
 	@After
 	public void tearDown() {
@@ -212,7 +212,7 @@ public class FinalizeManagerTest {
 	}
 
 	@Rule
-	public final NewEnvMethodRule newEnvMethodRule = new NewEnvMethodRule();
+	public final NewEnvTestRule newEnvTestRule = NewEnvTestRule.INSTANCE;
 
 	protected void doTestRegister(
 			boolean threadEnabled, ReferenceType referenceType)

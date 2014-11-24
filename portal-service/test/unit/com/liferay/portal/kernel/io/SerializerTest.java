@@ -20,7 +20,7 @@ import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayInputStream;
 import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayOutputStream;
 import com.liferay.portal.kernel.test.CodeCoverageAssertor;
 import com.liferay.portal.kernel.test.NewEnv;
-import com.liferay.portal.kernel.test.NewEnvMethodRule;
+import com.liferay.portal.kernel.test.NewEnvTestRule;
 import com.liferay.portal.kernel.util.StringPool;
 
 import java.io.IOException;
@@ -54,7 +54,7 @@ import org.junit.Test;
 public class SerializerTest {
 
 	@ClassRule
-	public static CodeCoverageAssertor codeCoverageAssertor =
+	public static final CodeCoverageAssertor codeCoverageAssertor =
 		new CodeCoverageAssertor() {
 
 			@Override
@@ -899,7 +899,7 @@ public class SerializerTest {
 	}
 
 	@Rule
-	public final NewEnvMethodRule newEnvMethodRule = new NewEnvMethodRule();
+	public final NewEnvTestRule newEnvTestRule = NewEnvTestRule.INSTANCE;
 
 	private static final int _COUNT = 1024;
 

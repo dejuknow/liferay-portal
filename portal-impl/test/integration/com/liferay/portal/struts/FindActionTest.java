@@ -15,7 +15,7 @@
 package com.liferay.portal.struts;
 
 import com.liferay.portal.NoSuchLayoutException;
-import com.liferay.portal.kernel.test.ExecutionTestListeners;
+import com.liferay.portal.kernel.test.AggregateTestRule;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Layout;
@@ -23,10 +23,10 @@ import com.liferay.portal.model.PortletConstants;
 import com.liferay.portal.model.impl.VirtualLayout;
 import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.security.permission.PermissionCheckerFactoryUtil;
+import com.liferay.portal.test.MainServletTestRule;
+import com.liferay.portal.test.ResetDatabaseTestRule;
 import com.liferay.portal.test.Sync;
-import com.liferay.portal.test.SynchronousDestinationExecutionTestListener;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
-import com.liferay.portal.test.listeners.ResetDatabaseExecutionTestListener;
+import com.liferay.portal.test.SynchronousDestinationTestRule;
 import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortletKeys;
@@ -43,6 +43,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.junit.Assert;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -53,15 +55,14 @@ import org.springframework.mock.web.MockHttpServletRequest;
  * @author Laszlo Csontos
  * @author Eduardo Garcia
  */
-@ExecutionTestListeners(
-	listeners = {
-		MainServletExecutionTestListener.class,
-		ResetDatabaseExecutionTestListener.class,
-		SynchronousDestinationExecutionTestListener.class
-	})
 @RunWith(LiferayIntegrationJUnitTestRunner.class)
 @Sync
 public class FindActionTest {
+
+	@ClassRule
+	public static final AggregateTestRule classAggregateTestRule =
+		new AggregateTestRule(
+			MainServletTestRule.INSTANCE, ResetDatabaseTestRule.INSTANCE);
 
 	@Test
 	public void testGetPlidAndPortletIdViewInContext() throws Exception {
@@ -120,6 +121,12 @@ public class FindActionTest {
 
 		Assert.assertNull(layout);
 	}
+
+	@Rule
+	public final AggregateTestRule methodAggregateTestRule =
+		new AggregateTestRule(
+			ResetDatabaseTestRule.INSTANCE,
+			SynchronousDestinationTestRule.INSTANCE);
 
 	protected void addLayouts(
 			boolean portletExists, boolean blogEntryWithDifferentGroup)

@@ -218,6 +218,16 @@ public class AUIUtil {
 		return null;
 	}
 
+	public static boolean isOpensNewWindow(String target) {
+		if ((target != null) &&
+			(target.equals("_blank") || target.equals("_new"))) {
+
+			return true;
+		}
+
+		return false;
+	}
+
 	public static String normalizeId(String name) {
 		Matcher matcher = _friendlyURLPattern.matcher(name);
 

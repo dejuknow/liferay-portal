@@ -14,23 +14,16 @@
 
 package com.liferay.portal.test.runners;
 
-import com.liferay.portal.kernel.util.ReflectionUtil;
-import com.liferay.portal.log.CaptureAppender;
-import com.liferay.portal.test.log.ConcurrentAssertUtil;
-import com.liferay.portal.test.log.ExpectedLogsUtil;
-import com.liferay.portal.test.log.LogAssertionUtil;
+import com.liferay.portal.kernel.util.CentralizedThreadLocal;
+import com.liferay.portal.test.log.LogAssertionTestRule;
 import com.liferay.portal.test.randomizerbumpers.UniqueStringRandomizerBumper;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
+import com.liferay.portal.test.rule.DeleteAfterTestRunTestRule;
 
 import java.util.Collections;
 import java.util.List;
 
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
-import org.junit.runner.notification.RunNotifier;
-import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
@@ -57,118 +50,49 @@ public class LiferayIntegrationJUnitTestRunner
 		return Collections.emptyList();
 	}
 
-	protected static Statement logAssertStatement(
-		final Statement statement, final Method method) {
-
-		return new Statement() {
-
-			@Override
-			public void evaluate() throws Throwable {
-				ConcurrentAssertUtil.startAssert();
-
-				CaptureAppender captureAppender = ExpectedLogsUtil.startAssert(
-					method);
-
-				try {
-					LogAssertionUtil.enableLogAssertion();
-
-					statement.evaluate();
-				}
-				finally {
-					ExpectedLogsUtil.endAssert(method, captureAppender);
-
-					ConcurrentAssertUtil.endAssert();
-				}
-			}
-
-		};
-	}
-
-	@Override
-	protected Statement classBlock(RunNotifier notifier) {
-		final Statement statement = super.classBlock(notifier);
-
-		return new Statement() {
-
-			@Override
-			public void evaluate() throws Throwable {
-				Thread currentThread = Thread.currentThread();
-
-				Object inheritableThreadLocals =
-					_INHERITABLE_THREAD_LOCALS_FIELD.get(currentThread);
-
-				if (inheritableThreadLocals != null) {
-					_INHERITABLE_THREAD_LOCALS_FIELD.set(
-						currentThread,
-						_CREATE_INHERITED_MAP_METHOD.invoke(
-							null, inheritableThreadLocals));
-				}
-
-				Object threadLocals = _THREAD_LOCALS_FIELD.get(currentThread);
-
-				_THREAD_LOCALS_FIELD.set(currentThread, null);
-
-				try {
-					statement.evaluate();
-				}
-				finally {
-					_INHERITABLE_THREAD_LOCALS_FIELD.set(
-						currentThread, inheritableThreadLocals);
-					_THREAD_LOCALS_FIELD.set(currentThread, threadLocals);
-				}
-			}
-
-		};
-	}
-
 	@Override
 	protected List<TestRule> classRules() {
 		List<TestRule> testRules = super.classRules();
 
-		testRules.add(_logAssertTestRule);
 		testRules.add(_uniqueStringRandomizerBumperTestRule);
+
+		testRules.add(_clearThreadLocalTestRule);
+
+		testRules.add(LogAssertionTestRule.INSTANCE);
 
 		return testRules;
 	}
 
 	@Override
-	protected Statement methodBlock(FrameworkMethod frameworkMethod) {
-		return logAssertStatement(
-			super.methodBlock(frameworkMethod), frameworkMethod.getMethod());
+	protected List<TestRule> getTestRules(Object object) {
+		List<TestRule> testRules = super.getTestRules(object);
+
+		testRules.add(new DeleteAfterTestRunTestRule(object));
+
+		testRules.add(LogAssertionTestRule.INSTANCE);
+
+		return testRules;
 	}
 
-	private static final Method _CREATE_INHERITED_MAP_METHOD;
-
-	private static final Field _INHERITABLE_THREAD_LOCALS_FIELD;
-
-	private static final Class<?> _THREAD_LOCAL_MAP_CLASS;
-
-	private static final Field _THREAD_LOCALS_FIELD;
-
-	static {
-		try {
-			_THREAD_LOCAL_MAP_CLASS = Class.forName(
-				ThreadLocal.class.getName().concat("$ThreadLocalMap"));
-
-			_CREATE_INHERITED_MAP_METHOD = ReflectionUtil.getDeclaredMethod(
-				ThreadLocal.class, "createInheritedMap",
-				_THREAD_LOCAL_MAP_CLASS);
-
-			_INHERITABLE_THREAD_LOCALS_FIELD = ReflectionUtil.getDeclaredField(
-				Thread.class, "inheritableThreadLocals");
-			_THREAD_LOCALS_FIELD = ReflectionUtil.getDeclaredField(
-				Thread.class, "threadLocals");
-		}
-		catch (Exception e) {
-			throw new ExceptionInInitializerError(e);
-		}
-	}
-
-	private final TestRule _logAssertTestRule = new TestRule() {
+	private final TestRule _clearThreadLocalTestRule = new TestRule() {
 
 		@Override
-		public Statement apply(Statement statement, Description description) {
-			return logAssertStatement(statement, null);
+		public Statement apply(
+			final Statement statement, Description description) {
+
+			return new Statement() {
+
+				@Override
+				public void evaluate() throws Throwable {
+					try {
+						statement.evaluate();
+					}
+					finally {
+						CentralizedThreadLocal.clearShortLivedThreadLocals();
+					}
+				}
+
+			};
 		}
 
 	};

@@ -24,7 +24,7 @@ import com.liferay.portal.NoSuchShardException;
 import com.liferay.portal.NoSuchVirtualHostException;
 import com.liferay.portal.RequiredCompanyException;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
-import com.liferay.portal.kernel.test.ExecutionTestListeners;
+import com.liferay.portal.kernel.test.AggregateTestRule;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ReflectionUtil;
 import com.liferay.portal.kernel.util.StringPool;
@@ -40,10 +40,10 @@ import com.liferay.portal.security.auth.CompanyThreadLocal;
 import com.liferay.portal.service.persistence.PasswordPolicyUtil;
 import com.liferay.portal.service.persistence.PortalPreferencesUtil;
 import com.liferay.portal.service.persistence.PortletUtil;
+import com.liferay.portal.test.MainServletTestRule;
 import com.liferay.portal.test.Sync;
-import com.liferay.portal.test.SynchronousDestinationExecutionTestListener;
-import com.liferay.portal.test.TransactionalMethodRule;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
+import com.liferay.portal.test.SynchronousDestinationTestRule;
+import com.liferay.portal.test.TransactionalTestRule;
 import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
 import com.liferay.portal.util.PortalInstances;
 import com.liferay.portal.util.PortletKeys;
@@ -69,6 +69,7 @@ import java.util.Map;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -80,14 +81,13 @@ import org.springframework.mock.web.MockServletContext;
  * @author Mika Koivisto
  * @author Dale Shan
  */
-@ExecutionTestListeners(
-	listeners = {
-		MainServletExecutionTestListener.class,
-		SynchronousDestinationExecutionTestListener.class
-	})
 @RunWith(LiferayIntegrationJUnitTestRunner.class)
 @Sync
 public class CompanyLocalServiceTest {
+
+	@ClassRule
+	public static final MainServletTestRule mainServletTestRule =
+		MainServletTestRule.INSTANCE;
 
 	@Before
 	public void setUp() {
@@ -500,8 +500,9 @@ public class CompanyLocalServiceTest {
 	}
 
 	@Rule
-	public TransactionalMethodRule transactionalMethodRule =
-		new TransactionalMethodRule();
+	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(
+		SynchronousDestinationTestRule.INSTANCE,
+		TransactionalTestRule.INSTANCE);
 
 	protected Company addCompany() throws Exception {
 		String webId = RandomTestUtil.randomString() + "test.com";

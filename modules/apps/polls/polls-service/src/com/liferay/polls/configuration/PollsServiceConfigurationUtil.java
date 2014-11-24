@@ -22,12 +22,12 @@ import com.liferay.portal.kernel.configuration.ConfigurationFactoryUtil;
  */
 public class PollsServiceConfigurationUtil {
 
-	public static final Configuration _configuration =
-		ConfigurationFactoryUtil.getConfiguration(
-			PollsServiceConfigurationUtil.class.getClassLoader(), "portlet");
-
 	public static String get(String key) {
 		return _configuration.get(key);
 	}
+
+	private static final Configuration _configuration =
+		ConfigurationFactoryUtil.getConfiguration(
+			PollsServiceConfigurationUtil.class.getClassLoader(), "portlet");
 
 }

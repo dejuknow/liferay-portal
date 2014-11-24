@@ -16,7 +16,7 @@ package com.liferay.portal.model.impl;
 
 import com.liferay.portal.LayoutFriendlyURLException;
 import com.liferay.portal.LayoutFriendlyURLsException;
-import com.liferay.portal.kernel.test.ExecutionTestListeners;
+import com.liferay.portal.kernel.test.AggregateTestRule;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringPool;
@@ -24,8 +24,8 @@ import com.liferay.portal.model.Group;
 import com.liferay.portal.model.LayoutConstants;
 import com.liferay.portal.service.LayoutLocalServiceUtil;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
-import com.liferay.portal.test.listeners.ResetDatabaseExecutionTestListener;
+import com.liferay.portal.test.MainServletTestRule;
+import com.liferay.portal.test.ResetDatabaseTestRule;
 import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
 import com.liferay.portal.util.test.GroupTestUtil;
 import com.liferay.portal.util.test.RandomTestUtil;
@@ -38,19 +38,21 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.junit.Assert;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
  * @author Sergio González
  */
-@ExecutionTestListeners(
-	listeners = {
-		MainServletExecutionTestListener.class,
-		ResetDatabaseExecutionTestListener.class
-	})
 @RunWith(LiferayIntegrationJUnitTestRunner.class)
 public class LayoutFriendlyURLTest {
+
+	@ClassRule
+	public static final AggregateTestRule aggregateTestRule =
+		new AggregateTestRule(
+			MainServletTestRule.INSTANCE, ResetDatabaseTestRule.INSTANCE);
 
 	@Test
 	public void testDifferentFriendlyURLDifferentLocaleDifferentGroup()
@@ -548,6 +550,10 @@ public class LayoutFriendlyURLTest {
 			Assert.fail();
 		}
 	}
+
+	@Rule
+	public final ResetDatabaseTestRule resetDatabaseTestRule =
+		ResetDatabaseTestRule.INSTANCE;
 
 	protected void addLayout(
 			long groupId, boolean privateLayout,

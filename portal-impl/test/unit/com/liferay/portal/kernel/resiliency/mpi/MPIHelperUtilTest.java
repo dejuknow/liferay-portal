@@ -44,7 +44,7 @@ import com.liferay.portal.kernel.util.PropsUtilAdvice;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.resiliency.spi.SPIRegistryImpl;
 import com.liferay.portal.test.AdviseWith;
-import com.liferay.portal.test.AspectJNewEnvMethodRule;
+import com.liferay.portal.test.AspectJNewEnvTestRule;
 
 import java.io.IOException;
 
@@ -75,8 +75,8 @@ import org.junit.Test;
 public class MPIHelperUtilTest {
 
 	@ClassRule
-	public static CodeCoverageAssertor codeCoverageAssertor =
-		new CodeCoverageAssertor();
+	public static final CodeCoverageAssertor codeCoverageAssertor =
+		CodeCoverageAssertor.INSTANCE;
 
 	@Before
 	public void setUp() {
@@ -1134,8 +1134,8 @@ public class MPIHelperUtilTest {
 	}
 
 	@Rule
-	public final AspectJNewEnvMethodRule aspectJNewEnvMethodRule =
-		new AspectJNewEnvMethodRule();
+	public final AspectJNewEnvTestRule aspectJNewEnvTestRule =
+		AspectJNewEnvTestRule.INSTANCE;
 
 	private static MPI _getMPIImpl() {
 		MPI mpiImpl = ReflectionTestUtil.getFieldValue(

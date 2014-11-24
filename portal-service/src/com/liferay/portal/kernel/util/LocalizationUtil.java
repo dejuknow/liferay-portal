@@ -239,6 +239,11 @@ public class LocalizationUtil {
 		return modifiedLocales;
 	}
 
+	/**
+	 * @deprecated As of 7.0.0 replaced by {@link
+	 *             #getLocalizedName(String, String)}
+	 */
+	@Deprecated
 	public static String getPreferencesKey(String key, String languageId) {
 		return getLocalization().getPreferencesKey(key, languageId);
 	}
