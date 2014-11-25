@@ -14,6 +14,7 @@
 
 package com.liferay.sync.engine.documentlibrary.handler;
 
+import com.liferay.sync.engine.SyncEngine;
 import com.liferay.sync.engine.documentlibrary.event.Event;
 import com.liferay.sync.engine.documentlibrary.event.GetSyncContextEvent;
 import com.liferay.sync.engine.documentlibrary.util.ServerEventUtil;
@@ -32,6 +33,7 @@ import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -75,7 +77,10 @@ public class BaseHandler implements Handler<Void> {
 						"Retrying event {} for sync file {}", _event, syncFile);
 				}
 
-				_event.run();
+				ExecutorService executorService =
+					SyncEngine.getEventProcessorExecutorService();
+
+				executorService.execute(_event);
 			}
 			else if (syncFile.getVersion() == null) {
 				SyncFileService.deleteSyncFile(syncFile);
