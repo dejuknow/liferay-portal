@@ -79,6 +79,7 @@ public class BatchEvent {
 			parameters = new HashMap<String, Object>(parameters);
 
 			parameters.remove("filePath");
+			parameters.remove("syncFile");
 
 			_batchParameters.add(parameters);
 
@@ -86,8 +87,10 @@ public class BatchEvent {
 
 			_handlers.put(zipFileId, event.getHandler());
 
-			if ((_eventsCount >= _MAX_EVENTS) ||
-				(_totalFileSize >= _MAX_TOTAL_FILE_SIZE)) {
+			if ((_eventsCount >=
+					PropsValues.SYNC_BATCH_EVENTS_TOTAL_COUNT) ||
+				(_totalFileSize >=
+					PropsValues.SYNC_BATCH_EVENTS_TOTAL_FILE_SIZE)) {
 
 				fireBatchEvent();
 			}
@@ -95,9 +98,7 @@ public class BatchEvent {
 			return true;
 		}
 		catch (IOException ioe) {
-			if (_logger.isTraceEnabled()) {
-				_logger.trace(ioe.getMessage(), ioe);
-			}
+			_logger.debug(ioe.getMessage(), ioe);
 
 			return false;
 		}
@@ -123,7 +124,7 @@ public class BatchEvent {
 
 			Map<String, Object> parameters = new HashMap<String, Object>();
 
-			parameters.put("handlers", getHandlers());
+			parameters.put("handlers", _handlers);
 			parameters.put("zipFilePath", _zipFilePath);
 
 			UpdateFileEntriesEvent updateFileEntriesEvent =
@@ -134,12 +135,8 @@ public class BatchEvent {
 			_closed = true;
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			_logger.debug(e.getMessage(), e);
 		}
-	}
-
-	public synchronized Map<String, Handler> getHandlers() {
-		return _handlers;
 	}
 
 	public synchronized boolean isClosed() {
@@ -151,7 +148,7 @@ public class BatchEvent {
 
 		long size = Files.size(filePath);
 
-		if (size >= _MAX_FILE_SIZE) {
+		if (size >= PropsValues.SYNC_BATCH_EVENTS_MAX_FILE_SIZE) {
 			return false;
 		}
 
@@ -204,16 +201,11 @@ public class BatchEvent {
 		}
 	}
 
-	private static final long _MAX_EVENTS = 100;
-
-	private static final long _MAX_FILE_SIZE = 1000000;
-
-	private static final long _MAX_TOTAL_FILE_SIZE = 10000000;
-
 	private static final Logger _logger = LoggerFactory.getLogger(
 		BatchEvent.class);
 
-	private List<Map<String, Object>> _batchParameters = new ArrayList<>();
+	private List<Map<String, Object>> _batchParameters =
+		new ArrayList<Map<String, Object>>();
 	private boolean _closed;
 	private int _eventsCount;
 	private Map<String, Handler> _handlers = new HashMap<String, Handler>();

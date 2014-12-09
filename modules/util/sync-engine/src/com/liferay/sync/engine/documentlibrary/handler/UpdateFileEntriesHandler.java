@@ -25,6 +25,9 @@ import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author Shinn Lok
  */
@@ -36,8 +39,8 @@ public class UpdateFileEntriesHandler extends BaseJSONHandler {
 
 	@Override
 	public void processResponse(String response) throws Exception {
-		Map<String, Handler> handlers = (Map<String, Handler>)getParameterValue(
-			"handlers");
+		Map<String, DownloadFileHandler> handlers =
+			(Map<String, DownloadFileHandler>)getParameterValue("handlers");
 
 		ObjectMapper objectMapper = new ObjectMapper();
 
@@ -62,6 +65,7 @@ public class UpdateFileEntriesHandler extends BaseJSONHandler {
 				handler.processResponse(fieldValue.toString());
 			}
 			catch (Exception e) {
+				_logger.debug(e.getMessage(), e);
 			}
 		}
 
@@ -69,5 +73,8 @@ public class UpdateFileEntriesHandler extends BaseJSONHandler {
 
 		Files.deleteIfExists(filePath);
 	}
+
+	private static final Logger _logger = LoggerFactory.getLogger(
+		UpdateFileEntriesHandler.class);
 
 }

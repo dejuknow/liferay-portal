@@ -28,8 +28,10 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -39,14 +41,17 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.io.output.CountingOutputStream;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
@@ -64,6 +69,7 @@ import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 
@@ -205,7 +211,7 @@ public class Session {
 
 	public void executeAsynchronousPost(
 			final String urlPath, final Map<String, Object> parameters,
-			final Handler<Void> handler)
+			final Handler<Void> handler, final boolean urlEncodedForm)
 		throws Exception {
 
 		Runnable runnable = new Runnable() {
@@ -213,7 +219,7 @@ public class Session {
 			@Override
 			public void run() {
 				try {
-					executePost(urlPath, parameters, handler);
+					executePost(urlPath, parameters, handler, urlEncodedForm);
 				}
 				catch (Exception e) {
 					handler.handleException(e);
@@ -245,28 +251,29 @@ public class Session {
 	}
 
 	public HttpResponse executePost(
-			String urlPath, Map<String, Object> parameters)
+			String urlPath, Map<String, Object> parameters,
+			boolean urlEncodedForm)
 		throws Exception {
 
 		HttpPost httpPost = new HttpPost(urlPath);
 
 		httpPost.setHeader("Sync-JWT", _token);
 
-		_buildHttpPostBody(httpPost, parameters);
+		_buildHttpPostBody(httpPost, parameters, urlEncodedForm);
 
 		return _httpClient.execute(_httpHost, httpPost, getBasicHttpContext());
 	}
 
 	public <T> T executePost(
 			String urlPath, Map<String, Object> parameters,
-			Handler<? extends T> handler)
+			Handler<? extends T> handler, boolean urlEncodedForm)
 		throws Exception {
 
 		HttpPost httpPost = new HttpPost(urlPath);
 
 		httpPost.setHeader("Sync-JWT", _token);
 
-		_buildHttpPostBody(httpPost, parameters);
+		_buildHttpPostBody(httpPost, parameters, urlEncodedForm);
 
 		return _httpClient.execute(
 			_httpHost, httpPost, handler, getBasicHttpContext());
@@ -310,7 +317,33 @@ public class Session {
 	}
 
 	private void _buildHttpPostBody(
-			HttpPost httpPost, Map<String, Object> parameters)
+			HttpPost httpPost, Map<String, Object> parameters,
+			boolean urlEncodedForm)
+		throws Exception {
+
+		HttpEntity httpEntity = null;
+
+		if (urlEncodedForm) {
+			httpEntity = _getURLEncodedFormEntity(parameters);
+		}
+		else {
+			httpEntity = _getEntity(parameters);
+		}
+
+		httpPost.setEntity(httpEntity);
+	}
+
+	private BasicAuthCache _getBasicAuthCache() {
+		BasicAuthCache basicAuthCache = new BasicAuthCache();
+
+		BasicScheme basicScheme = new BasicScheme();
+
+		basicAuthCache.put(_httpHost, basicScheme);
+
+		return basicAuthCache;
+	}
+
+	private HttpEntity _getEntity(Map<String, Object> parameters)
 		throws Exception {
 
 		Path deltaFilePath = (Path)parameters.get("deltaFilePath");
@@ -342,17 +375,7 @@ public class Session {
 					(String)parameters.get("title")));
 		}
 
-		httpPost.setEntity(multipartEntityBuilder.build());
-	}
-
-	private BasicAuthCache _getBasicAuthCache() {
-		BasicAuthCache basicAuthCache = new BasicAuthCache();
-
-		BasicScheme basicScheme = new BasicScheme();
-
-		basicAuthCache.put(_httpHost, basicScheme);
-
-		return basicAuthCache;
+		return multipartEntityBuilder.build();
 	}
 
 	private ContentBody _getFileBody(
@@ -423,6 +446,21 @@ public class Session {
 			ContentType.create(
 				ContentType.TEXT_PLAIN.getMimeType(),
 				Charset.forName("UTF-8")));
+	}
+
+	private HttpEntity _getURLEncodedFormEntity(Map<String, Object> parameters)
+		throws Exception {
+
+		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+
+		for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+			NameValuePair nameValuePair = new BasicNameValuePair(
+				entry.getKey(), String.valueOf(entry.getValue()));
+
+			nameValuePairs.add(nameValuePair);
+		}
+
+		return new UrlEncodedFormEntity(nameValuePairs);
 	}
 
 	private static final Logger _logger = LoggerFactory.getLogger(

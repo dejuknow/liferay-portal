@@ -33,6 +33,8 @@ import com.liferay.sync.engine.service.SyncSiteService;
 import com.liferay.sync.engine.service.SyncWatchEventService;
 import com.liferay.sync.engine.service.persistence.SyncAccountPersistence;
 import com.liferay.sync.engine.upgrade.util.UpgradeUtil;
+import com.liferay.sync.engine.util.BatchDownloadEvent;
+import com.liferay.sync.engine.util.BatchEventUtil;
 import com.liferay.sync.engine.util.ConnectionRetryUtil;
 import com.liferay.sync.engine.util.FileUtil;
 import com.liferay.sync.engine.util.LoggerUtil;
@@ -353,6 +355,12 @@ public class SyncEngine {
 
 					return;
 				}
+
+				BatchDownloadEvent batchDownloadEvent =
+					BatchEventUtil.getBatchDownloadEvent(
+						syncAccount.getSyncAccountId());
+
+				batchDownloadEvent.fireBatchEvent();
 
 				Set<Long> syncSiteIds = SyncSiteService.getActiveSyncSiteIds(
 					syncAccount.getSyncAccountId());
