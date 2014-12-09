@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.sync.engine.util;
+package com.liferay.sync.engine.documentlibrary.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -22,6 +22,9 @@ import com.liferay.sync.engine.documentlibrary.handler.Handler;
 import com.liferay.sync.engine.model.SyncAccount;
 import com.liferay.sync.engine.model.SyncFile;
 import com.liferay.sync.engine.service.SyncAccountService;
+import com.liferay.sync.engine.util.FileUtil;
+import com.liferay.sync.engine.util.PropsValues;
+import com.liferay.sync.engine.util.StreamUtil;
 
 import java.io.File;
 import java.io.IOException;

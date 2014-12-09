@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.sync.engine.util;
+package com.liferay.sync.engine.documentlibrary.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -20,6 +20,7 @@ import com.liferay.sync.engine.documentlibrary.event.DownloadFileEvent;
 import com.liferay.sync.engine.documentlibrary.event.DownloadFilesEvent;
 import com.liferay.sync.engine.documentlibrary.handler.DownloadFileHandler;
 import com.liferay.sync.engine.model.SyncFile;
+import com.liferay.sync.engine.util.PropsValues;
 
 import java.util.ArrayList;
 import java.util.HashMap;

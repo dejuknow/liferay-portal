@@ -16,13 +16,13 @@ package com.liferay.sync.engine.documentlibrary.event;
 
 import com.liferay.sync.engine.SyncEngine;
 import com.liferay.sync.engine.documentlibrary.handler.Handler;
+import com.liferay.sync.engine.documentlibrary.util.BatchEvent;
+import com.liferay.sync.engine.documentlibrary.util.BatchEventManager;
 import com.liferay.sync.engine.model.SyncAccount;
 import com.liferay.sync.engine.model.SyncFile;
 import com.liferay.sync.engine.service.SyncAccountService;
 import com.liferay.sync.engine.session.Session;
 import com.liferay.sync.engine.session.SessionManager;
-import com.liferay.sync.engine.util.BatchEvent;
-import com.liferay.sync.engine.util.BatchEventUtil;
 
 import java.util.Map;
 
@@ -140,7 +140,7 @@ public abstract class BaseEvent implements Event {
 	}
 
 	protected void processAsynchronousRequest() throws Exception {
-		BatchEvent batchEvent = BatchEventUtil.getBatchEvent(_syncAccountId);
+		BatchEvent batchEvent = BatchEventManager.getBatchEvent(_syncAccountId);
 
 		if (!batchEvent.addEvent(this)) {
 			executeAsynchronousPost(_urlPath, _parameters);

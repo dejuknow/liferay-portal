@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.sync.engine.util;
+package com.liferay.sync.engine.documentlibrary.util;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 /**
  * @author Shinn Lok
  */
-public class BatchEventUtil {
+public class BatchEventManager {
 
 	public static BatchDownloadEvent getBatchDownloadEvent(long syncAccountId) {
 		synchronized (_batchDownloadEvents) {

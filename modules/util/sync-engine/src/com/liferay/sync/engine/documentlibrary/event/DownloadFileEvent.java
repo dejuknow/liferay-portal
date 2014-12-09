@@ -16,10 +16,10 @@ package com.liferay.sync.engine.documentlibrary.event;
 
 import com.liferay.sync.engine.documentlibrary.handler.DownloadFileHandler;
 import com.liferay.sync.engine.documentlibrary.handler.Handler;
+import com.liferay.sync.engine.documentlibrary.util.BatchDownloadEvent;
+import com.liferay.sync.engine.documentlibrary.util.BatchEventManager;
 import com.liferay.sync.engine.model.SyncFile;
 import com.liferay.sync.engine.service.SyncFileService;
-import com.liferay.sync.engine.util.BatchDownloadEvent;
-import com.liferay.sync.engine.util.BatchEventUtil;
 
 import java.util.Map;
 
@@ -51,7 +51,7 @@ public class DownloadFileEvent extends BaseEvent {
 		SyncFileService.update(syncFile);
 
 		BatchDownloadEvent batchDownloadEvent =
-			BatchEventUtil.getBatchDownloadEvent(getSyncAccountId());
+			BatchEventManager.getBatchDownloadEvent(getSyncAccountId());
 
 		if (batchDownloadEvent.addEvent(this)) {
 			return;
