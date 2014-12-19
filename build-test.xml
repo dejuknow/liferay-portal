@@ -1306,6 +1306,19 @@ create database lportal${database.index} character set utf8;</echo>
 		</if>
 	</target>
 
+	<target name="deploy-extra-apps">
+		<var name="extra.apps.zip.file.name" value="${jenkins.shared.user.content.dir}/jobs/${top.level.job.name}/builds/${top.level.build.number}/downloads/extraapps.zip" />
+
+		<if>
+			<available file="${extra.apps.zip.file.name}" />
+			<then>
+				<ant antfile="build-test-plugins.xml" target="deploy-extra-apps">
+					<property name="extra.apps.zip.file.name" value="${extra.apps.zip.file.name}" />
+				</ant>
+			</then>
+		</if>
+	</target>
+
 	<target name="deploy-required-plugins">
 		<ant dir="${lp.plugins.dir}/portlets/marketplace-portlet" target="direct-deploy" />
 
@@ -1443,17 +1456,14 @@ ${marketplace.portlet.properties}</echo>
 
 				<property name="results.xml.file" value="portal-web/test-results/functional/TEST-${env.BUILD_FLOW_JOB_NAME}_${env.BUILD_FLOW_BUILD_NUMBER}_${test.class}.xml" />
 
-				<echo file="${results.xml.file}"><![CDATA[<?xml version="1.0" encoding="UTF-8" ?>
+				<echo file="${results.xml.file}"><![CDATA[<?xml version="1.0"?>
+
 <testsuite>
-<testcase classname="${test.class.name}" name="${test.method.name}" time="0.00">
-<failure message="Jenkins failure prior to running test">Jenkins failure prior to running test<failure>
-</testcase>
-<system-out>
-<![CDATA[]]]]><![CDATA[>
-</system-out>
-<system-err>
-<![CDATA[]]]]><![CDATA[>
-</system-err>
+	<testcase classname="${test.class.name}" name="${test.method.name}" time="0.00">
+		<failure message="Jenkins failure prior to running test.">Jenkins failure prior to running test.</failure>
+	</testcase>
+	<system-out></system-out>
+	<system-err></system-err>
 </testsuite>]]></echo>
 
 				<record-testray-components />
@@ -4022,6 +4032,8 @@ if (ppstate.equals("normal")) {
 		<antcall target="deploy-required-plugins" />
 
 		<antcall target="deploy-specified-plugins" />
+
+		<antcall target="deploy-extra-apps" />
 
 		<if>
 			<isset property="app.server.bundles.size" />

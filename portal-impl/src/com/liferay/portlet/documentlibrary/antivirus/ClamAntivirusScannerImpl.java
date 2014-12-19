@@ -15,6 +15,7 @@
 package com.liferay.portlet.documentlibrary.antivirus;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * @author Michael C. Han
@@ -47,7 +48,7 @@ public class ClamAntivirusScannerImpl extends BaseFileAntivirusScanner {
 					AntivirusScannerException.PROCESS_FAILURE);
 			}
 		}
-		catch (Exception e) {
+		catch (InterruptedException | IOException e) {
 			throw new AntivirusScannerException(
 				AntivirusScannerException.PROCESS_FAILURE);
 		}

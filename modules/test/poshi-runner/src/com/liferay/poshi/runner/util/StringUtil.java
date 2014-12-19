@@ -36,12 +36,32 @@ public class StringUtil {
 		return s.replace(oldSub, newSub);
 	}
 
+	public static String replace(String s, String[] oldSubs, String[] newSubs) {
+		if ((s == null) || (oldSubs == null) || (newSubs == null)) {
+			return null;
+		}
+
+		if (oldSubs.length != newSubs.length) {
+			return s;
+		}
+
+		for (int i = 0; i < oldSubs.length; i++) {
+			s = replace(s, oldSubs[i], newSubs[i]);
+		}
+
+		return s;
+	}
+
 	public static String[] split(String s) {
+		return split(s, StringPool.COMMA);
+	}
+
+	public static String[] split(String s, String delimiter) {
 		if (s == null) {
 			return null;
 		}
 
-		return s.split(",");
+		return s.split(delimiter);
 	}
 
 	public static String toLowerCase(String s) {
@@ -50,6 +70,18 @@ public class StringUtil {
 		}
 
 		return StringUtils.uncapitalize(s);
+	}
+
+	public static String toUpperCase(String s) {
+		if (s == null) {
+			return null;
+		}
+
+		return StringUtils.capitalize(s);
+	}
+
+	public static String valueOf(Object obj) {
+		return String.valueOf(obj);
 	}
 
 }

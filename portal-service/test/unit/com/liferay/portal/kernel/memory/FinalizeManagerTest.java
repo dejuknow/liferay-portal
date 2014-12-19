@@ -246,7 +246,10 @@ public class FinalizeManagerTest {
 
 		// First GC to trigger Object#finalize
 
-		if (referenceType == ReferenceType.SOFT) {
+		if (referenceType == ReferenceType.PHANTOM) {
+			GCUtil.gc(false);
+		}
+		else if (referenceType == ReferenceType.SOFT) {
 			GCUtil.fullGC(true);
 		}
 		else {
@@ -260,7 +263,7 @@ public class FinalizeManagerTest {
 
 			// Second GC to trigger ReferenceQueue#enqueue
 
-			GCUtil.gc(true);
+			GCUtil.gc(false);
 		}
 
 		if (threadEnabled) {
