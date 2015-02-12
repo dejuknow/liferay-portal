@@ -15,6 +15,8 @@
 package com.liferay.sync.engine.filesystem;
 
 import com.liferay.sync.engine.SyncEngine;
+import com.liferay.sync.engine.filesystem.listener.WatchEventListener;
+import com.liferay.sync.engine.filesystem.util.WatcherRegistry;
 import com.liferay.sync.engine.model.SyncAccount;
 import com.liferay.sync.engine.model.SyncFile;
 import com.liferay.sync.engine.model.SyncSite;
