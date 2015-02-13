@@ -21,10 +21,11 @@ import com.liferay.sync.engine.documentlibrary.util.BatchDownloadEvent;
 import com.liferay.sync.engine.documentlibrary.util.BatchEventManager;
 import com.liferay.sync.engine.documentlibrary.util.FileEventUtil;
 import com.liferay.sync.engine.documentlibrary.util.ServerEventUtil;
-import com.liferay.sync.engine.filesystem.SyncSiteWatchEventListener;
+import com.liferay.sync.engine.filesystem.MacOSXWatcher;
 import com.liferay.sync.engine.filesystem.SyncWatchEventProcessor;
-import com.liferay.sync.engine.filesystem.WatchEventListener;
 import com.liferay.sync.engine.filesystem.Watcher;
+import com.liferay.sync.engine.filesystem.listener.SyncSiteWatchEventListener;
+import com.liferay.sync.engine.filesystem.listener.WatchEventListener;
 import com.liferay.sync.engine.model.SyncAccount;
 import com.liferay.sync.engine.model.SyncFile;
 import com.liferay.sync.engine.model.SyncSite;
@@ -37,6 +38,7 @@ import com.liferay.sync.engine.upgrade.util.UpgradeUtil;
 import com.liferay.sync.engine.util.ConnectionRetryUtil;
 import com.liferay.sync.engine.util.FileUtil;
 import com.liferay.sync.engine.util.LoggerUtil;
+import com.liferay.sync.engine.util.OSDetector;
 import com.liferay.sync.engine.util.PropsValues;
 import com.liferay.sync.engine.util.SyncEngineUtil;
 
@@ -159,10 +161,30 @@ public class SyncEngine {
 			return;
 		}
 
-		SyncWatchEventService.deleteSyncWatchEvents(syncAccountId);
-
 		SyncAccount syncAccount = ServerEventUtil.synchronizeSyncAccount(
 			syncAccountId);
+
+		Path filePath = Paths.get(syncAccount.getFilePathName());
+
+		SyncFile syncFile = SyncFileService.fetchSyncFile(
+			syncAccount.getFilePathName());
+
+		if (FileUtil.getFileKey(filePath) != syncFile.getSyncFileId()) {
+			syncAccount.setActive(false);
+			syncAccount.setUiEvent(
+				SyncAccount.UI_EVENT_SYNC_ACCOUNT_FOLDER_MISSING);
+
+			SyncAccountService.update(syncAccount);
+
+			return;
+		}
+		else if (!syncAccount.isActive()) {
+			SyncAccountService.activateSyncAccount(syncAccountId, false);
+
+			return;
+		}
+
+		SyncWatchEventService.deleteSyncWatchEvents(syncAccountId);
 
 		Path dataFilePath = FileUtil.getFilePath(
 			syncAccount.getFilePathName(), ".data");
@@ -180,8 +202,6 @@ public class SyncEngine {
 			ServerEventUtil.synchronizeSyncSites(syncAccountId);
 		}
 
-		Path filePath = Paths.get(syncAccount.getFilePathName());
-
 		SyncWatchEventProcessor syncWatchEventProcessor =
 			new SyncWatchEventProcessor(syncAccountId);
 
@@ -192,7 +212,14 @@ public class SyncEngine {
 		WatchEventListener watchEventListener = new SyncSiteWatchEventListener(
 			syncAccountId);
 
-		Watcher watcher = new Watcher(filePath, true, watchEventListener);
+		Watcher watcher = null;
+
+		if (OSDetector.isApple()) {
+			watcher = new MacOSXWatcher(filePath, watchEventListener);
+		}
+		else {
+			watcher = new Watcher(filePath, watchEventListener);
+		}
 
 		_executorService.execute(watcher);
 
@@ -216,10 +243,8 @@ public class SyncEngine {
 
 		UpgradeUtil.upgrade();
 
-		for (long activeSyncAccountId :
-				SyncAccountService.getActiveSyncAccountIds()) {
-
-			scheduleSyncAccountTasks(activeSyncAccountId);
+		for (SyncAccount syncAccount : SyncAccountService.findAll()) {
+			scheduleSyncAccountTasks(syncAccount.getSyncAccountId());
 		}
 
 		SyncEngineUtil.fireSyncEngineStateChanged(
@@ -255,10 +280,7 @@ public class SyncEngine {
 		_running = false;
 	}
 
-	protected static void fireDeleteEvents(
-			Path filePath, final long syncAccountId)
-		throws IOException {
-
+	protected static void fireDeleteEvents(Path filePath) throws IOException {
 		long startTime = System.currentTimeMillis();
 
 		Files.walkFileTree(
@@ -314,6 +336,12 @@ public class SyncEngine {
 			filePath.toString(), startTime);
 
 		for (SyncFile deletedSyncFile : deletedSyncFiles) {
+			if (deletedSyncFile.getTypePK() == 0) {
+				SyncFileService.deleteSyncFile(deletedSyncFile);
+
+				continue;
+			}
+
 			if (deletedSyncFile.isFolder()) {
 				FileEventUtil.deleteFolder(
 					deletedSyncFile.getSyncAccountId(), deletedSyncFile);
@@ -398,7 +426,7 @@ public class SyncEngine {
 			Path filePath, long syncAccountId)
 		throws IOException {
 
-		fireDeleteEvents(filePath, syncAccountId);
+		fireDeleteEvents(filePath);
 
 		FileEventUtil.retryFileTransfers(syncAccountId);
 	}

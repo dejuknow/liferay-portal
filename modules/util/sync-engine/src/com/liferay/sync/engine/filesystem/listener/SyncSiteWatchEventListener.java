@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.sync.engine.filesystem;
+package com.liferay.sync.engine.filesystem.listener;
 
 import com.liferay.sync.engine.model.SyncAccount;
 import com.liferay.sync.engine.model.SyncFile;
@@ -135,8 +135,8 @@ public class SyncSiteWatchEventListener extends BaseWatchEventListener {
 			SyncWatchEventService.fetchLastSyncWatchEvent(syncAccountId);
 
 		if ((lastSyncWatchEvent == null) ||
-			!eventType.equals(lastSyncWatchEvent.getEventType()) ||
-			!filePathName.equals(lastSyncWatchEvent.getFilePathName())) {
+			!filePathName.equals(lastSyncWatchEvent.getFilePathName()) ||
+			!eventType.equals(lastSyncWatchEvent.getEventType())) {
 
 			return false;
 		}

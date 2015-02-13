@@ -86,10 +86,6 @@ public class AddFileFolderHandler extends BaseJSONHandler {
 		localSyncFile.setVersion(remoteSyncFile.getVersion());
 
 		SyncFileService.update(localSyncFile);
-
-		Path filePath = Paths.get(localSyncFile.getFilePathName());
-
-		FileUtil.setModifiedTime(filePath, remoteSyncFile.getModifiedTime());
 	}
 
 	private static final Logger _logger = LoggerFactory.getLogger(

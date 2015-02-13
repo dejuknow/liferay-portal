@@ -21,7 +21,7 @@ import com.liferay.sync.engine.documentlibrary.event.Event;
 import com.liferay.sync.engine.documentlibrary.model.SyncDLObjectUpdate;
 import com.liferay.sync.engine.documentlibrary.util.FileEventUtil;
 import com.liferay.sync.engine.filesystem.Watcher;
-import com.liferay.sync.engine.filesystem.WatcherRegistry;
+import com.liferay.sync.engine.filesystem.util.WatcherRegistry;
 import com.liferay.sync.engine.model.SyncFile;
 import com.liferay.sync.engine.model.SyncSite;
 import com.liferay.sync.engine.service.SyncFileService;
@@ -171,10 +171,14 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 	protected void downloadFile(
 		SyncFile syncFile, String sourceVersion, boolean patch) {
 
-		if (patch) {
+		String targetVersion = syncFile.getVersion();
+
+		if (patch && !sourceVersion.equals("PWC") &&
+			!targetVersion.equals("PWC") &&
+			(Double.valueOf(sourceVersion) < Double.valueOf(targetVersion))) {
+
 			FileEventUtil.downloadPatch(
-				sourceVersion, getSyncAccountId(), syncFile,
-				syncFile.getVersion());
+				sourceVersion, getSyncAccountId(), syncFile, targetVersion);
 		}
 		else {
 			FileEventUtil.downloadFile(getSyncAccountId(), syncFile);
