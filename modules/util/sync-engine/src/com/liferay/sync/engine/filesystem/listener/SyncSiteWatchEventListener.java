@@ -135,8 +135,8 @@ public class SyncSiteWatchEventListener extends BaseWatchEventListener {
 			SyncWatchEventService.fetchLastSyncWatchEvent(syncAccountId);
 
 		if ((lastSyncWatchEvent == null) ||
-			!eventType.equals(lastSyncWatchEvent.getEventType()) ||
-			!filePathName.equals(lastSyncWatchEvent.getFilePathName())) {
+			!filePathName.equals(lastSyncWatchEvent.getFilePathName()) ||
+			!eventType.equals(lastSyncWatchEvent.getEventType())) {
 
 			return false;
 		}
