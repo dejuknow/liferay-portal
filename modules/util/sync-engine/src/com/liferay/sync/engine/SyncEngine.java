@@ -37,6 +37,7 @@ import com.liferay.sync.engine.upgrade.util.UpgradeUtil;
 import com.liferay.sync.engine.util.ConnectionRetryUtil;
 import com.liferay.sync.engine.util.FileUtil;
 import com.liferay.sync.engine.util.LoggerUtil;
+import com.liferay.sync.engine.util.OSDetector;
 import com.liferay.sync.engine.util.PropsValues;
 import com.liferay.sync.engine.util.SyncEngineUtil;
 
@@ -210,7 +211,7 @@ public class SyncEngine {
 		WatchEventListener watchEventListener = new SyncSiteWatchEventListener(
 			syncAccountId);
 
-		Watcher watcher = new Watcher(filePath, true, watchEventListener);
+		Watcher watcher = new Watcher(filePath, watchEventListener);
 
 		_executorService.execute(watcher);
 
