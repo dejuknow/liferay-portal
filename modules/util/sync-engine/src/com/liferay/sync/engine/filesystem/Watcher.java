@@ -395,12 +395,17 @@ public class Watcher implements Runnable {
 		else if (eventType.equals(SyncWatchEvent.EVENT_TYPE_DELETE)) {
 			processMissingFilePath(filePath);
 
+			if (Files.notExists(filePath.getParent())) {
+				return;
+			}
+
 			fireWatchEventListener(SyncWatchEvent.EVENT_TYPE_DELETE, filePath);
 		}
 		else if (eventType.equals(SyncWatchEvent.EVENT_TYPE_MODIFY)) {
 			if (_downloadedFilePathNames.remove(filePath.toString()) ||
 				(removeCreatedFilePathName(filePath.toString()) &&
 				 !FileUtil.isValidChecksum(filePath)) ||
+				Files.notExists(filePath) ||
 				Files.isDirectory(filePath)) {
 
 				return;
