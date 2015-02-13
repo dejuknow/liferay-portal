@@ -21,6 +21,7 @@ import com.liferay.sync.engine.documentlibrary.util.BatchDownloadEvent;
 import com.liferay.sync.engine.documentlibrary.util.BatchEventManager;
 import com.liferay.sync.engine.documentlibrary.util.FileEventUtil;
 import com.liferay.sync.engine.documentlibrary.util.ServerEventUtil;
+import com.liferay.sync.engine.filesystem.MacOSXWatcher;
 import com.liferay.sync.engine.filesystem.SyncWatchEventProcessor;
 import com.liferay.sync.engine.filesystem.Watcher;
 import com.liferay.sync.engine.filesystem.listener.SyncSiteWatchEventListener;
@@ -211,7 +212,14 @@ public class SyncEngine {
 		WatchEventListener watchEventListener = new SyncSiteWatchEventListener(
 			syncAccountId);
 
-		Watcher watcher = new Watcher(filePath, watchEventListener);
+		Watcher watcher = null;
+
+		if (OSDetector.isApple()) {
+			watcher = new MacOSXWatcher(filePath, watchEventListener);
+		}
+		else {
+			watcher = new Watcher(filePath, watchEventListener);
+		}
 
 		_executorService.execute(watcher);
 
