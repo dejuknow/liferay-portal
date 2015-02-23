@@ -15,7 +15,7 @@
 package com.liferay.journal.content.web.portlet;
 
 import com.liferay.journal.content.web.constants.JournalContentPortletKeys;
-import com.liferay.journal.content.web.portlet.upgrade.JournalContentUpgrade;
+import com.liferay.journal.content.web.upgrade.JournalContentWebUpgrade;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.portlet.PortletRequestModel;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
@@ -178,8 +178,8 @@ public class JournalContentPortlet extends MVCPortlet {
 	}
 
 	@Reference(unbind = "-")
-	protected void setJournalContentUpgrade(
-		JournalContentUpgrade journalContentUpgrade) {
+	protected void setJournalContentWebUpgrade(
+		JournalContentWebUpgrade journalContentWebUpgrade) {
 	}
 
 	protected void unsetJournalContentSearchLocal(

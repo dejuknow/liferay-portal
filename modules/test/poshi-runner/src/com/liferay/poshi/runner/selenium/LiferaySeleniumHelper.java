@@ -23,6 +23,7 @@ import com.liferay.poshi.runner.util.HtmlUtil;
 import com.liferay.poshi.runner.util.LocaleUtil;
 import com.liferay.poshi.runner.util.PropsValues;
 import com.liferay.poshi.runner.util.RuntimeVariables;
+import com.liferay.poshi.runner.util.StringPool;
 import com.liferay.poshi.runner.util.StringUtil;
 import com.liferay.poshi.runner.util.Validator;
 
@@ -57,9 +58,20 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
+import org.sikuli.api.DesktopScreenRegion;
+import org.sikuli.api.ImageTarget;
+import org.sikuli.api.ScreenRegion;
+import org.sikuli.api.robot.Mouse;
+import org.sikuli.api.robot.desktop.DesktopMouse;
+import org.sikuli.api.visual.Canvas;
+import org.sikuli.api.visual.CanvasBuilder.ElementAdder;
+import org.sikuli.api.visual.CanvasBuilder.ElementAreaSetter;
+import org.sikuli.api.visual.DesktopCanvas;
+
 /**
  * @author Brian Wing Shun Chan
  */
+@SuppressWarnings("deprecation")
 public class LiferaySeleniumHelper {
 
 	public static void addToJavaScriptExceptions(Exception exception) {
@@ -588,6 +600,14 @@ public class LiferaySeleniumHelper {
 		return StringUtil.valueOf(GetterUtil.getInteger(value) + 1);
 	}
 
+	public static String getPortalRootDirName() throws Exception {
+		File file = new File("../../../" + StringPool.PERIOD);
+
+		String absolutePath = file.getAbsolutePath();
+
+		return absolutePath.substring(0, absolutePath.length() - 1);
+	}
+
 	public static boolean isConfirmation(
 		LiferaySelenium liferaySelenium, String pattern) {
 
@@ -1110,14 +1130,50 @@ public class LiferaySeleniumHelper {
 			LiferaySelenium liferaySelenium, String image)
 		throws Exception {
 
-		throw new UnsupportedOperationException();
+		ScreenRegion screenRegion = new DesktopScreenRegion();
+
+		liferaySelenium.pause("1000");
+
+		File file = new File(
+			getPortalRootDirName() + liferaySelenium.getSikuliImagesDirName() +
+				image);
+
+		ImageTarget imageTarget = new ImageTarget(file);
+
+		if (screenRegion.wait(imageTarget, 5000) != null) {
+			throw new Exception("Element is present");
+		}
 	}
 
 	public static void sikuliAssertElementPresent(
 			LiferaySelenium liferaySelenium, String image)
 		throws Exception {
 
-		throw new UnsupportedOperationException();
+		ScreenRegion screenRegion = new DesktopScreenRegion();
+
+		liferaySelenium.pause("1000");
+
+		File file = new File(
+			getPortalRootDirName() + liferaySelenium.getSikuliImagesDirName() +
+				image);
+
+		ImageTarget imageTarget = new ImageTarget(file);
+
+		screenRegion = screenRegion.wait(imageTarget, 5000);
+
+		if (screenRegion == null) {
+			throw new Exception("Element is not present");
+		}
+
+		Canvas canvas = new DesktopCanvas();
+
+		ElementAdder elementAdder = canvas.add();
+
+		ElementAreaSetter elementAreaSetter = elementAdder.box();
+
+		elementAreaSetter.around(screenRegion);
+
+		canvas.display(2);
 	}
 
 	public static void sikuliClick(
@@ -1137,13 +1193,21 @@ public class LiferaySeleniumHelper {
 	public static void sikuliLeftMouseDown(LiferaySelenium liferaySelenium)
 		throws Exception {
 
-		throw new UnsupportedOperationException();
+		liferaySelenium.pause("1000");
+
+		Mouse mouse = new DesktopMouse();
+
+		mouse.press();
 	}
 
 	public static void sikuliLeftMouseUp(LiferaySelenium liferaySelenium)
 		throws Exception {
 
-		throw new UnsupportedOperationException();
+		liferaySelenium.pause("1000");
+
+		Mouse mouse = new DesktopMouse();
+
+		mouse.release();
 	}
 
 	public static void sikuliMouseMove(
@@ -1156,13 +1220,21 @@ public class LiferaySeleniumHelper {
 	public static void sikuliRightMouseDown(LiferaySelenium liferaySelenium)
 		throws Exception {
 
-		throw new UnsupportedOperationException();
+		liferaySelenium.pause("1000");
+
+		Mouse mouse = new DesktopMouse();
+
+		mouse.rightPress();
 	}
 
 	public static void sikuliRightMouseUp(LiferaySelenium liferaySelenium)
 		throws Exception {
 
-		throw new UnsupportedOperationException();
+		liferaySelenium.pause("1000");
+
+		Mouse mouse = new DesktopMouse();
+
+		mouse.rightRelease();
 	}
 
 	public static void sikuliType(

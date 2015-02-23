@@ -19,6 +19,7 @@ import com.thoughtworks.selenium.Selenium;
 /**
  * @author Brian Wing Shun Chan
  */
+@SuppressWarnings("deprecation")
 public interface LiferaySelenium extends Selenium {
 
 	public void antCommand(String fileName, String target) throws Exception;

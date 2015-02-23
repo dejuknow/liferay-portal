@@ -44,6 +44,7 @@ import com.liferay.portal.repository.liferayrepository.model.LiferayFileVersion;
 import com.liferay.portal.util.PropsUtil;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.documentlibrary.NoSuchFileEntryException;
+import com.liferay.portlet.documentlibrary.model.DLProcessorConstants;
 import com.liferay.portlet.documentlibrary.store.DLStoreUtil;
 import com.liferay.util.log4j.Log4JUtil;
 
@@ -124,6 +125,11 @@ public class PDFProcessorImpl
 		throws Exception {
 
 		return doGetThumbnailFileSize(fileVersion, index);
+	}
+
+	@Override
+	public String getType() {
+		return DLProcessorConstants.PDF_PROCESSOR;
 	}
 
 	@Override
@@ -382,6 +388,15 @@ public class PDFProcessorImpl
 				String tempFileId = DLUtil.getTempFileId(
 					destinationFileVersion.getFileEntryId(),
 					destinationFileVersion.getVersion());
+
+				if (Validator.equals(
+						"PWC", destinationFileVersion.getVersion())) {
+
+					File file = new File(
+						DocumentConversionUtil.getFilePath(tempFileId, "pdf"));
+
+					FileUtil.delete(file);
+				}
 
 				File file = DocumentConversionUtil.convert(
 					tempFileId, inputStream, extension, "pdf");

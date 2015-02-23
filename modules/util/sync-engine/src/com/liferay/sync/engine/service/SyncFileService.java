@@ -22,6 +22,8 @@ import com.liferay.sync.engine.service.persistence.SyncFilePersistence;
 import com.liferay.sync.engine.util.FileUtil;
 import com.liferay.sync.engine.util.IODeltaUtil;
 
+import java.io.IOException;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -180,6 +182,17 @@ public class SyncFileService {
 
 			// Sync file
 
+			if (syncFile.isFile()) {
+				Path filePath = IODeltaUtil.getChecksumsFilePath(syncFile);
+
+				try {
+					Files.deleteIfExists(filePath);
+				}
+				catch (IOException ioe) {
+					_logger.error(ioe.getMessage(), ioe);
+				}
+			}
+
 			_syncFilePersistence.delete(syncFile, notify);
 
 			// Sync files
@@ -193,12 +206,14 @@ public class SyncFileService {
 
 			for (SyncFile childSyncFile : childSyncFiles) {
 				if (childSyncFile.isFolder()) {
-					deleteSyncFile(childSyncFile);
+					deleteSyncFile(childSyncFile, notify);
 				}
 				else {
-					childSyncFile.setUiEvent(syncFile.getUiEvent());
+					if (notify) {
+						childSyncFile.setUiEvent(syncFile.getUiEvent());
+					}
 
-					_syncFilePersistence.delete(childSyncFile);
+					deleteSyncFile(childSyncFile, notify);
 				}
 			}
 		}
@@ -378,6 +393,12 @@ public class SyncFileService {
 
 		// Local sync file
 
+		SyncFile targetSyncFile = fetchSyncFile(filePath.toString());
+
+		if (targetSyncFile != null) {
+			deleteSyncFile(targetSyncFile, false);
+		}
+
 		syncFile.setFilePathName(filePath.toString());
 		syncFile.setParentFolderId(folderId);
 
@@ -401,6 +422,12 @@ public class SyncFileService {
 
 		// Local sync file
 
+		SyncFile targetSyncFile = fetchSyncFile(filePath.toString());
+
+		if (targetSyncFile != null) {
+			deleteSyncFile(targetSyncFile, false);
+		}
+
 		updateSyncFile(filePath, parentFolderId, syncFile);
 
 		// Remote sync file
@@ -418,6 +445,54 @@ public class SyncFileService {
 		ModelListener<SyncFile> modelListener) {
 
 		_syncFilePersistence.registerModelListener(modelListener);
+	}
+
+	public static SyncFile renameFileSyncFile(
+			Path filePath, long syncAccountId, SyncFile syncFile)
+		throws Exception {
+
+		// Local sync file
+
+		String name = _getName(filePath, syncFile);
+		String sourceFileName = syncFile.getName();
+		String sourceVersion = syncFile.getVersion();
+
+		syncFile.setFilePathName(filePath.toString());
+		syncFile.setName(name);
+
+		update(syncFile);
+
+		// Remote sync file
+
+		if ((syncFile.getState() != SyncFile.STATE_ERROR) &&
+			(syncFile.getState() != SyncFile.STATE_UNSYNCED)) {
+
+			FileEventUtil.updateFile(
+				filePath, syncAccountId, syncFile, null, name,
+				syncFile.getChecksum(), sourceFileName, sourceVersion,
+				syncFile.getChecksum());
+		}
+
+		return syncFile;
+	}
+
+	public static SyncFile renameFolderSyncFile(
+			Path filePath, long syncAccountId, SyncFile syncFile)
+		throws Exception {
+
+		// Local sync file
+
+		updateSyncFile(filePath, syncFile.getParentFolderId(), syncFile);
+
+		// Remote sync file
+
+		if ((syncFile.getState() != SyncFile.STATE_ERROR) &&
+			(syncFile.getState() != SyncFile.STATE_UNSYNCED)) {
+
+			FileEventUtil.updateFolder(filePath, syncAccountId, syncFile);
+		}
+
+		return syncFile;
 	}
 
 	public static SyncFile resyncFolder(SyncFile syncFile) throws Exception {
@@ -568,25 +643,16 @@ public class SyncFileService {
 			return syncFile;
 		}
 
-		List<SyncFile> childSyncFiles = findSyncFiles(
-			syncFile.getTypePK(), syncFile.getSyncAccountId());
-
-		for (SyncFile childSyncFile : childSyncFiles) {
-			String childFilePathName = childSyncFile.getFilePathName();
-
-			childFilePathName = childFilePathName.replace(
+		try {
+			_syncFilePersistence.renameByFilePathName(
 				sourceFilePathName, targetFilePathName);
-
-			if (childSyncFile.isFolder()) {
-				updateSyncFile(
-					Paths.get(childFilePathName),
-					childSyncFile.getParentFolderId(), childSyncFile);
+		}
+		catch (SQLException sqle) {
+			if (_logger.isDebugEnabled()) {
+				_logger.debug(sqle.getMessage(), sqle);
 			}
-			else {
-				childSyncFile.setFilePathName(childFilePathName);
 
-				update(childSyncFile);
-			}
+			return null;
 		}
 
 		return syncFile;

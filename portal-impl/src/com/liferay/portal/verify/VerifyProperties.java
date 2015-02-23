@@ -461,6 +461,13 @@ public class VerifyProperties extends VerifyProcess {
 			"publish.to.live.by.default", "com.liferay.journal.content.web"
 		},
 
+		// Language
+
+		new String[] {
+			"language.display.templates.config", "display.templates.config",
+			"com.liferay.language.web"
+		},
+
 		// LDAP
 
 		new String[] {
@@ -530,6 +537,21 @@ public class VerifyProperties extends VerifyProcess {
 		new String[] {
 			"ldap.user.ignore.attributes", "user.ignore.attributes",
 			"com.liferay.portal.ldap"
+		},
+
+		// Navigation
+
+		new String[] {
+			"navigation.display.style", "display.style",
+			"com.liferay.navigation.web"
+		},
+		new String[] {
+			"navigation.display.style.default", "display.style.default",
+			"com.liferay.navigation.web"
+		},
+		new String[] {
+			"navigation.display.style.options", "display.style.options",
+			"com.liferay.navigation.web"
 		},
 
 		// Nested Portlets
@@ -663,6 +685,13 @@ public class VerifyProperties extends VerifyProcess {
 		new String[] {
 			"xsl.content.xsl.secure.processing.enabled",
 			"xsl.secure.processing.enabled", "com.liferay.xsl.content.web"
+		},
+
+		// XSL Engine
+
+		new String[] {
+			"xsl.template.secure.processing.enabled",
+			"secure.processing.enabled", "com.liferay.portal.template.xsl"
 		}
 	};
 
