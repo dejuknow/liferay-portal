@@ -21,11 +21,15 @@ import com.j256.ormlite.stmt.Where;
 
 import com.liferay.sync.engine.model.SyncFile;
 
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+
 import java.sql.SQLException;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -113,7 +117,11 @@ public class SyncFilePersistence extends BasePersistenceImpl<SyncFile, Long> {
 
 		filePathName = StringUtils.replace(filePathName, "\\", "\\\\");
 
-		where.like("filePathName", new SelectArg(filePathName + "/%"));
+		FileSystem fileSystem = FileSystems.getDefault();
+
+		where.like(
+			"filePathName",
+			new SelectArg(filePathName + fileSystem.getSeparator() + "%"));
 		where.lt("localSyncTime", localSyncTime);
 		where.or(
 			where.eq("state", SyncFile.STATE_SYNCED),
@@ -159,12 +167,47 @@ public class SyncFilePersistence extends BasePersistenceImpl<SyncFile, Long> {
 	}
 
 	public void renameByFilePathName(
-			String sourceFilePathName, String targetFilePathName)
+			final String sourceFilePathName, final String targetFilePathName)
 		throws SQLException {
 
-		updateRaw(
-			"UPDATE SyncFile SET filePathName = REPLACE(filePathName, ?, ?)",
-			sourceFilePathName, targetFilePathName);
+		QueryBuilder<SyncFile, Long> queryBuilder = queryBuilder();
+
+		Where<SyncFile, Long> where = queryBuilder.where();
+
+		String escapedSourceFilePathName = StringUtils.replace(
+			sourceFilePathName, "\\", "\\\\");
+
+		final FileSystem fileSystem = FileSystems.getDefault();
+
+		where.like(
+			"filePathName",
+			new SelectArg(
+				escapedSourceFilePathName + fileSystem.getSeparator() + "%"));
+
+		final List<SyncFile> syncFiles = query(queryBuilder.prepare());
+
+		Callable<Object> callable = new Callable<Object>() {
+
+			@Override
+			public Object call() throws Exception {
+				for (SyncFile syncFile : syncFiles) {
+					String filePathName = syncFile.getFilePathName();
+
+					filePathName = filePathName.replace(
+						sourceFilePathName + fileSystem.getSeparator(),
+						targetFilePathName + fileSystem.getSeparator());
+
+					syncFile.setFilePathName(filePathName);
+
+					update(syncFile);
+				}
+
+				return null;
+			}
+
+		};
+
+		callBatchTasks(callable);
 	}
 
 	public void updateByFilePathName(
