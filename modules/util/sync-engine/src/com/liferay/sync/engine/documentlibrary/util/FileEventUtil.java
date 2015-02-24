@@ -308,6 +308,22 @@ public class FileEventUtil {
 					uploadingSyncFile.getMimeType(), uploadingSyncFile);
 			}
 		}
+
+		List<SyncFile> movingSyncFiles = SyncFileService.findSyncFiles(
+			syncAccountId, SyncFile.UI_EVENT_MOVED_LOCAL);
+
+		for (SyncFile movingSyncFile : movingSyncFiles) {
+			if (movingSyncFile.isFolder()) {
+				moveFolder(
+					movingSyncFile.getParentFolderId(), syncAccountId,
+					movingSyncFile);
+			}
+			else {
+				moveFile(
+					movingSyncFile.getParentFolderId(), syncAccountId,
+					movingSyncFile);
+			}
+		}
 	}
 
 	public static void updateFile(
