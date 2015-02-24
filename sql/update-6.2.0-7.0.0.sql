@@ -128,4 +128,6 @@ insert into Region (regionId, countryId, regionCode, name, active_) values (3300
 update Region set regionCode = 'BB' where regionId = 4004 and regionCode = 'BR';
 update Region set name = 'Monza e Brianza', regionCode = 'MB' where regionId = 8060 and regionCode = 'MZ';
 
+alter table Subscription add groupId LONG;
+
 alter table UserNotificationEvent add actionRequired BOOLEAN;

@@ -15,7 +15,7 @@
 package com.liferay.site.browser.web.portlet;
 
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
-import com.liferay.site.browser.web.portlet.upgrade.SiteBrowserUpgrade;
+import com.liferay.site.browser.web.upgrade.SiteBrowserWebUpgrade;
 
 import javax.portlet.Portlet;
 
@@ -49,8 +49,8 @@ import org.osgi.service.component.annotations.Reference;
 public class SiteBrowserPortlet extends MVCPortlet {
 
 	@Reference(unbind = "-")
-	protected void setSiteBrowserUpgrade(
-		SiteBrowserUpgrade siteBrowserUpgrade) {
+	protected void setSiteBrowserWebUpgrade(
+		SiteBrowserWebUpgrade siteBrowserWebUpgrade) {
 	}
 
 }

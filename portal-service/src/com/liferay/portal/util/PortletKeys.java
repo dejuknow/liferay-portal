@@ -90,8 +90,6 @@ public class PortletKeys {
 
 	public static final String JOURNAL_CONTENT_SEARCH = "77";
 
-	public static final String LANGUAGE = "82";
-
 	public static final String LAYOUT_PROTOTYPE = "146";
 
 	public static final String LAYOUT_SET_PROTOTYPE = "149";
@@ -132,8 +130,6 @@ public class PortletKeys {
 	public static final String MY_WORKFLOW_INSTANCES = "158";
 
 	public static final String MY_WORKFLOW_TASKS = "153";
-
-	public static final String NAVIGATION = "71";
 
 	public static final String NESTED_PORTLETS =
 		"com_liferay_nested_portlets_web_portlet_NestedPortletsPortlet";

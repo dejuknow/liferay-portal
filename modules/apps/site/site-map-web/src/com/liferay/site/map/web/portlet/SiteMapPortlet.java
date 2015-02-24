@@ -53,7 +53,7 @@ import org.osgi.service.component.annotations.Reference;
 public class SiteMapPortlet extends MVCPortlet {
 
 	@Reference(unbind = "-")
-	protected void setSiteMapUpgrade(SiteMapWebUpgrade siteMapWebUpgrade) {
+	protected void setSiteMapWebUpgrade(SiteMapWebUpgrade siteMapWebUpgrade) {
 	}
 
 }

@@ -25,6 +25,7 @@ import com.liferay.portal.kernel.notifications.UserNotificationDefinition;
 import com.liferay.portal.kernel.parsers.bbcode.BBCodeTranslatorUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.Folder;
+import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
@@ -193,8 +194,9 @@ public class MBMessageLocalServiceImpl extends MBMessageLocalServiceBaseImpl {
 
 		MBMessage message = addMessage(
 			userId, userName, groupId, categoryId, threadId, parentMessageId,
-			subject, body, MBMessageConstants.DEFAULT_FORMAT, inputStreamOVPs,
-			anonymous, priority, allowPingbacks, serviceContext);
+			subject, body, PropsValues.DISCUSSION_COMMENTS_FORMAT,
+			inputStreamOVPs, anonymous, priority, allowPingbacks,
+			serviceContext);
 
 		// Discussion
 
@@ -249,9 +251,19 @@ public class MBMessageLocalServiceImpl extends MBMessageLocalServiceBaseImpl {
 
 		long messageId = counterLocalService.increment();
 
+		Map<String, Object> options = new HashMap<>();
+
+		boolean discussion = false;
+
+		if (categoryId == MBCategoryConstants.DISCUSSION_CATEGORY_ID) {
+			discussion = true;
+		}
+
+		options.put("discussion", discussion);
+
 		body = SanitizerUtil.sanitize(
 			user.getCompanyId(), groupId, userId, MBMessage.class.getName(),
-			messageId, "text/" + format, body);
+			messageId, "text/" + format, Sanitizer.MODE_ALL, body, options);
 
 		validate(subject, body);
 
@@ -347,7 +359,7 @@ public class MBMessageLocalServiceImpl extends MBMessageLocalServiceBaseImpl {
 
 		// Attachments
 
-		if (!inputStreamOVPs.isEmpty()) {
+		if (ListUtil.isNotEmpty(inputStreamOVPs)) {
 			Folder folder = message.addAttachmentsFolder();
 
 			PortletFileRepositoryUtil.addPortletFileEntries(
@@ -424,7 +436,7 @@ public class MBMessageLocalServiceImpl extends MBMessageLocalServiceBaseImpl {
 		throws PortalException {
 
 		long threadId = 0;
-		long parentMessageId = 0;
+		long parentMessageId = MBMessageConstants.DEFAULT_PARENT_MESSAGE_ID;
 
 		return addMessage(
 			userId, userName, groupId, categoryId, threadId, parentMessageId,
@@ -1438,9 +1450,8 @@ public class MBMessageLocalServiceImpl extends MBMessageLocalServiceBaseImpl {
 			}
 		}
 
-		List<ObjectValuePair<String, InputStream>> inputStreamOVPs =
-			Collections.emptyList();
-		List<String> existingFiles = new ArrayList<>();
+		List<ObjectValuePair<String, InputStream>> inputStreamOVPs = null;
+		List<String> existingFiles = null;
 		double priority = 0.0;
 		boolean allowPingbacks = false;
 
@@ -1450,6 +1461,19 @@ public class MBMessageLocalServiceImpl extends MBMessageLocalServiceBaseImpl {
 		return updateMessage(
 			userId, messageId, subject, body, inputStreamOVPs, existingFiles,
 			priority, allowPingbacks, serviceContext);
+	}
+
+	@Override
+	public MBMessage updateMessage(
+			long userId, long messageId, String body,
+			ServiceContext serviceContext)
+		throws PortalException {
+
+		MBMessage message = mbMessagePersistence.findByPrimaryKey(messageId);
+
+		return updateMessage(
+			userId, messageId, message.getSubject(), body, null, null,
+			message.getPriority(), message.isAllowPingbacks(), serviceContext);
 	}
 
 	@Override
@@ -1469,10 +1493,15 @@ public class MBMessageLocalServiceImpl extends MBMessageLocalServiceBaseImpl {
 		Date modifiedDate = serviceContext.getModifiedDate(new Date());
 		subject = ModelHintsUtil.trimString(
 			MBMessage.class.getName(), "subject", subject);
+
+		Map<String, Object> options = new HashMap<>();
+
+		options.put("discussion", message.isDiscussion());
+
 		body = SanitizerUtil.sanitize(
 			message.getCompanyId(), message.getGroupId(), userId,
 			MBMessage.class.getName(), messageId, "text/" + message.getFormat(),
-			body);
+			Sanitizer.MODE_ALL, body, options);
 
 		validate(subject, body);
 
@@ -1524,43 +1553,49 @@ public class MBMessageLocalServiceImpl extends MBMessageLocalServiceBaseImpl {
 
 		// Attachments
 
-		if (!inputStreamOVPs.isEmpty() || !existingFiles.isEmpty()) {
-			List<FileEntry> fileEntries = message.getAttachmentsFileEntries();
+		if ((inputStreamOVPs != null) || (existingFiles != null)) {
+			if (ListUtil.isNotEmpty(inputStreamOVPs) ||
+				ListUtil.isNotEmpty(existingFiles)) {
 
-			for (FileEntry fileEntry : fileEntries) {
-				String fileEntryId = String.valueOf(fileEntry.getFileEntryId());
-
-				if (!existingFiles.contains(fileEntryId)) {
-					if (!TrashUtil.isTrashEnabled(message.getGroupId())) {
-						deleteMessageAttachment(
-							messageId, fileEntry.getTitle());
-					}
-					else {
-						moveMessageAttachmentToTrash(
-							userId, messageId, fileEntry.getTitle());
-					}
-				}
-			}
-
-			Folder folder = message.addAttachmentsFolder();
-
-			PortletFileRepositoryUtil.addPortletFileEntries(
-				message.getGroupId(), userId, MBMessage.class.getName(),
-				message.getMessageId(), PortletKeys.MESSAGE_BOARDS,
-				folder.getFolderId(), inputStreamOVPs);
-		}
-		else {
-			if (TrashUtil.isTrashEnabled(message.getGroupId())) {
 				List<FileEntry> fileEntries =
 					message.getAttachmentsFileEntries();
 
 				for (FileEntry fileEntry : fileEntries) {
-					moveMessageAttachmentToTrash(
-						userId, messageId, fileEntry.getTitle());
+					String fileEntryId = String.valueOf(
+						fileEntry.getFileEntryId());
+
+					if (!existingFiles.contains(fileEntryId)) {
+						if (!TrashUtil.isTrashEnabled(message.getGroupId())) {
+							deleteMessageAttachment(
+								messageId, fileEntry.getTitle());
+						}
+						else {
+							moveMessageAttachmentToTrash(
+								userId, messageId, fileEntry.getTitle());
+						}
+					}
 				}
+
+				Folder folder = message.addAttachmentsFolder();
+
+				PortletFileRepositoryUtil.addPortletFileEntries(
+					message.getGroupId(), userId, MBMessage.class.getName(),
+					message.getMessageId(), PortletKeys.MESSAGE_BOARDS,
+					folder.getFolderId(), inputStreamOVPs);
 			}
 			else {
-				deleteMessageAttachments(message.getMessageId());
+				if (TrashUtil.isTrashEnabled(message.getGroupId())) {
+					List<FileEntry> fileEntries =
+						message.getAttachmentsFileEntries();
+
+					for (FileEntry fileEntry : fileEntries) {
+						moveMessageAttachmentToTrash(
+							userId, messageId, fileEntry.getTitle());
+					}
+				}
+				else {
+					deleteMessageAttachments(message.getMessageId());
+				}
 			}
 		}
 
@@ -1604,6 +1639,10 @@ public class MBMessageLocalServiceImpl extends MBMessageLocalServiceBaseImpl {
 		return message;
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, with no direct replacement
+	 */
+	@Deprecated
 	@Override
 	public MBMessage updateMessage(long messageId, String body)
 		throws PortalException {
@@ -1864,6 +1903,13 @@ public class MBMessageLocalServiceImpl extends MBMessageLocalServiceBaseImpl {
 	protected String getMessageURL(
 			MBMessage message, ServiceContext serviceContext)
 		throws PortalException {
+
+		String entryURL = GetterUtil.getString(
+			serviceContext.getAttribute("entryURL"));
+
+		if (Validator.isNotNull(entryURL)) {
+			return entryURL;
+		}
 
 		HttpServletRequest request = serviceContext.getRequest();
 

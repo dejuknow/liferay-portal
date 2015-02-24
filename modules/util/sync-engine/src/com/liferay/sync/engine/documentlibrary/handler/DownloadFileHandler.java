@@ -16,7 +16,7 @@ package com.liferay.sync.engine.documentlibrary.handler;
 
 import com.liferay.sync.engine.documentlibrary.event.Event;
 import com.liferay.sync.engine.filesystem.Watcher;
-import com.liferay.sync.engine.filesystem.WatcherRegistry;
+import com.liferay.sync.engine.filesystem.util.WatcherRegistry;
 import com.liferay.sync.engine.model.SyncAccount;
 import com.liferay.sync.engine.model.SyncFile;
 import com.liferay.sync.engine.service.SyncAccountService;
@@ -85,7 +85,7 @@ public class DownloadFileHandler extends BaseHandler {
 			return;
 		}
 
-		SyncFile syncFile = (SyncFile)getParameterValue("syncFile");
+		SyncFile syncFile = getLocalSyncFile();
 
 		SyncFileService.deleteSyncFile(syncFile, false);
 	}
@@ -184,7 +184,7 @@ public class DownloadFileHandler extends BaseHandler {
 
 		InputStream inputStream = null;
 
-		SyncFile syncFile = (SyncFile)getParameterValue("syncFile");
+		SyncFile syncFile = getLocalSyncFile();
 
 		if (isUnsynced(syncFile)) {
 			return;

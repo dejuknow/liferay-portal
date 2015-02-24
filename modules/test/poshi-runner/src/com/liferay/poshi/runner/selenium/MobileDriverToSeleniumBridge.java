@@ -29,6 +29,7 @@ import org.w3c.dom.Node;
 /**
  * @author Kenji Heigel
  */
+@SuppressWarnings("deprecation")
 public class MobileDriverToSeleniumBridge
 	extends MobileDriverWrapper implements Selenium {
 

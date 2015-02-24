@@ -31,9 +31,7 @@ import com.liferay.sync.engine.documentlibrary.event.UpdateFileEntryEvent;
 import com.liferay.sync.engine.documentlibrary.event.UpdateFolderEvent;
 import com.liferay.sync.engine.documentlibrary.handler.GetAllFolderSyncDLObjectsHandler;
 import com.liferay.sync.engine.model.SyncFile;
-import com.liferay.sync.engine.model.SyncSite;
 import com.liferay.sync.engine.service.SyncFileService;
-import com.liferay.sync.engine.service.SyncSiteService;
 import com.liferay.sync.engine.util.FileUtil;
 import com.liferay.sync.engine.util.PropsValues;
 
@@ -66,21 +64,6 @@ public class FileEventUtil {
 		parameters.put("mimeType", mimeType);
 		parameters.put("repositoryId", repositoryId);
 		parameters.put("serviceContext.attributes.overwrite", true);
-
-		SyncSite syncSite = SyncSiteService.fetchSyncSite(
-			repositoryId, syncAccountId);
-
-		if (syncSite.getType() != SyncSite.TYPE_SYSTEM) {
-			parameters.put(
-				"serviceContext.groupPermissions",
-				"ADD_DISCUSSION,DELETE,UPDATE,VIEW");
-		}
-
-		if (syncSite.getType() == SyncSite.TYPE_OPEN) {
-			parameters.put(
-				"serviceContext.guestPermissions", "ADD_DISCUSSION,VIEW");
-		}
-
 		parameters.put("sourceFileName", name);
 		parameters.put("syncFile", syncFile);
 		parameters.put("title", name);
@@ -102,20 +85,6 @@ public class FileEventUtil {
 		parameters.put("parentFolderId", parentFolderId);
 		parameters.put("repositoryId", repositoryId);
 		parameters.put("serviceContext.attributes.overwrite", true);
-
-		SyncSite syncSite = SyncSiteService.fetchSyncSite(
-			repositoryId, syncAccountId);
-
-		if (syncSite.getType() != SyncSite.TYPE_SYSTEM) {
-			parameters.put(
-				"serviceContext.groupPermissions",
-				"ADD_DOCUMENT,ADD_SUBFOLDER,ADD_SHORTCUT,UPDATE,VIEW");
-		}
-
-		if (syncSite.getType() == SyncSite.TYPE_OPEN) {
-			parameters.put("serviceContext.guestPermissions", "VIEW");
-		}
-
 		parameters.put("syncFile", syncFile);
 
 		AddFolderEvent addFolderEvent = new AddFolderEvent(
@@ -163,6 +132,16 @@ public class FileEventUtil {
 	}
 
 	public static void deleteFile(long syncAccountId, SyncFile syncFile) {
+		SyncFile parentSyncFile = SyncFileService.fetchSyncFile(
+			syncFile.getRepositoryId(), syncAccountId,
+			syncFile.getParentFolderId());
+
+		if ((parentSyncFile == null) ||
+			(parentSyncFile.getUiEvent() == SyncFile.UI_EVENT_DELETED_LOCAL)) {
+
+			return;
+		}
+
 		Map<String, Object> parameters = new HashMap<>();
 
 		parameters.put("fileEntryId", syncFile.getTypePK());
@@ -175,6 +154,16 @@ public class FileEventUtil {
 	}
 
 	public static void deleteFolder(long syncAccountId, SyncFile syncFile) {
+		SyncFile parentSyncFile = SyncFileService.fetchSyncFile(
+			syncFile.getRepositoryId(), syncAccountId,
+			syncFile.getParentFolderId());
+
+		if ((parentSyncFile == null) ||
+			(parentSyncFile.getUiEvent() == SyncFile.UI_EVENT_DELETED_LOCAL)) {
+
+			return;
+		}
+
 		Map<String, Object> parameters = new HashMap<>();
 
 		parameters.put("folderId", syncFile.getTypePK());
@@ -337,6 +326,22 @@ public class FileEventUtil {
 					uploadingSyncFile.getRepositoryId(), syncAccountId,
 					checksum, uploadingSyncFile.getName(),
 					uploadingSyncFile.getMimeType(), uploadingSyncFile);
+			}
+		}
+
+		List<SyncFile> movingSyncFiles = SyncFileService.findSyncFiles(
+			syncAccountId, SyncFile.UI_EVENT_MOVED_LOCAL);
+
+		for (SyncFile movingSyncFile : movingSyncFiles) {
+			if (movingSyncFile.isFolder()) {
+				moveFolder(
+					movingSyncFile.getParentFolderId(), syncAccountId,
+					movingSyncFile);
+			}
+			else {
+				moveFile(
+					movingSyncFile.getParentFolderId(), syncAccountId,
+					movingSyncFile);
 			}
 		}
 	}
