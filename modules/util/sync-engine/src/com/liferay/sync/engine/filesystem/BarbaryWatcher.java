@@ -122,9 +122,7 @@ public class BarbaryWatcher extends Watcher {
 							"Unregistered file path {}", getBaseFilePath());
 					}
 
-					if (Files.notExists(getBaseFilePath())) {
-						processMissingFilePath(getBaseFilePath());
-					}
+					processMissingFilePath(getBaseFilePath());
 				}
 			}
 			catch (Exception e) {
