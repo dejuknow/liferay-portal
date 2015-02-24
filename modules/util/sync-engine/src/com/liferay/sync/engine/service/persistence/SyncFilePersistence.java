@@ -83,6 +83,24 @@ public class SyncFilePersistence extends BasePersistenceImpl<SyncFile, Long> {
 		return syncFiles.get(0);
 	}
 
+	public List<SyncFile> findByParentFilePathName(String filePathName)
+		throws SQLException {
+
+		QueryBuilder<SyncFile, Long> queryBuilder = queryBuilder();
+
+		Where<SyncFile, Long> where = queryBuilder.where();
+
+		filePathName = StringUtils.replace(filePathName, "\\", "\\\\");
+
+		FileSystem fileSystem = FileSystems.getDefault();
+
+		where.like(
+			"filePathName",
+			new SelectArg(filePathName + fileSystem.getSeparator() + "%"));
+
+		return query(queryBuilder.prepare());
+	}
+
 	public SyncFile fetchByR_S_T(
 			long repositoryId, long syncAccountId, long typePK)
 		throws SQLException {
@@ -170,26 +188,15 @@ public class SyncFilePersistence extends BasePersistenceImpl<SyncFile, Long> {
 			final String sourceFilePathName, final String targetFilePathName)
 		throws SQLException {
 
-		QueryBuilder<SyncFile, Long> queryBuilder = queryBuilder();
-
-		Where<SyncFile, Long> where = queryBuilder.where();
-
-		String escapedSourceFilePathName = StringUtils.replace(
-			sourceFilePathName, "\\", "\\\\");
-
-		final FileSystem fileSystem = FileSystems.getDefault();
-
-		where.like(
-			"filePathName",
-			new SelectArg(
-				escapedSourceFilePathName + fileSystem.getSeparator() + "%"));
-
-		final List<SyncFile> syncFiles = query(queryBuilder.prepare());
-
 		Callable<Object> callable = new Callable<Object>() {
 
 			@Override
 			public Object call() throws Exception {
+				FileSystem fileSystem = FileSystems.getDefault();
+
+				List<SyncFile> syncFiles = findByParentFilePathName(
+					sourceFilePathName);
+
 				for (SyncFile syncFile : syncFiles) {
 					String filePathName = syncFile.getFilePathName();
 

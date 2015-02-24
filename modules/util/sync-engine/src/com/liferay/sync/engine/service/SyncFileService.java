@@ -33,6 +33,7 @@ import java.sql.SQLException;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 
 import org.slf4j.Logger;
@@ -179,34 +180,14 @@ public class SyncFileService {
 		deleteSyncFile(syncFile, true);
 	}
 
-	public static void deleteSyncFile(SyncFile syncFile, boolean notify) {
+	public static void deleteSyncFile(
+		final SyncFile syncFile, final boolean notify) {
+
 		try {
 
 			// Sync file
 
-			if (syncFile.isFile()) {
-				final Path filePath = IODeltaUtil.getChecksumsFilePath(syncFile);
-
-					Runnable runnable = new Runnable() {
-
-						@Override
-						public void run() {
-							try {
-								Files.deleteIfExists(filePath);
-							}
-							catch (IOException ioe) {
-								_logger.error(ioe.getMessage(), ioe);
-							}
-						}
-
-					};
-
-				ExecutorService executorService = SyncEngine.getExecutorService();
-
-				executorService.execute(runnable);
-			}
-
-			_syncFilePersistence.delete(syncFile, notify);
+			doDeleteSyncFile(syncFile, notify);
 
 			// Sync files
 
@@ -214,21 +195,24 @@ public class SyncFileService {
 				return;
 			}
 
-			List<SyncFile> childSyncFiles = findSyncFiles(
-				syncFile.getTypePK(), syncFile.getSyncAccountId());
+			Callable<Object> callable = new Callable<Object>() {
 
-			for (SyncFile childSyncFile : childSyncFiles) {
-				if (childSyncFile.isFolder()) {
-					deleteSyncFile(childSyncFile, notify);
-				}
-				else {
-					if (notify) {
-						childSyncFile.setUiEvent(syncFile.getUiEvent());
+				@Override
+				public Object call() throws Exception {
+					List<SyncFile> syncFiles =
+						_syncFilePersistence.findByParentFilePathName(
+							syncFile.getFilePathName());
+
+					for (SyncFile syncFile : syncFiles) {
+						doDeleteSyncFile(syncFile, notify);
 					}
 
-					deleteSyncFile(childSyncFile, notify);
+					return null;
 				}
-			}
+
+			};
+
+			_syncFilePersistence.callBatchTasks(callable);
 		}
 		catch (SQLException sqle) {
 			if (_logger.isDebugEnabled()) {
@@ -669,6 +653,34 @@ public class SyncFileService {
 		}
 
 		return syncFile;
+	}
+
+	protected static void doDeleteSyncFile(SyncFile syncFile, boolean notify)
+		throws SQLException {
+
+		if (syncFile.isFile()) {
+			final Path filePath = IODeltaUtil.getChecksumsFilePath(syncFile);
+
+			Runnable runnable = new Runnable() {
+
+				@Override
+				public void run() {
+					try {
+						Files.deleteIfExists(filePath);
+					}
+					catch (IOException ioe) {
+						_logger.error(ioe.getMessage(), ioe);
+					}
+				}
+
+			};
+
+			ExecutorService executorService = SyncEngine.getExecutorService();
+
+			executorService.execute(runnable);
+		}
+
+		_syncFilePersistence.delete(syncFile, notify);
 	}
 
 	private static String _getName(Path filePath, SyncFile syncFile) {
