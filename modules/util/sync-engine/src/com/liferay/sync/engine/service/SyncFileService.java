@@ -14,6 +14,7 @@
 
 package com.liferay.sync.engine.service;
 
+import com.liferay.sync.engine.SyncEngine;
 import com.liferay.sync.engine.documentlibrary.util.FileEventUtil;
 import com.liferay.sync.engine.model.ModelListener;
 import com.liferay.sync.engine.model.SyncFile;
@@ -32,6 +33,7 @@ import java.sql.SQLException;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -183,14 +185,25 @@ public class SyncFileService {
 			// Sync file
 
 			if (syncFile.isFile()) {
-				Path filePath = IODeltaUtil.getChecksumsFilePath(syncFile);
+				final Path filePath = IODeltaUtil.getChecksumsFilePath(syncFile);
 
-				try {
-					Files.deleteIfExists(filePath);
-				}
-				catch (IOException ioe) {
-					_logger.error(ioe.getMessage(), ioe);
-				}
+					Runnable runnable = new Runnable() {
+
+						@Override
+						public void run() {
+							try {
+								Files.deleteIfExists(filePath);
+							}
+							catch (IOException ioe) {
+								_logger.error(ioe.getMessage(), ioe);
+							}
+						}
+
+					};
+
+				ExecutorService executorService = SyncEngine.getExecutorService();
+
+				executorService.execute(runnable);
 			}
 
 			_syncFilePersistence.delete(syncFile, notify);
