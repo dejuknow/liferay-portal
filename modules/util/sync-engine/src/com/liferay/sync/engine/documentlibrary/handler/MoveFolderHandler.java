@@ -31,6 +31,25 @@ public class MoveFolderHandler extends BaseJSONHandler {
 	}
 
 	@Override
+	public boolean handlePortalException(String exception) throws Exception {
+		if (exception.equals(
+				"com.liferay.portlet.documentlibrary." +
+					"DuplicateFolderException")) {
+
+			SyncFile localSyncFile = getLocalSyncFile();
+
+			localSyncFile.setState(SyncFile.STATE_SYNCED);
+			localSyncFile.setUiEvent(SyncFile.UI_EVENT_UPLOADED);
+
+			SyncFileService.update(localSyncFile);
+
+			return true;
+		}
+
+		return super.handlePortalException(exception);
+	}
+
+	@Override
 	public void processResponse(String response) throws Exception {
 		SyncFile localSyncFile = getLocalSyncFile();
 
