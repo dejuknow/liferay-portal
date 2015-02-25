@@ -857,11 +857,6 @@
 			</bean>
 		</property>
 	</bean>
-	<bean id="com.liferay.portal.xsl.XSLManager" class="com.liferay.portal.xsl.XSLManager">
-		<property name="templateContextHelper">
-			<bean class="com.liferay.portal.template.TemplateContextHelper" />
-		</property>
-	</bean>
 	<bean id="com.liferay.portlet.DefaultControlPanelEntry" class="com.liferay.portlet.DefaultControlPanelEntry" />
 	<bean id="com.liferay.portlet.DefaultControlPanelEntryFactory" class="com.liferay.portlet.DefaultControlPanelEntryFactory" />
 	<bean id="com.liferay.portlet.PortletContainerImpl" class="com.liferay.portlet.PortletContainerImpl">
@@ -883,7 +878,9 @@
 	<bean id="com.liferay.portlet.blogs.service.permission.BlogsEntryPermission" class="com.liferay.portlet.blogs.service.permission.BlogsEntryPermission" />
 	<bean id="com.liferay.portlet.blogs.service.permission.BlogsPermission" class="com.liferay.portlet.blogs.service.permission.BlogsPermission" />
 	<bean id="com.liferay.portlet.blogs.util.BlogsIndexer" class="com.liferay.portlet.blogs.util.BlogsIndexer" />
+	<bean id="com.liferay.portlet.blogs.util.BlogsOpenSearchImpl" class="com.liferay.portlet.blogs.util.BlogsOpenSearchImpl" />
 	<bean id="com.liferay.portlet.calendar.util.CalIndexer" class="com.liferay.portlet.calendar.util.CalIndexer" />
+	<bean id="com.liferay.portlet.directory.util.DirectoryOpenSearchImpl" class="com.liferay.portlet.directory.util.DirectoryOpenSearchImpl" />
 	<bean id="com.liferay.portlet.documentlibrary.antivirus.AntivirusScannerUtil" class="com.liferay.portlet.documentlibrary.antivirus.AntivirusScannerUtil">
 		<property name="antivirusScanner">
 			<bean class="com.liferay.portlet.documentlibrary.antivirus.AntivirusScannerImpl" />
@@ -906,6 +903,7 @@
 	<bean id="com.liferay.portlet.documentlibrary.util.DLFileEntryIndexer" class="com.liferay.portlet.documentlibrary.util.DLFileEntryIndexer" />
 	<bean id="com.liferay.portlet.documentlibrary.util.DLFileEntryLockListener" class="com.liferay.portlet.documentlibrary.util.DLFileEntryLockListener" />
 	<bean id="com.liferay.portlet.documentlibrary.util.DLFolderIndexer" class="com.liferay.portlet.documentlibrary.util.DLFolderIndexer" />
+	<bean id="com.liferay.portlet.documentlibrary.util.DLOpenSearchImpl" class="com.liferay.portlet.documentlibrary.util.DLOpenSearchImpl" />
 	<bean id="com.liferay.portlet.documentlibrary.util.DLProcessorRegistryUtil" class="com.liferay.portlet.documentlibrary.util.DLProcessorRegistryUtil">
 		<property name="dLProcessorRegistry">
 			<bean class="com.liferay.portlet.documentlibrary.util.DLProcessorRegistryImpl" />
@@ -1101,11 +1099,6 @@
 			<bean class="com.liferay.portlet.dynamicdatamapping.util.FieldsToDDMFormValuesConverterImpl" />
 		</property>
 	</bean>
-	<bean id="com.liferay.portlet.dynamicdatamapping.validator.DDMFormValidatorUtil" class="com.liferay.portlet.dynamicdatamapping.validator.DDMFormValidatorUtil">
-		<property name="DDMFormValidator">
-			<bean class="com.liferay.portlet.dynamicdatamapping.validator.DDMFormValidatorImpl" />
-		</property>
-	</bean>
 	<bean id="com.liferay.portlet.dynamicdatamapping.validator.DDMFormValuesValidatorUtil" class="com.liferay.portlet.dynamicdatamapping.validator.DDMFormValuesValidatorUtil">
 		<property name="DDMFormValuesValidator">
 			<bean class="com.liferay.portlet.dynamicdatamapping.validator.DDMFormValuesValidatorImpl" />
@@ -1145,6 +1138,7 @@
 		<property name="journalConverter" ref="com.liferay.portlet.journal.util.JournalConverter" />
 	</bean>
 	<bean id="com.liferay.portlet.journal.util.JournalFolderIndexer" class="com.liferay.portlet.journal.util.JournalFolderIndexer" />
+	<bean id="com.liferay.portlet.journal.util.JournalOpenSearchImpl" class="com.liferay.portlet.journal.util.JournalOpenSearchImpl" />
 	<bean id="com.liferay.portlet.journal.util.JournalValidatorUtil" class="com.liferay.portlet.journal.util.JournalValidatorUtil">
 		<property name="JournalValidator">
 			<bean class="com.liferay.portlet.journal.util.JournalValidatorImpl" />
@@ -1162,6 +1156,7 @@
 	<bean id="com.liferay.portlet.messageboards.service.permission.MBThreadPermission" class="com.liferay.portlet.messageboards.service.permission.MBThreadPermission" />
 	<bean id="com.liferay.portlet.messageboards.service.permission.MBPermission" class="com.liferay.portlet.messageboards.service.permission.MBPermission" />
 	<bean id="com.liferay.portlet.messageboards.util.MBMessageIndexer" class="com.liferay.portlet.messageboards.util.MBMessageIndexer" />
+	<bean id="com.liferay.portlet.messageboards.util.MBOpenSearchImpl" class="com.liferay.portlet.messageboards.util.MBOpenSearchImpl" />
 	<bean id="com.liferay.portlet.messageboards.util.MBThreadIndexer" class="com.liferay.portlet.messageboards.util.MBThreadIndexer" />
 	<bean id="com.liferay.portlet.mobiledevicerules.service.permission.MDRPermissionUtil" class="com.liferay.portlet.mobiledevicerules.service.permission.MDRPermissionUtil">
 		<property name="MDRPermission">

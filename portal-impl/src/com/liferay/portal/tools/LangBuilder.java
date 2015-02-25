@@ -37,8 +37,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.TreeMap;
 
 /**
@@ -81,6 +83,8 @@ public class LangBuilder {
 		_langDir = langDir;
 		_langFile = langFile;
 		_langTranslate = langTranslate;
+
+		_initKeysWithUpdatedValues();
 
 		if (langPlugin) {
 			_portalLanguageProperties = new Properties();
@@ -238,8 +242,13 @@ public class LangBuilder {
 
 					String translatedText = properties.getProperty(key);
 
-					if ((translatedText == null) && (parentProperties != null))
-					{
+					if (_keysWithUpdatedValues.contains(key)) {
+						translatedText = null;
+					}
+
+					if ((translatedText == null) &&
+						(parentProperties != null)) {
+
 						translatedText = parentProperties.getProperty(key);
 					}
 
@@ -485,6 +494,35 @@ public class LangBuilder {
 		return value;
 	}
 
+	private void _initKeysWithUpdatedValues() throws Exception {
+		File backupLanguageFile = new File(
+			_langDir + "/" + _langFile + "_en.properties");
+
+		if (!backupLanguageFile.exists()) {
+			return;
+		}
+
+		Properties backupLanguageProperties = PropertiesUtil.load(
+			FileUtil.read(backupLanguageFile));
+
+		File languageFile = new File(
+			_langDir + "/" + _langFile + ".properties");
+
+		Properties languageProperties = PropertiesUtil.load(
+			FileUtil.read(languageFile));
+
+		Set<Map.Entry<Object, Object>> set = languageProperties.entrySet();
+
+		for (Map.Entry<Object, Object> entry : set) {
+			String key = (String)entry.getKey();
+			String value = (String)entry.getValue();
+
+			if (!value.equals(backupLanguageProperties.get(key))) {
+				_keysWithUpdatedValues.add(key);
+			}
+		}
+	}
+
 	private String _orderProperties(File propertiesFile) throws IOException {
 		if (!propertiesFile.exists()) {
 			return null;
@@ -683,6 +721,7 @@ public class LangBuilder {
 		return toText;
 	}
 
+	private final Set<String> _keysWithUpdatedValues = new HashSet<>();
 	private final String _langDir;
 	private final String _langFile;
 	private final boolean _langTranslate;

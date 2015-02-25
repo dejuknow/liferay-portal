@@ -15,13 +15,10 @@
 package com.liferay.portlet.messageboards;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.resource.manager.ClassLoaderResourceManager;
-import com.liferay.portal.kernel.resource.manager.ResourceManager;
 import com.liferay.portal.kernel.settings.FallbackKeys;
 import com.liferay.portal.kernel.settings.LocalizedValuesMap;
 import com.liferay.portal.kernel.settings.ParameterMapSettings;
 import com.liferay.portal.kernel.settings.Settings;
-import com.liferay.portal.kernel.settings.SettingsFactory;
 import com.liferay.portal.kernel.settings.SettingsFactoryUtil;
 import com.liferay.portal.kernel.settings.TypedSettings;
 import com.liferay.portal.kernel.util.LocalizationUtil;
@@ -36,16 +33,10 @@ import java.util.Map;
 /**
  * @author Jorge Ferrer
  */
+@Settings.Config(settingsIds = MBConstants.SERVICE_NAME)
 public class MBSettings {
 
 	public static final String[] ALL_KEYS = {
-		"emailFromAddress", "emailFromName", "emailMessageAddedBody",
-		"emailMessageAddedSubject", "emailMessageUpdatedBody",
-		"emailMessageUpdatedSubject", "messageFormat", "priorities", "ranks",
-		"recentPostsDateOffset", "rssDelta", "rssDisplayStyle", "rssFeedType",
-		"allowAnonymousPosting", "emailHtmlFormat", "emailMessageAddedEnabled",
-		"emailMessageUpdatedEnabled", "enableFlags", "enableRatings",
-		"enableRss", "subscribeByDefault", "threadAsQuestionByDefault"
 	};
 
 	public static MBSettings getInstance(long groupId) throws PortalException {
@@ -149,15 +140,18 @@ public class MBSettings {
 		return _typedSettings.getValue("recentPostsDateOffset");
 	}
 
+	@Settings.Property(name = "rssDelta")
 	public int getRSSDelta() {
 		return _typedSettings.getIntegerValue("rssDelta");
 	}
 
+	@Settings.Property(name = "rssDisplayStyle")
 	public String getRSSDisplayStyle() {
 		return _typedSettings.getValue(
 			"rssDisplayStyle", RSSUtil.DISPLAY_STYLE_FULL_CONTENT);
 	}
 
+	@Settings.Property(name = "rssFeedType")
 	public String getRSSFeedType() {
 		return _typedSettings.getValue(
 			"rssFeedType", RSSUtil.getFeedType(RSSUtil.ATOM, 1.0));
@@ -187,6 +181,7 @@ public class MBSettings {
 		return _typedSettings.getBooleanValue("enableRatings");
 	}
 
+	@Settings.Property(name = "enableRss")
 	public boolean isEnableRSS() {
 		if (!PortalUtil.isRSSFeedsEnabled()) {
 			return false;
@@ -262,18 +257,9 @@ public class MBSettings {
 		return fallbackKeys;
 	}
 
-	private static final String[] _MULTI_VALUED_KEYS = {"ranks"};
-
-	private static final ResourceManager _resourceManager =
-		new ClassLoaderResourceManager(MBSettings.class.getClassLoader());
-
 	static {
-		SettingsFactory settingsFactory =
-			SettingsFactoryUtil.getSettingsFactory();
-
-		settingsFactory.registerSettingsMetadata(
-			MBConstants.SERVICE_NAME, _getFallbackKeys(), _MULTI_VALUED_KEYS,
-			null, _resourceManager);
+		SettingsFactoryUtil.registerSettingsMetadata(
+			MBSettings.class, null, _getFallbackKeys());
 	}
 
 	private final TypedSettings _typedSettings;

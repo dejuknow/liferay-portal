@@ -47,8 +47,6 @@
 
 	TrashRenderer trashRenderer = trashHandler.getTrashRenderer(classPK);
 
-	String path = trashRenderer.render(renderRequest, renderResponse, AssetRenderer.TEMPLATE_FULL_CONTENT);
-
 	PortletURL containerModelURL = renderResponse.createRenderURL();
 
 	containerModelURL.setParameter("redirect", redirect);
@@ -332,13 +330,10 @@
 				</c:if>
 			</liferay-ui:panel-container>
 		</c:when>
-		<c:when test="<%= Validator.isNotNull(path) %>">
-			<liferay-util:include page="<%= path %>" portletId="<%= trashRenderer.getPortletId() %>">
-				<liferay-util:param name="showHeader" value="<%= Boolean.FALSE.toString() %>" />
-			</liferay-util:include>
-		</c:when>
 		<c:otherwise>
-			<%= HtmlUtil.escape(trashRenderer.getSummary(renderRequest, renderResponse)) %>
+			<liferay-ui:asset-display
+				renderer="<%= trashRenderer %>"
+			/>
 		</c:otherwise>
 	</c:choose>
 
@@ -367,6 +362,10 @@
 			</div>
 
 			<c:if test="<%= Validator.isNotNull(assetRenderer.getDiscussionPath()) %>">
+				<div class="alert alert-warning">
+					<liferay-ui:message key="commenting-is-disabled-because-this-entry-is-in-the-recycle-bin" />
+				</div>
+
 				<portlet:actionURL var="discussionURL">
 					<portlet:param name="struts_action" value="/trash/edit_discussion" />
 				</portlet:actionURL>
@@ -381,6 +380,7 @@
 						classPK="<%= classPK %>"
 						formAction="<%= discussionURL %>"
 						formName='<%= "fm" + classPK %>'
+						hideControls="<%= true %>"
 						paginationURL="<%= discussionPaginationURL %>"
 						redirect="<%= currentURL %>"
 						userId="<%= assetEntry.getUserId() %>"

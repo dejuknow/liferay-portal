@@ -15,13 +15,10 @@
 package com.liferay.portlet.documentlibrary;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.resource.manager.ClassLoaderResourceManager;
-import com.liferay.portal.kernel.resource.manager.ResourceManager;
 import com.liferay.portal.kernel.settings.FallbackKeys;
 import com.liferay.portal.kernel.settings.LocalizedValuesMap;
 import com.liferay.portal.kernel.settings.ParameterMapSettings;
 import com.liferay.portal.kernel.settings.Settings;
-import com.liferay.portal.kernel.settings.SettingsFactory;
 import com.liferay.portal.kernel.settings.SettingsFactoryUtil;
 import com.liferay.portal.kernel.settings.TypedSettings;
 import com.liferay.portal.kernel.util.PropsKeys;
@@ -32,14 +29,8 @@ import java.util.Map;
 /**
  * @author Adolfo Pérez
  */
+@Settings.Config(settingsIds = DLConstants.SERVICE_NAME)
 public class DLSettings {
-
-	public static final String[] ALL_KEYS = {
-		"emailFileEntryAddedBody", "emailFileEntryAddedSubject",
-		"emailFileEntryUpdatedBody", "emailFileEntryUpdatedSubject",
-		"emailFromAddress", "emailFromName", "emailFileEntryAddedEnabled",
-		"emailFileEntryUpdatedEnabled", "showHiddenMountFolders"
-	};
 
 	public static DLSettings getInstance(long groupId) throws PortalException {
 		Settings settings = SettingsFactoryUtil.getGroupServiceSettings(
@@ -69,6 +60,7 @@ public class DLSettings {
 		return _typedSettings.getLocalizedValuesMap("emailFileEntryAddedBody");
 	}
 
+	@Settings.Property(ignore = true)
 	public String getEmailFileEntryAddedBodyXml() {
 		LocalizedValuesMap emailFileEntryAddedBody =
 			getEmailFileEntryAddedBody();
@@ -81,6 +73,7 @@ public class DLSettings {
 			"emailFileEntryAddedSubject");
 	}
 
+	@Settings.Property(ignore = true)
 	public String getEmailFileEntryAddedSubjectXml() {
 		LocalizedValuesMap emailFileEntryAddedSubject =
 			getEmailFileEntryAddedSubject();
@@ -93,6 +86,7 @@ public class DLSettings {
 			"emailFileEntryUpdatedBody");
 	}
 
+	@Settings.Property(ignore = true)
 	public String getEmailFileEntryUpdatedBodyXml() {
 		LocalizedValuesMap emailFileEntryUpdatedBody =
 			getEmailFileEntryUpdatedBody();
@@ -105,6 +99,7 @@ public class DLSettings {
 			"emailFileEntryUpdatedSubject");
 	}
 
+	@Settings.Property(ignore = true)
 	public String getEmailFileEntryUpdatedSubjectXml() {
 		LocalizedValuesMap emailFileEntryUpdatedSubject =
 			getEmailFileEntryUpdatedSubject();
@@ -183,18 +178,9 @@ public class DLSettings {
 		return fallbackKeys;
 	}
 
-	private static final String[] _MULTI_VALUED_KEYS = {};
-
-	private static final ResourceManager _resourceManager =
-		new ClassLoaderResourceManager(DLSettings.class.getClassLoader());
-
 	static {
-		SettingsFactory settingsFactory =
-			SettingsFactoryUtil.getSettingsFactory();
-
-		settingsFactory.registerSettingsMetadata(
-			DLConstants.SERVICE_NAME, _getFallbackKeys(), _MULTI_VALUED_KEYS,
-			null, _resourceManager);
+		SettingsFactoryUtil.registerSettingsMetadata(
+			DLSettings.class, null, _getFallbackKeys());
 	}
 
 	private final TypedSettings _typedSettings;

@@ -337,11 +337,11 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 	protected void addSort(
 		SearchRequestBuilder searchRequestBuilder, Sort[] sorts) {
 
-		if ((sorts == null) || (sorts.length == 0)) {
+		if (ArrayUtil.isEmpty(sorts)) {
 			return;
 		}
 
-		Set<String> sortFieldNames = new HashSet<>();
+		Set<String> sortFieldNames = new HashSet<>(sorts.length);
 
 		for (Sort sort : sorts) {
 			if (sort == null) {

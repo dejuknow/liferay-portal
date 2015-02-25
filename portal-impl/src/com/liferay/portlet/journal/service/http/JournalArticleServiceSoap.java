@@ -1143,16 +1143,47 @@ public class JournalArticleServiceSoap {
 	* @param articleId the primary key of the web content article
 	* @param newFolderId the primary key of the web content article's new
 	folder
+	* @throws PortalException if the user did not have permission to update
+	any one of the versions of the web content article or if any
+	one of the versions of the web content article could not be
+	moved to the folder
+	* @deprecated As of 7.0.0, replaced by {@link #moveArticle(long, String,
+	long, ServiceContext)}
+	*/
+	@Deprecated
+	public static void moveArticle(long groupId, java.lang.String articleId,
+		long newFolderId) throws RemoteException {
+		try {
+			JournalArticleServiceUtil.moveArticle(groupId, articleId,
+				newFolderId);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	/**
+	* Moves all versions of the the web content article matching the group and
+	* article ID to the folder.
+	*
+	* @param groupId the primary key of the web content article's group
+	* @param articleId the primary key of the web content article
+	* @param newFolderId the primary key of the web content article's new
+	folder
 	* @throws PortalException if the user did not have permission to update any
 	one of the versions of the web content article or if any one of
 	the versions of the web content article could not be moved to the
 	folder
 	*/
 	public static void moveArticle(long groupId, java.lang.String articleId,
-		long newFolderId) throws RemoteException {
+		long newFolderId,
+		com.liferay.portal.service.ServiceContext serviceContext)
+		throws RemoteException {
 		try {
 			JournalArticleServiceUtil.moveArticle(groupId, articleId,
-				newFolderId);
+				newFolderId, serviceContext);
 		}
 		catch (Exception e) {
 			_log.error(e, e);
