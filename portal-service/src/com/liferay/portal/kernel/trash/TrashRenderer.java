@@ -14,27 +14,17 @@
 
 package com.liferay.portal.kernel.trash;
 
-import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portlet.asset.model.Renderer;
 
 import java.util.Locale;
 
-import javax.portlet.PortletRequest;
-import javax.portlet.PortletResponse;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
 /**
  * @author Zsolt Berentey
  */
-public interface TrashRenderer {
-
-	public String getClassName();
-
-	public long getClassPK();
-
-	public String getIconCssClass() throws PortalException;
-
-	public String getIconPath(PortletRequest portletRequest);
+public interface TrashRenderer extends Renderer {
 
 	public String getNewName(String oldName, String token);
 
@@ -47,17 +37,7 @@ public interface TrashRenderer {
 	@Deprecated
 	public String getSummary(Locale locale);
 
-	public String getSummary(
-		PortletRequest portletRequest, PortletResponse portletResponse);
-
-	public String getTitle(Locale locale);
-
 	public String getType();
-
-	public String render(
-			RenderRequest renderRequest, RenderResponse renderResponse,
-			String template)
-		throws Exception;
 
 	public String renderActions(
 			RenderRequest renderRequest, RenderResponse renderResponse)

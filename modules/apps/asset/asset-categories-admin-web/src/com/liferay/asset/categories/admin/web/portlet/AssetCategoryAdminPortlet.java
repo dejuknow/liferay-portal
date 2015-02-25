@@ -310,7 +310,7 @@ public class AssetCategoryAdminPortlet extends MVCPortlet {
 	}
 
 	@Reference(unbind = "-")
-	protected void setAssetCategoriesAdminUpgrade(
+	protected void setAssetCategoriesAdminWebUpgrade(
 		AssetCategoriesAdminWebUpgrade assetCategoriesAdminWebUpgrade) {
 	}
 

@@ -406,7 +406,7 @@ if (Validator.isNull(redirect)) {
 
 				<c:if test="<%= !newPage && approved %>">
 					<div class="alert alert-info">
-						<liferay-ui:message key="a-new-version-will-be-created-automatically-if-this-content-is-modified" />
+						<liferay-ui:message key="a-new-version-is-created-automatically-if-this-content-is-modified" />
 					</div>
 				</c:if>
 
@@ -523,7 +523,7 @@ if (Validator.isNull(redirect)) {
 
 		<portlet:renderURL var="nodeURL">
 			<portlet:param name="struts_action" value="/wiki/view" />
-			<portlet:param name="title" value="<%= wikiServiceConfiguration.frontPageName() %>" />
+			<portlet:param name="title" value="<%= wikiConfiguration.frontPageName() %>" />
 			<portlet:param name="tag" value="<%= StringPool.BLANK %>" />
 		</portlet:renderURL>
 

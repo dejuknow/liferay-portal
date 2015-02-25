@@ -51,7 +51,7 @@ import org.osgi.service.component.annotations.Reference;
 public class RSSPortlet extends MVCPortlet {
 
 	@Reference(unbind = "-")
-	protected void setRSSUpgrade(RSSWebUpgrade rssWebUpgrade) {
+	protected void setRSSWebUpgrade(RSSWebUpgrade rssWebUpgrade) {
 	}
 
 }

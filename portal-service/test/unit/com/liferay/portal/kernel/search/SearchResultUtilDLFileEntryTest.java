@@ -32,7 +32,6 @@ import java.util.Locale;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
-import javax.portlet.PortletURL;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -175,7 +174,7 @@ public class SearchResultUtilDLFileEntryTest
 		String title = RandomTestUtil.randomString();
 		String content = RandomTestUtil.randomString();
 
-		Summary summary = new Summary(null, title, content, null);
+		Summary summary = new Summary(null, title, content);
 
 		doReturn(
 			summary
@@ -183,7 +182,7 @@ public class SearchResultUtilDLFileEntryTest
 			indexer
 		).getSummary(
 			(Document)Matchers.any(), Matchers.anyString(),
-			(PortletURL)Matchers.any(), (PortletRequest)Matchers.isNull(),
+			(PortletRequest)Matchers.isNull(),
 			(PortletResponse)Matchers.isNull());
 
 		SearchResult searchResult = assertOneSearchResult(
@@ -282,8 +281,7 @@ public class SearchResultUtilDLFileEntryTest
 			indexer
 		).getSummary(
 			(Document)Matchers.any(), Matchers.anyString(),
-			(PortletURL)Matchers.any(), (PortletRequest)Matchers.any(),
-			(PortletResponse)Matchers.any());
+			(PortletRequest)Matchers.any(), (PortletResponse)Matchers.any());
 
 		stub(
 			method(IndexerRegistryUtil.class, "getIndexer", String.class)
@@ -315,7 +313,7 @@ public class SearchResultUtilDLFileEntryTest
 		Mockito.verify(
 			indexer
 		).getSummary(
-			document, snippet, portletURL, null, null
+			document, snippet, null, null
 		);
 
 		assertEmptyFileEntryTuples(searchResult);

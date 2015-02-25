@@ -134,6 +134,42 @@ public class HttpImplTest extends PowerMockito {
 	}
 
 	@Test
+	public void testNormalizePath() {
+		Assert.assertEquals(
+			"/api/axis", _httpImpl.normalizePath("/api/%61xis"));
+		Assert.assertEquals(
+			"/api/%2561xis", _httpImpl.normalizePath("/api/%2561xis"));
+		Assert.assertEquals(
+			"/api/ax%3Fs", _httpImpl.normalizePath("/api/ax%3fs"));
+		Assert.assertEquals(
+			"/api/%2F/axis",
+			_httpImpl.normalizePath("/api/%2f/;x=aaa_%2f_y/axis"));
+		Assert.assertEquals(
+			"/api/axis", _httpImpl.normalizePath("/api/;x=aaa_%2f_y/axis"));
+		Assert.assertEquals(
+			"/api/axis", _httpImpl.normalizePath("/api/;x=aaa_%5b_y/axis"));
+		Assert.assertEquals(
+			"/api/axis",
+			_httpImpl.normalizePath("/api/;x=aaa_LIFERAY_TEMP_SLASH_y/axis"));
+		Assert.assertEquals(
+			"/api/axis",
+			_httpImpl.normalizePath("/api///////%2e/../;x=y/axis"));
+		Assert.assertEquals(
+			"/api/axis",
+			_httpImpl.normalizePath("/////api///////%2e/a/../;x=y/axis"));
+		Assert.assertEquals(
+			"/api/axis",
+			_httpImpl.normalizePath("/////api///////%2e/../;x=y/axis"));
+		Assert.assertEquals(
+			"/api/axis", _httpImpl.normalizePath("/api///////%2e/axis"));
+		Assert.assertEquals(
+			"/api/axis", _httpImpl.normalizePath("./api///////%2e/axis"));
+		Assert.assertEquals(
+			"/api/axis?foo=bar&bar=foo",
+			_httpImpl.normalizePath("./api///////%2e/axis?foo=bar&bar=foo"));
+	}
+
+	@Test
 	public void testProtocolizeMalformedURL() {
 		Assert.assertEquals(
 			"foo.com", _httpImpl.protocolize("foo.com", 8080, true));
@@ -166,18 +202,17 @@ public class HttpImplTest extends PowerMockito {
 			"/TestServlet/one/two",
 			_httpImpl.removePathParameters(
 				"/TestServlet;jsessionid=ae01b0f2af/one;test=$one@two/two"));
-
 		Assert.assertEquals(
 			"/TestServlet/one/two",
 			_httpImpl.removePathParameters(
 				"/TestServlet;jsessionid=ae01b0f2af;test2=123,456" +
 					"/one;test=$one@two/two"));
-
 		Assert.assertEquals(
 			"/TestServlet/one/two",
 			_httpImpl.removePathParameters(
 				"/TestServlet/one;test=$one@two/two;jsessionid=ae01b0f2af" +
 					";test2=123,456"));
+		Assert.assertEquals("/", _httpImpl.removePathParameters("/;?"));
 	}
 
 	private void _addParameter(

@@ -31,15 +31,35 @@ public class MoveFileEntryHandler extends BaseJSONHandler {
 	}
 
 	@Override
+	public boolean handlePortalException(String exception) throws Exception {
+		if (exception.equals(
+				"com.liferay.portlet.documentlibrary.DuplicateFileException")) {
+
+			SyncFile localSyncFile = getLocalSyncFile();
+
+			localSyncFile.setState(SyncFile.STATE_SYNCED);
+			localSyncFile.setUiEvent(SyncFile.UI_EVENT_UPLOADED);
+
+			SyncFileService.update(localSyncFile);
+
+			return true;
+		}
+
+		return super.handlePortalException(exception);
+	}
+
+	@Override
 	public void processResponse(String response) throws Exception {
 		ObjectMapper objectMapper = new ObjectMapper();
 
 		SyncFile remoteSyncFile = objectMapper.readValue(
 			response, new TypeReference<SyncFile>() {});
 
-		SyncFile localSyncFile = (SyncFile)getParameterValue("syncFile");
+		SyncFile localSyncFile = getLocalSyncFile();
 
 		localSyncFile.setModifiedTime(remoteSyncFile.getModifiedTime());
+		localSyncFile.setState(SyncFile.STATE_SYNCED);
+		localSyncFile.setUiEvent(SyncFile.UI_EVENT_UPLOADED);
 
 		SyncFileService.update(localSyncFile);
 	}

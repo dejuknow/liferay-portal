@@ -22,26 +22,21 @@ ResultRow row = (ResultRow)request.getAttribute(WebKeys.SEARCH_CONTAINER_RESULT_
 Document document = (Document)row.getObject();
 
 String entryClassName = document.get(Field.ENTRY_CLASS_NAME);
+long entryClassPK = GetterUtil.getLong(document.get(Field.ENTRY_CLASS_PK));
 
 AssetRendererFactory assetRendererFactory = AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(entryClassName);
 
 AssetRenderer assetRenderer = null;
 
 if (assetRendererFactory != null) {
-	long classPK = GetterUtil.getLong(document.get(Field.ENTRY_CLASS_PK));
-
 	long resourcePrimKey = GetterUtil.getLong(document.get(Field.ROOT_ENTRY_CLASS_PK));
 
 	if (resourcePrimKey > 0) {
-		classPK = resourcePrimKey;
+		entryClassPK = resourcePrimKey;
 	}
 
-	assetRenderer = assetRendererFactory.getAssetRenderer(classPK);
+	assetRenderer = assetRendererFactory.getAssetRenderer(entryClassPK);
 }
-
-String[] queryTerms = (String[])request.getAttribute("search.jsp-queryTerms");
-
-PortletURL portletURL = (PortletURL)request.getAttribute("search.jsp-portletURL");
 %>
 
 <span class="asset-entry">
@@ -69,86 +64,29 @@ PortletURL portletURL = (PortletURL)request.getAttribute("search.jsp-portletURL"
 	</span>
 
 	<%
-	String[] assetCategoryIds = document.getValues(Field.ASSET_CATEGORY_IDS);
-	String[] assetTagNames = document.getValues(Field.ASSET_TAG_NAMES);
+	AssetEntry assetEntry = AssetEntryLocalServiceUtil.fetchEntry(entryClassName, entryClassPK);
 	%>
 
-	<c:if test="<%= Validator.isNotNull(assetCategoryIds[0]) || Validator.isNotNull(assetTagNames[0]) %>">
+	<c:if test="<%= (assetEntry != null) && (ArrayUtil.isNotEmpty(assetEntry.getCategoryIds()) || ArrayUtil.isNotEmpty(assetEntry.getTagNames())) %>">
 		<div class="asset-entry-content">
-			<c:if test="<%= Validator.isNotNull(assetTagNames[0]) %>">
-				<div class="asset-entry-tags">
 
-					<%
-					for (int i = 0; i < assetTagNames.length; i++) {
-						String assetTagName = assetTagNames[i].trim();
+			<%
+			PortletURL portletURL = (PortletURL)request.getAttribute("search.jsp-portletURL");
+			%>
 
-						PortletURL tagURL = PortletURLUtil.clone(portletURL, renderResponse);
+			<liferay-ui:asset-tags-summary
+				className="<%= entryClassName %>"
+				classPK="<%= entryClassPK %>"
+				paramName="<%= Field.ASSET_TAG_NAMES %>"
+				portletURL="<%= PortletURLUtil.clone(portletURL, renderResponse) %>"
+			/>
 
-						tagURL.setParameter(Field.ASSET_TAG_NAMES, assetTagName);
-					%>
-
-						<c:if test="<%= i == 0 %>">
-							<div class="taglib-asset-tags-summary">
-						</c:if>
-
-						<a class="tag" href="<%= tagURL.toString() %>"><%= assetTagName %></a>
-
-						<c:if test="<%= (i + 1) == assetTagNames.length %>">
-							</div>
-						</c:if>
-
-					<%
-					}
-					%>
-
-				</div>
-			</c:if>
-
-			<c:if test="<%= Validator.isNotNull(assetCategoryIds[0]) %>">
-				<div class="asset-entry-categories">
-
-					<%
-					for (int i = 0; i < assetCategoryIds.length; i++) {
-						long assetCategoryId = GetterUtil.getLong(assetCategoryIds[i]);
-
-						AssetCategory assetCategory = null;
-
-						try {
-							assetCategory = AssetCategoryLocalServiceUtil.getCategory(assetCategoryId);
-						}
-						catch (NoSuchCategoryException nsce) {
-						}
-
-						if (assetCategory == null) {
-							continue;
-						}
-
-						AssetVocabulary assetVocabulary = AssetVocabularyLocalServiceUtil.getVocabulary(assetCategory.getVocabularyId());
-
-						PortletURL categoryURL = PortletURLUtil.clone(portletURL, renderResponse);
-
-						categoryURL.setParameter(Field.ASSET_CATEGORY_TITLES, assetCategory.getTitle(LocaleUtil.getDefault()));
-					%>
-
-						<c:if test="<%= i == 0 %>">
-							<div class="taglib-asset-categories-summary">
-								<%= HtmlUtil.escape(assetVocabulary.getTitle(locale)) %>:
-						</c:if>
-
-						<a class="asset-category" href="<%= categoryURL.toString() %>">
-							<%= _buildAssetCategoryPath(assetCategory, locale) %>
-						</a>
-
-						<c:if test="<%= (i + 1) == assetCategoryIds.length %>">
-							</div>
-						</c:if>
-
-					<%
-					}
-					%>
-
-				</div>
-			</c:if>
+			<liferay-ui:asset-categories-summary
+				className="<%= entryClassName %>"
+				classPK="<%= entryClassPK %>"
+				paramName="<%= Field.ASSET_CATEGORY_IDS %>"
+				portletURL="<%= PortletURLUtil.clone(portletURL, renderResponse) %>"
+			/>
 		</div>
 	</c:if>
 
@@ -206,7 +144,33 @@ PortletURL portletURL = (PortletURL)request.getAttribute("search.jsp-portletURL"
 					<td class="value" valign="top">
 						<div class="container">
 							<code>
-								<c:if test="<%= values.length > 1 %>">[</c:if><%for (int i = 0; i < values.length; i++) {%><c:if test="<%= i > 0 %>">, </c:if><c:if test="<%= !field.isNumeric() %>">"</c:if><%= HtmlUtil.escape(values[i]) %><c:if test="<%= !field.isNumeric() %>">"</c:if><%}%><c:if test="<%= values.length > 1 %>">]</c:if>
+
+								<%
+								StringBundler sb = new StringBundler(2 + (4 * values.length));
+
+								for (int i = 0; i < values.length; i++) {
+									if (field.isNumeric()) {
+										sb.append(HtmlUtil.escape(values[i]));
+									}
+									else {
+										sb.append(StringPool.QUOTE);
+										sb.append(HtmlUtil.escape(values[i]));
+										sb.append(StringPool.QUOTE);
+									}
+
+									sb.append(StringPool.COMMA_AND_SPACE);
+								}
+
+								sb.setIndex(sb.index() - 1);
+
+								if (values.length > 1) {
+									sb.setStringAt(StringPool.OPEN_BRACKET, 0);
+
+									sb.append(StringPool.CLOSE_BRACKET);
+								}
+								%>
+
+								<%= sb.toString() %>
 							</code>
 						</div>
 					</td>

@@ -15,12 +15,9 @@
 package com.liferay.portlet.blogs;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.resource.manager.ClassLoaderResourceManager;
-import com.liferay.portal.kernel.resource.manager.ResourceManager;
 import com.liferay.portal.kernel.settings.FallbackKeys;
 import com.liferay.portal.kernel.settings.ParameterMapSettings;
 import com.liferay.portal.kernel.settings.Settings;
-import com.liferay.portal.kernel.settings.SettingsFactory;
 import com.liferay.portal.kernel.settings.SettingsFactoryUtil;
 import com.liferay.portal.kernel.settings.TypedSettings;
 import com.liferay.portal.kernel.util.PropsKeys;
@@ -33,16 +30,8 @@ import java.util.Map;
 /**
  * @author Iván Zaera
  */
+@Settings.Config(settingsIds = {PortletKeys.BLOGS, PortletKeys.BLOGS_ADMIN})
 public class BlogsPortletInstanceSettings {
-
-	public static final String[] ALL_KEYS = {
-		"displayStyle", "displayStyleGroupId", "pageDelta", "rssDelta",
-		"rssDisplayStyle", "rssFeedType", "socialBookmarksDisplayPosition",
-		"socialBookmarksDisplayStyle", "socialBookmarksTypes",
-		"enableCommentRatings", "enableComments", "enableFlags",
-		"enableRatings", "enableRelatedAssets", "enableRss",
-		"enableSocialBookmarks"
-	};
 
 	public static BlogsPortletInstanceSettings getInstance(
 			Layout layout, String portletId)
@@ -82,14 +71,17 @@ public class BlogsPortletInstanceSettings {
 		return _typedSettings.getIntegerValue("pageDelta");
 	}
 
+	@Settings.Property(name = "rssDelta")
 	public int getRssDelta() {
 		return _typedSettings.getIntegerValue("rssDelta");
 	}
 
+	@Settings.Property(name = "rssDisplayStyle")
 	public String getRssDisplayStyle() {
 		return _typedSettings.getValue("rssDisplayStyle");
 	}
 
+	@Settings.Property(name = "rssFeedType")
 	public String getRssFeedType() {
 		return _typedSettings.getValue("rssFeedType");
 	}
@@ -126,6 +118,7 @@ public class BlogsPortletInstanceSettings {
 		return _typedSettings.getBooleanValue("enableRelatedAssets");
 	}
 
+	@Settings.Property(name = "enableRss")
 	public boolean isEnableRSS() {
 		if (!PortalUtil.isRSSFeedsEnabled()) {
 			return false;
@@ -172,22 +165,9 @@ public class BlogsPortletInstanceSettings {
 		return fallbackKeys;
 	}
 
-	private static final String[] _MULTI_VALUED_KEYS = {};
-
-	private static final ResourceManager _resourceManager =
-		new ClassLoaderResourceManager(
-			BlogsPortletInstanceSettings.class.getClassLoader());
-
 	static {
-		SettingsFactory settingsFactory =
-			SettingsFactoryUtil.getSettingsFactory();
-
-		settingsFactory.registerSettingsMetadata(
-			PortletKeys.BLOGS, _getFallbackKeys(), _MULTI_VALUED_KEYS, null,
-			_resourceManager);
-		settingsFactory.registerSettingsMetadata(
-			PortletKeys.BLOGS_ADMIN, _getFallbackKeys(), _MULTI_VALUED_KEYS,
-			null, _resourceManager);
+		SettingsFactoryUtil.registerSettingsMetadata(
+			BlogsPortletInstanceSettings.class, null, _getFallbackKeys());
 	}
 
 	private final TypedSettings _typedSettings;

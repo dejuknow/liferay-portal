@@ -14,55 +14,19 @@
 
 package com.liferay.wiki.settings;
 
-import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.settings.FallbackKeys;
 import com.liferay.portal.kernel.settings.LocalizedValuesMap;
 import com.liferay.portal.kernel.settings.Settings;
 import com.liferay.portal.kernel.settings.TypedSettings;
-import com.liferay.portal.kernel.util.PropsKeys;
-
-import java.util.Map;
+import com.liferay.wiki.constants.WikiConstants;
 
 /**
  * @author Iván Zaera
  */
+@Settings.Config(settingsIds = WikiConstants.SERVICE_NAME)
 public class WikiSettings {
 
-	public static String[] ALL_KEYS = {
-		"defaultFormat", "emailFromAddress", "emailFromName",
-		"emailPageAddedBody", "emailPageAddedSubject", "emailPageUpdatedBody",
-		"emailPageUpdatedSubject", "emailPageAddedEnabled",
-		"emailPageUpdatedEnabled", "pageCommentsEnabled",
-		"pageMinorEditAddSocialActivity", "pageMinorEditSendEmail",
-		"rssAbstractLength",
-	};
-
-	/**
-	 * @deprecated As of 7.0.0, replaced by {WikiSettingsProvider#getGroupServiceSettings(long)}
-	 */
-	@Deprecated
-	public static WikiSettings getInstance(long groupId)
-		throws PortalException {
-
-		WikiSettingsProvider wikiSettingsProvider =
-			WikiSettingsProvider.getWikiSettingsProvider();
-
-		return wikiSettingsProvider.getGroupServiceSettings(groupId);
-	}
-
-	/**
-	 * @deprecated As of 7.0.0, replaced by {WikiSettingsProvider#getGroupServiceSettings(long,String[])}
-	 */
-	@Deprecated
-	public static WikiSettings getInstance(
-			long groupId, Map<String, String[]> parameterMap)
-		throws PortalException {
-
-		WikiSettingsProvider wikiSettingsProvider =
-			WikiSettingsProvider.getWikiSettingsProvider();
-
-		return wikiSettingsProvider.getGroupServiceSettings(
-			groupId, parameterMap);
+	public WikiSettings(Settings settings) {
+		_typedSettings = new TypedSettings(settings);
 	}
 
 	public String getDefaultFormat() {
@@ -81,6 +45,7 @@ public class WikiSettings {
 		return _typedSettings.getLocalizedValuesMap("emailPageAddedBody");
 	}
 
+	@Settings.Property(ignore = true)
 	public String getEmailPageAddedBodyXml() {
 		LocalizedValuesMap emailPageAddedBodyMap = getEmailPageAddedBody();
 
@@ -91,6 +56,7 @@ public class WikiSettings {
 		return _typedSettings.getLocalizedValuesMap("emailPageAddedSubject");
 	}
 
+	@Settings.Property(ignore = true)
 	public String getEmailPageAddedSubjectXml() {
 		LocalizedValuesMap emailPageAddedSubjectMap =
 			getEmailPageAddedSubject();
@@ -102,6 +68,7 @@ public class WikiSettings {
 		return _typedSettings.getLocalizedValuesMap("emailPageUpdatedBody");
 	}
 
+	@Settings.Property(ignore = true)
 	public String getEmailPageUpdatedBodyXml() {
 		LocalizedValuesMap emailPageUpdatedBodyMap = getEmailPageUpdatedBody();
 
@@ -112,6 +79,7 @@ public class WikiSettings {
 		return _typedSettings.getLocalizedValuesMap("emailPageUpdatedSubject");
 	}
 
+	@Settings.Property(ignore = true)
 	public String getEmailPageUpdatedSubjectXml() {
 		LocalizedValuesMap emailPageUpdatedSubjectMap =
 			getEmailPageUpdatedSubject();
@@ -119,6 +87,7 @@ public class WikiSettings {
 		return emailPageUpdatedSubjectMap.getLocalizationXml();
 	}
 
+	@Settings.Property(name = "rssAbstractLength")
 	public int getRSSAbstractLength() {
 		return _typedSettings.getIntegerValue("rssAbstractLength");
 	}
@@ -142,22 +111,6 @@ public class WikiSettings {
 	public boolean isPageMinorEditSendMail() {
 		return _typedSettings.getBooleanValue("pageMinorEditSendEmail");
 	}
-
-	protected static FallbackKeys getFallbackKeys() {
-		FallbackKeys fallbackKeys = new FallbackKeys();
-
-		fallbackKeys.add(
-			"emailFromAddress", PropsKeys.ADMIN_EMAIL_FROM_ADDRESS);
-		fallbackKeys.add("emailFromName", PropsKeys.ADMIN_EMAIL_FROM_NAME);
-
-		return fallbackKeys;
-	}
-
-	protected WikiSettings(Settings settings) {
-		_typedSettings = new TypedSettings(settings);
-	}
-
-	protected static final String[] MULTI_VALUED_KEYS = {};
 
 	private final TypedSettings _typedSettings;
 

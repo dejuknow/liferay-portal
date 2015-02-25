@@ -87,6 +87,7 @@ public class SeleniumUtil extends PropsValues {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private void _stopSelenium() {
 		if (_selenium != null) {
 			_selenium.stop();

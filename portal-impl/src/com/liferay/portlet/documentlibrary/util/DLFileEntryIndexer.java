@@ -21,8 +21,6 @@ import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.portlet.LiferayPortletURL;
-import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portal.kernel.search.BaseIndexer;
@@ -73,6 +71,7 @@ import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
 import com.liferay.portlet.dynamicdatamapping.storage.StorageEngineUtil;
+import com.liferay.portlet.dynamicdatamapping.util.DDMIndexer;
 import com.liferay.portlet.dynamicdatamapping.util.DDMIndexerUtil;
 import com.liferay.portlet.dynamicdatamapping.util.DDMUtil;
 import com.liferay.portlet.expando.model.ExpandoBridge;
@@ -90,8 +89,6 @@ import java.util.Locale;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
-import javax.portlet.PortletURL;
-import javax.portlet.WindowStateException;
 
 /**
  * @author Brian Wing Shun Chan
@@ -105,8 +102,9 @@ public class DLFileEntryIndexer extends BaseIndexer {
 
 	public DLFileEntryIndexer() {
 		setDefaultSelectedFieldNames(
-			Field.COMPANY_ID, Field.CONTENT, Field.ENTRY_CLASS_NAME,
-			Field.ENTRY_CLASS_PK, Field.TITLE, Field.UID);
+			Field.ASSET_TAG_NAMES, Field.COMPANY_ID, Field.CONTENT,
+			Field.ENTRY_CLASS_NAME, Field.ENTRY_CLASS_PK, Field.GROUP_ID,
+			Field.MODIFIED_DATE, Field.SCOPE_GROUP_ID, Field.TITLE, Field.UID);
 		setFilterSearch(true);
 		setPermissionAware(true);
 	}
@@ -207,7 +205,7 @@ public class DLFileEntryIndexer extends BaseIndexer {
 			Validator.isNotNull(ddmStructureFieldValue)) {
 
 			String[] ddmStructureFieldNameParts = StringUtil.split(
-				ddmStructureFieldName, StringPool.DOUBLE_UNDERLINE);
+				ddmStructureFieldName, DDMIndexer.DDM_FIELD_SEPARATOR);
 
 			DDMStructure structure = DDMStructureLocalServiceUtil.getStructure(
 				GetterUtil.getLong(ddmStructureFieldNameParts[1]));
@@ -458,28 +456,12 @@ public class DLFileEntryIndexer extends BaseIndexer {
 
 	@Override
 	protected Summary doGetSummary(
-		Document document, Locale locale, String snippet, PortletURL portletURL,
+		Document document, Locale locale, String snippet,
 		PortletRequest portletRequest, PortletResponse portletResponse) {
-
-		LiferayPortletURL liferayPortletURL = (LiferayPortletURL)portletURL;
-
-		liferayPortletURL.setLifecycle(PortletRequest.ACTION_PHASE);
-
-		try {
-			liferayPortletURL.setWindowState(LiferayWindowState.EXCLUSIVE);
-		}
-		catch (WindowStateException wse) {
-		}
-
-		String fileEntryId = document.get(Field.ENTRY_CLASS_PK);
-
-		portletURL.setParameter("struts_action", "/document_library/get_file");
-		portletURL.setParameter("fileEntryId", fileEntryId);
 
 		Summary summary = createSummary(document, Field.TITLE, Field.CONTENT);
 
 		summary.setMaxContentLength(200);
-		summary.setPortletURL(portletURL);
 
 		return summary;
 	}
