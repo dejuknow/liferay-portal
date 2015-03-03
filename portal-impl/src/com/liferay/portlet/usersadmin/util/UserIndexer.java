@@ -17,6 +17,8 @@ package com.liferay.portlet.usersadmin.util;
 import com.liferay.portal.NoSuchContactException;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.BaseIndexer;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.BooleanQuery;
@@ -54,7 +56,6 @@ import java.util.Set;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
-import javax.portlet.PortletURL;
 
 /**
  * @author Raymond Augé
@@ -73,7 +74,9 @@ public class UserIndexer extends BaseIndexer {
 	public UserIndexer() {
 		setCommitImmediately(true);
 		setDefaultSelectedFieldNames(
-			Field.COMPANY_ID, Field.UID, Field.USER_ID);
+			Field.ASSET_TAG_NAMES, Field.COMPANY_ID, Field.ENTRY_CLASS_NAME,
+			Field.ENTRY_CLASS_PK, Field.GROUP_ID, Field.MODIFIED_DATE,
+			Field.SCOPE_GROUP_ID, Field.UID, Field.USER_ID);
 		setIndexerEnabled(PropsValues.USERS_INDEXER_ENABLED);
 		setPermissionAware(true);
 		setStagingAware(false);
@@ -291,7 +294,7 @@ public class UserIndexer extends BaseIndexer {
 
 	@Override
 	protected Summary doGetSummary(
-		Document document, Locale locale, String snippet, PortletURL portletURL,
+		Document document, Locale locale, String snippet,
 		PortletRequest portletRequest, PortletResponse portletResponse) {
 
 		String firstName = document.get("firstName");
@@ -306,12 +309,7 @@ public class UserIndexer extends BaseIndexer {
 
 		String content = null;
 
-		String userId = document.get(Field.USER_ID);
-
-		portletURL.setParameter("struts_action", "/users_admin/edit_user");
-		portletURL.setParameter("p_u_i_d", userId);
-
-		return new Summary(title, content, portletURL);
+		return new Summary(title, content);
 	}
 
 	@Override
@@ -380,10 +378,13 @@ public class UserIndexer extends BaseIndexer {
 			try {
 				indexer.reindex(user.getContact());
 			}
-			catch (NoSuchContactException nscce) {
+			catch (NoSuchContactException nsce) {
 
 				// This is a temporary workaround for LPS-46825
 
+				if (_log.isDebugEnabled()) {
+					_log.debug(nsce, nsce);
+				}
 			}
 		}
 	}
@@ -447,5 +448,7 @@ public class UserIndexer extends BaseIndexer {
 
 		actionableDynamicQuery.performActions();
 	}
+
+	private static final Log _log = LogFactoryUtil.getLog(UserIndexer.class);
 
 }

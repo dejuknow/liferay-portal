@@ -54,8 +54,8 @@ import org.osgi.service.component.annotations.Reference;
 public class BreadcrumbPortlet extends MVCPortlet {
 
 	@Reference(unbind = "-")
-	protected void setBreadcrumbUpgrade(
-		BreadcrumbWebUpgrade breadcrumbUpgrade) {
+	protected void setBreadcrumbWebUpgrade(
+		BreadcrumbWebUpgrade breadcrumbWebUpgrade) {
 	}
 
 }

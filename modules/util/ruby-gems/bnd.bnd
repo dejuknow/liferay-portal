@@ -1,0 +1,4 @@
+Bundle-Name: Liferay Ruby Gems
+Bundle-SymbolicName: com.liferay.ruby.gems
+Bundle-Version: 1.0.0
+Include-Resource: classes

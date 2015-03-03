@@ -2088,13 +2088,35 @@ public interface JournalArticleLocalService extends BaseLocalService,
 	* @param articleId the primary key of the web content article
 	* @param newFolderId the primary key of the web content article's new
 	folder
+	* @return the updated web content article, which was moved to a new
+	folder
+	* @throws PortalException if a matching web content article could not
+	be found
+	* @deprecated As of 7.0.0, replaced by {@link #moveArticle(long, String,
+	long, ServiceContext)}
+	*/
+	@java.lang.Deprecated
+	@com.liferay.portal.kernel.search.Indexable(type = IndexableType.REINDEX)
+	public com.liferay.portlet.journal.model.JournalArticle moveArticle(
+		long groupId, java.lang.String articleId, long newFolderId)
+		throws com.liferay.portal.kernel.exception.PortalException;
+
+	/**
+	* Moves the web content article matching the group and article ID to a new
+	* folder.
+	*
+	* @param groupId the primary key of the web content article's group
+	* @param articleId the primary key of the web content article
+	* @param newFolderId the primary key of the web content article's new
+	folder
 	* @return the updated web content article, which was moved to a new folder
 	* @throws PortalException if a matching web content article could not be
 	found
 	*/
 	@com.liferay.portal.kernel.search.Indexable(type = IndexableType.REINDEX)
 	public com.liferay.portlet.journal.model.JournalArticle moveArticle(
-		long groupId, java.lang.String articleId, long newFolderId)
+		long groupId, java.lang.String articleId, long newFolderId,
+		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException;
 
 	/**

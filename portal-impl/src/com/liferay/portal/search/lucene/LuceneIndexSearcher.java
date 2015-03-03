@@ -92,6 +92,17 @@ import org.apache.lucene.search.highlight.TokenGroup;
 public class LuceneIndexSearcher extends BaseIndexSearcher {
 
 	@Override
+	public String getQueryString(SearchContext searchContext, Query query)
+		throws ParseException {
+
+		org.apache.lucene.search.Query luceneQuery =
+			(org.apache.lucene.search.Query)QueryTranslatorUtil.translate(
+				query);
+
+		return luceneQuery.toString();
+	}
+
+	@Override
 	public Hits search(SearchContext searchContext, Query query)
 		throws SearchException {
 
@@ -179,11 +190,15 @@ public class LuceneIndexSearcher extends BaseIndexSearcher {
 
 			Sort[] sorts = searchContext.getSorts();
 
-			if (sorts != null) {
+			if (ArrayUtil.isNotEmpty(sorts)) {
 				sortFields = new SortField[sorts.length];
 
 				for (int i = 0; i < sorts.length; i++) {
 					Sort sort = sorts[i];
+
+					if (sort == null) {
+						continue;
+					}
 
 					if ((sort.getType() == Sort.STRING_TYPE) &&
 						(searchContext.getLocale() != null)) {

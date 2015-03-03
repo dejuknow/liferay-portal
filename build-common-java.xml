@@ -139,13 +139,21 @@
 		<if>
 			<available file="bnd.bnd" />
 			<then>
-				<baseline-jar-macro
-					bndRootFile="${project.dir}/common.bnd"
-					file="bnd.bnd"
-					outputPath="."
-					rootProjectDir="${project.dir}"
-					sourcePath="."
-				/>
+				<manifest-helper />
+
+				<bndexpand propertyfile="${project.dir}/common.bnd" />
+
+				<bnd eclipse="false" exceptions="true" failok="false" inherit="true" output="${jar.file}.jar">
+					<bndfiles>
+						<fileset dir=".">
+							<include name="bnd.bnd" />
+						</fileset>
+					</bndfiles>
+					<classpath>
+						<pathelement location="classes" />
+					</classpath>
+					<property name="-sourcepath" value="." />
+				</bnd>
 			</then>
 			<else>
 				<antcall target="manifest" />

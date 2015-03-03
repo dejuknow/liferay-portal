@@ -21,11 +21,15 @@ import com.j256.ormlite.stmt.Where;
 
 import com.liferay.sync.engine.model.SyncFile;
 
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+
 import java.sql.SQLException;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -79,6 +83,23 @@ public class SyncFilePersistence extends BasePersistenceImpl<SyncFile, Long> {
 		return syncFiles.get(0);
 	}
 
+	public List<SyncFile> findByParentFilePathName(String parentFilePathName)
+		throws SQLException {
+
+		QueryBuilder<SyncFile, Long> queryBuilder = queryBuilder();
+
+		Where<SyncFile, Long> where = queryBuilder.where();
+
+		FileSystem fileSystem = FileSystems.getDefault();
+
+		parentFilePathName = StringUtils.replace(
+			parentFilePathName + fileSystem.getSeparator(), "\\", "\\\\");
+
+		where.like("filePathName", new SelectArg(parentFilePathName + "%"));
+
+		return query(queryBuilder.prepare());
+	}
+
 	public SyncFile fetchByR_S_T(
 			long repositoryId, long syncAccountId, long typePK)
 		throws SQLException {
@@ -104,19 +125,24 @@ public class SyncFilePersistence extends BasePersistenceImpl<SyncFile, Long> {
 		return queryForEq("syncAccountId", syncAccountId);
 	}
 
-	public List<SyncFile> findByF_L(String filePathName, long localSyncTime)
+	public List<SyncFile> findByPF_L(
+			String parentFilePathName, long localSyncTime)
 		throws SQLException {
 
 		QueryBuilder<SyncFile, Long> queryBuilder = queryBuilder();
 
 		Where<SyncFile, Long> where = queryBuilder.where();
 
-		filePathName = StringUtils.replace(filePathName, "\\", "\\\\");
+		FileSystem fileSystem = FileSystems.getDefault();
 
-		where.like("filePathName", new SelectArg(filePathName + "/%"));
+		parentFilePathName = StringUtils.replace(
+			parentFilePathName + fileSystem.getSeparator(), "\\", "\\\\");
+
+		where.like("filePathName", new SelectArg(parentFilePathName + "%"));
 		where.lt("localSyncTime", localSyncTime);
 		where.or(
 			where.eq("state", SyncFile.STATE_SYNCED),
+			where.eq("uiEvent", SyncFile.UI_EVENT_DELETED_LOCAL),
 			where.eq("uiEvent", SyncFile.UI_EVENT_UPLOADING));
 		where.ne("type", SyncFile.TYPE_SYSTEM);
 
@@ -156,6 +182,40 @@ public class SyncFilePersistence extends BasePersistenceImpl<SyncFile, Long> {
 		fieldValues.put("uiEvent", uiEvent);
 
 		return queryForFieldValues(fieldValues);
+	}
+
+	public void renameByFilePathName(
+			final String sourceFilePathName, final String targetFilePathName)
+		throws SQLException {
+
+		Callable<Object> callable = new Callable<Object>() {
+
+			@Override
+			public Object call() throws Exception {
+				FileSystem fileSystem = FileSystems.getDefault();
+
+				List<SyncFile> syncFiles = findByParentFilePathName(
+					sourceFilePathName);
+
+				for (SyncFile syncFile : syncFiles) {
+					String filePathName = syncFile.getFilePathName();
+
+					filePathName = StringUtils.replaceOnce(
+						filePathName,
+						sourceFilePathName + fileSystem.getSeparator(),
+						targetFilePathName + fileSystem.getSeparator());
+
+					syncFile.setFilePathName(filePathName);
+
+					update(syncFile);
+				}
+
+				return null;
+			}
+
+		};
+
+		callBatchTasks(callable);
 	}
 
 	public void updateByFilePathName(

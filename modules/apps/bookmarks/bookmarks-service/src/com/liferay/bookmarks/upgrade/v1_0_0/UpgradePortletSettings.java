@@ -16,8 +16,7 @@ package com.liferay.bookmarks.upgrade.v1_0_0;
 
 import com.liferay.bookmarks.constants.BookmarksConstants;
 import com.liferay.bookmarks.constants.BookmarksPortletKeys;
-import com.liferay.bookmarks.settings.BookmarksSettings;
-import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.bookmarks.settings.BookmarksGroupServiceSettings;
 import com.liferay.portal.util.PortletKeys;
 
 /**
@@ -30,8 +29,8 @@ public class UpgradePortletSettings
 	protected void doUpgrade() throws Exception {
 		upgradeMainPortlet(
 			BookmarksPortletKeys.BOOKMARKS, BookmarksConstants.SERVICE_NAME,
-			PortletKeys.PREFS_OWNER_TYPE_LAYOUT, StringPool.EMPTY_ARRAY,
-			BookmarksSettings.ALL_KEYS);
+			PortletKeys.PREFS_OWNER_TYPE_LAYOUT, null,
+			BookmarksGroupServiceSettings.class);
 	}
 
 }

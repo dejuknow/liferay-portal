@@ -102,12 +102,13 @@ public class DownloadFilesHandler extends BaseHandler {
 
 						Handler<Void> handler = handlers.get(field.getKey());
 
-						JsonNode fieldValue = field.getValue();
+						JsonNode valueJsonNode = field.getValue();
 
-						String exception = handler.getException(
-							fieldValue.textValue());
+						JsonNode exceptionJsonNode = valueJsonNode.get(
+							"exception");
 
-						handler.handlePortalException(exception);
+						handler.handlePortalException(
+							exceptionJsonNode.textValue());
 					}
 
 					break;
@@ -130,9 +131,14 @@ public class DownloadFilesHandler extends BaseHandler {
 							syncFile.getFilePathName());
 				}
 
-				downloadFileHandler.copyFile(
-					syncFile, Paths.get(syncFile.getFilePathName()),
-					new CloseShieldInputStream(zipInputStream));
+				try {
+					downloadFileHandler.copyFile(
+						syncFile, Paths.get(syncFile.getFilePathName()),
+						new CloseShieldInputStream(zipInputStream));
+				}
+				catch (Exception e) {
+					_logger.error(e.getMessage(), e);
+				}
 			}
 		}
 		catch (Exception e) {

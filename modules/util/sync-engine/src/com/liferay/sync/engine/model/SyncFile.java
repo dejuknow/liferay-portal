@@ -216,6 +216,10 @@ public class SyncFile extends StateAwareModel {
 		return version;
 	}
 
+	public long getVersionId() {
+		return versionId;
+	}
+
 	@Override
 	public int hashCode() {
 		return (int)(syncFileId ^ (syncFileId >>> 32));
@@ -333,6 +337,10 @@ public class SyncFile extends StateAwareModel {
 		this.version = version;
 	}
 
+	public void setVersionId(long versionId) {
+		this.versionId = versionId;
+	}
+
 	@DatabaseField(defaultValue = "", useGetSet = true)
 	protected String changeLog;
 
@@ -390,7 +398,7 @@ public class SyncFile extends StateAwareModel {
 	@DatabaseField(useGetSet = true)
 	protected long size;
 
-	@DatabaseField(useGetSet = true)
+	@DatabaseField(index = true, useGetSet = true)
 	protected long syncAccountId;
 
 	@DatabaseField(generatedId = true, useGetSet = true)
@@ -407,5 +415,8 @@ public class SyncFile extends StateAwareModel {
 
 	@DatabaseField(useGetSet = true)
 	protected String version;
+
+	@DatabaseField(useGetSet = true)
+	protected long versionId;
 
 }

@@ -22,7 +22,6 @@ import java.util.Locale;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
-import javax.portlet.PortletURL;
 
 /**
  * @author Brian Wing Shun Chan
@@ -92,6 +91,11 @@ public class DummyIndexer implements Indexer {
 	}
 
 	@Override
+	public String getQueryString(SearchContext searchContext, Query query) {
+		return StringPool.BLANK;
+	}
+
+	@Override
 	public String[] getSearchClassNames() {
 		return new String[0];
 	}
@@ -113,21 +117,20 @@ public class DummyIndexer implements Indexer {
 
 	/**
 	 * @deprecated As of 7.0.0, replaced by {@link #getSummary(Document, String,
-	 *             PortletURL, PortletRequest, PortletResponse)}
+	 *             PortletRequest, PortletResponse)}
 	 */
 	@Deprecated
 	@Override
 	public Summary getSummary(
-		Document document, Locale locale, String snippet,
-		PortletURL portletURL) {
+		Document document, Locale locale, String snippet) {
 
 		return null;
 	}
 
 	@Override
 	public Summary getSummary(
-		Document document, String snippet, PortletURL portletURL,
-		PortletRequest portletRequest, PortletResponse portletResponse) {
+		Document document, String snippet, PortletRequest portletRequest,
+		PortletResponse portletResponse) {
 
 		return null;
 	}

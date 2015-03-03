@@ -67,6 +67,7 @@ import org.xml.sax.InputSource;
 /**
  * @author Brian Wing Shun Chan
  */
+@SuppressWarnings("deprecation")
 public class WebDriverToSeleniumBridge
 	extends WebDriverWrapper implements Selenium {
 

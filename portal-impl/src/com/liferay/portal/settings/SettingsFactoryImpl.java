@@ -23,8 +23,10 @@ import com.liferay.portal.kernel.security.pacl.DoPrivileged;
 import com.liferay.portal.kernel.settings.ArchivedSettings;
 import com.liferay.portal.kernel.settings.FallbackKeys;
 import com.liferay.portal.kernel.settings.FallbackSettings;
+import com.liferay.portal.kernel.settings.PortalSettings;
 import com.liferay.portal.kernel.settings.PortletPreferencesSettings;
 import com.liferay.portal.kernel.settings.Settings;
+import com.liferay.portal.kernel.settings.SettingsDescriptor;
 import com.liferay.portal.kernel.settings.SettingsFactory;
 import com.liferay.portal.kernel.util.PortalClassLoaderUtil;
 import com.liferay.portal.kernel.util.PropsUtil;
@@ -42,7 +44,6 @@ import com.liferay.portal.util.PortletKeys;
 import java.io.InputStream;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -57,6 +58,10 @@ import javax.portlet.PortletPreferences;
  */
 @DoPrivileged
 public class SettingsFactoryImpl implements SettingsFactory {
+
+	public SettingsFactoryImpl() {
+		registerSettingsMetadata(PortalSettings.class, null, null);
+	}
 
 	@Override
 	public void clearCache() {
@@ -85,14 +90,6 @@ public class SettingsFactoryImpl implements SettingsFactory {
 	}
 
 	@Override
-	public Settings getGroupServiceCompanyDefaultSettings(
-		long companyId, String serviceName) {
-
-		return getCompanyPortletPreferencesSettings(
-			companyId, serviceName, null);
-	}
-
-	@Override
 	public Settings getGroupServiceSettings(long groupId, String serviceName)
 		throws PortalException {
 
@@ -116,20 +113,6 @@ public class SettingsFactoryImpl implements SettingsFactory {
 				groupId, serviceName, companyPortletPreferencesSettings);
 
 		return applyFallbackKeys(serviceName, groupPortletPreferencesSettings);
-	}
-
-	@Override
-	public List<String> getMultiValuedKeys(String settingsId) {
-		settingsId = PortletConstants.getRootPortletId(settingsId);
-
-		List<String> multiValuedKeys = _multiValuedKeysMap.get(settingsId);
-
-		if (multiValuedKeys == null) {
-			throw new IllegalStateException(
-				"No multi valued keys found for settings ID " + settingsId);
-		}
-
-		return multiValuedKeys;
 	}
 
 	@Override
@@ -173,21 +156,6 @@ public class SettingsFactoryImpl implements SettingsFactory {
 	}
 
 	@Override
-	public Settings getPortletInstanceCompanyDefaultSettings(
-		long companyId, String portletId) {
-
-		return getCompanyPortletPreferencesSettings(companyId, portletId, null);
-	}
-
-	@Override
-	public Settings getPortletInstanceGroupDefaultSettings(
-			long groupId, String portletId)
-		throws PortalException {
-
-		return getGroupPortletPreferencesSettings(groupId, portletId, null);
-	}
-
-	@Override
 	public Settings getPortletInstanceSettings(Layout layout, String portletId)
 		throws PortalException {
 
@@ -220,29 +188,44 @@ public class SettingsFactoryImpl implements SettingsFactory {
 	}
 
 	@Override
-	public void registerSettingsMetadata(
-		String settingsId, FallbackKeys fallbackKeys,
-		String[] multiValuedKeysArray, Object serviceConfigurationBean,
-		ResourceManager resourceManager) {
+	public Settings getServerSettings(String settingsId) {
+		Settings portalPropertiesSettings = getPortalPropertiesSettings();
 
+		return getServiceConfigurationBeanSettings(
+			settingsId, portalPropertiesSettings);
+	}
+
+	@Override
+	public SettingsDescriptor<?> getSettingsDescriptor(String settingsId) {
 		settingsId = PortletConstants.getRootPortletId(settingsId);
 
-		_fallbackKeysMap.put(settingsId, fallbackKeys);
+		return _settingsDescriptors.get(settingsId);
+	}
 
-		List<String> multiValuedKeysList = new ArrayList<>();
+	@Override
+	public void registerSettingsMetadata(
+		Class<?> settingsClass, Object serviceConfigurationBean,
+		FallbackKeys fallbackKeys) {
 
-		Collections.addAll(multiValuedKeysList, multiValuedKeysArray);
+		SettingsDescriptor<?> settingsDescriptor = new SettingsDescriptor<>(
+			settingsClass);
 
-		multiValuedKeysList = Collections.unmodifiableList(multiValuedKeysList);
+		for (String settingsId : settingsDescriptor.getSettingsIds()) {
+			_settingsDescriptors.put(settingsId, settingsDescriptor);
 
-		_multiValuedKeysMap.put(settingsId, multiValuedKeysList);
+			if (fallbackKeys != null) {
+				_fallbackKeysMap.put(settingsId, fallbackKeys);
+			}
 
-		if (serviceConfigurationBean != null) {
-			_serviceConfigurationBeans.put(
-				settingsId, serviceConfigurationBean);
+			if (serviceConfigurationBean != null) {
+				_serviceConfigurationBeans.put(
+					settingsId, serviceConfigurationBean);
+			}
+
+			_resourceManagers.put(
+				settingsId,
+				new ClassLoaderResourceManager(settingsClass.getClassLoader()));
 		}
-
-		_resourceManagers.put(settingsId, resourceManager);
 	}
 
 	protected Settings applyFallbackKeys(String settingsId, Settings settings) {
@@ -322,9 +305,11 @@ public class SettingsFactoryImpl implements SettingsFactory {
 
 	protected Settings getPortalPropertiesSettings() {
 		return new PropertiesSettings(
-			getPortalProperties(),
-			new ClassLoaderResourceManager(
-				PortalClassLoaderUtil.getClassLoader()));
+			new LocationVariableResolver(
+				new ClassLoaderResourceManager(
+					PortalClassLoaderUtil.getClassLoader()),
+				this),
+			getPortalProperties());
 	}
 
 	protected PortletPreferences getPortletInstancePortletPreferences(
@@ -394,19 +379,19 @@ public class SettingsFactoryImpl implements SettingsFactory {
 		String settingsId, Settings parentSettings) {
 
 		return new ServiceConfigurationBeanSettings(
-			getServiceConfigurationBean(settingsId),
-			getResourceManager(settingsId), parentSettings);
+			new LocationVariableResolver(getResourceManager(settingsId), this),
+			getServiceConfigurationBean(settingsId), parentSettings);
 	}
 
 	private final ConcurrentMap<String, FallbackKeys> _fallbackKeysMap =
-		new ConcurrentHashMap<>();
-	private final ConcurrentMap<String, List<String>> _multiValuedKeysMap =
 		new ConcurrentHashMap<>();
 	private final Map<String, Properties> _portletPropertiesMap =
 		new ConcurrentHashMap<>();
 	private final ConcurrentMap<String, ResourceManager> _resourceManagers =
 		new ConcurrentHashMap<>();
 	private final ConcurrentMap<String, Object> _serviceConfigurationBeans =
+		new ConcurrentHashMap<>();
+	private final Map<String, SettingsDescriptor<?>> _settingsDescriptors =
 		new ConcurrentHashMap<>();
 
 }

@@ -1875,7 +1875,16 @@ public class PortalImpl implements Portal {
 	public long[] getCurrentAndAncestorSiteGroupIds(long groupId)
 		throws PortalException {
 
-		List<Group> groups = getCurrentAndAncestorSiteGroups(groupId);
+		return getCurrentAndAncestorSiteGroupIds(groupId, false);
+	}
+
+	@Override
+	public long[] getCurrentAndAncestorSiteGroupIds(
+			long groupId, boolean checkContentSharingWithChildrenEnabled)
+		throws PortalException {
+
+		List<Group> groups = getCurrentAndAncestorSiteGroups(
+			groupId, checkContentSharingWithChildrenEnabled);
 
 		long[] groupIds = new long[groups.size()];
 
@@ -1892,7 +1901,16 @@ public class PortalImpl implements Portal {
 	public long[] getCurrentAndAncestorSiteGroupIds(long[] groupIds)
 		throws PortalException {
 
-		List<Group> groups = getCurrentAndAncestorSiteGroups(groupIds);
+		return getCurrentAndAncestorSiteGroupIds(groupIds, false);
+	}
+
+	@Override
+	public long[] getCurrentAndAncestorSiteGroupIds(
+			long[] groupIds, boolean checkContentSharingWithChildrenEnabled)
+		throws PortalException {
+
+		List<Group> groups = getCurrentAndAncestorSiteGroups(
+			groupIds, checkContentSharingWithChildrenEnabled);
 
 		long[] currentAndAncestorSiteGroupIds = new long[groups.size()];
 
@@ -1909,6 +1927,14 @@ public class PortalImpl implements Portal {
 	public List<Group> getCurrentAndAncestorSiteGroups(long groupId)
 		throws PortalException {
 
+		return getCurrentAndAncestorSiteGroups(groupId, false);
+	}
+
+	@Override
+	public List<Group> getCurrentAndAncestorSiteGroups(
+			long groupId, boolean checkContentSharingWithChildrenEnabled)
+		throws PortalException {
+
 		Set<Group> groups = new LinkedHashSet<>();
 
 		Group siteGroup = doGetCurrentSiteGroup(groupId);
@@ -1917,7 +1943,9 @@ public class PortalImpl implements Portal {
 			groups.add(siteGroup);
 		}
 
-		groups.addAll(doGetAncestorSiteGroups(groupId, false));
+		groups.addAll(
+			doGetAncestorSiteGroups(
+				groupId, checkContentSharingWithChildrenEnabled));
 
 		return new ArrayList<>(groups);
 	}
@@ -1926,10 +1954,20 @@ public class PortalImpl implements Portal {
 	public List<Group> getCurrentAndAncestorSiteGroups(long[] groupIds)
 		throws PortalException {
 
+		return getCurrentAndAncestorSiteGroups(groupIds, false);
+	}
+
+	@Override
+	public List<Group> getCurrentAndAncestorSiteGroups(
+			long[] groupIds, boolean checkContentSharingWithChildrenEnabled)
+		throws PortalException {
+
 		Set<Group> groups = new LinkedHashSet<>();
 
 		for (int i = 0; i < groupIds.length; i++) {
-			groups.addAll(getCurrentAndAncestorSiteGroups(groupIds[i]));
+			groups.addAll(
+				getCurrentAndAncestorSiteGroups(
+					groupIds[i], checkContentSharingWithChildrenEnabled));
 		}
 
 		return new ArrayList<>(groups);
@@ -2761,7 +2799,8 @@ public class PortalImpl implements Portal {
 			String instanceId = PortletConstants.generateInstanceId();
 
 			defaultAssetPublisherPortletId = PortletConstants.assemblePortletId(
-				PortletKeys.ASSET_PUBLISHER, instanceId);
+				"com_liferay_asset_publisher_web_AssetPublisherPortlet",
+				instanceId);
 		}
 
 		HttpServletRequest request = (HttpServletRequest)requestContext.get(
@@ -2791,8 +2830,7 @@ public class PortalImpl implements Portal {
 		String namespace = getPortletNamespace(defaultAssetPublisherPortletId);
 
 		actualParams.put(
-			namespace + "mvcPath",
-			new String[] {"/html/portlet/asset_publisher/view_content.jsp"});
+			namespace + "mvcPath", new String[] {"/view_content.jsp"});
 		actualParams.put(
 			namespace + "type",
 			new String[] {JournalArticleAssetRendererFactory.TYPE});
@@ -8287,7 +8325,7 @@ public class PortalImpl implements Portal {
 
 			if (local) {
 				portalInetSocketAddressEventListener.
-					portalLocalInetSockAddressConfigured(
+					portalLocalInetSocketAddressConfigured(
 						inetSocketAddress, secure);
 			}
 			else {

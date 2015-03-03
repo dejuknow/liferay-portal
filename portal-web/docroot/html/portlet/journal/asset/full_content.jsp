@@ -27,7 +27,7 @@ String languageId = LanguageUtil.getLanguageId(request);
 int articlePage = ParamUtil.getInteger(request, "page", 1);
 String viewMode = ParamUtil.getString(request, "viewMode", Constants.VIEW);
 
-boolean workflowAssetPreview = ParamUtil.getBoolean(request, "workflowAssetPreview");
+boolean workflowAssetPreview = GetterUtil.getBoolean((Boolean)request.getAttribute(WebKeys.WORKFLOW_ASSET_PREVIEW));
 
 JournalArticleDisplay articleDisplay = null;
 
@@ -56,7 +56,7 @@ else {
 
 	PortletURL articlePageURL = renderResponse.createRenderURL();
 
-	articlePageURL.setParameter("mvcPath", "/html/portlet/asset_publisher/view_content.jsp");
+	articlePageURL.setParameter("mvcPath", "/view_content.jsp");
 	articlePageURL.setParameter("type", assetRendererFactory.getType());
 	articlePageURL.setParameter("redirect", pageRedirect);
 	articlePageURL.setParameter("urlTitle", articleDisplay.getUrlTitle());

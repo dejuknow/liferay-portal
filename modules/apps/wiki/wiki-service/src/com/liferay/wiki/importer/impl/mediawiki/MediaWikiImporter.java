@@ -45,7 +45,7 @@ import com.liferay.portlet.asset.model.AssetTag;
 import com.liferay.portlet.asset.service.AssetTagLocalServiceUtil;
 import com.liferay.portlet.asset.util.AssetUtil;
 import com.liferay.portlet.documentlibrary.store.DLStoreUtil;
-import com.liferay.wiki.configuration.WikiServiceConfiguration;
+import com.liferay.wiki.configuration.WikiGroupServiceConfiguration;
 import com.liferay.wiki.exception.ImportFilesException;
 import com.liferay.wiki.exception.NoSuchPageException;
 import com.liferay.wiki.importer.WikiImporter;
@@ -137,7 +137,7 @@ public class MediaWikiImporter implements WikiImporter {
 	@Activate
 	protected void activate() {
 		_wikiPageTitlesRemovePattern = Pattern.compile(
-			_wikiServiceConfiguration.pageTitlesRemoveRegexp());
+			_wikiGroupServiceConfiguration.pageTitlesRemoveRegexp());
 	}
 
 	protected long getUserId(
@@ -271,7 +271,7 @@ public class MediaWikiImporter implements WikiImporter {
 
 					WikiPageLocalServiceUtil.renamePage(
 						userId, node.getNodeId(), frontPageTitle,
-						_wikiServiceConfiguration.frontPageName(), false,
+						_wikiGroupServiceConfiguration.frontPageName(), false,
 						serviceContext);
 				}
 			}
@@ -280,7 +280,7 @@ public class MediaWikiImporter implements WikiImporter {
 					StringBundler sb = new StringBundler(4);
 
 					sb.append("Could not move ");
-					sb.append(_wikiServiceConfiguration.frontPageName());
+					sb.append(_wikiGroupServiceConfiguration.frontPageName());
 					sb.append(" to the title provided: ");
 					sb.append(frontPageTitle);
 
@@ -329,6 +329,10 @@ public class MediaWikiImporter implements WikiImporter {
 			imagesInputStream);
 
 		List<String> entries = zipReader.getEntries();
+
+		if (entries == null) {
+			throw new ImportFilesException();
+		}
 
 		int total = entries.size();
 
@@ -691,10 +695,10 @@ public class MediaWikiImporter implements WikiImporter {
 	}
 
 	@Reference
-	protected void setWikiServiceConfiguration(
-		WikiServiceConfiguration wikiServiceConfiguration) {
+	protected void setWikiGroupServiceConfiguration(
+		WikiGroupServiceConfiguration wikiGroupServiceConfiguration) {
 
-		_wikiServiceConfiguration = wikiServiceConfiguration;
+		_wikiGroupServiceConfiguration = wikiGroupServiceConfiguration;
 	}
 
 	private static final String _WORK_IN_PROGRESS = "{{Work in progress}}";
@@ -715,7 +719,7 @@ public class MediaWikiImporter implements WikiImporter {
 
 	private final MediaWikiToCreoleTranslator _translator =
 		new MediaWikiToCreoleTranslator();
+	private WikiGroupServiceConfiguration _wikiGroupServiceConfiguration;
 	private Pattern _wikiPageTitlesRemovePattern;
-	private WikiServiceConfiguration _wikiServiceConfiguration;
 
 }

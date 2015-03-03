@@ -15,8 +15,9 @@
 package com.liferay.sync.engine.documentlibrary.handler;
 
 import com.liferay.sync.engine.documentlibrary.event.Event;
+import com.liferay.sync.engine.documentlibrary.util.FileEventUtil;
 import com.liferay.sync.engine.filesystem.Watcher;
-import com.liferay.sync.engine.filesystem.WatcherRegistry;
+import com.liferay.sync.engine.filesystem.util.WatcherRegistry;
 import com.liferay.sync.engine.model.SyncAccount;
 import com.liferay.sync.engine.model.SyncFile;
 import com.liferay.sync.engine.service.SyncAccountService;
@@ -85,9 +86,52 @@ public class DownloadFileHandler extends BaseHandler {
 			return;
 		}
 
-		SyncFile syncFile = (SyncFile)getParameterValue("syncFile");
+		SyncFile syncFile = getLocalSyncFile();
 
-		SyncFileService.deleteSyncFile(syncFile, false);
+		if ((Boolean)getParameterValue("patch")) {
+			FileEventUtil.downloadFile(getSyncAccountId(), syncFile);
+		}
+		else {
+			SyncFileService.deleteSyncFile(syncFile, false);
+		}
+	}
+
+	@Override
+	public boolean handlePortalException(String exception) throws Exception {
+		SyncFile syncFile = getLocalSyncFile();
+
+		if (exception.equals(
+				"com.liferay.portlet.documentlibrary." +
+					"NoSuchFileVersionException") &&
+			(Boolean)getParameterValue("patch")) {
+
+			if (_logger.isDebugEnabled()) {
+				_logger.debug(
+					"Handling exception {} file path {}", exception,
+					syncFile.getFilePathName());
+			}
+
+			FileEventUtil.downloadFile(getSyncAccountId(), syncFile);
+
+			return true;
+		}
+
+		if (exception.equals(
+				"com.liferay.portlet.documentlibrary." +
+					"NoSuchFileEntryException")) {
+
+			if (_logger.isDebugEnabled()) {
+				_logger.debug(
+					"Handling exception {} file path {}", exception,
+					syncFile.getFilePathName());
+			}
+
+			SyncFileService.deleteSyncFile(syncFile, false);
+
+			return true;
+		}
+
+		return super.handlePortalException(exception);
 	}
 
 	protected void copyFile(
@@ -184,7 +228,7 @@ public class DownloadFileHandler extends BaseHandler {
 
 		InputStream inputStream = null;
 
-		SyncFile syncFile = (SyncFile)getParameterValue("syncFile");
+		SyncFile syncFile = getLocalSyncFile();
 
 		if (isUnsynced(syncFile)) {
 			return;

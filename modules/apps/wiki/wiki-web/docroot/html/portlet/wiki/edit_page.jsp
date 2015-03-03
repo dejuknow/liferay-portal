@@ -32,7 +32,7 @@ String title = BeanParamUtil.getString(wikiPage, request, "title");
 boolean editTitle = ParamUtil.getBoolean(request, "editTitle");
 
 String content = BeanParamUtil.getString(wikiPage, request, "content");
-String selectedFormat = BeanParamUtil.getString(wikiPage, request, "format", wikiSettings.getDefaultFormat());
+String selectedFormat = BeanParamUtil.getString(wikiPage, request, "format", wikiGroupServiceSettings.getDefaultFormat());
 String parentTitle = BeanParamUtil.getString(wikiPage, request, "parentTitle");
 
 boolean preview = ParamUtil.getBoolean(request, "preview");
@@ -406,7 +406,7 @@ if (Validator.isNull(redirect)) {
 
 				<c:if test="<%= !newPage && approved %>">
 					<div class="alert alert-info">
-						<liferay-ui:message key="a-new-version-will-be-created-automatically-if-this-content-is-modified" />
+						<liferay-ui:message key="a-new-version-is-created-automatically-if-this-content-is-modified" />
 					</div>
 				</c:if>
 
@@ -523,7 +523,7 @@ if (Validator.isNull(redirect)) {
 
 		<portlet:renderURL var="nodeURL">
 			<portlet:param name="struts_action" value="/wiki/view" />
-			<portlet:param name="title" value="<%= wikiServiceConfiguration.frontPageName() %>" />
+			<portlet:param name="title" value="<%= wikiGroupServiceConfiguration.frontPageName() %>" />
 			<portlet:param name="tag" value="<%= StringPool.BLANK %>" />
 		</portlet:renderURL>
 

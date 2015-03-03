@@ -17,17 +17,9 @@ package com.liferay.sync.engine.documentlibrary.handler;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.liferay.sync.engine.documentlibrary.event.AddFileEntryEvent;
 import com.liferay.sync.engine.documentlibrary.event.Event;
 import com.liferay.sync.engine.model.SyncFile;
 import com.liferay.sync.engine.service.SyncFileService;
-import com.liferay.sync.engine.util.FileUtil;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Shinn Lok
@@ -39,33 +31,13 @@ public class AddFileFolderHandler extends BaseJSONHandler {
 	}
 
 	@Override
-	public boolean handlePortalException(String exception) throws Exception {
-		if (exception.equals(
-				"com.liferay.sync.SyncDLObjectChecksumException")) {
-
-			if (_logger.isDebugEnabled()) {
-				_logger.debug("Handling exception {}", exception);
-			}
-
-			AddFileEntryEvent addFileEntryEvent = new AddFileEntryEvent(
-				getSyncAccountId(), getParameters());
-
-			addFileEntryEvent.run();
-
-			return true;
-		}
-
-		return super.handlePortalException(exception);
-	}
-
-	@Override
 	public void processResponse(String response) throws Exception {
 		ObjectMapper objectMapper = new ObjectMapper();
 
 		SyncFile remoteSyncFile = objectMapper.readValue(
 			response, new TypeReference<SyncFile>() {});
 
-		SyncFile localSyncFile = (SyncFile)getParameterValue("syncFile");
+		SyncFile localSyncFile = getLocalSyncFile();
 
 		localSyncFile.setCompanyId(remoteSyncFile.getCompanyId());
 		localSyncFile.setCreateTime(remoteSyncFile.getCreateTime());
@@ -84,15 +56,9 @@ public class AddFileFolderHandler extends BaseJSONHandler {
 		localSyncFile.setTypeUuid(remoteSyncFile.getTypeUuid());
 		localSyncFile.setUiEvent(SyncFile.UI_EVENT_UPLOADED);
 		localSyncFile.setVersion(remoteSyncFile.getVersion());
+		localSyncFile.setVersionId(remoteSyncFile.getVersionId());
 
 		SyncFileService.update(localSyncFile);
-
-		Path filePath = Paths.get(localSyncFile.getFilePathName());
-
-		FileUtil.setModifiedTime(filePath, remoteSyncFile.getModifiedTime());
 	}
-
-	private static final Logger _logger = LoggerFactory.getLogger(
-		AddFileFolderHandler.class);
 
 }

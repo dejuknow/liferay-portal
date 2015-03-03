@@ -14,11 +14,12 @@
 
 package com.liferay.wiki.service.impl;
 
+import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
-import com.liferay.portal.kernel.settings.SettingsProvider;
+import com.liferay.portal.kernel.settings.GroupServiceSettingsProvider;
 import com.liferay.portal.kernel.util.CalendarFactoryUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.HttpUtil;
@@ -40,7 +41,7 @@ import com.liferay.wiki.model.WikiPageConstants;
 import com.liferay.wiki.service.base.WikiPageServiceBaseImpl;
 import com.liferay.wiki.service.permission.WikiNodePermission;
 import com.liferay.wiki.service.permission.WikiPagePermission;
-import com.liferay.wiki.settings.WikiSettings;
+import com.liferay.wiki.settings.WikiGroupServiceSettings;
 import com.liferay.wiki.util.WikiUtil;
 import com.liferay.wiki.util.comparator.PageCreateDateComparator;
 
@@ -705,12 +706,6 @@ public class WikiPageServiceImpl extends WikiPageServiceBaseImpl {
 			getUserId(), nodeId, title, version, serviceContext);
 	}
 
-	public void setWikiSettingsProvider(
-		SettingsProvider<WikiSettings> wikiSettingsProvider) {
-
-		_wikiSettingsProvider = wikiSettingsProvider;
-	}
-
 	@Override
 	public void subscribePage(long nodeId, String title)
 		throws PortalException {
@@ -826,14 +821,15 @@ public class WikiPageServiceImpl extends WikiPageServiceBaseImpl {
 			else {
 				String value = null;
 
-				WikiSettings wikiSettings =
-					_wikiSettingsProvider.getGroupServiceSettings(
+				WikiGroupServiceSettings wikiGroupServiceSettings =
+					_groupServiceSettingsProvider.getGroupServiceSettings(
 						page.getGroupId());
 
 				if (displayStyle.equals(RSSUtil.DISPLAY_STYLE_ABSTRACT)) {
 					value = StringUtil.shorten(
 						HtmlUtil.extractText(page.getContent()),
-						wikiSettings.getRSSAbstractLength(), StringPool.BLANK);
+						wikiGroupServiceSettings.getRSSAbstractLength(),
+						StringPool.BLANK);
 				}
 				else if (displayStyle.equals(RSSUtil.DISPLAY_STYLE_TITLE)) {
 					value = StringPool.BLANK;
@@ -896,6 +892,10 @@ public class WikiPageServiceImpl extends WikiPageServiceBaseImpl {
 		}
 	}
 
-	private SettingsProvider<WikiSettings> _wikiSettingsProvider;
+	@BeanReference(
+		name = "com.liferay.wiki.settings.provider.WikiGroupServiceSettingsProvider"
+	)
+	private GroupServiceSettingsProvider<WikiGroupServiceSettings>
+		_groupServiceSettingsProvider;
 
 }

@@ -41,7 +41,7 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.search.elasticsearch.connection.ElasticsearchConnectionManager;
 import com.liferay.portal.search.elasticsearch.facet.ElasticsearchFacetFieldCollector;
-import com.liferay.portal.search.elasticsearch.spi.facet.FacetProcessor;
+import com.liferay.portal.search.elasticsearch.facet.FacetProcessor;
 import com.liferay.portal.search.elasticsearch.util.DocumentTypes;
 
 import java.util.ArrayList;
@@ -82,6 +82,15 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(immediate = true, service = ElasticsearchIndexSearcher.class)
 public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
+
+	@Override
+	public String getQueryString(SearchContext searchContext, Query query)
+		throws ParseException {
+
+		QueryBuilder queryBuilder = _queryTranslator.translate(query);
+
+		return queryBuilder.toString();
+	}
 
 	@Override
 	public Hits search(SearchContext searchContext, Query query)
@@ -337,11 +346,11 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 	protected void addSort(
 		SearchRequestBuilder searchRequestBuilder, Sort[] sorts) {
 
-		if ((sorts == null) || (sorts.length == 0)) {
+		if (ArrayUtil.isEmpty(sorts)) {
 			return;
 		}
 
-		Set<String> sortFieldNames = new HashSet<>();
+		Set<String> sortFieldNames = new HashSet<>(sorts.length);
 
 		for (Sort sort : sorts) {
 			if (sort == null) {

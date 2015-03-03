@@ -23,10 +23,10 @@ import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.wiki.configuration.WikiServiceConfiguration;
-import com.liferay.wiki.configuration.WikiServiceConfigurationProvider;
+import com.liferay.wiki.configuration.WikiGroupServiceConfiguration;
 import com.liferay.wiki.model.WikiNode;
 import com.liferay.wiki.service.WikiNodeLocalServiceUtil;
+import com.liferay.wiki.service.settings.WikiServiceSettingsProvider;
 
 import java.util.List;
 import java.util.Map;
@@ -117,14 +117,18 @@ public class WikiNodeStagedModelDataHandler
 
 		WikiNode importedNode = null;
 
-		WikiServiceConfiguration wikiServiceConfiguration =
-			WikiServiceConfigurationProvider.getWikiServiceConfiguration();
+		WikiServiceSettingsProvider wikiServiceSettingsProvider =
+			WikiServiceSettingsProvider.getWikiServiceSettingsProvider();
+
+		WikiGroupServiceConfiguration wikiGroupServiceConfiguration =
+			wikiServiceSettingsProvider.getWikiGroupServiceConfiguration();
 
 		if (portletDataContext.isDataStrategyMirror()) {
 			WikiNode existingNode = fetchStagedModelByUuidAndGroupId(
 				node.getUuid(), portletDataContext.getScopeGroupId());
 
-			String initialNodeName = wikiServiceConfiguration.initialNodeName();
+			String initialNodeName =
+				wikiGroupServiceConfiguration.initialNodeName();
 
 			if ((existingNode == null) &&
 				initialNodeName.equals(node.getName())) {
@@ -151,7 +155,8 @@ public class WikiNodeStagedModelDataHandler
 			}
 		}
 		else {
-			String initialNodeName = wikiServiceConfiguration.initialNodeName();
+			String initialNodeName =
+				wikiGroupServiceConfiguration.initialNodeName();
 
 			if (initialNodeName.equals(node.getName())) {
 				WikiNode initialNode = WikiNodeLocalServiceUtil.fetchNode(

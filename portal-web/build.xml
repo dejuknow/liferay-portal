@@ -6,7 +6,7 @@
 	<property name="war.file" value="${ant.project.name}" />
 
 	<property name="alloy.version" value="3.0.0" />
-	<property name="alloy-font-awesome.version" value="1.0.0" />
+	<property name="alloy-font-awesome.version" value="2.0" />
 	<property name="alloyeditor.version" value="0.2.5" />
 	<property name="ckeditor.file" value="ckeditor_4.4.5_liferay.zip" />
 	<property name="scayt.file" value="scayt_4.4.5.zip" />
@@ -378,7 +378,7 @@
 	</target>
 
 	<target name="build-ckeditor-plugins-creole">
-		<get
+		<mirrors-get
 			dest="docroot/html/js/editor/ckeditor_diffs/plugins/creole/creole_parser.js"
 			src="http://www.ivan.fomichev.name/2008/04/javascript-creole-10-wiki-markup-parser.html"
 		/>
@@ -484,7 +484,7 @@
 				<available file="third-party/${scayt.file}" />
 			</not>
 			<then>
-				<get
+				<mirrors-get
 					dest="third-party/${scayt.file}"
 					src="http://download.ckeditor.com/scayt/releases/${scayt.file}"
 				/>
@@ -503,7 +503,7 @@
 				<available file="third-party/${wsc.file}" />
 			</not>
 			<then>
-				<get
+				<mirrors-get
 					dest="third-party/${wsc.file}"
 					src="http://download.ckeditor.com/wsc/releases/${wsc.file}"
 				/>

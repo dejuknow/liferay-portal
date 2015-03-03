@@ -32,7 +32,7 @@ long templateId = BeanParamUtil.getLong(template, request, "templateId");
 long groupId = BeanParamUtil.getLong(template, request, "groupId", scopeGroupId);
 long classNameId = BeanParamUtil.getLong(template, request, "classNameId");
 long classPK = BeanParamUtil.getLong(template, request, "classPK");
-long sourceClassNameId = BeanParamUtil.getLong(template, request, "sourceClassNameId");
+long resourceClassNameId = BeanParamUtil.getLong(template, request, "resourceClassNameId");
 
 boolean cacheable = BeanParamUtil.getBoolean(template, request, "cacheable", true);
 boolean smallImage = BeanParamUtil.getBoolean(template, request, "smallImage");
@@ -85,7 +85,7 @@ boolean showCacheableInput = ParamUtil.getBoolean(request, "showCacheableInput")
 	<aui:input name="groupId" type="hidden" value="<%= groupId %>" />
 	<aui:input name="classNameId" type="hidden" value="<%= classNameId %>" />
 	<aui:input name="classPK" type="hidden" value="<%= classPK %>" />
-	<aui:input name="sourceClassNameId" type="hidden" value="<%= sourceClassNameId %>" />
+	<aui:input name="resourceClassNameId" type="hidden" value="<%= resourceClassNameId %>" />
 	<aui:input name="type" type="hidden" value="<%= type %>" />
 	<aui:input name="structureAvailableFields" type="hidden" value="<%= structureAvailableFields %>" />
 	<aui:input name="saveAndContinue" type="hidden" value="<%= false %>" />
@@ -153,7 +153,7 @@ boolean showCacheableInput = ParamUtil.getBoolean(request, "showCacheableInput")
 				</c:if>
 
 				<c:if test="<%= type.equals(DDMTemplateConstants.TEMPLATE_TYPE_DISPLAY) %>">
-					<aui:select changesContext="<%= true %>" helpMessage='<%= (template == null) ? StringPool.BLANK : "changing-the-language-will-not-automatically-translate-the-existing-template-script" %>' label="language" name="language">
+					<aui:select changesContext="<%= true %>" helpMessage='<%= (template == null) ? StringPool.BLANK : "changing-the-language-does-not-automatically-translate-the-existing-template-script" %>' label="language" name="language">
 
 						<%
 						for (String curLangType : ddmDisplay.getTemplateLanguageTypes()) {
@@ -327,7 +327,7 @@ boolean showCacheableInput = ParamUtil.getBoolean(request, "showCacheableInput")
 					title: '<%= UnicodeLanguageUtil.get(request, "structures") %>'
 				},
 				function(event) {
-					if (confirm('<%= UnicodeLanguageUtil.get(request, "selecting-a-new-structure-will-change-the-available-input-fields-and-available-templates") %>') && (document.<portlet:namespace />fm.<portlet:namespace />classPK.value != event.ddmstructureid)) {
+					if (confirm('<%= UnicodeLanguageUtil.get(request, "selecting-a-new-structure-changes-the-available-input-fields-and-available-templates") %>') && (document.<portlet:namespace />fm.<portlet:namespace />classPK.value != event.ddmstructureid)) {
 						document.<portlet:namespace />fm.<portlet:namespace />classPK.value = event.ddmstructureid;
 
 						Liferay.fire('<portlet:namespace />refreshEditor');

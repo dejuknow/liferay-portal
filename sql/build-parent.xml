@@ -15,6 +15,15 @@
 	</if>
 
 	<target name="build-db">
+		<if>
+			<not>
+				<isset property="db.sql.dir" />
+			</not>
+			<then>
+				<var name="db.sql.dir" value="${basedir}" />
+			</then>
+		</if>
+
 		<java
 			classname="com.liferay.portal.tools.DBBuilder"
 			classpathref="project.classpath"
@@ -26,7 +35,7 @@
 			<arg value="-Dexternal-properties=com/liferay/portal/tools/dependencies/portal-tools.properties" />
 			<arg value="db.database.name=${database.name}" />
 			<arg value="db.database.types=${database.types}" />
-			<arg value="db.sql.dir=${basedir}" />
+			<arg value="db.sql.dir=${db.sql.dir}" />
 		</java>
 	</target>
 

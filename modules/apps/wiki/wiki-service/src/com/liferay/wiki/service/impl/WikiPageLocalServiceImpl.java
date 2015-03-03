@@ -14,6 +14,7 @@
 
 package com.liferay.wiki.service.impl;
 
+import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.diff.DiffHtmlUtil;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -27,8 +28,8 @@ import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
+import com.liferay.portal.kernel.settings.GroupServiceSettingsProvider;
 import com.liferay.portal.kernel.settings.LocalizedValuesMap;
-import com.liferay.portal.kernel.settings.SettingsProvider;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.systemevent.SystemEventHierarchyEntryThreadLocal;
 import com.liferay.portal.kernel.util.CalendarFactoryUtil;
@@ -73,7 +74,7 @@ import com.liferay.portlet.social.model.SocialActivityConstants;
 import com.liferay.portlet.trash.model.TrashEntry;
 import com.liferay.portlet.trash.model.TrashVersion;
 import com.liferay.portlet.trash.util.TrashUtil;
-import com.liferay.wiki.configuration.WikiServiceConfiguration;
+import com.liferay.wiki.configuration.WikiGroupServiceConfiguration;
 import com.liferay.wiki.constants.WikiPortletKeys;
 import com.liferay.wiki.exception.DuplicatePageException;
 import com.liferay.wiki.exception.NoSuchPageException;
@@ -89,7 +90,7 @@ import com.liferay.wiki.model.WikiPageResource;
 import com.liferay.wiki.model.impl.WikiPageDisplayImpl;
 import com.liferay.wiki.model.impl.WikiPageImpl;
 import com.liferay.wiki.service.base.WikiPageLocalServiceBaseImpl;
-import com.liferay.wiki.settings.WikiSettings;
+import com.liferay.wiki.settings.WikiGroupServiceSettings;
 import com.liferay.wiki.social.WikiActivityKeys;
 import com.liferay.wiki.util.WikiCacheThreadLocal;
 import com.liferay.wiki.util.WikiCacheUtil;
@@ -219,10 +220,11 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 
 		// Message boards
 
-		WikiSettings wikiSettings =
-			_wikiSettingsProvider.getGroupServiceSettings(node.getGroupId());
+		WikiGroupServiceSettings wikiGroupServiceSettings =
+			_groupServiceSettingsProvider.getGroupServiceSettings(
+				node.getGroupId());
 
-		if (wikiSettings.isPageCommentsEnabled()) {
+		if (wikiGroupServiceSettings.isPageCommentsEnabled()) {
 			mbMessageLocalService.addDiscussionMessage(
 				userId, page.getUserName(), page.getGroupId(),
 				WikiPage.class.getName(), resourcePrimKey,
@@ -246,10 +248,11 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 
 		WikiNode node = wikiNodePersistence.findByPrimaryKey(nodeId);
 
-		WikiSettings wikiSettings =
-			_wikiSettingsProvider.getGroupServiceSettings(node.getGroupId());
+		WikiGroupServiceSettings wikiGroupServiceSettings =
+			_groupServiceSettingsProvider.getGroupServiceSettings(
+				node.getGroupId());
 
-		String format = wikiSettings.getDefaultFormat();
+		String format = wikiGroupServiceSettings.getDefaultFormat();
 
 		boolean head = false;
 		String parentTitle = null;
@@ -1852,18 +1855,6 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 			oldPage.getRedirectTitle(), serviceContext);
 	}
 
-	public void setWikiServiceConfiguration(
-		WikiServiceConfiguration wikiServiceConfiguration) {
-
-		_wikiServiceConfiguration = wikiServiceConfiguration;
-	}
-
-	public void setWikiSettingsProvider(
-		SettingsProvider<WikiSettings> wikiSettingsProvider) {
-
-		_wikiSettingsProvider = wikiSettingsProvider;
-	}
-
 	@Override
 	public void subscribePage(long userId, long nodeId, String title)
 		throws PortalException {
@@ -2104,14 +2095,14 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 
 			// Social
 
-			WikiSettings wikiSettings =
-				_wikiSettingsProvider.getGroupServiceSettings(
+			WikiGroupServiceSettings wikiGroupServiceSettings =
+				_groupServiceSettingsProvider.getGroupServiceSettings(
 					page.getGroupId());
 
 			if ((oldStatus != WorkflowConstants.STATUS_IN_TRASH) &&
 				(page.getVersion() == WikiPageConstants.VERSION_DEFAULT) &&
 				(!page.isMinorEdit() ||
-				 wikiSettings.isPageMinorEditAddSocialActivity())) {
+				 wikiGroupServiceSettings.isPageMinorEditAddSocialActivity())) {
 
 				JSONObject extraDataJSONObject =
 					JSONFactoryUtil.createJSONObject();
@@ -2129,7 +2120,7 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 
 			if (NotificationThreadLocal.isEnabled() &&
 				(!page.isMinorEdit() ||
-				 wikiSettings.isPageMinorEditSendMail())) {
+				 wikiGroupServiceSettings.isPageMinorEditSendMail())) {
 
 				notifySubscribers(
 					userId, page,
@@ -2194,9 +2185,11 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 			throw new PageTitleException(title + " is reserved");
 		}
 
-		if (Validator.isNotNull(_wikiServiceConfiguration.pageTitlesRegexp())) {
+		if (Validator.isNotNull(
+				_wikiGroupServiceConfiguration.pageTitlesRegexp())) {
+
 			Pattern pattern = Pattern.compile(
-				_wikiServiceConfiguration.pageTitlesRegexp());
+				_wikiGroupServiceConfiguration.pageTitlesRegexp());
 
 			Matcher matcher = pattern.matcher(title);
 
@@ -3022,8 +3015,9 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 			return;
 		}
 
-		WikiSettings wikiSettings =
-			_wikiSettingsProvider.getGroupServiceSettings(page.getGroupId());
+		WikiGroupServiceSettings wikiGroupServiceSettings =
+			_groupServiceSettingsProvider.getGroupServiceSettings(
+				page.getGroupId());
 
 		boolean update = false;
 
@@ -3031,9 +3025,10 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 			update = true;
 		}
 
-		if (!update && wikiSettings.isEmailPageAddedEnabled()) {
+		if (!update && wikiGroupServiceSettings.isEmailPageAddedEnabled()) {
 		}
-		else if (update && wikiSettings.isEmailPageUpdatedEnabled()) {
+		else if (update &&
+				 wikiGroupServiceSettings.isEmailPageUpdatedEnabled()) {
 		}
 		else {
 			return;
@@ -3071,20 +3066,23 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 
 		String pageTitle = page.getTitle();
 
-		String fromName = wikiSettings.getEmailFromName();
-		String fromAddress = wikiSettings.getEmailFromAddress();
+		String fromName = wikiGroupServiceSettings.getEmailFromName();
+		String fromAddress = wikiGroupServiceSettings.getEmailFromAddress();
 
 		LocalizedValuesMap subjectLocalizedValuesMap = null;
 		LocalizedValuesMap bodyLocalizedValuesMap = null;
 
 		if (update) {
 			subjectLocalizedValuesMap =
-				wikiSettings.getEmailPageUpdatedSubject();
-			bodyLocalizedValuesMap = wikiSettings.getEmailPageUpdatedBody();
+				wikiGroupServiceSettings.getEmailPageUpdatedSubject();
+			bodyLocalizedValuesMap =
+				wikiGroupServiceSettings.getEmailPageUpdatedBody();
 		}
 		else {
-			subjectLocalizedValuesMap = wikiSettings.getEmailPageAddedSubject();
-			bodyLocalizedValuesMap = wikiSettings.getEmailPageAddedBody();
+			subjectLocalizedValuesMap =
+				wikiGroupServiceSettings.getEmailPageAddedSubject();
+			bodyLocalizedValuesMap =
+				wikiGroupServiceSettings.getEmailPageAddedBody();
 		}
 
 		SubscriptionSender subscriptionSender = new SubscriptionSender();
@@ -3295,11 +3293,12 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 
 		// Social
 
-		WikiSettings wikiSettings =
-			_wikiSettingsProvider.getGroupServiceSettings(node.getGroupId());
+		WikiGroupServiceSettings wikiGroupServiceSettings =
+			_groupServiceSettingsProvider.getGroupServiceSettings(
+				node.getGroupId());
 
 		if (!page.isMinorEdit() ||
-			wikiSettings.isPageMinorEditAddSocialActivity()) {
+			wikiGroupServiceSettings.isPageMinorEditAddSocialActivity()) {
 
 			if (oldPage.getVersion() == newVersion) {
 				SocialActivity lastSocialActivity =
@@ -3360,7 +3359,13 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 		validate(nodeId, content, format);
 	}
 
-	private WikiServiceConfiguration _wikiServiceConfiguration;
-	private SettingsProvider<WikiSettings> _wikiSettingsProvider;
+	@BeanReference(
+		name = "com.liferay.wiki.settings.provider.WikiGroupServiceSettingsProvider"
+	)
+	private GroupServiceSettingsProvider<WikiGroupServiceSettings>
+		_groupServiceSettingsProvider;
+
+	@BeanReference(type = WikiGroupServiceConfiguration.class)
+	private WikiGroupServiceConfiguration _wikiGroupServiceConfiguration;
 
 }

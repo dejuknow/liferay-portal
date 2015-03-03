@@ -104,12 +104,12 @@ BookmarksUtil.addPortletBreadcrumbEntries(entry, request, renderResponse);
 				<%= dateFormatDate.format(entry.getCreateDate()) %>
 			</div>
 
-			<div class="last lfr-asset-icon lfr-asset-downloads">
+			<div class="last lfr-asset-downloads lfr-asset-icon">
 				<%= entry.getVisits() %> <liferay-ui:message key="visits" />
 			</div>
 		</div>
 
-		<c:if test="<%= bookmarksSettings.isEnableRelatedAssets() %>">
+		<c:if test="<%= bookmarksGroupServiceSettings.isEnableRelatedAssets() %>">
 			<div class="entry-links">
 				<liferay-ui:asset-links
 					assetEntryId="<%= layoutAssetEntry.getEntryId() %>"

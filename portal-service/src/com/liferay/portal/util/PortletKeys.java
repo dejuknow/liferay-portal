@@ -31,8 +31,6 @@ public class PortletKeys {
 
 	public static final String ANNOUNCEMENTS = "84";
 
-	public static final String ASSET_PUBLISHER = "101";
-
 	public static final String BACKGROUND_TASK = "189";
 
 	public static final String BLOGS = "33";
@@ -62,7 +60,7 @@ public class PortletKeys {
 	public static final String DOCUMENT_LIBRARY_DISPLAY = "110";
 
 	public static final String DOCUMENT_SELECTOR =
-		"200_WAR_documentselectorweb";
+		"com_liferay_documentselector_web_portlet_DocumentSelectorPortlet";
 
 	public static final String DYNAMIC_DATA_LIST_DISPLAY = "169";
 
@@ -82,15 +80,11 @@ public class PortletKeys {
 
 	public static final String GROUP_STATISTICS = "181";
 
-	public static final String HIGHEST_RATED_ASSETS = "194";
-
 	public static final String IMAGE_UPLOADER = "195";
 
 	public static final String JOURNAL = "15";
 
 	public static final String JOURNAL_CONTENT_SEARCH = "77";
-
-	public static final String LANGUAGE = "82";
 
 	public static final String LAYOUT_PROTOTYPE = "146";
 
@@ -119,8 +113,6 @@ public class PortletKeys {
 
 	public static final String MONITORING = "131";
 
-	public static final String MOST_VIEWED_ASSETS = "193";
-
 	public static final String MY_ACCOUNT = "2";
 
 	public static final String MY_PAGES = "140";
@@ -132,8 +124,6 @@ public class PortletKeys {
 	public static final String MY_WORKFLOW_INSTANCES = "158";
 
 	public static final String MY_WORKFLOW_TASKS = "153";
-
-	public static final String NAVIGATION = "71";
 
 	public static final String NESTED_PORTLETS =
 		"com_liferay_nested_portlets_web_portlet_NestedPortletsPortlet";
@@ -176,11 +166,7 @@ public class PortletKeys {
 
 	public static final String RECENT_BLOGGERS = "114";
 
-	public static final String RECENT_CONTENT = "173";
-
 	public static final String RECENT_DOCUMENTS = "64";
-
-	public static final String RELATED_ASSETS = "175";
 
 	public static final String REQUESTS = "121";
 

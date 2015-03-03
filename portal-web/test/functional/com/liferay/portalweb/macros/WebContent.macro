@@ -1,0 +1,1760 @@
+<definition>
+	<command name="addCategoryPGViaWCD">
+		<execute function="Click" locator1="PGWebcontentdisplay#EDIT_WEB_CONTENT" />
+
+		<execute function="SelectFrame" locator1="PGWebcontentdisplayEditwebcontent#WEB_CONTENT_IFRAME" />
+		<execute function="AssertClick#assertTextClickAtViewHistory" locator1="PGWebcontentdisplayEditwebcontent#MENU_CATEGORIZATION" value1="Categorization" />
+
+		<var name="key_categoryName" value="${categoryName}" />
+		<var name="key_vocabularyName" value="${vocabularyName}" />
+
+		<execute function="AssertClick#assertTextClickTagSelector" locator1="PGWebcontentdisplayEditwebcontentCategorization#CATEGORIZATION_SELECT_BUTTON" value1="Select" />
+		<execute function="AssertClick" locator1="PGWebcontentdisplayEditwebcontentCategorization#CATEGORIES_CATEGORY_UNSELECTED" value1="${categoryName}" />
+		<execute function="AssertElementPresent" locator1="PGWebcontentdisplayEditwebcontentCategorization#CATEGORIES_CATEGORY_SELECTED" value1="${categoryName}" />
+		<execute function="Click" locator1="PGWebcontentdisplayEditwebcontentCategorization#CATEGORIES_CLOSE_BUTTON" />
+		<execute function="AssertTextEquals" locator1="PGWebcontentdisplayEditwebcontentCategorization#CATEGORIZATION_CATEGORY" value1="${categoryName}" />
+		<execute function="AssertClick" locator1="PGWebcontentdisplayEditwebcontentCategorization#PUBLISH_BUTTON" value1="Publish" />
+
+		<execute function="SelectFrame" value1="relative=top" />
+	</command>
+
+	<command name="addCP">
+		<execute function="AssertClick" locator1="CPWebcontent#TOOLBAR_ADD" value1="Add" />
+		<execute function="AssertClick" locator1="CPWebcontent#ADD_MENULIST_BASIC_WEB_CONTENT" value1="Basic Web Content" />
+
+		<if>
+			<isset var="expirationDate" />
+			<then>
+				<execute function="AssertClick" locator1="CPWebcontentAddwebcontent#MENU_SCHEDULE" value1="Schedule" />
+
+				<execute function="AssertChecked" locator1="CPWebcontentEditwebcontentSchedule#SCHEDULE_EXPIRATION_DATE_NEVER_EXPIRE_CHECKBOX" value1="Never Expire" />
+				<execute function="Uncheck" locator1="CPWebcontentEditwebcontentSchedule#SCHEDULE_EXPIRATION_DATE_NEVER_EXPIRE_CHECKBOX" value1="Never Expire" />
+				<execute function="Type#clickAtSendKeys" locator1="CPWebcontentEditwebcontentSchedule#SCHEDULE_EXPIRATION_DATE_FIELD" value1="${expirationDate}" />
+				<execute function="AssertClick" locator1="CPWebcontentEditwebcontentSchedule#MENU_CONTENT" value1="Content" />
+			</then>
+		</if>
+
+		<execute function="Type" locator1="CPWebcontentAddwebcontent#TITLE_FIELD" value1="${webContentTitle}" />
+		<execute function="Type#typeFrame" locator1="CPWebcontentAddwebcontent#CONTENT_FIELD" value1="${webContentContent}" />
+
+		<if>
+			<equals arg1="${uploadAudio}" arg2="true" />
+			<then>
+				<execute function="Click" locator1="CPWebcontentAddwebcontent#AUDIO_BUTTON" />
+				<execute function="AssertClick" locator1="CPWebcontentAddwebcontent#AUDIO_BROWSE_SERVER_BUTTON" value1="Browse Server" />
+				<execute function="Pause" locator1="10000" />
+				<execute function="SelectFrame" locator1="CPWebcontentAddwebcontent#BROWSE_IFRAME" />
+				<execute function="AssertClick" locator1="CPWebcontentAddwebcontent#CHOOSE_BUTTON" value1="Choose" />
+				<execute function="SelectFrame" value1="relative=top" />
+				<execute function="AssertClick" locator1="CPWebcontentAddwebcontent#AUDIO_OK_BUTTON" value1="OK" />
+			</then>
+		</if>
+
+		<if>
+			<isset var="abstractSummary" />
+			<then>
+				<execute function="AssertClick" locator1="CPWebcontentAddwebcontent#MENU_ABSTRACT" value1="Abstract" />
+				<execute function="Type" locator1="CPWebcontentAbstract#SUMMARY_FIELD" value1="${abstractSummary}" />
+				<execute function="AssertClick#assertPartialTextClickAt" locator1="CPWebcontentAddwebcontent#MENU_CONTENT" value1="Content" />
+			</then>
+		</if>
+
+		<execute function="AssertClick" locator1="CPWebcontentAddwebcontent#PUBLISH_BUTTON" value1="Publish" />
+
+		<execute function="AssertTextEquals" locator1="CPWebcontent#SUCCESS_MESSAGE" value1="Your request completed successfully." />
+
+		<var name="key_webContentTitle" value="${webContentTitle}" />
+
+		<execute function="Click" locator1="CPWebcontent#TOOLBAR_DISPLAY_STYLE_BUTTON" />
+		<execute function="AssertClick" locator1="CPWebcontent#DISPLAY_STYLE_MENULIST_DESCRIPTIVE" value1="Descriptive" />
+		<execute function="AssertElementPresent#pauseAssertVisible" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_THUMBNAIL" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_TITLE" value1="${webContentTitle}" />
+	</command>
+
+	<command name="addCPwithStructure">
+		<var name="key_structureName" value="${structureName}" />
+
+		<execute function="AssertClick" locator1="CPWebcontent#TOOLBAR_ADD" value1="Add"  />
+		<execute function="AssertClick" locator1="CPWebcontent#ADD_MENULIST_STRUCTURE_NAME" value1="${structureName}" />
+
+		<execute function="Type" locator1="CPWebcontentAddwebcontent#TITLE_FIELD" value1="${webContentTitle}" />
+
+		<if>
+			<isset var="webContentBoolean" />
+			<then>
+				<execute function="Check" locator1="CPWebcontentAddwebcontent#BOOLEAN_FIELD" />
+			</then>
+		</if>
+
+		<if>
+			<isset var="webContentDate" />
+			<then>
+				<execute function="Type" locator1="CPWebcontentAddwebcontent#DATE_FIELD" value1="${webContentDate}" />
+			</then>
+		</if>
+
+		<if>
+			<isset var="webContentDecimal" />
+			<then>
+				<var name="key_fieldName" value="Decimal" />
+
+				<execute function="Type" locator1="CPWebcontentAddwebcontent#DECIMAL_FIELD" value1="${webContentDecimal}" />
+			</then>
+		</if>
+
+		<if>
+			<isset var="webContentDocumentsAndMedia" />
+			<then>
+				<execute function="AssertClick" locator1="CPWebcontentAddwebcontent#DOCUMENTS_AND_MEDIA_FIELD_BUTTON" value1="${webContentDocumentsAndMedia}" />
+			</then>
+		</if>
+
+		<if>
+			<isset var="webContentHTML" />
+			<then>
+				<var name="key_fieldName" value="HTML" />
+
+				<execute function="Type#typeFrame" locator1="CPWebcontentAddwebcontent#HTML_FIELD" value1="${webContentHTML}" />
+			</then>
+		</if>
+
+		<if>
+			<isset var="webContentImage" />
+			<then>
+				<var name="key_fieldName" value="Image" />
+
+				<execute function="UploadCommonFile" locator1="CPWebcontentAddwebcontent#IMAGE_FIELD" value1="${webContentImage}" />
+			</then>
+		</if>
+
+		<if>
+			<isset var="webContentInteger" />
+			<then>
+				<var name="key_fieldName" value="Integer" />
+
+				<execute function="Type" locator1="CPWebcontentAddwebcontent#INTEGER_FIELD" value1="${webContentInteger}" />
+			</then>
+		</if>
+
+		<if>
+			<isset var="webContentNumber" />
+			<then>
+				<var name="key_fieldName" value="Number" />
+
+				<execute function="Type" locator1="CPWebcontentAddwebcontent#NUMBER_FIELD" value1="${webContentNumber}" />
+			</then>
+		</if>
+
+		<if>
+			<isset var="webContentRadio" />
+			<then>
+				<execute function="Select" locator1="CPWebcontentAddwebcontent#RADIO_FIELD" value1="${webContentRadio}" />
+			</then>
+		</if>
+
+		<if>
+			<isset var="webContentSelect" />
+			<then>
+				<execute function="Select" locator1="CPWebcontentAddwebcontent#SELECT_FIELD" value1="${webContentSelect}" />
+			</then>
+		</if>
+
+		<if>
+			<isset var="webContentText" />
+			<then>
+				<var name="key_fieldName" value="Text" />
+
+				<execute function="Type" locator1="CPWebcontentAddwebcontent#TEXT_FIELD" value1="${webContentText}" />
+			</then>
+		</if>
+
+		<if>
+			<isset var="webContentTextBox" />
+			<then>
+				<execute function="Type" locator1="CPWebcontentAddwebcontent#TEXT_BOX_FIELD" value1="${webContentTextBox}" />
+			</then>
+		</if>
+
+		<execute function="AssertClick" locator1="CPWebcontentAddwebcontent#PUBLISH_BUTTON" value1="Publish" />
+
+		<execute function="AssertTextEquals" locator1="CPWebcontent#SUCCESS_MESSAGE" value1="Your request completed successfully." />
+
+		<var name="key_webContentTitle" value="${webContentTitle}" />
+
+		<execute function="Click" locator1="CPWebcontent#TOOLBAR_DISPLAY_STYLE_BUTTON" />
+		<execute function="AssertClick" locator1="CPWebcontent#DISPLAY_STYLE_MENULIST_DESCRIPTIVE" value1="Descriptive" />
+		<execute function="AssertElementPresent#pauseAssertVisible" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_THUMBNAIL" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_TITLE" value1="${webContentTitle}" />
+	</command>
+
+	<command name="addDraftCP">
+		<execute function="AssertClick" locator1="CPWebcontent#TOOLBAR_ADD" value1="Add" />
+		<execute function="AssertClick" locator1="CPWebcontent#ADD_MENULIST_BASIC_WEB_CONTENT" value1="Basic Web Content" />
+
+		<execute function="Type" locator1="CPWebcontentAddwebcontent#TITLE_FIELD" value1="${webContentTitle}" />
+		<execute function="Type#typeFrame" locator1="CPWebcontentAddwebcontent#CONTENT_FIELD" value1="${webContentContent}" />
+		<execute function="AssertClick" locator1="CPWebcontentAddwebcontent#SAVE_AS_DRAFT_BUTTON" value1="Save as Draft" />
+		<execute function="AssertTextEquals" locator1="CPWebcontentAddwebcontent#SUCCESS_MESSAGE" value1="Your request completed successfully." />
+	</command>
+
+	<command name="addExistingRelatedAssetCP">
+		<var name="key_webContentTitle" value="${webContentTitle}" />
+
+		<execute function="Click" locator1="CPWebcontent#TOOLBAR_DISPLAY_STYLE_BUTTON" />
+		<execute function="AssertClick" locator1="CPWebcontent#DISPLAY_STYLE_MENULIST_DESCRIPTIVE" value1="Descriptive" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_TITLE" value1="${webContentTitle}" />
+		<execute function="Click" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_MENULIST_ARROW" />
+		<execute function="AssertClick" locator1="CPWebcontent#ENTRY_MENULIST_EDIT" value1="Edit" />
+
+		<execute function="AssertClick" locator1="CPWebcontentEditwebcontent#MENU_RELATED_ASSETS" value1="Related Assets" />
+
+		<execute function="Click" locator1="CPWebcontentRelatedassets#SELECT_BUTTON" />
+
+		<var name="key_assetType" value="${assetType}" />
+
+		<execute function="AssertClick" locator1="CPWebcontentRelatedassets#RELATED_ASSETS_SELECT_MENULIST_ASSET" value1="${assetType}" />
+
+		<execute function="SelectFrame" locator1="CPWebcontentRelatedassets#IFRAME" />
+
+		<var name="key_assetTitle" value="${assetTitle}" />
+
+		<execute function="Click" locator1="CPWebcontentRelatedassets#CHOOSE_BUTTON" value1="Choose" />
+
+		<execute function="SelectFrameTop" />
+
+		<execute function="AssertTextEquals" locator1="CPWebcontentRelatedassets#RELATED_ASSETS_TABLE_TYPE" value1="${assetType}" />
+		<execute function="AssertTextEquals" locator1="CPWebcontentRelatedassets#RELATED_ASSETS_TABLE_TITLE" value1="${assetTitle}" />
+		<execute function="AssertTextEquals" locator1="CPWebcontentRelatedassets#RELATED_ASSETS_TABLE_SCOPE" value1="${siteName}" />
+		<execute function="AssertElementPresent" locator1="CPWebcontentRelatedassets#RELATED_ASSETS_TABLE_REMOVE_LINK" />
+
+		<execute function="AssertClick" locator1="CPWebcontentEditwebcontent#PUBLISH_BUTTON" value1="Publish" />
+
+		<execute function="AssertTextEquals" locator1="CPWebcontent#SUCCESS_MESSAGE" value1="Your request completed successfully." />
+	</command>
+
+	<command name="addNullCP">
+		<execute function="AssertClick" locator1="CPWebcontent#TOOLBAR_ADD" value1="Add" />
+		<execute function="AssertClick" locator1="CPWebcontent#ADD_MENULIST_BASIC_WEB_CONTENT" value1="Basic Web Content" />
+
+		<if>
+			<isset var="webContentContent" />
+			<then>
+				<execute function="Type#typeFrame" locator1="CPWebcontentAddwebcontent#CONTENT_FIELD" value1="${webContentContent}" />
+			</then>
+		</if>
+
+		<execute function="AssertClick" locator1="CPWebcontentAddwebcontent#PUBLISH_BUTTON" value1="Publish" />
+
+		<execute function="AssertTextEquals" locator1="CPWebcontentAddwebcontent#ERROR_MESSAGE_FIELD_REQUIRED" value1="This field is required." />
+
+		<if>
+			<isset var="webContentContent" />
+			<then>
+				<execute function="AssertTextEquals#assertCKEditorText" locator1="CPWebcontentAddwebcontent#CONTENT_FIELD" value1="${webContentContent}" />
+			</then>
+		</if>
+	</command>
+
+	<command name="addPGViaAP">
+		<if>
+			<equals arg1="${assetTypeConfigured}" arg2="true" />
+			<then>
+				<execute function="Click" locator1="PGAssetpublisher#ADD_BASIC_WEB_CONTENT_BUTTON" />
+			</then>
+			<else>
+				<execute function="AssertClick" locator1="PGAssetpublisher#ADD_NEW_DROPDOWN" value1="Add New" />
+				<execute function="AssertClick" locator1="PGAssetpublisher#ADD_NEW_MENULIST_BASIC_WEB_CONTENT" value1="Basic Web Content" />
+			</else>
+		</if>
+
+		<execute function="SelectFrame" locator1="PGAssetpublisherAddnewwebcontent#WEB_CONTENT_IFRAME" />
+		<execute function="Type#typeWaitForCKEditor" locator1="PGAssetpublisherAddnewwebcontent#TITLE_FIELD" value1="${webContentTitle}" />
+		<execute function="Type#typeFrameWaitForCKEditor" locator1="PGAssetpublisherAddnewwebcontent#CONTENT_FIELD" value1="${webContentContent}" />
+
+		<if>
+			<equals arg1="${saveAsDraft}" arg2="true" />
+			<then>
+				<execute function="AssertClick#assertTextClickAtCKEditor" locator1="PGAssetpublisherAddnewwebcontent#SAVE_AS_DRAFT_BUTTON" value1="Save as Draft" />
+				<execute function="AssertTextEquals" locator1="PGAssetpublisherAddnewwebcontent#SUCCESS_MESSAGE" value1="Your request completed successfully." />
+
+				<execute function="Pause" locator1="5000" />
+				<execute function="SelectFrame" value1="relative=top" />
+				<execute function="AssertElementNotPresent" locator1="PGAssetpublisher#ASSET_ABSTRACT_GENERIC" />
+			</then>
+			<else>
+				<execute function="AssertClickNoError" locator1="PGAssetpublisherAddnewwebcontent#PUBLISH_BUTTON" value1="Publish" />
+
+				<execute function="Pause" locator1="5000" />
+				<execute function="SelectFrame" value1="relative=top" />
+
+				<var name="key_assetTitle" value="${webContentTitle}" />
+
+				<execute function="AssertTextEquals" locator1="PGAssetpublisher#ASSET_ABSTRACT_TITLE" value1="${webContentTitle}" />
+				<execute function="AssertTextEquals#assertPartialText" locator1="PGAssetpublisher#ASSET_ABSTRACT_DESCRIPTION" value1="${webContentContent}" />
+			</else>
+		</if>
+	</command>
+
+	<command name="addPGViaPanel">
+		<execute function="SelectFrame" locator1="PGWebcontentdisplayAddwebcontent#WEB_CONTENT_IFRAME" />
+		<execute function="Type" locator1="PGWebcontentdisplayAddwebcontent#TITLE_FIELD" value1="${webContentTitle}" />
+		<execute function="Type#typeFrameWaitForCKEditor" locator1="PGWebcontentdisplayAddwebcontent#CONTENT_FIELD" value1="${webContentContent}" />
+		<execute function="AssertClick#assertTextClickAtCKEditor" locator1="PGWebcontentdisplayAddwebcontent#PUBLISH_BUTTON" value1="Publish" />
+		<execute function="SelectFrameTop" />
+	</command>
+
+	<command name="addPGViaWCD">
+		<execute function="Click" locator1="PGWebcontentdisplay#ADD_WEB_CONTENT" />
+
+		<if>
+			<equals arg1="${localizedTitle}" arg2="true" />
+			<then>
+				<var name="key_localizedBasicWebContent" value="${localizedBasicWebContent}" />
+
+				<execute function="AssertClick" locator1="PGWebcontentdisplay#ADD_BASIC_WEB_CONTENT_LOCALIZED" value1="${localizedBasicWebContent}" />
+
+				<execute function="SelectFrame" locator1="PGWebcontentdisplayAddwebcontent#WEB_CONTENT_IFRAME" />
+
+				<var name="key_lowercaseLanguageCode" value="${lowercaseLanguageCode}" />
+
+				<execute function="Type" locator1="PGWebcontentdisplayAddwebcontent#TITLE_FIELD" value1="${webContentTitle}" />
+				<execute function="Type#typeFrameWaitForCKEditor" locator1="PGWebcontentdisplayAddwebcontent#CONTENT_FIELD_LOCALIZED" value1="${webContentContent}" />
+				<execute function="Click" locator1="PGWebcontentdisplayAddwebcontent#LOCALIZED_PUBLISH_BUTTON" />
+			</then>
+			<elseif>
+				<isset var="structureName" />
+				<then>
+					<var name="key_structureName" value="${structureName}" />
+
+					<execute function="AssertClick" locator1="PGWebcontentdisplay#ADD_STRUCTURED_WEB_CONTENT" value1="${structureName}" />
+
+					<execute function="SelectFrame" locator1="PGWebcontentdisplayAddwebcontent#WEB_CONTENT_IFRAME" />
+					<execute function="Type" locator1="PGWebcontentdisplayAddwebcontent#TITLE_FIELD" value1="${webContentTitle}" />
+
+					<var name="key_fieldName" value="${structureFieldName}" />
+
+					<execute function="Type" locator1="PGWebcontentdisplayAddwebcontent#TEXT_FIELD" value1="${webContentText}" />
+					<execute function="Click" locator1="PGWebcontentdisplayAddwebcontent#PUBLISH_BUTTON" />
+
+					<execute function="SelectFrame" value1="relative=top" />
+					<execute function="AssertTextEquals" locator1="PGWebcontentdisplay#WEB_CONTENT_CONTENT" value1="${webContentText}" />
+				</then>
+			</elseif>
+			<else>
+				<execute function="AssertClick" locator1="PGWebcontentdisplay#ADD_BASIC_WEB_CONTENT" value1="Basic Web Content" />
+
+				<execute function="SelectFrame" locator1="PGWebcontentdisplayAddwebcontent#WEB_CONTENT_IFRAME" />
+				<execute function="Type" locator1="PGWebcontentdisplayAddwebcontent#TITLE_FIELD" value1="${webContentTitle}" />
+				<execute function="Type#typeFrameWaitForCKEditor" locator1="PGWebcontentdisplayAddwebcontent#CONTENT_FIELD" value1="${webContentContent}" />
+
+				<if>
+					<equals arg1="${draft}" arg2="true" />
+					<then>
+						<execute function="Click" locator1="PGWebcontentdisplayAddwebcontent#SAVE_AS_DRAFT_BUTTON" />
+						<execute function="AssertTextEquals" locator1="PGWebcontentdisplayAddwebcontent#SUCCESS_MESSAGE" value1="Your request completed successfully." />
+					</then>
+					<else>
+						<execute function="Click" locator1="PGWebcontentdisplayAddwebcontent#PUBLISH_BUTTON" />
+						<execute function="SelectFrame" value1="relative=top" />
+
+						<if>
+							<equals arg1="${webContentJavascript}" arg2="true" />
+							<then>
+								<execute function="AssertTextEquals" locator1="//div[@class='journal-content-article']//span[contains(@class,'portlet-title-text')]" value1="${embeddedPortletTitle}" />
+							</then>
+							<elseif>
+								<equals arg1="${pageBreak}" arg2="true" />
+								<then>
+									<execute function="AssertTextEquals#assertPartialText" locator1="PGWebcontentdisplay#PAGINATION_PAGES" value1="Pages" />
+								</then>
+							</elseif>
+							<else>
+								<execute function="AssertTextEquals" locator1="PGWebcontentdisplay#WEB_CONTENT_CONTENT" value1="${webContentContent}" />
+							</else>
+						</if>
+					</else>
+				</if>
+			</else>
+		</if>
+	</command>
+
+	<command name="addTagPGViaWCD">
+		<execute function="Click" locator1="PGWebcontentdisplay#EDIT_WEB_CONTENT" />
+
+		<execute function="SelectFrame" locator1="PGWebcontentdisplayEditwebcontent#WEB_CONTENT_IFRAME" />
+		<execute function="AssertElementPresent" locator1="PGWebcontentdisplayEditwebcontent#TOOLBAR_BASIC_PREVIEW" />
+		<execute function="AssertClick#assertTextClickAtViewHistory" locator1="PGWebcontentdisplayEditwebcontent#MENU_CATEGORIZATION" value1="Categorization" />
+
+		<var name="key_tagName" value="${tagName}" />
+
+		<execute function="Type" locator1="PGWebcontentdisplayEditwebcontentCategorization#CATEGORIZATION_TAGS_FIELD" value1="${tagName}" />
+		<execute function="AssertClick" locator1="PGWebcontentdisplayEditwebcontentCategorization#CATEGORIZATION_TAGS_ADD_BUTTON" value1="Add" />
+		<execute function="AssertTextEquals" locator1="PGWebcontentdisplayEditwebcontentCategorization#CATEGORIZATION_TAG" value1="${tagName}" />
+		<execute function="AssertClick" locator1="PGWebcontentdisplayEditwebcontentCategorization#PUBLISH_BUTTON" value1="Publish" />
+
+		<execute function="SelectFrame" value1="relative=top" />
+	</command>
+
+	<command name="addTranslationCP">
+		<execute function="Click" locator1="CPWebcontent#TOOLBAR_DISPLAY_STYLE_BUTTON" />
+		<execute function="AssertClick" locator1="CPWebcontent#DISPLAY_STYLE_MENULIST_DESCRIPTIVE" value1="Descriptive" />
+
+		<var name="key_webContentTitle" value="${webContentTitle}" />
+
+		<execute function="AssertElementPresent#pauseAssertVisible" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_THUMBNAIL" />
+		<execute function="AssertClick" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_TITLE" value1="${webContentTitle}" />
+
+		<var name="key_localizedLanguage" value="${localizedLanguage}" />
+
+		<execute function="AssertTextEquals" locator1="CPWebcontentEditwebcontent#TITLE_FIELD" value1="${webContentTitle}" />
+		<execute function="AssertClick" locator1="CPWebcontentEditwebcontent#ADD_TRANSLATION" value1="Add Translation" />
+		<execute function="AssertClick" locator1="CPWebcontentEditwebcontent#ADD_TRANSLATION_MENULIST_LANGUAGE" value1="${localizedLanguage}" />
+
+		<if>
+			<isset var="localizedTitle" />
+			<then>
+				<execute function="Click" locator1="CPWebcontentEditwebcontent#TITLE_LOCALIZATION" />
+				<execute function="Type" locator1="CPWebcontentEditwebcontent#TITLE_FIELD" value1="${localizedTitle}" />
+			</then>
+		</if>
+
+		<if>
+			<isset var="localizedAbstractSummary" />
+			<then>
+				<execute function="Type" locator1="CPWebcontentAbstract#SUMMARY_FIELD" value1="${localizedAbstractSummary}" />
+			</then>
+		</if>
+
+		<if>
+			<isset var="localizedContent" />
+			<then>
+				<execute function="Type#typeFrame" locator1="CPWebcontentEditwebcontent#CONTENT_FIELD" value1="${localizedContent}" />
+			</then>
+		</if>
+
+		<if>
+			<isset var="localizedInteger" />
+			<then>
+				<var name="key_fieldName" value="Integer" />
+
+				<execute function="Type" locator1="CPWebcontentEditwebcontent#INTEGER_FIELD" value1="${localizedInteger}" />
+			</then>
+		</if>
+
+		<if>
+			<isset var="localizedNumber" />
+			<then>
+				<var name="key_fieldName" value="Number" />
+
+				<execute function="Type" locator1="CPWebcontentEditwebcontent#NUMBER_FIELD" value1="${localizedNumber}" />
+			</then>
+		</if>
+
+		<if>
+			<isset var="localizedText" />
+			<then>
+				<var name="key_fieldName" value="Text" />
+
+				<execute function="Type" locator1="CPWebcontentEditwebcontent#TEXT_FIELD" value1="${localizedText}" />
+			</then>
+		</if>
+
+		<if>
+			<isset var="localizedTextBox" />
+			<then>
+				<var name="key_fieldName" value="Text_Box" />
+
+				<execute function="Type" locator1="CPWebcontentEditwebcontent#TEXT_BOX_FIELD" value1="${localizedTextBox}" />
+			</then>
+		</if>
+
+		<if>
+			<isset var="unlocalizableHTML" />
+			<then>
+				<var name="key_fieldName" value="${unlocalizableHTML}" />
+
+				<execute function="AssertElementNotPresent" locator1="CPWebcontentEditwebcontent#HTML_FIELD" />
+			</then>
+		</if>
+
+		<if>
+			<isset var="unlocalizableText" />
+			<then>
+				<var name="key_fieldName" value="${unlocalizableText}" />
+
+				<execute function="AssertElementNotPresent" locator1="CPWebcontentEditwebcontent#TEXT_FIELD" />
+			</then>
+		</if>
+
+		<if>
+			<isset var="unlocalizableTextBox" />
+			<then>
+				<var name="key_fieldName" value="${unlocalizableTextBox}" />
+
+				<execute function="AssertElementNotPresent" locator1="CPWebcontentEditwebcontent#TEXT_BOX_FIELD" />
+			</then>
+		</if>
+
+		<if>
+			<isset var="unlocalizableField" />
+			<then>
+				<var name="key_fieldName" value="${unlocalizableField}" />
+
+				<execute function="AssertTextNotPresent" locator1="CPWebcontentEditwebcontent#${unlocalizableFieldLocator}" value1="${unlocalizableField}" />
+			</then>
+		</if>
+
+		<execute function="AssertClick" locator1="CPWebcontentEditwebcontent#PUBLISH_BUTTON" value1="Publish" />
+	</command>
+
+	<command name="addTranslationPGViaWCD">
+		<execute function="Click" locator1="PGWebcontentdisplay#EDIT_WEB_CONTENT" />
+
+		<execute function="SelectFrame" locator1="PGWebcontentdisplayEditwebcontent#WEB_CONTENT_IFRAME" />
+		<execute function="AssertClick#assertTextClickAtCKEditor" locator1="PGWebcontentdisplayEditwebcontent#ADD_TRANSLATION_MENULIST" value1="Add Translation" />
+
+		<var name="key_webContentTranslationLanguage" value="${webContentTranslationLanguage}" />
+
+		<execute function="AssertClick#assertTextClickAtCKEditor" locator1="PGWebcontentdisplayEditwebcontent#ADD_TRANSLATION_MENULIST_LANGUAGE" value1="${webContentTranslationLanguage}" />
+		<execute function="Type" locator1="PGWebcontentdisplayEditwebcontent#TITLE_FIELD" value1="${webContentTranslationTitle}" />
+		<execute function="Type#typeFrameWaitForCKEditor" locator1="PGWebcontentdisplayEditwebcontent#CONTENT_FIELD" value1="${webContentTranslationContent}" />
+		<execute function="AssertTextEquals#assertTextWaitForCKEditor" locator1="PGWebcontentdisplayEditwebcontent#AVAILABLE_TRANSLATION" value1="${webContentTranslationLanguage}" />
+		<execute function="AssertClick#pauseAssertTextClickAt" locator1="PGWebcontentdisplayEditwebcontent#PUBLISH_BUTTON" value1="Publish" />
+
+		<execute function="SelectFrame" value1="relative=top" />
+	</command>
+
+	<command name="addWithCategorizationTypeCP">
+		<execute function="AssertClick" locator1="CPWebcontent#TOOLBAR_ADD" value1="Add" />
+		<execute function="AssertClick" locator1="CPWebcontent#ADD_MENULIST_BASIC_WEB_CONTENT" value1="Basic Web Content" />
+
+		<execute function="Type" locator1="CPWebcontentAddwebcontent#TITLE_FIELD" value1="${webContentTitle}" />
+		<execute function="Type#typeFrame" locator1="CPWebcontentAddwebcontent#CONTENT_FIELD" value1="${webContentContent}" />
+		<execute function="AssertClick" locator1="CPWebcontentAddwebcontent#MENU_CATEGORIZATION" value1="Categorization" />
+
+		<execute function="Select" locator1="CPWebcontentCategorization#TYPE_SELECT" value1="${categorizationType}" />
+
+		<execute function="AssertClick" locator1="CPWebcontentAddwebcontent#PUBLISH_BUTTON" value1="Publish" />
+		<execute function="AssertTextEquals" locator1="CPWebcontent#SUCCESS_MESSAGE" value1="Your request completed successfully." />
+	</command>
+
+	<command name="addWithCategoryCP">
+		<execute function="AssertClick" locator1="CPWebcontent#TOOLBAR_ADD" value1="Add" />
+		<execute function="AssertClick" locator1="CPWebcontent#ADD_MENULIST_BASIC_WEB_CONTENT" value1="Basic Web Content" />
+
+		<execute function="Type" locator1="CPWebcontentAddwebcontent#TITLE_FIELD" value1="${webContentTitle}" />
+		<execute function="Type#typeFrame" locator1="CPWebcontentAddwebcontent#CONTENT_FIELD" value1="${webContentContent}" />
+		<execute function="AssertClick" locator1="CPWebcontentAddwebcontent#MENU_CATEGORIZATION" value1="Categorization" />
+
+		<if>
+			<isset var="userSegmentDetailTitle" />
+			<then>
+				<var name="key_userSegmentDetailTitle" value="${userSegmentDetailTitle}" />
+
+				<execute function="AssertTextEquals" locator1="CPWebcontentAddwebcontent#USER_SEGMENT_DETAIL_TITLE" value1="${userSegmentDetailTitle}" />
+			</then>
+		</if>
+
+		<var name="key_categoryName" value="${categoryName}" />
+		<var name="key_vocabularyName" value="${vocabularyName}" />
+
+		<execute function="AssertClick" locator1="CPWebcontentCategorization#CATEGORY_SELECT" value1="Select" />
+		<execute function="Click" locator1="CPWebcontentCategorization#CATEGORIES_WINDOW_CATEGORY_CHECKBOX" />
+		<execute function="Click" locator1="CPWebcontentCategorization#CATEGORIES_WINDOW_CLOSE_BUTTON" />
+		<execute function="AssertTextEquals" locator1="CPWebcontentCategorization#CATEGORY" value1="${categoryName}" />
+
+		<execute function="AssertClick" locator1="CPWebcontentAddwebcontent#PUBLISH_BUTTON" value1="Publish" />
+
+		<execute function="AssertTextEquals" locator1="CPWebcontent#SUCCESS_MESSAGE" value1="Your request completed successfully." />
+
+		<var name="key_webContentTitle" value="${webContentTitle}" />
+
+		<execute function="Click" locator1="CPWebcontent#TOOLBAR_DISPLAY_STYLE_BUTTON" />
+		<execute function="AssertClick" locator1="CPWebcontent#DISPLAY_STYLE_MENULIST_DESCRIPTIVE" value1="Descriptive" />
+		<execute function="AssertElementPresent#pauseAssertVisible" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_THUMBNAIL" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_TITLE" value1="${webContentTitle}" />
+		<execute function="AssertTextEquals" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_CATEGORY" value1="${categoryName}" />
+	</command>
+
+	<command name="addWithGlobalStructurePGViaWCD">
+		<var name="key_selectStructureName" value="${selectStructureName}" />
+
+		<execute function="Click" locator1="PGWebcontentdisplay#ADD_WEB_CONTENT" value1="Add" />
+		<execute function="AssertClick" locator1="PGWebcontentdisplay#ADD_MENU_WEB_CONTENT_STRUCTURE" value1="${selectStructureName}" />
+
+		<execute function="SelectFrame" locator1="PGWebcontentdisplayAddwebcontent#WEB_CONTENT_IFRAME" />
+		<execute function="AssertClick" locator1="PGWebcontentdisplayAddwebcontent#SELECT_STRUCTURE" value1="Select" />
+		<execute function="SelectFrame" value1="relative=top" />
+
+		<execute function="SelectFrame" locator1="PGWebcontentdisplayAddwebcontentStructures#STRUCTURE_IFRAME" />
+
+		<var name="key_structureName" value="${structureName}" />
+
+		<execute function="AssertClickNoError" locator1="PGWebcontentdisplayAddwebcontentStructures#STRUCTURE_TABLE_CHOOSE_BUTTON" value1="Choose" />
+		<execute function="Confirm" locator1="PGWebcontentdisplayAddwebcontentStructures#CONFIRMATION" value1="Selecting a new structure changes the available input fields and available templates. Do you want to proceed?" />
+		<execute function="SelectFrame" value1="relative=top" />
+
+		<execute function="SelectFrame" locator1="PGWebcontentdisplayAddwebcontent#WEB_CONTENT_IFRAME" />
+		<execute function="AssertTextEquals" locator1="PGWebcontentdisplayAddwebcontent#STRUCTURE_NAME" value1="${structureName}" />
+		<execute function="AssertTextEquals" locator1="PGWebcontentdisplayAddwebcontent#TEMPLATE_NAME" value1="${templateName}" />
+		<execute function="Type" locator1="PGWebcontentdisplayAddwebcontent#TITLE_FIELD" value1="${webContentTitle}" />
+
+		<var name="key_fieldName" value="${fieldName}" />
+
+		<execute function="Type" locator1="PGWebcontentdisplayAddwebcontent#TEXT_FIELD" value1="${webContentContent}" />
+		<execute function="Click" locator1="PGWebcontentdisplayAddwebcontent#PUBLISH_BUTTON" />
+
+		<execute function="SelectFrame" value1="relative=top" />
+
+		<if>
+			<equals arg1="${webContentJavascript}" arg2="true" />
+			<then>
+				<execute function="AssertTextEquals" locator1="//div[@class='journal-content-article']//span[contains(@class,'portlet-title-text')]" value1="${embeddedPortletTitle}" />
+			</then>
+			<else>
+				<execute function="AssertTextEquals" locator1="PGWebcontentdisplay#WEB_CONTENT_CONTENT" value1="${webContentContent}" />
+			</else>
+		</if>
+	</command>
+
+	<command name="addWithStructureAndWorkflowCP">
+		<var name="key_structureName" value="${structureName}" />
+
+		<execute function="AssertClick" locator1="CPWebcontent#TOOLBAR_ADD" value1="Add"  />
+		<execute function="AssertClick" locator1="CPWebcontent#ADD_MENULIST_STRUCTURE_NAME" value1="${structureName}" />
+
+		<execute function="Type" locator1="CPWebcontentAddwebcontent#TITLE_FIELD" value1="${webContentTitle}" />
+
+		<if>
+			<isset var="webContentText" />
+			<then>
+				<var name="key_fieldName" value="Text" />
+
+				<execute function="Type" locator1="CPWebcontentAddwebcontent#TEXT_FIELD" value1="${webContentText}" />
+			</then>
+		</if>
+
+		<execute function="AssertClick" locator1="CPWebcontentAddwebcontent#SUBMIT_FOR_PUBLICATION_BUTTON" value1="Submit for Publication" />
+
+		<execute function="AssertTextEquals" locator1="CPWebcontent#SUCCESS_MESSAGE" value1="Your request completed successfully." />
+
+		<var name="key_webContentTitle" value="${webContentTitle}" />
+
+		<execute function="Click" locator1="CPWebcontent#TOOLBAR_DISPLAY_STYLE_BUTTON" />
+		<execute function="AssertClick" locator1="CPWebcontent#DISPLAY_STYLE_MENULIST_DESCRIPTIVE" value1="Descriptive" />
+		<execute function="AssertElementPresent#pauseAssertVisible" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_THUMBNAIL" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_TITLE" value1="${webContentTitle}" />
+	</command>
+
+	<command name="addWithStructureCP">
+		<var name="key_structureName" value="${structureName}" />
+
+		<execute function="AssertClick" locator1="CPWebcontent#TOOLBAR_ADD" value1="Add"  />
+		<execute function="AssertClick" locator1="CPWebcontent#ADD_MENULIST_STRUCTURE_NAME" value1="${structureName}" />
+
+		<execute function="Type" locator1="CPWebcontentAddwebcontent#TITLE_FIELD" value1="${webContentTitle}" />
+
+		<if>
+			<isset var="webContentBoolean" />
+			<then>
+				<execute function="Check" locator1="CPWebcontentAddwebcontent#BOOLEAN_FIELD" />
+			</then>
+		</if>
+
+		<if>
+			<isset var="webContentDate" />
+			<then>
+				<execute function="Type" locator1="CPWebcontentAddwebcontent#DATE_FIELD" value1="${webContentDate}" />
+			</then>
+		</if>
+
+		<if>
+			<isset var="webContentDecimal" />
+			<then>
+				<var name="key_fieldName" value="Decimal" />
+
+				<execute function="Type" locator1="CPWebcontentAddwebcontent#DECIMAL_FIELD" value1="${webContentDecimal}" />
+			</then>
+		</if>
+
+		<if>
+			<isset var="webContentDocumentsAndMedia" />
+			<then>
+				<execute function="AssertClick" locator1="CPWebcontentAddwebcontent#DOCUMENTS_AND_MEDIA_FIELD_BUTTON" value1="${webContentDocumentsAndMedia}" />
+			</then>
+		</if>
+
+		<if>
+			<isset var="webContentHTML" />
+			<then>
+				<var name="key_fieldName" value="HTML" />
+
+				<execute function="Type#typeFrame" locator1="CPWebcontentAddwebcontent#HTML_FIELD" value1="${webContentHTML}" />
+			</then>
+		</if>
+
+		<if>
+			<isset var="webContentImage" />
+			<then>
+				<var name="key_fieldName" value="Image" />
+
+				<execute function="UploadCommonFile" locator1="CPWebcontentAddwebcontent#IMAGE_FIELD" value1="${webContentImage}" />
+			</then>
+		</if>
+
+		<if>
+			<isset var="webContentInteger" />
+			<then>
+				<var name="key_fieldName" value="Integer" />
+
+				<execute function="Type" locator1="CPWebcontentAddwebcontent#INTEGER_FIELD" value1="${webContentInteger}" />
+			</then>
+		</if>
+
+		<if>
+			<isset var="webContentLinkToPage" />
+			<then>
+				<var name="key_linkedPageName" value="${linkedPageName}" />
+
+				<execute function="Select" locator1="CPWebcontentAddwebcontent#LINK_TO_PAGE_SELECT" value1="regexp:–\s+${linkedPageName}" />
+			</then>
+		</if>
+
+		<if>
+			<isset var="webContentNumber" />
+			<then>
+				<var name="key_fieldName" value="Number" />
+
+				<execute function="Type" locator1="CPWebcontentAddwebcontent#NUMBER_FIELD" value1="${webContentNumber}" />
+			</then>
+		</if>
+
+		<if>
+			<isset var="webContentRadio" />
+			<then>
+				<execute function="Select" locator1="CPWebcontentAddwebcontent#RADIO_FIELD" value1="${webContentRadio}" />
+			</then>
+		</if>
+
+		<if>
+			<isset var="webContentSelect" />
+			<then>
+				<execute function="Select" locator1="CPWebcontentAddwebcontent#SELECT_FIELD" value1="${webContentSelect}" />
+			</then>
+		</if>
+
+		<if>
+			<isset var="webContentText" />
+			<then>
+				<var name="key_fieldName" value="Text" />
+
+				<execute function="Type" locator1="CPWebcontentAddwebcontent#TEXT_FIELD" value1="${webContentText}" />
+			</then>
+		</if>
+
+		<if>
+			<isset var="webContentTextBox" />
+			<then>
+				<var name="key_fieldName" value="Text_Box" />
+
+				<execute function="Type" locator1="CPWebcontentAddwebcontent#TEXT_BOX_FIELD" value1="${webContentTextBox}" />
+			</then>
+		</if>
+
+		<if>
+			<isset var="abstractSummary" />
+			<then>
+				<execute function="AssertClick" locator1="CPWebcontentAddwebcontent#MENU_ABSTRACT" value1="Abstract" />
+				<execute function="Type" locator1="CPWebcontentAbstract#SUMMARY_FIELD" value1="${abstractSummary}" />
+				<execute function="AssertClick#assertPartialTextClickAt" locator1="CPWebcontentAddwebcontent#MENU_CONTENT" value1="Content" />
+			</then>
+		</if>
+
+		<if>
+			<equals arg1="${saveAsDraft}" arg2="true" />
+			<then>
+				<execute function="AssertClick" locator1="CPWebcontentAddwebcontent#SAVE_AS_DRAFT_BUTTON" value1="Save as Draft" />
+				<execute function="AssertTextEquals" locator1="CPWebcontentAddwebcontent#SUCCESS_MESSAGE" value1="Your request completed successfully." />
+				<execute function="AssertTextEquals" locator1="CPWebcontentAddwebcontent#STATUS_LABEL" value1="Draft" />
+			</then>
+		</if>
+
+		<execute function="AssertClick" locator1="CPWebcontentAddwebcontent#PUBLISH_BUTTON" value1="Publish" />
+
+		<execute function="AssertTextEquals" locator1="CPWebcontent#SUCCESS_MESSAGE" value1="Your request completed successfully." />
+
+		<var name="key_webContentTitle" value="${webContentTitle}" />
+
+		<execute function="Click" locator1="CPWebcontent#TOOLBAR_DISPLAY_STYLE_BUTTON" />
+		<execute function="AssertClick" locator1="CPWebcontent#DISPLAY_STYLE_MENULIST_DESCRIPTIVE" value1="Descriptive" />
+		<execute function="AssertElementPresent#pauseAssertVisible" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_THUMBNAIL" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_TITLE" value1="${webContentTitle}" />
+	</command>
+
+	<command name="addWithWorkflowCP">
+		<execute function="AssertClick" locator1="CPWebcontent#TOOLBAR_ADD" value1="Add"  />
+		<execute function="AssertClick" locator1="CPWebcontent#ADD_MENULIST_BASIC_WEB_CONTENT" value1="Basic Web Content" />
+
+		<execute function="Type" locator1="CPWebcontentAddwebcontent#TITLE_FIELD" value1="${webContentTitle}" />
+		<execute function="Type#typeFrame" locator1="CPWebcontentAddwebcontent#CONTENT_FIELD" value1="${webContentContent}" />
+		<execute function="AssertClick" locator1="CPWebcontentAddwebcontent#SUBMIT_FOR_PUBLICATION_BUTTON" value1="Submit for Publication" />
+
+		<execute function="AssertTextEquals" locator1="CPWebcontent#SUCCESS_MESSAGE" value1="Your request completed successfully." />
+	</command>
+
+	<command name="addWithWorkflowPGViaAP">
+		<execute function="AssertClick" locator1="PGAssetpublisher#ADD_NEW_DROPDOWN" value1="Add New" />
+		<execute function="AssertClick" locator1="PGAssetpublisher#ADD_NEW_MENULIST_BASIC_WEB_CONTENT" value1="Basic Web Content" />
+
+		<execute function="SelectFrame" locator1="PGAssetpublisherAddnewwebcontent#WEB_CONTENT_IFRAME" />
+		<execute function="Type#typeWaitForCKEditor" locator1="PGAssetpublisherAddnewwebcontent#TITLE_FIELD" value1="${webContentTitle}" />
+		<execute function="Type#typeFrameWaitForCKEditor" locator1="PGAssetpublisherAddnewwebcontent#CONTENT_FIELD" value1="${webContentContent}" />
+		<execute function="AssertClick#assertTextClickAtCKEditor" locator1="PGAssetpublisherAddnewwebcontent#SUBMIT_FOR_PUBLICATION_BUTTON" value1="Submit for Publication" />
+		<execute function="Pause" locator1="5000" />
+
+		<execute function="SelectFrame" />
+		<execute function="AssertTextEquals" locator1="PGAssetpublisher#INFO_MESSAGE" value1="There are no results." />
+	</command>
+
+	<command name="addWithWorkflowPGViaWCD">
+		<if>
+			<isset var="selectStructureName" />
+			<then>
+				<var name="key_selectStructureName" value="${selectStructureName}" />
+
+				<execute function="Click" locator1="PGWebcontentdisplay#ADD_WEB_CONTENT" />
+				<execute function="AssertClick" locator1="PGWebcontentdisplay#ADD_MENU_WEB_CONTENT_STRUCTURE" value1="${selectStructureName}" />
+			</then>
+			<else>
+				<execute function="Click" locator1="PGWebcontentdisplay#ADD_WEB_CONTENT" />
+				<execute function="Click" locator1="PGWebcontentdisplay#ADD_BASIC_WEB_CONTENT" />
+			</else>
+		</if>
+
+		<execute function="SelectFrame" locator1="PGWebcontentdisplayAddwebcontent#WEB_CONTENT_IFRAME" />
+		<execute function="Type" locator1="PGWebcontentdisplayAddwebcontent#TITLE_FIELD" value1="${webContentTitle}" />
+		<execute function="Type#typeFrameWaitForCKEditor" locator1="PGWebcontentdisplayAddwebcontent#CONTENT_FIELD" value1="${webContentContent}" />
+		<execute function="AssertClick#assertTextClickAtCKEditor" locator1="PGWebcontentdisplayAddwebcontent#SUBMIT_FOR_PUBLICATION_BUTTON" value1="Submit for Publication" />
+
+		<execute function="SelectFrame" value1="relative=top" />
+		<execute function="AssertTextEquals" locator1="PGWebcontentdisplay#ALERT_MESSAGE" value1="${webContentTitle} is not approved." />
+	</command>
+
+	<command name="copyCP">
+		<var name="key_webContentTitle" value="${webContentTitle}" />
+
+		<execute function="Check" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_CHECKBOX" />
+		<execute function="Click" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_MENULIST_ARROW" />
+		<execute function="AssertClick" locator1="CPWebcontent#ENTRY_MENULIST_COPY" value1="Copy" />
+
+		<execute function="AssertClick" locator1="CPWebcontentCopy#COPY_BUTTON" value1="Copy" />
+		<execute function="AssertTextEquals" locator1="CPWebcontent#SUCCESS_MESSAGE" value1="Your request completed successfully." />
+		<execute function="Click" locator1="CPWebcontent#TOOLBAR_DISPLAY_STYLE_BUTTON" />
+		<execute function="AssertClick" locator1="CPWebcontent#DISPLAY_STYLE_MENULIST_DESCRIPTIVE" value1="Descriptive" />
+		<execute function="AssertElementPresent#pauseAssertVisible" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_THUMBNAIL" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_TITLE" value1="${webContentTitle}" />
+
+		<var name="key_categoryName" value="${categoryName}" />
+
+		<execute function="AssertTextEquals#assertPartialText" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_TITLE" value1="${webContentTitle}" />
+		<execute function="AssertTextEquals" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_CATEGORY" value1="${categoryName}" />
+		<execute function="AssertTextEquals" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_TITLE_COPY" value1="${webContentTitle}" />
+		<execute function="AssertTextEquals" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_CATEGORY_COPY" value1="${categoryName}" />
+	</command>
+
+	<command name="deleteCP">
+		<execute macro="WebContent#moveToRecycleBinCP" />
+
+		<execute macro="Page#gotoContentCP">
+			<var name="portletName" value="Recycle Bin" />
+		</execute>
+
+		<execute macro="RecycleBin#emptyCP" />
+
+		<execute macro="Page#gotoContentCP">
+			<var name="portletName" value="Web Content" />
+		</execute>
+
+		<execute function="AssertTextNotPresent" value1="${webContentTitle}" />
+	</command>
+
+	<command name="editCP">
+		<execute macro="WebContent#gotoEditPG">
+			<var name="webContentTitle" value="${webContentTitle}" />
+		</execute>
+
+		<execute function="Type" locator1="CPWebcontentEditwebcontent#TITLE_FIELD" value1="${webContentTitleEdit}" />
+
+		<if>
+			<isset var="webContentContentEdit" />
+			<then>
+				<execute function="Type#typeFrame" locator1="CPWebcontentEditwebcontent#CONTENT_FIELD" value1="${webContentContentEdit}" />
+			</then>
+		</if>
+
+		<if>
+			<equals arg1="${saveAsDraft}" arg2="true" />
+			<then>
+				<execute function="AssertClick" locator1="CPWebcontentEditwebcontent#SAVE_AS_DRAFT_BUTTON" value1="Save as Draft" />
+				<execute function="AssertTextEquals" locator1="CPWebcontentEditwebcontent#SUCCESS_MESSAGE" value1="Your request completed successfully." />
+				<execute function="AssertTextEquals" locator1="CPWebcontentEditwebcontent#STATUS_LABEL" value1="Draft" />
+			</then>
+			<else>
+				<execute function="AssertClick" locator1="CPWebcontentEditwebcontent#PUBLISH_BUTTON" value1="Publish" />
+
+				<execute function="AssertTextEquals" locator1="CPWebcontent#SUCCESS_MESSAGE" value1="Your request completed successfully." />
+
+				<var name="key_webContentTitle" value="${webContentTitleEdit}" />
+
+				<execute function="Click" locator1="CPWebcontent#TOOLBAR_DISPLAY_STYLE_BUTTON" />
+				<execute function="AssertClick" locator1="CPWebcontent#DISPLAY_STYLE_MENULIST_DESCRIPTIVE" value1="Descriptive" />
+				<execute function="AssertElementPresent#pauseAssertVisible" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_THUMBNAIL" />
+				<execute function="AssertTextEquals#assertPartialText" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_TITLE" value1="${webContentTitleEdit}" />
+			</else>
+		</if>
+	</command>
+
+	<command name="editDisplayPageCP">
+		<execute macro="WebContent#gotoEditCP">
+			<var name="webContentTitle" value="${webContentTitle}" />
+		</execute>
+
+		<execute function="AssertClick" locator1="CPWebcontentAddwebcontent#MENU_DISPLAY_PAGE" value1="Display Page" />
+		<execute function="AssertClick" locator1="CPWebcontentAddwebcontent#DISPLAY_PAGE_CHOOSE" value1="Choose" />
+		<execute function="Pause" locator1="5000" />
+
+		<var name="key_pageName" value="${pageName}" />
+
+		<execute function="SelectFrame" locator1="CPWebcontentAddwebcontentDisplaypageConfiguration#DISPLAY_PAGE_CONFIGURATION_IFRAME" />
+		<execute function="AssertClick" locator1="CPWebcontentAddwebcontentDisplaypageConfiguration#NAVIGATION_PUBLIC_PAGE" value1="Public Pages" />
+		<execute function="AssertClick" locator1="CPWebcontentAddwebcontentDisplaypageConfiguration#PUBLIC_PAGES_SELECTION" value1="${pageName}" />
+		<execute function="AssertTextEquals" locator1="CPWebcontentAddwebcontentDisplaypageConfiguration#SELECTED_PAGE_INFO_MESSAGE" value1="Public Pages > ${pageName}" />
+		<execute function="AssertClick" locator1="CPWebcontentAddwebcontentDisplaypageConfiguration#CHOOSE_BUTTON" value1="Choose" />
+
+		<execute function="SelectFrame" value1="relative=top" />
+		<execute function="AssertTextEquals" locator1="CPWebcontentAddwebcontent#DISPLAY_PAGE_SELECTION" value1="Public Pages > ${pageName}" />
+		<execute function="AssertClick" locator1="CPWebcontentAddwebcontent#PUBLISH_BUTTON" value1="Publish" />
+
+		<execute function="AssertTextEquals" locator1="CPWebcontent#SUCCESS_MESSAGE" value1="Your request completed successfully." />
+	</command>
+
+	<command name="editDisplayPagePGViaAP">
+		<var name="key_assetTitle" value="${assetTitle}" />
+
+		<execute function="Click" locator1="PGAssetpublisher#DISPLAY_ICON_EDIT" />
+
+		<execute function="SelectFrame" locator1="PGAssetpublisherAddnewwebcontent#WEB_CONTENT_IFRAME" />
+		<execute function="AssertClick" locator1="PGAssetpublisherAddnewwebcontent#MENU_DISPLAY_PAGE" value1="Display Page" />
+
+		<var name="key_displayPageSelection" value="${displayPageSelection}" />
+
+		<execute function="Click" locator1="PGAssetpublisherAddnewwebcontentDisplaypage#SELECT_DISPLAY_PAGE_BUTTON" />
+		<execute function="SelectFrame" value1="relative=top" />
+		<execute function="SelectFrame" locator1="PGAssetpublisherAddnewwebcontentDisplaypage#SELECT_DISPLAY_PAGE_IFRAME" />
+		<execute function="AssertClick" locator1="PGAssetpublisherAddnewwebcontentDisplaypage#PUBLIC_DISPLAY_PAGE_SELECTION" value1="${displayPageSelection}" />
+		<execute function="AssertClick" locator1="PGAssetpublisherAddnewwebcontentDisplaypage#CHOOSE_BUTTON" value1="Choose" />
+
+		<execute function="SelectFrame" value1="relative=top" />
+		<execute function="SelectFrame" locator1="PGAssetpublisherAddnewwebcontent#WEB_CONTENT_IFRAME" />
+		<execute function="AssertClick#assertPartialTextClickAt" locator1="PGAssetpublisherAddnewwebcontent#MENU_CONTENT" value1="Content" />
+		<execute function="AssertClick#assertTextClickAtCKEditor" locator1="PGAssetpublisherAddnewwebcontent#PUBLISH_BUTTON" value1="Publish" />
+
+		<execute function="Pause" locator1="3000" />
+		<execute function="SelectFrame" value1="relative=top" />
+	</command>
+
+	<command name="editNullCP">
+		<var name="key_webContentTitle" value="${webContentTitle}" />
+
+		<execute function="Click" locator1="CPWebcontent#TOOLBAR_DISPLAY_STYLE_BUTTON" />
+		<execute function="AssertClick" locator1="CPWebcontent#DISPLAY_STYLE_MENULIST_DESCRIPTIVE" value1="Descriptive" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_TITLE" value1="${webContentTitle}" />
+		<execute function="Click" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_MENULIST_ARROW" />
+		<execute function="AssertClick" locator1="CPWebcontent#ENTRY_MENULIST_EDIT" value1="Edit" />
+
+		<execute function="Type" locator1="CPWebcontentEditwebcontent#TITLE_FIELD" value1="" />
+
+		<if>
+			<isset var="webContentContent" />
+			<then>
+				<execute function="Type#typeFrame" locator1="CPWebcontentAddwebcontent#CONTENT_FIELD" value1="${webContentContent}" />
+			</then>
+		</if>
+
+		<execute function="AssertClick" locator1="CPWebcontentAddwebcontent#PUBLISH_BUTTON" value1="Publish" />
+		<execute function="AssertTextEquals" locator1="CPWebcontentAddwebcontent#ERROR_MESSAGE_FIELD_REQUIRED" value1="This field is required." />
+	</command>
+
+	<command name="editPGViaAP">
+		<var name="key_assetTitle" value="${assetTitle}" />
+
+		<execute function="Click" locator1="PGAssetpublisher#ASSET_ABSTRACT_EDIT" />
+
+		<execute function="SelectFrame" locator1="PGAssetpublisherAddnewwebcontent#WEB_CONTENT_IFRAME" />
+		<execute function="Type#typeWaitForCKEditor" locator1="PGAssetpublisherAddnewwebcontent#TITLE_FIELD" value1="${webContentTitleEdit}" />
+		<execute function="Type#typeFrameWaitForCKEditor" locator1="PGAssetpublisherAddnewwebcontent#CONTENT_FIELD" value1="${webContentContentEdit}" />
+		<execute function="Click" locator1="PGAssetpublisherAddnewwebcontent#PUBLISH_BUTTON" value1="Publish" />
+	</command>
+
+	<command name="editPGViaWCD">
+		<execute function="Click" locator1="PGWebcontentdisplay#EDIT_WEB_CONTENT" />
+
+		<execute function="SelectFrame" locator1="PGWebcontentdisplayEditwebcontent#WEB_CONTENT_IFRAME" />
+		<execute function="Type" locator1="PGWebcontentdisplayEditwebcontent#TITLE_FIELD" value1="${webContentTitleEdit}" />
+
+		<if>
+			<isset var="webContentText" />
+			<then>
+				<var name="key_fieldName" value="Text" />
+
+				<execute function="Type" locator1="PGWebcontentdisplayEditwebcontent#TEXT_FIELD" value1="${webContentText}" />
+			</then>
+			<else>
+				<execute function="Type#typeFrameWaitForCKEditor" locator1="PGWebcontentdisplayEditwebcontent#CONTENT_FIELD" value1="${webContentContentEdit}" />
+			</else>
+		</if>
+
+		<execute function="Click" locator1="PGWebcontentdisplayEditwebcontent#PUBLISH_BUTTON" value1="Publish" />
+
+		<execute function="SelectFrame" value1="relative=top" />
+
+		<if>
+			<equals arg1="${webContentJavascript}" arg2="true" />
+			<then>
+				<execute function="AssertTextEquals" locator1="//div[@class='journal-content-article']//span[contains(@class,'portlet-title-text')]" value1="${embeddedPortletTitle}" />
+			</then>
+			<else>
+				<execute function="AssertTextEquals" locator1="PGWebcontentdisplay#WEB_CONTENT_CONTENT" value1="${webContentContentEdit}" />
+			</else>
+		</if>
+	</command>
+
+	<command name="expireCP">
+		<var name="key_webContentTitle" value="${webContentTitle}" />
+
+		<execute function="Check" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_CHECKBOX" />
+		<execute function="AssertClick" locator1="CPWebcontent#TOOLBAR_ACTIONS" value1="Actions" />
+		<execute function="AssertClick" locator1="CPWebcontent#ACTION_MENULIST_EXPIRE" value1="Expire" />
+	</command>
+
+	<command name="expirePGViaWCD">
+		<var name="key_webContentTitle" value="${webContentTitle}" />
+
+		<execute function="Click" locator1="PGWebcontentdisplay#EDIT_WEB_CONTENT" />
+
+		<execute function="SelectFrame" locator1="PGWebcontentdisplayEditwebcontent#WEB_CONTENT_IFRAME" />
+		<execute function="Pause" locator1="5000" />
+		<execute function="AssertClick" locator1="PGWebcontentdisplayEditwebcontent#TOOLBAR_VIEW_HISTORY" value1="View History" />
+
+		<var name="key_historyStatus" value="Expired" />
+
+		<execute function="Click" locator1="PGWebcontentdisplayEditwebcontentViewhistory#VERSIONS_TABLE_ACTIONS" />
+		<execute function="AssertClick" locator1="PGWebcontentdisplayEditwebcontentViewhistory#ACTIONS_MENULIST_EXPIRE" value1="Expire" />
+		<execute function="AssertTextEquals" locator1="PGWebcontentdisplayEditwebcontentViewhistory#VERSIONS_TABLE_STATUS" value1="Expired" />
+	</command>
+
+	<command name="expireSpecificVersionCP">
+		<var name="key_webContentTitle" value="${webContentTitle}" />
+
+		<execute function="AssertClick" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_TITLE" value1="${webContentTitle}" />
+		<execute function="AssertClick" locator1="CPWebcontentEditwebcontent#VIEW_HISTORY_BUTTON" value1="View History" />
+
+		<for list="${webContentList}" param="webContentTitle">
+			<var name="key_webContentTitle" value="${webContentTitle}" />
+
+			<execute function="Check" locator1="CPWebcontentEditwebcontent#VIEW_HISTORY_VERSION_CHECKBOX" />
+		</for>
+
+		<execute function="AssertClickNoError" locator1="CPWebcontentEditwebcontent#VIEW_HISTORY_EXPIRE_BUTTON" value1="Expire" />
+		<execute function="Confirm" locator1="CPWebcontentEditwebcontent#CONFIRMATION" value1="Are you sure you want to expire the selected version?" />
+	</command>
+
+	<command name="gotoCP">
+		<execute function="Click" locator1="CPWebcontent#TOOLBAR_DISPLAY_STYLE_BUTTON" />
+		<execute function="AssertClick" locator1="CPWebcontent#DISPLAY_STYLE_MENULIST_DESCRIPTIVE" value1="Descriptive" />
+		<execute function="AssertElementPresent#pauseAssertVisible" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_THUMBNAIL" />
+		<execute function="AssertClick" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_TITLE" value1="${webContentTitle}" />
+	</command>
+
+	<command name="gotoEditCP">
+		<var name="key_webContentTitle" value="${webContentTitle}" />
+
+		<execute function="Click" locator1="CPWebcontent#TOOLBAR_DISPLAY_STYLE_BUTTON" />
+		<execute function="AssertClick" locator1="CPWebcontent#DISPLAY_STYLE_MENULIST_DESCRIPTIVE" value1="Descriptive" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_TITLE" value1="${webContentTitle}" />
+		<execute function="Click" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_MENULIST_ARROW" />
+		<execute function="AssertClick" locator1="CPWebcontent#ENTRY_MENULIST_EDIT" value1="Edit" />
+	</command>
+
+	<command name="gotoEditPG">
+		<var name="key_webContentTitle" value="${webContentTitle}" />
+
+		<execute function="Click" locator1="CPWebcontent#TOOLBAR_DISPLAY_STYLE_BUTTON" />
+		<execute function="AssertClick" locator1="CPWebcontent#DISPLAY_STYLE_MENULIST_DESCRIPTIVE" value1="Descriptive" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_TITLE" value1="${webContentTitle}" />
+		<execute function="Click" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_MENULIST_ARROW" />
+		<execute function="AssertClick" locator1="CPWebcontent#ENTRY_MENULIST_EDIT" value1="Edit" />
+	</command>
+
+	<command name="gotoViewSpecificVersionHistoryCP">
+		<var name="key_webContentTitle" value="${webContentTitle}" />
+
+		<execute function="Click" locator1="CPWebcontent#TOOLBAR_DISPLAY_STYLE_BUTTON" />
+		<execute function="AssertClick" locator1="CPWebcontent#DISPLAY_STYLE_MENULIST_DESCRIPTIVE" value1="Descriptive" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_TITLE" value1="${webContentTitle}" />
+		<execute function="Click" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_MENULIST_ARROW" />
+		<execute function="AssertClick" locator1="CPWebcontent#ENTRY_MENULIST_EDIT" value1="Edit" />
+		<execute function="AssertClick" locator1="CPWebcontentEditwebcontent#VIEW_HISTORY_BUTTON" value1="View History" />
+	</command>
+
+	<command name="moveToRecycleBinCP">
+		<var name="key_webContentTitle" value="${webContentTitle}" />
+
+		<execute function="Click" locator1="CPWebcontent#TOOLBAR_DISPLAY_STYLE_BUTTON" />
+		<execute function="AssertClick" locator1="CPWebcontent#DISPLAY_STYLE_MENULIST_DESCRIPTIVE" value1="Descriptive" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_TITLE" value1="${webContentTitle}" />
+		<execute function="Click" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_MENULIST_ARROW" />
+		<execute function="AssertClick" locator1="CPWebcontent#ENTRY_MENULIST_MOVE_TO_THE_RECYCLE_BIN" value1="Move to the Recycle Bin" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="CPWebcontent#SUCCESS_MESSAGE_RECYCLE_BIN" value1="The Web Content Article ${webContentTitle} was moved to the Recycle Bin. Undo" />
+	</command>
+
+	<command name="previewCPwithStructureTemplateXSL">
+		<var name="key_webContentTitle" value="${webContentTitle}" />
+
+		<execute macro="WebContent#gotoCP">
+			<var name="key_webContentTitle" value="${webContentTitle}" />
+		</execute>
+
+		<execute function="AssertTextEquals" locator1="CPWebcontentEditwebcontent#TITLE_FIELD" value1="${webContentTitle}" />
+		<execute function="AssertTextEquals" locator1="//input[contains(@id,'_15_Text') and @type='text']" value1="${webContentText}" />
+		<execute function="AssertClick" locator1="CPWebcontentEditwebcontent#BASIC_PREVIEW_BUTTON" value1="Basic Preview" />
+
+		<execute function="SelectFrame" locator1="CPWebcontentPreview#PREVIEW_IFRAME" />
+		<execute function="AssertTextEquals" locator1="CPWebcontentPreview#BODY_FIELD" value1="Text: ${webContentText}" />
+	</command>
+
+	<command name="publishBasicCP">
+		<execute function="AssertClick" locator1="CPWebcontentEditwebcontent#PUBLISH_BUTTON" value1="Publish" />
+
+		<execute function="AssertTextEquals" locator1="CPWebcontent#SUCCESS_MESSAGE" value1="Your request completed successfully." />
+	</command>
+
+	<command name="publishCP">
+		<var name="key_webContentTitle" value="${webContentTitle}" />
+
+		<execute macro="WebContent#gotoCP">
+			<var name="key_webContentTitle" value="${webContentTitle}" />
+		</execute>
+
+		<execute function="AssertClick" locator1="CPWebcontentEditwebcontent#PUBLISH_BUTTON" value1="Publish" />
+
+		<execute function="AssertTextEquals" locator1="CPWebcontent#SUCCESS_MESSAGE" value1="Your request completed successfully." />
+	</command>
+
+	<command name="searchCP">
+		<var name="key_webContentFolder" value="${webContentFolder}" />
+		<var name="key_webContentTitle" value="${webContentTitle}" />
+
+		<execute function="Type" locator1="CPWebcontent#TOOLBAR_SEARCH_FIELD" value1="${webContentTitle}" />
+		<execute function="AssertClick" locator1="CPWebcontent#TOOLBAR_SEARCH_BUTTON" value1="Search" />
+		<execute function="AssertTextEquals" locator1="CPWebcontent#SEARCH_RESULTS_TITLE" value1="${webContentTitle}" />
+		<execute function="AssertTextEquals" locator1="CPWebcontent#SEARCH_RESULTS_BODY" value1="${webContentContent}" />
+		<execute function="AssertTextEquals" locator1="CPWebcontent#SEARCH_RESULTS_FOLDER" value1="${webContentFolder}" />
+	</command>
+
+	<command name="searchNoPGViaWCS">
+		<var name="key_webContentSearchResultsName" value="${webContentSearchResultsName}" />
+
+		<execute function="Type" locator1="PGWebcontentsearch#SEARCH_FIELD" value1="${webContentSearchTerm}" />
+		<execute function="Click" locator1="PGWebcontentsearch#SEARCH_ICON" />
+
+		<execute function="AssertElementNotPresent" locator1="PGWebcontentsearchResults#RESULTS_TABLE_NAME" />
+		<execute function="AssertElementNotPresent" locator1="PGWebcontentsearchResults#RESULTS_TABLE_CONTENT" />
+
+		<if>
+			<equals arg1="${webContentSearchNoResults}" arg2="true" />
+			<then>
+				<execute function="AssertTextEquals" locator1="PGWebcontentsearchResults#INFO_MESSAGE" value1="No pages were found that matched the keywords: ${webContentSearchTerm}." />
+			</then>
+		</if>
+	</command>
+
+	<command name="searchNoResultsCP">
+		<var name="key_webContentFolder" value="${webContentFolder}" />
+		<var name="key_webContentTitle" value="${webContentTitle}" />
+
+		<execute function="Type" locator1="CPWebcontent#TOOLBAR_SEARCH_FIELD" value1="${searchQuery}" />
+		<execute function="AssertClick" locator1="CPWebcontent#TOOLBAR_SEARCH_BUTTON" value1="Search" />
+		<execute function="AssertTextEquals" locator1="CPWebcontent#SEARCH_RESULTS_NONE" value1="No web content was found that matched the keywords: ${searchQuery}." />
+		<execute function="AssertTextNotPresent" locator1="CPWebcontent#SEARCH_RESULTS_TITLE" value1="${webContentTitle}" />
+		<execute function="AssertTextNotPresent" locator1="CPWebcontent#SEARCH_RESULTS_BODY" value1="${webContentContent}" />
+		<execute function="AssertClick" locator1="CPWebcontent#SEARCH_RESULTS_FILTER_REMOVE_BUTTON" value1="Remove" />
+		<execute function="AssertTextEquals" locator1="CPWebcontent#SEARCH_RESULTS_TITLE" value1="${webContentTitle}" />
+	</command>
+
+	<command name="searchPGViaWCS">
+		<var name="key_webContentSearchResultsName" value="${webContentSearchResultsName}" />
+
+		<execute function="Type" locator1="PGWebcontentsearch#SEARCH_FIELD" value1="${webContentSearchTerm}" />
+		<execute function="Click" locator1="PGWebcontentsearch#SEARCH_ICON" />
+
+		<execute function="AssertTextEquals" locator1="PGWebcontentsearchResults#RESULTS_TABLE_NAME" value1="${webContentSearchResultsName}" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="PGWebcontentsearchResults#RESULTS_TABLE_CONTENT" value1="${webContentSearchResultsContent}" />
+	</command>
+
+	<command name="selectTemplateCP">
+		<execute macro="WebContent#gotoCP">
+			<var name="key_webContentTitle" value="${webContentTitle}" />
+		</execute>
+
+		<execute function="AssertClick" locator1="CPWebcontentEditwebcontent#SELECT_TEMPLATE" value1="Select" />
+
+		<var name="key_templateName" value="${templateName}" />
+
+		<execute function="SelectFrame" locator1="CPWebcontentSelecttemplate#TEMPLATES_IFRAME" />
+		<execute function="AssertClickNoError" locator1="CPWebcontentSelecttemplate#TEMPLATE_TABLE_CHOOSE" value1="Choose" />
+		<execute function="Confirm" locator1="CPWebcontentSelecttemplate#CONFIRMATION" value1="Selecting a new template will delete all unsaved content. Do you want to proceed?" />
+
+		<execute function="AssertClick" locator1="CPWebcontentAddwebcontent#PUBLISH_BUTTON" value1="Publish" />
+
+		<execute function="AssertTextEquals" locator1="CPWebcontent#SUCCESS_MESSAGE" value1="Your request completed successfully." />
+	</command>
+
+	<command name="tearDownCP">
+		<execute macro="Page#gotoContentCP">
+			<var name="portletName" value="Web Content" />
+		</execute>
+
+		<execute function="Click" locator1="CPWebcontent#TOOLBAR_DISPLAY_STYLE_BUTTON" />
+		<execute function="AssertClick" locator1="CPWebcontent#DISPLAY_STYLE_MENULIST_DESCRIPTIVE" value1="Descriptive" />
+
+		<while>
+			<condition function="IsElementPresent#pauseIsElementPresent" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_THUMBNAIL_GENERIC" />
+			<then>
+				<execute function="Check" locator1="CPWebcontent#TOOLBAR_SELECT_ALL_CHECKBOX" />
+				<execute function="AssertClick" locator1="CPWebcontent#TOOLBAR_ACTIONS" value1="Actions" />
+				<execute function="AssertClick" locator1="CPWebcontent#ACTION_MENULIST_MOVE_TO_THE_RECYCLE_BIN" value1="Move to the Recycle Bin" />
+				<execute function="AssertTextEquals#assertPartialText" locator1="CPWebcontent#SUCCESS_MESSAGE_RECYCLE_BIN" value1="moved to the Recycle Bin. Undo" />
+			</then>
+		</while>
+
+		<execute macro="Page#gotoContentCP">
+			<var name="portletName" value="Recycle Bin" />
+		</execute>
+
+		<execute macro="RecycleBin#emptyCP" />
+	</command>
+
+	<command name="viewAudioViaWCD">
+		<execute function="AssertElementPresent" locator1="PGWebcontentdisplay#WEB_CONTENT_AUDIO" />
+	</command>
+
+	<command name="viewCategorizationCategoryCP">
+		<var name="key_webContentTitle" value="${webContentTitle}" />
+
+		<execute function="Click" locator1="CPWebcontent#TOOLBAR_DISPLAY_STYLE_BUTTON" />
+		<execute function="AssertClick" locator1="CPWebcontent#DISPLAY_STYLE_MENULIST_DESCRIPTIVE" value1="Descriptive" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_TITLE" value1="${webContentTitle}" />
+		<execute function="Click" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_MENULIST_ARROW" />
+		<execute function="AssertClick" locator1="CPWebcontent#ENTRY_MENULIST_EDIT" value1="Edit" />
+
+		<execute function="Click" locator1="CPWebcontentEditwebcontent#MENU_CATEGORIZATION" />
+
+		<var name="key_categoryName" value="${categoryName}" />
+
+		<execute function="AssertTextEquals" locator1="CPWebcontentCategorization#CATEGORY" value1="${categoryName}" />
+	</command>
+
+	<command name="viewCategorizationSelectionCP">
+		<var name="key_webContentTitle" value="${webContentTitle}" />
+
+		<execute function="Click" locator1="CPWebcontent#TOOLBAR_DISPLAY_STYLE_BUTTON" />
+		<execute function="AssertClick" locator1="CPWebcontent#DISPLAY_STYLE_MENULIST_DESCRIPTIVE" value1="Descriptive" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_TITLE" value1="${webContentTitle}" />
+		<execute function="Click" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_MENULIST_ARROW" />
+		<execute function="AssertClick" locator1="CPWebcontent#ENTRY_MENULIST_EDIT" value1="Edit" />
+
+		<execute function="AssertClick" locator1="CPWebcontentAddwebcontent#MENU_CATEGORIZATION" value1="Categorization" />
+
+		<execute function="AssertTextPresent" locator1="CPWebcontentCategorization#TYPE_SELECT" value1="${categorizationType}" />
+	</command>
+
+	<command name="viewConversionLinksPGViaAP">
+		<var name="key_assetTitle" value="${webContentTitle}" />
+
+		<execute macro="WebContent#viewPGViaAP">
+			<var name="key_assetTitle" value="${webContentTitle}" />
+		</execute>
+
+		<for list="${documentTypes}" param="documentType">
+			<var name="documentTypeUppercase" value="${documentType?uppercase()}" />
+
+			<execute function="AssertTextEquals#assertPartialText" locator1="PGAssetpublisherAsset#DOCUMENT_CONVERSION_${documentTypeUppercase}" value1="${documentTypeUppercase}" />
+			<execute function="AssertElementPresent" locator1="PGAssetpublisherAsset#DOCUMENT_CONVERSION_${documentTypeUppercase}_ICON" />
+		</for>
+	</command>
+
+	<command name="viewCP">
+		<var name="key_webContentTitle" value="${webContentTitle}" />
+
+		<execute macro="WebContent#gotoCP">
+			<var name="key_webContentTitle" value="${webContentTitle}" />
+		</execute>
+
+		<execute function="AssertTextEquals" locator1="CPWebcontentEditwebcontent#TITLE_FIELD" value1="${webContentTitle}" />
+
+		<if>
+			<isset var="webContentText" />
+			<then>
+				<var name="key_fieldName" value="Text" />
+
+				<execute function="AssertTextEquals" locator1="CPWebcontentEditwebcontent#TEXT_FIELD" value1="${webContentText}" />
+			</then>
+			<else>
+				<execute function="SelectFrame" locator1="CPWebcontentEditwebcontent#CONTENT_FIELD" />
+				<execute function="AssertTextEquals" locator1="CPWebcontentEditwebcontent#BODY_FIELD" value1="${webContentContent}" />
+				<execute function="SelectFrame" value1="relative=top" />
+			</else>
+		</if>
+
+		<if>
+			<isset var="expirationDate" />
+			<then>
+				<execute function="AssertClick" locator1="CPWebcontentEditwebcontent#MENU_SCHEDULE" value1="Schedule" />
+
+				<execute function="AssertNotChecked" locator1="CPWebcontentEditwebcontentSchedule#SCHEDULE_EXPIRATION_DATE_NEVER_EXPIRE_CHECKBOX" value1="Never Expire" />
+				<execute function="AssertTextEquals" locator1="CPWebcontentEditwebcontentSchedule#SCHEDULE_EXPIRATION_DATE_FIELD" value1="${expirationDate}" />
+				<execute function="AssertClick" locator1="CPWebcontentEditwebcontentSchedule#MENU_CONTENT" value1="Content" />
+			</then>
+		</if>
+
+		<if>
+			<equals arg1="${expireContent}" arg2="true" />
+			<then>
+				<execute function="AssertTextEquals" locator1="CPWebcontentEditwebcontent#STATUS_LABEL" value1="Expired" />
+				<execute function="AssertClick" locator1="CPWebcontentEditwebcontent#VIEW_HISTORY_BUTTON" value1="View History" />
+
+				<execute function="AssertTextEquals" locator1="CPWebcontentEditwebcontentViewhistory#VERSIONS_TABLE_TITLE" value1="${webContentTitle}" />
+				<execute function="AssertTextEquals" locator1="CPWebcontentEditwebcontentViewhistory#VERSIONS_TABLE_STATUS_EXPIRED" value1="Expired" />
+
+				<if>
+					<isset var="webContentTitleEdit" />
+					<then>
+						<execute function="AssertTextEquals" locator1="CPWebcontentEditwebcontentViewhistory#VERSIONS_TABLE_VERSION_1.1" value1="1.1" />
+					</then>
+				</if>
+			</then>
+		</if>
+
+		<if>
+			<isset var="localizedLanguage" />
+			<then>
+				<execute macro="WebContent#viewTranslationCmdCP">
+					<var name="localizedContent" value="${localizedContent}" />
+					<var name="localizedLanguage" value="${localizedLanguage}" />
+					<var name="localizedTitle" value="${localizedTitle}" />
+					<var name="webContentTitle" value="${webContentTitle}" />
+				</execute>
+			</then>
+		</if>
+	</command>
+
+	<command name="viewCPDraft">
+		<var name="key_webContentTitle" value="${webContentTitle}" />
+
+		<execute function="Click" locator1="CPWebcontent#TOOLBAR_DISPLAY_STYLE_BUTTON" />
+		<execute function="AssertClick" locator1="CPWebcontent#DISPLAY_STYLE_MENULIST_DESCRIPTIVE" value1="Descriptive" />
+		<execute function="AssertElementPresent#pauseAssertVisible" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_THUMBNAIL" />
+		<execute function="AssertClick" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_TITLE" value1="${webContentTitle}" />
+
+		<execute function="AssertTextEquals" locator1="CPWebcontentEditwebcontent#STATUS_LABEL" value1="Draft" />
+		<execute function="AssertTextEquals" locator1="CPWebcontentEditwebcontent#TITLE_FIELD" value1="${webContentTitle}" />
+		<execute function="SelectFrame" locator1="CPWebcontentEditwebcontent#CONTENT_FIELD" />
+		<execute function="AssertTextEquals" locator1="CPWebcontentEditwebcontent#BODY_FIELD" value1="${webContentContent}" />
+
+		<execute function="SelectFrameTop" />
+	</command>
+
+	<command name="viewCPStatus">
+		<var name="key_webContentTitle" value="${webContentTitle}" />
+
+		<if>
+			<equals arg1="${webContentStatus}" arg2="Approved" />
+			<then>
+				<execute function="Click" locator1="CPWebcontent#TOOLBAR_DISPLAY_STYLE_BUTTON" />
+				<execute function="AssertClick" locator1="CPWebcontent#DISPLAY_STYLE_MENULIST_LIST" value1="List" />
+				<execute function="AssertTextEquals" locator1="CPWebcontent#ENTRY_LIST_WORKFLOW_STATUS" value1="Approved" />
+			</then>
+			<else>
+				<execute function="Click" locator1="CPWebcontent#TOOLBAR_DISPLAY_STYLE_BUTTON" />
+				<execute function="AssertClick" locator1="CPWebcontent#DISPLAY_STYLE_MENULIST_DESCRIPTIVE" value1="Descriptive" />
+				<execute function="AssertElementPresent#pauseAssertVisible" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_THUMBNAIL" />
+				<execute function="AssertTextEquals" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_WORKFLOW_STATUS" value1="${webContentStatus}" />
+				<execute function="AssertClick" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_TITLE" value1="${webContentTitle}" />
+
+				<execute function="AssertTextEquals" locator1="CPWebcontentAddwebcontent#TITLE_FIELD" value1="${webContentTitle}" />
+				<execute function="SelectFrame" locator1="CPWebcontentAddwebcontent#CONTENT_FIELD" />
+				<execute function="AssertTextEquals" locator1="CPWebcontentAddwebcontent#BODY_FIELD" value1="${webContentContent}" />
+
+				<execute function="SelectFrameTop" />
+			</else>
+		</if>
+	</command>
+
+	<command name="viewCPUserEdit">
+		<var name="key_userFirstLast" value="${userFirstLast}" />
+		<var name="key_webContentTitle" value="${webContentTitle}" />
+
+		<execute function="Click" locator1="CPWebcontent#TOOLBAR_DISPLAY_STYLE_BUTTON" />
+		<execute function="AssertClick" locator1="CPWebcontent#DISPLAY_STYLE_MENULIST_DESCRIPTIVE" value1="Descriptive" />
+		<execute function="AssertElementPresent#pauseAssertVisible" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_THUMBNAIL" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_TITLE" value1="${webContentTitle}" />
+		<execute function="AssertTextEquals" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_VERSION" value1="1.1" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_LAST_UPDATED" value1="${userFirstLast}" />
+	</command>
+
+	<command name="viewCPWithStructure">
+		<var name="key_webContentTitle" value="${webContentTitle}" />
+
+		<execute function="Click" locator1="CPWebcontent#TOOLBAR_DISPLAY_STYLE_BUTTON" />
+		<execute function="AssertClick" locator1="CPWebcontent#DISPLAY_STYLE_MENULIST_DESCRIPTIVE" value1="Descriptive" />
+		<execute function="AssertElementPresent#pauseAssertVisible" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_THUMBNAIL" />
+		<execute function="AssertClick" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_TITLE" value1="${webContentTitle}" />
+
+		<execute function="AssertTextEquals" locator1="CPWebcontentEditwebcontent#TITLE_FIELD" value1="${webContentTitle}" />
+	</command>
+
+	<command name="viewDefaultCP">
+		<var name="key_webContentTitle" value="${webContentTitle}" />
+
+		<execute function="Click" locator1="CPWebcontent#TOOLBAR_DISPLAY_STYLE_BUTTON" />
+		<execute function="AssertClick" locator1="CPWebcontent#DISPLAY_STYLE_MENULIST_DESCRIPTIVE" value1="Descriptive" />
+		<execute function="AssertTextEquals" locator1="CPWebcontent#INFO_MESSAGE" value1="No web content was found" />
+		<execute function="AssertElementNotPresent" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_THUMBNAIL" />
+		<execute function="AssertElementNotPresent" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_TITLE" />
+	</command>
+
+	<command name="viewDefaultPGViaWCD">
+		<execute function="AssertTextEquals" locator1="PGWebcontentdisplay#INFO_MESSAGE" value1="Select existing web content or add some web content to be displayed in this portlet." />
+	</command>
+
+	<command name="viewDisplayPagePGViaAP">
+		<var name="key_assetTitle" value="${assetTitle}" />
+
+		<execute function="AssertClick#assertPartialTextClickAtAndWait" locator1="PGAssetpublisher#DISPLAY_ICON_EDIT" value1="Edit" />
+
+		<execute function="SelectFrame" locator1="PGAssetpublisherAddnewwebcontent#WEB_CONTENT_IFRAME" />
+		<execute function="AssertClick" locator1="PGAssetpublisherAddnewwebcontent#MENU_DISPLAY_PAGE" value1="Display Page" />
+
+		<execute function="AssertTextEquals#assertPartialText" locator1="PGAssetpublisherAddnewwebcontentDisplaypage#PUBLIC_DISPLAY_PAGE_ITEM" value1="${displayPageSelection}" />
+
+		<execute function="SelectFrame" value1="relative=top" />
+	</command>
+
+	<command name="viewDraftCP">
+		<var name="key_webContentTitle" value="${webContentTitle}" />
+
+		<execute function="Click" locator1="CPWebcontent#TOOLBAR_DISPLAY_STYLE_BUTTON" />
+		<execute function="AssertClick" locator1="CPWebcontent#DISPLAY_STYLE_MENULIST_DESCRIPTIVE" value1="Descriptive" />
+		<execute function="AssertElementPresent#pauseAssertVisible" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_THUMBNAIL" />
+		<execute function="AssertTextEquals" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_WORKFLOW_STATUS" value1="Draft" />
+		<execute function="AssertClick" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_TITLE" value1="${webContentTitle}" />
+
+		<execute function="AssertTextEquals" locator1="CPWebcontentAddwebcontent#WORKFLOW_STATUS" value1="Draft" />
+		<execute function="AssertTextEquals" locator1="CPWebcontentAddwebcontent#TITLE_FIELD" value1="${webContentTitle}" />
+		<execute function="SelectFrame" locator1="CPWebcontentAddwebcontent#CONTENT_FIELD" />
+		<execute function="AssertTextEquals" locator1="CPWebcontentAddwebcontent#BODY_FIELD" value1="${webContentContent}" />
+		<execute function="SelectFrameTop" />
+	</command>
+
+	<command name="viewEditWCViaWCD">
+		<execute function="AssertElementPresent" locator1="PGWebcontentdisplay#WEB_CONTENT_CONTENT" value1="${webContentContent}" />
+		<execute function="AssertElementPresent" locator1="PGWebcontentdisplay#EDIT_WEB_CONTENT" />
+	</command>
+
+	<command name="viewLinkedAssetPGViaAP">
+		<var name="key_assetTitle" value="${webContentTitle}" />
+
+		<execute function="AssertClick#assertPartialTextClickAtAndWait" locator1="PGAssetpublisher#ASSET_ABSTRACT_VIEW" value1="${webContentTitle}" />
+
+		<execute function="AssertTextEquals" locator1="PGAssetpublisherAsset#ASSET_TITLE" value1="${webContentTitle}" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="PGAssetpublisherAsset#ASSET_CONTENT" value1="${webContentContent}" />
+	</command>
+
+	<command name="viewLinkToPagePGViaWCD">
+		<execute function="AssertClick" locator1="PGWebcontentdisplay#WEB_CONTENT_LINK_TO_PAGE" value1="Link to Page" />
+
+		<execute macro="Page#viewChildPG">
+			<var name="childPageName" value="${childPageName}" />
+		</execute>
+	</command>
+
+	<command name="viewNoContentAsGuestPGViaWCD">
+		<var name="key_portletName" value="Web Content Display" />
+
+		<execute function="AssertTextNotPresent" locator1="PGWebcontentdisplay#ERROR_MESSAGE" value1="The selected web content no longer exists." />
+		<execute function="AssertElementNotPresent" locator1="PGWebcontentdisplay#PORTLET_BODY" />
+	</command>
+
+	<command name="viewNoContentPGViaWCD">
+		<execute function="AssertTextEquals" locator1="PGWebcontentdisplay#ERROR_MESSAGE" value1="The selected web content no longer exists." />
+	</command>
+
+	<command name="viewNoConversionLinksPGViaAP">
+		<var name="key_assetTitle" value="${webContentTitle}" />
+
+		<execute macro="WebContent#viewPGViaAP">
+			<var name="key_assetTitle" value="${webContentTitle}" />
+		</execute>
+
+		<for list="${documentTypes}" param="documentType">
+			<var name="documentTypeUppercase" value="${documentType?uppercase()}" />
+
+			<execute function="AssertElementNotPresent" locator1="PGAssetpublisherAsset#DOCUMENT_CONVERSION_${documentTypeUppercase}" />
+		</for>
+	</command>
+
+	<command name="viewNoEditWCViaWCD">
+		<execute function="AssertElementPresent" locator1="PGWebcontentdisplay#WEB_CONTENT_CONTENT" value1="${webContentContent}" />
+		<execute function="AssertElementNotPresent" locator1="PGWebcontentdisplay#EDIT_WEB_CONTENT" />
+	</command>
+
+	<command name="viewPGViaAP">
+		<var name="key_assetTitle" value="${webContentTitle}" />
+
+		<execute function="AssertTextEquals" locator1="PGAssetpublisher#ASSET_ABSTRACT_TITLE" value1="${webContentTitle}" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="PGAssetpublisher#ASSET_ABSTRACT_DESCRIPTION" value1="${webContentContent}" />
+
+		<if>
+			<isset var="${author}" />
+			<then>
+				<var name="key_author" value="${author}" />
+
+				<execute function="AssertTextEquals#assertPartialText" locator1="PGAssetpublisher#METADATA_AUTHOR" value1="${author}" />
+			</then>
+		</if>
+
+		<execute function="AssertClick" locator1="PGAssetpublisher#ASSET_ABSTRACT_TITLE" value1="${webContentTitle}" />
+
+		<execute function="AssertTextEquals" locator1="PGAssetpublisherAsset#ASSET_TITLE" value1="${webContentTitle}" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="PGAssetpublisherAsset#ASSET_CONTENT" value1="${webContentContent}" />
+	</command>
+
+	<command name="viewPGViaWCD">
+		<if>
+			<equals arg1="${draft}" arg2="true" />
+			<then>
+				<execute function="AssertTextEquals" locator1="PGWebcontentdisplay#ALERT_MESSAGE" value1="${webContentTitle} is not approved." />
+			</then>
+			<elseif>
+				<equals arg1="${expiredContent}" arg2="true" />
+				<then>
+					<execute function="AssertTextEquals" locator1="PGWebcontentdisplay#ALERT_MESSAGE" value1="${webContentTitle} is expired." />
+				</then>
+			</elseif>
+			<else>
+				<execute function="AssertTextEquals" locator1="PGWebcontentdisplay#WEB_CONTENT_CONTENT" value1="${webContentContent}" />
+			</else>
+		</if>
+
+		<if>
+			<equals arg1="${availableLanguages}" arg2="true" />
+			<then>
+				<execute function="Click" locator1="PGWebcontentdisplay#EDIT_WEB_CONTENT" />
+
+				<execute function="SelectFrame" locator1="PGWebcontentdisplayEditwebcontent#WEB_CONTENT_IFRAME" />
+				<execute function="Click" locator1="PGWebcontentdisplayEditwebcontent#ADD_TRANSLATION_MENULIST" />
+
+				<var name="key_webContentTranslationLanguage" value="${webContentTranslationLanguage1}" />
+
+				<execute function="AssertTextEquals" locator1="PGWebcontentdisplayEditwebcontent#ADD_TRANSLATION_MENULIST_LANGUAGE" value1="${webContentTranslationLanguage1}" />
+
+				<var name="key_webContentTranslationLanguage" value="${webContentTranslationLanguage2}" />
+
+				<execute function="AssertTextNotPresent" locator1="PGWebcontentdisplayEditwebcontent#ADD_TRANSLATION_MENULIST_LANGUAGE" value1="${webContentTranslationLanguage2}" />
+			</then>
+		</if>
+	</command>
+
+	<command name="viewSelectedTemplateCP">
+		<execute macro="WebContent#gotoCP">
+			<var name="key_webContentTitle" value="${webContentTitle}" />
+		</execute>
+
+		<execute function="AssertTextEquals" locator1="CPWebcontentEditwebcontent#SELECTED_TEMPLATE" value1="${templateName}" />
+	</command>
+
+	<command name="viewSelectNoPGViaWCD">
+		<execute function="AssertClick" locator1="PGWebcontentdisplay#OPTIONS_ICON" value1="Options" />
+		<execute function="AssertClick" locator1="PGWebcontentdisplay#OPTIONS_MENULIST_CONFIGURATION" value1="Configuration" />
+
+		<execute function="SelectFrame" locator1="PGWebcontentdisplayConfiguration#CONFIGURATION_IFRAME" />
+
+		<var name="key_webContentTitle" value="${webContentTitle}" />
+
+		<execute function="AssertElementNotPresent" locator1="PGWebcontentdisplayConfiguration#WEB_CONTENT_TABLE_TITLE" />
+	</command>
+
+	<command name="viewSpecificVersionHistoryCP">
+		<var name="key_webContentTitle" value="${webContentTitle}" />
+
+		<execute function="AssertTextEquals" locator1="CPWebcontentEditwebcontent#VIEW_HISTORY_VERSION_TITLE" value1="${webContentTitle}" />
+		<execute function="AssertTextEquals" locator1="CPWebcontentEditwebcontent#VIEW_HISTORY_VERSION_STATUS" value1="${webContentStatus}" />
+	</command>
+
+	<command name="viewStructureViaAddMenuCP">
+		<var name="key_structureName" value="${structureName}" />
+
+		<execute function="AssertClick" locator1="CPWebcontent#TOOLBAR_ADD" value1="Add" />
+		<execute function="AssertElementPresent" locator1="CPWebcontent#ADD_MENULIST_STRUCTURE_NAME" />
+		<execute function="AssertTextEquals" locator1="CPWebcontent#ADD_MENULIST_STRUCTURE_NAME" value1="${structureName}" />
+	</command>
+
+	<command name="viewStructureWithWorkflowCP">
+		<var name="key_webContentTitle" value="${webContentTitle}" />
+
+		<execute function="Click" locator1="CPWebcontent#TOOLBAR_DISPLAY_STYLE_BUTTON" />
+		<execute function="AssertClick" locator1="CPWebcontent#DISPLAY_STYLE_MENULIST_DESCRIPTIVE" value1="Descriptive" />
+		<execute function="AssertElementPresent#pauseAssertVisible" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_THUMBNAIL" />
+		<execute function="AssertTextEquals" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_WORKFLOW_STATUS" value1="Pending" />
+		<execute function="AssertClick" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_TITLE" value1="${webContentTitle}" />
+
+		<execute function="AssertTextEquals" locator1="CPWebcontentAddwebcontent#WORKFLOW_STATUS" value1="Pending (${workflowTask})" />
+		<execute function="AssertTextEquals" locator1="CPWebcontentEditwebcontent#TITLE_FIELD" value1="${webContentTitle}" />
+	</command>
+
+	<command name="viewTextFieldWidth">
+		<var name="key_structureName" value="${structureName}" />
+
+		<execute function="AssertClick" locator1="CPWebcontent#TOOLBAR_ADD" value1="Add"  />
+		<execute function="AssertClick" locator1="CPWebcontent#ADD_MENULIST_STRUCTURE_NAME" value1="${structureName}" />
+
+		<var name="key_widthSize" value="${widthSize}" />
+
+		<execute function="AssertElementPresent" locator1="CPWebcontentAddwebcontent#TEXT_FIELD_WIDTH" value1="${widthSize}" />
+	</command>
+
+	<command name="viewTranslationCmdCP">
+		<var name="key_webContentTitle" value="${webContentTitle}" />
+
+		<execute function="AssertTextEquals" locator1="CPWebcontentEditwebcontent#TITLE_FIELD" value1="${webContentTitle}" />
+		<execute function="AssertTextEquals" locator1="CPWebcontentEditwebcontent#AVAILABLE_TRANSLATIONS_LABEL" value1="Available Translations:" />
+
+		<var name="key_localizedLanguage" value="${localizedLanguage}" />
+
+		<execute function="AssertClick" locator1="CPWebcontentEditwebcontent#AVAILABLE_TRANSLATIONS_LINK" value1="${localizedLanguage}" />
+
+		<execute function="AssertTextEquals" locator1="CPWebcontentEditwebcontent#TITLE_FIELD" value1="${localizedTitle}" />
+		<execute function="SelectFrame" locator1="CPWebcontentEditwebcontent#CONTENT_FIELD" />
+		<execute function="AssertTextEquals" locator1="CPWebcontentEditwebcontent#BODY_FIELD" value1="${localizedContent}" />
+	</command>
+
+	<command name="viewTranslationPGViaWCD">
+		<execute function="Click" locator1="PGWebcontentdisplay#EDIT_WEB_CONTENT" />
+
+		<execute function="SelectFrame" locator1="PGWebcontentdisplayEditwebcontent#WEB_CONTENT_EDIT_IFRAME" />
+		<execute function="AssertTextEquals" locator1="PGWebcontentdisplayEditwebcontent#STRUCTURE_NAME" value1="${structureLocalizationName}" />
+		<execute function="AssertTextEquals" locator1="PGWebcontentdisplayEditwebcontent#TEMPLATE_NAME" value1="${templateLocalizationName}" />
+
+		<if>
+			<isset var="webContentTranslationLanguage" />
+			<then>
+				<var name="key_webContentTranslationLanguage" value="${webContentTranslationLanguage}" />
+
+				<execute function="AssertClick" locator1="PGWebcontentdisplayEditwebcontent#AVAILABLE_TRANSLATION" value1="${webContentTranslationLanguage}" />
+
+				<if>
+					<isset var="localizedTitle" />
+					<then>
+						<execute function="AssertTextEquals" locator1="PGWebcontentdisplayEditwebcontent#TITLE_FIELD" value1="${localizedTitle}" />
+					</then>
+				</if>
+
+				<if>
+					<isset var="localizedContent" />
+					<then>
+						<execute function="AssertTextEquals" locator1="PGWebcontentdisplayEditwebcontent#CONTENT_FIELD" value1="${localizedContent}" />
+					</then>
+				</if>
+
+				<if>
+					<isset var="localizedText" />
+					<then>
+						<var name="key_fieldName" value="${localizedText}" />
+
+						<execute function="AssertTextEquals" locator1="PGWebcontentdisplayEditwebcontent#TEXT_FIELD" value1="${localizedText}" />
+					</then>
+				</if>
+
+				<if>
+					<isset var="localizedAbstractDescription" />
+					<then>
+						<execute function="AssertTextEquals" locator1="PGWebcontentdisplayEditwebcontent#SUMMARY_FIELD" value1="${localizedAbstractDescription}" />
+					</then>
+				</if>
+			</then>
+		</if>
+
+		<execute function="SelectFrame" value1="relative=top" />
+	</command>
+
+	<command name="viewUnlocalizableTextBox">
+		<var name="key_webContentTitle" value="${webContentTitle}" />
+
+		<execute macro="WebContent#gotoCP">
+			<var name="key_webContentTitle" value="${webContentTitle}" />
+		</execute>
+
+		<var name="key_fieldName" value="Text" />
+
+		<execute function="AssertTextEquals" locator1="CPWebcontentEditwebcontent#TITLE_FIELD" value1="${webContentTitle}" />
+
+		<var name="key_fieldName" value="Text_Box" />
+
+		<execute function="AssertTextEquals" locator1="CPWebcontentEditwebcontent#TEXT_BOX_FIELD" value1="${localizedTextBox}" />
+
+		<var name="key_translationLocale" value="es_ES" />
+
+		<execute function="Click" locator1="CPWebcontentEditwebcontent#TRANSLATION_LOCALE" />
+
+		<execute function="AssertTextEquals" locator1="CPWebcontentEditwebcontent#TITLE_FIELD" value1="${localizedTitle}" />
+
+		<var name="key_fieldName" value="Text" />
+
+		<execute function="AssertTextEquals" locator1="CPWebcontentEditwebcontent#TEXT_FIELD" value1="${localizedText}" />
+
+		<var name="key_fieldName" value="Text_Box" />
+
+		<execute function="AssertTextEquals" locator1="CPWebcontentEditwebcontent#TEXT_BOX_FIELD" value1="${localizedTextBox}" />
+	</command>
+
+	<command name="viewWithWorkflowCP">
+		<var name="key_webContentTitle" value="${webContentTitle}" />
+
+		<execute function="Click" locator1="CPWebcontent#TOOLBAR_DISPLAY_STYLE_BUTTON" />
+		<execute function="AssertClick" locator1="CPWebcontent#DISPLAY_STYLE_MENULIST_DESCRIPTIVE" value1="Descriptive" />
+		<execute function="AssertElementPresent#pauseAssertVisible" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_THUMBNAIL" />
+		<execute function="AssertTextEquals" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_WORKFLOW_STATUS" value1="Pending" />
+		<execute function="AssertClick" locator1="CPWebcontent#ENTRY_DESCRIPTIVE_TITLE" value1="${webContentTitle}" />
+
+		<execute function="AssertTextEquals" locator1="CPWebcontentAddwebcontent#WORKFLOW_STATUS" value1="Pending (${workflowTask})" />
+		<execute function="AssertTextEquals" locator1="CPWebcontentAddwebcontent#TITLE_FIELD" value1="${webContentTitle}" />
+		<execute function="SelectFrame" locator1="CPWebcontentAddwebcontent#CONTENT_FIELD" />
+		<execute function="AssertTextEquals" locator1="CPWebcontentAddwebcontent#BODY_FIELD" value1="${webContentContent}" />
+		<execute function="SelectFrameTop" />
+	</command>
+
+	<command name="viewWithWorkflowPGViaAP">
+		<execute function="AssertTextNotPresent" value1="${webContentTitle}" />
+	</command>
+
+	<command name="viewWithWorkflowPGViaWCD">
+		<execute function="AssertTextEquals" locator1="PGWebcontentdisplay#ALERT_MESSAGE" value1="${webContentTitle} is not approved." />
+		<execute function="AssertClick" locator1="PGWebcontentdisplay#ALERT_MESSAGE_LINK" value1="${webContentTitle} is not approved." />
+
+		<execute function="AssertTextEquals" locator1="PGWebcontentdisplayEditwebcontent#WORKFLOW_STATUS" value1="Pending (${workflowTask})" />
+		<execute function="AssertTextEquals" locator1="PGWebcontentdisplayEditwebcontent#TITLE_FIELD" value1="${webContentTitle}" />
+		<execute function="SelectFrame" locator1="PGWebcontentdisplayEditwebcontent#CONTENT_FIELD" />
+		<execute function="AssertTextEquals" locator1="PGWebcontentdisplayEditwebcontent#BODY_FIELD" value1="${webContentContent}" />
+	</command>
+</definition>

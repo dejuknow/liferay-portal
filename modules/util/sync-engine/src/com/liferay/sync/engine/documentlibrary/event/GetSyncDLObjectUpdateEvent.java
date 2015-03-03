@@ -24,7 +24,6 @@ import com.liferay.sync.engine.service.SyncSiteService;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -62,7 +61,7 @@ public class GetSyncDLObjectUpdateEvent extends BaseEvent {
 		syncSite = SyncSiteService.fetchSyncSite(
 			syncSite.getGroupId(), syncSite.getSyncAccountId());
 
-		if (syncSite.getRemoteSyncTime() == 0) {
+		if (syncSite.getRemoteSyncTime() == -1) {
 			String filePathName = syncSite.getFilePathName();
 
 			SyncFile syncFile = SyncFileService.fetchSyncFile(filePathName);
@@ -77,7 +76,9 @@ public class GetSyncDLObjectUpdateEvent extends BaseEvent {
 			}
 		}
 
-		Map<String, Object> parameters = new HashMap<>();
+		Map<String, Object> parameters = getParameters();
+
+		parameters.clear();
 
 		parameters.put("companyId", syncSite.getCompanyId());
 		parameters.put("lastAccessTime", syncSite.getRemoteSyncTime());

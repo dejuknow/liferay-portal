@@ -38,8 +38,7 @@ import com.liferay.portlet.trash.model.TrashEntry;
 import com.liferay.portlet.trash.service.TrashEntryLocalServiceUtil;
 import com.liferay.portlet.trash.service.TrashEntryServiceUtil;
 import com.liferay.portlet.trash.util.TrashUtil;
-import com.liferay.wiki.configuration.WikiServiceConfiguration;
-import com.liferay.wiki.configuration.WikiServiceConfigurationProvider;
+import com.liferay.wiki.configuration.WikiGroupServiceConfiguration;
 import com.liferay.wiki.constants.WikiWebKeys;
 import com.liferay.wiki.exception.DuplicatePageException;
 import com.liferay.wiki.exception.NoSuchNodeException;
@@ -54,6 +53,7 @@ import com.liferay.wiki.model.WikiPageResource;
 import com.liferay.wiki.service.WikiPageLocalServiceUtil;
 import com.liferay.wiki.service.WikiPageResourceLocalServiceUtil;
 import com.liferay.wiki.service.WikiPageServiceUtil;
+import com.liferay.wiki.web.settings.WikiWebSettingsProvider;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -272,11 +272,14 @@ public class EditPageAction extends PortletAction {
 				page = WikiPageServiceUtil.getPage(nodeId, title, false);
 			}
 			catch (NoSuchPageException nspe2) {
-				WikiServiceConfiguration wikiServiceConfiguration =
-					WikiServiceConfigurationProvider.
-						getWikiServiceConfiguration();
+				WikiWebSettingsProvider wikiWebSettingsProvider =
+					WikiWebSettingsProvider.getWikiWebSettingsProvider();
 
-				if (title.equals(wikiServiceConfiguration.frontPageName()) &&
+				WikiGroupServiceConfiguration wikiGroupServiceConfiguration =
+					wikiWebSettingsProvider.getWikiGroupServiceConfiguration();
+
+				if (title.equals(
+						wikiGroupServiceConfiguration.frontPageName()) &&
 					(version == 0)) {
 
 					ServiceContext serviceContext = new ServiceContext();
@@ -347,13 +350,16 @@ public class EditPageAction extends PortletAction {
 
 			String title = TrashUtil.getOriginalTitle(pageResource.getTitle());
 
-			WikiServiceConfiguration wikiServiceConfiguration =
-				WikiServiceConfigurationProvider.getWikiServiceConfiguration();
+			WikiWebSettingsProvider wikiWebSettingsProvider =
+				WikiWebSettingsProvider.getWikiWebSettingsProvider();
 
-			if (title.equals(wikiServiceConfiguration.frontPageName())) {
+			WikiGroupServiceConfiguration wikiGroupServiceConfiguration =
+				wikiWebSettingsProvider.getWikiGroupServiceConfiguration();
+
+			if (title.equals(wikiGroupServiceConfiguration.frontPageName())) {
 				WikiPage overridePage = WikiPageLocalServiceUtil.fetchPage(
 					pageResource.getNodeId(),
-					wikiServiceConfiguration.frontPageName());
+					wikiGroupServiceConfiguration.frontPageName());
 
 				if (overridePage != null) {
 					overridePageResourcePrimKey =

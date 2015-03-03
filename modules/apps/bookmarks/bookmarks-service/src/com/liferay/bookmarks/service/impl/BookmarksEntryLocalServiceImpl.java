@@ -21,9 +21,10 @@ import com.liferay.bookmarks.model.BookmarksFolder;
 import com.liferay.bookmarks.model.BookmarksFolderConstants;
 import com.liferay.bookmarks.service.base.BookmarksEntryLocalServiceBaseImpl;
 import com.liferay.bookmarks.service.permission.BookmarksPermission;
-import com.liferay.bookmarks.settings.BookmarksSettings;
+import com.liferay.bookmarks.settings.BookmarksGroupServiceSettings;
 import com.liferay.bookmarks.social.BookmarksActivityKeys;
 import com.liferay.bookmarks.util.comparator.EntryModifiedDateComparator;
+import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Property;
@@ -43,6 +44,7 @@ import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.search.QueryConfig;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.Sort;
+import com.liferay.portal.kernel.settings.GroupServiceSettingsProvider;
 import com.liferay.portal.kernel.settings.LocalizedValuesMap;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.ArrayUtil;
@@ -710,13 +712,14 @@ public class BookmarksEntryLocalServiceImpl
 			return;
 		}
 
-		BookmarksSettings bookmarksSettings = BookmarksSettings.getInstance(
-			entry.getGroupId());
+		BookmarksGroupServiceSettings bookmarksGroupServiceSettings =
+			_groupServiceSettingsProvider.getGroupServiceSettings(
+				entry.getGroupId());
 
 		if ((serviceContext.isCommandAdd() &&
-			 !bookmarksSettings.isEmailEntryAddedEnabled()) ||
+			 !bookmarksGroupServiceSettings.isEmailEntryAddedEnabled()) ||
 			(serviceContext.isCommandUpdate() &&
-			 !bookmarksSettings.isEmailEntryUpdatedEnabled())) {
+			 !bookmarksGroupServiceSettings.isEmailEntryUpdatedEnabled())) {
 
 			return;
 		}
@@ -738,22 +741,24 @@ public class BookmarksEntryLocalServiceImpl
 			layoutFullURL + Portal.FRIENDLY_URL_SEPARATOR + "bookmarks" +
 				StringPool.SLASH + entry.getEntryId();
 
-		String fromName = bookmarksSettings.getEmailFromName();
-		String fromAddress = bookmarksSettings.getEmailFromAddress();
+		String fromName = bookmarksGroupServiceSettings.getEmailFromName();
+		String fromAddress =
+			bookmarksGroupServiceSettings.getEmailFromAddress();
 
 		LocalizedValuesMap subjectLocalizedValuesMap = null;
 		LocalizedValuesMap bodyLocalizedValuesMap = null;
 
 		if (serviceContext.isCommandUpdate()) {
 			subjectLocalizedValuesMap =
-				bookmarksSettings.getEmailEntryUpdatedSubject();
+				bookmarksGroupServiceSettings.getEmailEntryUpdatedSubject();
 			bodyLocalizedValuesMap =
-				bookmarksSettings.getEmailEntryUpdatedBody();
+				bookmarksGroupServiceSettings.getEmailEntryUpdatedBody();
 		}
 		else {
 			subjectLocalizedValuesMap =
-				bookmarksSettings.getEmailEntryAddedSubject();
-			bodyLocalizedValuesMap = bookmarksSettings.getEmailEntryAddedBody();
+				bookmarksGroupServiceSettings.getEmailEntryAddedSubject();
+			bodyLocalizedValuesMap =
+				bookmarksGroupServiceSettings.getEmailEntryAddedBody();
 		}
 
 		SubscriptionSender subscriptionSender =
@@ -821,5 +826,11 @@ public class BookmarksEntryLocalServiceImpl
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		BookmarksEntryLocalServiceImpl.class);
+
+	@BeanReference(
+		name = "com.liferay.bookmarks.settings.provider.BookmarksGroupServiceSettingsProvider"
+	)
+	private GroupServiceSettingsProvider<BookmarksGroupServiceSettings>
+		_groupServiceSettingsProvider;
 
 }

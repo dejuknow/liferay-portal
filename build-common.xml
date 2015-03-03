@@ -520,31 +520,6 @@ Please set the environment variable ANT_OPTS to the recommended value of
 		</sequential>
 	</macrodef>
 
-	<macrodef name="baseline-jar-macro">
-		<attribute name="bndRootFile" />
-		<attribute name="file" />
-		<attribute name="outputPath" />
-		<attribute name="rootProjectDir" />
-		<attribute name="sourcePath" />
-
-		<sequential>
-			<manifest-helper />
-
-			<bndexpand propertyfile="@{bndRootFile}" />
-
-			<baseline-jar
-				bndRootFile="@{bndRootFile}"
-				file="@{file}"
-				outputPath="@{outputPath}"
-				sourcePath="@{sourcePath}"
-			>
-				<classpath>
-					<pathelement location="@{sourcePath}/classes" />
-				</classpath>
-			</baseline-jar>
-		</sequential>
-	</macrodef>
-
 	<macrodef name="check-fix-pack-requirements">
 		<attribute default="${app.server.dir}/patching-tool/patches" name="fix.pack.dir" />
 		<attribute name="fix.pack.file.name" />
@@ -700,7 +675,7 @@ Please set the environment variable ANT_OPTS to the recommended value of
 
 					<copy todir="test-classes/@{test.type}" preservelastmodified="true">
 						<fileset dir="test" includes="*.properties,META-INF/*.dtd,META-INF/*.xml" />
-						<fileset dir="test/@{test.type}" includes="**/*.policy,**/*.properties,**/dependencies/**,META-INF/*.xml,WEB-INF/*.xml" />
+						<fileset dir="test/@{test.type}" includes="**/*.bnd,**/*.png,**/*.policy,**/*.properties,**/dependencies/**,META-INF/*.xml,WEB-INF/*.xml" />
 					</copy>
 
 					<javac
@@ -1300,6 +1275,13 @@ rerun your task.
 			<if>
 				<available file="test/${current.test.dir}" type="dir" />
 				<then>
+					<if>
+						<equals arg1="@{test.type}" arg2="integration" />
+						<then>
+							<delete dir="${liferay.home}/osgi/state" />
+						</then>
+					</if>
+
 					<junit-cmd
 						forkmode="@{junit.forkmode}"
 						test.type="@{test.type}"
@@ -1533,16 +1515,6 @@ rerun your task.
 		<propertycopy from="TEST_CLASS_GROUP_${test.class.group.index}" name="test.classes" />
 
 		<test-cmd
-			junit.forkmode="once"
-			test.includes="${test.classes}"
-			test.type="integration"
-		/>
-
-		<report-test-coverage
-			test.type="integration"
-		/>
-
-		<test-cmd
 			junit.forkmode="perTest"
 			test.includes="${test.classes}"
 			test.type="unit"
@@ -1550,6 +1522,16 @@ rerun your task.
 
 		<report-test-coverage
 			test.type="unit"
+		/>
+
+		<test-cmd
+			junit.forkmode="once"
+			test.includes="${test.classes}"
+			test.type="integration"
+		/>
+
+		<report-test-coverage
+			test.type="integration"
 		/>
 	</target>
 

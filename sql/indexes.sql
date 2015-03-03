@@ -632,6 +632,7 @@ create unique index IX_4F973EFE on SocialRequest (uuid_, groupId);
 
 create index IX_786D171A on Subscription (companyId, classNameId, classPK);
 create unique index IX_2E1A92D4 on Subscription (companyId, userId, classNameId, classPK);
+create index IX_1290B81 on Subscription (groupId, userId);
 create index IX_E8F34171 on Subscription (userId, classNameId);
 
 create index IX_FFCBB747 on SystemEvent (groupId, classNameId, classPK, type_);
@@ -639,6 +640,7 @@ create index IX_A19C89FF on SystemEvent (groupId, systemEventSetKey);
 
 create unique index IX_143DC786 on Team (groupId, name);
 
+create index IX_1E8DFB2E on Ticket (classNameId, classPK, type_);
 create index IX_B2468446 on Ticket (key_);
 
 create unique index IX_B35F73D5 on TrashEntry (classNameId, classPK);

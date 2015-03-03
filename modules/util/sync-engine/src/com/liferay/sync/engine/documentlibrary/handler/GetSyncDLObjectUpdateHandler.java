@@ -21,13 +21,15 @@ import com.liferay.sync.engine.documentlibrary.event.Event;
 import com.liferay.sync.engine.documentlibrary.model.SyncDLObjectUpdate;
 import com.liferay.sync.engine.documentlibrary.util.FileEventUtil;
 import com.liferay.sync.engine.filesystem.Watcher;
-import com.liferay.sync.engine.filesystem.WatcherRegistry;
+import com.liferay.sync.engine.filesystem.util.WatcherRegistry;
 import com.liferay.sync.engine.model.SyncFile;
 import com.liferay.sync.engine.model.SyncSite;
 import com.liferay.sync.engine.service.SyncFileService;
 import com.liferay.sync.engine.service.SyncSiteService;
 import com.liferay.sync.engine.util.FileUtil;
 import com.liferay.sync.engine.util.IODeltaUtil;
+import com.liferay.sync.engine.util.OSDetector;
+import com.liferay.sync.engine.util.SyncEngineUtil;
 
 import java.io.IOException;
 
@@ -43,6 +45,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.io.FileUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,13 +67,38 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 		SyncDLObjectUpdate syncDLObjectUpdate = objectMapper.readValue(
 			response, new TypeReference<SyncDLObjectUpdate>() {});
 
+		boolean firedProcessingState = false;
+		long start = System.currentTimeMillis();
+
 		for (SyncFile targetSyncFile : syncDLObjectUpdate.getSyncDLObjects()) {
 			processSyncFile(targetSyncFile);
+
+			if (!firedProcessingState &&
+				((System.currentTimeMillis() - start) > 1000)) {
+
+				SyncEngineUtil.fireSyncEngineStateChanged(
+					getSyncAccountId(),
+					SyncEngineUtil.SYNC_ENGINE_STATE_PROCESSING);
+
+				firedProcessingState = true;
+			}
+		}
+
+		if (firedProcessingState) {
+			SyncEngineUtil.fireSyncEngineStateChanged(
+				getSyncAccountId(), SyncEngineUtil.SYNC_ENGINE_STATE_PROCESSED);
 		}
 
 		if (getParameterValue("parentFolderId") == null) {
 			SyncSite syncSite = SyncSiteService.fetchSyncSite(
 				(Long)getParameterValue("repositoryId"), getSyncAccountId());
+
+			if ((syncSite == null) ||
+				((Long)getParameterValue("lastAccessTime")
+					!= syncSite.getRemoteSyncTime())) {
+
+				return;
+			}
 
 			syncSite.setRemoteSyncTime(syncDLObjectUpdate.getLastAccessTime());
 
@@ -106,7 +135,7 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 		else {
 			SyncFileService.update(syncFile);
 
-			downloadFile(syncFile, null, false);
+			downloadFile(syncFile, null, 0, false);
 		}
 	}
 
@@ -125,6 +154,18 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 		Path sourceFilePath = Paths.get(sourceSyncFile.getFilePathName());
 
 		if (Files.notExists(sourceFilePath)) {
+			return;
+		}
+
+		if (sourceSyncFile.isFile()) {
+			Files.deleteIfExists(sourceFilePath);
+
+			return;
+		}
+
+		if (!OSDetector.isLinux()) {
+			FileUtils.deleteDirectory(sourceFilePath.toFile());
+
 			return;
 		}
 
@@ -169,7 +210,8 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 	}
 
 	protected void downloadFile(
-		SyncFile syncFile, String sourceVersion, boolean patch) {
+		SyncFile syncFile, String sourceVersion, long sourceVersionId,
+		boolean patch) {
 
 		String targetVersion = syncFile.getVersion();
 
@@ -178,7 +220,8 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 			(Double.valueOf(sourceVersion) < Double.valueOf(targetVersion))) {
 
 			FileEventUtil.downloadPatch(
-				sourceVersion, getSyncAccountId(), syncFile, targetVersion);
+				sourceVersionId, getSyncAccountId(), syncFile,
+				syncFile.getVersionId());
 		}
 		else {
 			FileEventUtil.downloadFile(getSyncAccountId(), syncFile);
@@ -220,7 +263,7 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 				targetFilePath, String.valueOf(sourceSyncFile.getSyncFileId()));
 		}
 		else {
-			downloadFile(sourceSyncFile, null, false);
+			downloadFile(sourceSyncFile, null, 0, false);
 		}
 
 		sourceSyncFile.setModifiedTime(targetSyncFile.getModifiedTime());
@@ -370,6 +413,7 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 		throws Exception {
 
 		String sourceVersion = sourceSyncFile.getVersion();
+		long sourceVersionId = sourceSyncFile.getVersionId();
 
 		boolean filePathChanged = processFilePathChange(
 			sourceSyncFile, targetSyncFile);
@@ -387,6 +431,7 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 		sourceSyncFile.setSize(targetSyncFile.getSize());
 		sourceSyncFile.setUiEvent(SyncFile.UI_EVENT_UPDATED_REMOTE);
 		sourceSyncFile.setVersion(targetSyncFile.getVersion());
+		sourceSyncFile.setVersionId(targetSyncFile.getVersionId());
 
 		SyncFileService.update(sourceSyncFile);
 
@@ -407,14 +452,14 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 					String.valueOf(sourceSyncFile.getSyncFileId()));
 			}
 			else {
-				downloadFile(sourceSyncFile, null, false);
+				downloadFile(sourceSyncFile, null, 0, false);
 			}
 		}
 		else if (targetSyncFile.isFile() &&
 				 FileUtil.isModified(targetSyncFile, filePath)) {
 
 			downloadFile(
-				sourceSyncFile, sourceVersion,
+				sourceSyncFile, sourceVersion, sourceVersionId,
 				!IODeltaUtil.isIgnoredFilePatchingExtension(targetSyncFile));
 		}
 		else {

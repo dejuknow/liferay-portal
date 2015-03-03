@@ -44,7 +44,7 @@ create table DDMStructureVersion (
 	type_ INTEGER
 );
 
-alter table DDMTemplate add sourceClassNameId LONG;
+alter table DDMTemplate add resourceClassNameId LONG;
 alter table DDMTemplate add version VARCHAR(75) null;
 
 update DDMTemplate set version = '1.0';
@@ -79,7 +79,7 @@ create table ExportImportConfiguration (
 	userName VARCHAR(75) null,
 	createDate DATE null,
 	modifiedDate DATE null,
-	name VARCHAR(75) null,
+	name VARCHAR(200) null,
 	description STRING null,
 	type_ INTEGER,
 	settings_ TEXT null,
@@ -127,5 +127,7 @@ insert into Region (regionId, countryId, regionCode, name, active_) values (3300
 
 update Region set regionCode = 'BB' where regionId = 4004 and regionCode = 'BR';
 update Region set name = 'Monza e Brianza', regionCode = 'MB' where regionId = 8060 and regionCode = 'MZ';
+
+alter table Subscription add groupId LONG;
 
 alter table UserNotificationEvent add actionRequired BOOLEAN;

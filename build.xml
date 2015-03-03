@@ -416,7 +416,7 @@
 			<then>
 				<mkdir dir="${app.server.geronimo.dir}/repository/org/apache/geronimo/specs/geronimo-el_2.2_spec/1.0.3" />
 
-				<get
+				<mirrors-get
 					dest="${app.server.geronimo.dir}/repository/org/apache/geronimo/specs/geronimo-el_2.2_spec/1.0.3/geronimo-el_2.2_spec-1.0.3.jar"
 					src="http://repo1.maven.org/maven2/org/apache/geronimo/specs/geronimo-el_2.2_spec/1.0.3/geronimo-el_2.2_spec-1.0.3.jar"
 					verbose="true"
@@ -1253,9 +1253,8 @@ print AdminControl.invoke(appManager, 'startApplication', 'liferay-portal')
 			ant -f modules/core/registry-api/build.xml deploy
 			ant -f modules/core/registry-test/build.xml compile-test
 
-			ant -f modules/build.xml compile
+			ant -f modules/build.xml compile-test
 
-			ant -f modules/apps/bookmarks/bookmarks-test/build.xml compile-test
 			ant -f modules/sdk/ant-arquillian/build.xml clean compile
 			ant -f modules/test/poshi-runner/build.xml clean compile
 

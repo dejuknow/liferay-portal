@@ -10,6 +10,7 @@
 	<classpathentry kind="lib" path="/portal-master/lib/development/mail.jar" />
 	<classpathentry kind="lib" path="/portal-master/lib/development/servlet-api.jar" />
 	<classpathentry kind="lib" path="/portal-master/lib/global/portlet.jar" />
+	<classpathentry kind="lib" path="/portal-master/lib/portal/ant.jar" />
 	<classpathentry kind="lib" path="/portal-master/lib/portal/bnd.jar" />
 	<classpathentry kind="lib" path="/portal-master/lib/portal/commons-logging.jar" />
 	<classpathentry kind="lib" path="/portal-master/lib/portal/log4j.jar" />
@@ -37,6 +38,7 @@
 	<classpathentry kind="lib" path="lib/httpcore.jar" />
 	<classpathentry kind="lib" path="lib/httpmime.jar" />
 	<classpathentry kind="lib" path="lib/java-client.jar" />
+	<classpathentry kind="lib" path="lib/javacpp.jar" />
 	<classpathentry kind="lib" path="lib/jetty-http.jar" />
 	<classpathentry kind="lib" path="lib/jetty-io.jar" />
 	<classpathentry kind="lib" path="lib/jetty-util.jar" />
@@ -46,6 +48,9 @@
 	<classpathentry kind="lib" path="lib/nekohtml.jar" />
 	<classpathentry kind="lib" path="lib/net.jsourcerer.webdriver.JSErrorCollector.jar" />
 	<classpathentry kind="lib" path="lib/netty.jar" />
+	<classpathentry kind="lib" path="lib/opencv.jar" />
+	<classpathentry kind="lib" path="lib/piccolo2d-core.jar" />
+	<classpathentry kind="lib" path="lib/piccolo2d-extras.jar" />
 	<classpathentry kind="lib" path="lib/platform.jar" />
 	<classpathentry kind="lib" path="lib/sac.jar" />
 	<classpathentry kind="lib" path="lib/selenium-api.jar" />
@@ -58,6 +63,9 @@
 	<classpathentry kind="lib" path="lib/selenium-safari-driver.jar" />
 	<classpathentry kind="lib" path="lib/selenium-support.jar" />
 	<classpathentry kind="lib" path="lib/serializer.jar" />
+	<classpathentry kind="lib" path="lib/sikuli-api.jar" />
+	<classpathentry kind="lib" path="lib/sikuli-core.jar" />
+	<classpathentry kind="lib" path="lib/slf4j-api.jar" />
 	<classpathentry kind="lib" path="lib/webbit.jar" />
 	<classpathentry kind="lib" path="lib/xalan.jar" />
 	<classpathentry kind="lib" path="lib/xercesImpl.jar" />

@@ -13,6 +13,7 @@ _sass_cache_*.css
 cobertura.ser
 
 **/.sonar
+**/pmd-reports
 
 /*.ant-*
 /*.ipr

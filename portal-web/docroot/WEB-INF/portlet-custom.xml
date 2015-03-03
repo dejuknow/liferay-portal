@@ -289,6 +289,12 @@
 			<mime-type>text/html</mime-type>
 		</supports>
 		<resource-bundle>com.liferay.portlet.StrutsResourceBundle</resource-bundle>
+		<portlet-preferences>
+			<preference>
+				<name>portletSetupShowBorders</name>
+				<value>false</value>
+			</preference>
+		</portlet-preferences>
 		<security-role-ref>
 			<role-name>guest</role-name>
 		</security-role-ref>
@@ -432,37 +438,6 @@
 		</security-role-ref>
 	</portlet>
 	<portlet>
-		<portlet-name>71</portlet-name>
-		<display-name>Navigation</display-name>
-		<portlet-class>com.liferay.portlet.StrutsPortlet</portlet-class>
-		<init-param>
-			<name>config-template</name>
-			<value>/html/portlet/navigation/configuration.jsp</value>
-		</init-param>
-		<init-param>
-			<name>template-path</name>
-			<value>/html/portlet/navigation/</value>
-		</init-param>
-		<init-param>
-			<name>view-action</name>
-			<value>/navigation/view</value>
-		</init-param>
-		<expiration-cache>0</expiration-cache>
-		<supports>
-			<mime-type>text/html</mime-type>
-		</supports>
-		<resource-bundle>com.liferay.portlet.StrutsResourceBundle</resource-bundle>
-		<security-role-ref>
-			<role-name>guest</role-name>
-		</security-role-ref>
-		<security-role-ref>
-			<role-name>power-user</role-name>
-		</security-role-ref>
-		<security-role-ref>
-			<role-name>user</role-name>
-		</security-role-ref>
-	</portlet>
-	<portlet>
 		<portlet-name>77</portlet-name>
 		<display-name>Journal Content Search</display-name>
 		<portlet-class>com.liferay.portlet.StrutsPortlet</portlet-class>
@@ -477,37 +452,6 @@
 		<init-param>
 			<name>view-action</name>
 			<value>/journal_content_search/view</value>
-		</init-param>
-		<expiration-cache>0</expiration-cache>
-		<supports>
-			<mime-type>text/html</mime-type>
-		</supports>
-		<resource-bundle>com.liferay.portlet.StrutsResourceBundle</resource-bundle>
-		<security-role-ref>
-			<role-name>guest</role-name>
-		</security-role-ref>
-		<security-role-ref>
-			<role-name>power-user</role-name>
-		</security-role-ref>
-		<security-role-ref>
-			<role-name>user</role-name>
-		</security-role-ref>
-	</portlet>
-	<portlet>
-		<portlet-name>82</portlet-name>
-		<display-name>Language</display-name>
-		<portlet-class>com.liferay.portlet.StrutsPortlet</portlet-class>
-		<init-param>
-			<name>config-template</name>
-			<value>/html/portlet/language/configuration.jsp</value>
-		</init-param>
-		<init-param>
-			<name>template-path</name>
-			<value>/html/portlet/language/</value>
-		</init-param>
-		<init-param>
-			<name>view-action</name>
-			<value>/language/view</value>
 		</init-param>
 		<expiration-cache>0</expiration-cache>
 		<supports>
@@ -654,41 +598,6 @@
 		<security-role-ref>
 			<role-name>user</role-name>
 		</security-role-ref>
-	</portlet>
-	<portlet>
-		<portlet-name>101</portlet-name>
-		<display-name>Asset Publisher</display-name>
-		<portlet-class>com.liferay.portlet.assetpublisher.AssetPublisherPortlet</portlet-class>
-		<init-param>
-			<name>config-template</name>
-			<value>/html/portlet/asset_publisher/configuration.jsp</value>
-		</init-param>
-		<init-param>
-			<name>template-path</name>
-			<value>/html/portlet/asset_publisher/</value>
-		</init-param>
-		<init-param>
-			<name>view-template</name>
-			<value>/html/portlet/asset_publisher/view.jsp</value>
-		</init-param>
-		<expiration-cache>0</expiration-cache>
-		<supports>
-			<mime-type>text/html</mime-type>
-		</supports>
-		<resource-bundle>com.liferay.portlet.StrutsResourceBundle</resource-bundle>
-		<security-role-ref>
-			<role-name>guest</role-name>
-		</security-role-ref>
-		<security-role-ref>
-			<role-name>power-user</role-name>
-		</security-role-ref>
-		<security-role-ref>
-			<role-name>user</role-name>
-		</security-role-ref>
-		<supported-public-render-parameter>categoryId</supported-public-render-parameter>
-		<supported-public-render-parameter>resetCur</supported-public-render-parameter>
-		<supported-public-render-parameter>tag</supported-public-render-parameter>
-		<supported-public-render-parameter>tags</supported-public-render-parameter>
 	</portlet>
 	<portlet>
 		<portlet-name>103</portlet-name>
@@ -1693,50 +1602,6 @@
 		</security-role-ref>
 	</portlet>
 	<portlet>
-		<portlet-name>173</portlet-name>
-		<display-name>Summary</display-name>
-		<portlet-class>com.liferay.portlet.assetpublisher.AssetPublisherPortlet</portlet-class>
-		<init-param>
-			<name>config-template</name>
-			<value>/html/portlet/asset_publisher/configuration.jsp</value>
-		</init-param>
-		<init-param>
-			<name>template-path</name>
-			<value>/html/portlet/asset_publisher/</value>
-		</init-param>
-		<init-param>
-			<name>view-template</name>
-			<value>/html/portlet/asset_publisher/view.jsp</value>
-		</init-param>
-		<expiration-cache>0</expiration-cache>
-		<supports>
-			<mime-type>text/html</mime-type>
-		</supports>
-		<resource-bundle>com.liferay.portlet.StrutsResourceBundle</resource-bundle>
-		<portlet-preferences>
-			<preference>
-				<name>assetVocabularyId</name>
-				<value>-1</value>
-			</preference>
-			<preference>
-				<name>displayStyle</name>
-				<value>title-list</value>
-			</preference>
-		</portlet-preferences>
-		<security-role-ref>
-			<role-name>guest</role-name>
-		</security-role-ref>
-		<security-role-ref>
-			<role-name>power-user</role-name>
-		</security-role-ref>
-		<security-role-ref>
-			<role-name>user</role-name>
-		</security-role-ref>
-		<supported-public-render-parameter>categoryId</supported-public-render-parameter>
-		<supported-public-render-parameter>resetCur</supported-public-render-parameter>
-		<supported-public-render-parameter>tag</supported-public-render-parameter>
-	</portlet>
-	<portlet>
 		<portlet-name>174</portlet-name>
 		<display-name>Site Memberships Admin</display-name>
 		<portlet-class>com.liferay.portlet.StrutsPortlet</portlet-class>
@@ -1756,50 +1621,6 @@
 		<security-role-ref>
 			<role-name>administrator</role-name>
 		</security-role-ref>
-	</portlet>
-	<portlet>
-		<portlet-name>175</portlet-name>
-		<display-name>Related Assets</display-name>
-		<portlet-class>com.liferay.portlet.assetpublisher.AssetPublisherPortlet</portlet-class>
-		<init-param>
-			<name>config-template</name>
-			<value>/html/portlet/asset_publisher/configuration.jsp</value>
-		</init-param>
-		<init-param>
-			<name>template-path</name>
-			<value>/html/portlet/asset_publisher/</value>
-		</init-param>
-		<init-param>
-			<name>view-template</name>
-			<value>/html/portlet/asset_publisher/view.jsp</value>
-		</init-param>
-		<expiration-cache>0</expiration-cache>
-		<supports>
-			<mime-type>text/html</mime-type>
-		</supports>
-		<resource-bundle>com.liferay.portlet.StrutsResourceBundle</resource-bundle>
-		<portlet-preferences>
-			<preference>
-				<name>assetLinkBehavior</name>
-				<value>viewInPortlet</value>
-			</preference>
-			<preference>
-				<name>displayStyle</name>
-				<value>title-list</value>
-			</preference>
-		</portlet-preferences>
-		<security-role-ref>
-			<role-name>guest</role-name>
-		</security-role-ref>
-		<security-role-ref>
-			<role-name>power-user</role-name>
-		</security-role-ref>
-		<security-role-ref>
-			<role-name>user</role-name>
-		</security-role-ref>
-		<supported-public-render-parameter>categoryId</supported-public-render-parameter>
-		<supported-public-render-parameter>resetCur</supported-public-render-parameter>
-		<supported-public-render-parameter>tag</supported-public-render-parameter>
 	</portlet>
 	<portlet>
 		<portlet-name>176</portlet-name>
@@ -2166,96 +1987,6 @@
 		<security-role-ref>
 			<role-name>administrator</role-name>
 		</security-role-ref>
-	</portlet>
-	<portlet>
-		<portlet-name>193</portlet-name>
-		<display-name>Most Viewed Assets</display-name>
-		<portlet-class>com.liferay.portlet.assetpublisher.AssetPublisherPortlet</portlet-class>
-		<init-param>
-			<name>config-template</name>
-			<value>/html/portlet/asset_publisher/configuration.jsp</value>
-		</init-param>
-		<init-param>
-			<name>template-path</name>
-			<value>/html/portlet/asset_publisher/</value>
-		</init-param>
-		<init-param>
-			<name>view-template</name>
-			<value>/html/portlet/asset_publisher/view.jsp</value>
-		</init-param>
-		<expiration-cache>0</expiration-cache>
-		<supports>
-			<mime-type>text/html</mime-type>
-		</supports>
-		<resource-bundle>com.liferay.portlet.StrutsResourceBundle</resource-bundle>
-		<portlet-preferences>
-			<preference>
-				<name>orderByColumn1</name>
-				<value>viewCount</value>
-			</preference>
-			<preference>
-				<name>orderByType1</name>
-				<value>DESC</value>
-			</preference>
-		</portlet-preferences>
-		<security-role-ref>
-			<role-name>guest</role-name>
-		</security-role-ref>
-		<security-role-ref>
-			<role-name>power-user</role-name>
-		</security-role-ref>
-		<security-role-ref>
-			<role-name>user</role-name>
-		</security-role-ref>
-		<supported-public-render-parameter>categoryId</supported-public-render-parameter>
-		<supported-public-render-parameter>resetCur</supported-public-render-parameter>
-		<supported-public-render-parameter>tag</supported-public-render-parameter>
-		<supported-public-render-parameter>tags</supported-public-render-parameter>
-	</portlet>
-	<portlet>
-		<portlet-name>194</portlet-name>
-		<display-name>Highest Rated Assets</display-name>
-		<portlet-class>com.liferay.portlet.assetpublisher.AssetPublisherPortlet</portlet-class>
-		<init-param>
-			<name>config-template</name>
-			<value>/html/portlet/asset_publisher/configuration.jsp</value>
-		</init-param>
-		<init-param>
-			<name>template-path</name>
-			<value>/html/portlet/asset_publisher/</value>
-		</init-param>
-		<init-param>
-			<name>view-template</name>
-			<value>/html/portlet/asset_publisher/view.jsp</value>
-		</init-param>
-		<expiration-cache>0</expiration-cache>
-		<supports>
-			<mime-type>text/html</mime-type>
-		</supports>
-		<resource-bundle>com.liferay.portlet.StrutsResourceBundle</resource-bundle>
-		<portlet-preferences>
-			<preference>
-				<name>orderByColumn1</name>
-				<value>ratings</value>
-			</preference>
-			<preference>
-				<name>orderByType1</name>
-				<value>DESC</value>
-			</preference>
-		</portlet-preferences>
-		<security-role-ref>
-			<role-name>guest</role-name>
-		</security-role-ref>
-		<security-role-ref>
-			<role-name>power-user</role-name>
-		</security-role-ref>
-		<security-role-ref>
-			<role-name>user</role-name>
-		</security-role-ref>
-		<supported-public-render-parameter>categoryId</supported-public-render-parameter>
-		<supported-public-render-parameter>resetCur</supported-public-render-parameter>
-		<supported-public-render-parameter>tag</supported-public-render-parameter>
-		<supported-public-render-parameter>tags</supported-public-render-parameter>
 	</portlet>
 	<portlet>
 		<portlet-name>195</portlet-name>

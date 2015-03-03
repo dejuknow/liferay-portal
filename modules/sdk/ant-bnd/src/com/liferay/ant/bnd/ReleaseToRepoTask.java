@@ -39,7 +39,7 @@ public class ReleaseToRepoTask extends BaseBndTask {
 		if ((_file == null) || !_file.exists() || _file.isDirectory()) {
 			if (_file != null) {
 				project.log(
-					"file is either missing or is a directory " +
+					"File is either missing or is a directory " +
 						_file.getAbsolutePath(),
 					Project.MSG_ERR);
 			}

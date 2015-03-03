@@ -16,7 +16,7 @@ package com.liferay.wiki.web.display.context.util;
 
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.wiki.configuration.WikiServiceConfiguration;
+import com.liferay.wiki.configuration.WikiGroupServiceConfiguration;
 import com.liferay.wiki.model.WikiNode;
 
 import javax.portlet.PortletURL;
@@ -29,11 +29,11 @@ public class WikiURLHelper {
 
 	public WikiURLHelper(
 		WikiRequestHelper wikiRequestHelper, RenderResponse renderResponse,
-		WikiServiceConfiguration wikiServiceConfiguration) {
+		WikiGroupServiceConfiguration wikiGroupServiceConfiguration) {
 
 		_wikiRequestHelper = wikiRequestHelper;
 		_renderResponse = renderResponse;
-		_wikiServiceConfiguration = wikiServiceConfiguration;
+		_wikiGroupServiceConfiguration = wikiGroupServiceConfiguration;
 	}
 
 	public PortletURL getBackToNodeURL(WikiNode wikiNode) {
@@ -45,7 +45,7 @@ public class WikiURLHelper {
 
 		frontPageURL.setParameter("struts_action", "/wiki/view");
 		frontPageURL.setParameter(
-			"title", _wikiServiceConfiguration.frontPageName());
+			"title", _wikiGroupServiceConfiguration.frontPageName());
 		frontPageURL.setParameter("tag", StringPool.BLANK);
 
 		return frontPageURL;
@@ -100,7 +100,7 @@ public class WikiURLHelper {
 		viewPageURL.setParameter("struts_action", "/wiki/view");
 		viewPageURL.setParameter("nodeName", wikiNode.getName());
 		viewPageURL.setParameter(
-			"title", _wikiServiceConfiguration.frontPageName());
+			"title", _wikiGroupServiceConfiguration.frontPageName());
 
 		return viewPageURL;
 	}
@@ -129,7 +129,7 @@ public class WikiURLHelper {
 	}
 
 	private final RenderResponse _renderResponse;
+	private final WikiGroupServiceConfiguration _wikiGroupServiceConfiguration;
 	private final WikiRequestHelper _wikiRequestHelper;
-	private final WikiServiceConfiguration _wikiServiceConfiguration;
 
 }
