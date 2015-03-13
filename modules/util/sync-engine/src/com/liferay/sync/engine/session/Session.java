@@ -145,6 +145,44 @@ public class Session {
 			}
 		}
 
+//
+//		try {
+//			KeyStore keyStore = KeyStore.getInstance("pkcs12");
+//
+//			InputStream keyStoreInputStream = new FileInputStream("/Users/deju/Desktop/keystore.pfx"); //get file is
+//			String keyStorePassword = "liferay";
+//
+//			keyStore.load(keyStoreInputStream, keyStorePassword.toCharArray());
+//
+////			KeyStore trustStore = KeyStore.getInstance("pkcs12");
+////			KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+//
+////			InputStream trustStoreInputStream = new FileInputStream("/Users/deju/Desktop/cacerts"); //optional?
+////			String trustStorePassword = "liferay";
+//
+////			trustStore.load(trustStoreInputStream, trustStorePassword.toCharArray());
+//
+//			SSLContextBuilder sslContextBuilder = new SSLContextBuilder();
+//
+//			SSLContext sslContext =
+//				sslContextBuilder
+//					.loadTrustMaterial(
+//						null, new TrustSelfSignedStrategy())
+//					.loadKeyMaterial(
+//						keyStore, keyStorePassword.toCharArray()).build();
+//
+//			SSLConnectionSocketFactory sslConnectionSocketFactory =
+//				new SSLConnectionSocketFactory(
+//					sslContext, new String[] {"TLSv1"}, null,
+//					new DefaultHostnameVerifier());
+//
+//			httpClientBuilder.setSSLSocketFactory(sslConnectionSocketFactory);
+//		}
+//		catch (Exception e) {
+//			System.out.println(e);
+//		}
+
+
 		_httpClient = httpClientBuilder.build();
 
 		_token = null;
