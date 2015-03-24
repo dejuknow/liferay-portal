@@ -127,7 +127,7 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 
 				if ((syncAccount == null) ||
 					(syncAccount.getState() != SyncAccount.STATE_CONNECTED) ||
-						(syncSite == null) || !syncSite.isActive()) {
+					(syncSite == null) || !syncSite.isActive()) {
 
 					doCancel();
 
@@ -162,22 +162,8 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 				response, new TypeReference<SyncDLObjectUpdate>() {});
 		}
 
-		_scheduledFuture.cancel(true);
-
-		long start = System.currentTimeMillis();
-
 		for (SyncFile targetSyncFile : _syncDLObjectUpdate.getSyncDLObjects()) {
 			processSyncFile(targetSyncFile);
-
-			if (!_firedProcessingState &&
-				((System.currentTimeMillis() - start) > 1000)) {
-
-				fireProcessingState();
-			}
-		}
-
-		if (_firedProcessingState) {
-			fireProcessedState();
 		}
 
 		if (getParameterValue("parentFolderId") == null) {
@@ -404,6 +390,11 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 		for (SyncFile dependentSyncFile : dependentSyncFiles) {
 			processSyncFile(dependentSyncFile);
 		}
+	}
+
+	@Override
+	protected void processFinally() {
+		_scheduledFuture.cancel(true);
 	}
 
 	protected void processSyncFile(SyncFile targetSyncFile) {
