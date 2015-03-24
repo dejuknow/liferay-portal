@@ -151,6 +151,15 @@ public class SyncWatchEventProcessor implements Runnable {
 		if (syncFile == null) {
 			syncFile = SyncFileService.fetchSyncFile(
 				FileKeyUtil.getFileKey(targetFilePath));
+
+			if ((syncFile != null) &&
+				((syncFile.getRepositoryId() !=
+					parentSyncFile.getRepositoryId()) ||
+				 (syncFile.getSyncAccountId() !=
+					 parentSyncFile.getSyncAccountId()))) {
+
+				syncFile = null;
+			}
 		}
 
 		if (syncFile == null) {
@@ -278,6 +287,15 @@ public class SyncWatchEventProcessor implements Runnable {
 		if (syncFile == null) {
 			syncFile = SyncFileService.fetchSyncFile(
 				FileKeyUtil.getFileKey(targetFilePath));
+
+			if ((syncFile != null) &&
+				((syncFile.getRepositoryId() !=
+					parentSyncFile.getRepositoryId()) ||
+				 (syncFile.getSyncAccountId() !=
+					 parentSyncFile.getSyncAccountId()))) {
+
+				syncFile = null;
+			}
 		}
 
 		if (syncFile == null) {
