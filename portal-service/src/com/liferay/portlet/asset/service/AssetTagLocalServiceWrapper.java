@@ -118,9 +118,10 @@ public class AssetTagLocalServiceWrapper implements AssetTagLocalService,
 	}
 
 	@Override
-	public void checkTags(long userId, long groupId, java.lang.String[] names)
+	public java.util.List<com.liferay.portlet.asset.model.AssetTag> checkTags(
+		long userId, long groupId, java.lang.String[] names)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		_assetTagLocalService.checkTags(userId, groupId, names);
+		return _assetTagLocalService.checkTags(userId, groupId, names);
 	}
 
 	@Override
@@ -311,6 +312,12 @@ public class AssetTagLocalServiceWrapper implements AssetTagLocalService,
 	}
 
 	@Override
+	public com.liferay.portlet.asset.model.AssetTag fetchTag(long groupId,
+		java.lang.String name) {
+		return _assetTagLocalService.fetchTag(groupId, name);
+	}
+
+	@Override
 	public com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
 		return _assetTagLocalService.getActionableDynamicQuery();
 	}
@@ -467,20 +474,17 @@ public class AssetTagLocalServiceWrapper implements AssetTagLocalService,
 	}
 
 	@Override
-	public long[] getTagIds(long groupId, java.lang.String[] names)
-		throws com.liferay.portal.kernel.exception.PortalException {
+	public long[] getTagIds(long groupId, java.lang.String[] names) {
 		return _assetTagLocalService.getTagIds(groupId, names);
 	}
 
 	@Override
-	public long[] getTagIds(long[] groupIds, java.lang.String name)
-		throws com.liferay.portal.kernel.exception.PortalException {
+	public long[] getTagIds(long[] groupIds, java.lang.String name) {
 		return _assetTagLocalService.getTagIds(groupIds, name);
 	}
 
 	@Override
-	public long[] getTagIds(long[] groupIds, java.lang.String[] names)
-		throws com.liferay.portal.kernel.exception.PortalException {
+	public long[] getTagIds(long[] groupIds, java.lang.String[] names) {
 		return _assetTagLocalService.getTagIds(groupIds, names);
 	}
 
@@ -547,8 +551,7 @@ public class AssetTagLocalServiceWrapper implements AssetTagLocalService,
 	}
 
 	@Override
-	public boolean hasTag(long groupId, java.lang.String name)
-		throws com.liferay.portal.kernel.exception.PortalException {
+	public boolean hasTag(long groupId, java.lang.String name) {
 		return _assetTagLocalService.hasTag(groupId, name);
 	}
 

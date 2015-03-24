@@ -181,6 +181,8 @@ public class EditPublishConfigurationAction
 		SessionMessages.add(
 			actionRequest, portletId + "description", description);
 
+		long groupId = ParamUtil.getLong(actionRequest, "groupId");
+
 		int exportImportConfigurationType =
 			ExportImportConfigurationConstants.TYPE_PUBLISH_LAYOUT_REMOTE;
 
@@ -191,8 +193,6 @@ public class EditPublishConfigurationAction
 			exportImportConfigurationType =
 				ExportImportConfigurationConstants.TYPE_PUBLISH_LAYOUT_LOCAL;
 		}
-
-		long groupId = ParamUtil.getLong(actionRequest, "groupId");
 
 		Map<String, Serializable> settingsMap =
 			ExportImportConfigurationSettingsMapFactory.buildSettingsMap(

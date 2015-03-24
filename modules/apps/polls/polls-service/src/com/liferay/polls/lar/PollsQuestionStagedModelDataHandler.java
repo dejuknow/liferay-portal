@@ -21,9 +21,9 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.lar.BaseStagedModelDataHandler;
 import com.liferay.portal.kernel.lar.ExportImportPathUtil;
 import com.liferay.portal.kernel.lar.PortletDataContext;
+import com.liferay.portal.kernel.lar.StagedModelDataHandler;
 import com.liferay.portal.kernel.lar.StagedModelModifiedDateComparator;
 import com.liferay.portal.kernel.util.CalendarFactoryUtil;
-import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.service.ServiceContext;
 
@@ -32,10 +32,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.osgi.service.component.annotations.Component;
+
 /**
  * @author Shinn Lok
  * @author Mate Thurzo
  */
+@Component(immediate = true, service = StagedModelDataHandler.class)
 public class PollsQuestionStagedModelDataHandler
 	extends BaseStagedModelDataHandler<PollsQuestion> {
 
@@ -55,27 +58,21 @@ public class PollsQuestionStagedModelDataHandler
 	}
 
 	@Override
-	public PollsQuestion fetchStagedModelByUuidAndCompanyId(
-		String uuid, long companyId) {
-
-		List<PollsQuestion> questions =
-			PollsQuestionLocalServiceUtil.getPollsQuestionsByUuidAndCompanyId(
-				uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-				new StagedModelModifiedDateComparator<PollsQuestion>());
-
-		if (ListUtil.isEmpty(questions)) {
-			return null;
-		}
-
-		return questions.get(0);
-	}
-
-	@Override
 	public PollsQuestion fetchStagedModelByUuidAndGroupId(
 		String uuid, long groupId) {
 
 		return PollsQuestionLocalServiceUtil.fetchPollsQuestionByUuidAndGroupId(
 			uuid, groupId);
+	}
+
+	@Override
+	public List<PollsQuestion> fetchStagedModelsByUuidAndCompanyId(
+		String uuid, long companyId) {
+
+		return PollsQuestionLocalServiceUtil.
+			getPollsQuestionsByUuidAndCompanyId(
+				uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+				new StagedModelModifiedDateComparator<PollsQuestion>());
 	}
 
 	@Override

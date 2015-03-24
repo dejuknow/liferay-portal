@@ -19,6 +19,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>EXPORT_IMPORT_IFRAME</td>
+	<td>//iframe[contains(@id,'configurationIframeDialog')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>EXPORT_FILE_NAME</td>
 	<td>//input[@id='_86_exportFileName']</td>
 	<td></td>
@@ -241,6 +246,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>CONTENT_CHOOSE_CONTENT_CONTENT_CHANGE_LINK</td>
+	<td>//a[@data-portlettitle='${key_contentName}']</td>
+	<td></td>
+</tr>
+<tr>
 	<td>CONTENT_CHOOSE_CONTENT_CONTENT_CHECKBOX</td>
 	<td>//ul[@class='portlet-list']//label[contains(.,'${key_contentName}')]/input</td>
 	<td></td>
@@ -322,6 +332,11 @@
 <tr>
 	<td>PERMISSIONS_CHECKBOX</td>
 	<td>//input[@id='_156_PERMISSIONS']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CONTENT_CHOOSE_CONTENT_CONTENT_CHANGE_LINK</td>
+	<td>//a[@data-portlettitle='${key_contentName}']</td>
 	<td></td>
 </tr>
 </tbody>

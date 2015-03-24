@@ -15,6 +15,7 @@
 package com.liferay.poshi.runner;
 
 import com.liferay.poshi.runner.util.FileUtil;
+import com.liferay.poshi.runner.util.OSDetector;
 import com.liferay.poshi.runner.util.PropsValues;
 import com.liferay.poshi.runner.util.StringUtil;
 
@@ -61,7 +62,9 @@ public class PoshiRunnerContext {
 		return _commandElements.get("action#" + classCommandName);
 	}
 
-	public static int getActionLocatorCount(String classCommandName) {
+	public static int getActionLocatorCount(String classCommandName)
+		throws PoshiRunnerException {
+
 		String commandName =
 			PoshiRunnerGetterUtil.getCommandNameFromClassCommandName(
 				classCommandName);
@@ -82,7 +85,9 @@ public class PoshiRunnerContext {
 		return _commandElements.get("function#" + classCommandName);
 	}
 
-	public static int getFunctionLocatorCount(String className) {
+	public static int getFunctionLocatorCount(String className)
+		throws PoshiRunnerException {
+
 		return _functionLocatorCounts.get(className);
 	}
 
@@ -142,7 +147,7 @@ public class PoshiRunnerContext {
 	}
 
 	private static void _readPathFile(String filePath, String className)
-		throws Exception {
+		throws PoshiRunnerException {
 
 		Element rootElement = PoshiRunnerGetterUtil.getRootElementFromFilePath(
 			filePath);
@@ -168,7 +173,13 @@ public class PoshiRunnerContext {
 
 			if (locatorKey.equals("EXTEND_ACTION_PATH")) {
 				for (String extendFilePath : _filePathsArray) {
-					if (extendFilePath.endsWith("/" + locator + ".path")) {
+					String expectedExtendedPath = "/" + locator + ".path";
+
+					if (OSDetector.isWindows()) {
+						expectedExtendedPath = "\\" + locator + ".path";
+					}
+
+					if (extendFilePath.endsWith(expectedExtendedPath)) {
 						extendFilePath = _BASE_DIR + "/" + extendFilePath;
 
 						_readPathFile(extendFilePath, className);
@@ -184,7 +195,7 @@ public class PoshiRunnerContext {
 		}
 	}
 
-	private static void _readPoshiFiles() throws Exception {
+	private static void _readPoshiFiles() throws PoshiRunnerException {
 		DirectoryScanner directoryScanner = new DirectoryScanner();
 
 		directoryScanner.setBasedir(_BASE_DIR);
@@ -200,6 +211,10 @@ public class PoshiRunnerContext {
 
 		for (String filePath : _filePathsArray) {
 			filePath = _BASE_DIR + "/" + filePath;
+
+			if (OSDetector.isWindows()) {
+				filePath = filePath.replace("/", "\\");
+			}
 
 			String className = PoshiRunnerGetterUtil.getClassNameFromFilePath(
 				filePath);
@@ -275,36 +290,46 @@ public class PoshiRunnerContext {
 		}
 	}
 
-	private static void _readSeleniumFiles() throws Exception {
+	private static void _readSeleniumFiles() throws PoshiRunnerException {
 		String[] fileNames = {
 			"LiferaySelenium.java", "WebDriverToSeleniumBridge.java"
 		};
 
 		for (String fileName : fileNames) {
-			String content = FileUtil.read(
-				"src/com/liferay/poshi/runner/selenium/" + fileName);
+			String filePath = "src/com/liferay/poshi/runner/selenium/";
 
-			Matcher matcher = _pattern.matcher(content);
+			if (OSDetector.isWindows()) {
+				filePath = filePath.replace("/", "\\");
+			}
 
-			while (matcher.find()) {
-				String methodSignature = matcher.group();
+			try {
+				String content = FileUtil.read(filePath + fileName);
 
-				int x = methodSignature.indexOf(" ", 7);
-				int y = methodSignature.indexOf("(");
+				Matcher matcher = _pattern.matcher(content);
 
-				String commandName = methodSignature.substring(x + 1, y);
+				while (matcher.find()) {
+					String methodSignature = matcher.group();
 
-				int parameterCount = 0;
+					int x = methodSignature.indexOf(" ", 7);
+					int y = methodSignature.indexOf("(");
 
-				int z = methodSignature.indexOf(")");
+					String commandName = methodSignature.substring(x + 1, y);
 
-				String parameters = methodSignature.substring(y + 1, z);
+					int parameterCount = 0;
 
-				if (!parameters.equals("")) {
-					parameterCount = StringUtil.count(parameters, ",") + 1;
+					int z = methodSignature.indexOf(")");
+
+					String parameters = methodSignature.substring(y + 1, z);
+
+					if (!parameters.equals("")) {
+						parameterCount = StringUtil.count(parameters, ",") + 1;
+					}
+
+					_seleniumParameterCounts.put(commandName, parameterCount);
 				}
-
-				_seleniumParameterCounts.put(commandName, parameterCount);
+			}
+			catch (Exception e) {
+				throw new PoshiRunnerException(e);
 			}
 		}
 

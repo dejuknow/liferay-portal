@@ -392,20 +392,6 @@
 		<css-class-wrapper>portlet-recent-documents</css-class-wrapper>
 	</portlet>
 	<portlet>
-		<portlet-name>77</portlet-name>
-		<icon>/html/icons/journal_content_search.png</icon>
-		<struts-path>journal_content_search</struts-path>
-		<configuration-action-class>com.liferay.portal.kernel.portlet.DefaultConfigurationAction</configuration-action-class>
-		<preferences-owned-by-group>true</preferences-owned-by-group>
-		<use-default-template>false</use-default-template>
-		<layout-cacheable>true</layout-cacheable>
-		<private-request-attributes>false</private-request-attributes>
-		<private-session-attributes>false</private-session-attributes>
-		<render-weight>50</render-weight>
-		<css-class-wrapper>portlet-journal-content-search</css-class-wrapper>
-		<add-default-resource>true</add-default-resource>
-	</portlet>
-	<portlet>
 		<portlet-name>83</portlet-name>
 		<icon>/html/icons/announcements.png</icon>
 		<struts-path>alerts</struts-path>
@@ -1310,31 +1296,6 @@
 		<private-session-attributes>false</private-session-attributes>
 		<header-portlet-css>/html/portlet/group_statistics/css/main.css</header-portlet-css>
 		<css-class-wrapper>portlet-group-statistics</css-class-wrapper>
-	</portlet>
-	<portlet>
-		<portlet-name>182</portlet-name>
-		<icon>/html/icons/trash.png</icon>
-		<scheduler-entry>
-			<scheduler-event-listener-class>com.liferay.portlet.trash.messaging.CheckEntryMessageListener</scheduler-event-listener-class>
-			<trigger>
-				<simple>
-					<property-key>trash.entry.check.interval</property-key>
-					<time-unit>minute</time-unit>
-				</simple>
-			</trigger>
-		</scheduler-entry>
-		<control-panel-entry-category>site_administration.content</control-panel-entry-category>
-		<control-panel-entry-weight>30.0</control-panel-entry-weight>
-		<control-panel-entry-class>com.liferay.portlet.trash.TrashControlPanelEntry</control-panel-entry-class>
-		<preferences-owned-by-group>true</preferences-owned-by-group>
-		<use-default-template>true</use-default-template>
-		<scopeable>true</scopeable>
-		<private-request-attributes>false</private-request-attributes>
-		<private-session-attributes>false</private-session-attributes>
-		<header-portlet-css>/html/portlet/document_library/css/main.css</header-portlet-css>
-		<header-portlet-css>/html/portlet/message_boards/css/main.css</header-portlet-css>
-		<header-portlet-css>/html/portlet/trash/css/main.css</header-portlet-css>
-		<css-class-wrapper>portlet-trash</css-class-wrapper>
 	</portlet>
 	<portlet>
 		<portlet-name>183</portlet-name>

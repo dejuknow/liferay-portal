@@ -1,7 +1,6 @@
 AUI.add(
 	'liferay-look-and-feel',
 	function(A) {
-		var Browser = Liferay.Browser;
 		var Lang = A.Lang;
 
 		var BACKGROUND_COLOR = 'backgroundColor';
@@ -147,10 +146,6 @@ AUI.add(
 										modal: false,
 										on: {
 											visibleChange: function(event) {
-												if (!event.newVal && Browser.isIe() && Browser.getMajorVersion() == 6) {
-													window.location.reload(true);
-												}
-
 												instance._destroyColorPickers();
 											}
 										}
@@ -181,7 +176,8 @@ AUI.add(
 												doAsUserId: themeDisplay.getDoAsUserIdEncoded(),
 												p_l_id: themeDisplay.getPlid(),
 												p_p_id: 113,
-												p_p_state: EXCLUSIVE
+												p_p_state: EXCLUSIVE,
+												_113_portletResource: instance._portletId
 											},
 											showLoading: false,
 											uri: themeDisplay.getPathMain() + '/portal/render_portlet'

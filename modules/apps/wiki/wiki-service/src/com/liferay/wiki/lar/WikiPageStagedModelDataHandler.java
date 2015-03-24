@@ -20,13 +20,13 @@ import com.liferay.portal.kernel.lar.BaseStagedModelDataHandler;
 import com.liferay.portal.kernel.lar.ExportImportHelperUtil;
 import com.liferay.portal.kernel.lar.ExportImportPathUtil;
 import com.liferay.portal.kernel.lar.PortletDataContext;
+import com.liferay.portal.kernel.lar.StagedModelDataHandler;
 import com.liferay.portal.kernel.lar.StagedModelDataHandlerUtil;
 import com.liferay.portal.kernel.lar.StagedModelModifiedDateComparator;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.trash.TrashHandler;
-import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.StreamUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -44,9 +44,12 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
+import org.osgi.service.component.annotations.Component;
+
 /**
  * @author Zsolt Berentey
  */
+@Component(immediate = true, service = StagedModelDataHandler.class)
 public class WikiPageStagedModelDataHandler
 	extends BaseStagedModelDataHandler<WikiPage> {
 
@@ -65,27 +68,20 @@ public class WikiPageStagedModelDataHandler
 	}
 
 	@Override
-	public WikiPage fetchStagedModelByUuidAndCompanyId(
-		String uuid, long companyId) {
-
-		List<WikiPage> pages =
-			WikiPageLocalServiceUtil.getWikiPagesByUuidAndCompanyId(
-				uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-				new StagedModelModifiedDateComparator<WikiPage>());
-
-		if (ListUtil.isEmpty(pages)) {
-			return null;
-		}
-
-		return pages.get(0);
-	}
-
-	@Override
 	public WikiPage fetchStagedModelByUuidAndGroupId(
 		String uuid, long groupId) {
 
 		return WikiPageLocalServiceUtil.fetchWikiPageByUuidAndGroupId(
 			uuid, groupId);
+	}
+
+	@Override
+	public List<WikiPage> fetchStagedModelsByUuidAndCompanyId(
+		String uuid, long companyId) {
+
+		return WikiPageLocalServiceUtil.getWikiPagesByUuidAndCompanyId(
+			uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+			new StagedModelModifiedDateComparator<WikiPage>());
 	}
 
 	@Override

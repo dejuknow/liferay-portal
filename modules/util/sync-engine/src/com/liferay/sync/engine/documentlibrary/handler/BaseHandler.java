@@ -39,6 +39,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NoHttpResponseException;
 import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.conn.HttpHostConnectException;
@@ -71,7 +72,34 @@ public class BaseHandler implements Handler<Void> {
 			_logger.debug("Handling exception {}", e.toString());
 		}
 
-		if (e instanceof FileNotFoundException) {
+		if (e instanceof ClientProtocolException) {
+			if (e instanceof HttpResponseException) {
+				HttpResponseException hre = (HttpResponseException)e;
+
+				int statusCode = hre.getStatusCode();
+
+				if (statusCode == HttpStatus.SC_UNAUTHORIZED) {
+					syncAccount.setState(SyncAccount.STATE_DISCONNECTED);
+					syncAccount.setUiEvent(
+						SyncAccount.UI_EVENT_AUTHENTICATION_EXCEPTION);
+
+					SyncAccountService.update(syncAccount);
+				}
+			}
+
+			// Retry connection for now. We are periodically receiving
+			// extraneous HttpStatus.SC_UNAUTHORIZED exceptions.
+
+			retryServerConnection(SyncAccount.UI_EVENT_CONNECTION_EXCEPTION);
+		}
+		else if ((e instanceof ConnectTimeoutException) ||
+				 (e instanceof HttpHostConnectException) ||
+				 (e instanceof SocketTimeoutException) ||
+				 (e instanceof UnknownHostException)) {
+
+			retryServerConnection(SyncAccount.UI_EVENT_CONNECTION_EXCEPTION);
+		}
+		else if (e instanceof FileNotFoundException) {
 			SyncFile syncFile = (SyncFile)getParameterValue("syncFile");
 
 			String message = e.getMessage();
@@ -90,31 +118,6 @@ public class BaseHandler implements Handler<Void> {
 			else if (syncFile.getVersion() == null) {
 				SyncFileService.deleteSyncFile(syncFile, false);
 			}
-		}
-		else if ((e instanceof ConnectTimeoutException) ||
-				 (e instanceof HttpHostConnectException) ||
-				 (e instanceof SocketTimeoutException) ||
-				 (e instanceof UnknownHostException)) {
-
-			retryServerConnection(SyncAccount.UI_EVENT_CONNECTION_EXCEPTION);
-		}
-		else if (e instanceof HttpResponseException) {
-			HttpResponseException hre = (HttpResponseException)e;
-
-			int statusCode = hre.getStatusCode();
-
-			if (statusCode == HttpStatus.SC_UNAUTHORIZED) {
-				syncAccount.setState(SyncAccount.STATE_DISCONNECTED);
-				syncAccount.setUiEvent(
-					SyncAccount.UI_EVENT_AUTHENTICATION_EXCEPTION);
-
-				SyncAccountService.update(syncAccount);
-			}
-
-			// Retry connection for now. We are periodically receiving
-			// extraneous HttpStatus.SC_UNAUTHORIZED exceptions.
-
-			retryServerConnection(SyncAccount.UI_EVENT_CONNECTION_EXCEPTION);
 		}
 		else if ((e instanceof NoHttpResponseException) ||
 				 (e instanceof SocketException)) {
@@ -175,6 +178,9 @@ public class BaseHandler implements Handler<Void> {
 		catch (Exception e) {
 			handleException(e);
 		}
+		finally {
+			processFinally();
+		}
 
 		return null;
 	}
@@ -228,6 +234,9 @@ public class BaseHandler implements Handler<Void> {
 
 			SyncSiteService.deleteSyncSite(syncSite.getSyncSiteId());
 		}
+	}
+
+	protected void processFinally() {
 	}
 
 	protected void retryServerConnection(int uiEvent) {

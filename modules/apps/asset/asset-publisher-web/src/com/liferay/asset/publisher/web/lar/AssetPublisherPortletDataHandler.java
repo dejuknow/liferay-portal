@@ -17,6 +17,7 @@ package com.liferay.asset.publisher.web.lar;
 import com.liferay.asset.publisher.web.constants.AssetPublisherPortletKeys;
 import com.liferay.asset.publisher.web.util.AssetPublisherUtil;
 import com.liferay.portal.NoSuchGroupException;
+import com.liferay.portal.NoSuchLayoutException;
 import com.liferay.portal.kernel.lar.DataLevel;
 import com.liferay.portal.kernel.lar.DefaultConfigurationPortletDataHandler;
 import com.liferay.portal.kernel.lar.ExportImportHelperUtil;
@@ -214,7 +215,7 @@ public class AssetPublisherPortletDataHandler
 					  anyAssetTypeClassName.equals(
 						  DLFileEntry.class.getName())) ||
 					 name.equals(
-						"classTypeIdsDLFileEntryAssetRendererFactory")) {
+						 "classTypeIdsDLFileEntryAssetRendererFactory")) {
 
 				ExportImportHelperUtil.updateExportPortletPreferencesClassPKs(
 					portletDataContext, portlet, portletPreferences, name,
@@ -226,7 +227,7 @@ public class AssetPublisherPortletDataHandler
 					  anyAssetTypeClassName.equals(
 						  JournalArticle.class.getName())) ||
 					 name.equals(
-						"classTypeIdsJournalArticleAssetRendererFactory")) {
+						 "classTypeIdsJournalArticleAssetRendererFactory")) {
 
 				ExportImportHelperUtil.updateExportPortletPreferencesClassPKs(
 					portletDataContext, portlet, portletPreferences, name,
@@ -408,7 +409,7 @@ public class AssetPublisherPortletDataHandler
 					  anyAssetTypeClassName.equals(
 						  DLFileEntry.class.getName())) ||
 					 name.equals(
-						"classTypeIdsDLFileEntryAssetRendererFactory")) {
+						 "classTypeIdsDLFileEntryAssetRendererFactory")) {
 
 				ExportImportHelperUtil.updateImportPortletPreferencesClassPKs(
 					portletDataContext, portletPreferences, name,
@@ -420,7 +421,7 @@ public class AssetPublisherPortletDataHandler
 					  anyAssetTypeClassName.equals(
 						  JournalArticle.class.getName())) ||
 					 name.equals(
-						"classTypeIdsJournalArticleAssetRendererFactory")) {
+						 "classTypeIdsJournalArticleAssetRendererFactory")) {
 
 				ExportImportHelperUtil.updateImportPortletPreferencesClassPKs(
 					portletDataContext, portletPreferences, name,
@@ -487,7 +488,16 @@ public class AssetPublisherPortletDataHandler
 				if (_log.isInfoEnabled()) {
 					_log.info(
 						"Ignoring scope " + newValue + " because the " +
-							"referenced group was not found");
+							"referenced group was not found",
+						nsge);
+				}
+			}
+			catch (NoSuchLayoutException nsle) {
+				if (_log.isInfoEnabled()) {
+					_log.info(
+						"Ignoring scope " + newValue + " because the " +
+							"referenced layout was not found",
+						nsle);
 				}
 			}
 			catch (PrincipalException pe) {
@@ -495,7 +505,8 @@ public class AssetPublisherPortletDataHandler
 					_log.info(
 						"Ignoring scope " + newValue + " because the " +
 							"referenced parent group no longer allows " +
-								"sharing content with child sites");
+								"sharing content with child sites",
+						pe);
 				}
 			}
 		}

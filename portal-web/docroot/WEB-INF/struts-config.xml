@@ -718,14 +718,6 @@
 			<forward name="portlet.invitation.view" path="portlet.invitation.view" />
 		</action>
 
-		<!-- Journal Content Search -->
-
-		<action path="/journal_content_search/search" type="com.liferay.portlet.journalcontentsearch.action.SearchAction">
-			<forward name="portlet.journal_content_search.search" path="portlet.journal_content_search.search" />
-		</action>
-
-		<action path="/journal_content_search/view" forward="portlet.journal_content_search.view" />
-
 		<!-- Layout Prototypes -->
 
 		<action path="/layout_prototypes/delete_background_task" type="com.liferay.portlet.backgroundtask.action.DeleteBackgroundTaskAction" />
@@ -882,11 +874,6 @@
 			<forward name="portlet.login.login" path="portlet.login.login" />
 		</action>
 
-		<action path="/login/facebook_connect_oauth" type="com.liferay.portlet.login.action.FacebookConnectAction">
-			<forward name="portlet.login.login" path="portlet.login.login" />
-			<forward name="portlet.login.update_account" path="portlet.login.update_account" />
-		</action>
-
 		<action path="/login/forgot_password" type="com.liferay.portlet.login.action.ForgotPasswordAction">
 			<forward name="portlet.login.forgot_password" path="portlet.login.forgot_password" />
 			<forward name="portlet.login.login" path="portlet.login.login" />
@@ -898,11 +885,6 @@
 		</action>
 
 		<action path="/login/login_redirect" forward="portlet.login.login_redirect" />
-
-		<action path="/login/open_id" type="com.liferay.portlet.login.action.OpenIdAction">
-			<forward name="portlet.login.open_id" path="portlet.login.open_id" />
-			<forward name="portlet.login.login" path="portlet.login.login" />
-		</action>
 
 		<action path="/login/update_account" forward="portlet.login.update_account" />
 

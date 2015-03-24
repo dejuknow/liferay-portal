@@ -1,6 +1,7 @@
 <definition component-name="portal-knowledge-base">
 	<property name="portlet.plugins.includes" value="knowledge-base-portlet" />
 	<property name="testray.main.component.name" value="Knowledge Base" />
+	<property name="web.plugins.includes" value="kaleo-web" />
 
 	<set-up>
 		<execute macro="User#firstLoginPG" />
@@ -91,18 +92,11 @@
 
 		<execute macro="KBArticle#addCP">
 			<var name="kbArticleContent" value="Knowledge Base Article Content" />
-			<var name="kbArticleSection" value="Database" />
 			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
 		</execute>
 
 		<execute macro="Page#gotoContentCP">
 			<var name="portletName" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#gotoCP">
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-			<var name="kbAuthor" value="Test Test" />
-			<var name="kbPriority" value="1.0" />
 		</execute>
 
 		<execute macro="KBArticle#viewCP">
@@ -127,19 +121,12 @@
 
 		<execute macro="KBArticle#addCP">
 			<var name="kbArticleContent" value="Knowledge Base Article Content" />
-			<var name="kbArticleSection" value="Portlets" />
 			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
 			<var name="kbTemplateTitle" value="Knowledge Base Template Title" />
 		</execute>
 
 		<execute macro="Page#gotoContentCP">
 			<var name="portletName" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#gotoCP">
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-			<var name="kbAuthor" value="Test Test" />
-			<var name="kbPriority" value="1.0" />
 		</execute>
 
 		<execute macro="KBArticle#viewCP">
@@ -216,6 +203,79 @@
 			<var name="RelatedAssetContent" value="Blogs Entry Content" />
 			<var name="RelatedAssetTitle" value="Blogs Entry Title" />
 			<var name="RelatedAssetType" value="Blogs Entry" />
+		</execute>
+	</command>
+
+	<command name="AddKBArticleWithCategory" priority="5">
+		<execute macro="Page#gotoContentCP">
+			<var name="portletName" value="Categories" />
+		</execute>
+
+		<execute macro="Vocabulary#addWithAssociatedAssetTypeCP">
+			<var name="requiredCheckbox" value="true" />
+			<var name="vocabularyAssociatedAssetType" value="Knowledge Base Article" />
+			<var name="vocabularyName" value="Vocabulary Name" />
+		</execute>
+
+		<execute macro="Page#gotoContentCP">
+			<var name="portletName" value="Categories" />
+		</execute>
+
+		<execute macro="Category#addCP">
+			<var name="categoryName" value="Category Name" />
+			<var name="vocabularyName" value="Vocabulary Name" />
+		</execute>
+
+		<execute macro="Page#gotoContentCP">
+			<var name="portletName" value="Knowledge Base" />
+		</execute>
+
+		<execute macro="KBArticle#addCP">
+			<var name="categoryName" value="Category Name" />
+			<var name="kbArticleContent" value="Knowledge Base Article Content" />
+			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
+			<var name="vocabularyName" value="Vocabulary Name" />
+		</execute>
+
+		<execute macro="KBArticle#viewCP">
+			<var name="categoryName" value="Category Name" />
+			<var name="kbArticleContent" value="Knowledge Base Article Content" />
+			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
+			<var name="kbAuthor" value="Test Test" />
+			<var name="kbPriority" value="1.0" />
+			<var name="vocabularyName" value="Vocabulary Name" />
+		</execute>
+	</command>
+
+	<command name="AddKBArticleWithoutRequiredCategory" priority="5">
+		<execute macro="Page#gotoContentCP">
+			<var name="portletName" value="Categories" />
+		</execute>
+
+		<execute macro="Vocabulary#addWithAssociatedAssetTypeCP">
+			<var name="requiredCheckbox" value="true" />
+			<var name="vocabularyAssociatedAssetType" value="Knowledge Base Article" />
+			<var name="vocabularyName" value="Vocabulary Name" />
+		</execute>
+
+		<execute macro="Page#gotoContentCP">
+			<var name="portletName" value="Categories" />
+		</execute>
+
+		<execute macro="Category#addCP">
+			<var name="categoryName" value="Category Name" />
+			<var name="vocabularyName" value="Vocabulary Name" />
+		</execute>
+
+		<execute macro="Page#gotoContentCP">
+			<var name="portletName" value="Knowledge Base" />
+		</execute>
+
+		<execute macro="KBArticle#addCP">
+			<var name="kbArticleContent" value="Knowledge Base Article Content" />
+			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
+			<var name="kbMissingRequiredCategory" value="true" />
+			<var name="vocabularyName" value="Vocabulary Name" />
 		</execute>
 	</command>
 
@@ -330,7 +390,6 @@
 
 		<execute macro="KBArticle#addCP">
 			<var name="kbArticleContent" value="Knowledge Base Article Content" />
-			<var name="kbArticleSection" value="Development" />
 			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
 		</execute>
 
@@ -412,6 +471,40 @@
 		</execute>
 	</command>
 
+	<command name="EditKBArticlePriorityViaEnterKey" priority="3">
+		<execute macro="Page#gotoContentCP">
+			<var name="portletName" value="Knowledge Base" />
+		</execute>
+
+		<execute macro="KBArticle#addCP">
+			<var name="kbArticleContent" value="Knowledge Base Article Content" />
+			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
+		</execute>
+
+		<execute macro="KBArticle#viewKBArticlePriorityCP">
+			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
+			<var name="kbPriority" value="1.0" />
+		</execute>
+
+		<execute macro="KBArticle#editKBArticlePriorityViaEnterKeyCP">
+			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
+			<var name="kbNewPriority" value="2.0" />
+		</execute>
+
+		<execute macro="Page#gotoPG">
+			<var name="pageName" value="Welcome" />
+		</execute>
+
+		<execute macro="Page#gotoContentCP">
+			<var name="portletName" value="Knowledge Base" />
+		</execute>
+
+		<execute macro="KBArticle#viewKBArticlePriorityCP">
+			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
+			<var name="kbPriority" value="2.0" />
+		</execute>
+	</command>
+
 	<command name="EditKBArticleViaKBAdmin" priority="5">
 		<execute macro="Page#gotoContentCP">
 			<var name="portletName" value="Knowledge Base" />
@@ -419,7 +512,6 @@
 
 		<execute macro="KBArticle#addCP">
 			<var name="kbArticleContent" value="Knowledge Base Article Content" />
-			<var name="kbArticleSection" value="Database" />
 			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
 		</execute>
 
@@ -435,12 +527,6 @@
 
 		<execute macro="Page#gotoContentCP">
 			<var name="portletName" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#gotoCP">
-			<var name="kbArticleTitle" value="Knowledge Base Article Title Edit" />
-			<var name="kbAuthor" value="Test Test" />
-			<var name="kbPriority" value="1.0" />
 		</execute>
 
 		<execute macro="KBArticle#viewCP">

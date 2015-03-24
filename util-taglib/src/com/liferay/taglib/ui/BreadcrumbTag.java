@@ -14,19 +14,11 @@
 
 package com.liferay.taglib.ui;
 
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.servlet.taglib.ui.BreadcrumbEntry;
 import com.liferay.portal.kernel.servlet.taglib.ui.BreadcrumbUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.PropsKeys;
-import com.liferay.portal.kernel.util.PropsUtil;
-import com.liferay.portal.kernel.util.UnicodeProperties;
-import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.Layout;
-import com.liferay.portal.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portlet.portletdisplaytemplate.util.PortletDisplayTemplate;
 import com.liferay.taglib.util.IncludeTag;
 
 import java.util.ArrayList;
@@ -40,8 +32,12 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class BreadcrumbTag extends IncludeTag {
 
-	public void setDisplayStyle(String displayStyle) {
-		_displayStyle = displayStyle;
+	public void setDdmTemplateGroupId(long ddmTemplateGroupId) {
+		_ddmTemplateGroupId = ddmTemplateGroupId;
+	}
+
+	public void setDdmTemplateKey(String ddmTemplateKey) {
+		_ddmTemplateKey = ddmTemplateKey;
 	}
 
 	public void setShowCurrentGroup(boolean showCurrentGroup) {
@@ -66,11 +62,12 @@ public class BreadcrumbTag extends IncludeTag {
 
 	@Override
 	protected void cleanUp() {
-		_displayStyle = _DISPLAY_STYLE;
+		_ddmTemplateGroupId = 0;
+		_ddmTemplateKey = null;
 		_showCurrentGroup = true;
-		_showGuestGroup = _SHOW_GUEST_GROUP;
+		_showGuestGroup = false;
 		_showLayout = true;
-		_showParentGroups = null;
+		_showParentGroups = true;
 		_showPortletBreadcrumb = true;
 	}
 
@@ -111,90 +108,39 @@ public class BreadcrumbTag extends IncludeTag {
 		return breadcrumbEntries;
 	}
 
+	protected String getDisplayStyle() {
+		if (Validator.isNotNull(_ddmTemplateKey)) {
+			return PortletDisplayTemplate.DISPLAY_STYLE_PREFIX +
+				_ddmTemplateKey;
+		}
+
+		return null;
+	}
+
 	@Override
 	protected String getPage() {
 		return _PAGE;
 	}
 
-	protected void initShowParentGroups(HttpServletRequest request) {
-		if (_showParentGroups != null) {
-			return;
-		}
-
-		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
-			WebKeys.THEME_DISPLAY);
-
-		try {
-			Layout layout = themeDisplay.getLayout();
-
-			Group group = layout.getGroup();
-
-			UnicodeProperties typeSettingsProperties =
-				group.getTypeSettingsProperties();
-
-			_showParentGroups = GetterUtil.getBoolean(
-				typeSettingsProperties.getProperty(
-					"breadcrumbShowParentGroups"),
-				_SHOW_PARENT_GROUPS);
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-		}
-	}
-
 	@Override
 	protected void setAttributes(HttpServletRequest request) {
-		initShowParentGroups(request);
-
 		request.setAttribute(
 			"liferay-ui:breadcrumb:breadcrumbEntries",
 			getBreadcrumbEntries(request));
-
-		String displayStyle = _displayStyle;
-
-		if (!ArrayUtil.contains(_DISPLAY_STYLE_OPTIONS, displayStyle)) {
-			displayStyle = _DISPLAY_STYLE_OPTIONS[0];
-		}
-
 		request.setAttribute(
-			"liferay-ui:breadcrumb:displayStyle", displayStyle);
+			"liferay-ui:breadcrumb:displayStyle", getDisplayStyle());
 		request.setAttribute(
-			"liferay-ui:breadcrumb:showCurrentGroup",
-			String.valueOf(_showCurrentGroup));
-		request.setAttribute(
-			"liferay-ui:breadcrumb:showGuestGroup",
-			String.valueOf(_showGuestGroup));
-		request.setAttribute(
-			"liferay-ui:breadcrumb:showLayout", String.valueOf(_showLayout));
-		request.setAttribute(
-			"liferay-ui:breadcrumb:showParentGroups",
-			String.valueOf(_showParentGroups));
-		request.setAttribute(
-			"liferay-ui:breadcrumb:showPortletBreadcrumb",
-			String.valueOf(_showPortletBreadcrumb));
+			"liferay-ui:breadcrumb:displayStyleGroupId", _ddmTemplateGroupId);
 	}
-
-	private static final String _DISPLAY_STYLE = GetterUtil.getString(
-		PropsUtil.get(PropsKeys.BREADCRUMB_DISPLAY_STYLE_DEFAULT));
-
-	private static final String[] _DISPLAY_STYLE_OPTIONS = PropsUtil.getArray(
-		PropsKeys.BREADCRUMB_DISPLAY_STYLE_OPTIONS);
 
 	private static final String _PAGE = "/html/taglib/ui/breadcrumb/page.jsp";
 
-	private static final boolean _SHOW_GUEST_GROUP = GetterUtil.getBoolean(
-		PropsUtil.get(PropsKeys.BREADCRUMB_SHOW_GUEST_GROUP));
-
-	private static final boolean _SHOW_PARENT_GROUPS = GetterUtil.getBoolean(
-		PropsUtil.get(PropsKeys.BREADCRUMB_SHOW_PARENT_GROUPS));
-
-	private static final Log _log = LogFactoryUtil.getLog(BreadcrumbTag.class);
-
-	private String _displayStyle = _DISPLAY_STYLE;
+	private long _ddmTemplateGroupId;
+	private String _ddmTemplateKey;
 	private boolean _showCurrentGroup = true;
-	private boolean _showGuestGroup = _SHOW_GUEST_GROUP;
+	private boolean _showGuestGroup;
 	private boolean _showLayout = true;
-	private Boolean _showParentGroups = null;
+	private boolean _showParentGroups = true;
 	private boolean _showPortletBreadcrumb = true;
 
 }

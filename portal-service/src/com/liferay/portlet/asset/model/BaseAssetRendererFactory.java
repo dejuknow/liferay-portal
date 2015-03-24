@@ -15,7 +15,6 @@
 package com.liferay.portlet.asset.model;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.util.Tuple;
@@ -141,13 +140,13 @@ public abstract class BaseAssetRendererFactory implements AssetRendererFactory {
 
 	@Deprecated
 	@Override
-	public Map<Long, String> getClassTypes(long[] groupId, Locale locale)
+	public Map<Long, String> getClassTypes(long[] groupIds, Locale locale)
 		throws Exception {
 
 		ClassTypeReader classTypeReader = getClassTypeReader();
 
 		List<ClassType> classTypes = classTypeReader.getAvailableClassTypes(
-			groupId, locale);
+			groupIds, locale);
 
 		Map<Long, String> classTypesMap = new HashMap<>();
 
@@ -253,13 +252,10 @@ public abstract class BaseAssetRendererFactory implements AssetRendererFactory {
 			return true;
 		}
 
-		Portlet portlet = null;
+		Portlet portlet = PortletLocalServiceUtil.getPortletById(
+			companyId, getPortletId());
 
-		try {
-			portlet = PortletLocalServiceUtil.getPortletById(
-				companyId, getPortletId());
-		}
-		catch (SystemException se) {
+		if (portlet == null) {
 			portlet = PortletLocalServiceUtil.getPortletById(getPortletId());
 		}
 

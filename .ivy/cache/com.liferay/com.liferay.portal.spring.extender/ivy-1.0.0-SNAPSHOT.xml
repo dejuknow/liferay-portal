@@ -4,7 +4,7 @@
 		module="com.liferay.portal.spring.extender"
 		revision="1.0.0-SNAPSHOT"
 		status="release"
-		publication="20150305122206"
+		publication="20150313112203"
 		default="true"
 	/>
 	<configurations>

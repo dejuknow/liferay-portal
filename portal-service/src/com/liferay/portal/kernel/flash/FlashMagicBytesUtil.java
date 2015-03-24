@@ -32,9 +32,13 @@ public class FlashMagicBytesUtil {
 
 		byte[] magicBytes = new byte[3];
 
-		pushbackInputStream.read(magicBytes);
+		int length = pushbackInputStream.read(magicBytes);
 
-		pushbackInputStream.unread(magicBytes);
+		if (length < 0) {
+			return new Result(false, inputStream);
+		}
+
+		pushbackInputStream.unread(magicBytes, 0, length);
 
 		inputStream = pushbackInputStream;
 

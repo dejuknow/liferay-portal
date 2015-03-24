@@ -26,6 +26,7 @@ import com.liferay.portlet.asset.AssetTagException;
 import com.liferay.portlet.asset.DuplicateTagException;
 import com.liferay.portlet.asset.NoSuchTagException;
 import com.liferay.portlet.asset.model.AssetTag;
+import com.liferay.portlet.asset.service.AssetTagLocalServiceUtil;
 import com.liferay.portlet.asset.service.AssetTagServiceUtil;
 
 import java.io.IOException;
@@ -50,8 +51,6 @@ import org.osgi.service.component.annotations.Reference;
 		"com.liferay.portlet.control-panel-entry-category=site_administration.content",
 		"com.liferay.portlet.control-panel-entry-weight=20.0",
 		"com.liferay.portlet.display-category=category.hidden",
-		"com.liferay.portlet.friendly-url-mapping=tags_admin",
-		"com.liferay.portlet.friendly-url-routes=com/liferay/asset/tags/admin/web/portlet/route/asset-tags-admin-friendly-url-routes.xml",
 		"com.liferay.portlet.header-portlet-css=/css/main.css",
 		"com.liferay.portlet.icon=/icons/asset_tag_admin.png",
 		"com.liferay.portlet.preferences-owned-by-group=true",
@@ -65,7 +64,7 @@ import org.osgi.service.component.annotations.Reference;
 		"javax.portlet.resource-bundle=content.Language",
 		"javax.portlet.security-role-ref=administrator",
 		"javax.portlet.supports.mime-type=text/html"
-		},
+	},
 	service = Portlet.class
 )
 public class AssetTagsAdminPortlet extends MVCPortlet {
@@ -120,16 +119,34 @@ public class AssetTagsAdminPortlet extends MVCPortlet {
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
 
-		long[] mergeTagIds = StringUtil.split(
-			ParamUtil.getString(actionRequest, "mergeTagIds"), 0L);
-		long targetTagId = ParamUtil.getLong(actionRequest, "targetTagId");
+		long groupId = ParamUtil.getLong(actionRequest, "groupId");
+		String targetTagName = ParamUtil.getString(
+			actionRequest, "targetTagName");
 
-		for (long mergeTagId : mergeTagIds) {
-			if (targetTagId == mergeTagId) {
+		AssetTag targetTag = AssetTagLocalServiceUtil.fetchTag(
+			groupId, targetTagName);
+
+		if (targetTag == null) {
+			return;
+		}
+
+		String[] mergeTagNames = StringUtil.split(
+			ParamUtil.getString(actionRequest, "mergeTagNames"));
+
+		for (String mergeTagName : mergeTagNames) {
+			if (targetTagName.equals(mergeTagName)) {
 				continue;
 			}
 
-			AssetTagServiceUtil.mergeTags(mergeTagId, targetTagId);
+			AssetTag mergeTag = AssetTagLocalServiceUtil.fetchTag(
+				groupId, mergeTagName);
+
+			if (mergeTag == null) {
+				continue;
+			}
+
+			AssetTagServiceUtil.mergeTags(
+				mergeTag.getTagId(), targetTag.getTagId());
 		}
 	}
 

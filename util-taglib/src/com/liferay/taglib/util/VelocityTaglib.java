@@ -98,9 +98,9 @@ public interface VelocityTaglib {
 	public void breadcrumb() throws Exception;
 
 	public void breadcrumb(
-			String displayStyle, boolean showGuestGroup,
-			boolean showParentGroups, boolean showLayout,
-			boolean showPortletBreadcrumb)
+			long ddmTemplateGroupId, String ddmTemplateKey,
+			boolean showGuestGroup, boolean showParentGroups,
+			boolean showLayout, boolean showPortletBreadcrumb)
 		throws Exception;
 
 	public void discussion(
@@ -270,8 +270,7 @@ public interface VelocityTaglib {
 
 	public void journalContentSearch() throws Exception;
 
-	public void journalContentSearch(
-			boolean showListed, String targetPortletId, String type)
+	public void journalContentSearch(boolean showListed, String targetPortletId)
 		throws Exception;
 
 	public void language() throws Exception;

@@ -21,6 +21,8 @@ import com.liferay.portal.kernel.image.ImageBag;
 import com.liferay.portal.kernel.image.ImageToolUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.provider.PortletProvider;
+import com.liferay.portal.kernel.provider.PortletProviderUtil;
 import com.liferay.portal.kernel.repository.RepositoryException;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.FileVersion;
@@ -75,7 +77,6 @@ import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.service.permission.PortletPermissionUtil;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
-import com.liferay.portal.util.PortletKeys;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.util.WebKeys;
 import com.liferay.portlet.documentlibrary.NoSuchFileEntryException;
@@ -94,6 +95,7 @@ import com.liferay.portlet.documentlibrary.util.PDFProcessor;
 import com.liferay.portlet.documentlibrary.util.PDFProcessorUtil;
 import com.liferay.portlet.documentlibrary.util.VideoProcessor;
 import com.liferay.portlet.documentlibrary.util.VideoProcessorUtil;
+import com.liferay.portlet.trash.model.TrashEntry;
 import com.liferay.portlet.trash.util.TrashUtil;
 
 import java.awt.image.RenderedImage;
@@ -871,9 +873,11 @@ public class WebServerServlet extends HttpServlet {
 			PermissionChecker permissionChecker =
 				PermissionThreadLocal.getPermissionChecker();
 
+			String portletId = PortletProviderUtil.getPortletId(
+				TrashEntry.class.getName(), PortletProvider.Action.VIEW);
+
 			if (!PortletPermissionUtil.hasControlPanelAccessPermission(
-					permissionChecker, fileEntry.getGroupId(),
-					PortletKeys.TRASH)) {
+					permissionChecker, fileEntry.getGroupId(), portletId)) {
 
 				throw new PrincipalException();
 			}
@@ -1020,11 +1024,11 @@ public class WebServerServlet extends HttpServlet {
 		FlashMagicBytesUtil.Result flashMagicBytesUtilResult =
 			FlashMagicBytesUtil.check(inputStream);
 
-		inputStream = flashMagicBytesUtilResult.getInputStream();
-
 		if (flashMagicBytesUtilResult.isFlash()) {
 			fileName = FileUtil.stripExtension(fileName) + ".swf";
 		}
+
+		inputStream = flashMagicBytesUtilResult.getInputStream();
 
 		// Determine proper content type
 
@@ -1213,9 +1217,20 @@ public class WebServerServlet extends HttpServlet {
 				HttpHeaders.CONTENT_DISPOSITION_ATTACHMENT);
 		}
 		else {
+			InputStream is = fileEntry.getContentStream();
+
+			FlashMagicBytesUtil.Result flashMagicBytesUtilResult =
+				FlashMagicBytesUtil.check(is);
+
+			is = flashMagicBytesUtilResult.getInputStream();
+
+			if (flashMagicBytesUtilResult.isFlash()) {
+				fileName = FileUtil.stripExtension(fileName) + ".swf";
+			}
+
 			ServletResponseUtil.sendFile(
-				request, response, fileName, fileEntry.getContentStream(),
-				fileEntry.getSize(), fileEntry.getMimeType());
+				request, response, fileName, is, fileEntry.getSize(),
+				fileEntry.getMimeType());
 		}
 	}
 

@@ -1346,7 +1346,7 @@ public class ServiceBuilder {
 	}
 
 	public String getReturnType(JavaMethod method) {
-		Type returnType = method.getReturns();
+		Type returnType = method.getReturnType();
 
 		return getTypeGenericsName(returnType);
 	}
@@ -1597,14 +1597,10 @@ public class ServiceBuilder {
 		String methodName = method.getName();
 
 		if (methodName.equals("afterPropertiesSet") ||
-			methodName.equals("destroy") ||
-			methodName.equals("equals") ||
-			methodName.equals("getClass") ||
-			methodName.equals("hashCode") ||
-			methodName.equals("notify") ||
-			methodName.equals("notifyAll") ||
-			methodName.equals("toString") ||
-			methodName.equals("wait")) {
+			methodName.equals("destroy") || methodName.equals("equals") ||
+			methodName.equals("getClass") || methodName.equals("hashCode") ||
+			methodName.equals("notify") || methodName.equals("notifyAll") ||
+			methodName.equals("toString") || methodName.equals("wait")) {
 
 			return false;
 		}
@@ -1691,7 +1687,7 @@ public class ServiceBuilder {
 	}
 
 	public boolean isSoapMethod(JavaMethod method) {
-		Type returnType = method.getReturns();
+		Type returnType = method.getReturnType();
 
 		String returnTypeGenericsName = getTypeGenericsName(returnType);
 		String returnValueName = returnType.getValue();
@@ -3977,8 +3973,7 @@ public class ServiceBuilder {
 
 					sb.append("DOUBLE");
 				}
-				else if (colType.equals("int") ||
-						 colType.equals("Integer") ||
+				else if (colType.equals("int") || colType.equals("Integer") ||
 						 StringUtil.equalsIgnoreCase(colType, "short")) {
 
 					sb.append("INTEGER");
@@ -4095,8 +4090,7 @@ public class ServiceBuilder {
 
 				sb.append("DOUBLE");
 			}
-			else if (colType.equals("int") ||
-					 colType.equals("Integer") ||
+			else if (colType.equals("int") || colType.equals("Integer") ||
 					 StringUtil.equalsIgnoreCase(colType, "short")) {
 
 				sb.append("INTEGER");
@@ -4248,7 +4242,7 @@ public class ServiceBuilder {
 		StringBundler sb = new StringBundler();
 
 		if (!javaMethod.isConstructor()) {
-			sb.append(getTypeGenericsName(javaMethod.getReturns()));
+			sb.append(getTypeGenericsName(javaMethod.getReturnType()));
 			sb.append(StringPool.SPACE);
 		}
 

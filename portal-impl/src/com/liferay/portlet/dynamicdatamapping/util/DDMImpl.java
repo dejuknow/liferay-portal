@@ -19,11 +19,14 @@ import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.security.pacl.DoPrivileged;
 import com.liferay.portal.kernel.upload.UploadRequest;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
+import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HttpUtil;
@@ -49,9 +52,11 @@ import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormLayout;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormLayoutColumn;
+import com.liferay.portlet.dynamicdatamapping.model.DDMFormLayoutPage;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormLayoutRow;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
+import com.liferay.portlet.dynamicdatamapping.model.LocalizedValue;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
@@ -67,6 +72,7 @@ import java.io.File;
 import java.io.Serializable;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -140,10 +146,16 @@ public class DDMImpl implements DDM {
 	public DDMFormLayout getDefaultDDMFormLayout(DDMForm ddmForm) {
 		DDMFormLayout ddmFormLayout = new DDMFormLayout();
 
+		ddmFormLayout.setDefaultLocale(ddmForm.getDefaultLocale());
+
+		DDMFormLayoutPage ddmFormLayoutPage = new DDMFormLayoutPage();
+
 		for (DDMFormField ddmFormField : ddmForm.getDDMFormFields()) {
-			ddmFormLayout.addDDMFormLayoutRow(
+			ddmFormLayoutPage.addDDMFormLayoutRow(
 				getDefaultDDMFormLayoutRow(ddmFormField));
 		}
+
+		ddmFormLayout.addDDMFormLayoutPage(ddmFormLayoutPage);
 
 		return ddmFormLayout;
 	}
@@ -642,8 +654,12 @@ public class DDMImpl implements DDM {
 			ServiceContext serviceContext)
 		throws PortalException {
 
-		String fieldDataType = ddmStructure.getFieldDataType(fieldName);
-		String fieldType = ddmStructure.getFieldType(fieldName);
+		DDMFormField ddmFormField = ddmStructure.getDDMFormField(fieldName);
+
+		String fieldDataType = ddmFormField.getDataType();
+		String fieldType = ddmFormField.getType();
+
+		LocalizedValue predefinedValue = ddmFormField.getPredefinedValue();
 
 		List<String> fieldNames = getFieldNames(
 			fieldNamespace, fieldName, serviceContext);
@@ -654,21 +670,42 @@ public class DDMImpl implements DDM {
 			Serializable fieldValue = serviceContext.getAttribute(
 				fieldNameValue);
 
+			if (fieldValue == null) {
+				fieldValue = predefinedValue.getString(
+					serviceContext.getLocale());
+			}
+
 			if (fieldType.equals(DDMImpl.TYPE_CHECKBOX) &&
 				Validator.isNull(fieldValue)) {
 
 				fieldValue = "false";
 			}
 			else if (fieldDataType.equals(FieldConstants.DATE)) {
-				int fieldValueMonth = GetterUtil.getInteger(
-					serviceContext.getAttribute(fieldNameValue + "Month"));
-				int fieldValueDay = GetterUtil.getInteger(
-					serviceContext.getAttribute(fieldNameValue + "Day"));
-				int fieldValueYear = GetterUtil.getInteger(
-					serviceContext.getAttribute(fieldNameValue + "Year"));
+				Date fieldValueDate = null;
 
-				Date fieldValueDate = PortalUtil.getDate(
-					fieldValueMonth, fieldValueDay, fieldValueYear);
+				if (fieldValue == null) {
+					int fieldValueMonth = GetterUtil.getInteger(
+						serviceContext.getAttribute(fieldNameValue + "Month"));
+					int fieldValueDay = GetterUtil.getInteger(
+						serviceContext.getAttribute(fieldNameValue + "Day"));
+					int fieldValueYear = GetterUtil.getInteger(
+						serviceContext.getAttribute(fieldNameValue + "Year"));
+
+					fieldValueDate = PortalUtil.getDate(
+						fieldValueMonth, fieldValueDay, fieldValueYear);
+				}
+				else {
+					try {
+						fieldValueDate = DateUtil.parseDate(
+							String.valueOf(fieldValue),
+							serviceContext.getLocale());
+					}
+					catch (ParseException pe) {
+						if (_log.isErrorEnabled()) {
+							_log.error("Unable to parse date " + fieldValue);
+						}
+					}
+				}
 
 				if (fieldValueDate != null) {
 					fieldValue = String.valueOf(fieldValueDate.getTime());
@@ -679,12 +716,14 @@ public class DDMImpl implements DDM {
 
 				HttpServletRequest request = serviceContext.getRequest();
 
-				if (!(request instanceof UploadRequest)) {
-					return null;
-				}
+				if (request instanceof UploadRequest) {
+					String imageFieldValue = getImageFieldValue(
+						(UploadRequest)request, fieldNameValue);
 
-				fieldValue = getImageFieldValue(
-					(UploadRequest)request, fieldNameValue);
+					if (Validator.isNotNull(imageFieldValue)) {
+						fieldValue = imageFieldValue;
+					}
+				}
 			}
 
 			if (fieldValue == null) {
@@ -694,11 +733,16 @@ public class DDMImpl implements DDM {
 			if (DDMImpl.TYPE_RADIO.equals(fieldType) ||
 				DDMImpl.TYPE_SELECT.equals(fieldType)) {
 
-				if (fieldValue instanceof String) {
-					fieldValue = new String[] {String.valueOf(fieldValue)};
-				}
+				String predefinedValueString = predefinedValue.getString(
+					serviceContext.getLocale());
 
-				fieldValue = JSONFactoryUtil.serialize(fieldValue);
+				if (!fieldValue.equals(predefinedValueString) &&
+					(fieldValue instanceof String)) {
+
+					fieldValue = new String[] {String.valueOf(fieldValue)};
+
+					fieldValue = JSONFactoryUtil.serialize(fieldValue);
+				}
 			}
 
 			Serializable fieldValueSerializable =
@@ -850,5 +894,7 @@ public class DDMImpl implements DDM {
 
 		return StringUtil.split(value);
 	}
+
+	private static final Log _log = LogFactoryUtil.getLog(DDMImpl.class);
 
 }

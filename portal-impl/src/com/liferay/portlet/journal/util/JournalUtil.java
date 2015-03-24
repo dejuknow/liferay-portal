@@ -22,7 +22,6 @@ import com.liferay.portal.kernel.diff.DiffHtmlUtil;
 import com.liferay.portal.kernel.diff.DiffVersion;
 import com.liferay.portal.kernel.diff.DiffVersionsInfo;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringReader;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
@@ -210,14 +209,8 @@ public class JournalUtil {
 			JournalStructureConstants.RESERVED_ARTICLE_SMALL_IMAGE_URL,
 			smallImageURL);
 
-		String[] assetTagNames = new String[0];
-
-		try {
-			assetTagNames = AssetTagLocalServiceUtil.getTagNames(
-				JournalArticle.class.getName(), article.getResourcePrimKey());
-		}
-		catch (SystemException se) {
-		}
+		String[] assetTagNames = AssetTagLocalServiceUtil.getTagNames(
+			JournalArticle.class.getName(), article.getResourcePrimKey());
 
 		addReservedEl(
 			rootElement, tokens,
@@ -234,17 +227,13 @@ public class JournalUtil {
 		String userComments = StringPool.BLANK;
 		String userJobTitle = StringPool.BLANK;
 
-		try {
-			User user = UserLocalServiceUtil.fetchUserById(article.getUserId());
+		User user = UserLocalServiceUtil.fetchUserById(article.getUserId());
 
-			if (user != null) {
-				userName = user.getFullName();
-				userEmailAddress = user.getEmailAddress();
-				userComments = user.getComments();
-				userJobTitle = user.getJobTitle();
-			}
-		}
-		catch (SystemException se) {
+		if (user != null) {
+			userName = user.getFullName();
+			userEmailAddress = user.getEmailAddress();
+			userComments = user.getComments();
+			userJobTitle = user.getJobTitle();
 		}
 
 		addReservedEl(
@@ -284,7 +273,8 @@ public class JournalUtil {
 
 		PortletURL portletURL = renderResponse.createRenderURL();
 
-		portletURL.setParameter("struts_action", "/article/view_article");
+		portletURL.setParameter(
+			"mvcPath", "/html/portlet/journal/view_article.jsp");
 		portletURL.setParameter(
 			"groupId", String.valueOf(article.getGroupId()));
 		portletURL.setParameter(
@@ -845,6 +835,70 @@ public class JournalUtil {
 		return LocalizationUtil.getLocalizationMap(
 			preferences, "emailArticleApprovalRequestedSubject",
 			PropsKeys.JOURNAL_EMAIL_ARTICLE_APPROVAL_REQUESTED_SUBJECT);
+	}
+
+	public static Map<Locale, String> getEmailArticleMovedFromFolderBodyMap(
+		PortletPreferences preferences) {
+
+		return LocalizationUtil.getLocalizationMap(
+			preferences, "emailArticleMovedFromFolderBody",
+			PropsKeys.JOURNAL_EMAIL_ARTICLE_MOVED_FROM_FOLDER_BODY);
+	}
+
+	public static boolean getEmailArticleMovedFromFolderEnabled(
+		PortletPreferences preferences) {
+
+		String emailArticleMovedFromFolderEnabled = preferences.getValue(
+			"emailArticleMovedFromFolderEnabled", StringPool.BLANK);
+
+		if (Validator.isNotNull(emailArticleMovedFromFolderEnabled)) {
+			return GetterUtil.getBoolean(emailArticleMovedFromFolderEnabled);
+		}
+		else {
+			return GetterUtil.getBoolean(
+				PropsUtil.get(
+					PropsKeys.JOURNAL_EMAIL_ARTICLE_MOVED_FROM_FOLDER_ENABLED));
+		}
+	}
+
+	public static Map<Locale, String> getEmailArticleMovedFromFolderSubjectMap(
+		PortletPreferences preferences) {
+
+		return LocalizationUtil.getLocalizationMap(
+			preferences, "emailArticleMovedFromFolderBody",
+			PropsKeys.JOURNAL_EMAIL_ARTICLE_MOVED_FROM_FOLDER_SUBJECT);
+	}
+
+	public static Map<Locale, String> getEmailArticleMovedToFolderBodyMap(
+		PortletPreferences preferences) {
+
+		return LocalizationUtil.getLocalizationMap(
+			preferences, "emailArticleMovedToFolderBody",
+			PropsKeys.JOURNAL_EMAIL_ARTICLE_MOVED_TO_FOLDER_BODY);
+	}
+
+	public static boolean getEmailArticleMovedToFolderEnabled(
+		PortletPreferences preferences) {
+
+		String emailArticleMovedToFolderEnabled = preferences.getValue(
+			"emailArticleMovedToFolderEnabled", StringPool.BLANK);
+
+		if (Validator.isNotNull(emailArticleMovedToFolderEnabled)) {
+			return GetterUtil.getBoolean(emailArticleMovedToFolderEnabled);
+		}
+		else {
+			return GetterUtil.getBoolean(
+				PropsUtil.get(
+					PropsKeys.JOURNAL_EMAIL_ARTICLE_MOVED_TO_FOLDER_ENABLED));
+		}
+	}
+
+	public static Map<Locale, String> getEmailArticleMovedToFolderSubjectMap(
+		PortletPreferences preferences) {
+
+		return LocalizationUtil.getLocalizationMap(
+			preferences, "emailArticleMovedToFolderBody",
+			PropsKeys.JOURNAL_EMAIL_ARTICLE_MOVED_TO_FOLDER_SUBJECT);
 	}
 
 	public static Map<Locale, String> getEmailArticleReviewBodyMap(
@@ -1460,8 +1514,7 @@ public class JournalUtil {
 			JournalArticle journalArticle = itr.next();
 
 			if (journalArticle.getArticleId().equals(articleId) &&
-				((journalArticle.getVersion() == version) ||
-				 (version == 0))) {
+				((journalArticle.getVersion() == version) || (version == 0))) {
 
 				itr.remove();
 			}

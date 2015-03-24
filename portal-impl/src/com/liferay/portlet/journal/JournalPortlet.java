@@ -35,6 +35,7 @@ import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -73,6 +74,7 @@ import com.liferay.portlet.journal.service.JournalFeedServiceUtil;
 import com.liferay.portlet.journal.service.JournalFolderServiceUtil;
 import com.liferay.portlet.journal.util.JournalRSSUtil;
 import com.liferay.portlet.journal.util.JournalUtil;
+import com.liferay.portlet.trash.service.TrashEntryServiceUtil;
 import com.liferay.portlet.trash.util.TrashUtil;
 import com.liferay.util.RSSUtil;
 
@@ -258,12 +260,23 @@ public class JournalPortlet extends MVCPortlet {
 					HtmlUtil.unescape(articleId), newFolderId, serviceContext);
 			}
 			catch (InvalidDDMStructureException idse) {
+				if (_log.isWarnEnabled()) {
+					_log.warn(idse.getMessage());
+				}
+
 				invalidArticleIds.add(articleId);
 			}
 		}
 
 		if (!invalidArticleIds.isEmpty()) {
-			throw new InvalidDDMStructureException();
+			StringBundler sb = new StringBundler(4);
+
+			sb.append("Folder ");
+			sb.append(newFolderId);
+			sb.append(" does not allow the structures for articles: ");
+			sb.append(StringUtil.merge(invalidArticleIds));
+
+			throw new InvalidDDMStructureException(sb.toString());
 		}
 
 		sendEditEntryRedirect(actionRequest, actionResponse);
@@ -288,6 +301,18 @@ public class JournalPortlet extends MVCPortlet {
 		throws Exception {
 
 		updateArticle(actionRequest, actionResponse);
+	}
+
+	public void restoreTrashEntries(
+			ActionRequest actionRequest, ActionResponse actionResponse)
+		throws Exception {
+
+		long[] restoreTrashEntryIds = StringUtil.split(
+			ParamUtil.getString(actionRequest, "restoreTrashEntryIds"), 0L);
+
+		for (long restoreTrashEntryId : restoreTrashEntryIds) {
+			TrashEntryServiceUtil.restoreEntry(restoreTrashEntryId);
+		}
 	}
 
 	@Override
@@ -970,7 +995,8 @@ public class JournalPortlet extends MVCPortlet {
 			actionRequest, PortletKeys.JOURNAL, themeDisplay.getPlid(),
 			PortletRequest.RENDER_PHASE);
 
-		portletURL.setParameter("mvcPath", "edit_article.jsp");
+		portletURL.setParameter(
+			"mvcPath", "/html/portlet/journal/edit_article.jsp");
 		portletURL.setParameter("redirect", redirect, false);
 		portletURL.setParameter(
 			"referringPortletResource", referringPortletResource, false);

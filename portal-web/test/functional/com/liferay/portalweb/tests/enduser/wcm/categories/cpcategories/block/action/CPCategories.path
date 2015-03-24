@@ -69,6 +69,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>BACK_BUTTON</td>
+	<td>//a[contains(@id,'AssetCategoriesAdminPortlet_TabsBack')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td></td>
 	<td></td>
 	<td></td>

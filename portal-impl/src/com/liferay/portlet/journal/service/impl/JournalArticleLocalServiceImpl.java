@@ -15,7 +15,6 @@
 package com.liferay.portlet.journal.service.impl;
 
 import com.liferay.portal.LocaleException;
-import com.liferay.portal.NoSuchImageException;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Property;
@@ -1347,6 +1346,23 @@ public class JournalArticleLocalServiceImpl
 		}
 	}
 
+	@Override
+	public JournalArticle fetchArticle(long groupId, String articleId) {
+
+		// Get the latest article that is approved, if none are approved, get
+		// the latest unapproved article
+
+		JournalArticle article = fetchLatestArticle(
+			groupId, articleId, WorkflowConstants.STATUS_APPROVED);
+
+		if (article != null) {
+			return article;
+		}
+
+		return fetchLatestArticle(
+			groupId, articleId, WorkflowConstants.STATUS_ANY);
+	}
+
 	/**
 	 * Returns the web content article matching the group, article ID, and
 	 * version.
@@ -1364,6 +1380,46 @@ public class JournalArticleLocalServiceImpl
 
 		return journalArticlePersistence.fetchByG_A_V(
 			groupId, articleId, version);
+	}
+
+	@Override
+	public JournalArticle fetchArticleByUrlTitle(
+		long groupId, String urlTitle) {
+
+		JournalArticle article = fetchLatestArticleByUrlTitle(
+			groupId, urlTitle, WorkflowConstants.STATUS_APPROVED);
+
+		if (article != null) {
+			return article;
+		}
+
+		return fetchLatestArticleByUrlTitle(
+			groupId, urlTitle, WorkflowConstants.STATUS_PENDING);
+	}
+
+	@Override
+	public JournalArticle fetchDisplayArticle(long groupId, String articleId) {
+		List<JournalArticle> articles = journalArticlePersistence.findByG_A_ST(
+			groupId, articleId, WorkflowConstants.STATUS_APPROVED);
+
+		if (articles.isEmpty()) {
+			return null;
+		}
+
+		Date now = new Date();
+
+		for (JournalArticle article : articles) {
+			Date displayDate = article.getDisplayDate();
+			Date expirationDate = article.getExpirationDate();
+
+			if (((displayDate == null) || displayDate.before(now)) &&
+				((expirationDate == null) || expirationDate.after(now))) {
+
+				return article;
+			}
+		}
+
+		return articles.get(0);
 	}
 
 	@Override
@@ -1471,6 +1527,31 @@ public class JournalArticleLocalServiceImpl
 			groupId, articleId, status, orderByComparator);
 	}
 
+	@Override
+	public JournalArticle fetchLatestArticleByUrlTitle(
+		long groupId, String urlTitle, int status) {
+
+		List<JournalArticle> articles = null;
+
+		OrderByComparator<JournalArticle> orderByComparator =
+			new ArticleVersionComparator();
+
+		if (status == WorkflowConstants.STATUS_ANY) {
+			articles = journalArticlePersistence.findByG_UT(
+				groupId, urlTitle, 0, 1, orderByComparator);
+		}
+		else {
+			articles = journalArticlePersistence.findByG_UT_ST(
+				groupId, urlTitle, status, 0, 1, orderByComparator);
+		}
+
+		if (articles.isEmpty()) {
+			return null;
+		}
+
+		return articles.get(0);
+	}
+
 	/**
 	 * Returns the latest indexable web content article matching the resource
 	 * primary key.
@@ -1530,14 +1611,15 @@ public class JournalArticleLocalServiceImpl
 		// Get the latest article that is approved, if none are approved, get
 		// the latest unapproved article
 
-		try {
-			return getLatestArticle(
-				groupId, articleId, WorkflowConstants.STATUS_APPROVED);
+		JournalArticle article = fetchLatestArticle(
+			groupId, articleId, WorkflowConstants.STATUS_APPROVED);
+
+		if (article != null) {
+			return article;
 		}
-		catch (NoSuchArticleException nsae) {
-			return getLatestArticle(
-				groupId, articleId, WorkflowConstants.STATUS_ANY);
-		}
+
+		return getLatestArticle(
+			groupId, articleId, WorkflowConstants.STATUS_ANY);
 	}
 
 	/**
@@ -1614,14 +1696,15 @@ public class JournalArticleLocalServiceImpl
 		// Get the latest article that is approved, if none are approved, get
 		// the latest unapproved article
 
-		try {
-			return getLatestArticleByUrlTitle(
-				groupId, urlTitle, WorkflowConstants.STATUS_APPROVED);
+		JournalArticle article = fetchLatestArticleByUrlTitle(
+			groupId, urlTitle, WorkflowConstants.STATUS_APPROVED);
+
+		if (article != null) {
+			return article;
 		}
-		catch (NoSuchArticleException nsae) {
-			return getLatestArticleByUrlTitle(
-				groupId, urlTitle, WorkflowConstants.STATUS_PENDING);
-		}
+
+		return getLatestArticleByUrlTitle(
+			groupId, urlTitle, WorkflowConstants.STATUS_PENDING);
 	}
 
 	/**
@@ -2538,31 +2621,15 @@ public class JournalArticleLocalServiceImpl
 	public JournalArticle getDisplayArticle(long groupId, String articleId)
 		throws PortalException {
 
-		List<JournalArticle> articles = journalArticlePersistence.findByG_A_ST(
-			groupId, articleId, WorkflowConstants.STATUS_APPROVED);
+		JournalArticle article = fetchDisplayArticle(groupId, articleId);
 
-		if (articles.isEmpty()) {
+		if (article == null) {
 			throw new NoSuchArticleException(
 				"No approved JournalArticle exists with the key {groupId=" +
 					groupId + ", " + "articleId=" + articleId + "}");
 		}
 
-		Date now = new Date();
-
-		for (int i = 0; i < articles.size(); i++) {
-			JournalArticle article = articles.get(i);
-
-			Date displayDate = article.getDisplayDate();
-			Date expirationDate = article.getExpirationDate();
-
-			if (((displayDate == null) || displayDate.before(now)) &&
-				((expirationDate == null) || expirationDate.after(now))) {
-
-				return article;
-			}
-		}
-
-		return articles.get(0);
+		return article;
 	}
 
 	/**
@@ -2848,27 +2915,16 @@ public class JournalArticleLocalServiceImpl
 			long groupId, String urlTitle, int status)
 		throws PortalException {
 
-		List<JournalArticle> articles = null;
+		JournalArticle article = fetchLatestArticleByUrlTitle(
+			groupId, urlTitle, status);
 
-		OrderByComparator<JournalArticle> orderByComparator =
-			new ArticleVersionComparator();
-
-		if (status == WorkflowConstants.STATUS_ANY) {
-			articles = journalArticlePersistence.findByG_UT(
-				groupId, urlTitle, 0, 1, orderByComparator);
-		}
-		else {
-			articles = journalArticlePersistence.findByG_UT_ST(
-				groupId, urlTitle, status, 0, 1, orderByComparator);
-		}
-
-		if (articles.isEmpty()) {
+		if (article == null) {
 			throw new NoSuchArticleException(
 				"No JournalArticle exists with the key {groupId=" + groupId +
 					", urlTitle=" + urlTitle + ", status=" + status + "}");
 		}
 
-		return articles.get(0);
+		return article;
 	}
 
 	/**
@@ -3172,13 +3228,7 @@ public class JournalArticleLocalServiceImpl
 		throws PortalException {
 
 		for (int i = 1;; i++) {
-			JournalArticle article = null;
-
-			try {
-				article = getArticleByUrlTitle(groupId, urlTitle);
-			}
-			catch (NoSuchArticleException nsae) {
-			}
+			JournalArticle article = fetchArticleByUrlTitle(groupId, urlTitle);
 
 			if ((article == null) || articleId.equals(article.getArticleId())) {
 				break;
@@ -3210,14 +3260,13 @@ public class JournalArticleLocalServiceImpl
 	 */
 	@Override
 	public boolean hasArticle(long groupId, String articleId) {
-		try {
-			getArticle(groupId, articleId);
+		JournalArticle article = fetchArticle(groupId, articleId);
 
+		if (article != null) {
 			return true;
 		}
-		catch (PortalException pe) {
-			return false;
-		}
+
+		return false;
 	}
 
 	/**
@@ -3343,6 +3392,12 @@ public class JournalArticleLocalServiceImpl
 			groupId, articleId);
 
 		for (JournalArticle article : articles) {
+			if (serviceContext != null) {
+				notifySubscribers(
+					serviceContext.getUserId(), article, article.getUrlTitle(),
+					"move_from", serviceContext);
+			}
+
 			article.setFolderId(newFolderId);
 			article.setTreePath(article.buildTreePath());
 
@@ -3351,7 +3406,7 @@ public class JournalArticleLocalServiceImpl
 			if (serviceContext != null) {
 				notifySubscribers(
 					serviceContext.getUserId(), article, article.getUrlTitle(),
-					serviceContext);
+					"move_to", serviceContext);
 			}
 		}
 
@@ -5759,10 +5814,16 @@ public class JournalArticleLocalServiceImpl
 
 			// Subscriptions
 
+			String action = "update";
+
+			if (article.getVersion() == 1.0) {
+				action = "add";
+			}
+
 			notifySubscribers(
 				user.getUserId(), article,
 				(String)workflowContext.get(WorkflowConstants.CONTEXT_URL),
-				serviceContext);
+				action, serviceContext);
 		}
 
 		return article;
@@ -6200,8 +6261,11 @@ public class JournalArticleLocalServiceImpl
 		for (Node imageNode : imageNodes) {
 			Element imageEl = (Element)imageNode;
 
-			String instanceId = imageEl.attributeValue("instance-id");
-			String name = imageEl.attributeValue("name");
+			String elInstanceId = imageEl.attributeValue("instance-id");
+			String elName = imageEl.attributeValue("name");
+			String elIndex = imageEl.attributeValue("index");
+
+			String name = elName + StringPool.UNDERLINE + elIndex;
 
 			List<Element> dynamicContentEls = imageEl.elements(
 				"dynamic-content");
@@ -6212,18 +6276,15 @@ public class JournalArticleLocalServiceImpl
 				String languageId = dynamicContentEl.attributeValue(
 					"language-id");
 
-				Image oldImage = null;
+				Image oldImage = imageLocalService.fetchImage(imageId);
 
-				try {
-					oldImage = imageLocalService.getImage(imageId);
-				}
-				catch (NoSuchImageException nsie) {
+				if (oldImage == null) {
 					continue;
 				}
 
 				imageId = journalArticleImageLocalService.getArticleImageId(
 					newArticle.getGroupId(), newArticle.getArticleId(),
-					newArticle.getVersion(), instanceId, name, languageId);
+					newArticle.getVersion(), elInstanceId, name, languageId);
 
 				imageLocalService.updateImage(imageId, oldImage.getTextObj());
 
@@ -6297,7 +6358,7 @@ public class JournalArticleLocalServiceImpl
 				String elIndex = element.attributeValue(
 					"index", StringPool.BLANK);
 
-				String name = elName + "_" + elIndex;
+				String name = elName + StringPool.UNDERLINE + elIndex;
 
 				formatImage(
 					groupId, articleId, version, incrementVersion, element,
@@ -6862,14 +6923,8 @@ public class JournalArticleLocalServiceImpl
 				id, serviceContext.getScopeGroupId(), articleId, title);
 		}
 
-		JournalArticle urlTitleArticle = null;
-
-		try {
-			urlTitleArticle = getArticleByUrlTitle(
-				serviceContext.getScopeGroupId(), urlTitle);
-		}
-		catch (NoSuchArticleException nsae) {
-		}
+		JournalArticle urlTitleArticle = fetchArticleByUrlTitle(
+			serviceContext.getScopeGroupId(), urlTitle);
 
 		if ((urlTitleArticle != null) &&
 			!Validator.equals(
@@ -6883,30 +6938,21 @@ public class JournalArticleLocalServiceImpl
 	}
 
 	protected boolean hasModifiedLatestApprovedVersion(
-			long groupId, String articleId, double version)
-		throws PortalException {
+		long groupId, String articleId, double version) {
 
-		double latestApprovedVersion;
+		JournalArticle article = fetchLatestArticle(
+			groupId, articleId, WorkflowConstants.STATUS_APPROVED);
 
-		try {
-			latestApprovedVersion = getLatestVersion(
-				groupId, articleId, WorkflowConstants.STATUS_APPROVED);
-
-			if (version >= latestApprovedVersion) {
-				return true;
-			}
-			else {
-				return false;
-			}
-		}
-		catch (NoSuchArticleException nsae) {
+		if ((article == null) || (article.getVersion() <= version)) {
 			return true;
 		}
+
+		return false;
 	}
 
 	protected void notifySubscribers(
 			long userId, JournalArticle article, String articleURL,
-			ServiceContext serviceContext)
+			String action, ServiceContext serviceContext)
 		throws PortalException {
 
 		if (!article.isApproved() || Validator.isNull(articleURL)) {
@@ -6934,10 +6980,17 @@ public class JournalArticleLocalServiceImpl
 				defaultPreferences);
 		}
 
-		if ((article.getVersion() == 1.0) &&
+		if (action.equals("add") &&
 			JournalUtil.getEmailArticleAddedEnabled(preferences)) {
 		}
-		else if ((article.getVersion() != 1.0) &&
+		else if (action.equals("move_to") &&
+				 JournalUtil.getEmailArticleMovedToFolderEnabled(preferences)) {
+		}
+		else if (action.equals("move_from") &&
+				 JournalUtil.getEmailArticleMovedFromFolderEnabled(
+					 preferences)) {
+		}
+		else if (action.equals("update") &&
 				 JournalUtil.getEmailArticleUpdatedEnabled(preferences)) {
 		}
 		else {
@@ -6952,13 +7005,26 @@ public class JournalArticleLocalServiceImpl
 		Map<Locale, String> localizedSubjectMap = null;
 		Map<Locale, String> localizedBodyMap = null;
 
-		if (article.getVersion() == 1.0) {
+		if (action.equals("add")) {
 			localizedSubjectMap = JournalUtil.getEmailArticleAddedSubjectMap(
 				preferences);
 			localizedBodyMap = JournalUtil.getEmailArticleAddedBodyMap(
 				preferences);
 		}
-		else {
+		else if (action.equals("move_to")) {
+			localizedSubjectMap =
+				JournalUtil.getEmailArticleMovedToFolderSubjectMap(preferences);
+			localizedBodyMap = JournalUtil.getEmailArticleMovedToFolderBodyMap(
+				preferences);
+		}
+		else if (action.equals("move_from")) {
+			localizedSubjectMap =
+				JournalUtil.getEmailArticleMovedFromFolderSubjectMap(
+					preferences);
+			localizedBodyMap =
+				JournalUtil.getEmailArticleMovedFromFolderBodyMap(preferences);
+		}
+		else if (action.equals("update")) {
 			localizedSubjectMap = JournalUtil.getEmailArticleUpdatedSubjectMap(
 				preferences);
 			localizedBodyMap = JournalUtil.getEmailArticleUpdatedBodyMap(
@@ -7004,10 +7070,14 @@ public class JournalArticleLocalServiceImpl
 		subscriptionSender.setContextAttribute(
 			"[$ARTICLE_DIFFS$]", DiffHtmlUtil.replaceStyles(articleDiffs),
 			false);
+
+		JournalFolder folder = article.getFolder();
+
 		subscriptionSender.setContextAttributes(
 			"[$ARTICLE_ID$]", article.getArticleId(), "[$ARTICLE_TITLE$]",
 			articleTitle, "[$ARTICLE_URL$]", articleURL, "[$ARTICLE_VERSION$]",
-			article.getVersion());
+			article.getVersion(), "[$FOLDER_NAME$]", folder.getName());
+
 		subscriptionSender.setContextCreatorUserPrefix("ARTICLE");
 		subscriptionSender.setCreatorUserId(article.getUserId());
 		subscriptionSender.setCurrentUserId(userId);
@@ -7033,8 +7103,6 @@ public class JournalArticleLocalServiceImpl
 		subscriptionSender.setReplyToAddress(fromAddress);
 		subscriptionSender.setScopeGroupId(article.getGroupId());
 		subscriptionSender.setServiceContext(serviceContext);
-
-		JournalFolder folder = article.getFolder();
 
 		subscriptionSender.addPersistedSubscribers(
 			JournalFolder.class.getName(), article.getGroupId());

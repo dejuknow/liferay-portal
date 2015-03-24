@@ -20,6 +20,7 @@
 String redirect = ParamUtil.getString(request, "redirect");
 String closeRedirect = ParamUtil.getString(request, "closeRedirect");
 boolean showBackURL = ParamUtil.getBoolean(request, "showBackURL", true);
+boolean showHeader = ParamUtil.getBoolean(request, "showHeader", true);
 
 String portletResource = ParamUtil.getString(request, "portletResource");
 
@@ -51,11 +52,12 @@ String script = BeanParamUtil.getString(template, request, "script");
 if (Validator.isNull(script)) {
 	TemplateHandler templateHandler = TemplateHandlerRegistryUtil.getTemplateHandler(classNameId);
 
+	if ((templateHandler == null) && (structure != null)) {
+		templateHandler = TemplateHandlerRegistryUtil.getTemplateHandler(structure.getClassNameId());
+	}
+
 	if (templateHandler != null) {
 		script = templateHandler.getTemplatesHelpContent(language);
-	}
-	else if ((structure != null) && Validator.equals(structure.getClassName(), JournalArticle.class.getName())) {
-		script = ContentUtil.get(PropsUtil.get(PropsKeys.JOURNAL_TEMPLATE_LANGUAGE_CONTENT, new Filter(language)));
 	}
 	else if (!type.equals(DDMTemplateConstants.TEMPLATE_TYPE_FORM)) {
 		script = ContentUtil.get(PropsUtil.get(PropsKeys.DYNAMIC_DATA_MAPPING_TEMPLATE_LANGUAGE_CONTENT, new Filter(language)));
@@ -122,12 +124,14 @@ boolean showCacheableInput = ParamUtil.getBoolean(request, "showCacheableInput")
 	}
 	%>
 
-	<liferay-ui:header
-		backURL="<%= ddmDisplay.getEditTemplateBackURL(liferayPortletRequest, liferayPortletResponse, classNameId, classPK, portletResource) %>"
-		localizeTitle="<%= false %>"
-		showBackURL="<%= showBackURL %>"
-		title="<%= title %>"
-	/>
+	<c:if test="<%= showHeader %>">
+		<liferay-ui:header
+			backURL="<%= ddmDisplay.getEditTemplateBackURL(liferayPortletRequest, liferayPortletResponse, classNameId, classPK, portletResource) %>"
+			localizeTitle="<%= false %>"
+			showBackURL="<%= showBackURL %>"
+			title="<%= title %>"
+		/>
+	</c:if>
 
 	<aui:model-context bean="<%= template %>" model="<%= DDMTemplate.class %>" />
 

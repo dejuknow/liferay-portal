@@ -20,6 +20,7 @@ import com.liferay.sync.engine.model.ModelListener;
 import com.liferay.sync.engine.model.SyncFile;
 import com.liferay.sync.engine.model.SyncFileModelListener;
 import com.liferay.sync.engine.service.persistence.SyncFilePersistence;
+import com.liferay.sync.engine.util.FileKeyUtil;
 import com.liferay.sync.engine.util.FileUtil;
 import com.liferay.sync.engine.util.IODeltaUtil;
 
@@ -121,8 +122,9 @@ public class SyncFileService {
 
 		_syncFilePersistence.create(syncFile);
 
-		FileUtil.writeFileKey(
-			Paths.get(filePathName), String.valueOf(syncFile.getSyncFileId()));
+		FileKeyUtil.writeFileKey(
+			Paths.get(filePathName), String.valueOf(syncFile.getSyncFileId()),
+			true);
 
 		IODeltaUtil.checksums(syncFile);
 
@@ -569,8 +571,8 @@ public class SyncFileService {
 
 		// Local sync file
 
-		FileUtil.writeFileKey(
-			filePath, String.valueOf(syncFile.getSyncFileId()));
+		FileKeyUtil.writeFileKey(
+			filePath, String.valueOf(syncFile.getSyncFileId()), true);
 
 		Path deltaFilePath = null;
 
