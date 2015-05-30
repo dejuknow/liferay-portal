@@ -25,6 +25,8 @@ public interface PortalWebResources {
 
 	public long getLastModified();
 
+	public String getResourceType();
+
 	public ServletContext getServletContext();
 
 }

@@ -16,35 +16,29 @@ package com.liferay.portal.servlet;
 
 import static org.mockito.Mockito.verify;
 
-import com.liferay.portal.cache.SingleVMPoolImpl;
-import com.liferay.portal.cache.memory.MemoryPortalCacheManager;
-import com.liferay.portal.kernel.cache.SingleVMPoolUtil;
 import com.liferay.portal.model.Portlet;
 import com.liferay.portal.model.PortletApp;
 import com.liferay.portal.service.PortletLocalService;
 import com.liferay.portal.service.PortletLocalServiceUtil;
+import com.liferay.portal.tools.ToolDependencies;
+import com.liferay.portal.util.Portal;
+import com.liferay.portal.util.PortalImpl;
+import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PortletKeys;
 
-import java.io.File;
-import java.io.IOException;
-
-import java.net.URI;
-import java.net.URL;
-
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 
 import org.mockito.Matchers;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.internal.stubbing.answers.CallsRealMethods;
 import org.mockito.invocation.InvocationOnMock;
@@ -55,6 +49,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletConfig;
 import org.springframework.mock.web.MockServletContext;
 
@@ -68,19 +63,20 @@ public class ComboServletTest extends PowerMockito {
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
-		SingleVMPoolImpl singleVMPoolImpl = new SingleVMPoolImpl();
+		ToolDependencies.wireCaches();
 
-		singleVMPoolImpl.setPortalCacheManager(
-			MemoryPortalCacheManager.createMemoryPortalCacheManager(
-				ComboServletTest.class.getName()));
+		_portal = PortalUtil.getPortal();
 
-		SingleVMPoolUtil singleVMPoolUtil = new SingleVMPoolUtil();
+		_portalUtil.setPortal(new PortalImpl());
+	}
 
-		singleVMPoolUtil.setSingleVMPool(singleVMPoolImpl);
+	@AfterClass
+	public static void tearDownClass() {
+		_portalUtil.setPortal(_portal);
 	}
 
 	@Before
-	public void setUp() throws IOException, ServletException {
+	public void setUp() throws ServletException {
 		MockitoAnnotations.initMocks(this);
 
 		when(
@@ -126,16 +122,6 @@ public class ComboServletTest extends PowerMockito {
 
 		_portalServletContext.setContextPath("portal");
 
-		File tempFile = _temporaryFolder.newFile();
-
-		URI tempFileURI = tempFile.toURI();
-
-		when(
-			_portalServletContext.getResource(Mockito.anyString())
-		).thenReturn(
-			tempFileURI.toURL()
-		);
-
 		when(
 			_portalPortletApp.getServletContext()
 		).thenReturn(
@@ -157,12 +143,6 @@ public class ComboServletTest extends PowerMockito {
 		_comboServlet.init(servletConfig);
 
 		_pluginServletContext = spy(new MockServletContext());
-
-		when(
-			_pluginServletContext.getResource(Mockito.anyString())
-		).thenReturn(
-			tempFileURI.toURL()
-		);
 
 		when(
 			_adminPortletApp.getServletContext()
@@ -193,37 +173,50 @@ public class ComboServletTest extends PowerMockito {
 		_mockHttpServletRequest.setLocalAddr("localhost");
 		_mockHttpServletRequest.setLocalPort(8080);
 		_mockHttpServletRequest.setScheme("http");
+
+		_mockHttpServletResponse = new MockHttpServletResponse();
 	}
 
 	@Test
-	public void testGetResourceWithNonexistingPortletId() throws Exception {
-		URL url = _comboServlet.getResourceURL(
-			_mockHttpServletRequest, "2345678:/js/javascript.js");
+	public void testGetResourceRequestDispatcherWithNonexistingPortletId()
+		throws Exception {
 
-		Assert.assertNull(url);
+		RequestDispatcher requestDispatcher =
+			_comboServlet.getResourceRequestDispatcher(
+				_mockHttpServletRequest, _mockHttpServletResponse,
+				"2345678:/js/javascript.js");
+
+		Assert.assertNull(requestDispatcher);
 	}
 
 	@Test
-	public void testGetResourceWithoutPortletId() throws Exception {
+	public void testGetResourceRequestDispatcherWithoutPortletId()
+		throws Exception {
+
 		String path = "/js/javascript.js";
 
-		_comboServlet.getResourceURL(
-			_mockHttpServletRequest, "/js/javascript.js");
+		_comboServlet.getResourceRequestDispatcher(
+			_mockHttpServletRequest, _mockHttpServletResponse,
+			"/js/javascript.js");
 
 		verify(_portalServletContext);
 
-		_portalServletContext.getResource(path);
+		_portalServletContext.getRequestDispatcher(path);
 	}
 
 	@Test
 	public void testGetResourceWithPortletId() throws Exception {
-		_comboServlet.getResourceURL(
-			_mockHttpServletRequest, PortletKeys.ADMIN + ":/js/javascript.js");
+		_comboServlet.getResourceRequestDispatcher(
+			_mockHttpServletRequest, _mockHttpServletResponse,
+			PortletKeys.ADMIN + ":/js/javascript.js");
 
 		verify(_pluginServletContext);
 
-		_pluginServletContext.getResource("/js/javascript.js");
+		_pluginServletContext.getRequestDispatcher("/js/javascript.js");
 	}
+
+	private static Portal _portal;
+	private static final PortalUtil _portalUtil = new PortalUtil();
 
 	@Mock
 	private Portlet _adminPortlet;
@@ -233,6 +226,7 @@ public class ComboServletTest extends PowerMockito {
 
 	private ComboServlet _comboServlet;
 	private MockHttpServletRequest _mockHttpServletRequest;
+	private MockHttpServletResponse _mockHttpServletResponse;
 	private MockServletContext _pluginServletContext;
 
 	@Mock
@@ -248,8 +242,5 @@ public class ComboServletTest extends PowerMockito {
 
 	@Mock
 	private Portlet _portletUndeployed;
-
-	@Rule
-	private final TemporaryFolder _temporaryFolder = new TemporaryFolder();
 
 }

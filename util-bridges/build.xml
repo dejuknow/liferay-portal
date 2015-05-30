@@ -5,9 +5,6 @@
 
 	<property name="deploy.dir" value="${app.server.lib.portal.dir}" />
 	<property name="jar.file" value="${ant.project.name}" />
-	<property name="javac.classpathref" value="web.classpath" />
-	<property name="javac.destdir" value="classes" />
-	<property name="javac.srcdir" value="src" />
 	<property name="manifest.bundle.name" value="Liferay Util Bridges" />
 	<property name="manifest.bundle.symbolic.name" value="util-bridges" />
 
@@ -18,8 +15,22 @@
 		<fileset dir="${project.dir}/lib/portal" includes="bsf.jar,commons-logging.jar,liferay-rhino.jar,portals-bridges.jar,struts.jar" />
 	</path>
 
-	<target name="jar" depends="build-common-java.jar">
-		<copy file="${jar.file}.jar" todir="${portal-impl.classes.dir}/com/liferay/portal/deploy/dependencies" preservelastmodified="true" />
-		<copy file="${project.dir}/lib/portal/portals-bridges.jar" todir="${portal-impl.classes.dir}/com/liferay/portal/deploy/dependencies" preservelastmodified="true" />
-	</target>
+	<macrodef name="compile-java">
+		<sequential>
+			<compile-java-cmd
+				javac.classpathref="web.classpath"
+			/>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="jar-marco">
+		<sequential>
+			<jar-marco-cmd>
+				<jar-post>
+					<copy file="${jar.file}.jar" todir="${portal-impl.classes.dir}/com/liferay/portal/deploy/dependencies" preservelastmodified="true" />
+					<copy file="${project.dir}/lib/portal/portals-bridges.jar" todir="${portal-impl.classes.dir}/com/liferay/portal/deploy/dependencies" preservelastmodified="true" />
+				</jar-post>
+			</jar-marco-cmd>
+		</sequential>
+	</macrodef>
 </project>

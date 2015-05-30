@@ -172,13 +172,13 @@
 			<var name="portletName" value="My Workflow Tasks" />
 		</execute>
 
-		<execute macro="Workflow#viewCompletedTasksCP">
+		<execute macro="Workflow#viewCompletedTasks">
 			<var name="workflowAssetTitle" value="Blogs Entry Title - Liferay" />
 			<var name="workflowAssetType" value="Blogs Entry" />
 			<var name="workflowTask" value="Review" />
 		</execute>
 
-		<execute macro="Workflow#viewCompletedTasksCP">
+		<execute macro="Workflow#viewCompletedTasks">
 			<var name="workflowAssetTitle" value="Blogs Entry Title - Site Name" />
 			<var name="workflowAssetType" value="Blogs Entry" />
 			<var name="workflowTask" value="Review" />
@@ -253,7 +253,7 @@
 			<var name="portletName" value="My Workflow Tasks" />
 		</execute>
 
-		<execute macro="Workflow#viewCompletedTasksCP">
+		<execute macro="Workflow#viewCompletedTasks">
 			<var name="workflowAssetTitle" value="Blogs Entry Title - Liferay" />
 			<var name="workflowAssetType" value="Blogs Entry" />
 			<var name="workflowTask" value="Review" />
@@ -264,7 +264,7 @@
 		</execute>
 	</command>
 
-	<command name="AddWikiPageAsSiteUser" priority="4">
+	<command known-issues="LPS-55550" name="AddWikiPageAsSiteUser" priority="4">
 		<var name="pageName" value="Wiki Page" />
 		<var name="portletName" value="Wiki" />
 		<var name="userEmailAddress" value="userea@liferay.com" />
@@ -360,8 +360,6 @@
 			<var name="portletName" value="My Submissions" />
 		</execute>
 
-		<execute function="SelectFrame" locator1="Myaccount#MY_ACCOUNT_IFRAME" />
-
 		<var name="key_workflowAssetTitle" value="${wikiPageTitle}" />
 
 		<execute function="AssertTextEquals" locator1="CPMysubmissions#PENDING_TABLE_DEFINITION" value1="Single Approver" />
@@ -370,8 +368,6 @@
 		<execute function="AssertTextEquals" locator1="CPMysubmissions#PENDING_TABLE_STATUS" value1="Review" />
 		<execute function="AssertElementPresent" locator1="CPMysubmissions#PENDING_TABLE_LAST_ACTIVITY_DATE" />
 		<execute function="AssertElementPresent" locator1="CPMysubmissions#PENDING_TABLE_END_DATE" />
-
-		<execute function="SelectFrame" value1="relative=top" />
 
 		<execute macro="User#logoutPG" />
 
@@ -642,36 +638,27 @@
 			<var name="portletName" value="My Workflow Tasks" />
 		</execute>
 
-		<execute macro="Workflow#viewAssignedToMyRolesTasksCP">
+		<execute macro="Workflow#viewTaskAssignedToMyRoles">
 			<var name="workflowAssetTitle" value="${webContentTitle}" />
 			<var name="workflowAssetType" value="Web Content Article" />
 			<var name="workflowTask" value="Review" />
 		</execute>
 
-		<execute macro="Workflow#viewAssignedToMyRolesTasksCP">
+		<execute macro="Workflow#viewTaskAssignedToMyRoles">
 			<var name="workflowAssetTitle" value="${entryTitle}" />
 			<var name="workflowAssetType" value="Blogs Entry" />
 			<var name="workflowTask" value="Review" />
 		</execute>
 
-		<execute function="SelectFrame" locator1="Myaccount#MY_ACCOUNT_IFRAME" />
-
 		<execute function="AssertElementNotPresent#assertNotVisible" locator1="//div[@id='workflowMyRolesTasksPanelContent']//tr[3]/td" />
-
-		<execute function="SelectFrame" value1="relative=top" />
 	</command>
 
 	<command name="ViewWebContentConfigurationCP" priority="4">
-		<var name="authorAddress" value="test@liferay.com" />
-		<var name="authorName" value="Joe Bloggs" />
-
 		<execute macro="Page#gotoContentCP">
 			<var name="portletName" value="Web Content" />
 		</execute>
 
-		<execute macro="WebContentPortlet#viewEmailConfigurationCP">
-			<var name="authorAddress" value="${authorAddress}" />
-			<var name="authorName" value="${authorName}" />
+		<execute macro="WebContent#viewEmailConfigurationCP">
 			<var name="webContentWorkflowEnabled" value="false" />
 		</execute>
 
@@ -687,9 +674,7 @@
 			<var name="portletName" value="Web Content" />
 		</execute>
 
-		<execute macro="WebContentPortlet#viewEmailConfigurationCP">
-			<var name="authorAddress" value="${authorAddress}" />
-			<var name="authorName" value="${authorName}" />
+		<execute macro="WebContent#viewEmailConfigurationCP">
 			<var name="webContentWorkflowEnabled" value="true" />
 		</execute>
 	</command>
@@ -743,6 +728,10 @@
 
 		<execute macro="Page#gotoContentCP">
 			<var name="portletName" value="Web Content" />
+		</execute>
+
+		<execute macro="WebContentNavigator#gotoEditCP">
+			<var name="webContentTitle" value="WC WebContent Title" />
 		</execute>
 
 		<execute macro="WebContent#viewCP">

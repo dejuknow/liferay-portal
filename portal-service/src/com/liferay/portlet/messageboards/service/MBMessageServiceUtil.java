@@ -41,16 +41,13 @@ public class MBMessageServiceUtil {
 	 * Never modify this class directly. Add custom service methods to {@link com.liferay.portlet.messageboards.service.impl.MBMessageServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
 	public static com.liferay.portlet.messageboards.model.MBMessage addDiscussionMessage(
-		long groupId, java.lang.String className, long classPK,
-		java.lang.String permissionClassName, long permissionClassPK,
-		long permissionOwnerId, long threadId, long parentMessageId,
-		java.lang.String subject, java.lang.String body,
+		long groupId, java.lang.String className, long classPK, long threadId,
+		long parentMessageId, java.lang.String subject, java.lang.String body,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
-				   .addDiscussionMessage(groupId, className, classPK,
-			permissionClassName, permissionClassPK, permissionOwnerId,
-			threadId, parentMessageId, subject, body, serviceContext);
+				   .addDiscussionMessage(groupId, className, classPK, threadId,
+			parentMessageId, subject, body, serviceContext);
 	}
 
 	public static com.liferay.portlet.messageboards.model.MBMessage addMessage(
@@ -62,13 +59,15 @@ public class MBMessageServiceUtil {
 
 	public static com.liferay.portlet.messageboards.model.MBMessage addMessage(
 		long groupId, long categoryId, java.lang.String subject,
-		java.lang.String body, java.lang.String fileName, java.io.File file,
+		java.lang.String body, java.lang.String format,
+		java.lang.String fileName, java.io.File file, boolean anonymous,
+		double priority, boolean allowPingbacks,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			java.io.FileNotFoundException {
 		return getService()
-				   .addMessage(groupId, categoryId, subject, body, fileName,
-			file, serviceContext);
+				   .addMessage(groupId, categoryId, subject, body, format,
+			fileName, file, anonymous, priority, allowPingbacks, serviceContext);
 	}
 
 	public static com.liferay.portlet.messageboards.model.MBMessage addMessage(
@@ -115,6 +114,17 @@ public class MBMessageServiceUtil {
 			inputStreamOVPs, anonymous, priority, allowPingbacks, serviceContext);
 	}
 
+	public static void addMessageAttachment(long messageId,
+		java.lang.String fileName, java.io.File file, java.lang.String mimeType)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		getService().addMessageAttachment(messageId, fileName, file, mimeType);
+	}
+
+	/**
+	* @deprecated As of 7.0.0, replaced by {@link #deleteDiscussionMessage(
+	long)}
+	*/
+	@Deprecated
 	public static void deleteDiscussionMessage(long groupId,
 		java.lang.String className, long classPK,
 		java.lang.String permissionClassName, long permissionClassPK,
@@ -125,9 +135,20 @@ public class MBMessageServiceUtil {
 			permissionClassName, permissionClassPK, permissionOwnerId, messageId);
 	}
 
+	public static void deleteDiscussionMessage(long messageId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		getService().deleteDiscussionMessage(messageId);
+	}
+
 	public static void deleteMessage(long messageId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		getService().deleteMessage(messageId);
+	}
+
+	public static void deleteMessageAttachment(long messageId,
+		java.lang.String fileName)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		getService().deleteMessageAttachment(messageId, fileName);
 	}
 
 	public static void deleteMessageAttachments(long messageId)
@@ -286,16 +307,13 @@ public class MBMessageServiceUtil {
 	}
 
 	public static com.liferay.portlet.messageboards.model.MBMessage updateDiscussionMessage(
-		java.lang.String className, long classPK,
-		java.lang.String permissionClassName, long permissionClassPK,
-		long permissionOwnerId, long messageId, java.lang.String subject,
-		java.lang.String body,
+		java.lang.String className, long classPK, long messageId,
+		java.lang.String subject, java.lang.String body,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
-				   .updateDiscussionMessage(className, classPK,
-			permissionClassName, permissionClassPK, permissionOwnerId,
-			messageId, subject, body, serviceContext);
+				   .updateDiscussionMessage(className, classPK, messageId,
+			subject, body, serviceContext);
 	}
 
 	public static com.liferay.portlet.messageboards.model.MBMessage updateMessage(

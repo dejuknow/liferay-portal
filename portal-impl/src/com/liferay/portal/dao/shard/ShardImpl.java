@@ -16,6 +16,8 @@ package com.liferay.portal.dao.shard;
 
 import com.liferay.portal.dao.shard.advice.ShardAdvice;
 import com.liferay.portal.kernel.dao.shard.Shard;
+import com.liferay.portal.kernel.dao.shard.ShardDataSourceTargetSource;
+import com.liferay.portal.kernel.dao.shard.ShardSessionFactoryTargetSource;
 import com.liferay.portal.kernel.security.pacl.DoPrivileged;
 import com.liferay.portal.kernel.util.InfrastructureUtil;
 import com.liferay.portal.util.PropsValues;
@@ -31,8 +33,7 @@ public class ShardImpl implements Shard {
 	@Override
 	public String[] getAvailableShardNames() {
 		ShardDataSourceTargetSource shardDataSourceTargetSource =
-			(ShardDataSourceTargetSource)
-				InfrastructureUtil.getShardDataSourceTargetSource();
+			InfrastructureUtil.getShardDataSourceTargetSource();
 
 		if (shardDataSourceTargetSource != null) {
 			return shardDataSourceTargetSource.getAvailableShardNames();

@@ -14,9 +14,6 @@
 
 package com.liferay.portlet;
 
-import com.liferay.portal.cache.SingleVMPoolImpl;
-import com.liferay.portal.cache.memory.MemoryPortalCacheManager;
-import com.liferay.portal.kernel.cache.SingleVMPoolUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.model.Layout;
 import com.liferay.portal.model.Portlet;
@@ -28,10 +25,12 @@ import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.service.PortletLocalServiceUtil;
 import com.liferay.portal.service.permission.LayoutPermissionUtil;
+import com.liferay.portal.tools.ToolDependencies;
 import com.liferay.portal.util.PortletKeys;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -51,18 +50,13 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @RunWith(PowerMockRunner.class)
 public class PortletPreferencesFactoryImplGetPreferencesIdsTest {
 
+	@BeforeClass
+	public static void setUpClass() throws Exception {
+		ToolDependencies.wireCaches();
+	}
+
 	@Before
 	public void setUp() {
-		SingleVMPoolUtil singleVMPoolUtil = new SingleVMPoolUtil();
-
-		SingleVMPoolImpl singleVMPoolImpl = new SingleVMPoolImpl();
-
-		singleVMPoolImpl.setPortalCacheManager(
-			MemoryPortalCacheManager.createMemoryPortalCacheManager(
-				PortletPreferencesFactoryImplUnitTest.class.getName()));
-
-		singleVMPoolUtil.setSingleVMPool(singleVMPoolImpl);
-
 		PortletPreferencesFactoryUtil portletPreferencesFactoryUtil =
 			new PortletPreferencesFactoryUtil();
 

@@ -15,6 +15,7 @@
 package com.liferay.portal.events;
 
 import com.liferay.portal.kernel.events.ActionException;
+import com.liferay.portal.kernel.events.SimpleAction;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.metadata.RawMetadataProcessorUtil;
 import com.liferay.portal.kernel.upgrade.util.UpgradeProcessUtil;
@@ -25,7 +26,7 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
-import com.liferay.portal.kernel.xml.SAXReaderUtil;
+import com.liferay.portal.kernel.xml.UnsecureSAXReaderUtil;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.service.GroupLocalServiceUtil;
 import com.liferay.portal.service.ServiceContext;
@@ -44,6 +45,7 @@ import com.liferay.portlet.dynamicdatamapping.model.DDMStructureConstants;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.storage.StorageType;
 import com.liferay.portlet.dynamicdatamapping.util.DDMUtil;
+import com.liferay.portlet.dynamicdatamapping.util.DefaultDDMStructureUtil;
 
 import java.io.StringReader;
 
@@ -60,8 +62,7 @@ import java.util.Map;
  * @author Miguel Pastor
  * @author Roberto Díaz
  */
-public class AddDefaultDocumentLibraryStructuresAction
-	extends BaseDefaultDDMStructureAction {
+public class AddDefaultDocumentLibraryStructuresAction extends SimpleAction {
 
 	@Override
 	public void run(String[] ids) throws ActionException {
@@ -99,8 +100,13 @@ public class AddDefaultDocumentLibraryStructuresAction
 
 		Locale locale = PortalUtil.getSiteDefaultLocale(groupId);
 
-		String definition = getDynamicDDMStructureDefinition(
-			"document-library-structures.xml", languageKey, locale);
+		String definition =
+			DefaultDDMStructureUtil.getDynamicDDMStructureDefinition(
+				AddDefaultDocumentLibraryStructuresAction.class.
+					getClassLoader(),
+				"com/liferay/portal/events/dependencies" +
+					"/document-library-structures.xml",
+				languageKey, locale);
 
 		DDMForm ddmForm = DDMFormXSDDeserializerUtil.deserialize(definition);
 
@@ -178,7 +184,7 @@ public class AddDefaultDocumentLibraryStructuresAction
 		String xsd = buildDLRawMetadataXML(
 			RawMetadataProcessorUtil.getFields(), locale);
 
-		Document document = SAXReaderUtil.read(new StringReader(xsd));
+		Document document = UnsecureSAXReaderUtil.read(new StringReader(xsd));
 
 		Element rootElement = document.getRootElement();
 
@@ -313,10 +319,13 @@ public class AddDefaultDocumentLibraryStructuresAction
 
 		serviceContext.setUserId(defaultUserId);
 
-		addDDMStructures(
+		DefaultDDMStructureUtil.addDDMStructures(
 			defaultUserId, group.getGroupId(),
 			PortalUtil.getClassNameId(DLFileEntryMetadata.class),
-			"document-library-structures.xml", serviceContext);
+			AddDefaultDocumentLibraryStructuresAction.class.getClassLoader(),
+			"com/liferay/portal/events/dependencies" +
+				"/document-library-structures.xml",
+			serviceContext);
 		addDLFileEntryTypes(defaultUserId, group.getGroupId(), serviceContext);
 		addDLRawMetadataStructures(
 			defaultUserId, group.getGroupId(), serviceContext);

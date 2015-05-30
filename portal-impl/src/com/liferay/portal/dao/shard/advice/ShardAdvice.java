@@ -14,9 +14,9 @@
 
 package com.liferay.portal.dao.shard.advice;
 
-import com.liferay.portal.dao.shard.ShardDataSourceTargetSource;
 import com.liferay.portal.dao.shard.ShardSelector;
-import com.liferay.portal.dao.shard.ShardSessionFactoryTargetSource;
+import com.liferay.portal.kernel.dao.shard.ShardDataSourceTargetSource;
+import com.liferay.portal.kernel.dao.shard.ShardSessionFactoryTargetSource;
 import com.liferay.portal.kernel.exception.LoggedExceptionInInitializerError;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
@@ -46,14 +46,12 @@ public class ShardAdvice {
 	public void afterPropertiesSet() {
 		if (_shardDataSourceTargetSource == null) {
 			_shardDataSourceTargetSource =
-				(ShardDataSourceTargetSource)InfrastructureUtil.
-					getShardDataSourceTargetSource();
+				InfrastructureUtil.getShardDataSourceTargetSource();
 		}
 
 		if (_shardSessionFactoryTargetSource == null) {
 			_shardSessionFactoryTargetSource =
-				(ShardSessionFactoryTargetSource)InfrastructureUtil.
-					getShardSessionFactoryTargetSource();
+				InfrastructureUtil.getShardSessionFactoryTargetSource();
 		}
 	}
 

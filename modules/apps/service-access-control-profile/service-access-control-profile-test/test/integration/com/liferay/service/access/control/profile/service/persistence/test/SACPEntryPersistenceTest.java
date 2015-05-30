@@ -35,7 +35,6 @@ import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PersistenceTestRule;
-import com.liferay.portal.util.PropsValues;
 
 import com.liferay.service.access.control.profile.exception.NoSuchEntryException;
 import com.liferay.service.access.control.profile.model.SACPEntry;
@@ -135,7 +134,7 @@ public class SACPEntryPersistenceTest {
 
 		newSACPEntry.setModifiedDate(RandomTestUtil.nextDate());
 
-		newSACPEntry.setAllowedServices(RandomTestUtil.randomString());
+		newSACPEntry.setAllowedServiceSignatures(RandomTestUtil.randomString());
 
 		newSACPEntry.setName(RandomTestUtil.randomString());
 
@@ -160,8 +159,8 @@ public class SACPEntryPersistenceTest {
 		Assert.assertEquals(Time.getShortTimestamp(
 				existingSACPEntry.getModifiedDate()),
 			Time.getShortTimestamp(newSACPEntry.getModifiedDate()));
-		Assert.assertEquals(existingSACPEntry.getAllowedServices(),
-			newSACPEntry.getAllowedServices());
+		Assert.assertEquals(existingSACPEntry.getAllowedServiceSignatures(),
+			newSACPEntry.getAllowedServiceSignatures());
 		Assert.assertEquals(existingSACPEntry.getName(), newSACPEntry.getName());
 		Assert.assertEquals(existingSACPEntry.getTitle(),
 			newSACPEntry.getTitle());
@@ -210,17 +209,11 @@ public class SACPEntryPersistenceTest {
 		Assert.assertEquals(existingSACPEntry, newSACPEntry);
 	}
 
-	@Test
+	@Test(expected = NoSuchEntryException.class)
 	public void testFindByPrimaryKeyMissing() throws Exception {
 		long pk = RandomTestUtil.nextLong();
 
-		try {
-			_persistence.findByPrimaryKey(pk);
-
-			Assert.fail("Missing entity did not throw NoSuchEntryException");
-		}
-		catch (NoSuchEntryException nsee) {
-		}
+		_persistence.findByPrimaryKey(pk);
 	}
 
 	@Test
@@ -232,8 +225,8 @@ public class SACPEntryPersistenceTest {
 	protected OrderByComparator<SACPEntry> getOrderByComparator() {
 		return OrderByComparatorFactoryUtil.create("SACPEntry", "uuid", true,
 			"sacpEntryId", true, "companyId", true, "userId", true, "userName",
-			true, "createDate", true, "modifiedDate", true, "allowedServices",
-			true, "name", true, "title", true);
+			true, "createDate", true, "modifiedDate", true,
+			"allowedServiceSignatures", true, "name", true, "title", true);
 	}
 
 	@Test
@@ -432,10 +425,6 @@ public class SACPEntryPersistenceTest {
 
 	@Test
 	public void testResetOriginalValues() throws Exception {
-		if (!PropsValues.HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE) {
-			return;
-		}
-
 		SACPEntry newSACPEntry = addSACPEntry();
 
 		_persistence.clearCache();
@@ -467,7 +456,7 @@ public class SACPEntryPersistenceTest {
 
 		sacpEntry.setModifiedDate(RandomTestUtil.nextDate());
 
-		sacpEntry.setAllowedServices(RandomTestUtil.randomString());
+		sacpEntry.setAllowedServiceSignatures(RandomTestUtil.randomString());
 
 		sacpEntry.setName(RandomTestUtil.randomString());
 

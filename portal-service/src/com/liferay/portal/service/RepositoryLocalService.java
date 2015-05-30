@@ -225,25 +225,13 @@ public interface RepositoryLocalService extends BaseLocalService,
 		com.liferay.portal.kernel.lar.PortletDataContext portletDataContext);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.util.List<com.liferay.portal.kernel.repository.LocalRepository> getGroupLocalRepositoryImpl(
-		long groupId) throws PortalException;
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public com.liferay.portal.kernel.repository.LocalRepository getLocalRepositoryImpl(
-		long folderId, long fileEntryId, long fileVersionId)
-		throws PortalException;
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public com.liferay.portal.kernel.repository.LocalRepository getLocalRepositoryImpl(
-		long repositoryId) throws PortalException;
+	public java.util.List<com.liferay.portal.model.Repository> getGroupRepositories(
+		long groupId);
 
 	@Override
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public com.liferay.portal.model.PersistedModel getPersistedModel(
 		java.io.Serializable primaryKeyObj) throws PortalException;
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.lang.String getRegistryName();
 
 	/**
 	* Returns a range of all the repositories.
@@ -327,19 +315,8 @@ public interface RepositoryLocalService extends BaseLocalService,
 		java.lang.String uuid, long groupId) throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public com.liferay.portal.kernel.repository.Repository getRepositoryImpl(
-		long folderId, long fileEntryId, long fileVersionId)
-		throws PortalException;
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public com.liferay.portal.kernel.repository.Repository getRepositoryImpl(
-		long repositoryId) throws PortalException;
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public com.liferay.portal.kernel.util.UnicodeProperties getTypeSettingsProperties(
 		long repositoryId) throws PortalException;
-
-	public void invalidate();
 
 	/**
 	* Sets the Spring bean ID for this bean.

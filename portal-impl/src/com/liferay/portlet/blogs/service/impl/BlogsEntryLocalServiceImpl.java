@@ -161,11 +161,9 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 			ServiceContext serviceContext)
 		throws PortalException {
 
-		Date now = new Date();
-
 		return addEntry(
-			userId, title, StringPool.BLANK, StringPool.BLANK, content, now,
-			true, true, new String[0], StringPool.BLANK, null, null,
+			userId, title, StringPool.BLANK, StringPool.BLANK, content,
+			new Date(), true, true, new String[0], StringPool.BLANK, null, null,
 			serviceContext);
 	}
 
@@ -228,8 +226,6 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 
 		long entryId = counterLocalService.increment();
 
-		Date now = new Date();
-
 		validate(title, content);
 
 		BlogsEntry entry = blogsEntryPersistence.create(entryId);
@@ -239,8 +235,6 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 		entry.setCompanyId(user.getCompanyId());
 		entry.setUserId(user.getUserId());
 		entry.setUserName(user.getFullName());
-		entry.setCreateDate(serviceContext.getCreateDate(now));
-		entry.setModifiedDate(serviceContext.getModifiedDate(now));
 		entry.setTitle(title);
 		entry.setSubtitle(subtitle);
 		entry.setUrlTitle(
@@ -252,7 +246,7 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 		entry.setAllowTrackbacks(allowTrackbacks);
 		entry.setStatus(WorkflowConstants.STATUS_DRAFT);
 		entry.setStatusByUserId(userId);
-		entry.setStatusDate(serviceContext.getModifiedDate(now));
+		entry.setStatusDate(serviceContext.getModifiedDate(null));
 		entry.setExpandoBridgeAttributes(serviceContext);
 
 		blogsEntryPersistence.update(entry);
@@ -1232,7 +1226,6 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 
 		String oldUrlTitle = entry.getUrlTitle();
 
-		entry.setModifiedDate(serviceContext.getModifiedDate(null));
 		entry.setTitle(title);
 		entry.setSubtitle(subtitle);
 		entry.setUrlTitle(
@@ -1476,7 +1469,6 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 			status = WorkflowConstants.STATUS_SCHEDULED;
 		}
 
-		entry.setModifiedDate(serviceContext.getModifiedDate(now));
 		entry.setStatus(status);
 		entry.setStatusByUserId(user.getUserId());
 		entry.setStatusByUserName(user.getFullName());

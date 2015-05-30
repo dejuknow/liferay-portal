@@ -16,6 +16,7 @@ package com.liferay.portal.kernel.comment;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.util.Function;
+import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.service.ServiceContext;
 
 /**
@@ -25,12 +26,19 @@ public interface CommentManager {
 
 	public void addComment(
 			long userId, long groupId, String className, long classPK,
-			String body, ServiceContext serviceContext)
+			String body,
+			Function<String, ServiceContext> serviceContextFunction)
 		throws PortalException;
 
 	public long addComment(
 			long userId, long groupId, String className, long classPK,
 			String userName, String subject, String body,
+			Function<String, ServiceContext> serviceContextFunction)
+		throws PortalException;
+
+	public long addComment(
+			long userId, String className, long classPK, String userName,
+			long parentCommentId, String subject, String body,
 			Function<String, ServiceContext> serviceContextFunction)
 		throws PortalException;
 
@@ -45,5 +53,30 @@ public interface CommentManager {
 		throws PortalException;
 
 	public int getCommentsCount(String className, long classPK);
+
+	public Discussion getDiscussion(
+			long userId, long groupId, String className, long classPK,
+			Function<String, ServiceContext> serviceContextFunction)
+		throws PortalException;
+
+	public DiscussionPermission getDiscussionPermission(
+		PermissionChecker permissionChecker);
+
+	public boolean hasDiscussion(String className, long classPK)
+		throws PortalException;
+
+	public void subscribeDiscussion(
+			long userId, long groupId, String className, long classPK)
+		throws PortalException;
+
+	public void unsubscribeDiscussion(
+			long userId, String className, long classPK)
+		throws PortalException;
+
+	public long updateComment(
+			long userId, String className, long classPK, long commentId,
+			String subject, String body,
+			Function<String, ServiceContext> serviceContextFunction)
+		throws PortalException;
 
 }

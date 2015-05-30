@@ -121,6 +121,8 @@
 			<var name="portletName" value="Web Content" />
 		</execute>
 
+		<execute macro="WebContentNavigator#gotoAddCP" />
+
 		<execute macro="WebContent#addWithCategoryCP">
 			<var name="categoryName" value="Category Name" />
 			<var name="vocabularyName" value="Vocabulary Name" />
@@ -394,6 +396,8 @@
 			<var name="portletName" value="Web Content" />
 		</execute>
 
+		<execute macro="WebContentNavigator#gotoAddCP" />
+
 		<execute macro="WebContent#addFailWithoutRequiredCategoryAssetTypeCP">
 			<var name="vocabularyName" value="Vocabulary Name" />
 		</execute>
@@ -401,6 +405,8 @@
 		<execute macro="Page#gotoContentCP">
 			<var name="portletName" value="Web Content" />
 		</execute>
+
+		<execute macro="WebContentNavigator#gotoAddCP" />
 
 		<execute macro="WebContent#addWithCategoryCP">
 			<var name="categoryName" value="Category Name" />
@@ -432,6 +438,8 @@
 		<execute macro="Page#gotoContentCP">
 			<var name="portletName" value="Web Content" />
 		</execute>
+
+		<execute macro="WebContentNavigator#gotoAddCP" />
 
 		<execute macro="WebContent#addWithCategoryCP">
 			<var name="categoryName" value="Category Name" />
@@ -586,6 +594,8 @@
 			<var name="portletName" value="Web Content" />
 		</execute>
 
+		<execute macro="WebContentNavigator#gotoAddCP" />
+
 		<execute macro="WebContent#addWithMultipleCategories">
 			<var name="categoryNameList" value="Category Name 1,Category Name 2" />
 			<var name="vocabularyName" value="Vocabulary Name" />
@@ -597,12 +607,12 @@
 			<var name="portletName" value="Web Content" />
 		</execute>
 
-		<execute macro="WebContent#gotoEditCP">
+		<execute macro="WebContentNavigator#gotoEditCP">
 			<var name="webContentTitle" value="Web Content Title" />
 		</execute>
 
 		<execute macro="WebContent#viewCategorizationCategoryCP">
-			<var name="categoryName" value="Category Name 2" />
+			<var name="categoryNameList" value="Category Name 2" />
 			<var name="webContentTitle" value="Web Content Title" />
 		</execute>
 
@@ -610,7 +620,7 @@
 			<var name="portletName" value="Web Content" />
 		</execute>
 
-		<execute macro="WebContent#gotoEditCP">
+		<execute macro="WebContentNavigator#gotoEditCP">
 			<var name="webContentTitle" value="WC WebContent Title" />
 		</execute>
 
@@ -632,6 +642,8 @@
 			<var name="portletName" value="Web Content" />
 		</execute>
 
+		<execute macro="WebContentNavigator#gotoAddCP" />
+
 		<execute macro="WebContent#addWithMultipleCategories">
 			<var name="categoryNameList" value="Category Name 1,Category Name 2" />
 			<var name="vocabularyName" value="Vocabulary Name" />
@@ -639,20 +651,18 @@
 			<var name="webContentTitle" value="Web Content Title Multiple Categories" />
 		</execute>
 
-		<for list="Category Name 1,Category Name 2" param="categoryName">
-			<execute macro="Page#gotoContentCP">
-				<var name="portletName" value="Web Content" />
-			</execute>
+		<execute macro="Page#gotoContentCP">
+			<var name="portletName" value="Web Content" />
+		</execute>
 
-			<execute macro="WebContent#gotoEditCP">
-				<var name="webContentTitle" value="Web Content Title Multiple Categories" />
-			</execute>
+		<execute macro="WebContentNavigator#gotoEditCP">
+			<var name="webContentTitle" value="Web Content Title Multiple Categories" />
+		</execute>
 
-			<execute macro="WebContent#viewCategorizationCategoryCP">
-				<var name="categoryName" value="${categoryName}" />
-				<var name="webContentTitle" value="Web Content Title Multiple Categories" />
-			</execute>
-		</for>
+		<execute macro="WebContent#viewCategorizationCategoryCP">
+			<var name="categoryNameList" value="Category Name 1,Category Name 2" />
+			<var name="webContentTitle" value="Web Content Title Multiple Categories" />
+		</execute>
 	</command>
 
 	<command known-issues="LPS-54823" name="DuplicateCategoriesViaWebContentCopy" priority="3">
@@ -681,6 +691,8 @@
 		<execute macro="Page#gotoContentCP">
 			<var name="portletName" value="Web Content" />
 		</execute>
+
+		<execute macro="WebContentNavigator#gotoAddCP" />
 
 		<execute macro="WebContent#addWithCategoryCP">
 			<var name="categoryName" value="${categoryName}" />
@@ -740,6 +752,8 @@
 			<var name="siteName" value="Site Name" />
 			<var name="siteURL" value="true" />
 		</execute>
+
+		<execute macro="WebContentNavigator#gotoAddCP" />
 
 		<execute macro="WebContent#addWithCategoryCP">
 			<var name="categoryName" value="Category Name" />
@@ -831,12 +845,12 @@
 			<var name="siteURL" value="true" />
 		</execute>
 
-		<execute macro="WebContent#gotoEditCP">
+		<execute macro="WebContentNavigator#gotoEditCP">
 			<var name="webContentTitle" value="Web Content Title" />
 		</execute>
 
 		<execute macro="WebContent#viewCategorizationCategoryCP">
-			<var name="categoryName" value="Category Name" />
+			<var name="categoryNameList" value="Category Name" />
 			<var name="webContentTitle" value="Web Content Title" />
 		</execute>
 	</command>
@@ -1262,7 +1276,7 @@
 		</execute>
 	</command>
 
-	<command known-issues="LPS-55119" name="ViewCannotAddDuplicateSubCategory" priority="5">
+	<command name="ViewCannotAddDuplicateSubCategory" priority="5">
 		<execute macro="Page#gotoContentCP">
 			<var name="portletName" value="Categories" />
 		</execute>

@@ -21,9 +21,6 @@ import com.liferay.portal.kernel.util.GetterUtil;
  */
 public class LanguageWebConfigurationValues {
 
-	public static final String DDM_TEMPLATE_KEY_DEFAULT = GetterUtil.getString(
-		LanguageWebConfigurationUtil.get("ddm.template.key.default"));
-
 	public static final String DISPLAY_TEMPLATES_CONFIG = GetterUtil.getString(
 		LanguageWebConfigurationUtil.get("display.templates.config"));
 

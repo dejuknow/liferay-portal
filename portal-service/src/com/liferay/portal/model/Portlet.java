@@ -2352,4 +2352,6 @@ public interface Portlet extends PortletModel, PersistedModel {
 	portlet
 	*/
 	public void setXmlRpcMethodClass(java.lang.String xmlRpcMethodClass);
+
+	public void unsetReady();
 }

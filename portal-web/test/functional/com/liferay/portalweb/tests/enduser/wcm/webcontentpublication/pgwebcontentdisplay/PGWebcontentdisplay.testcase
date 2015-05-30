@@ -73,7 +73,7 @@
 		</execute>
 	</command>
 
-	<command name="AddPortletWCDSite" priority="5">
+	<command known-issues="LPS-55978,LPS-53627" name="AddPortletWCDSite" priority="5">
 		<execute macro="Page#gotoCP">
 			<var name="portletName" value="Sites" />
 		</execute>
@@ -236,6 +236,8 @@
 			<var name="portletName" value="Web Content" />
 		</execute>
 
+		<execute macro="WebContentNavigator#gotoAddCP" />
+
 		<execute macro="WebContent#addCP">
 			<var name="webContentContent" value="WC WebContent Content" />
 			<var name="webContentTitle" value="WC WebContent Title" />
@@ -261,8 +263,19 @@
 			<var name="portletName" value="Web Content" />
 		</execute>
 
+		<execute macro="WebContentNavigator#gotoManageStructures" />
+
 		<execute macro="WebContentStructures#addCP">
-			<var name="structureFieldNames" value="Text" />
+			<var name="structureName" value="WC Structure Name" />
+		</execute>
+
+		<execute macro="DynamicDataMapping#addField">
+			<var name="field" value="Text" />
+			<var name="fieldFieldLabel" value="Text" />
+			<var name="fieldName" value="Text" />
+		</execute>
+
+		<execute macro="WebContentStructures#saveCP">
 			<var name="structureName" value="WC Structure Name" />
 		</execute>
 
@@ -299,9 +312,9 @@
 			<var name="webContentTitle" value="WC WebContent Title" />
 		</execute>
 
-		<execute macro="WebContent#expirePGViaWCD">
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
+		<execute macro="WebContentNavigator#gotoEditPGViaWCD" />
+
+		<execute macro="WebContent#expirePGViaWCD" />
 
 		<execute macro="Page#gotoPG">
 			<var name="pageName" value="Web Content Display Page" />
@@ -313,7 +326,7 @@
 		</execute>
 	</command>
 
-	<command name="ChangeTemplate" priority="5">
+	<command known-issues="LRQA-15496" name="ChangeTemplate" priority="5">
 		<execute macro="Page#gotoContentCP">
 			<var name="portletName" value="Web Content" />
 		</execute>
@@ -370,6 +383,8 @@
 			<var name="webContentTitle" value="WC WebContent Title" />
 		</execute>
 
+		<execute macro="WebContentNavigator#gotoEditPGViaWCD" />
+
 		<execute macro="WebContent#editPGViaWCD">
 			<var name="webContentContentEdit" value="WC WebContent Content Edit" />
 			<var name="webContentTitleEdit" value="WC WebContent Title Edit" />
@@ -391,6 +406,8 @@
 			<var name="webContentContent" value="WC WebContent Content" />
 			<var name="webContentTitle" value="WC WebContent Title" />
 		</execute>
+
+		<execute macro="WebContentNavigator#gotoEditPGViaWCD" />
 
 		<execute macro="WebContent#addTranslationPGViaWCD">
 			<var name="lowercaseLanguageCode" value="zh" />
@@ -428,6 +445,8 @@
 		<execute macro="Page#gotoContentCP">
 			<var name="portletName" value="Web Content" />
 		</execute>
+
+		<execute macro="WebContentNavigator#gotoAddCP" />
 
 		<execute macro="WebContent#addCP">
 			<var name="webContentContent" value="WC WebContent Content" />
@@ -474,6 +493,8 @@
 			<var name="portletName" value="Web Content" />
 		</execute>
 
+		<execute macro="WebContentNavigator#gotoAddCP" />
+
 		<execute macro="WebContent#addCP">
 			<var name="webContentContent" value="WC WebContent Content" />
 			<var name="webContentTitle" value="WC WebContent Title" />
@@ -497,6 +518,8 @@
 			<var name="portletName" value="Web Content" />
 			<var name="siteScopeName" value="Global" />
 		</execute>
+
+		<execute macro="WebContentNavigator#gotoAddCP" />
 
 		<execute macro="WebContent#addCP">
 			<var name="webContentContent" value="WC WebContent Content" />
@@ -536,7 +559,7 @@
 		</execute>
 	</command>
 
-	<command name="ViewAllFileTypesEnabled" priority="5">
+	<command known-issues="LPS-53627" name="ViewAllFileTypesEnabled" priority="5">
 		<execute macro="Page#gotoPG">
 			<var name="pageName" value="Web Content Display Page" />
 		</execute>
@@ -571,7 +594,7 @@
 		</execute>
 	</command>
 
-	<command known-issues="LPS-55118" name="ViewAllSettingsEnabledWCDConfiguration" priority="5">
+	<command known-issues="LPS-53627" name="ViewAllSettingsEnabledWCDConfiguration" priority="5">
 		<execute macro="WebContentDisplayPortlet#configureSetupPG">
 			<var name="wcdConfigurationSettings" value="Enable Print,Enable Related Assets,Enable Ratings,Enable Comments,Enable Comment Ratings,Enable View Count Increment" />
 		</execute>
@@ -579,6 +602,8 @@
 		<execute macro="Page#gotoContentCP">
 			<var name="portletName" value="Web Content" />
 		</execute>
+
+		<execute macro="WebContentNavigator#gotoAddCP" />
 
 		<execute macro="WebContent#addCP">
 			<var name="webContentContent" value="Web Content Content 1" />
@@ -589,6 +614,8 @@
 			<var name="portletName" value="Web Content" />
 		</execute>
 
+		<execute macro="WebContentNavigator#gotoAddCP" />
+
 		<execute macro="WebContent#addCP">
 			<var name="webContentContent" value="Web Content Content 2" />
 			<var name="webContentTitle" value="Web Content Title 2" />
@@ -598,8 +625,8 @@
 			<var name="portletName" value="Web Content" />
 		</execute>
 
-		<execute macro="WebContent#gotoEditCP">
-			<var name="webContentTitle" value="WC WebContent Title 1" />
+		<execute macro="WebContentNavigator#gotoEditCP">
+			<var name="webContentTitle" value="Web Content Content 1" />
 		</execute>
 
 		<execute macro="WebContent#addExistingRelatedAssetCP">
@@ -705,7 +732,7 @@
 			<var name="portletName" value="Web Content" />
 		</execute>
 
-		<execute macro="WebContent#gotoEditCP">
+		<execute macro="WebContentNavigator#gotoEditCP">
 			<var name="webContentTitle" value="WC WebContent Title" />
 		</execute>
 
@@ -759,7 +786,7 @@
 		</execute>
 	</command>
 
-	<command known-issues="LPS-54960" name="ViewPortletWCDShowAvailableLocales" priority="5">
+	<command known-issues="LPS-53627" name="ViewPortletWCDShowAvailableLocales" priority="5">
 		<execute macro="WebContentDisplayPortlet#configureSetupPG">
 			<var name="wcdConfigurationSettings" value="Show Available Locales" />
 		</execute>
@@ -772,6 +799,8 @@
 			<var name="webContentContent" value="WC WebContent Content" />
 			<var name="webContentTitle" value="WC WebContent Title" />
 		</execute>
+
+		<execute macro="WebContentNavigator#gotoEditPGViaWCD" />
 
 		<execute macro="WebContent#addTranslationPGViaWCD">
 			<var name="languageKey" value="zh_CN" />

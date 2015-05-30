@@ -27,19 +27,18 @@ page import="com.liferay.portal.kernel.util.Constants" %><%@
 page import="com.liferay.portal.kernel.util.Validator" %><%@
 page import="com.liferay.xsl.content.web.configuration.XSLContentConfiguration" %><%@
 page import="com.liferay.xsl.content.web.configuration.XSLContentPortletInstanceConfiguration" %><%@
-page import="com.liferay.xsl.content.web.util.XSLContentUtil" %>
+page import="com.liferay.xsl.content.web.display.context.XSLContentDisplayContext" %>
 
-<%@ page import="java.net.URL" %>
+<portlet:defineObjects />
 
 <liferay-theme:defineObjects />
-<portlet:defineObjects />
 
 <%
 XSLContentConfiguration xslContentConfiguration = (XSLContentConfiguration)request.getAttribute(XSLContentConfiguration.class.getName());
-XSLContentPortletInstanceConfiguration xslContentPortletInstanceConfiguration = portletDisplay.getPortletInstanceConfiguration(XSLContentPortletInstanceConfiguration.class);
 
-String xmlUrl = xslContentPortletInstanceConfiguration.xmlUrl();
-String xslUrl = xslContentPortletInstanceConfiguration.xslUrl();
+XSLContentDisplayContext xslContentDisplayContext = new XSLContentDisplayContext(request, xslContentConfiguration);
+
+XSLContentPortletInstanceConfiguration xslContentPortletInstanceConfiguration = xslContentDisplayContext.getXSLContentPortletInstanceConfiguration();
 %>
 
 <%@ include file="/init-ext.jsp" %>

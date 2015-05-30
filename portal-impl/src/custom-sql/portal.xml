@@ -930,7 +930,7 @@
 				(ResourcePermission.scope = ?) AND
 				(ResourcePermission.primKey = ?) AND
 				(ResourcePermission.roleId = ?) AND
-				(BITAND(CAST_LONG(ResourcePermission.actionIds, ?)) = ?)
+				(BITAND(CAST_LONG(ResourcePermission.actionIds), ?) = ?)
 		]]>
 	</sql>
 	<sql id="com.liferay.portal.service.persistence.ResourcePermissionFinder.findByResource">
@@ -1305,6 +1305,26 @@
 					(Users_Roles.roleId = Role_.roleId)
 			WHERE
 				(Users_Roles.userId = ?)
+		]]>
+	</sql>
+	<sql id="com.liferay.portal.service.persistence.ServiceComponentFinder.findByMaxBuildNumber">
+		<![CDATA[
+			SELECT
+				{ServiceComponent.*}
+			FROM
+				ServiceComponent
+			WHERE
+				buildNumber =
+					(
+						SELECT
+							MAX(buildNumber)
+						FROM
+							ServiceComponent tempServiceComponent
+						WHERE
+							ServiceComponent.buildNamespace = tempServiceComponent.buildNamespace
+					)
+			ORDER BY
+				buildNamespace DESC
 		]]>
 	</sql>
 	<sql id="com.liferay.portal.service.persistence.TeamFinder.countByG_N_D">

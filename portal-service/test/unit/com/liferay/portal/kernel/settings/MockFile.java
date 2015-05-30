@@ -241,6 +241,10 @@ public class MockFile implements com.liferay.portal.kernel.util.File {
 	}
 
 	@Override
+	public void mkdirs(File file) {
+	}
+
+	@Override
 	public void mkdirs(String pathName) {
 	}
 

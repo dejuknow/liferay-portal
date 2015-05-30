@@ -16,6 +16,9 @@ package com.liferay.portal.kernel.scripting;
 
 import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
 import com.liferay.portal.kernel.util.ClassLoaderPool;
+import com.liferay.registry.Registry;
+import com.liferay.registry.RegistryUtil;
+import com.liferay.registry.ServiceTracker;
 
 import java.util.Map;
 import java.util.Set;
@@ -29,6 +32,13 @@ public class ScriptingUtil {
 
 	public static void clearCache(String language) throws ScriptingException {
 		getScripting().clearCache(language);
+	}
+
+	public static ScriptingExecutor createScriptingExecutor(
+		String language, boolean executeInSeparateThread) {
+
+		return getScripting().createScriptingExecutor(
+			language, executeInSeparateThread);
 	}
 
 	/**
@@ -86,17 +96,11 @@ public class ScriptingUtil {
 	public static Scripting getScripting() {
 		PortalRuntimePermission.checkGetBeanProperty(ScriptingUtil.class);
 
-		return _scripting;
+		return _instance._serviceTracker.getService();
 	}
 
 	public static Set<String> getSupportedLanguages() {
 		return getScripting().getSupportedLanguages();
-	}
-
-	public void setScripting(Scripting scripting) {
-		PortalRuntimePermission.checkSetBeanProperty(getClass());
-
-		_scripting = scripting;
 	}
 
 	private static String[] _getServletContextNames(
@@ -112,6 +116,16 @@ public class ScriptingUtil {
 		return servletContextNames;
 	}
 
-	private static Scripting _scripting;
+	private ScriptingUtil() {
+		Registry registry = RegistryUtil.getRegistry();
+
+		_serviceTracker = registry.trackServices(Scripting.class);
+
+		_serviceTracker.open();
+	}
+
+	private static final ScriptingUtil _instance = new ScriptingUtil();
+
+	private final ServiceTracker<Scripting, Scripting> _serviceTracker;
 
 }

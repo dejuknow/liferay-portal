@@ -17,7 +17,6 @@ package com.liferay.portal.service.persistence.impl;
 import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.NoSuchExportImportConfigurationException;
-import com.liferay.portal.kernel.cache.CacheRegistryUtil;
 import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
@@ -36,11 +35,14 @@ import com.liferay.portal.model.ExportImportConfiguration;
 import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.impl.ExportImportConfigurationImpl;
 import com.liferay.portal.model.impl.ExportImportConfigurationModelImpl;
+import com.liferay.portal.service.ServiceContext;
+import com.liferay.portal.service.ServiceContextThreadLocal;
 import com.liferay.portal.service.persistence.ExportImportConfigurationPersistence;
 
 import java.io.Serializable;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -2723,10 +2725,6 @@ public class ExportImportConfigurationPersistenceImpl
 	 */
 	@Override
 	public void clearCache() {
-		if (_HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE) {
-			CacheRegistryUtil.clear(ExportImportConfigurationImpl.class.getName());
-		}
-
 		EntityCacheUtil.clearCache(ExportImportConfigurationImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
@@ -2874,6 +2872,30 @@ public class ExportImportConfigurationPersistenceImpl
 		boolean isNew = exportImportConfiguration.isNew();
 
 		ExportImportConfigurationModelImpl exportImportConfigurationModelImpl = (ExportImportConfigurationModelImpl)exportImportConfiguration;
+
+		ServiceContext serviceContext = ServiceContextThreadLocal.getServiceContext();
+
+		Date now = new Date();
+
+		if (isNew && (exportImportConfiguration.getCreateDate() == null)) {
+			if (serviceContext == null) {
+				exportImportConfiguration.setCreateDate(now);
+			}
+			else {
+				exportImportConfiguration.setCreateDate(serviceContext.getCreateDate(
+						now));
+			}
+		}
+
+		if (!exportImportConfigurationModelImpl.hasSetModifiedDate()) {
+			if (serviceContext == null) {
+				exportImportConfiguration.setModifiedDate(now);
+			}
+			else {
+				exportImportConfiguration.setModifiedDate(serviceContext.getModifiedDate(
+						now));
+			}
+		}
 
 		Session session = null;
 
@@ -3436,7 +3458,6 @@ public class ExportImportConfigurationPersistenceImpl
 	private static final String _ORDER_BY_ENTITY_ALIAS = "exportImportConfiguration.";
 	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY = "No ExportImportConfiguration exists with the primary key ";
 	private static final String _NO_SUCH_ENTITY_WITH_KEY = "No ExportImportConfiguration exists with the key {";
-	private static final boolean _HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE = com.liferay.portal.util.PropsValues.HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE;
 	private static final Log _log = LogFactoryUtil.getLog(ExportImportConfigurationPersistenceImpl.class);
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(new String[] {
 				"type", "settings"

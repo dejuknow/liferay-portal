@@ -98,6 +98,10 @@ public final class LoggerUtil {
 	}
 
 	public static void executeJavaScript(String script) {
+		if (!isLoggerStarted()) {
+			return;
+		}
+
 		_javascriptExecutor.executeScript(script);
 	}
 
@@ -301,13 +305,24 @@ public final class LoggerUtil {
 
 		_javascriptExecutor = (JavascriptExecutor)_webDriver;
 
-		String cssContent = _readResource(
-			"META-INF/resources/css/main_rtl.css");
+		String cssContent = _readResource("META-INF/resources/css/main.css");
 
 		FileUtil.write(_CURRENT_DIR + "/test-results/css/main.css", cssContent);
 
+		String jsContent = _readResource("META-INF/resources/js/main.js");
+
+		FileUtil.write(_CURRENT_DIR + "/test-results/js/main.js", jsContent);
+
 		String htmlContent = _readResource(
 			"META-INF/resources/html/index.html");
+
+		htmlContent = htmlContent.replace(
+			"<ul class=\"command-log\" data-logid=\"01\" id=\"commandLog\">" +
+				"</ul>",
+			CommandLoggerHandler.getCommandLogText());
+		htmlContent = htmlContent.replace(
+			"<ul class=\"xml-log-container\" id=\"xmlLogContainer\"></ul>",
+			XMLLoggerHandler.getXMLLogText());
 
 		FileUtil.write(_getHtmlFilePath(), htmlContent);
 
@@ -317,10 +332,15 @@ public final class LoggerUtil {
 	public static void stopLogger() throws Exception {
 		if (!PropsValues.SELENIUM_LOGGER_ENABLED) {
 			String cssContent = _readResource(
-				"META-INF/resources/css/main_rtl.css");
+				"META-INF/resources/css/main.css");
 
 			FileUtil.write(
 				_CURRENT_DIR + "/test-results/css/main.css", cssContent);
+
+			String jsContent = _readResource("META-INF/resources/js/main.js");
+
+			FileUtil.write(
+				_CURRENT_DIR + "/test-results/js/main.js", jsContent);
 		}
 
 		String htmlContent = _readResource(
@@ -330,6 +350,24 @@ public final class LoggerUtil {
 			"<ul class=\"command-log\" data-logid=\"01\" id=\"commandLog\">" +
 				"</ul>",
 			CommandLoggerHandler.getCommandLogText());
+		htmlContent = htmlContent.replace(
+			"<ul class=\"xml-log-container\" id=\"xmlLogContainer\"></ul>",
+			XMLLoggerHandler.getXMLLogText());
+
+		if (!PropsValues.TEST_RUN_LOCALLY) {
+			StringBuilder sb = new StringBuilder();
+
+			sb.append("http://rawgit.com/liferay/liferay-portal/master/");
+			sb.append("modules/test/poshi-runner/src/META-INF/resources");
+
+			htmlContent = StringUtil.replace(
+				htmlContent, "<link href=\"../css/main.css\"",
+				"<link href=\"" + sb.toString() + "/css/.sass-cache/" +
+					"main.css\"");
+			htmlContent = StringUtil.replace(
+				htmlContent, "<script src=\"../js/main.js\"",
+				"<script src=\"" + sb.toString() + "/js/main.js\"");
+		}
 
 		FileUtil.write(_getHtmlFilePath(), htmlContent);
 

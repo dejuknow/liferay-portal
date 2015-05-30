@@ -37,7 +37,6 @@ import com.liferay.portal.service.persistence.ResourcePermissionPersistence;
 import com.liferay.portal.service.persistence.ResourcePermissionUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PersistenceTestRule;
-import com.liferay.portal.util.PropsValues;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -233,18 +232,11 @@ public class ResourcePermissionPersistenceTest {
 		Assert.assertEquals(existingResourcePermission, newResourcePermission);
 	}
 
-	@Test
+	@Test(expected = NoSuchResourcePermissionException.class)
 	public void testFindByPrimaryKeyMissing() throws Exception {
 		long pk = RandomTestUtil.nextLong();
 
-		try {
-			_persistence.findByPrimaryKey(pk);
-
-			Assert.fail(
-				"Missing entity did not throw NoSuchResourcePermissionException");
-		}
-		catch (NoSuchResourcePermissionException nsee) {
-		}
+		_persistence.findByPrimaryKey(pk);
 	}
 
 	@Test
@@ -459,10 +451,6 @@ public class ResourcePermissionPersistenceTest {
 
 	@Test
 	public void testResetOriginalValues() throws Exception {
-		if (!PropsValues.HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE) {
-			return;
-		}
-
 		ResourcePermission newResourcePermission = addResourcePermission();
 
 		_persistence.clearCache();

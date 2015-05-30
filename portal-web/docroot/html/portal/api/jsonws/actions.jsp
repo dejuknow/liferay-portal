@@ -178,7 +178,7 @@ Set<String> contextNames = JSONWebServiceActionsManagerUtil.getContextNames();
 				{
 					el: item._node,
 					node: item,
-					text: Lang.trim(item.text())
+					text: item.text().trim()
 				}
 			);
 		}
@@ -196,16 +196,16 @@ Set<String> contextNames = JSONWebServiceActionsManagerUtil.getContextNames();
 			resultFilters: function(query, results) {
 				query = query.toLowerCase().replace(replaceRE, '');
 
-				return AArray.filter(
-					results,
+				return results.filter(
 					function(item, index) {
 						var node = item.raw.node;
+
 						var guid = node.guid();
 
 						var text = cache[guid];
 
 						if (!text) {
-							text = (node.attr('data-metaData') + '/' + item.text);
+							text = node.attr('data-metaData') + '/' + item.text;
 							text = text.toLowerCase().replace(replaceRE, '');
 
 							cache[guid] = text;
@@ -221,8 +221,7 @@ Set<String> contextNames = JSONWebServiceActionsManagerUtil.getContextNames();
 				if (!cachedResults) {
 					var queryChars = AArray.dedupe(query.toLowerCase().split(''));
 
-					cachedResults = AArray.map(
-						results,
+					cachedResults = results.map(
 						function(item, index) {
 							return A.Highlight.all(item.text, queryChars);
 						}
@@ -263,10 +262,10 @@ Set<String> contextNames = JSONWebServiceActionsManagerUtil.getContextNames();
 				var activeServiceNode = services;
 
 				if (query) {
-					AArray.each(
-						results,
+					results.forEach(
 						function(item, index) {
 							var raw = item.raw;
+
 							var el = raw.el;
 							var node = raw.node;
 							var serviceNode = raw.serviceNode;

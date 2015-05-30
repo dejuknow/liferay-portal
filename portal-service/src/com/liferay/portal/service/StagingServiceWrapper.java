@@ -53,12 +53,26 @@ public class StagingServiceWrapper implements StagingService,
 	}
 
 	@Override
-	public void publishStagingRequest(long stagingRequestId,
-		boolean privateLayout,
+	public com.liferay.portal.kernel.lar.MissingReferences publishStagingRequest(
+		long stagingRequestId,
+		com.liferay.portal.model.ExportImportConfiguration exportImportConfiguration)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _stagingService.publishStagingRequest(stagingRequestId,
+			exportImportConfiguration);
+	}
+
+	/**
+	* @throws PortalException
+	* @deprecated As of 7.0.0, with no direct replacement
+	*/
+	@Deprecated
+	@Override
+	public com.liferay.portal.kernel.lar.MissingReferences publishStagingRequest(
+		long stagingRequestId, boolean privateLayout,
 		java.util.Map<java.lang.String, java.lang.String[]> parameterMap)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		_stagingService.publishStagingRequest(stagingRequestId, privateLayout,
-			parameterMap);
+		return _stagingService.publishStagingRequest(stagingRequestId,
+			privateLayout, parameterMap);
 	}
 
 	/**

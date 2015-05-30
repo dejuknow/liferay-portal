@@ -25,7 +25,7 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
-import com.liferay.portal.kernel.xml.SAXReaderUtil;
+import com.liferay.portal.kernel.xml.UnsecureSAXReaderUtil;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portalweb.portal.BaseTestCase;
 import com.liferay.portalweb.portal.util.AntCommands;
@@ -226,7 +226,7 @@ public class LiferaySeleniumHelper {
 		content = "<log4j>" + content + "</log4j>";
 		content = content.replaceAll("log4j:", "");
 
-		Document document = SAXReaderUtil.read(content, true);
+		Document document = UnsecureSAXReaderUtil.read(content, true);
 
 		Element rootElement = document.getRootElement();
 
@@ -1054,9 +1054,11 @@ public class LiferaySeleniumHelper {
 			return true;
 		}
 
-		// LPS-55120, temporary workaround while Brian Wulbern investigates it
+		// LPS-55835, temporary workaround while Brian Wulbern investigates it
 
-		if (line.contains("java.io.IOException: Stream closed.")) {
+		if (line.matches(
+				"Current URL.*add_panel generates exception:[\\s\\S]*")) {
+
 			return true;
 		}
 
@@ -1457,34 +1459,35 @@ public class LiferaySeleniumHelper {
 	public static void typeAceEditor(
 		LiferaySelenium liferaySelenium, String locator, String value) {
 
+		liferaySelenium.typeKeys(locator, "");
+
+		Matcher matcher = _aceEditorPattern.matcher(value);
+
 		int x = 0;
-		int y = value.indexOf("${line.separator}");
 
-		String line = value;
+		while (matcher.find()) {
+			int y = matcher.start();
 
-		if (y != -1) {
-			line = value.substring(x, y);
-		}
+			String line = value.substring(x, y);
 
-		liferaySelenium.typeKeys(locator, line.trim());
+			_screen.type(line.trim());
 
-		liferaySelenium.keyPress(locator, "\\RETURN");
+			String specialCharacter = matcher.group();
 
-		while (y != -1) {
-			x = value.indexOf("}", x) + 1;
-			y = value.indexOf("${line.separator}", x);
-
-			if (y != -1) {
-				line = value.substring(x, y);
+			if (specialCharacter.equals("(")) {
+				_screen.type("9", Key.SHIFT);
 			}
-			else {
-				line = value.substring(x, value.length());
+			else if (specialCharacter.equals("${line.separator}")) {
+				liferaySelenium.keyPress(locator, "\\SPACE");
+				liferaySelenium.keyPress(locator, "\\RETURN");
 			}
 
-			liferaySelenium.typeKeys(locator, line.trim());
-
-			liferaySelenium.keyPress(locator, "\\RETURN");
+			x = y + specialCharacter.length();
 		}
+
+		String line = value.substring(x);
+
+		_screen.type(line.trim());
 	}
 
 	public static void typeFrame(
@@ -1829,6 +1832,8 @@ public class LiferaySeleniumHelper {
 		}
 	}
 
+	private static final Pattern _aceEditorPattern = Pattern.compile(
+		"\\(|\\$\\{line\\.separator\\}");
 	private static final List<Exception> _javaScriptExceptions =
 		new ArrayList<>();
 	private static final List<Exception> _liferayExceptions = new ArrayList<>();

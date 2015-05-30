@@ -38,7 +38,6 @@ import com.liferay.portal.service.persistence.LayoutFriendlyURLPersistence;
 import com.liferay.portal.service.persistence.LayoutFriendlyURLUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PersistenceTestRule;
-import com.liferay.portal.util.PropsValues;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -274,18 +273,11 @@ public class LayoutFriendlyURLPersistenceTest {
 		Assert.assertEquals(existingLayoutFriendlyURL, newLayoutFriendlyURL);
 	}
 
-	@Test
+	@Test(expected = NoSuchLayoutFriendlyURLException.class)
 	public void testFindByPrimaryKeyMissing() throws Exception {
 		long pk = RandomTestUtil.nextLong();
 
-		try {
-			_persistence.findByPrimaryKey(pk);
-
-			Assert.fail(
-				"Missing entity did not throw NoSuchLayoutFriendlyURLException");
-		}
-		catch (NoSuchLayoutFriendlyURLException nsee) {
-		}
+		_persistence.findByPrimaryKey(pk);
 	}
 
 	@Test
@@ -500,10 +492,6 @@ public class LayoutFriendlyURLPersistenceTest {
 
 	@Test
 	public void testResetOriginalValues() throws Exception {
-		if (!PropsValues.HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE) {
-			return;
-		}
-
 		LayoutFriendlyURL newLayoutFriendlyURL = addLayoutFriendlyURL();
 
 		_persistence.clearCache();

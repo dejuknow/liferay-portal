@@ -27,6 +27,7 @@ String cssClass = GetterUtil.getString((String)request.getAttribute("liferay-ui:
 boolean disabled = GetterUtil.getBoolean((String)request.getAttribute("liferay-ui:input-date:disabled"));
 String dayParam = GetterUtil.getString((String)request.getAttribute("liferay-ui:input-date:dayParam"));
 int dayValue = GetterUtil.getInteger((String)request.getAttribute("liferay-ui:input-date:dayValue"));
+int firstDayOfWeek = GetterUtil.getInteger((String)request.getAttribute("liferay-ui:input-date:firstDayOfWeek"));
 Date firstEnabledDate = GetterUtil.getDate(request.getAttribute("liferay-ui:input-date:firstEnabledDate"), DateFormatFactoryUtil.getDate(locale), null);
 Date lastEnabledDate = GetterUtil.getDate(request.getAttribute("liferay-ui:input-date:lastEnabledDate"), DateFormatFactoryUtil.getDate(locale), null);
 String monthParam = GetterUtil.getString((String)request.getAttribute("liferay-ui:input-date:monthParam"));
@@ -75,7 +76,9 @@ Format format = FastDateFormatFactoryUtil.getSimpleDateFormat(simpleDateFormatPa
 			<input class="form-control" <%= disabled ? "disabled=\"disabled\"" : "" %> id="<%= nameId %>" name="<%= namespace + HtmlUtil.escapeAttribute(name) %>" type="date" value="<%= format.format(calendar.getTime()) %>" />
 		</c:when>
 		<c:otherwise>
-			<input class="form-control" <%= disabled ? "disabled=\"disabled\"" : "" %> id="<%= nameId %>" name="<%= namespace + HtmlUtil.escapeAttribute(name) %>" placeholder="<%= StringUtil.toLowerCase(simpleDateFormatPattern) %>" type="text" value="<%= nullable ? "" : format.format(calendar.getTime()) %>" />
+			<aui:input disabled="<%= disabled %>" id="<%= name %>" label="" name="<%= name %>" placeholder="<%= StringUtil.toLowerCase(simpleDateFormatPattern) %>" title="" type="text" value="<%= nullable ? StringPool.BLANK : format.format(calendar.getTime()) %>" wrappedField="<%= true %>">
+				<aui:validator name="date" />
+			</aui:input>
 		</c:otherwise>
 	</c:choose>
 
@@ -105,6 +108,14 @@ Format format = FastDateFormatFactoryUtil.getSimpleDateFormat(simpleDateFormatPa
 							}
 
 							calendarOptions += String.format("minimumDate: new Date(%s)", firstEnabledDate.getTime());
+						}
+
+						if (firstDayOfWeek != -1) {
+							if (Validator.isNotNull(calendarOptions)) {
+								calendarOptions += StringPool.COMMA;
+							}
+
+							calendarOptions += String.format("'strings.first_weekday': %d", firstDayOfWeek);
 						}
 						%>
 
@@ -137,6 +148,10 @@ Format format = FastDateFormatFactoryUtil.getSimpleDateFormat(simpleDateFormatPa
 							}
 						},
 						selectionChange: function(event) {
+							if (isNaN(event.newSelection[0])) {
+								event.newSelection[0] = new Date();
+							}
+
 							datePicker.updateValue(event.newSelection[0]);
 						}
 					},

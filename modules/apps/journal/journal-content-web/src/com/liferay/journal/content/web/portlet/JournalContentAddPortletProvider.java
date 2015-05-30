@@ -18,6 +18,7 @@ import com.liferay.journal.content.web.constants.JournalContentPortletKeys;
 import com.liferay.journal.web.asset.JournalArticleAssetRenderer;
 import com.liferay.journal.web.asset.JournalArticleAssetRendererFactory;
 import com.liferay.portal.kernel.portlet.AddPortletProvider;
+import com.liferay.portal.kernel.portlet.BasePortletProvider;
 import com.liferay.portal.model.Layout;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portlet.asset.AssetRendererFactoryRegistryUtil;
@@ -41,7 +42,8 @@ import org.osgi.service.component.annotations.Reference;
 	},
 	service = AddPortletProvider.class
 )
-public class JournalContentAddPortletProvider implements AddPortletProvider {
+public class JournalContentAddPortletProvider
+	extends BasePortletProvider implements AddPortletProvider {
 
 	@Override
 	public String getPortletId() {
@@ -78,6 +80,11 @@ public class JournalContentAddPortletProvider implements AddPortletProvider {
 		_journalContentSearchLocal.updateContentSearch(
 			layout.getGroupId(), layout.isPrivateLayout(), layout.getLayoutId(),
 			portletId, article.getArticleId(), true);
+	}
+
+	@Override
+	protected long getPlid(ThemeDisplay themeDisplay) {
+		return themeDisplay.getPlid();
 	}
 
 	@Reference

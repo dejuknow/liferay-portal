@@ -101,26 +101,6 @@
 		</permissions>
 	</portlet-resource>
 	<portlet-resource>
-		<portlet-name>129</portlet-name>
-		<permissions>
-			<supports>
-				<action-key>ACCESS_IN_CONTROL_PANEL</action-key>
-				<action-key>CONFIGURATION</action-key>
-				<action-key>VIEW</action-key>
-			</supports>
-			<site-member-defaults>
-				<action-key>VIEW</action-key>
-			</site-member-defaults>
-			<guest-defaults>
-				<action-key>VIEW</action-key>
-			</guest-defaults>
-			<guest-unsupported>
-				<action-key>ACCESS_IN_CONTROL_PANEL</action-key>
-				<action-key>CONFIGURATION</action-key>
-			</guest-unsupported>
-		</permissions>
-	</portlet-resource>
-	<portlet-resource>
 		<portlet-name>130</portlet-name>
 		<permissions>
 			<supports>
@@ -162,26 +142,6 @@
 	</portlet-resource>
 	<portlet-resource>
 		<portlet-name>132</portlet-name>
-		<permissions>
-			<supports>
-				<action-key>ACCESS_IN_CONTROL_PANEL</action-key>
-				<action-key>CONFIGURATION</action-key>
-				<action-key>VIEW</action-key>
-			</supports>
-			<site-member-defaults>
-				<action-key>VIEW</action-key>
-			</site-member-defaults>
-			<guest-defaults>
-				<action-key>VIEW</action-key>
-			</guest-defaults>
-			<guest-unsupported>
-				<action-key>ACCESS_IN_CONTROL_PANEL</action-key>
-				<action-key>CONFIGURATION</action-key>
-			</guest-unsupported>
-		</permissions>
-	</portlet-resource>
-	<portlet-resource>
-		<portlet-name>134</portlet-name>
 		<permissions>
 			<supports>
 				<action-key>ACCESS_IN_CONTROL_PANEL</action-key>
@@ -327,10 +287,10 @@
 	<model-resource>
 		<model-name>com.liferay.portal.model.Group</model-name>
 		<portlet-ref>
-			<portlet-name>134</portlet-name>
+			<portlet-name>com_liferay_site_admin_web_portlet_SiteAdminPortlet</portlet-name>
 			<portlet-name>156</portlet-name>
-			<portlet-name>165</portlet-name>
-			<portlet-name>174</portlet-name>
+			<portlet-name>com_liferay_site_admin_web_portlet_SiteSettingsPortlet</portlet-name>
+			<portlet-name>com_liferay_site_memberships_web_portlet_SiteMembershipsPortlet</portlet-name>
 		</portlet-ref>
 		<weight>1</weight>
 		<permissions>
@@ -437,7 +397,7 @@
 	<model-resource>
 		<model-name>com.liferay.portal.model.LayoutPrototype</model-name>
 		<portlet-ref>
-			<portlet-name>146</portlet-name>
+			<portlet-name>com_liferay_layout_prototype_web_portlet_LayoutPrototypePortlet</portlet-name>
 		</portlet-ref>
 		<weight>1</weight>
 		<permissions>
@@ -461,7 +421,7 @@
 	<model-resource>
 		<model-name>com.liferay.portal.model.LayoutSetPrototype</model-name>
 		<portlet-ref>
-			<portlet-name>149</portlet-name>
+			<portlet-name>com_liferay_layout_set_prototype_web_portlet_LayoutSetPrototypePortlet</portlet-name>
 		</portlet-ref>
 		<weight>1</weight>
 		<permissions>

@@ -18,6 +18,7 @@ import com.liferay.portal.LocaleException;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.search.DDMStructureIndexer;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
@@ -58,7 +59,6 @@ import com.liferay.portlet.dynamicdatamapping.util.DDMXMLUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -114,8 +114,6 @@ public class DDMStructureLocalServiceImpl
 			structureKey = StringUtil.toUpperCase(structureKey.trim());
 		}
 
-		Date now = new Date();
-
 		validate(
 			groupId, parentStructureId, classNameId, structureKey, nameMap,
 			ddmForm);
@@ -129,8 +127,6 @@ public class DDMStructureLocalServiceImpl
 		structure.setCompanyId(user.getCompanyId());
 		structure.setUserId(user.getUserId());
 		structure.setUserName(user.getFullName());
-		structure.setCreateDate(serviceContext.getCreateDate(now));
-		structure.setModifiedDate(serviceContext.getModifiedDate(now));
 		structure.setParentStructureId(parentStructureId);
 		structure.setClassNameId(classNameId);
 		structure.setStructureKey(structureKey);
@@ -1455,7 +1451,6 @@ public class DDMStructureLocalServiceImpl
 
 		validate(nameMap, parentDDMForm, ddmForm);
 
-		structure.setModifiedDate(serviceContext.getModifiedDate(null));
 		structure.setParentStructureId(parentStructureId);
 
 		DDMStructureVersion latestStructureVersion =
@@ -1493,10 +1488,15 @@ public class DDMStructureLocalServiceImpl
 		Indexer indexer = IndexerRegistryUtil.nullSafeGetIndexer(
 			structure.getClassName());
 
-		List<Long> ddmStructureIds = getChildrenStructureIds(
-			structure.getGroupId(), structure.getStructureId());
+		if (indexer instanceof DDMStructureIndexer) {
+			DDMStructureIndexer ddmStructureIndexer =
+				(DDMStructureIndexer)indexer;
 
-		indexer.reindexDDMStructures(ddmStructureIds);
+			List<Long> ddmStructureIds = getChildrenStructureIds(
+				structure.getGroupId(), structure.getStructureId());
+
+			ddmStructureIndexer.reindexDDMStructures(ddmStructureIds);
+		}
 
 		return structure;
 	}

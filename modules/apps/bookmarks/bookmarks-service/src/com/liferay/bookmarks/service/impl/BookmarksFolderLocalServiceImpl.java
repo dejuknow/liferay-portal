@@ -69,7 +69,6 @@ public class BookmarksFolderLocalServiceImpl
 		User user = userPersistence.findByPrimaryKey(userId);
 		long groupId = serviceContext.getScopeGroupId();
 		parentFolderId = getParentFolderId(groupId, parentFolderId);
-		Date now = new Date();
 
 		validate(name);
 
@@ -82,8 +81,6 @@ public class BookmarksFolderLocalServiceImpl
 		folder.setCompanyId(user.getCompanyId());
 		folder.setUserId(user.getUserId());
 		folder.setUserName(user.getFullName());
-		folder.setCreateDate(serviceContext.getCreateDate(now));
-		folder.setModifiedDate(serviceContext.getModifiedDate(now));
 		folder.setParentFolderId(parentFolderId);
 		folder.setTreePath(folder.buildTreePath());
 		folder.setName(name);
@@ -335,6 +332,10 @@ public class BookmarksFolderLocalServiceImpl
 
 		BookmarksFolder folder = bookmarksFolderPersistence.findByPrimaryKey(
 			folderId);
+
+		if (folder.getParentFolderId() == parentFolderId) {
+			return folder;
+		}
 
 		folder.setParentFolderId(parentFolderId);
 		folder.setTreePath(folder.buildTreePath());
@@ -602,9 +603,13 @@ public class BookmarksFolderLocalServiceImpl
 
 		validate(name);
 
-		folder.setModifiedDate(serviceContext.getModifiedDate(null));
-		folder.setParentFolderId(parentFolderId);
-		folder.setTreePath(folder.buildTreePath());
+		long oldParentFolderId = folder.getParentFolderId();
+
+		if (oldParentFolderId != parentFolderId) {
+			folder.setParentFolderId(parentFolderId);
+			folder.setTreePath(folder.buildTreePath());
+		}
+
 		folder.setName(name);
 		folder.setDescription(description);
 		folder.setExpandoBridgeAttributes(serviceContext);
@@ -617,6 +622,11 @@ public class BookmarksFolderLocalServiceImpl
 			userId, folder, serviceContext.getAssetCategoryIds(),
 			serviceContext.getAssetTagNames(),
 			serviceContext.getAssetLinkEntryIds());
+
+		if (oldParentFolderId != parentFolderId) {
+			rebuildTree(
+				folder.getCompanyId(), folderId, folder.getTreePath(), true);
+		}
 
 		return folder;
 	}
@@ -725,6 +735,7 @@ public class BookmarksFolderLocalServiceImpl
 
 		for (BookmarksEntry entry : entries) {
 			entry.setFolderId(toFolderId);
+			entry.setTreePath(entry.buildTreePath());
 
 			bookmarksEntryPersistence.update(entry);
 

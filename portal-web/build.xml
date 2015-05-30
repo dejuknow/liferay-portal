@@ -5,6 +5,7 @@
 
 	<property name="war.file" value="${ant.project.name}" />
 
+	<property name="alloy.bootstrap.version" value="3.2.0-2" />
 	<property name="alloy.version" value="3.0.1" />
 	<property name="alloy-font-awesome.version" value="2.0" />
 	<property name="frontend.js.web.dir" value="../modules/frontend/frontend-js-web" />
@@ -12,6 +13,7 @@
 
 	<path id="jspc.common.classpath">
 		<pathelement path="docroot/WEB-INF/classes" />
+		<pathelement location="${project.dir}/modules/core/registry-api/classes" />
 		<pathelement location="${project.dir}/portal-impl/portal-impl.jar" />
 		<pathelement location="${project.dir}/portal-pacl/portal-pacl.jar" />
 		<pathelement location="${project.dir}/portal-service/portal-service.jar" />
@@ -47,11 +49,7 @@
 
 	<extension-point name="build-portal-web-dependencies" depends="build-bourbon,build-css,build-dtd,build-vaadin" />
 
-	<target name="build-alloy-bootstrap">
-		<property name="alloy.bootstrap.version" value="3.2.0-2" />
-
-		<property name="alloy.bootstrap.deploy" value="docroot/html/themes/_unstyled/css/aui" />
-
+	<target name="build-alloy-bootstrap-theme">
 		<path id="alloy.bootstrap.zip.path">
 			<fileset dir="third-party">
 				<include name="bootstrap-sass-${alloy.bootstrap.version}*.zip" />
@@ -62,55 +60,53 @@
 
 		<basename file="${alloy.bootstrap.zip.path}" property="alloy.bootstrap.file" />
 
-		<property name="alloy.bootstrap.tmp.dir" value="docroot/html/ALLOY_BOOTSTRAP_ZIP" />
+		<property name="alloy.bootstrap.assets.dir" value="${frontend.js.web.dir}/tmp/META-INF/resources/html/bootstrap-assets" />
 
 		<if>
 			<not>
 				<uptodate
 					srcfile="third-party/${alloy.bootstrap.file}"
-					targetfile="${alloy.bootstrap.deploy}"
+					targetfile="${alloy.bootstrap.assets.dir}"
 				/>
 			</not>
 			<then>
-
-				<!-- Prepare -->
-
-				<delete dir="${alloy.bootstrap.tmp.dir}" />
-				<delete dir="${alloy.bootstrap.deploy}" />
-
-				<unzip src="third-party/${alloy.bootstrap.file}" dest="${alloy.bootstrap.tmp.dir}" />
-
-				<!-- CSS -->
-
-				<property name="alloy.bootstrap.lib.dir" value="${alloy.bootstrap.tmp.dir}/bootstrap-sass-${alloy.bootstrap.version}/assets/stylesheets" />
-
-				<delete failonerror="false" includeemptydirs="true" quiet="true">
-					<fileset
-						dir="${alloy.bootstrap.lib.dir}"
-						includes="_bootstrap-*.scss"
-					/>
-				</delete>
-
-				<copy todir="${alloy.bootstrap.deploy}" overwrite="true" preservelastmodified="true">
-					<fileset dir="${alloy.bootstrap.lib.dir}/" />
-				</copy>
-
-				<!-- Glyphicons font -->
-
-				<property name="alloy.bootstrap.fonts.lib.dir" value="${alloy.bootstrap.tmp.dir}/bootstrap-sass-${alloy.bootstrap.version}/assets/fonts/bootstrap" />
-
-				<copy todir="${alloy.bootstrap.deploy}/glyphicons/font" overwrite="true" preservelastmodified="true">
-					<fileset dir="${alloy.bootstrap.fonts.lib.dir}/" />
-				</copy>
-
-				<!-- Clean up -->
-
-				<delete dir="${alloy.bootstrap.tmp.dir}" />
+				<ant-execute
+					ant.build.file="build.xml"
+					ant.dir="${frontend.js.web.dir}"
+					ant.target="build-alloy-bootstrap"
+				/>
 			</then>
 		</if>
+
+		<property name="alloy.bootstrap.deploy.theme.dir" value="docroot/html/themes/_unstyled/css/aui" />
+
+		<delete dir="${alloy.bootstrap.deploy.theme.dir}" />
+
+		<!-- CSS -->
+
+		<property name="alloy.bootstrap.css.lib.dir" value="${alloy.bootstrap.assets.dir}/stylesheets" />
+
+		<delete failonerror="false" includeemptydirs="true" quiet="true">
+			<fileset
+				dir="${alloy.bootstrap.css.lib.dir}"
+				includes="_bootstrap-*.scss"
+			/>
+		</delete>
+
+		<copy todir="${alloy.bootstrap.deploy.theme.dir}" overwrite="true" preservelastmodified="true">
+			<fileset dir="${alloy.bootstrap.css.lib.dir}/" />
+		</copy>
+
+		<!-- Glyphicons font -->
+
+		<property name="alloy.bootstrap.fonts.lib.dir" value="${alloy.bootstrap.assets.dir}/fonts/bootstrap" />
+
+		<copy todir="${alloy.bootstrap.deploy.theme.dir}/glyphicons/font" overwrite="true" preservelastmodified="true">
+			<fileset dir="${alloy.bootstrap.fonts.lib.dir}/" />
+		</copy>
 	</target>
 
-	<target name="build-alloy-font-awesome" depends="build-alloy-bootstrap">
+	<target name="build-alloy-font-awesome" depends="build-alloy-bootstrap-theme">
 		<path id="alloy-font-awesome.zip.path">
 			<fileset dir="third-party">
 				<include name="alloy-font-awesome-${alloy-font-awesome.version}*.zip" />
@@ -125,16 +121,16 @@
 			<not>
 				<uptodate
 					srcfile="third-party/${alloy-font-awesome.file}"
-					targetfile="${alloy.bootstrap.deploy}/alloy-font-awesome"
+					targetfile="${alloy.bootstrap.deploy.theme.dir}/alloy-font-awesome"
 				/>
 			</not>
 			<then>
-				<delete dir="${alloy.bootstrap.deploy}/alloy-font-awesome" />
+				<delete dir="${alloy.bootstrap.deploy.theme.dir}/alloy-font-awesome" />
 
-				<unzip src="third-party/${alloy-font-awesome.file}" dest="${alloy.bootstrap.deploy}" />
+				<unzip src="third-party/${alloy-font-awesome.file}" dest="${alloy.bootstrap.deploy.theme.dir}" />
 
-				<delete dir="${alloy.bootstrap.deploy}/alloy-font-awesome/css" />
-				<delete dir="${alloy.bootstrap.deploy}/alloy-font-awesome/less" />
+				<delete dir="${alloy.bootstrap.deploy.theme.dir}/alloy-font-awesome/css" />
+				<delete dir="${alloy.bootstrap.deploy.theme.dir}/alloy-font-awesome/less" />
 			</then>
 		</if>
 	</target>
@@ -198,6 +194,7 @@
 			file="${alloy.dir}/aui_deprecated.css"
 			tofile="docroot/html/css/portal/aui_deprecated.css"
 			overwrite="true"
+			preservelastmodified="true"
 		/>
 	</target>
 
@@ -389,7 +386,7 @@
 		<echo file="${project.dir}/tools/selenium/extensions/ide.${user.name}.js">${ide.js.content}</echo>
 	</target>
 
-	<target name="build-themes" depends="build-alloy-bootstrap,build-alloy-theme,build-alloy-font-awesome,build-bourbon">
+	<target name="build-themes" depends="build-alloy-bootstrap-theme,build-alloy-theme,build-alloy-font-awesome,build-bourbon">
 		<for param="module.name">
 			<path>
 				<dirset dir="docroot/html/themes" excludes="_styled,_unstyled" includes="*" />
@@ -677,13 +674,13 @@ ${oversize.files.jsp}</fail>
 	<target name="compile-resin">
 		<if>
 			<not>
-				<isset property="jdk.6.home" />
+				<isset property="jdk.7.home" />
 			</not>
 			<then>
 				<fail>
 .
 
-Please set the property "jdk.6.home" in build.properties.
+Please set the property "jdk.7.home" in build.properties.
 				</fail>
 			</then>
 		</if>
@@ -691,8 +688,8 @@ Please set the property "jdk.6.home" in build.properties.
 		<property name="jspc.classes.dir" value="classes/${app.server.type}" />
 
 		<path id="jspc.classpath">
-			<pathelement location="${jdk.6.home}/jre/lib/rt.jar" />
-			<pathelement location="${jdk.6.home}/lib/tools.jar" />
+			<pathelement location="${jdk.7.home}/jre/lib/rt.jar" />
+			<pathelement location="${jdk.7.home}/lib/tools.jar" />
 			<path refid="jspc.common.classpath" />
 			<pathelement location="${app.server.dir}/lib/resin.jar" />
 			<pathelement location="${project.dir}/lib/portal/abdera.jar" />
@@ -723,7 +720,7 @@ Please set the property "jdk.6.home" in build.properties.
 			fork="true"
 			maxmemory="512m"
 			newenvironment="true"
-			jvm="${jdk.6.home}\bin\java"
+			jvm="${jdk.7.home}\bin\java"
 		>
 			<arg line="docroot ${jspc.classes.dir}" />
 		</java>
@@ -775,7 +772,9 @@ Please set the property "jdk.6.home" in build.properties.
 		</antcall>
 	</target>
 
-	<target name="deploy" depends="compile,build-portal-web-dependencies">
+	<target name="deploy" depends="build-portal-web-dependencies">
+		<manifest-macro />
+
 		<antcall target="build-common-web.deploy" />
 
 		<if>
@@ -870,10 +869,6 @@ Please set the property "jdk.6.home" in build.properties.
 		</if>
 	</target>
 
-	<target name="deploy-properties">
-		<ant dir=".." target="deploy-properties" inheritAll="false" />
-	</target>
-
 	<target name="format-js">
 		<taskdef classname="com.philmander.jshint.JsHintAntTask" classpath="${project.dir}/tools/ant-jshint-2.0.5.jar" name="jshint" />
 
@@ -884,7 +879,7 @@ Please set the property "jdk.6.home" in build.properties.
 		>
 			<exclude name="**/aui/**" />
 			<exclude name="**/dynamiccss/dependencies/r2*.js" />
-			<exclude name="**/editor/**" />
+			<exclude name="**/editors/**" />
 			<exclude name="**/misc/**" />
 			<exclude name="**/selenium/**" />
 			<exclude name="**/VAADIN/**" />
@@ -908,7 +903,9 @@ Please set the property "jdk.6.home" in build.properties.
 		/>
 	</target>
 
-	<target name="war" depends="compile,build-portal-web-dependencies">
+	<target name="war" depends="build-portal-web-dependencies">
+		<manifest-macro />
+
 		<war
 			basedir="docroot"
 			destfile="${war.file}.war"

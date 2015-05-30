@@ -32,7 +32,6 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PersistenceTestRule;
-import com.liferay.portal.util.PropsValues;
 
 import com.liferay.portlet.journal.NoSuchArticleResourceException;
 import com.liferay.portlet.journal.model.JournalArticleResource;
@@ -182,18 +181,11 @@ public class JournalArticleResourcePersistenceTest {
 			newJournalArticleResource);
 	}
 
-	@Test
+	@Test(expected = NoSuchArticleResourceException.class)
 	public void testFindByPrimaryKeyMissing() throws Exception {
 		long pk = RandomTestUtil.nextLong();
 
-		try {
-			_persistence.findByPrimaryKey(pk);
-
-			Assert.fail(
-				"Missing entity did not throw NoSuchArticleResourceException");
-		}
-		catch (NoSuchArticleResourceException nsee) {
-		}
+		_persistence.findByPrimaryKey(pk);
 	}
 
 	@Test
@@ -412,10 +404,6 @@ public class JournalArticleResourcePersistenceTest {
 
 	@Test
 	public void testResetOriginalValues() throws Exception {
-		if (!PropsValues.HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE) {
-			return;
-		}
-
 		JournalArticleResource newJournalArticleResource = addJournalArticleResource();
 
 		_persistence.clearCache();

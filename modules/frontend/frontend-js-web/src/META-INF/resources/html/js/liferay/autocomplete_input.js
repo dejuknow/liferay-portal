@@ -70,8 +70,7 @@ AUI.add(
 
 				instance._bindUIACIBase();
 
-				var autocompleteAttrs = AArray.filter(
-					A.Object.keys(A.AutoComplete.ATTRS),
+				var autocompleteAttrs = A.Object.keys(A.AutoComplete.ATTRS).filter(
 					function(item) {
 						return item !== 'value';
 					}
@@ -93,8 +92,7 @@ AUI.add(
 
 				var tplResults = instance.get('tplResults');
 
-				return AArray.map(
-					results,
+				return results.map(
 					function(result) {
 						return Lang.sub(tplResults, result.raw);
 					}
@@ -113,7 +111,7 @@ AUI.add(
 				var offsetX = 0;
 				var offsetY = 0;
 
-				if (Lang.isArray(offset)) {
+				if (Array.isArray(offset)) {
 					offsetX = offset[0];
 					offsetY = offset[1];
 				}
@@ -192,8 +190,7 @@ AUI.add(
 				if (!instance._triggers) {
 					var triggers = [];
 
-					AArray.each(
-						instance.get(STR_TRIGGER),
+					instance.get(STR_TRIGGER).forEach(
 						function(item, index, collection) {
 							triggers.push(Lang.isString(item) ? item : item.term);
 						}
@@ -264,7 +261,7 @@ AUI.add(
 			_syncUIPosAlign: Lang.emptyFn,
 
 			_validateOffset: function(value) {
-				return (Lang.isArray(value) || Lang.isNumber(value));
+				return Array.isArray(value) || Lang.isNumber(value);
 			}
 		};
 

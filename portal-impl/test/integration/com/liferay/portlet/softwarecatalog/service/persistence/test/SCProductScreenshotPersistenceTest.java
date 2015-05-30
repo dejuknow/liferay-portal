@@ -30,7 +30,6 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PersistenceTestRule;
-import com.liferay.portal.util.PropsValues;
 
 import com.liferay.portlet.softwarecatalog.NoSuchProductScreenshotException;
 import com.liferay.portlet.softwarecatalog.model.SCProductScreenshot;
@@ -185,18 +184,11 @@ public class SCProductScreenshotPersistenceTest {
 		Assert.assertEquals(existingSCProductScreenshot, newSCProductScreenshot);
 	}
 
-	@Test
+	@Test(expected = NoSuchProductScreenshotException.class)
 	public void testFindByPrimaryKeyMissing() throws Exception {
 		long pk = RandomTestUtil.nextLong();
 
-		try {
-			_persistence.findByPrimaryKey(pk);
-
-			Assert.fail(
-				"Missing entity did not throw NoSuchProductScreenshotException");
-		}
-		catch (NoSuchProductScreenshotException nsee) {
-		}
+		_persistence.findByPrimaryKey(pk);
 	}
 
 	@Test
@@ -410,10 +402,6 @@ public class SCProductScreenshotPersistenceTest {
 
 	@Test
 	public void testResetOriginalValues() throws Exception {
-		if (!PropsValues.HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE) {
-			return;
-		}
-
 		SCProductScreenshot newSCProductScreenshot = addSCProductScreenshot();
 
 		_persistence.clearCache();

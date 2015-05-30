@@ -199,12 +199,14 @@ public class SyncFileService {
 
 				@Override
 				public Object call() throws Exception {
-					List<SyncFile> syncFiles =
+					List<SyncFile> childSyncFiles =
 						_syncFilePersistence.findByParentFilePathName(
 							syncFile.getFilePathName());
 
-					for (SyncFile syncFile : syncFiles) {
-						doDeleteSyncFile(syncFile, notify);
+					for (SyncFile childSyncFile : childSyncFiles) {
+						childSyncFile.setUiEvent(syncFile.getUiEvent());
+
+						doDeleteSyncFile(childSyncFile, notify);
 					}
 
 					return null;
@@ -277,10 +279,12 @@ public class SyncFileService {
 	}
 
 	public static List<SyncFile> findSyncFiles(
-		long syncAccountId, int uiEvent) {
+		long syncAccountId, int uiEvent, String orderByColumn,
+		boolean ascending) {
 
 		try {
-			return _syncFilePersistence.findByS_U(syncAccountId, uiEvent);
+			return _syncFilePersistence.findByS_U(
+				syncAccountId, uiEvent, orderByColumn, ascending);
 		}
 		catch (SQLException sqle) {
 			if (_logger.isDebugEnabled()) {

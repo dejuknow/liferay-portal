@@ -33,7 +33,6 @@ import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PersistenceTestRule;
-import com.liferay.portal.util.PropsValues;
 
 import com.liferay.portlet.mobiledevicerules.NoSuchRuleGroupException;
 import com.liferay.portlet.mobiledevicerules.model.MDRRuleGroup;
@@ -199,6 +198,11 @@ public class MDRRuleGroupPersistenceTest {
 	}
 
 	@Test
+	public void testCountByGroupIdArrayable() throws Exception {
+		_persistence.countByGroupId(new long[] { RandomTestUtil.nextLong(), 0L });
+	}
+
+	@Test
 	public void testFindByPrimaryKeyExisting() throws Exception {
 		MDRRuleGroup newMDRRuleGroup = addMDRRuleGroup();
 
@@ -207,17 +211,11 @@ public class MDRRuleGroupPersistenceTest {
 		Assert.assertEquals(existingMDRRuleGroup, newMDRRuleGroup);
 	}
 
-	@Test
+	@Test(expected = NoSuchRuleGroupException.class)
 	public void testFindByPrimaryKeyMissing() throws Exception {
 		long pk = RandomTestUtil.nextLong();
 
-		try {
-			_persistence.findByPrimaryKey(pk);
-
-			Assert.fail("Missing entity did not throw NoSuchRuleGroupException");
-		}
-		catch (NoSuchRuleGroupException nsee) {
-		}
+		_persistence.findByPrimaryKey(pk);
 	}
 
 	@Test
@@ -435,10 +433,6 @@ public class MDRRuleGroupPersistenceTest {
 
 	@Test
 	public void testResetOriginalValues() throws Exception {
-		if (!PropsValues.HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE) {
-			return;
-		}
-
 		MDRRuleGroup newMDRRuleGroup = addMDRRuleGroup();
 
 		_persistence.clearCache();

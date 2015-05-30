@@ -16,11 +16,16 @@ package com.liferay.document.library.repository.cmis.internal.model;
 
 import com.liferay.document.library.repository.cmis.internal.CMISRepository;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.StagedModelType;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.repository.Repository;
 import com.liferay.portal.kernel.repository.RepositoryException;
+import com.liferay.portal.kernel.repository.RepositoryProviderUtil;
+import com.liferay.portal.kernel.repository.capabilities.Capability;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.repository.model.FileShortcut;
 import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.repository.model.RepositoryModelOperation;
@@ -47,6 +52,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -179,6 +185,11 @@ public class CMISFileEntry extends CMISModel implements FileEntry {
 	@Override
 	public String getFileName() {
 		return DLUtil.getSanitizedFileName(getTitle(), getExtension());
+	}
+
+	@Override
+	public List<FileShortcut> getFileShortcuts() {
+		return Collections.emptyList();
 	}
 
 	@Override
@@ -408,6 +419,22 @@ public class CMISFileEntry extends CMISModel implements FileEntry {
 	}
 
 	@Override
+	public <T extends Capability> T getRepositoryCapability(
+		Class<T> capabilityClass) {
+
+		try {
+			Repository repository = RepositoryProviderUtil.getRepository(
+				getRepositoryId());
+
+			return repository.getCapability(capabilityClass);
+		}
+		catch (PortalException pe) {
+			throw new SystemException(
+				"Unable to access repository " + getRepositoryId(), pe);
+		}
+	}
+
+	@Override
 	public long getRepositoryId() {
 		return _cmisRepository.getRepositoryId();
 	}
@@ -608,6 +635,13 @@ public class CMISFileEntry extends CMISModel implements FileEntry {
 
 			return false;
 		}
+	}
+
+	@Override
+	public <T extends Capability> boolean isRepositoryCapabilityProvided(
+		Class<T> capabilityClass) {
+
+		return false;
 	}
 
 	@Override

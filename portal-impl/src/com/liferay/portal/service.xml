@@ -449,6 +449,14 @@
 		<reference package-path="com.liferay.portal" entity="ListType" />
 		<reference package-path="com.liferay.portal" entity="User" />
 	</entity>
+	<entity name="ExportImport" local-service="true" remote-service="true" >
+
+		<!-- References -->
+
+		<reference package-path="com.liferay.portal" entity="BackgroundTask" />
+		<reference package-path="com.liferay.portal" entity="ExportImportConfiguration" />
+		<reference package-path="com.liferay.portal" entity="Layout" />
+	</entity>
 	<entity name="ExportImportConfiguration" local-service="true" remote-service="true" trash-enabled="true">
 
 		<!-- PK fields -->
@@ -631,6 +639,7 @@
 		<reference package-path="com.liferay.portal" entity="BackgroundTask" />
 		<reference package-path="com.liferay.portal" entity="ClassName" />
 		<reference package-path="com.liferay.portal" entity="Company" />
+		<reference package-path="com.liferay.portal" entity="ExportImport" />
 		<reference package-path="com.liferay.portal" entity="ExportImportConfiguration" />
 		<reference package-path="com.liferay.portal" entity="Layout" />
 		<reference package-path="com.liferay.portal" entity="LayoutPrototype" />
@@ -1913,7 +1922,6 @@
 		<reference package-path="com.liferay.portal" entity="Portlet" />
 		<reference package-path="com.liferay.portal" entity="PortletItem" />
 	</entity>
-	<entity name="Quartz" local-service="true" remote-service="false" />
 	<entity name="Region" local-service="false" remote-service="true">
 
 		<!-- PK fields -->
@@ -2031,6 +2039,7 @@
 		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLAppHelper" />
 		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLFileEntry" />
 		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLFileEntryType" />
+		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLFileShortcut" />
 		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLFileVersion" />
 		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLFolder" />
 		<reference package-path="com.liferay.portlet.expando" entity="ExpandoValue" />
@@ -2424,6 +2433,7 @@
 
 		<!-- References -->
 
+		<reference package-path="com.liferay.portal" entity="ExportImport" />
 		<reference package-path="com.liferay.portal" entity="Group" />
 		<reference package-path="com.liferay.portal" entity="Layout" />
 		<reference package-path="com.liferay.portal" entity="LayoutRevision" />
@@ -2850,6 +2860,8 @@
 
 		<!-- References -->
 
+		<reference package-path="com.liferay.portal" entity="ExportImport" />
+		<reference package-path="com.liferay.portal" entity="ExportImportConfiguration" />
 		<reference package-path="com.liferay.portal" entity="Group" />
 		<reference package-path="com.liferay.portal" entity="Layout" />
 		<reference package-path="com.liferay.portal" entity="Resource" />
@@ -3361,8 +3373,7 @@
 		<exception>CompanyWebId</exception>
 		<exception>ContactBirthday</exception>
 		<exception>ContactClassName</exception>
-		<exception>ContactFirstName</exception>
-		<exception>ContactLastName</exception>
+		<exception>ContactName</exception>
 		<exception>CountryA2</exception>
 		<exception>CountryA3</exception>
 		<exception>CountryIdd</exception>

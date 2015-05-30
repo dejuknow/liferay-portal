@@ -3,9 +3,104 @@
 <project name="util-taglib" basedir="." default="compile">
 	<import file="../build-common-java.xml" />
 
+	<property name="deploy.dir" value="${app.server.lib.portal.dir}" />
 	<property name="jar.file" value="${ant.project.name}" />
 	<property name="manifest.bundle.name" value="Liferay Util Taglib" />
 	<property name="manifest.bundle.symbolic.name" value="util-taglib" />
+
+	<macrodef name="clean">
+		<sequential>
+			<clean-cmd>
+				<clean-post>
+					<delete file="${liferay.home}/osgi/portal/${jar.file}.jar" />
+				</clean-post>
+			</clean-cmd>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="compile-java">
+		<sequential>
+			<compile-java-cmd>
+				<compile-java-post>
+					<copy file="classes/META-INF/aui.tld" overwrite="true" tofile="classes/META-INF/liferay-aui.tld" preservelastmodified="true" />
+
+					<replace file="classes/META-INF/liferay-aui.tld">
+						<replacetoken><![CDATA[<uri>http://alloy.liferay.com/tld/aui</uri>]]></replacetoken>
+						<replacevalue><![CDATA[<uri>http://liferay.com/tld/aui</uri>]]></replacevalue>
+					</replace>
+
+					<copy file="classes/META-INF/ddm.tld" overwrite="true" tofile="classes/META-INF/liferay-ddm.tld" preservelastmodified="true" />
+
+					<replace file="classes/META-INF/liferay-ddm.tld">
+						<replacetoken><![CDATA[<short-name>ddm</short-name>]]></replacetoken>
+						<replacevalue><![CDATA[<short-name>liferay-ddm</short-name>]]></replacevalue>
+					</replace>
+
+					<replace file="classes/META-INF/liferay-ddm.tld">
+						<replacetoken><![CDATA[<uri>http://alloy.liferay.com/tld/ddm</uri>]]></replacetoken>
+						<replacevalue><![CDATA[<uri>http://liferay.com/tld/ddm</uri>]]></replacevalue>
+					</replace>
+
+					<copy file="classes/META-INF/liferay-portlet.tld" tofile="classes/META-INF/liferay-portlet_2_0.tld" preservelastmodified="true" />
+
+					<replace file="classes/META-INF/liferay-portlet_2_0.tld">
+						<replacetoken><![CDATA[<uri>http://java.sun.com/portlet</uri>]]></replacetoken>
+						<replacevalue><![CDATA[<uri>http://java.sun.com/portlet_2_0</uri>]]></replacevalue>
+					</replace>
+				</compile-java-post>
+			</compile-java-cmd>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="deploy">
+		<attribute name="deploy.dir" />
+		<attribute name="jar.file" />
+		<attribute name="src.dir" />
+
+		<sequential>
+			<deploy-cmd
+				copy.jar="false"
+				deploy.dir="@{deploy.dir}"
+				jar.file="@{jar.file}"
+				src.dir="@{src.dir}"
+			>
+				<deploy-post>
+					<copy file="@{jar.file}.jar" todir="${liferay.home}/osgi/portal" preservelastmodified="true" />
+
+					<if>
+						<equals arg1="${app.server.type}" arg2="tomcat" />
+						<then>
+							<copy file="@{jar.file}.jar" todir="@{deploy.dir}" preservelastmodified="true" />
+
+							<copy todir="${app.server.portal.dir}/WEB-INF/tld" preservelastmodified="true">
+								<fileset dir="classes/META-INF" includes="*.tld" />
+							</copy>
+						</then>
+					</if>
+				</deploy-post>
+			</deploy-cmd>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="jar-marco">
+		<sequential>
+			<jar-marco-cmd>
+				<jar-post>
+					<copy file="${jar.file}.jar" todir="${portal-impl.classes.dir}/com/liferay/portal/deploy/dependencies" preservelastmodified="true" />
+
+					<copy todir="${portal-impl.classes.dir}/com/liferay/portal/deploy/dependencies" preservelastmodified="true">
+						<fileset dir="classes/META-INF" />
+					</copy>
+
+					<copy file="${jar.file}.jar" todir="${project.dir}/portal-web/docroot/WEB-INF/lib" preservelastmodified="true" />
+
+					<copy overwrite="true" todir="${project.dir}/portal-web/docroot/WEB-INF/tld" preservelastmodified="true">
+						<fileset dir="classes/META-INF" includes="*.tld" />
+					</copy>
+				</jar-post>
+			</jar-marco-cmd>
+		</sequential>
+	</macrodef>
 
 	<target name="build-taglibs">
 		<delete file="${project.dir}/util-taglib/src/META-INF/aui.tld" failonerror="false" />
@@ -28,77 +123,6 @@
 			<jvmarg value="-Dtagbuilder.templates.dir=com/liferay/alloy/tools/tagbuilder/templates/" />
 			<jvmarg value="-Dtagbuilder.tld.dir=${project.dir}/util-taglib/src/META-INF/" />
 		</java>
-	</target>
-
-	<target name="clean" depends="build-common-java.clean">
-		<delete file="${liferay.home}/osgi/portal/${jar.file}.jar" />
-	</target>
-
-	<target name="compile" depends="check-compile-uptodate" unless="${compile.uptodate}">
-		<copy file="src/META-INF/aui.tld" overwrite="true" tofile="src/META-INF/liferay-aui.tld" preservelastmodified="true" />
-
-		<replace file="src/META-INF/liferay-aui.tld">
-			<replacetoken><![CDATA[<uri>http://alloy.liferay.com/tld/aui</uri>]]></replacetoken>
-			<replacevalue><![CDATA[<uri>http://liferay.com/tld/aui</uri>]]></replacevalue>
-		</replace>
-
-		<copy file="src/META-INF/ddm.tld" overwrite="true" tofile="src/META-INF/liferay-ddm.tld" preservelastmodified="true" />
-
-		<replace file="src/META-INF/liferay-ddm.tld">
-			<replacetoken><![CDATA[<short-name>ddm</short-name>]]></replacetoken>
-			<replacevalue><![CDATA[<short-name>liferay-ddm</short-name>]]></replacevalue>
-		</replace>
-
-		<replace file="src/META-INF/liferay-ddm.tld">
-			<replacetoken><![CDATA[<uri>http://alloy.liferay.com/tld/ddm</uri>]]></replacetoken>
-			<replacevalue><![CDATA[<uri>http://liferay.com/tld/ddm</uri>]]></replacevalue>
-		</replace>
-
-		<copy file="src/META-INF/liferay-portlet.tld" tofile="src/META-INF/liferay-portlet_2_0.tld" preservelastmodified="true" />
-
-		<replace file="src/META-INF/liferay-portlet_2_0.tld">
-			<replacetoken><![CDATA[<uri>http://java.sun.com/portlet</uri>]]></replacetoken>
-			<replacevalue><![CDATA[<uri>http://java.sun.com/portlet_2_0</uri>]]></replacevalue>
-		</replace>
-
-		<mkdir dir="classes" />
-
-		<antcall target="compile-java">
-			<param name="javac.classpathref" value="project.classpath" />
-			<param name="javac.destdir" value="classes" />
-			<param name="javac.srcdir" value="src" />
-		</antcall>
-	</target>
-
-	<target name="deploy" depends="check-deploy-uptodate,jar" unless="${deploy.uptodate}">
-		<copy file="${jar.file}.jar" todir="${liferay.home}/osgi/portal" preservelastmodified="true" />
-
-		<if>
-			<equals arg1="${app.server.type}" arg2="tomcat" />
-			<then>
-				<copy file="${jar.file}.jar" todir="${app.server.portal.dir}/WEB-INF/lib" preservelastmodified="true" />
-
-				<copy todir="${app.server.portal.dir}/WEB-INF/tld" preservelastmodified="true">
-					<fileset dir="classes/META-INF" includes="*.tld" />
-				</copy>
-			</then>
-		</if>
-	</target>
-
-	<target name="jar" depends="check-jar-uptodate" unless="${jar.uptodate}">
-		<antcall target="build-common-java.jar" />
-
-		<copy file="${jar.file}.jar" todir="${portal-impl.classes.dir}/com/liferay/portal/deploy/dependencies" preservelastmodified="true" />
-
-		<copy todir="${portal-impl.classes.dir}/com/liferay/portal/deploy/dependencies" preservelastmodified="true">
-			<fileset dir="classes/META-INF" />
-		</copy>
-
-		<copy file="${jar.file}.jar" todir="${project.dir}/portal-web/docroot/WEB-INF/lib" preservelastmodified="true" />
-
-		<copy overwrite="true" todir="${project.dir}/portal-web/docroot/WEB-INF/tld" preservelastmodified="true">
-			<fileset dir="classes/META-INF" includes="*.tld" />
-		</copy>
 	</target>
 
 	<target name="taglibdoc" depends="validate-tld">

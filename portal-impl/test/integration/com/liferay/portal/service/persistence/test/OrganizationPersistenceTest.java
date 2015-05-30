@@ -38,7 +38,6 @@ import com.liferay.portal.service.persistence.OrganizationPersistence;
 import com.liferay.portal.service.persistence.OrganizationUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PersistenceTestRule;
-import com.liferay.portal.util.PropsValues;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -270,18 +269,11 @@ public class OrganizationPersistenceTest {
 		Assert.assertEquals(existingOrganization, newOrganization);
 	}
 
-	@Test
+	@Test(expected = NoSuchOrganizationException.class)
 	public void testFindByPrimaryKeyMissing() throws Exception {
 		long pk = RandomTestUtil.nextLong();
 
-		try {
-			_persistence.findByPrimaryKey(pk);
-
-			Assert.fail(
-				"Missing entity did not throw NoSuchOrganizationException");
-		}
-		catch (NoSuchOrganizationException nsee) {
-		}
+		_persistence.findByPrimaryKey(pk);
 	}
 
 	@Test
@@ -498,10 +490,6 @@ public class OrganizationPersistenceTest {
 
 	@Test
 	public void testResetOriginalValues() throws Exception {
-		if (!PropsValues.HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE) {
-			return;
-		}
-
 		Organization newOrganization = addOrganization();
 
 		_persistence.clearCache();

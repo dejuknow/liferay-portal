@@ -30,6 +30,7 @@ import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.Node;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
+import com.liferay.portal.kernel.xml.UnsecureSAXReaderUtil;
 import com.liferay.portal.kernel.xml.XPath;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.util.PortalUtil;
@@ -189,12 +190,13 @@ public class DDMStructureTestUtil {
 		String name, Locale[] availableLocales, Locale defaultLocale) {
 
 		return getSampleDDMForm(
-			name, "string", true, "text", availableLocales, defaultLocale);
+			name, "string", "text", true, "text", availableLocales,
+			defaultLocale);
 	}
 
 	public static DDMForm getSampleDDMForm(
-		String name, String dataType, boolean repeatable, String type,
-		Locale[] availableLocales, Locale defaultLocale) {
+		String name, String dataType, String indexType, boolean repeatable,
+		String type, Locale[] availableLocales, Locale defaultLocale) {
 
 		DDMForm ddmForm = new DDMForm();
 
@@ -204,7 +206,7 @@ public class DDMStructureTestUtil {
 		DDMFormField ddmFormField = new DDMFormField(name, type);
 
 		ddmFormField.setDataType(dataType);
-		ddmFormField.setIndexType("text");
+		ddmFormField.setIndexType(indexType);
 		ddmFormField.setLocalizable(true);
 		ddmFormField.setRepeatable(repeatable);
 
@@ -294,7 +296,7 @@ public class DDMStructureTestUtil {
 
 		Map<String, Map<String, String>> map = new HashMap<>();
 
-		Document document = SAXReaderUtil.read(xsd);
+		Document document = UnsecureSAXReaderUtil.read(xsd);
 
 		XPath xPathSelector = SAXReaderUtil.createXPath("//dynamic-element");
 

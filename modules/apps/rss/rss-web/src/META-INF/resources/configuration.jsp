@@ -87,7 +87,7 @@
 					<liferay-ui:ddm-template-selector
 						className="<%= RSSFeed.class.getName() %>"
 						displayStyle="<%= rssPortletInstanceConfiguration.displayStyle() %>"
-						displayStyleGroupId="<%= rssPortletInstanceConfiguration.displayStyleGroupId(themeDisplay.getScopeGroupId()) %>"
+						displayStyleGroupId="<%= rssDisplayContext.getDisplayStyleGroupId() %>"
 						label="display-template"
 						refreshURL="<%= configurationRenderURL.toString() %>"
 						showEmptyOption="<%= true %>"

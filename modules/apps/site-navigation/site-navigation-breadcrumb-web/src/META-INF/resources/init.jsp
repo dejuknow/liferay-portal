@@ -22,18 +22,15 @@
 <%@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
 <%@ page import="com.liferay.portal.kernel.servlet.taglib.ui.BreadcrumbEntry" %><%@
-page import="com.liferay.portal.kernel.servlet.taglib.ui.BreadcrumbUtil" %><%@
 page import="com.liferay.portal.kernel.util.Constants" %><%@
 page import="com.liferay.portal.kernel.util.HtmlUtil" %><%@
 page import="com.liferay.site.navigation.breadcrumb.web.context.BreadcrumbDisplayContext" %>
-
-<%@ page import="java.util.List" %>
 
 <liferay-theme:defineObjects />
 <portlet:defineObjects/>
 
 <%
-BreadcrumbDisplayContext breadcrumbDisplayContext = new BreadcrumbDisplayContext(request, portletPreferences);
+BreadcrumbDisplayContext breadcrumbDisplayContext = new BreadcrumbDisplayContext(request);
 %>
 
 <%@ include file="/init-ext.jsp" %>

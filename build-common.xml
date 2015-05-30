@@ -76,6 +76,10 @@
 	<taskdef classname="com.liferay.ant.bnd.BaselineJarTask" classpathref="lib.classpath" name="baseline-jar" />
 	<taskdef classname="com.liferay.ant.bnd.ReleaseToRepoTask" classpathref="lib.classpath" name="release-to-repo" />
 
+	<taskdef classname="com.liferay.ant.build.logger.LiferayBuildLoggerInstallerTask" classpath="${project.dir}/lib/development/com.liferay.ant.build.logger.jar" name="liferay-build-logger-installer" />
+
+	<liferay-build-logger-installer />
+
 	<taskdef classname="com.tonicsystems.jarjar.JarJarTask" classpath="${project.dir}/lib/development/jarjar.jar" name="jarjar" />
 	<taskdef classname="com.oopsconsultancy.xmltask.ant.XmlTask" classpath="${project.dir}/lib/development/xmltask.jar" name="xmltask" />
 
@@ -464,16 +468,14 @@ Please set the environment variable ANT_OPTS to the recommended value of
 	<if>
 		<and>
 			<not>
-				<isset property="jdk.6.home" />
+				<isset property="jdk.7.home" />
 			</not>
 			<equals arg1="${java.specification.version}" arg2="1.6" />
 		</and>
 		<then>
-			<property name="jdk.6.home" value="${env.JAVA_HOME}" />
+			<property name="jdk.7.home" value="${env.JAVA_HOME}" />
 		</then>
 	</if>
-
-	<property name="junit.cobertura.agent" value="-javaagent:${project.dir}/${junit.cobertura.agent.jar}=${junit.cobertura.includes};${junit.cobertura.excludes}" />
 
 	<if>
 		<not>
@@ -483,6 +485,8 @@ Please set the environment variable ANT_OPTS to the recommended value of
 			<var name="junit.debug.jpda" value="" />
 		</then>
 	</if>
+
+	<property name="whip.agent" value="-javaagent:${project.dir}/${junit.whip.jar}=${junit.whip.includes};${junit.whip.excludes}" />
 
 	<macrodef name="ant-execute">
 		<attribute default="build.xml" name="ant.build.file" />
@@ -717,6 +721,27 @@ Please set the environment variable ANT_OPTS to the recommended value of
 		</sequential>
 	</macrodef>
 
+	<macrodef name="deploy-properties">
+		<sequential>
+			<if>
+				<and>
+					<equals arg1="${app.server.bundled}" arg2="true" />
+					<equals arg1="${app.server.type}" arg2="glassfish" />
+				</and>
+				<then>
+					<war destfile="${app.server.glassfish.portal.war.dir}" update="true">
+						<classes dir="${project.dir}/portal-impl/src" includes="portal-*.properties,system-*.properties" />
+					</war>
+				</then>
+				<else>
+					<copy todir="${app.server.classes.portal.dir}" overwrite="true">
+						<fileset dir="${project.dir}/portal-impl/src" includes="portal-*.properties,system-*.properties" />
+					</copy>
+				</else>
+			</if>
+		</sequential>
+	</macrodef>
+
 	<macrodef name="execute">
 		<attribute default="." name="dir" />
 
@@ -879,13 +904,13 @@ Please set the environment variable ANT_OPTS to the recommended value of
 		<sequential>
 			<junit dir="${project.dir}" fork="on" forkmode="@{forkmode}" haltonfailure="${junit.halt.on.failure}" jvm="${junit.jvm}" outputtoformatters="false" printsummary="on" showoutput="true">
 				<sysproperty key="junit.aspectj.dump" file="woven-classes" />
-				<sysproperty key="junit.cobertura.agent" value="${junit.cobertura.agent}" />
 				<sysproperty key="junit.code.coverage" value="${junit.code.coverage}" />
-				<sysproperty key="junit.code.coverage.dump" value="${junit.code.coverage.dump}" />
 				<sysproperty key="junit.debug" value="${junit.debug}" />
-				<sysproperty key="net.sourceforge.cobertura.datafile" file="test-coverage/@{test.type}/cobertura.ser" />
+				<sysproperty key="whip.agent" value="${whip.agent}" />
+				<sysproperty key="whip.datafile" file="test-coverage/@{test.type}/whip.dat" />
+				<sysproperty key="whip.instrument.dump" value="${whip.instrument.dump}" />
 				<jvmarg line="${junit.debug.jpda}" />
-				<jvmarg line="${junit.cobertura.agent}" />
+				<jvmarg line="${whip.agent}" />
 				<jvmarg value="-Xmx${junit.java.mx}" />
 				<jvmarg value="-Xss2m" />
 				<jvmarg value="-XX:MaxPermSize=${junit.java.maxpermsize}" />
@@ -934,6 +959,18 @@ Please set the environment variable ANT_OPTS to the recommended value of
 				classpathref="project.classpath"
 				projectDirPropertyName="project.dir"
 			/>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="print-current-time">
+		<sequential>
+			<local name="current.time" />
+
+			<tstamp>
+				<format property="current.time" pattern="MMMM d, yyyy 'at' hh:mm aa" />
+			</tstamp>
+
+			<echo message="${current.time}" />
 		</sequential>
 	</macrodef>
 
@@ -1085,8 +1122,8 @@ Please set the environment variable ANT_OPTS to the recommended value of
 		<attribute name="test.type" />
 
 		<sequential>
-			<ivy:resolve log="download-only">
-				<dependency name="arquillian-junit-container" org="org.jboss.arquillian.junit" rev="1.1.6.Final" />
+			<ivy:resolve log="${ivy.log.level}">
+				<dependency name="arquillian-junit-container" org="org.jboss.arquillian.junit" rev="1.1.8.Final" />
 				<dependency name="com.liferay.arquillian.extension" org="com.liferay" rev="1.0.0-SNAPSHOT" />
 				<exclude org="junit" />
 			</ivy:resolve>
@@ -1308,12 +1345,21 @@ rerun your task.
 		</if>
 	</target>
 
+	<target name="deploy-properties">
+		<deploy-properties />
+	</target>
+
 	<target name="format-javadoc">
 		<echo>Run "ant compile compile-test" before using format-javadoc to generate @Override tags.</echo>
 
+		<path id="javadoc.formatter.classpath">
+			<fileset dir="${project.dir}/tools/sdk/dependencies/com.liferay.javadoc.formatter/lib" includes="*.jar" />
+			<path refid="project.classpath" />
+		</path>
+
 		<java
-			classname="com.liferay.portal.tools.JavadocFormatter"
-			classpathref="project.classpath"
+			classname="com.liferay.javadoc.formatter.JavadocFormatter"
+			classpathref="javadoc.formatter.classpath"
 			fork="true"
 			newenvironment="true"
 		>
@@ -1324,14 +1370,6 @@ rerun your task.
 			<arg value="javadoc.output.file.prefix=${output.file.prefix}" />
 			<arg value="javadoc.update=${update}" />
 		</java>
-	</target>
-
-	<target name="print-current-time">
-		<tstamp>
-			<format property="current.time" pattern="MMMM d, yyyy 'at' hh:mm aa" />
-		</tstamp>
-
-		<echo message="${current.time}" />
 	</target>
 
 	<target name="print-properties">
@@ -1421,7 +1459,7 @@ rerun your task.
 			</sequential>
 		</for>
 
-		<ivy:resolve log="quiet">
+		<ivy:resolve log="${ivy.log.level}">
 			<dependency conf="default" name="sonar-ant-task" org="org.codehaus.sonar-plugins" rev="2.1" />
 		</ivy:resolve>
 

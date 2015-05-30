@@ -14,6 +14,9 @@
 
 package com.liferay.portal.kernel.util;
 
+import com.liferay.portal.kernel.dao.jdbc.aop.DynamicDataSourceTargetSource;
+import com.liferay.portal.kernel.dao.shard.ShardDataSourceTargetSource;
+import com.liferay.portal.kernel.dao.shard.ShardSessionFactoryTargetSource;
 import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
 import com.liferay.portal.kernel.spring.osgi.OSGiBeanProperties;
 
@@ -35,7 +38,9 @@ public class InfrastructureUtil {
 		return _dataSource;
 	}
 
-	public static Object getDynamicDataSourceTargetSource() {
+	public static DynamicDataSourceTargetSource
+		getDynamicDataSourceTargetSource() {
+
 		PortalRuntimePermission.checkGetBeanProperty(
 			InfrastructureUtil.class, "dynamicDataSourceTargetSource");
 
@@ -49,14 +54,16 @@ public class InfrastructureUtil {
 		return _mailSession;
 	}
 
-	public static Object getShardDataSourceTargetSource() {
+	public static ShardDataSourceTargetSource getShardDataSourceTargetSource() {
 		PortalRuntimePermission.checkGetBeanProperty(
 			InfrastructureUtil.class, "shardDataSourceTargetSource");
 
 		return _shardDataSourceTargetSource;
 	}
 
-	public static Object getShardSessionFactoryTargetSource() {
+	public static ShardSessionFactoryTargetSource
+		getShardSessionFactoryTargetSource() {
+
 		PortalRuntimePermission.checkGetBeanProperty(
 			InfrastructureUtil.class, "shardSessionFactoryTargetSource");
 
@@ -77,7 +84,7 @@ public class InfrastructureUtil {
 	}
 
 	public void setDynamicDataSourceTargetSource(
-		Object dynamicDataSourceTargetSource) {
+		DynamicDataSourceTargetSource dynamicDataSourceTargetSource) {
 
 		PortalRuntimePermission.checkSetBeanProperty(
 			getClass(), "dynamicDataSourceTargetSource");
@@ -92,7 +99,7 @@ public class InfrastructureUtil {
 	}
 
 	public void setShardDataSourceTargetSource(
-		Object shardDataSourceTargetSource) {
+		ShardDataSourceTargetSource shardDataSourceTargetSource) {
 
 		PortalRuntimePermission.checkSetBeanProperty(
 			getClass(), "shardDataSourceTargetSource");
@@ -101,7 +108,7 @@ public class InfrastructureUtil {
 	}
 
 	public void setShardSessionFactoryTargetSource(
-		Object shardSessionFactoryTargetSource) {
+		ShardSessionFactoryTargetSource shardSessionFactoryTargetSource) {
 
 		PortalRuntimePermission.checkSetBeanProperty(
 			getClass(), "shardSessionFactoryTargetSource");
@@ -117,10 +124,11 @@ public class InfrastructureUtil {
 	}
 
 	private static DataSource _dataSource;
-	private static Object _dynamicDataSourceTargetSource;
+	private static DynamicDataSourceTargetSource _dynamicDataSourceTargetSource;
 	private static Session _mailSession;
-	private static Object _shardDataSourceTargetSource;
-	private static Object _shardSessionFactoryTargetSource;
+	private static ShardDataSourceTargetSource _shardDataSourceTargetSource;
+	private static ShardSessionFactoryTargetSource
+		_shardSessionFactoryTargetSource;
 	private static Object _transactionManager;
 
 }

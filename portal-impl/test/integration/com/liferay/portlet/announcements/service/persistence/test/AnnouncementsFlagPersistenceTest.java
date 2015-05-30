@@ -31,7 +31,6 @@ import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PersistenceTestRule;
-import com.liferay.portal.util.PropsValues;
 
 import com.liferay.portlet.announcements.NoSuchFlagException;
 import com.liferay.portlet.announcements.model.AnnouncementsFlag;
@@ -165,17 +164,11 @@ public class AnnouncementsFlagPersistenceTest {
 		Assert.assertEquals(existingAnnouncementsFlag, newAnnouncementsFlag);
 	}
 
-	@Test
+	@Test(expected = NoSuchFlagException.class)
 	public void testFindByPrimaryKeyMissing() throws Exception {
 		long pk = RandomTestUtil.nextLong();
 
-		try {
-			_persistence.findByPrimaryKey(pk);
-
-			Assert.fail("Missing entity did not throw NoSuchFlagException");
-		}
-		catch (NoSuchFlagException nsee) {
-		}
+		_persistence.findByPrimaryKey(pk);
 	}
 
 	@Test
@@ -386,10 +379,6 @@ public class AnnouncementsFlagPersistenceTest {
 
 	@Test
 	public void testResetOriginalValues() throws Exception {
-		if (!PropsValues.HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE) {
-			return;
-		}
-
 		AnnouncementsFlag newAnnouncementsFlag = addAnnouncementsFlag();
 
 		_persistence.clearCache();

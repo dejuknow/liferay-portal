@@ -24,6 +24,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>ADD_BOOKMARK</td>
+	<td>//a[contains(.,'Add Bookmark')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>ADD_CHILD_ARTICLE</td>
 	<td>//a[@role='menuitem' and contains(.,'Add Child Article')]</td>
 	<td></td>
@@ -46,6 +51,11 @@
 <tr>
 	<td>ADD_REGULAR_ORGANIZATION</td>
 	<td>//a[@role='menuitem' and contains(.,'Add Regular Organization')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ADD_SUBCATEGORY</td>
+	<td>//a[@role='menuitem' and contains(.,'Add Subcategory')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -99,6 +109,16 @@
 	<td></td>
 </tr>
 <tr>
+	<td>BLOGS_ENTRY</td>
+	<td>//a[@role='menuitem' and contains(.,'Blogs Entry')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CALENDAR_EVENT</td>
+	<td>//a[@role='menuitem' and contains(.,'Calendar Event')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>CANCEL_CHECKOUT</td>
 	<td>//a[@role='menuitem' and contains(.,'Cancel Checkout')]</td>
 	<td></td>
@@ -134,6 +154,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>COPY_APPLICATIONS</td>
+	<td>//a[@role='menuitem' and contains(.,'Copy Applications')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>DEACTIVATE</td>
 	<td>//a[@role='menuitem' and contains(.,'Deactivate')]</td>
 	<td></td>
@@ -146,6 +171,11 @@
 <tr>
 	<td>DELETE</td>
 	<td>//a[@role='menuitem' and contains(.,'Delete')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>DISCARD_DRAFT</td>
+	<td>//a[@role='menuitem' and contains(.,'Discard Draft')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -209,6 +239,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>GLOBAL</td>
+	<td>//a[@role='menuitem' and contains(.,'Global')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>IMPERSONATE_USER</td>
 	<td>//a[@role='menuitem' and contains(.,'Impersonate User')]</td>
 	<td></td>
@@ -216,6 +251,11 @@
 <tr>
 	<td>IMPORT</td>
 	<td>//ul[@class='dropdown-menu']//a[contains(.,'Import')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>IMPORT_PAGES</td>
+	<td>//a[@role='menuitem' and contains(.,'Import Pages')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -236,6 +276,16 @@
 <tr>
 	<td>LOCK_THREAD</td>
 	<td>//a[@role='menuitem' and contains(.,'Lock Thread')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>LOOK_AND_FEEL</td>
+	<td>//a[@role='menuitem' and contains(.,'Look and Feel')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>OTHER_SITE</td>
+	<td>//a[@role='menuitem' and contains(.,'Other Site...')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -279,8 +329,23 @@
 	<td></td>
 </tr>
 <tr>
+	<td>MAXIMIZE</td>
+	<td>//a[@role='menuitem' and contains(.,'Maximize')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>MERGE</td>
+	<td>//a[@role='menuitem' and contains(.,'Merge')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>METADATA_SETS</td>
 	<td>//a[@role='menuitem' and contains(.,'Metadata Sets')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>MINIMIZE</td>
+	<td>//a[@role='menuitem' and contains(.,'Minimize')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -334,6 +399,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>REMOVE</td>
+	<td>//a[@role='menuitem' and contains(.,'Remove')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>REMOVE_MEMBERSHIP</td>
 	<td>//a[@role='menuitem' and contains(.,'Remove Membership')]</td>
 	<td></td>
@@ -361,6 +431,16 @@
 <tr>
 	<td>SAVE</td>
 	<td>//a[@role='menuitem' and contains(.,'Save')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SCOPE</td>
+	<td>//div[contains(.,'Scope')]//a[contains(@id,'_menu')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SCOPE_SELECTION</td>
+	<td>//ul[contains(@class,'lfr-menu-list')]/li/a[contains(.,'${key_scopeSelection}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -464,6 +544,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>VERSION</td>
+	<td>//span[@class='workflow-version']/strong</td>
+	<td></td>
+</tr>
+<tr>
 	<td>VIEW</td>
 	<td>//a[@role='menuitem' and contains(.,'View')]</td>
 	<td></td>
@@ -471,6 +556,11 @@
 <tr>
 	<td>VIEW_PAGES</td>
 	<td>//a[@role='menuitem' and contains(.,'View Pages')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>VIEW_REMOVED_ATTACHMENTS</td>
+	<td>//a[@role='menuitem' and contains(.,'View Removed Attachments')]</td>
 	<td></td>
 </tr>
 </tbody>

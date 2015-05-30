@@ -19,9 +19,9 @@ import aQute.bnd.annotation.ProviderType;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.jsonwebservice.JSONWebService;
+import com.liferay.portal.kernel.security.access.control.AccessControlled;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Transactional;
-import com.liferay.portal.security.ac.AccessControlled;
 
 /**
  * Provides the remote service interface for Staging. Methods of this
@@ -58,8 +58,18 @@ public interface StagingService extends BaseService {
 	*/
 	public java.lang.String getBeanIdentifier();
 
-	public void publishStagingRequest(long stagingRequestId,
-		boolean privateLayout,
+	public com.liferay.portal.kernel.lar.MissingReferences publishStagingRequest(
+		long stagingRequestId,
+		com.liferay.portal.model.ExportImportConfiguration exportImportConfiguration)
+		throws PortalException;
+
+	/**
+	* @throws PortalException
+	* @deprecated As of 7.0.0, with no direct replacement
+	*/
+	@java.lang.Deprecated
+	public com.liferay.portal.kernel.lar.MissingReferences publishStagingRequest(
+		long stagingRequestId, boolean privateLayout,
 		java.util.Map<java.lang.String, java.lang.String[]> parameterMap)
 		throws PortalException;
 

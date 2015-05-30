@@ -29,7 +29,7 @@ UserGroup userGroup = (UserGroup)row.getObject();
 <liferay-ui:icon-menu icon="<%= StringPool.BLANK %>" message="<%= StringPool.BLANK %>">
 	<c:if test="<%= UserGroupPermissionUtil.contains(permissionChecker, userGroup.getUserGroupId(), ActionKeys.UPDATE) && UserGroupPermissionUtil.contains(permissionChecker, userGroup.getUserGroupId(), ActionKeys.VIEW) %>">
 		<portlet:renderURL var="editURL">
-			<portlet:param name="struts_action" value="/users_admin/edit_user_group" />
+			<portlet:param name="mvcPath" value="/html/portlet/user_groups_admin/edit_user_group.jsp" />
 			<portlet:param name="redirect" value="<%= redirect %>" />
 			<portlet:param name="userGroupId" value="<%= String.valueOf(userGroup.getUserGroupId()) %>" />
 		</portlet:renderURL>
@@ -88,16 +88,17 @@ UserGroup userGroup = (UserGroup)row.getObject();
 	</c:if>
 
 	<c:if test="<%= GroupPermissionUtil.contains(permissionChecker, userGroupGroup, ActionKeys.MANAGE_LAYOUTS) %>">
-		<portlet:renderURL var="managePagesURL">
-			<portlet:param name="struts_action" value="/users_admin/edit_layouts" />
+		<liferay-portlet:renderURL plid="<%= PortalUtil.getControlPanelPlid(company.getCompanyId()) %>" portletName="<%= PortletKeys.GROUP_PAGES %>" var="managePagesURL" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
+			<portlet:param name="struts_action" value="/group_pages/edit_layouts" />
 			<portlet:param name="redirect" value="<%= redirect %>" />
 			<portlet:param name="groupId" value="<%= String.valueOf(userGroupGroup.getGroupId()) %>" />
-		</portlet:renderURL>
+		</liferay-portlet:renderURL>
 
 		<liferay-ui:icon
 			iconCssClass="icon-copy"
 			message="manage-site-pages"
 			url="<%= managePagesURL %>"
+			useDialog="<%= true %>"
 		/>
 	</c:if>
 
@@ -125,7 +126,7 @@ UserGroup userGroup = (UserGroup)row.getObject();
 
 	<c:if test="<%= UserGroupPermissionUtil.contains(permissionChecker, userGroup.getUserGroupId(), ActionKeys.ASSIGN_MEMBERS) %>">
 		<portlet:renderURL var="assignURL">
-			<portlet:param name="struts_action" value="/users_admin/edit_user_group_assignments" />
+			<portlet:param name="mvcPath" value="/html/portlet/user_groups_admin/edit_user_group_assignments.jsp" />
 			<portlet:param name="redirect" value="<%= redirect %>" />
 			<portlet:param name="userGroupId" value="<%= String.valueOf(userGroup.getUserGroupId()) %>" />
 		</portlet:renderURL>

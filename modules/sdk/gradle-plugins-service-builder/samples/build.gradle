@@ -1,0 +1,35 @@
+buildscript {
+	repositories {
+		mavenLocal()
+
+		maven {
+			url "http://cdn.repository.liferay.com/nexus/content/groups/public"
+		}
+	}
+
+	dependencies {
+		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.service.builder", version: "latest.release"
+	}
+}
+
+repositories {
+	mavenLocal()
+
+	maven {
+		url "http://cdn.repository.liferay.com/nexus/content/groups/public"
+	}
+}
+
+apply plugin: "com.liferay.portal.tools.service.builder"
+
+buildService {
+	apiDirName = "../tmp/api"
+	hbmFileName = "../tmp/src/META-INF/portal-hbm.xml"
+	implDirName = "../tmp/src"
+	inputFileName = "service.xml"
+	modelHintsFileName = "../tmp/src/META-INF/portal-model-hints.xml"
+	resourcesDirName = "../tmp/src"
+	springFileName = "../tmp/src/META-INF/portal-spring.xml"
+	sqlDirName = "../tmp/sql"
+	testDirName = "../tmp/test/integration"
+}

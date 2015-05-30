@@ -30,6 +30,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.repository.RepositoryException;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.repository.model.FileShortcut;
 import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.search.DocumentHelper;
@@ -68,8 +69,8 @@ import com.liferay.portlet.documentlibrary.model.DLFileEntryConstants;
 import com.liferay.portlet.documentlibrary.model.DLFolder;
 import com.liferay.portlet.documentlibrary.util.comparator.RepositoryModelCreateDateComparator;
 import com.liferay.portlet.documentlibrary.util.comparator.RepositoryModelModifiedDateComparator;
-import com.liferay.portlet.documentlibrary.util.comparator.RepositoryModelNameComparator;
 import com.liferay.portlet.documentlibrary.util.comparator.RepositoryModelSizeComparator;
+import com.liferay.portlet.documentlibrary.util.comparator.RepositoryModelTitleComparator;
 
 import java.io.InputStream;
 
@@ -193,6 +194,14 @@ public class CMISRepository extends BaseCmisRepository {
 
 			throw new RepositoryException(e);
 		}
+	}
+
+	@Override
+	public FileShortcut addFileShortcut(
+		long userId, long folderId, long toFileEntryId,
+		ServiceContext serviceContext) {
+
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -415,6 +424,16 @@ public class CMISRepository extends BaseCmisRepository {
 	}
 
 	@Override
+	public void deleteFileShortcut(long fileShortcutId) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void deleteFileShortcuts(long toFileEntryId) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public void deleteFolder(long folderId) throws PortalException {
 		try {
 			Session session = getSession();
@@ -434,6 +453,14 @@ public class CMISRepository extends BaseCmisRepository {
 
 			throw new RepositoryException(e);
 		}
+	}
+
+	@Override
+	public List<FileEntry> getFileEntries(
+		long folderId, int status, int start, int end,
+		OrderByComparator<FileEntry> obc) {
+
+		return getFileEntries(folderId, start, end, obc);
 	}
 
 	@Override
@@ -485,6 +512,13 @@ public class CMISRepository extends BaseCmisRepository {
 
 	@Override
 	public int getFileEntriesCount(long folderId) {
+		List<FileEntry> fileEntries = getFileEntries(folderId);
+
+		return fileEntries.size();
+	}
+
+	@Override
+	public int getFileEntriesCount(long folderId, int status) {
 		List<FileEntry> fileEntries = getFileEntries(folderId);
 
 		return fileEntries.size();
@@ -592,6 +626,11 @@ public class CMISRepository extends BaseCmisRepository {
 
 			throw new RepositoryException(e);
 		}
+	}
+
+	@Override
+	public FileShortcut getFileShortcut(long fileShortcutId) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -1385,6 +1424,21 @@ public class CMISRepository extends BaseCmisRepository {
 	}
 
 	@Override
+	public FileShortcut updateFileShortcut(
+		long userId, long fileShortcutId, long folderId, long toFileEntryId,
+		ServiceContext serviceContext) {
+
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void updateFileShortcuts(
+		long oldToFileEntryId, long newToFileEntryId) {
+
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public Folder updateFolder(
 			long folderId, String name, String description,
 			ServiceContext serviceContext)
@@ -2097,8 +2151,8 @@ public class CMISRepository extends BaseCmisRepository {
 		if ((obc != null) &&
 			((obc instanceof RepositoryModelCreateDateComparator) ||
 			 (obc instanceof RepositoryModelModifiedDateComparator) ||
-			 (obc instanceof RepositoryModelNameComparator) ||
-			 (obc instanceof RepositoryModelSizeComparator))) {
+			 (obc instanceof RepositoryModelSizeComparator) ||
+			 (obc instanceof RepositoryModelTitleComparator))) {
 
 			list = ListUtil.sort(list, obc);
 		}

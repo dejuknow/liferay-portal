@@ -107,8 +107,6 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 		dlFolder.setCompanyId(user.getCompanyId());
 		dlFolder.setUserId(user.getUserId());
 		dlFolder.setUserName(user.getFullName());
-		dlFolder.setCreateDate(serviceContext.getCreateDate(now));
-		dlFolder.setModifiedDate(serviceContext.getModifiedDate(now));
 		dlFolder.setRepositoryId(repositoryId);
 		dlFolder.setMountPoint(mountPoint);
 		dlFolder.setParentFolderId(parentFolderId);
@@ -833,6 +831,14 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 			ServiceContext serviceContext)
 		throws PortalException {
 
+		DLFolder dlFolder = dlFolderPersistence.findByPrimaryKey(folderId);
+
+		parentFolderId = getParentFolderId(dlFolder, parentFolderId);
+
+		if (dlFolder.getParentFolderId() == parentFolderId) {
+			return dlFolder;
+		}
+
 		boolean hasLock = hasFolderLock(userId, folderId);
 
 		Lock lock = null;
@@ -845,15 +851,10 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 		}
 
 		try {
-			DLFolder dlFolder = dlFolderPersistence.findByPrimaryKey(folderId);
-
-			parentFolderId = getParentFolderId(dlFolder, parentFolderId);
-
 			validateFolder(
 				dlFolder.getFolderId(), dlFolder.getGroupId(), parentFolderId,
 				dlFolder.getName());
 
-			dlFolder.setModifiedDate(serviceContext.getModifiedDate(null));
 			dlFolder.setParentFolderId(parentFolderId);
 			dlFolder.setTreePath(dlFolder.buildTreePath());
 			dlFolder.setExpandoBridgeAttributes(serviceContext);
@@ -1233,9 +1234,13 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 			validateFolder(
 				folderId, dlFolder.getGroupId(), parentFolderId, name);
 
-			dlFolder.setModifiedDate(serviceContext.getModifiedDate(null));
-			dlFolder.setParentFolderId(parentFolderId);
-			dlFolder.setTreePath(dlFolder.buildTreePath());
+			long oldParentFolderId = dlFolder.getParentFolderId();
+
+			if (oldParentFolderId != parentFolderId) {
+				dlFolder.setParentFolderId(parentFolderId);
+				dlFolder.setTreePath(dlFolder.buildTreePath());
+			}
+
 			dlFolder.setName(name);
 			dlFolder.setDescription(description);
 			dlFolder.setExpandoBridgeAttributes(serviceContext);
@@ -1250,6 +1255,12 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 				dlFileEntryTypeLocalService.updateFolderFileEntryTypes(
 					dlFolder, fileEntryTypeIds, defaultFileEntryTypeId,
 					serviceContext);
+			}
+
+			if (oldParentFolderId != parentFolderId) {
+				rebuildTree(
+					dlFolder.getCompanyId(), folderId, dlFolder.getTreePath(),
+					true);
 			}
 
 			return dlFolder;

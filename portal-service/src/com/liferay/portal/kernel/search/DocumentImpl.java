@@ -380,6 +380,20 @@ public class DocumentImpl implements Document {
 	}
 
 	@Override
+	public void addKeywordSortable(String name, String value) {
+		createKeywordField(name, value, false);
+
+		createSortableTextField(name, value);
+	}
+
+	@Override
+	public void addKeywordSortable(String name, String[] values) {
+		createField(name, values);
+
+		createSortableTextField(name, values);
+	}
+
+	@Override
 	public void addLocalizedKeyword(String name, Map<Locale, String> values) {
 		addLocalizedKeyword(name, values, false);
 	}
@@ -442,24 +456,6 @@ public class DocumentImpl implements Document {
 		Field field = createField(name, values);
 
 		field.setTokenized(true);
-	}
-
-	/**
-	 * @deprecated As of 6.1.0
-	 */
-	@Deprecated
-	@Override
-	public void addModifiedDate() {
-		addModifiedDate(new Date());
-	}
-
-	/**
-	 * @deprecated As of 6.1.0
-	 */
-	@Deprecated
-	@Override
-	public void addModifiedDate(Date modifiedDate) {
-		addDate(Field.MODIFIED, modifiedDate);
 	}
 
 	@Override
@@ -953,13 +949,7 @@ public class DocumentImpl implements Document {
 			value = StringUtil.toLowerCase(value);
 		}
 
-		Field field = createField(name, value);
-
-		for (String fieldName : Field.UNSCORED_FIELD_NAMES) {
-			if (StringUtil.equalsIgnoreCase(name, fieldName)) {
-				field.setBoost(0);
-			}
-		}
+		createField(name, value);
 	}
 
 	protected void createNumberField(

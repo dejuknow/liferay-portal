@@ -14,7 +14,11 @@
 
 package com.liferay.rss.web.display.context;
 
+import com.liferay.portal.kernel.settings.SettingsException;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.theme.PortletDisplay;
+import com.liferay.portal.theme.ThemeDisplay;
+import com.liferay.portal.util.WebKeys;
 import com.liferay.rss.web.configuration.RSSPortletInstanceConfiguration;
 import com.liferay.rss.web.configuration.RSSWebConfiguration;
 import com.liferay.rss.web.util.RSSFeed;
@@ -22,17 +26,46 @@ import com.liferay.rss.web.util.RSSFeed;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * @author Eudaldo Alonso
  */
 public class RSSDisplayContext {
 
 	public RSSDisplayContext(
-		RSSPortletInstanceConfiguration rssPortletInstanceConfiguration,
-		RSSWebConfiguration rssWebConfiguration) {
+		HttpServletRequest request,
+		RSSWebConfiguration rssWebConfiguration) throws SettingsException {
 
-		_rssPortletInstanceConfiguration = rssPortletInstanceConfiguration;
+		_request = request;
 		_rssWebConfiguration = rssWebConfiguration;
+
+		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
+			WebKeys.THEME_DISPLAY);
+
+		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
+
+		_rssPortletInstanceConfiguration =
+			portletDisplay.getPortletInstanceConfiguration(
+				RSSPortletInstanceConfiguration.class);
+	}
+
+	public long getDisplayStyleGroupId() {
+		if (_displayStyleGroupId != 0) {
+			return _displayStyleGroupId;
+		}
+
+		_displayStyleGroupId =
+			_rssPortletInstanceConfiguration.displayStyleGroupId();
+
+		if (_displayStyleGroupId <= 0) {
+			ThemeDisplay themeDisplay = (ThemeDisplay)_request.getAttribute(
+				WebKeys.THEME_DISPLAY);
+
+			_displayStyleGroupId = themeDisplay.getScopeGroupId();
+		}
+
+		return _displayStyleGroupId;
 	}
 
 	public List<RSSFeed> getRSSFeeds() {
@@ -57,6 +90,14 @@ public class RSSDisplayContext {
 		return rssFeeds;
 	}
 
+	public RSSPortletInstanceConfiguration
+		getRSSPortletInstanceConfiguration() {
+
+		return _rssPortletInstanceConfiguration;
+	}
+
+	private long _displayStyleGroupId;
+	private final HttpServletRequest _request;
 	private final RSSPortletInstanceConfiguration
 		_rssPortletInstanceConfiguration;
 	private final RSSWebConfiguration _rssWebConfiguration;

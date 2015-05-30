@@ -33,7 +33,6 @@ import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PersistenceTestRule;
-import com.liferay.portal.util.PropsValues;
 
 import com.liferay.portlet.dynamicdatamapping.NoSuchTemplateVersionException;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplateVersion;
@@ -128,6 +127,10 @@ public class DDMTemplateVersionPersistenceTest {
 
 		newDDMTemplateVersion.setCreateDate(RandomTestUtil.nextDate());
 
+		newDDMTemplateVersion.setClassNameId(RandomTestUtil.nextLong());
+
+		newDDMTemplateVersion.setClassPK(RandomTestUtil.nextLong());
+
 		newDDMTemplateVersion.setTemplateId(RandomTestUtil.nextLong());
 
 		newDDMTemplateVersion.setVersion(RandomTestUtil.randomString());
@@ -157,6 +160,10 @@ public class DDMTemplateVersionPersistenceTest {
 		Assert.assertEquals(Time.getShortTimestamp(
 				existingDDMTemplateVersion.getCreateDate()),
 			Time.getShortTimestamp(newDDMTemplateVersion.getCreateDate()));
+		Assert.assertEquals(existingDDMTemplateVersion.getClassNameId(),
+			newDDMTemplateVersion.getClassNameId());
+		Assert.assertEquals(existingDDMTemplateVersion.getClassPK(),
+			newDDMTemplateVersion.getClassPK());
 		Assert.assertEquals(existingDDMTemplateVersion.getTemplateId(),
 			newDDMTemplateVersion.getTemplateId());
 		Assert.assertEquals(existingDDMTemplateVersion.getVersion(),
@@ -196,18 +203,11 @@ public class DDMTemplateVersionPersistenceTest {
 		Assert.assertEquals(existingDDMTemplateVersion, newDDMTemplateVersion);
 	}
 
-	@Test
+	@Test(expected = NoSuchTemplateVersionException.class)
 	public void testFindByPrimaryKeyMissing() throws Exception {
 		long pk = RandomTestUtil.nextLong();
 
-		try {
-			_persistence.findByPrimaryKey(pk);
-
-			Assert.fail(
-				"Missing entity did not throw NoSuchTemplateVersionException");
-		}
-		catch (NoSuchTemplateVersionException nsee) {
-		}
+		_persistence.findByPrimaryKey(pk);
 	}
 
 	@Test
@@ -219,9 +219,10 @@ public class DDMTemplateVersionPersistenceTest {
 	protected OrderByComparator<DDMTemplateVersion> getOrderByComparator() {
 		return OrderByComparatorFactoryUtil.create("DDMTemplateVersion",
 			"templateVersionId", true, "groupId", true, "companyId", true,
-			"userId", true, "userName", true, "createDate", true, "templateId",
-			true, "version", true, "name", true, "description", true,
-			"language", true, "script", true);
+			"userId", true, "userName", true, "createDate", true,
+			"classNameId", true, "classPK", true, "templateId", true,
+			"version", true, "name", true, "description", true, "language",
+			true, "script", true);
 	}
 
 	@Test
@@ -422,10 +423,6 @@ public class DDMTemplateVersionPersistenceTest {
 
 	@Test
 	public void testResetOriginalValues() throws Exception {
-		if (!PropsValues.HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE) {
-			return;
-		}
-
 		DDMTemplateVersion newDDMTemplateVersion = addDDMTemplateVersion();
 
 		_persistence.clearCache();
@@ -456,6 +453,10 @@ public class DDMTemplateVersionPersistenceTest {
 		ddmTemplateVersion.setUserName(RandomTestUtil.randomString());
 
 		ddmTemplateVersion.setCreateDate(RandomTestUtil.nextDate());
+
+		ddmTemplateVersion.setClassNameId(RandomTestUtil.nextLong());
+
+		ddmTemplateVersion.setClassPK(RandomTestUtil.nextLong());
 
 		ddmTemplateVersion.setTemplateId(RandomTestUtil.nextLong());
 

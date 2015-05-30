@@ -33,7 +33,6 @@ import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PersistenceTestRule;
-import com.liferay.portal.util.PropsValues;
 
 import com.liferay.portlet.messageboards.NoSuchThreadFlagException;
 import com.liferay.portlet.messageboards.model.MBThreadFlag;
@@ -218,18 +217,11 @@ public class MBThreadFlagPersistenceTest {
 		Assert.assertEquals(existingMBThreadFlag, newMBThreadFlag);
 	}
 
-	@Test
+	@Test(expected = NoSuchThreadFlagException.class)
 	public void testFindByPrimaryKeyMissing() throws Exception {
 		long pk = RandomTestUtil.nextLong();
 
-		try {
-			_persistence.findByPrimaryKey(pk);
-
-			Assert.fail(
-				"Missing entity did not throw NoSuchThreadFlagException");
-		}
-		catch (NoSuchThreadFlagException nsee) {
-		}
+		_persistence.findByPrimaryKey(pk);
 	}
 
 	@Test
@@ -443,10 +435,6 @@ public class MBThreadFlagPersistenceTest {
 
 	@Test
 	public void testResetOriginalValues() throws Exception {
-		if (!PropsValues.HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE) {
-			return;
-		}
-
 		MBThreadFlag newMBThreadFlag = addMBThreadFlag();
 
 		_persistence.clearCache();

@@ -17,11 +17,12 @@ package com.liferay.portal.repository.proxy;
 import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.StagedModelType;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.repository.capabilities.Capability;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.repository.model.FileShortcut;
 import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.repository.model.RepositoryModelOperation;
@@ -52,26 +53,7 @@ public class FileEntryProxyBean
 
 	@Override
 	public Object clone() {
-		FileEntryProxyBean fileEntryProxyBean = newFileEntryProxyBean(
-			_fileEntry);
-
-		fileEntryProxyBean.setCompanyId(getCompanyId());
-		fileEntryProxyBean.setCreateDate(getCreateDate());
-		fileEntryProxyBean.setGroupId(getGroupId());
-		fileEntryProxyBean.setModifiedDate(getModifiedDate());
-		fileEntryProxyBean.setPrimaryKeyObj(getPrimaryKeyObj());
-		fileEntryProxyBean.setUserId(getUserId());
-		fileEntryProxyBean.setUserName(getUserName());
-
-		try {
-			fileEntryProxyBean.setUserUuid(getUserUuid());
-		}
-		catch (SystemException se) {
-		}
-
-		fileEntryProxyBean.setUuid(getUuid());
-
-		return fileEntryProxyBean;
+		return newFileEntryProxyBean(_fileEntry);
 	}
 
 	@Override
@@ -140,6 +122,11 @@ public class FileEntryProxyBean
 	@Override
 	public String getFileName() {
 		return _fileEntry.getFileName();
+	}
+
+	@Override
+	public List<FileShortcut> getFileShortcuts() {
+		return _fileEntry.getFileShortcuts();
 	}
 
 	@Override
@@ -256,6 +243,13 @@ public class FileEntryProxyBean
 	@Override
 	public int getReadCount() {
 		return _fileEntry.getReadCount();
+	}
+
+	@Override
+	public <T extends Capability> T getRepositoryCapability(
+		Class<T> capabilityClass) {
+
+		return _fileEntry.getRepositoryCapability(capabilityClass);
 	}
 
 	@Override
@@ -399,6 +393,13 @@ public class FileEntryProxyBean
 	@Override
 	public boolean isManualCheckInRequired() {
 		return _fileEntry.isManualCheckInRequired();
+	}
+
+	@Override
+	public <T extends Capability> boolean isRepositoryCapabilityProvided(
+		Class<T> capabilityClass) {
+
+		return _fileEntry.isRepositoryCapabilityProvided(capabilityClass);
 	}
 
 	@Override

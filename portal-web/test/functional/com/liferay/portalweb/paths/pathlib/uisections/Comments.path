@@ -9,13 +9,58 @@
 </thead>
 <tbody>
 <tr>
+	<td>ADD_COMMENT_LINK</td>
+	<td>link=Add Comment</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PANEL_TOGGLE</td>
+	<td>//div[contains(.,'Comment')]//div[@class='panel-toggle']/</td>
+	<td></td>
+</tr>
+<tr>
 	<td>BE_THE_FIRST_LINK</td>
 	<td>link=Be the first.</td>
 	<td></td>
 </tr>
 <tr>
-	<td>ADD_COMMENT_LINK</td>
-	<td>link=Add Comment</td>
+	<td>COMMENT_BODY</td>
+	<td>//div[@class='lfr-discussion-message']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>COMMENT_FIELD</td>
+	<td>//div[contains(@id,'postReplyBody')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>COMMENT_LABEL</td>
+	<td>//label[contains(.,'Comment')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>DELETE_LINK</td>
+	<td>//ul[@class='lfr-discussion-actions']/li[contains(.,'Delete')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>EDIT_LINK</td>
+	<td>//ul[@class='lfr-discussion-actions']/li[contains(.,'Edit')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ENTRY_COUNT_PANEL</td>
+	<td>//div[@class='panel-toggle']/span[contains(.,'Comments')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>THUMBS_UP</td>
+	<td>//a[contains(@class,'thumbs-up')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>THUMBS_DOWN</td>
+	<td>//a[contains(@class,'thumbs-down')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -41,6 +86,11 @@
 <tr>
 	<td>SUCCESS_MESSAGE</td>
 	<td>//div[contains(@class,'lfr-message-response') and contains(@class,'alert') and contains(@class,'alert-success')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>USER_NAME</td>
+	<td>//header[@class='lfr-discussion-message-author']/a | //span[@class='user-name']</td>
 	<td></td>
 </tr>
 </tbody>

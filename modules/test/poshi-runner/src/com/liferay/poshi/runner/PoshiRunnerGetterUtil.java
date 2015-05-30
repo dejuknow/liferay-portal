@@ -219,7 +219,7 @@ public class PoshiRunnerGetterUtil {
 
 					String tagName = line.substring(x + 1, y);
 
-					throw new PoshiRunnerException(
+					throw new Exception(
 						"Invaild \"" + tagName + "\" tag\n" + filePath + ":" +
 							lineNumber);
 				}
@@ -245,7 +245,7 @@ public class PoshiRunnerGetterUtil {
 	}
 
 	public static String getVarMethodValue(String classCommandName)
-		throws PoshiRunnerException {
+		throws Exception {
 
 		int x = classCommandName.indexOf("(");
 		int y = classCommandName.lastIndexOf(")");
@@ -285,6 +285,9 @@ public class PoshiRunnerGetterUtil {
 			Integer[] integers = new Integer[parameters.length];
 
 			for (int i = 0; i < parameters.length; i++) {
+				parameters[i] = parameters[i].replaceAll("\"", "");
+				parameters[i] = parameters[i].replaceAll("'", "");
+
 				integers[i] = Integer.parseInt(parameters[i].trim());
 			}
 
@@ -293,26 +296,21 @@ public class PoshiRunnerGetterUtil {
 			for (Method method : methods) {
 				String methodName = method.getName();
 
-				try {
-					if (methodName.equals(commandName)) {
-						Class<?>[] parameterTypes = method.getParameterTypes();
+				if (methodName.equals(commandName)) {
+					Class<?>[] parameterTypes = method.getParameterTypes();
 
-						if (parameterTypes.length > 1 ) {
-							Object returnObject = method.invoke(
-								null, (Object[])integers);
-
-								return returnObject.toString();
-						}
-						else {
-							Object returnObject = method.invoke(
-								null, new Object[] {integers});
+					if (parameterTypes.length > 1 ) {
+						Object returnObject = method.invoke(
+							null, (Object[])integers);
 
 							return returnObject.toString();
-						}
 					}
-				}
-				catch (Exception e) {
-					throw new PoshiRunnerException(e);
+					else {
+						Object returnObject = method.invoke(
+							null, new Object[] {integers});
+
+						return returnObject.toString();
+					}
 				}
 			}
 		}
@@ -347,25 +345,17 @@ public class PoshiRunnerGetterUtil {
 						"com.liferay.poshi.runner.util." + className);
 				}
 				catch (Exception e) {
-					throw new PoshiRunnerException(
-						"\nBUILD FAILED: No such class " + className, e);
+					throw new Exception("No such class " + className, e);
 				}
 			}
 
-			try {
-				Method method = clazz.getMethod(
-					commandName,
-					parameterClasses.toArray(
-						new Class[parameterClasses.size()]));
+			Method method = clazz.getMethod(
+				commandName,
+				parameterClasses.toArray(new Class[parameterClasses.size()]));
 
-				Object returnObject = method.invoke(
-					object, (Object[])parameters);
+			Object returnObject = method.invoke(object, (Object[])parameters);
 
-				return returnObject.toString();
-			}
-			catch (Exception e) {
-				throw new PoshiRunnerException(e);
-			}
+			return returnObject.toString();
 		}
 
 		return null;

@@ -21,8 +21,11 @@ import com.liferay.portal.UserGroupNameException;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.lar.ExportImportHelperUtil;
 import com.liferay.portal.kernel.lar.PortletDataHandlerKeys;
 import com.liferay.portal.kernel.lar.UserIdStrategy;
+import com.liferay.portal.kernel.lar.exportimportconfiguration.ExportImportConfigurationConstants;
+import com.liferay.portal.kernel.lar.exportimportconfiguration.ExportImportConfigurationSettingsMapFactory;
 import com.liferay.portal.kernel.search.BaseModelSearchResult;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.Indexer;
@@ -33,11 +36,15 @@ import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.CharPool;
+import com.liferay.portal.kernel.util.Constants;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.SetUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.model.ExportImportConfiguration;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.GroupConstants;
 import com.liferay.portal.model.ResourceConstants;
@@ -46,6 +53,7 @@ import com.liferay.portal.model.Team;
 import com.liferay.portal.model.User;
 import com.liferay.portal.model.UserGroup;
 import com.liferay.portal.model.UserGroupConstants;
+import com.liferay.portal.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.security.exportimport.UserGroupImportTransactionThreadLocal;
 import com.liferay.portal.security.permission.PermissionCacheUtil;
 import com.liferay.portal.service.ServiceContext;
@@ -58,7 +66,6 @@ import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -155,8 +162,6 @@ public class UserGroupLocalServiceImpl extends UserGroupLocalServiceBaseImpl {
 
 		// User group
 
-		Date now = new Date();
-
 		validate(0, companyId, name);
 
 		User user = userPersistence.findByPrimaryKey(userId);
@@ -172,16 +177,6 @@ public class UserGroupLocalServiceImpl extends UserGroupLocalServiceBaseImpl {
 		userGroup.setCompanyId(companyId);
 		userGroup.setUserId(user.getUserId());
 		userGroup.setUserName(user.getFullName());
-
-		if (serviceContext != null) {
-			userGroup.setCreateDate(serviceContext.getCreateDate(now));
-			userGroup.setModifiedDate(serviceContext.getModifiedDate(now));
-		}
-		else {
-			userGroup.setCreateDate(now);
-			userGroup.setModifiedDate(now);
-		}
-
 		userGroup.setParentUserGroupId(
 			UserGroupConstants.DEFAULT_PARENT_USER_GROUP_ID);
 		userGroup.setName(name);
@@ -232,7 +227,7 @@ public class UserGroupLocalServiceImpl extends UserGroupLocalServiceBaseImpl {
 	public void clearUserUserGroups(long userId) {
 		userPersistence.clearUserGroups(userId);
 
-		PermissionCacheUtil.clearCache();
+		PermissionCacheUtil.clearCache(userId);
 	}
 
 	/**
@@ -370,7 +365,7 @@ public class UserGroupLocalServiceImpl extends UserGroupLocalServiceBaseImpl {
 
 		// Users
 
-		clearUserUserGroups(userGroup.getUserGroupId());
+		clearUserUserGroups(userGroup.getUserId());
 
 		// Group
 
@@ -861,7 +856,7 @@ public class UserGroupLocalServiceImpl extends UserGroupLocalServiceBaseImpl {
 
 		indexer.reindex(userId);
 
-		PermissionCacheUtil.clearCache();
+		PermissionCacheUtil.clearCache(userId);
 	}
 
 	/**
@@ -948,7 +943,6 @@ public class UserGroupLocalServiceImpl extends UserGroupLocalServiceBaseImpl {
 		UserGroup userGroup = userGroupPersistence.findByPrimaryKey(
 			userGroupId);
 
-		userGroup.setModifiedDate(new Date());
 		userGroup.setName(name);
 		userGroup.setDescription(description);
 		userGroup.setExpandoBridgeAttributes(serviceContext);
@@ -1015,16 +1009,51 @@ public class UserGroupLocalServiceImpl extends UserGroupLocalServiceBaseImpl {
 		UserGroup userGroup = userGroupPersistence.findByPrimaryKey(
 			userGroupId);
 
+		User user = userLocalService.getUser(
+			GetterUtil.getLong(PrincipalThreadLocal.getName()));
+
 		Group group = userGroup.getGroup();
 
 		if (userGroup.hasPrivateLayouts()) {
-			files[0] = layoutLocalService.exportLayoutsAsFile(
-				group.getGroupId(), true, null, parameterMap, null, null);
+			Map<String, Serializable> settingsMap =
+				ExportImportConfigurationSettingsMapFactory.buildSettingsMap(
+					user.getUserId(), group.getGroupId(), true,
+					ExportImportHelperUtil.getAllLayoutIds(
+						group.getGroupId(), true),
+					parameterMap, user.getLocale(), user.getTimeZone());
+
+			ExportImportConfiguration exportImportConfiguration =
+				exportImportConfigurationLocalService.
+					addExportImportConfiguration(
+						user.getUserId(), group.getGroupId(), StringPool.BLANK,
+						StringPool.BLANK,
+						ExportImportConfigurationConstants.TYPE_EXPORT_LAYOUT,
+						settingsMap, WorkflowConstants.STATUS_DRAFT,
+						new ServiceContext());
+
+			files[0] = exportImportLocalService.exportLayoutsAsFile(
+				exportImportConfiguration);
 		}
 
 		if (userGroup.hasPublicLayouts()) {
-			files[1] = layoutLocalService.exportLayoutsAsFile(
-				group.getGroupId(), false, null, parameterMap, null, null);
+			Map<String, Serializable> settingsMap =
+				ExportImportConfigurationSettingsMapFactory.buildSettingsMap(
+					user.getUserId(), group.getGroupId(), false,
+					ExportImportHelperUtil.getAllLayoutIds(
+						group.getGroupId(), false),
+					parameterMap, user.getLocale(), user.getTimeZone());
+
+			ExportImportConfiguration exportImportConfiguration =
+				exportImportConfigurationLocalService.
+					addExportImportConfiguration(
+						user.getUserId(), group.getGroupId(), StringPool.BLANK,
+						StringPool.BLANK,
+						ExportImportConfigurationConstants.TYPE_EXPORT_LAYOUT,
+						settingsMap, WorkflowConstants.STATUS_DRAFT,
+						new ServiceContext());
+
+			files[1] = exportImportLocalService.exportLayoutsAsFile(
+				exportImportConfiguration);
 		}
 
 		return files;
@@ -1099,13 +1128,45 @@ public class UserGroupLocalServiceImpl extends UserGroupLocalServiceBaseImpl {
 		long groupId = user.getGroupId();
 
 		if (privateLayoutsFile != null) {
-			layoutLocalService.importLayouts(
-				userId, groupId, true, parameterMap, privateLayoutsFile);
+			Map<String, Serializable> settingsMap =
+				ExportImportConfigurationSettingsMapFactory.
+					buildImportSettingsMap(
+						user.getUserId(), groupId, true, null, parameterMap,
+						Constants.IMPORT, user.getLocale(), user.getTimeZone(),
+						privateLayoutsFile.getName());
+
+			ExportImportConfiguration exportImportConfiguration =
+				exportImportConfigurationLocalService.
+					addExportImportConfiguration(
+						user.getUserId(), groupId, StringPool.BLANK,
+						StringPool.BLANK,
+						ExportImportConfigurationConstants.TYPE_IMPORT_LAYOUT,
+						settingsMap, WorkflowConstants.STATUS_DRAFT,
+						new ServiceContext());
+
+			exportImportLocalService.importLayouts(
+				exportImportConfiguration, privateLayoutsFile);
 		}
 
 		if (publicLayoutsFile != null) {
-			layoutLocalService.importLayouts(
-				userId, groupId, false, parameterMap, publicLayoutsFile);
+			Map<String, Serializable> settingsMap =
+				ExportImportConfigurationSettingsMapFactory.
+					buildImportSettingsMap(
+						user.getUserId(), groupId, false, null, parameterMap,
+						Constants.IMPORT, user.getLocale(), user.getTimeZone(),
+						publicLayoutsFile.getName());
+
+			ExportImportConfiguration exportImportConfiguration =
+				exportImportConfigurationLocalService.
+					addExportImportConfiguration(
+						user.getUserId(), groupId, StringPool.BLANK,
+						StringPool.BLANK,
+						ExportImportConfigurationConstants.TYPE_IMPORT_LAYOUT,
+						settingsMap, WorkflowConstants.STATUS_DRAFT,
+						new ServiceContext());
+
+			exportImportLocalService.importLayouts(
+				exportImportConfiguration, publicLayoutsFile);
 		}
 	}
 

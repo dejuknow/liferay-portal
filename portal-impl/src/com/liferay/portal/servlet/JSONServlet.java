@@ -17,10 +17,10 @@ package com.liferay.portal.servlet;
 import com.liferay.portal.action.JSONServiceAction;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.security.access.control.AccessControlThreadLocal;
 import com.liferay.portal.kernel.servlet.ServletResponseUtil;
-import com.liferay.portal.security.ac.AccessControlThreadLocal;
+import com.liferay.portal.kernel.util.ClassLoaderUtil;
 import com.liferay.portal.struts.JSONAction;
-import com.liferay.portal.util.ClassLoaderUtil;
 
 import java.io.IOException;
 

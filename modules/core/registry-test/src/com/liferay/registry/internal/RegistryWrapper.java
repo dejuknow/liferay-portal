@@ -17,8 +17,10 @@ package com.liferay.registry.internal;
 import com.liferay.registry.Filter;
 import com.liferay.registry.Registry;
 import com.liferay.registry.ServiceReference;
+import com.liferay.registry.ServiceRegistrar;
 import com.liferay.registry.ServiceTracker;
 import com.liferay.registry.ServiceTrackerCustomizer;
+import com.liferay.registry.dependency.ServiceDependencyManager;
 
 import java.util.Collection;
 import java.util.Map;
@@ -83,6 +85,11 @@ public class RegistryWrapper implements Registry {
 	}
 
 	@Override
+	public Collection<ServiceDependencyManager> getServiceDependencyManagers() {
+		return _registry.getServiceDependencyManagers();
+	}
+
+	@Override
 	public <T> ServiceReference<T> getServiceReference(Class<T> clazz) {
 		return _registry.getServiceReference(clazz);
 	}
@@ -112,6 +119,11 @@ public class RegistryWrapper implements Registry {
 		throws Exception {
 
 		return _registry.getServiceReferences(className, filterString);
+	}
+
+	@Override
+	public <T> ServiceRegistrar<T> getServiceRegistrar(Class<T> clazz) {
+		return _registry.getServiceRegistrar(clazz);
 	}
 
 	@Override
@@ -175,6 +187,13 @@ public class RegistryWrapper implements Registry {
 	}
 
 	@Override
+	public void registerServiceDependencyManager(
+		ServiceDependencyManager serviceDependencyManager) {
+
+		_registry.registerServiceDependencyManager(serviceDependencyManager);
+	}
+
+	@Override
 	public Registry setRegistry(Registry registry) throws SecurityException {
 		return _registry.setRegistry(registry);
 	}
@@ -228,6 +247,13 @@ public class RegistryWrapper implements Registry {
 		}
 
 		return _registry.ungetService(serviceReference);
+	}
+
+	@Override
+	public void unregisterServiceDependencyManager(
+		ServiceDependencyManager serviceDependencyManager) {
+
+		_registry.unregisterServiceDependencyManager(serviceDependencyManager);
 	}
 
 	private final Registry _registry;

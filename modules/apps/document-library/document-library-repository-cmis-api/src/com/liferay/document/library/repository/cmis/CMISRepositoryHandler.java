@@ -20,6 +20,7 @@ import com.liferay.portal.kernel.repository.BaseRepositoryImpl;
 import com.liferay.portal.kernel.repository.RepositoryException;
 import com.liferay.portal.kernel.repository.capabilities.Capability;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.repository.model.FileShortcut;
 import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.search.Hits;
@@ -58,6 +59,16 @@ public abstract class CMISRepositoryHandler
 		return _baseCmisRepository.addFileEntry(
 			userId, folderId, sourceFileName, mimeType, title, description,
 			changeLog, is, size, serviceContext);
+	}
+
+	@Override
+	public FileShortcut addFileShortcut(
+			long userId, long folderId, long toFileEntryId,
+			ServiceContext serviceContext)
+		throws PortalException {
+
+		return _baseCmisRepository.addFileShortcut(
+			userId, folderId, toFileEntryId, serviceContext);
 	}
 
 	@Override
@@ -130,12 +141,32 @@ public abstract class CMISRepositoryHandler
 	}
 
 	@Override
+	public void deleteFileShortcut(long fileShortcutId) throws PortalException {
+		_baseCmisRepository.deleteFileShortcut(fileShortcutId);
+	}
+
+	@Override
+	public void deleteFileShortcuts(long toFileEntryId) throws PortalException {
+		_baseCmisRepository.deleteFileShortcuts(toFileEntryId);
+	}
+
+	@Override
 	public void deleteFolder(long folderId) throws PortalException {
 		_baseCmisRepository.deleteFolder(folderId);
 	}
 
 	public BaseRepository getCmisRepository() {
 		return _baseCmisRepository;
+	}
+
+	@Override
+	public List<FileEntry> getFileEntries(
+			long folderId, int status, int start, int end,
+			OrderByComparator<FileEntry> obc)
+		throws PortalException {
+
+		return _baseCmisRepository.getFileEntries(
+			folderId, status, start, end, obc);
 	}
 
 	@Override
@@ -172,6 +203,13 @@ public abstract class CMISRepositoryHandler
 	}
 
 	@Override
+	public int getFileEntriesCount(long folderId, int status)
+		throws PortalException {
+
+		return _baseCmisRepository.getFileEntriesCount(folderId, status);
+	}
+
+	@Override
 	public int getFileEntriesCount(long folderId, long fileEntryTypeId)
 		throws PortalException {
 
@@ -201,6 +239,13 @@ public abstract class CMISRepositoryHandler
 	@Override
 	public FileEntry getFileEntryByUuid(String uuid) throws PortalException {
 		return _baseCmisRepository.getFileEntryByUuid(uuid);
+	}
+
+	@Override
+	public FileShortcut getFileShortcut(long fileShortcutId)
+		throws PortalException {
+
+		return _baseCmisRepository.getFileShortcut(fileShortcutId);
 	}
 
 	@Override
@@ -528,6 +573,25 @@ public abstract class CMISRepositoryHandler
 		return _baseCmisRepository.updateFileEntry(
 			objectId, mimeType, properties, is, sourceFileName, size,
 			serviceContext);
+	}
+
+	@Override
+	public FileShortcut updateFileShortcut(
+			long userId, long fileShortcutId, long folderId, long toFileEntryId,
+			ServiceContext serviceContext)
+		throws PortalException {
+
+		return _baseCmisRepository.updateFileShortcut(
+			userId, fileShortcutId, folderId, toFileEntryId, serviceContext);
+	}
+
+	@Override
+	public void updateFileShortcuts(
+			long oldToFileEntryId, long newToFileEntryId)
+		throws PortalException {
+
+		_baseCmisRepository.updateFileShortcuts(
+			oldToFileEntryId, newToFileEntryId);
 	}
 
 	@Override

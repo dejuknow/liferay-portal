@@ -15,17 +15,23 @@
 package com.liferay.portlet.documentlibrary.util;
 
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.repository.model.FileShortcut;
 import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portal.kernel.repository.model.Folder;
+import com.liferay.portal.kernel.repository.model.RepositoryEntry;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.repository.liferayrepository.model.LiferayFileEntry;
+import com.liferay.portal.repository.liferayrepository.model.LiferayFileShortcut;
 import com.liferay.portal.repository.liferayrepository.model.LiferayFileVersion;
 import com.liferay.portal.repository.liferayrepository.model.LiferayFolder;
 import com.liferay.portlet.documentlibrary.model.DLFileEntry;
+import com.liferay.portlet.documentlibrary.model.DLFileShortcut;
+import com.liferay.portlet.documentlibrary.model.DLFileShortcutConstants;
 import com.liferay.portlet.documentlibrary.model.DLFileVersion;
 import com.liferay.portlet.documentlibrary.model.DLFolder;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -35,9 +41,6 @@ import java.util.List;
  */
 public class RepositoryModelUtil {
 
-	/**
-	 * @see com.liferay.portal.portletfilerepository.PortletFileRepositoryImpl#toFileEntries
-	 */
 	public static List<FileEntry> toFileEntries(
 		List<DLFileEntry> dlFileEntries) {
 
@@ -57,37 +60,23 @@ public class RepositoryModelUtil {
 		}
 	}
 
-	public static List<Object> toFileEntriesAndFolders(
-		List<Object> dlFileEntriesAndDLFolders) {
+	public static List<FileShortcut> toFileShortcuts(
+		List<DLFileShortcut> dlFileShortcuts) {
 
-		List<Object> fileEntriesAndFolders = new ArrayList<>(
-			dlFileEntriesAndDLFolders.size());
+		List<FileShortcut> fileShortcuts = new ArrayList<>(
+			dlFileShortcuts.size());
 
-		for (Object object : dlFileEntriesAndDLFolders) {
-			if (object instanceof DLFileEntry) {
-				DLFileEntry dlFileEntry = (DLFileEntry)object;
+		for (DLFileShortcut dlFileShortcut : dlFileShortcuts) {
+			FileShortcut fileShortcut = new LiferayFileShortcut(dlFileShortcut);
 
-				FileEntry fileEntry = new LiferayFileEntry(dlFileEntry);
-
-				fileEntriesAndFolders.add(fileEntry);
-			}
-			else if (object instanceof DLFolder) {
-				DLFolder dlFolder = (DLFolder)object;
-
-				Folder folder = new LiferayFolder(dlFolder);
-
-				fileEntriesAndFolders.add(folder);
-			}
-			else {
-				fileEntriesAndFolders.add(object);
-			}
+			fileShortcuts.add(fileShortcut);
 		}
 
-		if (ListUtil.isUnmodifiableList(dlFileEntriesAndDLFolders)) {
-			return Collections.unmodifiableList(fileEntriesAndFolders);
+		if (ListUtil.isUnmodifiableList(dlFileShortcuts)) {
+			return Collections.unmodifiableList(fileShortcuts);
 		}
 		else {
-			return fileEntriesAndFolders;
+			return fileShortcuts;
 		}
 	}
 
@@ -124,6 +113,57 @@ public class RepositoryModelUtil {
 		}
 		else {
 			return folders;
+		}
+	}
+
+	public static List<RepositoryEntry> toRepositoryEntries(
+		List<Object> dlFoldersAndDLFileEntriesAndDLFileShortcuts) {
+
+		List<RepositoryEntry> repositoryEntries = new ArrayList<>(
+			dlFoldersAndDLFileEntriesAndDLFileShortcuts.size());
+
+		for (Object object : dlFoldersAndDLFileEntriesAndDLFileShortcuts) {
+			if (object instanceof DLFileEntry) {
+				DLFileEntry dlFileEntry = (DLFileEntry)object;
+
+				FileEntry fileEntry = new LiferayFileEntry(dlFileEntry);
+
+				repositoryEntries.add(fileEntry);
+			}
+			else if (object instanceof DLFolder) {
+				DLFolder dlFolder = (DLFolder)object;
+
+				Folder folder = new LiferayFolder(dlFolder);
+
+				repositoryEntries.add(folder);
+			}
+			else if (object instanceof DLFileShortcut) {
+				DLFileShortcut dlFileShortcut = (DLFileShortcut)object;
+
+				FileShortcut fileShortcut = new LiferayFileShortcut(
+					dlFileShortcut);
+
+				repositoryEntries.add(fileShortcut);
+			}
+			else {
+				throw new IllegalArgumentException(
+					String.format(
+						"Expected an instance of one of: %s; got %s",
+						Arrays.asList(
+							DLFileEntry.class.getName(),
+							DLFolder.class.getName(),
+							DLFileShortcutConstants.getClassName()),
+						object));
+			}
+		}
+
+		if (ListUtil.isUnmodifiableList(
+				dlFoldersAndDLFileEntriesAndDLFileShortcuts)) {
+
+			return Collections.unmodifiableList(repositoryEntries);
+		}
+		else {
+			return repositoryEntries;
 		}
 	}
 

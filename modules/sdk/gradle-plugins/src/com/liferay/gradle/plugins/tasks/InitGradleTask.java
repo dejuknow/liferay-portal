@@ -16,11 +16,12 @@ package com.liferay.gradle.plugins.tasks;
 
 import com.liferay.gradle.plugins.LiferayPlugin;
 import com.liferay.gradle.plugins.extensions.LiferayExtension;
+import com.liferay.gradle.plugins.extensions.LiferayOSGiExtension;
 import com.liferay.gradle.plugins.extensions.LiferayThemeExtension;
-import com.liferay.gradle.plugins.util.FileUtil;
-import com.liferay.gradle.plugins.util.GradleUtil;
-import com.liferay.gradle.plugins.util.StringUtil;
-import com.liferay.gradle.plugins.util.Validator;
+import com.liferay.gradle.util.FileUtil;
+import com.liferay.gradle.util.GradleUtil;
+import com.liferay.gradle.util.StringUtil;
+import com.liferay.gradle.util.Validator;
 
 import groovy.util.Node;
 import groovy.util.NodeList;
@@ -35,6 +36,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
+import nebula.plugin.extraconfigurations.OptionalBasePlugin;
+import nebula.plugin.extraconfigurations.ProvidedBasePlugin;
 
 import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
@@ -90,30 +94,58 @@ public class InitGradleTask extends DefaultTask {
 		contents1.addAll(contents2);
 	}
 
+	protected String convertBuildPropertyValue(String value) {
+		value = value.replace(
+			"${app.server.deploy.dir}", "${appServerDeployDir}");
+		value = value.replace("${app.server.dir}", "${appServerDir}");
+		value = value.replace(
+			"${app.server.lib.global.dir}", "${appServerLibGlobalDir}");
+		value = value.replace(
+			"${app.server.parent.dir}", "${appServerParentDir}");
+		value = value.replace("${auto.deploy.dir}", "${deployDir}");
+		value = value.replace("${liferay.home}", "${liferayHome}");
+
+		return value;
+	}
+
 	protected List<String> getBuildDependenciesCompile() {
 		List<String> contents = new ArrayList<>();
 
-		if (_ivyXmlNode != null) {
-			Node dependenciesNode = getNode(_ivyXmlNode, "dependencies");
+		Iterator<Node> iterator = getIvyXmlDependenciesIterator();
 
-			if (dependenciesNode != null) {
-				Iterator<Node> iterator = dependenciesNode.iterator();
+		if (iterator != null) {
+			while (iterator.hasNext()) {
+				Node dependencyNode = iterator.next();
 
-				while (iterator.hasNext()) {
-					Node dependencyNode = iterator.next();
+				String conf = (String)dependencyNode.attribute("conf");
 
-					String conf = (String)dependencyNode.attribute("conf");
+				if (Validator.isNotNull(conf) && !conf.startsWith("default") &&
+					!conf.startsWith("internal")) {
 
-					if (Validator.isNotNull(conf) && !conf.equals("default")) {
-						continue;
-					}
-
-					String group = (String)dependencyNode.attribute("org");
-					String name = (String)dependencyNode.attribute("name");
-					String version = (String)dependencyNode.attribute("rev");
-
-					contents.add(wrapDependency(group, name, version));
+					continue;
 				}
+
+				String group = (String)dependencyNode.attribute("org");
+				String name = (String)dependencyNode.attribute("name");
+
+				boolean optional = false;
+				boolean transitive = true;
+
+				if (Validator.isNotNull(conf)) {
+					if (conf.equals("default->master")) {
+						transitive = false;
+					}
+					else if (conf.equals("internal->master")) {
+						optional = true;
+					}
+				}
+
+				String version = (String)dependencyNode.attribute("rev");
+
+				contents.add(
+					wrapDependency(
+						JavaPlugin.COMPILE_CONFIGURATION_NAME, group, name,
+						optional, transitive, version));
 			}
 		}
 
@@ -130,7 +162,10 @@ public class InitGradleTask extends DefaultTask {
 					deploymentContext);
 
 				if (FileUtil.exists(_project, serviceJarFileName)) {
-					contents.add(wrapServiceJarDependency(serviceJarFileName));
+					contents.add(
+						wrapServiceJarDependency(
+							JavaPlugin.COMPILE_CONFIGURATION_NAME,
+							serviceJarFileName));
 				}
 			}
 		}
@@ -138,30 +173,78 @@ public class InitGradleTask extends DefaultTask {
 		String importShared = getBuildXmlProperty("import.shared");
 
 		if (Validator.isNotNull(importShared)) {
-			Map<String, String> projectNamePathMap = new HashMap<>();
+			Map<String, String> projectFileNamePathMap = new HashMap<>();
 
 			Project rootProject = _project.getRootProject();
 
-			for (Project project : rootProject.getAllprojects()) {
-				projectNamePathMap.put(project.getName(), project.getPath());
+			File projectDir = _project.getProjectDir();
+
+			File parentDir = projectDir.getParentFile();
+
+			for (Project project : rootProject.getSubprojects()) {
+				File dir = project.getProjectDir();
+
+				projectFileNamePathMap.put(dir.getName(), project.getPath());
+
+				String projectFileName = FileUtil.relativize(
+					project.getProjectDir(), parentDir);
+
+				projectFileName = projectFileName.replace('\\', '/');
+
+				projectFileNamePathMap.put(projectFileName, project.getPath());
 			}
 
 			String[] importSharedArray = importShared.split(",");
 
-			for (String projectName : importSharedArray) {
-				String projectPath = projectNamePathMap.get(projectName);
+			for (String projectFileName : importSharedArray) {
+				String projectPath = projectFileNamePathMap.get(
+					projectFileName);
 
 				if (Validator.isNull(projectPath)) {
 					throw new GradleException(
-						"Unable to find project dependency " + projectName);
+						"Unable to find project dependency " + projectFileName);
 				}
 
-				contents.add(wrapProjectDependency(projectPath));
+				contents.add(
+					wrapProjectDependency(
+						JavaPlugin.COMPILE_CONFIGURATION_NAME, projectPath));
 			}
 		}
 
-		return wrapContents(
-			contents, 1, "(", JavaPlugin.COMPILE_CONFIGURATION_NAME, ")", true);
+		Collections.sort(contents);
+
+		return contents;
+	}
+
+	protected List<String> getBuildDependenciesProvided() {
+		List<String> contents = new ArrayList<>();
+
+		Iterator<Node> iterator = getIvyXmlDependenciesIterator();
+
+		if (iterator != null) {
+			while (iterator.hasNext()) {
+				Node dependencyNode = iterator.next();
+
+				String conf = (String)dependencyNode.attribute("conf");
+
+				if (Validator.isNull(conf) || !conf.startsWith("provided")) {
+					continue;
+				}
+
+				String group = (String)dependencyNode.attribute("org");
+				String name = (String)dependencyNode.attribute("name");
+				String version = (String)dependencyNode.attribute("rev");
+
+				contents.add(
+					wrapDependency(
+						ProvidedBasePlugin.getPROVIDED_CONFIGURATION_NAME(),
+						group, name, false, version));
+			}
+		}
+
+		Collections.sort(contents);
+
+		return contents;
 	}
 
 	protected List<String> getBuildDependenciesProvidedCompile() {
@@ -173,6 +256,14 @@ public class InitGradleTask extends DefaultTask {
 		if (Validator.isNotNull(portalDependencyJars)) {
 			String[] portalDependencyJarsArray = portalDependencyJars.split(
 				",");
+
+			String configurationName =
+				WarPlugin.PROVIDED_COMPILE_CONFIGURATION_NAME;
+
+			if (FileUtil.exists(_project, "bnd.bnd")) {
+				configurationName =
+					ProvidedBasePlugin.getPROVIDED_CONFIGURATION_NAME();
+			}
 
 			for (String fileName : portalDependencyJarsArray) {
 				String[] portalDependencyNotation =
@@ -187,52 +278,54 @@ public class InitGradleTask extends DefaultTask {
 					String name = portalDependencyNotation[1];
 					String version = portalDependencyNotation[2];
 
-					contents.add(wrapDependency(group, name, version));
+					contents.add(
+						wrapDependency(
+							configurationName, group, name, false, version));
 				}
 			}
 		}
 
-		return wrapContents(
-			contents, 1, "(", WarPlugin.PROVIDED_COMPILE_CONFIGURATION_NAME,
-			")", true);
+		Collections.sort(contents);
+
+		return contents;
 	}
 
 	protected List<String> getBuildDependenciesTestCompile() {
 		List<String> contents = new ArrayList<>();
 
-		if (_ivyXmlNode != null) {
-			Node dependenciesNode = getNode(_ivyXmlNode, "dependencies");
+		Iterator<Node> iterator = getIvyXmlDependenciesIterator();
 
-			if (dependenciesNode != null) {
-				Iterator<Node> iterator = dependenciesNode.iterator();
+		if (iterator != null) {
+			while (iterator.hasNext()) {
+				Node dependencyNode = iterator.next();
 
-				while (iterator.hasNext()) {
-					Node dependencyNode = iterator.next();
+				String conf = (String)dependencyNode.attribute("conf");
 
-					String conf = (String)dependencyNode.attribute("conf");
-
-					if (Validator.isNull(conf) || !conf.contains("test")) {
-						continue;
-					}
-
-					String group = (String)dependencyNode.attribute("org");
-					String name = (String)dependencyNode.attribute("name");
-					String version = (String)dependencyNode.attribute("rev");
-
-					contents.add(wrapDependency(group, name, version));
+				if (Validator.isNull(conf) || !conf.contains("test")) {
+					continue;
 				}
+
+				String group = (String)dependencyNode.attribute("org");
+				String name = (String)dependencyNode.attribute("name");
+				String version = (String)dependencyNode.attribute("rev");
+
+				contents.add(
+					wrapDependency(
+						JavaPlugin.TEST_COMPILE_CONFIGURATION_NAME, group, name,
+						true, version));
 			}
 		}
 
-		return wrapContents(
-			contents, 1, "(", JavaPlugin.TEST_COMPILE_CONFIGURATION_NAME, ")",
-			true);
+		Collections.sort(contents);
+
+		return contents;
 	}
 
 	protected List<String> getBuildGradleDependencies() {
 		List<String> contents = new ArrayList<>();
 
 		addContents(contents, getBuildDependenciesCompile());
+		addContents(contents, getBuildDependenciesProvided());
 		addContents(contents, getBuildDependenciesProvidedCompile());
 		addContents(contents, getBuildDependenciesTestCompile());
 
@@ -242,16 +335,33 @@ public class InitGradleTask extends DefaultTask {
 	protected List<String> getBuildGradleLiferay() {
 		List<String> contents = new ArrayList<>();
 
+		String autoDeployDirName = getBuildXmlProperty("auto.deploy.dir");
+
+		if (Validator.isNotNull(autoDeployDirName)) {
+			autoDeployDirName = convertBuildPropertyValue(autoDeployDirName);
+
+			contents.add(wrapPropertyFile("deployDir", autoDeployDirName));
+		}
+
+		if (_liferayExtension instanceof LiferayOSGiExtension) {
+			String autoUpdateXml = getBuildXmlProperty("osgi.auto.update.xml");
+
+			if (Validator.isNotNull(autoUpdateXml)) {
+				contents.add(
+					wrapProperty(1, "autoUpdateXml", false, autoUpdateXml));
+			}
+		}
+
 		if (_liferayExtension instanceof LiferayThemeExtension) {
 			String themeParent = getBuildXmlProperty("theme.parent");
 
 			if (Validator.isNotNull(themeParent)) {
-				contents.add(wrapProperty("themeParent", themeParent));
+				contents.add(wrapProperty(1, "themeParent", themeParent));
 			}
 
 			String themeType = getBuildXmlProperty("theme.type", "vm");
 
-			contents.add(wrapProperty("themeType", themeType));
+			contents.add(wrapProperty(1, "themeType", themeType));
 		}
 
 		if (!contents.isEmpty()) {
@@ -265,10 +375,26 @@ public class InitGradleTask extends DefaultTask {
 	protected List<String> getBuildGradleProperties() {
 		List<String> contents = new ArrayList<>();
 
+		String javacSource = getBuildXmlProperty("javac.source");
+
+		if (Validator.isNotNull(javacSource)) {
+			contents.add(wrapProperty(0, "sourceCompatibility", javacSource));
+		}
+
+		String javacTarget = getBuildXmlProperty("javac.target");
+
+		if (Validator.isNotNull(javacSource)) {
+			contents.add(wrapProperty(0, "targetCompatibility", javacTarget));
+		}
+
 		String pluginVersion = getBuildXmlProperty("plugin.version");
 
 		if (Validator.isNotNull(pluginVersion)) {
-			contents.add("version = \"" + pluginVersion + "\"");
+			if (!contents.isEmpty()) {
+				contents.add("");
+			}
+
+			contents.add(wrapProperty(0, "version", pluginVersion));
 		}
 
 		return contents;
@@ -294,6 +420,20 @@ public class InitGradleTask extends DefaultTask {
 		}
 
 		return defaultValue;
+	}
+
+	protected Iterator<Node> getIvyXmlDependenciesIterator() {
+		if (_ivyXmlNode == null) {
+			return null;
+		}
+
+		Node dependenciesNode = getNode(_ivyXmlNode, "dependencies");
+
+		if (dependenciesNode == null) {
+			return null;
+		}
+
+		return dependenciesNode.iterator();
 	}
 
 	protected Node getNode(Node parentNode, String name) {
@@ -361,38 +501,110 @@ public class InitGradleTask extends DefaultTask {
 		return contents;
 	}
 
-	protected String wrapDependency(String group, String name, String version) {
+	protected String wrapDependency(
+		String configurationName, String group, String name, boolean optional,
+		boolean transitive, String version) {
+
 		StringBuilder sb = new StringBuilder();
 
-		sb.append("\t\t[group: \"");
+		sb.append('\t');
+		sb.append(configurationName);
+		sb.append(" group: \"");
 		sb.append(group);
 		sb.append("\", name: \"");
 		sb.append(name);
+
+		if (optional) {
+			sb.append(", ");
+			sb.append(OptionalBasePlugin.getOPTIONAL_IDENTIFIER());
+		}
+
+		if (!transitive) {
+			sb.append(", transitive: false");
+		}
+
 		sb.append("\", version: \"");
 		sb.append(version);
-		sb.append("\"],");
+		sb.append('\"');
 
 		return sb.toString();
 	}
 
-	protected String wrapProjectDependency(String projectPath) {
-		return "\t\tproject(\"" + projectPath + "\"),";
+	protected String wrapDependency(
+		String configurationName, String group, String name, boolean transitive,
+		String version) {
+
+		return wrapDependency(
+			configurationName, group, name, false, transitive, version);
 	}
 
-	protected String wrapProperty(String name, String value) {
+	protected String wrapProjectDependency(
+		String configurationName, String projectPath) {
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append('\t');
+		sb.append(configurationName);
+		sb.append(" project(\"");
+		sb.append(projectPath);
+		sb.append("\")");
+
+		return sb.toString();
+	}
+
+	protected String wrapProperty(
+		int indentCount, String name, boolean quoteValue, String value) {
+
+		StringBuilder sb = new StringBuilder();
+
+		for (int i = 0; i < indentCount; i++) {
+			sb.append('\t');
+		}
+
+		sb.append(name);
+		sb.append(" = ");
+
+		if (quoteValue) {
+			sb.append('\"');
+		}
+
+		sb.append(value);
+
+		if (quoteValue) {
+			sb.append('\"');
+		}
+
+		return sb.toString();
+	}
+
+	protected String wrapProperty(int indentCount, String name, String value) {
+		return wrapProperty(indentCount, name, true, value);
+	}
+
+	protected String wrapPropertyFile(String name, String value) {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append('\t');
 		sb.append(name);
-		sb.append(" = \"");
+		sb.append(" = file(\"");
 		sb.append(value);
-		sb.append("\"");
+		sb.append("\")");
 
 		return sb.toString();
 	}
 
-	protected String wrapServiceJarDependency(String serviceJarFileName) {
-		return "\t\tfiles(\"" + serviceJarFileName + "\"),";
+	protected String wrapServiceJarDependency(
+		String configurationName, String serviceJarFileName) {
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append('\t');
+		sb.append(configurationName);
+		sb.append(" files(\"");
+		sb.append(serviceJarFileName);
+		sb.append("\")");
+
+		return sb.toString();
 	}
 
 	private static final PortalDependencyNotations _portalDependencyNotations =

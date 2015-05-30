@@ -53,6 +53,7 @@ import com.liferay.portal.util.WebKeys;
 import com.liferay.portlet.PortletBagFactory;
 import com.liferay.portlet.PortletInstanceFactory;
 import com.liferay.registry.util.StringPlus;
+import com.liferay.util.log4j.Log4JUtil;
 
 import java.io.IOException;
 
@@ -98,9 +99,7 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer;
 /**
  * @author Raymond Augé
  */
-@Component(
-	immediate = true, service = PortletTracker.class
-)
+@Component(immediate = true, service = PortletTracker.class)
 public class PortletTracker
 	implements
 		ServiceTrackerCustomizer<Portlet, com.liferay.portal.model.Portlet> {
@@ -178,7 +177,7 @@ public class PortletTracker
 		ServiceReference<Portlet> serviceReference,
 		com.liferay.portal.model.Portlet portletModel) {
 
-		portletModel.setReady(false);
+		portletModel.unsetReady();
 
 		ServiceRegistrations serviceRegistrations = _serviceRegistrations.get(
 			serviceReference.getBundle());
@@ -927,6 +926,8 @@ public class PortletTracker
 
 		createContext(bundle, bundlePortletApp, serviceRegistrations);
 
+		initLogger(classLoader);
+
 		serviceRegistrations.setBundlePortletApp(bundlePortletApp);
 
 		serviceRegistrations.doConfiguration(classLoader);
@@ -1096,6 +1097,11 @@ public class PortletTracker
 		}
 
 		return serviceRegistrations;
+	}
+
+	protected void initLogger(ClassLoader classLoader) {
+		Log4JUtil.configureLog4J(
+			classLoader.getResource("META-INF/portal-log4j.xml"));
 	}
 
 	protected void readResourceActions(

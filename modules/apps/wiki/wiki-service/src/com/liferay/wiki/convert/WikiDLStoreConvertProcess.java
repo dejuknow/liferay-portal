@@ -23,7 +23,6 @@ import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.util.MaintenanceUtil;
-import com.liferay.portlet.documentlibrary.model.DLFileEntry;
 import com.liferay.portlet.documentlibrary.model.DLFolderConstants;
 import com.liferay.wiki.model.WikiPage;
 import com.liferay.wiki.service.WikiPageLocalService;
@@ -34,9 +33,7 @@ import org.osgi.service.component.annotations.Reference;
 /**
  * @author Iván Zaera
  */
-@Component(
-	service = DLStoreConvertProcess.class
-)
+@Component(service = DLStoreConvertProcess.class)
 public class WikiDLStoreConvertProcess implements DLStoreConvertProcess {
 
 	@Override
@@ -66,21 +63,20 @@ public class WikiDLStoreConvertProcess implements DLStoreConvertProcess {
 			new ActionableDynamicQuery.PerformActionMethod() {
 
 				@Override
-				public void performAction(Object object) {
+				public void performAction(Object object)
+					throws PortalException {
+
 					WikiPage wikiPage = (WikiPage)object;
 
 					for (FileEntry fileEntry :
 							wikiPage.getAttachmentsFileEntries()) {
 
-						DLFileEntry dlFileEntry =
-							(DLFileEntry)fileEntry.getModel();
-
 						dlStoreConverter.migrateDLFileEntry(
 							wikiPage.getCompanyId(),
 							DLFolderConstants.getDataRepositoryId(
-								dlFileEntry.getRepositoryId(),
-								dlFileEntry.getFolderId()),
-							dlFileEntry);
+								fileEntry.getRepositoryId(),
+								fileEntry.getFolderId()),
+							fileEntry);
 					}
 				}
 

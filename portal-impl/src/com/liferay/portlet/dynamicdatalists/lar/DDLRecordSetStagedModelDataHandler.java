@@ -21,6 +21,7 @@ import com.liferay.portal.kernel.lar.ExportImportPathUtil;
 import com.liferay.portal.kernel.lar.PortletDataContext;
 import com.liferay.portal.kernel.lar.StagedModelDataHandlerUtil;
 import com.liferay.portal.kernel.lar.StagedModelModifiedDateComparator;
+import com.liferay.portal.kernel.spring.osgi.OSGiBeanProperties;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.service.ServiceContext;
@@ -35,10 +36,18 @@ import java.util.Map;
 /**
  * @author Brian Wing Shun Chan
  */
+@OSGiBeanProperties
 public class DDLRecordSetStagedModelDataHandler
 	extends BaseStagedModelDataHandler<DDLRecordSet> {
 
 	public static final String[] CLASS_NAMES = {DDLRecordSet.class.getName()};
+
+	@Override
+	public void deleteStagedModel(DDLRecordSet recordSet)
+		throws PortalException {
+
+		DDLRecordSetLocalServiceUtil.deleteRecordSet(recordSet);
+	}
 
 	@Override
 	public void deleteStagedModel(
@@ -49,7 +58,7 @@ public class DDLRecordSetStagedModelDataHandler
 			uuid, groupId);
 
 		if (ddlRecordSet != null) {
-			DDLRecordSetLocalServiceUtil.deleteRecordSet(ddlRecordSet);
+			deleteStagedModel(ddlRecordSet);
 		}
 	}
 

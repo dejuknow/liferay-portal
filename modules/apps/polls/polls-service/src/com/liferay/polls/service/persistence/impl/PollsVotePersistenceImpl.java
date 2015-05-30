@@ -22,7 +22,6 @@ import com.liferay.polls.model.impl.PollsVoteImpl;
 import com.liferay.polls.model.impl.PollsVoteModelImpl;
 import com.liferay.polls.service.persistence.PollsVotePersistence;
 
-import com.liferay.portal.kernel.cache.CacheRegistryUtil;
 import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
@@ -39,11 +38,14 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import com.liferay.portal.model.CacheModel;
+import com.liferay.portal.service.ServiceContext;
+import com.liferay.portal.service.ServiceContextThreadLocal;
 import com.liferay.portal.service.persistence.impl.BasePersistenceImpl;
 
 import java.io.Serializable;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -2653,10 +2655,6 @@ public class PollsVotePersistenceImpl extends BasePersistenceImpl<PollsVote>
 	 */
 	@Override
 	public void clearCache() {
-		if (_HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE) {
-			CacheRegistryUtil.clear(PollsVoteImpl.class.getName());
-		}
-
 		EntityCacheUtil.clearCache(PollsVoteImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
@@ -2892,6 +2890,28 @@ public class PollsVotePersistenceImpl extends BasePersistenceImpl<PollsVote>
 			String uuid = PortalUUIDUtil.generate();
 
 			pollsVote.setUuid(uuid);
+		}
+
+		ServiceContext serviceContext = ServiceContextThreadLocal.getServiceContext();
+
+		Date now = new Date();
+
+		if (isNew && (pollsVote.getCreateDate() == null)) {
+			if (serviceContext == null) {
+				pollsVote.setCreateDate(now);
+			}
+			else {
+				pollsVote.setCreateDate(serviceContext.getCreateDate(now));
+			}
+		}
+
+		if (!pollsVoteModelImpl.hasSetModifiedDate()) {
+			if (serviceContext == null) {
+				pollsVote.setModifiedDate(now);
+			}
+			else {
+				pollsVote.setModifiedDate(serviceContext.getModifiedDate(now));
+			}
 		}
 
 		Session session = null;
@@ -3411,7 +3431,6 @@ public class PollsVotePersistenceImpl extends BasePersistenceImpl<PollsVote>
 	private static final String _ORDER_BY_ENTITY_ALIAS = "pollsVote.";
 	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY = "No PollsVote exists with the primary key ";
 	private static final String _NO_SUCH_ENTITY_WITH_KEY = "No PollsVote exists with the key {";
-	private static final boolean _HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE = com.liferay.portal.util.PropsValues.HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE;
 	private static final Log _log = LogFactoryUtil.getLog(PollsVotePersistenceImpl.class);
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(new String[] {
 				"uuid"

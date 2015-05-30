@@ -81,7 +81,6 @@ page import="com.liferay.portal.service.PortletLocalServiceUtil" %><%@
 page import="com.liferay.portal.service.UserLocalServiceUtil" %><%@
 page import="com.liferay.portal.service.permission.PortletPermissionUtil" %><%@
 page import="com.liferay.portal.util.PortalUtil" %><%@
-page import="com.liferay.portlet.PortletURLFactoryUtil" %><%@
 page import="com.liferay.portlet.PortletURLUtil" %><%@
 page import="com.liferay.portlet.asset.AssetRendererFactoryRegistryUtil" %><%@
 page import="com.liferay.portlet.asset.DuplicateQueryRuleException" %><%@
@@ -94,7 +93,6 @@ page import="com.liferay.portlet.asset.model.ClassType" %><%@
 page import="com.liferay.portlet.asset.model.ClassTypeField" %><%@
 page import="com.liferay.portlet.asset.model.ClassTypeReader" %><%@
 page import="com.liferay.portlet.asset.service.AssetCategoryLocalServiceUtil" %><%@
-page import="com.liferay.portlet.asset.service.AssetEntryLocalServiceUtil" %><%@
 page import="com.liferay.portlet.asset.service.AssetEntryServiceUtil" %><%@
 page import="com.liferay.portlet.asset.service.AssetVocabularyLocalServiceUtil" %><%@
 page import="com.liferay.portlet.asset.service.persistence.AssetEntryQuery" %><%@
@@ -123,8 +121,9 @@ page import="java.util.Set" %>
 page import="javax.portlet.PortletRequest" %><%@
 page import="javax.portlet.PortletURL" %>
 
-<liferay-theme:defineObjects />
 <portlet:defineObjects />
+
+<liferay-theme:defineObjects />
 
 <%
 PortletURL currentURLObj = PortletURLUtil.getCurrent(liferayPortletRequest, liferayPortletResponse);

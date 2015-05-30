@@ -193,18 +193,21 @@ public class BackgroundTaskWrapper implements BackgroundTask,
 	}
 
 	@Override
-	public java.util.List<com.liferay.portal.kernel.repository.model.FileEntry> getAttachmentsFileEntries() {
+	public java.util.List<com.liferay.portal.kernel.repository.model.FileEntry> getAttachmentsFileEntries()
+		throws com.liferay.portal.kernel.exception.PortalException {
 		return _backgroundTask.getAttachmentsFileEntries();
 	}
 
 	@Override
 	public java.util.List<com.liferay.portal.kernel.repository.model.FileEntry> getAttachmentsFileEntries(
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.PortalException {
 		return _backgroundTask.getAttachmentsFileEntries(start, end);
 	}
 
 	@Override
-	public int getAttachmentsFileEntriesCount() {
+	public int getAttachmentsFileEntriesCount()
+		throws com.liferay.portal.kernel.exception.PortalException {
 		return _backgroundTask.getAttachmentsFileEntriesCount();
 	}
 
@@ -509,8 +512,7 @@ public class BackgroundTaskWrapper implements BackgroundTask,
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.model.BaseModel<?> baseModel) {
+	public void setExpandoBridgeAttributes(BaseModel<?> baseModel) {
 		_backgroundTask.setExpandoBridgeAttributes(baseModel);
 	}
 
@@ -668,7 +670,7 @@ public class BackgroundTaskWrapper implements BackgroundTask,
 	}
 
 	@Override
-	public com.liferay.portal.model.CacheModel<com.liferay.portal.model.BackgroundTask> toCacheModel() {
+	public CacheModel<com.liferay.portal.model.BackgroundTask> toCacheModel() {
 		return _backgroundTask.toCacheModel();
 	}
 

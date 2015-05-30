@@ -113,21 +113,6 @@ request.setAttribute("control_panel.jsp-ppid", ppid);
 								<c:if test="<%= showControlPanelMenu %>">
 									<aui:row>
 										<div id="controlPanelSiteHeading">
-											<c:if test="<%= showControlPanelMenu %>">
-
-												<%
-												String backURL = HttpUtil.setParameter(themeDisplay.getURLControlPanel(), "p_p_id", PortletKeys.SITES_ADMIN);
-												%>
-
-												<a class="previous-level" href="<%= backURL %>" title="<liferay-ui:message key="back" />">
-													<i class="control-panel-back-icon icon-circle-arrow-left"></i>
-
-													<span class="helper-hidden-accessible">
-														<liferay-ui:message key="back" />
-													</span>
-												</a>
-											</c:if>
-
 											<h1 class="site-title">
 												<%@ include file="/html/portal/layout/view/control_panel_site_selector.jspf" %>
 											</h1>
@@ -170,7 +155,10 @@ request.setAttribute("control_panel.jsp-ppid", ppid);
 
 									<c:if test="<%= !singlePortlet %>">
 										<aui:col cssClass="panel-page-menu" width="<%= 25 %>">
-											<liferay-portlet:runtime portletName="160" />
+											<liferay-portlet:runtime
+												portletProviderAction="<%= PortletProvider.Action.VIEW %>"
+												portletProviderClassName="<%= PortalAdministrationApplicationType.SiteAdmin.CLASS_NAME %>"
+											/>
 										</aui:col>
 									</c:if>
 

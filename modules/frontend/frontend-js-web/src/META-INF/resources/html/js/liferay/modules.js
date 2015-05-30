@@ -1,6 +1,6 @@
 ;(function() {
-	var LiferayAUI = Liferay.AUI;
 	var Browser = Liferay.Browser;
+	var LiferayAUI = Liferay.AUI;
 
 	var COMBINE = LiferayAUI.getCombine();
 
@@ -10,17 +10,19 @@
 
 	var PATH_JAVASCRIPT = LiferayAUI.getJavaScriptRootPath();
 
-	var SUPPORTS_INPUT_SELECTION = ((typeof INPUT_EL.selectionStart === 'number') && (typeof INPUT_EL.selectionEnd === 'number'));
+	var PATH_EDITORS = LiferayAUI.getEditorsPath();
+
+	var SUPPORTS_INPUT_SELECTION = typeof INPUT_EL.selectionStart === 'number' && typeof INPUT_EL.selectionEnd === 'number';
 
 	var testHistory = function(A) {
 		var WIN = A.config.win;
 
 		var HISTORY = WIN.history;
 
-		return (HISTORY &&
+		return HISTORY &&
 				HISTORY.pushState &&
 				HISTORY.replaceState &&
-				('onpopstate' in WIN || A.UA.gecko >= 2));
+				('onpopstate' in WIN || A.UA.gecko >= 2);
 	};
 
 	var filterConfig = null;
@@ -39,14 +41,14 @@
 		filter: Liferay.AUI.getFilter(),
 		groups: {
 			editor: {
-				base: PATH_JAVASCRIPT + '/editor/',
+				base: PATH_EDITORS + '/editors/',
 				combine: COMBINE,
 				modules: {
 					'inline-editor-ckeditor': {
 						path: 'ckeditor/main.js'
 					}
 				},
-				root: PATH_JAVASCRIPT + '/editor/'
+				root: PATH_EDITORS + '/editors/'
 			},
 
 			liferay: {
@@ -102,6 +104,14 @@
 							'liferay-app-view-move',
 							'liferay-history-manager',
 							'liferay-portlet-base'
+						]
+					},
+					'liferay-asset-addon-entry-selector': {
+						path: 'asset_addon_entry_selector.js',
+						requires: [
+							'aui-component',
+							'liferay-portlet-base',
+							'liferay-util-window'
 						]
 					},
 					'liferay-asset-categories-selector': {
@@ -191,7 +201,7 @@
 						condition: {
 							name: 'liferay-autocomplete-input-caretoffset-sel',
 							test: function(A) {
-								return (A.UA.ie && A.UA.ie < 9);
+								return A.UA.ie && A.UA.ie < 9;
 							},
 							trigger: 'liferay-autocomplete-textarea'
 						},
@@ -209,6 +219,20 @@
 					'liferay-browser-selectors': {
 						path: 'browser_selectors.js',
 						requires: ['yui-base']
+					},
+					'liferay-control-panel': {
+						path: 'control_panel.js',
+						requires: [
+							'aui-live-search-deprecated',
+							'aui-overlay-context-panel-deprecated',
+							'event-mouseenter',
+							'liferay-message',
+							'liferay-panel-search',
+							'liferay-portlet-base',
+							'liferay-store',
+							'node-focusmanager',
+							'transition'
+						]
 					},
 					'liferay-cover-cropper': {
 						path: 'cover_cropper.js',
@@ -500,6 +524,20 @@
 							'aui-template-deprecated',
 							'liferay-input-move-boxes',
 							'sortable'
+						]
+					},
+					'liferay-item-selector-browser': {
+						path: 'item_selector_browser.js',
+						requires: [
+							'liferay-item-viewer',
+							'liferay-portlet-base'
+						]
+					},
+					'liferay-item-viewer': {
+						path: 'item_viewer.js',
+						requires: [
+							'aui-component',
+							'aui-image-viewer'
 						]
 					},
 					'liferay-language': {
@@ -813,6 +851,7 @@
 							'aui-component',
 							'aui-io-request',
 							'aui-parse-content',
+							'liferay-form',
 							'liferay-portlet-url',
 							'liferay-util-window',
 							'plugin'

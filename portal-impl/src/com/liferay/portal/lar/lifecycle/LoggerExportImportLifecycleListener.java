@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.lar.PortletDataContext;
 import com.liferay.portal.kernel.lar.lifecycle.ExportImportLifecycleEvent;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.model.ExportImportConfiguration;
 import com.liferay.portal.model.StagedModel;
 
@@ -53,6 +54,10 @@ public class LoggerExportImportLifecycleListener
 			PortletDataContext portletDataContext, Throwable throwable)
 		throws Exception {
 
+		if (!_log.isDebugEnabled()) {
+			return;
+		}
+
 		_log.debug(
 			"Layout export failed for group " + portletDataContext.getGroupId(),
 			throwable);
@@ -61,6 +66,10 @@ public class LoggerExportImportLifecycleListener
 	@Override
 	protected void onLayoutExportStarted(PortletDataContext portletDataContext)
 		throws Exception {
+
+		if (!_log.isDebugEnabled()) {
+			return;
+		}
 
 		_log.debug(
 			"Layout export started for group " +
@@ -72,6 +81,10 @@ public class LoggerExportImportLifecycleListener
 			PortletDataContext portletDataContext)
 		throws Exception {
 
+		if (!_log.isDebugEnabled()) {
+			return;
+		}
+
 		_log.debug(
 			"Layout export succeeded for group " +
 				portletDataContext.getGroupId());
@@ -82,6 +95,10 @@ public class LoggerExportImportLifecycleListener
 			PortletDataContext portletDataContext, Throwable throwable)
 		throws Exception {
 
+		if (!_log.isDebugEnabled()) {
+			return;
+		}
+
 		_log.debug(
 			"Layout import failed for group " + portletDataContext.getGroupId(),
 			throwable);
@@ -90,6 +107,10 @@ public class LoggerExportImportLifecycleListener
 	@Override
 	protected void onLayoutImportStarted(PortletDataContext portletDataContext)
 		throws Exception {
+
+		if (!_log.isDebugEnabled()) {
+			return;
+		}
 
 		_log.debug(
 			"Layout import started for group " +
@@ -100,6 +121,10 @@ public class LoggerExportImportLifecycleListener
 	protected void onLayoutImportSucceeded(
 			PortletDataContext portletDataContext)
 		throws Exception {
+
+		if (!_log.isDebugEnabled()) {
+			return;
+		}
 
 		_log.debug(
 			"Layout import succeeded for group " +
@@ -112,6 +137,10 @@ public class LoggerExportImportLifecycleListener
 			Throwable throwable)
 		throws Exception {
 
+		if (!_log.isDebugEnabled()) {
+			return;
+		}
+
 		_log.debug(
 			"Layout publication failed for group " +
 				exportImportConfiguration.getGroupId(),
@@ -123,6 +152,10 @@ public class LoggerExportImportLifecycleListener
 			ExportImportConfiguration exportImportConfiguration)
 		throws Exception {
 
+		if (!_log.isDebugEnabled()) {
+			return;
+		}
+
 		_log.debug(
 			"Layout publication started for group " +
 				exportImportConfiguration.getGroupId());
@@ -132,6 +165,10 @@ public class LoggerExportImportLifecycleListener
 	protected void onLayoutLocalPublicationSucceeded(
 			ExportImportConfiguration exportImportConfiguration)
 		throws Exception {
+
+		if (!_log.isDebugEnabled()) {
+			return;
+		}
 
 		_log.debug(
 			"Layout publication succeeded for group " +
@@ -144,6 +181,10 @@ public class LoggerExportImportLifecycleListener
 			Throwable throwable)
 		throws Exception {
 
+		if (!_log.isDebugEnabled()) {
+			return;
+		}
+
 		_log.debug(
 			"Layout remote publication failed for group " +
 				exportImportConfiguration.getGroupId(),
@@ -155,6 +196,10 @@ public class LoggerExportImportLifecycleListener
 			ExportImportConfiguration exportImportConfiguration)
 		throws Exception {
 
+		if (!_log.isDebugEnabled()) {
+			return;
+		}
+
 		_log.debug(
 			"Layout publication started for group " +
 				exportImportConfiguration.getGroupId());
@@ -164,6 +209,10 @@ public class LoggerExportImportLifecycleListener
 	protected void onLayoutRemotePublicationSucceeded(
 			ExportImportConfiguration exportImportConfiguration)
 		throws Exception {
+
+		if (!_log.isDebugEnabled()) {
+			return;
+		}
 
 		_log.debug(
 			"Layout remote publication succeeded for group " +
@@ -175,6 +224,10 @@ public class LoggerExportImportLifecycleListener
 			PortletDataContext portletDataContext, Throwable throwable)
 		throws Exception {
 
+		if (!_log.isDebugEnabled()) {
+			return;
+		}
+
 		_log.debug(
 			"Portlet export failed for portlet " +
 				portletDataContext.getPortletId(),
@@ -184,6 +237,10 @@ public class LoggerExportImportLifecycleListener
 	@Override
 	protected void onPortletExportStarted(PortletDataContext portletDataContext)
 		throws Exception {
+
+		if (!_log.isDebugEnabled()) {
+			return;
+		}
 
 		_log.debug(
 			"Portlet export started for portlet " +
@@ -195,6 +252,10 @@ public class LoggerExportImportLifecycleListener
 			PortletDataContext portletDataContext)
 		throws Exception {
 
+		if (!_log.isDebugEnabled()) {
+			return;
+		}
+
 		_log.debug(
 			"Portlet export succeeded for portlet " +
 				portletDataContext.getPortletId());
@@ -204,6 +265,10 @@ public class LoggerExportImportLifecycleListener
 	protected void onPortletImportFailed(
 			PortletDataContext portletDataContext, Throwable throwable)
 		throws Exception {
+
+		if (!_log.isDebugEnabled()) {
+			return;
+		}
 
 		_log.debug(
 			"Portlet import failed for portlet " +
@@ -215,6 +280,10 @@ public class LoggerExportImportLifecycleListener
 	protected void onPortletImportStarted(PortletDataContext portletDataContext)
 		throws Exception {
 
+		if (!_log.isDebugEnabled()) {
+			return;
+		}
+
 		_log.debug(
 			"Portlet import started for portlet " +
 				portletDataContext.getPortletId());
@@ -225,6 +294,10 @@ public class LoggerExportImportLifecycleListener
 			PortletDataContext portletDataContext)
 		throws Exception {
 
+		if (!_log.isDebugEnabled()) {
+			return;
+		}
+
 		_log.debug(
 			"Portlet import succeeded for portlet " +
 				portletDataContext.getPortletId());
@@ -232,33 +305,55 @@ public class LoggerExportImportLifecycleListener
 
 	@Override
 	protected void onPortletPublicationFailed(
-			Map<String, Serializable> taskContextMap, Throwable throwable)
+			ExportImportConfiguration exportImportConfiguration,
+			Throwable throwable)
 		throws Exception {
 
+		if (!_log.isDebugEnabled()) {
+			return;
+		}
+
+		Map<String, Serializable> settingsMap =
+			exportImportConfiguration.getSettingsMap();
+
+		String portletId = MapUtil.getString(settingsMap, "portletId");
+
 		_log.debug(
-			"Portlet publication failed for portlet " +
-				taskContextMap.get("portletId"),
-			throwable);
+			"Portlet publication failed for portlet " + portletId, throwable);
 	}
 
 	@Override
 	protected void onPortletPublicationStarted(
-			Map<String, Serializable> taskContextMap)
+			ExportImportConfiguration exportImportConfiguration)
 		throws Exception {
 
-		_log.debug(
-			"Portlet publication started for portlet " +
-				taskContextMap.get("portletId"));
+		if (!_log.isDebugEnabled()) {
+			return;
+		}
+
+		Map<String, Serializable> settingsMap =
+			exportImportConfiguration.getSettingsMap();
+
+		String portletId = MapUtil.getString(settingsMap, "portletId");
+
+		_log.debug("Portlet publication started for portlet " + portletId);
 	}
 
 	@Override
 	protected void onPortletPublicationSucceeded(
-			Map<String, Serializable> taskContextMap)
+			ExportImportConfiguration exportImportConfiguration)
 		throws Exception {
 
-		_log.debug(
-			"Portlet publication succeeded for portlet " +
-				taskContextMap.get("portletId"));
+		if (!_log.isDebugEnabled()) {
+			return;
+		}
+
+		Map<String, Serializable> settingsMap =
+			exportImportConfiguration.getSettingsMap();
+
+		String portletId = MapUtil.getString(settingsMap, "portletId");
+
+		_log.debug("Portlet publication succeeded for portlet " + portletId);
 	}
 
 	@Override
@@ -266,6 +361,10 @@ public class LoggerExportImportLifecycleListener
 			PortletDataContext portletDataContext, StagedModel stagedModel,
 			Throwable throwable)
 		throws Exception {
+
+		if (!_log.isDebugEnabled()) {
+			return;
+		}
 
 		_log.debug(
 			"Staged model " + stagedModel.getStagedModelType() +
@@ -278,6 +377,10 @@ public class LoggerExportImportLifecycleListener
 			PortletDataContext portletDataContext, StagedModel stagedModel)
 		throws Exception {
 
+		if (!_log.isDebugEnabled()) {
+			return;
+		}
+
 		_log.debug(
 			"Staged model " + stagedModel.getStagedModelType() +
 				" export started");
@@ -287,6 +390,10 @@ public class LoggerExportImportLifecycleListener
 	protected void onStagedModelExportSucceeded(
 			PortletDataContext portletDataContext, StagedModel stagedModel)
 		throws Exception {
+
+		if (!_log.isDebugEnabled()) {
+			return;
+		}
 
 		_log.debug(
 			"Staged model " + stagedModel.getStagedModelType() +
@@ -299,6 +406,10 @@ public class LoggerExportImportLifecycleListener
 			Throwable throwable)
 		throws Exception {
 
+		if (!_log.isDebugEnabled()) {
+			return;
+		}
+
 		_log.debug(
 			"Staged model " + stagedModel.getStagedModelType() +
 				" import failed",
@@ -310,6 +421,10 @@ public class LoggerExportImportLifecycleListener
 			PortletDataContext portletDataContext, StagedModel stagedModel)
 		throws Exception {
 
+		if (!_log.isDebugEnabled()) {
+			return;
+		}
+
 		_log.debug(
 			"Staged model " + stagedModel.getStagedModelType() +
 				" import started");
@@ -319,6 +434,10 @@ public class LoggerExportImportLifecycleListener
 	protected void onStagedModelImportSucceeded(
 			PortletDataContext portletDataContext, StagedModel stagedModel)
 		throws Exception {
+
+		if (!_log.isDebugEnabled()) {
+			return;
+		}
 
 		_log.debug(
 			"Staged model " + stagedModel.getStagedModelType() +

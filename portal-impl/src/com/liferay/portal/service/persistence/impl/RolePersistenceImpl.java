@@ -18,7 +18,6 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.NoSuchRoleException;
 import com.liferay.portal.kernel.bean.BeanReference;
-import com.liferay.portal.kernel.cache.CacheRegistryUtil;
 import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
@@ -43,6 +42,8 @@ import com.liferay.portal.model.Role;
 import com.liferay.portal.model.impl.RoleImpl;
 import com.liferay.portal.model.impl.RoleModelImpl;
 import com.liferay.portal.security.permission.InlineSQLHelperUtil;
+import com.liferay.portal.service.ServiceContext;
+import com.liferay.portal.service.ServiceContextThreadLocal;
 import com.liferay.portal.service.persistence.GroupPersistence;
 import com.liferay.portal.service.persistence.RolePersistence;
 import com.liferay.portal.service.persistence.UserPersistence;
@@ -50,6 +51,7 @@ import com.liferay.portal.service.persistence.UserPersistence;
 import java.io.Serializable;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -8296,10 +8298,6 @@ public class RolePersistenceImpl extends BasePersistenceImpl<Role>
 	 */
 	@Override
 	public void clearCache() {
-		if (_HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE) {
-			CacheRegistryUtil.clear(RoleImpl.class.getName());
-		}
-
 		EntityCacheUtil.clearCache(RoleImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
@@ -8537,6 +8535,28 @@ public class RolePersistenceImpl extends BasePersistenceImpl<Role>
 			String uuid = PortalUUIDUtil.generate();
 
 			role.setUuid(uuid);
+		}
+
+		ServiceContext serviceContext = ServiceContextThreadLocal.getServiceContext();
+
+		Date now = new Date();
+
+		if (isNew && (role.getCreateDate() == null)) {
+			if (serviceContext == null) {
+				role.setCreateDate(now);
+			}
+			else {
+				role.setCreateDate(serviceContext.getCreateDate(now));
+			}
+		}
+
+		if (!roleModelImpl.hasSetModifiedDate()) {
+			if (serviceContext == null) {
+				role.setModifiedDate(now);
+			}
+			else {
+				role.setModifiedDate(serviceContext.getModifiedDate(now));
+			}
 		}
 
 		Session session = null;
@@ -9671,7 +9691,6 @@ public class RolePersistenceImpl extends BasePersistenceImpl<Role>
 	private static final String _ORDER_BY_ENTITY_TABLE = "Role_.";
 	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY = "No Role exists with the primary key ";
 	private static final String _NO_SUCH_ENTITY_WITH_KEY = "No Role exists with the key {";
-	private static final boolean _HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE = com.liferay.portal.util.PropsValues.HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE;
 	private static final Log _log = LogFactoryUtil.getLog(RolePersistenceImpl.class);
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(new String[] {
 				"uuid", "type"

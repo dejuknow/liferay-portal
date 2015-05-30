@@ -42,8 +42,6 @@ public class CommentManagerImplTest extends Mockito {
 		MockitoAnnotations.initMocks(this);
 
 		setUpRegistryUtil();
-
-		_commentManagerImpl = new CommentManagerImpl();
 	}
 
 	@Test
@@ -56,7 +54,7 @@ public class CommentManagerImplTest extends Mockito {
 
 		CommentManager defaultCommentManager = mock(CommentManager.class);
 
-		_commentManagerImpl.setDefaultCommentManager(defaultCommentManager);
+		_commentManagerImpl = new CommentManagerImpl(defaultCommentManager);
 
 		testAllCallsAreDelegated(defaultCommentManager);
 	}
@@ -79,7 +77,7 @@ public class CommentManagerImplTest extends Mockito {
 
 		CommentManager defaultCommentManager = mock(CommentManager.class);
 
-		_commentManagerImpl.setDefaultCommentManager(defaultCommentManager);
+		_commentManagerImpl = new CommentManagerImpl(defaultCommentManager);
 
 		testAllCallsAreDelegated(registryCommentManager);
 
@@ -124,15 +122,13 @@ public class CommentManagerImplTest extends Mockito {
 		String body = RandomTestUtil.randomString();
 		long commentId = RandomTestUtil.randomLong();
 
-		ServiceContext serviceContext = new ServiceContext();
-
 		_commentManagerImpl.addComment(
-			userId, groupId, className, classPK, body, serviceContext);
+			userId, groupId, className, classPK, body, _serviceContextFunction);
 
 		Mockito.verify(
 			commentManager
 		).addComment(
-			userId, groupId, className, classPK, body, serviceContext
+			userId, groupId, className, classPK, body, _serviceContextFunction
 		);
 
 		when(

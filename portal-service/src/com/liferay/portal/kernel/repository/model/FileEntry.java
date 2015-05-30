@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSON;
+import com.liferay.portal.kernel.repository.capabilities.Capability;
 import com.liferay.portal.kernel.util.Accessor;
 import com.liferay.portal.model.Lock;
 import com.liferay.portal.security.permission.PermissionChecker;
@@ -32,8 +33,7 @@ import java.util.List;
  */
 @JSON
 @ProviderType
-public interface FileEntry extends RepositoryModel<FileEntry> {
-
+public interface FileEntry extends RepositoryEntry, RepositoryModel<FileEntry> {
 	public static final Accessor<FileEntry, Long> FILE_ENTRY_ID_ACCESSOR =
 
 		new Accessor<FileEntry, Long>() {
@@ -87,6 +87,8 @@ public interface FileEntry extends RepositoryModel<FileEntry> {
 	public long getFileEntryId();
 
 	public String getFileName();
+
+	public List<FileShortcut> getFileShortcuts();
 
 	/**
 	 * Returns the current file version. The workflow state of the latest file
@@ -152,6 +154,9 @@ public interface FileEntry extends RepositoryModel<FileEntry> {
 
 	public int getReadCount();
 
+	public <T extends Capability> T getRepositoryCapability(
+		Class<T> capabilityClass);
+
 	public long getRepositoryId();
 
 	public long getSize();
@@ -189,6 +194,9 @@ public interface FileEntry extends RepositoryModel<FileEntry> {
 	public boolean isInTrashContainer();
 
 	public boolean isManualCheckInRequired();
+
+	public <T extends Capability> boolean isRepositoryCapabilityProvided(
+		Class<T> capabilityClass);
 
 	public boolean isSupportsLocking();
 

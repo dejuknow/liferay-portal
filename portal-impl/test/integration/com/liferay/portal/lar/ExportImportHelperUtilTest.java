@@ -23,6 +23,9 @@ import com.liferay.portal.kernel.lar.MissingReference;
 import com.liferay.portal.kernel.lar.MissingReferences;
 import com.liferay.portal.kernel.lar.PortletDataContext;
 import com.liferay.portal.kernel.lar.PortletDataContextFactoryUtil;
+import com.liferay.portal.kernel.lar.exportimportconfiguration.ExportImportConfigurationConstants;
+import com.liferay.portal.kernel.lar.exportimportconfiguration.ExportImportConfigurationSettingsMapFactory;
+import com.liferay.portal.kernel.repository.capabilities.ThumbnailCapability;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
@@ -41,6 +44,7 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Time;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
@@ -48,11 +52,13 @@ import com.liferay.portal.kernel.zip.ZipReader;
 import com.liferay.portal.kernel.zip.ZipReaderFactoryUtil;
 import com.liferay.portal.kernel.zip.ZipWriter;
 import com.liferay.portal.kernel.zip.ZipWriterFactoryUtil;
+import com.liferay.portal.model.ExportImportConfiguration;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Layout;
 import com.liferay.portal.model.StagedModel;
 import com.liferay.portal.model.User;
-import com.liferay.portal.repository.liferayrepository.model.LiferayFileEntry;
+import com.liferay.portal.service.ExportImportConfigurationLocalServiceUtil;
+import com.liferay.portal.service.ExportImportLocalServiceUtil;
 import com.liferay.portal.service.GroupLocalServiceUtil;
 import com.liferay.portal.service.LayoutLocalServiceUtil;
 import com.liferay.portal.service.ServiceContext;
@@ -62,15 +68,14 @@ import com.liferay.portal.util.PortalImpl;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.util.test.LayoutTestUtil;
-import com.liferay.portlet.documentlibrary.model.DLFileEntry;
 import com.liferay.portlet.documentlibrary.model.DLFolderConstants;
 import com.liferay.portlet.documentlibrary.service.DLAppLocalServiceUtil;
-import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalServiceUtil;
 import com.liferay.portlet.journal.model.JournalArticle;
 import com.liferay.portlet.journal.util.test.JournalTestUtil;
 
 import java.io.File;
 import java.io.InputStream;
+import java.io.Serializable;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -122,13 +127,11 @@ public class ExportImportHelperUtilTest extends PowerMockito {
 			RandomTestUtil.randomString() + ".txt", ContentTypes.TEXT_PLAIN,
 			RandomTestUtil.randomBytes(), serviceContext);
 
-		LiferayFileEntry liferayFileEntry = (LiferayFileEntry)_fileEntry;
+		ThumbnailCapability thumbnailCapability =
+			_fileEntry.getRepositoryCapability(ThumbnailCapability.class);
 
-		DLFileEntry dlFileEntry = liferayFileEntry.getDLFileEntry();
-
-		dlFileEntry.setLargeImageId(dlFileEntry.getFileEntryId());
-
-		DLFileEntryLocalServiceUtil.updateDLFileEntry(dlFileEntry);
+		_fileEntry = thumbnailCapability.setLargeImageId(
+			_fileEntry, _fileEntry.getFileEntryId());
 
 		TestReaderWriter testReaderWriter = new TestReaderWriter();
 
@@ -697,14 +700,31 @@ public class ExportImportHelperUtilTest extends PowerMockito {
 		List<Layout> layouts = LayoutLocalServiceUtil.getLayouts(
 			_stagingGroup.getGroupId(), privateLayout);
 
-		File larFile = LayoutLocalServiceUtil.exportLayoutsAsFile(
-			_stagingGroup.getGroupId(), privateLayout,
-			ExportImportHelperUtil.getLayoutIds(layouts),
-			new HashMap<String, String[]>(), null, null);
+		User user = TestPropsValues.getUser();
 
-		LayoutLocalServiceUtil.importLayouts(
-			TestPropsValues.getUserId(), _liveGroup.getGroupId(), privateLayout,
-			new HashMap<String, String[]>(), larFile);
+		Map<String, Serializable> settingsMap =
+			ExportImportConfigurationSettingsMapFactory.buildSettingsMap(
+				user.getUserId(), _stagingGroup.getGroupId(),
+				_liveGroup.getGroupId(), privateLayout,
+				ExportImportHelperUtil.getLayoutIds(layouts),
+				new HashMap<String, String[]>(), user.getLocale(),
+				user.getTimeZone());
+
+		ExportImportConfiguration exportImportConfiguration =
+			ExportImportConfigurationLocalServiceUtil.
+				addExportImportConfiguration(
+					user.getUserId(), _stagingGroup.getGroupId(),
+					StringPool.BLANK, StringPool.BLANK,
+					ExportImportConfigurationConstants.
+						TYPE_PUBLISH_LAYOUT_LOCAL,
+					settingsMap, WorkflowConstants.STATUS_DRAFT,
+					new ServiceContext());
+
+		File larFile = ExportImportLocalServiceUtil.exportLayoutsAsFile(
+			exportImportConfiguration);
+
+		ExportImportLocalServiceUtil.importLayouts(
+			exportImportConfiguration, larFile);
 	}
 
 	protected String getContent(String fileName) throws Exception {

@@ -33,9 +33,9 @@
 	<bean id="serviceAdvice" class="com.liferay.portal.spring.aop.SkipAdvice">
 		<property name="nextMethodInterceptor" ref="accessControlAdvice" />
 	</bean>
-	<bean id="accessControlAdvice" class="com.liferay.portal.security.ac.AccessControlAdvice">
+	<bean id="accessControlAdvice" class="com.liferay.portal.security.access.control.AccessControlAdvice">
 		<property name="accessControlAdvisor">
-			<bean class="com.liferay.portal.security.ac.AccessControlAdvisorImpl" />
+			<bean class="com.liferay.portal.security.access.control.AccessControlAdvisorImpl" />
 		</property>
 		<property name="nextMethodInterceptor" ref="portalResiliencyAdvice" />
 	</bean>
@@ -85,8 +85,8 @@
 	<bean class="com.liferay.portal.transaction.TransactionLifecycleManagerInitializer">
 		<property name="transactionLifecycleListeners">
 			<list>
-				<util:constant static-field="com.liferay.portal.cache.transactional.TransactionalPortalCacheHelper.TRANSACTION_LIFECYCLE_LISTENER" />
 				<util:constant static-field="com.liferay.portal.kernel.cache.ThreadLocalCacheManager.TRANSACTION_LIFECYCLE_LISTENER" />
+				<util:constant static-field="com.liferay.portal.kernel.cache.transactional.TransactionalPortalCacheHelper.TRANSACTION_LIFECYCLE_LISTENER" />
 				<util:constant static-field="com.liferay.portal.spring.hibernate.LastSessionRecorderUtil.TRANSACTION_LIFECYCLE_LISTENER" />
 				<util:constant static-field="com.liferay.portal.spring.transaction.TransactionCommitCallbackUtil.TRANSACTION_LIFECYCLE_LISTENER" />
 			</list>

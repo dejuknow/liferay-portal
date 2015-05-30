@@ -51,7 +51,7 @@ DLPortletInstanceSettingsHelper dlPortletInstanceSettingsHelper = new DLPortletI
 	/>
 
 	<div class="form-search">
-		<liferay-ui:input-search autoFocus="<%= windowState.equals(WindowState.MAXIMIZED) %>" placeholder='<%= LanguageUtil.get(locale, "keywords") %>' title='<%= LanguageUtil.get(locale, "search-documents") %>' />
+		<liferay-ui:input-search autoFocus="<%= windowState.equals(WindowState.MAXIMIZED) %>" placeholder='<%= LanguageUtil.get(request, "keywords") %>' title='<%= LanguageUtil.get(request, "search-documents") %>' />
 	</div>
 
 	<br /><br />
@@ -156,7 +156,7 @@ DLPortletInstanceSettingsHelper dlPortletInstanceSettingsHelper = new DLPortletI
 				<c:when test="<%= fileEntry != null %>">
 
 					<%
-					request.setAttribute("view_file_entry.jsp-fileEntry", fileEntry);
+					request.setAttribute("search.jsp-fileEntry", fileEntry);
 					%>
 
 					<portlet:renderURL var="rowURL">

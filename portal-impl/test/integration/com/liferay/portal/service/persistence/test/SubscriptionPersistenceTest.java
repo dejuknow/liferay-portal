@@ -36,7 +36,6 @@ import com.liferay.portal.service.persistence.SubscriptionPersistence;
 import com.liferay.portal.service.persistence.SubscriptionUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PersistenceTestRule;
-import com.liferay.portal.util.PropsValues;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -221,18 +220,11 @@ public class SubscriptionPersistenceTest {
 		Assert.assertEquals(existingSubscription, newSubscription);
 	}
 
-	@Test
+	@Test(expected = NoSuchSubscriptionException.class)
 	public void testFindByPrimaryKeyMissing() throws Exception {
 		long pk = RandomTestUtil.nextLong();
 
-		try {
-			_persistence.findByPrimaryKey(pk);
-
-			Assert.fail(
-				"Missing entity did not throw NoSuchSubscriptionException");
-		}
-		catch (NoSuchSubscriptionException nsee) {
-		}
+		_persistence.findByPrimaryKey(pk);
 	}
 
 	@Test
@@ -447,10 +439,6 @@ public class SubscriptionPersistenceTest {
 
 	@Test
 	public void testResetOriginalValues() throws Exception {
-		if (!PropsValues.HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE) {
-			return;
-		}
-
 		Subscription newSubscription = addSubscription();
 
 		_persistence.clearCache();

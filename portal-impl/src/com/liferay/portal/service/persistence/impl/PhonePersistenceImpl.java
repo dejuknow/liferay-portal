@@ -17,7 +17,6 @@ package com.liferay.portal.service.persistence.impl;
 import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.NoSuchPhoneException;
-import com.liferay.portal.kernel.cache.CacheRegistryUtil;
 import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
@@ -38,11 +37,14 @@ import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.Phone;
 import com.liferay.portal.model.impl.PhoneImpl;
 import com.liferay.portal.model.impl.PhoneModelImpl;
+import com.liferay.portal.service.ServiceContext;
+import com.liferay.portal.service.ServiceContextThreadLocal;
 import com.liferay.portal.service.persistence.PhonePersistence;
 
 import java.io.Serializable;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -3804,10 +3806,6 @@ public class PhonePersistenceImpl extends BasePersistenceImpl<Phone>
 	 */
 	@Override
 	public void clearCache() {
-		if (_HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE) {
-			CacheRegistryUtil.clear(PhoneImpl.class.getName());
-		}
-
 		EntityCacheUtil.clearCache(PhoneImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
@@ -3956,6 +3954,28 @@ public class PhonePersistenceImpl extends BasePersistenceImpl<Phone>
 			String uuid = PortalUUIDUtil.generate();
 
 			phone.setUuid(uuid);
+		}
+
+		ServiceContext serviceContext = ServiceContextThreadLocal.getServiceContext();
+
+		Date now = new Date();
+
+		if (isNew && (phone.getCreateDate() == null)) {
+			if (serviceContext == null) {
+				phone.setCreateDate(now);
+			}
+			else {
+				phone.setCreateDate(serviceContext.getCreateDate(now));
+			}
+		}
+
+		if (!phoneModelImpl.hasSetModifiedDate()) {
+			if (serviceContext == null) {
+				phone.setModifiedDate(now);
+			}
+			else {
+				phone.setModifiedDate(serviceContext.getModifiedDate(now));
+			}
 		}
 
 		Session session = null;
@@ -4537,7 +4557,6 @@ public class PhonePersistenceImpl extends BasePersistenceImpl<Phone>
 	private static final String _ORDER_BY_ENTITY_ALIAS = "phone.";
 	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY = "No Phone exists with the primary key ";
 	private static final String _NO_SUCH_ENTITY_WITH_KEY = "No Phone exists with the key {";
-	private static final boolean _HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE = com.liferay.portal.util.PropsValues.HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE;
 	private static final Log _log = LogFactoryUtil.getLog(PhonePersistenceImpl.class);
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(new String[] {
 				"uuid", "number", "primary"

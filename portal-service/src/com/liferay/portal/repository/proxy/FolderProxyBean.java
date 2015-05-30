@@ -15,7 +15,6 @@
 package com.liferay.portal.repository.proxy;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.StagedModelType;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.repository.model.RepositoryModelOperation;
@@ -42,25 +41,7 @@ public class FolderProxyBean
 
 	@Override
 	public Object clone() {
-		FolderProxyBean folderProxyBean = newFolderProxyBean(_folder);
-
-		folderProxyBean.setCompanyId(getCompanyId());
-		folderProxyBean.setCreateDate(getCreateDate());
-		folderProxyBean.setGroupId(getGroupId());
-		folderProxyBean.setModifiedDate(getModifiedDate());
-		folderProxyBean.setPrimaryKeyObj(getPrimaryKeyObj());
-		folderProxyBean.setUserId(getUserId());
-		folderProxyBean.setUserName(getUserName());
-
-		try {
-			folderProxyBean.setUserUuid(getUserUuid());
-		}
-		catch (SystemException se) {
-		}
-
-		folderProxyBean.setUuid(getUuid());
-
-		return folderProxyBean;
+		return newFolderProxyBean(_folder);
 	}
 
 	@Override

@@ -18,6 +18,7 @@ import com.liferay.portal.LocaleException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.lar.ExportImportClassedModelUtil;
 import com.liferay.portal.kernel.lar.ExportImportDateUtil;
+import com.liferay.portal.kernel.lar.ExportImportThreadLocal;
 import com.liferay.portal.kernel.lar.PortletDataHandler;
 import com.liferay.portal.kernel.lar.PortletDataHandlerKeys;
 import com.liferay.portal.kernel.lar.exportimportconfiguration.ExportImportConfigurationConstants;
@@ -37,8 +38,8 @@ import com.liferay.portal.model.Portlet;
 import com.liferay.portal.model.StagedModel;
 import com.liferay.portal.model.User;
 import com.liferay.portal.service.ExportImportConfigurationLocalServiceUtil;
+import com.liferay.portal.service.ExportImportLocalServiceUtil;
 import com.liferay.portal.service.GroupLocalServiceUtil;
-import com.liferay.portal.service.LayoutLocalServiceUtil;
 import com.liferay.portal.service.PortletLocalServiceUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.util.PortalUtil;
@@ -50,7 +51,7 @@ import com.liferay.portlet.asset.service.AssetEntryLocalServiceUtil;
 import com.liferay.portlet.asset.service.AssetLinkLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
 import com.liferay.portlet.dynamicdatamapping.util.test.DDMTemplateTestUtil;
-import com.liferay.portlet.portletdisplaytemplate.util.PortletDisplayTemplate;
+import com.liferay.portlet.portletdisplaytemplate.util.PortletDisplayTemplateUtil;
 
 import java.io.Serializable;
 
@@ -313,34 +314,42 @@ public abstract class BasePortletExportImportTestCase
 					settingsMap, WorkflowConstants.STATUS_DRAFT,
 					new ServiceContext());
 
-		larFile = LayoutLocalServiceUtil.exportPortletInfoAsFile(
-			exportImportConfiguration);
+		ExportImportThreadLocal.setPortletStagingInProcess(true);
 
-		importedLayout = LayoutTestUtil.addLayout(importedGroup);
+		try {
+			larFile = ExportImportLocalServiceUtil.exportPortletInfoAsFile(
+				exportImportConfiguration);
 
-		MapUtil.merge(getImportParameterMap(), importParameterMap);
+			importedLayout = LayoutTestUtil.addLayout(importedGroup);
 
-		settingsMap =
-			ExportImportConfigurationSettingsMapFactory.buildImportSettingsMap(
-				user.getUserId(), importedLayout.getPlid(),
-				importedGroup.getGroupId(), portletId, importParameterMap,
-				StringPool.BLANK, user.getLocale(), user.getTimeZone(),
-				StringPool.BLANK);
+			MapUtil.merge(getImportParameterMap(), importParameterMap);
 
-		exportImportConfiguration =
-			ExportImportConfigurationLocalServiceUtil.
-				addExportImportConfiguration(
-					user.getUserId(), importedGroup.getGroupId(),
-					StringPool.BLANK, StringPool.BLANK,
-					ExportImportConfigurationConstants.TYPE_IMPORT_PORTLET,
-					settingsMap, WorkflowConstants.STATUS_DRAFT,
-					new ServiceContext());
+			settingsMap =
+				ExportImportConfigurationSettingsMapFactory.
+					buildImportSettingsMap(
+						user.getUserId(), importedLayout.getPlid(),
+						importedGroup.getGroupId(), portletId,
+						importParameterMap, StringPool.BLANK, user.getLocale(),
+						user.getTimeZone(), StringPool.BLANK);
 
-		LayoutLocalServiceUtil.importPortletDataDeletions(
-			exportImportConfiguration, larFile);
+			exportImportConfiguration =
+				ExportImportConfigurationLocalServiceUtil.
+					addExportImportConfiguration(
+						user.getUserId(), importedGroup.getGroupId(),
+						StringPool.BLANK, StringPool.BLANK,
+						ExportImportConfigurationConstants.TYPE_IMPORT_PORTLET,
+						settingsMap, WorkflowConstants.STATUS_DRAFT,
+						new ServiceContext());
 
-		LayoutLocalServiceUtil.importPortletInfo(
-			exportImportConfiguration, larFile);
+			ExportImportLocalServiceUtil.importPortletDataDeletions(
+				exportImportConfiguration, larFile);
+
+			ExportImportLocalServiceUtil.importPortletInfo(
+				exportImportConfiguration, larFile);
+		}
+		finally {
+			ExportImportThreadLocal.setPortletStagingInProcess(false);
+		}
 	}
 
 	protected AssetEntry getAssetEntry(StagedModel stagedModel)
@@ -432,9 +441,8 @@ public abstract class BasePortletExportImportTestCase
 
 		Map<String, String[]> preferenceMap = new HashMap<>();
 
-		String displayStyle =
-			PortletDisplayTemplate.DISPLAY_STYLE_PREFIX +
-				ddmTemplate.getTemplateKey();
+		String displayStyle = PortletDisplayTemplateUtil.getDisplayStyle(
+			ddmTemplate.getTemplateKey());
 
 		preferenceMap.put("displayStyle", new String[] {displayStyle});
 

@@ -57,6 +57,8 @@ create table DDMTemplateVersion (
 	userId LONG,
 	userName VARCHAR(75) null,
 	createDate DATE null,
+	classNameId LONG,
+	classPK LONG,
 	templateId LONG,
 	version VARCHAR(75) null,
 	name STRING null,
@@ -64,6 +66,10 @@ create table DDMTemplateVersion (
 	language VARCHAR(75) null,
 	script TEXT null
 );
+
+alter table DLFileEntryMetadata drop column fileEntryTypeId;
+
+drop index IX_F8E90438 on DLFileEntryMetadata;
 
 alter table DLFolder add restrictionType INTEGER;
 

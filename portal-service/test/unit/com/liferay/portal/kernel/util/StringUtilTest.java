@@ -16,6 +16,7 @@ package com.liferay.portal.kernel.util;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -51,6 +52,28 @@ public class StringUtilTest {
 		Assert.assertEquals(
 			"Hello (World) (Liferay)",
 			StringUtil.appendParentheticalSuffix("Hello (World)", "Liferay"));
+	}
+
+	@Test
+	public void testBytesToHexString() {
+		Random random = new Random();
+
+		byte[] data = new byte[1024];
+
+		random.nextBytes(data);
+
+		String hexString = StringUtil.bytesToHexString(data);
+
+		Assert.assertEquals(data.length * 2, hexString.length());
+
+		for (int i = 0; i < data.length; i++) {
+			Assert.assertEquals(
+				hexString.charAt(i * 2),
+				StringUtil.HEX_DIGITS[(data[i] & 0xFF) >> 4]);
+			Assert.assertEquals(
+				hexString.charAt(i * 2 + 1),
+				StringUtil.HEX_DIGITS[data[i] & 0x0F]);
+		}
 	}
 
 	@Test
@@ -403,6 +426,14 @@ public class StringUtilTest {
 	@Test
 	public void testStripChar() {
 		Assert.assertEquals("abcd", StringUtil.strip(" a b  c   d", ' '));
+	}
+
+	@Test
+	public void testStripCharArray() {
+		Assert.assertEquals(
+			"HeoWor",
+			StringUtil.strip(
+				"Hello World", new char[] {CharPool.SPACE, 'l', 'd'}));
 	}
 
 	@Test

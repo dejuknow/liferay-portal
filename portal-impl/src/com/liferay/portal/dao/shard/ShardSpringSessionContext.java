@@ -15,8 +15,10 @@
 package com.liferay.portal.dao.shard;
 
 import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
+import com.liferay.portal.kernel.dao.shard.ShardSessionFactoryTargetSource;
 
 import org.hibernate.HibernateException;
+import org.hibernate.SessionFactory;
 import org.hibernate.classic.Session;
 import org.hibernate.engine.SessionFactoryImplementor;
 
@@ -43,7 +45,9 @@ public class ShardSpringSessionContext extends SpringSessionContext {
 			}
 
 			return (Session)SessionFactoryUtils.doGetSession(
-				_shardSessionFactoryTargetSource.getSessionFactory(), false);
+				(SessionFactory)
+					_shardSessionFactoryTargetSource.getSessionFactory(),
+				false);
 		}
 		catch (IllegalStateException ise) {
 			throw new HibernateException(ise);

@@ -108,38 +108,6 @@ public class DLAppServiceSoap {
 	}
 
 	/**
-	* Adds a file shortcut to the existing file entry. This method is only
-	* supported by the Liferay repository.
-	*
-	* @param repositoryId the primary key of the repository
-	* @param folderId the primary key of the file shortcut's parent folder
-	* @param toFileEntryId the primary key of the file shortcut's file entry
-	* @param serviceContext the service context to be applied. Can set the
-	asset category IDs, asset tag names, and expando bridge
-	attributes for the file entry.
-	* @return the file shortcut
-	* @throws PortalException if the parent folder or file entry could not be
-	found, or if the file shortcut's information was invalid
-	*/
-	public static com.liferay.portlet.documentlibrary.model.DLFileShortcutSoap addFileShortcut(
-		long repositoryId, long folderId, long toFileEntryId,
-		com.liferay.portal.service.ServiceContext serviceContext)
-		throws RemoteException {
-		try {
-			com.liferay.portlet.documentlibrary.model.DLFileShortcut returnValue =
-				DLAppServiceUtil.addFileShortcut(repositoryId, folderId,
-					toFileEntryId, serviceContext);
-
-			return com.liferay.portlet.documentlibrary.model.DLFileShortcutSoap.toSoapModel(returnValue);
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-
-			throw new RemoteException(e.getMessage());
-		}
-	}
-
-	/**
 	* Adds a folder.
 	*
 	* @param repositoryId the primary key of the repository
@@ -572,7 +540,7 @@ public class DLAppServiceSoap {
 	}
 
 	/**
-	* Returns a range of all the file entries in the folder.
+	* Returns a name-ordered range of all the file entries in the folder.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end -
@@ -588,7 +556,7 @@ public class DLAppServiceSoap {
 	* @param folderId the primary key of the file entry's folder
 	* @param start the lower bound of the range of results
 	* @param end the upper bound of the range of results (not inclusive)
-	* @return the range of file entries in the folder
+	* @return the name-ordered range of file entries in the folder
 	* @throws PortalException if the folder could not be found
 	*/
 	public static com.liferay.portal.kernel.repository.model.FileEntrySoap[] getFileEntries(
@@ -676,15 +644,15 @@ public class DLAppServiceSoap {
 	}
 
 	/**
-	* Returns a range of all the file entries with the file entry type in the
-	* folder.
+	* Returns a name-ordered range of all the file entries with the file entry
+	* type in the folder.
 	*
 	* @param repositoryId the primary key of the file entry's repository
 	* @param folderId the primary key of the file entry's folder
 	* @param fileEntryTypeId the primary key of the file entry type
 	* @param start the lower bound of the range of results
 	* @param end the upper bound of the range of results (not inclusive)
-	* @return the file entries in the folder
+	* @return the name-ordered range of the file entries in the folder
 	* @throws PortalException if the folder could not be found
 	*/
 	public static com.liferay.portal.kernel.repository.model.FileEntrySoap[] getFileEntries(
@@ -957,29 +925,6 @@ public class DLAppServiceSoap {
 	}
 
 	/**
-	* Returns the file shortcut with the primary key. This method is only
-	* supported by the Liferay repository.
-	*
-	* @param fileShortcutId the primary key of the file shortcut
-	* @return the file shortcut with the primary key
-	* @throws PortalException if the file shortcut could not be found
-	*/
-	public static com.liferay.portlet.documentlibrary.model.DLFileShortcutSoap getFileShortcut(
-		long fileShortcutId) throws RemoteException {
-		try {
-			com.liferay.portlet.documentlibrary.model.DLFileShortcut returnValue =
-				DLAppServiceUtil.getFileShortcut(fileShortcutId);
-
-			return com.liferay.portlet.documentlibrary.model.DLFileShortcutSoap.toSoapModel(returnValue);
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-
-			throw new RemoteException(e.getMessage());
-		}
-	}
-
-	/**
 	* Returns the folder with the primary key.
 	*
 	* @param folderId the primary key of the folder
@@ -1077,8 +1022,9 @@ public class DLAppServiceSoap {
 	}
 
 	/**
-	* Returns a range of all the immediate subfolders of the parent folder,
-	* optionally including mount folders for third-party repositories.
+	* Returns a name-ordered range of all the immediate subfolders of the
+	* parent folder, optionally including mount folders for third-party
+	* repositories.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end -
@@ -1096,7 +1042,8 @@ public class DLAppServiceSoap {
 	third-party repositories
 	* @param start the lower bound of the range of results
 	* @param end the upper bound of the range of results (not inclusive)
-	* @return the range of immediate subfolders of the parent folder
+	* @return the name-ordered range of immediate subfolders of the parent
+	folder
 	* @throws PortalException if the parent folder could not be found
 	*/
 	public static com.liferay.portal.kernel.repository.model.FolderSoap[] getFolders(
@@ -1208,7 +1155,8 @@ public class DLAppServiceSoap {
 	}
 
 	/**
-	* Returns a range of all the immediate subfolders of the parent folder.
+	* Returns a name-ordered range of all the immediate subfolders of the
+	* parent folder.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end -
@@ -1224,7 +1172,8 @@ public class DLAppServiceSoap {
 	* @param parentFolderId the primary key of the folder's parent folder
 	* @param start the lower bound of the range of results
 	* @param end the upper bound of the range of results (not inclusive)
-	* @return the range of immediate subfolders of the parent folder
+	* @return the name-ordered range of immediate subfolders of the parent
+	folder
 	* @throws PortalException if the parent folder could not be found
 	*/
 	public static com.liferay.portal.kernel.repository.model.FolderSoap[] getFolders(
@@ -1730,9 +1679,9 @@ public class DLAppServiceSoap {
 	}
 
 	/**
-	* Returns a range of all the immediate subfolders of the parent folder that
-	* are used for mounting third-party repositories. This method is only
-	* supported by the Liferay repository.
+	* Returns a name-ordered range of all the immediate subfolders of the
+	* parent folder that are used for mounting third-party repositories. This
+	* method is only supported by the Liferay repository.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end -
@@ -1748,8 +1697,8 @@ public class DLAppServiceSoap {
 	* @param parentFolderId the primary key of the parent folder
 	* @param start the lower bound of the range of results
 	* @param end the upper bound of the range of results (not inclusive)
-	* @return the range of immediate subfolders of the parent folder that are
-	used for mounting third-party repositories
+	* @return the name-ordered range of immediate subfolders of the parent
+	folder that are used for mounting third-party repositories
 	* @throws PortalException if the repository or parent folder could not be
 	found
 	*/
@@ -1999,56 +1948,6 @@ public class DLAppServiceSoap {
 			com.liferay.portal.kernel.repository.model.FileEntry returnValue = DLAppServiceUtil.moveFileEntryToTrash(fileEntryId);
 
 			return com.liferay.portal.kernel.repository.model.FileEntrySoap.toSoapModel(returnValue);
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-
-			throw new RemoteException(e.getMessage());
-		}
-	}
-
-	/**
-	* Moves the file shortcut from a trashed folder to the new folder.
-	*
-	* @param fileShortcutId the primary key of the file shortcut
-	* @param newFolderId the primary key of the new folder
-	* @param serviceContext the service context to be applied
-	* @return the file shortcut
-	* @throws PortalException if the file entry or the new folder could not be
-	found
-	*/
-	public static com.liferay.portlet.documentlibrary.model.DLFileShortcutSoap moveFileShortcutFromTrash(
-		long fileShortcutId, long newFolderId,
-		com.liferay.portal.service.ServiceContext serviceContext)
-		throws RemoteException {
-		try {
-			com.liferay.portlet.documentlibrary.model.DLFileShortcut returnValue =
-				DLAppServiceUtil.moveFileShortcutFromTrash(fileShortcutId,
-					newFolderId, serviceContext);
-
-			return com.liferay.portlet.documentlibrary.model.DLFileShortcutSoap.toSoapModel(returnValue);
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-
-			throw new RemoteException(e.getMessage());
-		}
-	}
-
-	/**
-	* Moves the file shortcut with the primary key to the trash portlet.
-	*
-	* @param fileShortcutId the primary key of the file shortcut
-	* @return the file shortcut
-	* @throws PortalException if the file shortcut could not be found
-	*/
-	public static com.liferay.portlet.documentlibrary.model.DLFileShortcutSoap moveFileShortcutToTrash(
-		long fileShortcutId) throws RemoteException {
-		try {
-			com.liferay.portlet.documentlibrary.model.DLFileShortcut returnValue =
-				DLAppServiceUtil.moveFileShortcutToTrash(fileShortcutId);
-
-			return com.liferay.portlet.documentlibrary.model.DLFileShortcutSoap.toSoapModel(returnValue);
 		}
 		catch (Exception e) {
 			_log.error(e, e);
@@ -2417,38 +2316,6 @@ public class DLAppServiceSoap {
 					majorVersion, bytes, serviceContext);
 
 			return com.liferay.portal.kernel.repository.model.FileEntrySoap.toSoapModel(returnValue);
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-
-			throw new RemoteException(e.getMessage());
-		}
-	}
-
-	/**
-	* Updates a file shortcut to the existing file entry. This method is only
-	* supported by the Liferay repository.
-	*
-	* @param fileShortcutId the primary key of the file shortcut
-	* @param folderId the primary key of the file shortcut's parent folder
-	* @param toFileEntryId the primary key of the file shortcut's file entry
-	* @param serviceContext the service context to be applied. Can set the
-	asset category IDs, asset tag names, and expando bridge
-	attributes for the file entry.
-	* @return the file shortcut
-	* @throws PortalException if the file shortcut, folder, or file entry could
-	not be found
-	*/
-	public static com.liferay.portlet.documentlibrary.model.DLFileShortcutSoap updateFileShortcut(
-		long fileShortcutId, long folderId, long toFileEntryId,
-		com.liferay.portal.service.ServiceContext serviceContext)
-		throws RemoteException {
-		try {
-			com.liferay.portlet.documentlibrary.model.DLFileShortcut returnValue =
-				DLAppServiceUtil.updateFileShortcut(fileShortcutId, folderId,
-					toFileEntryId, serviceContext);
-
-			return com.liferay.portlet.documentlibrary.model.DLFileShortcutSoap.toSoapModel(returnValue);
 		}
 		catch (Exception e) {
 			_log.error(e, e);

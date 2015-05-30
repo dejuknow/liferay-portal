@@ -8,7 +8,7 @@
 		</layout>
 	</appender>
 
-	<category name="com.liferay.portal.dao.shard.ShardDataSourceTargetSource">
+	<category name="com.liferay.portal.dao.shard.DefaultShardDataSourceTargetSource">
 		<priority value="INFO" />
 	</category>
 

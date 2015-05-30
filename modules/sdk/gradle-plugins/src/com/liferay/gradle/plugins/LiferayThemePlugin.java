@@ -19,9 +19,9 @@ import com.liferay.gradle.plugins.extensions.LiferayThemeExtension;
 import com.liferay.gradle.plugins.tasks.BuildCssTask;
 import com.liferay.gradle.plugins.tasks.BuildThumbnailsTask;
 import com.liferay.gradle.plugins.tasks.CompileThemeTask;
-import com.liferay.gradle.plugins.util.FileUtil;
-import com.liferay.gradle.plugins.util.GradleUtil;
-import com.liferay.gradle.plugins.util.Validator;
+import com.liferay.gradle.util.FileUtil;
+import com.liferay.gradle.util.GradleUtil;
+import com.liferay.gradle.util.Validator;
 
 import java.io.File;
 
@@ -84,20 +84,16 @@ public class LiferayThemePlugin extends LiferayWebAppPlugin {
 	}
 
 	@Override
-	protected void addTasks(
-		Project project, LiferayExtension liferayExtension) {
-
-		super.addTasks(project, liferayExtension);
+	protected void addTasks(Project project) {
+		super.addTasks(project);
 
 		addTaskBuildThumbnails(project);
 		addTaskCompileTheme(project);
 	}
 
 	@Override
-	protected void configureDependenciesCompile(
-		Project project, LiferayExtension liferayExtension) {
-
-		super.configureDependenciesCompile(project, liferayExtension);
+	protected void configureDependenciesCompile(Project project) {
+		super.configureDependenciesCompile(project);
 
 		if (hasJavaSources(project)) {
 			for (String dependencyNotation :
@@ -111,10 +107,8 @@ public class LiferayThemePlugin extends LiferayWebAppPlugin {
 	}
 
 	@Override
-	protected void configureDependenciesProvidedCompile(
-		Project project, LiferayExtension liferayExtension) {
-
-		super.configureDependenciesProvidedCompile(project, liferayExtension);
+	protected void configureDependenciesProvidedCompile(Project project) {
+		super.configureDependenciesProvidedCompile(project);
 
 		if (hasJavaSources(project)) {
 			GradleUtil.removeDependencies(
@@ -272,9 +266,7 @@ public class LiferayThemePlugin extends LiferayWebAppPlugin {
 			String relativeDiffsDir = FileUtil.relativize(
 				diffsDir, getWebAppDir(project));
 
-			if (Validator.isNotNull(relativeDiffsDir)) {
-				war.exclude(relativeDiffsDir + "/**");
-			}
+			war.exclude(relativeDiffsDir + "/**");
 		}
 	}
 

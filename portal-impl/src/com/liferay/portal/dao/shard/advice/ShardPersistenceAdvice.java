@@ -16,8 +16,8 @@ package com.liferay.portal.dao.shard.advice;
 
 import com.liferay.counter.service.persistence.CounterFinder;
 import com.liferay.counter.service.persistence.CounterPersistence;
-import com.liferay.portal.dao.shard.ShardDataSourceTargetSource;
-import com.liferay.portal.dao.shard.ShardSessionFactoryTargetSource;
+import com.liferay.portal.kernel.dao.shard.ShardDataSourceTargetSource;
+import com.liferay.portal.kernel.dao.shard.ShardSessionFactoryTargetSource;
 import com.liferay.portal.kernel.dao.shard.ShardUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;

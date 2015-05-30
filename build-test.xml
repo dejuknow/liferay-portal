@@ -40,7 +40,6 @@
 			<if>
 				<not>
 					<or>
-						<equals arg1="${app.server.type}" arg2="geronimo" />
 						<equals arg1="${app.server.type}" arg2="glassfish" />
 						<equals arg1="${app.server.type}" arg2="jboss" />
 						<equals arg1="${app.server.type}" arg2="jetty" />
@@ -53,7 +52,7 @@
 					</or>
 				</not>
 				<then>
-					<fail>Please set "app.server.type" to one of the following:${line.separator}geronimo, glassfish, jboss, jetty, jonas, resin, tcserver, tomcat, weblogic, or websphere.</fail>
+					<fail>Please set "app.server.type" to one of the following:${line.separator}, glassfish, jboss, jetty, jonas, resin, tcserver, tomcat, weblogic, or websphere.</fail>
 				</then>
 			</if>
 
@@ -1039,11 +1038,33 @@
 
 	<macrodef name="setup-testable-tomcat">
 		<sequential>
+			<setup-testable-tomcat-logging />
+
 			<setup-testable-tomcat-jmx />
 
 			<setup-testable-tomcat-manager />
 
 			<setup-testable-tomcat-osgi-modules />
+		</sequential>
+	</macrodef>
+
+	<macrodef name="setup-testable-tomcat-logging">
+		<sequential>
+			<if>
+				<not>
+					<resourcecontains resource="${app.server.tomcat.dir}/conf/logging.properties" substring="org.apache.catalina.level" />
+				</not>
+				<then>
+					<echo file="${app.server.tomcat.dir}/conf/logging.properties" append="true">
+						<![CDATA[
+org.apache.catalina.level=ALL
+
+org.apache.catalina.loader.WebappClassLoader.level=INFO
+org.apache.catalina.loader.WebappLoader.level=INFO
+org.apache.catalina.startup.ClassLoaderFactory.level=INFO]]>
+					</echo>
+				</then>
+			</if>
 		</sequential>
 	</macrodef>
 
@@ -1215,7 +1236,7 @@
 			<fail message="Please set the property ${mobile.android.home}." unless="mobile.android.home" />
 
 			<execute>
-				echo no | ${mobile.android.home}/tools/android create avd -n deviceName -t android-19
+				echo no | ${mobile.android.home}/tools/android create avd -f -n deviceName -t android-19
 			</execute>
 
 			<echo file="${user.home}/.android/avd/deviceName.avd/config.ini" append="true">
@@ -3339,6 +3360,10 @@ auto.deploy.dest.dir=C:/WINDOWS/system32/config/systemprofile/liferay/websphere-
 			<equals arg1="${setup.wizard.enabled}" arg2="true" />
 			<then>
 				<replace file="portal-impl/src/portal-ext.properties" token="setup.wizard.enabled=false" value="" />
+
+				<echo append="true" file="portal-impl/src/portal-ext.properties">
+
+include-and-override=${liferay.home}/portal-setup-wizard.properties</echo>
 			</then>
 		</if>
 
@@ -3452,15 +3477,6 @@ module.framework.properties.osgi.console=11312</echo>
 			<then>
 				<echo file="portal-web/test/test-portal-web-ext.properties" append="true">
 					mobile.android.home=${mobile.android.home}
-				</echo>
-			</then>
-		</if>
-
-		<if>
-			<isset property="ignore.errors.delimiter" />
-			<then>
-				<echo file="portal-web/test/test-portal-web-ext.properties" append="true">
-					ignore.errors.delimiter=${ignore.errors.delimiter}
 				</echo>
 			</then>
 		</if>
@@ -3660,6 +3676,42 @@ module.framework.properties.osgi.console=11312</echo>
 			<then>
 				<echo file="portal-web/test/test-portal-web-ext.properties" append="true">
 					database.db2.username=${database.db2.username}
+				</echo>
+			</then>
+		</if>
+
+		<if>
+			<isset property="database.hsql.driver" />
+			<then>
+				<echo file="portal-web/test/test-portal-web-ext.properties" append="true">
+					database.hsql.driver=${database.hsql.driver}
+				</echo>
+			</then>
+		</if>
+
+		<if>
+			<isset property="database.hsql.password" />
+			<then>
+				<echo file="portal-web/test/test-portal-web-ext.properties" append="true">
+					database.hsql.password=${database.hsql.password}
+				</echo>
+			</then>
+		</if>
+
+		<if>
+			<isset property="database.hsql.url" />
+			<then>
+				<echo file="portal-web/test/test-portal-web-ext.properties" append="true">
+					database.hsql.url=${database.hsql.url}
+				</echo>
+			</then>
+		</if>
+
+		<if>
+			<isset property="database.hsql.username" />
+			<then>
+				<echo file="portal-web/test/test-portal-web-ext.properties" append="true">
+					database.hsql.username=${database.hsql.username}
 				</echo>
 			</then>
 		</if>
@@ -3928,6 +3980,42 @@ module.framework.properties.osgi.console=11312</echo>
 		</if>
 
 		<if>
+			<isset property="lcs.email.address.3" />
+			<then>
+				<echo file="portal-web/test/test-portal-web-ext.properties" append="true">
+					lcs.email.address.3=${lcs.email.address.3}
+				</echo>
+			</then>
+		</if>
+
+		<if>
+			<isset property="lcs.email.id.1" />
+			<then>
+				<echo file="portal-web/test/test-portal-web-ext.properties" append="true">
+					lcs.email.id.1=${lcs.email.id.1}
+				</echo>
+			</then>
+		</if>
+
+		<if>
+			<isset property="lcs.email.id.2" />
+			<then>
+				<echo file="portal-web/test/test-portal-web-ext.properties" append="true">
+					lcs.email.id.2=${lcs.email.id.2}
+				</echo>
+			</then>
+		</if>
+
+		<if>
+			<isset property="lcs.email.id.3" />
+			<then>
+				<echo file="portal-web/test/test-portal-web-ext.properties" append="true">
+					lcs.email.id.3=${lcs.email.id.3}
+				</echo>
+			</then>
+		</if>
+
+		<if>
 			<isset property="lcs.email.password.1" />
 			<then>
 				<echo file="portal-web/test/test-portal-web-ext.properties" append="true">
@@ -3941,6 +4029,15 @@ module.framework.properties.osgi.console=11312</echo>
 			<then>
 				<echo file="portal-web/test/test-portal-web-ext.properties" append="true">
 					lcs.email.password.2=${lcs.email.password.2}
+				</echo>
+			</then>
+		</if>
+
+		<if>
+			<isset property="lcs.email.password.3" />
+			<then>
+				<echo file="portal-web/test/test-portal-web-ext.properties" append="true">
+					lcs.email.password.3=${lcs.email.password.3}
 				</echo>
 			</then>
 		</if>
@@ -4064,6 +4161,17 @@ module.framework.properties.osgi.console=11312</echo>
 			</then>
 		</if>
 
+		<get-testcase-property property.name="ignore.errors.delimiter" />
+
+		<if>
+			<isset property="ignore.errors.delimiter" />
+			<then>
+				<echo file="portal-web/test/test-portal-web-ext.properties" append="true">
+					ignore.errors.delimiter=${ignore.errors.delimiter}
+				</echo>
+			</then>
+		</if>
+
 		<get-testcase-property property.name="mobile.device.enabled" />
 
 		<if>
@@ -4119,6 +4227,19 @@ app.server.tomcat.dir=${app.server.parent.dir}/tomcat-7.0.27</echo>
 			</then>
 		</if>
 
+		<if>
+			<or>
+				<contains string="${liferay.portal.bundle}" substring="6.2.10" />
+				<equals arg1="${liferay.portal.bundle}" arg2="6.2.2" />
+				<equals arg1="${liferay.portal.bundle}" arg2="6.2.3" />
+			</or>
+			<then>
+				<echo file="${lp.plugins.dir}/build.${user.name}.properties" append="true">
+
+app.server.tomcat.dir=${app.server.parent.dir}/tomcat-7.0.42</echo>
+			</then>
+		</if>
+
 		<property file="${lp.plugins.dir}/portlets/so-portlet/docroot/WEB-INF/liferay-releng.properties" />
 
 		<property name="plugins.includes" value="so-portlet,${dependent-apps}" />
@@ -4134,23 +4255,6 @@ app.server.tomcat.dir=${app.server.parent.dir}/tomcat-7.0.27</echo>
 		<antcall target="record-git-commit-portal" inheritAll="false" />
 
 		<antcall target="compile" inheritAll="false" />
-
-		<if>
-			<matches pattern="http" string="${test.build.bundle.geronimo.zip.url}" />
-			<then>
-				<antcall target="prepare-test-bundle">
-					<param name="app.server.type" value="geronimo" />
-					<param name="test.app.server.bin.dir" value="${app.server.geronimo.bin.dir}" />
-					<param name="test.build.bundle.zip.url" value="${test.build.bundle.geronimo.zip.url}" />
-				</antcall>
-			</then>
-			<elseif>
-				<equals arg1="${test.build.bundle.geronimo}" arg2="true" />
-				<then>
-					<ant antfile="build-dist.xml" target="build-dist-geronimo" inheritAll="false" />
-				</then>
-			</elseif>
-		</if>
 
 		<if>
 			<matches pattern="http" string="${test.build.bundle.glassfish.zip.url}" />
@@ -4301,6 +4405,31 @@ app.server.tomcat.dir=${app.server.parent.dir}/tomcat-7.0.27</echo>
 		<if>
 			<matches pattern="http" string="${test.build.bundle.tomcat.zip.url}" />
 			<then>
+				<if>
+					<equals arg1="${liferay.portal.bundle}" arg2="6.1.20" />
+					<then>
+						<echo file="app.server.${user.name}.properties" append="true">
+							app.server.tomcat.version=7.0.27
+						</echo>
+
+						<var name="app.server.tomcat.bin.dir" value="${app.server.parent.dir}/tomcat-7.0.27/bin" />
+					</then>
+					<elseif>
+						<or>
+							<contains string="${liferay.portal.bundle}" substring="6.2.10" />
+							<equals arg1="${liferay.portal.bundle}" arg2="6.2.2" />
+							<equals arg1="${liferay.portal.bundle}" arg2="6.2.3" />
+						</or>
+						<then>
+							<echo file="app.server.${user.name}.properties" append="true">
+								app.server.tomcat.version=7.0.42
+							</echo>
+
+							<var name="app.server.tomcat.bin.dir" value="${app.server.parent.dir}/tomcat-7.0.42/bin" />
+						</then>
+					</elseif>
+				</if>
+
 				<antcall target="prepare-test-bundle">
 					<param name="app.server.type" value="tomcat" />
 					<param name="test.app.server.bin.dir" value="${app.server.tomcat.bin.dir}" />
@@ -4483,22 +4612,6 @@ plugins.includes=marketplace-portlet</echo>
 				</unzip>
 
 				<delete file="${tstamp.value}.zip" />
-
-				<if>
-					<and>
-						<equals arg1="${app.server.type}" arg2="tomcat" />
-						<equals arg1="${liferay.portal.bundle}" arg2="6.1.20" />
-					</and>
-					<then>
-						<echo file="app.server.${user.name}.properties" append="true">
-							app.server.tomcat.version=7.0.27
-						</echo>
-
-						<var name="test.app.server.bin.dir" unset="true" />
-
-						<var name="test.app.server.bin.dir" value="${app.server.parent.dir}/tomcat-7.0.27/bin" />
-					</then>
-				</if>
 
 				<chmod perm="a+x">
 					<fileset dir="${test.app.server.bin.dir}">
@@ -4835,6 +4948,10 @@ cluster.link.bind.addr["cluster-link-udp"]=127.0.0.1</echo>
 				</exec>
 			</then>
 		</if>
+	</target>
+
+	<target name="record-database-type">
+		<echo file="database-type" append="true">${database.type},</echo>
 	</target>
 
 	<target name="record-git-commit-bottom-test-jsp">
@@ -5228,6 +5345,7 @@ if (ppstate.equals("normal")) {
 			<then>
 				<antcall target="rebuild-database" inheritAll="false">
 					<param name="database.type" value="mysql" />
+					<param name="delete.liferay.home" value="false" />
 				</antcall>
 
 				<echo file="portal-impl/classes/portal-ext.properties">liferay.home=${liferay.home}
@@ -5648,6 +5766,10 @@ jdbc.default.password=${database.mysql.password}</echo>
 		</if>
 	</target>
 
+	<target name="setup-testable-tomcat">
+		<setup-testable-tomcat />
+	</target>
+
 	<target name="start-app-server">
 		<if>
 			<not>
@@ -5882,6 +6004,8 @@ Please set "ie.driver.zip" in test.properties to point to "IEDriverServer_x64_2.
 		<ant dir="portal-impl" target="test-package" inheritAll="false" />
 
 		<ant dir="util-java" target="test-package" inheritAll="false" />
+
+		<ant dir="modules" target="test-package" inheritAll="false" />
 	</target>
 
 	<target name="test-unit">

@@ -22,27 +22,23 @@ import static com.liferay.portal.kernel.lar.lifecycle.ExportImportLifecycleConst
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskResult;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.lar.ExportImportDateUtil;
 import com.liferay.portal.kernel.lar.ExportImportThreadLocal;
 import com.liferay.portal.kernel.lar.MissingReferences;
 import com.liferay.portal.kernel.lar.lifecycle.ExportImportLifecycleManager;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.util.DateRange;
-import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.model.BackgroundTask;
 import com.liferay.portal.model.ExportImportConfiguration;
 import com.liferay.portal.model.Group;
+import com.liferay.portal.service.ExportImportLocalServiceUtil;
 import com.liferay.portal.service.GroupLocalServiceUtil;
-import com.liferay.portal.service.LayoutLocalServiceUtil;
 import com.liferay.portal.service.LayoutSetBranchLocalServiceUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.StagingLocalServiceUtil;
 import com.liferay.portal.spring.transaction.TransactionHandlerUtil;
-import com.liferay.portal.util.PropsValues;
 
 import java.io.File;
 import java.io.Serializable;
@@ -77,6 +73,7 @@ public class LayoutStagingBackgroundTaskExecutor
 
 		clearBackgroundTaskStatus(backgroundTask);
 
+		File file = null;
 		MissingReferences missingReferences = null;
 
 		try {
@@ -87,12 +84,23 @@ public class LayoutStagingBackgroundTaskExecutor
 				PROCESS_FLAG_LAYOUT_STAGING_IN_PROCESS,
 				exportImportConfiguration);
 
+			boolean privateLayout = MapUtil.getBoolean(
+				settingsMap, "privateLayout");
+
+			initThreadLocals(sourceGroupId, privateLayout);
+
+			file = ExportImportLocalServiceUtil.exportLayoutsAsFile(
+				exportImportConfiguration);
+
+			markBackgroundTask(
+				backgroundTask.getBackgroundTaskId(), "exported");
+
 			missingReferences = TransactionHandlerUtil.invoke(
 				transactionAttribute,
-				new LayoutStagingCallable(
+				new LayoutStagingImportCallable(
 					backgroundTask.getBackgroundTaskId(),
-					exportImportConfiguration, sourceGroupId, targetGroupId,
-					userId));
+					exportImportConfiguration, file, sourceGroupId,
+					targetGroupId, userId));
 
 			ExportImportThreadLocal.setLayoutStagingInProcess(false);
 
@@ -127,8 +135,12 @@ public class LayoutStagingBackgroundTaskExecutor
 					sourceGroup, serviceContext);
 			}
 
+			deleteTempLarOnFailure(file);
+
 			throw new SystemException(t);
 		}
+
+		deleteTempLarOnSuccess(file);
 
 		return processMissingReferences(
 			backgroundTask.getBackgroundTaskId(), missingReferences);
@@ -169,15 +181,17 @@ public class LayoutStagingBackgroundTaskExecutor
 	private static final Log _log = LogFactoryUtil.getLog(
 		LayoutStagingBackgroundTaskExecutor.class);
 
-	private class LayoutStagingCallable implements Callable<MissingReferences> {
+	private class LayoutStagingImportCallable
+		implements Callable<MissingReferences> {
 
-		public LayoutStagingCallable(
+		public LayoutStagingImportCallable(
 			long backgroundTaskId,
-			ExportImportConfiguration exportImportConfiguration,
+			ExportImportConfiguration exportImportConfiguration, File file,
 			long sourceGroupId, long targetGroupId, long userId) {
 
 			_backgroundTaskId = backgroundTaskId;
 			_exportImportConfiguration = exportImportConfiguration;
+			_file = file;
 			_sourceGroupId = sourceGroupId;
 			_targetGroupId = targetGroupId;
 			_userId = userId;
@@ -185,70 +199,26 @@ public class LayoutStagingBackgroundTaskExecutor
 
 		@Override
 		public MissingReferences call() throws PortalException {
-			File file = null;
-			MissingReferences missingReferences = null;
+			ExportImportLocalServiceUtil.importLayoutsDataDeletions(
+				_exportImportConfiguration, _file);
 
-			try {
-				Map<String, Serializable> settingsMap =
-					_exportImportConfiguration.getSettingsMap();
+			MissingReferences missingReferences =
+				ExportImportLocalServiceUtil.validateImportLayoutsFile(
+					_exportImportConfiguration, _file);
 
-				boolean privateLayout = MapUtil.getBoolean(
-					settingsMap, "privateLayout");
+			markBackgroundTask(_backgroundTaskId, "validated");
 
-				initThreadLocals(_sourceGroupId, privateLayout);
+			ExportImportLocalServiceUtil.importLayouts(
+				_exportImportConfiguration, _file);
 
-				long[] layoutIds = GetterUtil.getLongValues(
-					settingsMap.get("layoutIds"));
-				Map<String, String[]> parameterMap =
-					(Map<String, String[]>)settingsMap.get("parameterMap");
-				DateRange dateRange = ExportImportDateUtil.getDateRange(
-					_exportImportConfiguration);
-
-				file = LayoutLocalServiceUtil.exportLayoutsAsFile(
-					_sourceGroupId, privateLayout, layoutIds, parameterMap,
-					dateRange.getStartDate(), dateRange.getEndDate());
-
-				markBackgroundTask(_backgroundTaskId, "exported");
-
-				LayoutLocalServiceUtil.importLayoutsDataDeletions(
-					_userId, _targetGroupId, privateLayout, parameterMap, file);
-
-				missingReferences =
-					LayoutLocalServiceUtil.validateImportLayoutsFile(
-						_userId, _targetGroupId, privateLayout, parameterMap,
-						file);
-
-				markBackgroundTask(_backgroundTaskId, "validated");
-
-				LayoutLocalServiceUtil.importLayouts(
-					_userId, _targetGroupId, privateLayout, parameterMap, file);
-
-				initLayoutSetBranches(_userId, _sourceGroupId, _targetGroupId);
-			}
-			catch (Exception e) {
-				if (PropsValues.STAGING_DELETE_TEMP_LAR_ON_FAILURE) {
-					FileUtil.delete(file);
-				}
-				else if ((file != null) && _log.isErrorEnabled()) {
-					_log.error(
-						"Kept temporary LAR file " + file.getAbsolutePath());
-				}
-
-				throw e;
-			}
-
-			if (PropsValues.STAGING_DELETE_TEMP_LAR_ON_SUCCESS) {
-				FileUtil.delete(file);
-			}
-			else if ((file != null) && _log.isDebugEnabled()) {
-				_log.debug("Kept temporary LAR file " + file.getAbsolutePath());
-			}
+			initLayoutSetBranches(_userId, _sourceGroupId, _targetGroupId);
 
 			return missingReferences;
 		}
 
 		private final long _backgroundTaskId;
 		private final ExportImportConfiguration _exportImportConfiguration;
+		private final File _file;
 		private final long _sourceGroupId;
 		private final long _targetGroupId;
 		private final long _userId;

@@ -24,17 +24,17 @@
 <%@ page import="com.liferay.portal.kernel.util.Constants" %><%@
 page import="com.liferay.portal.kernel.util.HtmlUtil" %><%@
 page import="com.liferay.portal.kernel.util.ParamUtil" %><%@
-page import="com.liferay.portal.kernel.util.PrefsParamUtil" %><%@
+page import="com.liferay.site.navigation.directory.web.display.context.SitesDirectoryDisplayContext" %><%@
 page import="com.liferay.taglib.ui.SitesDirectoryTag" %>
 
-<liferay-theme:defineObjects />
 <portlet:defineObjects />
+
+<liferay-theme:defineObjects />
 
 <%
 String portletResource = ParamUtil.getString(request, "portletResource");
 
-String displayStyle = PrefsParamUtil.getString(portletPreferences, renderRequest, "displayStyle", "descriptive");
-String sites = PrefsParamUtil.getString(portletPreferences, renderRequest, "sites", SitesDirectoryTag.SITES_TOP_LEVEL);
+SitesDirectoryDisplayContext sitesDirectoryDisplayContext = new SitesDirectoryDisplayContext(request);
 %>
 
 <%@ include file="/init-ext.jsp" %>

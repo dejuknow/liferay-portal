@@ -1,8 +1,8 @@
 AUI.add(
 	'liferay-upload',
 	function(A) {
-		var Lang = A.Lang;
 		var AArray = A.Array;
+		var Lang = A.Lang;
 		var UploaderQueue = A.Uploader.Queue;
 
 		var formatSelectorNS = A.Node.formatSelectorNS;
@@ -29,13 +29,13 @@ AUI.add(
 							'<span class="progress" id="{id}progress"></span>',
 						'</span>',
 
-						'<a class="lfr-button cancel-button" href="javascript:;" id="{id}cancelButton">{[ this.strings.cancelFileText ]}</a>',
-						'<a class="lfr-button delete-button" href="javascript:;" id="{id}deleteButton">{[ this.strings.deleteFileText ]}</a>',
+						'<a class="cancel-button lfr-button" href="javascript:;" id="{id}cancelButton">{[ this.strings.cancelFileText ]}</a>',
+						'<a class="delete-button lfr-button" href="javascript:;" id="{id}deleteButton">{[ this.strings.deleteFileText ]}</a>',
 					'</li>',
 				'</tpl>',
 
 				'<tpl if="values.error && this.multipleFiles">',
-					'<li class="upload-file upload-error" data-fileId="{id}" id="{id}">',
+					'<li class="upload-error upload-file" data-fileId="{id}" id="{id}">',
 						'<span class="file-title" title="{[ LString.escapeHTML(values.name) ]}">{[ LString.escapeHTML(values.name) ]}</span>',
 
 						'<span class="error-message" title="{[ LString.escapeHTML(values.error) ]}">{[ LString.escapeHTML(values.error) ]}</span>',
@@ -109,9 +109,9 @@ AUI.add(
 				'<h4>{[ this.strings.uploadsCompleteText ]}</h4>',
 			'</div>',
 
-			'<div class="pending-files-info alert alert-warning hide">{[ this.strings.pendingFileText ]}</div>',
+			'<div class="alert alert-warning hide pending-files-info">{[ this.strings.pendingFileText ]}</div>',
 
-			'<div class="hide float-container manage-upload-target" id="{$ns}manageUploadTarget">',
+			'<div class="float-container hide manage-upload-target" id="{$ns}manageUploadTarget">',
 				'<tpl if="multipleFiles">',
 					'<span class="field field-choice select-files">',
 						'<span class="field-content">',
@@ -122,8 +122,8 @@ AUI.add(
 					'</span>',
 				'</tpl>',
 
-				'<a href="javascript:;" class="lfr-button cancel-uploads hide">{[ this.cancelUploadsText ]}</a>',
-				'<a href="javascript:;" class="lfr-button clear-uploads hide">{[ this.strings.clearRecentUploadsText ]}</a>',
+				'<a class="cancel-uploads hide lfr-button" href="javascript:;">{[ this.cancelUploadsText ]}</a>',
+				'<a class="clear-uploads hide lfr-button" href="javascript:;">{[ this.strings.clearRecentUploadsText ]}</a>',
 			'</div>',
 
 			'<div class="upload-list" id="{$ns}fileList">',
@@ -245,12 +245,9 @@ AUI.add(
 
 						var fallback = instance.get('fallback');
 
-						var useFallback = (location.hash.indexOf(STR_PARAM_FALLBACK) > -1) && fallback;
+						var useFallback = location.hash.indexOf(STR_PARAM_FALLBACK) > -1 && fallback;
 
-						if (useFallback ||
-							UPLOADER_TYPE == 'none' ||
-							(UPLOADER_TYPE == 'flash' && !A.SWFDetect.isFlashVersionAtLeast(10, 1))) {
-
+						if (useFallback || UPLOADER_TYPE == 'none' || UPLOADER_TYPE == 'flash' && !A.SWFDetect.isFlashVersionAtLeast(10, 1)) {
 							if (fallback) {
 								fallback.show();
 							}
@@ -378,8 +375,7 @@ AUI.add(
 
 						queue.pauseUpload();
 
-						A.each(
-							queue.queuedFiles,
+						queue.queuedFiles.forEach(
 							function(item, index) {
 								var li = A.one('#' + item.id);
 
@@ -399,7 +395,7 @@ AUI.add(
 
 						instance._filesTotal = 0;
 
-						var cancelText = (instance.get('multipleFiles')) ? strings.cancelUploadsText : strings.cancelFileText;
+						var cancelText = instance.get('multipleFiles') ? strings.cancelUploadsText : strings.cancelFileText;
 
 						instance._updateList(0, cancelText);
 					},
@@ -415,7 +411,7 @@ AUI.add(
 					_formatTempFiles: function(fileNames) {
 						var instance = this;
 
-						if (Lang.isArray(fileNames) && fileNames.length) {
+						if (Array.isArray(fileNames) && fileNames.length) {
 							var fileListContent = instance._fileListContent;
 
 							instance._pendingFileInfo.show();
@@ -427,8 +423,7 @@ AUI.add(
 								metadataExplanationContainer.show();
 							}
 
-							var files = AArray.map(
-								fileNames,
+							var files = fileNames.map(
 								function(item, index) {
 									var title = item;
 
@@ -465,10 +460,8 @@ AUI.add(
 
 						var maxFileSize = instance.get('maxFileSize');
 
-						return AArray.filter(
-							data,
+						return data.filter(
 							function(item, index) {
-
 								var id = item.get('id') || A.guid();
 								var name = item.get('name');
 								var size = item.get('size') || 0;
@@ -482,7 +475,7 @@ AUI.add(
 								else if (name.length > 240) {
 									error = strings.invalidFileNameText;
 								}
-								else if (maxFileSize > 0 && (size > maxFileSize)) {
+								else if (maxFileSize > 0 && size > maxFileSize) {
 									error = instance._invalidFileSizeText;
 								}
 
@@ -547,8 +540,7 @@ AUI.add(
 						var dragDropFiles = dataTransfer && AArray(dataTransfer.files);
 
 						if (dragDropFiles && (target === uploaderBoundingBox || uploaderBoundingBox.contains(target))) {
-							event.fileList = AArray.map(
-								dragDropFiles,
+							event.fileList = dragDropFiles.map(
 								function(item, index) {
 									return new A.FileHTML5(item);
 								}
@@ -749,7 +741,7 @@ AUI.add(
 							if (instance._isUploading()) {
 								var uploadQueue = uploader.queue;
 
-								AArray.each(validFiles, uploadQueue.addToQueueBottom, uploadQueue);
+								validFiles.forEach(uploadQueue.addToQueueBottom, uploadQueue);
 							}
 							else {
 								uploader.uploadAll();
@@ -793,7 +785,7 @@ AUI.add(
 						var newLiNode;
 
 						try {
-							data = A.JSON.parse(data);
+							data = JSON.parse(data);
 						}
 						catch (e) {
 						}
@@ -931,14 +923,15 @@ AUI.add(
 					_renderControls: function() {
 						var instance = this;
 
+						var multipleFiles = instance.get('multipleFiles');
 						var strings = instance.get(STRINGS);
 
 						var templateConfig = {
 							$ns: instance.NS,
-							cancelUploadsText: (instance.get('multipleFiles')) ? strings.cancelUploadsText : strings.cancelFileText,
-							dropFileText: (instance.get('multipleFiles')) ? strings.dropFilesText : strings.dropFileText,
-							multipleFiles: instance.get('multipleFiles'),
-							selectFilesText: (instance.get('multipleFiles')) ? strings.selectFilesText : strings.selectFileText,
+							cancelUploadsText: multipleFiles ? strings.cancelUploadsText : strings.cancelFileText,
+							dropFileText: multipleFiles ? strings.dropFilesText : strings.dropFileText,
+							multipleFiles: multipleFiles,
+							selectFilesText: multipleFiles ? strings.selectFilesText : strings.selectFileText,
 							strings: strings,
 							uploaderType: UPLOADER_TYPE
 						};
@@ -954,7 +947,7 @@ AUI.add(
 
 						var uploadFragment = new A.Template(TPL_UPLOAD, templateConfig).render(
 							{
-								multipleFiles: instance.get('multipleFiles')
+								multipleFiles: multipleFiles
 							}
 						);
 
@@ -1023,7 +1016,7 @@ AUI.add(
 					_renderUploader: function() {
 						var instance = this;
 
-						var timestampParam = '_LFR_UPLOADER_TS=' + Lang.now();
+						var timestampParam = '_LFR_UPLOADER_TS=' + Date.now();
 
 						var uploader = new A.Uploader(
 							{
@@ -1070,8 +1063,8 @@ AUI.add(
 
 						var fileListContent = instance._fileListContent;
 
-						var hasUploadedFiles = !!fileListContent.one('.upload-complete');
 						var hasSavedFiles = !!fileListContent.one('.file-saved,.upload-error');
+						var hasUploadedFiles = !!fileListContent.one('.upload-complete');
 
 						if (instance._allRowIdsCheckbox) {
 							instance._allRowIdsCheckbox.toggle(hasUploadedFiles);
@@ -1105,7 +1098,7 @@ AUI.add(
 
 							var selectedFileName = STR_BLANK;
 
-							var hasSelectedFiles = (selectedFilesCount > 0);
+							var hasSelectedFiles = selectedFilesCount > 0;
 
 							if (hasSelectedFiles) {
 								selectedFileName = selectedFiles.item(0).ancestor().attr('data-title');
@@ -1138,7 +1131,7 @@ AUI.add(
 							}
 
 							if (metadataExplanationContainer) {
-								metadataExplanationContainer.toggle((!hasSelectedFiles) && (totalFilesCount > 0));
+								metadataExplanationContainer.toggle(!hasSelectedFiles && totalFilesCount > 0);
 							}
 						}
 					},

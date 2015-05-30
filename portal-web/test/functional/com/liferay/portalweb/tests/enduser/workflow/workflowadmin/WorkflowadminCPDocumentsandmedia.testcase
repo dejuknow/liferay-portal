@@ -20,7 +20,7 @@
 		<execute macro="DMDocumentType#tearDownCP" />
 	</tear-down>
 
-	<command name="AddDocumentsAndMediaNoWorkflowCP" priority="5">
+	<command known-issues="LPS-55550" name="AddDocumentsAndMediaNoWorkflowCP" priority="5">
 		<var name="dmDocumentDescription" value="DM Document Description" />
 		<var name="dmDocumentTitle" value="DM Document Title" />
 
@@ -196,7 +196,7 @@
 		</execute>
 	</command>
 
-	<command name="ApproveInDMFolderSingleApproverTypeSpecificWorkflowCP" priority="4">
+	<command known-issues="LPS-55550" name="ApproveInDMFolderSingleApproverTypeSpecificWorkflowCP" priority="4">
 		<execute macro="Page#gotoContentCP">
 			<var name="portletName" value="Documents and Media" />
 		</execute>
@@ -333,7 +333,7 @@
 		</execute>
 	</command>
 
-	<command name="ApproveInDMFolderSingleApproverWorkflowWithNoHomeFolderWorkflowCP" priority="4">
+	<command known-issues="LPS-55550" name="ApproveInDMFolderSingleApproverWorkflowWithNoHomeFolderWorkflowCP" priority="4">
 		<execute macro="Page#gotoContentCP">
 			<var name="portletName" value="Documents and Media" />
 		</execute>
@@ -620,7 +620,7 @@
 			<var name="portletName" value="My Workflow Tasks" />
 		</execute>
 
-		<execute macro="Workflow#viewRejectTask">
+		<execute macro="Workflow#viewRejectedTask">
 			<var name="workflowAssetTitle" value="DM Document Title" />
 			<var name="workflowAssetType" value="Document" />
 		</execute>
@@ -721,7 +721,7 @@
 			<var name="portletName" value="My Workflow Tasks" />
 		</execute>
 
-		<execute macro="Workflow#viewRejectTask">
+		<execute macro="Workflow#viewRejectedTask">
 			<var name="workflowAssetTitle" value="DM Document Title" />
 			<var name="workflowAssetType" value="Document" />
 		</execute>
@@ -737,7 +737,7 @@
 		</execute>
 	</command>
 
-	<command name="RejectInDMFolderSingleApproverTypeSpecificWorkflowCP" priority="4">
+	<command known-issues="LPS-55550" name="RejectInDMFolderSingleApproverTypeSpecificWorkflowCP" priority="4">
 		<execute macro="Page#gotoContentCP">
 			<var name="portletName" value="Documents and Media" />
 		</execute>
@@ -854,7 +854,7 @@
 			<var name="portletName" value="My Workflow Tasks" />
 		</execute>
 
-		<execute macro="Workflow#viewRejectTask">
+		<execute macro="Workflow#viewRejectedTask">
 			<var name="workflowAssetTitle" value="DM Folder Type Title" />
 			<var name="workflowAssetType" value="Document" />
 		</execute>
@@ -874,7 +874,7 @@
 		</execute>
 	</command>
 
-	<command name="RejectInDMFolderSingleApproverWorkflowWithNoHomeFolderWorkflowCP" priority="4">
+	<command known-issues="LPS-55550" name="RejectInDMFolderSingleApproverWorkflowWithNoHomeFolderWorkflowCP" priority="4">
 		<execute macro="Page#gotoContentCP">
 			<var name="portletName" value="Documents and Media" />
 		</execute>
@@ -961,7 +961,7 @@
 			<var name="portletName" value="My Workflow Tasks" />
 		</execute>
 
-		<execute macro="Workflow#viewRejectTask">
+		<execute macro="Workflow#viewRejectedTask">
 			<var name="workflowAssetTitle" value="DM Folder Document Title" />
 			<var name="workflowAssetType" value="Document" />
 		</execute>
@@ -1103,7 +1103,7 @@
 			<var name="portletName" value="My Workflow Tasks" />
 		</execute>
 
-		<execute macro="Workflow#viewRejectTask">
+		<execute macro="Workflow#viewRejectedTask">
 			<var name="workflowAssetTitle" value="DM Folder Document Title" />
 			<var name="workflowAssetType" value="Document" />
 		</execute>
@@ -1112,7 +1112,7 @@
 			<var name="portletName" value="My Workflow Tasks" />
 		</execute>
 
-		<execute macro="Workflow#viewRejectTask">
+		<execute macro="Workflow#viewRejectedTask">
 			<var name="workflowAssetTitle" value="DM Document Title" />
 			<var name="workflowAssetType" value="Document" />
 		</execute>

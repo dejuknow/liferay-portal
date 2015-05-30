@@ -14,6 +14,8 @@
 
 package com.liferay.portal.kernel.search;
 
+import com.liferay.portal.kernel.search.query.QueryVisitor;
+
 /**
  * @author Michael C. Han
  */
@@ -22,6 +24,11 @@ public abstract class BaseQueryImpl implements Query {
 	@Override
 	public <T> T accept(QueryVisitor<T> queryVisitor) {
 		return null;
+	}
+
+	@Override
+	public float getBoost() {
+		return _boost;
 	}
 
 	@Override
@@ -37,10 +44,25 @@ public abstract class BaseQueryImpl implements Query {
 	public abstract Object getWrappedQuery();
 
 	@Override
+	public boolean isDefaultBoost() {
+		if (_boost == BOOST_DEFAULT) {
+			return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	public void setBoost(float boost) {
+		_boost = boost;
+	}
+
+	@Override
 	public void setQueryConfig(QueryConfig queryConfig) {
 		_queryConfig = queryConfig;
 	}
 
+	private float _boost = BOOST_DEFAULT;
 	private QueryConfig _queryConfig;
 
 }

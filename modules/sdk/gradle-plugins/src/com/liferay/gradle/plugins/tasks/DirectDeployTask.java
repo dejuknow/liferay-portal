@@ -14,29 +14,23 @@
 
 package com.liferay.gradle.plugins.tasks;
 
-import com.liferay.gradle.plugins.util.FileUtil;
-import com.liferay.gradle.plugins.util.StringUtil;
+import com.liferay.gradle.util.FileUtil;
+import com.liferay.gradle.util.StringUtil;
 
 import java.io.File;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.gradle.api.tasks.Input;
-import org.gradle.api.tasks.InputDirectory;
-import org.gradle.api.tasks.InputFile;
-
 /**
  * @author Andrea Di Giorgi
  */
 public class DirectDeployTask extends BasePortalImplToolsTask {
 
-	@InputDirectory
 	public File getAppServerDeployDir() {
 		return _appServerDeployDir;
 	}
 
-	@Input
 	public String getAppServerType() {
 		return _appServerType;
 	}
@@ -128,27 +122,22 @@ public class DirectDeployTask extends BasePortalImplToolsTask {
 			webAppType = "layout";
 		}
 
-		return
-			"com.liferay.portal.tools.deploy." +
-				StringUtil.capitalize(webAppType) + "Deployer";
+		return "com.liferay.portal.tools.deploy." +
+			StringUtil.capitalize(webAppType) + "Deployer";
 	}
 
-	@InputFile
 	public File getWebAppFile() {
 		return _webAppFile;
 	}
 
-	@Input
 	public String getWebAppType() {
 		return _webAppType;
 	}
 
-	@Input
 	public boolean isCustomPortletXml() {
 		return _customPortletXml;
 	}
 
-	@Input
 	public boolean isUnpackWar() {
 		return _unpackWar;
 	}

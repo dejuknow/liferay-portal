@@ -9,13 +9,8 @@
 </thead>
 <tbody>
 <tr>
-	<td></td>
 	<td>ADD_ARTICLE_VIA_TEMPLATE</td>
 	<td>//a[@role='menuitem' and contains(.,'${kbTemplateTitle}')]</td>
-</tr>
-<tr>
-	<td>HEADER</td>
-	<td>//h3[@class='header-title']/span</td>
 	<td></td>
 </tr>
 <tr>

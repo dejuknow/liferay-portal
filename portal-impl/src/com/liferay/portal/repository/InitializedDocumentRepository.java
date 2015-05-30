@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.repository.DocumentRepository;
 import com.liferay.portal.kernel.repository.capabilities.Capability;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.repository.model.FileShortcut;
 import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -31,7 +32,8 @@ import java.util.List;
 /**
  * @author Adolfo Pérez
  */
-public class InitializedDocumentRepository implements DocumentRepository {
+public abstract class InitializedDocumentRepository
+	<T extends DocumentRepository> implements DocumentRepository {
 
 	@Override
 	public FileEntry addFileEntry(
@@ -40,9 +42,9 @@ public class InitializedDocumentRepository implements DocumentRepository {
 			ServiceContext serviceContext)
 		throws PortalException {
 
-		_checkDocumentRepository();
+		checkDocumentRepository();
 
-		return _documentRepository.addFileEntry(
+		return documentRepository.addFileEntry(
 			userId, folderId, sourceFileName, mimeType, title, description,
 			changeLog, file, serviceContext);
 	}
@@ -54,11 +56,23 @@ public class InitializedDocumentRepository implements DocumentRepository {
 			long size, ServiceContext serviceContext)
 		throws PortalException {
 
-		_checkDocumentRepository();
+		checkDocumentRepository();
 
-		return _documentRepository.addFileEntry(
+		return documentRepository.addFileEntry(
 			userId, folderId, sourceFileName, mimeType, title, description,
 			changeLog, is, size, serviceContext);
+	}
+
+	@Override
+	public FileShortcut addFileShortcut(
+			long userId, long folderId, long toFileEntryId,
+			ServiceContext serviceContext)
+		throws PortalException {
+
+		checkDocumentRepository();
+
+		return documentRepository.addFileShortcut(
+			userId, folderId, toFileEntryId, serviceContext);
 	}
 
 	@Override
@@ -67,9 +81,9 @@ public class InitializedDocumentRepository implements DocumentRepository {
 			ServiceContext serviceContext)
 		throws PortalException {
 
-		_checkDocumentRepository();
+		checkDocumentRepository();
 
-		return _documentRepository.addFolder(
+		return documentRepository.addFolder(
 			userId, parentFolderId, name, description, serviceContext);
 	}
 
@@ -79,9 +93,9 @@ public class InitializedDocumentRepository implements DocumentRepository {
 			ServiceContext serviceContext)
 		throws PortalException {
 
-		_checkDocumentRepository();
+		checkDocumentRepository();
 
-		_documentRepository.checkInFileEntry(
+		documentRepository.checkInFileEntry(
 			userId, fileEntryId, major, changeLog, serviceContext);
 	}
 
@@ -91,9 +105,9 @@ public class InitializedDocumentRepository implements DocumentRepository {
 			ServiceContext serviceContext)
 		throws PortalException {
 
-		_checkDocumentRepository();
+		checkDocumentRepository();
 
-		_documentRepository.checkInFileEntry(
+		documentRepository.checkInFileEntry(
 			userId, fileEntryId, lockUuid, serviceContext);
 	}
 
@@ -103,86 +117,147 @@ public class InitializedDocumentRepository implements DocumentRepository {
 			ServiceContext serviceContext)
 		throws PortalException {
 
-		_checkDocumentRepository();
+		checkDocumentRepository();
 
-		return _documentRepository.copyFileEntry(
+		return documentRepository.copyFileEntry(
 			userId, groupId, fileEntryId, destFolderId, serviceContext);
 	}
 
 	@Override
 	public void deleteAll() throws PortalException {
-		_checkDocumentRepository();
+		checkDocumentRepository();
 
-		_documentRepository.deleteAll();
+		documentRepository.deleteAll();
 	}
 
 	@Override
 	public void deleteFileEntry(long fileEntryId) throws PortalException {
-		_checkDocumentRepository();
+		checkDocumentRepository();
 
-		_documentRepository.deleteFileEntry(fileEntryId);
+		documentRepository.deleteFileEntry(fileEntryId);
+	}
+
+	@Override
+	public void deleteFileShortcut(long fileShortcutId) throws PortalException {
+		checkDocumentRepository();
+
+		documentRepository.deleteFileShortcut(fileShortcutId);
+	}
+
+	@Override
+	public void deleteFileShortcuts(long toFileEntryId) throws PortalException {
+		checkDocumentRepository();
+
+		documentRepository.deleteFileShortcuts(toFileEntryId);
 	}
 
 	@Override
 	public void deleteFolder(long folderId) throws PortalException {
-		_checkDocumentRepository();
+		checkDocumentRepository();
 
-		_documentRepository.deleteFolder(folderId);
+		documentRepository.deleteFolder(folderId);
 	}
 
 	@Override
-	public <T extends Capability> T getCapability(Class<T> capabilityClass) {
-		_checkDocumentRepository();
+	public <C extends Capability> C getCapability(Class<C> capabilityClass) {
+		checkDocumentRepository();
 
-		return _documentRepository.getCapability(capabilityClass);
+		return documentRepository.getCapability(capabilityClass);
+	}
+
+	@Override
+	public List<FileEntry> getFileEntries(
+			long folderId, int status, int start, int end,
+			OrderByComparator<FileEntry> obc)
+		throws PortalException {
+
+		checkDocumentRepository();
+
+		return documentRepository.getFileEntries(
+			folderId, status, start, end, obc);
+	}
+
+	@Override
+	public List<FileEntry> getFileEntries(
+			long folderId, int start, int end, OrderByComparator<FileEntry> obc)
+		throws PortalException {
+
+		checkDocumentRepository();
+
+		return documentRepository.getFileEntries(folderId, start, end, obc);
+	}
+
+	@Override
+	public int getFileEntriesCount(long folderId) throws PortalException {
+		checkDocumentRepository();
+
+		return documentRepository.getFileEntriesCount(folderId);
+	}
+
+	@Override
+	public int getFileEntriesCount(long folderId, int status)
+		throws PortalException {
+
+		checkDocumentRepository();
+
+		return documentRepository.getFileEntriesCount(folderId, status);
 	}
 
 	@Override
 	public FileEntry getFileEntry(long fileEntryId) throws PortalException {
-		_checkDocumentRepository();
+		checkDocumentRepository();
 
-		return _documentRepository.getFileEntry(fileEntryId);
+		return documentRepository.getFileEntry(fileEntryId);
 	}
 
 	@Override
 	public FileEntry getFileEntry(long folderId, String title)
 		throws PortalException {
 
-		_checkDocumentRepository();
+		checkDocumentRepository();
 
-		return _documentRepository.getFileEntry(folderId, title);
+		return documentRepository.getFileEntry(folderId, title);
 	}
 
 	@Override
 	public FileEntry getFileEntryByUuid(String uuid) throws PortalException {
-		_checkDocumentRepository();
+		checkDocumentRepository();
 
-		return _documentRepository.getFileEntryByUuid(uuid);
+		return documentRepository.getFileEntryByUuid(uuid);
+	}
+
+	@Override
+	public FileShortcut getFileShortcut(long fileShortcutId)
+		throws PortalException {
+
+		checkDocumentRepository();
+
+		return documentRepository.getFileShortcut(fileShortcutId);
 	}
 
 	@Override
 	public FileVersion getFileVersion(long fileVersionId)
 		throws PortalException {
 
-		_checkDocumentRepository();
+		checkDocumentRepository();
 
-		return _documentRepository.getFileVersion(fileVersionId);
+		return documentRepository.getFileVersion(fileVersionId);
 	}
 
 	@Override
 	public Folder getFolder(long folderId) throws PortalException {
-		_checkDocumentRepository();
+		checkDocumentRepository();
 
-		return _documentRepository.getFolder(folderId);
+		return documentRepository.getFolder(folderId);
 	}
 
 	@Override
 	public Folder getFolder(long parentFolderId, String name)
 		throws PortalException {
 
-		_checkDocumentRepository();
+		checkDocumentRepository();
 
-		return _documentRepository.getFolder(parentFolderId, name);
+		return documentRepository.getFolder(parentFolderId, name);
 	}
 
 	@Override
@@ -191,26 +266,26 @@ public class InitializedDocumentRepository implements DocumentRepository {
 			OrderByComparator<FileEntry> obc)
 		throws PortalException {
 
-		_checkDocumentRepository();
+		checkDocumentRepository();
 
-		return _documentRepository.getRepositoryFileEntries(
+		return documentRepository.getRepositoryFileEntries(
 			userId, rootFolderId, start, end, obc);
 	}
 
 	@Override
 	public long getRepositoryId() {
-		_checkDocumentRepository();
+		checkDocumentRepository();
 
-		return _documentRepository.getRepositoryId();
+		return documentRepository.getRepositoryId();
 	}
 
 	@Override
-	public <T extends Capability> boolean isCapabilityProvided(
-		Class<T> capabilityClass) {
+	public <C extends Capability> boolean isCapabilityProvided(
+		Class<C> capabilityClass) {
 
-		_checkDocumentRepository();
+		checkDocumentRepository();
 
-		return _documentRepository.isCapabilityProvided(capabilityClass);
+		return documentRepository.isCapabilityProvided(capabilityClass);
 	}
 
 	@Override
@@ -219,9 +294,9 @@ public class InitializedDocumentRepository implements DocumentRepository {
 			ServiceContext serviceContext)
 		throws PortalException {
 
-		_checkDocumentRepository();
+		checkDocumentRepository();
 
-		return _documentRepository.moveFileEntry(
+		return documentRepository.moveFileEntry(
 			userId, fileEntryId, newFolderId, serviceContext);
 	}
 
@@ -231,9 +306,9 @@ public class InitializedDocumentRepository implements DocumentRepository {
 			ServiceContext serviceContext)
 		throws PortalException {
 
-		_checkDocumentRepository();
+		checkDocumentRepository();
 
-		return _documentRepository.moveFolder(
+		return documentRepository.moveFolder(
 			userId, folderId, parentFolderId, serviceContext);
 	}
 
@@ -243,19 +318,19 @@ public class InitializedDocumentRepository implements DocumentRepository {
 			ServiceContext serviceContext)
 		throws PortalException {
 
-		_checkDocumentRepository();
+		checkDocumentRepository();
 
-		_documentRepository.revertFileEntry(
+		documentRepository.revertFileEntry(
 			userId, fileEntryId, version, serviceContext);
 	}
 
-	public void setDocumentRepository(DocumentRepository documentRepository) {
-		if (_documentRepository != null) {
+	public void setDocumentRepository(T documentRepository) {
+		if (this.documentRepository != null) {
 			throw new IllegalStateException(
 				"Unable to initialize an initialized document repository");
 		}
 
-		_documentRepository = documentRepository;
+		this.documentRepository = documentRepository;
 	}
 
 	@Override
@@ -265,9 +340,9 @@ public class InitializedDocumentRepository implements DocumentRepository {
 			boolean majorVersion, File file, ServiceContext serviceContext)
 		throws PortalException {
 
-		_checkDocumentRepository();
+		checkDocumentRepository();
 
-		return _documentRepository.updateFileEntry(
+		return documentRepository.updateFileEntry(
 			userId, fileEntryId, sourceFileName, mimeType, title, description,
 			changeLog, majorVersion, file, serviceContext);
 	}
@@ -280,11 +355,34 @@ public class InitializedDocumentRepository implements DocumentRepository {
 			ServiceContext serviceContext)
 		throws PortalException {
 
-		_checkDocumentRepository();
+		checkDocumentRepository();
 
-		return _documentRepository.updateFileEntry(
+		return documentRepository.updateFileEntry(
 			userId, fileEntryId, sourceFileName, mimeType, title, description,
 			changeLog, majorVersion, is, size, serviceContext);
+	}
+
+	@Override
+	public FileShortcut updateFileShortcut(
+			long userId, long fileShortcutId, long folderId, long toFileEntryId,
+			ServiceContext serviceContext)
+		throws PortalException {
+
+		checkDocumentRepository();
+
+		return documentRepository.updateFileShortcut(
+			userId, fileShortcutId, folderId, toFileEntryId, serviceContext);
+	}
+
+	@Override
+	public void updateFileShortcuts(
+			long oldToFileEntryId, long newToFileEntryId)
+		throws PortalException {
+
+		checkDocumentRepository();
+
+		documentRepository.updateFileShortcuts(
+			oldToFileEntryId, newToFileEntryId);
 	}
 
 	@Override
@@ -293,19 +391,19 @@ public class InitializedDocumentRepository implements DocumentRepository {
 			ServiceContext serviceContext)
 		throws PortalException {
 
-		_checkDocumentRepository();
+		checkDocumentRepository();
 
-		return _documentRepository.updateFolder(
+		return documentRepository.updateFolder(
 			folderId, parentFolderId, name, description, serviceContext);
 	}
 
-	private void _checkDocumentRepository() {
-		if (_documentRepository == null) {
+	protected void checkDocumentRepository() {
+		if (documentRepository == null) {
 			throw new IllegalStateException(
 				"Document repositry is not initialized");
 		}
 	}
 
-	private DocumentRepository _documentRepository;
+	protected T documentRepository;
 
 }

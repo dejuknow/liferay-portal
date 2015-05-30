@@ -14,6 +14,8 @@
 
 package com.liferay.portal.dao.shard;
 
+import com.liferay.portal.kernel.dao.shard.ShardSessionFactoryTargetSource;
+
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 

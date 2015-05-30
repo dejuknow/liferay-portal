@@ -70,7 +70,7 @@ AUI.add(
 				var triggers = instance._getTriggers();
 
 				for (var i = position; i >= 0; --i) {
-					var triggerIndex = AArray.indexOf(triggers, content.charAt(i));
+					var triggerIndex = AArray.indexOf(triggers, content[i]);
 
 					if (triggerIndex >= 0) {
 						result = i;
@@ -96,8 +96,7 @@ AUI.add(
 				if (caretIndex) {
 					val = val.substring(0, caretIndex.start);
 
-					AArray.each(
-						instance._getTriggers(),
+					instance._getTriggers().forEach(
 						function(item, index, collection) {
 							var lastTriggerIndex = val.lastIndexOf(item);
 
@@ -108,7 +107,7 @@ AUI.add(
 
 								var res = regExp.exec(val);
 
-								if (res && ((res.index + res[1].length + item.length) === val.length) && (!result || val.length < result.length)) {
+								if (res && res.index + res[1].length + item.length === val.length && (!result || val.length < result.length)) {
 									result = val;
 								}
 							}
@@ -168,7 +167,7 @@ AUI.add(
 
 								var spaceAdded = 1;
 
-								if (restText.length === 0 || restText.charAt(0) !== STR_SPACE) {
+								if (restText.length === 0 || restText[0] !== STR_SPACE) {
 									text += STR_SPACE;
 
 									spaceAdded = 0;

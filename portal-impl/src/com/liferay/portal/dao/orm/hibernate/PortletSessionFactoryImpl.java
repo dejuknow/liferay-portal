@@ -14,10 +14,10 @@
 
 package com.liferay.portal.dao.orm.hibernate;
 
-import com.liferay.portal.dao.shard.ShardDataSourceTargetSource;
 import com.liferay.portal.kernel.dao.jdbc.CurrentConnectionUtil;
 import com.liferay.portal.kernel.dao.orm.ORMException;
 import com.liferay.portal.kernel.dao.orm.Session;
+import com.liferay.portal.kernel.dao.shard.ShardDataSourceTargetSource;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.InfrastructureUtil;
@@ -112,21 +112,18 @@ public class PortletSessionFactoryImpl extends SessionFactoryImpl {
 
 	protected DataSource getDataSource() {
 		ShardDataSourceTargetSource shardDataSourceTargetSource =
-			(ShardDataSourceTargetSource)
-				InfrastructureUtil.getShardDataSourceTargetSource();
+			InfrastructureUtil.getShardDataSourceTargetSource();
 
 		if (shardDataSourceTargetSource != null) {
 			return shardDataSourceTargetSource.getDataSource();
 		}
-		else {
-			return _dataSource;
-		}
+
+		return _dataSource;
 	}
 
 	protected SessionFactory getSessionFactory() {
 		ShardDataSourceTargetSource shardDataSourceTargetSource =
-			(ShardDataSourceTargetSource)
-				InfrastructureUtil.getShardDataSourceTargetSource();
+			InfrastructureUtil.getShardDataSourceTargetSource();
 
 		if (shardDataSourceTargetSource == null) {
 			return getSessionFactoryImplementor();

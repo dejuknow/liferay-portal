@@ -208,7 +208,7 @@ AUI.add(
 
 						var curEntries = instance.get('curEntries');
 
-						A.each(curEntries, instance.add, instance);
+						curEntries.forEach(instance.add, instance);
 					},
 
 					addEntries: function() {
@@ -226,8 +226,7 @@ AUI.add(
 							if (text.indexOf(',') > -1) {
 								var items = text.split(',');
 
-								A.each(
-									items,
+								items.forEach(
 									function(item, index) {
 										instance.entries.add(item, {});
 									}
@@ -579,8 +578,7 @@ AUI.add(
 								var data = [];
 
 								if (results) {
-									data = AArray.map(
-										AArray(results.Result),
+									data = AArray(results.Result).map(
 										function(item, index) {
 											return {
 												name: item

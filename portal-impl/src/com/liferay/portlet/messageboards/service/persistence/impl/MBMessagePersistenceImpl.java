@@ -16,7 +16,6 @@ package com.liferay.portlet.messageboards.service.persistence.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.portal.kernel.cache.CacheRegistryUtil;
 import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
@@ -44,6 +43,8 @@ import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.security.permission.InlineSQLHelperUtil;
+import com.liferay.portal.service.ServiceContext;
+import com.liferay.portal.service.ServiceContextThreadLocal;
 import com.liferay.portal.service.persistence.impl.BasePersistenceImpl;
 
 import com.liferay.portlet.messageboards.NoSuchMessageException;
@@ -55,6 +56,7 @@ import com.liferay.portlet.messageboards.service.persistence.MBMessagePersistenc
 import java.io.Serializable;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -18159,10 +18161,6 @@ public class MBMessagePersistenceImpl extends BasePersistenceImpl<MBMessage>
 	 */
 	@Override
 	public void clearCache() {
-		if (_HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE) {
-			CacheRegistryUtil.clear(MBMessageImpl.class.getName());
-		}
-
 		EntityCacheUtil.clearCache(MBMessageImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
@@ -18365,6 +18363,28 @@ public class MBMessagePersistenceImpl extends BasePersistenceImpl<MBMessage>
 			String uuid = PortalUUIDUtil.generate();
 
 			mbMessage.setUuid(uuid);
+		}
+
+		ServiceContext serviceContext = ServiceContextThreadLocal.getServiceContext();
+
+		Date now = new Date();
+
+		if (isNew && (mbMessage.getCreateDate() == null)) {
+			if (serviceContext == null) {
+				mbMessage.setCreateDate(now);
+			}
+			else {
+				mbMessage.setCreateDate(serviceContext.getCreateDate(now));
+			}
+		}
+
+		if (!mbMessageModelImpl.hasSetModifiedDate()) {
+			if (serviceContext == null) {
+				mbMessage.setModifiedDate(now);
+			}
+			else {
+				mbMessage.setModifiedDate(serviceContext.getModifiedDate(now));
+			}
 		}
 
 		long userId = GetterUtil.getLong(PrincipalThreadLocal.getName());
@@ -19409,7 +19429,6 @@ public class MBMessagePersistenceImpl extends BasePersistenceImpl<MBMessage>
 	private static final String _ORDER_BY_ENTITY_TABLE = "MBMessage.";
 	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY = "No MBMessage exists with the primary key ";
 	private static final String _NO_SUCH_ENTITY_WITH_KEY = "No MBMessage exists with the key {";
-	private static final boolean _HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE = com.liferay.portal.util.PropsValues.HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE;
 	private static final Log _log = LogFactoryUtil.getLog(MBMessagePersistenceImpl.class);
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(new String[] {
 				"uuid"

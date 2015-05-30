@@ -69,7 +69,7 @@ AUI.add(
 					},
 
 					itemsError: {
-						validator: Lang.isArray
+						validator: Array.isArray
 					},
 
 					name: {
@@ -108,7 +108,7 @@ AUI.add(
 							var set = new A.Set();
 
 							if (A.Lang.isString(val)) {
-								AArray.each(val.split(','), set.add, set);
+								val.split(',').forEach(set.add, set);
 							}
 
 							return set;
@@ -235,8 +235,8 @@ AUI.add(
 
 						var selectedLanguageId = instance.getSelectedLanguageId();
 
-						var inputLanguage = instance._getInputLanguage(selectedLanguageId);
 						var defaultInputLanguage = instance._getInputLanguage(defaultLanguageId);
+						var inputLanguage = instance._getInputLanguage(selectedLanguageId);
 
 						instance.activateFlags();
 
@@ -361,7 +361,9 @@ AUI.add(
 									container: boundingBox,
 									formatter: function(title) {
 										var flagNode = this.get('trigger');
+
 										var value = flagNode.getData('value');
+
 										var formattedValue = availableLanguages[value];
 
 										if (value === defaultLanguageId) {
@@ -432,8 +434,7 @@ AUI.add(
 
 						var translatedLanguages = instance.get('translatedLanguages');
 
-						AArray.each(
-							flags,
+						flags.forEach(
 							function(item, index) {
 								var flagNode = instance.getItemByIndex(index);
 
@@ -567,7 +568,7 @@ AUI.add(
 
 					var currentTarget = event.currentTarget;
 
-					InputLocalized._initializeInputLocalized(event, currentTarget, userLanguageId);
+					InputLocalized._initializeInputLocalized(event, currentTarget);
 				},
 
 				_registerConfiguration: function(id, config) {

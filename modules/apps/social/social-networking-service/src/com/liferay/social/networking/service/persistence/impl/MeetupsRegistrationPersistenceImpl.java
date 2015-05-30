@@ -16,7 +16,6 @@ package com.liferay.social.networking.service.persistence.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.portal.kernel.cache.CacheRegistryUtil;
 import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
@@ -31,6 +30,8 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.model.CacheModel;
+import com.liferay.portal.service.ServiceContext;
+import com.liferay.portal.service.ServiceContextThreadLocal;
 import com.liferay.portal.service.persistence.impl.BasePersistenceImpl;
 
 import com.liferay.social.networking.exception.NoSuchMeetupsRegistrationException;
@@ -42,6 +43,7 @@ import com.liferay.social.networking.service.persistence.MeetupsRegistrationPers
 import java.io.Serializable;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -1389,10 +1391,6 @@ public class MeetupsRegistrationPersistenceImpl extends BasePersistenceImpl<Meet
 	 */
 	@Override
 	public void clearCache() {
-		if (_HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE) {
-			CacheRegistryUtil.clear(MeetupsRegistrationImpl.class.getName());
-		}
-
 		EntityCacheUtil.clearCache(MeetupsRegistrationImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
@@ -1597,6 +1595,30 @@ public class MeetupsRegistrationPersistenceImpl extends BasePersistenceImpl<Meet
 		boolean isNew = meetupsRegistration.isNew();
 
 		MeetupsRegistrationModelImpl meetupsRegistrationModelImpl = (MeetupsRegistrationModelImpl)meetupsRegistration;
+
+		ServiceContext serviceContext = ServiceContextThreadLocal.getServiceContext();
+
+		Date now = new Date();
+
+		if (isNew && (meetupsRegistration.getCreateDate() == null)) {
+			if (serviceContext == null) {
+				meetupsRegistration.setCreateDate(now);
+			}
+			else {
+				meetupsRegistration.setCreateDate(serviceContext.getCreateDate(
+						now));
+			}
+		}
+
+		if (!meetupsRegistrationModelImpl.hasSetModifiedDate()) {
+			if (serviceContext == null) {
+				meetupsRegistration.setModifiedDate(now);
+			}
+			else {
+				meetupsRegistration.setModifiedDate(serviceContext.getModifiedDate(
+						now));
+			}
+		}
 
 		Session session = null;
 
@@ -2082,7 +2104,6 @@ public class MeetupsRegistrationPersistenceImpl extends BasePersistenceImpl<Meet
 	private static final String _ORDER_BY_ENTITY_ALIAS = "meetupsRegistration.";
 	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY = "No MeetupsRegistration exists with the primary key ";
 	private static final String _NO_SUCH_ENTITY_WITH_KEY = "No MeetupsRegistration exists with the key {";
-	private static final boolean _HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE = com.liferay.portal.util.PropsValues.HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE;
 	private static final Log _log = LogFactoryUtil.getLog(MeetupsRegistrationPersistenceImpl.class);
 	private static final MeetupsRegistration _nullMeetupsRegistration = new MeetupsRegistrationImpl() {
 			@Override

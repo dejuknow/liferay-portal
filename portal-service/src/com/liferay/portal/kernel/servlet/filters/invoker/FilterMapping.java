@@ -37,9 +37,10 @@ import javax.servlet.http.HttpServletRequest;
 public class FilterMapping {
 
 	public FilterMapping(
-		Filter filter, FilterConfig filterConfig, List<String> urlPatterns,
-		List<String> dispatchers) {
+		String filterName, Filter filter, FilterConfig filterConfig,
+		List<String> urlPatterns, List<String> dispatchers) {
 
+		_filterName = filterName;
 		_filter = filter;
 		_urlPatterns = urlPatterns;
 
@@ -76,6 +77,10 @@ public class FilterMapping {
 
 	public Filter getFilter() {
 		return _filter;
+	}
+
+	public String getFilterName() {
+		return _filterName;
 	}
 
 	public boolean isMatch(
@@ -156,8 +161,8 @@ public class FilterMapping {
 
 	public FilterMapping replaceFilter(Filter filter) {
 		return new FilterMapping(
-			filter, _urlPatterns, _dispatchers, _urlRegexIgnorePattern,
-			_urlRegexPattern);
+			_filterName, filter, _urlPatterns, _dispatchers,
+			_urlRegexIgnorePattern, _urlRegexPattern);
 	}
 
 	protected boolean isMatchURLPattern(String uri, String urlPattern) {
@@ -184,9 +189,11 @@ public class FilterMapping {
 	}
 
 	private FilterMapping(
-		Filter filter, List<String> urlPatterns, Set<Dispatcher> dispatchers,
-		Pattern urlRegexIgnorePattern, Pattern urlRegexPattern) {
+		String filterName, Filter filter, List<String> urlPatterns,
+		Set<Dispatcher> dispatchers, Pattern urlRegexIgnorePattern,
+		Pattern urlRegexPattern) {
 
+		_filterName = filterName;
 		_filter = filter;
 		_urlPatterns = urlPatterns;
 		_dispatchers = dispatchers;
@@ -202,6 +209,7 @@ public class FilterMapping {
 
 	private final Set<Dispatcher> _dispatchers;
 	private final Filter _filter;
+	private final String _filterName;
 	private final List<String> _urlPatterns;
 	private final Pattern _urlRegexIgnorePattern;
 	private final Pattern _urlRegexPattern;

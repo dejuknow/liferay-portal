@@ -27,7 +27,7 @@ public class WikiPortletInstanceConfigurationBeanDeclaration
 	implements ConfigurationBeanDeclaration {
 
 	@Override
-	public Class getConfigurationBeanClass() {
+	public Class<?> getConfigurationBeanClass() {
 		return WikiPortletInstanceConfiguration.class;
 	}
 

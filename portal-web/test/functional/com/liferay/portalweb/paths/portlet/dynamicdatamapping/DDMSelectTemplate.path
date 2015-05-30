@@ -9,11 +9,6 @@
 </thead>
 <tbody>
 <tr>
-	<td>DDL_IFRAME</td>
-	<td>//iframe[contains(@src,'dynamic_data_lists')]</td>
-	<td></td>
-</tr>
-<tr>
 	<td>COPY_STRUCTURE_IFRAME</td>
 	<td>//iframe[contains(@id,'copyStructure_iframe_')]</td>
 	<td></td>
@@ -71,7 +66,7 @@
 </tr>
 <tr>
 	<td>TOOLBAR_SEARCH_FIELD</td>
-	<td>//div[@class='navbar ' or contains(@class,'navbar-default')]//input[@name='_166_keywords']</td>
+	<td>//div[@class='navbar ' or contains(@class,'navbar-default')]//input[contains(@name,'keywords')]</td>
 	<td></td>
 </tr>
 <tr>

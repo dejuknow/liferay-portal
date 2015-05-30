@@ -34,7 +34,7 @@ int mergeFailCount = SitesUtil.getMergeFailCount(layoutSetPrototype);
 
 	portletURL.setParameter("redirect", redirect);
 	portletURL.setParameter("layoutSetPrototypeId",String.valueOf(layoutSetPrototype.getLayoutSetPrototypeId()));
-	portletURL.setParameter("struts_action", "/sites_admin/edit_site");
+	portletURL.setParameter("struts_action", "/layouts_admin/edit_layout_set");
 	portletURL.setParameter(Constants.CMD, "reset_merge_fail_count_and_merge");
 	portletURL.setParameter("groupId", String.valueOf(groupId));
 	portletURL.setParameter("privateLayoutSet", String.valueOf(layoutSet.isPrivateLayout()));
@@ -73,7 +73,6 @@ List<Layout> mergeFailFriendlyURLLayouts = SitesUtil.getMergeFailFriendlyURLLayo
 				<portlet:param name="struts_action" value="/group_pages/edit_layouts" />
 				<portlet:param name="tabs1" value='<%= layoutSet.isPrivateLayout() ? "private-pages" : "public-pages" %>' />
 				<portlet:param name="redirect" value="<%= redirect %>" />
-				<portlet:param name="closeRedirect" value="<%= redirect %>" />
 				<portlet:param name="backURL" value="<%= redirect %>" />
 				<portlet:param name="groupId" value="<%= String.valueOf(groupId) %>" />
 			</liferay-portlet:renderURL>

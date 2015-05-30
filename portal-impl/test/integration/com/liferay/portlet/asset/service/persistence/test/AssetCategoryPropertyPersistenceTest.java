@@ -33,7 +33,6 @@ import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PersistenceTestRule;
-import com.liferay.portal.util.PropsValues;
 
 import com.liferay.portlet.asset.NoSuchCategoryPropertyException;
 import com.liferay.portlet.asset.model.AssetCategoryProperty;
@@ -203,18 +202,11 @@ public class AssetCategoryPropertyPersistenceTest {
 			newAssetCategoryProperty);
 	}
 
-	@Test
+	@Test(expected = NoSuchCategoryPropertyException.class)
 	public void testFindByPrimaryKeyMissing() throws Exception {
 		long pk = RandomTestUtil.nextLong();
 
-		try {
-			_persistence.findByPrimaryKey(pk);
-
-			Assert.fail(
-				"Missing entity did not throw NoSuchCategoryPropertyException");
-		}
-		catch (NoSuchCategoryPropertyException nsee) {
-		}
+		_persistence.findByPrimaryKey(pk);
 	}
 
 	@Test
@@ -434,10 +426,6 @@ public class AssetCategoryPropertyPersistenceTest {
 
 	@Test
 	public void testResetOriginalValues() throws Exception {
-		if (!PropsValues.HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE) {
-			return;
-		}
-
 		AssetCategoryProperty newAssetCategoryProperty = addAssetCategoryProperty();
 
 		_persistence.clearCache();

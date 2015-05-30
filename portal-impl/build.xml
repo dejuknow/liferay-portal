@@ -14,6 +14,148 @@
 	<property name="manifest.bundle.symbolic.name" value="portal-impl;singleton:=true" />
 	<property name="service.file" value="service.xml" />
 
+	<macrodef name="clean">
+		<sequential>
+			<clean-cmd>
+				<clean-post>
+					<if>
+						<and>
+							<equals arg1="${app.server.type}" arg2="tomcat" />
+							<antelope:endswith string="${app.server.portal.dir}" with="/portal-web/docroot" />
+						</and>
+						<then>
+							<delete dir="${app.server.classes.portal.dir}" />
+						</then>
+					</if>
+				</clean-post>
+			</clean-cmd>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="compile-dependencies">
+		<sequential>
+			<copy todir="${portal-impl.classes.dir}/com/liferay/portal/definitions" preservelastmodified="true">
+				<fileset dir="${project.dir}/definitions" />
+			</copy>
+
+			<copy todir="${portal-impl.classes.dir}/com/liferay/portal/deploy/dependencies" preservelastmodified="true">
+				<fileset
+					dir="${project.dir}/classes"
+					includes="*.properties"
+				/>
+				<fileset
+					dir="${project.dir}/portal-web/docroot/WEB-INF/tld"
+					includes="*.tld"
+				/>
+			</copy>
+
+			<copy todir="${portal-impl.classes.dir}/com/liferay/portal/tools/sql/dependencies" preservelastmodified="true">
+				<fileset
+					dir="${project.dir}/sql"
+					includes="portal-data-common.sql,portal-data-counter.sql,portal-data-release.sql,portal-tables.sql,indexes.properties,indexes.sql,sequences.sql,update-*.sql"
+				/>
+			</copy>
+
+			<copy file="${project.dir}/classes/log4j.properties" todir="${portal-impl.classes.dir}" preservelastmodified="true" />
+			<copy file="${project.dir}/classes/logging.properties" todir="${portal-impl.classes.dir}" preservelastmodified="true" />
+
+			<copy todir="${portal-impl.classes.dir}" preservelastmodified="true">
+				<fileset dir="src" excludes="**/*.java,**/META-INF/javadocs-all*.xml" />
+			</copy>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="compile-java">
+		<sequential>
+			<compile-dependencies />
+
+			<compile-java-cmd />
+
+			<print-current-time />
+		</sequential>
+	</macrodef>
+
+	<macrodef name="deploy">
+		<attribute name="deploy.dir" />
+		<attribute name="jar.file" />
+		<attribute name="src.dir" />
+
+		<sequential>
+			<deploy-cmd
+				copy.jar="false"
+				deploy.dir="@{deploy.dir}"
+				jar.file="@{jar.file}"
+				src.dir="@{src.dir}"
+			>
+				<deploy-post>
+					<ant dir="../portal-service" target="deploy" inheritAll="false" />
+
+					<deploy-properties />
+
+					<if>
+						<and>
+							<equals arg1="${app.server.type}" arg2="tomcat" />
+							<antelope:endswith string="${app.server.portal.dir}" with="/portal-web/docroot" />
+						</and>
+						<then>
+							<delete file="@{deploy.dir}/@{jar.file}" failonerror="false" />
+
+							<unjar dest="${app.server.classes.portal.dir}" src="portal-impl.jar" />
+						</then>
+						<else>
+							<copy file="@{jar.file}.jar" todir="@{deploy.dir}" preservelastmodified="true" />
+
+							<copy file="classes/log4j.properties" todir="${app.server.classes.portal.dir}" preservelastmodified="true" />
+							<copy file="classes/logging.properties" todir="${app.server.classes.portal.dir}" preservelastmodified="true" />
+						</else>
+					</if>
+				</deploy-post>
+			</deploy-cmd>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="jar-marco">
+		<sequential>
+			<jar-marco-cmd>
+				<jar-pre>
+					<ant dir="../util-bridges" target="jar" inheritAll="false" />
+					<ant dir="../util-java" target="jar" inheritAll="false" />
+					<ant dir="../util-taglib" target="jar" inheritAll="false" />
+
+					<property name="portal.deploy.dependencies.dir" value="${portal-impl.classes.dir}/com/liferay/portal/deploy/dependencies" />
+
+					<for list="1,2,3,4,5,6,7,8,9" param="index">
+						<sequential>
+							<if>
+								<available file="${portal.deploy.dependencies.dir}/plugins@{index}" />
+								<then>
+									<fileset dir="${portal.deploy.dependencies.dir}/plugins@{index}" id="plugins@{index}.wars">
+										<include name="*.war" />
+									</fileset>
+
+									<pathconvert property="plugins@{index}.wars.list" pathsep="," refid="plugins@{index}.wars">
+										<flattenmapper />
+									</pathconvert>
+
+									<if>
+										<not>
+											<uptodate targetfile="${jar.file}.jar">
+												<srcfiles dir="${portal.deploy.dependencies.dir}/plugins@{index}" includes="**/*.*" />
+											</uptodate>
+										</not>
+										<then>
+											<echo file="${portal.deploy.dependencies.dir}/plugins@{index}/wars.txt">${plugins@{index}.wars.list}</echo>
+										</then>
+									</if>
+								</then>
+							</if>
+						</sequential>
+					</for>
+				</jar-pre>
+			</jar-marco-cmd>
+		</sequential>
+	</macrodef>
+
 	<target name="build-alloy-taglib-jar">
 		<if>
 			<not>
@@ -99,11 +241,10 @@ svn://svn.liferay.com/repos/public/alloy/trunk/sandbox/taglibs.
 
 		<delete file="json-java.zip" />
 
-		<antcall target="compile-java">
-			<param name="javac.classpathref" value="project.classpath" />
-			<param name="javac.destdir" value="${tstamp.value}" />
-			<param name="javac.srcdir" value="${tstamp.value}" />
-		</antcall>
+		<compile-java
+			javac.destdir="${tstamp.value}"
+			javac.srcdir="${tstamp.value}"
+		/>
 
 		<zip
 			basedir="${tstamp.value}"
@@ -121,13 +262,16 @@ svn://svn.liferay.com/repos/public/alloy/trunk/sandbox/taglibs.
 	</target>
 
 	<target name="build-lang-cmd">
+		<path id="lang.builder.classpath">
+			<fileset dir="${project.dir}/tools/sdk/dependencies/com.liferay.lang.builder/lib" includes="*.jar" />
+		</path>
+
 		<java
-			classname="com.liferay.portal.tools.LangBuilder"
-			classpathref="project.classpath"
+			classname="com.liferay.lang.builder.LangBuilder"
+			classpathref="lang.builder.classpath"
 			fork="true"
 			newenvironment="true"
 		>
-			<jvmarg value="-Dexternal-properties=com/liferay/portal/tools/dependencies/portal-tools.properties" />
 			<jvmarg value="-Dfile.encoding=UTF-8" />
 			<jvmarg value="-Duser.country=US" />
 			<jvmarg value="-Duser.language=en" />
@@ -135,6 +279,8 @@ svn://svn.liferay.com/repos/public/alloy/trunk/sandbox/taglibs.
 			<arg value="lang.file=${lang.file}" />
 			<arg value="lang.plugin=false" />
 			<arg value="lang.translate=true" />
+			<arg value="lang.translate.client.id=${microsoft.translator.client.id}" />
+			<arg value="lang.translate.client.secret=${microsoft.translator.client.secret}" />
 		</java>
 
 		<copy file="${lang.dir}/${lang.file}.properties" tofile="${lang.dir}/${lang.file}_en.properties" />
@@ -324,11 +470,10 @@ svn://svn.liferay.com/repos/public/alloy/trunk/sandbox/taglibs.
 			<replacefilter token="localhost" value="127.0.0.1" />
 		</replace>
 
-		<antcall target="compile-java">
-			<param name="javac.classpathref" value="project.classpath" />
-			<param name="javac.destdir" value="${tstamp.value}" />
-			<param name="javac.srcdir" value="${tstamp.value}" />
-		</antcall>
+		<compile-java
+			javac.destdir="${tstamp.value}"
+			javac.srcdir="${tstamp.value}"
+		/>
 
 		<copy
 			file="${project.dir}/lib/development/selenium-java.jar"
@@ -515,13 +660,13 @@ svn://svn.liferay.com/repos/public/alloy/trunk/sandbox/taglibs.
 	</target>
 
 	<target name="build-service">
-		<path id="service.classpath">
+		<path id="service.builder.classpath">
 			<fileset dir="${project.dir}/tools/sdk/dependencies/com.liferay.portal.tools.service.builder/lib" includes="*.jar" />
 		</path>
 
 		<java
 			classname="com.liferay.portal.tools.service.builder.ServiceBuilder"
-			classpathref="service.classpath"
+			classpathref="service.builder.classpath"
 			fork="true"
 			newenvironment="true"
 			outputproperty="build-service.output"
@@ -717,87 +862,41 @@ svn://svn.liferay.com/repos/public/alloy/trunk/sandbox/taglibs.
 
 	<target name="build-upgrade-table">
 		<if>
-			<isset property="upgrade.table.dir" />
+			<not>
+				<equals arg1="${upgrade.table.dir}" arg2="" />
+			</not>
 			<then>
-				<for param="zip.file">
-					<path>
-						<fileset
-							dir="${upgrade.table.dir}"
-							includes="*.zip"
-						/>
-					</path>
-					<sequential>
-						<antelope:stringutil string="@{zip.file}" property="zip.version.beginindex">
-							<indexof string="src-" fromindex="0" />
-						</antelope:stringutil>
+				<ant antfile="build-common.xml" dir="${project.dir}/tools/sdk" inheritAll="false" target="prepare-upgrade-table">
+					<property name="upgrade.table.dir" value="${upgrade.table.dir}" />
+				</ant>
 
-						<math
-							datatype="int"
-							operand1="${zip.version.beginindex}"
-							operand2="4"
-							operation="+"
-							result="zip.version.beginindex"
-						/>
-
-						<antelope:stringutil string="@{zip.file}" property="zip.version.endindex">
-							<indexof string=".zip" fromindex="0" />
-						</antelope:stringutil>
-
-						<antelope:stringutil string="@{zip.file}" property="zip.version">
-							<substring beginindex="${zip.version.beginindex}" endindex="${zip.version.endindex}" />
-						</antelope:stringutil>
-
-						<if>
-							<or>
-								<not>
-									<uptodate
-										srcfile="@{zip.file}"
-										targetfile="${upgrade.table.dir}/${zip.version}"
-									/>
-								</not>
-								<not>
-									<available file="${upgrade.table.dir}/${zip.version}/indexes.sql" />
-								</not>
-							</or>
-							<then>
-								<mkdir dir="${upgrade.table.dir}/${zip.version}" />
-
-								<unzip
-									dest="${upgrade.table.dir}/${zip.version}"
-									src="@{zip.file}"
-								>
-									<patternset>
-										<include name="**/*ModelImpl.java" />
-										<include name="**/sql/indexes.sql" />
-									</patternset>
-									<mapper type="flatten" />
-								</unzip>
-							</then>
-						</if>
-					</sequential>
-				</for>
+				<path id="upgrade.table.builder.classpath">
+					<fileset dir="${project.dir}/tools/sdk/dependencies/com.liferay.portal.tools.upgrade.table.builder/lib" includes="*.jar" />
+				</path>
 
 				<java
-					classname="com.liferay.portal.tools.UpgradeTableBuilder"
-					classpathref="project.classpath"
+					classname="com.liferay.portal.tools.upgrade.table.builder.UpgradeTableBuilder"
+					classpathref="upgrade.table.builder.classpath"
 					fork="true"
 					newenvironment="true"
 				>
-					<arg value="${upgrade.table.dir}" />
+					<arg value="upgrade.base.dir=." />
+					<arg value="upgrade.osgi.module=false" />
+					<arg value="upgrade.table.dir=${upgrade.table.dir}" />
 				</java>
 			</then>
 		</if>
 	</target>
 
 	<target name="build-wsdd" depends="compile">
-		<path id="wsdd.classpath">
+		<path id="wsdd.builder.classpath">
 			<fileset dir="${project.dir}/tools/sdk/dependencies/com.liferay.portal.tools.wsdd.builder/lib" includes="*.jar" />
 			<path refid="project.classpath" />
 		</path>
 
 		<java
 			classname="com.liferay.portal.tools.wsdd.builder.WSDDBuilder"
-			classpathref="wsdd.classpath"
+			classpathref="wsdd.builder.classpath"
 			fork="true"
 			maxmemory="512m"
 			newenvironment="true"
@@ -959,99 +1058,6 @@ svn://svn.liferay.com/repos/public/alloy/trunk/sandbox/taglibs.
 		</jarjar>
 	</target>
 
-	<target name="clean">
-		<delete dir="classes" />
-
-		<if>
-			<and>
-				<equals arg1="${app.server.type}" arg2="tomcat" />
-				<antelope:endswith string="${app.server.portal.dir}" with="/portal-web/docroot" />
-			</and>
-			<then>
-				<delete dir="${app.server.classes.portal.dir}" />
-			</then>
-		</if>
-
-		<antcall target="build-common-java.clean" />
-	</target>
-
-	<target name="compile">
-		<antcall target="compile-dependencies" />
-
-		<antcall target="build-common-java.compile" />
-
-		<antcall target="print-current-time" />
-	</target>
-
-	<target name="compile-dependencies">
-		<copy todir="${portal-impl.classes.dir}/com/liferay/portal/definitions" preservelastmodified="true">
-			<fileset dir="${project.dir}/definitions" />
-		</copy>
-
-		<copy todir="${portal-impl.classes.dir}/com/liferay/portal/deploy/dependencies" preservelastmodified="true">
-			<fileset
-				dir="${project.dir}/classes"
-				includes="*.properties"
-			/>
-			<fileset
-				dir="${project.dir}/portal-web/docroot/WEB-INF/tld"
-				includes="*.tld"
-			/>
-		</copy>
-
-		<copy todir="${portal-impl.classes.dir}/com/liferay/portal/tools/sql/dependencies" preservelastmodified="true">
-			<fileset
-				dir="${project.dir}/sql"
-				includes="portal-data-common.sql,portal-data-counter.sql,portal-data-release.sql,portal-tables.sql,indexes.properties,indexes.sql,quartz-tables.sql,sequences.sql,update-*.sql"
-			/>
-		</copy>
-
-		<copy file="${project.dir}/classes/log4j.properties" todir="${portal-impl.classes.dir}" preservelastmodified="true" />
-		<copy file="${project.dir}/classes/logging.properties" todir="${portal-impl.classes.dir}" preservelastmodified="true" />
-
-		<if>
-			<not>
-				<available file="${portal-impl.classes.dir}/jamwiki.properties" />
-			</not>
-			<then>
-				<unzip
-					dest="${portal-impl.classes.dir}"
-					src="${project.dir}/tools/jamwiki-0.9.3-src.zip"
-				>
-					<patternset
-						includes="**/main/resources/ApplicationResources.properties,**/main/resources/jamwiki-configuration.xml,**/main/resources/logging.properties,**/main/resources/interwiki.properties"
-					/>
-				</unzip>
-
-				<move todir="${portal-impl.classes.dir}">
-					<fileset
-						dir="${portal-impl.classes.dir}/jamwiki-0.9.3/main/resources"
-						excludes="logging.properties"
-					/>
-				</move>
-
-				<concat destfile="${portal-impl.classes.dir}/logging.properties.new">
-					<fileset file="${portal-impl.classes.dir}/logging.properties" />
-					<fileset file="${portal-impl.classes.dir}/jamwiki-0.9.3/main/resources/logging.properties" />
-				</concat>
-
-				<move file="${portal-impl.classes.dir}/logging.properties.new" tofile="${portal-impl.classes.dir}/logging.properties" />
-
-				<delete dir="${portal-impl.classes.dir}/jamwiki-0.9.3" />
-
-				<echo file="${portal-impl.classes.dir}/jamwiki.properties">
-					database-type=com.liferay.portlet.wiki.engines.mediawiki.LiferayDataHandler
-					props-initialized=true
-					search-engine=com.liferay.portlet.wiki.engines.mediawiki.LiferaySearchEngine
-				</echo>
-			</then>
-		</if>
-
-		<copy todir="${portal-impl.classes.dir}" preservelastmodified="true">
-			<fileset dir="src" excludes="**/*.java,**/META-INF/javadocs-all*.xml" />
-		</copy>
-	</target>
-
 	<target name="compile-test">
 		<ant dir="${project.dir}/portal-service" target="compile-test" inheritAll="false" />
 
@@ -1059,7 +1065,7 @@ svn://svn.liferay.com/repos/public/alloy/trunk/sandbox/taglibs.
 	</target>
 
 	<target name="compile-tools">
-		<antcall target="compile-dependencies" />
+		<compile-dependencies />
 
 		<javac
 			classpathref="project.classpath"
@@ -1074,38 +1080,11 @@ svn://svn.liferay.com/repos/public/alloy/trunk/sandbox/taglibs.
 		/>
 	</target>
 
-	<target name="deploy" depends="check-deploy-uptodate,jar" unless="${deploy.uptodate}">
-		<ant dir="../portal-service" target="deploy" inheritAll="false" />
-
-		<antcall target="deploy-properties" />
-
-		<if>
-			<and>
-				<equals arg1="${app.server.type}" arg2="tomcat" />
-				<antelope:endswith string="${app.server.portal.dir}" with="/portal-web/docroot" />
-			</and>
-			<then>
-				<delete file="${app.server.lib.portal.dir}/portal-impl.jar" failonerror="false" />
-
-				<unjar dest="${app.server.classes.portal.dir}" src="portal-impl.jar" />
-			</then>
-			<else>
-				<antcall target="build-common-java.deploy" />
-
-				<copy file="classes/log4j.properties" todir="${app.server.classes.portal.dir}" preservelastmodified="true" />
-				<copy file="classes/logging.properties" todir="${app.server.classes.portal.dir}" preservelastmodified="true" />
-			</else>
-		</if>
-	</target>
-
-	<target name="deploy-properties">
-		<ant dir=".." target="deploy-properties" inheritAll="false" />
-	</target>
-
 	<target name="format-source">
-		<copy todir="${project.dir}/portal-impl/classes" overwrite="true" preservelastmodified="true">
-			<fileset dir="${project.dir}/portal-impl/src" includes="com/liferay/portal/tools/dependencies/*.properties" />
-		</copy>
+		<path id="source.formatter.classpath">
+			<fileset dir="${project.dir}/tools/sdk/dependencies/com.liferay.source.formatter/lib" includes="*.jar" />
+			<path refid="project.classpath" />
+		</path>
 
 		<if>
 			<not>
@@ -1117,8 +1096,8 @@ svn://svn.liferay.com/repos/public/alloy/trunk/sandbox/taglibs.
 		</if>
 
 		<java
-			classname="com.liferay.portal.tools.sourceformatter.SourceFormatter"
-			classpathref="project.classpath"
+			classname="com.liferay.source.formatter.SourceFormatter"
+			classpathref="source.formatter.classpath"
 			dir="${source.formatter.dir}"
 			fork="true"
 			newenvironment="true"
@@ -1134,54 +1113,17 @@ svn://svn.liferay.com/repos/public/alloy/trunk/sandbox/taglibs.
 
 	<target name="format-tld">
 		<java
-			classname="com.liferay.portal.tools.TLDFormatter"
+			classname="com.liferay.tld.formatter.TLDFormatter"
 			classpathref="project.classpath"
 			dir="${project.dir}"
 			fork="true"
 			newenvironment="true"
 		>
-			<jvmarg value="-Dexternal-properties=com/liferay/portal/tools/dependencies/portal-tools.properties" />
+			<arg value="tld.base.dir=./util-taglib/src/META-INF/" />
+			<arg value="tld.plugin=false" />
 		</java>
 
 		<delete file="ServiceBuilder.temp" />
-	</target>
-
-	<target name="jar" depends="compile">
-		<ant dir="../util-bridges" target="jar" inheritAll="false" />
-		<ant dir="../util-java" target="jar" inheritAll="false" />
-		<ant dir="../util-taglib" target="jar" inheritAll="false" />
-
-		<property name="portal.deploy.dependencies.dir" value="${portal-impl.classes.dir}/com/liferay/portal/deploy/dependencies" />
-
-		<for list="1,2,3,4,5,6,7,8,9" param="index">
-			<sequential>
-				<if>
-					<available file="${portal.deploy.dependencies.dir}/plugins@{index}" />
-					<then>
-						<fileset dir="${portal.deploy.dependencies.dir}/plugins@{index}" id="plugins@{index}.wars">
-							<include name="*.war" />
-						</fileset>
-
-						<pathconvert property="plugins@{index}.wars.list" pathsep="," refid="plugins@{index}.wars">
-							<flattenmapper />
-						</pathconvert>
-
-						<if>
-							<not>
-								<uptodate targetfile="${jar.file}.jar">
-									<srcfiles dir="${portal.deploy.dependencies.dir}/plugins@{index}" includes="**/*.*" />
-								</uptodate>
-							</not>
-							<then>
-								<echo file="${portal.deploy.dependencies.dir}/plugins@{index}/wars.txt">${plugins@{index}.wars.list}</echo>
-							</then>
-						</if>
-					</then>
-				</if>
-			</sequential>
-		</for>
-
-		<antcall target="build-common-java.jar" />
 	</target>
 
 	<target name="rebuild-hypersonic">

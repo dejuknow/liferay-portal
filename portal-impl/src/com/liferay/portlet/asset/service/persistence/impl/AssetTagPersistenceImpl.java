@@ -17,7 +17,6 @@ package com.liferay.portlet.asset.service.persistence.impl;
 import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.BeanReference;
-import com.liferay.portal.kernel.cache.CacheRegistryUtil;
 import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
@@ -38,6 +37,8 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.security.permission.InlineSQLHelperUtil;
+import com.liferay.portal.service.ServiceContext;
+import com.liferay.portal.service.ServiceContextThreadLocal;
 import com.liferay.portal.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.service.persistence.impl.TableMapper;
 import com.liferay.portal.service.persistence.impl.TableMapperFactory;
@@ -52,6 +53,7 @@ import com.liferay.portlet.asset.service.persistence.AssetTagPersistence;
 import java.io.Serializable;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -3137,10 +3139,6 @@ public class AssetTagPersistenceImpl extends BasePersistenceImpl<AssetTag>
 	 */
 	@Override
 	public void clearCache() {
-		if (_HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE) {
-			CacheRegistryUtil.clear(AssetTagImpl.class.getName());
-		}
-
 		EntityCacheUtil.clearCache(AssetTagImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
@@ -3334,6 +3332,28 @@ public class AssetTagPersistenceImpl extends BasePersistenceImpl<AssetTag>
 		boolean isNew = assetTag.isNew();
 
 		AssetTagModelImpl assetTagModelImpl = (AssetTagModelImpl)assetTag;
+
+		ServiceContext serviceContext = ServiceContextThreadLocal.getServiceContext();
+
+		Date now = new Date();
+
+		if (isNew && (assetTag.getCreateDate() == null)) {
+			if (serviceContext == null) {
+				assetTag.setCreateDate(now);
+			}
+			else {
+				assetTag.setCreateDate(serviceContext.getCreateDate(now));
+			}
+		}
+
+		if (!assetTagModelImpl.hasSetModifiedDate()) {
+			if (serviceContext == null) {
+				assetTag.setModifiedDate(now);
+			}
+			else {
+				assetTag.setModifiedDate(serviceContext.getModifiedDate(now));
+			}
+		}
 
 		Session session = null;
 
@@ -4077,7 +4097,6 @@ public class AssetTagPersistenceImpl extends BasePersistenceImpl<AssetTag>
 	private static final String _ORDER_BY_ENTITY_TABLE = "AssetTag.";
 	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY = "No AssetTag exists with the primary key ";
 	private static final String _NO_SUCH_ENTITY_WITH_KEY = "No AssetTag exists with the key {";
-	private static final boolean _HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE = com.liferay.portal.util.PropsValues.HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE;
 	private static final Log _log = LogFactoryUtil.getLog(AssetTagPersistenceImpl.class);
 	private static final AssetTag _nullAssetTag = new AssetTagImpl() {
 			@Override

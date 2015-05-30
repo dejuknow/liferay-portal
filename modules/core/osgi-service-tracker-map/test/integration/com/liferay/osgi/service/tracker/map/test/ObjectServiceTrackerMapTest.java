@@ -14,6 +14,7 @@
 
 package com.liferay.osgi.service.tracker.map.test;
 
+import com.liferay.osgi.service.tracker.map.PropertyServiceReferenceMapper;
 import com.liferay.osgi.service.tracker.map.ServiceReferenceMapper;
 import com.liferay.osgi.service.tracker.map.ServiceTrackerMap;
 import com.liferay.osgi.service.tracker.map.ServiceTrackerMapFactory;
@@ -226,11 +227,9 @@ public class ObjectServiceTrackerMapTest {
 	public void testGetServiceWithCustomComparator()
 		throws InvalidSyntaxException {
 
-		ServiceTrackerMapFactory.
-			PropertyServiceReferenceMapper<String, TrackedOne>
-				propertyServiceReferenceMapper =
-					new ServiceTrackerMapFactory.
-						PropertyServiceReferenceMapper<>("target");
+		ServiceReferenceMapper<String, TrackedOne>
+			propertyServiceReferenceMapper =
+				new PropertyServiceReferenceMapper<>("target");
 
 		ServiceTrackerMap<String, TrackedOne> serviceTrackerMap =
 			ServiceTrackerMapFactory.singleValueMap(

@@ -257,7 +257,7 @@ if (Validator.isNull(redirect)) {
 							for (String format : formats) {
 							%>
 
-								<aui:option label='<%= LanguageUtil.get(request, "wiki.formats." + format) %>' selected="<%= selectedFormat.equals(format) %>" value="<%= format %>" />
+								<aui:option label="<%= WikiUtil.getFormatLabel(format, locale) %>" selected="<%= selectedFormat.equals(format) %>" value="<%= format %>" />
 
 							<%
 							}
@@ -275,10 +275,9 @@ if (Validator.isNull(redirect)) {
 			<div>
 
 				<%
-				request.setAttribute("edit_page.jsp-wikiPage", wikiPage);
+				WikiUtil.renderEditPageHTML(selectedFormat, pageContext, wikiPage);
 				%>
 
-				<liferay-util:include page="<%= WikiUtil.getEditPage(selectedFormat) %>" servletContext="<%= application %>" />
 			</div>
 
 			<c:if test="<%= wikiPage != null %>">
@@ -473,14 +472,14 @@ if (Validator.isNull(redirect)) {
 
 	var formatSelect = form.fm('format');
 
-	var currentFormat = $.trim(formatSelect.find('option:selected').text());
+	var currentFormat = formatSelect.find('option:selected').text().trim();
 
 	var currentIndex = formatSelect.prop('selectedIndex');
 
 	formatSelect.on(
 		'change',
 		function(event) {
-			var newFormat = $.trim(formatSelect.find('option:selected').text());
+			var newFormat = formatSelect.find('option:selected').text().trim();
 
 			var confirmMessage = '<%= UnicodeLanguageUtil.get(request, "you-may-lose-formatting-when-switching-from-x-to-x") %>';
 

@@ -34,6 +34,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>PERMISSIONS_CHECKBOX</td>
+	<td>//tr[contains(.,'${key_roleName}')]//input[@value='${key_permissionDefinitionKey}']</td>
+	<td></td>
+</tr>
+<tr>
 	<td>GUEST_ACCESS_CHECKBOX</td>
 	<td>//tr[contains(.,'Guest')]//input[@value='ACCESS']</td>
 	<td></td>
@@ -56,6 +61,11 @@
 <tr>
 	<td>GUEST_ADD_DOCUMENT_CHECKBOX</td>
 	<td>//tr[contains(.,'Guest')]//input[@value='ADD_DOCUMENT']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>GUEST_ADD_ENTRY</td>
+	<td>//tr[contains(.,'Guest')]//input[@value='ADD_ENTRY']</td>
 	<td></td>
 </tr>
 <tr>
@@ -94,6 +104,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>GUEST_SUBSCRIBE_CHECKBOX</td>
+	<td>//input[@id='_198_guestPermissions_SUBSCRIBE']</td>
+	<td></td>
+</tr>
+<tr>
 	<td>GUEST_UPDATE_CHECKBOX</td>
 	<td>//tr[contains(.,'Guest')]//input[@value='UPDATE']</td>
 	<td></td>
@@ -101,6 +116,21 @@
 <tr>
 	<td>GUEST_UPDATE_DISCUSSION_CHECKBOX</td>
 	<td>//tr[contains(.,'Guest')]//input[@value='UPDATE_DISCUSSION']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>GUEST_VIEW_CHECKBOX</td>
+	<td>//input[@id='guest_ACTION_VIEW']</td>
+	<td></td>
+</tr>
+<tr>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>OWNER_VIEW_CHECKBOX</td>
+	<td>//input[@id='owner_ACTION_VIEW']</td>
 	<td></td>
 </tr>
 <tr>
@@ -121,6 +151,11 @@
 <tr>
 	<td>SITE_MEMBER_ADD_DISCUSSION_CHECKBOX</td>
 	<td>//tr[contains(.,'Site Member')]//input[@value='ADD_DISCUSSION']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SITE_MEMBER_ADD_ENTRY_CHECKBOX</td>
+	<td>//tr[contains(.,'Site Member')]//input[@value='ADD_ENTRY']</td>
 	<td></td>
 </tr>
 <tr>
@@ -149,6 +184,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>SITE_MEMBER_SUBSCRIBE_CHECKBOX</td>
+	<td>//tr[contains(.,'Site Member')]//input[@value='SUBSCRIBE']</td>
+	<td></td>
+</tr>
+<tr>
 	<td>SITE_MEMBER_UPDATE_CHECKBOX</td>
 	<td>//tr[contains(.,'Site Member')]//input[@value='UPDATE']</td>
 	<td></td>
@@ -156,6 +196,11 @@
 <tr>
 	<td>SITE_MEMBER_UPDATE_DISCUSSION_CHECKBOX</td>
 	<td>//tr[contains(.,'Site Member')]//input[@value='UPDATE_DISCUSSION']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SITE_MEMBER_VIEW_CHECKBOX</td>
+	<td>//input[@id='site-member_ACTION_VIEW']</td>
 	<td></td>
 </tr>
 </tbody>

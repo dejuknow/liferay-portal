@@ -14,17 +14,19 @@
 
 package com.liferay.portlet.messageboards.action;
 
+import com.liferay.portal.kernel.comment.CommentManagerUtil;
+import com.liferay.portal.kernel.comment.DiscussionPermission;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.Constants;
+import com.liferay.portal.kernel.util.Function;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.model.User;
 import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.ServiceContextFactory;
+import com.liferay.portal.service.ServiceContextFunction;
 import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.struts.PortletAction;
 import com.liferay.portal.theme.ThemeDisplay;
@@ -34,9 +36,6 @@ import com.liferay.portlet.messageboards.DiscussionMaxCommentsException;
 import com.liferay.portlet.messageboards.MessageBodyException;
 import com.liferay.portlet.messageboards.NoSuchMessageException;
 import com.liferay.portlet.messageboards.RequiredMessageException;
-import com.liferay.portlet.messageboards.model.MBMessage;
-import com.liferay.portlet.messageboards.service.MBDiscussionLocalServiceUtil;
-import com.liferay.portlet.messageboards.service.MBMessageServiceUtil;
 
 import java.io.IOException;
 
@@ -46,15 +45,12 @@ import javax.portlet.PortletConfig;
 import javax.portlet.PortletContext;
 import javax.portlet.PortletException;
 import javax.portlet.PortletRequestDispatcher;
-import javax.portlet.RenderRequest;
-import javax.portlet.RenderResponse;
 import javax.portlet.ResourceRequest;
 import javax.portlet.ResourceResponse;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 /**
@@ -77,7 +73,7 @@ public class EditDiscussionAction extends PortletAction {
 				ParamUtil.getString(actionRequest, "redirect"));
 
 			if (cmd.equals(Constants.ADD) || cmd.equals(Constants.UPDATE)) {
-				MBMessage message = updateMessage(actionRequest);
+				long commentId = updateComment(actionRequest);
 
 				boolean ajax = ParamUtil.getBoolean(actionRequest, "ajax");
 
@@ -87,7 +83,7 @@ public class EditDiscussionAction extends PortletAction {
 
 					JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
-					jsonObject.put("messageId", message.getMessageId());
+					jsonObject.put("commentId", commentId);
 					jsonObject.put("randomNamespace", randomNamespace);
 
 					writeJSON(actionRequest, actionResponse, jsonObject);
@@ -96,7 +92,7 @@ public class EditDiscussionAction extends PortletAction {
 				}
 			}
 			else if (cmd.equals(Constants.DELETE)) {
-				deleteMessage(actionRequest);
+				deleteComment(actionRequest);
 			}
 			else if (cmd.equals(Constants.SUBSCRIBE_TO_COMMENTS)) {
 				subscribeToComments(actionRequest, true);
@@ -107,52 +103,16 @@ public class EditDiscussionAction extends PortletAction {
 
 			sendRedirect(actionRequest, actionResponse, redirect);
 		}
-		catch (Exception e) {
-			if (e instanceof DiscussionMaxCommentsException ||
-				e instanceof MessageBodyException ||
-				e instanceof NoSuchMessageException ||
-				e instanceof PrincipalException ||
-				e instanceof RequiredMessageException) {
+		catch (DiscussionMaxCommentsException | MessageBodyException |
+				NoSuchMessageException | PrincipalException |
+				RequiredMessageException e) {
 
 				JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
 				jsonObject.putException(e);
 
 				writeJSON(actionRequest, actionResponse, jsonObject);
-			}
-			else {
-				throw e;
-			}
 		}
-	}
-
-	@Override
-	public ActionForward render(
-			ActionMapping actionMapping, ActionForm actionForm,
-			PortletConfig portletConfig, RenderRequest renderRequest,
-			RenderResponse renderResponse)
-		throws Exception {
-
-		try {
-			ActionUtil.getMessage(renderRequest);
-		}
-		catch (Exception e) {
-			if (e instanceof NoSuchMessageException ||
-				e instanceof PrincipalException) {
-
-				SessionErrors.add(renderRequest, e.getClass());
-
-				return actionMapping.findForward(
-					"portlet.message_boards.error");
-			}
-			else {
-				throw e;
-			}
-		}
-
-		return actionMapping.findForward(
-			getForward(
-				renderRequest, "portlet.message_boards.edit_discussion"));
 	}
 
 	@Override
@@ -166,10 +126,6 @@ public class EditDiscussionAction extends PortletAction {
 		long classPK = ParamUtil.getLong(resourceRequest, "classPK");
 		boolean hideControls = ParamUtil.getBoolean(
 			resourceRequest, "hideControls");
-		String permissionClassName = ParamUtil.getString(
-			resourceRequest, "permissionClassName");
-		long permissionClassPK = ParamUtil.getLong(
-			resourceRequest, "permissionClassPK");
 		boolean ratingsEnabled = ParamUtil.getBoolean(
 			resourceRequest, "ratingsEnabled");
 		long userId = ParamUtil.getLong(resourceRequest, "userId");
@@ -182,11 +138,6 @@ public class EditDiscussionAction extends PortletAction {
 			"liferay-ui:discussion:classPK", String.valueOf(classPK));
 		request.setAttribute(
 			"liferay-ui:discussion:hideControls", String.valueOf(hideControls));
-		request.setAttribute(
-			"liferay-ui:discussion:permissionClassName", permissionClassName);
-		request.setAttribute(
-			"liferay-ui:discussion:permissionClassPK",
-			String.valueOf(permissionClassPK));
 		request.setAttribute(
 			"liferay-ui:discussion:ratingsEnabled",
 			String.valueOf(ratingsEnabled));
@@ -220,23 +171,19 @@ public class EditDiscussionAction extends PortletAction {
 		portletRequestDispatcher.include(resourceRequest, resourceResponse);
 	}
 
-	protected void deleteMessage(ActionRequest actionRequest) throws Exception {
-		long groupId = PortalUtil.getScopeGroupId(actionRequest);
+	protected void deleteComment(ActionRequest actionRequest) throws Exception {
+		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
+			WebKeys.THEME_DISPLAY);
 
-		String className = ParamUtil.getString(actionRequest, "className");
-		long classPK = ParamUtil.getLong(actionRequest, "classPK");
-		String permissionClassName = ParamUtil.getString(
-			actionRequest, "permissionClassName");
-		long permissionClassPK = ParamUtil.getLong(
-			actionRequest, "permissionClassPK");
-		long permissionOwnerId = ParamUtil.getLong(
-			actionRequest, "permissionOwnerId");
+		long commentId = ParamUtil.getLong(actionRequest, "commentId");
 
-		long messageId = ParamUtil.getLong(actionRequest, "messageId");
+		DiscussionPermission discussionPermission =
+			CommentManagerUtil.getDiscussionPermission(
+				themeDisplay.getPermissionChecker());
 
-		MBMessageServiceUtil.deleteDiscussionMessage(
-			groupId, className, classPK, permissionClassName, permissionClassPK,
-			permissionOwnerId, messageId);
+		discussionPermission.checkDeletePermission(commentId);
+
+		CommentManagerUtil.deleteComment(commentId);
 	}
 
 	@Override
@@ -255,45 +202,37 @@ public class EditDiscussionAction extends PortletAction {
 		long classPK = ParamUtil.getLong(actionRequest, "classPK");
 
 		if (subscribe) {
-			MBDiscussionLocalServiceUtil.subscribeDiscussion(
+			CommentManagerUtil.subscribeDiscussion(
 				themeDisplay.getUserId(), themeDisplay.getScopeGroupId(),
 				className, classPK);
 		}
 		else {
-			MBDiscussionLocalServiceUtil.unsubscribeDiscussion(
+			CommentManagerUtil.unsubscribeDiscussion(
 				themeDisplay.getUserId(), className, classPK);
 		}
 	}
 
-	protected MBMessage updateMessage(ActionRequest actionRequest)
-		throws Exception {
-
+	protected long updateComment(ActionRequest actionRequest) throws Exception {
 		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
+		long commentId = ParamUtil.getLong(actionRequest, "commentId");
+
 		String className = ParamUtil.getString(actionRequest, "className");
 		long classPK = ParamUtil.getLong(actionRequest, "classPK");
-		String permissionClassName = ParamUtil.getString(
-			actionRequest, "permissionClassName");
-		long permissionClassPK = ParamUtil.getLong(
-			actionRequest, "permissionClassPK");
-		long permissionOwnerId = ParamUtil.getLong(
-			actionRequest, "permissionOwnerId");
-
-		long messageId = ParamUtil.getLong(actionRequest, "messageId");
-
-		long threadId = ParamUtil.getLong(actionRequest, "threadId");
-		long parentMessageId = ParamUtil.getLong(
-			actionRequest, "parentMessageId");
+		long parentCommentId = ParamUtil.getLong(
+			actionRequest, "parentCommentId");
 		String subject = ParamUtil.getString(actionRequest, "subject");
 		String body = ParamUtil.getString(actionRequest, "body");
 
-		ServiceContext serviceContext = ServiceContextFactory.getInstance(
-			MBMessage.class.getName(), actionRequest);
+		Function<String, ServiceContext> serviceContextFunction =
+			new ServiceContextFunction(actionRequest);
 
-		MBMessage message = null;
+		DiscussionPermission discussionPermission =
+			CommentManagerUtil.getDiscussionPermission(
+				themeDisplay.getPermissionChecker());
 
-		if (messageId <= 0) {
+		if (commentId <= 0) {
 
 			// Add message
 
@@ -312,7 +251,7 @@ public class EditDiscussionAction extends PortletAction {
 				if ((user == null) ||
 					(user.getStatus() != WorkflowConstants.STATUS_INCOMPLETE)) {
 
-					return null;
+					return 0;
 				}
 			}
 
@@ -321,10 +260,13 @@ public class EditDiscussionAction extends PortletAction {
 			PrincipalThreadLocal.setName(user.getUserId());
 
 			try {
-				message = MBMessageServiceUtil.addDiscussionMessage(
-					serviceContext.getScopeGroupId(), className, classPK,
-					permissionClassName, permissionClassPK, permissionOwnerId,
-					threadId, parentMessageId, subject, body, serviceContext);
+				discussionPermission.checkAddPermission(
+					themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId(),
+					className, classPK);
+
+				commentId = CommentManagerUtil.addComment(
+					user.getUserId(), className, classPK, user.getFullName(),
+					parentCommentId, subject, body, serviceContextFunction);
 			}
 			finally {
 				PrincipalThreadLocal.setName(name);
@@ -334,9 +276,11 @@ public class EditDiscussionAction extends PortletAction {
 
 			// Update message
 
-			message = MBMessageServiceUtil.updateDiscussionMessage(
-				className, classPK, permissionClassName, permissionClassPK,
-				permissionOwnerId, messageId, subject, body, serviceContext);
+			discussionPermission.checkUpdatePermission(commentId);
+
+			commentId = CommentManagerUtil.updateComment(
+				themeDisplay.getUserId(), className, classPK, commentId,
+				subject, body, serviceContextFunction);
 		}
 
 		// Subscription
@@ -344,12 +288,12 @@ public class EditDiscussionAction extends PortletAction {
 		boolean subscribe = ParamUtil.getBoolean(actionRequest, "subscribe");
 
 		if (subscribe) {
-			MBDiscussionLocalServiceUtil.subscribeDiscussion(
+			CommentManagerUtil.subscribeDiscussion(
 				themeDisplay.getUserId(), themeDisplay.getScopeGroupId(),
 				className, classPK);
 		}
 
-		return message;
+		return commentId;
 	}
 
 	private static final boolean _CHECK_METHOD_ON_PROCESS_ACTION = false;

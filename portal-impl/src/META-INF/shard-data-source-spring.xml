@@ -39,7 +39,7 @@
 			</bean>
 		</property>
 	</bean>
-	<bean id="shardDataSourceTargetSource" class="com.liferay.portal.dao.shard.ShardDataSourceTargetSource">
+	<bean id="shardDataSourceTargetSource" class="com.liferay.portal.dao.shard.DefaultShardDataSourceTargetSource">
 		<property name="dataSources">
 			<map>
 				<entry>
@@ -63,7 +63,7 @@
 			</map>
 		</property>
 	</bean>
-	<bean id="shardSessionFactoryTargetSource" class="com.liferay.portal.dao.shard.ShardSessionFactoryTargetSource">
+	<bean id="shardSessionFactoryTargetSource" class="com.liferay.portal.dao.shard.DefaultShardSessionFactoryTargetSource">
 		<property name="shardDataSourceTargetSource" ref="shardDataSourceTargetSource" />
 	</bean>
 	<bean id="com.liferay.portal.kernel.dao.jdbc.MappingSqlQueryFactoryUtil" class="com.liferay.portal.kernel.dao.jdbc.MappingSqlQueryFactoryUtil">

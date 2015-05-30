@@ -37,7 +37,7 @@ AUI.add(
 
 						var nativeFeatures = instance._addData(data);
 
-						var features = AArray.map(nativeFeatures, instance._wrapNativeFeature, instance);
+						var features = nativeFeatures.map(instance._wrapNativeFeature, instance);
 
 						instance.fire(
 							'featuresAdded',
@@ -140,7 +140,7 @@ AUI.add(
 			{
 				ATTRS: {
 					controls: {
-						validator: Lang.isArray,
+						validator: Array.isArray,
 						value: [
 							'Base.CONTROLS.PAN',
 							'Base.CONTROLS.TYPE',
@@ -217,7 +217,7 @@ AUI.add(
 
 						var position = instance.get('position');
 
-						var location = (position && position.location) ? position.location : {};
+						var location = position && position.location ? position.location : {};
 
 						if (!location.lat || !location.lng) {
 							Liferay.Util.getGeolocation(
@@ -303,8 +303,7 @@ AUI.add(
 									var features = event.features;
 
 									if (features.length > 1) {
-										AArray.each(
-											event.features,
+										event.features.forEach(
 											function(item, index) {
 												bounds.extend(item.getGeometry().get());
 											}
@@ -434,7 +433,7 @@ AUI.add(
 									}
 								}
 
-								config[item] = (controlIndex !== -1);
+								config[item] = controlIndex !== -1;
 							}
 						);
 
@@ -590,12 +589,15 @@ AUI.add(
 
 					Liferay.component(id, map);
 
-					A.Array.each(
-						instance._pendingCallbacks[id],
-						function(item, index) {
-							item(map);
-						}
-					);
+					var pendingCallback = instance._pendingCallbacks[id];
+
+					if (pendingCallback) {
+						pendingCallback.forEach(
+							function(item, index) {
+								item(map);
+							}
+						);
+					}
 				},
 
 				_pendingCallbacks: {}

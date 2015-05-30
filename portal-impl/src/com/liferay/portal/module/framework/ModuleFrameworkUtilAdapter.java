@@ -15,7 +15,7 @@
 package com.liferay.portal.module.framework;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.util.ClassLoaderUtil;
+import com.liferay.portal.kernel.util.ClassLoaderUtil;
 
 import java.io.InputStream;
 
@@ -107,8 +107,8 @@ public class ModuleFrameworkUtilAdapter {
 		_moduleFramework.stopBundle(bundleId, options);
 	}
 
-	public static void stopFramework() throws Exception {
-		_moduleFramework.stopFramework();
+	public static void stopFramework(long timeout) throws Exception {
+		_moduleFramework.stopFramework(timeout);
 	}
 
 	public static void stopRuntime() throws Exception {

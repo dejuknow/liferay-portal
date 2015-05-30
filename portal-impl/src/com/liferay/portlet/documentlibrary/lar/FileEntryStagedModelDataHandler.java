@@ -83,6 +83,11 @@ public class FileEntryStagedModelDataHandler
 	};
 
 	@Override
+	public void deleteStagedModel(FileEntry fileEntry) throws PortalException {
+		DLAppLocalServiceUtil.deleteFileEntry(fileEntry.getFileEntryId());
+	}
+
+	@Override
 	public void deleteStagedModel(
 			String uuid, long groupId, String className, String extraData)
 		throws PortalException {
@@ -90,7 +95,7 @@ public class FileEntryStagedModelDataHandler
 		FileEntry fileEntry = fetchStagedModelByUuidAndGroupId(uuid, groupId);
 
 		if (fileEntry != null) {
-			DLAppLocalServiceUtil.deleteFileEntry(fileEntry.getFileEntryId());
+			deleteStagedModel(fileEntry);
 		}
 	}
 
@@ -730,7 +735,8 @@ public class FileEntryStagedModelDataHandler
 		try {
 			FileVersion fileVersion = fileEntry.getFileVersion();
 
-			if (!ArrayUtil.contains(
+			if (!portletDataContext.isInitialPublication() &&
+				!ArrayUtil.contains(
 					getExportableStatuses(), fileVersion.getStatus())) {
 
 				throw new PortletDataException(

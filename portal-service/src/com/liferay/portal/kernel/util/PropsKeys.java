@@ -475,8 +475,6 @@ public interface PropsKeys {
 
 	public static final String CONTROL_PANEL_NAVIGATION_MAX_SITES = "control.panel.navigation.max.sites";
 
-	public static final String COOKIE_HTTP_ONLY_NAMES_EXCLUDES = "cookie.http.only.names.excludes";
-
 	public static final String COUNTER_DATA_CENTER_COUNT = "counter.data.center.count";
 
 	public static final String COUNTER_DATA_CENTER_DEPLOYMENT_ID = "counter.data.center.deployment.id";
@@ -905,10 +903,6 @@ public interface PropsKeys {
 
 	public static final String GZIP_COMPRESSION_LEVEL = "gzip.compression.level";
 
-	public static final String HIBERNATE_CACHE_USE_QUERY_CACHE = "hibernate.cache.use_query_cache";
-
-	public static final String HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE = "hibernate.cache.use_second_level_cache";
-
 	public static final String HIBERNATE_CONFIGS = "hibernate.configs";
 
 	public static final String HIBERNATE_DIALECT = "hibernate.dialect";
@@ -1116,6 +1110,8 @@ public interface PropsKeys {
 	public static final String JOURNAL_ARTICLE_CUSTOM_TOKEN_VALUE = "journal.article.custom.token.value";
 
 	public static final String JOURNAL_ARTICLE_CUSTOM_TOKENS = "journal.article.custom.tokens";
+
+	public static final String JOURNAL_ARTICLE_DATABASE_KEYWORD_SEARCH_CONTENT = "journal.article.database.keyword.search.content";
 
 	public static final String JOURNAL_ARTICLE_EXPIRE_ALL_VERSIONS = "journal.article.expire.all.versions";
 
@@ -1439,6 +1435,8 @@ public interface PropsKeys {
 
 	public static final String LOCALE_PREPEND_FRIENDLY_URL_STYLE = "locale.prepend.friendly.url.style";
 
+	public static final String LOCALE_USE_DEFAULT_IF_NOT_AVAILABLE = "locale.use.default.if.not.available";
+
 	public static final String LOCALES = "locales";
 
 	public static final String LOCALES_BETA = "locales.beta";
@@ -1671,6 +1669,8 @@ public interface PropsKeys {
 
 	public static final String MODULE_FRAMEWORK_STATE_DIR = "module.framework.state.dir";
 
+	public static final String MODULE_FRAMEWORK_STOP_WAIT_TIMEOUT = "module.framework.stop.wait.timeout";
+
 	public static final String MODULE_FRAMEWORK_SYSTEM_PACKAGES_EXTRA = "module.framework.system.packages.extra";
 
 	public static final String MODULE_FRAMEWORK_WEB_GENERATOR_DEFAULT_SERVLET_PACKAGES = "module.framework.web.generator.default.servlet.packages";
@@ -1704,8 +1704,6 @@ public interface PropsKeys {
 	public static final String MY_SITES_SHOW_USER_PRIVATE_SITES_WITH_NO_LAYOUTS = "my.sites.show.user.private.sites.with.no.layouts";
 
 	public static final String MY_SITES_SHOW_USER_PUBLIC_SITES_WITH_NO_LAYOUTS = "my.sites.show.user.public.sites.with.no.layouts";
-
-	public static final String NET_SF_EHCACHE_CONFIGURATION_RESOURCE_NAME = "net.sf.ehcache.configurationResourceName";
 
 	public static final String NETVIBES_SERVLET_MAPPING = "netvibes.servlet.mapping";
 
@@ -1933,6 +1931,10 @@ public interface PropsKeys {
 
 	public static final String POP_SERVER_SUBDOMAIN = "pop.server.subdomain";
 
+	public static final String PORTAL_CACHE_MANAGER_TYPE_MULTI_VM ="portal.cache.manager.type.multi.vm";
+
+	public static final String PORTAL_CACHE_MANAGER_TYPE_SINGLE_VM ="portal.cache.manager.type.single.vm";
+
 	public static final String PORTAL_FABRIC_AGENT_SELECTOR_CLASS = "portal.fabric.agent.selector.class";
 
 	public static final String PORTAL_FABRIC_CLIENT_EVENT_LOOP_GROUP_THREAD_COUNT = "portal.fabric.client.event.loop.group.thread.count";
@@ -2041,6 +2043,8 @@ public interface PropsKeys {
 
 	public static final String PORTLET_INTERRUPTED_REQUEST_WHITELIST_ACTIONS = "portlet.interrupted.request.whitelist.actions";
 
+	public static final String PORTLET_PREFERENCES_CACHE_KEY_THRESHOLD_SIZE = "portlet.preferences.cache.key.threshold.size";
+
 	public static final String PORTLET_PREFERENCES_STRICT_STORE = "portlet.preferences.strict.store";
 
 	public static final String PORTLET_PUBLIC_RENDER_PARAMETER_DISTRIBUTION = "portlet.public.render.parameter.distribution";
@@ -2148,8 +2152,6 @@ public interface PropsKeys {
 	public static final String SCHEDULER_JOB_NAME_MAX_LENGTH = "scheduler.job.name.max.length";
 
 	public static final String SCHEMA_RUN_ENABLED = "schema.run.enabled";
-
-	public static final String SCRIPTING_FORBIDDEN_CLASSES = "scripting.forbidden.classes";
 
 	public static final String SCRIPTING_JRUBY_COMPILE_MODE = "scripting.jruby.compile.mode";
 
@@ -2599,8 +2601,6 @@ public interface PropsKeys {
 
 	public static final String USERS_INDEXER_ENABLED = "users.indexer.enabled";
 
-	public static final String USERS_LAST_NAME_REQUIRED = "users.last.name.required";
-
 	public static final String USERS_LIST_VIEWS = "users.list.views";
 
 	public static final String USERS_PROFILE_FRIENDLY_URL = "users.profile.friendly.url";
@@ -2696,8 +2696,6 @@ public interface PropsKeys {
 	public static final String WIDGET_SERVLET_MAPPING = "widget.servlet.mapping";
 
 	public static final String XML_SECURITY_ENABLED = "xml.security.enabled";
-
-	public static final String XML_SECURITY_WHITELIST = "xml.security.whitelist";
 
 	public static final String XML_VALIDATION_ENABLED = "xml.validation.enabled";
 

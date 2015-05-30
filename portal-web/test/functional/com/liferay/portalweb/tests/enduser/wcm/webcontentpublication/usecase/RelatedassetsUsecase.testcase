@@ -50,9 +50,11 @@
 		</execute>
 
 		<execute macro="Page#gotoContentCP">
-			<var name="portletName" value="Web  Content" />
+			<var name="portletName" value="Web Content" />
 			<var name="siteScopeName" value="Site Name" />
 		</execute>
+
+		<execute macro="WebContentNavigator#gotoAddCP" />
 
 		<execute macro="WebContent#addCP">
 			<var name="webContentContent" value="Web Content Content 1" />
@@ -60,9 +62,11 @@
 		</execute>
 
 		<execute macro="Page#gotoContentCP">
-			<var name="portletName" value="Web  Content" />
+			<var name="portletName" value="Web Content" />
 			<var name="siteScopeName" value="Site Name" />
 		</execute>
+
+		<execute macro="WebContentNavigator#gotoAddCP" />
 
 		<execute macro="WebContent#addWithCategoryCP">
 			<var name="categoryName" value="Category Name" />
@@ -72,12 +76,12 @@
 		</execute>
 
 		<execute macro="Page#gotoContentCP">
-			<var name="portletName" value="Web  Content" />
+			<var name="portletName" value="Web Content" />
 			<var name="siteScopeName" value="Site Name" />
 		</execute>
 
-		<execute macro="WebContent#gotoEditCP">
-			<var name="webContentTitle" value="WC WebContent Title 2" />
+		<execute macro="WebContentNavigator#gotoEditCP">
+			<var name="webContentTitle" value="Web Content Title 2" />
 		</execute>
 
 		<execute macro="WebContent#addExistingRelatedAssetCP">

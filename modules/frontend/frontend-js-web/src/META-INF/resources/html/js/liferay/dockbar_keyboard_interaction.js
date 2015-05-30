@@ -1,7 +1,6 @@
 AUI.add(
 	'liferay-dockbar-keyboard-interaction',
 	function(A) {
-		var AArray = A.Array;
 		var AObject = A.Object;
 
 		var ACTIVE_DESCENDANT = 'activeDescendant';
@@ -20,9 +19,9 @@ AUI.add(
 
 		var SELECTOR_DOCKBAR_ITEM = '.dockbar-item:visible, a.nav-navigation-btn:visible';
 
-		var SELECTOR_DOCKBAR_ITEM_FIRST_LINK = '.dockbar-item:visible > a, a.nav-navigation-btn:visible';
+		var SELECTOR_DOCKBAR_ITEM_FIRST_LINK = '.dockbar-item:visible > a[role=menuitem], a.nav-navigation-btn:visible';
 
-		var SELECTOR_DOCKBAR_ITEM_LINK = '.dockbar-item:visible a, a.nav-navigation-btn:visible';
+		var SELECTOR_DOCKBAR_ITEM_LINK = '.dockbar-item:visible a[role=menuitem], a.nav-navigation-btn:visible';
 
 		var STR_MENU_ITEM = 'menuItem';
 
@@ -56,8 +55,7 @@ AUI.add(
 
 						var menuItem = target.ancestor(SELECTOR_DOCKBAR_ITEM) || target.getData(STR_MENU_ITEM);
 
-						AArray.some(
-							MENU_ITEM_CSS_CLASSES,
+						MENU_ITEM_CSS_CLASSES.some(
 							function(item, index) {
 								if (menuItem.hasClass(item)) {
 									menuItem.addClass(CSS_OPEN);
@@ -173,8 +171,7 @@ AUI.add(
 
 									var menuItem = menuItemLink.ancestor(SELECTOR_DOCKBAR_ITEM) || menuItemLink.getData(STR_MENU_ITEM);
 
-									AArray.some(
-										MENU_ITEM_CSS_CLASSES,
+									MENU_ITEM_CSS_CLASSES.some(
 										function(item, index) {
 											if (menuItem.hasClass(item)) {
 												menuItem.addClass(CSS_OPEN);

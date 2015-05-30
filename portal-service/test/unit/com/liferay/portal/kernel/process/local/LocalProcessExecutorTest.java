@@ -72,8 +72,11 @@ import java.nio.channels.ServerSocketChannel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CountDownLatch;
@@ -81,6 +84,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
@@ -1123,6 +1127,60 @@ public class LocalProcessExecutorTest {
 	}
 
 	@Test
+	public void testNonprocessCallablePipingBackProcessCallable()
+		throws Exception {
+
+		NonprocessCallablePipingBackProcessCallable
+			nonprocessCallablePipingBackProcessCallable =
+				new NonprocessCallablePipingBackProcessCallable();
+
+		try (CaptureHandler captureHandler =
+				JDKLoggerTestUtil.configureJDKLogger(
+					LocalProcessExecutor.class.getName(), Level.INFO)) {
+
+			ProcessChannel<Serializable> processChannel =
+				_localProcessExecutor.execute(
+					_createJPDAProcessConfig(_JPDA_OPTIONS1),
+					nonprocessCallablePipingBackProcessCallable);
+
+			NoticeableFuture<Serializable> noticeableFuture =
+				processChannel.getProcessNoticeableFuture();
+
+			noticeableFuture.get();
+
+			List<LogRecord> logRecords = captureHandler.getLogRecords();
+
+			Assert.assertEquals(1, logRecords.size());
+
+			LogRecord logRecord = logRecords.get(0);
+
+			Assert.assertEquals(
+				"Received a nonprocess callable piping back string piping " +
+					"back object",
+				logRecord.getMessage());
+		}
+
+		try (CaptureHandler captureHandler =
+				JDKLoggerTestUtil.configureJDKLogger(
+					LocalProcessExecutor.class.getName(), Level.OFF)) {
+
+			ProcessChannel<Serializable> processChannel =
+				_localProcessExecutor.execute(
+					_createJPDAProcessConfig(_JPDA_OPTIONS1),
+					nonprocessCallablePipingBackProcessCallable);
+
+			NoticeableFuture<Serializable> noticeableFuture =
+				processChannel.getProcessNoticeableFuture();
+
+			noticeableFuture.get();
+
+			List<LogRecord> logRecords = captureHandler.getLogRecords();
+
+			Assert.assertTrue(logRecords.isEmpty());
+		}
+	}
+
+	@Test
 	public void testProcessChannelPiping() throws Exception {
 		ReturnWithoutExitProcessCallable returnWithoutExitProcessCallable =
 			new ReturnWithoutExitProcessCallable("Premature return value");
@@ -1167,7 +1225,11 @@ public class LocalProcessExecutorTest {
 			Future<Serializable> interruptFuture = processChannel.write(
 				new InterruptProcessCallable());
 
-			Assert.assertNull(interruptFuture.get());
+			try {
+				Assert.assertNull(interruptFuture.get());
+			}
+			catch (CancellationException ce) {
+			}
 		}
 		finally {
 			System.setErr(oldErrPrintStream);
@@ -1185,9 +1247,7 @@ public class LocalProcessExecutorTest {
 			processChannel.getProcessNoticeableFuture();
 
 		try {
-			processFuture.get();
-
-			Assert.fail();
+			Assert.fail(processFuture.get());
 		}
 		catch (ExecutionException ee) {
 			Throwable throwable = ee.getCause();
@@ -1264,7 +1324,9 @@ public class LocalProcessExecutorTest {
 				JDKLoggerTestUtil.configureJDKLogger(
 					LocalProcessExecutor.class.getName(), Level.OFF)) {
 
-			_localProcessExecutor.destroy();
+			Set<Process> processes = _localProcessExecutor.destroy();
+
+			Assert.assertEquals(1, processes.size());
 
 			try {
 				future.get();
@@ -1275,6 +1337,12 @@ public class LocalProcessExecutorTest {
 				Assert.assertTrue(future.isCancelled());
 				Assert.assertTrue(future.isDone());
 			}
+
+			Iterator<Process> iterator = processes.iterator();
+
+			Process process = iterator.next();
+
+			Assert.assertTrue(process.waitFor() > 0);
 		}
 	}
 
@@ -1286,7 +1354,7 @@ public class LocalProcessExecutorTest {
 
 		try (CaptureHandler captureHandler =
 				JDKLoggerTestUtil.configureJDKLogger(
-					LocalProcessExecutor.class.getName(), Level.SEVERE)) {
+					LocalProcessExecutor.class.getName(), Level.WARNING)) {
 
 			ProcessChannel<Serializable> processChannel =
 				_localProcessExecutor.execute(
@@ -1304,6 +1372,13 @@ public class LocalProcessExecutorTest {
 			catch (ExecutionException ee) {
 				Throwable cause = ee.getCause();
 
+				Assert.assertSame(ProcessException.class, cause.getClass());
+
+				cause = cause.getCause();
+
+				Assert.assertSame(
+					NotSerializableException.class, cause.getClass());
+
 				List<LogRecord> logRecords = captureHandler.getLogRecords();
 
 				Assert.assertEquals(1, logRecords.size());
@@ -1311,8 +1386,10 @@ public class LocalProcessExecutorTest {
 				LogRecord logRecord = logRecords.get(0);
 
 				Assert.assertEquals(
-					"Abort subprocess piping", logRecord.getMessage());
-				Assert.assertSame(cause, logRecord.getThrown());
+					"Caught a write aborted exception", logRecord.getMessage());
+
+				cause = logRecord.getThrown();
+
 				Assert.assertSame(
 					WriteAbortedException.class, cause.getClass());
 
@@ -1320,6 +1397,39 @@ public class LocalProcessExecutorTest {
 
 				Assert.assertSame(
 					NotSerializableException.class, cause.getClass());
+			}
+		}
+
+		try (CaptureHandler captureHandler =
+				JDKLoggerTestUtil.configureJDKLogger(
+					LocalProcessExecutor.class.getName(), Level.OFF)) {
+
+			ProcessChannel<Serializable> processChannel =
+				_localProcessExecutor.execute(
+					_createJPDAProcessConfig(_JPDA_OPTIONS1),
+					unserializablePipingBackProcessCallable);
+
+			NoticeableFuture<Serializable> noticeableFuture =
+				processChannel.getProcessNoticeableFuture();
+
+			try {
+				noticeableFuture.get();
+
+				Assert.fail();
+			}
+			catch (ExecutionException ee) {
+				Throwable cause = ee.getCause();
+
+				Assert.assertSame(ProcessException.class, cause.getClass());
+
+				cause = cause.getCause();
+
+				Assert.assertSame(
+					NotSerializableException.class, cause.getClass());
+
+				List<LogRecord> logRecords = captureHandler.getLogRecords();
+
+				Assert.assertTrue(logRecords.isEmpty());
 			}
 		}
 	}
@@ -1373,27 +1483,25 @@ public class LocalProcessExecutorTest {
 			arguments.add("-Djunit.debug=true");
 		}
 
-		String agentLine = System.getProperty("junit.cobertura.agent");
+		String whipAgentLine = System.getProperty("whip.agent");
 
-		if (Validator.isNotNull(agentLine)) {
-			arguments.add(agentLine);
-			arguments.add("-Djunit.cobertura.agent=" + agentLine);
+		if (Validator.isNotNull(whipAgentLine)) {
+			arguments.add(whipAgentLine);
+			arguments.add("-Dwhip.agent=" + whipAgentLine);
 		}
 
-		if (Boolean.getBoolean("junit.code.coverage")) {
-			arguments.add("-Djunit.code.coverage=true");
-		}
-
-		if (Boolean.getBoolean("junit.code.coverage.dump")) {
-			arguments.add("-Djunit.code.coverage.dump=true");
-		}
-
-		String fileName = System.getProperty(
-			"net.sourceforge.cobertura.datafile");
+		String fileName = System.getProperty("whip.datafile");
 
 		if (fileName != null) {
-			arguments.add("-Dnet.sourceforge.cobertura.datafile=" + fileName);
+			arguments.add("-Dwhip.datafile=" + fileName);
 		}
+
+		if (Boolean.getBoolean("whip.instrument.dump")) {
+			arguments.add("-Dwhip.instrument.dump=true");
+		}
+
+		arguments.add("-Dwhip.static.instrument=true");
+		arguments.add("-Dwhip.static.instrument.use.data.file=true");
 
 		return arguments;
 	}
@@ -1420,6 +1528,30 @@ public class LocalProcessExecutorTest {
 		else {
 			return heartbeatThreadReference.get();
 		}
+	}
+
+	private static byte[] _toHeadlessSerializationData(
+			Serializable serializable)
+		throws IOException {
+
+		UnsyncByteArrayOutputStream unsyncByteArrayOutputStream =
+			new UnsyncByteArrayOutputStream();
+
+		try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(
+				unsyncByteArrayOutputStream) {
+
+					@Override
+					protected void writeStreamHeader() {
+					}
+
+				}) {
+
+			objectOutputStream.reset();
+
+			objectOutputStream.writeUnshared(serializable);
+		}
+
+		return unsyncByteArrayOutputStream.toByteArray();
 	}
 
 	private static void _waitForSignalFile(
@@ -2012,12 +2144,18 @@ public class LocalProcessExecutorTest {
 		implements ProcessCallable<Serializable> {
 
 		@Override
-		public Serializable call() {
-			Thread thread = ReturnWithoutExitProcessCallable._thread;
+		public Serializable call() throws ProcessException {
+			BlockingQueue<Thread> threadBlockingQueue =
+				ReturnWithoutExitProcessCallable._threadBlockingQueue;
 
-			Assert.assertNotNull(thread);
+			try {
+				Thread thread = threadBlockingQueue.take();
 
-			thread.interrupt();
+				thread.interrupt();
+			}
+			catch (InterruptedException ie) {
+				throw new ProcessException(ie);
+			}
 
 			return null;
 		}
@@ -2178,6 +2316,34 @@ public class LocalProcessExecutorTest {
 
 	}
 
+	private static class NonprocessCallablePipingBackProcessCallable
+		implements ProcessCallable<Serializable> {
+
+		@Override
+		public Serializable call() throws ProcessException {
+			try {
+				synchronized (System.out) {
+					System.out.flush();
+
+					OutputStream outputStream = new FileOutputStream(
+						FileDescriptor.out);
+
+					outputStream.write(
+						_toHeadlessSerializationData(
+							"string piping back object"));
+				}
+			}
+			catch (IOException ioe) {
+				throw new ProcessException(ioe);
+			}
+
+			return null;
+		}
+
+		private static final long serialVersionUID = 1L;
+
+	}
+
 	private static class NPEOOSShutdownHook implements ShutdownHook {
 
 		public NPEOOSShutdownHook() {
@@ -2266,7 +2432,7 @@ public class LocalProcessExecutorTest {
 				processOutputStream.writeProcessCallable(
 					new ReturnProcessCallable<String>(_returnValue));
 
-				_thread = Thread.currentThread();
+				_threadBlockingQueue.put(Thread.currentThread());
 
 				Thread.sleep(Long.MAX_VALUE);
 			}
@@ -2293,7 +2459,8 @@ public class LocalProcessExecutorTest {
 			return sb.toString();
 		}
 
-		private static volatile Thread _thread;
+		private static final BlockingQueue<Thread> _threadBlockingQueue =
+			new SynchronousQueue<>();
 		private static final long serialVersionUID = 1L;
 
 		private final String _returnValue;

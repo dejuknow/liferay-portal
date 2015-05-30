@@ -27,6 +27,7 @@ import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
 import com.liferay.portal.kernel.dao.jdbc.DataSourceFactoryUtil;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.log.SanitizerLogWrapper;
+import com.liferay.portal.kernel.util.ClassLoaderUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
@@ -232,10 +233,19 @@ public class InitUtil {
 
 	public synchronized static void stopModuleFramework() {
 		try {
-			ModuleFrameworkUtilAdapter.stopFramework();
+			ModuleFrameworkUtilAdapter.stopFramework(0);
 		}
 		catch (Exception e) {
-			new RuntimeException(e);
+			throw new RuntimeException(e);
+		}
+	}
+
+	public synchronized static void stopRuntime() {
+		try {
+			ModuleFrameworkUtilAdapter.stopRuntime();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
 		}
 	}
 

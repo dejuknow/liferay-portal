@@ -92,7 +92,7 @@ AUI.add(
 			{
 				ATTRS: {
 					availableLocales: {
-						validator: Lang.isArray,
+						validator: Array.isArray,
 						valueFn: '_valueAvailableLocales'
 					},
 
@@ -172,11 +172,11 @@ AUI.add(
 					renderUI: function() {
 						var instance = this;
 
-						var availableTranslationsNode = instance.get('availableTranslationsNode');
 						var availableTranslationsLinksNode = instance.get('availableTranslationsLinksNode');
+						var availableTranslationsNode = instance.get('availableTranslationsNode');
 						var changeDefaultLocaleNode = instance.get('changeDefaultLocaleNode');
-						var defaultLocaleNode = instance.get('defaultLocaleNode');
 						var defaultLocaleLabelNode = instance.get('defaultLocaleLabelNode');
+						var defaultLocaleNode = instance.get('defaultLocaleNode');
 						var defaultLocaleTextNode = instance.get('defaultLocaleTextNode');
 						var iconMenuNode = instance.get('iconMenuNode');
 
@@ -297,8 +297,7 @@ AUI.add(
 
 						var html;
 
-						A.each(
-							instance._locales,
+						instance._locales.forEach(
 							function(item, index) {
 								tplBuffer[0] = item;
 								tplBuffer[1] = localesMap[item];
@@ -407,11 +406,10 @@ AUI.add(
 							locale: STR_BLANK
 						};
 
-						AArray.each(
-							val,
+						val.forEach(
 							function(item, index) {
 								if (defaultLocale !== item) {
-									tplBuffer.cssClass = (editingLocale === item) ? CSS_TRANSLATION_EDITING : STR_BLANK;
+									tplBuffer.cssClass = editingLocale === item ? CSS_TRANSLATION_EDITING : STR_BLANK;
 
 									tplBuffer.displayName = localesMap[item];
 									tplBuffer.locale = item;
@@ -453,9 +451,9 @@ AUI.add(
 						var instance = this;
 
 						var availableTranslationsLinksNode = instance._availableTranslationsLinksNode;
-						var availableTranslationsLinksItems = availableTranslationsLinksNode.all(STR_DOT + CSS_TRANSLATION);
-
 						var defaultLocaleTextNode = instance._defaultLocaleTextNode;
+
+						var availableTranslationsLinksItems = availableTranslationsLinksNode.all(STR_DOT + CSS_TRANSLATION);
 
 						availableTranslationsLinksItems.removeClass(CSS_TRANSLATION_EDITING);
 						defaultLocaleTextNode.removeClass(CSS_TRANSLATION_EDITING);

@@ -261,10 +261,14 @@
 				<classpath mode="compile">lib/development/ant-installer.jar</classpath>
 				<classpath mode="compile">lib/development/antelope.jar</classpath>
 				<classpath mode="compile">lib/development/appium.jar</classpath>
+				<classpath mode="compile">lib/development/bsh.jar</classpath>
 				<classpath mode="compile">lib/development/catalina.jar</classpath>
 				<classpath mode="compile">lib/development/cobertura.jar</classpath>
 				<classpath mode="compile">lib/development/com.liferay.ant.bnd.jar</classpath>
-				<classpath mode="compile">lib/development/com.liferay.cobertura.agent.jar</classpath>
+				<classpath mode="compile">lib/development/com.liferay.ant.build.logger.jar</classpath>
+				<classpath mode="compile">lib/development/com.liferay.ant.jgit.jar</classpath>
+				<classpath mode="compile">lib/development/com.liferay.tld.formatter.jar</classpath>
+				<classpath mode="compile">lib/development/com.liferay.whip.jar</classpath>
 				<classpath mode="compile">lib/development/deployment.jar</classpath>
 				<classpath mode="compile">lib/development/derby.jar</classpath>
 				<classpath mode="compile">lib/development/derbytools.jar</classpath>
@@ -355,7 +359,6 @@
 				<classpath mode="compile">lib/portal/bcprov.jar</classpath>
 				<classpath mode="compile">lib/portal/bnd.jar</classpath>
 				<classpath mode="compile">lib/portal/boilerpipe.jar</classpath>
-				<classpath mode="compile">lib/portal/bsh.jar</classpath>
 				<classpath mode="compile">lib/portal/bsf.jar</classpath>
 				<classpath mode="compile">lib/portal/c3p0.jar</classpath>
 				<classpath mode="compile">lib/portal/ccpp-ri.jar</classpath>
@@ -370,7 +373,9 @@
 				<classpath mode="compile">lib/portal/closure-compiler.jar</classpath>
 				<classpath mode="compile">lib/portal/com.liferay.rtl.css.jar</classpath>
 				<classpath mode="compile">lib/portal/com.liferay.ruby.gems.jar</classpath>
+				<classpath mode="compile">lib/portal/com.liferay.sass.compiler.api.jar</classpath>
 				<classpath mode="compile">lib/portal/com.liferay.sass.compiler.jni.jar</classpath>
+				<classpath mode="compile">lib/portal/com.liferay.sass.compiler.ruby.jar</classpath>
 				<classpath mode="compile">lib/portal/commons-beanutils.jar</classpath>
 				<classpath mode="compile">lib/portal/commons-codec.jar</classpath>
 				<classpath mode="compile">lib/portal/commons-collections.jar</classpath>
@@ -397,12 +402,10 @@
 				<classpath mode="compile">lib/portal/easyconf.jar</classpath>
 				<classpath mode="compile">lib/portal/eclipse-core-runtime.jar</classpath>
 				<classpath mode="compile">lib/portal/ecs.jar</classpath>
-				<classpath mode="compile">lib/portal/ehcache.jar</classpath>
 				<classpath mode="compile">lib/portal/fastutil.jar</classpath>
 				<classpath mode="compile">lib/portal/fontbox.jar</classpath>
 				<classpath mode="compile">lib/portal/freshcookies-security.jar</classpath>
 				<classpath mode="compile">lib/portal/gif89.jar</classpath>
-				<classpath mode="compile">lib/portal/groovy.jar</classpath>
 				<classpath mode="compile">lib/portal/hessian.jar</classpath>
 				<classpath mode="compile">lib/portal/hibernate-commons-annotations.jar</classpath>
 				<classpath mode="compile">lib/portal/hibernate-core.jar</classpath>
@@ -423,7 +426,6 @@
 				<classpath mode="compile">lib/portal/jai_codec.jar</classpath>
 				<classpath mode="compile">lib/portal/jai_core.jar</classpath>
 				<classpath mode="compile">lib/portal/jakarta-regexp.jar</classpath>
-				<classpath mode="compile">lib/portal/jamwiki-core.jar</classpath>
 				<classpath mode="compile">lib/portal/java-diff.jar</classpath>
 				<classpath mode="compile">lib/portal/java-libpst.jar</classpath>
 				<classpath mode="compile">lib/portal/javassist.jar</classpath>
@@ -460,7 +462,6 @@
 				<classpath mode="compile">lib/portal/juh.jar</classpath>
 				<classpath mode="compile">lib/portal/juniversalchardet.jar</classpath>
 				<classpath mode="compile">lib/portal/jurt.jar</classpath>
-				<classpath mode="compile">lib/portal/jython.jar</classpath>
 				<classpath mode="compile">lib/portal/kxml2.jar</classpath>
 				<classpath mode="compile">lib/portal/liferay-icu4j.jar</classpath>
 				<classpath mode="compile">lib/portal/liferay-yui-compressor.jar</classpath>
@@ -486,9 +487,7 @@
 				<classpath mode="compile">lib/portal/poi.jar</classpath>
 				<classpath mode="compile">lib/portal/portal-client.jar</classpath>
 				<classpath mode="compile">lib/portal/portals-bridges.jar</classpath>
-				<classpath mode="compile">lib/portal/quartz.jar</classpath>
 				<classpath mode="compile">lib/portal/rdffilter.jar</classpath>
-				<classpath mode="compile">lib/portal/rhino.jar</classpath>
 				<classpath mode="compile">lib/portal/ridl.jar</classpath>
 				<classpath mode="compile">lib/portal/rome.jar</classpath>
 				<classpath mode="compile">lib/portal/saaj-api.jar</classpath>

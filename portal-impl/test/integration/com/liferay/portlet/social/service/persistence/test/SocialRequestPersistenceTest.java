@@ -32,7 +32,6 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PersistenceTestRule;
-import com.liferay.portal.util.PropsValues;
 
 import com.liferay.portlet.social.NoSuchRequestException;
 import com.liferay.portlet.social.model.SocialRequest;
@@ -281,17 +280,11 @@ public class SocialRequestPersistenceTest {
 		Assert.assertEquals(existingSocialRequest, newSocialRequest);
 	}
 
-	@Test
+	@Test(expected = NoSuchRequestException.class)
 	public void testFindByPrimaryKeyMissing() throws Exception {
 		long pk = RandomTestUtil.nextLong();
 
-		try {
-			_persistence.findByPrimaryKey(pk);
-
-			Assert.fail("Missing entity did not throw NoSuchRequestException");
-		}
-		catch (NoSuchRequestException nsee) {
-		}
+		_persistence.findByPrimaryKey(pk);
 	}
 
 	@Test
@@ -504,10 +497,6 @@ public class SocialRequestPersistenceTest {
 
 	@Test
 	public void testResetOriginalValues() throws Exception {
-		if (!PropsValues.HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE) {
-			return;
-		}
-
 		SocialRequest newSocialRequest = addSocialRequest();
 
 		_persistence.clearCache();

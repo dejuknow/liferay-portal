@@ -14,6 +14,7 @@
 
 package com.liferay.portal.dao.shard;
 
+import com.liferay.portal.kernel.dao.shard.ShardSessionFactoryTargetSource;
 import com.liferay.portal.spring.hibernate.LastSessionRecorderHibernateTransactionManager;
 
 import org.hibernate.SessionFactory;
@@ -32,7 +33,8 @@ public class ShardLastSessionRecorderHibernateTransactionManager
 
 	@Override
 	public SessionFactory getSessionFactory() {
-		return _shardSessionFactoryTargetSource.getSessionFactory();
+		return (SessionFactory)
+			_shardSessionFactoryTargetSource.getSessionFactory();
 	}
 
 	private final ShardSessionFactoryTargetSource

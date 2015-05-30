@@ -281,7 +281,13 @@
 
 		<execute function="UploadCommonFile" locator1="PGDocumentsandmediaAdddocument#FILE_FIELD" value1="${dmDocumentFile}" />
 		<execute function="Type" locator1="PGDocumentsandmediaAdddocument#TITLE_FIELD" value1="${dmDocumentTitle}" />
-		<execute function="Type" locator1="PGDocumentsandmediaAdddocument#DESCRIPTION_FIELD" value1="${dmDocumentDescription}" />
+
+		<if>
+			<isset var="dmDocumentDescription" />
+			<then>
+				<execute function="Type" locator1="PGDocumentsandmediaAdddocument#DESCRIPTION_FIELD" value1="${dmDocumentDescription}" />
+			</then>
+		</if>
 
 		<if>
 			<isset var="categoryName" />
@@ -651,6 +657,12 @@
 		<execute function="Click#makeVisibleClickAt" locator1="PGDocumentsandmedia#ENTRY_ICON_DOCUMENT_ACTIONS" />
 		<execute function="AssertClick" locator1="PGDocumentsandmedia#DOCUMENT_MENULIST_CHECKOUT" value1="Checkout" />
 		<execute function="AssertTextEquals#assertPartialText" locator1="PGDocumentsandmedia#SUCCESS_MESSAGE" value1="Your request completed successfully." />
+	</command>
+
+	<command name="copyURL">
+		<var name="key_dmDocumentTitle" value="${dmDocumentTitle}" />
+
+		<execute function="AssertClick" locator1="CPDocumentsandmedia#DOCUMENT_CONTAINER_DOCUMENT_TITLE" value1="${dmDocumentTitle}" />
 	</command>
 
 	<command name="deleteCommentPG">
@@ -1174,6 +1186,34 @@
 				<execute function="AssertTextEquals" locator1="CPDocumentsandmedia#INFO_MESSAGE" value1="There are no documents or media files in this folder." />
 			</then>
 		</if>
+	</command>
+
+	<command name="moveToSubFolderCP">
+		<var name="key_dmDocumentTitle" value="${dmDocumentTitle}" />
+
+		<execute function="AssertClick" locator1="CPDocumentsandmedia#DOCUMENT_CONTAINER_DOCUMENT_DROPDOWN" />
+
+		<execute function="AssertElementPresent" locator1="CPDocumentsandmedia#DOCUMENT_MENULIST_MOVE" />
+
+		<execute function="AssertClick" locator1="CPDocumentsandmedia#DOCUMENT_MENULIST_MOVE" value1="Move" />
+
+		<execute function="AssertClick" locator1="CPDocumentsandmediaMovedocument#SELECT_BUTTON" value1="Select" />
+
+		<execute function="SelectFrame" locator1="CPDocumentsandmediaMovedocument#FOLDER_WINDOW_ID" />
+
+		<execute function="AssertClick" locator1="CPDocumentsandmediaMovedocument#FOLDER_WINDOW_FOLDER" value1="${dmFolderName}" />
+
+		<execute function="AssertTextEquals" locator1="CPDocumentsandmediaMovedocument#FOLDER_WINDOW_FOLDER" value1="${dmSubFolderName}" />
+
+		<execute function="AssertClick" locator1="CPDocumentsandmediaMovedocument#FOLDER_WINDOW_FOLDER_CHOOSE_BUTTON" value1="Choose" />
+
+		<execute function="SelectFrame" locator1="relative=top" />
+
+		<execute function="AssertTextEquals" locator1="CPDocumentsandmediaMovedocument#NEW_FOLDER" value1="${dmSubFolderName}" />
+
+		<execute function="AssertClick" locator1="CPDocumentsandmediaMovedocument#MOVE_BUTTON" value1="Move" />
+
+		<execute function="AssertTextEquals" locator1="CPDocumentsandmedia#SUCCESS_MESSAGE" value1="Your request completed successfully." />
 	</command>
 
 	<command name="navigateBackViaDocumentViewPG">

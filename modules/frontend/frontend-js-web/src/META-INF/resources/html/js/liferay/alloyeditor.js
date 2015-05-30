@@ -26,15 +26,6 @@ AUI.add(
 						value: {}
 					},
 
-					editorOptions: {
-						validator: Lang.isObject,
-						value: {}
-					},
-
-					initMethod: {
-						validator: Lang.isFunction
-					},
-
 					onBlurMethod: {
 						validator: Lang.isFunction
 					},
@@ -49,6 +40,11 @@ AUI.add(
 
 					onInitMethod: {
 						validator: Lang.isFunction
+					},
+
+					textMode: {
+						validator: Lang.isBoolean,
+						value: {}
 					}
 				},
 
@@ -117,19 +113,10 @@ AUI.add(
 					getCkData: function() {
 						var instance = this;
 
-						var data;
+						var data = instance.getNativeEditor().getData();
 
-						var initFn = instance.get('initMethod');
-
-						if (!instance.instanceReady && initFn) {
-							data = initFn();
-						}
-						else {
-							data = instance.getNativeEditor().getData();
-
-							if (CKEDITOR.env.gecko && (CKEDITOR.tools.trim(data) === '<br />')) {
-								data = '';
-							}
+						if (CKEDITOR.env.gecko && CKEDITOR.tools.trim(data) === '<br />') {
+							data = '';
 						}
 
 						return data;
@@ -138,43 +125,29 @@ AUI.add(
 					getHTML: function() {
 						var instance = this;
 
-						var text = '';
-
-						var editorOptions = instance.get('editorOptions');
-
-						if (editorOptions.textMode) {
-							var editorName = instance.getNativeEditor().name;
-
-							var editorElement = CKEDITOR.instances[editorName].element.$;
-
-							var childElement;
-
-							if (editorElement.children.length) {
-								childElement = editorElement.children[0];
-							}
-							else if (editorElement.childNodes.length) {
-								childElement = editorElement.childNodes[0];
-							}
-
-							if (childElement) {
-								text = childElement.textContent;
-
-								if (text === undefined) {
-									text = childElement.innerText;
-								}
-							}
-						}
-						else {
-							text = instance.getCkData();
-						}
-
-						return text;
+						return instance.get('textMode') ? instance.getText() : instance.getCkData();
 					},
 
 					getNativeEditor: function() {
 						var instance = this;
 
 						return instance._alloyEditor.get('nativeEditor');
+					},
+
+					getText: function() {
+						var instance = this;
+
+						var editorName = instance.getNativeEditor().name;
+
+						var editor = CKEDITOR.instances[editorName];
+
+						var text = '';
+
+						if (editor) {
+							text = editor.editable().getText();
+						}
+
+						return text;
 					},
 
 					setHTML: function(value) {
@@ -196,7 +169,7 @@ AUI.add(
 
 						var changeFn = instance.get('onChangeMethod');
 
-						changeFn(instance.getHTML());
+						changeFn(instance.getText());
 					},
 
 					_onFocus: function(event) {

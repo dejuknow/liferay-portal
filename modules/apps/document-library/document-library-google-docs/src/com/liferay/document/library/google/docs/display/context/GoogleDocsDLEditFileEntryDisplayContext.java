@@ -74,19 +74,17 @@ public class GoogleDocsDLEditFileEntryDisplayContext
 	}
 
 	@Override
-	public boolean isCancelCheckoutDocumentButtonVisible()
-		throws PortalException {
-
+	public boolean isCancelCheckoutDocumentButtonVisible() {
 		return false;
 	}
 
 	@Override
-	public boolean isCheckinButtonVisible() throws PortalException {
+	public boolean isCheckinButtonVisible() {
 		return false;
 	}
 
 	@Override
-	public boolean isCheckoutDocumentButtonVisible() throws PortalException {
+	public boolean isCheckoutDocumentButtonVisible() {
 		return false;
 	}
 

@@ -17,8 +17,6 @@
 <%@ include file="/html/portlet/layouts_admin/init.jsp" %>
 
 <%
-String closeRedirect = ParamUtil.getString(request, "closeRedirect");
-
 Group selGroup = (Group)request.getAttribute(WebKeys.GROUP);
 
 Group group = layoutsAdminDisplayContext.getGroup();
@@ -69,8 +67,6 @@ if (layoutRevision != null) {
 	}
 }
 
-String[] mainSections = PropsValues.LAYOUT_FORM_UPDATE;
-
 if (selLayout.isSupportsEmbeddedPortlets()) {
 	List<Portlet> embeddedPortlets = new ArrayList<Portlet>();
 
@@ -86,16 +82,8 @@ if (selLayout.isSupportsEmbeddedPortlets()) {
 
 	if (!embeddedPortlets.isEmpty()) {
 		request.setAttribute("edit_pages.jsp-embeddedPortlets", embeddedPortlets);
-
-		mainSections = ArrayUtil.append(mainSections, "embedded-portlets");
 	}
 }
-
-if (!group.isUser() && selLayout.isTypePortlet()) {
-	mainSections = ArrayUtil.append(mainSections, "customization-settings");
-}
-
-String[][] categorySections = {mainSections};
 
 String displayStyle = ParamUtil.getString(request, "displayStyle");
 boolean showAddAction = ParamUtil.getBoolean(request, "showAddAction", true);
@@ -191,7 +179,6 @@ boolean showAddAction = ParamUtil.getBoolean(request, "showAddAction", true);
 <aui:form action='<%= HttpUtil.addParameter(editLayoutURL, "refererPlid", plid) %>' cssClass="edit-layout-form" enctype="multipart/form-data" method="post" name="fm" onSubmit='<%= "event.preventDefault(); " + liferayPortletResponse.getNamespace() + "saveLayout();" %>'>
 	<aui:input name="<%= Constants.CMD %>" type="hidden" />
 	<aui:input name="redirect" type="hidden" value='<%= HttpUtil.addParameter(redirectURL.toString(), liferayPortletResponse.getNamespace() + "selPlid", layoutsAdminDisplayContext.getSelPlid()) %>' />
-	<aui:input name="closeRedirect" type="hidden" value="<%= closeRedirect %>" />
 	<aui:input name="groupId" type="hidden" value="<%= selGroup.getGroupId() %>" />
 	<aui:input name="liveGroupId" type="hidden" value="<%= layoutsAdminDisplayContext.getLiveGroupId() %>" />
 	<aui:input name="stagingGroupId" type="hidden" value="<%= layoutsAdminDisplayContext.getStagingGroupId() %>" />
@@ -224,16 +211,6 @@ boolean showAddAction = ParamUtil.getBoolean(request, "showAddAction", true);
 		</c:when>
 		<c:otherwise>
 			<c:if test="<%= !group.isLayoutPrototype() && (selLayout != null) %>">
-				<c:if test="<%= selGroup.isStagingGroup() %>">
-					<%@ include file="/html/portlet/layouts_admin/error_auth_exception.jspf" %>
-
-					<%@ include file="/html/portlet/layouts_admin/error_remote_export_exception.jspf" %>
-
-					<div class="alert alert-warning">
-						<liferay-ui:message key="the-staging-environment-is-activated-changes-have-to-be-published-to-make-them-available-to-end-users" />
-					</div>
-				</c:if>
-
 				<c:if test="<%= selGroup.hasLocalOrRemoteStagingGroup() && !selGroup.isStagingGroup() %>">
 					<div class="alert alert-warning">
 						<liferay-ui:message key="changes-are-immediately-available-to-end-users" />
@@ -271,11 +248,9 @@ boolean showAddAction = ParamUtil.getBoolean(request, "showAddAction", true);
 
 			<c:if test="<%= !selGroup.hasLocalOrRemoteStagingGroup() || selGroup.isStagingGroup() %>">
 				<liferay-ui:form-navigator
-					categorySections="<%= categorySections %>"
 					displayStyle="<%= displayStyle %>"
 					formModelBean="<%= selLayout %>"
 					id="<%= FormNavigatorConstants.FORM_NAVIGATOR_ID_LAYOUT %>"
-					jspPath="/html/portlet/layouts_admin/layout/"
 					showButtons="<%= (selLayout.getGroupId() == layoutsAdminDisplayContext.getGroupId()) && SitesUtil.isLayoutUpdateable(selLayout) && LayoutPermissionUtil.contains(permissionChecker, selLayout, ActionKeys.UPDATE) %>"
 				/>
 			</c:if>

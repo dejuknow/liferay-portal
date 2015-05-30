@@ -48,7 +48,7 @@
 			<liferay-ui:ddm-template-selector
 				className="<%= AssetCategory.class.getName() %>"
 				displayStyle="<%= assetCategoriesNavigationPortletInstanceConfiguration.displayStyle() %>"
-				displayStyleGroupId="<%= assetCategoriesNavigationPortletInstanceConfiguration.displayStyleGroupId(themeDisplay.getScopeGroupId()) %>"
+				displayStyleGroupId="<%= assetCategoriesNavigationDisplayContext.getDisplayStyleGroupId() %>"
 				refreshURL="<%= configurationRenderURL %>"
 				showEmptyOption="<%= true %>"
 			/>

@@ -41,18 +41,22 @@ page import="com.sun.syndication.feed.synd.SyndImage" %>
 <%@ page import="java.text.Format" %>
 
 <%@ page import="java.util.Enumeration" %><%@
-page import="java.util.List" %>
+page import="java.util.HashMap" %><%@
+page import="java.util.List" %><%@
+page import="java.util.Map" %>
 
 <%@ page import="javax.portlet.ValidatorException" %>
 
-<liferay-theme:defineObjects />
 <portlet:defineObjects />
 
+<liferay-theme:defineObjects />
+
 <%
-RSSPortletInstanceConfiguration rssPortletInstanceConfiguration = portletDisplay.getPortletInstanceConfiguration(RSSPortletInstanceConfiguration.class);
 RSSWebConfiguration rssWebConfiguration = (RSSWebConfiguration)renderRequest.getAttribute(RSSWebConfiguration.class.getName());
 
-RSSDisplayContext rssDisplayContext = new RSSDisplayContext(rssPortletInstanceConfiguration, rssWebConfiguration);
+RSSDisplayContext rssDisplayContext = new RSSDisplayContext(request, rssWebConfiguration);
+
+RSSPortletInstanceConfiguration rssPortletInstanceConfiguration = rssDisplayContext.getRSSPortletInstanceConfiguration();
 
 Format dateFormatDateTime = FastDateFormatFactoryUtil.getDateTime(locale, timeZone);
 %>

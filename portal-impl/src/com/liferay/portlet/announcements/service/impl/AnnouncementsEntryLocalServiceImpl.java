@@ -15,10 +15,10 @@
 package com.liferay.portlet.announcements.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.interval.IntervalActionProcessor;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.PropsKeys;
@@ -75,9 +75,7 @@ public class AnnouncementsEntryLocalServiceImpl
 
 		User user = userPersistence.findByPrimaryKey(userId);
 
-		Date now = new Date();
-
-		Date displayDate = now;
+		Date displayDate = new Date();
 
 		if (!displayImmediately) {
 			displayDate = PortalUtil.getDate(
@@ -101,8 +99,6 @@ public class AnnouncementsEntryLocalServiceImpl
 		entry.setCompanyId(user.getCompanyId());
 		entry.setUserId(user.getUserId());
 		entry.setUserName(user.getFullName());
-		entry.setCreateDate(now);
-		entry.setModifiedDate(now);
 		entry.setClassNameId(classNameId);
 		entry.setClassPK(classPK);
 		entry.setTitle(title);
@@ -337,9 +333,7 @@ public class AnnouncementsEntryLocalServiceImpl
 
 		User user = userPersistence.findByPrimaryKey(userId);
 
-		Date now = new Date();
-
-		Date displayDate = now;
+		Date displayDate = new Date();
 
 		if (!displayImmediately) {
 			displayDate = PortalUtil.getDate(
@@ -358,7 +352,6 @@ public class AnnouncementsEntryLocalServiceImpl
 		AnnouncementsEntry entry =
 			announcementsEntryPersistence.findByPrimaryKey(entryId);
 
-		entry.setModifiedDate(now);
 		entry.setTitle(title);
 		entry.setContent(content);
 		entry.setUrl(url);
@@ -453,39 +446,61 @@ public class AnnouncementsEntryLocalServiceImpl
 				user.getFullName());
 		}
 		else {
-			int count = 0;
-
-			if (teamId > 0) {
-				count = userLocalService.getTeamUsersCount(teamId);
-			}
-			else {
-				count = userLocalService.searchCount(
-					company.getCompanyId(), null,
-					WorkflowConstants.STATUS_APPROVED, params);
-			}
-
-			int pages = count / Indexer.DEFAULT_INTERVAL;
-
-			for (int i = 0; i <= pages; i++) {
-				int start = (i * Indexer.DEFAULT_INTERVAL);
-				int end = start + Indexer.DEFAULT_INTERVAL;
-
-				List<User> users = null;
-
-				if (teamId > 0) {
-					users = userLocalService.getTeamUsers(teamId, start, end);
-				}
-				else {
-					users = userLocalService.search(
-						company.getCompanyId(), null,
-						WorkflowConstants.STATUS_APPROVED, params, start, end,
-						(OrderByComparator<User>)null);
-				}
-
-				notifyUsers(
-					users, entry, company.getLocale(), toAddress, toName);
-			}
+			notifyUsers(entry, teamId, params, toName, toAddress, company);
 		}
+	}
+
+	protected void notifyUsers(
+			final AnnouncementsEntry entry, final long teamId,
+			final LinkedHashMap<String, Object> params, final String toName,
+			final String toAddress, final Company company)
+		throws PortalException {
+
+		int total = 0;
+
+		if (teamId > 0) {
+			total = userLocalService.getTeamUsersCount(teamId);
+		}
+		else {
+			total = userLocalService.searchCount(
+				company.getCompanyId(), null, WorkflowConstants.STATUS_APPROVED,
+				params);
+		}
+
+		final IntervalActionProcessor<Void> intervalActionProcessor =
+			new IntervalActionProcessor<>(total);
+
+		intervalActionProcessor.setPerformIntervalActionMethod(
+			new IntervalActionProcessor.PerformIntervalActionMethod<Void>() {
+
+				@Override
+				public Void performIntervalAction(int start, int end)
+					throws PortalException {
+
+					List<User> users = null;
+
+					if (teamId > 0) {
+						users = userLocalService.getTeamUsers(
+							teamId, start, end);
+					}
+					else {
+						users = userLocalService.search(
+							company.getCompanyId(), null,
+							WorkflowConstants.STATUS_APPROVED, params, start,
+							end, (OrderByComparator<User>)null);
+					}
+
+					notifyUsers(
+						users, entry, company.getLocale(), toAddress, toName);
+
+					intervalActionProcessor.incrementStart(users.size());
+
+					return null;
+				}
+
+			});
+
+		intervalActionProcessor.performIntervalActions();
 	}
 
 	protected void notifyUsers(

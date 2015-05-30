@@ -129,6 +129,13 @@
 			<execute function="AssertElementPresent" locator1="Home#PAGE" value1="Asset Publisher Page" />
 		</for>
 
+		<execute macro="User#firstLoginPG">
+			<var name="loginViaDockbar" value="true" />
+			<var name="password" value="test" />
+			<var name="userEmailAddress" value="test@liferay.com" />
+			<var name="virtualHostsURL" value="http://www.able.com:8080" />
+		</execute>
+
 		<execute macro="Page#addPG">
 			<var name="pageName" value="Web Content Page" />
 		</execute>
@@ -228,7 +235,7 @@
 		</execute>
 	</command>
 
-	<command name="AssertAssetListScopeViaAssetPublisher" priority="4">
+	<command known-issues="LPS-55859" name="AssertAssetListScopeViaAssetPublisher" priority="4">
 		<execute macro="Page#gotoContentCP">
 			<var name="portletName" value="Documents and Media" />
 			<var name="siteScopeName" value="Global" />
@@ -330,6 +337,8 @@
 			<var name="webContentTitle" value="Web Content1 Title" />
 		</execute>
 
+		<execute macro="WebContentNavigator#gotoEditPGViaWCD" />
+
 		<execute macro="WebContent#addCategoryPGViaWCD">
 			<var name="categoryName" value="Vocabulary1 Category" />
 			<var name="vocabularyName" value="Vocabulary Name" />
@@ -350,6 +359,8 @@
 			<var name="webContentTitle" value="Web Content1 Title" />
 		</execute>
 
+		<execute macro="WebContentNavigator#gotoEditPGViaWCD" />
+
 		<execute macro="WebContent#addTranslationPGViaWCD">
 			<var name="lowercaseLanguageCode" value="de" />
 			<var name="webContentContent" value="Web Content1 Content" />
@@ -358,6 +369,8 @@
 			<var name="webContentTranslationLanguage" value="German (Germany)" />
 			<var name="webContentTranslationTitle" value="Netz Content1 Titel" />
 		</execute>
+
+		<execute macro="WebContentNavigator#gotoEditPGViaWCD" />
 
 		<execute macro="WebContent#addTranslationPGViaWCD">
 			<var name="lowercaseLanguageCode" value="fr" />
@@ -428,7 +441,7 @@
 		</execute>
 	</command>
 
-	<command known-issues="LPS-54822" name="AssetPublisherCategoriesNavigation" priority="3">
+	<command name="AssetPublisherCategoriesNavigation" priority="3">
 		<var name="siteName" value="Liferay" />
 
 		<execute macro="Page#gotoContentCP">
@@ -463,6 +476,8 @@
 			<var name="portletName" value="Web Content" />
 		</execute>
 
+		<execute macro="WebContentNavigator#gotoAddCP" />
+
 		<execute macro="WebContent#addWithCategoryCP">
 			<var name="categoryName" value="Vocabulary1 Category" />
 			<var name="vocabularyName" value="Vocabulary Name" />
@@ -473,6 +488,8 @@
 		<execute macro="Page#gotoContentCP">
 			<var name="portletName" value="Web Content" />
 		</execute>
+
+		<execute macro="WebContentNavigator#gotoAddCP" />
 
 		<execute macro="WebContent#addWithCategoryCP">
 			<var name="categoryName" value="Vocabulary1 Category" />
@@ -485,6 +502,8 @@
 			<var name="portletName" value="Web Content" />
 		</execute>
 
+		<execute macro="WebContentNavigator#gotoAddCP" />
+
 		<execute macro="WebContent#addWithCategoryCP">
 			<var name="categoryName" value="Vocabulary1 Category" />
 			<var name="vocabularyName" value="Vocabulary Name" />
@@ -496,6 +515,8 @@
 			<var name="portletName" value="Web Content" />
 		</execute>
 
+		<execute macro="WebContentNavigator#gotoAddCP" />
+
 		<execute macro="WebContent#addWithCategoryCP">
 			<var name="categoryName" value="Vocabulary1 Category" />
 			<var name="vocabularyName" value="Vocabulary Name" />
@@ -506,6 +527,8 @@
 		<execute macro="Page#gotoContentCP">
 			<var name="portletName" value="Web Content" />
 		</execute>
+
+		<execute macro="WebContentNavigator#gotoAddCP" />
 
 		<execute macro="WebContent#addWithCategoryCP">
 			<var name="categoryName" value="Vocabulary1 Category" />
@@ -596,14 +619,27 @@
 		</execute>
 	</command>
 
-	<command name="AssetPublisherFilterAndOrderByFieldType" priority="5">
+	<command known-issues="LPS-55464" name="AssetPublisherFilterAndOrderByFieldType" priority="5">
 		<execute macro="Page#gotoContentCP">
 			<var name="portletName" value="Web Content" />
 		</execute>
 
+		<execute macro="WebContentNavigator#gotoManageStructures" />
+
 		<execute macro="WebContentStructures#addCP">
 			<var name="structureDescription" value="WC Structure Description" />
-			<var name="structureFieldNames" value="Boolean,Date,Decimal,Documents and Media,HTML,Image,Integer,Link to Page,Number,Radio,Select,Text,Text Box" />
+			<var name="structureName" value="WC Structure Name" />
+		</execute>
+
+		<for list="Boolean,Date,Decimal,Documents and Media,HTML,Image,Integer,Link to Page,Number,Radio,Select,Text,Text Box" param="structureFieldName">
+			<execute macro="DynamicDataMapping#addField">
+				<var name="field" value="${structureFieldName}" />
+				<var name="fieldFieldLabel" value="${structureFieldName}" />
+				<var method="StringUtil#replace('${structureFieldName}', ' ', '_')" name="fieldName" />
+			</execute>
+		</for>
+
+		<execute macro="WebContentStructures#saveCP">
 			<var name="structureName" value="WC Structure Name" />
 		</execute>
 
@@ -623,6 +659,8 @@
 			<var name="portletName" value="Web Content" />
 		</execute>
 
+		<execute macro="WebContentNavigator#gotoAddWithStructureCP" />
+
 		<execute macro="WebContent#addWithStructureCP">
 			<var name="structureName" value="WC Structure Name" />
 			<var name="templateName" value="WC Template Name" />
@@ -635,15 +673,23 @@
 			<var name="portletName" value="Web Content" />
 		</execute>
 
-		<execute macro="WebContent#addTranslationCP">
+		<execute macro="WebContentNavigator#gotoEditCP">
+			<var name="webContentTitle" value="WC WebContent Title" />
+		</execute>
+
+		<execute macro="WebContent#addTranslation">
 			<var name="localizedInteger" value="3" />
 			<var name="localizedLanguage" value="German (Germany)" />
 			<var name="webContentTitle" value="Web Content1 Title" />
 		</execute>
 
+		<execute macro="WebContent#publish" />
+
 		<execute macro="Page#gotoContentCP">
 			<var name="portletName" value="Web Content" />
 		</execute>
+
+		<execute macro="WebContentNavigator#gotoAddWithStructureCP" />
 
 		<execute macro="WebContent#addWithStructureCP">
 			<var name="structureName" value="WC Structure Name" />
@@ -657,15 +703,23 @@
 			<var name="portletName" value="Web Content" />
 		</execute>
 
-		<execute macro="WebContent#addTranslationCP">
+		<execute macro="WebContentNavigator#gotoEditCP">
+			<var name="webContentTitle" value="WC WebContent Title" />
+		</execute>
+
+		<execute macro="WebContent#addTranslation">
 			<var name="localizedInteger" value="2" />
 			<var name="localizedLanguage" value="German (Germany)" />
 			<var name="webContentTitle" value="Web Content2 Title" />
 		</execute>
 
+		<execute macro="WebContent#publish" />
+
 		<execute macro="Page#gotoContentCP">
 			<var name="portletName" value="Web Content" />
 		</execute>
+
+		<execute macro="WebContentNavigator#gotoAddWithStructureCP" />
 
 		<execute macro="WebContent#addWithStructureCP">
 			<var name="structureName" value="WC Structure Name" />
@@ -679,15 +733,23 @@
 			<var name="portletName" value="Web Content" />
 		</execute>
 
-		<execute macro="WebContent#addTranslationCP">
+		<execute macro="WebContentNavigator#gotoEditCP">
+			<var name="webContentTitle" value="WC WebContent Title" />
+		</execute>
+
+		<execute macro="WebContent#addTranslation">
 			<var name="localizedInteger" value="8" />
 			<var name="localizedLanguage" value="German (Germany)" />
 			<var name="webContentTitle" value="Web Content3 Title" />
 		</execute>
 
+		<execute macro="WebContent#publish" />
+
 		<execute macro="Page#gotoContentCP">
 			<var name="portletName" value="Web Content" />
 		</execute>
+
+		<execute macro="WebContentNavigator#gotoAddCP" />
 
 		<execute macro="WebContent#addCP">
 			<var name="webContentContent" value="Web Content4 Content" />
@@ -788,6 +850,8 @@
 		<execute macro="Page#gotoContentCP">
 			<var name="portletName" value="Web Content" />
 		</execute>
+
+		<execute macro="WebContentNavigator#gotoManageStructures" />
 
 		<execute macro="WebContentStructures#editFieldSettingCP">
 			<var name="indexable" value="false" />
@@ -903,6 +967,8 @@
 			<var name="portletName" value="Web Content" />
 		</execute>
 
+		<execute macro="WebContentNavigator#gotoAddCP" />
+
 		<execute macro="WebContent#addCP">
 			<var name="webContentContent" value="WC WebContent1 Content" />
 			<var name="webContentTitle" value="WC WebContent1 Title" />
@@ -912,6 +978,8 @@
 			<var name="portletName" value="Web Content" />
 			<var name="siteScopeName" value="Global" />
 		</execute>
+
+		<execute macro="WebContentNavigator#gotoAddCP" />
 
 		<execute macro="WebContent#addCP">
 			<var name="webContentContent" value="WC WebContent Global Content" />
@@ -930,6 +998,8 @@
 			<var name="portletName" value="Web Content" />
 			<var name="siteScopeName" value="Site Name" />
 		</execute>
+
+		<execute macro="WebContentNavigator#gotoAddCP" />
 
 		<execute macro="WebContent#addCP">
 			<var name="webContentContent" value="WC WebContent Site Content" />
@@ -993,6 +1063,8 @@
 			<var name="portletName" value="Web Content" />
 		</execute>
 
+		<execute macro="WebContentNavigator#gotoAddCP" />
+
 		<execute macro="WebContent#addCP">
 			<var name="webContentContent" value="WC WebContent1 Content" />
 			<var name="webContentTitle" value="WC WebContent1 Title" />
@@ -1002,6 +1074,8 @@
 			<var name="portletName" value="Web Content" />
 			<var name="siteScopeName" value="Global" />
 		</execute>
+
+		<execute macro="WebContentNavigator#gotoAddCP" />
 
 		<execute macro="WebContent#addCP">
 			<var name="webContentContent" value="WC WebContent Global Content" />
@@ -1020,6 +1094,8 @@
 			<var name="portletName" value="Web Content" />
 			<var name="siteScopeName" value="Site Name" />
 		</execute>
+
+		<execute macro="WebContentNavigator#gotoAddCP" />
 
 		<execute macro="WebContent#addCP">
 			<var name="webContentContent" value="WC WebContent Site Content" />
@@ -1516,6 +1592,8 @@
 			<var name="portletName" value="Web Content" />
 		</execute>
 
+		<execute macro="WebContentNavigator#gotoAddCP" />
+
 		<execute macro="WebContent#addCP">
 			<var name="webContentContent" value="WC WebContent Content" />
 			<var name="webContentTitle" value="WC WebContent Title" />
@@ -1541,7 +1619,7 @@
 			<var name="portletName" value="Web Content" />
 		</execute>
 
-		<execute macro="WebContent#gotoEditCP">
+		<execute macro="WebContentNavigator#gotoEditCP">
 			<var name="webContentTitle" value="WC WebContent Title" />
 		</execute>
 
@@ -1651,6 +1729,8 @@
 		<execute macro="Page#gotoContentCP">
 			<var name="portletName" value="Web Content" />
 		</execute>
+
+		<execute macro="WebContentNavigator#gotoAddCP" />
 
 		<execute macro="WebContent#addCP">
 			<var name="webContentContent" value="WC WebContent Content" />

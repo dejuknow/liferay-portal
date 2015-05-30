@@ -40,14 +40,6 @@ public class DLAppHelperLocalServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to {@link com.liferay.portlet.documentlibrary.service.impl.DLAppHelperLocalServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
-	public static void addFileEntry(long userId,
-		com.liferay.portal.kernel.repository.model.FileEntry fileEntry,
-		com.liferay.portal.kernel.repository.model.FileVersion fileVersion,
-		com.liferay.portal.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().addFileEntry(userId, fileEntry, fileVersion, serviceContext);
-	}
-
 	public static void addFolder(long userId,
 		com.liferay.portal.kernel.repository.model.Folder folder,
 		com.liferay.portal.service.ServiceContext serviceContext)
@@ -175,14 +167,14 @@ public class DLAppHelperLocalServiceUtil {
 		return getService().moveFileEntryToTrash(userId, fileEntry);
 	}
 
-	public static com.liferay.portlet.documentlibrary.model.DLFileShortcut moveFileShortcutFromTrash(
+	public static com.liferay.portal.kernel.repository.model.FileShortcut moveFileShortcutFromTrash(
 		long userId,
-		com.liferay.portlet.documentlibrary.model.DLFileShortcut dlFileShortcut,
+		com.liferay.portal.kernel.repository.model.FileShortcut fileShortcut,
 		long newFolderId,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
-				   .moveFileShortcutFromTrash(userId, dlFileShortcut,
+				   .moveFileShortcutFromTrash(userId, fileShortcut,
 			newFolderId, serviceContext);
 	}
 
@@ -190,15 +182,15 @@ public class DLAppHelperLocalServiceUtil {
 	* Moves the file shortcut to the recycle bin.
 	*
 	* @param userId the primary key of the user moving the file shortcut
-	* @param dlFileShortcut the file shortcut to be moved
+	* @param fileShortcut the file shortcut to be moved
 	* @return the moved file shortcut
 	* @throws PortalException if a user with the primary key could not be found
 	*/
-	public static com.liferay.portlet.documentlibrary.model.DLFileShortcut moveFileShortcutToTrash(
+	public static com.liferay.portal.kernel.repository.model.FileShortcut moveFileShortcutToTrash(
 		long userId,
-		com.liferay.portlet.documentlibrary.model.DLFileShortcut dlFileShortcut)
+		com.liferay.portal.kernel.repository.model.FileShortcut fileShortcut)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().moveFileShortcutToTrash(userId, dlFileShortcut);
+		return getService().moveFileShortcutToTrash(userId, fileShortcut);
 	}
 
 	public static com.liferay.portal.kernel.repository.model.Folder moveFolderFromTrash(
@@ -251,9 +243,9 @@ public class DLAppHelperLocalServiceUtil {
 	}
 
 	public static void restoreFileShortcutFromTrash(long userId,
-		com.liferay.portlet.documentlibrary.model.DLFileShortcut dlFileShortcut)
+		com.liferay.portal.kernel.repository.model.FileShortcut fileShortcut)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().restoreFileShortcutFromTrash(userId, dlFileShortcut);
+		getService().restoreFileShortcutFromTrash(userId, fileShortcut);
 	}
 
 	public static void restoreFolderFromTrash(long userId,

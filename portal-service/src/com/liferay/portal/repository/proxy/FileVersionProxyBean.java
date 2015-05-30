@@ -15,7 +15,6 @@
 package com.liferay.portal.repository.proxy;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.StagedModelType;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.FileVersion;
@@ -44,26 +43,7 @@ public class FileVersionProxyBean
 
 	@Override
 	public Object clone() {
-		FileVersionProxyBean fileVersionProxyBean = newFileVersionProxyBean(
-			_fileVersion);
-
-		fileVersionProxyBean.setCompanyId(getCompanyId());
-		fileVersionProxyBean.setCreateDate(getCreateDate());
-		fileVersionProxyBean.setGroupId(getGroupId());
-		fileVersionProxyBean.setModifiedDate(getModifiedDate());
-		fileVersionProxyBean.setPrimaryKeyObj(getPrimaryKeyObj());
-		fileVersionProxyBean.setUserId(getUserId());
-		fileVersionProxyBean.setUserName(getUserName());
-
-		try {
-			fileVersionProxyBean.setUserUuid(getUserUuid());
-		}
-		catch (SystemException se) {
-		}
-
-		fileVersionProxyBean.setUuid(getUuid());
-
-		return fileVersionProxyBean;
+		return newFileVersionProxyBean(_fileVersion);
 	}
 
 	@Override

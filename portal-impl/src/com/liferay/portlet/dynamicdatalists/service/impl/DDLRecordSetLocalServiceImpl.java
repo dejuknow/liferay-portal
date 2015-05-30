@@ -31,7 +31,6 @@ import com.liferay.portlet.dynamicdatalists.service.base.DDLRecordSetLocalServic
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -61,8 +60,6 @@ public class DDLRecordSetLocalServiceImpl
 			recordSetKey = String.valueOf(counterLocalService.increment());
 		}
 
-		Date now = new Date();
-
 		validate(groupId, ddmStructureId, recordSetKey, nameMap);
 
 		long recordSetId = counterLocalService.increment();
@@ -74,8 +71,6 @@ public class DDLRecordSetLocalServiceImpl
 		recordSet.setCompanyId(user.getCompanyId());
 		recordSet.setUserId(user.getUserId());
 		recordSet.setUserName(user.getFullName());
-		recordSet.setCreateDate(serviceContext.getCreateDate(now));
-		recordSet.setModifiedDate(serviceContext.getModifiedDate(now));
 		recordSet.setDDMStructureId(ddmStructureId);
 		recordSet.setRecordSetKey(recordSetKey);
 		recordSet.setNameMap(nameMap);
@@ -106,7 +101,7 @@ public class DDLRecordSetLocalServiceImpl
 			DDLRecordSet.class);
 
 		ddmStructureLinkLocalService.addStructureLink(
-			classNameId, recordSetId, ddmStructureId, serviceContext);
+			classNameId, recordSetId, ddmStructureId);
 
 		return recordSet;
 	}
@@ -159,7 +154,8 @@ public class DDLRecordSetLocalServiceImpl
 
 		// Dynamic data mapping structure link
 
-		ddmStructureLinkLocalService.deleteClassStructureLink(
+		ddmStructureLinkLocalService.deleteStructureLinks(
+			classNameLocalService.getClassNameId(DDLRecordSet.class),
 			recordSet.getRecordSetId());
 
 		// Workflow
@@ -274,7 +270,6 @@ public class DDLRecordSetLocalServiceImpl
 		DDLRecordSet recordSet = ddlRecordSetPersistence.findByPrimaryKey(
 			recordSetId);
 
-		recordSet.setModifiedDate(serviceContext.getModifiedDate(null));
 		recordSet.setMinDisplayRows(minDisplayRows);
 
 		ddlRecordSetPersistence.update(recordSet);
@@ -325,7 +320,6 @@ public class DDLRecordSetLocalServiceImpl
 
 		long oldDDMStructureId = recordSet.getDDMStructureId();
 
-		recordSet.setModifiedDate(serviceContext.getModifiedDate(null));
 		recordSet.setDDMStructureId(ddmStructureId);
 		recordSet.setNameMap(nameMap);
 		recordSet.setDescriptionMap(descriptionMap);
@@ -341,12 +335,12 @@ public class DDLRecordSetLocalServiceImpl
 
 			// Dynamic data mapping structure link
 
-			DDMStructureLink ddmStructureLink =
-				ddmStructureLinkLocalService.getClassStructureLink(
-					recordSet.getRecordSetId());
-
 			long classNameId = classNameLocalService.getClassNameId(
 				DDLRecordSet.class);
+
+			DDMStructureLink ddmStructureLink =
+				ddmStructureLinkLocalService.getUniqueStructureLink(
+					classNameId, recordSet.getRecordSetId());
 
 			ddmStructureLinkLocalService.updateStructureLink(
 				ddmStructureLink.getStructureLinkId(), classNameId,

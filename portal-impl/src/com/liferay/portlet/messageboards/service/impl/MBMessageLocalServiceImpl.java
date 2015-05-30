@@ -438,29 +438,6 @@ public class MBMessageLocalServiceImpl extends MBMessageLocalServiceBaseImpl {
 	@Override
 	public MBMessage addMessage(
 			long userId, String userName, long groupId, long categoryId,
-			String subject, String body, String fileName, File file,
-			ServiceContext serviceContext)
-		throws FileNotFoundException, PortalException {
-
-		List<ObjectValuePair<String, InputStream>> inputStreamOVPs =
-			new ArrayList<>(1);
-
-		InputStream inputStream = new FileInputStream(file);
-
-		ObjectValuePair<String, InputStream> inputStreamOVP =
-			new ObjectValuePair<>(fileName, inputStream);
-
-		inputStreamOVPs.add(inputStreamOVP);
-
-		return addMessage(
-			userId, userName, groupId, categoryId, 0, 0, subject, body,
-			MBMessageConstants.DEFAULT_FORMAT, inputStreamOVPs, false, 0.0,
-			false, serviceContext);
-	}
-
-	@Override
-	public MBMessage addMessage(
-			long userId, String userName, long groupId, long categoryId,
 			String subject, String body, String format,
 			List<ObjectValuePair<String, InputStream>> inputStreamOVPs,
 			boolean anonymous, double priority, boolean allowPingbacks,
@@ -474,6 +451,30 @@ public class MBMessageLocalServiceImpl extends MBMessageLocalServiceBaseImpl {
 			userId, userName, groupId, categoryId, threadId, parentMessageId,
 			subject, body, format, inputStreamOVPs, anonymous, priority,
 			allowPingbacks, serviceContext);
+	}
+
+	@Override
+	public MBMessage addMessage(
+			long userId, String userName, long groupId, long categoryId,
+			String subject, String body, String format, String fileName,
+			File file, boolean anonymous, double priority,
+			boolean allowPingbacks, ServiceContext serviceContext)
+		throws FileNotFoundException, PortalException {
+
+		List<ObjectValuePair<String, InputStream>> inputStreamOVPs =
+			new ArrayList<>(1);
+
+		InputStream inputStream = new FileInputStream(file);
+
+		ObjectValuePair<String, InputStream> inputStreamOVP =
+			new ObjectValuePair<>(fileName, inputStream);
+
+		inputStreamOVPs.add(inputStreamOVP);
+
+		return addMessage(
+			userId, userName, groupId, categoryId, 0, 0, subject, body, format,
+			inputStreamOVPs, anonymous, priority, allowPingbacks,
+			serviceContext);
 	}
 
 	/**
@@ -499,6 +500,22 @@ public class MBMessageLocalServiceImpl extends MBMessageLocalServiceBaseImpl {
 		return addMessage(
 			userId, userName, groupId, categoryId, subject, body,
 			serviceContext);
+	}
+
+	@Override
+	public void addMessageAttachment(
+			long userId, long messageId, String fileName, File file,
+			String mimeType)
+		throws PortalException {
+
+		MBMessage message = mbMessagePersistence.findByPrimaryKey(messageId);
+
+		Folder folder = message.addAttachmentsFolder();
+
+		PortletFileRepositoryUtil.addPortletFileEntry(
+			message.getGroupId(), userId, MBMessage.class.getName(),
+			message.getMessageId(), PortletKeys.MESSAGE_BOARDS,
+			folder.getFolderId(), file, fileName, mimeType, true);
 	}
 
 	@Override
@@ -1566,7 +1583,7 @@ public class MBMessageLocalServiceImpl extends MBMessageLocalServiceBaseImpl {
 
 		int oldStatus = message.getStatus();
 
-		Date modifiedDate = serviceContext.getModifiedDate(new Date());
+		Date modifiedDate = serviceContext.getModifiedDate(null);
 		subject = ModelHintsUtil.trimString(
 			MBMessage.class.getName(), "subject", subject);
 

@@ -36,7 +36,6 @@ import com.liferay.portal.service.persistence.LayoutRevisionPersistence;
 import com.liferay.portal.service.persistence.LayoutRevisionUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PersistenceTestRule;
-import com.liferay.portal.util.PropsValues;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -341,18 +340,11 @@ public class LayoutRevisionPersistenceTest {
 		Assert.assertEquals(existingLayoutRevision, newLayoutRevision);
 	}
 
-	@Test
+	@Test(expected = NoSuchLayoutRevisionException.class)
 	public void testFindByPrimaryKeyMissing() throws Exception {
 		long pk = RandomTestUtil.nextLong();
 
-		try {
-			_persistence.findByPrimaryKey(pk);
-
-			Assert.fail(
-				"Missing entity did not throw NoSuchLayoutRevisionException");
-		}
-		catch (NoSuchLayoutRevisionException nsee) {
-		}
+		_persistence.findByPrimaryKey(pk);
 	}
 
 	@Test
@@ -573,10 +565,6 @@ public class LayoutRevisionPersistenceTest {
 
 	@Test
 	public void testResetOriginalValues() throws Exception {
-		if (!PropsValues.HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE) {
-			return;
-		}
-
 		LayoutRevision newLayoutRevision = addLayoutRevision();
 
 		_persistence.clearCache();

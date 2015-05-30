@@ -84,7 +84,8 @@ public interface MBMessageLocalService extends BaseLocalService,
 	public com.liferay.portlet.messageboards.model.MBMessage addMessage(
 		long userId, java.lang.String userName, long groupId, long categoryId,
 		java.lang.String subject, java.lang.String body,
-		java.lang.String fileName, java.io.File file,
+		java.lang.String format, java.lang.String fileName, java.io.File file,
+		boolean anonymous, double priority, boolean allowPingbacks,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws PortalException, java.io.FileNotFoundException;
 
@@ -110,6 +111,10 @@ public interface MBMessageLocalService extends BaseLocalService,
 		java.util.List<com.liferay.portal.kernel.util.ObjectValuePair<java.lang.String, java.io.InputStream>> inputStreamOVPs,
 		boolean anonymous, double priority, boolean allowPingbacks,
 		com.liferay.portal.service.ServiceContext serviceContext)
+		throws PortalException;
+
+	public void addMessageAttachment(long userId, long messageId,
+		java.lang.String fileName, java.io.File file, java.lang.String mimeType)
 		throws PortalException;
 
 	public void addMessageResources(

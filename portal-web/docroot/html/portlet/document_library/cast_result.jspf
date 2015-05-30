@@ -17,7 +17,7 @@
 <%
 Folder curFolder = null;
 FileEntry fileEntry = null;
-DLFileShortcut fileShortcut = null;
+FileShortcut fileShortcut = null;
 
 if (result instanceof AssetEntry) {
 	AssetEntry assetEntry = (AssetEntry)result;
@@ -37,23 +37,23 @@ if (result instanceof AssetEntry) {
 		fileEntry = fileEntry.toEscapedModel();
 	}
 }
-else if (result instanceof Folder) {
-	curFolder = (Folder)result;
-
-	curFolder = curFolder.toEscapedModel();
-}
 else if (result instanceof FileEntry) {
 	fileEntry = (FileEntry)result;
 
 	fileEntry = fileEntry.toEscapedModel();
 }
-else {
-	fileShortcut = (DLFileShortcut)result;
+else if (result instanceof FileShortcut) {
+	fileShortcut = (FileShortcut)result;
 
 	fileShortcut = fileShortcut.toEscapedModel();
 
 	fileEntry = DLAppLocalServiceUtil.getFileEntry(fileShortcut.getToFileEntryId());
 
 	fileEntry = fileEntry.toEscapedModel();
+}
+else if (result instanceof Folder) {
+	curFolder = (Folder)result;
+
+	curFolder = curFolder.toEscapedModel();
 }
 %>

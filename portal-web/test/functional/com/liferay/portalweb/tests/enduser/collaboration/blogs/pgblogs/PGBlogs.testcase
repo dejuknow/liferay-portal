@@ -23,9 +23,9 @@
 	<tear-down>
 		<execute macro="BlogsEntry#tearDownCP" />
 
-		<execute macro="BlogsPortlet#tearDownConfigurationDisplaySettingsPG" />
+		<execute macro="Blogs#tearDownConfigurationDisplaySettingsPG" />
 
-		<execute macro="BlogsPortlet#tearDownConfigurationScopePG" />
+		<execute macro="Blogs#tearDownConfigurationScopePG" />
 
 		<execute macro="Page#tearDownPG" />
 
@@ -887,7 +887,7 @@
 		</execute>
 	</command>
 
-	<command name="SearchBlogsEntryComment" priority="5">
+	<command known-issues="LPS-55802" name="SearchBlogsEntryComment" priority="5">
 		<var name="entryComment" value="Blogs Entry Comment" />
 		<var name="entryContent" value="Blogs Entry Content" />
 		<var name="entryTitle" value="Blogs Entry Title" />
@@ -1318,7 +1318,7 @@
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
-		<execute macro="BlogsPortlet#subscribePG" />
+		<execute macro="Blogs#subscribePG" />
 
 		<execute macro="User#logoutPG" />
 

@@ -14,21 +14,20 @@
 
 package com.liferay.portlet;
 
-import com.liferay.portal.cache.SingleVMPoolImpl;
-import com.liferay.portal.cache.memory.MemoryPortalCacheManager;
-import com.liferay.portal.kernel.cache.SingleVMPoolUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.security.xml.SecureXMLFactoryProviderImpl;
 import com.liferay.portal.security.xml.SecureXMLFactoryProviderUtil;
 import com.liferay.portal.service.util.test.PortletPreferencesImplTestUtil;
 import com.liferay.portal.service.util.test.PortletPreferencesTestUtil;
+import com.liferay.portal.tools.ToolDependencies;
 import com.liferay.portal.util.HtmlImpl;
 
 import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -36,6 +35,11 @@ import org.junit.Test;
  * @author Brian Wing Shun Chan
  */
 public class PortletPreferencesFactoryImplUnitTest {
+
+	@BeforeClass
+	public static void setUpClass() throws Exception {
+		ToolDependencies.wireCaches();
+	}
 
 	@Before
 	public void setUp() {
@@ -48,16 +52,6 @@ public class PortletPreferencesFactoryImplUnitTest {
 
 		secureXMLFactoryProviderUtil.setSecureXMLFactoryProvider(
 			new SecureXMLFactoryProviderImpl());
-
-		SingleVMPoolUtil singleVMPoolUtil = new SingleVMPoolUtil();
-
-		SingleVMPoolImpl singleVMPoolImpl = new SingleVMPoolImpl();
-
-		singleVMPoolImpl.setPortalCacheManager(
-			MemoryPortalCacheManager.createMemoryPortalCacheManager(
-				PortletPreferencesFactoryImplUnitTest.class.getName()));
-
-		singleVMPoolUtil.setSingleVMPool(singleVMPoolImpl);
 
 		PortletPreferencesFactoryUtil portletPreferencesFactoryUtil =
 			new PortletPreferencesFactoryUtil();

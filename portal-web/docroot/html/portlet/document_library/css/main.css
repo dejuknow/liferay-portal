@@ -260,6 +260,10 @@
 	.common-file-metadata-container {
 		padding: 1em;
 
+		fieldset {
+			overflow: hidden;
+		}
+
 		.field-element {
 			display: block;
 
@@ -289,6 +293,16 @@
 		.document-type-fields {
 			clear: left;
 			padding-top: 0.5em;
+		}
+
+		.document-type-selector, .tagselector {
+			.btn-group {
+				&, .btn {
+					max-width: 100%;
+					overflow: hidden;
+					white-space: normal;
+				}
+			}
 		}
 
 		.categorization-panel {
@@ -537,6 +551,10 @@
 	.portlet-document-library, .portlet-document-library-display {
 		.audio-node {
 			height: 28px;
+		}
+
+		.common-file-metadata-container fieldset {
+			display: table-cell;
 		}
 	}
 }

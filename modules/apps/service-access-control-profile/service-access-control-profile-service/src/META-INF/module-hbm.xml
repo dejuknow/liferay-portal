@@ -4,7 +4,6 @@
 <hibernate-mapping default-lazy="false" auto-import="false">
 	<import class="com.liferay.service.access.control.profile.model.SACPEntry" />
 	<class name="com.liferay.service.access.control.profile.model.impl.SACPEntryImpl" table="SACPEntry">
-		<cache usage="read-write" />
 		<id name="sacpEntryId" type="long">
 			<generator class="assigned" />
 		</id>
@@ -14,7 +13,7 @@
 		<property name="userName" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="createDate" type="org.hibernate.type.TimestampType" />
 		<property name="modifiedDate" type="org.hibernate.type.TimestampType" />
-		<property name="allowedServices" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="allowedServiceSignatures" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="name" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="title" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 	</class>

@@ -16,8 +16,13 @@ package com.liferay.poshi.runner.logger;
 
 import com.liferay.poshi.runner.PoshiRunnerContext;
 import com.liferay.poshi.runner.PoshiRunnerGetterUtil;
+import com.liferay.poshi.runner.PoshiRunnerStackTraceUtil;
 import com.liferay.poshi.runner.PoshiRunnerVariablesUtil;
+import com.liferay.poshi.runner.selenium.LiferaySeleniumHelper;
+import com.liferay.poshi.runner.util.StringUtil;
 import com.liferay.poshi.runner.util.Validator;
+
+import java.util.List;
 
 import org.dom4j.Element;
 
@@ -26,12 +31,19 @@ import org.dom4j.Element;
  */
 public final class CommandLoggerHandler {
 
-	public static void failCommand(Element element) {
+	public static void failCommand(Element element) throws Exception {
 		if (!_isCurrentCommand(element)) {
 			return;
 		}
 
 		_commandElement = null;
+
+		_failLineGroupLoggerElement(_lineGroupLoggerElement);
+
+		LoggerElement xmlLoggerElement = XMLLoggerHandler.getXMLLoggerElement(
+			PoshiRunnerStackTraceUtil.getSimpleStackTrace());
+
+		_updateStatus(xmlLoggerElement, "fail");
 	}
 
 	public static String getCommandLogText() {
@@ -39,13 +51,21 @@ public final class CommandLoggerHandler {
 	}
 
 	public static void logClassCommandName(String classCommandName) {
-		LoggerElement dividerLineLoggerElement = new LoggerElement();
-
-		dividerLineLoggerElement.setClassName("divider-line");
-		dividerLineLoggerElement.setText(classCommandName);
+		LoggerElement dividerLineLoggerElement = _getDividerLineLoggerElement(
+			classCommandName);
 
 		_commandLogLoggerElement.addChildLoggerElement(
 			dividerLineLoggerElement);
+	}
+
+	public static void logSeleniumCommand(
+		Element element, List<String> arguments) {
+
+		LoggerElement loggerElement = _lineGroupLoggerElement.loggerElement(
+			"ul");
+
+		loggerElement.addChildLoggerElement(
+			_getRunLineLoggerElement(element, arguments));
 	}
 
 	public static void passCommand(Element element) {
@@ -54,6 +74,11 @@ public final class CommandLoggerHandler {
 		}
 
 		_commandElement = null;
+
+		LoggerElement xmlLoggerElement = XMLLoggerHandler.getXMLLoggerElement(
+			PoshiRunnerStackTraceUtil.getSimpleStackTrace());
+
+		_updateStatus(xmlLoggerElement, "pass");
 	}
 
 	public static void startCommand(Element element) throws Exception {
@@ -61,67 +86,157 @@ public final class CommandLoggerHandler {
 			return;
 		}
 
+		_takeScreenshot("before", _errorLinkId);
+
 		_commandElement = element;
 
-		_commandLoggerElement = _getCommandLoggerElement(element);
+		_lineGroupLoggerElement = _getLineGroupLoggerElement(element);
 
-		_commandLogLoggerElement.addChildLoggerElement(_commandLoggerElement);
+		_commandLogLoggerElement.addChildLoggerElement(_lineGroupLoggerElement);
+
+		LoggerElement xmlLoggerElement = XMLLoggerHandler.getXMLLoggerElement(
+			PoshiRunnerStackTraceUtil.getSimpleStackTrace());
+
+		_updateStatus(xmlLoggerElement, "pending");
+
+		_linkLoggerElements(xmlLoggerElement);
+	}
+
+	public static void startRunning() throws Exception {
+		_xmlLogLoggerElement.addClassName("running");
+	}
+
+	public static void stopRunning() throws Exception {
+		_xmlLogLoggerElement.removeClassName("running");
+	}
+
+	private static void _failLineGroupLoggerElement(
+			LoggerElement lineGroupLoggerElement)
+		throws Exception {
+
+		lineGroupLoggerElement.addClassName("failed");
+
+		lineGroupLoggerElement.addChildLoggerElement(
+			_getErrorContainerLoggerElement());
+
+		LoggerElement childContainerLoggerElement =
+			lineGroupLoggerElement.loggerElement("ul");
+
+		List<LoggerElement> runLineLoggerElements =
+			childContainerLoggerElement.loggerElements("li");
+
+		LoggerElement runLineLoggerElement = runLineLoggerElements.get(
+			runLineLoggerElements.size() - 1);
+
+		runLineLoggerElement.addClassName("error-line");
 	}
 
 	private static LoggerElement _getButtonLoggerElement(int btnLinkId) {
-		LoggerElement buttonLoggerElement = new LoggerElement();
+		LoggerElement loggerElement = new LoggerElement();
 
-		buttonLoggerElement.setAttribute(
-			"data-btnlinkid", "command-" + btnLinkId);
-		buttonLoggerElement.setClassName("btn expand-toggle");
+		loggerElement.setAttribute("data-btnlinkid", "command-" + btnLinkId);
+		loggerElement.setClassName("btn expand-toggle");
 
-		return buttonLoggerElement;
+		return loggerElement;
+	}
+
+	private static LoggerElement _getCauseHeaderLoggerElement() {
+		LoggerElement loggerElement = new LoggerElement();
+
+		loggerElement.setClassName("cause-header");
+		loggerElement.setName("h4");
+		loggerElement.setText("Cause:");
+
+		return loggerElement;
+	}
+
+	private static LoggerElement _getCauseLoggerElement() {
+		LoggerElement loggerElement = new LoggerElement();
+
+		loggerElement.setClassName("cause");
+
+		loggerElement.addChildLoggerElement(_getCauseHeaderLoggerElement());
+
+		loggerElement.addChildLoggerElement(
+			SummaryLoggerHandler.getCauseBodyLoggerElement());
+
+		return loggerElement;
 	}
 
 	private static LoggerElement _getChildContainerLoggerElement(
 		int btnLinkId) {
 
-		LoggerElement childContainerLoggerElement = new LoggerElement();
+		LoggerElement loggerElement = new LoggerElement();
 
-		childContainerLoggerElement.setAttribute(
-			"data-btnlinkid", "command-" + btnLinkId);
-		childContainerLoggerElement.setClassName("child-container collapse");
-		childContainerLoggerElement.setName("ul");
+		loggerElement.setAttribute("data-btnlinkid", "command-" + btnLinkId);
+		loggerElement.setClassName("child-container collapse");
+		loggerElement.setName("ul");
 
-		return childContainerLoggerElement;
+		return loggerElement;
 	}
 
-	private static LoggerElement _getCommandLoggerElement(Element element)
+	private static LoggerElement _getConsoleLoggerElement(int errorLinkId) {
+		LoggerElement loggerElement = new LoggerElement();
+
+		loggerElement.setAttribute(
+			"data-errorlinkid", "console-" + errorLinkId);
+		loggerElement.setClassName("console errorPanel toggle");
+
+		loggerElement.addChildLoggerElement(_getConsoleLogLoggerElement());
+
+		return loggerElement;
+	}
+
+	private static LoggerElement _getConsoleLogLoggerElement() {
+		LoggerElement loggerElement = new LoggerElement();
+
+		loggerElement.setClassName("console-log");
+
+		loggerElement.addChildLoggerElement(_getStepsLoggerElement());
+
+		loggerElement.addChildLoggerElement(_getCauseLoggerElement());
+
+		return loggerElement;
+	}
+
+	private static LoggerElement _getDividerLineLoggerElement(
+		String classCommandName) {
+
+		LoggerElement loggerElement = new LoggerElement();
+
+		loggerElement.setClassName("divider-line");
+		loggerElement.setText(classCommandName);
+
+		return loggerElement;
+	}
+
+	private static LoggerElement _getErrorContainerLoggerElement()
 		throws Exception {
 
-		LoggerElement commandLoggerElement = new LoggerElement();
+		LoggerElement loggerElement = new LoggerElement();
 
-		commandLoggerElement.setClassName("line-group linkable");
-		commandLoggerElement.setName("li");
+		loggerElement.setClassName("error-container hidden");
 
-		commandLoggerElement.addChildLoggerElement(
-			_getButtonLoggerElement(_btnLinkId));
+		loggerElement.addChildLoggerElement(
+			_getConsoleLoggerElement(_errorLinkId));
 
-		commandLoggerElement.addChildLoggerElement(
-			_getLineContainerLoggerElement(element));
+		loggerElement.addChildLoggerElement(
+			_getScreenshotsLoggerElement(_errorLinkId));
 
-		commandLoggerElement.addChildLoggerElement(
-			_getChildContainerLoggerElement(_btnLinkId));
+		_errorLinkId++;
 
-		_btnLinkId++;
-
-		return commandLoggerElement;
+		return loggerElement;
 	}
 
 	private static LoggerElement _getLineContainerLoggerElement(Element element)
 		throws Exception {
 
-		LoggerElement lineContainerLoggerElement = new LoggerElement();
+		LoggerElement loggerElement = new LoggerElement();
 
-		lineContainerLoggerElement.setClassName("line-container");
-		lineContainerLoggerElement.setText(_getLineContainerText(element));
+		loggerElement.setClassName("line-container");
+		loggerElement.setText(_getLineContainerText(element));
 
-		return lineContainerLoggerElement;
+		return loggerElement;
 	}
 
 	private static String _getLineContainerText(Element element)
@@ -173,6 +288,28 @@ public final class CommandLoggerHandler {
 		return sb.toString();
 	}
 
+	private static LoggerElement _getLineGroupLoggerElement(Element element)
+		throws Exception {
+
+		LoggerElement loggerElement = new LoggerElement();
+
+		loggerElement.setClassName("line-group linkable");
+		loggerElement.setName("li");
+
+		loggerElement.addChildLoggerElement(
+			_getButtonLoggerElement(_btnLinkId));
+
+		loggerElement.addChildLoggerElement(
+			_getLineContainerLoggerElement(element));
+
+		loggerElement.addChildLoggerElement(
+			_getChildContainerLoggerElement(_btnLinkId));
+
+		_btnLinkId++;
+
+		return loggerElement;
+	}
+
 	private static String _getLineItemText(String className, String text) {
 		LoggerElement loggerElement = new LoggerElement();
 
@@ -182,6 +319,124 @@ public final class CommandLoggerHandler {
 		loggerElement.setText(text);
 
 		return loggerElement.toString();
+	}
+
+	private static LoggerElement _getRunLineLoggerElement(
+		Element element, List<String> arguments) {
+
+		LoggerElement loggerElement = new LoggerElement();
+
+		loggerElement.setClassName("run-line");
+		loggerElement.setName("li");
+		loggerElement.setText(_getRunLineText(element, arguments));
+
+		return loggerElement;
+	}
+
+	private static String _getRunLineText(
+		Element element, List<String> arguments) {
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(_getLineItemText("misc", "Running "));
+		sb.append(
+			_getLineItemText(
+				"command-name", element.attributeValue("selenium")));
+
+		if (!arguments.isEmpty()) {
+			sb.append(_getLineItemText("misc", " with parameters"));
+
+			for (String argument : arguments) {
+				sb.append(_getLineItemText("misc", "&nbsp;"));
+				sb.append(_getLineItemText("param-value", argument));
+			}
+		}
+
+		return sb.toString();
+	}
+
+	private static LoggerElement _getScreenshotContainerLoggerElement(
+		String screenshotName, int errorLinkId) {
+
+		LoggerElement loggerElement = new LoggerElement();
+
+		loggerElement.setClassName(screenshotName + " screenshot-container");
+
+		loggerElement.addChildLoggerElement(
+			_getScreenshotLoggerElement(screenshotName, errorLinkId));
+
+		loggerElement.addChildLoggerElement(
+			_getScreenshotSpanLoggerElement(
+				StringUtil.upperCaseFirstLetter(screenshotName)));
+
+		return loggerElement;
+	}
+
+	private static LoggerElement _getScreenshotLoggerElement(
+		String screenshotName, int errorLinkId) {
+
+		LoggerElement loggerElement = new LoggerElement();
+
+		loggerElement.setAttribute("alt", screenshotName + errorLinkId);
+		loggerElement.setAttribute(
+			"src", "screenshot/" + screenshotName + errorLinkId + ".jpg");
+		loggerElement.setName("img");
+
+		return loggerElement;
+	}
+
+	private static LoggerElement _getScreenshotsLoggerElement(int errorLinkId)
+		throws Exception {
+
+		LoggerElement loggerElement = new LoggerElement();
+
+		loggerElement.setAttribute(
+			"data-errorlinkid", "screenshots-" + errorLinkId);
+		loggerElement.setClassName("errorPanel screenshots toggle");
+
+		loggerElement.addChildLoggerElement(
+			_getScreenshotContainerLoggerElement("before", errorLinkId));
+
+		_takeScreenshot("after", errorLinkId);
+
+		loggerElement.addChildLoggerElement(
+			_getScreenshotContainerLoggerElement("after", errorLinkId));
+
+		return loggerElement;
+	}
+
+	private static LoggerElement _getScreenshotSpanLoggerElement(
+		String screenshotName) {
+
+		LoggerElement loggerElement = new LoggerElement();
+
+		loggerElement.setName("span");
+		loggerElement.setText(StringUtil.upperCaseFirstLetter(screenshotName));
+
+		return loggerElement;
+	}
+
+	private static LoggerElement _getStepsHeaderLoggerElement() {
+		LoggerElement loggerElement = new LoggerElement();
+
+		loggerElement.setClassName("steps-header");
+		loggerElement.setName("h4");
+		loggerElement.setText("Steps:");
+
+		return loggerElement;
+	}
+
+	private static LoggerElement _getStepsLoggerElement() {
+		LoggerElement loggerElement = new LoggerElement();
+
+		loggerElement.setClassName("steps");
+
+		loggerElement.addChildLoggerElement(_getStepsHeaderLoggerElement());
+
+		loggerElement.addChildLoggerElement(
+			SummaryLoggerHandler.getMajorStepsLoggerElement());
+
+		return loggerElement;
 	}
 
 	private static boolean _isCommand(Element element) {
@@ -204,16 +459,65 @@ public final class CommandLoggerHandler {
 		return element.equals(_commandElement);
 	}
 
+	private static void _linkLoggerElements(LoggerElement xmlLoggerElement) {
+		xmlLoggerElement.setAttribute("data-status01", "pending");
+
+		String functionLinkID = xmlLoggerElement.getAttributeValue(
+			"data-functionlinkid");
+
+		if (functionLinkID != null) {
+			_functionLinkId = Integer.parseInt(functionLinkID.substring(15));
+		}
+
+		xmlLoggerElement.setAttribute(
+			"data-functionlinkid", "functionLinkId-" + _functionLinkId);
+
+		_lineGroupLoggerElement.setAttribute(
+			"data-functionlinkid", "functionLinkId-" + _functionLinkId);
+
+		_functionLinkId++;
+	}
+
+	private static void _takeScreenshot(String screenshotName, int errorLinkId)
+		throws Exception {
+
+		String testClassCommandName =
+			PoshiRunnerContext.getTestCaseCommandName();
+
+		testClassCommandName = StringUtil.replace(
+			testClassCommandName, "#", "_");
+
+		LiferaySeleniumHelper.captureScreen(
+			PoshiRunnerGetterUtil.getCanonicalPath(".") + "/test-results/" +
+				testClassCommandName + "/screenshot/" + screenshotName +
+					errorLinkId + ".jpg");
+	}
+
+	private static void _updateStatus(
+		LoggerElement loggerElement, String status) {
+
+		loggerElement.setAttribute("data-status01", status);
+
+		LoggerUtil.executeJavaScript(
+			"loggerInterface.fire('command-complete', " +
+				loggerElement.getID() + ")");
+	}
+
 	private static int _btnLinkId;
 	private static Element _commandElement;
-	private static LoggerElement _commandLoggerElement;
 	private static final LoggerElement _commandLogLoggerElement =
 		new LoggerElement("commandLog");
+	private static int _errorLinkId;
+	private static int _functionLinkId;
+	private static LoggerElement _lineGroupLoggerElement;
+	private static final LoggerElement _xmlLogLoggerElement = new LoggerElement(
+		"xml-log");
 
 	static {
 		_commandLogLoggerElement.setAttribute("data-logid", "01");
-		_commandLogLoggerElement.setClassName("command-log");
+		_commandLogLoggerElement.setClassName("collapse command-log");
 		_commandLogLoggerElement.setName("ul");
+		_commandLogLoggerElement.setWrittenToLogger(true);
 	}
 
 }

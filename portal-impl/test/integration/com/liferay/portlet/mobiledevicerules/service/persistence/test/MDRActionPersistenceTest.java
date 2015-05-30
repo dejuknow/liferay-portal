@@ -33,7 +33,6 @@ import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PersistenceTestRule;
-import com.liferay.portal.util.PropsValues;
 
 import com.liferay.portlet.mobiledevicerules.NoSuchActionException;
 import com.liferay.portlet.mobiledevicerules.model.MDRAction;
@@ -224,17 +223,11 @@ public class MDRActionPersistenceTest {
 		Assert.assertEquals(existingMDRAction, newMDRAction);
 	}
 
-	@Test
+	@Test(expected = NoSuchActionException.class)
 	public void testFindByPrimaryKeyMissing() throws Exception {
 		long pk = RandomTestUtil.nextLong();
 
-		try {
-			_persistence.findByPrimaryKey(pk);
-
-			Assert.fail("Missing entity did not throw NoSuchActionException");
-		}
-		catch (NoSuchActionException nsee) {
-		}
+		_persistence.findByPrimaryKey(pk);
 	}
 
 	@Test
@@ -448,10 +441,6 @@ public class MDRActionPersistenceTest {
 
 	@Test
 	public void testResetOriginalValues() throws Exception {
-		if (!PropsValues.HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE) {
-			return;
-		}
-
 		MDRAction newMDRAction = addMDRAction();
 
 		_persistence.clearCache();

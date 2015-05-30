@@ -19,6 +19,12 @@
 <%
 long folderId = GetterUtil.getLong((String)liferayPortletRequest.getAttribute("view.jsp-folderId"));
 
+String keywords = ParamUtil.getString(request, "keywords");
+
+boolean advancedSearch = ParamUtil.getBoolean(liferayPortletRequest, ArticleDisplayTerms.ADVANCED_SEARCH);
+
+boolean search = Validator.isNotNull(keywords) || advancedSearch;
+
 PortletURL portletURL = liferayPortletResponse.createRenderURL();
 
 portletURL.setParameter("folderId", String.valueOf(folderId));
@@ -28,13 +34,7 @@ portletURL.setParameter("folderId", String.valueOf(folderId));
 	<aui:nav-bar>
 		<aui:nav collapsible="<%= true %>" cssClass="nav-display-style-buttons navbar-nav" icon="th-list" id="displayStyleButtons">
 
-			<%
-			String keywords = ParamUtil.getString(request, "keywords");
-
-			boolean advancedSearch = ParamUtil.getBoolean(liferayPortletRequest, ArticleDisplayTerms.ADVANCED_SEARCH);
-			%>
-
-			<c:if test="<%= Validator.isNull(keywords) && !advancedSearch %>">
+			<c:if test="<%= !search %>">
 				<liferay-util:include page="/display_style_buttons.jsp" servletContext="<%= application %>" />
 			</c:if>
 		</aui:nav>
@@ -61,33 +61,35 @@ portletURL.setParameter("folderId", String.valueOf(folderId));
 				<aui:nav-item cssClass="item-remove" href="<%= taglibURL %>" iconCssClass='<%= TrashUtil.isTrashEnabled(scopeGroupId) ? "icon-trash" : "icon-remove" %>' label='<%= TrashUtil.isTrashEnabled(scopeGroupId) ? "move-to-the-recycle-bin" : "delete" %>' />
 			</aui:nav-item>
 
-			<liferay-util:include page="/add_button.jsp" servletContext="<%= application %>" />
+			<c:if test="<%= !search %>">
+				<liferay-util:include page="/add_button.jsp" servletContext="<%= application %>" />
 
-			<liferay-util:include page="/sort_button.jsp" servletContext="<%= application %>" />
+				<liferay-util:include page="/sort_button.jsp" servletContext="<%= application %>" />
 
-			<c:if test="<%= !user.isDefaultUser() %>">
-				<aui:nav-item dropdown="<%= true %>" label="manage">
+				<c:if test="<%= !user.isDefaultUser() %>">
+					<aui:nav-item dropdown="<%= true %>" label="manage">
 
-					<%
-					String taglibURL = "javascript:" + renderResponse.getNamespace() + "openStructuresView()";
-					%>
+						<%
+						String taglibURL = "javascript:" + renderResponse.getNamespace() + "openStructuresView()";
+						%>
 
-					<aui:nav-item href="<%= taglibURL %>" iconCssClass="icon-th-large" label="structures" />
+						<aui:nav-item href="<%= taglibURL %>" iconCssClass="icon-th-large" label="structures" />
 
-					<%
-					taglibURL = "javascript:" + renderResponse.getNamespace() + "openTemplatesView()";
-					%>
+						<%
+						taglibURL = "javascript:" + renderResponse.getNamespace() + "openTemplatesView()";
+						%>
 
-					<aui:nav-item href="<%= taglibURL %>" iconCssClass="icon-list-alt" label="templates" />
+						<aui:nav-item href="<%= taglibURL %>" iconCssClass="icon-list-alt" label="templates" />
 
-					<%
-					taglibURL = "javascript:" + renderResponse.getNamespace() + "openFeedsView()";
-					%>
+						<%
+						taglibURL = "javascript:" + renderResponse.getNamespace() + "openFeedsView()";
+						%>
 
-					<c:if test="<%= PortalUtil.isRSSFeedsEnabled() %>">
-						<aui:nav-item href="<%= taglibURL %>" iconCssClass="icon-rss" label="feeds" />
-					</c:if>
-				</aui:nav-item>
+						<c:if test="<%= PortalUtil.isRSSFeedsEnabled() %>">
+							<aui:nav-item href="<%= taglibURL %>" iconCssClass="icon-rss" label="feeds" />
+						</c:if>
+					</aui:nav-item>
+				</c:if>
 			</c:if>
 		</aui:nav>
 
@@ -158,12 +160,12 @@ portletURL.setParameter("folderId", String.valueOf(folderId));
 					destroyOnHide: true
 				},
 				groupId: <%= scopeGroupId %>,
+				mvcPath: '/view_template.jsp',
 				refererPortletName: '<%= JournalPortletKeys.JOURNAL %>',
 				refererWebDAVToken: '<%= portlet.getWebDAVStorageToken() %>',
 				showAncestorScopes: true,
 				showHeader: false,
 				resourceClassNameId: '<%= PortalUtil.getClassNameId(JournalArticle.class) %>',
-				struts_action: '/dynamic_data_mapping/view_template',
 				title: '<%= UnicodeLanguageUtil.get(request, "templates") %>'
 			}
 		);

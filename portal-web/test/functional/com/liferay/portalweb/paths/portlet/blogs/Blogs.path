@@ -8,6 +8,130 @@
 <tr><td rowspan="1" colspan="3">Blogs</td></tr>
 </thead>
 <tbody>
+<tr>
+	<td>ADD_BLOGS_ENTRY</td>
+	<td>//a[contains(.,'Add Blog Entry')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>AGGREGATOR_NO_ENTRY_MESSAGE</td>
+	<td>//div[contains(@class,'portlet-body') and contains(.,'There are no blogs.')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PERMISSIONS</td>
+	<td>//a[contains(.,'Permissions')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<!--ENTRY_TABLE-->
+<tr>
+	<td>ENTRY_TABLE_ALL_CHECKBOX</td>
+	<td>//th/input[@name='_161_allRowIds']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ENTRY_TABLE_CHECKBOX</td>
+	<td>//tr[contains(.,'${key_entryTitle}')]/td/input[@name='_161_rowIds']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ENTRY_TABLE_TITLE</td>
+	<td>//tr[contains(.,'${key_entryTitle}')]/td[2]/a</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ENTRY_TABLE_AUTHOR</td>
+	<td>//tr[contains(.,'${key_entryTitle}')]/td[3]/a</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ENTRY_TABLE_CREATE_DATE</td>
+	<td>//tr[contains(.,'${key_entryTitle}')]/td[4]/a</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ENTRY_TABLE_STATUS</td>
+	<td>//tr[contains(.,'${key_entryTitle}')]/td[5]//span[@class='workflow-status']/strong</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ENTRY_TABLE_ACTIONS</td>
+	<td>//tr[contains(.,'${key_entryTitle}')]/td/div/a</td>
+	<td></td>
+</tr>
+<tr>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<!--RSS_FEED-->
+<tr>
+	<td>RSS_FEED_TITLE</td>
+	<td>//*[@id='feedTitleText']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>RSS_FEED_SUBTITLE</td>
+	<td>//*[@id='feedSubtitleText']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>RSS_ENTRY_TITLE</td>
+	<td>//*[@class='entry']/*/*</td>
+	<td></td>
+</tr>
+<tr>
+	<td>RSS_ENTRY_CONTENT</td>
+	<td>//*[@class='feedEntryContent']</td>
+	<td></td>
+</tr>
+<tr>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<!--RECENT_BLOGGER-->
+<tr>
+	<td>RECENT_BLOGGER_USER_NAME</td>
+	<td>//span[@class='user-name']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>RECENT_BLOGGER_POSTS</td>
+	<td>//div[@class='blogger-post-count']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>RECENT_BLOGGER_STARS</td>
+	<td>//div[@class='blogger-stars']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>RECENT_BLOGGER_DATE</td>
+	<td>//div[@class='blogger-date']</td>
+	<td></td>
+</tr>
+<tr>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<!--SEARCH_RESULTS-->
+<tr>
+	<td>SEARCH_RESULTS_ENTRY_TITLE</td>
+	<td>//a[@class='entry-link']/div/span[@class='entry-title' and contains(.,'${key_entryTitle}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SEARCH_RESULTS_ENTRY_DESCRIPTION</td>
+	<td>//a[@class='entry-link']/div/span[@class='entry-description' and contains(.,'${key_entryContent}')]</td>
+	<td></td>
+</tr>
 </tbody>
 </table>
 </body>

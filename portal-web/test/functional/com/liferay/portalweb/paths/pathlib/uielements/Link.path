@@ -1,0 +1,49 @@
+<html>
+<head>
+<title>Link</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">Link</td></tr>
+</thead>
+<tbody>
+<tr>
+	<td>EDIT</td>
+	<td>//a/span[contains(@class,'taglib-text') and contains(.,'Edit')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>MOVE_TO_THE_RECYCLING_BIN</td>
+	<td>//a/span[contains(@class,'taglib-text') and contains(.,'Move to the Recycle Bin')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>READ_MORE</td>
+	<td>//a[contains(.,'Read More')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>RSS</td>
+	<td>//a/span[contains(@class,'taglib-text') and contains(.,'RSS')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PERMISSIONS</td>
+	<td>//a/span[contains(@class,'taglib-text') and contains(.,'Permissions')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SUBSCRIBE</td>
+	<td>//a/span[contains(@class,'taglib-text') and contains(.,'Subscribe')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>UNSUBSCRIBE</td>
+	<td>//a/span[contains(@class,'taglib-text') and contains(.,'Unsubscribe')]</td>
+	<td></td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>

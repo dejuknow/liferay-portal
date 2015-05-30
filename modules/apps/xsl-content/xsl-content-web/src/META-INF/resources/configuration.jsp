@@ -39,9 +39,9 @@
 	</c:if>
 
 	<aui:fieldset>
-		<aui:input cssClass="lfr-input-text-container" name="preferences--xmlUrl--" type="text" value="<%= xmlUrl %>" />
+		<aui:input cssClass="lfr-input-text-container" name="preferences--xmlUrl--" type="text" value="<%= xslContentPortletInstanceConfiguration.xmlUrl() %>" />
 
-		<aui:input cssClass="lfr-input-text-container" name="preferences--xslUrl--" type="text" value="<%= xslUrl %>" />
+		<aui:input cssClass="lfr-input-text-container" name="preferences--xslUrl--" type="text" value="<%= xslContentPortletInstanceConfiguration.xslUrl() %>" />
 	</aui:fieldset>
 
 	<aui:button-row>

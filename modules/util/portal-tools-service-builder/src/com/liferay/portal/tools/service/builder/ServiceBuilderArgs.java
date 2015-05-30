@@ -14,16 +14,32 @@
 
 package com.liferay.portal.tools.service.builder;
 
-import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.kernel.util.StringUtil;
-
 /**
  * @author Raymond Augé
+ * @author Andrea Di Giorgi
  */
 public class ServiceBuilderArgs {
 
-	public String getApiDir() {
-		return _apiDir;
+	public static final String[] MODEL_HINTS_CONFIGS = {
+		"classpath*:META-INF/portal-model-hints.xml",
+		"META-INF/portal-model-hints.xml",
+		"classpath*:META-INF/ext-model-hints.xml",
+		"META-INF/portlet-model-hints.xml"
+	};
+
+	public static final String OUTPUT_KEY_MODIFIED_FILES =
+		"service.builder.modified.files";
+
+	public static final String[] READ_ONLY_PREFIXES = {
+		"fetch", "get", "has", "is", "load", "reindex", "search"
+	};
+
+	public static final String[] RESOURCE_ACTION_CONFIGS = {
+		"META-INF/resource-actions/default.xml", "resource-actions/default.xml"
+	};
+
+	public String getApiDirName() {
+		return _apiDirName;
 	}
 
 	public String getBeanLocatorUtil() {
@@ -38,8 +54,8 @@ public class ServiceBuilderArgs {
 		return _hbmFileName;
 	}
 
-	public String getImplDir() {
-		return _implDir;
+	public String getImplDirName() {
+		return _implDirName;
 	}
 
 	public String getInputFileName() {
@@ -74,8 +90,8 @@ public class ServiceBuilderArgs {
 		return _resourceActionsConfigs;
 	}
 
-	public String getResourcesDir() {
-		return _resourcesDir;
+	public String getResourcesDirName() {
+		return _resourcesDirName;
 	}
 
 	public String getSpringFileName() {
@@ -86,8 +102,8 @@ public class ServiceBuilderArgs {
 		return _springNamespaces;
 	}
 
-	public String getSqlDir() {
-		return _sqlDir;
+	public String getSqlDirName() {
+		return _sqlDirName;
 	}
 
 	public String getSqlFileName() {
@@ -106,8 +122,8 @@ public class ServiceBuilderArgs {
 		return _targetEntityName;
 	}
 
-	public String getTestDir() {
-		return _testDir;
+	public String getTestDirName() {
+		return _testDirName;
 	}
 
 	public boolean isAutoImportDefaultReferences() {
@@ -126,8 +142,8 @@ public class ServiceBuilderArgs {
 		return _osgiModule;
 	}
 
-	public void setApiDir(String apiDir) {
-		_apiDir = apiDir;
+	public void setApiDirName(String apiDirName) {
+		_apiDirName = apiDirName;
 	}
 
 	public void setAutoImportDefaultReferences(
@@ -156,8 +172,8 @@ public class ServiceBuilderArgs {
 		_hbmFileName = hbmFileName;
 	}
 
-	public void setImplDir(String implDir) {
-		_implDir = implDir;
+	public void setImplDirName(String implDirName) {
+		_implDirName = implDirName;
 	}
 
 	public void setInputFileName(String inputFileName) {
@@ -165,28 +181,41 @@ public class ServiceBuilderArgs {
 	}
 
 	public void setMergeModelHintsConfigs(String mergeModelHintsConfigs) {
+		setMergeModelHintsConfigs(_split(mergeModelHintsConfigs));
+	}
+
+	public void setMergeModelHintsConfigs(String[] mergeModelHintsConfigs) {
 		_setModelHintsConfigs(
-			ArrayUtil.append(
-				_modelHintsConfigs, StringUtil.split(mergeModelHintsConfigs)));
+			_append(_modelHintsConfigs, mergeModelHintsConfigs));
 	}
 
 	public void setMergeReadOnlyPrefixes(String mergeReadOnlyPrefixes) {
-		_setReadOnlyPrefixes(
-			ArrayUtil.append(
-				_readOnlyPrefixes, StringUtil.split(mergeReadOnlyPrefixes)));
+		setMergeReadOnlyPrefixes(_split(mergeReadOnlyPrefixes));
+	}
+
+	public void setMergeReadOnlyPrefixes(String[] mergeReadOnlyPrefixes) {
+		_setReadOnlyPrefixes(_append(_readOnlyPrefixes, mergeReadOnlyPrefixes));
 	}
 
 	public void setMergeResourceActionsConfigs(
 		String mergeResourceActionsConfigs) {
 
+		setMergeResourceActionsConfigs(_split(mergeResourceActionsConfigs));
+	}
+
+	public void setMergeResourceActionsConfigs(
+		String[] mergeResourceActionsConfigs) {
+
 		_setResourceActionsConfigs(
-			ArrayUtil.append(
-				_resourceActionsConfigs,
-				StringUtil.split(mergeResourceActionsConfigs)));
+			_append(_resourceActionsConfigs, mergeResourceActionsConfigs));
 	}
 
 	public void setModelHintsConfigs(String modelHintsConfigs) {
-		_setModelHintsConfigs(StringUtil.split(modelHintsConfigs));
+		setModelHintsConfigs(_split(modelHintsConfigs));
+	}
+
+	public void setModelHintsConfigs(String[] modelHintsConfigs) {
+		_setModelHintsConfigs(modelHintsConfigs);
 	}
 
 	public void setModelHintsFileName(String modelHintsFileName) {
@@ -206,7 +235,11 @@ public class ServiceBuilderArgs {
 	}
 
 	public void setReadOnlyPrefixes(String readOnlyPrefixes) {
-		_setReadOnlyPrefixes(StringUtil.split(readOnlyPrefixes));
+		setReadOnlyPrefixes(_split(readOnlyPrefixes));
+	}
+
+	public void setReadOnlyPrefixes(String[] readOnlyPrefixes) {
+		_setReadOnlyPrefixes(readOnlyPrefixes);
 	}
 
 	public void setRemotingFileName(String remotingFileName) {
@@ -214,11 +247,15 @@ public class ServiceBuilderArgs {
 	}
 
 	public void setResourceActionsConfigs(String resourceActionsConfigs) {
-		_setResourceActionsConfigs(StringUtil.split(resourceActionsConfigs));
+		setResourceActionsConfigs(_split(resourceActionsConfigs));
 	}
 
-	public void setResourcesDir(String resourcesDir) {
-		_resourcesDir = resourcesDir;
+	public void setResourceActionsConfigs(String[] resourceActionsConfigs) {
+		_setResourceActionsConfigs(resourceActionsConfigs);
+	}
+
+	public void setResourcesDirName(String resourcesDirName) {
+		_resourcesDirName = resourcesDirName;
 	}
 
 	public void setSpringFileName(String springFileName) {
@@ -226,11 +263,15 @@ public class ServiceBuilderArgs {
 	}
 
 	public void setSpringNamespaces(String springNamespaces) {
-		_springNamespaces = StringUtil.split(springNamespaces);
+		setSpringNamespaces(_split(springNamespaces));
 	}
 
-	public void setSqlDir(String sqlDir) {
-		_sqlDir = sqlDir;
+	public void setSpringNamespaces(String[] springNamespaces) {
+		_springNamespaces = springNamespaces;
+	}
+
+	public void setSqlDirName(String sqlDirName) {
+		_sqlDirName = sqlDirName;
 	}
 
 	public void setSqlFileName(String sqlFileName) {
@@ -249,8 +290,18 @@ public class ServiceBuilderArgs {
 		_targetEntityName = targetEntityName;
 	}
 
-	public void setTestDir(String testDir) {
-		_testDir = testDir;
+	public void setTestDirName(String testDirName) {
+		_testDirName = testDirName;
+	}
+
+	private String[] _append(String[] array1, String[] array2) {
+		String[] newArray = new String[array1.length + array2.length];
+
+		System.arraycopy(array1, 0, newArray, 0, array1.length);
+
+		System.arraycopy(array2, 0, newArray, array1.length, array2.length);
+
+		return newArray;
 	}
 
 	private void _setModelHintsConfigs(String[] modelHintsConfigs) {
@@ -289,7 +340,11 @@ public class ServiceBuilderArgs {
 		_resourceActionsConfigs = resourceActionsConfigs;
 	}
 
-	private String _apiDir = "../portal-service/src";
+	private String[] _split(String s) {
+		return s.split(",");
+	}
+
+	private String _apiDirName = "../portal-service/src";
 	private boolean _autoImportDefaultReferences = true;
 	private boolean _autoNamespaceTables;
 	private String _beanLocatorUtil =
@@ -297,31 +352,28 @@ public class ServiceBuilderArgs {
 	private long _buildNumber = 1;
 	private boolean _buildNumberIncrement = true;
 	private String _hbmFileName = "src/META-INF/portal-hbm.xml";
-	private String _implDir = "src";
+	private String _implDirName = "src";
 	private String _inputFileName = "service.xml";
-	private String[] _modelHintsConfigs = StringUtil.split(
-		ServiceBuilder.MODEL_HINTS_CONFIGS);
+	private String[] _modelHintsConfigs = MODEL_HINTS_CONFIGS;
 	private boolean _modelHintsConfigsSet;
 	private String _modelHintsFileName = "src/META-INF/portal-model-hints.xml";
 	private boolean _osgiModule;
 	private String _pluginName;
 	private String _propsUtil = "com.liferay.portal.util.PropsUtil";
-	private String[] _readOnlyPrefixes = StringUtil.split(
-		ServiceBuilder.READ_ONLY_PREFIXES);
+	private String[] _readOnlyPrefixes = READ_ONLY_PREFIXES;
 	private boolean _readOnlyPrefixesSet;
 	private String _remotingFileName =
 		"../portal-web/docroot/WEB-INF/remoting-servlet.xml";
-	private String[] _resourceActionsConfigs = StringUtil.split(
-		ServiceBuilder.RESOURCE_ACTION_CONFIGS);
+	private String[] _resourceActionsConfigs = RESOURCE_ACTION_CONFIGS;
 	private boolean _resourceActionsConfigsSet;
-	private String _resourcesDir = "src";
+	private String _resourcesDirName = "src";
 	private String _springFileName = "src/META-INF/portal-spring.xml";
 	private String[] _springNamespaces = new String[] {"beans"};
-	private String _sqlDir = "../sql";
+	private String _sqlDirName = "../sql";
 	private String _sqlFileName = "portal-tables.sql";
 	private String _sqlIndexesFileName = "indexes.sql";
 	private String _sqlSequencesFileName = "sequences.sql";
 	private String _targetEntityName;
-	private String _testDir = "test/integration";
+	private String _testDirName = "test/integration";
 
 }

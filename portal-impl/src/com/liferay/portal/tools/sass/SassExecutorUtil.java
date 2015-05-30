@@ -15,25 +15,19 @@
 package com.liferay.portal.tools.sass;
 
 import com.liferay.portal.kernel.util.NamedThreadFactory;
-import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.SystemProperties;
-import com.liferay.portal.scripting.ruby.RubyExecutor;
-import com.liferay.sass.compiler.jni.JniSassCompiler;
+import com.liferay.portal.util.PropsValues;
+import com.liferay.sass.compiler.SassCompiler;
+import com.liferay.sass.compiler.jni.internal.JniSassCompiler;
+import com.liferay.sass.compiler.ruby.internal.RubySassCompiler;
 
 import java.io.File;
-import java.io.IOException;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-
-import org.jruby.RubyArray;
-import org.jruby.RubyException;
-import org.jruby.embed.ScriptingContainer;
-import org.jruby.exceptions.RaiseException;
-import org.jruby.runtime.builtin.IRubyObject;
 
 /**
  * @author Minhchau Dang
@@ -65,7 +59,7 @@ public class SassExecutorUtil {
 	}
 
 	public static void init(String docrootDirName, String portalCommonDirName)
-		throws IOException {
+		throws Exception {
 
 		_docrootDirName = docrootDirName;
 		_portalCommonDirName = portalCommonDirName;
@@ -73,26 +67,14 @@ public class SassExecutorUtil {
 		int threads = 1;
 
 		try {
-			_jniSassCompiler = new JniSassCompiler();
+			_sassCompiler = new JniSassCompiler();
 		}
 		catch (Throwable t) {
 			threads = 2;
 
-			RubyExecutor rubyExecutor = new RubyExecutor();
-
-			rubyExecutor.setExecuteInSeparateThread(false);
-
-			_scriptingContainer = rubyExecutor.getScriptingContainer();
-
-			_scriptingContainer.setCurrentDirectory(
-				System.getProperty("user.dir"));
-
-			String rubyScript = StringUtil.read(
-				SassExecutorUtil.class.getClassLoader(),
-				"com/liferay/portal/servlet/filters/dynamiccss" +
-					"/dependencies/main.rb");
-
-			_scriptObject = _scriptingContainer.runScriptlet(rubyScript);
+			_sassCompiler = new RubySassCompiler(
+				PropsValues.SCRIPTING_JRUBY_COMPILE_MODE,
+				PropsValues.SCRIPTING_JRUBY_COMPILE_THRESHOLD, _TMP_DIR);
 		}
 
 		_executorService = Executors.newFixedThreadPool(
@@ -115,60 +97,17 @@ public class SassExecutorUtil {
 			cssThemePath = filePath.substring(0, pos + 4);
 		}
 
-		if (_jniSassCompiler != null) {
-			try {
-				return _jniSassCompiler.compileString(
-					content,
-					_portalCommonDirName + File.pathSeparator + cssThemePath,
-					"");
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-
-				_exception = new Exception("Unable to parse " + fileName, e);
-
-				_mainThread.interrupt();
-			}
+		try {
+			return _sassCompiler.compileString(
+				content,
+				_portalCommonDirName + File.pathSeparator + cssThemePath, "");
 		}
-		else {
-			try {
-				return _scriptingContainer.callMethod(
-					_scriptObject, "process",
-					new Object[] {
-						content, _portalCommonDirName, filePath, cssThemePath,
-						_TMP_DIR, false
-					},
-					String.class);
-			}
-			catch (Exception e) {
-				if (e instanceof RaiseException) {
-					RaiseException raiseException = (RaiseException)e;
+		catch (Exception e) {
+			e.printStackTrace();
 
-					RubyException rubyException = raiseException.getException();
+			_exception = new Exception("Unable to parse " + fileName, e);
 
-					System.err.println(
-						String.valueOf(
-							rubyException.message.toJava(String.class)));
-
-					IRubyObject iRubyObject = rubyException.getBacktrace();
-
-					RubyArray rubyArray = (RubyArray)iRubyObject.toJava(
-						RubyArray.class);
-
-					for (int i = 0; i < rubyArray.size(); i++) {
-						Object object = rubyArray.get(i);
-
-						System.err.println(String.valueOf(object));
-					}
-				}
-				else {
-					e.printStackTrace();
-				}
-
-				_exception = new Exception("Unable to parse " + fileName, e);
-
-				_mainThread.interrupt();
-			}
+			_mainThread.interrupt();
 		}
 
 		return content;
@@ -209,12 +148,10 @@ public class SassExecutorUtil {
 	private static String _docrootDirName;
 	private static Exception _exception;
 	private static ExecutorService _executorService;
-	private static JniSassCompiler _jniSassCompiler;
 	private static Thread _mainThread;
 	private static String _portalCommonDirName;
+	private static SassCompiler _sassCompiler;
 	private static final ConcurrentMap<String, SassFile> _sassFileCache =
 		new ConcurrentHashMap<>();
-	private static ScriptingContainer _scriptingContainer;
-	private static Object _scriptObject;
 
 }

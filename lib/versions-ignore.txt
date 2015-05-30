@@ -1,7 +1,12 @@
 lib/development/com.liferay.ant.bnd.jar
-lib/development/com.liferay.cobertura.agent.jar
+lib/development/com.liferay.ant.build.logger.jar
+lib/development/com.liferay.ant.jgit.jar
+lib/development/com.liferay.tld.formatter.jar
+lib/development/com.liferay.whip.jar
 lib/development/liferay-doclet.jar
 lib/portal/com.liferay.rtl.css.jar
 lib/portal/com.liferay.ruby.gems.jar
+lib/portal/com.liferay.sass.compiler.api.jar
 lib/portal/com.liferay.sass.compiler.jni.jar
+lib/portal/com.liferay.sass.compiler.ruby.jar
 lib/portal/portal-client.jar

@@ -26,7 +26,6 @@ import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Image;
 import com.liferay.portal.model.ResourceConstants;
 import com.liferay.portal.model.SystemEventConstants;
@@ -42,21 +41,16 @@ import com.liferay.portlet.dynamicdatamapping.TemplateNameException;
 import com.liferay.portlet.dynamicdatamapping.TemplateScriptException;
 import com.liferay.portlet.dynamicdatamapping.TemplateSmallImageNameException;
 import com.liferay.portlet.dynamicdatamapping.TemplateSmallImageSizeException;
-import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplateConstants;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplateVersion;
 import com.liferay.portlet.dynamicdatamapping.service.base.DDMTemplateLocalServiceBaseImpl;
 import com.liferay.portlet.dynamicdatamapping.util.DDMXMLUtil;
-import com.liferay.portlet.journal.model.JournalArticle;
-import com.liferay.portlet.journal.model.JournalArticleConstants;
-import com.liferay.portlet.journal.service.persistence.JournalArticleUtil;
 
 import java.io.File;
 import java.io.IOException;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -175,7 +169,6 @@ public class DDMTemplateLocalServiceImpl
 		// Template
 
 		User user = userPersistence.findByPrimaryKey(userId);
-		Date now = new Date();
 
 		if (Validator.isNull(templateKey)) {
 			templateKey = String.valueOf(counterLocalService.increment());
@@ -213,8 +206,6 @@ public class DDMTemplateLocalServiceImpl
 		template.setCompanyId(user.getCompanyId());
 		template.setUserId(user.getUserId());
 		template.setUserName(user.getFullName());
-		template.setCreateDate(serviceContext.getCreateDate(now));
-		template.setModifiedDate(serviceContext.getModifiedDate(now));
 		template.setClassNameId(classNameId);
 		template.setClassPK(classPK);
 		template.setResourceClassNameId(resourceClassNameId);
@@ -397,42 +388,12 @@ public class DDMTemplateLocalServiceImpl
 
 		// Template
 
-		if (template.getClassNameId() ==
-				classNameLocalService.getClassNameId(
-					DDMStructure.class.getName())) {
+		if (ddmTemplateLinkPersistence.countByTemplateId(
+				template.getTemplateId()) > 0) {
 
-			DDMStructure structure = ddmStructureLocalService.fetchDDMStructure(
-				template.getClassPK());
-
-			if ((structure != null) &&
-				(structure.getClassNameId() ==
-					classNameLocalService.getClassNameId(
-						JournalArticle.class.getName()))) {
-
-				Group companyGroup = groupLocalService.getCompanyGroup(
-					template.getCompanyId());
-
-				int count = 0;
-
-				if (template.getGroupId() == companyGroup.getGroupId()) {
-					count = JournalArticleUtil.countByC_DDMTK(
-						JournalArticleConstants.CLASSNAME_ID_DEFAULT,
-						template.getTemplateKey());
-				}
-				else {
-					count = JournalArticleUtil.countByG_C_DDMTK(
-						template.getGroupId(),
-						JournalArticleConstants.CLASSNAME_ID_DEFAULT,
-						template.getTemplateKey());
-				}
-
-				if (count > 0) {
-					throw new RequiredTemplateException(
-						"Template " + template.getName() + " cannot be " +
-							"deleted because it is used by " + count +
-								" journal articles");
-				}
-			}
+			throw new RequiredTemplateException.
+				MustNotDeleteTemplateReferencedByTemplateLinks(
+					template.getTemplateId());
 		}
 
 		ddmTemplatePersistence.remove(template);
@@ -1297,8 +1258,6 @@ public class DDMTemplateLocalServiceImpl
 		DDMTemplate template = ddmTemplateLocalService.getDDMTemplate(
 			templateId);
 
-		template.setModifiedDate(serviceContext.getModifiedDate(null));
-
 		if ((template.getClassPK() == 0) && (classPK > 0)) {
 
 			// Allow users to set the structure if and only if it currently does
@@ -1395,6 +1354,8 @@ public class DDMTemplateLocalServiceImpl
 		templateVersion.setUserId(template.getUserId());
 		templateVersion.setUserName(template.getUserName());
 		templateVersion.setCreateDate(template.getModifiedDate());
+		templateVersion.setClassNameId(template.getClassNameId());
+		templateVersion.setClassPK(template.getClassPK());
 		templateVersion.setTemplateId(template.getTemplateId());
 		templateVersion.setVersion(version);
 		templateVersion.setName(template.getName());

@@ -8,7 +8,6 @@ AUI.add(
 
 		var isEmpty = AObject.isEmpty;
 		var isValue = Lang.isValue;
-		var owns = AObject.owns;
 
 		var WIN = A.config.win;
 
@@ -38,7 +37,7 @@ AUI.add(
 
 					var hash = LOCATION.hash;
 
-					var locationHashValid = (hash.indexOf(History.VALUE_SEPARATOR) != -1);
+					var locationHashValid = hash.indexOf(History.VALUE_SEPARATOR) != -1;
 
 					if (locationHashValid) {
 						HISTORY.replaceState(null, null, instance._updateURI());
@@ -46,7 +45,7 @@ AUI.add(
 
 					config = config || {};
 
-					if (!owns(config, 'initialState')) {
+					if (!config.hasOwnProperty('initialState')) {
 						if (locationHashValid) {
 							config.initialState = instance._parse(hash.substr(1));
 						}
@@ -83,8 +82,7 @@ AUI.add(
 							A.each(
 								state,
 								function(value1, key1) {
-									A.Array.each(
-										instance.PROTECTED_HASH_KEYS,
+									instance.PROTECTED_HASH_KEYS.forEach(
 										function(value2, key2) {
 											if (value2.test(key1)) {
 												delete state[key1];

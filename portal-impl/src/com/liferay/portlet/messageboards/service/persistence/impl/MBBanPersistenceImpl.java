@@ -16,7 +16,6 @@ package com.liferay.portlet.messageboards.service.persistence.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.portal.kernel.cache.CacheRegistryUtil;
 import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
@@ -33,6 +32,8 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import com.liferay.portal.model.CacheModel;
+import com.liferay.portal.service.ServiceContext;
+import com.liferay.portal.service.ServiceContextThreadLocal;
 import com.liferay.portal.service.persistence.impl.BasePersistenceImpl;
 
 import com.liferay.portlet.messageboards.NoSuchBanException;
@@ -44,6 +45,7 @@ import com.liferay.portlet.messageboards.service.persistence.MBBanPersistence;
 import java.io.Serializable;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -3103,10 +3105,6 @@ public class MBBanPersistenceImpl extends BasePersistenceImpl<MBBan>
 	 */
 	@Override
 	public void clearCache() {
-		if (_HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE) {
-			CacheRegistryUtil.clear(MBBanImpl.class.getName());
-		}
-
 		EntityCacheUtil.clearCache(MBBanImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
@@ -3335,6 +3333,28 @@ public class MBBanPersistenceImpl extends BasePersistenceImpl<MBBan>
 			String uuid = PortalUUIDUtil.generate();
 
 			mbBan.setUuid(uuid);
+		}
+
+		ServiceContext serviceContext = ServiceContextThreadLocal.getServiceContext();
+
+		Date now = new Date();
+
+		if (isNew && (mbBan.getCreateDate() == null)) {
+			if (serviceContext == null) {
+				mbBan.setCreateDate(now);
+			}
+			else {
+				mbBan.setCreateDate(serviceContext.getCreateDate(now));
+			}
+		}
+
+		if (!mbBanModelImpl.hasSetModifiedDate()) {
+			if (serviceContext == null) {
+				mbBan.setModifiedDate(now);
+			}
+			else {
+				mbBan.setModifiedDate(serviceContext.getModifiedDate(now));
+			}
 		}
 
 		Session session = null;
@@ -3861,7 +3881,6 @@ public class MBBanPersistenceImpl extends BasePersistenceImpl<MBBan>
 	private static final String _ORDER_BY_ENTITY_ALIAS = "mbBan.";
 	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY = "No MBBan exists with the primary key ";
 	private static final String _NO_SUCH_ENTITY_WITH_KEY = "No MBBan exists with the key {";
-	private static final boolean _HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE = com.liferay.portal.util.PropsValues.HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE;
 	private static final Log _log = LogFactoryUtil.getLog(MBBanPersistenceImpl.class);
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(new String[] {
 				"uuid"

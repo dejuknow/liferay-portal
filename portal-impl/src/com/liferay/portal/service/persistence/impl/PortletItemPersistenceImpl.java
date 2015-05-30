@@ -17,7 +17,6 @@ package com.liferay.portal.service.persistence.impl;
 import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.NoSuchPortletItemException;
-import com.liferay.portal.kernel.cache.CacheRegistryUtil;
 import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
@@ -37,11 +36,14 @@ import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.PortletItem;
 import com.liferay.portal.model.impl.PortletItemImpl;
 import com.liferay.portal.model.impl.PortletItemModelImpl;
+import com.liferay.portal.service.ServiceContext;
+import com.liferay.portal.service.ServiceContextThreadLocal;
 import com.liferay.portal.service.persistence.PortletItemPersistence;
 
 import java.io.Serializable;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -1594,10 +1596,6 @@ public class PortletItemPersistenceImpl extends BasePersistenceImpl<PortletItem>
 	 */
 	@Override
 	public void clearCache() {
-		if (_HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE) {
-			CacheRegistryUtil.clear(PortletItemImpl.class.getName());
-		}
-
 		EntityCacheUtil.clearCache(PortletItemImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
@@ -1799,6 +1797,28 @@ public class PortletItemPersistenceImpl extends BasePersistenceImpl<PortletItem>
 		boolean isNew = portletItem.isNew();
 
 		PortletItemModelImpl portletItemModelImpl = (PortletItemModelImpl)portletItem;
+
+		ServiceContext serviceContext = ServiceContextThreadLocal.getServiceContext();
+
+		Date now = new Date();
+
+		if (isNew && (portletItem.getCreateDate() == null)) {
+			if (serviceContext == null) {
+				portletItem.setCreateDate(now);
+			}
+			else {
+				portletItem.setCreateDate(serviceContext.getCreateDate(now));
+			}
+		}
+
+		if (!portletItemModelImpl.hasSetModifiedDate()) {
+			if (serviceContext == null) {
+				portletItem.setModifiedDate(now);
+			}
+			else {
+				portletItem.setModifiedDate(serviceContext.getModifiedDate(now));
+			}
+		}
 
 		Session session = null;
 
@@ -2284,7 +2304,6 @@ public class PortletItemPersistenceImpl extends BasePersistenceImpl<PortletItem>
 	private static final String _ORDER_BY_ENTITY_ALIAS = "portletItem.";
 	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY = "No PortletItem exists with the primary key ";
 	private static final String _NO_SUCH_ENTITY_WITH_KEY = "No PortletItem exists with the key {";
-	private static final boolean _HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE = com.liferay.portal.util.PropsValues.HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE;
 	private static final Log _log = LogFactoryUtil.getLog(PortletItemPersistenceImpl.class);
 	private static final PortletItem _nullPortletItem = new PortletItemImpl() {
 			@Override

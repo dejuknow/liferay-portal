@@ -17,7 +17,6 @@ package com.liferay.portal.service.persistence.impl;
 import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.NoSuchWebsiteException;
-import com.liferay.portal.kernel.cache.CacheRegistryUtil;
 import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
@@ -38,11 +37,14 @@ import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.Website;
 import com.liferay.portal.model.impl.WebsiteImpl;
 import com.liferay.portal.model.impl.WebsiteModelImpl;
+import com.liferay.portal.service.ServiceContext;
+import com.liferay.portal.service.ServiceContextThreadLocal;
 import com.liferay.portal.service.persistence.WebsitePersistence;
 
 import java.io.Serializable;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -3827,10 +3829,6 @@ public class WebsitePersistenceImpl extends BasePersistenceImpl<Website>
 	 */
 	@Override
 	public void clearCache() {
-		if (_HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE) {
-			CacheRegistryUtil.clear(WebsiteImpl.class.getName());
-		}
-
 		EntityCacheUtil.clearCache(WebsiteImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
@@ -3980,6 +3978,28 @@ public class WebsitePersistenceImpl extends BasePersistenceImpl<Website>
 			String uuid = PortalUUIDUtil.generate();
 
 			website.setUuid(uuid);
+		}
+
+		ServiceContext serviceContext = ServiceContextThreadLocal.getServiceContext();
+
+		Date now = new Date();
+
+		if (isNew && (website.getCreateDate() == null)) {
+			if (serviceContext == null) {
+				website.setCreateDate(now);
+			}
+			else {
+				website.setCreateDate(serviceContext.getCreateDate(now));
+			}
+		}
+
+		if (!websiteModelImpl.hasSetModifiedDate()) {
+			if (serviceContext == null) {
+				website.setModifiedDate(now);
+			}
+			else {
+				website.setModifiedDate(serviceContext.getModifiedDate(now));
+			}
 		}
 
 		Session session = null;
@@ -4565,7 +4585,6 @@ public class WebsitePersistenceImpl extends BasePersistenceImpl<Website>
 	private static final String _ORDER_BY_ENTITY_ALIAS = "website.";
 	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY = "No Website exists with the primary key ";
 	private static final String _NO_SUCH_ENTITY_WITH_KEY = "No Website exists with the key {";
-	private static final boolean _HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE = com.liferay.portal.util.PropsValues.HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE;
 	private static final Log _log = LogFactoryUtil.getLog(WebsitePersistenceImpl.class);
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(new String[] {
 				"uuid", "primary"

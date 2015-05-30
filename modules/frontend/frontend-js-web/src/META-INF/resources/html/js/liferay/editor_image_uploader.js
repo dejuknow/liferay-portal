@@ -52,16 +52,17 @@ AUI.add(
 
 						var editor = host.getNativeEditor();
 
+						editor.on('imagedrop', instance._uploadImage, instance);
+
+						instance._editor = editor;
+
 						var uploader = instance._getUploader();
 
 						instance._eventHandles = [
-							editor.on('imagedrop', instance._uploadImage, instance),
 							uploader.on('uploadcomplete', instance._onUploadComplete, instance),
 							uploader.on('uploaderror', instance._onUploadError, instance),
 							uploader.on('uploadprogress', instance._onUploadProgress, instance)
 						];
-
-						instance._editor = editor;
 					},
 
 					destructor: function() {
@@ -74,6 +75,8 @@ AUI.add(
 						if (instance._alert) {
 							instance._alert.destroy();
 						}
+
+						instance._editor.removeListener('imagedrop', instance._uploadImage);
 
 						(new A.EventHandle(instance._eventHandles)).detach();
 					},
@@ -145,7 +148,7 @@ AUI.add(
 							progressbar.destroy();
 						}
 
-						var data = A.JSON.parse(event.data);
+						var data = JSON.parse(event.data);
 
 						if (data.success) {
 							var image = A.one(instance._editor.element.$).one('[data-random-id="' + data.image.randomId + '"]');
@@ -214,12 +217,12 @@ AUI.add(
 					_uploadImage: function(event) {
 						var instance = this;
 
-						var image = event.data.el.$;
 						var file = event.data.file;
+						var image = event.data.el.$;
 
 						image = A.one(image);
 
-						var randomId = Lang.now() + STR_UNDERSCORE + Liferay.Util.randomInt();
+						var randomId = Date.now() + STR_UNDERSCORE + Liferay.Util.randomInt();
 
 						image.attr('data-random-id', randomId);
 

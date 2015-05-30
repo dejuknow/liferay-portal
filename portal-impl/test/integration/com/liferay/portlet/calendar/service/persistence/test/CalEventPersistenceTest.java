@@ -33,7 +33,6 @@ import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PersistenceTestRule;
-import com.liferay.portal.util.PropsValues;
 
 import com.liferay.portlet.calendar.NoSuchEventException;
 import com.liferay.portlet.calendar.model.CalEvent;
@@ -319,29 +318,17 @@ public class CalEventPersistenceTest {
 		Assert.assertEquals(existingCalEvent, newCalEvent);
 	}
 
-	@Test
+	@Test(expected = NoSuchEventException.class)
 	public void testFindByPrimaryKeyMissing() throws Exception {
 		long pk = RandomTestUtil.nextLong();
 
-		try {
-			_persistence.findByPrimaryKey(pk);
-
-			Assert.fail("Missing entity did not throw NoSuchEventException");
-		}
-		catch (NoSuchEventException nsee) {
-		}
+		_persistence.findByPrimaryKey(pk);
 	}
 
 	@Test
 	public void testFindAll() throws Exception {
 		_persistence.findAll(QueryUtil.ALL_POS, QueryUtil.ALL_POS,
 			getOrderByComparator());
-	}
-
-	@Test
-	public void testFilterFindByGroupId() throws Exception {
-		_persistence.filterFindByGroupId(0, QueryUtil.ALL_POS,
-			QueryUtil.ALL_POS, getOrderByComparator());
 	}
 
 	protected OrderByComparator<CalEvent> getOrderByComparator() {
@@ -551,10 +538,6 @@ public class CalEventPersistenceTest {
 
 	@Test
 	public void testResetOriginalValues() throws Exception {
-		if (!PropsValues.HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE) {
-			return;
-		}
-
 		CalEvent newCalEvent = addCalEvent();
 
 		_persistence.clearCache();

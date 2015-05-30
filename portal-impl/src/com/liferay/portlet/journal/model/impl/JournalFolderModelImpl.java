@@ -176,18 +176,6 @@ public class JournalFolderModelImpl extends BaseModelImpl<JournalFolder>
 		return models;
 	}
 
-	public static final String MAPPING_TABLE_JOURNALFOLDERS_DDMSTRUCTURES_NAME = "JournalFolders_DDMStructures";
-	public static final Object[][] MAPPING_TABLE_JOURNALFOLDERS_DDMSTRUCTURES_COLUMNS =
-		{
-			{ "folderId", Types.BIGINT },
-			{ "structureId", Types.BIGINT }
-		};
-	public static final String MAPPING_TABLE_JOURNALFOLDERS_DDMSTRUCTURES_SQL_CREATE =
-		"create table JournalFolders_DDMStructures (structureId LONG not null,folderId LONG not null,primary key (structureId, folderId))";
-	public static final boolean FINDER_CACHE_ENABLED_JOURNALFOLDERS_DDMSTRUCTURES =
-		GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
-				"value.object.finder.cache.enabled.JournalFolders_DDMStructures"),
-			true);
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.liferay.portal.util.PropsUtil.get(
 				"lock.expiration.time.com.liferay.portlet.journal.model.JournalFolder"));
 
@@ -510,8 +498,14 @@ public class JournalFolderModelImpl extends BaseModelImpl<JournalFolder>
 		return _modifiedDate;
 	}
 
+	public boolean hasSetModifiedDate() {
+		return _setModifiedDate;
+	}
+
 	@Override
 	public void setModifiedDate(Date modifiedDate) {
+		_setModifiedDate = true;
+
 		_modifiedDate = modifiedDate;
 	}
 
@@ -1066,6 +1060,8 @@ public class JournalFolderModelImpl extends BaseModelImpl<JournalFolder>
 
 		journalFolderModelImpl._setOriginalCompanyId = false;
 
+		journalFolderModelImpl._setModifiedDate = false;
+
 		journalFolderModelImpl._originalParentFolderId = journalFolderModelImpl._parentFolderId;
 
 		journalFolderModelImpl._setOriginalParentFolderId = false;
@@ -1321,6 +1317,7 @@ public class JournalFolderModelImpl extends BaseModelImpl<JournalFolder>
 	private String _userName;
 	private Date _createDate;
 	private Date _modifiedDate;
+	private boolean _setModifiedDate;
 	private long _parentFolderId;
 	private long _originalParentFolderId;
 	private boolean _setOriginalParentFolderId;

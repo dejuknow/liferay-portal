@@ -4,8 +4,9 @@
 	default-destroy-method="destroy"
 	default-init-method="afterPropertiesSet"
 	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:util="http://www.springframework.org/schema/util"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
 >
 
 	<!-- Advice -->
@@ -14,7 +15,7 @@
 		<constructor-arg>
 			<bean class="com.liferay.portal.messaging.proxy.MessagingProxyBeanMatcher">
 				<property name="beanClass" value="com.liferay.portal.kernel.messaging.proxy.BaseProxyBean" />
-				<property name="beanNamePattern" value="com.liferay.portal.scheduler.SchedulerEngineProxyBean" />
+				<property name="beanNamePattern" value="com.liferay.portal.kernel.scheduler.SchedulerEngineProxyBean" />
 			</bean>
 		</constructor-arg>
 		<constructor-arg>
@@ -24,61 +25,44 @@
 
 	<!-- Proxy -->
 
-	<bean id="com.liferay.portal.scheduler.ClusterSchedulerEngineService" class="com.liferay.portal.scheduler.ClusterSchedulerEngine" factory-method="createClusterSchedulerEngine" >
-		<constructor-arg name="schedulerEngine" ref="com.liferay.portal.scheduler.SchedulerEngineProxyBean" />
-	</bean>
-	<bean id="com.liferay.portal.scheduler.SchedulerEngineProxyBean" class="com.liferay.portal.scheduler.SchedulerEngineProxyBean">
+	<bean id="com.liferay.portal.kernel.scheduler.SchedulerEngineProxyBean" class="com.liferay.portal.kernel.scheduler.SchedulerEngineProxyBean">
 		<property name="destinationName" value="liferay/scheduler_engine" />
 		<property name="synchronousDestinationName" value="liferay/scheduler_engine" />
 		<property name="synchronousMessageSenderMode" value="DIRECT" />
 	</bean>
 
-	<!-- Util -->
-
-	<bean class="com.liferay.portal.kernel.scheduler.SchedulerEngineHelperUtil">
-		<property name="schedulerEngineHelper">
-			<bean class="com.liferay.portal.scheduler.SchedulerEngineHelperImpl">
-				<property name="schedulerEngine" ref="com.liferay.portal.scheduler.ClusterSchedulerEngineService" />
-			</bean>
-		</property>
-	</bean>
-
 	<!-- Messaging -->
 
-	<bean id="destination.scheduler_dispatch" class="com.liferay.portal.kernel.messaging.ParallelDestination">
-		<property name="name" value="liferay/scheduler_dispatch" />
-	</bean>
-	<bean id="destination.scheduler_engine" class="com.liferay.portal.kernel.messaging.ParallelDestination">
-		<property name="name" value="liferay/scheduler_engine" />
-	</bean>
-	<bean id="destination.scheduler_scripting" class="com.liferay.portal.kernel.messaging.ParallelDestination">
-		<property name="name" value="liferay/scheduler_scripting" />
-	</bean>
-	<bean id="messageListener.scheduler_engine" class="com.liferay.portal.kernel.messaging.proxy.ProxyMessageListener">
-		<property name="manager">
-			<bean class="com.liferay.portal.scheduler.quartz.QuartzSchedulerEngine" />
-		</property>
-	</bean>
 	<bean id="messageListener.scheduler_scripting" class="com.liferay.portal.kernel.scheduler.messaging.SchedulerEventMessageListenerWrapper">
 		<property name="messageListener">
 			<bean class="com.liferay.portal.scheduler.messaging.ScriptingMessageListener" />
 		</property>
 	</bean>
 	<bean id="messagingConfigurator.scheduler" class="com.liferay.portal.kernel.messaging.config.DefaultMessagingConfigurator">
-		<property name="destinations">
-			<list>
-				<ref bean="destination.scheduler_dispatch" />
-				<ref bean="destination.scheduler_engine" />
-				<ref bean="destination.scheduler_scripting" />
-			</list>
+		<property name="destinationConfigurations">
+			<util:set>
+				<bean class="com.liferay.portal.kernel.messaging.DestinationConfiguration">
+					<constructor-arg name="destinationName" value="liferay/scheduler_dispatch" />
+					<constructor-arg name="destinationType">
+						<util:constant static-field="com.liferay.portal.kernel.messaging.DestinationConfiguration.DESTINATION_TYPE_PARALLEL" />
+					</constructor-arg>
+				</bean>
+				<bean class="com.liferay.portal.kernel.messaging.DestinationConfiguration">
+					<constructor-arg name="destinationName" value="liferay/scheduler_engine" />
+					<constructor-arg name="destinationType">
+						<util:constant static-field="com.liferay.portal.kernel.messaging.DestinationConfiguration.DESTINATION_TYPE_PARALLEL" />
+					</constructor-arg>
+				</bean>
+				<bean class="com.liferay.portal.kernel.messaging.DestinationConfiguration">
+					<constructor-arg name="destinationName" value="liferay/scheduler_scripting" />
+					<constructor-arg name="destinationType">
+						<util:constant static-field="com.liferay.portal.kernel.messaging.DestinationConfiguration.DESTINATION_TYPE_PARALLEL" />
+					</constructor-arg>
+				</bean>
+			</util:set>
 		</property>
 		<property name="messageListeners">
 			<map key-type="java.lang.String" value-type="java.util.List">
-				<entry key="liferay/scheduler_engine">
-					<list value-type="com.liferay.portal.kernel.messaging.MessageListener">
-						<ref bean="messageListener.scheduler_engine" />
-					</list>
-				</entry>
 				<entry key="liferay/scheduler_scripting">
 					<list value-type="com.liferay.portal.kernel.messaging.MessageListener">
 						<ref bean="messageListener.scheduler_scripting" />

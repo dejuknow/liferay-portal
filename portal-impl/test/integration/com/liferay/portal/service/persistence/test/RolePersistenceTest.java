@@ -38,7 +38,6 @@ import com.liferay.portal.service.persistence.RolePersistence;
 import com.liferay.portal.service.persistence.RoleUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PersistenceTestRule;
-import com.liferay.portal.util.PropsValues;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -271,17 +270,11 @@ public class RolePersistenceTest {
 		Assert.assertEquals(existingRole, newRole);
 	}
 
-	@Test
+	@Test(expected = NoSuchRoleException.class)
 	public void testFindByPrimaryKeyMissing() throws Exception {
 		long pk = RandomTestUtil.nextLong();
 
-		try {
-			_persistence.findByPrimaryKey(pk);
-
-			Assert.fail("Missing entity did not throw NoSuchRoleException");
-		}
-		catch (NoSuchRoleException nsee) {
-		}
+		_persistence.findByPrimaryKey(pk);
 	}
 
 	@Test
@@ -490,10 +483,6 @@ public class RolePersistenceTest {
 
 	@Test
 	public void testResetOriginalValues() throws Exception {
-		if (!PropsValues.HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE) {
-			return;
-		}
-
 		Role newRole = addRole();
 
 		_persistence.clearCache();

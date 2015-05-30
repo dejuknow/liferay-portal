@@ -96,12 +96,12 @@ public class GoogleDocsDLViewFileVersionDisplayContext
 	}
 
 	@Override
-	public boolean isDownloadLinkVisible() throws PortalException {
+	public boolean isDownloadLinkVisible() {
 		return false;
 	}
 
 	@Override
-	public boolean isVersionInfoVisible() throws PortalException {
+	public boolean isVersionInfoVisible() {
 		return false;
 	}
 

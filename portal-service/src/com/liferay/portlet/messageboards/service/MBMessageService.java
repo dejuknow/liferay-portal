@@ -19,10 +19,10 @@ import aQute.bnd.annotation.ProviderType;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.jsonwebservice.JSONWebService;
+import com.liferay.portal.kernel.security.access.control.AccessControlled;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
-import com.liferay.portal.security.ac.AccessControlled;
 import com.liferay.portal.service.BaseService;
 
 /**
@@ -48,10 +48,8 @@ public interface MBMessageService extends BaseService {
 	 * Never modify or reference this interface directly. Always use {@link MBMessageServiceUtil} to access the message-boards message remote service. Add custom service methods to {@link com.liferay.portlet.messageboards.service.impl.MBMessageServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
 	public com.liferay.portlet.messageboards.model.MBMessage addDiscussionMessage(
-		long groupId, java.lang.String className, long classPK,
-		java.lang.String permissionClassName, long permissionClassPK,
-		long permissionOwnerId, long threadId, long parentMessageId,
-		java.lang.String subject, java.lang.String body,
+		long groupId, java.lang.String className, long classPK, long threadId,
+		long parentMessageId, java.lang.String subject, java.lang.String body,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws PortalException;
 
@@ -62,7 +60,9 @@ public interface MBMessageService extends BaseService {
 
 	public com.liferay.portlet.messageboards.model.MBMessage addMessage(
 		long groupId, long categoryId, java.lang.String subject,
-		java.lang.String body, java.lang.String fileName, java.io.File file,
+		java.lang.String body, java.lang.String format,
+		java.lang.String fileName, java.io.File file, boolean anonymous,
+		double priority, boolean allowPingbacks,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws PortalException, java.io.FileNotFoundException;
 
@@ -97,12 +97,26 @@ public interface MBMessageService extends BaseService {
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws PortalException;
 
+	public void addMessageAttachment(long messageId, java.lang.String fileName,
+		java.io.File file, java.lang.String mimeType) throws PortalException;
+
+	/**
+	* @deprecated As of 7.0.0, replaced by {@link #deleteDiscussionMessage(
+	long)}
+	*/
+	@java.lang.Deprecated
 	public void deleteDiscussionMessage(long groupId,
 		java.lang.String className, long classPK,
 		java.lang.String permissionClassName, long permissionClassPK,
 		long permissionOwnerId, long messageId) throws PortalException;
 
+	public void deleteDiscussionMessage(long messageId)
+		throws PortalException;
+
 	public void deleteMessage(long messageId) throws PortalException;
+
+	public void deleteMessageAttachment(long messageId,
+		java.lang.String fileName) throws PortalException;
 
 	public void deleteMessageAttachments(long messageId)
 		throws PortalException;
@@ -209,10 +223,8 @@ public interface MBMessageService extends BaseService {
 		throws PortalException;
 
 	public com.liferay.portlet.messageboards.model.MBMessage updateDiscussionMessage(
-		java.lang.String className, long classPK,
-		java.lang.String permissionClassName, long permissionClassPK,
-		long permissionOwnerId, long messageId, java.lang.String subject,
-		java.lang.String body,
+		java.lang.String className, long classPK, long messageId,
+		java.lang.String subject, java.lang.String body,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws PortalException;
 

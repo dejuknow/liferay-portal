@@ -14,10 +14,14 @@
 
 package com.liferay.taglib.ui;
 
-import com.liferay.portal.kernel.editor.config.EditorConfig;
-import com.liferay.portal.kernel.editor.config.EditorConfigFactoryUtil;
+import com.liferay.portal.kernel.editor.Editor;
+import com.liferay.portal.kernel.editor.configuration.EditorConfiguration;
+import com.liferay.portal.kernel.editor.configuration.EditorConfigurationFactoryUtil;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.servlet.BrowserSnifferUtil;
+import com.liferay.portal.kernel.servlet.DirectRequestDispatcherFactoryUtil;
+import com.liferay.portal.kernel.servlet.PortalWebResourceConstants;
+import com.liferay.portal.kernel.servlet.PortalWebResourcesUtil;
 import com.liferay.portal.kernel.util.JavaConstants;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
@@ -26,13 +30,19 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.model.Portlet;
 import com.liferay.portal.theme.ThemeDisplay;
-import com.liferay.taglib.FileAvailabilityUtil;
+import com.liferay.registry.Registry;
+import com.liferay.registry.RegistryUtil;
+import com.liferay.registry.ServiceReference;
+import com.liferay.registry.collections.ServiceReferenceMapper;
+import com.liferay.registry.collections.ServiceTrackerCollections;
+import com.liferay.registry.collections.ServiceTrackerMap;
 import com.liferay.taglib.util.IncludeTag;
 
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -241,11 +251,12 @@ public class InputEditorTag extends IncludeTag {
 			(LiferayPortletResponse)request.getAttribute(
 				JavaConstants.JAVAX_PORTLET_RESPONSE);
 
-		EditorConfig editorConfig = EditorConfigFactoryUtil.getEditorConfig(
-			portlet.getPortletId(), getConfigKey(), getEditorName(request),
-			attributes, themeDisplay, portletResponse);
+		EditorConfiguration editorConfiguration =
+			EditorConfigurationFactoryUtil.getEditorConfiguration(
+				portlet.getPortletId(), getConfigKey(), getEditorName(request),
+				attributes, themeDisplay, portletResponse);
 
-		Map<String, Object> data = editorConfig.getData();
+		Map<String, Object> data = editorConfiguration.getData();
 
 		if (MapUtil.isNotEmpty(_data)) {
 			MapUtil.merge(_data, data);
@@ -254,39 +265,43 @@ public class InputEditorTag extends IncludeTag {
 		return data;
 	}
 
-	protected String getEditorName(HttpServletRequest request) {
+	protected Editor getEditor(HttpServletRequest request) {
 		String editorName = _editorName;
 
 		if (!BrowserSnifferUtil.isRtf(request)) {
-			editorName = "simple";
+			return _serviceTrackerMap.getService("simple");
 		}
 
 		if (Validator.isNull(editorName)) {
-			editorName = _EDITOR_WYSIWYG_DEFAULT;
+			return _serviceTrackerMap.getService(_EDITOR_WYSIWYG_DEFAULT);
 		}
 
-		if (!FileAvailabilityUtil.isAvailable(
-				servletContext, getPage(editorName))) {
-
-			editorName = _EDITOR_WYSIWYG_DEFAULT;
+		if (!_serviceTrackerMap.containsKey(editorName)) {
+			return _serviceTrackerMap.getService(_EDITOR_WYSIWYG_DEFAULT);
 		}
 
-		return editorName;
+		return _serviceTrackerMap.getService(editorName);
+	}
+
+	protected String getEditorName(HttpServletRequest request) {
+		Editor editor = getEditor(request);
+
+		return editor.getName();
 	}
 
 	@Override
 	protected String getPage() {
-		String editorName = getEditorName(request);
+		Editor editor = getEditor(request);
 
-		return getPage(editorName);
+		return editor.getJspPath(request);
 	}
 
-	protected String getPage(String editorName) {
-		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
-			WebKeys.THEME_DISPLAY);
-
-		return themeDisplay.getPathJavaScript() + "/editor/" +
-			editorName + ".jsp";
+	@Override
+	protected RequestDispatcher getRequestDispatcher(String page) {
+		return DirectRequestDispatcherFactoryUtil.getRequestDispatcher(
+			PortalWebResourcesUtil.getServletContext(
+				PortalWebResourceConstants.RESOURCE_TYPE_EDITORS),
+			page);
 	}
 
 	@Override
@@ -337,10 +352,37 @@ public class InputEditorTag extends IncludeTag {
 		request.setAttribute("liferay-ui:input-editor:width", _width);
 
 		request.setAttribute("liferay-ui:input-editor:data", getData());
+
+		Editor editor = getEditor(request);
+
+		editor.setItemSelectorAttribute(request);
 	}
 
 	private static final String _EDITOR_WYSIWYG_DEFAULT = PropsUtil.get(
 		PropsKeys.EDITOR_WYSIWYG_DEFAULT);
+
+	private static final ServiceTrackerMap<String, Editor> _serviceTrackerMap =
+		ServiceTrackerCollections.singleValueMap(
+			Editor.class, null,
+			new ServiceReferenceMapper<String, Editor>() {
+
+				@Override
+				public void map(
+					ServiceReference<Editor> serviceReference,
+					Emitter<String> emitter) {
+
+					Registry registry = RegistryUtil.getRegistry();
+
+					Editor editor = registry.getService(serviceReference);
+
+					emitter.emit(editor.getName());
+				}
+
+			});
+
+	static {
+		_serviceTrackerMap.open();
+	}
 
 	private boolean _allowBrowseDocuments = true;
 	private boolean _autoCreate = true;

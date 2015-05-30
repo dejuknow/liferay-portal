@@ -69,6 +69,26 @@ public class PortletPreferencesLocalServiceImpl
 
 		portletPreferences.setPreferences(defaultPreferences);
 
+		if (_log.isDebugEnabled()) {
+			StringBundler sb = new StringBundler(13);
+
+			sb.append("Add {companyId=");
+			sb.append(companyId);
+			sb.append(", ownerId=");
+			sb.append(ownerId);
+			sb.append(", ownerType=");
+			sb.append(ownerType);
+			sb.append(", plid=");
+			sb.append(plid);
+			sb.append(", portletId=");
+			sb.append(portletId);
+			sb.append(", defaultPreferences=");
+			sb.append(defaultPreferences);
+			sb.append("}");
+
+			_log.debug(sb.toString());
+		}
+
 		try {
 			portletPreferencesPersistence.update(portletPreferences);
 		}
@@ -103,12 +123,22 @@ public class PortletPreferencesLocalServiceImpl
 			long ownerId, int ownerType, long plid, String portletId)
 		throws PortalException {
 
+		if (_log.isDebugEnabled()) {
+			_log.debug(
+				"Delete {ownerId=" + ownerId + ", ownerType=" + ownerType +
+					", plid=" + plid + ", portletId=" + portletId + "}");
+		}
+
 		portletPreferencesPersistence.removeByO_O_P_P(
 			ownerId, ownerType, plid, portletId);
 	}
 
 	@Override
 	public void deletePortletPreferencesByPlid(long plid) {
+		if (_log.isDebugEnabled()) {
+			_log.debug("Delete {plid=" + plid + "}");
+		}
+
 		portletPreferencesPersistence.removeByPlid(plid);
 	}
 
@@ -310,6 +340,13 @@ public class PortletPreferencesLocalServiceImpl
 	@Override
 	public PortletPreferences updatePreferences(
 		long ownerId, int ownerType, long plid, String portletId, String xml) {
+
+		if (_log.isDebugEnabled()) {
+			_log.debug(
+				"Update {ownerId=" + ownerId + ", ownerType=" + ownerType +
+					", plid=" + plid + ", portletId=" + portletId + ", xml=" +
+						xml + "}");
+		}
 
 		PortletPreferences portletPreferences =
 			portletPreferencesPersistence.fetchByO_O_P_P(

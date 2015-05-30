@@ -8,6 +8,11 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
 >
+	<bean id="com.liferay.portal.kernel.lar.ExportImportProcessCallbackRegistryUtil" class="com.liferay.portal.kernel.lar.ExportImportProcessCallbackRegistryUtil">
+		<property name="exportImportProcessCallbackRegistry">
+			<bean class="com.liferay.portal.lar.ExportImportProcessCallbackRegistryImpl" />
+		</property>
+	</bean>
 	<bean id="com.liferay.portal.kernel.lar.PortletDataContextFactoryUtil" class="com.liferay.portal.kernel.lar.PortletDataContextFactoryUtil">
 		<property name="portletDataContextFactory">
 			<bean class="com.liferay.portal.lar.PortletDataContextFactoryImpl" />
@@ -16,7 +21,11 @@
 	<bean id="com.liferay.portal.kernel.lar.PortletDataHandlerStatusMessageSenderUtil" class="com.liferay.portal.kernel.lar.PortletDataHandlerStatusMessageSenderUtil">
 		<property name="portletDataHandlerStatusMessageSender">
 			<bean class="com.liferay.portal.lar.PortletDataHandlerStatusMessageSenderImpl">
-				<property name="destinationName" value="liferay/background_task_status" />
+				<property name="backgroundTaskStatusMessageSender">
+					<bean class="com.liferay.portal.kernel.backgroundtask.BackgroundTaskStatusMessageSenderImpl">
+						<property name="destinationName" value="liferay/background_task_status" />
+					</bean>
+				</property>
 			</bean>
 		</property>
 	</bean>
@@ -40,8 +49,10 @@
 			<bean class="com.liferay.portal.staging.permission.StagingPermissionImpl" />
 		</property>
 	</bean>
+	<bean id="com.liferay.portal.lar.lifecycle.CacheExportImportLifecycleListener" class="com.liferay.portal.lar.lifecycle.CacheExportImportLifecycleListener" />
 	<bean id="com.liferay.portal.lar.lifecycle.IndexingExportImportLifecycleListener" class="com.liferay.portal.lar.lifecycle.IndexingExportImportLifecycleListener" />
 	<bean id="com.liferay.portal.lar.lifecycle.LoggerExportImportLifecycleListener" class="com.liferay.portal.lar.lifecycle.LoggerExportImportLifecycleListener" />
+	<bean id="com.liferay.portal.lar.ExportImportProcessCallbackLifecycleListener" class="com.liferay.portal.lar.ExportImportProcessCallbackLifecycleListener" />
 	<bean id="com.liferay.portal.model.adapter.builder.StagedGroupModelAdapterBuilder" class="com.liferay.portal.model.adapter.builder.StagedGroupModelAdapterBuilder" />
 	<bean id="com.liferay.portal.model.adapter.builder.StagedThemeModelAdapterBuilder" class="com.liferay.portal.model.adapter.builder.StagedThemeModelAdapterBuilder" />
 	<bean id="com.liferay.portal.service.impl.LayoutLocalServiceStagingAdvice" class="com.liferay.portal.service.impl.LayoutLocalServiceStagingAdvice" />
@@ -53,4 +64,5 @@
 		<aop:advisor advice-ref="com.liferay.portal.service.impl.PortletPreferencesLocalServiceStagingAdvice" pointcut="bean(com.liferay.portal.service.PortletPreferencesLocalService)" />
 	</aop:config>
 	<bean id="com.liferay.portlet.asset.model.adapter.builder.StagedAssetTagModelAdapterBuilder" class="com.liferay.portlet.asset.model.adapter.builder.StagedAssetTagModelAdapterBuilder" />
+	<bean id="com.liferay.portlet.documentlibrary.lar.lifecycle.DLIndexingExportImportLifecycleListener" class="com.liferay.portlet.documentlibrary.lar.lifecycle.DLIndexingExportImportLifecycleListener" />
 </beans>

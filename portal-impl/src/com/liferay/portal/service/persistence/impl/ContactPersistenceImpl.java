@@ -17,7 +17,6 @@ package com.liferay.portal.service.persistence.impl;
 import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.NoSuchContactException;
-import com.liferay.portal.kernel.cache.CacheRegistryUtil;
 import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
@@ -35,11 +34,14 @@ import com.liferay.portal.model.Contact;
 import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.impl.ContactImpl;
 import com.liferay.portal.model.impl.ContactModelImpl;
+import com.liferay.portal.service.ServiceContext;
+import com.liferay.portal.service.ServiceContextThreadLocal;
 import com.liferay.portal.service.persistence.ContactPersistence;
 
 import java.io.Serializable;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -1595,10 +1597,6 @@ public class ContactPersistenceImpl extends BasePersistenceImpl<Contact>
 	 */
 	@Override
 	public void clearCache() {
-		if (_HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE) {
-			CacheRegistryUtil.clear(ContactImpl.class.getName());
-		}
-
 		EntityCacheUtil.clearCache(ContactImpl.class);
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
@@ -1739,6 +1737,28 @@ public class ContactPersistenceImpl extends BasePersistenceImpl<Contact>
 		boolean isNew = contact.isNew();
 
 		ContactModelImpl contactModelImpl = (ContactModelImpl)contact;
+
+		ServiceContext serviceContext = ServiceContextThreadLocal.getServiceContext();
+
+		Date now = new Date();
+
+		if (isNew && (contact.getCreateDate() == null)) {
+			if (serviceContext == null) {
+				contact.setCreateDate(now);
+			}
+			else {
+				contact.setCreateDate(serviceContext.getCreateDate(now));
+			}
+		}
+
+		if (!contactModelImpl.hasSetModifiedDate()) {
+			if (serviceContext == null) {
+				contact.setModifiedDate(now);
+			}
+			else {
+				contact.setModifiedDate(serviceContext.getModifiedDate(now));
+			}
+		}
 
 		Session session = null;
 
@@ -2257,7 +2277,6 @@ public class ContactPersistenceImpl extends BasePersistenceImpl<Contact>
 	private static final String _ORDER_BY_ENTITY_ALIAS = "contact.";
 	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY = "No Contact exists with the primary key ";
 	private static final String _NO_SUCH_ENTITY_WITH_KEY = "No Contact exists with the key {";
-	private static final boolean _HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE = com.liferay.portal.util.PropsValues.HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE;
 	private static final Log _log = LogFactoryUtil.getLog(ContactPersistenceImpl.class);
 	private static final Contact _nullContact = new ContactImpl() {
 			@Override

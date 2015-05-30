@@ -38,7 +38,6 @@ import com.liferay.portal.service.persistence.RepositoryPersistence;
 import com.liferay.portal.service.persistence.RepositoryUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PersistenceTestRule;
-import com.liferay.portal.util.PropsValues;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -236,18 +235,11 @@ public class RepositoryPersistenceTest {
 		Assert.assertEquals(existingRepository, newRepository);
 	}
 
-	@Test
+	@Test(expected = NoSuchRepositoryException.class)
 	public void testFindByPrimaryKeyMissing() throws Exception {
 		long pk = RandomTestUtil.nextLong();
 
-		try {
-			_persistence.findByPrimaryKey(pk);
-
-			Assert.fail(
-				"Missing entity did not throw NoSuchRepositoryException");
-		}
-		catch (NoSuchRepositoryException nsee) {
-		}
+		_persistence.findByPrimaryKey(pk);
 	}
 
 	@Test
@@ -463,10 +455,6 @@ public class RepositoryPersistenceTest {
 
 	@Test
 	public void testResetOriginalValues() throws Exception {
-		if (!PropsValues.HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE) {
-			return;
-		}
-
 		Repository newRepository = addRepository();
 
 		_persistence.clearCache();

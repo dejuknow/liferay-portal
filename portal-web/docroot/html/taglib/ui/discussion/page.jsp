@@ -19,23 +19,21 @@
 <%
 String randomNamespace = StringUtil.randomId() + StringPool.UNDERLINE;
 
-DiscussionTaglibHelper discussionTaglibHelper = new DiscussionTaglibHelper(request);
 DiscussionRequestHelper discussionRequestHelper = new DiscussionRequestHelper(request);
+DiscussionTaglibHelper discussionTaglibHelper = new DiscussionTaglibHelper(request);
 
-CommentSectionDisplayContext commentSectionDisplayContext = new MBCommentSectionDisplayContext(discussionTaglibHelper, discussionRequestHelper);
+DiscussionPermission discussionPermission = CommentManagerUtil.getDiscussionPermission(discussionRequestHelper.getPermissionChecker());
+Discussion discussion = CommentManagerUtil.getDiscussion(discussionTaglibHelper.getUserId(), discussionRequestHelper.getScopeGroupId(), discussionTaglibHelper.getClassName(), discussionTaglibHelper.getClassPK(), new ServiceContextFunction(renderRequest));
 
-MBMessageDisplay messageDisplay = MBMessageLocalServiceUtil.getDiscussionMessageDisplay(discussionTaglibHelper.getUserId(), scopeGroupId, discussionTaglibHelper.getClassName(), discussionTaglibHelper.getClassPK(), WorkflowConstants.STATUS_ANY, new MessageThreadComparator());
+DiscussionComment rootDiscussionComment = discussion.getRootDiscussionComment();
 
-MBTreeWalker treeWalker = messageDisplay.getTreeWalker();
-MBMessage rootMessage = treeWalker.getRoot();
-List<MBMessage> messages = treeWalker.getMessages();
-int messagesCount = messages.size();
+CommentSectionDisplayContext commentSectionDisplayContext = CommentDisplayContextProviderUtil.getCommentSectionDisplayContext(request, response, discussionPermission, discussion);
 %>
 
 <section>
 	<div class="hide lfr-message-response" id="<portlet:namespace />discussionStatusMessages"></div>
 
-	<c:if test="<%= commentSectionDisplayContext.isDiscussionMaxComments() %>">
+	<c:if test="<%= discussion.isMaxCommentsLimitExceeded() %>">
 		<div class="alert alert-warning">
 			<liferay-ui:message key="maximum-number-of-comments-has-been-reached" />
 		</div>
@@ -51,26 +49,22 @@ int messagesCount = messages.size();
 				<aui:input name="assetEntryVisible" type="hidden" value="<%= discussionTaglibHelper.isAssetEntryVisible() %>" />
 				<aui:input name="className" type="hidden" value="<%= discussionTaglibHelper.getClassName() %>" />
 				<aui:input name="classPK" type="hidden" value="<%= discussionTaglibHelper.getClassPK() %>" />
-				<aui:input name="permissionClassName" type="hidden" value="<%= discussionTaglibHelper.getPermissionClassName() %>" />
-				<aui:input name="permissionClassPK" type="hidden" value="<%= discussionTaglibHelper.getPermissionClassPK() %>" />
-				<aui:input name="permissionOwnerId" type="hidden" value="<%= String.valueOf(discussionTaglibHelper.getUserId()) %>" />
-				<aui:input name="messageId" type="hidden" />
-				<aui:input name="threadId" type="hidden" value="<%= commentSectionDisplayContext.getThreadId() %>" />
-				<aui:input name="parentMessageId" type="hidden" />
+				<aui:input name="commentId" type="hidden" />
+				<aui:input name="parentCommentId" type="hidden" />
 				<aui:input name="body" type="hidden" />
 				<aui:input name="workflowAction" type="hidden" value="<%= String.valueOf(WorkflowConstants.ACTION_PUBLISH) %>" />
 				<aui:input name="ajax" type="hidden" value="<%= true %>" />
 
 				<%
-				MBMessage message = rootMessage;
+				DiscussionComment discussionComment = rootDiscussionComment;
 				%>
 
 				<c:if test="<%= commentSectionDisplayContext.isControlsVisible() %>">
 					<aui:fieldset cssClass="add-comment" id='<%= randomNamespace + "messageScroll0" %>'>
-						<c:if test="<%= !commentSectionDisplayContext.isDiscussionMaxComments() %>">
-							<div id="<%= randomNamespace %>messageScroll<%= commentSectionDisplayContext.getRootMessageId() %>">
-								<aui:input name="messageId0" type="hidden" value="<%= commentSectionDisplayContext.getRootMessageId() %>" />
-								<aui:input name="parentMessageId0" type="hidden" value="<%= commentSectionDisplayContext.getRootMessageId() %>" />
+						<c:if test="<%= !discussion.isMaxCommentsLimitExceeded() %>">
+							<div id="<%= randomNamespace %>messageScroll<%= rootDiscussionComment.getCommentId() %>">
+								<aui:input name="commentId0" type="hidden" value="<%= rootDiscussionComment.getCommentId() %>" />
+								<aui:input name="parentCommentId0" type="hidden" value="<%= rootDiscussionComment.getCommentId() %>" />
 							</div>
 						</c:if>
 
@@ -103,11 +97,11 @@ int messagesCount = messages.size();
 							</c:choose>
 						</c:if>
 
-						<c:if test="<%= !commentSectionDisplayContext.isDiscussionMaxComments() %>">
+						<c:if test="<%= !discussion.isMaxCommentsLimitExceeded() %>">
 							<aui:input name="emailAddress" type="hidden" />
 
 							<c:choose>
-								<c:when test="<%= themeDisplay.isSignedIn() || !SSOUtil.isLoginRedirectRequired(discussionRequestHelper.getCompanyId()) %>">
+								<c:when test="<%= commentSectionDisplayContext.isReplyButtonVisible() %>">
 									<aui:row fluid="<%= true %>">
 										<div class="lfr-discussion-details">
 											<liferay-ui:user-display
@@ -118,7 +112,7 @@ int messagesCount = messages.size();
 										</div>
 
 										<div class="lfr-discussion-body">
-											<liferay-ui:input-editor configKey="commentsEditor" contents="" editorName='<%= PropsUtil.get("editor.wysiwyg.portal-web.docroot.html.taglib.ui.discussion.jsp") %>' name='<%= randomNamespace + "postReplyBody0" %>' onChangeMethod='<%= randomNamespace + "0OnChange" %>' placeholder="type-your-comment-here" />
+											<liferay-ui:input-editor configKey="commentsEditor" contents="" editorName='<%= PropsUtil.get("editor.wysiwyg.portal-web.docroot.html.taglib.ui.discussion.jsp") %>' name='<%= randomNamespace + "postReplyBody0" %>' onChangeMethod='<%= randomNamespace + "0ReplyOnChange" %>' placeholder="type-your-comment-here" showSource="<%= false %>" />
 
 											<aui:input name="postReplyBody0" type="hidden" />
 
@@ -141,33 +135,22 @@ int messagesCount = messages.size();
 					</aui:fieldset>
 				</c:if>
 
-				<c:if test="<%= messagesCount > 1 %>">
+				<c:if test="<%= commentSectionDisplayContext.isMessageThreadVisible() %>">
 					<a name="<%= randomNamespace %>messages_top"></a>
 
 					<aui:row>
 
 						<%
-						List<Long> classPKs = new ArrayList<Long>();
-
-						for (MBMessage curMessage : messages) {
-							if (!curMessage.isRoot()) {
-								classPKs.add(curMessage.getMessageId());
-							}
-						}
-
-						List<RatingsEntry> ratingsEntries = RatingsEntryLocalServiceUtil.getEntries(discussionTaglibHelper.getUserId(), MBDiscussion.class.getName(), classPKs);
-						List<RatingsStats> ratingsStatsList = RatingsStatsLocalServiceUtil.getStats(MBDiscussion.class.getName(), classPKs);
-
-						int[] range = treeWalker.getChildrenRange(rootMessage);
-
 						int index = 0;
 						int rootIndexPage = 0;
 						boolean moreCommentsPagination = false;
 
-						for (int j = range[0]; j < range[1]; j++) {
+						DiscussionCommentIterator discussionCommentIterator = rootDiscussionComment.getThreadDiscussionCommentIterator();
+
+						while (discussionCommentIterator.hasNext()) {
 							index = GetterUtil.getInteger(request.getAttribute("liferay-ui:discussion:index"), 1);
 
-							rootIndexPage = j;
+							rootIndexPage = discussionCommentIterator.getIndexPage();
 
 							if ((index + 1) > PropsValues.DISCUSSION_COMMENTS_DELTA_VALUE) {
 								moreCommentsPagination = true;
@@ -175,16 +158,9 @@ int messagesCount = messages.size();
 								break;
 							}
 
-							message = (MBMessage)messages.get(j);
-
-							request.setAttribute(WebKeys.MESSAGE_BOARDS_TREE_WALKER, treeWalker);
-							request.setAttribute(WebKeys.MESSAGE_BOARDS_TREE_WALKER_CUR_MESSAGE, message);
-
-							request.setAttribute("liferay-ui:discussion:messageDisplay", messageDisplay);
+							request.setAttribute("liferay-ui:discussion:discussion", discussion);
+							request.setAttribute("liferay-ui:discussion:discussionComment", discussionCommentIterator.next());
 							request.setAttribute("liferay-ui:discussion:randomNamespace", randomNamespace);
-							request.setAttribute("liferay-ui:discussion:ratingsEntries", ratingsEntries);
-							request.setAttribute("liferay-ui:discussion:ratingsStatsList", ratingsStatsList);
-							request.setAttribute("liferay-ui:discussion:rootMessage", rootMessage);
 						%>
 
 							<liferay-util:include page="/html/taglib/ui/discussion/view_message_thread.jsp" />
@@ -216,8 +192,8 @@ int messagesCount = messages.size();
 		%>
 
 		<aui:script>
-			function <%= namespace + randomNamespace %>0OnChange(html) {
-				Liferay.Util.toggleDisabled('#<%= namespace + randomNamespace %>postReplyButton0', !html);
+			function <%= namespace + randomNamespace %>0ReplyOnChange(html) {
+				Liferay.Util.toggleDisabled('#<%= namespace + randomNamespace %>postReplyButton0', html.trim() === '');
 			}
 
 			function <%= randomNamespace %>afterLogin(emailAddress, anonymousAccount) {
@@ -231,10 +207,10 @@ int messagesCount = messages.size();
 			function <%= randomNamespace %>deleteMessage(i) {
 				var form = AUI.$('#<%= namespace %><%= HtmlUtil.escapeJS(discussionTaglibHelper.getFormName()) %>');
 
-				var messageId = form.fm('messageId' + i).val();
+				var commentId = form.fm('commentId' + i).val();
 
 				form.fm('<%= randomNamespace %><%= Constants.CMD %>').val('<%= Constants.DELETE %>');
-				form.fm('messageId').val(messageId);
+				form.fm('commentId').val(commentId);
 
 				<portlet:namespace />sendMessage(form);
 			}
@@ -257,7 +233,7 @@ int messagesCount = messages.size();
 					function(event) {
 						<portlet:namespace />showStatusMessage('success', '<%= UnicodeLanguageUtil.get(request, "your-request-processed-successfully") %>');
 
-						location.hash = '#' + AUI.$('#<portlet:namespace />randomNamespace').val() + 'message_' + response.messageId;
+						location.hash = '#' + AUI.$('#<portlet:namespace />randomNamespace').val() + 'message_' + response.commentId;
 					}
 				);
 
@@ -274,10 +250,10 @@ int messagesCount = messages.size();
 
 				var editorInstance = window['<%= namespace + randomNamespace %>postReplyBody' + i];
 
-				var parentMessageId = form.fm('parentMessageId' + i).val();
+				var parentCommentId = form.fm('parentCommentId' + i).val();
 
 				form.fm('<%= randomNamespace %><%= Constants.CMD %>').val('<%= Constants.ADD %>');
-				form.fm('parentMessageId').val(parentMessageId);
+				form.fm('parentCommentId').val(parentCommentId);
 				form.fm('body').val(editorInstance.getHTML());
 
 				if (!themeDisplay.isSignedIn()) {
@@ -303,8 +279,8 @@ int messagesCount = messages.size();
 				}
 			}
 
-			function <%= randomNamespace %>scrollIntoView(messageId) {
-				document.getElementById('<%= randomNamespace %>messageScroll' + messageId).scrollIntoView();
+			function <%= randomNamespace %>scrollIntoView(commentId) {
+				document.getElementById('<%= randomNamespace %>messageScroll' + commentId).scrollIntoView();
 			}
 
 			function <portlet:namespace />sendMessage(form, refreshPage) {
@@ -409,14 +385,14 @@ int messagesCount = messages.size();
 
 				var editorInstance = window['<%= namespace + randomNamespace %>editReplyBody' + i];
 
-				var messageId = form.fm('messageId' + i).val();
+				var commentId = form.fm('commentId' + i).val();
 
 				if (pending) {
 					form.fm('workflowAction').val('<%= WorkflowConstants.ACTION_SAVE_DRAFT %>');
 				}
 
 				form.fm('<%= randomNamespace %><%= Constants.CMD %>').val('<%= Constants.UPDATE %>');
-				form.fm('messageId').val(messageId);
+				form.fm('commentId').val(commentId);
 				form.fm('body').val(editorInstance.getHTML());
 
 				<portlet:namespace />sendMessage(form);
@@ -438,8 +414,6 @@ int messagesCount = messages.size();
 							classPK: <%= discussionTaglibHelper.getClassPK() %>,
 							hideControls: '<%= discussionTaglibHelper.isHideControls() %>',
 							index: form.fm('index').val(),
-							permissionClassName: '<%= discussionTaglibHelper.getPermissionClassName() %>',
-							permissionClassPK: '<%= discussionTaglibHelper.getPermissionClassPK() %>',
 							randomNamespace: '<%= randomNamespace %>',
 							ratingsEnabled: '<%= discussionTaglibHelper.isRatingsEnabled() %>',
 							rootIndexPage: form.fm('rootIndexPage').val(),

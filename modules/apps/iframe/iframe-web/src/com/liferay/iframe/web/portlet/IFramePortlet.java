@@ -17,20 +17,18 @@ package com.liferay.iframe.web.portlet;
 import aQute.bnd.annotation.metatype.Configurable;
 
 import com.liferay.iframe.web.configuration.IFrameConfiguration;
+import com.liferay.iframe.web.configuration.IFramePortletInstanceConfiguration;
 import com.liferay.iframe.web.constants.IFrameWebKeys;
+import com.liferay.iframe.web.display.context.IFrameDisplayContext;
 import com.liferay.iframe.web.upgrade.IFrameWebUpgrade;
 import com.liferay.iframe.web.util.IFrameUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
-import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.theme.ThemeDisplay;
-import com.liferay.portal.util.PortalUtil;
 
 import java.io.IOException;
 
@@ -38,7 +36,7 @@ import java.util.Map;
 
 import javax.portlet.Portlet;
 import javax.portlet.PortletException;
-import javax.portlet.PortletPreferences;
+import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
@@ -113,42 +111,6 @@ public class IFramePortlet extends MVCPortlet {
 			IFrameConfiguration.class, properties);
 	}
 
-	protected String getPassword(
-			RenderRequest renderRequest, RenderResponse renderResponse)
-		throws PortalException {
-
-		PortletPreferences portletPreferences = renderRequest.getPreferences();
-
-		String password = portletPreferences.getValue(
-			"basicPassword", StringPool.BLANK);
-
-		return IFrameUtil.getPassword(renderRequest, password);
-	}
-
-	protected String getSrc(
-		RenderRequest renderRequest, RenderResponse renderResponse) {
-
-		PortletPreferences portletPreferences = renderRequest.getPreferences();
-
-		String src = portletPreferences.getValue("src", StringPool.BLANK);
-
-		src = ParamUtil.getString(renderRequest, "src", src);
-
-		return src;
-	}
-
-	protected String getUserName(
-			RenderRequest renderRequest, RenderResponse renderResponse)
-		throws PortalException {
-
-		PortletPreferences portletPreferences = renderRequest.getPreferences();
-
-		String userName = portletPreferences.getValue(
-			"basicUserName", StringPool.BLANK);
-
-		return IFrameUtil.getUserName(renderRequest, userName);
-	}
-
 	@Reference(unbind = "-")
 	protected void setIFrameWebUpgrade(IFrameWebUpgrade iFrameWebUpgrade) {
 	}
@@ -157,23 +119,28 @@ public class IFramePortlet extends MVCPortlet {
 			RenderRequest renderRequest, RenderResponse renderResponse)
 		throws PortalException {
 
-		PortletPreferences portletPreferences = renderRequest.getPreferences();
+		IFrameDisplayContext iFrameDisplayContext = new IFrameDisplayContext(
+			_iFrameConfiguration, renderRequest);
 
-		String src = getSrc(renderRequest, renderResponse);
+		IFramePortletInstanceConfiguration iFramePortletInstanceConfiguration =
+			iFrameDisplayContext.getIFramePortletInstanceConfiguration();
 
-		boolean auth = GetterUtil.getBoolean(
-			portletPreferences.getValue("auth", StringPool.BLANK));
+		String src = ParamUtil.getString(
+			renderRequest, "src", iFramePortletInstanceConfiguration.src());
 
-		if (!auth) {
+		if (!iFramePortletInstanceConfiguration.auth()) {
 			return src;
 		}
 
-		String authType = portletPreferences.getValue(
-			"authType", StringPool.BLANK);
+		String authType = iFrameDisplayContext.getAuthType();
 
 		if (authType.equals("basic")) {
-			String userName = getUserName(renderRequest, renderResponse);
-			String password = getPassword(renderRequest, renderResponse);
+			String userName = IFrameUtil.getUserName(
+				renderRequest,
+				iFramePortletInstanceConfiguration.basicUserName());
+			String password = IFrameUtil.getPassword(
+				renderRequest,
+				iFramePortletInstanceConfiguration.basicPassword());
 
 			int pos = src.indexOf("://");
 
@@ -183,15 +150,11 @@ public class IFramePortlet extends MVCPortlet {
 			src = protocol + userName + ":" + password + "@" + url;
 		}
 		else {
-			ThemeDisplay themeDisplay =
-				(ThemeDisplay)renderRequest.getAttribute(
-					com.liferay.portal.kernel.util.WebKeys.THEME_DISPLAY);
+			PortletURL proxyURL = renderResponse.createRenderURL();
 
-			String portletId = PortalUtil.getPortletId(renderRequest);
+			proxyURL.setParameter("mvcPath", "/proxy.jsp");
 
-			src =
-				"/proxy.jsp?p_l_id=" + themeDisplay.getPlid() + "&p_p_id=" +
-					portletId;
+			src = proxyURL.toString();
 		}
 
 		return src;

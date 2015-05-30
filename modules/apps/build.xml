@@ -9,6 +9,7 @@
 		<dirset dir="bookmarks" includes="*" />
 		<dirset dir="comments" includes="*" />
 		<dirset dir="configuration-admin" includes="*" />
+		<dirset dir="control-panel" includes="*" />
 		<dirset dir="currency-converter" includes="*" />
 		<dirset dir="dictionary" includes="*" />
 		<dirset dir="document-library" includes="*" />
@@ -18,7 +19,8 @@
 		<dirset dir="iframe" includes="*" />
 		<dirset dir="invitation" includes="*" />
 		<dirset dir="item-selector" includes="*" />
-		<dirset dir="journal" includes="*" />
+		<dirset dir="journal" excludes="journal-content-asset-addon-entry" includes="*" />
+		<dirset dir="journal/journal-content-asset-addon-entry" includes="*" />
 		<dirset dir="layout" includes="*" />
 		<dirset dir="loan-calculator" includes="*" />
 		<dirset dir="marketplace" includes="*" />
@@ -27,10 +29,13 @@
 		<dirset dir="nested-portlets" includes="*" />
 		<dirset dir="network-utilities" includes="*" />
 		<dirset dir="password-generator" includes="*" />
+		<dirset dir="password-policies-admin" includes="*" />
 		<dirset dir="polls" includes="*" />
 		<dirset dir="portlet-css" includes="*" />
+		<dirset dir="portlet-display-template" includes="*" />
 		<dirset dir="productivity-center" includes="*" />
 		<dirset dir="quick-note" includes="*" />
+		<dirset dir="roles" includes="*" />
 		<dirset dir="rss" includes="*" />
 		<dirset dir="search" includes="*" />
 		<dirset dir="service-access-control-profile" includes="*" />

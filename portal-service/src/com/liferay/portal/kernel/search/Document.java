@@ -108,7 +108,11 @@ public interface Document extends Cloneable, Serializable {
 
 	public void addKeywordSortable(String name, Boolean value);
 
-	public void addKeywordSortable(String name, Boolean[] value);
+	public void addKeywordSortable(String name, Boolean[] values);
+
+	public void addKeywordSortable(String name, String value);
+
+	public void addKeywordSortable(String name, String[] values);
 
 	public void addLocalizedKeyword(String name, Map<Locale, String> values);
 
@@ -120,18 +124,6 @@ public interface Document extends Cloneable, Serializable {
 		boolean sortable);
 
 	public void addLocalizedText(String name, Map<Locale, String> values);
-
-	/**
-	 * @deprecated As of 6.1.0
-	 */
-	@Deprecated
-	public void addModifiedDate();
-
-	/**
-	 * @deprecated As of 6.1.0
-	 */
-	@Deprecated
-	public void addModifiedDate(Date modifiedDate);
 
 	public void addNumber(String name, BigDecimal value);
 

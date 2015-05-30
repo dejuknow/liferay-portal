@@ -16,6 +16,7 @@ package com.liferay.portal.kernel.repository.model;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.lar.StagedModelType;
+import com.liferay.portal.kernel.repository.capabilities.Capability;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.Lock;
 import com.liferay.portal.model.ModelWrapper;
@@ -128,6 +129,11 @@ public class FileEntryWrapper implements FileEntry, ModelWrapper<FileEntry> {
 	}
 
 	@Override
+	public List<FileShortcut> getFileShortcuts() {
+		return _fileEntry.getFileShortcuts();
+	}
+
+	@Override
 	public FileVersion getFileVersion() throws PortalException {
 		return _fileEntry.getFileVersion();
 	}
@@ -227,6 +233,13 @@ public class FileEntryWrapper implements FileEntry, ModelWrapper<FileEntry> {
 	@Override
 	public int getReadCount() {
 		return _fileEntry.getReadCount();
+	}
+
+	@Override
+	public <T extends Capability> T getRepositoryCapability(
+		Class<T> capabilityClass) {
+
+		return _fileEntry.getRepositoryCapability(capabilityClass);
 	}
 
 	@Override
@@ -332,6 +345,13 @@ public class FileEntryWrapper implements FileEntry, ModelWrapper<FileEntry> {
 	@Override
 	public boolean isManualCheckInRequired() {
 		return _fileEntry.isManualCheckInRequired();
+	}
+
+	@Override
+	public <T extends Capability> boolean isRepositoryCapabilityProvided(
+		Class<T> capabilityClass) {
+
+		return _fileEntry.isRepositoryCapabilityProvided(capabilityClass);
 	}
 
 	@Override

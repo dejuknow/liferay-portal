@@ -37,7 +37,6 @@ import com.liferay.portal.service.persistence.PortletPreferencesPersistence;
 import com.liferay.portal.service.persistence.PortletPreferencesUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PersistenceTestRule;
-import com.liferay.portal.util.PropsValues;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -230,18 +229,11 @@ public class PortletPreferencesPersistenceTest {
 		Assert.assertEquals(existingPortletPreferences, newPortletPreferences);
 	}
 
-	@Test
+	@Test(expected = NoSuchPortletPreferencesException.class)
 	public void testFindByPrimaryKeyMissing() throws Exception {
 		long pk = RandomTestUtil.nextLong();
 
-		try {
-			_persistence.findByPrimaryKey(pk);
-
-			Assert.fail(
-				"Missing entity did not throw NoSuchPortletPreferencesException");
-		}
-		catch (NoSuchPortletPreferencesException nsee) {
-		}
+		_persistence.findByPrimaryKey(pk);
 	}
 
 	@Test
@@ -456,10 +448,6 @@ public class PortletPreferencesPersistenceTest {
 
 	@Test
 	public void testResetOriginalValues() throws Exception {
-		if (!PropsValues.HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE) {
-			return;
-		}
-
 		PortletPreferences newPortletPreferences = addPortletPreferences();
 
 		_persistence.clearCache();

@@ -1,8 +1,13 @@
 Bundle-Name: Liferay XML Formatter
 Bundle-SymbolicName: com.liferay.xml.formatter
 Bundle-Version: 1.0.0
+Import-Package:\
+	!org.apache.maven.plugin.*,\
+	!org.apache.tools.ant.*,\
+	*
 Include-Resource:\
 	classes,\
+	{META-INF/maven/plugin.xml=src/META-INF/maven/plugin.xml},\
 	@../../../portal-service/portal-service.jar!/com/liferay/portal/kernel/io/unsync/UnsyncByteArrayInputStream.class,\
 	@../../../portal-service/portal-service.jar!/com/liferay/portal/kernel/io/unsync/UnsyncByteArrayOutputStream.class,\
 	@../../../portal-service/portal-service.jar!/com/liferay/portal/kernel/io/unsync/UnsyncStringReader.class,\
@@ -10,7 +15,7 @@ Include-Resource:\
 	@../../../portal-service/portal-service.jar!/com/liferay/portal/kernel/memory/SoftReferenceThreadLocal.class,\
 	@../../../portal-service/portal-service.jar!/com/liferay/portal/kernel/search/Document.class,\
 	@../../../portal-service/portal-service.jar!/com/liferay/portal/kernel/search/Field.class,\
-	@../../../portal-service/portal-service.jar!/com/liferay/portal/kernel/search/util/SearchUtil.class,\
+	@../../../portal-service/portal-service.jar!/com/liferay/portal/kernel/search/highlight/HighlightUtil.class,\
 	@../../../portal-service/portal-service.jar!/com/liferay/portal/kernel/security/RandomUtil.class,\
 	@../../../portal-service/portal-service.jar!/com/liferay/portal/kernel/security/pacl/DoPrivileged.class,\
 	@../../../portal-service/portal-service.jar!/com/liferay/portal/kernel/security/pacl/permission/PortalRuntimePermission$NoPACL.class,\
