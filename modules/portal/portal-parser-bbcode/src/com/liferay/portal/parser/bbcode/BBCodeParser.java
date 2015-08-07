@@ -113,8 +113,9 @@ public class BBCodeParser {
 		List<BBCodeItem> bbCodeItems, BBCodeLexer bbCodeLexer,
 		IntegerWrapper marker, BBCodeToken bbCodeToken, String data) {
 
-		int lastIndex = 0;
 		int length = data.length();
+
+		int lastIndex = length;
 
 		if (bbCodeToken != null) {
 			lastIndex = bbCodeLexer.getLastIndex();
@@ -159,7 +160,7 @@ public class BBCodeParser {
 			}
 		}
 
-		if ((size >= 0) && isValidTag(endTag)) {
+		if (size >= 0) {
 			for (int i = tags.size() - 1; i >= size; i--) {
 				BBCodeItem bbCodeItem = new BBCodeItem(
 					TYPE_TAG_END, null, tags.elementAt(i));
@@ -185,8 +186,7 @@ public class BBCodeParser {
 			if (_blockElements.contains(startTag)) {
 				String currentTag = null;
 
-				while (!tags.isEmpty() &&
-					   ((currentTag = tags.lastElement()) != null) &&
+				while (((currentTag = tags.lastElement()) != null) &&
 					   _inlineElements.contains(currentTag)) {
 
 					BBCodeToken currentTagBBCodeToken = new BBCodeToken(

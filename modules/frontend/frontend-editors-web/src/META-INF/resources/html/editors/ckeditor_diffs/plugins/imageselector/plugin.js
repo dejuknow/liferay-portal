@@ -1,6 +1,8 @@
 (function() {
 	var pluginName = 'imageselector';
 
+	var STR_UPLOADABLE_FILE_RETURN_TYPE = 'com.liferay.item.selector.criteria.UploadableFileReturnType';
+
 	CKEDITOR.plugins.add(
 		pluginName,
 		{
@@ -16,13 +18,25 @@
 								var selectedItem = event.newVal;
 
 								if (selectedItem) {
-									if (callback) {
-										callback(selectedItem.value);
-									}
-									else {
-										var el = CKEDITOR.dom.element.createFromHtml('<img src="' + selectedItem.value + '">');
+									var imageSrc = selectedItem.value;
 
-										editor.insertElement(el);
+									if (selectedItem.returnType === STR_UPLOADABLE_FILE_RETURN_TYPE) {
+										try {
+											imageSrc = JSON.parse(selectedItem.value).url;
+										}
+										catch (e) {
+										}
+									}
+
+									if (imageSrc) {
+										if (callback) {
+											callback(imageSrc);
+										}
+										else {
+											var el = CKEDITOR.dom.element.createFromHtml('<img src="' + imageSrc + '">');
+
+											editor.insertElement(el);
+										}
 									}
 								}
 							};
@@ -98,6 +112,8 @@
 				var itemSelectorDialog = instance._itemSelectorDialog;
 
 				if (itemSelectorDialog) {
+					itemSelectorDialog.set('zIndex', CKEDITOR.getNextZIndex());
+
 					callback(itemSelectorDialog);
 				}
 				else {
@@ -109,7 +125,8 @@
 							itemSelectorDialog = new A.LiferayItemSelectorDialog(
 								{
 									eventName: eventName,
-									url: editor.config.filebrowserImageBrowseUrl
+									url: editor.config.filebrowserImageBrowseUrl,
+									zIndex: CKEDITOR.getNextZIndex()
 								}
 							);
 

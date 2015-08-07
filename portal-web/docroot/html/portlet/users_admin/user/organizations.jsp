@@ -21,6 +21,8 @@ User selUser = (User)request.getAttribute("user.selUser");
 
 List<Organization> organizations = (List<Organization>)request.getAttribute("user.organizations");
 
+String organizationIdsString = ParamUtil.getString(request, "organizationsSearchContainerPrimaryKeys");
+
 currentURLObj.setParameter("historyKey", renderResponse.getNamespace() + "organizations");
 %>
 
@@ -36,14 +38,13 @@ currentURLObj.setParameter("historyKey", renderResponse.getNamespace() + "organi
 	/>
 </liferay-util:buffer>
 
-<aui:input name="addOrganizationIds" type="hidden" />
+<aui:input name="addOrganizationIds" type="hidden" value="<%= organizationIdsString %>" />
 <aui:input name="deleteOrganizationIds" type="hidden" />
 
 <h3><liferay-ui:message key="organizations" /></h3>
 
 <liferay-ui:search-container
 	curParam="organizationsCur"
-	emptyResultsMessage="no-organizations-were-found"
 	headerNames="name,type,roles,null"
 	iteratorURL="<%= currentURLObj %>"
 	total="<%= organizations.size() %>"
@@ -110,6 +111,13 @@ currentURLObj.setParameter("historyKey", renderResponse.getNamespace() + "organi
 		var Util = Liferay.Util;
 
 		var addOrganizationIds = [];
+
+		var organizationValues = document.<portlet:namespace />fm.<portlet:namespace />addOrganizationIds.value;
+
+		if (organizationValues) {
+			addOrganizationIds.push(organizationValues);
+		}
+
 		var deleteOrganizationIds = [];
 
 		var searchContainer = Liferay.SearchContainer.get('<portlet:namespace />organizationsSearchContainer');

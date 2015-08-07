@@ -25,7 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -33,8 +33,10 @@ import org.junit.Test;
  */
 public class JniSassCompilerTest {
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeClass
+	public static void setUpClass() throws Exception {
+		System.setProperty("jna.nosys", Boolean.TRUE.toString());
+
 		JniSassCompilerTestUtil.addSearchPath();
 	}
 

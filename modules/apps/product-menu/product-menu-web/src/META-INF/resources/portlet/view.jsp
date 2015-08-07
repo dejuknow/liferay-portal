@@ -17,8 +17,154 @@
 <%@ include file="/portlet/init.jsp" %>
 
 <%
+PanelAppRegistry panelAppRegistry = (PanelAppRegistry)request.getAttribute(ApplicationListWebKeys.PANEL_APP_REGISTRY);
 PanelCategoryRegistry panelCategoryRegistry = (PanelCategoryRegistry)request.getAttribute(ApplicationListWebKeys.PANEL_CATEGORY_REGISTRY);
-PanelCategory panelCategory = panelCategoryRegistry.getPanelCategory(PanelCategoryKeys.MY_SPACE);
+
+PanelCategory firstChildPanelCategory = panelCategoryRegistry.getFirstChildPanelCategory(PanelCategoryKeys.ROOT);
+
+String rootPanelCategoryKey = firstChildPanelCategory.getKey();
+
+if (Validator.isNotNull(themeDisplay.getPpid())) {
+	PanelCategoryHelper panelCategoryHelper = new PanelCategoryHelper(panelAppRegistry, panelCategoryRegistry);
+
+	for (PanelCategory panelCategory : panelCategoryRegistry.getChildPanelCategories(PanelCategoryKeys.ROOT)) {
+		if (panelCategoryHelper.containsPortlet(themeDisplay.getPpid(), panelCategory)) {
+			rootPanelCategoryKey = panelCategory.getKey();
+
+			break;
+		}
+	}
+}
 %>
 
-<application-list-ui:panel-category-content panelCategory="<%= panelCategory %>" />
+<h4 class="sidebar-header">
+	<span class="company-details">
+		<img alt="" class="company-logo" src="<%= themeDisplay.getCompanyLogo() %>" />
+		<span class="company-name"><%= company.getName() %></span>
+	</span>
+
+	<aui:icon cssClass="sidenav-close" image="remove" url="javascript:;" />
+</h4>
+
+<ul class="nav nav-tabs product-menu-tabs">
+
+	<%
+	for (PanelCategory childPanelCategory : panelCategoryRegistry.getChildPanelCategories(PanelCategoryKeys.ROOT)) {
+		if (!childPanelCategory.hasAccessPermission(permissionChecker, themeDisplay.getScopeGroup())) {
+			continue;
+		}
+	%>
+
+		<li class="col-xs-4 <%= rootPanelCategoryKey.equals(childPanelCategory.getKey()) ? "active" : StringPool.BLANK %>">
+			<a aria-expanded="true" data-toggle="tab" href="#<portlet:namespace /><%= childPanelCategory.getKey() %>">
+				<div class="product-menu-tab-icon">
+					<span class="<%= childPanelCategory.getIconCssClass() %> icon-monospaced"></span>
+				</div>
+
+				<div class="product-menu-tab-text">
+					<%= childPanelCategory.getLabel(locale) %>
+				</div>
+			</a>
+		</li>
+
+	<%
+	}
+	%>
+
+</ul>
+
+<div class="sidebar-body">
+	<div class="tab-content">
+
+		<%
+		for (PanelCategory childPanelCategory : panelCategoryRegistry.getChildPanelCategories(PanelCategoryKeys.ROOT)) {
+		%>
+
+			<div class="fade in tab-pane <%= rootPanelCategoryKey.equals(childPanelCategory.getKey()) ? "active" : StringPool.BLANK %>" id="<portlet:namespace /><%= childPanelCategory.getKey() %>">
+				<liferay-application-list:panel-content panelCategory="<%= childPanelCategory %>" />
+			</div>
+
+		<%
+		}
+		%>
+
+	</div>
+</div>
+
+<div class="sidebar-footer">
+	<div class="nameplate">
+		<div class="nameplate-field">
+			<div class="user-icon user-icon-lg">
+				<img alt="<%= HtmlUtil.escapeAttribute(user.getFullName()) %>" src="<%= HtmlUtil.escape(user.getPortraitURL(themeDisplay)) %>" />
+			</div>
+		</div>
+
+		<div class="nameplate-content">
+			<h4 class="user-heading">
+				<%= HtmlUtil.escape(user.getFullName()) %>
+			</h4>
+
+			<small class="user-subheading">
+				<ul class="nav nav-pills">
+
+					<%
+					List<Group> mySiteGroups = user.getMySiteGroups(new String[] {User.class.getName()}, false, QueryUtil.ALL_POS);
+
+					for (Group mySiteGroup : mySiteGroups) {
+					%>
+
+						<c:if test="<%= mySiteGroup.getPublicLayoutsPageCount() > 0 %>">
+							<li>
+								<aui:a href="<%= mySiteGroup.getDisplayURL(themeDisplay, false) %>" label="profile" />
+							</li>
+						</c:if>
+
+						<c:if test="<%= mySiteGroup.getPrivateLayoutsPageCount() > 0 %>">
+							<li>
+								<aui:a href="<%= mySiteGroup.getDisplayURL(themeDisplay, true) %>" label="dashboard" />
+							</li>
+						</c:if>
+
+					<%
+					}
+					%>
+
+				</ul>
+			</small>
+		</div>
+
+		<c:if test="<%= themeDisplay.isShowSignOutIcon() %>">
+			<div class="nameplate-field">
+				<a class="icon-monospaced icon-off user-signout" href="<%= themeDisplay.getURLSignOut() %>"></a>
+			</div>
+		</c:if>
+	</div>
+</div>
+
+<aui:script use="liferay-store">
+	var sidenavContainer = $('#sidenavContainerId');
+
+	sidenavContainer.sideNavigation(
+		{
+			gutter: '0',
+			toggler: '#sidenavToggleId',
+			type: 'fixed-push',
+			typeMobile: 'fixed',
+			width: '320px'
+		}
+	);
+
+	sidenavContainer.on(
+		'closed.lexicon.sidenav',
+		function(event) {
+			Liferay.Store('liferay_product_menu_state', 'closed');
+		}
+	);
+
+	sidenavContainer.on(
+		'open.lexicon.sidenav',
+		function(event) {
+			Liferay.Store('liferay_product_menu_state', 'open');
+		}
+	);
+</aui:script>

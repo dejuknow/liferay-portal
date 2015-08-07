@@ -444,6 +444,22 @@ public interface LayoutSetPrototypeModel extends BaseModel<LayoutSetPrototype>,
 	 */
 	public void setActive(boolean active);
 
+	/**
+	 * Returns the last publish date of this layout set prototype.
+	 *
+	 * @return the last publish date of this layout set prototype
+	 */
+	@Override
+	public Date getLastPublishDate();
+
+	/**
+	 * Sets the last publish date of this layout set prototype.
+	 *
+	 * @param lastPublishDate the last publish date of this layout set prototype
+	 */
+	@Override
+	public void setLastPublishDate(Date lastPublishDate);
+
 	@Override
 	public boolean isNew();
 

@@ -26,6 +26,8 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.TextFormatter;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.tools.ImportsFormatter;
+import com.liferay.portal.tools.JavaImportsFormatter;
 import com.liferay.source.formatter.util.FileUtil;
 
 import com.thoughtworks.qdox.JavaDocBuilder;
@@ -216,14 +218,6 @@ public class JSPSourceProcessor extends BaseSourceProcessor {
 	protected String buildFullPathIncludeFileName(
 		String fileName, String includeFileName) {
 
-		String topLevelDirName = null;
-
-		int x = includeFileName.indexOf(CharPool.SLASH, 1);
-
-		if (x != -1) {
-			topLevelDirName = includeFileName.substring(1, x);
-		}
-
 		String path = fileName;
 
 		while (true) {
@@ -233,18 +227,13 @@ public class JSPSourceProcessor extends BaseSourceProcessor {
 				return StringPool.BLANK;
 			}
 
-			if (Validator.isNull(topLevelDirName) ||
-				path.equals(topLevelDirName) ||
-				path.endsWith(StringPool.SLASH + topLevelDirName)) {
+			String fullPathIncludeFileName =
+				path.substring(0, y) + includeFileName;
 
-				String fullPathIncludeFileName =
-					path.substring(0, y) + includeFileName;
+			if (_jspContents.containsKey(fullPathIncludeFileName) &&
+				!fullPathIncludeFileName.equals(fileName)) {
 
-				if (_jspContents.containsKey(fullPathIncludeFileName) &&
-					!fullPathIncludeFileName.equals(fileName)) {
-
-					return fullPathIncludeFileName;
-				}
+				return fullPathIncludeFileName;
 			}
 
 			path = path.substring(0, y);
@@ -520,7 +509,7 @@ public class JSPSourceProcessor extends BaseSourceProcessor {
 
 				if (portalSource && _moveFrequentlyUsedImportsToCommonInit &&
 					fileName.endsWith("/init.jsp") &&
-					!absolutePath.contains("/modules/") &&
+					!isModulesFile(absolutePath) &&
 					!fileName.endsWith("/common/init.jsp")) {
 
 					addImportCounts(content);
@@ -765,7 +754,7 @@ public class JSPSourceProcessor extends BaseSourceProcessor {
 								}
 								else if (Validator.isNull(
 											previousAttributeAndValue) &&
-										 (previousAttribute.compareTo(
+										 (previousAttribute.compareToIgnoreCase(
 											 attribute) > 0)) {
 
 									previousAttributeAndValue = previousLine;
@@ -799,8 +788,8 @@ public class JSPSourceProcessor extends BaseSourceProcessor {
 							currentException = line.substring(x, y);
 
 							if (Validator.isNotNull(previousException) &&
-								(previousException.compareTo(currentException) >
-									0)) {
+								(previousException.compareToIgnoreCase(
+									currentException) > 0)) {
 
 								currentException = line;
 								previousException = previousLine;
@@ -1152,7 +1141,8 @@ public class JSPSourceProcessor extends BaseSourceProcessor {
 			return _utilTaglibDirName;
 		}
 
-		File utilTaglibDir = getFile("util-taglib", 4);
+		File utilTaglibDir = getFile(
+			"util-taglib", BaseSourceProcessor.PORTAL_MAX_DIR_LEVEL);
 
 		if (utilTaglibDir != null) {
 			_utilTaglibDirName = utilTaglibDir.getAbsolutePath();

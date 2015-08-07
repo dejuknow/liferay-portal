@@ -15,6 +15,7 @@
 package com.liferay.gradle.plugins.service.builder;
 
 import com.liferay.gradle.util.StringUtil;
+import com.liferay.gradle.util.Validator;
 import com.liferay.portal.tools.service.builder.ServiceBuilderArgs;
 
 import java.io.File;
@@ -23,6 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.gradle.api.Project;
+import org.gradle.api.artifacts.ConfigurationContainer;
+import org.gradle.api.file.FileCollection;
 import org.gradle.api.tasks.JavaExec;
 import org.gradle.process.JavaExecSpec;
 
@@ -42,8 +45,14 @@ public class BuildServiceTask extends JavaExec {
 	}
 
 	@Override
+	public JavaExec classpath(Object... paths) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public void exec() {
 		super.setArgs(getArgs());
+		super.setClasspath(getClasspath());
 		super.setWorkingDir(getWorkingDir());
 
 		super.exec();
@@ -91,7 +100,15 @@ public class BuildServiceTask extends JavaExec {
 		args.add("service.sql.file=" + getSqlFileName());
 		args.add("service.sql.indexes.file=" + getSqlIndexesFileName());
 		args.add("service.sql.sequences.file=" + getSqlSequencesFileName());
-		args.add("service.target.entity.name=" + getTargetEntityName());
+
+		String targetEntityName = getTargetEntityName();
+
+		if (Validator.isNull(targetEntityName)) {
+			targetEntityName = "${service.target.entity.name}";
+		}
+
+		args.add("service.target.entity.name=" + targetEntityName);
+
 		args.add("service.test.dir=" + getTestDirName());
 
 		return args;
@@ -103,6 +120,17 @@ public class BuildServiceTask extends JavaExec {
 
 	public long getBuildNumber() {
 		return _serviceBuilderArgs.getBuildNumber();
+	}
+
+	@Override
+	public FileCollection getClasspath() {
+		Project project = getProject();
+
+		ConfigurationContainer configurationContainer =
+			project.getConfigurations();
+
+		return configurationContainer.getByName(
+			ServiceBuilderPlugin.CONFIGURATION_NAME);
 	}
 
 	public String getHbmFileName() {
@@ -252,6 +280,11 @@ public class BuildServiceTask extends JavaExec {
 
 	public void setBuildNumberIncrement(boolean buildNumberIncrement) {
 		_serviceBuilderArgs.setBuildNumberIncrement(buildNumberIncrement);
+	}
+
+	@Override
+	public JavaExec setClasspath(FileCollection classpath) {
+		throw new UnsupportedOperationException();
 	}
 
 	public void setHbmFileName(String hbmFileName) {

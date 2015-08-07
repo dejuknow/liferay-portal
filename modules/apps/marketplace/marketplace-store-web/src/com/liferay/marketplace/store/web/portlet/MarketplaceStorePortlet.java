@@ -37,7 +37,6 @@ import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.expando.service.ExpandoValueLocalServiceUtil;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 
 import java.net.URL;
@@ -212,29 +211,6 @@ public class MarketplaceStorePortlet extends RemoteMVCPortlet {
 		jsonObject.put("message", "success");
 
 		writeJSON(actionRequest, actionResponse, jsonObject);
-	}
-
-	@Override
-	public void processAction(
-			ActionRequest actionRequest, ActionResponse actionResponse)
-		throws IOException {
-
-		try {
-			if (!isProcessActionRequest(actionRequest)) {
-				return;
-			}
-
-			if (!callActionMethod(actionRequest, actionResponse)) {
-				return;
-			}
-		}
-		catch (PortletException pe) {
-			JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
-
-			jsonObject.put("message", "fail");
-
-			writeJSON(actionRequest, actionResponse, jsonObject);
-		}
 	}
 
 	public void uninstallApp(
@@ -449,7 +425,12 @@ public class MarketplaceStorePortlet extends RemoteMVCPortlet {
 	}
 
 	@Override
-	protected String getRemotePortletURL() {
+	protected String getServerNamespace() {
+		return PortalUtil.getPortletNamespace(_OSB_PORTLET_ID);
+	}
+
+	@Override
+	protected String getServerPortletURL() {
 		return
 			MarketplaceStoreWebConfigurationValues.MARKETPLACE_URL +
 				"/osb-portlet/mp_server";

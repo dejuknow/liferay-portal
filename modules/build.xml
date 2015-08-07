@@ -5,6 +5,7 @@
 	<path id="plugins.includes.path">
 		<dirset dir="addons/portlet-configuration-icon" includes="*" />
 		<dirset dir="apps/amazon-rankings" includes="*" />
+		<dirset dir="apps/announcements" includes="*" />
 		<dirset dir="apps/asset" includes="*" />
 		<dirset dir="apps/application-list" includes="*" />
 		<dirset dir="apps/blogs" includes="*" />
@@ -61,14 +62,17 @@
 		<dirset dir="apps/unit-converter" includes="*" />
 		<dirset dir="apps/user-groups-admin" includes="*" />
 		<dirset dir="apps/user-personal-bar" includes="*" />
+		<dirset dir="apps/users-admin" includes="*" />
 		<dirset dir="apps/web-proxy" includes="*" />
 		<dirset dir="apps/wiki" includes="*" />
 		<dirset dir="apps/workflow" includes="*" />
 		<dirset dir="apps/xsl-content" includes="*" />
 		<dirset dir="core" includes="*" />
 		<dirset dir="frontend" includes="*" />
-		<dirset dir="portal" excludes="portal-cache-memory,portal-search-solr,portal-taglib-aui-form-extension-sample" includes="*" />
+		<dirset dir="portal" excludes="portal-search-solr,portal-taglib-aui-form-extension-sample" includes="*" />
+		<dirset dir="portal-cache" includes="portal-cache,portal-cache-ehcache,portal-cache-ehcache-provider" />
 		<dirset dir="portal-security" includes="*" />
+		<dirset dir="portal-store" includes="*" />
 		<dirset dir="util" includes="pmd,portal-tools-sample-sql-builder,sass-compiler-jni" />
 	</path>
 

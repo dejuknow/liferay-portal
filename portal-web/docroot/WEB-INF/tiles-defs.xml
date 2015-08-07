@@ -120,26 +120,6 @@
 		<put name="portlet_content" value="/portlet/admin/view.jsp" />
 	</definition>
 
-	<!-- Announcements -->
-
-	<definition name="portlet.announcements" extends="portlet" />
-
-	<definition name="portlet.announcements.edit_entry" extends="portlet.announcements">
-		<put name="portlet_content" value="/portlet/announcements/edit_entry.jsp" />
-	</definition>
-
-	<definition name="portlet.announcements.error" extends="portlet.announcements">
-		<put name="portlet_content" value="/portlet/announcements/error.jsp" />
-	</definition>
-
-	<definition name="portlet.announcements.preview_entry" extends="portlet.announcements">
-		<put name="portlet_content" value="/portlet/announcements/preview_entry.jsp" />
-	</definition>
-
-	<definition name="portlet.announcements.view" extends="portlet.announcements">
-		<put name="portlet_content" value="/portlet/announcements/view.jsp" />
-	</definition>
-
 	<!-- Background Task-->
 
 	<definition name="portlet.background_task" extends="portlet" />
@@ -272,42 +252,6 @@
 		<put name="portlet_content" value="/portlet/maps/view.jsp" />
 	</definition>
 
-	<!-- Mobile Device Rules -->
-
-	<definition name="portlet.mobile_device_rules" extends="portlet" />
-
-	<definition name="portlet.mobile_device_rules.edit_action" extends="portlet.mobile_device_rules">
-		<put name="portlet_content" value="/portlet/mobile_device_rules/edit_action.jsp" />
-	</definition>
-
-	<definition name="portlet.mobile_device_rules.edit_rule" extends="portlet.mobile_device_rules">
-		<put name="portlet_content" value="/portlet/mobile_device_rules/edit_rule.jsp" />
-	</definition>
-
-	<definition name="portlet.mobile_device_rules.edit_rule_group" extends="portlet.mobile_device_rules">
-		<put name="portlet_content" value="/portlet/mobile_device_rules/edit_rule_group.jsp" />
-	</definition>
-
-	<definition name="portlet.mobile_device_rules.edit_rule_group_instance_priorities" extends="portlet.mobile_device_rules">
-		<put name="portlet_content" value="/portlet/mobile_device_rules/edit_rule_group_instance_priorities.jsp" />
-	</definition>
-
-	<definition name="portlet.mobile_device_rules.select_rule_group" extends="portlet.mobile_device_rules">
-		<put name="portlet_content" value="/portlet/mobile_device_rules/select_rule_group.jsp" />
-	</definition>
-
-	<definition name="portlet.mobile_device_rules.view" extends="portlet.mobile_device_rules">
-		<put name="portlet_content" value="/portlet/mobile_device_rules/view.jsp" />
-	</definition>
-
-	<definition name="portlet.mobile_device_rules.view_actions" extends="portlet.mobile_device_rules">
-		<put name="portlet_content" value="/portlet/mobile_device_rules/view_actions.jsp" />
-	</definition>
-
-	<definition name="portlet.mobile_device_rules.view_rules" extends="portlet.mobile_device_rules">
-		<put name="portlet_content" value="/portlet/mobile_device_rules/view_rules.jsp" />
-	</definition>
-
 	<!-- Monitoring -->
 
 	<definition name="portlet.monitoring" extends="portlet" />
@@ -344,21 +288,6 @@
 		<put name="portlet_content" value="/portlet/our_activities/view.jsp" />
 	</definition>
 
-	<!-- Plugins Admin -->
-
-	<definition name="portlet.plugins_admin" extends="portlet" />
-
-	<definition name="portlet.plugins_admin.edit_plugin" extends="portlet.plugins_admin">
-		<put name="portlet_content" value="/portlet/plugins_admin/edit_plugin.jsp" />
-	</definition>
-
-	<definition name="portlet.plugins_admin.error" extends="portlet.plugins_admin">
-		<put name="portlet_content" value="/portlet/plugins_admin/error.jsp" />
-	</definition>
-
-	<definition name="portlet.plugins_admin.view" extends="portlet.plugins_admin">
-		<put name="portlet_content" value="/portlet/plugins_admin/view.jsp" />
-	</definition>
 
 	<!-- Portal Settings -->
 
@@ -484,18 +413,6 @@
 
 	<definition name="portlet.sites_directory.view" extends="portlet.sites_directory">
 		<put name="portlet_content" value="/portlet/sites_directory/view.jsp" />
-	</definition>
-
-	<!-- Social Activity -->
-
-	<definition name="portlet.social_activity" extends="portlet" />
-
-	<definition name="portlet.social_activity.error" extends="portlet.social_activity">
-		<put name="portlet_content" value="/portlet/social_activity/error.jsp" />
-	</definition>
-
-	<definition name="portlet.social_activity.view" extends="portlet.social_activity">
-		<put name="portlet_content" value="/portlet/social_activity/view.jsp" />
 	</definition>
 
 	<!-- Software Catalog -->

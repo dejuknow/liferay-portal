@@ -40,7 +40,9 @@ LPS-30525.
 </#macro>
 
 <#macro control_menu>
-	${theme.runtime("com.liferay.portlet.admin.util.PortalControlMenuApplicationType$ControlMenu", portletProviderAction.VIEW)}
+	<#if $is_setup_complete && $is_signed_in>
+		${theme.runtime("com.liferay.portlet.admin.util.PortalControlMenuApplicationType$ControlMenu", portletProviderAction.VIEW)}
+	</#if>
 </#macro>
 
 <#macro css
@@ -88,13 +90,21 @@ ${languageUtil.format(locale, key, arguments)}</#macro>
 </#macro>
 
 <#macro product_menu>
-	${theme.runtime("com.liferay.portlet.admin.util.PortalProductMenuApplicationType$ProductMenu", portletProviderAction.VIEW)}
+	<#if $is_setup_complete && $is_signed_in>
+		${theme.runtime("com.liferay.portlet.admin.util.PortalProductMenuApplicationType$ProductMenu", portletProviderAction.VIEW)}
+	</#if>
 </#macro>
 
 <#macro quick_access
 	content_id
 >
 	${theme.quickAccess(content_id)}
+</#macro>
+
+<#macro search>
+	<#if $is_setup_complete>
+		${theme.runtime("com.liferay.portlet.admin.util.PortalSearchApplicationType$Search", portletProviderAction.VIEW)}
+	</#if>
 </#macro>
 
 <#macro silently
@@ -104,5 +114,7 @@ ${languageUtil.format(locale, key, arguments)}</#macro>
 </#macro>
 
 <#macro user_personal_bar>
-	${theme.runtime("com.liferay.portlet.admin.util.PortalUserPersonalBarApplicationType$UserPersonalBar", portletProviderAction.VIEW)}
+	<#if $is_setup_complete>
+		${theme.runtime("com.liferay.portlet.admin.util.PortalUserPersonalBarApplicationType$UserPersonalBar", portletProviderAction.VIEW)}
+	</#if>
 </#macro>

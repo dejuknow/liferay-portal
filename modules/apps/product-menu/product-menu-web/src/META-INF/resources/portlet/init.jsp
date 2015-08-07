@@ -14,9 +14,30 @@
  */
 --%>
 
-<%@ taglib uri="http://liferay.com/tld/application-list/ui" prefix="application-list-ui" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<%@ page import="com.liferay.application.list.PanelCategory" %><%@
+<%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
+
+<%@ taglib uri="http://liferay.com/tld/application-list" prefix="liferay-application-list" %><%@
+taglib uri="http://liferay.com/tld/aui" prefix="aui" %><%@
+taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
+taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
+
+<%@ page import="com.liferay.application.list.PanelAppRegistry" %><%@
+page import="com.liferay.application.list.PanelCategory" %><%@
 page import="com.liferay.application.list.PanelCategoryRegistry" %><%@
 page import="com.liferay.application.list.constants.PanelCategoryKeys" %><%@
-page import="com.liferay.application.list.taglib.constants.ApplicationListWebKeys" %>
+page import="com.liferay.application.list.taglib.constants.ApplicationListWebKeys" %><%@
+page import="com.liferay.application.list.taglib.display.context.logic.PanelCategoryHelper" %><%@
+page import="com.liferay.portal.kernel.dao.orm.QueryUtil" %><%@
+page import="com.liferay.portal.kernel.util.HtmlUtil" %><%@
+page import="com.liferay.portal.kernel.util.StringPool" %><%@
+page import="com.liferay.portal.kernel.util.Validator" %><%@
+page import="com.liferay.portal.model.Group" %><%@
+page import="com.liferay.portal.model.User" %>
+
+<%@ page import="java.util.List" %>
+
+<portlet:defineObjects />
+
+<liferay-theme:defineObjects />

@@ -65,7 +65,9 @@
 	<i class="<%= icon %>"></i>
 </c:if>
 
-<%= LanguageUtil.get(request, value) %>
+<c:if test="<%= Validator.isNotNull(value) %>">
+	<span class="lfr-btn-label"><%= LanguageUtil.get(request, value) %></span>
+</c:if>
 
 <c:if test='<%= Validator.isNotNull(icon) && iconAlign.equals("right") %>'>
 	<i class="<%= icon %>"></i>

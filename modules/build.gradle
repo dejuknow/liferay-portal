@@ -11,8 +11,18 @@ buildscript {
 
 	dependencies {
 		classpath group: "com.liferay", name: "com.liferay.gradle.plugins", version: "+"
-		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.maven.plugin.builder", version: "latest.release"
+		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.maven.plugin.builder", version: "1.0.2"
 	}
+}
+
+buildDir = new File(rootDir.parentFile, "build")
+
+task wrapper(type: Wrapper) {
+	File wrapperDir = rootDir.parentFile
+
+	distributionUrl = "../../tools/gradle-${gradle.gradleVersion}.LIFERAY-PATCHED-1-bin.zip"
+	jarFile = new File(wrapperDir, "gradle/wrapper/gradle-wrapper.jar")
+	scriptFile = new File(wrapperDir, "gradlew")
 }
 
 gradle.beforeProject {
@@ -28,7 +38,12 @@ gradle.beforeProject {
 gradle.taskGraph.useFilter {
 	Task task ->
 
-	if (task.name == "compileJSP") {
+	if (task.name == "buildService") {
+		if (!FileUtil.exists(task.project, "service.xml")) {
+			return false
+		}
+	}
+	else if (task.name == "compileJSP") {
 		FileTree jspFileTree = fileTree(dir: task.project.projectDir, excludes: ["**/custom_jsps/**/*", "**/dependencies/**/*"], includes: ["docroot/**/*.jsp", "src/META-INF/resources/**/*.jsp"])
 
 		if (jspFileTree.empty) {

@@ -17,8 +17,11 @@ package com.liferay.portal.portlet.tracker.internal;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.configuration.ConfigurationFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.language.UTF8Control;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.PortletBag;
 import com.liferay.portal.kernel.portlet.PortletBagPool;
@@ -26,6 +29,7 @@ import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapDictionary;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringPool;
@@ -65,8 +69,10 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -76,7 +82,6 @@ import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
 
 import javax.servlet.Servlet;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletContextListener;
 
 import org.osgi.framework.Bundle;
@@ -120,7 +125,9 @@ public class PortletTracker
 		if (Validator.isNull(portletName)) {
 			Class<?> clazz = portlet.getClass();
 
-			portletName = clazz.getName();
+			portletName = StringUtil.replace(
+				clazz.getName(), new String[] {".", "$"},
+				new String[] {"_", "_"});
 		}
 
 		String portletId = StringUtil.replace(
@@ -289,6 +296,10 @@ public class PortletTracker
 				bundlePortletApp.getServletContextName(),
 				bundleWiring.getClassLoader(), serviceRegistrations);
 
+			checkResourceBundles(
+				bundle.getBundleContext(), bundleWiring.getClassLoader(),
+				portletModel, serviceRegistrations);
+
 			List<Company> companies = _companyLocalService.getCompanies();
 
 			deployPortlet(serviceReference, portletModel, companies);
@@ -327,6 +338,33 @@ public class PortletTracker
 		portletModel.setStrutsPath(portletId);
 
 		return portletModel;
+	}
+
+	protected void checkResourceBundles(
+		BundleContext bundleContext, ClassLoader classLoader,
+		com.liferay.portal.model.Portlet portletModel,
+		ServiceRegistrations serviceRegistrations) {
+
+		if (Validator.isBlank(portletModel.getResourceBundle())) {
+			return;
+		}
+
+		for (Locale locale : LanguageUtil.getAvailableLocales()) {
+			ResourceBundle resourceBundle = ResourceBundle.getBundle(
+				portletModel.getResourceBundle(), locale, classLoader,
+				UTF8Control.INSTANCE);
+
+			Dictionary<String, Object> properties = new HashMapDictionary<>();
+
+			properties.put("javax.portlet.name", portletModel.getPortletId());
+			properties.put("language.id", LocaleUtil.toLanguageId(locale));
+
+			ServiceRegistration<ResourceBundle> serviceRegistration =
+				bundleContext.registerService(
+					ResourceBundle.class, resourceBundle, properties);
+
+			serviceRegistrations.addServiceRegistration(serviceRegistration);
+		}
 	}
 
 	protected void checkResources(
@@ -1173,6 +1211,11 @@ public class PortletTracker
 		}
 	}
 
+	@Reference(target = ModuleServiceLifecycle.PORTAL_INITIALIZED, unbind = "-")
+	protected void setModuleServiceLifecycle(
+		ModuleServiceLifecycle moduleServiceLifecycle) {
+	}
+
 	@Reference(unbind = "-")
 	protected void setPortletInstanceFactory(
 		PortletInstanceFactory portletInstanceFactory) {
@@ -1197,10 +1240,6 @@ public class PortletTracker
 	@Reference(unbind = "-")
 	protected void setResourceActions(ResourceActions resourceActions) {
 		_resourceActions = resourceActions;
-	}
-
-	@Reference(target = "(original.bean=true)", unbind = "-")
-	protected void setServletContext(ServletContext servletContext) {
 	}
 
 	protected String toLowerCase(Object object) {

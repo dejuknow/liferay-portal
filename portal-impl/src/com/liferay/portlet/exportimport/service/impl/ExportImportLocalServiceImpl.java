@@ -17,7 +17,6 @@ package com.liferay.portlet.exportimport.service.impl;
 import com.liferay.portal.LocaleException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.model.BackgroundTask;
@@ -25,7 +24,6 @@ import com.liferay.portal.model.Layout;
 import com.liferay.portal.model.Portlet;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portlet.documentlibrary.util.DLValidatorUtil;
-import com.liferay.portlet.dynamicdatamapping.StructureDuplicateStructureKeyException;
 import com.liferay.portlet.exportimport.LARFileNameException;
 import com.liferay.portlet.exportimport.backgroundtask.LayoutExportBackgroundTaskExecutor;
 import com.liferay.portlet.exportimport.backgroundtask.LayoutImportBackgroundTaskExecutor;
@@ -87,7 +85,6 @@ public class ExportImportLocalServiceImpl
 
 		Map<String, Serializable> taskContextMap = new HashMap<>();
 
-		taskContextMap.put(Constants.CMD, Constants.EXPORT);
 		taskContextMap.put(
 			"exportImportConfigurationId",
 			exportImportConfiguration.getExportImportConfigurationId());
@@ -154,7 +151,6 @@ public class ExportImportLocalServiceImpl
 
 		Map<String, Serializable> taskContextMap = new HashMap<>();
 
-		taskContextMap.put(Constants.CMD, Constants.EXPORT);
 		taskContextMap.put(
 			"exportImportConfigurationId",
 			exportImportConfiguration.getExportImportConfigurationId());
@@ -272,7 +268,6 @@ public class ExportImportLocalServiceImpl
 
 		Map<String, Serializable> taskContextMap = new HashMap<>();
 
-		taskContextMap.put(Constants.CMD, Constants.IMPORT);
 		taskContextMap.put(
 			"exportImportConfigurationId",
 			exportImportConfiguration.getExportImportConfigurationId());
@@ -391,10 +386,7 @@ public class ExportImportLocalServiceImpl
 					break;
 				}
 
-				if ((cause instanceof LocaleException) ||
-					(cause instanceof
-						StructureDuplicateStructureKeyException)) {
-
+				if (cause instanceof LocaleException) {
 					throw (PortalException)cause;
 				}
 
@@ -447,7 +439,6 @@ public class ExportImportLocalServiceImpl
 
 		Map<String, Serializable> taskContextMap = new HashMap<>();
 
-		taskContextMap.put(Constants.CMD, Constants.IMPORT);
 		taskContextMap.put(
 			"exportImportConfigurationId",
 			exportImportConfiguration.getExportImportConfigurationId());

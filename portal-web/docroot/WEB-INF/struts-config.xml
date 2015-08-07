@@ -159,34 +159,6 @@
 
 		<action path="/admin_server/view_chart" type="com.liferay.portlet.admin.action.ViewChartAction" />
 
-		<!-- Alerts -->
-
-		<action path="/alerts/edit_entry" type="com.liferay.portlet.announcements.action.EditEntryAction">
-			<forward name="portlet.announcements.edit_entry" path="portlet.announcements.edit_entry" />
-			<forward name="portlet.announcements.error" path="portlet.announcements.error" />
-		</action>
-
-		<action path="/alerts/preview_entry" type="com.liferay.portlet.announcements.action.PreviewEntryAction">
-			<forward name="portlet.announcements.preview_entry" path="portlet.announcements.preview_entry" />
-		</action>
-
-		<action path="/alerts/view" type="com.liferay.portlet.announcements.action.ViewAction">
-			<forward name="portlet.announcements.view" path="portlet.announcements.view" />
-		</action>
-
-		<!-- Announcements -->
-
-		<action path="/announcements/edit_entry" type="com.liferay.portlet.announcements.action.EditEntryAction">
-			<forward name="portlet.announcements.edit_entry" path="portlet.announcements.edit_entry" />
-			<forward name="portlet.announcements.error" path="portlet.announcements.error" />
-		</action>
-
-		<action path="/announcements/preview_entry" type="com.liferay.portlet.announcements.action.PreviewEntryAction">
-			<forward name="portlet.announcements.preview_entry" path="portlet.announcements.preview_entry" />
-		</action>
-
-		<action path="/announcements/view" forward="portlet.announcements.view" />
-
 		<!-- Asset -->
 
 		<action path="/asset/get_categories" type="com.liferay.portlet.asset.action.GetCategoriesAction" />
@@ -206,10 +178,6 @@
 		<action path="/directory/view_user" forward="portlet.directory.view_user" />
 
 		<!-- Dockbar -->
-
-		<action path="/dockbar/edit_layouts" type="com.liferay.portlet.dockbar.action.EditLayoutsAction">
-			<forward name="portlet.dockbar.view" path="portlet.dockbar.view" />
-		</action>
 
 		<action path="/dockbar/view" type="com.liferay.portlet.dockbar.action.ViewAction">
 			<forward name="portlet.dockbar.view" path="portlet.dockbar.view" />
@@ -272,44 +240,6 @@
 
 		<action path="/maps/view" forward="portlet.maps.view" name="mapsMapsForm" scope="request" />
 
-		<!-- Mobile Device Rules -->
-
-		<action path="/mobile_device_rules/edit_action" type="com.liferay.portlet.mobiledevicerules.action.EditActionAction">
-			<forward name="portlet.mobile_device_rules.edit_action" path="portlet.mobile_device_rules.edit_action" />
-			<forward name="portlet.mobile_device_rules.error" path="portlet.mobile_device_rules.error" />
-		</action>
-
-		<action path="/mobile_device_rules/edit_action_editor" type="com.liferay.portlet.mobiledevicerules.action.EditActionAction" />
-
-		<action path="/mobile_device_rules/edit_rule" type="com.liferay.portlet.mobiledevicerules.action.EditRuleAction">
-			<forward name="portlet.mobile_device_rules.edit_rule" path="portlet.mobile_device_rules.edit_rule" />
-			<forward name="portlet.mobile_device_rules.error" path="portlet.mobile_device_rules.error" />
-		</action>
-
-		<action path="/mobile_device_rules/edit_rule_editor" type="com.liferay.portlet.mobiledevicerules.action.EditRuleAction" />
-
-		<action path="/mobile_device_rules/edit_rule_group" type="com.liferay.portlet.mobiledevicerules.action.EditRuleGroupAction">
-			<forward name="portlet.mobile_device_rules.edit_rule_group" path="portlet.mobile_device_rules.edit_rule_group" />
-			<forward name="portlet.mobile_device_rules.error" path="portlet.mobile_device_rules.error" />
-		</action>
-
-		<action path="/mobile_device_rules/edit_rule_group_instance" type="com.liferay.portlet.mobiledevicerules.action.EditRuleGroupInstanceAction">
-			<forward name="portlet.mobile_device_rules.edit_rule_group_instance_priorities" path="portlet.mobile_device_rules.edit_rule_group_instance_priorities" />
-			<forward name="portlet.mobile_device_rules.error" path="portlet.mobile_device_rules.error" />
-		</action>
-
-		<action path="/mobile_device_rules/edit_rule_group_instance_editor" type="com.liferay.portlet.mobiledevicerules.action.EditRuleGroupInstanceAction" />
-
-		<action path="/mobile_device_rules/select_rule_group" forward="portlet.mobile_device_rules.select_rule_group" />
-
-		<action path="/mobile_device_rules/site_url_layouts" type="com.liferay.portlet.mobiledevicerules.action.SiteURLLayoutsAction" />
-
-		<action path="/mobile_device_rules/view" forward="portlet.mobile_device_rules.view" />
-
-		<action path="/mobile_device_rules/view_actions" forward="portlet.mobile_device_rules.view_actions" />
-
-		<action path="/mobile_device_rules/view_rules" forward="portlet.mobile_device_rules.view_rules" />
-
 		<!-- Monitoring -->
 
 		<action path="/monitoring/edit_session" type="com.liferay.portlet.monitoring.action.EditSessionAction">
@@ -331,14 +261,6 @@
 
 		<action path="/our_activities/view" forward="portlet.our_activities.view" />
 
-		<!-- Plugins Admin -->
-
-		<action path="/plugins_admin/edit_plugin" type="com.liferay.portlet.pluginsadmin.action.EditPluginAction">
-			<forward name="portlet.plugins_admin.edit_plugin" path="portlet.plugins_admin.edit_plugin" />
-			<forward name="portlet.plugins_admin.error" path="portlet.plugins_admin.error" />
-		</action>
-
-		<action path="/plugins_admin/view" forward="portlet.plugins_admin.view" />
 
 		<!-- Portal Settings -->
 
@@ -437,13 +359,6 @@
 		<!-- Sites Directory -->
 
 		<action path="/sites_directory/view" forward="portlet.sites_directory.view" />
-
-		<!-- Social Activity -->
-
-		<action path="/social_activity/view" type="com.liferay.portlet.socialactivity.action.ViewAction">
-			<forward name="portlet.social_activity.error" path="portlet.social_activity.error" />
-			<forward name="portlet.social_activity.view" path="portlet.social_activity.view" />
-		</action>
 
 		<!-- Software Catalog -->
 

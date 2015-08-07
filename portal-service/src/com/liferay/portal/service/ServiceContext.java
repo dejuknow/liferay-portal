@@ -110,6 +110,8 @@ public class ServiceContext implements Cloneable, Serializable {
 		serviceContext.setLanguageId(getLanguageId());
 		serviceContext.setLayoutFullURL(getLayoutFullURL());
 		serviceContext.setLayoutURL(getLayoutURL());
+		serviceContext.setModelPermissions(
+			(ModelPermissions)_modelPermissions.clone());
 		serviceContext.setModifiedDate(getModifiedDate());
 		serviceContext.setPathFriendlyURLPrivateGroup(
 			getPathFriendlyURLPrivateGroup());
@@ -148,8 +150,8 @@ public class ServiceContext implements Cloneable, Serializable {
 		Role defaultGroupRole = RoleLocalServiceUtil.getDefaultGroupRole(
 			siteGroupId);
 
-		List<String> groupPermissions = new ArrayList<>();
-		List<String> guestPermissions = new ArrayList<>();
+		List<String> groupPermissionsList = new ArrayList<>();
+		List<String> guestPermissionsList = new ArrayList<>();
 
 		String[] roleNames = {RoleConstants.GUEST, defaultGroupRole.getName()};
 
@@ -170,20 +172,25 @@ public class ServiceContext implements Cloneable, Serializable {
 					guestDefaultActions.contains(action) &&
 					siteGroup.hasPublicLayouts()) {
 
-					guestPermissions.add(action);
+					guestPermissionsList.add(action);
 				}
 				else if (roleName.equals(defaultGroupRole.getName()) &&
 						 groupDefaultActions.contains(action)) {
 
-					groupPermissions.add(action);
+					groupPermissionsList.add(action);
 				}
 			}
 		}
 
-		setGroupPermissions(
-			groupPermissions.toArray(new String[groupPermissions.size()]));
-		setGuestPermissions(
-			guestPermissions.toArray(new String[guestPermissions.size()]));
+		String[] groupPermissions = groupPermissionsList.toArray(
+			new String[groupPermissionsList.size()]);
+
+		setGroupPermissions(groupPermissions);
+
+		String[] guestPermissions = guestPermissionsList.toArray(
+			new String[guestPermissionsList.size()]);
+
+		setGuestPermissions(guestPermissions);
 	}
 
 	/**
@@ -376,7 +383,8 @@ public class ServiceContext implements Cloneable, Serializable {
 	 * @return the specific group permissions
 	 */
 	public String[] getGroupPermissions() {
-		return _groupPermissions;
+		return _modelPermissions.getActionIds(
+			RoleConstants.PLACEHOLDER_DEFAULT_GROUP_ROLE);
 	}
 
 	/**
@@ -413,7 +421,7 @@ public class ServiceContext implements Cloneable, Serializable {
 	 * @return the specific guest permissions
 	 */
 	public String[] getGuestPermissions() {
-		return _guestPermissions;
+		return _modelPermissions.getActionIds(RoleConstants.GUEST);
 	}
 
 	/**
@@ -1265,7 +1273,8 @@ public class ServiceContext implements Cloneable, Serializable {
 	 * @param groupPermissions the permissions (optionally <code>null</code>)
 	 */
 	public void setGroupPermissions(String[] groupPermissions) {
-		_groupPermissions = groupPermissions;
+		_modelPermissions.addRolePermissions(
+			RoleConstants.PLACEHOLDER_DEFAULT_GROUP_ROLE, groupPermissions);
 	}
 
 	/**
@@ -1277,7 +1286,8 @@ public class ServiceContext implements Cloneable, Serializable {
 	 *        <code>null</code>)
 	 */
 	public void setGuestPermissions(String[] guestPermissions) {
-		_guestPermissions = guestPermissions;
+		_modelPermissions.addRolePermissions(
+			RoleConstants.GUEST, guestPermissions);
 	}
 
 	/**
@@ -1557,14 +1567,12 @@ public class ServiceContext implements Cloneable, Serializable {
 	private Map<String, Serializable> _expandoBridgeAttributes;
 	private boolean _failOnPortalException = true;
 	private Date _formDate;
-	private String[] _groupPermissions;
-	private String[] _guestPermissions;
 	private transient Map<String, String> _headers;
 	private boolean _indexingEnabled = true;
 	private String _languageId;
 	private String _layoutFullURL;
 	private String _layoutURL;
-	private ModelPermissions _modelPermissions;
+	private ModelPermissions _modelPermissions = new ModelPermissions();
 	private Date _modifiedDate;
 	private String _pathFriendlyURLPrivateGroup;
 	private String _pathFriendlyURLPrivateUser;

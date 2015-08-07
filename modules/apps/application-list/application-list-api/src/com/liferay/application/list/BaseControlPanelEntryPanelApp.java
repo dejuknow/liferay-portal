@@ -22,17 +22,13 @@ import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Portlet;
 import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.service.PortletLocalService;
-import com.liferay.portal.theme.ThemeDisplay;
-import com.liferay.portal.util.WebKeys;
+import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.ControlPanelEntry;
-import com.liferay.portlet.PortletURLFactoryUtil;
 
 import java.util.Locale;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
-import javax.portlet.WindowState;
-import javax.portlet.WindowStateException;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -60,21 +56,8 @@ public abstract class BaseControlPanelEntryPanelApp implements PanelApp {
 	public PortletURL getPortletURL(HttpServletRequest request)
 		throws PortalException {
 
-		try {
-			ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
-				WebKeys.THEME_DISPLAY);
-
-			PortletURL portletURL = PortletURLFactoryUtil.create(
-				request, getPortletId(), themeDisplay.getPlid(),
-				PortletRequest.RENDER_PHASE);
-
-			portletURL.setWindowState(WindowState.MAXIMIZED);
-
-			return portletURL;
-		}
-		catch (WindowStateException wse) {
-			throw new PortalException(wse);
-		}
+		return PortalUtil.getControlPanelPortletURL(
+			request, getPortletId(), 0, PortletRequest.RENDER_PHASE);
 	}
 
 	@Override

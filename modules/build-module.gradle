@@ -10,7 +10,7 @@ buildscript {
 	}
 
 	dependencies {
-		classpath group: "com.liferay", name: "com.liferay.gradle.util", version: "latest.release"
+		classpath group: "com.liferay", name: "com.liferay.gradle.util", version: "1.0.15"
 	}
 }
 
@@ -18,11 +18,19 @@ apply plugin: "com.liferay.plugin"
 apply plugin: "eclipse"
 
 liferay {
-	appServerParentDir = rootProject.file("../../bundles")
+	appServerParentDir = System.properties["appServerParentDir"] ?: rootProject.file("../../bundles")
 
 	if (deployDir == new File(appServerParentDir, "deploy")) {
 		deployDir = new File(liferayHome, "osgi/apps")
 	}
+
+	String liferayHomeSystemProperty = System.properties["liferayHome"]
+
+	if (liferayHomeSystemProperty) {
+		liferayHome = liferayHomeSystemProperty
+	}
+
+	tmpDir = new File(rootDir, "../tmp")
 }
 
 File appServerClassesPortalDir = new File(liferay.appServerPortalDir, "WEB-INF/classes")
@@ -39,9 +47,21 @@ afterEvaluate {
 	project.ext.set("plugin.full.version", project.version.toString())
 }
 
+buildCSS {
+	portalCommonDirName = new File(rootDir, "../portal-web/docroot/html/css/common")
+}
+
 configurations {
 	portal
 	portalTest
+
+	whenObjectAdded {
+		Configuration configuration ->
+
+		if (configuration.name == "portalToolsThumbnailBuilder") {
+			configuration.extendsFrom portal
+		}
+	}
 }
 
 if (FileUtil.exists(project, "docroot")) {
@@ -53,6 +73,10 @@ if (FileUtil.exists(project, "docroot")) {
 }
 
 dependencies {
+	cssBuilder group: "com.liferay", name: "com.liferay.css.builder", version: "1.0.7"
+	javadocFormatter group: "com.liferay", name: "com.liferay.javadoc.formatter", version: "1.0.4"
+	langBuilder group: "com.liferay", name: "com.liferay.lang.builder", version: "1.0.1"
+
 	portal files(appServerClassesPortalDir)
 	portal fileTree(dir: appServerLibPortalDir, include: "*.jar")
 	portal fileTree(dir: liferay.appServerLibGlobalDir, include: "*.jar")
@@ -63,6 +87,12 @@ dependencies {
 	portal group: "javax.servlet.jsp", name: "jsp-api", version: "2.1"
 
 	portalTest fileTree(dir: new File(moduleFrameworkBaseDir, "test"), include: "portal-test*.jar")
+	serviceBuilder group: "com.liferay", name: "com.liferay.portal.tools.service.builder", version: "1.0.29"
+	sourceFormatter group: "com.liferay", name: "com.liferay.source.formatter", version: "1.0.44"
+	tldFormatter group: "com.liferay", name: "com.liferay.tld.formatter", version: "1.0.0"
+	upgradeTableBuilder group: "com.liferay", name: "com.liferay.portal.tools.upgrade.table.builder", version: "1.0.1"
+	wsddBuilder group: "com.liferay", name: "com.liferay.portal.tools.wsdd.builder", version: "1.0.2"
+	xmlFormatter group: "com.liferay", name: "com.liferay.xml.formatter", version: "1.0.0"
 }
 
 eclipseClasspath {
@@ -77,18 +107,28 @@ eclipseProject {
 	}
 }
 
+jspC {
+	jspCVersion = "1.0.3"
+}
+
 repositories {
 	mavenLocal()
+
+	maven {
+		url "http://cdn.repository.liferay.com/nexus/content/groups/public"
+	}
 }
 
 sourceSets {
+	FileCollection portalJarsFileCollection = fileTree(dir: appServerLibPortalDir, include: "util-slf4j.jar")
+
 	main {
 		compileClasspath += configurations.portal
 	}
 
 	test {
-		compileClasspath = configurations.portal + compileClasspath + configurations.portalTest
-		runtimeClasspath = configurations.portal + runtimeClasspath + configurations.portalTest
+		compileClasspath = portalJarsFileCollection + compileClasspath + configurations.portal + configurations.portalTest
+		runtimeClasspath = portalJarsFileCollection + runtimeClasspath + configurations.portal + configurations.portalTest
 	}
 
 	testIntegration {
@@ -128,6 +168,10 @@ testIntegration {
 
 	maxHeapSize = "512m"
 	minHeapSize = "512m"
+}
+
+whip {
+	version = "1.0.0"
 }
 
 pluginManager.withPlugin("com.liferay.maven.plugin.builder") {

@@ -691,7 +691,6 @@
 	</command>
 
 	<command name="viewContentSharingPG">
-
 		<var name="key_siteScope" value="${siteScope1}" />
 
 		<execute function="AssertTextEquals" locator1="PGAssetpublisher#ADD_NEW_DROPDOWN_IN_SCOPED_SITE" value1="Add New in ${siteScope1}" />
@@ -857,7 +856,7 @@
 		<var name="key_paginationNumber" value="${paginationNumber}" />
 
 		<execute function="AssertTextEquals" locator1="PGAssetpublisher#PAGINATION_PAGE_BUTTON" value1="Page ${pageNumber}" />
-		<execute function="AssertTextEquals" locator1="PGAssetpublisher#PAGINATION_ITEMS_PER_PAGE" value1="— ${paginationNumber} Items per Page" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="PGAssetpublisher#PAGINATION_ITEMS_PER_PAGE" value1="${paginationNumber} Items per Page" />
 		<execute function="AssertTextEquals" locator1="PGAssetpublisher#PAGINATION_TOTAL_ITEMS" value1="Showing ${key_pageMod} results." />
 
 		<if>

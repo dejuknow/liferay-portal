@@ -68,6 +68,7 @@ public class MDRRuleGroupInstanceWrapper implements MDRRuleGroupInstance,
 		attributes.put("classPK", getClassPK());
 		attributes.put("ruleGroupId", getRuleGroupId());
 		attributes.put("priority", getPriority());
+		attributes.put("lastPublishDate", getLastPublishDate());
 
 		return attributes;
 	}
@@ -145,6 +146,12 @@ public class MDRRuleGroupInstanceWrapper implements MDRRuleGroupInstance,
 		if (priority != null) {
 			setPriority(priority);
 		}
+
+		Date lastPublishDate = (Date)attributes.get("lastPublishDate");
+
+		if (lastPublishDate != null) {
+			setLastPublishDate(lastPublishDate);
+		}
 	}
 
 	@Override
@@ -209,7 +216,7 @@ public class MDRRuleGroupInstanceWrapper implements MDRRuleGroupInstance,
 	* @return the create date of this m d r rule group instance
 	*/
 	@Override
-	public java.util.Date getCreateDate() {
+	public Date getCreateDate() {
 		return _mdrRuleGroupInstance.getCreateDate();
 	}
 
@@ -229,12 +236,22 @@ public class MDRRuleGroupInstanceWrapper implements MDRRuleGroupInstance,
 	}
 
 	/**
+	* Returns the last publish date of this m d r rule group instance.
+	*
+	* @return the last publish date of this m d r rule group instance
+	*/
+	@Override
+	public Date getLastPublishDate() {
+		return _mdrRuleGroupInstance.getLastPublishDate();
+	}
+
+	/**
 	* Returns the modified date of this m d r rule group instance.
 	*
 	* @return the modified date of this m d r rule group instance
 	*/
 	@Override
-	public java.util.Date getModifiedDate() {
+	public Date getModifiedDate() {
 		return _mdrRuleGroupInstance.getModifiedDate();
 	}
 
@@ -400,7 +417,7 @@ public class MDRRuleGroupInstanceWrapper implements MDRRuleGroupInstance,
 	* @param createDate the create date of this m d r rule group instance
 	*/
 	@Override
-	public void setCreateDate(java.util.Date createDate) {
+	public void setCreateDate(Date createDate) {
 		_mdrRuleGroupInstance.setCreateDate(createDate);
 	}
 
@@ -433,12 +450,22 @@ public class MDRRuleGroupInstanceWrapper implements MDRRuleGroupInstance,
 	}
 
 	/**
+	* Sets the last publish date of this m d r rule group instance.
+	*
+	* @param lastPublishDate the last publish date of this m d r rule group instance
+	*/
+	@Override
+	public void setLastPublishDate(Date lastPublishDate) {
+		_mdrRuleGroupInstance.setLastPublishDate(lastPublishDate);
+	}
+
+	/**
 	* Sets the modified date of this m d r rule group instance.
 	*
 	* @param modifiedDate the modified date of this m d r rule group instance
 	*/
 	@Override
-	public void setModifiedDate(java.util.Date modifiedDate) {
+	public void setModifiedDate(Date modifiedDate) {
 		_mdrRuleGroupInstance.setModifiedDate(modifiedDate);
 	}
 

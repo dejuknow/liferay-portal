@@ -616,8 +616,19 @@ public class XMLSourceProcessor extends BaseSourceProcessor {
 		Document document = readXML(content);
 
 		checkOrder(
+			fileName, document.getRootElement(), "macrodef", null,
+			new ElementComparator());
+		checkOrder(
 			fileName, document.getRootElement(), "target", null,
 			new ElementComparator());
+
+		int i1 = content.lastIndexOf("</macrodef>");
+		int i2 = content.indexOf("</target>");
+
+		if ((i2 != -1) && (i1 > i2)) {
+			processErrorMessage(
+				fileName, "macrodefs go before targets: " + fileName);
+		}
 
 		return newContent;
 	}
@@ -1004,9 +1015,11 @@ public class XMLSourceProcessor extends BaseSourceProcessor {
 	protected String getTablesContent(String fileName, String absolutePath)
 		throws Exception {
 
-		if (portalSource && !absolutePath.contains("/modules/")) {
+		if (portalSource && !isModulesFile(absolutePath)) {
 			if (_tablesContent == null) {
-				_tablesContent = getContent("sql/portal-tables.sql", 4);
+				_tablesContent = getContent(
+					"sql/portal-tables.sql",
+					BaseSourceProcessor.PORTAL_MAX_DIR_LEVEL);
 			}
 
 			return _tablesContent;

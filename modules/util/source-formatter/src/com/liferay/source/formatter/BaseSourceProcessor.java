@@ -395,7 +395,8 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 			_portalLanguageProperties = new Properties();
 
 			File portalLanguagePropertiesFile = new File(
-				getFile("portal-impl", 5), "src/content/Language.properties");
+				getFile("portal-impl", PORTAL_MAX_DIR_LEVEL),
+				"src/content/Language.properties");
 
 			InputStream inputStream = new FileInputStream(
 				portalLanguagePropertiesFile);
@@ -542,7 +543,8 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 
 		if (_copyright == null) {
 			_copyright = getContent(
-				sourceFormatterArgs.getCopyrightFileName(), 4);
+				sourceFormatterArgs.getCopyrightFileName(),
+				PORTAL_MAX_DIR_LEVEL);
 		}
 
 		String copyright = _copyright;
@@ -552,7 +554,8 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		}
 
 		if (_oldCopyright == null) {
-			_oldCopyright = getContent("old-copyright.txt", 4);
+			_oldCopyright = getContent(
+				"old-copyright.txt", PORTAL_MAX_DIR_LEVEL);
 		}
 
 		if (Validator.isNotNull(_oldCopyright) &&
@@ -1395,6 +1398,10 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		return matcher.matches();
 	}
 
+	protected boolean isModulesFile(String absolutePath) {
+		return absolutePath.contains("/modules/");
+	}
+
 	protected void processErrorMessage(String fileName, String message) {
 		List<String> errorMessages = _errorMessagesMap.get(fileName);
 
@@ -1491,7 +1498,7 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 			}
 
 			if (Validator.isNotNull(previousAttribute) &&
-				(previousAttribute.compareTo(attribute) > 0)) {
+				(previousAttribute.compareToIgnoreCase(attribute) > 0)) {
 
 				wrongOrder = true;
 			}
@@ -1730,6 +1737,8 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 
 	protected static final String BASEDIR = "./";
 
+	protected static final int PORTAL_MAX_DIR_LEVEL = 5;
+
 	protected static Pattern attributeNamePattern = Pattern.compile(
 		"[a-z]+[-_a-zA-Z0-9]*");
 	protected static Pattern emptyCollectionPattern = Pattern.compile(
@@ -1774,7 +1783,7 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		int level = 2;
 
 		if (portalSource) {
-			level = 3;
+			level = PORTAL_MAX_DIR_LEVEL;
 		}
 
 		for (int i = 0; i <= level; i++) {
@@ -1866,7 +1875,7 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 	}
 
 	private boolean _isPortalSource() {
-		if (getFile("portal-impl", 5) != null) {
+		if (getFile("portal-impl", PORTAL_MAX_DIR_LEVEL) != null) {
 			return true;
 		}
 		else {

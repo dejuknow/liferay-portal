@@ -42,7 +42,7 @@ public class MDRPermissionImpl implements MDRPermission {
 
 		Boolean hasPermission = StagingPermissionUtil.hasPermission(
 			permissionChecker, groupId, RESOURCE_NAME, groupId,
-			PortletKeys.MOBILE_DEVICE_SITE_ADMIN, actionId);
+			PortletKeys.MOBILE_DEVICE_RULES, actionId);
 
 		if (hasPermission != null) {
 			return hasPermission.booleanValue();

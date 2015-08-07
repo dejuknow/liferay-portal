@@ -20,7 +20,7 @@ feature or API will be dropped in an upcoming version.
 replaces an old API, in spite of the old API being kept in Liferay Portal for
 backwards compatibility.
 
-*This document has been reviewed through commit `dd4de87`.*
+*This document has been reviewed through commit `bfabcf8`.*
 
 ## Breaking Changes Contribution Guidelines
 
@@ -571,11 +571,16 @@ Old classes:
 
 New classes:
 
-    com.liferay.portal.kernel.portlet.bridges.mvc.ActionCommand
-    com.liferay.portal.kernel.portlet.bridges.mvc.BaseActionCommand
+    com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand
+    com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand
 
 In addition, `com.liferay.util.bridges.mvc.MVCPortlet` is deprecated, but was
 made to extend `com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet`.
+
+The classes in the `com.liferay.portal.kernel.portlet.bridges.mvc` package have
+been renamed to add the `MVC` prefix. These modifications were made after this
+breaking change, and can be referenced in
+[LPS-56372](https://issues.liferay.com/browse/LPS-56372).
 
 #### Who is affected?
 
@@ -1995,7 +2000,7 @@ Depending on the changes, different extension methods are available:
 parameters.
 - For CKEditor instance manipulation (setting attributes, adding listeners,
 etc.), the `DynamicInclude` extension point
-`js#ckeditor[_creole|_bbcode]#onEditorCreated` has been added to provide the
+`#ckeditor[_creole|_bbcode]#onEditorCreated` has been added to provide the
 possibility of injecting JavaScript, when needed.
 
 #### Why was this change made?
@@ -2160,5 +2165,30 @@ This change was part of needed modifications to extract the Portal Instances
 portlet from the Admin portlet. The constant's old name was not accurate, since
 it originated from the old Admin portlet. Since the Portal Instances portlet
 is now extracted to its own module, the old name no longer resembles its usage.
+
+---------------------------------------
+
+### Removed Vaadin 6 from Liferay Core
+- **Date:** 2015-Jul-31
+- **JIRA Ticket:** LPS-57525
+
+#### What changed?
+
+The bundled Vaadin 6.x JAR file has been removed from portal core.
+
+#### Who is affected?
+
+This affects developers who are creating Vaadin portlet applications in Liferay
+Portal.
+
+#### How should I update my code?
+
+You should upgrade to Vaadin 7, bundle your `vaadin.jar` with your plugin, or 
+deploy Vaadin libraries to Liferay's OSGi container.
+
+#### Why was this change made?
+
+Vaadin 6.x is outdated and there are no plans for any new projects to be
+created with it. Therefore, developers should begin using Vaadin 7.x.
 
 ---------------------------------------

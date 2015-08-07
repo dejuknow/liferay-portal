@@ -119,6 +119,10 @@ if (editorOptions != null) {
 					}
 				);
 			};
+
+			CKEDITOR.getNextZIndex = function() {
+				return CKEDITOR.dialog._.currentZIndex ? CKEDITOR.dialog._.currentZIndex + 10 : Liferay.zIndex.OVERLAY;
+			};
 		</script>
 	</liferay-util:html-top>
 </c:if>
@@ -147,8 +151,6 @@ if (inlineEdit && Validator.isNotNull(inlineEditSaveURL)) {
 
 <script type="text/javascript">
 	CKEDITOR.disableAutoInline = true;
-
-	CKEDITOR.env.isCompatible = true;
 </script>
 
 <aui:script use="<%= modules %>">
@@ -424,7 +426,7 @@ if (inlineEdit && Validator.isNotNull(inlineEditSaveURL)) {
 
 		var ckEditor = CKEDITOR.instances['<%= name %>'];
 
-		<liferay-util:dynamic-include key='<%= "com.liferay.frontend.editors.web#" + editorName + "#js#onEditorCreate" %>' />
+		<liferay-util:dynamic-include key='<%= "com.liferay.frontend.editors.web#" + editorName + "#onEditorCreate" %>' />
 
 		<c:if test="<%= inlineEdit && (Validator.isNotNull(inlineEditSaveURL)) %>">
 			inlineEditor = new Liferay.CKEditorInline(

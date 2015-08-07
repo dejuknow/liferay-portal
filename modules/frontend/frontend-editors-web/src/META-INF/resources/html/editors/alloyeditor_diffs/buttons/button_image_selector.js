@@ -3,6 +3,8 @@
 (function() {
 	'use strict';
 
+	var STR_UPLOADABLE_FILE_RETURN_TYPE = 'com.liferay.item.selector.criteria.UploadableFileReturnType';
+
 	var Util = Liferay.Util;
 
 	var ButtonImage = React.createClass(
@@ -28,7 +30,7 @@
 				return React.createElement(
 					'button',
 					{
-						className: 'alloy-editor-button',
+						className: 'ae-button',
 						'data-type': 'button-image',
 						onClick: this._handleClick,
 						tabIndex: this.props.tabIndex
@@ -36,7 +38,7 @@
 					React.createElement(
 						'span',
 						{
-							className: 'alloy-editor-icon-image'
+							className: 'ae-icon-image'
 						}
 					)
 				);
@@ -60,7 +62,7 @@
 
 				var editor = this.props.editor.get('nativeEditor');
 
-				var eventName = editor.name + 'selectDocument';
+				var eventName = editor.name + 'selectItem';
 
 				if (instance._itemSelectorDialog) {
 					instance._itemSelectorDialog.open();
@@ -92,7 +94,7 @@
 
 				var editor = instance.props.editor.get('nativeEditor');
 
-				var eventName = editor.name + 'selectDocument';
+				var eventName = editor.name + 'selectItem';
 
 				var selectedItem = event.newVal;
 
@@ -100,15 +102,27 @@
 					Util.getWindow(eventName).onceAfter(
 						'visibleChange',
 						function() {
-							var el = CKEDITOR.dom.element.createFromHtml(
-								instance.props.imageTPL.output(
-									{
-										src: selectedItem.value
-									}
-								)
-							);
+							var imageSrc = selectedItem.value;
 
-							editor.insertElement(el);
+							if (selectedItem.returnType === STR_UPLOADABLE_FILE_RETURN_TYPE) {
+								try {
+									imageSrc = JSON.parse(selectedItem.value).url;
+								}
+								catch (e) {
+								}
+							}
+
+							if (imageSrc) {
+								var el = CKEDITOR.dom.element.createFromHtml(
+									instance.props.imageTPL.output(
+										{
+											src: imageSrc
+										}
+									)
+								);
+
+								editor.insertElement(el);
+							}
 						}
 					);
 				}

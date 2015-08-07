@@ -40,7 +40,6 @@ import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.CharPool;
-import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.FriendlyURLNormalizerUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -58,7 +57,6 @@ import com.liferay.portal.kernel.util.TreeModelTasksAdapter;
 import com.liferay.portal.kernel.util.TreePathUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.workflow.WorkflowHandler;
 import com.liferay.portal.kernel.workflow.WorkflowHandlerRegistryUtil;
 import com.liferay.portal.model.Account;
@@ -308,8 +306,7 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 
 		if (className.equals(Group.class.getName())) {
 			if (!site && (liveGroupId == 0) &&
-				!groupKey.equals(GroupConstants.CONTROL_PANEL) &&
-				!groupKey.equals(GroupConstants.USER_PERSONAL_PANEL)) {
+				!groupKey.equals(GroupConstants.CONTROL_PANEL)) {
 
 				throw new IllegalArgumentException();
 			}
@@ -713,12 +710,6 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 						GroupConstants.USER_PERSONAL_SITE_FRIENDLY_URL;
 					site = false;
 				}
-				else if (groupKey.equals(GroupConstants.USER_PERSONAL_PANEL)) {
-					type = GroupConstants.TYPE_SITE_PRIVATE;
-					friendlyURL =
-						GroupConstants.USER_PERSONAL_PANEL_FRIENDLY_URL;
-					site = false;
-				}
 
 				group = groupLocalService.addGroup(
 					defaultUserId, GroupConstants.DEFAULT_PARENT_GROUP_ID,
@@ -747,15 +738,6 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 
 				if (layoutSet.getPageCount() == 0) {
 					addDefaultGuestPublicLayouts(group);
-				}
-			}
-
-			if (group.isUserPersonalPanel()) {
-				LayoutSet layoutSet = layoutSetLocalService.getLayoutSet(
-					group.getGroupId(), true);
-
-				if (layoutSet.getPageCount() == 0) {
-					addUserPersonalPanelLayouts(group);
 				}
 			}
 
@@ -3629,19 +3611,17 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 			PortletDataHandlerKeys.PORTLET_DATA_CONTROL_DEFAULT,
 			new String[] {Boolean.TRUE.toString()});
 
-		Map<String, Serializable> settingsMap =
-			ExportImportConfigurationSettingsMapFactory.buildImportSettingsMap(
-				defaultUser.getUserId(), group.getGroupId(), false, null,
-				parameterMap, Constants.IMPORT, defaultUser.getLocale(),
-				defaultUser.getTimeZone(), larFile.getName());
+		Map<String, Serializable> importLayoutSettingsMap =
+			ExportImportConfigurationSettingsMapFactory.
+				buildImportLayoutSettingsMap(
+					defaultUser, group.getGroupId(), false, null, parameterMap);
 
 		ExportImportConfiguration exportImportConfiguration =
-			exportImportConfigurationLocalService.addExportImportConfiguration(
-				defaultUser.getUserId(), group.getGroupId(), StringPool.BLANK,
-				StringPool.BLANK,
-				ExportImportConfigurationConstants.TYPE_IMPORT_LAYOUT,
-				settingsMap, WorkflowConstants.STATUS_DRAFT,
-				new ServiceContext());
+			exportImportConfigurationLocalService.
+				addDraftExportImportConfiguration(
+					defaultUser.getUserId(),
+					ExportImportConfigurationConstants.TYPE_IMPORT_LAYOUT,
+					importLayoutSettingsMap);
 
 		exportImportLocalService.importLayouts(
 			exportImportConfiguration, larFile);
@@ -3672,25 +3652,6 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 				}
 			}
 		}
-	}
-
-	protected void addUserPersonalPanelLayouts(Group group)
-		throws PortalException {
-
-		long defaultUserId = userLocalService.getDefaultUserId(
-			group.getCompanyId());
-
-		String friendlyURL = getFriendlyURL(
-			PropsValues.USER_PERSONAL_PANEL_LAYOUT_FRIENDLY_URL);
-
-		ServiceContext serviceContext = new ServiceContext();
-
-		layoutLocalService.addLayout(
-			defaultUserId, group.getGroupId(), true,
-			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID,
-			PropsValues.USER_PERSONAL_PANEL_LAYOUT_NAME, StringPool.BLANK,
-			StringPool.BLANK, LayoutConstants.TYPE_USER_PERSONAL_PANEL, false,
-			friendlyURL, serviceContext);
 	}
 
 	protected void deletePortletData(Group group) throws PortalException {
@@ -3784,9 +3745,7 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 
 			String groupKey = group.getGroupKey();
 
-			if (groupKey.equals(GroupConstants.CONTROL_PANEL) ||
-				groupKey.equals(GroupConstants.USER_PERSONAL_PANEL)) {
-
+			if (groupKey.equals(GroupConstants.CONTROL_PANEL)) {
 				iterator.remove();
 
 				continue;

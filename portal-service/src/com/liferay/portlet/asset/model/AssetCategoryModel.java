@@ -483,6 +483,22 @@ public interface AssetCategoryModel extends BaseModel<AssetCategory>,
 	 */
 	public void setVocabularyId(long vocabularyId);
 
+	/**
+	 * Returns the last publish date of this asset category.
+	 *
+	 * @return the last publish date of this asset category
+	 */
+	@Override
+	public Date getLastPublishDate();
+
+	/**
+	 * Sets the last publish date of this asset category.
+	 *
+	 * @param lastPublishDate the last publish date of this asset category
+	 */
+	@Override
+	public void setLastPublishDate(Date lastPublishDate);
+
 	@Override
 	public boolean isNew();
 

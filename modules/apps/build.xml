@@ -4,6 +4,7 @@
 <project>
 	<path id="plugins.includes.path">
 		<dirset dir="amazon-rankings" includes="*" />
+		<dirset dir="announcements" includes="*" />
 		<dirset dir="asset" includes="*" />
 		<dirset dir="application-list" includes="*" />
 		<dirset dir="blogs" includes="*" />
@@ -60,6 +61,7 @@
 		<dirset dir="unit-converter" includes="*" />
 		<dirset dir="user-groups-admin" includes="*" />
 		<dirset dir="user-personal-bar" includes="*" />
+		<dirset dir="users-admin" includes="*" />
 		<dirset dir="web-proxy" includes="*" />
 		<dirset dir="wiki" includes="*" />
 		<dirset dir="workflow" includes="*" />

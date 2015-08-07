@@ -67,6 +67,7 @@ public class MDRRuleWrapper implements MDRRule, ModelWrapper<MDRRule> {
 		attributes.put("description", getDescription());
 		attributes.put("type", getType());
 		attributes.put("typeSettings", getTypeSettings());
+		attributes.put("lastPublishDate", getLastPublishDate());
 
 		return attributes;
 	}
@@ -150,6 +151,12 @@ public class MDRRuleWrapper implements MDRRule, ModelWrapper<MDRRule> {
 		if (typeSettings != null) {
 			setTypeSettings(typeSettings);
 		}
+
+		Date lastPublishDate = (Date)attributes.get("lastPublishDate");
+
+		if (lastPublishDate != null) {
+			setLastPublishDate(lastPublishDate);
+		}
 	}
 
 	@Override
@@ -184,7 +191,7 @@ public class MDRRuleWrapper implements MDRRule, ModelWrapper<MDRRule> {
 	* @return the create date of this m d r rule
 	*/
 	@Override
-	public java.util.Date getCreateDate() {
+	public Date getCreateDate() {
 		return _mdrRule.getCreateDate();
 	}
 
@@ -267,7 +274,7 @@ public class MDRRuleWrapper implements MDRRule, ModelWrapper<MDRRule> {
 	* @return the locales and localized descriptions of this m d r rule
 	*/
 	@Override
-	public java.util.Map<java.util.Locale, java.lang.String> getDescriptionMap() {
+	public Map<java.util.Locale, java.lang.String> getDescriptionMap() {
 		return _mdrRule.getDescriptionMap();
 	}
 
@@ -287,12 +294,22 @@ public class MDRRuleWrapper implements MDRRule, ModelWrapper<MDRRule> {
 	}
 
 	/**
+	* Returns the last publish date of this m d r rule.
+	*
+	* @return the last publish date of this m d r rule
+	*/
+	@Override
+	public Date getLastPublishDate() {
+		return _mdrRule.getLastPublishDate();
+	}
+
+	/**
 	* Returns the modified date of this m d r rule.
 	*
 	* @return the modified date of this m d r rule
 	*/
 	@Override
-	public java.util.Date getModifiedDate() {
+	public Date getModifiedDate() {
 		return _mdrRule.getModifiedDate();
 	}
 
@@ -369,7 +386,7 @@ public class MDRRuleWrapper implements MDRRule, ModelWrapper<MDRRule> {
 	* @return the locales and localized names of this m d r rule
 	*/
 	@Override
-	public java.util.Map<java.util.Locale, java.lang.String> getNameMap() {
+	public Map<java.util.Locale, java.lang.String> getNameMap() {
 		return _mdrRule.getNameMap();
 	}
 
@@ -532,7 +549,7 @@ public class MDRRuleWrapper implements MDRRule, ModelWrapper<MDRRule> {
 	* @param createDate the create date of this m d r rule
 	*/
 	@Override
-	public void setCreateDate(java.util.Date createDate) {
+	public void setCreateDate(Date createDate) {
 		_mdrRule.setCreateDate(createDate);
 	}
 
@@ -583,7 +600,7 @@ public class MDRRuleWrapper implements MDRRule, ModelWrapper<MDRRule> {
 	*/
 	@Override
 	public void setDescriptionMap(
-		java.util.Map<java.util.Locale, java.lang.String> descriptionMap) {
+		Map<java.util.Locale, java.lang.String> descriptionMap) {
 		_mdrRule.setDescriptionMap(descriptionMap);
 	}
 
@@ -595,7 +612,7 @@ public class MDRRuleWrapper implements MDRRule, ModelWrapper<MDRRule> {
 	*/
 	@Override
 	public void setDescriptionMap(
-		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
+		Map<java.util.Locale, java.lang.String> descriptionMap,
 		java.util.Locale defaultLocale) {
 		_mdrRule.setDescriptionMap(descriptionMap, defaultLocale);
 	}
@@ -629,12 +646,22 @@ public class MDRRuleWrapper implements MDRRule, ModelWrapper<MDRRule> {
 	}
 
 	/**
+	* Sets the last publish date of this m d r rule.
+	*
+	* @param lastPublishDate the last publish date of this m d r rule
+	*/
+	@Override
+	public void setLastPublishDate(Date lastPublishDate) {
+		_mdrRule.setLastPublishDate(lastPublishDate);
+	}
+
+	/**
 	* Sets the modified date of this m d r rule.
 	*
 	* @param modifiedDate the modified date of this m d r rule
 	*/
 	@Override
-	public void setModifiedDate(java.util.Date modifiedDate) {
+	public void setModifiedDate(Date modifiedDate) {
 		_mdrRule.setModifiedDate(modifiedDate);
 	}
 
@@ -683,8 +710,7 @@ public class MDRRuleWrapper implements MDRRule, ModelWrapper<MDRRule> {
 	* @param nameMap the locales and localized names of this m d r rule
 	*/
 	@Override
-	public void setNameMap(
-		java.util.Map<java.util.Locale, java.lang.String> nameMap) {
+	public void setNameMap(Map<java.util.Locale, java.lang.String> nameMap) {
 		_mdrRule.setNameMap(nameMap);
 	}
 
@@ -695,8 +721,7 @@ public class MDRRuleWrapper implements MDRRule, ModelWrapper<MDRRule> {
 	* @param defaultLocale the default locale
 	*/
 	@Override
-	public void setNameMap(
-		java.util.Map<java.util.Locale, java.lang.String> nameMap,
+	public void setNameMap(Map<java.util.Locale, java.lang.String> nameMap,
 		java.util.Locale defaultLocale) {
 		_mdrRule.setNameMap(nameMap, defaultLocale);
 	}

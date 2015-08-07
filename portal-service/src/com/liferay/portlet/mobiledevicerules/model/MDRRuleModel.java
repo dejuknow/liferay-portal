@@ -456,6 +456,22 @@ public interface MDRRuleModel extends BaseModel<MDRRule>, LocalizedModel,
 	 */
 	public void setTypeSettings(String typeSettings);
 
+	/**
+	 * Returns the last publish date of this m d r rule.
+	 *
+	 * @return the last publish date of this m d r rule
+	 */
+	@Override
+	public Date getLastPublishDate();
+
+	/**
+	 * Sets the last publish date of this m d r rule.
+	 *
+	 * @param lastPublishDate the last publish date of this m d r rule
+	 */
+	@Override
+	public void setLastPublishDate(Date lastPublishDate);
+
 	@Override
 	public boolean isNew();
 

@@ -1545,6 +1545,12 @@ public class RoleLocalServiceImpl extends RoleLocalServiceBaseImpl {
 		}
 		catch (NoSuchRoleException nsre) {
 		}
+
+		if (name.equals(RoleConstants.PLACEHOLDER_DEFAULT_GROUP_ROLE)) {
+			throw new RoleNameException(
+				RoleConstants.PLACEHOLDER_DEFAULT_GROUP_ROLE +
+					" is a temporary placeholder that must not be persisted");
+		}
 	}
 
 	private final Map<String, Role> _systemRolesMap = new HashMap<>();

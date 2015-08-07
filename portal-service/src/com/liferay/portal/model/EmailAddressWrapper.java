@@ -67,6 +67,7 @@ public class EmailAddressWrapper implements EmailAddress,
 		attributes.put("address", getAddress());
 		attributes.put("typeId", getTypeId());
 		attributes.put("primary", getPrimary());
+		attributes.put("lastPublishDate", getLastPublishDate());
 
 		return attributes;
 	}
@@ -150,6 +151,12 @@ public class EmailAddressWrapper implements EmailAddress,
 		if (primary != null) {
 			setPrimary(primary);
 		}
+
+		Date lastPublishDate = (Date)attributes.get("lastPublishDate");
+
+		if (lastPublishDate != null) {
+			setLastPublishDate(lastPublishDate);
+		}
 	}
 
 	@Override
@@ -218,7 +225,7 @@ public class EmailAddressWrapper implements EmailAddress,
 	* @return the create date of this email address
 	*/
 	@Override
-	public java.util.Date getCreateDate() {
+	public Date getCreateDate() {
 		return _emailAddress.getCreateDate();
 	}
 
@@ -238,12 +245,22 @@ public class EmailAddressWrapper implements EmailAddress,
 	}
 
 	/**
+	* Returns the last publish date of this email address.
+	*
+	* @return the last publish date of this email address
+	*/
+	@Override
+	public Date getLastPublishDate() {
+		return _emailAddress.getLastPublishDate();
+	}
+
+	/**
 	* Returns the modified date of this email address.
 	*
 	* @return the modified date of this email address
 	*/
 	@Override
-	public java.util.Date getModifiedDate() {
+	public Date getModifiedDate() {
 		return _emailAddress.getModifiedDate();
 	}
 
@@ -429,7 +446,7 @@ public class EmailAddressWrapper implements EmailAddress,
 	* @param createDate the create date of this email address
 	*/
 	@Override
-	public void setCreateDate(java.util.Date createDate) {
+	public void setCreateDate(Date createDate) {
 		_emailAddress.setCreateDate(createDate);
 	}
 
@@ -461,12 +478,22 @@ public class EmailAddressWrapper implements EmailAddress,
 	}
 
 	/**
+	* Sets the last publish date of this email address.
+	*
+	* @param lastPublishDate the last publish date of this email address
+	*/
+	@Override
+	public void setLastPublishDate(Date lastPublishDate) {
+		_emailAddress.setLastPublishDate(lastPublishDate);
+	}
+
+	/**
 	* Sets the modified date of this email address.
 	*
 	* @param modifiedDate the modified date of this email address
 	*/
 	@Override
-	public void setModifiedDate(java.util.Date modifiedDate) {
+	public void setModifiedDate(Date modifiedDate) {
 		_emailAddress.setModifiedDate(modifiedDate);
 	}
 

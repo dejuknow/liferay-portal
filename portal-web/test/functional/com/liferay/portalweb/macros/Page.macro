@@ -69,6 +69,8 @@
 			<var name="virtualHostsURL" value="${virtualHostsURL}" />
 		</execute>
 
+		<execute function="AssertClick" locator1="CPSitepages#NAVIGATION_PUBLIC_PAGES" value1="Public Pages" />
+
 		<execute function="AssertClick" locator1="CPSitepages#TOOLBAR_ADD_PAGE" value1="Add Page" />
 
 		<execute function="Type#mouseOverFocusType" locator1="CPSitepagesAddpage#ADD_PAGE_NAME_FIELD" value1="${pageName}" />
@@ -90,6 +92,7 @@
 			<isset var="pageType" />
 			<then>
 				<execute macro="SitePage#selectSitePageTypeRadioCP">
+					<var name="componentName" value="${componentName}" />
 					<var name="pageTypeDescription" value="${pageTypeDescription}" />
 					<var name="pageTypeURL" value="${pageTypeURL}" />
 					<var name="sitePageType" value="${pageType}" />
@@ -195,6 +198,18 @@
 		<execute function="AssertTextEquals" locator1="CPSitepages#SUCCESS_MESSAGE" value1="Your request completed successfully." />
 	</command>
 
+	<command name="changeSiteScope">
+		<execute function="AssertClick" locator1="ProductMenu#PRODUCT_MENU_TABS_SITES_NAVIGATION" value1="Sites" />
+
+		<execute function="Click" locator1="ProductMenu#PRODUCT_MENU_PANEL_SITE_SELECTOR" />
+
+		<var name="key_portletCategoryName" value="${portletCategoryName}" />
+
+		<execute function="AssertClick" locator1="ProductMenu#PRODUCT_MENU_PANEL_ALL_SITES_PANEL_TITLE" value1="${portletCategoryName}" />
+
+		<execute function="AssertClick" locator1="ProductMenu#PRODUCT_MENU_PANEL_SITE_NAME" value1="${siteName}" />
+	</command>
+
 	<command name="deleteFriendlyURLPG">
 		<var name="key_friendlyUrlLocalized" value="${friendlyUrlLocalized}" />
 
@@ -287,21 +302,30 @@
 			</else>
 		</if>
 
-		<execute function="AssertClick#assertTextClickAtClickDockbar" locator1="Dockbar#ADMIN_DROP_DOWN_BUTTON" value1="Admin" />
-		<execute function="AssertClick" locator1="Dockbar#${portletCategoryKey}" value1="${portletCategoryName}" />
+		<if>
+			<condition function="IsElementNotPresent" locator1="ProductMenu#PRODUCT_MENU_TABS_SITES_NAVIGATION" />
+			<then>
+				<execute function="Click" locator1="ProductMenu#CONTROL_PANEL_SIDE_NAVIGATION_TOGGLE" />
+			</then>
+		</if>
+
+		<execute function="AssertClick" locator1="ProductMenu#PRODUCT_MENU_TABS_SITES_NAVIGATION" value1="Sites" />
 
 		<if>
 			<isset var="siteScopeName" />
 			<then>
-				<execute function="Click" locator1="Home#SCOPE_SELECTOR" />
-
-				<var name="key_siteScopeName" value="${siteScopeName}" />
-
-				<execute function="Click" locator1="Home#SCOPE_SELECTOR_MENULIST_ITEM" />
+				<execute macro="Page#changeSiteScope">
+					<var name="portletCategoryName" value="My Sites" />
+					<var name="siteName" value="${siteScopeName}" />
+				</execute>
 			</then>
 		</if>
 
+		<execute function="AssertClick" locator1="ProductMenu#PRODUCT_MENU_TABS_SITES_NAVIGATION" value1="Sites" />
+
 		<var name="key_portletCategoryName" value="${portletCategoryName}" />
+
+		<execute function="AssertClick" locator1="ProductMenu#PRODUCT_MENU_PANEL_SITES_PANEL_TITLE" value1="${portletCategoryName}" />
 
 		<if>
 			<not>
@@ -323,7 +347,7 @@
 					<then>
 						<var name="key_portletName" value="${portletName}" />
 
-						<execute function="AssertClick#assertPartialTextClickAtCPNavigation" locator1="Home#SITE_ADMINISTRATION_NAVIGATION" value1="${portletName}" />
+						<execute function="AssertClick" locator1="ProductMenu#PRODUCT_MENU_PANEL_MENU_ITEM" value1="${portletName}" />
 					</then>
 				</if>
 			</then>
@@ -447,15 +471,83 @@
 			<var name="virtualHostsURL" value="${virtualHostsURL}" />
 		</execute>
 
-		<execute function="AssertClick#assertTextClickAtClickDockbar" locator1="Dockbar#ADMIN" value1="Admin" />
-		<execute function="AssertClick" locator1="Dockbar#ADMIN_CONTROL_PANEL" value1="Control Panel" />
+		<var name="appsPortletList" value="App Manager,Purchased,Store,Plugins Configuration,License Manager" />
+		<var name="configurationPortletList" value="Portal Settings,Custom Fields,Server Administration,Portal Instances,Workflow Configuration,Workflow Definition,Configuration Admin,Server Access Policy" />
+		<var name="sitesPortletList" value="Sites,Site Templates,Page Templates" />
+		<var name="usersPortletList" value="Users and Organizations,User Groups,Roles,Password Policies,Monitoring" />
+
+		<for list="${usersPortletList}" param="usersPortletName">
+			<if>
+				<equals arg1="${portletName}" arg2="${usersPortletName}" />
+				<then>
+					<var name="portletCategoryName" value="Users" />
+				</then>
+			</if>
+		</for>
+
+		<for list="${sitesPortletList}" param="sitesPortletName">
+			<if>
+				<equals arg1="${portletName}" arg2="${sitesPortletName}" />
+				<then>
+					<var name="portletCategoryName" value="Administration" />
+				</then>
+			</if>
+		</for>
+
+		<for list="${appsPortletList}" param="appsPortletName">
+			<if>
+				<equals arg1="${portletName}" arg2="${appsPortletName}" />
+				<then>
+					<var name="portletCategoryName" value="Apps" />
+				</then>
+			</if>
+		</for>
+
+		<for list="${configurationPortletList}" param="configurationPortletName">
+			<if>
+				<equals arg1="${portletName}" arg2="${configurationPortletName}" />
+				<then>
+					<var name="portletCategoryName" value="Configuration" />
+				</then>
+			</if>
+		</for>
+
+		<var name="key_portletCategoryName" value="${portletCategoryName}" />
+
+		<if>
+			<equals arg1="${portletCategoryName}" arg2="Administration" />
+			<then>
+				<if>
+					<condition function="IsElementNotPresent" locator1="ProductMenu#PRODUCT_MENU_PANEL_SITE_SELECTOR" />
+					<then>
+						<execute function="Click" locator1="ProductMenu#CONTROL_PANEL_SIDE_NAVIGATION_TOGGLE" />
+					</then>
+				</if>
+
+				<execute function="Click" locator1="ProductMenu#PRODUCT_MENU_PANEL_SITE_SELECTOR" />
+
+				<execute function="AssertClick" locator1="ProductMenu#PRODUCT_MENU_PANEL_ALL_SITES_PANEL_TITLE" value1="Administration" />
+			</then>
+			<else>
+				<if>
+					<condition function="IsElementNotPresent" locator1="ProductMenu#PRODUCT_MENU_TABS_CONTROL_PANEL_NAVIGATION" />
+					<then>
+						<execute function="Click" locator1="ProductMenu#CONTROL_PANEL_SIDE_NAVIGATION_TOGGLE" />
+					</then>
+				</if>
+
+				<execute function="AssertClick" locator1="ProductMenu#PRODUCT_MENU_TABS_CONTROL_PANEL_NAVIGATION" value1="Control Panel" />
+
+				<execute function="AssertClick" locator1="ProductMenu#PRODUCT_MENU_PANEL_CONTROL_PANEL_PANEL_TITLE" value1="${portletCategoryName}" />
+			</else>
+		</if>
 
 		<if>
 			<isset var="portletName" />
 			<then>
 				<var name="key_portletName" value="${portletName}" />
 
-				<execute function="Click#click" locator1="Home#CONTROL_PANEL_NAVIGATION" />
+				<execute function="AssertClick" locator1="ProductMenu#PRODUCT_MENU_PANEL_MENU_ITEM" value1="${portletName}" />
 			</then>
 		</if>
 	</command>
@@ -502,12 +594,22 @@
 			<var name="virtualHostsURL" value="${virtualHostsURL}" />
 		</execute>
 
-		<execute function="Click" locator1="Dockbar#USER_NAME" />
-		<execute function="AssertClick" locator1="Dockbar#USER_MY_ACCOUNT" value1="My Account" />
+		<if>
+			<condition function="IsElementNotPresent" locator1="ProductMenu#PRODUCT_MENU_TABS_MY_SPACE_NAVIGATION" />
+			<then>
+				<execute function="Click" locator1="ProductMenu#CONTROL_PANEL_SIDE_NAVIGATION_TOGGLE" />
+			</then>
+		</if>
+
+		<execute function="AssertClick" locator1="ProductMenu#PRODUCT_MENU_TABS_MY_SPACE_NAVIGATION" value1="My Space" />
+
+		<var name="key_portletCategoryName" value="My Account" />
+
+		<execute function="AssertClick" locator1="ProductMenu#PRODUCT_MENU_PANEL_MY_SPACE_PANEL_TITLE" value1="My Account" />
 
 		<var name="key_portletName" value="${portletName}" />
 
-		<execute function="AssertClick" locator1="MyAccount#NAVIGATION_PRODUCTIVITY_CENTER" value1="${portletName}" />
+		<execute function="AssertClick" locator1="ProductMenu#PRODUCT_MENU_PANEL_MENU_ITEM" value1="${portletName}" />
 	</command>
 
 	<command name="gotoMyDashboard">
@@ -524,7 +626,7 @@
 			<var name="virtualHostsURL" value="${virtualHostsURL}" />
 		</execute>
 
-		<execute function="Click" locator1="Dockbar#USER_NAME" />
+		<execute function="Click" locator1="Dockbar#USER_AVATAR_IMAGE" />
 		<execute function="AssertClick" locator1="Dockbar#USER_MY_DASHBOARD" value1="My Dashboard" />
 	</command>
 
@@ -542,7 +644,7 @@
 			<var name="virtualHostsURL" value="${virtualHostsURL}" />
 		</execute>
 
-		<execute function="Click" locator1="Dockbar#USER_NAME" />
+		<execute function="Click" locator1="Dockbar#USER_AVATAR_IMAGE" />
 		<execute function="AssertClick" locator1="Dockbar#USER_MY_PROFILE" value1="My Profile" />
 	</command>
 
@@ -796,6 +898,33 @@
 		</if>
 	</command>
 
+	<command name="tearDownCP" summary="Delete all pages except the Welcome Page">
+		<execute macro="Page#gotoPagesCP">
+			<var name="friendlyURL" value="${friendlyURL}" />
+			<var name="pageAccess" value="${pageAccess}" />
+			<var name="pageStaging" value="${pageStaging}" />
+			<var name="portletName" value="Site Pages" />
+			<var name="siteName" value="${siteName}" />
+			<var name="siteNameURL" value="${siteNameURL}" />
+			<var name="siteURL" value="${siteURL}" />
+			<var name="specificURL" value="${specificURL}" />
+			<var name="virtualHostsURL" value="${virtualHostsURL}" />
+		</execute>
+
+		<execute function="AssertClick" locator1="CPSitepages#NAVIGATION_PUBLIC_PAGES" value1="Public Pages" />
+
+		<while>
+			<condition function="IsElementPresent" locator1="CPSitepages#PAGE_TREE_PAGE_LINK_2" />
+			<then>
+				<execute function="Click" locator1="CPSitepages#PAGE_TREE_PAGE_LINK_2" />
+
+				<execute function="ClickNoError" locator1="CPSitepages#TOOLBAR_DELETE" />
+
+				<execute function="Confirm#waitForConfirmation" value1="Are you sure you want to delete the selected page?" />
+			</then>
+		</while>
+	</command>
+
 	<command name="tearDownPG" summary="Delete all pages except the Welcome Page">
 		<execute macro="Page#openURL">
 			<var name="friendlyURL" value="${friendlyURL}" />
@@ -839,7 +968,7 @@
 				<execute function="AssertTextEquals" locator1="Home#PAGE_CHILD_PAGE" value1="${childPageName}" />
 			</then>
 			<else>
-				<execute function="AssertTextEquals" locator1="Home#BREADCRUMB_3" value1="${childPageName}" />
+				<execute function="Pause" locator1="1073" />
 			</else>
 		</if>
 	</command>
@@ -877,7 +1006,7 @@
 	</command>
 
 	<command name="viewFriendlyURLLanguageOptionsPG">
-		<execute function="Click" locator1="Dockbar#EDIT_SPANISH" />
+		<execute function="Click#clickAt" locator1="Dockbar#EDIT" />
 
 		<if>
 			<condition function="IsElementPresent" locator1="DockbarEditpanel#DETAILS_FRIENDLY_URL_TITLE" />
@@ -925,7 +1054,7 @@
 			</then>
 		</if>
 
-		<execute function="Click#clickAtSidebarClickAt" locator1="Dockbar#EDIT_SPANISH" />
+		<execute function="Click#clickAt" locator1="Dockbar#EDIT" />
 
 		<var name="key_defaultSiteLanguageKey" value="${defaultSiteLanguageKey}" />
 
@@ -967,10 +1096,10 @@
 		<if>
 			<equals arg1="${liferaySite}" arg2="true" />
 			<then>
-				<execute function="AssertTextEquals" locator1="Home#BREADCRUMB_1" value1="${pageName}" />
+				<execute function="Pause" locator1="1073" />
 			</then>
 			<else>
-				<execute function="AssertTextEquals" locator1="Home#BREADCRUMB_2" value1="${pageName}" />
+				<execute function="Pause" locator1="1073" />
 			</else>
 		</if>
 	</command>
@@ -999,10 +1128,10 @@
 		<if>
 			<isset var="childPageName" />
 			<then>
-				<execute function="AssertTextEquals" locator1="Home#BREADCRUMB_3" value1="${childPageName}" />
+				<execute function="Pause" locator1="1073" />
 			</then>
 			<else>
-				<execute function="AssertTextEquals" locator1="Home#BREADCRUMB_2" value1="${pageName}" />
+				<execute function="Pause" locator1="1073" />
 			</else>
 		</if>
 
@@ -1038,13 +1167,13 @@
 			<var name="virtualHostsURL" value="${virtualHostsURL}" />
 		</execute>
 
-		<execute function="Click" locator1="Dockbar#USER_NAME" />
+		<execute function="Click" locator1="Dockbar#USER_AVATAR_IMAGE" />
 		<execute function="AssertTextNotPresent" locator1="Dockbar#USER_MY_PROFILE" value1="My Profile" />
 		<execute function="AssertTextNotPresent" locator1="Dockbar#USER_MY_DASHBOARD" value1="My Dashboard" />
 	</command>
 
 	<command name="viewWithWorkflowPG">
-		<execute function="AssertTextEquals" locator1="Home#BREADCRUMB_2" value1="${pageName}" />
+		<execute function="Pause" locator1="1073" />
 		<execute function="Pause" locator1="5000" />
 
 		<execute function="AssertClick#assertTextClickAtClickDockbar" locator1="PGStaging#STAGING_DROP_DOWN_BUTTON" value1="Staging" />

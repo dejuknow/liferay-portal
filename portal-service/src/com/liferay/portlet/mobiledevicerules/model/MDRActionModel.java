@@ -499,6 +499,22 @@ public interface MDRActionModel extends AttachedModel, BaseModel<MDRAction>,
 	 */
 	public void setTypeSettings(String typeSettings);
 
+	/**
+	 * Returns the last publish date of this m d r action.
+	 *
+	 * @return the last publish date of this m d r action
+	 */
+	@Override
+	public Date getLastPublishDate();
+
+	/**
+	 * Sets the last publish date of this m d r action.
+	 *
+	 * @param lastPublishDate the last publish date of this m d r action
+	 */
+	@Override
+	public void setLastPublishDate(Date lastPublishDate);
+
 	@Override
 	public boolean isNew();
 

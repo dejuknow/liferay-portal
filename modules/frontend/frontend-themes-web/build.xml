@@ -7,7 +7,7 @@
 	<property name="alloy-font-awesome.version" value="2.0" />
 	<property name="css.dir" value="../frontend-css-web/src/META-INF/resources/html/css" />
 	<property name="frontend.js.web.dir" value="../frontend-js-web" />
-	<property name="lexicon.version" value="0.1.6" />
+	<property name="lexicon.version" value="0.1.9" />
 	<property name="themes.dir" value="src/META-INF/resources/html/themes" />
 	<property name="third.party.dir" value="../../../portal-web/third-party" />
 
@@ -207,10 +207,24 @@
 				/>
 			</replaceregexp>
 
-			<replaceregexp match="^// INSERT CUSTOM EXTENSIONS" replace="@import &quot;../../aui_custom&quot;;${line.separator}@import &quot;../../liferay_custom&quot;;" byline="true">
+			<replaceregexp match="^// INSERT CUSTOM EXTENSIONS" replace="@import &quot;../../liferay_variables_custom&quot;;${line.separator}@import &quot;../../liferay_variables&quot;;${line.separator}@import &quot;../../aui_custom&quot;;${line.separator}@import &quot;../../liferay_custom&quot;;" byline="true">
 				<fileset
 					dir="${lexicon.assets.dir}/scss"
 					includes="atlas.scss,bootstrap.scss,lexicon-base.scss"
+				/>
+			</replaceregexp>
+
+			<replaceregexp match="^// INSERT CUSTOM BASE VARS" replace="@import &quot;../../aui_variables&quot;;${line.separator}@import &quot;../alloy-font-awesome/scss/font-awesome&quot;;" byline="true">
+				<fileset
+					dir="${lexicon.assets.dir}/scss"
+					includes="atlas-variables.scss,lexicon-base-variables.scss"
+				/>
+			</replaceregexp>
+
+			<replaceregexp match="^// INSERT CUSTOM VARS" replace="@import &quot;../../liferay_variables_custom&quot;;${line.separator}@import &quot;../../liferay_variables&quot;;" byline="true">
+				<fileset
+					dir="${lexicon.assets.dir}/scss"
+					includes="atlas-variables.scss,lexicon-base-variables.scss"
 				/>
 			</replaceregexp>
 

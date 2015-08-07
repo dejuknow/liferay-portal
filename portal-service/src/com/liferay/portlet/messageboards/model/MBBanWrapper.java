@@ -63,6 +63,7 @@ public class MBBanWrapper implements MBBan, ModelWrapper<MBBan> {
 		attributes.put("createDate", getCreateDate());
 		attributes.put("modifiedDate", getModifiedDate());
 		attributes.put("banUserId", getBanUserId());
+		attributes.put("lastPublishDate", getLastPublishDate());
 
 		return attributes;
 	}
@@ -122,6 +123,12 @@ public class MBBanWrapper implements MBBan, ModelWrapper<MBBan> {
 		if (banUserId != null) {
 			setBanUserId(banUserId);
 		}
+
+		Date lastPublishDate = (Date)attributes.get("lastPublishDate");
+
+		if (lastPublishDate != null) {
+			setLastPublishDate(lastPublishDate);
+		}
 	}
 
 	@Override
@@ -180,7 +187,7 @@ public class MBBanWrapper implements MBBan, ModelWrapper<MBBan> {
 	* @return the create date of this message boards ban
 	*/
 	@Override
-	public java.util.Date getCreateDate() {
+	public Date getCreateDate() {
 		return _mbBan.getCreateDate();
 	}
 
@@ -200,12 +207,22 @@ public class MBBanWrapper implements MBBan, ModelWrapper<MBBan> {
 	}
 
 	/**
+	* Returns the last publish date of this message boards ban.
+	*
+	* @return the last publish date of this message boards ban
+	*/
+	@Override
+	public Date getLastPublishDate() {
+		return _mbBan.getLastPublishDate();
+	}
+
+	/**
 	* Returns the modified date of this message boards ban.
 	*
 	* @return the modified date of this message boards ban
 	*/
 	@Override
-	public java.util.Date getModifiedDate() {
+	public Date getModifiedDate() {
 		return _mbBan.getModifiedDate();
 	}
 
@@ -340,7 +357,7 @@ public class MBBanWrapper implements MBBan, ModelWrapper<MBBan> {
 	* @param createDate the create date of this message boards ban
 	*/
 	@Override
-	public void setCreateDate(java.util.Date createDate) {
+	public void setCreateDate(Date createDate) {
 		_mbBan.setCreateDate(createDate);
 	}
 
@@ -373,12 +390,22 @@ public class MBBanWrapper implements MBBan, ModelWrapper<MBBan> {
 	}
 
 	/**
+	* Sets the last publish date of this message boards ban.
+	*
+	* @param lastPublishDate the last publish date of this message boards ban
+	*/
+	@Override
+	public void setLastPublishDate(Date lastPublishDate) {
+		_mbBan.setLastPublishDate(lastPublishDate);
+	}
+
+	/**
 	* Sets the modified date of this message boards ban.
 	*
 	* @param modifiedDate the modified date of this message boards ban
 	*/
 	@Override
-	public void setModifiedDate(java.util.Date modifiedDate) {
+	public void setModifiedDate(Date modifiedDate) {
 		_mbBan.setModifiedDate(modifiedDate);
 	}
 

@@ -176,6 +176,8 @@ public class LayoutPersistenceTest {
 
 		newLayout.setSourcePrototypeLayoutUuid(RandomTestUtil.randomString());
 
+		newLayout.setLastPublishDate(RandomTestUtil.nextDate());
+
 		_layouts.add(_persistence.update(newLayout));
 
 		Layout existingLayout = _persistence.findByPrimaryKey(newLayout.getPrimaryKey());
@@ -233,6 +235,9 @@ public class LayoutPersistenceTest {
 			newLayout.getLayoutPrototypeLinkEnabled());
 		Assert.assertEquals(existingLayout.getSourcePrototypeLayoutUuid(),
 			newLayout.getSourcePrototypeLayoutUuid());
+		Assert.assertEquals(Time.getShortTimestamp(
+				existingLayout.getLastPublishDate()),
+			Time.getShortTimestamp(newLayout.getLastPublishDate()));
 	}
 
 	@Test
@@ -399,13 +404,12 @@ public class LayoutPersistenceTest {
 			true, "userId", true, "userName", true, "createDate", true,
 			"modifiedDate", true, "privateLayout", true, "layoutId", true,
 			"parentLayoutId", true, "name", true, "title", true, "description",
-			true, "keywords", true, "robots", true, "type", true,
-			"typeSettings", true, "hidden", true, "friendlyURL", true,
-			"iconImageId", true, "themeId", true, "colorSchemeId", true,
-			"wapThemeId", true, "wapColorSchemeId", true, "css", true,
-			"priority", true, "layoutPrototypeUuid", true,
+			true, "keywords", true, "robots", true, "type", true, "hidden",
+			true, "friendlyURL", true, "iconImageId", true, "themeId", true,
+			"colorSchemeId", true, "wapThemeId", true, "wapColorSchemeId",
+			true, "priority", true, "layoutPrototypeUuid", true,
 			"layoutPrototypeLinkEnabled", true, "sourcePrototypeLayoutUuid",
-			true);
+			true, "lastPublishDate", true);
 	}
 
 	@Test
@@ -715,6 +719,8 @@ public class LayoutPersistenceTest {
 		layout.setLayoutPrototypeLinkEnabled(RandomTestUtil.randomBoolean());
 
 		layout.setSourcePrototypeLayoutUuid(RandomTestUtil.randomString());
+
+		layout.setLastPublishDate(RandomTestUtil.nextDate());
 
 		_layouts.add(_persistence.update(layout));
 

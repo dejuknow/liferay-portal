@@ -23,7 +23,6 @@ import com.liferay.portal.kernel.search.QueryConfig;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchEngineUtil;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
-import com.liferay.portal.kernel.test.rule.DeleteAfterTestRunTestRule;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -35,7 +34,7 @@ import com.liferay.portal.service.RepositoryEntryLocalServiceUtil;
 import com.liferay.portal.service.RepositoryLocalServiceUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.test.ServiceTestUtil;
-import com.liferay.portal.util.PortletKeys;
+import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portlet.documentlibrary.model.DLFolderConstants;
 
 import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
@@ -55,8 +54,8 @@ public class CMISQueryBuilderTest {
 
 	@ClassRule
 	@Rule
-	public static final DeleteAfterTestRunTestRule deleteAfterTestRule =
-		new DeleteAfterTestRunTestRule();
+	public static final LiferayIntegrationTestRule liferayIntegrationTestRule =
+		new LiferayIntegrationTestRule();
 
 	@Before
 	public void setUp() throws Exception {
@@ -70,7 +69,7 @@ public class CMISQueryBuilderTest {
 			ClassNameLocalServiceUtil.getClassNameId(_REPOSITORY_CLASS_NAME),
 			DLFolderConstants.DEFAULT_PARENT_FOLDER_ID,
 			StringUtil.randomString(), StringUtil.randomString(),
-			PortletKeys.DOCUMENT_LIBRARY, new UnicodeProperties(), true,
+			StringUtil.randomString(), new UnicodeProperties(), true,
 			serviceContext);
 
 		_repositoryEntry =

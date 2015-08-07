@@ -76,7 +76,7 @@ public class MDRRuleGroupInstancePermissionImpl
 			permissionChecker, ruleGroupInstance.getGroupId(),
 			MDRRuleGroupInstance.class.getName(),
 			ruleGroupInstance.getRuleGroupInstanceId(),
-			PortletKeys.MOBILE_DEVICE_SITE_ADMIN, actionId);
+			PortletKeys.MOBILE_DEVICE_RULES, actionId);
 
 		if (hasPermission != null) {
 			return hasPermission.booleanValue();
