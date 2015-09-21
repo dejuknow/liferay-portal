@@ -14,19 +14,20 @@
 
 package com.liferay.portlet.display.template.web.lar;
 
+import com.liferay.dynamic.data.mapping.model.DDMTemplate;
+import com.liferay.dynamic.data.mapping.model.DDMTemplateConstants;
+import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalServiceUtil;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Property;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
+import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
 import com.liferay.portal.kernel.template.TemplateHandlerRegistryUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PortletKeys;
-import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
-import com.liferay.portlet.dynamicdatamapping.model.DDMTemplateConstants;
-import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalServiceUtil;
 import com.liferay.portlet.exportimport.lar.BasePortletDataHandler;
 import com.liferay.portlet.exportimport.lar.ManifestSummary;
 import com.liferay.portlet.exportimport.lar.PortletDataContext;
@@ -40,7 +41,9 @@ import java.util.List;
 
 import javax.portlet.PortletPreferences;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Juan Fernández
@@ -54,12 +57,6 @@ public class PortletDisplayTemplatePortletDataHandler
 
 	public static final String NAMESPACE = "portlet_display_template";
 
-	public PortletDisplayTemplatePortletDataHandler() {
-		setExportControls(
-			new PortletDataHandlerBoolean(
-				NAMESPACE, "application-display-templates", true, true));
-	}
-
 	@Override
 	public StagedModelType[] getDeletionSystemEventStagedModelTypes() {
 		return getStagedModelTypes();
@@ -71,8 +68,7 @@ public class PortletDisplayTemplatePortletDataHandler
 
 		for (StagedModelType stagedModelType : getStagedModelTypes()) {
 			long modelCount = manifestSummary.getModelAdditionCount(
-				stagedModelType.getClassName(),
-				stagedModelType.getReferrerClassName());
+				stagedModelType);
 
 			if (modelCount == -1) {
 				continue;
@@ -87,6 +83,13 @@ public class PortletDisplayTemplatePortletDataHandler
 		}
 
 		return totalModelCount;
+	}
+
+	@Activate
+	protected void activate() {
+		setExportControls(
+			new PortletDataHandlerBoolean(
+				NAMESPACE, "application-display-templates", true, true));
 	}
 
 	@Override
@@ -207,6 +210,11 @@ public class PortletDisplayTemplatePortletDataHandler
 			new StagedModelType[stagedModelTypes.size()]);
 
 		return _stagedModelTypes;
+	}
+
+	@Reference(target = ModuleServiceLifecycle.PORTAL_INITIALIZED, unbind = "-")
+	protected void setModuleServiceLifecycle(
+		ModuleServiceLifecycle moduleServiceLifecycle) {
 	}
 
 	private StagedModelType[] _stagedModelTypes;

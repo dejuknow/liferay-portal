@@ -23,6 +23,7 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.UnicodeProperties;
+import com.liferay.portal.model.Company;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.GroupConstants;
 import com.liferay.portal.model.Organization;
@@ -699,6 +700,18 @@ public class GroupServiceImpl extends GroupServiceBaseImpl {
 		}
 
 		if ((classNames == null) ||
+			ArrayUtil.contains(classNames, Company.class.getName())) {
+
+			userSiteGroups.addAll(
+				groupLocalService.search(
+					user.getCompanyId(),
+					new long[] {
+						classNameLocalService.getClassNameId(Company.class)
+					},
+					null, new LinkedHashMap<String, Object>(), start, end));
+		}
+
+		if ((classNames == null) ||
 			ArrayUtil.contains(classNames, Group.class.getName())) {
 
 			LinkedHashMap<String, Object> groupParams = new LinkedHashMap<>();
@@ -714,18 +727,28 @@ public class GroupServiceImpl extends GroupServiceBaseImpl {
 		if ((classNames == null) ||
 			ArrayUtil.contains(classNames, Organization.class.getName())) {
 
+			int filteredUserSiteGroupsCount = 0;
+
 			List<Organization> userOrgs =
 				organizationLocalService.getOrganizations(
-					userId, start, end, null);
+					userId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
 
 			for (Organization organization : userOrgs) {
+				if (filteredUserSiteGroupsCount == max) {
+					break;
+				}
+
 				if (!organization.hasPrivateLayouts() &&
 					!organization.hasPublicLayouts()) {
 
 					userSiteGroups.remove(organization.getGroup());
+
+					filteredUserSiteGroupsCount--;
 				}
 				else {
-					userSiteGroups.add(0, organization.getGroup());
+					userSiteGroups.add(organization.getGroup());
+
+					filteredUserSiteGroupsCount++;
 				}
 
 				if (!PropsValues.ORGANIZATIONS_MEMBERSHIP_STRICT) {
@@ -738,7 +761,9 @@ public class GroupServiceImpl extends GroupServiceBaseImpl {
 							continue;
 						}
 
-						userSiteGroups.add(0, ancestorOrganization.getGroup());
+						userSiteGroups.add(ancestorOrganization.getGroup());
+
+						filteredUserSiteGroupsCount++;
 					}
 				}
 			}

@@ -14,14 +14,14 @@
 
 package com.liferay.exportimport.lifecycle;
 
+import com.liferay.portal.kernel.messaging.Destination;
+import com.liferay.portal.kernel.messaging.DestinationNames;
 import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.messaging.MessageListener;
 import com.liferay.portlet.exportimport.lifecycle.ExportImportLifecycleEventListenerRegistryUtil;
 import com.liferay.portlet.exportimport.lifecycle.ExportImportLifecycleListener;
 
 import java.util.Set;
-
-import javax.servlet.ServletContext;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -31,12 +31,13 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	immediate = true,
-	property = {"destination.name=liferay/export_import_lifecycle_event_async"},
+	property = {"destination.name=" + DestinationNames.EXPORT_IMPORT_LIFECYCLE_EVENT_ASYNC},
 	service = MessageListener.class
 )
 public class AsyncExportImportLifecycleMessageListener
 	extends BaseExportImportLifecycleMessageListener {
 
+	@Override
 	protected Set<ExportImportLifecycleListener>
 		getExportImportLifecycleListeners(Message message) {
 
@@ -44,8 +45,11 @@ public class AsyncExportImportLifecycleMessageListener
 			getAsyncExportImportLifecycleListeners();
 	}
 
-	@Reference(target = "(original.bean=*)", unbind = "-")
-	protected void setServletContext(ServletContext servletContext) {
+	@Reference(
+		target = "(destination.name=" + DestinationNames.EXPORT_IMPORT_LIFECYCLE_EVENT_ASYNC + ")",
+		unbind = "-"
+	)
+	protected void setDestination(Destination destination) {
 	}
 
 }

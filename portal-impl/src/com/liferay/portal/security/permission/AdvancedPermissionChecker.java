@@ -134,6 +134,7 @@ public class AdvancedPermissionChecker extends BasePermissionChecker {
 	 * @return the permission checker bag for the guest user
 	 * @throws Exception if an exception occurred
 	 */
+	@Override
 	public PermissionCheckerBag getGuestUserBag() throws Exception {
 		Group guestGroup = GroupLocalServiceUtil.getGroup(
 			getCompanyId(), GroupConstants.GUEST);
@@ -377,6 +378,7 @@ public class AdvancedPermissionChecker extends BasePermissionChecker {
 	 * @throws Exception if a user or group with the primary key could not be
 	 *         found
 	 */
+	@Override
 	public PermissionCheckerBag getUserBag(long userId, long groupId)
 		throws Exception {
 
@@ -904,7 +906,18 @@ public class AdvancedPermissionChecker extends BasePermissionChecker {
 			long groupId, String name, String primKey, String actionId)
 		throws Exception {
 
-		ResourceActionsUtil.checkAction(name, actionId);
+		try {
+			ResourceActionsUtil.checkAction(name, actionId);
+		}
+		catch (Exception e) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(
+					"Guest does not have permission to " + actionId + " on " +
+						name + " with primary key " + primKey);
+			}
+
+			return false;
+		}
 
 		if (name.indexOf(CharPool.PERIOD) != -1) {
 

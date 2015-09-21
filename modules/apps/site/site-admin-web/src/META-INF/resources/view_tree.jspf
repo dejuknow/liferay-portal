@@ -38,7 +38,7 @@ if (group != null) {
 }
 %>
 
-<c:if test="<%= (group != null) %>">
+<c:if test="<%= group != null %>">
 	<c:if test="<%= layout.isTypeControlPanel() %>">
 		<div id="breadcrumb">
 			<liferay-ui:breadcrumb showCurrentGroup="<%= false %>" showGuestGroup="<%= false %>" showLayout="<%= false %>" showPortletBreadcrumb="<%= true %>" />
@@ -57,11 +57,15 @@ if (group != null) {
 			parentGroupName = parentGroup.getDescriptiveName();
 		}
 	}
-	%>
 
-	<portlet:renderURL var="headerBackURL">
-		<portlet:param name="groupId" value="<%= String.valueOf(parentGroupId) %>" />
-	</portlet:renderURL>
+	PortletURL headerBackURL = renderResponse.createRenderURL();
+
+	if (parentGroupId > 0) {
+		headerBackURL.setParameter("mvcPath", "/view.jsp");
+		headerBackURL.setParameter("groupId", String.valueOf(parentGroupId));
+		headerBackURL.setParameter("sitesListView", SiteConstants.LIST_VIEW_TREE);
+	}
+	%>
 
 	<liferay-ui:header
 		backLabel="<%= parentGroupName %>"
@@ -109,6 +113,8 @@ if (group != null) {
 			GroupSearchTerms searchTerms = (GroupSearchTerms)searchContainer.getSearchTerms();
 
 			request.setAttribute("view_tree.jspf-searchTerms", searchTerms);
+
+			Map<Long, Integer> groupUsersCounts = Collections.emptyMap();
 			%>
 
 			<liferay-ui:search-container-results>
@@ -179,6 +185,10 @@ if (group != null) {
 
 				<%
 				searchContainer.setResults(results);
+
+				long[] groupIds = ListUtil.toLongArray(results, Group.GROUP_ID_ACCESSOR);
+
+				groupUsersCounts = UserLocalServiceUtil.searchCounts(company.getCompanyId(), WorkflowConstants.STATUS_APPROVED, groupIds);
 				%>
 
 			</liferay-ui:search-container-results>
@@ -199,19 +209,13 @@ if (group != null) {
 				rowIdProperty="friendlyURL"
 				rowVar="row"
 			>
+				<portlet:renderURL var="siteAdministrationURL" windowState="<%= WindowState.MAXIMIZED.toString() %>">
+					<portlet:param name="mvcPath" value="/edit_site.jsp" />
+					<portlet:param name="groupId" value="<%= String.valueOf(curGroup.getGroupId()) %>" />
+				</portlet:renderURL>
 
 				<%
-				String rowURL = null;
-
-				ThemeDisplay siteThemeDisplay = (ThemeDisplay)themeDisplay.clone();
-
-				siteThemeDisplay.setScopeGroupId(curGroup.getGroupId());
-
-				PortletURL siteAdministrationURL = PortalUtil.getSiteAdministrationURL(renderResponse, siteThemeDisplay);
-
-				if (siteAdministrationURL != null) {
-					rowURL = siteAdministrationURL.toString();
-				}
+				String rowURL = siteAdministrationURL.toString();
 				%>
 
 				<%@ include file="/site_columns.jspf" %>

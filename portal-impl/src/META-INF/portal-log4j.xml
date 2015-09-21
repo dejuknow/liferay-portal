@@ -233,7 +233,7 @@
 	</category>
 
 	<category name="com.liferay.portal.events.StartupAction">
-		<priority value="ERROR" />
+		<priority value="INFO" />
 	</category>
 
 	<category name="com.liferay.portal.events.StartupHelper">
@@ -412,6 +412,10 @@
 		<priority value="INFO" />
 	</category>
 
+	<category name="com.liferay.portal.patcher.PatcherImpl">
+		<priority value="WARN" />
+	</category>
+
 	<category name="com.liferay.portal.pop">
 		<priority value="ERROR" />
 	</category>
@@ -421,10 +425,6 @@
 	</category>
 
 	<category name="com.liferay.portal.sanitizer.DummySanitizerImpl">
-		<priority value="ERROR" />
-	</category>
-
-	<category name="com.liferay.portal.scripting.ruby.RubyExecutor">
 		<priority value="ERROR" />
 	</category>
 
@@ -988,10 +988,6 @@
 		<priority value="WARN" />
 	</category>
 
-	<category name="com.liferay.portlet.messageboards.pop.MessageListenerImpl">
-		<priority value="ERROR" />
-	</category>
-
 	<category name="com.liferay.portlet.messageboards.service.impl.MBCategoryLocalServiceImpl">
 		<priority value="ERROR" />
 	</category>
@@ -1006,10 +1002,6 @@
 
 	<category name="com.liferay.portlet.portletconfiguration.action">
 		<priority value="ERROR" />
-	</category>
-
-	<category name="com.liferay.portlet.shopping.action.PayPalNotificationAction">
-		<priority value="DEBUG" />
 	</category>
 
 	<category name="com.liferay.portlet.usersadmin.action.EditUserPortraitAction">
@@ -1161,10 +1153,6 @@
 	</category>
 
 	<category name="org.apache.commons.validator">
-		<priority value="ERROR" />
-	</category>
-
-	<category name="org.apache.jackrabbit">
 		<priority value="ERROR" />
 	</category>
 

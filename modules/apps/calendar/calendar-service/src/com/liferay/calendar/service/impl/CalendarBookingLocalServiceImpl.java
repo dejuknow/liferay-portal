@@ -33,9 +33,7 @@ import com.liferay.calendar.service.configuration.CalendarServiceConfigurationVa
 import com.liferay.calendar.social.CalendarActivityKeys;
 import com.liferay.calendar.util.JCalendarUtil;
 import com.liferay.calendar.util.RecurrenceUtil;
-import com.liferay.calendar.workflow.CalendarBookingApprovalWorkflow;
 import com.liferay.calendar.workflow.CalendarBookingWorkflowConstants;
-import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.Property;
@@ -179,8 +177,16 @@ public class CalendarBookingLocalServiceImpl
 		calendarBooking.setSecondReminder(secondReminder);
 		calendarBooking.setSecondReminderType(secondReminderType);
 		calendarBooking.setExpandoBridgeAttributes(serviceContext);
-		calendarBooking.setStatus(
-			CalendarBookingWorkflowConstants.STATUS_DRAFT);
+
+		if (calendarBooking.isMasterBooking()) {
+			calendarBooking.setStatus(
+				CalendarBookingWorkflowConstants.STATUS_DRAFT);
+		}
+		else {
+			calendarBooking.setStatus(
+				CalendarBookingWorkflowConstants.STATUS_MASTER_PENDING);
+		}
+
 		calendarBooking.setStatusDate(serviceContext.getModifiedDate(now));
 
 		calendarBookingPersistence.update(calendarBooking);
@@ -214,11 +220,13 @@ public class CalendarBookingLocalServiceImpl
 
 		// Workflow
 
-		WorkflowHandlerRegistryUtil.startWorkflowInstance(
-			calendarBooking.getCompanyId(), calendarBooking.getGroupId(),
-			userId, CalendarBooking.class.getName(),
-			calendarBooking.getCalendarBookingId(), calendarBooking,
-			serviceContext);
+		if (calendarBooking.isMasterBooking()) {
+			WorkflowHandlerRegistryUtil.startWorkflowInstance(
+				calendarBooking.getCompanyId(), calendarBooking.getGroupId(),
+				userId, CalendarBooking.class.getName(),
+				calendarBooking.getCalendarBookingId(), calendarBooking,
+				serviceContext);
+		}
 
 		return calendarBooking;
 	}
@@ -383,6 +391,16 @@ public class CalendarBookingLocalServiceImpl
 			recurrenceObj.setUntilJCalendar(startTimeJCalendar);
 		}
 		else {
+			CalendarBooking calendarBookingInstance =
+				RecurrenceUtil.getCalendarBookingInstance(calendarBooking, 1);
+
+			if (calendarBookingInstance == null) {
+				calendarBookingLocalService.deleteCalendarBooking(
+					calendarBooking);
+
+				return;
+			}
+
 			recurrenceObj.addExceptionDate(startTimeJCalendar);
 		}
 
@@ -749,8 +767,7 @@ public class CalendarBookingLocalServiceImpl
 			Map<Locale, String> descriptionMap, String location, long startTime,
 			long endTime, boolean allDay, String recurrence, long firstReminder,
 			String firstReminderType, long secondReminder,
-			String secondReminderType, int status,
-			ServiceContext serviceContext)
+			String secondReminderType, ServiceContext serviceContext)
 		throws PortalException {
 
 		// Calendar booking
@@ -804,6 +821,11 @@ public class CalendarBookingLocalServiceImpl
 		calendarBooking.setFirstReminderType(firstReminderType);
 		calendarBooking.setSecondReminder(secondReminder);
 		calendarBooking.setSecondReminderType(secondReminderType);
+
+		if (!calendarBooking.isPending() || !calendarBooking.isDraft()) {
+			calendarBooking.setStatus(WorkflowConstants.STATUS_DRAFT);
+		}
+
 		calendarBooking.setExpandoBridgeAttributes(serviceContext);
 
 		calendarBookingPersistence.update(calendarBooking);
@@ -833,11 +855,13 @@ public class CalendarBookingLocalServiceImpl
 
 		// Workflow
 
-		WorkflowHandlerRegistryUtil.startWorkflowInstance(
-			calendarBooking.getCompanyId(), calendarBooking.getGroupId(),
-			userId, CalendarBooking.class.getName(),
-			calendarBooking.getCalendarBookingId(), calendarBooking,
-			serviceContext);
+		if (calendarBooking.isMasterBooking()) {
+			WorkflowHandlerRegistryUtil.startWorkflowInstance(
+				calendarBooking.getCompanyId(), calendarBooking.getGroupId(),
+				userId, CalendarBooking.class.getName(),
+				calendarBooking.getCalendarBookingId(), calendarBooking,
+				serviceContext);
+		}
 
 		return calendarBooking;
 	}
@@ -848,7 +872,7 @@ public class CalendarBookingLocalServiceImpl
 			Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
 			String location, long startTime, long endTime, boolean allDay,
 			String recurrence, long firstReminder, String firstReminderType,
-			long secondReminder, String secondReminderType, int status,
+			long secondReminder, String secondReminderType,
 			ServiceContext serviceContext)
 		throws PortalException {
 
@@ -859,7 +883,7 @@ public class CalendarBookingLocalServiceImpl
 			userId, calendarBookingId, calendarId, childCalendarIds, titleMap,
 			descriptionMap, location, startTime, endTime, allDay, recurrence,
 			firstReminder, firstReminderType, secondReminder,
-			secondReminderType, status, serviceContext);
+			secondReminderType, serviceContext);
 	}
 
 	@Override
@@ -870,8 +894,7 @@ public class CalendarBookingLocalServiceImpl
 			String location, long startTime, long endTime, boolean allDay,
 			String recurrence, boolean allFollowing, long firstReminder,
 			String firstReminderType, long secondReminder,
-			String secondReminderType, int status,
-			ServiceContext serviceContext)
+			String secondReminderType, ServiceContext serviceContext)
 		throws PortalException {
 
 		CalendarBooking calendarBooking =
@@ -882,7 +905,7 @@ public class CalendarBookingLocalServiceImpl
 				userId, calendarBookingId, calendarId, childCalendarIds,
 				titleMap, descriptionMap, location, startTime, endTime, allDay,
 				recurrence, firstReminder, firstReminderType, secondReminder,
-				secondReminderType, status, serviceContext);
+				secondReminderType, serviceContext);
 		}
 
 		String oldRecurrence = calendarBooking.getRecurrence();
@@ -922,7 +945,7 @@ public class CalendarBookingLocalServiceImpl
 			Map<Locale, String> descriptionMap, String location, long startTime,
 			long endTime, boolean allDay, String recurrence,
 			boolean allFollowing, long firstReminder, String firstReminderType,
-			long secondReminder, String secondReminderType, int status,
+			long secondReminder, String secondReminderType,
 			ServiceContext serviceContext)
 		throws PortalException {
 
@@ -933,7 +956,7 @@ public class CalendarBookingLocalServiceImpl
 			userId, calendarBookingId, instanceIndex, calendarId,
 			childCalendarIds, titleMap, descriptionMap, location, startTime,
 			endTime, allDay, recurrence, allFollowing, firstReminder,
-			firstReminderType, secondReminder, secondReminderType, status,
+			firstReminderType, secondReminder, secondReminderType,
 			serviceContext);
 	}
 
@@ -990,6 +1013,36 @@ public class CalendarBookingLocalServiceImpl
 				updateStatus(
 					userId, childCalendarBooking,
 					CalendarBookingWorkflowConstants.STATUS_PENDING,
+					serviceContext);
+			}
+		}
+		else if (status == CalendarBookingWorkflowConstants.STATUS_APPROVED) {
+			List<CalendarBooking> childCalendarBookings =
+				calendarBooking.getChildCalendarBookings();
+
+			for (CalendarBooking childCalendarBooking : childCalendarBookings) {
+				if (childCalendarBooking.equals(calendarBooking)) {
+					continue;
+				}
+
+				updateStatus(
+					userId, childCalendarBooking,
+					CalendarBookingWorkflowConstants.STATUS_PENDING,
+					serviceContext);
+			}
+		}
+		else {
+			List<CalendarBooking> childCalendarBookings =
+				calendarBooking.getChildCalendarBookings();
+
+			for (CalendarBooking childCalendarBooking : childCalendarBookings) {
+				if (childCalendarBooking.equals(calendarBooking)) {
+					continue;
+				}
+
+				updateStatus(
+					userId, childCalendarBooking,
+					CalendarBookingWorkflowConstants.STATUS_MASTER_PENDING,
 					serviceContext);
 			}
 		}
@@ -1209,9 +1262,6 @@ public class CalendarBookingLocalServiceImpl
 			throw new CalendarBookingRecurrenceException();
 		}
 	}
-
-	@BeanReference(type = CalendarBookingApprovalWorkflow.class)
-	protected CalendarBookingApprovalWorkflow calendarBookingApprovalWorkflow;
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		CalendarBookingLocalServiceImpl.class);

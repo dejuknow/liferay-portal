@@ -64,6 +64,7 @@ public class TeamWrapper implements Team, ModelWrapper<Team> {
 		attributes.put("groupId", getGroupId());
 		attributes.put("name", getName());
 		attributes.put("description", getDescription());
+		attributes.put("lastPublishDate", getLastPublishDate());
 
 		return attributes;
 	}
@@ -135,6 +136,12 @@ public class TeamWrapper implements Team, ModelWrapper<Team> {
 		if (description != null) {
 			setDescription(description);
 		}
+
+		Date lastPublishDate = (Date)attributes.get("lastPublishDate");
+
+		if (lastPublishDate != null) {
+			setLastPublishDate(lastPublishDate);
+		}
 	}
 
 	@Override
@@ -163,7 +170,7 @@ public class TeamWrapper implements Team, ModelWrapper<Team> {
 	* @return the create date of this team
 	*/
 	@Override
-	public java.util.Date getCreateDate() {
+	public Date getCreateDate() {
 		return _team.getCreateDate();
 	}
 
@@ -193,12 +200,22 @@ public class TeamWrapper implements Team, ModelWrapper<Team> {
 	}
 
 	/**
+	* Returns the last publish date of this team.
+	*
+	* @return the last publish date of this team
+	*/
+	@Override
+	public Date getLastPublishDate() {
+		return _team.getLastPublishDate();
+	}
+
+	/**
 	* Returns the modified date of this team.
 	*
 	* @return the modified date of this team
 	*/
 	@Override
-	public java.util.Date getModifiedDate() {
+	public Date getModifiedDate() {
 		return _team.getModifiedDate();
 	}
 
@@ -339,7 +356,7 @@ public class TeamWrapper implements Team, ModelWrapper<Team> {
 	* @param createDate the create date of this team
 	*/
 	@Override
-	public void setCreateDate(java.util.Date createDate) {
+	public void setCreateDate(Date createDate) {
 		_team.setCreateDate(createDate);
 	}
 
@@ -381,12 +398,22 @@ public class TeamWrapper implements Team, ModelWrapper<Team> {
 	}
 
 	/**
+	* Sets the last publish date of this team.
+	*
+	* @param lastPublishDate the last publish date of this team
+	*/
+	@Override
+	public void setLastPublishDate(Date lastPublishDate) {
+		_team.setLastPublishDate(lastPublishDate);
+	}
+
+	/**
 	* Sets the modified date of this team.
 	*
 	* @param modifiedDate the modified date of this team
 	*/
 	@Override
-	public void setModifiedDate(java.util.Date modifiedDate) {
+	public void setModifiedDate(Date modifiedDate) {
 		_team.setModifiedDate(modifiedDate);
 	}
 

@@ -44,8 +44,7 @@ public class CKEditorOnEditorCreateDynamicInclude implements DynamicInclude {
 		Bundle bundle = _bundleContext.getBundle();
 
 		URL entryURL = bundle.getEntry(
-			"/META-INF/resources/html/editors/ckeditor/extension" +
-				"/dialog_definition.js");
+			"/META-INF/resources/ckeditor/extension/dialog_definition.js");
 
 		StreamUtil.transfer(entryURL.openStream(), response.getOutputStream());
 	}
@@ -55,7 +54,7 @@ public class CKEditorOnEditorCreateDynamicInclude implements DynamicInclude {
 		DynamicInclude.DynamicIncludeRegistry dynamicIncludeRegistry) {
 
 		dynamicIncludeRegistry.register(
-			"com.liferay.frontend.editors.web#ckeditor#js#onEditorCreate");
+			"com.liferay.frontend.editors.web#ckeditor#onEditorCreate");
 	}
 
 	@Activate

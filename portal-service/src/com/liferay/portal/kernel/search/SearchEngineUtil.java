@@ -17,12 +17,14 @@ package com.liferay.portal.kernel.search;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.DestinationNames;
+import com.liferay.portal.kernel.messaging.proxy.ProxyModeThreadLocal;
 import com.liferay.portal.kernel.search.queue.QueuingSearchEngine;
 import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
 import com.liferay.portal.kernel.util.ClassUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.portal.kernel.util.ProxyFactory;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.security.permission.PermissionThreadLocal;
 import com.liferay.registry.Registry;
@@ -890,7 +892,8 @@ public class SearchEngineUtil {
 
 		SearchContext searchContext = new SearchContext();
 
-		searchContext.setCommitImmediately(commitImmediately);
+		searchContext.setCommitImmediately(
+			commitImmediately || ProxyModeThreadLocal.isForceSync());
 		searchContext.setCompanyId(companyId);
 		searchContext.setSearchEngineId(searchEngineId);
 
@@ -965,15 +968,6 @@ public class SearchEngineUtil {
 		_queueCapacity = queueCapacity;
 	}
 
-	public void setSearchPermissionChecker(
-		SearchPermissionChecker searchPermissionChecker) {
-
-		PortalRuntimePermission.checkSetBeanProperty(
-			getClass(), "searchPermissionChecker");
-
-		_searchPermissionChecker = searchPermissionChecker;
-	}
-
 	private SearchEngineUtil() {
 		Registry registry = RegistryUtil.getRegistry();
 
@@ -998,7 +992,8 @@ public class SearchEngineUtil {
 		_queuingSearchEngines = new HashMap<>();
 	private static final Map<String, SearchEngine> _searchEngines =
 		new ConcurrentHashMap<>();
-	private static SearchPermissionChecker _searchPermissionChecker;
+	private static final SearchPermissionChecker _searchPermissionChecker =
+		ProxyFactory.newServiceTrackedInstance(SearchPermissionChecker.class);
 
 	private final ServiceTracker
 		<SearchEngineConfigurator, SearchEngineConfigurator> _serviceTracker;

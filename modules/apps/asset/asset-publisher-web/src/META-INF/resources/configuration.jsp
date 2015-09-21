@@ -23,7 +23,7 @@ String redirect = ParamUtil.getString(request, "redirect");
 
 String eventName = "_" + HtmlUtil.escapeJS(assetPublisherDisplayContext.getPortletResource()) + "_selectSite";
 
-List<AssetRendererFactory> classTypesAssetRendererFactories = new ArrayList<AssetRendererFactory>();
+List<AssetRendererFactory<?>> classTypesAssetRendererFactories = new ArrayList<>();
 %>
 
 <liferay-portlet:actionURL portletConfiguration="<%= true %>" var="configurationActionURL" />
@@ -155,6 +155,7 @@ List<AssetRendererFactory> classTypesAssetRendererFactories = new ArrayList<Asse
 
 						layoutSiteBrowserURL.setParameter("groupId", String.valueOf(layout.getGroupId()));
 						layoutSiteBrowserURL.setParameter("selectedGroupIds", StringUtil.merge(assetPublisherDisplayContext.getGroupIds()));
+						layoutSiteBrowserURL.setParameter("privateLayout", String.valueOf(layout.isPrivateLayout()));
 						layoutSiteBrowserURL.setParameter("type", "layoutScopes");
 						layoutSiteBrowserURL.setParameter("eventName", eventName);
 						layoutSiteBrowserURL.setPortletMode(PortletMode.VIEW);
@@ -322,7 +323,7 @@ List<AssetRendererFactory> classTypesAssetRendererFactories = new ArrayList<Asse
 		form.fm('classNameIds').val(Util.listSelect(form.fm('currentClassNameIds')));
 
 		<%
-		for (AssetRendererFactory curRendererFactory : classTypesAssetRendererFactories) {
+		for (AssetRendererFactory<?> curRendererFactory : classTypesAssetRendererFactories) {
 			String className = AssetPublisherUtil.getClassName(curRendererFactory);
 		%>
 

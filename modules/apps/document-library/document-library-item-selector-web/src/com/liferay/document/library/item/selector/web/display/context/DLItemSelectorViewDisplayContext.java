@@ -18,13 +18,13 @@ import com.liferay.document.library.item.selector.web.DLItemSelectorView;
 import com.liferay.item.selector.ItemSelectorCriterion;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.theme.ThemeDisplay;
+import com.liferay.portal.util.PortletKeys;
 import com.liferay.portlet.PortletURLUtil;
 import com.liferay.portlet.documentlibrary.model.DLFolderConstants;
 
 import java.util.Locale;
 
+import javax.portlet.ActionRequest;
 import javax.portlet.PortletException;
 import javax.portlet.PortletURL;
 
@@ -37,16 +37,13 @@ public class DLItemSelectorViewDisplayContext<T extends ItemSelectorCriterion> {
 
 	public DLItemSelectorViewDisplayContext(
 		T itemSelectorCriterion, DLItemSelectorView<T> dlItemSelectorView,
-		String itemSelectedEventName, PortletURL portletURL) {
+		String itemSelectedEventName, boolean search, PortletURL portletURL) {
 
 		_itemSelectorCriterion = itemSelectorCriterion;
 		_dlItemSelectorView = dlItemSelectorView;
 		_itemSelectedEventName = itemSelectedEventName;
+		_search = search;
 		_portletURL = portletURL;
-	}
-
-	public String getDisplayStyle(HttpServletRequest request) {
-		return ParamUtil.getString(request, "displayStyle");
 	}
 
 	public long getFolderId(HttpServletRequest request) {
@@ -74,30 +71,41 @@ public class DLItemSelectorViewDisplayContext<T extends ItemSelectorCriterion> {
 		PortletURL portletURL = PortletURLUtil.clone(
 			_portletURL, liferayPortletResponse);
 
-		portletURL.setParameter("displayStyle", getDisplayStyle(request));
 		portletURL.setParameter(
 			"folderId", String.valueOf(getFolderId(request)));
 		portletURL.setParameter(
-			"tabName", String.valueOf(getTitle(request.getLocale())));
+			"selectedTab", String.valueOf(getTitle(request.getLocale())));
 
 		return portletURL;
-	}
-
-	public long getRepositoryId(HttpServletRequest request) {
-		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
-			WebKeys.THEME_DISPLAY);
-
-		return ParamUtil.getLong(
-			request, "repositoryId", themeDisplay.getScopeGroupId());
 	}
 
 	public String getTitle(Locale locale) {
 		return _dlItemSelectorView.getTitle(locale);
 	}
 
+	public PortletURL getUploadURL(
+		HttpServletRequest request,
+		LiferayPortletResponse liferayPortletResponse) {
+
+		PortletURL portletURL = liferayPortletResponse.createActionURL(
+			PortletKeys.DOCUMENT_LIBRARY);
+
+		portletURL.setParameter(
+			ActionRequest.ACTION_NAME, "/document_library/upload_file_entry");
+		portletURL.setParameter(
+			"folderId", String.valueOf(getFolderId(request)));
+
+		return portletURL;
+	}
+
+	public boolean isSearch() {
+		return _search;
+	}
+
 	private final DLItemSelectorView<T> _dlItemSelectorView;
 	private final String _itemSelectedEventName;
 	private final T _itemSelectorCriterion;
 	private final PortletURL _portletURL;
+	private final boolean _search;
 
 }

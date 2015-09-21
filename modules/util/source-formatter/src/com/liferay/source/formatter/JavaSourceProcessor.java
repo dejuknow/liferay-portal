@@ -23,6 +23,7 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.tools.JavaImportsFormatter;
 import com.liferay.portal.tools.ToolsUtil;
 import com.liferay.source.formatter.util.FileUtil;
 
@@ -104,7 +105,7 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 			String propertyNameAndValue = parameterProperty.substring(x + 1, z);
 
 			if (Validator.isNotNull(previousPropertyName) &&
-				(previousPropertyName.compareTo(propertyName) > 0)) {
+				(previousPropertyName.compareToIgnoreCase(propertyName) > 0)) {
 
 				content = StringUtil.replaceFirst(
 					content, previousPropertyNameAndValue,
@@ -172,7 +173,8 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 				annotationParameters.substring(y + 1, x));
 
 			if (Validator.isNull(previousParameterName) ||
-				(previousParameterName.compareTo(parameterName) <= 0)) {
+				(previousParameterName.compareToIgnoreCase(parameterName) <=
+					0)) {
 
 				previousParameterName = parameterName;
 
@@ -537,34 +539,7 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 
 		className = className.substring(0, pos);
 
-		String packagePath = fileName;
-
-		int packagePathX = packagePath.indexOf("/src/");
-
-		if (packagePathX == -1) {
-			packagePathX = packagePath.indexOf("/integration/");
-		}
-
-		if (packagePathX == -1) {
-			packagePathX = packagePath.indexOf("/unit/");
-		}
-
-		if (packagePathX != -1) {
-			packagePathX = packagePath.indexOf(
-				CharPool.SLASH, packagePathX + 1);
-		}
-
-		int packagePathY = packagePath.lastIndexOf(CharPool.SLASH);
-
-		if (packagePathX >= packagePathY) {
-			packagePath = StringPool.BLANK;
-		}
-		else {
-			packagePath = packagePath.substring(packagePathX + 1, packagePathY);
-		}
-
-		packagePath = StringUtil.replace(
-			packagePath, StringPool.SLASH, StringPool.PERIOD);
+		String packagePath = ToolsUtil.getPackagePath(file);
 
 		if (packagePath.endsWith(".model")) {
 			if (content.contains("extends " + className + "Model")) {
@@ -878,21 +853,52 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 					fileName);
 		}
 
-		// LPS-56706
+		// LPS-56706 and LPS-57722
 
-		if (portalSource && absolutePath.contains("/modules/") &&
-			absolutePath.contains("/test/integration/") &&
-			newContent.contains("@RunWith(Arquillian.class)") &&
-			newContent.contains("import org.powermock.")) {
+		if (portalSource && isModulesFile(absolutePath) &&
+			fileName.endsWith("Test.java")) {
 
-			processErrorMessage(
-				fileName,
-				"Do not use PowerMock inside Arquillian tests: " + fileName);
+			if (absolutePath.contains("/test/integration/")) {
+				if (newContent.contains("@RunWith(Arquillian.class)") &&
+					newContent.contains("import org.powermock.")) {
+
+					processErrorMessage(
+						fileName,
+						"Do not use PowerMock inside Arquillian tests: " +
+							fileName);
+				}
+
+				if (!packagePath.endsWith(".test")) {
+					processErrorMessage(
+						fileName,
+						"Module integration test must be under a test " +
+							"subpackage" + fileName);
+				}
+			}
+			else if (absolutePath.contains("/test/unit/") &&
+					 packagePath.endsWith(".test")) {
+
+				processErrorMessage(
+					fileName,
+					"Module unit test should not be under a test subpackage" +
+						fileName);
+			}
 		}
 
 		// LPS-48156
 
 		newContent = checkPrincipalException(newContent);
+
+		// LPS-57358
+
+		if (portalSource && isModulesFile(absolutePath) &&
+			newContent.contains("ProxyFactory.newServiceTrackedInstance(")) {
+
+			processErrorMessage(
+				fileName,
+				"Do not use ProxyFactory.newServiceTrackedInstance in " +
+					"modules: " + fileName);
+		}
 
 		newContent = getCombinedLinesContent(
 			newContent, _combinedLinesPattern1);
@@ -1189,7 +1195,7 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 				}
 
 				if (Validator.isNotNull(previousAnnotation) &&
-					(previousAnnotation.compareTo(annotation) > 0)) {
+					(previousAnnotation.compareToIgnoreCase(annotation) > 0)) {
 
 					content = StringUtil.replaceFirst(
 						content, previousAnnotation, annotation);

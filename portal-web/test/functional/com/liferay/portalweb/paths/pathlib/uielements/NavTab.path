@@ -19,6 +19,16 @@
 	<td></td>
 </tr>
 <tr>
+	<td>ALL_ORGANIZATIONS</td>
+	<td>//ul[contains(@class,'nav-tabs')]/li/a[contains(.,'All Organizations')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ALL_USERS</td>
+	<td>//ul[contains(@class,'nav-tabs')]/li/a[contains(.,'All Users')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>ASSET_SELECTION</td>
 	<td>//ul[contains(@class,'nav-tabs')]/li[contains(.,'Asset Selection')]/a</td>
 	<td></td>
@@ -39,8 +49,18 @@
 	<td></td>
 </tr>
 <tr>
+	<td>COMPLETED</td>
+	<td>//ul[contains(@class,'nav-tabs')]/li/a[contains(.,'Completed')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CONSUMERS</td>
+	<td>//ul[contains(@class,'nav-tabs')]/li/a[contains(.,'Consumers')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>CURRENT</td>
-	<td>//ul[contains(@class,'nav-tabs')]/li/a[contains(.,'AVAILABLE')]</td>
+	<td>//ul[contains(@class,'nav-tabs')]/li/a[contains(.,'Current')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -64,7 +84,7 @@
 	<td></td>
 </tr>
 <tr>
-	<td>EMAIL_VERIFICATiON_NOTIFICATION</td>
+	<td>EMAIL_VERIFICATION_NOTIFICATION</td>
 	<td>//ul[contains(@class,'nav-tabs')]/li/a[contains(.,'Email Verification Notification')]</td>
 	<td></td>
 </tr>
@@ -139,8 +159,23 @@
 	<td></td>
 </tr>
 <tr>
+	<td>PENDING</td>
+	<td>//ul[contains(@class,'nav-tabs')]/li/a[contains(.,'Pending')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>PORTAL_PROPERTIES</td>
 	<td>//ul[contains(@class,'nav-tabs')]/li/a[contains(.,'Portal Properties')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PORTLET_CONFIGURATION</td>
+	<td>//ul[contains(@class,'nav-tabs')]/li/a[contains(.,'Portlet Configuration')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PRODUCERS</td>
+	<td>//ul[contains(@class,'nav-tabs')]/li/a[contains(.,'Producers')]</td>
 	<td></td>
 </tr>
 <tr>

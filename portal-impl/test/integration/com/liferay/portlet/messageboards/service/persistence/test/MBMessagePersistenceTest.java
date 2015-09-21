@@ -158,6 +158,8 @@ public class MBMessagePersistenceTest {
 
 		newMBMessage.setAnswer(RandomTestUtil.randomBoolean());
 
+		newMBMessage.setLastPublishDate(RandomTestUtil.nextDate());
+
 		newMBMessage.setStatus(RandomTestUtil.nextInt());
 
 		newMBMessage.setStatusByUserId(RandomTestUtil.nextLong());
@@ -212,6 +214,9 @@ public class MBMessagePersistenceTest {
 			newMBMessage.getAllowPingbacks());
 		Assert.assertEquals(existingMBMessage.getAnswer(),
 			newMBMessage.getAnswer());
+		Assert.assertEquals(Time.getShortTimestamp(
+				existingMBMessage.getLastPublishDate()),
+			Time.getShortTimestamp(newMBMessage.getLastPublishDate()));
 		Assert.assertEquals(existingMBMessage.getStatus(),
 			newMBMessage.getStatus());
 		Assert.assertEquals(existingMBMessage.getStatusByUserId(),
@@ -487,10 +492,10 @@ public class MBMessagePersistenceTest {
 			true, "userName", true, "createDate", true, "modifiedDate", true,
 			"classNameId", true, "classPK", true, "categoryId", true,
 			"threadId", true, "rootMessageId", true, "parentMessageId", true,
-			"subject", true, "body", true, "format", true, "anonymous", true,
-			"priority", true, "allowPingbacks", true, "answer", true, "status",
-			true, "statusByUserId", true, "statusByUserName", true,
-			"statusDate", true);
+			"subject", true, "format", true, "anonymous", true, "priority",
+			true, "allowPingbacks", true, "answer", true, "lastPublishDate",
+			true, "status", true, "statusByUserId", true, "statusByUserName",
+			true, "statusDate", true);
 	}
 
 	@Test
@@ -698,9 +703,9 @@ public class MBMessagePersistenceTest {
 		Assert.assertTrue(Validator.equals(existingMBMessage.getUuid(),
 				ReflectionTestUtil.invoke(existingMBMessage, "getOriginalUuid",
 					new Class<?>[0])));
-		Assert.assertEquals(existingMBMessage.getGroupId(),
-			ReflectionTestUtil.invoke(existingMBMessage, "getOriginalGroupId",
-				new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingMBMessage.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingMBMessage,
+				"getOriginalGroupId", new Class<?>[0]));
 	}
 
 	protected MBMessage addMBMessage() throws Exception {
@@ -747,6 +752,8 @@ public class MBMessagePersistenceTest {
 		mbMessage.setAllowPingbacks(RandomTestUtil.randomBoolean());
 
 		mbMessage.setAnswer(RandomTestUtil.randomBoolean());
+
+		mbMessage.setLastPublishDate(RandomTestUtil.nextDate());
 
 		mbMessage.setStatus(RandomTestUtil.nextInt());
 

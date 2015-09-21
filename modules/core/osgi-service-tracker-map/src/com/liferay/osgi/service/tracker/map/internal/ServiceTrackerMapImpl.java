@@ -20,10 +20,13 @@ import com.liferay.osgi.service.tracker.map.ServiceTrackerBucket;
 import com.liferay.osgi.service.tracker.map.ServiceTrackerBucketFactory;
 import com.liferay.osgi.service.tracker.map.ServiceTrackerMap;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Filter;
@@ -97,6 +100,23 @@ public class ServiceTrackerMapImpl<K, SR, TS, R>
 		_serviceTracker.open();
 	}
 
+	@Override
+	public Collection<R> values() {
+		return Collections.unmodifiableCollection(getServices());
+	}
+
+	protected Collection<R> getServices() {
+		Collection<R> services = new ArrayList<>();
+
+		for (ServiceTrackerBucket<SR, TS, R> serviceTrackerBucket :
+				_serviceTrackerBuckets.values()) {
+
+			services.add(serviceTrackerBucket.getContent());
+		}
+
+		return services;
+	}
+
 	private void removeKeys(
 		ServiceReferenceServiceTuple<SR, TS, K> serviceReferenceServiceTuple) {
 
@@ -147,7 +167,7 @@ public class ServiceTrackerMapImpl<K, SR, TS, R>
 	private final ServiceReferenceMapper<K, ? super SR> _serviceReferenceMapper;
 	private final ServiceTracker<SR, ServiceReferenceServiceTuple<SR, TS, K>>
 		_serviceTracker;
-	private final ConcurrentHashMap<K, ServiceTrackerBucket<SR, TS, R>>
+	private final ConcurrentMap<K, ServiceTrackerBucket<SR, TS, R>>
 		_serviceTrackerBuckets = new ConcurrentHashMap<>();
 	private final ServiceTrackerCustomizer<SR, TS> _serviceTrackerCustomizer;
 	private final ServiceTrackerBucketFactory<SR, TS, R>

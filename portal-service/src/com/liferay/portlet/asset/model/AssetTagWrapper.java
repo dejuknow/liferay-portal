@@ -64,6 +64,7 @@ public class AssetTagWrapper implements AssetTag, ModelWrapper<AssetTag> {
 		attributes.put("modifiedDate", getModifiedDate());
 		attributes.put("name", getName());
 		attributes.put("assetCount", getAssetCount());
+		attributes.put("lastPublishDate", getLastPublishDate());
 
 		return attributes;
 	}
@@ -129,6 +130,12 @@ public class AssetTagWrapper implements AssetTag, ModelWrapper<AssetTag> {
 		if (assetCount != null) {
 			setAssetCount(assetCount);
 		}
+
+		Date lastPublishDate = (Date)attributes.get("lastPublishDate");
+
+		if (lastPublishDate != null) {
+			setLastPublishDate(lastPublishDate);
+		}
 	}
 
 	@Override
@@ -167,7 +174,7 @@ public class AssetTagWrapper implements AssetTag, ModelWrapper<AssetTag> {
 	* @return the create date of this asset tag
 	*/
 	@Override
-	public java.util.Date getCreateDate() {
+	public Date getCreateDate() {
 		return _assetTag.getCreateDate();
 	}
 
@@ -187,12 +194,22 @@ public class AssetTagWrapper implements AssetTag, ModelWrapper<AssetTag> {
 	}
 
 	/**
+	* Returns the last publish date of this asset tag.
+	*
+	* @return the last publish date of this asset tag
+	*/
+	@Override
+	public Date getLastPublishDate() {
+		return _assetTag.getLastPublishDate();
+	}
+
+	/**
 	* Returns the modified date of this asset tag.
 	*
 	* @return the modified date of this asset tag
 	*/
 	@Override
-	public java.util.Date getModifiedDate() {
+	public Date getModifiedDate() {
 		return _assetTag.getModifiedDate();
 	}
 
@@ -327,7 +344,7 @@ public class AssetTagWrapper implements AssetTag, ModelWrapper<AssetTag> {
 	* @param createDate the create date of this asset tag
 	*/
 	@Override
-	public void setCreateDate(java.util.Date createDate) {
+	public void setCreateDate(Date createDate) {
 		_assetTag.setCreateDate(createDate);
 	}
 
@@ -360,12 +377,22 @@ public class AssetTagWrapper implements AssetTag, ModelWrapper<AssetTag> {
 	}
 
 	/**
+	* Sets the last publish date of this asset tag.
+	*
+	* @param lastPublishDate the last publish date of this asset tag
+	*/
+	@Override
+	public void setLastPublishDate(Date lastPublishDate) {
+		_assetTag.setLastPublishDate(lastPublishDate);
+	}
+
+	/**
 	* Sets the modified date of this asset tag.
 	*
 	* @param modifiedDate the modified date of this asset tag
 	*/
 	@Override
-	public void setModifiedDate(java.util.Date modifiedDate) {
+	public void setModifiedDate(Date modifiedDate) {
 		_assetTag.setModifiedDate(modifiedDate);
 	}
 

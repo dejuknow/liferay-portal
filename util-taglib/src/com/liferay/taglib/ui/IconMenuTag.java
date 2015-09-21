@@ -96,6 +96,7 @@ public class IconMenuTag extends BaseBodyTagSupport implements BodyTag {
 				_localizeMessage = true;
 				_maxDisplayItems = _DEFAULT_MAX_DISPLAY_ITEMS;
 				_message = "actions";
+				_scroll = false;
 				_select = false;
 				_showArrow = true;
 				_showExpanded = false;
@@ -190,6 +191,10 @@ public class IconMenuTag extends BaseBodyTagSupport implements BodyTag {
 		_localizeMessage = localizeMessage;
 	}
 
+	public void setMarkupView(String markupView) {
+		_markupView = markupView;
+	}
+
 	public void setMaxDisplayItems(int maxDisplayItems) {
 		if (maxDisplayItems <= 0) {
 			maxDisplayItems = _DEFAULT_MAX_DISPLAY_ITEMS;
@@ -202,6 +207,10 @@ public class IconMenuTag extends BaseBodyTagSupport implements BodyTag {
 		if (message != null) {
 			_message = message;
 		}
+	}
+
+	public void setScroll(boolean scroll) {
+		_scroll = scroll;
 	}
 
 	public void setSelect(boolean select) {
@@ -232,17 +241,13 @@ public class IconMenuTag extends BaseBodyTagSupport implements BodyTag {
 		_useIconCaret = useIconCaret;
 	}
 
-	public void setView(String view) {
-		_view = view;
-	}
-
 	protected String getEndPage() {
 		if (Validator.isNotNull(_endPage)) {
 			return _endPage;
 		}
 
-		if (Validator.isNotNull(_view)) {
-			return "/html/taglib/ui/icon_menu/" + _view + "/end.jsp";
+		if (Validator.isNotNull(_markupView)) {
+			return "/html/taglib/ui/icon_menu/" + _markupView + "/end.jsp";
 		}
 
 		return "/html/taglib/ui/icon_menu/end.jsp";
@@ -253,8 +258,8 @@ public class IconMenuTag extends BaseBodyTagSupport implements BodyTag {
 			return _startPage;
 		}
 
-		if (Validator.isNotNull(_view)) {
-			return "/html/taglib/ui/icon_menu/" + _view + "/start.jsp";
+		if (Validator.isNotNull(_markupView)) {
+			return "/html/taglib/ui/icon_menu/" + _markupView + "/start.jsp";
 		}
 
 		return "/html/taglib/ui/icon_menu/start.jsp";
@@ -448,7 +453,7 @@ public class IconMenuTag extends BaseBodyTagSupport implements BodyTag {
 		HttpServletRequest request =
 			(HttpServletRequest)pageContext.getRequest();
 
-		request.setAttribute("liferay-ui:icon-menu:css-class", _cssClass);
+		request.setAttribute("liferay-ui:icon-menu:cssClass", _cssClass);
 		request.setAttribute("liferay-ui:icon-menu:direction", _direction);
 
 		String message = _message;
@@ -458,6 +463,9 @@ public class IconMenuTag extends BaseBodyTagSupport implements BodyTag {
 		}
 
 		request.setAttribute("liferay-ui:icon-menu:message", message);
+		request.setAttribute("liferay-ui:icon-menu:scroll", _scroll);
+		request.setAttribute(
+			"liferay-ui:icon-menu:triggerCssClass", _triggerCssClass);
 	}
 
 	private static final String _AUI_PATH = "../aui/";
@@ -473,8 +481,10 @@ public class IconMenuTag extends BaseBodyTagSupport implements BodyTag {
 	private String _icon;
 	private String _id;
 	private boolean _localizeMessage = true;
+	private String _markupView;
 	private int _maxDisplayItems = _DEFAULT_MAX_DISPLAY_ITEMS;
 	private String _message = "actions";
+	private boolean _scroll;
 	private boolean _select;
 	private boolean _showArrow = true;
 	private boolean _showExpanded;
@@ -482,6 +492,5 @@ public class IconMenuTag extends BaseBodyTagSupport implements BodyTag {
 	private String _startPage;
 	private String _triggerCssClass;
 	private boolean _useIconCaret;
-	private String _view;
 
 }

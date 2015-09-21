@@ -23,6 +23,9 @@ import static com.liferay.portlet.exportimport.lifecycle.ExportImportLifecycleCo
 import com.liferay.exportimport.lar.DeletionSystemEventImporter;
 import com.liferay.exportimport.lar.LayoutCache;
 import com.liferay.exportimport.lar.PermissionImporter;
+import com.liferay.exportimport.portlet.preferences.processor.Capability;
+import com.liferay.exportimport.portlet.preferences.processor.ExportImportPortletPreferencesProcessor;
+import com.liferay.exportimport.portlet.preferences.processor.ExportImportPortletPreferencesProcessorRegistryUtil;
 import com.liferay.portal.LocaleException;
 import com.liferay.portal.NoSuchPortletPreferencesException;
 import com.liferay.portal.PortletIdException;
@@ -37,6 +40,7 @@ import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.ReleaseInfo;
@@ -116,6 +120,7 @@ import java.util.Map;
 import org.apache.commons.lang.time.StopWatch;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Brian Wing Shun Chan
@@ -210,7 +215,7 @@ public class PortletImportController implements ImportController {
 			portletDataContext = getPortletDataContext(
 				exportImportConfiguration, file);
 
-			ExportImportLifecycleManager.fireExportImportLifecycleEvent(
+			_exportImportLifecycleManager.fireExportImportLifecycleEvent(
 				EVENT_PORTLET_IMPORT_STARTED, getProcessFlag(),
 				PortletDataContextFactoryUtil.clonePortletDataContext(
 					portletDataContext));
@@ -224,7 +229,7 @@ public class PortletImportController implements ImportController {
 
 			ExportImportThreadLocal.setPortletImportInProcess(false);
 
-			ExportImportLifecycleManager.fireExportImportLifecycleEvent(
+			_exportImportLifecycleManager.fireExportImportLifecycleEvent(
 				EVENT_PORTLET_IMPORT_SUCCEEDED, getProcessFlag(),
 				PortletDataContextFactoryUtil.clonePortletDataContext(
 					portletDataContext),
@@ -233,7 +238,7 @@ public class PortletImportController implements ImportController {
 		catch (Throwable t) {
 			ExportImportThreadLocal.setPortletImportInProcess(false);
 
-			ExportImportLifecycleManager.fireExportImportLifecycleEvent(
+			_exportImportLifecycleManager.fireExportImportLifecycleEvent(
 				EVENT_PORTLET_IMPORT_FAILED, getProcessFlag(),
 				PortletDataContextFactoryUtil.clonePortletDataContext(
 					portletDataContext),
@@ -911,13 +916,39 @@ public class PortletImportController implements ImportController {
 					Portlet portlet = PortletLocalServiceUtil.getPortletById(
 						portletDataContext.getCompanyId(), curPortletId);
 
-					PortletDataHandler portletDataHandler =
-						portlet.getPortletDataHandlerInstance();
+					ExportImportPortletPreferencesProcessor
+						exportImportPortletPreferencesProcessor =
+							ExportImportPortletPreferencesProcessorRegistryUtil.
+								getExportImportPortletPreferencesProcessor(
+									portlet.getRootPortletId());
 
-					jxPortletPreferences =
-						portletDataHandler.processImportPortletPreferences(
-							portletDataContext, curPortletId,
-							jxPortletPreferences);
+					if (exportImportPortletPreferencesProcessor != null) {
+						List<Capability> importCapabilities =
+							exportImportPortletPreferencesProcessor.
+								getImportCapabilities();
+
+						if (ListUtil.isNotEmpty(importCapabilities)) {
+							for (Capability importCapability :
+									importCapabilities) {
+
+								importCapability.process(
+									portletDataContext, jxPortletPreferences);
+							}
+						}
+
+						exportImportPortletPreferencesProcessor.
+							processImportPortletPreferences(
+								portletDataContext, jxPortletPreferences);
+					}
+					else {
+						PortletDataHandler portletDataHandler =
+							portlet.getPortletDataHandlerInstance();
+
+						jxPortletPreferences =
+							portletDataHandler.processImportPortletPreferences(
+								portletDataContext, curPortletId,
+								jxPortletPreferences);
+					}
 				}
 				finally {
 					portletDataContext.setImportDataRootElement(
@@ -1199,6 +1230,13 @@ public class PortletImportController implements ImportController {
 		portletDataContext.setScopeType(StringPool.BLANK);
 	}
 
+	@Reference(unbind = "-")
+	protected void setExportImportLifecycleManager(
+		ExportImportLifecycleManager exportImportLifecycleManager) {
+
+		_exportImportLifecycleManager = exportImportLifecycleManager;
+	}
+
 	protected void updatePortletPreferences(
 			PortletDataContext portletDataContext, long ownerId, int ownerType,
 			long plid, String portletId, String xml, boolean importData)
@@ -1362,11 +1400,9 @@ public class PortletImportController implements ImportController {
 	private static final Log _log = LogFactoryUtil.getLog(
 		PortletImportController.class);
 
-	private static final PortletImportController _instance =
-		new PortletImportController();
-
 	private final DeletionSystemEventImporter _deletionSystemEventImporter =
 		DeletionSystemEventImporter.getInstance();
+	private ExportImportLifecycleManager _exportImportLifecycleManager;
 	private final PermissionImporter _permissionImporter =
 		PermissionImporter.getInstance();
 

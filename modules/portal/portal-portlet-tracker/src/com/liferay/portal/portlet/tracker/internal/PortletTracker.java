@@ -17,16 +17,23 @@ package com.liferay.portal.portlet.tracker.internal;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.configuration.ConfigurationFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.PortletBag;
 import com.liferay.portal.kernel.portlet.PortletBagPool;
+import com.liferay.portal.kernel.portlet.RestrictPortletServletRequest;
+import com.liferay.portal.kernel.servlet.PortletServlet;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapDictionary;
+import com.liferay.portal.kernel.util.JavaConstants;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -46,11 +53,15 @@ import com.liferay.portal.security.permission.ResourceActionsUtil;
 import com.liferay.portal.service.CompanyLocalService;
 import com.liferay.portal.service.PortletLocalService;
 import com.liferay.portal.service.ResourceActionLocalService;
-import com.liferay.portal.util.PortletCategoryKeys;
+import com.liferay.portal.util.PortalUtil;
+import com.liferay.portal.util.PortletCategoryUtil;
 import com.liferay.portal.util.PortletKeys;
 import com.liferay.portal.util.WebAppPool;
 import com.liferay.portal.util.WebKeys;
+import com.liferay.portlet.InvokerPortlet;
 import com.liferay.portlet.PortletBagFactory;
+import com.liferay.portlet.PortletContextBag;
+import com.liferay.portlet.PortletContextBagPool;
 import com.liferay.portlet.PortletInstanceFactory;
 import com.liferay.registry.util.StringPlus;
 import com.liferay.util.log4j.Log4JUtil;
@@ -65,19 +76,31 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import javax.portlet.Portlet;
 import javax.portlet.PortletMode;
+import javax.portlet.PortletRequest;
 import javax.portlet.WindowState;
 
+import javax.servlet.DispatcherType;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
 import javax.servlet.Servlet;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletContextListener;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -120,7 +143,9 @@ public class PortletTracker
 		if (Validator.isNull(portletName)) {
 			Class<?> clazz = portlet.getClass();
 
-			portletName = clazz.getName();
+			portletName = StringUtil.replace(
+				clazz.getName(), new String[] {".", "$"},
+				new String[] {"_", "_"});
 		}
 
 		String portletId = StringUtil.replace(
@@ -273,13 +298,19 @@ public class PortletTracker
 		collectJxPortletFeatures(serviceReference, portletModel);
 		collectLiferayFeatures(serviceReference, portletModel);
 
+		PortletContextBag portletContextBag = new PortletContextBag(
+			bundlePortletApp.getServletContextName());
+
+		PortletContextBagPool.put(
+			bundlePortletApp.getServletContextName(), portletContextBag);
+
 		PortletBagFactory portletBagFactory = new BundlePortletBagFactory(
 			portlet);
 
 		portletBagFactory.setClassLoader(bundleWiring.getClassLoader());
 		portletBagFactory.setServletContext(
 			bundlePortletApp.getServletContext());
-		portletBagFactory.setWARFile(false);
+		portletBagFactory.setWARFile(true);
 
 		try {
 			portletBagFactory.create(portletModel);
@@ -288,6 +319,10 @@ public class PortletTracker
 				bundle.getBundleContext(),
 				bundlePortletApp.getServletContextName(),
 				bundleWiring.getClassLoader(), serviceRegistrations);
+
+			checkResourceBundles(
+				bundle.getBundleContext(), bundleWiring.getClassLoader(),
+				portletModel, serviceRegistrations);
 
 			List<Company> companies = _companyLocalService.getCompanies();
 
@@ -306,7 +341,10 @@ public class PortletTracker
 			return portletModel;
 		}
 		catch (Exception e) {
-			_log.error(e, e);
+			_log.error(
+				"Portlet " + portletId + " from " + bundle +
+					" failed to initialize",
+				e);
 
 			return null;
 		}
@@ -327,6 +365,32 @@ public class PortletTracker
 		portletModel.setStrutsPath(portletId);
 
 		return portletModel;
+	}
+
+	protected void checkResourceBundles(
+		BundleContext bundleContext, ClassLoader classLoader,
+		com.liferay.portal.model.Portlet portletModel,
+		ServiceRegistrations serviceRegistrations) {
+
+		if (Validator.isBlank(portletModel.getResourceBundle())) {
+			return;
+		}
+
+		for (Locale locale : LanguageUtil.getAvailableLocales()) {
+			ResourceBundle resourceBundle = ResourceBundleUtil.getBundle(
+				portletModel.getResourceBundle(), locale, classLoader);
+
+			Dictionary<String, Object> properties = new HashMapDictionary<>();
+
+			properties.put("javax.portlet.name", portletModel.getPortletId());
+			properties.put("language.id", LocaleUtil.toLanguageId(locale));
+
+			ServiceRegistration<ResourceBundle> serviceRegistration =
+				bundleContext.registerService(
+					ResourceBundle.class, resourceBundle, properties);
+
+			serviceRegistrations.addServiceRegistration(serviceRegistration);
+		}
 	}
 
 	protected void checkResources(
@@ -370,6 +434,11 @@ public class PortletTracker
 			createDefaultServlet(bundleContext, contextName));
 		serviceRegistrations.addServiceRegistration(
 			createJspServlet(bundleContext, contextName, classLoader));
+		serviceRegistrations.addServiceRegistration(
+			createPortletServlet(bundleContext, contextName, classLoader));
+		serviceRegistrations.addServiceRegistration(
+			createRestrictPortletServletRequestFilter(
+				bundleContext, contextName, classLoader));
 	}
 
 	protected void collectCacheScope(
@@ -403,6 +472,9 @@ public class PortletTracker
 				GetterUtil.getString(
 					serviceReference.getProperty(initParamKey)));
 		}
+
+		initParams.put(
+			InvokerPortlet.INIT_INVOKER_PORTLET_NAME, "portlet-servlet");
 
 		portletModel.setInitParams(initParams);
 	}
@@ -458,19 +530,8 @@ public class PortletTracker
 			get(serviceReference, "control-panel-entry-category"),
 			portletModel.getControlPanelEntryCategory());
 
-		if (Validator.equals(controlPanelEntryCategory, "content")) {
-			controlPanelEntryCategory =
-				PortletCategoryKeys.SITE_ADMINISTRATION_CONTENT;
-		}
-		else if (Validator.equals(controlPanelEntryCategory, "marketplace")) {
-			controlPanelEntryCategory = PortletCategoryKeys.APPS;
-		}
-		else if (Validator.equals(controlPanelEntryCategory, "portal")) {
-			controlPanelEntryCategory = PortletCategoryKeys.USERS;
-		}
-		else if (Validator.equals(controlPanelEntryCategory, "server")) {
-			controlPanelEntryCategory = PortletCategoryKeys.APPS;
-		}
+		controlPanelEntryCategory = PortletCategoryUtil.getPortletCategoryKey(
+			controlPanelEntryCategory);
 
 		portletModel.setControlPanelEntryCategory(controlPanelEntryCategory);
 
@@ -504,6 +565,10 @@ public class PortletTracker
 			GetterUtil.getString(
 				get(serviceReference, "friendly-url-routes"),
 				portletModel.getFriendlyURLRoutes()));
+		portletModel.setFullPageDisplayable(
+			GetterUtil.getBoolean(
+				get(serviceReference, "full-page-displayable"),
+				portletModel.isFullPageDisplayable()));
 		portletModel.setHeaderPortalCss(
 			StringPlus.asList(get(serviceReference, "header-portal-css")));
 		portletModel.setHeaderPortalJavaScript(
@@ -583,10 +648,15 @@ public class PortletTracker
 			portletModel.setRenderWeight(1);
 		}
 
+		boolean defaultRequiresNamespacedParameters = GetterUtil.getBoolean(
+			get(serviceReference, "requires-namespaced-parameters"),
+			portletModel.isRequiresNamespacedParameters());
+
 		portletModel.setRequiresNamespacedParameters(
 			GetterUtil.getBoolean(
-				get(serviceReference, "requires-namespaced-parameters"),
-				portletModel.isRequiresNamespacedParameters()));
+				serviceReference.getProperty("requires-namespaced-parameters"),
+				defaultRequiresNamespacedParameters));
+
 		portletModel.setRestoreCurrentView(
 			GetterUtil.getBoolean(
 				get(serviceReference, "restore-current-view"),
@@ -633,22 +703,18 @@ public class PortletTracker
 		com.liferay.portal.model.Portlet portletModel) {
 
 		String portletInfoTitle = GetterUtil.getString(
-			serviceReference.getProperty("javax.portlet.info.title"),
-			portletModel.getPortletId());
+			serviceReference.getProperty("javax.portlet.info.title"));
 
 		String portletDisplayName = GetterUtil.getString(
 			serviceReference.getProperty("javax.portlet.display-name"),
 			portletInfoTitle);
 
 		String portletInfoShortTitle = GetterUtil.getString(
-			serviceReference.getProperty("javax.portlet.info.short-title"),
-			portletModel.getPortletId());
+			serviceReference.getProperty("javax.portlet.info.short-title"));
 		String portletInfoKeyWords = GetterUtil.getString(
-			serviceReference.getProperty("javax.portlet.info.keywords"),
-			portletModel.getPortletId());
+			serviceReference.getProperty("javax.portlet.info.keywords"));
 		String portletDescription = GetterUtil.getString(
-			serviceReference.getProperty("javax.portlet.description"),
-			portletModel.getPortletId());
+			serviceReference.getProperty("javax.portlet.description"));
 
 		PortletInfo portletInfo = new PortletInfo(
 			portletDisplayName, portletInfoShortTitle, portletInfoKeyWords,
@@ -739,6 +805,13 @@ public class PortletTracker
 
 		List<String> roleRefs = StringPlus.asList(
 			serviceReference.getProperty("javax.portlet.security-role-ref"));
+
+		if (roleRefs.isEmpty()) {
+			roleRefs.add("administrator");
+			roleRefs.add("guest");
+			roleRefs.add("power-user");
+			roleRefs.add("user");
+		}
 
 		for (String roleRef : roleRefs) {
 			for (String curRoleRef : StringUtil.split(roleRef)) {
@@ -1054,6 +1127,54 @@ public class PortletTracker
 			Servlet.class, servlet, properties);
 	}
 
+	protected ServiceRegistration<Servlet> createPortletServlet(
+		BundleContext bundleContext, String contextName,
+		ClassLoader classLoader) {
+
+		Dictionary<String, Object> properties = new HashMapDictionary<>();
+
+		properties.put(
+			HttpWhiteboardConstants.HTTP_WHITEBOARD_CONTEXT_SELECT,
+			contextName);
+		properties.put(
+			HttpWhiteboardConstants.HTTP_WHITEBOARD_SERVLET_NAME,
+			"Portlet Servlet");
+		properties.put(
+			HttpWhiteboardConstants.HTTP_WHITEBOARD_SERVLET_PATTERN,
+			"/portlet-servlet/*");
+
+		return bundleContext.registerService(
+			Servlet.class, new PortletServletWrapper(), properties);
+	}
+
+	protected ServiceRegistration<?> createRestrictPortletServletRequestFilter(
+		BundleContext bundleContext, String contextName,
+		ClassLoader classLoader) {
+
+		Dictionary<String, Object> properties = new HashMapDictionary<>();
+
+		properties.put(
+			HttpWhiteboardConstants.HTTP_WHITEBOARD_CONTEXT_SELECT,
+			contextName);
+		properties.put(
+			HttpWhiteboardConstants.HTTP_WHITEBOARD_FILTER_ASYNC_SUPPORTED,
+			Boolean.TRUE);
+		properties.put(
+			HttpWhiteboardConstants.HTTP_WHITEBOARD_FILTER_DISPATCHER,
+			new String[] {
+				DispatcherType.ASYNC.toString(),
+				DispatcherType.FORWARD.toString(),
+				DispatcherType.INCLUDE.toString(),
+				DispatcherType.REQUEST.toString()
+			});
+		properties.put(
+			HttpWhiteboardConstants.HTTP_WHITEBOARD_FILTER_PATTERN, "/*");
+
+		return bundleContext.registerService(
+			Filter.class, new RestrictPortletServletRequestFilter(),
+			properties);
+	}
+
 	@Deactivate
 	protected void deactivate() {
 		_serviceTracker.close();
@@ -1173,6 +1294,11 @@ public class PortletTracker
 		}
 	}
 
+	@Reference(target = ModuleServiceLifecycle.PORTAL_INITIALIZED, unbind = "-")
+	protected void setModuleServiceLifecycle(
+		ModuleServiceLifecycle moduleServiceLifecycle) {
+	}
+
 	@Reference(unbind = "-")
 	protected void setPortletInstanceFactory(
 		PortletInstanceFactory portletInstanceFactory) {
@@ -1197,10 +1323,6 @@ public class PortletTracker
 	@Reference(unbind = "-")
 	protected void setResourceActions(ResourceActions resourceActions) {
 		_resourceActions = resourceActions;
-	}
-
-	@Reference(target = "(original.bean=true)", unbind = "-")
-	protected void setServletContext(ServletContext servletContext) {
 	}
 
 	protected String toLowerCase(Object object) {
@@ -1259,6 +1381,75 @@ public class PortletTracker
 		_serviceRegistrations = new ConcurrentHashMap<>();
 	private ServiceTracker<Portlet, com.liferay.portal.model.Portlet>
 		_serviceTracker;
+
+	private class PortletServletWrapper extends HttpServlet {
+
+		@Override
+		protected void service(
+				HttpServletRequest httpServletRequest,
+				HttpServletResponse httpServletResponse)
+			throws IOException, ServletException {
+
+			_servlet.service(httpServletRequest, httpServletResponse);
+		}
+
+		private final Servlet _servlet = new PortletServlet();
+
+	}
+
+	private class RestrictPortletServletRequestFilter implements Filter {
+
+		@Override
+		public void destroy() {
+		}
+
+		@Override
+		public void doFilter(
+				ServletRequest servletRequest, ServletResponse servletResponse,
+				FilterChain filterChain)
+			throws IOException, ServletException {
+
+			try {
+				filterChain.doFilter(servletRequest, servletResponse);
+			}
+			finally {
+				PortletRequest portletRequest =
+					(PortletRequest)servletRequest.getAttribute(
+						JavaConstants.JAVAX_PORTLET_REQUEST);
+
+				if (portletRequest == null) {
+					return;
+				}
+
+				RestrictPortletServletRequest restrictPortletServletRequest =
+					new RestrictPortletServletRequest(
+						PortalUtil.getHttpServletRequest(portletRequest));
+
+				Enumeration<String> enumeration =
+					servletRequest.getAttributeNames();
+
+				while (enumeration.hasMoreElements()) {
+					String name = enumeration.nextElement();
+
+					if (!RestrictPortletServletRequest.isSharedRequestAttribute(
+							name)) {
+
+						continue;
+					}
+
+					restrictPortletServletRequest.setAttribute(
+						name, servletRequest.getAttribute(name));
+				}
+
+				restrictPortletServletRequest.mergeSharedAttributes();
+			}
+		}
+
+		@Override
+		public void init(FilterConfig filterConfig) throws ServletException {
+		}
+
+	}
 
 	private class ServiceRegistrations {
 

@@ -17,6 +17,7 @@
 <%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
 
 <%@ taglib uri="http://liferay.com/tld/aui" prefix="aui" %><%@
+taglib uri="http://liferay.com/tld/ddm" prefix="liferay-ddm" %><%@
 taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %><%@
 taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
@@ -27,8 +28,8 @@ page import="com.liferay.portal.model.Layout" %><%@
 page import="com.liferay.portal.model.LayoutSet" %><%@
 page import="com.liferay.portal.service.LayoutLocalServiceUtil" %><%@
 page import="com.liferay.portal.util.LayoutDescription" %><%@
-page import="com.liferay.site.navigation.site.map.web.configuration.SiteMapPortletInstanceConfiguration" %><%@
-page import="com.liferay.site.navigation.site.map.web.display.context.SiteMapDisplayContext" %>
+page import="com.liferay.site.navigation.site.map.web.configuration.SiteNavigationSiteMapPortletInstanceConfiguration" %><%@
+page import="com.liferay.site.navigation.site.map.web.display.context.SiteNavigationSiteMapDisplayContext" %>
 
 <%@ page import="java.util.HashMap" %><%@
 page import="java.util.List" %><%@
@@ -39,9 +40,9 @@ page import="java.util.Map" %>
 <liferay-theme:defineObjects />
 
 <%
-SiteMapDisplayContext siteMapDisplayContext = new SiteMapDisplayContext(request);
+SiteNavigationSiteMapDisplayContext siteNavigationSiteMapDisplayContext = new SiteNavigationSiteMapDisplayContext(request);
 
-SiteMapPortletInstanceConfiguration siteMapPortletInstanceConfiguration = siteMapDisplayContext.getSiteMapPortletInstanceConfiguration();
+SiteNavigationSiteMapPortletInstanceConfiguration siteNavigationSiteMapPortletInstanceConfiguration = siteNavigationSiteMapDisplayContext.getSiteNavigationSiteMapPortletInstanceConfiguration();
 %>
 
 <%@ include file="/init-ext.jsp" %>

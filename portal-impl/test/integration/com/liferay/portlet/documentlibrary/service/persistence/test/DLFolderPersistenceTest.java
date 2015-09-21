@@ -151,6 +151,8 @@ public class DLFolderPersistenceTest {
 
 		newDLFolder.setRestrictionType(RandomTestUtil.nextInt());
 
+		newDLFolder.setLastPublishDate(RandomTestUtil.nextDate());
+
 		newDLFolder.setStatus(RandomTestUtil.nextInt());
 
 		newDLFolder.setStatusByUserId(RandomTestUtil.nextLong());
@@ -200,6 +202,9 @@ public class DLFolderPersistenceTest {
 			newDLFolder.getHidden());
 		Assert.assertEquals(existingDLFolder.getRestrictionType(),
 			newDLFolder.getRestrictionType());
+		Assert.assertEquals(Time.getShortTimestamp(
+				existingDLFolder.getLastPublishDate()),
+			Time.getShortTimestamp(newDLFolder.getLastPublishDate()));
 		Assert.assertEquals(existingDLFolder.getStatus(),
 			newDLFolder.getStatus());
 		Assert.assertEquals(existingDLFolder.getStatusByUserId(),
@@ -391,8 +396,9 @@ public class DLFolderPersistenceTest {
 			"repositoryId", true, "mountPoint", true, "parentFolderId", true,
 			"treePath", true, "name", true, "description", true,
 			"lastPostDate", true, "defaultFileEntryTypeId", true, "hidden",
-			true, "restrictionType", true, "status", true, "statusByUserId",
-			true, "statusByUserName", true, "statusDate", true);
+			true, "restrictionType", true, "lastPublishDate", true, "status",
+			true, "statusByUserId", true, "statusByUserName", true,
+			"statusDate", true);
 	}
 
 	@Test
@@ -600,22 +606,22 @@ public class DLFolderPersistenceTest {
 		Assert.assertTrue(Validator.equals(existingDLFolder.getUuid(),
 				ReflectionTestUtil.invoke(existingDLFolder, "getOriginalUuid",
 					new Class<?>[0])));
-		Assert.assertEquals(existingDLFolder.getGroupId(),
-			ReflectionTestUtil.invoke(existingDLFolder, "getOriginalGroupId",
-				new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingDLFolder.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingDLFolder,
+				"getOriginalGroupId", new Class<?>[0]));
 
-		Assert.assertEquals(existingDLFolder.getRepositoryId(),
-			ReflectionTestUtil.invoke(existingDLFolder,
+		Assert.assertEquals(Long.valueOf(existingDLFolder.getRepositoryId()),
+			ReflectionTestUtil.<Long>invoke(existingDLFolder,
 				"getOriginalRepositoryId", new Class<?>[0]));
-		Assert.assertEquals(existingDLFolder.getMountPoint(),
-			ReflectionTestUtil.invoke(existingDLFolder,
+		Assert.assertEquals(Boolean.valueOf(existingDLFolder.getMountPoint()),
+			ReflectionTestUtil.<Boolean>invoke(existingDLFolder,
 				"getOriginalMountPoint", new Class<?>[0]));
 
-		Assert.assertEquals(existingDLFolder.getGroupId(),
-			ReflectionTestUtil.invoke(existingDLFolder, "getOriginalGroupId",
-				new Class<?>[0]));
-		Assert.assertEquals(existingDLFolder.getParentFolderId(),
-			ReflectionTestUtil.invoke(existingDLFolder,
+		Assert.assertEquals(Long.valueOf(existingDLFolder.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingDLFolder,
+				"getOriginalGroupId", new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingDLFolder.getParentFolderId()),
+			ReflectionTestUtil.<Long>invoke(existingDLFolder,
 				"getOriginalParentFolderId", new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(existingDLFolder.getName(),
 				ReflectionTestUtil.invoke(existingDLFolder, "getOriginalName",
@@ -660,6 +666,8 @@ public class DLFolderPersistenceTest {
 		dlFolder.setHidden(RandomTestUtil.randomBoolean());
 
 		dlFolder.setRestrictionType(RandomTestUtil.nextInt());
+
+		dlFolder.setLastPublishDate(RandomTestUtil.nextDate());
 
 		dlFolder.setStatus(RandomTestUtil.nextInt());
 

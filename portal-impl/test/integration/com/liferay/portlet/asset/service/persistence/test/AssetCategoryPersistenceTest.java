@@ -143,6 +143,8 @@ public class AssetCategoryPersistenceTest {
 
 		newAssetCategory.setVocabularyId(RandomTestUtil.nextLong());
 
+		newAssetCategory.setLastPublishDate(RandomTestUtil.nextDate());
+
 		_assetCategories.add(_persistence.update(newAssetCategory));
 
 		AssetCategory existingAssetCategory = _persistence.findByPrimaryKey(newAssetCategory.getPrimaryKey());
@@ -179,6 +181,9 @@ public class AssetCategoryPersistenceTest {
 			newAssetCategory.getDescription());
 		Assert.assertEquals(existingAssetCategory.getVocabularyId(),
 			newAssetCategory.getVocabularyId());
+		Assert.assertEquals(Time.getShortTimestamp(
+				existingAssetCategory.getLastPublishDate()),
+			Time.getShortTimestamp(newAssetCategory.getLastPublishDate()));
 	}
 
 	@Test
@@ -349,7 +354,7 @@ public class AssetCategoryPersistenceTest {
 			"userId", true, "userName", true, "createDate", true,
 			"modifiedDate", true, "parentCategoryId", true, "leftCategoryId",
 			true, "rightCategoryId", true, "name", true, "title", true,
-			"description", true, "vocabularyId", true);
+			"description", true, "vocabularyId", true, "lastPublishDate", true);
 	}
 
 	@Test
@@ -557,18 +562,20 @@ public class AssetCategoryPersistenceTest {
 		Assert.assertTrue(Validator.equals(existingAssetCategory.getUuid(),
 				ReflectionTestUtil.invoke(existingAssetCategory,
 					"getOriginalUuid", new Class<?>[0])));
-		Assert.assertEquals(existingAssetCategory.getGroupId(),
-			ReflectionTestUtil.invoke(existingAssetCategory,
+		Assert.assertEquals(Long.valueOf(existingAssetCategory.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingAssetCategory,
 				"getOriginalGroupId", new Class<?>[0]));
 
-		Assert.assertEquals(existingAssetCategory.getParentCategoryId(),
-			ReflectionTestUtil.invoke(existingAssetCategory,
+		Assert.assertEquals(Long.valueOf(
+				existingAssetCategory.getParentCategoryId()),
+			ReflectionTestUtil.<Long>invoke(existingAssetCategory,
 				"getOriginalParentCategoryId", new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(existingAssetCategory.getName(),
 				ReflectionTestUtil.invoke(existingAssetCategory,
 					"getOriginalName", new Class<?>[0])));
-		Assert.assertEquals(existingAssetCategory.getVocabularyId(),
-			ReflectionTestUtil.invoke(existingAssetCategory,
+		Assert.assertEquals(Long.valueOf(
+				existingAssetCategory.getVocabularyId()),
+			ReflectionTestUtil.<Long>invoke(existingAssetCategory,
 				"getOriginalVocabularyId", new Class<?>[0]));
 	}
 
@@ -602,6 +609,8 @@ public class AssetCategoryPersistenceTest {
 		assetCategory.setDescription(RandomTestUtil.randomString());
 
 		assetCategory.setVocabularyId(RandomTestUtil.nextLong());
+
+		assetCategory.setLastPublishDate(RandomTestUtil.nextDate());
 
 		_assetCategories.add(_persistence.update(assetCategory));
 
@@ -850,6 +859,8 @@ public class AssetCategoryPersistenceTest {
 		assetCategory.setDescription(RandomTestUtil.randomString());
 
 		assetCategory.setVocabularyId(RandomTestUtil.nextLong());
+
+		assetCategory.setLastPublishDate(RandomTestUtil.nextDate());
 
 		if (parentCategoryId != null) {
 			assetCategory.setParentCategoryId(parentCategoryId);

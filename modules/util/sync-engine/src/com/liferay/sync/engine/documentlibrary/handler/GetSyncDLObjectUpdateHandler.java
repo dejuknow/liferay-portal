@@ -18,6 +18,7 @@ import com.liferay.sync.engine.documentlibrary.event.Event;
 import com.liferay.sync.engine.documentlibrary.event.GetSyncContextEvent;
 import com.liferay.sync.engine.documentlibrary.model.SyncDLObjectUpdate;
 import com.liferay.sync.engine.documentlibrary.util.FileEventUtil;
+import com.liferay.sync.engine.documentlibrary.util.comparator.SyncFileComparator;
 import com.liferay.sync.engine.filesystem.Watcher;
 import com.liferay.sync.engine.filesystem.util.WatcherRegistry;
 import com.liferay.sync.engine.model.SyncAccount;
@@ -47,6 +48,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +57,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -165,12 +168,24 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 	@Override
 	public void processResponse(String response) throws Exception {
 		if (_syncDLObjectUpdate == null) {
+			if (response.startsWith("\"")) {
+				response = StringEscapeUtils.unescapeJava(response);
+
+				response = response.substring(1, response.length() - 1);
+			}
+
 			_syncDLObjectUpdate = JSONUtil.readValue(
 				response, SyncDLObjectUpdate.class);
 		}
 
-		for (SyncFile targetSyncFile : _syncDLObjectUpdate.getSyncDLObjects()) {
-			processSyncFile(targetSyncFile);
+		List<SyncFile> syncFiles = _syncDLObjectUpdate.getSyncFiles();
+
+		if (!syncFiles.isEmpty()) {
+			Collections.sort(syncFiles, _syncFileComparator);
+
+			for (SyncFile syncFile : syncFiles) {
+				processSyncFile(syncFile);
+			}
 		}
 
 		if (getParameterValue("parentFolderId") == null) {
@@ -186,7 +201,17 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 
 			syncSite.setRemoteSyncTime(_syncDLObjectUpdate.getLastAccessTime());
 
+			if (_syncDLObjectUpdate.getResultsTotal() <= syncFiles.size()) {
+				syncSite.setState(SyncSite.STATE_SYNCED);
+			}
+
 			SyncSiteService.update(syncSite);
+
+			if (_syncDLObjectUpdate.getResultsTotal() > syncFiles.size()) {
+				FileEventUtil.getUpdates(
+					syncSite.getCompanyId(), syncSite.getGroupId(),
+					getSyncAccountId(), syncSite);
+			}
 		}
 	}
 
@@ -216,14 +241,16 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 				filePath, String.valueOf(syncFile.getSyncFileId()), false);
 		}
 		else {
-			if (syncFile.getSize() <= 0) {
+			String checksum = syncFile.getChecksum();
+
+			if (checksum.isEmpty() || (syncFile.getSize() <= 0)) {
 				downloadFile(syncFile, null, 0, false);
 
 				return;
 			}
 
 			SyncFile sourceSyncFile = SyncFileService.fetchSyncFile(
-				syncFile.getChecksum(), SyncFile.STATE_SYNCED);
+				checksum, SyncFile.STATE_SYNCED);
 
 			SyncFileService.update(syncFile);
 
@@ -283,6 +310,10 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 
 	protected void deleteFile(SyncFile sourceSyncFile, boolean trashed)
 		throws Exception {
+
+		if (sourceSyncFile.getUiEvent() == SyncFile.UI_EVENT_DELETED_LOCAL) {
+			return;
+		}
 
 		if (trashed) {
 			sourceSyncFile.setUiEvent(SyncFile.UI_EVENT_TRASHED_REMOTE);
@@ -377,10 +408,16 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 	@Override
 	protected void logResponse(String response) {
 		try {
+			if (response.startsWith("\"")) {
+				response = StringEscapeUtils.unescapeJava(response);
+
+				response = response.substring(1, response.length() - 1);
+			}
+
 			_syncDLObjectUpdate = JSONUtil.readValue(
 				response, SyncDLObjectUpdate.class);
 
-			List<SyncFile> syncFiles = _syncDLObjectUpdate.getSyncDLObjects();
+			List<SyncFile> syncFiles = _syncDLObjectUpdate.getSyncFiles();
 
 			if (!syncFiles.isEmpty()) {
 				super.logResponse(response);
@@ -650,6 +687,8 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 		new HashMap<>();
 	private static final ScheduledExecutorService _scheduledExecutorService =
 		Executors.newScheduledThreadPool(5);
+	private static final Comparator<SyncFile> _syncFileComparator =
+		new SyncFileComparator();
 
 	private final ScheduledFuture<?> _scheduledFuture;
 	private SyncDLObjectUpdate _syncDLObjectUpdate;

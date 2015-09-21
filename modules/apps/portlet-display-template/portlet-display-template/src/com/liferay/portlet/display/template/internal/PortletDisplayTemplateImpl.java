@@ -14,6 +14,9 @@
 
 package com.liferay.portlet.display.template.internal;
 
+import com.liferay.dynamic.data.mapping.exception.NoSuchTemplateException;
+import com.liferay.dynamic.data.mapping.model.DDMTemplate;
+import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
 import com.liferay.portal.kernel.bean.ClassLoaderBeanHandler;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringWriter;
@@ -41,12 +44,6 @@ import com.liferay.portal.util.PortletKeys;
 import com.liferay.portlet.PortletURLUtil;
 import com.liferay.portlet.display.template.PortletDisplayTemplate;
 import com.liferay.portlet.display.template.PortletDisplayTemplateConstants;
-import com.liferay.portlet.dynamicdatamapping.NoSuchTemplateException;
-import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
-import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalService;
-import com.liferay.portlet.exportimport.lar.PortletDataContext;
-import com.liferay.portlet.exportimport.lar.PortletDataException;
-import com.liferay.portlet.exportimport.lar.StagedModelDataHandlerUtil;
 import com.liferay.taglib.servlet.PipingServletResponse;
 import com.liferay.taglib.util.VelocityTaglib;
 
@@ -80,24 +77,6 @@ import org.osgi.service.component.annotations.Reference;
 @Component(immediate = true)
 @DoPrivileged
 public class PortletDisplayTemplateImpl implements PortletDisplayTemplate {
-
-	@Override
-	public void exportDDMTemplateStagedModel(
-			PortletDataContext portletDataContext, String portletId,
-			long ddmTemplateId)
-		throws PortletDataException {
-
-		try {
-			DDMTemplate ddmTemplate = _ddmTemplateLocalService.getTemplate(
-				ddmTemplateId);
-
-			StagedModelDataHandlerUtil.exportReferenceStagedModel(
-				portletDataContext, portletId, ddmTemplate);
-		}
-		catch (PortalException pe) {
-			throw new PortletDataException(pe);
-		}
-	}
 
 	@Override
 	public DDMTemplate fetchDDMTemplate(long groupId, String displayStyle) {

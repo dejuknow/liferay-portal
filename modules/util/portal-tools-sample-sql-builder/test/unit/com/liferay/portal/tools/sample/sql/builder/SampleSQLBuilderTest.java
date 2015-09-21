@@ -22,7 +22,7 @@ import com.liferay.portal.kernel.util.SortedProperties;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.SystemProperties;
 import com.liferay.portal.test.rule.LogAssertionTestRule;
-import com.liferay.portal.tools.DBLoader;
+import com.liferay.portal.tools.HypersonicLoader;
 import com.liferay.portal.tools.ToolDependencies;
 
 import java.io.File;
@@ -51,6 +51,8 @@ public class SampleSQLBuilderTest {
 	@Test
 	public void testGenerateAndInsertSampleSQL() throws Exception {
 		ToolDependencies.wireBasic();
+
+		DBFactoryUtil.setDB(DB.TYPE_HYPERSONIC);
 
 		Properties properties = new SortedProperties();
 
@@ -142,8 +144,6 @@ public class SampleSQLBuilderTest {
 	private void _loadHypersonic(String sqlDir, String outputDir)
 		throws Exception {
 
-		Class.forName("org.hsqldb.jdbcDriver");
-
 		Connection connection = null;
 		Statement statement = null;
 
@@ -152,14 +152,14 @@ public class SampleSQLBuilderTest {
 				"jdbc:hsqldb:mem:testSampleSQLBuilderDB;shutdown=true", "sa",
 				"");
 
-			DBLoader.loadHypersonic(
+			HypersonicLoader.loadHypersonic(
 				connection, sqlDir + "/portal/portal-hypersonic.sql");
-			DBLoader.loadHypersonic(
+			HypersonicLoader.loadHypersonic(
 				connection, sqlDir + "/indexes/indexes-hypersonic.sql");
 
 			_loadServiceComponentsSQL(connection);
 
-			DBLoader.loadHypersonic(
+			HypersonicLoader.loadHypersonic(
 				connection, outputDir + "/sample-hypersonic.sql");
 
 			statement = connection.createStatement();

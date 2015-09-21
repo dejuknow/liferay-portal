@@ -321,6 +321,22 @@ public interface RepositoryModel extends BaseModel<Repository>, MVCCModel,
 	 */
 	public void setDlFolderId(long dlFolderId);
 
+	/**
+	 * Returns the last publish date of this repository.
+	 *
+	 * @return the last publish date of this repository
+	 */
+	@Override
+	public Date getLastPublishDate();
+
+	/**
+	 * Sets the last publish date of this repository.
+	 *
+	 * @param lastPublishDate the last publish date of this repository
+	 */
+	@Override
+	public void setLastPublishDate(Date lastPublishDate);
+
 	@Override
 	public boolean isNew();
 

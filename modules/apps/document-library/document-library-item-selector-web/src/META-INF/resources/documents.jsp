@@ -26,14 +26,10 @@ SearchContainer searchContainer = new SearchContainer(renderRequest, null, null,
 List results = null;
 int total = 0;
 
-long repositoryId = dlItemSelectorViewDisplayContext.getRepositoryId(request);
 long folderId = dlItemSelectorViewDisplayContext.getFolderId(request);
 String[] mimeTypes = dlItemSelectorViewDisplayContext.getMimeTypes();
 
-String keywords = ParamUtil.getString(request, "keywords");
-String tabName = ParamUtil.getString(request, "tabName");
-
-if (Validator.isNotNull(keywords) && tabName.equals(dlItemSelectorViewDisplayContext.getTitle(locale))) {
+if (dlItemSelectorViewDisplayContext.isSearch()) {
 	SearchContext searchContext = SearchContextFactory.getInstance(request);
 
 	searchContext.setAttribute("mimeTypes", mimeTypes);
@@ -41,7 +37,7 @@ if (Validator.isNotNull(keywords) && tabName.equals(dlItemSelectorViewDisplayCon
 	searchContext.setFolderIds(new long[] {dlItemSelectorViewDisplayContext.getFolderId(request)});
 	searchContext.setStart(searchContainer.getStart());
 
-	Hits hits = DLAppServiceUtil.search(repositoryId, searchContext);
+	Hits hits = DLAppServiceUtil.search(themeDisplay.getScopeGroupId(), searchContext);
 
 	total = hits.getLength();
 
@@ -71,21 +67,20 @@ if (Validator.isNotNull(keywords) && tabName.equals(dlItemSelectorViewDisplayCon
 	}
 }
 else {
-	total = DLAppServiceUtil.getFoldersAndFileEntriesAndFileShortcutsCount(repositoryId, folderId, WorkflowConstants.STATUS_APPROVED, mimeTypes, false);
-	results = DLAppServiceUtil.getFoldersAndFileEntriesAndFileShortcuts(repositoryId, folderId, WorkflowConstants.STATUS_APPROVED, mimeTypes, false, searchContainer.getStart(), searchContainer.getEnd(), searchContainer.getOrderByComparator());
+	total = DLAppServiceUtil.getFoldersAndFileEntriesAndFileShortcutsCount(themeDisplay.getScopeGroupId(), folderId, WorkflowConstants.STATUS_APPROVED, mimeTypes, false);
+	results = DLAppServiceUtil.getFoldersAndFileEntriesAndFileShortcuts(themeDisplay.getScopeGroupId(), folderId, WorkflowConstants.STATUS_APPROVED, mimeTypes, false, searchContainer.getStart(), searchContainer.getEnd(), searchContainer.getOrderByComparator());
 }
 
 searchContainer.setTotal(total);
 searchContainer.setResults(results);
 %>
 
-<item-selector-ui:browser
+<liferay-item-selector:browser
 	desiredItemSelectorReturnTypes="<%= itemSelectorCriterion.getDesiredItemSelectorReturnTypes() %>"
-	displayStyle="<%= dlItemSelectorViewDisplayContext.getDisplayStyle(request) %>"
-	displayStyleURL="<%= dlItemSelectorViewDisplayContext.getPortletURL(request, liferayPortletResponse) %>"
 	itemSelectedEventName="<%= dlItemSelectorViewDisplayContext.getItemSelectedEventName() %>"
+	portletURL="<%= dlItemSelectorViewDisplayContext.getPortletURL(request, liferayPortletResponse) %>"
 	searchContainer="<%= searchContainer %>"
-	searchURL="<%= dlItemSelectorViewDisplayContext.getPortletURL(request, liferayPortletResponse) %>"
 	showBreadcrumb="<%= true %>"
 	tabName="<%= dlItemSelectorViewDisplayContext.getTitle(locale) %>"
+	uploadURL="<%= dlItemSelectorViewDisplayContext.getUploadURL(request, liferayPortletResponse) %>"
 />

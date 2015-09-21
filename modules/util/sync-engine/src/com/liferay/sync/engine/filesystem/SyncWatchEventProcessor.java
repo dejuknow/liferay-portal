@@ -64,7 +64,8 @@ public class SyncWatchEventProcessor implements Runnable {
 
 					if ((syncFile.getSyncAccountId() != _syncAccountId) ||
 						(syncFile.getTypePK() == 0) ||
-						!originalValues.containsKey("typePK")) {
+						(!originalValues.containsKey("typePK") &&
+						 !originalValues.containsKey("state"))) {
 
 						return;
 					}
@@ -205,6 +206,12 @@ public class SyncWatchEventProcessor implements Runnable {
 			return;
 		}
 
+		if (syncFile.getState() == SyncFile.STATE_IN_PROGRESS) {
+			queueSyncWatchEvent(syncFile.getFilePathName(), syncWatchEvent);
+
+			return;
+		}
+
 		Path sourceFilePath = Paths.get(syncFile.getFilePathName());
 
 		if (targetFilePath.equals(sourceFilePath)) {
@@ -328,6 +335,12 @@ public class SyncWatchEventProcessor implements Runnable {
 			SyncFileService.addFolderSyncFile(
 				targetFilePath, parentSyncFile.getTypePK(),
 				parentSyncFile.getRepositoryId(), _syncAccountId);
+
+			return;
+		}
+
+		if (syncFile.getState() == SyncFile.STATE_IN_PROGRESS) {
+			queueSyncWatchEvent(syncFile.getFilePathName(), syncWatchEvent);
 
 			return;
 		}

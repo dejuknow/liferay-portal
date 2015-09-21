@@ -76,74 +76,31 @@ if (layout != null) {
 	}
 	%>
 
-	<aui:nav collapsible="<%= false %>" cssClass="navbar-nav staging-bar" id="stagingBar">
-		<c:if test="<%= (liveGroup != null) %>">
+	<c:if test="<%= liveGroup != null %>">
+		<li class="control-menu-nav-item">
 			<c:choose>
 				<c:when test="<%= group.isStagingGroup() || group.isStagedRemotely() %>">
 					<c:if test="<%= stagingGroup != null %>">
-						<aui:nav-item anchorCssClass="staging-link" cssClass="active site-variations staging-toggle" dropdown="<%= true %>" id="stagingLink" label="staging" toggle="<%= true %>">
-							<aui:nav-item cssClass="row">
-								<c:choose>
-									<c:when test="<%= (group.isStagingGroup() || group.isStagedRemotely()) && branchingEnabled %>">
-
-										<%
-										request.setAttribute(WebKeys.PRIVATE_LAYOUT, privateLayout);
-										request.setAttribute("view.jsp-layoutBranch", layoutBranch);
-										request.setAttribute("view.jsp-layoutRevision", layoutRevision);
-										request.setAttribute("view.jsp-layoutSetBranch", layoutSetBranch);
-										request.setAttribute("view.jsp-layoutSetBranches", layoutSetBranches);
-										request.setAttribute("view.jsp-stagingFriendlyURL", stagingFriendlyURL);
-										%>
-
-										<c:if test="<%= !layoutRevision.isIncomplete() %>">
-											<liferay-util:include page="/view_layout_set_branch_details.jsp" servletContext="<%= application %>" />
-
-											<liferay-util:include page="/view_layout_branch_details.jsp" servletContext="<%= application %>" />
-										</c:if>
-
-										<div class="layout-revision-details" id="<portlet:namespace />layoutRevisionDetails">
-											<aui:model-context bean="<%= layoutRevision %>" model="<%= LayoutRevision.class %>" />
-
-											<liferay-util:include page="/view_layout_revision_details.jsp" servletContext="<%= application %>" />
-										</div>
-
-										<liferay-staging:menu cssClass="branching-enabled col-md-4" extended="<%= false %>" layoutSetBranchId="<%= layoutRevision.getLayoutSetBranchId() %>" onlyActions="<%= true %>" />
-									</c:when>
-
-									<c:otherwise>
-										<div class="staging-details">
-											<c:choose>
-												<c:when test="<%= liveLayout == null %>">
-													<span class="last-publication-branch">
-														<liferay-ui:message arguments='<%= "<strong>" + HtmlUtil.escape(layout.getName(locale)) + "</strong>" %>' key="page-x-has-not-been-published-to-live-yet" translateArguments="<%= false %>" />
-													</span>
-												</c:when>
-												<c:otherwise>
-
-													<%
-													request.setAttribute("privateLayout", privateLayout);
-													request.setAttribute("view.jsp-typeSettingsProperties", liveLayout.getTypeSettingsProperties());
-													%>
-
-													<liferay-util:include page="/last_publication_date_message.jsp" servletContext="<%= application %>" />
-												</c:otherwise>
-											</c:choose>
-										</div>
-
-										<c:if test="<%= group.isStagingGroup() || group.isStagedRemotely() %>">
-											<liferay-staging:menu cssClass="publish-link" extended="<%= false %>" onlyActions="<%= true %>" />
-										</c:if>
-									</c:otherwise>
-								</c:choose>
-							</aui:nav-item>
-						</aui:nav-item>
+						<a class="active control-menu-icon sidenav-toggler" id="stagingLink" value="staging">
+							<span class="icon-fb-radio icon-monospaced"></span>
+							<span class="control-menu-icon-label">
+								<liferay-ui:message key="staging" />
+							</span>
+						</a>
 					</c:if>
 				</c:when>
 				<c:otherwise>
-					<aui:nav-item cssClass='<%= ((layoutSetBranches != null) ? " active" : StringPool.BLANK) + " staging-toggle" %>' href="<%= (layoutSetBranches != null) ? null : stagingFriendlyURL %>" label="staging" />
+					<a class='<%= ((layoutSetBranches != null) ? "active control-menu-icon sidenav-toggler" : StringPool.BLANK) %>' href="<%= (layoutSetBranches != null) ? null : stagingFriendlyURL %>" value="staging">
+						<span class="icon-fb-radio icon-monospaced"></span>
+						<span class="control-menu-icon-label">
+							<liferay-ui:message key="staging" />
+						</span>
+					</a>
 				</c:otherwise>
 			</c:choose>
+		</li>
 
+		<li class="active control-menu-nav-item">
 			<c:choose>
 				<c:when test="<%= group.isStagedRemotely() %>">
 
@@ -159,33 +116,105 @@ if (layout != null) {
 					String remoteURL = StagingUtil.buildRemoteURL(remoteAddress, remotePort, remotePathContext, secureConnection, remoteGroupId, layout.isPrivateLayout());
 					%>
 
-					<aui:nav-item cssClass="remote-live-link" href="<%= remoteURL %>" iconCssClass="icon-external-link-sign" label="go-to-remote-live" />
+					<a href="<%= remoteURL %>" icon="icon-external-link-sign" value="go-to-remote-live">
+						<liferay-ui:message key="go-to-remote-live" />
+					</a>
 				</c:when>
 				<c:when test="<%= group.isStagingGroup() %>">
 					<c:if test="<%= Validator.isNotNull(liveFriendlyURL) %>">
-						<aui:nav-item cssClass=" live-link staging-toggle" href="<%= liveFriendlyURL %>" label="live" />
+						<a class="control-menu-icon taglib-icon" href="<%= liveFriendlyURL %>" value="live">
+							<i class="icon-circle-blank icon-monospaced"></i>
+
+							<span class="hide-accessible taglib-text"></span>
+							<span class="control-menu-icon-label">
+								<liferay-ui:message key="live" />
+							</span>
+						</a>
 					</c:if>
 				</c:when>
 				<c:otherwise>
-					<aui:nav-item anchorCssClass="staging-link" cssClass="active live-link staging-toggle" dropdown="<%= true %>" id="liveLink" label="live" toggle="<%= true %>">
-						<aui:nav-item cssClass="row">
-							<div class="staging-details">
-								<div class="alert alert-warning hide warning-content" id="<portlet:namespace />warningMessage">
-									<liferay-ui:message key="an-inital-staging-publication-is-in-progress" />
-								</div>
+					<a class="control-menu-icon taglib-icon" id="liveLink" value="live">
+						<i class="icon-circle-blank icon-monospaced"></i>
+
+						<span class="hide-accessible taglib-text"></span>
+
+						<span class="control-menu-icon-label">
+							<liferay-ui:message key="live" />
+						</span>
+					</a>
+				</c:otherwise>
+			</c:choose>
+		</li>
+
+		<c:if test="<%= (group.isStagingGroup() || group.isStagedRemotely()) && (stagingGroup != null) %>">
+			<c:choose>
+				<c:when test="<%= (group.isStagingGroup() || group.isStagedRemotely()) && branchingEnabled %>">
+
+					<%
+					request.setAttribute(WebKeys.PRIVATE_LAYOUT, privateLayout);
+					request.setAttribute("view.jsp-layoutBranch", layoutBranch);
+					request.setAttribute("view.jsp-layoutRevision", layoutRevision);
+					request.setAttribute("view.jsp-layoutSetBranch", layoutSetBranch);
+					request.setAttribute("view.jsp-layoutSetBranches", layoutSetBranches);
+					request.setAttribute("view.jsp-stagingFriendlyURL", stagingFriendlyURL);
+					%>
+
+					<c:if test="<%= !layoutRevision.isIncomplete() %>">
+						<liferay-util:include page="/view_layout_set_branch_details.jsp" servletContext="<%= application %>" />
+
+						<liferay-util:include page="/view_layout_branch_details.jsp" servletContext="<%= application %>" />
+					</c:if>
+
+					<div class="layout-revision-details" id="<portlet:namespace />layoutRevisionDetails">
+						<aui:model-context bean="<%= layoutRevision %>" model="<%= LayoutRevision.class %>" />
+
+						<liferay-util:include page="/view_layout_revision_details.jsp" servletContext="<%= application %>" />
+					</div>
+
+					<liferay-staging:menu cssClass="branching-enabled col-md-4" extended="<%= false %>" layoutSetBranchId="<%= layoutRevision.getLayoutSetBranchId() %>" onlyActions="<%= true %>" />
+				</c:when>
+
+				<c:otherwise>
+					<div class="staging-details">
+						<c:choose>
+							<c:when test="<%= liveLayout == null %>">
+								<span class="last-publication-branch">
+									<liferay-ui:message arguments='<%= "<strong>" + HtmlUtil.escape(layout.getName(locale)) + "</strong>" %>' key="page-x-has-not-been-published-to-live-yet" translateArguments="<%= false %>" />
+								</span>
+							</c:when>
+							<c:otherwise>
 
 								<%
+								request.setAttribute("privateLayout", privateLayout);
 								request.setAttribute("view.jsp-typeSettingsProperties", liveLayout.getTypeSettingsProperties());
 								%>
 
 								<liferay-util:include page="/last_publication_date_message.jsp" servletContext="<%= application %>" />
-							</div>
-						</aui:nav-item>
-					</aui:nav-item>
+							</c:otherwise>
+						</c:choose>
+					</div>
+
+					<c:if test="<%= group.isStagingGroup() || group.isStagedRemotely() %>">
+						<liferay-staging:menu cssClass="publish-link" extended="<%= false %>" onlyActions="<%= true %>" />
+					</c:if>
 				</c:otherwise>
 			</c:choose>
 		</c:if>
-	</aui:nav>
+
+		<c:if test="<%= !group.isStagedRemotely() && !group.isStagingGroup() %>">
+			<li class="control-menu-nav-item">
+				<div class="alert alert-warning hide warning-content" id="<portlet:namespace />warningMessage">
+					<liferay-ui:message key="an-inital-staging-publication-is-in-progress" />
+				</div>
+
+				<%
+				request.setAttribute("view.jsp-typeSettingsProperties", liveLayout.getTypeSettingsProperties());
+				%>
+
+				<liferay-util:include page="/last_publication_date_message.jsp" servletContext="<%= application %>" />
+			</li>
+		</c:if>
+	</c:if>
 
 	<c:if test="<%= !branchingEnabled %>">
 		<aui:script use="liferay-staging">
@@ -204,7 +233,7 @@ if (layout != null) {
 
 		var checkBackgroundTasks = function() {
 			Liferay.Service(
-				'/backgroundtask/get-background-tasks-count',
+				'/backgroundtask.backgroundtask/get-background-tasks-count',
 				{
 					completed: false,
 					groupId: '<%= liveGroup.getGroupId() %>',

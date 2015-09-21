@@ -36,6 +36,10 @@ public interface LiferaySelenium extends Selenium {
 
 	public void assertConsoleTextPresent(String text) throws Exception;
 
+	public void assertCssValue(
+			String locator, String cssAttribute, String cssValue)
+		throws Exception;
+
 	public void assertEditable(String locator) throws Exception;
 
 	public void assertElementNotPresent(String locator) throws Exception;
@@ -175,6 +179,8 @@ public interface LiferaySelenium extends Selenium {
 
 	public boolean isSelectedLabel(String selectLocator, String pattern);
 
+	public boolean isSikuliImagePresent(String image) throws Exception;
+
 	public boolean isTCatEnabled();
 
 	public boolean isText(String locator, String value);
@@ -182,6 +188,10 @@ public interface LiferaySelenium extends Selenium {
 	public boolean isTextNotPresent(String pattern);
 
 	public boolean isValue(String locator, String value);
+
+	public void javaScriptMouseDown(String locator);
+
+	public void javaScriptMouseUp(String locator);
 
 	public void keyDownAndWait(String locator, String keySequence);
 

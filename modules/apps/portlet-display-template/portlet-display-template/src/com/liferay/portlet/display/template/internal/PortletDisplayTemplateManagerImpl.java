@@ -16,13 +16,10 @@ package com.liferay.portlet.display.template.internal;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.portletdisplaytemplate.PortletDisplayTemplateManager;
-import com.liferay.portal.kernel.template.TemplateHandler;
 import com.liferay.portal.kernel.template.TemplateVariableGroup;
 import com.liferay.portlet.display.template.PortletDisplayTemplate;
 import com.liferay.portlet.dynamicdatamapping.DDMTemplate;
 import com.liferay.portlet.dynamicdatamapping.DDMTemplateManager;
-import com.liferay.portlet.exportimport.lar.PortletDataContext;
-import com.liferay.portlet.exportimport.lar.PortletDataException;
 
 import java.util.List;
 import java.util.Map;
@@ -41,21 +38,11 @@ public class PortletDisplayTemplateManagerImpl
 	implements PortletDisplayTemplateManager {
 
 	@Override
-	public void exportDDMTemplateStagedModel(
-			PortletDataContext portletDataContext, String portletId,
-			DDMTemplate ddmTemplate)
-		throws PortletDataException {
-
-		_portletDisplayTemplate.exportDDMTemplateStagedModel(
-			portletDataContext, portletId, ddmTemplate.getTemplateId());
-	}
-
-	@Override
 	public DDMTemplate getDDMTemplate(
 		long groupId, long classNameId, String displayStyle,
 		boolean useDefault) {
 
-		com.liferay.portlet.dynamicdatamapping.model.DDMTemplate ddmTemplate =
+		com.liferay.dynamic.data.mapping.model.DDMTemplate ddmTemplate =
 			_portletDisplayTemplate.getPortletDisplayTemplateDDMTemplate(
 				groupId, classNameId, displayStyle, useDefault);
 
@@ -73,18 +60,8 @@ public class PortletDisplayTemplateManagerImpl
 	}
 
 	@Override
-	public long getDDMTemplateGroupId(long groupId) {
-		return _portletDisplayTemplate.getDDMTemplateGroupId(groupId);
-	}
-
-	@Override
 	public String getDisplayStyle(String ddmTemplateKey) {
 		return _portletDisplayTemplate.getDisplayStyle(ddmTemplateKey);
-	}
-
-	@Override
-	public List<TemplateHandler> getPortletDisplayTemplateHandlers() {
-		return _portletDisplayTemplate.getPortletDisplayTemplateHandlers();
 	}
 
 	@Override

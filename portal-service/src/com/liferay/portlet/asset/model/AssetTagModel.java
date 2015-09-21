@@ -236,6 +236,22 @@ public interface AssetTagModel extends BaseModel<AssetTag>, StagedGroupedModel {
 	 */
 	public void setAssetCount(int assetCount);
 
+	/**
+	 * Returns the last publish date of this asset tag.
+	 *
+	 * @return the last publish date of this asset tag
+	 */
+	@Override
+	public Date getLastPublishDate();
+
+	/**
+	 * Sets the last publish date of this asset tag.
+	 *
+	 * @param lastPublishDate the last publish date of this asset tag
+	 */
+	@Override
+	public void setLastPublishDate(Date lastPublishDate);
+
 	@Override
 	public boolean isNew();
 

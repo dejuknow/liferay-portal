@@ -14,6 +14,10 @@
 
 package com.liferay.journal.service.impl;
 
+import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.model.DDMStructureLink;
+import com.liferay.dynamic.data.mapping.service.DDMStructureLinkLocalService;
+import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.journal.exception.DuplicateFolderNameException;
 import com.liferay.journal.exception.InvalidDDMStructureException;
 import com.liferay.journal.exception.NoSuchFolderException;
@@ -52,12 +56,11 @@ import com.liferay.portal.model.TreeModel;
 import com.liferay.portal.model.User;
 import com.liferay.portal.model.WorkflowDefinitionLink;
 import com.liferay.portal.service.ServiceContext;
+import com.liferay.portal.spring.extender.service.ServiceReference;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.asset.model.AssetEntry;
 import com.liferay.portlet.asset.model.AssetLinkConstants;
-import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
-import com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink;
 import com.liferay.portlet.social.model.SocialActivityConstants;
 import com.liferay.portlet.trash.model.TrashEntry;
 import com.liferay.portlet.trash.model.TrashVersion;
@@ -175,6 +178,11 @@ public class JournalFolderLocalServiceImpl
 		// Expando
 
 		expandoValueLocalService.deleteValues(
+			JournalFolder.class.getName(), folder.getFolderId());
+
+		// Ratings
+
+		ratingsStatsLocalService.deleteStats(
 			JournalFolder.class.getName(), folder.getFolderId());
 
 		// Trash
@@ -314,7 +322,7 @@ public class JournalFolderLocalServiceImpl
 		long classNameId = classNameLocalService.getClassNameId(
 			JournalArticle.class);
 
-		return ddmStructurePersistence.findByG_C(groupIds, classNameId);
+		return ddmStructureLocalService.getStructures(groupIds, classNameId);
 	}
 
 	@Override
@@ -419,17 +427,22 @@ public class JournalFolderLocalServiceImpl
 
 	@Override
 	public int getFoldersAndArticlesCount(long groupId, long folderId) {
+		QueryDefinition<?> queryDefinition = new QueryDefinition<>(
+			WorkflowConstants.STATUS_ANY);
+
 		return journalFolderFinder.countF_A_ByG_F(
-			groupId, folderId,
-			new QueryDefinition<Object>(WorkflowConstants.STATUS_ANY));
+			groupId, folderId, queryDefinition);
 	}
 
 	@Override
 	public int getFoldersAndArticlesCount(
 		long groupId, long folderId, int status) {
 
+		QueryDefinition<?> queryDefinition = new QueryDefinition<>(
+			status, 0, false);
+
 		return journalFolderFinder.countF_A_ByG_F(
-			groupId, folderId, new QueryDefinition<Object>(status));
+			groupId, folderId, queryDefinition);
 	}
 
 	@Override
@@ -1449,5 +1462,11 @@ public class JournalFolderLocalServiceImpl
 			throw new DuplicateFolderNameException(name);
 		}
 	}
+
+	@ServiceReference(type = DDMStructureLinkLocalService.class)
+	protected DDMStructureLinkLocalService ddmStructureLinkLocalService;
+
+	@ServiceReference(type = DDMStructureLocalService.class)
+	protected DDMStructureLocalService ddmStructureLocalService;
 
 }

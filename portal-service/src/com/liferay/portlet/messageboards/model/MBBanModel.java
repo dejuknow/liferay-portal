@@ -235,6 +235,22 @@ public interface MBBanModel extends BaseModel<MBBan>, StagedGroupedModel {
 	 */
 	public void setBanUserUuid(String banUserUuid);
 
+	/**
+	 * Returns the last publish date of this message boards ban.
+	 *
+	 * @return the last publish date of this message boards ban
+	 */
+	@Override
+	public Date getLastPublishDate();
+
+	/**
+	 * Sets the last publish date of this message boards ban.
+	 *
+	 * @param lastPublishDate the last publish date of this message boards ban
+	 */
+	@Override
+	public void setLastPublishDate(Date lastPublishDate);
+
 	@Override
 	public boolean isNew();
 

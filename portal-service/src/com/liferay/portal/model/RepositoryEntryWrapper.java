@@ -66,6 +66,7 @@ public class RepositoryEntryWrapper implements RepositoryEntry,
 		attributes.put("repositoryId", getRepositoryId());
 		attributes.put("mappedId", getMappedId());
 		attributes.put("manualCheckInRequired", getManualCheckInRequired());
+		attributes.put("lastPublishDate", getLastPublishDate());
 
 		return attributes;
 	}
@@ -144,6 +145,12 @@ public class RepositoryEntryWrapper implements RepositoryEntry,
 		if (manualCheckInRequired != null) {
 			setManualCheckInRequired(manualCheckInRequired);
 		}
+
+		Date lastPublishDate = (Date)attributes.get("lastPublishDate");
+
+		if (lastPublishDate != null) {
+			setLastPublishDate(lastPublishDate);
+		}
 	}
 
 	@Override
@@ -173,7 +180,7 @@ public class RepositoryEntryWrapper implements RepositoryEntry,
 	* @return the create date of this repository entry
 	*/
 	@Override
-	public java.util.Date getCreateDate() {
+	public Date getCreateDate() {
 		return _repositoryEntry.getCreateDate();
 	}
 
@@ -190,6 +197,16 @@ public class RepositoryEntryWrapper implements RepositoryEntry,
 	@Override
 	public long getGroupId() {
 		return _repositoryEntry.getGroupId();
+	}
+
+	/**
+	* Returns the last publish date of this repository entry.
+	*
+	* @return the last publish date of this repository entry
+	*/
+	@Override
+	public Date getLastPublishDate() {
+		return _repositoryEntry.getLastPublishDate();
 	}
 
 	/**
@@ -218,7 +235,7 @@ public class RepositoryEntryWrapper implements RepositoryEntry,
 	* @return the modified date of this repository entry
 	*/
 	@Override
-	public java.util.Date getModifiedDate() {
+	public Date getModifiedDate() {
 		return _repositoryEntry.getModifiedDate();
 	}
 
@@ -363,7 +380,7 @@ public class RepositoryEntryWrapper implements RepositoryEntry,
 	* @param createDate the create date of this repository entry
 	*/
 	@Override
-	public void setCreateDate(java.util.Date createDate) {
+	public void setCreateDate(Date createDate) {
 		_repositoryEntry.setCreateDate(createDate);
 	}
 
@@ -395,6 +412,16 @@ public class RepositoryEntryWrapper implements RepositoryEntry,
 	}
 
 	/**
+	* Sets the last publish date of this repository entry.
+	*
+	* @param lastPublishDate the last publish date of this repository entry
+	*/
+	@Override
+	public void setLastPublishDate(Date lastPublishDate) {
+		_repositoryEntry.setLastPublishDate(lastPublishDate);
+	}
+
+	/**
 	* Sets whether this repository entry is manual check in required.
 	*
 	* @param manualCheckInRequired the manual check in required of this repository entry
@@ -420,7 +447,7 @@ public class RepositoryEntryWrapper implements RepositoryEntry,
 	* @param modifiedDate the modified date of this repository entry
 	*/
 	@Override
-	public void setModifiedDate(java.util.Date modifiedDate) {
+	public void setModifiedDate(Date modifiedDate) {
 		_repositoryEntry.setModifiedDate(modifiedDate);
 	}
 

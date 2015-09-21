@@ -36,25 +36,72 @@ List<String> titles = localizedItemSelectorRendering.getTitles();
 		<div class="alert alert-info">
 
 			<%
-			ResourceBundle resourceBundle = ResourceBundle.getBundle("content/Language", locale);
+			ResourceBundle resourceBundle = ResourceBundleUtil.getBundle("content/Language", locale, getClass());
 			%>
 
 			<%= LanguageUtil.get(resourceBundle, "selection-is-not-available") %>
 		</div>
 	</c:when>
 	<c:otherwise>
-		<liferay-ui:tabs names="<%= StringUtil.merge(titles) %>" refresh="<%= false %>" type="pills" value="<%= localizedItemSelectorRendering.getSelectedTab() %>">
+
+		<%
+		String selectedTab = localizedItemSelectorRendering.getSelectedTab();
+
+		if (Validator.isNull(selectedTab)) {
+			selectedTab = titles.get(0);
+		}
+
+		ItemSelectorViewRenderer itemSelectorViewRenderer = localizedItemSelectorRendering.getItemSelectorViewRenderer(selectedTab);
+
+		ItemSelectorView<ItemSelectorCriterion> initialItemSelectorView = itemSelectorViewRenderer.getItemSelectorView();
+		%>
+
+		<div class="form-search <%= initialItemSelectorView.isShowSearch() ? "" : "hide" %>" id="<portlet:namespace />formSearch">
+			<aui:form action="<%= currentURL %>" cssClass="basic-search input-group"  name="searchFm">
+				<div class="input-group-input">
+					<div class="basic-search-slider">
+						<button class="basic-search-close btn btn-default" type="button"><span class="icon-remove"></span></button>
+
+						<aui:input name="selectedTab" type="hidden" value="<%= selectedTab %>" />
+
+						<%
+						String keywords = ParamUtil.getString(request, "keywords");
+						%>
+
+						<aui:input cssClass="form-control" label="" name="keywords" placeholder="search" type="text" />
+					</div>
+				</div>
+				<div class="input-group-btn">
+					<aui:button cssClass="btn btn-default" icon="icon-search" type="submit" value="" />
+				</div>
+			</aui:form>
+		</div>
+
+		<liferay-ui:tabs names="<%= StringUtil.merge(titles) %>" param="selectedTab" refresh="<%= false %>" type="pills" value="<%= selectedTab %>">
 
 			<%
 			for (String title : titles) {
-				ItemSelectorViewRenderer itemSelectorViewRenderer = localizedItemSelectorRendering.getItemSelectorViewRenderer(title);
+				ItemSelectorViewRenderer curItemSelectorViewRenderer = localizedItemSelectorRendering.getItemSelectorViewRenderer(title);
+
+				Map<String, Object> data = new HashMap<String, Object>();
+
+				ItemSelectorView<ItemSelectorCriterion> itemSelectorView = curItemSelectorViewRenderer.getItemSelectorView();
+
+				if (selectedTab.equals(itemSelectorView.getTitle(locale))) {
+					data.put("portletURL", currentURL);
+				}
+				else {
+					data.put("portletURL", curItemSelectorViewRenderer.getPortletURL());
+				}
+
+				data.put("showSearch", itemSelectorView.isShowSearch());
 			%>
 
-				<liferay-ui:section>
+				<liferay-ui:section data="<%= data %>">
 					<div>
 
 						<%
-						itemSelectorViewRenderer.renderHTML(pageContext);
+						curItemSelectorViewRenderer.renderHTML(pageContext);
 						%>
 
 					</div>
@@ -67,6 +114,33 @@ List<String> titles = localizedItemSelectorRendering.getTitles();
 		</liferay-ui:tabs>
 	</c:otherwise>
 </c:choose>
+
+<aui:script use="aui-base">
+	Liferay.on(
+		'showTab',
+		function(event) {
+			var searchForm = A.one('#<portlet:namespace />searchFm');
+
+			if (searchForm) {
+				A.one('#<portlet:namespace />selectedTab').val(event.id);
+
+				var tabSection = event.tabSection;
+
+				var showSearch = tabSection.getData('showSearch');
+
+				var formSearch = A.one('#<portlet:namespace />formSearch');
+
+				if (formSearch) {
+					formSearch.toggle(showSearch === 'true');
+
+					var searchFm = A.one('#<portlet:namespace />searchFm');
+
+					searchFm.setAttribute('action', tabSection.getData('portletURL'));
+				}
+			}
+		}
+	);
+</aui:script>
 
 <%!
 private static Log _log = LogFactoryUtil.getLog("com_liferay_item_selector_web.view_jsp");

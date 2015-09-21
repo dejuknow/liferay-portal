@@ -29,10 +29,7 @@ int total = 0;
 List<FileEntry> results = new ArrayList<FileEntry>();
 
 if (folder != null) {
-	String keywords = ParamUtil.getString(request, "keywords");
-	String tabName = ParamUtil.getString(request, "tabName");
-
-	if (Validator.isNotNull(keywords) && tabName.equals(blogsItemSelectorViewDisplayContext.getTitle(locale))) {
+	if (blogsItemSelectorViewDisplayContext.isSearch()) {
 		SearchContext searchContext = SearchContextFactory.getInstance(request);
 
 		searchContext.setEnd(searchContainer.getEnd());
@@ -76,13 +73,12 @@ searchContainer.setTotal(total);
 searchContainer.setResults(results);
 %>
 
-<item-selector-ui:browser
+<liferay-item-selector:browser
 	desiredItemSelectorReturnTypes="<%= blogsItemSelectorCriterion.getDesiredItemSelectorReturnTypes() %>"
-	displayStyle="<%= blogsItemSelectorViewDisplayContext.getDisplayStyle(request) %>"
-	displayStyleURL="<%= blogsItemSelectorViewDisplayContext.getPortletURL(request, liferayPortletResponse) %>"
 	itemSelectedEventName="<%= blogsItemSelectorViewDisplayContext.getItemSelectedEventName() %>"
+	portletURL="<%= blogsItemSelectorViewDisplayContext.getPortletURL(request, liferayPortletResponse) %>"
 	searchContainer="<%= searchContainer %>"
-	searchURL="<%= blogsItemSelectorViewDisplayContext.getPortletURL(request, liferayPortletResponse) %>"
+	showDragAndDropZone="<%= false %>"
 	tabName="<%= blogsItemSelectorViewDisplayContext.getTitle(locale) %>"
 	uploadURL="<%= blogsItemSelectorViewDisplayContext.getUploadURL(liferayPortletResponse) %>"
 />

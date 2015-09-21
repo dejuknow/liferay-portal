@@ -992,6 +992,22 @@ public interface LayoutModel extends BaseModel<Layout>, LocalizedModel, MVCCMode
 	 */
 	public void setSourcePrototypeLayoutUuid(String sourcePrototypeLayoutUuid);
 
+	/**
+	 * Returns the last publish date of this layout.
+	 *
+	 * @return the last publish date of this layout
+	 */
+	@Override
+	public Date getLastPublishDate();
+
+	/**
+	 * Sets the last publish date of this layout.
+	 *
+	 * @param lastPublishDate the last publish date of this layout
+	 */
+	@Override
+	public void setLastPublishDate(Date lastPublishDate);
+
 	@Override
 	public boolean isNew();
 

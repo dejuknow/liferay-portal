@@ -20,7 +20,7 @@ feature or API will be dropped in an upcoming version.
 replaces an old API, in spite of the old API being kept in Liferay Portal for
 backwards compatibility.
 
-*This document has been reviewed through commit `dd4de87`.*
+*This document has been reviewed through commit `c68e01c`.*
 
 ## Breaking Changes Contribution Guidelines
 
@@ -571,11 +571,16 @@ Old classes:
 
 New classes:
 
-    com.liferay.portal.kernel.portlet.bridges.mvc.ActionCommand
-    com.liferay.portal.kernel.portlet.bridges.mvc.BaseActionCommand
+    com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand
+    com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand
 
 In addition, `com.liferay.util.bridges.mvc.MVCPortlet` is deprecated, but was
 made to extend `com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet`.
+
+The classes in the `com.liferay.portal.kernel.portlet.bridges.mvc` package have
+been renamed to add the `MVC` prefix. These modifications were made after this
+breaking change, and can be referenced in
+[LPS-56372](https://issues.liferay.com/browse/LPS-56372).
 
 #### Who is affected?
 
@@ -1995,7 +2000,7 @@ Depending on the changes, different extension methods are available:
 parameters.
 - For CKEditor instance manipulation (setting attributes, adding listeners,
 etc.), the `DynamicInclude` extension point
-`js#ckeditor[_creole|_bbcode]#onEditorCreated` has been added to provide the
+`#ckeditor[_creole|_bbcode]#onEditorCreated` has been added to provide the
 possibility of injecting JavaScript, when needed.
 
 #### Why was this change made?
@@ -2160,5 +2165,159 @@ This change was part of needed modifications to extract the Portal Instances
 portlet from the Admin portlet. The constant's old name was not accurate, since
 it originated from the old Admin portlet. Since the Portal Instances portlet
 is now extracted to its own module, the old name no longer resembles its usage.
+
+---------------------------------------
+
+### Removed Support for filterFindBy Generation or InlinePermissionUtil Usage for Tables When the Primary Key Type Is Not long
+- **Date:** 2015-Jul-21
+- **JIRA Ticket:** LPS-54590
+
+#### What changed?
+
+ServiceBuilder and inline permission filter support has been removed for
+non-`long` primary key types.
+
+#### Who is affected?
+
+This affects code that is using `int`, `float`, `double`, `boolean`, or `short`
+type primary keys in the `service.xml` with inline permissions.
+
+#### How should I update my code?
+
+You should change the primary key type to `long`.
+
+#### Why was this change made?
+
+Inline permissioning was using the `join` method between two different data
+types and that caused significant performance degradation with `filterFindBy`
+queries.
+
+---------------------------------------
+
+### Removed Vaadin 6 from Liferay Core
+- **Date:** 2015-Jul-31
+- **JIRA Ticket:** LPS-57525
+
+#### What changed?
+
+The bundled Vaadin 6.x JAR file has been removed from portal core.
+
+#### Who is affected?
+
+This affects developers who are creating Vaadin portlet applications in Liferay
+Portal.
+
+#### How should I update my code?
+
+You should upgrade to Vaadin 7, bundle your `vaadin.jar` with your plugin, or
+deploy Vaadin libraries to Liferay's OSGi container.
+
+#### Why was this change made?
+
+Vaadin 6.x is outdated and there are no plans for any new projects to be
+created with it. Therefore, developers should begin using Vaadin 7.x.
+
+---------------------------------------
+
+### Replaced the Navigation Menu Portlet's Display Styles with ADTs
+- **Date:** 2015-Jul-31
+- **JIRA Ticket:** LPS-27113
+
+#### What changed?
+
+The custom display styles of the navigation tag added using JSPs no longer work.
+They have been replaced by Application Display Templates (ADT).
+
+#### Who is affected?
+
+This affects developers that use portlet properties with the following prefix:
+
+    navigation.display.style
+
+This also affects developers that use the following attribute in the navigation
+tag:
+
+    displayStyleDefinition
+
+#### How should I update my code?
+
+To style the Navigation portlet, you should use ADTs instead of using custom
+styles in your JSPs. ADTs can be created from the UI of the portal by navigating
+to *Site Settings* &rarr; *Application Display Templates*. ADTs can also be
+created programatically.
+
+Developers should use the `ddmTemplateGroupId` and `ddmTemplateKey` attributes
+of the navigation tag to set the ADT that defines the style of the navigation.
+
+#### Why was this change made?
+
+ADTs allow you to change an application's look and feel without changing its JSP
+code.
+
+---------------------------------------
+
+### Renamed URI Attribute Used to Generate AUI Tag Library
+- **Date:** 2015-Aug-12
+- **JIRA Ticket:** LPS-57809
+
+#### What changed?
+
+The URI attribute used to identify the AUI taglib has been renamed.
+
+#### Who is affected?
+
+This affects developers that use the URI `http://alloy.liferay.com/tld/aui` in
+their JSPs, XMLs, etc.
+
+#### How should I update my code?
+
+You should use the new AUI URI declaration:
+
+Old:
+
+    http://alloy.liferay.com/tld/aui
+
+New:
+
+    http://liferay.com/tld/aui
+
+#### Why was this change made?
+
+To stay consistent with other taglibs provided by Liferay, the AUI `.tld` file
+was modified to start with the prefix `liferay-`. Due to this change, the XML
+files used to automatically generate the AUI taglib were modified, changing the
+AUI URI declaration.
+
+---------------------------------------
+
+### <runtime-portlet> tag can't be used anymore in the body of Web Content Articles
+- **Date:** 2015-Sep-17
+- **JIRA Ticket:** LPS-58736
+
+#### What changed?
+
+The tag <runtime-portlet> won't be replaced by a portlet if it is found in the 
+body of a web content anymore.
+
+#### Who is affected?
+
+Any Web Content in the database (JournalArticle table) which uses this taglib.
+
+#### How should I update my code?
+
+Embeding another portlet is only supported from a template. You should embed
+the portlet using the call to theme.runtime.
+
+In Velocity:
+`$theme.runtime("145")`
+
+In Freemarker:
+`${theme.runtime("145")}``
+
+
+#### Why was this change made?
+
+To improve the performance of web content articles while enforcing a single
+way to embed portlets into the page in order to test it better.
 
 ---------------------------------------

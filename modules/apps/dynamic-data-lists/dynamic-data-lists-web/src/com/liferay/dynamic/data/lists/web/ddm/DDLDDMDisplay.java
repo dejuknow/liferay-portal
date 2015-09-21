@@ -14,15 +14,14 @@
 
 package com.liferay.dynamic.data.lists.web.ddm;
 
+import com.liferay.dynamic.data.lists.constants.DDLPortletKeys;
 import com.liferay.dynamic.data.lists.model.DDLRecordSet;
 import com.liferay.dynamic.data.lists.web.configuration.DDLWebConfigurationValues;
-import com.liferay.dynamic.data.lists.web.constants.DDLPortletKeys;
+import com.liferay.dynamic.data.mapping.model.DDMTemplate;
+import com.liferay.dynamic.data.mapping.util.BaseDDMDisplay;
+import com.liferay.dynamic.data.mapping.util.DDMDisplay;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
-import com.liferay.portlet.dynamicdatamapping.util.BaseDDMDisplay;
-import com.liferay.portlet.dynamicdatamapping.util.DDMDisplay;
-import com.liferay.portlet.dynamicdatamapping.util.DDMPermissionHandler;
 
 import java.util.Locale;
 
@@ -36,11 +35,6 @@ import org.osgi.service.component.annotations.Component;
 	service = DDMDisplay.class
 )
 public class DDLDDMDisplay extends BaseDDMDisplay {
-
-	@Override
-	public DDMPermissionHandler getDDMPermissionHandler() {
-		return _ddmPermissionHandler;
-	}
 
 	@Override
 	public String getPortletId() {
@@ -68,8 +62,5 @@ public class DDLDDMDisplay extends BaseDDMDisplay {
 
 		return PortalUtil.getClassNameId(DDLRecordSet.class);
 	}
-
-	private final DDMPermissionHandler _ddmPermissionHandler =
-		new DDLDDMPermissionHandler();
 
 }

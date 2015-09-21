@@ -297,6 +297,22 @@ public interface WebsiteModel extends AttachedModel, BaseModel<Website>,
 	 */
 	public void setPrimary(boolean primary);
 
+	/**
+	 * Returns the last publish date of this website.
+	 *
+	 * @return the last publish date of this website
+	 */
+	@Override
+	public Date getLastPublishDate();
+
+	/**
+	 * Sets the last publish date of this website.
+	 *
+	 * @param lastPublishDate the last publish date of this website
+	 */
+	@Override
+	public void setLastPublishDate(Date lastPublishDate);
+
 	@Override
 	public boolean isNew();
 

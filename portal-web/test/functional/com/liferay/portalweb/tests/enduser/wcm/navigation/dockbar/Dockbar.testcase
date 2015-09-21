@@ -48,101 +48,16 @@
 	</command>
 
 	<command name="SearchCollapsedPortlet" priority="4">
-		<execute function="Click#clickAtSidebarClickAtWaitForScript" locator1="Dockbar#ADD" />
+		<execute function="Click#clickAtSidebarClickAtWaitForScript" locator1="Icon#ADD" />
 
-		<execute function="AssertClick" locator1="DockbarAddpanelapplications#NAVIGATION_APPLICATIONS" value1="Applications" />
+		<execute function="AssertClick" locator1="NavPill#APPLICATIONS" value1="Applications" />
 
-		<var name="portletLocator" value="//span[@data-title=&quot;Bookmarks&quot; and contains(@class,'drag-content-item')]" />
-
-		<execute function="AssertVisible#pauseAssertVisible" locator1="${portletLocator}" />
-
-		<execute function="Type#sendKeysApplicationSearch" locator1="DockbarAddpanelapplications#SEARCH_FIELD" value1="Bookmarks" />
+		<var name="portletLocator" value="//span[@data-title=&quot;Bookmarks&quot; and contains(@class,'add-content-item')]" />
 
 		<execute function="AssertVisible#pauseAssertVisible" locator1="${portletLocator}" />
-	</command>
 
-	<command name="ViewAddPageField" priority="4">
-		<execute function="Click#clickAtSidebarClickAtWaitForScript" locator1="Dockbar#ADD" />
+		<execute function="Type#sendKeysApplicationSearch" locator1="NavBar#APPLICATION_SEARCH_FIELD" value1="Bookmarks" />
 
-		<execute function="AssertClick" locator1="DockbarAddpanelpage#NAVIGATION_PAGE" value1="Page" />
-
-		<execute macro="Dockbar#viewLocalizationOptionsAdd">
-			<var name="localizationOptions" value="en_US,ca_ES,zh_CN,nl_NL,fi_FI,fr_FR,de_DE,iw_IL,hu_HU,ja_JP,pt_BR,es_ES" />
-		</execute>
-
-		<execute function="AssertVisible" locator1="DockbarAddpanelpage#NAME_FIELD" />
-	</command>
-
-	<command name="ViewAddPageFieldEditable" priority="4">
-		<execute function="Click#clickAtSidebarClickAtWaitForScript" locator1="Dockbar#ADD" />
-
-		<execute function="AssertClick" locator1="DockbarAddpanelpage#NAVIGATION_PAGE" value1="Page" />
-
-		<execute function="Click#clickAtSidebarClickAtWaitForScript" locator1="Dockbar#ADD" />
-		<execute function="Click#clickAtSidebarClickAtWaitForScript" locator1="Dockbar#ADD" />
-
-		<execute function="AssertClick" locator1="DockbarAddpanelpage#NAVIGATION_PAGE" value1="Page" />
-		<execute function="Type" locator1="DockbarAddpanelpage#NAME_FIELD" value1="Dockbar Test Page" />
-
-		<execute macro="Page#addLocalizedNamePG">
-			<var name="localizationName" value="fr_FR" />
-			<var name="localizeNewPage" value="true" />
-			<var name="pageName" value="Dockbar Test Page French" />
-		</execute>
-
-		<execute function="Click" locator1="DockbarAddpanelpage#ADD_PAGE_BUTTON" />
-
-		<var name="key_pageName" value="Dockbar Test Page" />
-
-		<execute function="AssertClick" locator1="Home#PAGE" value1="Dockbar Test Page" />
-	</command>
-
-	<command name="ViewEditPageFields" priority="4">
-		<execute macro="Page#addPG">
-			<var name="pageName" value="Dockbar Test Page" />
-		</execute>
-
-		<execute function="Click#clickAtSidebarClickAt" locator1="Dockbar#EDIT" />
-
-		<execute macro="Dockbar#viewLocalizationOptionsEdit">
-			<var name="localizationOptions" value="en_US,ca_ES,zh_CN,nl_NL,fi_FI,fr_FR,de_DE,iw_IL,hu_HU,ja_JP,pt_BR,es_ES" />
-		</execute>
-
-		<execute macro="Dockbar#viewLocalizationOptionsEdit">
-			<var name="friendlyURL" value="true" />
-			<var name="localizationOptions" value="en_US,ca_ES,zh_CN,nl_NL,fi_FI,fr_FR,de_DE,iw_IL,hu_HU,ja_JP,pt_BR,es_ES" />
-		</execute>
-
-		<execute function="AssertVisible" locator1="DockbarEditpanel#DETAILS_NAME_FIELD" />
-		<execute function="AssertVisible" locator1="DockbarEditpanel#DETAILS_FRIENDLYURL" />
-	</command>
-
-	<command name="ViewEditPageFieldsEditable" priority="4">
-		<execute macro="Page#addPG">
-			<var name="pageName" value="Dockbar Test Page" />
-		</execute>
-
-		<execute function="Click#clickAtSidebarClickAt" locator1="Dockbar#EDIT" />
-		<execute function="Click#clickAtSidebarClickAt" locator1="Dockbar#EDIT" />
-		<execute function="Click#clickAtSidebarClickAt" locator1="Dockbar#EDIT" />
-
-		<execute function="Type" locator1="DockbarEditpanel#DETAILS_NAME_FIELD" value1="Edited" />
-		<execute function="Type" locator1="DockbarEditpanel#DETAILS_FRIENDLYURL" value1="/edited" />
-
-		<execute macro="Page#addLocalizedNamePG">
-			<var name="localizationName" value="fr_FR" />
-			<var name="pageName" value="Edited French" />
-		</execute>
-
-		<execute macro="Page#addFriendlyURLLocalizedPG">
-			<var name="friendlyUrlLocalized" value="fr_FR" />
-			<var name="localizedFriendlyURL" value="/edited-french" />
-		</execute>
-
-		<execute function="AssertClick#pauseAssertTextClickAt" locator1="DockbarEditpanel#SAVE_BUTTON" value1="Save" />
-
-		<var name="key_pageName" value="Edited" />
-
-		<execute function="AssertTextEquals" locator1="Home#PAGE" value1="Edited" />
+		<execute function="AssertVisible#pauseAssertVisible" locator1="${portletLocator}" />
 	</command>
 </definition>

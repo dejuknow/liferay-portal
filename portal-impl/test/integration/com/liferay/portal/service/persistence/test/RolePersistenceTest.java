@@ -144,6 +144,8 @@ public class RolePersistenceTest {
 
 		newRole.setSubtype(RandomTestUtil.randomString());
 
+		newRole.setLastPublishDate(RandomTestUtil.nextDate());
+
 		_roles.add(_persistence.update(newRole));
 
 		Role existingRole = _persistence.findByPrimaryKey(newRole.getPrimaryKey());
@@ -169,6 +171,9 @@ public class RolePersistenceTest {
 			newRole.getDescription());
 		Assert.assertEquals(existingRole.getType(), newRole.getType());
 		Assert.assertEquals(existingRole.getSubtype(), newRole.getSubtype());
+		Assert.assertEquals(Time.getShortTimestamp(
+				existingRole.getLastPublishDate()),
+			Time.getShortTimestamp(newRole.getLastPublishDate()));
 	}
 
 	@Test
@@ -288,7 +293,8 @@ public class RolePersistenceTest {
 			true, "uuid", true, "roleId", true, "companyId", true, "userId",
 			true, "userName", true, "createDate", true, "modifiedDate", true,
 			"classNameId", true, "classPK", true, "name", true, "title", true,
-			"description", true, "type", true, "subtype", true);
+			"description", true, "type", true, "subtype", true,
+			"lastPublishDate", true);
 	}
 
 	@Test
@@ -489,21 +495,21 @@ public class RolePersistenceTest {
 
 		Role existingRole = _persistence.findByPrimaryKey(newRole.getPrimaryKey());
 
-		Assert.assertEquals(existingRole.getCompanyId(),
-			ReflectionTestUtil.invoke(existingRole, "getOriginalCompanyId",
-				new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingRole.getCompanyId()),
+			ReflectionTestUtil.<Long>invoke(existingRole,
+				"getOriginalCompanyId", new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(existingRole.getName(),
 				ReflectionTestUtil.invoke(existingRole, "getOriginalName",
 					new Class<?>[0])));
 
-		Assert.assertEquals(existingRole.getCompanyId(),
-			ReflectionTestUtil.invoke(existingRole, "getOriginalCompanyId",
-				new Class<?>[0]));
-		Assert.assertEquals(existingRole.getClassNameId(),
-			ReflectionTestUtil.invoke(existingRole, "getOriginalClassNameId",
-				new Class<?>[0]));
-		Assert.assertEquals(existingRole.getClassPK(),
-			ReflectionTestUtil.invoke(existingRole, "getOriginalClassPK",
+		Assert.assertEquals(Long.valueOf(existingRole.getCompanyId()),
+			ReflectionTestUtil.<Long>invoke(existingRole,
+				"getOriginalCompanyId", new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingRole.getClassNameId()),
+			ReflectionTestUtil.<Long>invoke(existingRole,
+				"getOriginalClassNameId", new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingRole.getClassPK()),
+			ReflectionTestUtil.<Long>invoke(existingRole, "getOriginalClassPK",
 				new Class<?>[0]));
 	}
 
@@ -539,6 +545,8 @@ public class RolePersistenceTest {
 		role.setType(RandomTestUtil.nextInt());
 
 		role.setSubtype(RandomTestUtil.randomString());
+
+		role.setLastPublishDate(RandomTestUtil.nextDate());
 
 		_roles.add(_persistence.update(role));
 

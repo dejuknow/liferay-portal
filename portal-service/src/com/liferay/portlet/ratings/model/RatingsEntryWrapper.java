@@ -65,6 +65,7 @@ public class RatingsEntryWrapper implements RatingsEntry,
 		attributes.put("classNameId", getClassNameId());
 		attributes.put("classPK", getClassPK());
 		attributes.put("score", getScore());
+		attributes.put("lastPublishDate", getLastPublishDate());
 
 		return attributes;
 	}
@@ -130,6 +131,12 @@ public class RatingsEntryWrapper implements RatingsEntry,
 		if (score != null) {
 			setScore(score);
 		}
+
+		Date lastPublishDate = (Date)attributes.get("lastPublishDate");
+
+		if (lastPublishDate != null) {
+			setLastPublishDate(lastPublishDate);
+		}
 	}
 
 	@Override
@@ -189,7 +196,7 @@ public class RatingsEntryWrapper implements RatingsEntry,
 	* @return the create date of this ratings entry
 	*/
 	@Override
-	public java.util.Date getCreateDate() {
+	public Date getCreateDate() {
 		return _ratingsEntry.getCreateDate();
 	}
 
@@ -209,12 +216,22 @@ public class RatingsEntryWrapper implements RatingsEntry,
 	}
 
 	/**
+	* Returns the last publish date of this ratings entry.
+	*
+	* @return the last publish date of this ratings entry
+	*/
+	@Override
+	public Date getLastPublishDate() {
+		return _ratingsEntry.getLastPublishDate();
+	}
+
+	/**
 	* Returns the modified date of this ratings entry.
 	*
 	* @return the modified date of this ratings entry
 	*/
 	@Override
-	public java.util.Date getModifiedDate() {
+	public Date getModifiedDate() {
 		return _ratingsEntry.getModifiedDate();
 	}
 
@@ -354,7 +371,7 @@ public class RatingsEntryWrapper implements RatingsEntry,
 	* @param createDate the create date of this ratings entry
 	*/
 	@Override
-	public void setCreateDate(java.util.Date createDate) {
+	public void setCreateDate(Date createDate) {
 		_ratingsEntry.setCreateDate(createDate);
 	}
 
@@ -387,12 +404,22 @@ public class RatingsEntryWrapper implements RatingsEntry,
 	}
 
 	/**
+	* Sets the last publish date of this ratings entry.
+	*
+	* @param lastPublishDate the last publish date of this ratings entry
+	*/
+	@Override
+	public void setLastPublishDate(Date lastPublishDate) {
+		_ratingsEntry.setLastPublishDate(lastPublishDate);
+	}
+
+	/**
 	* Sets the modified date of this ratings entry.
 	*
 	* @param modifiedDate the modified date of this ratings entry
 	*/
 	@Override
-	public void setModifiedDate(java.util.Date modifiedDate) {
+	public void setModifiedDate(Date modifiedDate) {
 		_ratingsEntry.setModifiedDate(modifiedDate);
 	}
 

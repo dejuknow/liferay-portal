@@ -67,6 +67,7 @@ public class LayoutFriendlyURLWrapper implements LayoutFriendlyURL,
 		attributes.put("privateLayout", getPrivateLayout());
 		attributes.put("friendlyURL", getFriendlyURL());
 		attributes.put("languageId", getLanguageId());
+		attributes.put("lastPublishDate", getLastPublishDate());
 
 		return attributes;
 	}
@@ -150,6 +151,12 @@ public class LayoutFriendlyURLWrapper implements LayoutFriendlyURL,
 		if (languageId != null) {
 			setLanguageId(languageId);
 		}
+
+		Date lastPublishDate = (Date)attributes.get("lastPublishDate");
+
+		if (lastPublishDate != null) {
+			setLastPublishDate(lastPublishDate);
+		}
 	}
 
 	@Override
@@ -179,7 +186,7 @@ public class LayoutFriendlyURLWrapper implements LayoutFriendlyURL,
 	* @return the create date of this layout friendly u r l
 	*/
 	@Override
-	public java.util.Date getCreateDate() {
+	public Date getCreateDate() {
 		return _layoutFriendlyURL.getCreateDate();
 	}
 
@@ -219,6 +226,16 @@ public class LayoutFriendlyURLWrapper implements LayoutFriendlyURL,
 	}
 
 	/**
+	* Returns the last publish date of this layout friendly u r l.
+	*
+	* @return the last publish date of this layout friendly u r l
+	*/
+	@Override
+	public Date getLastPublishDate() {
+		return _layoutFriendlyURL.getLastPublishDate();
+	}
+
+	/**
 	* Returns the layout friendly u r l ID of this layout friendly u r l.
 	*
 	* @return the layout friendly u r l ID of this layout friendly u r l
@@ -234,7 +251,7 @@ public class LayoutFriendlyURLWrapper implements LayoutFriendlyURL,
 	* @return the modified date of this layout friendly u r l
 	*/
 	@Override
-	public java.util.Date getModifiedDate() {
+	public Date getModifiedDate() {
 		return _layoutFriendlyURL.getModifiedDate();
 	}
 
@@ -379,7 +396,7 @@ public class LayoutFriendlyURLWrapper implements LayoutFriendlyURL,
 	* @param createDate the create date of this layout friendly u r l
 	*/
 	@Override
-	public void setCreateDate(java.util.Date createDate) {
+	public void setCreateDate(Date createDate) {
 		_layoutFriendlyURL.setCreateDate(createDate);
 	}
 
@@ -431,6 +448,16 @@ public class LayoutFriendlyURLWrapper implements LayoutFriendlyURL,
 	}
 
 	/**
+	* Sets the last publish date of this layout friendly u r l.
+	*
+	* @param lastPublishDate the last publish date of this layout friendly u r l
+	*/
+	@Override
+	public void setLastPublishDate(Date lastPublishDate) {
+		_layoutFriendlyURL.setLastPublishDate(lastPublishDate);
+	}
+
+	/**
 	* Sets the layout friendly u r l ID of this layout friendly u r l.
 	*
 	* @param layoutFriendlyURLId the layout friendly u r l ID of this layout friendly u r l
@@ -446,7 +473,7 @@ public class LayoutFriendlyURLWrapper implements LayoutFriendlyURL,
 	* @param modifiedDate the modified date of this layout friendly u r l
 	*/
 	@Override
-	public void setModifiedDate(java.util.Date modifiedDate) {
+	public void setModifiedDate(Date modifiedDate) {
 		_layoutFriendlyURL.setModifiedDate(modifiedDate);
 	}
 

@@ -20,6 +20,14 @@
 long groupId = ParamUtil.getLong(request, "groupId");
 long[] selectedGroupIds = StringUtil.split(ParamUtil.getString(request, "selectedGroupIds"), 0L);
 
+Boolean privateLayout = null;
+
+String privateLayoutString = request.getParameter("privateLayout");
+
+if (Validator.isNotNull(privateLayoutString)) {
+	privateLayout = GetterUtil.getBoolean(privateLayoutString);
+}
+
 String type = ParamUtil.getString(request, "type");
 String[] types = ParamUtil.getParameterValues(request, "types");
 
@@ -60,6 +68,7 @@ portletURL.setParameter("types", types);
 portletURL.setParameter("filter", filter);
 portletURL.setParameter("includeCompany", String.valueOf(includeCompany));
 portletURL.setParameter("includeUserPersonalSite", String.valueOf(includeUserPersonalSite));
+portletURL.setParameter("manualMembership", String.valueOf(manualMembership));
 portletURL.setParameter("eventName", eventName);
 portletURL.setParameter("target", target);
 %>
@@ -188,6 +197,8 @@ portletURL.setParameter("target", target);
 
 			if (type.equals("layoutScopes")) {
 				groups = GroupLocalServiceUtil.getGroups(company.getCompanyId(), Layout.class.getName(), groupId, start, end);
+
+				groups = _filterLayoutGroups(groups, privateLayout);
 			}
 			else if (type.equals("parent-sites")) {
 				Group group = GroupLocalServiceUtil.getGroup(groupId);
@@ -236,7 +247,7 @@ portletURL.setParameter("target", target);
 			/>
 
 			<liferay-ui:search-container-column-text>
-				<c:if test="<%= ((Validator.isNull(p_u_i_d) || SiteMembershipPolicyUtil.isMembershipAllowed((selUser != null) ? selUser.getUserId() : 0, group.getGroupId()))) %>">
+				<c:if test="<%= Validator.isNull(p_u_i_d) || SiteMembershipPolicyUtil.isMembershipAllowed((selUser != null) ? selUser.getUserId() : 0, group.getGroupId()) %>">
 
 					<%
 					Map<String, Object> data = new HashMap<String, Object>();
@@ -245,6 +256,7 @@ portletURL.setParameter("target", target);
 					data.put("groupid", group.getGroupId());
 					data.put("grouptype", LanguageUtil.get(request, group.getTypeLabel()));
 					data.put("target", target);
+					data.put("url", group.getDisplayURL(themeDisplay));
 
 					boolean disabled = false;
 
@@ -270,6 +282,28 @@ portletURL.setParameter("target", target);
 </aui:form>
 
 <%!
+private List<Group> _filterLayoutGroups(List<Group> groups, Boolean privateLayout) throws Exception {
+	List<Group> filteredGroups = new ArrayList();
+
+	if (privateLayout == null) {
+		return groups;
+	}
+
+	for (Group group : groups) {
+		if (!group.isLayout()) {
+			continue;
+		}
+
+		Layout layout = LayoutLocalServiceUtil.getLayout(group.getClassPK());
+
+		if (layout.isPrivateLayout() == privateLayout) {
+			filteredGroups.add(group);
+		}
+	}
+
+	return filteredGroups;
+}
+
 private List<Group> _filterGroups(List<Group> groups, String filter) throws Exception {
 	List<Group> filteredGroups = new ArrayList();
 

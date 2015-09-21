@@ -14,12 +14,6 @@
 
 package com.liferay.frontend.editors.web.editor.configuration;
 
-import com.liferay.item.selector.ItemSelector;
-import com.liferay.item.selector.ItemSelectorCriterion;
-import com.liferay.item.selector.ItemSelectorReturnType;
-import com.liferay.item.selector.criteria.URLItemSelectorReturnType;
-import com.liferay.item.selector.criteria.image.criterion.ImageItemSelectorCriterion;
-import com.liferay.item.selector.criteria.url.criterion.URLItemSelectorCriterion;
 import com.liferay.portal.kernel.editor.configuration.BaseEditorConfigContributor;
 import com.liferay.portal.kernel.editor.configuration.EditorConfigContributor;
 import com.liferay.portal.kernel.json.JSONArray;
@@ -28,20 +22,16 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
+import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portlet.RequestBackedPortletURLFactory;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import javax.portlet.PortletURL;
-
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Sergio González
@@ -73,8 +63,8 @@ public class AlloyEditorConfigContributor extends BaseEditorConfigContributor {
 
 		jsonObject.put(
 			"extraPlugins",
-			"autolink,dragresize,dropimages,placeholder,selectionregion," +
-				"tableresize,tabletools,uicore");
+			"ae_autolink,ae_dragresize,ae_addimages,ae_placeholder," +
+				"ae_selectionregion,ae_tableresize,ae_tabletools,ae_uicore");
 
 		String languageId = getLanguageId(themeDisplay);
 
@@ -82,7 +72,8 @@ public class AlloyEditorConfigContributor extends BaseEditorConfigContributor {
 
 		jsonObject.put(
 			"removePlugins",
-			"elementspath,image,link,liststyle,resize,toolbar");
+			"contextmenu,elementspath,image,link,liststyle,resize,tabletools," +
+				"toolbar");
 
 		String namespace = GetterUtil.getString(
 			inputEditorTaglibAttributes.get(
@@ -94,19 +85,10 @@ public class AlloyEditorConfigContributor extends BaseEditorConfigContributor {
 					inputEditorTaglibAttributes.get(
 						"liferay-ui:input-editor:name"));
 
-		populateFileBrowserURL(
-			jsonObject, requestBackedPortletURLFactory,
-			name + "selectDocument");
-
 		jsonObject.put("srcNode", name);
 
 		jsonObject.put(
 			"toolbars", getToolbarsJSONObject(themeDisplay.getLocale()));
-	}
-
-	@Reference(unbind = "-")
-	public void setItemSelector(ItemSelector itemSelector) {
-		_itemSelector = itemSelector;
 	}
 
 	protected JSONObject getStyleFormatJSONObject(
@@ -123,8 +105,8 @@ public class AlloyEditorConfigContributor extends BaseEditorConfigContributor {
 	protected JSONArray getStyleFormatsJSONArray(Locale locale) {
 		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
 
-		ResourceBundle resourceBundle = ResourceBundle.getBundle(
-			"content.Language", locale);
+		ResourceBundle resourceBundle = ResourceBundleUtil.getBundle(
+			"content.Language", locale, getClass());
 
 		jsonArray.put(
 			getStyleFormatJSONObject(
@@ -271,13 +253,14 @@ public class AlloyEditorConfigContributor extends BaseEditorConfigContributor {
 		jsonObject.put(
 			"buttons",
 			toJSONArray(
-				"['tableRow', 'tableColumn', 'tableCell', 'tableRemove']"));
+				"['tableHeading', 'tableRow', 'tableColumn', 'tableCell', " +
+					"'tableRemove']"));
 		jsonObject.put(
 			"getArrowBoxClasses",
 			"AlloyEditor.SelectionGetArrowBoxClasses.table");
 		jsonObject.put("name", "table");
 		jsonObject.put("setPosition", "AlloyEditor.SelectionSetPosition.table");
-		jsonObject.put("test", "AlloyEeditor.SelectionTest.table");
+		jsonObject.put("test", "AlloyEditor.SelectionTest.table");
 
 		return jsonObject;
 	}
@@ -304,57 +287,8 @@ public class AlloyEditorConfigContributor extends BaseEditorConfigContributor {
 		return jsonObject;
 	}
 
-	protected void populateFileBrowserURL(
-		JSONObject jsonObject,
-		RequestBackedPortletURLFactory requestBackedPortletURLFactory,
-		String eventName) {
-
-		List<ItemSelectorReturnType> urlDesiredItemSelectorReturnTypes =
-			new ArrayList<>();
-
-		ItemSelectorReturnType urlItemSelectorReturnType =
-			new URLItemSelectorReturnType();
-
-		urlDesiredItemSelectorReturnTypes.add(urlItemSelectorReturnType);
-
-		ItemSelectorCriterion urlItemSelectorCriterion =
-			new URLItemSelectorCriterion();
-
-		urlItemSelectorCriterion.setDesiredItemSelectorReturnTypes(
-			urlDesiredItemSelectorReturnTypes);
-
-		PortletURL layoutItemSelectorURL = _itemSelector.getItemSelectorURL(
-			requestBackedPortletURLFactory, eventName,
-			urlItemSelectorCriterion);
-
-		jsonObject.put(
-			"filebrowserBrowseUrl", layoutItemSelectorURL.toString());
-
-		ItemSelectorCriterion imageItemSelectorCriterion =
-			new ImageItemSelectorCriterion();
-
-		List<ItemSelectorReturnType> imageDesiredItemSelectorReturnTypes =
-			new ArrayList<>();
-
-		imageDesiredItemSelectorReturnTypes.add(urlItemSelectorReturnType);
-
-		imageItemSelectorCriterion.setDesiredItemSelectorReturnTypes(
-			imageDesiredItemSelectorReturnTypes);
-
-		PortletURL dlItemSelectorURL = _itemSelector.getItemSelectorURL(
-			requestBackedPortletURLFactory, eventName,
-			imageItemSelectorCriterion);
-
-		jsonObject.put(
-			"filebrowserImageBrowseLinkUrl", dlItemSelectorURL.toString());
-		jsonObject.put(
-			"filebrowserImageBrowseUrl", dlItemSelectorURL.toString());
-	}
-
 	private static final int _CKEDITOR_STYLE_BLOCK = 1;
 
 	private static final int _CKEDITOR_STYLE_INLINE = 2;
-
-	private ItemSelector _itemSelector;
 
 }

@@ -14,18 +14,19 @@
 
 package com.liferay.dynamic.data.mapping.validator.internal;
 
+import com.liferay.dynamic.data.mapping.model.DDMForm;
+import com.liferay.dynamic.data.mapping.model.DDMFormField;
+import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
+import com.liferay.dynamic.data.mapping.model.DDMFormFieldType;
+import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.dynamic.data.mapping.validator.DDMFormValidationException;
 import com.liferay.dynamic.data.mapping.validator.DDMFormValidator;
 import com.liferay.portal.kernel.bean.BeanPropertiesUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
-import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
-import com.liferay.portlet.dynamicdatamapping.model.DDMFormFieldOptions;
-import com.liferay.portlet.dynamicdatamapping.model.DDMFormFieldType;
-import com.liferay.portlet.dynamicdatamapping.model.LocalizedValue;
-import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldTypeRegistryUtil;
+import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -40,7 +41,7 @@ import org.osgi.service.component.annotations.Component;
 /**
  * @author Marcellus Tavares
  */
-@Component(immediate = true, service = DDMFormValidator.class)
+@Component(immediate = true)
 public class DDMFormValidatorImpl implements DDMFormValidator {
 
 	@Override
@@ -92,13 +93,15 @@ public class DDMFormValidatorImpl implements DDMFormValidator {
 					ddmFormField.getName());
 		}
 
-		if (ddmFormFieldNames.contains(ddmFormField.getName())) {
+		if (ddmFormFieldNames.contains(
+				StringUtil.toLowerCase(ddmFormField.getName()))) {
+
 			throw new DDMFormValidationException(
 				"The field name " + ddmFormField.getName() +
 					" was defined more than once");
 		}
 
-		ddmFormFieldNames.add(ddmFormField.getName());
+		ddmFormFieldNames.add(StringUtil.toLowerCase(ddmFormField.getName()));
 	}
 
 	protected void validateDDMFormFieldOptions(
@@ -195,12 +198,18 @@ public class DDMFormValidatorImpl implements DDMFormValidator {
 	protected void validateDDMFormFieldType(DDMFormField ddmFormField)
 		throws DDMFormValidationException {
 
-		Set<String> fieldTypeNames =
-			DDMFormFieldTypeRegistryUtil.getDDMFormFieldTypeNames();
-
-		if (!fieldTypeNames.contains(ddmFormField.getType())) {
+		if (Validator.isNull(ddmFormField.getType())) {
 			throw new DDMFormValidationException(
-				"Invalid type set for field " + ddmFormField.getName());
+				"The field type was never set for DDM form field");
+		}
+
+		Matcher matcher = _ddmFormFieldTypePattern.matcher(
+			ddmFormField.getType());
+
+		if (!matcher.matches()) {
+			throw new DDMFormValidationException(
+				"Invalid characters were defined for field type " +
+					ddmFormField.getType());
 		}
 	}
 
@@ -241,5 +250,7 @@ public class DDMFormValidatorImpl implements DDMFormValidator {
 	};
 	private final Pattern _ddmFormFieldNamePattern = Pattern.compile(
 		"(\\w|_)+");
+	private final Pattern _ddmFormFieldTypePattern = Pattern.compile(
+		"(\\w|-|_)+");
 
 }

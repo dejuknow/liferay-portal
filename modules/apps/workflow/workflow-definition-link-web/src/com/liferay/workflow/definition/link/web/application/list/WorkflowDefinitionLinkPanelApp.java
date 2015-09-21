@@ -30,17 +30,12 @@ import org.osgi.service.component.annotations.Reference;
 	immediate = true,
 	property = {
 		"panel.category.key=" + PanelCategoryKeys.SITE_ADMINISTRATION_CONFIGURATION,
-		"service.ranking:Integer=600"
+		"service.ranking:Integer=400"
 	},
 	service = PanelApp.class
 )
 public class WorkflowDefinitionLinkPanelApp
 	extends BaseControlPanelEntryPanelApp {
-
-	@Override
-	public String getParentCategoryKey() {
-		return PanelCategoryKeys.SITE_ADMINISTRATION_CONFIGURATION;
-	}
 
 	@Override
 	public String getPortletId() {
@@ -52,7 +47,7 @@ public class WorkflowDefinitionLinkPanelApp
 	protected void setPortletLocalService(
 		PortletLocalService portletLocalService) {
 
-		_portletLocalService = portletLocalService;
+		this.portletLocalService = portletLocalService;
 	}
 
 }

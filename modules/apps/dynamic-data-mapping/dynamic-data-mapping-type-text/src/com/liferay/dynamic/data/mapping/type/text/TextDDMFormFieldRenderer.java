@@ -14,11 +14,10 @@
 
 package com.liferay.dynamic.data.mapping.type.text;
 
+import com.liferay.dynamic.data.mapping.registry.BaseDDMFormFieldRenderer;
+import com.liferay.dynamic.data.mapping.registry.DDMFormFieldRenderer;
 import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.template.TemplateResource;
-import com.liferay.portal.kernel.util.MapUtil;
-import com.liferay.portlet.dynamicdatamapping.registry.BaseDDMFormFieldRenderer;
-import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldRenderer;
 
 import java.util.Map;
 
@@ -30,8 +29,8 @@ import org.osgi.service.component.annotations.Deactivate;
  * @author Marcellus Tavares
  */
 @Component(
-	immediate = true, property = {"templatePath=/META-INF/resources/text.soy"},
-	service = {TextDDMFormFieldRenderer.class, DDMFormFieldRenderer.class}
+	immediate = true, property = "ddm.form.field.type.name=text",
+	service = DDMFormFieldRenderer.class
 )
 public class TextDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 
@@ -52,9 +51,7 @@ public class TextDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 
 	@Activate
 	protected void activate(Map<String, Object> properties) {
-		String templatePath = MapUtil.getString(properties, "templatePath");
-
-		_templateResource = getTemplateResource(templatePath);
+		_templateResource = getTemplateResource("/META-INF/resources/text.soy");
 	}
 
 	@Deactivate

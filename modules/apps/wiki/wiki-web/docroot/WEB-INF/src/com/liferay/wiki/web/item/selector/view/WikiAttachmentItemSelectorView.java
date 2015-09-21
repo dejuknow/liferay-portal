@@ -16,8 +16,11 @@ package com.liferay.wiki.web.item.selector.view;
 
 import com.liferay.item.selector.ItemSelectorReturnType;
 import com.liferay.item.selector.ItemSelectorView;
-import com.liferay.item.selector.criteria.URLItemSelectorReturnType;
+import com.liferay.item.selector.criteria.FileEntryItemSelectorReturnType;
+import com.liferay.item.selector.criteria.UploadableFileReturnType;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.ResourceBundleUtil;
+import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.wiki.item.selector.criterion.WikiAttachmentItemSelectorCriterion;
 import com.liferay.wiki.web.item.selector.view.display.context.WikiAttachmentItemSelectorViewDisplayContext;
 
@@ -68,10 +71,20 @@ public class WikiAttachmentItemSelectorView
 
 	@Override
 	public String getTitle(Locale locale) {
-		ResourceBundle resourceBundle = ResourceBundle.getBundle(
-			"content/Language", locale);
+		ResourceBundle resourceBundle = ResourceBundleUtil.getBundle(
+			"content/Language", locale, getClass());
 
 		return resourceBundle.getString("page-attachments");
+	}
+
+	@Override
+	public boolean isShowSearch() {
+		return true;
+	}
+
+	@Override
+	public boolean isVisible(ThemeDisplay themeDisplay) {
+		return true;
 	}
 
 	@Override
@@ -79,14 +92,14 @@ public class WikiAttachmentItemSelectorView
 			ServletRequest request, ServletResponse response,
 			WikiAttachmentItemSelectorCriterion
 				wikiAttachmentItemSelectorCriterion,
-			PortletURL portletURL, String itemSelectedEventName)
+			PortletURL portletURL, String itemSelectedEventName, boolean search)
 		throws IOException, ServletException {
 
 		WikiAttachmentItemSelectorViewDisplayContext
 			wikiAttachmentItemSelectorViewDisplayContext =
 				new WikiAttachmentItemSelectorViewDisplayContext(
 					wikiAttachmentItemSelectorCriterion, this,
-					itemSelectedEventName, portletURL);
+					itemSelectedEventName, search, portletURL);
 
 		request.setAttribute(
 			WIKI_ATTACHMENT_ITEM_SELECTOR_VIEW_DISPLAY_CONTEXT,
@@ -112,7 +125,8 @@ public class WikiAttachmentItemSelectorView
 		_supportedItemSelectorReturnTypes = Collections.unmodifiableList(
 			ListUtil.fromArray(
 				new ItemSelectorReturnType[] {
-					new URLItemSelectorReturnType()
+					new FileEntryItemSelectorReturnType(),
+					new UploadableFileReturnType()
 				}));
 
 	private ServletContext _servletContext;

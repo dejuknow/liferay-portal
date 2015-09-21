@@ -84,6 +84,7 @@ public class DLFileEntryWrapper implements DLFileEntry,
 		attributes.put("custom1ImageId", getCustom1ImageId());
 		attributes.put("custom2ImageId", getCustom2ImageId());
 		attributes.put("manualCheckInRequired", getManualCheckInRequired());
+		attributes.put("lastPublishDate", getLastPublishDate());
 
 		return attributes;
 	}
@@ -264,6 +265,12 @@ public class DLFileEntryWrapper implements DLFileEntry,
 		if (manualCheckInRequired != null) {
 			setManualCheckInRequired(manualCheckInRequired);
 		}
+
+		Date lastPublishDate = (Date)attributes.get("lastPublishDate");
+
+		if (lastPublishDate != null) {
+			setLastPublishDate(lastPublishDate);
+		}
 	}
 
 	@Override
@@ -341,7 +348,7 @@ public class DLFileEntryWrapper implements DLFileEntry,
 	* @return the create date of this document library file entry
 	*/
 	@Override
-	public java.util.Date getCreateDate() {
+	public Date getCreateDate() {
 		return _dlFileEntry.getCreateDate();
 	}
 
@@ -366,7 +373,7 @@ public class DLFileEntryWrapper implements DLFileEntry,
 	}
 
 	@Override
-	public java.util.Map<java.lang.String, com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues> getDDMFormValuesMap(
+	public Map<java.lang.String, com.liferay.portlet.dynamicdatamapping.DDMFormValues> getDDMFormValuesMap(
 		long fileVersionId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _dlFileEntry.getDDMFormValuesMap(fileVersionId);
@@ -528,6 +535,16 @@ public class DLFileEntryWrapper implements DLFileEntry,
 		return _dlFileEntry.getLargeImageId();
 	}
 
+	/**
+	* Returns the last publish date of this document library file entry.
+	*
+	* @return the last publish date of this document library file entry
+	*/
+	@Override
+	public Date getLastPublishDate() {
+		return _dlFileEntry.getLastPublishDate();
+	}
+
 	@Override
 	public com.liferay.portlet.documentlibrary.model.DLFileVersion getLatestFileVersion(
 		boolean trusted)
@@ -571,7 +588,7 @@ public class DLFileEntryWrapper implements DLFileEntry,
 	* @return the modified date of this document library file entry
 	*/
 	@Override
-	public java.util.Date getModifiedDate() {
+	public Date getModifiedDate() {
 		return _dlFileEntry.getModifiedDate();
 	}
 
@@ -904,7 +921,7 @@ public class DLFileEntryWrapper implements DLFileEntry,
 	* @param createDate the create date of this document library file entry
 	*/
 	@Override
-	public void setCreateDate(java.util.Date createDate) {
+	public void setCreateDate(Date createDate) {
 		_dlFileEntry.setCreateDate(createDate);
 	}
 
@@ -1043,6 +1060,16 @@ public class DLFileEntryWrapper implements DLFileEntry,
 	}
 
 	/**
+	* Sets the last publish date of this document library file entry.
+	*
+	* @param lastPublishDate the last publish date of this document library file entry
+	*/
+	@Override
+	public void setLastPublishDate(Date lastPublishDate) {
+		_dlFileEntry.setLastPublishDate(lastPublishDate);
+	}
+
+	/**
 	* Sets whether this document library file entry is manual check in required.
 	*
 	* @param manualCheckInRequired the manual check in required of this document library file entry
@@ -1068,7 +1095,7 @@ public class DLFileEntryWrapper implements DLFileEntry,
 	* @param modifiedDate the modified date of this document library file entry
 	*/
 	@Override
-	public void setModifiedDate(java.util.Date modifiedDate) {
+	public void setModifiedDate(Date modifiedDate) {
 		_dlFileEntry.setModifiedDate(modifiedDate);
 	}
 

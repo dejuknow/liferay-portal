@@ -16,7 +16,6 @@ package com.liferay.portlet.dynamicdatamapping;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
 
 /**
  * @author Rafael Praxedes
@@ -28,14 +27,11 @@ public interface StorageEngineManager {
 	public long create(
 			long companyId, long ddmStructureId, DDMFormValues ddmFormValues,
 			ServiceContext serviceContext)
-		throws StorageException;
+		throws PortalException;
 
-	public void deleteByClass(long classPK) throws StorageException;
+	public void deleteByClass(long classPK) throws PortalException;
 
-	public void deleteByDDMStructure(long ddmStructureId)
-		throws StorageException;
-
-	public DDMFormValues getDDMFormValues(long classPK) throws StorageException;
+	public DDMFormValues getDDMFormValues(long classPK) throws PortalException;
 
 	public DDMFormValues getDDMFormValues(
 			long ddmStructureId, String fieldNamespace,
@@ -45,6 +41,6 @@ public interface StorageEngineManager {
 	public void update(
 			long classPK, DDMFormValues ddmFormValues,
 			ServiceContext serviceContext)
-		throws StorageException;
+		throws PortalException;
 
 }

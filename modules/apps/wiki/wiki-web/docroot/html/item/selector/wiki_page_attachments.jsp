@@ -25,65 +25,63 @@ SearchContainer searchContainer = new SearchContainer(renderRequest, null, null,
 
 WikiPage wikiPage = wikiAttachmentItemSelectorViewDisplayContext.getWikiPage();
 
-Folder folder = DLAppServiceUtil.getFolder(wikiPage.getAttachmentsFolderId());
-
 int total = 0;
 List<FileEntry> results = new ArrayList<FileEntry>();
 
-String keywords = ParamUtil.getString(request, "keywords");
-String tabName = ParamUtil.getString(request, "tabName");
+if (wikiPage.getAttachmentsFolderId() != DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
+	if (wikiAttachmentItemSelectorViewDisplayContext.isSearch()) {
+		SearchContext searchContext = SearchContextFactory.getInstance(request);
 
-if (Validator.isNotNull(keywords) && tabName.equals(wikiAttachmentItemSelectorViewDisplayContext.getTitle(locale))) {
-	SearchContext searchContext = SearchContextFactory.getInstance(request);
+		searchContext.setEnd(searchContainer.getEnd());
+		searchContext.setFolderIds(new long[] {wikiPage.getAttachmentsFolderId()});
+		searchContext.setStart(searchContainer.getStart());
 
-	searchContext.setEnd(searchContainer.getEnd());
-	searchContext.setFolderIds(new long[] {folder.getFolderId()});
-	searchContext.setStart(searchContainer.getStart());
+		Folder folder = DLAppServiceUtil.getFolder(wikiPage.getAttachmentsFolderId());
 
-	Hits hits = PortletFileRepositoryUtil.searchPortletFileEntries(folder.getRepositoryId(), searchContext);
+		Hits hits = PortletFileRepositoryUtil.searchPortletFileEntries(folder.getRepositoryId(), searchContext);
 
-	total = hits.getLength();
+		total = hits.getLength();
 
-	Document[] docs = hits.getDocs();
+		Document[] docs = hits.getDocs();
 
-	results = new ArrayList(docs.length);
+		results = new ArrayList(docs.length);
 
-	for (Document doc : docs) {
-		long fileEntryId = GetterUtil.getLong(doc.get(Field.ENTRY_CLASS_PK));
+		for (Document doc : docs) {
+			long fileEntryId = GetterUtil.getLong(doc.get(Field.ENTRY_CLASS_PK));
 
-		FileEntry fileEntry = null;
+			FileEntry fileEntry = null;
 
-		try {
-			fileEntry = DLAppLocalServiceUtil.getFileEntry(fileEntryId);
-		}
-		catch (Exception e) {
-			if (_log.isWarnEnabled()) {
-				_log.warn("Documents and Media search index is stale and contains file entry {" + fileEntryId + "}");
+			try {
+				fileEntry = DLAppLocalServiceUtil.getFileEntry(fileEntryId);
+			}
+			catch (Exception e) {
+				if (_log.isWarnEnabled()) {
+					_log.warn("Documents and Media search index is stale and contains file entry {" + fileEntryId + "}");
+				}
+
+				continue;
 			}
 
-			continue;
+			results.add(fileEntry);
 		}
-
-		results.add(fileEntry);
 	}
-}
-else {
-	total = wikiPage.getAttachmentsFileEntriesCount();
-	results = wikiPage.getAttachmentsFileEntries(searchContainer.getStart(), searchContainer.getEnd());
+	else {
+		total = wikiPage.getAttachmentsFileEntriesCount();
+		results = wikiPage.getAttachmentsFileEntries(searchContainer.getStart(), searchContainer.getEnd());
+	}
 }
 
 searchContainer.setTotal(total);
 searchContainer.setResults(results);
 %>
 
-<item-selector-ui:browser
+<liferay-item-selector:browser
 	desiredItemSelectorReturnTypes="<%= wikiAttachmentItemSelectorCriterion.getDesiredItemSelectorReturnTypes() %>"
-	displayStyle="<%= wikiAttachmentItemSelectorViewDisplayContext.getDisplayStyle(request) %>"
-	displayStyleURL="<%= wikiAttachmentItemSelectorViewDisplayContext.getPortletURL(request, liferayPortletResponse) %>"
 	itemSelectedEventName="<%= wikiAttachmentItemSelectorViewDisplayContext.getItemSelectedEventName() %>"
+	portletURL="<%= wikiAttachmentItemSelectorViewDisplayContext.getPortletURL(request, liferayPortletResponse) %>"
 	searchContainer="<%= searchContainer %>"
-	searchURL="<%= wikiAttachmentItemSelectorViewDisplayContext.getPortletURL(request, liferayPortletResponse) %>"
 	tabName="<%= wikiAttachmentItemSelectorViewDisplayContext.getTitle(locale) %>"
+	uploadURL="<%= wikiAttachmentItemSelectorViewDisplayContext.getUploadURL(liferayPortletResponse) %>"
 />
 
 <%!

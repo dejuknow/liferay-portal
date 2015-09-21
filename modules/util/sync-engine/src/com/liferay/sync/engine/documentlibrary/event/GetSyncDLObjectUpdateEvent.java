@@ -61,6 +61,10 @@ public class GetSyncDLObjectUpdateEvent extends BaseEvent {
 		syncSite = SyncSiteService.fetchSyncSite(
 			syncSite.getGroupId(), syncSite.getSyncAccountId());
 
+		syncSite.setState(SyncSite.STATE_IN_PROGRESS);
+
+		SyncSiteService.update(syncSite);
+
 		if (syncSite.getRemoteSyncTime() == -1) {
 			String filePathName = syncSite.getFilePathName();
 
@@ -80,8 +84,8 @@ public class GetSyncDLObjectUpdateEvent extends BaseEvent {
 
 		parameters.clear();
 
-		parameters.put("companyId", syncSite.getCompanyId());
 		parameters.put("lastAccessTime", syncSite.getRemoteSyncTime());
+		parameters.put("max", 0);
 		parameters.put("repositoryId", syncSite.getGroupId());
 		parameters.put("syncSite", syncSite);
 

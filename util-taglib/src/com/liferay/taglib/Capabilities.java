@@ -46,23 +46,9 @@ public class Capabilities {
 
 	@ProvideCapability(
 		name = "jsp.taglib", ns = "osgi.extender",
-		value = "uri=http://liferay.com/tld/ddm", version = "${@version}"
-	)
-	public class DDM {
-	}
-
-	@ProvideCapability(
-		name = "jsp.taglib", ns = "osgi.extender",
 		value = "uri=http://liferay.com/tld/aui", version = "${@version}"
 	)
 	public class LiferayAUI {
-	}
-
-	@ProvideCapability(
-		name = "jsp.taglib", ns = "osgi.extender",
-		value = "uri=http://liferay.com/tld/ddm", version = "${@version}"
-	)
-	public class LiferayDDM {
 	}
 
 	@ProvideCapability(
@@ -84,13 +70,6 @@ public class Capabilities {
 		value = "uri=http://liferay.com/tld/security", version = "${@version}"
 	)
 	public class LiferaySecurity {
-	}
-
-	@ProvideCapability(
-		name = "jsp.taglib", ns = "osgi.extender",
-		value = "uri=http://liferay.com/tld/staging", version = "${@version}"
-	)
-	public class LiferayStaging {
 	}
 
 	@ProvideCapability(

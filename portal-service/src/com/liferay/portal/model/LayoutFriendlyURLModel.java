@@ -286,6 +286,22 @@ public interface LayoutFriendlyURLModel extends BaseModel<LayoutFriendlyURL>,
 	 */
 	public void setLanguageId(String languageId);
 
+	/**
+	 * Returns the last publish date of this layout friendly u r l.
+	 *
+	 * @return the last publish date of this layout friendly u r l
+	 */
+	@Override
+	public Date getLastPublishDate();
+
+	/**
+	 * Sets the last publish date of this layout friendly u r l.
+	 *
+	 * @param lastPublishDate the last publish date of this layout friendly u r l
+	 */
+	@Override
+	public void setLastPublishDate(Date lastPublishDate);
+
 	@Override
 	public boolean isNew();
 

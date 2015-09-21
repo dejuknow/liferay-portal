@@ -56,11 +56,7 @@ if (row == null) {
 <liferay-ui:icon-menu direction="down" icon="<%= StringPool.BLANK %>" message="<%= StringPool.BLANK %>" showExpanded="<%= view %>" showWhenSingleIcon="<%= true %>">
 
 	<%
-	ThemeDisplay siteThemeDisplay = (ThemeDisplay)themeDisplay.clone();
-
-	siteThemeDisplay.setScopeGroupId(group.getGroupId());
-
-	PortletURL siteAdministrationURL = PortalUtil.getSiteAdministrationURL(renderResponse, siteThemeDisplay);
+	PortletURL siteAdministrationURL = group.getAdministrationURL(themeDisplay);
 	%>
 
 	<c:if test="<%= siteAdministrationURL != null %>">
@@ -95,9 +91,7 @@ if (row == null) {
 		<c:if test="<%= !group.isCompany() && (PortalPermissionUtil.contains(permissionChecker, ActionKeys.ADD_COMMUNITY) || GroupPermissionUtil.contains(permissionChecker, group, ActionKeys.ADD_COMMUNITY)) %>">
 			<liferay-portlet:renderURL varImpl="addSiteURL">
 				<portlet:param name="mvcPath" value="/edit_site.jsp" />
-				<portlet:param name="redirect" value="<%= currentURL %>" />
 				<portlet:param name="parentGroupSearchContainerPrimaryKeys" value="<%= String.valueOf(group.getGroupId()) %>" />
-				<portlet:param name="showPrototypes" value="<%= Boolean.TRUE.toString() %>" />
 			</liferay-portlet:renderURL>
 
 			<liferay-ui:icon
@@ -184,7 +178,7 @@ if (row == null) {
 		/>
 	</c:if>
 
-	<c:if test="<%= !group.isCompany() && (!(organizationUser || userGroupUser) && ((group.getType() == GroupConstants.TYPE_SITE_OPEN) || (group.getType() == GroupConstants.TYPE_SITE_RESTRICTED)) && GroupLocalServiceUtil.hasUserGroup(user.getUserId(), group.getGroupId())) && !SiteMembershipPolicyUtil.isMembershipRequired(user.getUserId(), group.getGroupId()) %>">
+	<c:if test="<%= !group.isCompany() && !(organizationUser || userGroupUser) && ((group.getType() == GroupConstants.TYPE_SITE_OPEN) || (group.getType() == GroupConstants.TYPE_SITE_RESTRICTED)) && GroupLocalServiceUtil.hasUserGroup(user.getUserId(), group.getGroupId()) && !SiteMembershipPolicyUtil.isMembershipRequired(user.getUserId(), group.getGroupId()) %>">
 		<portlet:actionURL name="editGroupAssignments" var="leaveURL">
 			<portlet:param name="redirect" value="<%= currentURL %>" />
 			<portlet:param name="groupId" value="<%= String.valueOf(group.getGroupId()) %>" />

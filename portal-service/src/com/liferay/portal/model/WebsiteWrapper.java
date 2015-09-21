@@ -66,6 +66,7 @@ public class WebsiteWrapper implements Website, ModelWrapper<Website> {
 		attributes.put("url", getUrl());
 		attributes.put("typeId", getTypeId());
 		attributes.put("primary", getPrimary());
+		attributes.put("lastPublishDate", getLastPublishDate());
 
 		return attributes;
 	}
@@ -149,6 +150,12 @@ public class WebsiteWrapper implements Website, ModelWrapper<Website> {
 		if (primary != null) {
 			setPrimary(primary);
 		}
+
+		Date lastPublishDate = (Date)attributes.get("lastPublishDate");
+
+		if (lastPublishDate != null) {
+			setLastPublishDate(lastPublishDate);
+		}
 	}
 
 	@Override
@@ -207,7 +214,7 @@ public class WebsiteWrapper implements Website, ModelWrapper<Website> {
 	* @return the create date of this website
 	*/
 	@Override
-	public java.util.Date getCreateDate() {
+	public Date getCreateDate() {
 		return _website.getCreateDate();
 	}
 
@@ -217,12 +224,22 @@ public class WebsiteWrapper implements Website, ModelWrapper<Website> {
 	}
 
 	/**
+	* Returns the last publish date of this website.
+	*
+	* @return the last publish date of this website
+	*/
+	@Override
+	public Date getLastPublishDate() {
+		return _website.getLastPublishDate();
+	}
+
+	/**
 	* Returns the modified date of this website.
 	*
 	* @return the modified date of this website
 	*/
 	@Override
-	public java.util.Date getModifiedDate() {
+	public Date getModifiedDate() {
 		return _website.getModifiedDate();
 	}
 
@@ -418,7 +435,7 @@ public class WebsiteWrapper implements Website, ModelWrapper<Website> {
 	* @param createDate the create date of this website
 	*/
 	@Override
-	public void setCreateDate(java.util.Date createDate) {
+	public void setCreateDate(Date createDate) {
 		_website.setCreateDate(createDate);
 	}
 
@@ -440,12 +457,22 @@ public class WebsiteWrapper implements Website, ModelWrapper<Website> {
 	}
 
 	/**
+	* Sets the last publish date of this website.
+	*
+	* @param lastPublishDate the last publish date of this website
+	*/
+	@Override
+	public void setLastPublishDate(Date lastPublishDate) {
+		_website.setLastPublishDate(lastPublishDate);
+	}
+
+	/**
 	* Sets the modified date of this website.
 	*
 	* @param modifiedDate the modified date of this website
 	*/
 	@Override
-	public void setModifiedDate(java.util.Date modifiedDate) {
+	public void setModifiedDate(Date modifiedDate) {
 		_website.setModifiedDate(modifiedDate);
 	}
 

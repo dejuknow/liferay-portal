@@ -14,15 +14,14 @@
 
 package com.liferay.exportimport.web.upgrade;
 
-import com.liferay.exportimport.web.upgrade.v1_0_0.UpgradeExportImportPortletId;
+import com.liferay.exportimport.web.upgrade.v1_0_0.UpgradePortletId;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 import com.liferay.portal.service.ReleaseLocalService;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.servlet.ServletContext;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -34,6 +33,11 @@ import org.osgi.service.component.annotations.Reference;
 @Component(immediate = true, service = ExportImportWebUpgrade.class)
 public class ExportImportWebUpgrade {
 
+	@Reference(target = ModuleServiceLifecycle.PORTAL_INITIALIZED, unbind = "-")
+	protected void setModuleServiceLifecycle(
+		ModuleServiceLifecycle moduleServiceLifecycle) {
+	}
+
 	@Reference(unbind = "-")
 	protected void setReleaseLocalService(
 		ReleaseLocalService releaseLocalService) {
@@ -41,15 +45,11 @@ public class ExportImportWebUpgrade {
 		_releaseLocalService = releaseLocalService;
 	}
 
-	@Reference(target = "(original.bean=*)", unbind = "-")
-	protected void setServletContext(ServletContext servletContext) {
-	}
-
 	@Activate
 	protected void upgrade() throws PortalException {
 		List<UpgradeProcess> upgradeProcesses = new ArrayList<>();
 
-		upgradeProcesses.add(new UpgradeExportImportPortletId());
+		upgradeProcesses.add(new UpgradePortletId());
 
 		_releaseLocalService.updateRelease(
 			"com.liferay.exportimport.web", upgradeProcesses, 1, 1, false);

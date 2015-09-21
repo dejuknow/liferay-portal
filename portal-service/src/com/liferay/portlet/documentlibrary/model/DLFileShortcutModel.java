@@ -292,6 +292,22 @@ public interface DLFileShortcutModel extends BaseModel<DLFileShortcut>,
 	public void setActive(boolean active);
 
 	/**
+	 * Returns the last publish date of this document library file shortcut.
+	 *
+	 * @return the last publish date of this document library file shortcut
+	 */
+	@Override
+	public Date getLastPublishDate();
+
+	/**
+	 * Sets the last publish date of this document library file shortcut.
+	 *
+	 * @param lastPublishDate the last publish date of this document library file shortcut
+	 */
+	@Override
+	public void setLastPublishDate(Date lastPublishDate);
+
+	/**
 	 * Returns the status of this document library file shortcut.
 	 *
 	 * @return the status of this document library file shortcut

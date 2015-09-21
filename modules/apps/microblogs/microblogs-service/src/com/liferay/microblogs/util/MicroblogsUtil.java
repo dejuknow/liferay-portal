@@ -14,6 +14,7 @@
 
 package com.liferay.microblogs.util;
 
+import com.liferay.microblogs.constants.MicroblogsPortletKeys;
 import com.liferay.microblogs.model.MicroblogsEntry;
 import com.liferay.microblogs.model.MicroblogsEntryConstants;
 import com.liferay.microblogs.service.MicroblogsEntryLocalServiceUtil;
@@ -23,6 +24,8 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.notifications.UserNotificationManagerUtil;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
@@ -112,7 +115,7 @@ public class MicroblogsUtil {
 		if (isTaggedUser(
 				microblogsEntry.getMicroblogsEntryId(), false, userId) &&
 			UserNotificationManagerUtil.isDeliver(
-				userId, PortletKeys.MICROBLOGS, 0,
+				userId, MicroblogsPortletKeys.MICROBLOGS, 0,
 				MicroblogsEntryConstants.NOTIFICATION_TYPE_TAG, deliveryType)) {
 
 			return MicroblogsEntryConstants.NOTIFICATION_TYPE_TAG;
@@ -125,7 +128,7 @@ public class MicroblogsUtil {
 
 			if ((getRootMicroblogsUserId(microblogsEntry) == userId) &&
 				UserNotificationManagerUtil.isDeliver(
-					userId, PortletKeys.MICROBLOGS, 0,
+					userId, MicroblogsPortletKeys.MICROBLOGS, 0,
 					MicroblogsEntryConstants.NOTIFICATION_TYPE_REPLY,
 					deliveryType)) {
 
@@ -133,7 +136,7 @@ public class MicroblogsUtil {
 			}
 			else if (hasReplied(rootMicroblogsEntryId, userId) &&
 					 UserNotificationManagerUtil.isDeliver(
-						 userId, PortletKeys.MICROBLOGS, 0,
+						 userId, MicroblogsPortletKeys.MICROBLOGS, 0,
 						 MicroblogsEntryConstants.
 							 NOTIFICATION_TYPE_REPLY_TO_REPLIED,
 						 deliveryType)) {
@@ -144,7 +147,7 @@ public class MicroblogsUtil {
 			else if (MicroblogsUtil.isTaggedUser(
 						rootMicroblogsEntryId, true, userId) &&
 					 UserNotificationManagerUtil.isDeliver(
-						 userId, PortletKeys.MICROBLOGS, 0,
+						 userId, MicroblogsPortletKeys.MICROBLOGS, 0,
 						 MicroblogsEntryConstants.
 							 NOTIFICATION_TYPE_REPLY_TO_TAGGED,
 						 deliveryType)) {
@@ -340,12 +343,12 @@ public class MicroblogsUtil {
 				themeDisplay.getCompanyId(), themeDisplay.getUserId());
 
 			long portletPlid = PortalUtil.getPlidFromPortletId(
-				group.getGroupId(), true, "1_WAR_microblogsportlet");
+				group.getGroupId(), true, MicroblogsPortletKeys.MICROBLOGS);
 
 			if (portletPlid != 0) {
 				portletURL = PortletURLFactoryUtil.create(
 					serviceContext.getLiferayPortletRequest(),
-					"1_WAR_microblogsportlet", portletPlid,
+					MicroblogsPortletKeys.MICROBLOGS, portletPlid,
 					PortletRequest.RENDER_PHASE);
 
 				try {
@@ -359,7 +362,7 @@ public class MicroblogsUtil {
 					serviceContext.getLiferayPortletResponse();
 
 				portletURL = liferayPortletResponse.createRenderURL(
-					"1_WAR_microblogsportlet");
+					MicroblogsPortletKeys.MICROBLOGS);
 
 				try {
 					portletURL.setWindowState(WindowState.MAXIMIZED);
@@ -431,11 +434,16 @@ public class MicroblogsUtil {
 				content = StringUtil.replace(content, result, userLink);
 			}
 			catch (NoSuchUserException nsue) {
+				if (_log.isDebugEnabled()) {
+					_log.debug(nsue, nsue);
+				}
 			}
 		}
 
 		return content;
 	}
+
+	private static final Log _log = LogFactoryUtil.getLog(MicroblogsUtil.class);
 
 	private static final Pattern _hashtagPattern = Pattern.compile(
 		"\\#[a-zA-Z]\\w*");

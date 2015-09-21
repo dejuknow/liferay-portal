@@ -22,6 +22,8 @@ import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
+import com.liferay.portal.kernel.test.rule.Sync;
+import com.liferay.portal.kernel.test.rule.SynchronousDestinationTestRule;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.RoleTestUtil;
@@ -30,7 +32,6 @@ import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.ResourceConstants;
 import com.liferay.portal.model.RoleConstants;
@@ -40,8 +41,6 @@ import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.security.permission.PermissionThreadLocal;
 import com.liferay.portal.security.permission.SimplePermissionChecker;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.test.log.CaptureAppender;
-import com.liferay.portal.test.log.Log4JLoggerTestUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.documentlibrary.NoSuchFolderException;
@@ -54,15 +53,11 @@ import com.liferay.portlet.documentlibrary.model.DLFolderConstants;
 import com.liferay.portlet.documentlibrary.service.DLAppServiceUtil;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryTypeLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.service.DLFileVersionLocalServiceUtil;
-import com.liferay.portlet.documentlibrary.store.BaseStore;
+import com.liferay.portlet.dynamicdatamapping.DDMForm;
+import com.liferay.portlet.dynamicdatamapping.DDMFormFieldValue;
+import com.liferay.portlet.dynamicdatamapping.DDMFormValues;
 import com.liferay.portlet.dynamicdatamapping.DDMStructure;
-import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
-import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
-import com.liferay.portlet.dynamicdatamapping.storage.Field;
-import com.liferay.portlet.dynamicdatamapping.storage.Fields;
-import com.liferay.portlet.dynamicdatamapping.util.DDMFormValuesToFieldsConverterUtil;
-import com.liferay.portlet.dynamicdatamapping.util.DDMImpl;
-import com.liferay.portlet.dynamicdatamapping.util.FieldsToDDMFormValuesConverterUtil;
+import com.liferay.portlet.dynamicdatamapping.LocalizedValue;
 import com.liferay.portlet.expando.model.ExpandoColumnConstants;
 import com.liferay.portlet.expando.model.ExpandoTable;
 import com.liferay.portlet.expando.service.ExpandoColumnLocalServiceUtil;
@@ -72,13 +67,8 @@ import com.liferay.registry.RegistryUtil;
 
 import java.io.Serializable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import org.apache.log4j.Level;
-import org.apache.log4j.spi.LoggingEvent;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -92,12 +82,15 @@ import org.junit.runner.RunWith;
  * @author Preston Crary
  */
 @RunWith(Arquillian.class)
+@Sync
 public class DLFileVersionTest {
 
 	@ClassRule
 	@Rule
 	public static final AggregateTestRule aggregateTestRule =
-		new LiferayIntegrationTestRule();
+		new AggregateTestRule(
+			new LiferayIntegrationTestRule(),
+			SynchronousDestinationTestRule.INSTANCE);
 
 	@Before
 	public void setUp() throws Exception {
@@ -145,15 +138,12 @@ public class DLFileVersionTest {
 		_serviceContext = getServiceContext();
 
 		FileEntry fileEntry = DLAppServiceUtil.addFileEntry(
-			_group.getGroupId(), parentFolder.getFolderId(), _SOURCE_FILE_NAME,
+			_group.getGroupId(), _parentFolder.getFolderId(), _SOURCE_FILE_NAME,
 			ContentTypes.APPLICATION_OCTET_STREAM, _TITLE, StringPool.BLANK,
 			StringPool.BLANK, _DATA_VERSION_1, _serviceContext);
 
 		_fileVersion = DLFileVersionLocalServiceUtil.getFileVersion(
 			fileEntry.getFileEntryId(), DLFileEntryConstants.VERSION_DEFAULT);
-
-		_captureAppender = Log4JLoggerTestUtil.configureLog4JLogger(
-			BaseStore.class.getName(), Level.WARN);
 	}
 
 	@After
@@ -167,12 +157,6 @@ public class DLFileVersionTest {
 		tearDownPermissionThreadLocal();
 		tearDownPrincipalThreadLocal();
 		tearDownResourcePermission();
-
-		List<LoggingEvent> loggingEvents = _captureAppender.getLoggingEvents();
-
-		Assert.assertTrue(loggingEvents.isEmpty());
-
-		_captureAppender.close();
 	}
 
 	@Test
@@ -202,8 +186,6 @@ public class DLFileVersionTest {
 		fileEntry = DLAppServiceUtil.getFileEntry(fileEntry.getFileEntryId());
 
 		Assert.assertEquals("2.0", fileEntry.getVersion());
-
-		checkLogForFileDeletion(4);
 	}
 
 	@Test
@@ -216,8 +198,6 @@ public class DLFileVersionTest {
 
 		Assert.assertNotEquals(
 			DLFileEntryConstants.VERSION_DEFAULT, fileEntry.getVersion());
-
-		checkLogForFileDeletion(1);
 	}
 
 	@Test
@@ -230,8 +210,6 @@ public class DLFileVersionTest {
 
 		Assert.assertNotEquals(
 			DLFileEntryConstants.VERSION_DEFAULT, fileEntry.getVersion());
-
-		checkLogForFileDeletion(1);
 	}
 
 	@Test
@@ -247,8 +225,6 @@ public class DLFileVersionTest {
 
 		Assert.assertNotEquals(
 			DLFileEntryConstants.VERSION_DEFAULT, fileEntry.getVersion());
-
-		checkLogForFileDeletion(1);
 	}
 
 	@Test
@@ -266,8 +242,6 @@ public class DLFileVersionTest {
 
 		Assert.assertNotEquals(
 			DLFileEntryConstants.VERSION_DEFAULT, fileEntry.getVersion());
-
-		checkLogForFileDeletion(1);
 	}
 
 	@Test
@@ -283,8 +257,6 @@ public class DLFileVersionTest {
 
 		Assert.assertNotEquals(
 			DLFileEntryConstants.VERSION_DEFAULT, fileEntry.getVersion());
-
-		checkLogForFileDeletion(1);
 	}
 
 	@Test
@@ -297,8 +269,6 @@ public class DLFileVersionTest {
 
 		Assert.assertEquals(
 			DLFileEntryConstants.VERSION_DEFAULT, fileEntry.getVersion());
-
-		checkLogForFileDeletion(1);
 	}
 
 	@Test
@@ -311,8 +281,6 @@ public class DLFileVersionTest {
 
 		Assert.assertNotEquals(
 			DLFileEntryConstants.VERSION_DEFAULT, fileEntry.getVersion());
-
-		checkLogForFileDeletion(1);
 	}
 
 	@Test
@@ -325,57 +293,29 @@ public class DLFileVersionTest {
 
 		Assert.assertNotEquals(
 			DLFileEntryConstants.VERSION_DEFAULT, fileEntry.getVersion());
-
-		checkLogForFileDeletion(1);
 	}
 
-	protected void checkLogForFileDeletion(int size) {
-		List<LoggingEvent> loggingEvents = _captureAppender.getLoggingEvents();
+	protected DDMFormFieldValue createDDMFormFieldValue(String name) {
+		DDMFormFieldValue ddmFormFieldValue = new DDMFormFieldValue();
 
-		Assert.assertEquals(size, loggingEvents.size());
+		ddmFormFieldValue.setName(name);
 
-		for (LoggingEvent loggingEvent : loggingEvents) {
-			String message = (String)loggingEvent.getMessage();
+		LocalizedValue localizedValue = new LocalizedValue(LocaleUtil.US);
 
-			Assert.assertTrue(
-				message.startsWith(
-					"Unable to delete file {companyId=" +
-						_fileVersion.getCompanyId()));
-			Assert.assertTrue(
-				message.endsWith(
-					"versionLabel=PWC} because it does not exist"));
-		}
+		localizedValue.addString(LocaleUtil.US, StringPool.BLANK);
 
-		loggingEvents.clear();
+		ddmFormFieldValue.setValue(localizedValue);
+
+		return ddmFormFieldValue;
 	}
 
-	protected Field createField(DDMStructure ddmStructure, String name) {
-		Field field = new Field(
-			ddmStructure.getStructureId(), name, StringPool.BLANK);
+	protected DDMFormValues createDDMFormValues(DDMForm ddmForm) {
+		DDMFormValues ddmFormValues = new DDMFormValues(ddmForm);
 
-		field.setDefaultLocale(LocaleUtil.US);
+		ddmFormValues.addAvailableLocale(LocaleUtil.US);
+		ddmFormValues.setDefaultLocale(LocaleUtil.US);
 
-		return field;
-	}
-
-	protected Field createFieldsDisplayField(
-		DDMStructure ddmStructure, Set<String> fieldNames) {
-
-		List<String> fieldsDisplayValues = new ArrayList<>();
-
-		for (String fieldName : fieldNames) {
-			fieldsDisplayValues.add(
-				fieldName + DDMImpl.INSTANCE_SEPARATOR +
-				StringUtil.randomString());
-		}
-
-		Field fieldsDisplayField = new Field(
-			ddmStructure.getStructureId(), DDMImpl.FIELDS_DISPLAY_NAME,
-			StringUtil.merge(fieldsDisplayValues));
-
-		fieldsDisplayField.setDefaultLocale(LocaleUtil.US);
-
-		return fieldsDisplayField;
+		return ddmFormValues;
 	}
 
 	protected ServiceContext getServiceContext() throws Exception {
@@ -399,26 +339,15 @@ public class DLFileVersionTest {
 		List<DDMStructure> ddmStructures = fileEntryType.getDDMStructures();
 
 		for (DDMStructure ddmStructure : ddmStructures) {
-			Fields fields = new Fields();
+			DDMFormValues ddmFormValues = createDDMFormValues(
+				ddmStructure.getDDMForm());
 
-			Set<String> fieldNames = ddmStructure.getFieldNames();
+			for (String fieldName : ddmStructure.getFieldNames()) {
+				DDMFormFieldValue ddmFormFieldValue = createDDMFormFieldValue(
+					fieldName);
 
-			for (String fieldName : fieldNames) {
-				Field field = createField(ddmStructure, fieldName);
-
-				fields.put(field);
+				ddmFormValues.addDDMFormFieldValue(ddmFormFieldValue);
 			}
-
-			Field fieldsDisplayField = createFieldsDisplayField(
-				ddmStructure, fieldNames);
-
-			fields.put(fieldsDisplayField);
-
-			DDMFormValues ddmFormValues =
-				FieldsToDDMFormValuesConverterUtil.convert(
-					DDMStructureLocalServiceUtil.getDDMStructure(
-						ddmStructure.getStructureId()),
-					fields);
 
 			serviceContext.setAttribute(
 				DDMFormValues.class.getName() + ddmStructure.getStructureId(),
@@ -441,7 +370,7 @@ public class DLFileVersionTest {
 			ServiceContextTestUtil.getServiceContext(
 				_group.getGroupId(), TestPropsValues.getUserId());
 
-		parentFolder = DLAppServiceUtil.addFolder(
+		_parentFolder = DLAppServiceUtil.addFolder(
 			_group.getGroupId(), DLFolderConstants.DEFAULT_PARENT_FOLDER_ID,
 			"Test Folder", RandomTestUtil.randomString(), serviceContext);
 	}
@@ -532,23 +461,21 @@ public class DLFileVersionTest {
 					DDMFormValues.class.getName() +
 					ddmStructure.getStructureId());
 
-			com.liferay.portlet.dynamicdatamapping.model.DDMStructure
-				structure = DDMStructureLocalServiceUtil.getDDMStructure(
-					ddmStructure.getStructureId());
+			for (DDMFormFieldValue ddmFormFieldValue :
+					ddmFormValues.getDDMFormFieldValues()) {
 
-			Fields fields = DDMFormValuesToFieldsConverterUtil.convert(
-				structure, ddmFormValues);
+				String fieldType = ddmStructure.getFieldType(
+					ddmFormFieldValue.getName());
 
-			for (Field field : fields) {
-				String type = field.getType();
+				if (fieldType.equals("text")) {
+					LocalizedValue localizedValue = new LocalizedValue(
+						LocaleUtil.US);
 
-				if (!field.isPrivate() && type.equals("text")) {
-					field.setValue(metadata);
+					localizedValue.addString(LocaleUtil.US, metadata);
+
+					ddmFormFieldValue.setValue(localizedValue);
 				}
 			}
-
-			ddmFormValues = FieldsToDDMFormValuesConverterUtil.convert(
-				structure, fields);
 
 			_serviceContext.setAttribute(
 				DDMFormValues.class.getName() + ddmStructure.getStructureId(),
@@ -585,7 +512,6 @@ public class DLFileVersionTest {
 		}
 	}
 
-	private CaptureAppender _captureAppender;
 	private long _contractDLFileEntryTypeId;
 	private DLFileVersion _fileVersion;
 
@@ -594,7 +520,7 @@ public class DLFileVersionTest {
 
 	private String _originalName;
 	private PermissionChecker _originalPermissionChecker;
+	private Folder _parentFolder;
 	private ServiceContext _serviceContext;
-	private Folder parentFolder;
 
 }

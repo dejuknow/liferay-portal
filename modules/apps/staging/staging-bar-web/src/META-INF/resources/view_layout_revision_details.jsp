@@ -50,7 +50,7 @@ else {
 }
 %>
 
-<div class="layout-revision-actions">
+<li class="control-menu-nav-item">
 	<c:if test="<%= !layoutRevision.isIncomplete() %>">
 
 		<%
@@ -108,9 +108,7 @@ else {
 
 		</c:if>
 	</c:if>
-</div>
 
-<div class="layout-revision-info <%= layoutRevision.isIncomplete() ? "incomplete" : "col-md-7" %>">
 	<c:if test="<%= !layoutRevision.isIncomplete() %>">
 		<span class="layout-revision-version"><label><liferay-ui:message key="version" />:</label> <span class=""><%= layoutRevision.getLayoutRevisionId() %></span></span>
 
@@ -130,9 +128,7 @@ else {
 		<c:if test="<%= hasWorkflowTask %>">
 
 			<%
-			long controlPanelPlid = PortalUtil.getControlPanelPlid(company.getCompanyId());
-
-			PortletURL portletURL = liferayPortletResponse.createLiferayPortletURL(controlPanelPlid, PortletKeys.MY_WORKFLOW_TASK, PortletRequest.RENDER_PHASE);
+			PortletURL portletURL = PortalUtil.getControlPanelPortletURL(request, PortletKeys.MY_WORKFLOW_TASK, 0, PortletRequest.RENDER_PHASE);
 
 			portletURL.setParameter("mvcPath", "/edit_workflow_task.jsp");
 
@@ -162,7 +158,9 @@ else {
 			/>
 		</c:if>
 	</c:if>
+</li>
 
+<li class="control-menu-nav-item">
 	<c:if test="<%= !hasWorkflowTask %>">
 		<c:if test="<%= !layoutRevision.isHead() && LayoutPermissionUtil.contains(permissionChecker, layoutRevision.getPlid(), ActionKeys.UPDATE) %>">
 			<c:if test="<%= layoutRevision.isIncomplete() %>">
@@ -204,14 +202,9 @@ else {
 			}
 			%>
 
-			<liferay-ui:icon
-				cssClass="label label-submit"
-				iconCssClass="icon-ok"
-				id="submitLink"
-				label="<%= true %>"
-				message="<%= label %>"
-				url="<%= taglibURL %>"
-			/>
+			<a href="<%= taglibURL %>" id="submitLink">
+				<liferay-ui:message key="<%= label %>" />
+			</a>
 
 			<c:if test="<%= workflowEnabled && !pendingLayoutRevisions.isEmpty() %>">
 
@@ -236,7 +229,7 @@ else {
 			</c:if>
 		</c:if>
 	</c:if>
-</div>
+</li>
 
 <portlet:renderURL var="markAsReadyForPublicationURL" windowState="<%= LiferayWindowState.EXCLUSIVE.toString() %>">
 	<portlet:param name="mvcPath" value="/view_layout_revision_details.jsp" />

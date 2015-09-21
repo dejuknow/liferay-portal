@@ -139,6 +139,8 @@ public class AssetVocabularyPersistenceTest {
 
 		newAssetVocabulary.setSettings(RandomTestUtil.randomString());
 
+		newAssetVocabulary.setLastPublishDate(RandomTestUtil.nextDate());
+
 		_assetVocabularies.add(_persistence.update(newAssetVocabulary));
 
 		AssetVocabulary existingAssetVocabulary = _persistence.findByPrimaryKey(newAssetVocabulary.getPrimaryKey());
@@ -169,6 +171,9 @@ public class AssetVocabularyPersistenceTest {
 			newAssetVocabulary.getDescription());
 		Assert.assertEquals(existingAssetVocabulary.getSettings(),
 			newAssetVocabulary.getSettings());
+		Assert.assertEquals(Time.getShortTimestamp(
+				existingAssetVocabulary.getLastPublishDate()),
+			Time.getShortTimestamp(newAssetVocabulary.getLastPublishDate()));
 	}
 
 	@Test
@@ -268,7 +273,7 @@ public class AssetVocabularyPersistenceTest {
 			true, "vocabularyId", true, "groupId", true, "companyId", true,
 			"userId", true, "userName", true, "createDate", true,
 			"modifiedDate", true, "name", true, "title", true, "description",
-			true, "settings", true);
+			true, "settings", true, "lastPublishDate", true);
 	}
 
 	@Test
@@ -478,12 +483,12 @@ public class AssetVocabularyPersistenceTest {
 		Assert.assertTrue(Validator.equals(existingAssetVocabulary.getUuid(),
 				ReflectionTestUtil.invoke(existingAssetVocabulary,
 					"getOriginalUuid", new Class<?>[0])));
-		Assert.assertEquals(existingAssetVocabulary.getGroupId(),
-			ReflectionTestUtil.invoke(existingAssetVocabulary,
+		Assert.assertEquals(Long.valueOf(existingAssetVocabulary.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingAssetVocabulary,
 				"getOriginalGroupId", new Class<?>[0]));
 
-		Assert.assertEquals(existingAssetVocabulary.getGroupId(),
-			ReflectionTestUtil.invoke(existingAssetVocabulary,
+		Assert.assertEquals(Long.valueOf(existingAssetVocabulary.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingAssetVocabulary,
 				"getOriginalGroupId", new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(existingAssetVocabulary.getName(),
 				ReflectionTestUtil.invoke(existingAssetVocabulary,
@@ -516,6 +521,8 @@ public class AssetVocabularyPersistenceTest {
 		assetVocabulary.setDescription(RandomTestUtil.randomString());
 
 		assetVocabulary.setSettings(RandomTestUtil.randomString());
+
+		assetVocabulary.setLastPublishDate(RandomTestUtil.nextDate());
 
 		_assetVocabularies.add(_persistence.update(assetVocabulary));
 

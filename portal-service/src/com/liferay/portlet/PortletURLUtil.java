@@ -273,11 +273,21 @@ public class PortletURLUtil {
 		for (Map.Entry<String, String[]> entry : parameters.entrySet()) {
 			String name = entry.getKey();
 
+			if (name.startsWith(StringPool.UNDERLINE) &&
+				!name.startsWith(namespace)) {
+
+				continue;
+			}
+
 			if (!PortalUtil.isReservedParameter(name) &&
 				!name.equals("currentURL") &&
 				!isRefreshURLReservedParameter(name, namespace)) {
 
 				String[] values = entry.getValue();
+
+				if (values == null) {
+					continue;
+				}
 
 				for (int i = 0; i < values.length; i++) {
 					sb.append(StringPool.AMPERSAND);

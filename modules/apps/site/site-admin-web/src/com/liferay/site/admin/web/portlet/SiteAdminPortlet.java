@@ -27,6 +27,7 @@ import com.liferay.portal.NoSuchLayoutException;
 import com.liferay.portal.PendingBackgroundTaskException;
 import com.liferay.portal.RemoteOptionsException;
 import com.liferay.portal.RequiredGroupException;
+import com.liferay.portal.kernel.backgroundtask.BackgroundTaskManagerUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
@@ -34,6 +35,8 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.servlet.MultiSessionMessages;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.transaction.Propagation;
+import com.liferay.portal.kernel.transaction.TransactionAttribute;
+import com.liferay.portal.kernel.transaction.TransactionInvokerUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HttpUtil;
@@ -61,7 +64,6 @@ import com.liferay.portal.model.Team;
 import com.liferay.portal.security.auth.AuthException;
 import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.security.auth.RemoteAuthException;
-import com.liferay.portal.service.BackgroundTaskLocalServiceUtil;
 import com.liferay.portal.service.GroupLocalServiceUtil;
 import com.liferay.portal.service.GroupServiceUtil;
 import com.liferay.portal.service.LayoutLocalServiceUtil;
@@ -77,8 +79,6 @@ import com.liferay.portal.service.ServiceContextThreadLocal;
 import com.liferay.portal.service.TeamLocalServiceUtil;
 import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.service.UserServiceUtil;
-import com.liferay.portal.spring.transaction.TransactionAttributeBuilder;
-import com.liferay.portal.spring.transaction.TransactionHandlerUtil;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.asset.AssetCategoryException;
@@ -111,8 +111,6 @@ import javax.portlet.RenderResponse;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-
-import org.springframework.transaction.interceptor.TransactionAttribute;
 
 /**
  * @author Eudaldo Alonso
@@ -165,7 +163,7 @@ public class SiteAdminPortlet extends MVCPortlet {
 		long backgroundTaskId = ParamUtil.getLong(
 			actionRequest, "backgroundTaskId");
 
-		BackgroundTaskLocalServiceUtil.deleteBackgroundTask(backgroundTaskId);
+		BackgroundTaskManagerUtil.deleteBackgroundTask(backgroundTaskId);
 	}
 
 	public void deleteGroups(
@@ -203,7 +201,7 @@ public class SiteAdminPortlet extends MVCPortlet {
 
 		Callable<Group> groupCallable = new GroupCallable(actionRequest);
 
-		Group group = TransactionHandlerUtil.invoke(
+		Group group = TransactionInvokerUtil.invoke(
 			_transactionAttribute, groupCallable);
 
 		String redirect = ParamUtil.getString(actionRequest, "redirect");
@@ -211,12 +209,10 @@ public class SiteAdminPortlet extends MVCPortlet {
 		long liveGroupId = ParamUtil.getLong(actionRequest, "liveGroupId");
 
 		if (liveGroupId <= 0) {
-			themeDisplay.setScopeGroupId(group.getGroupId());
-
 			PortletURL siteAdministrationURL =
-				PortalUtil.getSiteAdministrationURL(
-					actionResponse, themeDisplay,
-					SiteAdminPortletKeys.SITE_SETTINGS);
+				PortalUtil.getControlPanelPortletURL(
+					actionRequest, group, SiteAdminPortletKeys.SITE_SETTINGS, 0,
+					PortletRequest.RENDER_PHASE);
 
 			String controlPanelURL = HttpUtil.setParameter(
 				themeDisplay.getURLControlPanel(), "p_p_id",
@@ -847,20 +843,13 @@ public class SiteAdminPortlet extends MVCPortlet {
 			StagingUtil.updateStaging(actionRequest, liveGroup);
 		}
 
-		boolean forceDisable = ParamUtil.getBoolean(
-			actionRequest, "forceDisable");
-
-		if (forceDisable) {
-			GroupLocalServiceUtil.disableStaging(liveGroupId);
-		}
-
 		return liveGroup;
 	}
 
 	private static final int _LAYOUT_SET_VISIBILITY_PRIVATE = 1;
 
-	private final TransactionAttribute _transactionAttribute =
-		TransactionAttributeBuilder.build(
+	private static final TransactionAttribute _transactionAttribute =
+		TransactionAttribute.Factory.create(
 			Propagation.REQUIRED, new Class<?>[] {Exception.class});
 
 	private class GroupCallable implements Callable<Group> {

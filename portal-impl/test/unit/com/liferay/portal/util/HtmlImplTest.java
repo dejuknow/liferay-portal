@@ -18,6 +18,9 @@ import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -28,6 +31,25 @@ import org.junit.Test;
 public class HtmlImplTest {
 
 	@Test
+	public void testBuildData() {
+		Assert.assertEquals(StringPool.BLANK, _htmlImpl.buildData(null));
+
+		Map<String, Object> data = new LinkedHashMap<>();
+
+		Assert.assertEquals(StringPool.BLANK, _htmlImpl.buildData(data));
+
+		data.put("key1", "value1");
+
+		Assert.assertEquals("data-key1=\"value1\" ", _htmlImpl.buildData(data));
+
+		data.put("key2", "value2");
+
+		Assert.assertEquals(
+			"data-key1=\"value1\" data-key2=\"value2\" ",
+			_htmlImpl.buildData(data));
+	}
+
+	@Test
 	public void testEscapeBlank() {
 		assertUnchangedEscape("");
 	}
@@ -35,6 +57,23 @@ public class HtmlImplTest {
 	@Test
 	public void testEscapeCaseSensitive() {
 		assertUnchangedEscape("CAPITAL lowercase Text");
+	}
+
+	@Test
+	public void testEscapeHREF() {
+		Assert.assertNull(_htmlImpl.escapeHREF(null));
+		Assert.assertEquals(
+			StringPool.BLANK, _htmlImpl.escapeHREF(StringPool.BLANK));
+		Assert.assertEquals(
+			"javascript&#x25;3aalert&#x28;&#x27;hello&#x27;&#x29;&#x3b;",
+			_htmlImpl.escapeHREF("javascript:alert('hello');"));
+		Assert.assertEquals(
+			"data&#x25;3atext&#x2f;html&#x3b;base64&#x2c;PHNjcmlwdD5hbGVydCgn" +
+				"dGVzdDMnKTwvc2NyaXB0Pg",
+			_htmlImpl.escapeHREF(
+				"data:text/html;base64,PHNjcmlwdD5hbGVydCgndGVzdDMnKTwvc2NyaX" +
+					"B0Pg"));
+		assertUnchangedEscape("http://localhost:8080");
 	}
 
 	@Test

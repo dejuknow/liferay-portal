@@ -24,12 +24,10 @@ if (layout != null) {
 	group = layout.getGroup();
 	layoutSet = layout.getLayoutSet();
 }
-
-boolean hasLayoutUpdatePermission = LayoutPermissionUtil.contains(permissionChecker, layout, ActionKeys.UPDATE);
 %>
 
 <aui:nav-bar cssClass="dockbar navbar-static-top" data-namespace="<%= renderResponse.getNamespace() %>" id="dockbar">
-	<c:if test="<%= group.isControlPanel() || group.isUserPersonalPanel() %>">
+	<c:if test="<%= group.isControlPanel() %>">
 
 		<%
 		String controlPanelCategory = themeDisplay.getControlPanelCategory();
@@ -82,7 +80,7 @@ boolean hasLayoutUpdatePermission = LayoutPermissionUtil.contains(permissionChec
 		}
 		%>
 
-		<c:if test="<%= group.isUserPersonalPanel() || controlPanelCategory.startsWith(PortletCategoryKeys.CURRENT_SITE) || !controlPanelCategory.equals(PortletCategoryKeys.MY) %>">
+		<c:if test="<%= controlPanelCategory.startsWith(PortletCategoryKeys.CURRENT_SITE) || !controlPanelCategory.equals(PortletCategoryKeys.USER_MY_ACCOUNT) %>">
 			<div class="navbar-brand">
 				<a class="control-panel-back-link" href="<%= backURL %>" title="<liferay-ui:message key="back" />">
 					<i class="control-panel-back-icon icon-chevron-sign-left"></i>
@@ -94,7 +92,7 @@ boolean hasLayoutUpdatePermission = LayoutPermissionUtil.contains(permissionChec
 
 				<h1>
 					<c:choose>
-						<c:when test="<%= !group.isUserPersonalPanel() && controlPanelCategory.startsWith(PortletCategoryKeys.CURRENT_SITE) %>">
+						<c:when test="<%= controlPanelCategory.startsWith(PortletCategoryKeys.CURRENT_SITE) %>">
 							<liferay-ui:control-panel-site-selector />
 
 							<span class="site-administration-title">
@@ -121,14 +119,14 @@ boolean hasLayoutUpdatePermission = LayoutPermissionUtil.contains(permissionChec
 	String controlPanelCategory = themeDisplay.getControlPanelCategory();
 	%>
 
-	<c:if test="<%= !((group.isControlPanel() || group.isUserPersonalPanel()) && controlPanelCategory.startsWith(PortletCategoryKeys.CURRENT_SITE)) %>">
+	<c:if test="<%= !(group.isControlPanel() && controlPanelCategory.startsWith(PortletCategoryKeys.CURRENT_SITE)) %>">
 		<aui:nav collapsible="<%= false %>" cssClass="nav-navigation navbar-nav">
 			<c:if test="<%= !group.isControlPanel() %>">
 				<aui:nav-item anchorCssClass="site-navigation-btn" anchorId="navSiteNavigation" href="javascript:;" iconCssClass="icon-reorder" />
 			</c:if>
 
 			<aui:nav-item dropdown="<%= true %>" iconCssClass="icon-cog" toggleTouch="<%= false %>">
-				<c:if test="<%= group.isControlPanel() && !controlPanelCategory.equals(PortletCategoryKeys.MY) && !controlPanelCategory.startsWith(PortletCategoryKeys.CURRENT_SITE) %>">
+				<c:if test="<%= group.isControlPanel() && !controlPanelCategory.equals(PortletCategoryKeys.USER_MY_ACCOUNT) && !controlPanelCategory.startsWith(PortletCategoryKeys.CURRENT_SITE) %>">
 
 					<%
 					String[] categories = PortletCategoryKeys.ALL;
@@ -139,19 +137,19 @@ boolean hasLayoutUpdatePermission = LayoutPermissionUtil.contains(permissionChec
 						String cssClass = StringPool.BLANK;
 						String iconCssClass = StringPool.BLANK;
 
-						if (curCategory.equals(PortletCategoryKeys.APPS)) {
+						if (curCategory.equals(PortletCategoryKeys.CONTROL_PANEL_APPS)) {
 							cssClass = "control-panel-apps";
 							iconCssClass = "icon-th";
 						}
-						else if (curCategory.equals(PortletCategoryKeys.CONFIGURATION)) {
+						else if (curCategory.equals(PortletCategoryKeys.CONTROL_PANEL_CONFIGURATION)) {
 							cssClass = "control-panel-configuration";
 							iconCssClass = "icon-cog";
 						}
-						else if (curCategory.equals(PortletCategoryKeys.SITES)) {
+						else if (curCategory.equals(PortletCategoryKeys.CONTROL_PANEL_SITES)) {
 							cssClass = "control-panel-sites";
 							iconCssClass = "icon-globe";
 						}
-						else if (curCategory.equals(PortletCategoryKeys.USERS)) {
+						else if (curCategory.equals(PortletCategoryKeys.CONTROL_PANEL_USERS)) {
 							cssClass = "control-panel-users";
 							iconCssClass = "icon-user";
 						}
@@ -171,16 +169,12 @@ boolean hasLayoutUpdatePermission = LayoutPermissionUtil.contains(permissionChec
 	</c:if>
 
 	<%
-	boolean userSetupComplete = false;
-
-	if (user.isSetupComplete() || themeDisplay.isImpersonated()) {
-		userSetupComplete = true;
-	}
-
 	boolean portalMessageUseAnimation = GetterUtil.getBoolean(PortalMessages.get(request, PortalMessages.KEY_ANIMATION), true);
 	%>
 
-	<%@ include file="/html/portlet/dockbar/view_user_panel.jspf" %>
+	<c:if test="<%= user.isSetupComplete() || themeDisplay.isImpersonated() %>">
+		<%@ include file="/html/portlet/dockbar/view_user_panel.jspf" %>
+	</c:if>
 </aui:nav-bar>
 
 <div class="dockbar-messages" id="<portlet:namespace />dockbarMessages">

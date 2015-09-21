@@ -1,8 +1,6 @@
 (function() {
 	var STR_BLANK = '';
 
-	var STR_COMMA = ',';
-
 	var STR_DASH = '-';
 
 	var STR_DOT = '.';
@@ -11,14 +9,9 @@
 
 	var STR_SPACE = ' ';
 
-	var TPL_SPAN = '<span>';
-
-	var TPL_SPAN_CLOSE = '</span>';
-
 	AUI.add(
 		'liferay-calendar-simple-menu',
 		function(A) {
-			var AArray = A.Array;
 			var Lang = A.Lang;
 
 			var getClassName = A.getClassName;
@@ -191,7 +184,7 @@
 										cssClass = CSS_SIMPLE_MENU_SEPARATOR;
 									}
 
-									if (AArray.indexOf(hiddenItems, id) > -1) {
+									if (hiddenItems.indexOf(id) > -1) {
 										cssClass += STR_SPACE + CSS_SIMPLE_MENU_ITEM_HIDDEN;
 									}
 
@@ -240,7 +233,7 @@
 									function(item, index) {
 										var id = item.attr('data-id');
 
-										item.toggleClass(CSS_SIMPLE_MENU_ITEM_HIDDEN, AArray.indexOf(val, id) > -1);
+										item.toggleClass(CSS_SIMPLE_MENU_ITEM_HIDDEN, val.indexOf(id) > -1);
 									}
 								);
 							}
@@ -434,7 +427,7 @@
 
 							var calendars = instance.get('calendars');
 
-							return instance.items.item(AArray.indexOf(calendars, calendar));
+							return instance.items.item(calendars.indexOf(calendar));
 						},
 
 						remove: function(calendar) {
@@ -443,7 +436,7 @@
 							var calendars = instance.get('calendars');
 
 							if (calendars.length > 0) {
-								var index = AArray.indexOf(calendars, calendar);
+								var index = calendars.indexOf(calendar);
 
 								if (index > -1) {
 									AArray.remove(calendars, index);
@@ -751,7 +744,7 @@
 
 							instance.items.removeClass(CSS_SIMPLE_COLOR_PICKER_ITEM_SELECTED);
 
-							var newNode = instance.items.item(AArray.indexOf(pallete, val));
+							var newNode = instance.items.item(pallete.indexOf(val));
 
 							if (newNode) {
 								newNode.addClass(CSS_SIMPLE_COLOR_PICKER_ITEM_SELECTED);
@@ -784,18 +777,18 @@
 
 			var TPL_REMINDER_SECTION = '<div class="calendar-portlet-reminder-section form-inline">' +
 					'<label class="checkbox">' +
-						'<input class="calendar-portlet-reminder-check" id="{portletNamespace}reminder{i}" name="{portletNamespace}reminder{i}" type="checkbox" <tpl if="!disabled">checked="checked"</tpl> />' +
+						'<input <tpl if="!disabled">checked="checked"</tpl> class="calendar-portlet-reminder-check" id="{portletNamespace}reminder{i}" name="{portletNamespace}reminder{i}" type="checkbox" />' +
 					'</label>' +
 					'<label class="reminder-type" for="{portletNamespace}reminder{i}">' +
 						'<input id="{portletNamespace}reminderType{i}" name="{portletNamespace}reminderType{i}" type="hidden" value="email" />' +
 						'{email}' +
 					'</label>' +
-					'<input class="input-mini reminder-value" name="{portletNamespace}reminderValue{i}" type="text" size="5" value="{time.value}" <tpl if="disabled">disabled="disabled"</tpl> /> ' +
-					'<select class="reminder-duration span2" name="{portletNamespace}reminderDuration{i}" <tpl if="disabled">disabled="disabled"</tpl>>' +
-						'<option value="60" <tpl if="time.desc == \'minutes\'">selected="selected"</tpl>>{minutes}</option>' +
-						'<option value="3600" <tpl if="time.desc == \'hours\'">selected="selected"</tpl>>{hours}</option>' +
-						'<option value="86400" <tpl if="time.desc == \'days\'">selected="selected"</tpl>>{days}</option>' +
-						'<option value="604800" <tpl if="time.desc == \'weeks\'">selected="selected"</tpl>>{weeks}</option>' +
+					'<input class="input-mini reminder-value" <tpl if="disabled">disabled="disabled"</tpl> name="{portletNamespace}reminderValue{i}" size="5" type="text" value="{time.value}" /> ' +
+					'<select class="reminder-duration span2" <tpl if="disabled">disabled="disabled"</tpl> name="{portletNamespace}reminderDuration{i}">' +
+						'<option <tpl if="time.desc == \'minutes\'">selected="selected"</tpl> value="60">{minutes}</option>' +
+						'<option <tpl if="time.desc == \'hours\'">selected="selected"</tpl> value="3600">{hours}</option>' +
+						'<option <tpl if="time.desc == \'days\'">selected="selected"</tpl> value="86400">{days}</option>' +
+						'<option <tpl if="time.desc == \'weeks\'">selected="selected"</tpl> value="604800">{weeks}</option>' +
 					'</select>' +
 				'</div>';
 
@@ -1001,114 +994,71 @@
 					YEARLY: 'YEARLY'
 				},
 
-				INTERVAL_LABELS: {
-					DAILY: Liferay.Language.get('days'),
-					MONTHLY: Liferay.Language.get('months'),
-					WEEKLY: Liferay.Language.get('weeks'),
-					YEARLY: Liferay.Language.get('years')
-				},
+				INTERVAL_UNITS: {},
 
-				MONTH_LABELS: [
-					Liferay.Language.get('january'),
-					Liferay.Language.get('february'),
-					Liferay.Language.get('march'),
-					Liferay.Language.get('april'),
-					Liferay.Language.get('may'),
-					Liferay.Language.get('june'),
-					Liferay.Language.get('july'),
-					Liferay.Language.get('august'),
-					Liferay.Language.get('september'),
-					Liferay.Language.get('october'),
-					Liferay.Language.get('november'),
-					Liferay.Language.get('december')
-				],
+				MONTH_LABELS: [],
 
-				POSITION_LABELS: {
-					'-1': Liferay.Language.get('last'),
-					'1': Liferay.Language.get('first'),
-					'2': Liferay.Language.get('second'),
-					'3': Liferay.Language.get('third'),
-					'4': Liferay.Language.get('fourth')
-				},
+				POSITION_LABELS: {},
 
-				WEEKDAY_LABELS: {
-					FR: Liferay.Language.get('weekday.FR'),
-					MO: Liferay.Language.get('weekday.MO'),
-					SA: Liferay.Language.get('weekday.SA'),
-					SU: Liferay.Language.get('weekday.SU'),
-					TH: Liferay.Language.get('weekday.TH'),
-					TU: Liferay.Language.get('weekday.TU'),
-					WE: Liferay.Language.get('weekday.WE')
-				},
+				RECURRENCE_SUMMARIES: {},
+
+				WEEKDAY_LABELS: {},
 
 				getSummary: function(recurrence) {
 					var instance = this;
 
-					var month = null;
-					var position = null;
-					var template = [];
-					var weekDay = null;
+					var key;
+					var params = [];
+					var parts = [];
 
 					if (recurrence.interval == 1) {
-						template.push(recurrence.frequency);
+						parts.push(A.Lang.String.toLowerCase(recurrence.frequency));
 					}
 					else {
-						template.push(Liferay.Language.get('every'), ' {interval} {intervalLabel}');
+						parts.push('every-x-' + instance.INTERVAL_UNITS[recurrence.frequency]);
+
+						params.push(recurrence.interval);
 					}
 
 					if (recurrence.positionalWeekday) {
 						if (recurrence.frequency == instance.FREQUENCY.MONTHLY) {
-							template.push(STR_SPACE, Liferay.Language.get('on'), ' {position} {weekDay}');
+							parts.push('on-x-x');
+
+							params.push(instance.POSITION_LABELS[recurrence.positionalWeekday.position]);
+							params.push(instance.WEEKDAY_LABELS[recurrence.positionalWeekday.weekday]);
 						}
 						else {
-							template.push(STR_SPACE, Liferay.Language.get('on-the'), ' {position} {weekDay} ', Liferay.Language.get('of'), ' {month}');
-						}
+							parts.push('on-x-x-of-x');
 
-						month = instance.MONTH_LABELS[recurrence.positionalWeekday.month];
-						position = instance.POSITION_LABELS[recurrence.positionalWeekday.position];
-						weekDay = instance.WEEKDAY_LABELS[recurrence.positionalWeekday.weekday];
+							params.push(instance.POSITION_LABELS[recurrence.positionalWeekday.position]);
+							params.push(instance.WEEKDAY_LABELS[recurrence.positionalWeekday.weekday]);
+							params.push(instance.MONTH_LABELS[recurrence.positionalWeekday.month]);
+						}
 					}
 					else if (recurrence.frequency == instance.FREQUENCY.WEEKLY && recurrence.weekdays.length > 0) {
-						template.push(STR_SPACE, TPL_SPAN, Liferay.Language.get('on'), TPL_SPAN_CLOSE, ' {weekDays}');
+						parts.push('on-x');
+
+						params.push(recurrence.weekdays.join(', '));
 					}
 
 					if (recurrence.count && recurrence.endValue === 'after') {
-						template.push(', {count} ', Liferay.Language.get('times'));
+						parts.push('x-times');
+
+						params.push(recurrence.count);
 					}
 					else if (recurrence.untilDate && recurrence.endValue === 'on') {
+						parts.push('until-x-x-x');
+
 						var untilDate = recurrence.untilDate;
 
-						template.push(
-							STR_COMMA,
-							STR_SPACE,
-							TPL_SPAN,
-							Liferay.Language.get('until'),
-							TPL_SPAN_CLOSE,
-							A.Lang.sub(
-								' {month} {date}, {year}',
-								{
-									date: untilDate.getDate(),
-									month: instance.MONTH_LABELS[untilDate.getMonth()],
-									year: untilDate.getFullYear()
-								}
-							)
-						);
+						params.push(instance.MONTH_LABELS[untilDate.getMonth()]);
+						params.push(untilDate.getDate());
+						params.push(untilDate.getFullYear());
 					}
 
-					var summary = A.Lang.sub(
-						template.join(STR_BLANK),
-						{
-							count: recurrence.count,
-							interval: recurrence.interval,
-							intervalLabel: instance.INTERVAL_LABELS[recurrence.frequency],
-							month: month,
-							position: position,
-							weekDay: weekDay,
-							weekDays: recurrence.weekdays.join(', ')
-						}
-					);
+					key = parts.join(STR_DASH);
 
-					return A.Lang.String.capitalize(summary);
+					return A.Lang.sub(instance.RECURRENCE_SUMMARIES[key], params);
 				},
 
 				openConfirmationPanel: function(actionName, onlyThisInstanceFn, allFollowingFn, allEventsInFn, cancelFn) {
@@ -1287,6 +1237,19 @@
 					queue.run();
 				},
 
+				showAlert: function(container, message) {
+					new A.Alert(
+						{
+							animated: true,
+							bodyContent: message,
+							closeable: true,
+							cssClass: 'alert-success',
+							destroyOnHide: true,
+							duration: 1
+						}
+					).render(container);
+				},
+
 				_queueableQuestionUpdateAllInvited: function(data) {
 					var instance = this;
 
@@ -1378,19 +1341,6 @@
 							}
 						);
 					}
-				},
-
-				showAlert: function(container, message) {
-					new A.Alert(
-						{
-							animated: true,
-							bodyContent: message,
-							closeable: true,
-							cssClass: 'alert-success',
-							destroyOnHide: true,
-							duration: 1
-						}
-					).render(container);
 				}
 			};
 		},
@@ -1399,4 +1349,276 @@
 			requires: ['aui-alert', 'liferay-util-window']
 		}
 	);
+
+	AUI.add(
+			'liferay-calendar-interval-selector',
+			function(A) {
+				var AArray = A.Array;
+
+				var EVENT_SELECTION_CHANGE = 'selectionChange';
+
+				var IntervalSelector = A.Component.create(
+					{
+						AUGMENTS: [Liferay.PortletBase],
+
+						EXTENDS: A.Base,
+
+						NAME: 'interval-selector',
+
+						prototype: {
+							initializer: function(config) {
+								var instance = this;
+
+								instance.eventHandlers = [];
+
+								instance._containerNode = instance.byId(config.containerId);
+								instance._submitButtonNode = instance.byId(config.submitButtonId);
+
+								instance._duration = 0;
+								instance._endDate = new Date();
+								instance._startDate = new Date();
+								instance._validDate = true;
+
+								instance._endDatePicker = instance._getComponent(config.endDatePickerName + 'DatePicker');
+								instance._endTimePicker = instance._getComponent(config.endTimePickerName + 'TimePicker');
+								instance._startDatePicker = instance._getComponent(config.startDatePickerName + 'DatePicker');
+								instance._startTimePicker = instance._getComponent(config.startTimePickerName + 'TimePicker');
+
+								instance._initPicker(instance._endDatePicker);
+								instance._initPicker(instance._endTimePicker);
+								instance._initPicker(instance._startDatePicker);
+								instance._initPicker(instance._startTimePicker);
+
+								instance._setEndDate();
+								instance._setEndTime();
+								instance._setStartDate();
+								instance._setStartTime();
+								instance._setDuration();
+
+								instance.bindUI();
+							},
+
+							bindUI: function() {
+								var instance = this;
+
+								instance.eventHandlers.push(
+									instance._endDatePicker.on(EVENT_SELECTION_CHANGE, instance._onEndDatePickerSelectionChange, instance),
+									instance._endTimePicker.on(EVENT_SELECTION_CHANGE, instance._onEndTimePickerSelectionChange, instance),
+									instance._startDatePicker.on(EVENT_SELECTION_CHANGE, instance._onStartDatePickerSelectionChange, instance),
+									instance._startTimePicker.on(EVENT_SELECTION_CHANGE, instance._onStartTimePickerSelectionChange, instance)
+								);
+							},
+
+							destructor: function() {
+								var instance = this;
+
+								AArray.invoke(instance.eventHandlers, 'detach');
+
+								instance.eventHandlers = null;
+							},
+
+							_getComponent: function(name) {
+								var instance = this;
+
+								return Liferay.component(instance.NS + name);
+							},
+
+							_initPicker: function(picker) {
+								var instance = this;
+
+								var attrs = picker.getAttrs();
+
+								var inputNode = A.one(attrs.container._node.children[0]);
+
+								picker.useInputNodeOnce(inputNode);
+							},
+
+							_onEndDatePickerSelectionChange: function() {
+								var instance = this;
+
+								instance._setEndDate();
+
+								var endDateValue = instance._endDate.valueOf();
+
+								if (instance._validDate && (instance._startDate.valueOf() >= endDateValue)) {
+									instance._startDate = new Date(endDateValue - instance._duration);
+
+									instance._setStartDatePickerDate();
+								}
+
+								instance._setDuration();
+								instance._validate();
+							},
+
+							_onEndTimePickerSelectionChange: function() {
+								var instance = this;
+
+								instance._setEndTime();
+
+								var endDateValue = instance._endDate.valueOf();
+
+								if (instance._validDate && (instance._startDate.valueOf() >= endDateValue)) {
+									instance._startDate = new Date(endDateValue - instance._duration);
+
+									instance._setStartDatePickerDate();
+									instance._setStartTimePickerTime();
+								}
+
+								instance._setDuration();
+								instance._validate();
+							},
+
+							_onStartDatePickerSelectionChange: function() {
+								var instance = this;
+
+								instance._setStartDate();
+
+								if (instance._validDate) {
+									instance._endDate = new Date(instance._startDate.valueOf() + instance._duration);
+
+									instance._setEndDatePickerDate();
+								}
+
+								instance._setDuration();
+								instance._validate();
+							},
+
+							_onStartTimePickerSelectionChange: function() {
+								var instance = this;
+
+								instance._setStartTime();
+
+								if (instance._validDate) {
+									instance._endDate = new Date(instance._startDate.valueOf() + instance._duration);
+
+									instance._setEndDatePickerDate();
+									instance._setEndTimePickerTime();
+								}
+
+								instance._setDuration();
+								instance._validate();
+							},
+
+							_setDuration: function() {
+								var instance = this;
+
+								instance._duration = (instance._endDate.valueOf() - instance._startDate.valueOf());
+							},
+
+							_setEndDate: function() {
+								var instance = this;
+
+								var endDateObj = instance._endDatePicker.getDate();
+
+								var endDate = instance._endDate;
+
+								endDate.setDate(endDateObj.getDate());
+								endDate.setMonth(endDateObj.getMonth());
+								endDate.setYear(endDateObj.getFullYear());
+							},
+
+							_setEndDatePickerDate: function() {
+								var instance = this;
+
+								instance._endDatePicker.clearSelection(true);
+
+								instance._endDatePicker.selectDates([instance._endDate]);
+							},
+
+							_setEndTime: function() {
+								var instance = this;
+
+								var endTime = instance._endTimePicker.getTime();
+
+								instance._endDate.setHours(endTime.getHours());
+								instance._endDate.setMinutes(endTime.getMinutes());
+							},
+
+							_setEndTimePickerTime: function() {
+								var instance = this;
+
+								instance._endTimePicker.selectDates([instance._endDate]);
+							},
+
+							_setStartDate: function() {
+								var instance = this;
+
+								var startDateObj = instance._startDatePicker.getDate();
+
+								var startDate = instance._startDate;
+
+								startDate.setDate(startDateObj.getDate());
+								startDate.setMonth(startDateObj.getMonth());
+								startDate.setYear(startDateObj.getFullYear());
+							},
+
+							_setStartDatePickerDate: function() {
+								var instance = this;
+
+								var startDatePicker = instance._startDatePicker;
+
+								startDatePicker.clearSelection(true);
+
+								startDatePicker.selectDates([instance._startDate]);
+							},
+
+							_setStartTime: function() {
+								var instance = this;
+
+								var startTime = instance._startTimePicker.getTime();
+
+								var startDate = instance._startDate;
+
+								startDate.setHours(startTime.getHours());
+								startDate.setMinutes(startTime.getMinutes());
+							},
+
+							_setStartTimePickerTime: function() {
+								var instance = this;
+
+								instance._startTimePicker.selectDates([instance._startDate]);
+							},
+
+							_validate: function() {
+								var instance = this;
+
+								var validDate = (instance._duration > 0);
+
+								instance._validDate = validDate;
+
+								var meetingEventDate = instance._containerNode;
+
+								if (meetingEventDate) {
+									meetingEventDate.toggleClass('error', !validDate);
+
+									var helpInline = meetingEventDate.one('.help-inline');
+
+									if (validDate && helpInline) {
+										helpInline.remove();
+									}
+
+									if (!validDate && !helpInline) {
+										var inlineHelp = A.Node.create('<div class="help-inline">' + Liferay.Language.get('the-end-time-must-be-after-the-start-time') + '</div>');
+
+										meetingEventDate.insert(inlineHelp);
+									}
+
+									var submitButton = instance._submitButtonNode;
+
+									if (submitButton) {
+										submitButton.attr('disabled', !validDate);
+									}
+								}
+							}
+						}
+					}
+				);
+
+				Liferay.IntervalSelector = IntervalSelector;
+			},
+			'',
+			{
+				requires: ['aui-base', 'liferay-portlet-base']
+			}
+		);
 }());
