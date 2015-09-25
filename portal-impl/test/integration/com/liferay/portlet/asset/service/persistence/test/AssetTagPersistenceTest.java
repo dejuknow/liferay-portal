@@ -135,6 +135,8 @@ public class AssetTagPersistenceTest {
 
 		newAssetTag.setAssetCount(RandomTestUtil.nextInt());
 
+		newAssetTag.setLastPublishDate(RandomTestUtil.nextDate());
+
 		_assetTags.add(_persistence.update(newAssetTag));
 
 		AssetTag existingAssetTag = _persistence.findByPrimaryKey(newAssetTag.getPrimaryKey());
@@ -158,6 +160,9 @@ public class AssetTagPersistenceTest {
 		Assert.assertEquals(existingAssetTag.getName(), newAssetTag.getName());
 		Assert.assertEquals(existingAssetTag.getAssetCount(),
 			newAssetTag.getAssetCount());
+		Assert.assertEquals(Time.getShortTimestamp(
+				existingAssetTag.getLastPublishDate()),
+			Time.getShortTimestamp(newAssetTag.getLastPublishDate()));
 	}
 
 	@Test
@@ -255,7 +260,7 @@ public class AssetTagPersistenceTest {
 		return OrderByComparatorFactoryUtil.create("AssetTag", "uuid", true,
 			"tagId", true, "groupId", true, "companyId", true, "userId", true,
 			"userName", true, "createDate", true, "modifiedDate", true, "name",
-			true, "assetCount", true);
+			true, "assetCount", true, "lastPublishDate", true);
 	}
 
 	@Test
@@ -463,13 +468,13 @@ public class AssetTagPersistenceTest {
 		Assert.assertTrue(Validator.equals(existingAssetTag.getUuid(),
 				ReflectionTestUtil.invoke(existingAssetTag, "getOriginalUuid",
 					new Class<?>[0])));
-		Assert.assertEquals(existingAssetTag.getGroupId(),
-			ReflectionTestUtil.invoke(existingAssetTag, "getOriginalGroupId",
-				new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingAssetTag.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingAssetTag,
+				"getOriginalGroupId", new Class<?>[0]));
 
-		Assert.assertEquals(existingAssetTag.getGroupId(),
-			ReflectionTestUtil.invoke(existingAssetTag, "getOriginalGroupId",
-				new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingAssetTag.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingAssetTag,
+				"getOriginalGroupId", new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(existingAssetTag.getName(),
 				ReflectionTestUtil.invoke(existingAssetTag, "getOriginalName",
 					new Class<?>[0])));
@@ -497,6 +502,8 @@ public class AssetTagPersistenceTest {
 		assetTag.setName(RandomTestUtil.randomString());
 
 		assetTag.setAssetCount(RandomTestUtil.nextInt());
+
+		assetTag.setLastPublishDate(RandomTestUtil.nextDate());
 
 		_assetTags.add(_persistence.update(assetTag));
 

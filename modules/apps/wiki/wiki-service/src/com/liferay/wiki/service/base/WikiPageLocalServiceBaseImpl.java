@@ -65,6 +65,7 @@ import com.liferay.portlet.exportimport.lar.StagedModelDataHandler;
 import com.liferay.portlet.exportimport.lar.StagedModelDataHandlerRegistryUtil;
 import com.liferay.portlet.exportimport.lar.StagedModelDataHandlerUtil;
 import com.liferay.portlet.exportimport.lar.StagedModelType;
+import com.liferay.portlet.ratings.service.persistence.RatingsStatsPersistence;
 import com.liferay.portlet.trash.service.persistence.TrashEntryPersistence;
 import com.liferay.portlet.trash.service.persistence.TrashVersionPersistence;
 
@@ -297,13 +298,13 @@ public abstract class WikiPageLocalServiceBaseImpl extends BaseLocalServiceImpl
 
 					long modelAdditionCount = super.performCount();
 
-					manifestSummary.addModelAdditionCount(stagedModelType.toString(),
+					manifestSummary.addModelAdditionCount(stagedModelType,
 						modelAdditionCount);
 
 					long modelDeletionCount = ExportImportHelperUtil.getModelDeletionCount(portletDataContext,
 							stagedModelType);
 
-					manifestSummary.addModelDeletionCount(stagedModelType.toString(),
+					manifestSummary.addModelDeletionCount(stagedModelType,
 						modelDeletionCount);
 
 					return modelAdditionCount;
@@ -475,7 +476,7 @@ public abstract class WikiPageLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @return the wiki page local service
 	 */
-	public com.liferay.wiki.service.WikiPageLocalService getWikiPageLocalService() {
+	public WikiPageLocalService getWikiPageLocalService() {
 		return wikiPageLocalService;
 	}
 
@@ -485,7 +486,7 @@ public abstract class WikiPageLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param wikiPageLocalService the wiki page local service
 	 */
 	public void setWikiPageLocalService(
-		com.liferay.wiki.service.WikiPageLocalService wikiPageLocalService) {
+		WikiPageLocalService wikiPageLocalService) {
 		this.wikiPageLocalService = wikiPageLocalService;
 	}
 
@@ -1224,6 +1225,44 @@ public abstract class WikiPageLocalServiceBaseImpl extends BaseLocalServiceImpl
 	}
 
 	/**
+	 * Returns the ratings stats local service.
+	 *
+	 * @return the ratings stats local service
+	 */
+	public com.liferay.portlet.ratings.service.RatingsStatsLocalService getRatingsStatsLocalService() {
+		return ratingsStatsLocalService;
+	}
+
+	/**
+	 * Sets the ratings stats local service.
+	 *
+	 * @param ratingsStatsLocalService the ratings stats local service
+	 */
+	public void setRatingsStatsLocalService(
+		com.liferay.portlet.ratings.service.RatingsStatsLocalService ratingsStatsLocalService) {
+		this.ratingsStatsLocalService = ratingsStatsLocalService;
+	}
+
+	/**
+	 * Returns the ratings stats persistence.
+	 *
+	 * @return the ratings stats persistence
+	 */
+	public RatingsStatsPersistence getRatingsStatsPersistence() {
+		return ratingsStatsPersistence;
+	}
+
+	/**
+	 * Sets the ratings stats persistence.
+	 *
+	 * @param ratingsStatsPersistence the ratings stats persistence
+	 */
+	public void setRatingsStatsPersistence(
+		RatingsStatsPersistence ratingsStatsPersistence) {
+		this.ratingsStatsPersistence = ratingsStatsPersistence;
+	}
+
+	/**
 	 * Returns the trash entry local service.
 	 *
 	 * @return the trash entry local service
@@ -1475,7 +1514,7 @@ public abstract class WikiPageLocalServiceBaseImpl extends BaseLocalServiceImpl
 	}
 
 	@BeanReference(type = com.liferay.wiki.service.WikiPageLocalService.class)
-	protected com.liferay.wiki.service.WikiPageLocalService wikiPageLocalService;
+	protected WikiPageLocalService wikiPageLocalService;
 	@BeanReference(type = com.liferay.wiki.service.WikiPageService.class)
 	protected com.liferay.wiki.service.WikiPageService wikiPageService;
 	@BeanReference(type = WikiPagePersistence.class)
@@ -1554,6 +1593,10 @@ public abstract class WikiPageLocalServiceBaseImpl extends BaseLocalServiceImpl
 	protected com.liferay.portlet.expando.service.ExpandoRowLocalService expandoRowLocalService;
 	@BeanReference(type = ExpandoRowPersistence.class)
 	protected ExpandoRowPersistence expandoRowPersistence;
+	@BeanReference(type = com.liferay.portlet.ratings.service.RatingsStatsLocalService.class)
+	protected com.liferay.portlet.ratings.service.RatingsStatsLocalService ratingsStatsLocalService;
+	@BeanReference(type = RatingsStatsPersistence.class)
+	protected RatingsStatsPersistence ratingsStatsPersistence;
 	@BeanReference(type = com.liferay.portlet.trash.service.TrashEntryLocalService.class)
 	protected com.liferay.portlet.trash.service.TrashEntryLocalService trashEntryLocalService;
 	@BeanReference(type = com.liferay.portlet.trash.service.TrashEntryService.class)

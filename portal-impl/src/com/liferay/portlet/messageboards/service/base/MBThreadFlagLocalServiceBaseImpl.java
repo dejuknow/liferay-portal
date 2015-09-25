@@ -276,13 +276,13 @@ public abstract class MBThreadFlagLocalServiceBaseImpl
 
 					long modelAdditionCount = super.performCount();
 
-					manifestSummary.addModelAdditionCount(stagedModelType.toString(),
+					manifestSummary.addModelAdditionCount(stagedModelType,
 						modelAdditionCount);
 
 					long modelDeletionCount = ExportImportHelperUtil.getModelDeletionCount(portletDataContext,
 							stagedModelType);
 
-					manifestSummary.addModelDeletionCount(stagedModelType.toString(),
+					manifestSummary.addModelDeletionCount(stagedModelType,
 						modelDeletionCount);
 
 					return modelAdditionCount;
@@ -422,7 +422,7 @@ public abstract class MBThreadFlagLocalServiceBaseImpl
 	 *
 	 * @return the message boards thread flag local service
 	 */
-	public com.liferay.portlet.messageboards.service.MBThreadFlagLocalService getMBThreadFlagLocalService() {
+	public MBThreadFlagLocalService getMBThreadFlagLocalService() {
 		return mbThreadFlagLocalService;
 	}
 
@@ -432,7 +432,7 @@ public abstract class MBThreadFlagLocalServiceBaseImpl
 	 * @param mbThreadFlagLocalService the message boards thread flag local service
 	 */
 	public void setMBThreadFlagLocalService(
-		com.liferay.portlet.messageboards.service.MBThreadFlagLocalService mbThreadFlagLocalService) {
+		MBThreadFlagLocalService mbThreadFlagLocalService) {
 		this.mbThreadFlagLocalService = mbThreadFlagLocalService;
 	}
 
@@ -611,7 +611,7 @@ public abstract class MBThreadFlagLocalServiceBaseImpl
 	}
 
 	@BeanReference(type = com.liferay.portlet.messageboards.service.MBThreadFlagLocalService.class)
-	protected com.liferay.portlet.messageboards.service.MBThreadFlagLocalService mbThreadFlagLocalService;
+	protected MBThreadFlagLocalService mbThreadFlagLocalService;
 	@BeanReference(type = MBThreadFlagPersistence.class)
 	protected MBThreadFlagPersistence mbThreadFlagPersistence;
 	@BeanReference(type = com.liferay.counter.service.CounterLocalService.class)

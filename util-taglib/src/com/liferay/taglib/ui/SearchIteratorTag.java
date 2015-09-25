@@ -14,6 +14,9 @@
 
 package com.liferay.taglib.ui;
 
+import com.liferay.portal.kernel.dao.search.ResultRowSplitter;
+import com.liferay.portal.kernel.util.Validator;
+
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -21,20 +24,56 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class SearchIteratorTag<R> extends SearchPaginatorTag<R> {
 
+	public static final String DEFAULT_DISPLAY_STYPE = "list";
+
+	public String getDisplayStyle() {
+		return _displayStyle;
+	}
+
+	public ResultRowSplitter getResultRowSplitter() {
+		return _resultRowSplitter;
+	}
+
+	public void setDisplayStyle(String displayStyle) {
+		_displayStyle = displayStyle;
+	}
+
+	public void setMarkupView(String markupView) {
+		_markupView = markupView;
+	}
+
 	public void setPaginate(boolean paginate) {
 		_paginate = paginate;
+	}
+
+	public void setResultRowSplitter(ResultRowSplitter resultRowSplitter) {
+		_resultRowSplitter = resultRowSplitter;
 	}
 
 	@Override
 	protected void cleanUp() {
 		super.cleanUp();
 
+		_displayStyle = DEFAULT_DISPLAY_STYPE;
+		_markupView = null;
 		_paginate = true;
+		_resultRowSplitter = null;
 	}
 
 	@Override
 	protected String getPage() {
-		return _PAGE;
+		String displayStyle = _displayStyle;
+
+		if (Validator.isNull(displayStyle)) {
+			displayStyle = DEFAULT_DISPLAY_STYPE;
+		}
+
+		if (Validator.isNotNull(_markupView)) {
+			return "/html/taglib/ui/search_iterator/" + _markupView + "/" +
+				displayStyle + ".jsp";
+		}
+
+		return "/html/taglib/ui/search_iterator/" + displayStyle + ".jsp";
 	}
 
 	@Override
@@ -43,11 +82,13 @@ public class SearchIteratorTag<R> extends SearchPaginatorTag<R> {
 
 		request.setAttribute(
 			"liferay-ui:search-iterator:paginate", String.valueOf(_paginate));
+		request.setAttribute(
+			"liferay-ui:search-iterator:resultRowSplitter", _resultRowSplitter);
 	}
 
-	private static final String _PAGE =
-		"/html/taglib/ui/search_iterator/page.jsp";
-
+	private String _displayStyle = DEFAULT_DISPLAY_STYPE;
+	private String _markupView;
 	private boolean _paginate = true;
+	private ResultRowSplitter _resultRowSplitter;
 
 }

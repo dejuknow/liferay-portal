@@ -1,8 +1,6 @@
 <definition component-name="portal-workflow">
-	<property name="web.plugins.includes" value="kaleo-web" />
 	<property name="testray.main.component.name" value="Workflow" />
 
-	<var name="pageName" value="Page Comments Page" />
 	<var name="portletName" value="Page Comments" />
 	<var name="workflowAssetType" value="Comments" />
 
@@ -19,11 +17,11 @@
 		</execute>
 
 		<execute macro="Page#addPG">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Page Comments Page" />
 		</execute>
 
 		<execute macro="Page#gotoPG">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Page Comments Page" />
 		</execute>
 
 		<execute macro="Portlet#addPG">
@@ -32,7 +30,9 @@
 	</set-up>
 
 	<tear-down>
-		<execute macro="PageComment#tearDownPG" />
+		<execute macro="PageComment#tearDownPG">
+			<var name="pageName" value="Page Comments Page" />
+		</execute>
 
 		<execute macro="Page#tearDownPG" />
 
@@ -41,12 +41,12 @@
 		<execute macro="Workflow#tearDownSiteWorkflow" />
 	</tear-down>
 
-	<command known-issues="LPS-56092" name="ApprovePageCommentPG" priority="4">
+	<command name="ApprovePageCommentPG" priority="4">
 		<var name="commentAuthor" value="Test Test (You)" />
 		<var name="commentBody" value="Page Comment Comment" />
 
 		<execute macro="Page#gotoPG">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Page Comments Page" />
 		</execute>
 
 		<execute macro="PageComment#addWithWorkflowPG">
@@ -55,7 +55,7 @@
 		</execute>
 
 		<execute macro="Page#gotoPG">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Page Comments Page" />
 		</execute>
 
 		<execute macro="PageComment#viewWithWorkflowPG">
@@ -75,7 +75,7 @@
 		</execute>
 
 		<execute macro="Page#gotoPG">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Page Comments Page" />
 		</execute>
 
 		<execute macro="PageComment#viewWithWorkflowPG">
@@ -95,7 +95,7 @@
 		</execute>
 
 		<execute macro="Page#gotoPG">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Page Comments Page" />
 		</execute>
 
 		<execute macro="PageComment#viewPG">
@@ -104,11 +104,11 @@
 		</execute>
 	</command>
 
-	<command known-issues="LPS-54708" name="DeleteComment" priority="4">
+	<command name="DeleteComment" priority="4">
 		<description message="This is a use case for LPS-54707." />
 
 		<execute macro="Page#gotoPG">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Page Comments Page" />
 		</execute>
 
 		<execute macro="PageComment#addWithWorkflowPG">
@@ -117,7 +117,7 @@
 		</execute>
 
 		<execute macro="Page#gotoPG">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Page Comments Page" />
 		</execute>
 
 		<execute macro="PageComment#viewWithWorkflowPG">
@@ -138,7 +138,7 @@
 		</execute>
 
 		<execute macro="PageComment#tearDownPG">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Page Comments Page" />
 		</execute>
 
 		<execute macro="Page#gotoMyAccount">
@@ -148,12 +148,12 @@
 		<execute macro="Workflow#viewDefaultMySubmissionsCP" />
 	</command>
 
-	<command known-issues="LPS-56092" name="RejectPageCommentPG" priority="4">
+	<command name="RejectPageCommentPG" priority="4">
 		<var name="commentAuthor" value="Test Test (You)" />
 		<var name="commentBody" value="Page Comment Comment" />
 
 		<execute macro="Page#gotoPG">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Page Comments Page" />
 		</execute>
 
 		<execute macro="PageComment#addWithWorkflowPG">
@@ -162,7 +162,7 @@
 		</execute>
 
 		<execute macro="Page#gotoPG">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Page Comments Page" />
 		</execute>
 
 		<execute macro="PageComment#viewWithWorkflowPG">
@@ -201,7 +201,7 @@
 		</execute>
 
 		<execute macro="Page#gotoPG">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Page Comments Page" />
 		</execute>
 
 		<execute macro="PageComment#viewWithWorkflowPG">

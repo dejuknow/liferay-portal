@@ -14,6 +14,7 @@
 
 package com.liferay.poshi.runner.selenium;
 
+import io.appium.java_client.TouchAction;
 import io.appium.java_client.ios.IOSDriver;
 
 import java.net.URL;
@@ -25,10 +26,29 @@ import org.openqa.selenium.remote.DesiredCapabilities;
  */
 public class IOSMobileDriverImpl extends BaseMobileDriverImpl {
 
-	public IOSMobileDriverImpl(String projectDirName, String browserURL) {
-		super(
-			projectDirName, browserURL,
-			new IOSDriver(_url, _desiredCapabilities));
+	public IOSMobileDriverImpl(String browserURL) {
+		super(browserURL, new IOSDriver(_url, _desiredCapabilities));
+	}
+
+	protected void tap(String locator) {
+		TouchAction touchAction = new TouchAction(this);
+
+		int screenPositionX = WebDriverHelper.getElementPositionCenterX(
+			this, locator);
+
+		int navigationBarHeight = 44;
+
+		int screenPositionY =
+			WebDriverHelper.getElementPositionCenterY(this, locator) +
+				navigationBarHeight;
+
+		context("NATIVE_APP");
+
+		touchAction.tap(screenPositionX, screenPositionY);
+
+		touchAction.perform();
+
+		context("WEBVIEW_1");
 	}
 
 	private static final DesiredCapabilities _desiredCapabilities;

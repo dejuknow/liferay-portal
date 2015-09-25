@@ -47,7 +47,7 @@ for (long groupId : groupIds) {
 
 					Map.Entry<String, PortletURL> entry = iterator.next();
 
-					AssetRendererFactory assetRendererFactory = AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(_getClassName(entry.getKey()));
+					AssetRendererFactory<?> assetRendererFactory = AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(_getClassName(entry.getKey()));
 
 					String message = _getMessage(entry.getKey(), addPortletURLs, locale);
 
@@ -64,7 +64,7 @@ for (long groupId : groupIds) {
 						href="<%= _getURL(curGroupId, plid, entry.getValue(), assetRendererFactory.getPortletId(), message, addDisplayPageParameter, layout, pageContext, portletResponse) %>"
 						iconCssClass="<%= assetRendererFactory.getIconCssClass() %>"
 						iconSrc="<%= assetRendererFactory.getIconPath(portletRequest) %>"
-						label='<%= LanguageUtil.format(request, (groupIds.length == 1) ? "add-x" : "add-x-in-x", new Object [] {HtmlUtil.escape(message), HtmlUtil.escape((GroupLocalServiceUtil.getGroup(groupId)).getDescriptiveName(locale))}, false) %>'
+						label='<%= LanguageUtil.format(request, (groupIds.length == 1) ? "add-x" : "add-x-in-x", new Object[] {HtmlUtil.escape(message), HtmlUtil.escape((GroupLocalServiceUtil.getGroup(groupId)).getDescriptiveName(locale))}, false) %>'
 					/>
 				</c:when>
 				<c:otherwise>
@@ -76,7 +76,7 @@ for (long groupId : groupIds) {
 
 						<%
 						for (Map.Entry<String, PortletURL> entry : addPortletURLs.entrySet()) {
-							AssetRendererFactory assetRendererFactory = AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(_getClassName(entry.getKey()));
+							AssetRendererFactory<?> assetRendererFactory = AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(_getClassName(entry.getKey()));
 
 							String message = _getMessage(entry.getKey(), addPortletURLs, locale);
 
@@ -134,7 +134,7 @@ private String _getMessage(String className, Map<String, PortletURL> addPortletU
 		className = className.substring(0, pos);
 	}
 
-	AssetRendererFactory assetRendererFactory = AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(className);
+	AssetRendererFactory<?> assetRendererFactory = AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(className);
 
 	if (pos == -1) {
 		message = assetRendererFactory.getTypeName(locale);

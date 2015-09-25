@@ -1923,7 +1923,7 @@
 		</execute>
 	</command>
 
-	<command known-issues="LPS-55802" name="SearchSOBlogsEntryComment" priority="4">
+	<command name="SearchSOBlogsEntryComment" priority="4">
 		<var name="entryComment" value="Blogs Entry Comment" />
 		<var name="entryContent" value="Blogs Entry Content" />
 		<var name="entryTitle" value="Blogs Entry Title" />
@@ -2276,7 +2276,7 @@
 			<var name="userScreenName" value="${userScreenName}" />
 		</execute>
 
-		<execute macro="PermissionsInline#gotoBlogsPG">
+		<execute macro="PermissionsInline#gotoBlogsCP">
 			<var name="pageName" value="${pageName}" />
 			<var name="siteName" value="${siteName}" />
 			<var name="siteURLTemp" value="true" />
@@ -3060,7 +3060,7 @@
 			<var name="entryTitle" value="${entryTitle}" />
 		</execute>
 
-		<execute macro="BlogsNavigator#gotoSettingsTab" />
+		<execute macro="BlogsNavigator#gotoSettings" />
 
 		<execute macro="BlogsEntry#addCustomAbstract">
 			<var name="entryAbstractDescription" value="${entryAbstractDescription}" />

@@ -29,6 +29,9 @@ public interface ElasticsearchConfiguration {
 	@Meta.AD(deflt = "", required = false)
 	public String[] additionalConfigurations();
 
+	@Meta.AD(deflt = "", required = false)
+	public String[] additionalIndexConfigurations();
+
 	@Meta.AD(deflt = "false", required = false)
 	public boolean bootstrapMlockAll();
 
@@ -41,7 +44,7 @@ public interface ElasticsearchConfiguration {
 	@Meta.AD(deflt = "true", required = false)
 	public boolean clientTransportSniff();
 
-	@Meta.AD(deflt = "LiferayElasticSearch", required = false)
+	@Meta.AD(deflt = "LiferayElasticsearchCluster", required = false)
 	public String clusterName();
 
 	@Meta.AD(deflt = "9300-9400", required = false)

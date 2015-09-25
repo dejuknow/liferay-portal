@@ -52,20 +52,19 @@ Map<String, String[]> parameterMap = (Map<String, String[]>)GetterUtil.getObject
 
 			<liferay-ui:layouts-tree
 				defaultStateChecked="<%= true %>"
+				draggableTree="<%= false %>"
 				groupId="<%= groupId %>"
 				incomplete="<%= false %>"
 				privateLayout="<%= privateLayout %>"
 				rootNodeName="<%= group.getLayoutRootNodeName(privateLayout, locale) %>"
-				selPlid="<%= selPlid %>"
 				selectableTree="<%= true %>"
 				selectedLayoutIds="<%= selectedLayoutIds %>"
+				selPlid="<%= selPlid %>"
 				treeId="<%= treeId %>"
 			/>
 		</div>
 
 		<c:if test="<%= cmd.equals(Constants.PUBLISH) %>">
-			<aui:input name="scope" type="hidden" value='<%= Validator.isNull(selectedLayoutIds) ? "all-pages" : "selected-pages" %>' />
-
 			<c:choose>
 				<c:when test="<%= layoutSetBranchId > 0 %>">
 					<aui:input name="layoutSetBranchId" type="hidden" value="<%= layoutSetBranchId %>" />

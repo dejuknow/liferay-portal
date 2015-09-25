@@ -265,7 +265,7 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 
 		layoutLocalServiceHelper.validate(
 			groupId, privateLayout, layoutId, parentLayoutId, name, type,
-			hidden, friendlyURLMap);
+			hidden, friendlyURLMap, serviceContext);
 
 		Date now = new Date();
 
@@ -383,7 +383,6 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 		boolean addGuestPermissions = false;
 
 		if (!privateLayout || type.equals(LayoutConstants.TYPE_CONTROL_PANEL) ||
-			type.equals(LayoutConstants.TYPE_USER_PERSONAL_PANEL) ||
 			group.isLayoutSetPrototype()) {
 
 			addGuestPermissions = true;
@@ -2295,7 +2294,7 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 
 		layoutLocalServiceHelper.validate(
 			groupId, privateLayout, layoutId, parentLayoutId, name, type,
-			hidden, friendlyURLMap);
+			hidden, friendlyURLMap, serviceContext);
 
 		layoutLocalServiceHelper.validateParentLayoutId(
 			groupId, privateLayout, layoutId, parentLayoutId);

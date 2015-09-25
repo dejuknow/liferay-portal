@@ -17,7 +17,7 @@
 <%@ include file="/init.jsp" %>
 
 <%
-List<AssetRendererFactory> classTypesAssetRendererFactories = (List<AssetRendererFactory>)request.getAttribute("configuration.jsp-classTypesAssetRendererFactories");
+List<AssetRendererFactory<?>> classTypesAssetRendererFactories = (List<AssetRendererFactory<?>>)request.getAttribute("configuration.jsp-classTypesAssetRendererFactories");
 PortletURL configurationRenderURL = (PortletURL)request.getAttribute("configuration.jsp-configurationRenderURL");
 String redirect = (String)request.getAttribute("configuration.jsp-redirect");
 String selectScope = (String)request.getAttribute("configuration.jsp-selectScope");
@@ -108,9 +108,9 @@ String selectStyle = (String)request.getAttribute("configuration.jsp-selectStyle
 					</div>
 
 					<%
-					List<AssetRendererFactory> assetRendererFactories = ListUtil.sort(AssetRendererFactoryRegistryUtil.getAssetRendererFactories(company.getCompanyId()), new AssetRendererFactoryTypeNameComparator(locale));
+					List<AssetRendererFactory<?>> assetRendererFactories = ListUtil.sort(AssetRendererFactoryRegistryUtil.getAssetRendererFactories(company.getCompanyId()), new AssetRendererFactoryTypeNameComparator(locale));
 
-					for (AssetRendererFactory assetRendererFactory : assetRendererFactories) {
+					for (AssetRendererFactory<?> assetRendererFactory : assetRendererFactories) {
 						ClassTypeReader classTypeReader = assetRendererFactory.getClassTypeReader();
 
 						List<ClassType> classTypes = classTypeReader.getAvailableClassTypes(assetPublisherDisplayContext.getReferencedModelsGroupIds(), locale);
@@ -143,11 +143,16 @@ String selectStyle = (String)request.getAttribute("configuration.jsp-selectStyle
 					%>
 
 						<div class='asset-subtype <%= (assetSelectedClassTypeIds.length < 1) ? StringPool.BLANK : "hide" %>' id="<portlet:namespace /><%= className %>Options">
-							<aui:select label='<%= LanguageUtil.format(request, "x-subtype", ResourceActionsUtil.getModelResource(locale, assetRendererFactory.getClassName()), false) %>' name='<%= "preferences--anyClassType" + className + "--" %>'>
+
+							<%
+							String label = ResourceActionsUtil.getModelResource(locale, assetRendererFactory.getClassName()) + StringPool.SPACE + assetRendererFactory.getSubtypeTitle(themeDisplay.getLocale());
+							%>
+
+							<aui:select label="<%= label %>" name='<%= "preferences--anyClassType" + className + "--" %>'>
 								<aui:option label="any" selected="<%= anyAssetSubtype %>" value="<%= true %>" />
 								<aui:option label='<%= LanguageUtil.get(request, "select-more-than-one") + StringPool.TRIPLE_PERIOD %>' selected="<%= !anyAssetSubtype && (assetSelectedClassTypeIds.length > 1) %>" value="<%= false %>" />
 
-								<optgroup label="<liferay-ui:message key="subtype" />">
+								<optgroup label="<%= assetRendererFactory.getSubtypeTitle(themeDisplay.getLocale()) %>">
 
 									<%
 									for (ClassType classType : classTypes) {
@@ -169,11 +174,11 @@ String selectStyle = (String)request.getAttribute("configuration.jsp-selectStyle
 
 							<c:if test="<%= assetPublisherDisplayContext.isShowSubtypeFieldsFilter() %>">
 								<div class="asset-subtypefields-wrapper-enable hide" id="<portlet:namespace /><%= className %>subtypeFieldsFilterEnableWrapper">
-									<aui:input checked="<%= assetPublisherDisplayContext.isSubtypeFieldsFilterEnabled() %>" label="filter-by-field" name='<%= "preferences--subtypeFieldsFilterEnabled" + className + "--" %>' type="checkbox" value="<%= assetPublisherDisplayContext.isSubtypeFieldsFilterEnabled() %>" />
+									<aui:input checked="<%= assetPublisherDisplayContext.isSubtypeFieldsFilterEnabled() %>" label="filter-by-field" name='<%= "preferences--subtypeFieldsFilterEnabled" + className + "--" %>' type="checkbox" />
 								</div>
 
 								<span class="asset-subtypefields-message" id="<portlet:namespace /><%= className %>ddmStructureFieldMessage">
-									<c:if test="<%= (Validator.isNotNull(assetPublisherDisplayContext.getDDMStructureFieldLabel()) && (classNameIds[0] == PortalUtil.getClassNameId(assetRendererFactory.getClassName()))) %>">
+									<c:if test="<%= Validator.isNotNull(assetPublisherDisplayContext.getDDMStructureFieldLabel()) && (classNameIds[0] == PortalUtil.getClassNameId(assetRendererFactory.getClassName())) %>">
 										<%= HtmlUtil.escape(assetPublisherDisplayContext.getDDMStructureFieldLabel()) + ": " + HtmlUtil.escape(assetPublisherDisplayContext.getDDMStructureDisplayFieldValue()) %>
 									</c:if>
 								</span>
@@ -188,7 +193,7 @@ String selectStyle = (String)request.getAttribute("configuration.jsp-selectStyle
 									%>
 
 										<span class="asset-subtypefields hide" id="<portlet:namespace /><%= classType.getClassTypeId() %>_<%= className %>Options">
-											<liferay-portlet:renderURL portletName="<%= AssetPublisherPortletKeys.ASSET_PUBLISHER %>" var="selectStructureFieldURL" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
+											<liferay-portlet:renderURL portletName="<%= assetPublisherDisplayContext.getPortletResource() %>" var="selectStructureFieldURL" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
 												<portlet:param name="mvcPath" value="/select_structure_field.jsp" />
 												<portlet:param name="portletResource" value="<%= assetPublisherDisplayContext.getPortletResource() %>" />
 												<portlet:param name="className" value="<%= assetRendererFactory.getClassName() %>" />
@@ -533,6 +538,8 @@ String selectStyle = (String)request.getAttribute("configuration.jsp-selectStyle
 </aui:button-row>
 
 <aui:script sandbox="<%= true %>">
+	var Util = Liferay.Util;
+
 	var MAP_DDM_STRUCTURES = {};
 
 	var assetSelector = $('#<portlet:namespace />anyAssetType');
@@ -543,11 +550,11 @@ String selectStyle = (String)request.getAttribute("configuration.jsp-selectStyle
 	var sourcePanel = $('#assetPublisherSourcePanel');
 
 	<%
-	for (AssetRendererFactory curRendererFactory : classTypesAssetRendererFactories) {
+	for (AssetRendererFactory<?> curRendererFactory : classTypesAssetRendererFactories) {
 		String className = AssetPublisherUtil.getClassName(curRendererFactory);
 	%>
 
-		Liferay.Util.toggleSelectBox('<portlet:namespace />anyClassType<%= className %>', 'false', '<portlet:namespace /><%= className %>Boxes');
+		Util.toggleSelectBox('<portlet:namespace />anyClassType<%= className %>', 'false', '<portlet:namespace /><%= className %>Boxes');
 
 		var <%= className %>Options = $('#<portlet:namespace /><%= className %>Options');
 
@@ -667,8 +674,6 @@ String selectStyle = (String)request.getAttribute("configuration.jsp-selectStyle
 
 					var subtypeFieldsFilterEnabled = $('#<portlet:namespace />subtypeFieldsFilterEnabled<%= className %>');
 
-					subtypeFieldsFilterEnabled.val(false);
-
 					subtypeFieldsFilterEnabled.prop('checked', false);
 
 					sourcePanel.find('.asset-subtypefields').addClass('hide');
@@ -685,7 +690,7 @@ String selectStyle = (String)request.getAttribute("configuration.jsp-selectStyle
 	function <portlet:namespace />toggleSubclasses(removeOrderBySubtype) {
 
 		<%
-		for (AssetRendererFactory curRendererFactory : classTypesAssetRendererFactories) {
+		for (AssetRendererFactory<?> curRendererFactory : classTypesAssetRendererFactories) {
 			String className = AssetPublisherUtil.getClassName(curRendererFactory);
 		%>
 
@@ -716,7 +721,7 @@ String selectStyle = (String)request.getAttribute("configuration.jsp-selectStyle
 		function(event) {
 			var assetSubtypeFieldsPopupNodes = $('.asset-subtypefields-popup .btn');
 
-			Liferay.Util.toggleDisabled(assetSubtypeFieldsPopupNodes, !$(event.target).prop('checked'));
+			Util.toggleDisabled(assetSubtypeFieldsPopupNodes, !$(event.target).prop('checked'));
 		}
 	);
 
@@ -734,9 +739,14 @@ String selectStyle = (String)request.getAttribute("configuration.jsp-selectStyle
 		'.asset-subtypefields-popup',
 		function(event) {
 			var currentTarget = $(event.currentTarget);
-			var target = $(event.target);
+			var btn = $('.btn', currentTarget);
+			var uri = btn.data('href');
 
-			Liferay.Util.selectEntity(
+			uri = Util.addParams('<portlet:namespace />ddmStructureDisplayFieldValue="' + $('#<portlet:namespace />ddmStructureDisplayFieldValue').val() + '"', uri);
+			uri = Util.addParams('<portlet:namespace />ddmStructureFieldName="' + $('#<portlet:namespace />ddmStructureFieldName').val() + '"', uri);
+			uri = Util.addParams('<portlet:namespace />ddmStructureFieldValue="' + $('#<portlet:namespace />ddmStructureFieldValue').val() + '"', uri);
+
+			Util.selectEntity(
 				{
 					dialog: {
 						constrain: true,
@@ -746,7 +756,7 @@ String selectStyle = (String)request.getAttribute("configuration.jsp-selectStyle
 					eventName: '<portlet:namespace />selectDDMStructureField',
 					id: '<portlet:namespace />selectDDMStructure' + currentTarget.attr('id'),
 					title: '<liferay-ui:message arguments="structure-field" key="select-x" />',
-					uri: target.data('href')
+					uri: uri
 				},
 				function(event) {
 					setDDMFields(event.className, event.name, event.value, event.displayValue, event.label + ': ' + event.displayValue);

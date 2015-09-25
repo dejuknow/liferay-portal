@@ -25,21 +25,20 @@ JournalArticle article = ActionUtil.getArticle(request);
 
 long classNameId = BeanParamUtil.getLong(article, request, "classNameId");
 
-boolean localizeTitle = true;
-String title = "new-web-content";
+portletDisplay.setShowBackIcon(true);
+portletDisplay.setURLBack((article == null) ? redirect : backURL);
+
+String title = StringPool.BLANK;
 
 if (classNameId > JournalArticleConstants.CLASSNAME_ID_DEFAULT) {
-	title = "structure-default-values";
+	title = LanguageUtil.get(request, "structure-default-values");
 }
 else if ((article != null) && !article.isNew()) {
-	localizeTitle = false;
-
 	title = article.getTitle(locale);
 }
-%>
+else {
+	title = LanguageUtil.get(request, "new-web-content");
+}
 
-<liferay-ui:header
-	backURL="<%= article == null ? redirect : backURL %>"
-	localizeTitle="<%= localizeTitle %>"
-	title="<%= title %>"
-/>
+renderResponse.setTitle(title);
+%>

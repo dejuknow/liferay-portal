@@ -14,12 +14,9 @@
 
 package com.liferay.gradle.plugins.js.transpiler;
 
+import com.liferay.gradle.plugins.node.tasks.ExecuteNodeTask;
 import com.liferay.gradle.util.FileUtil;
 import com.liferay.gradle.util.GradleUtil;
-
-import com.moowork.gradle.node.NodeExtension;
-import com.moowork.gradle.node.task.NodeTask;
-import com.moowork.gradle.node.task.SetupTask;
 
 import groovy.lang.Closure;
 
@@ -29,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.gradle.api.Action;
 import org.gradle.api.Project;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.file.FileTree;
@@ -46,33 +42,11 @@ import org.gradle.util.GUtil;
 /**
  * @author Andrea Di Giorgi
  */
-public class TranspileJSTask extends NodeTask {
+public class TranspileJSTask extends ExecuteNodeTask {
 
 	public TranspileJSTask() {
 		dependsOn(JSTranspilerPlugin.DOWNLOAD_BABEL_TASK_NAME);
 		dependsOn(JSTranspilerPlugin.DOWNLOAD_LFR_AMD_LOADER_TASK_NAME);
-		dependsOn(SetupTask.NAME);
-
-		Project project = getProject();
-
-		project.afterEvaluate(
-			new Action<Project>() {
-
-				@Override
-				public void execute(Project project) {
-					NodeExtension nodeExtension = GradleUtil.getExtension(
-						project, NodeExtension.class);
-
-					File scriptFile = new File(
-						nodeExtension.getNodeModulesDir(),
-						"node_modules/babel/bin/babel/index.js");
-
-					setScript(scriptFile);
-
-					setWorkingDir(_sourceDir);
-				}
-
-			});
 	}
 
 	public TranspileJSTask exclude(Closure<?> closure) {
@@ -100,10 +74,12 @@ public class TranspileJSTask extends NodeTask {
 	}
 
 	@Override
-	public void exec() {
+	public void executeNode() {
 		setArgs(getCompleteArgs());
 
-		super.exec();
+		super.setWorkingDir(getWorkingDir());
+
+		super.executeNode();
 	}
 
 	public Set<String> getExcludes() {
@@ -124,6 +100,10 @@ public class TranspileJSTask extends NodeTask {
 		return GradleUtil.toFile(getProject(), _outputDir);
 	}
 
+	public String getScriptFileName() {
+		return _scriptFileName;
+	}
+
 	public File getSourceDir() {
 		return GradleUtil.toFile(getProject(), _sourceDir);
 	}
@@ -140,6 +120,21 @@ public class TranspileJSTask extends NodeTask {
 		FileTree fileTree = project.fileTree(_sourceDir);
 
 		return fileTree.matching(_patternFilterable);
+	}
+
+	@Input
+	public SourceMaps getSourceMaps() {
+		return _sourceMaps;
+	}
+
+	@Input
+	public int getStage() {
+		return _stage;
+	}
+
+	@Override
+	public File getWorkingDir() {
+		return getSourceDir();
 	}
 
 	public TranspileJSTask include(Closure<?> closure) {
@@ -186,14 +181,36 @@ public class TranspileJSTask extends NodeTask {
 		_outputDir = outputDir;
 	}
 
+	public void setScriptFileName(String scriptFileName) {
+		_scriptFileName = scriptFileName;
+	}
+
 	public void setSourceDir(Object sourceDir) {
 		_sourceDir = sourceDir;
+	}
+
+	public void setSourceMaps(SourceMaps sourceMaps) {
+		_sourceMaps = sourceMaps;
+	}
+
+	public void setStage(int stage) {
+		_stage = stage;
+	}
+
+	public static enum SourceMaps {
+
+		DISABLED, ENABLED, ENABLED_INLINE
+
 	}
 
 	protected List<Object> getCompleteArgs() {
 		File sourceDir = getSourceDir();
 
 		List<Object> completeArgs = new ArrayList<>();
+
+		File scriptFile = new File(getNodeDir(), getScriptFileName());
+
+		completeArgs.add(FileUtil.getAbsolutePath(scriptFile));
 
 		GUtil.addToCollection(completeArgs, getArgs());
 
@@ -202,6 +219,19 @@ public class TranspileJSTask extends NodeTask {
 
 		completeArgs.add("--out-dir");
 		completeArgs.add(FileUtil.relativize(getOutputDir(), sourceDir));
+
+		SourceMaps sourceMaps = getSourceMaps();
+
+		if (sourceMaps != SourceMaps.DISABLED) {
+			completeArgs.add("--source-maps");
+		}
+
+		if (sourceMaps == SourceMaps.ENABLED_INLINE) {
+			completeArgs.add("inline");
+		}
+
+		completeArgs.add("--stage");
+		completeArgs.add(getStage());
 
 		for (File file : getSourceFiles()) {
 			completeArgs.add(FileUtil.relativize(file, sourceDir));
@@ -213,6 +243,9 @@ public class TranspileJSTask extends NodeTask {
 	private Object _modules = "amd";
 	private Object _outputDir;
 	private final PatternFilterable _patternFilterable = new PatternSet();
+	private String _scriptFileName = "node_modules/babel/bin/babel.js";
 	private Object _sourceDir;
+	private SourceMaps _sourceMaps = SourceMaps.ENABLED;
+	private int _stage = 0;
 
 }

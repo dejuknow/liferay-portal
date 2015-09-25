@@ -14,6 +14,22 @@
 
 package com.liferay.journal.service.impl;
 
+import com.liferay.dynamic.data.mapping.exception.NoSuchTemplateException;
+import com.liferay.dynamic.data.mapping.exception.StorageFieldNameException;
+import com.liferay.dynamic.data.mapping.exception.StorageFieldRequiredException;
+import com.liferay.dynamic.data.mapping.exception.StructureDefinitionException;
+import com.liferay.dynamic.data.mapping.model.DDMForm;
+import com.liferay.dynamic.data.mapping.model.DDMFormField;
+import com.liferay.dynamic.data.mapping.model.DDMStorageLink;
+import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.model.DDMTemplate;
+import com.liferay.dynamic.data.mapping.model.LocalizedValue;
+import com.liferay.dynamic.data.mapping.service.DDMStorageLinkLocalService;
+import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
+import com.liferay.dynamic.data.mapping.service.DDMTemplateLinkLocalService;
+import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
+import com.liferay.dynamic.data.mapping.storage.Fields;
+import com.liferay.dynamic.data.mapping.util.DDMXMLUtil;
 import com.liferay.journal.configuration.JournalGroupServiceConfiguration;
 import com.liferay.journal.configuration.JournalServiceConfigurationValues;
 import com.liferay.journal.constants.JournalConstants;
@@ -37,9 +53,7 @@ import com.liferay.journal.model.JournalFolder;
 import com.liferay.journal.model.impl.JournalArticleDisplayImpl;
 import com.liferay.journal.service.base.JournalArticleLocalServiceBaseImpl;
 import com.liferay.journal.service.permission.JournalPermission;
-import com.liferay.journal.service.util.JournalServiceComponentProvider;
 import com.liferay.journal.social.JournalActivityKeys;
-import com.liferay.journal.util.JournalContentUtil;
 import com.liferay.journal.util.comparator.ArticleIDComparator;
 import com.liferay.journal.util.comparator.ArticleVersionComparator;
 import com.liferay.journal.util.impl.JournalUtil;
@@ -60,6 +74,8 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.module.configuration.ConfigurationException;
+import com.liferay.portal.kernel.module.configuration.ConfigurationFactory;
 import com.liferay.portal.kernel.notifications.UserNotificationDefinition;
 import com.liferay.portal.kernel.portlet.PortletProvider;
 import com.liferay.portal.kernel.portlet.PortletProviderUtil;
@@ -78,8 +94,6 @@ import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.settings.GroupServiceSettingsLocator;
-import com.liferay.portal.kernel.settings.SettingsException;
-import com.liferay.portal.kernel.settings.SettingsFactory;
 import com.liferay.portal.kernel.social.SocialActivityManagerUtil;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.systemevent.SystemEventHierarchyEntryThreadLocal;
@@ -123,7 +137,7 @@ import com.liferay.portal.model.SystemEventConstants;
 import com.liferay.portal.model.User;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextUtil;
-import com.liferay.portal.servlet.filters.cache.CacheUtil;
+import com.liferay.portal.spring.extender.service.ServiceReference;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.GroupSubscriptionCheckSubscriptionSender;
 import com.liferay.portal.util.PortalUtil;
@@ -135,19 +149,6 @@ import com.liferay.portlet.asset.model.AssetEntry;
 import com.liferay.portlet.asset.model.AssetLink;
 import com.liferay.portlet.asset.model.AssetLinkConstants;
 import com.liferay.portlet.documentlibrary.util.DLUtil;
-import com.liferay.portlet.dynamicdatamapping.NoSuchTemplateException;
-import com.liferay.portlet.dynamicdatamapping.StorageFieldNameException;
-import com.liferay.portlet.dynamicdatamapping.StorageFieldRequiredException;
-import com.liferay.portlet.dynamicdatamapping.StructureDefinitionException;
-import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
-import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
-import com.liferay.portlet.dynamicdatamapping.model.DDMStorageLink;
-import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
-import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
-import com.liferay.portlet.dynamicdatamapping.model.LocalizedValue;
-import com.liferay.portlet.dynamicdatamapping.storage.Fields;
-import com.liferay.portlet.dynamicdatamapping.util.DDMUtil;
-import com.liferay.portlet.dynamicdatamapping.util.DDMXMLUtil;
 import com.liferay.portlet.expando.util.ExpandoBridgeUtil;
 import com.liferay.portlet.exportimport.lar.ExportImportThreadLocal;
 import com.liferay.portlet.social.model.SocialActivityConstants;
@@ -165,12 +166,10 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import javax.portlet.PortletPreferences;
 
@@ -441,7 +440,8 @@ public class JournalArticleLocalServiceImpl
 		updateAsset(
 			userId, article, serviceContext.getAssetCategoryIds(),
 			serviceContext.getAssetTagNames(),
-			serviceContext.getAssetLinkEntryIds());
+			serviceContext.getAssetLinkEntryIds(),
+			serviceContext.getAssetPriority());
 
 		// Comment
 
@@ -514,9 +514,9 @@ public class JournalArticleLocalServiceImpl
 	 * @param  serviceContext the service context to be applied. Can set the
 	 *         UUID, creation date, modification date, expando bridge
 	 *         attributes, guest permissions, group permissions, asset category
-	 *         IDs, asset tag names, asset link entry IDs, URL title, and
-	 *         workflow actions for the web content article. Can also set
-	 *         whether to add the default guest and group permissions.
+	 *         IDs, asset tag names, asset link entry IDs, asset priority, URL
+	 *         title, and workflow actions for the web content article. Can also
+	 *         set whether to add the default guest and group permissions.
 	 * @return the web content article
 	 * @throws PortalException if a portal exception occurred
 	 */
@@ -881,7 +881,7 @@ public class JournalArticleLocalServiceImpl
 
 		updateAsset(
 			userId, newArticle, assetCategoryIds, assetTagNames,
-			assetLinkEntryIds);
+			assetLinkEntryIds, oldAssetEntry.getPriority());
 
 		// Dynamic data mapping
 
@@ -1272,6 +1272,20 @@ public class JournalArticleLocalServiceImpl
 				0, groupId, JournalArticle.class.getName(),
 				articleResource.getResourcePrimKey(), articleResource.getUuid(),
 				null, SystemEventConstants.TYPE_DELETE, StringPool.BLANK);
+		}
+	}
+
+	@Override
+	public void deleteArticles(long groupId, String className, long classPK)
+		throws PortalException {
+
+		long classNameId = classNameLocalService.getClassNameId(className);
+
+		List<JournalArticle> articles = journalArticlePersistence.findByG_C_C(
+			groupId, classNameId, classPK);
+
+		for (JournalArticle article : articles) {
+			journalArticleLocalService.deleteArticle(article, null, null);
 		}
 	}
 
@@ -3604,6 +3618,15 @@ public class JournalArticleLocalServiceImpl
 			JournalArticle.class.getName(), article.getResourcePrimKey(),
 			false);
 
+		// Comment
+
+		if (JournalServiceConfigurationValues.
+				JOURNAL_ARTICLE_COMMENTS_ENABLED) {
+
+			CommentManagerUtil.moveDiscussionToTrash(
+				JournalArticle.class.getName(), article.getResourcePrimKey());
+		}
+
 		// Social
 
 		JSONObject extraDataJSONObject = JSONFactoryUtil.createJSONObject();
@@ -3800,6 +3823,15 @@ public class JournalArticleLocalServiceImpl
 
 		trashEntryLocalService.deleteEntry(
 			JournalArticle.class.getName(), article.getResourcePrimKey());
+
+		// Comment
+
+		if (JournalServiceConfigurationValues.
+				JOURNAL_ARTICLE_COMMENTS_ENABLED) {
+
+			CommentManagerUtil.restoreDiscussionFromTrash(
+				JournalArticle.class.getName(), article.getResourcePrimKey());
+		}
 
 		// Social
 
@@ -4908,13 +4940,13 @@ public class JournalArticleLocalServiceImpl
 	 *         article's display page
 	 * @param  serviceContext the service context to be applied. Can set the
 	 *         modification date, expando bridge attributes, asset category IDs,
-	 *         asset tag names, asset link entry IDs, workflow actions, URL
-	 *         title, and can set whether to add the default command update for
-	 *         the web content article. With respect to social activities, by
-	 *         setting the service context's command to {@link
-	 *         com.liferay.portal.kernel.util.Constants#UPDATE}, the invocation
-	 *         is considered a web content update activity; otherwise it is
-	 *         considered a web content add activity.
+	 *         asset tag names, asset link entry IDs, asset priority, workflow
+	 *         actions, URL title, and can set whether to add the default
+	 *         command update for the web content article. With respect to
+	 *         social activities, by setting the service context's command to
+	 *         {@link com.liferay.portal.kernel.util.Constants#UPDATE}, the
+	 *         invocation is considered a web content update activity; otherwise
+	 *         it is considered a web content add activity.
 	 * @return the updated web content article
 	 * @throws PortalException if a user with the primary key or a matching web
 	 *         content article could not be found, or if a portal exception
@@ -5096,13 +5128,13 @@ public class JournalArticleLocalServiceImpl
 	 *         <code>null</code>)
 	 * @param  serviceContext the service context to be applied. Can set the
 	 *         modification date, expando bridge attributes, asset category IDs,
-	 *         asset tag names, asset link entry IDs, workflow actions, URL
-	 *         title , and can set whether to add the default command update for
-	 *         the web content article. With respect to social activities, by
-	 *         setting the service context's command to {@link
-	 *         com.liferay.portal.kernel.util.Constants#UPDATE}, the invocation
-	 *         is considered a web content update activity; otherwise it is
-	 *         considered a web content add activity.
+	 *         asset tag names, asset link entry IDs, asset priority, workflow
+	 *         actions, URL title , and can set whether to add the default
+	 *         command update for the web content article. With respect to
+	 *         social activities, by setting the service context's command to
+	 *         {@link com.liferay.portal.kernel.util.Constants#UPDATE}, the
+	 *         invocation is considered a web content update activity; otherwise
+	 *         it is considered a web content add activity.
 	 * @return the updated web content article
 	 * @throws PortalException if a user with the primary key or a matching web
 	 *         content article could not be found, or if a portal exception
@@ -5288,7 +5320,8 @@ public class JournalArticleLocalServiceImpl
 		updateAsset(
 			userId, article, serviceContext.getAssetCategoryIds(),
 			serviceContext.getAssetTagNames(),
-			serviceContext.getAssetLinkEntryIds());
+			serviceContext.getAssetLinkEntryIds(),
+			serviceContext.getAssetPriority());
 
 		// Dynamic data mapping
 
@@ -5358,13 +5391,13 @@ public class JournalArticleLocalServiceImpl
 	 *         boolean, String, File, Map, String, ServiceContext)} description.
 	 * @param  serviceContext the service context to be applied. Can set the
 	 *         modification date, expando bridge attributes, asset category IDs,
-	 *         asset tag names, asset link entry IDs, workflow actions, URL
-	 *         title, and can set whether to add the default command update for
-	 *         the web content article. With respect to social activities, by
-	 *         setting the service context's command to {@link
-	 *         com.liferay.portal.kernel.util.Constants#UPDATE}, the invocation
-	 *         is considered a web content update activity; otherwise it is
-	 *         considered a web content add activity.
+	 *         asset tag names, asset link entry IDs, asset priority, workflow
+	 *         actions, URL title, and can set whether to add the default
+	 *         command update for the web content article. With respect to
+	 *         social activities, by setting the service context's command to
+	 *         {@link com.liferay.portal.kernel.util.Constants#UPDATE}, the
+	 *         invocation is considered a web content update activity; otherwise
+	 *         it is considered a web content add activity.
 	 * @return the updated web content article
 	 * @throws PortalException if a user with the primary key or a matching web
 	 *         content article could not be found, or if a portal exception
@@ -5551,18 +5584,46 @@ public class JournalArticleLocalServiceImpl
 	 * Updates the web content article's asset with the new asset categories,
 	 * tag names, and link entries, removing and adding them as necessary.
 	 *
+	 * @param      userId the primary key of the user updating the web content
+	 *             article's asset
+	 * @param      article the web content article
+	 * @param      assetCategoryIds the primary keys of the new asset categories
+	 * @param      assetTagNames the new asset tag names
+	 * @param      assetLinkEntryIds the primary keys of the new asset link
+	 *             entries
+	 * @throws     PortalException if a portal exception occurred
+	 * @deprecated As of 7.0.0, replaced by {@link #updateAsset(long,
+	 *             JournalArticle, long[], String[], long[], Double)}
+	 */
+	@Deprecated
+	@Override
+	public void updateAsset(
+			long userId, JournalArticle article, long[] assetCategoryIds,
+			String[] assetTagNames, long[] assetLinkEntryIds)
+		throws PortalException {
+
+		updateAsset(
+			userId, article, assetCategoryIds, assetTagNames, assetLinkEntryIds,
+			null);
+	}
+
+	/**
+	 * Updates the web content article's asset with the new asset categories,
+	 * tag names, and link entries, removing and adding them as necessary.
+	 *
 	 * @param  userId the primary key of the user updating the web content
 	 *         article's asset
 	 * @param  article the web content article
 	 * @param  assetCategoryIds the primary keys of the new asset categories
 	 * @param  assetTagNames the new asset tag names
 	 * @param  assetLinkEntryIds the primary keys of the new asset link entries
+	 * @param  priority the priority of the asset
 	 * @throws PortalException if a portal exception occurred
 	 */
 	@Override
 	public void updateAsset(
 			long userId, JournalArticle article, long[] assetCategoryIds,
-			String[] assetTagNames, long[] assetLinkEntryIds)
+			String[] assetTagNames, long[] assetLinkEntryIds, Double priority)
 		throws PortalException {
 
 		boolean visible = article.isApproved();
@@ -5597,7 +5658,7 @@ public class JournalArticleLocalServiceImpl
 				getClassTypeId(article), assetCategoryIds, assetTagNames, false,
 				null, null, null, ContentTypes.TEXT_HTML, article.getTitle(),
 				article.getDescription(), article.getDescription(), null,
-				article.getLayoutUuid(), 0, 0, null);
+				article.getLayoutUuid(), 0, 0, priority);
 		}
 		else {
 			JournalArticleResource journalArticleResource =
@@ -5612,7 +5673,7 @@ public class JournalArticleLocalServiceImpl
 				assetCategoryIds, assetTagNames, visible, null, null, null,
 				ContentTypes.TEXT_HTML, article.getTitle(),
 				article.getDescription(), article.getDescription(), null,
-				article.getLayoutUuid(), 0, 0, null);
+				article.getLayoutUuid(), 0, 0, priority);
 		}
 
 		assetLinkLocalService.updateLinks(
@@ -5793,7 +5854,8 @@ public class JournalArticleLocalServiceImpl
 								ContentTypes.TEXT_HTML, article.getTitle(),
 								article.getDescription(),
 								article.getDescription(), null,
-								article.getLayoutUuid(), 0, 0, null);
+								article.getLayoutUuid(), 0, 0,
+								draftAssetEntry.getPriority());
 
 						assetLinkLocalService.updateLinks(
 							userId, assetEntry.getEntryId(), assetLinkEntryIds,
@@ -6109,6 +6171,9 @@ public class JournalArticleLocalServiceImpl
 			displayDate, WorkflowConstants.STATUS_SCHEDULED);
 
 		for (JournalArticle article : articles) {
+			long userId = PortalUtil.getValidUserId(
+				article.getCompanyId(), article.getUserId());
+
 			ServiceContext serviceContext = new ServiceContext();
 
 			serviceContext.setCommand(Constants.UPDATE);
@@ -6121,8 +6186,8 @@ public class JournalArticleLocalServiceImpl
 			serviceContext.setScopeGroupId(article.getGroupId());
 
 			journalArticleLocalService.updateStatus(
-				article.getUserId(), article, WorkflowConstants.STATUS_APPROVED,
-				null, serviceContext, new HashMap<String, Serializable>());
+				userId, article, WorkflowConstants.STATUS_APPROVED, null,
+				serviceContext, new HashMap<String, Serializable>());
 		}
 	}
 
@@ -6140,8 +6205,6 @@ public class JournalArticleLocalServiceImpl
 		if (_log.isDebugEnabled()) {
 			_log.debug("Expiring " + articles.size() + " articles");
 		}
-
-		Set<Long> companyIds = new HashSet<>();
 
 		for (JournalArticle article : articles) {
 			if (JournalServiceConfigurationValues.
@@ -6173,16 +6236,6 @@ public class JournalArticleLocalServiceImpl
 				IndexerRegistryUtil.nullSafeGetIndexer(JournalArticle.class);
 
 			indexer.reindex(article);
-
-			JournalContentUtil.clearCache(
-				article.getGroupId(), article.getArticleId(),
-				article.getDDMTemplateKey());
-
-			companyIds.add(article.getCompanyId());
-		}
-
-		for (long companyId : companyIds) {
-			CacheUtil.clearCache(companyId);
 		}
 
 		if (_previousCheckDate == null) {
@@ -6879,7 +6932,7 @@ public class JournalArticleLocalServiceImpl
 			}
 			catch (NoSuchTemplateException nste) {
 				if (!defaultDDMTemplateKey.equals(ddmTemplateKey)) {
-					ddmTemplate = ddmTemplatePersistence.findByG_C_T(
+					ddmTemplate = ddmTemplateLocalService.getTemplate(
 						PortalUtil.getSiteGroupId(article.getGroupId()),
 						classNameLocalService.getClassNameId(
 							DDMStructure.class),
@@ -6995,16 +7048,9 @@ public class JournalArticleLocalServiceImpl
 
 	protected JournalGroupServiceConfiguration
 			getJournalGroupServiceConfiguration(long groupId)
-		throws SettingsException {
+		throws ConfigurationException {
 
-		JournalServiceComponentProvider journalServiceComponentProvider =
-			JournalServiceComponentProvider.
-				getJournalServiceComponentProvider();
-
-		SettingsFactory settingsFactory =
-			journalServiceComponentProvider.getSettingsFactory();
-
-		return settingsFactory.getSettings(
+		return configurationFactory.getConfiguration(
 			JournalGroupServiceConfiguration.class,
 			new GroupServiceSettingsLocator(
 				groupId, JournalConstants.SERVICE_NAME));
@@ -7477,6 +7523,9 @@ public class JournalArticleLocalServiceImpl
 		DDMForm ddmForm = ddmStructure.getDDMForm();
 
 		Map<String, DDMFormField> ddmFormFieldsMap =
+			ddmForm.getDDMFormFieldsMap(true);
+
+		Map<String, DDMFormField> fullHierarchyDDMFormFieldsMap =
 			ddmStructure.getFullHierarchyDDMFormFieldsMap(true);
 
 		Map<String, String> fieldsValuesMap = createFieldsValuesMap(content);
@@ -7488,7 +7537,13 @@ public class JournalArticleLocalServiceImpl
 			String ddmFormFieldValue = fieldValue.getValue();
 
 			updateDDMFormFieldPredefinedValue(
-				ddmFormFieldsMap.get(ddmFormFieldName), ddmFormFieldValue);
+				fullHierarchyDDMFormFieldsMap.get(ddmFormFieldName),
+				ddmFormFieldValue);
+
+			if (ddmFormFieldsMap.containsKey(ddmFormFieldName)) {
+				updateDDMFormFieldPredefinedValue(
+					ddmFormFieldsMap.get(ddmFormFieldName), ddmFormFieldValue);
+			}
 		}
 
 		ddmStructure.updateDDMForm(ddmForm);
@@ -7710,43 +7765,39 @@ public class JournalArticleLocalServiceImpl
 	}
 
 	protected void validateDDMStructureFields(
-			DDMStructure ddmStructure, long classNameId, Fields fields)
+			DDMStructure ddmStructure, long classNameId, Fields fields,
+			Locale[] locales)
 		throws PortalException {
 
-		for (com.liferay.portlet.dynamicdatamapping.storage.Field field :
-				fields) {
-
+		for (com.liferay.dynamic.data.mapping.storage.Field field : fields) {
 			if (!ddmStructure.hasField(field.getName())) {
 				throw new StorageFieldNameException();
 			}
 
-			if (ddmStructure.getFieldRequired(field.getName()) &&
-				Validator.isNull(field.getValue()) &&
-				(classNameId == JournalArticleConstants.CLASSNAME_ID_DEFAULT)) {
+			for (Locale locale : locales) {
+				if (ddmStructure.getFieldRequired(field.getName()) &&
+					Validator.isNull(field.getValue(locale)) &&
+					(classNameId ==
+						JournalArticleConstants.CLASSNAME_ID_DEFAULT)) {
 
-				throw new StorageFieldRequiredException();
+					throw new StorageFieldRequiredException(
+						"Required field value is not present for " + locale);
+				}
 			}
 		}
-	}
-
-	protected void validateDDMStructureFields(
-			DDMStructure ddmStructure, long classNameId,
-			ServiceContext serviceContext)
-		throws PortalException {
-
-		Fields fields = DDMUtil.getFields(
-			ddmStructure.getStructureId(), serviceContext);
-
-		validateDDMStructureFields(ddmStructure, classNameId, fields);
 	}
 
 	protected void validateDDMStructureFields(
 			DDMStructure ddmStructure, long classNameId, String content)
 		throws PortalException {
 
+		Locale[] contentLocales = LocaleUtil.fromLanguageIds(
+			LocalizationUtil.getAvailableLanguageIds(content));
+
 		Fields fields = DDMXMLUtil.getFields(ddmStructure, content);
 
-		validateDDMStructureFields(ddmStructure, classNameId, fields);
+		validateDDMStructureFields(
+			ddmStructure, classNameId, fields, contentLocales);
 	}
 
 	protected void validateDDMStructureId(
@@ -7777,6 +7828,21 @@ public class JournalArticleLocalServiceImpl
 			"Invalid structure " + ddmStructure.getStructureId() +
 				" for folder " + folderId);
 	}
+
+	@ServiceReference(type = ConfigurationFactory.class)
+	protected ConfigurationFactory configurationFactory;
+
+	@ServiceReference(type = DDMStorageLinkLocalService.class)
+	protected DDMStorageLinkLocalService ddmStorageLinkLocalService;
+
+	@ServiceReference(type = DDMStructureLocalService.class)
+	protected DDMStructureLocalService ddmStructureLocalService;
+
+	@ServiceReference(type = DDMTemplateLinkLocalService.class)
+	protected DDMTemplateLinkLocalService ddmTemplateLinkLocalService;
+
+	@ServiceReference(type = DDMTemplateLocalService.class)
+	protected DDMTemplateLocalService ddmTemplateLocalService;
 
 	private static final long _JOURNAL_ARTICLE_CHECK_INTERVAL =
 		JournalServiceConfigurationValues.JOURNAL_ARTICLE_CHECK_INTERVAL

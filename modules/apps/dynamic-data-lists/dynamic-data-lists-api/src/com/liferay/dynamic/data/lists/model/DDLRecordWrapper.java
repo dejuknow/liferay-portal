@@ -68,6 +68,7 @@ public class DDLRecordWrapper implements DDLRecord, ModelWrapper<DDLRecord> {
 		attributes.put("recordSetId", getRecordSetId());
 		attributes.put("version", getVersion());
 		attributes.put("displayIndex", getDisplayIndex());
+		attributes.put("lastPublishDate", getLastPublishDate());
 
 		return attributes;
 	}
@@ -157,6 +158,12 @@ public class DDLRecordWrapper implements DDLRecord, ModelWrapper<DDLRecord> {
 		if (displayIndex != null) {
 			setDisplayIndex(displayIndex);
 		}
+
+		Date lastPublishDate = (Date)attributes.get("lastPublishDate");
+
+		if (lastPublishDate != null) {
+			setLastPublishDate(lastPublishDate);
+		}
 	}
 
 	@Override
@@ -186,19 +193,19 @@ public class DDLRecordWrapper implements DDLRecord, ModelWrapper<DDLRecord> {
 	* @return the create date of this d d l record
 	*/
 	@Override
-	public java.util.Date getCreateDate() {
+	public Date getCreateDate() {
 		return _ddlRecord.getCreateDate();
 	}
 
 	@Override
-	public java.util.List<com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue> getDDMFormFieldValues(
+	public java.util.List<com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue> getDDMFormFieldValues(
 		java.lang.String fieldName)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _ddlRecord.getDDMFormFieldValues(fieldName);
 	}
 
 	@Override
-	public com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues getDDMFormValues()
+	public com.liferay.dynamic.data.mapping.storage.DDMFormValues getDDMFormValues()
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _ddlRecord.getDDMFormValues();
 	}
@@ -250,6 +257,16 @@ public class DDLRecordWrapper implements DDLRecord, ModelWrapper<DDLRecord> {
 		return _ddlRecord.getGroupId();
 	}
 
+	/**
+	* Returns the last publish date of this d d l record.
+	*
+	* @return the last publish date of this d d l record
+	*/
+	@Override
+	public Date getLastPublishDate() {
+		return _ddlRecord.getLastPublishDate();
+	}
+
 	@Override
 	public com.liferay.dynamic.data.lists.model.DDLRecordVersion getLatestRecordVersion()
 		throws com.liferay.portal.kernel.exception.PortalException {
@@ -262,7 +279,7 @@ public class DDLRecordWrapper implements DDLRecord, ModelWrapper<DDLRecord> {
 	* @return the modified date of this d d l record
 	*/
 	@Override
-	public java.util.Date getModifiedDate() {
+	public Date getModifiedDate() {
 		return _ddlRecord.getModifiedDate();
 	}
 
@@ -452,7 +469,7 @@ public class DDLRecordWrapper implements DDLRecord, ModelWrapper<DDLRecord> {
 	* @param createDate the create date of this d d l record
 	*/
 	@Override
-	public void setCreateDate(java.util.Date createDate) {
+	public void setCreateDate(Date createDate) {
 		_ddlRecord.setCreateDate(createDate);
 	}
 
@@ -505,12 +522,22 @@ public class DDLRecordWrapper implements DDLRecord, ModelWrapper<DDLRecord> {
 	}
 
 	/**
+	* Sets the last publish date of this d d l record.
+	*
+	* @param lastPublishDate the last publish date of this d d l record
+	*/
+	@Override
+	public void setLastPublishDate(Date lastPublishDate) {
+		_ddlRecord.setLastPublishDate(lastPublishDate);
+	}
+
+	/**
 	* Sets the modified date of this d d l record.
 	*
 	* @param modifiedDate the modified date of this d d l record
 	*/
 	@Override
-	public void setModifiedDate(java.util.Date modifiedDate) {
+	public void setModifiedDate(Date modifiedDate) {
 		_ddlRecord.setModifiedDate(modifiedDate);
 	}
 

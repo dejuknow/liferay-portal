@@ -274,13 +274,13 @@ public abstract class WebsiteLocalServiceBaseImpl extends BaseLocalServiceImpl
 
 					long modelAdditionCount = super.performCount();
 
-					manifestSummary.addModelAdditionCount(stagedModelType.toString(),
+					manifestSummary.addModelAdditionCount(stagedModelType,
 						modelAdditionCount);
 
 					long modelDeletionCount = ExportImportHelperUtil.getModelDeletionCount(portletDataContext,
 							stagedModelType);
 
-					manifestSummary.addModelDeletionCount(stagedModelType.toString(),
+					manifestSummary.addModelDeletionCount(stagedModelType,
 						modelDeletionCount);
 
 					return modelAdditionCount;
@@ -297,12 +297,18 @@ public abstract class WebsiteLocalServiceBaseImpl extends BaseLocalServiceImpl
 
 					StagedModelType stagedModelType = exportActionableDynamicQuery.getStagedModelType();
 
-					if (stagedModelType.getReferrerClassNameId() >= 0) {
-						Property classNameIdProperty = PropertyFactoryUtil.forName(
-								"classNameId");
+					long referrerClassNameId = stagedModelType.getReferrerClassNameId();
 
+					Property classNameIdProperty = PropertyFactoryUtil.forName(
+							"classNameId");
+
+					if ((referrerClassNameId != StagedModelType.REFERRER_CLASS_NAME_ID_ALL) &&
+							(referrerClassNameId != StagedModelType.REFERRER_CLASS_NAME_ID_ANY)) {
 						dynamicQuery.add(classNameIdProperty.eq(
 								stagedModelType.getReferrerClassNameId()));
+					}
+					else if (referrerClassNameId == StagedModelType.REFERRER_CLASS_NAME_ID_ANY) {
+						dynamicQuery.add(classNameIdProperty.isNotNull());
 					}
 				}
 			});
@@ -320,7 +326,8 @@ public abstract class WebsiteLocalServiceBaseImpl extends BaseLocalServiceImpl
 				}
 			});
 		exportActionableDynamicQuery.setStagedModelType(new StagedModelType(
-				PortalUtil.getClassNameId(Website.class.getName())));
+				PortalUtil.getClassNameId(Website.class.getName()),
+				StagedModelType.REFERRER_CLASS_NAME_ID_ALL));
 
 		return exportActionableDynamicQuery;
 	}
@@ -397,7 +404,7 @@ public abstract class WebsiteLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @return the website local service
 	 */
-	public com.liferay.portal.service.WebsiteLocalService getWebsiteLocalService() {
+	public WebsiteLocalService getWebsiteLocalService() {
 		return websiteLocalService;
 	}
 
@@ -406,8 +413,7 @@ public abstract class WebsiteLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param websiteLocalService the website local service
 	 */
-	public void setWebsiteLocalService(
-		com.liferay.portal.service.WebsiteLocalService websiteLocalService) {
+	public void setWebsiteLocalService(WebsiteLocalService websiteLocalService) {
 		this.websiteLocalService = websiteLocalService;
 	}
 
@@ -717,7 +723,7 @@ public abstract class WebsiteLocalServiceBaseImpl extends BaseLocalServiceImpl
 	}
 
 	@BeanReference(type = com.liferay.portal.service.WebsiteLocalService.class)
-	protected com.liferay.portal.service.WebsiteLocalService websiteLocalService;
+	protected WebsiteLocalService websiteLocalService;
 	@BeanReference(type = com.liferay.portal.service.WebsiteService.class)
 	protected com.liferay.portal.service.WebsiteService websiteService;
 	@BeanReference(type = WebsitePersistence.class)

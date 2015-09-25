@@ -37,20 +37,15 @@ import org.osgi.service.component.annotations.Reference;
 public class BlogsPanelApp extends BaseControlPanelEntryPanelApp {
 
 	@Override
-	public String getParentCategoryKey() {
-		return PanelCategoryKeys.SITE_ADMINISTRATION_CONTENT;
-	}
-
-	@Override
 	public String getPortletId() {
-		return BlogsPortletKeys.BLOGS;
+		return BlogsPortletKeys.BLOGS_ADMIN;
 	}
 
 	@Reference(unbind = "-")
 	protected void setPortletLocalService(
 		PortletLocalService portletLocalService) {
 
-		_portletLocalService = portletLocalService;
+		this.portletLocalService = portletLocalService;
 	}
 
 }

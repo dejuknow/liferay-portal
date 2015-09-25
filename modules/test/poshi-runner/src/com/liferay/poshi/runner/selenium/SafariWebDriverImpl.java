@@ -14,6 +14,10 @@
 
 package com.liferay.poshi.runner.selenium;
 
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.internal.WrapsDriver;
 import org.openqa.selenium.safari.SafariDriver;
 
 /**
@@ -21,8 +25,62 @@ import org.openqa.selenium.safari.SafariDriver;
  */
 public class SafariWebDriverImpl extends BaseWebDriverImpl {
 
-	public SafariWebDriverImpl(String projectDirName, String browserURL) {
-		super(projectDirName, browserURL, new SafariDriver());
+	public SafariWebDriverImpl(String browserURL) {
+		super(browserURL, new SafariDriver());
+	}
+
+	@Override
+	public void assertConfirmation(String pattern) throws Exception {
+	}
+
+	@Override
+	public void click(String locator) {
+		if (locator.contains("x:")) {
+			String url = getHtmlNodeHref(locator);
+
+			open(url);
+		}
+		else {
+			WebElement webElement = getWebElement(locator);
+
+			WrapsDriver wrapsDriver = (WrapsDriver)webElement;
+
+			WebDriver wrappedWebDriver = wrapsDriver.getWrappedDriver();
+
+			JavascriptExecutor javascriptExecutor =
+				(JavascriptExecutor)wrappedWebDriver;
+
+			try {
+				javascriptExecutor.executeScript(
+					"confirm = function(){return true;};");
+
+				webElement.click();
+			}
+			catch (Exception e) {
+				if (!webElement.isDisplayed()) {
+					scrollWebElementIntoView(webElement);
+				}
+
+				webElement.click();
+			}
+		}
+	}
+
+	@Override
+	public void mouseDown(String locator) {
+		WebDriverHelper.executeJavaScriptMouseEvent(this, locator, "mousedown");
+	}
+
+	@Override
+	public void mouseOver(String locator) {
+		WebDriverHelper.executeJavaScriptMouseEvent(this, locator, "mouseover");
+	}
+
+	@Override
+	public void mouseUp(String locator) {
+		WebDriverHelper.executeJavaScriptMouseEvent(this, locator, "mouseup");
+
+		WebDriverHelper.executeJavaScriptMouseEvent(this, locator, "click");
 	}
 
 }

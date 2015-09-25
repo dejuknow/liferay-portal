@@ -211,7 +211,7 @@ public interface Portal {
 
 	/**
 	 * Adds the preserved parameters doAsUserId, doAsUserLanguageId,
-	 * doAsGroupId, refererPlid, and controlPanelCategory to the URL.
+	 * doAsGroupId, and refererPlid to the URL.
 	 *
 	 * @param  themeDisplay the current theme display
 	 * @param  url the URL
@@ -476,15 +476,9 @@ public interface Portal {
 
 	public long[] getCompanyIds();
 
-	public String getComputerAddress();
+	public Set<String> getComputerAddresses();
 
 	public String getComputerName();
-
-	public Map<String, List<Portlet>> getControlPanelCategoriesMap(
-		HttpServletRequest request);
-
-	public String getControlPanelCategory(
-		String portletId, ThemeDisplay themeDisplay);
 
 	public String getControlPanelFullURL(
 			long scopeGroupId, String ppid, Map<String, String[]> params)
@@ -495,18 +489,20 @@ public interface Portal {
 	public long getControlPanelPlid(PortletRequest portletRequest)
 		throws PortalException;
 
-	public Set<Portlet> getControlPanelPortlets(
-		long companyId, String category);
-
-	public List<Portlet> getControlPanelPortlets(
-		String category, ThemeDisplay themeDisplay);
+	public PortletURL getControlPanelPortletURL(
+		HttpServletRequest request, Group group, String portletId,
+		long refererPlid, String lifecycle);
 
 	public PortletURL getControlPanelPortletURL(
-		HttpServletRequest request, String portletId, long referrerPlid,
+		HttpServletRequest request, String portletId, long refererPlid,
 		String lifecycle);
 
 	public PortletURL getControlPanelPortletURL(
-		PortletRequest portletRequest, String portletId, long referrerPlid,
+		PortletRequest portletRequest, Group group, String portletId,
+		long refererPlid, String lifecycle);
+
+	public PortletURL getControlPanelPortletURL(
+		PortletRequest portletRequest, String portletId, long refererPlid,
 		String lifecycle);
 
 	public String getCreateAccountURL(
@@ -698,15 +694,7 @@ public interface Portal {
 			ThemeDisplay themeDisplay)
 		throws PortalException;
 
-	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
-	 */
-	@Deprecated
-	public Portlet getFirstMyAccountPortlet(ThemeDisplay themeDisplay);
-
 	public String getFirstPageLayoutTypes(HttpServletRequest request);
-
-	public Portlet getFirstSiteAdministrationPortlet(ThemeDisplay themeDisplay);
 
 	public String getFullName(
 		String firstName, String middleName, String lastName);
@@ -1107,19 +1095,22 @@ public interface Portal {
 			long companyId, long groupId, long userId)
 		throws PortalException;
 
-	public Map<String, List<Portlet>> getSiteAdministrationCategoriesMap(
-		HttpServletRequest request);
-
-	public PortletURL getSiteAdministrationURL(
-		HttpServletRequest request, ThemeDisplay themeDisplay);
-
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link
+	 *             #getControlPanelPortletURL(PortletRequest, Group, String,
+	 *             long, String)}
+	 */
+	@Deprecated
 	public PortletURL getSiteAdministrationURL(
 		HttpServletRequest request, ThemeDisplay themeDisplay,
-		String portletName);
+		String portletId);
 
-	public PortletURL getSiteAdministrationURL(
-		PortletResponse portletResponse, ThemeDisplay themeDisplay);
-
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link
+	 *             #getControlPanelPortletURL(PortletRequest, Group, String,
+	 *             long, String)}
+	 */
+	@Deprecated
 	public PortletURL getSiteAdministrationURL(
 		PortletResponse portletResponse, ThemeDisplay themeDisplay,
 		String portletName);
@@ -1314,9 +1305,6 @@ public interface Portal {
 
 	public boolean isCompanyControlPanelPortlet(
 			String portletId, ThemeDisplay themeDisplay)
-		throws PortalException;
-
-	public boolean isCompanyControlPanelVisible(ThemeDisplay themeDisplay)
 		throws PortalException;
 
 	public boolean isControlPanelPortlet(

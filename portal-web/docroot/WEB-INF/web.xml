@@ -17,6 +17,10 @@
 		<param-name>com.ibm.websphere.portletcontainer.PortletDeploymentEnabled</param-name>
 		<param-value>false</param-value>
 	</context-param>
+	<context-param>
+		<param-name>osgi.http.endpoint</param-name>
+		<param-value>/o/</param-value>
+	</context-param>
 	<filter>
 		<filter-name>Invoker Filter - ERROR</filter-name>
 		<filter-class>com.liferay.portal.kernel.servlet.filters.invoker.InvokerFilter</filter-class>
@@ -828,11 +832,7 @@
 		</taglib>
 		<taglib>
 			<taglib-uri>http://liferay.com/tld/aui</taglib-uri>
-			<taglib-location>/WEB-INF/tld/aui.tld</taglib-location>
-		</taglib>
-		<taglib>
-			<taglib-uri>http://liferay.com/tld/ddm</taglib-uri>
-			<taglib-location>/WEB-INF/tld/liferay-ddm.tld</taglib-location>
+			<taglib-location>/WEB-INF/tld/liferay-aui.tld</taglib-location>
 		</taglib>
 		<taglib>
 			<taglib-uri>http://liferay.com/tld/portlet</taglib-uri>
@@ -841,10 +841,6 @@
 		<taglib>
 			<taglib-uri>http://liferay.com/tld/security</taglib-uri>
 			<taglib-location>/WEB-INF/tld/liferay-security.tld</taglib-location>
-		</taglib>
-		<taglib>
-			<taglib-uri>http://liferay.com/tld/staging</taglib-uri>
-			<taglib-location>/WEB-INF/tld/liferay-staging.tld</taglib-location>
 		</taglib>
 		<taglib>
 			<taglib-uri>http://liferay.com/tld/theme</taglib-uri>

@@ -16,11 +16,10 @@ package com.liferay.portal.theme;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.module.configuration.ConfigurationException;
+import com.liferay.portal.kernel.module.configuration.ConfigurationFactoryUtil;
 import com.liferay.portal.kernel.portlet.toolbar.PortletToolbar;
 import com.liferay.portal.kernel.settings.PortletInstanceSettingsLocator;
-import com.liferay.portal.kernel.settings.SettingsException;
-import com.liferay.portal.kernel.settings.SettingsFactory;
-import com.liferay.portal.kernel.settings.SettingsFactoryUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
@@ -56,7 +55,6 @@ public class PortletDisplay implements Serializable {
 		_columnId = master.getColumnId();
 		_columnPos = master.getColumnPos();
 		_content = master.getContent();
-		_controlPanelCategory = master.getControlPanelCategory();
 		_customCSSClassName = master.getCustomCSSClassName();
 		_description = master.getDescription();
 		_id = master.getId();
@@ -124,7 +122,6 @@ public class PortletDisplay implements Serializable {
 		slave.setColumnId(_columnId);
 		slave.setColumnPos(_columnPos);
 		slave.setContent(_content);
-		slave.setControlPanelCategory(_controlPanelCategory);
 		slave.setCustomCSSClassName(_customCSSClassName);
 		slave.setDescription(_description);
 		slave.setId(_id);
@@ -204,19 +201,6 @@ public class PortletDisplay implements Serializable {
 		return _content;
 	}
 
-	/**
-	 * Returns the control panel category where the current portlet resides. A
-	 * portlet's control panel category is configured in its
-	 * <code>liferay-portlet.xml</code> file.
-	 *
-	 * @return the control panel category where the current portlet resides, or
-	 *         an empty string if the portlet is not configured to appear in the
-	 *         control panel.
-	 */
-	public String getControlPanelCategory() {
-		return _controlPanelCategory;
-	}
-
 	public String getCustomCSSClassName() {
 		return _customCSSClassName;
 	}
@@ -238,15 +222,12 @@ public class PortletDisplay implements Serializable {
 	}
 
 	public <T> T getPortletInstanceConfiguration(Class<T> clazz)
-		throws SettingsException {
-
-		SettingsFactory settingsFactory =
-			SettingsFactoryUtil.getSettingsFactory();
+		throws ConfigurationException {
 
 		String portletId = Validator.isNull(
 			_portletResource) ? _id : _portletResource;
 
-		return settingsFactory.getSettings(
+		return ConfigurationFactoryUtil.getConfiguration(
 			clazz,
 			new PortletInstanceSettingsLocator(
 				_themeDisplay.getLayout(), portletId));
@@ -502,7 +483,6 @@ public class PortletDisplay implements Serializable {
 		_columnId = StringPool.BLANK;
 		_columnPos = 0;
 		_content.setIndex(0);
-		_controlPanelCategory = StringPool.BLANK;
 		_customCSSClassName = StringPool.BLANK;
 		_description = StringPool.BLANK;
 		_id = StringPool.BLANK;
@@ -591,10 +571,6 @@ public class PortletDisplay implements Serializable {
 		else {
 			_content = content;
 		}
-	}
-
-	public void setControlPanelCategory(String controlPanelCategory) {
-		_controlPanelCategory = controlPanelCategory;
 	}
 
 	public void setCustomCSSClassName(String customCSSClassName) {
@@ -863,7 +839,6 @@ public class PortletDisplay implements Serializable {
 	private String _columnId = StringPool.BLANK;
 	private int _columnPos;
 	private StringBundler _content = _blankStringBundler;
-	private String _controlPanelCategory = StringPool.BLANK;
 	private String _customCSSClassName = StringPool.BLANK;
 	private String _description = StringPool.BLANK;
 	private String _id = StringPool.BLANK;

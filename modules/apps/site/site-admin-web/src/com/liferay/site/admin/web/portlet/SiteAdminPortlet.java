@@ -14,6 +14,10 @@
 
 package com.liferay.site.admin.web.portlet;
 
+import com.liferay.application.list.PanelAppRegistry;
+import com.liferay.application.list.PanelCategoryRegistry;
+import com.liferay.application.list.constants.ApplicationListWebKeys;
+import com.liferay.application.list.display.context.logic.PanelCategoryHelper;
 import com.liferay.portal.DuplicateGroupException;
 import com.liferay.portal.GroupFriendlyURLException;
 import com.liferay.portal.GroupInheritContentException;
@@ -27,6 +31,7 @@ import com.liferay.portal.NoSuchLayoutException;
 import com.liferay.portal.PendingBackgroundTaskException;
 import com.liferay.portal.RemoteOptionsException;
 import com.liferay.portal.RequiredGroupException;
+import com.liferay.portal.kernel.backgroundtask.BackgroundTaskManagerUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
@@ -34,9 +39,10 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.servlet.MultiSessionMessages;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.transaction.Propagation;
+import com.liferay.portal.kernel.transaction.TransactionAttribute;
+import com.liferay.portal.kernel.transaction.TransactionInvokerUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -51,7 +57,6 @@ import com.liferay.portal.liveusers.LiveUsers;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.GroupConstants;
 import com.liferay.portal.model.Layout;
-import com.liferay.portal.model.LayoutConstants;
 import com.liferay.portal.model.LayoutSet;
 import com.liferay.portal.model.LayoutSetPrototype;
 import com.liferay.portal.model.MembershipRequest;
@@ -61,7 +66,6 @@ import com.liferay.portal.model.Team;
 import com.liferay.portal.security.auth.AuthException;
 import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.security.auth.RemoteAuthException;
-import com.liferay.portal.service.BackgroundTaskLocalServiceUtil;
 import com.liferay.portal.service.GroupLocalServiceUtil;
 import com.liferay.portal.service.GroupServiceUtil;
 import com.liferay.portal.service.LayoutLocalServiceUtil;
@@ -77,8 +81,6 @@ import com.liferay.portal.service.ServiceContextThreadLocal;
 import com.liferay.portal.service.TeamLocalServiceUtil;
 import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.service.UserServiceUtil;
-import com.liferay.portal.spring.transaction.TransactionAttributeBuilder;
-import com.liferay.portal.spring.transaction.TransactionHandlerUtil;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.asset.AssetCategoryException;
@@ -111,8 +113,6 @@ import javax.portlet.RenderResponse;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-
-import org.springframework.transaction.interceptor.TransactionAttribute;
 
 /**
  * @author Eudaldo Alonso
@@ -165,7 +165,7 @@ public class SiteAdminPortlet extends MVCPortlet {
 		long backgroundTaskId = ParamUtil.getLong(
 			actionRequest, "backgroundTaskId");
 
-		BackgroundTaskLocalServiceUtil.deleteBackgroundTask(backgroundTaskId);
+		BackgroundTaskManagerUtil.deleteBackgroundTask(backgroundTaskId);
 	}
 
 	public void deleteGroups(
@@ -198,57 +198,30 @@ public class SiteAdminPortlet extends MVCPortlet {
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Throwable {
 
-		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
-			WebKeys.THEME_DISPLAY);
-
 		Callable<Group> groupCallable = new GroupCallable(actionRequest);
 
-		Group group = TransactionHandlerUtil.invoke(
+		Group group = TransactionInvokerUtil.invoke(
 			_transactionAttribute, groupCallable);
-
-		String redirect = ParamUtil.getString(actionRequest, "redirect");
 
 		long liveGroupId = ParamUtil.getLong(actionRequest, "liveGroupId");
 
+		PortletURL siteAdministrationURL = PortalUtil.getControlPanelPortletURL(
+			actionRequest, group, SiteAdminPortletKeys.SITE_SETTINGS, 0,
+			PortletRequest.RENDER_PHASE);
+
+		siteAdministrationURL.setParameter(
+			"redirect", siteAdministrationURL.toString());
+
 		if (liveGroupId <= 0) {
-			themeDisplay.setScopeGroupId(group.getGroupId());
-
-			PortletURL siteAdministrationURL =
-				PortalUtil.getSiteAdministrationURL(
-					actionResponse, themeDisplay,
-					SiteAdminPortletKeys.SITE_SETTINGS);
-
-			String controlPanelURL = HttpUtil.setParameter(
-				themeDisplay.getURLControlPanel(), "p_p_id",
-				SiteAdminPortletKeys.SITE_ADMIN);
-
-			controlPanelURL = HttpUtil.setParameter(
-				controlPanelURL, "controlPanelCategory",
-				themeDisplay.getControlPanelCategory());
-
-			siteAdministrationURL.setParameter("redirect", controlPanelURL);
-
-			redirect = siteAdministrationURL.toString();
-
 			hideDefaultSuccessMessage(actionRequest);
 
 			MultiSessionMessages.add(
 				actionRequest,
 				SiteAdminPortletKeys.SITE_SETTINGS + "requestProcessed");
 		}
-		else {
-			long newRefererPlid = getRefererPlid(
-				group, themeDisplay.getScopeGroupId(), redirect);
 
-			redirect = HttpUtil.setParameter(
-				redirect, "doAsGroupId", group.getGroupId());
-			redirect = HttpUtil.setParameter(
-				redirect, "refererPlid", newRefererPlid);
-		}
-
-		actionRequest.setAttribute(WebKeys.REDIRECT, redirect);
-
-		sendRedirect(actionRequest, actionResponse);
+		actionRequest.setAttribute(
+			WebKeys.REDIRECT, siteAdministrationURL.toString());
 	}
 
 	public void editGroupAssignments(
@@ -328,6 +301,12 @@ public class SiteAdminPortlet extends MVCPortlet {
 			RenderRequest renderRequest, RenderResponse renderResponse)
 		throws IOException, PortletException {
 
+		PanelCategoryHelper panelCategoryHelper = new PanelCategoryHelper(
+			_panelAppRegistry, _panelCategoryRegistry);
+
+		renderRequest.setAttribute(
+			ApplicationListWebKeys.PANEL_CATEGORY_HELPER, panelCategoryHelper);
+
 		if (SessionErrors.contains(
 				renderRequest, NoSuchBackgroundTaskException.class.getName()) ||
 			SessionErrors.contains(
@@ -384,33 +363,6 @@ public class SiteAdminPortlet extends MVCPortlet {
 		}
 
 		return refererGroupId;
-	}
-
-	protected long getRefererPlid(
-		Group liveGroup, long scopeGroupId, String redirect) {
-
-		long refererPlid = GetterUtil.getLong(
-			HttpUtil.getParameter(redirect, "refererPlid", false));
-
-		if ((refererPlid > 0) && liveGroup.hasStagingGroup() &&
-			(scopeGroupId != liveGroup.getGroupId())) {
-
-			Layout firstLayout = LayoutLocalServiceUtil.fetchFirstLayout(
-				liveGroup.getGroupId(), false,
-				LayoutConstants.DEFAULT_PARENT_LAYOUT_ID);
-
-			if (firstLayout == null) {
-				firstLayout = LayoutLocalServiceUtil.fetchFirstLayout(
-					liveGroup.getGroupId(), true,
-					LayoutConstants.DEFAULT_PARENT_LAYOUT_ID);
-			}
-
-			if (firstLayout != null) {
-				return firstLayout.getPlid();
-			}
-		}
-
-		return LayoutConstants.DEFAULT_PLID;
 	}
 
 	protected List<Role> getRoles(PortletRequest portletRequest)
@@ -482,6 +434,18 @@ public class SiteAdminPortlet extends MVCPortlet {
 		}
 
 		return false;
+	}
+
+	@Reference(unbind = "-")
+	protected void setPanelAppRegistry(PanelAppRegistry panelAppRegistry) {
+		_panelAppRegistry = panelAppRegistry;
+	}
+
+	@Reference(unbind = "-")
+	protected void setPanelCategoryRegistry(
+		PanelCategoryRegistry panelCategoryRegistry) {
+
+		_panelCategoryRegistry = panelCategoryRegistry;
 	}
 
 	@Reference(unbind = "-")
@@ -847,21 +811,17 @@ public class SiteAdminPortlet extends MVCPortlet {
 			StagingUtil.updateStaging(actionRequest, liveGroup);
 		}
 
-		boolean forceDisable = ParamUtil.getBoolean(
-			actionRequest, "forceDisable");
-
-		if (forceDisable) {
-			GroupLocalServiceUtil.disableStaging(liveGroupId);
-		}
-
 		return liveGroup;
 	}
 
 	private static final int _LAYOUT_SET_VISIBILITY_PRIVATE = 1;
 
-	private final TransactionAttribute _transactionAttribute =
-		TransactionAttributeBuilder.build(
+	private static final TransactionAttribute _transactionAttribute =
+		TransactionAttribute.Factory.create(
 			Propagation.REQUIRED, new Class<?>[] {Exception.class});
+
+	private PanelAppRegistry _panelAppRegistry;
+	private PanelCategoryRegistry _panelCategoryRegistry;
 
 	private class GroupCallable implements Callable<Group> {
 

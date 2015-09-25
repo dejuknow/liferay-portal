@@ -30,17 +30,12 @@ import org.osgi.service.component.annotations.Reference;
 	immediate = true,
 	property = {
 		"panel.category.key=" + PanelCategoryKeys.SITE_ADMINISTRATION_CONFIGURATION,
-		"service.ranking:Integer=300"
+		"service.ranking:Integer=200"
 	},
 	service = PanelApp.class
 )
 public class PortletDisplayTemplatePanelApp
 	extends BaseControlPanelEntryPanelApp {
-
-	@Override
-	public String getParentCategoryKey() {
-		return PanelCategoryKeys.SITE_ADMINISTRATION_CONFIGURATION;
-	}
 
 	@Override
 	public String getPortletId() {
@@ -51,7 +46,7 @@ public class PortletDisplayTemplatePanelApp
 	protected void setPortletLocalService(
 		PortletLocalService portletLocalService) {
 
-		_portletLocalService = portletLocalService;
+		this.portletLocalService = portletLocalService;
 	}
 
 }

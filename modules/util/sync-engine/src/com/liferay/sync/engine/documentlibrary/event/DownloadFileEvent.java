@@ -22,8 +22,15 @@ import com.liferay.sync.engine.model.SyncAccount;
 import com.liferay.sync.engine.model.SyncFile;
 import com.liferay.sync.engine.service.SyncAccountService;
 import com.liferay.sync.engine.service.SyncFileService;
+import com.liferay.sync.engine.util.FileUtil;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import java.util.Map;
+
+import org.apache.http.client.methods.HttpGet;
 
 /**
  * @author Shinn Lok
@@ -47,6 +54,10 @@ public class DownloadFileEvent extends BaseEvent {
 	protected void processRequest() throws Exception {
 		SyncFile syncFile = (SyncFile)getParameterValue("syncFile");
 
+		Path filePath = Paths.get(syncFile.getFilePathName());
+
+		syncFile.setPreviousModifiedTime(
+			FileUtil.getLastModifiedTime(filePath));
 		syncFile.setState(SyncFile.STATE_IN_PROGRESS);
 		syncFile.setUiEvent(SyncFile.UI_EVENT_DOWNLOADING);
 
@@ -74,7 +85,7 @@ public class DownloadFileEvent extends BaseEvent {
 		sb.append("/");
 		sb.append(syncFile.getTypeUuid());
 
-		if ((Boolean)getParameterValue("patch")) {
+		if ((boolean)getParameterValue("patch")) {
 			sb.append("?patch=true&sourceVersionId=");
 			sb.append(getParameterValue("sourceVersionId"));
 			sb.append("&targetVersionId=");
@@ -83,9 +94,20 @@ public class DownloadFileEvent extends BaseEvent {
 		else {
 			sb.append("?version=");
 			sb.append(syncFile.getVersion());
+			sb.append("&versionId=");
+			sb.append(syncFile.getVersionId());
 		}
 
-		executeAsynchronousGet(sb.toString());
+		HttpGet httpGet = new HttpGet(sb.toString());
+
+		Path tempFilePath = FileUtil.getTempFilePath(syncFile);
+
+		if (Files.exists(tempFilePath)) {
+			httpGet.setHeader(
+				"Range", "bytes=" + Files.size(tempFilePath) + "-");
+		}
+
+		executeAsynchronousGet(httpGet);
 	}
 
 	private static final String _URL_PATH = "/sync-web/download";

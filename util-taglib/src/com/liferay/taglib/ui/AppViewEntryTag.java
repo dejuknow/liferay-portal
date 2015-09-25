@@ -16,6 +16,7 @@ package com.liferay.taglib.ui;
 
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.taglib.util.IncludeTag;
 
 import java.util.Date;
@@ -122,6 +123,10 @@ public class AppViewEntryTag extends IncludeTag {
 		_locked = locked;
 	}
 
+	public void setMarkupView(String markupView) {
+		_markupView = markupView;
+	}
+
 	public void setModifiedDate(Date modifiedDate) {
 		_modifiedDate = modifiedDate;
 	}
@@ -193,7 +198,7 @@ public class AppViewEntryTag extends IncludeTag {
 		_data = null;
 		_description = null;
 		_displayDate = null;
-		_displayStyle = null;
+		_displayStyle = "descriptive";
 		_expirationDate = null;
 		_folder = false;
 		_groupId = 0;
@@ -215,6 +220,7 @@ public class AppViewEntryTag extends IncludeTag {
 		_title = null;
 		_url = null;
 		_version = null;
+		_markupView = null;
 	}
 
 	protected ServletContext getActionJspServletContext() {
@@ -227,7 +233,12 @@ public class AppViewEntryTag extends IncludeTag {
 
 	@Override
 	protected String getPage() {
-		return _PAGE;
+		if (Validator.isNotNull(_markupView)) {
+			return "/html/taglib/ui/app_view_entry/" + _markupView + "/" +
+				_displayStyle + ".jsp";
+		}
+
+		return "/html/taglib/ui/app_view_entry/" + _displayStyle + ".jsp";
 	}
 
 	@Override
@@ -304,9 +315,6 @@ public class AppViewEntryTag extends IncludeTag {
 
 	private static final boolean _CLEAN_UP_SET_ATTRIBUTES = true;
 
-	private static final String _PAGE =
-		"/html/taglib/ui/app_view_entry/page.jsp";
-
 	private String _actionJsp;
 	private ServletContext _actionJspServletContext;
 	private String _assetCategoryClassName;
@@ -320,7 +328,7 @@ public class AppViewEntryTag extends IncludeTag {
 	private Map<String, Object> _data;
 	private String _description;
 	private Date _displayDate;
-	private String _displayStyle;
+	private String _displayStyle = "descriptive";
 	private Date _expirationDate;
 	private boolean _folder;
 	private long _groupId;
@@ -328,6 +336,7 @@ public class AppViewEntryTag extends IncludeTag {
 	private String _latestApprovedVersion;
 	private String _latestApprovedVersionAuthor;
 	private boolean _locked;
+	private String _markupView;
 	private Date _modifiedDate;
 	private Date _reviewDate;
 	private String _rowCheckerId;

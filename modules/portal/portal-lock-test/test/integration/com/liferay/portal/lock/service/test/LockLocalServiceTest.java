@@ -67,6 +67,15 @@ public class LockLocalServiceTest {
 	@ExpectedLogs(
 		expectedLogs = {
 			@ExpectedLog(
+				dbType = DB.TYPE_DB2, expectedLog = "Error for batch element",
+				expectedType = ExpectedType.PREFIX
+			),
+			@ExpectedLog(
+				dbType = DB.TYPE_DB2,
+				expectedLog = "[jcc][t4][102][10040][4.16.53] Batch failure.",
+				expectedType = ExpectedType.PREFIX
+			),
+			@ExpectedLog(
 				dbType = DB.TYPE_MYSQL,
 				expectedLog =
 					"Deadlock found when trying to get lock; try restarting " +
@@ -87,6 +96,11 @@ public class LockLocalServiceTest {
 				dbType = DB.TYPE_POSTGRESQL,
 				expectedLog =
 					"ERROR: duplicate key value violates unique constraint ",
+				expectedType = ExpectedType.PREFIX
+			),
+			@ExpectedLog(
+				dbType = DB.TYPE_SYBASE,
+				expectedLog = "Attempt to insert duplicate key row",
 				expectedType = ExpectedType.PREFIX
 			)
 		},

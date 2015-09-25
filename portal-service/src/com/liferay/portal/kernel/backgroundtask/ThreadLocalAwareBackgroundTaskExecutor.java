@@ -14,8 +14,6 @@
 
 package com.liferay.portal.kernel.backgroundtask;
 
-import com.liferay.portal.model.BackgroundTask;
-
 import java.io.Serializable;
 
 import java.util.Map;
@@ -33,6 +31,15 @@ public class ThreadLocalAwareBackgroundTaskExecutor
 		super(backgroundTaskExecutor);
 
 		_backgroundTaskThreadLocalManager = backgroundTaskThreadLocalManager;
+	}
+
+	@Override
+	public BackgroundTaskExecutor clone() {
+		BackgroundTaskExecutor backgroundTaskExecutor =
+			new ThreadLocalAwareBackgroundTaskExecutor(
+				getBackgroundTaskExecutor(), _backgroundTaskThreadLocalManager);
+
+		return backgroundTaskExecutor;
 	}
 
 	@Override

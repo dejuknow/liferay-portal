@@ -27,7 +27,6 @@ import com.liferay.portal.kernel.search.QueryConfig;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.social.SocialActivityManagerUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.InstancePool;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -422,19 +421,56 @@ public class AssetEntryLocalServiceImpl extends AssetEntryLocalServiceBaseImpl {
 	@Override
 	public Hits search(
 		long companyId, long[] groupIds, long userId, String className,
+		long classTypeId, String keywords, boolean showNonindexable, int status,
+		int start, int end) {
+
+		return search(
+			companyId, groupIds, userId, className, classTypeId, keywords,
+			keywords, keywords, null, null, showNonindexable,
+			new int[] {status}, false, start, end);
+	}
+
+	@Override
+	public Hits search(
+		long companyId, long[] groupIds, long userId, String className,
+		long classTypeId, String keywords, boolean showNonindexable,
+		int[] statuses, int start, int end) {
+
+		return search(
+			companyId, groupIds, userId, className, classTypeId, keywords,
+			keywords, keywords, null, null, showNonindexable, statuses, false,
+			start, end);
+	}
+
+	@Override
+	public Hits search(
+		long companyId, long[] groupIds, long userId, String className,
 		long classTypeId, String keywords, int status, int start, int end) {
 
 		return search(
 			companyId, groupIds, userId, className, classTypeId, keywords,
-			keywords, keywords, null, null, status, false, start, end);
+			false, status, start, end);
 	}
 
 	@Override
 	public Hits search(
 		long companyId, long[] groupIds, long userId, String className,
 		long classTypeId, String userName, String title, String description,
-		String assetCategoryIds, String assetTagNames, int status,
-		boolean andSearch, int start, int end) {
+		String assetCategoryIds, String assetTagNames, boolean showNonindexable,
+		int status, boolean andSearch, int start, int end) {
+
+		return search(
+			companyId, groupIds, userId, className, classTypeId, userName,
+			title, description, assetCategoryIds, assetTagNames,
+			showNonindexable, new int[] {status}, andSearch, start, end);
+	}
+
+	@Override
+	public Hits search(
+		long companyId, long[] groupIds, long userId, String className,
+		long classTypeId, String userName, String title, String description,
+		String assetCategoryIds, String assetTagNames, boolean showNonindexable,
+		int[] statuses, boolean andSearch, int start, int end) {
 
 		try {
 			Indexer<?> indexer = AssetSearcher.getInstance();
@@ -456,10 +492,14 @@ public class AssetEntryLocalServiceImpl extends AssetEntryLocalServiceBaseImpl {
 			searchContext.setAttribute(Field.TITLE, title);
 			searchContext.setAttribute(Field.USER_NAME, userName);
 			searchContext.setAttribute("paginationType", "regular");
-			searchContext.setAttribute("status", status);
+			searchContext.setAttribute("status", statuses);
 
 			if (classTypeId > 0) {
 				searchContext.setClassTypeIds(new long[] {classTypeId});
+			}
+
+			if (showNonindexable) {
+				searchContext.setAttribute("showNonindexable", Boolean.TRUE);
 			}
 
 			searchContext.setCompanyId(companyId);
@@ -480,6 +520,19 @@ public class AssetEntryLocalServiceImpl extends AssetEntryLocalServiceBaseImpl {
 		catch (Exception e) {
 			throw new SystemException(e);
 		}
+	}
+
+	@Override
+	public Hits search(
+		long companyId, long[] groupIds, long userId, String className,
+		long classTypeId, String userName, String title, String description,
+		String assetCategoryIds, String assetTagNames, int status,
+		boolean andSearch, int start, int end) {
+
+		return search(
+			companyId, groupIds, userId, className, classTypeId, userName,
+			title, description, assetCategoryIds, assetTagNames, false,
+			new int[] {status}, andSearch, start, end);
 	}
 
 	/**
@@ -561,7 +614,7 @@ public class AssetEntryLocalServiceImpl extends AssetEntryLocalServiceBaseImpl {
 			long[] categoryIds, String[] tagNames, boolean visible,
 			Date startDate, Date endDate, Date expirationDate, String mimeType,
 			String title, String description, String summary, String url,
-			String layoutUuid, int height, int width, Integer priority)
+			String layoutUuid, int height, int width, Double priority)
 		throws PortalException {
 
 		// Entry
@@ -624,7 +677,7 @@ public class AssetEntryLocalServiceImpl extends AssetEntryLocalServiceBaseImpl {
 		entry.setModifiedDate(modifiedDate);
 		entry.setClassTypeId(classTypeId);
 
-		AssetRendererFactory assetRendererFactory =
+		AssetRendererFactory<?> assetRendererFactory =
 			AssetRendererFactoryRegistryUtil.
 				getAssetRendererFactoryByClassNameId(classNameId);
 
@@ -646,7 +699,7 @@ public class AssetEntryLocalServiceImpl extends AssetEntryLocalServiceBaseImpl {
 		entry.setWidth(width);
 
 		if (priority != null) {
-			entry.setPriority(priority.intValue());
+			entry.setPriority(priority.doubleValue());
 		}
 
 		// Categories
@@ -726,7 +779,7 @@ public class AssetEntryLocalServiceImpl extends AssetEntryLocalServiceBaseImpl {
 	 * @deprecated As of 7.0.0, replaced by {@link #updateEntry(long, long,
 	 *             Date, Date, String, long, String, long, long[], String[],
 	 *             boolean, Date, Date, Date, String, String, String, String,
-	 *             String, String, int, int, Integer)}
+	 *             String, String, int, int, Double)}
 	 */
 	@Deprecated
 	@Override
@@ -740,11 +793,17 @@ public class AssetEntryLocalServiceImpl extends AssetEntryLocalServiceBaseImpl {
 			boolean sync)
 		throws PortalException {
 
+		Double priorityDouble = null;
+
+		if (priority != null) {
+			priorityDouble = priority.doubleValue();
+		}
+
 		return updateEntry(
 			userId, groupId, createDate, modifiedDate, className, classPK,
 			classUuid, classTypeId, categoryIds, tagNames, visible, startDate,
 			endDate, expirationDate, mimeType, title, description, summary, url,
-			layoutUuid, height, width, priority);
+			layoutUuid, height, width, priorityDouble);
 	}
 
 	@Override
@@ -767,13 +826,13 @@ public class AssetEntryLocalServiceImpl extends AssetEntryLocalServiceBaseImpl {
 				entry.getExpirationDate(), entry.getMimeType(),
 				entry.getTitle(), entry.getDescription(), entry.getSummary(),
 				entry.getUrl(), entry.getLayoutUuid(), entry.getHeight(),
-				entry.getWidth(), GetterUtil.getInteger(entry.getPriority()));
+				entry.getWidth(), entry.getPriority());
 		}
 
 		return updateEntry(
 			userId, groupId, null, null, className, classPK, null, 0,
 			categoryIds, tagNames, true, null, null, null, null, null, null,
-			null, null, null, 0, 0, null);
+			null, null, null, 0, 0, (Double)null);
 	}
 
 	/**
@@ -818,11 +877,17 @@ public class AssetEntryLocalServiceImpl extends AssetEntryLocalServiceBaseImpl {
 			int height, int width, Integer priority, boolean sync)
 		throws PortalException {
 
+		Double priorityDouble = null;
+
+		if (priority != null) {
+			priorityDouble = priority.doubleValue();
+		}
+
 		return updateEntry(
 			userId, groupId, null, null, className, classPK, classUuid,
 			classTypeId, categoryIds, tagNames, visible, startDate, endDate,
 			expirationDate, mimeType, title, description, summary, url,
-			layoutUuid, height, width, priority);
+			layoutUuid, height, width, priorityDouble);
 	}
 
 	@Override
@@ -835,7 +900,7 @@ public class AssetEntryLocalServiceImpl extends AssetEntryLocalServiceBaseImpl {
 		AssetEntry entry = assetEntryPersistence.findByC_C(
 			classNameId, classPK);
 
-		AssetRendererFactory assetRendererFactory =
+		AssetRendererFactory<?> assetRendererFactory =
 			AssetRendererFactoryRegistryUtil.
 				getAssetRendererFactoryByClassNameId(classNameId);
 
@@ -857,7 +922,7 @@ public class AssetEntryLocalServiceImpl extends AssetEntryLocalServiceBaseImpl {
 		AssetEntry entry = assetEntryPersistence.findByC_C(
 			classNameId, classPK);
 
-		AssetRendererFactory assetRendererFactory =
+		AssetRendererFactory<?> assetRendererFactory =
 			AssetRendererFactoryRegistryUtil.
 				getAssetRendererFactoryByClassNameId(classNameId);
 
@@ -1005,14 +1070,14 @@ public class AssetEntryLocalServiceImpl extends AssetEntryLocalServiceBaseImpl {
 			return new long[] {classNameLocalService.getClassNameId(className)};
 		}
 
-		List<AssetRendererFactory> rendererFactories =
+		List<AssetRendererFactory<?>> rendererFactories =
 			AssetRendererFactoryRegistryUtil.getAssetRendererFactories(
 				companyId);
 
 		long[] classNameIds = new long[rendererFactories.size()];
 
 		for (int i = 0; i < rendererFactories.size(); i++) {
-			AssetRendererFactory rendererFactory = rendererFactories.get(i);
+			AssetRendererFactory<?> rendererFactory = rendererFactories.get(i);
 
 			classNameIds[i] = classNameLocalService.getClassNameId(
 				rendererFactory.getClassName());

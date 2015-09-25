@@ -97,11 +97,11 @@ public class ReleasePersistenceImpl extends BasePersistenceImpl<Release>
 			"countByServletContextName", new String[] { String.class.getName() });
 
 	/**
-	 * Returns the release where servletContextName = &#63; or throws a {@link com.liferay.portal.NoSuchReleaseException} if it could not be found.
+	 * Returns the release where servletContextName = &#63; or throws a {@link NoSuchReleaseException} if it could not be found.
 	 *
 	 * @param servletContextName the servlet context name
 	 * @return the matching release
-	 * @throws com.liferay.portal.NoSuchReleaseException if a matching release could not be found
+	 * @throws NoSuchReleaseException if a matching release could not be found
 	 */
 	@Override
 	public Release findByServletContextName(String servletContextName)
@@ -398,7 +398,7 @@ public class ReleasePersistenceImpl extends BasePersistenceImpl<Release>
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 
-		clearUniqueFindersCache(release);
+		clearUniqueFindersCache((ReleaseModelImpl)release);
 	}
 
 	@Override
@@ -410,38 +410,39 @@ public class ReleasePersistenceImpl extends BasePersistenceImpl<Release>
 			EntityCacheUtil.removeResult(ReleaseModelImpl.ENTITY_CACHE_ENABLED,
 				ReleaseImpl.class, release.getPrimaryKey());
 
-			clearUniqueFindersCache(release);
+			clearUniqueFindersCache((ReleaseModelImpl)release);
 		}
 	}
 
-	protected void cacheUniqueFindersCache(Release release, boolean isNew) {
+	protected void cacheUniqueFindersCache(ReleaseModelImpl releaseModelImpl,
+		boolean isNew) {
 		if (isNew) {
-			Object[] args = new Object[] { release.getServletContextName() };
+			Object[] args = new Object[] {
+					releaseModelImpl.getServletContextName()
+				};
 
 			FinderCacheUtil.putResult(FINDER_PATH_COUNT_BY_SERVLETCONTEXTNAME,
 				args, Long.valueOf(1));
 			FinderCacheUtil.putResult(FINDER_PATH_FETCH_BY_SERVLETCONTEXTNAME,
-				args, release);
+				args, releaseModelImpl);
 		}
 		else {
-			ReleaseModelImpl releaseModelImpl = (ReleaseModelImpl)release;
-
 			if ((releaseModelImpl.getColumnBitmask() &
 					FINDER_PATH_FETCH_BY_SERVLETCONTEXTNAME.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] { release.getServletContextName() };
+				Object[] args = new Object[] {
+						releaseModelImpl.getServletContextName()
+					};
 
 				FinderCacheUtil.putResult(FINDER_PATH_COUNT_BY_SERVLETCONTEXTNAME,
 					args, Long.valueOf(1));
 				FinderCacheUtil.putResult(FINDER_PATH_FETCH_BY_SERVLETCONTEXTNAME,
-					args, release);
+					args, releaseModelImpl);
 			}
 		}
 	}
 
-	protected void clearUniqueFindersCache(Release release) {
-		ReleaseModelImpl releaseModelImpl = (ReleaseModelImpl)release;
-
-		Object[] args = new Object[] { release.getServletContextName() };
+	protected void clearUniqueFindersCache(ReleaseModelImpl releaseModelImpl) {
+		Object[] args = new Object[] { releaseModelImpl.getServletContextName() };
 
 		FinderCacheUtil.removeResult(FINDER_PATH_COUNT_BY_SERVLETCONTEXTNAME,
 			args);
@@ -480,7 +481,7 @@ public class ReleasePersistenceImpl extends BasePersistenceImpl<Release>
 	 *
 	 * @param releaseId the primary key of the release
 	 * @return the release that was removed
-	 * @throws com.liferay.portal.NoSuchReleaseException if a release with the primary key could not be found
+	 * @throws NoSuchReleaseException if a release with the primary key could not be found
 	 */
 	@Override
 	public Release remove(long releaseId) throws NoSuchReleaseException {
@@ -492,7 +493,7 @@ public class ReleasePersistenceImpl extends BasePersistenceImpl<Release>
 	 *
 	 * @param primaryKey the primary key of the release
 	 * @return the release that was removed
-	 * @throws com.liferay.portal.NoSuchReleaseException if a release with the primary key could not be found
+	 * @throws NoSuchReleaseException if a release with the primary key could not be found
 	 */
 	@Override
 	public Release remove(Serializable primaryKey)
@@ -559,7 +560,7 @@ public class ReleasePersistenceImpl extends BasePersistenceImpl<Release>
 	}
 
 	@Override
-	public Release updateImpl(com.liferay.portal.model.Release release) {
+	public Release updateImpl(Release release) {
 		release = toUnwrappedModel(release);
 
 		boolean isNew = release.isNew();
@@ -599,7 +600,7 @@ public class ReleasePersistenceImpl extends BasePersistenceImpl<Release>
 				release.setNew(false);
 			}
 			else {
-				session.merge(release);
+				release = (Release)session.merge(release);
 			}
 		}
 		catch (Exception e) {
@@ -618,8 +619,8 @@ public class ReleasePersistenceImpl extends BasePersistenceImpl<Release>
 		EntityCacheUtil.putResult(ReleaseModelImpl.ENTITY_CACHE_ENABLED,
 			ReleaseImpl.class, release.getPrimaryKey(), release, false);
 
-		clearUniqueFindersCache(release);
-		cacheUniqueFindersCache(release, isNew);
+		clearUniqueFindersCache(releaseModelImpl);
+		cacheUniqueFindersCache(releaseModelImpl, isNew);
 
 		release.resetOriginalValues();
 
@@ -641,6 +642,7 @@ public class ReleasePersistenceImpl extends BasePersistenceImpl<Release>
 		releaseImpl.setCreateDate(release.getCreateDate());
 		releaseImpl.setModifiedDate(release.getModifiedDate());
 		releaseImpl.setServletContextName(release.getServletContextName());
+		releaseImpl.setSchemaVersion(release.getSchemaVersion());
 		releaseImpl.setBuildNumber(release.getBuildNumber());
 		releaseImpl.setBuildDate(release.getBuildDate());
 		releaseImpl.setVerified(release.isVerified());
@@ -655,7 +657,7 @@ public class ReleasePersistenceImpl extends BasePersistenceImpl<Release>
 	 *
 	 * @param primaryKey the primary key of the release
 	 * @return the release
-	 * @throws com.liferay.portal.NoSuchReleaseException if a release with the primary key could not be found
+	 * @throws NoSuchReleaseException if a release with the primary key could not be found
 	 */
 	@Override
 	public Release findByPrimaryKey(Serializable primaryKey)
@@ -675,11 +677,11 @@ public class ReleasePersistenceImpl extends BasePersistenceImpl<Release>
 	}
 
 	/**
-	 * Returns the release with the primary key or throws a {@link com.liferay.portal.NoSuchReleaseException} if it could not be found.
+	 * Returns the release with the primary key or throws a {@link NoSuchReleaseException} if it could not be found.
 	 *
 	 * @param releaseId the primary key of the release
 	 * @return the release
-	 * @throws com.liferay.portal.NoSuchReleaseException if a release with the primary key could not be found
+	 * @throws NoSuchReleaseException if a release with the primary key could not be found
 	 */
 	@Override
 	public Release findByPrimaryKey(long releaseId)
@@ -849,7 +851,7 @@ public class ReleasePersistenceImpl extends BasePersistenceImpl<Release>
 	 * Returns a range of all the releases.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.model.impl.ReleaseModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ReleaseModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of releases
@@ -865,7 +867,7 @@ public class ReleasePersistenceImpl extends BasePersistenceImpl<Release>
 	 * Returns an ordered range of all the releases.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.model.impl.ReleaseModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ReleaseModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of releases
@@ -1003,7 +1005,7 @@ public class ReleasePersistenceImpl extends BasePersistenceImpl<Release>
 	}
 
 	@Override
-	protected Set<String> getBadColumnNames() {
+	public Set<String> getBadColumnNames() {
 		return _badColumnNames;
 	}
 

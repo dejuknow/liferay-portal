@@ -22,7 +22,6 @@ import com.liferay.portal.kernel.deploy.hot.HotDeployEvent;
 import com.liferay.portal.kernel.deploy.hot.HotDeployException;
 import com.liferay.portal.kernel.javadoc.JavadocManagerUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
-import com.liferay.portal.kernel.language.UTF8Control;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.PortletBag;
@@ -38,6 +37,7 @@ import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.InfrastructureUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.ServerDetector;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -59,8 +59,12 @@ import com.liferay.portlet.PortletContextBag;
 import com.liferay.portlet.PortletContextBagPool;
 import com.liferay.portlet.PortletFilterFactory;
 import com.liferay.portlet.PortletInstanceFactoryUtil;
-import com.liferay.portlet.PortletResourceBundles;
 import com.liferay.portlet.PortletURLListenerFactory;
+import com.liferay.registry.Registry;
+import com.liferay.registry.RegistryUtil;
+import com.liferay.registry.ServiceRegistration;
+import com.liferay.registry.collections.ServiceRegistrationMap;
+import com.liferay.registry.collections.ServiceRegistrationMapImpl;
 import com.liferay.util.bridges.php.PHPPortlet;
 
 import java.util.HashMap;
@@ -168,6 +172,32 @@ public class PortletHotDeployListener extends BaseHotDeployListener {
 		}
 	}
 
+	protected void checkResourceBundles(
+		ClassLoader classLoader, Portlet portlet) {
+
+		if (Validator.isNull(portlet.getResourceBundle())) {
+			return;
+		}
+
+		Registry registry = RegistryUtil.getRegistry();
+
+		for (Locale locale : LanguageUtil.getAvailableLocales()) {
+			ResourceBundle resourceBundle = ResourceBundleUtil.getBundle(
+				portlet.getResourceBundle(), locale, classLoader);
+
+			Map<String, Object> properties = new HashMap<>();
+
+			properties.put("language.id", LocaleUtil.toLanguageId(locale));
+			properties.put("javax.portlet.name", portlet.getPortletId());
+
+			ServiceRegistration<ResourceBundle> serviceRegistration =
+				registry.registerService(
+					ResourceBundle.class, resourceBundle, properties);
+
+			_serviceRegistrations.put(resourceBundle, serviceRegistration);
+		}
+	}
+
 	protected void destroyPortlet(Portlet portlet, Set<String> portletIds)
 		throws Exception {
 
@@ -189,6 +219,15 @@ public class PortletHotDeployListener extends BaseHotDeployListener {
 		PortletInstanceFactoryUtil.destroy(portlet);
 
 		portletIds.add(portlet.getPortletId());
+
+		for (ResourceBundle resourceBundle : _serviceRegistrations.keySet()) {
+			ServiceRegistration<ResourceBundle> serviceRegistration =
+				_serviceRegistrations.remove(resourceBundle);
+
+			if (serviceRegistration != null) {
+				serviceRegistration.unregister();
+			}
+		}
 	}
 
 	protected void doInvokeDeploy(HotDeployEvent hotDeployEvent)
@@ -322,6 +361,8 @@ public class PortletHotDeployListener extends BaseHotDeployListener {
 			ResourceActionLocalServiceUtil.checkResourceActions(
 				portlet.getPortletId(), portletActions);
 
+			checkResourceBundles(classLoader, portlet);
+
 			for (String modelName : modelNames) {
 				List<String> modelActions =
 					ResourceActionsUtil.getModelResourceActions(modelName);
@@ -415,7 +456,6 @@ public class PortletHotDeployListener extends BaseHotDeployListener {
 		}
 
 		PortletContextBagPool.remove(servletContextName);
-		PortletResourceBundles.remove(servletContextName);
 
 		unbindDataSource(servletContextName);
 
@@ -535,21 +575,6 @@ public class PortletHotDeployListener extends BaseHotDeployListener {
 			return;
 		}
 
-		String languageBundleName = portletProperties.getProperty(
-			"language.bundle");
-
-		if (Validator.isNotNull(languageBundleName)) {
-			for (Locale locale : LanguageUtil.getAvailableLocales()) {
-				ResourceBundle resourceBundle = ResourceBundle.getBundle(
-					languageBundleName, locale, classLoader,
-					UTF8Control.INSTANCE);
-
-				PortletResourceBundles.put(
-					servletContextName, LocaleUtil.toLanguageId(locale),
-					resourceBundle);
-			}
-		}
-
 		String[] resourceActionConfigs = StringUtil.split(
 			portletProperties.getProperty(PropsKeys.RESOURCE_ACTIONS_CONFIGS));
 
@@ -610,5 +635,8 @@ public class PortletHotDeployListener extends BaseHotDeployListener {
 	private static final Map<String, Boolean> _dataSourceBindStates =
 		new HashMap<>();
 	private static final Map<String, List<Portlet>> _portlets = new HashMap<>();
+
+	private final ServiceRegistrationMap<ResourceBundle>
+		_serviceRegistrations = new ServiceRegistrationMapImpl<>();
 
 }

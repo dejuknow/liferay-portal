@@ -23,12 +23,12 @@ boolean showBackURL = ParamUtil.getBoolean(request, "showBackURL", true);
 
 String portletResourceNamespace = ParamUtil.getString(request, "portletResourceNamespace", renderResponse.getNamespace());
 
-DDMStructure structure = (DDMStructure)request.getAttribute(WebKeys.DYNAMIC_DATA_MAPPING_STRUCTURE);
+DDMStructure structure = (DDMStructure)request.getAttribute(DDMWebKeys.DYNAMIC_DATA_MAPPING_STRUCTURE);
 
 DDMStructureVersion structureVersion = null;
 
 if (structure != null) {
-	structureVersion = structure.getStructureVersion();
+	structureVersion = structure.getLatestStructureVersion();
 }
 
 long groupId = BeanParamUtil.getLong(structure, request, "groupId", scopeGroupId);
@@ -49,9 +49,23 @@ long classNameId = PortalUtil.getClassNameId(DDMStructure.class);
 long classPK = BeanParamUtil.getLong(structure, request, "structureId");
 String structureKey = BeanParamUtil.getString(structure, request, "structureKey");
 
-String script = BeanParamUtil.getString(structure, request, "definition");
+String script = null;
 
-JSONArray fieldsJSONArray = DDMUtil.getDDMFormFieldsJSONArray(structure, script);
+if (structure != null) {
+	script = BeanParamUtil.getString(structureVersion, request, "definition");
+}
+else {
+	script = BeanParamUtil.getString(structure, request, "definition");
+}
+
+JSONArray fieldsJSONArray = null;
+
+if (structure != null) {
+	fieldsJSONArray = DDMUtil.getDDMFormFieldsJSONArray(structureVersion, script);
+}
+else {
+	fieldsJSONArray = DDMUtil.getDDMFormFieldsJSONArray(structure, script);
+}
 
 String fieldsJSONArrayString = StringPool.BLANK;
 
@@ -124,7 +138,7 @@ if (Validator.isNotNull(requestUpdateStructureURL)) {
 
 	<aui:model-context bean="<%= structure %>" model="<%= DDMStructure.class %>" />
 
-	<c:if test="<%= structureVersion != null %>">
+	<c:if test="<%= (structureVersion != null) && ddmDisplay.isVersioningEnabled() %>">
 		<aui:workflow-status model="<%= DDMStructure.class %>" status="<%= structureVersion.getStatus() %>" version="<%= structureVersion.getVersion() %>" />
 
 		<div class="structure-history-toolbar" id="<portlet:namespace />structureHistoryToolbar"></div>
@@ -204,7 +218,7 @@ if (Validator.isNotNull(requestUpdateStructureURL)) {
 					</c:choose>
 				</aui:row>
 
-				<c:if test="<%= !PropsValues.DYNAMIC_DATA_MAPPING_STRUCTURE_FORCE_AUTOGENERATE_KEY %>">
+				<c:if test="<%= !ddmServiceConfiguration.autogenerateStructureKey() %>">
 					<aui:input disabled="<%= (structure != null) ? true : false %>" label='<%= LanguageUtil.format(request, "x-key", ddmDisplay.getStructureName(locale), false) %>' name="structureKey" />
 				</c:if>
 
@@ -241,7 +255,9 @@ if (Validator.isNotNull(requestUpdateStructureURL)) {
 <aui:button-row>
 	<aui:button onClick='<%= renderResponse.getNamespace() + "saveStructure(false);" %>' primary="<%= true %>" value='<%= LanguageUtil.get(request, "save") %>' />
 
-	<aui:button onClick='<%= renderResponse.getNamespace() + "saveStructure(true);" %>' value='<%= LanguageUtil.get(request, "save-draft") %>' />
+	<c:if test="<%= ddmDisplay.isVersioningEnabled() %>">
+		<aui:button onClick='<%= renderResponse.getNamespace() + "saveStructure(true);" %>' value='<%= LanguageUtil.get(request, "save-draft") %>' />
+	</c:if>
 
 	<aui:button href="<%= redirect %>" type="cancel" />
 </aui:button-row>
@@ -250,7 +266,7 @@ if (Validator.isNotNull(requestUpdateStructureURL)) {
 	function <portlet:namespace />openParentStructureSelector() {
 		Liferay.Util.openDDMPortlet(
 			{
-				basePortletURL: '<%= PortletURLFactoryUtil.create(request, PortletKeys.DYNAMIC_DATA_MAPPING, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>',
+				basePortletURL: '<%= PortletURLFactoryUtil.create(request, DDMPortletKeys.DYNAMIC_DATA_MAPPING, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>',
 				classPK: <%= (structure != null) ? structure.getPrimaryKey() : 0 %>,
 				dialog: {
 					destroyOnHide: true

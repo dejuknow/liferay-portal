@@ -117,7 +117,7 @@ public class UserIdMapperPersistenceImpl extends BasePersistenceImpl<UserIdMappe
 	 * Returns a range of all the user ID mappers where userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.model.impl.UserIdMapperModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link UserIdMapperModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -134,7 +134,7 @@ public class UserIdMapperPersistenceImpl extends BasePersistenceImpl<UserIdMappe
 	 * Returns an ordered range of all the user ID mappers where userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.model.impl.UserIdMapperModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link UserIdMapperModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -247,7 +247,7 @@ public class UserIdMapperPersistenceImpl extends BasePersistenceImpl<UserIdMappe
 	 * @param userId the user ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching user ID mapper
-	 * @throws com.liferay.portal.NoSuchUserIdMapperException if a matching user ID mapper could not be found
+	 * @throws NoSuchUserIdMapperException if a matching user ID mapper could not be found
 	 */
 	@Override
 	public UserIdMapper findByUserId_First(long userId,
@@ -297,7 +297,7 @@ public class UserIdMapperPersistenceImpl extends BasePersistenceImpl<UserIdMappe
 	 * @param userId the user ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching user ID mapper
-	 * @throws com.liferay.portal.NoSuchUserIdMapperException if a matching user ID mapper could not be found
+	 * @throws NoSuchUserIdMapperException if a matching user ID mapper could not be found
 	 */
 	@Override
 	public UserIdMapper findByUserId_Last(long userId,
@@ -354,7 +354,7 @@ public class UserIdMapperPersistenceImpl extends BasePersistenceImpl<UserIdMappe
 	 * @param userId the user ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next user ID mapper
-	 * @throws com.liferay.portal.NoSuchUserIdMapperException if a user ID mapper with the primary key could not be found
+	 * @throws NoSuchUserIdMapperException if a user ID mapper with the primary key could not be found
 	 */
 	@Override
 	public UserIdMapper[] findByUserId_PrevAndNext(long userIdMapperId,
@@ -570,12 +570,12 @@ public class UserIdMapperPersistenceImpl extends BasePersistenceImpl<UserIdMappe
 			new String[] { Long.class.getName(), String.class.getName() });
 
 	/**
-	 * Returns the user ID mapper where userId = &#63; and type = &#63; or throws a {@link com.liferay.portal.NoSuchUserIdMapperException} if it could not be found.
+	 * Returns the user ID mapper where userId = &#63; and type = &#63; or throws a {@link NoSuchUserIdMapperException} if it could not be found.
 	 *
 	 * @param userId the user ID
 	 * @param type the type
 	 * @return the matching user ID mapper
-	 * @throws com.liferay.portal.NoSuchUserIdMapperException if a matching user ID mapper could not be found
+	 * @throws NoSuchUserIdMapperException if a matching user ID mapper could not be found
 	 */
 	@Override
 	public UserIdMapper findByU_T(long userId, String type)
@@ -826,12 +826,12 @@ public class UserIdMapperPersistenceImpl extends BasePersistenceImpl<UserIdMappe
 			new String[] { String.class.getName(), String.class.getName() });
 
 	/**
-	 * Returns the user ID mapper where type = &#63; and externalUserId = &#63; or throws a {@link com.liferay.portal.NoSuchUserIdMapperException} if it could not be found.
+	 * Returns the user ID mapper where type = &#63; and externalUserId = &#63; or throws a {@link NoSuchUserIdMapperException} if it could not be found.
 	 *
 	 * @param type the type
 	 * @param externalUserId the external user ID
 	 * @return the matching user ID mapper
-	 * @throws com.liferay.portal.NoSuchUserIdMapperException if a matching user ID mapper could not be found
+	 * @throws NoSuchUserIdMapperException if a matching user ID mapper could not be found
 	 */
 	@Override
 	public UserIdMapper findByT_E(String type, String externalUserId)
@@ -1180,7 +1180,7 @@ public class UserIdMapperPersistenceImpl extends BasePersistenceImpl<UserIdMappe
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 
-		clearUniqueFindersCache(userIdMapper);
+		clearUniqueFindersCache((UserIdMapperModelImpl)userIdMapper);
 	}
 
 	@Override
@@ -1192,65 +1192,67 @@ public class UserIdMapperPersistenceImpl extends BasePersistenceImpl<UserIdMappe
 			EntityCacheUtil.removeResult(UserIdMapperModelImpl.ENTITY_CACHE_ENABLED,
 				UserIdMapperImpl.class, userIdMapper.getPrimaryKey());
 
-			clearUniqueFindersCache(userIdMapper);
+			clearUniqueFindersCache((UserIdMapperModelImpl)userIdMapper);
 		}
 	}
 
-	protected void cacheUniqueFindersCache(UserIdMapper userIdMapper,
-		boolean isNew) {
+	protected void cacheUniqueFindersCache(
+		UserIdMapperModelImpl userIdMapperModelImpl, boolean isNew) {
 		if (isNew) {
 			Object[] args = new Object[] {
-					userIdMapper.getUserId(), userIdMapper.getType()
+					userIdMapperModelImpl.getUserId(),
+					userIdMapperModelImpl.getType()
 				};
 
 			FinderCacheUtil.putResult(FINDER_PATH_COUNT_BY_U_T, args,
 				Long.valueOf(1));
 			FinderCacheUtil.putResult(FINDER_PATH_FETCH_BY_U_T, args,
-				userIdMapper);
+				userIdMapperModelImpl);
 
 			args = new Object[] {
-					userIdMapper.getType(), userIdMapper.getExternalUserId()
+					userIdMapperModelImpl.getType(),
+					userIdMapperModelImpl.getExternalUserId()
 				};
 
 			FinderCacheUtil.putResult(FINDER_PATH_COUNT_BY_T_E, args,
 				Long.valueOf(1));
 			FinderCacheUtil.putResult(FINDER_PATH_FETCH_BY_T_E, args,
-				userIdMapper);
+				userIdMapperModelImpl);
 		}
 		else {
-			UserIdMapperModelImpl userIdMapperModelImpl = (UserIdMapperModelImpl)userIdMapper;
-
 			if ((userIdMapperModelImpl.getColumnBitmask() &
 					FINDER_PATH_FETCH_BY_U_T.getColumnBitmask()) != 0) {
 				Object[] args = new Object[] {
-						userIdMapper.getUserId(), userIdMapper.getType()
+						userIdMapperModelImpl.getUserId(),
+						userIdMapperModelImpl.getType()
 					};
 
 				FinderCacheUtil.putResult(FINDER_PATH_COUNT_BY_U_T, args,
 					Long.valueOf(1));
 				FinderCacheUtil.putResult(FINDER_PATH_FETCH_BY_U_T, args,
-					userIdMapper);
+					userIdMapperModelImpl);
 			}
 
 			if ((userIdMapperModelImpl.getColumnBitmask() &
 					FINDER_PATH_FETCH_BY_T_E.getColumnBitmask()) != 0) {
 				Object[] args = new Object[] {
-						userIdMapper.getType(), userIdMapper.getExternalUserId()
+						userIdMapperModelImpl.getType(),
+						userIdMapperModelImpl.getExternalUserId()
 					};
 
 				FinderCacheUtil.putResult(FINDER_PATH_COUNT_BY_T_E, args,
 					Long.valueOf(1));
 				FinderCacheUtil.putResult(FINDER_PATH_FETCH_BY_T_E, args,
-					userIdMapper);
+					userIdMapperModelImpl);
 			}
 		}
 	}
 
-	protected void clearUniqueFindersCache(UserIdMapper userIdMapper) {
-		UserIdMapperModelImpl userIdMapperModelImpl = (UserIdMapperModelImpl)userIdMapper;
-
+	protected void clearUniqueFindersCache(
+		UserIdMapperModelImpl userIdMapperModelImpl) {
 		Object[] args = new Object[] {
-				userIdMapper.getUserId(), userIdMapper.getType()
+				userIdMapperModelImpl.getUserId(),
+				userIdMapperModelImpl.getType()
 			};
 
 		FinderCacheUtil.removeResult(FINDER_PATH_COUNT_BY_U_T, args);
@@ -1268,7 +1270,8 @@ public class UserIdMapperPersistenceImpl extends BasePersistenceImpl<UserIdMappe
 		}
 
 		args = new Object[] {
-				userIdMapper.getType(), userIdMapper.getExternalUserId()
+				userIdMapperModelImpl.getType(),
+				userIdMapperModelImpl.getExternalUserId()
 			};
 
 		FinderCacheUtil.removeResult(FINDER_PATH_COUNT_BY_T_E, args);
@@ -1307,7 +1310,7 @@ public class UserIdMapperPersistenceImpl extends BasePersistenceImpl<UserIdMappe
 	 *
 	 * @param userIdMapperId the primary key of the user ID mapper
 	 * @return the user ID mapper that was removed
-	 * @throws com.liferay.portal.NoSuchUserIdMapperException if a user ID mapper with the primary key could not be found
+	 * @throws NoSuchUserIdMapperException if a user ID mapper with the primary key could not be found
 	 */
 	@Override
 	public UserIdMapper remove(long userIdMapperId)
@@ -1320,7 +1323,7 @@ public class UserIdMapperPersistenceImpl extends BasePersistenceImpl<UserIdMappe
 	 *
 	 * @param primaryKey the primary key of the user ID mapper
 	 * @return the user ID mapper that was removed
-	 * @throws com.liferay.portal.NoSuchUserIdMapperException if a user ID mapper with the primary key could not be found
+	 * @throws NoSuchUserIdMapperException if a user ID mapper with the primary key could not be found
 	 */
 	@Override
 	public UserIdMapper remove(Serializable primaryKey)
@@ -1388,8 +1391,7 @@ public class UserIdMapperPersistenceImpl extends BasePersistenceImpl<UserIdMappe
 	}
 
 	@Override
-	public UserIdMapper updateImpl(
-		com.liferay.portal.model.UserIdMapper userIdMapper) {
+	public UserIdMapper updateImpl(UserIdMapper userIdMapper) {
 		userIdMapper = toUnwrappedModel(userIdMapper);
 
 		boolean isNew = userIdMapper.isNew();
@@ -1407,7 +1409,7 @@ public class UserIdMapperPersistenceImpl extends BasePersistenceImpl<UserIdMappe
 				userIdMapper.setNew(false);
 			}
 			else {
-				session.merge(userIdMapper);
+				userIdMapper = (UserIdMapper)session.merge(userIdMapper);
 			}
 		}
 		catch (Exception e) {
@@ -1446,8 +1448,8 @@ public class UserIdMapperPersistenceImpl extends BasePersistenceImpl<UserIdMappe
 			UserIdMapperImpl.class, userIdMapper.getPrimaryKey(), userIdMapper,
 			false);
 
-		clearUniqueFindersCache(userIdMapper);
-		cacheUniqueFindersCache(userIdMapper, isNew);
+		clearUniqueFindersCache(userIdMapperModelImpl);
+		cacheUniqueFindersCache(userIdMapperModelImpl, isNew);
 
 		userIdMapper.resetOriginalValues();
 
@@ -1479,7 +1481,7 @@ public class UserIdMapperPersistenceImpl extends BasePersistenceImpl<UserIdMappe
 	 *
 	 * @param primaryKey the primary key of the user ID mapper
 	 * @return the user ID mapper
-	 * @throws com.liferay.portal.NoSuchUserIdMapperException if a user ID mapper with the primary key could not be found
+	 * @throws NoSuchUserIdMapperException if a user ID mapper with the primary key could not be found
 	 */
 	@Override
 	public UserIdMapper findByPrimaryKey(Serializable primaryKey)
@@ -1499,11 +1501,11 @@ public class UserIdMapperPersistenceImpl extends BasePersistenceImpl<UserIdMappe
 	}
 
 	/**
-	 * Returns the user ID mapper with the primary key or throws a {@link com.liferay.portal.NoSuchUserIdMapperException} if it could not be found.
+	 * Returns the user ID mapper with the primary key or throws a {@link NoSuchUserIdMapperException} if it could not be found.
 	 *
 	 * @param userIdMapperId the primary key of the user ID mapper
 	 * @return the user ID mapper
-	 * @throws com.liferay.portal.NoSuchUserIdMapperException if a user ID mapper with the primary key could not be found
+	 * @throws NoSuchUserIdMapperException if a user ID mapper with the primary key could not be found
 	 */
 	@Override
 	public UserIdMapper findByPrimaryKey(long userIdMapperId)
@@ -1674,7 +1676,7 @@ public class UserIdMapperPersistenceImpl extends BasePersistenceImpl<UserIdMappe
 	 * Returns a range of all the user ID mappers.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.model.impl.UserIdMapperModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link UserIdMapperModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of user ID mappers
@@ -1690,7 +1692,7 @@ public class UserIdMapperPersistenceImpl extends BasePersistenceImpl<UserIdMappe
 	 * Returns an ordered range of all the user ID mappers.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.model.impl.UserIdMapperModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link UserIdMapperModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of user ID mappers
@@ -1828,7 +1830,7 @@ public class UserIdMapperPersistenceImpl extends BasePersistenceImpl<UserIdMappe
 	}
 
 	@Override
-	protected Set<String> getBadColumnNames() {
+	public Set<String> getBadColumnNames() {
 		return _badColumnNames;
 	}
 

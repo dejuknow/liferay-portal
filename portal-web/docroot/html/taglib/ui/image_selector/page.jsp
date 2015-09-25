@@ -88,24 +88,37 @@ if (fileEntryId != 0) {
 	</div>
 
 	<div class="change-image-controls <%= (fileEntryId != 0) ? StringPool.BLANK : "hide" %>">
-		<aui:button cssClass="browse-image btn-primary" value="change-picture" />
+		<aui:button cssClass="browse-image icon-monospaced" icon="icon-refresh" />
 
-		<aui:button icon="icon-trash" id='<%= randomNamespace + "removeImage" %>' useNamespace="<%= false %>" />
+		<aui:button cssClass="icon-monospaced" icon="icon-trash" id='<%= randomNamespace + "removeImage" %>' useNamespace="<%= false %>" />
 	</div>
 </div>
 
 <%
 PortletURL itemSelectorURL = liferayPortletResponse.createRenderURL(PortletKeys.ITEM_SELECTOR);
 
-itemSelectorURL.setParameter("criteria", "com.liferay.blogs.item.selector.criterion.BlogsItemSelectorCriterion,com.liferay.item.selector.criteria.image.criterion.ImageItemSelectorCriterion");
+itemSelectorURL.setParameter("criteria", "com.liferay.blogs.item.selector.criterion.BlogsItemSelectorCriterion,com.liferay.item.selector.criteria.image.criterion.ImageItemSelectorCriterion,com.liferay.item.selector.criteria.upload.criterion.UploadItemSelectorCriterion");
 itemSelectorURL.setParameter("itemSelectedEventName", randomNamespace + "selectImage");
 
 JSONObject itemSelectorJSONParamJSONObject = JSONFactoryUtil.createJSONObject();
 
 itemSelectorJSONParamJSONObject.put("desiredItemSelectorReturnTypes", "com.liferay.item.selector.criteria.FileEntryItemSelectorReturnType,com.liferay.item.selector.criteria.UploadableFileReturnType");
 
+JSONObject itemSelectorUploadParamJSONObject = JSONFactoryUtil.createJSONObject();
+
+itemSelectorUploadParamJSONObject.put("desiredItemSelectorReturnTypes", "com.liferay.item.selector.criteria.UploadableFileReturnType");
+
 itemSelectorURL.setParameter("0_json", itemSelectorJSONParamJSONObject.toString());
 itemSelectorURL.setParameter("1_json", itemSelectorJSONParamJSONObject.toString());
+
+PortletURL uploadItemSelectorCriterionUploadURL = liferayPortletResponse.createActionURL(PortletKeys.BLOGS);
+
+uploadItemSelectorCriterionUploadURL.setParameter(ActionRequest.ACTION_NAME, "/blogs/upload_image");
+
+itemSelectorUploadParamJSONObject.put("repositoryName", LanguageUtil.get(locale, "blogs"));
+itemSelectorUploadParamJSONObject.put("URL", uploadItemSelectorCriterionUploadURL.toString());
+
+itemSelectorURL.setParameter("2_json", itemSelectorUploadParamJSONObject.toString());
 
 itemSelectorURL.setPortletMode(PortletMode.VIEW);
 itemSelectorURL.setWindowState(LiferayWindowState.POP_UP);

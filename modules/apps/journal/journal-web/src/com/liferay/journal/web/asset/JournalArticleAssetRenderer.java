@@ -40,6 +40,7 @@ import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.service.GroupLocalServiceUtil;
 import com.liferay.portal.service.LayoutLocalServiceUtil;
 import com.liferay.portal.service.LayoutSetLocalServiceUtil;
+import com.liferay.portal.service.permission.LayoutPermissionUtil;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.WebKeys;
@@ -66,7 +67,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Raymond Augé
  */
 public class JournalArticleAssetRenderer
-	extends BaseJSPAssetRenderer implements TrashRenderer {
+	extends BaseJSPAssetRenderer<JournalArticle> implements TrashRenderer {
 
 	public static final String TYPE = "journal_article";
 
@@ -86,6 +87,11 @@ public class JournalArticleAssetRenderer
 	}
 
 	public JournalArticle getArticle() {
+		return _article;
+	}
+
+	@Override
+	public JournalArticle getAssetObject() {
 		return _article;
 	}
 
@@ -223,9 +229,9 @@ public class JournalArticleAssetRenderer
 			LiferayPortletResponse liferayPortletResponse)
 		throws Exception {
 
-		PortletURL portletURL = liferayPortletResponse.createLiferayPortletURL(
-			getControlPanelPlid(liferayPortletRequest),
-			JournalPortletKeys.JOURNAL, PortletRequest.RENDER_PHASE);
+		PortletURL portletURL = PortalUtil.getControlPanelPortletURL(
+			liferayPortletRequest, JournalPortletKeys.JOURNAL, 0,
+			PortletRequest.RENDER_PHASE);
 
 		portletURL.setParameter("mvcPath", "/edit_article.jsp");
 		portletURL.setParameter(
@@ -243,10 +249,11 @@ public class JournalArticleAssetRenderer
 			LiferayPortletResponse liferayPortletResponse)
 		throws Exception {
 
-		LiferayPortletURL liferayPortletURL =
-			liferayPortletResponse.createLiferayPortletURL(
-				getControlPanelPlid(liferayPortletRequest),
-				JournalPortletKeys.JOURNAL, PortletRequest.RESOURCE_PHASE);
+		PortletURL portletURL = PortalUtil.getControlPanelPortletURL(
+			liferayPortletRequest, JournalPortletKeys.JOURNAL, 0,
+			PortletRequest.RESOURCE_PHASE);
+
+		LiferayPortletURL liferayPortletURL = (LiferayPortletURL)portletURL;
 
 		liferayPortletURL.setParameter(
 			"groupId", String.valueOf(_article.getGroupId()));
@@ -267,9 +274,9 @@ public class JournalArticleAssetRenderer
 			LiferayPortletResponse liferayPortletResponse)
 		throws Exception {
 
-		PortletURL portletURL = liferayPortletResponse.createLiferayPortletURL(
-			getControlPanelPlid(liferayPortletRequest),
-			JournalPortletKeys.JOURNAL, PortletRequest.RENDER_PHASE);
+		PortletURL portletURL = PortalUtil.getControlPanelPortletURL(
+			liferayPortletRequest, JournalPortletKeys.JOURNAL, 0,
+			PortletRequest.RENDER_PHASE);
 
 		JournalArticle previousApprovedArticle =
 			JournalArticleLocalServiceUtil.getPreviousApprovedArticle(_article);
@@ -312,7 +319,7 @@ public class JournalArticleAssetRenderer
 			WebKeys.PORTLET_ID);
 
 		PortletPreferences portletSetup =
-			PortletPreferencesFactoryUtil.getLayoutPortletSetup(
+			PortletPreferencesFactoryUtil.getStrictLayoutPortletSetup(
 				layout, portletId);
 
 		String linkToLayoutUuid = GetterUtil.getString(
@@ -344,14 +351,17 @@ public class JournalArticleAssetRenderer
 				_article.getGroupId(), layout.isPrivateLayout(),
 				_article.getArticleId());
 
-		if (!hitLayoutIds.isEmpty()) {
-			Long hitLayoutId = hitLayoutIds.get(0);
-
+		for (Long hitLayoutId : hitLayoutIds) {
 			Layout hitLayout = LayoutLocalServiceUtil.getLayout(
 				_article.getGroupId(), layout.isPrivateLayout(),
 				hitLayoutId.longValue());
 
-			return PortalUtil.getLayoutURL(hitLayout, themeDisplay);
+			if (LayoutPermissionUtil.contains(
+					themeDisplay.getPermissionChecker(), hitLayout,
+					ActionKeys.VIEW)) {
+
+				return PortalUtil.getLayoutURL(hitLayout, themeDisplay);
+			}
 		}
 
 		return noSuchEntryRedirect;

@@ -14,20 +14,21 @@
 
 package com.liferay.dynamic.data.lists.web.webdav;
 
+import com.liferay.dynamic.data.lists.constants.DDLPortletKeys;
 import com.liferay.dynamic.data.lists.model.DDLRecordSet;
-import com.liferay.dynamic.data.lists.web.constants.DDLPortletKeys;
+import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.model.DDMTemplate;
+import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
+import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalServiceUtil;
+import com.liferay.dynamic.data.mapping.webdav.DDMWebDavUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.webdav.BaseWebDAVStorageImpl;
 import com.liferay.portal.kernel.webdav.Resource;
 import com.liferay.portal.kernel.webdav.WebDAVException;
 import com.liferay.portal.kernel.webdav.WebDAVRequest;
 import com.liferay.portal.kernel.webdav.WebDAVStorage;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
-import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
-import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
-import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalServiceUtil;
-import com.liferay.portlet.dynamicdatamapping.webdav.DDMWebDavUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +40,10 @@ import org.osgi.service.component.annotations.Component;
  */
 @Component(
 	immediate = true,
-	property = {"javax.portlet.name=" + DDLPortletKeys.DYNAMIC_DATA_LISTS},
+	property = {
+		"javax.portlet.name=" + DDLPortletKeys.DYNAMIC_DATA_LISTS,
+		"webdav.storage.token=dynamic_data_lists"
+	},
 	service = WebDAVStorage.class
 )
 public class DDLWebDAVStorageImpl extends BaseWebDAVStorageImpl {
@@ -143,7 +147,8 @@ public class DDLWebDAVStorageImpl extends BaseWebDAVStorageImpl {
 			DDMTemplateLocalServiceUtil.getTemplatesByStructureClassNameId(
 				webDAVRequest.getGroupId(),
 				PortalUtil.getClassNameId(DDLRecordSet.class),
-				QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+				WorkflowConstants.STATUS_APPROVED, QueryUtil.ALL_POS,
+				QueryUtil.ALL_POS, null);
 
 		for (DDMTemplate ddmTemplate : ddmTemplates) {
 			Resource resource = DDMWebDavUtil.toResource(

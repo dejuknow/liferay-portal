@@ -226,8 +226,6 @@ AUI.add(
 					bgData.backgroundColor = color;
 				};
 
-				var hexValue = backgroundColor.val().replace('#', EMPTY);
-
 				if (!instance._backgroundColorPicker) {
 					instance._backgroundColorPicker = new A.ColorPickerPopover(
 						{
@@ -480,8 +478,8 @@ AUI.add(
 							instance[borderLocation] = new A.ColorPickerPopover(
 								{
 									constrain: true,
-									trigger: item,
-									zIndex: 1000
+									plugins: [Liferay.WidgetZIndex],
+									trigger: item
 								}
 							).render(popupBoundingBox);
 						}
@@ -642,7 +640,7 @@ AUI.add(
 
 				if (!insertContainer) {
 					insertContainer = A.Node.create('<div id="lfr-add-rule-container"></div>');
-					addIdLink = A.Node.create('<a href="javascript:;" id="lfr-add-id">' + Liferay.Language.get('add-a-css-rule-for-just-this-portlet') + '</a>');
+					addIdLink = A.Node.create('<a href="javascript:;" id="lfr-add-id">' + Liferay.Language.get('add-a-css-rule-for-this-portlet') + '</a>');
 					addClassLink = A.Node.create('<a href="javascript:;" id="lfr-add-class">' + Liferay.Language.get('add-a-css-rule-for-all-portlets-like-this-one') + '</a>');
 
 					var updateOnTypeHolder = A.Node.create('<span class="field"><span class="field-content"></span></span>');
@@ -1952,8 +1950,6 @@ AUI.add(
 						textData.color = color;
 					}
 				};
-
-				var hexValue = fontColor.val().replace('#', EMPTY);
 
 				if (!instance._fontColorPicker) {
 					instance._fontColorPicker = new A.ColorPickerPopover(

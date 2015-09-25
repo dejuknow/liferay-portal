@@ -26,7 +26,7 @@ String portletResource = ParamUtil.getString(request, "portletResource");
 
 String portletResourceNamespace = ParamUtil.getString(request, "portletResourceNamespace");
 
-DDMTemplate template = (DDMTemplate)request.getAttribute(WebKeys.DYNAMIC_DATA_MAPPING_TEMPLATE);
+DDMTemplate template = (DDMTemplate)request.getAttribute(DDMWebKeys.DYNAMIC_DATA_MAPPING_TEMPLATE);
 
 long templateId = BeanParamUtil.getLong(template, request, "templateId");
 
@@ -38,7 +38,7 @@ long resourceClassNameId = BeanParamUtil.getLong(template, request, "resourceCla
 boolean cacheable = BeanParamUtil.getBoolean(template, request, "cacheable", true);
 boolean smallImage = BeanParamUtil.getBoolean(template, request, "smallImage");
 
-DDMStructure structure = (DDMStructure)request.getAttribute(WebKeys.DYNAMIC_DATA_MAPPING_STRUCTURE);
+DDMStructure structure = (DDMStructure)request.getAttribute(DDMWebKeys.DYNAMIC_DATA_MAPPING_STRUCTURE);
 
 if ((structure == null) && (template != null)) {
 	structure = DDMTemplateHelperUtil.fetchStructure(template);
@@ -46,7 +46,7 @@ if ((structure == null) && (template != null)) {
 
 String type = BeanParamUtil.getString(template, request, "type", DDMTemplateConstants.TEMPLATE_TYPE_FORM);
 String mode = BeanParamUtil.getString(template, request, "mode", DDMTemplateConstants.TEMPLATE_MODE_CREATE);
-String language = BeanParamUtil.getString(template, request, "language", PropsValues.DYNAMIC_DATA_MAPPING_TEMPLATE_LANGUAGE_DEFAULT);
+String language = BeanParamUtil.getString(template, request, "language", ddmServiceConfiguration.defaultTemplateLanguage());
 String script = BeanParamUtil.getString(template, request, "script");
 
 if (Validator.isNull(script) && type.equals(DDMTemplateConstants.TEMPLATE_TYPE_DISPLAY)) {
@@ -60,14 +60,14 @@ if (Validator.isNull(script) && type.equals(DDMTemplateConstants.TEMPLATE_TYPE_D
 		script = templateHandler.getTemplatesHelpContent(language);
 	}
 	else {
-		script = ContentUtil.get(PropsUtil.get(PropsKeys.DYNAMIC_DATA_MAPPING_TEMPLATE_LANGUAGE_CONTENT, new Filter(language)));
+		script = ContentUtil.get(DDMWebConfigurationUtil.class.getClassLoader(), DDMWebConfigurationUtil.get(DDMWebConfigurationKeys.DYNAMIC_DATA_MAPPING_TEMPLATE_LANGUAGE_CONTENT, new Filter(language)));
 	}
 }
 
 DDMTemplateVersion templateVersion = null;
 
 if (template != null) {
-	templateVersion = template.getTemplateVersion();
+	templateVersion = template.getLatestTemplateVersion();
 }
 
 String structureAvailableFields = ParamUtil.getString(request, "structureAvailableFields");
@@ -87,7 +87,7 @@ boolean showCacheableInput = ParamUtil.getBoolean(request, "showCacheableInput")
 	<portlet:param name="mvcPath" value="/edit_template.jsp" />
 </portlet:actionURL>
 
-<aui:form action="<%= (template == null) ? addTemplateURL : updateTemplateURL %>" enctype="multipart/form-data" method="post" name="fm" onSubmit='<%="event.preventDefault();" %>'>
+<aui:form action="<%= (template == null) ? addTemplateURL : updateTemplateURL %>" enctype="multipart/form-data" method="post" name="fm" onSubmit='<%= "event.preventDefault();" %>'>
 	<aui:input name="redirect" type="hidden" value="<%= redirect %>" />
 	<aui:input name="closeRedirect" type="hidden" value="<%= closeRedirect %>" />
 	<aui:input name="portletResource" type="hidden" value="<%= portletResource %>" />
@@ -108,7 +108,7 @@ boolean showCacheableInput = ParamUtil.getBoolean(request, "showCacheableInput")
 	<liferay-ui:error exception="<%= TemplateSmallImageNameException.class %>">
 
 		<%
-		String[] imageExtensions = PrefsPropsUtil.getStringArray(PropsKeys.DYNAMIC_DATA_MAPPING_IMAGE_EXTENSIONS, ",");
+		String[] imageExtensions = PrefsPropsUtil.getStringArray(DDMServiceConfigurationKeys.DYNAMIC_DATA_MAPPING_IMAGE_EXTENSIONS, ",");
 		%>
 
 		<liferay-ui:message key="image-names-must-end-with-one-of-the-following-extensions" /> <%= StringUtil.merge(imageExtensions, StringPool.COMMA) %>.
@@ -117,7 +117,7 @@ boolean showCacheableInput = ParamUtil.getBoolean(request, "showCacheableInput")
 	<liferay-ui:error exception="<%= TemplateSmallImageSizeException.class %>">
 
 		<%
-		long imageMaxSize = PrefsPropsUtil.getLong(PropsKeys.DYNAMIC_DATA_MAPPING_IMAGE_SMALL_MAX_SIZE);
+		long imageMaxSize = PrefsPropsUtil.getLong(DDMServiceConfigurationKeys.DYNAMIC_DATA_MAPPING_IMAGE_SMALL_MAX_SIZE);
 		%>
 
 		<liferay-ui:message arguments="<%= TextFormatter.formatStorageSize(imageMaxSize, locale) %>" key="please-enter-a-small-image-with-a-valid-file-size-no-larger-than-x" translateArguments="<%= false %>" />
@@ -136,7 +136,7 @@ boolean showCacheableInput = ParamUtil.getBoolean(request, "showCacheableInput")
 
 	<c:if test="<%= showHeader %>">
 		<liferay-ui:header
-			backURL="<%= ddmDisplay.getEditTemplateBackURL(liferayPortletRequest, liferayPortletResponse, classNameId, classPK, portletResource) %>"
+			backURL="<%= ddmDisplay.getEditTemplateBackURL(liferayPortletRequest, liferayPortletResponse, classNameId, classPK, resourceClassNameId, portletResource) %>"
 			localizeTitle="<%= false %>"
 			showBackURL="<%= showBackURL %>"
 			title="<%= title %>"
@@ -145,7 +145,7 @@ boolean showCacheableInput = ParamUtil.getBoolean(request, "showCacheableInput")
 
 	<aui:model-context bean="<%= template %>" model="<%= DDMTemplate.class %>" />
 
-	<c:if test="<%= templateVersion != null %>">
+	<c:if test="<%= (templateVersion != null) && ddmDisplay.isVersioningEnabled() %>">
 		<aui:workflow-status model="<%= DDMTemplate.class %>" status="<%= templateVersion.getStatus() %>" version="<%= templateVersion.getVersion() %>" />
 
 		<div class="template-history-toolbar" id="<portlet:namespace />templateHistoryToolbar"></div>
@@ -190,7 +190,7 @@ boolean showCacheableInput = ParamUtil.getBoolean(request, "showCacheableInput")
 					<div class="form-group">
 						<aui:input helpMessage="structure-help" name="structure" type="resource" value="<%= (structure != null) ? structure.getName(locale) : StringPool.BLANK %>" />
 
-						<c:if test="<%= ((template == null) || (template.getClassPK() == 0)) %>">
+						<c:if test="<%= (template == null) || (template.getClassPK() == 0) %>">
 							<liferay-ui:icon
 								iconCssClass="icon-search"
 								label="<%= true %>"
@@ -226,7 +226,7 @@ boolean showCacheableInput = ParamUtil.getBoolean(request, "showCacheableInput")
 					</aui:select>
 				</c:if>
 
-				<c:if test="<%= !PropsValues.DYNAMIC_DATA_MAPPING_TEMPLATE_FORCE_AUTOGENERATE_KEY %>">
+				<c:if test="<%= !ddmServiceConfiguration.autogenerateTemplateKey() %>">
 					<aui:input disabled="<%= (template != null) ? true : false %>" name="templateKey" />
 				</c:if>
 
@@ -370,7 +370,7 @@ boolean showCacheableInput = ParamUtil.getBoolean(request, "showCacheableInput")
 		function <portlet:namespace />openDDMStructureSelector() {
 			Liferay.Util.openDDMPortlet(
 				{
-					basePortletURL: '<%= PortletURLFactoryUtil.create(request, PortletKeys.DYNAMIC_DATA_MAPPING, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>',
+					basePortletURL: '<%= PortletURLFactoryUtil.create(request, DDMPortletKeys.DYNAMIC_DATA_MAPPING, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>',
 					classNameId: '<%= PortalUtil.getClassNameId(DDMStructure.class) %>',
 					classPK: 0,
 					eventName: '<portlet:namespace />selectStructure',
@@ -423,7 +423,9 @@ boolean showCacheableInput = ParamUtil.getBoolean(request, "showCacheableInput")
 
 	<aui:button onClick='<%= renderResponse.getNamespace() + "saveAndContinueTemplate();" %>' value='<%= LanguageUtil.get(request, "save-and-continue") %>' />
 
-	<aui:button onClick='<%= renderResponse.getNamespace() + "saveDraftTemplate();" %>' value='<%= LanguageUtil.get(request, "save-draft") %>' />
+	<c:if test="<%= ddmDisplay.isVersioningEnabled() %>">
+		<aui:button onClick='<%= renderResponse.getNamespace() + "saveDraftTemplate();" %>' value='<%= LanguageUtil.get(request, "save-draft") %>' />
+	</c:if>
 
 	<aui:button href="<%= redirect %>" type="cancel" />
 </aui:button-row>

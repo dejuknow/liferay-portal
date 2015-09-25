@@ -1,5 +1,4 @@
 <definition component-name="portal-workflow">
-	<property name="web.plugins.includes" value="kaleo-web" />
 	<property name="testray.main.component.name" value="Workflow" />
 
 	<var name="workflowAssetType" value="Dynamic Data Lists Record" />
@@ -20,7 +19,7 @@
 		<var name="ddlRecordFieldData" value="Record Text" />
 		<var name="field" value="Text" />
 		<var name="fieldFieldLabel" value="Text Label" />
-		<var name="fieldName" value="Text_Name" />
+		<var name="fieldName" value="TextName" />
 
 		<execute macro="Page#gotoContentCP">
 			<var name="portletName" value="Dynamic Data Lists" />
@@ -80,6 +79,7 @@
 		</execute>
 
 		<execute macro="Workflow#assignToMeTaskByActions">
+			<var name="ddlDataDefinitionName" value="${ddlDataDefinitionName}" />
 			<var name="workflowAssetTitle" value="${ddlListName}" />
 			<var name="workflowAssetType" value="${workflowAssetType}" />
 			<var name="workflowTask" value="Review" />
@@ -127,13 +127,13 @@
 		</execute>
 	</command>
 
-	<command name="RejectDynamicdatalistCP" priority="4">
+	<command name="RejectDynamicdatalistCP" priority="5">
 		<var name="ddlDataDefinitionName" value="DDL Definition" />
 		<var name="ddlListName" value="DDL List" />
 		<var name="ddlRecordFieldData" value="Record Text" />
 		<var name="field" value="Text" />
 		<var name="fieldFieldLabel" value="Text Label" />
-		<var name="fieldName" value="Text_Name" />
+		<var name="fieldName" value="TextName" />
 
 		<execute macro="Page#gotoContentCP">
 			<var name="portletName" value="Dynamic Data Lists" />
@@ -193,6 +193,7 @@
 		</execute>
 
 		<execute macro="Workflow#assignToMeTaskByActions">
+			<var name="ddlDataDefinitionName" value="${ddlDataDefinitionName}" />
 			<var name="workflowAssetTitle" value="${ddlListName}" />
 			<var name="workflowAssetType" value="${workflowAssetType}" />
 			<var name="workflowTask" value="Review" />

@@ -123,7 +123,7 @@ public class DLContentPersistenceImpl extends BasePersistenceImpl<DLContent>
 	 * Returns a range of all the document library contents where companyId = &#63; and repositoryId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portlet.documentlibrary.model.impl.DLContentModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link DLContentModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -142,7 +142,7 @@ public class DLContentPersistenceImpl extends BasePersistenceImpl<DLContent>
 	 * Returns an ordered range of all the document library contents where companyId = &#63; and repositoryId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portlet.documentlibrary.model.impl.DLContentModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link DLContentModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -266,7 +266,7 @@ public class DLContentPersistenceImpl extends BasePersistenceImpl<DLContent>
 	 * @param repositoryId the repository ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching document library content
-	 * @throws com.liferay.portlet.documentlibrary.NoSuchContentException if a matching document library content could not be found
+	 * @throws NoSuchContentException if a matching document library content could not be found
 	 */
 	@Override
 	public DLContent findByC_R_First(long companyId, long repositoryId,
@@ -322,7 +322,7 @@ public class DLContentPersistenceImpl extends BasePersistenceImpl<DLContent>
 	 * @param repositoryId the repository ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching document library content
-	 * @throws com.liferay.portlet.documentlibrary.NoSuchContentException if a matching document library content could not be found
+	 * @throws NoSuchContentException if a matching document library content could not be found
 	 */
 	@Override
 	public DLContent findByC_R_Last(long companyId, long repositoryId,
@@ -385,7 +385,7 @@ public class DLContentPersistenceImpl extends BasePersistenceImpl<DLContent>
 	 * @param repositoryId the repository ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next document library content
-	 * @throws com.liferay.portlet.documentlibrary.NoSuchContentException if a document library content with the primary key could not be found
+	 * @throws NoSuchContentException if a document library content with the primary key could not be found
 	 */
 	@Override
 	public DLContent[] findByC_R_PrevAndNext(long contentId, long companyId,
@@ -648,7 +648,7 @@ public class DLContentPersistenceImpl extends BasePersistenceImpl<DLContent>
 	 * Returns a range of all the document library contents where companyId = &#63; and repositoryId = &#63; and path = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portlet.documentlibrary.model.impl.DLContentModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link DLContentModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -668,7 +668,7 @@ public class DLContentPersistenceImpl extends BasePersistenceImpl<DLContent>
 	 * Returns an ordered range of all the document library contents where companyId = &#63; and repositoryId = &#63; and path = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portlet.documentlibrary.model.impl.DLContentModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link DLContentModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -814,7 +814,7 @@ public class DLContentPersistenceImpl extends BasePersistenceImpl<DLContent>
 	 * @param path the path
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching document library content
-	 * @throws com.liferay.portlet.documentlibrary.NoSuchContentException if a matching document library content could not be found
+	 * @throws NoSuchContentException if a matching document library content could not be found
 	 */
 	@Override
 	public DLContent findByC_R_P_First(long companyId, long repositoryId,
@@ -875,7 +875,7 @@ public class DLContentPersistenceImpl extends BasePersistenceImpl<DLContent>
 	 * @param path the path
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching document library content
-	 * @throws com.liferay.portlet.documentlibrary.NoSuchContentException if a matching document library content could not be found
+	 * @throws NoSuchContentException if a matching document library content could not be found
 	 */
 	@Override
 	public DLContent findByC_R_P_Last(long companyId, long repositoryId,
@@ -943,7 +943,7 @@ public class DLContentPersistenceImpl extends BasePersistenceImpl<DLContent>
 	 * @param path the path
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next document library content
-	 * @throws com.liferay.portlet.documentlibrary.NoSuchContentException if a document library content with the primary key could not be found
+	 * @throws NoSuchContentException if a document library content with the primary key could not be found
 	 */
 	@Override
 	public DLContent[] findByC_R_P_PrevAndNext(long contentId, long companyId,
@@ -1239,7 +1239,7 @@ public class DLContentPersistenceImpl extends BasePersistenceImpl<DLContent>
 	 * Returns a range of all the document library contents where companyId = &#63; and repositoryId = &#63; and path LIKE &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portlet.documentlibrary.model.impl.DLContentModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link DLContentModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -1259,7 +1259,7 @@ public class DLContentPersistenceImpl extends BasePersistenceImpl<DLContent>
 	 * Returns an ordered range of all the document library contents where companyId = &#63; and repositoryId = &#63; and path LIKE &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portlet.documentlibrary.model.impl.DLContentModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link DLContentModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -1399,7 +1399,7 @@ public class DLContentPersistenceImpl extends BasePersistenceImpl<DLContent>
 	 * @param path the path
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching document library content
-	 * @throws com.liferay.portlet.documentlibrary.NoSuchContentException if a matching document library content could not be found
+	 * @throws NoSuchContentException if a matching document library content could not be found
 	 */
 	@Override
 	public DLContent findByC_R_LikeP_First(long companyId, long repositoryId,
@@ -1460,7 +1460,7 @@ public class DLContentPersistenceImpl extends BasePersistenceImpl<DLContent>
 	 * @param path the path
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching document library content
-	 * @throws com.liferay.portlet.documentlibrary.NoSuchContentException if a matching document library content could not be found
+	 * @throws NoSuchContentException if a matching document library content could not be found
 	 */
 	@Override
 	public DLContent findByC_R_LikeP_Last(long companyId, long repositoryId,
@@ -1528,7 +1528,7 @@ public class DLContentPersistenceImpl extends BasePersistenceImpl<DLContent>
 	 * @param path the path
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next document library content
-	 * @throws com.liferay.portlet.documentlibrary.NoSuchContentException if a document library content with the primary key could not be found
+	 * @throws NoSuchContentException if a document library content with the primary key could not be found
 	 */
 	@Override
 	public DLContent[] findByC_R_LikeP_PrevAndNext(long contentId,
@@ -1782,7 +1782,7 @@ public class DLContentPersistenceImpl extends BasePersistenceImpl<DLContent>
 
 	private static final String _FINDER_COLUMN_C_R_LIKEP_COMPANYID_2 = "dlContent.companyId = ? AND ";
 	private static final String _FINDER_COLUMN_C_R_LIKEP_REPOSITORYID_2 = "dlContent.repositoryId = ? AND ";
-	private static final String _FINDER_COLUMN_C_R_LIKEP_PATH_1 = "dlContent.path LIKE NULL";
+	private static final String _FINDER_COLUMN_C_R_LIKEP_PATH_1 = "dlContent.path IS NULL";
 	private static final String _FINDER_COLUMN_C_R_LIKEP_PATH_2 = "dlContent.path LIKE ?";
 	private static final String _FINDER_COLUMN_C_R_LIKEP_PATH_3 = "(dlContent.path IS NULL OR dlContent.path LIKE '')";
 	public static final FinderPath FINDER_PATH_FETCH_BY_C_R_P_V = new FinderPath(DLContentModelImpl.ENTITY_CACHE_ENABLED,
@@ -1805,14 +1805,14 @@ public class DLContentPersistenceImpl extends BasePersistenceImpl<DLContent>
 			});
 
 	/**
-	 * Returns the document library content where companyId = &#63; and repositoryId = &#63; and path = &#63; and version = &#63; or throws a {@link com.liferay.portlet.documentlibrary.NoSuchContentException} if it could not be found.
+	 * Returns the document library content where companyId = &#63; and repositoryId = &#63; and path = &#63; and version = &#63; or throws a {@link NoSuchContentException} if it could not be found.
 	 *
 	 * @param companyId the company ID
 	 * @param repositoryId the repository ID
 	 * @param path the path
 	 * @param version the version
 	 * @return the matching document library content
-	 * @throws com.liferay.portlet.documentlibrary.NoSuchContentException if a matching document library content could not be found
+	 * @throws NoSuchContentException if a matching document library content could not be found
 	 */
 	@Override
 	public DLContent findByC_R_P_V(long companyId, long repositoryId,
@@ -2200,7 +2200,7 @@ public class DLContentPersistenceImpl extends BasePersistenceImpl<DLContent>
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 
-		clearUniqueFindersCache(dlContent);
+		clearUniqueFindersCache((DLContentModelImpl)dlContent);
 	}
 
 	@Override
@@ -2212,46 +2212,49 @@ public class DLContentPersistenceImpl extends BasePersistenceImpl<DLContent>
 			EntityCacheUtil.removeResult(DLContentModelImpl.ENTITY_CACHE_ENABLED,
 				DLContentImpl.class, dlContent.getPrimaryKey());
 
-			clearUniqueFindersCache(dlContent);
+			clearUniqueFindersCache((DLContentModelImpl)dlContent);
 		}
 	}
 
-	protected void cacheUniqueFindersCache(DLContent dlContent, boolean isNew) {
+	protected void cacheUniqueFindersCache(
+		DLContentModelImpl dlContentModelImpl, boolean isNew) {
 		if (isNew) {
 			Object[] args = new Object[] {
-					dlContent.getCompanyId(), dlContent.getRepositoryId(),
-					dlContent.getPath(), dlContent.getVersion()
+					dlContentModelImpl.getCompanyId(),
+					dlContentModelImpl.getRepositoryId(),
+					dlContentModelImpl.getPath(),
+					dlContentModelImpl.getVersion()
 				};
 
 			FinderCacheUtil.putResult(FINDER_PATH_COUNT_BY_C_R_P_V, args,
 				Long.valueOf(1));
 			FinderCacheUtil.putResult(FINDER_PATH_FETCH_BY_C_R_P_V, args,
-				dlContent);
+				dlContentModelImpl);
 		}
 		else {
-			DLContentModelImpl dlContentModelImpl = (DLContentModelImpl)dlContent;
-
 			if ((dlContentModelImpl.getColumnBitmask() &
 					FINDER_PATH_FETCH_BY_C_R_P_V.getColumnBitmask()) != 0) {
 				Object[] args = new Object[] {
-						dlContent.getCompanyId(), dlContent.getRepositoryId(),
-						dlContent.getPath(), dlContent.getVersion()
+						dlContentModelImpl.getCompanyId(),
+						dlContentModelImpl.getRepositoryId(),
+						dlContentModelImpl.getPath(),
+						dlContentModelImpl.getVersion()
 					};
 
 				FinderCacheUtil.putResult(FINDER_PATH_COUNT_BY_C_R_P_V, args,
 					Long.valueOf(1));
 				FinderCacheUtil.putResult(FINDER_PATH_FETCH_BY_C_R_P_V, args,
-					dlContent);
+					dlContentModelImpl);
 			}
 		}
 	}
 
-	protected void clearUniqueFindersCache(DLContent dlContent) {
-		DLContentModelImpl dlContentModelImpl = (DLContentModelImpl)dlContent;
-
+	protected void clearUniqueFindersCache(
+		DLContentModelImpl dlContentModelImpl) {
 		Object[] args = new Object[] {
-				dlContent.getCompanyId(), dlContent.getRepositoryId(),
-				dlContent.getPath(), dlContent.getVersion()
+				dlContentModelImpl.getCompanyId(),
+				dlContentModelImpl.getRepositoryId(),
+				dlContentModelImpl.getPath(), dlContentModelImpl.getVersion()
 			};
 
 		FinderCacheUtil.removeResult(FINDER_PATH_COUNT_BY_C_R_P_V, args);
@@ -2292,7 +2295,7 @@ public class DLContentPersistenceImpl extends BasePersistenceImpl<DLContent>
 	 *
 	 * @param contentId the primary key of the document library content
 	 * @return the document library content that was removed
-	 * @throws com.liferay.portlet.documentlibrary.NoSuchContentException if a document library content with the primary key could not be found
+	 * @throws NoSuchContentException if a document library content with the primary key could not be found
 	 */
 	@Override
 	public DLContent remove(long contentId) throws NoSuchContentException {
@@ -2304,7 +2307,7 @@ public class DLContentPersistenceImpl extends BasePersistenceImpl<DLContent>
 	 *
 	 * @param primaryKey the primary key of the document library content
 	 * @return the document library content that was removed
-	 * @throws com.liferay.portlet.documentlibrary.NoSuchContentException if a document library content with the primary key could not be found
+	 * @throws NoSuchContentException if a document library content with the primary key could not be found
 	 */
 	@Override
 	public DLContent remove(Serializable primaryKey)
@@ -2372,8 +2375,7 @@ public class DLContentPersistenceImpl extends BasePersistenceImpl<DLContent>
 	}
 
 	@Override
-	public DLContent updateImpl(
-		com.liferay.portlet.documentlibrary.model.DLContent dlContent) {
+	public DLContent updateImpl(DLContent dlContent) {
 		dlContent = toUnwrappedModel(dlContent);
 
 		boolean isNew = dlContent.isNew();
@@ -2460,8 +2462,8 @@ public class DLContentPersistenceImpl extends BasePersistenceImpl<DLContent>
 		EntityCacheUtil.putResult(DLContentModelImpl.ENTITY_CACHE_ENABLED,
 			DLContentImpl.class, dlContent.getPrimaryKey(), dlContent, false);
 
-		clearUniqueFindersCache(dlContent);
-		cacheUniqueFindersCache(dlContent, isNew);
+		clearUniqueFindersCache(dlContentModelImpl);
+		cacheUniqueFindersCache(dlContentModelImpl, isNew);
 
 		dlContent.resetOriginalValues();
 
@@ -2495,7 +2497,7 @@ public class DLContentPersistenceImpl extends BasePersistenceImpl<DLContent>
 	 *
 	 * @param primaryKey the primary key of the document library content
 	 * @return the document library content
-	 * @throws com.liferay.portlet.documentlibrary.NoSuchContentException if a document library content with the primary key could not be found
+	 * @throws NoSuchContentException if a document library content with the primary key could not be found
 	 */
 	@Override
 	public DLContent findByPrimaryKey(Serializable primaryKey)
@@ -2515,11 +2517,11 @@ public class DLContentPersistenceImpl extends BasePersistenceImpl<DLContent>
 	}
 
 	/**
-	 * Returns the document library content with the primary key or throws a {@link com.liferay.portlet.documentlibrary.NoSuchContentException} if it could not be found.
+	 * Returns the document library content with the primary key or throws a {@link NoSuchContentException} if it could not be found.
 	 *
 	 * @param contentId the primary key of the document library content
 	 * @return the document library content
-	 * @throws com.liferay.portlet.documentlibrary.NoSuchContentException if a document library content with the primary key could not be found
+	 * @throws NoSuchContentException if a document library content with the primary key could not be found
 	 */
 	@Override
 	public DLContent findByPrimaryKey(long contentId)
@@ -2690,7 +2692,7 @@ public class DLContentPersistenceImpl extends BasePersistenceImpl<DLContent>
 	 * Returns a range of all the document library contents.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portlet.documentlibrary.model.impl.DLContentModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link DLContentModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of document library contents
@@ -2706,7 +2708,7 @@ public class DLContentPersistenceImpl extends BasePersistenceImpl<DLContent>
 	 * Returns an ordered range of all the document library contents.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portlet.documentlibrary.model.impl.DLContentModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link DLContentModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of document library contents
@@ -2844,7 +2846,7 @@ public class DLContentPersistenceImpl extends BasePersistenceImpl<DLContent>
 	}
 
 	@Override
-	protected Set<String> getBadColumnNames() {
+	public Set<String> getBadColumnNames() {
 		return _badColumnNames;
 	}
 

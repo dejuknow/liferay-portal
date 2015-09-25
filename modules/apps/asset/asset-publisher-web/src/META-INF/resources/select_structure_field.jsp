@@ -21,7 +21,7 @@ String className = ParamUtil.getString(request, "className");
 long classTypeId = ParamUtil.getLong(request, "classTypeId");
 String eventName = ParamUtil.getString(request, "eventName", liferayPortletResponse.getNamespace() + "selectDDMStructureField");
 
-AssetRendererFactory assetRendererFactory = AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(className);
+AssetRendererFactory<?> assetRendererFactory = AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(className);
 
 ClassTypeReader classTypeReader = assetRendererFactory.getClassTypeReader();
 
@@ -78,11 +78,11 @@ portletURL.setParameter("classTypeId", String.valueOf(classTypeId));
 					<portlet:param name="fieldsNamespace" value="<%= fieldsNamespace %>" />
 				</liferay-portlet:resourceURL>
 
-				<aui:form action="<%= structureFieldURL %>" name='<%= name + "fieldForm" %>' onSubmit="event.preventDefault()">
+				<aui:form action="<%= structureFieldURL %>" disabled="<%= !name.equals(assetPublisherDisplayContext.getDDMStructureFieldName()) %>" name='<%= name + "fieldForm" %>' onSubmit="event.preventDefault()">
 					<aui:input disabled="<%= true %>" name="buttonId" type="hidden" value='<%= renderResponse.getNamespace() + "applyButton" + name %>' />
 
 					<%
-					com.liferay.portlet.dynamicdatamapping.storage.Field ddmField = new com.liferay.portlet.dynamicdatamapping.storage.Field();
+					com.liferay.dynamic.data.mapping.storage.Field ddmField = new com.liferay.dynamic.data.mapping.storage.Field();
 
 					ddmField.setDefaultLocale(themeDisplay.getLocale());
 					ddmField.setDDMStructureId(ddmStructureId);
@@ -91,7 +91,7 @@ portletURL.setParameter("classTypeId", String.valueOf(classTypeId));
 					Serializable ddmStructureFieldValue = assetPublisherDisplayContext.getDDMStructureFieldValue();
 
 					if (name.equals(assetPublisherDisplayContext.getDDMStructureFieldName())) {
-						if (fieldType.equals(DDMImpl.TYPE_DDM_DATE)) {
+						if (fieldType.equals(DDMFormFieldType.DATE)) {
 							ddmStructureFieldValue = GetterUtil.getDate(ddmStructureFieldValue, DateFormatFactoryUtil.getSimpleDateFormat("yyyyMMddHHmmss"));
 						}
 
@@ -171,7 +171,7 @@ portletURL.setParameter("classTypeId", String.valueOf(classTypeId));
 
 							Util.getOpener().Liferay.fire('<%= HtmlUtil.escapeJS(eventName) %>', result);
 
-							Util.getWindow().hide();
+							Util.getWindow().destroy();
 						}
 						else {
 							message.show();
@@ -218,6 +218,4 @@ portletURL.setParameter("classTypeId", String.valueOf(classTypeId));
 		},
 		'input[name=<portlet:namespace />selectStructureFieldSubtype]'
 	);
-
-	toggleDisabledFormFields(fieldSubtypeForms, true);
 </aui:script>

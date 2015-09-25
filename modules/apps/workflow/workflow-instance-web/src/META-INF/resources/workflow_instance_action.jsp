@@ -31,10 +31,11 @@ else {
 }
 %>
 
-<liferay-ui:icon-menu icon="<%= StringPool.BLANK %>" message="<%= StringPool.BLANK %>" showExpanded="<%= (row == null) %>" showWhenSingleIcon="<%= (row == null) %>">
+<liferay-ui:icon-menu direction="left-side" icon="<%= StringPool.BLANK %>" markupView="lexicon" message="<%= StringPool.BLANK %>" showWhenSingleIcon="<%= true %>">
 	<c:if test="<%= !workflowInstance.isComplete() %>">
 		<portlet:renderURL var="redirectURL">
 			<portlet:param name="mvcPath" value="/view.jsp" />
+			<portlet:param name="tabs2" value="pending" />
 		</portlet:renderURL>
 
 		<portlet:actionURL name="deleteWorkflowInstance" var="deleteURL">
@@ -43,7 +44,6 @@ else {
 		</portlet:actionURL>
 
 		<liferay-ui:icon
-			iconCssClass="icon-undo"
 			message="withdraw-submission"
 			url="<%= deleteURL %>"
 		/>

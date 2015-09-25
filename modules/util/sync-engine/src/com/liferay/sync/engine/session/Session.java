@@ -17,6 +17,7 @@ package com.liferay.sync.engine.session;
 import com.btr.proxy.search.ProxySearch;
 
 import com.liferay.sync.engine.documentlibrary.handler.Handler;
+import com.liferay.sync.engine.util.OSDetector;
 import com.liferay.sync.engine.util.PropsValues;
 import com.liferay.sync.engine.util.ReleaseInfo;
 
@@ -107,12 +108,28 @@ public class Session {
 		builder.setConnectTimeout(connectionTimeout);
 		builder.setSocketTimeout(socketTimeout);
 
-		List<Header> headers = new ArrayList<>(1);
+		List<Header> headers = new ArrayList<>(2);
 
-		Header header = new BasicHeader(
+		Header syncBuildHeader = new BasicHeader(
 			"Sync-Build", String.valueOf(ReleaseInfo.getBuildNumber()));
 
-		headers.add(header);
+		headers.add(syncBuildHeader);
+
+		String syncDevice = null;
+
+		if (OSDetector.isApple()) {
+			syncDevice = "desktop-mac";
+		}
+		else if (OSDetector.isLinux()) {
+			syncDevice = "desktop-linux";
+		}
+		else if (OSDetector.isWindows()) {
+			syncDevice = "desktop-windows";
+		}
+
+		Header syncDeviceHeader = new BasicHeader("Sync-Device", syncDevice);
+
+		headers.add(syncDeviceHeader);
 
 		httpClientBuilder.setDefaultHeaders(headers);
 
@@ -559,13 +576,13 @@ public class Session {
 	private BasicHttpContext _basicHttpContext;
 	private final AtomicInteger _downloadedBytes = new AtomicInteger(0);
 	private volatile int _downloadRate;
-	private ExecutorService _executorService;
-	private HttpClient _httpClient;
-	private HttpHost _httpHost;
+	private final ExecutorService _executorService;
+	private final HttpClient _httpClient;
+	private final HttpHost _httpHost;
 	private final Set<String> _ignoredParameterKeys = new HashSet<>(
 		Arrays.asList("filePath", "syncFile", "syncSite", "uiEvent"));
 	private OAuthConsumer _oAuthConsumer;
-	private boolean _oAuthEnabled;
+	private final boolean _oAuthEnabled;
 	private String _token;
 	private ScheduledFuture<?> _trackTransferRateScheduledFuture;
 	private final AtomicInteger _uploadedBytes = new AtomicInteger(0);

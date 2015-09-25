@@ -51,7 +51,7 @@ else {
 
 OrderByComparator<BackgroundTask> orderByComparator = BackgroundTaskComparatorFactoryUtil.getBackgroundTaskOrderByComparator(orderByCol, orderByType);
 
-String taskExecutorClassName = localPublishing ? LayoutStagingBackgroundTaskExecutor.class.getName() : LayoutRemoteStagingBackgroundTaskExecutor.class.getName();
+String taskExecutorClassName = localPublishing ? BackgroundTaskExecutorNames.LAYOUT_STAGING_BACKGROUND_TASK_EXECUTOR : BackgroundTaskExecutorNames.LAYOUT_REMOTE_STAGING_BACKGROUND_TASK_EXECUTOR;
 %>
 
 <liferay-ui:search-container
@@ -64,12 +64,12 @@ String taskExecutorClassName = localPublishing ? LayoutStagingBackgroundTaskExec
 	<liferay-ui:search-container-results>
 
 		<%
-		List<BackgroundTask> backgroundTasks = BackgroundTaskLocalServiceUtil.getBackgroundTasks(groupId, taskExecutorClassName, QueryUtil.ALL_POS, QueryUtil.ALL_POS, orderByComparator);
+		List<BackgroundTask> backgroundTasks = BackgroundTaskManagerUtil.getBackgroundTasks(groupId, taskExecutorClassName, QueryUtil.ALL_POS, QueryUtil.ALL_POS, orderByComparator);
 
 		results.addAll(backgroundTasks);
 
 		if (localPublishing) {
-			results.addAll(BackgroundTaskLocalServiceUtil.getBackgroundTasks(liveGroupId, taskExecutorClassName, QueryUtil.ALL_POS, QueryUtil.ALL_POS, orderByComparator));
+			results.addAll(BackgroundTaskManagerUtil.getBackgroundTasks(liveGroupId, taskExecutorClassName, QueryUtil.ALL_POS, QueryUtil.ALL_POS, orderByComparator));
 		}
 
 		searchContainer.setTotal(results.size());
@@ -82,7 +82,7 @@ String taskExecutorClassName = localPublishing ? LayoutStagingBackgroundTaskExec
 	</liferay-ui:search-container-results>
 
 	<liferay-ui:search-container-row
-		className="com.liferay.portal.model.BackgroundTask"
+		className="com.liferay.portal.kernel.backgroundtask.BackgroundTask"
 		keyProperty="backgroundTaskId"
 		modelVar="backgroundTask"
 	>
@@ -178,10 +178,10 @@ String taskExecutorClassName = localPublishing ? LayoutStagingBackgroundTaskExec
 </liferay-ui:search-container>
 
 <%
-int incompleteBackgroundTaskCount = BackgroundTaskLocalServiceUtil.getBackgroundTasksCount(groupId, taskExecutorClassName, false);
+int incompleteBackgroundTaskCount = BackgroundTaskManagerUtil.getBackgroundTasksCount(groupId, taskExecutorClassName, false);
 
 if (localPublishing) {
-	incompleteBackgroundTaskCount += BackgroundTaskLocalServiceUtil.getBackgroundTasksCount(liveGroupId, taskExecutorClassName, false);
+	incompleteBackgroundTaskCount += BackgroundTaskManagerUtil.getBackgroundTasksCount(liveGroupId, taskExecutorClassName, false);
 }
 %>
 

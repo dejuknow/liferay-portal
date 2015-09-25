@@ -45,6 +45,11 @@ public class TestLayoutTypeController implements LayoutTypeController {
 	}
 
 	@Override
+	public String getType() {
+		return null;
+	}
+
+	@Override
 	public String getURL() {
 		return null;
 	}
@@ -66,8 +71,28 @@ public class TestLayoutTypeController implements LayoutTypeController {
 	}
 
 	@Override
+	public boolean isBrowsable() {
+		return true;
+	}
+
+	@Override
+	public boolean isCheckLayoutViewPermission() {
+		return true;
+	}
+
+	@Override
 	public boolean isFirstPageable() {
 		return false;
+	}
+
+	@Override
+	public boolean isFullPageDisplayable() {
+		return false;
+	}
+
+	@Override
+	public boolean isInstanceable() {
+		return true;
 	}
 
 	@Override

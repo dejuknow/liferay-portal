@@ -25,7 +25,6 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.tools.ArgumentsUtil;
-import com.liferay.portal.tools.CSSBuilderUtil;
 import com.liferay.sass.compiler.SassCompiler;
 import com.liferay.sass.compiler.SassCompilerException;
 import com.liferay.sass.compiler.jni.internal.JniSassCompiler;
@@ -245,6 +244,8 @@ public class CSSBuilder {
 			sassCompilerClassName.equals("jni")) {
 
 			try {
+				System.setProperty("jna.nosys", Boolean.TRUE.toString());
+
 				_sassCompiler = new JniSassCompiler();
 
 				System.out.println("Using native Sass compiler");
@@ -265,6 +266,8 @@ public class CSSBuilder {
 			catch (Exception e) {
 				System.out.println(
 					"Unable to load Ruby compiler, falling back to native");
+
+				System.setProperty("jna.nosys", Boolean.TRUE.toString());
 
 				_sassCompiler = new JniSassCompiler();
 			}
@@ -305,16 +308,23 @@ public class CSSBuilder {
 
 		String filePath = _docrootDirName.concat(fileName);
 
-		String cssThemePath = filePath;
+		String cssBasePath = filePath;
 
 		int pos = filePath.lastIndexOf("/css/");
 
 		if (pos >= 0) {
-			cssThemePath = filePath.substring(0, pos + 4);
+			cssBasePath = filePath.substring(0, pos + 4);
+		}
+		else {
+			pos = filePath.lastIndexOf("/resources/");
+
+			if (pos >= 0) {
+				cssBasePath = filePath.substring(0, pos + 10);
+			}
 		}
 
 		return _sassCompiler.compileString(
-			content, _portalCommonDirName + File.pathSeparator + cssThemePath,
+			content, _portalCommonDirName + File.pathSeparator + cssBasePath,
 			StringPool.BLANK);
 	}
 

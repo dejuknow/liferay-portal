@@ -266,7 +266,7 @@ public class CalendarNotificationTemplatePersistenceTest {
 			true, "companyId", true, "userId", true, "userName", true,
 			"createDate", true, "modifiedDate", true, "calendarId", true,
 			"notificationType", true, "notificationTypeSettings", true,
-			"notificationTemplateType", true, "subject", true, "body", true,
+			"notificationTemplateType", true, "subject", true,
 			"lastPublishDate", true);
 	}
 
@@ -494,13 +494,17 @@ public class CalendarNotificationTemplatePersistenceTest {
 				ReflectionTestUtil.invoke(
 					existingCalendarNotificationTemplate, "getOriginalUuid",
 					new Class<?>[0])));
-		Assert.assertEquals(existingCalendarNotificationTemplate.getGroupId(),
-			ReflectionTestUtil.invoke(existingCalendarNotificationTemplate,
-				"getOriginalGroupId", new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(
+				existingCalendarNotificationTemplate.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(
+				existingCalendarNotificationTemplate, "getOriginalGroupId",
+				new Class<?>[0]));
 
-		Assert.assertEquals(existingCalendarNotificationTemplate.getCalendarId(),
-			ReflectionTestUtil.invoke(existingCalendarNotificationTemplate,
-				"getOriginalCalendarId", new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(
+				existingCalendarNotificationTemplate.getCalendarId()),
+			ReflectionTestUtil.<Long>invoke(
+				existingCalendarNotificationTemplate, "getOriginalCalendarId",
+				new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(
 				existingCalendarNotificationTemplate.getNotificationType(),
 				ReflectionTestUtil.invoke(

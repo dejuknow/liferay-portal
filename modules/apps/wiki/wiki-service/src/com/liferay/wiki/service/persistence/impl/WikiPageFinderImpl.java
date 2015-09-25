@@ -14,6 +14,7 @@
 
 package com.liferay.wiki.service.persistence.impl;
 
+import com.liferay.portal.kernel.dao.orm.QueryDefinition;
 import com.liferay.portal.kernel.dao.orm.QueryPos;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.SQLQuery;
@@ -26,7 +27,6 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.security.permission.InlineSQLHelperUtil;
 import com.liferay.portal.service.ClassNameLocalServiceUtil;
-import com.liferay.portal.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.util.dao.orm.CustomSQLUtil;
 import com.liferay.wiki.exception.NoSuchPageException;
 import com.liferay.wiki.model.WikiPage;
@@ -43,10 +43,13 @@ import java.util.List;
  * @author Brian Wing Shun Chan
  */
 public class WikiPageFinderImpl
-	extends BasePersistenceImpl<WikiPage> implements WikiPageFinder {
+	extends WikiPageFinderBaseImpl implements WikiPageFinder {
 
 	public static final String COUNT_BY_CREATE_DATE =
 		WikiPageFinder.class.getName() + ".countByCreateDate";
+
+	public static final String COUNT_BY_G_N_H_S =
+		WikiPageFinder.class.getName() + ".countByG_N_H_S";
 
 	public static final String FIND_BY_RESOURCE_PRIM_KEY =
 		WikiPageFinder.class.getName() + ".findByResourcePrimKey";
@@ -56,6 +59,9 @@ public class WikiPageFinderImpl
 
 	public static final String FIND_BY_NO_ASSETS =
 		WikiPageFinder.class.getName() + ".findByNoAssets";
+
+	public static final String FIND_BY_G_N_H_S =
+		WikiPageFinder.class.getName() + ".findByG_N_H_S";
 
 	@Override
 	public int countByCreateDate(
@@ -73,6 +79,14 @@ public class WikiPageFinderImpl
 	}
 
 	@Override
+	public int countByG_N_H_S(
+		long groupId, long nodeId, boolean head,
+		QueryDefinition<WikiPage> queryDefinition) {
+
+		return doCountByG_N_H_S(groupId, nodeId, head, queryDefinition, false);
+	}
+
+	@Override
 	public int filterCountByCreateDate(
 		long groupId, long nodeId, Date createDate, boolean before) {
 
@@ -85,6 +99,14 @@ public class WikiPageFinderImpl
 		long groupId, long nodeId, Timestamp createDate, boolean before) {
 
 		return doCountByCreateDate(groupId, nodeId, createDate, before, true);
+	}
+
+	@Override
+	public int filterCountByG_N_H_S(
+		long groupId, long nodeId, boolean head,
+		QueryDefinition<WikiPage> queryDefinition) {
+
+		return doCountByG_N_H_S(groupId, nodeId, head, queryDefinition, true);
 	}
 
 	@Override
@@ -104,6 +126,14 @@ public class WikiPageFinderImpl
 
 		return doFindByCreateDate(
 			groupId, nodeId, createDate, before, start, end, true);
+	}
+
+	@Override
+	public List<WikiPage> filterFindByG_N_H_S(
+		long groupId, long nodeId, boolean head,
+		QueryDefinition<WikiPage> queryDefinition) {
+
+		return doFindByG_N_H_S(groupId, nodeId, head, queryDefinition, true);
 	}
 
 	@Override
@@ -197,6 +227,14 @@ public class WikiPageFinderImpl
 		}
 	}
 
+	@Override
+	public List<WikiPage> findByG_N_H_S(
+		long groupId, long nodeId, boolean head,
+		QueryDefinition<WikiPage> queryDefinition) {
+
+		return doFindByG_N_H_S(groupId, nodeId, head, queryDefinition, false);
+	}
+
 	protected int doCountByCreateDate(
 		long groupId, long nodeId, Timestamp createDate, boolean before,
 		boolean inlineSQLHelper) {
@@ -234,6 +272,64 @@ public class WikiPageFinderImpl
 			qPos.add(createDate);
 			qPos.add(true);
 			qPos.add(WorkflowConstants.STATUS_APPROVED);
+
+			Iterator<Long> itr = q.iterate();
+
+			if (itr.hasNext()) {
+				Long count = itr.next();
+
+				if (count != null) {
+					return count.intValue();
+				}
+			}
+
+			return 0;
+		}
+		catch (Exception e) {
+			throw new SystemException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected int doCountByG_N_H_S(
+		long groupId, long nodeId, boolean head,
+		QueryDefinition<WikiPage> queryDefinition, boolean inlineSQLHelper) {
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			String sql = CustomSQLUtil.get(
+				COUNT_BY_G_N_H_S, queryDefinition, "WikiPage");
+
+			if (inlineSQLHelper) {
+				sql = InlineSQLHelperUtil.replacePermissionCheck(
+					sql, WikiPage.class.getName(), "WikiPage.resourcePrimKey",
+					groupId);
+			}
+
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+			q.addScalar(COUNT_COLUMN_NAME, Type.LONG);
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(groupId);
+			qPos.add(nodeId);
+			qPos.add(head);
+
+			if (queryDefinition.getOwnerUserId() > 0) {
+				qPos.add(queryDefinition.getOwnerUserId());
+
+				if (queryDefinition.isIncludeOwner()) {
+					qPos.add(WorkflowConstants.STATUS_IN_TRASH);
+				}
+			}
+
+			qPos.add(queryDefinition.getStatus());
 
 			Iterator<Long> itr = q.iterate();
 
@@ -294,6 +390,59 @@ public class WikiPageFinderImpl
 			qPos.add(WorkflowConstants.STATUS_APPROVED);
 
 			return (List<WikiPage>)QueryUtil.list(q, getDialect(), start, end);
+		}
+		catch (Exception e) {
+			throw new SystemException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected List<WikiPage> doFindByG_N_H_S(
+		long groupId, long nodeId, boolean head,
+		QueryDefinition<WikiPage> queryDefinition, boolean inlineSQLHelper) {
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			String sql = CustomSQLUtil.get(
+				FIND_BY_G_N_H_S, queryDefinition, "WikiPage");
+
+			if (inlineSQLHelper) {
+				sql = InlineSQLHelperUtil.replacePermissionCheck(
+					sql, WikiPage.class.getName(), "WikiPage.resourcePrimKey",
+					groupId);
+			}
+
+			CustomSQLUtil.replaceOrderBy(
+				sql, queryDefinition.getOrderByComparator("WikiPage"));
+
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+			q.addEntity("WikiPage", WikiPageImpl.class);
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(groupId);
+			qPos.add(nodeId);
+			qPos.add(head);
+
+			if (queryDefinition.getOwnerUserId() > 0) {
+				qPos.add(queryDefinition.getOwnerUserId());
+
+				if (queryDefinition.isIncludeOwner()) {
+					qPos.add(WorkflowConstants.STATUS_IN_TRASH);
+				}
+			}
+
+			qPos.add(queryDefinition.getStatus());
+
+			return (List<WikiPage>)QueryUtil.list(
+				q, getDialect(), queryDefinition.getStart(),
+				queryDefinition.getEnd());
 		}
 		catch (Exception e) {
 			throw new SystemException(e);

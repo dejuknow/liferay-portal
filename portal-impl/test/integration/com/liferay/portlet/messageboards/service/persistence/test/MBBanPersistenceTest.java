@@ -133,6 +133,8 @@ public class MBBanPersistenceTest {
 
 		newMBBan.setBanUserId(RandomTestUtil.nextLong());
 
+		newMBBan.setLastPublishDate(RandomTestUtil.nextDate());
+
 		_mbBans.add(_persistence.update(newMBBan));
 
 		MBBan existingMBBan = _persistence.findByPrimaryKey(newMBBan.getPrimaryKey());
@@ -152,6 +154,9 @@ public class MBBanPersistenceTest {
 			Time.getShortTimestamp(newMBBan.getModifiedDate()));
 		Assert.assertEquals(existingMBBan.getBanUserId(),
 			newMBBan.getBanUserId());
+		Assert.assertEquals(Time.getShortTimestamp(
+				existingMBBan.getLastPublishDate()),
+			Time.getShortTimestamp(newMBBan.getLastPublishDate()));
 	}
 
 	@Test
@@ -236,7 +241,7 @@ public class MBBanPersistenceTest {
 		return OrderByComparatorFactoryUtil.create("MBBan", "uuid", true,
 			"banId", true, "groupId", true, "companyId", true, "userId", true,
 			"userName", true, "createDate", true, "modifiedDate", true,
-			"banUserId", true);
+			"banUserId", true, "lastPublishDate", true);
 	}
 
 	@Test
@@ -439,16 +444,16 @@ public class MBBanPersistenceTest {
 		Assert.assertTrue(Validator.equals(existingMBBan.getUuid(),
 				ReflectionTestUtil.invoke(existingMBBan, "getOriginalUuid",
 					new Class<?>[0])));
-		Assert.assertEquals(existingMBBan.getGroupId(),
-			ReflectionTestUtil.invoke(existingMBBan, "getOriginalGroupId",
-				new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingMBBan.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingMBBan,
+				"getOriginalGroupId", new Class<?>[0]));
 
-		Assert.assertEquals(existingMBBan.getGroupId(),
-			ReflectionTestUtil.invoke(existingMBBan, "getOriginalGroupId",
-				new Class<?>[0]));
-		Assert.assertEquals(existingMBBan.getBanUserId(),
-			ReflectionTestUtil.invoke(existingMBBan, "getOriginalBanUserId",
-				new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingMBBan.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingMBBan,
+				"getOriginalGroupId", new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingMBBan.getBanUserId()),
+			ReflectionTestUtil.<Long>invoke(existingMBBan,
+				"getOriginalBanUserId", new Class<?>[0]));
 	}
 
 	protected MBBan addMBBan() throws Exception {
@@ -471,6 +476,8 @@ public class MBBanPersistenceTest {
 		mbBan.setModifiedDate(RandomTestUtil.nextDate());
 
 		mbBan.setBanUserId(RandomTestUtil.nextLong());
+
+		mbBan.setLastPublishDate(RandomTestUtil.nextDate());
 
 		_mbBans.add(_persistence.update(mbBan));
 

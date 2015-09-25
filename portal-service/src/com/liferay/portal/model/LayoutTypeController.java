@@ -28,6 +28,8 @@ public interface LayoutTypeController extends Serializable {
 
 	public String[] getConfigurationActionUpdate();
 
+	public String getType();
+
 	public String getURL();
 
 	public String includeEditContent(
@@ -40,7 +42,15 @@ public interface LayoutTypeController extends Serializable {
 			Layout layout)
 		throws Exception;
 
+	public boolean isBrowsable();
+
+	public boolean isCheckLayoutViewPermission();
+
 	public boolean isFirstPageable();
+
+	public boolean isFullPageDisplayable();
+
+	public boolean isInstanceable();
 
 	public boolean isParentable();
 

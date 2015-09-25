@@ -87,6 +87,10 @@ String[] types = LayoutTypeControllerTracker.getTypes();
 			<liferay-ui:message arguments='<%= Validator.isNull(lte.getLayoutType()) ? type : "layout.types." + lte.getLayoutType() %>' key="the-first-page-cannot-be-of-type-x" />
 		</c:if>
 
+		<c:if test="<%= lte.getType() == LayoutTypeException.NOT_INSTANCEABLE %>">
+			<liferay-ui:message arguments="<%= type %>" key="pages-of-type-x-cannot-be-selected" />
+		</c:if>
+
 		<c:if test="<%= lte.getType() == LayoutTypeException.NOT_PARENTABLE %>">
 			<liferay-ui:message arguments="<%= type %>" key="pages-of-type-x-cannot-have-child-pages" />
 		</c:if>
@@ -171,14 +175,20 @@ String[] types = LayoutTypeControllerTracker.getTypes();
 						}
 
 						LayoutTypeController layoutTypeController = LayoutTypeControllerTracker.getLayoutTypeController(type);
+
+						if (!layoutTypeController.isInstanceable()) {
+							continue;
+						}
+
+						ResourceBundle resourceBundle = ResourceBundleUtil.getBundle("content.Language", locale, layoutTypeController.getClass());
 					%>
 
-						<aui:nav-item cssClass="lfr-page-template" data-search='<%= LanguageUtil.get(request, "layout.types." + type) %>'>
+						<aui:nav-item cssClass="lfr-page-template" data-search='<%= LanguageUtil.get(request, resourceBundle, "layout.types." + type) %>'>
 							<div class="lfr-page-template-title toggler-header toggler-header-collapsed" data-type="<%= type %>">
-								<aui:input disabled="<%= (layoutsCount == 0) && !layoutTypeController.isFirstPageable() %>" id='<%= "addLayoutSelectedPageTemplate" + type %>' label='<%= "layout.types." + type %>' name="selectedPageTemplate" type="radio" />
+								<aui:input disabled="<%= (layoutsCount == 0) && !layoutTypeController.isFirstPageable() %>" id='<%= "addLayoutSelectedPageTemplate" + type %>' label='<%= LanguageUtil.get(request, resourceBundle, "layout.types." + type) %>' name="selectedPageTemplate" type="radio" />
 
 								<div class="lfr-page-template-description">
-									<small><%= LanguageUtil.get(request, "layout.types." + type + ".description" ) %></small>
+									<small><%= LanguageUtil.get(request, resourceBundle, "layout.types." + type + ".description") %></small>
 								</div>
 							</div>
 

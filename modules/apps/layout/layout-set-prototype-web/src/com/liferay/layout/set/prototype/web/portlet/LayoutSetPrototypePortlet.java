@@ -14,6 +14,10 @@
 
 package com.liferay.layout.set.prototype.web.portlet;
 
+import com.liferay.application.list.PanelAppRegistry;
+import com.liferay.application.list.PanelCategoryRegistry;
+import com.liferay.application.list.constants.ApplicationListWebKeys;
+import com.liferay.application.list.display.context.logic.PanelCategoryHelper;
 import com.liferay.layout.set.prototype.web.constants.LayoutSetPrototypePortletKeys;
 import com.liferay.layout.set.prototype.web.upgrade.LayoutSetPrototypeWebUpgrade;
 import com.liferay.portal.NoSuchLayoutSetPrototypeException;
@@ -31,7 +35,6 @@ import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.service.LayoutSetPrototypeServiceUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
-import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.sites.util.SitesUtil;
 
@@ -44,6 +47,7 @@ import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.Portlet;
 import javax.portlet.PortletException;
+import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
@@ -168,16 +172,10 @@ public class LayoutSetPrototypePortlet extends MVCPortlet {
 				layoutSetPrototype.getLayoutSetPrototypeId(),
 				settingsProperties.toString());
 
-		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
-			WebKeys.THEME_DISPLAY);
-
-		ThemeDisplay siteThemeDisplay = (ThemeDisplay)themeDisplay.clone();
-
-		siteThemeDisplay.setScopeGroupId(layoutSetPrototype.getGroupId());
-
-		PortletURL siteAdministrationURL = PortalUtil.getSiteAdministrationURL(
-			actionResponse, siteThemeDisplay,
-			LayoutSetPrototypePortletKeys.SITE_TEMPLATE_SETTINGS);
+		PortletURL siteAdministrationURL = PortalUtil.getControlPanelPortletURL(
+			actionRequest, layoutSetPrototype.getGroup(),
+			LayoutSetPrototypePortletKeys.SITE_TEMPLATE_SETTINGS, 0,
+			PortletRequest.RENDER_PHASE);
 
 		actionRequest.setAttribute(
 			WebKeys.REDIRECT, siteAdministrationURL.toString());
@@ -189,6 +187,12 @@ public class LayoutSetPrototypePortlet extends MVCPortlet {
 	protected void doDispatch(
 			RenderRequest renderRequest, RenderResponse renderResponse)
 		throws IOException, PortletException {
+
+		PanelCategoryHelper panelCategoryHelper = new PanelCategoryHelper(
+			_panelAppRegistry, _panelCategoryRegistry);
+
+		renderRequest.setAttribute(
+			ApplicationListWebKeys.PANEL_CATEGORY_HELPER, panelCategoryHelper);
 
 		if (SessionErrors.contains(
 				renderRequest, PrincipalException.getNestedClasses())) {
@@ -216,5 +220,20 @@ public class LayoutSetPrototypePortlet extends MVCPortlet {
 	protected void setLayoutSetPrototypeWebUpgrade(
 		LayoutSetPrototypeWebUpgrade layoutSetPrototypeWebUpgrade) {
 	}
+
+	@Reference(unbind = "-")
+	protected void setPanelAppRegistry(PanelAppRegistry panelAppRegistry) {
+		_panelAppRegistry = panelAppRegistry;
+	}
+
+	@Reference(unbind = "-")
+	protected void setPanelCategoryRegistry(
+		PanelCategoryRegistry panelCategoryRegistry) {
+
+		_panelCategoryRegistry = panelCategoryRegistry;
+	}
+
+	private PanelAppRegistry _panelAppRegistry;
+	private PanelCategoryRegistry _panelCategoryRegistry;
 
 }

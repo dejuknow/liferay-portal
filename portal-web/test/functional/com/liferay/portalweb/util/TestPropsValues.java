@@ -49,17 +49,17 @@ public class TestPropsValues
 	public static final String DATABASE_DB2_USERNAME = TestPropsUtil.get(
 		"database.db2.username");
 
-	public static final String DATABASE_HSQL_DRIVER = TestPropsUtil.get(
-		"database.hsql.driver");
+	public static final String DATABASE_HYPERSONIC_DRIVER = TestPropsUtil.get(
+		"database.hypersonic.driver");
 
-	public static final String DATABASE_HSQL_PASSWORD = TestPropsUtil.get(
-		"database.hsql.password");
+	public static final String DATABASE_HYPERSONIC_PASSWORD = TestPropsUtil.get(
+		"database.hypersonic.password");
 
-	public static final String DATABASE_HSQL_URL = TestPropsUtil.get(
-		"database.hsql.url");
+	public static final String DATABASE_HYPERSONIC_URL = TestPropsUtil.get(
+		"database.hypersonic.url");
 
-	public static final String DATABASE_HSQL_USERNAME = TestPropsUtil.get(
-		"database.hsql.username");
+	public static final String DATABASE_HYPERSONIC_USERNAME = TestPropsUtil.get(
+		"database.hypersonic.username");
 
 	public static final String DATABASE_MYSQL_DRIVER = TestPropsUtil.get(
 		"database.mysql.driver");
@@ -234,11 +234,17 @@ public class TestPropsValues
 	public static final boolean SAVE_SOURCE = GetterUtil.getBoolean(
 		TestPropsUtil.get("save.source"));
 
+	public static final String SELENIUM_CHROME_DRIVER_EXECUTABLE =
+		TestPropsUtil.get("selenium.chrome.driver.executable");
+
 	public static final String SELENIUM_EXECUTABLE_DIR_NAME = TestPropsUtil.get(
 		"selenium.executable.dir");
 
 	public static final String SELENIUM_HOST = TestPropsUtil.get(
 		"selenium.host");
+
+	public static final String SELENIUM_IE_DRIVER_EXECUTABLE =
+		TestPropsUtil.get("selenium.ie.driver.executable");
 
 	public static final String SELENIUM_IMPLEMENTATION = TestPropsUtil.get(
 		"selenium.implementation");
@@ -266,7 +272,7 @@ public class TestPropsValues
 		GetterUtil.getBoolean(TestPropsUtil.get("test.assert.liferay.errors"));
 
 	public static final String TEST_BASE_DIR_NAME = TestPropsUtil.get(
-		"test.basedir");
+		"test.base.dir.name");
 
 	public static final String TEST_CLASS_COMMAND_NAME = TestPropsUtil.get(
 		"test.class.command.name");

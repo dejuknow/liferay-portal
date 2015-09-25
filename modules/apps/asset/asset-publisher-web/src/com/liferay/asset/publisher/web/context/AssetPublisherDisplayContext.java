@@ -17,6 +17,7 @@ package com.liferay.asset.publisher.web.context;
 import com.liferay.asset.publisher.web.configuration.AssetPublisherWebConfigurationValues;
 import com.liferay.asset.publisher.web.constants.AssetPublisherPortletKeys;
 import com.liferay.asset.publisher.web.util.AssetPublisherUtil;
+import com.liferay.dynamic.data.mapping.util.DDMIndexerUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -56,7 +57,6 @@ import com.liferay.portlet.asset.service.AssetEntryLocalServiceUtil;
 import com.liferay.portlet.asset.service.AssetEntryServiceUtil;
 import com.liferay.portlet.asset.service.persistence.AssetEntryQuery;
 import com.liferay.portlet.asset.util.AssetUtil;
-import com.liferay.portlet.dynamicdatamapping.util.DDMIndexerUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -73,6 +73,16 @@ import javax.servlet.http.HttpServletRequest;
  * @author Eudaldo Alonso
  */
 public class AssetPublisherDisplayContext {
+
+	public static final String PAGINATION_TYPE_NONE = "none";
+
+	public static final String PAGINATION_TYPE_REGULAR = "regular";
+
+	public static final String PAGINATION_TYPE_SIMPLE = "simple";
+
+	public static final String[] PAGINATION_TYPES = {
+		PAGINATION_TYPE_NONE, PAGINATION_TYPE_REGULAR, PAGINATION_TYPE_SIMPLE
+	};
 
 	public AssetPublisherDisplayContext(
 		HttpServletRequest request, PortletPreferences portletPreferences) {
@@ -392,7 +402,7 @@ public class AssetPublisherDisplayContext {
 		return _extensions;
 	}
 
-	public String[] getExtensions(AssetRenderer assetRenderer) {
+	public String[] getExtensions(AssetRenderer<?> assetRenderer) {
 		final String[] supportedConversions =
 			assetRenderer.getSupportedConversions();
 
@@ -475,6 +485,10 @@ public class AssetPublisherDisplayContext {
 		if (_paginationType == null) {
 			_paginationType = GetterUtil.getString(
 				_portletPreferences.getValue("paginationType", "none"));
+
+			if (!ArrayUtil.contains(PAGINATION_TYPES, _paginationType)) {
+				_paginationType = PAGINATION_TYPE_NONE;
+			}
 		}
 
 		return _paginationType;
@@ -869,19 +883,13 @@ public class AssetPublisherDisplayContext {
 	public boolean isPaginationTypeNone() {
 		String paginationType = getPaginationType();
 
-		return paginationType.equals("none");
+		return paginationType.equals(PAGINATION_TYPE_NONE);
 	}
 
-	public boolean isPaginationTypeRegular() {
-		String paginationType = getPaginationType();
+	public boolean isPaginationTypeSelected(String paginationType) {
+		String curPaginationType = getPaginationType();
 
-		return paginationType.equals("regular");
-	}
-
-	public boolean isPaginationTypeSimple() {
-		String paginationType = getPaginationType();
-
-		return paginationType.equals("simple");
+		return curPaginationType.equals(paginationType);
 	}
 
 	public boolean isSelectionStyleDynamic() {
@@ -1103,7 +1111,7 @@ public class AssetPublisherDisplayContext {
 			return;
 		}
 
-		AssetRendererFactory assetRendererFactory =
+		AssetRendererFactory<?> assetRendererFactory =
 			AssetRendererFactoryRegistryUtil.
 				getAssetRendererFactoryByClassNameId(classNameIds[0]);
 
@@ -1155,7 +1163,7 @@ public class AssetPublisherDisplayContext {
 				baseModelSearchResult.getBaseModels();
 
 			if (!assetEntries.isEmpty() && (start < groupTotal)) {
-				AssetRendererFactory groupAssetRendererFactory =
+				AssetRendererFactory<?> groupAssetRendererFactory =
 					AssetRendererFactoryRegistryUtil.
 						getAssetRendererFactoryByClassNameId(classNameId);
 
@@ -1344,19 +1352,23 @@ public class AssetPublisherDisplayContext {
 			return;
 		}
 
-		_ddmStructureDisplayFieldValue = GetterUtil.getString(
+		_ddmStructureDisplayFieldValue = ParamUtil.getString(
+			_request, "ddmStructureDisplayFieldValue",
 			_portletPreferences.getValue(
 				"ddmStructureDisplayFieldValue", StringPool.BLANK));
-		_ddmStructureFieldName = GetterUtil.getString(
+		_ddmStructureFieldName = ParamUtil.getString(
+			_request, "ddmStructureFieldName",
 			_portletPreferences.getValue(
 				"ddmStructureFieldName", StringPool.BLANK));
-		_ddmStructureFieldValue = _portletPreferences.getValue(
-			"ddmStructureFieldValue", StringPool.BLANK);
+		_ddmStructureFieldValue = ParamUtil.getString(
+			_request, "ddmStructureFieldValue",
+			_portletPreferences.getValue(
+				"ddmStructureFieldValue", StringPool.BLANK));
 
 		if (Validator.isNotNull(_ddmStructureFieldName) &&
 			Validator.isNotNull(_ddmStructureFieldValue)) {
 
-			AssetRendererFactory assetRendererFactory =
+			AssetRendererFactory<?> assetRendererFactory =
 				AssetRendererFactoryRegistryUtil.
 					getAssetRendererFactoryByClassNameId(classNameIds[0]);
 

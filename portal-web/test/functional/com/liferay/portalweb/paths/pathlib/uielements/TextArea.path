@@ -24,8 +24,18 @@
 	<td></td>
 </tr>
 <tr>
+	<td>POLLS_QUESTION</td>
+	<td>//textarea[contains(@id,'pollsweb_description')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>SUMMARY</td>
 	<td>//textarea[contains(@id,'description')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>WEB_EDITOR</td>
+	<td>//textarea[contains(@id,'web_editor')]</td>
 	<td></td>
 </tr>
 </tbody>

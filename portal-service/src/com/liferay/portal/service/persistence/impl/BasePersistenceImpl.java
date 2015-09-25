@@ -15,6 +15,7 @@
 package com.liferay.portal.service.persistence.impl;
 
 import com.liferay.portal.NoSuchModelException;
+import com.liferay.portal.kernel.configuration.Filter;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.Dialect;
@@ -28,8 +29,11 @@ import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.NullSafeStringComparator;
 import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.BaseModel;
@@ -201,6 +205,11 @@ public class BasePersistenceImpl<T extends BaseModel<T>>
 	}
 
 	@Override
+	public Set<String> getBadColumnNames() {
+		return Collections.emptySet();
+	}
+
+	@Override
 	public Session getCurrentSession() throws ORMException {
 		return _sessionFactory.getCurrentSession();
 	}
@@ -295,6 +304,11 @@ public class BasePersistenceImpl<T extends BaseModel<T>>
 		_sessionFactory = sessionFactory;
 		_dialect = _sessionFactory.getDialect();
 		_db = DBFactoryUtil.getDB(_dialect);
+
+		_databaseOrderByMaxColumns = GetterUtil.getInteger(
+			PropsUtil.get(
+				PropsKeys.DATABASE_ORDER_BY_MAX_COLUMNS,
+				new Filter(_db.getType())));
 	}
 
 	@Override
@@ -425,11 +439,19 @@ public class BasePersistenceImpl<T extends BaseModel<T>>
 
 		String[] orderByFields = orderByComparator.getOrderByFields();
 
-		for (int i = 0; i < orderByFields.length; i++) {
+		int length = orderByFields.length;
+
+		if ((_databaseOrderByMaxColumns > 0) &&
+			(_databaseOrderByMaxColumns < length)) {
+
+			length = _databaseOrderByMaxColumns;
+		}
+
+		for (int i = 0; i < length; i++) {
 			query.append(
 				getColumnName(entityAlias, orderByFields[i], sqlQuery));
 
-			if ((i + 1) < orderByFields.length) {
+			if ((i + 1) < length) {
 				if (orderByComparator.isAscending(orderByFields[i])) {
 					query.append(ORDER_BY_ASC_HAS_NEXT);
 				}
@@ -446,10 +468,6 @@ public class BasePersistenceImpl<T extends BaseModel<T>>
 				}
 			}
 		}
-	}
-
-	protected Set<String> getBadColumnNames() {
-		return Collections.emptySet();
 	}
 
 	protected ClassLoader getClassLoader() {
@@ -570,6 +588,7 @@ public class BasePersistenceImpl<T extends BaseModel<T>>
 	private static final Log _log = LogFactoryUtil.getLog(
 		BasePersistenceImpl.class);
 
+	private int _databaseOrderByMaxColumns;
 	private DataSource _dataSource;
 	private DB _db;
 	private Dialect _dialect;

@@ -25,10 +25,10 @@ import com.liferay.portal.service.TeamServiceUtil;
 
 /**
  * Provides the HTTP utility for the
- * {@link com.liferay.portal.service.TeamServiceUtil} service utility. The
+ * {@link TeamServiceUtil} service utility. The
  * static methods of this class calls the same methods of the service utility.
  * However, the signatures are different because it requires an additional
- * {@link com.liferay.portal.security.auth.HttpPrincipal} parameter.
+ * {@link HttpPrincipal} parameter.
  *
  * <p>
  * The benefits of using the HTTP utility is that it is fast and allows for
@@ -47,8 +47,8 @@ import com.liferay.portal.service.TeamServiceUtil;
  *
  * @author Brian Wing Shun Chan
  * @see TeamServiceSoap
- * @see com.liferay.portal.security.auth.HttpPrincipal
- * @see com.liferay.portal.service.TeamServiceUtil
+ * @see HttpPrincipal
+ * @see TeamServiceUtil
  * @generated
  */
 @ProviderType
@@ -334,13 +334,72 @@ public class TeamServiceHttp {
 		}
 	}
 
+	public static java.util.List<com.liferay.portal.model.Team> search(
+		HttpPrincipal httpPrincipal, long groupId, java.lang.String name,
+		java.lang.String description,
+		java.util.LinkedHashMap<java.lang.String, java.lang.Object> params,
+		int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Team> obc) {
+		try {
+			MethodKey methodKey = new MethodKey(TeamServiceUtil.class,
+					"search", _searchParameterTypes9);
+
+			MethodHandler methodHandler = new MethodHandler(methodKey, groupId,
+					name, description, params, start, end, obc);
+
+			Object returnObj = null;
+
+			try {
+				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
+			}
+			catch (Exception e) {
+				throw new com.liferay.portal.kernel.exception.SystemException(e);
+			}
+
+			return (java.util.List<com.liferay.portal.model.Team>)returnObj;
+		}
+		catch (com.liferay.portal.kernel.exception.SystemException se) {
+			_log.error(se, se);
+
+			throw se;
+		}
+	}
+
+	public static int searchCount(HttpPrincipal httpPrincipal, long groupId,
+		java.lang.String name, java.lang.String description,
+		java.util.LinkedHashMap<java.lang.String, java.lang.Object> params) {
+		try {
+			MethodKey methodKey = new MethodKey(TeamServiceUtil.class,
+					"searchCount", _searchCountParameterTypes10);
+
+			MethodHandler methodHandler = new MethodHandler(methodKey, groupId,
+					name, description, params);
+
+			Object returnObj = null;
+
+			try {
+				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
+			}
+			catch (Exception e) {
+				throw new com.liferay.portal.kernel.exception.SystemException(e);
+			}
+
+			return ((Integer)returnObj).intValue();
+		}
+		catch (com.liferay.portal.kernel.exception.SystemException se) {
+			_log.error(se, se);
+
+			throw se;
+		}
+	}
+
 	public static com.liferay.portal.model.Team updateTeam(
 		HttpPrincipal httpPrincipal, long teamId, java.lang.String name,
 		java.lang.String description)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		try {
 			MethodKey methodKey = new MethodKey(TeamServiceUtil.class,
-					"updateTeam", _updateTeamParameterTypes9);
+					"updateTeam", _updateTeamParameterTypes11);
 
 			MethodHandler methodHandler = new MethodHandler(methodKey, teamId,
 					name, description);
@@ -396,7 +455,16 @@ public class TeamServiceHttp {
 	private static final Class<?>[] _hasUserTeamParameterTypes8 = new Class[] {
 			long.class, long.class
 		};
-	private static final Class<?>[] _updateTeamParameterTypes9 = new Class[] {
+	private static final Class<?>[] _searchParameterTypes9 = new Class[] {
+			long.class, java.lang.String.class, java.lang.String.class,
+			java.util.LinkedHashMap.class, int.class, int.class,
+			com.liferay.portal.kernel.util.OrderByComparator.class
+		};
+	private static final Class<?>[] _searchCountParameterTypes10 = new Class[] {
+			long.class, java.lang.String.class, java.lang.String.class,
+			java.util.LinkedHashMap.class
+		};
+	private static final Class<?>[] _updateTeamParameterTypes11 = new Class[] {
 			long.class, java.lang.String.class, java.lang.String.class
 		};
 }

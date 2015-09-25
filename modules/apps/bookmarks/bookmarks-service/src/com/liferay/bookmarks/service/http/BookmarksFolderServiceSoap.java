@@ -26,7 +26,7 @@ import java.rmi.RemoteException;
 
 /**
  * Provides the SOAP utility for the
- * {@link com.liferay.bookmarks.service.BookmarksFolderServiceUtil} service utility. The
+ * {@link BookmarksFolderServiceUtil} service utility. The
  * static methods of this class calls the same methods of the service utility.
  * However, the signatures are different because it is difficult for SOAP to
  * support certain types.
@@ -61,7 +61,7 @@ import java.rmi.RemoteException;
  * @author Brian Wing Shun Chan
  * @see BookmarksFolderServiceHttp
  * @see com.liferay.bookmarks.model.BookmarksFolderSoap
- * @see com.liferay.bookmarks.service.BookmarksFolderServiceUtil
+ * @see BookmarksFolderServiceUtil
  * @generated
  */
 @ProviderType
@@ -307,6 +307,18 @@ public class BookmarksFolderServiceSoap {
 		}
 	}
 
+	public static void mergeFolders(long folderId, long parentFolderId)
+		throws RemoteException {
+		try {
+			BookmarksFolderServiceUtil.mergeFolders(folderId, parentFolderId);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
 	public static com.liferay.bookmarks.model.BookmarksFolderSoap moveFolder(
 		long folderId, long parentFolderId) throws RemoteException {
 		try {
@@ -387,6 +399,12 @@ public class BookmarksFolderServiceSoap {
 		}
 	}
 
+	/**
+	* @deprecated As of 7.0.0, replaced by {@link #updateFolder(long, long,
+	String, String, ServiceContext)} and {@link #mergeFolders(
+	long, long)}
+	*/
+	@Deprecated
 	public static com.liferay.bookmarks.model.BookmarksFolderSoap updateFolder(
 		long folderId, long parentFolderId, java.lang.String name,
 		java.lang.String description, boolean mergeWithParentFolder,
@@ -396,6 +414,24 @@ public class BookmarksFolderServiceSoap {
 			com.liferay.bookmarks.model.BookmarksFolder returnValue = BookmarksFolderServiceUtil.updateFolder(folderId,
 					parentFolderId, name, description, mergeWithParentFolder,
 					serviceContext);
+
+			return com.liferay.bookmarks.model.BookmarksFolderSoap.toSoapModel(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static com.liferay.bookmarks.model.BookmarksFolderSoap updateFolder(
+		long folderId, long parentFolderId, java.lang.String name,
+		java.lang.String description,
+		com.liferay.portal.service.ServiceContext serviceContext)
+		throws RemoteException {
+		try {
+			com.liferay.bookmarks.model.BookmarksFolder returnValue = BookmarksFolderServiceUtil.updateFolder(folderId,
+					parentFolderId, name, description, serviceContext);
 
 			return com.liferay.bookmarks.model.BookmarksFolderSoap.toSoapModel(returnValue);
 		}

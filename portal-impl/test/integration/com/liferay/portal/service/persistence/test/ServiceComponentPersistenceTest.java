@@ -186,7 +186,7 @@ public class ServiceComponentPersistenceTest {
 	protected OrderByComparator<ServiceComponent> getOrderByComparator() {
 		return OrderByComparatorFactoryUtil.create("ServiceComponent",
 			"mvccVersion", true, "serviceComponentId", true, "buildNamespace",
-			true, "buildNumber", true, "buildDate", true, "data", true);
+			true, "buildNumber", true, "buildDate", true);
 	}
 
 	@Test
@@ -397,8 +397,9 @@ public class ServiceComponentPersistenceTest {
 				existingServiceComponent.getBuildNamespace(),
 				ReflectionTestUtil.invoke(existingServiceComponent,
 					"getOriginalBuildNamespace", new Class<?>[0])));
-		Assert.assertEquals(existingServiceComponent.getBuildNumber(),
-			ReflectionTestUtil.invoke(existingServiceComponent,
+		Assert.assertEquals(Long.valueOf(
+				existingServiceComponent.getBuildNumber()),
+			ReflectionTestUtil.<Long>invoke(existingServiceComponent,
 				"getOriginalBuildNumber", new Class<?>[0]));
 	}
 

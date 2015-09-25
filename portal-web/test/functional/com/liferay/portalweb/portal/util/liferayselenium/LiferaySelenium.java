@@ -174,6 +174,8 @@ public interface LiferaySelenium extends Selenium {
 
 	public boolean isSelectedLabel(String selectLocator, String pattern);
 
+	public boolean isSikuliImagePresent(String image) throws Exception;
+
 	public boolean isTCatEnabled();
 
 	public boolean isText(String locator, String value);
@@ -181,6 +183,10 @@ public interface LiferaySelenium extends Selenium {
 	public boolean isTextNotPresent(String pattern);
 
 	public boolean isValue(String locator, String value);
+
+	public void javaScriptMouseDown(String locator);
+
+	public void javaScriptMouseUp(String locator);
 
 	public void keyDownAndWait(String locator, String keySequence);
 

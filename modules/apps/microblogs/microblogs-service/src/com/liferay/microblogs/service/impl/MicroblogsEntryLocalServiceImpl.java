@@ -14,17 +14,19 @@
 
 package com.liferay.microblogs.service.impl;
 
+import com.liferay.microblogs.constants.MicroblogsPortletKeys;
 import com.liferay.microblogs.exception.UnsupportedMicroblogsEntryException;
 import com.liferay.microblogs.microblogs.social.MicroblogsActivityKeys;
 import com.liferay.microblogs.model.MicroblogsEntry;
 import com.liferay.microblogs.model.MicroblogsEntryConstants;
 import com.liferay.microblogs.service.base.MicroblogsEntryLocalServiceBaseImpl;
 import com.liferay.microblogs.util.MicroblogsUtil;
-import com.liferay.microblogs.util.PortletKeys;
 import com.liferay.microblogs.util.comparator.EntryCreateDateComparator;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.DestinationNames;
 import com.liferay.portal.kernel.messaging.MessageBusUtil;
 import com.liferay.portal.kernel.process.ProcessCallable;
@@ -418,6 +420,9 @@ public class MicroblogsEntryLocalServiceImpl
 			return subscription.getSubscriptionId();
 		}
 		catch (PortalException pe) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(pe, pe);
+			}
 		}
 
 		return 0;
@@ -441,12 +446,13 @@ public class MicroblogsEntryLocalServiceImpl
 				StringUtil.shorten(microblogsEntry.getContent(), 50),
 			serviceContext));
 
-		AssetRendererFactory assetRendererFactory =
-			AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(
-				MicroblogsEntry.class.getName());
+		AssetRendererFactory<MicroblogsEntry> assetRendererFactory =
+			AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClass(
+				MicroblogsEntry.class);
 
-		AssetRenderer assetRenderer = assetRendererFactory.getAssetRenderer(
-			microblogsEntry.getMicroblogsEntryId());
+		AssetRenderer<MicroblogsEntry> assetRenderer =
+			assetRendererFactory.getAssetRenderer(
+				microblogsEntry.getMicroblogsEntryId());
 
 		String entryURL = StringPool.BLANK;
 
@@ -456,6 +462,9 @@ public class MicroblogsEntryLocalServiceImpl
 				serviceContext.getLiferayPortletResponse(), null);
 		}
 		catch (Exception e) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(e, e);
+			}
 		}
 
 		notificationEventJSONObject.put("entryURL", entryURL);
@@ -528,6 +537,9 @@ public class MicroblogsEntryLocalServiceImpl
 		}
 	}
 
+	private static final Log _log = LogFactoryUtil.getLog(
+		MicroblogsEntryLocalServiceImpl.class);
+
 	private class NotificationProcessCallable
 		implements ProcessCallable<Serializable> {
 
@@ -591,7 +603,8 @@ public class MicroblogsEntryLocalServiceImpl
 
 						userNotificationEventLocalService.
 							sendUserNotificationEvents(
-								receiverUserIds.get(j), PortletKeys.MICROBLOGS,
+								receiverUserIds.get(j),
+								MicroblogsPortletKeys.MICROBLOGS,
 								UserNotificationDeliveryConstants.TYPE_PUSH,
 								notificationEventJSONObject);
 					}
@@ -609,7 +622,8 @@ public class MicroblogsEntryLocalServiceImpl
 
 						userNotificationEventLocalService.
 							sendUserNotificationEvents(
-								receiverUserIds.get(j), PortletKeys.MICROBLOGS,
+								receiverUserIds.get(j),
+								MicroblogsPortletKeys.MICROBLOGS,
 								UserNotificationDeliveryConstants.TYPE_WEBSITE,
 								notificationEventJSONObject);
 					}

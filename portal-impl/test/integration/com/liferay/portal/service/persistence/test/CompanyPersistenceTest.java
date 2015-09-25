@@ -213,9 +213,9 @@ public class CompanyPersistenceTest {
 
 	protected OrderByComparator<Company> getOrderByComparator() {
 		return OrderByComparatorFactoryUtil.create("Company", "mvccVersion",
-			true, "companyId", true, "accountId", true, "webId", true, "key",
-			true, "mx", true, "homeURL", true, "logoId", true, "system", true,
-			"maxUsers", true, "active", true);
+			true, "companyId", true, "accountId", true, "webId", true, "mx",
+			true, "homeURL", true, "logoId", true, "system", true, "maxUsers",
+			true, "active", true);
 	}
 
 	@Test
@@ -428,9 +428,9 @@ public class CompanyPersistenceTest {
 				ReflectionTestUtil.invoke(existingCompany, "getOriginalMx",
 					new Class<?>[0])));
 
-		Assert.assertEquals(existingCompany.getLogoId(),
-			ReflectionTestUtil.invoke(existingCompany, "getOriginalLogoId",
-				new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingCompany.getLogoId()),
+			ReflectionTestUtil.<Long>invoke(existingCompany,
+				"getOriginalLogoId", new Class<?>[0]));
 	}
 
 	protected Company addCompany() throws Exception {

@@ -64,6 +64,7 @@ public class MBThreadFlagWrapper implements MBThreadFlag,
 		attributes.put("createDate", getCreateDate());
 		attributes.put("modifiedDate", getModifiedDate());
 		attributes.put("threadId", getThreadId());
+		attributes.put("lastPublishDate", getLastPublishDate());
 
 		return attributes;
 	}
@@ -123,6 +124,12 @@ public class MBThreadFlagWrapper implements MBThreadFlag,
 		if (threadId != null) {
 			setThreadId(threadId);
 		}
+
+		Date lastPublishDate = (Date)attributes.get("lastPublishDate");
+
+		if (lastPublishDate != null) {
+			setLastPublishDate(lastPublishDate);
+		}
 	}
 
 	@Override
@@ -152,7 +159,7 @@ public class MBThreadFlagWrapper implements MBThreadFlag,
 	* @return the create date of this message boards thread flag
 	*/
 	@Override
-	public java.util.Date getCreateDate() {
+	public Date getCreateDate() {
 		return _mbThreadFlag.getCreateDate();
 	}
 
@@ -172,12 +179,22 @@ public class MBThreadFlagWrapper implements MBThreadFlag,
 	}
 
 	/**
+	* Returns the last publish date of this message boards thread flag.
+	*
+	* @return the last publish date of this message boards thread flag
+	*/
+	@Override
+	public Date getLastPublishDate() {
+		return _mbThreadFlag.getLastPublishDate();
+	}
+
+	/**
 	* Returns the modified date of this message boards thread flag.
 	*
 	* @return the modified date of this message boards thread flag
 	*/
 	@Override
-	public java.util.Date getModifiedDate() {
+	public Date getModifiedDate() {
 		return _mbThreadFlag.getModifiedDate();
 	}
 
@@ -302,7 +319,7 @@ public class MBThreadFlagWrapper implements MBThreadFlag,
 	* @param createDate the create date of this message boards thread flag
 	*/
 	@Override
-	public void setCreateDate(java.util.Date createDate) {
+	public void setCreateDate(Date createDate) {
 		_mbThreadFlag.setCreateDate(createDate);
 	}
 
@@ -335,12 +352,22 @@ public class MBThreadFlagWrapper implements MBThreadFlag,
 	}
 
 	/**
+	* Sets the last publish date of this message boards thread flag.
+	*
+	* @param lastPublishDate the last publish date of this message boards thread flag
+	*/
+	@Override
+	public void setLastPublishDate(Date lastPublishDate) {
+		_mbThreadFlag.setLastPublishDate(lastPublishDate);
+	}
+
+	/**
 	* Sets the modified date of this message boards thread flag.
 	*
 	* @param modifiedDate the modified date of this message boards thread flag
 	*/
 	@Override
-	public void setModifiedDate(java.util.Date modifiedDate) {
+	public void setModifiedDate(Date modifiedDate) {
 		_mbThreadFlag.setModifiedDate(modifiedDate);
 	}
 

@@ -52,7 +52,7 @@ String title = ddmDisplay.getViewTemplatesTitle(structure, locale);
 	</c:if>
 
 	<liferay-ui:search-container
-		searchContainer="<%= new TemplateSearch(renderRequest, portletURL) %>"
+		searchContainer="<%= new TemplateSearch(renderRequest, portletURL, WorkflowConstants.STATUS_APPROVED) %>"
 	>
 		<c:if test="<%= showToolbar %>">
 
@@ -74,7 +74,7 @@ String title = ddmDisplay.getViewTemplatesTitle(structure, locale);
 		</liferay-ui:search-container-results>
 
 		<liferay-ui:search-container-row
-			className="com.liferay.portlet.dynamicdatamapping.model.DDMTemplate"
+			className="com.liferay.dynamic.data.mapping.model.DDMTemplate"
 			keyProperty="templateId"
 			modelVar="template"
 		>
@@ -89,9 +89,9 @@ String title = ddmDisplay.getViewTemplatesTitle(structure, locale);
 				value="<%= HtmlUtil.escape(template.getName(locale)) %>"
 			/>
 
-			<liferay-ui:search-container-column-text
+			<liferay-ui:search-container-column-jsp
 				name="description"
-				value="<%= HtmlUtil.escape(template.getDescription(locale)) %>"
+				path="/template_description.jsp"
 			/>
 
 			<liferay-ui:search-container-column-date

@@ -24,19 +24,12 @@ import com.liferay.portal.kernel.util.InstanceFactory;
 import com.liferay.portal.util.PropsValues;
 
 import org.hibernate.dialect.DB2Dialect;
-import org.hibernate.dialect.DerbyDialect;
 import org.hibernate.dialect.Dialect;
-import org.hibernate.dialect.FirebirdDialect;
 import org.hibernate.dialect.HSQLDialect;
-import org.hibernate.dialect.InformixDialect;
-import org.hibernate.dialect.IngresDialect;
-import org.hibernate.dialect.InterbaseDialect;
-import org.hibernate.dialect.JDataStoreDialect;
 import org.hibernate.dialect.MySQLDialect;
 import org.hibernate.dialect.Oracle8iDialect;
 import org.hibernate.dialect.Oracle9Dialect;
 import org.hibernate.dialect.PostgreSQLDialect;
-import org.hibernate.dialect.SAPDBDialect;
 import org.hibernate.dialect.SQLServerDialect;
 import org.hibernate.dialect.Sybase11Dialect;
 import org.hibernate.dialect.SybaseASE15Dialect;
@@ -83,32 +76,10 @@ public class DBFactoryImpl implements DBFactory {
 		}
 
 		if (dialect instanceof DB2Dialect) {
-			if (dialect instanceof DerbyDialect) {
-				db = DerbyDB.getInstance();
-			}
-			else {
-				db = DB2DB.getInstance();
-			}
+			db = DB2DB.getInstance();
 		}
 		else if (dialect instanceof HSQLDialect) {
 			db = HypersonicDB.getInstance();
-		}
-		else if (dialect instanceof InformixDialect) {
-			db = InformixDB.getInstance();
-		}
-		else if (dialect instanceof IngresDialect) {
-			db = IngresDB.getInstance();
-		}
-		else if (dialect instanceof InterbaseDialect) {
-			if (dialect instanceof FirebirdDialect) {
-				db = FirebirdDB.getInstance();
-			}
-			else {
-				db = InterBaseDB.getInstance();
-			}
-		}
-		else if (dialect instanceof JDataStoreDialect) {
-			db = JDataStoreDB.getInstance();
 		}
 		else if (dialect instanceof MySQLDialect) {
 			db = MySQLDB.getInstance();
@@ -120,9 +91,6 @@ public class DBFactoryImpl implements DBFactory {
 		}
 		else if (dialect instanceof PostgreSQLDialect) {
 			db = PostgreSQLDB.getInstance();
-		}
-		else if (dialect instanceof SAPDBDialect) {
-			db = SAPDB.getInstance();
 		}
 		else if (dialect instanceof SQLServerDialect) {
 			db = SQLServerDB.getInstance();
@@ -145,26 +113,8 @@ public class DBFactoryImpl implements DBFactory {
 		if (type.equals(DB.TYPE_DB2)) {
 			db = DB2DB.getInstance();
 		}
-		else if (type.equals(DB.TYPE_DERBY)) {
-			db = DerbyDB.getInstance();
-		}
-		else if (type.equals(DB.TYPE_FIREBIRD)) {
-			db = FirebirdDB.getInstance();
-		}
 		else if (type.equals(DB.TYPE_HYPERSONIC)) {
 			db = HypersonicDB.getInstance();
-		}
-		else if (type.equals(DB.TYPE_INFORMIX)) {
-			db = InformixDB.getInstance();
-		}
-		else if (type.equals(DB.TYPE_INGRES)) {
-			db = IngresDB.getInstance();
-		}
-		else if (type.equals(DB.TYPE_INTERBASE)) {
-			db = InterBaseDB.getInstance();
-		}
-		else if (type.equals(DB.TYPE_JDATASTORE)) {
-			db = JDataStoreDB.getInstance();
 		}
 		else if (type.equals(DB.TYPE_MYSQL)) {
 			db = MySQLDB.getInstance();
@@ -174,9 +124,6 @@ public class DBFactoryImpl implements DBFactory {
 		}
 		else if (type.equals(DB.TYPE_POSTGRESQL)) {
 			db = PostgreSQLDB.getInstance();
-		}
-		else if (type.equals(DB.TYPE_SAP)) {
-			db = SAPDB.getInstance();
 		}
 		else if (type.equals(DB.TYPE_SQLSERVER)) {
 			db = SQLServerDB.getInstance();

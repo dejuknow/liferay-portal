@@ -14,6 +14,11 @@
 
 package com.liferay.journal.content.web.context;
 
+import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.model.DDMTemplate;
+import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
+import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalServiceUtil;
+import com.liferay.dynamic.data.mapping.service.permission.DDMTemplatePermission;
 import com.liferay.journal.content.asset.addon.entry.common.ContentMetadataAssetAddonEntry;
 import com.liferay.journal.content.asset.addon.entry.common.ContentMetadataAssetAddonEntryTracker;
 import com.liferay.journal.content.asset.addon.entry.common.UserToolAssetAddonEntry;
@@ -53,11 +58,6 @@ import com.liferay.portlet.asset.model.AssetRenderer;
 import com.liferay.portlet.asset.model.AssetRendererFactory;
 import com.liferay.portlet.asset.service.AssetEntryLocalServiceUtil;
 import com.liferay.portlet.asset.service.AssetEntryServiceUtil;
-import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
-import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
-import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
-import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalServiceUtil;
-import com.liferay.portlet.dynamicdatamapping.service.permission.DDMTemplatePermission;
 import com.liferay.util.PropertyComparator;
 
 import java.util.ArrayList;
@@ -92,7 +92,7 @@ public class JournalContentDisplayContext {
 		JournalArticleDisplay articleDisplay = getArticleDisplay();
 
 		if ((article == null) || !hasViewPermission() ||
-			(articleDisplay == null) || isExpired()) {
+			(articleDisplay == null) || isExpired() || article.isScheduled()) {
 
 			portletRequest.setAttribute(
 				WebKeys.PORTLET_CONFIGURATOR_VISIBILITY, Boolean.TRUE);
@@ -218,16 +218,18 @@ public class JournalContentDisplayContext {
 		return assetEntry.getEntryId();
 	}
 
-	public AssetRenderer getAssetRenderer() throws PortalException {
+	public AssetRenderer<JournalArticle> getAssetRenderer()
+		throws PortalException {
+
 		JournalArticle article = getArticle();
 
 		if (article == null) {
 			return null;
 		}
 
-		AssetRendererFactory assetRendererFactory =
-			AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(
-				JournalArticle.class.getName());
+		AssetRendererFactory<JournalArticle> assetRendererFactory =
+			AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClass(
+				JournalArticle.class);
 
 		if (assetRendererFactory == null) {
 			return null;

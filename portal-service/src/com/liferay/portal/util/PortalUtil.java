@@ -238,7 +238,7 @@ public class PortalUtil {
 
 	/**
 	 * Adds the preserved parameters doAsUserId, doAsUserLanguageId,
-	 * doAsGroupId, refererPlid, and controlPanelCategory to the URL.
+	 * doAsGroupId, and refererPlid to the URL.
 	 *
 	 * @param  themeDisplay the current theme display
 	 * @param  url the URL
@@ -613,24 +613,12 @@ public class PortalUtil {
 		return getPortal().getCompanyIds();
 	}
 
-	public static String getComputerAddress() {
-		return getPortal().getComputerAddress();
+	public static Set<String> getComputerAddresses() {
+		return getPortal().getComputerAddresses();
 	}
 
 	public static String getComputerName() {
 		return getPortal().getComputerName();
-	}
-
-	public static Map<String, List<Portlet>> getControlPanelCategoriesMap(
-		HttpServletRequest request) {
-
-		return getPortal().getControlPanelCategoriesMap(request);
-	}
-
-	public static String getControlPanelCategory(
-		String portletId, ThemeDisplay themeDisplay) {
-
-		return getPortal().getControlPanelCategory(portletId, themeDisplay);
 	}
 
 	public static String getControlPanelFullURL(
@@ -652,32 +640,36 @@ public class PortalUtil {
 		return getPortal().getControlPanelPlid(portletRequest);
 	}
 
-	public static Set<Portlet> getControlPanelPortlets(
-		long companyId, String category) {
+	public static PortletURL getControlPanelPortletURL(
+		HttpServletRequest request, Group group, String portletId,
+		long refererPlid, String lifecycle) {
 
-		return getPortal().getControlPanelPortlets(companyId, category);
-	}
-
-	public static List<Portlet> getControlPanelPortlets(
-		String category, ThemeDisplay themeDisplay) {
-
-		return getPortal().getControlPanelPortlets(category, themeDisplay);
+		return getPortal().getControlPanelPortletURL(
+			request, group, portletId, refererPlid, lifecycle);
 	}
 
 	public static PortletURL getControlPanelPortletURL(
-		HttpServletRequest request, String portletId, long referrerPlid,
+		HttpServletRequest request, String portletId, long refererPlid,
 		String lifecycle) {
 
 		return getPortal().getControlPanelPortletURL(
-			request, portletId, referrerPlid, lifecycle);
+			request, portletId, refererPlid, lifecycle);
 	}
 
 	public static PortletURL getControlPanelPortletURL(
-		PortletRequest portletRequest, String portletId, long referrerPlid,
+		PortletRequest portletRequest, Group group, String portletId,
+		long refererPlid, String lifecycle) {
+
+		return getPortal().getControlPanelPortletURL(
+			portletRequest, group, portletId, refererPlid, lifecycle);
+	}
+
+	public static PortletURL getControlPanelPortletURL(
+		PortletRequest portletRequest, String portletId, long refererPlid,
 		String lifecycle) {
 
 		return getPortal().getControlPanelPortletURL(
-			portletRequest, portletId, referrerPlid, lifecycle);
+			portletRequest, portletId, refererPlid, lifecycle);
 	}
 
 	public static String getCreateAccountURL(
@@ -972,22 +964,8 @@ public class PortalUtil {
 			portlet, facebookCanvasPageURL, themeDisplay);
 	}
 
-	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
-	 */
-	@Deprecated
-	public static Portlet getFirstMyAccountPortlet(ThemeDisplay themeDisplay) {
-		return getPortal().getFirstMyAccountPortlet(themeDisplay);
-	}
-
 	public static String getFirstPageLayoutTypes(HttpServletRequest request) {
 		return getPortal().getFirstPageLayoutTypes(request);
-	}
-
-	public static Portlet getFirstSiteAdministrationPortlet(
-		ThemeDisplay themeDisplay) {
-
-		return getPortal().getFirstSiteAdministrationPortlet(themeDisplay);
 	}
 
 	public static String getFullName(
@@ -1792,33 +1770,26 @@ public class PortalUtil {
 			companyId, groupId, userId);
 	}
 
-	public static Map<String, List<Portlet>> getSiteAdministrationCategoriesMap(
-		HttpServletRequest request) {
-
-		return getPortal().getSiteAdministrationCategoriesMap(request);
-	}
-
-	public static PortletURL getSiteAdministrationURL(
-		HttpServletRequest request, ThemeDisplay themeDisplay) {
-
-		return getPortal().getSiteAdministrationURL(request, themeDisplay);
-	}
-
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link
+	 *             #getControlPanelPortletURL(PortletRequest, Group, String,
+	 *             long, String)}
+	 */
+	@Deprecated
 	public static PortletURL getSiteAdministrationURL(
 		HttpServletRequest request, ThemeDisplay themeDisplay,
-		String portletName) {
+		String portletId) {
 
 		return getPortal().getSiteAdministrationURL(
-			request, themeDisplay, portletName);
+			request, themeDisplay, portletId);
 	}
 
-	public static PortletURL getSiteAdministrationURL(
-		PortletResponse portletResponse, ThemeDisplay themeDisplay) {
-
-		return getPortal().getSiteAdministrationURL(
-			portletResponse, themeDisplay);
-	}
-
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link
+	 *             #getControlPanelPortletURL(PortletRequest, Group, String,
+	 *             long, String)}
+	 */
+	@Deprecated
 	public static PortletURL getSiteAdministrationURL(
 		PortletResponse portletResponse, ThemeDisplay themeDisplay,
 		String portletName) {
@@ -2161,13 +2132,6 @@ public class PortalUtil {
 
 		return getPortal().isCompanyControlPanelPortlet(
 			portletId, themeDisplay);
-	}
-
-	public static boolean isCompanyControlPanelVisible(
-			ThemeDisplay themeDisplay)
-		throws PortalException {
-
-		return getPortal().isCompanyControlPanelVisible(themeDisplay);
 	}
 
 	public static boolean isControlPanelPortlet(

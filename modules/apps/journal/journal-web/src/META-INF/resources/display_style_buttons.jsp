@@ -33,8 +33,8 @@ if (!ddmStructureKey.equals("0")) {
 }
 %>
 
-<liferay-ui:app-view-display-style
-	displayStyle="<%= journalDisplayContext.getDisplayStyle() %>"
+<liferay-frontend:management-bar-display-buttons
 	displayStyleURL="<%= displayStyleURL %>"
-	displayStyles="<%= journalDisplayContext.getDisplayViews() %>"
+	displayViews="<%= journalDisplayContext.getDisplayViews() %>"
+	selectedDisplayStyle="<%= journalDisplayContext.getDisplayStyle() %>"
 />

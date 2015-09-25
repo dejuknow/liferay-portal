@@ -19,6 +19,13 @@ import com.liferay.osgi.service.tracker.map.PropertyServiceReferenceComparator;
 import com.liferay.osgi.service.tracker.map.ServiceReferenceMapper;
 import com.liferay.osgi.service.tracker.map.ServiceTrackerMap;
 import com.liferay.osgi.service.tracker.map.ServiceTrackerMapFactory;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.PredicateFilter;
+import com.liferay.portal.model.Group;
+import com.liferay.portal.security.permission.PermissionChecker;
 
 import java.util.Collections;
 import java.util.List;
@@ -36,16 +43,24 @@ import org.osgi.service.component.annotations.Deactivate;
 @Component(immediate = true, service = PanelCategoryRegistry.class)
 public class PanelCategoryRegistry {
 
-	public Iterable<PanelCategory> getChildPanelCategories(
+	public List<PanelCategory> getChildPanelCategories(
 		PanelCategory panelCategory) {
 
 		return getChildPanelCategories(panelCategory.getKey());
 	}
 
-	public Iterable<PanelCategory> getChildPanelCategories(
+	public List<PanelCategory> getChildPanelCategories(
+		PanelCategory panelCategory, final PermissionChecker permissionChecker,
+		final Group group) {
+
+		return getChildPanelCategories(
+			panelCategory.getKey(), permissionChecker, group);
+	}
+
+	public List<PanelCategory> getChildPanelCategories(
 		String panelCategoryKey) {
 
-		Iterable<PanelCategory> childPanelCategories =
+		List<PanelCategory> childPanelCategories =
 			_childPanelCategoriesServiceTrackerMap.getService(panelCategoryKey);
 
 		if (childPanelCategories == null) {
@@ -55,15 +70,58 @@ public class PanelCategoryRegistry {
 		return childPanelCategories;
 	}
 
-	public PanelCategory getFirstChildPanelCategory(String panelCategoryKey) {
-		List<PanelCategory> childPanelCategories =
-			_childPanelCategoriesServiceTrackerMap.getService(panelCategoryKey);
+	public List<PanelCategory> getChildPanelCategories(
+		String panelCategoryKey, final PermissionChecker permissionChecker,
+		final Group group) {
 
-		if (childPanelCategories == null) {
-			return null;
+		List<PanelCategory> panelCategories = getChildPanelCategories(
+			panelCategoryKey);
+
+		if (panelCategories.isEmpty()) {
+			return panelCategories;
 		}
 
-		return childPanelCategories.get(0);
+		return ListUtil.filter(
+			panelCategories,
+			new PredicateFilter<PanelCategory>() {
+
+				@Override
+				public boolean filter(PanelCategory panelCategory) {
+					try {
+						return panelCategory.hasAccessPermission(
+							permissionChecker, group);
+					}
+					catch (PortalException e) {
+						_log.error(e);
+					}
+
+					return false;
+				}
+
+			});
+	}
+
+	public PanelCategory getFirstChildPanelCategory(
+		String panelCategoryKey, PermissionChecker permissionChecker,
+		Group group) {
+
+		List<PanelCategory> panelCategories = getChildPanelCategories(
+			panelCategoryKey);
+
+		for (PanelCategory panelCategory : panelCategories) {
+			try {
+				if (panelCategory.hasAccessPermission(
+						permissionChecker, group)) {
+
+					return panelCategory;
+				}
+			}
+			catch (PortalException e) {
+				_log.error(e);
+			}
+		}
+
+		return null;
 	}
 
 	public PanelCategory getPanelCategory(String panelCategoryKey) {
@@ -121,6 +179,9 @@ public class PanelCategoryRegistry {
 		_childPanelCategoriesServiceTrackerMap.close();
 		_panelCategoryServiceTrackerMap.close();
 	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		PanelCategoryRegistry.class);
 
 	private ServiceTrackerMap<String, List<PanelCategory>>
 		_childPanelCategoriesServiceTrackerMap;

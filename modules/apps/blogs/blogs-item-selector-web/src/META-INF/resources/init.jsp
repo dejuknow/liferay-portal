@@ -16,7 +16,7 @@
 
 <%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
 
-<%@ taglib uri="http://liferay.com/tld/item-selector/ui" prefix="item-selector-ui" %><%@
+<%@ taglib uri="http://liferay.com/tld/item-selector" prefix="liferay-item-selector" %><%@
 taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %>
 
 <%@ page import="com.liferay.blogs.item.selector.criterion.BlogsItemSelectorCriterion" %><%@
@@ -34,11 +34,13 @@ page import="com.liferay.portal.kernel.search.Hits" %><%@
 page import="com.liferay.portal.kernel.search.SearchContext" %><%@
 page import="com.liferay.portal.kernel.search.SearchContextFactory" %><%@
 page import="com.liferay.portal.kernel.util.GetterUtil" %><%@
+page import="com.liferay.portal.kernel.util.OrderByComparator" %><%@
 page import="com.liferay.portal.kernel.util.ParamUtil" %><%@
-page import="com.liferay.portal.kernel.util.Validator" %><%@
+page import="com.liferay.portal.kernel.util.ResourceBundleUtil" %><%@
 page import="com.liferay.portal.kernel.workflow.WorkflowConstants" %><%@
 page import="com.liferay.portal.portletfilerepository.PortletFileRepositoryUtil" %><%@
-page import="com.liferay.portlet.documentlibrary.service.DLAppLocalServiceUtil" %>
+page import="com.liferay.portlet.documentlibrary.service.DLAppLocalServiceUtil" %><%@
+page import="com.liferay.portlet.documentlibrary.util.DLUtil" %>
 
 <%@ page import="java.util.ArrayList" %><%@
 page import="java.util.List" %><%@
@@ -49,5 +51,5 @@ page import="java.util.ResourceBundle" %>
 <liferay-theme:defineObjects/>
 
 <%
-ResourceBundle resourceBundle = ResourceBundle.getBundle("content.Language", locale);
+ResourceBundle resourceBundle = ResourceBundleUtil.getBundle("content.Language", locale, getClass());
 %>

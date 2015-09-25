@@ -22,9 +22,13 @@ PortletURL portletURL = renderResponse.createRenderURL();
 
 <liferay-ui:error exception="<%= RequiredLayoutSetPrototypeException.class %>" message="you-cannot-delete-site-templates-that-are-used-by-a-site" />
 
-<liferay-util:include page="/toolbar.jsp" servletContext="<%= application %>" />
+<aui:nav-bar cssClass="collapse-basic-search" markupView="lexicon">
+	<aui:nav cssClass="navbar-nav">
+		<aui:nav-item cssClass="active" label="templates" />
+	</aui:nav>
+</aui:nav-bar>
 
-<aui:form action="<%= portletURL.toString() %>" method="get" name="fm">
+<aui:form action="<%= portletURL.toString() %>" cssClass="container-fluid-1280" method="get" name="fm">
 	<liferay-portlet:renderURLParams varImpl="portletURL" />
 	<aui:input name="<%= Constants.CMD %>" type="hidden" />
 	<aui:input name="redirect" type="hidden" value="<%= portletURL.toString() %>" />
@@ -51,11 +55,17 @@ PortletURL portletURL = renderResponse.createRenderURL();
 			<%
 			String rowURL = null;
 
-			ThemeDisplay siteThemeDisplay = (ThemeDisplay)themeDisplay.clone();
+			Group group = layoutSetPrototype.getGroup();
 
-			siteThemeDisplay.setScopeGroupId(layoutSetPrototype.getGroupId());
+			PortletURL siteAdministrationURL = null;
 
-			PortletURL siteAdministrationURL = PortalUtil.getSiteAdministrationURL(renderResponse, siteThemeDisplay);
+			PanelCategoryHelper panelCategoryHelper = (PanelCategoryHelper)request.getAttribute(ApplicationListWebKeys.PANEL_CATEGORY_HELPER);
+
+			String portletId = panelCategoryHelper.getFirstPortletId(PanelCategoryKeys.SITE_ADMINISTRATION, permissionChecker, group);
+
+			if (Validator.isNotNull(portletId)) {
+				siteAdministrationURL = PortalUtil.getControlPanelPortletURL(request, group, portletId, 0, PortletRequest.RENDER_PHASE);
+			}
 
 			if (siteAdministrationURL != null) {
 				rowURL = siteAdministrationURL.toString();
@@ -86,18 +96,29 @@ PortletURL portletURL = renderResponse.createRenderURL();
 			/>
 
 			<liferay-ui:search-container-column-text
+				cssClass="checkbox-cell"
 				name="active"
 			>
 				<%= LanguageUtil.get(request, layoutSetPrototype.isActive()? "yes" : "no") %>
 			</liferay-ui:search-container-column-text>
 
 			<liferay-ui:search-container-column-jsp
-				align="right"
-				cssClass="entry-action"
+				cssClass="checkbox-cell entry-action"
+				href="<%= rowURL %>"
 				path="/layout_set_prototype_action.jsp"
 			/>
 		</liferay-ui:search-container-row>
 
-		<liferay-ui:search-iterator />
+		<liferay-ui:search-iterator markupView="lexicon" />
 	</liferay-ui:search-container>
 </aui:form>
+
+<c:if test="<%= PortalPermissionUtil.contains(permissionChecker, ActionKeys.ADD_LAYOUT_SET_PROTOTYPE) %>">
+	<portlet:renderURL var="addLayoutSetPrototypeURL">
+		<portlet:param name="mvcPath" value="/edit_layout_set_prototype.jsp" />
+	</portlet:renderURL>
+
+	<liferay-frontend:add-menu>
+		<liferay-frontend:add-menu-item title='<%= LanguageUtil.get(request, "add") %>' url="<%= addLayoutSetPrototypeURL.toString() %>" />
+	</liferay-frontend:add-menu>
+</c:if>

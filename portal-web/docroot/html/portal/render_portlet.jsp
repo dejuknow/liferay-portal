@@ -206,7 +206,7 @@ if ((!group.hasStagingGroup() || group.isStagingGroup()) &&
 	boolean supportsConfigurationLAR = portlet.getConfigurationActionInstance() != null;
 	boolean supportsDataLAR = !(portlet.getPortletDataHandlerInstance() instanceof DefaultConfigurationPortletDataHandler);
 
-	if (supportsConfigurationLAR || supportsDataLAR || (!group.isControlPanel() && !group.isUserPersonalPanel())) {
+	if (supportsConfigurationLAR || supportsDataLAR || !group.isControlPanel()) {
 		showExportImportIcon = true;
 	}
 
@@ -237,14 +237,12 @@ if (portlet.hasPortletMode(responseContentType, PortletMode.EDIT)) {
 	}
 }
 
-if (portlet.hasPortletMode(responseContentType, LiferayPortletMode.EDIT_DEFAULTS)) {
-	if (showEditIcon && themeDisplay.isShowAddContentIcon()) {
-		showEditDefaultsIcon = true;
-	}
+if (portlet.hasPortletMode(responseContentType, LiferayPortletMode.EDIT_DEFAULTS) && showEditIcon) {
+	showEditDefaultsIcon = true;
 }
 
 if (portlet.hasPortletMode(responseContentType, LiferayPortletMode.EDIT_GUEST)) {
-	if (showEditIcon && !layout.isPrivateLayout() && themeDisplay.isShowAddContentIcon()) {
+	if (showEditIcon && !layout.isPrivateLayout()) {
 		showEditGuestIcon = true;
 	}
 }
@@ -314,6 +312,16 @@ if (layout.isLayoutPrototypeLinkActive()) {
 	showPortletCssIcon = false;
 }
 
+// Portlets in a full page cannot be moved
+
+LayoutTypeController layoutTypeController = layoutTypePortlet.getLayoutTypeController();
+
+if (layoutTypeController.isFullPageDisplayable()) {
+	showCloseIcon = false;
+	showMaxIcon = false;
+	showMinIcon = false;
+}
+
 long previousScopeGroupId = themeDisplay.getScopeGroupId();
 
 if (Validator.isNotNull(portletResource)) {
@@ -341,7 +349,6 @@ portletDisplay.setActive(portlet.isActive());
 portletDisplay.setColumnCount(columnCount);
 portletDisplay.setColumnId(columnId);
 portletDisplay.setColumnPos(columnPos);
-portletDisplay.setControlPanelCategory(portlet.getControlPanelEntryCategory());
 portletDisplay.setId(portletId);
 portletDisplay.setInstanceId(instanceId);
 portletDisplay.setModeAbout(modeAbout);
@@ -715,7 +722,7 @@ if (themeDisplay.isWidget()) {
 	portletDisplay.setShowBackIcon(false);
 }
 
-if (group.isControlPanel() || group.isUserPersonalPanel()) {
+if (group.isControlPanel()) {
 	portletDisplay.setShowBackIcon(false);
 	portletDisplay.setShowConfigurationIcon(false);
 	portletDisplay.setShowMaxIcon(false);
@@ -797,9 +804,9 @@ if ((invokerPortlet != null) && (invokerPortlet.isStrutsPortlet() || invokerPort
 	request.removeAttribute(ComponentConstants.COMPONENT_CONTEXT);
 }
 
-String portalAdministrationApplicationTypeSiteAdminPortletId = PortletProviderUtil.getPortletId(PortalAdministrationApplicationType.SiteAdmin.CLASS_NAME, PortletProvider.Action.VIEW);
+String portalProductMenuApplicationTypePortletId = PortletProviderUtil.getPortletId(PortalProductMenuApplicationType.ProductMenu.CLASS_NAME, PortletProvider.Action.VIEW);
 
-if ((layout.isTypePanel() || layout.isTypeControlPanel()) && !portletDisplay.getId().equals(portalAdministrationApplicationTypeSiteAdminPortletId) && !portlet.isStatic()) {
+if ((layout.isTypePanel() || layout.isTypeControlPanel()) && !portletDisplay.getId().equals(portalProductMenuApplicationTypePortletId) && !portlet.isStatic()) {
 	PortalUtil.setPageTitle(portletDisplay.getTitle(), request);
 }
 
@@ -1004,19 +1011,20 @@ else {
 }
 %>
 
+<aui:script position='<%= themeDisplay.isIsolated() ? "inline" : "auto" %>'>
+	Liferay.Portlet.onLoad(
+		{
+			canEditTitle: <%= showConfigurationIcon && portletDecorate %>,
+			columnPos: <%= columnPos %>,
+			isStatic: '<%= staticVar %>',
+			namespacedId: 'p_p_id<%= HtmlUtil.escapeJS(renderResponseImpl.getNamespace()) %>',
+			portletId: '<%= HtmlUtil.escapeJS(portletDisplay.getId()) %>',
+			refreshURL: '<%= HtmlUtil.escapeJS(PortletURLUtil.getRefreshURL(request, themeDisplay)) %>'
+		}
+	);
+</aui:script>
+
 <c:if test="<%= renderPortletBoundary %>">
-		<aui:script position='<%= themeDisplay.isIsolated() ? "inline" : "auto" %>'>
-			Liferay.Portlet.onLoad(
-				{
-					canEditTitle: <%= showConfigurationIcon && portletDecorate %>,
-					columnPos: <%= columnPos %>,
-					isStatic: '<%= staticVar %>',
-					namespacedId: 'p_p_id<%= HtmlUtil.escapeJS(renderResponseImpl.getNamespace()) %>',
-					portletId: '<%= HtmlUtil.escapeJS(portletDisplay.getId()) %>',
-					refreshURL: '<%= HtmlUtil.escapeJS(PortletURLUtil.getRefreshURL(request, themeDisplay)) %>'
-				}
-			);
-		</aui:script>
 		</div>
 	</div>
 </c:if>

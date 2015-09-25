@@ -22,12 +22,13 @@
 		<antcall target="revert-test-properties" />
 
 		<if>
-			<not>
-				<equals arg1="${test.poshi.runner.enabled}" arg2="true" />
-			</not>
+			<equals arg1="${test.poshi.runner.enabled}" arg2="true" />
 			<then>
-				<ant dir="portal-impl" target="build-selenium-test-case" />
+				<antcall target="record-test-generated-properties" />
 			</then>
+			<else>
+				<ant dir="portal-impl" target="build-selenium-test-case" />
+			</else>
 		</if>
 
 		<if>
@@ -45,16 +46,25 @@
 
 		<antcall target="start-selenium" />
 
-		<antcall target="run-tomcat" inheritAll="false">
-			<param name="test.class" value="${test.class}" />
-		</antcall>
+		<if>
+			<isset property="test.base.dir.name" />
+			<then>
+				<antcall target="run-tomcat" inheritAll="false">
+					<param name="test.base.dir.name" value="${test.base.dir.name}" />
+					<param name="test.class" value="${test.class}" />
+				</antcall>
+			</then>
+			<else>
+				<antcall target="run-tomcat" inheritAll="false">
+					<param name="test.class" value="${test.class}" />
+				</antcall>
+			</else>
+		</if>
 
 		<antcall target="stop-selenium" />
 	</target>
 
 	<target name="run-tomcat">
 		<antcall target="run-simple-server" />
-
-		<antcall target="evaluate-logs" />
 	</target>
 </project>

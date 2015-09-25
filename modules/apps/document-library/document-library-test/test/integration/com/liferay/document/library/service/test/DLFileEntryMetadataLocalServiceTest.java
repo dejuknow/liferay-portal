@@ -15,8 +15,11 @@
 package com.liferay.document.library.service.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.dynamic.data.mapping.io.DDMFormXSDDeserializerUtil;
+import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMFormTestUtil;
-import com.liferay.dynamic.data.mapping.test.util.DDMFormValuesTestUtil;
+import com.liferay.dynamic.data.mapping.util.DDMBeanTranslatorUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
@@ -29,6 +32,7 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.User;
 import com.liferay.portal.service.ServiceContext;
+import com.liferay.portal.test.randomizerbumpers.TikaSafeRandomizerBumper;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portlet.documentlibrary.model.DLFileEntry;
 import com.liferay.portlet.documentlibrary.model.DLFileEntryMetadata;
@@ -38,14 +42,11 @@ import com.liferay.portlet.documentlibrary.model.DLFolderConstants;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryMetadataLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryTypeLocalServiceUtil;
-import com.liferay.portlet.dynamicdatamapping.io.DDMFormXSDDeserializerUtil;
-import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
-import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
-import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
-import com.liferay.portlet.dynamicdatamapping.model.UnlocalizedValue;
-import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
-import com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue;
-import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
+import com.liferay.portlet.dynamicdatamapping.DDMForm;
+import com.liferay.portlet.dynamicdatamapping.DDMFormField;
+import com.liferay.portlet.dynamicdatamapping.DDMFormFieldValue;
+import com.liferay.portlet.dynamicdatamapping.DDMFormValues;
+import com.liferay.portlet.dynamicdatamapping.UnlocalizedValue;
 
 import java.io.ByteArrayInputStream;
 
@@ -84,10 +85,11 @@ public class DLFileEntryMetadataLocalServiceTest {
 		byte[] testFileBytes = FileUtil.getBytes(
 			getClass(), "dependencies/ddmstructure.xml");
 
-		DDMForm ddmForm = DDMFormXSDDeserializerUtil.deserialize(
-			new String(testFileBytes));
+		com.liferay.dynamic.data.mapping.model.DDMForm ddmForm =
+			DDMFormXSDDeserializerUtil.deserialize(new String(testFileBytes));
 
-		serviceContext.setAttribute("ddmForm", ddmForm);
+		serviceContext.setAttribute(
+			"ddmForm", DDMBeanTranslatorUtil.translate(ddmForm));
 
 		User user = TestPropsValues.getUser();
 
@@ -108,7 +110,7 @@ public class DLFileEntryMetadataLocalServiceTest {
 			_ddmStructure.getStructureKey(), user.getLocale());
 
 		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
-			RandomTestUtil.randomBytes());
+			RandomTestUtil.randomBytes(TikaSafeRandomizerBumper.INSTANCE));
 
 		_dlFileEntry = DLFileEntryLocalServiceUtil.addFileEntry(
 			TestPropsValues.getUserId(), _group.getGroupId(),
@@ -185,8 +187,10 @@ public class DLFileEntryMetadataLocalServiceTest {
 		Set<Locale> availableLocales = DDMFormTestUtil.createAvailableLocales(
 			currentLocale);
 
-		DDMForm ddmForm = DDMFormTestUtil.createDDMForm(
-			availableLocales, currentLocale);
+		DDMForm ddmForm = new DDMForm();
+
+		ddmForm.setAvailableLocales(availableLocales);
+		ddmForm.setDefaultLocale(currentLocale);
 
 		DDMFormField ddmFormField = new DDMFormField("date_an", "ddm-date");
 
@@ -194,8 +198,10 @@ public class DLFileEntryMetadataLocalServiceTest {
 
 		ddmForm.addDDMFormField(ddmFormField);
 
-		DDMFormValues ddmFormValues = DDMFormValuesTestUtil.createDDMFormValues(
-			ddmForm, availableLocales, currentLocale);
+		DDMFormValues ddmFormValues = new DDMFormValues(ddmForm);
+
+		ddmFormValues.setAvailableLocales(availableLocales);
+		ddmFormValues.setDefaultLocale(currentLocale);
 
 		DDMFormFieldValue ddmFormFieldValue = new DDMFormFieldValue();
 

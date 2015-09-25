@@ -26,7 +26,6 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.RemotePreference;
 import com.liferay.portal.kernel.util.SetUtil;
-import com.liferay.portal.kernel.util.SilentPrefsPropsUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -69,6 +68,7 @@ import com.liferay.portal.service.WebsiteLocalServiceUtil;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.Portal;
 import com.liferay.portal.util.PortalUtil;
+import com.liferay.portal.util.PrefsPropsUtil;
 import com.liferay.portal.util.PropsUtil;
 import com.liferay.portal.util.PropsValues;
 
@@ -534,35 +534,33 @@ public class UserImpl extends UserBaseImpl {
 
 	@Override
 	public List<Group> getMySiteGroups() throws PortalException {
-		return getMySiteGroups(null, false, QueryUtil.ALL_POS);
-	}
-
-	@Override
-	public List<Group> getMySiteGroups(boolean includeControlPanel, int max)
-		throws PortalException {
-
-		return getMySiteGroups(null, includeControlPanel, max);
+		return getMySiteGroups(null, QueryUtil.ALL_POS);
 	}
 
 	@Override
 	public List<Group> getMySiteGroups(int max) throws PortalException {
-		return getMySiteGroups(null, false, max);
+		return getMySiteGroups(null, max);
 	}
 
+	/**
+	 * @deprecated As of 6.2.0, replaced by {@link #getMySiteGroups(String[],
+	 *             int)}
+	 */
+	@Deprecated
 	@Override
 	public List<Group> getMySiteGroups(
 			String[] classNames, boolean includeControlPanel, int max)
 		throws PortalException {
 
-		return GroupServiceUtil.getUserSitesGroups(
-			getUserId(), classNames, includeControlPanel, max);
+		return getMySiteGroups(classNames, max);
 	}
 
 	@Override
 	public List<Group> getMySiteGroups(String[] classNames, int max)
 		throws PortalException {
 
-		return getMySiteGroups(classNames, false, max);
+		return GroupServiceUtil.getUserSitesGroups(
+			getUserId(), classNames, max);
 	}
 
 	/**
@@ -575,15 +573,14 @@ public class UserImpl extends UserBaseImpl {
 	}
 
 	/**
-	 * @deprecated As of 6.2.0, replaced by {@link #getMySiteGroups(boolean,
-	 *             int)}
+	 * @deprecated As of 6.2.0, replaced by {@link User#getMySiteGroups(int)}
 	 */
 	@Deprecated
 	@Override
 	public List<Group> getMySites(boolean includeControlPanel, int max)
 		throws PortalException {
 
-		return getMySiteGroups(includeControlPanel, max);
+		return getMySiteGroups(max);
 	}
 
 	/**
@@ -597,7 +594,7 @@ public class UserImpl extends UserBaseImpl {
 
 	/**
 	 * @deprecated As of 6.2.0, replaced by {@link #getMySiteGroups(String[],
-	 *             boolean, int)}
+	 *              int)}
 	 */
 	@Deprecated
 	@Override
@@ -605,7 +602,7 @@ public class UserImpl extends UserBaseImpl {
 			String[] classNames, boolean includeControlPanel, int max)
 		throws PortalException {
 
-		return getMySiteGroups(classNames, includeControlPanel, max);
+		return getMySiteGroups(classNames, max);
 	}
 
 	/**
@@ -850,7 +847,7 @@ public class UserImpl extends UserBaseImpl {
 			max++;
 		}
 
-		List<Group> groups = getMySiteGroups(true, max);
+		List<Group> groups = getMySiteGroups(max);
 
 		return !groups.isEmpty();
 	}
@@ -942,6 +939,10 @@ public class UserImpl extends UserBaseImpl {
 
 	@Override
 	public boolean isReminderQueryComplete() {
+		if (isDefaultUser()) {
+			return true;
+		}
+
 		if (PropsValues.USERS_REMINDER_QUERIES_ENABLED) {
 			if (Validator.isNull(getReminderQueryQuestion()) ||
 				Validator.isNull(getReminderQueryAnswer())) {
@@ -967,7 +968,7 @@ public class UserImpl extends UserBaseImpl {
 
 	@Override
 	public boolean isTermsOfUseComplete() {
-		boolean termsOfUseRequired = SilentPrefsPropsUtil.getBoolean(
+		boolean termsOfUseRequired = PrefsPropsUtil.getBoolean(
 			getCompanyId(), PropsKeys.TERMS_OF_USE_REQUIRED,
 			PropsValues.TERMS_OF_USE_REQUIRED);
 

@@ -461,6 +461,11 @@ public abstract class BaseSeleniumImpl
 	}
 
 	@Override
+	public boolean isSikuliImagePresent(String image) throws Exception {
+		return LiferaySeleniumHelper.isSikuliImagePresent(this, image);
+	}
+
+	@Override
 	public boolean isTCatEnabled() {
 		return LiferaySeleniumHelper.isTCatEnabled();
 	}
@@ -478,6 +483,16 @@ public abstract class BaseSeleniumImpl
 	@Override
 	public boolean isValue(String locator, String value) {
 		return value.equals(getValue(locator));
+	}
+
+	@Override
+	public void javaScriptMouseDown(String locator) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void javaScriptMouseUp(String locator) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override

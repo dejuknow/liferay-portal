@@ -25,10 +25,12 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
+import com.liferay.portal.kernel.patcher.PatchInconsistencyException;
+import com.liferay.portal.kernel.patcher.PatcherUtil;
 import com.liferay.portal.kernel.plugin.PluginPackage;
 import com.liferay.portal.kernel.servlet.DynamicServletRequest;
 import com.liferay.portal.kernel.servlet.PortalSessionThreadLocal;
-import com.liferay.portal.kernel.servlet.ProtectedServletRequest;
 import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.template.TemplateManager;
 import com.liferay.portal.kernel.util.ClassLoaderUtil;
@@ -63,8 +65,6 @@ import com.liferay.portal.model.User;
 import com.liferay.portal.plugin.PluginPackageUtil;
 import com.liferay.portal.security.auth.CompanyThreadLocal;
 import com.liferay.portal.security.auth.PrincipalException;
-import com.liferay.portal.security.auth.PrincipalThreadLocal;
-import com.liferay.portal.security.jaas.JAASHelper;
 import com.liferay.portal.security.permission.ResourceActionsUtil;
 import com.liferay.portal.server.capabilities.ServerCapabilitiesUtil;
 import com.liferay.portal.service.CompanyLocalServiceUtil;
@@ -145,7 +145,8 @@ public class MainServlet extends ActionServlet {
 			_log.debug("Destroy plugins");
 		}
 
-		_servletContextRegistration.unregister();
+		_moduleServiceLifecycleServiceRegistration.unregister();
+		_servletContextServiceRegistration.unregister();
 
 		PortalLifecycleUtil.flushDestroys();
 
@@ -202,6 +203,29 @@ public class MainServlet extends ActionServlet {
 		servletContext.setAttribute(MainServlet.class.getName(), Boolean.TRUE);
 
 		callParentInit();
+
+		if (_log.isDebugEnabled()) {
+			_log.debug("Verify patch levels");
+		}
+
+		try {
+			PatcherUtil.verifyPatchLevels();
+		}
+		catch (PatchInconsistencyException pie) {
+			if (!PropsValues.VERIFY_PATCH_LEVELS_DISABLED) {
+				_log.error(
+					"Stopping the server due to the inconsistent patch levels");
+
+				if (_log.isWarnEnabled()) {
+					_log.warn(
+						"Set the property \"verify.patch.levels.disabled\" " +
+							"to override stopping the server due to the " +
+								"inconsistent patch levels");
+				}
+
+				System.exit(0);
+			}
+		}
 
 		if (_log.isDebugEnabled()) {
 			_log.debug("Process startup events");
@@ -363,7 +387,7 @@ public class MainServlet extends ActionServlet {
 
 		StartupHelperUtil.setStartupFinished(true);
 
-		registerServletContextWithModuleFramework();
+		registerPortalInitialized();
 
 		ThreadLocalCacheManager.clearAll(Lifecycle.REQUEST);
 	}
@@ -454,20 +478,6 @@ public class MainServlet extends ActionServlet {
 		long userId = getUserId(request);
 
 		String remoteUser = getRemoteUser(request, userId);
-
-		if (_log.isDebugEnabled()) {
-			_log.debug("Protect request");
-		}
-
-		request = protectRequest(request, remoteUser);
-
-		if (_log.isDebugEnabled()) {
-			_log.debug("Set principal");
-		}
-
-		String password = getPassword(request);
-
-		setPrincipal(companyId, userId, remoteUser, password);
 
 		try {
 			if (_log.isDebugEnabled()) {
@@ -686,10 +696,6 @@ public class MainServlet extends ActionServlet {
 
 	protected long getCompanyId(HttpServletRequest request) {
 		return PortalInstances.getCompanyId(request);
-	}
-
-	protected String getPassword(HttpServletRequest request) {
-		return PortalUtil.getUserPassword(request);
 	}
 
 	protected String getRemoteUser(HttpServletRequest request, long userId) {
@@ -1049,25 +1055,21 @@ public class MainServlet extends ActionServlet {
 			return userId;
 		}
 
-		if (PropsValues.PORTAL_JAAS_ENABLE) {
-			userId = JAASHelper.getJaasUserId(companyId, remoteUser);
-		}
-		else {
-			userId = GetterUtil.getLong(remoteUser);
-		}
-
-		EventsProcessorUtil.process(
-			PropsKeys.LOGIN_EVENTS_PRE, PropsValues.LOGIN_EVENTS_PRE, request,
-			response);
+		userId = GetterUtil.getLong(remoteUser);
 
 		User user = UserLocalServiceUtil.getUserById(userId);
 
-		if (!user.isDefaultUser() &&
-			(PropsValues.USERS_UPDATE_LAST_LOGIN ||
-			 (user.getLastLoginDate() == null))) {
+		if (!user.isDefaultUser()) {
+			EventsProcessorUtil.process(
+				PropsKeys.LOGIN_EVENTS_PRE, PropsValues.LOGIN_EVENTS_PRE,
+				request, response);
 
-			user = UserLocalServiceUtil.updateLastLogin(
-				userId, request.getRemoteAddr());
+			if (PropsValues.USERS_UPDATE_LAST_LOGIN ||
+				(user.getLastLoginDate() == null)) {
+
+				user = UserLocalServiceUtil.updateLastLogin(
+					userId, request.getRemoteAddr());
+			}
 		}
 
 		HttpSession session = request.getSession();
@@ -1076,9 +1078,11 @@ public class MainServlet extends ActionServlet {
 		session.setAttribute(WebKeys.USER_ID, Long.valueOf(userId));
 		session.setAttribute(Globals.LOCALE_KEY, user.getLocale());
 
-		EventsProcessorUtil.process(
-			PropsKeys.LOGIN_EVENTS_POST, PropsValues.LOGIN_EVENTS_POST, request,
-			response);
+		if (!user.isDefaultUser()) {
+			EventsProcessorUtil.process(
+				PropsKeys.LOGIN_EVENTS_POST, PropsValues.LOGIN_EVENTS_POST,
+				request, response);
+		}
 
 		return userId;
 	}
@@ -1313,28 +1317,26 @@ public class MainServlet extends ActionServlet {
 		startupAction.run(null);
 	}
 
-	protected HttpServletRequest protectRequest(
-		HttpServletRequest request, String remoteUser) {
-
-		// WebSphere will not return the remote user unless you are
-		// authenticated AND accessing a protected path. Other servers will
-		// return the remote user for all threads associated with an
-		// authenticated user. We use ProtectedServletRequest to ensure we get
-		// similar behavior across all servers.
-
-		return new ProtectedServletRequest(request, remoteUser);
-	}
-
-	protected void registerServletContextWithModuleFramework() {
+	protected void registerPortalInitialized() {
 		Registry registry = RegistryUtil.getRegistry();
 
 		Map<String, Object> properties = new HashMap<>();
+
+		properties.put("module.service.lifecycle", "portal.initialized");
+		properties.put("service.vendor", ReleaseInfo.getVendor());
+		properties.put("service.version", ReleaseInfo.getVersion());
+
+		_moduleServiceLifecycleServiceRegistration = registry.registerService(
+			ModuleServiceLifecycle.class, new ModuleServiceLifecycle() {},
+			properties);
+
+		properties = new HashMap<>();
 
 		properties.put("bean.id", ServletContext.class.getName());
 		properties.put("original.bean", Boolean.TRUE);
 		properties.put("service.vendor", ReleaseInfo.getVendor());
 
-		_servletContextRegistration = registry.registerService(
+		_servletContextServiceRegistration = registry.registerService(
 			ServletContext.class, getServletContext(), properties);
 	}
 
@@ -1361,40 +1363,6 @@ public class MainServlet extends ActionServlet {
 		PortalUtil.setPortalInetSocketAddresses(request);
 	}
 
-	protected void setPrincipal(
-		long companyId, long userId, String remoteUser, String password) {
-
-		if ((userId == 0) && (remoteUser == null)) {
-			return;
-		}
-
-		String name = String.valueOf(userId);
-
-		if (PropsValues.PORTAL_JAAS_ENABLE) {
-			long remoteUserId = 0;
-
-			try {
-				remoteUserId = JAASHelper.getJaasUserId(companyId, remoteUser);
-			}
-			catch (Exception e) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(e);
-				}
-			}
-
-			if (remoteUserId > 0) {
-				name = String.valueOf(remoteUserId);
-			}
-		}
-		else if (remoteUser != null) {
-			name = remoteUser;
-		}
-
-		PrincipalThreadLocal.setName(name);
-
-		PrincipalThreadLocal.setPassword(password);
-	}
-
 	private static final boolean _HTTP_HEADER_VERSION_VERBOSITY_DEFAULT =
 		StringUtil.equalsIgnoreCase(
 			PropsValues.HTTP_HEADER_VERSION_VERBOSITY, ReleaseInfo.getName());
@@ -1408,6 +1376,9 @@ public class MainServlet extends ActionServlet {
 
 	private static final Log _log = LogFactoryUtil.getLog(MainServlet.class);
 
-	private ServiceRegistration<ServletContext> _servletContextRegistration;
+	private ServiceRegistration<ModuleServiceLifecycle>
+		_moduleServiceLifecycleServiceRegistration;
+	private ServiceRegistration<ServletContext>
+		_servletContextServiceRegistration;
 
 }

@@ -12,19 +12,14 @@
 				"en_US": "Content"
 			},
 			"localizable": true,
-			"multiple": false,
 			"name": "content",
-			"predefinedValue": {
-				"en_US": ""
-			},
 			"readOnly": false,
 			"repeatable": false,
 			"required": false,
 			"showLabel": true,
-			"tip": {
-				"en_US": ""
-			},
-			"type": "ddm-text-html"
+			"type": "ddm-text-html",
+			"validation": {},
+			"visibilityExpression": ""
 		}
 	]
 }

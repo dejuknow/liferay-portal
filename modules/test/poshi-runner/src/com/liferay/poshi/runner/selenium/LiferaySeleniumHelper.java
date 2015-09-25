@@ -15,6 +15,7 @@
 package com.liferay.poshi.runner.selenium;
 
 import com.liferay.poshi.runner.PoshiRunnerGetterUtil;
+import com.liferay.poshi.runner.exception.PoshiRunnerWarningException;
 import com.liferay.poshi.runner.util.AntCommands;
 import com.liferay.poshi.runner.util.EmailCommands;
 import com.liferay.poshi.runner.util.FileUtil;
@@ -82,8 +83,16 @@ public class LiferaySeleniumHelper {
 		_javaScriptExceptions.add(exception);
 	}
 
+	public static void addToJavaScriptExceptions(List<Exception> exceptions) {
+		_javaScriptExceptions.addAll(exceptions);
+	}
+
 	public static void addToLiferayExceptions(Exception exception) {
 		_liferayExceptions.add(exception);
+	}
+
+	public static void addToLiferayExceptions(List<Exception> exceptions) {
+		_liferayExceptions.addAll(exceptions);
 	}
 
 	public static void antCommand(
@@ -250,6 +259,7 @@ public class LiferaySeleniumHelper {
 		Element rootElement = document.getRootElement();
 
 		List<Element> eventElements = rootElement.elements("event");
+		List<Exception> exceptions = new ArrayList<>();
 
 		for (Element eventElement : eventElements) {
 			String level = eventElement.attributeValue("level");
@@ -270,25 +280,21 @@ public class LiferaySeleniumHelper {
 					continue;
 				}
 
-				Element throwableElement = eventElement.element("throwable");
+				StringBuilder sb = new StringBuilder();
 
-				Exception exception = null;
+				sb.append("LIFERAY_ERROR: ");
+				sb.append(messageText);
 
-				if (throwableElement != null) {
-					exception = new Exception(
-						messageText + throwableElement.getText());
+				System.out.println(sb.toString());
 
-					addToLiferayExceptions(exception);
-
-					throw exception;
-				}
-
-				exception = new Exception(messageText);
-
-				addToLiferayExceptions(exception);
-
-				throw exception;
+				exceptions.add(new PoshiRunnerWarningException(sb.toString()));
 			}
+		}
+
+		if (!exceptions.isEmpty()) {
+			addToLiferayExceptions(exceptions);
+
+			throw exceptions.get(0);
 		}
 	}
 
@@ -368,6 +374,78 @@ public class LiferaySeleniumHelper {
 				System.out.println();
 			}
 
+			throw new Exception(sb.toString());
+		}
+	}
+
+	public static void assertNoPoshiWarnings() throws Exception {
+		if (!PropsValues.TEST_ASSERT_WARNING_EXCEPTIONS) {
+			return;
+		}
+
+		StringBuilder sb = new StringBuilder();
+
+		if (!_javaScriptExceptions.isEmpty()) {
+			sb.append("\n");
+			sb.append("##\n");
+
+			sb.append("## ");
+			sb.append(_javaScriptExceptions.size());
+			sb.append(" Javascript Exception");
+
+			if (_javaScriptExceptions.size() > 1) {
+				sb.append("s were");
+			}
+			else {
+				sb.append(" was");
+			}
+
+			sb.append(" thrown\n");
+
+			sb.append("##\n");
+			sb.append("\n");
+
+			for (int i = 0; i < _javaScriptExceptions.size(); i++) {
+				Exception exception = _javaScriptExceptions.get(i);
+
+				sb.append(exception.getMessage());
+				sb.append("\n");
+			}
+
+			sb.append("\n");
+		}
+
+		if (!_liferayExceptions.isEmpty()) {
+			sb.append("\n");
+			sb.append("##\n");
+
+			sb.append("## ");
+			sb.append(_liferayExceptions.size());
+			sb.append(" Liferay Exception");
+
+			if (_liferayExceptions.size() > 1) {
+				sb.append("s were");
+			}
+			else {
+				sb.append(" was");
+			}
+
+			sb.append(" thrown\n");
+
+			sb.append("##\n");
+			sb.append("\n");
+
+			for (int i = 0; i < _liferayExceptions.size(); i++) {
+				Exception exception = _liferayExceptions.get(i);
+
+				sb.append(exception.getMessage());
+				sb.append("\n");
+			}
+
+			sb.append("\n");
+		}
+
+		if (Validator.isNotNull(sb.toString())) {
 			throw new Exception(sb.toString());
 		}
 	}
@@ -692,7 +770,7 @@ public class LiferaySeleniumHelper {
 
 			Matcher matcher = pattern.matcher(messageText);
 
-			if (matcher.matches()) {
+			if (matcher.find()) {
 				return true;
 			}
 		}
@@ -895,6 +973,21 @@ public class LiferaySeleniumHelper {
 		return !liferaySelenium.isVisible(locator);
 	}
 
+	public static boolean isSikuliImagePresent(
+			LiferaySelenium liferaySelenium, String image)
+		throws Exception {
+
+		ScreenRegion screenRegion = new DesktopScreenRegion();
+
+		ImageTarget imageTarget = getImageTarget(liferaySelenium, image);
+
+		if (screenRegion.find(imageTarget) != null) {
+			return true;
+		}
+
+		return false;
+	}
+
 	public static boolean isTCatEnabled() {
 		return PropsValues.TCAT_ENABLED;
 	}
@@ -928,9 +1021,8 @@ public class LiferaySeleniumHelper {
 		_screenshotCount++;
 
 		captureScreen(
-			liferaySelenium.getProjectDirName() +
-				"portal-web/test-results/functional/screenshots/" +
-					_screenshotCount + ".jpg");
+			_CURRENT_DIR_NAME + "test-results/functional/screenshots/" +
+				_screenshotCount + ".jpg");
 	}
 
 	public static void saveScreenshotBeforeAction(
@@ -946,9 +1038,8 @@ public class LiferaySeleniumHelper {
 		}
 
 		captureScreen(
-			liferaySelenium.getProjectDirName() +
-				"portal-web/test-results/functional/screenshots/" +
-					"ScreenshotBeforeAction" + _screenshotErrorCount + ".jpg");
+			_CURRENT_DIR_NAME + "test-results/functional/screenshots/" +
+				"ScreenshotBeforeAction" + _screenshotErrorCount + ".jpg");
 	}
 
 	public static void sendEmail(
@@ -1011,7 +1102,9 @@ public class LiferaySeleniumHelper {
 
 		ScreenRegion imageTargetScreenRegion = screenRegion.find(imageTarget);
 
-		mouse.click(imageTargetScreenRegion.getCenter());
+		if (imageTargetScreenRegion != null) {
+			mouse.click(imageTargetScreenRegion.getCenter());
+		}
 	}
 
 	public static void sikuliClickByIndex(
@@ -1030,7 +1123,9 @@ public class LiferaySeleniumHelper {
 		ScreenRegion imageTargetScreenRegion = imageTargetScreenRegions.get(
 			Integer.parseInt(index));
 
-		mouse.click(imageTargetScreenRegion.getCenter());
+		if (imageTargetScreenRegion != null) {
+			mouse.click(imageTargetScreenRegion.getCenter());
+		}
 	}
 
 	public static void sikuliDragAndDrop(
@@ -1168,9 +1263,15 @@ public class LiferaySeleniumHelper {
 
 		keyboard.keyUp(Key.CTRL);
 
-		sikuliType(
-			liferaySelenium, image,
-			_TEST_BASE_DIR_NAME + "/" + _TEST_DEPENDENCIES_DIR_NAME + value);
+		String fileName =
+			_TEST_BASE_DIR_NAME + "/" + _TEST_DEPENDENCIES_DIR_NAME + "/" +
+				value;
+
+		if (OSDetector.isWindows()) {
+			fileName = StringUtil.replace(fileName, "/", "\\");
+		}
+
+		sikuliType(liferaySelenium, image, fileName);
 
 		keyboard.type(Key.ENTER);
 	}
@@ -1179,14 +1280,13 @@ public class LiferaySeleniumHelper {
 			LiferaySelenium liferaySelenium, String image, String value)
 		throws Exception {
 
-		String tCatAdminFileName =
-			PropsValues.TCAT_ADMIN_REPOSITORY + "/" + value;
+		String fileName = PropsValues.TCAT_ADMIN_REPOSITORY + "/" + value;
 
 		if (OSDetector.isWindows()) {
-			tCatAdminFileName = tCatAdminFileName.replace("/", "\\");
+			fileName = StringUtil.replace(fileName, "/", "\\");
 		}
 
-		sikuliType(liferaySelenium, image, tCatAdminFileName);
+		sikuliType(liferaySelenium, image, fileName);
 
 		Keyboard keyboard = new DesktopKeyboard();
 
@@ -1207,15 +1307,13 @@ public class LiferaySeleniumHelper {
 
 		keyboard.keyUp(Key.CTRL);
 
-		String slash = "/";
+		String fileName = liferaySelenium.getOutputDirName() + "/" + value;
 
 		if (OSDetector.isWindows()) {
-			slash = "\\";
+			fileName = StringUtil.replace(fileName, "/", "\\");
 		}
 
-		sikuliType(
-			liferaySelenium, image,
-			liferaySelenium.getOutputDirName() + slash + value);
+		sikuliType(liferaySelenium, image, fileName);
 
 		keyboard.type(Key.ENTER);
 	}
@@ -1280,7 +1378,9 @@ public class LiferaySeleniumHelper {
 	}
 
 	public static void typeScreen(String value) {
-		throw new UnsupportedOperationException();
+		Keyboard keyboard = new DesktopKeyboard();
+
+		keyboard.type(value);
 	}
 
 	public static void waitForConfirmation(
@@ -1620,6 +1720,33 @@ public class LiferaySeleniumHelper {
 		}
 	}
 
+	public static void writePoshiWarnings() throws Exception {
+		StringBuilder sb = new StringBuilder();
+
+		if (!_javaScriptExceptions.isEmpty()) {
+			for (int i = 0; i < _javaScriptExceptions.size(); i++) {
+				Exception exception = _javaScriptExceptions.get(i);
+
+				sb.append("<value><![CDATA[");
+				sb.append(exception.getMessage());
+				sb.append(")]]></value>\n");
+			}
+		}
+
+		if (!_liferayExceptions.isEmpty()) {
+			for (int i = 0; i < _liferayExceptions.size(); i++) {
+				Exception exception = _liferayExceptions.get(i);
+
+				sb.append("<value><![CDATA[");
+				sb.append(exception.getMessage());
+				sb.append(")]]></value>\n");
+			}
+		}
+
+		FileUtil.write(
+			PropsValues.TEST_POSHI_WARNINGS_FILE_NAME, sb.toString());
+	}
+
 	private static List<ScreenRegion> getScreenRegions(
 			LiferaySelenium liferaySelenium, String image)
 		throws Exception {
@@ -1630,6 +1757,9 @@ public class LiferaySeleniumHelper {
 
 		return screenRegion.findAll(imageTarget);
 	}
+
+	private static final String _CURRENT_DIR_NAME =
+		PoshiRunnerGetterUtil.getCanonicalPath(".");
 
 	private static final String _TEST_BASE_DIR_NAME =
 		PoshiRunnerGetterUtil.getCanonicalPath(PropsValues.TEST_BASE_DIR_NAME);

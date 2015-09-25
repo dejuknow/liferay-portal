@@ -29,21 +29,21 @@
 
 		<liferay-ui:input-move-boxes
 			leftBoxName="currentLanguageIds"
-			leftList="<%= languageDisplayContext.getCurrentLanguageIdKVPs() %>"
+			leftList="<%= siteNavigationLanguageDisplayContext.getCurrentLanguageIdKVPs() %>"
 			leftReorder="true"
 			leftTitle="current"
 			rightBoxName="availableLanguageIds"
-			rightList="<%= languageDisplayContext.getAvailableLanguageIdKVPs() %>"
+			rightList="<%= siteNavigationLanguageDisplayContext.getAvailableLanguageIdKVPs() %>"
 			rightTitle="available"
 		/>
 	</aui:fieldset>
 
 	<aui:fieldset>
 		<div class="display-template">
-			<liferay-ui:ddm-template-selector
+			<liferay-ddm:template-selector
 				className="<%= LanguageEntry.class.getName() %>"
 				displayStyle="<%= languagePortletInstanceConfiguration.displayStyle() %>"
-				displayStyleGroupId="<%= languageDisplayContext.getDisplayStyleGroupId() %>"
+				displayStyleGroupId="<%= siteNavigationLanguageDisplayContext.getDisplayStyleGroupId() %>"
 				refreshURL="<%= configurationRenderURL %>"
 			/>
 		</div>

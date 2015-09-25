@@ -10,14 +10,6 @@
 		<execute macro="Page#addPG">
 			<var name="pageName" value="Search Page" />
 		</execute>
-
-		<execute macro="Page#gotoPG">
-			<var name="pageName" value="Search Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Search" />
-		</execute>
 	</set-up>
 
 	<tear-down>
@@ -43,7 +35,7 @@
 			<var name="portletName" value="Blogs" />
 		</execute>
 
-		<execute macro="BlogsEntry#addCP">
+		<execute macro="Blogs#addEntry">
 			<var name="entryContent" value="Blogs Entry Content" />
 			<var name="entryTitle" value="Blogs Entry Title" />
 		</execute>
@@ -183,17 +175,9 @@
 			<var name="portletName" value="Blogs" />
 		</execute>
 
-		<execute macro="BlogsEntry#addCP">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Page#gotoContentCP">
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="BlogsEntry#addCategoryCP">
+		<execute macro="Blogs#addEntryWithCategory">
 			<var name="categoryName" value="Category Name" />
+			<var name="entryContent" value="Blogs Entry Content" />
 			<var name="entryTitle" value="Blogs Entry Title" />
 			<var name="vocabularyName" value="Vocabulary Name" />
 		</execute>
@@ -267,17 +251,9 @@
 			<var name="portletName" value="Blogs" />
 		</execute>
 
-		<execute macro="BlogsEntry#addCP">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Page#gotoContentCP">
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="BlogsEntry#addCategoryCP">
+		<execute macro="Blogs#addEntryWithCategory">
 			<var name="categoryName" value="Category Name" />
+			<var name="entryContent" value="Blogs Entry Content" />
 			<var name="entryTitle" value="Blogs Entry Title" />
 			<var name="vocabularyName" value="Vocabulary Name" />
 		</execute>
@@ -342,23 +318,11 @@
 	</command>
 
 	<command name="SearchBlogsEntryQuotes" priority="4">
-		<execute macro="Page#addPG">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="Page#gotoPG">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Blogs" />
-		</execute>
-
 		<execute macro="Page#gotoContentCP">
 			<var name="portletName" value="Blogs" />
 		</execute>
 
-		<execute macro="BlogsEntry#addCP">
+		<execute macro="Blogs#addEntry">
 			<var name="entryContent" value="Blogs Entry Content" />
 			<var name="entryTitle" value="Blogs Entry Title" />
 		</execute>
@@ -519,16 +483,8 @@
 			<var name="portletName" value="Blogs" />
 		</execute>
 
-		<execute macro="BlogsEntry#addCP">
+		<execute macro="Blogs#addEntryWithTag">
 			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Page#gotoContentCP">
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="BlogsEntry#addTagCP">
 			<var name="entryTitle" value="Blogs Entry Title" />
 			<var name="tagName" value="tag name" />
 		</execute>
@@ -589,16 +545,8 @@
 			<var name="portletName" value="Blogs" />
 		</execute>
 
-		<execute macro="BlogsEntry#addCP">
+		<execute macro="Blogs#addEntryWithTag">
 			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Page#gotoContentCP">
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="BlogsEntry#addTagCP">
 			<var name="entryTitle" value="Blogs Entry Title" />
 			<var name="tagName" value="tag name" />
 		</execute>
@@ -676,11 +624,6 @@
 
 		<execute macro="Page#gotoPG">
 			<var name="pageName" value="Search Page" />
-		</execute>
-
-		<execute macro="Search#viewSearchResultPG">
-			<var name="searchAssetTitle" value="DM Document Title" />
-			<var name="searchAssetType" value="Document" />
 		</execute>
 
 		<execute macro="Search#searchPG">
@@ -918,7 +861,7 @@
 		</execute>
 
 		<execute macro="Page#gotoPG">
-			<var name="pageName" value="Search Pagef" />
+			<var name="pageName" value="Search Page" />
 		</execute>
 
 		<execute macro="Search#searchPG">

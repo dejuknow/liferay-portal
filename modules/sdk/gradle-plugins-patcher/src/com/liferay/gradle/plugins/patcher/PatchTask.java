@@ -16,6 +16,7 @@ package com.liferay.gradle.plugins.patcher;
 
 import com.liferay.gradle.util.FileUtil;
 import com.liferay.gradle.util.GradleUtil;
+import com.liferay.gradle.util.Validator;
 import com.liferay.gradle.util.copy.ReplaceLeadingPathAction;
 
 import groovy.lang.Closure;
@@ -30,6 +31,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -141,6 +143,10 @@ public class PatchTask extends DefaultTask {
 		return dependency.getVersion();
 	}
 
+	public String getOriginalLibSrcBaseUrl() {
+		return GradleUtil.toString(_originalLibSrcBaseUrl);
+	}
+
 	@Input
 	public String getOriginalLibSrcDirName() {
 		return GradleUtil.toString(_originalLibSrcDirName);
@@ -245,7 +251,7 @@ public class PatchTask extends DefaultTask {
 
 		_project.copy(closure);
 
-		for (final File patchFile : getPatchFiles()) {
+		for (final File patchFile : getSortedPatchFiles()) {
 			final ByteArrayOutputStream byteArrayOutputStream =
 				new ByteArrayOutputStream();
 
@@ -330,6 +336,10 @@ public class PatchTask extends DefaultTask {
 		_originalLibModuleName = originalLibModuleName;
 	}
 
+	public void setOriginalLibSrcBaseUrl(Object originalLibSrcBaseUrl) {
+		_originalLibSrcBaseUrl = originalLibSrcBaseUrl;
+	}
+
 	public void setOriginalLibSrcDirName(Object originalLibSrcDirName) {
 		_originalLibSrcDirName = originalLibSrcDirName;
 	}
@@ -371,13 +381,26 @@ public class PatchTask extends DefaultTask {
 	}
 
 	protected String getOriginalLibSrcUrl() {
-		StringBuilder sb = new StringBuilder(_BASE_URL);
+		StringBuilder sb = new StringBuilder();
 
-		String moduleGroup = getOriginalLibModuleGroup();
+		String baseUrl = getOriginalLibSrcBaseUrl();
 
-		sb.append(moduleGroup.replace('.', '/'));
+		if (Validator.isNotNull(baseUrl)) {
+			sb.append(baseUrl);
 
-		sb.append('/');
+			if (baseUrl.charAt(baseUrl.length() - 1) != '/') {
+				sb.append('/');
+			}
+		}
+		else {
+			sb.append(_BASE_URL);
+
+			String moduleGroup = getOriginalLibModuleGroup();
+
+			sb.append(moduleGroup.replace('.', '/'));
+			sb.append('/');
+		}
+
 		sb.append(getOriginalLibModuleName());
 		sb.append('/');
 		sb.append(getOriginalLibModuleVersion());
@@ -409,6 +432,16 @@ public class PatchTask extends DefaultTask {
 		return GradleUtil.toFile(_project, patchedSrcDir);
 	}
 
+	protected List<File> getSortedPatchFiles() {
+		List<File> sortedPatchFiles = new ArrayList<>();
+
+		GUtil.addToCollection(sortedPatchFiles, getPatchFiles());
+
+		Collections.sort(sortedPatchFiles);
+
+		return sortedPatchFiles;
+	}
+
 	private static final String _BASE_URL =
 		"http://repo.maven.apache.org/maven2/";
 
@@ -417,6 +450,7 @@ public class PatchTask extends DefaultTask {
 	private Object _originalLibConfigurationName =
 		JavaPlugin.COMPILE_CONFIGURATION_NAME;
 	private Object _originalLibModuleName;
+	private Object _originalLibSrcBaseUrl;
 	private Object _originalLibSrcDirName = ".";
 	private final Map<String, Object> _patchedSrcDirMappings = new HashMap<>();
 	private Object _patchesDir = "patches";

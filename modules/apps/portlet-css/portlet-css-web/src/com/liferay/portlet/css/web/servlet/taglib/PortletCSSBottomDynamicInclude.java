@@ -59,7 +59,7 @@ public class PortletCSSBottomDynamicInclude extends BaseDynamicInclude {
 
 	@Override
 	public void register(DynamicIncludeRegistry dynamicIncludeRegistry) {
-		dynamicIncludeRegistry.register("/html/common/themes/bottom-ext.jsp");
+		dynamicIncludeRegistry.register("/html/common/themes/bottom.jsp#post");
 	}
 
 	@Reference(target = "(osgi.web.symbolicname=com.liferay.portlet.css.web)")
@@ -67,8 +67,7 @@ public class PortletCSSBottomDynamicInclude extends BaseDynamicInclude {
 		_servletContext = servletContext;
 	}
 
-	private static final String _JSP_PATH =
-		"/META-INF/resources/definitions.jsp";
+	private static final String _JSP_PATH = "/definitions.jsp";
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		PortletCSSBottomDynamicInclude.class);

@@ -14,6 +14,7 @@
 
 package com.liferay.bookmarks.lar;
 
+import com.liferay.bookmarks.constants.BookmarksPortletKeys;
 import com.liferay.bookmarks.model.BookmarksEntry;
 import com.liferay.bookmarks.model.BookmarksFolder;
 import com.liferay.bookmarks.model.BookmarksFolderConstants;
@@ -23,23 +24,23 @@ import com.liferay.bookmarks.service.BookmarksEntryLocalServiceUtil;
 import com.liferay.bookmarks.service.BookmarksFolderLocalServiceUtil;
 import com.liferay.bookmarks.service.permission.BookmarksResourcePermissionChecker;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
-import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.MapUtil;
+import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
 import com.liferay.portal.kernel.xml.Element;
-import com.liferay.portal.model.Portlet;
-import com.liferay.portal.service.PortletLocalServiceUtil;
 import com.liferay.portlet.exportimport.lar.BasePortletDataHandler;
-import com.liferay.portlet.exportimport.lar.ExportImportPathUtil;
 import com.liferay.portlet.exportimport.lar.PortletDataContext;
+import com.liferay.portlet.exportimport.lar.PortletDataHandler;
 import com.liferay.portlet.exportimport.lar.PortletDataHandlerBoolean;
 import com.liferay.portlet.exportimport.lar.StagedModelDataHandlerUtil;
 import com.liferay.portlet.exportimport.lar.StagedModelType;
 import com.liferay.portlet.exportimport.xstream.XStreamAliasRegistryUtil;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.portlet.PortletPreferences;
+
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Jorge Ferrer
@@ -49,11 +50,20 @@ import javax.portlet.PortletPreferences;
  * @author Mate Thurzo
  * @author Daniel Kocsis
  */
+@Component(
+	immediate = true,
+	property = {
+		"javax.portlet.name=" + BookmarksPortletKeys.BOOKMARKS,
+		"javax.portlet.name=" + BookmarksPortletKeys.BOOKMARKS_ADMIN
+	},
+	service = PortletDataHandler.class
+)
 public class BookmarksPortletDataHandler extends BasePortletDataHandler {
 
 	public static final String NAMESPACE = "bookmarks";
 
-	public BookmarksPortletDataHandler() {
+	@Activate
+	protected void activate() {
 		setDataPortletPreferences("rootFolderId");
 		setDeletionSystemEventStagedModelTypes(
 			new StagedModelType(BookmarksEntry.class),
@@ -180,64 +190,9 @@ public class BookmarksPortletDataHandler extends BasePortletDataHandler {
 		folderExportActionableDynamicQuery.performCount();
 	}
 
-	@Override
-	protected PortletPreferences doProcessExportPortletPreferences(
-			PortletDataContext portletDataContext, String portletId,
-			PortletPreferences portletPreferences)
-		throws Exception {
-
-		long rootFolderId = GetterUtil.getLong(
-			portletPreferences.getValue("rootFolderId", null));
-
-		if (rootFolderId != BookmarksFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
-			BookmarksFolder folder = BookmarksFolderLocalServiceUtil.getFolder(
-				rootFolderId);
-
-			Portlet portlet = PortletLocalServiceUtil.getPortletById(
-				portletDataContext.getCompanyId(), portletId);
-
-			portletDataContext.addReferenceElement(
-				portlet, portletDataContext.getExportDataRootElement(), folder,
-				PortletDataContext.REFERENCE_TYPE_DEPENDENCY,
-				!portletDataContext.getBooleanParameter(NAMESPACE, "entries"));
-		}
-
-		return portletPreferences;
-	}
-
-	@Override
-	protected PortletPreferences doProcessImportPortletPreferences(
-			PortletDataContext portletDataContext, String portletId,
-			PortletPreferences portletPreferences)
-		throws Exception {
-
-		long rootFolderId = GetterUtil.getLong(
-			portletPreferences.getValue("rootFolderId", null));
-
-		if (rootFolderId > 0) {
-			String rootFolderPath = ExportImportPathUtil.getModelPath(
-				portletDataContext, BookmarksFolder.class.getName(),
-				rootFolderId);
-
-			BookmarksFolder folder =
-				(BookmarksFolder)portletDataContext.getZipEntryAsObject(
-					rootFolderPath);
-
-			StagedModelDataHandlerUtil.importStagedModel(
-				portletDataContext, folder);
-
-			Map<Long, Long> folderIds =
-				(Map<Long, Long>)portletDataContext.getNewPrimaryKeysMap(
-					BookmarksFolder.class);
-
-			rootFolderId = MapUtil.getLong(
-				folderIds, rootFolderId, rootFolderId);
-
-			portletPreferences.setValue(
-				"rootFolderId", String.valueOf(rootFolderId));
-		}
-
-		return portletPreferences;
+	@Reference(target = ModuleServiceLifecycle.PORTAL_INITIALIZED, unbind = "-")
+	protected void setModuleServiceLifecycle(
+		ModuleServiceLifecycle moduleServiceLifecycle) {
 	}
 
 }

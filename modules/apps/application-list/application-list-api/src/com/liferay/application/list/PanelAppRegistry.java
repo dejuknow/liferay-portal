@@ -18,6 +18,13 @@ import com.liferay.application.list.util.PanelCategoryServiceReferenceMapper;
 import com.liferay.osgi.service.tracker.map.PropertyServiceReferenceComparator;
 import com.liferay.osgi.service.tracker.map.ServiceTrackerMap;
 import com.liferay.osgi.service.tracker.map.ServiceTrackerMapFactory;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.PredicateFilter;
+import com.liferay.portal.model.Group;
+import com.liferay.portal.security.permission.PermissionChecker;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,15 +42,69 @@ import org.osgi.service.component.annotations.Deactivate;
 @Component(immediate = true, service = PanelAppRegistry.class)
 public class PanelAppRegistry {
 
-	public Iterable<PanelApp> getPanelApps(PanelCategory parentPanelCategory) {
-		Iterable<PanelApp> panelItems = _serviceTrackerMap.getService(
-			parentPanelCategory.getKey());
+	public PanelApp getFirstPanelApp(
+		PanelCategory parentPanelCategory, PermissionChecker permissionChecker,
+		Group group) {
 
-		if (panelItems == null) {
+		List<PanelApp> panelApps = getPanelApps(parentPanelCategory);
+
+		for (PanelApp panelApp : panelApps) {
+			try {
+				if (panelApp.hasAccessPermission(permissionChecker, group)) {
+					return panelApp;
+				}
+			}
+			catch (PortalException e) {
+				_log.error(e);
+			}
+		}
+
+		return null;
+	}
+
+	public List<PanelApp> getPanelApps(PanelCategory parentPanelCategory) {
+		return getPanelApps(parentPanelCategory.getKey());
+	}
+
+	public List<PanelApp> getPanelApps(
+		PanelCategory parentPanelCategory,
+		final PermissionChecker permissionChecker, final Group group) {
+
+		List<PanelApp> panelApps = getPanelApps(parentPanelCategory);
+
+		if (panelApps.isEmpty()) {
+			return panelApps;
+		}
+
+		return ListUtil.filter(
+			panelApps,
+			new PredicateFilter<PanelApp>() {
+
+				@Override
+				public boolean filter(PanelApp panelApp) {
+					try {
+						return panelApp.hasAccessPermission(
+							permissionChecker, group);
+					}
+					catch (PortalException e) {
+						_log.error(e);
+					}
+
+					return false;
+				}
+
+			});
+	}
+
+	public List<PanelApp> getPanelApps(String parentPanelCategoryKey) {
+		List<PanelApp> panelApps = _serviceTrackerMap.getService(
+			parentPanelCategoryKey);
+
+		if (panelApps == null) {
 			return Collections.emptyList();
 		}
 
-		return panelItems;
+		return panelApps;
 	}
 
 	@Activate
@@ -62,6 +123,9 @@ public class PanelAppRegistry {
 	protected void deactivate() {
 		_serviceTrackerMap.close();
 	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		PanelAppRegistry.class);
 
 	private ServiceTrackerMap<String, List<PanelApp>> _serviceTrackerMap;
 

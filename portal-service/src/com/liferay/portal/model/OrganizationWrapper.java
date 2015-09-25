@@ -72,6 +72,7 @@ public class OrganizationWrapper implements Organization,
 		attributes.put("statusId", getStatusId());
 		attributes.put("comments", getComments());
 		attributes.put("logoId", getLogoId());
+		attributes.put("lastPublishDate", getLastPublishDate());
 
 		return attributes;
 	}
@@ -185,6 +186,12 @@ public class OrganizationWrapper implements Organization,
 		if (logoId != null) {
 			setLogoId(logoId);
 		}
+
+		Date lastPublishDate = (Date)attributes.get("lastPublishDate");
+
+		if (lastPublishDate != null) {
+			setLastPublishDate(lastPublishDate);
+		}
 	}
 
 	@Override
@@ -266,7 +273,7 @@ public class OrganizationWrapper implements Organization,
 	* @return the create date of this organization
 	*/
 	@Override
-	public java.util.Date getCreateDate() {
+	public Date getCreateDate() {
 		return _organization.getCreateDate();
 	}
 
@@ -291,6 +298,16 @@ public class OrganizationWrapper implements Organization,
 	}
 
 	/**
+	* Returns the last publish date of this organization.
+	*
+	* @return the last publish date of this organization
+	*/
+	@Override
+	public Date getLastPublishDate() {
+		return _organization.getLastPublishDate();
+	}
+
+	/**
 	* Returns the logo ID of this organization.
 	*
 	* @return the logo ID of this organization
@@ -306,7 +323,7 @@ public class OrganizationWrapper implements Organization,
 	* @return the modified date of this organization
 	*/
 	@Override
-	public java.util.Date getModifiedDate() {
+	public Date getModifiedDate() {
 		return _organization.getModifiedDate();
 	}
 
@@ -609,7 +626,7 @@ public class OrganizationWrapper implements Organization,
 	* @param createDate the create date of this organization
 	*/
 	@Override
-	public void setCreateDate(java.util.Date createDate) {
+	public void setCreateDate(Date createDate) {
 		_organization.setCreateDate(createDate);
 	}
 
@@ -631,6 +648,16 @@ public class OrganizationWrapper implements Organization,
 	}
 
 	/**
+	* Sets the last publish date of this organization.
+	*
+	* @param lastPublishDate the last publish date of this organization
+	*/
+	@Override
+	public void setLastPublishDate(Date lastPublishDate) {
+		_organization.setLastPublishDate(lastPublishDate);
+	}
+
+	/**
 	* Sets the logo ID of this organization.
 	*
 	* @param logoId the logo ID of this organization
@@ -646,7 +673,7 @@ public class OrganizationWrapper implements Organization,
 	* @param modifiedDate the modified date of this organization
 	*/
 	@Override
-	public void setModifiedDate(java.util.Date modifiedDate) {
+	public void setModifiedDate(Date modifiedDate) {
 		_organization.setModifiedDate(modifiedDate);
 	}
 

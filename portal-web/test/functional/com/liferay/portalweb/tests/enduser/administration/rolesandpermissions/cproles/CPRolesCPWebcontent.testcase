@@ -35,6 +35,7 @@
 			<var name="userLoginEmailAddress" value="userea@liferay.com" />
 			<var name="userLoginEmailAddress" value="test@liferay.com" />
 			<var name="userLoginFullName" value="Test Test" />
+			<var name="userScreenName" value="usersn" />
 		</execute>
 
 		<execute macro="Permissions#definePermissionLoginUserCP">
@@ -51,7 +52,7 @@
 			<var name="siteURL" value="true" />
 		</execute>
 
-		<execute function="AssertElementNotPresent" locator1="CPWebcontent#TOOLBAR_ADD" />
+		<execute function="AssertElementNotPresent" locator1="Button#PLUS" />
 
 		<execute macro="Permissions#definePermissionLoginUserCP">
 			<var name="permissionDefinitionKey" value="SITE_ADMIN_CONTENT_WEB_CONTENT_RESOURCE_PERMISSIONS_WEB_CONTENT_ADD_FOLDER_CHECKBOX" />
@@ -93,7 +94,7 @@
 			<var name="siteURL" value="true" />
 		</execute>
 
-		<execute function="AssertElementNotPresent" locator1="CPWebcontent#TOOLBAR_ADD" />
+		<execute function="AssertElementNotPresent" locator1="Button#PLUS" />
 	</command>
 
 	<command name="AddStructureSiteRole" priority="4">
@@ -110,6 +111,7 @@
 			<var name="userLoginEmailAddress" value="userea@liferay.com" />
 			<var name="userLoginEmailAddress" value="test@liferay.com" />
 			<var name="userLoginFullName" value="Test Test" />
+			<var name="userScreenName" value="usersn" />
 		</execute>
 
 		<execute macro="Permissions#definePermissionLoginUserCP">
@@ -126,7 +128,7 @@
 			<var name="siteURL" value="true" />
 		</execute>
 
-		<execute function="AssertElementNotPresent" locator1="CPWebcontent#TOOLBAR_MANAGE" />
+		<execute function="AssertElementNotPresent" locator1="Toolbar#MANAGE" />
 
 		<execute macro="Permissions#definePermissionLoginUserCP">
 			<var name="permissionDefinitionKey" value="SITE_ADMIN_CONTENT_WEB_CONTENT_RESOURCE_PERMISSIONS_WEB_CONTENT_ADD_STRUCTURE_CHECKBOX" />
@@ -180,7 +182,7 @@
 			<var name="siteURL" value="true" />
 		</execute>
 
-		<execute function="AssertElementNotPresent" locator1="CPWebcontent#TOOLBAR_MANAGE" />
+		<execute function="AssertElementNotPresent" locator1="Toolbar#MANAGE" />
 	</command>
 
 	<command name="AddTemplateSiteRole" priority="4">
@@ -197,6 +199,7 @@
 			<var name="userLoginEmailAddress" value="userea@liferay.com" />
 			<var name="userLoginEmailAddress" value="test@liferay.com" />
 			<var name="userLoginFullName" value="Test Test" />
+			<var name="userScreenName" value="usersn" />
 		</execute>
 
 		<execute macro="Permissions#definePermissionLoginUserCP">
@@ -213,7 +216,7 @@
 			<var name="siteURL" value="true" />
 		</execute>
 
-		<execute function="AssertElementNotPresent" locator1="CPWebcontent#TOOLBAR_MANAGE" />
+		<execute function="AssertElementNotPresent" locator1="Toolbar#MANAGE" />
 
 		<execute macro="Permissions#definePermissionLoginUserCP">
 			<var name="permissionDefinitionKey" value="SITE_ADMIN_CONTENT_WEB_CONTENT_RESOURCE_PERMISSIONS_WEB_CONTENT_ADD_TEMPLATE_CHECKBOX" />
@@ -255,7 +258,7 @@
 			<var name="siteURL" value="true" />
 		</execute>
 
-		<execute function="AssertElementNotPresent" locator1="CPWebcontent#TOOLBAR_MANAGE" />
+		<execute function="AssertElementNotPresent" locator1="Toolbar#MANAGE" />
 	</command>
 
 	<command name="AddWebContentSiteRole" priority="4">
@@ -272,6 +275,7 @@
 			<var name="userLoginEmailAddress" value="userea@liferay.com" />
 			<var name="userLoginEmailAddress" value="test@liferay.com" />
 			<var name="userLoginFullName" value="Test Test" />
+			<var name="userScreenName" value="usersn" />
 		</execute>
 
 		<execute macro="Permissions#definePermissionLoginUserCP">
@@ -288,7 +292,7 @@
 			<var name="siteURL" value="true" />
 		</execute>
 
-		<execute function="AssertElementNotPresent" locator1="CPWebcontent#TOOLBAR_ADD" />
+		<execute function="AssertElementNotPresent" locator1="Button#PLUS" />
 
 		<execute macro="Permissions#definePermissionLoginUserCP">
 			<var name="permissionDefinitionKey" value="SITE_ADMIN_CONTENT_WEB_CONTENT_RESOURCE_PERMISSIONS_WEB_CONTENT_ADD_WEB_CONTENT_CHECKBOX" />
@@ -338,7 +342,7 @@
 			<var name="siteURL" value="true" />
 		</execute>
 
-		<execute function="AssertElementNotPresent" locator1="CPWebcontent#TOOLBAR_ADD" />
+		<execute function="AssertElementNotPresent" locator1="Button#PLUS" />
 	</command>
 
 	<command name="ViewWebContentPortletRegRole" priority="4">
@@ -355,7 +359,7 @@
 
 		<execute macro="Page#openURL" />
 
-		<execute function="AssertElementNotPresent" locator1="Dockbar#ADMIN" />
+		<execute function="AssertElementNotPresent" locator1="ControlMenu#ADMIN" />
 
 		<execute macro="Permissions#definePermissionLoginUserCP">
 			<var name="permissionDefinitionKey" value="SITE_ADMIN_CONTENT_WEB_CONTENT_GENERAL_PERMISSIONS_ACCESS_IN_SITE_ADMINISTRATION_CHECKBOX" />
@@ -387,7 +391,7 @@
 
 		<execute macro="Page#openURL" />
 
-		<execute function="AssertElementNotPresent" locator1="Dockbar#ADMIN" />
+		<execute function="AssertElementNotPresent" locator1="ControlMenu#ADMIN" />
 	</command>
 
 	<command name="ViewWebContentPortletSiteRole" priority="4">
@@ -412,7 +416,7 @@
 			<var name="siteURL" value="true" />
 		</execute>
 
-		<execute function="AssertElementNotPresent" locator1="Dockbar#ADMIN" />
+		<execute function="AssertElementNotPresent" locator1="ControlMenu#ADMIN" />
 
 		<execute macro="Permissions#definePermissionLoginUserCP">
 			<var name="permissionDefinitionKey" value="SITE_ADMIN_CONTENT_WEB_CONTENT_GENERAL_PERMISSIONS_ACCESS_IN_SITE_ADMINISTRATION_CHECKBOX" />
@@ -451,6 +455,6 @@
 			<var name="siteURL" value="true" />
 		</execute>
 
-		<execute function="AssertElementNotPresent" locator1="Dockbar#ADMIN" />
+		<execute function="AssertElementNotPresent" locator1="ControlMenu#ADMIN" />
 	</command>
 </definition>

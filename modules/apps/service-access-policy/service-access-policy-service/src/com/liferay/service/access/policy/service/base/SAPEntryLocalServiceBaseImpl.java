@@ -26,7 +26,6 @@ import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DefaultActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
-import com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Projection;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
@@ -41,12 +40,6 @@ import com.liferay.portal.service.persistence.ResourcePermissionPersistence;
 import com.liferay.portal.service.persistence.RolePersistence;
 import com.liferay.portal.service.persistence.UserPersistence;
 import com.liferay.portal.util.PortalUtil;
-
-import com.liferay.portlet.exportimport.lar.ExportImportHelperUtil;
-import com.liferay.portlet.exportimport.lar.ManifestSummary;
-import com.liferay.portlet.exportimport.lar.PortletDataContext;
-import com.liferay.portlet.exportimport.lar.StagedModelDataHandlerUtil;
-import com.liferay.portlet.exportimport.lar.StagedModelType;
 
 import com.liferay.service.access.policy.model.SAPEntry;
 import com.liferay.service.access.policy.service.SAPEntryLocalService;
@@ -263,59 +256,6 @@ public abstract class SAPEntryLocalServiceBaseImpl extends BaseLocalServiceImpl
 		actionableDynamicQuery.setPrimaryKeyPropertyName("sapEntryId");
 	}
 
-	@Override
-	public ExportActionableDynamicQuery getExportActionableDynamicQuery(
-		final PortletDataContext portletDataContext) {
-		final ExportActionableDynamicQuery exportActionableDynamicQuery = new ExportActionableDynamicQuery() {
-				@Override
-				public long performCount() throws PortalException {
-					ManifestSummary manifestSummary = portletDataContext.getManifestSummary();
-
-					StagedModelType stagedModelType = getStagedModelType();
-
-					long modelAdditionCount = super.performCount();
-
-					manifestSummary.addModelAdditionCount(stagedModelType.toString(),
-						modelAdditionCount);
-
-					long modelDeletionCount = ExportImportHelperUtil.getModelDeletionCount(portletDataContext,
-							stagedModelType);
-
-					manifestSummary.addModelDeletionCount(stagedModelType.toString(),
-						modelDeletionCount);
-
-					return modelAdditionCount;
-				}
-			};
-
-		initActionableDynamicQuery(exportActionableDynamicQuery);
-
-		exportActionableDynamicQuery.setAddCriteriaMethod(new ActionableDynamicQuery.AddCriteriaMethod() {
-				@Override
-				public void addCriteria(DynamicQuery dynamicQuery) {
-					portletDataContext.addDateRangeCriteria(dynamicQuery,
-						"modifiedDate");
-				}
-			});
-
-		exportActionableDynamicQuery.setCompanyId(portletDataContext.getCompanyId());
-
-		exportActionableDynamicQuery.setPerformActionMethod(new ActionableDynamicQuery.PerformActionMethod() {
-				@Override
-				public void performAction(Object object)
-					throws PortalException {
-					SAPEntry stagedModel = (SAPEntry)object;
-
-					StagedModelDataHandlerUtil.exportStagedModel(portletDataContext,
-						stagedModel);
-				}
-			});
-		exportActionableDynamicQuery.setStagedModelType(new StagedModelType(
-				PortalUtil.getClassNameId(SAPEntry.class.getName())));
-
-		return exportActionableDynamicQuery;
-	}
-
 	/**
 	 * @throws PortalException
 	 */
@@ -388,7 +328,7 @@ public abstract class SAPEntryLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @return the s a p entry local service
 	 */
-	public com.liferay.service.access.policy.service.SAPEntryLocalService getSAPEntryLocalService() {
+	public SAPEntryLocalService getSAPEntryLocalService() {
 		return sapEntryLocalService;
 	}
 
@@ -398,7 +338,7 @@ public abstract class SAPEntryLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param sapEntryLocalService the s a p entry local service
 	 */
 	public void setSAPEntryLocalService(
-		com.liferay.service.access.policy.service.SAPEntryLocalService sapEntryLocalService) {
+		SAPEntryLocalService sapEntryLocalService) {
 		this.sapEntryLocalService = sapEntryLocalService;
 	}
 
@@ -766,7 +706,7 @@ public abstract class SAPEntryLocalServiceBaseImpl extends BaseLocalServiceImpl
 	}
 
 	@BeanReference(type = com.liferay.service.access.policy.service.SAPEntryLocalService.class)
-	protected com.liferay.service.access.policy.service.SAPEntryLocalService sapEntryLocalService;
+	protected SAPEntryLocalService sapEntryLocalService;
 	@BeanReference(type = com.liferay.service.access.policy.service.SAPEntryService.class)
 	protected com.liferay.service.access.policy.service.SAPEntryService sapEntryService;
 	@BeanReference(type = SAPEntryPersistence.class)

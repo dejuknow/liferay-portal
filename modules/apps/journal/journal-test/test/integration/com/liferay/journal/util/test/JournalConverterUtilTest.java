@@ -15,7 +15,19 @@
 package com.liferay.journal.util.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.dynamic.data.mapping.io.DDMFormXSDDeserializerUtil;
+import com.liferay.dynamic.data.mapping.model.DDMForm;
+import com.liferay.dynamic.data.mapping.model.DDMFormField;
+import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
+import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.model.DDMStructureConstants;
+import com.liferay.dynamic.data.mapping.model.LocalizedValue;
+import com.liferay.dynamic.data.mapping.storage.Field;
+import com.liferay.dynamic.data.mapping.storage.Fields;
+import com.liferay.dynamic.data.mapping.storage.StorageType;
 import com.liferay.dynamic.data.mapping.test.util.DDMStructureTestHelper;
+import com.liferay.dynamic.data.mapping.util.impl.DDMImpl;
+import com.liferay.dynamic.data.mapping.util.impl.DDMXMLImpl;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.test.util.JournalTestUtil;
 import com.liferay.journal.util.JournalConverter;
@@ -44,6 +56,7 @@ import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Layout;
 import com.liferay.portal.model.User;
 import com.liferay.portal.service.ServiceContext;
+import com.liferay.portal.test.randomizerbumpers.TikaSafeRandomizerBumper;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.test.LayoutTestUtil;
@@ -51,18 +64,6 @@ import com.liferay.portal.xml.XMLSchemaImpl;
 import com.liferay.portlet.documentlibrary.model.DLFolderConstants;
 import com.liferay.portlet.documentlibrary.service.DLAppLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.util.DLUtil;
-import com.liferay.portlet.dynamicdatamapping.io.DDMFormXSDDeserializerUtil;
-import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
-import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
-import com.liferay.portlet.dynamicdatamapping.model.DDMFormFieldOptions;
-import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
-import com.liferay.portlet.dynamicdatamapping.model.DDMStructureConstants;
-import com.liferay.portlet.dynamicdatamapping.model.LocalizedValue;
-import com.liferay.portlet.dynamicdatamapping.storage.Field;
-import com.liferay.portlet.dynamicdatamapping.storage.Fields;
-import com.liferay.portlet.dynamicdatamapping.storage.StorageType;
-import com.liferay.portlet.dynamicdatamapping.util.DDMImpl;
-import com.liferay.portlet.dynamicdatamapping.util.DDMXMLImpl;
 import com.liferay.registry.Registry;
 import com.liferay.registry.RegistryUtil;
 
@@ -110,7 +111,8 @@ public class JournalConverterUtilTest {
 	public void setUp() throws Exception {
 		_group = GroupTestUtil.addGroup();
 
-		_ddmStructureTestHelper = new DDMStructureTestHelper(_group);
+		_ddmStructureTestHelper = new DDMStructureTestHelper(
+			PortalUtil.getClassNameId(JournalArticle.class), _group);
 
 		long classNameId = PortalUtil.getClassNameId(JournalArticle.class);
 
@@ -212,7 +214,7 @@ public class JournalConverterUtilTest {
 		fields.put(multiListField);
 
 		Field fieldsDisplayField = getFieldsDisplayField(
-			_ddmStructure.getStructureId(), "multi-list_INSTANCE_9X5wVsSv");
+			_ddmStructure.getStructureId(), "multi_list_INSTANCE_9X5wVsSv");
 
 		fields.put(fieldsDisplayField);
 
@@ -358,7 +360,8 @@ public class JournalConverterUtilTest {
 		FileEntry fileEntry = DLAppLocalServiceUtil.addFileEntry(
 			TestPropsValues.getUserId(), _group.getGroupId(),
 			DLFolderConstants.DEFAULT_PARENT_FOLDER_ID, "Test 1.txt",
-			ContentTypes.TEXT_PLAIN, RandomTestUtil.randomBytes(),
+			ContentTypes.TEXT_PLAIN,
+			RandomTestUtil.randomBytes(TikaSafeRandomizerBumper.INSTANCE),
 			serviceContext);
 
 		Field documentLibraryField = getDocumentLibraryField(
@@ -470,7 +473,7 @@ public class JournalConverterUtilTest {
 		expectedFields.put(multiListField);
 
 		Field fieldsDisplayField = getFieldsDisplayField(
-			_ddmStructure.getStructureId(), "multi-list_INSTANCE_9X5wVsSv");
+			_ddmStructure.getStructureId(), "multi_list_INSTANCE_9X5wVsSv");
 
 		expectedFields.put(fieldsDisplayField);
 
@@ -745,7 +748,7 @@ public class JournalConverterUtilTest {
 		Field field = new Field();
 
 		field.setDDMStructureId(ddmStructureId);
-		field.setName("multi-list");
+		field.setName("multi_list");
 
 		field.addValue(_enLocale, "[\"a\"]");
 

@@ -207,6 +207,8 @@ public interface PropsKeys {
 
 	public static final String AUTO_DEPLOY_WEBSPHERE_WSADMIN_PROPERTIES_FILE = "auto.deploy.websphere.wsadmin.properties.file.name";
 
+	public static final String AUTO_DEPLOY_WILDFLY_PREFIX = "auto.deploy.wildfly.prefix";
+
 	public static final String AUTO_LOGIN_HOOKS = "auto.login.hooks";
 
 	public static final String AUTO_LOGIN_IGNORE_HOSTS = "auto.login.ignore.hosts";
@@ -239,13 +241,9 @@ public interface PropsKeys {
 
 	public static final String BLOGS_ENTRY_PREVIOUS_AND_NEXT_NAVIGATION_ENABLED = "blogs.entry.previous.and.next.navigation.enabled";
 
-	public static final String BLOGS_IMAGE_ALLOY_EDITOR_MAX_SIZE = "blogs.image.alloy.editor.max.size";
-
-	public static final String BLOGS_IMAGE_COVER_MAX_SIZE = "blogs.image.cover.max.size";
-
 	public static final String BLOGS_IMAGE_EXTENSIONS = "blogs.image.extensions";
 
-	public static final String BLOGS_IMAGE_SMALL_MAX_SIZE = "blogs.image.small.max.size";
+	public static final String BLOGS_IMAGE_MAX_SIZE = "blogs.image.max.size";
 
 	public static final String BLOGS_LINKBACK_EXCERPT_LENGTH = "blogs.linkback.excerpt.length";
 
@@ -445,8 +443,6 @@ public interface PropsKeys {
 
 	public static final String CONTROL_PANEL_DEFAULT_ENTRY_CLASS = "control.panel.default.entry.class";
 
-	public static final String CONTROL_PANEL_HOME_PORTLET_ID = "control.panel.home.portlet.id";
-
 	public static final String CONTROL_PANEL_LAYOUT_FRIENDLY_URL = "control.panel.layout.friendly.url";
 
 	public static final String CONTROL_PANEL_LAYOUT_NAME = "control.panel.layout.name";
@@ -474,6 +470,10 @@ public interface PropsKeys {
 	public static final String DATABASE_INDEXES_UPDATE_ON_STARTUP = "database.indexes.update.on.startup";
 
 	public static final String DATABASE_MYSQL_ENGINE = "database.mysql.engine";
+
+	public static final String DATABASE_ORDER_BY_MAX_COLUMNS = "database.order.by.max.columns";
+
+	public static final String DATABASE_STRING_INDEX_MAX_LENGTH = "database.string.index.max.length";
 
 	public static final String DEFAULT_ADMIN_EMAIL_ADDRESS_PREFIX = "default.admin.email.address.prefix";
 
@@ -590,8 +590,6 @@ public interface PropsKeys {
 	public static final String DL_COMPARABLE_FILE_EXTENSIONS = "dl.comparable.file.extensions";
 
 	public static final String DL_DEFAULT_DISPLAY_VIEW = "dl.default.display.view";
-
-	public static final String DL_DISPLAY_TEMPLATES_CONFIG = "dl.display.templates.config";
 
 	public static final String DL_DISPLAY_VIEWS = "dl.display.views";
 
@@ -731,8 +729,6 @@ public interface PropsKeys {
 
 	public static final String DL_RELATED_ASSETS_ENABLED = "dl.related.assets.enabled";
 
-	public static final String DL_REPOSITORY_CMIS_DELETE_DEPTH = "dl.repository.cmis.delete.depth";
-
 	public static final String DL_REPOSITORY_GUEST_PASSWORD = "dl.repository.guest.password";
 
 	public static final String DL_REPOSITORY_GUEST_USERNAME = "dl.repository.guest.username";
@@ -741,61 +737,19 @@ public interface PropsKeys {
 
 	public static final String DL_SHOW_HIDDEN_MOUNT_FOLDERS = "dl.show.hidden.mount.folders";
 
-	public static final String DL_STORE_ADVANCED_FILE_SYSTEM_ROOT_DIR = "dl.store.advanced.file.system.root.dir";
-
 	public static final String DL_STORE_ANTIVIRUS_ENABLED = "dl.store.antivirus.enabled";
 
 	public static final String DL_STORE_ANTIVIRUS_IMPL = "dl.store.antivirus.impl";
 
-	public static final String DL_STORE_CMIS_CREDENTIALS_PASSWORD = "dl.store.cmis.credentials.password";
-
-	public static final String DL_STORE_CMIS_CREDENTIALS_USERNAME = "dl.store.cmis.credentials.username";
-
-	public static final String DL_STORE_CMIS_REPOSITORY_URL = "dl.store.cmis.repository.url";
-
-	public static final String DL_STORE_CMIS_SYSTEM_ROOT_DIR = "dl.store.cmis.system.root.dir";
-
-	public static final String DL_STORE_FILE_SYSTEM_ROOT_DIR = "dl.store.file.system.root.dir";
-
 	public static final String DL_STORE_IMPL = "dl.store.impl";
-
-	public static final String DL_STORE_JCR_FETCH_DELAY = "dl.store.jcr.fetch.delay";
-
-	public static final String DL_STORE_JCR_FETCH_MAX_FAILURES = "dl.store.jcr.fetch.max.failures";
-
-	public static final String DL_STORE_JCR_MOVE_VERSION_LABELS = "dl.store.jcr.move.version.labels";
-
-	public static final String DL_STORE_S3_ACCESS_KEY = "dl.store.s3.access.key";
-
-	public static final String DL_STORE_S3_BUCKET_NAME = "dl.store.s3.bucket.name";
-
-	public static final String DL_STORE_S3_JETS3T = "dl.store.s3.jets3t";
-
-	public static final String DL_STORE_S3_SECRET_KEY = "dl.store.s3.secret.key";
-
-	public static final String DL_STORE_S3_TEMP_DIR_CLEAN_UP_EXPUNGE = "dl.store.s3.temp.dir.clean.up.expunge";
-
-	public static final String DL_STORE_S3_TEMP_DIR_CLEAN_UP_FREQUENCY = "dl.store.s3.temp.dir.clean.up.frequency";
 
 	public static final String DL_SUBFOLDERS_VISIBLE = "dl.subfolders.visible";
 
 	public static final String DL_TABS_VISIBLE = "dl.tabs.visible";
 
+	public static final String DL_WEBDAV_SUBSTITUTION_CHAR = "dl.webdav.substitution.char";
+
 	public static final String DOCKBAR_ADD_PORTLETS = "dockbar.add.portlets";
-
-	public static final String DOCKBAR_ADMINISTRATIVE_LINKS_SHOW_IN_POP_UP = "dockbar.administrative.links.show.in.pop.up";
-
-	public static final String DYNAMIC_DATA_MAPPING_IMAGE_EXTENSIONS = "dynamic.data.mapping.image.extensions";
-
-	public static final String DYNAMIC_DATA_MAPPING_IMAGE_SMALL_MAX_SIZE = "dynamic.data.mapping.image.small.max.size";
-
-	public static final String DYNAMIC_DATA_MAPPING_STRUCTURE_FORCE_AUTOGENERATE_KEY = "dynamic.data.mapping.structure.force.autogenerate.key";
-
-	public static final String DYNAMIC_DATA_MAPPING_TEMPLATE_FORCE_AUTOGENERATE_KEY = "dynamic.data.mapping.template.force.autogenerate.key";
-
-	public static final String DYNAMIC_DATA_MAPPING_TEMPLATE_LANGUAGE_CONTENT = "dynamic.data.mapping.template.language.content";
-
-	public static final String DYNAMIC_DATA_MAPPING_TEMPLATE_LANGUAGE_DEFAULT = "dynamic.data.mapping.template.language.default";
 
 	public static final String DYNAMIC_RESOURCE_SERVLET_ALLOWED_PATHS = "dynamic.resource.servlet.allowed.paths";
 
@@ -868,6 +822,8 @@ public interface PropsKeys {
 	public static final String FLAGS_GUEST_USERS_ENABLED = "flags.guest.users.enabled";
 
 	public static final String FLAGS_REASONS = "flags.reasons";
+
+	public static final String FULL_PAGE_DISPLAYABLE = "full.page.displayable";
 
 	public static final String GLOBAL_SHUTDOWN_EVENTS = "global.shutdown.events";
 
@@ -1039,24 +995,6 @@ public interface PropsKeys {
 
 	public static final String JAVASCRIPT_SINGLE_PAGE_APPLICATION_ENABLED = "javascript.single.page.application.enabled";
 
-	public static final String JCR_INITIALIZE_ON_STARTUP = "jcr.initialize.on.startup";
-
-	public static final String JCR_JACKRABBIT_CONFIG_FILE_PATH = "jcr.jackrabbit.config.file.path";
-
-	public static final String JCR_JACKRABBIT_CREDENTIALS_PASSWORD = "jcr.jackrabbit.credentials.password";
-
-	public static final String JCR_JACKRABBIT_CREDENTIALS_USERNAME = "jcr.jackrabbit.credentials.username";
-
-	public static final String JCR_JACKRABBIT_REPOSITORY_HOME = "jcr.jackrabbit.repository.home";
-
-	public static final String JCR_JACKRABBIT_REPOSITORY_ROOT = "jcr.jackrabbit.repository.root";
-
-	public static final String JCR_NODE_DOCUMENTLIBRARY = "jcr.node.documentlibrary";
-
-	public static final String JCR_WORKSPACE_NAME = "jcr.workspace.name";
-
-	public static final String JCR_WRAP_SESSION = "jcr.wrap.session";
-
 	public static final String JDBC_DEFAULT_DRIVER_CLASS_NAME = "jdbc.default.driverClassName";
 
 	public static final String JDBC_DEFAULT_JNDI_NAME = "jdbc.default.jndi.name";
@@ -1098,6 +1036,8 @@ public interface PropsKeys {
 	public static final String JSP_WRITER_BUFFER_SIZE = "jsp.writer.buffer.size";
 
 	public static final String LAYOUT_AJAX_RENDER_ENABLE = "layout.ajax.render.enable";
+
+	public static final String LAYOUT_BROWSABLE = "layout.browsable";
 
 	public static final String LAYOUT_CLONE_IMPL = "layout.clone.impl";
 
@@ -1274,6 +1214,8 @@ public interface PropsKeys {
 	public static final String LDAP_IMPORT_USER_PASSWORD_ENABLED = "ldap.import.user.password.enabled";
 
 	public static final String LDAP_IMPORT_USER_SEARCH_FILTER = "ldap.import.user.search.filter";
+
+	public static final String LDAP_IMPORT_USER_SYNC_STRATEGY = "ldap.import.user.sync.strategy";
 
 	public static final String LDAP_PAGE_SIZE = "ldap.page.size";
 
@@ -1815,10 +1757,6 @@ public interface PropsKeys {
 
 	public static final String POP_SERVER_SUBDOMAIN = "pop.server.subdomain";
 
-	public static final String PORTAL_CACHE_MANAGER_TYPE_MULTI_VM ="portal.cache.manager.type.multi.vm";
-
-	public static final String PORTAL_CACHE_MANAGER_TYPE_SINGLE_VM ="portal.cache.manager.type.single.vm";
-
 	public static final String PORTAL_FABRIC_AGENT_SELECTOR_CLASS = "portal.fabric.agent.selector.class";
 
 	public static final String PORTAL_FABRIC_CLIENT_EVENT_LOOP_GROUP_THREAD_COUNT = "portal.fabric.client.event.loop.group.thread.count";
@@ -1987,6 +1925,8 @@ public interface PropsKeys {
 
 	public static final String REST_PROXY_URL_PREFIXES_ALLOWED = "rest.proxy.url.prefixes.allowed";
 
+	public static final String RETRY_ADVICE_MAX_RETRIES = "retry.advice.max.retries";
+
 	public static final String ROBOTS_TXT_WITH_SITEMAP = "robots.txt.with.sitemap";
 
 	public static final String ROBOTS_TXT_WITHOUT_SITEMAP = "robots.txt.without.sitemap";
@@ -2044,8 +1984,6 @@ public interface PropsKeys {
 	public static final String SCRIPTING_JRUBY_COMPILE_MODE = "scripting.jruby.compile.mode";
 
 	public static final String SCRIPTING_JRUBY_COMPILE_THRESHOLD = "scripting.jruby.compile.threshold";
-
-	public static final String SCRIPTING_JRUBY_LOAD_PATHS = "scripting.jruby.load.paths";
 
 	public static final String SEARCH_CONTAINER_PAGE_DEFAULT_DELTA = "search.container.page.default.delta";
 
@@ -2245,10 +2183,6 @@ public interface PropsKeys {
 
 	public static final String SITES_SITEMAP_DEFAULT_PRIORITY = "sites.sitemap.default.priority";
 
-	public static final String SOCIAL_ACTIVITY_CONTRIBUTION_INCREMENTS = "social.activity.contribution.increments";
-
-	public static final String SOCIAL_ACTIVITY_CONTRIBUTION_LIMIT_VALUES = "social.activity.contribution.limit.values";
-
 	public static final String SOCIAL_ACTIVITY_COUNTER_PERIOD_LENGTH = "social.activity.counter.period.length";
 
 	public static final String SOCIAL_ACTIVITY_FILTER_SEARCH_LIMIT = "social.activity.filter.search.limit";
@@ -2256,10 +2190,6 @@ public interface PropsKeys {
 	public static final String SOCIAL_ACTIVITY_LOCK_RETRY_DELAY = "social.activity.lock.retry.delay";
 
 	public static final String SOCIAL_ACTIVITY_LOCK_TIMEOUT = "social.activity.lock.timeout";
-
-	public static final String SOCIAL_ACTIVITY_PARTICIPATION_INCREMENTS = "social.activity.participation.increments";
-
-	public static final String SOCIAL_ACTIVITY_PARTICIPATION_LIMIT_VALUES = "social.activity.participation.limit.values";
 
 	public static final String SOCIAL_ACTIVITY_SETS_BUNDLING_ENABLED = "social.activity.sets.bundling.enabled";
 
@@ -2427,10 +2357,6 @@ public interface PropsKeys {
 
 	public static final String USER_NOTIFICATION_EVENT_CONFIRMATION_ENABLED = "user.notification.event.confirmation.enabled";
 
-	public static final String USER_PERSONAL_PANEL_LAYOUT_FRIENDLY_URL = "user.personal.panel.layout.friendly.url";
-
-	public static final String USER_PERSONAL_PANEL_LAYOUT_NAME = "user.personal.panel.layout.name";
-
 	public static final String USERS_ADMIN_ORGANIZATION_COLUMN_LIMIT = "users.admin.organization.column.limit";
 
 	public static final String USERS_ADMIN_ROLE_COLUMN_LIMIT = "users.admin.role.column.limit";
@@ -2528,6 +2454,8 @@ public interface PropsKeys {
 	public static final String VERIFY_DATABASE_TRANSACTIONS_DISABLED = "verify.database.transactions.disabled";
 
 	public static final String VERIFY_FREQUENCY = "verify.frequency";
+
+	public static final String VERIFY_PATCH_LEVELS_DISABLED = "verify.patch.levels.disabled";
 
 	public static final String VERIFY_PROCESS_CONCURRENCY_THRESHOLD = "verify.process.concurrency.threshold";
 

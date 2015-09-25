@@ -32,6 +32,7 @@ import com.liferay.sync.engine.documentlibrary.event.UpdateFileEntryEvent;
 import com.liferay.sync.engine.documentlibrary.event.UpdateFolderEvent;
 import com.liferay.sync.engine.documentlibrary.handler.GetAllFolderSyncDLObjectsHandler;
 import com.liferay.sync.engine.model.SyncFile;
+import com.liferay.sync.engine.model.SyncSite;
 import com.liferay.sync.engine.service.SyncFileService;
 import com.liferay.sync.engine.util.FileUtil;
 import com.liferay.sync.engine.util.PropsValues;
@@ -233,11 +234,10 @@ public class FileEventUtil {
 	}
 
 	public static List<SyncFile> getAllFolders(
-		long companyId, long repositoryId, long syncAccountId) {
+		long repositoryId, long syncAccountId) {
 
 		Map<String, Object> parameters = new HashMap<>();
 
-		parameters.put("companyId", companyId);
 		parameters.put("repositoryId", repositoryId);
 
 		GetAllFolderSyncDLObjectsEvent getAllFolderSyncDLObjectsEvent =
@@ -250,6 +250,20 @@ public class FileEventUtil {
 				getHandler();
 
 		return getAllFolderSyncDLObjectsHandler.getSyncFiles();
+	}
+
+	public static void getUpdates(
+		long repositoryId, long syncAccountId, SyncSite syncSite) {
+
+		Map<String, Object> parameters = new HashMap<>();
+
+		parameters.put("repositoryId", repositoryId);
+		parameters.put("syncSite", syncSite);
+
+		GetSyncDLObjectUpdateEvent getSyncDLObjectUpdateEvent =
+			new GetSyncDLObjectUpdateEvent(syncAccountId, parameters);
+
+		getSyncDLObjectUpdateEvent.run();
 	}
 
 	public static void moveFile(
@@ -289,8 +303,7 @@ public class FileEventUtil {
 	public static void resyncFolder(long syncAccountId, SyncFile syncFile) {
 		Map<String, Object> parameters = new HashMap<>();
 
-		parameters.put("companyId", syncFile.getCompanyId());
-		parameters.put("lastAccessTime", 0);
+		parameters.put("lastAccessTime", -1);
 		parameters.put("parentFolderId", syncFile.getTypePK());
 		parameters.put("repositoryId", syncFile.getRepositoryId());
 		parameters.put("syncFile", syncFile);

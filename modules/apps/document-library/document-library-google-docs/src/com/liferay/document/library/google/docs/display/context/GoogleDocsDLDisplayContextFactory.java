@@ -15,6 +15,8 @@
 package com.liferay.document.library.google.docs.display.context;
 
 import com.liferay.document.library.google.docs.util.GoogleDocsMetadataHelper;
+import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
+import com.liferay.dynamic.data.mapping.storage.StorageEngine;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.repository.model.FileEntry;
@@ -29,8 +31,6 @@ import com.liferay.portlet.documentlibrary.model.DLFileVersion;
 import com.liferay.portlet.documentlibrary.service.DLAppService;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryMetadataLocalService;
 import com.liferay.portlet.dynamicdatamapping.DDMStructure;
-import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalService;
-import com.liferay.portlet.dynamicdatamapping.storage.StorageEngine;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -69,15 +69,19 @@ public class GoogleDocsDLDisplayContextFactory
 		HttpServletRequest request, HttpServletResponse response,
 		FileEntry fileEntry) {
 
-		GoogleDocsMetadataHelper googleDocsMetadataHelper =
-			new GoogleDocsMetadataHelper(
-				_ddmStructureLocalService, (DLFileEntry)fileEntry.getModel(),
-				_dlFileEntryMetadataLocalService, _storageEngine);
+		Object model = fileEntry.getModel();
 
-		if (googleDocsMetadataHelper.isGoogleDocs()) {
-			return new GoogleDocsDLEditFileEntryDisplayContext(
-				parentDLEditFileEntryDisplayContext, request, response,
-				fileEntry);
+		if (model instanceof DLFileEntry) {
+			GoogleDocsMetadataHelper googleDocsMetadataHelper =
+				new GoogleDocsMetadataHelper(
+					_ddmStructureLocalService, (DLFileEntry)model,
+					_dlFileEntryMetadataLocalService, _storageEngine);
+
+			if (googleDocsMetadataHelper.isGoogleDocs()) {
+				return new GoogleDocsDLEditFileEntryDisplayContext(
+					parentDLEditFileEntryDisplayContext, request, response,
+					fileEntry);
+			}
 		}
 
 		return parentDLEditFileEntryDisplayContext;
@@ -120,19 +124,17 @@ public class GoogleDocsDLDisplayContextFactory
 
 		Object model = fileVersion.getModel();
 
-		if (!(model instanceof DLFileVersion)) {
-			return parentDLViewFileVersionDisplayContext;
-		}
+		if (model instanceof DLFileVersion) {
+			GoogleDocsMetadataHelper googleDocsMetadataHelper =
+				new GoogleDocsMetadataHelper(
+					_ddmStructureLocalService, (DLFileVersion)model,
+					_dlFileEntryMetadataLocalService, _storageEngine);
 
-		GoogleDocsMetadataHelper googleDocsMetadataHelper =
-			new GoogleDocsMetadataHelper(
-				_ddmStructureLocalService, (DLFileVersion)model,
-				_dlFileEntryMetadataLocalService, _storageEngine);
-
-		if (googleDocsMetadataHelper.isGoogleDocs()) {
-			return new GoogleDocsDLViewFileVersionDisplayContext(
-				parentDLViewFileVersionDisplayContext, request, response,
-				fileVersion, googleDocsMetadataHelper);
+			if (googleDocsMetadataHelper.isGoogleDocs()) {
+				return new GoogleDocsDLViewFileVersionDisplayContext(
+					parentDLViewFileVersionDisplayContext, request, response,
+					fileVersion, googleDocsMetadataHelper);
+			}
 		}
 
 		return parentDLViewFileVersionDisplayContext;

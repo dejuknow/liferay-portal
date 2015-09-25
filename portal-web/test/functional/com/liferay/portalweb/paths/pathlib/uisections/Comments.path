@@ -44,6 +44,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>DELETE_LINK_GENERIC</td>
+	<td>//ul[@class='lfr-discussion-actions']/li/span/a[contains(.,'Delete')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>EDIT_COMMENT_FIELD</td>
 	<td>//div[contains(@name,'editReplyBody')]</td>
 	<td></td>
@@ -55,7 +60,7 @@
 </tr>
 <tr>
 	<td>ENTRY_COUNT_PANEL</td>
-	<td>//div[@class='panel-toggle']/span[contains(.,'Comments')]</td>
+	<td>//div[@class='view-entry-container']//h2[contains(.,'Comments')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -101,6 +106,11 @@
 <tr>
 	<td>USER_NAME</td>
 	<td>//header[@class='lfr-discussion-message-author']/a | //span[@class='user-name']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>WORKFLOW_STATUS</td>
+	<td>//div[contains(@class,'lfr-discussion-body') and contains(.,'${key_commentBody}')]//span[contains(@class,'workflow-status')]/strong</td>
 	<td></td>
 </tr>
 </tbody>
