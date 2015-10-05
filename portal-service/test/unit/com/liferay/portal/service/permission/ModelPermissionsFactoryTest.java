@@ -20,8 +20,8 @@ import com.liferay.portal.model.RoleConstants;
 import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.service.RoleLocalServiceUtil;
 
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.junit.Assert;
@@ -89,11 +89,11 @@ public class ModelPermissionsFactoryTest extends PowerMockito {
 		String[] guestPermissions = {};
 
 		ModelPermissions modelPermissions = ModelPermissionsFactory.create(
-			_COMPANY_ID, 0, groupPermissions, guestPermissions);
+			groupPermissions, guestPermissions);
 
-		List<Role> roles = modelPermissions.getRoles();
+		Collection<String> roleNames = modelPermissions.getRoleNames();
 
-		Assert.assertEquals(0, roles.size());
+		Assert.assertEquals(0, roleNames.size());
 	}
 
 	@Test
@@ -102,31 +102,19 @@ public class ModelPermissionsFactoryTest extends PowerMockito {
 		String[] guestPermissions = {};
 
 		ModelPermissions modelPermissions = ModelPermissionsFactory.create(
-			_COMPANY_ID, 1, groupPermissions, guestPermissions);
+			groupPermissions, guestPermissions);
 
-		List<Role> roles = modelPermissions.getRoles();
+		Collection<String> roleNames = modelPermissions.getRoleNames();
 
-		Assert.assertEquals(1, roles.size());
+		Assert.assertEquals(1, roleNames.size());
 
-		Role role = roles.get(0);
+		String roleName = roleNames.iterator().next();
 
-		Assert.assertEquals(RoleConstants.SITE_MEMBER, role.getName());
+		Assert.assertEquals(
+			RoleConstants.PLACEHOLDER_DEFAULT_GROUP_ROLE, roleName);
 		Assert.assertEquals(
 			ListUtil.fromArray(groupPermissions),
-			modelPermissions.getActionIds(role));
-	}
-
-	@Test
-	public void testCreateWithGroupPermissionsAndGroupZero() throws Exception {
-		String[] groupPermissions = {ActionKeys.VIEW};
-		String[] guestPermissions = {};
-
-		ModelPermissions modelPermissions = ModelPermissionsFactory.create(
-			_COMPANY_ID, 0, groupPermissions, guestPermissions);
-
-		List<Role> roles = modelPermissions.getRoles();
-
-		Assert.assertEquals(0, roles.size());
+			modelPermissions.getActionIdsList(roleName));
 	}
 
 	@Test
@@ -135,16 +123,16 @@ public class ModelPermissionsFactoryTest extends PowerMockito {
 		String[] guestPermissions = {ActionKeys.VIEW};
 
 		ModelPermissions modelPermissions = ModelPermissionsFactory.create(
-			_COMPANY_ID, 1, groupPermissions, guestPermissions);
+			groupPermissions, guestPermissions);
 
-		List<Role> roles = modelPermissions.getRoles();
+		Collection<String> roleNames = modelPermissions.getRoleNames();
 
-		Assert.assertEquals(2, roles.size());
+		Assert.assertEquals(2, roleNames.size());
 
-		List<Role> viewActionIdRoles = modelPermissions.getRoles(
-			ActionKeys.VIEW);
+		Collection<String> viewActionIdRoleNames =
+			modelPermissions.getRoleNames(ActionKeys.VIEW);
 
-		Assert.assertEquals(2, viewActionIdRoles.size());
+		Assert.assertEquals(2, viewActionIdRoleNames.size());
 	}
 
 	@Test
@@ -153,18 +141,17 @@ public class ModelPermissionsFactoryTest extends PowerMockito {
 		String[] guestPermissions = {ActionKeys.VIEW};
 
 		ModelPermissions modelPermissions = ModelPermissionsFactory.create(
-			_COMPANY_ID, 1, groupPermissions, guestPermissions);
+			groupPermissions, guestPermissions);
 
-		List<Role> roles = modelPermissions.getRoles();
+		Collection<String> roleNames = modelPermissions.getRoleNames();
 
-		Assert.assertEquals(1, roles.size());
+		Assert.assertEquals(1, roleNames.size());
 
-		Role role = roles.get(0);
+		String roleName = roleNames.iterator().next();
 
-		Assert.assertEquals(RoleConstants.GUEST, role.getName());
-		Assert.assertEquals(
-			ListUtil.fromArray(guestPermissions),
-			modelPermissions.getActionIds(role));
+		Assert.assertEquals(RoleConstants.GUEST, roleName);
+		Assert.assertArrayEquals(
+			guestPermissions, modelPermissions.getActionIds(roleName));
 	}
 
 	@Test
@@ -173,11 +160,11 @@ public class ModelPermissionsFactoryTest extends PowerMockito {
 		String[] guestPermissions = null;
 
 		ModelPermissions modelPermissions = ModelPermissionsFactory.create(
-			_COMPANY_ID, 0, groupPermissions, guestPermissions);
+			groupPermissions, guestPermissions);
 
-		List<Role> roles = modelPermissions.getRoles();
+		Collection<String> roleNames = modelPermissions.getRoleNames();
 
-		Assert.assertTrue(roles.isEmpty());
+		Assert.assertTrue(roleNames.isEmpty());
 	}
 
 	@Test
@@ -187,9 +174,9 @@ public class ModelPermissionsFactoryTest extends PowerMockito {
 		ModelPermissions modelPermissions = ModelPermissionsFactory.create(
 			parameterMap);
 
-		List<Role> roles = modelPermissions.getRoles();
+		Collection<String> roleNames = modelPermissions.getRoleNames();
 
-		Assert.assertEquals(0, roles.size());
+		Assert.assertEquals(0, roleNames.size());
 	}
 
 	@Test
@@ -206,16 +193,15 @@ public class ModelPermissionsFactoryTest extends PowerMockito {
 		ModelPermissions modelPermissions = ModelPermissionsFactory.create(
 			parameterMap);
 
-		List<Role> roles = modelPermissions.getRoles();
+		Collection<String> roleNames = modelPermissions.getRoleNames();
 
-		Assert.assertEquals(1, roles.size());
+		Assert.assertEquals(1, roleNames.size());
 
-		Role role = roles.get(0);
+		String roleName = roleNames.iterator().next();
 
-		Assert.assertEquals(RoleConstants.GUEST, role.getName());
-		Assert.assertEquals(
-			ListUtil.fromArray(permissions),
-			modelPermissions.getActionIds(role));
+		Assert.assertEquals(RoleConstants.GUEST, roleName);
+		Assert.assertArrayEquals(
+			permissions, modelPermissions.getActionIds(roleName));
 	}
 
 	@Test
@@ -236,17 +222,14 @@ public class ModelPermissionsFactoryTest extends PowerMockito {
 		ModelPermissions modelPermissions = ModelPermissionsFactory.create(
 			parameterMap);
 
-		List<Role> roles = modelPermissions.getRoles();
+		Collection<String> roleNames = modelPermissions.getRoleNames();
 
-		Assert.assertEquals(2, roles.size());
+		Assert.assertEquals(2, roleNames.size());
 
-		Role role = roles.get(0);
+		String roleName = roleNames.iterator().next();
 
-		Assert.assertEquals(
-			ListUtil.fromArray(permissions),
-			modelPermissions.getActionIds(role));
+		Assert.assertArrayEquals(
+			permissions, modelPermissions.getActionIds(roleName));
 	}
-
-	private static final long _COMPANY_ID = 1;
 
 }

@@ -28,6 +28,7 @@ import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
 import com.liferay.portlet.asset.AssetCategoryNameException;
 import com.liferay.portlet.asset.DuplicateCategoryException;
+import com.liferay.portlet.asset.DuplicateCategoryPropertyException;
 import com.liferay.portlet.asset.DuplicateVocabularyException;
 import com.liferay.portlet.asset.NoSuchCategoryException;
 import com.liferay.portlet.asset.NoSuchVocabularyException;
@@ -35,8 +36,8 @@ import com.liferay.portlet.asset.VocabularyNameException;
 import com.liferay.portlet.asset.model.AssetCategory;
 import com.liferay.portlet.asset.model.AssetCategoryConstants;
 import com.liferay.portlet.asset.model.AssetVocabulary;
-import com.liferay.portlet.asset.service.AssetCategoryServiceUtil;
-import com.liferay.portlet.asset.service.AssetVocabularyServiceUtil;
+import com.liferay.portlet.asset.service.AssetCategoryService;
+import com.liferay.portlet.asset.service.AssetVocabularyService;
 import com.liferay.portlet.asset.util.AssetVocabularySettingsHelper;
 
 import java.io.IOException;
@@ -60,8 +61,6 @@ import org.osgi.service.component.annotations.Reference;
 @Component(
 	immediate = true,
 	property = {
-		"com.liferay.portlet.control-panel-entry-category=site_administration.content",
-		"com.liferay.portlet.control-panel-entry-weight=21.0",
 		"com.liferay.portlet.css-class-wrapper=portlet-asset-category-admin",
 		"com.liferay.portlet.display-category=category.hidden",
 		"com.liferay.portlet.icon=/icons/asset_category_admin.png",
@@ -98,7 +97,7 @@ public class AssetCategoryAdminPortlet extends MVCPortlet {
 				ParamUtil.getString(actionRequest, "deleteCategoryIds"), 0L);
 		}
 
-		AssetCategoryServiceUtil.deleteCategories(deleteCategoryIds);
+		_assetCategoryService.deleteCategories(deleteCategoryIds);
 	}
 
 	public void deleteVocabulary(
@@ -118,7 +117,7 @@ public class AssetCategoryAdminPortlet extends MVCPortlet {
 		}
 
 		for (long deleteVocabularyId : deleteVocabularyIds) {
-			AssetVocabularyServiceUtil.deleteVocabulary(deleteVocabularyId);
+			_assetVocabularyService.deleteVocabulary(deleteVocabularyId);
 		}
 	}
 
@@ -144,7 +143,7 @@ public class AssetCategoryAdminPortlet extends MVCPortlet {
 
 			// Add category
 
-			AssetCategoryServiceUtil.addCategory(
+			_assetCategoryService.addCategory(
 				serviceContext.getScopeGroupId(), parentCategoryId, titleMap,
 				descriptionMap, vocabularyId, categoryProperties,
 				serviceContext);
@@ -153,7 +152,7 @@ public class AssetCategoryAdminPortlet extends MVCPortlet {
 
 			// Update category
 
-			AssetCategoryServiceUtil.updateCategory(
+			_assetCategoryService.updateCategory(
 				categoryId, parentCategoryId, titleMap, descriptionMap,
 				vocabularyId, categoryProperties, serviceContext);
 		}
@@ -177,7 +176,7 @@ public class AssetCategoryAdminPortlet extends MVCPortlet {
 
 			// Add vocabulary
 
-			AssetVocabularyServiceUtil.addVocabulary(
+			_assetVocabularyService.addVocabulary(
 				serviceContext.getScopeGroupId(), StringPool.BLANK, titleMap,
 				descriptionMap, getSettings(actionRequest), serviceContext);
 		}
@@ -185,7 +184,7 @@ public class AssetCategoryAdminPortlet extends MVCPortlet {
 
 			// Update vocabulary
 
-			AssetVocabularyServiceUtil.updateVocabulary(
+			_assetVocabularyService.updateVocabulary(
 				vocabularyId, StringPool.BLANK, titleMap, descriptionMap,
 				getSettings(actionRequest), serviceContext);
 		}
@@ -204,7 +203,7 @@ public class AssetCategoryAdminPortlet extends MVCPortlet {
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(
 			AssetCategory.class.getName(), actionRequest);
 
-		AssetCategoryServiceUtil.moveCategory(
+		_assetCategoryService.moveCategory(
 			categoryId, parentCategoryId, vocabularyId, serviceContext);
 	}
 
@@ -296,6 +295,7 @@ public class AssetCategoryAdminPortlet extends MVCPortlet {
 	protected boolean isSessionErrorException(Throwable cause) {
 		if (cause instanceof AssetCategoryNameException ||
 			cause instanceof DuplicateCategoryException ||
+			cause instanceof DuplicateCategoryPropertyException ||
 			cause instanceof DuplicateVocabularyException ||
 			cause instanceof NoSuchCategoryException ||
 			cause instanceof NoSuchVocabularyException ||
@@ -312,5 +312,22 @@ public class AssetCategoryAdminPortlet extends MVCPortlet {
 	protected void setAssetCategoriesAdminWebUpgrade(
 		AssetCategoriesAdminWebUpgrade assetCategoriesAdminWebUpgrade) {
 	}
+
+	@Reference(unbind = "-")
+	protected void setAssetCategoryService(
+		AssetCategoryService assetCategoryService) {
+
+		_assetCategoryService = assetCategoryService;
+	}
+
+	@Reference(unbind = "-")
+	protected void setAssetVocabularyService(
+		AssetVocabularyService assetVocabularyService) {
+
+		_assetVocabularyService = assetVocabularyService;
+	}
+
+	private AssetCategoryService _assetCategoryService;
+	private AssetVocabularyService _assetVocabularyService;
 
 }

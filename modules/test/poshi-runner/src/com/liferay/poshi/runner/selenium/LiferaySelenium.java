@@ -32,9 +32,15 @@ public interface LiferaySelenium extends Selenium {
 
 	public void assertConfirmation(String pattern) throws Exception;
 
+	public void assertConsoleErrors() throws Exception;
+
 	public void assertConsoleTextNotPresent(String text) throws Exception;
 
 	public void assertConsoleTextPresent(String text) throws Exception;
+
+	public void assertCssValue(
+			String locator, String cssAttribute, String cssValue)
+		throws Exception;
 
 	public void assertEditable(String locator) throws Exception;
 
@@ -139,8 +145,6 @@ public interface LiferaySelenium extends Selenium {
 
 	public String getPrimaryTestSuiteName();
 
-	public String getProjectDirName();
-
 	public String getSikuliImagesDirName();
 
 	public String getTestDependenciesDirName();
@@ -175,6 +179,8 @@ public interface LiferaySelenium extends Selenium {
 
 	public boolean isSelectedLabel(String selectLocator, String pattern);
 
+	public boolean isSikuliImagePresent(String image) throws Exception;
+
 	public boolean isTCatEnabled();
 
 	public boolean isText(String locator, String value);
@@ -182,6 +188,10 @@ public interface LiferaySelenium extends Selenium {
 	public boolean isTextNotPresent(String pattern);
 
 	public boolean isValue(String locator, String value);
+
+	public void javaScriptMouseDown(String locator);
+
+	public void javaScriptMouseUp(String locator);
 
 	public void keyDownAndWait(String locator, String keySequence);
 
@@ -287,7 +297,7 @@ public interface LiferaySelenium extends Selenium {
 
 	public void typeScreen(String value);
 
-	public void uploadCommonFile(String locator, String value);
+	public void uploadCommonFile(String locator, String value) throws Exception;
 
 	public void uploadFile(String locator, String value);
 

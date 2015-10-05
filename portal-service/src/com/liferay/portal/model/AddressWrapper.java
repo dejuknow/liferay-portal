@@ -73,6 +73,7 @@ public class AddressWrapper implements Address, ModelWrapper<Address> {
 		attributes.put("typeId", getTypeId());
 		attributes.put("mailing", getMailing());
 		attributes.put("primary", getPrimary());
+		attributes.put("lastPublishDate", getLastPublishDate());
 
 		return attributes;
 	}
@@ -198,6 +199,12 @@ public class AddressWrapper implements Address, ModelWrapper<Address> {
 		if (primary != null) {
 			setPrimary(primary);
 		}
+
+		Date lastPublishDate = (Date)attributes.get("lastPublishDate");
+
+		if (lastPublishDate != null) {
+			setLastPublishDate(lastPublishDate);
+		}
 	}
 
 	@Override
@@ -291,13 +298,23 @@ public class AddressWrapper implements Address, ModelWrapper<Address> {
 	* @return the create date of this address
 	*/
 	@Override
-	public java.util.Date getCreateDate() {
+	public Date getCreateDate() {
 		return _address.getCreateDate();
 	}
 
 	@Override
 	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
 		return _address.getExpandoBridge();
+	}
+
+	/**
+	* Returns the last publish date of this address.
+	*
+	* @return the last publish date of this address
+	*/
+	@Override
+	public Date getLastPublishDate() {
+		return _address.getLastPublishDate();
 	}
 
 	/**
@@ -316,7 +333,7 @@ public class AddressWrapper implements Address, ModelWrapper<Address> {
 	* @return the modified date of this address
 	*/
 	@Override
-	public java.util.Date getModifiedDate() {
+	public Date getModifiedDate() {
 		return _address.getModifiedDate();
 	}
 
@@ -586,7 +603,7 @@ public class AddressWrapper implements Address, ModelWrapper<Address> {
 	* @param createDate the create date of this address
 	*/
 	@Override
-	public void setCreateDate(java.util.Date createDate) {
+	public void setCreateDate(Date createDate) {
 		_address.setCreateDate(createDate);
 	}
 
@@ -608,6 +625,16 @@ public class AddressWrapper implements Address, ModelWrapper<Address> {
 	}
 
 	/**
+	* Sets the last publish date of this address.
+	*
+	* @param lastPublishDate the last publish date of this address
+	*/
+	@Override
+	public void setLastPublishDate(Date lastPublishDate) {
+		_address.setLastPublishDate(lastPublishDate);
+	}
+
+	/**
 	* Sets whether this address is mailing.
 	*
 	* @param mailing the mailing of this address
@@ -623,7 +650,7 @@ public class AddressWrapper implements Address, ModelWrapper<Address> {
 	* @param modifiedDate the modified date of this address
 	*/
 	@Override
-	public void setModifiedDate(java.util.Date modifiedDate) {
+	public void setModifiedDate(Date modifiedDate) {
 		_address.setModifiedDate(modifiedDate);
 	}
 

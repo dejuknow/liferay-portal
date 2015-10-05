@@ -27,11 +27,14 @@ import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector;
 import com.liferay.portal.kernel.transaction.Propagation;
+import com.liferay.portal.kernel.transaction.TransactionAttribute;
+import com.liferay.portal.kernel.transaction.TransactionInvokerUtil;
 import com.liferay.portal.kernel.upload.LiferayFileItemException;
 import com.liferay.portal.kernel.upload.UploadException;
 import com.liferay.portal.kernel.util.Constants;
@@ -47,8 +50,6 @@ import com.liferay.portal.portletfilerepository.PortletFileRepositoryUtil;
 import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
-import com.liferay.portal.spring.transaction.TransactionAttributeBuilder;
-import com.liferay.portal.spring.transaction.TransactionHandlerUtil;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.WebKeys;
@@ -58,10 +59,11 @@ import com.liferay.portlet.asset.AssetTagException;
 import com.liferay.portlet.blogs.BlogsEntryAttachmentFileEntryHelper;
 import com.liferay.portlet.blogs.BlogsEntryAttachmentFileEntryReference;
 import com.liferay.portlet.blogs.EntryContentException;
+import com.liferay.portlet.blogs.EntryCoverImageCropException;
 import com.liferay.portlet.blogs.EntryDescriptionException;
 import com.liferay.portlet.blogs.EntryDisplayDateException;
 import com.liferay.portlet.blogs.EntrySmallImageNameException;
-import com.liferay.portlet.blogs.EntrySmallImageSizeException;
+import com.liferay.portlet.blogs.EntrySmallImageScaleException;
 import com.liferay.portlet.blogs.EntryTitleException;
 import com.liferay.portlet.blogs.NoSuchEntryException;
 import com.liferay.portlet.blogs.model.BlogsEntry;
@@ -83,8 +85,6 @@ import javax.portlet.PortletRequest;
 import javax.portlet.WindowState;
 
 import org.osgi.service.component.annotations.Component;
-
-import org.springframework.transaction.interceptor.TransactionAttribute;
 
 /**
  * @author Brian Wing Shun Chan
@@ -179,7 +179,7 @@ public class EditEntryMVCActionCommand extends BaseMVCActionCommand {
 				Callable<Object[]> updateEntryCallable =
 					new UpdateEntryCallable(actionRequest);
 
-				Object[] returnValue = TransactionHandlerUtil.invoke(
+				Object[] returnValue = TransactionInvokerUtil.invoke(
 					_transactionAttribute, updateEntryCallable);
 
 				entry = (BlogsEntry)returnValue[0];
@@ -333,10 +333,11 @@ public class EditEntryMVCActionCommand extends BaseMVCActionCommand {
 				mvcPath = "/blogs/error.jsp";
 			}
 			else if (e instanceof EntryContentException ||
+					 e instanceof EntryCoverImageCropException ||
 					 e instanceof EntryDescriptionException ||
 					 e instanceof EntryDisplayDateException ||
 					 e instanceof EntrySmallImageNameException ||
-					 e instanceof EntrySmallImageSizeException ||
+					 e instanceof EntrySmallImageScaleException ||
 					 e instanceof EntryTitleException ||
 					 e instanceof FileSizeException ||
 					 e instanceof LiferayFileItemException ||
@@ -524,11 +525,15 @@ public class EditEntryMVCActionCommand extends BaseMVCActionCommand {
 					getTempBlogsEntryAttachmentFileEntries(content);
 
 			if (!tempBlogsEntryAttachments.isEmpty()) {
+				Folder folder = BlogsEntryLocalServiceUtil.addAttachmentsFolder(
+					themeDisplay.getUserId(), entry.getGroupId());
+
 				blogsEntryAttachmentFileEntryReferences =
 					blogsEntryAttachmentFileEntryHelper.
 						addBlogsEntryAttachmentFileEntries(
 							entry.getGroupId(), themeDisplay.getUserId(),
-							entry.getEntryId(), tempBlogsEntryAttachments);
+							entry.getEntryId(), folder.getFolderId(),
+							tempBlogsEntryAttachments);
 
 				content = blogsEntryAttachmentFileEntryHelper.updateContent(
 					content, blogsEntryAttachmentFileEntryReferences);
@@ -573,11 +578,14 @@ public class EditEntryMVCActionCommand extends BaseMVCActionCommand {
 					getTempBlogsEntryAttachmentFileEntries(content);
 
 			if (!tempBlogsEntryAttachmentFileEntries.isEmpty()) {
+				Folder folder = BlogsEntryLocalServiceUtil.addAttachmentsFolder(
+					themeDisplay.getUserId(), entry.getGroupId());
+
 				blogsEntryAttachmentFileEntryReferences =
 					blogsEntryAttachmentHelper.
 						addBlogsEntryAttachmentFileEntries(
 							entry.getGroupId(), themeDisplay.getUserId(),
-							entry.getEntryId(),
+							entry.getEntryId(), folder.getFolderId(),
 							tempBlogsEntryAttachmentFileEntries);
 
 				content = blogsEntryAttachmentHelper.updateContent(
@@ -612,8 +620,8 @@ public class EditEntryMVCActionCommand extends BaseMVCActionCommand {
 	private static final Log _log = LogFactoryUtil.getLog(
 		EditEntryMVCActionCommand.class);
 
-	private final TransactionAttribute _transactionAttribute =
-		TransactionAttributeBuilder.build(
+	private static final TransactionAttribute _transactionAttribute =
+		TransactionAttribute.Factory.create(
 			Propagation.REQUIRED, new Class<?>[] {Exception.class});
 
 	private class UpdateEntryCallable implements Callable<Object[]> {

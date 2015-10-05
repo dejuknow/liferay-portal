@@ -45,6 +45,7 @@ import com.liferay.portal.test.rule.PersistenceTestRule;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -64,8 +65,9 @@ import java.util.Set;
  */
 @RunWith(Arquillian.class)
 public class JournalFolderPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -546,22 +548,23 @@ public class JournalFolderPersistenceTest {
 		Assert.assertTrue(Validator.equals(existingJournalFolder.getUuid(),
 				ReflectionTestUtil.invoke(existingJournalFolder,
 					"getOriginalUuid", new Class<?>[0])));
-		Assert.assertEquals(existingJournalFolder.getGroupId(),
-			ReflectionTestUtil.invoke(existingJournalFolder,
+		Assert.assertEquals(Long.valueOf(existingJournalFolder.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingJournalFolder,
 				"getOriginalGroupId", new Class<?>[0]));
 
-		Assert.assertEquals(existingJournalFolder.getGroupId(),
-			ReflectionTestUtil.invoke(existingJournalFolder,
+		Assert.assertEquals(Long.valueOf(existingJournalFolder.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingJournalFolder,
 				"getOriginalGroupId", new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(existingJournalFolder.getName(),
 				ReflectionTestUtil.invoke(existingJournalFolder,
 					"getOriginalName", new Class<?>[0])));
 
-		Assert.assertEquals(existingJournalFolder.getGroupId(),
-			ReflectionTestUtil.invoke(existingJournalFolder,
+		Assert.assertEquals(Long.valueOf(existingJournalFolder.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingJournalFolder,
 				"getOriginalGroupId", new Class<?>[0]));
-		Assert.assertEquals(existingJournalFolder.getParentFolderId(),
-			ReflectionTestUtil.invoke(existingJournalFolder,
+		Assert.assertEquals(Long.valueOf(
+				existingJournalFolder.getParentFolderId()),
+			ReflectionTestUtil.<Long>invoke(existingJournalFolder,
 				"getOriginalParentFolderId", new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(existingJournalFolder.getName(),
 				ReflectionTestUtil.invoke(existingJournalFolder,

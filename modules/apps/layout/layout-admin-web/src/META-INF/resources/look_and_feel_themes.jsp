@@ -204,9 +204,7 @@ Map<String, ThemeSetting> configurableSettings = selTheme.getConfigurableSetting
 				<c:if test="<%= permissionChecker.isOmniadmin() && PortletLocalServiceUtil.hasPortlet(themeDisplay.getCompanyId(), PortletKeys.MARKETPLACE_STORE) && PrefsPropsUtil.getBoolean(PropsKeys.AUTO_DEPLOY_ENABLED, PropsValues.AUTO_DEPLOY_ENABLED) %>">
 
 					<%
-					long controlPanelPlid = PortalUtil.getControlPanelPlid(company.getCompanyId());
-
-					PortletURL marketplaceURL = PortletURLFactoryUtil.create(request, PortletKeys.MARKETPLACE_STORE, controlPanelPlid, PortletRequest.RENDER_PHASE);
+					PortletURL marketplaceURL = PortalUtil.getControlPanelPortletURL(request, PortletKeys.MARKETPLACE_STORE, 0, PortletRequest.RENDER_PHASE);
 					%>
 
 					<liferay-ui:icon
@@ -216,7 +214,7 @@ Map<String, ThemeSetting> configurableSettings = selTheme.getConfigurableSetting
 						label="<%= true %>"
 						linkCssClass="btn btn-default"
 						message="install-more"
-						url='<%= HttpUtil.removeParameter(marketplaceURL.toString(), "controlPanelCategory") %>'
+						url="<%= marketplaceURL.toString() %>"
 					/>
 				</c:if>
 			</legend>

@@ -41,6 +41,7 @@ import com.liferay.portal.test.rule.PersistenceTestRule;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -57,8 +58,9 @@ import java.util.Set;
  * @generated
  */
 public class UserIdMapperPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -400,8 +402,8 @@ public class UserIdMapperPersistenceTest {
 
 		UserIdMapper existingUserIdMapper = _persistence.findByPrimaryKey(newUserIdMapper.getPrimaryKey());
 
-		Assert.assertEquals(existingUserIdMapper.getUserId(),
-			ReflectionTestUtil.invoke(existingUserIdMapper,
+		Assert.assertEquals(Long.valueOf(existingUserIdMapper.getUserId()),
+			ReflectionTestUtil.<Long>invoke(existingUserIdMapper,
 				"getOriginalUserId", new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(existingUserIdMapper.getType(),
 				ReflectionTestUtil.invoke(existingUserIdMapper,

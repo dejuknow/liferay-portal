@@ -16,8 +16,8 @@ package com.liferay.wiki.web.item.selector.view.display.context;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
-import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portlet.PortletURLUtil;
+import com.liferay.wiki.constants.WikiPortletKeys;
 import com.liferay.wiki.item.selector.criterion.WikiAttachmentItemSelectorCriterion;
 import com.liferay.wiki.model.WikiPage;
 import com.liferay.wiki.service.WikiPageLocalServiceUtil;
@@ -39,17 +39,14 @@ public class WikiAttachmentItemSelectorViewDisplayContext {
 		WikiAttachmentItemSelectorCriterion wikiAttachmentItemSelectorCriterion,
 		WikiAttachmentItemSelectorView
 			wikiAttachmentItemSelectorView,
-		String itemSelectedEventName, PortletURL portletURL) {
+		String itemSelectedEventName, boolean search, PortletURL portletURL) {
 
 		_wikiAttachmentItemSelectorCriterion =
 			wikiAttachmentItemSelectorCriterion;
 		_wikiAttachmentItemSelectorView = wikiAttachmentItemSelectorView;
 		_itemSelectedEventName = itemSelectedEventName;
+		_search = search;
 		_portletURL = portletURL;
-	}
-
-	public String getDisplayStyle(HttpServletRequest request) {
-		return ParamUtil.getString(request, "displayStyle");
 	}
 
 	public String getItemSelectedEventName() {
@@ -64,15 +61,30 @@ public class WikiAttachmentItemSelectorViewDisplayContext {
 		PortletURL portletURL = PortletURLUtil.clone(
 			_portletURL, liferayPortletResponse);
 
-		portletURL.setParameter("displayStyle", getDisplayStyle(request));
 		portletURL.setParameter(
-			"tabName", String.valueOf(getTitle(request.getLocale())));
+			"selectedTab", String.valueOf(getTitle(request.getLocale())));
 
 		return portletURL;
 	}
 
 	public String getTitle(Locale locale) {
 		return _wikiAttachmentItemSelectorView.getTitle(locale);
+	}
+
+	public PortletURL getUploadURL(
+		LiferayPortletResponse liferayPortletResponse) {
+
+		PortletURL portletURL = liferayPortletResponse.createActionURL(
+			WikiPortletKeys.WIKI);
+
+		portletURL.setParameter(
+			"struts_action", "/wiki/upload_page_attachment");
+		portletURL.setParameter(
+			"resourcePrimKey",
+			String.valueOf(
+				_wikiAttachmentItemSelectorCriterion.getWikiPageResourceId()));
+
+		return portletURL;
 	}
 
 	public WikiAttachmentItemSelectorCriterion
@@ -86,8 +98,13 @@ public class WikiAttachmentItemSelectorViewDisplayContext {
 			_wikiAttachmentItemSelectorCriterion.getWikiPageResourceId());
 	}
 
+	public boolean isSearch() {
+		return _search;
+	}
+
 	private final String _itemSelectedEventName;
 	private final PortletURL _portletURL;
+	private final boolean _search;
 	private final WikiAttachmentItemSelectorCriterion
 		_wikiAttachmentItemSelectorCriterion;
 	private final WikiAttachmentItemSelectorView

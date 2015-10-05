@@ -29,8 +29,6 @@ import org.osgi.service.component.annotations.Reference;
 @Component(
 	immediate = true,
 	property = {
-		"com.liferay.portlet.control-panel-entry-category=configuration",
-		"com.liferay.portlet.control-panel-entry-weight=4.0",
 		"com.liferay.portlet.css-class-wrapper=portlet-admin",
 		"com.liferay.portlet.display-category=category.hidden",
 		"com.liferay.portlet.icon=/icons/portal_instances.png",
@@ -39,7 +37,7 @@ import org.osgi.service.component.annotations.Reference;
 		"com.liferay.portlet.private-session-attributes=false",
 		"com.liferay.portlet.render-weight=50",
 		"com.liferay.portlet.struts-path=portal_instances",
-		"com.liferay.portlet.use-default-template=false",
+		"com.liferay.portlet.use-default-template=true",
 		"javax.portlet.display-name=Portal Instances",
 		"javax.portlet.expiration-cache=0",
 		"javax.portlet.init-param.template-path=/",

@@ -19,10 +19,10 @@ import com.liferay.portal.kernel.cache.ThreadLocalCachable;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.messaging.DestinationNames;
 import com.liferay.portal.kernel.repository.model.FileEntry;
-import com.liferay.portal.kernel.scheduler.CronTrigger;
 import com.liferay.portal.kernel.scheduler.SchedulerEngineHelperUtil;
 import com.liferay.portal.kernel.scheduler.StorageType;
 import com.liferay.portal.kernel.scheduler.Trigger;
+import com.liferay.portal.kernel.scheduler.TriggerFactoryUtil;
 import com.liferay.portal.kernel.util.Digester;
 import com.liferay.portal.kernel.util.DigesterUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -30,7 +30,6 @@ import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.TempFileEntryUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
-import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Layout;
 import com.liferay.portal.model.LayoutConstants;
@@ -1413,6 +1412,51 @@ public class LayoutServiceImpl extends LayoutServiceBaseImpl {
 	/**
 	 * Schedules a range of layouts to be published.
 	 *
+	 * @param      sourceGroupId the primary key of the source group
+	 * @param      targetGroupId the primary key of the target group
+	 * @param      privateLayout whether the layout is private to the group
+	 * @param      layoutIds the layouts considered for publishing, specified by
+	 *             the layout IDs
+	 * @param      parameterMap the mapping of parameters indicating which
+	 *             information will be used. See {@link
+	 *             com.liferay.portlet.exportimport.lar.PortletDataHandlerKeys}.
+	 * @param      scope the scope of the pages. It can be
+	 *             <code>all-pages</code> or <code>selected-pages</code>.
+	 * @param      startDate the start date
+	 * @param      endDate the end date
+	 * @param      groupName the group name (optionally {@link
+	 *             DestinationNames#LAYOUTS_LOCAL_PUBLISHER}). See {@link
+	 *             DestinationNames}.
+	 * @param      cronText the cron text. See {@link
+	 *             com.liferay.portal.kernel.cal.RecurrenceSerializer
+	 *             #toCronText}
+	 * @param      schedulerStartDate the scheduler start date
+	 * @param      schedulerEndDate the scheduler end date
+	 * @param      description the scheduler description
+	 * @throws     PortalException if the group did not have permission to
+	 *             manage and publish
+	 * @deprecated As of 7.0.0, replaced by {@link #schedulePublishToLive(long,
+	 *             long, boolean, long[], Map, String, String, Date, Date,
+	 *             String)}
+	 */
+	@Deprecated
+	@Override
+	public void schedulePublishToLive(
+			long sourceGroupId, long targetGroupId, boolean privateLayout,
+			long[] layoutIds, Map<String, String[]> parameterMap, String scope,
+			Date startDate, Date endDate, String groupName, String cronText,
+			Date schedulerStartDate, Date schedulerEndDate, String description)
+		throws PortalException {
+
+		schedulePublishToLive(
+			sourceGroupId, targetGroupId, privateLayout, layoutIds,
+			parameterMap, groupName, cronText, schedulerStartDate,
+			schedulerEndDate, description);
+	}
+
+	/**
+	 * Schedules a range of layouts to be published.
+	 *
 	 * @param  sourceGroupId the primary key of the source group
 	 * @param  targetGroupId the primary key of the target group
 	 * @param  privateLayout whether the layout is private to the group
@@ -1421,10 +1465,6 @@ public class LayoutServiceImpl extends LayoutServiceBaseImpl {
 	 * @param  parameterMap the mapping of parameters indicating which
 	 *         information will be used. See {@link
 	 *         com.liferay.portlet.exportimport.lar.PortletDataHandlerKeys}.
-	 * @param  scope the scope of the pages. It can be <code>all-pages</code> or
-	 *         <code>selected-pages</code>.
-	 * @param  startDate the start date
-	 * @param  endDate the end date
 	 * @param  groupName the group name (optionally {@link
 	 *         DestinationNames#LAYOUTS_LOCAL_PUBLISHER}). See {@link
 	 *         DestinationNames}.
@@ -1439,32 +1479,33 @@ public class LayoutServiceImpl extends LayoutServiceBaseImpl {
 	@Override
 	public void schedulePublishToLive(
 			long sourceGroupId, long targetGroupId, boolean privateLayout,
-			long[] layoutIds, Map<String, String[]> parameterMap, String scope,
-			Date startDate, Date endDate, String groupName, String cronText,
-			Date schedulerStartDate, Date schedulerEndDate, String description)
+			long[] layoutIds, Map<String, String[]> parameterMap,
+			String groupName, String cronText, Date schedulerStartDate,
+			Date schedulerEndDate, String description)
 		throws PortalException {
 
 		GroupPermissionUtil.check(
 			getPermissionChecker(), targetGroupId, ActionKeys.PUBLISH_STAGING);
 
-		Trigger trigger = new CronTrigger(
+		Trigger trigger = TriggerFactoryUtil.createTrigger(
 			PortalUUIDUtil.generate(), groupName, schedulerStartDate,
 			schedulerEndDate, cronText);
 
 		User user = userPersistence.findByPrimaryKey(getUserId());
 
-		Map<String, Serializable> settingsMap =
-			ExportImportConfigurationSettingsMapFactory.buildSettingsMap(
-				getUserId(), sourceGroupId, targetGroupId, privateLayout,
-				layoutIds, parameterMap, user.getLocale(), user.getTimeZone());
+		Map<String, Serializable> publishLayoutLocalSettingsMap =
+			ExportImportConfigurationSettingsMapFactory.
+				buildPublishLayoutLocalSettingsMap(
+					user, sourceGroupId, targetGroupId, privateLayout,
+					layoutIds, parameterMap);
 
 		ExportImportConfiguration exportImportConfiguration =
-			exportImportConfigurationLocalService.addExportImportConfiguration(
-				getUserId(), sourceGroupId, trigger.getJobName(), description,
-				ExportImportConfigurationConstants.
-					TYPE_SCHEDULED_PUBLISH_LAYOUT_LOCAL,
-				settingsMap, WorkflowConstants.STATUS_DRAFT,
-				new ServiceContext());
+			exportImportConfigurationLocalService.
+				addDraftExportImportConfiguration(
+					getUserId(), trigger.getJobName(),
+					ExportImportConfigurationConstants.
+						TYPE_SCHEDULED_PUBLISH_LAYOUT_LOCAL,
+					publishLayoutLocalSettingsMap);
 
 		SchedulerEngineHelperUtil.schedule(
 			trigger, StorageType.PERSISTED, description,
@@ -1484,10 +1525,6 @@ public class LayoutServiceImpl extends LayoutServiceBaseImpl {
 	 * @param      parameterMap the mapping of parameters indicating which
 	 *             information will be used. See {@link
 	 *             com.liferay.portlet.exportimport.lar.PortletDataHandlerKeys}.
-	 * @param      scope the scope of the pages. It can be
-	 *             <code>all-pages</code> or <code>selected-pages</code>.
-	 * @param      startDate the start date
-	 * @param      endDate the end date
 	 * @param      groupName the group name (optionally {@link
 	 *             DestinationNames#LAYOUTS_LOCAL_PUBLISHER}). See {@link
 	 *             DestinationNames}.
@@ -1516,8 +1553,8 @@ public class LayoutServiceImpl extends LayoutServiceBaseImpl {
 		schedulePublishToLive(
 			sourceGroupId, targetGroupId, privateLayout,
 			ExportImportHelperUtil.getLayoutIds(layoutIdMap, targetGroupId),
-			parameterMap, scope, startDate, endDate, groupName, cronText,
-			schedulerStartDate, schedulerEndDate, description);
+			parameterMap, groupName, cronText, schedulerStartDate,
+			schedulerEndDate, description);
 	}
 
 	/**
@@ -1563,26 +1600,27 @@ public class LayoutServiceImpl extends LayoutServiceBaseImpl {
 		GroupPermissionUtil.check(
 			getPermissionChecker(), sourceGroupId, ActionKeys.PUBLISH_STAGING);
 
-		Trigger trigger = new CronTrigger(
+		Trigger trigger = TriggerFactoryUtil.createTrigger(
 			PortalUUIDUtil.generate(), groupName, schedulerStartDate,
 			schedulerEndDate, cronText);
 
 		User user = userPersistence.findByPrimaryKey(getUserId());
 
-		Map<String, Serializable> settingsMap =
-			ExportImportConfigurationSettingsMapFactory.buildSettingsMap(
-				getUserId(), sourceGroupId, privateLayout, layoutIdMap,
-				parameterMap, remoteAddress, remotePort, remotePathContext,
-				secureConnection, remoteGroupId, remotePrivateLayout,
-				user.getLocale(), user.getTimeZone());
+		Map<String, Serializable> publishLayoutRemoteSettingsMap =
+			ExportImportConfigurationSettingsMapFactory.
+				buildPublishLayoutRemoteSettingsMap(
+					getUserId(), sourceGroupId, privateLayout, layoutIdMap,
+					parameterMap, remoteAddress, remotePort, remotePathContext,
+					secureConnection, remoteGroupId, remotePrivateLayout,
+					user.getLocale(), user.getTimeZone());
 
 		ExportImportConfiguration exportImportConfiguration =
-			exportImportConfigurationLocalService.addExportImportConfiguration(
-				getUserId(), sourceGroupId, trigger.getJobName(), description,
-				ExportImportConfigurationConstants.
-					TYPE_SCHEDULED_PUBLISH_LAYOUT_REMOTE,
-				settingsMap, WorkflowConstants.STATUS_DRAFT,
-				new ServiceContext());
+			exportImportConfigurationLocalService.
+				addDraftExportImportConfiguration(
+					getUserId(), trigger.getJobName(),
+					ExportImportConfigurationConstants.
+						TYPE_SCHEDULED_PUBLISH_LAYOUT_REMOTE,
+					publishLayoutRemoteSettingsMap);
 
 		SchedulerEngineHelperUtil.schedule(
 			trigger, StorageType.PERSISTED, description,

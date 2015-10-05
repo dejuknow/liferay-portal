@@ -43,6 +43,7 @@ import com.liferay.portlet.blogs.service.persistence.BlogsEntryUtil;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -59,8 +60,9 @@ import java.util.Set;
  * @generated
  */
 public class BlogsEntryPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -163,6 +165,8 @@ public class BlogsEntryPersistenceTest {
 
 		newBlogsEntry.setSmallImageURL(RandomTestUtil.randomString());
 
+		newBlogsEntry.setLastPublishDate(RandomTestUtil.nextDate());
+
 		newBlogsEntry.setStatus(RandomTestUtil.nextInt());
 
 		newBlogsEntry.setStatusByUserId(RandomTestUtil.nextLong());
@@ -226,6 +230,9 @@ public class BlogsEntryPersistenceTest {
 			newBlogsEntry.getSmallImageId());
 		Assert.assertEquals(existingBlogsEntry.getSmallImageURL(),
 			newBlogsEntry.getSmallImageURL());
+		Assert.assertEquals(Time.getShortTimestamp(
+				existingBlogsEntry.getLastPublishDate()),
+			Time.getShortTimestamp(newBlogsEntry.getLastPublishDate()));
 		Assert.assertEquals(existingBlogsEntry.getStatus(),
 			newBlogsEntry.getStatus());
 		Assert.assertEquals(existingBlogsEntry.getStatusByUserId(),
@@ -474,12 +481,12 @@ public class BlogsEntryPersistenceTest {
 			"entryId", true, "groupId", true, "companyId", true, "userId",
 			true, "userName", true, "createDate", true, "modifiedDate", true,
 			"title", true, "subtitle", true, "urlTitle", true, "description",
-			true, "content", true, "displayDate", true, "allowPingbacks", true,
-			"allowTrackbacks", true, "trackbacks", true, "coverImageCaption",
-			true, "coverImageFileEntryId", true, "coverImageURL", true,
-			"smallImage", true, "smallImageFileEntryId", true, "smallImageId",
-			true, "smallImageURL", true, "status", true, "statusByUserId",
-			true, "statusByUserName", true, "statusDate", true);
+			true, "displayDate", true, "allowPingbacks", true,
+			"allowTrackbacks", true, "coverImageCaption", true,
+			"coverImageFileEntryId", true, "coverImageURL", true, "smallImage",
+			true, "smallImageFileEntryId", true, "smallImageId", true,
+			"smallImageURL", true, "lastPublishDate", true, "status", true,
+			"statusByUserId", true, "statusByUserName", true, "statusDate", true);
 	}
 
 	@Test
@@ -687,13 +694,13 @@ public class BlogsEntryPersistenceTest {
 		Assert.assertTrue(Validator.equals(existingBlogsEntry.getUuid(),
 				ReflectionTestUtil.invoke(existingBlogsEntry,
 					"getOriginalUuid", new Class<?>[0])));
-		Assert.assertEquals(existingBlogsEntry.getGroupId(),
-			ReflectionTestUtil.invoke(existingBlogsEntry, "getOriginalGroupId",
-				new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingBlogsEntry.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingBlogsEntry,
+				"getOriginalGroupId", new Class<?>[0]));
 
-		Assert.assertEquals(existingBlogsEntry.getGroupId(),
-			ReflectionTestUtil.invoke(existingBlogsEntry, "getOriginalGroupId",
-				new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingBlogsEntry.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingBlogsEntry,
+				"getOriginalGroupId", new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(existingBlogsEntry.getUrlTitle(),
 				ReflectionTestUtil.invoke(existingBlogsEntry,
 					"getOriginalUrlTitle", new Class<?>[0])));
@@ -749,6 +756,8 @@ public class BlogsEntryPersistenceTest {
 		blogsEntry.setSmallImageId(RandomTestUtil.nextLong());
 
 		blogsEntry.setSmallImageURL(RandomTestUtil.randomString());
+
+		blogsEntry.setLastPublishDate(RandomTestUtil.nextDate());
 
 		blogsEntry.setStatus(RandomTestUtil.nextInt());
 

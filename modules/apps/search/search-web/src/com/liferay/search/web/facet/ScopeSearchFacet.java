@@ -20,7 +20,8 @@ import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.facet.ScopeFacet;
 import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.search.web.util.SearchFacet;
+import com.liferay.search.facet.BaseJSPSearchFacet;
+import com.liferay.search.facet.SearchFacet;
 
 import javax.portlet.ActionRequest;
 
@@ -37,11 +38,11 @@ public class ScopeSearchFacet extends BaseJSPSearchFacet {
 
 	@Override
 	public String getConfigurationJspPath() {
-		return "/META-INF/resources/facets/configuration/scopes.jsp";
+		return "/facets/configuration/scopes.jsp";
 	}
 
 	@Override
-	public FacetConfiguration getDefaultConfiguration() {
+	public FacetConfiguration getDefaultConfiguration(long companyId) {
 		FacetConfiguration facetConfiguration = new FacetConfiguration();
 
 		facetConfiguration.setClassName(getFacetClassName());
@@ -65,7 +66,7 @@ public class ScopeSearchFacet extends BaseJSPSearchFacet {
 
 	@Override
 	public String getDisplayJspPath() {
-		return "/META-INF/resources/facets/view/scopes.jsp";
+		return "/facets/view/scopes.jsp";
 	}
 
 	public String getFacetClassName() {
@@ -97,7 +98,7 @@ public class ScopeSearchFacet extends BaseJSPSearchFacet {
 
 	@Override
 	public String getLabel() {
-		return "site";
+		return "any-site";
 	}
 
 	@Override

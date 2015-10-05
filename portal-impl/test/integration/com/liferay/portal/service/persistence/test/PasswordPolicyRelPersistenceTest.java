@@ -39,6 +39,7 @@ import com.liferay.portal.test.rule.PersistenceTestRule;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -55,8 +56,9 @@ import java.util.Set;
  * @generated
  */
 public class PasswordPolicyRelPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -384,11 +386,12 @@ public class PasswordPolicyRelPersistenceTest {
 
 		PasswordPolicyRel existingPasswordPolicyRel = _persistence.findByPrimaryKey(newPasswordPolicyRel.getPrimaryKey());
 
-		Assert.assertEquals(existingPasswordPolicyRel.getClassNameId(),
-			ReflectionTestUtil.invoke(existingPasswordPolicyRel,
+		Assert.assertEquals(Long.valueOf(
+				existingPasswordPolicyRel.getClassNameId()),
+			ReflectionTestUtil.<Long>invoke(existingPasswordPolicyRel,
 				"getOriginalClassNameId", new Class<?>[0]));
-		Assert.assertEquals(existingPasswordPolicyRel.getClassPK(),
-			ReflectionTestUtil.invoke(existingPasswordPolicyRel,
+		Assert.assertEquals(Long.valueOf(existingPasswordPolicyRel.getClassPK()),
+			ReflectionTestUtil.<Long>invoke(existingPasswordPolicyRel,
 				"getOriginalClassPK", new Class<?>[0]));
 	}
 

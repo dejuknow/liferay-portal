@@ -85,9 +85,7 @@ public class FacebookConnectNavigationPreDynamicInclude
 			requestDispatcher.include(request, response);
 		}
 		catch (ServletException se) {
-			if (_log.isErrorEnabled()) {
-				_log.error("Unable to include JSP", se);
-			}
+			_log.error("Unable to include JSP", se);
 
 			throw new IOException("Unable to include " + _JSP_PATH, se);
 		}
@@ -114,7 +112,7 @@ public class FacebookConnectNavigationPreDynamicInclude
 	}
 
 	private static final String _JSP_PATH =
-		"/META-INF/resources/html/portlet/login/navigation/facebook.jsp";
+		"/html/portlet/login/navigation/facebook.jsp";
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		FacebookConnectNavigationPreDynamicInclude.class);

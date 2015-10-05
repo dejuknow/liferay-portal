@@ -56,9 +56,13 @@ public interface PortalService extends BaseService {
 	*/
 	public java.lang.String getBeanIdentifier();
 
-	@com.liferay.portal.kernel.jsonwebservice.JSONWebService
+	@JSONWebService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getBuildNumber();
+
+	@JSONWebService
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public java.lang.String getVersion();
 
 	/**
 	* Sets the Spring bean ID for this bean.
@@ -80,11 +84,10 @@ public interface PortalService extends BaseService {
 
 	public void testAddClassName_Success(java.lang.String classNameValue);
 
-	@com.liferay.portal.kernel.transaction.Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public void testAutoSyncHibernateSessionStateOnTxCreation();
 
-	public void testDeleteClassName()
-		throws com.liferay.portal.kernel.exception.PortalException;
+	public void testDeleteClassName() throws PortalException;
 
 	public int testGetBuildNumber();
 

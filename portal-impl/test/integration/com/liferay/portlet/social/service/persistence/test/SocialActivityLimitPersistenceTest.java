@@ -42,6 +42,7 @@ import com.liferay.portlet.social.service.persistence.SocialActivityLimitUtil;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -58,8 +59,9 @@ import java.util.Set;
  * @generated
  */
 public class SocialActivityLimitPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -423,20 +425,25 @@ public class SocialActivityLimitPersistenceTest {
 
 		SocialActivityLimit existingSocialActivityLimit = _persistence.findByPrimaryKey(newSocialActivityLimit.getPrimaryKey());
 
-		Assert.assertEquals(existingSocialActivityLimit.getGroupId(),
-			ReflectionTestUtil.invoke(existingSocialActivityLimit,
+		Assert.assertEquals(Long.valueOf(
+				existingSocialActivityLimit.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingSocialActivityLimit,
 				"getOriginalGroupId", new Class<?>[0]));
-		Assert.assertEquals(existingSocialActivityLimit.getUserId(),
-			ReflectionTestUtil.invoke(existingSocialActivityLimit,
+		Assert.assertEquals(Long.valueOf(
+				existingSocialActivityLimit.getUserId()),
+			ReflectionTestUtil.<Long>invoke(existingSocialActivityLimit,
 				"getOriginalUserId", new Class<?>[0]));
-		Assert.assertEquals(existingSocialActivityLimit.getClassNameId(),
-			ReflectionTestUtil.invoke(existingSocialActivityLimit,
+		Assert.assertEquals(Long.valueOf(
+				existingSocialActivityLimit.getClassNameId()),
+			ReflectionTestUtil.<Long>invoke(existingSocialActivityLimit,
 				"getOriginalClassNameId", new Class<?>[0]));
-		Assert.assertEquals(existingSocialActivityLimit.getClassPK(),
-			ReflectionTestUtil.invoke(existingSocialActivityLimit,
+		Assert.assertEquals(Long.valueOf(
+				existingSocialActivityLimit.getClassPK()),
+			ReflectionTestUtil.<Long>invoke(existingSocialActivityLimit,
 				"getOriginalClassPK", new Class<?>[0]));
-		Assert.assertEquals(existingSocialActivityLimit.getActivityType(),
-			ReflectionTestUtil.invoke(existingSocialActivityLimit,
+		Assert.assertEquals(Integer.valueOf(
+				existingSocialActivityLimit.getActivityType()),
+			ReflectionTestUtil.<Integer>invoke(existingSocialActivityLimit,
 				"getOriginalActivityType", new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(
 				existingSocialActivityLimit.getActivityCounterName(),

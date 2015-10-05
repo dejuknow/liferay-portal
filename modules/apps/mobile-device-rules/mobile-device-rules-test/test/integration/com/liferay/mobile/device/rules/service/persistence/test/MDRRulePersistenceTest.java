@@ -15,6 +15,13 @@
 package com.liferay.mobile.device.rules.service.persistence.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+
+import com.liferay.mobile.device.rules.exception.NoSuchRuleException;
+import com.liferay.mobile.device.rules.model.MDRRule;
+import com.liferay.mobile.device.rules.service.MDRRuleLocalServiceUtil;
+import com.liferay.mobile.device.rules.service.persistence.MDRRulePersistence;
+import com.liferay.mobile.device.rules.service.persistence.MDRRuleUtil;
+
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
@@ -35,17 +42,13 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PersistenceTestRule;
 
-import com.liferay.portlet.mobiledevicerules.NoSuchRuleException;
-import com.liferay.portlet.mobiledevicerules.model.MDRRule;
-import com.liferay.portlet.mobiledevicerules.service.MDRRuleLocalServiceUtil;
-import com.liferay.portlet.mobiledevicerules.service.persistence.MDRRulePersistence;
-import com.liferay.portlet.mobiledevicerules.service.persistence.MDRRuleUtil;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
+
 import org.junit.runner.RunWith;
 
 import java.io.Serializable;
@@ -62,8 +65,9 @@ import java.util.Set;
  */
 @RunWith(Arquillian.class)
 public class MDRRulePersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -144,6 +148,8 @@ public class MDRRulePersistenceTest {
 
 		newMDRRule.setTypeSettings(RandomTestUtil.randomString());
 
+		newMDRRule.setLastPublishDate(RandomTestUtil.nextDate());
+
 		_mdrRules.add(_persistence.update(newMDRRule));
 
 		MDRRule existingMDRRule = _persistence.findByPrimaryKey(newMDRRule.getPrimaryKey());
@@ -171,6 +177,9 @@ public class MDRRulePersistenceTest {
 		Assert.assertEquals(existingMDRRule.getType(), newMDRRule.getType());
 		Assert.assertEquals(existingMDRRule.getTypeSettings(),
 			newMDRRule.getTypeSettings());
+		Assert.assertEquals(Time.getShortTimestamp(
+				existingMDRRule.getLastPublishDate()),
+			Time.getShortTimestamp(newMDRRule.getLastPublishDate()));
 	}
 
 	@Test
@@ -234,7 +243,7 @@ public class MDRRulePersistenceTest {
 			"ruleId", true, "groupId", true, "companyId", true, "userId", true,
 			"userName", true, "createDate", true, "modifiedDate", true,
 			"ruleGroupId", true, "name", true, "description", true, "type",
-			true, "typeSettings", true);
+			true, "lastPublishDate", true);
 	}
 
 	@Test
@@ -440,9 +449,9 @@ public class MDRRulePersistenceTest {
 		Assert.assertTrue(Validator.equals(existingMDRRule.getUuid(),
 				ReflectionTestUtil.invoke(existingMDRRule, "getOriginalUuid",
 					new Class<?>[0])));
-		Assert.assertEquals(existingMDRRule.getGroupId(),
-			ReflectionTestUtil.invoke(existingMDRRule, "getOriginalGroupId",
-				new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingMDRRule.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingMDRRule,
+				"getOriginalGroupId", new Class<?>[0]));
 	}
 
 	protected MDRRule addMDRRule() throws Exception {
@@ -473,6 +482,8 @@ public class MDRRulePersistenceTest {
 		mdrRule.setType(RandomTestUtil.randomString());
 
 		mdrRule.setTypeSettings(RandomTestUtil.randomString());
+
+		mdrRule.setLastPublishDate(RandomTestUtil.nextDate());
 
 		_mdrRules.add(_persistence.update(mdrRule));
 

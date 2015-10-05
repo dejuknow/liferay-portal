@@ -14,7 +14,6 @@
 
 package com.liferay.portal.dao.db;
 
-import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.Index;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.io.unsync.UnsyncBufferedReader;
@@ -22,6 +21,7 @@ import com.liferay.portal.kernel.io.unsync.UnsyncStringReader;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 
 import java.io.IOException;
@@ -43,8 +43,8 @@ import java.util.regex.Pattern;
  */
 public class OracleDB extends BaseDB {
 
-	public static DB getInstance() {
-		return _instance;
+	public OracleDB(int majorVersion, int minorVersion) {
+		super(TYPE_ORACLE, majorVersion, minorVersion);
 	}
 
 	@Override
@@ -146,8 +146,24 @@ public class OracleDB extends BaseDB {
 		return _SUPPORTS_INLINE_DISTINCT;
 	}
 
-	protected OracleDB() {
-		super(TYPE_ORACLE);
+	@Override
+	protected String[] buildColumnTypeTokens(String line) {
+		Matcher matcher = _varchar2CharPattern.matcher(line);
+
+		StringBuffer sb = new StringBuffer();
+
+		while (matcher.find()) {
+			matcher.appendReplacement(
+				sb, "VARCHAR2(" + matcher.group(1) + "%20CHAR)");
+		}
+
+		matcher.appendTail(sb);
+
+		String[] template = super.buildColumnTypeTokens(sb.toString());
+
+		template[3] = StringUtil.replace(template[3], "%20", StringPool.SPACE);
+
+		return template;
 	}
 
 	@Override
@@ -305,8 +321,8 @@ public class OracleDB extends BaseDB {
 
 	private static final boolean _SUPPORTS_INLINE_DISTINCT = false;
 
-	private static final OracleDB _instance = new OracleDB();
-
+	private static final Pattern _varchar2CharPattern = Pattern.compile(
+		"VARCHAR2\\((\\d+) CHAR\\)");
 	private static final Pattern _varcharPattern = Pattern.compile(
 		"VARCHAR\\((\\d+)\\)");
 

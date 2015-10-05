@@ -43,6 +43,7 @@ import com.liferay.portlet.calendar.service.persistence.CalEventUtil;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -61,8 +62,9 @@ import java.util.Set;
  */
 @Deprecated
 public class CalEventPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -337,11 +339,10 @@ public class CalEventPersistenceTest {
 		return OrderByComparatorFactoryUtil.create("CalEvent", "uuid", true,
 			"eventId", true, "groupId", true, "companyId", true, "userId",
 			true, "userName", true, "createDate", true, "modifiedDate", true,
-			"title", true, "description", true, "location", true, "startDate",
-			true, "endDate", true, "durationHour", true, "durationMinute",
-			true, "allDay", true, "timeZoneSensitive", true, "type", true,
-			"repeating", true, "recurrence", true, "remindBy", true,
-			"firstReminder", true, "secondReminder", true);
+			"title", true, "location", true, "startDate", true, "endDate",
+			true, "durationHour", true, "durationMinute", true, "allDay", true,
+			"timeZoneSensitive", true, "type", true, "repeating", true,
+			"remindBy", true, "firstReminder", true, "secondReminder", true);
 	}
 
 	@Test
@@ -549,9 +550,9 @@ public class CalEventPersistenceTest {
 		Assert.assertTrue(Validator.equals(existingCalEvent.getUuid(),
 				ReflectionTestUtil.invoke(existingCalEvent, "getOriginalUuid",
 					new Class<?>[0])));
-		Assert.assertEquals(existingCalEvent.getGroupId(),
-			ReflectionTestUtil.invoke(existingCalEvent, "getOriginalGroupId",
-				new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingCalEvent.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingCalEvent,
+				"getOriginalGroupId", new Class<?>[0]));
 	}
 
 	protected CalEvent addCalEvent() throws Exception {

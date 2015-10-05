@@ -14,6 +14,7 @@
 
 package com.liferay.taglib.aui;
 
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.taglib.aui.base.BaseIconTag;
 
 /**
@@ -23,4 +24,16 @@ import com.liferay.taglib.aui.base.BaseIconTag;
  * @author Julio Camarero
  */
 public class IconTag extends BaseIconTag {
+
+	@Override
+	protected String getPage() {
+		String markupView = getMarkupView();
+
+		if (Validator.isNotNull(markupView)) {
+			return "/html/taglib/aui/icon/" + markupView + "/page.jsp";
+		}
+
+		return "/html/taglib/aui/icon/page.jsp";
+	}
+
 }

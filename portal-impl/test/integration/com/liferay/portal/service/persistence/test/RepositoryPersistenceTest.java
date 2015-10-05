@@ -42,6 +42,7 @@ import com.liferay.portal.test.rule.PersistenceTestRule;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -58,8 +59,9 @@ import java.util.Set;
  * @generated
  */
 public class RepositoryPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -144,6 +146,8 @@ public class RepositoryPersistenceTest {
 
 		newRepository.setDlFolderId(RandomTestUtil.nextLong());
 
+		newRepository.setLastPublishDate(RandomTestUtil.nextDate());
+
 		_repositories.add(_persistence.update(newRepository));
 
 		Repository existingRepository = _persistence.findByPrimaryKey(newRepository.getPrimaryKey());
@@ -180,6 +184,9 @@ public class RepositoryPersistenceTest {
 			newRepository.getTypeSettings());
 		Assert.assertEquals(existingRepository.getDlFolderId(),
 			newRepository.getDlFolderId());
+		Assert.assertEquals(Time.getShortTimestamp(
+				existingRepository.getLastPublishDate()),
+			Time.getShortTimestamp(newRepository.getLastPublishDate()));
 	}
 
 	@Test
@@ -253,8 +260,8 @@ public class RepositoryPersistenceTest {
 			true, "uuid", true, "repositoryId", true, "groupId", true,
 			"companyId", true, "userId", true, "userName", true, "createDate",
 			true, "modifiedDate", true, "classNameId", true, "name", true,
-			"description", true, "portletId", true, "typeSettings", true,
-			"dlFolderId", true);
+			"description", true, "portletId", true, "dlFolderId", true,
+			"lastPublishDate", true);
 	}
 
 	@Test
@@ -464,13 +471,13 @@ public class RepositoryPersistenceTest {
 		Assert.assertTrue(Validator.equals(existingRepository.getUuid(),
 				ReflectionTestUtil.invoke(existingRepository,
 					"getOriginalUuid", new Class<?>[0])));
-		Assert.assertEquals(existingRepository.getGroupId(),
-			ReflectionTestUtil.invoke(existingRepository, "getOriginalGroupId",
-				new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingRepository.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingRepository,
+				"getOriginalGroupId", new Class<?>[0]));
 
-		Assert.assertEquals(existingRepository.getGroupId(),
-			ReflectionTestUtil.invoke(existingRepository, "getOriginalGroupId",
-				new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingRepository.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingRepository,
+				"getOriginalGroupId", new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(existingRepository.getName(),
 				ReflectionTestUtil.invoke(existingRepository,
 					"getOriginalName", new Class<?>[0])));
@@ -511,6 +518,8 @@ public class RepositoryPersistenceTest {
 		repository.setTypeSettings(RandomTestUtil.randomString());
 
 		repository.setDlFolderId(RandomTestUtil.nextLong());
+
+		repository.setLastPublishDate(RandomTestUtil.nextDate());
 
 		_repositories.add(_persistence.update(repository));
 

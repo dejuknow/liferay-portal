@@ -15,7 +15,6 @@
 package com.liferay.portlet.directory.asset;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.spring.osgi.OSGiBeanProperties;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.User;
 import com.liferay.portal.security.permission.PermissionChecker;
@@ -29,19 +28,17 @@ import com.liferay.portlet.asset.model.BaseAssetRendererFactory;
 /**
  * @author Michael C. Han
  */
-@OSGiBeanProperties(
-	property = {"search.asset.type=com.liferay.portal.model.User"}
-)
-public class UserAssetRendererFactory extends BaseAssetRendererFactory {
+public class UserAssetRendererFactory extends BaseAssetRendererFactory<User> {
 
 	public static final String TYPE = "user";
 
 	public UserAssetRendererFactory() {
+		setSearchable(true);
 		setSelectable(false);
 	}
 
 	@Override
-	public AssetRenderer getAssetRenderer(long classPK, int type)
+	public AssetRenderer<User> getAssetRenderer(long classPK, int type)
 		throws PortalException {
 
 		User user = UserLocalServiceUtil.getUserById(classPK);
@@ -54,7 +51,7 @@ public class UserAssetRendererFactory extends BaseAssetRendererFactory {
 	}
 
 	@Override
-	public AssetRenderer getAssetRenderer(long groupId, String urlTitle)
+	public AssetRenderer<User> getAssetRenderer(long groupId, String urlTitle)
 		throws PortalException {
 
 		Group group = GroupLocalServiceUtil.getGroup(groupId);

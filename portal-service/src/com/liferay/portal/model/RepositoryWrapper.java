@@ -68,6 +68,7 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 		attributes.put("portletId", getPortletId());
 		attributes.put("typeSettings", getTypeSettings());
 		attributes.put("dlFolderId", getDlFolderId());
+		attributes.put("lastPublishDate", getLastPublishDate());
 
 		return attributes;
 	}
@@ -163,6 +164,12 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 		if (dlFolderId != null) {
 			setDlFolderId(dlFolderId);
 		}
+
+		Date lastPublishDate = (Date)attributes.get("lastPublishDate");
+
+		if (lastPublishDate != null) {
+			setLastPublishDate(lastPublishDate);
+		}
 	}
 
 	@Override
@@ -211,7 +218,7 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 	* @return the create date of this repository
 	*/
 	@Override
-	public java.util.Date getCreateDate() {
+	public Date getCreateDate() {
 		return _repository.getCreateDate();
 	}
 
@@ -251,12 +258,22 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 	}
 
 	/**
+	* Returns the last publish date of this repository.
+	*
+	* @return the last publish date of this repository
+	*/
+	@Override
+	public Date getLastPublishDate() {
+		return _repository.getLastPublishDate();
+	}
+
+	/**
 	* Returns the modified date of this repository.
 	*
 	* @return the modified date of this repository
 	*/
 	@Override
-	public java.util.Date getModifiedDate() {
+	public Date getModifiedDate() {
 		return _repository.getModifiedDate();
 	}
 
@@ -431,7 +448,7 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 	* @param createDate the create date of this repository
 	*/
 	@Override
-	public void setCreateDate(java.util.Date createDate) {
+	public void setCreateDate(Date createDate) {
 		_repository.setCreateDate(createDate);
 	}
 
@@ -483,12 +500,22 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 	}
 
 	/**
+	* Sets the last publish date of this repository.
+	*
+	* @param lastPublishDate the last publish date of this repository
+	*/
+	@Override
+	public void setLastPublishDate(Date lastPublishDate) {
+		_repository.setLastPublishDate(lastPublishDate);
+	}
+
+	/**
 	* Sets the modified date of this repository.
 	*
 	* @param modifiedDate the modified date of this repository
 	*/
 	@Override
-	public void setModifiedDate(java.util.Date modifiedDate) {
+	public void setModifiedDate(Date modifiedDate) {
 		_repository.setModifiedDate(modifiedDate);
 	}
 

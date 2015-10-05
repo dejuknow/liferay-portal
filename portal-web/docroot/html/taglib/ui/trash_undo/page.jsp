@@ -39,6 +39,10 @@ if (SessionMessages.contains(portletRequest, portletDisplay.getId() + SessionMes
 
 			trashedEntriesCount = primaryKeys.length;
 		}
+
+		Map<String, Object> trashData = new HashMap<String, Object>();
+
+		trashData.put("navigation", Boolean.TRUE.toString());
 %>
 
 		<div class="alert alert-success taglib-trash-undo">
@@ -49,15 +53,9 @@ if (SessionMessages.contains(portletRequest, portletDisplay.getId() + SessionMes
 
 							<%
 							PortletURL trashURL = TrashUtil.getViewURL(request);
-
-							String trashURLString = HttpUtil.setParameter(trashURL.toString(), "doAsGroupId", String.valueOf(themeDisplay.getScopeGroupId()));
-
-							if (!layout.isTypeControlPanel() || Validator.isNull(themeDisplay.getControlPanelCategory())) {
-								trashURLString = HttpUtil.setParameter(trashURLString, "controlPanelCategory", "current_site");
-							}
 							%>
 
-							<aui:a href="<%= trashURLString %>" label="the-recycle-bin" />
+							<aui:a data="<%= trashData %>" href="<%= trashURL.toString() %>" label="the-recycle-bin" />
 						</c:when>
 						<c:otherwise>
 							<liferay-ui:message key="the-recycle-bin" />
@@ -110,15 +108,9 @@ if (SessionMessages.contains(portletRequest, portletDisplay.getId() + SessionMes
 
 									<%
 									PortletURL trashURL = TrashUtil.getViewContentURL(request, GetterUtil.getLong(primaryKeys[0]));
-
-									String trashURLString = HttpUtil.setParameter(trashURL.toString(), "doAsGroupId", String.valueOf(themeDisplay.getScopeGroupId()));
-
-									if (Validator.isNull(themeDisplay.getControlPanelCategory())) {
-										trashURLString = HttpUtil.setParameter(trashURLString, "controlPanelCategory", "current_site");
-									}
 									%>
 
-									<em class="delete-entry-title"><aui:a href="<%= trashURLString %>" label="<%= HtmlUtil.escape(title) %>" /></em>
+									<em class="delete-entry-title"><aui:a data="<%= trashData %>" href="<%= trashURL.toString() %>" label="<%= HtmlUtil.escape(title) %>" /></em>
 								</c:when>
 								<c:when test="<%= Validator.isNotNull(title) %>">
 									<em class="delete-entry-title"><%= HtmlUtil.escape(title) %></em>

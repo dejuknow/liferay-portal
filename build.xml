@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="portal" basedir="." default="compile" xmlns:antelope="antlib:ise.antelope.tasks">
+<project name="portal" basedir="." default="compile" xmlns:antelope="antlib:ise.antelope.tasks" xmlns:artifact="antlib:org.apache.maven.artifact.ant">
 	<import file="build-common.xml" />
 
 	<macrodef name="setup-jrebel">
@@ -93,7 +93,9 @@
 
 				<setup-sdk />
 
-				<ant dir="${project.dir}/modules" target="clean" inheritAll="false" />
+				<gradle-execute dir="${project.dir}/modules" task="clean">
+					<arg value="-Dportal.build=true" />
+				</gradle-execute>
 			</sequential>
 
 			<delete dir="${doc.dir}" />
@@ -113,7 +115,7 @@
 
 			<delete failonerror="false">
 				<fileset
-					dir="${liferay.home}/data/hsql"
+					dir="${liferay.home}/data/hypersonic"
 					includes="${database.name}.*"
 				/>
 			</delete>
@@ -204,7 +206,9 @@
 
 		<delete file="javac.output.txt" />
 
-		<ant dir="modules/core/registry-api" target="compile" inheritAll="false" />
+		<gradle-execute dir="modules/core/registry-api" task="classes">
+			<arg value="--parallel" />
+		</gradle-execute>
 
 		<ant dir="portal-service" target="compile" inheritAll="false" />
 
@@ -253,17 +257,13 @@
 		<setup-sdk />
 
 		<if>
-			<equals arg1="${app.server.type}" arg2="glassfish" />
-			<then>
-				<delete file="${app.server.glassfish.portal.war.dir}" />
-			</then>
-			<elseif>
+			<or>
+				<equals arg1="${app.server.type}" arg2="glassfish" />
 				<equals arg1="${app.server.type}" arg2="websphere" />
-				<then>
-					<delete dir="${app.server.portal.dir}" />
-					<delete file="${app.server.portal.dir}" />
-				</then>
-			</elseif>
+			</or>
+			<then>
+				<delete file="${app.server.portal.war.name}" />
+			</then>
 		</if>
 
 		<if>
@@ -291,7 +291,7 @@
 
 		<ant dir="portal-web" target="deploy" inheritAll="false" />
 
-		<copy todir="${liferay.home}/data/hsql">
+		<copy todir="${liferay.home}/data/hypersonic">
 			<fileset dir="sql">
 				<include name="${database.name}.properties" />
 				<include name="${database.name}.script" />
@@ -316,32 +316,42 @@
 				</not>
 			</and>
 			<then>
-				<move file="${app.server.glassfish.portal.war.dir}" tofile="${app.server.glassfish.portal.war.dir}-tmp" />
+				<move file="${app.server.portal.war.name}" tofile="${app.server.portal.war.name}-tmp" />
 
 				<mkdir dir="${app.server.portal.dir}" />
 
-				<unzip src="${app.server.glassfish.portal.war.dir}-tmp" dest="${app.server.portal.dir}" />
+				<unzip src="${app.server.portal.war.name}-tmp" dest="${app.server.portal.dir}" />
 			</then>
 		</if>
 
+		<ant dir="portal-web" target="war" inheritAll="false" />
+
+		<antcall target="install-portal-snapshots" />
+
 		<stopwatch name="modules.stopwatch" />
 
-		<ant dir="${project.dir}/modules/core/registry-api" target="deploy" inheritAll="false" />
+		<gradle-execute dir="${project.dir}/modules/core/registry-api" task="deploy">
+			<arg value="--parallel" />
+		</gradle-execute>
 
-		<ant dir="${project.dir}/modules" target="deploy" inheritAll="false" />
+		<gradle-execute dir="${project.dir}/modules" task="deploy">
+			<arg value="--parallel" />
+			<arg value="-Dportal.build=true" />
+			<env key="WAS_HOME" value="${app.server.websphere.dir}" />
+		</gradle-execute>
 
 		<stopwatch action="elapsed" name="modules.stopwatch" />
 
 		<if>
 			<and>
-				<available file="${app.server.glassfish.portal.war.dir}-tmp" type="file" />
 				<available file="${app.server.portal.dir}" type="dir" />
+				<available file="${app.server.portal.war.name}-tmp" type="file" />
 				<equals arg1="${app.server.type}" arg2="glassfish" />
 			</and>
 			<then>
 				<delete dir="${app.server.portal.dir}" />
 
-				<move file="${app.server.glassfish.portal.war.dir}-tmp" tofile="${app.server.glassfish.portal.war.dir}" />
+				<move file="${app.server.portal.war.name}-tmp" tofile="${app.server.portal.war.name}" />
 			</then>
 		</if>
 
@@ -350,7 +360,7 @@
 
 	<target name="deploy-additional-jars">
 		<copy todir="${app.server.lib.global.dir}">
-			<fileset dir="lib/development" includes="hsql.jar,jtds.jar,mysql.jar,postgresql.jar" />
+			<fileset dir="lib/development" includes="hsql.jar,mysql.jar,postgresql.jar" />
 			<fileset dir="lib/global" />
 		</copy>
 
@@ -369,24 +379,6 @@
 		<copy todir="${app.server.lib.portal.dir}">
 			<fileset dir="lib/portal" />
 		</copy>
-
-		<if>
-			<equals arg1="${app.server.type}" arg2="glassfish" />
-			<then>
-				<tstamp>
-					<format property="tstamp.value" pattern="yyyyMMddkkmmssSSS" />
-				</tstamp>
-
-				<jar
-					basedir="${app.server.portal.dir}"
-					jarfile="${tstamp.value}"
-				/>
-
-				<delete dir="${app.server.portal.dir}" />
-
-				<move file="${tstamp.value}" tofile="${app.server.glassfish.portal.war.dir}" />
-			</then>
-		</if>
 
 		<if>
 			<equals arg1="${app.server.type}" arg2="jetty" />
@@ -489,7 +481,10 @@
 		</if>
 
 		<if>
-			<equals arg1="${app.server.type}" arg2="websphere" />
+			<or>
+				<equals arg1="${app.server.type}" arg2="glassfish" />
+				<equals arg1="${app.server.type}" arg2="websphere" />
+			</or>
 			<then>
 				<tstamp>
 					<format property="tstamp.value" pattern="yyyyMMddkkmmssSSS" />
@@ -502,8 +497,13 @@
 
 				<delete dir="${app.server.portal.dir}" />
 
-				<move file="${tstamp.value}" tofile="${app.server.portal.dir}" />
+				<move file="${tstamp.value}" tofile="${app.server.portal.war.name}" />
+			</then>
+		</if>
 
+		<if>
+			<equals arg1="${app.server.type}" arg2="websphere" />
+			<then>
 				<ant dir="support-websphere" target="deploy" inheritAll="false" />
 			</then>
 		</if>
@@ -539,6 +539,18 @@
 		>
 			<include name="liferay-*${lp.version.dtd}.dtd" />
 		</DTDDoc>
+	</target>
+
+	<target name="install-portal-snapshots">
+		<install-portal-snapshot artifact.dir="portal-impl" artifact.name="portal-impl" />
+		<install-portal-snapshot artifact.dir="portal-service" artifact.name="portal-service" />
+		<install-portal-snapshot artifact.dir="portal-test" artifact.name="portal-test" />
+		<install-portal-snapshot artifact.dir="portal-test-internal" artifact.name="portal-test-internal" />
+		<install-portal-snapshot artifact.dir="portal-web" artifact.name="portal-web" />
+		<install-portal-snapshot artifact.dir="util-bridges" artifact.name="util-bridges" />
+		<install-portal-snapshot artifact.dir="util-java" artifact.name="util-java" />
+		<install-portal-snapshot artifact.dir="util-slf4j" artifact.name="util-slf4j" />
+		<install-portal-snapshot artifact.dir="util-taglib" artifact.name="util-taglib" />
 	</target>
 
 	<target name="jar">
@@ -722,13 +734,9 @@
 	</target>
 
 	<target name="sort-xml-attributes">
-		<path id="source.formatter.classpath">
-			<fileset dir="${sdk.dir}/dependencies/com.liferay.source.formatter/lib" includes="*.jar" />
-		</path>
-
 		<java
 			classname="com.liferay.portal.tools.source.formatter.XMLAttributesSorter"
-			classpathref="source.formatter.classpath"
+			classpathref="portal.tools.classpath"
 			fork="true"
 			newenvironment="true"
 		>
@@ -758,7 +766,10 @@
 
 	<target name="update-app-server-scripts">
 		<if>
-			<equals arg1="${app.server.type}" arg2="jboss" />
+			<or>
+				<equals arg1="${app.server.type}" arg2="jboss" />
+				<equals arg1="${app.server.type}" arg2="wildfly" />
+			</or>
 			<then>
 				<if>
 					<not>
@@ -812,13 +823,26 @@
 		<if>
 			<equals arg1="${app.server.type}" arg2="websphere" />
 			<then>
-				<exec dir="${app.server.websphere.bin.dir}" executable="/bin/sh" os="${os.unix}">
-					<arg line="startServer.sh server1" />
-				</exec>
+				<if>
+					<os family="unix" />
+					<then>
+						<chmod file="${app.server.websphere.bin.dir}/startServer.sh" perm="a+x" />
 
-				<exec dir="${app.server.websphere.bin.dir}" executable="cmd.exe" os="${os.windows}">
-					<arg line="/c startServer.bat server1" />
-				</exec>
+						<exec dir="${app.server.websphere.bin.dir}" executable="/bin/sh">
+							<arg value="-c" />
+							<arg value="./startServer.sh server1" />
+						</exec>
+					</then>
+					<elseif>
+						<os family="windows" />
+						<then>
+							<exec dir="${app.server.websphere.bin.dir}" executable="cmd.exe">
+								<arg value="/c" />
+								<arg value="startServer.bat server1" />
+							</exec>
+						</then>
+					</elseif>
+				</if>
 
 				<echo>Installing liferay-portal.war.</echo>
 
@@ -854,57 +878,69 @@ print AdminConfig.save()
 print AdminControl.invoke(appManager, 'startApplication', 'liferay-portal')
 				</echo>
 
-				<exec dir="${app.server.websphere.bin.dir}" executable="/bin/sh" os="${os.unix}">
-					<arg line="wsadmin.sh -f ${basedir}/wsadmin.py" />
-				</exec>
+				<if>
+					<os family="unix" />
+					<then>
+						<exec dir="${app.server.websphere.bin.dir}" executable="/bin/sh">
+							<arg value="-c" />
+							<arg value="./wsadmin.sh -f ${basedir}/wsadmin.py" />
+						</exec>
 
-				<exec dir="${app.server.websphere.bin.dir}" executable="cmd.exe" os="${os.windows}">
-					<arg line="/c wsadmin.bat -f ${basedir}\wsadmin.py" />
-				</exec>
+						<exec dir="${app.server.websphere.bin.dir}" executable="/bin/sh">
+							<arg value="-c" />
+							<arg value="./stopServer.sh server1" />
+						</exec>
+					</then>
+					<elseif>
+						<os family="windows" />
+						<then>
+							<exec dir="${app.server.websphere.bin.dir}" executable="cmd.exe">
+								<arg value="/c" />
+								<arg value="wsadmin.bat -f ${basedir}\wsadmin.py" />
+							</exec>
+
+							<exec dir="${app.server.websphere.bin.dir}" executable="cmd.exe">
+								<arg value="/c" />
+								<arg value="stopServer.bat server1" />
+							</exec>
+						</then>
+					</elseif>
+				</if>
 
 				<delete file="wsadmin.py" />
-
-				<exec dir="${app.server.websphere.bin.dir}" executable="/bin/sh" os="${os.unix}">
-					<arg line="stopServer.sh server1" />
-				</exec>
-
-				<exec dir="${app.server.websphere.bin.dir}" executable="cmd.exe" os="${os.windows}">
-					<arg line="/c stopServer.bat server1" />
-				</exec>
 			</then>
 		</if>
 	</target>
 
-	<target name="update-ivy-cache">
+	<target name="update-gradle-cache">
 		<execute>
 			git reset --hard HEAD
 			git clean -d -f
-
-			rm -fr .ivy
-
-			ant setup-sdk
-
-			ant -f modules/apps/build.xml clean
-			ant -f modules/core/build.xml clean
-			ant -f modules/portal/build.xml clean
-			ant -f modules/sdk/build.xml clean
-			ant -f modules/test/build.xml clean
-			ant -f modules/third-party/build.xml clean
-			ant -f modules/util/build.xml clean
-
-			ant -f modules/core/registry-api/build.xml deploy
-			ant -f modules/core/registry-test/build.xml compile-test
-
-			ant -f modules/apps/build.xml compile-test
-			ant -f modules/core/build.xml compile-test
-			ant -f modules/portal/build.xml compile-test
-			ant -f modules/sdk/build.xml compile-test
-			ant -f modules/test/build.xml compile-test
-			ant -f modules/third-party/build.xml compile-test
-			ant -f modules/util/build.xml compile-test
-
-			ant -f portal-service/build.xml test-class -Dtest.class=StringUtilTest
 		</execute>
+
+		<delete dir="${basedir}/.gradle" />
+
+		<setup-sdk />
+
+		<gradle-execute dir="modules" forcedcacheenabled="false" task="clean">
+			<arg value="-Dmaven.local.ignore=true" />
+		</gradle-execute>
+
+		<gradle-execute dir="modules/core/registry-api" forcedcacheenabled="false" task="deploy">
+			<arg value="-Dmaven.local.ignore=true" />
+		</gradle-execute>
+
+		<gradle-execute dir="modules" forcedcacheenabled="false" task="classes">
+			<arg value="-Dmaven.local.ignore=true" />
+			<arg value="testClasses" />
+			<arg value="testIntegrationClasses" />
+		</gradle-execute>
+
+		<gradle-execute dir="modules/sdk/gradle-util" failonerror="false" forcedcacheenabled="false" task="findbugsMain">
+			<arg value="-Dmaven.local.ignore=true" />
+		</gradle-execute>
+
+		<ant dir="portal-web" target="update-gradle-cache" inheritAll="false" />
 	</target>
 
 	<target name="update-plugins-to-svn-revision">

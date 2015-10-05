@@ -19,7 +19,7 @@
 <%
 String closeRedirect = ParamUtil.getString(request, "closeRedirect");
 
-DDMTemplate template = (DDMTemplate)request.getAttribute(WebKeys.DYNAMIC_DATA_MAPPING_TEMPLATE);
+DDMTemplate template = (DDMTemplate)request.getAttribute(DDMWebKeys.DYNAMIC_DATA_MAPPING_TEMPLATE);
 
 long templateId = BeanParamUtil.getLong(template, request, "templateId");
 
@@ -30,7 +30,7 @@ DDMTemplateVersion templateVersion = template.getTemplateVersion();
 	<portlet:param name="mvcPath" value="/copy_template.jsp" />
 </portlet:actionURL>
 
-<aui:form action="<%= copyTemplateURL %>" method="post" name="fm">
+<aui:form action="<%= copyTemplateURL %>" cssClass="container-fluid-1280" method="post" name="fm">
 	<aui:input name="redirect" type="hidden" value="<%= currentURL %>" />
 	<aui:input name="closeRedirect" type="hidden" value="<%= closeRedirect %>" />
 	<aui:input name="templateId" type="hidden" value="<%= String.valueOf(templateId) %>" />

@@ -53,7 +53,7 @@ searchContext.addFacet(scopeFacet);
 List<SearchFacet> searchFacets = searchDisplayContext.getEnabledSearchFacets();
 
 for (SearchFacet searchFacet : searchFacets) {
-	searchFacet.init(searchDisplayContext.getSearchConfiguration(), searchContext);
+	searchFacet.init(company.getCompanyId(), searchDisplayContext.getSearchConfiguration(), searchContext);
 
 	Facet facet = searchFacet.getFacet();
 
@@ -83,7 +83,7 @@ Hits hits = indexer.search(searchContext);
 
 				request.setAttribute("search.jsp-facet", searchFacet.getFacet());
 
-				searchFacet.includeView(request, response);
+				searchFacet.includeView(request, new PipingServletResponse(pageContext));
 			}
 			%>
 

@@ -42,14 +42,11 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	immediate = true,
-	property = {
-		"javax.portlet.name=" + JournalPortletKeys.JOURNAL,
-		"search.asset.type=com.liferay.journal.model.JournalFolder"
-	},
+	property = {"javax.portlet.name=" + JournalPortletKeys.JOURNAL},
 	service = AssetRendererFactory.class
 )
 public class JournalFolderAssetRendererFactory
-	extends BaseAssetRendererFactory {
+	extends BaseAssetRendererFactory<JournalFolder> {
 
 	public static final String TYPE = "content_folder";
 
@@ -57,10 +54,11 @@ public class JournalFolderAssetRendererFactory
 		setCategorizable(false);
 		setClassName(JournalFolder.class.getName());
 		setPortletId(JournalPortletKeys.JOURNAL);
+		setSearchable(true);
 	}
 
 	@Override
-	public AssetRenderer getAssetRenderer(long classPK, int type)
+	public AssetRenderer<JournalFolder> getAssetRenderer(long classPK, int type)
 		throws PortalException {
 
 		JournalFolder folder = JournalFolderLocalServiceUtil.getFolder(classPK);

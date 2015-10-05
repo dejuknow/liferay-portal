@@ -47,14 +47,11 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	immediate = true,
-	property = {
-		"javax.portlet.name=" + CalendarPortletKeys.CALENDAR,
-		"search.asset.type=com.liferay.calendar.model.CalendarBooking"
-	},
+	property = {"javax.portlet.name=" + CalendarPortletKeys.CALENDAR},
 	service = AssetRendererFactory.class
 )
 public class CalendarBookingAssetRendererFactory
-	extends BaseAssetRendererFactory {
+	extends BaseAssetRendererFactory<CalendarBooking> {
 
 	public static final String TYPE = "calendar";
 
@@ -62,10 +59,12 @@ public class CalendarBookingAssetRendererFactory
 		setLinkable(true);
 		setClassName(CalendarBooking.class.getName());
 		setPortletId(CalendarPortletKeys.CALENDAR);
+		setSearchable(true);
 	}
 
 	@Override
-	public AssetRenderer getAssetRenderer(long classPK, int type)
+	public AssetRenderer<CalendarBooking> getAssetRenderer(
+			long classPK, int type)
 		throws PortalException {
 
 		CalendarBooking calendarBooking =

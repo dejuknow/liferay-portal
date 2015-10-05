@@ -42,6 +42,7 @@ import com.liferay.portal.test.rule.PersistenceTestRule;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -58,8 +59,9 @@ import java.util.Set;
  * @generated
  */
 public class UserPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -194,6 +196,8 @@ public class UserPersistenceTest {
 
 		newUser.setEmailAddressVerified(RandomTestUtil.randomBoolean());
 
+		newUser.setLastPublishDate(RandomTestUtil.nextDate());
+
 		newUser.setStatus(RandomTestUtil.nextInt());
 
 		_users.add(_persistence.update(newUser));
@@ -271,6 +275,9 @@ public class UserPersistenceTest {
 			newUser.getAgreedToTermsOfUse());
 		Assert.assertEquals(existingUser.getEmailAddressVerified(),
 			newUser.getEmailAddressVerified());
+		Assert.assertEquals(Time.getShortTimestamp(
+				existingUser.getLastPublishDate()),
+			Time.getShortTimestamp(newUser.getLastPublishDate()));
 		Assert.assertEquals(existingUser.getStatus(), newUser.getStatus());
 	}
 
@@ -451,8 +458,8 @@ public class UserPersistenceTest {
 			"loginDate", true, "loginIP", true, "lastLoginDate", true,
 			"lastLoginIP", true, "lastFailedLoginDate", true,
 			"failedLoginAttempts", true, "lockout", true, "lockoutDate", true,
-			"agreedToTermsOfUse", true, "emailAddressVerified", true, "status",
-			true);
+			"agreedToTermsOfUse", true, "emailAddressVerified", true,
+			"lastPublishDate", true, "status", true);
 	}
 
 	@Test
@@ -653,52 +660,52 @@ public class UserPersistenceTest {
 
 		User existingUser = _persistence.findByPrimaryKey(newUser.getPrimaryKey());
 
-		Assert.assertEquals(existingUser.getContactId(),
-			ReflectionTestUtil.invoke(existingUser, "getOriginalContactId",
+		Assert.assertEquals(Long.valueOf(existingUser.getContactId()),
+			ReflectionTestUtil.<Long>invoke(existingUser,
+				"getOriginalContactId", new Class<?>[0]));
+
+		Assert.assertEquals(Long.valueOf(existingUser.getPortraitId()),
+			ReflectionTestUtil.<Long>invoke(existingUser,
+				"getOriginalPortraitId", new Class<?>[0]));
+
+		Assert.assertEquals(Long.valueOf(existingUser.getCompanyId()),
+			ReflectionTestUtil.<Long>invoke(existingUser,
+				"getOriginalCompanyId", new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingUser.getUserId()),
+			ReflectionTestUtil.<Long>invoke(existingUser, "getOriginalUserId",
 				new Class<?>[0]));
 
-		Assert.assertEquals(existingUser.getPortraitId(),
-			ReflectionTestUtil.invoke(existingUser, "getOriginalPortraitId",
-				new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingUser.getCompanyId()),
+			ReflectionTestUtil.<Long>invoke(existingUser,
+				"getOriginalCompanyId", new Class<?>[0]));
+		Assert.assertEquals(Boolean.valueOf(existingUser.getDefaultUser()),
+			ReflectionTestUtil.<Boolean>invoke(existingUser,
+				"getOriginalDefaultUser", new Class<?>[0]));
 
-		Assert.assertEquals(existingUser.getCompanyId(),
-			ReflectionTestUtil.invoke(existingUser, "getOriginalCompanyId",
-				new Class<?>[0]));
-		Assert.assertEquals(existingUser.getUserId(),
-			ReflectionTestUtil.invoke(existingUser, "getOriginalUserId",
-				new Class<?>[0]));
-
-		Assert.assertEquals(existingUser.getCompanyId(),
-			ReflectionTestUtil.invoke(existingUser, "getOriginalCompanyId",
-				new Class<?>[0]));
-		Assert.assertEquals(existingUser.getDefaultUser(),
-			ReflectionTestUtil.invoke(existingUser, "getOriginalDefaultUser",
-				new Class<?>[0]));
-
-		Assert.assertEquals(existingUser.getCompanyId(),
-			ReflectionTestUtil.invoke(existingUser, "getOriginalCompanyId",
-				new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingUser.getCompanyId()),
+			ReflectionTestUtil.<Long>invoke(existingUser,
+				"getOriginalCompanyId", new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(existingUser.getScreenName(),
 				ReflectionTestUtil.invoke(existingUser,
 					"getOriginalScreenName", new Class<?>[0])));
 
-		Assert.assertEquals(existingUser.getCompanyId(),
-			ReflectionTestUtil.invoke(existingUser, "getOriginalCompanyId",
-				new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingUser.getCompanyId()),
+			ReflectionTestUtil.<Long>invoke(existingUser,
+				"getOriginalCompanyId", new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(existingUser.getEmailAddress(),
 				ReflectionTestUtil.invoke(existingUser,
 					"getOriginalEmailAddress", new Class<?>[0])));
 
-		Assert.assertEquals(existingUser.getCompanyId(),
-			ReflectionTestUtil.invoke(existingUser, "getOriginalCompanyId",
-				new Class<?>[0]));
-		Assert.assertEquals(existingUser.getFacebookId(),
-			ReflectionTestUtil.invoke(existingUser, "getOriginalFacebookId",
-				new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingUser.getCompanyId()),
+			ReflectionTestUtil.<Long>invoke(existingUser,
+				"getOriginalCompanyId", new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingUser.getFacebookId()),
+			ReflectionTestUtil.<Long>invoke(existingUser,
+				"getOriginalFacebookId", new Class<?>[0]));
 
-		Assert.assertEquals(existingUser.getCompanyId(),
-			ReflectionTestUtil.invoke(existingUser, "getOriginalCompanyId",
-				new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingUser.getCompanyId()),
+			ReflectionTestUtil.<Long>invoke(existingUser,
+				"getOriginalCompanyId", new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(existingUser.getOpenId(),
 				ReflectionTestUtil.invoke(existingUser, "getOriginalOpenId",
 					new Class<?>[0])));
@@ -786,6 +793,8 @@ public class UserPersistenceTest {
 		user.setAgreedToTermsOfUse(RandomTestUtil.randomBoolean());
 
 		user.setEmailAddressVerified(RandomTestUtil.randomBoolean());
+
+		user.setLastPublishDate(RandomTestUtil.nextDate());
 
 		user.setStatus(RandomTestUtil.nextInt());
 

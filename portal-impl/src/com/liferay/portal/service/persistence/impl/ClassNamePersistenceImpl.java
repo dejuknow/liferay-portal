@@ -92,11 +92,11 @@ public class ClassNamePersistenceImpl extends BasePersistenceImpl<ClassName>
 			new String[] { String.class.getName() });
 
 	/**
-	 * Returns the class name where value = &#63; or throws a {@link com.liferay.portal.NoSuchClassNameException} if it could not be found.
+	 * Returns the class name where value = &#63; or throws a {@link NoSuchClassNameException} if it could not be found.
 	 *
 	 * @param value the value
 	 * @return the matching class name
-	 * @throws com.liferay.portal.NoSuchClassNameException if a matching class name could not be found
+	 * @throws NoSuchClassNameException if a matching class name could not be found
 	 */
 	@Override
 	public ClassName findByValue(String value) throws NoSuchClassNameException {
@@ -386,7 +386,7 @@ public class ClassNamePersistenceImpl extends BasePersistenceImpl<ClassName>
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 
-		clearUniqueFindersCache(className);
+		clearUniqueFindersCache((ClassNameModelImpl)className);
 	}
 
 	@Override
@@ -398,38 +398,36 @@ public class ClassNamePersistenceImpl extends BasePersistenceImpl<ClassName>
 			EntityCacheUtil.removeResult(ClassNameModelImpl.ENTITY_CACHE_ENABLED,
 				ClassNameImpl.class, className.getPrimaryKey());
 
-			clearUniqueFindersCache(className);
+			clearUniqueFindersCache((ClassNameModelImpl)className);
 		}
 	}
 
-	protected void cacheUniqueFindersCache(ClassName className, boolean isNew) {
+	protected void cacheUniqueFindersCache(
+		ClassNameModelImpl classNameModelImpl, boolean isNew) {
 		if (isNew) {
-			Object[] args = new Object[] { className.getValue() };
+			Object[] args = new Object[] { classNameModelImpl.getValue() };
 
 			FinderCacheUtil.putResult(FINDER_PATH_COUNT_BY_VALUE, args,
 				Long.valueOf(1));
 			FinderCacheUtil.putResult(FINDER_PATH_FETCH_BY_VALUE, args,
-				className);
+				classNameModelImpl);
 		}
 		else {
-			ClassNameModelImpl classNameModelImpl = (ClassNameModelImpl)className;
-
 			if ((classNameModelImpl.getColumnBitmask() &
 					FINDER_PATH_FETCH_BY_VALUE.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] { className.getValue() };
+				Object[] args = new Object[] { classNameModelImpl.getValue() };
 
 				FinderCacheUtil.putResult(FINDER_PATH_COUNT_BY_VALUE, args,
 					Long.valueOf(1));
 				FinderCacheUtil.putResult(FINDER_PATH_FETCH_BY_VALUE, args,
-					className);
+					classNameModelImpl);
 			}
 		}
 	}
 
-	protected void clearUniqueFindersCache(ClassName className) {
-		ClassNameModelImpl classNameModelImpl = (ClassNameModelImpl)className;
-
-		Object[] args = new Object[] { className.getValue() };
+	protected void clearUniqueFindersCache(
+		ClassNameModelImpl classNameModelImpl) {
+		Object[] args = new Object[] { classNameModelImpl.getValue() };
 
 		FinderCacheUtil.removeResult(FINDER_PATH_COUNT_BY_VALUE, args);
 		FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_VALUE, args);
@@ -464,7 +462,7 @@ public class ClassNamePersistenceImpl extends BasePersistenceImpl<ClassName>
 	 *
 	 * @param classNameId the primary key of the class name
 	 * @return the class name that was removed
-	 * @throws com.liferay.portal.NoSuchClassNameException if a class name with the primary key could not be found
+	 * @throws NoSuchClassNameException if a class name with the primary key could not be found
 	 */
 	@Override
 	public ClassName remove(long classNameId) throws NoSuchClassNameException {
@@ -476,7 +474,7 @@ public class ClassNamePersistenceImpl extends BasePersistenceImpl<ClassName>
 	 *
 	 * @param primaryKey the primary key of the class name
 	 * @return the class name that was removed
-	 * @throws com.liferay.portal.NoSuchClassNameException if a class name with the primary key could not be found
+	 * @throws NoSuchClassNameException if a class name with the primary key could not be found
 	 */
 	@Override
 	public ClassName remove(Serializable primaryKey)
@@ -544,10 +542,12 @@ public class ClassNamePersistenceImpl extends BasePersistenceImpl<ClassName>
 	}
 
 	@Override
-	public ClassName updateImpl(com.liferay.portal.model.ClassName className) {
+	public ClassName updateImpl(ClassName className) {
 		className = toUnwrappedModel(className);
 
 		boolean isNew = className.isNew();
+
+		ClassNameModelImpl classNameModelImpl = (ClassNameModelImpl)className;
 
 		Session session = null;
 
@@ -560,7 +560,7 @@ public class ClassNamePersistenceImpl extends BasePersistenceImpl<ClassName>
 				className.setNew(false);
 			}
 			else {
-				session.merge(className);
+				className = (ClassName)session.merge(className);
 			}
 		}
 		catch (Exception e) {
@@ -579,8 +579,8 @@ public class ClassNamePersistenceImpl extends BasePersistenceImpl<ClassName>
 		EntityCacheUtil.putResult(ClassNameModelImpl.ENTITY_CACHE_ENABLED,
 			ClassNameImpl.class, className.getPrimaryKey(), className, false);
 
-		clearUniqueFindersCache(className);
-		cacheUniqueFindersCache(className, isNew);
+		clearUniqueFindersCache(classNameModelImpl);
+		cacheUniqueFindersCache(classNameModelImpl, isNew);
 
 		className.resetOriginalValues();
 
@@ -609,7 +609,7 @@ public class ClassNamePersistenceImpl extends BasePersistenceImpl<ClassName>
 	 *
 	 * @param primaryKey the primary key of the class name
 	 * @return the class name
-	 * @throws com.liferay.portal.NoSuchClassNameException if a class name with the primary key could not be found
+	 * @throws NoSuchClassNameException if a class name with the primary key could not be found
 	 */
 	@Override
 	public ClassName findByPrimaryKey(Serializable primaryKey)
@@ -629,11 +629,11 @@ public class ClassNamePersistenceImpl extends BasePersistenceImpl<ClassName>
 	}
 
 	/**
-	 * Returns the class name with the primary key or throws a {@link com.liferay.portal.NoSuchClassNameException} if it could not be found.
+	 * Returns the class name with the primary key or throws a {@link NoSuchClassNameException} if it could not be found.
 	 *
 	 * @param classNameId the primary key of the class name
 	 * @return the class name
-	 * @throws com.liferay.portal.NoSuchClassNameException if a class name with the primary key could not be found
+	 * @throws NoSuchClassNameException if a class name with the primary key could not be found
 	 */
 	@Override
 	public ClassName findByPrimaryKey(long classNameId)
@@ -804,7 +804,7 @@ public class ClassNamePersistenceImpl extends BasePersistenceImpl<ClassName>
 	 * Returns a range of all the class names.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.model.impl.ClassNameModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ClassNameModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of class names
@@ -820,7 +820,7 @@ public class ClassNamePersistenceImpl extends BasePersistenceImpl<ClassName>
 	 * Returns an ordered range of all the class names.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.model.impl.ClassNameModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ClassNameModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of class names

@@ -45,6 +45,7 @@ import com.liferay.portal.test.rule.PersistenceTestRule;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -64,8 +65,9 @@ import java.util.Set;
  */
 @RunWith(Arquillian.class)
 public class PollsVotePersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -461,16 +463,16 @@ public class PollsVotePersistenceTest {
 		Assert.assertTrue(Validator.equals(existingPollsVote.getUuid(),
 				ReflectionTestUtil.invoke(existingPollsVote, "getOriginalUuid",
 					new Class<?>[0])));
-		Assert.assertEquals(existingPollsVote.getGroupId(),
-			ReflectionTestUtil.invoke(existingPollsVote, "getOriginalGroupId",
-				new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingPollsVote.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingPollsVote,
+				"getOriginalGroupId", new Class<?>[0]));
 
-		Assert.assertEquals(existingPollsVote.getQuestionId(),
-			ReflectionTestUtil.invoke(existingPollsVote,
+		Assert.assertEquals(Long.valueOf(existingPollsVote.getQuestionId()),
+			ReflectionTestUtil.<Long>invoke(existingPollsVote,
 				"getOriginalQuestionId", new Class<?>[0]));
-		Assert.assertEquals(existingPollsVote.getUserId(),
-			ReflectionTestUtil.invoke(existingPollsVote, "getOriginalUserId",
-				new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingPollsVote.getUserId()),
+			ReflectionTestUtil.<Long>invoke(existingPollsVote,
+				"getOriginalUserId", new Class<?>[0]));
 	}
 
 	protected PollsVote addPollsVote() throws Exception {

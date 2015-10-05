@@ -44,6 +44,7 @@ import com.liferay.wiki.service.persistence.WikiPageResourceUtil;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -63,8 +64,9 @@ import java.util.Set;
  */
 @RunWith(Arquillian.class)
 public class WikiPageResourcePersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -407,12 +409,12 @@ public class WikiPageResourcePersistenceTest {
 		Assert.assertTrue(Validator.equals(existingWikiPageResource.getUuid(),
 				ReflectionTestUtil.invoke(existingWikiPageResource,
 					"getOriginalUuid", new Class<?>[0])));
-		Assert.assertEquals(existingWikiPageResource.getGroupId(),
-			ReflectionTestUtil.invoke(existingWikiPageResource,
+		Assert.assertEquals(Long.valueOf(existingWikiPageResource.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingWikiPageResource,
 				"getOriginalGroupId", new Class<?>[0]));
 
-		Assert.assertEquals(existingWikiPageResource.getNodeId(),
-			ReflectionTestUtil.invoke(existingWikiPageResource,
+		Assert.assertEquals(Long.valueOf(existingWikiPageResource.getNodeId()),
+			ReflectionTestUtil.<Long>invoke(existingWikiPageResource,
 				"getOriginalNodeId", new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(
 				existingWikiPageResource.getTitle(),

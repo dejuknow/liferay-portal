@@ -49,7 +49,8 @@ AUI.add(
 			}
 		);
 
-		var ReadOnlyFormBuilderSupport = function() {};
+		var ReadOnlyFormBuilderSupport = function() {
+		};
 
 		ReadOnlyFormBuilderSupport.ATTRS = {
 			readOnly: {
@@ -64,8 +65,8 @@ AUI.add(
 					var instance = this;
 
 					if (instance.get('readOnly')) {
-						instance.set('allowRemoveRequiredFields',false);
-						instance.set('enableEditing',false);
+						instance.set('allowRemoveRequiredFields', false);
+						instance.set('enableEditing', false);
 						instance.translationManager.hide();
 
 						instance.after('render', instance._afterRenderReadOnlyFormBuilder);
@@ -76,18 +77,10 @@ AUI.add(
 					}
 				},
 
-				_afterRenderReadOnlyFormBuilder: function() {
-					var instance = this;
-
-					instance.tabView.enableTab(1);
-					instance.openEditProperties(instance.get('fields').item(0));
-					instance.tabView.getTabs().item(0).hide();
-				},
-
 				_afterFieldRender: function(event) {
 					var field = event.target;
 
-					if (A.instanceOf(field, A.FormBuilderField)) {
+					if (instanceOf(field, A.FormBuilderField)) {
 						var readOnlyAttributes = AArray.map(
 							field.getPropertyModel(),
 							function(item) {
@@ -97,6 +90,14 @@ AUI.add(
 
 						field.set('readOnlyAttributes', readOnlyAttributes);
 					}
+				},
+
+				_afterRenderReadOnlyFormBuilder: function() {
+					var instance = this;
+
+					instance.tabView.enableTab(1);
+					instance.openEditProperties(instance.get('fields').item(0));
+					instance.tabView.getTabs().item(0).hide();
 				},
 
 				_onMouseOverFieldReadOnlyFormBuilder: function(event) {
@@ -522,7 +523,7 @@ AUI.add(
 
 						var fields = val.map(
 							function(item, index) {
-								return A.instanceOf(item, A.PropertyBuilderAvailableField) ? item : new A.LiferayAvailableField(item);
+								return instanceOf(item, A.PropertyBuilderAvailableField) ? item : new A.LiferayAvailableField(item);
 							}
 						);
 
@@ -612,6 +613,8 @@ AUI.add(
 				var instance = this;
 
 				if (isString(str)) {
+					str = str.trim();
+
 					for (var i = 0; i < str.length; i++) {
 						var item = str[i];
 
@@ -629,7 +632,7 @@ AUI.add(
 			normalizeValue: function(value) {
 				var instance = this;
 
-				if (Lang.isUndefined(value)) {
+				if (isUndefined(value)) {
 					value = STR_BLANK;
 				}
 
@@ -651,7 +654,7 @@ AUI.add(
 			},
 
 			validateFieldName: function(fieldName) {
-				return (/^[\w]+$/).test(fieldName);
+				return (/^[\w]+$/).test(fieldName) && !Lang.String.contains(fieldName, '_');
 			}
 		};
 

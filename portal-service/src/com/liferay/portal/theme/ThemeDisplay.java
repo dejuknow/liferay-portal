@@ -17,7 +17,6 @@ package com.liferay.portal.theme;
 import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
@@ -47,9 +46,10 @@ import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.service.GroupLocalServiceUtil;
 import com.liferay.portal.service.LayoutLocalServiceUtil;
 import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.admin.util.PortalAdministrationApplicationType;
+import com.liferay.portal.util.PortletKeys;
+import com.liferay.portlet.admin.util.PortalMyAccountApplicationType;
 import com.liferay.portlet.exportimport.staging.StagingUtil;
-import com.liferay.portlet.mobiledevicerules.model.MDRRuleGroupInstance;
+import com.liferay.portlet.mobiledevicerules.MDRRuleGroupInstance;
 
 import java.io.Serializable;
 
@@ -59,6 +59,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TimeZone;
 
+import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
 
 import javax.servlet.http.HttpServletRequest;
@@ -257,10 +258,6 @@ public class ThemeDisplay
 
 	public Contact getContact() {
 		return _contact;
-	}
-
-	public String getControlPanelCategory() {
-		return _controlPanelCategory;
 	}
 
 	/**
@@ -536,8 +533,7 @@ public class ThemeDisplay
 	}
 
 	/**
-	 * Returns the URL for the portal instance's JavaScript resources. This
-	 * method typically returns <code>/html/js</code>.
+	 * Returns the URL for the portal instance's JavaScript resources.
 	 *
 	 * @return the URL for the portal instance's JavaScript resources
 	 */
@@ -887,8 +883,12 @@ public class ThemeDisplay
 		return _unfilteredLayouts;
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, with no direct replacement
+	 */
+	@Deprecated
 	public String getURLAddContent() {
-		return _urlAddContent;
+		return StringPool.BLANK;
 	}
 
 	public String getURLControlPanel() {
@@ -903,6 +903,10 @@ public class ThemeDisplay
 		return _urlHome;
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, with no direct replacement
+	 */
+	@Deprecated
 	public String getURLLayoutTemplates() {
 		if (Validator.isNull(_urlLayoutTemplates)) {
 			return getURLPageSettings() + "#layout";
@@ -913,35 +917,33 @@ public class ThemeDisplay
 
 	@JSON(include = false)
 	public PortletURL getURLMyAccount() {
-		try {
-			if (_urlMyAccount == null) {
-				_urlMyAccount = PortletProviderUtil.getPortletURL(
-					getRequest(),
-					PortalAdministrationApplicationType.SiteAdmin.CLASS_NAME,
-					PortletProvider.Action.VIEW);
-			}
+		if (_urlMyAccount == null) {
+			String portletId = PortletProviderUtil.getPortletId(
+				PortalMyAccountApplicationType.MyAccount.CLASS_NAME,
+				PortletProvider.Action.VIEW);
 
-			return _urlMyAccount;
+			_urlMyAccount = PortalUtil.getControlPanelPortletURL(
+				getRequest(), portletId, 0, PortletRequest.RENDER_PHASE);
 		}
-		catch (PortalException pe) {
-			throw new SystemException(pe);
-		}
+
+		return _urlMyAccount;
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, with no direct replacement
+	 */
+	@Deprecated
 	@JSON(include = false)
 	public PortletURL getURLPageSettings() {
-		try {
-			if (_urlPageSettings == null) {
-				_urlPageSettings = PortletProviderUtil.getPortletURL(
-					getRequest(), Layout.class.getName(),
-					PortletProvider.Action.EDIT);
-			}
+		if (_urlPageSettings == null) {
+			String portletId = PortletProviderUtil.getPortletId(
+				Layout.class.getName(), PortletProvider.Action.EDIT);
 
-			return _urlPageSettings;
+			_urlPageSettings = PortalUtil.getControlPanelPortletURL(
+				getRequest(), portletId, 0, PortletRequest.RENDER_PHASE);
 		}
-		catch (PortalException pe) {
-			throw new SystemException(pe);
-		}
+
+		return _urlPageSettings;
 	}
 
 	public String getURLPortal() {
@@ -961,12 +963,14 @@ public class ThemeDisplay
 		return _urlSignOut;
 	}
 
-	public String getURLSiteAdministration() {
-		return _urlSiteAdministration;
-	}
-
 	@JSON(include = false)
 	public PortletURL getURLUpdateManager() {
+		if (_urlUpdateManager == null) {
+			_urlUpdateManager = PortalUtil.getControlPanelPortletURL(
+				getRequest(), PortletKeys.MARKETPLACE_STORE, 0,
+				PortletRequest.RENDER_PHASE);
+		}
+
 		return _urlUpdateManager;
 	}
 
@@ -1068,12 +1072,20 @@ public class ThemeDisplay
 		return _secure;
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, with no direct replacement
+	 */
+	@Deprecated
 	public boolean isShowAddContentIcon() {
-		return _showAddContentIcon;
+		return false;
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, with no direct replacement
+	 */
+	@Deprecated
 	public boolean isShowAddContentIconPermission() {
-		return _showAddContentIconPermission;
+		return false;
 	}
 
 	public boolean isShowControlPanelIcon() {
@@ -1256,10 +1268,6 @@ public class ThemeDisplay
 
 	public void setContact(Contact contact) {
 		_contact = contact;
-	}
-
-	public void setControlPanelCategory(String controlPanelCategory) {
-		_controlPanelCategory = controlPanelCategory;
 	}
 
 	public void setDevice(Device device) {
@@ -1584,14 +1592,19 @@ public class ThemeDisplay
 		_sessionId = sessionId;
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, with no direct replacement
+	 */
+	@Deprecated
 	public void setShowAddContentIcon(boolean showAddContentIcon) {
-		_showAddContentIcon = showAddContentIcon;
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, with no direct replacement
+	 */
+	@Deprecated
 	public void setShowAddContentIconPermission(
 		boolean showAddContentIconPermission) {
-
-		_showAddContentIconPermission = showAddContentIconPermission;
 	}
 
 	public void setShowControlPanelIcon(boolean showControlPanelIcon) {
@@ -1729,8 +1742,11 @@ public class ThemeDisplay
 		_unfilteredLayouts = unfilteredLayouts;
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, with no direct replacement
+	 */
+	@Deprecated
 	public void setURLAddContent(String urlAddContent) {
-		_urlAddContent = urlAddContent;
 	}
 
 	public void setURLControlPanel(String urlControlPanel) {
@@ -1781,10 +1797,10 @@ public class ThemeDisplay
 		_urlSignOut = urlSignOut;
 	}
 
-	public void setURLSiteAdministration(String urlSiteAdministration) {
-		_urlSiteAdministration = urlSiteAdministration;
-	}
-
+	/**
+	 * @deprecated As of 7.0.0, with no direct replacement
+	 */
+	@Deprecated
 	public void setURLUpdateManager(PortletURL urlUpdateManager) {
 		_urlUpdateManager = urlUpdateManager;
 	}
@@ -1822,7 +1838,6 @@ public class ThemeDisplay
 	private int _companyLogoHeight;
 	private int _companyLogoWidth;
 	private Contact _contact;
-	private String _controlPanelCategory = StringPool.BLANK;
 	private User _defaultUser;
 	private Device _device;
 	private long _doAsGroupId = 0;
@@ -1885,8 +1900,6 @@ public class ThemeDisplay
 	private String _serverName;
 	private int _serverPort;
 	private String _sessionId = StringPool.BLANK;
-	private boolean _showAddContentIcon;
-	private boolean _showAddContentIconPermission;
 	private boolean _showControlPanelIcon;
 	private boolean _showHomeIcon;
 	private boolean _showLayoutTemplatesIcon;
@@ -1918,7 +1931,6 @@ public class ThemeDisplay
 	private String _tilesTitle = StringPool.BLANK;
 	private TimeZone _timeZone;
 	private List<Layout> _unfilteredLayouts;
-	private String _urlAddContent = StringPool.BLANK;
 	private String _urlControlPanel = StringPool.BLANK;
 	private String _urlCurrent = StringPool.BLANK;
 	private String _urlHome = StringPool.BLANK;
@@ -1929,7 +1941,6 @@ public class ThemeDisplay
 	private transient PortletURL _urlPublishToLive = null;
 	private String _urlSignIn = StringPool.BLANK;
 	private String _urlSignOut = StringPool.BLANK;
-	private String _urlSiteAdministration = StringPool.BLANK;
 	private transient PortletURL _urlUpdateManager = null;
 	private User _user;
 	private boolean _widget;

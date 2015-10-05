@@ -73,6 +73,7 @@ public class ClassUtil {
 				else if (st.sval.startsWith("@")) {
 					st.ordinaryChar(' ');
 					st.wordChars('=', '=');
+					st.wordChars('+', '+');
 
 					String[] annotationClasses = _processAnnotation(
 						st.sval, st);
@@ -167,7 +168,7 @@ public class ClassUtil {
 			path = url.getFile();
 		}
 
-		if (ServerDetector.isJBoss()) {
+		if (ServerDetector.isJBoss() || ServerDetector.isWildfly()) {
 			if (path.startsWith("file:") && !path.startsWith("file:/")) {
 				path = path.substring(5);
 

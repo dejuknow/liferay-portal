@@ -19,7 +19,7 @@
 <%
 String closeRedirect = ParamUtil.getString(request, "closeRedirect");
 
-DDMStructure structure = (DDMStructure)request.getAttribute(WebKeys.DYNAMIC_DATA_MAPPING_STRUCTURE);
+DDMStructure structure = (DDMStructure)request.getAttribute(DDMWebKeys.DYNAMIC_DATA_MAPPING_STRUCTURE);
 
 DDMStructureVersion structureVersion = structure.getStructureVersion();
 
@@ -34,7 +34,7 @@ boolean copyDisplayTemplates = ParamUtil.getBoolean(request, "copyDisplayTemplat
 	<portlet:param name="mvcPath" value="/copy_structure.jsp" />
 </portlet:actionURL>
 
-<aui:form action="<%= copyStructureURL %>" method="post" name="fm">
+<aui:form action="<%= copyStructureURL %>" cssClass="container-fluid-1280" method="post" name="fm">
 	<aui:input name="redirect" type="hidden" value="<%= currentURL %>" />
 	<aui:input name="closeRedirect" type="hidden" value="<%= closeRedirect %>" />
 	<aui:input name="classNameId" type="hidden" value="<%= String.valueOf(classNameId) %>" />

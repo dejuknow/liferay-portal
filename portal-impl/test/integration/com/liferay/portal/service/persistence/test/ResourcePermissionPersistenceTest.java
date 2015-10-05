@@ -41,6 +41,7 @@ import com.liferay.portal.test.rule.PersistenceTestRule;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -57,8 +58,9 @@ import java.util.Set;
  * @generated
  */
 public class ResourcePermissionPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -125,11 +127,15 @@ public class ResourcePermissionPersistenceTest {
 
 		newResourcePermission.setPrimKey(RandomTestUtil.randomString());
 
+		newResourcePermission.setPrimKeyId(RandomTestUtil.nextLong());
+
 		newResourcePermission.setRoleId(RandomTestUtil.nextLong());
 
 		newResourcePermission.setOwnerId(RandomTestUtil.nextLong());
 
 		newResourcePermission.setActionIds(RandomTestUtil.nextLong());
+
+		newResourcePermission.setViewActionId(RandomTestUtil.randomBoolean());
 
 		_resourcePermissions.add(_persistence.update(newResourcePermission));
 
@@ -147,12 +153,16 @@ public class ResourcePermissionPersistenceTest {
 			newResourcePermission.getScope());
 		Assert.assertEquals(existingResourcePermission.getPrimKey(),
 			newResourcePermission.getPrimKey());
+		Assert.assertEquals(existingResourcePermission.getPrimKeyId(),
+			newResourcePermission.getPrimKeyId());
 		Assert.assertEquals(existingResourcePermission.getRoleId(),
 			newResourcePermission.getRoleId());
 		Assert.assertEquals(existingResourcePermission.getOwnerId(),
 			newResourcePermission.getOwnerId());
 		Assert.assertEquals(existingResourcePermission.getActionIds(),
 			newResourcePermission.getActionIds());
+		Assert.assertEquals(existingResourcePermission.getViewActionId(),
+			newResourcePermission.getViewActionId());
 	}
 
 	@Test
@@ -224,6 +234,29 @@ public class ResourcePermissionPersistenceTest {
 	}
 
 	@Test
+	public void testCountByC_N_S_P_R_V() throws Exception {
+		_persistence.countByC_N_S_P_R_V(RandomTestUtil.nextLong(),
+			StringPool.BLANK, RandomTestUtil.nextInt(),
+			RandomTestUtil.nextLong(), RandomTestUtil.nextLong(),
+			RandomTestUtil.randomBoolean());
+
+		_persistence.countByC_N_S_P_R_V(0L, StringPool.NULL, 0, 0L, 0L,
+			RandomTestUtil.randomBoolean());
+
+		_persistence.countByC_N_S_P_R_V(0L, (String)null, 0, 0L, 0L,
+			RandomTestUtil.randomBoolean());
+	}
+
+	@Test
+	public void testCountByC_N_S_P_R_VArrayable() throws Exception {
+		_persistence.countByC_N_S_P_R_V(RandomTestUtil.nextLong(),
+			RandomTestUtil.randomString(), RandomTestUtil.nextInt(),
+			RandomTestUtil.nextLong(),
+			new long[] { RandomTestUtil.nextLong(), 0L },
+			RandomTestUtil.randomBoolean());
+	}
+
+	@Test
 	public void testFindByPrimaryKeyExisting() throws Exception {
 		ResourcePermission newResourcePermission = addResourcePermission();
 
@@ -248,8 +281,9 @@ public class ResourcePermissionPersistenceTest {
 	protected OrderByComparator<ResourcePermission> getOrderByComparator() {
 		return OrderByComparatorFactoryUtil.create("ResourcePermission",
 			"mvccVersion", true, "resourcePermissionId", true, "companyId",
-			true, "name", true, "scope", true, "primKey", true, "roleId", true,
-			"ownerId", true, "actionIds", true);
+			true, "name", true, "scope", true, "primKey", true, "primKeyId",
+			true, "roleId", true, "ownerId", true, "actionIds", true,
+			"viewActionId", true);
 	}
 
 	@Test
@@ -457,22 +491,24 @@ public class ResourcePermissionPersistenceTest {
 
 		ResourcePermission existingResourcePermission = _persistence.findByPrimaryKey(newResourcePermission.getPrimaryKey());
 
-		Assert.assertEquals(existingResourcePermission.getCompanyId(),
-			ReflectionTestUtil.invoke(existingResourcePermission,
+		Assert.assertEquals(Long.valueOf(
+				existingResourcePermission.getCompanyId()),
+			ReflectionTestUtil.<Long>invoke(existingResourcePermission,
 				"getOriginalCompanyId", new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(
 				existingResourcePermission.getName(),
 				ReflectionTestUtil.invoke(existingResourcePermission,
 					"getOriginalName", new Class<?>[0])));
-		Assert.assertEquals(existingResourcePermission.getScope(),
-			ReflectionTestUtil.invoke(existingResourcePermission,
+		Assert.assertEquals(Integer.valueOf(
+				existingResourcePermission.getScope()),
+			ReflectionTestUtil.<Integer>invoke(existingResourcePermission,
 				"getOriginalScope", new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(
 				existingResourcePermission.getPrimKey(),
 				ReflectionTestUtil.invoke(existingResourcePermission,
 					"getOriginalPrimKey", new Class<?>[0])));
-		Assert.assertEquals(existingResourcePermission.getRoleId(),
-			ReflectionTestUtil.invoke(existingResourcePermission,
+		Assert.assertEquals(Long.valueOf(existingResourcePermission.getRoleId()),
+			ReflectionTestUtil.<Long>invoke(existingResourcePermission,
 				"getOriginalRoleId", new Class<?>[0]));
 	}
 
@@ -492,11 +528,15 @@ public class ResourcePermissionPersistenceTest {
 
 		resourcePermission.setPrimKey(RandomTestUtil.randomString());
 
+		resourcePermission.setPrimKeyId(RandomTestUtil.nextLong());
+
 		resourcePermission.setRoleId(RandomTestUtil.nextLong());
 
 		resourcePermission.setOwnerId(RandomTestUtil.nextLong());
 
 		resourcePermission.setActionIds(RandomTestUtil.nextLong());
+
+		resourcePermission.setViewActionId(RandomTestUtil.randomBoolean());
 
 		_resourcePermissions.add(_persistence.update(resourcePermission));
 

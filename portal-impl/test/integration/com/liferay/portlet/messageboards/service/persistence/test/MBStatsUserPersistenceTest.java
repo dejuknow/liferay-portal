@@ -41,6 +41,7 @@ import com.liferay.portlet.messageboards.service.persistence.MBStatsUserUtil;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -57,8 +58,9 @@ import java.util.Set;
  * @generated
  */
 public class MBStatsUserPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -400,12 +402,12 @@ public class MBStatsUserPersistenceTest {
 
 		MBStatsUser existingMBStatsUser = _persistence.findByPrimaryKey(newMBStatsUser.getPrimaryKey());
 
-		Assert.assertEquals(existingMBStatsUser.getGroupId(),
-			ReflectionTestUtil.invoke(existingMBStatsUser,
+		Assert.assertEquals(Long.valueOf(existingMBStatsUser.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingMBStatsUser,
 				"getOriginalGroupId", new Class<?>[0]));
-		Assert.assertEquals(existingMBStatsUser.getUserId(),
-			ReflectionTestUtil.invoke(existingMBStatsUser, "getOriginalUserId",
-				new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingMBStatsUser.getUserId()),
+			ReflectionTestUtil.<Long>invoke(existingMBStatsUser,
+				"getOriginalUserId", new Class<?>[0]));
 	}
 
 	protected MBStatsUser addMBStatsUser() throws Exception {

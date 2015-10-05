@@ -40,6 +40,7 @@ import com.liferay.portlet.asset.service.persistence.AssetTagStatsUtil;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -56,8 +57,9 @@ import java.util.Set;
  * @generated
  */
 public class AssetTagStatsPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -386,11 +388,11 @@ public class AssetTagStatsPersistenceTest {
 
 		AssetTagStats existingAssetTagStats = _persistence.findByPrimaryKey(newAssetTagStats.getPrimaryKey());
 
-		Assert.assertEquals(existingAssetTagStats.getTagId(),
-			ReflectionTestUtil.invoke(existingAssetTagStats,
+		Assert.assertEquals(Long.valueOf(existingAssetTagStats.getTagId()),
+			ReflectionTestUtil.<Long>invoke(existingAssetTagStats,
 				"getOriginalTagId", new Class<?>[0]));
-		Assert.assertEquals(existingAssetTagStats.getClassNameId(),
-			ReflectionTestUtil.invoke(existingAssetTagStats,
+		Assert.assertEquals(Long.valueOf(existingAssetTagStats.getClassNameId()),
+			ReflectionTestUtil.<Long>invoke(existingAssetTagStats,
 				"getOriginalClassNameId", new Class<?>[0]));
 	}
 

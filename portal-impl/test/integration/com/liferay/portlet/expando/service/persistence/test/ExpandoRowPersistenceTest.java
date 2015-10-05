@@ -41,6 +41,7 @@ import com.liferay.portlet.expando.service.persistence.ExpandoRowUtil;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -57,8 +58,9 @@ import java.util.Set;
  * @generated
  */
 public class ExpandoRowPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -392,12 +394,12 @@ public class ExpandoRowPersistenceTest {
 
 		ExpandoRow existingExpandoRow = _persistence.findByPrimaryKey(newExpandoRow.getPrimaryKey());
 
-		Assert.assertEquals(existingExpandoRow.getTableId(),
-			ReflectionTestUtil.invoke(existingExpandoRow, "getOriginalTableId",
-				new Class<?>[0]));
-		Assert.assertEquals(existingExpandoRow.getClassPK(),
-			ReflectionTestUtil.invoke(existingExpandoRow, "getOriginalClassPK",
-				new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingExpandoRow.getTableId()),
+			ReflectionTestUtil.<Long>invoke(existingExpandoRow,
+				"getOriginalTableId", new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingExpandoRow.getClassPK()),
+			ReflectionTestUtil.<Long>invoke(existingExpandoRow,
+				"getOriginalClassPK", new Class<?>[0]));
 	}
 
 	protected ExpandoRow addExpandoRow() throws Exception {

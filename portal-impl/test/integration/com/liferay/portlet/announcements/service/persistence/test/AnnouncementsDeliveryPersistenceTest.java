@@ -42,6 +42,7 @@ import com.liferay.portlet.announcements.service.persistence.AnnouncementsDelive
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -58,8 +59,9 @@ import java.util.Set;
  * @generated
  */
 public class AnnouncementsDeliveryPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -402,8 +404,9 @@ public class AnnouncementsDeliveryPersistenceTest {
 
 		AnnouncementsDelivery existingAnnouncementsDelivery = _persistence.findByPrimaryKey(newAnnouncementsDelivery.getPrimaryKey());
 
-		Assert.assertEquals(existingAnnouncementsDelivery.getUserId(),
-			ReflectionTestUtil.invoke(existingAnnouncementsDelivery,
+		Assert.assertEquals(Long.valueOf(
+				existingAnnouncementsDelivery.getUserId()),
+			ReflectionTestUtil.<Long>invoke(existingAnnouncementsDelivery,
 				"getOriginalUserId", new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(
 				existingAnnouncementsDelivery.getType(),

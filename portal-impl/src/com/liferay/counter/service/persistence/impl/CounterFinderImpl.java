@@ -20,7 +20,6 @@ import com.liferay.counter.model.CounterRegister;
 import com.liferay.counter.model.impl.CounterImpl;
 import com.liferay.counter.service.persistence.CounterFinder;
 import com.liferay.portal.kernel.cache.CacheRegistryItem;
-import com.liferay.portal.kernel.cache.CacheRegistryUtil;
 import com.liferay.portal.kernel.concurrent.CompeteLatch;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.dao.orm.LockMode;
@@ -55,11 +54,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CounterFinderImpl
 	extends BasePersistenceImpl<Dummy>
 	implements CacheRegistryItem, CounterFinder {
-
-	@Override
-	public void afterPropertiesSet() {
-		CacheRegistryUtil.register(this);
-	}
 
 	@Override
 	public List<String> getNames() {
@@ -321,14 +315,14 @@ public class CounterFinderImpl
 
 		// Use the slow path
 
-		CompeteLatch completeLatch = counterRegister.getCompeteLatch();
+		CompeteLatch competeLatch = counterRegister.getCompeteLatch();
 
-		if (!completeLatch.compete()) {
+		if (!competeLatch.compete()) {
 
 			// Loser thread has to wait for the winner thread to finish its job
 
 			try {
-				completeLatch.await();
+				competeLatch.await();
 			}
 			catch (InterruptedException ie) {
 				throw processException(ie);
@@ -365,7 +359,7 @@ public class CounterFinderImpl
 
 			// Winner thread opens the latch so that loser threads can continue
 
-			completeLatch.done();
+			competeLatch.done();
 		}
 
 		return newValue;

@@ -14,7 +14,7 @@
 
 package com.liferay.poshi.runner.selenium;
 
-import com.liferay.poshi.runner.PoshiRunnerGetterUtil;
+import com.liferay.poshi.runner.util.FileUtil;
 import com.liferay.poshi.runner.util.GetterUtil;
 import com.liferay.poshi.runner.util.OSDetector;
 import com.liferay.poshi.runner.util.PropsValues;
@@ -22,9 +22,7 @@ import com.liferay.poshi.runner.util.StringPool;
 import com.liferay.poshi.runner.util.StringUtil;
 import com.liferay.poshi.runner.util.Validator;
 
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.List;
 
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
@@ -40,9 +38,7 @@ import org.openqa.selenium.internal.WrapsDriver;
 public abstract class BaseWebDriverImpl
 	extends WebDriverToSeleniumBridge implements LiferaySelenium {
 
-	public BaseWebDriverImpl(
-		String projectDirName, String browserURL, WebDriver webDriver) {
-
+	public BaseWebDriverImpl(String browserURL, WebDriver webDriver) {
 		super(webDriver);
 
 		System.setProperty("java.awt.headless", "false");
@@ -54,7 +50,6 @@ public abstract class BaseWebDriverImpl
 
 		if (OSDetector.isWindows()) {
 			outputDirName = StringUtil.replace(outputDirName, "//", "\\");
-			projectDirName = StringUtil.replace(projectDirName, "//", "\\");
 
 			sikuliImagesDirName = StringUtil.replace(
 				sikuliImagesDirName, "//", "\\");
@@ -66,7 +61,6 @@ public abstract class BaseWebDriverImpl
 		}
 
 		_outputDirName = outputDirName;
-		_projectDirName = projectDirName;
 		_sikuliImagesDirName = sikuliImagesDirName;
 		_testDependenciesDirName = testDependenciesDirName;
 
@@ -105,6 +99,11 @@ public abstract class BaseWebDriverImpl
 	}
 
 	@Override
+	public void assertConsoleErrors() throws Exception {
+		LiferaySeleniumHelper.assertConsoleErrors();
+	}
+
+	@Override
 	public void assertConsoleTextNotPresent(String text) throws Exception {
 		LiferaySeleniumHelper.assertConsoleTextNotPresent(text);
 	}
@@ -112,6 +111,14 @@ public abstract class BaseWebDriverImpl
 	@Override
 	public void assertConsoleTextPresent(String text) throws Exception {
 		LiferaySeleniumHelper.assertConsoleTextPresent(text);
+	}
+
+	@Override
+	public void assertCssValue(
+			String locator, String cssAttribute, String cssValue)
+		throws Exception {
+
+		WebDriverHelper.assertCssValue(this, locator, cssAttribute, cssValue);
 	}
 
 	@Override
@@ -160,11 +167,7 @@ public abstract class BaseWebDriverImpl
 
 	@Override
 	public void assertLiferayErrors() throws Exception {
-		if (!PropsValues.TEST_ASSERT_LIFERAY_ERRORS) {
-			return;
-		}
-
-		LiferaySeleniumHelper.assertLiferayErrors();
+		LiferaySeleniumHelper.assertConsoleErrors();
 	}
 
 	@Override
@@ -415,11 +418,6 @@ public abstract class BaseWebDriverImpl
 	}
 
 	@Override
-	public String getProjectDirName() {
-		return _projectDirName;
-	}
-
-	@Override
 	public String getSikuliImagesDirName() {
 		return _sikuliImagesDirName;
 	}
@@ -477,15 +475,7 @@ public abstract class BaseWebDriverImpl
 
 	@Override
 	public boolean isNotSelectedLabel(String selectLocator, String pattern) {
-		if (isElementNotPresent(selectLocator)) {
-			return false;
-		}
-
-		String[] selectedLabels = getSelectedLabels(selectLocator);
-
-		List<String> selectedLabelsList = Arrays.asList(selectedLabels);
-
-		return !selectedLabelsList.contains(pattern);
+		return WebDriverHelper.isNotSelectedLabel(this, selectLocator, pattern);
 	}
 
 	@Override
@@ -505,20 +495,17 @@ public abstract class BaseWebDriverImpl
 
 	@Override
 	public boolean isPartialText(String locator, String value) {
-		WebElement webElement = getWebElement(locator, "1");
-
-		String text = webElement.getText();
-
-		return text.contains(value);
+		return WebDriverHelper.isPartialText(this, locator, value);
 	}
 
 	@Override
 	public boolean isSelectedLabel(String selectLocator, String pattern) {
-		if (isElementNotPresent(selectLocator)) {
-			return false;
-		}
+		return WebDriverHelper.isSelectedLabel(this, selectLocator, pattern);
+	}
 
-		return pattern.equals(getSelectedLabel(selectLocator, "1"));
+	@Override
+	public boolean isSikuliImagePresent(String image) throws Exception {
+		return LiferaySeleniumHelper.isSikuliImagePresent(this, image);
 	}
 
 	@Override
@@ -539,6 +526,16 @@ public abstract class BaseWebDriverImpl
 	@Override
 	public boolean isValue(String locator, String value) {
 		return value.equals(getValue(locator, "1"));
+	}
+
+	@Override
+	public void javaScriptMouseDown(String locator) {
+		WebDriverHelper.executeJavaScriptMouseEvent(this, locator, "mousedown");
+	}
+
+	@Override
+	public void javaScriptMouseUp(String locator) {
+		WebDriverHelper.executeJavaScriptMouseEvent(this, locator, "mouseup");
 	}
 
 	@Override
@@ -835,16 +832,20 @@ public abstract class BaseWebDriverImpl
 	}
 
 	@Override
-	public void uploadCommonFile(String location, String value) {
-		String slash = "/";
+	public void uploadCommonFile(String location, String value)
+		throws Exception {
+
+		String filePath =
+			FileUtil.getSeparator() + _testDependenciesDirName +
+				FileUtil.getSeparator() + value;
+
+		filePath = LiferaySeleniumHelper.getSourceDirFilePath(filePath);
 
 		if (OSDetector.isWindows()) {
-			slash = "\\";
+			filePath = StringUtil.replace(filePath, "/", "\\");
 		}
 
-		uploadFile(
-			location,
-			_TEST_BASE_DIR_NAME + slash + _testDependenciesDirName + value);
+		uploadFile(location, filePath);
 	}
 
 	@Override
@@ -858,34 +859,18 @@ public abstract class BaseWebDriverImpl
 
 	@Override
 	public void uploadTempFile(String location, String value) {
-		String slash = "/";
+		String filePath = _outputDirName + FileUtil.getSeparator() + value;
 
 		if (OSDetector.isWindows()) {
-			slash = "\\";
+			filePath = StringUtil.replace(filePath, "/", "\\");
 		}
 
-		uploadFile(location, _outputDirName + slash + value);
+		uploadFile(location, filePath);
 	}
 
 	@Override
 	public void waitForConfirmation(String pattern) throws Exception {
-		int timeout =
-			PropsValues.TIMEOUT_EXPLICIT_WAIT /
-				PropsValues.TIMEOUT_IMPLICIT_WAIT;
-
-		for (int second = 0;; second++) {
-			if (second >= timeout) {
-				assertConfirmation(pattern);
-			}
-
-			try {
-				if (isConfirmation(pattern)) {
-					break;
-				}
-			}
-			catch (Exception e) {
-			}
-		}
+		LiferaySeleniumHelper.waitForConfirmation(this, pattern);
 	}
 
 	@Override
@@ -976,16 +961,12 @@ public abstract class BaseWebDriverImpl
 
 	private static final String _OUTPUT_DIR_NAME = PropsValues.OUTPUT_DIR_NAME;
 
-	private static final String _TEST_BASE_DIR_NAME =
-		PoshiRunnerGetterUtil.getCanonicalPath(PropsValues.TEST_BASE_DIR_NAME);
-
 	private static final String _TEST_DEPENDENCIES_DIR_NAME =
 		PropsValues.TEST_DEPENDENCIES_DIR_NAME;
 
 	private String _clipBoard = "";
 	private final String _outputDirName;
 	private String _primaryTestSuiteName;
-	private final String _projectDirName;
 	private final String _sikuliImagesDirName;
 	private final String _testDependenciesDirName;
 

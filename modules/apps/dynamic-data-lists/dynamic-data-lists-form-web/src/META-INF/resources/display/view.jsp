@@ -31,20 +31,34 @@ DDLRecordSet recordSet = ddlFormDisplayContext.getRecordSet();
 	<c:otherwise>
 		<portlet:actionURL name="addRecord" var="addRecordActionURL" />
 
-		<aui:form action="<%= addRecordActionURL %>" method="post" name="fm">
-			<aui:input name="redirect" type="hidden" value="<%= redirect %>" />
-			<aui:input name="groupId" type="hidden" value="<%= themeDisplay.getScopeGroupId() %>" />
-			<aui:input name="recordSetId" type="hidden" value="<%= recordSet.getRecordSetId() %>" />
-			<aui:input name="availableLanguageId" type="hidden" value="<%= themeDisplay.getLanguageId() %>" />
-			<aui:input name="defaultLanguageId" type="hidden" value="<%= themeDisplay.getLanguageId() %>" />
-			<aui:input name="workflowAction" type="hidden" value="<%= WorkflowConstants.ACTION_PUBLISH %>" />
+		<div class="portlet-forms">
+			<aui:form action="<%= addRecordActionURL %>" method="post" name="fm">
+				<aui:input name="redirect" type="hidden" value="<%= redirect %>" />
+				<aui:input name="groupId" type="hidden" value="<%= themeDisplay.getScopeGroupId() %>" />
+				<aui:input name="recordSetId" type="hidden" value="<%= recordSet.getRecordSetId() %>" />
+				<aui:input name="availableLanguageId" type="hidden" value="<%= themeDisplay.getLanguageId() %>" />
+				<aui:input name="defaultLanguageId" type="hidden" value="<%= themeDisplay.getLanguageId() %>" />
+				<aui:input name="workflowAction" type="hidden" value="<%= WorkflowConstants.ACTION_PUBLISH %>" />
 
-			<%= request.getAttribute(WebKeys.DYNAMIC_DATA_MAPPING_FORM_HTML) %>
+				<div class="ddl-form-basic-info">
+					<div class="container-fluid-1280">
+						<h1 class="ddl-form-name"><%= recordSet.getName(locale) %></h1>
 
-			<aui:button-row>
-				<aui:button type="submit" value="send" />
-			</aui:button-row>
-		</aui:form>
+						<%
+						String description = recordSet.getDescription(locale);
+						%>
+
+						<c:if test="<%= Validator.isNotNull(description) %>">
+							<h2 class="ddl-form-description"><%= description %></h2>
+						</c:if>
+					</div>
+				</div>
+
+				<div class="container-fluid-1280 ddl-form-builder-app">
+					<%= request.getAttribute(DDMWebKeys.DYNAMIC_DATA_MAPPING_FORM_HTML) %>
+				</div>
+			</aui:form>
+		</div>
 	</c:otherwise>
 </c:choose>
 

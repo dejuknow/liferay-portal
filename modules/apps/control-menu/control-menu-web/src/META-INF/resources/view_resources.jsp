@@ -17,16 +17,16 @@
 <%@ include file="/init.jsp" %>
 
 <%
-boolean viewEntries = ParamUtil.getBoolean(request, "viewEntries");
-boolean viewPreview = ParamUtil.getBoolean(request, "viewPreview");
+boolean viewAssetEntries = ParamUtil.getBoolean(request, "viewAssetEntries");
+boolean viewAssetPreview = ParamUtil.getBoolean(request, "viewAssetPreview");
 %>
 
 <c:choose>
-	<c:when test="<%= viewEntries %>">
+	<c:when test="<%= viewAssetEntries %>">
 		<div id="<portlet:namespace />entries">
 
 			<%
-			String displayStyleDefault = GetterUtil.getString(SessionClicks.get(request, "liferay_addpanel_displaystyle", "descriptive"));
+			String displayStyleDefault = GetterUtil.getString(SessionClicks.get(request, "com.liferay.control.menu.web_addPanelDisplayStyle", "descriptive"));
 			String displayStyle = ParamUtil.getString(request, "displayStyle", displayStyleDefault);
 			String keywords = ParamUtil.getString(request, "keywords");
 
@@ -53,13 +53,13 @@ boolean viewPreview = ParamUtil.getBoolean(request, "viewPreview");
 				<aui:nav cssClass="<%= navListCssClass %>">
 
 					<%
-					int deltaDefault = GetterUtil.getInteger(SessionClicks.get(request, "liferay_addpanel_numitems", "10"));
+					int deltaDefault = GetterUtil.getInteger(SessionClicks.get(request, "com.liferay.control.menu.web_addPanelNumItems", "10"));
 					int delta = ParamUtil.getInteger(request, "delta", deltaDefault);
 
 					long[] availableClassNameIds = AssetRendererFactoryRegistryUtil.getClassNameIds(company.getCompanyId());
 
 					for (long classNameId : availableClassNameIds) {
-						AssetRendererFactory assetRendererFactory = AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassNameId(classNameId);
+						AssetRendererFactory<?> assetRendererFactory = AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassNameId(classNameId);
 
 						if (!assetRendererFactory.isSelectable()) {
 							availableClassNameIds = ArrayUtil.remove(availableClassNameIds, classNameId);
@@ -84,13 +84,13 @@ boolean viewPreview = ParamUtil.getBoolean(request, "viewPreview");
 						String className = PortalUtil.getClassName(assetEntry.getClassNameId());
 						long classPK = assetEntry.getClassPK();
 
-						AssetRendererFactory assetRendererFactory = AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(className);
+						AssetRendererFactory<?> assetRendererFactory = AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(className);
 
 						if (assetRendererFactory == null) {
 							continue;
 						}
 
-						AssetRenderer assetRenderer = null;
+						AssetRenderer<?> assetRenderer = null;
 
 						try {
 							assetRenderer = assetRendererFactory.getAssetRenderer(classPK);
@@ -135,7 +135,7 @@ boolean viewPreview = ParamUtil.getBoolean(request, "viewPreview");
 							label='<%= displayStyle.equals("list") ? title : "" %>'
 						>
 							<c:choose>
-								<c:when test='<%= !displayStyle.equals("list") %>' >
+								<c:when test='<%= !displayStyle.equals("list") %>'>
 									<div class="add-content-thumbnail <%= displayStyle.equals("descriptive") ? "col-md-4" : StringPool.BLANK %>">
 										<img alt="<liferay-ui:message escapeAttribute="<%= true %>" key="thumbnail" />" src="<%= HtmlUtil.escapeAttribute(assetRenderer.getThumbnailPath(liferayPortletRequest)) %>" />
 									</div>
@@ -167,7 +167,7 @@ boolean viewPreview = ParamUtil.getBoolean(request, "viewPreview");
 		</div>
 	</c:when>
 
-	<c:when test="<%= viewPreview %>">
+	<c:when test="<%= viewAssetPreview %>">
 
 		<%
 		long classPK = ParamUtil.getLong(request, "classPK");

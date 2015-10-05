@@ -14,7 +14,6 @@
 
 package com.liferay.poshi.runner.selenium;
 
-import com.liferay.poshi.runner.PoshiRunnerGetterUtil;
 import com.liferay.poshi.runner.util.PropsValues;
 
 /**
@@ -43,8 +42,6 @@ public class SeleniumUtil extends PropsValues {
 	}
 
 	private void _startSelenium() {
-		String projectDirName = PoshiRunnerGetterUtil.getProjectDirName();
-
 		String portalURL = PORTAL_URL;
 
 		if (TCAT_ENABLED) {
@@ -52,36 +49,53 @@ public class SeleniumUtil extends PropsValues {
 		}
 
 		if (MOBILE_DEVICE_TYPE.equals("android")) {
-			_selenium = new AndroidMobileDriverImpl(projectDirName, portalURL);
+			_selenium = new AndroidMobileDriverImpl(portalURL);
+		}
+		else if (MOBILE_DEVICE_TYPE.equals("androidchrome")) {
+			_selenium = new ChromeMobileDriverImpl(portalURL);
 		}
 		else if (MOBILE_DEVICE_TYPE.equals("ios")) {
-			_selenium = new IOSMobileDriverImpl(projectDirName, portalURL);
+			_selenium = new IOSMobileDriverImpl(portalURL);
 		}
 		else {
-			if (BROWSER_TYPE.equals("*chrome") ||
-				BROWSER_TYPE.equals("*firefox")) {
-
-				_selenium = new FirefoxWebDriverImpl(projectDirName, portalURL);
-			}
-			else if (BROWSER_TYPE.equals("*googlechrome")) {
+			if (BROWSER_TYPE.equals("chrome")) {
 				System.setProperty(
 					"webdriver.chrome.driver",
-					SELENIUM_EXECUTABLE_DIR_NAME + "\\chromedriver.exe");
+					SELENIUM_EXECUTABLE_DIR_NAME +
+						SELENIUM_CHROME_DRIVER_EXECUTABLE);
 
-				_selenium = new ChromeWebDriverImpl(projectDirName, portalURL);
+				_selenium = new ChromeWebDriverImpl(portalURL);
 			}
-			else if (BROWSER_TYPE.equals("*iehta") ||
-					 BROWSER_TYPE.equals("*iexplore")) {
+			else if (BROWSER_TYPE.equals("edge") &&
+					 !SELENIUM_REMOTE_DRIVER_ENABLED) {
+
+				_selenium = new EdgeWebDriverImpl(portalURL);
+			}
+			else if (BROWSER_TYPE.equals("edge") &&
+					 SELENIUM_REMOTE_DRIVER_ENABLED) {
+
+				_selenium = new EdgeRemoteWebDriverImpl(portalURL);
+			}
+			else if (BROWSER_TYPE.equals("firefox")) {
+				_selenium = new FirefoxWebDriverImpl(portalURL);
+			}
+			else if (BROWSER_TYPE.equals("internetexplorer") &&
+					 !SELENIUM_REMOTE_DRIVER_ENABLED) {
 
 				System.setProperty(
 					"webdriver.ie.driver",
-					SELENIUM_EXECUTABLE_DIR_NAME + "\\IEDriverServer.exe");
+					SELENIUM_EXECUTABLE_DIR_NAME +
+						SELENIUM_IE_DRIVER_EXECUTABLE);
 
-				_selenium = new InternetExplorerWebDriverImpl(
-					projectDirName, portalURL);
+				_selenium = new InternetExplorerWebDriverImpl(portalURL);
 			}
-			else if (BROWSER_TYPE.equals("*safari")) {
-				_selenium = new SafariWebDriverImpl(projectDirName, portalURL);
+			else if (BROWSER_TYPE.equals("internetexplorer") &&
+					 SELENIUM_REMOTE_DRIVER_ENABLED) {
+
+				_selenium = new InternetExplorerRemoteWebDriverImpl(portalURL);
+			}
+			else if (BROWSER_TYPE.equals("safari")) {
+				_selenium = new SafariWebDriverImpl(portalURL);
 			}
 			else {
 				throw new RuntimeException(

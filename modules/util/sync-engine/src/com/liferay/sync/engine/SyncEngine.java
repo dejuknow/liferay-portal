@@ -16,7 +16,6 @@ package com.liferay.sync.engine;
 
 import com.j256.ormlite.support.ConnectionSource;
 
-import com.liferay.sync.engine.documentlibrary.event.GetSyncDLObjectUpdateEvent;
 import com.liferay.sync.engine.documentlibrary.util.BatchDownloadEvent;
 import com.liferay.sync.engine.documentlibrary.util.BatchEventManager;
 import com.liferay.sync.engine.documentlibrary.util.FileEventUtil;
@@ -60,8 +59,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-
-import org.apache.commons.io.FileUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -200,6 +197,10 @@ public class SyncEngine {
 		List<SyncSite> syncSites = SyncSiteService.findSyncSites(syncAccountId);
 
 		for (SyncSite syncSite : syncSites) {
+			syncSite.setState(SyncSite.STATE_SYNCED);
+
+			SyncSiteService.update(syncSite);
+
 			if (!syncSite.isActive() || (syncSite.getRemoteSyncTime() == -1)) {
 				continue;
 			}
@@ -221,13 +222,6 @@ public class SyncEngine {
 		}
 
 		SyncWatchEventService.deleteSyncWatchEvents(syncAccountId);
-
-		Path dataFilePath = FileUtil.getFilePath(
-			syncAccount.getFilePathName(), ".data");
-
-		if (Files.exists(dataFilePath)) {
-			FileUtils.cleanDirectory(dataFilePath.toFile());
-		}
 
 		if (!ConnectionRetryUtil.retryInProgress(syncAccountId)) {
 			ServerEventUtil.synchronizeSyncSites(syncAccountId);
@@ -354,17 +348,13 @@ public class SyncEngine {
 					SyncSite syncSite = SyncSiteService.fetchSyncSite(
 						syncSiteId);
 
-					Map<String, Object> parameters = new HashMap<>();
+					if (syncSite.getState() == SyncSite.STATE_IN_PROGRESS) {
+						continue;
+					}
 
-					parameters.put("companyId", syncSite.getCompanyId());
-					parameters.put("repositoryId", syncSite.getGroupId());
-					parameters.put("syncSite", syncSite);
-
-					GetSyncDLObjectUpdateEvent getSyncDLObjectUpdateEvent =
-						new GetSyncDLObjectUpdateEvent(
-							syncAccount.getSyncAccountId(), parameters);
-
-					getSyncDLObjectUpdateEvent.run();
+					FileEventUtil.getUpdates(
+						syncSite.getGroupId(), syncAccount.getSyncAccountId(),
+						syncSite);
 				}
 
 				BatchDownloadEvent batchDownloadEvent =

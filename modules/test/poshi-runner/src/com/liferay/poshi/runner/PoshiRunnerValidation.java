@@ -37,6 +37,14 @@ import org.dom4j.Element;
  */
 public class PoshiRunnerValidation {
 
+	public static void clearExceptions() {
+		_exceptions.clear();
+	}
+
+	public static Set<Exception> getExceptions() {
+		return _exceptions;
+	}
+
 	public static void main(String[] args) throws Exception {
 		PoshiRunnerContext.readFiles();
 
@@ -44,11 +52,9 @@ public class PoshiRunnerValidation {
 	}
 
 	public static void validate() throws Exception {
-		String[] filePathsArray = PoshiRunnerContext.getFilePathsArray();
+		List<String> filePaths = PoshiRunnerContext.getFilePathsList();
 
-		for (String filePath : filePathsArray) {
-			filePath = _TEST_BASE_DIR_NAME + "/" + filePath;
-
+		for (String filePath : filePaths) {
 			if (OSDetector.isWindows()) {
 				filePath = filePath.replace("/", "\\");
 			}
@@ -128,7 +134,7 @@ public class PoshiRunnerValidation {
 			"description", "echo", "execute", "fail", "for", "if", "property",
 			"take-screenshot", "task", "var", "while");
 
-		if (filePath.endsWith(".function")) {
+		if (Validator.isNotNull(filePath) && filePath.endsWith(".function")) {
 			possibleElementNames = Arrays.asList("execute", "if");
 		}
 
@@ -422,11 +428,16 @@ public class PoshiRunnerValidation {
 			multiplePrimaryAttributeNames = Arrays.asList(
 				"macro-desktop", "macro-mobile");
 
-			primaryAttributeNames = Arrays.asList("function", "macro");
+			primaryAttributeNames = Arrays.asList(
+				"function", "macro", "macro-desktop", "macro-mobile");
 		}
 		else if (filePath.endsWith(".testcase")) {
+			multiplePrimaryAttributeNames = Arrays.asList(
+				"macro-desktop", "macro-mobile");
+
 			primaryAttributeNames = Arrays.asList(
-				"function", "macro", "test-case");
+				"function", "macro", "macro-desktop", "macro-mobile",
+				"test-case");
 		}
 
 		String primaryAttributeName = getPrimaryAttributeName(

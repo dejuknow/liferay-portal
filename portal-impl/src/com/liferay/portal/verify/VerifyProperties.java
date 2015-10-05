@@ -99,7 +99,9 @@ public class VerifyProperties extends VerifyProcess {
 
 		// Document library
 
-		StoreFactory.checkProperties();
+		StoreFactory storeFactory = StoreFactory.getInstance();
+
+		storeFactory.checkProperties();
 
 		// LDAP
 
@@ -370,11 +372,11 @@ public class VerifyProperties extends VerifyProcess {
 			"com.liferay.asset.publisher.web"
 		},
 		new String[] {
-			"asset.publisher.email.from.name", "email.from.name",
+			"asset.publisher.email.from.address", "email.from.address",
 			"com.liferay.asset.publisher.web"
 		},
 		new String[] {
-			"asset.publisher.email.from.address", "email.from.address",
+			"asset.publisher.email.from.name", "email.from.name",
 			"com.liferay.asset.publisher.web"
 		},
 		new String[] {
@@ -657,6 +659,94 @@ public class VerifyProperties extends VerifyProcess {
 			"com.liferay.currency.converter.web"
 		},
 
+		// Document Library
+
+		new String[] {
+			"dl.display.templates.config", "display.templates.config",
+			"com.liferay.document.library.web"
+		},
+		new String[] {
+			"dl.repository.cmis.delete.depth", "delete.depth",
+			"com.liferay.document.library.repository.cmis"
+		},
+		new String[] {
+			"dl.store.advanced.file.system.root.dir", "root.dir",
+			"com.liferay.portal.store.filesystem"
+		},
+		new String[] {
+			"dl.store.cmis.credentials.username", "credentials.username",
+			"com.liferay.portal.store.cmis"
+		},
+		new String[] {
+			"dl.store.cmis.credentials.password", "credentials.password",
+			"com.liferay.portal.store.cmis"
+		},
+		new String[] {
+			"dl.store.cmis.repository.url", "repository.url",
+			"com.liferay.portal.store.cmis"
+		},
+		new String[] {
+			"dl.store.cmis.system.root.dir", "system.root.dir",
+			"com.liferay.portal.store.cmis"
+		},
+		new String[] {
+			"dl.store.file.system.root.dir", "root.dir",
+			"com.liferay.portal.store.filesystem"
+		},
+		new String[] {
+			"dl.store.jcr.fetch.delay", "fetch.delay",
+			"com.liferay.portal.store.jcr"
+		},
+		new String[] {
+			"dl.store.jcr.fetch.max.failures", "fetch.max.failures",
+			"com.liferay.portal.store.jcr"
+		},
+		new String[] {
+			"dl.store.jcr.move.version.labels", "move.version.labels",
+			"com.liferay.portal.store.jcr"
+		},
+		new String[] {
+			"dl.store.s3.access.key", "access.key",
+			"com.liferay.portal.store.s3"
+		},
+		new String[] {
+			"dl.store.s3.bucket.name", "bucket.name",
+			"com.liferay.portal.store.s3"
+		},
+		new String[] {
+			"dl.store.s3.jets3t[httpclient.max-connections]",
+			"http.client.max.connections", "com.liferay.portal.store.s3"
+		},
+		new String[] {
+			"dl.store.s3.jets3t[s3service.default-bucket-location]",
+			"s3service.default.bucket.location", "com.liferay.portal.store.s3"
+		},
+		new String[] {
+			"dl.store.s3.jets3t[s3service.default-storage-class]",
+			"s3service.default.storage.class", "com.liferay.portal.store.s3"
+		},
+		new String[] {
+			"dl.store.s3.jets3t[s3service.s3-endpoint]",
+			"s3service.s3.endpoint", "com.liferay.portal.store.s3"
+		},
+		new String[] {
+			"dl.store.s3.secret.key", "secret.key",
+			"com.liferay.portal.store.s3"
+		},
+		new String[] {
+			"dl.store.s3.temp.dir.clean.up.expunge",
+			"temp.dir.clean.up.expunge", "com.liferay.portal.store.s3"
+		},
+		new String[] {
+			"dl.store.s3.temp.dir.clean.up.frequency",
+			"temp.dir.clean.up.frequency", "com.liferay.portal.store.s3"
+		},
+		new String[] {
+			"dl.temporary.file.entries.check.interval",
+			"temporary.file.entries.check.interval",
+			"com.liferay.document.library.web"
+		},
+
 		// Dynamic Data Lists
 
 		new String[] {
@@ -668,6 +758,39 @@ public class VerifyProperties extends VerifyProcess {
 			"dynamic.data.lists.storage.type",
 			"dynamic.data.lists.storage.type",
 			"com.liferay.dynamic.data.lists.web"
+		},
+
+		// Dynamic Data Mapping
+
+		new String[] {
+			"dynamic.data.mapping.image.extensions",
+			"dynamic.data.mapping.image.extensions",
+			"com.liferay.dynamic.data.mapping.service"
+		},
+		new String[] {
+			"dynamic.data.mapping.image.small.max.size",
+			"dynamic.data.mapping.image.small.max.size",
+			"com.liferay.dynamic.data.mapping.service"
+		},
+		new String[] {
+			"dynamic.data.mapping.structure.force.autogenerate.key",
+			"dynamic.data.mapping.structure.force.autogenerate.key",
+			"com.liferay.dynamic.data.mapping.web"
+		},
+		new String[] {
+			"dynamic.data.mapping.template.force.autogenerate.key",
+			"dynamic.data.mapping.template.force.autogenerate.key",
+			"com.liferay.dynamic.data.mapping.web"
+		},
+		new String[] {
+			"dynamic.data.mapping.template.language.default",
+			"dynamic.data.mapping.template.language.default",
+			"com.liferay.dynamic.data.mapping.web"
+		},
+		new String[] {
+			"dynamic.data.mapping.template.language.content",
+			"dynamic.data.mapping.template.language.content",
+			"com.liferay.dynamic.data.mapping.web"
 		},
 
 		// Facebook Connect
@@ -757,6 +880,44 @@ public class VerifyProperties extends VerifyProcess {
 			"com.liferay.iframe.web"
 		},
 
+		// JCR
+
+		new String[] {
+			"jcr.initialize.on.startup", "initialize.on.startup",
+			"com.liferay.portal.store.jcr"
+		},
+		new String[] {
+			"jcr.jackrabbit.config.file.path", "jackrabbit.config.file.path",
+			"com.liferay.portal.store.jcr"
+		},
+		new String[] {
+			"jcr.jackrabbit.credentials.password",
+			"jackrabbit.credentials.password", "com.liferay.portal.store.jcr"
+		},
+		new String[] {
+			"jcr.jackrabbit.credentials.username",
+			"jackrabbit.credentials.username", "com.liferay.portal.store.jcr"
+		},
+		new String[] {
+			"jcr.jackrabbit.repository.home", "repository.home",
+			"com.liferay.portal.store.jcr"
+		},
+		new String[] {
+			"jcr.jackrabbit.repository.root", "repository.root",
+			"com.liferay.portal.store.jcr"
+		},
+		new String[] {
+			"jcr.node.documentlibrary", "node.documentlibrary",
+			"com.liferay.portal.store.jcr"
+		},
+		new String[] {
+			"jcr.workspace.name", "workspace.name",
+			"com.liferay.portal.store.jcr"
+		},
+		new String[] {
+			"jcr.wrap.session", "wrap.session", "com.liferay.portal.store.jcr"
+		},
+
 		// Journal
 
 		new String[] {
@@ -837,11 +998,11 @@ public class VerifyProperties extends VerifyProcess {
 			"journal.display.views", "display.views", "com.liferay.journal.web"
 		},
 		new String[] {
-			"journal.email.from.name", "email.from.name",
+			"journal.email.from.address", "email.from.address",
 			"com.liferay.journal.service"
 		},
 		new String[] {
-			"journal.email.from.address", "email.from.address",
+			"journal.email.from.name", "email.from.name",
 			"com.liferay.journal.service"
 		},
 		new String[] {
@@ -1112,6 +1273,10 @@ public class VerifyProperties extends VerifyProcess {
 			"ldap.import.user.password.enabled", "import.user.password.enabled",
 			"com.liferay.portal.ldap"
 		},
+		new String[] {
+			"ldap.import.user.sync.strategy", "import.user.sync.strategy",
+			"com.liferay.portal.ldap"
+		},
 		new String[] {"ldap.page.size", "page.size", "com.liferay.portal.ldap"},
 		new String[] {
 			"ldap.password.policy.enabled", "password.policy.enabled",
@@ -1166,6 +1331,13 @@ public class VerifyProperties extends VerifyProcess {
 			"com.liferay.portal.search.lucene"
 		},
 
+		// Message Boards
+
+		new String[] {
+			"message.boards.expire.ban.job.interval", "expire.ban.job.interval",
+			"com.liferay.message.boards.web"
+		},
+
 		// Monitoring
 
 		new String[] {
@@ -1196,11 +1368,7 @@ public class VerifyProperties extends VerifyProcess {
 		// Navigation
 
 		new String[] {
-			"navigation.display.style", "display.style",
-			"com.liferay.site.navigation.menu.web"
-		},
-		new String[] {
-			"navigation.display.style.default", "display.style.default",
+			"navigation.display.style.default", "ddm.template.key.default",
 			"com.liferay.site.navigation.menu.web"
 		},
 		new String[] {
@@ -1362,11 +1530,118 @@ public class VerifyProperties extends VerifyProcess {
 			"com.liferay.rss.web"
 		},
 
+		// Shopping
+
+		new String[] {
+			"shopping.cart.min.qty.multiple", "cart.min.qty.multiple",
+			"com.liferay.shopping.service"
+		},
+		new String[] {
+			"shopping.category.forward.to.cart", "category.forward.to.cart",
+			"com.liferay.shopping.service"
+		},
+		new String[] {
+			"shopping.category.show.special.items",
+			"category.show.special.items", "com.liferay.shopping.service"
+		},
+		new String[] {
+			"shopping.credit.card.types", "credit.card.types",
+			"com.liferay.shopping.service"
+		},
+		new String[] {
+			"shopping.currency.id", "currency.id",
+			"com.liferay.shopping.service"
+		},
+		new String[] {
+			"shopping.email.from.address", "email.from.address",
+			"com.liferay.shopping.service"
+		},
+		new String[] {
+			"shopping.email.from.name", "email.from.name",
+			"com.liferay.shopping.service"
+		},
+		new String[] {
+			"shopping.email.order.confirmation.enabled",
+			"email.order.confirmation.enabled", "com.liferay.shopping.service"
+		},
+		new String[] {
+			"shopping.email.order.confirmation.subject",
+			"email.order.confirmation.subject", "com.liferay.shopping.service"
+		},
+		new String[] {
+			"shopping.email.order.confirmation.body",
+			"email.order.confirmation.body", "com.liferay.shopping.service"
+		},
+		new String[] {
+			"shopping.email.order.shipping.enabled",
+			"email.order.shipping.enabled", "com.liferay.shopping.service"
+		},
+		new String[] {
+			"shopping.email.order.shipping.subject",
+			"email.order.shipping.subject", "com.liferay.shopping.service"
+		},
+		new String[] {
+			"shopping.email.order.shipping.body", "email.order.shipping.body",
+			"com.liferay.shopping.service"
+		},
+		new String[] {
+			"shopping.image.extensions", "image.extensions",
+			"com.liferay.shopping.service"
+		},
+		new String[] {
+			"shopping.image.large.max.size", "image.large.max.size",
+			"com.liferay.shopping.service"
+		},
+		new String[] {
+			"shopping.image.medium.max.size", "image.medium.max.size",
+			"com.liferay.shopping.service"
+		},
+		new String[] {
+			"shopping.image.small.max.size", "image.small.max.size",
+			"com.liferay.shopping.service"
+		},
+		new String[] {
+			"shopping.insurance", "insurance", "com.liferay.shopping.service"
+		},
+		new String[] {
+			"shopping.insurance.formula", "insurance.formula",
+			"com.liferay.shopping.service"
+		},
+		new String[] {
+			"shopping.item.show.availability", "item.show.availability",
+			"com.liferay.shopping.service"
+		},
+		new String[] {
+			"shopping.min.order", "min.order", "com.liferay.shopping.service"
+		},
+		new String[] {
+			"shopping.order.comments.enabled", "order.comments.enabled",
+			"com.liferay.shopping.service"
+		},
+		new String[] {
+			"shopping.paypal.email.address", "paypal.email.address",
+			"com.liferay.shopping.service"
+		},
+		new String[] {
+			"shopping.shipping", "shipping", "com.liferay.shopping.service"
+		},
+		new String[] {
+			"shopping.shipping.formula", "shipping.formula",
+			"com.liferay.shopping.service"
+		},
+		new String[] {
+			"shopping.tax.rate", "tax.rate", "com.liferay.shopping.service"
+		},
+
 		// Scripting
 
 		new String[] {
 			"scripting.forbidden.classes", "forbidden.classes",
 			"com.liferay.portal.scripting.javascript"
+		},
+		new String[] {
+			"scripting.jruby.load.paths", "load.paths",
+			"com.liferay.portal.scripting.ruby"
 		},
 
 		// Search
@@ -1394,6 +1669,25 @@ public class VerifyProperties extends VerifyProcess {
 			"staging.draft.export.import.configuration.clean.up.count",
 			"draft.export.import.configuration.clean.up.count",
 			"com.liferay.exportimport.web"
+		},
+
+		// Social Activity
+
+		new String[] {
+			"social.activity.contribution.increments",
+			"contribution.increments", "com.liferay.social.activity"
+		},
+		new String[] {
+			"social.activity.contribution.limit.values",
+			"contribution.limit.values", "com.liferay.social.activity"
+		},
+		new String[] {
+			"social.activity.participation.increments",
+			"participation.increments", "com.liferay.social.activity"
+		},
+		new String[] {
+			"social.activity.participation.limit.values",
+			"participation.limit.values", "com.liferay.social.activity"
 		},
 
 		// Tags Compiler
@@ -1495,7 +1789,7 @@ public class VerifyProperties extends VerifyProcess {
 		"asset.publisher.filter.unlistable.entries",
 		"asset.tag.permissions.enabled", "asset.tag.properties.default",
 		"asset.tag.properties.enabled", "auth.max.failures.limit",
-		"breadcrumb.display.style.options",
+		"blogs.image.small.max.size", "breadcrumb.display.style.options",
 		"buffered.increment.parallel.queue.size",
 		"buffered.increment.serial.queue.size", "cas.validate.url",
 		"cluster.executor.heartbeat.interval",
@@ -1508,8 +1802,9 @@ public class VerifyProperties extends VerifyProcess {
 		"commons.pool.enabled", "company.settings.form.configuration",
 		"company.settings.form.identification",
 		"company.settings.form.miscellaneous", "company.settings.form.social",
-		"convert.processes", "discussion.thread.view",
-		"dl.file.entry.read.count.enabled",
+		"control.panel.home.portlet.id", "convert.processes",
+		"discussion.thread.view", "dl.file.entry.read.count.enabled",
+		"dockbar.administrative.links.show.in.pop.up",
 		"dynamic.data.lists.record.set.force.autogenerate.key",
 		"dynamic.data.lists.template.language.parser[ftl]",
 		"dynamic.data.lists.template.language.parser[vm]",
@@ -1586,7 +1881,9 @@ public class VerifyProperties extends VerifyProcess {
 		"organizations.form.add.miscellaneous",
 		"organizations.form.update.identification",
 		"organizations.form.update.main",
-		"organizations.form.update.miscellaneous", "portal.ctx",
+		"organizations.form.update.miscellaneous",
+		"portal.cache.manager.type.multi.vm",
+		"portal.cache.manager.type.single.vm", "portal.ctx",
 		"portal.security.manager.enable", "permissions.list.filter",
 		"permissions.thread.local.cache.max.size",
 		"permissions.user.check.algorithm", "persistence.provider",
@@ -1604,7 +1901,8 @@ public class VerifyProperties extends VerifyProcess {
 		"users.form.add.miscellaneous", "users.form.my.account.identification",
 		"users.form.my.account.main", "users.form.my.account.miscellaneous",
 		"users.form.update.identification", "users.form.update.main",
-		"users.form.update.miscellaneous", "webdav.storage.class",
+		"users.form.update.miscellaneous", "vaadin.resources.path",
+		"vaadin.theme", "vaadin.widgetset", "webdav.storage.class",
 		"webdav.storage.show.edit.url", "webdav.storage.show.view.url",
 		"webdav.storage.tokens", "wiki.email.page.added.signature",
 		"wiki.email.page.updated.signature", "xss.allow"

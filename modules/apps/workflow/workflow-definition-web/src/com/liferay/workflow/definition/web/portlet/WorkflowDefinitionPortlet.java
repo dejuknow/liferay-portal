@@ -47,8 +47,6 @@ import org.osgi.service.component.annotations.Component;
 @Component(
 	immediate = true,
 	property = {
-		"com.liferay.portlet.control-panel-entry-category=configuration",
-		"com.liferay.portlet.control-panel-entry-weight=4.0",
 		"com.liferay.portlet.css-class-wrapper=portlet-workflow-definitions",
 		"com.liferay.portlet.display-category=category.hidden",
 		"com.liferay.portlet.header-portlet-css=/css/main.css",
@@ -77,7 +75,7 @@ public class WorkflowDefinitionPortlet extends MVCPortlet {
 		throws IOException, PortletException {
 
 		try {
-			String path = getPath(renderRequest);
+			String path = getPath(renderRequest, renderResponse);
 
 			if (Validator.equals(path, "/edit_workflow_definition.jsp")) {
 				setWorkflowDefinitionRenderRequestAttribute(renderRequest);

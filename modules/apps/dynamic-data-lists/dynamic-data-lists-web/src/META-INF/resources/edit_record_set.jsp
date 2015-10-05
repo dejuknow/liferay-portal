@@ -44,13 +44,12 @@ if (ddmStructureId > 0) {
 	catch (NoSuchStructureException nsse) {
 	}
 }
-%>
 
-<liferay-ui:header
-	backURL="<%= redirect %>"
-	localizeTitle="<%= (recordSet == null) %>"
-	title='<%= (recordSet == null) ? "new-list" : recordSet.getName(locale) %>'
-/>
+portletDisplay.setShowBackIcon(true);
+portletDisplay.setURLBack(redirect);
+
+renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-list") : recordSet.getName(locale));
+%>
 
 <portlet:actionURL name="addRecordSet" var="addRecordSetURL">
 	<portlet:param name="mvcPath" value="/edit_record_set.jsp" />
@@ -60,7 +59,7 @@ if (ddmStructureId > 0) {
 	<portlet:param name="mvcPath" value="/edit_record_set.jsp" />
 </portlet:actionURL>
 
-<aui:form action="<%= (recordSet == null) ? addRecordSetURL : updateRecordSetURL %>" method="post" name="fm" onSubmit='<%= "event.preventDefault(); " + renderResponse.getNamespace() + "saveRecordSet();" %>'>
+<aui:form action="<%= (recordSet == null) ? addRecordSetURL : updateRecordSetURL %>" cssClass="container-fluid-1280" method="post" name="fm" onSubmit='<%= "event.preventDefault(); " + renderResponse.getNamespace() + "saveRecordSet();" %>'>
 	<aui:input name="redirect" type="hidden" value="<%= redirect %>" />
 	<aui:input name="portletResource" type="hidden" value="<%= portletResource %>" />
 	<aui:input name="groupId" type="hidden" value="<%= groupId %>" />
@@ -116,7 +115,7 @@ if (ddmStructureId > 0) {
 				<aui:option><%= LanguageUtil.get(request, "no-workflow") %></aui:option>
 
 				<%
-				List<WorkflowDefinition> workflowDefinitions = WorkflowDefinitionManagerUtil.getActiveWorkflowDefinitions(company.getCompanyId(), 0, 100, null);
+				List<WorkflowDefinition> workflowDefinitions = WorkflowDefinitionManagerUtil.getActiveWorkflowDefinitions(company.getCompanyId(), QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
 
 				for (WorkflowDefinition workflowDefinition : workflowDefinitions) {
 					boolean selected = false;
@@ -155,7 +154,7 @@ if (ddmStructureId > 0) {
 	function <portlet:namespace />openDDMStructureSelector() {
 		Liferay.Util.openDDMPortlet(
 			{
-				basePortletURL: '<%= PortletURLFactoryUtil.create(request, PortletKeys.DYNAMIC_DATA_MAPPING, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>',
+				basePortletURL: '<%= PortletURLFactoryUtil.create(request, PortletProviderUtil.getPortletId(DDMStructure.class.getName(), PortletProvider.Action.VIEW), themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>',
 				classPK: <%= ddmStructureId %>,
 				dialog: {
 					destroyOnHide: true
@@ -169,7 +168,7 @@ if (ddmStructureId > 0) {
 				%>
 
 				refererPortletName: '<%= portlet.getPortletName() %>',
-				refererWebDAVToken: '<%= portlet.getWebDAVStorageToken() %>',
+				refererWebDAVToken: '<%= WebDAVUtil.getStorageToken(portlet) %>',
 				showAncestorScopes: true,
 				title: '<%= UnicodeLanguageUtil.get(request, "data-definitions") %>'
 			},

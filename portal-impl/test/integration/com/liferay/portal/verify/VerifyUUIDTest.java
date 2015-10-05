@@ -51,21 +51,43 @@ public class VerifyUUIDTest extends BaseVerifyProcessTestCase {
 	@ExpectedLogs(
 		expectedLogs = {
 			@ExpectedLog(
-				dbType = DB.TYPE_MYSQL, expectedLog =
+				dbType = DB.TYPE_DB2,
+				expectedLog = "Unable to process runnable:",
+				expectedType = ExpectedType.PREFIX
+			),
+			@ExpectedLog(
+				dbType = DB.TYPE_HYPERSONIC,
+				expectedLog =
+					"Unable to process runnable: user lacks privilege or " +
+						"object not found:",
+				expectedType = ExpectedType.PREFIX
+			),
+			@ExpectedLog(
+				dbType = DB.TYPE_MYSQL,
+				expectedLog =
 					"Unable to process runnable: Unknown column 'Unknown' " +
 						"in 'field list'",
 				expectedType = ExpectedType.EXACT
 			),
 			@ExpectedLog(
-				dbType = DB.TYPE_ORACLE, expectedLog =
+				dbType = DB.TYPE_ORACLE,
+				expectedLog =
 					"Unable to process runnable: ORA-00904: \"UNKNOWN\":" +
 						" invalid identifier",
 				expectedType = ExpectedType.PREFIX
 			),
 			@ExpectedLog(
-				dbType = DB.TYPE_POSTGRESQL, expectedLog =
+				dbType = DB.TYPE_POSTGRESQL,
+				expectedLog =
 					"Unable to process runnable: ERROR: column \"unknown\" " +
 						"does not exist",
+				expectedType = ExpectedType.PREFIX
+			),
+			@ExpectedLog(
+				dbType = DB.TYPE_SYBASE,
+				expectedLog =
+					"Unable to process runnable: Invalid column name " +
+						"'Unknown'.",
 				expectedType = ExpectedType.PREFIX
 			)
 		},
@@ -92,20 +114,40 @@ public class VerifyUUIDTest extends BaseVerifyProcessTestCase {
 	@ExpectedLogs(
 		expectedLogs = {
 			@ExpectedLog(
+				dbType = DB.TYPE_DB2,
+				expectedLog = "Unable to process runnable:",
+				expectedType = ExpectedType.PREFIX
+			),
+			@ExpectedLog(
+				dbType = DB.TYPE_HYPERSONIC,
+				expectedLog =
+					"Unable to process runnable: user lacks privilege or " +
+						"object not found:",
+				expectedType = ExpectedType.PREFIX
+			),
+			@ExpectedLog(
 				dbType = DB.TYPE_MYSQL,
 				expectedLog = "Unable to process runnable: Table ",
 				expectedType = ExpectedType.PREFIX
 			),
 			@ExpectedLog(
-				dbType = DB.TYPE_ORACLE, expectedLog =
+				dbType = DB.TYPE_ORACLE,
+				expectedLog =
 					"Unable to process runnable: ORA-00942: table or view" +
 						" does not exist",
 				expectedType = ExpectedType.PREFIX
 			),
 			@ExpectedLog(
-				dbType = DB.TYPE_POSTGRESQL, expectedLog =
+				dbType = DB.TYPE_POSTGRESQL,
+				expectedLog =
 					"Unable to process runnable: ERROR: relation " +
 						"\"unknown\" does not exist",
+				expectedType = ExpectedType.PREFIX
+			),
+			@ExpectedLog(
+				dbType = DB.TYPE_SYBASE,
+				expectedLog =
+					"Unable to process runnable: Unknown not found.",
 				expectedType = ExpectedType.PREFIX
 			)
 		},
@@ -143,20 +185,41 @@ public class VerifyUUIDTest extends BaseVerifyProcessTestCase {
 	@ExpectedLogs(
 		expectedLogs = {
 			@ExpectedLog(
-				dbType = DB.TYPE_MYSQL, expectedLog =
-					"Unable to process runnable: Table ",
+				dbType = DB.TYPE_DB2,
+				expectedLog =
+					"Unable to process runnable:",
 				expectedType = ExpectedType.PREFIX
 			),
 			@ExpectedLog(
-				dbType = DB.TYPE_ORACLE, expectedLog =
+				dbType = DB.TYPE_HYPERSONIC,
+				expectedLog =
+					"Unable to process runnable: user lacks privilege or " +
+						"object not found:",
+				expectedType = ExpectedType.PREFIX
+			),
+			@ExpectedLog(
+				dbType = DB.TYPE_MYSQL,
+				expectedLog = "Unable to process runnable: Table ",
+				expectedType = ExpectedType.PREFIX
+			),
+			@ExpectedLog(
+				dbType = DB.TYPE_ORACLE,
+				expectedLog =
 					"Unable to process runnable: ORA-00942: table or view" +
 						" does not exist",
 				expectedType = ExpectedType.PREFIX
 			),
 			@ExpectedLog(
-				dbType = DB.TYPE_POSTGRESQL, expectedLog =
+				dbType = DB.TYPE_POSTGRESQL,
+				expectedLog =
 					"Unable to process runnable: ERROR: relation \"unknown\" " +
 						"does not exist",
+				expectedType = ExpectedType.PREFIX
+			),
+			@ExpectedLog(
+				dbType = DB.TYPE_SYBASE,
+				expectedLog =
+					"Unable to process runnable: Unknown not found.",
 				expectedType = ExpectedType.PREFIX
 			)
 		},

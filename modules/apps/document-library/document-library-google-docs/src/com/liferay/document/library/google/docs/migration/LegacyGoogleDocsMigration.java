@@ -17,6 +17,8 @@ package com.liferay.document.library.google.docs.migration;
 import com.liferay.document.library.google.docs.util.GoogleDocsConstants;
 import com.liferay.document.library.google.docs.util.GoogleDocsDLFileEntryTypeHelper;
 import com.liferay.document.library.google.docs.util.GoogleDocsMetadataHelper;
+import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
+import com.liferay.dynamic.data.mapping.storage.StorageEngine;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
@@ -28,9 +30,6 @@ import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalService;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryMetadataLocalService;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryTypeLocalService;
 import com.liferay.portlet.dynamicdatamapping.DDMStructure;
-import com.liferay.portlet.dynamicdatamapping.DDMStructureManagerUtil;
-import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalService;
-import com.liferay.portlet.dynamicdatamapping.storage.StorageEngine;
 
 /**
  * @author Iván Zaera
@@ -72,7 +71,7 @@ public class LegacyGoogleDocsMigration {
 	}
 
 	public void migrate() throws PortalException {
-		com.liferay.portlet.dynamicdatamapping.model.DDMStructure ddmStructure =
+		com.liferay.dynamic.data.mapping.model.DDMStructure ddmStructure =
 			_googleDocsDLFileEntryTypeHelper.addGoogleDocsDDMStructure();
 
 		_dlFileEntryType.setFileEntryTypeKey(
@@ -102,8 +101,13 @@ public class LegacyGoogleDocsMigration {
 		definition = definition.replaceAll(
 			"(?s)<dynamic-element[^>]*>.*?</dynamic-element>", "");
 
-		DDMStructureManagerUtil.updateStructureDefinition(
-			legacyDDMStructure.getStructureId(), definition);
+		com.liferay.dynamic.data.mapping.model.DDMStructure ddmStructure =
+			_ddmStructureLocalService.getDDMStructure(
+				legacyDDMStructure.getStructureId());
+
+		ddmStructure.setDefinition(definition);
+
+		_ddmStructureLocalService.updateDDMStructure(ddmStructure);
 	}
 
 	protected void upgradeDLFileEntries() throws PortalException {

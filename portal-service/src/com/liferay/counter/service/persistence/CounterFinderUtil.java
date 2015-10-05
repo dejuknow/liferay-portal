@@ -25,10 +25,6 @@ import com.liferay.portal.kernel.util.ReferenceRegistry;
  */
 @ProviderType
 public class CounterFinderUtil {
-	public static void afterPropertiesSet() {
-		getFinder().afterPropertiesSet();
-	}
-
 	public static java.util.List<java.lang.String> getNames() {
 		return getFinder().getNames();
 	}

@@ -19,10 +19,13 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.JavaConstants;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Portlet;
 import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.service.PortletLocalServiceUtil;
+import com.liferay.portal.theme.ThemeDisplay;
+import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.ControlPanelEntry;
 import com.liferay.portlet.PortletConfigFactoryUtil;
 
@@ -30,6 +33,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javax.portlet.PortletConfig;
+import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
 
 import javax.servlet.http.HttpServletRequest;
@@ -82,9 +86,8 @@ public class PortletPanelAppAdapter implements PanelApp {
 		return key;
 	}
 
-	@Override
-	public String getParentCategoryKey() {
-		return null;
+	public Portlet getPortlet() {
+		return PortletLocalServiceUtil.getPortletById(getPortletId());
 	}
 
 	@Override
@@ -94,7 +97,12 @@ public class PortletPanelAppAdapter implements PanelApp {
 
 	@Override
 	public PortletURL getPortletURL(HttpServletRequest request) {
-		return null;
+		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
+			WebKeys.THEME_DISPLAY);
+
+		return PortalUtil.getControlPanelPortletURL(
+			request, getPortletId(), themeDisplay.getPlid(),
+			PortletRequest.RENDER_PHASE);
 	}
 
 	@Override
@@ -117,10 +125,6 @@ public class PortletPanelAppAdapter implements PanelApp {
 		catch (Exception e) {
 			throw new PortalException(e);
 		}
-	}
-
-	protected Portlet getPortlet() {
-		return PortletLocalServiceUtil.getPortletById(getPortletId());
 	}
 
 	private final String _portletId;

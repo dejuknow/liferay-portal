@@ -42,6 +42,7 @@ import com.liferay.portlet.expando.service.persistence.ExpandoTableUtil;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -58,8 +59,9 @@ import java.util.Set;
  * @generated
  */
 public class ExpandoTablePersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -383,11 +385,11 @@ public class ExpandoTablePersistenceTest {
 
 		ExpandoTable existingExpandoTable = _persistence.findByPrimaryKey(newExpandoTable.getPrimaryKey());
 
-		Assert.assertEquals(existingExpandoTable.getCompanyId(),
-			ReflectionTestUtil.invoke(existingExpandoTable,
+		Assert.assertEquals(Long.valueOf(existingExpandoTable.getCompanyId()),
+			ReflectionTestUtil.<Long>invoke(existingExpandoTable,
 				"getOriginalCompanyId", new Class<?>[0]));
-		Assert.assertEquals(existingExpandoTable.getClassNameId(),
-			ReflectionTestUtil.invoke(existingExpandoTable,
+		Assert.assertEquals(Long.valueOf(existingExpandoTable.getClassNameId()),
+			ReflectionTestUtil.<Long>invoke(existingExpandoTable,
 				"getOriginalClassNameId", new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(existingExpandoTable.getName(),
 				ReflectionTestUtil.invoke(existingExpandoTable,

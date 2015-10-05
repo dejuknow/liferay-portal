@@ -20,7 +20,6 @@ import com.liferay.poshi.runner.util.FileUtil;
 import com.liferay.poshi.runner.util.MathUtil;
 import com.liferay.poshi.runner.util.OSDetector;
 import com.liferay.poshi.runner.util.PropsValues;
-import com.liferay.poshi.runner.util.StringPool;
 import com.liferay.poshi.runner.util.StringUtil;
 
 import java.io.BufferedReader;
@@ -165,11 +164,7 @@ public class PoshiRunnerGetterUtil {
 	}
 
 	public static String getProjectDirName() {
-		File file = new File(StringPool.PERIOD);
-
-		String absolutePath = file.getAbsolutePath();
-
-		return absolutePath.substring(0, absolutePath.length() - 1);
+		return getCanonicalPath(PropsValues.PROJECT_DIR);
 	}
 
 	public static Element getRootElementFromFilePath(String filePath)
@@ -239,7 +234,7 @@ public class PoshiRunnerGetterUtil {
 					String tagName = line.substring(x + 1, y);
 
 					throw new Exception(
-						"Invaild \"" + tagName + "\" tag\n" + filePath + ":" +
+						"Invalid \"" + tagName + "\" tag\n" + filePath + ":" +
 							lineNumber);
 				}
 			}
@@ -292,6 +287,10 @@ public class PoshiRunnerGetterUtil {
 						parameterValue);
 				}
 
+				if (parameterValue.contains("\'")) {
+					parameterValue = parameterValue.replaceAll("\\\\'", "'");
+				}
+
 				params.add(parameterValue);
 			}
 
@@ -321,11 +320,19 @@ public class PoshiRunnerGetterUtil {
 						Object returnObject = method.invoke(
 							null, (Object[])integers);
 
-							return returnObject.toString();
+						if (returnObject == null) {
+							returnObject = "";
+						}
+
+						return returnObject.toString();
 					}
 					else {
 						Object returnObject = method.invoke(
 							null, new Object[] {integers});
+
+						if (returnObject == null) {
+							returnObject = "";
+						}
 
 						return returnObject.toString();
 					}
@@ -365,6 +372,10 @@ public class PoshiRunnerGetterUtil {
 				parameterClasses.toArray(new Class[parameterClasses.size()]));
 
 			Object returnObject = method.invoke(object, (Object[])parameters);
+
+			if (returnObject == null) {
+				returnObject = "";
+			}
 
 			return returnObject.toString();
 		}

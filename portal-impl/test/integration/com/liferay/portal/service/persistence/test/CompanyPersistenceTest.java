@@ -41,6 +41,7 @@ import com.liferay.portal.test.rule.PersistenceTestRule;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -57,8 +58,9 @@ import java.util.Set;
  * @generated
  */
 public class CompanyPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -213,9 +215,9 @@ public class CompanyPersistenceTest {
 
 	protected OrderByComparator<Company> getOrderByComparator() {
 		return OrderByComparatorFactoryUtil.create("Company", "mvccVersion",
-			true, "companyId", true, "accountId", true, "webId", true, "key",
-			true, "mx", true, "homeURL", true, "logoId", true, "system", true,
-			"maxUsers", true, "active", true);
+			true, "companyId", true, "accountId", true, "webId", true, "mx",
+			true, "homeURL", true, "logoId", true, "system", true, "maxUsers",
+			true, "active", true);
 	}
 
 	@Test
@@ -428,9 +430,9 @@ public class CompanyPersistenceTest {
 				ReflectionTestUtil.invoke(existingCompany, "getOriginalMx",
 					new Class<?>[0])));
 
-		Assert.assertEquals(existingCompany.getLogoId(),
-			ReflectionTestUtil.invoke(existingCompany, "getOriginalLogoId",
-				new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingCompany.getLogoId()),
+			ReflectionTestUtil.<Long>invoke(existingCompany,
+				"getOriginalLogoId", new Class<?>[0]));
 	}
 
 	protected Company addCompany() throws Exception {

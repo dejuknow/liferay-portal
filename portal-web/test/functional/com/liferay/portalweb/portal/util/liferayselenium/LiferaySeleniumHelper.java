@@ -1100,6 +1100,12 @@ public class LiferaySeleniumHelper {
 			return true;
 		}
 
+		// LPS-55160
+
+		if (line.matches(".*osgi.compendium:service=.*version=1.[0-9]+.*")) {
+			return true;
+		}
+
 		// LRQA-14442, temporary workaround until Kiyoshi Lee fixes it
 
 		if (line.contains("Framework Event Dispatcher: Equinox Container:")) {
@@ -1197,6 +1203,21 @@ public class LiferaySeleniumHelper {
 		LiferaySelenium liferaySelenium, String locator) {
 
 		return !liferaySelenium.isVisible(locator);
+	}
+
+	public static boolean isSikuliImagePresent(
+			LiferaySelenium liferaySelenium, String image)
+		throws Exception {
+
+		ScreenRegion screenRegion = new DesktopScreenRegion();
+
+		ImageTarget imageTarget = getImageTarget(liferaySelenium, image);
+
+		if (screenRegion.find(imageTarget) != null) {
+			return true;
+		}
+
+		return false;
 	}
 
 	public static boolean isTCatEnabled() {
@@ -1307,7 +1328,9 @@ public class LiferaySeleniumHelper {
 
 		ScreenRegion imageTargetScreenRegion = screenRegion.find(imageTarget);
 
-		mouse.click(imageTargetScreenRegion.getCenter());
+		if (imageTargetScreenRegion != null) {
+			mouse.click(imageTargetScreenRegion.getCenter());
+		}
 	}
 
 	public static void sikuliClickByIndex(
@@ -1326,7 +1349,9 @@ public class LiferaySeleniumHelper {
 		ScreenRegion imageTargetScreenRegion = imageTargetScreenRegions.get(
 			Integer.parseInt(index));
 
-		mouse.click(imageTargetScreenRegion.getCenter());
+		if (imageTargetScreenRegion != null) {
+			mouse.click(imageTargetScreenRegion.getCenter());
+		}
 	}
 
 	public static void sikuliDragAndDrop(

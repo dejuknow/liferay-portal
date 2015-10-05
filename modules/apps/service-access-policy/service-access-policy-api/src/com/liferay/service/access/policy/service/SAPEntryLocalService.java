@@ -60,13 +60,12 @@ public interface SAPEntryLocalService extends BaseLocalService,
 
 	public com.liferay.service.access.policy.model.SAPEntry addSAPEntry(
 		long userId, java.lang.String allowedServiceSignatures,
-		boolean defaultSAPEntry, java.lang.String name,
+		boolean defaultSAPEntry, boolean enabled, java.lang.String name,
 		java.util.Map<java.util.Locale, java.lang.String> titleMap,
 		com.liferay.portal.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException;
+		throws PortalException;
 
-	public void checkDefaultSAPEntry(long companyId)
-		throws com.liferay.portal.kernel.exception.PortalException;
+	public void checkDefaultSAPEntry(long companyId) throws PortalException;
 
 	/**
 	* Creates a new s a p entry with the primary key. Does not add the s a p entry to the database.
@@ -83,7 +82,7 @@ public interface SAPEntryLocalService extends BaseLocalService,
 	@Override
 	public com.liferay.portal.model.PersistedModel deletePersistedModel(
 		com.liferay.portal.model.PersistedModel persistedModel)
-		throws com.liferay.portal.kernel.exception.PortalException;
+		throws PortalException;
 
 	/**
 	* Deletes the s a p entry from the database. Also notifies the appropriate model listeners.
@@ -95,7 +94,7 @@ public interface SAPEntryLocalService extends BaseLocalService,
 	@com.liferay.portal.kernel.search.Indexable(type = IndexableType.DELETE)
 	public com.liferay.service.access.policy.model.SAPEntry deleteSAPEntry(
 		com.liferay.service.access.policy.model.SAPEntry sapEntry)
-		throws com.liferay.portal.kernel.exception.PortalException;
+		throws PortalException;
 
 	/**
 	* Deletes the s a p entry with the primary key from the database. Also notifies the appropriate model listeners.
@@ -106,8 +105,7 @@ public interface SAPEntryLocalService extends BaseLocalService,
 	*/
 	@com.liferay.portal.kernel.search.Indexable(type = IndexableType.DELETE)
 	public com.liferay.service.access.policy.model.SAPEntry deleteSAPEntry(
-		long sapEntryId)
-		throws com.liferay.portal.kernel.exception.PortalException;
+		long sapEntryId) throws PortalException;
 
 	public com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery();
 
@@ -211,15 +209,10 @@ public interface SAPEntryLocalService extends BaseLocalService,
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getCompanySAPEntriesCount(long companyId);
 
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery getExportActionableDynamicQuery(
-		com.liferay.portlet.exportimport.lar.PortletDataContext portletDataContext);
-
 	@Override
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public com.liferay.portal.model.PersistedModel getPersistedModel(
-		java.io.Serializable primaryKeyObj)
-		throws com.liferay.portal.kernel.exception.PortalException;
+		java.io.Serializable primaryKeyObj) throws PortalException;
 
 	/**
 	* Returns a range of all the s a p entries.
@@ -246,8 +239,7 @@ public interface SAPEntryLocalService extends BaseLocalService,
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public com.liferay.service.access.policy.model.SAPEntry getSAPEntry(
-		long companyId, java.lang.String name)
-		throws com.liferay.portal.kernel.exception.PortalException;
+		long companyId, java.lang.String name) throws PortalException;
 
 	/**
 	* Returns the s a p entry with the primary key.
@@ -258,8 +250,7 @@ public interface SAPEntryLocalService extends BaseLocalService,
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public com.liferay.service.access.policy.model.SAPEntry getSAPEntry(
-		long sapEntryId)
-		throws com.liferay.portal.kernel.exception.PortalException;
+		long sapEntryId) throws PortalException;
 
 	/**
 	* Returns the s a p entry with the matching UUID and company.
@@ -271,8 +262,7 @@ public interface SAPEntryLocalService extends BaseLocalService,
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public com.liferay.service.access.policy.model.SAPEntry getSAPEntryByUuidAndCompanyId(
-		java.lang.String uuid, long companyId)
-		throws com.liferay.portal.kernel.exception.PortalException;
+		java.lang.String uuid, long companyId) throws PortalException;
 
 	/**
 	* Sets the Spring bean ID for this bean.
@@ -293,8 +283,8 @@ public interface SAPEntryLocalService extends BaseLocalService,
 
 	public com.liferay.service.access.policy.model.SAPEntry updateSAPEntry(
 		long sapEntryId, java.lang.String allowedServiceSignatures,
-		java.lang.String name,
+		boolean enabled, java.lang.String name,
 		java.util.Map<java.util.Locale, java.lang.String> titleMap,
 		com.liferay.portal.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException;
+		throws PortalException;
 }

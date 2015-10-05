@@ -44,6 +44,7 @@ import com.liferay.portlet.documentlibrary.service.persistence.DLContentUtil;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -63,8 +64,9 @@ import java.util.Set;
  * @generated
  */
 public class DLContentPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -433,11 +435,11 @@ public class DLContentPersistenceTest {
 
 		DLContent existingDLContent = _persistence.findByPrimaryKey(newDLContent.getPrimaryKey());
 
-		Assert.assertEquals(existingDLContent.getCompanyId(),
-			ReflectionTestUtil.invoke(existingDLContent,
+		Assert.assertEquals(Long.valueOf(existingDLContent.getCompanyId()),
+			ReflectionTestUtil.<Long>invoke(existingDLContent,
 				"getOriginalCompanyId", new Class<?>[0]));
-		Assert.assertEquals(existingDLContent.getRepositoryId(),
-			ReflectionTestUtil.invoke(existingDLContent,
+		Assert.assertEquals(Long.valueOf(existingDLContent.getRepositoryId()),
+			ReflectionTestUtil.<Long>invoke(existingDLContent,
 				"getOriginalRepositoryId", new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(existingDLContent.getPath(),
 				ReflectionTestUtil.invoke(existingDLContent, "getOriginalPath",

@@ -41,6 +41,7 @@ import com.liferay.portlet.documentlibrary.service.persistence.DLFileEntryMetada
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -57,8 +58,9 @@ import java.util.Set;
  * @generated
  */
 public class DLFileEntryMetadataPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -406,11 +408,13 @@ public class DLFileEntryMetadataPersistenceTest {
 
 		DLFileEntryMetadata existingDLFileEntryMetadata = _persistence.findByPrimaryKey(newDLFileEntryMetadata.getPrimaryKey());
 
-		Assert.assertEquals(existingDLFileEntryMetadata.getDDMStructureId(),
-			ReflectionTestUtil.invoke(existingDLFileEntryMetadata,
+		Assert.assertEquals(Long.valueOf(
+				existingDLFileEntryMetadata.getDDMStructureId()),
+			ReflectionTestUtil.<Long>invoke(existingDLFileEntryMetadata,
 				"getOriginalDDMStructureId", new Class<?>[0]));
-		Assert.assertEquals(existingDLFileEntryMetadata.getFileVersionId(),
-			ReflectionTestUtil.invoke(existingDLFileEntryMetadata,
+		Assert.assertEquals(Long.valueOf(
+				existingDLFileEntryMetadata.getFileVersionId()),
+			ReflectionTestUtil.<Long>invoke(existingDLFileEntryMetadata,
 				"getOriginalFileVersionId", new Class<?>[0]));
 	}
 

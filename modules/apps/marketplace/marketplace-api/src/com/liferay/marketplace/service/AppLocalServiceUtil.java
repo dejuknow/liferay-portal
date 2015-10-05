@@ -272,13 +272,13 @@ public class AppLocalServiceUtil {
 		return getService().getBundledApps();
 	}
 
-	public static com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery getExportActionableDynamicQuery(
-		com.liferay.portlet.exportimport.lar.PortletDataContext portletDataContext) {
-		return getService().getExportActionableDynamicQuery(portletDataContext);
-	}
-
 	public static java.util.List<com.liferay.marketplace.model.App> getInstalledApps() {
 		return getService().getInstalledApps();
+	}
+
+	public static java.util.List<com.liferay.marketplace.model.App> getInstalledApps(
+		java.lang.String category) {
+		return getService().getInstalledApps(category);
 	}
 
 	public static com.liferay.portal.model.PersistedModel getPersistedModel(
@@ -324,6 +324,12 @@ public class AppLocalServiceUtil {
 	}
 
 	public static com.liferay.marketplace.model.App updateApp(long userId,
+		java.io.File file)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().updateApp(userId, file);
+	}
+
+	public static com.liferay.marketplace.model.App updateApp(long userId,
 		long remoteAppId, java.lang.String title, java.lang.String description,
 		java.lang.String category, java.lang.String iconURL,
 		java.lang.String version, java.io.File file)
@@ -331,12 +337,6 @@ public class AppLocalServiceUtil {
 		return getService()
 				   .updateApp(userId, remoteAppId, title, description,
 			category, iconURL, version, file);
-	}
-
-	public static com.liferay.marketplace.model.App updateApp(long userId,
-		long remoteAppId, java.lang.String version, java.io.File file)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().updateApp(userId, remoteAppId, version, file);
 	}
 
 	public static AppLocalService getService() {

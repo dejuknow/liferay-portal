@@ -42,6 +42,7 @@ import com.liferay.portal.test.rule.PersistenceTestRule;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -58,8 +59,9 @@ import java.util.Set;
  * @generated
  */
 public class PasswordPolicyPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -184,6 +186,8 @@ public class PasswordPolicyPersistenceTest {
 
 		newPasswordPolicy.setResetTicketMaxAge(RandomTestUtil.nextLong());
 
+		newPasswordPolicy.setLastPublishDate(RandomTestUtil.nextDate());
+
 		_passwordPolicies.add(_persistence.update(newPasswordPolicy));
 
 		PasswordPolicy existingPasswordPolicy = _persistence.findByPrimaryKey(newPasswordPolicy.getPrimaryKey());
@@ -260,6 +264,9 @@ public class PasswordPolicyPersistenceTest {
 			newPasswordPolicy.getResetFailureCount());
 		Assert.assertEquals(existingPasswordPolicy.getResetTicketMaxAge(),
 			newPasswordPolicy.getResetTicketMaxAge());
+		Assert.assertEquals(Time.getShortTimestamp(
+				existingPasswordPolicy.getLastPublishDate()),
+			Time.getShortTimestamp(newPasswordPolicy.getLastPublishDate()));
 	}
 
 	@Test
@@ -339,7 +346,7 @@ public class PasswordPolicyPersistenceTest {
 			true, "maxAge", true, "warningTime", true, "graceLimit", true,
 			"lockout", true, "maxFailure", true, "lockoutDuration", true,
 			"requireUnlock", true, "resetFailureCount", true,
-			"resetTicketMaxAge", true);
+			"resetTicketMaxAge", true, "lastPublishDate", true);
 	}
 
 	@Test
@@ -546,15 +553,16 @@ public class PasswordPolicyPersistenceTest {
 
 		PasswordPolicy existingPasswordPolicy = _persistence.findByPrimaryKey(newPasswordPolicy.getPrimaryKey());
 
-		Assert.assertEquals(existingPasswordPolicy.getCompanyId(),
-			ReflectionTestUtil.invoke(existingPasswordPolicy,
+		Assert.assertEquals(Long.valueOf(existingPasswordPolicy.getCompanyId()),
+			ReflectionTestUtil.<Long>invoke(existingPasswordPolicy,
 				"getOriginalCompanyId", new Class<?>[0]));
-		Assert.assertEquals(existingPasswordPolicy.getDefaultPolicy(),
-			ReflectionTestUtil.invoke(existingPasswordPolicy,
+		Assert.assertEquals(Boolean.valueOf(
+				existingPasswordPolicy.getDefaultPolicy()),
+			ReflectionTestUtil.<Boolean>invoke(existingPasswordPolicy,
 				"getOriginalDefaultPolicy", new Class<?>[0]));
 
-		Assert.assertEquals(existingPasswordPolicy.getCompanyId(),
-			ReflectionTestUtil.invoke(existingPasswordPolicy,
+		Assert.assertEquals(Long.valueOf(existingPasswordPolicy.getCompanyId()),
+			ReflectionTestUtil.<Long>invoke(existingPasswordPolicy,
 				"getOriginalCompanyId", new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(existingPasswordPolicy.getName(),
 				ReflectionTestUtil.invoke(existingPasswordPolicy,
@@ -633,6 +641,8 @@ public class PasswordPolicyPersistenceTest {
 		passwordPolicy.setResetFailureCount(RandomTestUtil.nextLong());
 
 		passwordPolicy.setResetTicketMaxAge(RandomTestUtil.nextLong());
+
+		passwordPolicy.setLastPublishDate(RandomTestUtil.nextDate());
 
 		_passwordPolicies.add(_persistence.update(passwordPolicy));
 

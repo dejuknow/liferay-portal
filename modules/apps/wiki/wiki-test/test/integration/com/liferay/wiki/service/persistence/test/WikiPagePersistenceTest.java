@@ -46,6 +46,7 @@ import com.liferay.wiki.service.persistence.WikiPageUtil;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -65,8 +66,9 @@ import java.util.Set;
  */
 @RunWith(Arquillian.class)
 public class WikiPagePersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -576,10 +578,10 @@ public class WikiPagePersistenceTest {
 			"pageId", true, "resourcePrimKey", true, "groupId", true,
 			"companyId", true, "userId", true, "userName", true, "createDate",
 			true, "modifiedDate", true, "nodeId", true, "title", true,
-			"version", true, "minorEdit", true, "content", true, "summary",
-			true, "format", true, "head", true, "parentTitle", true,
-			"redirectTitle", true, "lastPublishDate", true, "status", true,
-			"statusByUserId", true, "statusByUserName", true, "statusDate", true);
+			"version", true, "minorEdit", true, "summary", true, "format",
+			true, "head", true, "parentTitle", true, "redirectTitle", true,
+			"lastPublishDate", true, "status", true, "statusByUserId", true,
+			"statusByUserName", true, "statusDate", true);
 	}
 
 	@Test
@@ -787,23 +789,23 @@ public class WikiPagePersistenceTest {
 		Assert.assertTrue(Validator.equals(existingWikiPage.getUuid(),
 				ReflectionTestUtil.invoke(existingWikiPage, "getOriginalUuid",
 					new Class<?>[0])));
-		Assert.assertEquals(existingWikiPage.getGroupId(),
-			ReflectionTestUtil.invoke(existingWikiPage, "getOriginalGroupId",
-				new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingWikiPage.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingWikiPage,
+				"getOriginalGroupId", new Class<?>[0]));
 
-		Assert.assertEquals(existingWikiPage.getResourcePrimKey(),
-			ReflectionTestUtil.invoke(existingWikiPage,
+		Assert.assertEquals(Long.valueOf(existingWikiPage.getResourcePrimKey()),
+			ReflectionTestUtil.<Long>invoke(existingWikiPage,
 				"getOriginalResourcePrimKey", new Class<?>[0]));
-		Assert.assertEquals(existingWikiPage.getNodeId(),
-			ReflectionTestUtil.invoke(existingWikiPage, "getOriginalNodeId",
-				new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingWikiPage.getNodeId()),
+			ReflectionTestUtil.<Long>invoke(existingWikiPage,
+				"getOriginalNodeId", new Class<?>[0]));
 		AssertUtils.assertEquals(existingWikiPage.getVersion(),
 			ReflectionTestUtil.<Double>invoke(existingWikiPage,
 				"getOriginalVersion", new Class<?>[0]));
 
-		Assert.assertEquals(existingWikiPage.getNodeId(),
-			ReflectionTestUtil.invoke(existingWikiPage, "getOriginalNodeId",
-				new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingWikiPage.getNodeId()),
+			ReflectionTestUtil.<Long>invoke(existingWikiPage,
+				"getOriginalNodeId", new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(existingWikiPage.getTitle(),
 				ReflectionTestUtil.invoke(existingWikiPage, "getOriginalTitle",
 					new Class<?>[0])));

@@ -29,9 +29,7 @@ birthdayCalendar.set(Calendar.DATE, 1);
 birthdayCalendar.set(Calendar.YEAR, 1970);
 %>
 
-<portlet:actionURL secure="<%= PropsValues.COMPANY_SECURITY_AUTH_REQUIRES_HTTPS || request.isSecure() %>" var="createAccountURL" windowState="<%= LiferayWindowState.MAXIMIZED.toString() %>">
-	<portlet:param name="struts_action" value="/login/create_account" />
-</portlet:actionURL>
+<portlet:actionURL name="/login/create_account" secure="<%= PropsValues.COMPANY_SECURITY_AUTH_REQUIRES_HTTPS || request.isSecure() %>" var="createAccountURL" windowState="<%= LiferayWindowState.MAXIMIZED.toString() %>" />
 
 <aui:form action="<%= createAccountURL %>" method="post" name="fm">
 	<aui:input name="saveLastPath" type="hidden" value="<%= false %>" />
@@ -158,27 +156,7 @@ birthdayCalendar.set(Calendar.YEAR, 1970);
 				</c:if>
 			</aui:input>
 
-			<%
-			User selUser = null;
-			Contact selContact = null;
-
-			Locale userLocale = null;
-
-			String languageId = request.getParameter("languageId");
-
-			if (Validator.isNotNull(languageId)) {
-				userLocale = LocaleUtil.fromLanguageId(languageId);
-			}
-			else {
-				User defaultUser = company.getDefaultUser();
-
-				userLocale = LocaleUtil.fromLanguageId(defaultUser.getLanguageId());
-			}
-			%>
-
-			<%@ include file="/html/portlet/users_admin/user/details_language.jspf" %>
-
-			<%@ include file="/html/portlet/users_admin/user/details_user_name.jspf" %>
+			<liferay-ui:user-name-fields />
 		</aui:col>
 
 		<aui:col width="<%= 50 %>">
@@ -211,9 +189,7 @@ birthdayCalendar.set(Calendar.YEAR, 1970);
 			</c:if>
 
 			<c:if test="<%= PropsValues.CAPTCHA_CHECK_PORTAL_CREATE_ACCOUNT %>">
-				<portlet:resourceURL var="captchaURL">
-					<portlet:param name="struts_action" value="/login/captcha" />
-				</portlet:resourceURL>
+				<portlet:resourceURL id="/login/captcha" var="captchaURL" />
 
 				<liferay-ui:captcha url="<%= captchaURL %>" />
 			</c:if>

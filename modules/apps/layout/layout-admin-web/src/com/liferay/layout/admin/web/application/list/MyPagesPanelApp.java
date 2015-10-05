@@ -14,11 +14,16 @@
 
 package com.liferay.layout.admin.web.application.list;
 
-import com.liferay.application.list.BaseControlPanelEntryPanelApp;
 import com.liferay.application.list.PanelApp;
 import com.liferay.application.list.constants.PanelCategoryKeys;
 import com.liferay.layout.admin.web.constants.LayoutAdminPortletKeys;
-import com.liferay.portal.service.PortletLocalService;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.model.Group;
+import com.liferay.portal.model.Portlet;
+import com.liferay.portal.model.User;
+import com.liferay.portal.security.permission.PermissionChecker;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -29,28 +34,37 @@ import org.osgi.service.component.annotations.Reference;
 @Component(
 	immediate = true,
 	property = {
-		"panel.category.key=" + PanelCategoryKeys.MY_SPACE_PRODUCTIVITY_CENTER,
+		"panel.category.key=" + PanelCategoryKeys.USER_MY_ACCOUNT,
 		"service.ranking:Integer=200"
 	},
 	service = PanelApp.class
 )
-public class MyPagesPanelApp extends BaseControlPanelEntryPanelApp {
-
-	@Override
-	public String getParentCategoryKey() {
-		return PanelCategoryKeys.MY_SPACE_PRODUCTIVITY_CENTER;
-	}
+public class MyPagesPanelApp extends GroupPagesPanelApp {
 
 	@Override
 	public String getPortletId() {
 		return LayoutAdminPortletKeys.MY_PAGES;
 	}
 
-	@Reference(unbind = "-")
-	protected void setPortletLocalService(
-		PortletLocalService portletLocalService) {
+	@Override
+	public boolean hasAccessPermission(
+			PermissionChecker permissionChecker, Group group)
+		throws PortalException {
 
-		_portletLocalService = portletLocalService;
+		User user = permissionChecker.getUser();
+
+		return super.hasAccessPermission(permissionChecker, user.getGroup());
 	}
+
+	@Reference(
+		target = "(javax.portlet.name=" + LayoutAdminPortletKeys.MY_PAGES + ")",
+		unbind = "-"
+	)
+	protected final void setPortlet(Portlet portlet) {
+		super.setPortlet(portlet);
+	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		MyPagesPanelApp.class);
 
 }

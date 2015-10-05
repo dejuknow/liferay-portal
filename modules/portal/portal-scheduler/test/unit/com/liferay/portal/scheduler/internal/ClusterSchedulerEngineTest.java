@@ -30,10 +30,9 @@ import com.liferay.portal.kernel.scheduler.SchedulerEngine;
 import com.liferay.portal.kernel.scheduler.SchedulerEngineHelperUtil;
 import com.liferay.portal.kernel.scheduler.SchedulerException;
 import com.liferay.portal.kernel.scheduler.StorageType;
+import com.liferay.portal.kernel.scheduler.TimeUnit;
 import com.liferay.portal.kernel.scheduler.Trigger;
-import com.liferay.portal.kernel.scheduler.TriggerFactoryUtil;
 import com.liferay.portal.kernel.scheduler.TriggerState;
-import com.liferay.portal.kernel.scheduler.TriggerType;
 import com.liferay.portal.kernel.scheduler.messaging.SchedulerResponse;
 import com.liferay.portal.kernel.security.SecureRandomUtil;
 import com.liferay.portal.kernel.servlet.PluginContextLifecycleThreadLocal;
@@ -62,6 +61,7 @@ import java.io.Serializable;
 import java.lang.reflect.Constructor;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -866,9 +866,9 @@ public class ClusterSchedulerEngineTest {
 		Assert.assertEquals(1, schedulerResponses.size());
 		Assert.assertTrue(_memoryClusteredJobs.isEmpty());
 
-		Trigger trigger = TriggerFactoryUtil.buildTrigger(
-			TriggerType.SIMPLE, _TEST_JOB_NAME_PREFIX + "new",
-			_MEMORY_CLUSTER_TEST_GROUP_NAME, null, null, _DEFAULT_INTERVAL);
+		Trigger trigger = getTrigger(
+			_TEST_JOB_NAME_PREFIX + "new", _MEMORY_CLUSTER_TEST_GROUP_NAME,
+			_DEFAULT_INTERVAL);
 
 		_clusterSchedulerEngine.schedule(
 			trigger, StringPool.BLANK, StringPool.BLANK, new Message(),
@@ -894,9 +894,9 @@ public class ClusterSchedulerEngineTest {
 		Assert.assertEquals(1, schedulerResponses.size());
 		Assert.assertTrue(_memoryClusteredJobs.isEmpty());
 
-		trigger = TriggerFactoryUtil.buildTrigger(
-			TriggerType.SIMPLE, _TEST_JOB_NAME_PREFIX + "new",
-			_PERSISTENT_TEST_GROUP_NAME, null, null, _DEFAULT_INTERVAL);
+		trigger = getTrigger(
+			_TEST_JOB_NAME_PREFIX + "new", _PERSISTENT_TEST_GROUP_NAME,
+			_DEFAULT_INTERVAL);
 
 		_clusterSchedulerEngine.schedule(
 			trigger, StringPool.BLANK, StringPool.BLANK, new Message(),
@@ -931,9 +931,9 @@ public class ClusterSchedulerEngineTest {
 		Assert.assertTrue(schedulerResponses.isEmpty());
 		Assert.assertEquals(1, _memoryClusteredJobs.size());
 
-		Trigger trigger = TriggerFactoryUtil.buildTrigger(
-			TriggerType.SIMPLE, _TEST_JOB_NAME_PREFIX + "new",
-			_MEMORY_CLUSTER_TEST_GROUP_NAME, null, null, _DEFAULT_INTERVAL);
+		Trigger trigger = getTrigger(
+			_TEST_JOB_NAME_PREFIX + "new", _MEMORY_CLUSTER_TEST_GROUP_NAME,
+			_DEFAULT_INTERVAL);
 
 		_clusterSchedulerEngine.schedule(
 			trigger, StringPool.BLANK, StringPool.BLANK, new Message(),
@@ -1598,9 +1598,9 @@ public class ClusterSchedulerEngineTest {
 
 		Assert.assertTrue(_memoryClusteredJobs.isEmpty());
 
-		Trigger trigger = TriggerFactoryUtil.buildTrigger(
-			TriggerType.SIMPLE, _TEST_JOB_NAME_0,
-			_MEMORY_CLUSTER_TEST_GROUP_NAME, null, null, _DEFAULT_INTERVAL * 2);
+		Trigger trigger = getTrigger(
+			_TEST_JOB_NAME_0, _MEMORY_CLUSTER_TEST_GROUP_NAME,
+			_DEFAULT_INTERVAL * 2);
 
 		_clusterSchedulerEngine.update(trigger, StorageType.MEMORY_CLUSTERED);
 
@@ -1628,9 +1628,9 @@ public class ClusterSchedulerEngineTest {
 
 		Assert.assertTrue(_memoryClusteredJobs.isEmpty());
 
-		trigger = TriggerFactoryUtil.buildTrigger(
-			TriggerType.SIMPLE, _TEST_JOB_NAME_0, _PERSISTENT_TEST_GROUP_NAME,
-			null, null, _DEFAULT_INTERVAL * 2);
+		trigger = getTrigger(
+			_TEST_JOB_NAME_0, _PERSISTENT_TEST_GROUP_NAME,
+			_DEFAULT_INTERVAL * 2);
 
 		_clusterSchedulerEngine.update(trigger, StorageType.PERSISTED);
 
@@ -1671,9 +1671,9 @@ public class ClusterSchedulerEngineTest {
 
 		assertTriggerContent(schedulerResponse, _DEFAULT_INTERVAL);
 
-		Trigger trigger = TriggerFactoryUtil.buildTrigger(
-			TriggerType.SIMPLE, _TEST_JOB_NAME_0,
-			_MEMORY_CLUSTER_TEST_GROUP_NAME, null, null, _DEFAULT_INTERVAL * 2);
+		Trigger trigger = getTrigger(
+			_TEST_JOB_NAME_0, _MEMORY_CLUSTER_TEST_GROUP_NAME,
+			_DEFAULT_INTERVAL * 2);
 
 		_clusterSchedulerEngine.update(trigger, StorageType.MEMORY_CLUSTERED);
 
@@ -1689,9 +1689,8 @@ public class ClusterSchedulerEngineTest {
 
 		// Test 2, with not existed group name
 
-		trigger = TriggerFactoryUtil.buildTrigger(
-			TriggerType.SIMPLE, _TEST_JOB_NAME_0, _NOT_EXISTED_GROUP_NAME, null,
-			null, _DEFAULT_INTERVAL * 2);
+		trigger = getTrigger(
+			_TEST_JOB_NAME_0, _NOT_EXISTED_GROUP_NAME, _DEFAULT_INTERVAL * 2);
 
 		try {
 			_clusterSchedulerEngine.update(
@@ -1707,9 +1706,9 @@ public class ClusterSchedulerEngineTest {
 
 		// Test 3, with not existed job name
 
-		trigger = TriggerFactoryUtil.buildTrigger(
-			TriggerType.SIMPLE, _TEST_JOB_NAME_PREFIX, _NOT_EXISTED_GROUP_NAME,
-			null, null, _DEFAULT_INTERVAL * 2);
+		trigger = getTrigger(
+			_TEST_JOB_NAME_PREFIX, _NOT_EXISTED_GROUP_NAME,
+			_DEFAULT_INTERVAL * 2);
 
 		try {
 			_clusterSchedulerEngine.update(
@@ -1755,6 +1754,13 @@ public class ClusterSchedulerEngineTest {
 
 	}
 
+	protected static Trigger getTrigger(
+		String jobName, String groupName, int interval) {
+
+		return new MockTrigger(
+			jobName, groupName, null, null, interval, TimeUnit.SECOND);
+	}
+
 	protected void assertSuppressErrorValue(
 		SchedulerResponse schedulerResponse, Object expectedValue) {
 
@@ -1764,11 +1770,11 @@ public class ClusterSchedulerEngineTest {
 	}
 
 	protected void assertTriggerContent(
-		SchedulerResponse schedulerResponse, long expectedInterval) {
+		SchedulerResponse schedulerResponse, int expectedInterval) {
 
-		Trigger trigger = schedulerResponse.getTrigger();
+		MockTrigger mockTrigger = (MockTrigger)schedulerResponse.getTrigger();
 
-		Assert.assertEquals(expectedInterval, trigger.getTriggerContent());
+		Assert.assertEquals(expectedInterval, mockTrigger.getInterval());
 	}
 
 	protected void assertTriggerState(
@@ -1981,7 +1987,7 @@ public class ClusterSchedulerEngineTest {
 		_schedulerEngineHelperImpl.setClusterLink(_clusterLink);
 	}
 
-	private static final long _DEFAULT_INTERVAL = 20000;
+	private static final int _DEFAULT_INTERVAL = 20;
 
 	private static final String _MEMORY_CLUSTER_TEST_GROUP_NAME =
 		"memory.cluster.test.group";
@@ -2345,9 +2351,7 @@ public class ClusterSchedulerEngineTest {
 			schedulerResponse.setStorageType(storageType);
 
 			if (trigger == null) {
-				trigger = TriggerFactoryUtil.buildTrigger(
-					TriggerType.SIMPLE, jobName, groupName, null, null,
-					_DEFAULT_INTERVAL);
+				trigger = getTrigger(jobName, groupName, _DEFAULT_INTERVAL);
 			}
 
 			schedulerResponse.setTrigger(trigger);
@@ -2367,6 +2371,62 @@ public class ClusterSchedulerEngineTest {
 
 		private final Map<String, SchedulerResponse> _defaultJobs =
 			new HashMap<>();
+
+	}
+
+	private static class MockTrigger implements Trigger {
+
+		public MockTrigger(
+			String jobName, String groupName, Date startDate, Date endDate,
+			int interval, TimeUnit timeUnit) {
+
+			_jobName = jobName;
+			_groupName = groupName;
+			_startDate = startDate;
+			_endDate = endDate;
+			_interval = interval;
+			_timeUnit = timeUnit;
+		}
+
+		@Override
+		public Date getEndDate() {
+			return _endDate;
+		}
+
+		@Override
+		public String getGroupName() {
+			return _groupName;
+		}
+
+		public int getInterval() {
+			return _interval;
+		}
+
+		@Override
+		public String getJobName() {
+			return _jobName;
+		}
+
+		@Override
+		public Date getStartDate() {
+			return _startDate;
+		}
+
+		public TimeUnit getTimeUnit() {
+			return _timeUnit;
+		}
+
+		@Override
+		public Serializable getWrappedTrigger() {
+			return null;
+		}
+
+		private final Date _endDate;
+		private final String _groupName;
+		private final int _interval;
+		private final String _jobName;
+		private final Date _startDate;
+		private final TimeUnit _timeUnit;
 
 	}
 

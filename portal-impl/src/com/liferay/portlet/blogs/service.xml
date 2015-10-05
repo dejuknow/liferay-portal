@@ -39,6 +39,7 @@
 		<column name="smallImageFileEntryId" type="long" />
 		<column name="smallImageId" type="long" />
 		<column name="smallImageURL" type="String" />
+		<column name="lastPublishDate" type="Date" />
 		<column name="status" type="int" />
 		<column name="statusByUserId" type="long" />
 		<column name="statusByUserName" type="String" />
@@ -231,13 +232,14 @@
 		<reference package-path="com.liferay.portlet.blogs" entity="BlogsEntry" />
 	</entity>
 	<exceptions>
-		<exception>CoverImageName</exception>
-		<exception>CoverImageSize</exception>
 		<exception>EntryContent</exception>
+		<exception>EntryCoverImageCrop</exception>
 		<exception>EntryDescription</exception>
 		<exception>EntryDisplayDate</exception>
+		<exception>EntryImageName</exception>
+		<exception>EntryImageSize</exception>
 		<exception>EntrySmallImageName</exception>
-		<exception>EntrySmallImageSize</exception>
+		<exception>EntrySmallImageScale</exception>
 		<exception>EntryTitle</exception>
 		<exception>TrackbackValidation</exception>
 	</exceptions>

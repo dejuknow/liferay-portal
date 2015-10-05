@@ -47,14 +47,11 @@ import org.osgi.service.component.annotations.Reference;
  * @author Sergio González
  */
 @Component(
-	immediate = true,
-	property = {
-		"javax.portlet.name=" + WikiPortletKeys.WIKI,
-		"search.asset.type=com.liferay.wiki.model.WikiPage"
-	},
+	immediate = true, property = {"javax.portlet.name=" + WikiPortletKeys.WIKI},
 	service = AssetRendererFactory.class
 )
-public class WikiPageAssetRendererFactory extends BaseAssetRendererFactory {
+public class WikiPageAssetRendererFactory
+	extends BaseAssetRendererFactory<WikiPage> {
 
 	public static final String TYPE = "wiki";
 
@@ -62,10 +59,11 @@ public class WikiPageAssetRendererFactory extends BaseAssetRendererFactory {
 		setClassName(WikiPage.class.getName());
 		setLinkable(true);
 		setPortletId(WikiPortletKeys.WIKI);
+		setSearchable(true);
 	}
 
 	@Override
-	public AssetRenderer getAssetRenderer(long classPK, int type)
+	public AssetRenderer<WikiPage> getAssetRenderer(long classPK, int type)
 		throws PortalException {
 
 		WikiPage page = WikiPageLocalServiceUtil.fetchWikiPage(classPK);

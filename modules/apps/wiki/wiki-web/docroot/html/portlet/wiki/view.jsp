@@ -169,10 +169,10 @@ Map<String, Object> contextObjects = new HashMap<String, Object>();
 
 contextObjects.put("assetEntry", layoutAssetEntry);
 contextObjects.put("formattedContent", formattedContent);
-contextObjects.put("wikiPortletInstanceSettings", wikiPortletInstanceSettings);
+contextObjects.put("wikiPortletInstanceOverriddenConfiguration", wikiPortletInstanceOverriddenConfiguration);
 %>
 
-<liferay-ui:ddm-template-renderer className="<%= WikiPage.class.getName() %>" contextObjects="<%= contextObjects %>" displayStyle="<%= wikiPortletInstanceSettingsHelper.getDisplayStyle() %>" displayStyleGroupId="<%= wikiPortletInstanceSettingsHelper.getDisplayStyleGroupId() %>" entries="<%= entries %>">
+<liferay-ddm:template-renderer className="<%= WikiPage.class.getName() %>" contextObjects="<%= contextObjects %>" displayStyle="<%= wikiPortletInstanceSettingsHelper.getDisplayStyle() %>" displayStyleGroupId="<%= wikiPortletInstanceSettingsHelper.getDisplayStyleGroupId() %>" entries="<%= entries %>">
 	<liferay-ui:header
 		backLabel="<%= parentTitle %>"
 		backURL="<%= (viewParentPageURL != null) ? viewParentPageURL.toString() : null %>"
@@ -370,7 +370,7 @@ contextObjects.put("wikiPortletInstanceSettings", wikiPortletInstanceSettings);
 			</liferay-ui:panel-container>
 		</c:if>
 	</c:if>
-</liferay-ui:ddm-template-renderer>
+</liferay-ddm:template-renderer>
 
 <aui:script sandbox="<%= true %>">
 	var toc = $('#p_p_id<portlet:namespace /> .toc');

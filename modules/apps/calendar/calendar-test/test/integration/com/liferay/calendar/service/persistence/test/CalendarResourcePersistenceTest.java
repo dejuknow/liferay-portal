@@ -45,6 +45,7 @@ import com.liferay.portal.test.rule.PersistenceTestRule;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -64,8 +65,9 @@ import java.util.Set;
  */
 @RunWith(Arquillian.class)
 public class CalendarResourcePersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -532,15 +534,16 @@ public class CalendarResourcePersistenceTest {
 		Assert.assertTrue(Validator.equals(existingCalendarResource.getUuid(),
 				ReflectionTestUtil.invoke(existingCalendarResource,
 					"getOriginalUuid", new Class<?>[0])));
-		Assert.assertEquals(existingCalendarResource.getGroupId(),
-			ReflectionTestUtil.invoke(existingCalendarResource,
+		Assert.assertEquals(Long.valueOf(existingCalendarResource.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingCalendarResource,
 				"getOriginalGroupId", new Class<?>[0]));
 
-		Assert.assertEquals(existingCalendarResource.getClassNameId(),
-			ReflectionTestUtil.invoke(existingCalendarResource,
+		Assert.assertEquals(Long.valueOf(
+				existingCalendarResource.getClassNameId()),
+			ReflectionTestUtil.<Long>invoke(existingCalendarResource,
 				"getOriginalClassNameId", new Class<?>[0]));
-		Assert.assertEquals(existingCalendarResource.getClassPK(),
-			ReflectionTestUtil.invoke(existingCalendarResource,
+		Assert.assertEquals(Long.valueOf(existingCalendarResource.getClassPK()),
+			ReflectionTestUtil.<Long>invoke(existingCalendarResource,
 				"getOriginalClassPK", new Class<?>[0]));
 	}
 

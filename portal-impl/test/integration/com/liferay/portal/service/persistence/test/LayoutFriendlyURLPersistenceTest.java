@@ -42,6 +42,7 @@ import com.liferay.portal.test.rule.PersistenceTestRule;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -58,8 +59,9 @@ import java.util.Set;
  * @generated
  */
 public class LayoutFriendlyURLPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -140,6 +142,8 @@ public class LayoutFriendlyURLPersistenceTest {
 
 		newLayoutFriendlyURL.setLanguageId(RandomTestUtil.randomString());
 
+		newLayoutFriendlyURL.setLastPublishDate(RandomTestUtil.nextDate());
+
 		_layoutFriendlyURLs.add(_persistence.update(newLayoutFriendlyURL));
 
 		LayoutFriendlyURL existingLayoutFriendlyURL = _persistence.findByPrimaryKey(newLayoutFriendlyURL.getPrimaryKey());
@@ -172,6 +176,9 @@ public class LayoutFriendlyURLPersistenceTest {
 			newLayoutFriendlyURL.getFriendlyURL());
 		Assert.assertEquals(existingLayoutFriendlyURL.getLanguageId(),
 			newLayoutFriendlyURL.getLanguageId());
+		Assert.assertEquals(Time.getShortTimestamp(
+				existingLayoutFriendlyURL.getLastPublishDate()),
+			Time.getShortTimestamp(newLayoutFriendlyURL.getLastPublishDate()));
 	}
 
 	@Test
@@ -291,7 +298,8 @@ public class LayoutFriendlyURLPersistenceTest {
 			"mvccVersion", true, "uuid", true, "layoutFriendlyURLId", true,
 			"groupId", true, "companyId", true, "userId", true, "userName",
 			true, "createDate", true, "modifiedDate", true, "plid", true,
-			"privateLayout", true, "friendlyURL", true, "languageId", true);
+			"privateLayout", true, "friendlyURL", true, "languageId", true,
+			"lastPublishDate", true);
 	}
 
 	@Test
@@ -502,23 +510,24 @@ public class LayoutFriendlyURLPersistenceTest {
 				existingLayoutFriendlyURL.getUuid(),
 				ReflectionTestUtil.invoke(existingLayoutFriendlyURL,
 					"getOriginalUuid", new Class<?>[0])));
-		Assert.assertEquals(existingLayoutFriendlyURL.getGroupId(),
-			ReflectionTestUtil.invoke(existingLayoutFriendlyURL,
+		Assert.assertEquals(Long.valueOf(existingLayoutFriendlyURL.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingLayoutFriendlyURL,
 				"getOriginalGroupId", new Class<?>[0]));
 
-		Assert.assertEquals(existingLayoutFriendlyURL.getPlid(),
-			ReflectionTestUtil.invoke(existingLayoutFriendlyURL,
+		Assert.assertEquals(Long.valueOf(existingLayoutFriendlyURL.getPlid()),
+			ReflectionTestUtil.<Long>invoke(existingLayoutFriendlyURL,
 				"getOriginalPlid", new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(
 				existingLayoutFriendlyURL.getLanguageId(),
 				ReflectionTestUtil.invoke(existingLayoutFriendlyURL,
 					"getOriginalLanguageId", new Class<?>[0])));
 
-		Assert.assertEquals(existingLayoutFriendlyURL.getGroupId(),
-			ReflectionTestUtil.invoke(existingLayoutFriendlyURL,
+		Assert.assertEquals(Long.valueOf(existingLayoutFriendlyURL.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingLayoutFriendlyURL,
 				"getOriginalGroupId", new Class<?>[0]));
-		Assert.assertEquals(existingLayoutFriendlyURL.getPrivateLayout(),
-			ReflectionTestUtil.invoke(existingLayoutFriendlyURL,
+		Assert.assertEquals(Boolean.valueOf(
+				existingLayoutFriendlyURL.getPrivateLayout()),
+			ReflectionTestUtil.<Boolean>invoke(existingLayoutFriendlyURL,
 				"getOriginalPrivateLayout", new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(
 				existingLayoutFriendlyURL.getFriendlyURL(),
@@ -559,6 +568,8 @@ public class LayoutFriendlyURLPersistenceTest {
 		layoutFriendlyURL.setFriendlyURL(RandomTestUtil.randomString());
 
 		layoutFriendlyURL.setLanguageId(RandomTestUtil.randomString());
+
+		layoutFriendlyURL.setLastPublishDate(RandomTestUtil.nextDate());
 
 		_layoutFriendlyURLs.add(_persistence.update(layoutFriendlyURL));
 

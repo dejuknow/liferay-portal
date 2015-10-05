@@ -254,6 +254,11 @@ public class MBCategoryLocalServiceImpl extends MBCategoryLocalServiceBaseImpl {
 
 		expandoRowLocalService.deleteRows(category.getCategoryId());
 
+		// Ratings
+
+		ratingsStatsLocalService.deleteStats(
+			MBCategory.class.getName(), category.getCategoryId());
+
 		// Resources
 
 		resourceLocalService.deleteResource(
@@ -985,7 +990,7 @@ public class MBCategoryLocalServiceImpl extends MBCategoryLocalServiceBaseImpl {
 				// Threads
 
 				mbThreadLocalService.moveDependentsToTrash(
-					user.getUserId(), thread.getThreadId(), trashEntryId);
+					thread.getGroupId(), thread.getThreadId(), trashEntryId);
 
 				// Indexer
 
@@ -1061,7 +1066,7 @@ public class MBCategoryLocalServiceImpl extends MBCategoryLocalServiceBaseImpl {
 				// Threads
 
 				mbThreadLocalService.restoreDependentsFromTrash(
-					user.getUserId(), thread.getThreadId());
+					thread.getGroupId(), thread.getThreadId());
 
 				// Trash
 

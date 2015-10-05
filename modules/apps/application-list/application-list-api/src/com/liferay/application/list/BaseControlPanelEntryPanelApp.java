@@ -22,17 +22,13 @@ import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Portlet;
 import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.service.PortletLocalService;
-import com.liferay.portal.theme.ThemeDisplay;
-import com.liferay.portal.util.WebKeys;
+import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.ControlPanelEntry;
-import com.liferay.portlet.PortletURLFactoryUtil;
 
 import java.util.Locale;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
-import javax.portlet.WindowState;
-import javax.portlet.WindowStateException;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -56,25 +52,23 @@ public abstract class BaseControlPanelEntryPanelApp implements PanelApp {
 				getPortletId());
 	}
 
+	public Portlet getPortlet() {
+		if (_portlet != null) {
+			return _portlet;
+		}
+
+		_portlet = portletLocalService.getPortletById(getPortletId());
+
+		return _portlet;
+	}
+
 	@Override
 	public PortletURL getPortletURL(HttpServletRequest request)
 		throws PortalException {
 
-		try {
-			ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
-				WebKeys.THEME_DISPLAY);
-
-			PortletURL portletURL = PortletURLFactoryUtil.create(
-				request, getPortletId(), themeDisplay.getPlid(),
-				PortletRequest.RENDER_PHASE);
-
-			portletURL.setWindowState(WindowState.MAXIMIZED);
-
-			return portletURL;
-		}
-		catch (WindowStateException wse) {
-			throw new PortalException(wse);
-		}
+		return PortalUtil.getControlPanelPortletURL(
+			request, getGroup(request), getPortletId(), 0,
+			PortletRequest.RENDER_PHASE);
 	}
 
 	@Override
@@ -103,13 +97,23 @@ public abstract class BaseControlPanelEntryPanelApp implements PanelApp {
 	protected ControlPanelEntry getControlPanelEntry() {
 		Portlet portlet = getPortlet();
 
+		if (portlet == null) {
+			return null;
+		}
+
 		return portlet.getControlPanelEntryInstance();
 	}
 
-	protected Portlet getPortlet() {
-		return _portletLocalService.getPortletById(getPortletId());
+	protected Group getGroup(HttpServletRequest request) {
+		return null;
 	}
 
-	protected PortletLocalService _portletLocalService;
+	protected void setPortlet(Portlet portlet) {
+		_portlet = portlet;
+	}
+
+	protected PortletLocalService portletLocalService;
+
+	private Portlet _portlet;
 
 }

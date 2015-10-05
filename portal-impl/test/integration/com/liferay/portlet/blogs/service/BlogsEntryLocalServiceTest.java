@@ -16,8 +16,6 @@ package com.liferay.portlet.blogs.service;
 
 import com.liferay.portal.kernel.dao.orm.QueryDefinition;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
-import com.liferay.portal.kernel.repository.model.FileEntry;
-import com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.rule.Sync;
@@ -29,10 +27,7 @@ import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.CalendarFactoryUtil;
-import com.liferay.portal.kernel.util.MimeTypesUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.TempFileEntryUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.ModelHintsUtil;
@@ -47,11 +42,10 @@ import com.liferay.portlet.asset.model.AssetEntry;
 import com.liferay.portlet.asset.service.AssetEntryLocalServiceUtil;
 import com.liferay.portlet.blogs.EntryContentException;
 import com.liferay.portlet.blogs.EntryTitleException;
+import com.liferay.portlet.blogs.NoSuchEntryException;
 import com.liferay.portlet.blogs.model.BlogsEntry;
 import com.liferay.portlet.blogs.util.test.BlogsTestUtil;
 import com.liferay.portlet.messageboards.service.MBMessageLocalServiceUtil;
-
-import java.io.InputStream;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -80,36 +74,20 @@ public class BlogsEntryLocalServiceTest {
 	@Before
 	public void setUp() throws Exception {
 		_group = GroupTestUtil.addGroup();
-		_statusAnyQueryDefinition = new QueryDefinition<BlogsEntry>(
-			WorkflowConstants.STATUS_ANY, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-			null);
-		_statusApprovedQueryDefinition = new QueryDefinition<BlogsEntry>(
-			WorkflowConstants.STATUS_APPROVED, QueryUtil.ALL_POS,
-			QueryUtil.ALL_POS, null);
-		_statusInTrashQueryDefinition = new QueryDefinition<BlogsEntry>(
-			WorkflowConstants.STATUS_IN_TRASH, QueryUtil.ALL_POS,
-			QueryUtil.ALL_POS, null);
 		_user = TestPropsValues.getUser();
 	}
 
 	@Test
-	public void testAddEntryWithoutSmallImage() throws Exception {
-		BlogsEntry expectedEntry = testAddEntry(false);
+	public void testAddEntry() throws Exception {
+		int initialCount = BlogsEntryLocalServiceUtil.getGroupEntriesCount(
+			_group.getGroupId(), _statusApprovedQueryDefinition);
 
-		BlogsEntry actualEntry = BlogsEntryLocalServiceUtil.getBlogsEntry(
-			expectedEntry.getEntryId());
+		addEntry(false);
 
-		BlogsTestUtil.assertEquals(expectedEntry, actualEntry);
-	}
+		int actualCount = BlogsEntryLocalServiceUtil.getGroupEntriesCount(
+			_group.getGroupId(), _statusApprovedQueryDefinition);
 
-	@Test
-	public void testAddEntryWithSmallImage() throws Exception {
-		BlogsEntry expectedEntry = testAddEntry(true);
-
-		BlogsEntry actualEntry = BlogsEntryLocalServiceUtil.getBlogsEntry(
-			expectedEntry.getEntryId());
-
-		BlogsTestUtil.assertEquals(expectedEntry, actualEntry);
+		Assert.assertEquals(initialCount + 1, actualCount);
 	}
 
 	@Test(expected = EntryContentException.class)
@@ -142,6 +120,15 @@ public class BlogsEntryLocalServiceTest {
 			serviceContext);
 	}
 
+	@Test(expected = NoSuchEntryException.class)
+	public void testDeleteEntry() throws Exception {
+		BlogsEntry entry = addEntry(false);
+
+		BlogsEntryLocalServiceUtil.deleteEntry(entry);
+
+		BlogsEntryLocalServiceUtil.getEntry(entry.getEntryId());
+	}
+
 	@Test
 	public void testGetCompanyEntriesCountInTrash() throws Exception {
 		testGetCompanyEntriesCount(true);
@@ -167,9 +154,8 @@ public class BlogsEntryLocalServiceTest {
 		BlogsEntry entry = addEntry(false);
 
 		MBMessageLocalServiceUtil.getDiscussionMessageDisplay(
-			TestPropsValues.getUserId(), _group.getGroupId(),
-			BlogsEntry.class.getName(), entry.getEntryId(),
-			WorkflowConstants.STATUS_ANY);
+			_user.getUserId(), _group.getGroupId(), BlogsEntry.class.getName(),
+			entry.getEntryId(), WorkflowConstants.STATUS_ANY);
 	}
 
 	@Test
@@ -441,14 +427,14 @@ public class BlogsEntryLocalServiceTest {
 	public void testSubscribe() throws Exception {
 		int initialCount =
 			SubscriptionLocalServiceUtil.getUserSubscriptionsCount(
-				TestPropsValues.getUserId());
+				_user.getUserId());
 
 		BlogsEntryLocalServiceUtil.subscribe(
-			TestPropsValues.getUserId(), _group.getGroupId());
+			_user.getUserId(), _group.getGroupId());
 
 		int actualCount =
 			SubscriptionLocalServiceUtil.getUserSubscriptionsCount(
-				TestPropsValues.getUserId());
+				_user.getUserId());
 
 		Assert.assertEquals(initialCount + 1, actualCount);
 	}
@@ -457,17 +443,17 @@ public class BlogsEntryLocalServiceTest {
 	public void testUnsubscribe() throws Exception {
 		int initialCount =
 			SubscriptionLocalServiceUtil.getUserSubscriptionsCount(
-				TestPropsValues.getUserId());
+				_user.getUserId());
 
 		BlogsEntryLocalServiceUtil.subscribe(
-			TestPropsValues.getUserId(), _group.getGroupId());
+			_user.getUserId(), _group.getGroupId());
 
 		BlogsEntryLocalServiceUtil.unsubscribe(
-			TestPropsValues.getUserId(), _group.getGroupId());
+			_user.getUserId(), _group.getGroupId());
 
 		int actualCount =
 			SubscriptionLocalServiceUtil.getUserSubscriptionsCount(
-				TestPropsValues.getUserId());
+				_user.getUserId());
 
 		Assert.assertEquals(initialCount, actualCount);
 	}
@@ -481,7 +467,7 @@ public class BlogsEntryLocalServiceTest {
 	}
 
 	protected BlogsEntry addEntry(boolean statusInTrash) throws Exception {
-		return addEntry(TestPropsValues.getUserId(), statusInTrash);
+		return addEntry(_user.getUserId(), statusInTrash);
 	}
 
 	protected BlogsEntry addEntry(long userId, boolean statusInTrash)
@@ -506,46 +492,6 @@ public class BlogsEntryLocalServiceTest {
 		return entry;
 	}
 
-	protected BlogsEntry addEntryWithSmallImage(long userId) throws Exception {
-		ServiceContext serviceContext =
-			ServiceContextTestUtil.getServiceContext(
-				_group.getGroupId(), userId);
-
-		ClassLoader classLoader = getClass().getClassLoader();
-
-		InputStream inputStream = classLoader.getResourceAsStream(
-			"com/liferay/portal/util/dependencies/test.jpg");
-
-		FileEntry fileEntry = null;
-
-		try {
-			fileEntry = TempFileEntryUtil.getTempFileEntry(
-				serviceContext.getScopeGroupId(), userId,
-				BlogsEntry.class.getName(), "image.jpg");
-		}
-		catch (Exception e) {
-			fileEntry = TempFileEntryUtil.addTempFileEntry(
-				serviceContext.getScopeGroupId(), userId,
-				BlogsEntry.class.getName(), "image.jpg", inputStream,
-				MimeTypesUtil.getContentType("image.jpg"));
-		}
-
-		ImageSelector coverImageSelector = null;
-		ImageSelector smallImageSelector = new ImageSelector(
-			fileEntry.getFileEntryId(), StringPool.BLANK, null);
-
-		Calendar displayCalendar = CalendarFactoryUtil.getCalendar(2012, 1, 1);
-
-		BlogsEntry entry = BlogsEntryLocalServiceUtil.addEntry(
-			userId, RandomTestUtil.randomString(),
-			RandomTestUtil.randomString(), RandomTestUtil.randomString(),
-			RandomTestUtil.randomString(), displayCalendar.getTime(), true,
-			true, new String[0], StringPool.BLANK, coverImageSelector,
-			smallImageSelector, serviceContext);
-
-		return entry;
-	}
-
 	protected void assertBlogsEntriesStatus(
 		List<BlogsEntry> entries, boolean statusInTrash) {
 
@@ -562,34 +508,6 @@ public class BlogsEntryLocalServiceTest {
 					WorkflowConstants.STATUS_IN_TRASH, entry.getStatus());
 			}
 		}
-	}
-
-	protected BlogsEntry testAddEntry(boolean smallImage) throws Exception {
-		int initialCount = BlogsEntryLocalServiceUtil.getGroupEntriesCount(
-			_group.getGroupId(), _statusApprovedQueryDefinition);
-
-		BlogsEntry entry = null;
-
-		if (smallImage) {
-			entry = addEntryWithSmallImage(TestPropsValues.getUserId());
-		}
-		else {
-			entry = addEntry(false);
-		}
-
-		int actualCount = BlogsEntryLocalServiceUtil.getGroupEntriesCount(
-			_group.getGroupId(), _statusApprovedQueryDefinition);
-
-		Assert.assertEquals(initialCount + 1, actualCount);
-
-		if (smallImage) {
-			Assert.assertTrue(entry.isSmallImage());
-		}
-		else {
-			Assert.assertFalse(entry.isSmallImage());
-		}
-
-		return entry;
 	}
 
 	protected void testGetCompanyEntries(boolean statusInTrash)
@@ -851,9 +769,18 @@ public class BlogsEntryLocalServiceTest {
 	@DeleteAfterTestRun
 	private Group _group;
 
-	private QueryDefinition<BlogsEntry> _statusAnyQueryDefinition;
-	private QueryDefinition<BlogsEntry> _statusApprovedQueryDefinition;
-	private QueryDefinition<BlogsEntry> _statusInTrashQueryDefinition;
+	private final QueryDefinition<BlogsEntry> _statusAnyQueryDefinition =
+		new QueryDefinition<BlogsEntry>(
+			WorkflowConstants.STATUS_ANY, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+			null);
+	private final QueryDefinition<BlogsEntry> _statusApprovedQueryDefinition =
+		new QueryDefinition<BlogsEntry>(
+			WorkflowConstants.STATUS_APPROVED, QueryUtil.ALL_POS,
+			QueryUtil.ALL_POS, null);
+	private final QueryDefinition<BlogsEntry> _statusInTrashQueryDefinition =
+		new QueryDefinition<BlogsEntry>(
+			WorkflowConstants.STATUS_IN_TRASH, QueryUtil.ALL_POS,
+			QueryUtil.ALL_POS, null);
 	private User _user;
 
 }

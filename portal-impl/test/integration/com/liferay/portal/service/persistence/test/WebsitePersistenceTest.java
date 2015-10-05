@@ -40,6 +40,7 @@ import com.liferay.portal.test.rule.PersistenceTestRule;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -56,8 +57,9 @@ import java.util.Set;
  * @generated
  */
 public class WebsitePersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -138,6 +140,8 @@ public class WebsitePersistenceTest {
 
 		newWebsite.setPrimary(RandomTestUtil.randomBoolean());
 
+		newWebsite.setLastPublishDate(RandomTestUtil.nextDate());
+
 		_websites.add(_persistence.update(newWebsite));
 
 		Website existingWebsite = _persistence.findByPrimaryKey(newWebsite.getPrimaryKey());
@@ -166,6 +170,9 @@ public class WebsitePersistenceTest {
 		Assert.assertEquals(existingWebsite.getTypeId(), newWebsite.getTypeId());
 		Assert.assertEquals(existingWebsite.getPrimary(),
 			newWebsite.getPrimary());
+		Assert.assertEquals(Time.getShortTimestamp(
+				existingWebsite.getLastPublishDate()),
+			Time.getShortTimestamp(newWebsite.getLastPublishDate()));
 	}
 
 	@Test
@@ -252,7 +259,7 @@ public class WebsitePersistenceTest {
 			true, "uuid", true, "websiteId", true, "companyId", true, "userId",
 			true, "userName", true, "createDate", true, "modifiedDate", true,
 			"classNameId", true, "classPK", true, "url", true, "typeId", true,
-			"primary", true);
+			"primary", true, "lastPublishDate", true);
 	}
 
 	@Test
@@ -475,6 +482,8 @@ public class WebsitePersistenceTest {
 		website.setTypeId(RandomTestUtil.nextLong());
 
 		website.setPrimary(RandomTestUtil.randomBoolean());
+
+		website.setLastPublishDate(RandomTestUtil.nextDate());
 
 		_websites.add(_persistence.update(website));
 

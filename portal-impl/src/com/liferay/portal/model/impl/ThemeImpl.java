@@ -27,6 +27,7 @@ import com.liferay.portal.kernel.util.ThemeHelper;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.ColorScheme;
 import com.liferay.portal.model.Plugin;
+import com.liferay.portal.model.PortletDecorator;
 import com.liferay.portal.model.SpriteImage;
 import com.liferay.portal.model.Theme;
 import com.liferay.portal.model.ThemeSetting;
@@ -207,6 +208,19 @@ public class ThemeImpl extends PluginBaseImpl implements Theme {
 	}
 
 	@Override
+	public List<PortletDecorator> getPortletDecorators() {
+		List<PortletDecorator> portletDecorators = ListUtil.fromMapValues(
+			_portletDecoratorsMap);
+
+		return ListUtil.sort(portletDecorators);
+	}
+
+	@Override
+	public Map<String, PortletDecorator> getPortletDecoratorsMap() {
+		return _portletDecoratorsMap;
+	}
+
+	@Override
 	public String getResourcePath(
 		ServletContext servletContext, String portletId, String path) {
 
@@ -306,14 +320,23 @@ public class ThemeImpl extends PluginBaseImpl implements Theme {
 			return proxyPath.concat(virtualPath);
 		}
 
+		if (isWARFile()) {
+			return getContextPath();
+		}
+
 		String contextPath = null;
 
-		if (!isWARFile()) {
+		if (_themeId.equals("admin")) {
 			contextPath = PortalWebResourcesUtil.getContextPath(
-				PortalWebResourceConstants.RESOURCE_TYPE_THEMES);
+				PortalWebResourceConstants.RESOURCE_TYPE_THEME_ADMIN);
 		}
-		else {
-			return getContextPath();
+		else if (_themeId.equals("classic")) {
+			contextPath = PortalWebResourcesUtil.getContextPath(
+				PortalWebResourceConstants.RESOURCE_TYPE_THEME_CLASSIC);
+		}
+
+		if (Validator.isNull(contextPath)) {
+			return proxyPath;
 		}
 
 		return proxyPath.concat(contextPath);
@@ -663,6 +686,8 @@ public class ThemeImpl extends PluginBaseImpl implements Theme {
 	private boolean _loadFromServletContext;
 	private String _name;
 	private boolean _pageTheme;
+	private final Map<String, PortletDecorator> _portletDecoratorsMap =
+		new HashMap<>();
 	private final Map<String, Boolean> _resourceExistsMap =
 		new ConcurrentHashMap<>();
 	private final Map<String, String> _resourcePathsMap =

@@ -410,19 +410,17 @@ public abstract class BasePortletExportImportTestCase
 		MapUtil.merge(getExportParameterMap(), exportParameterMap);
 
 		Map<String, Serializable> settingsMap =
-			ExportImportConfigurationSettingsMapFactory.buildExportSettingsMap(
-				user.getUserId(), layout.getPlid(), layout.getGroupId(),
-				portletId, exportParameterMap, StringPool.BLANK,
-				user.getLocale(), user.getTimeZone(), StringPool.BLANK);
+			ExportImportConfigurationSettingsMapFactory.
+				buildExportPortletSettingsMap(
+					user, layout.getPlid(), layout.getGroupId(), portletId,
+					exportParameterMap, StringPool.BLANK);
 
 		ExportImportConfiguration exportImportConfiguration =
 			ExportImportConfigurationLocalServiceUtil.
-				addExportImportConfiguration(
-					user.getUserId(), layout.getGroupId(), StringPool.BLANK,
-					StringPool.BLANK,
+				addDraftExportImportConfiguration(
+					user.getUserId(),
 					ExportImportConfigurationConstants.TYPE_EXPORT_PORTLET,
-					settingsMap, WorkflowConstants.STATUS_DRAFT,
-					new ServiceContext());
+					settingsMap);
 
 		ExportImportThreadLocal.setPortletStagingInProcess(true);
 
@@ -436,11 +434,10 @@ public abstract class BasePortletExportImportTestCase
 
 			settingsMap =
 				ExportImportConfigurationSettingsMapFactory.
-					buildImportSettingsMap(
-						user.getUserId(), importedLayout.getPlid(),
+					buildImportPortletSettingsMap(
+						user, importedLayout.getPlid(),
 						importedGroup.getGroupId(), portletId,
-						importParameterMap, StringPool.BLANK, user.getLocale(),
-						user.getTimeZone(), StringPool.BLANK);
+						importParameterMap);
 
 			exportImportConfiguration =
 				ExportImportConfigurationLocalServiceUtil.
@@ -549,9 +546,12 @@ public abstract class BasePortletExportImportTestCase
 		}
 
 		String className = templateHandler.getClassName();
+		long resourceClassNameId = PortalUtil.getClassNameId(
+			"com.liferay.portlet.display.template.PortletDisplayTemplate");
 
 		DDMTemplate ddmTemplate = DDMTemplateTestUtil.addTemplate(
-			displayStyleGroupId, PortalUtil.getClassNameId(className), 0);
+			displayStyleGroupId, PortalUtil.getClassNameId(className), 0,
+			resourceClassNameId);
 
 		Map<String, String[]> preferenceMap = new HashMap<>();
 

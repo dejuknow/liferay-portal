@@ -25,7 +25,7 @@ import java.rmi.RemoteException;
 
 /**
  * Provides the SOAP utility for the
- * {@link com.liferay.portlet.blogs.service.BlogsEntryServiceUtil} service utility. The
+ * {@link BlogsEntryServiceUtil} service utility. The
  * static methods of this class calls the same methods of the service utility.
  * However, the signatures are different because it is difficult for SOAP to
  * support certain types.
@@ -60,7 +60,7 @@ import java.rmi.RemoteException;
  * @author Brian Wing Shun Chan
  * @see BlogsEntryServiceHttp
  * @see com.liferay.portlet.blogs.model.BlogsEntrySoap
- * @see com.liferay.portlet.blogs.service.BlogsEntryServiceUtil
+ * @see BlogsEntryServiceUtil
  * @generated
  */
 @ProviderType
@@ -205,6 +205,24 @@ public class BlogsEntryServiceSoap {
 			java.util.List<com.liferay.portlet.blogs.model.BlogsEntry> returnValue =
 				BlogsEntryServiceUtil.getGroupEntries(groupId, status, start,
 					end);
+
+			return com.liferay.portlet.blogs.model.BlogsEntrySoap.toSoapModels(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static com.liferay.portlet.blogs.model.BlogsEntrySoap[] getGroupEntries(
+		long groupId, int status, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.blogs.model.BlogsEntry> obc)
+		throws RemoteException {
+		try {
+			java.util.List<com.liferay.portlet.blogs.model.BlogsEntry> returnValue =
+				BlogsEntryServiceUtil.getGroupEntries(groupId, status, start,
+					end, obc);
 
 			return com.liferay.portlet.blogs.model.BlogsEntrySoap.toSoapModels(returnValue);
 		}

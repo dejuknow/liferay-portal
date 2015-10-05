@@ -41,6 +41,7 @@ import com.liferay.portlet.ratings.service.persistence.RatingsStatsUtil;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -57,8 +58,9 @@ import java.util.Set;
  * @generated
  */
 public class RatingsStatsPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -381,11 +383,11 @@ public class RatingsStatsPersistenceTest {
 
 		RatingsStats existingRatingsStats = _persistence.findByPrimaryKey(newRatingsStats.getPrimaryKey());
 
-		Assert.assertEquals(existingRatingsStats.getClassNameId(),
-			ReflectionTestUtil.invoke(existingRatingsStats,
+		Assert.assertEquals(Long.valueOf(existingRatingsStats.getClassNameId()),
+			ReflectionTestUtil.<Long>invoke(existingRatingsStats,
 				"getOriginalClassNameId", new Class<?>[0]));
-		Assert.assertEquals(existingRatingsStats.getClassPK(),
-			ReflectionTestUtil.invoke(existingRatingsStats,
+		Assert.assertEquals(Long.valueOf(existingRatingsStats.getClassPK()),
+			ReflectionTestUtil.<Long>invoke(existingRatingsStats,
 				"getOriginalClassPK", new Class<?>[0]));
 	}
 

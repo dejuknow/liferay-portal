@@ -45,6 +45,7 @@ import com.liferay.portal.test.rule.PersistenceTestRule;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -64,8 +65,9 @@ import java.util.Set;
  */
 @RunWith(Arquillian.class)
 public class PollsQuestionPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -459,8 +461,8 @@ public class PollsQuestionPersistenceTest {
 		Assert.assertTrue(Validator.equals(existingPollsQuestion.getUuid(),
 				ReflectionTestUtil.invoke(existingPollsQuestion,
 					"getOriginalUuid", new Class<?>[0])));
-		Assert.assertEquals(existingPollsQuestion.getGroupId(),
-			ReflectionTestUtil.invoke(existingPollsQuestion,
+		Assert.assertEquals(Long.valueOf(existingPollsQuestion.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingPollsQuestion,
 				"getOriginalGroupId", new Class<?>[0]));
 	}
 

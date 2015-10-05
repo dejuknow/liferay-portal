@@ -102,6 +102,11 @@ public class FileShortcutWrapper
 	}
 
 	@Override
+	public Date getLastPublishDate() {
+		return _fileShortcut.getLastPublishDate();
+	}
+
+	@Override
 	public Object getModel() {
 		return _fileShortcut.getModel();
 	}
@@ -129,6 +134,11 @@ public class FileShortcutWrapper
 	@Override
 	public Serializable getPrimaryKeyObj() {
 		return _fileShortcut.getPrimaryKeyObj();
+	}
+
+	@Override
+	public long getRepositoryId() {
+		return _fileShortcut.getRepositoryId();
 	}
 
 	@Override
@@ -182,8 +192,8 @@ public class FileShortcutWrapper
 	}
 
 	@Override
-	public void setCreateDate(Date date) {
-		_fileShortcut.setCreateDate(date);
+	public void setCreateDate(Date createDate) {
+		_fileShortcut.setCreateDate(createDate);
 	}
 
 	@Override
@@ -192,8 +202,13 @@ public class FileShortcutWrapper
 	}
 
 	@Override
-	public void setModifiedDate(Date date) {
-		_fileShortcut.setModifiedDate(date);
+	public void setLastPublishDate(Date lastPublishDate) {
+		_fileShortcut.setLastPublishDate(lastPublishDate);
+	}
+
+	@Override
+	public void setModifiedDate(Date modifiedDate) {
+		_fileShortcut.setModifiedDate(modifiedDate);
 	}
 
 	@Override

@@ -28,7 +28,6 @@ import com.liferay.portal.kernel.search.BaseIndexer;
 import com.liferay.portal.kernel.search.BaseRelatedEntryIndexer;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.BooleanQuery;
-import com.liferay.portal.kernel.search.DDMStructureIndexer;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.DocumentHelper;
 import com.liferay.portal.kernel.search.DocumentImpl;
@@ -59,7 +58,6 @@ import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.service.GroupLocalServiceUtil;
 import com.liferay.portal.util.PortalUtil;
-import com.liferay.portal.util.PortletKeys;
 import com.liferay.portal.util.PrefsPropsUtil;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.documentlibrary.model.DLFileEntry;
@@ -72,12 +70,11 @@ import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryMetadataLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.service.DLFolderLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.service.permission.DLFileEntryPermission;
+import com.liferay.portlet.dynamicdatamapping.DDMFormValues;
 import com.liferay.portlet.dynamicdatamapping.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.DDMStructureManager;
 import com.liferay.portlet.dynamicdatamapping.DDMStructureManagerUtil;
 import com.liferay.portlet.dynamicdatamapping.StorageEngineManagerUtil;
-import com.liferay.portlet.dynamicdatamapping.StructureFieldException;
-import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
 import com.liferay.portlet.expando.model.ExpandoBridge;
 import com.liferay.portlet.expando.util.ExpandoBridgeFactoryUtil;
 import com.liferay.portlet.expando.util.ExpandoBridgeIndexerUtil;
@@ -100,8 +97,7 @@ import javax.portlet.PortletResponse;
  */
 @OSGiBeanProperties
 public class DLFileEntryIndexer
-	extends BaseIndexer<DLFileEntry>
-	implements DDMStructureIndexer, RelatedEntryIndexer {
+	extends BaseIndexer<DLFileEntry> implements RelatedEntryIndexer {
 
 	public static final String CLASS_NAME = DLFileEntry.class.getName();
 
@@ -228,10 +224,10 @@ public class DLFileEntryIndexer
 				DDMStructureManager.STRUCTURE_INDEXER_FIELD_SEPARATOR);
 
 			DDMStructure ddmStructure = DDMStructureManagerUtil.getStructure(
-				GetterUtil.getLong(ddmStructureFieldNameParts[1]));
+				GetterUtil.getLong(ddmStructureFieldNameParts[2]));
 
 			String fieldName = StringUtil.replaceLast(
-				ddmStructureFieldNameParts[2],
+				ddmStructureFieldNameParts[3],
 				StringPool.UNDERLINE.concat(
 					LocaleUtil.toLanguageId(searchContext.getLocale())),
 				StringPool.BLANK);
@@ -242,9 +238,9 @@ public class DLFileEntryIndexer
 						ddmStructureFieldValue,
 						ddmStructure.getFieldType(fieldName));
 			}
-			catch (StructureFieldException sfe) {
+			catch (Exception e) {
 				if (_log.isDebugEnabled()) {
-					_log.debug(sfe, sfe);
+					_log.debug(e, e);
 				}
 			}
 
@@ -303,31 +299,6 @@ public class DLFileEntryIndexer
 			if (Validator.isNotNull(expandoAttributes)) {
 				addSearchExpando(searchQuery, searchContext, expandoAttributes);
 			}
-		}
-	}
-
-	@Override
-	public void reindexDDMStructures(List<Long> ddmStructureIds)
-		throws SearchException {
-
-		if (SearchEngineUtil.isIndexReadOnly() || !isIndexerEnabled()) {
-			return;
-		}
-
-		try {
-			Indexer<DLFileEntry> indexer =
-				IndexerRegistryUtil.nullSafeGetIndexer(DLFileEntry.class);
-
-			List<DLFileEntry> dlFileEntries =
-				DLFileEntryLocalServiceUtil.getDDMStructureFileEntries(
-					ArrayUtil.toLongArray(ddmStructureIds));
-
-			for (DLFileEntry dlFileEntry : dlFileEntries) {
-				indexer.reindex(dlFileEntry);
-			}
-		}
-		catch (Exception e) {
-			throw new SearchException(e);
 		}
 	}
 
@@ -559,8 +530,8 @@ public class DLFileEntryIndexer
 		}
 		else {
 			long companyId = GetterUtil.getLong(ids[0]);
-			long groupId = GetterUtil.getLong(ids[2]);
-			long dataRepositoryId = GetterUtil.getLong(ids[3]);
+			long groupId = GetterUtil.getLong(ids[1]);
+			long dataRepositoryId = GetterUtil.getLong(ids[2]);
 
 			reindexFileEntries(companyId, groupId, dataRepositoryId);
 		}
@@ -665,13 +636,12 @@ public class DLFileEntryIndexer
 
 					DLFolder dlFolder = (DLFolder)object;
 
-					String portletId = PortletKeys.DOCUMENT_LIBRARY;
 					long groupId = dlFolder.getGroupId();
 					long folderId = dlFolder.getFolderId();
 
 					String[] newIds = {
-						String.valueOf(companyId), portletId,
-						String.valueOf(groupId), String.valueOf(folderId)
+						String.valueOf(companyId), String.valueOf(groupId),
+						String.valueOf(folderId)
 					};
 
 					reindex(newIds);
@@ -696,13 +666,12 @@ public class DLFileEntryIndexer
 
 					Group group = (Group)object;
 
-					String portletId = PortletKeys.DOCUMENT_LIBRARY;
 					long groupId = group.getGroupId();
 					long folderId = groupId;
 
 					String[] newIds = {
-						String.valueOf(companyId), portletId,
-						String.valueOf(groupId), String.valueOf(folderId)
+						String.valueOf(companyId), String.valueOf(groupId),
+						String.valueOf(folderId)
 					};
 
 					reindex(newIds);

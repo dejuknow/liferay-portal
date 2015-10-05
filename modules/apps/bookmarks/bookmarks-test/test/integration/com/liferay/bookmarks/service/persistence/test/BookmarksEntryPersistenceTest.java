@@ -45,6 +45,7 @@ import com.liferay.portal.test.rule.PersistenceTestRule;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -64,8 +65,9 @@ import java.util.Set;
  */
 @RunWith(Arquillian.class)
 public class BookmarksEntryPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -594,8 +596,8 @@ public class BookmarksEntryPersistenceTest {
 		Assert.assertTrue(Validator.equals(existingBookmarksEntry.getUuid(),
 				ReflectionTestUtil.invoke(existingBookmarksEntry,
 					"getOriginalUuid", new Class<?>[0])));
-		Assert.assertEquals(existingBookmarksEntry.getGroupId(),
-			ReflectionTestUtil.invoke(existingBookmarksEntry,
+		Assert.assertEquals(Long.valueOf(existingBookmarksEntry.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingBookmarksEntry,
 				"getOriginalGroupId", new Class<?>[0]));
 	}
 

@@ -39,6 +39,7 @@ import com.liferay.portal.test.rule.PersistenceTestRule;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -55,8 +56,9 @@ import java.util.Set;
  * @generated
  */
 public class BrowserTrackerPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -372,8 +374,8 @@ public class BrowserTrackerPersistenceTest {
 
 		BrowserTracker existingBrowserTracker = _persistence.findByPrimaryKey(newBrowserTracker.getPrimaryKey());
 
-		Assert.assertEquals(existingBrowserTracker.getUserId(),
-			ReflectionTestUtil.invoke(existingBrowserTracker,
+		Assert.assertEquals(Long.valueOf(existingBrowserTracker.getUserId()),
+			ReflectionTestUtil.<Long>invoke(existingBrowserTracker,
 				"getOriginalUserId", new Class<?>[0]));
 	}
 

@@ -15,11 +15,18 @@
 package com.liferay.sync.engine.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import com.liferay.sync.engine.service.persistence.BasePersistenceImpl;
+import com.liferay.sync.engine.util.JSONUtil;
+
+import java.io.IOException;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Shinn Lok
@@ -53,6 +60,8 @@ public class SyncFile extends StateAwareModel {
 	public static final String TYPE_FILE = "file";
 
 	public static final String TYPE_FOLDER = "folder";
+
+	public static final String TYPE_PRIVATE_WORKING_COPY = "privateWorkingCopy";
 
 	public static final String TYPE_SYSTEM = "system";
 
@@ -99,6 +108,8 @@ public class SyncFile extends StateAwareModel {
 	public static final int UI_EVENT_UPDATED_LOCAL = 17;
 
 	public static final int UI_EVENT_UPDATED_REMOTE = 18;
+
+	public static final int UI_EVENT_UPLOAD_EXCEPTION = 25;
 
 	public static final int UI_EVENT_UPLOADED = 19;
 
@@ -160,6 +171,23 @@ public class SyncFile extends StateAwareModel {
 		return filePathName;
 	}
 
+	public String getLocalExtraSettings() {
+		return localExtraSettings;
+	}
+
+	public String getLocalExtraSettingsValue(String key) {
+		try {
+			JsonNode jsonNode = JSONUtil.readTree(localExtraSettings);
+
+			JsonNode valueJsonNode = jsonNode.get(key);
+
+			return valueJsonNode.asText();
+		}
+		catch (Exception e) {
+			return null;
+		}
+	}
+
 	public long getLocalSyncTime() {
 		return localSyncTime;
 	}
@@ -190,6 +218,10 @@ public class SyncFile extends StateAwareModel {
 
 	public long getParentFolderId() {
 		return parentFolderId;
+	}
+
+	public long getPreviousModifiedTime() {
+		return previousModifiedTime;
 	}
 
 	public long getRepositoryId() {
@@ -246,7 +278,15 @@ public class SyncFile extends StateAwareModel {
 	}
 
 	public boolean isFolder() {
-		return !isFile();
+		if (!isFile() && !isPrivateWorkingCopy()) {
+			return true;
+		}
+
+		return false;
+	}
+
+	public boolean isPrivateWorkingCopy() {
+		return type.equals(TYPE_PRIVATE_WORKING_COPY);
 	}
 
 	public boolean isSystem() {
@@ -289,6 +329,24 @@ public class SyncFile extends StateAwareModel {
 		this.filePathName = filePathName;
 	}
 
+	public void setLocalExtraSettings(String localExtraSettings) {
+		this.localExtraSettings = localExtraSettings;
+	}
+
+	public void setLocalExtraSettingsValue(String key, Object value)
+		throws IOException {
+
+		Map<String, Object> map = new HashMap();
+
+		if (localExtraSettings != null) {
+			map = JSONUtil.readValue(localExtraSettings, Map.class);
+		}
+
+		map.put(key, value);
+
+		localExtraSettings = JSONUtil.writeValueAsString(map);
+	}
+
 	public void setLocalSyncTime(long localSyncTime) {
 		this.localSyncTime = localSyncTime;
 	}
@@ -319,6 +377,10 @@ public class SyncFile extends StateAwareModel {
 
 	public void setParentFolderId(long parentFolderId) {
 		this.parentFolderId = parentFolderId;
+	}
+
+	public void setPreviousModifiedTime(long previousModifiedTime) {
+		this.previousModifiedTime = previousModifiedTime;
 	}
 
 	public void setRepositoryId(long repositoryId) {
@@ -392,6 +454,9 @@ public class SyncFile extends StateAwareModel {
 	@DatabaseField(uniqueIndex = true, useGetSet = true, width = 16777216)
 	protected String filePathName;
 
+	@DatabaseField(useGetSet = true, width = 16777216)
+	protected String localExtraSettings;
+
 	@DatabaseField(useGetSet = true)
 	protected long localSyncTime;
 
@@ -415,6 +480,9 @@ public class SyncFile extends StateAwareModel {
 
 	@DatabaseField(useGetSet = true)
 	protected long parentFolderId;
+
+	@DatabaseField(useGetSet = true)
+	protected long previousModifiedTime;
 
 	@DatabaseField(useGetSet = true)
 	protected long repositoryId;

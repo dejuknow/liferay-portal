@@ -34,6 +34,23 @@ public interface Portlet extends PortletModel, PersistedModel {
 	 *
 	 * Never modify this interface directly. Add methods to {@link com.liferay.portal.model.impl.PortletImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
+	public static final Accessor<Portlet, Long> ID_ACCESSOR = new Accessor<Portlet, Long>() {
+			@Override
+			public Long get(Portlet portlet) {
+				return portlet.getId();
+			}
+
+			@Override
+			public Class<Long> getAttributeClass() {
+				return Long.class;
+			}
+
+			@Override
+			public Class<Portlet> getTypeClass() {
+				return Portlet.class;
+			}
+		};
+
 	public static final Accessor<Portlet, String> PORTLET_ID_ACCESSOR = new Accessor<Portlet, String>() {
 			@Override
 			public String get(Portlet portlet) {
@@ -146,7 +163,7 @@ public interface Portlet extends PortletModel, PersistedModel {
 	*
 	* @return the asset type instances of the portlet
 	*/
-	public java.util.List<com.liferay.portlet.asset.model.AssetRendererFactory> getAssetRendererFactoryInstances();
+	public java.util.List<com.liferay.portlet.asset.model.AssetRendererFactory<?>> getAssetRendererFactoryInstances();
 
 	/**
 	* Returns the names of the classes that represent atom collection adapters
@@ -1260,6 +1277,8 @@ public interface Portlet extends PortletModel, PersistedModel {
 	*/
 	public boolean isAjaxable();
 
+	public boolean isFullPageDisplayable();
+
 	/**
 	* Returns <code>true</code> to include the portlet and make it available to
 	* be made active.
@@ -1711,6 +1730,8 @@ public interface Portlet extends PortletModel, PersistedModel {
 	URL routes of the portlet
 	*/
 	public void setFriendlyURLRoutes(java.lang.String friendlyURLRoutes);
+
+	public void setFullPageDisplayable(boolean fullPageDisplayable);
 
 	/**
 	* Sets a list of CSS files that will be referenced from the page's header

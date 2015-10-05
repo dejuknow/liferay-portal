@@ -39,6 +39,7 @@ import com.liferay.portal.test.rule.PersistenceTestRule;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -55,8 +56,9 @@ import java.util.Set;
  * @generated
  */
 public class PortalPreferencesPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -170,7 +172,7 @@ public class PortalPreferencesPersistenceTest {
 	protected OrderByComparator<PortalPreferences> getOrderByComparator() {
 		return OrderByComparatorFactoryUtil.create("PortalPreferences",
 			"mvccVersion", true, "portalPreferencesId", true, "ownerId", true,
-			"ownerType", true, "preferences", true);
+			"ownerType", true);
 	}
 
 	@Test
@@ -377,11 +379,12 @@ public class PortalPreferencesPersistenceTest {
 
 		PortalPreferences existingPortalPreferences = _persistence.findByPrimaryKey(newPortalPreferences.getPrimaryKey());
 
-		Assert.assertEquals(existingPortalPreferences.getOwnerId(),
-			ReflectionTestUtil.invoke(existingPortalPreferences,
+		Assert.assertEquals(Long.valueOf(existingPortalPreferences.getOwnerId()),
+			ReflectionTestUtil.<Long>invoke(existingPortalPreferences,
 				"getOriginalOwnerId", new Class<?>[0]));
-		Assert.assertEquals(existingPortalPreferences.getOwnerType(),
-			ReflectionTestUtil.invoke(existingPortalPreferences,
+		Assert.assertEquals(Integer.valueOf(
+				existingPortalPreferences.getOwnerType()),
+			ReflectionTestUtil.<Integer>invoke(existingPortalPreferences,
 				"getOriginalOwnerType", new Class<?>[0]));
 	}
 

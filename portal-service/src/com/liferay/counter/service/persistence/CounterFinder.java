@@ -22,8 +22,6 @@ import aQute.bnd.annotation.ProviderType;
  */
 @ProviderType
 public interface CounterFinder {
-	public void afterPropertiesSet();
-
 	public java.util.List<java.lang.String> getNames();
 
 	public java.lang.String getRegistryName();

@@ -19,7 +19,6 @@ import com.liferay.portal.kernel.portlet.PortletProvider;
 import com.liferay.portal.kernel.portlet.PortletProviderUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.CookieKeys;
-import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -29,6 +28,7 @@ import com.liferay.portal.model.GroupConstants;
 import com.liferay.portal.model.Layout;
 import com.liferay.portal.model.LayoutConstants;
 import com.liferay.portal.model.LayoutSet;
+import com.liferay.portal.model.LayoutType;
 import com.liferay.portal.model.Organization;
 import com.liferay.portal.model.User;
 import com.liferay.portal.service.GroupLocalServiceUtil;
@@ -255,7 +255,7 @@ public class BreadcrumbUtil {
 
 		Group group = layoutSet.getGroup();
 
-		if (group.isControlPanel() || group.isUserPersonalPanel()) {
+		if (group.isControlPanel()) {
 			return;
 		}
 
@@ -315,6 +315,12 @@ public class BreadcrumbUtil {
 
 		breadcrumbEntry.setBaseModel(layout);
 
+		LayoutType layoutType = layout.getLayoutType();
+
+		if (!layoutType.isBrowsable()) {
+			breadcrumbEntry.setBrowsable(false);
+		}
+
 		String layoutName = layout.getName(themeDisplay.getLocale());
 
 		if (layout.isTypeControlPanel()) {
@@ -331,11 +337,6 @@ public class BreadcrumbUtil {
 		if (themeDisplay.isAddSessionIdToURL()) {
 			layoutURL = PortalUtil.getURLWithSessionId(
 				layoutURL, themeDisplay.getSessionId());
-		}
-
-		if (layout.isTypeControlPanel()) {
-			layoutURL = HttpUtil.removeParameter(
-				layoutURL, "controlPanelCategory");
 		}
 
 		breadcrumbEntry.setURL(layoutURL);

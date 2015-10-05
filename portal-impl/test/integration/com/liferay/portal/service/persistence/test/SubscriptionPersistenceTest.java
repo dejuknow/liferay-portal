@@ -40,6 +40,7 @@ import com.liferay.portal.test.rule.PersistenceTestRule;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -56,8 +57,9 @@ import java.util.Set;
  * @generated
  */
 public class SubscriptionPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -445,17 +447,17 @@ public class SubscriptionPersistenceTest {
 
 		Subscription existingSubscription = _persistence.findByPrimaryKey(newSubscription.getPrimaryKey());
 
-		Assert.assertEquals(existingSubscription.getCompanyId(),
-			ReflectionTestUtil.invoke(existingSubscription,
+		Assert.assertEquals(Long.valueOf(existingSubscription.getCompanyId()),
+			ReflectionTestUtil.<Long>invoke(existingSubscription,
 				"getOriginalCompanyId", new Class<?>[0]));
-		Assert.assertEquals(existingSubscription.getUserId(),
-			ReflectionTestUtil.invoke(existingSubscription,
+		Assert.assertEquals(Long.valueOf(existingSubscription.getUserId()),
+			ReflectionTestUtil.<Long>invoke(existingSubscription,
 				"getOriginalUserId", new Class<?>[0]));
-		Assert.assertEquals(existingSubscription.getClassNameId(),
-			ReflectionTestUtil.invoke(existingSubscription,
+		Assert.assertEquals(Long.valueOf(existingSubscription.getClassNameId()),
+			ReflectionTestUtil.<Long>invoke(existingSubscription,
 				"getOriginalClassNameId", new Class<?>[0]));
-		Assert.assertEquals(existingSubscription.getClassPK(),
-			ReflectionTestUtil.invoke(existingSubscription,
+		Assert.assertEquals(Long.valueOf(existingSubscription.getClassPK()),
+			ReflectionTestUtil.<Long>invoke(existingSubscription,
 				"getOriginalClassPK", new Class<?>[0]));
 	}
 

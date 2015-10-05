@@ -43,6 +43,7 @@ import com.liferay.portlet.documentlibrary.service.persistence.DLFileEntryUtil;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -59,8 +60,9 @@ import java.util.Set;
  * @generated
  */
 public class DLFileEntryPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -173,6 +175,8 @@ public class DLFileEntryPersistenceTest {
 
 		newDLFileEntry.setManualCheckInRequired(RandomTestUtil.randomBoolean());
 
+		newDLFileEntry.setLastPublishDate(RandomTestUtil.nextDate());
+
 		_dlFileEntries.add(_persistence.update(newDLFileEntry));
 
 		DLFileEntry existingDLFileEntry = _persistence.findByPrimaryKey(newDLFileEntry.getPrimaryKey());
@@ -237,6 +241,9 @@ public class DLFileEntryPersistenceTest {
 			newDLFileEntry.getCustom2ImageId());
 		Assert.assertEquals(existingDLFileEntry.getManualCheckInRequired(),
 			newDLFileEntry.getManualCheckInRequired());
+		Assert.assertEquals(Time.getShortTimestamp(
+				existingDLFileEntry.getLastPublishDate()),
+			Time.getShortTimestamp(newDLFileEntry.getLastPublishDate()));
 	}
 
 	@Test
@@ -437,10 +444,10 @@ public class DLFileEntryPersistenceTest {
 			"classNameId", true, "classPK", true, "repositoryId", true,
 			"folderId", true, "treePath", true, "name", true, "fileName", true,
 			"extension", true, "mimeType", true, "title", true, "description",
-			true, "extraSettings", true, "fileEntryTypeId", true, "version",
-			true, "size", true, "readCount", true, "smallImageId", true,
-			"largeImageId", true, "custom1ImageId", true, "custom2ImageId",
-			true, "manualCheckInRequired", true);
+			true, "fileEntryTypeId", true, "version", true, "size", true,
+			"readCount", true, "smallImageId", true, "largeImageId", true,
+			"custom1ImageId", true, "custom2ImageId", true,
+			"manualCheckInRequired", true, "lastPublishDate", true);
 	}
 
 	@Test
@@ -648,35 +655,35 @@ public class DLFileEntryPersistenceTest {
 		Assert.assertTrue(Validator.equals(existingDLFileEntry.getUuid(),
 				ReflectionTestUtil.invoke(existingDLFileEntry,
 					"getOriginalUuid", new Class<?>[0])));
-		Assert.assertEquals(existingDLFileEntry.getGroupId(),
-			ReflectionTestUtil.invoke(existingDLFileEntry,
+		Assert.assertEquals(Long.valueOf(existingDLFileEntry.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingDLFileEntry,
 				"getOriginalGroupId", new Class<?>[0]));
 
-		Assert.assertEquals(existingDLFileEntry.getGroupId(),
-			ReflectionTestUtil.invoke(existingDLFileEntry,
+		Assert.assertEquals(Long.valueOf(existingDLFileEntry.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingDLFileEntry,
 				"getOriginalGroupId", new Class<?>[0]));
-		Assert.assertEquals(existingDLFileEntry.getFolderId(),
-			ReflectionTestUtil.invoke(existingDLFileEntry,
+		Assert.assertEquals(Long.valueOf(existingDLFileEntry.getFolderId()),
+			ReflectionTestUtil.<Long>invoke(existingDLFileEntry,
 				"getOriginalFolderId", new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(existingDLFileEntry.getName(),
 				ReflectionTestUtil.invoke(existingDLFileEntry,
 					"getOriginalName", new Class<?>[0])));
 
-		Assert.assertEquals(existingDLFileEntry.getGroupId(),
-			ReflectionTestUtil.invoke(existingDLFileEntry,
+		Assert.assertEquals(Long.valueOf(existingDLFileEntry.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingDLFileEntry,
 				"getOriginalGroupId", new Class<?>[0]));
-		Assert.assertEquals(existingDLFileEntry.getFolderId(),
-			ReflectionTestUtil.invoke(existingDLFileEntry,
+		Assert.assertEquals(Long.valueOf(existingDLFileEntry.getFolderId()),
+			ReflectionTestUtil.<Long>invoke(existingDLFileEntry,
 				"getOriginalFolderId", new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(existingDLFileEntry.getFileName(),
 				ReflectionTestUtil.invoke(existingDLFileEntry,
 					"getOriginalFileName", new Class<?>[0])));
 
-		Assert.assertEquals(existingDLFileEntry.getGroupId(),
-			ReflectionTestUtil.invoke(existingDLFileEntry,
+		Assert.assertEquals(Long.valueOf(existingDLFileEntry.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingDLFileEntry,
 				"getOriginalGroupId", new Class<?>[0]));
-		Assert.assertEquals(existingDLFileEntry.getFolderId(),
-			ReflectionTestUtil.invoke(existingDLFileEntry,
+		Assert.assertEquals(Long.valueOf(existingDLFileEntry.getFolderId()),
+			ReflectionTestUtil.<Long>invoke(existingDLFileEntry,
 				"getOriginalFolderId", new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(existingDLFileEntry.getTitle(),
 				ReflectionTestUtil.invoke(existingDLFileEntry,
@@ -743,6 +750,8 @@ public class DLFileEntryPersistenceTest {
 		dlFileEntry.setCustom2ImageId(RandomTestUtil.nextLong());
 
 		dlFileEntry.setManualCheckInRequired(RandomTestUtil.randomBoolean());
+
+		dlFileEntry.setLastPublishDate(RandomTestUtil.nextDate());
 
 		_dlFileEntries.add(_persistence.update(dlFileEntry));
 

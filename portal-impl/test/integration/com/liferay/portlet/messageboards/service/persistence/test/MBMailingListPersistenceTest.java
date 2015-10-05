@@ -43,6 +43,7 @@ import com.liferay.portlet.messageboards.service.persistence.MBMailingListUtil;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -59,8 +60,9 @@ import java.util.Set;
  * @generated
  */
 public class MBMailingListPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -511,15 +513,15 @@ public class MBMailingListPersistenceTest {
 		Assert.assertTrue(Validator.equals(existingMBMailingList.getUuid(),
 				ReflectionTestUtil.invoke(existingMBMailingList,
 					"getOriginalUuid", new Class<?>[0])));
-		Assert.assertEquals(existingMBMailingList.getGroupId(),
-			ReflectionTestUtil.invoke(existingMBMailingList,
+		Assert.assertEquals(Long.valueOf(existingMBMailingList.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingMBMailingList,
 				"getOriginalGroupId", new Class<?>[0]));
 
-		Assert.assertEquals(existingMBMailingList.getGroupId(),
-			ReflectionTestUtil.invoke(existingMBMailingList,
+		Assert.assertEquals(Long.valueOf(existingMBMailingList.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingMBMailingList,
 				"getOriginalGroupId", new Class<?>[0]));
-		Assert.assertEquals(existingMBMailingList.getCategoryId(),
-			ReflectionTestUtil.invoke(existingMBMailingList,
+		Assert.assertEquals(Long.valueOf(existingMBMailingList.getCategoryId()),
+			ReflectionTestUtil.<Long>invoke(existingMBMailingList,
 				"getOriginalCategoryId", new Class<?>[0]));
 	}
 

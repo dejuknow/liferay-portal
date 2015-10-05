@@ -42,6 +42,7 @@ import com.liferay.portal.test.rule.PersistenceTestRule;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -58,8 +59,9 @@ import java.util.Set;
  * @generated
  */
 public class RepositoryEntryPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -138,6 +140,8 @@ public class RepositoryEntryPersistenceTest {
 
 		newRepositoryEntry.setManualCheckInRequired(RandomTestUtil.randomBoolean());
 
+		newRepositoryEntry.setLastPublishDate(RandomTestUtil.nextDate());
+
 		_repositoryEntries.add(_persistence.update(newRepositoryEntry));
 
 		RepositoryEntry existingRepositoryEntry = _persistence.findByPrimaryKey(newRepositoryEntry.getPrimaryKey());
@@ -168,6 +172,9 @@ public class RepositoryEntryPersistenceTest {
 			newRepositoryEntry.getMappedId());
 		Assert.assertEquals(existingRepositoryEntry.getManualCheckInRequired(),
 			newRepositoryEntry.getManualCheckInRequired());
+		Assert.assertEquals(Time.getShortTimestamp(
+				existingRepositoryEntry.getLastPublishDate()),
+			Time.getShortTimestamp(newRepositoryEntry.getLastPublishDate()));
 	}
 
 	@Test
@@ -240,7 +247,8 @@ public class RepositoryEntryPersistenceTest {
 			"mvccVersion", true, "uuid", true, "repositoryEntryId", true,
 			"groupId", true, "companyId", true, "userId", true, "userName",
 			true, "createDate", true, "modifiedDate", true, "repositoryId",
-			true, "mappedId", true, "manualCheckInRequired", true);
+			true, "mappedId", true, "manualCheckInRequired", true,
+			"lastPublishDate", true);
 	}
 
 	@Test
@@ -450,12 +458,13 @@ public class RepositoryEntryPersistenceTest {
 		Assert.assertTrue(Validator.equals(existingRepositoryEntry.getUuid(),
 				ReflectionTestUtil.invoke(existingRepositoryEntry,
 					"getOriginalUuid", new Class<?>[0])));
-		Assert.assertEquals(existingRepositoryEntry.getGroupId(),
-			ReflectionTestUtil.invoke(existingRepositoryEntry,
+		Assert.assertEquals(Long.valueOf(existingRepositoryEntry.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingRepositoryEntry,
 				"getOriginalGroupId", new Class<?>[0]));
 
-		Assert.assertEquals(existingRepositoryEntry.getRepositoryId(),
-			ReflectionTestUtil.invoke(existingRepositoryEntry,
+		Assert.assertEquals(Long.valueOf(
+				existingRepositoryEntry.getRepositoryId()),
+			ReflectionTestUtil.<Long>invoke(existingRepositoryEntry,
 				"getOriginalRepositoryId", new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(
 				existingRepositoryEntry.getMappedId(),
@@ -489,6 +498,8 @@ public class RepositoryEntryPersistenceTest {
 		repositoryEntry.setMappedId(RandomTestUtil.randomString());
 
 		repositoryEntry.setManualCheckInRequired(RandomTestUtil.randomBoolean());
+
+		repositoryEntry.setLastPublishDate(RandomTestUtil.nextDate());
 
 		_repositoryEntries.add(_persistence.update(repositoryEntry));
 

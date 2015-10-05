@@ -27,6 +27,7 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.Team;
 import com.liferay.portal.model.impl.TeamImpl;
+import com.liferay.portal.security.permission.InlineSQLHelperUtil;
 import com.liferay.portal.service.persistence.TeamFinder;
 import com.liferay.util.dao.orm.CustomSQLUtil;
 
@@ -38,8 +39,7 @@ import java.util.Map;
 /**
  * @author Brian Wing Shun Chan
  */
-public class TeamFinderImpl
-	extends BasePersistenceImpl<Team> implements TeamFinder {
+public class TeamFinderImpl extends TeamFinderBaseImpl implements TeamFinder {
 
 	public static final String COUNT_BY_G_N_D =
 		TeamFinder.class.getName() + ".countByG_N_D";
@@ -58,6 +58,41 @@ public class TeamFinderImpl
 		long groupId, String name, String description,
 		LinkedHashMap<String, Object> params) {
 
+		return doCountByG_N_D(groupId, name, description, params, false);
+	}
+
+	@Override
+	public int filterCountByG_N_D(
+		long groupId, String name, String description,
+		LinkedHashMap<String, Object> params) {
+
+		return doCountByG_N_D(groupId, name, description, params, true);
+	}
+
+	@Override
+	public List<Team> filterFindByG_N_D(
+		long groupId, String name, String description,
+		LinkedHashMap<String, Object> params, int start, int end,
+		OrderByComparator<Team> obc) {
+
+		return doFindByG_N_D(
+			groupId, name, description, params, start, end, obc, true);
+	}
+
+	@Override
+	public List<Team> findByG_N_D(
+		long groupId, String name, String description,
+		LinkedHashMap<String, Object> params, int start, int end,
+		OrderByComparator<Team> obc) {
+
+		return doFindByG_N_D(
+			groupId, name, description, params, start, end, obc, false);
+	}
+
+	protected int doCountByG_N_D(
+		long groupId, String name, String description,
+		LinkedHashMap<String, Object> params, boolean inlineSQLHelper) {
+
 		name = CustomSQLUtil.keywords(name)[0];
 		description = CustomSQLUtil.keywords(description)[0];
 
@@ -67,6 +102,11 @@ public class TeamFinderImpl
 			session = openSession();
 
 			String sql = CustomSQLUtil.get(COUNT_BY_G_N_D);
+
+			if (inlineSQLHelper) {
+				sql = InlineSQLHelperUtil.replacePermissionCheck(
+					sql, Team.class.getName(), "Team.teamId", groupId);
+			}
 
 			sql = StringUtil.replace(sql, "[$JOIN$]", getJoin(params));
 			sql = StringUtil.replace(sql, "[$WHERE$]", getWhere(params));
@@ -105,11 +145,10 @@ public class TeamFinderImpl
 		}
 	}
 
-	@Override
-	public List<Team> findByG_N_D(
+	protected List<Team> doFindByG_N_D(
 		long groupId, String name, String description,
 		LinkedHashMap<String, Object> params, int start, int end,
-		OrderByComparator<Team> obc) {
+		OrderByComparator<Team> obc, boolean inlineSQLHelper) {
 
 		name = CustomSQLUtil.keywords(name)[0];
 		description = CustomSQLUtil.keywords(description)[0];
@@ -120,6 +159,11 @@ public class TeamFinderImpl
 			session = openSession();
 
 			String sql = CustomSQLUtil.get(FIND_BY_G_N_D);
+
+			if (inlineSQLHelper) {
+				sql = InlineSQLHelperUtil.replacePermissionCheck(
+					sql, Team.class.getName(), "Team.teamId", groupId);
+			}
 
 			sql = StringUtil.replace(sql, "[$JOIN$]", getJoin(params));
 			sql = StringUtil.replace(sql, "[$WHERE$]", getWhere(params));

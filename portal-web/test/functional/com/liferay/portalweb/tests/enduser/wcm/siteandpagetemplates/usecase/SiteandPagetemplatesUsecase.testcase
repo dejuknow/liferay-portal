@@ -61,6 +61,7 @@
 
 		<execute macro="Site#addSiteTemplateCP">
 			<var name="siteName" value="Site Name" />
+			<var name="siteTemplateName" value="Site Template" />
 		</execute>
 
 		<execute macro="Page#gotoPagesCP">
@@ -92,6 +93,7 @@
 
 		<execute macro="Site#addSiteTemplateCP">
 			<var name="siteName" value="Site Name" />
+			<var name="siteTemplateName" value="Site Template Name" />
 		</execute>
 
 		<execute macro="PermissionsInline#gotoSiteTemplateCP">
@@ -135,8 +137,13 @@
 			<var name="siteTemplateName" value="Site Template Name" />
 		</execute>
 
+		<execute macro="Page#gotoCP">
+			<var name="portletName" value="Site Templates" />
+		</execute>
+
 		<execute macro="SiteTemplatesNavigator#gotoSiteTemplatesPage">
 			<var name="pageName" value="Page1 Name" />
+			<var name="siteTemplateName" value="Site Template Name" />
 		</execute>
 
 		<execute macro="Portlet#addPG">
@@ -247,7 +254,9 @@
 
 		<execute macro="Site#gotoManageSitesTemplatesViaAddDropdown" />
 
-		<execute macro="SiteTemplates#viewDefaultCP" />
+		<execute macro="SiteTemplates#viewDefaultCP">
+			<var name="siteTemplateNameList" value="Intranet Site,Community Site" />
+		</execute>
 
 		<execute macro="SiteTemplates#addCP">
 			<var name="siteTemplateName" value="Site Template Name" />
@@ -517,7 +526,7 @@
 			<var name="siteURL" value="true" />
 		</execute>
 
-		<execute macro="Portlet#viewSpecificPG">
+		<execute macro="Portlet#viewPillTitle">
 			<var name="portletName" value="Blogs" />
 		</execute>
 
@@ -795,7 +804,7 @@
 		</execute>
 	</command>
 
-	<command known-issues="LPS-55859" name="SitesTemplateResourceInheritance" priority="4">
+	<command name="SitesTemplateResourceInheritance" priority="4">
 		<property name="portlet.plugins.includes" value="tasks-portlet" />
 
 		<execute macro="Page#gotoCP">
@@ -933,7 +942,7 @@
 		</execute>
 	</command>
 
-	<command known-issues="LPS-51156" name="ViewNoAddPageTabViaPageTemplatesCP" priority="4">
+	<command name="ViewNoAddPageTabViaPageTemplatesCP" priority="4">
 		<execute macro="Page#gotoCP">
 			<var name="portletName" value="Page Templates" />
 		</execute>

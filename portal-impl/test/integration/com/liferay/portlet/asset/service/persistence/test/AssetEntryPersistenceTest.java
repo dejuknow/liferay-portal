@@ -44,6 +44,7 @@ import com.liferay.portlet.asset.service.persistence.AssetEntryUtil;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -60,8 +61,9 @@ import java.util.Set;
  * @generated
  */
 public class AssetEntryPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -325,10 +327,9 @@ public class AssetEntryPersistenceTest {
 			"classNameId", true, "classPK", true, "classUuid", true,
 			"classTypeId", true, "listable", true, "visible", true,
 			"startDate", true, "endDate", true, "publishDate", true,
-			"expirationDate", true, "mimeType", true, "title", true,
-			"description", true, "summary", true, "url", true, "layoutUuid",
-			true, "height", true, "width", true, "priority", true, "viewCount",
-			true);
+			"expirationDate", true, "mimeType", true, "title", true, "url",
+			true, "layoutUuid", true, "height", true, "width", true,
+			"priority", true, "viewCount", true);
 	}
 
 	@Test
@@ -533,19 +534,19 @@ public class AssetEntryPersistenceTest {
 
 		AssetEntry existingAssetEntry = _persistence.findByPrimaryKey(newAssetEntry.getPrimaryKey());
 
-		Assert.assertEquals(existingAssetEntry.getGroupId(),
-			ReflectionTestUtil.invoke(existingAssetEntry, "getOriginalGroupId",
-				new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingAssetEntry.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingAssetEntry,
+				"getOriginalGroupId", new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(existingAssetEntry.getClassUuid(),
 				ReflectionTestUtil.invoke(existingAssetEntry,
 					"getOriginalClassUuid", new Class<?>[0])));
 
-		Assert.assertEquals(existingAssetEntry.getClassNameId(),
-			ReflectionTestUtil.invoke(existingAssetEntry,
+		Assert.assertEquals(Long.valueOf(existingAssetEntry.getClassNameId()),
+			ReflectionTestUtil.<Long>invoke(existingAssetEntry,
 				"getOriginalClassNameId", new Class<?>[0]));
-		Assert.assertEquals(existingAssetEntry.getClassPK(),
-			ReflectionTestUtil.invoke(existingAssetEntry, "getOriginalClassPK",
-				new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingAssetEntry.getClassPK()),
+			ReflectionTestUtil.<Long>invoke(existingAssetEntry,
+				"getOriginalClassPK", new Class<?>[0]));
 	}
 
 	protected AssetEntry addAssetEntry() throws Exception {

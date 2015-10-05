@@ -1,0 +1,14 @@
+buildService {
+	apiDirName = "../mobile-device-rules-api/src"
+	testDirName = "../mobile-device-rules-test/test/integration"
+}
+
+dependencies {
+	compile group: "org.osgi", name: "org.osgi.compendium", version: "5.0.0"
+	compile project(":apps:export-import:export-import-service")
+	compile project(":apps:mobile-device-rules:mobile-device-rules-api")
+}
+
+liferay {
+	deployDir = file("${liferayHome}/osgi/modules")
+}

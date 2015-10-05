@@ -16,21 +16,21 @@ package com.liferay.blogs.web.messaging;
 
 import aQute.bnd.annotation.metatype.Configurable;
 
-import com.liferay.blogs.configuration.BlogsSystemConfiguration;
+import com.liferay.blogs.configuration.BlogsConfiguration;
 import com.liferay.blogs.web.constants.BlogsPortletKeys;
 import com.liferay.portal.kernel.messaging.BaseSchedulerEntryMessageListener;
 import com.liferay.portal.kernel.messaging.Message;
+import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
 import com.liferay.portal.kernel.scheduler.SchedulerEntry;
 import com.liferay.portal.kernel.scheduler.TimeUnit;
-import com.liferay.portal.kernel.scheduler.TriggerType;
+import com.liferay.portal.kernel.scheduler.TriggerFactory;
+import com.liferay.portal.kernel.scheduler.TriggerFactoryUtil;
 import com.liferay.portal.model.Portlet;
 import com.liferay.portlet.blogs.linkback.LinkbackConsumer;
 import com.liferay.portlet.blogs.linkback.LinkbackConsumerUtil;
 import com.liferay.portlet.blogs.util.LinkbackProducerUtil;
 
 import java.util.Map;
-
-import javax.servlet.ServletContext;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -50,14 +50,13 @@ public class LinkbackMessageListener extends BaseSchedulerEntryMessageListener {
 	@Activate
 	@Modified
 	protected void activate(Map<String, Object> properties) {
-		schedulerEntry.setTimeUnit(TimeUnit.MINUTE);
-		schedulerEntry.setTriggerType(TriggerType.SIMPLE);
+		_blogsConfiguration = Configurable.createConfigurable(
+			BlogsConfiguration.class, properties);
 
-		_blogsSystemConfiguration = Configurable.createConfigurable(
-			BlogsSystemConfiguration.class, properties);
-
-		schedulerEntry.setTriggerValue(
-			_blogsSystemConfiguration.linkbackJobInterval());
+		schedulerEntryImpl.setTrigger(
+			TriggerFactoryUtil.createTrigger(
+				getEventListenerClass(), getEventListenerClass(),
+				_blogsConfiguration.linkbackJobInterval(), TimeUnit.MINUTE));
 	}
 
 	@Override
@@ -67,15 +66,20 @@ public class LinkbackMessageListener extends BaseSchedulerEntryMessageListener {
 		LinkbackProducerUtil.sendQueuedPingbacks();
 	}
 
+	@Reference(target = ModuleServiceLifecycle.PORTAL_INITIALIZED, unbind = "-")
+	protected void setModuleServiceLifecycle(
+		ModuleServiceLifecycle moduleServiceLifecycle) {
+	}
+
 	@Reference(target = "(javax.portlet.name=" + BlogsPortletKeys.BLOGS + ")")
 	protected void setPortlet(Portlet portlet) {
 	}
 
-	@Reference(target = "(original.bean=*)", unbind = "-")
-	protected void setServletContext(ServletContext servletContext) {
+	@Reference(unbind = "-")
+	protected void setTriggerFactory(TriggerFactory triggerFactory) {
 	}
 
-	private volatile BlogsSystemConfiguration _blogsSystemConfiguration;
+	private volatile BlogsConfiguration _blogsConfiguration;
 	private final LinkbackConsumer _linkbackConsumer =
 		LinkbackConsumerUtil.getLinkbackConsumer();
 

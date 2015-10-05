@@ -1,24 +1,101 @@
-.portlet-control-menu {
+@import "bourbon";
+@import "mixins";
+
+body.open {
 	.control-menu {
-		background-color: #1F282E;
-		bottom: 0;
-		list-style: none;
-		margin: 0;
-		opacity: 0.7;
-		position: fixed;
-		text-align: center;
-		width: 100%;
+		@include sm() {
+			left: 320px;
+		}
+	}
+}
 
-		li {
-			display: inline-block;
-			padding: 0 20px;
+.control-menu {
+	bottom: 0;
+	left: 0;
+	position: fixed;
+	right: 0;
+	z-index: 500;
+}
 
-			a {
-				color: #FFF;
-				display: block;
-				font-size: 20px;
-				padding-top: 5px;
+.control-menu-level-1,
+.control-menu-level-2 {
+	padding-bottom: 5px;
+	padding-top: 5px;
+	position: relative;
+}
+
+.control-menu-level-1 {
+	.control-menu-nav {
+		@include media-query(null, 279px) {
+			@include flex-wrap(wrap);
+		}
+
+		> li {
+			@include media-query(null, 279px) {
+				margin-bottom: 2px;
+				margin-left: 2px;
+			}
+
+			&:first-child {
+				@include flex(1);
+
+				margin-left: 0;
+
+				@include media-query(null, 279px) {
+					@include flex(0 1 auto);
+				}
+			}
+
+			&:nth-last-child(2) {
+				@include flex(1);
+
+				@include media-query(null, 279px) {
+					@include flex(0 1 auto);
+				}
 			}
 		}
 	}
+}
+
+.control-menu-level-2 {
+	border-bottom: 1px solid #EEE;
+
+	.control-menu-nav {
+		@include flex-wrap(wrap);
+		@include justify-content(space-between);
+
+		> li {
+			margin-bottom: 5px;
+			margin-left: 0;
+			text-align: center;
+
+			@include sm() {
+				margin-bottom: 0;
+			}
+		}
+	}
+}
+
+.control-menu-nav {
+	@include display(flex);
+
+	list-style: none;
+	margin-bottom: 0;
+	padding-left: 0;
+
+	> li {
+		@include align-self(center);
+
+		display: block;
+		float: left;
+		margin-left: 16px;
+	}
+}
+
+.control-menu-icon {
+	display: inline-block;
+}
+
+.control-menu-icon-label {
+	display: block;
 }

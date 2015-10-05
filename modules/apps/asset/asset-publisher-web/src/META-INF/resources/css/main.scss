@@ -1,6 +1,7 @@
 .portlet-asset-publisher {
 	.asset-abstract {
 		border-bottom: 1px solid #DDD;
+		overflow: hidden;
 		padding: 0.6em 0;
 
 		&:last-child {
@@ -19,6 +20,19 @@
 	.asset-content {
 		clear: right;
 		padding: 10px;
+
+		.lfr-preview-file-content {
+			border-bottom-width: 0;
+			height: auto;
+
+			.lfr-preview-file-image-current-column {
+				padding: 0;
+			}
+
+			.lfr-preview-file-image-container {
+				height: auto;
+			}
+		}
 	}
 
 	.asset-flag {
@@ -26,10 +40,6 @@
 	}
 
 	.asset-full-content {
-		.asset-content {
-			margin-right: 25px;
-		}
-
 		&.show-asset-title .asset-content {
 			margin-right: 10px;
 			overflow-x: auto;
@@ -69,36 +79,6 @@
 
 		.icon-edit-sign {
 			font-size: 2em;
-		}
-	}
-
-	.asset-author {
-		overflow: hidden;
-		padding: 10px;
-
-		.asset-avatar {
-			float: left;
-			padding-right: 10px;
-
-			.avatar {
-				width: 45px;
-			}
-		}
-
-		.asset-user-info {
-			margin-top: 5px;
-
-			.user-info {
-				color: #009AE5;
-				display: block;
-				font-size: 14px;
-				line-height: 14px;
-			}
-
-			.date-info {
-				color: #8C8C8C;
-				font-size: 13px;
-			}
 		}
 	}
 
@@ -296,4 +276,11 @@
 
 .social-boomarks-options {
 	margin-left: 2em;
+}
+
+/* Skin */
+
+.portlet-asset-publisher .asset-content .lfr-preview-file-content .lfr-preview-file-image-current-column {
+	background: none;
+	box-shadow: none;
 }

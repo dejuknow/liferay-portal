@@ -15,8 +15,13 @@
 package com.liferay.journal.lar.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.model.DDMTemplate;
+import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
+import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMStructureTestUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMTemplateTestUtil;
+import com.liferay.journal.constants.JournalPortletKeys;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.model.JournalArticleConstants;
 import com.liferay.journal.model.JournalArticleResource;
@@ -44,13 +49,9 @@ import com.liferay.portal.service.CompanyLocalServiceUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.test.ServiceTestUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
-import com.liferay.portal.util.PortletKeys;
+import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.asset.model.AssetEntry;
 import com.liferay.portlet.asset.service.AssetEntryLocalServiceUtil;
-import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
-import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
-import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
-import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalServiceUtil;
 import com.liferay.portlet.exportimport.lar.PortletDataHandlerKeys;
 import com.liferay.portlet.exportimport.lar.UserIdStrategy;
 
@@ -87,7 +88,7 @@ public class JournalExportImportTest extends BasePortletExportImportTestCase {
 
 	@Override
 	public String getPortletId() {
-		return PortletKeys.JOURNAL;
+		return JournalPortletKeys.JOURNAL;
 	}
 
 	@Before
@@ -124,7 +125,7 @@ public class JournalExportImportTest extends BasePortletExportImportTestCase {
 		addParameter(exportParameterMap, "version-history", false);
 
 		exportImportPortlet(
-			PortletKeys.JOURNAL, exportParameterMap,
+			JournalPortletKeys.JOURNAL, exportParameterMap,
 			new HashMap<String, String[]>());
 
 		JournalArticle importedArticle = (JournalArticle)getStagedModel(
@@ -243,7 +244,8 @@ public class JournalExportImportTest extends BasePortletExportImportTestCase {
 			groupId, JournalArticle.class.getName());
 
 		ddmTemplate = DDMTemplateTestUtil.addTemplate(
-			groupId, ddmStructure.getStructureId());
+			groupId, ddmStructure.getStructureId(),
+			PortalUtil.getClassNameId(JournalArticle.class));
 
 		String content = DDMStructureTestUtil.getSampleStructuredContent();
 
@@ -251,7 +253,7 @@ public class JournalExportImportTest extends BasePortletExportImportTestCase {
 			group.getGroupId(), content, ddmStructure.getStructureKey(),
 			ddmTemplate.getTemplateKey());
 
-		exportImportPortlet(PortletKeys.JOURNAL);
+		exportImportPortlet(JournalPortletKeys.JOURNAL);
 
 		int articlesCount = JournalArticleLocalServiceUtil.getArticlesCount(
 			importedGroup.getGroupId());
@@ -332,7 +334,8 @@ public class JournalExportImportTest extends BasePortletExportImportTestCase {
 			parameterMap, "permissionsAssignedToRoles",
 			Boolean.TRUE.toString());
 		addParameter(parameterMap, "plid", String.valueOf(plid));
-		addParameter(parameterMap, "portletResource", PortletKeys.JOURNAL);
+		addParameter(
+			parameterMap, "portletResource", JournalPortletKeys.JOURNAL);
 		addParameter(parameterMap, "referenced-content", true);
 		addParameter(parameterMap, "structures", true);
 		addParameter(parameterMap, "version-history", true);
@@ -351,7 +354,7 @@ public class JournalExportImportTest extends BasePortletExportImportTestCase {
 
 		parameterMap.put(
 			PortletDataHandlerKeys.PORTLET_DATA + StringPool.UNDERLINE +
-				PortletKeys.JOURNAL,
+				JournalPortletKeys.JOURNAL,
 			new String[] {Boolean.TRUE.toString()});
 
 		return parameterMap;

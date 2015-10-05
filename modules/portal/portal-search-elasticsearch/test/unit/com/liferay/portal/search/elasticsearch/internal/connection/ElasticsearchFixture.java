@@ -21,13 +21,13 @@ import com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfig
 import com.liferay.portal.search.elasticsearch.connection.ElasticsearchConnection;
 import com.liferay.portal.search.elasticsearch.internal.cluster.ClusterSettingsContext;
 import com.liferay.portal.search.elasticsearch.internal.cluster.UnicastSettingsContributor;
+import com.liferay.portal.search.elasticsearch.settings.BaseSettingsContributor;
 
 import java.io.File;
 
-import java.lang.reflect.Method;
-
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
 
@@ -37,10 +37,14 @@ import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequestBuilder
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequestBuilder;
+import org.elasticsearch.action.admin.indices.get.GetIndexRequestBuilder;
+import org.elasticsearch.action.admin.indices.get.GetIndexResponse;
 import org.elasticsearch.client.AdminClient;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.ClusterAdminClient;
 import org.elasticsearch.client.IndicesAdminClient;
+import org.elasticsearch.common.settings.ImmutableSettings.Builder;
+import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.indices.IndexMissingException;
 
 import org.mockito.Mockito;
@@ -97,10 +101,16 @@ public class ElasticsearchFixture {
 		deleteTmpDir();
 	}
 
-	public ClusterHealthResponse getClusterHealthResponse() {
+	public AdminClient getAdminClient() {
 		Client client = _elasticsearchConnection.getClient();
 
-		AdminClient adminClient = client.admin();
+		return client.admin();
+	}
+
+	public ClusterHealthResponse getClusterHealthResponse(
+		HealthExpectations healthExpectations) {
+
+		AdminClient adminClient = getAdminClient();
 
 		ClusterAdminClient clusterAdminClient = adminClient.cluster();
 
@@ -110,16 +120,33 @@ public class ElasticsearchFixture {
 		ClusterHealthRequest clusterHealthRequest =
 			clusterHealthRequestBuilder.request();
 
+		clusterHealthRequest.timeout(new TimeValue(10, TimeUnit.MINUTES));
+		clusterHealthRequest.waitForActiveShards(
+			healthExpectations.activeShards);
+		clusterHealthRequest.waitForNodes(
+			String.valueOf(healthExpectations.numberOfNodes));
+		clusterHealthRequest.waitForRelocatingShards(0);
+		clusterHealthRequest.waitForStatus(healthExpectations.status);
+
 		ActionFuture<ClusterHealthResponse> health = clusterAdminClient.health(
 			clusterHealthRequest);
 
 		return health.actionGet();
 	}
 
-	public IndicesAdminClient getIndicesAdminClient() {
-		Client client = _elasticsearchConnection.getClient();
+	public GetIndexResponse getIndex(String... indices) {
+		IndicesAdminClient indicesAdminClient = getIndicesAdminClient();
 
-		AdminClient adminClient = client.admin();
+		GetIndexRequestBuilder getIndexRequestBuilder =
+			indicesAdminClient.prepareGetIndex();
+
+		getIndexRequestBuilder.addIndices(indices);
+
+		return getIndexRequestBuilder.get();
+	}
+
+	public IndicesAdminClient getIndicesAdminClient() {
+		AdminClient adminClient = getAdminClient();
 
 		return adminClient.indices();
 	}
@@ -152,6 +179,22 @@ public class ElasticsearchFixture {
 
 	}
 
+	protected void addDiskThresholdSettingsContributor(
+		EmbeddedElasticsearchConnection embeddedElasticsearchConnection) {
+
+		embeddedElasticsearchConnection.addSettingsContributor(
+			new BaseSettingsContributor(0) {
+
+				@Override
+				public void populate(Builder builder) {
+					builder.put(
+						"cluster.routing.allocation.disk.threshold_enabled",
+						"false");
+				}
+
+			});
+	}
+
 	protected void addUnicastSettingsContributor(
 		EmbeddedElasticsearchConnection embeddedElasticsearchConnection) {
 
@@ -160,17 +203,13 @@ public class ElasticsearchFixture {
 		}
 
 		UnicastSettingsContributor unicastSettingsContributor =
-			new UnicastSettingsContributor();
+			new UnicastSettingsContributor() {
+				{
+					setClusterSettingsContext(_clusterSettingsContext);
 
-		execute(
-			UnicastSettingsContributor.class, "setClusterSettingsContext",
-			new Class<?>[] {ClusterSettingsContext.class},
-			unicastSettingsContributor, new Object[] {_clusterSettingsContext});
-
-		execute(
-			UnicastSettingsContributor.class, "activate",
-			new Class<?>[] {Map.class}, unicastSettingsContributor,
-			new Object[] {_elasticsearchConfigurationProperties});
+					activate(_elasticsearchConfigurationProperties);
+				}
+			};
 
 		embeddedElasticsearchConnection.addSettingsContributor(
 			unicastSettingsContributor);
@@ -180,6 +219,7 @@ public class ElasticsearchFixture {
 		EmbeddedElasticsearchConnection embeddedElasticsearchConnection =
 			new EmbeddedElasticsearchConnection();
 
+		addDiskThresholdSettingsContributor(embeddedElasticsearchConnection);
 		addUnicastSettingsContributor(embeddedElasticsearchConnection);
 
 		Props props = Mockito.mock(Props.class);
@@ -204,22 +244,6 @@ public class ElasticsearchFixture {
 
 	protected void deleteTmpDir() throws Exception {
 		FileUtils.deleteDirectory(new File(_tmpDirName));
-	}
-
-	protected void execute(
-		Class<?> clazz, String methodName, Class<?>[] parameterTypes,
-		Object instance, Object[] parameters) {
-
-		try {
-			Method method = clazz.getDeclaredMethod(methodName, parameterTypes);
-
-			method.setAccessible(true);
-
-			method.invoke(instance, parameters);
-		}
-		catch (Exception e) {
-			throw new IllegalStateException(e);
-		}
 	}
 
 	private ClusterSettingsContext _clusterSettingsContext;

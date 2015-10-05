@@ -39,6 +39,7 @@ import com.liferay.portal.test.rule.PersistenceTestRule;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -55,8 +56,9 @@ import java.util.Set;
  * @generated
  */
 public class ResourceBlockPermissionPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -403,11 +405,13 @@ public class ResourceBlockPermissionPersistenceTest {
 
 		ResourceBlockPermission existingResourceBlockPermission = _persistence.findByPrimaryKey(newResourceBlockPermission.getPrimaryKey());
 
-		Assert.assertEquals(existingResourceBlockPermission.getResourceBlockId(),
-			ReflectionTestUtil.invoke(existingResourceBlockPermission,
+		Assert.assertEquals(Long.valueOf(
+				existingResourceBlockPermission.getResourceBlockId()),
+			ReflectionTestUtil.<Long>invoke(existingResourceBlockPermission,
 				"getOriginalResourceBlockId", new Class<?>[0]));
-		Assert.assertEquals(existingResourceBlockPermission.getRoleId(),
-			ReflectionTestUtil.invoke(existingResourceBlockPermission,
+		Assert.assertEquals(Long.valueOf(
+				existingResourceBlockPermission.getRoleId()),
+			ReflectionTestUtil.<Long>invoke(existingResourceBlockPermission,
 				"getOriginalRoleId", new Class<?>[0]));
 	}
 

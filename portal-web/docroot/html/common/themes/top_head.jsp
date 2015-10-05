@@ -16,7 +16,7 @@
 
 <%@ include file="/html/common/themes/init.jsp" %>
 
-<liferay-util:dynamic-include key="/html/common/themes/top_head-ext.jsp" />
+<liferay-util:dynamic-include key="/html/common/themes/top_head.jsp#pre" />
 
 <%@ include file="/html/common/themes/top_meta.jspf" %>
 <%@ include file="/html/common/themes/top_meta-ext.jsp" %>
@@ -64,7 +64,7 @@ if (!themeDisplay.isSignedIn() && layout.isPublicLayout()) {
 long cssLastModifiedTime = PortalWebResourcesUtil.getLastModified(PortalWebResourceConstants.RESOURCE_TYPE_CSS);
 %>
 
-<link href="<%= HtmlUtil.escapeAttribute(PortalUtil.getStaticResourceURL(request, themeDisplay.getCDNDynamicResourcesHost() + PortalWebResourcesUtil.getContextPath(PortalWebResourceConstants.RESOURCE_TYPE_CSS) + "/html/css/main.css", cssLastModifiedTime)) %>" rel="stylesheet" type="text/css" />
+<link href="<%= HtmlUtil.escapeAttribute(PortalUtil.getStaticResourceURL(request, themeDisplay.getCDNDynamicResourcesHost() + PortalWebResourcesUtil.getContextPath(PortalWebResourceConstants.RESOURCE_TYPE_CSS) + "/main.css", cssLastModifiedTime)) %>" rel="stylesheet" type="text/css" />
 
 <%
 List<Portlet> portlets = null;
@@ -85,7 +85,7 @@ if (layout != null) {
 			}
 		}
 	}
-	else if ((layout.isTypeControlPanel() || layout.isTypePanel() || layout.isTypeUserPersonalPanel()) && Validator.isNotNull(ppid)) {
+	else if ((layout.isTypeControlPanel() || layout.isTypePanel()) && Validator.isNotNull(ppid)) {
 		portlets = new ArrayList<Portlet>();
 
 		Portlet portlet = PortletLocalServiceUtil.getPortletById(company.getCompanyId(), ppid);
@@ -197,6 +197,8 @@ StringBundler pageTopSB = OutputTag.getData(request, WebKeys.PAGE_TOP);
 
 	</style>
 </c:if>
+
+<liferay-util:dynamic-include key="/html/common/themes/top_head.jsp#post" />
 
 <%!
 private String _escapeCssBlock(String css) {

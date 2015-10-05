@@ -18,7 +18,6 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.MapUtil;
-import com.liferay.portal.model.BackgroundTask;
 import com.liferay.portal.model.User;
 import com.liferay.portal.service.UserLocalServiceUtil;
 
@@ -32,6 +31,9 @@ import java.util.Map;
  */
 public abstract class BaseBackgroundTaskExecutor
 	implements BackgroundTaskExecutor {
+
+	@Override
+	public abstract BackgroundTaskExecutor clone();
 
 	@Override
 	public BackgroundTaskStatusMessageTranslator

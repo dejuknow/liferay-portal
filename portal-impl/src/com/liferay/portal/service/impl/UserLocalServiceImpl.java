@@ -1864,9 +1864,10 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 		membershipRequestLocalService.deleteMembershipRequestsByUserId(
 			user.getUserId());
 
-		// Shopping cart
+		// Ratings
 
-		shoppingCartLocalService.deleteUserCarts(user.getUserId());
+		ratingsStatsLocalService.deleteStats(
+			User.class.getName(), user.getUserId());
 
 		// Social
 
@@ -3393,6 +3394,13 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 		catch (Exception e) {
 			throw new SystemException(e);
 		}
+	}
+
+	@Override
+	public Map<Long, Integer> searchCounts(
+		long companyId, int status, long[] groupIds) {
+
+		return userFinder.countByGroups(companyId, status, groupIds);
 	}
 
 	@Override
@@ -6716,7 +6724,7 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 
 		if ((user != null) && (user.getUserId() != userId)) {
 			throw new UserScreenNameException.MustNotBeDuplicate(
-				userId, screenName);
+				user.getUserId(), screenName);
 		}
 
 		String friendlyURL = StringPool.SLASH + screenName;

@@ -16,41 +16,60 @@
 
 <%@ include file="/init.jsp" %>
 
-<aui:form name="fm">
+<%
+String displayStyle = ParamUtil.getString(request, "displayStyle", "list");
+%>
+
+<liferay-portlet:renderURL varImpl="portletURL" />
+
+<aui:nav-bar cssClass="collapse-basic-search" markupView="lexicon">
+	<aui:nav cssClass="navbar-nav">
+		<aui:nav-item cssClass="active" label="tags" />
+	</aui:nav>
+
+	<aui:nav-bar-search>
+		<aui:form action="<%= portletURL %>" name="searchFm">
+			<liferay-ui:input-search markupView="lexicon" />
+		</aui:form>
+	</aui:nav-bar-search>
+</aui:nav-bar>
+
+<liferay-frontend:management-bar
+	checkBoxContainerId="assetTagsSearchContainer"
+	includeCheckBox="<%= true %>"
+>
+	<liferay-frontend:management-bar-buttons>
+		<liferay-frontend:management-bar-display-buttons
+			displayStyleURL="<%= portletURL %>"
+			displayViews='<%= new String[] {"list"} %>'
+			selectedDisplayStyle="<%= displayStyle %>"
+		/>
+	</liferay-frontend:management-bar-buttons>
+
+	<liferay-frontend:management-bar-action-buttons>
+		<aui:a cssClass="btn" href="javascript:;" iconCssClass="icon-random" id="mergeSelectedTags" />
+
+		<aui:a cssClass="btn" href="javascript:;" iconCssClass="icon-trash" id="deleteSelectedTags" />
+	</liferay-frontend:management-bar-action-buttons>
+</liferay-frontend:management-bar>
+
+<aui:form cssClass="container-fluid-1280" name="fm">
 	<aui:input name="deleteTagIds" type="hidden" />
 
 	<liferay-ui:search-container
 		emptyResultsMessage="there-are-no-tags"
-		rowChecker="<%= new RowChecker(renderResponse) %>"
+		id="assetTags"
+		rowChecker="<%= new EmptyOnClickRowChecker(renderResponse) %>"
 	>
-		<aui:nav-bar>
-			<aui:nav cssClass="navbar-nav">
-				<c:if test="<%= AssetPermission.contains(permissionChecker, themeDisplay.getSiteGroupId(), ActionKeys.ADD_TAG) %>">
-					<portlet:renderURL var="editTagURL">
-						<portlet:param name="mvcPath" value="/edit_tag.jsp" />
-					</portlet:renderURL>
-
-					<aui:nav-item href="<%= editTagURL %>" iconCssClass="icon-plus" label="add-tag" />
-				</c:if>
-
-				<aui:nav-item cssClass="hide" dropdown="<%= true %>" id="tagsActionsButton" label="actions">
-					<aui:nav-item iconCssClass="icon-random" id="mergeSelectedTags" label="merge" />
-
-					<aui:nav-item cssClass="item-remove" iconCssClass="icon-remove" id="deleteSelectedTags" label="delete" />
-				</aui:nav-item>
-			</aui:nav>
-
-			<aui:nav-bar-search>
-				<div class="form-search">
-					<liferay-ui:input-search />
-				</div>
-			</aui:nav-bar-search>
-		</aui:nav-bar>
 
 		<liferay-ui:search-container-results>
 
 			<%
 			String keywords = ParamUtil.getString(request, "keywords", null);
+
+			if (Validator.isNotNull(keywords)) {
+				keywords = StringUtil.quote(keywords, StringPool.PERCENT);
+			}
 
 			total = AssetTagServiceUtil.getTagsCount(scopeGroupId, keywords);
 
@@ -87,29 +106,29 @@
 			</liferay-ui:search-container-column-text>
 
 			<liferay-ui:search-container-column-jsp
-				cssClass="entry-action"
+				cssClass="checkbox-cell entry-action"
 				path="/tag_action.jsp"
 			/>
 		</liferay-ui:search-container-row>
 
-		<liferay-ui:search-iterator />
+		<liferay-ui:search-iterator markupView="lexicon" />
 	</liferay-ui:search-container>
 </aui:form>
+
+<c:if test="<%= AssetPermission.contains(permissionChecker, themeDisplay.getSiteGroupId(), ActionKeys.ADD_TAG) %>">
+	<portlet:renderURL var="editTagURL">
+		<portlet:param name="mvcPath" value="/edit_tag.jsp" />
+	</portlet:renderURL>
+
+	<liferay-frontend:add-menu>
+		<liferay-frontend:add-menu-item title='<%= LanguageUtil.get(request, "add-tag") %>' url="<%= editTagURL.toString() %>" />
+	</liferay-frontend:add-menu>
+</c:if>
 
 <aui:script sandbox="<%= true %>">
 	var Util = Liferay.Util;
 
 	var form = $(document.<portlet:namespace />fm);
-
-	$('#<portlet:namespace /><%= searchContainerReference.getId() %>SearchContainer').on(
-		'click',
-		'input[type=checkbox]',
-		function() {
-			var hide = (Util.listCheckedExcept(form, '<portlet:namespace /><%= RowChecker.ALL_ROW_IDS %>').length == 0);
-
-			$('#<portlet:namespace />tagsActionsButton').toggleClass('hide', hide);
-		}
-	);
 
 	$('#<portlet:namespace />deleteSelectedTags').on(
 		'click',

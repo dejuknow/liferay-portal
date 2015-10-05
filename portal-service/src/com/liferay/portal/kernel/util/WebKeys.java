@@ -158,6 +158,8 @@ public interface WebKeys {
 
 	public static final String PORTLET_DECORATE = "PORTLET_DECORATE";
 
+	public static final String PORTLET_DISPLAY_TEMPLATE = "PORTLET_DISPLAY_TEMPLATE";
+
 	public static final String PORTLET_ID = "PORTLET_ID";
 
 	public static final String PORTLET_PREFERENCES_MAP = "PORTLET_PREFERENCES_MAP";
@@ -200,7 +202,11 @@ public interface WebKeys {
 
 	public static final String SEARCH_CONTAINER_RESULT_ROW = "SEARCH_CONTAINER_RESULT_ROW";
 
+	public static final String SEARCH_CONTAINER_RESULT_ROW_CHECKER = "SEARCH_CONTAINER_RESULT_ROW_CHECKER";
+
 	public static final String SEARCH_CONTAINER_RESULT_ROW_ENTRY = "SEARCH_CONTAINER_RESULT_ROW_ENTRY";
+
+	public static final String SEARCH_ENTRY_HREF = "SEARCH_ENTRY_HREF";
 
 	public static final String SEARCH_SEARCH_RESULTS = "SEARCH_SEARCH_RESULTS";
 

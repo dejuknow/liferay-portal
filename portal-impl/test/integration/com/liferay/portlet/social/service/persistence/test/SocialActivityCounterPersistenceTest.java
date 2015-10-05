@@ -42,6 +42,7 @@ import com.liferay.portlet.social.service.persistence.SocialActivityCounterUtil;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -58,8 +59,9 @@ import java.util.Set;
  * @generated
  */
 public class SocialActivityCounterPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -458,44 +460,54 @@ public class SocialActivityCounterPersistenceTest {
 
 		SocialActivityCounter existingSocialActivityCounter = _persistence.findByPrimaryKey(newSocialActivityCounter.getPrimaryKey());
 
-		Assert.assertEquals(existingSocialActivityCounter.getGroupId(),
-			ReflectionTestUtil.invoke(existingSocialActivityCounter,
+		Assert.assertEquals(Long.valueOf(
+				existingSocialActivityCounter.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingSocialActivityCounter,
 				"getOriginalGroupId", new Class<?>[0]));
-		Assert.assertEquals(existingSocialActivityCounter.getClassNameId(),
-			ReflectionTestUtil.invoke(existingSocialActivityCounter,
+		Assert.assertEquals(Long.valueOf(
+				existingSocialActivityCounter.getClassNameId()),
+			ReflectionTestUtil.<Long>invoke(existingSocialActivityCounter,
 				"getOriginalClassNameId", new Class<?>[0]));
-		Assert.assertEquals(existingSocialActivityCounter.getClassPK(),
-			ReflectionTestUtil.invoke(existingSocialActivityCounter,
+		Assert.assertEquals(Long.valueOf(
+				existingSocialActivityCounter.getClassPK()),
+			ReflectionTestUtil.<Long>invoke(existingSocialActivityCounter,
 				"getOriginalClassPK", new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(
 				existingSocialActivityCounter.getName(),
 				ReflectionTestUtil.invoke(existingSocialActivityCounter,
 					"getOriginalName", new Class<?>[0])));
-		Assert.assertEquals(existingSocialActivityCounter.getOwnerType(),
-			ReflectionTestUtil.invoke(existingSocialActivityCounter,
+		Assert.assertEquals(Integer.valueOf(
+				existingSocialActivityCounter.getOwnerType()),
+			ReflectionTestUtil.<Integer>invoke(existingSocialActivityCounter,
 				"getOriginalOwnerType", new Class<?>[0]));
-		Assert.assertEquals(existingSocialActivityCounter.getStartPeriod(),
-			ReflectionTestUtil.invoke(existingSocialActivityCounter,
+		Assert.assertEquals(Integer.valueOf(
+				existingSocialActivityCounter.getStartPeriod()),
+			ReflectionTestUtil.<Integer>invoke(existingSocialActivityCounter,
 				"getOriginalStartPeriod", new Class<?>[0]));
 
-		Assert.assertEquals(existingSocialActivityCounter.getGroupId(),
-			ReflectionTestUtil.invoke(existingSocialActivityCounter,
+		Assert.assertEquals(Long.valueOf(
+				existingSocialActivityCounter.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingSocialActivityCounter,
 				"getOriginalGroupId", new Class<?>[0]));
-		Assert.assertEquals(existingSocialActivityCounter.getClassNameId(),
-			ReflectionTestUtil.invoke(existingSocialActivityCounter,
+		Assert.assertEquals(Long.valueOf(
+				existingSocialActivityCounter.getClassNameId()),
+			ReflectionTestUtil.<Long>invoke(existingSocialActivityCounter,
 				"getOriginalClassNameId", new Class<?>[0]));
-		Assert.assertEquals(existingSocialActivityCounter.getClassPK(),
-			ReflectionTestUtil.invoke(existingSocialActivityCounter,
+		Assert.assertEquals(Long.valueOf(
+				existingSocialActivityCounter.getClassPK()),
+			ReflectionTestUtil.<Long>invoke(existingSocialActivityCounter,
 				"getOriginalClassPK", new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(
 				existingSocialActivityCounter.getName(),
 				ReflectionTestUtil.invoke(existingSocialActivityCounter,
 					"getOriginalName", new Class<?>[0])));
-		Assert.assertEquals(existingSocialActivityCounter.getOwnerType(),
-			ReflectionTestUtil.invoke(existingSocialActivityCounter,
+		Assert.assertEquals(Integer.valueOf(
+				existingSocialActivityCounter.getOwnerType()),
+			ReflectionTestUtil.<Integer>invoke(existingSocialActivityCounter,
 				"getOriginalOwnerType", new Class<?>[0]));
-		Assert.assertEquals(existingSocialActivityCounter.getEndPeriod(),
-			ReflectionTestUtil.invoke(existingSocialActivityCounter,
+		Assert.assertEquals(Integer.valueOf(
+				existingSocialActivityCounter.getEndPeriod()),
+			ReflectionTestUtil.<Integer>invoke(existingSocialActivityCounter,
 				"getOriginalEndPeriod", new Class<?>[0]));
 	}
 

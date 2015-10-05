@@ -23,11 +23,15 @@ import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.theme.ThemeDisplay;
+import com.liferay.portal.util.WebKeys;
+import com.liferay.portlet.asset.AssetRendererFactoryRegistryUtil;
 import com.liferay.portlet.asset.model.AssetRendererFactory;
-import com.liferay.search.web.util.SearchFacet;
+import com.liferay.search.facet.BaseJSPSearchFacet;
+import com.liferay.search.facet.SearchFacet;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.portlet.ActionRequest;
 
@@ -35,9 +39,6 @@ import javax.servlet.ServletContext;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
-import org.osgi.service.component.annotations.ReferencePolicyOption;
 
 /**
  * @author Eudaldo Alonso
@@ -45,17 +46,20 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
 @Component(immediate = true, service = SearchFacet.class)
 public class AssetEntriesSearchFacet extends BaseJSPSearchFacet {
 
-	public List<AssetRendererFactory> getAssetRendererFactories() {
-		return _assetRendererFactories;
+	public List<AssetRendererFactory<?>> getAssetRendererFactories(
+		long companyId) {
+
+		return AssetRendererFactoryRegistryUtil.getAssetRendererFactories(
+			companyId);
 	}
 
 	@Override
 	public String getConfigurationJspPath() {
-		return "/META-INF/resources/facets/configuration/asset_entries.jsp";
+		return "/facets/configuration/asset_entries.jsp";
 	}
 
 	@Override
-	public FacetConfiguration getDefaultConfiguration() {
+	public FacetConfiguration getDefaultConfiguration(long companyId) {
 		FacetConfiguration facetConfiguration = new FacetConfiguration();
 
 		facetConfiguration.setClassName(getFacetClassName());
@@ -66,7 +70,7 @@ public class AssetEntriesSearchFacet extends BaseJSPSearchFacet {
 
 		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
 
-		for (String assetType : getAssetTypes()) {
+		for (String assetType : getAssetTypes(companyId)) {
 			jsonArray.put(assetType);
 		}
 
@@ -85,7 +89,7 @@ public class AssetEntriesSearchFacet extends BaseJSPSearchFacet {
 
 	@Override
 	public String getDisplayJspPath() {
-		return "/META-INF/resources/facets/view/asset_entries.jsp";
+		return "/facets/view/asset_entries.jsp";
 	}
 
 	@Override
@@ -100,6 +104,9 @@ public class AssetEntriesSearchFacet extends BaseJSPSearchFacet {
 
 	@Override
 	public JSONObject getJSONData(ActionRequest actionRequest) {
+		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
+			WebKeys.THEME_DISPLAY);
+
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
 		int frequencyThreshold = ParamUtil.getInteger(
@@ -113,7 +120,7 @@ public class AssetEntriesSearchFacet extends BaseJSPSearchFacet {
 		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
 
 		if (ArrayUtil.isEmpty(assetTypes)) {
-			assetTypes = getAssetTypes();
+			assetTypes = getAssetTypes(themeDisplay.getCompanyId());
 		}
 
 		for (String assetType : assetTypes) {
@@ -127,6 +134,11 @@ public class AssetEntriesSearchFacet extends BaseJSPSearchFacet {
 
 	@Override
 	public String getLabel() {
+		return "any-asset";
+	}
+
+	@Override
+	public String getTitle() {
 		return "asset-type";
 	}
 
@@ -138,38 +150,25 @@ public class AssetEntriesSearchFacet extends BaseJSPSearchFacet {
 		super.setServletContext(servletContext);
 	}
 
-	@Reference(
-		cardinality = ReferenceCardinality.MULTIPLE,
-		policy = ReferencePolicy.DYNAMIC,
-		policyOption = ReferencePolicyOption.GREEDY,
-		target = "(search.asset.type=*)", unbind = "removeAssetRendererFactory"
-	)
-	protected void addAssetRendererFactory(
-		AssetRendererFactory assetRendererFactory) {
+	protected String[] getAssetTypes(long companyId) {
+		List<String> assetTypes = new ArrayList<>();
 
-		_assetRendererFactories.add(assetRendererFactory);
-	}
+		List<AssetRendererFactory<?>> assetRendererFactories =
+			AssetRendererFactoryRegistryUtil.getAssetRendererFactories(
+				companyId);
 
-	protected String[] getAssetTypes() {
-		String[] assetTypes = new String[_assetRendererFactories.size()];
+		for (int i = 0; i < assetRendererFactories.size(); i++) {
+			AssetRendererFactory<?> assetRendererFactory =
+				assetRendererFactories.get(i);
 
-		for (int i = 0; i < _assetRendererFactories.size(); i++) {
-			AssetRendererFactory assetRendererFactory =
-				_assetRendererFactories.get(i);
+			if (!assetRendererFactory.isSearchable()) {
+				continue;
+			}
 
-			assetTypes[i] = assetRendererFactory.getClassName();
+			assetTypes.add(assetRendererFactory.getClassName());
 		}
 
-		return assetTypes;
+		return ArrayUtil.toStringArray(assetTypes);
 	}
-
-	protected void removeAssetRendererFactory(
-		AssetRendererFactory assetRendererFactory) {
-
-		_assetRendererFactories.remove(assetRendererFactory);
-	}
-
-	private final List<AssetRendererFactory> _assetRendererFactories =
-		new CopyOnWriteArrayList<>();
 
 }

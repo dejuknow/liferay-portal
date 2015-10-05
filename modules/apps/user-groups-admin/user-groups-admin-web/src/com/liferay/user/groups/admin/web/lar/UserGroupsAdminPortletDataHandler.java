@@ -15,14 +15,10 @@
 package com.liferay.user.groups.admin.web.lar;
 
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
-import com.liferay.portal.kernel.template.TemplateHandler;
-import com.liferay.portal.kernel.template.TemplateHandlerRegistryUtil;
-import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.model.UserGroup;
 import com.liferay.portal.model.impl.UserGroupImpl;
-import com.liferay.portal.service.UserGroupLocalServiceUtil;
+import com.liferay.portal.service.UserGroupLocalService;
 import com.liferay.portlet.exportimport.lar.BasePortletDataHandler;
 import com.liferay.portlet.exportimport.lar.DataLevel;
 import com.liferay.portlet.exportimport.lar.PortletDataContext;
@@ -37,6 +33,7 @@ import java.util.List;
 import javax.portlet.PortletPreferences;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Michael C. Han
@@ -76,7 +73,7 @@ public class UserGroupsAdminPortletDataHandler extends BasePortletDataHandler {
 			return portletPreferences;
 		}
 
-		UserGroupLocalServiceUtil.deleteUserGroups(
+		_userGroupLocalService.deleteUserGroups(
 			portletDataContext.getCompanyId());
 
 		return portletPreferences;
@@ -96,7 +93,7 @@ public class UserGroupsAdminPortletDataHandler extends BasePortletDataHandler {
 			"group-id", String.valueOf(portletDataContext.getScopeGroupId()));
 
 		ActionableDynamicQuery actionableDynamicQuery =
-			UserGroupLocalServiceUtil.getExportActionableDynamicQuery(
+			_userGroupLocalService.getExportActionableDynamicQuery(
 				portletDataContext);
 
 		actionableDynamicQuery.performActions();
@@ -132,51 +129,19 @@ public class UserGroupsAdminPortletDataHandler extends BasePortletDataHandler {
 		throws Exception {
 
 		ActionableDynamicQuery actionableDynamicQuery =
-			UserGroupLocalServiceUtil.getExportActionableDynamicQuery(
+			_userGroupLocalService.getExportActionableDynamicQuery(
 				portletDataContext);
 
 		actionableDynamicQuery.performCount();
 	}
 
-	@Override
-	protected String getDisplayStyle(
-		PortletDataContext portletDataContext, String portletId,
-		PortletPreferences portletPreferences) {
+	@Reference(unbind = "-")
+	protected void setUserGroupLocalService(
+		UserGroupLocalService userGroupLocalService) {
 
-		try {
-			TemplateHandler templateHandler =
-				TemplateHandlerRegistryUtil.getTemplateHandler(
-					UserGroup.class.getName());
-
-			if (Validator.isNotNull(templateHandler)) {
-				return portletPreferences.getValue("displayStyle", null);
-			}
-		}
-		catch (Exception e) {
-		}
-
-		return null;
+		_userGroupLocalService = userGroupLocalService;
 	}
 
-	@Override
-	protected long getDisplayStyleGroupId(
-		PortletDataContext portletDataContext, String portletId,
-		PortletPreferences portletPreferences) {
-
-		try {
-			TemplateHandler templateHandler =
-				TemplateHandlerRegistryUtil.getTemplateHandler(
-					UserGroup.class.getName());
-
-			if (Validator.isNotNull(templateHandler)) {
-				return GetterUtil.getLong(
-					portletPreferences.getValue("displayStyleGroupId", null));
-			}
-		}
-		catch (Exception e) {
-		}
-
-		return 0;
-	}
+	private UserGroupLocalService _userGroupLocalService;
 
 }

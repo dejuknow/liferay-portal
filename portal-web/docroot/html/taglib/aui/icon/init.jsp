@@ -24,6 +24,7 @@ java.util.Map<java.lang.String, java.lang.Object> data = (java.util.Map<java.lan
 java.lang.String id = GetterUtil.getString((java.lang.String)request.getAttribute("aui:icon:id"));
 java.lang.String image = GetterUtil.getString((java.lang.String)request.getAttribute("aui:icon:image"));
 java.lang.String label = GetterUtil.getString((java.lang.String)request.getAttribute("aui:icon:label"));
+java.lang.String markupView = GetterUtil.getString((java.lang.String)request.getAttribute("aui:icon:markupView"));
 java.lang.String target = GetterUtil.getString((java.lang.String)request.getAttribute("aui:icon:target"));
 java.lang.String url = GetterUtil.getString((java.lang.String)request.getAttribute("aui:icon:url"));
 Map<String, Object> dynamicAttributes = (Map<String, Object>)request.getAttribute("aui:icon:dynamicAttributes");

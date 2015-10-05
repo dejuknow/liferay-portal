@@ -42,6 +42,7 @@ import com.liferay.portlet.social.service.persistence.SocialActivityAchievementU
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -58,8 +59,9 @@ import java.util.Set;
  * @generated
  */
 public class SocialActivityAchievementPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -440,11 +442,13 @@ public class SocialActivityAchievementPersistenceTest {
 
 		SocialActivityAchievement existingSocialActivityAchievement = _persistence.findByPrimaryKey(newSocialActivityAchievement.getPrimaryKey());
 
-		Assert.assertEquals(existingSocialActivityAchievement.getGroupId(),
-			ReflectionTestUtil.invoke(existingSocialActivityAchievement,
+		Assert.assertEquals(Long.valueOf(
+				existingSocialActivityAchievement.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingSocialActivityAchievement,
 				"getOriginalGroupId", new Class<?>[0]));
-		Assert.assertEquals(existingSocialActivityAchievement.getUserId(),
-			ReflectionTestUtil.invoke(existingSocialActivityAchievement,
+		Assert.assertEquals(Long.valueOf(
+				existingSocialActivityAchievement.getUserId()),
+			ReflectionTestUtil.<Long>invoke(existingSocialActivityAchievement,
 				"getOriginalUserId", new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(
 				existingSocialActivityAchievement.getName(),

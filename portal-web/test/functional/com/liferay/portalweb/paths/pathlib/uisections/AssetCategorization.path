@@ -44,6 +44,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>VOCABULARY_LIST_ITEM</td>
+	<td>//span[@class='field-content'][${key_count}]/label</td>
+	<td></td>
+</tr>
+<tr>
 	<td>VOCABULARY_SELECT</td>
 	<td>//button[contains(@title,'Select') and contains(@title,'${key_vocabularyName}')]</td>
 	<td></td>
@@ -71,6 +76,11 @@
 <tr>
 	<td>CATEGORIES_CATEGORY_CHECKBOX</td>
 	<td>//li[contains(@id,'category') and contains(.,'${key_categoryName}')]//span[contains(@class,'tree-node-checkbox')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CATEGORIES_CATEGORY_CHECKBOX_CHECKED</td>
+	<td>//li[contains(@id,'category') and contains(.,'${key_categoryName}')]/div[contains(@class,'checked')]//span[contains(@class,'tree-node-checkbox')]</td>
 	<td></td>
 </tr>
 <tr>

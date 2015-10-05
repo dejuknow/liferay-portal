@@ -49,13 +49,11 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	immediate = true,
-	property = {
-		"javax.portlet.name=" + BlogsPortletKeys.BLOGS,
-		"search.asset.type=com.liferay.portlet.blogs.model.BlogsEntry"
-	},
+	property = {"javax.portlet.name=" + BlogsPortletKeys.BLOGS},
 	service = AssetRendererFactory.class
 )
-public class BlogsEntryAssetRendererFactory extends BaseAssetRendererFactory {
+public class BlogsEntryAssetRendererFactory
+	extends BaseAssetRendererFactory<BlogsEntry> {
 
 	public static final String TYPE = "blog";
 
@@ -63,10 +61,11 @@ public class BlogsEntryAssetRendererFactory extends BaseAssetRendererFactory {
 		setClassName(BlogsEntry.class.getName());
 		setLinkable(true);
 		setPortletId(BlogsPortletKeys.BLOGS);
+		setSearchable(true);
 	}
 
 	@Override
-	public AssetRenderer getAssetRenderer(long classPK, int type)
+	public AssetRenderer<BlogsEntry> getAssetRenderer(long classPK, int type)
 		throws PortalException {
 
 		BlogsEntry entry = BlogsEntryLocalServiceUtil.getEntry(classPK);
@@ -81,7 +80,8 @@ public class BlogsEntryAssetRendererFactory extends BaseAssetRendererFactory {
 	}
 
 	@Override
-	public AssetRenderer getAssetRenderer(long groupId, String urlTitle)
+	public AssetRenderer<BlogsEntry> getAssetRenderer(
+			long groupId, String urlTitle)
 		throws PortalException {
 
 		BlogsEntry entry = BlogsEntryServiceUtil.getEntry(groupId, urlTitle);

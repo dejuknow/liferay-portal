@@ -43,6 +43,7 @@ import com.liferay.portlet.documentlibrary.service.persistence.DLFileEntryTypeUt
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -59,8 +60,9 @@ import java.util.Set;
  * @generated
  */
 public class DLFileEntryTypePersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -137,6 +139,8 @@ public class DLFileEntryTypePersistenceTest {
 
 		newDLFileEntryType.setDescription(RandomTestUtil.randomString());
 
+		newDLFileEntryType.setLastPublishDate(RandomTestUtil.nextDate());
+
 		_dlFileEntryTypes.add(_persistence.update(newDLFileEntryType));
 
 		DLFileEntryType existingDLFileEntryType = _persistence.findByPrimaryKey(newDLFileEntryType.getPrimaryKey());
@@ -165,6 +169,9 @@ public class DLFileEntryTypePersistenceTest {
 			newDLFileEntryType.getName());
 		Assert.assertEquals(existingDLFileEntryType.getDescription(),
 			newDLFileEntryType.getDescription());
+		Assert.assertEquals(Time.getShortTimestamp(
+				existingDLFileEntryType.getLastPublishDate()),
+			Time.getShortTimestamp(newDLFileEntryType.getLastPublishDate()));
 	}
 
 	@Test
@@ -248,7 +255,7 @@ public class DLFileEntryTypePersistenceTest {
 			true, "fileEntryTypeId", true, "groupId", true, "companyId", true,
 			"userId", true, "userName", true, "createDate", true,
 			"modifiedDate", true, "fileEntryTypeKey", true, "name", true,
-			"description", true);
+			"description", true, "lastPublishDate", true);
 	}
 
 	@Test
@@ -458,12 +465,12 @@ public class DLFileEntryTypePersistenceTest {
 		Assert.assertTrue(Validator.equals(existingDLFileEntryType.getUuid(),
 				ReflectionTestUtil.invoke(existingDLFileEntryType,
 					"getOriginalUuid", new Class<?>[0])));
-		Assert.assertEquals(existingDLFileEntryType.getGroupId(),
-			ReflectionTestUtil.invoke(existingDLFileEntryType,
+		Assert.assertEquals(Long.valueOf(existingDLFileEntryType.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingDLFileEntryType,
 				"getOriginalGroupId", new Class<?>[0]));
 
-		Assert.assertEquals(existingDLFileEntryType.getGroupId(),
-			ReflectionTestUtil.invoke(existingDLFileEntryType,
+		Assert.assertEquals(Long.valueOf(existingDLFileEntryType.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingDLFileEntryType,
 				"getOriginalGroupId", new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(
 				existingDLFileEntryType.getFileEntryTypeKey(),
@@ -495,6 +502,8 @@ public class DLFileEntryTypePersistenceTest {
 		dlFileEntryType.setName(RandomTestUtil.randomString());
 
 		dlFileEntryType.setDescription(RandomTestUtil.randomString());
+
+		dlFileEntryType.setLastPublishDate(RandomTestUtil.nextDate());
 
 		_dlFileEntryTypes.add(_persistence.update(dlFileEntryType));
 

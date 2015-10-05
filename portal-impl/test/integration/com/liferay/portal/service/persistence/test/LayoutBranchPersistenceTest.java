@@ -41,6 +41,7 @@ import com.liferay.portal.test.rule.PersistenceTestRule;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -57,8 +58,9 @@ import java.util.Set;
  * @generated
  */
 public class LayoutBranchPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -430,12 +432,13 @@ public class LayoutBranchPersistenceTest {
 
 		LayoutBranch existingLayoutBranch = _persistence.findByPrimaryKey(newLayoutBranch.getPrimaryKey());
 
-		Assert.assertEquals(existingLayoutBranch.getLayoutSetBranchId(),
-			ReflectionTestUtil.invoke(existingLayoutBranch,
+		Assert.assertEquals(Long.valueOf(
+				existingLayoutBranch.getLayoutSetBranchId()),
+			ReflectionTestUtil.<Long>invoke(existingLayoutBranch,
 				"getOriginalLayoutSetBranchId", new Class<?>[0]));
-		Assert.assertEquals(existingLayoutBranch.getPlid(),
-			ReflectionTestUtil.invoke(existingLayoutBranch, "getOriginalPlid",
-				new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingLayoutBranch.getPlid()),
+			ReflectionTestUtil.<Long>invoke(existingLayoutBranch,
+				"getOriginalPlid", new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(existingLayoutBranch.getName(),
 				ReflectionTestUtil.invoke(existingLayoutBranch,
 					"getOriginalName", new Class<?>[0])));

@@ -40,6 +40,7 @@ import com.liferay.portal.test.rule.PersistenceTestRule;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -56,8 +57,9 @@ import java.util.Set;
  * @generated
  */
 public class WebDAVPropsPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -186,7 +188,7 @@ public class WebDAVPropsPersistenceTest {
 		return OrderByComparatorFactoryUtil.create("WebDAVProps",
 			"mvccVersion", true, "webDavPropsId", true, "companyId", true,
 			"createDate", true, "modifiedDate", true, "classNameId", true,
-			"classPK", true, "props", true);
+			"classPK", true);
 	}
 
 	@Test
@@ -393,11 +395,11 @@ public class WebDAVPropsPersistenceTest {
 
 		WebDAVProps existingWebDAVProps = _persistence.findByPrimaryKey(newWebDAVProps.getPrimaryKey());
 
-		Assert.assertEquals(existingWebDAVProps.getClassNameId(),
-			ReflectionTestUtil.invoke(existingWebDAVProps,
+		Assert.assertEquals(Long.valueOf(existingWebDAVProps.getClassNameId()),
+			ReflectionTestUtil.<Long>invoke(existingWebDAVProps,
 				"getOriginalClassNameId", new Class<?>[0]));
-		Assert.assertEquals(existingWebDAVProps.getClassPK(),
-			ReflectionTestUtil.invoke(existingWebDAVProps,
+		Assert.assertEquals(Long.valueOf(existingWebDAVProps.getClassPK()),
+			ReflectionTestUtil.<Long>invoke(existingWebDAVProps,
 				"getOriginalClassPK", new Class<?>[0]));
 	}
 

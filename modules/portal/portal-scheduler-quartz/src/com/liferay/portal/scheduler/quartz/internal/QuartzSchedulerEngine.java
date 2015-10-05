@@ -25,17 +25,16 @@ import com.liferay.portal.kernel.messaging.InvokerMessageListener;
 import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.messaging.MessageBus;
 import com.liferay.portal.kernel.messaging.MessageListener;
-import com.liferay.portal.kernel.scheduler.IntervalTrigger;
 import com.liferay.portal.kernel.scheduler.JobState;
 import com.liferay.portal.kernel.scheduler.SchedulerEngine;
 import com.liferay.portal.kernel.scheduler.SchedulerEngineHelper;
 import com.liferay.portal.kernel.scheduler.SchedulerException;
 import com.liferay.portal.kernel.scheduler.StorageType;
 import com.liferay.portal.kernel.scheduler.TriggerState;
-import com.liferay.portal.kernel.scheduler.TriggerType;
 import com.liferay.portal.kernel.scheduler.messaging.SchedulerEventMessageListenerWrapper;
 import com.liferay.portal.kernel.scheduler.messaging.SchedulerResponse;
 import com.liferay.portal.kernel.util.CharPool;
+import com.liferay.portal.kernel.util.ClassLoaderPool;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PortalClassLoaderUtil;
 import com.liferay.portal.kernel.util.PortalRunMode;
@@ -68,18 +67,13 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.osgi.service.component.annotations.ReferencePolicyOption;
 
-import org.quartz.CronScheduleBuilder;
-import org.quartz.CronTrigger;
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
 import org.quartz.ObjectAlreadyExistsException;
 import org.quartz.Scheduler;
-import org.quartz.SimpleScheduleBuilder;
-import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
 import org.quartz.TriggerKey;
 import org.quartz.impl.StdSchedulerFactory;
 import org.quartz.impl.jdbcjobstore.UpdateLockRowSemaphore;
@@ -103,7 +97,7 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
 	public void delete(String groupName, StorageType storageType)
 		throws SchedulerException {
 
-		if (!isEnabled(storageType)) {
+		if (!isEnabled()) {
 			return;
 		}
 
@@ -133,7 +127,7 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
 			String jobName, String groupName, StorageType storageType)
 		throws SchedulerException {
 
-		if (!isEnabled(storageType)) {
+		if (!isEnabled()) {
 			return;
 		}
 
@@ -175,7 +169,7 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
 			String jobName, String groupName, StorageType storageType)
 		throws SchedulerException {
 
-		if (!isEnabled(storageType)) {
+		if (!isEnabled()) {
 			return null;
 		}
 
@@ -234,7 +228,7 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
 	public List<SchedulerResponse> getScheduledJobs(StorageType storageType)
 		throws SchedulerException {
 
-		if (!isEnabled(storageType)) {
+		if (!isEnabled()) {
 			return Collections.emptyList();
 		}
 
@@ -263,7 +257,7 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
 			String groupName, StorageType storageType)
 		throws SchedulerException {
 
-		if (!isEnabled(storageType)) {
+		if (!isEnabled()) {
 			return Collections.emptyList();
 		}
 
@@ -282,7 +276,7 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
 	public void pause(String groupName, StorageType storageType)
 		throws SchedulerException {
 
-		if (!isEnabled(storageType)) {
+		if (!isEnabled()) {
 			return;
 		}
 
@@ -311,7 +305,7 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
 	public void pause(String jobName, String groupName, StorageType storageType)
 		throws SchedulerException {
 
-		if (!isEnabled(storageType)) {
+		if (!isEnabled()) {
 			return;
 		}
 
@@ -340,7 +334,7 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
 	public void resume(String groupName, StorageType storageType)
 		throws SchedulerException {
 
-		if (!isEnabled(storageType)) {
+		if (!isEnabled()) {
 			return;
 		}
 
@@ -370,7 +364,7 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
 			String jobName, String groupName, StorageType storageType)
 		throws SchedulerException {
 
-		if (!isEnabled(storageType)) {
+		if (!isEnabled()) {
 			return;
 		}
 
@@ -402,14 +396,14 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
 			StorageType storageType)
 		throws SchedulerException {
 
-		if (!isEnabled(storageType)) {
+		if (!isEnabled()) {
 			return;
 		}
 
 		try {
 			Scheduler scheduler = getScheduler(storageType);
 
-			Trigger quartzTrigger = getQuartzTrigger(trigger, storageType);
+			Trigger quartzTrigger = (Trigger)trigger.getWrappedTrigger();
 
 			if (quartzTrigger == null) {
 				return;
@@ -501,7 +495,7 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
 			String jobName, String groupName, StorageType storageType)
 		throws SchedulerException {
 
-		if (!isEnabled(storageType)) {
+		if (!isEnabled()) {
 			return;
 		}
 
@@ -528,7 +522,7 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
 	public void unschedule(String groupName, StorageType storageType)
 		throws SchedulerException {
 
-		if (!isEnabled(storageType)) {
+		if (!isEnabled()) {
 			return;
 		}
 
@@ -556,7 +550,7 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
 			String jobName, String groupName, StorageType storageType)
 		throws SchedulerException {
 
-		if (!isEnabled(storageType)) {
+		if (!isEnabled()) {
 			return;
 		}
 
@@ -585,7 +579,7 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
 			StorageType storageType)
 		throws SchedulerException {
 
-		if (!isEnabled(storageType)) {
+		if (!isEnabled()) {
 			return;
 		}
 
@@ -688,86 +682,6 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
 		return schedulerEventListener;
 	}
 
-	protected Trigger getQuartzTrigger(
-			com.liferay.portal.kernel.scheduler.Trigger trigger,
-			StorageType storageType)
-		throws SchedulerException {
-
-		if (trigger == null) {
-			return null;
-		}
-
-		Date endDate = trigger.getEndDate();
-		String jobName = fixMaxLength(
-			trigger.getJobName(), _jobNameMaxLength, storageType);
-		String groupName = fixMaxLength(
-			trigger.getGroupName(), _groupNameMaxLength, storageType);
-
-		Date startDate = trigger.getStartDate();
-
-		if (startDate == null) {
-			startDate = new Date(System.currentTimeMillis());
-		}
-
-		Trigger quartzTrigger = null;
-
-		TriggerType triggerType = trigger.getTriggerType();
-
-		if (triggerType.equals(TriggerType.CRON)) {
-			TriggerBuilder<Trigger>triggerBuilder = TriggerBuilder.newTrigger();
-
-			triggerBuilder.endAt(endDate);
-			triggerBuilder.forJob(jobName, groupName);
-			triggerBuilder.startAt(startDate);
-			triggerBuilder.withIdentity(jobName, groupName);
-
-			CronScheduleBuilder cronScheduleBuilder =
-				CronScheduleBuilder.cronSchedule(
-					(String)trigger.getTriggerContent());
-
-			triggerBuilder.withSchedule(cronScheduleBuilder);
-
-			quartzTrigger = triggerBuilder.build();
-		}
-		else if (triggerType.equals(TriggerType.SIMPLE)) {
-			long interval = (Long)trigger.getTriggerContent();
-
-			if (interval <= 0) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(
-						"Not scheduling " + trigger.getJobName() +
-							" because interval is less than or equal to 0");
-				}
-
-				return null;
-			}
-
-			TriggerBuilder<Trigger>triggerBuilder = TriggerBuilder.newTrigger();
-
-			triggerBuilder.endAt(endDate);
-			triggerBuilder.forJob(jobName, groupName);
-			triggerBuilder.startAt(startDate);
-			triggerBuilder.withIdentity(jobName, groupName);
-
-			SimpleScheduleBuilder simpleScheduleBuilder =
-				SimpleScheduleBuilder.simpleSchedule();
-
-			simpleScheduleBuilder.withIntervalInMilliseconds(interval);
-			simpleScheduleBuilder.withRepeatCount(
-				SimpleTrigger.REPEAT_INDEFINITELY);
-
-			triggerBuilder.withSchedule(simpleScheduleBuilder);
-
-			quartzTrigger = triggerBuilder.build();
-		}
-		else {
-			throw new SchedulerException(
-				"Unknown trigger type " + trigger.getTriggerType());
-		}
-
-		return quartzTrigger;
-	}
-
 	protected SchedulerResponse getScheduledJob(
 			Scheduler scheduler, JobKey jobKey)
 		throws Exception {
@@ -778,16 +692,31 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
 			return null;
 		}
 
+		SchedulerResponse schedulerResponse = new SchedulerResponse();
+
 		JobDataMap jobDataMap = jobDetail.getJobDataMap();
 
 		String description = jobDataMap.getString(SchedulerEngine.DESCRIPTION);
+
+		schedulerResponse.setDescription(description);
+
 		String destinationName = jobDataMap.getString(
 			SchedulerEngine.DESTINATION_NAME);
+
+		schedulerResponse.setDestinationName(destinationName);
+
 		Message message = getMessage(jobDataMap);
+
+		JobState jobState = getJobState(jobDataMap);
+
+		message.put(SchedulerEngine.JOB_STATE, jobState);
+
+		schedulerResponse.setMessage(message);
+
 		StorageType storageType = StorageType.valueOf(
 			jobDataMap.getString(SchedulerEngine.STORAGE_TYPE));
 
-		SchedulerResponse schedulerResponse = null;
+		schedulerResponse.setStorageType(storageType);
 
 		String jobName = jobKey.getName();
 		String groupName = jobKey.getGroup();
@@ -796,62 +725,22 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
 
 		Trigger trigger = scheduler.getTrigger(triggerKey);
 
-		JobState jobState = getJobState(jobDataMap);
-
-		message.put(SchedulerEngine.JOB_STATE, jobState);
-
 		if (trigger == null) {
-			schedulerResponse = new SchedulerResponse();
-
-			schedulerResponse.setDescription(description);
-			schedulerResponse.setDestinationName(destinationName);
 			schedulerResponse.setGroupName(groupName);
 			schedulerResponse.setJobName(jobName);
-			schedulerResponse.setMessage(message);
-			schedulerResponse.setStorageType(storageType);
+
+			return schedulerResponse;
 		}
-		else {
-			message.put(SchedulerEngine.END_TIME, trigger.getEndTime());
-			message.put(
-				SchedulerEngine.FINAL_FIRE_TIME, trigger.getFinalFireTime());
-			message.put(
-				SchedulerEngine.NEXT_FIRE_TIME, trigger.getNextFireTime());
-			message.put(
-				SchedulerEngine.PREVIOUS_FIRE_TIME,
-				trigger.getPreviousFireTime());
-			message.put(SchedulerEngine.START_TIME, trigger.getStartTime());
 
-			if (trigger instanceof CronTrigger) {
-				CronTrigger cronTrigger = CronTrigger.class.cast(trigger);
+		message.put(SchedulerEngine.END_TIME, trigger.getEndTime());
+		message.put(
+			SchedulerEngine.FINAL_FIRE_TIME, trigger.getFinalFireTime());
+		message.put(SchedulerEngine.NEXT_FIRE_TIME, trigger.getNextFireTime());
+		message.put(
+			SchedulerEngine.PREVIOUS_FIRE_TIME, trigger.getPreviousFireTime());
+		message.put(SchedulerEngine.START_TIME, trigger.getStartTime());
 
-				schedulerResponse = new SchedulerResponse();
-
-				schedulerResponse.setDescription(description);
-				schedulerResponse.setDestinationName(destinationName);
-				schedulerResponse.setMessage(message);
-				schedulerResponse.setStorageType(storageType);
-				schedulerResponse.setTrigger(
-					new com.liferay.portal.kernel.scheduler.CronTrigger(
-						jobName, groupName, cronTrigger.getStartTime(),
-						cronTrigger.getEndTime(),
-						cronTrigger.getCronExpression()));
-			}
-			else if (trigger instanceof SimpleTrigger) {
-				SimpleTrigger simpleTrigger = SimpleTrigger.class.cast(trigger);
-
-				schedulerResponse = new SchedulerResponse();
-
-				schedulerResponse.setDescription(description);
-				schedulerResponse.setDestinationName(destinationName);
-				schedulerResponse.setMessage(message);
-				schedulerResponse.setStorageType(storageType);
-				schedulerResponse.setTrigger(
-					new IntervalTrigger(
-						jobName, groupName, simpleTrigger.getStartTime(),
-						simpleTrigger.getEndTime(),
-						simpleTrigger.getRepeatInterval()));
-			}
-		}
+		schedulerResponse.setTrigger(new QuartzTrigger(trigger));
 
 		return schedulerResponse;
 	}
@@ -980,27 +869,6 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
 		return GetterUtil.getBoolean(_props.get(PropsKeys.SCHEDULER_ENABLED));
 	}
 
-	protected boolean isEnabled(StorageType storageType)
-		throws SchedulerException {
-
-		if (!isEnabled()) {
-			return false;
-		}
-
-		Scheduler scheduler = getScheduler(storageType);
-
-		try {
-			if (scheduler.isShutdown() || scheduler.isInStandbyMode()) {
-				return false;
-			}
-		}
-		catch (org.quartz.SchedulerException se) {
-			throw new SchedulerException(se);
-		}
-
-		return true;
-	}
-
 	protected void registerMessageListeners(
 			String destinationName, Message message)
 		throws SchedulerException {
@@ -1027,11 +895,21 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
 		else {
 			Portlet portlet = _portletLocalService.getPortletById(portletId);
 
-			PortletApp portletApp = portlet.getPortletApp();
+			if (portlet == null) {
 
-			ServletContext servletContext = portletApp.getServletContext();
+				// No portlet found for the portlet ID. Try getting the class
+				// loader where we assume the portlet ID is actually a servlet
+				// context name.
 
-			classLoader = servletContext.getClassLoader();
+				classLoader = ClassLoaderPool.getClassLoader(portletId);
+			}
+			else {
+				PortletApp portletApp = portlet.getPortletApp();
+
+				ServletContext servletContext = portletApp.getServletContext();
+
+				classLoader = servletContext.getClassLoader();
+			}
 		}
 
 		if (classLoader == null) {
@@ -1144,6 +1022,13 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
 
 		_jobNameMaxLength = GetterUtil.getInteger(
 			_props.get(PropsKeys.SCHEDULER_JOB_NAME_MAX_LENGTH), 80);
+	}
+
+	@Reference(unbind = "-")
+	protected void setQuartzTriggerFactory(
+		QuartzTriggerFactory quartzTriggerFactory) {
+
+		_quartzTriggerFactory = quartzTriggerFactory;
 	}
 
 	@Reference(
@@ -1291,7 +1176,7 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
 			StorageType storageType)
 		throws Exception {
 
-		Trigger quartzTrigger = getQuartzTrigger(trigger, storageType);
+		Trigger quartzTrigger = (Trigger)trigger.getWrappedTrigger();
 
 		if (quartzTrigger == null) {
 			return;
@@ -1362,6 +1247,7 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
 	private Scheduler _persistedScheduler;
 	private volatile PortletLocalService _portletLocalService;
 	private Props _props;
+	private QuartzTriggerFactory _quartzTriggerFactory;
 	private volatile SchedulerEngineHelper _schedulerEngineHelper;
 
 }

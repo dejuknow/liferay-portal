@@ -27,10 +27,10 @@ import com.liferay.portlet.asset.service.AssetEntryServiceUtil;
 
 /**
  * Provides the HTTP utility for the
- * {@link com.liferay.portlet.asset.service.AssetEntryServiceUtil} service utility. The
+ * {@link AssetEntryServiceUtil} service utility. The
  * static methods of this class calls the same methods of the service utility.
  * However, the signatures are different because it requires an additional
- * {@link com.liferay.portal.security.auth.HttpPrincipal} parameter.
+ * {@link HttpPrincipal} parameter.
  *
  * <p>
  * The benefits of using the HTTP utility is that it is fast and allows for
@@ -49,8 +49,8 @@ import com.liferay.portlet.asset.service.AssetEntryServiceUtil;
  *
  * @author Brian Wing Shun Chan
  * @see AssetEntryServiceSoap
- * @see com.liferay.portal.security.auth.HttpPrincipal
- * @see com.liferay.portlet.asset.service.AssetEntryServiceUtil
+ * @see HttpPrincipal
+ * @see AssetEntryServiceUtil
  * @generated
  */
 @ProviderType
@@ -277,7 +277,7 @@ public class AssetEntryServiceHttp {
 		java.lang.String mimeType, java.lang.String title,
 		java.lang.String description, java.lang.String summary,
 		java.lang.String url, java.lang.String layoutUuid, int height,
-		int width, java.lang.Integer priority)
+		int width, java.lang.Double priority)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		try {
 			MethodKey methodKey = new MethodKey(AssetEntryServiceUtil.class,
@@ -470,7 +470,7 @@ public class AssetEntryServiceHttp {
 			java.lang.String.class, java.lang.String.class,
 			java.lang.String.class, java.lang.String.class,
 			java.lang.String.class, java.lang.String.class, int.class, int.class,
-			java.lang.Integer.class
+			java.lang.Double.class
 		};
 	private static final Class<?>[] _updateEntryParameterTypes8 = new Class[] {
 			long.class, java.util.Date.class, java.util.Date.class,

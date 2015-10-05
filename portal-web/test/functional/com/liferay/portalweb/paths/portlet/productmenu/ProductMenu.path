@@ -1,0 +1,131 @@
+<html>
+<head>
+<title>ProductMenu</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">ProductMenu</td></tr>
+</thead>
+<tbody>
+<tr>
+	<td>TOGGLE</td>
+	<td>//a[contains(@class,'sidenav-toggler')]/span</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PRODUCT_MENU_OPENED</td>
+	<td>//div[contains(@id,'sidenavSliderId') and not(contains(@class,'closed'))]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>TAB</td>
+	<td>//div[contains(.,'${key_tab}')]/../div[contains(@class,'tab-icon')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>BACK_ARROW</td>
+	<td>//a[contains(@id,'mySitesLink')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CATEGORY_COLLAPSED</td>
+	<td>//div[contains(@class,'active')]//a[contains(.,'${key_category}') and contains(@class,'collapsed')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CATEGORY_EXPANDED</td>
+	<td>//div[contains(@class,'active')]//a[contains(.,'${key_category}') and not(contains(@class,'collapsed'))]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PORTLET</td>
+	<td>//div[@class='list-group-item']//li/a[contains(.,'${key_portlet}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SITE_NAME_HEADER</td>
+	<td>//div[contains(@class,'sidebar-header')]//span[contains(.,'${key_siteName}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>USER_PROFILE_PICTURE</td>
+	<td>//div[contains(@class,'user-icon')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>USER_FULL_NAME</td>
+	<td>//div[contains(@class,'nameplate')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<!--PRODUCT_MENU_TABS-->
+<tr>
+	<td>PRODUCT_MENU_TABS_TAB_ICON</td>
+	<td>//div[contains(.,'${tabName}')]/../div[contains(@class,'tab-icon')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PRODUCT_MENU_TABS_SITES_NAVIGATION</td>
+	<td>//div[contains(.,'Sites')]/../div[contains(@class,'tab-text')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PRODUCT_MENU_TABS_MY_SPACE_NAVIGATION</td>
+	<td>//div[contains(.,'My Space')]/../div[contains(@class,'tab-text')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PRODUCT_MENU_TABS_CONTROL_PANEL_NAVIGATION</td>
+	<td>//div[contains(.,'Control Panel')]/../div[contains(@class,'tab-text')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<!--PRODUCT_MENU_PANEL-->
+<tr>
+	<td>PRODUCT_MENU_PANEL_SITES_PANEL_TITLE</td>
+	<td>//div[contains(@id,'site_administration')]//a[contains(.,'${key_portletCategoryName}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PRODUCT_MENU_PANEL_ALL_SITES_PANEL_TITLE</td>
+	<td>//div[contains(@id,'all_sites')]//a[contains(.,'${key_portletCategoryName}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PRODUCT_MENU_PANEL_MY_SPACE_PANEL_TITLE</td>
+	<td>//div[contains(@id,'my_space')]//a[contains(.,'${key_portletCategoryName}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PRODUCT_MENU_PANEL_CONTROL_PANEL_PANEL_TITLE</td>
+	<td>//div[contains(@class,'active') and contains(@id,'control_panel')]/div/a[contains(.,'${key_portletCategoryName}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PRODUCT_MENU_PANEL_MENU_ITEM</td>
+	<td>//div[contains(@class,'active')]//a[.='${key_portletName}']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PRODUCT_MENU_PANEL_SITE_ADMINISTRATION_SITE_NAME</td>
+	<td>//div[contains(@id,'site_administration')]//a[contains(.,'${key_siteName}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PRODUCT_MENU_PANEL_SITE_SELECTOR</td>
+	<td>//a[contains(@id,'mySitesLink')]</td>
+	<td></td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>

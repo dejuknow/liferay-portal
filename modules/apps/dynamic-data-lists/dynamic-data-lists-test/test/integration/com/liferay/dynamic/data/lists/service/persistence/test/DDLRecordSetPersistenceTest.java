@@ -45,6 +45,7 @@ import com.liferay.portal.test.rule.PersistenceTestRule;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -64,8 +65,9 @@ import java.util.Set;
  */
 @RunWith(Arquillian.class)
 public class DDLRecordSetPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -148,6 +150,8 @@ public class DDLRecordSetPersistenceTest {
 
 		newDDLRecordSet.setScope(RandomTestUtil.nextInt());
 
+		newDDLRecordSet.setLastPublishDate(RandomTestUtil.nextDate());
+
 		_ddlRecordSets.add(_persistence.update(newDDLRecordSet));
 
 		DDLRecordSet existingDDLRecordSet = _persistence.findByPrimaryKey(newDDLRecordSet.getPrimaryKey());
@@ -182,6 +186,9 @@ public class DDLRecordSetPersistenceTest {
 			newDDLRecordSet.getMinDisplayRows());
 		Assert.assertEquals(existingDDLRecordSet.getScope(),
 			newDDLRecordSet.getScope());
+		Assert.assertEquals(Time.getShortTimestamp(
+				existingDDLRecordSet.getLastPublishDate()),
+			Time.getShortTimestamp(newDDLRecordSet.getLastPublishDate()));
 	}
 
 	@Test
@@ -266,7 +273,7 @@ public class DDLRecordSetPersistenceTest {
 			"userId", true, "userName", true, "createDate", true,
 			"modifiedDate", true, "DDMStructureId", true, "recordSetKey", true,
 			"name", true, "description", true, "minDisplayRows", true, "scope",
-			true);
+			true, "lastPublishDate", true);
 	}
 
 	@Test
@@ -474,12 +481,12 @@ public class DDLRecordSetPersistenceTest {
 		Assert.assertTrue(Validator.equals(existingDDLRecordSet.getUuid(),
 				ReflectionTestUtil.invoke(existingDDLRecordSet,
 					"getOriginalUuid", new Class<?>[0])));
-		Assert.assertEquals(existingDDLRecordSet.getGroupId(),
-			ReflectionTestUtil.invoke(existingDDLRecordSet,
+		Assert.assertEquals(Long.valueOf(existingDDLRecordSet.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingDDLRecordSet,
 				"getOriginalGroupId", new Class<?>[0]));
 
-		Assert.assertEquals(existingDDLRecordSet.getGroupId(),
-			ReflectionTestUtil.invoke(existingDDLRecordSet,
+		Assert.assertEquals(Long.valueOf(existingDDLRecordSet.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingDDLRecordSet,
 				"getOriginalGroupId", new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(
 				existingDDLRecordSet.getRecordSetKey(),
@@ -517,6 +524,8 @@ public class DDLRecordSetPersistenceTest {
 		ddlRecordSet.setMinDisplayRows(RandomTestUtil.nextInt());
 
 		ddlRecordSet.setScope(RandomTestUtil.nextInt());
+
+		ddlRecordSet.setLastPublishDate(RandomTestUtil.nextDate());
 
 		_ddlRecordSets.add(_persistence.update(ddlRecordSet));
 

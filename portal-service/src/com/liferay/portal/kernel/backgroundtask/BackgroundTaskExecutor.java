@@ -14,12 +14,12 @@
 
 package com.liferay.portal.kernel.backgroundtask;
 
-import com.liferay.portal.model.BackgroundTask;
-
 /**
  * @author Michael C. Han
  */
 public interface BackgroundTaskExecutor {
+
+	public BackgroundTaskExecutor clone();
 
 	public BackgroundTaskResult execute(BackgroundTask backgroundTask)
 		throws Exception;

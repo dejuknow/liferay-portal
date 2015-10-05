@@ -42,6 +42,7 @@ import com.liferay.portal.test.rule.PersistenceTestRule;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -58,8 +59,9 @@ import java.util.Set;
  * @generated
  */
 public class TeamPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -136,6 +138,8 @@ public class TeamPersistenceTest {
 
 		newTeam.setDescription(RandomTestUtil.randomString());
 
+		newTeam.setLastPublishDate(RandomTestUtil.nextDate());
+
 		_teams.add(_persistence.update(newTeam));
 
 		Team existingTeam = _persistence.findByPrimaryKey(newTeam.getPrimaryKey());
@@ -156,6 +160,9 @@ public class TeamPersistenceTest {
 		Assert.assertEquals(existingTeam.getName(), newTeam.getName());
 		Assert.assertEquals(existingTeam.getDescription(),
 			newTeam.getDescription());
+		Assert.assertEquals(Time.getShortTimestamp(
+				existingTeam.getLastPublishDate()),
+			Time.getShortTimestamp(newTeam.getLastPublishDate()));
 	}
 
 	@Test
@@ -233,7 +240,8 @@ public class TeamPersistenceTest {
 		return OrderByComparatorFactoryUtil.create("Team", "mvccVersion", true,
 			"uuid", true, "teamId", true, "companyId", true, "userId", true,
 			"userName", true, "createDate", true, "modifiedDate", true,
-			"groupId", true, "name", true, "description", true);
+			"groupId", true, "name", true, "description", true,
+			"lastPublishDate", true);
 	}
 
 	@Test
@@ -437,12 +445,12 @@ public class TeamPersistenceTest {
 		Assert.assertTrue(Validator.equals(existingTeam.getUuid(),
 				ReflectionTestUtil.invoke(existingTeam, "getOriginalUuid",
 					new Class<?>[0])));
-		Assert.assertEquals(existingTeam.getGroupId(),
-			ReflectionTestUtil.invoke(existingTeam, "getOriginalGroupId",
+		Assert.assertEquals(Long.valueOf(existingTeam.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingTeam, "getOriginalGroupId",
 				new Class<?>[0]));
 
-		Assert.assertEquals(existingTeam.getGroupId(),
-			ReflectionTestUtil.invoke(existingTeam, "getOriginalGroupId",
+		Assert.assertEquals(Long.valueOf(existingTeam.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingTeam, "getOriginalGroupId",
 				new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(existingTeam.getName(),
 				ReflectionTestUtil.invoke(existingTeam, "getOriginalName",
@@ -473,6 +481,8 @@ public class TeamPersistenceTest {
 		team.setName(RandomTestUtil.randomString());
 
 		team.setDescription(RandomTestUtil.randomString());
+
+		team.setLastPublishDate(RandomTestUtil.nextDate());
 
 		_teams.add(_persistence.update(team));
 

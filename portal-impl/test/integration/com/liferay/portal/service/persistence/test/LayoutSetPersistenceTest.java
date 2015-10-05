@@ -41,6 +41,7 @@ import com.liferay.portal.test.rule.PersistenceTestRule;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -57,8 +58,9 @@ import java.util.Set;
  * @generated
  */
 public class LayoutSetPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -239,9 +241,9 @@ public class LayoutSetPersistenceTest {
 			true, "layoutSetId", true, "groupId", true, "companyId", true,
 			"createDate", true, "modifiedDate", true, "privateLayout", true,
 			"logoId", true, "themeId", true, "colorSchemeId", true,
-			"wapThemeId", true, "wapColorSchemeId", true, "css", true,
-			"pageCount", true, "settings", true, "layoutSetPrototypeUuid",
-			true, "layoutSetPrototypeLinkEnabled", true);
+			"wapThemeId", true, "wapColorSchemeId", true, "pageCount", true,
+			"layoutSetPrototypeUuid", true, "layoutSetPrototypeLinkEnabled",
+			true);
 	}
 
 	@Test
@@ -446,11 +448,12 @@ public class LayoutSetPersistenceTest {
 
 		LayoutSet existingLayoutSet = _persistence.findByPrimaryKey(newLayoutSet.getPrimaryKey());
 
-		Assert.assertEquals(existingLayoutSet.getGroupId(),
-			ReflectionTestUtil.invoke(existingLayoutSet, "getOriginalGroupId",
-				new Class<?>[0]));
-		Assert.assertEquals(existingLayoutSet.getPrivateLayout(),
-			ReflectionTestUtil.invoke(existingLayoutSet,
+		Assert.assertEquals(Long.valueOf(existingLayoutSet.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingLayoutSet,
+				"getOriginalGroupId", new Class<?>[0]));
+		Assert.assertEquals(Boolean.valueOf(
+				existingLayoutSet.getPrivateLayout()),
+			ReflectionTestUtil.<Boolean>invoke(existingLayoutSet,
 				"getOriginalPrivateLayout", new Class<?>[0]));
 	}
 

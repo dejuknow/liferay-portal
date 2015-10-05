@@ -167,6 +167,8 @@ String ddmTemplateKey = journalContentDisplayContext.getDDMTemplateKey();
 			selectWebContentURL.setParameter("selectedGroupIds", StringUtil.merge(PortalUtil.getSharedContentSiteGroupIds(company.getCompanyId(), scopeGroupId, user.getUserId())));
 			selectWebContentURL.setParameter("refererAssetEntryId", "[$ARTICLE_REFERER_ASSET_ENTRY_ID$]");
 			selectWebContentURL.setParameter("typeSelection", JournalArticle.class.getName());
+			selectWebContentURL.setParameter("showNonindexable", String.valueOf(Boolean.TRUE));
+			selectWebContentURL.setParameter("showScheduled", String.valueOf(Boolean.TRUE));
 			selectWebContentURL.setParameter("eventName", "selectContent");
 			selectWebContentURL.setWindowState(LiferayWindowState.POP_UP);
 
@@ -261,7 +263,7 @@ String ddmTemplateKey = journalContentDisplayContext.getDDMTemplateKey();
 
 			Liferay.Util.openDDMPortlet(
 				{
-					basePortletURL: '<%= PortletURLFactoryUtil.create(request, PortletKeys.DYNAMIC_DATA_MAPPING, PortalUtil.getControlPanelPlid(company.getCompanyId()), PortletRequest.RENDER_PHASE) %>',
+					basePortletURL: '<%= PortalUtil.getControlPanelPortletURL(request, PortletProviderUtil.getPortletId(DDMStructure.class.getName(), PortletProvider.Action.VIEW), 0, PortletRequest.RENDER_PHASE) %>',
 					classNameId: '<%= PortalUtil.getClassNameId(DDMStructure.class) %>',
 					classPK: templatePreviewContent.attr('data-structure-key'),
 					dialog: {

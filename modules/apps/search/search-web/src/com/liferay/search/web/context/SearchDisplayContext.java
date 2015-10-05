@@ -24,8 +24,8 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PropsValues;
-import com.liferay.search.web.util.SearchFacet;
-import com.liferay.search.web.util.SearchFacetTracker;
+import com.liferay.search.facet.SearchFacet;
+import com.liferay.search.facet.util.SearchFacetTracker;
 
 import java.util.List;
 
@@ -164,6 +164,17 @@ public class SearchDisplayContext {
 			"searchConfiguration", StringPool.BLANK);
 
 		return _searchConfiguration;
+	}
+
+	public String getSearchScope() {
+		if (_searchScope != null) {
+			return _searchScope;
+		}
+
+		_searchScope = _portletPreferences.getValue(
+			"searchScope", StringPool.BLANK);
+
+		return _searchScope;
 	}
 
 	public boolean isCollatedSpellCheckResultEnabled() {
@@ -308,6 +319,7 @@ public class SearchDisplayContext {
 	private Integer _querySuggestionsMax;
 	private final HttpServletRequest _request;
 	private String _searchConfiguration;
+	private String _searchScope;
 	private Boolean _viewInContext;
 
 }

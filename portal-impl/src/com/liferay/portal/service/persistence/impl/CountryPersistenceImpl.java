@@ -93,11 +93,11 @@ public class CountryPersistenceImpl extends BasePersistenceImpl<Country>
 			new String[] { String.class.getName() });
 
 	/**
-	 * Returns the country where name = &#63; or throws a {@link com.liferay.portal.NoSuchCountryException} if it could not be found.
+	 * Returns the country where name = &#63; or throws a {@link NoSuchCountryException} if it could not be found.
 	 *
 	 * @param name the name
 	 * @return the matching country
-	 * @throws com.liferay.portal.NoSuchCountryException if a matching country could not be found
+	 * @throws NoSuchCountryException if a matching country could not be found
 	 */
 	@Override
 	public Country findByName(String name) throws NoSuchCountryException {
@@ -326,11 +326,11 @@ public class CountryPersistenceImpl extends BasePersistenceImpl<Country>
 			new String[] { String.class.getName() });
 
 	/**
-	 * Returns the country where a2 = &#63; or throws a {@link com.liferay.portal.NoSuchCountryException} if it could not be found.
+	 * Returns the country where a2 = &#63; or throws a {@link NoSuchCountryException} if it could not be found.
 	 *
 	 * @param a2 the a2
 	 * @return the matching country
-	 * @throws com.liferay.portal.NoSuchCountryException if a matching country could not be found
+	 * @throws NoSuchCountryException if a matching country could not be found
 	 */
 	@Override
 	public Country findByA2(String a2) throws NoSuchCountryException {
@@ -558,11 +558,11 @@ public class CountryPersistenceImpl extends BasePersistenceImpl<Country>
 			new String[] { String.class.getName() });
 
 	/**
-	 * Returns the country where a3 = &#63; or throws a {@link com.liferay.portal.NoSuchCountryException} if it could not be found.
+	 * Returns the country where a3 = &#63; or throws a {@link NoSuchCountryException} if it could not be found.
 	 *
 	 * @param a3 the a3
 	 * @return the matching country
-	 * @throws com.liferay.portal.NoSuchCountryException if a matching country could not be found
+	 * @throws NoSuchCountryException if a matching country could not be found
 	 */
 	@Override
 	public Country findByA3(String a3) throws NoSuchCountryException {
@@ -815,7 +815,7 @@ public class CountryPersistenceImpl extends BasePersistenceImpl<Country>
 	 * Returns a range of all the countries where active = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.model.impl.CountryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link CountryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param active the active
@@ -832,7 +832,7 @@ public class CountryPersistenceImpl extends BasePersistenceImpl<Country>
 	 * Returns an ordered range of all the countries where active = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.model.impl.CountryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link CountryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param active the active
@@ -945,7 +945,7 @@ public class CountryPersistenceImpl extends BasePersistenceImpl<Country>
 	 * @param active the active
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching country
-	 * @throws com.liferay.portal.NoSuchCountryException if a matching country could not be found
+	 * @throws NoSuchCountryException if a matching country could not be found
 	 */
 	@Override
 	public Country findByActive_First(boolean active,
@@ -994,7 +994,7 @@ public class CountryPersistenceImpl extends BasePersistenceImpl<Country>
 	 * @param active the active
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching country
-	 * @throws com.liferay.portal.NoSuchCountryException if a matching country could not be found
+	 * @throws NoSuchCountryException if a matching country could not be found
 	 */
 	@Override
 	public Country findByActive_Last(boolean active,
@@ -1051,7 +1051,7 @@ public class CountryPersistenceImpl extends BasePersistenceImpl<Country>
 	 * @param active the active
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next country
-	 * @throws com.liferay.portal.NoSuchCountryException if a country with the primary key could not be found
+	 * @throws NoSuchCountryException if a country with the primary key could not be found
 	 */
 	@Override
 	public Country[] findByActive_PrevAndNext(long countryId, boolean active,
@@ -1332,7 +1332,7 @@ public class CountryPersistenceImpl extends BasePersistenceImpl<Country>
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 
-		clearUniqueFindersCache(country);
+		clearUniqueFindersCache((CountryModelImpl)country);
 	}
 
 	@Override
@@ -1344,67 +1344,69 @@ public class CountryPersistenceImpl extends BasePersistenceImpl<Country>
 			EntityCacheUtil.removeResult(CountryModelImpl.ENTITY_CACHE_ENABLED,
 				CountryImpl.class, country.getPrimaryKey());
 
-			clearUniqueFindersCache(country);
+			clearUniqueFindersCache((CountryModelImpl)country);
 		}
 	}
 
-	protected void cacheUniqueFindersCache(Country country, boolean isNew) {
+	protected void cacheUniqueFindersCache(CountryModelImpl countryModelImpl,
+		boolean isNew) {
 		if (isNew) {
-			Object[] args = new Object[] { country.getName() };
+			Object[] args = new Object[] { countryModelImpl.getName() };
 
 			FinderCacheUtil.putResult(FINDER_PATH_COUNT_BY_NAME, args,
 				Long.valueOf(1));
-			FinderCacheUtil.putResult(FINDER_PATH_FETCH_BY_NAME, args, country);
+			FinderCacheUtil.putResult(FINDER_PATH_FETCH_BY_NAME, args,
+				countryModelImpl);
 
-			args = new Object[] { country.getA2() };
+			args = new Object[] { countryModelImpl.getA2() };
 
 			FinderCacheUtil.putResult(FINDER_PATH_COUNT_BY_A2, args,
 				Long.valueOf(1));
-			FinderCacheUtil.putResult(FINDER_PATH_FETCH_BY_A2, args, country);
+			FinderCacheUtil.putResult(FINDER_PATH_FETCH_BY_A2, args,
+				countryModelImpl);
 
-			args = new Object[] { country.getA3() };
+			args = new Object[] { countryModelImpl.getA3() };
 
 			FinderCacheUtil.putResult(FINDER_PATH_COUNT_BY_A3, args,
 				Long.valueOf(1));
-			FinderCacheUtil.putResult(FINDER_PATH_FETCH_BY_A3, args, country);
+			FinderCacheUtil.putResult(FINDER_PATH_FETCH_BY_A3, args,
+				countryModelImpl);
 		}
 		else {
-			CountryModelImpl countryModelImpl = (CountryModelImpl)country;
-
 			if ((countryModelImpl.getColumnBitmask() &
 					FINDER_PATH_FETCH_BY_NAME.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] { country.getName() };
+				Object[] args = new Object[] { countryModelImpl.getName() };
 
 				FinderCacheUtil.putResult(FINDER_PATH_COUNT_BY_NAME, args,
 					Long.valueOf(1));
 				FinderCacheUtil.putResult(FINDER_PATH_FETCH_BY_NAME, args,
-					country);
+					countryModelImpl);
 			}
 
 			if ((countryModelImpl.getColumnBitmask() &
 					FINDER_PATH_FETCH_BY_A2.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] { country.getA2() };
+				Object[] args = new Object[] { countryModelImpl.getA2() };
 
 				FinderCacheUtil.putResult(FINDER_PATH_COUNT_BY_A2, args,
 					Long.valueOf(1));
-				FinderCacheUtil.putResult(FINDER_PATH_FETCH_BY_A2, args, country);
+				FinderCacheUtil.putResult(FINDER_PATH_FETCH_BY_A2, args,
+					countryModelImpl);
 			}
 
 			if ((countryModelImpl.getColumnBitmask() &
 					FINDER_PATH_FETCH_BY_A3.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] { country.getA3() };
+				Object[] args = new Object[] { countryModelImpl.getA3() };
 
 				FinderCacheUtil.putResult(FINDER_PATH_COUNT_BY_A3, args,
 					Long.valueOf(1));
-				FinderCacheUtil.putResult(FINDER_PATH_FETCH_BY_A3, args, country);
+				FinderCacheUtil.putResult(FINDER_PATH_FETCH_BY_A3, args,
+					countryModelImpl);
 			}
 		}
 	}
 
-	protected void clearUniqueFindersCache(Country country) {
-		CountryModelImpl countryModelImpl = (CountryModelImpl)country;
-
-		Object[] args = new Object[] { country.getName() };
+	protected void clearUniqueFindersCache(CountryModelImpl countryModelImpl) {
+		Object[] args = new Object[] { countryModelImpl.getName() };
 
 		FinderCacheUtil.removeResult(FINDER_PATH_COUNT_BY_NAME, args);
 		FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_NAME, args);
@@ -1417,7 +1419,7 @@ public class CountryPersistenceImpl extends BasePersistenceImpl<Country>
 			FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_NAME, args);
 		}
 
-		args = new Object[] { country.getA2() };
+		args = new Object[] { countryModelImpl.getA2() };
 
 		FinderCacheUtil.removeResult(FINDER_PATH_COUNT_BY_A2, args);
 		FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_A2, args);
@@ -1430,7 +1432,7 @@ public class CountryPersistenceImpl extends BasePersistenceImpl<Country>
 			FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_A2, args);
 		}
 
-		args = new Object[] { country.getA3() };
+		args = new Object[] { countryModelImpl.getA3() };
 
 		FinderCacheUtil.removeResult(FINDER_PATH_COUNT_BY_A3, args);
 		FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_A3, args);
@@ -1465,7 +1467,7 @@ public class CountryPersistenceImpl extends BasePersistenceImpl<Country>
 	 *
 	 * @param countryId the primary key of the country
 	 * @return the country that was removed
-	 * @throws com.liferay.portal.NoSuchCountryException if a country with the primary key could not be found
+	 * @throws NoSuchCountryException if a country with the primary key could not be found
 	 */
 	@Override
 	public Country remove(long countryId) throws NoSuchCountryException {
@@ -1477,7 +1479,7 @@ public class CountryPersistenceImpl extends BasePersistenceImpl<Country>
 	 *
 	 * @param primaryKey the primary key of the country
 	 * @return the country that was removed
-	 * @throws com.liferay.portal.NoSuchCountryException if a country with the primary key could not be found
+	 * @throws NoSuchCountryException if a country with the primary key could not be found
 	 */
 	@Override
 	public Country remove(Serializable primaryKey)
@@ -1544,7 +1546,7 @@ public class CountryPersistenceImpl extends BasePersistenceImpl<Country>
 	}
 
 	@Override
-	public Country updateImpl(com.liferay.portal.model.Country country) {
+	public Country updateImpl(Country country) {
 		country = toUnwrappedModel(country);
 
 		boolean isNew = country.isNew();
@@ -1562,7 +1564,7 @@ public class CountryPersistenceImpl extends BasePersistenceImpl<Country>
 				country.setNew(false);
 			}
 			else {
-				session.merge(country);
+				country = (Country)session.merge(country);
 			}
 		}
 		catch (Exception e) {
@@ -1600,8 +1602,8 @@ public class CountryPersistenceImpl extends BasePersistenceImpl<Country>
 		EntityCacheUtil.putResult(CountryModelImpl.ENTITY_CACHE_ENABLED,
 			CountryImpl.class, country.getPrimaryKey(), country, false);
 
-		clearUniqueFindersCache(country);
-		cacheUniqueFindersCache(country, isNew);
+		clearUniqueFindersCache(countryModelImpl);
+		cacheUniqueFindersCache(countryModelImpl, isNew);
 
 		country.resetOriginalValues();
 
@@ -1636,7 +1638,7 @@ public class CountryPersistenceImpl extends BasePersistenceImpl<Country>
 	 *
 	 * @param primaryKey the primary key of the country
 	 * @return the country
-	 * @throws com.liferay.portal.NoSuchCountryException if a country with the primary key could not be found
+	 * @throws NoSuchCountryException if a country with the primary key could not be found
 	 */
 	@Override
 	public Country findByPrimaryKey(Serializable primaryKey)
@@ -1656,11 +1658,11 @@ public class CountryPersistenceImpl extends BasePersistenceImpl<Country>
 	}
 
 	/**
-	 * Returns the country with the primary key or throws a {@link com.liferay.portal.NoSuchCountryException} if it could not be found.
+	 * Returns the country with the primary key or throws a {@link NoSuchCountryException} if it could not be found.
 	 *
 	 * @param countryId the primary key of the country
 	 * @return the country
-	 * @throws com.liferay.portal.NoSuchCountryException if a country with the primary key could not be found
+	 * @throws NoSuchCountryException if a country with the primary key could not be found
 	 */
 	@Override
 	public Country findByPrimaryKey(long countryId)
@@ -1830,7 +1832,7 @@ public class CountryPersistenceImpl extends BasePersistenceImpl<Country>
 	 * Returns a range of all the countries.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.model.impl.CountryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link CountryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of countries
@@ -1846,7 +1848,7 @@ public class CountryPersistenceImpl extends BasePersistenceImpl<Country>
 	 * Returns an ordered range of all the countries.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.model.impl.CountryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link CountryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of countries
@@ -1984,7 +1986,7 @@ public class CountryPersistenceImpl extends BasePersistenceImpl<Country>
 	}
 
 	@Override
-	protected Set<String> getBadColumnNames() {
+	public Set<String> getBadColumnNames() {
 		return _badColumnNames;
 	}
 

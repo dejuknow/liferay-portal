@@ -51,18 +51,18 @@ public interface SAPEntryService extends BaseService {
 	 * Never modify or reference this interface directly. Always use {@link SAPEntryServiceUtil} to access the s a p entry remote service. Add custom service methods to {@link com.liferay.service.access.policy.service.impl.SAPEntryServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
 	public com.liferay.service.access.policy.model.SAPEntry addSAPEntry(
-		java.lang.String allowedServiceSignatures, java.lang.String name,
+		java.lang.String allowedServiceSignatures, boolean enabled,
+		java.lang.String name,
 		java.util.Map<java.util.Locale, java.lang.String> titleMap,
 		com.liferay.portal.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException;
+		throws PortalException;
 
 	public com.liferay.service.access.policy.model.SAPEntry deleteSAPEntry(
 		com.liferay.service.access.policy.model.SAPEntry sapEntry)
-		throws com.liferay.portal.kernel.exception.PortalException;
+		throws PortalException;
 
 	public com.liferay.service.access.policy.model.SAPEntry deleteSAPEntry(
-		long sapEntryId)
-		throws com.liferay.portal.kernel.exception.PortalException;
+		long sapEntryId) throws PortalException;
 
 	/**
 	* Returns the Spring bean ID for this bean.
@@ -85,13 +85,11 @@ public interface SAPEntryService extends BaseService {
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public com.liferay.service.access.policy.model.SAPEntry getSAPEntry(
-		long companyId, java.lang.String name)
-		throws com.liferay.portal.kernel.exception.PortalException;
+		long companyId, java.lang.String name) throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public com.liferay.service.access.policy.model.SAPEntry getSAPEntry(
-		long sapEntryId)
-		throws com.liferay.portal.kernel.exception.PortalException;
+		long sapEntryId) throws PortalException;
 
 	/**
 	* Sets the Spring bean ID for this bean.
@@ -102,8 +100,8 @@ public interface SAPEntryService extends BaseService {
 
 	public com.liferay.service.access.policy.model.SAPEntry updateSAPEntry(
 		long sapEntryId, java.lang.String allowedServiceSignatures,
-		java.lang.String name,
+		boolean enabled, java.lang.String name,
 		java.util.Map<java.util.Locale, java.lang.String> titleMap,
 		com.liferay.portal.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException;
+		throws PortalException;
 }

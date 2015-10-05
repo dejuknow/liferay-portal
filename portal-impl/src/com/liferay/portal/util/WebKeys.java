@@ -41,8 +41,6 @@ public class WebKeys implements com.liferay.portal.kernel.util.WebKeys {
 
 	public static final String AVAILABLE_LOCALES = "AVAILABLE_LOCALES";
 
-	public static final String BASIC_AUTH_ENABLED = "BASIC_AUTH_ENABLED";
-
 	public static final String BLOGS_CATEGORY = "BLOGS_CATEGORY";
 
 	public static final String BLOGS_ENTRY = "BLOGS_ENTRY";
@@ -83,6 +81,8 @@ public class WebKeys implements com.liferay.portal.kernel.util.WebKeys {
 
 	public static final String DIFF_VERSION = "DIFF_VERSION";
 
+	public static final String DOCUMENT_LIBRARY_DYNAMIC_DATA_MAPPING_STRUCTURE = "DOCUMENT_LIBRARY_DYNAMIC_DATA_MAPPING_STRUCTURE";
+
 	public static final String DOCUMENT_LIBRARY_FILE_ENTRIES = "DOCUMENT_LIBRARY_FILE_ENTRIES";
 
 	public static final String DOCUMENT_LIBRARY_FILE_ENTRY = "DOCUMENT_LIBRARY_FILE_ENTRY";
@@ -98,12 +98,6 @@ public class WebKeys implements com.liferay.portal.kernel.util.WebKeys {
 	public static final String DOCUMENT_LIBRARY_FOLDERS = "DOCUMENT_LIBRARY_FOLDERS";
 
 	public static final String DOCUMENT_LIBRARY_REPOSITORY = "DOCUMENT_LIBRARY_REPOSITORY";
-
-	public static final String DYNAMIC_DATA_MAPPING_FORM_HTML = "DYNAMIC_DATA_MAPPING_FORM_HTML";
-
-	public static final String DYNAMIC_DATA_MAPPING_STRUCTURE = "DYNAMIC_DATA_MAPPING_STRUCTURE";
-
-	public static final String DYNAMIC_DATA_MAPPING_TEMPLATE = "DYNAMIC_DATA_MAPPING_TEMPLATE";
 
 	public static final String EMAIL_ADDRESS = "EMAIL_ADDRESS";
 
@@ -253,24 +247,6 @@ public class WebKeys implements com.liferay.portal.kernel.util.WebKeys {
 
 	public static final String MESSAGE_BOARDS_TREE_WALKER_VIEWABLE_THREAD = "MESSAGE_BOARDS_TREE_WALKER_VIEWABLE_THREAD";
 
-	public static final String MOBILE_DEVICE_RULES_RULE = "MOBILE_DEVICE_RULES_RULE";
-
-	public static final String MOBILE_DEVICE_RULES_RULE_EDITOR_JSP = "MOBILE_DEVICE_RULES_RULE_EDITOR_JSP";
-
-	public static final String MOBILE_DEVICE_RULES_RULE_GROUP = "MOBILE_DEVICE_RULES_RULE_GROUP";
-
-	public static final String MOBILE_DEVICE_RULES_RULE_GROUP_ACTION = "MOBILE_DEVICE_RULES_RULE_GROUP_ACTION";
-
-	public static final String MOBILE_DEVICE_RULES_RULE_GROUP_ACTION_EDITOR_JSP = "MOBILE_DEVICE_RULES_RULE_GROUP_ACTION_EDITOR_JSP";
-
-	public static final String MOBILE_DEVICE_RULES_RULE_GROUP_ACTION_TYPE = "MOBILE_DEVICE_RULES_RULE_GROUP_ACTION_TYPE";
-
-	public static final String MOBILE_DEVICE_RULES_RULE_GROUP_INSTANCE = "MOBILE_DEVICE_RULES_RULE_GROUP_INSTANCE";
-
-	public static final String MOBILE_DEVICE_RULES_RULE_INSTANCE = "MOBILE_DEVICE_RULES_RULE_INSTANCE";
-
-	public static final String MOBILE_DEVICE_RULES_RULE_TYPE = "MOBILE_DEVICE_RULES_RULE_TYPE";
-
 	public static final String NETVIBES = "NETVIBES";
 
 	public static final String NOTES_LIST = "NOTES_LIST";
@@ -356,8 +332,6 @@ public class WebKeys implements com.liferay.portal.kernel.util.WebKeys {
 
 	public static final String SITE_ADMINISTRATION_CATEGORIES_MAP = "SITES_ADMINISTRATION_CATEGORIES_MAP";
 
-	public static final String SOCIAL_ACTIVITY_SETTINGS_MAP = "SOCIAL_ACTIVITY_SETTINGS_MAP";
-
 	public static final String SOFTWARE_CATALOG_FRAMEWORK_VERSION = "SOFTWARE_CATALOG_FRAMEWORK_VERSION";
 
 	public static final String SOFTWARE_CATALOG_LICENSE = "SOFTWARE_CATALOG_LICENSE";
@@ -385,6 +359,8 @@ public class WebKeys implements com.liferay.portal.kernel.util.WebKeys {
 	public static final String TASK_LIST = "TASK_LIST";
 
 	public static final String TEAM = "TEAM";
+
+	public static final String TICKET = "TICKET";
 
 	public static final String TRANSLATOR_TRANSLATION = "TRANSLATOR_TRANSLATION";
 

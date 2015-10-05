@@ -49,9 +49,7 @@ public class OpenIdLoginDynamicInclude extends BaseDynamicInclude {
 			requestDispatcher.include(request, response);
 		}
 		catch (ServletException se) {
-			if (_log.isErrorEnabled()) {
-				_log.error("Unable to include JSP", se);
-			}
+			_log.error("Unable to include JSP", se);
 
 			throw new IOException("Unable to include " + _JSP_PATH, se);
 		}
@@ -61,7 +59,7 @@ public class OpenIdLoginDynamicInclude extends BaseDynamicInclude {
 	public void register(
 		DynamicInclude.DynamicIncludeRegistry dynamicIncludeRegistry) {
 
-		dynamicIncludeRegistry.register("/html/portlet/login/open_id.jsp");
+		dynamicIncludeRegistry.register("/html/portlet/login/open_id.jsp#pre");
 	}
 
 	@Reference(
@@ -71,8 +69,7 @@ public class OpenIdLoginDynamicInclude extends BaseDynamicInclude {
 		_servletContext = servletContext;
 	}
 
-	private static final String _JSP_PATH =
-		"/META-INF/resources/html/portlet/login/open_id.jsp";
+	private static final String _JSP_PATH = "/html/portlet/login/open_id.jsp";
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		OpenIdLoginDynamicInclude.class);

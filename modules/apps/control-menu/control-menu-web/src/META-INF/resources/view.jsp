@@ -17,123 +17,71 @@
 <%@ include file="/init.jsp" %>
 
 <%
+List<ControlMenuCategory> controlMenuCategories = (List<ControlMenuCategory>)request.getAttribute(ControlMenuWebKeys.CONTROL_MENU_CATEGORIES);
+ControlMenuEntryRegistry controlMenuEntryRegistry = (ControlMenuEntryRegistry)request.getAttribute(ControlMenuWebKeys.CONTROL_MENU_ENTRY_REGISTRY);
+
 Group group = null;
-LayoutSet layoutSet = null;
 
 if (layout != null) {
 	group = layout.getGroup();
-	layoutSet = layout.getLayoutSet();
-}
-
-boolean hasLayoutCustomizePermission = LayoutPermissionUtil.contains(permissionChecker, layout, ActionKeys.CUSTOMIZE);
-boolean hasLayoutUpdatePermission = LayoutPermissionUtil.contains(permissionChecker, layout, ActionKeys.UPDATE);
-
-String toggleControlsState = GetterUtil.getString(SessionClicks.get(request, "liferay_toggle_controls", "visible"));
-
-boolean userSetupComplete = false;
-
-if (user.isSetupComplete() || themeDisplay.isImpersonated()) {
-	userSetupComplete = true;
 }
 %>
 
-<c:if test="<%= !group.isControlPanel() && !group.isUserPersonalPanel() && userSetupComplete %>">
-	<ul class="control-menu" data-namespace="<portlet:namespace />" id="<portlet:namespace />controlMenu">
+<c:if test="<%= !layout.isTypeControlPanel() && !group.isControlPanel() %>">
+	<div class="control-menu">
+		<c:if test="<%= (user.isSetupComplete() || themeDisplay.isImpersonated()) && themeDisplay.isShowStagingIcon() %>">
+			<div class="control-menu-level-2">
+				<div class="container-fluid-1280">
 
-		<%
-		boolean hasLayoutAddPermission = false;
+					<%
+					String renderPortletBoundary = GetterUtil.getString(request.getAttribute(WebKeys.RENDER_PORTLET_BOUNDARY));
 
-		if (layout.getParentLayoutId() == LayoutConstants.DEFAULT_PARENT_LAYOUT_ID) {
-			hasLayoutAddPermission = GroupPermissionUtil.contains(permissionChecker, group, ActionKeys.ADD_LAYOUT);
-		}
-		else {
-			hasLayoutAddPermission = LayoutPermissionUtil.contains(permissionChecker, layout, ActionKeys.ADD_LAYOUT);
-		}
-		%>
+					request.setAttribute(WebKeys.RENDER_PORTLET_BOUNDARY, Boolean.FALSE.toString());
+					%>
 
-		<c:if test="<%= !group.isControlPanel() && !group.isUserPersonalPanel() && userSetupComplete && (hasLayoutAddPermission || hasLayoutUpdatePermission || (layoutTypePortlet.isCustomizable() && layoutTypePortlet.isCustomizedView() && hasLayoutCustomizePermission)) %>">
-			<portlet:renderURL var="addURL" windowState="<%= LiferayWindowState.EXCLUSIVE.toString() %>">
-				<portlet:param name="mvcPath" value="/add_panel.jsp" />
-				<portlet:param name="stateMaximized" value="<%= String.valueOf(themeDisplay.isStateMaximized()) %>" />
-				<portlet:param name="viewEntries" value="<%= Boolean.TRUE.toString() %>" />
-			</portlet:renderURL>
+					<liferay-portlet:runtime portletName="<%= PortletKeys.STAGING_BAR %>" />
 
-			<%
-			Map<String, Object> data = new HashMap<String, Object>();
+					<%
+					request.setAttribute(WebKeys.RENDER_PORTLET_BOUNDARY, renderPortletBoundary);
+					%>
 
-			data.put("panelURL", addURL);
-			%>
-
-			<li>
-				<liferay-ui:icon
-					data="<%= data %>"
-					iconCssClass="icon-plus"
-					id="addPanel"
-					label="add"
-					url="javascript:;"
-				/>
-			</li>
+				</div>
+			</div>
 		</c:if>
 
-		<c:if test="<%= !group.isControlPanel() && !group.isUserPersonalPanel() && userSetupComplete && (hasLayoutUpdatePermission || GroupPermissionUtil.contains(permissionChecker, group, ActionKeys.PREVIEW_IN_DEVICE)) %>">
-			<portlet:renderURL var="previewContentURL" windowState="<%= LiferayWindowState.EXCLUSIVE.toString() %>">
-				<portlet:param name="mvcPath" value="/preview_panel.jsp" />
-			</portlet:renderURL>
+		<div class="control-menu-level-1">
+			<div class="container-fluid-1280">
+				<ul class="control-menu-nav" data-namespace="<portlet:namespace />" id="<portlet:namespace />controlMenu">
 
-			<%
-			Map<String, Object> data = new HashMap<String, Object>();
+					<%
+					for (ControlMenuCategory controlMenuCategory : controlMenuCategories) {
+						List<ControlMenuEntry> controlMenuEntries = controlMenuEntryRegistry.getControlMenuEntries(controlMenuCategory, request);
 
-			data.put("panelURL", previewContentURL);
-			%>
+						for (ControlMenuEntry controlMenuEntry : controlMenuEntries) {
+							if (controlMenuEntry.include(request, new PipingServletResponse(pageContext))) {
+								continue;
+							}
+					%>
 
-			<li>
-				<liferay-ui:icon
-					data="<%= data %>"
-					iconCssClass="icon-desktop"
-					id="previewPanel"
-					label="preview"
-					url="javascript:;"
-				/>
-			</li>
-		</c:if>
+							<li>
+								<liferay-ui:icon
+									iconCssClass='<%= controlMenuEntry.getIconCssClass(request) + " icon-monospaced" %>'
+									label="<%= false %>"
+									linkCssClass="control-menu-icon"
+									message="<%= controlMenuEntry.getLabel(locale) %>"
+									url="<%= controlMenuEntry.getURL(request) %>"
+								/>
+							</li>
 
-		<c:if test="<%= !group.isControlPanel() && !group.isUserPersonalPanel() && userSetupComplete && (themeDisplay.isShowLayoutTemplatesIcon() || themeDisplay.isShowPageSettingsIcon()) %>">
+					<%
+						}
+					}
+					%>
 
-			<%
-			PortletURL editPageURL = PortletProviderUtil.getPortletURL(request, Layout.class.getName(), PortletProvider.Action.EDIT);
-
-			editPageURL.setParameter("tabs1", layout.isPrivateLayout() ? "private-pages" : "public-pages");
-			editPageURL.setParameter("groupId", String.valueOf(groupDisplayContextHelper.getLiveGroupId()));
-			editPageURL.setParameter("selPlid", String.valueOf(layout.getPlid()));
-			editPageURL.setParameter("treeId", "layoutsTree");
-			editPageURL.setParameter("viewLayout", Boolean.TRUE.toString());
-
-			String editPageURLString = HttpUtil.setParameter(editPageURL.toString(), "controlPanelCategory", "current_site");
-
-			editPageURLString = HttpUtil.setParameter(editPageURLString, "doAsGroupId", String.valueOf(groupDisplayContextHelper.getLiveGroupId()));
-			editPageURLString = HttpUtil.setParameter(editPageURLString, "refererPlid", String.valueOf(layout.getPlid()));
-			%>
-
-			<li>
-				<liferay-ui:icon
-					iconCssClass="icon-edit"
-					label="edit"
-					url="<%= editPageURLString %>"
-				/>
-			</li>
-		</c:if>
-
-		<c:if test="<%= !group.isControlPanel() && !group.isUserPersonalPanel() && userSetupComplete && (!group.hasStagingGroup() || group.isStagingGroup()) && (hasLayoutUpdatePermission || (layoutTypePortlet.isCustomizable() && layoutTypePortlet.isCustomizedView() && hasLayoutCustomizePermission) || PortletPermissionUtil.hasConfigurationPermission(permissionChecker, themeDisplay.getSiteGroupId(), layout, ActionKeys.CONFIGURATION)) %>">
-			<li id="<portlet:namespace />toggleControls">
-				<liferay-ui:icon
-					cssClass="toggle-controls"
-					iconCssClass='<%= "controls-state-icon " + (toggleControlsState.equals("visible") ? "icon-eye-open" : "icon-eye-close") %>'
-					label="edit-controls"
-					url="javascript:;"
-				/>
-			</li>
-		</c:if>
-	</ul>
+				</ul>
+			</div>
+		</div>
+	</div>
 </c:if>
 
 <aui:script position="inline" use="liferay-control-menu">

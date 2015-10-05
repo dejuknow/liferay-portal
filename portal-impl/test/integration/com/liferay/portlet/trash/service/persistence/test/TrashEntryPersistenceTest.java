@@ -41,6 +41,7 @@ import com.liferay.portlet.trash.service.persistence.TrashEntryUtil;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -57,8 +58,9 @@ import java.util.Set;
  * @generated
  */
 public class TrashEntryPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -228,8 +230,7 @@ public class TrashEntryPersistenceTest {
 		return OrderByComparatorFactoryUtil.create("TrashEntry", "entryId",
 			true, "groupId", true, "companyId", true, "userId", true,
 			"userName", true, "createDate", true, "classNameId", true,
-			"classPK", true, "systemEventSetKey", true, "typeSettings", true,
-			"status", true);
+			"classPK", true, "systemEventSetKey", true, "status", true);
 	}
 
 	@Test
@@ -434,12 +435,12 @@ public class TrashEntryPersistenceTest {
 
 		TrashEntry existingTrashEntry = _persistence.findByPrimaryKey(newTrashEntry.getPrimaryKey());
 
-		Assert.assertEquals(existingTrashEntry.getClassNameId(),
-			ReflectionTestUtil.invoke(existingTrashEntry,
+		Assert.assertEquals(Long.valueOf(existingTrashEntry.getClassNameId()),
+			ReflectionTestUtil.<Long>invoke(existingTrashEntry,
 				"getOriginalClassNameId", new Class<?>[0]));
-		Assert.assertEquals(existingTrashEntry.getClassPK(),
-			ReflectionTestUtil.invoke(existingTrashEntry, "getOriginalClassPK",
-				new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingTrashEntry.getClassPK()),
+			ReflectionTestUtil.<Long>invoke(existingTrashEntry,
+				"getOriginalClassPK", new Class<?>[0]));
 	}
 
 	protected TrashEntry addTrashEntry() throws Exception {

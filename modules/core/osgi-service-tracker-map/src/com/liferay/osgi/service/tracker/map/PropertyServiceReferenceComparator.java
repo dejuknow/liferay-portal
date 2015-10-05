@@ -14,6 +14,8 @@
 
 package com.liferay.osgi.service.tracker.map;
 
+import java.io.Serializable;
+
 import java.util.Comparator;
 
 import org.osgi.framework.ServiceReference;
@@ -22,7 +24,7 @@ import org.osgi.framework.ServiceReference;
  * @author Carlos Sierra Andrés
  */
 public class PropertyServiceReferenceComparator<T>
-	implements Comparator<ServiceReference<T>> {
+	implements Comparator<ServiceReference<T>>, Serializable {
 
 	public PropertyServiceReferenceComparator(String propertyKey) {
 		_propertyKey = propertyKey;
@@ -38,33 +40,36 @@ public class PropertyServiceReferenceComparator<T>
 				return 0;
 			}
 			else {
-				return -1;
+				return 1;
 			}
 		}
 		else if (serviceReference2 == null) {
-			return 1;
+			return -1;
 		}
 
 		Object propertyValue1 = serviceReference1.getProperty(_propertyKey);
-
-		if (!(propertyValue1 instanceof Comparable)) {
-			return -(serviceReference1.compareTo(serviceReference2));
-		}
-
-		Comparable<Object> propertyValueComparable1 =
-			(Comparable<Object>)propertyValue1;
-
 		Object propertyValue2 = serviceReference2.getProperty(_propertyKey);
 
 		if (propertyValue1 == null) {
-			if (propertyValue2 != null) {
-				return -1;
+			if (propertyValue2 == null) {
+				return 0;
 			}
-
-			return -(serviceReference1.compareTo(serviceReference2));
+			else {
+				return 1;
+			}
+		}
+		else if (propertyValue2 == null) {
+			return -1;
 		}
 
-		return -(propertyValueComparable1.compareTo(propertyValue2));
+		if (!(propertyValue2 instanceof Comparable)) {
+			return serviceReference2.compareTo(serviceReference1);
+		}
+
+		Comparable<Object> propertyValueComparable2 =
+			(Comparable<Object>)propertyValue2;
+
+		return propertyValueComparable2.compareTo(propertyValue1);
 	}
 
 	private final String _propertyKey;

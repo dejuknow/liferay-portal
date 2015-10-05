@@ -42,6 +42,7 @@ import com.liferay.portal.test.rule.PersistenceTestRule;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -58,8 +59,9 @@ import java.util.Set;
  * @generated
  */
 public class LayoutSetBranchPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -277,9 +279,8 @@ public class LayoutSetBranchPersistenceTest {
 			true, "modifiedDate", true, "privateLayout", true, "name", true,
 			"description", true, "master", true, "logoId", true, "themeId",
 			true, "colorSchemeId", true, "wapThemeId", true,
-			"wapColorSchemeId", true, "css", true, "settings", true,
-			"layoutSetPrototypeUuid", true, "layoutSetPrototypeLinkEnabled",
-			true);
+			"wapColorSchemeId", true, "layoutSetPrototypeUuid", true,
+			"layoutSetPrototypeLinkEnabled", true);
 	}
 
 	@Test
@@ -486,11 +487,12 @@ public class LayoutSetBranchPersistenceTest {
 
 		LayoutSetBranch existingLayoutSetBranch = _persistence.findByPrimaryKey(newLayoutSetBranch.getPrimaryKey());
 
-		Assert.assertEquals(existingLayoutSetBranch.getGroupId(),
-			ReflectionTestUtil.invoke(existingLayoutSetBranch,
+		Assert.assertEquals(Long.valueOf(existingLayoutSetBranch.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingLayoutSetBranch,
 				"getOriginalGroupId", new Class<?>[0]));
-		Assert.assertEquals(existingLayoutSetBranch.getPrivateLayout(),
-			ReflectionTestUtil.invoke(existingLayoutSetBranch,
+		Assert.assertEquals(Boolean.valueOf(
+				existingLayoutSetBranch.getPrivateLayout()),
+			ReflectionTestUtil.<Boolean>invoke(existingLayoutSetBranch,
 				"getOriginalPrivateLayout", new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(existingLayoutSetBranch.getName(),
 				ReflectionTestUtil.invoke(existingLayoutSetBranch,

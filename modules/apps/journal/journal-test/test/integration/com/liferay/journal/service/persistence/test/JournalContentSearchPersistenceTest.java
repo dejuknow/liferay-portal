@@ -44,6 +44,7 @@ import com.liferay.portal.test.rule.PersistenceTestRule;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -63,8 +64,9 @@ import java.util.Set;
  */
 @RunWith(Arquillian.class)
 public class JournalContentSearchPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -470,14 +472,17 @@ public class JournalContentSearchPersistenceTest {
 
 		JournalContentSearch existingJournalContentSearch = _persistence.findByPrimaryKey(newJournalContentSearch.getPrimaryKey());
 
-		Assert.assertEquals(existingJournalContentSearch.getGroupId(),
-			ReflectionTestUtil.invoke(existingJournalContentSearch,
+		Assert.assertEquals(Long.valueOf(
+				existingJournalContentSearch.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingJournalContentSearch,
 				"getOriginalGroupId", new Class<?>[0]));
-		Assert.assertEquals(existingJournalContentSearch.getPrivateLayout(),
-			ReflectionTestUtil.invoke(existingJournalContentSearch,
+		Assert.assertEquals(Boolean.valueOf(
+				existingJournalContentSearch.getPrivateLayout()),
+			ReflectionTestUtil.<Boolean>invoke(existingJournalContentSearch,
 				"getOriginalPrivateLayout", new Class<?>[0]));
-		Assert.assertEquals(existingJournalContentSearch.getLayoutId(),
-			ReflectionTestUtil.invoke(existingJournalContentSearch,
+		Assert.assertEquals(Long.valueOf(
+				existingJournalContentSearch.getLayoutId()),
+			ReflectionTestUtil.<Long>invoke(existingJournalContentSearch,
 				"getOriginalLayoutId", new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(
 				existingJournalContentSearch.getPortletId(),

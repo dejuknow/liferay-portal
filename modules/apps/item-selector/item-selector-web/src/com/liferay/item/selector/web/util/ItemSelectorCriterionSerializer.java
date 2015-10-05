@@ -40,6 +40,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -134,6 +135,12 @@ public class ItemSelectorCriterionSerializer<T extends ItemSelectorCriterion> {
 							serializableFieldClass.getComponentType(),
 							list.size()));
 				}
+				else if (((serializableFieldClass == Long.class) ||
+						  (serializableFieldClass == Long.TYPE)) &&
+						 (value instanceof String)) {
+
+					value = Long.valueOf((String)value);
+				}
 
 				PropertyUtils.setProperty(
 					itemSelectorCriterion, externalPropertyKey, value);
@@ -192,7 +199,7 @@ public class ItemSelectorCriterionSerializer<T extends ItemSelectorCriterion> {
 			List<ItemSelectorReturnType> itemSelectorReturnTypes =
 				_itemSelectorReturnTypes.get(desiredItemSelectorReturnTypeName);
 
-			if (itemSelectorReturnTypes.isEmpty()) {
+			if (ListUtil.isEmpty(itemSelectorReturnTypes)) {
 				if (_log.isWarnEnabled()) {
 					_log.warn(
 						"No return types are registered for " +
@@ -252,7 +259,7 @@ public class ItemSelectorCriterionSerializer<T extends ItemSelectorCriterion> {
 		ItemSelectorCriterionSerializer.class);
 
 	private BundleContext _bundleContext;
-	private final ConcurrentHashMap<String, List<ItemSelectorReturnType>>
+	private final ConcurrentMap<String, List<ItemSelectorReturnType>>
 		_itemSelectorReturnTypes = new ConcurrentHashMap<>();
 	private ServiceTracker<ItemSelectorView, ItemSelectorView> _serviceTracker;
 

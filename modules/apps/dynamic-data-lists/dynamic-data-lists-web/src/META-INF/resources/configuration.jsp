@@ -21,8 +21,6 @@ int cur = ParamUtil.getInteger(request, SearchContainer.DEFAULT_CUR_PARAM);
 
 String keywords = ParamUtil.getString(request, "keywords");
 
-DDLDisplayContext ddlDisplayContext = new DDLDisplayContext(renderRequest, renderResponse);
-
 DDLRecordSet selRecordSet = ddlDisplayContext.getRecordSet();
 %>
 
@@ -50,7 +48,7 @@ DDLRecordSet selRecordSet = ddlDisplayContext.getRecordSet();
 			total="<%= DDLRecordSetServiceUtil.searchCount(company.getCompanyId(), scopeGroupId, keywords, DDLRecordSetConstants.SCOPE_DYNAMIC_DATA_LISTS) %>"
 		>
 			<div class="form-search input-append">
-				<liferay-ui:input-search autoFocus="<%= true %>" placeholder='<%= LanguageUtil.get(request, "keywords") %>'/>
+				<liferay-ui:input-search autoFocus="<%= true %>" placeholder='<%= LanguageUtil.get(request, "keywords") %>' />
 			</div>
 
 			<liferay-ui:search-container-results

@@ -68,6 +68,7 @@ public class DLFileShortcutWrapper implements DLFileShortcut,
 		attributes.put("toFileEntryId", getToFileEntryId());
 		attributes.put("treePath", getTreePath());
 		attributes.put("active", getActive());
+		attributes.put("lastPublishDate", getLastPublishDate());
 		attributes.put("status", getStatus());
 		attributes.put("statusByUserId", getStatusByUserId());
 		attributes.put("statusByUserName", getStatusByUserName());
@@ -156,6 +157,12 @@ public class DLFileShortcutWrapper implements DLFileShortcut,
 			setActive(active);
 		}
 
+		Date lastPublishDate = (Date)attributes.get("lastPublishDate");
+
+		if (lastPublishDate != null) {
+			setLastPublishDate(lastPublishDate);
+		}
+
 		Integer status = (Integer)attributes.get("status");
 
 		if (status != null) {
@@ -233,7 +240,7 @@ public class DLFileShortcutWrapper implements DLFileShortcut,
 	* @return the create date of this document library file shortcut
 	*/
 	@Override
-	public java.util.Date getCreateDate() {
+	public Date getCreateDate() {
 		return _dlFileShortcut.getCreateDate();
 	}
 
@@ -291,12 +298,22 @@ public class DLFileShortcutWrapper implements DLFileShortcut,
 	}
 
 	/**
+	* Returns the last publish date of this document library file shortcut.
+	*
+	* @return the last publish date of this document library file shortcut
+	*/
+	@Override
+	public Date getLastPublishDate() {
+		return _dlFileShortcut.getLastPublishDate();
+	}
+
+	/**
 	* Returns the modified date of this document library file shortcut.
 	*
 	* @return the modified date of this document library file shortcut
 	*/
 	@Override
-	public java.util.Date getModifiedDate() {
+	public Date getModifiedDate() {
 		return _dlFileShortcut.getModifiedDate();
 	}
 
@@ -371,7 +388,7 @@ public class DLFileShortcutWrapper implements DLFileShortcut,
 	* @return the status date of this document library file shortcut
 	*/
 	@Override
-	public java.util.Date getStatusDate() {
+	public Date getStatusDate() {
 		return _dlFileShortcut.getStatusDate();
 	}
 
@@ -652,7 +669,7 @@ public class DLFileShortcutWrapper implements DLFileShortcut,
 	* @param createDate the create date of this document library file shortcut
 	*/
 	@Override
-	public void setCreateDate(java.util.Date createDate) {
+	public void setCreateDate(Date createDate) {
 		_dlFileShortcut.setCreateDate(createDate);
 	}
 
@@ -705,12 +722,22 @@ public class DLFileShortcutWrapper implements DLFileShortcut,
 	}
 
 	/**
+	* Sets the last publish date of this document library file shortcut.
+	*
+	* @param lastPublishDate the last publish date of this document library file shortcut
+	*/
+	@Override
+	public void setLastPublishDate(Date lastPublishDate) {
+		_dlFileShortcut.setLastPublishDate(lastPublishDate);
+	}
+
+	/**
 	* Sets the modified date of this document library file shortcut.
 	*
 	* @param modifiedDate the modified date of this document library file shortcut
 	*/
 	@Override
-	public void setModifiedDate(java.util.Date modifiedDate) {
+	public void setModifiedDate(Date modifiedDate) {
 		_dlFileShortcut.setModifiedDate(modifiedDate);
 	}
 
@@ -790,7 +817,7 @@ public class DLFileShortcutWrapper implements DLFileShortcut,
 	* @param statusDate the status date of this document library file shortcut
 	*/
 	@Override
-	public void setStatusDate(java.util.Date statusDate) {
+	public void setStatusDate(Date statusDate) {
 		_dlFileShortcut.setStatusDate(statusDate);
 	}
 

@@ -20,7 +20,8 @@ import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.facet.MultiValueFacet;
 import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.search.web.util.SearchFacet;
+import com.liferay.search.facet.BaseJSPSearchFacet;
+import com.liferay.search.facet.SearchFacet;
 
 import javax.portlet.ActionRequest;
 
@@ -37,11 +38,11 @@ public class FolderSearchFacet extends BaseJSPSearchFacet {
 
 	@Override
 	public String getConfigurationJspPath() {
-		return "/META-INF/resources/facets/configuration/folders.jsp";
+		return "/facets/configuration/folders.jsp";
 	}
 
 	@Override
-	public FacetConfiguration getDefaultConfiguration() {
+	public FacetConfiguration getDefaultConfiguration(long companyId) {
 		FacetConfiguration facetConfiguration = new FacetConfiguration();
 
 		facetConfiguration.setClassName(getFacetClassName());
@@ -65,7 +66,7 @@ public class FolderSearchFacet extends BaseJSPSearchFacet {
 
 	@Override
 	public String getDisplayJspPath() {
-		return "/META-INF/resources/facets/view/folders.jsp";
+		return "/facets/view/folders.jsp";
 	}
 
 	@Override
@@ -98,6 +99,11 @@ public class FolderSearchFacet extends BaseJSPSearchFacet {
 
 	@Override
 	public String getLabel() {
+		return "any-folder";
+	}
+
+	@Override
+	public String getTitle() {
 		return "folder";
 	}
 

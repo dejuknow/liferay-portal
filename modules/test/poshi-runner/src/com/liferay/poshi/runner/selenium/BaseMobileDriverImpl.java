@@ -24,14 +24,10 @@ import io.appium.java_client.MobileDriver;
 public abstract class BaseMobileDriverImpl
 	extends MobileDriverToSeleniumBridge implements LiferaySelenium {
 
-	public BaseMobileDriverImpl(
-		String projectDirName, String browserURL, MobileDriver mobileDriver) {
-
+	public BaseMobileDriverImpl(String browserURL, MobileDriver mobileDriver) {
 		super(mobileDriver);
 
 		System.setProperty("java.awt.headless", "false");
-
-		_projectDirName = projectDirName;
 	}
 
 	@Override
@@ -60,6 +56,11 @@ public abstract class BaseMobileDriverImpl
 	}
 
 	@Override
+	public void assertConsoleErrors() throws Exception {
+		LiferaySeleniumHelper.assertConsoleErrors();
+	}
+
+	@Override
 	public void assertConsoleTextNotPresent(String text) throws Exception {
 		LiferaySeleniumHelper.assertConsoleTextNotPresent(text);
 	}
@@ -67,6 +68,14 @@ public abstract class BaseMobileDriverImpl
 	@Override
 	public void assertConsoleTextPresent(String text) throws Exception {
 		LiferaySeleniumHelper.assertConsoleTextPresent(text);
+	}
+
+	@Override
+	public void assertCssValue(
+			String locator, String cssAttribute, String cssValue)
+		throws Exception {
+
+		WebDriverHelper.assertCssValue(this, locator, cssAttribute, cssValue);
 	}
 
 	@Override
@@ -115,11 +124,7 @@ public abstract class BaseMobileDriverImpl
 
 	@Override
 	public void assertLiferayErrors() throws Exception {
-		if (!PropsValues.TEST_ASSERT_LIFERAY_ERRORS) {
-			return;
-		}
-
-		LiferaySeleniumHelper.assertLiferayErrors();
+		LiferaySeleniumHelper.assertConsoleErrors();
 	}
 
 	@Override
@@ -336,11 +341,6 @@ public abstract class BaseMobileDriverImpl
 	}
 
 	@Override
-	public String getProjectDirName() {
-		return _projectDirName;
-	}
-
-	@Override
 	public String getSikuliImagesDirName() {
 		return _SIKULI_IMAGES_DIR_NAME;
 	}
@@ -399,7 +399,7 @@ public abstract class BaseMobileDriverImpl
 
 	@Override
 	public boolean isNotSelectedLabel(String selectLocator, String pattern) {
-		throw new UnsupportedOperationException();
+		return WebDriverHelper.isNotSelectedLabel(this, selectLocator, pattern);
 	}
 
 	@Override
@@ -419,12 +419,17 @@ public abstract class BaseMobileDriverImpl
 
 	@Override
 	public boolean isPartialText(String locator, String value) {
-		throw new UnsupportedOperationException();
+		return WebDriverHelper.isPartialText(this, locator, value);
 	}
 
 	@Override
 	public boolean isSelectedLabel(String selectLocator, String pattern) {
-		throw new UnsupportedOperationException();
+		return WebDriverHelper.isSelectedLabel(this, selectLocator, pattern);
+	}
+
+	@Override
+	public boolean isSikuliImagePresent(String image) throws Exception {
+		return LiferaySeleniumHelper.isSikuliImagePresent(this, image);
 	}
 
 	@Override
@@ -445,6 +450,16 @@ public abstract class BaseMobileDriverImpl
 	@Override
 	public boolean isValue(String locator, String value) {
 		return value.equals(getValue(locator, "1"));
+	}
+
+	@Override
+	public void javaScriptMouseDown(String locator) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void javaScriptMouseUp(String locator) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -707,7 +722,9 @@ public abstract class BaseMobileDriverImpl
 	}
 
 	@Override
-	public void uploadCommonFile(String locator, String value) {
+	public void uploadCommonFile(String locator, String value)
+		throws Exception {
+
 		throw new UnsupportedOperationException();
 	}
 
@@ -723,7 +740,7 @@ public abstract class BaseMobileDriverImpl
 
 	@Override
 	public void waitForConfirmation(String pattern) throws Exception {
-		throw new UnsupportedOperationException();
+		LiferaySeleniumHelper.waitForConfirmation(this, pattern);
 	}
 
 	@Override
@@ -820,6 +837,5 @@ public abstract class BaseMobileDriverImpl
 		PropsValues.TEST_DEPENDENCIES_DIR_NAME;
 
 	private String _primaryTestSuiteName;
-	private final String _projectDirName;
 
 }

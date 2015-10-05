@@ -15,33 +15,38 @@
 package com.liferay.dynamic.data.lists.form.web.context;
 
 import com.liferay.dynamic.data.lists.constants.DDLActionKeys;
+import com.liferay.dynamic.data.lists.form.web.configuration.DDLFormWebConfigurationValues;
 import com.liferay.dynamic.data.lists.form.web.context.util.DDLFormAdminRequestHelper;
 import com.liferay.dynamic.data.lists.form.web.search.RecordSetSearchTerms;
+import com.liferay.dynamic.data.lists.form.web.util.DDLFormPortletUtil;
 import com.liferay.dynamic.data.lists.model.DDLRecordSet;
 import com.liferay.dynamic.data.lists.model.DDLRecordSetConstants;
 import com.liferay.dynamic.data.lists.service.DDLRecordSetLocalServiceUtil;
 import com.liferay.dynamic.data.lists.service.DDLRecordSetServiceUtil;
 import com.liferay.dynamic.data.lists.service.permission.DDLPermission;
 import com.liferay.dynamic.data.lists.service.permission.DDLRecordSetPermission;
+import com.liferay.dynamic.data.mapping.io.DDMFormFieldTypesJSONSerializerUtil;
+import com.liferay.dynamic.data.mapping.io.DDMFormJSONSerializerUtil;
+import com.liferay.dynamic.data.mapping.io.DDMFormLayoutJSONSerializerUtil;
+import com.liferay.dynamic.data.mapping.model.DDMForm;
+import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
+import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.registry.DDMFormFieldType;
+import com.liferay.dynamic.data.mapping.registry.DDMFormFieldTypeServicesTrackerUtil;
+import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PrefsParamUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.security.permission.ActionKeys;
-import com.liferay.portlet.dynamicdatamapping.io.DDMFormFieldTypesJSONSerializerUtil;
-import com.liferay.portlet.dynamicdatamapping.io.DDMFormJSONSerializerUtil;
-import com.liferay.portlet.dynamicdatamapping.io.DDMFormLayoutJSONSerializerUtil;
-import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
-import com.liferay.portlet.dynamicdatamapping.model.DDMFormLayout;
-import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
-import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldType;
-import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldTypeRegistryUtil;
-import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
 
 import java.util.List;
 
+import javax.portlet.PortletPreferences;
 import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
@@ -59,11 +64,13 @@ public class DDLFormAdminDisplayContext {
 
 		_ddlFormAdminRequestHelper = new DDLFormAdminRequestHelper(
 			renderRequest);
+
+		_portletPreferences = _renderRequest.getPreferences();
 	}
 
 	public JSONArray getDDMFormFieldTypesJSONArray() throws PortalException {
 		List<DDMFormFieldType> ddmFormFieldTypes =
-			DDMFormFieldTypeRegistryUtil.getDDMFormFieldTypes();
+			DDMFormFieldTypeServicesTrackerUtil.getDDMFormFieldTypes();
 
 		String serializedDDMFormFieldTypes =
 			DDMFormFieldTypesJSONSerializerUtil.serialize(ddmFormFieldTypes);
@@ -86,6 +93,27 @@ public class DDLFormAdminDisplayContext {
 			recordSet.getDDMStructureId());
 
 		return _ddmStucture;
+	}
+
+	public String getDisplayStyle() {
+		if (_displayStyle == null) {
+			_displayStyle = DDLFormPortletUtil.getDisplayStyle(
+				_renderRequest, getDisplayViews());
+		}
+
+		return _displayStyle;
+	}
+
+	public String[] getDisplayViews() {
+		if (_displayViews == null) {
+			_displayViews = StringUtil.split(
+				PrefsParamUtil.getString(
+					_portletPreferences, _renderRequest, "displayViews",
+					StringUtil.merge(
+						DDLFormWebConfigurationValues.DISPLAY_VIEWS)));
+		}
+
+		return _displayViews;
 	}
 
 	public PortletURL getPortletURL() {
@@ -124,17 +152,15 @@ public class DDLFormAdminDisplayContext {
 				_ddlFormAdminRequestHelper.getCompanyId(),
 				_ddlFormAdminRequestHelper.getScopeGroupId(),
 				searchTerms.getName(), searchTerms.getDescription(),
-				DDLRecordSetConstants.SCOPE_DYNAMIC_DATA_LISTS,
-				searchTerms.isAndOperator(), searchContainer.getStart(),
-				searchContainer.getEnd(),
+				DDLRecordSetConstants.SCOPE_FORMS, searchTerms.isAndOperator(),
+				searchContainer.getStart(), searchContainer.getEnd(),
 				searchContainer.getOrderByComparator());
 		}
 		else {
 			return DDLRecordSetServiceUtil.search(
 				_ddlFormAdminRequestHelper.getCompanyId(),
 				_ddlFormAdminRequestHelper.getScopeGroupId(),
-				searchTerms.getKeywords(),
-				DDLRecordSetConstants.SCOPE_DYNAMIC_DATA_LISTS,
+				searchTerms.getKeywords(), DDLRecordSetConstants.SCOPE_FORMS,
 				searchContainer.getStart(), searchContainer.getEnd(),
 				searchContainer.getOrderByComparator());
 		}
@@ -152,15 +178,13 @@ public class DDLFormAdminDisplayContext {
 				_ddlFormAdminRequestHelper.getCompanyId(),
 				_ddlFormAdminRequestHelper.getScopeGroupId(),
 				searchTerms.getName(), searchTerms.getDescription(),
-				DDLRecordSetConstants.SCOPE_DYNAMIC_DATA_LISTS,
-				searchTerms.isAndOperator());
+				DDLRecordSetConstants.SCOPE_FORMS, searchTerms.isAndOperator());
 		}
 		else {
 			return DDLRecordSetServiceUtil.searchCount(
 				_ddlFormAdminRequestHelper.getCompanyId(),
 				_ddlFormAdminRequestHelper.getScopeGroupId(),
-				searchTerms.getKeywords(),
-				DDLRecordSetConstants.SCOPE_DYNAMIC_DATA_LISTS);
+				searchTerms.getKeywords(), DDLRecordSetConstants.SCOPE_FORMS);
 		}
 	}
 
@@ -219,8 +243,17 @@ public class DDLFormAdminDisplayContext {
 			ActionKeys.UPDATE);
 	}
 
+	public boolean isShowViewEntriesRecordSetIcon(DDLRecordSet recordSet) {
+		return DDLRecordSetPermission.contains(
+			_ddlFormAdminRequestHelper.getPermissionChecker(), recordSet,
+			ActionKeys.VIEW);
+	}
+
 	private final DDLFormAdminRequestHelper _ddlFormAdminRequestHelper;
 	private DDMStructure _ddmStucture;
+	private String _displayStyle;
+	private String[] _displayViews;
+	private final PortletPreferences _portletPreferences;
 	private DDLRecordSet _recordSet;
 	private final RenderRequest _renderRequest;
 	private final RenderResponse _renderResponse;

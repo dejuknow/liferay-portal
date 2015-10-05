@@ -31,7 +31,7 @@ else if (Validator.isNull(searchTerms.getKeywords())) {
 
 	searchContainer.setTotal(total);
 
-	results = BlogsEntryServiceUtil.getGroupEntries(scopeGroupId, WorkflowConstants.STATUS_ANY, searchContainer.getStart(), searchContainer.getEnd());
+	results = BlogsEntryServiceUtil.getGroupEntries(scopeGroupId, WorkflowConstants.STATUS_ANY, searchContainer.getStart(), searchContainer.getEnd(), searchContainer.getOrderByComparator());
 }
 else {
 	Indexer indexer = IndexerRegistryUtil.getIndexer(BlogsEntry.class);
@@ -74,5 +74,5 @@ searchContainer.setResults(results);
 %>
 
 <%!
-private static Log _log = LogFactoryUtil.getLog("portal-web.docroot.html.portlet.blogs_admin.entry_search_results_jspf");
+private static Log _log = LogFactoryUtil.getLog("com_liferay_blogs_web.blogs_admin.entry_search_results_jspf");
 %>

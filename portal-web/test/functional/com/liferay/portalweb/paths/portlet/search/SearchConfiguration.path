@@ -35,7 +35,7 @@
 </tr>
 <tr>
 	<td>BASIC_DISPLAY_USER_FACET_CHECKBOX</td>
-	<td>//input[contains(@id,'displayUserFacet')]</td>
+	<td>//input[contains(@id,'UserSearchFacet')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -46,6 +46,21 @@
 <tr>
 	<td>ADVANCED_SEARCH_CONFIGURATION</td>
 	<td>//textarea[contains(@id,'searchConfiguration')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SEARCH_PORTLET_TAG_CONFIGURATION</td>
+	<td>//div[contains(@id,'PortletConfiguration')]//a[contains(@id,'AssetEntries')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SEARCH_PORTLET_ASSET_TYPE_TAG_CONFIGURATION</td>
+	<td>//select[contains(@id,'currentAssetTypes')]//option[contains(.,'${key_searchAssetType}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SEARCH_PORTLET_CONFIGURATION_MOVE_TO_AVAILABLE_BUTTON</td>
+	<td>//button[contains(@title,'Current to Available')]</td>
 	<td></td>
 </tr>
 </tbody>

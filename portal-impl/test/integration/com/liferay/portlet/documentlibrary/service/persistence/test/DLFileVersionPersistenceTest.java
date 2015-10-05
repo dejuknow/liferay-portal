@@ -43,6 +43,7 @@ import com.liferay.portlet.documentlibrary.service.persistence.DLFileVersionUtil
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -59,8 +60,9 @@ import java.util.Set;
  * @generated
  */
 public class DLFileVersionPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -161,6 +163,8 @@ public class DLFileVersionPersistenceTest {
 
 		newDLFileVersion.setChecksum(RandomTestUtil.randomString());
 
+		newDLFileVersion.setLastPublishDate(RandomTestUtil.nextDate());
+
 		newDLFileVersion.setStatus(RandomTestUtil.nextInt());
 
 		newDLFileVersion.setStatusByUserId(RandomTestUtil.nextLong());
@@ -221,6 +225,9 @@ public class DLFileVersionPersistenceTest {
 			newDLFileVersion.getSize());
 		Assert.assertEquals(existingDLFileVersion.getChecksum(),
 			newDLFileVersion.getChecksum());
+		Assert.assertEquals(Time.getShortTimestamp(
+				existingDLFileVersion.getLastPublishDate()),
+			Time.getShortTimestamp(newDLFileVersion.getLastPublishDate()));
 		Assert.assertEquals(existingDLFileVersion.getStatus(),
 			newDLFileVersion.getStatus());
 		Assert.assertEquals(existingDLFileVersion.getStatusByUserId(),
@@ -354,8 +361,8 @@ public class DLFileVersionPersistenceTest {
 			"modifiedDate", true, "repositoryId", true, "folderId", true,
 			"fileEntryId", true, "treePath", true, "fileName", true,
 			"extension", true, "mimeType", true, "title", true, "description",
-			true, "changeLog", true, "extraSettings", true, "fileEntryTypeId",
-			true, "version", true, "size", true, "checksum", true, "status",
+			true, "changeLog", true, "fileEntryTypeId", true, "version", true,
+			"size", true, "checksum", true, "lastPublishDate", true, "status",
 			true, "statusByUserId", true, "statusByUserName", true,
 			"statusDate", true);
 	}
@@ -567,12 +574,12 @@ public class DLFileVersionPersistenceTest {
 		Assert.assertTrue(Validator.equals(existingDLFileVersion.getUuid(),
 				ReflectionTestUtil.invoke(existingDLFileVersion,
 					"getOriginalUuid", new Class<?>[0])));
-		Assert.assertEquals(existingDLFileVersion.getGroupId(),
-			ReflectionTestUtil.invoke(existingDLFileVersion,
+		Assert.assertEquals(Long.valueOf(existingDLFileVersion.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingDLFileVersion,
 				"getOriginalGroupId", new Class<?>[0]));
 
-		Assert.assertEquals(existingDLFileVersion.getFileEntryId(),
-			ReflectionTestUtil.invoke(existingDLFileVersion,
+		Assert.assertEquals(Long.valueOf(existingDLFileVersion.getFileEntryId()),
+			ReflectionTestUtil.<Long>invoke(existingDLFileVersion,
 				"getOriginalFileEntryId", new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(existingDLFileVersion.getVersion(),
 				ReflectionTestUtil.invoke(existingDLFileVersion,
@@ -627,6 +634,8 @@ public class DLFileVersionPersistenceTest {
 		dlFileVersion.setSize(RandomTestUtil.nextLong());
 
 		dlFileVersion.setChecksum(RandomTestUtil.randomString());
+
+		dlFileVersion.setLastPublishDate(RandomTestUtil.nextDate());
 
 		dlFileVersion.setStatus(RandomTestUtil.nextInt());
 

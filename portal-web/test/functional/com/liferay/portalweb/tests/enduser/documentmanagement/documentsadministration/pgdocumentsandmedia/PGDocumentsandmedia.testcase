@@ -391,27 +391,30 @@
 
 		<execute macro="DMFolder#addPG">
 			<var name="dmFolderDescription" value="DM Folder Description" />
+			<var name="dmFolderName" value="DM Folder Name" />
 		</execute>
 
 		<execute macro="Page#gotoPG">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
-		<execute macro="DMFolder#gotoPG" />
+		<execute macro="DMFolder#gotoPG">
+			<var name="dmFolderName" value="DM Folder Name" />
+		</execute>
 
 		<execute macro="DMDocument#addPG">
 			<var name="dmDocumentFile" value="Document_1.doc" />
-			<var name="dmDocumentTitle" value="${dmDocumentFile}" />
+			<var name="dmDocumentTitle" value="Document_1.doc" />
 		</execute>
 
 		<execute macro="DMDocument#addPG">
 			<var name="dmDocumentFile" value="Document_2.doc" />
-			<var name="dmDocumentTitle" value="${dmDocumentFile}" />
+			<var name="dmDocumentTitle" value="Document_2.doc" />
 		</execute>
 
 		<execute macro="DMDocument#addPG">
 			<var name="dmDocumentFile" value="Document_3.doc" />
-			<var name="dmDocumentTitle" value="${dmDocumentFile}" />
+			<var name="dmDocumentTitle" value="Document_3.doc" />
 		</execute>
 
 		<execute macro="DMDocument#viewPG">
@@ -422,7 +425,9 @@
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
-		<execute macro="DMFolder#gotoPG" />
+		<execute macro="DMFolder#gotoPG">
+			<var name="dmFolderName" value="DM Folder Name" />
+		</execute>
 
 		<execute macro="DMDocument#viewPG">
 			<var name="dmDocumentTitle" value="Document_2.doc" />
@@ -432,7 +437,9 @@
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
-		<execute macro="DMFolder#gotoPG" />
+		<execute macro="DMFolder#gotoPG">
+			<var name="dmFolderName" value="DM Folder Name" />
+		</execute>
 
 		<execute macro="DMDocument#viewPG">
 			<var name="dmDocumentTitle" value="Document_3.doc" />
@@ -494,8 +501,6 @@
 	</command>
 
 	<command name="AddFolderImages" priority="4">
-		<var name="dmDocumentDescription" value="DM Image Description" />
-
 		<execute macro="Page#gotoPG">
 			<var name="pageName" value="${pageName}" />
 		</execute>
@@ -514,22 +519,25 @@
 		</execute>
 
 		<execute macro="DMDocument#addPG">
+			<var name="dmDocumentDescription" value="DM Image Description 1" />
 			<var name="dmDocumentFile" value="Document_1.jpg" />
 			<var name="dmDocumentTitle" value="DM Image 1 Title" />
 		</execute>
 
 		<execute macro="DMDocument#addPG">
+			<var name="dmDocumentDescription" value="DM Image Description 2" />
 			<var name="dmDocumentFile" value="Document_2.jpg" />
 			<var name="dmDocumentTitle" value="DM Image 2 Title" />
 		</execute>
 
 		<execute macro="DMDocument#addPG">
+			<var name="dmDocumentDescription" value="DM Image Description 3" />
 			<var name="dmDocumentFile" value="Document_3.jpg" />
 			<var name="dmDocumentTitle" value="DM Image 3 Title" />
 		</execute>
 
 		<execute macro="DMDocument#viewAllPG">
-			<var name="dmDocumentDescription" value="${dmDocumentDescription}" />
+			<var name="dmDocumentDescription" value="DM Image Description 1" />
 			<var name="dmDocumentTitle" value="DM Image 1 Title" />
 		</execute>
 
@@ -542,7 +550,7 @@
 		</execute>
 
 		<execute macro="DMDocument#viewAllPG">
-			<var name="dmDocumentDescription" value="${dmDocumentDescription}" />
+			<var name="dmDocumentDescription" value="DM Image Description 2" />
 			<var name="dmDocumentTitle" value="DM Image 2 Title" />
 		</execute>
 
@@ -555,7 +563,7 @@
 		</execute>
 
 		<execute macro="DMDocument#viewAllPG">
-			<var name="dmDocumentDescription" value="${dmDocumentDescription}" />
+			<var name="dmDocumentDescription" value="DM Image Description 3" />
 			<var name="dmDocumentTitle" value="DM Image 3 Title" />
 		</execute>
 	</command>

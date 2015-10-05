@@ -67,6 +67,15 @@ public class LockLocalServiceTest {
 	@ExpectedLogs(
 		expectedLogs = {
 			@ExpectedLog(
+				dbType = DB.TYPE_DB2, expectedLog = "Error for batch element",
+				expectedType = ExpectedType.PREFIX
+			),
+			@ExpectedLog(
+				dbType = DB.TYPE_DB2,
+				expectedLog = "[jcc][t4][102][10040][4.16.53] Batch failure.",
+				expectedType = ExpectedType.PREFIX
+			),
+			@ExpectedLog(
 				dbType = DB.TYPE_MYSQL,
 				expectedLog =
 					"Deadlock found when trying to get lock; try restarting " +
@@ -88,6 +97,11 @@ public class LockLocalServiceTest {
 				expectedLog =
 					"ERROR: duplicate key value violates unique constraint ",
 				expectedType = ExpectedType.PREFIX
+			),
+			@ExpectedLog(
+				dbType = DB.TYPE_SYBASE,
+				expectedLog = "Attempt to insert duplicate key row",
+				expectedType = ExpectedType.CONTAINS
 			)
 		},
 		level = "ERROR", loggerClass = JDBCExceptionReporter.class
@@ -226,7 +240,7 @@ public class LockLocalServiceTest {
 				String message = cause.getMessage();
 
 				if ((cause instanceof BatchUpdateException) &&
-					message.equals(
+					message.contains(
 						"Attempt to insert duplicate key row in object " +
 							"'Lock_' with unique index 'IX_228562AD'\n")) {
 

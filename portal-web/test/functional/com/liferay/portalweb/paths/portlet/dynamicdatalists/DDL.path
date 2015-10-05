@@ -21,7 +21,7 @@
 <!--TOOLBAR-->
 <tr>
 	<td>TOOLBAR_ADD</td>
-	<td>//ul[contains(@aria-label,'Dynamic Data List')]//a[@role='menuitem']/span[contains(.,'Add')]</td>
+	<td>//a[@title='${key_ddlDataDefinitionName}']</td>
 	<td></td>
 </tr>
 <tr>
@@ -52,7 +52,7 @@
 </tr>
 <tr>
 	<td>RECORD_TABLE_COLUMN_ONE_RECORD_1</td>
-	<td>xpath=(//div[contains(@id,'ocerSearchContain2er')]//tr/td[1])</td>
+	<td>xpath=(//div[contains(@id,'ocerSearchContainer')]//tr/td[1]/a)</td>
 	<td></td>
 </tr>
 <tr>
@@ -62,7 +62,7 @@
 </tr>
 <tr>
 	<td>RECORD_TABLE_COLUMN_TWO_RECORD_1</td>
-	<td>xpath=(//div[contains(@id,'ocerSearchContainer')]//tr/td[2])</td>
+	<td>xpath=(//div[contains(@id,'ocerSearchContainer')]//tr/td[2]/a)</td>
 	<td></td>
 </tr>
 <tr>
@@ -86,8 +86,13 @@
 	<td></td>
 </tr>
 <tr>
-	<td>RECORD_TABLE_ACTIONS_1</td>
-	<td>xpath=//td[contains(@class,'entry-action last')]/div/a/i[contains(@class,'menu-arrow caret')][1]</td>
+	<td>RECORD_TABLE_ELLIPSIS</td>
+	<td>//tr[contains(.,'${key_ddlRecordFieldData}')]//td[contains(@class,'entry-action')]/div/a/span[contains(@class,'icon-ellipsis-vertical')][1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>RECORD_TABLE_ELLIPSIS_1</td>
+	<td>xpath=//td[contains(@class,'entry-action')]/div/a/span[contains(@class,'icon-ellipsis-vertical')][1]</td>
 	<td></td>
 </tr>
 <tr>
@@ -148,8 +153,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>LIST_TABLE_ACTIONS</td>
-	<td>xpath=(//div[contains(@id,'ddlRecordSetsSearchContainer')]//tr[contains(.,'${key_ddlListName}')]/td[5]/div/a)[1]</td>
+	<td>LIST_TABLE_ELLIPSIS</td>
+	<td>//tr[contains(.,'${key_ddlListName}')]//td[contains(@class,'entry-action')]/div/a/span[contains(@class,'icon-ellipsis-vertical')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -168,8 +173,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>LIST_TABLE_ACTIONS_1</td>
-	<td>xpath=//td[contains(@class,'entry-action last')]/div/a/i[contains(@class,'menu-arrow caret')][1]</td>
+	<td>LIST_TABLE_ELLIPSIS_1</td>
+	<td>xpath=//td[contains(@class,'entry-action')]/div/a/span[contains(@class,'icon-ellipsis-vertical')][1]</td>
 	<td></td>
 </tr>
 <tr>
@@ -181,6 +186,11 @@
 <tr>
 	<td>MENULIST_VIEW</td>
 	<td>//a[@role='menuitem' and contains(.,'View')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>MENULIST_VIEW_SPECIFIC_RECORD</td>
+	<td>//tr[contains(.,'${key_ddlRecordFieldData}')]//a[@role='menuitem' and contains(.,'View')]</td>
 	<td></td>
 </tr>
 <tr>

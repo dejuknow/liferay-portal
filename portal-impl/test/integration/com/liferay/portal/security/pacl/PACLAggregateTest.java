@@ -30,6 +30,8 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.SystemProperties;
 import com.liferay.portal.test.log.CaptureAppender;
+import com.liferay.portal.test.rule.ExpectedLogs;
+import com.liferay.portal.test.rule.HypersonicServerTestRule;
 import com.liferay.portal.test.rule.PACLTestRule;
 import com.liferay.portal.test.rule.callback.LogAssertionTestCallback;
 import com.liferay.portal.util.InitUtil;
@@ -66,6 +68,7 @@ import java.util.concurrent.Future;
 
 import javax.naming.Context;
 
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
@@ -82,6 +85,10 @@ import org.junit.runners.model.InitializationError;
  */
 @RunWith(PACLAggregateTest.PACLAggregateTestRunner.class)
 public class PACLAggregateTest {
+
+	@ClassRule
+	public static final HypersonicServerTestRule hypersonicServerTestRule =
+		HypersonicServerTestRule.INSTANCE;
 
 	@Test
 	public void testPACLTests() throws Exception {
@@ -139,11 +146,11 @@ public class PACLAggregateTest {
 		arguments.add("-Djava.security.policy==" + url.getFile());
 		arguments.add("-Dliferay.mode=test");
 
-		boolean junitDebug = Boolean.getBoolean("junit.debug");
+		boolean junitDebug = Boolean.getBoolean("jvm.debug");
 
 		if (junitDebug) {
 			arguments.add(_JPDA_OPTIONS);
-			arguments.add("-Djunit.debug=true");
+			arguments.add("-Djvm.debug=true");
 		}
 
 		arguments.add(
@@ -155,6 +162,10 @@ public class PACLAggregateTest {
 		arguments.add(
 			"-Dportal:" + PropsKeys.MODULE_FRAMEWORK_PROPERTIES +
 				_OSGI_CONSOLE);
+
+		for (String property : hypersonicServerTestRule.getJdbcProperties()) {
+			arguments.add("-D" + property);
+		}
 
 		builder.setArguments(arguments);
 		builder.setBootstrapClassPath(System.getProperty("java.class.path"));
@@ -355,7 +366,7 @@ public class PACLAggregateTest {
 
 			System.setProperty("catalina.base", ".");
 
-			CaptureAppender captureAppender = null;
+			List<CaptureAppender> captureAppenders = null;
 
 			Path tempStatePath = null;
 
@@ -375,7 +386,8 @@ public class PACLAggregateTest {
 				Log4JUtil.configureLog4J(
 					PACLTestsProcessCallable.class.getClassLoader());
 
-				captureAppender = LogAssertionTestCallback.startAssert(null);
+				captureAppenders = LogAssertionTestCallback.startAssert(
+					Collections.<ExpectedLogs>emptyList());
 
 				JUnitCore junitCore = new JUnitCore();
 
@@ -427,7 +439,9 @@ public class PACLAggregateTest {
 						throw new ProcessException(ioe);
 					}
 
-					LogAssertionTestCallback.endAssert(null, captureAppender);
+					LogAssertionTestCallback.endAssert(
+						Collections.<ExpectedLogs>emptyList(),
+						captureAppenders);
 				}
 			}
 		}

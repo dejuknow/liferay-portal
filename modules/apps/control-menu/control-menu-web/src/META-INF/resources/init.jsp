@@ -19,12 +19,19 @@
 <%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
 
 <%@ taglib uri="http://liferay.com/tld/aui" prefix="aui" %><%@
+taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %><%@
 taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %><%@
 taglib uri="http://liferay.com/tld/util" prefix="liferay-util" %>
 
-<%@ page import="com.liferay.portal.kernel.dao.search.SearchContainer" %><%@
+<%@ page import="com.liferay.control.menu.ControlMenuCategory" %><%@
+page import="com.liferay.control.menu.ControlMenuEntry" %><%@
+page import="com.liferay.control.menu.constants.ControlMenuWebKeys" %><%@
+page import="com.liferay.control.menu.util.ControlMenuEntryRegistry" %><%@
+page import="com.liferay.control.menu.web.InformationMessagesControlMenuEntry" %><%@
+page import="com.liferay.portal.kernel.dao.search.SearchContainer" %><%@
 page import="com.liferay.portal.kernel.language.LanguageUtil" %><%@
+page import="com.liferay.portal.kernel.language.UnicodeLanguageUtil" %><%@
 page import="com.liferay.portal.kernel.portlet.LiferayWindowState" %><%@
 page import="com.liferay.portal.kernel.portlet.PortletProvider" %><%@
 page import="com.liferay.portal.kernel.portlet.PortletProviderUtil" %><%@
@@ -45,7 +52,7 @@ page import="com.liferay.portal.kernel.util.Validator" %><%@
 page import="com.liferay.portal.model.Group" %><%@
 page import="com.liferay.portal.model.Layout" %><%@
 page import="com.liferay.portal.model.LayoutConstants" %><%@
-page import="com.liferay.portal.model.LayoutSet" %><%@
+page import="com.liferay.portal.model.LayoutTypeController" %><%@
 page import="com.liferay.portal.model.Portlet" %><%@
 page import="com.liferay.portal.model.PortletApp" %><%@
 page import="com.liferay.portal.model.PortletCategory" %><%@
@@ -67,7 +74,6 @@ page import="com.liferay.portal.util.WebKeys" %><%@
 page import="com.liferay.portal.util.comparator.PortletCategoryComparator" %><%@
 page import="com.liferay.portal.util.comparator.PortletTitleComparator" %><%@
 page import="com.liferay.portlet.PortletConfigFactoryUtil" %><%@
-page import="com.liferay.portlet.PortletURLImpl" %><%@
 page import="com.liferay.portlet.PortletURLUtil" %><%@
 page import="com.liferay.portlet.asset.AssetRendererFactoryRegistryUtil" %><%@
 page import="com.liferay.portlet.asset.model.AssetEntry" %><%@
@@ -76,7 +82,9 @@ page import="com.liferay.portlet.asset.model.AssetRendererFactory" %><%@
 page import="com.liferay.portlet.asset.service.persistence.AssetEntryQuery" %><%@
 page import="com.liferay.portlet.asset.util.AssetUtil" %><%@
 page import="com.liferay.portlet.layoutsadmin.context.GroupDisplayContextHelper" %><%@
-page import="com.liferay.taglib.aui.AUIUtil" %>
+page import="com.liferay.portlet.sites.util.SitesUtil" %><%@
+page import="com.liferay.taglib.aui.AUIUtil" %><%@
+page import="com.liferay.taglib.servlet.PipingServletResponse" %>
 
 <%@ page import="java.util.ArrayList" %><%@
 page import="java.util.HashMap" %><%@

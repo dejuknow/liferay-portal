@@ -43,6 +43,7 @@ import com.liferay.portlet.messageboards.service.persistence.MBDiscussionUtil;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -59,8 +60,9 @@ import java.util.Set;
  * @generated
  */
 public class MBDiscussionPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -137,6 +139,8 @@ public class MBDiscussionPersistenceTest {
 
 		newMBDiscussion.setThreadId(RandomTestUtil.nextLong());
 
+		newMBDiscussion.setLastPublishDate(RandomTestUtil.nextDate());
+
 		_mbDiscussions.add(_persistence.update(newMBDiscussion));
 
 		MBDiscussion existingMBDiscussion = _persistence.findByPrimaryKey(newMBDiscussion.getPrimaryKey());
@@ -165,6 +169,9 @@ public class MBDiscussionPersistenceTest {
 			newMBDiscussion.getClassPK());
 		Assert.assertEquals(existingMBDiscussion.getThreadId(),
 			newMBDiscussion.getThreadId());
+		Assert.assertEquals(Time.getShortTimestamp(
+				existingMBDiscussion.getLastPublishDate()),
+			Time.getShortTimestamp(newMBDiscussion.getLastPublishDate()));
 	}
 
 	@Test
@@ -243,7 +250,7 @@ public class MBDiscussionPersistenceTest {
 			true, "discussionId", true, "groupId", true, "companyId", true,
 			"userId", true, "userName", true, "createDate", true,
 			"modifiedDate", true, "classNameId", true, "classPK", true,
-			"threadId", true);
+			"threadId", true, "lastPublishDate", true);
 	}
 
 	@Test
@@ -453,19 +460,19 @@ public class MBDiscussionPersistenceTest {
 		Assert.assertTrue(Validator.equals(existingMBDiscussion.getUuid(),
 				ReflectionTestUtil.invoke(existingMBDiscussion,
 					"getOriginalUuid", new Class<?>[0])));
-		Assert.assertEquals(existingMBDiscussion.getGroupId(),
-			ReflectionTestUtil.invoke(existingMBDiscussion,
+		Assert.assertEquals(Long.valueOf(existingMBDiscussion.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingMBDiscussion,
 				"getOriginalGroupId", new Class<?>[0]));
 
-		Assert.assertEquals(existingMBDiscussion.getThreadId(),
-			ReflectionTestUtil.invoke(existingMBDiscussion,
+		Assert.assertEquals(Long.valueOf(existingMBDiscussion.getThreadId()),
+			ReflectionTestUtil.<Long>invoke(existingMBDiscussion,
 				"getOriginalThreadId", new Class<?>[0]));
 
-		Assert.assertEquals(existingMBDiscussion.getClassNameId(),
-			ReflectionTestUtil.invoke(existingMBDiscussion,
+		Assert.assertEquals(Long.valueOf(existingMBDiscussion.getClassNameId()),
+			ReflectionTestUtil.<Long>invoke(existingMBDiscussion,
 				"getOriginalClassNameId", new Class<?>[0]));
-		Assert.assertEquals(existingMBDiscussion.getClassPK(),
-			ReflectionTestUtil.invoke(existingMBDiscussion,
+		Assert.assertEquals(Long.valueOf(existingMBDiscussion.getClassPK()),
+			ReflectionTestUtil.<Long>invoke(existingMBDiscussion,
 				"getOriginalClassPK", new Class<?>[0]));
 	}
 
@@ -493,6 +500,8 @@ public class MBDiscussionPersistenceTest {
 		mbDiscussion.setClassPK(RandomTestUtil.nextLong());
 
 		mbDiscussion.setThreadId(RandomTestUtil.nextLong());
+
+		mbDiscussion.setLastPublishDate(RandomTestUtil.nextDate());
 
 		_mbDiscussions.add(_persistence.update(mbDiscussion));
 

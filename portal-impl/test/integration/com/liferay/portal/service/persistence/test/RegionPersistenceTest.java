@@ -38,6 +38,7 @@ import com.liferay.portal.test.rule.PersistenceTestRule;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -54,8 +55,9 @@ import java.util.Set;
  * @generated
  */
 public class RegionPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -373,9 +375,9 @@ public class RegionPersistenceTest {
 
 		Region existingRegion = _persistence.findByPrimaryKey(newRegion.getPrimaryKey());
 
-		Assert.assertEquals(existingRegion.getCountryId(),
-			ReflectionTestUtil.invoke(existingRegion, "getOriginalCountryId",
-				new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingRegion.getCountryId()),
+			ReflectionTestUtil.<Long>invoke(existingRegion,
+				"getOriginalCountryId", new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(existingRegion.getRegionCode(),
 				ReflectionTestUtil.invoke(existingRegion,
 					"getOriginalRegionCode", new Class<?>[0])));

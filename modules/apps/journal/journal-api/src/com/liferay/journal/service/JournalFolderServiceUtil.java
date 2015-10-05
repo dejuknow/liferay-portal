@@ -77,7 +77,7 @@ public class JournalFolderServiceUtil {
 		return getService().getBeanIdentifier();
 	}
 
-	public static java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> getDDMStructures(
+	public static java.util.List<com.liferay.dynamic.data.mapping.model.DDMStructure> getDDMStructures(
 		long[] groupIds, long folderId, int restrictionType)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService().getDDMStructures(groupIds, folderId, restrictionType);
@@ -136,6 +136,14 @@ public class JournalFolderServiceUtil {
 			end, obc);
 	}
 
+	public static java.util.List<java.lang.Object> getFoldersAndArticles(
+		long groupId, long userId, long folderId, int status, int start,
+		int end, com.liferay.portal.kernel.util.OrderByComparator<?> obc) {
+		return getService()
+				   .getFoldersAndArticles(groupId, userId, folderId, status,
+			start, end, obc);
+	}
+
 	public static int getFoldersAndArticlesCount(long groupId, long folderId) {
 		return getService().getFoldersAndArticlesCount(groupId, folderId);
 	}
@@ -149,6 +157,12 @@ public class JournalFolderServiceUtil {
 		java.util.List<java.lang.Long> folderIds, int status) {
 		return getService()
 				   .getFoldersAndArticlesCount(groupId, folderIds, status);
+	}
+
+	public static int getFoldersAndArticlesCount(long groupId, long userId,
+		long folderId, int status) {
+		return getService()
+				   .getFoldersAndArticlesCount(groupId, userId, folderId, status);
 	}
 
 	public static int getFoldersCount(long groupId, long parentFolderId) {

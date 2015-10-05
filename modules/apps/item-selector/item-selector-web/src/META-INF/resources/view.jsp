@@ -36,35 +36,70 @@ List<String> titles = localizedItemSelectorRendering.getTitles();
 		<div class="alert alert-info">
 
 			<%
-			ResourceBundle resourceBundle = ResourceBundle.getBundle("content/Language", locale);
+			ResourceBundle resourceBundle = ResourceBundleUtil.getBundle("content/Language", locale, getClass());
 			%>
 
 			<%= LanguageUtil.get(resourceBundle, "selection-is-not-available") %>
 		</div>
 	</c:when>
 	<c:otherwise>
-		<liferay-ui:tabs names="<%= StringUtil.merge(titles) %>" refresh="<%= false %>" type="pills" value="<%= localizedItemSelectorRendering.getSelectedTab() %>">
+
+		<%
+		String selectedTab = localizedItemSelectorRendering.getSelectedTab();
+
+		if (Validator.isNull(selectedTab)) {
+			selectedTab = titles.get(0);
+		}
+
+		ItemSelectorViewRenderer itemSelectorViewRenderer = localizedItemSelectorRendering.getItemSelectorViewRenderer(selectedTab);
+		%>
+
+		<aui:nav-bar cssClass="collapse-basic-search" markupView="lexicon">
+			<aui:nav cssClass="navbar-nav">
+
+				<%
+				for (String title : titles) {
+					ItemSelectorViewRenderer curItemSelectorViewRenderer = localizedItemSelectorRendering.getItemSelectorViewRenderer(title);
+
+					PortletURL portletURL = curItemSelectorViewRenderer.getPortletURL();
+				%>
+
+					<aui:nav-item
+						href="<%= portletURL.toString() %>"
+						label="<%= title %>"
+						selected="<%= selectedTab.equals(title) %>"
+					/>
+
+				<%
+				}
+				%>
+
+			</aui:nav>
 
 			<%
-			for (String title : titles) {
-				ItemSelectorViewRenderer itemSelectorViewRenderer = localizedItemSelectorRendering.getItemSelectorViewRenderer(title);
+			ItemSelectorView<ItemSelectorCriterion> itemSelectorView = itemSelectorViewRenderer.getItemSelectorView();
 			%>
 
-				<liferay-ui:section>
-					<div>
+			<c:if test="<%= itemSelectorView.isShowSearch() %>">
 
-						<%
-						itemSelectorViewRenderer.renderHTML(pageContext);
-						%>
+				<%
+				PortletURL searchURL = PortletURLUtil.clone(currentURLObj, liferayPortletResponse);
 
-					</div>
-				</liferay-ui:section>
+				searchURL.setParameter("resetCur", Boolean.TRUE.toString());
+				%>
 
-			<%
-			}
-			%>
+				<aui:nav-bar-search>
+					<aui:form action="<%= searchURL %>" name="searchFm">
+						<liferay-ui:input-search markupView="lexicon" />
+					</aui:form>
+				</aui:nav-bar-search>
+			</c:if>
+		</aui:nav-bar>
 
-		</liferay-ui:tabs>
+		<%
+		itemSelectorViewRenderer.renderHTML(pageContext);
+		%>
+
 	</c:otherwise>
 </c:choose>
 

@@ -45,6 +45,7 @@ import com.liferay.portal.test.rule.PersistenceTestRule;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -64,8 +65,9 @@ import java.util.Set;
  */
 @RunWith(Arquillian.class)
 public class CalendarPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -485,9 +487,9 @@ public class CalendarPersistenceTest {
 		Assert.assertTrue(Validator.equals(existingCalendar.getUuid(),
 				ReflectionTestUtil.invoke(existingCalendar, "getOriginalUuid",
 					new Class<?>[0])));
-		Assert.assertEquals(existingCalendar.getGroupId(),
-			ReflectionTestUtil.invoke(existingCalendar, "getOriginalGroupId",
-				new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingCalendar.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingCalendar,
+				"getOriginalGroupId", new Class<?>[0]));
 	}
 
 	protected Calendar addCalendar() throws Exception {

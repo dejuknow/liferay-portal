@@ -24,8 +24,8 @@ ResultRow row = (ResultRow)request.getAttribute(WebKeys.SEARCH_CONTAINER_RESULT_
 DDMTemplateVersion templateVersion = (DDMTemplateVersion)row.getObject();
 %>
 
-<liferay-ui:icon-menu icon="<%= StringPool.BLANK %>" message="<%= StringPool.BLANK %>">
-	<liferay-portlet:renderURL portletName="<%= PortletKeys.DYNAMIC_DATA_MAPPING %>" var="viewTemplateVersionURL" windowState="<%= WindowState.MAXIMIZED.toString() %>">
+<liferay-ui:icon-menu icon="<%= StringPool.BLANK %>" markupView="lexicon" message="<%= StringPool.BLANK %>">
+	<liferay-portlet:renderURL portletName="<%= DDMPortletKeys.DYNAMIC_DATA_MAPPING %>" var="viewTemplateVersionURL" windowState="<%= WindowState.MAXIMIZED.toString() %>">
 		<portlet:param name="mvcPath" value="/view_template_version.jsp" />
 		<portlet:param name="redirect" value="<%= redirect %>" />
 		<portlet:param name="templateVersionId" value="<%= String.valueOf(templateVersion.getTemplateVersionId()) %>" />
@@ -33,7 +33,6 @@ DDMTemplateVersion templateVersion = (DDMTemplateVersion)row.getObject();
 	</liferay-portlet:renderURL>
 
 	<liferay-ui:icon
-		iconCssClass="icon-search"
 		message="view[action]"
 		url="<%= viewTemplateVersionURL %>"
 	/>
@@ -47,7 +46,6 @@ DDMTemplateVersion templateVersion = (DDMTemplateVersion)row.getObject();
 		</portlet:actionURL>
 
 		<liferay-ui:icon
-			iconCssClass="icon-undo"
 			message="revert"
 			url="<%= revertURL %>"
 		/>

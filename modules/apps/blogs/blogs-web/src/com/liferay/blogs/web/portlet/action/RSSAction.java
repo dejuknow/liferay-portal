@@ -14,11 +14,10 @@
 
 package com.liferay.blogs.web.portlet.action;
 
-import com.liferay.blogs.settings.BlogsGroupServiceSettings;
+import com.liferay.blogs.configuration.BlogsGroupServiceOverriddenConfiguration;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
+import com.liferay.portal.kernel.module.configuration.ConfigurationFactoryUtil;
 import com.liferay.portal.kernel.settings.GroupServiceSettingsLocator;
-import com.liferay.portal.kernel.settings.SettingsFactory;
-import com.liferay.portal.kernel.settings.SettingsFactoryUtil;
 import com.liferay.portal.kernel.struts.StrutsAction;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.RSSUtil;
@@ -28,8 +27,8 @@ import com.liferay.portal.model.Layout;
 import com.liferay.portal.struts.BaseRSSStrutsAction;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.WebKeys;
+import com.liferay.portlet.blogs.constants.BlogsConstants;
 import com.liferay.portlet.blogs.service.BlogsEntryServiceUtil;
-import com.liferay.portlet.blogs.util.BlogsConstants;
 
 import java.util.Date;
 
@@ -116,20 +115,18 @@ public class RSSAction extends BaseRSSStrutsAction {
 	protected boolean isRSSFeedsEnabled(HttpServletRequest request)
 		throws Exception {
 
-		SettingsFactory settingsFactory =
-			SettingsFactoryUtil.getSettingsFactory();
-
 		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
-		BlogsGroupServiceSettings rssBlogsGroupServiceSettings =
-			settingsFactory.getSettings(
-				BlogsGroupServiceSettings.class,
-				new GroupServiceSettingsLocator(
-					themeDisplay.getSiteGroupId(),
-					BlogsConstants.SERVICE_NAME));
+		BlogsGroupServiceOverriddenConfiguration
+			blogsGroupServiceOverridenConfiguration =
+				ConfigurationFactoryUtil.getConfiguration(
+					BlogsGroupServiceOverriddenConfiguration.class,
+					new GroupServiceSettingsLocator(
+						themeDisplay.getSiteGroupId(),
+						BlogsConstants.SERVICE_NAME));
 
-		return rssBlogsGroupServiceSettings.enableRss();
+		return blogsGroupServiceOverridenConfiguration.enableRss();
 	}
 
 }

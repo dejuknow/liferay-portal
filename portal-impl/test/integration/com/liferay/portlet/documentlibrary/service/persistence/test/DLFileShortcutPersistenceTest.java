@@ -43,6 +43,7 @@ import com.liferay.portlet.documentlibrary.service.persistence.DLFileShortcutUti
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -59,8 +60,9 @@ import java.util.Set;
  * @generated
  */
 public class DLFileShortcutPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -141,6 +143,8 @@ public class DLFileShortcutPersistenceTest {
 
 		newDLFileShortcut.setActive(RandomTestUtil.randomBoolean());
 
+		newDLFileShortcut.setLastPublishDate(RandomTestUtil.nextDate());
+
 		newDLFileShortcut.setStatus(RandomTestUtil.nextInt());
 
 		newDLFileShortcut.setStatusByUserId(RandomTestUtil.nextLong());
@@ -181,6 +185,9 @@ public class DLFileShortcutPersistenceTest {
 			newDLFileShortcut.getTreePath());
 		Assert.assertEquals(existingDLFileShortcut.getActive(),
 			newDLFileShortcut.getActive());
+		Assert.assertEquals(Time.getShortTimestamp(
+				existingDLFileShortcut.getLastPublishDate()),
+			Time.getShortTimestamp(newDLFileShortcut.getLastPublishDate()));
 		Assert.assertEquals(existingDLFileShortcut.getStatus(),
 			newDLFileShortcut.getStatus());
 		Assert.assertEquals(existingDLFileShortcut.getStatusByUserId(),
@@ -293,9 +300,9 @@ public class DLFileShortcutPersistenceTest {
 			true, "fileShortcutId", true, "groupId", true, "companyId", true,
 			"userId", true, "userName", true, "createDate", true,
 			"modifiedDate", true, "repositoryId", true, "folderId", true,
-			"toFileEntryId", true, "treePath", true, "active", true, "status",
-			true, "statusByUserId", true, "statusByUserName", true,
-			"statusDate", true);
+			"toFileEntryId", true, "treePath", true, "active", true,
+			"lastPublishDate", true, "status", true, "statusByUserId", true,
+			"statusByUserName", true, "statusDate", true);
 	}
 
 	@Test
@@ -505,8 +512,8 @@ public class DLFileShortcutPersistenceTest {
 		Assert.assertTrue(Validator.equals(existingDLFileShortcut.getUuid(),
 				ReflectionTestUtil.invoke(existingDLFileShortcut,
 					"getOriginalUuid", new Class<?>[0])));
-		Assert.assertEquals(existingDLFileShortcut.getGroupId(),
-			ReflectionTestUtil.invoke(existingDLFileShortcut,
+		Assert.assertEquals(Long.valueOf(existingDLFileShortcut.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingDLFileShortcut,
 				"getOriginalGroupId", new Class<?>[0]));
 	}
 
@@ -538,6 +545,8 @@ public class DLFileShortcutPersistenceTest {
 		dlFileShortcut.setTreePath(RandomTestUtil.randomString());
 
 		dlFileShortcut.setActive(RandomTestUtil.randomBoolean());
+
+		dlFileShortcut.setLastPublishDate(RandomTestUtil.nextDate());
 
 		dlFileShortcut.setStatus(RandomTestUtil.nextInt());
 

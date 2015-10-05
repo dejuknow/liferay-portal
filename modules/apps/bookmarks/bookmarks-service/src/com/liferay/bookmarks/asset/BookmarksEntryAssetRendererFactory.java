@@ -49,14 +49,11 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	immediate = true,
-	property = {
-		"javax.portlet.name=" + BookmarksPortletKeys.BOOKMARKS,
-		"search.asset.type=com.liferay.bookmarks.model.BookmarksEntry"
-	},
+	property = {"javax.portlet.name=" + BookmarksPortletKeys.BOOKMARKS},
 	service = AssetRendererFactory.class
 )
 public class BookmarksEntryAssetRendererFactory
-	extends BaseAssetRendererFactory {
+	extends BaseAssetRendererFactory<BookmarksEntry> {
 
 	public static final String TYPE = "bookmark";
 
@@ -64,10 +61,12 @@ public class BookmarksEntryAssetRendererFactory
 		setClassName(BookmarksEntry.class.getName());
 		setLinkable(true);
 		setPortletId(BookmarksPortletKeys.BOOKMARKS);
+		setSearchable(true);
 	}
 
 	@Override
-	public AssetRenderer getAssetRenderer(long classPK, int type)
+	public AssetRenderer<BookmarksEntry> getAssetRenderer(
+			long classPK, int type)
 		throws PortalException {
 
 		BookmarksEntry entry = BookmarksEntryLocalServiceUtil.getEntry(classPK);

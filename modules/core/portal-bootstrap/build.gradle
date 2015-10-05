@@ -1,6 +1,13 @@
+import com.liferay.gradle.util.FileUtil
+
 import org.dm.gradle.plugins.bundle.JarBuilder
 
 dependencies {
+	compile group: "com.liferay.portal", name: "portal-impl", version: liferay.portalVersion
+	compile group: "com.liferay.portal", name: "portal-service", version: liferay.portalVersion
+	compile group: "javax.servlet", name: "javax.servlet-api", version: "3.0.1"
+	compile group: "org.springframework", name: "spring-beans", version: "3.2.10.RELEASE"
+	compile group: "org.springframework", name: "spring-context", version: "3.2.10.RELEASE"
 	compile project(":core:jaxws-osgi-bridge")
 	compile project(":core:osgi-service-tracker-map")
 	compile project(":core:registry-impl")
@@ -10,7 +17,11 @@ liferay {
 	deployDir = file("${liferayHome}/osgi/core")
 }
 
+File systemPackagesExtraBndFile = file("system.packages.extra.bnd")
+File systemPackagesExtraManifestFile = file("system.packages.extra.mf")
+
 task buildSystemPackagesExtraManifest
+task copySystemPackagesExtraManifest(type: Copy)
 
 buildSystemPackagesExtraManifest {
 	dependsOn classes
@@ -23,16 +34,12 @@ buildSystemPackagesExtraManifest {
 
 		Map<String, String> properties = liferay.bundleDefaultInstructions
 
-		properties["-include"] = "system.packages.extra.bnd"
+		properties["-include"] = relativePath(systemPackagesExtraBndFile)
 
 		jarBuilder.withProperties properties
 		jarBuilder.withSourcepath sourceSets.main.allSource.srcDirs
 
-		File buildSystemPackagesExtraManifestFile = file("tmp/META-INF/MANIFEST.MF")
-
-		buildSystemPackagesExtraManifestFile.parentFile.mkdirs()
-
-		buildSystemPackagesExtraManifestFile.withOutputStream {
+		systemPackagesExtraManifestFile.withOutputStream {
 			jarBuilder.writeManifestTo it
 		}
 	}
@@ -46,6 +53,19 @@ deploy {
 	}
 }
 
+copySystemPackagesExtraManifest {
+	if (!FileUtil.isUpToDate(project, systemPackagesExtraBndFile, systemPackagesExtraManifestFile)) {
+		dependsOn buildSystemPackagesExtraManifest
+	}
+
+	from systemPackagesExtraManifestFile
+	into "tmp/META-INF"
+
+	rename {
+		"MANIFEST.MF"
+	}
+}
+
 jar {
-	dependsOn buildSystemPackagesExtraManifest
+	dependsOn copySystemPackagesExtraManifest
 }

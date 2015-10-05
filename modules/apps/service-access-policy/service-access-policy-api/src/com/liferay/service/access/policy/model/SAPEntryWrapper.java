@@ -19,8 +19,6 @@ import aQute.bnd.annotation.ProviderType;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.ModelWrapper;
 
-import com.liferay.portlet.exportimport.lar.StagedModelType;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -63,6 +61,7 @@ public class SAPEntryWrapper implements SAPEntry, ModelWrapper<SAPEntry> {
 		attributes.put("modifiedDate", getModifiedDate());
 		attributes.put("allowedServiceSignatures", getAllowedServiceSignatures());
 		attributes.put("defaultSAPEntry", getDefaultSAPEntry());
+		attributes.put("enabled", getEnabled());
 		attributes.put("name", getName());
 		attributes.put("title", getTitle());
 
@@ -126,6 +125,12 @@ public class SAPEntryWrapper implements SAPEntry, ModelWrapper<SAPEntry> {
 			setDefaultSAPEntry(defaultSAPEntry);
 		}
 
+		Boolean enabled = (Boolean)attributes.get("enabled");
+
+		if (enabled != null) {
+			setEnabled(enabled);
+		}
+
 		String name = (String)attributes.get("name");
 
 		if (name != null) {
@@ -186,7 +191,7 @@ public class SAPEntryWrapper implements SAPEntry, ModelWrapper<SAPEntry> {
 	* @return the create date of this s a p entry
 	*/
 	@Override
-	public java.util.Date getCreateDate() {
+	public Date getCreateDate() {
 		return _sapEntry.getCreateDate();
 	}
 
@@ -205,6 +210,16 @@ public class SAPEntryWrapper implements SAPEntry, ModelWrapper<SAPEntry> {
 		return _sapEntry.getDefaultSAPEntry();
 	}
 
+	/**
+	* Returns the enabled of this s a p entry.
+	*
+	* @return the enabled of this s a p entry
+	*/
+	@Override
+	public boolean getEnabled() {
+		return _sapEntry.getEnabled();
+	}
+
 	@Override
 	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
 		return _sapEntry.getExpandoBridge();
@@ -216,7 +231,7 @@ public class SAPEntryWrapper implements SAPEntry, ModelWrapper<SAPEntry> {
 	* @return the modified date of this s a p entry
 	*/
 	@Override
-	public java.util.Date getModifiedDate() {
+	public Date getModifiedDate() {
 		return _sapEntry.getModifiedDate();
 	}
 
@@ -328,7 +343,7 @@ public class SAPEntryWrapper implements SAPEntry, ModelWrapper<SAPEntry> {
 	* @return the locales and localized titles of this s a p entry
 	*/
 	@Override
-	public java.util.Map<java.util.Locale, java.lang.String> getTitleMap() {
+	public Map<java.util.Locale, java.lang.String> getTitleMap() {
 		return _sapEntry.getTitleMap();
 	}
 
@@ -392,6 +407,16 @@ public class SAPEntryWrapper implements SAPEntry, ModelWrapper<SAPEntry> {
 		return _sapEntry.isDefaultSAPEntry();
 	}
 
+	/**
+	* Returns <code>true</code> if this s a p entry is enabled.
+	*
+	* @return <code>true</code> if this s a p entry is enabled; <code>false</code> otherwise
+	*/
+	@Override
+	public boolean isEnabled() {
+		return _sapEntry.isEnabled();
+	}
+
 	@Override
 	public boolean isEscapedModel() {
 		return _sapEntry.isEscapedModel();
@@ -452,7 +477,7 @@ public class SAPEntryWrapper implements SAPEntry, ModelWrapper<SAPEntry> {
 	* @param createDate the create date of this s a p entry
 	*/
 	@Override
-	public void setCreateDate(java.util.Date createDate) {
+	public void setCreateDate(Date createDate) {
 		_sapEntry.setCreateDate(createDate);
 	}
 
@@ -464,6 +489,16 @@ public class SAPEntryWrapper implements SAPEntry, ModelWrapper<SAPEntry> {
 	@Override
 	public void setDefaultSAPEntry(boolean defaultSAPEntry) {
 		_sapEntry.setDefaultSAPEntry(defaultSAPEntry);
+	}
+
+	/**
+	* Sets whether this s a p entry is enabled.
+	*
+	* @param enabled the enabled of this s a p entry
+	*/
+	@Override
+	public void setEnabled(boolean enabled) {
+		_sapEntry.setEnabled(enabled);
 	}
 
 	@Override
@@ -490,7 +525,7 @@ public class SAPEntryWrapper implements SAPEntry, ModelWrapper<SAPEntry> {
 	* @param modifiedDate the modified date of this s a p entry
 	*/
 	@Override
-	public void setModifiedDate(java.util.Date modifiedDate) {
+	public void setModifiedDate(Date modifiedDate) {
 		_sapEntry.setModifiedDate(modifiedDate);
 	}
 
@@ -579,8 +614,7 @@ public class SAPEntryWrapper implements SAPEntry, ModelWrapper<SAPEntry> {
 	* @param titleMap the locales and localized titles of this s a p entry
 	*/
 	@Override
-	public void setTitleMap(
-		java.util.Map<java.util.Locale, java.lang.String> titleMap) {
+	public void setTitleMap(Map<java.util.Locale, java.lang.String> titleMap) {
 		_sapEntry.setTitleMap(titleMap);
 	}
 
@@ -591,8 +625,7 @@ public class SAPEntryWrapper implements SAPEntry, ModelWrapper<SAPEntry> {
 	* @param defaultLocale the default locale
 	*/
 	@Override
-	public void setTitleMap(
-		java.util.Map<java.util.Locale, java.lang.String> titleMap,
+	public void setTitleMap(Map<java.util.Locale, java.lang.String> titleMap,
 		java.util.Locale defaultLocale) {
 		_sapEntry.setTitleMap(titleMap, defaultLocale);
 	}
@@ -679,11 +712,6 @@ public class SAPEntryWrapper implements SAPEntry, ModelWrapper<SAPEntry> {
 		}
 
 		return false;
-	}
-
-	@Override
-	public StagedModelType getStagedModelType() {
-		return _sapEntry.getStagedModelType();
 	}
 
 	/**

@@ -304,6 +304,38 @@ public class GroupServiceTest {
 	}
 
 	@Test
+	public void testFindGroupByRole() throws Exception {
+		Group group = GroupTestUtil.addGroup(
+			GroupConstants.DEFAULT_PARENT_GROUP_ID);
+
+		long roleId = RoleTestUtil.addGroupRole(group.getGroupId());
+
+		LinkedHashMap<String, Object> groupParams = new LinkedHashMap<>();
+
+		groupParams.put("groupsRoles", Long.valueOf(roleId));
+		groupParams.put("site", Boolean.TRUE);
+
+		Assert.assertEquals(
+			1,
+			GroupLocalServiceUtil.searchCount(
+				TestPropsValues.getCompanyId(), null, groupParams));
+
+		List<Group> groups = GroupLocalServiceUtil.search(
+			TestPropsValues.getCompanyId(), null, groupParams,
+			QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+
+		Assert.assertEquals(1, groups.size());
+		Assert.assertEquals(group, groups.get(0));
+		Assert.assertEquals(
+			1, GroupLocalServiceUtil.getRoleGroupsCount(roleId));
+
+		groups = GroupLocalServiceUtil.getRoleGroups(roleId);
+
+		Assert.assertEquals(1, groups.size());
+		Assert.assertEquals(group, groups.get(0));
+	}
+
+	@Test
 	public void testFindGuestGroupByCompanyName() throws Exception {
 		LinkedHashMap<String, Object> groupParams = new LinkedHashMap<>();
 
@@ -364,7 +396,7 @@ public class GroupServiceTest {
 
 		try {
 			List<Group> groups = GroupServiceUtil.getUserSitesGroups(
-				TestPropsValues.getUserId(), null, false, QueryUtil.ALL_POS);
+				TestPropsValues.getUserId(), null, QueryUtil.ALL_POS);
 
 			Assert.assertTrue(groups.contains(parentOrganizationGroup));
 		}

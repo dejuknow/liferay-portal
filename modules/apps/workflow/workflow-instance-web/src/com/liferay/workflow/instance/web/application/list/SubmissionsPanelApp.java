@@ -17,7 +17,7 @@ package com.liferay.workflow.instance.web.application.list;
 import com.liferay.application.list.BaseControlPanelEntryPanelApp;
 import com.liferay.application.list.PanelApp;
 import com.liferay.application.list.constants.PanelCategoryKeys;
-import com.liferay.portal.service.PortletLocalService;
+import com.liferay.portal.model.Portlet;
 import com.liferay.workflow.instance.web.constants.WorkflowInstancePortletKeys;
 
 import org.osgi.service.component.annotations.Component;
@@ -37,20 +37,16 @@ import org.osgi.service.component.annotations.Reference;
 public class SubmissionsPanelApp extends BaseControlPanelEntryPanelApp {
 
 	@Override
-	public String getParentCategoryKey() {
-		return PanelCategoryKeys.CONTROL_PANEL_APPS;
-	}
-
-	@Override
 	public String getPortletId() {
 		return WorkflowInstancePortletKeys.WORKFLOW_INSTANCE;
 	}
 
-	@Reference(unbind = "-")
-	protected void setPortletLocalService(
-		PortletLocalService portletLocalService) {
-
-		_portletLocalService = portletLocalService;
+	@Reference(
+		target = "(javax.portlet.name=" + WorkflowInstancePortletKeys.WORKFLOW_INSTANCE + ")",
+		unbind = "-"
+	)
+	protected void setPortlet(Portlet portlet) {
+		super.setPortlet(portlet);
 	}
 
 }

@@ -17,10 +17,11 @@ package com.liferay.password.policies.admin.web.lar;
 import com.liferay.password.policies.admin.web.constants.PasswordPoliciesAdminPortletKeys;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.model.PasswordPolicy;
 import com.liferay.portal.model.impl.PasswordPolicyImpl;
-import com.liferay.portal.service.PasswordPolicyLocalServiceUtil;
+import com.liferay.portal.service.PasswordPolicyLocalService;
 import com.liferay.portlet.exportimport.lar.BasePortletDataHandler;
 import com.liferay.portlet.exportimport.lar.DataLevel;
 import com.liferay.portlet.exportimport.lar.PortletDataContext;
@@ -34,7 +35,9 @@ import java.util.List;
 
 import javax.portlet.PortletPreferences;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Daniela Zapata Riesco
@@ -49,7 +52,8 @@ public class PasswordPolicyPortletDataHandler extends BasePortletDataHandler {
 
 	public static final String NAMESPACE = "password_policies_admin";
 
-	public PasswordPolicyPortletDataHandler() {
+	@Activate
+	protected void activate() {
 		setDataLevel(DataLevel.PORTAL);
 		setDeletionSystemEventStagedModelTypes(
 			new StagedModelType(PasswordPolicy.class));
@@ -75,7 +79,7 @@ public class PasswordPolicyPortletDataHandler extends BasePortletDataHandler {
 			return portletPreferences;
 		}
 
-		PasswordPolicyLocalServiceUtil.deleteNondefaultPasswordPolicies(
+		_passwordPolicyLocalService.deleteNondefaultPasswordPolicies(
 			portletDataContext.getCompanyId());
 
 		return portletPreferences;
@@ -140,7 +144,7 @@ public class PasswordPolicyPortletDataHandler extends BasePortletDataHandler {
 		final PortletDataContext portletDataContext, final boolean export) {
 
 		ActionableDynamicQuery actionableDynamicQuery =
-			PasswordPolicyLocalServiceUtil.getExportActionableDynamicQuery(
+			_passwordPolicyLocalService.getExportActionableDynamicQuery(
 				portletDataContext);
 
 		actionableDynamicQuery.setPerformActionMethod(
@@ -165,7 +169,21 @@ public class PasswordPolicyPortletDataHandler extends BasePortletDataHandler {
 		return actionableDynamicQuery;
 	}
 
+	@Reference(target = ModuleServiceLifecycle.PORTAL_INITIALIZED, unbind = "-")
+	protected void setModuleServiceLifecycle(
+		ModuleServiceLifecycle moduleServiceLifecycle) {
+	}
+
+	@Reference(unbind = "-")
+	protected void setPasswordPolicyLocalService(
+		PasswordPolicyLocalService passwordPolicyLocalService) {
+
+		_passwordPolicyLocalService = passwordPolicyLocalService;
+	}
+
 	protected static final String RESOURCE_NAME =
 		"com.liferay.portlet.passwordpoliciesadmin";
+
+	private PasswordPolicyLocalService _passwordPolicyLocalService;
 
 }

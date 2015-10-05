@@ -185,6 +185,8 @@ ArticleSearch searchContainer = new ArticleSearch(liferayPortletRequest, portlet
 
 					Summary summary = searchResult.getSummary();
 
+					summary.setQueryTerms(hits.getQueryTerms());
+
 					JournalArticle article = null;
 					JournalFolder curFolder = null;
 
@@ -230,7 +232,7 @@ ArticleSearch searchContainer = new ArticleSearch(liferayPortletRequest, portlet
 								showCheckbox="<%= JournalArticlePermission.contains(permissionChecker, article, ActionKeys.DELETE) || JournalArticlePermission.contains(permissionChecker, article, ActionKeys.UPDATE) %>"
 								status="<%= article.getStatus() %>"
 								thumbnailSrc='<%= Validator.isNotNull(article.getArticleImageURL(themeDisplay)) ? article.getArticleImageURL(themeDisplay) : themeDisplay.getPathThemeImages() + "/file_system/large/article.png" %>'
-								title="<%= ((summary != null) && Validator.isNotNull(summary.getTitle())) ? summary.getTitle() : article.getTitle(locale) %>"
+								title="<%= article.getTitle(locale) %>"
 								url="<%= rowURL.toString() %>"
 								versions="<%= versions %>"
 							/>
@@ -323,7 +325,7 @@ ArticleSearch searchContainer = new ArticleSearch(liferayPortletRequest, portlet
 								actionJspServletContext="<%= application %>"
 								containerName="<%= JournalUtil.getAbsolutePath(liferayPortletRequest, curArticle.getFolderId()) %>"
 								cssClass='<%= MathUtil.isEven(i) ? "alt" : StringPool.BLANK %>'
-								description="<%= curArticle.getDescription(locale) %>"
+								description="<%= LocalizationUtil.getLocalization(curArticle.getContent(), themeDisplay.getLanguageId()) %>"
 								queryTerms="<%= queryTerms %>"
 								rowCheckerId="<%= HtmlUtil.escape(curArticle.getArticleId()) %>"
 								rowCheckerName="<%= JournalArticle.class.getSimpleName() %>"
@@ -378,5 +380,5 @@ ArticleSearch searchContainer = new ArticleSearch(liferayPortletRequest, portlet
 </div>
 
 <%!
-private static Log _log = LogFactoryUtil.getLog("portal-web.docroot.html.portlet.journal.search_resources_jsp");
+private static Log _log = LogFactoryUtil.getLog("com_liferay_journal_web.search_resources_jsp");
 %>

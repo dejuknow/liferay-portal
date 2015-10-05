@@ -41,6 +41,7 @@ import com.liferay.portal.test.rule.PersistenceTestRule;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -57,8 +58,9 @@ import java.util.Set;
  * @generated
  */
 public class ResourceBlockPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -409,11 +411,11 @@ public class ResourceBlockPersistenceTest {
 
 		ResourceBlock existingResourceBlock = _persistence.findByPrimaryKey(newResourceBlock.getPrimaryKey());
 
-		Assert.assertEquals(existingResourceBlock.getCompanyId(),
-			ReflectionTestUtil.invoke(existingResourceBlock,
+		Assert.assertEquals(Long.valueOf(existingResourceBlock.getCompanyId()),
+			ReflectionTestUtil.<Long>invoke(existingResourceBlock,
 				"getOriginalCompanyId", new Class<?>[0]));
-		Assert.assertEquals(existingResourceBlock.getGroupId(),
-			ReflectionTestUtil.invoke(existingResourceBlock,
+		Assert.assertEquals(Long.valueOf(existingResourceBlock.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingResourceBlock,
 				"getOriginalGroupId", new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(existingResourceBlock.getName(),
 				ReflectionTestUtil.invoke(existingResourceBlock,

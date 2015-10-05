@@ -10,46 +10,31 @@
 		<company-excludes />
 	</company-limit>
 	<theme id="classic" name="Classic">
-		<root-path>/html/themes/classic</root-path>
+		<root-path>/classic</root-path>
 		<templates-path>${root-path}/templates</templates-path>
 		<images-path>${root-path}/images</images-path>
 		<template-extension>vm</template-extension>
 		<settings>
 			<setting configurable="true" key="bullet-style" options="dots,arrows" type="select" value="dots" />
-			<setting configurable="true" key="portlet-setup-show-borders-default" type="checkbox" value="true" />
 			<setting configurable="false" key="show-site-name-default" value="true" />
 			<setting configurable="false" key="show-site-name-supported" value="true" />
 		</settings>
 		<roles>
 			<role-name>User</role-name>
 		</roles>
-		<color-scheme id="01" name="Default">
-			<default-cs>true</default-cs>
-			<css-class>default</css-class>
-			<color-scheme-images-path>${images-path}/color_schemes/${css-class}</color-scheme-images-path>
-		</color-scheme>
-		<color-scheme id="02" name="Dark">
-			<css-class>dark</css-class>
-		</color-scheme>
-		<color-scheme id="03" name="Light">
-			<css-class>light</css-class>
-		</color-scheme>
+		<portlet-decorator id="barebone" name="Barebone">
+			<portlet-decorator-css-class>portlet-barebone</portlet-decorator-css-class>
+		</portlet-decorator>
+		<portlet-decorator id="borderless" name="Borderless">
+			<portlet-decorator-css-class>portlet-borderless</portlet-decorator-css-class>
+		</portlet-decorator>
+		<portlet-decorator id="decorate" name="Decorate">
+			<default-portlet-decorator>true</default-portlet-decorator>
+			<portlet-decorator-css-class>portlet-decorate</portlet-decorator-css-class>
+		</portlet-decorator>
 	</theme>
 	<theme id="admin" name="Admin">
-		<root-path>/html/themes/admin</root-path>
-		<control-panel-theme>true</control-panel-theme>
-		<page-theme>false</page-theme>
-	</theme>
-	<theme id="atlas" name="Atlas">
-		<root-path>/html/themes/atlas</root-path>
-		<control-panel-theme>false</control-panel-theme>
-		<page-theme>true</page-theme>
-	</theme>
-	<theme id="control-panel" name="Control Panel">
-		<root-path>/html/themes/control_panel</root-path>
-		<settings>
-			<setting configurable="true" key="footer-text" type="textarea" value="Powered by Liferay" />
-		</settings>
+		<root-path>/admin</root-path>
 		<control-panel-theme>true</control-panel-theme>
 		<page-theme>false</page-theme>
 	</theme>

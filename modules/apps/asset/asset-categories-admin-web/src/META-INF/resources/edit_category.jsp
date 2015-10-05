@@ -81,25 +81,26 @@ else {
 		categoryPropertiesIndexes = new int[0];
 	}
 }
-%>
 
-<liferay-ui:header
-	backURL="<%= redirect %>"
-	title='<%= (category != null) ? category.getTitle(locale) : "add-new-category" %>'
-/>
+portletDisplay.setShowBackIcon(true);
+portletDisplay.setURLBack(redirect);
+
+renderResponse.setTitle(((category == null) ? LanguageUtil.get(request, "add-new-category") : HtmlUtil.escape(category.getTitle(locale))));
+%>
 
 <portlet:actionURL name="editCategory" var="editCategoryURL">
 	<portlet:param name="mvcPath" value="/edit_category.jsp" />
 	<portlet:param name="vocabularyId" value="<%= String.valueOf(vocabularyId) %>" />
 </portlet:actionURL>
 
-<aui:form action="<%= editCategoryURL %>" name="fm">
+<aui:form action="<%= editCategoryURL %>" cssClass="container-fluid-1280" name="fm">
 	<aui:input name="redirect" type="hidden" value="<%= redirect %>" />
 	<aui:input name="categoryId" type="hidden" value="<%= categoryId %>" />
 	<aui:input name="parentCategoryId" type="hidden" value="<%= parentCategoryId %>" />
 
 	<liferay-ui:error exception="<%= AssetCategoryNameException.class %>" message="please-enter-a-valid-name" />
 	<liferay-ui:error exception="<%= DuplicateCategoryException.class %>" message="please-enter-a-unique-name" />
+	<liferay-ui:error exception="<%= DuplicateCategoryPropertyException.class %>" message="please-enter-a-unique-property-key" />
 
 	<aui:model-context bean="<%= category %>" model="<%= AssetCategory.class %>" />
 
@@ -147,9 +148,9 @@ else {
 		</liferay-ui:panel-container>
 
 		<aui:button-row>
-			<aui:button type="submit" />
+			<aui:button cssClass="btn-lg" type="submit" />
 
-			<aui:button href="<%= redirect %>" type="cancel" />
+			<aui:button cssClass="btn-lg" href="<%= redirect %>" type="cancel" />
 		</aui:button-row>
 	</aui:fieldset>
 </aui:form>

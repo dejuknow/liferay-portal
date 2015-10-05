@@ -58,6 +58,8 @@ import org.apache.tools.ant.types.selectors.SelectorUtils;
  */
 public abstract class BaseSourceProcessor implements SourceProcessor {
 
+	public static final int PORTAL_MAX_DIR_LEVEL = 5;
+
 	public BaseSourceProcessor() {
 		portalSource = _isPortalSource();
 
@@ -395,7 +397,8 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 			_portalLanguageProperties = new Properties();
 
 			File portalLanguagePropertiesFile = new File(
-				getFile("portal-impl", 5), "src/content/Language.properties");
+				getFile("portal-impl", PORTAL_MAX_DIR_LEVEL),
+				"src/content/Language.properties");
 
 			InputStream inputStream = new FileInputStream(
 				portalLanguagePropertiesFile);
@@ -542,7 +545,8 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 
 		if (_copyright == null) {
 			_copyright = getContent(
-				sourceFormatterArgs.getCopyrightFileName(), 4);
+				sourceFormatterArgs.getCopyrightFileName(),
+				PORTAL_MAX_DIR_LEVEL);
 		}
 
 		String copyright = _copyright;
@@ -552,7 +556,8 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		}
 
 		if (_oldCopyright == null) {
-			_oldCopyright = getContent("old-copyright.txt", 4);
+			_oldCopyright = getContent(
+				"old-copyright.txt", PORTAL_MAX_DIR_LEVEL);
 		}
 
 		if (Validator.isNotNull(_oldCopyright) &&
@@ -773,7 +778,17 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 	}
 
 	protected String formatIncorrectSyntax(
-		String line, String incorrectSyntax, String correctSyntax) {
+		String line, String incorrectSyntax, String correctSyntax,
+		boolean lineStart) {
+
+		if (lineStart) {
+			if (line.startsWith(incorrectSyntax)) {
+				line = StringUtil.replaceFirst(
+					line, incorrectSyntax, correctSyntax);
+			}
+
+			return line;
+		}
 
 		for (int x = -1;;) {
 			x = line.indexOf(incorrectSyntax, x + 1);
@@ -835,115 +850,112 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		return line;
 	}
 
-	protected String formatWhitespace(String line, String trimmedLine) {
-		line = formatIncorrectSyntax(line, "catch(", "catch (");
-		line = formatIncorrectSyntax(line, "else{", "else {");
-		line = formatIncorrectSyntax(line, "for(", "for (");
-		line = formatIncorrectSyntax(line, "if(", "if (");
-		line = formatIncorrectSyntax(line, "while(", "while (");
-		line = formatIncorrectSyntax(line, "List <", "List<");
-		line = formatIncorrectSyntax(line, "){", ") {");
-		line = formatIncorrectSyntax(line, "]{", "] {");
-		line = formatIncorrectSyntax(line, " [", "[");
-		line = formatIncorrectSyntax(
-			line, StringPool.SPACE + StringPool.TAB, StringPool.TAB);
+	protected String formatWhitespace(String line, String linePart) {
+		String originalLinePart = linePart;
+
+		linePart = formatIncorrectSyntax(linePart, "catch(", "catch (", true);
+		linePart = formatIncorrectSyntax(linePart, "else{", "else {", true);
+		linePart = formatIncorrectSyntax(linePart, "for(", "for (", true);
+		linePart = formatIncorrectSyntax(linePart, "if(", "if (", true);
+		linePart = formatIncorrectSyntax(linePart, "while(", "while (", true);
+		linePart = formatIncorrectSyntax(linePart, "List <", "List<", false);
+		linePart = formatIncorrectSyntax(linePart, "){", ") {", false);
+		linePart = formatIncorrectSyntax(linePart, "]{", "] {", false);
+		linePart = formatIncorrectSyntax(linePart, " [", "[", false);
 
 		for (int x = 0;;) {
-			x = line.indexOf(CharPool.EQUAL, x + 1);
+			x = linePart.indexOf(CharPool.EQUAL, x + 1);
 
 			if (x == -1) {
 				break;
 			}
 
-			if (ToolsUtil.isInsideQuotes(line, x)) {
+			if (ToolsUtil.isInsideQuotes(linePart, x)) {
 				continue;
 			}
 
-			char c = line.charAt(x - 1);
+			char c = linePart.charAt(x - 1);
 
 			if (Character.isLetterOrDigit(c)) {
-				line = StringUtil.replaceFirst(line, "=", " =", x);
+				linePart = StringUtil.replaceFirst(linePart, "=", " =", x);
 
 				break;
 			}
 
-			if (x == (line.length() - 1)) {
+			if (x == (linePart.length() - 1)) {
 				break;
 			}
 
-			c = line.charAt(x + 1);
+			c = linePart.charAt(x + 1);
 
 			if (Character.isLetterOrDigit(c)) {
-				line = StringUtil.replaceFirst(line, "=", "= ", x);
+				linePart = StringUtil.replaceFirst(linePart, "=", "= ", x);
 
 				break;
 			}
 		}
 
 		if (!line.contains(StringPool.DOUBLE_SLASH)) {
-			while (trimmedLine.contains(StringPool.TAB)) {
-				line = StringUtil.replaceLast(
-					line, StringPool.TAB, StringPool.SPACE);
-
-				trimmedLine = StringUtil.replaceLast(
-					trimmedLine, StringPool.TAB, StringPool.SPACE);
+			while (linePart.contains(StringPool.TAB)) {
+				linePart = StringUtil.replaceLast(
+					linePart, StringPool.TAB, StringPool.SPACE);
 			}
 		}
 
 		for (int x = 0;;) {
-			x = trimmedLine.indexOf(StringPool.DOUBLE_SPACE, x + 1);
+			x = linePart.indexOf(StringPool.DOUBLE_SPACE, x + 1);
 
 			if (x == -1) {
 				break;
 			}
 
-			if (ToolsUtil.isInsideQuotes(trimmedLine, x)) {
+			if (ToolsUtil.isInsideQuotes(linePart, x)) {
 				continue;
 			}
 
-			trimmedLine = StringUtil.replaceFirst(
-				trimmedLine, StringPool.DOUBLE_SPACE, StringPool.SPACE, x);
-
-			line = StringUtil.replaceFirst(
-				line, StringPool.DOUBLE_SPACE, StringPool.SPACE,
-				x + getLeadingTabCount(line));
+			linePart = StringUtil.replaceFirst(
+				linePart, StringPool.DOUBLE_SPACE, StringPool.SPACE, x);
 		}
 
 		if (line.contains(StringPool.DOUBLE_SLASH)) {
-			return line;
+			line = StringUtil.replace(line, originalLinePart, linePart);
+
+			return formatIncorrectSyntax(
+				line, StringPool.SPACE + StringPool.TAB, StringPool.TAB, false);
 		}
 
-		int pos = line.indexOf(") ");
+		int pos = linePart.indexOf(") ");
 
-		if ((pos != -1) && !line.contains(StringPool.AT) &&
-			!ToolsUtil.isInsideQuotes(line, pos)) {
+		if ((pos != -1) && ((pos + 2) < linePart.length()) &&
+			!linePart.contains(StringPool.AT) &&
+			!ToolsUtil.isInsideQuotes(linePart, pos)) {
 
-			String linePart = line.substring(pos + 2);
+			String linePart2 = linePart.substring(pos + 2);
 
-			if (Character.isLetter(linePart.charAt(0)) &&
-				!linePart.startsWith("default") &&
-				!linePart.startsWith("instanceof") &&
-				!linePart.startsWith("throws")) {
+			if (Character.isLetter(linePart2.charAt(0)) &&
+				!linePart2.startsWith("default") &&
+				!linePart2.startsWith("instanceof") &&
+				!linePart2.startsWith("throws")) {
 
-				line = StringUtil.replaceFirst(
-					line, StringPool.SPACE, StringPool.BLANK, pos);
+				linePart = StringUtil.replaceFirst(
+					linePart, StringPool.SPACE, StringPool.BLANK, pos);
 			}
 		}
 
-		pos = line.indexOf(" (");
+		pos = linePart.indexOf(" (");
 
-		if ((pos != -1) && !line.contains(StringPool.EQUAL) &&
-			!ToolsUtil.isInsideQuotes(line, pos) &&
-			(trimmedLine.startsWith("private ") ||
-			 trimmedLine.startsWith("protected ") ||
-			 trimmedLine.startsWith("public "))) {
+		if ((pos != -1) && !linePart.contains(StringPool.EQUAL) &&
+			!ToolsUtil.isInsideQuotes(linePart, pos) &&
+			(linePart.startsWith("private ") ||
+			 linePart.startsWith("protected ") ||
+			 linePart.startsWith("public "))) {
 
-			line = StringUtil.replaceFirst(line, " (", "(", pos);
+			linePart = StringUtil.replaceFirst(linePart, " (", "(", pos);
 		}
 
 		for (int x = -1;;) {
-			int posComma = line.indexOf(CharPool.COMMA, x + 1);
-			int posSemicolon = line.indexOf(CharPool.SEMICOLON, x + 1);
+			int posComma = linePart.indexOf(CharPool.COMMA, x + 1);
+			int posSemicolon = linePart.indexOf(CharPool.SEMICOLON, x + 1);
 
 			if ((posComma == -1) && (posSemicolon == -1)) {
 				break;
@@ -955,29 +967,62 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 				x = Math.max(posComma, posSemicolon);
 			}
 
-			if (ToolsUtil.isInsideQuotes(line, x)) {
+			if (ToolsUtil.isInsideQuotes(linePart, x)) {
 				continue;
 			}
 
-			if (line.length() > (x + 1)) {
-				char nextChar = line.charAt(x + 1);
+			if (linePart.length() > (x + 1)) {
+				char nextChar = linePart.charAt(x + 1);
 
 				if ((nextChar != CharPool.APOSTROPHE) &&
 					(nextChar != CharPool.CLOSE_PARENTHESIS) &&
 					(nextChar != CharPool.SPACE) &&
 					(nextChar != CharPool.STAR)) {
 
-					line = StringUtil.insert(line, StringPool.SPACE, x + 1);
+					linePart = StringUtil.insert(
+						linePart, StringPool.SPACE, x + 1);
 				}
 			}
 
 			if (x > 0) {
-				char previousChar = line.charAt(x - 1);
+				char previousChar = linePart.charAt(x - 1);
 
 				if (previousChar == CharPool.SPACE) {
-					line = line.substring(0, x - 1).concat(line.substring(x));
+					linePart = linePart.substring(0, x - 1).concat(
+						linePart.substring(x));
 				}
 			}
+		}
+
+		line = StringUtil.replace(line, originalLinePart, linePart);
+
+		return formatIncorrectSyntax(
+			line, StringPool.SPACE + StringPool.TAB, StringPool.TAB, false);
+	}
+
+	protected String formatWhitespace(
+		String line, String trimmedLine, boolean javaSource) {
+
+		if (javaSource) {
+			return formatWhitespace(line, trimmedLine);
+		}
+
+		Matcher matcher = javaSourceInsideJSPTagPattern.matcher(line);
+
+		while (matcher.find()) {
+			String linePart = matcher.group(1);
+
+			if (!linePart.startsWith(StringPool.SPACE)) {
+				return StringUtil.replace(
+					line, matcher.group(), "<%= " + linePart + "%>");
+			}
+
+			if (!linePart.endsWith(StringPool.SPACE)) {
+				return StringUtil.replace(
+					line, matcher.group(), "<%=" + linePart + " %>");
+			}
+
+			line = formatWhitespace(line, linePart);
 		}
 
 		return line;
@@ -1120,14 +1165,25 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 	}
 
 	protected List<String> getFileNames(
-			String basedir, String[] excludes, String[] includes)
+			String basedir, List<String> recentChangesFileNames,
+			String[] excludes, String[] includes)
 		throws Exception {
 
 		if (_excludes != null) {
 			excludes = ArrayUtil.append(excludes, _excludes);
 		}
 
-		return _sourceFormatterHelper.scanForFiles(basedir, excludes, includes);
+		return _sourceFormatterHelper.getFileNames(
+			basedir, recentChangesFileNames, excludes, includes);
+	}
+
+	protected List<String> getFileNames(
+			String basedir, String[] excludes, String[] includes)
+		throws Exception {
+
+		return getFileNames(
+			basedir, sourceFormatterArgs.getRecentChangesFileNames(), excludes,
+			includes);
 	}
 
 	protected List<String> getFileNames(String[] excludes, String[] includes)
@@ -1395,6 +1451,10 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		return matcher.matches();
 	}
 
+	protected boolean isModulesFile(String absolutePath) {
+		return absolutePath.contains("/modules/");
+	}
+
 	protected void processErrorMessage(String fileName, String message) {
 		List<String> errorMessages = _errorMessagesMap.get(fileName);
 
@@ -1491,7 +1551,7 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 			}
 
 			if (Validator.isNotNull(previousAttribute) &&
-				(previousAttribute.compareTo(attribute) > 0)) {
+				(previousAttribute.compareToIgnoreCase(attribute) > 0)) {
 
 				wrongOrder = true;
 			}
@@ -1728,12 +1788,12 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		return line;
 	}
 
-	protected static final String BASEDIR = "./";
-
 	protected static Pattern attributeNamePattern = Pattern.compile(
 		"[a-z]+[-_a-zA-Z0-9]*");
 	protected static Pattern emptyCollectionPattern = Pattern.compile(
 		"Collections\\.EMPTY_(LIST|MAP|SET)");
+	protected static Pattern javaSourceInsideJSPTagPattern = Pattern.compile(
+		"<%=(.+?)%>");
 	protected static Pattern languageKeyPattern = Pattern.compile(
 		"LanguageUtil.(?:get|format)\\([^;%]+|Liferay.Language.get\\('([^']+)");
 	protected static boolean portalSource;
@@ -1774,7 +1834,7 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		int level = 2;
 
 		if (portalSource) {
-			level = 3;
+			level = PORTAL_MAX_DIR_LEVEL;
 		}
 
 		for (int i = 0; i <= level; i++) {
@@ -1866,7 +1926,7 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 	}
 
 	private boolean _isPortalSource() {
-		if (getFile("portal-impl", 5) != null) {
+		if (getFile("portal-impl", PORTAL_MAX_DIR_LEVEL) != null) {
 			return true;
 		}
 		else {

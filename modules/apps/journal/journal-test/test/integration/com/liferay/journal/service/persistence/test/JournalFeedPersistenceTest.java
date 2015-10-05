@@ -46,6 +46,7 @@ import com.liferay.portal.test.rule.PersistenceTestRule;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -65,8 +66,9 @@ import java.util.Set;
  */
 @RunWith(Arquillian.class)
 public class JournalFeedPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -507,12 +509,12 @@ public class JournalFeedPersistenceTest {
 		Assert.assertTrue(Validator.equals(existingJournalFeed.getUuid(),
 				ReflectionTestUtil.invoke(existingJournalFeed,
 					"getOriginalUuid", new Class<?>[0])));
-		Assert.assertEquals(existingJournalFeed.getGroupId(),
-			ReflectionTestUtil.invoke(existingJournalFeed,
+		Assert.assertEquals(Long.valueOf(existingJournalFeed.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingJournalFeed,
 				"getOriginalGroupId", new Class<?>[0]));
 
-		Assert.assertEquals(existingJournalFeed.getGroupId(),
-			ReflectionTestUtil.invoke(existingJournalFeed,
+		Assert.assertEquals(Long.valueOf(existingJournalFeed.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingJournalFeed,
 				"getOriginalGroupId", new Class<?>[0]));
 		Assert.assertTrue(Validator.equals(existingJournalFeed.getFeedId(),
 				ReflectionTestUtil.invoke(existingJournalFeed,

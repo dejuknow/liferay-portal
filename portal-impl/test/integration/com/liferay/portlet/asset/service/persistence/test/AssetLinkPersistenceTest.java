@@ -41,6 +41,7 @@ import com.liferay.portlet.asset.service.persistence.AssetLinkUtil;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -57,8 +58,9 @@ import java.util.Set;
  * @generated
  */
 public class AssetLinkPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -432,15 +434,15 @@ public class AssetLinkPersistenceTest {
 
 		AssetLink existingAssetLink = _persistence.findByPrimaryKey(newAssetLink.getPrimaryKey());
 
-		Assert.assertEquals(existingAssetLink.getEntryId1(),
-			ReflectionTestUtil.invoke(existingAssetLink, "getOriginalEntryId1",
-				new Class<?>[0]));
-		Assert.assertEquals(existingAssetLink.getEntryId2(),
-			ReflectionTestUtil.invoke(existingAssetLink, "getOriginalEntryId2",
-				new Class<?>[0]));
-		Assert.assertEquals(existingAssetLink.getType(),
-			ReflectionTestUtil.invoke(existingAssetLink, "getOriginalType",
-				new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingAssetLink.getEntryId1()),
+			ReflectionTestUtil.<Long>invoke(existingAssetLink,
+				"getOriginalEntryId1", new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingAssetLink.getEntryId2()),
+			ReflectionTestUtil.<Long>invoke(existingAssetLink,
+				"getOriginalEntryId2", new Class<?>[0]));
+		Assert.assertEquals(Integer.valueOf(existingAssetLink.getType()),
+			ReflectionTestUtil.<Integer>invoke(existingAssetLink,
+				"getOriginalType", new Class<?>[0]));
 	}
 
 	protected AssetLink addAssetLink() throws Exception {

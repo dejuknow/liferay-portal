@@ -45,6 +45,7 @@ import com.liferay.portal.test.rule.PersistenceTestRule;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -64,8 +65,9 @@ import java.util.Set;
  */
 @RunWith(Arquillian.class)
 public class DDLRecordPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -148,6 +150,8 @@ public class DDLRecordPersistenceTest {
 
 		newDDLRecord.setDisplayIndex(RandomTestUtil.nextInt());
 
+		newDDLRecord.setLastPublishDate(RandomTestUtil.nextDate());
+
 		_ddlRecords.add(_persistence.update(newDDLRecord));
 
 		DDLRecord existingDDLRecord = _persistence.findByPrimaryKey(newDDLRecord.getPrimaryKey());
@@ -181,6 +185,9 @@ public class DDLRecordPersistenceTest {
 			newDDLRecord.getVersion());
 		Assert.assertEquals(existingDDLRecord.getDisplayIndex(),
 			newDDLRecord.getDisplayIndex());
+		Assert.assertEquals(Time.getShortTimestamp(
+				existingDDLRecord.getLastPublishDate()),
+			Time.getShortTimestamp(newDDLRecord.getLastPublishDate()));
 	}
 
 	@Test
@@ -259,7 +266,8 @@ public class DDLRecordPersistenceTest {
 			"recordId", true, "groupId", true, "companyId", true, "userId",
 			true, "userName", true, "versionUserId", true, "versionUserName",
 			true, "createDate", true, "modifiedDate", true, "DDMStorageId",
-			true, "recordSetId", true, "version", true, "displayIndex", true);
+			true, "recordSetId", true, "version", true, "displayIndex", true,
+			"lastPublishDate", true);
 	}
 
 	@Test
@@ -467,9 +475,9 @@ public class DDLRecordPersistenceTest {
 		Assert.assertTrue(Validator.equals(existingDDLRecord.getUuid(),
 				ReflectionTestUtil.invoke(existingDDLRecord, "getOriginalUuid",
 					new Class<?>[0])));
-		Assert.assertEquals(existingDDLRecord.getGroupId(),
-			ReflectionTestUtil.invoke(existingDDLRecord, "getOriginalGroupId",
-				new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingDDLRecord.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingDDLRecord,
+				"getOriginalGroupId", new Class<?>[0]));
 	}
 
 	protected DDLRecord addDDLRecord() throws Exception {
@@ -502,6 +510,8 @@ public class DDLRecordPersistenceTest {
 		ddlRecord.setVersion(RandomTestUtil.randomString());
 
 		ddlRecord.setDisplayIndex(RandomTestUtil.nextInt());
+
+		ddlRecord.setLastPublishDate(RandomTestUtil.nextDate());
 
 		_ddlRecords.add(_persistence.update(ddlRecord));
 

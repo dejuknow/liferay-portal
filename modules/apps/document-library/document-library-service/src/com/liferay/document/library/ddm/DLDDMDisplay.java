@@ -14,13 +14,12 @@
 
 package com.liferay.document.library.ddm;
 
+import com.liferay.dynamic.data.mapping.storage.StorageType;
+import com.liferay.dynamic.data.mapping.util.BaseDDMDisplay;
+import com.liferay.dynamic.data.mapping.util.DDMDisplay;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.util.PortletKeys;
 import com.liferay.portlet.documentlibrary.model.DLFileEntryMetadata;
-import com.liferay.portlet.dynamicdatamapping.storage.StorageType;
-import com.liferay.portlet.dynamicdatamapping.util.BaseDDMDisplay;
-import com.liferay.portlet.dynamicdatamapping.util.DDMDisplay;
-import com.liferay.portlet.dynamicdatamapping.util.DDMPermissionHandler;
 
 import java.util.Locale;
 
@@ -34,11 +33,6 @@ import org.osgi.service.component.annotations.Component;
 	service = DDMDisplay.class
 )
 public class DLDDMDisplay extends BaseDDMDisplay {
-
-	@Override
-	public DDMPermissionHandler getDDMPermissionHandler() {
-		return _ddmPermissionHandler;
-	}
 
 	@Override
 	public String getPortletId() {
@@ -59,8 +53,5 @@ public class DLDDMDisplay extends BaseDDMDisplay {
 	public String getStructureType() {
 		return DLFileEntryMetadata.class.getName();
 	}
-
-	private final DDMPermissionHandler _ddmPermissionHandler =
-		new DLDDMPermissionHandler();
 
 }

@@ -41,6 +41,7 @@ import com.liferay.portal.test.rule.PersistenceTestRule;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -57,8 +58,9 @@ import java.util.Set;
  * @generated
  */
 public class VirtualHostPersistenceTest {
+	@ClassRule
 	@Rule
-	public final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
+	public static final AggregateTestRule aggregateTestRule = new AggregateTestRule(new LiferayIntegrationTestRule(),
 			PersistenceTestRule.INSTANCE,
 			new TransactionalTestRule(Propagation.REQUIRED));
 
@@ -392,11 +394,11 @@ public class VirtualHostPersistenceTest {
 				ReflectionTestUtil.invoke(existingVirtualHost,
 					"getOriginalHostname", new Class<?>[0])));
 
-		Assert.assertEquals(existingVirtualHost.getCompanyId(),
-			ReflectionTestUtil.invoke(existingVirtualHost,
+		Assert.assertEquals(Long.valueOf(existingVirtualHost.getCompanyId()),
+			ReflectionTestUtil.<Long>invoke(existingVirtualHost,
 				"getOriginalCompanyId", new Class<?>[0]));
-		Assert.assertEquals(existingVirtualHost.getLayoutSetId(),
-			ReflectionTestUtil.invoke(existingVirtualHost,
+		Assert.assertEquals(Long.valueOf(existingVirtualHost.getLayoutSetId()),
+			ReflectionTestUtil.<Long>invoke(existingVirtualHost,
 				"getOriginalLayoutSetId", new Class<?>[0]));
 	}
 

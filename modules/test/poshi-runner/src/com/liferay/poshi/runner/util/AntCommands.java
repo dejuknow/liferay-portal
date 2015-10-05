@@ -14,9 +14,11 @@
 
 package com.liferay.poshi.runner.util;
 
+import com.liferay.poshi.runner.PoshiRunnerGetterUtil;
 import com.liferay.poshi.runner.selenium.LiferaySelenium;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStreamReader;
 
 import java.util.concurrent.Callable;
@@ -41,12 +43,10 @@ public class AntCommands implements Callable<Void> {
 
 		StringBuilder sb = new StringBuilder();
 
+		String projectDirName = PoshiRunnerGetterUtil.getProjectDirName();
+
 		if (!OSDetector.isWindows()) {
-			String projectDirName = _liferaySelenium.getProjectDirName();
-
 			projectDirName = StringUtil.replace(projectDirName, "\\", "//");
-
-			runtime.exec("/bin/bash cd " + projectDirName);
 
 			sb.append("/bin/bash ant -f ");
 			sb.append(_fileName);
@@ -56,8 +56,6 @@ public class AntCommands implements Callable<Void> {
 			sb.append(PropsValues.TEST_NAME);
 		}
 		else {
-			runtime.exec("cmd /c cd " + _liferaySelenium.getProjectDirName());
-
 			sb.append("cmd /c ant -f ");
 			sb.append(_fileName);
 			sb.append(" ");
@@ -66,7 +64,8 @@ public class AntCommands implements Callable<Void> {
 			sb.append(PropsValues.TEST_NAME);
 		}
 
-		Process process = runtime.exec(sb.toString());
+		Process process = runtime.exec(
+			sb.toString(), null, new File(projectDirName));
 
 		InputStreamReader inputStreamReader = new InputStreamReader(
 			process.getInputStream());

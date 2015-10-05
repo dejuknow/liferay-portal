@@ -265,6 +265,22 @@ public interface MBDiscussionModel extends AttachedModel, BaseModel<MBDiscussion
 	 */
 	public void setThreadId(long threadId);
 
+	/**
+	 * Returns the last publish date of this message boards discussion.
+	 *
+	 * @return the last publish date of this message boards discussion
+	 */
+	@Override
+	public Date getLastPublishDate();
+
+	/**
+	 * Sets the last publish date of this message boards discussion.
+	 *
+	 * @param lastPublishDate the last publish date of this message boards discussion
+	 */
+	@Override
+	public void setLastPublishDate(Date lastPublishDate);
+
 	@Override
 	public boolean isNew();
 

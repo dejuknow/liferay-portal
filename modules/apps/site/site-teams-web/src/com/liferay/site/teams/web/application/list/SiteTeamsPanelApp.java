@@ -17,7 +17,7 @@ package com.liferay.site.teams.web.application.list;
 import com.liferay.application.list.BaseControlPanelEntryPanelApp;
 import com.liferay.application.list.PanelApp;
 import com.liferay.application.list.constants.PanelCategoryKeys;
-import com.liferay.portal.service.PortletLocalService;
+import com.liferay.portal.model.Portlet;
 import com.liferay.site.teams.web.constants.SiteTeamsPortletKeys;
 
 import org.osgi.service.component.annotations.Component;
@@ -37,20 +37,16 @@ import org.osgi.service.component.annotations.Reference;
 public class SiteTeamsPanelApp extends BaseControlPanelEntryPanelApp {
 
 	@Override
-	public String getParentCategoryKey() {
-		return PanelCategoryKeys.SITE_ADMINISTRATION_USERS;
-	}
-
-	@Override
 	public String getPortletId() {
-		return SiteTeamsPortletKeys.SITE_TEAMS_ADMIN;
+		return SiteTeamsPortletKeys.SITE_TEAMS;
 	}
 
-	@Reference(unbind = "-")
-	protected void setPortletLocalService(
-		PortletLocalService portletLocalService) {
-
-		_portletLocalService = portletLocalService;
+	@Reference(
+		target = "(javax.portlet.name=" + SiteTeamsPortletKeys.SITE_TEAMS + ")",
+		unbind = "-"
+	)
+	protected void setPortlet(Portlet portlet) {
+		super.setPortlet(portlet);
 	}
 
 }

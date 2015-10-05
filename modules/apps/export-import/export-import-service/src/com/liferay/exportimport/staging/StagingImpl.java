@@ -21,6 +21,7 @@ import com.liferay.portal.NoSuchLayoutBranchException;
 import com.liferay.portal.NoSuchLayoutRevisionException;
 import com.liferay.portal.PortletIdException;
 import com.liferay.portal.RemoteOptionsException;
+import com.liferay.portal.kernel.backgroundtask.BackgroundTaskManagerUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONArray;
@@ -73,7 +74,6 @@ import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.security.permission.PermissionThreadLocal;
 import com.liferay.portal.security.permission.ResourceActionsUtil;
-import com.liferay.portal.service.BackgroundTaskLocalServiceUtil;
 import com.liferay.portal.service.GroupLocalServiceUtil;
 import com.liferay.portal.service.LayoutBranchLocalServiceUtil;
 import com.liferay.portal.service.LayoutLocalServiceUtil;
@@ -103,9 +103,7 @@ import com.liferay.portlet.exportimport.LARFileSizeException;
 import com.liferay.portlet.exportimport.LARTypeException;
 import com.liferay.portlet.exportimport.MissingReferenceException;
 import com.liferay.portlet.exportimport.RemoteExportException;
-import com.liferay.portlet.exportimport.backgroundtask.LayoutRemoteStagingBackgroundTaskExecutor;
-import com.liferay.portlet.exportimport.backgroundtask.LayoutStagingBackgroundTaskExecutor;
-import com.liferay.portlet.exportimport.backgroundtask.PortletStagingBackgroundTaskExecutor;
+import com.liferay.portlet.exportimport.background.task.BackgroundTaskExecutorNames;
 import com.liferay.portlet.exportimport.configuration.ExportImportConfigurationConstants;
 import com.liferay.portlet.exportimport.configuration.ExportImportConfigurationParameterMapFactory;
 import com.liferay.portlet.exportimport.configuration.ExportImportConfigurationSettingsMapFactory;
@@ -297,7 +295,7 @@ public class StagingImpl implements Staging {
 		Map<String, Serializable> settingsMap =
 			exportImportConfiguration.getSettingsMap();
 
-		long remoteGroupId = MapUtil.getLong(settingsMap, "remoteGroupId");
+		long targetGroupId = MapUtil.getLong(settingsMap, "targetGroupId");
 		String remoteAddress = MapUtil.getString(settingsMap, "remoteAddress");
 		int remotePort = MapUtil.getInteger(settingsMap, "remotePort");
 		String remotePathContext = MapUtil.getString(
@@ -306,7 +304,7 @@ public class StagingImpl implements Staging {
 			settingsMap, "secureConnection");
 
 		validateRemoteGroup(
-			exportImportConfiguration.getGroupId(), remoteGroupId,
+			exportImportConfiguration.getGroupId(), targetGroupId,
 			remoteAddress, remotePort, remotePathContext, secureConnection);
 
 		boolean remotePrivateLayout = MapUtil.getBoolean(
@@ -346,23 +344,21 @@ public class StagingImpl implements Staging {
 
 		User user = permissionChecker.getUser();
 
-		Map<String, Serializable> settingsMap =
-			ExportImportConfigurationSettingsMapFactory.buildSettingsMap(
-				user.getUserId(), sourceGroupId, privateLayout, layoutIdMap,
-				parameterMap, remoteAddress, remotePort, remotePathContext,
-				secureConnection, remoteGroupId, remotePrivateLayout,
-				user.getLocale(), user.getTimeZone());
-
-		ServiceContext serviceContext = new ServiceContext();
+		Map<String, Serializable> publishLayoutRemoteSettingsMap =
+			ExportImportConfigurationSettingsMapFactory.
+				buildPublishLayoutRemoteSettingsMap(
+					user.getUserId(), sourceGroupId, privateLayout, layoutIdMap,
+					parameterMap, remoteAddress, remotePort, remotePathContext,
+					secureConnection, remoteGroupId, remotePrivateLayout,
+					user.getLocale(), user.getTimeZone());
 
 		ExportImportConfiguration exportImportConfiguration =
 			ExportImportConfigurationLocalServiceUtil.
-				addExportImportConfiguration(
-					user.getUserId(), sourceGroupId, StringPool.BLANK,
-					StringPool.BLANK, ExportImportConfigurationConstants.
+				addDraftExportImportConfiguration(
+					user.getUserId(),
+					ExportImportConfigurationConstants.
 						TYPE_PUBLISH_LAYOUT_REMOTE,
-					settingsMap, WorkflowConstants.STATUS_DRAFT,
-					serviceContext);
+					publishLayoutRemoteSettingsMap);
 
 		doCopyRemoteLayouts(
 			exportImportConfiguration, remoteAddress, remotePort,
@@ -570,8 +566,7 @@ public class StagingImpl implements Staging {
 
 	@Override
 	public JSONArray getErrorMessagesJSONArray(
-		Locale locale, Map<String, MissingReference> missingReferences,
-		Map<String, Serializable> contextMap) {
+		Locale locale, Map<String, MissingReference> missingReferences) {
 
 		JSONArray errorMessagesJSONArray = JSONFactoryUtil.createJSONArray();
 
@@ -653,15 +648,24 @@ public class StagingImpl implements Staging {
 		return errorMessagesJSONArray;
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link
+	 *             #getErrorMessagesJSONArray(Locale, Map<String,
+	 *             MissingReference>)}
+	 */
+	@Deprecated
+	@Override
+	public JSONArray getErrorMessagesJSONArray(
+		Locale locale, Map<String, MissingReference> missingReferences,
+		Map<String, Serializable> contextMap) {
+
+		return getErrorMessagesJSONArray(locale, missingReferences);
+	}
+
 	@Override
 	public JSONObject getExceptionMessagesJSONObject(
-		Locale locale, Exception e, Map<String, Serializable> contextMap) {
-
-		String cmd = null;
-
-		if (contextMap != null) {
-			cmd = (String)contextMap.get(Constants.CMD);
-		}
+		Locale locale, Exception e,
+		ExportImportConfiguration exportImportConfiguration) {
 
 		JSONObject exceptionMessagesJSONObject =
 			JSONFactoryUtil.createJSONObject();
@@ -705,8 +709,16 @@ public class StagingImpl implements Staging {
 			catch (Exception e1) {
 			}
 
-			if (Validator.equals(cmd, Constants.PUBLISH_TO_LIVE) ||
-				Validator.equals(cmd, Constants.PUBLISH_TO_REMOTE)) {
+			if ((exportImportConfiguration != null) &&
+				((exportImportConfiguration.getType() ==
+					ExportImportConfigurationConstants.
+						TYPE_PUBLISH_LAYOUT_LOCAL) ||
+				(exportImportConfiguration.getType() ==
+					ExportImportConfigurationConstants.
+						TYPE_PUBLISH_LAYOUT_REMOTE) ||
+				(exportImportConfiguration.getType() ==
+					ExportImportConfigurationConstants.
+						TYPE_PUBLISH_PORTLET))) {
 
 				errorMessage = LanguageUtil.get(
 					locale,
@@ -804,8 +816,16 @@ public class StagingImpl implements Staging {
 		else if (e instanceof MissingReferenceException) {
 			MissingReferenceException mre = (MissingReferenceException)e;
 
-			if (Validator.equals(cmd, Constants.PUBLISH_TO_LIVE) ||
-				Validator.equals(cmd, Constants.PUBLISH_TO_REMOTE)) {
+			if ((exportImportConfiguration != null) &&
+				((exportImportConfiguration.getType() ==
+					ExportImportConfigurationConstants.
+						TYPE_PUBLISH_LAYOUT_LOCAL) ||
+				(exportImportConfiguration.getType() ==
+					ExportImportConfigurationConstants.
+						TYPE_PUBLISH_LAYOUT_REMOTE) ||
+				(exportImportConfiguration.getType() ==
+					ExportImportConfigurationConstants.
+						TYPE_PUBLISH_PORTLET))) {
 
 				errorMessage = LanguageUtil.get(
 					locale,
@@ -822,12 +842,10 @@ public class StagingImpl implements Staging {
 			MissingReferences missingReferences = mre.getMissingReferences();
 
 			errorMessagesJSONArray = getErrorMessagesJSONArray(
-				locale, missingReferences.getDependencyMissingReferences(),
-				contextMap);
+				locale, missingReferences.getDependencyMissingReferences());
 			errorType = ServletResponseConstants.SC_FILE_CUSTOM_EXCEPTION;
 			warningMessagesJSONArray = getWarningMessagesJSONArray(
-				locale, missingReferences.getWeakMissingReferences(),
-				contextMap);
+				locale, missingReferences.getWeakMissingReferences());
 		}
 		else if (e instanceof PortletDataException) {
 			PortletDataException pde = (PortletDataException)e;
@@ -925,6 +943,19 @@ public class StagingImpl implements Staging {
 		}
 
 		return exceptionMessagesJSONObject;
+	}
+
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link
+	 *             #getExceptionMessagesJSONObject(Locale, Exception,
+	 *             ExportImportConfiguration)}
+	 */
+	@Deprecated
+	@Override
+	public JSONObject getExceptionMessagesJSONObject(
+		Locale locale, Exception e, Map<String, Serializable> contextMap) {
+
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -1080,8 +1111,7 @@ public class StagingImpl implements Staging {
 
 	@Override
 	public JSONArray getWarningMessagesJSONArray(
-		Locale locale, Map<String, MissingReference> missingReferences,
-		Map<String, Serializable> contextMap) {
+		Locale locale, Map<String, MissingReference> missingReferences) {
 
 		JSONArray warningMessagesJSONArray = JSONFactoryUtil.createJSONArray();
 
@@ -1118,6 +1148,20 @@ public class StagingImpl implements Staging {
 		}
 
 		return warningMessagesJSONArray;
+	}
+
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link
+	 *             #getWarningMessagesJSONArray(Locale, Map<String,
+	 *             MissingReference>)}
+	 */
+	@Deprecated
+	@Override
+	public JSONArray getWarningMessagesJSONArray(
+		Locale locale, Map<String, MissingReference> missingReferences,
+		Map<String, Serializable> contextMap) {
+
+		return getWarningMessagesJSONArray(locale, missingReferences);
 	}
 
 	@Override
@@ -1257,14 +1301,14 @@ public class StagingImpl implements Staging {
 
 		Map<String, Serializable> taskContextMap = new HashMap<>();
 
-		taskContextMap.put(Constants.CMD, Constants.PUBLISH_TO_LIVE);
 		taskContextMap.put(
 			"exportImportConfigurationId",
 			exportImportConfiguration.getExportImportConfigurationId());
 
-		BackgroundTaskLocalServiceUtil.addBackgroundTask(
+		BackgroundTaskManagerUtil.addBackgroundTask(
 			userId, exportImportConfiguration.getGroupId(), StringPool.BLANK,
-			null, LayoutStagingBackgroundTaskExecutor.class, taskContextMap,
+			BackgroundTaskExecutorNames.
+				LAYOUT_STAGING_BACKGROUND_TASK_EXECUTOR, taskContextMap,
 			new ServiceContext());
 	}
 
@@ -1292,19 +1336,19 @@ public class StagingImpl implements Staging {
 
 		User user = UserLocalServiceUtil.getUser(userId);
 
-		Map<String, Serializable> settingsMap =
-			ExportImportConfigurationSettingsMapFactory.buildSettingsMap(
-				userId, sourceGroupId, targetGroupId, privateLayout, layoutIds,
-				parameterMap, user.getLocale(), user.getTimeZone());
+		Map<String, Serializable> publishLayoutLocalSettingsMap =
+			ExportImportConfigurationSettingsMapFactory.
+				buildPublishLayoutLocalSettingsMap(
+					user, sourceGroupId, targetGroupId, privateLayout,
+					layoutIds, parameterMap);
 
 		ExportImportConfiguration exportImportConfiguration =
 			ExportImportConfigurationLocalServiceUtil.
-				addExportImportConfiguration(
-					userId, sourceGroupId, StringPool.BLANK, StringPool.BLANK,
+				addDraftExportImportConfiguration(
+					userId,
 					ExportImportConfigurationConstants.
 						TYPE_PUBLISH_LAYOUT_LOCAL,
-					settingsMap, WorkflowConstants.STATUS_DRAFT,
-					new ServiceContext());
+					publishLayoutLocalSettingsMap);
 
 		publishLayouts(userId, exportImportConfiguration);
 	}
@@ -1382,16 +1426,16 @@ public class StagingImpl implements Staging {
 
 		Map<String, Serializable> taskContextMap = new HashMap<>();
 
-		taskContextMap.put(Constants.CMD, Constants.PUBLISH_TO_LIVE);
 		taskContextMap.put(
 			"exportImportConfigurationId",
 			exportImportConfiguration.getExportImportConfigurationId());
 
-		BackgroundTaskLocalServiceUtil.addBackgroundTask(
+		BackgroundTaskManagerUtil.addBackgroundTask(
 			userId, exportImportConfiguration.getGroupId(),
-			exportImportConfiguration.getName(), null,
-			PortletStagingBackgroundTaskExecutor.class, taskContextMap,
-			new ServiceContext());
+			exportImportConfiguration.getName(),
+			BackgroundTaskExecutorNames.
+				PORTLET_STAGING_BACKGROUND_TASK_EXECUTOR,
+			taskContextMap, new ServiceContext());
 	}
 
 	@Override
@@ -1414,21 +1458,19 @@ public class StagingImpl implements Staging {
 
 		User user = UserLocalServiceUtil.getUser(userId);
 
-		Map<String, Serializable> settingsMap =
-			ExportImportConfigurationSettingsMapFactory.buildSettingsMap(
-				userId, sourceGroupId, sourcePlid, targetGroupId, targetPlid,
-				portletId, parameterMap, Constants.PUBLISH_TO_LIVE,
-				user.getLocale(), user.getTimeZone());
-
-		ServiceContext serviceContext = new ServiceContext();
+		Map<String, Serializable> publishPortletSettingsMap =
+			ExportImportConfigurationSettingsMapFactory.
+				buildPublishPortletSettingsMap(
+					userId, sourceGroupId, sourcePlid, targetGroupId,
+					targetPlid, portletId, parameterMap, user.getLocale(),
+					user.getTimeZone());
 
 		ExportImportConfiguration exportImportConfiguration =
 			ExportImportConfigurationLocalServiceUtil.
-				addExportImportConfiguration(
-					userId, sourceGroupId, portletId, StringPool.BLANK,
+				addDraftExportImportConfiguration(
+					userId,
 					ExportImportConfigurationConstants.TYPE_PUBLISH_PORTLET,
-					settingsMap, WorkflowConstants.STATUS_DRAFT,
-					serviceContext);
+					publishPortletSettingsMap);
 
 		publishPortlet(userId, exportImportConfiguration);
 	}
@@ -1974,7 +2016,6 @@ public class StagingImpl implements Staging {
 
 		Map<String, Serializable> taskContextMap = new HashMap<>();
 
-		taskContextMap.put(Constants.CMD, Constants.PUBLISH_TO_REMOTE);
 		taskContextMap.put(
 			"exportImportConfigurationId",
 			exportImportConfiguration.getExportImportConfigurationId());
@@ -1994,11 +2035,12 @@ public class StagingImpl implements Staging {
 
 		taskContextMap.put("httpPrincipal", httpPrincipal);
 
-		BackgroundTaskLocalServiceUtil.addBackgroundTask(
+		BackgroundTaskManagerUtil.addBackgroundTask(
 			user.getUserId(), exportImportConfiguration.getGroupId(),
-			StringPool.BLANK, null,
-			LayoutRemoteStagingBackgroundTaskExecutor.class, taskContextMap,
-			new ServiceContext());
+			StringPool.BLANK,
+			BackgroundTaskExecutorNames.
+				LAYOUT_REMOTE_STAGING_BACKGROUND_TASK_EXECUTOR,
+			taskContextMap, new ServiceContext());
 	}
 
 	protected boolean getBoolean(
@@ -2199,14 +2241,8 @@ public class StagingImpl implements Staging {
 			privateLayout = false;
 		}
 
-		String scope = ParamUtil.getString(portletRequest, "scope");
-
-		long[] layoutIds = null;
-
-		if (scope.equals("selected-pages")) {
-			layoutIds = ExportImportHelperUtil.getLayoutIds(
-				portletRequest, targetGroupId);
-		}
+		long[] layoutIds = ExportImportHelperUtil.getLayoutIds(
+			portletRequest, targetGroupId);
 
 		if (schedule) {
 			String groupName = getSchedulerGroupName(
@@ -2238,20 +2274,13 @@ public class StagingImpl implements Staging {
 
 			LayoutServiceUtil.schedulePublishToLive(
 				sourceGroupId, targetGroupId, privateLayout, layoutIds,
-				parameterMap, scope, null, null, groupName, cronText,
-				startCalendar.getTime(), schedulerEndDate, description);
+				parameterMap, groupName, cronText, startCalendar.getTime(),
+				schedulerEndDate, description);
 		}
 		else {
-			if (scope.equals("all-pages")) {
-				publishLayouts(
-					themeDisplay.getUserId(), sourceGroupId, targetGroupId,
-					privateLayout, parameterMap);
-			}
-			else {
-				publishLayouts(
-					themeDisplay.getUserId(), sourceGroupId, targetGroupId,
-					privateLayout, layoutIds, parameterMap);
-			}
+			publishLayouts(
+				themeDisplay.getUserId(), sourceGroupId, targetGroupId,
+				privateLayout, layoutIds, parameterMap);
 		}
 	}
 
@@ -2269,17 +2298,8 @@ public class StagingImpl implements Staging {
 			privateLayout = false;
 		}
 
-		String scope = ParamUtil.getString(portletRequest, "scope");
-
-		if (Validator.isNull(scope)) {
-			scope = "all-pages";
-		}
-
-		Map<Long, Boolean> layoutIdMap = null;
-
-		if (scope.equals("selected-pages")) {
-			layoutIdMap = ExportImportHelperUtil.getLayoutIdMap(portletRequest);
-		}
+		Map<Long, Boolean> layoutIdMap = ExportImportHelperUtil.getLayoutIdMap(
+			portletRequest);
 
 		Map<String, String[]> parameterMap =
 			ExportImportConfigurationParameterMapFactory.buildParameterMap(

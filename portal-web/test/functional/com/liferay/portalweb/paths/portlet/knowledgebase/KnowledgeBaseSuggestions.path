@@ -14,6 +14,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>CONTENT_INPUT</td>
+	<td>//textarea[contains(@id,'knowledgebaseportlet_content')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>CONTENT</td>
 	<td>//div[@class='kb-article-comment']//div[contains(.,'${kbSuggestionBody}')]</td>
 	<td></td>
@@ -51,6 +56,32 @@
 <tr>
 	<td>DELETE_BUTTON</td>
 	<td>//tr[contains(.,'${key_kbSuggestionBody}')]//a[contains(.,'Delete')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<!--NAVIGATION-->
+<tr>
+	<td>NAVIGATION_BAR</td>
+	<td>//ul[contains(@id,'knowledgebaseportlet') and contains(@class,'navbar')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>NAVIGATION_NEW</td>
+	<td>//ul[contains(@class,'navbar')]//a[contains(.,'New')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>NAVIGATION_IN_PROGRESS</td>
+	<td>//ul[contains(@class,'navbar')]//a[contains(.,'In Progress')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>NAVIGATION_RESOLVED</td>
+	<td>//ul[contains(@class,'navbar')]//a[contains(.,'Resolved')]</td>
 	<td></td>
 </tr>
 </tbody>

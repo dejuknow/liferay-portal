@@ -24,7 +24,9 @@ import com.liferay.portal.NoSuchGroupException;
 import com.liferay.portal.NoSuchLayoutSetException;
 import com.liferay.portal.PendingBackgroundTaskException;
 import com.liferay.portal.RequiredGroupException;
+import com.liferay.portal.kernel.backgroundtask.BackgroundTask;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskConstants;
+import com.liferay.portal.kernel.backgroundtask.BackgroundTaskManagerUtil;
 import com.liferay.portal.kernel.cache.ThreadLocalCachable;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -40,7 +42,6 @@ import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.CharPool;
-import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.FriendlyURLNormalizerUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -58,11 +59,9 @@ import com.liferay.portal.kernel.util.TreeModelTasksAdapter;
 import com.liferay.portal.kernel.util.TreePathUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.workflow.WorkflowHandler;
 import com.liferay.portal.kernel.workflow.WorkflowHandlerRegistryUtil;
 import com.liferay.portal.model.Account;
-import com.liferay.portal.model.BackgroundTask;
 import com.liferay.portal.model.Company;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.GroupConstants;
@@ -91,6 +90,7 @@ import com.liferay.portal.security.auth.CompanyThreadLocal;
 import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.security.permission.PermissionCacheUtil;
 import com.liferay.portal.security.permission.ResourceActionsUtil;
+import com.liferay.portal.security.permission.RolePermissions;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.base.GroupLocalServiceBaseImpl;
 import com.liferay.portal.theme.ThemeLoader;
@@ -308,8 +308,7 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 
 		if (className.equals(Group.class.getName())) {
 			if (!site && (liveGroupId == 0) &&
-				!groupKey.equals(GroupConstants.CONTROL_PANEL) &&
-				!groupKey.equals(GroupConstants.USER_PERSONAL_PANEL)) {
+				!groupKey.equals(GroupConstants.CONTROL_PANEL)) {
 
 				throw new IllegalArgumentException();
 			}
@@ -713,12 +712,6 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 						GroupConstants.USER_PERSONAL_SITE_FRIENDLY_URL;
 					site = false;
 				}
-				else if (groupKey.equals(GroupConstants.USER_PERSONAL_PANEL)) {
-					type = GroupConstants.TYPE_SITE_PRIVATE;
-					friendlyURL =
-						GroupConstants.USER_PERSONAL_PANEL_FRIENDLY_URL;
-					site = false;
-				}
 
 				group = groupLocalService.addGroup(
 					defaultUserId, GroupConstants.DEFAULT_PARENT_GROUP_ID,
@@ -747,15 +740,6 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 
 				if (layoutSet.getPageCount() == 0) {
 					addDefaultGuestPublicLayouts(group);
-				}
-			}
-
-			if (group.isUserPersonalPanel()) {
-				LayoutSet layoutSet = layoutSetLocalService.getLayoutSet(
-					group.getGroupId(), true);
-
-				if (layoutSet.getPageCount() == 0) {
-					addUserPersonalPanelLayouts(group);
 				}
 			}
 
@@ -802,7 +786,7 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 			}
 
 			List<BackgroundTask> backgroundTasks =
-				backgroundTaskLocalService.getBackgroundTasks(
+				BackgroundTaskManagerUtil.getBackgroundTasks(
 					group.getGroupId(),
 					BackgroundTaskConstants.STATUS_IN_PROGRESS);
 
@@ -813,7 +797,7 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 
 			// Background tasks
 
-			backgroundTaskLocalService.deleteGroupBackgroundTasks(
+			BackgroundTaskManagerUtil.deleteGroupBackgroundTasks(
 				group.getGroupId());
 
 			// Layout set branches
@@ -923,13 +907,6 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 			// Expando
 
 			expandoRowLocalService.deleteRows(group.getGroupId());
-
-			// Shopping
-
-			shoppingCartLocalService.deleteGroupCarts(group.getGroupId());
-			shoppingCategoryLocalService.deleteCategories(group.getGroupId());
-			shoppingCouponLocalService.deleteCoupons(group.getGroupId());
-			shoppingOrderLocalService.deleteOrders(group.getGroupId());
 
 			// Social
 
@@ -3494,6 +3471,9 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 
 		ServiceContext serviceContext = new ServiceContext();
 
+		serviceContext.setAttribute(
+			"layout.instanceable.allowed", Boolean.TRUE);
+
 		layoutLocalService.addLayout(
 			defaultUserId, group.getGroupId(), true,
 			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID,
@@ -3629,19 +3609,17 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 			PortletDataHandlerKeys.PORTLET_DATA_CONTROL_DEFAULT,
 			new String[] {Boolean.TRUE.toString()});
 
-		Map<String, Serializable> settingsMap =
-			ExportImportConfigurationSettingsMapFactory.buildImportSettingsMap(
-				defaultUser.getUserId(), group.getGroupId(), false, null,
-				parameterMap, Constants.IMPORT, defaultUser.getLocale(),
-				defaultUser.getTimeZone(), larFile.getName());
+		Map<String, Serializable> importLayoutSettingsMap =
+			ExportImportConfigurationSettingsMapFactory.
+				buildImportLayoutSettingsMap(
+					defaultUser, group.getGroupId(), false, null, parameterMap);
 
 		ExportImportConfiguration exportImportConfiguration =
-			exportImportConfigurationLocalService.addExportImportConfiguration(
-				defaultUser.getUserId(), group.getGroupId(), StringPool.BLANK,
-				StringPool.BLANK,
-				ExportImportConfigurationConstants.TYPE_IMPORT_LAYOUT,
-				settingsMap, WorkflowConstants.STATUS_DRAFT,
-				new ServiceContext());
+			exportImportConfigurationLocalService.
+				addDraftExportImportConfiguration(
+					defaultUser.getUserId(),
+					ExportImportConfigurationConstants.TYPE_IMPORT_LAYOUT,
+					importLayoutSettingsMap);
 
 		exportImportLocalService.importLayouts(
 			exportImportConfiguration, larFile);
@@ -3672,25 +3650,6 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 				}
 			}
 		}
-	}
-
-	protected void addUserPersonalPanelLayouts(Group group)
-		throws PortalException {
-
-		long defaultUserId = userLocalService.getDefaultUserId(
-			group.getCompanyId());
-
-		String friendlyURL = getFriendlyURL(
-			PropsValues.USER_PERSONAL_PANEL_LAYOUT_FRIENDLY_URL);
-
-		ServiceContext serviceContext = new ServiceContext();
-
-		layoutLocalService.addLayout(
-			defaultUserId, group.getGroupId(), true,
-			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID,
-			PropsValues.USER_PERSONAL_PANEL_LAYOUT_NAME, StringPool.BLANK,
-			StringPool.BLANK, LayoutConstants.TYPE_USER_PERSONAL_PANEL, false,
-			friendlyURL, serviceContext);
 	}
 
 	protected void deletePortletData(Group group) throws PortalException {
@@ -3784,9 +3743,7 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 
 			String groupKey = group.getGroupKey();
 
-			if (groupKey.equals(GroupConstants.CONTROL_PANEL) ||
-				groupKey.equals(GroupConstants.USER_PERSONAL_PANEL)) {
-
+			if (groupKey.equals(GroupConstants.CONTROL_PANEL)) {
 				iterator.remove();
 
 				continue;
@@ -3899,32 +3856,31 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 
 		// Join by role permissions
 
-		List<?> rolePermissions = (List<?>)params.remove("rolePermissions");
+		RolePermissions rolePermissions = (RolePermissions)params.remove(
+			"rolePermissions");
 
 		if (rolePermissions != null) {
-			String resourceName = (String)rolePermissions.get(0);
-			Integer resourceScope = (Integer)rolePermissions.get(1);
-			String resourceActionId = (String)rolePermissions.get(2);
-			Long resourceRoleId = (Long)rolePermissions.get(3);
-
 			ResourceAction resourceAction =
 				resourceActionLocalService.fetchResourceAction(
-					resourceName, resourceActionId);
+					rolePermissions.getName(), rolePermissions.getActionId());
 
 			if (resourceAction != null) {
 				Set<Group> rolePermissionsGroups = new HashSet<>();
 
-				if (resourceBlockLocalService.isSupported(resourceName)) {
+				if (resourceBlockLocalService.isSupported(
+						rolePermissions.getName())) {
+
 					List<ResourceTypePermission> resourceTypePermissions =
 						resourceTypePermissionPersistence.findByRoleId(
-							resourceRoleId);
+							rolePermissions.getRoleId());
 
 					for (ResourceTypePermission resourceTypePermission :
 							resourceTypePermissions) {
 
 						if ((resourceTypePermission.getCompanyId() ==
 								companyId) &&
-							resourceName.equals(
+							Validator.equals(
+								rolePermissions.getName(),
 								resourceTypePermission.getName()) &&
 							resourceTypePermission.hasAction(resourceAction)) {
 
@@ -3940,13 +3896,14 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 				else {
 					List<ResourcePermission> resourcePermissions =
 						resourcePermissionPersistence.findByC_N_S(
-							companyId, resourceName, resourceScope);
+							companyId, rolePermissions.getName(),
+							rolePermissions.getScope());
 
 					for (ResourcePermission resourcePermission :
 							resourcePermissions) {
 
 						if ((resourcePermission.getRoleId() ==
-								resourceRoleId) &&
+								rolePermissions.getRoleId()) &&
 							resourcePermission.hasAction(
 								resourceAction)) {
 
@@ -3963,6 +3920,14 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 
 				groups.retainAll(rolePermissionsGroups);
 			}
+		}
+
+		// Join by Groups_Roles
+
+		Long roleId = (Long)params.remove("groupsRoles");
+
+		if (roleId != null) {
+			groups.retainAll(rolePersistence.getGroups(roleId));
 		}
 
 		if (userId == null) {
@@ -4011,14 +3976,6 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 
 		if (_log.isDebugEnabled() && !params.isEmpty()) {
 			_log.debug("Unprocessed parameters " + MapUtil.toString(params));
-		}
-
-		// Join by Groups_Roles
-
-		Long roleId = (Long)params.remove("groupsRoles");
-
-		if (roleId != null) {
-			joinedGroups.retainAll(rolePersistence.getGroups(roleId));
 		}
 
 		if (joinedGroups.size() > groups.size()) {

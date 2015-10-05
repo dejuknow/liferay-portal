@@ -15,6 +15,7 @@
 package com.liferay.exportimport.lar;
 
 import com.liferay.exportimport.xstream.ConverterAdapter;
+import com.liferay.exportimport.xstream.configurator.XStreamConfigurator;
 import com.liferay.portal.NoSuchRoleException;
 import com.liferay.portal.NoSuchTeamException;
 import com.liferay.portal.kernel.bean.BeanPropertiesUtil;
@@ -84,15 +85,14 @@ import com.liferay.portlet.exportimport.lar.ExportImportPathUtil;
 import com.liferay.portlet.exportimport.lar.ExportImportThreadLocal;
 import com.liferay.portlet.exportimport.lar.ManifestSummary;
 import com.liferay.portlet.exportimport.lar.PortletDataContext;
-import com.liferay.portlet.exportimport.lar.PortletDataContextListener;
 import com.liferay.portlet.exportimport.lar.PortletDataHandlerControl;
 import com.liferay.portlet.exportimport.lar.PortletDataHandlerKeys;
 import com.liferay.portlet.exportimport.lar.StagedModelDataHandlerUtil;
 import com.liferay.portlet.exportimport.lar.StagedModelType;
 import com.liferay.portlet.exportimport.lar.UserIdStrategy;
+import com.liferay.portlet.exportimport.xstream.XStreamAlias;
 import com.liferay.portlet.exportimport.xstream.XStreamAliasRegistryUtil;
 import com.liferay.portlet.exportimport.xstream.XStreamConverter;
-import com.liferay.portlet.exportimport.xstream.XStreamConverterRegistryUtil;
 import com.liferay.portlet.messageboards.model.MBMessage;
 import com.liferay.portlet.ratings.model.RatingsEntry;
 
@@ -114,6 +114,10 @@ import java.util.Map;
 import java.util.Set;
 
 import jodd.bean.BeanUtil;
+
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 
 /**
  * <p>
@@ -189,6 +193,12 @@ public class PortletDataContextImpl implements PortletDataContext {
 		}
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link
+	 *             BaseStagedModelDataHandler#exportAssetTags(
+	 *             PortletDataContext, StagedModel)}
+	 */
+	@Deprecated
 	@Override
 	public void addAssetTags(Class<?> clazz, long classPK) {
 		String[] tagNames = AssetTagLocalServiceUtil.getTagNames(
@@ -248,7 +258,6 @@ public class PortletDataContextImpl implements PortletDataContext {
 					classedModel);
 
 				addAssetLinks(clazz, classPK);
-				addAssetTags(clazz, classPK);
 				addExpando(element, path, classedModel, clazz);
 				addLocks(clazz, String.valueOf(classPK));
 				addPermissions(clazz, classPK);
@@ -400,7 +409,14 @@ public class PortletDataContextImpl implements PortletDataContext {
 			String roleName = role.getName();
 
 			if (role.isTeam()) {
-				roleName = PermissionExporter.ROLE_TEAM_PREFIX + roleName;
+				try {
+					roleName =
+						PermissionExporter.ROLE_TEAM_PREFIX +
+							role.getDescriptiveName();
+				}
+				catch (PortalException pe) {
+					_log.error(pe, pe);
+				}
 			}
 
 			KeyValuePair permission = new KeyValuePair(
@@ -1179,6 +1195,11 @@ public class PortletDataContextImpl implements PortletDataContext {
 	}
 
 	@Override
+	public Element getReferenceElement(Class<?> clazz, long classPK) {
+		return getReferenceElement(clazz.getName(), classPK);
+	}
+
+	@Override
 	public Element getReferenceElement(
 		Element parentElement, Class<?> clazz, long groupId, String uuid,
 		String referenceType) {
@@ -1208,6 +1229,20 @@ public class PortletDataContextImpl implements PortletDataContext {
 			parentStagedModel, className, classPK, null);
 
 		if (!referenceElements.isEmpty()) {
+			return referenceElements.get(0);
+		}
+
+		return null;
+	}
+
+	@Override
+	public Element getReferenceElement(String className, long classPK) {
+		Element parentElement = getImportDataRootElement();
+
+		List<Element> referenceElements = getReferenceElements(
+			parentElement, className, 0, null, classPK, null);
+
+		if (ListUtil.isNotEmpty(referenceElements)) {
 			return referenceElements.get(0);
 		}
 
@@ -1881,7 +1916,8 @@ public class PortletDataContextImpl implements PortletDataContext {
 	@Deprecated
 	@Override
 	public void setPortetDataContextListener(
-		PortletDataContextListener portletDataContextListener) {
+		com.liferay.portlet.exportimport.lar.PortletDataContextListener
+			portletDataContextListener) {
 	}
 
 	@Override
@@ -2450,22 +2486,32 @@ public class PortletDataContextImpl implements PortletDataContext {
 				XStreamAliasRegistryUtil.getAliasesClassLoader(
 					XStream.class.getClassLoader())));
 
-		Map<Class<?>, String> aliases = XStreamAliasRegistryUtil.getAliases();
-
-		for (Map.Entry<Class<?>, String> alias : aliases.entrySet()) {
-			_xStream.alias(alias.getValue(), alias.getKey());
-		}
-
-		Set<XStreamConverter> xStreamConverters =
-			XStreamConverterRegistryUtil.getXStreamConverters();
-
-		for (XStreamConverter xStreamConverter : xStreamConverters) {
-			_xStream.registerConverter(
-				new ConverterAdapter(xStreamConverter),
-				XStream.PRIORITY_VERY_HIGH);
-		}
-
 		_xStream.omitField(HashMap.class, "cache_bitmask");
+
+		if (ListUtil.isEmpty(_xStreamConfigurators)) {
+			return;
+		}
+
+		for (XStreamConfigurator xStreamConfigurator : _xStreamConfigurators) {
+			List<XStreamAlias> xStreamAliases =
+				xStreamConfigurator.getXStreamAliases();
+
+			if (ListUtil.isNotEmpty(xStreamAliases)) {
+				for (XStreamAlias xStreamAlias : xStreamAliases) {
+					_xStream.alias(
+						xStreamAlias.getName(), xStreamAlias.getClazz());
+				}
+			}
+
+			List<XStreamConverter> xStreamConverters =
+				xStreamConfigurator.getXStreamConverters();
+
+			for (XStreamConverter xStreamConverter : xStreamConverters) {
+				_xStream.registerConverter(
+					new ConverterAdapter(xStreamConverter),
+					XStream.PRIORITY_VERY_HIGH);
+			}
+		}
 	}
 
 	protected boolean isResourceMain(ClassedModel classedModel) {
@@ -2476,6 +2522,16 @@ public class PortletDataContextImpl implements PortletDataContext {
 		}
 
 		return true;
+	}
+
+	@Reference(
+		cardinality = ReferenceCardinality.MULTIPLE,
+		policy = ReferencePolicy.DYNAMIC
+	)
+	protected void setXStreamConfigurators(
+		List<XStreamConfigurator> xStreamConfigurators) {
+
+		_xStreamConfigurators = xStreamConfigurators;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
@@ -2524,6 +2580,7 @@ public class PortletDataContextImpl implements PortletDataContext {
 	private transient UserIdStrategy _userIdStrategy;
 	private long _userPersonalSiteGroupId;
 	private transient XStream _xStream;
+	private transient List<XStreamConfigurator> _xStreamConfigurators;
 	private transient ZipReader _zipReader;
 	private transient ZipWriter _zipWriter;
 

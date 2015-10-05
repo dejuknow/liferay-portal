@@ -16,6 +16,7 @@ package com.liferay.portal.dao.db;
 
 import com.liferay.counter.service.CounterLocalServiceUtil;
 import com.liferay.portal.dao.orm.common.SQLTransformer;
+import com.liferay.portal.kernel.configuration.Filter;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.Index;
 import com.liferay.portal.kernel.dao.db.IndexMetadata;
@@ -33,6 +34,8 @@ import com.liferay.portal.kernel.template.TemplateManagerUtil;
 import com.liferay.portal.kernel.util.ClassLoaderUtil;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -166,6 +169,16 @@ public abstract class BaseDB implements DB {
 	}
 
 	@Override
+	public int getMajorVersion() {
+		return _majorVersion;
+	}
+
+	@Override
+	public int getMinorVersion() {
+		return _minorVersion;
+	}
+
+	@Override
 	public String getTemplateFalse() {
 		return getTemplate()[2];
 	}
@@ -178,6 +191,11 @@ public abstract class BaseDB implements DB {
 	@Override
 	public String getType() {
 		return _type;
+	}
+
+	@Override
+	public String getVersionString() {
+		return _majorVersion + StringPool.PERIOD + _minorVersion;
 	}
 
 	@Override
@@ -337,6 +355,9 @@ public abstract class BaseDB implements DB {
 			boolean failOnError)
 		throws IOException, NamingException, SQLException {
 
+		template = applyMaxStringIndexLengthLimitation(
+			_columnLengthPattern.matcher(template));
+
 		if (evaluate) {
 			try {
 				template = evaluateVM(template.hashCode() + "", template);
@@ -456,8 +477,9 @@ public abstract class BaseDB implements DB {
 			String template, boolean evaluate, boolean failOnError)
 		throws IOException, NamingException, SQLException {
 
-		runSQLTemplateString(
-			DataAccess.getConnection(), template, evaluate, failOnError);
+		try (Connection connection = DataAccess.getConnection()) {
+			runSQLTemplateString(connection, template, evaluate, failOnError);
+		}
 	}
 
 	@Override
@@ -502,14 +524,47 @@ public abstract class BaseDB implements DB {
 		addIndexes(con, indexesSQL, validIndexNames);
 	}
 
-	protected BaseDB(String type) {
+	protected BaseDB(String type, int majorVersion, int minorVersion) {
 		_type = type;
+		_majorVersion = majorVersion;
+		_minorVersion = minorVersion;
 
 		String[] actual = getTemplate();
 
 		for (int i = 0; i < TEMPLATE.length; i++) {
 			_templateMap.put(TEMPLATE[i], actual[i]);
 		}
+	}
+
+	protected String applyMaxStringIndexLengthLimitation(Matcher matcher) {
+		int stringIndexMaxLength = GetterUtil.getInteger(
+			PropsUtil.get(
+				PropsKeys.DATABASE_STRING_INDEX_MAX_LENGTH,
+				new Filter(getType())),
+			-1);
+
+		if (stringIndexMaxLength < 0) {
+			return matcher.replaceAll(StringPool.BLANK);
+		}
+
+		StringBuffer sb = new StringBuffer();
+
+		String replacement = "\\(" + stringIndexMaxLength + "\\)";
+
+		while (matcher.find()) {
+			int length = Integer.valueOf(matcher.group(1));
+
+			if (length > stringIndexMaxLength) {
+				matcher.appendReplacement(sb, replacement);
+			}
+			else {
+				matcher.appendReplacement(sb, StringPool.BLANK);
+			}
+		}
+
+		matcher.appendTail(sb);
+
+		return sb.toString();
 	}
 
 	protected String[] buildColumnNameTokens(String line) {
@@ -616,8 +671,13 @@ public abstract class BaseDB implements DB {
 			template = sb.toString();
 		}
 
-		if (fileName.equals("indexes") && (this instanceof SybaseDB)) {
-			template = removeBooleanIndexes(sqlDir, template);
+		if (fileName.equals("indexes")) {
+			template = applyMaxStringIndexLengthLimitation(
+				_columnLengthPattern.matcher(template));
+
+			if (this instanceof SybaseDB) {
+				template = removeBooleanIndexes(sqlDir, template);
+			}
 		}
 
 		return template;
@@ -1070,6 +1130,8 @@ public abstract class BaseDB implements DB {
 
 	private static final Log _log = LogFactoryUtil.getLog(BaseDB.class);
 
+	private static final Pattern _columnLengthPattern = Pattern.compile(
+		"\\[\\$COLUMN_LENGTH:(\\d+)\\$\\]");
 	private static final Pattern _templatePattern;
 	private static final Pattern _timestampPattern = Pattern.compile(
 		"SPECIFIC_TIMESTAMP_\\d+");
@@ -1099,6 +1161,8 @@ public abstract class BaseDB implements DB {
 		_templatePattern = Pattern.compile(sb.toString());
 	}
 
+	private final int _majorVersion;
+	private final int _minorVersion;
 	private boolean _supportsStringCaseSensitiveQuery;
 	private final Map<String, String> _templateMap = new HashMap<>();
 	private final String _type;

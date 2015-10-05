@@ -20,6 +20,6 @@ package com.liferay.control.menu.web.constants;
 public class ControlMenuPortletKeys {
 
 	public static final String CONTROL_MENU =
-		"com_liferay_control_menu_portlet_ControlMenuPortlet";
+		"com_liferay_control_menu_web_portlet_ControlMenuPortlet";
 
 }

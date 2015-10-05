@@ -29,15 +29,14 @@ import com.liferay.portal.kernel.settings.Settings;
 import com.liferay.portal.kernel.settings.SettingsFactoryUtil;
 import com.liferay.portal.kernel.settings.SettingsLocatorHelper;
 import com.liferay.portal.kernel.settings.definition.ConfigurationBeanDeclaration;
-import com.liferay.portal.kernel.settings.definition.SettingsIdMapping;
+import com.liferay.portal.kernel.settings.definition.ConfigurationPidMapping;
 import com.liferay.portal.kernel.util.PortalClassLoaderUtil;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.model.Group;
-import com.liferay.portal.model.Layout;
 import com.liferay.portal.model.PortletConstants;
-import com.liferay.portal.service.GroupLocalServiceUtil;
-import com.liferay.portal.service.PortalPreferencesLocalServiceUtil;
-import com.liferay.portal.service.PortletPreferencesLocalServiceUtil;
+import com.liferay.portal.service.GroupLocalService;
+import com.liferay.portal.service.PortalPreferencesLocalService;
+import com.liferay.portal.service.PortletPreferencesLocalService;
 import com.liferay.portal.util.PortletKeys;
 
 import java.util.Properties;
@@ -64,7 +63,7 @@ public class SettingsLocatorHelperImpl implements SettingsLocatorHelper {
 	public PortletPreferences getCompanyPortletPreferences(
 		long companyId, String settingsId) {
 
-		return PortletPreferencesLocalServiceUtil.getStrictPreferences(
+		return _portletPreferencesLocalService.getStrictPreferences(
 			companyId, companyId, PortletKeys.PREFS_OWNER_TYPE_COMPANY, 0,
 			settingsId);
 	}
@@ -93,9 +92,9 @@ public class SettingsLocatorHelperImpl implements SettingsLocatorHelper {
 		long groupId, String settingsId) {
 
 		try {
-			Group group = GroupLocalServiceUtil.getGroup(groupId);
+			Group group = _groupLocalService.getGroup(groupId);
 
-			return PortletPreferencesLocalServiceUtil.getStrictPreferences(
+			return _portletPreferencesLocalService.getStrictPreferences(
 				group.getCompanyId(), groupId,
 				PortletKeys.PREFS_OWNER_TYPE_GROUP, 0, settingsId);
 		}
@@ -113,7 +112,7 @@ public class SettingsLocatorHelperImpl implements SettingsLocatorHelper {
 	}
 
 	public PortletPreferences getPortalPreferences(long companyId) {
-		return PortalPreferencesLocalServiceUtil.getPreferences(
+		return _portalPreferencesLocalService.getPreferences(
 			companyId, PortletKeys.PREFS_OWNER_TYPE_COMPANY);
 	}
 
@@ -140,7 +139,7 @@ public class SettingsLocatorHelperImpl implements SettingsLocatorHelper {
 	}
 
 	public PortletPreferences getPortletInstancePortletPreferences(
-		Layout layout, String portletId) {
+		long companyId, long plid, String portletId) {
 
 		long ownerId = PortletKeys.PREFS_OWNER_ID_DEFAULT;
 		int ownerType = PortletKeys.PREFS_OWNER_TYPE_LAYOUT;
@@ -150,17 +149,16 @@ public class SettingsLocatorHelperImpl implements SettingsLocatorHelper {
 			ownerType = PortletKeys.PREFS_OWNER_TYPE_USER;
 		}
 
-		return PortletPreferencesLocalServiceUtil.getStrictPreferences(
-			layout.getCompanyId(), ownerId, ownerType, layout.getPlid(),
-			portletId);
+		return _portletPreferencesLocalService.getStrictPreferences(
+			companyId, ownerId, ownerType, plid, portletId);
 	}
 
 	@Override
 	public Settings getPortletInstancePortletPreferencesSettings(
-		Layout layout, String portletId, Settings parentSettings) {
+		long companyId, long plid, String portletId, Settings parentSettings) {
 
 		return new PortletPreferencesSettings(
-			getPortletInstancePortletPreferences(layout, portletId),
+			getPortletInstancePortletPreferences(companyId, plid, portletId),
 			parentSettings);
 	}
 
@@ -247,10 +245,31 @@ public class SettingsLocatorHelperImpl implements SettingsLocatorHelper {
 		cardinality = ReferenceCardinality.MULTIPLE,
 		policy = ReferencePolicy.DYNAMIC
 	)
-	protected void setSettingsIdMapping(SettingsIdMapping settingsIdMapping) {
+	protected void setConfigurationPidMapping(
+		ConfigurationPidMapping configurationPidMapping) {
+
 		_configurationBeanClasses.put(
-			settingsIdMapping.getSettingsId(),
-			settingsIdMapping.getConfigurationBeanClass());
+			configurationPidMapping.getConfigurationPid(),
+			configurationPidMapping.getConfigurationBeanClass());
+	}
+
+	@Reference(unbind = "-")
+	protected void setGroupLocalService(GroupLocalService groupLocalService) {
+		_groupLocalService = groupLocalService;
+	}
+
+	@Reference(unbind = "-")
+	protected void setPortalPreferencesLocalService(
+		PortalPreferencesLocalService portalPreferencesLocalService) {
+
+		_portalPreferencesLocalService = portalPreferencesLocalService;
+	}
+
+	@Reference(unbind = "-")
+	protected void setPortletPreferencesLocalService(
+		PortletPreferencesLocalService portletPreferencesLocalService) {
+
+		_portletPreferencesLocalService = portletPreferencesLocalService;
 	}
 
 	protected void unsetConfigurationBeanDeclaration(
@@ -269,8 +288,11 @@ public class SettingsLocatorHelperImpl implements SettingsLocatorHelper {
 		_configurationBeanManagedServices.remove(configurationBeanClass);
 	}
 
-	protected void unsetSettingsIdMapping(SettingsIdMapping settingsIdMapping) {
-		_configurationBeanClasses.remove(settingsIdMapping.getSettingsId());
+	protected void unsetConfigurationPidMapping(
+		ConfigurationPidMapping configurationPidMapping) {
+
+		_configurationBeanClasses.remove(
+			configurationPidMapping.getConfigurationPid());
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
@@ -281,5 +303,8 @@ public class SettingsLocatorHelperImpl implements SettingsLocatorHelper {
 		new ConcurrentHashMap<>();
 	private final ConcurrentMap<Class<?>, ConfigurationBeanManagedService>
 		_configurationBeanManagedServices = new ConcurrentHashMap<>();
+	private GroupLocalService _groupLocalService;
+	private PortalPreferencesLocalService _portalPreferencesLocalService;
+	private PortletPreferencesLocalService _portletPreferencesLocalService;
 
 }
