@@ -23,7 +23,9 @@ import com.liferay.configuration.admin.ConfigurationAdmin;
  */
 @ConfigurationAdmin(category = "platform")
 @Meta.OCD(
-	id = "com.liferay.portal.security.sso.facebook.connect.module.configuration.FacebookConnectConfiguration"
+	id = "com.liferay.portal.security.sso.facebook.connect.module.configuration.FacebookConnectConfiguration",
+	localization = "content/Language",
+	name = "%facebook.connect.configuration.name"
 )
 public interface FacebookConnectConfiguration {
 
@@ -45,7 +47,7 @@ public interface FacebookConnectConfiguration {
 	public String oauthAuthURL();
 
 	@Meta.AD(
-		deflt = "http://localhost:8080/c/login/facebook_connect_oauth",
+		deflt = "http://localhost:8080/c/facebook_connect/facebook_connect_oauth",
 		required = false
 	)
 	public String oauthRedirectURL();

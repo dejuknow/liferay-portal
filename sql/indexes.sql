@@ -361,6 +361,18 @@ create index IX_9F242DF6 on RatingsEntry (uuid_[$COLUMN_LENGTH:75$], companyId);
 
 create unique index IX_A6E99284 on RatingsStats (classNameId, classPK);
 
+create index IX_B91F79BD on RecentLayoutBranch (groupId);
+create index IX_351E86E8 on RecentLayoutBranch (layoutBranchId);
+create unique index IX_C27D6369 on RecentLayoutBranch (userId, layoutSetBranchId, plid);
+
+create index IX_8D8A2724 on RecentLayoutRevision (groupId);
+create index IX_DA0788DA on RecentLayoutRevision (layoutRevisionId);
+create unique index IX_4C600BD0 on RecentLayoutRevision (userId, layoutSetBranchId, plid);
+
+create index IX_711995A5 on RecentLayoutSetBranch (groupId);
+create index IX_23FF0700 on RecentLayoutSetBranch (layoutSetBranchId);
+create unique index IX_4654D204 on RecentLayoutSetBranch (userId, layoutSetId);
+
 create index IX_2D9A426F on Region (active_);
 create index IX_11FB3E42 on Region (countryId, active_);
 create unique index IX_A2635F5C on Region (countryId, regionCode[$COLUMN_LENGTH:75$]);
@@ -400,30 +412,6 @@ create index IX_F436EC8E on Role_ (name[$COLUMN_LENGTH:75$]);
 create index IX_5EB4E2FB on Role_ (subtype[$COLUMN_LENGTH:75$]);
 create index IX_CBE204 on Role_ (type_, subtype[$COLUMN_LENGTH:75$]);
 create index IX_B9FF6043 on Role_ (uuid_[$COLUMN_LENGTH:75$], companyId);
-
-create index IX_630CC727 on SCFrameworkVersi_SCProductVers (companyId);
-create index IX_3BB93ECA on SCFrameworkVersi_SCProductVers (frameworkVersionId);
-create index IX_E8D33FF9 on SCFrameworkVersi_SCProductVers (productVersionId);
-
-create index IX_C98C0D78 on SCFrameworkVersion (companyId);
-create index IX_6E1764F on SCFrameworkVersion (groupId, active_);
-
-create index IX_5327BB79 on SCLicense (active_, recommended);
-
-create index IX_2EE8A074 on SCLicenses_SCProductEntries (companyId);
-create index IX_27006638 on SCLicenses_SCProductEntries (licenseId);
-create index IX_D7710A66 on SCLicenses_SCProductEntries (productEntryId);
-
-create index IX_5D25244F on SCProductEntry (companyId);
-create index IX_98E6A9CB on SCProductEntry (groupId, userId);
-create index IX_7311E812 on SCProductEntry (repoGroupId[$COLUMN_LENGTH:75$], repoArtifactId[$COLUMN_LENGTH:75$]);
-
-create index IX_AE8224CC on SCProductScreenshot (fullImageId);
-create index IX_DA913A55 on SCProductScreenshot (productEntryId, priority);
-create index IX_6C572DAC on SCProductScreenshot (thumbnailId);
-
-create index IX_7020130F on SCProductVersion (directDownloadURL[$COLUMN_LENGTH:2000$]);
-create index IX_8377A211 on SCProductVersion (productEntryId);
 
 create unique index IX_4F0315B8 on ServiceComponent (buildNamespace[$COLUMN_LENGTH:75$], buildNumber);
 
@@ -518,6 +506,7 @@ create unique index IX_D1C44A6E on UserIdMapper (userId, type_[$COLUMN_LENGTH:75
 
 create unique index IX_8B6E3ACE on UserNotificationDelivery (userId, portletId[$COLUMN_LENGTH:200$], classNameId, notificationType, deliveryType);
 
+create index IX_BF29100B on UserNotificationEvent (type_[$COLUMN_LENGTH:75$]);
 create index IX_5CE95F03 on UserNotificationEvent (userId, actionRequired, archived);
 create index IX_3DBB361A on UserNotificationEvent (userId, archived);
 create index IX_E32CC19 on UserNotificationEvent (userId, delivered, actionRequired);

@@ -71,7 +71,7 @@ public class SearchEngineUtil {
 			boolean commitImmediately)
 		throws SearchException {
 
-		if (isIndexReadOnly()) {
+		if (isIndexReadOnly() || (document == null)) {
 			return;
 		}
 
@@ -164,6 +164,27 @@ public class SearchEngineUtil {
 				searchEngine.backup(companyId, backupName);
 			}
 		}
+	}
+
+	public static void commit(String searchEngineId) throws SearchException {
+		for (long companyId : _companyIds.keySet()) {
+			commit(searchEngineId, companyId);
+		}
+	}
+
+	public static void commit(String searchEngineId, long companyId)
+		throws SearchException {
+
+		SearchEngine searchEngine = getSearchEngine(searchEngineId);
+
+		IndexWriter indexWriter = searchEngine.getIndexWriter();
+
+		SearchContext searchContext = new SearchContext();
+
+		searchContext.setCompanyId(companyId);
+		searchContext.setSearchEngineId(searchEngineId);
+
+		indexWriter.commit(searchContext);
 	}
 
 	/**
@@ -582,7 +603,7 @@ public class SearchEngineUtil {
 			boolean commitImmediately)
 		throws SearchException {
 
-		if (isIndexReadOnly()) {
+		if (isIndexReadOnly() || (document == null)) {
 			return;
 		}
 
@@ -883,7 +904,7 @@ public class SearchEngineUtil {
 			boolean commitImmediately)
 		throws SearchException {
 
-		if (isIndexReadOnly()) {
+		if (isIndexReadOnly() || (document == null)) {
 			return;
 		}
 

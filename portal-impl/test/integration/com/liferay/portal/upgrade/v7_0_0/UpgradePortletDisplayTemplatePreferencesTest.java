@@ -25,7 +25,6 @@ import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Layout;
 import com.liferay.portal.service.LayoutLocalServiceUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
-import com.liferay.portal.test.rule.MainServletTestRule;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.test.LayoutTestUtil;
 import com.liferay.portlet.dynamicdatamapping.DDMTemplate;
@@ -50,8 +49,7 @@ public class UpgradePortletDisplayTemplatePreferencesTest
 	@ClassRule
 	@Rule
 	public static final AggregateTestRule aggregateTestRule =
-		new AggregateTestRule(
-			new LiferayIntegrationTestRule(), MainServletTestRule.INSTANCE);
+		new LiferayIntegrationTestRule();
 
 	@Test
 	public void testUpgrade() throws Exception {
@@ -70,7 +68,7 @@ public class UpgradePortletDisplayTemplatePreferencesTest
 			"portlet1", DISPLAY_STYLE_PREFIX_6_2 + ddmTemplate.getUuid());
 		setPortletDisplayStyle("portlet2", "testDisplayStyle");
 
-		doUpgrade();
+		upgrade();
 
 		CacheRegistryUtil.clear();
 

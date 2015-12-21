@@ -9,6 +9,11 @@
 </thead>
 <tbody>
 <tr>
+	<td>EDITED_SITE_PAGES_VARIATION</td>
+	<td>//span[contains(@class,'layout-set-branch-selector')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>STAGING_NAVIGATION</td>
 	<td>//ul[contains(@class,'nav-tabs')]/li/a[contains(.,'Staging')]</td>
 	<td></td>
@@ -97,7 +102,7 @@
 </tr>
 <tr>
 	<td>SITE_PAGES_VARIATION</td>
-	<td>//a[span[contains(.,'${key_sitePagesVariationName}')]]</td>
+	<td>//div[contains(@class,'layout-set-branch-selector')]/a//span[contains(.,'${key_sitePagesVariationName}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -227,7 +232,7 @@
 </tr>
 <tr>
 	<td>STAGING_MENU_REVISION_DETAILS_MESSAGE</td>
-	<td>//div[contains(@id,'layoutRevisionDetails')]</td>
+	<td>//li[contains(@id,'layoutRevisionDetails')]/ul/li/p</td>
 	<td></td>
 </tr>
 <tr>

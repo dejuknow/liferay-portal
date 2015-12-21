@@ -14,7 +14,6 @@
 
 package com.liferay.portal.service;
 
-import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.randomizerbumpers.UniqueStringRandomizerBumper;
@@ -34,12 +33,12 @@ import com.liferay.portal.service.persistence.ResourcePermissionPersistence;
 import com.liferay.portal.service.test.ServiceTestUtil;
 import com.liferay.portal.spring.aop.ServiceBeanAopProxy;
 import com.liferay.portal.spring.transaction.DefaultTransactionExecutor;
+import com.liferay.portal.test.rule.ExpectedDBType;
 import com.liferay.portal.test.rule.ExpectedLog;
 import com.liferay.portal.test.rule.ExpectedLogs;
 import com.liferay.portal.test.rule.ExpectedMultipleLogs;
 import com.liferay.portal.test.rule.ExpectedType;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
-import com.liferay.portal.test.rule.MainServletTestRule;
 import com.liferay.portal.util.PropsValues;
 
 import java.util.ArrayList;
@@ -56,7 +55,6 @@ import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -68,16 +66,12 @@ import org.springframework.aop.framework.AdvisedSupport;
  * @author William Newbury
  * @author Shuyang Zhou
  */
-@Ignore(
-	"Ignored due to random hanging, Matthew Tambara will fix and reenable it"
-)
 public class ResourcePermissionLocalServiceConcurrentTest {
 
 	@ClassRule
 	@Rule
 	public static final AggregateTestRule aggregateTestRule =
-		new AggregateTestRule(
-			new LiferayIntegrationTestRule(), MainServletTestRule.INSTANCE);
+		new LiferayIntegrationTestRule();
 
 	@Before
 	public void setUp() throws Exception {
@@ -153,41 +147,42 @@ public class ResourcePermissionLocalServiceConcurrentTest {
 			@ExpectedLogs(
 				expectedLogs = {
 					@ExpectedLog(
-						dbType = DB.TYPE_DB2, expectedLog = "Batch failure",
+						expectedDBType = ExpectedDBType.DB2,
+						expectedLog = "Batch failure",
 						expectedType = ExpectedType.CONTAINS
 					),
 					@ExpectedLog(
-						dbType = DB.TYPE_DB2,
+						expectedDBType = ExpectedDBType.DB2,
 						expectedLog = "DB2 SQL Error: SQLCODE=-803",
 						expectedType = ExpectedType.CONTAINS
 					),
 					@ExpectedLog(
-						dbType = DB.TYPE_HYPERSONIC,
+						expectedDBType = ExpectedDBType.HYPERSONIC,
 						expectedLog = "integrity constraint violation",
 						expectedType = ExpectedType.PREFIX
 					),
 					@ExpectedLog(
-						dbType = DB.TYPE_MYSQL,
+						expectedDBType = ExpectedDBType.MYSQL,
 						expectedLog = "Duplicate entry '",
 						expectedType = ExpectedType.PREFIX
 					),
 					@ExpectedLog(
-						dbType = DB.TYPE_ORACLE,
+						expectedDBType = ExpectedDBType.ORACLE,
 						expectedLog = "ORA-00001: unique constraint",
 						expectedType = ExpectedType.PREFIX
 					),
 					@ExpectedLog(
-						dbType = DB.TYPE_POSTGRESQL,
+						expectedDBType = ExpectedDBType.POSTGRESQL,
 						expectedLog = "Batch entry",
 						expectedType = ExpectedType.PREFIX
 					),
 					@ExpectedLog(
-						dbType = DB.TYPE_POSTGRESQL,
+						expectedDBType = ExpectedDBType.POSTGRESQL,
 						expectedLog = "duplicate key",
 						expectedType = ExpectedType.CONTAINS
 					),
 					@ExpectedLog(
-						dbType = DB.TYPE_SYBASE,
+						expectedDBType = ExpectedDBType.SYBASE,
 						expectedLog = "Attempt to insert duplicate key row",
 						expectedType = ExpectedType.CONTAINS
 					)

@@ -122,7 +122,7 @@ if (!cmd.equals(Constants.ADD)) {
 </portlet:actionURL>
 
 <div class="container-fluid-1280">
-	<liferay-ui:trash-undo
+	<liferay-trash:trash-undo
 		portletURL="<%= restoreTrashEntriesURL %>"
 	/>
 
@@ -225,14 +225,14 @@ if (!cmd.equals(Constants.ADD)) {
 					<aui:button-row>
 						<c:choose>
 							<c:when test="<%= cmd.equals(Constants.ADD) || cmd.equals(Constants.UPDATE) %>">
-								<aui:button type="submit" value="save" />
+								<aui:button cssClass="btn-lg" type="submit" value="save" />
 
-								<aui:button href="<%= portletURL.toString() %>" type="cancel" />
+								<aui:button cssClass="btn-lg" href="<%= portletURL.toString() %>" type="cancel" />
 							</c:when>
 							<c:otherwise>
-								<aui:button type="submit" value="export" />
+								<aui:button cssClass="btn-lg" type="submit" value="export" />
 
-								<aui:button href="<%= backURL %>" type="cancel" />
+								<aui:button cssClass="btn-lg" href="<%= backURL %>" type="cancel" />
 							</c:otherwise>
 						</c:choose>
 					</aui:button-row>
@@ -311,8 +311,6 @@ if (!cmd.equals(Constants.ADD)) {
 			var allContentRadioChecked = A.one('#<portlet:namespace />allContent').attr('checked');
 
 			if (allContentRadioChecked) {
-				var selectedContents = A.one('#<portlet:namespace />selectContents');
-
 				var portletDataControlDefault = A.one('#<portlet:namespace /><%= PortletDataHandlerKeys.PORTLET_DATA_CONTROL_DEFAULT %>');
 
 				portletDataControlDefault.val(true);

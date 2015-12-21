@@ -192,7 +192,7 @@ public class LiferaySeleniumHelper {
 		for (Element eventElement : eventElements) {
 			String level = eventElement.attributeValue("level");
 
-			if (level.equals("ERROR")) {
+			if (level.equals("ERROR") || level.equals("FATAL")) {
 				String timestamp = eventElement.attributeValue("timestamp");
 
 				if (_errorTimestamps.contains(timestamp)) {
@@ -1833,7 +1833,7 @@ public class LiferaySeleniumHelper {
 
 				sb.append("<value><![CDATA[");
 				sb.append(exception.getMessage());
-				sb.append(")]]></value>\n");
+				sb.append("]]></value>\n");
 			}
 		}
 
@@ -1843,7 +1843,7 @@ public class LiferaySeleniumHelper {
 
 				sb.append("<value><![CDATA[");
 				sb.append(exception.getMessage());
-				sb.append(")]]></value>\n");
+				sb.append("]]></value>\n");
 			}
 		}
 

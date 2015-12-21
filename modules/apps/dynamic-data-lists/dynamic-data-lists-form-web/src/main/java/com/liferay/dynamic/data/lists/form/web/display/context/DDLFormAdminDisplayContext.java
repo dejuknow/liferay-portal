@@ -15,11 +15,13 @@
 package com.liferay.dynamic.data.lists.form.web.display.context;
 
 import com.liferay.dynamic.data.lists.constants.DDLActionKeys;
+import com.liferay.dynamic.data.lists.constants.DDLWebKeys;
 import com.liferay.dynamic.data.lists.form.web.configuration.DDLFormWebConfiguration;
 import com.liferay.dynamic.data.lists.form.web.display.context.util.DDLFormAdminRequestHelper;
 import com.liferay.dynamic.data.lists.form.web.display.context.util.DDLFormWebRequestHelper;
 import com.liferay.dynamic.data.lists.form.web.search.RecordSetSearchTerms;
 import com.liferay.dynamic.data.lists.form.web.util.DDLFormPortletUtil;
+import com.liferay.dynamic.data.lists.model.DDLFormRecord;
 import com.liferay.dynamic.data.lists.model.DDLRecord;
 import com.liferay.dynamic.data.lists.model.DDLRecordSet;
 import com.liferay.dynamic.data.lists.model.DDLRecordSetConstants;
@@ -35,15 +37,19 @@ import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingContext;
 import com.liferay.dynamic.data.mapping.io.DDMFormFieldTypesJSONSerializerUtil;
 import com.liferay.dynamic.data.mapping.io.DDMFormJSONSerializerUtil;
 import com.liferay.dynamic.data.mapping.io.DDMFormLayoutJSONSerializerUtil;
+import com.liferay.dynamic.data.mapping.model.DDMDataProviderInstance;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.service.DDMDataProviderInstanceLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
+import com.liferay.osgi.util.ServiceTrackerFactory;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PrefsParamUtil;
@@ -60,13 +66,15 @@ import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
 
 import java.util.List;
+import java.util.Locale;
 
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
-import org.osgi.framework.Bundle;
+import javax.servlet.http.HttpServletRequest;
+
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -175,25 +183,12 @@ public class DDLFormAdminDisplayContext {
 		return portletURL;
 	}
 
-	public DDLRecordSet getRecordSet() throws PortalException {
-		if (_recordSet != null) {
-			return _recordSet;
-		}
-
-		long recordSetId = ParamUtil.getLong(_renderRequest, "recordSetId");
-
-		_recordSet = DDLRecordSetLocalServiceUtil.fetchDDLRecordSet(
-			recordSetId);
-
-		return _recordSet;
-	}
-
-	public String getRecordSetLayoutURL() throws PortalException {
+	public String getPublishedFormURL() throws PortalException {
 		if (_recordSet == null) {
 			return StringPool.BLANK;
 		}
 
-		StringBundler sb = new StringBundler(5);
+		StringBundler sb = new StringBundler(4);
 
 		ThemeDisplay themeDisplay =
 			_ddlFormAdminRequestHelper.getThemeDisplay();
@@ -202,11 +197,32 @@ public class DDLFormAdminDisplayContext {
 
 		sb.append(themeDisplay.getPortalURL());
 		sb.append(group.getPathFriendlyURL(false, themeDisplay));
-		sb.append(group.getFriendlyURL());
-		sb.append("/shared");
-		sb.append(String.format("/-/form/%d", _recordSet.getRecordSetId()));
+		sb.append("/forms/shared/-/form/");
+		sb.append(_recordSet.getRecordSetId());
 
 		return sb.toString();
+	}
+
+	public DDLRecordSet getRecordSet() throws PortalException {
+		if (_recordSet != null) {
+			return _recordSet;
+		}
+
+		long recordSetId = ParamUtil.getLong(_renderRequest, "recordSetId");
+
+		if (recordSetId > 0) {
+			_recordSet = DDLRecordSetLocalServiceUtil.fetchDDLRecordSet(
+				recordSetId);
+		}
+		else {
+			DDLRecord ddlRecord = getRecord();
+
+			if (ddlRecord != null) {
+				_recordSet = ddlRecord.getRecordSet();
+			}
+		}
+
+		return _recordSet;
 	}
 
 	public List<DDLRecordSet> getSearchContainerResults(
@@ -255,6 +271,18 @@ public class DDLFormAdminDisplayContext {
 				_ddlFormAdminRequestHelper.getScopeGroupId(),
 				searchTerms.getKeywords(), DDLRecordSetConstants.SCOPE_FORMS);
 		}
+	}
+
+	public String getSerializedDDMDataProviders() throws PortalException {
+		ThemeDisplay themeDisplay =
+			_ddlFormAdminRequestHelper.getThemeDisplay();
+
+		List<DDMDataProviderInstance> ddmDataProviderInstances =
+			DDMDataProviderInstanceLocalServiceUtil.getDataProviderInstances(
+				PortalUtil.getCurrentAndAncestorSiteGroupIds(
+					themeDisplay.getScopeGroupId()));
+
+		return serialize(ddmDataProviderInstances, themeDisplay.getLocale());
 	}
 
 	public String getSerializedDDMForm() throws PortalException {
@@ -381,7 +409,41 @@ public class DDLFormAdminDisplayContext {
 	protected DDLRecord getRecord() throws PortalException {
 		long recordId = ParamUtil.getLong(_renderRequest, "recordId");
 
-		return DDLRecordLocalServiceUtil.fetchDDLRecord(recordId);
+		if (recordId > 0) {
+			return DDLRecordLocalServiceUtil.fetchDDLRecord(recordId);
+		}
+
+		HttpServletRequest httpServletRequest =
+			_ddlFormAdminRequestHelper.getRequest();
+
+		Object record = httpServletRequest.getAttribute(
+			DDLWebKeys.DYNAMIC_DATA_LISTS_RECORD);
+
+		if (record instanceof DDLFormRecord) {
+			DDLFormRecord formRecord = (DDLFormRecord)record;
+
+			return formRecord.getDDLRecord();
+		}
+		else {
+			return (DDLRecord)record;
+		}
+	}
+
+	protected String serialize(
+		List<DDMDataProviderInstance> ddmDataProviderInstances, Locale locale) {
+
+		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
+
+		for (DDMDataProviderInstance ddmDataProviderInstance :
+				ddmDataProviderInstances) {
+
+			JSONObject jsonObject = toJSONObject(
+				ddmDataProviderInstance, locale);
+
+			jsonArray.put(jsonObject);
+		}
+
+		return jsonArray.toString();
 	}
 
 	protected void setDDMFormFieldReadOnly(DDMFormField ddmFormField) {
@@ -394,18 +456,23 @@ public class DDLFormAdminDisplayContext {
 		}
 	}
 
-	private static final ServiceTracker
-		<DDMFormRenderer, DDMFormRenderer> _ddmFormRendererServiceTracker;
+	protected JSONObject toJSONObject(
+		DDMDataProviderInstance ddmDataProviderInstance, Locale locale) {
 
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(
-			DDLFormAdminDisplayContext.class);
+		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
-		_ddmFormRendererServiceTracker = new ServiceTracker<>(
-			bundle.getBundleContext(), DDMFormRenderer.class, null);
+		jsonObject.put(
+			"id", ddmDataProviderInstance.getDataProviderInstanceId());
+		jsonObject.put("name", ddmDataProviderInstance.getName(locale));
 
-		_ddmFormRendererServiceTracker.open();
+		return jsonObject;
 	}
+
+	private static final ServiceTracker
+		<DDMFormRenderer, DDMFormRenderer> _ddmFormRendererServiceTracker =
+			ServiceTrackerFactory.open(
+				FrameworkUtil.getBundle(DDLFormAdminDisplayContext.class),
+				DDMFormRenderer.class);
 
 	private final DDLFormAdminRequestHelper _ddlFormAdminRequestHelper;
 	private DDMStructure _ddmStucture;

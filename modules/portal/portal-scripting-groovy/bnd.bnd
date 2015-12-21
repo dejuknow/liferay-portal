@@ -5,6 +5,7 @@ DynamicImport-Package: *
 Import-Package:\
 	!com.thoughtworks.xstream.*,\
 	!javax.swing.*,\
+	!org.apache.commons.cli.*,\
 	!org.apache.ivy.*,\
 	!org.fusesource.jansi.*,\
 	*
@@ -12,3 +13,6 @@ Include-Resource: \
 	classes,\
 	@lib/antlr.jar,\
 	@lib/groovy.jar
+Liferay-Releng-Module-Group-Description:
+Liferay-Releng-Module-Group-Title: Scripting Engines
+-include: ../../../marketplace/platform/bnd.bnd

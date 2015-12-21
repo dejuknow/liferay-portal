@@ -21,11 +21,14 @@ import com.liferay.configuration.admin.ConfigurationAdmin;
 /**
  * @author Michael C. Han
  */
-@ConfigurationAdmin(category = "platform")
+@ConfigurationAdmin(
+	category = "platform", factoryInstanceLabelAttribute = "companyId",
+	scope = ConfigurationAdmin.Scope.COMPANY
+)
 @Meta.OCD(
 	factory = true,
 	id = "com.liferay.portal.ldap.configuration.SystemLDAPConfiguration",
-	localization = "content/Language"
+	localization = "content/Language", name = "%system.ldap.configuration.name"
 )
 public interface SystemLDAPConfiguration extends CompanyScopedConfiguration {
 
@@ -63,10 +66,10 @@ public interface SystemLDAPConfiguration extends CompanyScopedConfiguration {
 	@Meta.AD(deflt = "com.sun.jndi.ldap.LdapCtxFactory", required = false)
 	public String factoryInitial();
 
-	@Meta.AD(deflt = "1000", required = false)
+	@Meta.AD(deflt = "1000", description = "%page-size-help", required = false)
 	public int pageSize();
 
-	@Meta.AD(deflt = "1000", required = false)
+	@Meta.AD(deflt = "1000", description = "%range-size-help", required = false)
 	public int rangeSize();
 
 	@Meta.AD(

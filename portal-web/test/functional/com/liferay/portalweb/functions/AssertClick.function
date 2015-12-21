@@ -139,7 +139,7 @@
 			<then>
 				<execute argument1="//nav[@id='navigation']" selenium="clickAt" />
 
-				<execute argument1="//script[contains(@src,'/aui/sortable/sortable-min.js')]" selenium="waitForElementPresent" />
+				<execute argument1="//script[contains(@src,'/aui/sortable/sortable')]" selenium="waitForElementPresent" />
 
 				<execute selenium="mouseOver" />
 
@@ -164,6 +164,18 @@
 		<execute selenium="assertJavaScriptErrors" />
 
 		<execute selenium="assertLiferayErrors" />
+	</command>
+
+	<command name="assertTextClickAtWaitForLastScript">
+		<execute selenium="waitForVisible" />
+
+		<execute function="AssertClick#assertTextClickAt" />
+
+		<execute selenium="assertJavaScriptErrors" />
+
+		<execute selenium="assertLiferayErrors" />
+
+		<execute argument1="xpath=(//script)[last()]" selenium="waitForElementPresent" />
 	</command>
 
 	<command name="assertTextClickNoMouseOver">

@@ -26,7 +26,7 @@ PortletURL portletURL = renderResponse.createRenderURL();
 portletURL.setParameter("configurationCategory", configurationCategory);
 %>
 
-<aui:nav-bar cssClass="collapse-basic-search" markupView="lexicon">
+<aui:nav-bar markupView="lexicon">
 	<aui:nav cssClass="navbar-nav">
 
 		<%
@@ -89,28 +89,22 @@ portletURL.setParameter("configurationCategory", configurationCategory);
 				</c:choose>
 			</liferay-ui:search-container-column-text>
 
-			<liferay-ui:search-container-column-text
-				align="center"
-				name="status"
-			>
+			<liferay-ui:search-container-column-text name="scope">
 				<c:choose>
-					<c:when test="<%= configurationModel.isFactory() %>">
-						<liferay-ui:icon
-							cssClass="icon-plus-sign-2"
-							message="factory"
-						/>
+					<c:when test="<%= ConfigurationAdmin.Scope.COMPANY.equals(configurationModel.getScope()) %>">
+						<liferay-ui:message key="default-settings-for-all-instances" />
 					</c:when>
-					<c:when test="<%= configurationModel.getConfiguration() != null %>">
-						<liferay-ui:icon
-							cssClass="icon-check"
-							message="active"
-						/>
+					<c:when test="<%= ConfigurationAdmin.Scope.GROUP.equals(configurationModel.getScope()) %>">
+						<liferay-ui:message key="default-configuration-for-all-sites" />
+					</c:when>
+					<c:when test="<%= ConfigurationAdmin.Scope.PORTLET_INSTANCE.equals(configurationModel.getScope()) %>">
+						<liferay-ui:message key="default-configuration-for-application" />
+					</c:when>
+					<c:when test="<%= ConfigurationAdmin.Scope.SYSTEM.equals(configurationModel.getScope()) %>">
+						<liferay-ui:message key="system" />
 					</c:when>
 					<c:otherwise>
-						<liferay-ui:icon
-							cssClass="icon-check-empty"
-							message="not-active"
-						/>
+						-
 					</c:otherwise>
 				</c:choose>
 			</liferay-ui:search-container-column-text>
@@ -132,18 +126,6 @@ portletURL.setParameter("configurationCategory", configurationCategory);
 								method="post"
 								url="<%= viewFactoryInstancesURL %>"
 							/>
-
-							<portlet:renderURL var="createFactoryConfigURL">
-								<portlet:param name="mvcRenderCommandName" value="/edit_configuration" />
-								<portlet:param name="redirect" value="<%= currentURL %>" />
-								<portlet:param name="factoryPid" value="<%= configurationModel.getID() %>" />
-							</portlet:renderURL>
-
-							<liferay-ui:icon
-								message="add"
-								method="post"
-								url="<%= createFactoryConfigURL %>"
-							/>
 						</c:when>
 						<c:otherwise>
 							<liferay-ui:icon
@@ -160,7 +142,7 @@ portletURL.setParameter("configurationCategory", configurationCategory);
 								</portlet:actionURL>
 
 								<liferay-ui:icon
-									message="delete"
+									message='<%= configurationModel.isFactory() ? "delete" : "reset-default-values" %>'
 									method="post"
 									url="<%= deleteConfigActionURL %>"
 								/>

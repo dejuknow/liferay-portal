@@ -14,8 +14,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>STATUS_LABEL</td>
-	<td>//span[contains(@class,'workflow-status')]/strong</td>
+	<td>VERSION</td>
+	<td>//span[@class='workflow-version']/span[@class='workflow-value']</td>
 	<td></td>
 </tr>
 <tr>
@@ -112,47 +112,6 @@
 <tr>
 	<td>VIEW_HISTORY_VERSION_STATUS</td>
 	<td>//tr[contains(.,'${key_webContentTitle}')]/td[5]</td>
-	<td></td>
-</tr>
-<tr>
-	<td></td>
-	<td></td>
-	<td></td>
-</tr>
-<!--MENU-->
-<tr>
-	<td>MENU_CONTENT</td>
-	<td>//a[contains(@id,'contentLink')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>MENU_CATEGORIZATION</td>
-	<td>//a[contains(@id,'categorizationLink')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>MENU_SCHEDULE</td>
-	<td>//a[contains(@id,'scheduleLink')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>MENU_DISPLAY_PAGE</td>
-	<td>//a[contains(@id,'displayPageLink')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>MENU_RELATED_ASSETS</td>
-	<td>//a[contains(@id,'relatedAssetsLink')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>MENU_PERMISSIONS</td>
-	<td>//a[contains(@id,'permissionsLink')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>MENU_CUSTOM_FIELDS</td>
-	<td>//a[contains(@id,'customFieldsLink')]</td>
 	<td></td>
 </tr>
 <tr>

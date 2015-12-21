@@ -19,7 +19,7 @@
 
 		<execute function="Type" locator1="Comments#COMMENT_FIELD" value1="${entryComment}" />
 
-		<execute function="AssertElementPresent" locator1="ControlMenu#USER_SIGN_IN" />
+		<execute function="AssertElementPresent" locator1="UserBar#USER_SIGN_IN" />
 
 		<execute function="AssertClick" locator1="Button#REPLY_AS" value1="Reply as..." />
 
@@ -45,7 +45,7 @@
 
 		<execute function="Pause" value1="1000" />
 
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request processed successfully." />
+		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
 	</command>
 
 	<command name="delete">
@@ -71,7 +71,7 @@
 
 		<execute function="Confirm" value1="Are you sure you want to delete the selected comment?" />
 
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request processed successfully." />
+		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
 		<execute function="AssertTextNotPresent" value1="${entryComment}" />
 	</command>
 

@@ -89,13 +89,8 @@ roleSearch.setResults(roles);
 		>
 			<liferay-ui:search-container-column-text
 				name="title"
-			>
-				<liferay-ui:icon
-					iconCssClass="<%= RolesAdminUtil.getIconCssClass(role) %>"
-					label="<%= true %>"
-					message="<%= HtmlUtil.escape(role.getTitle(locale)) %>"
-				/>
-			</liferay-ui:search-container-column-text>
+				value="<%= HtmlUtil.escape(role.getTitle(locale)) %>"
+			/>
 
 			<liferay-ui:search-container-column-text
 				name="type"
@@ -112,29 +107,18 @@ roleSearch.setResults(roles);
 	</liferay-ui:search-container>
 </aui:form>
 
-<aui:script>
-	$('input[name="<portlet:namespace />rowIds"]').on(
-		'change',
+<aui:script use="liferay-search-container">
+	var searchContainer = Liferay.SearchContainer.get('<portlet:namespace />userGroupRoleRole');
+
+	searchContainer.on(
+		'rowToggled',
 		function(event) {
-			<portlet:namespace />updateUserGroupRole();
+			Liferay.Util.getOpener().Liferay.fire(
+				'<%= HtmlUtil.escapeJS(eventName) %>',
+				{
+					data: event.elements.allSelectedElements.getDOMNodes()
+				}
+			);
 		}
 	);
-
-	function <portlet:namespace />updateUserGroupRole() {
-		var Util = Liferay.Util;
-
-		var form = AUI.$(document.<portlet:namespace />fm);
-
-		var values = {
-			data: {
-				addRoleIds: Util.listCheckedExcept(form, '<portlet:namespace />allRowIds'),
-				removeRoleIds: Util.listUncheckedExcept(form, '<portlet:namespace />allRowIds'),
-				selUserId: <%= siteMembershipsDisplayContext.getUserId() %>
-			}
-		};
-
-		Util.getOpener().Liferay.fire('<%= HtmlUtil.escapeJS(eventName) %>', values);
-	}
-
-	<portlet:namespace />updateUserGroupRole();
 </aui:script>

@@ -16,8 +16,7 @@ package com.liferay.wiki.service;
 
 import aQute.bnd.annotation.ProviderType;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
+import com.liferay.osgi.util.ServiceTrackerFactory;
 
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -925,11 +924,12 @@ public class WikiPageLocalServiceUtil {
 
 	public static void updateAsset(long userId,
 		com.liferay.wiki.model.WikiPage page, long[] assetCategoryIds,
-		java.lang.String[] assetTagNames, long[] assetLinkEntryIds)
+		java.lang.String[] assetTagNames, long[] assetLinkEntryIds,
+		java.lang.Double priority)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		getService()
 			.updateAsset(userId, page, assetCategoryIds, assetTagNames,
-			assetLinkEntryIds);
+			assetLinkEntryIds, priority);
 	}
 
 	public static com.liferay.wiki.model.WikiPage updatePage(long userId,
@@ -1002,14 +1002,6 @@ public class WikiPageLocalServiceUtil {
 	public void setService(WikiPageLocalService service) {
 	}
 
-	private static ServiceTracker<WikiPageLocalService, WikiPageLocalService> _serviceTracker;
-
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(WikiPageLocalServiceUtil.class);
-
-		_serviceTracker = new ServiceTracker<WikiPageLocalService, WikiPageLocalService>(bundle.getBundleContext(),
-				WikiPageLocalService.class, null);
-
-		_serviceTracker.open();
-	}
+	private static ServiceTracker<WikiPageLocalService, WikiPageLocalService> _serviceTracker =
+		ServiceTrackerFactory.open(WikiPageLocalService.class);
 }

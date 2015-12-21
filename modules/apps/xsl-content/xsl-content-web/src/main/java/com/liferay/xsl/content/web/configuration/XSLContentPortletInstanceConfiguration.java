@@ -21,10 +21,14 @@ import com.liferay.configuration.admin.ConfigurationAdmin;
 /**
  * @author Juergen Kappler
  */
-@ConfigurationAdmin(category = "web-experience-management")
+@ConfigurationAdmin(
+	category = "web-experience-management",
+	scope = ConfigurationAdmin.Scope.PORTLET_INSTANCE
+)
 @Meta.OCD(
 	id = "com.liferay.xsl.content.web.configuration.XSLContentPortletInstanceConfiguration",
-	name = "XSL Content"
+	localization = "content/Language",
+	name = "%xsl.content.portlet.instance.configuration.name"
 )
 public interface XSLContentPortletInstanceConfiguration {
 

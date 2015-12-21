@@ -18,114 +18,118 @@
 
 <%@ include file="/html/taglib/ui/search_iterator/lexicon/top.jspf" %>
 
-<div id="<%= namespace + id %>SearchContainer">
+<%
+request.setAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW_CHECKER, rowChecker);
 
-	<%
-	request.setAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW_CHECKER, rowChecker);
+boolean allRowsIsChecked = true;
 
-	boolean allRowsIsChecked = true;
+List<ResultRowSplitterEntry> resultRowSplitterEntries = new ArrayList<ResultRowSplitterEntry>();
 
-	List<List<com.liferay.portal.kernel.dao.search.ResultRow>> resultRowsList = new ArrayList<List<com.liferay.portal.kernel.dao.search.ResultRow>>();
+if (resultRowSplitter != null) {
+	resultRowSplitterEntries = resultRowSplitter.split(searchContainer.getResultRows());
+}
+else {
+	resultRowSplitterEntries.add(new ResultRowSplitterEntry(StringPool.BLANK, resultRows));
+}
 
-	if (resultRowSplitter != null) {
-		resultRowsList = resultRowSplitter.split(searchContainer.getResultRows());
-	}
-	else {
-		resultRowsList.add(resultRows);
-	}
+for (int i = 0; i < resultRowSplitterEntries.size(); i++) {
+	ResultRowSplitterEntry resultRowSplitterEntry = resultRowSplitterEntries.get(i);
 
-	for (int i = 0; i < resultRowsList.size(); i++) {
-		List<com.liferay.portal.kernel.dao.search.ResultRow> curResultRows = resultRowsList.get(i);
-	%>
+	List<com.liferay.portal.kernel.dao.search.ResultRow> curResultRows = resultRowSplitterEntry.getResultRows();
+%>
 
-		<ul class="<%= searchContainer.getCssClass() %> <%= resultRows.isEmpty() ? "hide" : StringPool.BLANK %> list-unstyled row">
+	<c:if test="<%= Validator.isNotNull(resultRowSplitterEntry.getTitle()) %>">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<liferay-ui:message key="<%= resultRowSplitterEntry.getTitle() %>" />
+			</div>
+		</div>
+	</c:if>
 
-			<%
-			for (int j = 0; j < curResultRows.size(); j++) {
-				com.liferay.portal.kernel.dao.search.ResultRow row = curResultRows.get(j);
+	<ul class="list-unstyled row" data-qa-id="rows<%= i %>">
 
-				primaryKeysJSONArray.put(row.getPrimaryKey());
+		<%
+		for (int j = 0; j < curResultRows.size(); j++) {
+			com.liferay.portal.kernel.dao.search.ResultRow row = curResultRows.get(j);
 
-				request.setAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW, row);
+			primaryKeysJSONArray.put(row.getPrimaryKey());
 
-				List entries = row.getEntries();
+			request.setAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW, row);
 
-				boolean rowIsChecked = false;
-				boolean rowIsDisabled = false;
+			List entries = row.getEntries();
 
-				if (rowChecker != null) {
-					rowIsChecked = rowChecker.isChecked(row.getObject());
-					rowIsDisabled = rowChecker.isDisabled(row.getObject());
+			boolean rowIsChecked = false;
+			boolean rowIsDisabled = false;
 
-					if (!rowIsChecked) {
-						allRowsIsChecked = false;
-					}
+			if (rowChecker != null) {
+				rowIsChecked = rowChecker.isChecked(row.getObject());
+				rowIsDisabled = rowChecker.isDisabled(row.getObject());
 
-					String rowSelector = rowChecker.getRowSelector();
-
-					if (Validator.isNull(rowSelector)) {
-						Map<String, Object> rowData = row.getData();
-
-						if (rowData == null) {
-							rowData = new HashMap<String, Object>();
-						}
-
-						rowData.put("selectable", !rowIsDisabled);
-
-						row.setData(rowData);
-					}
+				if (!rowIsChecked) {
+					allRowsIsChecked = false;
 				}
 
-				request.setAttribute("liferay-ui:search-container-row:rowId", id.concat(StringPool.UNDERLINE.concat(row.getRowId())));
+				String rowSelector = rowChecker.getRowSelector();
 
-				Map<String, Object> data = row.getData();
+				if (Validator.isNull(rowSelector)) {
+					Map<String, Object> rowData = row.getData();
 
-				if (data == null) {
-					data = new HashMap<String, Object>();
-				}
-			%>
-
-				<li class="<%= GetterUtil.getString(row.getClassName()) %> <%= row.getCssClass() %> <%= rowIsChecked ? "active" : StringPool.BLANK %>" <%= AUIUtil.buildData(data) %>>
-
-					<%
-					for (int k = 0; k < entries.size(); k++) {
-						com.liferay.portal.kernel.dao.search.SearchEntry entry = (com.liferay.portal.kernel.dao.search.SearchEntry)entries.get(k);
-
-						entry.setIndex(k);
-
-						request.setAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW_ENTRY, entry);
-					%>
-
-							<%
-							entry.print(pageContext.getOut(), request, response);
-							%>
-
-					<%
+					if (rowData == null) {
+						rowData = new HashMap<String, Object>();
 					}
-					%>
 
-				</li>
+					rowData.put("selectable", !rowIsDisabled);
 
-			<%
-				request.removeAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW);
-				request.removeAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW_ENTRY);
-
-				request.removeAttribute("liferay-ui:search-container-row:rowId");
+					row.setData(rowData);
+				}
 			}
-			%>
 
-			<c:if test="<%= i == (resultRowsList.size() - 1) %>">
-				<li></li>
-			</c:if>
-		</ul>
+			request.setAttribute("liferay-ui:search-container-row:rowId", id.concat(StringPool.UNDERLINE.concat(row.getRowId())));
 
-	<%
-	}
-	%>
+			Map<String, Object> data = row.getData();
 
-</div>
+			if (data == null) {
+				data = new HashMap<String, Object>();
+			}
+		%>
+
+			<li class="<%= GetterUtil.getString(row.getClassName()) %> <%= row.getCssClass() %> <%= rowIsChecked ? "active" : StringPool.BLANK %>" data-qa-id="row" <%= AUIUtil.buildData(data) %>>
+
+				<%
+				for (int k = 0; k < entries.size(); k++) {
+					com.liferay.portal.kernel.dao.search.SearchEntry entry = (com.liferay.portal.kernel.dao.search.SearchEntry)entries.get(k);
+
+					entry.setIndex(k);
+
+					request.setAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW_ENTRY, entry);
+				%>
+
+						<%
+						entry.print(pageContext.getOut(), request, response);
+						%>
+
+				<%
+				}
+				%>
+
+			</li>
+
+		<%
+			request.removeAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW);
+			request.removeAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW_ENTRY);
+
+			request.removeAttribute("liferay-ui:search-container-row:rowId");
+		}
+		%>
+
+		<c:if test="<%= i == (resultRowSplitterEntries.size() - 1) %>">
+			<li></li>
+		</c:if>
+	</ul>
 
 <%
+}
+
 String rowHtmlTag = "li";
 %>
 

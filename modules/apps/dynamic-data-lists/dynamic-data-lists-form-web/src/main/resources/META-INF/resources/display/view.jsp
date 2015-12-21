@@ -20,12 +20,6 @@
 String redirect = ParamUtil.getString(request, "redirect", currentURL);
 
 DDLRecordSet recordSet = ddlFormDisplayContext.getRecordSet();
-
-boolean published = false;
-
-if (recordSet != null) {
-	published = GetterUtil.getBoolean(recordSet.getSettingsProperty("published", Boolean.FALSE.toString()));
-}
 %>
 
 <c:choose>
@@ -36,7 +30,7 @@ if (recordSet != null) {
 	</c:when>
 	<c:otherwise>
 		<c:choose>
-			<c:when test="<%= published %>">
+			<c:when test="<%= ddlFormDisplayContext.isFormAvailable() %>">
 				<portlet:actionURL name="addRecord" var="addRecordActionURL" />
 
 				<div class="portlet-forms">
@@ -58,6 +52,15 @@ if (recordSet != null) {
 
 						<liferay-ui:error exception="<%= CaptchaMaxChallengesException.class %>" message="maximum-number-of-captcha-attempts-exceeded" />
 						<liferay-ui:error exception="<%= CaptchaTextException.class %>" message="text-verification-failed" />
+
+						<liferay-ui:error exception="<%= StorageFieldValueException.RequiredValue.class %>">
+
+							<%
+							StorageFieldValueException.RequiredValue rv = (StorageFieldValueException.RequiredValue)errorException;
+							%>
+
+							<liferay-ui:message arguments="<%= rv.getFieldName() %>" key="no-value-defined-for-field-x" translateArguments="<%= false %>" />
+						</liferay-ui:error>
 
 						<div class="ddl-form-basic-info">
 							<div class="container-fluid-1280">

@@ -31,7 +31,7 @@ public abstract class UpgradeCompanyId extends UpgradeProcess {
 	@Override
 	protected void doUpgrade() throws Exception {
 		for (TableUpdater tableUpdater : getTableUpdaters()) {
-			if (tableHasColumn(tableUpdater.getTableName(), "companyId")) {
+			if (hasColumn(tableUpdater.getTableName(), "companyId")) {
 				if (_log.isInfoEnabled()) {
 					_log.info("Skipping table " + tableUpdater.getTableName());
 				}
@@ -66,8 +66,8 @@ public abstract class UpgradeCompanyId extends UpgradeProcess {
 			_columnName = foreignColumnName;
 
 			_foreignNamesArray = new String[][] {
-				new String[] {foreignTableName, foreignColumnName
-			}};
+				new String[] {foreignTableName, foreignColumnName}
+			};
 		}
 
 		public TableUpdater(

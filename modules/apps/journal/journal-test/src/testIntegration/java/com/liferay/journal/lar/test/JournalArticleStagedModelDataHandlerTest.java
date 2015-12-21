@@ -76,6 +76,11 @@ public class JournalArticleStagedModelDataHandlerTest
 			SynchronousDestinationTestRule.INSTANCE,
 			TransactionalTestRule.INSTANCE);
 
+	@Override
+	public boolean isAssetPrioritySupported() {
+		return true;
+	}
+
 	@Test
 	public void testCompanyScopeDependencies() throws Exception {
 		initExport();
@@ -364,6 +369,35 @@ public class JournalArticleStagedModelDataHandlerTest
 		validateComments(article, importedArticle, group);
 
 		validateImport(dependentStagedModelsMap, group);
+	}
+
+	@Override
+	protected void validateImportedStagedModel(
+			StagedModel stagedModel, StagedModel importedStagedModel)
+		throws Exception {
+
+		super.validateImportedStagedModel(stagedModel, importedStagedModel);
+
+		JournalArticle article = (JournalArticle)stagedModel;
+		JournalArticle importedArticle = (JournalArticle)importedStagedModel;
+
+		Assert.assertEquals(article.getTitle(), importedArticle.getTitle());
+		Assert.assertEquals(
+			article.getUrlTitle(), importedArticle.getUrlTitle());
+		Assert.assertEquals(
+			article.getDescription(), importedArticle.getDescription());
+		Assert.assertEquals(
+			article.getDisplayDate(), importedArticle.getDisplayDate());
+		Assert.assertEquals(
+			article.getExpirationDate(), importedArticle.getExpirationDate());
+		Assert.assertEquals(
+			article.getReviewDate(), importedArticle.getReviewDate());
+		Assert.assertEquals(
+			article.isIndexable(), importedArticle.isIndexable());
+		Assert.assertEquals(
+			article.isSmallImage(), importedArticle.isSmallImage());
+		Assert.assertEquals(
+			article.getSmallImageURL(), importedArticle.getSmallImageURL());
 	}
 
 }

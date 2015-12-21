@@ -16,8 +16,7 @@ package com.liferay.portal.background.task.service;
 
 import aQute.bnd.annotation.ProviderType;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
+import com.liferay.osgi.util.ServiceTrackerFactory;
 
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -360,6 +359,15 @@ public class BackgroundTaskLocalServiceUtil {
 				   .getBackgroundTasks(groupId, taskExecutorClassNames, status);
 	}
 
+	public static java.util.List<com.liferay.portal.background.task.model.BackgroundTask> getBackgroundTasks(
+		long[] groupIds, java.lang.String name,
+		java.lang.String taskExecutorClassName, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.background.task.model.BackgroundTask> orderByComparator) {
+		return getService()
+				   .getBackgroundTasks(groupIds, name, taskExecutorClassName,
+			start, end, orderByComparator);
+	}
+
 	/**
 	* Returns a range of all the background tasks.
 	*
@@ -452,6 +460,21 @@ public class BackgroundTaskLocalServiceUtil {
 			completed);
 	}
 
+	public static int getBackgroundTasksCount(long[] groupIds,
+		java.lang.String name, java.lang.String taskExecutorClassName) {
+		return getService()
+				   .getBackgroundTasksCount(groupIds, name,
+			taskExecutorClassName);
+	}
+
+	public static int getBackgroundTasksCount(long[] groupIds,
+		java.lang.String name, java.lang.String taskExecutorClassName,
+		boolean completed) {
+		return getService()
+				   .getBackgroundTasksCount(groupIds, name,
+			taskExecutorClassName, completed);
+	}
+
 	public static com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
 		return getService().getIndexableActionableDynamicQuery();
 	}
@@ -501,14 +524,6 @@ public class BackgroundTaskLocalServiceUtil {
 	public void setService(BackgroundTaskLocalService service) {
 	}
 
-	private static ServiceTracker<BackgroundTaskLocalService, BackgroundTaskLocalService> _serviceTracker;
-
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(BackgroundTaskLocalServiceUtil.class);
-
-		_serviceTracker = new ServiceTracker<BackgroundTaskLocalService, BackgroundTaskLocalService>(bundle.getBundleContext(),
-				BackgroundTaskLocalService.class, null);
-
-		_serviceTracker.open();
-	}
+	private static ServiceTracker<BackgroundTaskLocalService, BackgroundTaskLocalService> _serviceTracker =
+		ServiceTrackerFactory.open(BackgroundTaskLocalService.class);
 }

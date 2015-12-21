@@ -122,7 +122,8 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 				MBThread.class.getName(), thread.getThreadId(),
 				thread.getUuid(), 0, new long[0], new String[0], false, null,
 				null, null, null, String.valueOf(thread.getRootMessageId()),
-				null, null, null, null, 0, 0, null);
+				null, null, null, null, 0, 0,
+				serviceContext.getAssetPriority());
 		}
 
 		return thread;
@@ -1094,7 +1095,9 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 		MBMessage message = mbMessagePersistence.findByPrimaryKey(messageId);
 
 		if (message.isRoot()) {
-			throw new SplitThreadException();
+			throw new SplitThreadException(
+				"Unable to split message " + messageId +
+					" because it is a root message");
 		}
 
 		MBCategory category = message.getCategory();

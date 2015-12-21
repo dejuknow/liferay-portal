@@ -35,18 +35,6 @@
 		</execute>
 	</command>
 
-	<command name="gotoControlPanelSystem" summary="Navigate to Product Menu > Control Panel > System > ${portlet}">
-		<execute macro="ProductMenuHelper#gotoControlPanel" />
-
-		<execute macro="ProductMenuHelper#expandCategory">
-			<var name="category" value="System" />
-		</execute>
-
-		<execute macro="ProductMenuHelper#gotoPortlet">
-			<var name="portlet" value="${portlet}" />
-		</execute>
-	</command>
-
 	<command name="gotoControlPanelUsers" summary="Navigate to Product Menu > Control Panel > Users > ${portlet}">
 		<execute macro="ProductMenuHelper#gotoControlPanel" />
 
@@ -59,10 +47,24 @@
 		</execute>
 	</command>
 
+	<command name="gotoEditPage" summary="Navigate to Product Menu > Sites > Pages > Public Pages > ${page}">
+		<var name="page" value="${page}" />
+
+		<execute macro="ProductMenuHelper#gotoEditPage" />
+	</command>
+
+	<command name="gotoEditPublicPages" summary="Navigate to Product Menu > Sites > Pages > Public Pages > ${page}">
+		<execute macro="ProductMenuHelper#gotoEditPublicPages" />
+	</command>
+
+	<command name="gotoLiveSite" summary="Navigate to the Live site">
+		<execute macro="ProductMenuHelper#gotoSites" />
+
+		<execute function="AssertClick" locator1="ProductMenu#LIVE_LINK" value1="Live" />
+	</command>
+
 	<command name="gotoLocalizedControlPanel" summary="Navigate to Product Menu > Control Panel > ${category} > ${portlet}">
-		<execute macro="ProductMenuHelper#gotoTab">
-			<var name="tab" value="${tab}" />
-		</execute>
+		<execute macro="ProductMenuHelper#gotoControlPanel" />
 
 		<execute macro="ProductMenuHelper#expandCategory">
 			<var name="category" value="${category}" />
@@ -74,11 +76,7 @@
 	</command>
 
 	<command name="gotoLocalizedSitesAdministration" summary="Navigate to Product Menu > Sites > ${category} > ${portlet}">
-		<execute macro="ProductMenuHelper#gotoTab">
-			<var name="tab" value="${tab}" />
-		</execute>
-
-		<execute function="Click" locator1="ProductMenu#BACK_ARROW" />
+		<execute macro="ProductMenuHelper#gotoSites" />
 
 		<execute macro="ProductMenuHelper#expandCategory">
 			<var name="category" value="${category}" />
@@ -102,6 +100,8 @@
 	</command>
 
 	<command name="gotoPersonalSite" summary="Navigate to Product Menu > Profile" >
+		<execute macro="ProductMenuHelper#gotoUser" />
+
 		<execute function="Click" locator1="ProductMenu#USER_PROFILE" />
 	</command>
 
@@ -134,11 +134,13 @@
 
 		<if>
 			<and>
-				<condition function="IsElementPresent" locator1="ProductMenu#BACK_ARROW" />
-				<condition function="IsVisible" locator1="ProductMenu#BACK_ARROW" />
+				<condition function="IsElementPresent" locator1="ProductMenu#SITES_COMPASS" />
+				<condition function="IsVisible" locator1="ProductMenu#SITES_COMPASS" />
 			</and>
 			<then>
-				<execute function="Click" locator1="ProductMenu#BACK_ARROW" />
+				<execute function="Click" locator1="ProductMenu#SITES_COMPASS" />
+
+				<execute function="AssertVisible" locator1="ProductMenu#SITES_POPUP" />
 			</then>
 		</if>
 
@@ -205,6 +207,18 @@
 		<execute macro="ProductMenuHelper#gotoPortlet">
 			<var name="portlet" value="${portlet}" />
 		</execute>
+	</command>
+
+	<command name="gotoSiteViaLink" summary="Navigate to ${site} via the 'Go to Site' link">
+		<execute macro="ProductMenuHelper#gotoSites" />
+
+		<execute function="AssertClick" locator1="ProductMenu#GO_TO_SITES_LINK" value1="Go to Site" />
+	</command>
+
+	<command name="gotoStagingSite" summary="Navigate to the Staging site">
+		<execute macro="ProductMenuHelper#gotoSites" />
+
+		<execute function="AssertClick" locator1="ProductMenu#STAGING_LINK" value1="Staging" />
 	</command>
 
 	<command name="gotoUserMyAccount" summary="Navigate to Product Menu > User > My Account > ${portlet}">

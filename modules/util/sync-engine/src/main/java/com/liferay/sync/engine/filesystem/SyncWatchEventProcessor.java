@@ -15,8 +15,10 @@
 package com.liferay.sync.engine.filesystem;
 
 import com.liferay.sync.engine.SyncEngine;
+import com.liferay.sync.engine.documentlibrary.event.Event;
 import com.liferay.sync.engine.documentlibrary.util.BatchEvent;
 import com.liferay.sync.engine.documentlibrary.util.BatchEventManager;
+import com.liferay.sync.engine.documentlibrary.util.FileEventManager;
 import com.liferay.sync.engine.documentlibrary.util.FileEventUtil;
 import com.liferay.sync.engine.model.SyncAccount;
 import com.liferay.sync.engine.model.SyncFile;
@@ -194,7 +196,14 @@ public class SyncWatchEventProcessor implements Runnable {
 							parentSyncFile.getRepositoryId(), _syncAccountId);
 					}
 					catch (Exception e) {
-						if (_logger.isTraceEnabled()) {
+						Throwable throwable = e.getCause();
+
+						String message = throwable.getMessage();
+
+						if (!message.contains(
+								"Unique index or primary key violation") &&
+							_logger.isTraceEnabled()) {
+
 							_logger.trace(e.getMessage(), e);
 						}
 					}
@@ -225,7 +234,7 @@ public class SyncWatchEventProcessor implements Runnable {
 			try {
 				if ((Files.size(targetFilePath) == 0) ||
 					FileUtil.isModified(syncFile, targetFilePath) ||
-					isInErrorState(targetFilePath)) {
+					isInErrorState(sourceFilePath)) {
 
 					SyncFileService.addFileSyncFile(
 						targetFilePath, parentSyncFile.getTypePK(),
@@ -399,7 +408,6 @@ public class SyncWatchEventProcessor implements Runnable {
 		SyncFile syncFile = SyncFileService.fetchSyncFile(filePath.toString());
 
 		if ((syncFile == null) ||
-			(syncFile.getState() == SyncFile.STATE_IN_PROGRESS) ||
 			!Files.notExists(Paths.get(syncFile.getFilePathName()))) {
 
 			return;
@@ -410,6 +418,20 @@ public class SyncWatchEventProcessor implements Runnable {
 			SyncFileService.deleteSyncFile(syncFile, false);
 
 			return;
+		}
+		else if (syncFile.getState() == SyncFile.STATE_IN_PROGRESS) {
+			Set<Event> events = FileEventManager.getEvents(
+				syncFile.getSyncFileId());
+
+			for (Event event : events) {
+				event.cancel();
+			}
+
+			if (isPendingTypePK(syncFile)) {
+				SyncFileService.deleteSyncFile(syncFile);
+
+				return;
+			}
 		}
 		else if (isPendingTypePK(syncFile)) {
 			queueSyncWatchEvent(syncFile.getFilePathName(), syncWatchEvent);
@@ -486,8 +508,6 @@ public class SyncWatchEventProcessor implements Runnable {
 
 	protected boolean isInErrorState(Path filePath) {
 		while (true) {
-			filePath = filePath.getParent();
-
 			if (filePath == null) {
 				return false;
 			}
@@ -495,18 +515,20 @@ public class SyncWatchEventProcessor implements Runnable {
 			SyncFile syncFile = SyncFileService.fetchSyncFile(
 				filePath.toString());
 
-			if (syncFile == null) {
-				continue;
+			if (syncFile != null) {
+				if (syncFile.isSystem()) {
+					break;
+				}
+
+				if (syncFile.getState() == SyncFile.STATE_ERROR) {
+					return true;
+				}
 			}
 
-			if (!syncFile.isSystem() &&
-				(syncFile.getState() == SyncFile.STATE_ERROR)) {
-
-				return true;
-			}
-
-			return false;
+			filePath = filePath.getParent();
 		}
+
+		return false;
 	}
 
 	protected boolean isPendingTypePK(SyncFile syncFile) {

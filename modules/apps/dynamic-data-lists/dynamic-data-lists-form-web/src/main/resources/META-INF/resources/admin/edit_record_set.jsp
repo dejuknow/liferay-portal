@@ -49,10 +49,50 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 		<aui:input name="ddmStructureId" type="hidden" value="<%= ddmStructureId %>" />
 		<aui:input name="publish" type="hidden" />
 
+		<liferay-ui:error exception="<%= DDMFormLayoutValidationException.class %>" message="please-enter-a-valid-form-layout" />
+
+		<liferay-ui:error exception="<%= DDMFormLayoutValidationException.MustNotDuplicateFieldName.class %>">
+
+			<%
+			DDMFormLayoutValidationException.MustNotDuplicateFieldName mndfn = (DDMFormLayoutValidationException.MustNotDuplicateFieldName)errorException;
+			%>
+
+			<liferay-ui:message arguments="<%= StringUtil.merge(mndfn.getDuplicatedFieldNames(), StringPool.COMMA_AND_SPACE) %>" key="the-definition-field-name-x-was-defined-more-than-once" translateArguments="<%= false %>" />
+		</liferay-ui:error>
+
+		<liferay-ui:error exception="<%= DDMFormValidationException.class %>" message="please-enter-a-valid-form-definition" />
+
+		<liferay-ui:error exception="<%= DDMFormValidationException.MustNotDuplicateFieldName.class %>">
+
+			<%
+			DDMFormValidationException.MustNotDuplicateFieldName mndfn = (DDMFormValidationException.MustNotDuplicateFieldName)errorException;
+			%>
+
+			<liferay-ui:message arguments="<%= mndfn.getFieldName() %>" key="the-definition-field-name-x-was-defined-more-than-once" translateArguments="<%= false %>" />
+		</liferay-ui:error>
+
+		<liferay-ui:error exception="<%= DDMFormValidationException.MustSetOptionsForField.class %>">
+
+			<%
+			DDMFormValidationException.MustSetOptionsForField msoff = (DDMFormValidationException.MustSetOptionsForField)errorException;
+			%>
+
+			<liferay-ui:message arguments="<%= msoff.getFieldName() %>" key="at-least-one-option-should-be-set-for-field-x" translateArguments="<%= false %>" />
+		</liferay-ui:error>
+
+		<liferay-ui:error exception="<%= DDMFormValidationException.MustSetValidCharactersForFieldName.class %>">
+
+			<%
+			DDMFormValidationException.MustSetValidCharactersForFieldName msvcffn = (DDMFormValidationException.MustSetValidCharactersForFieldName)errorException;
+			%>
+
+			<liferay-ui:message arguments="<%= msvcffn.getFieldName() %>" key="invalid-characters-were-defined-for-field-name-x" translateArguments="<%= false %>" />
+		</liferay-ui:error>
+
 		<liferay-ui:error exception="<%= RecordSetNameException.class %>" message="please-enter-a-valid-form-name" />
-		<liferay-ui:error exception="<%= StructureDefinitionException .class %>" message="please-enter-a-valid-form-definition" />
-		<liferay-ui:error exception="<%= StructureLayoutException .class %>" message="please-enter-a-valid-form-layout" />
-		<liferay-ui:error exception="<%= StructureNameException .class %>" message="please-enter-a-valid-form-name" />
+		<liferay-ui:error exception="<%= StructureDefinitionException.class %>" message="please-enter-a-valid-form-definition" />
+		<liferay-ui:error exception="<%= StructureLayoutException.class %>" message="please-enter-a-valid-form-layout" />
+		<liferay-ui:error exception="<%= StructureNameException.class %>" message="please-enter-a-valid-form-name" />
 
 		<c:if test="<%= ddlFormAdminDisplayContext.isRecordSetPublished() %>">
 			<div class="alert alert-success ddl-form-alert">
@@ -63,7 +103,7 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 					</button>
 
 					<liferay-util:buffer var="publishedLink">
-						<a href="<%= ddlFormAdminDisplayContext.getRecordSetLayoutURL() %>" target="_blank"><%= ddlFormAdminDisplayContext.getRecordSetLayoutURL() %></a>
+						<a href="<%= ddlFormAdminDisplayContext.getPublishedFormURL() %>" target="_blank"><%= ddlFormAdminDisplayContext.getPublishedFormURL() %></a>
 						<span class="icon-external-link"></span>
 					</liferay-util:buffer>
 
@@ -93,7 +133,7 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 			<aui:input name="layout" type="hidden" />
 
 			<div id="<portlet:namespace />formBuilder">
-				<span class="icon-refresh icon-spin" id="<portlet:namespace />loader"></span>
+				<span class="ddl-loader icon-refresh icon-spin" id="<portlet:namespace />loader"></span>
 			</div>
 		</aui:fieldset>
 
@@ -139,6 +179,7 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 
 								new Liferay.DDL.Portlet(
 									{
+										dataProviders: <%= ddlFormAdminDisplayContext.getSerializedDDMDataProviders() %>,
 										definition: <%= ddlFormAdminDisplayContext.getSerializedDDMForm() %>,
 										editForm: event.form,
 										layout: <%= ddlFormAdminDisplayContext.getSerializedDDMFormLayout() %>,

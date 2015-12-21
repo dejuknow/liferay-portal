@@ -1212,6 +1212,38 @@ create table RatingsStats (
 	averageScore DOUBLE
 );
 
+create table RecentLayoutBranch (
+	mvccVersion LONG default 0,
+	recentLayoutBranchId LONG not null primary key,
+	groupId LONG,
+	companyId LONG,
+	userId LONG,
+	layoutBranchId LONG,
+	layoutSetBranchId LONG,
+	plid LONG
+);
+
+create table RecentLayoutRevision (
+	mvccVersion LONG default 0,
+	recentLayoutRevisionId LONG not null primary key,
+	groupId LONG,
+	companyId LONG,
+	userId LONG,
+	layoutRevisionId LONG,
+	layoutSetBranchId LONG,
+	plid LONG
+);
+
+create table RecentLayoutSetBranch (
+	mvccVersion LONG default 0,
+	recentLayoutSetBranchId LONG not null primary key,
+	groupId LONG,
+	companyId LONG,
+	userId LONG,
+	layoutSetBranchId LONG,
+	layoutSetId LONG
+);
+
 create table Region (
 	mvccVersion LONG default 0,
 	regionId LONG not null primary key,
@@ -1337,88 +1369,6 @@ create table Role_ (
 	description STRING null,
 	type_ INTEGER,
 	subtype VARCHAR(75) null
-);
-
-create table SCFrameworkVersi_SCProductVers (
-	companyId LONG not null,
-	frameworkVersionId LONG not null,
-	productVersionId LONG not null,
-	primary key (companyId, frameworkVersionId, productVersionId)
-);
-
-create table SCFrameworkVersion (
-	frameworkVersionId LONG not null primary key,
-	groupId LONG,
-	companyId LONG,
-	userId LONG,
-	userName VARCHAR(75) null,
-	createDate DATE null,
-	modifiedDate DATE null,
-	name VARCHAR(75) null,
-	url STRING null,
-	active_ BOOLEAN,
-	priority INTEGER
-);
-
-create table SCLicense (
-	licenseId LONG not null primary key,
-	companyId LONG,
-	name VARCHAR(75) null,
-	url STRING null,
-	openSource BOOLEAN,
-	active_ BOOLEAN,
-	recommended BOOLEAN
-);
-
-create table SCLicenses_SCProductEntries (
-	companyId LONG not null,
-	licenseId LONG not null,
-	productEntryId LONG not null,
-	primary key (companyId, licenseId, productEntryId)
-);
-
-create table SCProductEntry (
-	productEntryId LONG not null primary key,
-	groupId LONG,
-	companyId LONG,
-	userId LONG,
-	userName VARCHAR(75) null,
-	createDate DATE null,
-	modifiedDate DATE null,
-	name VARCHAR(75) null,
-	type_ VARCHAR(75) null,
-	tags VARCHAR(255) null,
-	shortDescription STRING null,
-	longDescription STRING null,
-	pageURL STRING null,
-	author VARCHAR(75) null,
-	repoGroupId VARCHAR(75) null,
-	repoArtifactId VARCHAR(75) null
-);
-
-create table SCProductScreenshot (
-	productScreenshotId LONG not null primary key,
-	companyId LONG,
-	groupId LONG,
-	productEntryId LONG,
-	thumbnailId LONG,
-	fullImageId LONG,
-	priority INTEGER
-);
-
-create table SCProductVersion (
-	productVersionId LONG not null primary key,
-	companyId LONG,
-	userId LONG,
-	userName VARCHAR(75) null,
-	createDate DATE null,
-	modifiedDate DATE null,
-	productEntryId LONG,
-	version VARCHAR(75) null,
-	changeLog STRING null,
-	downloadPageURL STRING null,
-	directDownloadURL VARCHAR(2000) null,
-	repoStoreArtifact BOOLEAN
 );
 
 create table ServiceComponent (

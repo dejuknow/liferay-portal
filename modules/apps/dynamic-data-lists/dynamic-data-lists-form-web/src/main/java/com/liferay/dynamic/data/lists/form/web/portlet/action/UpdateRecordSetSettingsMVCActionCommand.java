@@ -51,6 +51,8 @@ public class UpdateRecordSetSettingsMVCActionCommand
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
 
+		hideDefaultErrorMessage(actionRequest);
+
 		updateRecordSetSettings(actionRequest);
 		updateWorkflowDefinitionLink(actionRequest);
 	}
@@ -120,7 +122,10 @@ public class UpdateRecordSetSettingsMVCActionCommand
 
 		long recordSetId = ParamUtil.getLong(actionRequest, "recordSetId");
 
-		UnicodeProperties settingsProperties = new UnicodeProperties(true);
+		DDLRecordSet recordSet = _ddlRecordSetService.getRecordSet(recordSetId);
+
+		UnicodeProperties settingsProperties =
+			recordSet.getSettingsProperties();
 
 		updateRecordSetRedirectURLSettings(actionRequest, settingsProperties);
 		updateRecordSetRequireCaptchaSettings(

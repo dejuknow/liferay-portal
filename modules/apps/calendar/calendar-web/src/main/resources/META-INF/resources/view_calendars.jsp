@@ -42,7 +42,7 @@ portletURL.setParameter("calendarResourceId", String.valueOf(calendarResource.ge
 			<liferay-portlet:param name="calendarResourceId" value="<%= String.valueOf(calendarResource.getCalendarResourceId()) %>" />
 		</liferay-portlet:renderURL>
 
-		<aui:button onClick="<%= editCalendarURL %>" primary="<%= true %>" value="add-calendar" />
+		<aui:button href="<%= editCalendarURL %>" primary="<%= true %>" value="add-calendar" />
 	</aui:button-row>
 </c:if>
 
@@ -94,7 +94,6 @@ portletURL.setParameter("calendarResourceId", String.valueOf(calendarResource.ge
 				cssClass="entry-action"
 				path="/calendar_action.jsp"
 			/>
-
 		</liferay-ui:search-container-row>
 
 		<liferay-ui:search-iterator markupView="lexicon" />
