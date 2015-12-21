@@ -240,12 +240,12 @@ public class SyncEngine {
 			watcher = new JPathWatcher(syncAccountFilePath, watchEventListener);
 		}
 
-		_executorService.execute(watcher);
+		watcher.run();
 
 		SyncWatchEventProcessor syncWatchEventProcessor =
 			new SyncWatchEventProcessor(syncAccountId);
 
-		_executorService.execute(syncWatchEventProcessor);
+		syncWatchEventProcessor.run();
 
 		if (!ConnectionRetryUtil.retryInProgress(syncAccountId)) {
 			synchronizeSyncFiles(syncAccountId);
