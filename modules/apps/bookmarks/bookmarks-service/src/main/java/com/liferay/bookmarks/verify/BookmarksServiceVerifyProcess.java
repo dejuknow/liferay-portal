@@ -72,7 +72,7 @@ public class BookmarksServiceVerifyProcess extends VerifyProcess {
 		for (BookmarksEntry entry : entries) {
 			try {
 				_bookmarksEntryLocalService.updateAsset(
-					entry.getUserId(), entry, null, null, null);
+					entry.getUserId(), entry, null, null, null, null);
 			}
 			catch (Exception e) {
 				if (_log.isWarnEnabled()) {
@@ -100,7 +100,7 @@ public class BookmarksServiceVerifyProcess extends VerifyProcess {
 		for (BookmarksFolder folder : folders) {
 			try {
 				_bookmarksFolderLocalService.updateAsset(
-					folder.getUserId(), folder, null, null, null);
+					folder.getUserId(), folder, null, null, null, null);
 			}
 			catch (Exception e) {
 				if (_log.isWarnEnabled()) {
@@ -127,7 +127,7 @@ public class BookmarksServiceVerifyProcess extends VerifyProcess {
 	private static final Log _log = LogFactoryUtil.getLog(
 		BookmarksServiceVerifyProcess.class);
 
-	private volatile BookmarksEntryLocalService _bookmarksEntryLocalService;
-	private volatile BookmarksFolderLocalService _bookmarksFolderLocalService;
+	private BookmarksEntryLocalService _bookmarksEntryLocalService;
+	private BookmarksFolderLocalService _bookmarksFolderLocalService;
 
 }

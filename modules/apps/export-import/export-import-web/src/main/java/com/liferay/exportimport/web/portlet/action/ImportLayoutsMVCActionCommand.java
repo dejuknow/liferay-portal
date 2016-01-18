@@ -78,7 +78,7 @@ import org.osgi.service.component.annotations.Reference;
 @Component(
 	immediate = true,
 	property = {
-		"javax.portlet.name=" + ExportImportPortletKeys.EXPORT_IMPORT,
+		"javax.portlet.name=" + ExportImportPortletKeys.IMPORT,
 		"mvc.command.name=importLayouts"
 	},
 	service = {ImportLayoutsMVCActionCommand.class, MVCActionCommand.class}
@@ -454,10 +454,10 @@ public class ImportLayoutsMVCActionCommand extends BaseMVCActionCommand {
 	private static final Log _log = LogFactoryUtil.getLog(
 		ImportLayoutsMVCActionCommand.class);
 
-	private volatile DLFileEntryLocalService _dlFileEntryLocalService;
-	private volatile ExportImportConfigurationLocalService
+	private DLFileEntryLocalService _dlFileEntryLocalService;
+	private ExportImportConfigurationLocalService
 		_exportImportConfigurationLocalService;
-	private volatile ExportImportService _exportImportService;
-	private volatile LayoutService _layoutService;
+	private ExportImportService _exportImportService;
+	private LayoutService _layoutService;
 
 }

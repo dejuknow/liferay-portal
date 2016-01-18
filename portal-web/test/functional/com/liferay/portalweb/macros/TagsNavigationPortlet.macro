@@ -15,7 +15,7 @@
 	<command name="configureDisplayStylePG">
 		<execute macro="Portlet#gotoPortletOptions">
 			<var name="portletName" value="Tags Navigation" />
-			<var name="portletNameBorderless" value="${portletNameBorderless}" />
+			<var name="portletName" value="${portletName}" />
 			<var name="portletOption" value="Configuration" />
 		</execute>
 
@@ -29,13 +29,13 @@
 		</if>
 
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="You have successfully updated the setup." />
+		<execute macro="Alert#viewSetupUpdatedSuccessMessage" />
 	</command>
 
 	<command name="configureFlaggableSettingsPG">
 		<execute macro="Portlet#gotoPortletOptions">
 			<var name="portletName" value="Tags Navigation" />
-			<var name="portletNameBorderless" value="${portletNameBorderless}" />
+			<var name="portletName" value="${portletName}" />
 			<var name="portletOption" value="Configuration" />
 		</execute>
 
@@ -44,19 +44,19 @@
 		<if>
 			<equals arg1="${showUnusedTags}" arg2="true" />
 			<then>
-				<execute function="Check" locator1="TagsNavigationConfiguration#SHOW_UNUSED_TAGS_CHECKBOX" value1="Show Unused Tags" />
+				<execute function="Check#checkToggleSwitch" locator1="TagsNavigationConfiguration#SHOW_UNUSED_TAGS_CHECKBOX" value1="Show Unused Tags" />
 			</then>
 		</if>
 
 		<if>
 			<equals arg1="${showAssetCount}" arg2="true" />
 			<then>
-				<execute function="Check" locator1="TagsNavigationConfiguration#SHOW_ASSET_COUNT_CHECKBOX" value1="Show Asset Count" />
+				<execute function="Check#checkToggleSwitch" locator1="TagsNavigationConfiguration#SHOW_ASSET_COUNT_CHECKBOX" value1="Show Asset Count" />
 			</then>
 		</if>
 
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="You have successfully updated the setup." />
+		<execute macro="Alert#viewSetupUpdatedSuccessMessage" />
 	</command>
 
 	<command name="viewADTColorByPopularityPG">
@@ -83,7 +83,7 @@
 	<command name="viewTagCloudConfiguration">
 		<execute macro="Portlet#gotoPortletOptions">
 			<var name="portletName" value="Tag Cloud" />
-			<var name="portletNameBorderless" value="${portletNameBorderless}" />
+			<var name="portletName" value="${portletName}" />
 			<var name="portletOption" value="Configuration" />
 		</execute>
 

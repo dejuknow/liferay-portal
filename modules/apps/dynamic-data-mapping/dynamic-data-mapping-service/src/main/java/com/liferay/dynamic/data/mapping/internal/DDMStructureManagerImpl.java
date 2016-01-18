@@ -354,8 +354,7 @@ public class DDMStructureManagerImpl implements DDMStructureManager {
 
 	protected OrderByComparator
 		<com.liferay.dynamic.data.mapping.model.DDMStructure>
-		getStructureOrderByComparator(
-			int structureComparator) {
+			getStructureOrderByComparator(int structureComparator) {
 
 		if (structureComparator ==
 				DDMStructureManager.STRUCTURE_COMPARATOR_STRUCTURE_KEY) {
@@ -430,9 +429,9 @@ public class DDMStructureManagerImpl implements DDMStructureManager {
 		return portalException;
 	}
 
-	private volatile DDM _ddm;
-	private volatile DDMBeanTranslator _ddmBeanTranslator;
-	private volatile DDMStorageLinkLocalService _ddmStorageLinkLocalService;
-	private volatile DDMStructureLocalService _ddmStructureLocalService;
+	private DDM _ddm;
+	private DDMBeanTranslator _ddmBeanTranslator;
+	private DDMStorageLinkLocalService _ddmStorageLinkLocalService;
+	private DDMStructureLocalService _ddmStructureLocalService;
 
 }

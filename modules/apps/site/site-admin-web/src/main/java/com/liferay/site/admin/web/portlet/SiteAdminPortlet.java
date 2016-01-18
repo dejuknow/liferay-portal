@@ -31,6 +31,7 @@ import com.liferay.portal.NoSuchLayoutException;
 import com.liferay.portal.PendingBackgroundTaskException;
 import com.liferay.portal.RemoteOptionsException;
 import com.liferay.portal.RequiredGroupException;
+import com.liferay.portal.kernel.backgroundtask.BackgroundTaskConstants;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskManagerUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -162,7 +163,7 @@ public class SiteAdminPortlet extends MVCPortlet {
 		throws Exception {
 
 		long backgroundTaskId = ParamUtil.getLong(
-			actionRequest, "backgroundTaskId");
+			actionRequest, BackgroundTaskConstants.BACKGROUND_TASK_ID);
 
 		BackgroundTaskManagerUtil.deleteBackgroundTask(backgroundTaskId);
 	}
@@ -402,9 +403,8 @@ public class SiteAdminPortlet extends MVCPortlet {
 		List<Team> teams = new ArrayList<>();
 
 		long[] teamsTeamIds = ArrayUtil.unique(
-				StringUtil.split(
-						ParamUtil.getString(portletRequest, "teamsTeamIds"), 0L)
-		);
+			StringUtil.split(
+				ParamUtil.getString(portletRequest, "teamsTeamIds"), 0L));
 
 		for (long teamsTeamId : teamsTeamIds) {
 			if (teamsTeamId == 0) {
@@ -905,8 +905,8 @@ public class SiteAdminPortlet extends MVCPortlet {
 		TransactionAttribute.Factory.create(
 			Propagation.REQUIRED, new Class<?>[] {Exception.class});
 
-	private volatile PanelAppRegistry _panelAppRegistry;
-	private volatile PanelCategoryRegistry _panelCategoryRegistry;
+	private PanelAppRegistry _panelAppRegistry;
+	private PanelCategoryRegistry _panelCategoryRegistry;
 
 	private class GroupCallable implements Callable<Group> {
 

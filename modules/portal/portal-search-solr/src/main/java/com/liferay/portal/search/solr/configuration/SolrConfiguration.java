@@ -22,13 +22,15 @@ import com.liferay.configuration.admin.ConfigurationAdmin;
  * @author Michael C. Han
  */
 @ConfigurationAdmin(category = "platform")
-@Meta.OCD(id = "com.liferay.portal.search.solr.configuration.SolrConfiguration")
+@Meta.OCD(
+	id = "com.liferay.portal.search.solr.configuration.SolrConfiguration",
+	localization = "content/Language", name = "%solr.configuration.name"
+)
 public interface SolrConfiguration {
 
 	@Meta.AD(
 		deflt = "BASIC", optionLabels = {"Basic", "Cert"},
-		optionValues = {"BASIC", "CERT"},
-		required = false
+		optionValues = {"BASIC", "CERT"}, required = false
 	)
 	public String authenticationMode();
 

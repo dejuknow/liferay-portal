@@ -66,77 +66,105 @@ public interface UsersAdmin {
 		ORGANIZATION_COUNTRY_NAME_ACCESSOR =
 			new Accessor<Organization, String>() {
 
-			@Override
-			public String get(Organization organization) {
-				Address address = organization.getAddress();
+				@Override
+				public String get(Organization organization) {
+					Address address = organization.getAddress();
 
-				Country country = address.getCountry();
+					Country country = address.getCountry();
 
-				String countryName = country.getName(
-					LocaleThreadLocal.getThemeDisplayLocale());
+					String countryName = country.getName(
+						LocaleThreadLocal.getThemeDisplayLocale());
 
-				if (Validator.isNull(countryName)) {
-					country = CountryServiceUtil.fetchCountry(
-						organization.getCountryId());
+					if (Validator.isNull(countryName)) {
+						country = CountryServiceUtil.fetchCountry(
+							organization.getCountryId());
 
-					if (country != null) {
-						countryName = country.getName(
-							LocaleThreadLocal.getThemeDisplayLocale());
+						if (country != null) {
+							countryName = country.getName(
+								LocaleThreadLocal.getThemeDisplayLocale());
+						}
 					}
+
+					return countryName;
 				}
 
-				return countryName;
-			}
+				@Override
+				public Class<String> getAttributeClass() {
+					return String.class;
+				}
 
-			@Override
-			public Class<String> getAttributeClass() {
-				return String.class;
-			}
+				@Override
+				public Class<Organization> getTypeClass() {
+					return Organization.class;
+				}
 
-			@Override
-			public Class<Organization> getTypeClass() {
-				return Organization.class;
-			}
-
-		};
+			};
 
 	public static final Accessor<Organization, String>
 		ORGANIZATION_REGION_NAME_ACCESSOR =
 			new Accessor<Organization, String>() {
 
-			@Override
-			public String get(Organization organization) {
-				Address address = organization.getAddress();
+				@Override
+				public String get(Organization organization) {
+					Address address = organization.getAddress();
 
-				Region region = address.getRegion();
+					Region region = address.getRegion();
 
-				String regionName = region.getName();
+					String regionName = region.getName();
 
-				if (Validator.isNull(regionName)) {
-					region = RegionServiceUtil.fetchRegion(
-						organization.getRegionId());
+					if (Validator.isNull(regionName)) {
+						region = RegionServiceUtil.fetchRegion(
+							organization.getRegionId());
 
-					if (region != null) {
-						regionName = LanguageUtil.get(
-							LocaleThreadLocal.getThemeDisplayLocale(),
-							region.getName());
+						if (region != null) {
+							regionName = LanguageUtil.get(
+								LocaleThreadLocal.getThemeDisplayLocale(),
+								region.getName());
+						}
 					}
+
+					return regionName;
 				}
 
-				return regionName;
-			}
+				@Override
+				public Class<String> getAttributeClass() {
+					return String.class;
+				}
 
-			@Override
-			public Class<String> getAttributeClass() {
-				return String.class;
-			}
+				@Override
+				public Class<Organization> getTypeClass() {
+					return Organization.class;
+				}
 
-			@Override
-			public Class<Organization> getTypeClass() {
-				return Organization.class;
-			}
+			};
 
-		};
+	public static final Accessor<UserGroupGroupRole, Long>
+		USER_GROUP_GROUP_ROLE_ID_ACCESSOR =
+			new Accessor<UserGroupGroupRole, Long>() {
+
+				@Override
+				public Long get(UserGroupGroupRole userGroupGroupRole) {
+					Role role = RoleLocalServiceUtil.fetchRole(
+						userGroupGroupRole.getRoleId());
+
+					if (role == null) {
+						return 0L;
+					}
+
+					return role.getRoleId();
+				}
+
+				@Override
+				public Class<Long> getAttributeClass() {
+					return Long.class;
+				}
+
+				@Override
+				public Class<UserGroupGroupRole> getTypeClass() {
+					return UserGroupGroupRole.class;
+				}
+
+			};
 
 	public static final Accessor<UserGroupGroupRole, String>
 		USER_GROUP_GROUP_ROLE_TITLE_ACCESSOR =
@@ -166,6 +194,33 @@ public interface UsersAdmin {
 				}
 
 			};
+
+	public static final Accessor<UserGroupRole, Long>
+		USER_GROUP_ROLE_ID_ACCESSOR = new Accessor<UserGroupRole, Long>() {
+
+			@Override
+			public Long get(UserGroupRole userGroupRole) {
+				Role role = RoleLocalServiceUtil.fetchRole(
+					userGroupRole.getRoleId());
+
+				if (role == null) {
+					return 0L;
+				}
+
+				return role.getRoleId();
+			}
+
+			@Override
+			public Class<Long> getAttributeClass() {
+				return Long.class;
+			}
+
+			@Override
+			public Class<UserGroupRole> getTypeClass() {
+				return UserGroupRole.class;
+			}
+
+		};
 
 	public static final Accessor<UserGroupRole, String>
 		USER_GROUP_ROLE_TITLE_ACCESSOR = new Accessor<UserGroupRole, String>() {

@@ -59,6 +59,7 @@ import com.liferay.portlet.asset.AssetCategoryException;
 import com.liferay.portlet.asset.AssetTagException;
 import com.liferay.portlet.blogs.BlogsEntryAttachmentFileEntryHelper;
 import com.liferay.portlet.blogs.BlogsEntryAttachmentFileEntryReference;
+import com.liferay.portlet.blogs.BlogsEntryImageSelectorHelper;
 import com.liferay.portlet.blogs.EntryContentException;
 import com.liferay.portlet.blogs.EntryCoverImageCropException;
 import com.liferay.portlet.blogs.EntryDescriptionException;
@@ -192,10 +193,10 @@ public class EditEntryMVCActionCommand extends BaseMVCActionCommand {
 					_transactionAttribute, updateEntryCallable);
 
 				entry = (BlogsEntry)returnValue[0];
-				oldUrlTitle = ((String)returnValue[1]);
+				oldUrlTitle = (String)returnValue[1];
 				blogsEntryAttachmentFileEntryReferences =
-					((List<BlogsEntryAttachmentFileEntryReference>)
-						returnValue[2]);
+					(List<BlogsEntryAttachmentFileEntryReference>)
+						returnValue[2];
 			}
 			else if (cmd.equals(Constants.DELETE)) {
 				deleteEntries(actionRequest, false);
@@ -493,17 +494,40 @@ public class EditEntryMVCActionCommand extends BaseMVCActionCommand {
 		String coverImageCaption = ParamUtil.getString(
 			actionRequest, "coverImageCaption");
 
-		ImageSelector coverImageImageSelector = new ImageSelector(
-			coverImageFileEntryId, coverImageURL,
-			coverImageFileEntryCropRegion);
+		long oldCoverImageId = 0;
+		String oldCoverImageURL = StringPool.BLANK;
+		long oldSmallImageId = 0;
+		String oldSmallImageURL = StringPool.BLANK;
+
+		if (entryId != 0) {
+			BlogsEntry entry = _blogsEntryLocalService.getBlogsEntry(entryId);
+
+			oldCoverImageId = entry.getCoverImageFileEntryId();
+			oldCoverImageURL = entry.getCoverImageURL();
+			oldSmallImageId = entry.getSmallImageId();
+			oldSmallImageURL = entry.getSmallImageURL();
+		}
+
+		BlogsEntryImageSelectorHelper blogsEntryCoverImageSelectorHelper =
+			new BlogsEntryImageSelectorHelper(
+				coverImageFileEntryId, oldCoverImageId,
+				coverImageFileEntryCropRegion, coverImageURL, oldCoverImageURL);
+
+		ImageSelector coverImageImageSelector =
+			blogsEntryCoverImageSelectorHelper.getImageSelector();
 
 		long smallImageFileEntryId = ParamUtil.getLong(
 			actionRequest, "smallImageFileEntryId");
 		String smallImageURL = ParamUtil.getString(
 			actionRequest, "smallImageURL");
 
-		ImageSelector smallImageImageSelector = new ImageSelector(
-			smallImageFileEntryId, smallImageURL, null);
+		BlogsEntryImageSelectorHelper blogsEntrySmallImageSelectorHelper =
+			new BlogsEntryImageSelectorHelper(
+				smallImageFileEntryId, oldSmallImageId, StringPool.BLANK,
+				smallImageURL, oldSmallImageURL);
+
+		ImageSelector smallImageImageSelector =
+			blogsEntrySmallImageSelectorHelper.getImageSelector();
 
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(
 			BlogsEntry.class.getName(), actionRequest);
@@ -620,6 +644,24 @@ public class EditEntryMVCActionCommand extends BaseMVCActionCommand {
 			}
 		}
 
+		if (blogsEntryCoverImageSelectorHelper.isFileEntryTempFile()) {
+			_blogsEntryLocalService.addOriginalImageFileEntry(
+				themeDisplay.getUserId(), entry.getGroupId(),
+				entry.getEntryId(), coverImageImageSelector);
+
+			PortletFileRepositoryUtil.deletePortletFileEntry(
+				coverImageFileEntryId);
+		}
+
+		if (blogsEntrySmallImageSelectorHelper.isFileEntryTempFile()) {
+			_blogsEntryLocalService.addOriginalImageFileEntry(
+				themeDisplay.getUserId(), entry.getGroupId(),
+				entry.getEntryId(), smallImageImageSelector);
+
+			PortletFileRepositoryUtil.deletePortletFileEntry(
+				smallImageFileEntryId);
+		}
+
 		return new Object[] {
 			entry, oldUrlTitle, blogsEntryAttachmentFileEntryReferences
 		};
@@ -632,9 +674,9 @@ public class EditEntryMVCActionCommand extends BaseMVCActionCommand {
 		TransactionAttribute.Factory.create(
 			Propagation.REQUIRED, new Class<?>[] {Exception.class});
 
-	private volatile BlogsEntryLocalService _blogsEntryLocalService;
-	private volatile BlogsEntryService _blogsEntryService;
-	private volatile TrashEntryService _trashEntryService;
+	private BlogsEntryLocalService _blogsEntryLocalService;
+	private BlogsEntryService _blogsEntryService;
+	private TrashEntryService _trashEntryService;
 
 	private class UpdateEntryCallable implements Callable<Object[]> {
 

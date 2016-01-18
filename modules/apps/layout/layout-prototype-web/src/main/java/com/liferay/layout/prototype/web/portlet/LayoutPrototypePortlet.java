@@ -14,7 +14,7 @@
 
 package com.liferay.layout.prototype.web.portlet;
 
-import com.liferay.layout.prototype.web.constants.LayoutPrototypePortletKeys;
+import com.liferay.layout.prototype.constants.LayoutPrototypePortletKeys;
 import com.liferay.portal.NoSuchLayoutPrototypeException;
 import com.liferay.portal.RequiredLayoutPrototypeException;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
@@ -186,6 +186,6 @@ public class LayoutPrototypePortlet extends MVCPortlet {
 		_layoutPrototypeService = layoutPrototypeService;
 	}
 
-	private volatile LayoutPrototypeService _layoutPrototypeService;
+	private LayoutPrototypeService _layoutPrototypeService;
 
 }

@@ -9,6 +9,16 @@
 </thead>
 <tbody>
 <tr>
+	<td>TAB_LINK</td>
+	<td>//ul[contains(@class,'nav-tabs')]//li[contains(.,'${key_tabName}')]/a</td>
+	<td></td>
+</tr>
+<tr>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
 	<td>ACCOUNT_CREATED_NOTIFICATION</td>
 	<td>//ul[contains(@class,'nav-tabs')]/li/a[contains(.,'Account Created Notification')]</td>
 	<td></td>
@@ -236,6 +246,11 @@
 <tr>
 	<td>SYSTEM_PROPERTIES</td>
 	<td>//ul[contains(@class,'nav-tabs')]/li/a[contains(.,'System Properties')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>TAB_LINK</td>
+	<td>//ul[contains(@class,'nav-tabs')]//li[contains(.,'${key_tab}')]/a</td>
 	<td></td>
 </tr>
 <tr>

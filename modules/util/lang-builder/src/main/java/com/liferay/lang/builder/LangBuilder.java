@@ -151,6 +151,10 @@ public class LangBuilder {
 
 		String content = _orderProperties(propertiesFile);
 
+		if (Validator.isNull(content)) {
+			return;
+		}
+
 		// Locales that are not invoked by _createProperties should still be
 		// rewritten to use the right line separator
 
@@ -250,11 +254,11 @@ public class LangBuilder {
 
 		try (UnsyncBufferedReader unsyncBufferedReader =
 				new UnsyncBufferedReader(new UnsyncStringReader(content));
-			UnsyncBufferedWriter unsyncBufferedWriter =
-				new UnsyncBufferedWriter(
-					new OutputStreamWriter(
-						new FileOutputStream(propertiesFile),
-						StringPool.UTF8))) {
+					UnsyncBufferedWriter unsyncBufferedWriter =
+						new UnsyncBufferedWriter(
+							new OutputStreamWriter(
+								new FileOutputStream(propertiesFile),
+								StringPool.UTF8))) {
 
 			boolean firstLine = true;
 			int state = 0;
@@ -602,9 +606,10 @@ public class LangBuilder {
 		String content = _read(propertiesFile);
 
 		try (UnsyncBufferedReader unsyncBufferedReader =
-			new UnsyncBufferedReader(new UnsyncStringReader(content));
-			UnsyncBufferedWriter unsyncBufferedWriter =
-				new UnsyncBufferedWriter(new FileWriter(propertiesFile))) {
+				new UnsyncBufferedReader(new UnsyncStringReader(content));
+					UnsyncBufferedWriter unsyncBufferedWriter =
+						new UnsyncBufferedWriter(
+							new FileWriter(propertiesFile))) {
 
 			Map<String, String> messages = new TreeMap<>(
 				new NaturalOrderStringComparator(true, true));

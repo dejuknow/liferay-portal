@@ -49,6 +49,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>ERROR_3_ALT</td>
+	<td>//div[@class='alert alert-warning']</td>
+	<td></td>
+</tr>
+<tr>
 	<td>ERROR_3_LINK</td>
 	<td>xpath=(//div[contains(@class,'alert') and (contains(@class,'alert-warning'))]/a)</td>
 	<td></td>
@@ -140,12 +145,7 @@
 </tr>
 <tr>
 	<td>RECYCLE_BIN_RESTORE_SUCCESS</td>
-	<td>//div[contains(@class,'alert-success') and em[contains(@class,'restore')]]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>SUCCESS</td>
-	<td>//div[contains(@class,'alert-success') and contains(@class,'taglib-trash-undo')]</td>
+	<td>//div[contains(@class,'alert-success') and em[contains(@class,'restore')]] | //div[contains(@class,'alert-success') and contains(.,'restored')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -161,11 +161,6 @@
 <tr>
 	<td>SAVE_STATUS</td>
 	<td>//div[contains(@class,'alert') and contains(@class,'alert-success') and contains(@class,'save-status')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>STATUS</td>
-	<td>//span[contains(@class,'workflow-status')]/strong</td>
 	<td></td>
 </tr>
 <tr>
@@ -211,6 +206,11 @@
 <tr>
 	<td>USER_BLOCKED</td>
 	<td>//div[contains(@class,'alert-block')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>WORKFLOW_STATUS</td>
+	<td>//span[contains(@class,'workflow-status')]/strong | //span[contains(@class,'workflow-status')]/span</td>
 	<td></td>
 </tr>
 <tr>

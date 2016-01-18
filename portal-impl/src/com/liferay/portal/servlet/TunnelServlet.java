@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.security.access.control.AccessControlThreadLoca
 import com.liferay.portal.kernel.util.MethodHandler;
 import com.liferay.portal.kernel.util.MethodKey;
 import com.liferay.portal.kernel.util.ObjectValuePair;
+import com.liferay.portal.kernel.util.ProtectedClassLoaderObjectInputStream;
 import com.liferay.portal.security.auth.HttpPrincipal;
 import com.liferay.portal.util.PortalUtil;
 
@@ -48,8 +49,11 @@ public class TunnelServlet extends HttpServlet {
 
 		ObjectInputStream ois = null;
 
+		Thread thread = Thread.currentThread();
+
 		try {
-			ois = new ObjectInputStream(request.getInputStream());
+			ois = new ProtectedClassLoaderObjectInputStream(
+				request.getInputStream(), thread.getContextClassLoader());
 		}
 		catch (IOException ioe) {
 			if (_log.isWarnEnabled()) {

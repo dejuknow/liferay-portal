@@ -17,7 +17,7 @@ package com.liferay.control.menu.web;
 import com.liferay.control.menu.BaseJSPControlMenuEntry;
 import com.liferay.control.menu.ControlMenuEntry;
 import com.liferay.control.menu.constants.ControlMenuCategoryKeys;
-import com.liferay.control.menu.constants.ControlMenuWebKeys;
+import com.liferay.control.menu.web.constants.ControlMenuWebKeys;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.model.Group;
@@ -55,28 +55,6 @@ public class InformationMessagesControlMenuEntry
 	@Override
 	public String getJspPath() {
 		return "/entries/information_messages.jsp";
-	}
-
-	@Override
-	public boolean hasAccessPermission(HttpServletRequest request)
-		throws PortalException {
-
-		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
-			WebKeys.THEME_DISPLAY);
-
-		Layout layout = themeDisplay.getLayout();
-
-		if (layout.isTypeControlPanel()) {
-			return false;
-		}
-
-		if (!isCustomizableLayout(themeDisplay) &&
-			!isLinkedLayout(themeDisplay) && !isModifiedLayout(themeDisplay)) {
-
-			return false;
-		}
-
-		return super.hasAccessPermission(request);
 	}
 
 	public boolean hasUpdateLayoutPermission(ThemeDisplay themeDisplay)
@@ -178,6 +156,26 @@ public class InformationMessagesControlMenuEntry
 		}
 
 		return true;
+	}
+
+	@Override
+	public boolean isShow(HttpServletRequest request) throws PortalException {
+		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
+			WebKeys.THEME_DISPLAY);
+
+		Layout layout = themeDisplay.getLayout();
+
+		if (layout.isTypeControlPanel()) {
+			return false;
+		}
+
+		if (!isCustomizableLayout(themeDisplay) &&
+			!isLinkedLayout(themeDisplay) && !isModifiedLayout(themeDisplay)) {
+
+			return false;
+		}
+
+		return super.isShow(request);
 	}
 
 	@Override

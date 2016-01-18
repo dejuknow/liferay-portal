@@ -88,12 +88,12 @@
 						<equals arg1="${database.type}" arg2="mysql" />
 						<equals arg1="${database.type}" arg2="oracle" />
 						<equals arg1="${database.type}" arg2="postgresql" />
-						<equals arg1="${database.type}" arg2="sql.server" />
+						<equals arg1="${database.type}" arg2="sqlserver" />
 						<equals arg1="${database.type}" arg2="sybase" />
 					</or>
 				</not>
 				<then>
-					<fail>Please set "database.type" to one of the following:${line.separator}db2, hypersonic, mysql, oracle, postgresql, sql.server, sybase.</fail>
+					<fail>Please set "database.type" to one of the following:${line.separator}db2, hypersonic, mysql, oracle, postgresql, sqlserver, sybase.</fail>
 				</then>
 			</if>
 		</sequential>
@@ -953,10 +953,47 @@ counter.jdbc.prefix=jdbc.counter.]]></echo>
 				<available file="poshi-warnings.xml" />
 				<then>
 					<loadfile property="testray.testcase.warnings" srcfile="poshi-warnings.xml" />
+
+					<propertyregex
+						global="true"
+						input="${testray.testcase.warnings}"
+						override="true"
+						property="testray.testcase.warnings"
+						regexp="(?&lt;!&lt;value&gt;\s?)&lt;!\\?\[CDATA\\?\["
+						replace="&amp;lt;!&amp;#91;CDATA&amp;#91;"
+					/>
+
+					<propertyregex
+						global="true"
+						input="${testray.testcase.warnings}"
+						override="true"
+						property="testray.testcase.warnings"
+						regexp="\\?]\\?]&gt;(?!\s*&lt;\/value&gt;)"
+						replace="&amp;#93;&amp;#93;&amp;gt;"
+					/>
 				</then>
 			</if>
 
 			<property name="testray.testcase.warnings" value="" />
+		</sequential>
+	</macrodef>
+
+	<macrodef name="poshi-execute">
+		<attribute name="task" />
+
+		<sequential>
+			<if>
+				<equals arg1="${test.poshi.runner.local.release}" arg2="true" />
+				<then>
+					<gradle-execute dir="modules/test/poshi-runner" task="deploy" />
+				</then>
+			</if>
+
+			<gradle-execute failonerror="false" task="@{task}">
+				<arg value="--build-file=portal-web/build-test.gradle" />
+				<arg value="-Plocal=${test.poshi.runner.local.release}" />
+				<arg value="-PposhiRunnerExtProperties=${test.ext.properties.file}" />
+			</gradle-execute>
 		</sequential>
 	</macrodef>
 
@@ -1185,7 +1222,7 @@ counter.jdbc.prefix=jdbc.counter.]]></echo>
 			<echo file="${liferay.home}/osgi/portal/com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfiguration.cfg">
 				additionalConfigurations=\
 					cluster.routing.allocation.disk.threshold_enabled: false,\
-					cluster.service.cluster.service.slow_task_logging_threshold: 600s, \
+					cluster.service.slow_task_logging_threshold: 600s, \
 					index.indexing.slowlog.threshold.index.warn: 600s,\
 					index.search.slowlog.threshold.fetch.warn: 600s,\
 					index.search.slowlog.threshold.query.warn: 600s,\
@@ -1423,19 +1460,33 @@ ${portal.legacy.file.content}</echo>
 						<![CDATA[
 tell application "System Events"
 	tell process "Safari"
-		set frontmost to true
-
-		repeat until (exists window 1) and subrole of window 1 is "AXDialog" -- wait until the dialog is displayed.
+		repeat until (exists window 1) and subrole of window 1 is "AXDialog"
 			delay 1
 		end repeat
 
-		click button 1 of front window -- install
+		click button 1 of front window
 	end tell
 end tell
 
 tell application "Safari" to quit
 						]]>
 					</echo>
+
+					<if>
+						<contains string="${os.version}" substring="10.11" />
+						<then>
+							<replace file="tools/selenium/safaridriver.scpt">
+								<replacefilter>
+									<replacetoken><![CDATA[repeat until (exists window 1) and subrole of window 1 is "AXDialog"]]></replacetoken>
+									<replacevalue><![CDATA[repeat until exists button 1 of sheet 1 of window 1]]></replacevalue>
+								</replacefilter>
+								<replacefilter>
+									<replacetoken><![CDATA[click button 1 of front window]]></replacetoken>
+									<replacevalue><![CDATA[click button 1 of sheet 1 of window 1]]></replacevalue>
+								</replacefilter>
+							</replace>
+						</then>
+					</if>
 
 					<execute>
 						osascript ${basedir.unix}/tools/selenium/safaridriver.scpt
@@ -1618,10 +1669,7 @@ tell application "Safari" to quit
 				</else>
 			</if>
 
-			<replace file="${app.server.tomcat.bin.dir}/setenv${file.suffix.bat}">
-				<replacetoken><![CDATA[-Xmx1024m -XX:MaxPermSize=256m]]></replacetoken>
-				<replacevalue><![CDATA[-verbose:gc -Xloggc:/tmp/tomcat-gc.log -Xms512m -Xmx512m -XX:MaxNewSize=32m -XX:MaxPermSize=200m -XX:MaxTenuringThreshold=0 -XX:NewSize=32m -XX:ParallelGCThreads=2 -XX:PermSize=200m -XX:+PrintGCCause -XX:+PrintGCDetails -XX:SurvivorRatio=65536 -XX:TargetSurvivorRatio=0 -XX:+UseParNewGC]]></replacevalue>
-			</replace>
+			<prepare-tomcat-setenv />
 
 			<antcall target="prepare-test-build-tomcat-dependents" inheritAll="false" />
 
@@ -1738,6 +1786,15 @@ tell application "Safari" to quit
 					<var name="app.server.bundle.index" unset="true" />
 				</then>
 			</if>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="prepare-tomcat-setenv">
+		<sequential>
+			<replace file="${app.server.tomcat.bin.dir}/setenv${file.suffix.bat}">
+				<replacetoken><![CDATA[-Xmx1024m -XX:MaxPermSize=384m]]></replacetoken>
+				<replacevalue><![CDATA[-verbose:gc -Xloggc:/tmp/tomcat-gc.log -Xms512m -Xmx1024m -XX:MaxNewSize=32m -XX:MaxPermSize=200m -XX:MaxTenuringThreshold=0 -XX:NewSize=32m -XX:ParallelGCThreads=2 -XX:PermSize=200m -XX:+PrintGCCause -XX:+PrintGCDetails -XX:SurvivorRatio=65536 -XX:TargetSurvivorRatio=0 -XX:+UseParNewGC]]></replacevalue>
+			</replace>
 		</sequential>
 	</macrodef>
 
@@ -2357,7 +2414,26 @@ org.apache.catalina.startup.ClassLoaderFactory.level=INFO]]>
 				<arg value="${mobile.android.home}/tools/emulator -avd deviceName -no-boot-anim" />
 			</exec>
 
-			<sleep seconds="120" />
+			<echo file="wait_for_android_device.sh">
+				<![CDATA[
+					#!/bin/bash
+
+					bootanim=""
+
+					until [[ $bootanim =~ "stopped" ]];
+					do
+						bootanim=`${mobile.android.home}/platform-tools/adb shell getprop init.svc.bootanim`
+
+						sleep 1
+					done
+				]]>
+			</echo>
+
+			<chmod file="wait_for_android_device.sh" perm="a+x" />
+
+			<exec executable="${basedir}/wait_for_android_device.sh" timeout="300000" />
+
+			<delete file="wait_for_android_device.sh" />
 
 			<execute>
 				${mobile.android.home}/platform-tools/adb push ${basedir.unix}/portal-web/test/functional/com/liferay/portalweb/dependencies/mobile/swipe_down.sh /data/local
@@ -2784,6 +2860,12 @@ org.apache.catalina.startup.ClassLoaderFactory.level=INFO]]>
 					<then>
 						<property name="portal.version.url.path" value="6.1.2-ga3" />
 					</then>
+					<elseif>
+						<equals arg1="${portal.version}" arg2="6.2.3" />
+						<then>
+							<property name="portal.version.url.path" value="6.2.3-ga4" />
+						</then>
+					</elseif>
 					<else>
 						<property name="portal.version.url.path" value="${portal.version}" />
 					</else>
@@ -2793,6 +2875,7 @@ org.apache.catalina.startup.ClassLoaderFactory.level=INFO]]>
 					<or>
 						<equals arg1="${portal.version}" arg2="6.0.6" />
 						<equals arg1="${portal.version}" arg2="6.1.2" />
+						<equals arg1="${portal.version}" arg2="6.2.3" />
 					</or>
 					<then>
 						<propertycopy from="sql.legacy.base.url[ce]" name="sql.legacy.base.url" />
@@ -2998,9 +3081,9 @@ go]]></replacevalue>
 				<property name="test.case.attachments">
 					<![CDATA[
 						<attachments>
-							<file name="console.output" value="${testray.logs.jenkins.console}" />
-							<file name="report.html" value="${testray.logs.poshi.report}" />
-							<file name="summary.html" value="${testray.logs.poshi.summary}" />
+							<file name="Jenkins Console" value="${testray.logs.jenkins.console}" />
+							<file name="Poshi Report" value="${testray.logs.poshi.report}" />
+							<file name="Poshi Summary" value="${testray.logs.poshi.summary}" />
 						</attachments>
 					]]>
 				</property>
@@ -3009,7 +3092,7 @@ go]]></replacevalue>
 				<property name="test.case.attachments">
 					<![CDATA[
 						<attachments>
-							<file name="console.output" value="${testray.logs.jenkins.console}" />
+							<file name="Jenkins Console" value="${testray.logs.jenkins.console}" />
 						</attachments>
 					]]>
 				</property>
@@ -4843,8 +4926,10 @@ module.framework.properties.osgi.console=11312</echo>
 			<then>
 				<echo append="true" file="${test.ext.properties.file}">
 					test.batch.max.group.size=${test.batch.max.group.size}
+					test.batch.max.subgroup.size=${test.batch.max.subgroup.size}
 					test.batch.property.names=${test.batch.property.names}
 					test.batch.property.values=${test.batch.property.values}
+					test.batch.run.type=${test.batch.run.type}
 				</echo>
 			</then>
 		</if>
@@ -4892,6 +4977,15 @@ module.framework.properties.osgi.console=11312</echo>
 		</if>
 
 		<if>
+			<isset property="test.pause.on.failure" />
+			<then>
+				<echo append="true" file="${test.ext.properties.file}">
+					test.pause.on.failure=${test.pause.on.failure}
+				</echo>
+			</then>
+		</if>
+
+		<if>
 			<isset property="test.portal.instance" />
 			<then>
 				<echo append="true" file="${test.ext.properties.file}">
@@ -4917,6 +5011,7 @@ module.framework.properties.osgi.console=11312</echo>
 		<antcall target="prepare-selenium-browser" />
 		<antcall target="prepare-selenium-database-properties" />
 		<antcall target="prepare-selenium-email-properties" />
+		<antcall target="prepare-selenium-google-properties" />
 		<antcall target="prepare-selenium-required-properties" />
 		<antcall target="prepare-selenium-testcase-properties" />
 
@@ -5015,15 +5110,6 @@ module.framework.properties.osgi.console=11312</echo>
 		</if>
 
 		<if>
-			<isset property="test.assert.warning.exceptions" />
-			<then>
-				<echo append="true" file="${test.ext.properties.file}">
-					test.assert.warning.exceptions=${test.assert.warning.exceptions}
-				</echo>
-			</then>
-		</if>
-
-		<if>
 			<isset property="test.base.dir.name" />
 			<then>
 				<echo append="true" file="${test.ext.properties.file}">
@@ -5066,6 +5152,15 @@ module.framework.properties.osgi.console=11312</echo>
 		</if>
 
 		<if>
+			<equals arg1="${test.save.web.page}" arg2="true" />
+			<then>
+				<echo append="true" file="${test.ext.properties.file}">
+					save.web.page=true
+				</echo>
+			</then>
+		</if>
+
+		<if>
 			<equals arg1="${test.selenium.implementation}" arg2="selenium" />
 			<then>
 				<echo append="true" file="${test.ext.properties.file}">
@@ -5098,6 +5193,7 @@ module.framework.properties.osgi.console=11312</echo>
 	<target name="prepare-selenium-browser">
 		<echo append="true" file="${test.ext.properties.file}">
 			browser.type=${browser.type}
+			browser.version=${browser.version}
 		</echo>
 
 		<if>
@@ -5172,7 +5268,6 @@ module.framework.properties.osgi.console=11312</echo>
 			<then>
 				<echo append="true" file="${test.ext.properties.file}">
 					selenium.desired.capabilities.platform=${selenium.desired.capabilities.platform}
-					selenium.desired.capabilities.version=${selenium.desired.capabilities.version}
 					selenium.remote.driver.enabled=${selenium.remote.driver.enabled}
 					selenium.remote.driver.hub=${selenium.remote.driver.hub}
 				</echo>
@@ -5670,6 +5765,35 @@ module.framework.properties.osgi.console=11312</echo>
 		</if>
 	</target>
 
+	<target name="prepare-selenium-google-properties">
+		<if>
+			<isset property="google.api.key" />
+			<then>
+				<echo append="true" file="${test.ext.properties.file}">
+					google.api.key=${google.api.key}
+				</echo>
+			</then>
+		</if>
+
+		<if>
+			<isset property="google.client.id" />
+			<then>
+				<echo append="true" file="${test.ext.properties.file}">
+					google.client.id=${google.client.id}
+				</echo>
+			</then>
+		</if>
+
+		<if>
+			<isset property="google.client.secret" />
+			<then>
+				<echo append="true" file="${test.ext.properties.file}">
+					google.client.secret=${google.client.secret}
+				</echo>
+			</then>
+		</if>
+	</target>
+
 	<target name="prepare-selenium-required-properties">
 		<get-test-url />
 
@@ -5725,6 +5849,17 @@ module.framework.properties.osgi.console=11312</echo>
 			<then>
 				<echo append="true" file="${test.ext.properties.file}">
 					test.assert.javascript.errors=false
+				</echo>
+			</then>
+		</if>
+
+		<get-testcase-property property.name="test.assert.warning.exceptions" />
+
+		<if>
+			<isset property="test.assert.warning.exceptions" />
+			<then>
+				<echo append="true" file="${test.ext.properties.file}">
+					test.assert.warning.exceptions=${test.assert.warning.exceptions}
 				</echo>
 			</then>
 		</if>
@@ -6247,11 +6382,7 @@ if (ppstate.equals("normal")) {
 			</else>
 		</if>
 
-		<gradle-execute failonerror="false" task="writePoshiProperties">
-			<arg value="--build-file=portal-web/build-test.gradle" />
-			<arg value="-Plocal=${test.poshi.runner.local.release}" />
-			<arg value="-PposhiRunnerExtProperties=${test.ext.properties.file}" />
-		</gradle-execute>
+		<poshi-execute task="writePoshiProperties" />
 
 		<move file="portal-web/test.case.method.names.properties" tofile="test.case.method.names.properties" />
 
@@ -6322,11 +6453,7 @@ if (ppstate.equals("normal")) {
 			</else>
 		</if>
 
-		<gradle-execute failonerror="false" task="writePoshiProperties">
-			<arg value="--build-file=portal-web/build-test.gradle" />
-			<arg value="-Plocal=${test.poshi.runner.local.release}" />
-			<arg value="-PposhiRunnerExtProperties=${test.ext.properties.file}" />
-		</gradle-execute>
+		<poshi-execute task="writePoshiProperties" />
 
 		<move file="portal-web/test.generated.properties" tofile="test.generated.properties" />
 
@@ -6618,19 +6745,11 @@ if (ppstate.equals("normal")) {
 			</else>
 		</if>
 
-		<gradle-execute failonerror="false" task="evaluatePoshiConsole">
-			<arg value="--build-file=portal-web/build-test.gradle" />
-			<arg value="-Plocal=${test.poshi.runner.local.release}" />
-			<arg value="-PposhiRunnerExtProperties=${test.ext.properties.file}" />
-		</gradle-execute>
+		<poshi-execute task="evaluatePoshiConsole" />
 	</target>
 
 	<target name="run-poshi-runner">
-		<gradle-execute failonerror="false" task="runPoshi">
-			<arg value="--build-file=portal-web/build-test.gradle" />
-			<arg value="-Plocal=${test.poshi.runner.local.release}" />
-			<arg value="-PposhiRunnerExtProperties=${test.ext.properties.file}" />
-		</gradle-execute>
+		<poshi-execute task="runPoshi" />
 	</target>
 
 	<target name="run-poshi-validation">
@@ -6648,11 +6767,7 @@ if (ppstate.equals("normal")) {
 			</else>
 		</if>
 
-		<gradle-execute failonerror="false" task="validatePoshi">
-			<arg value="--build-file=portal-web/build-test.gradle" />
-			<arg value="-Plocal=${test.poshi.runner.local.release}" />
-			<arg value="-PposhiRunnerExtProperties=${test.ext.properties.file}" />
-		</gradle-execute>
+		<poshi-execute task="validatePoshi" />
 	</target>
 
 	<target name="run-selenium-smoke-test">

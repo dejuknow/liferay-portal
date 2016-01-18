@@ -229,6 +229,10 @@ public class LayoutStagedModelDataHandler
 			PortletDataContext portletDataContext, Layout layout)
 		throws Exception {
 
+		if (layout.isTypeSharedPortlet()) {
+			return;
+		}
+
 		Element layoutElement = portletDataContext.getExportDataElement(layout);
 
 		populateElementLayoutMetadata(layoutElement, layout);
@@ -1376,17 +1380,16 @@ public class LayoutStagedModelDataHandler
 	private static final Log _log = LogFactoryUtil.getLog(
 		LayoutStagedModelDataHandler.class);
 
-	private volatile CounterLocalService _counterLocalService;
-	private volatile GroupLocalService _groupLocalService;
-	private volatile ImageLocalService _imageLocalService;
-	private volatile LayoutFriendlyURLLocalService
-		_layoutFriendlyURLLocalService;
-	private volatile LayoutLocalService _layoutLocalService;
-	private volatile LayoutLocalServiceHelper _layoutLocalServiceHelper;
-	private volatile LayoutPrototypeLocalService _layoutPrototypeLocalService;
-	private volatile LayoutSetLocalService _layoutSetLocalService;
-	private volatile LayoutTemplateLocalService _layoutTemplateLocalService;
-	private volatile PortletLocalService _portletLocalService;
-	private volatile ResourceLocalService _resourceLocalService;
+	private CounterLocalService _counterLocalService;
+	private GroupLocalService _groupLocalService;
+	private ImageLocalService _imageLocalService;
+	private LayoutFriendlyURLLocalService _layoutFriendlyURLLocalService;
+	private LayoutLocalService _layoutLocalService;
+	private LayoutLocalServiceHelper _layoutLocalServiceHelper;
+	private LayoutPrototypeLocalService _layoutPrototypeLocalService;
+	private LayoutSetLocalService _layoutSetLocalService;
+	private LayoutTemplateLocalService _layoutTemplateLocalService;
+	private PortletLocalService _portletLocalService;
+	private ResourceLocalService _resourceLocalService;
 
 }

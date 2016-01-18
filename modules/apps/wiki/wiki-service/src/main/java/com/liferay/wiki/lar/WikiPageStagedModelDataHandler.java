@@ -124,7 +124,7 @@ public class WikiPageStagedModelDataHandler
 				replaceExportContentReferences(
 					portletDataContext, page, page.getContent(),
 					portletDataContext.getBooleanParameter(
-						WikiPortletDataHandler.NAMESPACE, "referenced-content"),
+						"wiki", "referenced-content"),
 					true);
 
 		page.setContent(content);
@@ -355,9 +355,9 @@ public class WikiPageStagedModelDataHandler
 	private static final Log _log = LogFactoryUtil.getLog(
 		WikiPageStagedModelDataHandler.class);
 
-	private volatile WikiPageExportImportContentProcessor
+	private WikiPageExportImportContentProcessor
 		_wikiPageExportImportContentProcessor;
-	private volatile WikiPageLocalService _wikiPageLocalService;
-	private volatile WikiPageResourceLocalService _wikiPageResourceLocalService;
+	private WikiPageLocalService _wikiPageLocalService;
+	private WikiPageResourceLocalService _wikiPageResourceLocalService;
 
 }

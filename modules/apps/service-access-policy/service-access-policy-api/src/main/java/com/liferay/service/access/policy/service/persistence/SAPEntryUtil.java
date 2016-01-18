@@ -16,14 +16,13 @@ package com.liferay.service.access.policy.service.persistence;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.osgi.util.ServiceTrackerFactory;
+
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.service.ServiceContext;
 
 import com.liferay.service.access.policy.model.SAPEntry;
-
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
 
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -1305,21 +1304,6 @@ public class SAPEntryUtil {
 		return _serviceTracker.getService();
 	}
 
-	/**
-	 * @deprecated As of 6.2.0
-	 */
-	@Deprecated
-	public void setPersistence(SAPEntryPersistence persistence) {
-	}
-
-	private static ServiceTracker<SAPEntryPersistence, SAPEntryPersistence> _serviceTracker;
-
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(SAPEntryUtil.class);
-
-		_serviceTracker = new ServiceTracker<SAPEntryPersistence, SAPEntryPersistence>(bundle.getBundleContext(),
-				SAPEntryPersistence.class, null);
-
-		_serviceTracker.open();
-	}
+	private static ServiceTracker<SAPEntryPersistence, SAPEntryPersistence> _serviceTracker =
+		ServiceTrackerFactory.open(SAPEntryPersistence.class);
 }

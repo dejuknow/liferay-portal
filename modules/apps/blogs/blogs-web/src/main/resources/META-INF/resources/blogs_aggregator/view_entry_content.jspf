@@ -23,7 +23,7 @@
 		showBlogEntryURL.setParameter("mvcRenderCommandName", "/blogs/view_entry");
 		showBlogEntryURL.setParameter("entryId", String.valueOf(entry.getEntryId()));
 
-		StringBundler sb = new StringBundler(8);
+		StringBundler sb = new StringBundler(6);
 
 		sb.append(themeDisplay.getPathMain());
 		sb.append("/blogs/find_entry?noSuchEntryRedirect=");
@@ -33,9 +33,7 @@
 
 		String viewEntryURL = sb.toString();
 
-		sb.append("&showAllEntries=1");
-
-		String viewAllEntriesURL = sb.toString();
+		String viewAllEntriesURL = viewEntryURL.concat("&showAllEntries=1");
 		%>
 
 		<c:if test='<%= !displayStyle.endsWith("-without-title") %>'>
@@ -70,6 +68,7 @@
 			<c:if test='<%= displayStyle.endsWith("-image") %>'>
 				<a href="<%= viewAllEntriesURL %>">
 					<liferay-ui:user-portrait
+						imageCssClass="user-icon-lg"
 						userId="<%= entry.getUserId() %>"
 					/>
 				</a>
@@ -83,7 +82,6 @@
 							<img alt="" class="asset-small-image" src="<%= HtmlUtil.escape(entry.getSmallImageURL(themeDisplay)) %>" width="150" />
 						</div>
 					</c:if>
-
 				</c:when>
 				<c:when test='<%= displayStyle.startsWith("quote") %>'>
 					<span class="quote">

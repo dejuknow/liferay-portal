@@ -15,7 +15,7 @@
 package com.liferay.dynamic.data.mapping.storage.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
-import com.liferay.dynamic.data.mapping.exception.StorageFieldRequiredException;
+import com.liferay.dynamic.data.mapping.exception.StorageFieldValueException.RequiredValue;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
@@ -120,14 +120,14 @@ public class StorageAdapterTest extends BaseDDMServiceTestCase {
 		Field fieldsDisplayField = createFieldsDisplayField(
 			structure.getStructureId(),
 			"boolean_INSTANCE_rztm,boolean_INSTANCE_ovho," +
-			"boolean_INSTANCE_krvx");
+				"boolean_INSTANCE_krvx");
 
 		fields.put(fieldsDisplayField);
 
 		validate(structure.getStructureId(), fields);
 	}
 
-	@Test(expected = StorageFieldRequiredException.class)
+	@Test(expected = RequiredValue.class)
 	public void testCreateWithInvalidDDMFormValues() throws Exception {
 		DDMStructure structure = addStructure(
 			_CLASS_NAME_ID, "Default Structure");
@@ -220,7 +220,7 @@ public class StorageAdapterTest extends BaseDDMServiceTestCase {
 		Field fieldsDisplayField = createFieldsDisplayField(
 			structure.getStructureId(),
 			"decimal_INSTANCE_rztm,decimal_INSTANCE_ovho," +
-			"decimal_INSTANCE_krvx");
+				"decimal_INSTANCE_krvx");
 
 		fields.put(fieldsDisplayField);
 
@@ -316,7 +316,7 @@ public class StorageAdapterTest extends BaseDDMServiceTestCase {
 		Field fieldsDisplayField = createFieldsDisplayField(
 			structure.getStructureId(),
 			"integer_INSTANCE_rztm,integer_INSTANCE_ovho," +
-			"integer_INSTANCE_krvx");
+				"integer_INSTANCE_krvx");
 
 		fields.put(fieldsDisplayField);
 
@@ -390,7 +390,7 @@ public class StorageAdapterTest extends BaseDDMServiceTestCase {
 		Field fieldsDisplayField = createFieldsDisplayField(
 			structure.getStructureId(),
 			"number_INSTANCE_rztm,number_INSTANCE_ovho," +
-			"number_INSTANCE_krvx");
+				"number_INSTANCE_krvx");
 
 		fields.put(fieldsDisplayField);
 
@@ -505,7 +505,7 @@ public class StorageAdapterTest extends BaseDDMServiceTestCase {
 		validate(structure.getStructureId(), fields);
 	}
 
-	@Test(expected = StorageFieldRequiredException.class)
+	@Test(expected = RequiredValue.class)
 	public void testUpdateWithInvalidDDMFormValues() throws Exception {
 		DDMStructure structure = addStructure(
 			_CLASS_NAME_ID, "Default Structure");

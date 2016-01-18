@@ -15,6 +15,7 @@
 package com.liferay.portal.service.persistence.impl;
 
 import com.liferay.portal.kernel.dao.db.DB;
+import com.liferay.portal.kernel.dao.db.DBType;
 import com.liferay.portal.kernel.dao.orm.CustomSQLParam;
 import com.liferay.portal.kernel.dao.orm.QueryPos;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
@@ -169,15 +170,13 @@ public class UserFinderImpl extends UserFinderBaseImpl implements UserFinder {
 
 			DB db = getDB();
 
-			String dbType = db.getType();
-
-			boolean sybase = dbType.equals(DB.TYPE_SYBASE);
+			boolean sybase = db.getDBType() == DBType.SYBASE;
 
 			if (sybase) {
-				sb = new StringBundler(19);
+				sb = new StringBundler(25);
 			}
 			else {
-				sb = new StringBundler(13);
+				sb = new StringBundler(17);
 			}
 
 			sb.append("SELECT groupId, COUNT(DISTINCT userId) FROM (");
@@ -902,7 +901,7 @@ public class UserFinderImpl extends UserFinderBaseImpl implements UserFinder {
 				sql = StringUtil.replace(sql, _STATUS_SQL, StringPool.BLANK);
 			}
 
-			StringBundler sb = new StringBundler(14);
+			StringBundler sb = new StringBundler(20);
 
 			sb.append(StringPool.OPEN_PARENTHESIS);
 			sb.append(replaceJoinAndWhere(sql, params1));

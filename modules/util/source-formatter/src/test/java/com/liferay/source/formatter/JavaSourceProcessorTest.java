@@ -116,8 +116,8 @@ public class JavaSourceProcessorTest extends BaseSourceProcessorTestCase {
 				"line break:", "line break:", "line break:", "line break:"
 			},
 			new Integer[] {
-				23, 27, 31, 38, 42, 46, 51, 55, 57, 60, 63, 67, 70, 75, 81, 85,
-				91, 99, 102, 109
+				31, 35, 42, 47, 51, 53, 56, 59, 63, 66, 71, 77, 81, 87, 98, 111,
+				114, 120, 123, 130
 			});
 		test("IncorrectLineBreaks2.testjava");
 	}
@@ -170,6 +170,11 @@ public class JavaSourceProcessorTest extends BaseSourceProcessorTestCase {
 	@Test
 	public void testLPS28266() throws Exception {
 		test("LPS28266.testjava", "Use getInt(1) for count:");
+	}
+
+	@Test
+	public void testMissingEmptyLines() throws Exception {
+		test("MissingEmptyLines.testjava");
 	}
 
 	@Test

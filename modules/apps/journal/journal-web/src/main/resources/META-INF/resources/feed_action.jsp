@@ -22,7 +22,7 @@ ResultRow row = (ResultRow)request.getAttribute(WebKeys.SEARCH_CONTAINER_RESULT_
 JournalFeed feed = (JournalFeed)row.getObject();
 %>
 
-<liferay-ui:icon-menu direction="down" icon="<%= StringPool.BLANK %>" message="<%= StringPool.BLANK %>" showWhenSingleIcon="<%= true %>">
+<liferay-ui:icon-menu direction="left-side" icon="<%= StringPool.BLANK %>" markupView="lexicon" message="<%= StringPool.BLANK %>" showWhenSingleIcon="<%= true %>">
 	<c:if test="<%= JournalFeedPermission.contains(permissionChecker, feed, ActionKeys.UPDATE) %>">
 		<portlet:renderURL var="editFeedURL">
 			<portlet:param name="mvcPath" value="/edit_feed.jsp" />
@@ -55,7 +55,7 @@ JournalFeed feed = (JournalFeed)row.getObject();
 		<portlet:actionURL name="deleteFeeds" var="deleteFeedURL">
 			<portlet:param name="redirect" value="<%= currentURL %>" />
 			<portlet:param name="groupId" value="<%= String.valueOf(feed.getGroupId()) %>" />
-			<portlet:param name="deleteFeedIds" value="<%= feed.getFeedId() %>" />
+			<portlet:param name="deleteFeedId" value="<%= feed.getFeedId() %>" />
 		</portlet:actionURL>
 
 		<liferay-ui:icon-delete

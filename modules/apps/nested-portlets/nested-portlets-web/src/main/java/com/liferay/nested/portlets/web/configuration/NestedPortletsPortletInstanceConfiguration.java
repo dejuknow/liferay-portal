@@ -21,13 +21,26 @@ import com.liferay.configuration.admin.ConfigurationAdmin;
 /**
  * @author Juergen Kappler
  */
-@ConfigurationAdmin(category = "web-experience-management")
+@ConfigurationAdmin(
+	category = "web-experience-management",
+	scope = ConfigurationAdmin.Scope.PORTLET_INSTANCE
+)
 @Meta.OCD(
-	id = "com.liferay.nested.portlets.web.configuration.NestedPortletsPortletInstanceConfiguration"
+	id = "com.liferay.nested.portlets.web.configuration.NestedPortletsPortletInstanceConfiguration",
+	localization = "content/Language",
+	name = "%nested.portlets.portlet.instance.configuration.name"
 )
 public interface NestedPortletsPortletInstanceConfiguration {
 
-	@Meta.AD(required = false)
+	@Meta.AD(
+		deflt = "2_columns_i", id = "layout.template.default", required = false
+	)
 	public String layoutTemplateId();
+
+	@Meta.AD(
+		deflt = "freeform,1_column", id = "layout.template.unsupported",
+		required = false
+	)
+	public String[] layoutTemplatesUnsupported();
 
 }

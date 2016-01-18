@@ -24,7 +24,6 @@ import com.liferay.service.access.policy.service.SAPEntryLocalService;
 
 import java.util.List;
 
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -38,7 +37,6 @@ import org.osgi.service.component.annotations.Reference;
 )
 public class SAPServiceVerifyProcess extends VerifyProcess {
 
-	@Activate
 	@Override
 	protected void doVerify() throws Exception {
 		verifyDefaultSAPEntry();
@@ -78,7 +76,7 @@ public class SAPServiceVerifyProcess extends VerifyProcess {
 	private static final Log _log = LogFactoryUtil.getLog(
 		SAPServiceVerifyProcess.class);
 
-	private volatile CompanyLocalService _companyLocalService;
-	private volatile SAPEntryLocalService _sapEntryLocalService;
+	private CompanyLocalService _companyLocalService;
+	private SAPEntryLocalService _sapEntryLocalService;
 
 }

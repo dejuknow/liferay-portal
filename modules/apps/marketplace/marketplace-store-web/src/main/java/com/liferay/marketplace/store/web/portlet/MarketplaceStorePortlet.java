@@ -381,9 +381,13 @@ public class MarketplaceStorePortlet extends RemoteMVCPortlet {
 		parameterMap.put(
 			"clientBuild",
 			new String[] {String.valueOf(MarketplaceConstants.CLIENT_BUILD)});
-		parameterMap.put(
-			"compatibility",
-			new String[] {String.valueOf(ReleaseInfo.getBuildNumber())});
+
+		if (!parameterMap.containsKey("compatibility")) {
+			parameterMap.put(
+				"compatibility",
+				new String[] {String.valueOf(ReleaseInfo.getBuildNumber())});
+		}
+
 		parameterMap.put(
 			"supportsHotDeploy",
 			new String[] {
@@ -407,7 +411,7 @@ public class MarketplaceStorePortlet extends RemoteMVCPortlet {
 		super.setOAuthManager(oAuthManager);
 	}
 
-	private volatile AppLocalService _appLocalService;
-	private volatile AppService _appService;
+	private AppLocalService _appLocalService;
+	private AppService _appService;
 
 }

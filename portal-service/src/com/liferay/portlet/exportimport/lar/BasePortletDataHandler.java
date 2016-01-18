@@ -16,6 +16,7 @@ package com.liferay.portlet.exportimport.lar;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.plugin.Version;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringPool;
@@ -199,16 +200,16 @@ public abstract class BasePortletDataHandler implements PortletDataHandler {
 				companyId, PortletKeys.PREFS_OWNER_TYPE_COMPANY,
 				portlet.getRootPortletId(), false) > 0)) {
 
-				PortletDataHandlerControl[] portletDataHandlerControls = null;
+			PortletDataHandlerControl[] portletDataHandlerControls = null;
 
-				if (isDisplayPortlet()) {
-					portletDataHandlerControls = getExportControls();
-				}
+			if (isDisplayPortlet()) {
+				portletDataHandlerControls = getExportControls();
+			}
 
-				configurationControls.add(
-					new PortletDataHandlerBoolean(
-						null, PortletDataHandlerKeys.PORTLET_SETUP, "setup",
-						true, false, portletDataHandlerControls, null, null));
+			configurationControls.add(
+				new PortletDataHandlerBoolean(
+					null, PortletDataHandlerKeys.PORTLET_SETUP, "setup", true,
+					false, portletDataHandlerControls, null, null));
 		}
 
 		// Archived setups
@@ -335,6 +336,11 @@ public abstract class BasePortletDataHandler implements PortletDataHandler {
 	@Override
 	public int getRank() {
 		return _rank;
+	}
+
+	@Override
+	public String getSchemaVersion() {
+		return "1.0.0";
 	}
 
 	@Override
@@ -511,6 +517,16 @@ public abstract class BasePortletDataHandler implements PortletDataHandler {
 		_rank = rank;
 	}
 
+	@Override
+	public boolean validateSchemaVersion(String schemaVersion) {
+		try {
+			return doValidateSchemaVersion(schemaVersion);
+		}
+		catch (Exception e) {
+			return false;
+		}
+	}
+
 	protected Element addExportDataRootElement(
 		PortletDataContext portletDataContext) {
 
@@ -644,6 +660,40 @@ public abstract class BasePortletDataHandler implements PortletDataHandler {
 		throws Exception {
 
 		return portletPreferences;
+	}
+
+	protected boolean doValidateSchemaVersion(String schemaVersion)
+		throws Exception {
+
+		// Major version has to be identical
+
+		Version currentVersion = Version.getInstance(getSchemaVersion());
+		Version importedVersion = Version.getInstance(schemaVersion);
+
+		if (!Validator.equals(
+				currentVersion.getMajor(), importedVersion.getMajor())) {
+
+			return false;
+		}
+
+		// Imported minor version should be less than or equal to the current
+		// minor version
+
+		int currentMinorVersion = GetterUtil.getInteger(
+			currentVersion.getMinor(), -1);
+		int importedMinorVersion = GetterUtil.getInteger(
+			importedVersion.getMinor(), -1);
+
+		if (((currentMinorVersion == -1) && (importedMinorVersion == -1)) ||
+			(currentMinorVersion < importedMinorVersion)) {
+
+			return false;
+		}
+
+		// Import should be compatible with all minor versions if previous
+		// validations pass
+
+		return true;
 	}
 
 	protected String getExportDataRootElementString(Element rootElement) {

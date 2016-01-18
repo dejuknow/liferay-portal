@@ -43,4 +43,9 @@ public interface PanelCategory extends PanelEntry {
 			HttpServletRequest request, HttpServletResponse response)
 		throws IOException;
 
+	public boolean isActive(
+		HttpServletRequest request, PanelCategoryHelper panelCategoryHelper);
+
+	public boolean isPersistState();
+
 }

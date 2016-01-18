@@ -84,8 +84,18 @@
 	<td></td>
 </tr>
 <tr>
+	<td>STAGING</td>
+	<td>//a[contains(@data-qa-id,'staging')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>SUBSCRIBE</td>
 	<td>//a/span[contains(@class,'taglib-text') and contains(.,'Subscribe')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>VIEW_IN_CONTEXT</td>
+	<td>//a[contains(.,'View in Context')]</td>
 	<td></td>
 </tr>
 <tr>

@@ -18,12 +18,11 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.dynamic.data.lists.model.DDLRecord;
 
+import com.liferay.osgi.util.ServiceTrackerFactory;
+
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.service.ServiceContext;
-
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
 
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -1149,21 +1148,6 @@ public class DDLRecordUtil {
 		return _serviceTracker.getService();
 	}
 
-	/**
-	 * @deprecated As of 6.2.0
-	 */
-	@Deprecated
-	public void setPersistence(DDLRecordPersistence persistence) {
-	}
-
-	private static ServiceTracker<DDLRecordPersistence, DDLRecordPersistence> _serviceTracker;
-
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(DDLRecordUtil.class);
-
-		_serviceTracker = new ServiceTracker<DDLRecordPersistence, DDLRecordPersistence>(bundle.getBundleContext(),
-				DDLRecordPersistence.class, null);
-
-		_serviceTracker.open();
-	}
+	private static ServiceTracker<DDLRecordPersistence, DDLRecordPersistence> _serviceTracker =
+		ServiceTrackerFactory.open(DDLRecordPersistence.class);
 }

@@ -18,12 +18,11 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.microblogs.model.MicroblogsEntry;
 
+import com.liferay.osgi.util.ServiceTrackerFactory;
+
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.service.ServiceContext;
-
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
 
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -1928,21 +1927,6 @@ public class MicroblogsEntryUtil {
 		return _serviceTracker.getService();
 	}
 
-	/**
-	 * @deprecated As of 6.2.0
-	 */
-	@Deprecated
-	public void setPersistence(MicroblogsEntryPersistence persistence) {
-	}
-
-	private static ServiceTracker<MicroblogsEntryPersistence, MicroblogsEntryPersistence> _serviceTracker;
-
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(MicroblogsEntryUtil.class);
-
-		_serviceTracker = new ServiceTracker<MicroblogsEntryPersistence, MicroblogsEntryPersistence>(bundle.getBundleContext(),
-				MicroblogsEntryPersistence.class, null);
-
-		_serviceTracker.open();
-	}
+	private static ServiceTracker<MicroblogsEntryPersistence, MicroblogsEntryPersistence> _serviceTracker =
+		ServiceTrackerFactory.open(MicroblogsEntryPersistence.class);
 }

@@ -16,6 +16,8 @@
 
 <%@ include file="/init.jsp" %>
 
+<liferay-util:dynamic-include key="com.liferay.dynamic.data.lists.web#/view_record.jsp#pre" />
+
 <%
 String redirect = ParamUtil.getString(request, "redirect");
 
@@ -96,10 +98,10 @@ if (ddlDisplayContext.isAdminPortlet()) {
 					<portlet:param name="formDDMTemplateId" value="<%= String.valueOf(formDDMTemplateId) %>" />
 				</portlet:renderURL>
 
-				<aui:button href="<%= editRecordURL %>" name="edit" primary="<%= true %>" value="edit" />
+				<aui:button cssClass="btn-lg" href="<%= editRecordURL %>" name="edit" primary="<%= true %>" value="edit" />
 			</c:if>
 
-			<aui:button href="<%= redirect %>" name="cancelButton" type="cancel" />
+			<aui:button cssClass="btn-lg" href="<%= redirect %>" name="cancelButton" type="cancel" />
 		</aui:button-row>
 	</aui:fieldset>
 </div>
@@ -113,3 +115,5 @@ portletURL.setParameter("recordSetId", String.valueOf(recordSetId));
 PortalUtil.addPortletBreadcrumbEntry(request, recordSet.getName(locale), portletURL.toString());
 PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.format(request, "view-x", ddmStructure.getName(locale), false), currentURL);
 %>
+
+<liferay-util:dynamic-include key="com.liferay.dynamic.data.lists.web#/view_record.jsp#post" />

@@ -66,6 +66,7 @@ import com.liferay.portlet.asset.AssetTagException;
 import com.liferay.portlet.asset.model.AssetVocabulary;
 import com.liferay.portlet.documentlibrary.DuplicateFileEntryException;
 import com.liferay.portlet.documentlibrary.DuplicateFolderNameException;
+import com.liferay.portlet.documentlibrary.FileEntryLockException;
 import com.liferay.portlet.documentlibrary.FileExtensionException;
 import com.liferay.portlet.documentlibrary.FileMimeTypeException;
 import com.liferay.portlet.documentlibrary.FileNameException;
@@ -78,6 +79,7 @@ import com.liferay.portlet.documentlibrary.SourceFileNameException;
 import com.liferay.portlet.documentlibrary.antivirus.AntivirusScannerException;
 import com.liferay.portlet.documentlibrary.model.DLFileEntry;
 import com.liferay.portlet.documentlibrary.service.DLAppService;
+import com.liferay.portlet.documentlibrary.service.DLTrashService;
 import com.liferay.portlet.documentlibrary.util.DLUtil;
 import com.liferay.portlet.dynamicdatamapping.StorageFieldRequiredException;
 import com.liferay.portlet.trash.service.TrashEntryService;
@@ -375,7 +377,7 @@ public class EditFileEntryMVCActionCommand extends BaseMVCActionCommand {
 		FileEntry fileEntry = _dlAppService.getFileEntry(fileEntryId);
 
 		if (fileEntry.isRepositoryCapabilityProvided(TrashCapability.class)) {
-			fileEntry = _dlAppService.moveFileEntryToTrash(fileEntryId);
+			fileEntry = _dlTrashService.moveFileEntryToTrash(fileEntryId);
 
 			TrashUtil.addTrashSessionMessages(
 				actionRequest, (TrashedModel)fileEntry.getModel());
@@ -665,8 +667,9 @@ public class EditFileEntryMVCActionCommand extends BaseMVCActionCommand {
 				PropsKeys.DL_FILE_EXTENSIONS, StringPool.COMMA);
 		}
 		else {
-			ThemeDisplay themeDisplay = (ThemeDisplay)
-				portletRequest.getAttribute(WebKeys.THEME_DISPLAY);
+			ThemeDisplay themeDisplay =
+				(ThemeDisplay)portletRequest.getAttribute(
+					WebKeys.THEME_DISPLAY);
 
 			PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
 
@@ -837,6 +840,7 @@ public class EditFileEntryMVCActionCommand extends BaseMVCActionCommand {
 			}
 		}
 		else if (e instanceof DuplicateLockException ||
+				 e instanceof FileEntryLockException.MustOwnLock ||
 				 e instanceof InvalidFileVersionException ||
 				 e instanceof NoSuchFileEntryException ||
 				 e instanceof PrincipalException) {
@@ -892,6 +896,11 @@ public class EditFileEntryMVCActionCommand extends BaseMVCActionCommand {
 	@Reference(unbind = "-")
 	protected void setDLAppService(DLAppService dlAppService) {
 		_dlAppService = dlAppService;
+	}
+
+	@Reference(unbind = "-")
+	protected void setDLTrashService(DLTrashService dlTrashService) {
+		_dlTrashService = dlTrashService;
 	}
 
 	@Reference(unbind = "-")
@@ -1024,7 +1033,8 @@ public class EditFileEntryMVCActionCommand extends BaseMVCActionCommand {
 	private static final Log _log = LogFactoryUtil.getLog(
 		EditFileEntryMVCActionCommand.class);
 
-	private volatile DLAppService _dlAppService;
-	private volatile TrashEntryService _trashEntryService;
+	private DLAppService _dlAppService;
+	private DLTrashService _dlTrashService;
+	private TrashEntryService _trashEntryService;
 
 }

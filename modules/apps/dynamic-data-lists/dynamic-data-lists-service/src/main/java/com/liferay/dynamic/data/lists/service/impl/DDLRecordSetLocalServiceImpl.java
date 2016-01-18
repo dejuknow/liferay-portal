@@ -17,19 +17,19 @@ package com.liferay.dynamic.data.lists.service.impl;
 import com.liferay.dynamic.data.lists.exception.RecordSetDDMStructureIdException;
 import com.liferay.dynamic.data.lists.exception.RecordSetDuplicateRecordSetKeyException;
 import com.liferay.dynamic.data.lists.exception.RecordSetNameException;
-import com.liferay.dynamic.data.lists.exception.RecordSetSettingsException;
 import com.liferay.dynamic.data.lists.model.DDLRecordSet;
 import com.liferay.dynamic.data.lists.service.base.DDLRecordSetLocalServiceBaseImpl;
+import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONSerializer;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMStructureLink;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLinkLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
+import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
+import com.liferay.dynamic.data.mapping.validator.DDMFormValuesValidator;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
-import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.ResourceConstants;
 import com.liferay.portal.model.SystemEventConstants;
@@ -286,6 +286,25 @@ public class DDLRecordSetLocalServiceImpl
 
 	@Override
 	public DDLRecordSet updateRecordSet(
+			long recordSetId, DDMFormValues settingsDDMFormValues)
+		throws PortalException {
+
+		Date now = new Date();
+
+		ddmFormValuesValidator.validate(settingsDDMFormValues);
+
+		DDLRecordSet recordSet = ddlRecordSetPersistence.findByPrimaryKey(
+			recordSetId);
+
+		recordSet.setModifiedDate(now);
+		recordSet.setSettings(
+			ddmFormValuesJSONSerializer.serialize(settingsDDMFormValues));
+
+		return ddlRecordSetPersistence.update(recordSet);
+	}
+
+	@Override
+	public DDLRecordSet updateRecordSet(
 			long recordSetId, long ddmStructureId, Map<Locale, String> nameMap,
 			Map<Locale, String> descriptionMap, int minDisplayRows,
 			ServiceContext serviceContext)
@@ -312,27 +331,6 @@ public class DDLRecordSetLocalServiceImpl
 		return doUpdateRecordSet(
 			ddmStructureId, nameMap, descriptionMap, minDisplayRows,
 			serviceContext, recordSet);
-	}
-
-	@Override
-	public DDLRecordSet updateRecordSet(long recordSetId, String settings)
-		throws PortalException {
-
-		Date now = new Date();
-
-		UnicodeProperties settingsProperties = new UnicodeProperties();
-
-		settingsProperties.fastLoad(settings);
-
-		validateSettingsProperties(settingsProperties);
-
-		DDLRecordSet recordSet = ddlRecordSetPersistence.findByPrimaryKey(
-			recordSetId);
-
-		recordSet.setModifiedDate(now);
-		recordSet.setSettings(settingsProperties.toString());
-
-		return ddlRecordSetPersistence.update(recordSet);
 	}
 
 	protected DDLRecordSet doUpdateRecordSet(
@@ -428,57 +426,11 @@ public class DDLRecordSetLocalServiceImpl
 		}
 	}
 
-	protected void validateSettingsProperties(
-			UnicodeProperties settingsProperties)
-		throws PortalException {
+	@ServiceReference(type = DDMFormValuesJSONSerializer.class)
+	protected DDMFormValuesJSONSerializer ddmFormValuesJSONSerializer;
 
-		String redirectURL = settingsProperties.getProperty("redirectURL");
-
-		if (Validator.isNotNull(redirectURL) && !Validator.isUrl(redirectURL)) {
-			throw new RecordSetSettingsException(
-				"The property \"redirectURL\" is not a URL");
-		}
-
-		String requireCaptcha = settingsProperties.getProperty(
-			"requireCaptcha");
-
-		if (Validator.isNotNull(requireCaptcha) &&
-			!Validator.isBoolean(requireCaptcha)) {
-
-			throw new RecordSetSettingsException(
-				"The property \"requireCaptcha\" is not a boolean");
-		}
-
-		boolean sendEmailNotification = GetterUtil.getBoolean(
-			settingsProperties.getProperty("sendEmailNotification"));
-
-		if (sendEmailNotification) {
-			String emailFromAddress = settingsProperties.getProperty(
-				"emailFromAddress");
-
-			if (!Validator.isEmailAddress(emailFromAddress)) {
-				throw new RecordSetSettingsException(
-					"The property \"emailFromAddress\" is not an email " +
-						"address");
-			}
-
-			String emailFromName = settingsProperties.getProperty(
-				"emailFromName");
-
-			if (Validator.isNull(emailFromName)) {
-				throw new RecordSetSettingsException(
-					"The property \"emailFromName\" is empty");
-			}
-
-			String emailToAddress = settingsProperties.getProperty(
-				"emailToAddresses");
-
-			if (!Validator.isEmailAddress(emailToAddress)) {
-				throw new RecordSetSettingsException(
-					"The property \"emailToAddress\" is not an email address");
-			}
-		}
-	}
+	@ServiceReference(type = DDMFormValuesValidator.class)
+	protected DDMFormValuesValidator ddmFormValuesValidator;
 
 	@ServiceReference(type = DDMStructureLinkLocalService.class)
 	protected DDMStructureLinkLocalService ddmStructureLinkLocalService;

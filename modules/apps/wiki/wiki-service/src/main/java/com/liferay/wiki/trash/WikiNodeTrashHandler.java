@@ -241,8 +241,7 @@ public class WikiNodeTrashHandler extends BaseWikiTrashHandler {
 		}
 
 		if (!containerModel) {
-			portletURL.setParameter(
-				"mvcRenderCommandName", "/wiki/view_all_pages");
+			portletURL.setParameter("mvcRenderCommandName", "/wiki/view_pages");
 		}
 
 		return portletURL;
@@ -271,7 +270,7 @@ public class WikiNodeTrashHandler extends BaseWikiTrashHandler {
 		_wikiPageLocalService = wikiPageLocalService;
 	}
 
-	private volatile WikiNodeLocalService _wikiNodeLocalService;
-	private volatile WikiPageLocalService _wikiPageLocalService;
+	private WikiNodeLocalService _wikiNodeLocalService;
+	private WikiPageLocalService _wikiPageLocalService;
 
 }

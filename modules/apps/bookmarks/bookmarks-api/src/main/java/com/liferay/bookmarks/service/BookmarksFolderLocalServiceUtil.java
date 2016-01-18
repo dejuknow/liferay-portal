@@ -16,8 +16,7 @@ package com.liferay.bookmarks.service;
 
 import aQute.bnd.annotation.ProviderType;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
+import com.liferay.osgi.util.ServiceTrackerFactory;
 
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -474,11 +473,11 @@ public class BookmarksFolderLocalServiceUtil {
 	public static void updateAsset(long userId,
 		com.liferay.bookmarks.model.BookmarksFolder folder,
 		long[] assetCategoryIds, java.lang.String[] assetTagNames,
-		long[] assetLinkEntryIds)
+		long[] assetLinkEntryIds, java.lang.Double priority)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		getService()
 			.updateAsset(userId, folder, assetCategoryIds, assetTagNames,
-			assetLinkEntryIds);
+			assetLinkEntryIds, priority);
 	}
 
 	/**
@@ -528,21 +527,6 @@ public class BookmarksFolderLocalServiceUtil {
 		return _serviceTracker.getService();
 	}
 
-	/**
-	 * @deprecated As of 6.2.0
-	 */
-	@Deprecated
-	public void setService(BookmarksFolderLocalService service) {
-	}
-
-	private static ServiceTracker<BookmarksFolderLocalService, BookmarksFolderLocalService> _serviceTracker;
-
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(BookmarksFolderLocalServiceUtil.class);
-
-		_serviceTracker = new ServiceTracker<BookmarksFolderLocalService, BookmarksFolderLocalService>(bundle.getBundleContext(),
-				BookmarksFolderLocalService.class, null);
-
-		_serviceTracker.open();
-	}
+	private static ServiceTracker<BookmarksFolderLocalService, BookmarksFolderLocalService> _serviceTracker =
+		ServiceTrackerFactory.open(BookmarksFolderLocalService.class);
 }

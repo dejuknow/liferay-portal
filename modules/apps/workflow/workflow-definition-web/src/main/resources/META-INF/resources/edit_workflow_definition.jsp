@@ -43,7 +43,7 @@ renderResponse.setTitle((workflowDefinition == null) ? LanguageUtil.get(request,
 	<portlet:param name="mvcPath" value="/edit_workflow_definition.jsp" />
 </liferay-portlet:actionURL>
 
-<div class="container-fluid-1280">
+<div class="container-fluid-1280 workflow-definition-container">
 	<aui:form action="<%= editWorkflowDefinitionURL %>" enctype="multipart/form-data" method="post">
 		<aui:input name="redirect" type="hidden" value="<%= redirect %>" />
 		<aui:input name="name" type="hidden" value="<%= name %>" />
@@ -53,15 +53,15 @@ renderResponse.setTitle((workflowDefinition == null) ? LanguageUtil.get(request,
 
 		<aui:fieldset>
 			<aui:field-wrapper label="title">
-				<liferay-ui:input-localized name="title" xml='<%= BeanPropertiesUtil.getString(workflowDefinition, "title") %>' />
+				<liferay-ui:input-localized cssClass="form-control" name="title" xml='<%= BeanPropertiesUtil.getString(workflowDefinition, "title") %>' />
 			</aui:field-wrapper>
 
 			<aui:input name="file" type="file" />
 
 			<aui:button-row>
-				<aui:button type="submit" />
+				<aui:button cssClass="btn-lg" type="submit" />
 
-				<aui:button href="<%= redirect %>" type="cancel" />
+				<aui:button cssClass="btn-lg" href="<%= redirect %>" type="cancel" />
 			</aui:button-row>
 		</aui:fieldset>
 	</aui:form>

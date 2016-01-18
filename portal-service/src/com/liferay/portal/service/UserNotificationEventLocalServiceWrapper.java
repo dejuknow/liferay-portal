@@ -476,6 +476,12 @@ public class UserNotificationEventLocalServiceWrapper
 		return _userNotificationEventLocalService.getPersistedModel(primaryKeyObj);
 	}
 
+	@Override
+	public java.util.List<com.liferay.portal.model.UserNotificationEvent> getTypeNotificationEvents(
+		java.lang.String type) {
+		return _userNotificationEventLocalService.getTypeNotificationEvents(type);
+	}
+
 	/**
 	* Returns the user notification event with the primary key.
 	*
@@ -658,23 +664,6 @@ public class UserNotificationEventLocalServiceWrapper
 		boolean archive) {
 		return _userNotificationEventLocalService.updateUserNotificationEvents(uuids,
 			companyId, archive);
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
-	 */
-	@Deprecated
-	public UserNotificationEventLocalService getWrappedUserNotificationEventLocalService() {
-		return _userNotificationEventLocalService;
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #setWrappedService}
-	 */
-	@Deprecated
-	public void setWrappedUserNotificationEventLocalService(
-		UserNotificationEventLocalService userNotificationEventLocalService) {
-		_userNotificationEventLocalService = userNotificationEventLocalService;
 	}
 
 	@Override

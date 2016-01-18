@@ -16,9 +16,8 @@ package com.liferay.portlet.configuration.icon.maximize;
 
 import com.liferay.portal.kernel.portlet.configuration.icon.BasePortletConfigurationIcon;
 import com.liferay.portal.kernel.util.HtmlUtil;
-import com.liferay.portal.theme.PortletDisplay;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.portlet.PortletRequest;
 
 /**
  * @author Eudaldo Alonso
@@ -26,8 +25,8 @@ import javax.servlet.http.HttpServletRequest;
 public class MaximizePortletConfigurationIcon
 	extends BasePortletConfigurationIcon {
 
-	public MaximizePortletConfigurationIcon(HttpServletRequest request) {
-		super(request);
+	public MaximizePortletConfigurationIcon(PortletRequest portletRequest) {
+		super(portletRequest);
 	}
 
 	@Override
@@ -47,8 +46,6 @@ public class MaximizePortletConfigurationIcon
 
 	@Override
 	public String getOnClick() {
-		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
-
 		return "submitForm(document.hrefFm, '".concat(
 			HtmlUtil.escapeJS(portletDisplay.getURLMax())).concat(
 				"'); return false;");
@@ -56,15 +53,11 @@ public class MaximizePortletConfigurationIcon
 
 	@Override
 	public String getURL() {
-		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
-
 		return portletDisplay.getURLMax();
 	}
 
 	@Override
 	public boolean isShow() {
-		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
-
 		return portletDisplay.isShowMaxIcon();
 	}
 

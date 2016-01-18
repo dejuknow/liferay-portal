@@ -11,14 +11,10 @@
 		</if>
 	</command>
 
-	<command name="_gotoDetailsViaDialogBox">
-		<execute function="AssertClick" locator1="Calendar#SCHEDULER_EVENT_DIALOG_BOX_VIEW_DETAILS_BUTTON" value1="View Details" />
-
-		<execute function="SelectFrame" locator1="CalendarViewEventDetails#VIEW_EVENT_IFRAME" />
-	</command>
-
 	<command name="_selectSpecificEventCurrentDay">
 		<var name="key_eventTitle" value="${eventTitle}" />
+
+		<execute function="ScrollWebElementIntoView" locator1="PGCalendar#SCHEDULER_REGULAR_EVENT_SPECIFIC_CURRENT_DAY_VIA_DAY_OR_WEEK_VIEW" />
 
 		<execute function="AssertClick#assertTextClickNoMouseOver" locator1="PGCalendar#SCHEDULER_REGULAR_EVENT_SPECIFIC_CURRENT_DAY_VIA_DAY_OR_WEEK_VIEW" value1="${eventTitle}" />
 	</command>
@@ -147,6 +143,12 @@
 		<execute function="SikuliClick" locator1="PGCalendar#SCHEDULER_DAY_VIEW_PNG" />
 	</command>
 
+	<command name="gotoDetailsViaDialogBox">
+		<execute function="AssertClick" locator1="Calendar#SCHEDULER_EVENT_DIALOG_BOX_VIEW_DETAILS_BUTTON" value1="View Details" />
+
+		<execute function="SelectFrame" locator1="CalendarViewEventDetails#VIEW_EVENT_IFRAME" />
+	</command>
+
 	<command name="gotoEdit">
 		<execute macro="CalendarNavigator#gotoView">
 			<var name="viewType" value="Week" />
@@ -155,6 +157,20 @@
 		<execute macro="CalendarScheduler#selectEvent">
 			<var name="eventTitle" value="${eventTitle}" />
 			<var name="eventType" value="${eventType}" />
+		</execute>
+
+		<execute function="AssertClick" locator1="Calendar#SCHEDULER_EVENT_DIALOG_BOX_EDIT_BUTTON" value1="Edit" />
+
+		<execute function="SelectFrame" locator1="CalendarEditEvent#EDIT_EVENT_IFRAME" />
+	</command>
+
+	<command name="gotoEditSpecific">
+		<execute macro="CalendarNavigator#gotoView">
+			<var name="viewType" value="Week" />
+		</execute>
+
+		<execute macro="CalendarScheduler#selectSpecificEvent">
+			<var name="eventTitle" value="${eventTitle}" />
 		</execute>
 
 		<execute function="AssertClick" locator1="Calendar#SCHEDULER_EVENT_DIALOG_BOX_EDIT_BUTTON" value1="Edit" />
@@ -190,6 +206,8 @@
 
 	<command name="selectSpecificEvent">
 		<var name="key_eventTitle" value="${eventTitle}" />
+
+		<execute function="ScrollWebElementIntoView" locator1="Calendar#SCHEDULER_EVENT_SPECIFIC" />
 
 		<execute function="AssertClick#assertTextClickNoMouseOver" locator1="Calendar#SCHEDULER_EVENT_SPECIFIC" value1="${eventTitle}" />
 	</command>

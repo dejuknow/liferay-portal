@@ -26,15 +26,6 @@ long recordId = BeanParamUtil.getLong(record, request, "recordId");
 long groupId = BeanParamUtil.getLong(record, request, "groupId", scopeGroupId);
 long recordSetId = BeanParamUtil.getLong(record, request, "recordSetId");
 
-if (Validator.isNull(redirect)) {
-	PortletURL redirectURL = renderResponse.createRenderURL();
-
-	redirectURL.setParameter("mvcPath", "/view_record_set.jsp");
-	redirectURL.setParameter("recordSetId", String.valueOf(recordSetId));
-
-	redirect = redirectURL.toString();
-}
-
 long formDDMTemplateId = ParamUtil.getLong(request, "formDDMTemplateId");
 
 DDLRecordVersion recordVersion = null;
@@ -195,11 +186,11 @@ else {
 			}
 			%>
 
-			<aui:button name="saveButton" onClick='<%= renderResponse.getNamespace() + "setWorkflowAction(true);" %>' primary="<%= false %>" type="submit" value="<%= saveButtonLabel %>" />
+			<aui:button cssClass="btn-lg" name="saveButton" onClick='<%= renderResponse.getNamespace() + "setWorkflowAction(true);" %>' primary="<%= false %>" type="submit" value="<%= saveButtonLabel %>" />
 
-			<aui:button disabled="<%= pending %>" name="publishButton" onClick='<%= renderResponse.getNamespace() + "setWorkflowAction(false);" %>' type="submit" value="<%= publishButtonLabel %>" />
+			<aui:button cssClass="btn-lg" disabled="<%= pending %>" name="publishButton" onClick='<%= renderResponse.getNamespace() + "setWorkflowAction(false);" %>' type="submit" value="<%= publishButtonLabel %>" />
 
-			<aui:button href="<%= redirect %>" name="cancelButton" type="cancel" />
+			<aui:button cssClass="btn-lg" href="<%= redirect %>" name="cancelButton" type="cancel" />
 		</aui:button-row>
 	</aui:fieldset>
 </aui:form>

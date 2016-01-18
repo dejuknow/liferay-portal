@@ -4,22 +4,19 @@
 
 		<execute function="AssertTextEquals" locator1="Categories#VOCABULARY_ENTRY" value1="${vocabularyName}" />
 
-		<var name="key_listEntry" value="${vocabularyName}" />
+		<var name="key_rowEntry" value="${vocabularyName}" />
 
-		<execute function="Click" locator1="Icon#LIST_VERTICAL_ELLIPSIS" value1="${vocabularyName}" />
+		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" value1="${vocabularyName}" />
 		<execute function="AssertClick" locator1="MenuItem#EDIT" value1="Edit" />
 
-		<if>
-			<condition function="IsElementPresent" locator1="CategoriesEditVocabulary#ASSOCIATED_ASSET_TYPES_BAR_COLLAPSED" />
-			<then>
-				<execute function="Click" locator1="CategoriesEditVocabulary#ASSOCIATED_ASSET_TYPES_BAR" />
-			</then>
-		</if>
+		<execute macro="Panel#expandPanel">
+			<var name="panelHeading" value="Associated Asset Types" />
+		</execute>
 
 		<execute function="Click" locator1="CategoriesEditVocabulary#ASSOCIATED_ASSET_TYPES_ADD_BUTTON" />
 		<execute function="Select" locator1="CategoriesEditVocabulary#ASSOCIATED_ASSET_TYPES_SELECT_2" value1="${vocabularyAssociatedAssetType2}" />
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute macro="Alert#viewRequestCompletedSuccessMessage" />
 	</command>
 
 	<command name="addCP" summary="Add a vocabulary named '${vocabularyName}'">
@@ -61,7 +58,7 @@
 		</if>
 
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute macro="Alert#viewRequestCompletedSuccessMessage" />
 	</command>
 
 	<command name="addViewableByCP">
@@ -69,17 +66,14 @@
 
 		<execute function="Type" locator1="TextInput#NAME" value1="${vocabularyName}" />
 
-		<if>
-			<condition function="IsElementPresent" locator1="CategoriesEditVocabulary#PERMISSIONS_BAR_COLLAPSED" />
-			<then>
-				<execute function="Click" locator1="CategoriesEditVocabulary#PERMISSIONS_BAR" />
-			</then>
-		</if>
+		<execute macro="Panel#expandPanel">
+			<var name="panelHeading" value="Permissions" />
+		</execute>
 
 		<execute function="Select" locator1="CategoriesEditVocabulary#PERMISSIONS_VIEWABLE_BY_SELECT" value1="${viewableBy}" />
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
 
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute macro="Alert#viewRequestCompletedSuccessMessage" />
 
 		<var name="key_vocabularyName" value="${vocabularyName}" />
 
@@ -98,24 +92,21 @@
 		<execute function="Click" locator1="Button#PLUS" />
 		<execute function="Type" locator1="TextInput#NAME" value1="${vocabularyName}" />
 
-		<if>
-			<condition function="IsElementPresent" locator1="CategoriesEditVocabulary#ASSOCIATED_ASSET_TYPES_BAR_COLLAPSED" />
-			<then>
-				<execute function="Click" locator1="CategoriesEditVocabulary#ASSOCIATED_ASSET_TYPES_BAR" />
-			</then>
-		</if>
+		<execute macro="Panel#expandPanel">
+			<var name="panelHeading" value="Associated Asset Types" />
+		</execute>
 
 		<execute function="Select" locator1="CategoriesEditVocabulary#ASSOCIATED_ASSET_TYPES_SELECT" value1="${vocabularyAssociatedAssetType}" />
 
 		<if>
 			<equals arg1="${required}" arg2="true" />
 			<then>
-				<execute function="Check" locator1="CategoriesEditVocabulary#REQUIRED_CHECKBOX" />
+				<execute function="Check#checkToggleSwitch" locator1="CategoriesEditVocabulary#REQUIRED_CHECKBOX" />
 			</then>
 		</if>
 
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute macro="Alert#viewRequestCompletedSuccessMessage" />
 
 		<var name="key_vocabularyName" value="${vocabularyName}" />
 
@@ -127,21 +118,18 @@
 
 		<execute function="AssertTextEquals" locator1="Categories#VOCABULARY_ENTRY" value1="${vocabularyName}" />
 
-		<var name="key_listEntry" value="${vocabularyName}" />
+		<var name="key_rowEntry" value="${vocabularyName}" />
 
-		<execute function="Click" locator1="Icon#LIST_VERTICAL_ELLIPSIS" />
+		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
 		<execute function="AssertClick" locator1="MenuItem#EDIT" value1="Edit" />
 
-		<if>
-			<condition function="IsElementPresent" locator1="CategoriesEditVocabulary#ASSOCIATED_ASSET_TYPES_BAR_COLLAPSED" />
-			<then>
-				<execute function="Click" locator1="CategoriesEditVocabulary#ASSOCIATED_ASSET_TYPES_BAR" />
-			</then>
-		</if>
+		<execute macro="Panel#expandPanel">
+			<var name="panelHeading" value="Associated Asset Types" />
+		</execute>
 
 		<execute function="Click" locator1="CategoriesEditVocabulary#ASSOCIATED_ASSET_TYPES_DELETE_BUTTON_2" />
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute macro="Alert#viewRequestCompletedSuccessMessage" />
 	</command>
 
 	<command name="deleteByIconCP">
@@ -151,7 +139,7 @@
 		<execute function="Check#checkAll" locator1="Checkbox#SELECT_ALL" />
 		<execute function="ClickNoError" locator1="Icon#DELETE" />
 		<execute function="Confirm" value1="Are you sure you want to delete this? It will be deleted immediately." />
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute macro="Alert#viewRequestCompletedSuccessMessage" />
 		<execute function="AssertTextNotPresent" value1="${vocabularyName}" />
 	</command>
 
@@ -160,14 +148,14 @@
 
 		<execute function="AssertTextEquals" locator1="Categories#VOCABULARY_ENTRY" value1="${vocabularyName}" />
 
-		<var name="key_listEntry" value="${vocabularyName}" />
+		<var name="key_rowEntry" value="${vocabularyName}" />
 
-		<execute function="Click" locator1="Icon#LIST_VERTICAL_ELLIPSIS" />
+		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
 		<execute function="AssertClickNoError" locator1="MenuItem#DELETE" value1="Delete" />
 
 		<execute function="Confirm" value1="Are you sure you want to delete this? It will be deleted immediately." />
 
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute macro="Alert#viewRequestCompletedSuccessMessage" />
 		<execute function="AssertTextNotPresent" locator1="Categories#VOCABULARY_ENTRY" value1="${vocabularyName}" />
 	</command>
 
@@ -176,9 +164,9 @@
 
 		<execute function="AssertTextEquals" locator1="Categories#VOCABULARY_ENTRY" value1="${vocabularyName}" />
 
-		<var name="key_listEntry" value="${vocabularyName}" />
+		<var name="key_rowEntry" value="${vocabularyName}" />
 
-		<execute function="Click" locator1="Icon#LIST_VERTICAL_ELLIPSIS" />
+		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
 		<execute function="AssertClick" locator1="MenuItem#EDIT" value1="Edit" />
 
 		<if>
@@ -202,7 +190,7 @@
 		</if>
 
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute macro="Alert#viewRequestCompletedSuccessMessage" />
 
 		<if>
 			<isset var="vocabularyNameEdit" />
@@ -227,7 +215,7 @@
 		</execute>
 
 		<if>
-			<condition function="IsElementPresent" locator1="Categories#VOCABULARY_ENTRY_GENERIC" />
+			<condition function="IsElementPresent" locator1="Checkbox#SELECT_ALL" />
 			<then>
 				<execute function="Check#checkAll" locator1="Checkbox#SELECT_ALL" />
 				<execute function="ClickNoError" locator1="Icon#DELETE" />
@@ -244,9 +232,9 @@
 		<if>
 			<equals arg1="${allowMultipleCategories}" arg2="false" />
 			<then>
-				<var name="key_listEntry" value="${vocabularyName}" />
+				<var name="key_rowEntry" value="${vocabularyName}" />
 
-				<execute function="Click" locator1="Icon#LIST_VERTICAL_ELLIPSIS" />
+				<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
 				<execute function="AssertClick" locator1="MenuItem#EDIT" value1="Edit" />
 				<execute function="AssertNotChecked#assertNotCheckedToggleSwitch" locator1="CategoriesEditVocabulary#ALLOW_MULTIPLE_CATEGORIES_TOGGLE_SWITCH" />
 			</then>
@@ -279,7 +267,7 @@
 		<if>
 			<equals arg1="${nullResult}" arg2="true" />
 			<then>
-				<execute function="AssertTextEquals" locator1="Message#EMPTY_INFO" value1="There are no vocabularies." />
+				<execute function="AssertTextEquals" locator1="Message#EMPTY_INFO" value1="There are no vocabularies. You can add a vocabulary by clicking the plus button on the bottom right corner." />
 			</then>
 		</if>
 	</command>
@@ -289,9 +277,9 @@
 
 		<execute function="AssertTextEquals" locator1="Categories#VOCABULARY_ENTRY" value1="${vocabularyName}" />
 
-		<var name="key_listEntry" value="${vocabularyName}" />
+		<var name="key_rowEntry" value="${vocabularyName}" />
 
-		<execute function="Click" locator1="Icon#LIST_VERTICAL_ELLIPSIS" />
+		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
 		<execute function="AssertClick" locator1="MenuItem#PERMISSIONS_LEXICON" value1="Permissions" />
 
 		<execute function="SelectFrame" locator1="AssetPermissions#IFRAME" />
@@ -323,17 +311,14 @@
 
 		<execute function="AssertTextEquals" locator1="Categories#VOCABULARY_ENTRY" value1="${vocabularyName}" />
 
-		<var name="key_listEntry" value="${vocabularyName}" />
+		<var name="key_rowEntry" value="${vocabularyName}" />
 
-		<execute function="Click" locator1="Icon#LIST_VERTICAL_ELLIPSIS" />
+		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
 		<execute function="AssertClick" locator1="MenuItem#EDIT" value1="Edit" />
 
-		<if>
-			<condition function="IsElementPresent" locator1="CategoriesEditVocabulary#ASSOCIATED_ASSET_TYPES_BAR_COLLAPSED" />
-			<then>
-				<execute function="Click" locator1="CategoriesEditVocabulary#ASSOCIATED_ASSET_TYPES_BAR" />
-			</then>
-		</if>
+		<execute macro="Panel#expandPanel">
+			<var name="panelHeading" value="Associated Asset Types" />
+		</execute>
 
 		<execute function="AssertSelectedLabel" locator1="CategoriesEditVocabulary#ASSOCIATED_ASSET_TYPES_SELECT" value1="${vocabularyAssociatedAssetType}" />
 	</command>

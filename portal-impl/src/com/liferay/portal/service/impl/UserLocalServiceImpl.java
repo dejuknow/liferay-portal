@@ -889,7 +889,7 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 
 		// Groups
 
-		if (groupIds != null) {
+		if (!ArrayUtil.isEmpty(groupIds)) {
 			List<Group> groups = new ArrayList<>();
 
 			for (long groupId : groupIds) {
@@ -1854,6 +1854,15 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 		userGroupRoleLocalService.deleteUserGroupRolesByUserId(
 			user.getUserId());
 
+		// Recent layouts
+
+		recentLayoutBranchLocalService.deleteUserRecentLayoutBranches(
+			user.getUserId());
+		recentLayoutRevisionLocalService.deleteUserRecentLayoutRevisions(
+			user.getUserId());
+		recentLayoutSetBranchLocalService.deleteUserRecentLayoutSetBranches(
+			user.getUserId());
+
 		// Resources
 
 		resourceLocalService.deleteResource(
@@ -2386,9 +2395,10 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 
 		params.put(
 			"socialMutualRelationType",
-			new Long[] {userId1, Long.valueOf(socialRelationType), userId2,
-			Long.valueOf(socialRelationType)
-		});
+			new Long[] {
+				userId1, Long.valueOf(socialRelationType), userId2,
+				Long.valueOf(socialRelationType)
+			});
 
 		return search(
 			user1.getCompanyId(), null, WorkflowConstants.STATUS_APPROVED,
@@ -2545,9 +2555,10 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 
 		params.put(
 			"socialMutualRelationType",
-			new Long[] {userId1, Long.valueOf(socialRelationType), userId2,
-			Long.valueOf(socialRelationType)
-		});
+			new Long[] {
+				userId1, Long.valueOf(socialRelationType), userId2,
+				Long.valueOf(socialRelationType)
+			});
 
 		return searchCount(
 			user1.getCompanyId(), null, WorkflowConstants.STATUS_APPROVED,
@@ -4354,8 +4365,9 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 			if (!autoPassword) {
 				if (Validator.isNull(password1) ||
 					Validator.isNull(password2)) {
-						throw new UserPasswordException.MustNotBeNull(
-							user.getUserId());
+
+					throw new UserPasswordException.MustNotBeNull(
+						user.getUserId());
 				}
 			}
 
@@ -4752,10 +4764,11 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 			String msg = GetterUtil.getString(mle.getCause().getMessage());
 
 			if (LDAPSettingsUtil.isPasswordPolicyEnabled(user.getCompanyId())) {
-				String passwordHistory = PrefsPropsUtil.getString(
-					user.getCompanyId(), PropsKeys.LDAP_ERROR_PASSWORD_HISTORY);
+				String errorPasswordHistory =
+					LDAPSettingsUtil.getErrorPasswordHistory(
+						user.getCompanyId());
 
-				if (msg.contains(passwordHistory)) {
+				if (msg.contains(errorPasswordHistory)) {
 					throw new UserPasswordException.MustNotBeRecentlyUsed(
 						userId);
 				}

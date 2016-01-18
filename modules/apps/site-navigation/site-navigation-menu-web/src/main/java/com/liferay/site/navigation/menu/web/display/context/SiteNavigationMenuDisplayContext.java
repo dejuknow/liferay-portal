@@ -15,15 +15,19 @@
 package com.liferay.site.navigation.menu.web.display.context;
 
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
-import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.model.Layout;
 import com.liferay.portal.theme.PortletDisplay;
 import com.liferay.portal.theme.ThemeDisplay;
+import com.liferay.portal.util.LayoutDescription;
+import com.liferay.portal.util.LayoutListUtil;
 import com.liferay.portlet.display.template.PortletDisplayTemplate;
 import com.liferay.site.navigation.menu.web.configuration.SiteNavigationMenuPortletInstanceConfiguration;
 import com.liferay.site.navigation.menu.web.configuration.SiteNavigationMenuWebConfiguration;
+
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -48,27 +52,6 @@ public class SiteNavigationMenuDisplayContext {
 		_siteNavigationMenuPortletInstanceConfiguration =
 			portletDisplay.getPortletInstanceConfiguration(
 				SiteNavigationMenuPortletInstanceConfiguration.class);
-	}
-
-	public String getBulletStyle() {
-		if (_bulletStyle != null) {
-			return _bulletStyle;
-		}
-
-		_bulletStyle = ParamUtil.getString(
-			_request, "bulletStyle",
-			_siteNavigationMenuPortletInstanceConfiguration.bulletStyle());
-
-		if (Validator.isNull(_bulletStyle)) {
-			ThemeDisplay themeDisplay = (ThemeDisplay)_request.getAttribute(
-				WebKeys.THEME_DISPLAY);
-
-			_bulletStyle = GetterUtil.getString(
-				themeDisplay.getThemeSetting("bullet-style"),
-				_siteNavigationMenuWebConfiguration.defaultBulletStyle());
-		}
-
-		return _bulletStyle;
 	}
 
 	public String getDDMTemplateKey() {
@@ -99,11 +82,6 @@ public class SiteNavigationMenuDisplayContext {
 			_request, "displayStyle",
 			_siteNavigationMenuPortletInstanceConfiguration.displayStyle());
 
-		if (Validator.isNull(_displayStyle )) {
-			_displayStyle =
-				_siteNavigationMenuWebConfiguration.defaultDisplayStyle();
-		}
-
 		return _displayStyle;
 	}
 
@@ -127,18 +105,6 @@ public class SiteNavigationMenuDisplayContext {
 		return _displayStyleGroupId;
 	}
 
-	public String getHeaderType() {
-		if (_headerType != null) {
-			return _headerType;
-		}
-
-		_headerType = ParamUtil.getString(
-			_request, "headerType",
-			_siteNavigationMenuPortletInstanceConfiguration.headerType());
-
-		return _headerType;
-	}
-
 	public String getIncludedLayouts() {
 		if (_includedLayouts != null) {
 			return _includedLayouts;
@@ -149,6 +115,17 @@ public class SiteNavigationMenuDisplayContext {
 			_siteNavigationMenuPortletInstanceConfiguration.includedLayouts());
 
 		return _includedLayouts;
+	}
+
+	public List<LayoutDescription> getLayoutDescriptions() {
+		ThemeDisplay themeDisplay = (ThemeDisplay)_request.getAttribute(
+			WebKeys.THEME_DISPLAY);
+
+		Layout layout = themeDisplay.getLayout();
+
+		return LayoutListUtil.getLayoutDescriptions(
+			layout.getGroupId(), layout.isPrivateLayout(), StringPool.BLANK,
+			themeDisplay.getLocale());
 	}
 
 	public int getRootLayoutLevel() {
@@ -175,16 +152,16 @@ public class SiteNavigationMenuDisplayContext {
 		return _rootLayoutType;
 	}
 
-	public boolean isNestedChildren() {
-		if (_nestedChildren != null) {
-			return _nestedChildren;
+	public String getRootLayoutUuid() {
+		if (_rootLayoutUuid != null) {
+			return _rootLayoutUuid;
 		}
 
-		_nestedChildren = ParamUtil.getBoolean(
-			_request, "nestedChildren",
-			_siteNavigationMenuPortletInstanceConfiguration.nestedChildren());
+		_rootLayoutUuid = ParamUtil.getString(
+			_request, "rootLayoutUuid",
+			_siteNavigationMenuPortletInstanceConfiguration.rootLayoutUuid());
 
-		return _nestedChildren;
+		return _rootLayoutUuid;
 	}
 
 	public boolean isPreview() {
@@ -199,17 +176,15 @@ public class SiteNavigationMenuDisplayContext {
 		return _preview;
 	}
 
-	private String _bulletStyle;
 	private String _ddmTemplateKey;
 	private String _displayStyle;
 	private long _displayStyleGroupId;
-	private String _headerType;
 	private String _includedLayouts;
-	private Boolean _nestedChildren;
 	private Boolean _preview;
 	private final HttpServletRequest _request;
 	private Integer _rootLayoutLevel;
 	private String _rootLayoutType;
+	private String _rootLayoutUuid;
 	private final SiteNavigationMenuPortletInstanceConfiguration
 		_siteNavigationMenuPortletInstanceConfiguration;
 	private final SiteNavigationMenuWebConfiguration

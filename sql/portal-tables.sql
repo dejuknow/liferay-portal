@@ -115,14 +115,14 @@ create table AssetEntries_AssetCategories (
 	companyId LONG not null,
 	categoryId LONG not null,
 	entryId LONG not null,
-	primary key (companyId, categoryId, entryId)
+	primary key (categoryId, entryId)
 );
 
 create table AssetEntries_AssetTags (
 	companyId LONG not null,
 	entryId LONG not null,
 	tagId LONG not null,
-	primary key (companyId, entryId, tagId)
+	primary key (entryId, tagId)
 );
 
 create table AssetEntry (
@@ -433,7 +433,7 @@ create table DLFileEntryTypes_DLFolders (
 	companyId LONG not null,
 	fileEntryTypeId LONG not null,
 	folderId LONG not null,
-	primary key (companyId, fileEntryTypeId, folderId)
+	primary key (fileEntryTypeId, folderId)
 );
 
 create table DLFileRank (
@@ -633,21 +633,21 @@ create table Groups_Orgs (
 	companyId LONG not null,
 	groupId LONG not null,
 	organizationId LONG not null,
-	primary key (companyId, groupId, organizationId)
+	primary key (groupId, organizationId)
 );
 
 create table Groups_Roles (
 	companyId LONG not null,
 	groupId LONG not null,
 	roleId LONG not null,
-	primary key (companyId, groupId, roleId)
+	primary key (groupId, roleId)
 );
 
 create table Groups_UserGroups (
 	companyId LONG not null,
 	groupId LONG not null,
 	userGroupId LONG not null,
-	primary key (companyId, groupId, userGroupId)
+	primary key (groupId, userGroupId)
 );
 
 create table Image (
@@ -1212,6 +1212,38 @@ create table RatingsStats (
 	averageScore DOUBLE
 );
 
+create table RecentLayoutBranch (
+	mvccVersion LONG default 0,
+	recentLayoutBranchId LONG not null primary key,
+	groupId LONG,
+	companyId LONG,
+	userId LONG,
+	layoutBranchId LONG,
+	layoutSetBranchId LONG,
+	plid LONG
+);
+
+create table RecentLayoutRevision (
+	mvccVersion LONG default 0,
+	recentLayoutRevisionId LONG not null primary key,
+	groupId LONG,
+	companyId LONG,
+	userId LONG,
+	layoutRevisionId LONG,
+	layoutSetBranchId LONG,
+	plid LONG
+);
+
+create table RecentLayoutSetBranch (
+	mvccVersion LONG default 0,
+	recentLayoutSetBranchId LONG not null primary key,
+	groupId LONG,
+	companyId LONG,
+	userId LONG,
+	layoutSetBranchId LONG,
+	layoutSetId LONG
+);
+
 create table Region (
 	mvccVersion LONG default 0,
 	regionId LONG not null primary key,
@@ -1337,88 +1369,6 @@ create table Role_ (
 	description STRING null,
 	type_ INTEGER,
 	subtype VARCHAR(75) null
-);
-
-create table SCFrameworkVersi_SCProductVers (
-	companyId LONG not null,
-	frameworkVersionId LONG not null,
-	productVersionId LONG not null,
-	primary key (companyId, frameworkVersionId, productVersionId)
-);
-
-create table SCFrameworkVersion (
-	frameworkVersionId LONG not null primary key,
-	groupId LONG,
-	companyId LONG,
-	userId LONG,
-	userName VARCHAR(75) null,
-	createDate DATE null,
-	modifiedDate DATE null,
-	name VARCHAR(75) null,
-	url STRING null,
-	active_ BOOLEAN,
-	priority INTEGER
-);
-
-create table SCLicense (
-	licenseId LONG not null primary key,
-	companyId LONG,
-	name VARCHAR(75) null,
-	url STRING null,
-	openSource BOOLEAN,
-	active_ BOOLEAN,
-	recommended BOOLEAN
-);
-
-create table SCLicenses_SCProductEntries (
-	companyId LONG not null,
-	licenseId LONG not null,
-	productEntryId LONG not null,
-	primary key (companyId, licenseId, productEntryId)
-);
-
-create table SCProductEntry (
-	productEntryId LONG not null primary key,
-	groupId LONG,
-	companyId LONG,
-	userId LONG,
-	userName VARCHAR(75) null,
-	createDate DATE null,
-	modifiedDate DATE null,
-	name VARCHAR(75) null,
-	type_ VARCHAR(75) null,
-	tags VARCHAR(255) null,
-	shortDescription STRING null,
-	longDescription STRING null,
-	pageURL STRING null,
-	author VARCHAR(75) null,
-	repoGroupId VARCHAR(75) null,
-	repoArtifactId VARCHAR(75) null
-);
-
-create table SCProductScreenshot (
-	productScreenshotId LONG not null primary key,
-	companyId LONG,
-	groupId LONG,
-	productEntryId LONG,
-	thumbnailId LONG,
-	fullImageId LONG,
-	priority INTEGER
-);
-
-create table SCProductVersion (
-	productVersionId LONG not null primary key,
-	companyId LONG,
-	userId LONG,
-	userName VARCHAR(75) null,
-	createDate DATE null,
-	modifiedDate DATE null,
-	productEntryId LONG,
-	version VARCHAR(75) null,
-	changeLog STRING null,
-	downloadPageURL STRING null,
-	directDownloadURL VARCHAR(2000) null,
-	repoStoreArtifact BOOLEAN
 );
 
 create table ServiceComponent (
@@ -1713,7 +1663,7 @@ create table UserGroups_Teams (
 	companyId LONG not null,
 	teamId LONG not null,
 	userGroupId LONG not null,
-	primary key (companyId, teamId, userGroupId)
+	primary key (teamId, userGroupId)
 );
 
 create table UserIdMapper (
@@ -1746,35 +1696,35 @@ create table Users_Groups (
 	companyId LONG not null,
 	groupId LONG not null,
 	userId LONG not null,
-	primary key (companyId, groupId, userId)
+	primary key (groupId, userId)
 );
 
 create table Users_Orgs (
 	companyId LONG not null,
 	organizationId LONG not null,
 	userId LONG not null,
-	primary key (companyId, organizationId, userId)
+	primary key (organizationId, userId)
 );
 
 create table Users_Roles (
 	companyId LONG not null,
 	roleId LONG not null,
 	userId LONG not null,
-	primary key (companyId, roleId, userId)
+	primary key (roleId, userId)
 );
 
 create table Users_Teams (
 	companyId LONG not null,
 	teamId LONG not null,
 	userId LONG not null,
-	primary key (companyId, teamId, userId)
+	primary key (teamId, userId)
 );
 
 create table Users_UserGroups (
 	companyId LONG not null,
 	userId LONG not null,
 	userGroupId LONG not null,
-	primary key (companyId, userId, userGroupId)
+	primary key (userId, userGroupId)
 );
 
 create table UserTracker (

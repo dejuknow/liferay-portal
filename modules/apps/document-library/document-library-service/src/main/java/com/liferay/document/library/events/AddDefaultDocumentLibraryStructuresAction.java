@@ -32,8 +32,6 @@ import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
 import com.liferay.portal.kernel.upgrade.util.UpgradeProcessUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.xml.Document;
@@ -149,10 +147,12 @@ public class AddDefaultDocumentLibraryStructuresAction extends SimpleAction {
 				groupId, dlFileEntryTypeKey);
 
 		if (dlFileEntryType == null) {
-			Map<Locale, String> localizationMap =
-				LocalizationUtil.getLocalizationMap(
-					LanguageUtil.getSupportedLocales(), LocaleUtil.getDefault(),
-					languageKey);
+			Map<Locale, String> localizationMap = new HashMap<>();
+
+			for (Locale curLocale : LanguageUtil.getAvailableLocales(groupId)) {
+				localizationMap.put(
+					curLocale, LanguageUtil.get(curLocale, languageKey));
+			}
 
 			_dlFileEntryTypeLocalService.addFileEntryType(
 				userId, groupId, dlFileEntryTypeKey, localizationMap,
@@ -425,14 +425,14 @@ public class AddDefaultDocumentLibraryStructuresAction extends SimpleAction {
 		_userLocalService = userLocalService;
 	}
 
-	private volatile CompanyLocalService _companyLocalService;
-	private volatile DDM _ddm;
-	private volatile DDMBeanTranslator _ddmBeanTranslator;
-	private volatile DDMFormXSDDeserializer _ddmFormXSDDeserializer;
-	private volatile DDMStructureLocalService _ddmStructureLocalService;
-	private volatile DefaultDDMStructureHelper _defaultDDMStructureHelper;
-	private volatile DLFileEntryTypeLocalService _dlFileEntryTypeLocalService;
-	private volatile GroupLocalService _groupLocalService;
-	private volatile UserLocalService _userLocalService;
+	private CompanyLocalService _companyLocalService;
+	private DDM _ddm;
+	private DDMBeanTranslator _ddmBeanTranslator;
+	private DDMFormXSDDeserializer _ddmFormXSDDeserializer;
+	private DDMStructureLocalService _ddmStructureLocalService;
+	private DefaultDDMStructureHelper _defaultDDMStructureHelper;
+	private DLFileEntryTypeLocalService _dlFileEntryTypeLocalService;
+	private GroupLocalService _groupLocalService;
+	private UserLocalService _userLocalService;
 
 }

@@ -86,6 +86,13 @@ public class WikiNodeServiceWrapper implements WikiNodeService,
 	}
 
 	@Override
+	public java.util.List<com.liferay.wiki.model.WikiNode> getNodes(
+		long groupId, int status, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.wiki.model.WikiNode> obc) {
+		return _wikiNodeService.getNodes(groupId, status, start, end, obc);
+	}
+
+	@Override
 	public int getNodesCount(long groupId) {
 		return _wikiNodeService.getNodesCount(groupId);
 	}
@@ -144,22 +151,6 @@ public class WikiNodeServiceWrapper implements WikiNodeService,
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _wikiNodeService.updateNode(nodeId, name, description,
 			serviceContext);
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
-	 */
-	@Deprecated
-	public WikiNodeService getWrappedWikiNodeService() {
-		return _wikiNodeService;
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #setWrappedService}
-	 */
-	@Deprecated
-	public void setWrappedWikiNodeService(WikiNodeService wikiNodeService) {
-		_wikiNodeService = wikiNodeService;
 	}
 
 	@Override

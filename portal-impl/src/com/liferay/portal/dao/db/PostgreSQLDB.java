@@ -14,6 +14,7 @@
 
 package com.liferay.portal.dao.db;
 
+import com.liferay.portal.kernel.dao.db.DBType;
 import com.liferay.portal.kernel.dao.db.Index;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.io.unsync.UnsyncBufferedReader;
@@ -39,7 +40,7 @@ import java.util.List;
 public class PostgreSQLDB extends BaseDB {
 
 	public PostgreSQLDB(int majorVersion, int minorVersion) {
-		super(TYPE_POSTGRESQL, majorVersion, minorVersion);
+		super(DBType.POSTGRESQL, majorVersion, minorVersion);
 	}
 
 	@Override
@@ -88,7 +89,7 @@ public class PostgreSQLDB extends BaseDB {
 			}
 		}
 		finally {
-			DataAccess.cleanUp(null, ps, rs);
+			DataAccess.cleanUp(ps, rs);
 		}
 
 		return indexes;

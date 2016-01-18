@@ -30,7 +30,7 @@ import com.liferay.portal.service.ServiceContextFactory;
 import com.liferay.portal.service.UserGroupService;
 import com.liferay.portal.service.UserService;
 import com.liferay.portlet.sites.util.SitesUtil;
-import com.liferay.user.groups.admin.web.constants.UserGroupsAdminPortletKeys;
+import com.liferay.user.groups.admin.constants.UserGroupsAdminPortletKeys;
 
 import java.io.IOException;
 
@@ -206,7 +206,7 @@ public class UserGroupsAdminPortlet extends MVCPortlet {
 		_userService = userService;
 	}
 
-	private volatile UserGroupService _userGroupService;
-	private volatile UserService _userService;
+	private UserGroupService _userGroupService;
+	private UserService _userService;
 
 }

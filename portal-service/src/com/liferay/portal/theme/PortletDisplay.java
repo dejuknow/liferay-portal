@@ -41,12 +41,21 @@ import javax.portlet.PortletPreferences;
  * @author Brian Wing Shun Chan
  * @author Eduardo Lundgren
  */
-public class PortletDisplay implements Serializable {
+public class PortletDisplay implements Cloneable, Serializable {
 
 	public PortletDisplay() {
 		if (_log.isDebugEnabled()) {
 			_log.debug("Creating new instance " + hashCode());
 		}
+	}
+
+	@Override
+	public Object clone() {
+		PortletDisplay portletDisplay = new PortletDisplay();
+
+		portletDisplay.copyFrom(this);
+
+		return portletDisplay;
 	}
 
 	public void copyFrom(PortletDisplay master) {

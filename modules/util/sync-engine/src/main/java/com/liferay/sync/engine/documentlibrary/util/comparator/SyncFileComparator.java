@@ -25,19 +25,28 @@ public class SyncFileComparator implements Comparator<SyncFile> {
 
 	@Override
 	public int compare(SyncFile syncFile1, SyncFile syncFile2) {
-		int value = 0;
+		String event1 = syncFile1.getEvent();
+		String event2 = syncFile2.getEvent();
 
-		long size1 = syncFile1.getSize();
-		long size2 = syncFile2.getSize();
+		if (event1.equals(SyncFile.EVENT_DELETE) ||
+			event1.equals(SyncFile.EVENT_TRASH)) {
 
-		if (size1 < size2) {
-			value = -1;
+			if (event2.equals(SyncFile.EVENT_DELETE) ||
+				event2.equals(SyncFile.EVENT_TRASH)) {
+
+				return 0;
+			}
+
+			return -1;
 		}
-		else if (size1 > size2) {
-			value = 1;
-		}
+		else if (event2.equals(SyncFile.EVENT_DELETE) ||
+				 event2.equals(SyncFile.EVENT_TRASH)) {
 
-		return value;
+			return 1;
+		}
+		else {
+			return Long.compare(syncFile1.getSize(), syncFile2.getSize());
+		}
 	}
 
 }

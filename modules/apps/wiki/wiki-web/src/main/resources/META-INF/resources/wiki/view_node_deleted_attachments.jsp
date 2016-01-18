@@ -25,7 +25,7 @@ List<FileEntry> attachmentsFileEntries = node.getDeletedAttachmentsFiles();
 
 PortletURL portletURL = renderResponse.createRenderURL();
 
-portletURL.setParameter("mvcRenderCommandName", "/wiki/view_all_pages");
+portletURL.setParameter("mvcRenderCommandName", "/wiki/view_pages");
 portletURL.setParameter("redirect", currentURL);
 portletURL.setParameter("nodeId", String.valueOf(node.getNodeId()));
 
@@ -52,7 +52,7 @@ iteratorURL.setParameter("viewTrashAttachments", Boolean.TRUE.toString());
 	<portlet:param name="nodeId" value="<%= String.valueOf(node.getPrimaryKey()) %>" />
 </portlet:actionURL>
 
-<liferay-ui:trash-empty
+<liferay-trash:empty
 	confirmMessage="are-you-sure-you-want-to-remove-the-attachments-for-this-wiki-node"
 	emptyMessage="remove-the-attachments-for-this-wiki-node"
 	infoMessage="attachments-that-have-been-removed-for-more-than-x-will-be-automatically-deleted"

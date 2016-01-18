@@ -18,12 +18,6 @@
 	$theme.runtime("com.liferay.portal.kernel.servlet.taglib.ui.BreadcrumbEntry", $portletProviderAction.VIEW, "", $!default_preferences)
 #end
 
-#macro (control_menu)
-	#if ($is_setup_complete && $is_signed_in)
-		$theme.runtime("com.liferay.portlet.admin.util.PortalControlMenuApplicationType$ControlMenu", $portletProviderAction.VIEW)
-	#end
-#end
-
 #macro (css $file_name)
 	#if ($file_name == $css_main_file)
 		<link class="lfr-css-file" href="$file_name" id="mainLiferayThemeCSS" rel="stylesheet" type="text/css" />
@@ -53,14 +47,6 @@ $languageUtil.format($locale, $lang_key, $arguments.toArray())#end
 	$theme.runtime("com.liferay.portal.kernel.servlet.taglib.ui.LanguageEntry", $portletProviderAction.VIEW, "", $!default_preferences)
 #end
 
-#macro (menu $menu)
-	#set ($menu_tag = $theme.getMenuTag())
-
-	$menu_tag.setMenu($menu)
-
-	$menu_tag.runTag()
-#end
-
 #macro (navigation_menu $default_preferences)
 	$theme.runtime("com.liferay.portal.theme.NavItem", $portletProviderAction.VIEW, "", $!default_preferences)
 #end
@@ -79,14 +65,6 @@ $languageUtil.format($locale, $lang_key, $arguments.toArray())#end
 			</div>
 		</div>
 	#end
-#end
-
-#macro (quick_access $content_id)
-	#set ($quick_access_tag = $theme.getQuickAccessTag())
-
-	$quick_access_tag.setContentId($content_id)
-
-	$quick_access_tag.runTag()
 #end
 
 #macro (silently $foo)

@@ -72,6 +72,7 @@ import com.liferay.portlet.PortletURLImpl;
 import java.io.IOException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -402,8 +403,6 @@ public class LayoutImpl extends LayoutBaseImpl {
 
 	@Override
 	public List<Portlet> getEmbeddedPortlets(long groupId) {
-		List<Portlet> portlets = new ArrayList<>();
-
 		List<PortletPreferences> portletPreferences =
 			PortletPreferencesLocalServiceUtil.getPortletPreferences(
 				groupId, PortletKeys.PREFS_OWNER_TYPE_LAYOUT,
@@ -427,6 +426,12 @@ public class LayoutImpl extends LayoutBaseImpl {
 						PortletKeys.PREFS_OWNER_TYPE_USER, getPlid()));
 			}
 		}
+
+		if (portletPreferences.isEmpty()) {
+			return Collections.emptyList();
+		}
+
+		List<Portlet> portlets = new ArrayList<>(portletPreferences.size());
 
 		for (PortletPreferences portletPreference : portletPreferences) {
 			String portletId = portletPreference.getPortletId();
@@ -1171,6 +1176,15 @@ public class LayoutImpl extends LayoutBaseImpl {
 	}
 
 	@Override
+	public boolean isTypeSharedPortlet() {
+		if (Validator.equals(getType(), LayoutConstants.TYPE_SHARED_PORTLET)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	@Override
 	public boolean isTypeURL() {
 		if (Validator.equals(getType(), LayoutConstants.TYPE_URL)) {
 			return true;
@@ -1416,7 +1430,7 @@ public class LayoutImpl extends LayoutBaseImpl {
 	}
 
 	private LayoutSet _layoutSet;
-	private LayoutType _layoutType;
+	private transient LayoutType _layoutType;
 	private UnicodeProperties _typeSettingsProperties;
 
 }

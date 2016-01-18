@@ -17,7 +17,7 @@ package com.liferay.portal.util;
 import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.dao.db.DB;
-import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
+import com.liferay.portal.kernel.dao.db.DBManagerUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
@@ -308,9 +308,10 @@ public class PortalUtil {
 	}
 
 	public static LayoutQueryStringComposite
-		getActualLayoutQueryStringComposite(
-			long groupId, boolean privateLayout, String friendlyURL,
-			Map<String, String[]> params, Map<String, Object> requestContext)
+			getActualLayoutQueryStringComposite(
+				long groupId, boolean privateLayout, String friendlyURL,
+				Map<String, String[]> params,
+				Map<String, Object> requestContext)
 		throws PortalException {
 
 		return getPortal().getActualLayoutQueryStringComposite(
@@ -847,11 +848,11 @@ public class PortalUtil {
 	}
 
 	/**
-	 * @deprecated As of 6.1.0, replaced by {@link DBFactoryUtil#getDB()}
+	 * @deprecated As of 6.1.0, replaced by {@link DBManagerUtil#getDB()}
 	 */
 	@Deprecated
 	public static DB getDB() {
-		return DBFactoryUtil.getDB();
+		return DBManagerUtil.getDB();
 	}
 
 	public static long getDefaultCompanyId() {
@@ -1182,6 +1183,13 @@ public class PortalUtil {
 		throws PortalException {
 
 		return getPortal().getLayoutRelativeURL(layout, themeDisplay, doAsUser);
+	}
+
+	public static String getLayoutSetDisplayURL(
+			LayoutSet layoutSet, boolean secureConnection)
+		throws PortalException {
+
+		return getPortal().getLayoutSetDisplayURL(layoutSet, secureConnection);
 	}
 
 	public static String getLayoutSetFriendlyURL(
@@ -2001,9 +2009,10 @@ public class PortalUtil {
 	 */
 	@Deprecated
 	public static LayoutFriendlyURLComposite
-		getVirtualLayoutFriendlyURLComposite(
-			boolean privateLayout, String friendlyURL,
-			Map<String, String[]> params, Map<String, Object> requestContext)
+			getVirtualLayoutFriendlyURLComposite(
+				boolean privateLayout, String friendlyURL,
+				Map<String, String[]> params,
+				Map<String, Object> requestContext)
 		throws PortalException {
 
 		return getPortal().getVirtualLayoutFriendlyURLComposite(
@@ -2253,7 +2262,7 @@ public class PortalUtil {
 	 */
 	@Deprecated
 	public static void runSQL(String sql) throws IOException, SQLException {
-		DBFactoryUtil.getDB().runSQL(sql);
+		DBManagerUtil.getDB().runSQL(sql);
 	}
 
 	public static void sendError(

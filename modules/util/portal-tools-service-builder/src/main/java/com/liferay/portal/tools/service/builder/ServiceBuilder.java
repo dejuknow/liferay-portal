@@ -4011,7 +4011,7 @@ public class ServiceBuilder {
 
 		sb.append("\tprimary key (");
 
-		for (int i = 0; i < entities.length; i++) {
+		for (int i = 1; i < entities.length; i++) {
 			Entity entity = entities[i];
 
 			List<EntityColumn> pkList = entity.getPKList();
@@ -4021,7 +4021,7 @@ public class ServiceBuilder {
 
 				String colDBName = col.getDBName();
 
-				if ((i != 0) || (j != 0)) {
+				if ((i != 1) || (j != 0)) {
 					sb.append(", ");
 				}
 
@@ -4291,7 +4291,7 @@ public class ServiceBuilder {
 	}
 
 	private String _getSpringNamespacesDeclarations() {
-		StringBundler sb = new StringBundler(_springNamespaces.length * 4);
+		StringBundler sb = new StringBundler(_springNamespaces.length * 6);
 
 		for (String namespace : _springNamespaces) {
 			sb.append("\txmlns");
@@ -4310,7 +4310,7 @@ public class ServiceBuilder {
 	}
 
 	private String _getSpringSchemaLocations() {
-		StringBundler sb = new StringBundler(_springNamespaces.length * 6);
+		StringBundler sb = new StringBundler(_springNamespaces.length * 7);
 
 		for (String namespace : _springNamespaces) {
 			sb.append("\thttp://www.springframework.org/schema/");

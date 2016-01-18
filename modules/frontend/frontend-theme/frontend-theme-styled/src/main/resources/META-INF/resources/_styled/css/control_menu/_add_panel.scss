@@ -3,7 +3,6 @@
 	bottom: 0;
 	color: #FFF;
 	overflow: auto;
-	padding: 0 15px;
 	position: fixed;
 	right: 0;
 	top: 0;
@@ -17,10 +16,10 @@
 		color: #869CAD;
 	}
 
-	button.close {
+	a.close {
 		color: #FFF;
 		opacity: 1;
-		padding: 2px 8px;
+		padding: 0 8px;
 
 		&:hover {
 			background: transparent;
@@ -53,7 +52,7 @@
 		}
 	}
 
-	.lfr-has-device-preview {
+	.lfr-has-simulation-panel {
 		padding-right: $devicePreviewPanelWidth;
 
 		.control-menu {
@@ -70,7 +69,7 @@
 	}
 }
 
-.lfr-has-add-content, .lfr-has-device-preview, .lfr-has-edit-layout {
+.lfr-has-add-content, .lfr-has-simulation-panel, .lfr-has-edit-layout {
 	&.open {
 		padding-left: 0;
 

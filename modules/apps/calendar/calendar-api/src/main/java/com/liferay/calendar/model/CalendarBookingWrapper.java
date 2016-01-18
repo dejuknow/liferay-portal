@@ -287,15 +287,6 @@ public class CalendarBookingWrapper implements CalendarBooking,
 		return _calendarBooking.getAllDay();
 	}
 
-	/**
-	* @deprecated As of 6.1.0, replaced by {@link #isApproved()}
-	*/
-	@Deprecated
-	@Override
-	public boolean getApproved() {
-		return _calendarBooking.getApproved();
-	}
-
 	@Override
 	public java.lang.String[] getAvailableLanguageIds() {
 		return _calendarBooking.getAvailableLanguageIds();
@@ -683,8 +674,7 @@ public class CalendarBookingWrapper implements CalendarBooking,
 	}
 
 	@Override
-	public java.util.TimeZone getTimeZone()
-		throws com.liferay.portal.kernel.exception.PortalException {
+	public java.util.TimeZone getTimeZone() {
 		return _calendarBooking.getTimeZone();
 	}
 
@@ -1525,14 +1515,6 @@ public class CalendarBookingWrapper implements CalendarBooking,
 	@Override
 	public StagedModelType getStagedModelType() {
 		return _calendarBooking.getStagedModelType();
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedModel}
-	 */
-	@Deprecated
-	public CalendarBooking getWrappedCalendarBooking() {
-		return _calendarBooking;
 	}
 
 	@Override

@@ -320,7 +320,7 @@ public class OrganizationStagedModelDataHandler
 			String addressPath = addressElement.attributeValue("path");
 
 			Address address = (Address)portletDataContext.getZipEntryAsObject(
-				addressPath);
+				addressElement, addressPath);
 
 			address.setClassPK(importedOrganization.getOrganizationId());
 
@@ -361,7 +361,7 @@ public class OrganizationStagedModelDataHandler
 
 			EmailAddress emailAddress =
 				(EmailAddress)portletDataContext.getZipEntryAsObject(
-					emailAddressPath);
+					emailAddressElement, emailAddressPath);
 
 			emailAddress.setClassPK(importedOrganization.getOrganizationId());
 
@@ -455,8 +455,8 @@ public class OrganizationStagedModelDataHandler
 		for (Element phoneElement : phoneElements) {
 			String phonePath = phoneElement.attributeValue("path");
 
-			Phone phone = (Phone)portletDataContext.getZipEntryAsObject
-				(phonePath);
+			Phone phone = (Phone)portletDataContext.getZipEntryAsObject(
+				phoneElement, phonePath);
 
 			phone.setClassPK(importedOrganization.getOrganizationId());
 
@@ -499,7 +499,7 @@ public class OrganizationStagedModelDataHandler
 			String websitePath = websiteElement.attributeValue("path");
 
 			Website website = (Website)portletDataContext.getZipEntryAsObject(
-				websitePath);
+				websiteElement, websitePath);
 
 			website.setClassPK(importedOrganization.getOrganizationId());
 
@@ -581,15 +581,14 @@ public class OrganizationStagedModelDataHandler
 		_websiteLocalService = websiteLocalService;
 	}
 
-	private volatile AddressLocalService _addressLocalService;
-	private volatile EmailAddressLocalService _emailAddressLocalService;
-	private volatile GroupLocalService _groupLocalService;
-	private volatile OrganizationLocalService _organizationLocalService;
-	private volatile OrgLaborLocalService _orgLaborLocalService;
-	private volatile PasswordPolicyLocalService _passwordPolicyLocalService;
-	private volatile PasswordPolicyRelLocalService
-		_passwordPolicyRelLocalService;
-	private volatile PhoneLocalService _phoneLocalService;
-	private volatile WebsiteLocalService _websiteLocalService;
+	private AddressLocalService _addressLocalService;
+	private EmailAddressLocalService _emailAddressLocalService;
+	private GroupLocalService _groupLocalService;
+	private OrganizationLocalService _organizationLocalService;
+	private OrgLaborLocalService _orgLaborLocalService;
+	private PasswordPolicyLocalService _passwordPolicyLocalService;
+	private PasswordPolicyRelLocalService _passwordPolicyRelLocalService;
+	private PhoneLocalService _phoneLocalService;
+	private WebsiteLocalService _websiteLocalService;
 
 }

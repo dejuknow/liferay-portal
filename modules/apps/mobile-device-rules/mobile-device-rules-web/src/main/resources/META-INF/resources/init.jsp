@@ -19,6 +19,7 @@
 <%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
 
 <%@ taglib uri="http://liferay.com/tld/aui" prefix="aui" %><%@
+taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %><%@
 taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %><%@
 taglib uri="http://liferay.com/tld/security" prefix="liferay-security" %><%@
 taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
@@ -47,6 +48,7 @@ page import="com.liferay.mobile.device.rules.service.MDRRuleLocalServiceUtil" %>
 page import="com.liferay.mobile.device.rules.service.permission.MDRPermission" %><%@
 page import="com.liferay.mobile.device.rules.service.permission.MDRRuleGroupInstancePermission" %><%@
 page import="com.liferay.mobile.device.rules.service.permission.MDRRuleGroupPermission" %><%@
+page import="com.liferay.mobile.device.rules.util.comparator.RuleCreateDateComparator" %><%@
 page import="com.liferay.mobile.device.rules.util.comparator.RuleGroupInstancePriorityComparator" %><%@
 page import="com.liferay.mobile.device.rules.web.constants.MDRWebKeys" %><%@
 page import="com.liferay.mobile.device.rules.web.search.RuleGroupChecker" %><%@
@@ -67,6 +69,7 @@ page import="com.liferay.portal.kernel.portlet.LiferayWindowState" %><%@
 page import="com.liferay.portal.kernel.util.Constants" %><%@
 page import="com.liferay.portal.kernel.util.GetterUtil" %><%@
 page import="com.liferay.portal.kernel.util.HtmlUtil" %><%@
+page import="com.liferay.portal.kernel.util.OrderByComparator" %><%@
 page import="com.liferay.portal.kernel.util.ParamUtil" %><%@
 page import="com.liferay.portal.kernel.util.SetUtil" %><%@
 page import="com.liferay.portal.kernel.util.StringPool" %><%@
@@ -112,11 +115,7 @@ PortletURL currentURLObj = PortletURLUtil.getCurrent(liferayPortletRequest, life
 
 String currentURL = currentURLObj.toString();
 
-long groupId = ParamUtil.getLong(request, "groupId");
-
-if (groupId == 0) {
-	groupId = themeDisplay.getSiteGroupId();
-}
+long groupId = ParamUtil.getLong(request, "groupId", themeDisplay.getSiteGroupId());
 %>
 
 <%@ include file="/init-ext.jsp" %>

@@ -232,12 +232,21 @@ public class JournalPortlet extends MVCPortlet {
 		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
-		String[] deleteFeedIds = StringUtil.split(
-			ParamUtil.getString(actionRequest, "deleteFeedIds"));
+		long[] deleteFeedIds = null;
 
-		for (int i = 0; i < deleteFeedIds.length; i++) {
+		long deleteFeedId = ParamUtil.getLong(actionRequest, "deleteFeedId");
+
+		if (deleteFeedId > 0) {
+			deleteFeedIds = new long[] {deleteFeedId};
+		}
+		else {
+			deleteFeedIds = ParamUtil.getLongValues(actionRequest, "rowIds");
+		}
+
+		for (long curDeleteFeedId : deleteFeedIds) {
 			_journalFeedService.deleteFeed(
-				themeDisplay.getScopeGroupId(), deleteFeedIds[i]);
+				themeDisplay.getScopeGroupId(),
+				String.valueOf(curDeleteFeedId));
 		}
 	}
 
@@ -647,16 +656,6 @@ public class JournalPortlet extends MVCPortlet {
 		Map<String, byte[]> images =
 			(HashMap<String, byte[]>)contentAndImages[1];
 
-		Boolean fileItemThresholdSizeExceeded =
-			(Boolean)uploadPortletRequest.getAttribute(
-				WebKeys.FILE_ITEM_THRESHOLD_SIZE_EXCEEDED);
-
-		if ((fileItemThresholdSizeExceeded != null) &&
-			fileItemThresholdSizeExceeded.booleanValue()) {
-
-			throw new ArticleContentSizeException();
-		}
-
 		String ddmTemplateKey = ParamUtil.getString(
 			uploadPortletRequest, "ddmTemplateKey");
 		String layoutUuid = ParamUtil.getString(
@@ -927,10 +926,9 @@ public class JournalPortlet extends MVCPortlet {
 		throws Exception {
 
 		long[] ddmStructureIds = StringUtil.split(
-				ParamUtil.getString(
-						actionRequest,
-						"ddmStructuresSearchContainerPrimaryKeys"),
-				0L);
+			ParamUtil.getString(
+				actionRequest, "ddmStructuresSearchContainerPrimaryKeys"),
+			0L);
 		int restrinctionType = ParamUtil.getInteger(
 			actionRequest, "restrictionType");
 
@@ -1425,18 +1423,17 @@ public class JournalPortlet extends MVCPortlet {
 
 	private static final Log _log = LogFactoryUtil.getLog(JournalPortlet.class);
 
-	private volatile DDMStructureLocalService _ddmStructureLocalService;
-	private volatile ItemSelector _itemSelector;
-	private volatile JournalArticleService _journalArticleService;
-	private volatile JournalContent _journalContent;
-	private volatile JournalContentSearchLocalService
-		_journalContentSearchLocalService;
-	private volatile JournalConverter _journalConverter;
-	private volatile JournalFeedService _journalFeedService;
-	private volatile JournalFolderService _journalFolderService;
-	private volatile JournalRSSUtil _journalRSSUtil;
+	private DDMStructureLocalService _ddmStructureLocalService;
+	private ItemSelector _itemSelector;
+	private JournalArticleService _journalArticleService;
+	private JournalContent _journalContent;
+	private JournalContentSearchLocalService _journalContentSearchLocalService;
+	private JournalConverter _journalConverter;
+	private JournalFeedService _journalFeedService;
+	private JournalFolderService _journalFolderService;
+	private JournalRSSUtil _journalRSSUtil;
 	private volatile JournalWebConfiguration _journalWebConfiguration;
-	private volatile LayoutLocalService _layoutLocalService;
-	private volatile TrashEntryService _trashEntryService;
+	private LayoutLocalService _layoutLocalService;
+	private TrashEntryService _trashEntryService;
 
 }

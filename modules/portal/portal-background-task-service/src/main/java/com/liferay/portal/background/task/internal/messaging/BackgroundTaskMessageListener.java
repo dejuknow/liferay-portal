@@ -66,7 +66,8 @@ public class BackgroundTaskMessageListener extends BaseMessageListener {
 
 	@Override
 	protected void doReceive(Message message) throws Exception {
-		long backgroundTaskId = (Long)message.get("backgroundTaskId");
+		long backgroundTaskId = (Long)message.get(
+			BackgroundTaskConstants.BACKGROUND_TASK_ID);
 
 		BackgroundTaskThreadLocal.setBackgroundTaskId(backgroundTaskId);
 
@@ -170,7 +171,8 @@ public class BackgroundTaskMessageListener extends BaseMessageListener {
 			Message responseMessage = new Message();
 
 			responseMessage.put(
-				"backgroundTaskId", backgroundTask.getBackgroundTaskId());
+				BackgroundTaskConstants.BACKGROUND_TASK_ID,
+				backgroundTask.getBackgroundTaskId());
 			responseMessage.put("name", backgroundTask.getName());
 			responseMessage.put("status", status);
 			responseMessage.put(
@@ -297,12 +299,10 @@ public class BackgroundTaskMessageListener extends BaseMessageListener {
 	private static final Log _log = LogFactoryUtil.getLog(
 		BackgroundTaskMessageListener.class);
 
-	private volatile BackgroundTaskExecutorRegistry
-		_backgroundTaskExecutorRegistry;
-	private volatile BackgroundTaskManager _backgroundTaskManager;
-	private volatile BackgroundTaskStatusRegistry _backgroundTaskStatusRegistry;
-	private volatile BackgroundTaskThreadLocalManager
-		_backgroundTaskThreadLocalManager;
-	private volatile MessageBus _messageBus;
+	private BackgroundTaskExecutorRegistry _backgroundTaskExecutorRegistry;
+	private BackgroundTaskManager _backgroundTaskManager;
+	private BackgroundTaskStatusRegistry _backgroundTaskStatusRegistry;
+	private BackgroundTaskThreadLocalManager _backgroundTaskThreadLocalManager;
+	private MessageBus _messageBus;
 
 }

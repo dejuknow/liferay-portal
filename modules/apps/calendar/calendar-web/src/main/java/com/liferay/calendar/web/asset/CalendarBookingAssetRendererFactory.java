@@ -96,11 +96,10 @@ public class CalendarBookingAssetRendererFactory
 		return TYPE;
 	}
 
-	@Deprecated
 	@Override
 	public PortletURL getURLAdd(
 			LiferayPortletRequest liferayPortletRequest,
-			LiferayPortletResponse liferayPortletResponse)
+			LiferayPortletResponse liferayPortletResponse, long classTypeId)
 		throws PortalException {
 
 		ThemeDisplay themeDisplay =
@@ -191,7 +190,7 @@ public class CalendarBookingAssetRendererFactory
 		_calendarBookingLocalService = calendarBookingLocalService;
 	}
 
-	private volatile CalendarBookingLocalService _calendarBookingLocalService;
-	private volatile ServletContext _servletContext;
+	private CalendarBookingLocalService _calendarBookingLocalService;
+	private ServletContext _servletContext;
 
 }

@@ -1593,6 +1593,11 @@ public class LayoutWrapper implements Layout, ModelWrapper<Layout> {
 	}
 
 	@Override
+	public boolean isTypeSharedPortlet() {
+		return _layout.isTypeSharedPortlet();
+	}
+
+	@Override
 	public boolean isTypeURL() {
 		return _layout.isTypeURL();
 	}
@@ -2314,14 +2319,6 @@ public class LayoutWrapper implements Layout, ModelWrapper<Layout> {
 	@Override
 	public StagedModelType getStagedModelType() {
 		return _layout.getStagedModelType();
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedModel}
-	 */
-	@Deprecated
-	public Layout getWrappedLayout() {
-		return _layout;
 	}
 
 	@Override

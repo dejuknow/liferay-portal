@@ -17,34 +17,32 @@
 <%@ include file="/management_bar_display_buttons/init.jsp" %>
 
 <%
+boolean disabled = GetterUtil.getBoolean(request.getAttribute("liferay-frontend:management-bar-display-buttons:disabled"));
 String[] displayViews = (String[])request.getAttribute("liferay-frontend:management-bar-display-buttons:displayViews");
 PortletURL portletURL = (PortletURL)request.getAttribute("liferay-frontend:management-bar-display-buttons:portletURL");
 String selectedDisplayStyle = (String)request.getAttribute("liferay-frontend:management-bar-display-buttons:selectedDisplayStyle");
 
 PortletURL displayStyleURL = PortletURLUtil.clone(portletURL, liferayPortletResponse);
-%>
 
-<%
 for (String displayStyle : displayViews) {
 	displayStyleURL.setParameter("displayStyle", displayStyle);
 
-	String iconCssClass = "icon-";
+	String icon = "table2";
 
 	if (displayStyle.equals("descriptive")) {
-		iconCssClass += "th-list";
+		icon = "list";
 	}
 	else if (displayStyle.equals("icon")) {
-		iconCssClass += "th-large";
-	}
-	else if (displayStyle.equals("list")) {
-		iconCssClass += "align-justify";
+		icon = "cards2";
 	}
 %>
 
 	<liferay-frontend:management-bar-button
 		active="<%= displayStyle.equals(selectedDisplayStyle) %>"
+		disabled="<%= disabled %>"
 		href="<%= displayStyleURL.toString() %>"
-		iconCssClass="<%= iconCssClass %>"
+		icon="<%= icon %>"
+		label="<%= displayStyle %>"
 	/>
 
 <%

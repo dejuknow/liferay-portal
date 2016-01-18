@@ -17,9 +17,11 @@ package com.liferay.portal.search.internal.background.task;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskExecutor;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.search.IndexWriterHelperUtil;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
-import com.liferay.portal.kernel.search.SearchEngineUtil;
+import com.liferay.portal.kernel.search.background.task.ReindexBackgroundTaskConstants;
+import com.liferay.portal.kernel.search.background.task.ReindexStatusMessageSenderUtil;
 
 /**
  * @author Andrew Betts
@@ -36,21 +38,30 @@ public class ReindexSingleIndexerBackgroundTaskExecutor
 	protected void reindex(String className, long[] companyIds)
 		throws Exception {
 
-		Indexer indexer = IndexerRegistryUtil.getIndexer(className);
+		Indexer<?> indexer = IndexerRegistryUtil.getIndexer(className);
 
 		if (indexer == null) {
 			return;
 		}
 
 		for (long companyId : companyIds) {
+			ReindexStatusMessageSenderUtil.sendStatusMessage(
+				ReindexBackgroundTaskConstants.SINGLE_START, companyId,
+				companyIds);
+
 			try {
-				SearchEngineUtil.deleteEntityDocuments(
+				IndexWriterHelperUtil.deleteEntityDocuments(
 					indexer.getSearchEngineId(), companyId, className, true);
 
 				indexer.reindex(new String[] {String.valueOf(companyId)});
 			}
 			catch (Exception e) {
 				_log.error(e, e);
+			}
+			finally {
+				ReindexStatusMessageSenderUtil.sendStatusMessage(
+					ReindexBackgroundTaskConstants.SINGLE_END, companyId,
+					companyIds);
 			}
 		}
 	}

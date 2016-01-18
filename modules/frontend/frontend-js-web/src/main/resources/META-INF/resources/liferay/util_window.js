@@ -38,6 +38,30 @@ AUI.add(
 
 					autoWidthRatio: {
 						value: 0.95
+					},
+
+					toolbars: {
+						valueFn: function() {
+							var instance = this;
+
+							return {
+								header: [
+									{
+										cssClass: 'close',
+										discardDefaultButtonCssClasses: true,
+										labelHTML: '<svg class="lexicon-icon"><use xlink:href="/o/frontend-theme-admin-web/admin/images/lexicon/icons.svg#times" /></svg>',
+										on: {
+											click: function(event) {
+												instance.hide();
+
+												event.domEvent.stopPropagation();
+											}
+										},
+										render: true
+									}
+								]
+							};
+						}
 					}
 				},
 
@@ -64,8 +88,6 @@ AUI.add(
 				IFRAME_SUFFIX: '_iframe_',
 
 				TITLE_TEMPLATE: '<h3 class="modal-title" />',
-
-				_winResizeHandler: null,
 
 				getByChild: function(child) {
 					var instance = this;
@@ -457,7 +479,9 @@ AUI.add(
 					delete instance._map[id + instance.IFRAME_SUFFIX];
 
 					A.Array.invoke(modal._liferayHandles, 'detach');
-				}
+				},
+
+				_winResizeHandler: null
 			}
 		);
 	},

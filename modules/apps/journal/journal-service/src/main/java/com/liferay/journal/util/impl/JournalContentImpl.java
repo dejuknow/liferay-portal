@@ -299,7 +299,7 @@ public class JournalContentImpl implements JournalContent {
 	protected static final String CACHE_NAME = JournalContent.class.getName();
 
 	private PortalCache<JournalContentKey, JournalArticleDisplay>
-			_getPortalCache() {
+		_getPortalCache() {
 
 		if (_portalCache == null) {
 			_portalCache = MultiVMPoolUtil.getPortalCache(CACHE_NAME);
@@ -327,7 +327,7 @@ public class JournalContentImpl implements JournalContent {
 	private static PortalCacheIndexer
 		<String, JournalContentKey, JournalArticleDisplay> _portalCacheIndexer;
 
-	private volatile JournalArticleLocalService _journalArticleLocalService;
+	private JournalArticleLocalService _journalArticleLocalService;
 
 	private static class JournalContentKey implements Serializable {
 

@@ -171,7 +171,6 @@ public class SyncFilePersistence extends BasePersistenceImpl<SyncFile, Long> {
 		where.lt("localSyncTime", localSyncTime);
 		where.or(
 			where.eq("state", SyncFile.STATE_SYNCED),
-			where.eq("uiEvent", SyncFile.UI_EVENT_DELETED_LOCAL),
 			where.eq("uiEvent", SyncFile.UI_EVENT_UPLOADING));
 		where.ne("type", SyncFile.TYPE_SYSTEM);
 
@@ -197,6 +196,17 @@ public class SyncFilePersistence extends BasePersistenceImpl<SyncFile, Long> {
 		Map<String, Object> fieldValues = new HashMap<>();
 
 		fieldValues.put("repositoryId", repositoryId);
+		fieldValues.put("syncAccountId", syncAccountId);
+
+		return queryForFieldValues(fieldValues);
+	}
+
+	public List<SyncFile> findByS_S(int state, long syncAccountId)
+		throws SQLException {
+
+		Map<String, Object> fieldValues = new HashMap<>();
+
+		fieldValues.put("state", state);
 		fieldValues.put("syncAccountId", syncAccountId);
 
 		return queryForFieldValues(fieldValues);

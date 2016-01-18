@@ -491,9 +491,9 @@ public class UserImpl extends UserBaseImpl {
 
 	@Override
 	public String getInitials() {
-		String[] names = StringUtil.split(getFullName(), StringPool.SPACE);
+		StringBundler sb = new StringBundler(2);
 
-		StringBundler sb = new StringBundler(names.length);
+		String[] names = new String[] {getFirstName(), getLastName()};
 
 		for (String name : names) {
 			sb.append(StringUtil.toUpperCase(StringUtil.shorten(name, 1)));
@@ -554,60 +554,6 @@ public class UserImpl extends UserBaseImpl {
 
 		return GroupServiceUtil.getUserSitesGroups(
 			getUserId(), classNames, max);
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link #getMySiteGroups}
-	 */
-	@Deprecated
-	@Override
-	public List<Group> getMySites() throws PortalException {
-		return getMySiteGroups();
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link User#getMySiteGroups(int)}
-	 */
-	@Deprecated
-	@Override
-	public List<Group> getMySites(boolean includeControlPanel, int max)
-		throws PortalException {
-
-		return getMySiteGroups(max);
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link #getMySiteGroups(int)}
-	 */
-	@Deprecated
-	@Override
-	public List<Group> getMySites(int max) throws PortalException {
-		return getMySiteGroups(max);
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link #getMySiteGroups(String[],
-	 *             int)}
-	 */
-	@Deprecated
-	@Override
-	public List<Group> getMySites(
-			String[] classNames, boolean includeControlPanel, int max)
-		throws PortalException {
-
-		return getMySiteGroups(classNames, max);
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link #getMySiteGroups(String[],
-	 *             int)}
-	 */
-	@Deprecated
-	@Override
-	public List<Group> getMySites(String[] classNames, int max)
-		throws PortalException {
-
-		return getMySiteGroups(classNames, max);
 	}
 
 	@Override

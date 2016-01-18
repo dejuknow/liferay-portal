@@ -450,6 +450,11 @@ public class UserNotificationEventLocalServiceUtil {
 		return getService().getPersistedModel(primaryKeyObj);
 	}
 
+	public static java.util.List<com.liferay.portal.model.UserNotificationEvent> getTypeNotificationEvents(
+		java.lang.String type) {
+		return getService().getTypeNotificationEvents(type);
+	}
+
 	/**
 	* Returns the user notification event with the primary key.
 	*
@@ -622,13 +627,6 @@ public class UserNotificationEventLocalServiceUtil {
 		}
 
 		return _service;
-	}
-
-	/**
-	 * @deprecated As of 6.2.0
-	 */
-	@Deprecated
-	public void setService(UserNotificationEventLocalService service) {
 	}
 
 	private static UserNotificationEventLocalService _service;

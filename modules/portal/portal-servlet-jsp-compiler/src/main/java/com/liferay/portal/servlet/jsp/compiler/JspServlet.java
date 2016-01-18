@@ -14,8 +14,13 @@
 
 package com.liferay.portal.servlet.jsp.compiler;
 
+import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.servlet.jsp.compiler.internal.JspBundleClassloader;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -74,11 +79,6 @@ import org.osgi.framework.wiring.BundleWiring;
  * @author Raymond Augé
  */
 public class JspServlet extends HttpServlet {
-
-	public JspServlet() {
-		_jspBundle = FrameworkUtil.getBundle(
-			com.liferay.portal.servlet.jsp.compiler.JspServlet.class);
-	}
 
 	@Override
 	public void destroy() {
@@ -178,6 +178,16 @@ public class JspServlet extends HttpServlet {
 		defaults.put("httpMethods", "GET,POST,HEAD");
 		defaults.put("keepgenerated", "false");
 		defaults.put("logVerbosityLevel", "NONE");
+		defaults.put("saveBytecode", "true");
+
+		StringBundler sb = new StringBundler(4);
+
+		sb.append(_WORK_DIR);
+		sb.append(_bundle.getSymbolicName());
+		sb.append(StringPool.DASH);
+		sb.append(_bundle.getVersion());
+
+		defaults.put("scratchdir", sb.toString());
 
 		Enumeration<String> names = servletConfig.getInitParameterNames();
 		Set<String> nameSet = new HashSet<>(Collections.list(names));
@@ -215,6 +225,7 @@ public class JspServlet extends HttpServlet {
 
 					return value;
 				}
+
 			}
 		);
 
@@ -443,12 +454,17 @@ public class JspServlet extends HttpServlet {
 
 	private static final Class<?>[] _INTERFACES = {ServletContext.class};
 
+	private static final String _WORK_DIR =
+		PropsUtil.get(PropsKeys.LIFERAY_HOME) + File.separator + "work" +
+			File.separator;
+
+	private static final Bundle _jspBundle = FrameworkUtil.getBundle(
+		JspServlet.class);
 	private static final Pattern _originalJspPattern = Pattern.compile(
 		"^(?<file>.*)(\\.(portal|original))(?<extension>\\.(jsp|jspf))$");
 
 	private Bundle[] _allParticipatingBundles;
 	private Bundle _bundle;
-	private final Bundle _jspBundle;
 	private JspBundleClassloader _jspBundleClassloader;
 	private final HttpServlet _jspServlet =
 		new org.apache.jasper.servlet.JspServlet();

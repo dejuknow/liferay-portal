@@ -15,7 +15,6 @@
 package com.liferay.portal.service.impl;
 
 import com.liferay.portal.DuplicateUserGroupException;
-import com.liferay.portal.NoSuchUserGroupException;
 import com.liferay.portal.RequiredUserGroupException;
 import com.liferay.portal.UserGroupNameException;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
@@ -213,10 +212,6 @@ public class UserGroupLocalServiceImpl extends UserGroupLocalServiceBaseImpl {
 	 * Clears all associations between the user and its user groups and clears
 	 * the permissions cache.
 	 *
-	 * <p>
-	 * This method is called from {@link #deleteUserGroup(UserGroup)}.
-	 * </p>
-	 *
 	 * @param userId the primary key of the user
 	 */
 	@Override
@@ -348,10 +343,6 @@ public class UserGroupLocalServiceImpl extends UserGroupLocalServiceBaseImpl {
 		// Expando
 
 		expandoRowLocalService.deleteRows(userGroup.getUserGroupId());
-
-		// Users
-
-		clearUserUserGroups(userGroup.getUserId());
 
 		// Group
 
@@ -1157,15 +1148,12 @@ public class UserGroupLocalServiceImpl extends UserGroupLocalServiceBaseImpl {
 			throw new UserGroupNameException();
 		}
 
-		try {
-			UserGroup userGroup = userGroupFinder.findByC_N(companyId, name);
+		UserGroup userGroup = fetchUserGroup(companyId, name);
 
-			if (userGroup.getUserGroupId() != userGroupId) {
-				throw new DuplicateUserGroupException(
-					"{userGroupId=" + userGroupId + "}");
-			}
-		}
-		catch (NoSuchUserGroupException nsuge) {
+		if ((userGroup != null) &&
+			(userGroup.getUserGroupId() != userGroupId)) {
+
+			throw new DuplicateUserGroupException("{name=" + name + "}");
 		}
 	}
 

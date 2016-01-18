@@ -26,6 +26,8 @@ import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
 import com.liferay.portlet.asset.AssetCategoryNameException;
+import com.liferay.portlet.asset.CategoryPropertyKeyException;
+import com.liferay.portlet.asset.CategoryPropertyValueException;
 import com.liferay.portlet.asset.DuplicateCategoryException;
 import com.liferay.portlet.asset.DuplicateCategoryPropertyException;
 import com.liferay.portlet.asset.DuplicateVocabularyException;
@@ -293,6 +295,8 @@ public class AssetCategoryAdminPortlet extends MVCPortlet {
 	@Override
 	protected boolean isSessionErrorException(Throwable cause) {
 		if (cause instanceof AssetCategoryNameException ||
+			cause instanceof CategoryPropertyKeyException ||
+			cause instanceof CategoryPropertyValueException ||
 			cause instanceof DuplicateCategoryException ||
 			cause instanceof DuplicateCategoryPropertyException ||
 			cause instanceof DuplicateVocabularyException ||
@@ -321,7 +325,7 @@ public class AssetCategoryAdminPortlet extends MVCPortlet {
 		_assetVocabularyService = assetVocabularyService;
 	}
 
-	private volatile AssetCategoryService _assetCategoryService;
-	private volatile AssetVocabularyService _assetVocabularyService;
+	private AssetCategoryService _assetCategoryService;
+	private AssetVocabularyService _assetVocabularyService;
 
 }

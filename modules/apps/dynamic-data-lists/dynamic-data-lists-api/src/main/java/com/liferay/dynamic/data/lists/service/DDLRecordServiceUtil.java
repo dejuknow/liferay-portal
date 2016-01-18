@@ -16,8 +16,7 @@ package com.liferay.dynamic.data.lists.service;
 
 import aQute.bnd.annotation.ProviderType;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
+import com.liferay.osgi.util.ServiceTrackerFactory;
 
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -153,21 +152,6 @@ public class DDLRecordServiceUtil {
 		return _serviceTracker.getService();
 	}
 
-	/**
-	 * @deprecated As of 6.2.0
-	 */
-	@Deprecated
-	public void setService(DDLRecordService service) {
-	}
-
-	private static ServiceTracker<DDLRecordService, DDLRecordService> _serviceTracker;
-
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(DDLRecordServiceUtil.class);
-
-		_serviceTracker = new ServiceTracker<DDLRecordService, DDLRecordService>(bundle.getBundleContext(),
-				DDLRecordService.class, null);
-
-		_serviceTracker.open();
-	}
+	private static ServiceTracker<DDLRecordService, DDLRecordService> _serviceTracker =
+		ServiceTrackerFactory.open(DDLRecordService.class);
 }

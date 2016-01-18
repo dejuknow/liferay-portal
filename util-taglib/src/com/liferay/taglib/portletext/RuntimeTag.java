@@ -212,11 +212,10 @@ public class RuntimeTag extends TagSupport {
 
 			boolean writeJSONObject = false;
 
-			if (PortletPreferencesLocalServiceUtil.getPortletPreferencesCount(
-					themeDisplay.getScopeGroupId(),
-					PortletKeys.PREFS_OWNER_TYPE_LAYOUT,
-					PortletKeys.PREFS_PLID_SHARED, portlet, false) < 1) {
+			LayoutTypePortlet layoutTypePortlet =
+				themeDisplay.getLayoutTypePortlet();
 
+			if (!layoutTypePortlet.isPortletEmbedded(portlet.getPortletId())) {
 				PortletPreferencesFactoryUtil.getLayoutPortletSetup(
 					themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId(),
 					PortletKeys.PREFS_OWNER_TYPE_LAYOUT,
@@ -289,10 +288,11 @@ public class RuntimeTag extends TagSupport {
 
 			if (Validator.isNotNull(_portletProviderClassName) &&
 				(_portletProviderAction != null)) {
-					doTag(
-						_portletProviderClassName, _portletProviderAction,
-						_instanceId, _queryString, _defaultPreferences,
-						pageContext, request, response);
+
+				doTag(
+					_portletProviderClassName, _portletProviderAction,
+					_instanceId, _queryString, _defaultPreferences, pageContext,
+					request, response);
 			}
 			else {
 				doTag(

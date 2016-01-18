@@ -218,7 +218,7 @@ public class BackgroundTaskLocalServiceImpl
 					Message message = new Message();
 
 					message.put(
-						"backgroundTaskId",
+						BackgroundTaskConstants.BACKGROUND_TASK_ID,
 						backgroundTask.getBackgroundTaskId());
 					message.put("name", backgroundTask.getName());
 					message.put("status", status);
@@ -411,6 +411,16 @@ public class BackgroundTaskLocalServiceImpl
 
 	@Override
 	public List<BackgroundTask> getBackgroundTasks(
+		long[] groupIds, String name, String taskExecutorClassName, int start,
+		int end, OrderByComparator<BackgroundTask> orderByComparator) {
+
+		return backgroundTaskPersistence.findByG_N_T(
+			groupIds, name, taskExecutorClassName, start, end,
+			orderByComparator);
+	}
+
+	@Override
+	public List<BackgroundTask> getBackgroundTasks(
 		String taskExecutorClassName, int status) {
 
 		return backgroundTaskPersistence.findByT_S(
@@ -492,6 +502,23 @@ public class BackgroundTaskLocalServiceImpl
 			groupId, taskExecutorClassNames, completed);
 	}
 
+	@Override
+	public int getBackgroundTasksCount(
+		long[] groupIds, String name, String taskExecutorClassName) {
+
+		return backgroundTaskPersistence.countByG_N_T(
+			groupIds, name, taskExecutorClassName);
+	}
+
+	@Override
+	public int getBackgroundTasksCount(
+		long[] groupIds, String name, String taskExecutorClassName,
+		boolean completed) {
+
+		return backgroundTaskPersistence.countByG_N_T_C(
+			groupIds, name, taskExecutorClassName, completed);
+	}
+
 	@Clusterable(onMaster = true)
 	@Override
 	public String getBackgroundTaskStatusJSON(long backgroundTaskId) {
@@ -521,7 +548,8 @@ public class BackgroundTaskLocalServiceImpl
 
 		Message message = new Message();
 
-		message.put("backgroundTaskId", backgroundTaskId);
+		message.put(
+			BackgroundTaskConstants.BACKGROUND_TASK_ID, backgroundTaskId);
 
 		MessageBusUtil.sendMessage(DestinationNames.BACKGROUND_TASK, message);
 	}
@@ -531,7 +559,8 @@ public class BackgroundTaskLocalServiceImpl
 	public void triggerBackgroundTask(long backgroundTaskId) {
 		Message message = new Message();
 
-		message.put("backgroundTaskId", backgroundTaskId);
+		message.put(
+			BackgroundTaskConstants.BACKGROUND_TASK_ID, backgroundTaskId);
 
 		MessageBusUtil.sendMessage(DestinationNames.BACKGROUND_TASK, message);
 	}

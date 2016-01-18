@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import java.io.IOException;
 
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,6 +28,8 @@ import javax.servlet.http.HttpServletResponse;
  * @author Julio Camarero
  */
 public interface ControlMenuEntry {
+
+	public Map<String, Object> getData(HttpServletRequest request);
 
 	public String getIconCssClass(HttpServletRequest request);
 
@@ -38,12 +41,11 @@ public interface ControlMenuEntry {
 
 	public String getURL(HttpServletRequest request);
 
-	public boolean hasAccessPermission(HttpServletRequest request)
-		throws PortalException;
-
 	public boolean include(
 			HttpServletRequest request, HttpServletResponse response)
 		throws IOException;
+
+	public boolean isShow(HttpServletRequest request) throws PortalException;
 
 	public boolean isUseDialog();
 

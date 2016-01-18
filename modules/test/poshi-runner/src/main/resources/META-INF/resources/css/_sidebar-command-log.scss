@@ -11,6 +11,10 @@
 	padding: 0;
 	transition: height 0.5s ease-in-out;
 
+	&.running {
+		height: calc(100% - 80px);
+	}
+
 	.status div {
 		display: inline;
 	}
@@ -134,8 +138,12 @@
 		}
 	}
 
-	.current-scope.failed {
-		border-color: transparentize($failed-color, 0.6);
+	.warning {
+		background-color: transparentize($warning-color, 0.86);
+
+		&.line-group.linkable:hover {
+			background-color: transparentize($warning-color, 0.90);
+		}
 	}
 
 	.title-line {

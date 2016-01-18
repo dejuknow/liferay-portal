@@ -35,7 +35,7 @@
 	</tear-down>
 
 	<command name="Demo1" priority="3">
-		<execute macro="Page#addPG">
+		<execute macro="Page#add">
 			<var name="pageName" value="Company Picnic" />
 		</execute>
 
@@ -125,7 +125,7 @@
 			<var name="fieldName" value="WhatAreYouBringing" />
 		</execute>
 
-		<execute macro="DDLRecord#publishViaDDLDisplayPG" />
+		<execute macro="DDLRecord#publish" />
 
 		<execute macro="DDLRecord#addViaDDLDisplayPG">
 			<var name="ddlDataDefinitionName" value="Potluck Items" />
@@ -149,7 +149,7 @@
 			<var name="fieldName" value="WhatAreYouBringing" />
 		</execute>
 
-		<execute macro="DDLRecord#publishViaDDLDisplayPG" />
+		<execute macro="DDLRecord#publish" />
 
 		<execute function="AssertTextEquals" locator1="xpath=(//div[contains(@id,'ocerSearchContainer')]//thead/tr/th[1])" value1="First Name" />
 		<execute function="AssertTextEquals" locator1="xpath=(//div[contains(@id,'ocerSearchContainer')]//thead/tr/th[2])" value1="Last Name" />

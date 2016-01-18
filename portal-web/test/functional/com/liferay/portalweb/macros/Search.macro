@@ -74,15 +74,7 @@
 			</else>
 		</if>
 
-		<if>
-			<equals arg1="${searchSocialOffice}" arg2="true" />
-			<then>
-				<execute function="KeyPress" locator1="Search#SEARCH_FIELD" value1="\RETURN" />
-			</then>
-			<else>
-				<execute function="Click" locator1="Search#SEARCH_BUTTON" />
-			</else>
-		</if>
+		<execute function="KeyPress" locator1="Search#SEARCH_FIELD" value1="\RETURN" />
 	</command>
 
 	<command name="viewAssetTypeFacetPG">
@@ -149,7 +141,7 @@
 		<if>
 			<isset var="searchAssetSummary" />
 			<then>
-				<execute function="AssertTextEquals" locator1="SearchResults#ASSET_ENTRY_TABLE_SUMMARY" value1="${searchAssetSummary}" />
+				<execute function="AssertTextEquals#assertPartialText" locator1="SearchResults#ASSET_ENTRY_TABLE_SUMMARY" value1="${searchAssetSummary}" />
 			</then>
 		</if>
 	</command>

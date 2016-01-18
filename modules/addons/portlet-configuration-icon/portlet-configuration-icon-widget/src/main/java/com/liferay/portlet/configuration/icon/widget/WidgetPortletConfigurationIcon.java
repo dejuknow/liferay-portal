@@ -23,7 +23,6 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.model.Portlet;
-import com.liferay.portal.theme.PortletDisplay;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PortletKeys;
 import com.liferay.portal.util.PropsValues;
@@ -34,16 +33,14 @@ import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
 
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * @author Eudaldo Alonso
  */
 public class WidgetPortletConfigurationIcon
 	extends BasePortletConfigurationIcon {
 
-	public WidgetPortletConfigurationIcon(HttpServletRequest request) {
-		super(request);
+	public WidgetPortletConfigurationIcon(PortletRequest portletRequest) {
+		super(portletRequest);
 	}
 
 	@Override
@@ -54,12 +51,12 @@ public class WidgetPortletConfigurationIcon
 	@Override
 	public String getURL() {
 		try {
-			Portlet portlet = (Portlet)request.getAttribute(
+			Portlet portlet = (Portlet)portletRequest.getAttribute(
 				WebKeys.RENDER_PORTLET);
 
 			PortletURL basePortletURL = PortletURLFactoryUtil.create(
-				request, PortletKeys.PORTLET_SHARING, themeDisplay.getPlid(),
-				PortletRequest.RESOURCE_PHASE);
+				portletRequest, PortletKeys.PORTLET_SHARING,
+				themeDisplay.getPlid(), PortletRequest.RESOURCE_PHASE);
 
 			StringBundler sb = new StringBundler();
 
@@ -87,8 +84,6 @@ public class WidgetPortletConfigurationIcon
 
 	@Override
 	public boolean isShow() {
-		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
-
 		PortletPreferences portletSetup =
 			PortletPreferencesFactoryUtil.getStrictLayoutPortletSetup(
 				themeDisplay.getLayout(), portletDisplay.getId());

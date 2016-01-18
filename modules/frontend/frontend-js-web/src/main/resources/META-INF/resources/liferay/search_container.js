@@ -7,7 +7,7 @@ AUI.add(
 
 		var STR_BLANK = '';
 
-		var STR_CONTENT_BOX = 'contentBox';
+		var STR_BOUNDING_BOX = 'boundingBox';
 
 		var SearchContainer = A.Component.create(
 			{
@@ -63,7 +63,7 @@ AUI.add(
 
 						var id = instance.get('id');
 
-						var contentBox = instance.get(STR_CONTENT_BOX);
+						var boundingBox = instance.get(STR_BOUNDING_BOX);
 
 						instance._dataStore = A.one('#' + id + 'PrimaryKeys');
 						instance._emptyResultsMessage = A.one('#' + id + 'EmptyResultsMessage');
@@ -80,8 +80,8 @@ AUI.add(
 							}
 						}
 
-						instance._table = contentBox.one('table');
-						instance._parentContainer = contentBox.ancestor('.lfr-search-container');
+						instance._table = boundingBox.one('table');
+						instance._parentContainer = boundingBox.ancestor();
 
 						if (instance._table) {
 							instance._table.setAttribute('data-searchContainerId', id);
@@ -236,6 +236,12 @@ AUI.add(
 						}
 
 						return ids;
+					},
+
+					getForm: function() {
+						var instance = this;
+
+						return instance.get(STR_BOUNDING_BOX).ancestor('form');
 					},
 
 					getSize: function() {

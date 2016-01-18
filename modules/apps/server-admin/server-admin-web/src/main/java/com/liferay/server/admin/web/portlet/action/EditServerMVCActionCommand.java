@@ -47,9 +47,7 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.scripting.ScriptingException;
 import com.liferay.portal.kernel.scripting.ScriptingHelperUtil;
 import com.liferay.portal.kernel.scripting.ScriptingUtil;
-import com.liferay.portal.kernel.search.Indexer;
-import com.liferay.portal.kernel.search.IndexerRegistryUtil;
-import com.liferay.portal.kernel.search.SearchEngineUtil;
+import com.liferay.portal.kernel.search.IndexWriterHelperUtil;
 import com.liferay.portal.kernel.servlet.DirectServletRegistryUtil;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
@@ -211,9 +209,6 @@ public class EditServerMVCActionCommand extends BaseMVCActionCommand {
 		else if (cmd.equals("threadDump")) {
 			threadDump();
 		}
-		else if (cmd.equals("toggleIndexerEnabled")) {
-			toggleIndexerEnabled(actionRequest);
-		}
 		else if (cmd.equals("updateCaptcha")) {
 			updateCaptcha(actionRequest, portletPreferences);
 		}
@@ -349,7 +344,7 @@ public class EditServerMVCActionCommand extends BaseMVCActionCommand {
 		XugglerUtil.installNativeLibraries(jarName);
 	}
 
-	protected void reindex(ActionRequest actionRequest) throws Exception {
+	protected void reindex(final ActionRequest actionRequest) throws Exception {
 		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
@@ -392,7 +387,8 @@ public class EditServerMVCActionCommand extends BaseMVCActionCommand {
 				try {
 					BackgroundTask backgroundTask =
 						BackgroundTaskManagerUtil.getBackgroundTask(
-							message.getLong("backgroundTaskId"));
+							message.getLong(
+								BackgroundTaskConstants.BACKGROUND_TASK_ID));
 
 					Map<String, Serializable> taskContextMap =
 						backgroundTask.getTaskContextMap();
@@ -407,14 +403,29 @@ public class EditServerMVCActionCommand extends BaseMVCActionCommand {
 
 				int status = message.getInteger("status");
 
-				if ((status ==
-						BackgroundTaskConstants.STATUS_CANCELLED) ||
+				if ((status == BackgroundTaskConstants.STATUS_CANCELLED) ||
 					(status == BackgroundTaskConstants.STATUS_FAILED) ||
 					(status == BackgroundTaskConstants.STATUS_SUCCESSFUL)) {
+
+					PortletSession portletSession =
+						actionRequest.getPortletSession();
+
+					long lastAccessedTime =
+						portletSession.getLastAccessedTime();
+					int maxInactiveInterval =
+						portletSession.getMaxInactiveInterval();
+
+					int extendedMaxInactiveIntervalTime =
+						(int)(System.currentTimeMillis() - lastAccessedTime +
+							maxInactiveInterval);
+
+					portletSession.setMaxInactiveInterval(
+						extendedMaxInactiveIntervalTime);
 
 					countDownLatch.countDown();
 				}
 			}
+
 		};
 
 		MessageBusUtil.registerMessageListener(
@@ -441,8 +452,8 @@ public class EditServerMVCActionCommand extends BaseMVCActionCommand {
 		long[] companyIds = PortalInstances.getCompanyIds();
 
 		for (long companyId : companyIds) {
-			SearchEngineUtil.indexQuerySuggestionDictionaries(companyId);
-			SearchEngineUtil.indexSpellCheckerDictionaries(companyId);
+			IndexWriterHelperUtil.indexQuerySuggestionDictionaries(companyId);
+			IndexWriterHelperUtil.indexSpellCheckerDictionaries(companyId);
 		}
 	}
 
@@ -535,25 +546,6 @@ public class EditServerMVCActionCommand extends BaseMVCActionCommand {
 			_log.error(
 				"Thread dumps require the log level to be at least INFO for " +
 					clazz.getName());
-		}
-	}
-
-	protected void toggleIndexerEnabled(ActionRequest actionRequest)
-		throws Exception {
-
-		String className = ParamUtil.getString(actionRequest, "className");
-
-		Indexer<?> indexer = IndexerRegistryUtil.nullSafeGetIndexer(className);
-
-		boolean indexerEnabled = indexer.isIndexerEnabled();
-
-		if (indexerEnabled) {
-			indexer.setIndexerEnabled(false);
-		}
-		else {
-			indexer.setIndexerEnabled(true);
-
-			reindex(actionRequest);
 		}
 	}
 
@@ -676,12 +668,6 @@ public class EditServerMVCActionCommand extends BaseMVCActionCommand {
 			actionRequest, "journalImageSmallMaxSize");
 		String shoppingImageExtensions = getFileExtensions(
 			actionRequest, "shoppingImageExtensions");
-		long scImageMaxSize = ParamUtil.getLong(
-			actionRequest, "scImageMaxSize");
-		long scImageThumbnailMaxHeight = ParamUtil.getLong(
-			actionRequest, "scImageThumbnailMaxHeight");
-		long scImageThumbnailMaxWidth = ParamUtil.getLong(
-			actionRequest, "scImageThumbnailMaxWidth");
 		long shoppingImageLargeMaxSize = ParamUtil.getLong(
 			actionRequest, "shoppingImageLargeMaxSize");
 		long shoppingImageMediumMaxSize = ParamUtil.getLong(
@@ -724,14 +710,6 @@ public class EditServerMVCActionCommand extends BaseMVCActionCommand {
 		portletPreferences.setValue(
 			PropsKeys.SHOPPING_IMAGE_SMALL_MAX_SIZE,
 			String.valueOf(shoppingImageSmallMaxSize));
-		portletPreferences.setValue(
-			PropsKeys.SC_IMAGE_MAX_SIZE, String.valueOf(scImageMaxSize));
-		portletPreferences.setValue(
-			PropsKeys.SC_IMAGE_THUMBNAIL_MAX_HEIGHT,
-			String.valueOf(scImageThumbnailMaxHeight));
-		portletPreferences.setValue(
-			PropsKeys.SC_IMAGE_THUMBNAIL_MAX_WIDTH,
-			String.valueOf(scImageThumbnailMaxWidth));
 		portletPreferences.setValue(
 			PropsKeys.UPLOAD_SERVLET_REQUEST_IMPL_MAX_SIZE,
 			String.valueOf(uploadServletRequestImplMaxSize));
@@ -902,7 +880,7 @@ public class EditServerMVCActionCommand extends BaseMVCActionCommand {
 	private static final Log _log = LogFactoryUtil.getLog(
 		EditServerMVCActionCommand.class);
 
-	private volatile MailService _mailService;
-	private volatile ServiceComponentLocalService _serviceComponentLocalService;
+	private MailService _mailService;
+	private ServiceComponentLocalService _serviceComponentLocalService;
 
 }

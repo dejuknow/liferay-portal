@@ -41,10 +41,10 @@ if (liveGroup.isStaged()) {
 
 treeId = treeId + liveGroupId;
 
-String publishActionKey = "publish-to-live";
+String publishMessageKey = "publish-to-live";
 
 if (cmd.equals(Constants.PUBLISH_TO_REMOTE)) {
-	publishActionKey = "publish-to-remote-live";
+	publishMessageKey = "publish-to-remote-live";
 }
 
 long selPlid = ParamUtil.getLong(request, "selPlid", LayoutConstants.DEFAULT_PARENT_LAYOUT_ID);
@@ -65,6 +65,10 @@ String openNodes = SessionTreeJSClicks.getOpenNodes(request, treeId + "SelectedN
 
 if (openNodes == null) {
 	selectedLayoutIds = ExportImportHelperUtil.getAllLayoutIds(stagingGroupId, privateLayout);
+
+	for (long selectedLayoutId : selectedLayoutIds) {
+		SessionTreeJSClicks.openLayoutNodes(request, treeId + "SelectedNode", privateLayout, selectedLayoutId, true);
+	}
 }
 else {
 	selectedLayoutIds = GetterUtil.getLongValues(StringUtil.split(openNodes, ','));
@@ -199,61 +203,62 @@ response.setHeader("Ajax-ID", request.getHeader("Ajax-ID"));
 
 			<%
 			String scheduleCMD = StringPool.BLANK;
-			String unscheduleCMD = StringPool.BLANK;
 
 			if (cmd.equals(Constants.PUBLISH_TO_LIVE)) {
 				scheduleCMD = "schedule_publish_to_live";
-				unscheduleCMD = "unschedule_publish_to_live";
 			}
 			else if (cmd.equals(Constants.PUBLISH_TO_REMOTE)) {
 				scheduleCMD = "schedule_publish_to_remote";
-				unscheduleCMD = "unschedule_publish_to_remote";
 			}
 			else if (cmd.equals("copy_from_live")) {
 				scheduleCMD = "schedule_copy_from_live";
-				unscheduleCMD = "unschedule_copy_from_live";
 			}
 			%>
 
-			<aui:fieldset cssClass="options-group" label="date">
-				<%@ include file="/new_publication/publish_layouts_scheduler.jspf" %>
-			</aui:fieldset>
-
-			<c:if test="<%= !group.isCompany() %>">
-				<aui:fieldset cssClass="options-group" label="pages">
-					<liferay-util:include page="/new_publication/select_pages.jsp" servletContext="<%= application %>">
-						<liferay-util:param name="<%= Constants.CMD %>" value="<%= Constants.PUBLISH %>" />
-						<liferay-util:param name="groupId" value="<%= String.valueOf(stagingGroupId) %>" />
-						<liferay-util:param name="layoutSetBranchId" value="<%= String.valueOf(layoutSetBranchId) %>" />
-						<liferay-util:param name="privateLayout" value="<%= String.valueOf(privateLayout) %>" />
-						<liferay-util:param name="treeId" value="<%= treeId %>" />
-						<liferay-util:param name="selectedLayoutIds" value="<%= StringUtil.merge(selectedLayoutIds) %>" />
-					</liferay-util:include>
-				</aui:fieldset>
-			</c:if>
-
-			<liferay-staging:content cmd="<%= cmd %>" parameterMap="<%= null %>" type="<%= localPublishing ? Constants.PUBLISH_TO_LIVE : Constants.PUBLISH_TO_REMOTE %>" />
-
-			<liferay-staging:deletions cmd="<%= Constants.PUBLISH %>" />
-
-			<aui:fieldset cssClass="options-group" label="permissions">
-				<%@ include file="/new_publication/permissions.jspf" %>
-			</aui:fieldset>
-
-			<c:if test="<%= !localPublishing %>">
-				<aui:fieldset cssClass="options-group" label="remote-live-connection-settings">
-					<%@ include file="/new_publication/publish_layouts_remote_options.jspf" %>
+			<aui:fieldset-group markupView="lexicon">
+				<aui:fieldset>
+					<aui:input name="name" />
 				</aui:fieldset>
 
-			</c:if>
+				<aui:fieldset collapsible="<%= true %>" cssClass="options-group" label="date">
+					<%@ include file="/new_publication/publish_layouts_scheduler.jspf" %>
+				</aui:fieldset>
+
+				<c:if test="<%= !group.isCompany() %>">
+					<aui:fieldset collapsible="<%= true %>" cssClass="options-group" label="pages">
+						<liferay-util:include page="/new_publication/select_pages.jsp" servletContext="<%= application %>">
+							<liferay-util:param name="<%= Constants.CMD %>" value="<%= Constants.PUBLISH %>" />
+							<liferay-util:param name="groupId" value="<%= String.valueOf(stagingGroupId) %>" />
+							<liferay-util:param name="layoutSetBranchId" value="<%= String.valueOf(layoutSetBranchId) %>" />
+							<liferay-util:param name="privateLayout" value="<%= String.valueOf(privateLayout) %>" />
+							<liferay-util:param name="treeId" value="<%= treeId %>" />
+							<liferay-util:param name="selectedLayoutIds" value="<%= StringUtil.merge(selectedLayoutIds) %>" />
+						</liferay-util:include>
+					</aui:fieldset>
+				</c:if>
+
+				<liferay-staging:content cmd="<%= cmd %>" parameterMap="<%= null %>" type="<%= localPublishing ? Constants.PUBLISH_TO_LIVE : Constants.PUBLISH_TO_REMOTE %>" />
+
+				<liferay-staging:deletions cmd="<%= Constants.PUBLISH %>" />
+
+				<aui:fieldset collapsible="<%= true %>" cssClass="options-group" label="permissions">
+					<%@ include file="/new_publication/permissions.jspf" %>
+				</aui:fieldset>
+
+				<c:if test="<%= !localPublishing %>">
+					<aui:fieldset collapsible="<%= true %>" cssClass="options-group" label="remote-live-connection-settings">
+						<%@ include file="/new_publication/publish_layouts_remote_options.jspf" %>
+					</aui:fieldset>
+				</c:if>
+			</aui:fieldset-group>
 		</div>
 
 		<aui:button-row>
-			<aui:button id="addButton" onClick='<%= renderResponse.getNamespace() + "schedulePublishEvent();" %>' value="add-event" />
+			<aui:button cssClass="btn-lg" id="addButton" onClick='<%= renderResponse.getNamespace() + "schedulePublishEvent();" %>' value="add-event" />
 
-			<aui:button id="publishButton" type="submit" value="<%= publishActionKey %>" />
+			<aui:button cssClass="btn-lg" id="publishButton" type="submit" value="<%= publishMessageKey %>" />
 
-			<aui:button href="<%= basePortletURL %>" type="reset" value="cancel" />
+			<aui:button cssClass="btn-lg" href="<%= basePortletURL %>" type="reset" value="cancel" />
 		</aui:button-row>
 	</div>
 </aui:form>

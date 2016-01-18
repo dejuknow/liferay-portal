@@ -215,13 +215,22 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 
 			if (insideQuotes) {
 				if (c == delimeter) {
-					if ((c > 1) && (s.charAt(i - 1) == CharPool.BACK_SLASH) &&
-						(s.charAt(i - 2) != CharPool.BACK_SLASH)) {
+					int precedingBackSlashCount = 0;
 
-						continue;
+					for (int j = (i - 1); j >= 0; j--) {
+						if (s.charAt(j) == CharPool.BACK_SLASH) {
+							precedingBackSlashCount += 1;
+						}
+						else {
+							break;
+						}
 					}
 
-					insideQuotes = false;
+					if ((precedingBackSlashCount == 0) ||
+						((precedingBackSlashCount % 2) == 0)) {
+
+						insideQuotes = false;
+					}
 				}
 			}
 			else if (c == delimeter) {
@@ -1370,6 +1379,12 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		}
 
 		return new String[0];
+	}
+
+	protected int getLineCount(String content, int pos) {
+		String beforePos = content.substring(0, pos);
+
+		return StringUtil.count(beforePos, StringPool.NEW_LINE) + 1;
 	}
 
 	protected String getMainReleaseVersion() {

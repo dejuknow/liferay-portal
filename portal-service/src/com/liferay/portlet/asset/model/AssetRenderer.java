@@ -49,6 +49,8 @@ public interface AssetRenderer<T> extends Renderer {
 
 	public T getAssetObject();
 
+	public AssetRendererFactory<T> getAssetRendererFactory();
+
 	public int getAssetRendererType();
 
 	public String[] getAvailableLanguageIds() throws Exception;
@@ -118,7 +120,7 @@ public interface AssetRenderer<T> extends Renderer {
 
 	public String getUrlTitle();
 
-	public PortletURL getURLView(
+	public String getURLView(
 			LiferayPortletResponse liferayPortletResponse,
 			WindowState windowState)
 		throws Exception;
@@ -148,6 +150,8 @@ public interface AssetRenderer<T> extends Renderer {
 	public boolean hasViewPermission(PermissionChecker permissionChecker)
 		throws PortalException;
 
+	public boolean isCommentable();
+
 	public boolean isConvertible();
 
 	public boolean isDisplayable();
@@ -157,6 +161,8 @@ public interface AssetRenderer<T> extends Renderer {
 	public boolean isPreviewInContext();
 
 	public boolean isPrintable();
+
+	public boolean isRatable();
 
 	/**
 	 * @deprecated As of 7.0.0, with no direct replacement

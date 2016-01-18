@@ -22,11 +22,14 @@ import com.liferay.portal.ldap.configuration.CompanyScopedConfiguration;
 /**
  * @author Michael C. Han
  */
-@ConfigurationAdmin(category = "platform")
+@ConfigurationAdmin(
+	category = "platform", factoryInstanceLabelAttribute = "companyId",
+	scope = ConfigurationAdmin.Scope.COMPANY
+)
 @Meta.OCD(
 	factory = true,
 	id = "com.liferay.portal.ldap.exportimport.configuration.LDAPExportConfiguration",
-	localization = "content/Language"
+	localization = "content/Language", name = "%ldap.export.configuration.name"
 )
 public interface LDAPExportConfiguration extends CompanyScopedConfiguration {
 
@@ -34,10 +37,15 @@ public interface LDAPExportConfiguration extends CompanyScopedConfiguration {
 	@Override
 	public long companyId();
 
-	@Meta.AD(deflt = "false", required = false)
+	@Meta.AD(
+		deflt = "false", description = "%export-enabled-help", required = false
+	)
 	public boolean exportEnabled();
 
-	@Meta.AD(deflt = "true", required = false)
+	@Meta.AD(
+		deflt = "true", description = "%export-group-enabled-help",
+		required = false
+	)
 	public boolean exportGroupEnabled();
 
 }

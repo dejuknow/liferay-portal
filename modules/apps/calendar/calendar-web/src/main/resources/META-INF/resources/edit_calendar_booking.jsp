@@ -134,7 +134,7 @@ if (calendarBooking != null) {
 		recurring = true;
 	}
 
-	recurrence = calendarBooking.getRecurrenceObj();
+	recurrence = RecurrenceUtil.inTimeZone(calendarBooking.getRecurrenceObj(), startTimeJCalendar, calendarBookingTimeZone);
 
 	approved = calendarBooking.isApproved();
 
@@ -638,7 +638,7 @@ for (long otherCalendarId : otherCalendarIds) {
 			borderStyle: 'dashed',
 			borderWidth: '2px',
 			color: '#F8F8F8',
-			content: '&nbsp;',
+			content: '',
 			editingEvent: true,
 			endDate: Liferay.CalendarUtil.toLocalTime(new Date(<%= endTime %>)),
 			on: {

@@ -9,16 +9,6 @@
 </thead>
 <tbody>
 <tr>
-	<td>ADD</td>
-	<td>//a[contains(@id,'addPanel')]</td>
-	<td>Add Button</td>
-</tr>
-<tr>
-	<td>ADD_ICON</td>
-	<td>//a[contains(@class,'control-menu-icon')]/i[contains(@class,'icon-plus')]</td>
-	<td></td>
-</tr>
-<tr>
 	<td>PREVIEW</td>
 	<td>//a/i[contains(@class,'icon-desktop')]</td>
 	<td></td>
@@ -198,12 +188,7 @@
 </tr>
 <tr>
 	<td>USER_MY_PROFILE</td>
-	<td>//a/span[contains(.,'My Profile')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>USER_MY_DASHBOARD</td>
-	<td>//a/span[contains(.,'My Dashboard')]</td>
+	<td>//a/span[contains(.,'Profile')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -214,11 +199,6 @@
 <tr>
 	<td>USER_MY_ACCOUNT_LOCALIZED</td>
 	<td>//a[@title='${key_myAccount}']</td>
-	<td></td>
-</tr>
-<tr>
-	<td>USER_SIGN_OUT</td>
-	<td>//li[contains(@class,'sign-out')]/a</td>
 	<td></td>
 </tr>
 <tr>

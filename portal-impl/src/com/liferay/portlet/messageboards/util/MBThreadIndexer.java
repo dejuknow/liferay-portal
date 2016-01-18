@@ -24,10 +24,9 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.BaseIndexer;
 import com.liferay.portal.kernel.search.Document;
-import com.liferay.portal.kernel.search.DocumentImpl;
 import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.search.IndexWriterHelperUtil;
 import com.liferay.portal.kernel.search.SearchContext;
-import com.liferay.portal.kernel.search.SearchEngineUtil;
 import com.liferay.portal.kernel.search.Summary;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.spring.osgi.OSGiBeanProperties;
@@ -116,13 +115,7 @@ public class MBThreadIndexer extends BaseIndexer<MBThread> {
 
 		searchContext.setSearchEngineId(getSearchEngineId());
 
-		Document document = new DocumentImpl();
-
-		document.addUID(CLASS_NAME, mbThread.getThreadId());
-
-		SearchEngineUtil.deleteDocument(
-			getSearchEngineId(), mbThread.getCompanyId(),
-			document.get(Field.UID), isCommitImmediately());
+		deleteDocument(mbThread.getCompanyId(), mbThread.getThreadId());
 	}
 
 	@Override
@@ -160,7 +153,7 @@ public class MBThreadIndexer extends BaseIndexer<MBThread> {
 	protected void doReindex(MBThread mbThread) throws Exception {
 		Document document = getDocument(mbThread);
 
-		SearchEngineUtil.updateDocument(
+		IndexWriterHelperUtil.updateDocument(
 			getSearchEngineId(), mbThread.getCompanyId(), document,
 			isCommitImmediately());
 	}
@@ -282,7 +275,7 @@ public class MBThreadIndexer extends BaseIndexer<MBThread> {
 					try {
 						Document document = getDocument(thread);
 
-						indexableActionableDynamicQuery.addDocument(document);
+						indexableActionableDynamicQuery.addDocuments(document);
 					}
 					catch (PortalException pe) {
 						if (_log.isWarnEnabled()) {

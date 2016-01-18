@@ -16,6 +16,7 @@ package com.liferay.dynamic.data.lists.form.web.display.context;
 
 import com.liferay.dynamic.data.lists.form.web.constants.DDLFormWebKeys;
 import com.liferay.dynamic.data.lists.model.DDLRecordSet;
+import com.liferay.dynamic.data.lists.model.DDLRecordSetSettings;
 import com.liferay.dynamic.data.lists.service.DDLRecordSetLocalServiceUtil;
 import com.liferay.dynamic.data.lists.service.permission.DDLRecordSetPermission;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -81,12 +82,36 @@ public class DDLFormDisplayContext {
 		return _recordSetId;
 	}
 
+	public String getRedirectURL() {
+		DDLRecordSet recordSet = getRecordSet();
+
+		if (recordSet == null) {
+			return null;
+		}
+
+		DDLRecordSetSettings recordSetSettings = recordSet.getSettingsModel();
+
+		return recordSetSettings.redirectURL();
+	}
+
+	public boolean isFormAvailable() {
+		if (isPreview()) {
+			return true;
+		}
+
+		if (isSharedURL()) {
+			return isFormPublished() && isFormShared();
+		}
+
+		return getRecordSet() != null;
+	}
+
 	public boolean isShowConfigurationIcon() throws PortalException {
 		if (_showConfigurationIcon != null) {
 			return _showConfigurationIcon;
 		}
 
-		if (isFormShared()) {
+		if (isPreview() || (isSharedURL() && isFormShared())) {
 			_showConfigurationIcon = false;
 
 			return _showConfigurationIcon;
@@ -144,8 +169,32 @@ public class DDLFormDisplayContext {
 		return _hasViewPermission;
 	}
 
+	protected boolean isFormPublished() {
+		DDLRecordSet recordSet = getRecordSet();
+
+		if (recordSet == null) {
+			return false;
+		}
+
+		DDLRecordSetSettings recordSetSettings = recordSet.getSettingsModel();
+
+		return recordSetSettings.published();
+	}
+
 	protected boolean isFormShared() {
 		return ParamUtil.getBoolean(_renderRequest, "shared");
+	}
+
+	protected boolean isPreview() {
+		return ParamUtil.getBoolean(_renderRequest, "preview");
+	}
+
+	protected boolean isSharedURL() {
+		ThemeDisplay themeDisplay = getThemeDisplay();
+
+		String urlCurrent = themeDisplay.getURLCurrent();
+
+		return urlCurrent.contains("/shared");
 	}
 
 	private Boolean _hasViewPermission;

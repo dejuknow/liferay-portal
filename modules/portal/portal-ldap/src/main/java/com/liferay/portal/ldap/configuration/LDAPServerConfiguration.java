@@ -21,18 +21,21 @@ import com.liferay.configuration.admin.ConfigurationAdmin;
 /**
  * @author Michael C. Han
  */
-@ConfigurationAdmin(category = "platform")
+@ConfigurationAdmin(
+	category = "platform", factoryInstanceLabelAttribute = "companyId",
+	scope = ConfigurationAdmin.Scope.COMPANY
+)
 @Meta.OCD(
 	factory = true,
 	id = "com.liferay.portal.ldap.configuration.LDAPServerConfiguration",
-	localization = "content/Language"
+	localization = "content/Language", name = "%ldap.server.configuration.name"
 )
 public interface LDAPServerConfiguration {
 
 	@Meta.AD(deflt = "(mail=@email_address@)", required = false)
 	public String authSearchFilter();
 
-	@Meta.AD(deflt = "dc=example,dc=com", required = false)
+	@Meta.AD(deflt = "", required = false)
 	public String baseDN();
 
 	@Meta.AD(deflt = "ldap://localhost:10389", required = false)
@@ -41,31 +44,43 @@ public interface LDAPServerConfiguration {
 	@Meta.AD(deflt = "0", required = false)
 	public long companyId();
 
-	@Meta.AD(deflt = "", required = false)
+	@Meta.AD(
+		deflt = "", description = "%contact-custom-mappings-help",
+		required = false
+	)
 	public String[] contactCustomMappings();
 
 	@Meta.AD(
 		deflt = "birthday=|facebookSn=|jabberSn=|jobTitle=|skypeSn=|smsSn=|twitterSn=",
-		required = false
+		description = "%contact-mappings-help", required = false
 	)
 	public String[] contactMappings();
 
-	@Meta.AD(deflt = "top|groupOfUniqueNames", required = false)
+	@Meta.AD(
+		deflt = "top|groupOfUniqueNames",
+		description = "%group-default-object-classes-help", required = false
+	)
 	public String[] groupDefaultObjectClasses();
 
 	@Meta.AD(
 		deflt = "description=description|groupName=cn|user=uniqueMember",
-		required = false
+		description = "%group-mappings-help", required = false
 	)
 	public String[] groupMappings();
 
-	@Meta.AD(deflt = "ou=groups,dc=example,dc=com", required = false)
+	@Meta.AD(deflt = "", description = "%groups-dn-help", required = false)
 	public String groupsDN();
 
-	@Meta.AD(deflt = "(objectClass=groupOfUniqueNames)", required = false)
+	@Meta.AD(
+		deflt = "(objectClass=groupOfUniqueNames)",
+		description = "%group-search-filter-help", required = false
+	)
 	public String groupSearchFilter();
 
-	@Meta.AD(deflt = "true", required = false)
+	@Meta.AD(
+		deflt = "true", description = "%group-search-filter-enabled-help",
+		required = false
+	)
 	public boolean groupSearchFilterEnabled();
 
 	@Meta.AD(deflt = "0", required = false)
@@ -74,34 +89,42 @@ public interface LDAPServerConfiguration {
 	@Meta.AD(deflt = "secret", required = false)
 	public String securityCredential();
 
-	@Meta.AD(deflt = "uid=admin,ou=system", required = false)
+	@Meta.AD(deflt = "", required = false)
 	public String securityPrincipal();
 
 	@Meta.AD(deflt = "", required = false)
 	public String serverName();
 
-	@Meta.AD(deflt = "", required = false)
+	@Meta.AD(
+		deflt = "", description = "%user-custom-mappings-help", required = false
+	)
 	public String[] userCustomMappings();
 
 	@Meta.AD(
 		deflt = "top|person|inetOrgPerson|organizationalPerson",
-		required = false
+		description = "%user-default-object-classes-help", required = false
 	)
 	public String[] userDefaultObjectClasses();
 
-	@Meta.AD(deflt = "", required = false)
+	@Meta.AD(
+		deflt = "", description = "%user-ignore-attributes-help",
+		required = false
+	)
 	public String[] userIgnoreAttributes();
 
 	@Meta.AD(
 		deflt = "emailAddress=mail|firstName=givenName|group=groupMembership|jobTitle=title|lastName=sn|password=userPassword|screenName=cn|uuid=uuid",
-		required = false
+		description = "%user-mappings-help", required = false
 	)
 	public String[] userMappings();
 
-	@Meta.AD(deflt = "users,dc=example,dc=com", required = false)
+	@Meta.AD(deflt = "", description = "%users-dn-help", required = false)
 	public String usersDN();
 
-	@Meta.AD(deflt = "(objectClass=inetOrgPerson)", required = false)
+	@Meta.AD(
+		deflt = "(objectClass=inetOrgPerson)",
+		description = "%user-search-filter-help", required = false
+	)
 	public String userSearchFilter();
 
 }

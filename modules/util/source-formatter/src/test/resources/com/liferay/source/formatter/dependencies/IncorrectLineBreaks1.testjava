@@ -16,10 +16,14 @@ package com.liferay.source.formatter.dependencies;
 
 import com.liferay.portal.kernel.util.StringUtil;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 /**
  * @author Hugo Huijser
  */
 public class IncorrectLineBreaks1 {
+
 	public void method1() {
 		String thisIsAStringWithAVeryVeryVeryLongName = "";
 
@@ -39,18 +43,10 @@ public class IncorrectLineBreaks1 {
 				StringPool.Period);
 
 		boolean b = StringUtil.contains(
-			thisIsAStringWithAVeryVeryVeryLongName, StringUtil.trim(
-				thisIsAStringWithAVeryVeryVeryLongName2);
-
-		boolean b2 = StringUtil.contains(
-			test1, "Hello World" + "Hello World Hello" +
-				"Hello World Hello World);
-
-		boolean b3 = StringUtil.contains(
 			StringUtil.replace(
 				"Hello World", "Hello", "World"), "Hello World Hello World");
 
-		boolean b4 = StringUtil.contains(
+		boolean b1 = StringUtil.contains(
 			"Hello World Hello World Hello World " +
 				"Hello World Hello World Hello World", "Hello");
 
@@ -95,6 +91,31 @@ public class IncorrectLineBreaks1 {
 		}
 	}
 
+	public void method5() {
+		String[] stringArray = new String[] {"One", "Two", "Three"};
+
+		Arrays.sort(
+			stringArray, new Comparator<String>() {
+
+				@Override
+				public int compare(String s1, String s2) {
+					return s1.compareTo(s2);
+				}
+
+			});
+
+		int i = StringUtil.lastIndexOfAny(
+			"Hello",
+			new String[] {
+				"One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight"
+			}, 5);
+
+		StringUtil.merge(
+			new String[] {"One", "Two", "Three", "Four", "Five", "Six", "Seven",
+			"Eight"
+		});
+	}
+
 	public void methodWithASlightlyLongerName(
 		String test1, String test2, String[] testStringArray) throws Exception {
 
@@ -105,10 +126,10 @@ public class IncorrectLineBreaks1 {
 		}
 	}
 
-	private static final String _NUMBERS =
+	private static final String[] _NUMBERS =
 		new String[] {
 			"One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight",
 			"Nine", "Ten"
-		}; 
+		};
 
 }

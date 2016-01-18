@@ -16,116 +16,116 @@
 
 <%@ include file="/init.jsp" %>
 
-<aui:row>
-	<aui:col width="<%= 50 %>">
-		<liferay-portlet:actionURL portletConfiguration="<%= true %>" var="configurationActionURL" />
+<%
+String rootLayoutType = siteNavigationMenuDisplayContext.getRootLayoutType();
+%>
 
-		<liferay-portlet:renderURL portletConfiguration="<%= true %>" var="configurationRenderURL" />
+<liferay-portlet:actionURL portletConfiguration="<%= true %>" var="configurationActionURL" />
 
-		<aui:form action="<%= configurationActionURL %>" method="post" name="fm">
-			<aui:input name="<%= Constants.CMD %>" type="hidden" value="<%= Constants.UPDATE %>" />
-			<aui:input name="redirect" type="hidden" value="<%= configurationRenderURL %>" />
+<liferay-portlet:renderURL portletConfiguration="<%= true %>" var="configurationRenderURL" />
 
-			<div class="display-template">
-				<liferay-ddm:template-selector
-					className="<%= NavItem.class.getName() %>"
-					displayStyle="<%= siteNavigationMenuDisplayContext.getDisplayStyle() %>"
-					displayStyleGroupId="<%= siteNavigationMenuDisplayContext.getDisplayStyleGroupId() %>"
-					refreshURL="<%= configurationRenderURL %>"
-				/>
-			</div>
+<aui:form action="<%= configurationActionURL %>" method="post" name="fm">
+	<aui:input name="<%= Constants.CMD %>" type="hidden" value="<%= Constants.UPDATE %>" />
+	<aui:input name="redirect" type="hidden" value="<%= configurationRenderURL %>" />
 
-			<aui:fieldset column="<%= true %>">
-				<aui:select name="preferences--bulletStyle--">
+	<aui:row>
+		<aui:col width="<%= 50 %>">
+			<aui:fieldset-group markupView="lexicon">
+				<aui:fieldset>
+					<div class="display-template">
+						<liferay-ddm:template-selector
+							className="<%= NavItem.class.getName() %>"
+							displayStyle="<%= siteNavigationMenuDisplayContext.getDisplayStyle() %>"
+							displayStyleGroupId="<%= siteNavigationMenuDisplayContext.getDisplayStyleGroupId() %>"
+							refreshURL="<%= configurationRenderURL %>"
+						/>
+					</div>
 
-					<%
-					String[] bulletStyleOptions = theme.getSettingOptions("bullet-style");
-					%>
+					<div id="<portlet:namespace />customDisplayOptions">
+						<aui:select id ="rootLayoutType" label="root-layout" name="preferences--rootLayoutType--" value="<%= rootLayoutType %>">
+							<aui:option label="parent-at-level" value="absolute" />
+							<aui:option label="relative-parent-up-by" value="relative" />
+							<aui:option label="select" value="select" />
+						</aui:select>
 
-					<c:choose>
-						<c:when test="<%= ArrayUtil.isEmpty(bulletStyleOptions) %>">
-							<aui:option label="default" value="" />
-						</c:when>
-						<c:otherwise>
+						<div class="<%= rootLayoutType.equals("parent-at-level") || rootLayoutType.equals("relative-parent-up-by") ? "" : "hide" %>" id="<portlet:namespace />rootLayoutLevel">
+							<aui:select name="preferences--rootLayoutLevel--">
 
-							<%
-							for (String bulletStyleOption : bulletStyleOptions) {
-							%>
+								<%
+								for (int i = 0; i <= 4; i++) {
+								%>
 
-								<aui:option label="<%= bulletStyleOption %>" selected="<%= Validator.equals(siteNavigationMenuDisplayContext.getBulletStyle(), bulletStyleOption) %>" />
+									<aui:option label="<%= i %>" selected="<%= siteNavigationMenuDisplayContext.getRootLayoutLevel() == i %>" />
 
-							<%
-							}
-							%>
+								<%
+								}
+								%>
 
-						</c:otherwise>
-					</c:choose>
-				</aui:select>
-			</aui:fieldset>
+							</aui:select>
+						</div>
 
-			<aui:fieldset column="<%= true %>">
-				<div class="" id="<portlet:namespace />customDisplayOptions">
-					<aui:select label="header" name="preferences--headerType--" value="<%= siteNavigationMenuDisplayContext.getHeaderType() %>">
-						<aui:option label="none" />
-						<aui:option label="portlet-title" />
-						<aui:option label="root-layout" />
-						<aui:option label="breadcrumb" />
-					</aui:select>
+						<div class="<%= rootLayoutType.equals("select") ? "" : "hide" %>" id="<portlet:namespace />rootLayoutUuid">
+							<aui:select label="" name="preferences--rootLayoutUuid--">
+								<aui:option value="" />
 
-					<aui:select label="root-layout" name="preferences--rootLayoutType--" value="<%= siteNavigationMenuDisplayContext.getRootLayoutType() %>">
-						<aui:option label="parent-at-level" value="absolute" />
-						<aui:option label="relative-parent-up-by" value="relative" />
-					</aui:select>
+								<%
+								for (LayoutDescription layoutDescription : siteNavigationMenuDisplayContext.getLayoutDescriptions()) {
+									Layout layoutDescriptionLayout = LayoutLocalServiceUtil.fetchLayout(layoutDescription.getPlid());
 
-					<aui:select name="preferences--rootLayoutLevel--">
+									if (layoutDescriptionLayout != null) {
+								%>
 
-						<%
-						for (int i = 0; i <= 4; i++) {
-						%>
+										<aui:option label="<%= layoutDescription.getDisplayName() %>" selected="<%= Validator.equals(layoutDescriptionLayout.getUuid(), siteNavigationMenuDisplayContext.getRootLayoutUuid()) %>" value="<%= layoutDescriptionLayout.getUuid() %>" />
 
-							<aui:option label="<%= i %>" selected="<%= siteNavigationMenuDisplayContext.getRootLayoutLevel() == i %>" />
+								<%
+									}
+								}
+								%>
 
-						<%
-						}
-						%>
+							</aui:select>
+						</div>
 
-					</aui:select>
+						<aui:script>
+							Liferay.Util.toggleSelectBox('<portlet:namespace />rootLayoutType', 'select', '<portlet:namespace />rootLayoutUuid');
 
-					<aui:select name="preferences--includedLayouts--" value="<%= siteNavigationMenuDisplayContext.getIncludedLayouts() %>">
-						<aui:option label="auto" />
-						<aui:option label="all" />
-					</aui:select>
+							Liferay.Util.toggleSelectBox(
+								'<portlet:namespace />rootLayoutType',
+								function(currentValue, value) {
+									return currentValue === 'absolute' || currentValue === 'relative';
+								},
+								'<portlet:namespace />rootLayoutLevel'
+							);
+						</aui:script>
 
-					<aui:select name="preferences--nestedChildren--">
-						<aui:option label="yes" selected="<%= siteNavigationMenuDisplayContext.isNestedChildren() %>" value="1" />
-						<aui:option label="no" selected="<%= !siteNavigationMenuDisplayContext.isNestedChildren() %>" value="0" />
-					</aui:select>
-				</div>
-			</aui:fieldset>
+						<aui:select name="preferences--includedLayouts--" value="<%= siteNavigationMenuDisplayContext.getIncludedLayouts() %>">
+							<aui:option label="auto" />
+							<aui:option label="all" />
+						</aui:select>
+					</div>
+				</aui:fieldset>
+			</aui:fieldset-group>
+		</aui:col>
+		<aui:col width="<%= 50 %>">
+			<liferay-portlet:preview
+				portletName="<%= portletResource %>"
+				showBorders="<%= true %>"
+			/>
+		</aui:col>
+	</aui:row>
 
-			<aui:button-row>
-				<aui:button type="submit" />
-			</aui:button-row>
-		</aui:form>
-	</aui:col>
-	<aui:col width="<%= 50 %>">
-		<liferay-portlet:preview
-			portletName="<%= portletResource %>"
-			showBorders="<%= true %>"
-		/>
-	</aui:col>
-</aui:row>
+	<aui:button-row>
+		<aui:button cssClass="btn-lg" type="submit" />
+	</aui:button-row>
+</aui:form>
 
 <aui:script sandbox="<%= true %>">
 	var form = $('#<portlet:namespace />fm');
 
-	var selectBulletStyle = form.fm('bulletStyle');
 	var selectDisplayStyle = form.fm('displayStyle');
-	var selectHeaderType = form.fm('headerType');
 	var selectIncludedLayouts = form.fm('includedLayouts');
-	var selectNestedChildren = form.fm('nestedChildren');
 	var selectRootLayoutLevel = form.fm('rootLayoutLevel');
 	var selectRootLayoutType = form.fm('rootLayoutType');
+	var selectRootLayoutUuid = form.fm('rootLayoutUuid');
 
 	var curPortletBoundaryId = '#p_p_id_<%= HtmlUtil.escapeJS(portletResource) %>_';
 
@@ -134,16 +134,14 @@
 		'select',
 		function() {
 			var data = {
-				bulletStyle: selectBulletStyle.val(),
 				displayStyle: selectDisplayStyle.val(),
 				preview: true
 			};
 
-			data.headerType = selectHeaderType.val();
 			data.includedLayouts = selectIncludedLayouts.val();
-			data.nestedChildren = selectNestedChildren.val();
 			data.rootLayoutLevel = selectRootLayoutLevel.val();
 			data.rootLayoutType = selectRootLayoutType.val();
+			data.rootLayoutUuid = selectRootLayoutUuid.val();
 
 			data = Liferay.Util.ns('_<%= HtmlUtil.escapeJS(portletResource) %>_', data);
 

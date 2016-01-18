@@ -22,11 +22,14 @@ import com.liferay.portal.ldap.configuration.CompanyScopedConfiguration;
 /**
  * @author Michael C. Han
  */
-@ConfigurationAdmin(category = "platform")
+@ConfigurationAdmin(
+	category = "platform", factoryInstanceLabelAttribute = "companyId",
+	scope = ConfigurationAdmin.Scope.COMPANY
+)
 @Meta.OCD(
 	factory = true,
 	id = "com.liferay.portal.ldap.authenticator.configuration.LDAPAuthConfiguration",
-	localization = "content/Language"
+	localization = "content/Language", name = "%ldap.auth.configuration.name"
 )
 public interface LDAPAuthConfiguration extends CompanyScopedConfiguration {
 
@@ -37,13 +40,13 @@ public interface LDAPAuthConfiguration extends CompanyScopedConfiguration {
 	public boolean enabled();
 
 	@Meta.AD(
-		deflt = "bind", optionValues = {"bind", "password-compare"},
-		required = false
+		deflt = "bind", description = "%method-help",
+		optionValues = {"bind", "password-compare"}, required = false
 	)
 	public String method();
 
 	@Meta.AD(
-		deflt = "NONE",
+		deflt = "NONE", description = "%password-encryption-algorithm-help",
 		optionValues = {
 			"BCRYPT", "MD2", "MD5", "NONE", "SHA", "SHA-256", "SHA-384", "SSHA",
 			"UFC-CRYPT"
@@ -52,7 +55,10 @@ public interface LDAPAuthConfiguration extends CompanyScopedConfiguration {
 	)
 	public String passwordEncryptionAlgorithm();
 
-	@Meta.AD(deflt = "false", required = false)
+	@Meta.AD(
+		deflt = "false", description = "%password-policy-enabled-help",
+		required = false
+	)
 	public boolean passwordPolicyEnabled();
 
 	@Meta.AD(deflt = "false", required = false)

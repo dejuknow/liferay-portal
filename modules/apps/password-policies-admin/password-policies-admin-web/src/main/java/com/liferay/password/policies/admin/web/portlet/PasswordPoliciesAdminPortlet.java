@@ -71,6 +71,18 @@ import org.osgi.service.component.annotations.Reference;
 )
 public class PasswordPoliciesAdminPortlet extends MVCPortlet {
 
+	public void deletePasswordPolicies(
+			ActionRequest actionRequest, ActionResponse actionResponse)
+		throws Exception {
+
+		long[] passwordPolicyIds = StringUtil.split(
+			ParamUtil.getString(actionRequest, "passwordPolicyIds"), 0L);
+
+		for (long passwordPolicyId : passwordPolicyIds) {
+			_passwordPolicyService.deletePasswordPolicy(passwordPolicyId);
+		}
+	}
+
 	public void deletePasswordPolicy(
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
@@ -252,8 +264,8 @@ public class PasswordPoliciesAdminPortlet extends MVCPortlet {
 		_userService = userService;
 	}
 
-	private volatile OrganizationService _organizationService;
-	private volatile PasswordPolicyService _passwordPolicyService;
-	private volatile UserService _userService;
+	private OrganizationService _organizationService;
+	private PasswordPolicyService _passwordPolicyService;
+	private UserService _userService;
 
 }

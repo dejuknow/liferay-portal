@@ -16,14 +16,12 @@
 
 <%@ include file="/init.jsp" %>
 
-<liferay-ui:navigation
-	bulletStyle="<%= siteNavigationMenuDisplayContext.getBulletStyle() %>"
+<liferay-site-navigation:navigation
 	ddmTemplateGroupId="<%= siteNavigationMenuDisplayContext.getDisplayStyleGroupId() %>"
 	ddmTemplateKey="<%= siteNavigationMenuDisplayContext.getDDMTemplateKey() %>"
-	headerType="<%= siteNavigationMenuDisplayContext.getHeaderType() %>"
 	includedLayouts="<%= siteNavigationMenuDisplayContext.getIncludedLayouts() %>"
-	nestedChildren="<%= siteNavigationMenuDisplayContext.isNestedChildren() %>"
 	preview="<%= siteNavigationMenuDisplayContext.isPreview() %>"
 	rootLayoutLevel="<%= siteNavigationMenuDisplayContext.getRootLayoutLevel() %>"
 	rootLayoutType="<%= siteNavigationMenuDisplayContext.getRootLayoutType() %>"
+	rootLayoutUuid="<%= siteNavigationMenuDisplayContext.getRootLayoutUuid() %>"
 />

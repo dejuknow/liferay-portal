@@ -19,8 +19,8 @@
 <%
 GroupDisplayContextHelper groupDisplayContextHelper = new GroupDisplayContextHelper(request);
 
-Group liveGroup = groupDisplayContextHelper.getLiveGroup();
-long liveGroupId = groupDisplayContextHelper.getLiveGroupId();
+liveGroup = groupDisplayContextHelper.getLiveGroup();
+liveGroupId = groupDisplayContextHelper.getLiveGroupId();
 UnicodeProperties liveGroupTypeSettings = liveGroup.getTypeSettingsProperties();
 
 LayoutSet privateLayoutSet = LayoutSetLocalServiceUtil.getLayoutSet(liveGroup.getGroupId(), true);
@@ -30,15 +30,14 @@ boolean liveGroupRemoteStaging = liveGroup.hasRemoteStagingGroup() && PropsValue
 boolean stagedLocally = liveGroup.isStaged() && !liveGroup.isStagedRemotely();
 boolean stagedRemotely = liveGroup.isStaged() && !stagedLocally;
 
-Group stagingGroup = null;
-long stagingGroupId = 0L;
-
 if (stagedLocally) {
 	stagingGroup = liveGroup.getStagingGroup();
 	stagingGroupId = stagingGroup.getGroupId();
 }
 
 BackgroundTask lastCompletedInitialPublicationBackgroundTask = BackgroundTaskManagerUtil.fetchFirstBackgroundTask(liveGroupId, BackgroundTaskExecutorNames.LAYOUT_STAGING_BACKGROUND_TASK_EXECUTOR, true, new BackgroundTaskCreateDateComparator(false));
+
+boolean disableStagingOptions = GetterUtil.getBoolean(SessionMessages.get(liferayPortletRequest, portletDisplay.getId() + "disableStagingOptions"), false);
 %>
 
 <div class="container-fluid-1280">
@@ -53,8 +52,12 @@ BackgroundTask lastCompletedInitialPublicationBackgroundTask = BackgroundTaskMan
 		<portlet:param name="mvcPath" value="/view.jsp" />
 	</portlet:actionURL>
 
+	<portlet:renderURL var="redirectURL">
+		<portlet:param name="mvcRenderCommandName" value="staging" />
+	</portlet:renderURL>
+
 	<aui:form action="<%= editStagingConfigurationURL %>" method="post" name="fm" onSubmit='<%= "event.preventDefault(); " + renderResponse.getNamespace() + "saveGroup();" %>'>
-		<aui:input name="redirect" type="hidden" value="<%= currentURL %>" />
+		<aui:input name="redirect" type="hidden" value="<%= redirectURL %>" />
 		<aui:input name="groupId" type="hidden" value="<%= liveGroupId %>" />
 		<aui:input name="liveGroupId" type="hidden" value="<%= liveGroupId %>" />
 		<aui:input name="stagingGroupId" type="hidden" value="<%= stagingGroupId %>" />
@@ -133,7 +136,6 @@ BackgroundTask lastCompletedInitialPublicationBackgroundTask = BackgroundTaskMan
 				</div>
 			</c:when>
 			<c:when test="<%= GroupPermissionUtil.contains(permissionChecker, liveGroup, ActionKeys.MANAGE_STAGING) %>">
-
 				<liferay-ui:error exception="<%= LocaleException.class %>">
 
 					<%
@@ -154,100 +156,107 @@ BackgroundTask lastCompletedInitialPublicationBackgroundTask = BackgroundTaskMan
 					<liferay-ui:message key="<%= se.getMessage() %>" />
 				</liferay-ui:error>
 
-				<aui:fieldset label="staging-type">
-					<div id="<portlet:namespace />stagingTypes">
-						<aui:input checked="<%= !liveGroup.isStaged() %>" id="none" label="none" name="stagingType" type="radio" value="<%= StagingConstants.TYPE_NOT_STAGED %>" />
+				<aui:fieldset-group markupView="lexicon">
+					<c:choose>
+						<c:when test="<%= !disableStagingOptions %>">
+							<aui:fieldset>
+								<div id="<portlet:namespace />stagingTypes">
+									<aui:input checked="<%= !liveGroup.isStaged() %>" id="none" label="none" name="stagingType" type="radio" value="<%= StagingConstants.TYPE_NOT_STAGED %>" />
 
-						<c:if test="<%= !liveGroupRemoteStaging %>">
-							<aui:input checked="<%= stagedLocally %>" helpMessage="staging-type-local" id="local" label="local-live" name="stagingType" type="radio" value="<%= StagingConstants.TYPE_LOCAL_STAGING %>" />
+									<c:if test="<%= !liveGroupRemoteStaging %>">
+										<aui:input checked="<%= stagedLocally %>" helpMessage="staging-type-local" id="local" label="local-live" name="stagingType" type="radio" value="<%= StagingConstants.TYPE_LOCAL_STAGING %>" />
+									</c:if>
+
+									<aui:input checked="<%= stagedRemotely %>" helpMessage="staging-type-remote" id="remote" label="remote-live" name="stagingType" type="radio" value="<%= StagingConstants.TYPE_REMOTE_STAGING %>" />
+								</div>
+							</aui:fieldset>
+						</c:when>
+						<c:otherwise>
+							<div class="alert alert-warning">
+								<liferay-ui:message key="staging-is-disabled.-please-close-this-window-in-order-to-go-to-the-live-site" />
+							</div>
+						</c:otherwise>
+					</c:choose>
+
+					<%
+					boolean showRemoteOptions = stagedRemotely;
+
+					int stagingType = ParamUtil.getInteger(request, "stagingType");
+
+					if (stagingType == StagingConstants.TYPE_REMOTE_STAGING) {
+						showRemoteOptions = true;
+					}
+					%>
+
+					<div class="<%= showRemoteOptions ? StringPool.BLANK : "hide" %>" id="<portlet:namespace />remoteStagingOptions">
+						<%@ include file="/error_auth_exception.jspf" %>
+
+						<%@ include file="/error_remote_export_exception.jspf" %>
+
+						<aui:fieldset collapsible="<%= true %>" label="remote-live-connection-settings">
+							<%@ include file="/error_remote_options_exception.jspf" %>
+
+							<div class="alert alert-info">
+								<liferay-ui:message key="remote-publish-help" />
+							</div>
+
+							<aui:input label="remote-host-ip" name="remoteAddress" size="20" type="text" value='<%= liveGroupTypeSettings.getProperty("remoteAddress") %>' />
+
+							<aui:input label="remote-port" name="remotePort" size="10" type="text" value='<%= liveGroupTypeSettings.getProperty("remotePort") %>' />
+
+							<aui:input label="remote-path-context" name="remotePathContext" size="10" type="text" value='<%= liveGroupTypeSettings.getProperty("remotePathContext") %>' />
+
+							<aui:input label='<%= LanguageUtil.get(request, "remote-site-id" ) %>' name="remoteGroupId" size="10" type="text" value='<%= liveGroupTypeSettings.getProperty("remoteGroupId") %>' />
+
+							<aui:input label="use-a-secure-network-connection" name="secureConnection" type="toggle-switch" value='<%= liveGroupTypeSettings.getProperty("secureConnection") %>' />
+						</aui:fieldset>
+					</div>
+
+					<div class="<%= ((liveGroup.isStaged() || (stagingType != StagingConstants.TYPE_NOT_STAGED)) ? StringPool.BLANK : "hide") %>" id="<portlet:namespace />stagedPortlets">
+						<c:if test="<%= !liveGroup.isCompany() && !liveGroupRemoteStaging %>">
+							<aui:fieldset collapsible="<%= true %>" helpMessage="page-versioning-help" label="page-versioning">
+								<aui:input label="enabled-on-public-pages" name="branchingPublic" type="toggle-switch" value='<%= GetterUtil.getBoolean(liveGroupTypeSettings.getProperty("branchingPublic")) %>' />
+
+								<aui:input label="enabled-on-private-pages" name="branchingPrivate" type="toggle-switch" value='<%= GetterUtil.getBoolean(liveGroupTypeSettings.getProperty("branchingPrivate")) %>' />
+							</aui:fieldset>
 						</c:if>
 
-						<aui:input checked="<%= stagedRemotely %>" helpMessage="staging-type-remote" id="remote" label="remote-live" name="stagingType" type="radio" value="<%= StagingConstants.TYPE_REMOTE_STAGING %>" />
-					</div>
-				</aui:fieldset>
+						<aui:fieldset collapsible="<%= true %>" helpMessage="staged-portlets-help" label="staged-content">
+							<div class="alert alert-warning">
+								<liferay-ui:message key="staged-portlets-alert" />
+							</div>
 
-				<%
-				boolean showRemoteOptions = stagedRemotely;
+							<%
+							Set<String> portletDataHandlerClasses = new HashSet<String>();
 
-				int stagingType = ParamUtil.getInteger(request, "stagingType");
+							List<Portlet> dataSiteLevelPortlets = ExportImportHelperUtil.getDataSiteLevelPortlets(company.getCompanyId(), true);
 
-				if (stagingType == StagingConstants.TYPE_REMOTE_STAGING) {
-					showRemoteOptions = true;
-				}
-				%>
+							dataSiteLevelPortlets = ListUtil.sort(dataSiteLevelPortlets, new PortletTitleComparator(application, locale));
 
-				<div class="<%= showRemoteOptions ? StringPool.BLANK : "hide" %>" id="<portlet:namespace />remoteStagingOptions">
-					<br />
+							for (Portlet curPortlet : dataSiteLevelPortlets) {
+								String portletDataHandlerClass = curPortlet.getPortletDataHandlerClass();
 
-					<%@ include file="/error_auth_exception.jspf" %>
+								if (!portletDataHandlerClasses.contains(portletDataHandlerClass)) {
+									portletDataHandlerClasses.add(portletDataHandlerClass);
+								}
+								else {
+									continue;
+								}
 
-					<%@ include file="/error_remote_export_exception.jspf" %>
+								PortletDataHandler portletDataHandler = curPortlet.getPortletDataHandlerInstance();
 
-					<aui:fieldset label="remote-live-connection-settings">
-						<%@ include file="/error_remote_options_exception.jspf" %>
+								boolean staged = GetterUtil.getBoolean(liveGroupTypeSettings.getProperty(StagingUtil.getStagedPortletId(curPortlet.getRootPortletId())), portletDataHandler.isPublishToLiveByDefault());
+							%>
 
-						<div class="alert alert-info">
-							<liferay-ui:message key="remote-publish-help" />
-						</div>
+								<aui:input disabled="<%= liveGroupRemoteStaging || liveGroup.isStaged() %>" label="<%= PortalUtil.getPortletTitle(curPortlet, application, locale) %>" name="<%= StagingConstants.STAGED_PREFIX + StagingUtil.getStagedPortletId(curPortlet.getRootPortletId()) + StringPool.DOUBLE_DASH %>" type="toggle-switch" value="<%= staged %>" />
 
-						<aui:input label="remote-host-ip" name="remoteAddress" size="20" type="text" value='<%= liveGroupTypeSettings.getProperty("remoteAddress") %>' />
+							<%
+							}
+							%>
 
-						<aui:input label="remote-port" name="remotePort" size="10" type="text" value='<%= liveGroupTypeSettings.getProperty("remotePort") %>' />
-
-						<aui:input label="remote-path-context" name="remotePathContext" size="10" type="text" value='<%= liveGroupTypeSettings.getProperty("remotePathContext") %>' />
-
-						<aui:input label='<%= LanguageUtil.get(request, "remote-site-id" ) %>' name="remoteGroupId" size="10" type="text" value='<%= liveGroupTypeSettings.getProperty("remoteGroupId") %>' />
-
-						<aui:input label="use-a-secure-network-connection" name="secureConnection" type="checkbox" value='<%= liveGroupTypeSettings.getProperty("secureConnection") %>' />
-					</aui:fieldset>
-				</div>
-
-				<div class="<%= ((liveGroup.isStaged() || (stagingType != StagingConstants.TYPE_NOT_STAGED)) ? StringPool.BLANK : "hide") %>" id="<portlet:namespace />stagedPortlets">
-					<br />
-
-					<c:if test="<%= !liveGroup.isCompany() && !liveGroupRemoteStaging %>">
-						<aui:fieldset helpMessage="page-versioning-help" label="page-versioning">
-							<aui:input label="enabled-on-public-pages" name="branchingPublic" type="checkbox" value='<%= GetterUtil.getBoolean(liveGroupTypeSettings.getProperty("branchingPublic")) %>' />
-
-							<aui:input label="enabled-on-private-pages" name="branchingPrivate" type="checkbox" value='<%= GetterUtil.getBoolean(liveGroupTypeSettings.getProperty("branchingPrivate")) %>' />
 						</aui:fieldset>
-					</c:if>
-
-					<aui:fieldset helpMessage="staged-portlets-help" label="staged-content">
-						<div class="alert alert-warning">
-							<liferay-ui:message key="staged-portlets-alert" />
-						</div>
-
-						<%
-						Set<String> portletDataHandlerClasses = new HashSet<String>();
-
-						List<Portlet> dataSiteLevelPortlets = ExportImportHelperUtil.getDataSiteLevelPortlets(company.getCompanyId(), true);
-
-						dataSiteLevelPortlets = ListUtil.sort(dataSiteLevelPortlets, new PortletTitleComparator(application, locale));
-
-						for (Portlet curPortlet : dataSiteLevelPortlets) {
-							String portletDataHandlerClass = curPortlet.getPortletDataHandlerClass();
-
-							if (!portletDataHandlerClasses.contains(portletDataHandlerClass)) {
-								portletDataHandlerClasses.add(portletDataHandlerClass);
-							}
-							else {
-								continue;
-							}
-
-							PortletDataHandler portletDataHandler = curPortlet.getPortletDataHandlerInstance();
-
-							boolean staged = GetterUtil.getBoolean(liveGroupTypeSettings.getProperty(StagingUtil.getStagedPortletId(curPortlet.getRootPortletId())), portletDataHandler.isPublishToLiveByDefault());
-						%>
-
-							<aui:input disabled="<%= liveGroupRemoteStaging || liveGroup.isStaged() %>" label="<%= PortalUtil.getPortletTitle(curPortlet, application, locale) %>" name="<%= StagingConstants.STAGED_PREFIX + StagingUtil.getStagedPortletId(curPortlet.getRootPortletId()) + StringPool.DOUBLE_DASH %>" type="checkbox" value="<%= staged %>" />
-
-						<%
-						}
-						%>
-
-					</aui:fieldset>
-				</div>
+					</div>
+				</aui:fieldset-group>
 
 				<aui:script sandbox="<%= true %>">
 					var remoteStagingOptions = $('#<portlet:namespace />remoteStagingOptions');
@@ -275,9 +284,9 @@ BackgroundTask lastCompletedInitialPublicationBackgroundTask = BackgroundTaskMan
 			</c:otherwise>
 		</c:choose>
 
-		<c:if test="<%= !privateLayoutSet.isLayoutSetPrototypeLinkActive() && !publicLayoutSet.isLayoutSetPrototypeLinkActive() %>">
+		<c:if test="<%= !privateLayoutSet.isLayoutSetPrototypeLinkActive() && !publicLayoutSet.isLayoutSetPrototypeLinkActive() && !disableStagingOptions %>">
 			<aui:button-row>
-				<aui:button cssClass="btn-primary" type="submit" />
+				<aui:button cssClass="btn-lg btn-primary" type="submit" />
 			</aui:button-row>
 		</c:if>
 	</aui:form>
@@ -298,13 +307,13 @@ BackgroundTask lastCompletedInitialPublicationBackgroundTask = BackgroundTaskMan
 
 			<c:choose>
 				<c:when test="<%= liveGroup.isStaged() && !liveGroup.isStagedRemotely() %>">
-					oldValue = 1;
+					oldValue = <%= StagingConstants.TYPE_LOCAL_STAGING %>;
 				</c:when>
 				<c:when test="<%= liveGroup.isStaged() && liveGroup.isStagedRemotely() %>">
-					oldValue = 2;
+					oldValue = <%= StagingConstants.TYPE_REMOTE_STAGING %>;
 				</c:when>
 				<c:otherwise>
-					oldValue = 0;
+					oldValue = <%= StagingConstants.TYPE_NOT_STAGED %>;
 				</c:otherwise>
 			</c:choose>
 
@@ -313,13 +322,13 @@ BackgroundTask lastCompletedInitialPublicationBackgroundTask = BackgroundTaskMan
 			if (stagingTypeEl.length && (currentValue != oldValue)) {
 				ok = false;
 
-				if (currentValue == 0) {
+				if (currentValue == <%= StagingConstants.TYPE_NOT_STAGED %>) {
 					ok = confirm('<%= UnicodeLanguageUtil.format(request, "are-you-sure-you-want-to-deactivate-staging-for-x", liveGroup.getDescriptiveName(locale), false) %>');
 				}
-				else if (currentValue == 1) {
+				else if (currentValue == <%= StagingConstants.TYPE_LOCAL_STAGING %>) {
 					ok = confirm('<%= UnicodeLanguageUtil.format(request, "are-you-sure-you-want-to-activate-local-staging-for-x", liveGroup.getDescriptiveName(locale), false) %>');
 				}
-				else if (currentValue == 2) {
+				else if (currentValue == <%= StagingConstants.TYPE_REMOTE_STAGING %>) {
 					ok = confirm('<%= UnicodeLanguageUtil.format(request, "are-you-sure-you-want-to-activate-remote-staging-for-x", liveGroup.getDescriptiveName(locale), false) %>');
 				}
 			}

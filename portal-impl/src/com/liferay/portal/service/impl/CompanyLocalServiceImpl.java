@@ -21,6 +21,7 @@ import com.liferay.portal.CompanyWebIdException;
 import com.liferay.portal.LocaleException;
 import com.liferay.portal.NoSuchVirtualHostException;
 import com.liferay.portal.RequiredCompanyException;
+import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Property;
@@ -34,7 +35,7 @@ import com.liferay.portal.kernel.search.FacetedSearcher;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.SearchContext;
-import com.liferay.portal.kernel.search.SearchEngineUtil;
+import com.liferay.portal.kernel.search.SearchEngineHelperUtil;
 import com.liferay.portal.kernel.search.facet.AssetEntriesFacet;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.ScopeFacet;
@@ -70,6 +71,8 @@ import com.liferay.portal.model.User;
 import com.liferay.portal.model.VirtualHost;
 import com.liferay.portal.security.auth.CompanyThreadLocal;
 import com.liferay.portal.service.base.CompanyLocalServiceBaseImpl;
+import com.liferay.portal.service.persistence.CompanyProvider;
+import com.liferay.portal.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.util.Portal;
 import com.liferay.portal.util.PortalInstances;
 import com.liferay.portal.util.PortalUtil;
@@ -77,6 +80,9 @@ import com.liferay.portal.util.PortletKeys;
 import com.liferay.portal.util.PrefsPropsUtil;
 import com.liferay.portal.util.PropsUtil;
 import com.liferay.portal.util.PropsValues;
+import com.liferay.registry.Registry;
+import com.liferay.registry.RegistryUtil;
+import com.liferay.registry.ServiceRegistration;
 import com.liferay.util.Encryptor;
 import com.liferay.util.EncryptorException;
 
@@ -87,6 +93,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -267,132 +274,152 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 			}
 		}
 
-		// Search engine
+		CompanyProvider currentCompanyProvider =
+			_companyProviderWrapper.getCompanyProvider();
 
-		long companyId = company.getCompanyId();
+		try {
+			long companyId = company.getCompanyId();
 
-		SearchEngineUtil.initialize(companyId);
+			_companyProviderWrapper.setCompanyProvider(
+				new CustomCompanyProvider(companyId));
 
-		// Key
+			// Key
 
-		checkCompanyKey(companyId);
+			checkCompanyKey(companyId);
 
-		// Default user
+			// Default user
 
-		User defaultUser = userPersistence.fetchByC_DU(companyId, true);
+			User defaultUser = userPersistence.fetchByC_DU(companyId, true);
 
-		if (defaultUser != null) {
-			if (!defaultUser.isAgreedToTermsOfUse()) {
+			if (defaultUser != null) {
+				if (!defaultUser.isAgreedToTermsOfUse()) {
+					defaultUser.setAgreedToTermsOfUse(true);
+
+					userPersistence.update(defaultUser);
+				}
+			}
+			else {
+				long userId = counterLocalService.increment();
+
+				defaultUser = userPersistence.create(userId);
+
+				defaultUser.setCompanyId(companyId);
+				defaultUser.setDefaultUser(true);
+				defaultUser.setContactId(counterLocalService.increment());
+				defaultUser.setPassword("password");
+				defaultUser.setScreenName(
+					String.valueOf(defaultUser.getUserId()));
+				defaultUser.setEmailAddress("default@" + company.getMx());
+
+				if (Validator.isNotNull(PropsValues.COMPANY_DEFAULT_LOCALE)) {
+					defaultUser.setLanguageId(
+						PropsValues.COMPANY_DEFAULT_LOCALE);
+				}
+				else {
+					Locale locale = LocaleUtil.getDefault();
+
+					defaultUser.setLanguageId(locale.toString());
+				}
+
+				if (Validator.isNotNull(
+						PropsValues.COMPANY_DEFAULT_TIME_ZONE)) {
+
+					defaultUser.setTimeZoneId(
+						PropsValues.COMPANY_DEFAULT_TIME_ZONE);
+				}
+				else {
+					TimeZone timeZone = TimeZoneUtil.getDefault();
+
+					defaultUser.setTimeZoneId(timeZone.getID());
+				}
+
+				String greeting = LanguageUtil.format(
+					defaultUser.getLocale(), "welcome", null, false);
+
+				defaultUser.setGreeting(greeting + StringPool.EXCLAMATION);
+				defaultUser.setLoginDate(now);
+				defaultUser.setFailedLoginAttempts(0);
 				defaultUser.setAgreedToTermsOfUse(true);
+				defaultUser.setStatus(WorkflowConstants.STATUS_APPROVED);
 
 				userPersistence.update(defaultUser);
+
+				// Contact
+
+				Contact defaultContact = contactPersistence.create(
+					defaultUser.getContactId());
+
+				defaultContact.setCompanyId(defaultUser.getCompanyId());
+				defaultContact.setUserId(defaultUser.getUserId());
+				defaultContact.setUserName(StringPool.BLANK);
+				defaultContact.setClassName(User.class.getName());
+				defaultContact.setClassPK(defaultUser.getUserId());
+				defaultContact.setAccountId(company.getAccountId());
+				defaultContact.setParentContactId(
+					ContactConstants.DEFAULT_PARENT_CONTACT_ID);
+				defaultContact.setEmailAddress(defaultUser.getEmailAddress());
+				defaultContact.setFirstName(StringPool.BLANK);
+				defaultContact.setMiddleName(StringPool.BLANK);
+				defaultContact.setLastName(StringPool.BLANK);
+				defaultContact.setMale(true);
+				defaultContact.setBirthday(now);
+
+				contactPersistence.update(defaultContact);
 			}
+
+			// System roles
+
+			roleLocalService.checkSystemRoles(companyId);
+
+			// System groups
+
+			groupLocalService.checkSystemGroups(companyId);
+
+			// Company group
+
+			groupLocalService.checkCompanyGroup(companyId);
+
+			// Default password policy
+
+			passwordPolicyLocalService.checkDefaultPasswordPolicy(companyId);
+
+			// Default user must have the Guest role
+
+			Role guestRole = roleLocalService.getRole(
+				companyId, RoleConstants.GUEST);
+
+			roleLocalService.setUserRoles(
+				defaultUser.getUserId(), new long[] {guestRole.getRoleId()});
+
+			// Default admin
+
+			if (userPersistence.countByCompanyId(companyId) == 1) {
+				String emailAddress =
+					PropsValues.DEFAULT_ADMIN_EMAIL_ADDRESS_PREFIX + "@" + mx;
+
+				userLocalService.addDefaultAdminUser(
+					companyId, PropsValues.DEFAULT_ADMIN_SCREEN_NAME,
+					emailAddress, defaultUser.getLocale(),
+					PropsValues.DEFAULT_ADMIN_FIRST_NAME,
+					PropsValues.DEFAULT_ADMIN_MIDDLE_NAME,
+					PropsValues.DEFAULT_ADMIN_LAST_NAME);
+			}
+
+			// Portlets
+
+			portletLocalService.checkPortlets(companyId);
+
+			Registry registry = RegistryUtil.getRegistry();
+
+			ServiceRegistration<Company> serviceRegistration =
+				registry.registerService(Company.class, company);
+
+			_companyServiceRegistrations.put(
+				company.getCompanyId(), serviceRegistration);
 		}
-		else {
-			long userId = counterLocalService.increment();
-
-			defaultUser = userPersistence.create(userId);
-
-			defaultUser.setCompanyId(companyId);
-			defaultUser.setDefaultUser(true);
-			defaultUser.setContactId(counterLocalService.increment());
-			defaultUser.setPassword("password");
-			defaultUser.setScreenName(String.valueOf(defaultUser.getUserId()));
-			defaultUser.setEmailAddress("default@" + company.getMx());
-
-			if (Validator.isNotNull(PropsValues.COMPANY_DEFAULT_LOCALE)) {
-				defaultUser.setLanguageId(PropsValues.COMPANY_DEFAULT_LOCALE);
-			}
-			else {
-				Locale locale = LocaleUtil.getDefault();
-
-				defaultUser.setLanguageId(locale.toString());
-			}
-
-			if (Validator.isNotNull(PropsValues.COMPANY_DEFAULT_TIME_ZONE)) {
-				defaultUser.setTimeZoneId(
-					PropsValues.COMPANY_DEFAULT_TIME_ZONE);
-			}
-			else {
-				TimeZone timeZone = TimeZoneUtil.getDefault();
-
-				defaultUser.setTimeZoneId(timeZone.getID());
-			}
-
-			String greeting = LanguageUtil.format(
-				defaultUser.getLocale(), "welcome", null, false);
-
-			defaultUser.setGreeting(greeting + StringPool.EXCLAMATION);
-			defaultUser.setLoginDate(now);
-			defaultUser.setFailedLoginAttempts(0);
-			defaultUser.setAgreedToTermsOfUse(true);
-			defaultUser.setStatus(WorkflowConstants.STATUS_APPROVED);
-
-			userPersistence.update(defaultUser);
-
-			// Contact
-
-			Contact defaultContact = contactPersistence.create(
-				defaultUser.getContactId());
-
-			defaultContact.setCompanyId(defaultUser.getCompanyId());
-			defaultContact.setUserId(defaultUser.getUserId());
-			defaultContact.setUserName(StringPool.BLANK);
-			defaultContact.setClassName(User.class.getName());
-			defaultContact.setClassPK(defaultUser.getUserId());
-			defaultContact.setAccountId(company.getAccountId());
-			defaultContact.setParentContactId(
-				ContactConstants.DEFAULT_PARENT_CONTACT_ID);
-			defaultContact.setEmailAddress(defaultUser.getEmailAddress());
-			defaultContact.setFirstName(StringPool.BLANK);
-			defaultContact.setMiddleName(StringPool.BLANK);
-			defaultContact.setLastName(StringPool.BLANK);
-			defaultContact.setMale(true);
-			defaultContact.setBirthday(now);
-
-			contactPersistence.update(defaultContact);
+		finally {
+			_companyProviderWrapper.setCompanyProvider(currentCompanyProvider);
 		}
-
-		// System roles
-
-		roleLocalService.checkSystemRoles(companyId);
-
-		// System groups
-
-		groupLocalService.checkSystemGroups(companyId);
-
-		// Company group
-
-		groupLocalService.checkCompanyGroup(companyId);
-
-		// Default password policy
-
-		passwordPolicyLocalService.checkDefaultPasswordPolicy(companyId);
-
-		// Default user must have the Guest role
-
-		Role guestRole = roleLocalService.getRole(
-			companyId, RoleConstants.GUEST);
-
-		roleLocalService.setUserRoles(
-			defaultUser.getUserId(), new long[] {guestRole.getRoleId()});
-
-		// Default admin
-
-		if (userPersistence.countByCompanyId(companyId) == 1) {
-			String emailAddress =
-				PropsValues.DEFAULT_ADMIN_EMAIL_ADDRESS_PREFIX + "@" + mx;
-
-			userLocalService.addDefaultAdminUser(
-				companyId, PropsValues.DEFAULT_ADMIN_SCREEN_NAME, emailAddress,
-				defaultUser.getLocale(), PropsValues.DEFAULT_ADMIN_FIRST_NAME,
-				PropsValues.DEFAULT_ADMIN_MIDDLE_NAME,
-				PropsValues.DEFAULT_ADMIN_LAST_NAME);
-		}
-
-		// Portlets
-
-		portletLocalService.checkPortlets(companyId);
 
 		return company;
 	}
@@ -726,7 +753,7 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 			searchContext.setCompanyId(companyId);
 			searchContext.setEnd(end);
 			searchContext.setEntryClassNames(
-				SearchEngineUtil.getEntryClassNames());
+				SearchEngineHelperUtil.getEntryClassNames());
 
 			if (groupId > 0) {
 				searchContext.setGroupIds(new long[] {groupId});
@@ -1222,7 +1249,7 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 		layoutSetPrototypeActionableDynamicQuery.setCompanyId(companyId);
 		layoutSetPrototypeActionableDynamicQuery.setPerformActionMethod(
 			new ActionableDynamicQuery.
-			PerformActionMethod<LayoutSetPrototype>() {
+				PerformActionMethod<LayoutSetPrototype>() {
 
 				@Override
 				public void performAction(LayoutSetPrototype layoutSetPrototype)
@@ -1340,6 +1367,17 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 		};
 
 		TransactionCommitCallbackUtil.registerCallback(callable);
+
+		// Search indices
+
+		SearchEngineHelperUtil.removeCompany(companyId);
+
+		ServiceRegistration<Company> serviceRegistration =
+			_companyServiceRegistrations.remove(companyId);
+
+		if (serviceRegistration != null) {
+			serviceRegistration.unregister();
+		}
 
 		return company;
 	}
@@ -1625,5 +1663,31 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		CompanyLocalServiceImpl.class);
+
+	@BeanReference(type = CompanyProviderWrapper.class)
+	private CompanyProviderWrapper _companyProviderWrapper;
+
+	private final Map<Long, ServiceRegistration<Company>>
+		_companyServiceRegistrations = new HashMap<>();
+
+	private class CustomCompanyProvider implements CompanyProvider {
+
+		public CustomCompanyProvider(long companyId) {
+			_companyId = companyId;
+		}
+
+		@Override
+		public long getCompanyId() {
+			return _companyId;
+		}
+
+		@Override
+		public String getCompanyIdName() {
+			return "companyId";
+		}
+
+		private final long _companyId;
+
+	}
 
 }

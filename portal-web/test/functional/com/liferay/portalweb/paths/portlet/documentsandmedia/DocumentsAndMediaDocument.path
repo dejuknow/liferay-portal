@@ -197,6 +197,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>DOCUMENT_DETAILS_IMAGE_PREVIEW</td>
+	<td>//div[contains(@class,'preview-file-image-container')]/img</td>
+	<td></td>
+</tr>
+<tr>
 	<td></td>
 	<td></td>
 	<td></td>
@@ -321,7 +326,7 @@
 </tr>
 <tr>
 	<td>VERSION_HISTORY_TABLE_DROPDOWN</td>
-	<td>//tr[contains(.,'${key_dmDocumentVersionNumber}')]/td[5]/div/a/i</td>
+	<td>//tr[contains(.,'${key_dmDocumentVersionNumber}')]/td[5]/div/a</td>
 	<td></td>
 </tr>
 </tbody>

@@ -52,6 +52,8 @@ import javax.naming.directory.ModificationItem;
 import javax.naming.directory.SchemaViolationException;
 import javax.naming.ldap.LdapContext;
 
+import org.apache.commons.lang.time.StopWatch;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -74,6 +76,14 @@ public class LDAPUserExporterImpl implements UserExporter {
 		throws Exception {
 
 		long companyId = contact.getCompanyId();
+
+		StopWatch stopWatch = new StopWatch();
+
+		if (_log.isDebugEnabled()) {
+			stopWatch.start();
+
+			_log.debug("Exporting contact " + contact);
+		}
 
 		LDAPAuthConfiguration ldapAuthConfiguration =
 			_ldapAuthConfigurationProvider.getConfiguration(companyId);
@@ -145,6 +155,12 @@ public class LDAPUserExporterImpl implements UserExporter {
 			if (ldapContext != null) {
 				ldapContext.close();
 			}
+
+			if (_log.isDebugEnabled()) {
+				_log.debug(
+					"Finished exporting contact " + contact + " in " +
+						stopWatch.getTime() + "ms");
+			}
 		}
 	}
 
@@ -156,6 +172,15 @@ public class LDAPUserExporterImpl implements UserExporter {
 		User user = _userLocalService.getUser(userId);
 
 		long companyId = user.getCompanyId();
+
+		StopWatch stopWatch = new StopWatch();
+
+		if (_log.isDebugEnabled()) {
+			stopWatch.start();
+
+			_log.debug(
+				"Exporting user " + user + " in user group " + userGroupId);
+		}
 
 		LDAPAuthConfiguration ldapAuthConfiguration =
 			_ldapAuthConfigurationProvider.getConfiguration(companyId);
@@ -230,6 +255,12 @@ public class LDAPUserExporterImpl implements UserExporter {
 		finally {
 			if (ldapContext != null) {
 				ldapContext.close();
+			}
+
+			if (_log.isDebugEnabled()) {
+				_log.debug(
+					"Finished exporting user " + user + " in user group " +
+						userGroupId + " in " + stopWatch.getTime() + "ms");
 			}
 		}
 	}
@@ -449,12 +480,12 @@ public class LDAPUserExporterImpl implements UserExporter {
 	private static final Log _log = LogFactoryUtil.getLog(
 		LDAPUserExporterImpl.class);
 
-	private volatile ConfigurationProvider<LDAPAuthConfiguration>
+	private ConfigurationProvider<LDAPAuthConfiguration>
 		_ldapAuthConfigurationProvider;
-	private volatile LDAPSettings _ldapSettings;
-	private volatile PortalLDAP _portalLDAP;
-	private volatile PortalToLDAPConverter _portalToLDAPConverter;
-	private volatile UserGroupLocalService _userGroupLocalService;
-	private volatile UserLocalService _userLocalService;
+	private LDAPSettings _ldapSettings;
+	private PortalLDAP _portalLDAP;
+	private PortalToLDAPConverter _portalToLDAPConverter;
+	private UserGroupLocalService _userGroupLocalService;
+	private UserLocalService _userLocalService;
 
 }

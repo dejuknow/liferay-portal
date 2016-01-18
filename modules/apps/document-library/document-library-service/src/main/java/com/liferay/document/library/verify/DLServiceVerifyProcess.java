@@ -164,6 +164,8 @@ public class DLServiceVerifyProcess extends VerifyProcess {
 		dlFileEntryType = _dlFileEntryTypeLocalService.createDLFileEntryType(
 			DLFileEntryTypeConstants.FILE_ENTRY_TYPE_ID_BASIC_DOCUMENT);
 
+		dlFileEntryType.setCompanyId(
+			DLFileEntryTypeConstants.COMPANY_ID_BASIC_DOCUMENT);
 		dlFileEntryType.setFileEntryTypeKey(
 			StringUtil.toUpperCase(
 				DLFileEntryTypeConstants.NAME_BASIC_DOCUMENT));
@@ -397,6 +399,7 @@ public class DLServiceVerifyProcess extends VerifyProcess {
 						return;
 					}
 				}
+
 			});
 
 		actionableDynamicQuery.performActions();
@@ -714,13 +717,12 @@ public class DLServiceVerifyProcess extends VerifyProcess {
 	private static final Log _log = LogFactoryUtil.getLog(
 		DLServiceVerifyProcess.class);
 
-	private volatile CounterLocalService _counterLocalService;
-	private volatile DLAppHelperLocalService _dlAppHelperLocalService;
-	private volatile DLFileEntryLocalService _dlFileEntryLocalService;
-	private volatile DLFileEntryMetadataLocalService
-		_dlFileEntryMetadataLocalService;
-	private volatile DLFileEntryTypeLocalService _dlFileEntryTypeLocalService;
-	private volatile DLFileVersionLocalService _dlFileVersionLocalService;
-	private volatile DLFolderLocalService _dlFolderLocalService;
+	private CounterLocalService _counterLocalService;
+	private DLAppHelperLocalService _dlAppHelperLocalService;
+	private DLFileEntryLocalService _dlFileEntryLocalService;
+	private DLFileEntryMetadataLocalService _dlFileEntryMetadataLocalService;
+	private DLFileEntryTypeLocalService _dlFileEntryTypeLocalService;
+	private DLFileVersionLocalService _dlFileVersionLocalService;
+	private DLFolderLocalService _dlFolderLocalService;
 
 }

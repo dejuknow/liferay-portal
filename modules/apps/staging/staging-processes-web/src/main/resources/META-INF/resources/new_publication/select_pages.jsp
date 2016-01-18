@@ -48,11 +48,12 @@ String selectedLayoutIds = ParamUtil.getString(request, "selectedLayoutIds");
 			long selPlid = ParamUtil.getLong(request, "selPlid", LayoutConstants.DEFAULT_PLID);
 			%>
 
-			<liferay-ui:layouts-tree
+			<liferay-layout:layouts-tree
 				defaultStateChecked="<%= true %>"
 				draggableTree="<%= false %>"
 				groupId="<%= groupId %>"
 				incomplete="<%= false %>"
+				portletURL="<%= renderResponse.createRenderURL() %>"
 				privateLayout="<%= privateLayout %>"
 				rootNodeName="<%= group.getLayoutRootNodeName(privateLayout, locale) %>"
 				selectableTree="<%= true %>"

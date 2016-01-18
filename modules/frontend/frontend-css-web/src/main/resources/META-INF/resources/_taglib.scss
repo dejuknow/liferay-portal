@@ -1,3 +1,4 @@
+@import "taglib/alert";
 @import "taglib/asset_metadata";
 @import "taglib/app_view_common";
 @import "taglib/app_view_entry";
@@ -9,6 +10,7 @@
 @import "taglib/calendar";
 @import "taglib/captcha";
 @import "taglib/categorization_filter";
+@import "taglib/control_menu";
 @import "taglib/ddm_template";
 @import "taglib/diff";
 @import "taglib/diff_html";
@@ -35,6 +37,7 @@
 @import "taglib/management_bar";
 @import "taglib/map";
 @import "taglib/navbar";
+@import "taglib/notification";
 @import "taglib/preview";
 @import "taglib/ratings";
 @import "taglib/rss_settings";

@@ -17,6 +17,7 @@ package com.liferay.portal.service.persistence.impl;
 import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.NoSuchUserTrackerException;
+import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
@@ -37,6 +38,8 @@ import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.UserTracker;
 import com.liferay.portal.model.impl.UserTrackerImpl;
 import com.liferay.portal.model.impl.UserTrackerModelImpl;
+import com.liferay.portal.service.persistence.CompanyProvider;
+import com.liferay.portal.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.service.persistence.UserTrackerPersistence;
 
 import java.io.Serializable;
@@ -1728,6 +1731,8 @@ public class UserTrackerPersistenceImpl extends BasePersistenceImpl<UserTracker>
 		userTracker.setNew(true);
 		userTracker.setPrimaryKey(userTrackerId);
 
+		userTracker.setCompanyId(companyProvider.getCompanyId());
+
 		return userTracker;
 	}
 
@@ -2331,6 +2336,8 @@ public class UserTrackerPersistenceImpl extends BasePersistenceImpl<UserTracker>
 		finderCache.removeCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 	}
 
+	@BeanReference(type = CompanyProviderWrapper.class)
+	protected CompanyProvider companyProvider;
 	protected EntityCache entityCache = EntityCacheUtil.getEntityCache();
 	protected FinderCache finderCache = FinderCacheUtil.getFinderCache();
 	private static final String _SQL_SELECT_USERTRACKER = "SELECT userTracker FROM UserTracker userTracker";

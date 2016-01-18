@@ -21,17 +21,19 @@ import com.liferay.configuration.admin.ConfigurationAdmin;
 /**
  * @author Lino Alves
  */
-@ConfigurationAdmin(category = "productivity")
+@ConfigurationAdmin(
+	category = "productivity", scope = ConfigurationAdmin.Scope.GROUP
+)
 @Meta.OCD(
 	id = "com.liferay.dynamic.data.lists.form.web.configuration.DDLFormWebConfiguration",
-	name = "Dynamic Data Lists Form Configuration"
+	localization = "content/Language", name = "%ddl.form.web.configuration.name"
 )
 public interface DDLFormWebConfiguration {
 
-	@Meta.AD(deflt = "descriptive", required = false)
+	@Meta.AD(
+		deflt = "descriptive", optionLabels = {"Descriptive", "List", "Icon"},
+		optionValues = {"descriptive", "list", "icon"}, required = false
+	)
 	public String defaultDisplayView();
-
-	@Meta.AD(deflt = "icon | descriptive | list", required = false)
-	public String[] supportedDisplayView();
 
 }

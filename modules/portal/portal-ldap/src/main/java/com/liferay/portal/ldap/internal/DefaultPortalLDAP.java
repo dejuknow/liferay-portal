@@ -262,14 +262,21 @@ public class DefaultPortalLDAP implements PortalLDAP {
 				new String[mappedGroupAttributeIds.size()]));
 
 		if (_log.isDebugEnabled()) {
-			for (String attributeId : mappedGroupAttributeIds) {
-				Attribute attribute = attributes.get(attributeId);
+			if ((attributes == null) || (attributes.size() == 0)) {
+				_log.debug(
+					"No LDAP group attributes found for " +
+						fullDistinguishedName);
+			}
+			else {
+				for (String attributeId : mappedGroupAttributeIds) {
+					Attribute attribute = attributes.get(attributeId);
 
-				if (attribute == null) {
-					continue;
+					if (attribute == null) {
+						continue;
+					}
+
+					_log.debug("LDAP group attribute " + attribute.toString());
 				}
-
-				_log.debug("LDAP group attribute " + attribute.toString());
 			}
 		}
 
@@ -651,14 +658,21 @@ public class DefaultPortalLDAP implements PortalLDAP {
 			ldapContext, fullDistinguishedName, mappedUserAttributeIds);
 
 		if (_log.isDebugEnabled()) {
-			for (String attributeId : mappedUserAttributeIds) {
-				Attribute attribute = attributes.get(attributeId);
+			if ((attributes == null) || (attributes.size() == 0)) {
+				_log.debug(
+					"No LDAP user attributes found for:: " +
+						fullDistinguishedName);
+			}
+			else {
+				for (String attributeId : mappedUserAttributeIds) {
+					Attribute attribute = attributes.get(attributeId);
 
-				if (attribute == null) {
-					continue;
+					if (attribute == null) {
+						continue;
+					}
+
+					_log.debug("LDAP user attribute " + attribute.toString());
 				}
-
-				_log.debug("LDAP user attribute " + attribute.toString());
 			}
 		}
 
@@ -1082,10 +1096,10 @@ public class DefaultPortalLDAP implements PortalLDAP {
 		DefaultPortalLDAP.class);
 
 	private String _companySecurityAuthType;
-	private volatile ConfigurationProvider<LDAPServerConfiguration>
+	private ConfigurationProvider<LDAPServerConfiguration>
 		_ldapServerConfigurationProvider;
-	private volatile LDAPSettings _ldapSettings;
-	private volatile ConfigurationProvider<SystemLDAPConfiguration>
+	private LDAPSettings _ldapSettings;
+	private ConfigurationProvider<SystemLDAPConfiguration>
 		_systemLDAPConfigurationProvider;
 
 }

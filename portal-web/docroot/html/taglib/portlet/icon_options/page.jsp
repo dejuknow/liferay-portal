@@ -20,7 +20,7 @@
 	cssClass="portlet-options"
 	direction="<%= direction %>"
 	extended="<%= false %>"
-	icon="../aui/ellipsis-vertical"
+	icon='<%= (markupView != null) && markupView.equals("lexicon") ? StringPool.BLANK : "../aui/ellipsis-vertical" %>'
 	markupView="<%= markupView %>"
 	message="options"
 	showArrow="<%= false %>"
@@ -29,14 +29,12 @@
 >
 
 	<%
-	List<PortletConfigurationIconFactory> portletConfigurationIconFactories = ListUtil.copy(PortletConfigurationIconTracker.getPortletConfigurationIcons(portletRequest));
-
 	portletConfigurationIconFactories = ListUtil.sort(portletConfigurationIconFactories, new PropertyComparator("weight", false, false));
 
 	for (PortletConfigurationIconFactory portletConfigurationIconFactory : portletConfigurationIconFactories) {
-		PortletConfigurationIcon portletConfigurationIcon = portletConfigurationIconFactory.create(request);
+		PortletConfigurationIcon portletConfigurationIcon = portletConfigurationIconFactory.create(portletRequest);
 
-		if (portletConfigurationIcon.isShow()) {
+		if ((portletConfigurationIcon != null) && portletConfigurationIcon.isShow()) {
 			boolean include = portletConfigurationIconFactory.include(request, new PipingServletResponse(pageContext));
 
 			if (!include) {

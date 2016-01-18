@@ -48,6 +48,7 @@ import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalService;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryMetadataLocalService;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryTypeLocalService;
 import com.liferay.portlet.documentlibrary.service.DLFileVersionLocalService;
+import com.liferay.portlet.documentlibrary.service.DLTrashService;
 import com.liferay.portlet.documentlibrary.util.DLProcessorRegistryUtil;
 import com.liferay.portlet.documentlibrary.util.DLProcessorThreadLocal;
 import com.liferay.portlet.dynamicdatamapping.DDMFormValues;
@@ -415,7 +416,7 @@ public class FileEntryStagedModelDataHandler
 					fileEntry.getSize(), serviceContext);
 
 				if (fileEntry.isInTrash()) {
-					importedFileEntry = _dlAppService.moveFileEntryToTrash(
+					importedFileEntry = _dlTrashService.moveFileEntryToTrash(
 						importedFileEntry.getFileEntryId());
 				}
 			}
@@ -732,6 +733,11 @@ public class FileEntryStagedModelDataHandler
 	}
 
 	@Reference(unbind = "-")
+	protected void setDLTrashService(DLTrashService dlTrashService) {
+		_dlTrashService = dlTrashService;
+	}
+
+	@Reference(unbind = "-")
 	protected void setRepositoryLocalService(
 		RepositoryLocalService repositoryLocalService) {
 
@@ -798,13 +804,13 @@ public class FileEntryStagedModelDataHandler
 	private static final Log _log = LogFactoryUtil.getLog(
 		FileEntryStagedModelDataHandler.class);
 
-	private volatile DLAppLocalService _dlAppLocalService;
-	private volatile DLAppService _dlAppService;
-	private volatile DLFileEntryLocalService _dlFileEntryLocalService;
-	private volatile DLFileEntryMetadataLocalService
-		_dlFileEntryMetadataLocalService;
-	private volatile DLFileEntryTypeLocalService _dlFileEntryTypeLocalService;
-	private volatile DLFileVersionLocalService _dlFileVersionLocalService;
-	private volatile RepositoryLocalService _repositoryLocalService;
+	private DLAppLocalService _dlAppLocalService;
+	private DLAppService _dlAppService;
+	private DLFileEntryLocalService _dlFileEntryLocalService;
+	private DLFileEntryMetadataLocalService _dlFileEntryMetadataLocalService;
+	private DLFileEntryTypeLocalService _dlFileEntryTypeLocalService;
+	private DLFileVersionLocalService _dlFileVersionLocalService;
+	private DLTrashService _dlTrashService;
+	private RepositoryLocalService _repositoryLocalService;
 
 }

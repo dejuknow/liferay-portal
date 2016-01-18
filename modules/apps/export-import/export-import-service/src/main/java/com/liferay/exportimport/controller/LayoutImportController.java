@@ -43,6 +43,7 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.ReleaseInfo;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Tuple;
 import com.liferay.portal.kernel.util.UnicodeProperties;
@@ -60,7 +61,6 @@ import com.liferay.portal.model.LayoutPrototype;
 import com.liferay.portal.model.LayoutSet;
 import com.liferay.portal.model.LayoutSetPrototype;
 import com.liferay.portal.model.Portlet;
-import com.liferay.portal.model.impl.LayoutImpl;
 import com.liferay.portal.service.GroupLocalService;
 import com.liferay.portal.service.LayoutLocalService;
 import com.liferay.portal.service.LayoutPrototypeLocalService;
@@ -90,7 +90,6 @@ import com.liferay.portlet.exportimport.lar.StagedModelDataHandlerUtil;
 import com.liferay.portlet.exportimport.lar.UserIdStrategy;
 import com.liferay.portlet.exportimport.lifecycle.ExportImportLifecycleManager;
 import com.liferay.portlet.exportimport.model.ExportImportConfiguration;
-import com.liferay.portlet.exportimport.xstream.XStreamAliasRegistryUtil;
 import com.liferay.portlet.sites.util.Sites;
 import com.liferay.portlet.sites.util.SitesUtil;
 
@@ -108,7 +107,6 @@ import java.util.Set;
 
 import org.apache.commons.lang.time.StopWatch;
 
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -294,11 +292,6 @@ public class LayoutImportController implements ImportController {
 				zipReader.close();
 			}
 		}
-	}
-
-	@Activate
-	protected void activate() {
-		XStreamAliasRegistryUtil.register(LayoutImpl.class, "Layout");
 	}
 
 	protected void deleteMissingLayouts(
@@ -861,7 +854,7 @@ public class LayoutImportController implements ImportController {
 
 		// Asset links
 
-		_portletImportController.readAssetLinks(portletDataContext);
+		_portletImportController.importAssetLinks(portletDataContext);
 
 		// Delete missing layouts
 
@@ -1296,6 +1289,43 @@ public class LayoutImportController implements ImportController {
 					"portal build number " + buildNumber);
 		}
 
+		// Portlets compatibility
+
+		Element portletsElement = rootElement.element("portlets");
+
+		List<Element> portletElements = portletsElement.elements("portlet");
+
+		for (Element portletElement : portletElements) {
+			String portletId = GetterUtil.getString(
+				portletElement.attributeValue("portlet-id"));
+
+			if (Validator.isNull(portletId)) {
+				continue;
+			}
+
+			String schemaVersion = GetterUtil.getString(
+				portletElement.attributeValue("schema-version"));
+
+			Portlet portlet = _portletLocalService.getPortletById(
+				companyId, portletId);
+
+			PortletDataHandler portletDataHandler =
+				portlet.getPortletDataHandlerInstance();
+
+			if (!portletDataHandler.validateSchemaVersion(schemaVersion)) {
+				StringBundler sb = new StringBundler(6);
+
+				sb.append("Portlet's schema version ");
+				sb.append(schemaVersion);
+				sb.append(" in the LAR is not valid for the deployed portlet ");
+				sb.append(portletId);
+				sb.append(" with schema version ");
+				sb.append(portletDataHandler.getSchemaVersion());
+
+				throw new LayoutImportException(sb.toString());
+			}
+		}
+
 		// Type
 
 		String larType = headerElement.attributeValue("type");
@@ -1456,17 +1486,16 @@ public class LayoutImportController implements ImportController {
 
 	private final DeletionSystemEventImporter _deletionSystemEventImporter =
 		DeletionSystemEventImporter.getInstance();
-	private volatile ExportImportLifecycleManager _exportImportLifecycleManager;
-	private volatile GroupLocalService _groupLocalService;
-	private volatile LayoutLocalService _layoutLocalService;
-	private volatile LayoutPrototypeLocalService _layoutPrototypeLocalService;
-	private volatile LayoutSetLocalService _layoutSetLocalService;
-	private volatile LayoutSetPrototypeLocalService
-		_layoutSetPrototypeLocalService;
+	private ExportImportLifecycleManager _exportImportLifecycleManager;
+	private GroupLocalService _groupLocalService;
+	private LayoutLocalService _layoutLocalService;
+	private LayoutPrototypeLocalService _layoutPrototypeLocalService;
+	private LayoutSetLocalService _layoutSetLocalService;
+	private LayoutSetPrototypeLocalService _layoutSetPrototypeLocalService;
 	private final PermissionImporter _permissionImporter =
 		PermissionImporter.getInstance();
-	private volatile PortletImportController _portletImportController;
-	private volatile PortletLocalService _portletLocalService;
+	private PortletImportController _portletImportController;
+	private PortletLocalService _portletLocalService;
 	private final ThemeImporter _themeImporter = ThemeImporter.getInstance();
 
 }

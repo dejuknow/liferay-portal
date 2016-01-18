@@ -30,20 +30,25 @@ InformationMessagesControlMenuEntry informationMessagesControlMenuEntry = (Infor
 Map<String, Object> data = new HashMap<String, Object>();
 
 data.put("panelURL", addURL);
+data.put("qa-id", "info");
 %>
 
-<li>
-	<liferay-ui:icon
-		iconCssClass="icon-info icon-monospaced"
-		id="infoButton"
-		linkCssClass="control-menu-icon"
-		url="javascript:;"
-	/>
+<liferay-ui:icon
+	data="<%= data %>"
+	icon="information-live"
+	id="infoButton"
+	label="<%= false %>"
+	linkCssClass="control-menu-icon"
+	markupView="lexicon"
+	message="additional-information"
+	url="javascript:;"
+/>
 
-	<liferay-util:buffer var="infoContainer">
+<div class="hide">
+	<div id="<portlet:namespace/>infoContainer">
 		<c:if test="<%= informationMessagesControlMenuEntry.isModifiedLayout(themeDisplay) %>">
 			<div class="modified-layout">
-				<i class="icon-info-sign"></i>
+				<aui:icon image="information-live" markupView="lexicon" />
 
 				<span class="message-info">
 					<liferay-ui:message key="this-page-has-been-changed-since-the-last-update-from-the-site-template-excerpt" />
@@ -68,7 +73,7 @@ data.put("panelURL", addURL);
 
 		<c:if test="<%= informationMessagesControlMenuEntry.isLinkedLayout(themeDisplay) %>">
 			<div class="linked-layout">
-				<i class="icon-info-sign"></i>
+				<aui:icon image="information-live" markupView="lexicon" />
 
 				<span class="message-info">
 
@@ -93,7 +98,7 @@ data.put("panelURL", addURL);
 
 		<c:if test="<%= informationMessagesControlMenuEntry.isCustomizableLayout(themeDisplay) %>">
 			<div class="customizable-layout">
-				<i class="icon-info-sign"></i>
+				<aui:icon image="information-live" markupView="lexicon" />
 
 				<span class="message-info">
 					<c:choose>
@@ -162,15 +167,36 @@ data.put("panelURL", addURL);
 				);
 			</aui:script>
 		</c:if>
-	</liferay-util:buffer>
+	</div>
+</div>
 
-	<aui:script sandbox="<%= true %>">
-		$('#<portlet:namespace />infoButton').popover(
-			{
-				content: '<%= HtmlUtil.escapeJS(infoContainer) %>',
-				html: true,
-				placement: 'bottom'
-			}
-		);
-	</aui:script>
-</li>
+<aui:script position="auto" use="aui-popover,event-outside">
+	var trigger = A.one('#<portlet:namespace />infoButton');
+
+	var popOver = new A.Popover(
+		{
+			align: {
+					node: trigger,
+					points:[A.WidgetPositionAlign.TC, A.WidgetPositionAlign.BC]
+				},
+			bodyContent: A.one('#<portlet:namespace/>infoContainer'),
+			constrain: true,
+			hideOn: [
+				{
+					node: A.one('document'),
+					eventName: 'key',
+					keyCode: 'esc'
+				},
+				{
+					node: A.one('document'),
+					eventName: 'clickoutside'
+				}
+			],
+			position: 'bottom',
+			trigger: trigger,
+			visible: false,
+			width: 300,
+			zIndex: Liferay.zIndex.TOOLTIP
+		}
+	).render();
+</aui:script>

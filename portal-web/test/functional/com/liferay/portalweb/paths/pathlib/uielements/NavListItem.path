@@ -60,7 +60,7 @@
 </tr>
 <tr>
 	<td>CATEGORIZATION</td>
-	<td>//ul[contains(@class,'nav-list')]/li/a[contains(.,'Categorization')]</td>
+	<td>//ul[contains(@class,'nav-list')]/li/a[contains(.,'Categorization')] | //div[@id='CategorizationTitle']/a</td>
 	<td></td>
 </tr>
 <tr>
@@ -80,12 +80,12 @@
 </tr>
 <tr>
 	<td>CUSTOM_FIELDS</td>
-	<td>//ul[contains(@class,'nav-list')]/li/a[contains(.,'Custom Fields')]</td>
+	<td>//div[contains(@id,'Custom-FieldsTitle')]/a[contains(.,'Custom Fields')] | //div[@id='Custom-FieldsTitle']/a</td>
 	<td></td>
 </tr>
 <tr>
 	<td>CUSTOMIZATION_SETTINGS</td>
-	<td>//ul[contains(@class,'nav-list')]/li/a[contains(.,'Customization Settings')]</td>
+	<td>//div[contains(@id,'customization-settingsTitle')]/a[contains(.,'Customization Settings')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -154,13 +154,18 @@
 	<td></td>
 </tr>
 <tr>
+	<td>METADATA</td>
+	<td>//div[@id='metadataTitle']/a</td>
+	<td></td>
+</tr>
+<tr>
 	<td>MINE</td>
 	<td>//ul[contains(@class,'list-group') and contains(@class,'nav')]/li[contains(.,'Mine')]/a/span</td>
 	<td></td>
 </tr>
 <tr>
 	<td>MOBILE_DEVICE_RULES</td>
-	<td>//ul[contains(@class,'nav-list')]/li/a[contains(.,'Mobile Device Rules')]</td>
+	<td>//div[contains(@id,'mobile-device-rulesTitle')]/a[contains(.,'Mobile Device Rules')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -195,7 +200,7 @@
 </tr>
 <tr>
 	<td>PERMISSIONS</td>
-	<td>//ul[contains(@class,'list-group') and contains(@class,'nav')]/li/a[contains(.,'Permissions')]</td>
+	<td>//ul[contains(@class,'list-group') and contains(@class,'nav')]/li/a[contains(.,'Permissions')] | //div[@id='PermissionsTitle']/a</td>
 	<td></td>
 </tr>
 <tr>
@@ -230,7 +235,7 @@
 </tr>
 <tr>
 	<td>SEO</td>
-	<td>//ul[contains(@class,'nav-list')]/li/a[contains(.,'SEO')]</td>
+	<td>//div[@id='SEOTitle']/a</td>
 	<td></td>
 </tr>
 <tr>

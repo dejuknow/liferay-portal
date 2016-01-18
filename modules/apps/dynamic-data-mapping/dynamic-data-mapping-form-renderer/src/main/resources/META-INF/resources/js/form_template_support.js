@@ -21,6 +21,10 @@ AUI.add(
 				value: false
 			},
 
+			submitLabel: {
+				value: Liferay.Language.get('submit')
+			},
+
 			templateNamespace: {
 				value: 'ddm.paginated_form'
 			}
@@ -45,7 +49,8 @@ AUI.add(
 				return {
 					pages: normalizedLayout.pages,
 					readOnly: instance.get('readOnly'),
-					strings: instance.get('strings')
+					strings: instance.get('strings'),
+					submitLabel: instance.get('submitLabel')
 				};
 			},
 
@@ -110,7 +115,8 @@ AUI.add(
 				return A.merge(
 					column,
 					{
-						fields: column.fieldNames.map(A.bind('_renderFieldTemplate', instance))
+						fields: column.fieldNames.map(A.bind('_renderFieldTemplate', instance)),
+						size: column.size
 					}
 				);
 			},
@@ -174,7 +180,7 @@ AUI.add(
 							columns: [
 								{
 									fieldNames: [fieldName],
-									size: 12
+									size: instance.get('size')
 								}
 							]
 						};

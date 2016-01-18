@@ -31,6 +31,8 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextThreadLocal;
+import com.liferay.portal.service.persistence.CompanyProvider;
+import com.liferay.portal.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 import com.liferay.portal.workflow.kaleo.exception.NoSuchNotificationRecipientException;
@@ -1755,6 +1757,8 @@ public class KaleoNotificationRecipientPersistenceImpl
 		kaleoNotificationRecipient.setNew(true);
 		kaleoNotificationRecipient.setPrimaryKey(kaleoNotificationRecipientId);
 
+		kaleoNotificationRecipient.setCompanyId(companyProvider.getCompanyId());
+
 		return kaleoNotificationRecipient;
 	}
 
@@ -2410,6 +2414,8 @@ public class KaleoNotificationRecipientPersistenceImpl
 		finderCache.removeCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 	}
 
+	@ServiceReference(type = CompanyProviderWrapper.class)
+	protected CompanyProvider companyProvider;
 	@ServiceReference(type = EntityCache.class)
 	protected EntityCache entityCache;
 	@ServiceReference(type = FinderCache.class)

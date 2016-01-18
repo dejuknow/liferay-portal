@@ -437,8 +437,7 @@ public class WikiPageTrashHandler extends BaseWikiTrashHandler {
 		}
 
 		if (containerModel) {
-			portletURL.setParameter(
-				"mvcRenderCommandName", "/wiki/view_all_pages");
+			portletURL.setParameter("mvcRenderCommandName", "/wiki/view_pages");
 		}
 		else {
 			portletURL.setParameter("mvcRenderCommandName", "/wiki/view");
@@ -475,8 +474,8 @@ public class WikiPageTrashHandler extends BaseWikiTrashHandler {
 		_wikiPageService = wikiPageService;
 	}
 
-	private volatile WikiPageLocalService _wikiPageLocalService;
-	private volatile WikiPageResourceLocalService _wikiPageResourceLocalService;
-	private volatile WikiPageService _wikiPageService;
+	private WikiPageLocalService _wikiPageLocalService;
+	private WikiPageResourceLocalService _wikiPageResourceLocalService;
+	private WikiPageService _wikiPageService;
 
 }

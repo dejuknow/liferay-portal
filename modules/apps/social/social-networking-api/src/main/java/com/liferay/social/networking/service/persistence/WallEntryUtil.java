@@ -16,14 +16,13 @@ package com.liferay.social.networking.service.persistence;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.osgi.util.ServiceTrackerFactory;
+
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.service.ServiceContext;
 
 import com.liferay.social.networking.model.WallEntry;
-
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
 
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -746,21 +745,6 @@ public class WallEntryUtil {
 		return _serviceTracker.getService();
 	}
 
-	/**
-	 * @deprecated As of 6.2.0
-	 */
-	@Deprecated
-	public void setPersistence(WallEntryPersistence persistence) {
-	}
-
-	private static ServiceTracker<WallEntryPersistence, WallEntryPersistence> _serviceTracker;
-
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(WallEntryUtil.class);
-
-		_serviceTracker = new ServiceTracker<WallEntryPersistence, WallEntryPersistence>(bundle.getBundleContext(),
-				WallEntryPersistence.class, null);
-
-		_serviceTracker.open();
-	}
+	private static ServiceTracker<WallEntryPersistence, WallEntryPersistence> _serviceTracker =
+		ServiceTrackerFactory.open(WallEntryPersistence.class);
 }

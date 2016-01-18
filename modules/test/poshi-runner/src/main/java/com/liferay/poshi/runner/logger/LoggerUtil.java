@@ -29,10 +29,12 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 /**
@@ -166,6 +168,35 @@ public final class LoggerUtil {
 		}
 	}
 
+	public static void pauseFailedTest() throws Exception {
+		if (!isLoggerStarted()) {
+			_startLogger();
+		}
+
+		_javascriptExecutor.executeScript(
+			"loggerInterface.fire('pause-trigger')");
+
+		pauseLoggerCheck();
+	}
+
+	public static void pauseLoggerCheck() throws Exception {
+		if (!isLoggerStarted()) {
+			return;
+		}
+
+		WebElement webElement = _webDriver.findElement(By.id("commandLog"));
+
+		String classAttribute = webElement.getAttribute("class");
+
+		while (classAttribute.contains("paused")) {
+			webElement = _webDriver.findElement(By.id("commandLog"));
+
+			classAttribute = webElement.getAttribute("class");
+
+			Thread.sleep(1000);
+		}
+	}
+
 	public static void setAttribute(
 		LoggerElement loggerElement, String attributeName,
 		String attributeValue) {
@@ -238,49 +269,7 @@ public final class LoggerUtil {
 			return;
 		}
 
-		_webDriver = new FirefoxDriver();
-
-		WebDriver.Options options = _webDriver.manage();
-
-		WebDriver.Window window = options.window();
-
-		window.setPosition(new Point(1050, 45));
-		window.setSize(new Dimension(850, 950));
-
-		_javascriptExecutor = (JavascriptExecutor)_webDriver;
-
-		String mainCSSContent = _readResource(
-			"META-INF/resources/css/main.css");
-
-		FileUtil.write(
-			_CURRENT_DIR_NAME + "/test-results/css/main.css", mainCSSContent);
-
-		String indexHTMLContent = _readResource(
-			"META-INF/resources/html/index.html");
-
-		indexHTMLContent = indexHTMLContent.replace(
-			"<ul class=\"command-log\" data-logid=\"01\" id=\"commandLog\">" +
-				"</ul>",
-			CommandLoggerHandler.getCommandLogText());
-		indexHTMLContent = indexHTMLContent.replace(
-			"<ul class=\"xml-log-container\" id=\"xmlLogContainer\"></ul>",
-			XMLLoggerHandler.getXMLLogText());
-
-		FileUtil.write(_getHtmlFilePath(), indexHTMLContent);
-
-		String componentJSContent = _readResource(
-			"META-INF/resources/js/component.js");
-
-		FileUtil.write(
-			_CURRENT_DIR_NAME + "/test-results/js/component.js",
-			componentJSContent);
-
-		String mainJSContent = _readResource("META-INF/resources/js/main.js");
-
-		FileUtil.write(
-			_CURRENT_DIR_NAME + "/test-results/js/main.js", mainJSContent);
-
-		_webDriver.get("file://" + _getHtmlFilePath());
+		_startLogger();
 	}
 
 	public static void stopLogger() throws Exception {
@@ -389,6 +378,52 @@ public final class LoggerUtil {
 		bufferedReader.close();
 
 		return sb.toString();
+	}
+
+	private static void _startLogger() throws Exception {
+		_webDriver = new FirefoxDriver();
+
+		WebDriver.Options options = _webDriver.manage();
+
+		WebDriver.Window window = options.window();
+
+		window.setPosition(new Point(1050, 45));
+		window.setSize(new Dimension(850, 950));
+
+		_javascriptExecutor = (JavascriptExecutor)_webDriver;
+
+		String mainCSSContent = _readResource(
+			"META-INF/resources/css/main.css");
+
+		FileUtil.write(
+			_CURRENT_DIR_NAME + "/test-results/css/main.css", mainCSSContent);
+
+		String indexHTMLContent = _readResource(
+			"META-INF/resources/html/index.html");
+
+		indexHTMLContent = indexHTMLContent.replace(
+			"<ul class=\"command-log\" data-logid=\"01\" id=\"commandLog\">" +
+				"</ul>",
+			CommandLoggerHandler.getCommandLogText());
+		indexHTMLContent = indexHTMLContent.replace(
+			"<ul class=\"xml-log-container\" id=\"xmlLogContainer\"></ul>",
+			XMLLoggerHandler.getXMLLogText());
+
+		FileUtil.write(_getHtmlFilePath(), indexHTMLContent);
+
+		String componentJSContent = _readResource(
+			"META-INF/resources/js/component.js");
+
+		FileUtil.write(
+			_CURRENT_DIR_NAME + "/test-results/js/component.js",
+			componentJSContent);
+
+		String mainJSContent = _readResource("META-INF/resources/js/main.js");
+
+		FileUtil.write(
+			_CURRENT_DIR_NAME + "/test-results/js/main.js", mainJSContent);
+
+		_webDriver.get("file://" + _getHtmlFilePath());
 	}
 
 	private static final String _CURRENT_DIR_NAME =

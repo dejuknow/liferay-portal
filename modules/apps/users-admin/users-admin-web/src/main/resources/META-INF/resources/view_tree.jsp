@@ -105,6 +105,22 @@ if (organization != null) {
 	</div>
 </c:if>
 
+<c:if test="<%= portletName.equals(UsersAdminPortletKeys.MY_ORGANIZATIONS) %>">
+	<aui:nav-bar>
+		<liferay-util:include page="/toolbar.jsp" servletContext="<%= application %>" />
+
+		<aui:nav-bar-search>
+			<div class="form-search">
+				<liferay-ui:input-search autoFocus="<%= windowState.equals(WindowState.MAXIMIZED) %>" />
+			</div>
+		</aui:nav-bar-search>
+	</aui:nav-bar>
+
+	<div id="breadcrumb">
+		<liferay-ui:breadcrumb showCurrentGroup="<%= false %>" showGuestGroup="<%= false %>" showLayout="<%= false %>" showPortletBreadcrumb="<%= true %>" />
+	</div>
+</c:if>
+
 <c:choose>
 	<c:when test="<%= showList %>">
 
@@ -302,7 +318,6 @@ if (organization != null) {
 
 								<c:choose>
 									<c:when test="<%= !searchTerms.hasSearchTerms() && (parentOrganizationId <= 0) && (filterManageableOrganizations) %>">
-
 										<liferay-ui:search-container-results>
 
 											<%
@@ -316,7 +331,6 @@ if (organization != null) {
 											%>
 
 										</liferay-ui:search-container-results>
-
 									</c:when>
 									<c:otherwise>
 
@@ -444,7 +458,6 @@ if (organization != null) {
 
 					<liferay-util:include page="/organization_action.jsp" servletContext="<%= application %>" />
 				</aui:col>
-
 			</c:if>
 		</aui:row>
 	</c:when>

@@ -773,7 +773,7 @@ public class AssetPublisherExportImportPortletPreferencesProcessor
 			try {
 				if (!AssetPublisherUtil.isScopeIdSelectable(
 						PermissionThreadLocal.getPermissionChecker(), newValue,
-						companyGroupId, layout)) {
+						companyGroupId, layout, false)) {
 
 					continue;
 				}
@@ -801,7 +801,7 @@ public class AssetPublisherExportImportPortletPreferencesProcessor
 					_log.info(
 						"Ignoring scope " + newValue + " because the " +
 							"referenced parent group no longer allows " +
-							"sharing content with child sites",
+								"sharing content with child sites",
 						pe);
 				}
 			}
@@ -814,19 +814,19 @@ public class AssetPublisherExportImportPortletPreferencesProcessor
 	private static final Log _log = LogFactoryUtil.getLog(
 		AssetPublisherExportImportPortletPreferencesProcessor.class);
 
-	private volatile AssetCategoryLocalService _assetCategoryLocalService;
-	private volatile AssetPublisherPortletDisplayTemplateExportCapability
+	private AssetCategoryLocalService _assetCategoryLocalService;
+	private AssetPublisherPortletDisplayTemplateExportCapability
 		_assetPublisherPortletDisplayTemplateExportCapability;
-	private volatile AssetPublisherPortletDisplayTemplateImportCapability
+	private AssetPublisherPortletDisplayTemplateImportCapability
 		_assetPublisherPortletDisplayTemplateImportCapability;
-	private volatile AssetVocabularyLocalService _assetVocabularyLocalService;
-	private volatile CompanyLocalService _companyLocalService;
-	private volatile DDMStructureLocalService _ddmStructureLocalService;
-	private volatile DLFileEntryTypeLocalService _dlFileEntryTypeLocalService;
-	private volatile LayoutLocalService _layoutLocalService;
-	private volatile OrganizationLocalService _organizationLocalService;
-	private volatile PortletLocalService _portletLocalService;
-	private volatile ReferencedStagedModelImporterCapability
+	private AssetVocabularyLocalService _assetVocabularyLocalService;
+	private CompanyLocalService _companyLocalService;
+	private DDMStructureLocalService _ddmStructureLocalService;
+	private DLFileEntryTypeLocalService _dlFileEntryTypeLocalService;
+	private LayoutLocalService _layoutLocalService;
+	private OrganizationLocalService _organizationLocalService;
+	private PortletLocalService _portletLocalService;
+	private ReferencedStagedModelImporterCapability
 		_referencedStagedModelImporterCapability;
 
 }

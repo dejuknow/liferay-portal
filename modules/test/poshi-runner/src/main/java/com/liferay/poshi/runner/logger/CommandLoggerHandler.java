@@ -19,6 +19,8 @@ import com.liferay.poshi.runner.PoshiRunnerGetterUtil;
 import com.liferay.poshi.runner.PoshiRunnerStackTraceUtil;
 import com.liferay.poshi.runner.PoshiRunnerVariablesUtil;
 import com.liferay.poshi.runner.selenium.LiferaySeleniumHelper;
+import com.liferay.poshi.runner.selenium.WebDriverHelper;
+import com.liferay.poshi.runner.selenium.WebDriverUtil;
 import com.liferay.poshi.runner.util.HtmlUtil;
 import com.liferay.poshi.runner.util.StringUtil;
 import com.liferay.poshi.runner.util.Validator;
@@ -26,6 +28,8 @@ import com.liferay.poshi.runner.util.Validator;
 import java.util.List;
 
 import org.dom4j.Element;
+
+import org.openqa.selenium.WebDriver;
 
 /**
  * @author Michael Hashimoto
@@ -125,21 +129,28 @@ public final class CommandLoggerHandler {
 		_commandLogLoggerElement = new LoggerElement("commandLog");
 
 		_commandLogLoggerElement.setAttribute("data-logid", "01");
-		_commandLogLoggerElement.setClassName("collapse command-log");
+		_commandLogLoggerElement.setClassName("collapse command-log running");
 		_commandLogLoggerElement.setName("ul");
 		_commandLogLoggerElement.setWrittenToLogger(true);
-
-		_xmlLogLoggerElement.addClassName("running");
 	}
 
 	public static void stopRunning() throws Exception {
-		_xmlLogLoggerElement.removeClassName("running");
-
-		_commandLogLoggerElement = null;
+		_commandLogLoggerElement.removeClassName("running");
 	}
 
 	public static void warnCommand(Element element) throws Exception {
-		failCommand(element);
+		if (!_isCurrentCommand(element)) {
+			return;
+		}
+
+		_commandElement = null;
+
+		_warningLineGroupLoggerElement(_lineGroupLoggerElement);
+
+		LoggerElement xmlLoggerElement = XMLLoggerHandler.getXMLLoggerElement(
+			PoshiRunnerStackTraceUtil.getSimpleStackTrace());
+
+		_updateStatus(xmlLoggerElement, "warning");
 	}
 
 	private static void _failLineGroupLoggerElement(
@@ -507,6 +518,12 @@ public final class CommandLoggerHandler {
 		_functionLinkId++;
 	}
 
+	private static void _setHTMLSource() throws Exception {
+		WebDriver webDriver = WebDriverUtil.getWebDriver();
+
+		_htmlSource = webDriver.getPageSource();
+	}
+
 	private static void _takeScreenshot(String screenshotName, int errorLinkId)
 		throws Exception {
 
@@ -532,13 +549,49 @@ public final class CommandLoggerHandler {
 				loggerElement.getID() + "')");
 	}
 
+	private static void _warningLineGroupLoggerElement(
+			LoggerElement lineGroupLoggerElement)
+		throws Exception {
+
+		lineGroupLoggerElement.addClassName("warning");
+
+		lineGroupLoggerElement.addChildLoggerElement(
+			_getErrorContainerLoggerElement());
+
+		LoggerElement childContainerLoggerElement =
+			lineGroupLoggerElement.loggerElement("ul");
+
+		List<LoggerElement> runLineLoggerElements =
+			childContainerLoggerElement.loggerElements("li");
+
+		if (!runLineLoggerElements.isEmpty()) {
+			LoggerElement runLineLoggerElement = runLineLoggerElements.get(
+				runLineLoggerElements.size() - 1);
+
+			runLineLoggerElement.addClassName("warning-line");
+		}
+	}
+
+	private static void _writeWebPage(int errorLinkId) throws Exception {
+		String testClassCommandName =
+			PoshiRunnerContext.getTestCaseCommandName();
+
+		testClassCommandName = StringUtil.replace(
+			testClassCommandName, "#", "_");
+
+		WebDriverHelper.saveWebPage(
+			PoshiRunnerGetterUtil.getCanonicalPath(".") + "/test-results/" +
+				testClassCommandName + "/web-pages/index" + errorLinkId +
+					".html",
+			_htmlSource);
+	}
+
 	private static int _btnLinkId;
 	private static Element _commandElement;
 	private static LoggerElement _commandLogLoggerElement;
 	private static int _errorLinkId;
 	private static int _functionLinkId;
+	private static String _htmlSource;
 	private static LoggerElement _lineGroupLoggerElement;
-	private static final LoggerElement _xmlLogLoggerElement = new LoggerElement(
-		"xml-log");
 
 }

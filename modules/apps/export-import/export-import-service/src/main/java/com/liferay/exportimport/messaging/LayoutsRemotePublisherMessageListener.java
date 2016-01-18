@@ -107,7 +107,8 @@ public class LayoutsRemotePublisherMessageListener
 
 		try {
 			StagingUtil.copyRemoteLayouts(
-				sourceGroupId, privateLayout, layoutIdMap, parameterMap,
+				sourceGroupId, privateLayout, layoutIdMap,
+				exportImportConfiguration.getName(), parameterMap,
 				remoteAddress, remotePort, remotePathContext, secureConnection,
 				targetGroupId, remotePrivateLayout);
 		}
@@ -137,8 +138,8 @@ public class LayoutsRemotePublisherMessageListener
 		_userLocalService = userLocalService;
 	}
 
-	private volatile ExportImportConfigurationLocalService
+	private ExportImportConfigurationLocalService
 		_exportImportConfigurationLocalService;
-	private volatile UserLocalService _userLocalService;
+	private UserLocalService _userLocalService;
 
 }

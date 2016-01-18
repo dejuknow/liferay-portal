@@ -39,7 +39,10 @@ import org.osgi.service.component.annotations.Reference;
  * @author Zsolt Berentey
  */
 @Component(
-	property = {"javax.portlet.name=" + UsersAdminPortletKeys.USERS_ADMIN},
+	property = {
+		"javax.portlet.name=" + UsersAdminPortletKeys.MY_ORGANIZATIONS,
+		"javax.portlet.name=" + UsersAdminPortletKeys.USERS_ADMIN
+	},
 	service = ControlPanelEntry.class
 )
 public class UsersControlPanelEntry extends BaseControlPanelEntry {
@@ -109,7 +112,7 @@ public class UsersControlPanelEntry extends BaseControlPanelEntry {
 		_userGroupRoleLocalService = userGroupRoleLocalService;
 	}
 
-	private volatile OrganizationLocalService _organizationLocalService;
-	private volatile UserGroupRoleLocalService _userGroupRoleLocalService;
+	private OrganizationLocalService _organizationLocalService;
+	private UserGroupRoleLocalService _userGroupRoleLocalService;
 
 }

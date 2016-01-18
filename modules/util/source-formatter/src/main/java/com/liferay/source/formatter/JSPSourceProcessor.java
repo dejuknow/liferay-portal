@@ -284,6 +284,27 @@ public class JSPSourceProcessor extends BaseSourceProcessor {
 			content.substring(y);
 	}
 
+	protected String fixEmptyLineInNestedTags(
+		String content, Pattern pattern, boolean startTag) {
+
+		Matcher matcher = pattern.matcher(content);
+
+		while (matcher.find()) {
+			String tabs1 = matcher.group(1);
+			String tabs2 = matcher.group(2);
+
+			if ((startTag && ((tabs1.length() + 1) == tabs2.length())) ||
+				(!startTag && ((tabs1.length() - 1) == tabs2.length()))) {
+
+				content = StringUtil.replaceFirst(
+					content, StringPool.NEW_LINE, StringPool.BLANK,
+					matcher.end(1));
+			}
+		}
+
+		return content;
+	}
+
 	@Override
 	protected String doFormat(
 			File file, String fileName, String absolutePath, String content)
@@ -306,6 +327,13 @@ public class JSPSourceProcessor extends BaseSourceProcessor {
 		newContent = fixRedirectBackURL(newContent);
 
 		newContent = fixCompatClassImports(absolutePath, newContent);
+
+		newContent = fixEmptyLineInNestedTags(
+			newContent, _emptyLineInNestedTagsPattern1, true);
+		newContent = fixEmptyLineInNestedTags(
+			newContent, _emptyLineInNestedTagsPattern2, false);
+		newContent = fixEmptyLineInNestedTags(
+			newContent, _emptyLineInNestedTagsPattern3, false);
 
 		if (_stripJSPImports && !_jspContents.isEmpty()) {
 			try {
@@ -396,11 +424,8 @@ public class JSPSourceProcessor extends BaseSourceProcessor {
 
 			String javaClassName = matcher.group(2);
 
-			String beforeJavaClass = newContent.substring(
-				0, matcher.start() + 1);
-
-			int javaClassLineCount =
-				StringUtil.count(beforeJavaClass, "\n") + 1;
+			int javaClassLineCount = getLineCount(
+				newContent, matcher.start() + 1);
 
 			newContent = formatJavaTerms(
 				javaClassName, null, file, fileName, absolutePath, newContent,
@@ -603,7 +628,11 @@ public class JSPSourceProcessor extends BaseSourceProcessor {
 					}
 				}
 
-				line = formatWhitespace(line, trimmedLine, javaSource);
+				if (!trimmedLine.startsWith(StringPool.DOUBLE_SLASH) &&
+					!trimmedLine.startsWith(StringPool.STAR)) {
+
+					line = formatWhitespace(line, trimmedLine, javaSource);
+				}
 
 				// LPS-47179
 
@@ -1687,6 +1716,12 @@ public class JSPSourceProcessor extends BaseSourceProcessor {
 
 	private Set<String> _checkedForIncludesFileNames = new HashSet<>();
 	private final List<String> _duplicateImportClassNames = new ArrayList<>();
+	private final Pattern _emptyLineInNestedTagsPattern1 = Pattern.compile(
+		"\n(\t*)<[a-z-]*:.*[^/]>\n\n(\t*)<[a-z-]*:.*>\n");
+	private final Pattern _emptyLineInNestedTagsPattern2 = Pattern.compile(
+		"\n(\t*)/>\n\n(\t*)</[a-z-]*:[a-z-]*>\n");
+	private final Pattern _emptyLineInNestedTagsPattern3 = Pattern.compile(
+		"\n(\t*)</[a-z-]*:[a-z-]*>\n\n(\t*)</[a-z-]*:[a-z-]*>\n");
 	private final Pattern _ifTagPattern = Pattern.compile(
 		"^<c:if test=('|\")<%= (.+) %>('|\")>$");
 	private final List<String> _importClassNames = new ArrayList<>();

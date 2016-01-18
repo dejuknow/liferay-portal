@@ -415,14 +415,14 @@ public class KaleoTaskInstanceTokenLocalServiceWrapper
 
 	@Override
 	public java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoTaskInstanceToken> search(
-		java.lang.String keywords, java.lang.String[] assetTypes,
-		java.lang.Boolean completed, java.lang.Boolean searchByUserRoles,
-		int start, int end,
+		java.lang.String keywords, java.lang.String assetTitle,
+		java.lang.String[] assetTypes, java.lang.Boolean completed,
+		java.lang.Boolean searchByUserRoles, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.workflow.kaleo.model.KaleoTaskInstanceToken> orderByComparator,
 		com.liferay.portal.service.ServiceContext serviceContext) {
-		return _kaleoTaskInstanceTokenLocalService.search(keywords, assetTypes,
-			completed, searchByUserRoles, start, end, orderByComparator,
-			serviceContext);
+		return _kaleoTaskInstanceTokenLocalService.search(keywords, assetTitle,
+			assetTypes, completed, searchByUserRoles, start, end,
+			orderByComparator, serviceContext);
 	}
 
 	@Override
@@ -437,41 +437,41 @@ public class KaleoTaskInstanceTokenLocalServiceWrapper
 
 	@Override
 	public java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoTaskInstanceToken> search(
-		java.lang.String taskName, java.lang.String assetType,
-		java.lang.Long[] assetPrimaryKeys, java.util.Date dueDateGT,
-		java.util.Date dueDateLT, java.lang.Boolean completed,
-		java.lang.Boolean searchByUserRoles, boolean andOperator, int start,
-		int end,
+		java.lang.String taskName, java.lang.String assetTitle,
+		java.lang.String assetType, java.lang.Long[] assetPrimaryKeys,
+		java.util.Date dueDateGT, java.util.Date dueDateLT,
+		java.lang.Boolean completed, java.lang.Boolean searchByUserRoles,
+		boolean andOperator, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.workflow.kaleo.model.KaleoTaskInstanceToken> orderByComparator,
 		com.liferay.portal.service.ServiceContext serviceContext) {
-		return _kaleoTaskInstanceTokenLocalService.search(taskName, assetType,
-			assetPrimaryKeys, dueDateGT, dueDateLT, completed,
+		return _kaleoTaskInstanceTokenLocalService.search(taskName, assetTitle,
+			assetType, assetPrimaryKeys, dueDateGT, dueDateLT, completed,
 			searchByUserRoles, andOperator, start, end, orderByComparator,
 			serviceContext);
 	}
 
 	@Override
 	public java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoTaskInstanceToken> search(
-		java.lang.String taskName, java.lang.String[] assetTypes,
-		java.lang.Long[] assetPrimaryKeys, java.util.Date dueDateGT,
-		java.util.Date dueDateLT, java.lang.Boolean completed,
-		java.lang.Boolean searchByUserRoles, boolean andOperator, int start,
-		int end,
+		java.lang.String taskName, java.lang.String assetTitle,
+		java.lang.String[] assetTypes, java.lang.Long[] assetPrimaryKeys,
+		java.util.Date dueDateGT, java.util.Date dueDateLT,
+		java.lang.Boolean completed, java.lang.Boolean searchByUserRoles,
+		boolean andOperator, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.workflow.kaleo.model.KaleoTaskInstanceToken> orderByComparator,
 		com.liferay.portal.service.ServiceContext serviceContext) {
-		return _kaleoTaskInstanceTokenLocalService.search(taskName, assetTypes,
-			assetPrimaryKeys, dueDateGT, dueDateLT, completed,
+		return _kaleoTaskInstanceTokenLocalService.search(taskName, assetTitle,
+			assetTypes, assetPrimaryKeys, dueDateGT, dueDateLT, completed,
 			searchByUserRoles, andOperator, start, end, orderByComparator,
 			serviceContext);
 	}
 
 	@Override
 	public int searchCount(java.lang.String keywords,
-		java.lang.String[] assetTypes, java.lang.Boolean completed,
-		java.lang.Boolean searchByUserRoles,
+		java.lang.String assetTitle, java.lang.String[] assetTypes,
+		java.lang.Boolean completed, java.lang.Boolean searchByUserRoles,
 		com.liferay.portal.service.ServiceContext serviceContext) {
 		return _kaleoTaskInstanceTokenLocalService.searchCount(keywords,
-			assetTypes, completed, searchByUserRoles, serviceContext);
+			assetTitle, assetTypes, completed, searchByUserRoles, serviceContext);
 	}
 
 	@Override
@@ -484,26 +484,26 @@ public class KaleoTaskInstanceTokenLocalServiceWrapper
 
 	@Override
 	public int searchCount(java.lang.String taskName,
-		java.lang.String assetType, java.lang.Long[] assetPrimaryKeys,
-		java.util.Date dueDateGT, java.util.Date dueDateLT,
-		java.lang.Boolean completed, java.lang.Boolean searchByUserRoles,
-		boolean andOperator,
+		java.lang.String assetTitle, java.lang.String assetType,
+		java.lang.Long[] assetPrimaryKeys, java.util.Date dueDateGT,
+		java.util.Date dueDateLT, java.lang.Boolean completed,
+		java.lang.Boolean searchByUserRoles, boolean andOperator,
 		com.liferay.portal.service.ServiceContext serviceContext) {
 		return _kaleoTaskInstanceTokenLocalService.searchCount(taskName,
-			assetType, assetPrimaryKeys, dueDateGT, dueDateLT, completed,
-			searchByUserRoles, andOperator, serviceContext);
+			assetTitle, assetType, assetPrimaryKeys, dueDateGT, dueDateLT,
+			completed, searchByUserRoles, andOperator, serviceContext);
 	}
 
 	@Override
 	public int searchCount(java.lang.String taskName,
-		java.lang.String[] assetTypes, java.lang.Long[] assetPrimaryKeys,
-		java.util.Date dueDateGT, java.util.Date dueDateLT,
-		java.lang.Boolean completed, java.lang.Boolean searchByUserRoles,
-		boolean andOperator,
+		java.lang.String assetTitle, java.lang.String[] assetTypes,
+		java.lang.Long[] assetPrimaryKeys, java.util.Date dueDateGT,
+		java.util.Date dueDateLT, java.lang.Boolean completed,
+		java.lang.Boolean searchByUserRoles, boolean andOperator,
 		com.liferay.portal.service.ServiceContext serviceContext) {
 		return _kaleoTaskInstanceTokenLocalService.searchCount(taskName,
-			assetTypes, assetPrimaryKeys, dueDateGT, dueDateLT, completed,
-			searchByUserRoles, andOperator, serviceContext);
+			assetTitle, assetTypes, assetPrimaryKeys, dueDateGT, dueDateLT,
+			completed, searchByUserRoles, andOperator, serviceContext);
 	}
 
 	@Override
@@ -525,23 +525,6 @@ public class KaleoTaskInstanceTokenLocalServiceWrapper
 	public com.liferay.portal.workflow.kaleo.model.KaleoTaskInstanceToken updateKaleoTaskInstanceToken(
 		com.liferay.portal.workflow.kaleo.model.KaleoTaskInstanceToken kaleoTaskInstanceToken) {
 		return _kaleoTaskInstanceTokenLocalService.updateKaleoTaskInstanceToken(kaleoTaskInstanceToken);
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
-	 */
-	@Deprecated
-	public KaleoTaskInstanceTokenLocalService getWrappedKaleoTaskInstanceTokenLocalService() {
-		return _kaleoTaskInstanceTokenLocalService;
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #setWrappedService}
-	 */
-	@Deprecated
-	public void setWrappedKaleoTaskInstanceTokenLocalService(
-		KaleoTaskInstanceTokenLocalService kaleoTaskInstanceTokenLocalService) {
-		_kaleoTaskInstanceTokenLocalService = kaleoTaskInstanceTokenLocalService;
 	}
 
 	@Override

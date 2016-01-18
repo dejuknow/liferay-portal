@@ -27,7 +27,6 @@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %><%@
 taglib uri="http://liferay.com/tld/util" prefix="liferay-util" %>
 
 <%@ page import="com.liferay.dynamic.data.mapping.configuration.DDMServiceConfiguration" %><%@
-page import="com.liferay.dynamic.data.mapping.configuration.DDMServiceConfigurationKeys" %><%@
 page import="com.liferay.dynamic.data.mapping.constants.DDMPortletKeys" %><%@
 page import="com.liferay.dynamic.data.mapping.constants.DDMWebKeys" %><%@
 page import="com.liferay.dynamic.data.mapping.exception.NoSuchStructureException" %><%@
@@ -69,6 +68,9 @@ page import="com.liferay.dynamic.data.mapping.util.DDMDisplay" %><%@
 page import="com.liferay.dynamic.data.mapping.util.DDMDisplayRegistryUtil" %><%@
 page import="com.liferay.dynamic.data.mapping.util.DDMTemplateHelperUtil" %><%@
 page import="com.liferay.dynamic.data.mapping.util.DDMUtil" %><%@
+page import="com.liferay.dynamic.data.mapping.validator.DDMFormLayoutValidationException" %><%@
+page import="com.liferay.dynamic.data.mapping.validator.DDMFormValidationException" %><%@
+page import="com.liferay.dynamic.data.mapping.web.configuration.DDMWebConfiguration" %><%@
 page import="com.liferay.dynamic.data.mapping.web.configuration.DDMWebConfigurationKeys" %><%@
 page import="com.liferay.dynamic.data.mapping.web.configuration.DDMWebConfigurationUtil" %><%@
 page import="com.liferay.dynamic.data.mapping.web.context.util.DDMWebRequestHelper" %><%@
@@ -112,7 +114,6 @@ page import="com.liferay.portal.security.permission.ResourceActionsUtil" %><%@
 page import="com.liferay.portal.service.GroupLocalServiceUtil" %><%@
 page import="com.liferay.portal.template.TemplateContextHelper" %><%@
 page import="com.liferay.portal.util.PortalUtil" %><%@
-page import="com.liferay.portal.util.PrefsPropsUtil" %><%@
 page import="com.liferay.portlet.PortalPreferences" %><%@
 page import="com.liferay.portlet.PortletPreferencesFactoryUtil" %><%@
 page import="com.liferay.portlet.PortletURLFactoryUtil" %><%@
@@ -137,6 +138,8 @@ page import="javax.portlet.PortletURL" %><%@
 page import="javax.portlet.WindowState" %>
 
 <portlet:defineObjects />
+
+<liferay-frontend:defineObjects />
 
 <liferay-theme:defineObjects />
 
@@ -165,14 +168,8 @@ String scopeTemplateType = ddmDisplay.getTemplateType();
 
 String storageTypeValue = StringPool.BLANK;
 
-if (scopeStorageType.equals("expando")) {
-	storageTypeValue = StorageType.EXPANDO.getValue();
-}
-else if (scopeStorageType.equals("json")) {
+if (scopeStorageType.equals("json")) {
 	storageTypeValue = StorageType.JSON.getValue();
-}
-else if (scopeStorageType.equals("xml")) {
-	storageTypeValue = StorageType.XML.getValue();
 }
 
 String templateTypeValue = StringPool.BLANK;
@@ -185,8 +182,9 @@ else if (scopeTemplateType.equals(DDMTemplateConstants.TEMPLATE_TYPE_FORM)) {
 }
 
 DDMWebRequestHelper ddmWebRequestHelper = new DDMWebRequestHelper(request);
-
 DDMServiceConfiguration ddmServiceConfiguration = ddmWebRequestHelper.getDDMServiceConfiguration();
+
+DDMWebConfiguration ddmWebConfiguration = (DDMWebConfiguration)request.getAttribute(DDMWebConfiguration.class.getName());
 %>
 
 <%@ include file="/init-ext.jsp" %>

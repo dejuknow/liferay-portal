@@ -19,11 +19,15 @@ import com.liferay.control.menu.ControlMenuEntry;
 import com.liferay.control.menu.constants.ControlMenuCategoryKeys;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskManager;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.model.CompanyConstants;
 import com.liferay.portal.search.internal.background.task.ReindexPortalBackgroundTaskExecutor;
 import com.liferay.portal.search.internal.background.task.ReindexSingleIndexerBackgroundTaskExecutor;
 
 import java.util.Locale;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -46,13 +50,26 @@ public class IndexingControlMenuEntry
 	extends BaseControlMenuEntry implements ControlMenuEntry {
 
 	@Override
+	public Map<String, Object> getData(HttpServletRequest request) {
+		Map<String, Object> data = super.getData(request);
+
+		data.put("qa-id", "indexing");
+
+		return data;
+	}
+
+	@Override
 	public String getIconCssClass(HttpServletRequest request) {
 		return "icon-refresh";
 	}
 
 	@Override
 	public String getLabel(Locale locale) {
-		return "the-portal-is-currently-reindexing";
+		ResourceBundle resourceBundle = ResourceBundleUtil.getBundle(
+			"content.Language", locale, getClass());
+
+		return LanguageUtil.get(
+			resourceBundle, "the-portal-is-currently-reindexing");
 	}
 
 	@Override
@@ -61,9 +78,7 @@ public class IndexingControlMenuEntry
 	}
 
 	@Override
-	public boolean hasAccessPermission(HttpServletRequest request)
-		throws PortalException {
-
+	public boolean isShow(HttpServletRequest request) throws PortalException {
 		int count = _backgroundTaskManager.getBackgroundTasksCount(
 			CompanyConstants.SYSTEM,
 			new String[] {
@@ -76,7 +91,7 @@ public class IndexingControlMenuEntry
 			return false;
 		}
 
-		return super.hasAccessPermission(request);
+		return super.isShow(request);
 	}
 
 	@Reference(unbind = "-")
@@ -86,6 +101,6 @@ public class IndexingControlMenuEntry
 		_backgroundTaskManager = backgroundTaskManager;
 	}
 
-	private volatile BackgroundTaskManager _backgroundTaskManager;
+	private BackgroundTaskManager _backgroundTaskManager;
 
 }

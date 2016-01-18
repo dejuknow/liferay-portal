@@ -33,21 +33,21 @@ WikiVisualizationHelper wikiVisualizationHelper = new WikiVisualizationHelper(wi
 	PortletURL undoTrashURL = wikiURLHelper.getUndoTrashURL();
 	%>
 
-	<liferay-ui:trash-undo portletURL="<%= undoTrashURL.toString() %>" />
+	<liferay-trash:undo portletURL="<%= undoTrashURL.toString() %>" />
 </c:if>
 
-<c:if test="<%= wikiVisualizationHelper.isNodeNameVisible() %>">
+<%
+boolean portletTitleBasedNavigation = GetterUtil.getBoolean(portletConfig.getInitParameter("portlet-title-based-navigation"));
 
-	<%
-	PortletURL backToNodeURL = wikiURLHelper.getBackToNodeURL(node);
-	%>
+PortletURL backToNodeURL = wikiURLHelper.getBackToNodeURL(node);
 
-	<liferay-ui:header
-		backURL="<%= backToNodeURL.toString() %>"
-		localizeTitle="<%= false %>"
-		title="<%= node.getName() %>"
-	/>
-</c:if>
+if (portletTitleBasedNavigation) {
+	portletDisplay.setShowBackIcon(true);
+	portletDisplay.setURLBack(backToNodeURL.toString());
+
+	renderResponse.setTitle(node.getName());
+}
+%>
 
 <c:if test="<%= !print %>">
 	<c:if test="<%= wikiVisualizationHelper.isNodeNavigationVisible() %>">
@@ -61,7 +61,7 @@ WikiVisualizationHelper wikiVisualizationHelper = new WikiVisualizationHelper(wi
 					cssClass = "active";
 				}
 
-				PortletURL viewPageURL = wikiURLHelper.getViewPageURL(curNode);
+				PortletURL viewPageURL = wikiURLHelper.getViewFrontPagePageURL(curNode);
 			%>
 
 				<aui:nav-item cssClass="<%= cssClass %>" href="<%= viewPageURL.toString() %>" label="<%= HtmlUtil.escape(curNode.getName()) %>" />
@@ -95,7 +95,7 @@ WikiVisualizationHelper wikiVisualizationHelper = new WikiVisualizationHelper(wi
 			<aui:nav-item cssClass='<%= selected ? "active" : StringPool.BLANK %>' href="<%= viewRecentChangesURL.toString() %>" label="<%= label %>" selected="<%= selected %>" />
 
 			<%
-			PortletURL viewAllPagesURL = wikiURLHelper.getViewAllPagesURL(node);
+			PortletURL viewAllPagesURL = wikiURLHelper.getViewPagesURL(node);
 
 			label = "all-pages";
 			selected = wikiVisualizationHelper.isViewAllPagesNavItemSelected();

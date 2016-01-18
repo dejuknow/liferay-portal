@@ -1,17 +1,50 @@
 <definition>
-	<command name="viewPlatformSettingCP">
-		<var name="key_assetEntry" value="${configurationName}" />
+	<command name="editConfiguration">
+		<var name="key_rowEntry" value="${configurationName}" />
 
-		<execute function="Click" locator1="Icon#DESCRIPTIVE_VERTICAL_ELLIPSIS" />
+		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+
+		<execute function="AssertClick" locator1="MenuItem#EDIT" value1="Edit" />
+	</command>
+
+	<command name="gotoCategory">
+		<var name="key_category" value="${category}" />
+
+		<execute function="AssertClick" locator1="SystemSettings#MENUBAR_CATEGORY" value1="${category}" />
+	</command>
+
+	<command name="resetConfiguration">
+		<execute macro="SystemSettings#gotoCategory">
+			<var name="category" value="${category}" />
+		</execute>
+
+		<var name="key_rowEntry" value="${configurationName}" />
+
+		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+
+		<execute function="AssertClick" locator1="MenuItem#RESET_DEFAULT_VALUES" value1="Reset Default Values" />
+
+		<execute macro="Alert#viewRequestCompletedSuccessMessage" />
+	</command>
+
+	<command name="viewPlatformSettingCP">
+		<var name="key_rowEntry" value="${configurationName}" />
+
+		<while>
+			<condition function="IsElementNotPresent" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+			<then>
+				<execute function="Click" locator1="Pagination#NEXT_LINK" />
+			</then>
+		</while>
+
+		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
 
 		<execute function="AssertClick" locator1="MenuItem#VIEW" value1="View" />
 
 		<if>
-			<isset var="status" />
+			<equals arg1="${LDAPEnabled}" arg2="true" />
 			<then>
-				<var name="key_status" value="${status}" />
-
-				<execute function="AssertElementPresent" locator1="Checkbox#STATUS" />
+				<execute function="AssertElementPresent" locator1="SystemSettings#LDAP_ENTRY" />
 			</then>
 			<else>
 				<execute function="AssertTextEquals" locator1="Message#EMPTY_INFO" value1="No configurations were found." />

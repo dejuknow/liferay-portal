@@ -110,6 +110,7 @@ public class BookmarksEntryAssetRendererFactory
 		portletURL.setParameter(
 			"folderId",
 			String.valueOf(BookmarksFolderConstants.DEFAULT_PARENT_FOLDER_ID));
+		portletURL.setParameter("showFolderSelector", Boolean.TRUE.toString());
 
 		return portletURL;
 	}
@@ -170,7 +171,7 @@ public class BookmarksEntryAssetRendererFactory
 		_bookmarksEntryLocalService = bookmarksEntryLocalService;
 	}
 
-	private volatile BookmarksEntryLocalService _bookmarksEntryLocalService;
-	private volatile ServletContext _servletContext;
+	private BookmarksEntryLocalService _bookmarksEntryLocalService;
+	private ServletContext _servletContext;
 
 }
