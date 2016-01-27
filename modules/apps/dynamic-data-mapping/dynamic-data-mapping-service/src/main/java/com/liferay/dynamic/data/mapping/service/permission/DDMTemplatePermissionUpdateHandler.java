@@ -16,8 +16,8 @@ package com.liferay.dynamic.data.mapping.service.permission;
 
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
+import com.liferay.portal.kernel.security.permission.PermissionUpdateHandler;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.security.permission.PermissionUpdateHandler;
 
 import java.util.Date;
 
@@ -57,6 +57,6 @@ public class DDMTemplatePermissionUpdateHandler
 		_ddmTemplateLocalService = ddmTemplateLocalService;
 	}
 
-	private volatile DDMTemplateLocalService _ddmTemplateLocalService;
+	private DDMTemplateLocalService _ddmTemplateLocalService;
 
 }

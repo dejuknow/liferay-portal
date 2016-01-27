@@ -17,8 +17,6 @@
 <%@ include file="/init.jsp" %>
 
 <%
-String tabs1 = ParamUtil.getString(request, "tabs1", "staging");
-
 String redirect = ParamUtil.getString(request, "redirect");
 
 if (Validator.isNull(redirect)) {
@@ -29,17 +27,7 @@ if (Validator.isNull(redirect)) {
 
 String keywords = ParamUtil.getString(request, "keywords");
 
-long groupId = themeDisplay.getScopeGroupId();
-
-Group group = GroupLocalServiceUtil.getGroup(groupId);
-
-if (group.isStagingGroup() && tabs1.equals("live")) {
-	groupId = group.getLiveGroupId();
-}
-
 PortletURL portletURL = renderResponse.createRenderURL();
-
-portletURL.setParameter("tabs1", tabs1);
 
 PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, "recycle-bin"), portletURL.toString());
 
@@ -50,7 +38,7 @@ if (Validator.isNotNull(keywords)) {
 
 <aui:nav-bar cssClass="collapse-basic-search" markupView="lexicon">
 	<aui:nav cssClass="navbar-nav">
-		<aui:nav-item cssClass="active" label="entries" />
+		<aui:nav-item label="entries" selected="<%= true %>" />
 	</aui:nav>
 
 	<aui:nav-bar-search>
@@ -114,15 +102,7 @@ if (Validator.isNotNull(keywords)) {
 		<c:if test="<%= tpe.getType() == TrashPermissionException.RESTORE_RENAME %>">
 			<liferay-ui:message key="you-do-not-have-permission-to-rename-this-item" />
 		</c:if>
-
 	</liferay-ui:error>
-
-	<c:if test="<%= group.isStagingGroup() %>">
-		<liferay-ui:tabs
-			names="staging,live"
-			url="<%= portletURL.toString() %>"
-		/>
-	</c:if>
 
 	<liferay-ui:search-container
 		searchContainer="<%= new EntrySearch(renderRequest, portletURL) %>"
@@ -140,14 +120,14 @@ if (Validator.isNotNull(keywords)) {
 			if (Validator.isNotNull(searchTerms.getKeywords())) {
 				Sort sort = SortFactoryUtil.getSort(TrashEntry.class, searchContainer.getOrderByCol(), searchContainer.getOrderByType());
 
-				BaseModelSearchResult<TrashEntry> baseModelSearchResult = TrashEntryLocalServiceUtil.searchTrashEntries(company.getCompanyId(), groupId, user.getUserId(), searchTerms.getKeywords(), searchContainer.getStart(), searchContainer.getEnd(), sort);
+				BaseModelSearchResult<TrashEntry> baseModelSearchResult = TrashEntryLocalServiceUtil.searchTrashEntries(company.getCompanyId(), themeDisplay.getScopeGroupId(), user.getUserId(), searchTerms.getKeywords(), searchContainer.getStart(), searchContainer.getEnd(), sort);
 
 				searchContainer.setTotal(baseModelSearchResult.getLength());
 
 				results = baseModelSearchResult.getBaseModels();
 			}
 			else {
-				TrashEntryList trashEntryList = TrashEntryServiceUtil.getEntries(groupId, searchContainer.getStart(), searchContainer.getEnd(), searchContainer.getOrderByComparator());
+				TrashEntryList trashEntryList = TrashEntryServiceUtil.getEntries(themeDisplay.getScopeGroupId(), searchContainer.getStart(), searchContainer.getEnd(), searchContainer.getOrderByComparator());
 
 				searchContainer.setTotal(trashEntryList.getCount());
 
@@ -199,7 +179,6 @@ if (Validator.isNotNull(keywords)) {
 				name="name"
 			>
 				<liferay-ui:icon
-					iconCssClass="<%= trashRenderer.getIconCssClass() %>"
 					label="<%= true %>"
 					message="<%= HtmlUtil.escape(trashRenderer.getTitle(locale)) %>"
 					method="get"
@@ -229,7 +208,6 @@ if (Validator.isNotNull(keywords)) {
 
 					<liferay-util:buffer var="rootEntryIcon">
 						<liferay-ui:icon
-							iconCssClass="<%= rootTrashRenderer.getIconCssClass() %>"
 							label="<%= true %>"
 							message="<%= HtmlUtil.escape(rootTrashRenderer.getTitle(locale)) %>"
 							method="get"
@@ -286,17 +264,6 @@ if (Validator.isNotNull(keywords)) {
 				</c:otherwise>
 			</c:choose>
 		</liferay-ui:search-container-row>
-
-		<c:if test="<%= Validator.isNull(keywords) %>">
-			<portlet:actionURL name="emptyTrash" var="emptyTrashURL">
-				<portlet:param name="groupId" value="<%= String.valueOf(groupId) %>" />
-			</portlet:actionURL>
-
-			<liferay-ui:trash-empty
-				portletURL="<%= emptyTrashURL %>"
-				totalEntries="<%= searchContainer.getTotal() %>"
-			/>
-		</c:if>
 
 		<liferay-ui:breadcrumb
 			showCurrentGroup="<%= false %>"

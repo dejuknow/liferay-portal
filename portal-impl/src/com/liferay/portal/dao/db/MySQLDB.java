@@ -14,6 +14,7 @@
 
 package com.liferay.portal.dao.db;
 
+import com.liferay.portal.kernel.dao.db.DBType;
 import com.liferay.portal.kernel.dao.db.Index;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.io.unsync.UnsyncBufferedReader;
@@ -41,7 +42,7 @@ import java.util.List;
 public class MySQLDB extends BaseDB {
 
 	public MySQLDB(int majorVersion, int minorVersion) {
-		super(TYPE_MYSQL, majorVersion, minorVersion);
+		super(DBType.MYSQL, majorVersion, minorVersion);
 	}
 
 	@Override
@@ -85,7 +86,7 @@ public class MySQLDB extends BaseDB {
 			}
 		}
 		finally {
-			DataAccess.cleanUp(null, ps, rs);
+			DataAccess.cleanUp(ps, rs);
 		}
 
 		return indexes;
@@ -186,7 +187,8 @@ public class MySQLDB extends BaseDB {
 
 					line =
 						line.substring(0, pos) + " engine " +
-						PropsValues.DATABASE_MYSQL_ENGINE + line.substring(pos);
+							PropsValues.DATABASE_MYSQL_ENGINE +
+								line.substring(pos);
 				}
 
 				sb.append(line);

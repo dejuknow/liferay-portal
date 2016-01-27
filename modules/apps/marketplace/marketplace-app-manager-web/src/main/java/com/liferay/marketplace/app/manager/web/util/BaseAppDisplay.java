@@ -24,6 +24,7 @@ import org.osgi.framework.Bundle;
  */
 public abstract class BaseAppDisplay implements AppDisplay {
 
+	@Override
 	public void addBundle(Bundle bundle) {
 		_moduleGroupDisplays = null;
 
@@ -41,19 +42,22 @@ public abstract class BaseAppDisplay implements AppDisplay {
 		return title.compareToIgnoreCase(appDisplay.getTitle());
 	}
 
+	@Override
 	public List<Bundle> getBundles() {
 		return _bundles;
 	}
 
+	@Override
 	public List<ModuleGroupDisplay> getModuleGroupDisplays() {
 		if (_moduleGroupDisplays == null) {
 			_moduleGroupDisplays =
-				ModuleGroupDisplayFactoryUtil.getModuleGroupDisplays(_bundles);
+				ModuleGroupDisplayFactoryUtil.getModuleGroupDisplays(this);
 		}
 
 		return _moduleGroupDisplays;
 	}
 
+	@Override
 	public int getState() {
 		List<Bundle> _bundles = getBundles();
 
@@ -64,6 +68,10 @@ public abstract class BaseAppDisplay implements AppDisplay {
 		int state = Bundle.ACTIVE;
 
 		for (Bundle bundle : _bundles) {
+			if (BundleUtil.isFragment(bundle)) {
+				continue;
+			}
+
 			int bundleState = bundle.getState();
 
 			if (state > bundleState) {
@@ -74,6 +82,7 @@ public abstract class BaseAppDisplay implements AppDisplay {
 		return state;
 	}
 
+	@Override
 	public boolean hasModuleGroups() {
 		List<ModuleGroupDisplay> moduleGroupDisplays = getModuleGroupDisplays();
 
@@ -88,7 +97,9 @@ public abstract class BaseAppDisplay implements AppDisplay {
 
 		String title = moduleGroupDisplay.getTitle();
 
-		if (title.equals(ModuleGroupDisplay.MODULE_GROUP_TITLE_UNCATEGORIZED)) {
+		if (title.equals(
+				ModuleGroupDisplay.MODULE_GROUP_TITLE_INDEPENDENT_MODULES)) {
+
 			return false;
 		}
 		else {

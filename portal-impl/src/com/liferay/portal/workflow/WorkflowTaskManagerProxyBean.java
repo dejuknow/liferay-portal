@@ -173,7 +173,7 @@ public class WorkflowTaskManagerProxyBean
 
 	@Override
 	public List<WorkflowTask> search(
-		long companyId, long userId, String keywords, Boolean completed,
+		long companyId, long userId, String taskName, Boolean completed,
 		Boolean searchByUserRoles, int start, int end,
 		OrderByComparator<WorkflowTask> orderByComparator) {
 
@@ -182,7 +182,7 @@ public class WorkflowTaskManagerProxyBean
 
 	@Override
 	public List<WorkflowTask> search(
-		long companyId, long userId, String taskName, String assetType,
+		long companyId, long userId, String keywords, String assetType,
 		Long[] assetPrimaryKey, Date dueDateGT, Date dueDateLT,
 		Boolean completed, Boolean searchByUserRoles, boolean andOperator,
 		int start, int end, OrderByComparator<WorkflowTask> orderByComparator) {

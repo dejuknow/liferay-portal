@@ -1,8 +1,20 @@
 <definition>
+	<command name="_selectAssetType">
+		<var name="key_assetType" value="${assetType}" />
+
+		<execute function="AssertClick" locator1="AssetRelatedAssets#RELATED_ASSETS_SELECT" value1="Select" />
+
+		<var method="StringUtil#replace('${assetType}', ' ', '_')" name="assetTypeLocator" />
+
+		<var method="StringUtil#upperCase('${assetTypeLocator}')" name="assetTypeLocator" />
+
+		<execute function="AssertClick" locator1="MenuItem#${assetTypeLocator}" value1="${assetType}" />
+	</command>
+
 	<command name="configureFilterByCategories">
 		<execute macro="Portlet#gotoPortletOptions">
 			<var name="portletName" value="Related Assets" />
-			<var name="portletNameBorderless" value="${portletNameBorderless}" />
+			<var name="portletName" value="${portletName}" />
 			<var name="portletOption" value="Configuration" />
 		</execute>
 
@@ -23,47 +35,44 @@
 
 		<execute function="AssertTextEquals" locator1="RelatedassetsConfiguration#CATEGORY" value1="${categoryName}" />
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="You have successfully updated the setup." />
+		<execute macro="Alert#viewSetupUpdatedSuccessMessage" />
 
 		<execute function="SelectFrameTop" />
 	</command>
 
 	<command name="gotoBookmarksSelectionPG">
-		<execute function="AssertClick" locator1="NavListItem#ADD_BOOKMARK" value1="Add Bookmark" />
+		<execute function="Click#makeVisibleClickAt" locator1="Portlet#ICON_PLUS_SIGN" />
 
-		<if>
-			<condition function="IsElementPresent#waitForVisible" locator1="AssetRelatedAssets#HEADER_COLLAPSED" />
-			<then>
-				<execute function="Click" locator1="AssetRelatedAssets#HEADER_COLLAPSED" />
-				<execute function="AssertElementPresent" locator1="AssetRelatedAssets#HEADER_EXPANDED" />
-			</then>
-		</if>
+		<execute function="AssertClick" locator1="MenuItem#BOOKMARK" value1="Bookmark" />
+
+		<execute macro="Panel#expandPanel">
+			<var name="panelHeading" value="Related Assets" />
+		</execute>
+
+		<execute function="AssertClick" locator1="AssetRelatedAssets#RELATED_ASSETS_SELECT" value1="Select" />
 
 		<var name="key_assetType" value="${assetType}" />
 
-		<execute function="AssertClick" locator1="AssetRelatedAssets#RELATED_ASSETS_SELECT" value1="Select" />
 		<execute function="AssertClick" locator1="AssetRelatedAssets#RELATED_ASSETS_SELECT_MENULIST_ASSET" value1="${assetType}" />
 	</command>
 
 	<command name="gotoWebContentSelectionCP">
-		<execute function="Click" locator1="Button#PLUS" />
-		<execute function="AssertClick" locator1="MenuItem#BASIC_WEB_CONTENT" value1="Basic Web Content" />
+		<execute macro="WebContentNavigator#gotoAddCP" />
 
-		<var name="key_assetType" value="${assetType}" />
+		<execute macro="Panel#expandPanel">
+			<var name="panelHeading" value="Related Assets" />
+		</execute>
 
-		<execute function="AssertClick" locator1="WCEditWebContent#MENU_RELATED_ASSETS" value1="Related Assets" />
-		<execute function="AssertClick" locator1="WCEditWebContent#RELATED_ASSETS_SELECT" value1="Select" />
-
-		<var method="StringUtil#replace('${assetType}', ' ', '_')" name="assetTypeLocator" />
-		<var method="StringUtil#upperCase('${assetTypeLocator}')" name="assetTypeLocator" />
-		<execute function="AssertClick" locator1="MenuItem#${assetTypeLocator}" value1="${assetType}" />
+		<execute macro="RelatedAssets#_selectAssetType">
+			<var name="assetType" value="${assetType}" />
+		</execute>
 	</command>
 
 	<command name="searchAdvancedRelatedAssetsCP">
 		<if>
 			<condition function="IsElementNotPresent" locator1="AdvancedSearch#MATCH_SELECT" />
 			<then>
-				<execute function="Click" locator1="RelatedassetsSelect#SEARCH_ADVANCED_MENULIST" />
+				<execute function="Click" locator1="Icon#ADVANCED_SEARCH" />
 			</then>
 		</if>
 
@@ -125,7 +134,23 @@
 			</then>
 		</if>
 
-		<execute function="AssertClick" locator1="RelatedassetsSelect#SEARCH_BUTTON" value1="Search" />
+		<execute function="Click" locator1="Icon#BASIC_SEARCH" />
+	</command>
+
+	<command name="selectAsset">
+		<execute macro="RelatedAssets#_selectAssetType">
+			<var name="assetType" value="${assetType}" />
+		</execute>
+
+		<execute function="SelectFrame" value1="relative=top" />
+
+		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
+
+		<var name="key_assetTitle" value="${assetTitle}" />
+
+		<execute function="AssertClick" locator1="AssetRelatedAssets#ASSET_TABLE_CHOOSE" value1="${assetTitle}" />
+
+		<execute function="SelectFrame" value1="relative=top" />
 	</command>
 
 	<command name="viewAdvancedSearchNoResultCP">
@@ -160,7 +185,7 @@
 	</command>
 
 	<command name="viewNoSearchResultsCP">
-		<execute function="AssertTextEquals" locator1="Message#INFO" value1="There are no results." />
+		<execute function="AssertTextEquals" locator1="Message#EMPTY_INFO" value1="There are no results." />
 	</command>
 
 	<command name="viewPG">
@@ -171,9 +196,9 @@
 
 	<command name="viewViaSelectCP">
 		<execute function="SelectFrame" locator1="RelatedassetsSelect#IFRAME" />
-		<execute function="AssertElementPresent" locator1="RelatedassetsSelect#SEARCH_ADVANCED_MENULIST" />
+		<execute function="AssertElementPresent" locator1="Icon#ADVANCED_SEARCH" />
 		<execute function="AssertElementPresent" locator1="RelatedassetsSelect#SEARCH_FIELD" />
-		<execute function="AssertTextEquals" locator1="RelatedassetsSelect#SEARCH_BUTTON" value1="Search" />
+		<execute function="AssertElementPresent" locator1="Icon#BASIC_SEARCH" />
 
 		<for list="${forList}" param="assetTitle">
 			<var name="key_assetTitle" value="${assetTitle}" />

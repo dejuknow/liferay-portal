@@ -144,6 +144,20 @@ public class ServiceTrackerMapImpl<K, SR, TS, R>
 			if (serviceTrackerBucket.isDisposable()) {
 				_serviceTrackerBuckets.remove(emittedKey);
 			}
+
+			if (_serviceTrackerMapListener != null) {
+				try {
+					_serviceTrackerMapListener.keyRemoved(
+						ServiceTrackerMapImpl.this, emittedKey,
+						keyedServiceReferenceServiceTuple.getService(),
+						serviceTrackerBucket.getContent());
+				}
+				catch (Throwable t) {
+					_logger.log(
+						Logger.LOG_ERROR,
+						"Invocation to listener threw exception", t);
+				}
+			}
 		}
 
 		emittedKeys.clear();
@@ -280,12 +294,12 @@ public class ServiceTrackerMapImpl<K, SR, TS, R>
 				(ServiceReference)serviceReference,
 				new ServiceReferenceMapper.Emitter<K>() {
 
-				@Override
-				public void emit(K key) {
-					storeKey(key, keyedServiceReferenceServiceTuple);
-				}
+					@Override
+					public void emit(K key) {
+						storeKey(key, keyedServiceReferenceServiceTuple);
+					}
 
-			});
+				});
 		}
 
 		@Override

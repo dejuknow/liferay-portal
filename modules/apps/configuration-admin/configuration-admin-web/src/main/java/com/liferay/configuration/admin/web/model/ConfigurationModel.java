@@ -14,14 +14,16 @@
 
 package com.liferay.configuration.admin.web.model;
 
-import com.liferay.configuration.admin.ConfigurationAdmin;
-import com.liferay.configuration.admin.ExtendedAttributeDefinition;
-import com.liferay.configuration.admin.ExtendedObjectClassDefinition;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.metatype.annotations.ExtendedObjectClassDefinition;
+import com.liferay.portal.metatype.definitions.ExtendedAttributeDefinition;
 
 import java.io.IOException;
 import java.io.InputStream;
 
+import java.util.Dictionary;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,10 +32,13 @@ import org.osgi.service.cm.Configuration;
 /**
  * @author Raymond Augé
  */
-public class ConfigurationModel implements ExtendedObjectClassDefinition {
+public class ConfigurationModel
+	implements
+		com.liferay.portal.metatype.definitions.ExtendedObjectClassDefinition {
 
 	public ConfigurationModel(
-		ExtendedObjectClassDefinition extendedObjectClassDefinition,
+		com.liferay.portal.metatype.definitions.ExtendedObjectClassDefinition
+			extendedObjectClassDefinition,
 		Configuration configuration, String bundleLocation, boolean factory) {
 
 		_extendedObjectClassDefinition = extendedObjectClassDefinition;
@@ -54,7 +59,7 @@ public class ConfigurationModel implements ExtendedObjectClassDefinition {
 	public String getCategory() {
 		Map<String, String> extensionAttributes =
 			_extendedObjectClassDefinition.getExtensionAttributes(
-				ConfigurationAdmin.XML_NAMESPACE);
+				ExtendedObjectClassDefinition.XML_NAMESPACE);
 
 		return GetterUtil.get(extensionAttributes.get("category"), "other");
 	}
@@ -68,7 +73,9 @@ public class ConfigurationModel implements ExtendedObjectClassDefinition {
 		return _extendedObjectClassDefinition.getDescription();
 	}
 
-	public ExtendedObjectClassDefinition getExtendedObjectClassDefinition() {
+	public com.liferay.portal.metatype.definitions.ExtendedObjectClassDefinition
+		getExtendedObjectClassDefinition() {
+
 		return _extendedObjectClassDefinition;
 	}
 
@@ -105,9 +112,45 @@ public class ConfigurationModel implements ExtendedObjectClassDefinition {
 		return _extendedObjectClassDefinition.getID();
 	}
 
+	public String getLabel() {
+		String factoryInstanceLabelAttribute = getLabelAttribute();
+
+		if (Validator.isNull(factoryInstanceLabelAttribute)) {
+			return getName();
+		}
+
+		Dictionary<String, Object> properties = _configuration.getProperties();
+
+		Object value = properties.get(factoryInstanceLabelAttribute);
+
+		if (value == null) {
+			return getName();
+		}
+
+		return String.valueOf(value);
+	}
+
+	public String getLabelAttribute() {
+		Map<String, String> extensionAttributes =
+			_extendedObjectClassDefinition.getExtensionAttributes(
+				ExtendedObjectClassDefinition.XML_NAMESPACE);
+
+		return GetterUtil.get(
+			extensionAttributes.get("factoryInstanceLabelAttribute"),
+			StringPool.BLANK);
+	}
+
 	@Override
 	public String getName() {
 		return _extendedObjectClassDefinition.getName();
+	}
+
+	public String getScope() {
+		Map<String, String> extensionAttributes =
+			_extendedObjectClassDefinition.getExtensionAttributes(
+				ExtendedObjectClassDefinition.XML_NAMESPACE);
+
+		return extensionAttributes.get("scope");
 	}
 
 	public boolean isFactory() {
@@ -116,7 +159,9 @@ public class ConfigurationModel implements ExtendedObjectClassDefinition {
 
 	private final String _bundleLocation;
 	private final Configuration _configuration;
-	private final ExtendedObjectClassDefinition _extendedObjectClassDefinition;
+	private final
+		com.liferay.portal.metatype.definitions.ExtendedObjectClassDefinition
+			_extendedObjectClassDefinition;
 	private final boolean _factory;
 
 }

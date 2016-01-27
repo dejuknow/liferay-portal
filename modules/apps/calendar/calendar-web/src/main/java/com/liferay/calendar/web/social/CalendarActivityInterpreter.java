@@ -19,9 +19,9 @@ import com.liferay.calendar.model.CalendarBooking;
 import com.liferay.calendar.service.CalendarBookingLocalService;
 import com.liferay.calendar.service.permission.CalendarPermission;
 import com.liferay.calendar.social.CalendarActivityKeys;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.PortletURLFactoryUtil;
@@ -138,6 +138,6 @@ public class CalendarActivityInterpreter extends BaseSocialActivityInterpreter {
 	private static final String[] _CLASS_NAMES =
 		{CalendarBooking.class.getName()};
 
-	private volatile CalendarBookingLocalService _calendarBookingLocalService;
+	private CalendarBookingLocalService _calendarBookingLocalService;
 
 }

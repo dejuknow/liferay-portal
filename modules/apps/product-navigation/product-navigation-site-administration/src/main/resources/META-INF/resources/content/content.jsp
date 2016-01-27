@@ -14,81 +14,98 @@
  */
 --%>
 
-<%@ include file="/content/init.jsp" %>
+<%@ include file="/init.jsp" %>
 
 <%
 PanelCategory panelCategory = (PanelCategory)request.getAttribute(ApplicationListWebKeys.PANEL_CATEGORY);
+PanelCategoryHelper panelCategoryHelper = (PanelCategoryHelper)request.getAttribute(ApplicationListWebKeys.PANEL_CATEGORY_HELPER);
 %>
 
-<liferay-application-list:panel-category panelCategory="<%= panelCategory %>">
+<liferay-application-list:panel-category panelCategory="<%= panelCategory %>" showBody="<%= false %>">
 
 	<%
-	List<Layout> scopeLayouts = new ArrayList<Layout>();
-
 	Group curSite = themeDisplay.getSiteGroup();
 
-	scopeLayouts.addAll(LayoutLocalServiceUtil.getScopeGroupLayouts(curSite.getGroupId(), false));
-	scopeLayouts.addAll(LayoutLocalServiceUtil.getScopeGroupLayouts(curSite.getGroupId(), true));
+	List<Layout> scopeLayouts = LayoutLocalServiceUtil.getScopeGroupLayouts(curSite.getGroupId());
 	%>
 
-	<c:if test="<%= !scopeLayouts.isEmpty() %>">
-		<ul class="nav nav-equal-height nav-nested">
-			<li>
-				<div class="nav-equal-height-heading">
+	<c:choose>
+		<c:when test="<%= scopeLayouts.isEmpty() %>">
+			<liferay-application-list:panel-category-body panelCategory="<%= panelCategory %>" />
+		</c:when>
+		<c:otherwise>
+			<ul class="nav nav-equal-height nav-nested">
+				<li>
+					<div class="scope-selector">
 
-					<%
-					String scopeLabel = null;
+						<%
+						Group curScopeGroup = themeDisplay.getScopeGroup();
+						%>
 
-					Group curScopeGroup = themeDisplay.getScopeGroup();
+						<span class="scope-name">
+							<c:choose>
+								<c:when test="<%= curScopeGroup.isLayout() %>">
+									<%= curScopeGroup.getDescriptiveName(locale) %> (<liferay-ui:message key="scope" />)
+								</c:when>
+								<c:otherwise>
+									<liferay-ui:message key="default-scope" />
+								</c:otherwise>
+							</c:choose>
+						</span>
 
-					if (curScopeGroup.isLayout()) {
-						scopeLabel = StringUtil.shorten(curScopeGroup.getDescriptiveName(locale), 20);
-					}
-					else {
-						scopeLabel = LanguageUtil.get(request, "default-scope");
-					}
-					%>
+						<span class="nav-equal-height-heading-field">
+							<liferay-ui:icon-menu direction="right" icon="cog" markupView="lexicon" message="" showArrow="<%= false %>">
 
-					<span><%= scopeLabel %></span>
+								<%
+								Map<String, Object> data = new HashMap<String, Object>();
 
-					<span class="nav-equal-height-heading-field">
-						<liferay-ui:icon-menu direction="down" icon="../aui/cog" message="" showArrow="<%= false %>">
+								data.put("navigation", Boolean.TRUE.toString());
 
-							<%
-							Map<String, Object> data = new HashMap<String, Object>();
+								String portletId = themeDisplay.getPpid();
 
-							data.put("navigation", Boolean.TRUE.toString());
+								if (Validator.isNull(portletId) || !panelCategoryHelper.containsPortlet(portletId, PanelCategoryKeys.SITE_ADMINISTRATION_CONTENT, permissionChecker, curSite)) {
+									portletId = panelCategoryHelper.getFirstPortletId(PanelCategoryKeys.SITE_ADMINISTRATION_CONTENT, permissionChecker, curSite);
+								}
 
-							PortletURL portletURL = PortalUtil.getControlPanelPortletURL(request, curSite, themeDisplay.getPpid(), 0, 0, PortletRequest.RENDER_PHASE);
-							%>
-
-							<liferay-ui:icon
-								data="<%= data %>"
-								message="default-scope"
-								url="<%= portletURL.toString() %>"
-							/>
-
-							<%
-							for (Layout curScopeLayout : scopeLayouts) {
-								Group scopeGroup = curScopeLayout.getScopeGroup();
-
-								portletURL = PortalUtil.getControlPanelPortletURL(request, scopeGroup, themeDisplay.getPpid(), 0, 0, PortletRequest.RENDER_PHASE);
-							%>
+								PortletURL portletURL = PortalUtil.getControlPanelPortletURL(request, curSite, portletId, 0, 0, PortletRequest.RENDER_PHASE);
+								%>
 
 								<liferay-ui:icon
+									cssClass='<%= (curScopeGroup.getGroupId() == curSite.getGroupId()) ? "active" : StringPool.BLANK %>'
 									data="<%= data %>"
-									message="<%= HtmlUtil.escape(curScopeLayout.getName(locale)) %>"
+									message="default-scope"
 									url="<%= portletURL.toString() %>"
 								/>
 
-							<%
-							}
-							%>
+								<%
+								for (Layout curScopeLayout : scopeLayouts) {
+									Group scopeGroup = curScopeLayout.getScopeGroup();
 
-						</liferay-ui:icon-menu>
-					</span>
-				</div>
-			</li>
-		</ul>
-	</c:if>
+									if (Validator.isNull(portletId) || !panelCategoryHelper.containsPortlet(portletId, PanelCategoryKeys.SITE_ADMINISTRATION_CONTENT, permissionChecker, scopeGroup)) {
+										portletId = panelCategoryHelper.getFirstPortletId(PanelCategoryKeys.SITE_ADMINISTRATION_CONTENT, permissionChecker, scopeGroup);
+									}
+
+									portletURL = PortalUtil.getControlPanelPortletURL(request, scopeGroup, portletId, 0, 0, PortletRequest.RENDER_PHASE);
+								%>
+
+									<liferay-ui:icon
+										cssClass='<%= (curScopeGroup.getGroupId() == scopeGroup.getGroupId()) ? "active" : StringPool.BLANK %>'
+										data="<%= data %>"
+										message="<%= HtmlUtil.escape(curScopeLayout.getName(locale)) %>"
+										url="<%= portletURL.toString() %>"
+									/>
+
+								<%
+								}
+								%>
+
+							</liferay-ui:icon-menu>
+						</span>
+					</div>
+
+					<liferay-application-list:panel-category-body panelCategory="<%= panelCategory %>" />
+				</li>
+			</ul>
+		</c:otherwise>
+	</c:choose>
 </liferay-application-list:panel-category>

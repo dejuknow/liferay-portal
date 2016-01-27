@@ -3,19 +3,12 @@
 	<property name="testray.main.component.name" value="Mentions" />
 
 	<set-up>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="SignIn#signInPortalInstanceSetUp" />
-			</then>
-		</if>
+		<execute macro="TestCase#setUpPortalInstance" />
 
 		<execute macro="User#firstLoginPG" />
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Users and Organizations" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
 		<execute macro="User#addCP">
@@ -25,8 +18,8 @@
 			<var name="userScreenName" value="usersn" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Users and Organizations" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
 		<execute macro="User#editPasswordCP">
@@ -119,6 +112,10 @@
 			<var name="portlet" value="Message Boards" />
 		</execute>
 
+		<execute macro="MessageboardsThread#gotoCP">
+			<var name="threadSubject" value="Thread Subject" />
+		</execute>
+
 		<execute macro="MessageboardsThread#viewReplyCP">
 			<var name="postsNumber" value="2" />
 			<var name="threadBody" value="Thread Body" />
@@ -150,6 +147,10 @@
 
 		<execute macro="ProductMenu#gotoSitesContent">
 			<var name="portlet" value="Message Boards" />
+		</execute>
+
+		<execute macro="MessageboardsThread#gotoCP">
+			<var name="threadSubject" value="Thread Subject" />
 		</execute>
 
 		<execute macro="Mentions#addMentionViaMessageBoardThread">

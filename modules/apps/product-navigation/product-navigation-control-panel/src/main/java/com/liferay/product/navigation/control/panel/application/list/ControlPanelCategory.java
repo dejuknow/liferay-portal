@@ -20,9 +20,9 @@ import com.liferay.application.list.PanelCategory;
 import com.liferay.application.list.constants.PanelCategoryKeys;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.model.Group;
-import com.liferay.portal.security.permission.ActionKeys;
-import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.service.permission.PortalPermissionUtil;
 
 import java.util.Locale;
@@ -37,16 +37,11 @@ import org.osgi.service.component.annotations.Reference;
 	immediate = true,
 	property = {
 		"panel.category.key=" + PanelCategoryKeys.ROOT,
-		"service.ranking:Integer=300"
+		"service.ranking:Integer=100"
 	},
 	service = PanelCategory.class
 )
 public class ControlPanelCategory extends BasePanelCategory {
-
-	@Override
-	public String getIconCssClass() {
-		return "icon-tasks";
-	}
 
 	@Override
 	public String getKey() {
@@ -59,8 +54,7 @@ public class ControlPanelCategory extends BasePanelCategory {
 	}
 
 	@Override
-	public boolean hasAccessPermission(
-			PermissionChecker permissionChecker, Group group)
+	public boolean isShow(PermissionChecker permissionChecker, Group group)
 		throws PortalException {
 
 		if (PortalPermissionUtil.contains(
@@ -77,6 +71,6 @@ public class ControlPanelCategory extends BasePanelCategory {
 		_panelAppRegistry = panelAppRegistry;
 	}
 
-	private volatile PanelAppRegistry _panelAppRegistry;
+	private PanelAppRegistry _panelAppRegistry;
 
 }

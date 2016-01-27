@@ -20,9 +20,7 @@ import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portlet.asset.model.AssetCategory;
 import com.liferay.portlet.asset.model.AssetVocabulary;
-import com.liferay.portlet.asset.model.adapter.StagedAssetLink;
 import com.liferay.portlet.asset.service.AssetCategoryLocalService;
-import com.liferay.portlet.asset.service.AssetLinkLocalService;
 import com.liferay.portlet.asset.service.AssetVocabularyLocalService;
 import com.liferay.portlet.exportimport.lar.BasePortletDataHandler;
 import com.liferay.portlet.exportimport.lar.PortletDataContext;
@@ -52,6 +50,13 @@ import org.osgi.service.component.annotations.Reference;
 public class AssetCategoryPortletDataHandler extends BasePortletDataHandler {
 
 	public static final String NAMESPACE = "asset_category";
+
+	public static final String SCHEMA_VERSION = "1.0.0";
+
+	@Override
+	public String getSchemaVersion() {
+		return SCHEMA_VERSION;
+	}
 
 	@Activate
 	protected void activate() {
@@ -113,12 +118,6 @@ public class AssetCategoryPortletDataHandler extends BasePortletDataHandler {
 			vocabularyActionableDynamicQuery.performActions();
 		}
 
-		ActionableDynamicQuery linkActionableDynamicQuery =
-			_assetLinkLocalService.getExportActionbleDynamicQuery(
-				portletDataContext);
-
-		linkActionableDynamicQuery.performActions();
-
 		return getExportDataRootElementString(rootElement);
 	}
 
@@ -152,16 +151,6 @@ public class AssetCategoryPortletDataHandler extends BasePortletDataHandler {
 				StagedModelDataHandlerUtil.importStagedModel(
 					portletDataContext, vocabularyElement);
 			}
-		}
-
-		Element linksElement = portletDataContext.getImportDataGroupElement(
-			StagedAssetLink.class);
-
-		List<Element> linkElements = linksElement.elements();
-
-		for (Element linkElement : linkElements) {
-			StagedModelDataHandlerUtil.importStagedModel(
-				portletDataContext, linkElement);
 		}
 
 		return null;
@@ -220,13 +209,6 @@ public class AssetCategoryPortletDataHandler extends BasePortletDataHandler {
 	}
 
 	@Reference(unbind = "-")
-	protected void setAssetLinkLocalService(
-		AssetLinkLocalService assetLinkLocalService) {
-
-		_assetLinkLocalService = assetLinkLocalService;
-	}
-
-	@Reference(unbind = "-")
 	protected void setAssetVocabularyLocalService(
 		AssetVocabularyLocalService assetVocabularyLocalService) {
 
@@ -238,8 +220,7 @@ public class AssetCategoryPortletDataHandler extends BasePortletDataHandler {
 		ModuleServiceLifecycle moduleServiceLifecycle) {
 	}
 
-	private volatile AssetCategoryLocalService _assetCategoryLocalService;
-	private volatile AssetLinkLocalService _assetLinkLocalService;
-	private volatile AssetVocabularyLocalService _assetVocabularyLocalService;
+	private AssetCategoryLocalService _assetCategoryLocalService;
+	private AssetVocabularyLocalService _assetVocabularyLocalService;
 
 }

@@ -16,6 +16,7 @@ package com.liferay.wiki.model;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.annotation.ImplementationClassName;
 import com.liferay.portal.kernel.util.Accessor;
 import com.liferay.portal.model.PersistedModel;
 
@@ -28,6 +29,7 @@ import com.liferay.portal.model.PersistedModel;
  * @see com.liferay.wiki.model.impl.WikiPageResourceModelImpl
  * @generated
  */
+@ImplementationClassName("com.liferay.wiki.model.impl.WikiPageResourceImpl")
 @ProviderType
 public interface WikiPageResource extends WikiPageResourceModel, PersistedModel {
 	/*

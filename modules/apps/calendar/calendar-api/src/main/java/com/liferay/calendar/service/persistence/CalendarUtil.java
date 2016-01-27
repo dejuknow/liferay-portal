@@ -18,12 +18,11 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.calendar.model.Calendar;
 
+import com.liferay.osgi.util.ServiceTrackerFactory;
+
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.service.ServiceContext;
-
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
 
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -187,7 +186,7 @@ public class CalendarUtil {
 	* @param resourceBlockId the resource block ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching calendar
-	* @throws com.liferay.calendar.NoSuchCalendarException if a matching calendar could not be found
+	* @throws NoSuchCalendarException if a matching calendar could not be found
 	*/
 	public static Calendar findByResourceBlockId_First(long resourceBlockId,
 		OrderByComparator<Calendar> orderByComparator)
@@ -217,7 +216,7 @@ public class CalendarUtil {
 	* @param resourceBlockId the resource block ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching calendar
-	* @throws com.liferay.calendar.NoSuchCalendarException if a matching calendar could not be found
+	* @throws NoSuchCalendarException if a matching calendar could not be found
 	*/
 	public static Calendar findByResourceBlockId_Last(long resourceBlockId,
 		OrderByComparator<Calendar> orderByComparator)
@@ -248,7 +247,7 @@ public class CalendarUtil {
 	* @param resourceBlockId the resource block ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next calendar
-	* @throws com.liferay.calendar.NoSuchCalendarException if a calendar with the primary key could not be found
+	* @throws NoSuchCalendarException if a calendar with the primary key could not be found
 	*/
 	public static Calendar[] findByResourceBlockId_PrevAndNext(
 		long calendarId, long resourceBlockId,
@@ -351,7 +350,7 @@ public class CalendarUtil {
 	* @param uuid the uuid
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching calendar
-	* @throws com.liferay.calendar.NoSuchCalendarException if a matching calendar could not be found
+	* @throws NoSuchCalendarException if a matching calendar could not be found
 	*/
 	public static Calendar findByUuid_First(java.lang.String uuid,
 		OrderByComparator<Calendar> orderByComparator)
@@ -377,7 +376,7 @@ public class CalendarUtil {
 	* @param uuid the uuid
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching calendar
-	* @throws com.liferay.calendar.NoSuchCalendarException if a matching calendar could not be found
+	* @throws NoSuchCalendarException if a matching calendar could not be found
 	*/
 	public static Calendar findByUuid_Last(java.lang.String uuid,
 		OrderByComparator<Calendar> orderByComparator)
@@ -404,7 +403,7 @@ public class CalendarUtil {
 	* @param uuid the uuid
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next calendar
-	* @throws com.liferay.calendar.NoSuchCalendarException if a calendar with the primary key could not be found
+	* @throws NoSuchCalendarException if a calendar with the primary key could not be found
 	*/
 	public static Calendar[] findByUuid_PrevAndNext(long calendarId,
 		java.lang.String uuid, OrderByComparator<Calendar> orderByComparator)
@@ -433,12 +432,12 @@ public class CalendarUtil {
 	}
 
 	/**
-	* Returns the calendar where uuid = &#63; and groupId = &#63; or throws a {@link com.liferay.calendar.NoSuchCalendarException} if it could not be found.
+	* Returns the calendar where uuid = &#63; and groupId = &#63; or throws a {@link NoSuchCalendarException} if it could not be found.
 	*
 	* @param uuid the uuid
 	* @param groupId the group ID
 	* @return the matching calendar
-	* @throws com.liferay.calendar.NoSuchCalendarException if a matching calendar could not be found
+	* @throws NoSuchCalendarException if a matching calendar could not be found
 	*/
 	public static Calendar findByUUID_G(java.lang.String uuid, long groupId)
 		throws com.liferay.calendar.exception.NoSuchCalendarException {
@@ -573,7 +572,7 @@ public class CalendarUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching calendar
-	* @throws com.liferay.calendar.NoSuchCalendarException if a matching calendar could not be found
+	* @throws NoSuchCalendarException if a matching calendar could not be found
 	*/
 	public static Calendar findByUuid_C_First(java.lang.String uuid,
 		long companyId, OrderByComparator<Calendar> orderByComparator)
@@ -603,7 +602,7 @@ public class CalendarUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching calendar
-	* @throws com.liferay.calendar.NoSuchCalendarException if a matching calendar could not be found
+	* @throws NoSuchCalendarException if a matching calendar could not be found
 	*/
 	public static Calendar findByUuid_C_Last(java.lang.String uuid,
 		long companyId, OrderByComparator<Calendar> orderByComparator)
@@ -634,7 +633,7 @@ public class CalendarUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next calendar
-	* @throws com.liferay.calendar.NoSuchCalendarException if a calendar with the primary key could not be found
+	* @throws NoSuchCalendarException if a calendar with the primary key could not be found
 	*/
 	public static Calendar[] findByUuid_C_PrevAndNext(long calendarId,
 		java.lang.String uuid, long companyId,
@@ -748,7 +747,7 @@ public class CalendarUtil {
 	* @param calendarResourceId the calendar resource ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching calendar
-	* @throws com.liferay.calendar.NoSuchCalendarException if a matching calendar could not be found
+	* @throws NoSuchCalendarException if a matching calendar could not be found
 	*/
 	public static Calendar findByG_C_First(long groupId,
 		long calendarResourceId, OrderByComparator<Calendar> orderByComparator)
@@ -780,7 +779,7 @@ public class CalendarUtil {
 	* @param calendarResourceId the calendar resource ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching calendar
-	* @throws com.liferay.calendar.NoSuchCalendarException if a matching calendar could not be found
+	* @throws NoSuchCalendarException if a matching calendar could not be found
 	*/
 	public static Calendar findByG_C_Last(long groupId,
 		long calendarResourceId, OrderByComparator<Calendar> orderByComparator)
@@ -813,7 +812,7 @@ public class CalendarUtil {
 	* @param calendarResourceId the calendar resource ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next calendar
-	* @throws com.liferay.calendar.NoSuchCalendarException if a calendar with the primary key could not be found
+	* @throws NoSuchCalendarException if a calendar with the primary key could not be found
 	*/
 	public static Calendar[] findByG_C_PrevAndNext(long calendarId,
 		long groupId, long calendarResourceId,
@@ -885,7 +884,7 @@ public class CalendarUtil {
 	* @param calendarResourceId the calendar resource ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next calendar
-	* @throws com.liferay.calendar.NoSuchCalendarException if a calendar with the primary key could not be found
+	* @throws NoSuchCalendarException if a calendar with the primary key could not be found
 	*/
 	public static Calendar[] filterFindByG_C_PrevAndNext(long calendarId,
 		long groupId, long calendarResourceId,
@@ -1018,7 +1017,7 @@ public class CalendarUtil {
 	* @param defaultCalendar the default calendar
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching calendar
-	* @throws com.liferay.calendar.NoSuchCalendarException if a matching calendar could not be found
+	* @throws NoSuchCalendarException if a matching calendar could not be found
 	*/
 	public static Calendar findByG_C_D_First(long groupId,
 		long calendarResourceId, boolean defaultCalendar,
@@ -1054,7 +1053,7 @@ public class CalendarUtil {
 	* @param defaultCalendar the default calendar
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching calendar
-	* @throws com.liferay.calendar.NoSuchCalendarException if a matching calendar could not be found
+	* @throws NoSuchCalendarException if a matching calendar could not be found
 	*/
 	public static Calendar findByG_C_D_Last(long groupId,
 		long calendarResourceId, boolean defaultCalendar,
@@ -1091,7 +1090,7 @@ public class CalendarUtil {
 	* @param defaultCalendar the default calendar
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next calendar
-	* @throws com.liferay.calendar.NoSuchCalendarException if a calendar with the primary key could not be found
+	* @throws NoSuchCalendarException if a calendar with the primary key could not be found
 	*/
 	public static Calendar[] findByG_C_D_PrevAndNext(long calendarId,
 		long groupId, long calendarResourceId, boolean defaultCalendar,
@@ -1170,7 +1169,7 @@ public class CalendarUtil {
 	* @param defaultCalendar the default calendar
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next calendar
-	* @throws com.liferay.calendar.NoSuchCalendarException if a calendar with the primary key could not be found
+	* @throws NoSuchCalendarException if a calendar with the primary key could not be found
 	*/
 	public static Calendar[] filterFindByG_C_D_PrevAndNext(long calendarId,
 		long groupId, long calendarResourceId, boolean defaultCalendar,
@@ -1256,7 +1255,7 @@ public class CalendarUtil {
 	*
 	* @param calendarId the primary key of the calendar
 	* @return the calendar that was removed
-	* @throws com.liferay.calendar.NoSuchCalendarException if a calendar with the primary key could not be found
+	* @throws NoSuchCalendarException if a calendar with the primary key could not be found
 	*/
 	public static Calendar remove(long calendarId)
 		throws com.liferay.calendar.exception.NoSuchCalendarException {
@@ -1268,11 +1267,11 @@ public class CalendarUtil {
 	}
 
 	/**
-	* Returns the calendar with the primary key or throws a {@link com.liferay.calendar.NoSuchCalendarException} if it could not be found.
+	* Returns the calendar with the primary key or throws a {@link NoSuchCalendarException} if it could not be found.
 	*
 	* @param calendarId the primary key of the calendar
 	* @return the calendar
-	* @throws com.liferay.calendar.NoSuchCalendarException if a calendar with the primary key could not be found
+	* @throws NoSuchCalendarException if a calendar with the primary key could not be found
 	*/
 	public static Calendar findByPrimaryKey(long calendarId)
 		throws com.liferay.calendar.exception.NoSuchCalendarException {
@@ -1378,21 +1377,6 @@ public class CalendarUtil {
 		return _serviceTracker.getService();
 	}
 
-	/**
-	 * @deprecated As of 6.2.0
-	 */
-	@Deprecated
-	public void setPersistence(CalendarPersistence persistence) {
-	}
-
-	private static ServiceTracker<CalendarPersistence, CalendarPersistence> _serviceTracker;
-
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(CalendarUtil.class);
-
-		_serviceTracker = new ServiceTracker<CalendarPersistence, CalendarPersistence>(bundle.getBundleContext(),
-				CalendarPersistence.class, null);
-
-		_serviceTracker.open();
-	}
+	private static ServiceTracker<CalendarPersistence, CalendarPersistence> _serviceTracker =
+		ServiceTrackerFactory.open(CalendarPersistence.class);
 }

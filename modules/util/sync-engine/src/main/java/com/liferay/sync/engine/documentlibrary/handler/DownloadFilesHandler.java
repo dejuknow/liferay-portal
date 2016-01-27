@@ -51,6 +51,20 @@ public class DownloadFilesHandler extends BaseHandler {
 	}
 
 	@Override
+	public void removeEvent() {
+		Map<String, DownloadFileHandler> handlers =
+			(Map<String, DownloadFileHandler>)getParameterValue("handlers");
+
+		for (DownloadFileHandler downloadFileHandler : handlers.values()) {
+			if (!downloadFileHandler.isEventCancelled()) {
+				downloadFileHandler.removeEvent();
+			}
+		}
+
+		super.removeEvent();
+	}
+
+	@Override
 	protected void doHandleResponse(HttpResponse httpResponse)
 		throws Exception {
 
@@ -97,7 +111,7 @@ public class DownloadFilesHandler extends BaseHandler {
 					while (fields.hasNext()) {
 						Map.Entry<String, JsonNode> field = fields.next();
 
-						Handler<Void> handler = handlers.get(field.getKey());
+						Handler<Void> handler = handlers.remove(field.getKey());
 
 						JsonNode valueJsonNode = field.getValue();
 
@@ -111,7 +125,7 @@ public class DownloadFilesHandler extends BaseHandler {
 					break;
 				}
 
-				DownloadFileHandler downloadFileHandler = handlers.get(
+				DownloadFileHandler downloadFileHandler = handlers.remove(
 					zipEntryName);
 
 				SyncFile syncFile =
@@ -124,8 +138,8 @@ public class DownloadFilesHandler extends BaseHandler {
 				if (_logger.isTraceEnabled()) {
 					_logger.trace(
 						"Handling response {} file path {}",
-							DownloadFileHandler.class.getSimpleName(),
-							syncFile.getFilePathName());
+						DownloadFileHandler.class.getSimpleName(),
+						syncFile.getFilePathName());
 				}
 
 				try {
@@ -137,6 +151,9 @@ public class DownloadFilesHandler extends BaseHandler {
 					if (!isEventCancelled()) {
 						_logger.error(e.getMessage(), e);
 					}
+				}
+				finally {
+					downloadFileHandler.removeEvent();
 				}
 			}
 		}

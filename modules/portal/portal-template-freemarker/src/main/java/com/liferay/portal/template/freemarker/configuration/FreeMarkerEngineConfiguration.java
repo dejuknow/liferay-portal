@@ -16,14 +16,16 @@ package com.liferay.portal.template.freemarker.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
-import com.liferay.configuration.admin.ConfigurationAdmin;
+import com.liferay.portal.metatype.annotations.ExtendedObjectClassDefinition;
 
 /**
  * @author Peter Fellwock
  */
-@ConfigurationAdmin(category = "platform")
+@ExtendedObjectClassDefinition(category = "platform")
 @Meta.OCD(
-	id = "com.liferay.portal.template.freemarker.configuration.FreeMarkerEngineConfiguration"
+	id = "com.liferay.portal.template.freemarker.configuration.FreeMarkerEngineConfiguration",
+	localization = "content/Language",
+	name = "%freemarker.engine.configuration.name"
 )
 public interface FreeMarkerEngineConfiguration {
 
@@ -45,7 +47,10 @@ public interface FreeMarkerEngineConfiguration {
 	)
 	public String[] restrictedClasses();
 
-	@Meta.AD(deflt = "serviceLocator", required = false)
+	@Meta.AD(
+		deflt = "serviceLocator|utilLocator|objectUtil|staticUtil",
+		required = false
+	)
 	public String[] restrictedVariables();
 
 	@Meta.AD(deflt = "rethrow", required = false)

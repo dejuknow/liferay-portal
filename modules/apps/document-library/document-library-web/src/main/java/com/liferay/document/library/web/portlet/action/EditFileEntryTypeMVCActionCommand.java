@@ -15,10 +15,17 @@
 package com.liferay.document.library.web.portlet.action;
 
 import com.liferay.document.library.web.constants.DLPortletKeys;
+import com.liferay.dynamic.data.mapping.kernel.DDMForm;
+import com.liferay.dynamic.data.mapping.kernel.NoSuchStructureException;
+import com.liferay.dynamic.data.mapping.kernel.RequiredStructureException;
+import com.liferay.dynamic.data.mapping.kernel.StructureDefinitionException;
+import com.liferay.dynamic.data.mapping.kernel.StructureDuplicateElementException;
+import com.liferay.dynamic.data.mapping.kernel.StructureNameException;
 import com.liferay.dynamic.data.mapping.util.DDM;
 import com.liferay.dynamic.data.mapping.util.DDMBeanTranslator;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.Constants;
@@ -29,24 +36,17 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.model.Group;
-import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.service.GroupLocalService;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.documentlibrary.DuplicateFileEntryTypeException;
-import com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException;
-import com.liferay.portlet.documentlibrary.NoSuchMetadataSetException;
+import com.liferay.portlet.documentlibrary.exception.DuplicateFileEntryTypeException;
+import com.liferay.portlet.documentlibrary.exception.NoSuchFileEntryTypeException;
+import com.liferay.portlet.documentlibrary.exception.NoSuchMetadataSetException;
 import com.liferay.portlet.documentlibrary.model.DLFileEntryType;
 import com.liferay.portlet.documentlibrary.service.DLAppService;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryTypeService;
-import com.liferay.portlet.dynamicdatamapping.DDMForm;
-import com.liferay.portlet.dynamicdatamapping.NoSuchStructureException;
-import com.liferay.portlet.dynamicdatamapping.RequiredStructureException;
-import com.liferay.portlet.dynamicdatamapping.StructureDefinitionException;
-import com.liferay.portlet.dynamicdatamapping.StructureDuplicateElementException;
-import com.liferay.portlet.dynamicdatamapping.StructureNameException;
 
 import java.util.Locale;
 import java.util.Map;
@@ -261,10 +261,10 @@ public class EditFileEntryTypeMVCActionCommand extends BaseMVCActionCommand {
 		}
 	}
 
-	private volatile DDM _ddm;
-	private volatile DDMBeanTranslator _ddmBeanTranslator;
-	private volatile DLAppService _dlAppService;
-	private volatile DLFileEntryTypeService _dlFileEntryTypeService;
-	private volatile GroupLocalService _groupLocalService;
+	private DDM _ddm;
+	private DDMBeanTranslator _ddmBeanTranslator;
+	private DLAppService _dlAppService;
+	private DLFileEntryTypeService _dlFileEntryTypeService;
+	private GroupLocalService _groupLocalService;
 
 }

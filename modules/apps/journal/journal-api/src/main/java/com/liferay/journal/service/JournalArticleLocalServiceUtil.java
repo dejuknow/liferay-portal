@@ -16,8 +16,7 @@ package com.liferay.journal.service;
 
 import aQute.bnd.annotation.ProviderType;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
+import com.liferay.osgi.util.ServiceTrackerFactory;
 
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -3515,23 +3514,6 @@ public class JournalArticleLocalServiceUtil {
 	}
 
 	/**
-	* @deprecated As of 6.2.0, replaced by {@link
-	#updateArticleTranslation(long, String, double, Locale,
-	String, String, String, Map, ServiceContext)}
-	*/
-	@Deprecated
-	public static com.liferay.journal.model.JournalArticle updateArticleTranslation(
-		long groupId, java.lang.String articleId, double version,
-		java.util.Locale locale, java.lang.String title,
-		java.lang.String description, java.lang.String content,
-		java.util.Map<java.lang.String, byte[]> images)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService()
-				   .updateArticleTranslation(groupId, articleId, version,
-			locale, title, description, content, images);
-	}
-
-	/**
 	* Updates the translation of the web content article.
 	*
 	* @param groupId the primary key of the web content article's group
@@ -3782,21 +3764,6 @@ public class JournalArticleLocalServiceUtil {
 		return _serviceTracker.getService();
 	}
 
-	/**
-	 * @deprecated As of 6.2.0
-	 */
-	@Deprecated
-	public void setService(JournalArticleLocalService service) {
-	}
-
-	private static ServiceTracker<JournalArticleLocalService, JournalArticleLocalService> _serviceTracker;
-
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(JournalArticleLocalServiceUtil.class);
-
-		_serviceTracker = new ServiceTracker<JournalArticleLocalService, JournalArticleLocalService>(bundle.getBundleContext(),
-				JournalArticleLocalService.class, null);
-
-		_serviceTracker.open();
-	}
+	private static ServiceTracker<JournalArticleLocalService, JournalArticleLocalService> _serviceTracker =
+		ServiceTrackerFactory.open(JournalArticleLocalService.class);
 }

@@ -19,214 +19,23 @@
 <%
 String referringPortletResource = ParamUtil.getString(request, "referringPortletResource");
 
-String ddmStructureName = LanguageUtil.get(request, "basic-web-content");
+ArticleSearch articleSearchContainer = journalDisplayContext.getSearchContainer();
 
-PortletURL portletURL = journalDisplayContext.getPortletURL();
-
-ArticleSearch articleSearchContainer = new ArticleSearch(liferayPortletRequest, portletURL);
-
-String orderByCol = ParamUtil.getString(request, "orderByCol");
-String orderByType = ParamUtil.getString(request, "orderByType");
-
-if (Validator.isNull(orderByCol)) {
-	orderByCol = portalPreferences.getValue(JournalPortletKeys.JOURNAL, "order-by-col", "modified-date");
-	orderByType = portalPreferences.getValue(JournalPortletKeys.JOURNAL, "order-by-type", "asc");
-}
-else {
-	boolean saveOrderBy = ParamUtil.getBoolean(request, "saveOrderBy");
-
-	if (saveOrderBy) {
-		portalPreferences.setValue(JournalPortletKeys.JOURNAL, "order-by-col", orderByCol);
-		portalPreferences.setValue(JournalPortletKeys.JOURNAL, "order-by-type", orderByType);
-	}
-}
-
-OrderByComparator<JournalArticle> orderByComparator = JournalPortletUtil.getArticleOrderByComparator(orderByCol, orderByType);
-
-articleSearchContainer.setOrderByCol(orderByCol);
-articleSearchContainer.setOrderByComparator(orderByComparator);
-articleSearchContainer.setOrderByType(orderByType);
-
-EntriesChecker entriesChecker = new EntriesChecker(liferayPortletRequest, liferayPortletResponse);
-
-entriesChecker.setCssClass("entry-selector");
-
-articleSearchContainer.setRowChecker(entriesChecker);
-
-EntriesMover entriesMover = new EntriesMover(scopeGroupId);
-
-articleSearchContainer.setRowMover(entriesMover);
-
-ArticleDisplayTerms displayTerms = (ArticleDisplayTerms)articleSearchContainer.getDisplayTerms();
-%>
-
-<c:if test="<%= Validator.isNotNull(displayTerms.getDDMStructureKey()) %>">
-	<aui:input name="<%= ArticleDisplayTerms.DDM_STRUCTURE_KEY %>" type="hidden" value="<%= displayTerms.getDDMStructureKey() %>" />
-
-	<%
-	DDMStructure ddmStructure = DDMStructureLocalServiceUtil.fetchStructure(themeDisplay.getSiteGroupId(), PortalUtil.getClassNameId(JournalArticle.class), displayTerms.getDDMStructureKey(), true);
-
-	if (ddmStructure != null) {
-		ddmStructureName = ddmStructure.getName(locale);
-	}
-	%>
-
-</c:if>
-
-<c:if test="<%= Validator.isNotNull(displayTerms.getDDMTemplateKey()) %>">
-	<aui:input name="<%= ArticleDisplayTerms.DDM_TEMPLATE_KEY %>" type="hidden" value="<%= displayTerms.getDDMTemplateKey() %>" />
-</c:if>
-
-<c:if test="<%= portletName.equals(JournalPortletKeys.JOURNAL) && !((themeDisplay.getScopeGroupId() == themeDisplay.getCompanyGroupId()) && (Validator.isNotNull(displayTerms.getDDMStructureKey()) || Validator.isNotNull(displayTerms.getDDMTemplateKey()))) %>">
-	<aui:input name="groupId" type="hidden" />
-</c:if>
-
-<%
-ArticleSearchTerms searchTerms = (ArticleSearchTerms)articleSearchContainer.getSearchTerms();
-
-if (journalDisplayContext.getFolderId() != JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
-	List<Long> folderIds = new ArrayList<Long>(1);
-
-	folderIds.add(journalDisplayContext.getFolderId());
-
-	searchTerms.setFolderIds(folderIds);
-}
-else {
-	searchTerms.setFolderIds(new ArrayList<Long>());
-}
-
-if (Validator.isNotNull(displayTerms.getDDMStructureKey())) {
-	searchTerms.setDDMStructureKey(displayTerms.getDDMStructureKey());
-}
-
-searchTerms.setVersion(-1);
-
-if (journalDisplayContext.isNavigationRecent()) {
-	articleSearchContainer.setOrderByCol("create-date");
-	articleSearchContainer.setOrderByType(orderByType);
-}
-
-int status = WorkflowConstants.STATUS_APPROVED;
-
-if (permissionChecker.isContentReviewer(user.getCompanyId(), scopeGroupId)) {
-	status = WorkflowConstants.STATUS_ANY;
-}
-
-List results = null;
-int total = 0;
-%>
-
-<c:choose>
-	<c:when test="<%= journalDisplayContext.isNavigationMine() || journalDisplayContext.isNavigationRecent() %>">
-
-		<%
-		boolean includeOwner = true;
-
-		if (journalDisplayContext.isNavigationMine()) {
-			includeOwner = false;
-		}
-
-		total = JournalArticleServiceUtil.getGroupArticlesCount(scopeGroupId, themeDisplay.getUserId(), journalDisplayContext.getFolderId(), journalDisplayContext.getStatus(), includeOwner);
-
-		articleSearchContainer.setTotal(total);
-
-		results = JournalArticleServiceUtil.getGroupArticles(scopeGroupId, themeDisplay.getUserId(), journalDisplayContext.getFolderId(), journalDisplayContext.getStatus(), includeOwner, articleSearchContainer.getStart(), articleSearchContainer.getEnd(), articleSearchContainer.getOrderByComparator());
-		%>
-
-	</c:when>
-	<c:when test="<%= Validator.isNotNull(displayTerms.getDDMStructureKey()) %>">
-
-		<%
-		total = JournalArticleServiceUtil.getArticlesCountByStructureId(displayTerms.getGroupId(), searchTerms.getDDMStructureKey());
-
-		articleSearchContainer.setTotal(total);
-
-		results = JournalArticleServiceUtil.getArticlesByStructureId(displayTerms.getGroupId(), displayTerms.getDDMStructureKey(), articleSearchContainer.getStart(), articleSearchContainer.getEnd(), articleSearchContainer.getOrderByComparator());
-		%>
-
-	</c:when>
-	<c:when test="<%= Validator.isNotNull(displayTerms.getDDMTemplateKey()) %>">
-
-		<%
-		total = JournalArticleServiceUtil.searchCount(company.getCompanyId(), searchTerms.getGroupId(), searchTerms.getFolderIds(), JournalArticleConstants.CLASSNAME_ID_DEFAULT, searchTerms.getKeywords(), searchTerms.getVersionObj(), searchTerms.getDDMStructureKey(), searchTerms.getDDMTemplateKey(), searchTerms.getDisplayDateGT(), searchTerms.getDisplayDateLT(), searchTerms.getStatus(), searchTerms.getReviewDate());
-
-		articleSearchContainer.setTotal(total);
-
-		results = JournalArticleServiceUtil.search(company.getCompanyId(), searchTerms.getGroupId(), searchTerms.getFolderIds(), JournalArticleConstants.CLASSNAME_ID_DEFAULT, searchTerms.getKeywords(), searchTerms.getVersionObj(), searchTerms.getDDMStructureKey(), searchTerms.getDDMTemplateKey(), searchTerms.getDisplayDateGT(), searchTerms.getDisplayDateLT(), searchTerms.getStatus(), searchTerms.getReviewDate(), articleSearchContainer.getStart(), articleSearchContainer.getEnd(), articleSearchContainer.getOrderByComparator());
-		%>
-
-	</c:when>
-	<c:otherwise>
-
-		<%
-		total = JournalFolderServiceUtil.getFoldersAndArticlesCount(scopeGroupId, themeDisplay.getUserId(), journalDisplayContext.getFolderId(), journalDisplayContext.getStatus());
-
-		articleSearchContainer.setTotal(total);
-
-		OrderByComparator<Object> folderOrderByComparator = null;
-
-		boolean orderByAsc = false;
-
-		if (orderByType.equals("asc")) {
-			orderByAsc = true;
-		}
-
-		if (orderByCol.equals("display-date")) {
-			folderOrderByComparator = new FolderArticleDisplayDateComparator(orderByAsc);
-		}
-		else if (orderByCol.equals("modified-date")) {
-			folderOrderByComparator = new FolderArticleModifiedDateComparator(orderByAsc);
-		}
-
-		results = JournalFolderServiceUtil.getFoldersAndArticles(scopeGroupId, themeDisplay.getUserId(), journalDisplayContext.getFolderId(), journalDisplayContext.getStatus(), articleSearchContainer.getStart(), articleSearchContainer.getEnd(), folderOrderByComparator);
-		%>
-
-	</c:otherwise>
-</c:choose>
-
-<%
-articleSearchContainer.setResults(results);
-
-request.setAttribute("view.jsp-total", String.valueOf(total));
+request.setAttribute("view.jsp-total", String.valueOf(articleSearchContainer.getTotal()));
 
 request.setAttribute("view_entries.jsp-entryStart", String.valueOf(articleSearchContainer.getStart()));
 request.setAttribute("view_entries.jsp-entryEnd", String.valueOf(articleSearchContainer.getEnd()));
-%>
 
-<c:if test="<%= results.isEmpty() %>">
-	<div class="alert alert-info entries-empty">
-		<c:choose>
-			<c:when test="<%= Validator.isNotNull(displayTerms.getDDMStructureKey()) %>">
-				<c:if test="<%= total == 0 %>">
-					<liferay-ui:message arguments="<%= HtmlUtil.escape(ddmStructureName) %>" key="there-is-no-web-content-with-structure-x" translateArguments="<%= false %>" />
-				</c:if>
-			</c:when>
-			<c:otherwise>
-				<c:if test="<%= total == 0 %>">
-					<liferay-ui:message key="no-web-content-was-found" />
-				</c:if>
-			</c:otherwise>
-		</c:choose>
-	</div>
-</c:if>
-
-<%
 String displayStyle = journalDisplayContext.getDisplayStyle();
 
 String searchContainerId = ParamUtil.getString(request, "searchContainerId");
 %>
 
 <liferay-ui:search-container
+	emptyResultsMessage="no-web-content-was-found"
 	id="<%= searchContainerId %>"
 	searchContainer="<%= articleSearchContainer %>"
-	total="<%= total %>"
-	totalVar="articleSearchContainerTotal"
 >
-	<liferay-ui:search-container-results
-		results="<%= results %>"
-		resultsVar="articleSearchContainerResults"
-	/>
-
 	<liferay-ui:search-container-row
 		className="Object"
 		cssClass="entry-display-style"
@@ -280,19 +89,41 @@ String searchContainerId = ParamUtil.getString(request, "searchContainerId");
 
 				<c:choose>
 					<c:when test='<%= displayStyle.equals("descriptive") %>'>
-						<liferay-ui:search-container-column-image
-							src='<%= Validator.isNotNull(curArticle.getArticleImageURL(themeDisplay)) ? curArticle.getArticleImageURL(themeDisplay) : themeDisplay.getPathThemeImages() + "/file_system/large/article.png" %>'
-							toggleRowChecker="<%= journalDisplayContext.isShowEditActions() %>"
-						/>
+						<liferay-ui:search-container-column-text>
+							<liferay-ui:user-portrait
+								cssClass="user-icon-lg"
+								userId="<%= curArticle.getUserId() %>"
+							/>
+						</liferay-ui:search-container-column-text>
 
-						<liferay-ui:search-container-column-jsp
-							colspan="2"
-							href="<%= rowURL %>"
-							path="/view_article_descriptive.jsp"
-						/>
+						<liferay-ui:search-container-column-text
+							colspan="<%= 2 %>"
+						>
+
+							<%
+							Date createDate = curArticle.getModifiedDate();
+
+							String modifiedDateDescription = LanguageUtil.getTimeDescription(request, System.currentTimeMillis() - createDate.getTime(), true);
+							%>
+
+							<h6 class="text-default">
+								<liferay-ui:message arguments="<%= new String[] {HtmlUtil.escape(curArticle.getUserName()), modifiedDateDescription} %>" key="x-modified-x-ago" />
+							</h6>
+
+							<h5>
+								<aui:a href="<%= rowURL != null ? rowURL.toString() : null %>">
+									<%= HtmlUtil.escape(curArticle.getTitle(locale)) %>
+								</aui:a>
+							</h5>
+
+							<h6 class="text-default">
+								<aui:workflow-status markupView="lexicon" showIcon="<%= false %>" showLabel="<%= false %>" status="<%= curArticle.getStatus() %>" />
+							</h6>
+						</liferay-ui:search-container-column-text>
 
 						<c:if test="<%= journalDisplayContext.isShowEditActions() %>">
 							<liferay-ui:search-container-column-jsp
+								cssClass="list-group-item-field"
 								path="/article_action.jsp"
 							/>
 						</c:if>
@@ -309,30 +140,34 @@ String searchContainerId = ParamUtil.getString(request, "searchContainerId");
 							String articleImageURL = curArticle.getArticleImageURL(themeDisplay);
 							%>
 
-							<liferay-frontend:vertical-card
-								actionJsp='<%= journalDisplayContext.isShowEditActions() ? "/article_action.jsp" : null %>'
-								actionJspServletContext="<%= application %>"
-								imageUrl='<%= Validator.isNotNull(articleImageURL) ? articleImageURL : themeDisplay.getPathThemeImages() + "/file_system/large/article.png" %>'
-								resultRow="<%= row %>"
-								rowChecker="<%= entriesChecker %>"
-								title="<%= curArticle.getTitle(locale) %>"
-								url="<%= rowURL != null ? rowURL.toString() : null %>"
-							>
-								<liferay-frontend:vertical-card-sticker-bottom>
-									<liferay-ui:user-portrait
-										cssClass="sticker sticker-bottom"
-										userId="<%= curArticle.getUserId() %>"
-									/>
-								</liferay-frontend:vertical-card-sticker-bottom>
-
-								<liferay-frontend:vertical-card-header>
-									<liferay-ui:message arguments="<%= new String[] {LanguageUtil.getTimeDescription(locale, System.currentTimeMillis() - curArticle.getModifiedDate().getTime(), true), HtmlUtil.escape(curArticle.getUserName())} %>" key="x-ago-by-x" translateArguments="<%= false %>" />
-								</liferay-frontend:vertical-card-header>
-
-								<liferay-frontend:vertical-card-footer>
-									<aui:workflow-status markupView="lexicon" showIcon="<%= false %>" showLabel="<%= false %>" status="<%= curArticle.getStatus() %>" />
-								</liferay-frontend:vertical-card-footer>
-							</liferay-frontend:vertical-card>
+							<c:choose>
+								<c:when test="<%= Validator.isNotNull(articleImageURL) %>">
+									<liferay-frontend:vertical-card
+										actionJsp='<%= journalDisplayContext.isShowEditActions() ? "/article_action.jsp" : null %>'
+										actionJspServletContext="<%= application %>"
+										imageUrl="<%= articleImageURL %>"
+										resultRow="<%= row %>"
+										rowChecker="<%= articleSearchContainer.getRowChecker() %>"
+										title="<%= curArticle.getTitle(locale) %>"
+										url="<%= rowURL != null ? rowURL.toString() : null %>"
+									>
+										<%@ include file="/article_vertical_card.jspf" %>
+									</liferay-frontend:vertical-card>
+								</c:when>
+								<c:otherwise>
+									<liferay-frontend:icon-vertical-card
+										actionJsp='<%= journalDisplayContext.isShowEditActions() ? "/article_action.jsp" : null %>'
+										actionJspServletContext="<%= application %>"
+										icon="web-content"
+										resultRow="<%= row %>"
+										rowChecker="<%= articleSearchContainer.getRowChecker() %>"
+										title="<%= curArticle.getTitle(locale) %>"
+										url="<%= rowURL != null ? rowURL.toString() : null %>"
+									>
+										<%@ include file="/article_vertical_card.jspf" %>
+									</liferay-frontend:icon-vertical-card>
+								</c:otherwise>
+							</c:choose>
 						</liferay-ui:search-container-column-text>
 					</c:when>
 					<c:otherwise>
@@ -346,6 +181,11 @@ String searchContainerId = ParamUtil.getString(request, "searchContainerId");
 							name="title"
 							path="/article_title.jsp"
 							truncate="<%= true %>"
+						/>
+
+						<liferay-ui:search-container-column-text
+							name="author"
+							value="<%= HtmlUtil.escape(PortalUtil.getUserName(curArticle)) %>"
 						/>
 
 						<liferay-ui:search-container-column-status
@@ -362,11 +202,6 @@ String searchContainerId = ParamUtil.getString(request, "searchContainerId");
 							value="<%= curArticle.getDisplayDate() %>"
 						/>
 
-						<liferay-ui:search-container-column-text
-							name="author"
-							value="<%= PortalUtil.getUserName(curArticle) %>"
-						/>
-
 						<%
 						DDMStructure ddmStructure = DDMStructureLocalServiceUtil.getStructure(scopeGroupId, PortalUtil.getClassNameId(JournalArticle.class), curArticle.getDDMStructureKey(), true);
 						%>
@@ -378,8 +213,7 @@ String searchContainerId = ParamUtil.getString(request, "searchContainerId");
 
 						<c:if test="<%= journalDisplayContext.isShowEditActions() %>">
 							<liferay-ui:search-container-column-jsp
-								align="right"
-								cssClass="checkbox-cell entry-action"
+								cssClass="list-group-item-field"
 								path="/article_action.jsp"
 							/>
 						</c:if>
@@ -411,31 +245,38 @@ String searchContainerId = ParamUtil.getString(request, "searchContainerId");
 				<c:choose>
 					<c:when test='<%= displayStyle.equals("descriptive") %>'>
 						<liferay-ui:search-container-column-icon
-							icon="icon-folder-close"
+							icon="folder"
 							toggleRowChecker="<%= true %>"
 						/>
 
-						<liferay-ui:search-container-column-text colspan="<%= 2 %>">
-							<liferay-ui:app-view-entry
-								actionJsp='<%= journalDisplayContext.isShowEditActions() ? "/folder_action.jsp" : null %>'
-								actionJspServletContext="<%= application %>"
-								author="<%= curFolder.getUserName() %>"
-								createDate="<%= curFolder.getCreateDate() %>"
-								description="<%= curFolder.getDescription() %>"
-								displayStyle="descriptive"
-								folder="<%= true %>"
-								markupView="lexicon"
-								modifiedDate="<%= curFolder.getModifiedDate() %>"
-								rowCheckerId="<%= String.valueOf(curFolder.getFolderId()) %>"
-								rowCheckerName="<%= JournalFolder.class.getSimpleName() %>"
-								showCheckbox="<%= JournalFolderPermission.contains(permissionChecker, curFolder, ActionKeys.DELETE) || JournalFolderPermission.contains(permissionChecker, curFolder, ActionKeys.UPDATE) %>"
-								title="<%= curFolder.getName() %>"
-								url="<%= rowURL.toString() %>"
-							/>
+						<liferay-ui:search-container-column-text
+							colspan="<%= 2 %>"
+						>
+
+							<%
+							Date createDate = curFolder.getCreateDate();
+
+							String createDateDescription = LanguageUtil.getTimeDescription(request, System.currentTimeMillis() - createDate.getTime(), true);
+							%>
+
+							<h6 class="text-default">
+								<liferay-ui:message arguments="<%= new String[] {HtmlUtil.escape(curFolder.getUserName()), createDateDescription} %>" key="x-modified-x-ago" />
+							</h6>
+
+							<h5>
+								<aui:a href="<%= rowURL != null ? rowURL.toString() : null %>">
+									<%= curFolder.getName() %>
+								</aui:a>
+							</h5>
+
+							<h6 class="text-default">
+								<span><%= HtmlUtil.escape(curFolder.getDescription()) %></span>
+							</h6>
 						</liferay-ui:search-container-column-text>
 
 						<c:if test="<%= journalDisplayContext.isShowEditActions() %>">
 							<liferay-ui:search-container-column-jsp
+								cssClass="list-group-item-field"
 								path="/folder_action.jsp"
 							/>
 						</c:if>
@@ -450,13 +291,15 @@ String searchContainerId = ParamUtil.getString(request, "searchContainerId");
 							<liferay-frontend:horizontal-card
 								actionJsp='<%= journalDisplayContext.isShowEditActions() ? "/folder_action.jsp" : null %>'
 								actionJspServletContext="<%= application %>"
-								icon="icon-folder-close-alt"
-								imageCSSClass="icon-monospaced"
 								resultRow="<%= row %>"
-								rowChecker="<%= entriesChecker %>"
+								rowChecker="<%= articleSearchContainer.getRowChecker() %>"
 								text="<%= HtmlUtil.escape(curFolder.getName()) %>"
 								url="<%= rowURL.toString() %>"
-							/>
+							>
+								<liferay-frontend:horizontal-card-icon>
+									<span class="icon-folder-close-alt icon-monospaced"></span>
+								</liferay-frontend:horizontal-card-icon>
+							</liferay-frontend:horizontal-card>
 						</liferay-ui:search-container-column-text>
 					</c:when>
 					<c:otherwise>
@@ -470,6 +313,11 @@ String searchContainerId = ParamUtil.getString(request, "searchContainerId");
 							name="title"
 							truncate="<%= true %>"
 							value="<%= HtmlUtil.escape(curFolder.getName()) %>"
+						/>
+
+						<liferay-ui:search-container-column-text
+							name="author"
+							value="<%= HtmlUtil.escape(PortalUtil.getUserName(curFolder)) %>"
 						/>
 
 						<liferay-ui:search-container-column-text
@@ -488,19 +336,13 @@ String searchContainerId = ParamUtil.getString(request, "searchContainerId");
 						/>
 
 						<liferay-ui:search-container-column-text
-							name="author"
-							value="<%= PortalUtil.getUserName(curFolder) %>"
-						/>
-
-						<liferay-ui:search-container-column-text
 							name="type"
 							value='<%= LanguageUtil.get(request, "folder") %>'
 						/>
 
 						<c:if test="<%= journalDisplayContext.isShowEditActions() %>">
 							<liferay-ui:search-container-column-jsp
-								align="right"
-								cssClass="checkbox-cell entry-action"
+								cssClass="list-group-item-field"
 								path="/folder_action.jsp"
 							/>
 						</c:if>

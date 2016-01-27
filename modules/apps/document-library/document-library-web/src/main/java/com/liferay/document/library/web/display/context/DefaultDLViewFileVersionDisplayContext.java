@@ -14,14 +14,16 @@
 
 package com.liferay.document.library.web.display.context;
 
-import com.liferay.document.library.web.configuration.DLConfiguration;
+import com.liferay.document.library.display.context.DLMimeTypeDisplayContext;
 import com.liferay.document.library.web.display.context.logic.DLPortletInstanceSettingsHelper;
-import com.liferay.document.library.web.display.context.logic.DLVisualizationHelper;
 import com.liferay.document.library.web.display.context.logic.FileEntryDisplayContextHelper;
 import com.liferay.document.library.web.display.context.logic.FileVersionDisplayContextHelper;
 import com.liferay.document.library.web.display.context.logic.UIItemsBuilder;
 import com.liferay.document.library.web.display.context.util.DLRequestHelper;
 import com.liferay.document.library.web.display.context.util.JSPRenderer;
+import com.liferay.dynamic.data.mapping.kernel.DDMFormValues;
+import com.liferay.dynamic.data.mapping.kernel.DDMStructure;
+import com.liferay.dynamic.data.mapping.kernel.StorageEngineManagerUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.repository.model.FileEntry;
@@ -35,9 +37,6 @@ import com.liferay.portlet.documentlibrary.display.context.DLViewFileVersionDisp
 import com.liferay.portlet.documentlibrary.model.DLFileEntryMetadata;
 import com.liferay.portlet.documentlibrary.model.DLFileVersion;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryMetadataLocalServiceUtil;
-import com.liferay.portlet.dynamicdatamapping.DDMFormValues;
-import com.liferay.portlet.dynamicdatamapping.DDMStructure;
-import com.liferay.portlet.dynamicdatamapping.StorageEngineManagerUtil;
 
 import java.io.IOException;
 
@@ -58,60 +57,31 @@ public class DefaultDLViewFileVersionDisplayContext
 
 	public DefaultDLViewFileVersionDisplayContext(
 			HttpServletRequest request, HttpServletResponse response,
-			FileShortcut fileShortcut, DLConfiguration dlConfiguration)
+			FileShortcut fileShortcut,
+			DLMimeTypeDisplayContext dlMimeTypeDisplayContext)
 		throws PortalException {
 
 		this(
 			request, response, fileShortcut.getFileVersion(), fileShortcut,
-			dlConfiguration);
+			dlMimeTypeDisplayContext);
 	}
 
 	public DefaultDLViewFileVersionDisplayContext(
 		HttpServletRequest request, HttpServletResponse response,
-		FileVersion fileVersion, DLConfiguration dlConfiguration) {
+		FileVersion fileVersion,
+		DLMimeTypeDisplayContext dlMimeTypeDisplayContext) {
 
-		this(request, response, fileVersion, null, dlConfiguration);
+		this(request, response, fileVersion, null, dlMimeTypeDisplayContext);
 	}
 
 	@Override
 	public String getCssClassFileMimeType() {
-		String mimeType = _fileVersion.getMimeType();
-
-		if (_containsMimeType(_dlConfiguration.codeFileMimeTypes(), mimeType)) {
-			return "file-icon-color-7";
-		}
-		else if (_containsMimeType(
-					_dlConfiguration.compressedFileMimeTypes(), mimeType)) {
-
-			return "file-icon-color-1";
-		}
-		else if (_containsMimeType(
-					_dlConfiguration.multimediaFileMimeTypes(), mimeType)) {
-
-			return "file-icon-color-3";
-		}
-		else if (_containsMimeType(
-					_dlConfiguration.presentationFileMimeTypes(), mimeType)) {
-
-			return "file-icon-color-4";
-		}
-		else if (_containsMimeType(
-					_dlConfiguration.spreadSheetFileMimeTypes(), mimeType)) {
-
-			return "file-icon-color-2";
-		}
-		else if (_containsMimeType(
-					_dlConfiguration.textFileMimeTypes(), mimeType)) {
-
-			return "file-icon-color-6";
-		}
-		else if (_containsMimeType(
-					_dlConfiguration.vectorialFileMimeTypes(), mimeType)) {
-
-			return "file-icon-color-5";
+		if (_dlMimeTypeDisplayContext == null) {
+			return "file-icon-color-0";
 		}
 
-		return "file-icon-color-0";
+		return _dlMimeTypeDisplayContext.getCssClassFileMimeType(
+			_fileVersion.getMimeType());
 	}
 
 	@Override
@@ -128,14 +98,28 @@ public class DefaultDLViewFileVersionDisplayContext
 
 	@Override
 	public List<DDMStructure> getDDMStructures() throws PortalException {
+		if (_ddmStructures != null) {
+			return _ddmStructures;
+		}
+
 		if (_fileVersionDisplayContextHelper.isDLFileVersion()) {
 			DLFileVersion dlFileVersion =
 				(DLFileVersion)_fileVersion.getModel();
 
-			return dlFileVersion.getDDMStructures();
+			_ddmStructures = dlFileVersion.getDDMStructures();
+		}
+		else {
+			_ddmStructures = Collections.emptyList();
 		}
 
-		return Collections.emptyList();
+		return _ddmStructures;
+	}
+
+	@Override
+	public int getDDMStructuresCount() throws PortalException {
+		List<DDMStructure> ddmStructures = getDDMStructures();
+
+		return ddmStructures.size();
 	}
 
 	@Override
@@ -210,14 +194,12 @@ public class DefaultDLViewFileVersionDisplayContext
 	private DefaultDLViewFileVersionDisplayContext(
 		HttpServletRequest request, HttpServletResponse response,
 		FileVersion fileVersion, FileShortcut fileShortcut,
-		DLConfiguration dlConfiguration) {
+		DLMimeTypeDisplayContext dlMimeTypeDisplayContext) {
 
 		try {
 			_fileVersion = fileVersion;
 
 			DLRequestHelper dlRequestHelper = new DLRequestHelper(request);
-
-			_dlVisualizationHelper = new DLVisualizationHelper(dlRequestHelper);
 
 			_dlPortletInstanceSettingsHelper =
 				new DLPortletInstanceSettingsHelper(dlRequestHelper);
@@ -230,15 +212,13 @@ public class DefaultDLViewFileVersionDisplayContext
 				new FileVersionDisplayContextHelper(fileVersion);
 
 			if (fileShortcut == null) {
-				_uiItemsBuilder = new UIItemsBuilder(
-					request, response, fileVersion);
+				_uiItemsBuilder = new UIItemsBuilder(request, fileVersion);
 			}
 			else {
-				_uiItemsBuilder = new UIItemsBuilder(
-					request, response, fileShortcut);
+				_uiItemsBuilder = new UIItemsBuilder(request, fileShortcut);
 			}
 
-			_dlConfiguration = dlConfiguration;
+			_dlMimeTypeDisplayContext = dlMimeTypeDisplayContext;
 		}
 		catch (PortalException pe) {
 			throw new SystemException(
@@ -246,25 +226,6 @@ public class DefaultDLViewFileVersionDisplayContext
 					fileVersion,
 				pe);
 		}
-	}
-
-	private boolean _containsMimeType(String[] mimeTypes, String mimeType) {
-		for (String curMimeType : mimeTypes) {
-			int pos = curMimeType.indexOf("/");
-
-			if (pos != -1) {
-				if (mimeType.equals(curMimeType)) {
-					return true;
-				}
-			}
-			else {
-				if (mimeType.startsWith(curMimeType)) {
-					return true;
-				}
-			}
-		}
-
-		return false;
 	}
 
 	private FileEntry _getFileEntry(FileVersion fileVersion)
@@ -308,10 +269,10 @@ public class DefaultDLViewFileVersionDisplayContext
 	private static final UUID _UUID = UUID.fromString(
 		"85F6C50E-3893-4E32-9D63-208528A503FA");
 
-	private final DLConfiguration _dlConfiguration;
+	private List<DDMStructure> _ddmStructures;
+	private final DLMimeTypeDisplayContext _dlMimeTypeDisplayContext;
 	private final DLPortletInstanceSettingsHelper
 		_dlPortletInstanceSettingsHelper;
-	private final DLVisualizationHelper _dlVisualizationHelper;
 	private final FileEntryDisplayContextHelper _fileEntryDisplayContextHelper;
 	private final FileVersion _fileVersion;
 	private final FileVersionDisplayContextHelper

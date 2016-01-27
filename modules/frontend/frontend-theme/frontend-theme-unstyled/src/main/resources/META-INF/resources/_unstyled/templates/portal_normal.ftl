@@ -14,13 +14,15 @@
 
 <body class="${css_class}">
 
-<@liferay.quick_access content_id="#main-content" />
+<@liferay_ui["quick-access"] contentId="#main-content" />
 
 ${theme.include(body_top_include)}
 
-<@liferay.product_menu_sidebar state="${liferay_product_menu_state}" />
+<@liferay.product_menu_sidebar state="${liferay_product_menu_state!}" />
 
-<@liferay.control_menu />
+<#if themeDisplay.isImpersonated() || (is_setup_complete && is_signed_in)>
+	<@liferay_control_menu["control-menu"] />
+</#if>
 
 <div class="container-fluid" id="wrapper">
 	<header id="banner" role="banner">
@@ -61,7 +63,9 @@ ${theme.include(body_top_include)}
 
 			${portletDisplay.setTitle(the_title)}
 
-			${theme.wrapPortlet("portlet.ftl", content_include)}
+			<@liferay_theme["wrap-portlet"] page="portlet.ftl">
+				${theme.include(content_include)}
+			</@>
 		</#if>
 	</section>
 

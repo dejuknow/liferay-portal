@@ -21,12 +21,12 @@ import com.liferay.portal.kernel.ldap.LDAPServerNameException;
 import com.liferay.portal.kernel.ldap.LDAPUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.HashMapDictionary;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PropertiesParamUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
@@ -34,7 +34,6 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.ldap.configuration.ConfigurationProvider;
 import com.liferay.portal.ldap.configuration.LDAPServerConfiguration;
 import com.liferay.portal.ldap.constants.LDAPConstants;
-import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.settings.web.constants.PortalSettingsPortletKeys;
 import com.liferay.portal.theme.ThemeDisplay;
 
@@ -191,8 +190,7 @@ public class PortalSettingsEditLDAPServerMVCActionCommand
 		}
 
 		List<LDAPServerConfiguration> ldapServerConfigurations =
-			_ldapServerConfigurationProvider.getConfigurations(
-				companyId, false);
+			_ldapServerConfigurationProvider.getConfigurations(companyId);
 
 		for (LDAPServerConfiguration ldapServerConfiguration :
 				ldapServerConfigurations) {
@@ -226,9 +224,12 @@ public class PortalSettingsEditLDAPServerMVCActionCommand
 
 		Object propertyValue = dictionary.get(property);
 
+		if (propertyValue == null) {
+			return;
+		}
+
 		if (propertyValue instanceof String) {
-			String[] propertyValues = StringUtil.split(
-				(String)propertyValue, StringPool.COMMA);
+			String[] propertyValues = StringUtil.split((String)propertyValue);
 
 			dictionary.put(property, propertyValues);
 		}
@@ -237,6 +238,6 @@ public class PortalSettingsEditLDAPServerMVCActionCommand
 	private static ConfigurationProvider<LDAPServerConfiguration>
 		_ldapServerConfigurationProvider;
 
-	private volatile CounterLocalService _counterLocalService;
+	private CounterLocalService _counterLocalService;
 
 }

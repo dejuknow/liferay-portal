@@ -227,15 +227,6 @@ public class BookmarksEntryWrapper implements BookmarksEntry,
 	}
 
 	/**
-	* @deprecated As of 6.1.0, replaced by {@link #isApproved()}
-	*/
-	@Deprecated
-	@Override
-	public boolean getApproved() {
-		return _bookmarksEntry.getApproved();
-	}
-
-	/**
 	* Returns the company ID of this bookmarks entry.
 	*
 	* @return the company ID of this bookmarks entry
@@ -983,14 +974,6 @@ public class BookmarksEntryWrapper implements BookmarksEntry,
 	@Override
 	public StagedModelType getStagedModelType() {
 		return _bookmarksEntry.getStagedModelType();
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedModel}
-	 */
-	@Deprecated
-	public BookmarksEntry getWrappedBookmarksEntry() {
-		return _bookmarksEntry;
 	}
 
 	@Override

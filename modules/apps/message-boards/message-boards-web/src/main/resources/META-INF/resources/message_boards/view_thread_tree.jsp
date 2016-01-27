@@ -22,7 +22,6 @@ MBMessage selMessage = (MBMessage)request.getAttribute(WebKeys.MESSAGE_BOARDS_TR
 MBMessage message = (MBMessage)request.getAttribute(WebKeys.MESSAGE_BOARDS_TREE_WALKER_CUR_MESSAGE);
 MBCategory category = (MBCategory)request.getAttribute(WebKeys.MESSAGE_BOARDS_TREE_WALKER_CATEGORY);
 MBThread thread = (MBThread)request.getAttribute(WebKeys.MESSAGE_BOARDS_TREE_WALKER_THREAD);
-boolean lastNode = ((Boolean)request.getAttribute(WebKeys.MESSAGE_BOARDS_TREE_WALKER_LAST_NODE)).booleanValue();
 int depth = ((Integer)request.getAttribute(WebKeys.MESSAGE_BOARDS_TREE_WALKER_DEPTH)).intValue();
 %>
 
@@ -30,7 +29,6 @@ int depth = ((Integer)request.getAttribute(WebKeys.MESSAGE_BOARDS_TREE_WALKER_DE
 
 	<%
 	request.setAttribute("edit_message.jsp-category", category);
-	request.setAttribute("edit_message.jsp-depth", depth);
 	request.setAttribute("edit_message.jsp-editable", Boolean.TRUE);
 	request.setAttribute("edit_message.jsp-message", message);
 	request.setAttribute("edit-message.jsp-showDeletedAttachmentsFileEntries", Boolean.TRUE);
@@ -38,6 +36,10 @@ int depth = ((Integer)request.getAttribute(WebKeys.MESSAGE_BOARDS_TREE_WALKER_DE
 	request.setAttribute("edit-message.jsp-showRecentPosts", Boolean.TRUE);
 	request.setAttribute("edit_message.jsp-thread", thread);
 	%>
+
+	<c:if test="<%= depth == 0 %>">
+		<div class="card-tab-group message-container">
+	</c:if>
 
 	<liferay-util:include page="/message_boards/view_thread_message.jsp" servletContext="<%= application %>" />
 
@@ -75,8 +77,14 @@ for (int i = range[0]; i < range[1]; i++) {
 	request.setAttribute(WebKeys.MESSAGE_BOARDS_TREE_WALKER_THREAD, thread);
 %>
 
-	<liferay-util:include page="/message_boards/view_thread_tree.jsp" servletContext="<%= application %>" />
+	<div class="card-tab message-container">
+		<liferay-util:include page="/message_boards/view_thread_tree.jsp" servletContext="<%= application %>" />
+	</div>
 
 <%
 }
 %>
+
+<c:if test="<%= (depth == 0) && ((message.getMessageId() != selMessage.getMessageId()) || MBUtil.isViewableMessage(themeDisplay, message)) %>">
+	</div>
+</c:if>

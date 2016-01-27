@@ -14,6 +14,8 @@
 
 package com.liferay.exportimport.lar;
 
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.KeyValuePair;
@@ -25,7 +27,6 @@ import com.liferay.portal.model.Layout;
 import com.liferay.portal.model.PortletConstants;
 import com.liferay.portal.model.ResourceConstants;
 import com.liferay.portal.model.Role;
-import com.liferay.portal.security.permission.ResourceActionsUtil;
 import com.liferay.portal.service.ResourcePermissionLocalServiceUtil;
 import com.liferay.portal.service.RoleLocalServiceUtil;
 import com.liferay.portal.service.permission.PortletPermissionUtil;
@@ -136,10 +137,20 @@ public class PermissionExporter {
 
 			Role role = RoleLocalServiceUtil.fetchRole(roleId);
 
+			String roleName = role.getName();
+
+			if (role.isTeam()) {
+				try {
+					roleName = ROLE_TEAM_PREFIX + role.getDescriptiveName();
+				}
+				catch (PortalException pe) {
+				}
+			}
+
 			Element roleElement = permissionsElement.addElement("role");
 
 			roleElement.addAttribute("uuid", role.getUuid());
-			roleElement.addAttribute("name", role.getName());
+			roleElement.addAttribute("name", roleName);
 			roleElement.addAttribute("title", role.getTitle());
 			roleElement.addAttribute("description", role.getDescription());
 			roleElement.addAttribute("type", String.valueOf(role.getType()));

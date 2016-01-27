@@ -16,8 +16,7 @@ package com.liferay.portal.workflow.kaleo.service;
 
 import aQute.bnd.annotation.ProviderType;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
+import com.liferay.osgi.util.ServiceTrackerFactory;
 
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -330,6 +329,26 @@ public class KaleoInstanceLocalServiceUtil {
 		return getService().getPersistedModel(primaryKeyObj);
 	}
 
+	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoInstance> search(
+		java.lang.Long userId, java.lang.String assetType,
+		java.lang.String nodeName, java.lang.String kaleoDefinitionName,
+		java.lang.Boolean completed, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.workflow.kaleo.model.KaleoInstance> orderByComparator,
+		com.liferay.portal.service.ServiceContext serviceContext) {
+		return getService()
+				   .search(userId, assetType, nodeName, kaleoDefinitionName,
+			completed, start, end, orderByComparator, serviceContext);
+	}
+
+	public static int searchCount(java.lang.Long userId,
+		java.lang.String assetType, java.lang.String nodeName,
+		java.lang.String kaleoDefinitionName, java.lang.Boolean completed,
+		com.liferay.portal.service.ServiceContext serviceContext) {
+		return getService()
+				   .searchCount(userId, assetType, nodeName,
+			kaleoDefinitionName, completed, serviceContext);
+	}
+
 	/**
 	* Updates the kaleo instance in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	*
@@ -355,21 +374,6 @@ public class KaleoInstanceLocalServiceUtil {
 		return _serviceTracker.getService();
 	}
 
-	/**
-	 * @deprecated As of 6.2.0
-	 */
-	@Deprecated
-	public void setService(KaleoInstanceLocalService service) {
-	}
-
-	private static ServiceTracker<KaleoInstanceLocalService, KaleoInstanceLocalService> _serviceTracker;
-
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(KaleoInstanceLocalServiceUtil.class);
-
-		_serviceTracker = new ServiceTracker<KaleoInstanceLocalService, KaleoInstanceLocalService>(bundle.getBundleContext(),
-				KaleoInstanceLocalService.class, null);
-
-		_serviceTracker.open();
-	}
+	private static ServiceTracker<KaleoInstanceLocalService, KaleoInstanceLocalService> _serviceTracker =
+		ServiceTrackerFactory.open(KaleoInstanceLocalService.class);
 }

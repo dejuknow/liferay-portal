@@ -41,12 +41,21 @@ import javax.portlet.PortletPreferences;
  * @author Brian Wing Shun Chan
  * @author Eduardo Lundgren
  */
-public class PortletDisplay implements Serializable {
+public class PortletDisplay implements Cloneable, Serializable {
 
 	public PortletDisplay() {
 		if (_log.isDebugEnabled()) {
 			_log.debug("Creating new instance " + hashCode());
 		}
+	}
+
+	@Override
+	public Object clone() {
+		PortletDisplay portletDisplay = new PortletDisplay();
+
+		portletDisplay.copyFrom(this);
+
+		return portletDisplay;
 	}
 
 	public void copyFrom(PortletDisplay master) {
@@ -73,6 +82,7 @@ public class PortletDisplay implements Serializable {
 		_portletDecoratorId = master.getPortletDecoratorId();
 		_portletDisplayName = master.getPortletDisplayName();
 		_portletName = master.getPortletName();
+		_portletResource = master.getPortletResource();
 		_portletSetup = master.getPortletSetup();
 		_portletToolbar = master.getPortletToolbar();
 		_resourcePK = master.getResourcePK();
@@ -104,6 +114,7 @@ public class PortletDisplay implements Serializable {
 		_urlBack = master.getURLBack();
 		_urlClose = master.getURLClose();
 		_urlConfiguration = master.getURLConfiguration();
+		_urlConfigurationJS = master.getURLConfigurationJS();
 		_urlEdit = master.getURLEdit();
 		_urlEditDefaults = master.getURLEditDefaults();
 		_urlEditGuest = master.getURLEditGuest();
@@ -174,6 +185,7 @@ public class PortletDisplay implements Serializable {
 		slave.setURLBack(_urlBack);
 		slave.setURLClose(_urlClose);
 		slave.setURLConfiguration(_urlConfiguration);
+		slave.setURLConfigurationJS(_urlConfigurationJS);
 		slave.setURLEdit(_urlEdit);
 		slave.setURLEditDefaults(_urlEditDefaults);
 		slave.setURLEditGuest(_urlEditGuest);

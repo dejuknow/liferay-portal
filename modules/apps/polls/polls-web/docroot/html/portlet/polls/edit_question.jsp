@@ -58,27 +58,26 @@ if (choiceName > 0) {
 }
 
 boolean showHeader = ParamUtil.getBoolean(request, "showHeader", true);
+
+if (showHeader) {
+	renderResponse.setTitle(question == null ? LanguageUtil.get(request, "new-poll") : question.getTitle(locale));
+}
+
+portletDisplay.setShowBackIcon(true);
+portletDisplay.setURLBack(redirect);
 %>
 
 <liferay-portlet:actionURL refererPlid="<%= themeDisplay.getRefererPlid() %>" var="editQuestionURL">
 	<portlet:param name="struts_action" value="/polls/edit_question" />
 </liferay-portlet:actionURL>
 
-<aui:form action="<%= editQuestionURL %>" method="post" name="fm" onSubmit='<%= "event.preventDefault(); " + renderResponse.getNamespace() + "saveQuestion();" %>'>
+<aui:form action="<%= editQuestionURL %>" cssClass="container-fluid-1280" method="post" name="fm" onSubmit='<%= "event.preventDefault(); " + renderResponse.getNamespace() + "saveQuestion();" %>'>
 	<aui:input name="<%= Constants.CMD %>" type="hidden" value="" />
 	<aui:input name="redirect" type="hidden" value="<%= redirect %>" />
 	<aui:input name="referringPortletResource" type="hidden" value="<%= referringPortletResource %>" />
 	<aui:input name="questionId" type="hidden" value="<%= questionId %>" />
 	<aui:input name="choicesCount" type="hidden" value="<%= choicesCount %>" />
 	<aui:input name="choiceName" type="hidden" value="" />
-
-	<c:if test="<%= showHeader %>">
-		<liferay-ui:header
-			backURL="<%= redirect %>"
-			localizeTitle="<%= (question == null) %>"
-			title='<%= (question == null) ? "new-poll" : question.getTitle(locale) %>'
-		/>
-	</c:if>
 
 	<liferay-ui:error exception="<%= QuestionChoiceException.class %>" message="please-enter-valid-choices" />
 	<liferay-ui:error exception="<%= QuestionDescriptionException.class %>" message="please-enter-a-valid-description" />
@@ -133,7 +132,7 @@ boolean showHeader = ParamUtil.getBoolean(request, "showHeader", true);
 			%>
 
 			<aui:button-row>
-				<aui:button cssClass="add-choice" onClick='<%= renderResponse.getNamespace() + "addPollChoice();" %>' value="add-choice" />
+				<aui:button cssClass="add-choice btn-lg" onClick='<%= renderResponse.getNamespace() + "addPollChoice();" %>' value="add-choice" />
 			</aui:button-row>
 		</aui:field-wrapper>
 
@@ -146,9 +145,9 @@ boolean showHeader = ParamUtil.getBoolean(request, "showHeader", true);
 		</c:if>
 
 		<aui:button-row>
-			<aui:button type="submit" />
+			<aui:button cssClass="btn-lg" type="submit" />
 
-			<aui:button href="<%= redirect %>" type="cancel" />
+			<aui:button cssClass="btn-lg" href="<%= redirect %>" type="cancel" />
 		</aui:button-row>
 	</aui:fieldset>
 </aui:form>

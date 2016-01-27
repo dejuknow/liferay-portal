@@ -18,9 +18,8 @@ import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.portlet.configuration.icon.BasePortletConfigurationIcon;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.theme.PortletDisplay;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.portlet.PortletRequest;
 
 /**
  * @author Eudaldo Alonso
@@ -28,8 +27,8 @@ import javax.servlet.http.HttpServletRequest;
 public class ExportImportPortletConfigurationIcon
 	extends BasePortletConfigurationIcon {
 
-	public ExportImportPortletConfigurationIcon(HttpServletRequest request) {
-		super(request);
+	public ExportImportPortletConfigurationIcon(PortletRequest portletRequest) {
+		super(portletRequest);
 	}
 
 	@Override
@@ -49,11 +48,10 @@ public class ExportImportPortletConfigurationIcon
 
 	@Override
 	public String getOnClick() {
-		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
+		StringBundler sb = new StringBundler(12);
 
-		StringBundler sb = new StringBundler(11);
-
-		sb.append("Liferay.Portlet.openWindow({namespace: '");
+		sb.append("Liferay.Portlet.openWindow({bodyCssClass: ");
+		sb.append("'dialog-with-footer', namespace: '");
 		sb.append(portletDisplay.getNamespace());
 		sb.append("', portlet: '#p_p_id_");
 		sb.append(portletDisplay.getId());
@@ -70,15 +68,11 @@ public class ExportImportPortletConfigurationIcon
 
 	@Override
 	public String getURL() {
-		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
-
 		return portletDisplay.getURLExportImport();
 	}
 
 	@Override
 	public boolean isShow() {
-		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
-
 		return portletDisplay.isShowExportImportIcon();
 	}
 

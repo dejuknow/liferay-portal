@@ -47,9 +47,17 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.scripting.ScriptingException;
 import com.liferay.portal.kernel.scripting.ScriptingHelperUtil;
 import com.liferay.portal.kernel.scripting.ScriptingUtil;
-import com.liferay.portal.kernel.search.Indexer;
-import com.liferay.portal.kernel.search.IndexerRegistryUtil;
-import com.liferay.portal.kernel.search.SearchEngineUtil;
+import com.liferay.portal.kernel.search.IndexWriterHelperUtil;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
+import com.liferay.portal.kernel.security.membershippolicy.OrganizationMembershipPolicy;
+import com.liferay.portal.kernel.security.membershippolicy.OrganizationMembershipPolicyFactoryUtil;
+import com.liferay.portal.kernel.security.membershippolicy.RoleMembershipPolicy;
+import com.liferay.portal.kernel.security.membershippolicy.RoleMembershipPolicyFactoryUtil;
+import com.liferay.portal.kernel.security.membershippolicy.SiteMembershipPolicy;
+import com.liferay.portal.kernel.security.membershippolicy.SiteMembershipPolicyFactoryUtil;
+import com.liferay.portal.kernel.security.membershippolicy.UserGroupMembershipPolicy;
+import com.liferay.portal.kernel.security.membershippolicy.UserGroupMembershipPolicyFactoryUtil;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.servlet.DirectServletRegistryUtil;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
@@ -68,20 +76,8 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import com.liferay.portal.kernel.xuggler.XugglerInstallException;
 import com.liferay.portal.kernel.xuggler.XugglerUtil;
-import com.liferay.portal.model.CompanyConstants;
-import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.security.lang.DoPrivilegedBean;
-import com.liferay.portal.security.membershippolicy.OrganizationMembershipPolicy;
-import com.liferay.portal.security.membershippolicy.OrganizationMembershipPolicyFactoryUtil;
-import com.liferay.portal.security.membershippolicy.RoleMembershipPolicy;
-import com.liferay.portal.security.membershippolicy.RoleMembershipPolicyFactoryUtil;
-import com.liferay.portal.security.membershippolicy.SiteMembershipPolicy;
-import com.liferay.portal.security.membershippolicy.SiteMembershipPolicyFactoryUtil;
-import com.liferay.portal.security.membershippolicy.UserGroupMembershipPolicy;
-import com.liferay.portal.security.membershippolicy.UserGroupMembershipPolicyFactoryUtil;
-import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.service.ServiceComponentLocalService;
-import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.upload.UploadServletRequestImpl;
 import com.liferay.portal.util.MaintenanceUtil;
@@ -210,9 +206,6 @@ public class EditServerMVCActionCommand extends BaseMVCActionCommand {
 		}
 		else if (cmd.equals("threadDump")) {
 			threadDump();
-		}
-		else if (cmd.equals("toggleIndexerEnabled")) {
-			toggleIndexerEnabled(actionRequest);
 		}
 		else if (cmd.equals("updateCaptcha")) {
 			updateCaptcha(actionRequest, portletPreferences);
@@ -349,7 +342,7 @@ public class EditServerMVCActionCommand extends BaseMVCActionCommand {
 		XugglerUtil.installNativeLibraries(jarName);
 	}
 
-	protected void reindex(ActionRequest actionRequest) throws Exception {
+	protected void reindex(final ActionRequest actionRequest) throws Exception {
 		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
@@ -357,22 +350,10 @@ public class EditServerMVCActionCommand extends BaseMVCActionCommand {
 
 		String className = ParamUtil.getString(actionRequest, "className");
 
-		taskContextMap.put("className", className);
-
-		taskContextMap.put("companyIds", PortalInstances.getCompanyIds());
-
-		String taskExecutorClassName =
-			_CLASS_NAME_REINDEX_PORTAL_BACKGROUND_TASK_EXECUTOR;
-
-		if (Validator.isNotNull(className)) {
-			taskExecutorClassName =
-				_CLASS_NAME_REINDEX_SINGLE_INDEXER_BACKGROUND_TASK_EXECUTOR;
-		}
-
 		if (!ParamUtil.getBoolean(actionRequest, "blocking")) {
-			BackgroundTaskManagerUtil.addBackgroundTask(
-				themeDisplay.getUserId(), CompanyConstants.SYSTEM, "reindex",
-				taskExecutorClassName, taskContextMap, new ServiceContext());
+			IndexWriterHelperUtil.reindex(
+				themeDisplay.getUserId(), "reindex",
+				PortalInstances.getCompanyIds(), className, taskContextMap);
 
 			return;
 		}
@@ -392,7 +373,8 @@ public class EditServerMVCActionCommand extends BaseMVCActionCommand {
 				try {
 					BackgroundTask backgroundTask =
 						BackgroundTaskManagerUtil.getBackgroundTask(
-							message.getLong("backgroundTaskId"));
+							message.getLong(
+								BackgroundTaskConstants.BACKGROUND_TASK_ID));
 
 					Map<String, Serializable> taskContextMap =
 						backgroundTask.getTaskContextMap();
@@ -407,23 +389,38 @@ public class EditServerMVCActionCommand extends BaseMVCActionCommand {
 
 				int status = message.getInteger("status");
 
-				if ((status ==
-						BackgroundTaskConstants.STATUS_CANCELLED) ||
+				if ((status == BackgroundTaskConstants.STATUS_CANCELLED) ||
 					(status == BackgroundTaskConstants.STATUS_FAILED) ||
 					(status == BackgroundTaskConstants.STATUS_SUCCESSFUL)) {
+
+					PortletSession portletSession =
+						actionRequest.getPortletSession();
+
+					long lastAccessedTime =
+						portletSession.getLastAccessedTime();
+					int maxInactiveInterval =
+						portletSession.getMaxInactiveInterval();
+
+					int extendedMaxInactiveIntervalTime =
+						(int)(System.currentTimeMillis() - lastAccessedTime +
+							maxInactiveInterval);
+
+					portletSession.setMaxInactiveInterval(
+						extendedMaxInactiveIntervalTime);
 
 					countDownLatch.countDown();
 				}
 			}
+
 		};
 
 		MessageBusUtil.registerMessageListener(
 			DestinationNames.BACKGROUND_TASK_STATUS, messageListener);
 
 		try {
-			BackgroundTaskManagerUtil.addBackgroundTask(
-				themeDisplay.getUserId(), CompanyConstants.SYSTEM, "reindex",
-				taskExecutorClassName, taskContextMap, new ServiceContext());
+			IndexWriterHelperUtil.reindex(
+				themeDisplay.getUserId(), "reindex",
+				PortalInstances.getCompanyIds(), className, taskContextMap);
 
 			countDownLatch.await(
 				ParamUtil.getLong(actionRequest, "timeout", Time.HOUR),
@@ -441,8 +438,8 @@ public class EditServerMVCActionCommand extends BaseMVCActionCommand {
 		long[] companyIds = PortalInstances.getCompanyIds();
 
 		for (long companyId : companyIds) {
-			SearchEngineUtil.indexQuerySuggestionDictionaries(companyId);
-			SearchEngineUtil.indexSpellCheckerDictionaries(companyId);
+			IndexWriterHelperUtil.indexQuerySuggestionDictionaries(companyId);
+			IndexWriterHelperUtil.indexSpellCheckerDictionaries(companyId);
 		}
 	}
 
@@ -538,25 +535,6 @@ public class EditServerMVCActionCommand extends BaseMVCActionCommand {
 		}
 	}
 
-	protected void toggleIndexerEnabled(ActionRequest actionRequest)
-		throws Exception {
-
-		String className = ParamUtil.getString(actionRequest, "className");
-
-		Indexer<?> indexer = IndexerRegistryUtil.nullSafeGetIndexer(className);
-
-		boolean indexerEnabled = indexer.isIndexerEnabled();
-
-		if (indexerEnabled) {
-			indexer.setIndexerEnabled(false);
-		}
-		else {
-			indexer.setIndexerEnabled(true);
-
-			reindex(actionRequest);
-		}
-	}
-
 	protected void updateCaptcha(
 			ActionRequest actionRequest, PortletPreferences portletPreferences)
 		throws Exception {
@@ -580,8 +558,11 @@ public class EditServerMVCActionCommand extends BaseMVCActionCommand {
 		validateCaptcha(actionRequest);
 
 		if (SessionErrors.isEmpty(actionRequest)) {
+			Class<?> clazz = captcha.getClass();
+
 			portletPreferences.setValue(
-				PropsKeys.CAPTCHA_ENGINE_IMPL, captcha.getClass().getName());
+				PropsKeys.CAPTCHA_ENGINE_IMPL, clazz.getName());
+
 			portletPreferences.setValue(
 				PropsKeys.CAPTCHA_ENGINE_RECAPTCHA_KEY_PRIVATE,
 				reCaptchaPrivateKey);
@@ -676,12 +657,6 @@ public class EditServerMVCActionCommand extends BaseMVCActionCommand {
 			actionRequest, "journalImageSmallMaxSize");
 		String shoppingImageExtensions = getFileExtensions(
 			actionRequest, "shoppingImageExtensions");
-		long scImageMaxSize = ParamUtil.getLong(
-			actionRequest, "scImageMaxSize");
-		long scImageThumbnailMaxHeight = ParamUtil.getLong(
-			actionRequest, "scImageThumbnailMaxHeight");
-		long scImageThumbnailMaxWidth = ParamUtil.getLong(
-			actionRequest, "scImageThumbnailMaxWidth");
 		long shoppingImageLargeMaxSize = ParamUtil.getLong(
 			actionRequest, "shoppingImageLargeMaxSize");
 		long shoppingImageMediumMaxSize = ParamUtil.getLong(
@@ -724,14 +699,6 @@ public class EditServerMVCActionCommand extends BaseMVCActionCommand {
 		portletPreferences.setValue(
 			PropsKeys.SHOPPING_IMAGE_SMALL_MAX_SIZE,
 			String.valueOf(shoppingImageSmallMaxSize));
-		portletPreferences.setValue(
-			PropsKeys.SC_IMAGE_MAX_SIZE, String.valueOf(scImageMaxSize));
-		portletPreferences.setValue(
-			PropsKeys.SC_IMAGE_THUMBNAIL_MAX_HEIGHT,
-			String.valueOf(scImageThumbnailMaxHeight));
-		portletPreferences.setValue(
-			PropsKeys.SC_IMAGE_THUMBNAIL_MAX_WIDTH,
-			String.valueOf(scImageThumbnailMaxWidth));
 		portletPreferences.setValue(
 			PropsKeys.UPLOAD_SERVLET_REQUEST_IMPL_MAX_SIZE,
 			String.valueOf(uploadServletRequestImplMaxSize));
@@ -889,20 +856,10 @@ public class EditServerMVCActionCommand extends BaseMVCActionCommand {
 		_serviceComponentLocalService.verifyDB();
 	}
 
-	private static final String
-		_CLASS_NAME_REINDEX_PORTAL_BACKGROUND_TASK_EXECUTOR =
-			"com.liferay.portal.search.internal.background.task." +
-				"ReindexPortalBackgroundTaskExecutor";
-
-	private static final String
-		_CLASS_NAME_REINDEX_SINGLE_INDEXER_BACKGROUND_TASK_EXECUTOR =
-			"com.liferay.portal.search.internal.background.task." +
-				"ReindexSingleIndexerBackgroundTaskExecutor";
-
 	private static final Log _log = LogFactoryUtil.getLog(
 		EditServerMVCActionCommand.class);
 
-	private volatile MailService _mailService;
-	private volatile ServiceComponentLocalService _serviceComponentLocalService;
+	private MailService _mailService;
+	private ServiceComponentLocalService _serviceComponentLocalService;
 
 }

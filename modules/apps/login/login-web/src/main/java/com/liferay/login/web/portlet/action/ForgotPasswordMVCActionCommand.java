@@ -16,13 +16,13 @@ package com.liferay.login.web.portlet.action;
 
 import com.liferay.login.web.constants.LoginPortletKeys;
 import com.liferay.login.web.portlet.util.LoginUtil;
-import com.liferay.portal.NoSuchUserException;
-import com.liferay.portal.RequiredReminderQueryException;
-import com.liferay.portal.SendPasswordException;
-import com.liferay.portal.UserActiveException;
-import com.liferay.portal.UserEmailAddressException;
-import com.liferay.portal.UserLockoutException;
-import com.liferay.portal.UserReminderQueryException;
+import com.liferay.portal.exception.NoSuchUserException;
+import com.liferay.portal.exception.RequiredReminderQueryException;
+import com.liferay.portal.exception.SendPasswordException;
+import com.liferay.portal.exception.UserActiveException;
+import com.liferay.portal.exception.UserEmailAddressException;
+import com.liferay.portal.exception.UserLockoutException;
+import com.liferay.portal.exception.UserReminderQueryException;
 import com.liferay.portal.kernel.captcha.CaptchaConfigurationException;
 import com.liferay.portal.kernel.captcha.CaptchaException;
 import com.liferay.portal.kernel.captcha.CaptchaTextException;
@@ -30,6 +30,7 @@ import com.liferay.portal.kernel.captcha.CaptchaUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
@@ -37,7 +38,6 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.model.Company;
 import com.liferay.portal.model.User;
-import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.service.UserLocalService;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
@@ -281,6 +281,6 @@ public class ForgotPasswordMVCActionCommand extends BaseMVCActionCommand {
 		_userLocalService = userLocalService;
 	}
 
-	private volatile UserLocalService _userLocalService;
+	private UserLocalService _userLocalService;
 
 }

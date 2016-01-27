@@ -17,6 +17,7 @@ package com.liferay.expando.web.portlet;
 import com.liferay.expando.web.constants.ExpandoPortletKeys;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
@@ -26,14 +27,13 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.model.User;
-import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.expando.ColumnNameException;
-import com.liferay.portlet.expando.ColumnTypeException;
-import com.liferay.portlet.expando.DuplicateColumnNameException;
-import com.liferay.portlet.expando.NoSuchColumnException;
-import com.liferay.portlet.expando.ValueDataException;
+import com.liferay.portlet.expando.exception.ColumnNameException;
+import com.liferay.portlet.expando.exception.ColumnTypeException;
+import com.liferay.portlet.expando.exception.DuplicateColumnNameException;
+import com.liferay.portlet.expando.exception.NoSuchColumnException;
+import com.liferay.portlet.expando.exception.ValueDataException;
 import com.liferay.portlet.expando.model.ExpandoBridge;
 import com.liferay.portlet.expando.model.ExpandoColumnConstants;
 import com.liferay.portlet.expando.service.ExpandoColumnService;
@@ -391,6 +391,6 @@ public class ExpandoPortlet extends MVCPortlet {
 		expandoBridge.setAttributeProperties(name, properties);
 	}
 
-	private volatile ExpandoColumnService _expandoColumnService;
+	private ExpandoColumnService _expandoColumnService;
 
 }

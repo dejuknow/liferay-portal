@@ -16,14 +16,20 @@ package com.liferay.wiki.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
-import com.liferay.configuration.admin.ConfigurationAdmin;
 import com.liferay.portal.kernel.settings.LocalizedValuesMap;
+import com.liferay.portal.metatype.annotations.ExtendedObjectClassDefinition;
 
 /**
  * @author Iván Zaera
  */
-@ConfigurationAdmin(category = "collaboration")
-@Meta.OCD(id = "com.liferay.wiki.configuration.WikiGroupServiceConfiguration")
+@ExtendedObjectClassDefinition(
+	category = "collaboration", scope = ExtendedObjectClassDefinition.Scope.GROUP
+)
+@Meta.OCD(
+	id = "com.liferay.wiki.configuration.WikiGroupServiceConfiguration",
+	localization = "content/Language",
+	name = "%wiki.group.service.configuration.name"
+)
 public interface WikiGroupServiceConfiguration {
 
 	/**

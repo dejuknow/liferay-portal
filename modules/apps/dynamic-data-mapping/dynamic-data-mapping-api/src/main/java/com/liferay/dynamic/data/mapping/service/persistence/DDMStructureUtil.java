@@ -18,12 +18,11 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 
+import com.liferay.osgi.util.ServiceTrackerFactory;
+
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.service.ServiceContext;
-
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
 
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -185,7 +184,7 @@ public class DDMStructureUtil {
 	* @param uuid the uuid
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public static DDMStructure findByUuid_First(java.lang.String uuid,
 		OrderByComparator<DDMStructure> orderByComparator)
@@ -211,7 +210,7 @@ public class DDMStructureUtil {
 	* @param uuid the uuid
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public static DDMStructure findByUuid_Last(java.lang.String uuid,
 		OrderByComparator<DDMStructure> orderByComparator)
@@ -238,7 +237,7 @@ public class DDMStructureUtil {
 	* @param uuid the uuid
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a d d m structure with the primary key could not be found
+	* @throws NoSuchStructureException if a d d m structure with the primary key could not be found
 	*/
 	public static DDMStructure[] findByUuid_PrevAndNext(long structureId,
 		java.lang.String uuid, OrderByComparator<DDMStructure> orderByComparator)
@@ -267,12 +266,12 @@ public class DDMStructureUtil {
 	}
 
 	/**
-	* Returns the d d m structure where uuid = &#63; and groupId = &#63; or throws a {@link com.liferay.dynamic.data.mapping.NoSuchStructureException} if it could not be found.
+	* Returns the d d m structure where uuid = &#63; and groupId = &#63; or throws a {@link NoSuchStructureException} if it could not be found.
 	*
 	* @param uuid the uuid
 	* @param groupId the group ID
 	* @return the matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public static DDMStructure findByUUID_G(java.lang.String uuid, long groupId)
 		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException {
@@ -409,7 +408,7 @@ public class DDMStructureUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public static DDMStructure findByUuid_C_First(java.lang.String uuid,
 		long companyId, OrderByComparator<DDMStructure> orderByComparator)
@@ -439,7 +438,7 @@ public class DDMStructureUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public static DDMStructure findByUuid_C_Last(java.lang.String uuid,
 		long companyId, OrderByComparator<DDMStructure> orderByComparator)
@@ -470,7 +469,7 @@ public class DDMStructureUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a d d m structure with the primary key could not be found
+	* @throws NoSuchStructureException if a d d m structure with the primary key could not be found
 	*/
 	public static DDMStructure[] findByUuid_C_PrevAndNext(long structureId,
 		java.lang.String uuid, long companyId,
@@ -576,7 +575,7 @@ public class DDMStructureUtil {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public static DDMStructure findByGroupId_First(long groupId,
 		OrderByComparator<DDMStructure> orderByComparator)
@@ -602,7 +601,7 @@ public class DDMStructureUtil {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public static DDMStructure findByGroupId_Last(long groupId,
 		OrderByComparator<DDMStructure> orderByComparator)
@@ -629,7 +628,7 @@ public class DDMStructureUtil {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a d d m structure with the primary key could not be found
+	* @throws NoSuchStructureException if a d d m structure with the primary key could not be found
 	*/
 	public static DDMStructure[] findByGroupId_PrevAndNext(long structureId,
 		long groupId, OrderByComparator<DDMStructure> orderByComparator)
@@ -692,7 +691,7 @@ public class DDMStructureUtil {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a d d m structure with the primary key could not be found
+	* @throws NoSuchStructureException if a d d m structure with the primary key could not be found
 	*/
 	public static DDMStructure[] filterFindByGroupId_PrevAndNext(
 		long structureId, long groupId,
@@ -949,7 +948,7 @@ public class DDMStructureUtil {
 	* @param parentStructureId the parent structure ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public static DDMStructure findByParentStructureId_First(
 		long parentStructureId,
@@ -981,7 +980,7 @@ public class DDMStructureUtil {
 	* @param parentStructureId the parent structure ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public static DDMStructure findByParentStructureId_Last(
 		long parentStructureId,
@@ -1014,7 +1013,7 @@ public class DDMStructureUtil {
 	* @param parentStructureId the parent structure ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a d d m structure with the primary key could not be found
+	* @throws NoSuchStructureException if a d d m structure with the primary key could not be found
 	*/
 	public static DDMStructure[] findByParentStructureId_PrevAndNext(
 		long structureId, long parentStructureId,
@@ -1118,7 +1117,7 @@ public class DDMStructureUtil {
 	* @param classNameId the class name ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public static DDMStructure findByClassNameId_First(long classNameId,
 		OrderByComparator<DDMStructure> orderByComparator)
@@ -1146,7 +1145,7 @@ public class DDMStructureUtil {
 	* @param classNameId the class name ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public static DDMStructure findByClassNameId_Last(long classNameId,
 		OrderByComparator<DDMStructure> orderByComparator)
@@ -1175,7 +1174,7 @@ public class DDMStructureUtil {
 	* @param classNameId the class name ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a d d m structure with the primary key could not be found
+	* @throws NoSuchStructureException if a d d m structure with the primary key could not be found
 	*/
 	public static DDMStructure[] findByClassNameId_PrevAndNext(
 		long structureId, long classNameId,
@@ -1283,7 +1282,7 @@ public class DDMStructureUtil {
 	* @param structureKey the structure key
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public static DDMStructure findByStructureKey_First(
 		java.lang.String structureKey,
@@ -1313,7 +1312,7 @@ public class DDMStructureUtil {
 	* @param structureKey the structure key
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public static DDMStructure findByStructureKey_Last(
 		java.lang.String structureKey,
@@ -1344,7 +1343,7 @@ public class DDMStructureUtil {
 	* @param structureKey the structure key
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a d d m structure with the primary key could not be found
+	* @throws NoSuchStructureException if a d d m structure with the primary key could not be found
 	*/
 	public static DDMStructure[] findByStructureKey_PrevAndNext(
 		long structureId, java.lang.String structureKey,
@@ -1457,7 +1456,7 @@ public class DDMStructureUtil {
 	* @param parentStructureId the parent structure ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public static DDMStructure findByG_P_First(long groupId,
 		long parentStructureId,
@@ -1491,7 +1490,7 @@ public class DDMStructureUtil {
 	* @param parentStructureId the parent structure ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public static DDMStructure findByG_P_Last(long groupId,
 		long parentStructureId,
@@ -1525,7 +1524,7 @@ public class DDMStructureUtil {
 	* @param parentStructureId the parent structure ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a d d m structure with the primary key could not be found
+	* @throws NoSuchStructureException if a d d m structure with the primary key could not be found
 	*/
 	public static DDMStructure[] findByG_P_PrevAndNext(long structureId,
 		long groupId, long parentStructureId,
@@ -1597,7 +1596,7 @@ public class DDMStructureUtil {
 	* @param parentStructureId the parent structure ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a d d m structure with the primary key could not be found
+	* @throws NoSuchStructureException if a d d m structure with the primary key could not be found
 	*/
 	public static DDMStructure[] filterFindByG_P_PrevAndNext(long structureId,
 		long groupId, long parentStructureId,
@@ -1720,7 +1719,7 @@ public class DDMStructureUtil {
 	* @param classNameId the class name ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public static DDMStructure findByG_C_First(long groupId, long classNameId,
 		OrderByComparator<DDMStructure> orderByComparator)
@@ -1750,7 +1749,7 @@ public class DDMStructureUtil {
 	* @param classNameId the class name ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public static DDMStructure findByG_C_Last(long groupId, long classNameId,
 		OrderByComparator<DDMStructure> orderByComparator)
@@ -1781,7 +1780,7 @@ public class DDMStructureUtil {
 	* @param classNameId the class name ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a d d m structure with the primary key could not be found
+	* @throws NoSuchStructureException if a d d m structure with the primary key could not be found
 	*/
 	public static DDMStructure[] findByG_C_PrevAndNext(long structureId,
 		long groupId, long classNameId,
@@ -1852,7 +1851,7 @@ public class DDMStructureUtil {
 	* @param classNameId the class name ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a d d m structure with the primary key could not be found
+	* @throws NoSuchStructureException if a d d m structure with the primary key could not be found
 	*/
 	public static DDMStructure[] filterFindByG_C_PrevAndNext(long structureId,
 		long groupId, long classNameId,
@@ -2131,7 +2130,7 @@ public class DDMStructureUtil {
 	* @param classNameId the class name ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public static DDMStructure findByC_C_First(long companyId,
 		long classNameId, OrderByComparator<DDMStructure> orderByComparator)
@@ -2161,7 +2160,7 @@ public class DDMStructureUtil {
 	* @param classNameId the class name ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public static DDMStructure findByC_C_Last(long companyId, long classNameId,
 		OrderByComparator<DDMStructure> orderByComparator)
@@ -2192,7 +2191,7 @@ public class DDMStructureUtil {
 	* @param classNameId the class name ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a d d m structure with the primary key could not be found
+	* @throws NoSuchStructureException if a d d m structure with the primary key could not be found
 	*/
 	public static DDMStructure[] findByC_C_PrevAndNext(long structureId,
 		long companyId, long classNameId,
@@ -2225,13 +2224,13 @@ public class DDMStructureUtil {
 	}
 
 	/**
-	* Returns the d d m structure where groupId = &#63; and classNameId = &#63; and structureKey = &#63; or throws a {@link com.liferay.dynamic.data.mapping.NoSuchStructureException} if it could not be found.
+	* Returns the d d m structure where groupId = &#63; and classNameId = &#63; and structureKey = &#63; or throws a {@link NoSuchStructureException} if it could not be found.
 	*
 	* @param groupId the group ID
 	* @param classNameId the class name ID
 	* @param structureKey the structure key
 	* @return the matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public static DDMStructure findByG_C_S(long groupId, long classNameId,
 		java.lang.String structureKey)
@@ -2384,7 +2383,7 @@ public class DDMStructureUtil {
 	* @param description the description
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public static DDMStructure findByG_N_D_First(long groupId,
 		java.lang.String name, java.lang.String description,
@@ -2420,7 +2419,7 @@ public class DDMStructureUtil {
 	* @param description the description
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public static DDMStructure findByG_N_D_Last(long groupId,
 		java.lang.String name, java.lang.String description,
@@ -2457,7 +2456,7 @@ public class DDMStructureUtil {
 	* @param description the description
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a d d m structure with the primary key could not be found
+	* @throws NoSuchStructureException if a d d m structure with the primary key could not be found
 	*/
 	public static DDMStructure[] findByG_N_D_PrevAndNext(long structureId,
 		long groupId, java.lang.String name, java.lang.String description,
@@ -2533,7 +2532,7 @@ public class DDMStructureUtil {
 	* @param description the description
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a d d m structure with the primary key could not be found
+	* @throws NoSuchStructureException if a d d m structure with the primary key could not be found
 	*/
 	public static DDMStructure[] filterFindByG_N_D_PrevAndNext(
 		long structureId, long groupId, java.lang.String name,
@@ -2616,7 +2615,7 @@ public class DDMStructureUtil {
 	*
 	* @param structureId the primary key of the d d m structure
 	* @return the d d m structure that was removed
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a d d m structure with the primary key could not be found
+	* @throws NoSuchStructureException if a d d m structure with the primary key could not be found
 	*/
 	public static DDMStructure remove(long structureId)
 		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException {
@@ -2628,11 +2627,11 @@ public class DDMStructureUtil {
 	}
 
 	/**
-	* Returns the d d m structure with the primary key or throws a {@link com.liferay.dynamic.data.mapping.NoSuchStructureException} if it could not be found.
+	* Returns the d d m structure with the primary key or throws a {@link NoSuchStructureException} if it could not be found.
 	*
 	* @param structureId the primary key of the d d m structure
 	* @return the d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a d d m structure with the primary key could not be found
+	* @throws NoSuchStructureException if a d d m structure with the primary key could not be found
 	*/
 	public static DDMStructure findByPrimaryKey(long structureId)
 		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException {
@@ -2739,21 +2738,6 @@ public class DDMStructureUtil {
 		return _serviceTracker.getService();
 	}
 
-	/**
-	 * @deprecated As of 6.2.0
-	 */
-	@Deprecated
-	public void setPersistence(DDMStructurePersistence persistence) {
-	}
-
-	private static ServiceTracker<DDMStructurePersistence, DDMStructurePersistence> _serviceTracker;
-
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(DDMStructureUtil.class);
-
-		_serviceTracker = new ServiceTracker<DDMStructurePersistence, DDMStructurePersistence>(bundle.getBundleContext(),
-				DDMStructurePersistence.class, null);
-
-		_serviceTracker.open();
-	}
+	private static ServiceTracker<DDMStructurePersistence, DDMStructurePersistence> _serviceTracker =
+		ServiceTrackerFactory.open(DDMStructurePersistence.class);
 }

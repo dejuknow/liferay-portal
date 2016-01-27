@@ -1,6 +1,6 @@
 <definition>
 	<command name="gotoControlPanelApps" summary="Navigate to Product Menu > Control Panel > Apps > ${portlet}">
-		<execute macro="ProductMenuHelper#gotoControlPanel" />
+		<execute macro="ProductMenuHelper#expandPanelControlPanel" />
 
 		<execute macro="ProductMenuHelper#expandCategory">
 			<var name="category" value="Apps" />
@@ -12,7 +12,7 @@
 	</command>
 
 	<command name="gotoControlPanelConfiguration" summary="Navigate to Product Menu > Control Panel > Configuration > ${portlet}">
-		<execute macro="ProductMenuHelper#gotoControlPanel" />
+		<execute macro="ProductMenuHelper#expandPanelControlPanel" />
 
 		<execute macro="ProductMenuHelper#expandCategory">
 			<var name="category" value="Configuration" />
@@ -24,7 +24,7 @@
 	</command>
 
 	<command name="gotoControlPanelSites" summary="Navigate to Product Menu > Control Panel > Sites > ${portlet}">
-		<execute macro="ProductMenuHelper#gotoControlPanel" />
+		<execute macro="ProductMenuHelper#expandPanelControlPanel" />
 
 		<execute macro="ProductMenuHelper#expandCategory">
 			<var name="category" value="Sites" />
@@ -35,20 +35,8 @@
 		</execute>
 	</command>
 
-	<command name="gotoControlPanelSystem" summary="Navigate to Product Menu > Control Panel > System > ${portlet}">
-		<execute macro="ProductMenuHelper#gotoControlPanel" />
-
-		<execute macro="ProductMenuHelper#expandCategory">
-			<var name="category" value="System" />
-		</execute>
-
-		<execute macro="ProductMenuHelper#gotoPortlet">
-			<var name="portlet" value="${portlet}" />
-		</execute>
-	</command>
-
 	<command name="gotoControlPanelUsers" summary="Navigate to Product Menu > Control Panel > Users > ${portlet}">
-		<execute macro="ProductMenuHelper#gotoControlPanel" />
+		<execute macro="ProductMenuHelper#expandPanelControlPanel" />
 
 		<execute macro="ProductMenuHelper#expandCategory">
 			<var name="category" value="Users" />
@@ -59,10 +47,25 @@
 		</execute>
 	</command>
 
+	<command name="gotoEditPage" summary="Navigate to Product Menu > Sites > Pages > Public Pages > ${page}">
+
+		<execute macro="ProductMenuHelper#expandPanelSites" />
+
+		<execute macro="ProductMenuHelper#expandPageTree" />
+
+		<var name="key_page" value="${page}" />
+
+		<execute function="Click#makeVisibleClickAt" locator1="ProductMenu#EDIT_PAGE" />
+	</command>
+
+	<command name="gotoLiveSite" summary="Navigate to the Live site">
+		<execute macro="ProductMenuHelper#expandPanelSites" />
+
+		<execute function="AssertClick" locator1="ProductMenu#LIVE_LINK" value1="Live" />
+	</command>
+
 	<command name="gotoLocalizedControlPanel" summary="Navigate to Product Menu > Control Panel > ${category} > ${portlet}">
-		<execute macro="ProductMenuHelper#gotoTab">
-			<var name="tab" value="${tab}" />
-		</execute>
+		<execute macro="ProductMenuHelper#expandPanelControlPanel" />
 
 		<execute macro="ProductMenuHelper#expandCategory">
 			<var name="category" value="${category}" />
@@ -74,11 +77,7 @@
 	</command>
 
 	<command name="gotoLocalizedSitesAdministration" summary="Navigate to Product Menu > Sites > ${category} > ${portlet}">
-		<execute macro="ProductMenuHelper#gotoTab">
-			<var name="tab" value="${tab}" />
-		</execute>
-
-		<execute function="Click" locator1="ProductMenu#BACK_ARROW" />
+		<execute macro="ProductMenuHelper#expandPanelSites" />
 
 		<execute macro="ProductMenuHelper#expandCategory">
 			<var name="category" value="${category}" />
@@ -90,7 +89,7 @@
 	</command>
 
 	<command name="gotoLocalizedUserMyAccount" summary="Navigate to Product Menu > User > My Account > ${portlet}">
-		<execute macro="ProductMenuHelper#gotoUser" />
+		<execute macro="ProductMenuHelper#expandPanelUser" />
 
 		<execute macro="ProductMenuHelper#expandCategory">
 			<var name="category" value="${category}" />
@@ -102,45 +101,65 @@
 	</command>
 
 	<command name="gotoPersonalSite" summary="Navigate to Product Menu > Profile" >
+		<execute macro="ProductMenuHelper#expandPanelUser" />
+
 		<execute function="Click" locator1="ProductMenu#USER_PROFILE" />
 	</command>
 
 	<command name="gotoPrivatePages" summary="Navigate to Product Menu > Sites > Pages > Private Pages > ${page}">
-		<execute macro="ProductMenuHelper#gotoSites" />
+		<execute macro="ProductMenuHelper#expandPanelSites" />
 
 		<execute macro="ProductMenuHelper#expandCategory">
 			<var name="category" value="Pages" />
 		</execute>
 
-		<execute macro="ProductMenuHelper#gotoAddPage">
-			<var name="page" value="Private Pages" />
-		</execute>
+		<execute function="AssertClick" locator1="ProductMenu#PRIVATE_PAGES" value1="Private Pages" />
+
+		<execute function="Pause" locator1="5000" />
+
+		<execute macro="ProductMenuHelper#openProductMenu" />
+	</command>
+
+	<command name="gotoPrivateSite" summary="Navigate to Product Menu > Sites > Site Popup > ${site}">
+		<execute macro="ProductMenuHelper#expandPanelSites" />
+
+		<execute macro="ProductMenuHelper#openSitesPopup" />
+
+		<var name="key_site" value="${site}" />
+
+		<execute function="AssertClick" locator1="ProductMenu#PRIVATE_SITE_LINK" value1="${site}" />
 	</command>
 
 	<command name="gotoPublicPages" summary="Navigate to Product Menu > Sites > Pages > Public Pages > ${page}">
-		<execute macro="ProductMenuHelper#gotoSites" />
+		<execute macro="ProductMenuHelper#expandPanelSites" />
 
 		<execute macro="ProductMenuHelper#expandCategory">
 			<var name="category" value="Pages" />
 		</execute>
 
-		<execute macro="ProductMenuHelper#gotoAddPage">
-			<var name="page" value="Public Pages" />
+		<execute function="Click" locator1="ProductMenu#PUBLIC_PAGES" />
+
+		<execute macro="ProductMenuHelper#openProductMenu" />
+
+		<execute macro="ProductMenuHelper#expandCategory">
+			<var name="category" value="Pages" />
 		</execute>
 	</command>
 
-	<command name="gotoSite" summary="Navigate to Product Menu > Sites > Back Arrow > ${site}">
-		<execute macro="ProductMenuHelper#gotoSites" />
+	<command name="gotoPublicSite" summary="Navigate to Product Menu > Sites > Site Popup > ${site}">
+		<execute macro="ProductMenuHelper#expandPanelSites" />
 
-		<if>
-			<and>
-				<condition function="IsElementPresent" locator1="ProductMenu#BACK_ARROW" />
-				<condition function="IsVisible" locator1="ProductMenu#BACK_ARROW" />
-			</and>
-			<then>
-				<execute function="Click" locator1="ProductMenu#BACK_ARROW" />
-			</then>
-		</if>
+		<execute macro="ProductMenuHelper#openSitesPopup" />
+
+		<var name="key_site" value="${site}" />
+
+		<execute function="AssertClick" locator1="ProductMenu#PUBLIC_SITE_LINK" value1="${site}" />
+	</command>
+
+	<command name="gotoSite" summary="Navigate to Product Menu > Sites > Sites Popup > ${site}">
+		<execute macro="ProductMenuHelper#expandPanelSites" />
+
+		<execute macro="ProductMenuHelper#openSitesPopup" />
 
 		<execute macro="ProductMenuHelper#gotoSite">
 			<var name="site" value="${site}" />
@@ -148,7 +167,7 @@
 	</command>
 
 	<command name="gotoSitesConfiguration" summary="Navigate to Product Menu > Sites > Configuration > ${portlet}">
-		<execute macro="ProductMenuHelper#gotoSites" />
+		<execute macro="ProductMenuHelper#expandPanelSites" />
 
 		<execute macro="ProductMenuHelper#expandCategory">
 			<var name="category" value="Configuration" />
@@ -160,7 +179,7 @@
 	</command>
 
 	<command name="gotoSitesContent" summary="Navigate to Product Menu > Sites > Content > ${portlet}">
-		<execute macro="ProductMenuHelper#gotoSites" />
+		<execute macro="ProductMenuHelper#expandPanelSites" />
 
 		<execute macro="ProductMenuHelper#expandCategory">
 			<var name="category" value="Content" />
@@ -172,7 +191,7 @@
 	</command>
 
 	<command name="gotoSitesPages" summary="Navigate to Product Menu > Sites > Pages > ${page}">
-		<execute macro="ProductMenuHelper#gotoSites" />
+		<execute macro="ProductMenuHelper#expandPanelSites" />
 
 		<execute macro="ProductMenuHelper#expandCategory">
 			<var name="category" value="Pages" />
@@ -184,7 +203,7 @@
 	</command>
 
 	<command name="gotoSitesPublishingTools" summary="Navigate to Product Menu > Sites > Publishing Tools > ${portlet}">
-		<execute macro="ProductMenuHelper#gotoSites" />
+		<execute macro="ProductMenuHelper#expandPanelSites" />
 
 		<execute macro="ProductMenuHelper#expandCategory">
 			<var name="category" value="Publishing Tools" />
@@ -196,7 +215,7 @@
 	</command>
 
 	<command name="gotoSitesUsers" summary="Navigate to Product Menu > Sites > Users > ${portlet}">
-		<execute macro="ProductMenuHelper#gotoSites" />
+		<execute macro="ProductMenuHelper#expandPanelSites" />
 
 		<execute macro="ProductMenuHelper#expandCategory">
 			<var name="category" value="Users" />
@@ -207,8 +226,20 @@
 		</execute>
 	</command>
 
+	<command name="gotoSiteViaLink" summary="Navigate to ${site} via the 'Go to Site' link">
+		<execute macro="ProductMenuHelper#expandPanelSites" />
+
+		<execute function="AssertClick" locator1="ProductMenu#GO_TO_SITES_LINK" value1="Go to Site" />
+	</command>
+
+	<command name="gotoStagingSite" summary="Navigate to the Staging site">
+		<execute macro="ProductMenuHelper#expandPanelSites" />
+
+		<execute function="AssertClick" locator1="ProductMenu#STAGING_LINK" value1="Staging" />
+	</command>
+
 	<command name="gotoUserMyAccount" summary="Navigate to Product Menu > User > My Account > ${portlet}">
-		<execute macro="ProductMenuHelper#gotoUser" />
+		<execute macro="ProductMenuHelper#expandPanelUser" />
 
 		<execute macro="ProductMenuHelper#expandCategory">
 			<var name="category" value="My Account" />
@@ -220,7 +251,7 @@
 	</command>
 
 	<command name="viewNoSite" summary="View ${site} is not available in the product menu.">
-		<execute macro="ProductMenuHelper#gotoSites" />
+		<execute macro="ProductMenuHelper#expandPanelSites" />
 
 		<if>
 			<and>
@@ -238,15 +269,17 @@
 	</command>
 
 	<command name="viewSite" summary="View ${site} is available in the product menu.">
-		<execute macro="ProductMenuHelper#gotoSites" />
+		<execute macro="ProductMenuHelper#expandPanelSites" />
 
 		<if>
 			<and>
-				<condition function="IsElementPresent" locator1="ProductMenu#BACK_ARROW" />
-				<condition function="IsVisible" locator1="ProductMenu#BACK_ARROW" />
+				<condition function="IsElementPresent" locator1="ProductMenu#SITES_POPUP" />
+				<condition function="IsNotVisible" locator1="ProductMenu#SITES_POPUP" />
 			</and>
 			<then>
-				<execute function="Click" locator1="ProductMenu#BACK_ARROW" />
+				<execute function="Click" locator1="ProductMenu#SITES_COMPASS" />
+
+				<execute function="AssertVisible" locator1="ProductMenu#SITES_POPUP" />
 			</then>
 		</if>
 

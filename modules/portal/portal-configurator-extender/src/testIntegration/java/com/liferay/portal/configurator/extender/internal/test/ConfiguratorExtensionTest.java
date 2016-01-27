@@ -102,6 +102,7 @@ public class ConfiguratorExtensionTest {
 					"test.pid", "key=value")),
 			Arrays.asList(
 				new ConfigurationDescriptionFactory() {
+
 					@Override
 					public ConfigurationDescription create(
 						NamedConfigurationContent namedConfigurationContent) {
@@ -115,8 +116,10 @@ public class ConfiguratorExtensionTest {
 									throw new RuntimeException(
 										"This should be handled");
 								}
+
 							});
 					}
+
 				},
 				new StringConfigurationDescriptionFactory()));
 
@@ -149,9 +152,12 @@ public class ConfiguratorExtensionTest {
 			_configurationAdmin.createFactoryConfiguration(
 				"test.factory.pid", null);
 
-		configuration.update(new Hashtable<String, Object>() { {
-			put("key", "value");
-		}});
+		configuration.update(
+			new Hashtable<String, Object>() {
+				{
+					put("key", "value");
+				}
+			});
 
 		_startExtension(
 			"aBundle",
@@ -247,9 +253,12 @@ public class ConfiguratorExtensionTest {
 
 		Configuration configuration = _configurationAdmin.getConfiguration(
 			"test.pid", null);
-		configuration.update(new Hashtable<String, Object>() { {
-			put("key", "value");
-		}});
+		configuration.update(
+			new Hashtable<String, Object>() {
+				{
+					put("key", "value");
+				}
+			});
 
 		_startExtension(
 			"aBundle",
@@ -366,21 +375,24 @@ public class ConfiguratorExtensionTest {
 						namedConfigurationContent;
 
 				return new SingleConfigurationDescription(
-					ssncc._pid, new Supplier<Dictionary<String, Object>>() {
+					ssncc._pid,
+					new Supplier<Dictionary<String, Object>>() {
 
-					@Override
-					public Dictionary<String, Object> get() {
-						try {
-							Dictionary<?, ?> properties = PropertiesUtil.load(
-								ssncc.getInputStream(), "UTF-8");
+						@Override
+						public Dictionary<String, Object> get() {
+							try {
+								Dictionary<?, ?> properties =
+									PropertiesUtil.load(
+										ssncc.getInputStream(), "UTF-8");
 
-							return (Dictionary<String, Object>)properties;
+								return (Dictionary<String, Object>)properties;
+							}
+							catch (IOException e) {
+								throw new RuntimeException(e);
+							}
 						}
-						catch (IOException e) {
-							throw new RuntimeException(e);
-						}
-					}
-				});
+
+					});
 			}
 			else {
 				final StringFactoryNamedConfigurationContent sfncc =
@@ -391,19 +403,21 @@ public class ConfiguratorExtensionTest {
 					sfncc._factoryPid, sfncc._pid,
 					new Supplier<Dictionary<String, Object>>() {
 
-					@Override
-					public Dictionary<String, Object> get() {
-						try {
-							Dictionary<?, ?> properties = PropertiesUtil.load(
-								sfncc.getInputStream(), "UTF-8");
+						@Override
+						public Dictionary<String, Object> get() {
+							try {
+								Dictionary<?, ?> properties =
+									PropertiesUtil.load(
+										sfncc.getInputStream(), "UTF-8");
 
-							return (Dictionary<String, Object>)properties;
+								return (Dictionary<String, Object>)properties;
+							}
+							catch (IOException e) {
+								throw new RuntimeException(e);
+							}
 						}
-						catch (IOException e) {
-							throw new RuntimeException(e);
-						}
-					}
-				});
+
+					});
 			}
 		}
 

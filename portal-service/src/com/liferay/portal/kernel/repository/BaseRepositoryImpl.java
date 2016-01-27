@@ -14,7 +14,7 @@
 
 package com.liferay.portal.kernel.repository;
 
-import com.liferay.portal.NoSuchRepositoryEntryException;
+import com.liferay.portal.exception.NoSuchRepositoryEntryException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.repository.capabilities.Capability;
@@ -25,13 +25,13 @@ import com.liferay.portal.kernel.repository.search.RepositorySearchQueryBuilderU
 import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.SearchContext;
-import com.liferay.portal.kernel.search.SearchEngineUtil;
+import com.liferay.portal.kernel.search.SearchEngineHelper;
 import com.liferay.portal.kernel.search.SearchException;
+import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.model.RepositoryEntry;
-import com.liferay.portal.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.service.CompanyLocalService;
 import com.liferay.portal.service.RepositoryEntryLocalService;
 import com.liferay.portal.service.ServiceContext;
@@ -267,8 +267,8 @@ public abstract class BaseRepositoryImpl
 	@Override
 	@SuppressWarnings("rawtypes")
 	public List<com.liferay.portal.kernel.repository.model.RepositoryEntry>
-		getFileEntriesAndFileShortcuts(
-			long folderId, int status, int start, int end)
+			getFileEntriesAndFileShortcuts(
+				long folderId, int status, int start, int end)
 		throws PortalException {
 
 		return (List)getFileEntries(folderId, start, end, null);
@@ -319,10 +319,10 @@ public abstract class BaseRepositoryImpl
 	@Override
 	@SuppressWarnings("rawtypes")
 	public List<com.liferay.portal.kernel.repository.model.RepositoryEntry>
-		getFoldersAndFileEntriesAndFileShortcuts(
-			long folderId, int status, String[] mimeTypes,
-			boolean includeMountFolders, int start, int end,
-			OrderByComparator<?> obc)
+			getFoldersAndFileEntriesAndFileShortcuts(
+				long folderId, int status, String[] mimeTypes,
+				boolean includeMountFolders, int start, int end,
+				OrderByComparator<?> obc)
 		throws PortalException {
 
 		return (List)getFoldersAndFileEntries(
@@ -501,7 +501,7 @@ public abstract class BaseRepositoryImpl
 
 	@Override
 	public Hits search(SearchContext searchContext) throws SearchException {
-		searchContext.setSearchEngineId(SearchEngineUtil.GENERIC_ENGINE_ID);
+		searchContext.setSearchEngineId(SearchEngineHelper.GENERIC_ENGINE_ID);
 
 		BooleanQuery fullQuery = RepositorySearchQueryBuilderUtil.getFullQuery(
 			searchContext);

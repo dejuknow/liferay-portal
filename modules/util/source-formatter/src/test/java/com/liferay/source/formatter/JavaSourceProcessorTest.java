@@ -113,13 +113,24 @@ public class JavaSourceProcessorTest extends BaseSourceProcessorTestCase {
 				"line break:", "line break:", "line break:", "line break:",
 				"line break:", "line break:", "line break:", "line break:",
 				"line break:", "line break:", "line break:", "line break:",
-				"line break:", "line break:", "line break:", "line break:"
+				"line break:", "line break:"
 			},
 			new Integer[] {
-				23, 27, 31, 38, 42, 46, 51, 55, 57, 60, 63, 67, 70, 75, 81, 85,
-				91, 99, 102, 109
+				31, 35, 43, 47, 49, 52, 55, 59, 62, 67, 71, 77, 81, 87, 98, 111,
+				115, 125
 			});
 		test("IncorrectLineBreaks2.testjava");
+	}
+
+	@Test
+	public void testIncorrectTabs() throws Exception {
+		test(
+			"IncorrectTabs.testjava",
+			new String[] {
+				"Incorrect tab or line break:", "Incorrect tab or line break:",
+				"Incorrect tab or line break:"
+			},
+			new Integer[] {27, 31, 37});
 	}
 
 	@Test
@@ -130,7 +141,7 @@ public class JavaSourceProcessorTest extends BaseSourceProcessorTestCase {
 				"Only private var should start with underscore:",
 				"Only private var should start with underscore:"
 			},
-			new Integer[] {19, 25});
+			new Integer[] {22, 28});
 		test("IncorrectVariableNames2.testjava");
 	}
 
@@ -170,6 +181,16 @@ public class JavaSourceProcessorTest extends BaseSourceProcessorTestCase {
 	@Test
 	public void testLPS28266() throws Exception {
 		test("LPS28266.testjava", "Use getInt(1) for count:");
+	}
+
+	@Test
+	public void testMissingAuthor() throws Exception {
+		test("MissingAuthor.testjava", "Missing author:");
+	}
+
+	@Test
+	public void testMissingEmptyLines() throws Exception {
+		test("MissingEmptyLines.testjava");
 	}
 
 	@Test

@@ -14,12 +14,17 @@
 
 package com.liferay.dynamic.data.mapping.exportimport.xstream.configurator;
 
+import com.liferay.dynamic.data.mapping.kernel.DDMFormField;
+import com.liferay.dynamic.data.mapping.kernel.DDMFormFieldOptions;
+import com.liferay.dynamic.data.mapping.kernel.DDMFormValues;
+import com.liferay.dynamic.data.mapping.kernel.LocalizedValue;
 import com.liferay.dynamic.data.mapping.model.impl.DDMStructureImpl;
 import com.liferay.dynamic.data.mapping.model.impl.DDMTemplateImpl;
 import com.liferay.exportimport.xstream.configurator.XStreamConfigurator;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portlet.exportimport.xstream.XStreamAlias;
 import com.liferay.portlet.exportimport.xstream.XStreamConverter;
+import com.liferay.portlet.exportimport.xstream.XStreamType;
 
 import java.util.List;
 
@@ -32,6 +37,11 @@ import org.osgi.service.component.annotations.Component;
 @Component(immediate = true, service = XStreamConfigurator.class)
 public class DynamicDataMappingXStreamConfigurator
 	implements XStreamConfigurator {
+
+	@Override
+	public List<XStreamType> getAllowedXStreamTypes() {
+		return ListUtil.toList(_xStreamTypes);
+	}
 
 	@Override
 	public List<XStreamAlias> getXStreamAliases() {
@@ -49,8 +59,16 @@ public class DynamicDataMappingXStreamConfigurator
 			new XStreamAlias(DDMStructureImpl.class, "DDMStructure"),
 			new XStreamAlias(DDMTemplateImpl.class, "DDMTemplate")
 		};
+
+		_xStreamTypes = new XStreamType[] {
+			new XStreamType(DDMFormField.class),
+			new XStreamType(DDMFormFieldOptions.class),
+			new XStreamType(DDMFormValues.class),
+			new XStreamType(LocalizedValue.class)
+		};
 	}
 
 	private XStreamAlias[] _xStreamAliases;
+	private XStreamType[] _xStreamTypes;
 
 }

@@ -16,15 +16,20 @@ package com.liferay.portal.rest.extender.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
-import com.liferay.configuration.admin.ConfigurationAdmin;
+import com.liferay.portal.metatype.annotations.ExtendedObjectClassDefinition;
 
 /**
  * @author Carlos Sierra Andrés
  */
-@ConfigurationAdmin(category = "platform")
+@ExtendedObjectClassDefinition(
+	category = "platform", factoryInstanceLabelAttribute = "companyId",
+	scope = ExtendedObjectClassDefinition.Scope.COMPANY
+)
 @Meta.OCD(
 	factory = true,
-	id = "com.liferay.portal.rest.extender.configuration.RestExtenderConfiguration"
+	id = "com.liferay.portal.rest.extender.configuration.RestExtenderConfiguration",
+	localization = "content/Language",
+	name = "%rest.extender.configuration.name"
 )
 public interface RestExtenderConfiguration {
 

@@ -1,21 +1,12 @@
 <definition component-name="portal-wcm">
 	<property name="testray.main.component.name" value="Asset Publisher" />
 
-	<var name="portletName" value="Asset Publisher" />
-
 	<set-up>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="SignIn#signInPortalInstanceSetUp" />
-			</then>
-		</if>
+		<execute macro="TestCase#setUpPortalInstance" />
 
 		<execute macro="User#firstLoginPG" />
 
-		<execute macro="Page#addPG">
+		<execute macro="Page#add">
 			<var name="pageName" value="Asset Publisher Page" />
 		</execute>
 
@@ -24,7 +15,7 @@
 		</execute>
 
 		<execute macro="Portlet#addPG">
-			<var name="portletName" value="${portletName}" />
+			<var name="portletName" value="Asset Publisher" />
 		</execute>
 	</set-up>
 
@@ -83,7 +74,7 @@
 	</command>
 
 	<command name="AddBookmarkViaAP" priority="4">
-		<execute macro="Page#addPG">
+		<execute macro="Page#add">
 			<var name="pageName" value="Bookmarks Page" />
 		</execute>
 
@@ -124,8 +115,8 @@
 		</execute>
 	</command>
 
-	<command name="AddCustomTitleViaAP" priority="4">
-		<execute macro="Page#addPG">
+	<command name="AddCustomTitleViaAP" priority="3">
+		<execute macro="Page#add">
 			<var name="pageName" value="Test Page" />
 		</execute>
 
@@ -156,8 +147,8 @@
 		</execute>
 	</command>
 
-	<command name="ConfigureAPPortletDisplaytemplateFullContentWithBookmarks" priority="4">
-		<execute macro="Page#addPG">
+	<command name="ConfigureAPPortletDisplaytemplateWithBookmarks" priority="4">
+		<execute macro="Page#add">
 			<var name="pageName" value="Bookmarks Page" />
 		</execute>
 
@@ -208,39 +199,6 @@
 		<execute macro="AssetPublisherPortlet#viewConfigureAPDisplayTemplateFullContentBookmarksPG">
 			<var name="assetTitle" value="Test Bookmark Name" />
 		</execute>
-	</command>
-
-	<command name="ConfigureAPPortletDisplaytemplateTableWithBookmarks" priority="4">
-		<execute macro="Page#addPG">
-			<var name="pageName" value="Bookmarks Page" />
-		</execute>
-
-		<execute macro="Page#gotoPG">
-			<var name="pageName" value="Bookmarks Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Bookmarks" />
-		</execute>
-
-		<execute macro="Page#gotoPG">
-			<var name="pageName" value="Bookmarks Page" />
-		</execute>
-
-		<execute macro="BookmarksFolder#addPG">
-			<var name="folderDescription" value="Test Folder Description" />
-			<var name="folderName" value="Test Folder Name" />
-		</execute>
-
-		<execute macro="Page#gotoPG">
-			<var name="pageName" value="Bookmarks Page" />
-		</execute>
-
-		<execute macro="Bookmark#addPG">
-			<var name="bookmarkDescription" value="Test Bookmark Description" />
-			<var name="bookmarkName" value="Test Bookmark Name" />
-			<var name="bookmarkURL" value="http://www.liferay.com" />
-		</execute>
 
 		<execute macro="Page#gotoPG">
 			<var name="pageName" value="Asset Publisher Page" />
@@ -263,39 +221,6 @@
 			<var name="assetTitle" value="Test Bookmark Name" />
 			<var name="bookmarkDescription" value="Test Bookmark Description" />
 			<var name="bookmarkName" value="Test Bookmark Name" />
-		</execute>
-	</command>
-
-	<command name="ConfigureAPPortletDisplaytemplateTitlelistWithBookmarks" priority="4">
-		<execute macro="Page#addPG">
-			<var name="pageName" value="Bookmarks Page" />
-		</execute>
-
-		<execute macro="Page#gotoPG">
-			<var name="pageName" value="Bookmarks Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Bookmarks" />
-		</execute>
-
-		<execute macro="Page#gotoPG">
-			<var name="pageName" value="Bookmarks Page" />
-		</execute>
-
-		<execute macro="BookmarksFolder#addPG">
-			<var name="folderDescription" value="Test Folder Description" />
-			<var name="folderName" value="Test Folder Name" />
-		</execute>
-
-		<execute macro="Page#gotoPG">
-			<var name="pageName" value="Bookmarks Page" />
-		</execute>
-
-		<execute macro="Bookmark#addPG">
-			<var name="bookmarkDescription" value="Test Bookmark Description" />
-			<var name="bookmarkName" value="Test Bookmark Name" />
-			<var name="bookmarkURL" value="http://www.liferay.com" />
 		</execute>
 
 		<execute macro="Page#gotoPG">
@@ -323,8 +248,6 @@
 	</command>
 
 	<command name="ConfigureAPPortletEnableRatings" priority="4">
-		<var name="assetTitle" value="WC WebContent Title" />
-
 		<execute macro="AssetPublisherPortlet#configureFlaggableDisplaySettingsPG">
 			<var name="enableRatings" value="true" />
 		</execute>
@@ -366,7 +289,7 @@
 		<execute macro="AssetPublisherPortlet#rate4StarsPG" />
 
 		<execute macro="Page#gotoPG">
-			<var name="assetTitle" value="${assetTitle}" />
+			<var name="assetTitle" value="WC WebContent Title" />
 			<var name="pageName" value="Asset Publisher Page" />
 		</execute>
 
@@ -374,8 +297,8 @@
 	</command>
 
 	<command name="ConfigureAPPortletScopeMultipleSites" priority="4">
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Sites" />
+		<execute macro="ProductMenu#gotoControlPanelSites">
+			<var name="portlet" value="Sites" />
 		</execute>
 
 		<execute macro="Site#addBlankCP">
@@ -387,7 +310,7 @@
 		</execute>
 
 		<execute macro="Portlet#addDuplicatePG">
-			<var name="portletName" value="${portletName}" />
+			<var name="portletName" value="Asset Publisher" />
 		</execute>
 
 		<execute macro="Page#gotoPG">
@@ -395,9 +318,7 @@
 		</execute>
 
 		<execute macro="AssetPublisherPortlet#configureAddSiteScopes">
-			<var name="addSite" value="true" />
-			<var name="defaultSite" value="true" />
-			<var name="siteName" value="Test Site" />
+			<var name="otherSite" value="Test Site" />
 		</execute>
 
 		<execute macro="Page#gotoPG">
@@ -487,7 +408,7 @@
 	</command>
 
 	<command name="ConfigureAPPortletWithSelectedBookmarksEntry" priority="4">
-		<execute macro="Page#addPG">
+		<execute macro="Page#add">
 			<var name="pageName" value="Bookmarks Page" />
 		</execute>
 
@@ -553,7 +474,7 @@
 	</command>
 
 	<command name="FilterTagsByNameAP" priority="4">
-		<execute macro="Page#addPG">
+		<execute macro="Page#add">
 			<var name="pageName" value="Tags Navigation Page" />
 		</execute>
 
@@ -586,8 +507,10 @@
 		</execute>
 
 		<for list="first tag,second tag,third tag" param="tagName">
-			<execute macro="Page#gotoContentCP">
-				<var name="portletName" value="Tags" />
+			<execute macro="Navigator#openURL" />
+
+			<execute macro="ProductMenu#gotoSitesContent">
+				<var name="portlet" value="Tags" />
 			</execute>
 
 			<execute macro="Tag#addCP">
@@ -651,8 +574,8 @@
 	</command>
 
 	<command name="FindSiteAPViaSearchScopeSelector" priority="4">
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Sites" />
+		<execute macro="ProductMenu#gotoControlPanelSites">
+			<var name="portlet" value="Sites" />
 		</execute>
 
 		<execute macro="Site#addBlankCP">
@@ -890,20 +813,6 @@
 		</execute>
 
 		<execute macro="AssetPublisherPortlet#viewRestoredSetupPG">
-			<var name="archiveName" value="AP Archive Name" />
-		</execute>
-
-		<execute macro="Page#gotoPG">
-			<var name="pageName" value="Asset Publisher Page" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#deleteArchivedSetupPG">
-			<var name="archiveName" value="AP Archive Name" />
-		</execute>
-	</command>
-
-	<command name="SaveAPArchivedSetup" priority="4">
-		<execute macro="AssetPublisherPortlet#saveArchivedSetupPG">
 			<var name="archiveName" value="AP Archive Name" />
 		</execute>
 

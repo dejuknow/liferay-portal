@@ -5,18 +5,11 @@
 	<var name="portletName" value="Bookmarks" />
 
 	<set-up>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="SignIn#signInPortalInstanceSetUp" />
-			</then>
-		</if>
+		<execute macro="TestCase#setUpPortalInstance" />
 
 		<execute macro="User#firstLoginPG" />
 
-		<execute macro="Page#addPG">
+		<execute macro="Page#add">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -68,12 +61,7 @@
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
-		<execute macro="Bookmark#gotoPG">
-			<var name="bookmarkName" value="${bookmarkName}" />
-			<var name="bookmarkURL" value="${bookmarkURL}" />
-		</execute>
-
-		<execute macro="Bookmark#viewPG">
+		<execute macro="Bookmark#viewBookmark">
 			<var name="bookmarkName" value="${bookmarkName}" />
 			<var name="bookmarkURL" value="${bookmarkURL}" />
 		</execute>
@@ -94,7 +82,7 @@
 			<var name="folderName" value="${folderName}" />
 		</execute>
 
-		<execute macro="BookmarksFolder#viewPG">
+		<execute macro="BookmarksFolder#viewFolder">
 			<var name="folderDescription" value="${folderDescription}" />
 			<var name="folderName" value="${folderName}" />
 		</execute>
@@ -144,12 +132,7 @@
 
 		<execute function="Pause" locator1="3000" />
 
-		<execute macro="Bookmark#gotoPG">
-			<var name="bookmarkName" value="${bookmarkName}" />
-			<var name="bookmarkURL" value="${bookmarkURL}" />
-		</execute>
-
-		<execute macro="Bookmark#viewPG">
+		<execute macro="Bookmark#viewBookmark">
 			<var name="bookmarkName" value="${bookmarkName}" />
 			<var name="bookmarkURL" value="${bookmarkURL}" />
 		</execute>
@@ -217,7 +200,7 @@
 	<command name="DeleteFolderBookmark" priority="5">
 		<var name="bookmarkDescription" value="Test Bookmark Description" />
 		<var name="bookmarkName" value="Test Bookmark Name" />
-		<var name="bookmarkURL" value="http://liferay.com" />
+		<var name="bookmarkURL" value="http://www.liferay.com" />
 		<var name="folderDescription" value="Test Folder Description" />
 		<var name="folderName" value="Test Folder Name" />
 
@@ -293,8 +276,8 @@
 		<var name="bookmarkDescriptionEdit" value="Test Bookmark Description Edit" />
 		<var name="bookmarkName" value="Test Bookmark Name" />
 		<var name="bookmarkNameEdit" value="Test Bookmark Name Edit" />
-		<var name="bookmarkURL" value="http://liferay.com" />
-		<var name="bookmarkURLEdit" value="http://www.alloyui.com" />
+		<var name="bookmarkURL" value="http://www.liferay.com" />
+		<var name="bookmarkURLEdit" value="http://alloyui.com" />
 		<var name="folderDescription" value="Test Folder Description" />
 		<var name="folderName" value="Test Folder Name" />
 
@@ -340,7 +323,7 @@
 	<command name="MoveFolderBookmarkToFolder" priority="4">
 		<var name="bookmarkDescription" value="Test Bookmark Description" />
 		<var name="bookmarkName" value="Test Bookmark Name" />
-		<var name="bookmarkURL" value="http://liferay.com" />
+		<var name="bookmarkURL" value="http://www.liferay.com" />
 		<var name="bookmarkURLEdit" value="http://www.alloyui.com" />
 		<var name="folderDescription1" value="Test Folder Description 1" />
 		<var name="folderDescription2" value="Test Folder Description 2" />
@@ -390,13 +373,13 @@
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
-		<var name="key_folderName" value="${folderName2}" />
+		<var name="key_assetName" value="${folderName2}" />
 
-		<execute function="AssertClick#assertPartialTextClickAtAndWait" locator1="Bookmarks#FOLDERS_TABLE_FOLDER_NAME" value1="${folderName2}" />
+		<execute function="AssertClick#assertPartialTextClickAtAndWait" locator1="Bookmarks#DESCRIPTIVE_ENTRY_TITLE" value1="${folderName2}" />
 
-		<var name="key_bookmarkName" value="${bookmarkName}" />
+		<var name="key_assetName" value="${bookmarkName}" />
 
-		<execute function="AssertTextEquals" locator1="PGBookmarksFolder#BOOKMARKS_TABLE_NAME" value1="${bookmarkName}" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Bookmarks#DESCRIPTIVE_ENTRY_TITLE" value1="${bookmarkName}" />
 	</command>
 
 	<command name="RemoveBookmarkPortlet" priority="5">

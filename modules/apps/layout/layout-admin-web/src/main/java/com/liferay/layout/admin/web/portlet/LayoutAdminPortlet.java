@@ -21,30 +21,30 @@ import com.liferay.mobile.device.rules.service.MDRActionLocalService;
 import com.liferay.mobile.device.rules.service.MDRActionService;
 import com.liferay.mobile.device.rules.service.MDRRuleGroupInstanceLocalService;
 import com.liferay.mobile.device.rules.service.MDRRuleGroupInstanceService;
-import com.liferay.portal.ImageTypeException;
-import com.liferay.portal.LayoutFriendlyURLException;
-import com.liferay.portal.LayoutFriendlyURLsException;
-import com.liferay.portal.LayoutNameException;
-import com.liferay.portal.LayoutParentLayoutIdException;
-import com.liferay.portal.LayoutSetVirtualHostException;
-import com.liferay.portal.LayoutTypeException;
-import com.liferay.portal.NoSuchGroupException;
-import com.liferay.portal.RequiredLayoutException;
-import com.liferay.portal.SitemapChangeFrequencyException;
-import com.liferay.portal.SitemapIncludeException;
-import com.liferay.portal.SitemapPagePriorityException;
 import com.liferay.portal.events.EventsProcessorUtil;
+import com.liferay.portal.exception.ImageTypeException;
+import com.liferay.portal.exception.LayoutFriendlyURLException;
+import com.liferay.portal.exception.LayoutFriendlyURLsException;
+import com.liferay.portal.exception.LayoutNameException;
+import com.liferay.portal.exception.LayoutParentLayoutIdException;
+import com.liferay.portal.exception.LayoutSetVirtualHostException;
+import com.liferay.portal.exception.LayoutTypeException;
+import com.liferay.portal.exception.NoSuchGroupException;
+import com.liferay.portal.exception.RequiredLayoutException;
+import com.liferay.portal.exception.SitemapChangeFrequencyException;
+import com.liferay.portal.exception.SitemapIncludeException;
+import com.liferay.portal.exception.SitemapPagePriorityException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.servlet.MultiSessionMessages;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.upload.UploadException;
 import com.liferay.portal.kernel.upload.UploadPortletRequest;
 import com.liferay.portal.kernel.util.FileUtil;
-import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -68,7 +68,6 @@ import com.liferay.portal.model.LayoutTypePortlet;
 import com.liferay.portal.model.Theme;
 import com.liferay.portal.model.ThemeSetting;
 import com.liferay.portal.model.impl.ThemeSettingImpl;
-import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.service.GroupLocalService;
 import com.liferay.portal.service.GroupService;
 import com.liferay.portal.service.LayoutLocalService;
@@ -88,7 +87,7 @@ import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.documentlibrary.service.DLAppLocalService;
 import com.liferay.portlet.sites.action.ActionUtil;
-import com.liferay.portlet.sites.util.SitesUtil;
+import com.liferay.sites.kernel.util.SitesUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -102,15 +101,10 @@ import java.util.Set;
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.Portlet;
-import javax.portlet.PortletContext;
 import javax.portlet.PortletException;
 import javax.portlet.PortletRequest;
-import javax.portlet.PortletRequestDispatcher;
-import javax.portlet.PortletSession;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
-import javax.portlet.ResourceRequest;
-import javax.portlet.ResourceResponse;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -243,8 +237,8 @@ public class LayoutAdminPortlet extends MVCPortlet {
 			Layout copyLayout = null;
 
 			String layoutTemplateId = ParamUtil.getString(
-					uploadPortletRequest, "layoutTemplateId",
-					PropsValues.DEFAULT_LAYOUT_TEMPLATE_ID);
+				uploadPortletRequest, "layoutTemplateId",
+				PropsValues.DEFAULT_LAYOUT_TEMPLATE_ID);
 
 			if (copyLayoutId > 0) {
 				copyLayout = layoutLocalService.fetchLayout(
@@ -291,6 +285,42 @@ public class LayoutAdminPortlet extends MVCPortlet {
 			layout.getTypeSettingsProperties());
 	}
 
+	public void copyApplications(
+			ActionRequest actionRequest, ActionResponse actionResponse)
+		throws Exception {
+
+		long groupId = ParamUtil.getLong(actionRequest, "groupId");
+		boolean privateLayout = ParamUtil.getBoolean(
+			actionRequest, "privateLayout");
+		long layoutId = ParamUtil.getLong(actionRequest, "layoutId");
+
+		Layout layout = layoutLocalService.getLayout(
+			groupId, privateLayout, layoutId);
+
+		if (!layout.getType().equals(LayoutConstants.TYPE_PORTLET)) {
+			return;
+		}
+
+		long copyLayoutId = ParamUtil.getLong(actionRequest, "copyLayoutId");
+
+		if ((copyLayoutId == 0) || (copyLayoutId == layout.getLayoutId())) {
+			return;
+		}
+
+		Layout copyLayout = layoutLocalService.fetchLayout(
+			groupId, privateLayout, copyLayoutId);
+
+		if ((copyLayout == null) || !copyLayout.isTypePortlet()) {
+			return;
+		}
+
+		ActionUtil.removePortletIds(actionRequest, layout);
+
+		ActionUtil.copyPreferences(actionRequest, layout, copyLayout);
+
+		SitesUtil.copyLookAndFeel(layout, copyLayout);
+	}
+
 	public void deleteLayout(
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
@@ -300,9 +330,9 @@ public class LayoutAdminPortlet extends MVCPortlet {
 
 		String redirect = ParamUtil.getString(actionRequest, "redirect");
 
-		long plid = ParamUtil.getLong(actionRequest, "plid");
+		long selPlid = ParamUtil.getLong(actionRequest, "selPlid");
 
-		if (plid <= 0) {
+		if (selPlid <= 0) {
 			long groupId = ParamUtil.getLong(actionRequest, "groupId");
 			boolean privateLayout = ParamUtil.getBoolean(
 				actionRequest, "privateLayout");
@@ -311,13 +341,13 @@ public class LayoutAdminPortlet extends MVCPortlet {
 			Layout layout = layoutLocalService.getLayout(
 				groupId, privateLayout, layoutId);
 
-			plid = layout.getPlid();
+			selPlid = layout.getPlid();
 		}
 
 		Object[] returnValue = SitesUtil.deleteLayout(
 			actionRequest, actionResponse);
 
-		if (plid == themeDisplay.getRefererPlid()) {
+		if (selPlid == themeDisplay.getRefererPlid()) {
 			long newRefererPlid = (Long)returnValue[2];
 
 			redirect = HttpUtil.setParameter(
@@ -402,31 +432,10 @@ public class LayoutAdminPortlet extends MVCPortlet {
 			layoutTypePortlet.setLayoutTemplateId(
 				themeDisplay.getUserId(), layoutTemplateId);
 
-			long copyLayoutId = ParamUtil.getLong(
-				uploadPortletRequest, "copyLayoutId");
+			layoutTypeSettingsProperties.putAll(formTypeSettingsProperties);
 
-			if ((copyLayoutId > 0) && (copyLayoutId != layout.getLayoutId())) {
-				Layout copyLayout = layoutLocalService.fetchLayout(
-					groupId, privateLayout, copyLayoutId);
-
-				if ((copyLayout != null) && copyLayout.isTypePortlet()) {
-					layoutTypeSettingsProperties =
-						copyLayout.getTypeSettingsProperties();
-
-					ActionUtil.removePortletIds(actionRequest, layout);
-
-					ActionUtil.copyPreferences(
-						actionRequest, layout, copyLayout);
-
-					SitesUtil.copyLookAndFeel(layout, copyLayout);
-				}
-			}
-			else {
-				layoutTypeSettingsProperties.putAll(formTypeSettingsProperties);
-
-				layoutService.updateLayout(
-					groupId, privateLayout, layoutId, layout.getTypeSettings());
-			}
+			layoutService.updateLayout(
+				groupId, privateLayout, layoutId, layout.getTypeSettings());
 		}
 		else {
 			layout.setTypeSettingsProperties(formTypeSettingsProperties);
@@ -586,30 +595,6 @@ public class LayoutAdminPortlet extends MVCPortlet {
 
 		if (mergeFailCountAfterMerge > 0) {
 			SessionErrors.add(actionRequest, "resetMergeFailCountAndMerge");
-		}
-	}
-
-	@Override
-	public void serveResource(
-			ResourceRequest resourceRequest, ResourceResponse resourceResponse)
-		throws IOException, PortletException {
-
-		String resourceID = GetterUtil.getString(
-			resourceRequest.getResourceID());
-
-		if (resourceID.equals("getMobileDeviceRules")) {
-			PortletSession portletSession = resourceRequest.getPortletSession();
-
-			PortletContext portletContext = portletSession.getPortletContext();
-
-			PortletRequestDispatcher portletRequestDispatcher =
-				portletContext.getRequestDispatcher(
-					"/layout/mobile_device_rules_rule_group_instances.jsp");
-
-			portletRequestDispatcher.include(resourceRequest, resourceResponse);
-		}
-		else {
-			super.serveResource(resourceRequest, resourceResponse);
 		}
 	}
 

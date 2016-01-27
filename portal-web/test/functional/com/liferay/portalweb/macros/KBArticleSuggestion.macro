@@ -3,7 +3,7 @@
 		<execute function="AssertClick" locator1="KnowledgeBaseArticle#DO_YOU_HAVE_ANY_SUGGESTIONS" value1="Do you have any suggestions?" />
 		<execute function="Type" locator1="KnowledgeBaseSuggestions#CONTENT_INPUT" value1="${kbSuggestionBody}" />
 		<execute function="AssertClick" locator1="Button#SUBMIT" value1="Submit" />
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Suggestion saved successfully." />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Suggestion saved successfully." />
 	</command>
 
 	<command name="cancelSuggestionPG">
@@ -63,7 +63,7 @@
 		<var name="key_kbSuggestionBody" value="${kbSuggestionBody}" />
 
 		<execute function="AssertClick" locator1="KnowledgeBaseSuggestions#MOVE_TO_IN_PROGRESS_BUTTON" value1="Move to in Progress" />
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Suggestion status updated successfully." />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Suggestion status updated successfully." />
 	</command>
 
 	<command name="moveToNewStatus">
@@ -71,7 +71,7 @@
 		<var name="key_kbSuggestionBody" value="${kbSuggestionBody}" />
 
 		<execute function="AssertClick" locator1="KnowledgeBaseSuggestions#MOVE_TO_NEW_BUTTON" value1="Move to New" />
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Suggestion status updated successfully." />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Suggestion status updated successfully." />
 	</command>
 
 	<command name="moveToResolvedStatus">
@@ -79,7 +79,7 @@
 		<var name="key_kbSuggestionBody" value="${kbSuggestionBody}" />
 
 		<execute function="AssertClick" locator1="KnowledgeBaseSuggestions#RESOLVE_BUTTON" value1="Resolve" />
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Suggestion status updated successfully." />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Suggestion status updated successfully." />
 	</command>
 
 	<command name="viewDefaultInProgress">
@@ -130,22 +130,6 @@
 			</then>
 			<else>
 				<execute function="AssertTextEquals#assertPartialText" locator1="KnowledgeBase#LINK_THERE_ARE_SUGGESTIONS" value1="You sent ${kbSuggestionCount} suggestions for this article." />
-			</else>
-		</if>
-	</command>
-
-	<command name="viewSuggestionCountPG">
-		<var name="kbSuggestionCount" value="${kbSuggestionCount}" />
-
-		<execute function="AssertTextEquals" locator1="KnowledgeBaseArticle#DO_YOU_HAVE_ANY_SUGGESTIONS" value1="Do you have any suggestions?" />
-
-		<if>
-			<equals arg1="${kbSuggestionCount}" arg2="1" />
-			<then>
-				<execute function="AssertTextEquals#assertPartialText" locator1="KnowledgeBase#LINK_THERE_ARE_SUGGESTIONS" value1="There is one suggestion." />
-			</then>
-			<else>
-				<execute function="AssertTextEquals#assertPartialText" locator1="KnowledgeBase#LINK_THERE_ARE_SUGGESTIONS" value1="There are ${kbSuggestionCount} suggestions." />
 			</else>
 		</if>
 	</command>

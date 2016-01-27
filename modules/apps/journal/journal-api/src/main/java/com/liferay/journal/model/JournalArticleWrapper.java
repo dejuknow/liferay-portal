@@ -318,15 +318,6 @@ public class JournalArticleWrapper implements JournalArticle,
 	}
 
 	/**
-	* @deprecated As of 6.1.0, replaced by {@link #isApproved()}
-	*/
-	@Deprecated
-	@Override
-	public boolean getApproved() {
-		return _journalArticle.getApproved();
-	}
-
-	/**
 	* Returns the article ID of this journal article.
 	*
 	* @return the article ID of this journal article
@@ -364,15 +355,6 @@ public class JournalArticleWrapper implements JournalArticle,
 	@Override
 	public java.lang.String[] getAvailableLanguageIds() {
 		return _journalArticle.getAvailableLanguageIds();
-	}
-
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link #getAvailableLanguageIds}
-	*/
-	@Deprecated
-	@Override
-	public java.lang.String[] getAvailableLocales() {
-		return _journalArticle.getAvailableLocales();
 	}
 
 	/**
@@ -475,15 +457,6 @@ public class JournalArticleWrapper implements JournalArticle,
 	@Override
 	public java.lang.String getDefaultLanguageId() {
 		return _journalArticle.getDefaultLanguageId();
-	}
-
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link #getDefaultLanguageId}
-	*/
-	@Deprecated
-	@Override
-	public java.lang.String getDefaultLocale() {
-		return _journalArticle.getDefaultLocale();
 	}
 
 	/**
@@ -1778,14 +1751,6 @@ public class JournalArticleWrapper implements JournalArticle,
 	@Override
 	public StagedModelType getStagedModelType() {
 		return _journalArticle.getStagedModelType();
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedModel}
-	 */
-	@Deprecated
-	public JournalArticle getWrappedJournalArticle() {
-		return _journalArticle;
 	}
 
 	@Override

@@ -980,61 +980,6 @@ public class UserWrapper implements User, ModelWrapper<User> {
 	}
 
 	/**
-	* @deprecated As of 6.2.0, replaced by {@link #getMySiteGroups}
-	*/
-	@Deprecated
-	@Override
-	public java.util.List<com.liferay.portal.model.Group> getMySites()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _user.getMySites();
-	}
-
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link #getMySiteGroups(String[],
-	int)}
-	*/
-	@Deprecated
-	@Override
-	public java.util.List<com.liferay.portal.model.Group> getMySites(
-		java.lang.String[] classNames, boolean includeControlPanel, int max)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _user.getMySites(classNames, includeControlPanel, max);
-	}
-
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link #getMySiteGroups(String[],
-	int)}
-	*/
-	@Deprecated
-	@Override
-	public java.util.List<com.liferay.portal.model.Group> getMySites(
-		java.lang.String[] classNames, int max)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _user.getMySites(classNames, max);
-	}
-
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link User#getMySiteGroups(int)}
-	*/
-	@Deprecated
-	@Override
-	public java.util.List<com.liferay.portal.model.Group> getMySites(
-		boolean includeControlPanel, int max)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _user.getMySites(includeControlPanel, max);
-	}
-
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link #getMySiteGroups(int)}
-	*/
-	@Deprecated
-	@Override
-	public java.util.List<com.liferay.portal.model.Group> getMySites(int max)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _user.getMySites(max);
-	}
-
-	/**
 	* Returns the open ID of this user.
 	*
 	* @return the open ID of this user
@@ -2032,14 +1977,6 @@ public class UserWrapper implements User, ModelWrapper<User> {
 	@Override
 	public StagedModelType getStagedModelType() {
 		return _user.getStagedModelType();
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedModel}
-	 */
-	@Deprecated
-	public User getWrappedUser() {
-		return _user;
 	}
 
 	@Override

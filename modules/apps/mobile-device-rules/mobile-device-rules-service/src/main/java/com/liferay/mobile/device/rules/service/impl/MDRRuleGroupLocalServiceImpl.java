@@ -19,9 +19,11 @@ import aQute.bnd.annotation.ProviderType;
 import com.liferay.mobile.device.rules.model.MDRRule;
 import com.liferay.mobile.device.rules.model.MDRRuleGroup;
 import com.liferay.mobile.device.rules.service.base.MDRRuleGroupLocalServiceBaseImpl;
+import com.liferay.mobile.device.rules.util.comparator.RuleGroupCreateDateComparator;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
+import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
@@ -224,47 +226,24 @@ public class MDRRuleGroupLocalServiceImpl
 			groupId, name, params, andOperator, start, end);
 	}
 
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link #searchByKeywords(long,
-	 *             String, LinkedHashMap, boolean, int, int)}
-	 */
-	@Deprecated
-	@Override
-	public List<MDRRuleGroup> searchByKeywords(
-		long groupId, String keywords, boolean andOperator, int start,
-		int end) {
-
-		LinkedHashMap<String, Object> params = new LinkedHashMap<>();
-
-		params.put("includeGlobalScope", Boolean.TRUE);
-
-		return mdrRuleGroupFinder.findByKeywords(
-			groupId, keywords, params, start, end);
-	}
-
 	@Override
 	public List<MDRRuleGroup> searchByKeywords(
 		long groupId, String keywords, LinkedHashMap<String, Object> params,
 		boolean andOperator, int start, int end) {
 
-		return mdrRuleGroupFinder.findByKeywords(
-			groupId, keywords, params, start, end);
+		return searchByKeywords(
+			groupId, keywords, params, andOperator, start, end,
+			new RuleGroupCreateDateComparator());
 	}
 
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link #searchByKeywordsCount(long,
-	 *             String, LinkedHashMap, boolean)}
-	 */
-	@Deprecated
 	@Override
-	public int searchByKeywordsCount(
-		long groupId, String keywords, boolean andOperator) {
+	public List<MDRRuleGroup> searchByKeywords(
+		long groupId, String keywords, LinkedHashMap<String, Object> params,
+		boolean andOperator, int start, int end,
+		OrderByComparator<MDRRuleGroup> obc) {
 
-		LinkedHashMap<String, Object> params = new LinkedHashMap<>();
-
-		params.put("includeGlobalScope", Boolean.TRUE);
-
-		return mdrRuleGroupFinder.countByKeywords(groupId, keywords, params);
+		return mdrRuleGroupFinder.findByKeywords(
+			groupId, keywords, params, start, end, obc);
 	}
 
 	@Override
@@ -273,21 +252,6 @@ public class MDRRuleGroupLocalServiceImpl
 		boolean andOperator) {
 
 		return mdrRuleGroupFinder.countByKeywords(groupId, keywords, params);
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link #searchCount(long, String,
-	 *             LinkedHashMap, boolean)}
-	 */
-	@Deprecated
-	@Override
-	public int searchCount(long groupId, String name, boolean andOperator) {
-		LinkedHashMap<String, Object> params = new LinkedHashMap<>();
-
-		params.put("includeGlobalScope", Boolean.TRUE);
-
-		return mdrRuleGroupFinder.countByG_N(
-			groupId, name, params, andOperator);
 	}
 
 	@Override

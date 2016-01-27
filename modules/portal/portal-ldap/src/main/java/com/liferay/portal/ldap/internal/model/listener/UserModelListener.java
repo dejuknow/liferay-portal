@@ -14,8 +14,10 @@
 
 package com.liferay.portal.ldap.internal.model.listener;
 
-import com.liferay.portal.ModelListenerException;
+import com.liferay.portal.exception.ModelListenerException;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
+import com.liferay.portal.kernel.security.exportimport.UserExporter;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.ldap.internal.UserImportTransactionThreadLocal;
 import com.liferay.portal.model.BaseModelListener;
@@ -24,8 +26,6 @@ import com.liferay.portal.model.MembershipRequest;
 import com.liferay.portal.model.MembershipRequestConstants;
 import com.liferay.portal.model.ModelListener;
 import com.liferay.portal.model.User;
-import com.liferay.portal.security.auth.PrincipalThreadLocal;
-import com.liferay.portal.security.exportimport.UserExporter;
 import com.liferay.portal.service.MembershipRequestLocalService;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextThreadLocal;
@@ -152,9 +152,8 @@ public class UserModelListener extends BaseModelListener<User> {
 		}
 	}
 
-	private volatile MembershipRequestLocalService
-		_membershipRequestLocalService;
-	private volatile UserExporter _userExporter;
-	private volatile UserLocalService _userLocalService;
+	private MembershipRequestLocalService _membershipRequestLocalService;
+	private UserExporter _userExporter;
+	private UserLocalService _userLocalService;
 
 }

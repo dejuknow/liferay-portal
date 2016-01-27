@@ -65,6 +65,13 @@ public class DDLPortletDataHandler extends BasePortletDataHandler {
 
 	public static final String NAMESPACE = "dynamic_data_lists";
 
+	public static final String SCHEMA_VERSION = "1.0.0";
+
+	@Override
+	public String getSchemaVersion() {
+		return SCHEMA_VERSION;
+	}
+
 	@Activate
 	protected void activate() {
 		setDataLocalized(true);
@@ -373,8 +380,8 @@ public class DDLPortletDataHandler extends BasePortletDataHandler {
 		ModuleServiceLifecycle moduleServiceLifecycle) {
 	}
 
-	private volatile DDLRecordLocalService _ddlRecordLocalService;
-	private volatile DDLRecordSetLocalService _ddlRecordSetLocalService;
-	private volatile DDMStructureLocalService _ddmStructureLocalService;
+	private DDLRecordLocalService _ddlRecordLocalService;
+	private DDLRecordSetLocalService _ddlRecordSetLocalService;
+	private DDMStructureLocalService _ddmStructureLocalService;
 
 }

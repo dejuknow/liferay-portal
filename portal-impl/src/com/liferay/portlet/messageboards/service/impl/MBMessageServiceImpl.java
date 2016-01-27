@@ -18,23 +18,24 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lock.LockManagerUtil;
 import com.liferay.portal.kernel.parsers.bbcode.BBCodeTranslatorUtil;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.ObjectValuePair;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.model.Company;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.User;
-import com.liferay.portal.security.auth.PrincipalException;
-import com.liferay.portal.security.permission.ActionKeys;
-import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PropsValues;
-import com.liferay.portlet.messageboards.LockedThreadException;
+import com.liferay.portlet.messageboards.exception.LockedThreadException;
 import com.liferay.portlet.messageboards.model.MBCategory;
 import com.liferay.portlet.messageboards.model.MBCategoryConstants;
 import com.liferay.portlet.messageboards.model.MBMessage;
@@ -94,26 +95,6 @@ public class MBMessageServiceImpl extends MBMessageServiceBaseImpl {
 		return mbMessageLocalService.addDiscussionMessage(
 			user.getUserId(), null, groupId, className, classPK, threadId,
 			parentMessageId, subject, body, serviceContext);
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link #addMessage(long, String,
-	 *             String, String, List, boolean, double, boolean,
-	 *             ServiceContext)}
-	 */
-	@Deprecated
-	@Override
-	public MBMessage addMessage(
-			long groupId, long categoryId, long threadId, long parentMessageId,
-			String subject, String body, String format,
-			List<ObjectValuePair<String, InputStream>> inputStreamOVPs,
-			boolean anonymous, double priority, boolean allowPingbacks,
-			ServiceContext serviceContext)
-		throws PortalException {
-
-		return addMessage(
-			parentMessageId, subject, body, format, inputStreamOVPs, anonymous,
-			priority, allowPingbacks, serviceContext);
 	}
 
 	@Override
@@ -219,7 +200,14 @@ public class MBMessageServiceImpl extends MBMessageServiceBaseImpl {
 		if (LockManagerUtil.isLocked(
 				MBThread.class.getName(), parentMessage.getThreadId())) {
 
-			throw new LockedThreadException();
+			StringBundler sb = new StringBundler(4);
+
+			sb.append("Thread is locked for class name ");
+			sb.append(MBThread.class.getName());
+			sb.append(" and class PK ");
+			sb.append(parentMessage.getThreadId());
+
+			throw new LockedThreadException(sb.toString());
 		}
 
 		if (!MBCategoryPermission.contains(
@@ -254,7 +242,14 @@ public class MBMessageServiceImpl extends MBMessageServiceBaseImpl {
 		if (LockManagerUtil.isLocked(
 				MBThread.class.getName(), message.getThreadId())) {
 
-			throw new LockedThreadException();
+			StringBundler sb = new StringBundler(4);
+
+			sb.append("Thread is locked for class name ");
+			sb.append(MBThread.class.getName());
+			sb.append(" and class PK ");
+			sb.append(message.getThreadId());
+
+			throw new LockedThreadException(sb.toString());
 		}
 
 		MBCategoryPermission.contains(
@@ -583,6 +578,23 @@ public class MBMessageServiceImpl extends MBMessageServiceBaseImpl {
 
 	@Override
 	public MBMessageDisplay getMessageDisplay(
+			long messageId, int status, boolean includePrevAndNext)
+		throws PortalException {
+
+		MBMessagePermission.check(
+			getPermissionChecker(), messageId, ActionKeys.VIEW);
+
+		return mbMessageLocalService.getMessageDisplay(
+			getGuestOrUserId(), messageId, status, includePrevAndNext);
+	}
+
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link #getMessageDisplay(long, int,
+	 *             boolean)}
+	 */
+	@Deprecated
+	@Override
+	public MBMessageDisplay getMessageDisplay(
 			long messageId, int status, String threadView,
 			boolean includePrevAndNext)
 		throws PortalException {
@@ -762,7 +774,14 @@ public class MBMessageServiceImpl extends MBMessageServiceBaseImpl {
 		if (LockManagerUtil.isLocked(
 				MBThread.class.getName(), message.getThreadId())) {
 
-			throw new LockedThreadException();
+			StringBundler sb = new StringBundler(4);
+
+			sb.append("Thread is locked for class name ");
+			sb.append(MBThread.class.getName());
+			sb.append(" and class PK ");
+			sb.append(message.getThreadId());
+
+			throw new LockedThreadException(sb.toString());
 		}
 
 		if (!MBCategoryPermission.contains(

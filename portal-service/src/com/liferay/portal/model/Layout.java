@@ -16,6 +16,7 @@ package com.liferay.portal.model;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.annotation.ImplementationClassName;
 import com.liferay.portal.kernel.util.Accessor;
 
 /**
@@ -27,6 +28,7 @@ import com.liferay.portal.kernel.util.Accessor;
  * @see com.liferay.portal.model.impl.LayoutModelImpl
  * @generated
  */
+@ImplementationClassName("com.liferay.portal.model.impl.LayoutImpl")
 @ProviderType
 public interface Layout extends LayoutModel, PersistedModel {
 	/*
@@ -122,7 +124,7 @@ public interface Layout extends LayoutModel, PersistedModel {
 	access
 	*/
 	public java.util.List<com.liferay.portal.model.Layout> getChildren(
-		com.liferay.portal.security.permission.PermissionChecker permissionChecker)
+		com.liferay.portal.kernel.security.permission.PermissionChecker permissionChecker)
 		throws com.liferay.portal.kernel.exception.PortalException;
 
 	/**
@@ -438,6 +440,8 @@ public interface Layout extends LayoutModel, PersistedModel {
 	public boolean isTypePanel();
 
 	public boolean isTypePortlet();
+
+	public boolean isTypeSharedPortlet();
 
 	public boolean isTypeURL();
 

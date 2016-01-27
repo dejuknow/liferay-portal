@@ -49,8 +49,23 @@
 	<td></td>
 </tr>
 <tr>
+	<td>IFRAME_TITLE</td>
+	<td>//div[contains(@class,'modal-header')]/h3[@class='modal-title' and contains(.,'${key_iframeTitle}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>LOADING_MESSAGE</td>
+	<td>//div[contains(@class,'overlaymask') and not(contains(@class,'hidden'))]//div[contains(@class,'loadingmask-message')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>METADATA_SETS_IFRAME</td>
 	<td>//iframe[contains(@class,'dialog-iframe-node ')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PAGE_VARIATION_IFRAME</td>
+	<td>//iframe[contains(@id,'pagesVariationsDialog_iframe_')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -94,6 +109,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>SITE_VARIATION_IFRAME</td>
+	<td>//iframe[contains(@id,'sitePagesVariationDialog_iframe_')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>STRUCTURES</td>
 	<td>//iframe[contains(@src,'scopeTitle=Structures')]</td>
 	<td></td>
@@ -106,11 +126,6 @@
 <tr>
 	<td>UPLOAD_IMAGE</td>
 	<td>//iframe[contains(@id,'changeLogo_iframe')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>VARIATION_IFRAME</td>
-	<td>//iframe[contains(@id,'layoutSetBranches_iframe')]</td>
 	<td></td>
 </tr>
 </tbody>

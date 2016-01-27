@@ -16,14 +16,16 @@ package com.liferay.portal.search.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
-import com.liferay.configuration.admin.ConfigurationAdmin;
+import com.liferay.portal.metatype.annotations.ExtendedObjectClassDefinition;
 
 /**
  * @author Michael C. Han
  */
-@ConfigurationAdmin(category = "platform")
+@ExtendedObjectClassDefinition(category = "platform")
 @Meta.OCD(
-	id = "com.liferay.portal.search.configuration.QueryPreProcessConfiguration"
+	id = "com.liferay.portal.search.configuration.QueryPreProcessConfiguration",
+	localization = "content/Language",
+	name = "%query.pre.process.configuration.name"
 )
 public interface QueryPreProcessConfiguration {
 

@@ -59,10 +59,10 @@ import com.liferay.portal.util.PortletKeys;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.asset.model.AssetEntry;
 import com.liferay.portlet.asset.model.AssetLinkConstants;
-import com.liferay.portlet.calendar.EventDurationException;
-import com.liferay.portlet.calendar.EventEndDateException;
-import com.liferay.portlet.calendar.EventStartDateException;
-import com.liferay.portlet.calendar.EventTitleException;
+import com.liferay.portlet.calendar.exception.EventDurationException;
+import com.liferay.portlet.calendar.exception.EventEndDateException;
+import com.liferay.portlet.calendar.exception.EventStartDateException;
+import com.liferay.portlet.calendar.exception.EventTitleException;
 import com.liferay.portlet.calendar.model.CalEvent;
 import com.liferay.portlet.calendar.model.CalEventConstants;
 import com.liferay.portlet.calendar.service.base.CalEventLocalServiceBaseImpl;
@@ -247,34 +247,6 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 		return event;
 	}
 
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link #addEvent(long, String,
-	 *             String, String, int, int, int, int, int, int, int, boolean,
-	 *             boolean, String, boolean, TZSRecurrence, int, int, int,
-	 *             ServiceContext)}
-	 */
-	@Deprecated
-	@Indexable(type = IndexableType.REINDEX)
-	@Override
-	public CalEvent addEvent(
-			long userId, String title, String description, String location,
-			int startDateMonth, int startDateDay, int startDateYear,
-			int startDateHour, int startDateMinute, int endDateMonth,
-			int endDateDay, int endDateYear, int durationHour,
-			int durationMinute, boolean allDay, boolean timeZoneSensitive,
-			String type, boolean repeating, TZSRecurrence recurrence,
-			int remindBy, int firstReminder, int secondReminder,
-			ServiceContext serviceContext)
-		throws PortalException {
-
-		return addEvent(
-			userId, title, description, location, startDateMonth, startDateDay,
-			startDateYear, startDateHour, startDateMinute, durationHour,
-			durationMinute, allDay, timeZoneSensitive, type, repeating,
-			recurrence, remindBy, firstReminder, secondReminder,
-			serviceContext);
-	}
-
 	@Override
 	public void addEventResources(
 			CalEvent event, boolean addGroupPermissions,
@@ -350,7 +322,7 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 				double daysToCheck = Math.ceil(
 					CalEventConstants.REMINDERS[
 						CalEventConstants.REMINDERS.length - 1] /
-					Time.DAY);
+							Time.DAY);
 
 				Calendar cal = (Calendar)now.clone();
 
@@ -820,34 +792,6 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 		CalEventLocalUtil.clearEventsPool(event.getGroupId());
 
 		return event;
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link #updateEvent(long, long,
-	 *             String, String, String, int, int, int, int, int, int, int,
-	 *             boolean, boolean, String, boolean, TZSRecurrence, int, int,
-	 *             int, ServiceContext)}
-	 */
-	@Deprecated
-	@Indexable(type = IndexableType.REINDEX)
-	@Override
-	public CalEvent updateEvent(
-			long userId, long eventId, String title, String description,
-			String location, int startDateMonth, int startDateDay,
-			int startDateYear, int startDateHour, int startDateMinute,
-			int endDateMonth, int endDateDay, int endDateYear, int durationHour,
-			int durationMinute, boolean allDay, boolean timeZoneSensitive,
-			String type, boolean repeating, TZSRecurrence recurrence,
-			int remindBy, int firstReminder, int secondReminder,
-			ServiceContext serviceContext)
-		throws PortalException {
-
-		return updateEvent(
-			userId, eventId, title, description, location, startDateMonth,
-			startDateDay, startDateYear, startDateHour, startDateMinute,
-			durationHour, durationMinute, allDay, timeZoneSensitive, type,
-			repeating, recurrence, remindBy, firstReminder, secondReminder,
-			serviceContext);
 	}
 
 	protected File exportICal4j(

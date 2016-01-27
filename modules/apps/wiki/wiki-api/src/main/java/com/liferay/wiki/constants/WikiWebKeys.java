@@ -19,11 +19,21 @@ package com.liferay.wiki.constants;
  */
 public class WikiWebKeys {
 
+	public static final String DL_MIME_TYPE_DISPLAY_CONTEXT =
+		"DL_MIME_TYPE_DISPLAY_CONTEXT";
+
 	public static final String WIKI_NODE = "WIKI_NODE";
 
 	public static final String WIKI_NODE_ID = "WIKI_NODE_ID";
 
+	public static final String WIKI_NODES = "WIKI_NODES";
+
 	public static final String WIKI_PAGE = "WIKI_PAGE";
+
+	public static final String WIKI_PAGES = "WIKI_PAGES";
+
+	public static final String WIKI_PORTLET_TOOLBAR_CONTRIBUTOR =
+		"WIKI_PORTLET_TOOLBAR_CONTRIBUTOR";
 
 	public static final String WIKI_TREE_WALKER_DEPTH =
 		"WIKI_TREE_WALKER_DEPTH";

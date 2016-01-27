@@ -15,10 +15,12 @@
 package com.liferay.exportimport.lar;
 
 import com.liferay.exportimport.xstream.ConverterAdapter;
+import com.liferay.exportimport.xstream.XStreamStagedModelTypeHierarchyPermission;
 import com.liferay.exportimport.xstream.configurator.XStreamConfigurator;
 import com.liferay.exportimport.xstream.configurator.XStreamConfiguratorRegistryUtil;
-import com.liferay.portal.NoSuchRoleException;
-import com.liferay.portal.NoSuchTeamException;
+import com.liferay.portal.exception.NoSuchLayoutException;
+import com.liferay.portal.exception.NoSuchRoleException;
+import com.liferay.portal.exception.NoSuchTeamException;
 import com.liferay.portal.kernel.bean.BeanPropertiesUtil;
 import com.liferay.portal.kernel.dao.orm.Conjunction;
 import com.liferay.portal.kernel.dao.orm.Criterion;
@@ -32,6 +34,7 @@ import com.liferay.portal.kernel.lock.Lock;
 import com.liferay.portal.kernel.lock.LockManager;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.DateRange;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -44,6 +47,7 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.xml.Attribute;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.Node;
@@ -67,8 +71,9 @@ import com.liferay.portal.model.RoleConstants;
 import com.liferay.portal.model.StagedGroupedModel;
 import com.liferay.portal.model.StagedModel;
 import com.liferay.portal.model.Team;
-import com.liferay.portal.security.permission.ResourceActionsUtil;
+import com.liferay.portal.model.WorkflowedModel;
 import com.liferay.portal.service.GroupLocalServiceUtil;
+import com.liferay.portal.service.LayoutLocalServiceUtil;
 import com.liferay.portal.service.ResourceBlockLocalServiceUtil;
 import com.liferay.portal.service.ResourceBlockPermissionLocalServiceUtil;
 import com.liferay.portal.service.ResourcePermissionLocalServiceUtil;
@@ -96,16 +101,20 @@ import com.liferay.portlet.exportimport.lar.StagedModelType;
 import com.liferay.portlet.exportimport.lar.UserIdStrategy;
 import com.liferay.portlet.exportimport.xstream.XStreamAlias;
 import com.liferay.portlet.exportimport.xstream.XStreamConverter;
+import com.liferay.portlet.exportimport.xstream.XStreamType;
 import com.liferay.portlet.messageboards.model.MBMessage;
 import com.liferay.portlet.ratings.model.RatingsEntry;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.core.ClassLoaderReference;
 import com.thoughtworks.xstream.io.xml.XppDriver;
+import com.thoughtworks.xstream.security.NoTypePermission;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+
+import java.sql.Timestamp;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -113,6 +122,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -164,33 +174,11 @@ public class PortletDataContextImpl implements PortletDataContext {
 			return;
 		}
 
-		List<AssetLink> directAssetLinks =
-			AssetLinkLocalServiceUtil.getDirectLinks(assetEntry.getEntryId());
+		List<AssetLink> assetLinks = AssetLinkLocalServiceUtil.getLinks(
+			assetEntry.getEntryId());
 
-		if (directAssetLinks.isEmpty()) {
-			return;
-		}
-
-		Map<Integer, List<AssetLink>> assetLinksMap = new HashMap<>();
-
-		for (AssetLink assetLink : directAssetLinks) {
-			List<AssetLink> assetLinks = assetLinksMap.get(assetLink.getType());
-
-			if (assetLinks == null) {
-				assetLinks = new ArrayList<>();
-
-				assetLinksMap.put(assetLink.getType(), assetLinks);
-			}
-
-			assetLinks.add(assetLink);
-		}
-
-		for (Map.Entry<Integer, List<AssetLink>> entry :
-				assetLinksMap.entrySet()) {
-
-			_assetLinksMap.put(
-				getPrimaryKeyString(assetEntry.getClassUuid(), entry.getKey()),
-				entry.getValue());
+		for (AssetLink assetLink : assetLinks) {
+			_assetLinkIds.add(assetLink.getLinkId());
 		}
 	}
 
@@ -233,19 +221,7 @@ public class PortletDataContextImpl implements PortletDataContext {
 
 		element.addAttribute("path", path);
 
-		if (classedModel instanceof AttachedModel) {
-			AttachedModel attachedModel = (AttachedModel)classedModel;
-
-			element.addAttribute("class-name", attachedModel.getClassName());
-		}
-		else if (BeanUtil.hasProperty(classedModel, "className")) {
-			String className = BeanPropertiesUtil.getStringSilent(
-				classedModel, "className");
-
-			if (className != null) {
-				element.addAttribute("class-name", className);
-			}
-		}
+		populateClassNameAttribute(classedModel, element);
 
 		if (!hasPrimaryKey(String.class, path)) {
 			if (classedModel instanceof AuditedModel) {
@@ -259,6 +235,7 @@ public class PortletDataContextImpl implements PortletDataContext {
 					classedModel);
 
 				addAssetLinks(clazz, classPK);
+				addAssetPriority(element, clazz, classPK);
 				addExpando(element, path, classedModel, clazz);
 				addLocks(clazz, String.valueOf(classPK));
 				addPermissions(clazz, classPK);
@@ -268,34 +245,6 @@ public class PortletDataContextImpl implements PortletDataContext {
 		}
 
 		addZipEntry(path, classedModel);
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link #addClassedModel(Element,
-	 *             String, ClassedModel, Class)}
-	 */
-	@Deprecated
-	@Override
-	public void addClassedModel(
-			Element element, String path, ClassedModel classedModel,
-			Class<?> clazz, String namespace)
-		throws PortalException {
-
-		addClassedModel(element, path, classedModel, clazz);
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link #addClassedModel(Element,
-	 *             String, ClassedModel)}
-	 */
-	@Deprecated
-	@Override
-	public void addClassedModel(
-			Element element, String path, ClassedModel classedModel,
-			String namespace)
-		throws PortalException {
-
-		addClassedModel(element, path, classedModel);
 	}
 
 	/**
@@ -667,18 +616,6 @@ public class PortletDataContextImpl implements PortletDataContext {
 			element, null, classedModel, classedModel.getModelClass());
 	}
 
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link
-	 *             #createServiceContext(Element, ClassedModel)}
-	 */
-	@Deprecated
-	@Override
-	public ServiceContext createServiceContext(
-		Element element, ClassedModel classedModel, String namespace) {
-
-		return createServiceContext(element, classedModel);
-	}
-
 	@Override
 	public ServiceContext createServiceContext(StagedModel stagedModel) {
 		return createServiceContext(stagedModel, stagedModel.getModelClass());
@@ -689,8 +626,8 @@ public class PortletDataContextImpl implements PortletDataContext {
 		StagedModel stagedModel, Class<?> clazz) {
 
 		return createServiceContext(
-			null, ExportImportPathUtil.getModelPath(stagedModel), stagedModel,
-			clazz);
+			getImportDataStagedModelElement(stagedModel),
+			ExportImportPathUtil.getModelPath(stagedModel), stagedModel, clazz);
 	}
 
 	@Override
@@ -699,18 +636,6 @@ public class PortletDataContextImpl implements PortletDataContext {
 
 		return createServiceContext(
 			null, path, classedModel, classedModel.getModelClass());
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link #createServiceContext(String,
-	 *             ClassedModel)}
-	 */
-	@Deprecated
-	@Override
-	public ServiceContext createServiceContext(
-		String path, ClassedModel classedModel, String namespace) {
-
-		return createServiceContext(path, classedModel);
 	}
 
 	@Override
@@ -755,8 +680,17 @@ public class PortletDataContextImpl implements PortletDataContext {
 	}
 
 	@Override
+	public Set<Long> getAssetLinkIds() {
+		return _assetLinkIds;
+	}
+
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link #getAssetLinkIds()}
+	 */
+	@Deprecated
+	@Override
 	public Map<String, List<AssetLink>> getAssetLinksMap() {
-		return _assetLinksMap;
+		return Collections.emptyMap();
 	}
 
 	@Override
@@ -990,16 +924,6 @@ public class PortletDataContextImpl implements PortletDataContext {
 			"path", path);
 	}
 
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link
-	 *             ExportImportPathUtil#getLayoutPath(PortletDataContext, long)}
-	 */
-	@Deprecated
-	@Override
-	public String getLayoutPath(long plid) {
-		return StringPool.BLANK;
-	}
-
 	@Override
 	public Map<String, Lock> getLocks() {
 		return _locksMap;
@@ -1075,17 +999,6 @@ public class PortletDataContextImpl implements PortletDataContext {
 	@Override
 	public String getPortletId() {
 		return _portletId;
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link
-	 *             ExportImportPathUtil#getPortletPath(PortletDataContext,
-	 *             String)}
-	 */
-	@Deprecated
-	@Override
-	public String getPortletPath(String portletId) {
-		return ExportImportPathUtil.getPortletPath(this, portletId);
 	}
 
 	@Override
@@ -1258,16 +1171,6 @@ public class PortletDataContextImpl implements PortletDataContext {
 			parentStagedModel, clazz.getName(), 0, null);
 	}
 
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link
-	 *             ExportImportPathUtil#getRootPath(PortletDataContext)}
-	 */
-	@Deprecated
-	@Override
-	public String getRootPath() {
-		return ExportImportPathUtil.getRootPath(this);
-	}
-
 	@Override
 	public String getRootPortletId() {
 		return _rootPortletId;
@@ -1310,38 +1213,6 @@ public class PortletDataContextImpl implements PortletDataContext {
 	@Override
 	public long getSourceGroupId() {
 		return _sourceGroupId;
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link
-	 *             ExportImportPathUtil#getSourceLayoutPath(PortletDataContext,
-	 *             long)}
-	 */
-	@Deprecated
-	@Override
-	public String getSourceLayoutPath(long layoutId) {
-		return StringPool.BLANK;
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link
-	 *             ExportImportPathUtil#getSourcePortletPath(PortletDataContext,
-	 *             String)}
-	 */
-	@Deprecated
-	@Override
-	public String getSourcePortletPath(String portletId) {
-		return StringPool.BLANK;
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link
-	 *             ExportImportPathUtil#getSourceRootPath(PortletDataContext)}
-	 */
-	@Deprecated
-	@Override
-	public String getSourceRootPath() {
-		return ExportImportPathUtil.getSourceRootPath(this);
 	}
 
 	@Override
@@ -1400,9 +1271,9 @@ public class PortletDataContextImpl implements PortletDataContext {
 	public Object getZipEntryAsObject(Element element, String path) {
 		Object object = fromXML(getZipEntryAsString(path));
 
-		Attribute classNameAttribute = element.attribute("class-name");
+		Attribute classNameAttribute = element.attribute("attached-class-name");
 
-		if (classNameAttribute != null) {
+		if ((object != null) && (classNameAttribute != null)) {
 			BeanPropertiesUtil.setProperty(
 				object, "className", classNameAttribute.getText());
 		}
@@ -1528,35 +1399,6 @@ public class PortletDataContextImpl implements PortletDataContext {
 
 		importLocks(clazz, String.valueOf(classPK), String.valueOf(newClassPK));
 		importPermissions(clazz, classPK, newClassPK);
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link
-	 *             #importClassedModel(ClassedModel, ClassedModel, Class)}
-	 */
-	@Deprecated
-	@Override
-	public void importClassedModel(
-			ClassedModel classedModel, ClassedModel newClassedModel,
-			Class<?> clazz, String namespace)
-		throws PortalException {
-
-		importClassedModel(classedModel, newClassedModel, clazz);
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link
-	 *             #importClassedModel(ClassedModel, ClassedModel)}
-	 */
-	@Deprecated
-	@Override
-	public void importClassedModel(
-			ClassedModel classedModel, ClassedModel newClassedModel,
-			String namespace)
-		throws PortalException {
-
-		importClassedModel(
-			classedModel, newClassedModel, classedModel.getModelClass());
 	}
 
 	/**
@@ -2048,6 +1890,20 @@ public class PortletDataContextImpl implements PortletDataContext {
 		return _xStream.toXML(object);
 	}
 
+	protected void addAssetPriority(
+		Element element, Class<?> clazz, long classPK) {
+
+		AssetEntry assetEntry = AssetEntryLocalServiceUtil.fetchEntry(
+			clazz.getName(), classPK);
+
+		if (assetEntry == null) {
+			return;
+		}
+
+		element.addAttribute(
+			"asset-priority", String.valueOf(assetEntry.getPriority()));
+	}
+
 	protected void addExpando(
 		Element element, String path, ClassedModel classedModel,
 		Class<?> clazz) {
@@ -2129,6 +1985,18 @@ public class PortletDataContextImpl implements PortletDataContext {
 			serviceContext.setAssetTagNames(assetTagNames);
 		}
 
+		if (element != null) {
+			Attribute assetPriorityAttribute = element.attribute(
+				"asset-priority");
+
+			if (assetPriorityAttribute != null) {
+				double assetPriority = GetterUtil.getDouble(
+					assetPriorityAttribute.getValue());
+
+				serviceContext.setAssetPriority(assetPriority);
+			}
+		}
+
 		// Expando
 
 		String expandoPath = null;
@@ -2154,6 +2022,25 @@ public class PortletDataContextImpl implements PortletDataContext {
 				if (_log.isDebugEnabled()) {
 					_log.debug(e, e);
 				}
+			}
+		}
+
+		// Workflow
+
+		if (classedModel instanceof WorkflowedModel) {
+			WorkflowedModel workflowedModel = (WorkflowedModel)classedModel;
+
+			if (workflowedModel.getStatus() ==
+					WorkflowConstants.STATUS_APPROVED) {
+
+				serviceContext.setWorkflowAction(
+					WorkflowConstants.ACTION_PUBLISH);
+			}
+			else if (workflowedModel.getStatus() ==
+						WorkflowConstants.STATUS_DRAFT) {
+
+				serviceContext.setWorkflowAction(
+					WorkflowConstants.ACTION_SAVE_DRAFT);
 			}
 		}
 
@@ -2187,6 +2074,8 @@ public class PortletDataContextImpl implements PortletDataContext {
 
 		referenceElement.addAttribute(
 			"class-pk", String.valueOf(classedModel.getPrimaryKeyObj()));
+
+		populateClassNameAttribute(classedModel, referenceElement);
 
 		if (missing) {
 			if (classedModel instanceof StagedModel) {
@@ -2225,6 +2114,22 @@ public class PortletDataContextImpl implements PortletDataContext {
 
 				referenceElement.addAttribute(
 					"live-group-id", String.valueOf(liveGroupId));
+
+				if (group.isLayout()) {
+					try {
+						Layout scopeLayout = LayoutLocalServiceUtil.getLayout(
+							group.getClassPK());
+
+						referenceElement.addAttribute(
+							"scope-layout-uuid", scopeLayout.getUuid());
+					}
+					catch (NoSuchLayoutException nsle) {
+						if (_log.isWarnEnabled()) {
+							_log.warn(
+								"Unable to find layout " + group.getClassPK());
+						}
+					}
+				}
 			}
 			catch (Exception e) {
 				if (_log.isWarnEnabled()) {
@@ -2541,6 +2446,8 @@ public class PortletDataContextImpl implements PortletDataContext {
 			return;
 		}
 
+		List<String> allowedTypeNames = new ArrayList<>();
+
 		for (XStreamConfigurator xStreamConfigurator : xStreamConfigurators) {
 			List<XStreamAlias> xStreamAliases =
 				xStreamConfigurator.getXStreamAliases();
@@ -2562,7 +2469,42 @@ public class PortletDataContextImpl implements PortletDataContext {
 						XStream.PRIORITY_VERY_HIGH);
 				}
 			}
+
+			List<XStreamType> xStreamTypes =
+				xStreamConfigurator.getAllowedXStreamTypes();
+
+			if (ListUtil.isNotEmpty(xStreamTypes)) {
+				for (XStreamType xStreamType : xStreamTypes) {
+					allowedTypeNames.add(xStreamType.getTypeExpression());
+				}
+			}
 		}
+
+		// For default permissions, first wipe than add default
+
+		_xStream.addPermission(NoTypePermission.NONE);
+
+		_xStream.addPermission(
+			XStreamStagedModelTypeHierarchyPermission.STAGED_MODELS);
+
+		_xStream.allowTypeHierarchy(List.class);
+		_xStream.allowTypeHierarchy(Map.class);
+		_xStream.allowTypeHierarchy(Timestamp.class);
+		_xStream.allowTypeHierarchy(Set.class);
+
+		Class[] types = new Class[] {
+			Boolean.class, Date.class, Integer.class, String.class,
+			Locale.class, Long.class
+		};
+
+		_xStream.allowTypes(types);
+
+		_xStream.allowTypes(allowedTypeNames.toArray(new String[0]));
+
+		_xStream.allowTypesByWildcard(
+			new String[] {
+				"com.thoughtworks.xstream.mapper.DynamicProxyMapper*"
+			});
 	}
 
 	protected boolean isResourceMain(ClassedModel classedModel) {
@@ -2575,11 +2517,31 @@ public class PortletDataContextImpl implements PortletDataContext {
 		return true;
 	}
 
+	protected void populateClassNameAttribute(
+		ClassedModel classedModel, Element element) {
+
+		String attachedClassName = null;
+
+		if (classedModel instanceof AttachedModel) {
+			AttachedModel attachedModel = (AttachedModel)classedModel;
+
+			attachedClassName = attachedModel.getClassName();
+		}
+		else if (BeanUtil.hasProperty(classedModel, "className")) {
+			attachedClassName = BeanPropertiesUtil.getStringSilent(
+				classedModel, "className");
+		}
+
+		if (Validator.isNotNull(attachedClassName)) {
+			element.addAttribute("attached-class-name", attachedClassName);
+		}
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		PortletDataContextImpl.class);
 
 	private final Map<String, long[]> _assetCategoryIdsMap = new HashMap<>();
-	private final Map<String, List<AssetLink>> _assetLinksMap = new HashMap<>();
+	private final Set<Long> _assetLinkIds = new HashSet<>();
 	private final Map<String, String[]> _assetTagNamesMap = new HashMap<>();
 	private long _companyGroupId;
 	private long _companyId;

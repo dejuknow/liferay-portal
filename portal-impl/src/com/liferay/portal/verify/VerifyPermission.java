@@ -15,7 +15,8 @@
 package com.liferay.portal.verify;
 
 import com.liferay.portal.kernel.dao.db.DB;
-import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
+import com.liferay.portal.kernel.dao.db.DBManagerUtil;
+import com.liferay.portal.kernel.dao.db.DBType;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
@@ -23,6 +24,8 @@ import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
@@ -38,9 +41,7 @@ import com.liferay.portal.model.Role;
 import com.liferay.portal.model.RoleConstants;
 import com.liferay.portal.model.User;
 import com.liferay.portal.model.UserGroup;
-import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.security.permission.PermissionCacheUtil;
-import com.liferay.portal.security.permission.ResourceActionsUtil;
 import com.liferay.portal.service.LayoutLocalServiceUtil;
 import com.liferay.portal.service.ResourceActionLocalServiceUtil;
 import com.liferay.portal.service.ResourcePermissionLocalServiceUtil;
@@ -67,8 +68,8 @@ public class VerifyPermission extends VerifyProcess {
 			List<String> actionIds =
 				ResourceActionsUtil.getModelResourceActions(modelName);
 
-				ResourceActionLocalServiceUtil.checkResourceActions(
-					modelName, actionIds, true);
+			ResourceActionLocalServiceUtil.checkResourceActions(
+				modelName, actionIds, true);
 		}
 
 		List<String> portletNames = ResourceActionsUtil.getPortletNames();
@@ -195,9 +196,7 @@ public class VerifyPermission extends VerifyProcess {
 		long userClassNameId = PortalUtil.getClassNameId(User.class);
 		long userGroupClassNameId = PortalUtil.getClassNameId(UserGroup.class);
 
-		DB db = DBFactoryUtil.getDB();
-
-		String dbType = db.getType();
+		DB db = DBManagerUtil.getDB();
 
 		long[] companyIds = PortalInstances.getCompanyIdsBySQL();
 
@@ -249,7 +248,7 @@ public class VerifyPermission extends VerifyProcess {
 
 			StringBundler sb = new StringBundler(8);
 
-			if (dbType.equals(DB.TYPE_MYSQL)) {
+			if (db.getDBType() == DBType.MYSQL) {
 				sb.append("update ");
 				sb.append(joinSB.toString());
 				sb.append(" set resourcePermission1.roleId = ");

@@ -16,8 +16,8 @@ package com.liferay.journal.service.permission;
 
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.service.JournalArticleLocalService;
+import com.liferay.portal.kernel.security.permission.PermissionUpdateHandler;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.security.permission.PermissionUpdateHandler;
 
 import java.util.Date;
 
@@ -55,6 +55,6 @@ public class JournalArticlePermissionUpdateHandler
 		_journalArticleLocalService = journalArticleLocalService;
 	}
 
-	private volatile JournalArticleLocalService _journalArticleLocalService;
+	private JournalArticleLocalService _journalArticleLocalService;
 
 }

@@ -10,12 +10,12 @@
 <tbody>
 <tr>
 	<td>ALL_STRUCTURES_WORKFLOW_SELECT</td>
-	<td>//select[contains(@id,'workflowDefinition-1')]</td>
+	<td>//select[contains(@id,'workflowDefinition')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>WORKFLOW_STATUS</td>
-	<td>//span[@class='workflow-status']/strong</td>
+	<td>//span[@class='workflow-status']/span</td>
 	<td></td>
 </tr>
 </tbody>

@@ -138,14 +138,11 @@ public class PropertiesSourceProcessor extends BaseSourceProcessor {
 		else if (fileName.endsWith("source-formatter.properties")) {
 			formatSourceFormatterProperties(fileName, content);
 		}
-		else if (portalSource && fileName.endsWith("portal.properties")) {
-			newContent = formatPortalPortalProperties(fileName, content);
-		}
-		else {
+		else if (!portalSource || !fileName.endsWith("portal.properties")) {
 			formatPortalProperties(fileName, content);
 		}
 
-		return newContent;
+		return formatProperties(newContent);
 	}
 
 	@Override
@@ -161,7 +158,7 @@ public class PropertiesSourceProcessor extends BaseSourceProcessor {
 		Set<String> allDuplicateLines = new HashSet<>();
 
 		for (Map.Entry<String, Set<String>> entry :
-			_duplicateLanguageKeyLinesMap.entrySet()) {
+				_duplicateLanguageKeyLinesMap.entrySet()) {
 
 			Set<String> duplicateLines = entry.getValue();
 
@@ -209,39 +206,6 @@ public class PropertiesSourceProcessor extends BaseSourceProcessor {
 				coreLanguagePropertiesContent,
 				newCoreLanguagePropertiesContent);
 		}
-	}
-
-	protected String formatPortalPortalProperties(
-			String fileName, String content)
-		throws Exception {
-
-		StringBundler sb = new StringBundler();
-
-		try (UnsyncBufferedReader unsyncBufferedReader =
-				new UnsyncBufferedReader(new UnsyncStringReader(content))) {
-
-			String line = null;
-
-			while ((line = unsyncBufferedReader.readLine()) != null) {
-				line = trimLine(line, true);
-
-				if (line.startsWith(StringPool.TAB)) {
-					line = line.replace(
-						StringPool.TAB, StringPool.FOUR_SPACES);
-				}
-
-				sb.append(line);
-				sb.append("\n");
-			}
-		}
-
-		String newContent = sb.toString();
-
-		if (newContent.endsWith("\n")) {
-			newContent = newContent.substring(0, newContent.length() - 1);
-		}
-
-		return newContent;
 	}
 
 	protected void formatPortalProperties(String fileName, String content)
@@ -348,6 +312,41 @@ public class PropertiesSourceProcessor extends BaseSourceProcessor {
 		}
 
 		return content;
+	}
+
+	protected String formatProperties(String content)
+		throws Exception {
+
+		StringBundler sb = new StringBundler();
+
+		try (UnsyncBufferedReader unsyncBufferedReader =
+				new UnsyncBufferedReader(new UnsyncStringReader(content))) {
+
+			String line = null;
+
+			while ((line = unsyncBufferedReader.readLine()) != null) {
+				line = trimLine(line, true);
+
+				if (line.startsWith(StringPool.TAB)) {
+					line = line.replace(StringPool.TAB, StringPool.FOUR_SPACES);
+				}
+
+				if (line.contains(" \t")) {
+					line = line.replace(" \t", StringPool.FOUR_SPACES);
+				}
+
+				sb.append(line);
+				sb.append("\n");
+			}
+		}
+
+		String newContent = sb.toString();
+
+		if (newContent.endsWith("\n")) {
+			newContent = newContent.substring(0, newContent.length() - 1);
+		}
+
+		return newContent;
 	}
 
 	protected void formatSourceFormatterProperties(

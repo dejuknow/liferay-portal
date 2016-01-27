@@ -16,32 +16,36 @@
 
 <%@ include file="/management_bar/init.jsp" %>
 
-<div class="management-bar-container" id="<%= namespace %>managementBarContainerId">
+<div class="management-bar-container" data-qa-id="managementBar" id="<%= namespace %>managementBarContainerId">
 	<div class="management-bar management-bar-default">
 		<div class="container-fluid-1280">
 			<div class="management-bar-header">
 				<c:if test="<%= includeCheckBox %>">
 					<div class="checkbox">
 						<label>
-							<aui:input cssClass="select-all-checkboxes" inline="<%= true %>" label="" name="<%= RowChecker.ALL_ROW_IDS %>" title="select-all" type="checkbox" />
+							<aui:input cssClass="select-all-checkboxes" data-qa-id="selectAllCheckbox" disabled="<%= disabled %>" inline="<%= true %>" label="" name="<%= RowChecker.ALL_ROW_IDS %>" title="select-all" type="checkbox" />
 						</label>
 					</div>
 				</c:if>
+
+				<a class="collapsed management-bar-toggle management-bar-toggle-link" data-toggle="collapse" href="#<%= namespace %>managementBarCollapse">
+					<span class="management-bar-item-title"><liferay-ui:message key="label" /></span>
+
+					<span class="icon-sort"></span>
+				</a>
 			</div>
 
-			<c:if test="<%= Validator.isNotNull(buttons) %>">
-				<div class="management-bar-header-right">
+			<c:if test="<%= Validator.isNotNull(filters) %>">
+				<div class="collapse management-bar-collapse" id="<%= namespace %>managementBarCollapse">
 					<ul class="management-bar-nav nav">
-						<%= buttons %>
+						<%= filters %>
 					</ul>
 				</div>
 			</c:if>
 
-			<c:if test="<%= Validator.isNotNull(filters) %>">
-				<div class="collapse management-bar-collapse">
-					<ul class="management-bar-nav nav">
-						<%= filters %>
-					</ul>
+			<c:if test="<%= Validator.isNotNull(buttons) %>">
+				<div class="management-bar-header-right">
+					<%= buttons %>
 				</div>
 			</c:if>
 		</div>
@@ -52,17 +56,11 @@
 			<div class="container-fluid-1280">
 				<div class="management-bar-header">
 					<c:if test="<%= includeCheckBox %>">
-						<label class="checkbox">
-							<aui:input cssClass="select-all-checkboxes" inline="<%= true %>" label="" name="actionsCheckBox" title="select-all" type="checkbox" />
-						</label>
-					</c:if>
-				</div>
-
-				<div class="management-bar-header-right">
-					<c:if test="<%= Validator.isNotNull(actionButtons) %>">
-						<ul class="management-bar-nav nav">
-							<%= actionButtons %>
-						</ul>
+						<div class="checkbox">
+							<label>
+								<aui:input cssClass="select-all-checkboxes" data-qa-id="selectAllCheckbox" disabled="<%= disabled %>" inline="<%= true %>" label="" name="actionsCheckBox" title="select-all" type="checkbox" />
+							</label>
+						</div>
 					</c:if>
 				</div>
 
@@ -74,6 +72,12 @@
 							</span>
 						</li>
 					</ul>
+				</div>
+
+				<div class="management-bar-header-right">
+					<c:if test="<%= Validator.isNotNull(actionButtons) %>">
+						<%= actionButtons %>
+					</c:if>
 				</div>
 			</div>
 		</div>

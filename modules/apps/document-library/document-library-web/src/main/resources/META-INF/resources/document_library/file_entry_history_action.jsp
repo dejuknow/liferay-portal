@@ -21,14 +21,20 @@ String redirect = ParamUtil.getString(request, "redirect");
 
 ResultRow row = (ResultRow)request.getAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW);
 
-FileVersion fileVersion = (FileVersion)row.getObject();
+FileVersion fileVersion = null;
+
+if (row != null) {
+	fileVersion = (FileVersion)row.getObject();
+}
+else {
+	fileVersion = (FileVersion)request.getAttribute("info_panel.jsp-fileVersion");
+}
 
 FileEntry fileEntry = fileVersion.getFileEntry();
 %>
 
-<liferay-ui:icon-menu direction='<%= "down" %>' icon="<%= StringPool.BLANK %>" message="<%= StringPool.BLANK %>">
+<liferay-ui:icon-menu direction="left-side" icon="<%= StringPool.BLANK %>" markupView="lexicon" message="<%= StringPool.BLANK %>" showWhenSingleIcon="<%= true %>">
 	<liferay-ui:icon
-		iconCssClass="icon-download"
 		message="download"
 		method="get"
 		url="<%= DLUtil.getPreviewURL(fileEntry, fileVersion, themeDisplay, StringPool.BLANK) %>"
@@ -42,7 +48,6 @@ FileEntry fileEntry = fileVersion.getFileEntry();
 	</portlet:renderURL>
 
 	<liferay-ui:icon
-		iconCssClass="icon-search"
 		message="view[action]"
 		url="<%= viewFileVersionURL %>"
 	/>
@@ -62,7 +67,6 @@ FileEntry fileEntry = fileVersion.getFileEntry();
 		</portlet:actionURL>
 
 		<liferay-ui:icon
-			iconCssClass="icon-undo"
 			message="revert"
 			url="<%= revertURL %>"
 		/>

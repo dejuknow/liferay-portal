@@ -251,14 +251,6 @@ public interface DLFileEntryMetadataLocalService extends BaseLocalService,
 	public com.liferay.portlet.documentlibrary.model.DLFileEntryMetadata getFileEntryMetadata(
 		long fileEntryMetadataId) throws PortalException;
 
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link
-	#getFileVersionFileEntryMetadatasCount(long)}
-	*/
-	@java.lang.Deprecated
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public long getFileEntryMetadataCount(long fileEntryId, long fileVersionId);
-
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public java.util.List<com.liferay.portlet.documentlibrary.model.DLFileEntryMetadata> getFileVersionFileEntryMetadatas(
 		long fileVersionId);
@@ -298,15 +290,15 @@ public interface DLFileEntryMetadataLocalService extends BaseLocalService,
 		com.liferay.portlet.documentlibrary.model.DLFileEntryMetadata dlFileEntryMetadata);
 
 	public void updateFileEntryMetadata(long companyId,
-		java.util.List<com.liferay.portlet.dynamicdatamapping.DDMStructure> ddmStructures,
+		java.util.List<com.liferay.dynamic.data.mapping.kernel.DDMStructure> ddmStructures,
 		long fileEntryId, long fileVersionId,
-		java.util.Map<java.lang.String, com.liferay.portlet.dynamicdatamapping.DDMFormValues> ddmFormValuesMap,
+		java.util.Map<java.lang.String, com.liferay.dynamic.data.mapping.kernel.DDMFormValues> ddmFormValuesMap,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws PortalException;
 
 	public void updateFileEntryMetadata(long fileEntryTypeId, long fileEntryId,
 		long fileVersionId,
-		java.util.Map<java.lang.String, com.liferay.portlet.dynamicdatamapping.DDMFormValues> ddmFormValuesMap,
+		java.util.Map<java.lang.String, com.liferay.dynamic.data.mapping.kernel.DDMFormValues> ddmFormValuesMap,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws PortalException;
 }

@@ -14,10 +14,9 @@
 
 package com.liferay.portal.service.impl;
 
-import com.liferay.portal.DuplicateUserGroupException;
-import com.liferay.portal.NoSuchUserGroupException;
-import com.liferay.portal.RequiredUserGroupException;
-import com.liferay.portal.UserGroupNameException;
+import com.liferay.portal.exception.DuplicateUserGroupException;
+import com.liferay.portal.exception.RequiredUserGroupException;
+import com.liferay.portal.exception.UserGroupNameException;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
@@ -29,6 +28,8 @@ import com.liferay.portal.kernel.search.QueryConfig;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.search.Sort;
+import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
+import com.liferay.portal.kernel.security.exportimport.UserGroupImportTransactionThreadLocal;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -45,8 +46,6 @@ import com.liferay.portal.model.Team;
 import com.liferay.portal.model.User;
 import com.liferay.portal.model.UserGroup;
 import com.liferay.portal.model.UserGroupConstants;
-import com.liferay.portal.security.auth.PrincipalThreadLocal;
-import com.liferay.portal.security.exportimport.UserGroupImportTransactionThreadLocal;
 import com.liferay.portal.security.permission.PermissionCacheUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.base.UserGroupLocalServiceBaseImpl;
@@ -57,7 +56,7 @@ import com.liferay.portlet.exportimport.lar.ExportImportHelperUtil;
 import com.liferay.portlet.exportimport.lar.PortletDataHandlerKeys;
 import com.liferay.portlet.exportimport.lar.UserIdStrategy;
 import com.liferay.portlet.exportimport.model.ExportImportConfiguration;
-import com.liferay.portlet.usersadmin.util.UsersAdminUtil;
+import com.liferay.users.admin.kernel.util.UsersAdminUtil;
 
 import java.io.File;
 import java.io.Serializable;
@@ -213,10 +212,6 @@ public class UserGroupLocalServiceImpl extends UserGroupLocalServiceBaseImpl {
 	 * Clears all associations between the user and its user groups and clears
 	 * the permissions cache.
 	 *
-	 * <p>
-	 * This method is called from {@link #deleteUserGroup(UserGroup)}.
-	 * </p>
-	 *
 	 * @param userId the primary key of the user
 	 */
 	@Override
@@ -348,10 +343,6 @@ public class UserGroupLocalServiceImpl extends UserGroupLocalServiceBaseImpl {
 		// Expando
 
 		expandoRowLocalService.deleteRows(userGroup.getUserGroupId());
-
-		// Users
-
-		clearUserUserGroups(userGroup.getUserId());
 
 		// Group
 
@@ -530,14 +521,14 @@ public class UserGroupLocalServiceImpl extends UserGroupLocalServiceBaseImpl {
 	 *         user group's name or description (optionally <code>null</code>)
 	 * @param  params the finder params (optionally <code>null</code>). For more
 	 *         information see {@link
-	 *         com.liferay.portlet.usergroupsadmin.util.UserGroupIndexer}
+	 *         com.liferay.user.groups.admin.web.search.UserGroupIndexer}
 	 * @param  start the lower bound of the range of user groups to return
 	 * @param  end the upper bound of the range of user groups to return (not
 	 *         inclusive)
 	 * @param  sort the field and direction by which to sort (optionally
 	 *         <code>null</code>)
 	 * @return the matching user groups ordered by sort
-	 * @see    com.liferay.portlet.usergroupsadmin.util.UserGroupIndexer
+	 * @see    com.liferay.user.groups.admin.web.search.UserGroupIndexer
 	 */
 	@Override
 	public Hits search(
@@ -625,7 +616,7 @@ public class UserGroupLocalServiceImpl extends UserGroupLocalServiceBaseImpl {
 	 *         <code>null</code>)
 	 * @param  params the finder params (optionally <code>null</code>). For more
 	 *         information see {@link
-	 *         com.liferay.portlet.usergroupsadmin.util.UserGroupIndexer}
+	 *         com.liferay.user.groups.admin.web.search.UserGroupIndexer}
 	 * @param  andSearch whether every field must match its keywords or just one
 	 *         field
 	 * @param  start the lower bound of the range of user groups to return
@@ -1157,15 +1148,12 @@ public class UserGroupLocalServiceImpl extends UserGroupLocalServiceBaseImpl {
 			throw new UserGroupNameException();
 		}
 
-		try {
-			UserGroup userGroup = userGroupFinder.findByC_N(companyId, name);
+		UserGroup userGroup = fetchUserGroup(companyId, name);
 
-			if (userGroup.getUserGroupId() != userGroupId) {
-				throw new DuplicateUserGroupException(
-					"{userGroupId=" + userGroupId + "}");
-			}
-		}
-		catch (NoSuchUserGroupException nsuge) {
+		if ((userGroup != null) &&
+			(userGroup.getUserGroupId() != userGroupId)) {
+
+			throw new DuplicateUserGroupException("{name=" + name + "}");
 		}
 	}
 

@@ -14,6 +14,7 @@
 
 package com.liferay.portal.upgrade.v7_0_0;
 
+import com.liferay.dynamic.data.mapping.kernel.DDMTemplate;
 import com.liferay.portal.kernel.cache.CacheRegistryUtil;
 import com.liferay.portal.kernel.portletdisplaytemplate.PortletDisplayTemplateManager;
 import com.liferay.portal.kernel.template.TemplateHandlerRegistryUtil;
@@ -25,10 +26,8 @@ import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Layout;
 import com.liferay.portal.service.LayoutLocalServiceUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
-import com.liferay.portal.test.rule.MainServletTestRule;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.test.LayoutTestUtil;
-import com.liferay.portlet.dynamicdatamapping.DDMTemplate;
 import com.liferay.portlet.dynamicdatamapping.util.test.DDMTemplateTestUtil;
 
 import java.util.HashMap;
@@ -50,8 +49,7 @@ public class UpgradePortletDisplayTemplatePreferencesTest
 	@ClassRule
 	@Rule
 	public static final AggregateTestRule aggregateTestRule =
-		new AggregateTestRule(
-			new LiferayIntegrationTestRule(), MainServletTestRule.INSTANCE);
+		new LiferayIntegrationTestRule();
 
 	@Test
 	public void testUpgrade() throws Exception {
@@ -70,7 +68,7 @@ public class UpgradePortletDisplayTemplatePreferencesTest
 			"portlet1", DISPLAY_STYLE_PREFIX_6_2 + ddmTemplate.getUuid());
 		setPortletDisplayStyle("portlet2", "testDisplayStyle");
 
-		doUpgrade();
+		upgrade();
 
 		CacheRegistryUtil.clear();
 

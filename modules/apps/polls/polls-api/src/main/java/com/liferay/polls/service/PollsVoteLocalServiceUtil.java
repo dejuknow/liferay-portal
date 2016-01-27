@@ -16,8 +16,7 @@ package com.liferay.polls.service;
 
 import aQute.bnd.annotation.ProviderType;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
+import com.liferay.osgi.util.ServiceTrackerFactory;
 
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -197,6 +196,11 @@ public class PollsVoteLocalServiceUtil {
 		return getService().fetchPollsVoteByUuidAndGroupId(uuid, groupId);
 	}
 
+	public static com.liferay.polls.model.PollsVote fetchQuestionUserVote(
+		long questionId, long userId) {
+		return getService().fetchQuestionUserVote(questionId, userId);
+	}
+
 	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
 		return getService().getActionableDynamicQuery();
 	}
@@ -324,11 +328,6 @@ public class PollsVoteLocalServiceUtil {
 		return getService().getQuestionVotesCount(questionId);
 	}
 
-	public static com.liferay.polls.model.PollsVote getVote(long questionId,
-		long userId) throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getVote(questionId, userId);
-	}
-
 	/**
 	* Updates the polls vote in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	*
@@ -344,21 +343,6 @@ public class PollsVoteLocalServiceUtil {
 		return _serviceTracker.getService();
 	}
 
-	/**
-	 * @deprecated As of 6.2.0
-	 */
-	@Deprecated
-	public void setService(PollsVoteLocalService service) {
-	}
-
-	private static ServiceTracker<PollsVoteLocalService, PollsVoteLocalService> _serviceTracker;
-
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(PollsVoteLocalServiceUtil.class);
-
-		_serviceTracker = new ServiceTracker<PollsVoteLocalService, PollsVoteLocalService>(bundle.getBundleContext(),
-				PollsVoteLocalService.class, null);
-
-		_serviceTracker.open();
-	}
+	private static ServiceTracker<PollsVoteLocalService, PollsVoteLocalService> _serviceTracker =
+		ServiceTrackerFactory.open(PollsVoteLocalService.class);
 }

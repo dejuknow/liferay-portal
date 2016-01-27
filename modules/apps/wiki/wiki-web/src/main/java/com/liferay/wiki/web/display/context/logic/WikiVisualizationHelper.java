@@ -56,12 +56,6 @@ public class WikiVisualizationHelper {
 		return false;
 	}
 
-	public boolean isNodeNameVisible() {
-		String portletId = _wikiRequestHelper.getPortletId();
-
-		return portletId.equals(WikiPortletKeys.WIKI_ADMIN);
-	}
-
 	public boolean isNodeNavigationVisible() throws PortalException {
 		Collection<WikiNode> nodes =
 			_wikiPortletInstanceSettingsHelper.getAllPermittedNodes();
@@ -89,7 +83,7 @@ public class WikiVisualizationHelper {
 	}
 
 	public boolean isViewAllPagesNavItemSelected() {
-		return isNavItemSelected("/wiki/view_all_pages");
+		return isNavItemSelected("/wiki/view_pages");
 	}
 
 	public boolean isViewDraftPagesNavItemSelected() {

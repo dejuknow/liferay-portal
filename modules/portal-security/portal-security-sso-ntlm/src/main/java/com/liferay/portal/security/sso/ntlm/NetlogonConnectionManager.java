@@ -14,6 +14,8 @@
 
 package com.liferay.portal.security.sso.ntlm;
 
+import com.liferay.portal.security.sso.ntlm.internal.NetlogonConnection;
+
 import java.io.IOException;
 
 import java.security.NoSuchAlgorithmException;

@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.dynamic.data.lists.model.DDLRecord;
 import com.liferay.dynamic.data.lists.model.DDLRecordSet;
+import com.liferay.osgi.util.ServiceTrackerFactory;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.search.Hits;
@@ -25,12 +26,12 @@ import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermissio
 import com.liferay.portal.service.ServiceContext;
 
 import java.util.List;
+import java.util.Locale;
 
 import javax.portlet.PortletPreferences;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -54,20 +55,22 @@ public class DDLUtil {
 	}
 
 	public static JSONObject getRecordJSONObject(
-			DDLRecord record, boolean latestRecordVersion)
+			DDLRecord record, boolean latestRecordVersion, Locale locale)
 		throws Exception {
 
-		return getDDL().getRecordJSONObject(record, latestRecordVersion);
+		return getDDL().getRecordJSONObject(
+			record, latestRecordVersion, locale);
 	}
 
 	public static List<DDLRecord> getRecords(Hits hits) throws Exception {
 		return getDDL().getRecords(hits);
 	}
 
-	public static JSONArray getRecordSetJSONArray(DDLRecordSet recordSet)
+	public static JSONArray getRecordSetJSONArray(
+			DDLRecordSet recordSet, Locale locale)
 		throws Exception {
 
-		return getDDL().getRecordSetJSONArray(recordSet);
+		return getDDL().getRecordSetJSONArray(recordSet, locale);
 	}
 
 	public static JSONArray getRecordsJSONArray(List<DDLRecord> records)
@@ -77,10 +80,11 @@ public class DDLUtil {
 	}
 
 	public static JSONArray getRecordsJSONArray(
-			List<DDLRecord> records, boolean latestRecordVersion)
+			List<DDLRecord> records, boolean latestRecordVersion, Locale locale)
 		throws Exception {
 
-		return getDDL().getRecordsJSONArray(records, latestRecordVersion);
+		return getDDL().getRecordsJSONArray(
+			records, latestRecordVersion, locale);
 	}
 
 	/**
@@ -124,15 +128,8 @@ public class DDLUtil {
 			recordId, recordSetId, mergeFields, serviceContext);
 	}
 
-	private static final ServiceTracker<DDL, DDL> _serviceTracker;
-
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(DDLUtil.class);
-
-		_serviceTracker = new ServiceTracker<>(
-			bundle.getBundleContext(), DDL.class, null);
-
-		_serviceTracker.open();
-	}
+	private static final ServiceTracker<DDL, DDL> _serviceTracker =
+		ServiceTrackerFactory.open(
+			FrameworkUtil.getBundle(DDLUtil.class), DDL.class);
 
 }

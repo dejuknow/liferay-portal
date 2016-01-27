@@ -14,15 +14,15 @@
 
 package com.liferay.portal.service.impl;
 
-import com.liferay.portal.CountryA2Exception;
-import com.liferay.portal.CountryA3Exception;
-import com.liferay.portal.CountryIddException;
-import com.liferay.portal.CountryNameException;
-import com.liferay.portal.CountryNumberException;
+import com.liferay.portal.exception.CountryA2Exception;
+import com.liferay.portal.exception.CountryA3Exception;
+import com.liferay.portal.exception.CountryIddException;
+import com.liferay.portal.exception.CountryNameException;
+import com.liferay.portal.exception.CountryNumberException;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.Country;
-import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.service.base.CountryServiceBaseImpl;
 
 import java.util.List;

@@ -228,7 +228,7 @@ public class DLContentLocalServiceWrapper implements DLContentLocalService,
 	@Override
 	public com.liferay.portlet.documentlibrary.model.DLContent getContent(
 		long companyId, long repositoryId, java.lang.String path)
-		throws com.liferay.portlet.documentlibrary.NoSuchContentException {
+		throws com.liferay.portlet.documentlibrary.exception.NoSuchContentException {
 		return _dlContentLocalService.getContent(companyId, repositoryId, path);
 	}
 
@@ -236,7 +236,7 @@ public class DLContentLocalServiceWrapper implements DLContentLocalService,
 	public com.liferay.portlet.documentlibrary.model.DLContent getContent(
 		long companyId, long repositoryId, java.lang.String path,
 		java.lang.String version)
-		throws com.liferay.portlet.documentlibrary.NoSuchContentException {
+		throws com.liferay.portlet.documentlibrary.exception.NoSuchContentException {
 		return _dlContentLocalService.getContent(companyId, repositoryId, path,
 			version);
 	}
@@ -353,23 +353,6 @@ public class DLContentLocalServiceWrapper implements DLContentLocalService,
 	public com.liferay.portlet.documentlibrary.model.DLContent updateDLContent(
 		com.liferay.portlet.documentlibrary.model.DLContent dlContent) {
 		return _dlContentLocalService.updateDLContent(dlContent);
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
-	 */
-	@Deprecated
-	public DLContentLocalService getWrappedDLContentLocalService() {
-		return _dlContentLocalService;
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #setWrappedService}
-	 */
-	@Deprecated
-	public void setWrappedDLContentLocalService(
-		DLContentLocalService dlContentLocalService) {
-		_dlContentLocalService = dlContentLocalService;
 	}
 
 	@Override

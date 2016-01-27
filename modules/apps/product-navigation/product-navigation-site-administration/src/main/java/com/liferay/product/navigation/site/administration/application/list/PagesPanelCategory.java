@@ -37,11 +37,6 @@ import org.osgi.service.component.annotations.Component;
 public class PagesPanelCategory extends BasePanelCategory {
 
 	@Override
-	public String getIconCssClass() {
-		return "icon-sitemap";
-	}
-
-	@Override
 	public String getKey() {
 		return PanelCategoryKeys.SITE_ADMINISTRATION_PAGES;
 	}
@@ -49,6 +44,11 @@ public class PagesPanelCategory extends BasePanelCategory {
 	@Override
 	public String getLabel(Locale locale) {
 		return LanguageUtil.get(locale, "category.site_administration.pages");
+	}
+
+	@Override
+	public boolean isPersistState() {
+		return true;
 	}
 
 }

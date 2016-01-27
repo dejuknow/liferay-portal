@@ -16,6 +16,7 @@ package com.liferay.portal.model;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.annotation.ImplementationClassName;
 import com.liferay.portal.kernel.util.Accessor;
 
 /**
@@ -27,6 +28,7 @@ import com.liferay.portal.kernel.util.Accessor;
  * @see com.liferay.portal.model.impl.PhoneModelImpl
  * @generated
  */
+@ImplementationClassName("com.liferay.portal.model.impl.PhoneImpl")
 @ProviderType
 public interface Phone extends PhoneModel, PersistedModel {
 	/*

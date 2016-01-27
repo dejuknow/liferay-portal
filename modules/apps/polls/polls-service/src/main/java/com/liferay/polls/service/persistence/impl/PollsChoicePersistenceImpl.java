@@ -40,6 +40,8 @@ import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextThreadLocal;
+import com.liferay.portal.service.persistence.CompanyProvider;
+import com.liferay.portal.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 
@@ -293,7 +295,7 @@ public class PollsChoicePersistenceImpl extends BasePersistenceImpl<PollsChoice>
 	 * @param uuid the uuid
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching polls choice
-	 * @throws com.liferay.polls.NoSuchChoiceException if a matching polls choice could not be found
+	 * @throws NoSuchChoiceException if a matching polls choice could not be found
 	 */
 	@Override
 	public PollsChoice findByUuid_First(String uuid,
@@ -342,7 +344,7 @@ public class PollsChoicePersistenceImpl extends BasePersistenceImpl<PollsChoice>
 	 * @param uuid the uuid
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching polls choice
-	 * @throws com.liferay.polls.NoSuchChoiceException if a matching polls choice could not be found
+	 * @throws NoSuchChoiceException if a matching polls choice could not be found
 	 */
 	@Override
 	public PollsChoice findByUuid_Last(String uuid,
@@ -399,7 +401,7 @@ public class PollsChoicePersistenceImpl extends BasePersistenceImpl<PollsChoice>
 	 * @param uuid the uuid
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next polls choice
-	 * @throws com.liferay.polls.NoSuchChoiceException if a polls choice with the primary key could not be found
+	 * @throws NoSuchChoiceException if a polls choice with the primary key could not be found
 	 */
 	@Override
 	public PollsChoice[] findByUuid_PrevAndNext(long choiceId, String uuid,
@@ -644,12 +646,12 @@ public class PollsChoicePersistenceImpl extends BasePersistenceImpl<PollsChoice>
 			new String[] { String.class.getName(), Long.class.getName() });
 
 	/**
-	 * Returns the polls choice where uuid = &#63; and groupId = &#63; or throws a {@link com.liferay.polls.NoSuchChoiceException} if it could not be found.
+	 * Returns the polls choice where uuid = &#63; and groupId = &#63; or throws a {@link NoSuchChoiceException} if it could not be found.
 	 *
 	 * @param uuid the uuid
 	 * @param groupId the group ID
 	 * @return the matching polls choice
-	 * @throws com.liferay.polls.NoSuchChoiceException if a matching polls choice could not be found
+	 * @throws NoSuchChoiceException if a matching polls choice could not be found
 	 */
 	@Override
 	public PollsChoice findByUUID_G(String uuid, long groupId)
@@ -1109,7 +1111,7 @@ public class PollsChoicePersistenceImpl extends BasePersistenceImpl<PollsChoice>
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching polls choice
-	 * @throws com.liferay.polls.NoSuchChoiceException if a matching polls choice could not be found
+	 * @throws NoSuchChoiceException if a matching polls choice could not be found
 	 */
 	@Override
 	public PollsChoice findByUuid_C_First(String uuid, long companyId,
@@ -1165,7 +1167,7 @@ public class PollsChoicePersistenceImpl extends BasePersistenceImpl<PollsChoice>
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching polls choice
-	 * @throws com.liferay.polls.NoSuchChoiceException if a matching polls choice could not be found
+	 * @throws NoSuchChoiceException if a matching polls choice could not be found
 	 */
 	@Override
 	public PollsChoice findByUuid_C_Last(String uuid, long companyId,
@@ -1228,7 +1230,7 @@ public class PollsChoicePersistenceImpl extends BasePersistenceImpl<PollsChoice>
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next polls choice
-	 * @throws com.liferay.polls.NoSuchChoiceException if a polls choice with the primary key could not be found
+	 * @throws NoSuchChoiceException if a polls choice with the primary key could not be found
 	 */
 	@Override
 	public PollsChoice[] findByUuid_C_PrevAndNext(long choiceId, String uuid,
@@ -1666,7 +1668,7 @@ public class PollsChoicePersistenceImpl extends BasePersistenceImpl<PollsChoice>
 	 * @param questionId the question ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching polls choice
-	 * @throws com.liferay.polls.NoSuchChoiceException if a matching polls choice could not be found
+	 * @throws NoSuchChoiceException if a matching polls choice could not be found
 	 */
 	@Override
 	public PollsChoice findByQuestionId_First(long questionId,
@@ -1717,7 +1719,7 @@ public class PollsChoicePersistenceImpl extends BasePersistenceImpl<PollsChoice>
 	 * @param questionId the question ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching polls choice
-	 * @throws com.liferay.polls.NoSuchChoiceException if a matching polls choice could not be found
+	 * @throws NoSuchChoiceException if a matching polls choice could not be found
 	 */
 	@Override
 	public PollsChoice findByQuestionId_Last(long questionId,
@@ -1775,7 +1777,7 @@ public class PollsChoicePersistenceImpl extends BasePersistenceImpl<PollsChoice>
 	 * @param questionId the question ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next polls choice
-	 * @throws com.liferay.polls.NoSuchChoiceException if a polls choice with the primary key could not be found
+	 * @throws NoSuchChoiceException if a polls choice with the primary key could not be found
 	 */
 	@Override
 	public PollsChoice[] findByQuestionId_PrevAndNext(long choiceId,
@@ -1990,12 +1992,12 @@ public class PollsChoicePersistenceImpl extends BasePersistenceImpl<PollsChoice>
 			new String[] { Long.class.getName(), String.class.getName() });
 
 	/**
-	 * Returns the polls choice where questionId = &#63; and name = &#63; or throws a {@link com.liferay.polls.NoSuchChoiceException} if it could not be found.
+	 * Returns the polls choice where questionId = &#63; and name = &#63; or throws a {@link NoSuchChoiceException} if it could not be found.
 	 *
 	 * @param questionId the question ID
 	 * @param name the name
 	 * @return the matching polls choice
-	 * @throws com.liferay.polls.NoSuchChoiceException if a matching polls choice could not be found
+	 * @throws NoSuchChoiceException if a matching polls choice could not be found
 	 */
 	@Override
 	public PollsChoice findByQ_N(long questionId, String name)
@@ -2434,6 +2436,8 @@ public class PollsChoicePersistenceImpl extends BasePersistenceImpl<PollsChoice>
 
 		pollsChoice.setUuid(uuid);
 
+		pollsChoice.setCompanyId(companyProvider.getCompanyId());
+
 		return pollsChoice;
 	}
 
@@ -2442,7 +2446,7 @@ public class PollsChoicePersistenceImpl extends BasePersistenceImpl<PollsChoice>
 	 *
 	 * @param choiceId the primary key of the polls choice
 	 * @return the polls choice that was removed
-	 * @throws com.liferay.polls.NoSuchChoiceException if a polls choice with the primary key could not be found
+	 * @throws NoSuchChoiceException if a polls choice with the primary key could not be found
 	 */
 	@Override
 	public PollsChoice remove(long choiceId) throws NoSuchChoiceException {
@@ -2454,7 +2458,7 @@ public class PollsChoicePersistenceImpl extends BasePersistenceImpl<PollsChoice>
 	 *
 	 * @param primaryKey the primary key of the polls choice
 	 * @return the polls choice that was removed
-	 * @throws com.liferay.polls.NoSuchChoiceException if a polls choice with the primary key could not be found
+	 * @throws NoSuchChoiceException if a polls choice with the primary key could not be found
 	 */
 	@Override
 	public PollsChoice remove(Serializable primaryKey)
@@ -2680,11 +2684,11 @@ public class PollsChoicePersistenceImpl extends BasePersistenceImpl<PollsChoice>
 	}
 
 	/**
-	 * Returns the polls choice with the primary key or throws a {@link com.liferay.portal.NoSuchModelException} if it could not be found.
+	 * Returns the polls choice with the primary key or throws a {@link com.liferay.portal.exception.NoSuchModelException} if it could not be found.
 	 *
 	 * @param primaryKey the primary key of the polls choice
 	 * @return the polls choice
-	 * @throws com.liferay.polls.NoSuchChoiceException if a polls choice with the primary key could not be found
+	 * @throws NoSuchChoiceException if a polls choice with the primary key could not be found
 	 */
 	@Override
 	public PollsChoice findByPrimaryKey(Serializable primaryKey)
@@ -2704,11 +2708,11 @@ public class PollsChoicePersistenceImpl extends BasePersistenceImpl<PollsChoice>
 	}
 
 	/**
-	 * Returns the polls choice with the primary key or throws a {@link com.liferay.polls.NoSuchChoiceException} if it could not be found.
+	 * Returns the polls choice with the primary key or throws a {@link NoSuchChoiceException} if it could not be found.
 	 *
 	 * @param choiceId the primary key of the polls choice
 	 * @return the polls choice
-	 * @throws com.liferay.polls.NoSuchChoiceException if a polls choice with the primary key could not be found
+	 * @throws NoSuchChoiceException if a polls choice with the primary key could not be found
 	 */
 	@Override
 	public PollsChoice findByPrimaryKey(long choiceId)
@@ -3079,6 +3083,8 @@ public class PollsChoicePersistenceImpl extends BasePersistenceImpl<PollsChoice>
 		finderCache.removeCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 	}
 
+	@ServiceReference(type = CompanyProviderWrapper.class)
+	protected CompanyProvider companyProvider;
 	@ServiceReference(type = EntityCache.class)
 	protected EntityCache entityCache;
 	@ServiceReference(type = FinderCache.class)

@@ -23,10 +23,9 @@ import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMapFactory
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMapListener;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBContext;
-import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
+import com.liferay.portal.kernel.dao.db.DBManagerUtil;
 import com.liferay.portal.kernel.dao.db.DBProcessContext;
 import com.liferay.portal.kernel.upgrade.UpgradeStep;
-import com.liferay.portal.kernel.util.RunnableUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.Release;
 import com.liferay.portal.output.stream.container.OutputStreamContainer;
@@ -122,7 +121,7 @@ public class ReleaseManager {
 
 		_logger = new Logger(bundleContext);
 
-		DB db = DBFactoryUtil.getDB();
+		DB db = DBManagerUtil.getDB();
 
 		ServiceTrackerMapListener<String, UpgradeInfo, List<UpgradeInfo>>
 			serviceTrackerMapListener = null;
@@ -138,7 +137,7 @@ public class ReleaseManager {
 		_serviceTrackerMap = ServiceTrackerMapFactory.openMultiValueMap(
 			bundleContext, UpgradeStep.class,
 			"(&(upgrade.bundle.symbolic.name=*)(|(upgrade.db.type=any)" +
-				"(upgrade.db.type=" + db.getType() + ")))",
+				"(upgrade.db.type=" + db.getDBType() + ")))",
 			new PropertyServiceReferenceMapper<String, UpgradeStep>(
 				"upgrade.bundle.symbolic.name"),
 			new UpgradeServiceTrackerCustomizer(bundleContext),
@@ -193,10 +192,10 @@ public class ReleaseManager {
 
 		OutputStream outputStream = outputStreamContainer.getOutputStream();
 
-		RunnableUtil.runWithSwappedSystemOut(
+		_outputStreamContainerFactoryTracker.runWithSwappedLog(
 			new UpgradeInfosRunnable(
 				bundleSymbolicName, upgradeInfos, outputStream),
-			outputStream);
+			outputStreamContainer.getDescription(), outputStream);
 
 		try {
 			outputStream.close();
@@ -236,11 +235,11 @@ public class ReleaseManager {
 
 	private static Logger _logger;
 
-	private volatile OutputStreamContainerFactoryTracker
+	private OutputStreamContainerFactoryTracker
 		_outputStreamContainerFactoryTracker;
-	private volatile ReleaseLocalService _releaseLocalService;
+	private ReleaseLocalService _releaseLocalService;
 	private ReleaseManagerConfiguration _releaseManagerConfiguration;
-	private volatile ReleasePublisher _releasePublisher;
+	private ReleasePublisher _releasePublisher;
 	private ServiceTrackerMap<String, List<UpgradeInfo>> _serviceTrackerMap;
 
 	private class UpgradeInfoServiceTrackerMapListener
@@ -254,6 +253,13 @@ public class ReleaseManager {
 			List<UpgradeInfo> upgradeInfos) {
 
 			doExecute(key, serviceTrackerMap);
+		}
+
+		@Override
+		public void keyRemoved(
+			ServiceTrackerMap<String, List<UpgradeInfo>> serviceTrackerMap,
+			String key, UpgradeInfo upgradeInfo,
+			List<UpgradeInfo> upgradeInfos) {
 		}
 
 	}
@@ -305,7 +311,7 @@ public class ReleaseManager {
 		private final OutputStream _outputStream;
 		private final List<UpgradeInfo> _upgradeInfos;
 
-	};
+	}
 
 	private class UpgradeServiceTrackerCustomizer
 		implements ServiceTrackerCustomizer<UpgradeStep, UpgradeInfo> {

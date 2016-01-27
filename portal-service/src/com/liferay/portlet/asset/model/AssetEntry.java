@@ -16,6 +16,7 @@ package com.liferay.portlet.asset.model;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.annotation.ImplementationClassName;
 import com.liferay.portal.kernel.util.Accessor;
 import com.liferay.portal.model.PersistedModel;
 
@@ -28,6 +29,7 @@ import com.liferay.portal.model.PersistedModel;
  * @see com.liferay.portlet.asset.model.impl.AssetEntryModelImpl
  * @generated
  */
+@ImplementationClassName("com.liferay.portlet.asset.model.impl.AssetEntryImpl")
 @ProviderType
 public interface AssetEntry extends AssetEntryModel, PersistedModel {
 	/*

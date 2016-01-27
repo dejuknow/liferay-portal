@@ -17,21 +17,21 @@ package com.liferay.message.boards.web.portlet.action;
 import com.liferay.message.boards.web.constants.MBPortletKeys;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.ObjectValuePair;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portlet.ActionResponseImpl;
-import com.liferay.portlet.messageboards.LockedThreadException;
 import com.liferay.portlet.messageboards.MBGroupServiceSettings;
-import com.liferay.portlet.messageboards.MessageBodyException;
-import com.liferay.portlet.messageboards.MessageSubjectException;
-import com.liferay.portlet.messageboards.NoSuchThreadException;
-import com.liferay.portlet.messageboards.RequiredMessageException;
+import com.liferay.portlet.messageboards.exception.LockedThreadException;
+import com.liferay.portlet.messageboards.exception.MessageBodyException;
+import com.liferay.portlet.messageboards.exception.MessageSubjectException;
+import com.liferay.portlet.messageboards.exception.NoSuchThreadException;
+import com.liferay.portlet.messageboards.exception.RequiredMessageException;
 import com.liferay.portlet.messageboards.model.MBMessage;
 import com.liferay.portlet.messageboards.model.MBThread;
 import com.liferay.portlet.messageboards.model.MBThreadConstants;
@@ -150,8 +150,8 @@ public class MoveThreadMVCActionCommand extends BaseMVCActionCommand {
 		_mbThreadService = mbThreadService;
 	}
 
-	private volatile MBMessageService _mbMessageService;
-	private volatile MBThreadLocalService _mbThreadLocalService;
-	private volatile MBThreadService _mbThreadService;
+	private MBMessageService _mbMessageService;
+	private MBThreadLocalService _mbThreadLocalService;
+	private MBThreadService _mbThreadService;
 
 }

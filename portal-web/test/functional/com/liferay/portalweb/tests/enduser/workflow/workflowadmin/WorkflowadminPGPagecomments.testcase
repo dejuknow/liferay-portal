@@ -5,27 +5,22 @@
 	<var name="workflowAssetType" value="Comments" />
 
 	<set-up>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="SignIn#signInPortalInstanceSetUp" />
-			</then>
-		</if>
+		<execute macro="TestCase#setUpPortalInstance" />
 
 		<execute macro="User#firstLoginPG" />
 
-		<execute macro="Page#gotoConfigurationCP">
-			<var name="portletName" value="Workflow Configuration" />
+		<execute macro="Navigator#openURL" />
+
+		<execute macro="ProductMenu#gotoSitesConfiguration">
+			<var name="portlet" value="Workflow Configuration" />
 		</execute>
 
 		<execute macro="Workflow#configureWorkflow">
 			<var name="workflowDefinition" value="Single Approver (Version 1)" />
-			<var name="workflowResourceKey" value="RESOURCE_TABLE_COMMENTS_SELECT" />
+			<var name="workflowResourceValue" value="Comments" />
 		</execute>
 
-		<execute macro="Page#addPG">
+		<execute macro="Page#add">
 			<var name="pageName" value="Page Comments Page" />
 		</execute>
 
@@ -60,7 +55,9 @@
 		</if>
 	</tear-down>
 
-	<command name="ApprovePageCommentPG" priority="4">
+	<command name="ApprovePageCommentPG" priority="5">
+		<property name="portal.acceptance" value="true" />
+
 		<var name="commentAuthor" value="Test Test (You)" />
 		<var name="commentBody" value="Page Comment Comment" />
 
@@ -119,6 +116,18 @@
 
 		<execute macro="PageComment#viewPG">
 			<var name="commentAuthor" value="${commentAuthor}" />
+			<var name="commentBody" value="${commentBody}" />
+		</execute>
+
+		<execute macro="Page#gotoMyAccount">
+			<var name="portletName" value="My Submissions" />
+		</execute>
+
+		<execute macro="Workflow#gotoViewCompletedAssetViaMySubmissions">
+			<var name="workflowAssetTitle" value="${commentBody}" />
+		</execute>
+
+		<execute macro="PageComment#viewAsWorkflowAsset">
 			<var name="commentBody" value="${commentBody}" />
 		</execute>
 	</command>

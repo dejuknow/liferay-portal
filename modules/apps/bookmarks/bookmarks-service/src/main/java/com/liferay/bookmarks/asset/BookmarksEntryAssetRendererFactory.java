@@ -24,9 +24,8 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.LiferayPortletURL;
-import com.liferay.portal.security.permission.ActionKeys;
-import com.liferay.portal.security.permission.PermissionChecker;
-import com.liferay.portal.theme.ThemeDisplay;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.asset.model.AssetRenderer;
 import com.liferay.portlet.asset.model.AssetRendererFactory;
@@ -88,7 +87,7 @@ public class BookmarksEntryAssetRendererFactory
 
 	@Override
 	public String getIconCssClass() {
-		return "icon-bookmark-empty";
+		return "bookmarks";
 	}
 
 	@Override
@@ -110,6 +109,7 @@ public class BookmarksEntryAssetRendererFactory
 		portletURL.setParameter(
 			"folderId",
 			String.valueOf(BookmarksFolderConstants.DEFAULT_PARENT_FOLDER_ID));
+		portletURL.setParameter("showFolderSelector", Boolean.TRUE.toString());
 
 		return portletURL;
 	}
@@ -158,11 +158,6 @@ public class BookmarksEntryAssetRendererFactory
 		_servletContext = servletContext;
 	}
 
-	@Override
-	protected String getIconPath(ThemeDisplay themeDisplay) {
-		return themeDisplay.getPathThemeImages() + "/ratings/star_hover.png";
-	}
-
 	@Reference(unbind = "-")
 	protected void setBookmarksEntryLocalService(
 		BookmarksEntryLocalService bookmarksEntryLocalService) {
@@ -170,7 +165,7 @@ public class BookmarksEntryAssetRendererFactory
 		_bookmarksEntryLocalService = bookmarksEntryLocalService;
 	}
 
-	private volatile BookmarksEntryLocalService _bookmarksEntryLocalService;
-	private volatile ServletContext _servletContext;
+	private BookmarksEntryLocalService _bookmarksEntryLocalService;
+	private ServletContext _servletContext;
 
 }

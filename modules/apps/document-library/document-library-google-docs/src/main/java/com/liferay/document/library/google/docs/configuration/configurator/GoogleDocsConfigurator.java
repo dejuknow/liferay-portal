@@ -16,6 +16,7 @@ package com.liferay.document.library.google.docs.configuration.configurator;
 
 import com.liferay.document.library.google.docs.migration.LegacyGoogleDocsMigration;
 import com.liferay.document.library.google.docs.util.GoogleDocsDLFileEntryTypeHelper;
+import com.liferay.dynamic.data.mapping.kernel.DDMStructureLinkManager;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.storage.StorageEngine;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
@@ -28,7 +29,6 @@ import com.liferay.portal.service.UserLocalService;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalService;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryMetadataLocalService;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryTypeLocalService;
-import com.liferay.portlet.dynamicdatamapping.DDMStructureLinkManager;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -145,14 +145,13 @@ public class GoogleDocsConfigurator {
 		_userLocalService = userLocalService;
 	}
 
-	private volatile ClassNameLocalService _classNameLocalService;
-	private volatile CompanyLocalService _companyLocalService;
-	private volatile DDMStructureLocalService _ddmStructureLocalService;
-	private volatile DLFileEntryLocalService _dlFileEntryLocalService;
-	private volatile DLFileEntryMetadataLocalService
-		_dlFileEntryMetadataLocalService;
-	private volatile DLFileEntryTypeLocalService _dlFileEntryTypeLocalService;
-	private volatile StorageEngine _storageEngine;
-	private volatile UserLocalService _userLocalService;
+	private ClassNameLocalService _classNameLocalService;
+	private CompanyLocalService _companyLocalService;
+	private DDMStructureLocalService _ddmStructureLocalService;
+	private DLFileEntryLocalService _dlFileEntryLocalService;
+	private DLFileEntryMetadataLocalService _dlFileEntryMetadataLocalService;
+	private DLFileEntryTypeLocalService _dlFileEntryTypeLocalService;
+	private StorageEngine _storageEngine;
+	private UserLocalService _userLocalService;
 
 }

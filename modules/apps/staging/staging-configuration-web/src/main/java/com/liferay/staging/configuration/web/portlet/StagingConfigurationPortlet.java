@@ -14,15 +14,16 @@
 
 package com.liferay.staging.configuration.web.portlet;
 
-import com.liferay.portal.NoSuchBackgroundTaskException;
+import com.liferay.portal.exception.NoSuchBackgroundTaskException;
+import com.liferay.portal.kernel.backgroundtask.BackgroundTaskConstants;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskManagerUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.model.Group;
-import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.service.GroupLocalService;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
@@ -30,13 +31,15 @@ import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.exportimport.service.StagingLocalService;
 import com.liferay.portlet.exportimport.staging.StagingConstants;
-import com.liferay.staging.configuration.web.portlet.constants.StagingConfigurationPortletKeys;
+import com.liferay.staging.constants.StagingConfigurationPortletKeys;
+import com.liferay.staging.constants.StagingProcessesPortletKeys;
 
 import java.io.IOException;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.Portlet;
+import javax.portlet.PortletException;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
 
@@ -78,7 +81,7 @@ public class StagingConfigurationPortlet extends MVCPortlet {
 
 		try {
 			long backgroundTaskId = ParamUtil.getLong(
-				actionRequest, "backgroundTaskId");
+				actionRequest, BackgroundTaskConstants.BACKGROUND_TASK_ID);
 
 			BackgroundTaskManagerUtil.deleteBackgroundTask(backgroundTaskId);
 
@@ -98,7 +101,9 @@ public class StagingConfigurationPortlet extends MVCPortlet {
 
 	public void editStagingConfiguration(
 			ActionRequest actionRequest, ActionResponse actionResponse)
-		throws IOException, PortalException {
+		throws IOException, PortalException, PortletException {
+
+		hideDefaultSuccessMessage(actionRequest);
 
 		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
@@ -157,18 +162,21 @@ public class StagingConfigurationPortlet extends MVCPortlet {
 		String redirect = ParamUtil.getString(actionRequest, "redirect");
 
 		if (!stagedGroup) {
+
+			// Staging was turned on
+
 			PortletURL portletURL = null;
 
 			if (stagingType == StagingConstants.TYPE_LOCAL_STAGING) {
 				portletURL = PortalUtil.getControlPanelPortletURL(
 					actionRequest, liveGroup.getStagingGroup(),
-					StagingConfigurationPortletKeys.STAGING_CONFIGURATION, 0, 0,
+					StagingProcessesPortletKeys.STAGING_PROCESSES, 0, 0,
 					PortletRequest.RENDER_PHASE);
 			}
 			else if (stagingType == StagingConstants.TYPE_REMOTE_STAGING) {
 				portletURL = PortalUtil.getControlPanelPortletURL(
 					actionRequest, liveGroup,
-					StagingConfigurationPortletKeys.STAGING_CONFIGURATION, 0, 0,
+					StagingProcessesPortletKeys.STAGING_PROCESSES, 0, 0,
 					PortletRequest.RENDER_PHASE);
 			}
 
@@ -176,11 +184,35 @@ public class StagingConfigurationPortlet extends MVCPortlet {
 				redirect = portletURL.toString();
 			}
 		}
-		else if (stagingType == StagingConstants.TYPE_NOT_STAGED) {
+		else if ((stagingType == StagingConstants.TYPE_NOT_STAGED) ||
+				 (stagingType == StagingConstants.TYPE_REMOTE_STAGING)) {
+
+			// Staging was turned off or remote staging configuration was
+			// modified
+
 			PortletURL portletURL = PortalUtil.getControlPanelPortletURL(
 				actionRequest, liveGroup,
-				StagingConfigurationPortletKeys.STAGING_CONFIGURATION, 0, 0,
+				StagingProcessesPortletKeys.STAGING_PROCESSES, 0, 0,
 				PortletRequest.RENDER_PHASE);
+
+			portletURL.setParameter(
+				"showStagingConfiguration", Boolean.TRUE.toString());
+
+			if (portletURL != null) {
+				redirect = portletURL.toString();
+			}
+		}
+		else {
+
+			// Local staging configuration was modified
+
+			PortletURL portletURL = PortalUtil.getControlPanelPortletURL(
+				actionRequest, liveGroup.getStagingGroup(),
+				StagingProcessesPortletKeys.STAGING_PROCESSES, 0, 0,
+				PortletRequest.RENDER_PHASE);
+
+			portletURL.setParameter(
+				"showStagingConfiguration", Boolean.TRUE.toString());
 
 			if (portletURL != null) {
 				redirect = portletURL.toString();
@@ -214,7 +246,7 @@ public class StagingConfigurationPortlet extends MVCPortlet {
 		_stagingLocalService = null;
 	}
 
-	private volatile GroupLocalService _groupLocalService;
-	private volatile StagingLocalService _stagingLocalService;
+	private GroupLocalService _groupLocalService;
+	private StagingLocalService _stagingLocalService;
 
 }

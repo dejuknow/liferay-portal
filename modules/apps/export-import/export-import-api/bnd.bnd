@@ -5,5 +5,8 @@ Export-Package:\
 	com.liferay.exportimport.content.processor,\
 	com.liferay.exportimport.portlet.preferences.processor,\
 	com.liferay.exportimport.staged.model.repository,\
+	com.liferay.exportimport.util.comparator,\
 	com.liferay.exportimport.xstream.configurator
-Include-Resource: classes
+Liferay-Releng-Module-Group-Description:
+Liferay-Releng-Module-Group-Title: Data Management
+-include: ../../../../marketplace/web-content-management/bnd.bnd

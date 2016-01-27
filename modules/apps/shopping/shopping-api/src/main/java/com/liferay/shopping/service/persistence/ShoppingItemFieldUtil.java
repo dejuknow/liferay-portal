@@ -16,14 +16,13 @@ package com.liferay.shopping.service.persistence;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.osgi.util.ServiceTrackerFactory;
+
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.service.ServiceContext;
 
 import com.liferay.shopping.model.ShoppingItemField;
-
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
 
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -186,7 +185,7 @@ public class ShoppingItemFieldUtil {
 	* @param itemId the item ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching shopping item field
-	* @throws com.liferay.shopping.NoSuchItemFieldException if a matching shopping item field could not be found
+	* @throws NoSuchItemFieldException if a matching shopping item field could not be found
 	*/
 	public static ShoppingItemField findByItemId_First(long itemId,
 		OrderByComparator<ShoppingItemField> orderByComparator)
@@ -212,7 +211,7 @@ public class ShoppingItemFieldUtil {
 	* @param itemId the item ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching shopping item field
-	* @throws com.liferay.shopping.NoSuchItemFieldException if a matching shopping item field could not be found
+	* @throws NoSuchItemFieldException if a matching shopping item field could not be found
 	*/
 	public static ShoppingItemField findByItemId_Last(long itemId,
 		OrderByComparator<ShoppingItemField> orderByComparator)
@@ -239,7 +238,7 @@ public class ShoppingItemFieldUtil {
 	* @param itemId the item ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next shopping item field
-	* @throws com.liferay.shopping.NoSuchItemFieldException if a shopping item field with the primary key could not be found
+	* @throws NoSuchItemFieldException if a shopping item field with the primary key could not be found
 	*/
 	public static ShoppingItemField[] findByItemId_PrevAndNext(
 		long itemFieldId, long itemId,
@@ -302,7 +301,7 @@ public class ShoppingItemFieldUtil {
 	*
 	* @param itemFieldId the primary key of the shopping item field
 	* @return the shopping item field that was removed
-	* @throws com.liferay.shopping.NoSuchItemFieldException if a shopping item field with the primary key could not be found
+	* @throws NoSuchItemFieldException if a shopping item field with the primary key could not be found
 	*/
 	public static ShoppingItemField remove(long itemFieldId)
 		throws com.liferay.shopping.exception.NoSuchItemFieldException {
@@ -315,11 +314,11 @@ public class ShoppingItemFieldUtil {
 	}
 
 	/**
-	* Returns the shopping item field with the primary key or throws a {@link com.liferay.shopping.NoSuchItemFieldException} if it could not be found.
+	* Returns the shopping item field with the primary key or throws a {@link NoSuchItemFieldException} if it could not be found.
 	*
 	* @param itemFieldId the primary key of the shopping item field
 	* @return the shopping item field
-	* @throws com.liferay.shopping.NoSuchItemFieldException if a shopping item field with the primary key could not be found
+	* @throws NoSuchItemFieldException if a shopping item field with the primary key could not be found
 	*/
 	public static ShoppingItemField findByPrimaryKey(long itemFieldId)
 		throws com.liferay.shopping.exception.NoSuchItemFieldException {
@@ -426,21 +425,6 @@ public class ShoppingItemFieldUtil {
 		return _serviceTracker.getService();
 	}
 
-	/**
-	 * @deprecated As of 6.2.0
-	 */
-	@Deprecated
-	public void setPersistence(ShoppingItemFieldPersistence persistence) {
-	}
-
-	private static ServiceTracker<ShoppingItemFieldPersistence, ShoppingItemFieldPersistence> _serviceTracker;
-
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(ShoppingItemFieldUtil.class);
-
-		_serviceTracker = new ServiceTracker<ShoppingItemFieldPersistence, ShoppingItemFieldPersistence>(bundle.getBundleContext(),
-				ShoppingItemFieldPersistence.class, null);
-
-		_serviceTracker.open();
-	}
+	private static ServiceTracker<ShoppingItemFieldPersistence, ShoppingItemFieldPersistence> _serviceTracker =
+		ServiceTrackerFactory.open(ShoppingItemFieldPersistence.class);
 }

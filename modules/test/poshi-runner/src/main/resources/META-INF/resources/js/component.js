@@ -17,11 +17,21 @@ YUI.add(
 
 		var CSS_FAIL = 'fail';
 
+		var CSS_FAILED = 'failed';
+
 		var CSS_HIDDEN = 'hidden';
+
+		var CSS_PASS = 'pass';
+
+		var CSS_PENDING = 'pending';
+
+		var CSS_RUNNING = 'running';
 
 		var CSS_TOGGLE = 'toggle';
 
 		var CSS_TRANSITIONING = 'transitioning';
+
+		var CSS_WARNING = 'warning';
 
 		var STR_BLANK = '';
 
@@ -35,9 +45,11 @@ YUI.add(
 
 		var STR_DOT = '.';
 
-		var STR_FAILS = 'fails';
+		var STR_ERRORS = 'errors';
 
 		var STR_HEIGHT = 'height';
+
+		var STR_PAUSED = 'paused';
 
 		var STR_RUNNING = 'running';
 
@@ -47,9 +59,15 @@ YUI.add(
 
 		var STR_STATUS = 'status';
 
+		var STR_TRANSITIONING = 'transitioning';
+
 		var STR_XML_LOG = 'xmlLog';
 
 		var SELECTOR_FAIL = STR_DOT + CSS_FAIL;
+
+		var SELECTOR_FAILED = STR_DOT + CSS_FAILED;
+
+		var SELECTOR_WARNING = STR_DOT + CSS_WARNING;
 
 		var TPL_ERROR_BUTTONS = '<button class="btn {cssClass}" data-errorlinkid="{linkId}" onclick="loggerInterface.handleErrorBtns">' +
 				'<div class="btn-content"></div>' +
@@ -74,18 +92,22 @@ YUI.add(
 						setter: A.one
 					},
 
-					fails: {
+					errors: {
 						setter: function() {
 							var instance = this;
 
 							var xmlLog = instance.get(STR_XML_LOG);
 
-							return xmlLog.all(SELECTOR_FAIL);
+							return xmlLog.all(SELECTOR_FAIL + ', ' + SELECTOR_WARNING);
 						}
 					},
 
+					paused: {
+						value: false
+					},
+
 					running: {
-						value: null
+						value: false
 					},
 
 					sidebar: {
@@ -94,7 +116,11 @@ YUI.add(
 
 					status: {
 						validator: Lang.isArray,
-						value: ['fail', 'pass', 'pending']
+						value: [CSS_FAIL, CSS_PASS, CSS_PENDING, CSS_WARNING]
+					},
+
+					transitioning: {
+						value: null
 					},
 
 					xmlLog: {
@@ -105,21 +131,14 @@ YUI.add(
 				NAME: 'poshilogger',
 
 				prototype: {
-					renderUI: function() {
+					initializer: function() {
 						var instance = this;
 
 						var sidebar = instance.get(STR_SIDEBAR);
-						var xmlLog = instance.get(STR_XML_LOG);
-
-						xmlLog.toggleClass(STR_RUNNING);
 
 						var commandLog = sidebar.one('.command-log');
 
 						instance._toggleCommandLog(commandLog);
-
-						if (!xmlLog.hasClass(STR_RUNNING)) {
-							instance._minimizeSidebar();
-						}
 					},
 
 					bindUI: function() {
@@ -139,17 +158,12 @@ YUI.add(
 						var latestCommand = commandLog.one('.line-group:last-child');
 
 						if (latestCommand) {
-							instance._parseCommandLog(latestCommand);
-
 							var linkedFunction = instance.get(STR_XML_LOG).one('#' + id);
 
 							instance._displayNode(linkedFunction);
-
-							instance._selectCurrentScope(linkedFunction);
-
 							instance._setXmlNodeClass(linkedFunction);
 
-							if (latestCommand.hasClass('failed')) {
+							if (latestCommand.hasClass(CSS_FAILED) || latestCommand.hasClass(CSS_WARNING)) {
 								instance._injectXmlError(latestCommand);
 							}
 						}
@@ -158,19 +172,22 @@ YUI.add(
 					handleCurrentCommandSelect: function(event) {
 						var instance = this;
 
-						var xmlLog = instance.get(STR_XML_LOG);
-
 						var currentTargetAncestor = event.currentTarget.ancestor();
 
 						if (currentTargetAncestor) {
+							if (!currentTargetAncestor.hasClass('current-scope')) {
+								event.halt(true);
+							}
+
 							instance._parseCommandLog(currentTargetAncestor);
 
 							var functionLinkId = currentTargetAncestor.getData(ATTR_DATA_FUNCTION_LINK_ID);
 
+							var xmlLog = instance.get(STR_XML_LOG);
+
 							var linkedFunction = xmlLog.one('.line-group[data-functionLinkId="' + functionLinkId + '"]');
 
-							instance._displayNode(linkedFunction);
-
+							instance._displayNode(linkedFunction, true);
 							instance._selectCurrentScope(linkedFunction);
 						}
 					},
@@ -178,13 +195,16 @@ YUI.add(
 					handleCurrentScopeSelect: function(event) {
 						var instance = this;
 
-						var currentTarget = event.currentTarget.ancestor();
+						var currentTargetAncestor = event.currentTarget.ancestor();
 
-						event.stopPropagation();
+						if (currentTargetAncestor) {
+							if (!currentTargetAncestor.hasClass('current-scope')) {
+								event.halt(true);
+							}
 
-						instance._displayNode(currentTarget);
-
-						instance._selectCurrentScope(currentTarget);
+							instance._displayNode(currentTargetAncestor, true);
+							instance._selectCurrentScope(currentTargetAncestor);
+						}
 					},
 
 					handleErrorBtns: function(event) {
@@ -234,7 +254,30 @@ YUI.add(
 					handleGoToErrorBtn: function(event) {
 						var instance = this;
 
-						instance._displayNode();
+						var currentScope = instance.get(STR_CURRENT_SCOPE);
+						var errorNodes = instance.get(STR_ERRORS);
+
+						var lastIndex = errorNodes.size() - 1;
+
+						var newIndex = lastIndex;
+
+						if (currentScope) {
+							var index = errorNodes.indexOf(currentScope);
+
+							if (index > -1) {
+								if (index < lastIndex) {
+									newIndex = index + 1;
+								}
+								else {
+									newIndex = 0;
+								}
+							}
+						}
+
+						var failure = errorNodes.item(newIndex);
+
+						instance._selectCurrentScope(failure);
+						instance._displayNode(failure, true);
 					},
 
 					handleLineTrigger: function(id, starting) {
@@ -249,10 +292,8 @@ YUI.add(
 						if (container) {
 							if (starting && container.hasClass(CSS_COLLAPSE)) {
 								instance._toggleContainer(container, false);
-								instance._scrollToNode(linkedLine);
 							}
-
-							else if (!starting && !container.hasClass(CSS_COLLAPSE)) {
+							else if (linkedLine.hasClass('conditional-fail')) {
 								instance._toggleContainer(container, false);
 							}
 						}
@@ -264,22 +305,38 @@ YUI.add(
 						instance._minimizeSidebar(event.currentTarget);
 					},
 
+					handlePauseBtn: function(event) {
+						var instance = this;
+
+						instance._togglePauseTest();
+					},
+
 					handleToggleCollapseBtn: function(event, inSidebar) {
 						var instance = this;
 
 						var currentTarget = event.currentTarget;
 
-						var lookUpScope = instance.get(STR_XML_LOG);
+						if (!currentTarget.hasClass('btn')) {
+							currentTarget = currentTarget.previous();
 
-						if (inSidebar) {
-							lookUpScope = instance.get(STR_SIDEBAR);
+							if (!inSidebar) {
+								currentTarget = currentTarget.one('.btn-collapse');
+							}
 						}
 
-						var linkId = currentTarget.getData(ATTR_DATA_BUTTON_LINK_ID);
+						if (currentTarget) {
+							var lookUpScope = instance.get(STR_XML_LOG);
 
-						var collapsibleNode = lookUpScope.one('.child-container[data-btnLinkId="' + linkId + '"]');
+							if (inSidebar) {
+								lookUpScope = instance.get(STR_SIDEBAR);
+							}
 
-						instance._toggleContainer(collapsibleNode, inSidebar);
+							var linkId = currentTarget.getData(ATTR_DATA_BUTTON_LINK_ID);
+
+							var collapsibleNode = lookUpScope.one('.child-container[data-btnLinkId="' + linkId + '"]');
+
+							instance._toggleContainer(collapsibleNode, inSidebar);
+						}
 					},
 
 					handleToggleCommandLogBtn: function(event) {
@@ -308,7 +365,7 @@ YUI.add(
 						sidebar.delegate(
 							'click',
 							A.rbind('handleToggleCollapseBtn', instance, true),
-							'.expand-toggle'
+							'.expand-toggle, .linkable.current-scope .line-container'
 						);
 
 						var logBtn = sidebar.all('.btn-command-log');
@@ -335,6 +392,15 @@ YUI.add(
 								A.bind('handleGoToErrorBtn', instance)
 							);
 						}
+
+						var pause = sidebar.one('.btn-pause');
+
+						if (pause) {
+							pause.on(
+								'click',
+								A.bind('handlePauseBtn', instance)
+							);
+						}
 					},
 
 					_bindXMLLog: function() {
@@ -357,7 +423,7 @@ YUI.add(
 						xmlLog.delegate(
 							'click',
 							A.rbind('handleToggleCollapseBtn', instance, false),
-							'.btn-collapse, .btn-var'
+							'.btn-collapse, .btn-var, .current-scope > .line-container'
 						);
 
 						xmlLog.delegate(
@@ -380,9 +446,9 @@ YUI.add(
 
 						var returnVal = false;
 
-						var running = instance.get(STR_RUNNING);
+						var transitioning = instance.get(STR_TRANSITIONING);
 
-						if (targetNode && (!running || !running.contains(targetNode))) {
+						if (targetNode && (!transitioning || !transitioning.contains(targetNode))) {
 							var height;
 
 							var collapsing = targetNode.getStyle(STR_HEIGHT) != '0px';
@@ -392,7 +458,7 @@ YUI.add(
 
 								targetNode.height(height);
 
-								instance.set(STR_RUNNING, targetNode);
+								instance.set(STR_TRANSITIONING, targetNode);
 
 								targetNode.addClass(CSS_TRANSITIONING);
 							}
@@ -420,21 +486,21 @@ YUI.add(
 						return returnVal;
 					},
 
-					_displayNode: function(node) {
+					_displayNode: function(node, scrollTo) {
 						var instance = this;
 
-						node = node || instance.get(STR_FAILS).last();
+						node = node || instance.get(STR_ERRORS).last();
 
 						if (node) {
 							var parentContainers = node.ancestors('.child-container');
 
 							if (parentContainers) {
-								instance._expandParentContainers(parentContainers, node);
+								instance._expandParentContainers(parentContainers, node, scrollTo);
 							}
 						}
 					},
 
-					_expandParentContainers: function(parentContainers, node) {
+					_expandParentContainers: function(parentContainers, node, scrollTo) {
 						var instance = this;
 
 						var timeout = 0;
@@ -444,20 +510,21 @@ YUI.add(
 						if (container.hasClass(CSS_COLLAPSE)) {
 							instance._toggleContainer(container, false);
 
-							instance._scrollToNode(container.one('.line-group'));
-
-							timeout = 200;
+							timeout = 10;
 						}
 
-						if (parentContainers.size()) {
-							setTimeout(
-								A.bind('_expandParentContainers', instance, parentContainers, node),
-								timeout
-							);
-						}
-						else {
-							instance._scrollToNode(node);
-						}
+						A.later(
+							timeout,
+							instance,
+							function() {
+								if (parentContainers.size()) {
+									instance._expandParentContainers(parentContainers, node, scrollTo);
+								}
+								else if (scrollTo) {
+									instance._scrollToNode(node);
+								}
+							}
+						);
 					},
 
 					_getCommandLogNode: function(logId) {
@@ -473,7 +540,7 @@ YUI.add(
 					_getTransition: function(targetNode, height, collapsing) {
 						var instance = this;
 
-						var duration = Math.pow(height, 0.35) / 15;
+						var duration = Math.pow(height, 0.15) / 15;
 
 						var ease = 'ease-in';
 
@@ -502,13 +569,13 @@ YUI.add(
 								},
 
 								marginTop: {
-									duration: 0.1,
+									duration: 0.05,
 									easing: ease,
 									value: margin
 								},
 
 								marginBottom: {
-									duration: 0.1,
+									duration: 0.05,
 									easing: ease,
 									value: margin
 								}
@@ -523,7 +590,7 @@ YUI.add(
 									targetNode.height('auto');
 								}
 
-								instance.set(STR_RUNNING, null);
+								instance.set(STR_TRANSITIONING, null);
 
 								targetNode.removeClass(CSS_TRANSITIONING);
 							}
@@ -645,36 +712,24 @@ YUI.add(
 							else {
 								var buffer = [];
 
-								if (scopeType === 'macro') {
-									var parameters = currentScope.all('> .line-container .child-container .name');
-									var parameterSize = parameters.size();
+								if (scopeType === 'macro' || scopeType === 'function') {
+									var increment = 2;
+									var start = 0;
+									var valueIncrement = 1;
 
-									for (var i = 0; i < parameterSize; i += 2) {
-										buffer.push(
-											A.Lang.sub(
-												TPL_PARAMETER,
-												{
-													cssClass: 'parameter-name',
-													parameter: parameters.item(i).html()
-												}
-											)
-										);
+									var paramCollection = currentScope.all('> .line-container .child-container .name');
 
-										buffer.push(
-											A.Lang.sub(
-												TPL_PARAMETER,
-												{
-													cssClass: 'parameter-value',
-													parameter: parameters.item(i + 1).html()
-												}
-											)
-										);
+									if (scopeType === 'function') {
+										increment = 1;
+										start = 1;
+										valueIncrement = 0;
+
+										paramCollection = scopeNames;
 									}
-								}
-								else if (scopeType === 'function') {
-									var parameterCount = scopeNames.size() - 1;
 
-									for (var i = 1; i <= parameterCount; i++) {
+									var limit = paramCollection.size();
+
+									for (var i = start; i < limit; i += increment) {
 										buffer.push(
 											A.Lang.sub(
 												TPL_PARAMETER,
@@ -682,15 +737,13 @@ YUI.add(
 													cssClass: 'parameter-name',
 													parameter: scopeTypes.item(i).html()
 												}
-											)
-										);
+											),
 
-										buffer.push(
 											A.Lang.sub(
 												TPL_PARAMETER,
 												{
 													cssClass: 'parameter-value',
-													parameter: scopeNames.item(i).html()
+													parameter: scopeNames.item(i + valueIncrement).html()
 												}
 											)
 										);
@@ -756,7 +809,7 @@ YUI.add(
 
 								new A.Anim(
 									{
-										duration: 2,
+										duration: 0.12,
 										easing: 'easeOutStrong',
 										node: scrollNode,
 										to: {
@@ -831,17 +884,17 @@ YUI.add(
 
 							newLogId = logId;
 
-							var commandFailures = commandLog.all('.failed');
+							var commandErrors = commandLog.all(SELECTOR_FAILED + ', ' + SELECTOR_WARNING);
 
-							commandFailures.each(instance._injectXmlError, instance);
+							commandErrors.each(instance._injectXmlError, instance);
 						}
 						else {
 							newLogId = null;
 
-							var fails = instance.get(STR_XML_LOG).all(SELECTOR_FAIL);
+							var errors = instance.get(STR_XML_LOG).all(SELECTOR_FAIL + ', ' + SELECTOR_WARNING);
 
-							if (fails.size()) {
-								fails.each(instance._clearXmlErrors);
+							if (errors.size()) {
+								errors.each(instance._clearXmlErrors);
 							}
 						}
 
@@ -849,16 +902,25 @@ YUI.add(
 
 						instance._toggleXmlLogClasses(logId);
 
-						var failNodes = instance.get(STR_XML_LOG).all(SELECTOR_FAIL);
+						var errorNodes = instance.get(STR_XML_LOG).all(SELECTOR_FAIL + ', ' + SELECTOR_WARNING);
 
-						instance.set(STR_FAILS, failNodes);
+						instance.set(STR_ERRORS, errorNodes);
 
 						instance._transitionCommandLog(commandLog);
 
-						if (failNodes.size()) {
-							failNodes.each(instance._displayNode, instance);
+						var running = commandLog.hasClass(CSS_RUNNING);
 
-							instance._selectCurrentScope(failNodes.first());
+						instance.set(STR_RUNNING, running);
+
+						instance.get(STR_CONTENT_BOX).toggleClass(CSS_RUNNING, running);
+
+						if (errorNodes.size() > 0) {
+							errorNodes.each(instance._displayNode, instance);
+
+							var lastFailNode = errorNodes.first();
+
+							instance._selectCurrentScope(lastFailNode);
+							instance._scrollToNode(lastFailNode);
 						}
 					},
 
@@ -880,6 +942,27 @@ YUI.add(
 						if (collapsed && collapsibleBtn) {
 							collapsibleBtn.toggleClass(CSS_TOGGLE);
 						}
+					},
+
+					_togglePauseTest: function() {
+						var instance = this;
+
+						var commandLogId = instance.get(STR_COMMAND_LOG_ID);
+						var sidebar = instance.get(STR_SIDEBAR);
+
+						var commandLogNode = sidebar.one('.command-log[data-logId="' + commandLogId + '"]');
+
+						if (commandLogNode) {
+							commandLogNode.toggleClass('paused');
+						}
+
+						var pauseBtn = sidebar.one('.btn-pause');
+
+						if (pauseBtn) {
+							pauseBtn.toggleClass(CSS_TOGGLE);
+						}
+
+						instance.set(STR_PAUSED, !instance.get(STR_PAUSED));
 					},
 
 					_toggleXmlLogClasses: function(logId) {

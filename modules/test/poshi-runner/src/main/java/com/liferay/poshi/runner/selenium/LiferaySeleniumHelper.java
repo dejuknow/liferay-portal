@@ -14,6 +14,7 @@
 
 package com.liferay.poshi.runner.selenium;
 
+import com.liferay.poshi.runner.PoshiRunnerContext;
 import com.liferay.poshi.runner.PoshiRunnerGetterUtil;
 import com.liferay.poshi.runner.exception.PoshiRunnerWarningException;
 import com.liferay.poshi.runner.util.AntCommands;
@@ -192,7 +193,7 @@ public class LiferaySeleniumHelper {
 		for (Element eventElement : eventElements) {
 			String level = eventElement.attributeValue("level");
 
-			if (level.equals("ERROR")) {
+			if (level.equals("ERROR") || level.equals("FATAL")) {
 				String timestamp = eventElement.attributeValue("timestamp");
 
 				if (_errorTimestamps.contains(timestamp)) {
@@ -305,7 +306,8 @@ public class LiferaySeleniumHelper {
 	}
 
 	public static void assertLocation(
-		LiferaySelenium liferaySelenium, String pattern) {
+			LiferaySelenium liferaySelenium, String pattern)
+		throws Exception {
 
 		TestCase.assertEquals(pattern, liferaySelenium.getLocation());
 	}
@@ -484,7 +486,8 @@ public class LiferaySeleniumHelper {
 	}
 
 	public static void assertNotLocation(
-		LiferaySelenium liferaySelenium, String pattern) {
+			LiferaySelenium liferaySelenium, String pattern)
+		throws Exception {
 
 		TestCase.assertTrue(
 			Validator.equals(pattern, liferaySelenium.getLocation()));
@@ -1062,6 +1065,14 @@ public class LiferaySeleniumHelper {
 
 	public static boolean isTCatEnabled() {
 		return PropsValues.TCAT_ENABLED;
+	}
+
+	public static boolean isTestName(String testName) {
+		if (testName.equals(PoshiRunnerContext.getTestCaseCommandName())) {
+			return true;
+		}
+
+		return false;
 	}
 
 	public static boolean isTextNotPresent(
@@ -1833,7 +1844,7 @@ public class LiferaySeleniumHelper {
 
 				sb.append("<value><![CDATA[");
 				sb.append(exception.getMessage());
-				sb.append(")]]></value>\n");
+				sb.append("]]></value>\n");
 			}
 		}
 
@@ -1843,7 +1854,7 @@ public class LiferaySeleniumHelper {
 
 				sb.append("<value><![CDATA[");
 				sb.append(exception.getMessage());
-				sb.append(")]]></value>\n");
+				sb.append("]]></value>\n");
 			}
 		}
 

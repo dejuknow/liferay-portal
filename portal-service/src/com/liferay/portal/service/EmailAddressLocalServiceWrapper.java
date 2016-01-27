@@ -43,20 +43,6 @@ public class EmailAddressLocalServiceWrapper implements EmailAddressLocalService
 		return _emailAddressLocalService.addEmailAddress(emailAddress);
 	}
 
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link #addEmailAddress(long,
-	String, long, String, int, boolean, ServiceContext)}
-	*/
-	@Deprecated
-	@Override
-	public com.liferay.portal.model.EmailAddress addEmailAddress(long userId,
-		java.lang.String className, long classPK, java.lang.String address,
-		long typeId, boolean primary)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _emailAddressLocalService.addEmailAddress(userId, className,
-			classPK, address, typeId, primary);
-	}
-
 	@Override
 	public com.liferay.portal.model.EmailAddress addEmailAddress(long userId,
 		java.lang.String className, long classPK, java.lang.String address,
@@ -348,23 +334,6 @@ public class EmailAddressLocalServiceWrapper implements EmailAddressLocalService
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _emailAddressLocalService.updateEmailAddress(emailAddressId,
 			address, typeId, primary);
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
-	 */
-	@Deprecated
-	public EmailAddressLocalService getWrappedEmailAddressLocalService() {
-		return _emailAddressLocalService;
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #setWrappedService}
-	 */
-	@Deprecated
-	public void setWrappedEmailAddressLocalService(
-		EmailAddressLocalService emailAddressLocalService) {
-		_emailAddressLocalService = emailAddressLocalService;
 	}
 
 	@Override

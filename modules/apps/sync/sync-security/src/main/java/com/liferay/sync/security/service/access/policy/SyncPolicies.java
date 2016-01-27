@@ -72,11 +72,11 @@ public class SyncPolicies {
 						allowedServiceSignatures, defaultSAPEntry, true, name,
 						map, new ServiceContext());
 				}
-				catch (PortalException e) {
+				catch (PortalException pe) {
 					throw new Exception(
 						"Unable to add default SAP entry for company " +
 							company.getCompanyId(),
-						e);
+						pe);
 				}
 			}
 		}
@@ -101,8 +101,8 @@ public class SyncPolicies {
 		_userLocalService = userLocalService;
 	}
 
-	private volatile CompanyLocalService _companyLocalService;
-	private volatile SAPEntryLocalService _sapEntryLocalService;
-	private volatile UserLocalService _userLocalService;
+	private CompanyLocalService _companyLocalService;
+	private SAPEntryLocalService _sapEntryLocalService;
+	private UserLocalService _userLocalService;
 
 }

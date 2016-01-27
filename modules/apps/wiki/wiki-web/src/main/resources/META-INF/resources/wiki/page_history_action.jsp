@@ -19,23 +19,28 @@
 <%
 ResultRow row = (ResultRow)request.getAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW);
 
-WikiPage wikiPage = (WikiPage)row.getObject();
+WikiPage wikiPage = null;
+
+if (row != null) {
+	wikiPage = (WikiPage)row.getObject();
+}
+else {
+	wikiPage = (WikiPage)request.getAttribute("info_panel.jsp-wikiPage");
+}
 %>
 
-<liferay-ui:icon-menu icon="<%= StringPool.BLANK %>" message="<%= StringPool.BLANK %>">
-	<c:if test="<%= (wikiPage.getStatus() == WorkflowConstants.STATUS_APPROVED) && WikiPagePermissionChecker.contains(permissionChecker, wikiPage, ActionKeys.UPDATE) %>">
-		<portlet:actionURL name="/wiki/edit_page" var="revertURL">
-			<portlet:param name="<%= Constants.CMD %>" value="<%= Constants.REVERT %>" />
-			<portlet:param name="redirect" value="<%= currentURL %>" />
-			<portlet:param name="nodeId" value="<%= String.valueOf(wikiPage.getNodeId()) %>" />
-			<portlet:param name="title" value="<%= HtmlUtil.unescape(wikiPage.getTitle()) %>" />
-			<portlet:param name="version" value="<%= String.valueOf(wikiPage.getVersion()) %>" />
-		</portlet:actionURL>
+<c:if test="<%= (wikiPage.getStatus() == WorkflowConstants.STATUS_APPROVED) && WikiPagePermissionChecker.contains(permissionChecker, wikiPage, ActionKeys.UPDATE) %>">
+	<portlet:actionURL name="/wiki/edit_page" var="revertURL">
+		<portlet:param name="<%= Constants.CMD %>" value="<%= Constants.REVERT %>" />
+		<portlet:param name="redirect" value="<%= currentURL %>" />
+		<portlet:param name="nodeId" value="<%= String.valueOf(wikiPage.getNodeId()) %>" />
+		<portlet:param name="title" value="<%= HtmlUtil.unescape(wikiPage.getTitle()) %>" />
+		<portlet:param name="version" value="<%= String.valueOf(wikiPage.getVersion()) %>" />
+	</portlet:actionURL>
 
-		<liferay-ui:icon
-			iconCssClass="icon-undo"
-			message="revert"
-			url="<%= revertURL %>"
-		/>
-	</c:if>
-</liferay-ui:icon-menu>
+	<liferay-ui:icon
+		iconCssClass="icon-undo"
+		message="revert"
+		url="<%= revertURL %>"
+	/>
+</c:if>

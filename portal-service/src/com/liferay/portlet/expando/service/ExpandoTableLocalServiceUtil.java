@@ -63,28 +63,6 @@ public class ExpandoTableLocalServiceUtil {
 		return getService().addExpandoTable(expandoTable);
 	}
 
-	/**
-	* @deprecated As of 6.1.0, replaced by {@link #addTable(long, String,
-	String)}
-	*/
-	@Deprecated
-	public static com.liferay.portlet.expando.model.ExpandoTable addTable(
-		java.lang.String className, java.lang.String name)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().addTable(className, name);
-	}
-
-	/**
-	* @deprecated As of 6.1.0, replaced by {@link #addTable(long, long,
-	String)}
-	*/
-	@Deprecated
-	public static com.liferay.portlet.expando.model.ExpandoTable addTable(
-		long classNameId, java.lang.String name)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().addTable(classNameId, name);
-	}
-
 	public static com.liferay.portlet.expando.model.ExpandoTable addTable(
 		long companyId, java.lang.String className, java.lang.String name)
 		throws com.liferay.portal.kernel.exception.PortalException {
@@ -342,28 +320,6 @@ public class ExpandoTableLocalServiceUtil {
 		return getService().getPersistedModel(primaryKeyObj);
 	}
 
-	/**
-	* @deprecated As of 6.1.0, replaced by {@link #getTable(long, String,
-	String)}
-	*/
-	@Deprecated
-	public static com.liferay.portlet.expando.model.ExpandoTable getTable(
-		java.lang.String className, java.lang.String name)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getTable(className, name);
-	}
-
-	/**
-	* @deprecated As of 6.1.0, replaced by {@link #getTable(long, long,
-	String)}
-	*/
-	@Deprecated
-	public static com.liferay.portlet.expando.model.ExpandoTable getTable(
-		long classNameId, java.lang.String name)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getTable(classNameId, name);
-	}
-
 	public static com.liferay.portlet.expando.model.ExpandoTable getTable(
 		long companyId, java.lang.String className, java.lang.String name)
 		throws com.liferay.portal.kernel.exception.PortalException {
@@ -418,13 +374,6 @@ public class ExpandoTableLocalServiceUtil {
 		}
 
 		return _service;
-	}
-
-	/**
-	 * @deprecated As of 6.2.0
-	 */
-	@Deprecated
-	public void setService(ExpandoTableLocalService service) {
 	}
 
 	private static ExpandoTableLocalService _service;

@@ -41,6 +41,7 @@ import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.exportimport.lar.PortletDataContext;
 import com.liferay.portlet.exportimport.lar.PortletDataException;
 import com.liferay.portlet.exportimport.lar.StagedModelDataHandlerUtil;
+import com.liferay.portlet.exportimport.staging.MergeLayoutPrototypesThreadLocal;
 
 import java.util.List;
 import java.util.Map;
@@ -156,18 +157,29 @@ public class JournalContentExportImportPortletPreferencesProcessor
 			!defaultDDMTemplateKey.equals(preferenceDDMTemplateKey)) {
 
 			try {
-				DDMTemplate ddmTemplate = _ddmTemplateLocalService.getTemplate(
-					article.getGroupId(),
-					PortalUtil.getClassNameId(DDMStructure.class),
-					preferenceDDMTemplateKey, true);
+				DDMTemplate ddmTemplate =
+					_ddmTemplateLocalService.fetchTemplate(
+						article.getGroupId(),
+						PortalUtil.getClassNameId(DDMStructure.class),
+						preferenceDDMTemplateKey, true);
+
+				if (ddmTemplate == null) {
+					ddmTemplate = _ddmTemplateLocalService.getTemplate(
+						article.getGroupId(),
+						PortalUtil.getClassNameId(DDMStructure.class),
+						defaultDDMTemplateKey, true);
+
+					portletPreferences.setValue(
+						"ddmTemplateKey", defaultDDMTemplateKey);
+				}
 
 				StagedModelDataHandlerUtil.exportReferenceStagedModel(
 					portletDataContext, article, ddmTemplate,
 					PortletDataContext.REFERENCE_TYPE_STRONG);
 			}
-			catch (PortalException pe) {
+			catch (PortalException | ReadOnlyException e) {
 				throw new PortletDataException(
-					"Unable to export referenced article template", pe);
+					"Unable to export referenced article template", e);
 			}
 		}
 
@@ -192,6 +204,7 @@ public class JournalContentExportImportPortletPreferencesProcessor
 		}
 
 		long previousScopeGroupId = portletDataContext.getScopeGroupId();
+		String previousScopeType = portletDataContext.getScopeType();
 
 		Map<Long, Long> groupIds =
 			(Map<Long, Long>)portletDataContext.getNewPrimaryKeysMap(
@@ -199,6 +212,12 @@ public class JournalContentExportImportPortletPreferencesProcessor
 
 		long importGroupId = GetterUtil.getLong(
 			portletPreferences.getValue("groupId", null));
+
+		if ((importGroupId == portletDataContext.getCompanyGroupId()) &&
+			MergeLayoutPrototypesThreadLocal.isInProgress()) {
+
+			portletDataContext.setScopeType("company");
+		}
 
 		long groupId = MapUtil.getLong(groupIds, importGroupId, importGroupId);
 
@@ -261,6 +280,7 @@ public class JournalContentExportImportPortletPreferencesProcessor
 		}
 
 		portletDataContext.setScopeGroupId(previousScopeGroupId);
+		portletDataContext.setScopeType(previousScopeType);
 
 		return portletPreferences;
 	}
@@ -305,12 +325,11 @@ public class JournalContentExportImportPortletPreferencesProcessor
 	private static final Log _log = LogFactoryUtil.getLog(
 		JournalContentExportImportPortletPreferencesProcessor.class);
 
-	private volatile DDMTemplateLocalService _ddmTemplateLocalService;
-	private volatile JournalArticleLocalService _journalArticleLocalService;
-	private volatile JournalContentSearchLocalService
-		_journalContentSearchLocalService;
-	private volatile LayoutLocalService _layoutLocalService;
-	private volatile ReferencedStagedModelImporterCapability
+	private DDMTemplateLocalService _ddmTemplateLocalService;
+	private JournalArticleLocalService _journalArticleLocalService;
+	private JournalContentSearchLocalService _journalContentSearchLocalService;
+	private LayoutLocalService _layoutLocalService;
+	private ReferencedStagedModelImporterCapability
 		_referencedStagedModelImporterCapability;
 
 }

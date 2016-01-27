@@ -33,6 +33,8 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextThreadLocal;
+import com.liferay.portal.service.persistence.CompanyProvider;
+import com.liferay.portal.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 
@@ -282,7 +284,7 @@ public class ShoppingCouponPersistenceImpl extends BasePersistenceImpl<ShoppingC
 	 * @param groupId the group ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching shopping coupon
-	 * @throws com.liferay.shopping.NoSuchCouponException if a matching shopping coupon could not be found
+	 * @throws NoSuchCouponException if a matching shopping coupon could not be found
 	 */
 	@Override
 	public ShoppingCoupon findByGroupId_First(long groupId,
@@ -333,7 +335,7 @@ public class ShoppingCouponPersistenceImpl extends BasePersistenceImpl<ShoppingC
 	 * @param groupId the group ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching shopping coupon
-	 * @throws com.liferay.shopping.NoSuchCouponException if a matching shopping coupon could not be found
+	 * @throws NoSuchCouponException if a matching shopping coupon could not be found
 	 */
 	@Override
 	public ShoppingCoupon findByGroupId_Last(long groupId,
@@ -391,7 +393,7 @@ public class ShoppingCouponPersistenceImpl extends BasePersistenceImpl<ShoppingC
 	 * @param groupId the group ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next shopping coupon
-	 * @throws com.liferay.shopping.NoSuchCouponException if a shopping coupon with the primary key could not be found
+	 * @throws NoSuchCouponException if a shopping coupon with the primary key could not be found
 	 */
 	@Override
 	public ShoppingCoupon[] findByGroupId_PrevAndNext(long couponId,
@@ -605,11 +607,11 @@ public class ShoppingCouponPersistenceImpl extends BasePersistenceImpl<ShoppingC
 			new String[] { String.class.getName() });
 
 	/**
-	 * Returns the shopping coupon where code = &#63; or throws a {@link com.liferay.shopping.NoSuchCouponException} if it could not be found.
+	 * Returns the shopping coupon where code = &#63; or throws a {@link NoSuchCouponException} if it could not be found.
 	 *
 	 * @param code the code
 	 * @return the matching shopping coupon
-	 * @throws com.liferay.shopping.NoSuchCouponException if a matching shopping coupon could not be found
+	 * @throws NoSuchCouponException if a matching shopping coupon could not be found
 	 */
 	@Override
 	public ShoppingCoupon findByCode(String code) throws NoSuchCouponException {
@@ -966,6 +968,8 @@ public class ShoppingCouponPersistenceImpl extends BasePersistenceImpl<ShoppingC
 		shoppingCoupon.setNew(true);
 		shoppingCoupon.setPrimaryKey(couponId);
 
+		shoppingCoupon.setCompanyId(companyProvider.getCompanyId());
+
 		return shoppingCoupon;
 	}
 
@@ -974,7 +978,7 @@ public class ShoppingCouponPersistenceImpl extends BasePersistenceImpl<ShoppingC
 	 *
 	 * @param couponId the primary key of the shopping coupon
 	 * @return the shopping coupon that was removed
-	 * @throws com.liferay.shopping.NoSuchCouponException if a shopping coupon with the primary key could not be found
+	 * @throws NoSuchCouponException if a shopping coupon with the primary key could not be found
 	 */
 	@Override
 	public ShoppingCoupon remove(long couponId) throws NoSuchCouponException {
@@ -986,7 +990,7 @@ public class ShoppingCouponPersistenceImpl extends BasePersistenceImpl<ShoppingC
 	 *
 	 * @param primaryKey the primary key of the shopping coupon
 	 * @return the shopping coupon that was removed
-	 * @throws com.liferay.shopping.NoSuchCouponException if a shopping coupon with the primary key could not be found
+	 * @throws NoSuchCouponException if a shopping coupon with the primary key could not be found
 	 */
 	@Override
 	public ShoppingCoupon remove(Serializable primaryKey)
@@ -1175,11 +1179,11 @@ public class ShoppingCouponPersistenceImpl extends BasePersistenceImpl<ShoppingC
 	}
 
 	/**
-	 * Returns the shopping coupon with the primary key or throws a {@link com.liferay.portal.NoSuchModelException} if it could not be found.
+	 * Returns the shopping coupon with the primary key or throws a {@link com.liferay.portal.exception.NoSuchModelException} if it could not be found.
 	 *
 	 * @param primaryKey the primary key of the shopping coupon
 	 * @return the shopping coupon
-	 * @throws com.liferay.shopping.NoSuchCouponException if a shopping coupon with the primary key could not be found
+	 * @throws NoSuchCouponException if a shopping coupon with the primary key could not be found
 	 */
 	@Override
 	public ShoppingCoupon findByPrimaryKey(Serializable primaryKey)
@@ -1199,11 +1203,11 @@ public class ShoppingCouponPersistenceImpl extends BasePersistenceImpl<ShoppingC
 	}
 
 	/**
-	 * Returns the shopping coupon with the primary key or throws a {@link com.liferay.shopping.NoSuchCouponException} if it could not be found.
+	 * Returns the shopping coupon with the primary key or throws a {@link NoSuchCouponException} if it could not be found.
 	 *
 	 * @param couponId the primary key of the shopping coupon
 	 * @return the shopping coupon
-	 * @throws com.liferay.shopping.NoSuchCouponException if a shopping coupon with the primary key could not be found
+	 * @throws NoSuchCouponException if a shopping coupon with the primary key could not be found
 	 */
 	@Override
 	public ShoppingCoupon findByPrimaryKey(long couponId)
@@ -1575,6 +1579,8 @@ public class ShoppingCouponPersistenceImpl extends BasePersistenceImpl<ShoppingC
 		finderCache.removeCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 	}
 
+	@ServiceReference(type = CompanyProviderWrapper.class)
+	protected CompanyProvider companyProvider;
 	@ServiceReference(type = EntityCache.class)
 	protected EntityCache entityCache;
 	@ServiceReference(type = FinderCache.class)

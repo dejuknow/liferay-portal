@@ -81,6 +81,16 @@ public class StringUtilTest {
 	}
 
 	@Test
+	public void testContainsIgnoreCase() {
+		Assert.assertFalse(StringUtil.containsIgnoreCase(null, null));
+		Assert.assertFalse(StringUtil.containsIgnoreCase("one,two", null));
+		Assert.assertFalse(StringUtil.containsIgnoreCase(null, "one"));
+		Assert.assertTrue(StringUtil.containsIgnoreCase("one", "one"));
+		Assert.assertTrue(StringUtil.containsIgnoreCase("one,two", "Two"));
+		Assert.assertTrue(StringUtil.containsIgnoreCase("one,two", "onE"));
+	}
+
+	@Test
 	public void testEqualsIgnoreBreakLine() throws Exception {
 		Assert.assertTrue(
 			StringUtil.equalsIgnoreBreakLine("Hello\n World", "Hello World"));
@@ -103,6 +113,7 @@ public class StringUtilTest {
 			StringUtil.equalsIgnoreCase("Hello \n World", "hello \n worlD"));
 		Assert.assertFalse(StringUtil.equalsIgnoreCase("Hello \n World", ""));
 		Assert.assertFalse(StringUtil.equalsIgnoreCase("Hello \n World", null));
+		Assert.assertFalse(StringUtil.equalsIgnoreCase("!", "A"));
 	}
 
 	@Test
@@ -890,6 +901,17 @@ public class StringUtilTest {
 		wildcard = "a%__d";
 
 		Assert.assertTrue(
+			s,
+			StringUtil.wildcardMatches(
+				s, wildcard, CharPool.UNDERLINE, CharPool.PERCENT,
+				CharPool.BACK_SLASH, true));
+
+		// Body mismatch with a short wildcard
+
+		s = "abc";
+		wildcard = "%ab";
+
+		Assert.assertFalse(
 			s,
 			StringUtil.wildcardMatches(
 				s, wildcard, CharPool.UNDERLINE, CharPool.PERCENT,

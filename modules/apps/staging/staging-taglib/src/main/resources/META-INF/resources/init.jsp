@@ -19,6 +19,7 @@
 <%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
 
 <%@ taglib uri="http://liferay.com/tld/aui" prefix="aui" %><%@
+taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %><%@
 taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %><%@
 taglib uri="http://liferay.com/tld/staging" prefix="liferay-staging" %><%@
 taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
@@ -28,7 +29,11 @@ taglib uri="http://liferay.com/tld/util" prefix="liferay-util" %>
 <%@ page import="com.liferay.portal.kernel.language.LanguageUtil" %><%@
 page import="com.liferay.portal.kernel.language.UnicodeLanguageUtil" %><%@
 page import="com.liferay.portal.kernel.portlet.LiferayWindowState" %><%@
+page import="com.liferay.portal.kernel.portlet.PortletBag" %><%@
+page import="com.liferay.portal.kernel.portlet.PortletBagPool" %><%@
+page import="com.liferay.portal.kernel.security.permission.ActionKeys" %><%@
 page import="com.liferay.portal.kernel.servlet.SessionMessages" %><%@
+page import="com.liferay.portal.kernel.util.AggregateResourceBundle" %><%@
 page import="com.liferay.portal.kernel.util.ArrayUtil" %><%@
 page import="com.liferay.portal.kernel.util.CalendarFactoryUtil" %><%@
 page import="com.liferay.portal.kernel.util.Constants" %><%@
@@ -42,11 +47,12 @@ page import="com.liferay.portal.kernel.util.UnicodeFormatter" %><%@
 page import="com.liferay.portal.kernel.util.UnicodeProperties" %><%@
 page import="com.liferay.portal.kernel.util.Validator" %><%@
 page import="com.liferay.portal.model.Group" %><%@
+page import="com.liferay.portal.model.LayoutRevision" %><%@
+page import="com.liferay.portal.model.LayoutRevisionConstants" %><%@
 page import="com.liferay.portal.model.LayoutSetBranch" %><%@
 page import="com.liferay.portal.model.Portlet" %><%@
 page import="com.liferay.portal.model.StagedGroupedModel" %><%@
 page import="com.liferay.portal.model.StagedModel" %><%@
-page import="com.liferay.portal.security.permission.ActionKeys" %><%@
 page import="com.liferay.portal.service.LayoutSetBranchLocalServiceUtil" %><%@
 page import="com.liferay.portal.service.permission.GroupPermissionUtil" %><%@
 page import="com.liferay.portal.util.PortalUtil" %><%@
@@ -64,7 +70,8 @@ page import="com.liferay.portlet.exportimport.lar.PortletDataHandlerControl" %><
 page import="com.liferay.portlet.exportimport.lar.PortletDataHandlerKeys" %><%@
 page import="com.liferay.portlet.exportimport.lar.StagedModelType" %><%@
 page import="com.liferay.portlet.exportimport.model.ExportImportConfiguration" %><%@
-page import="com.liferay.portlet.exportimport.staging.StagingUtil" %>
+page import="com.liferay.portlet.exportimport.staging.StagingUtil" %><%@
+page import="com.liferay.staging.processes.web.constants.StagingProcessesWebKeys" %>
 
 <%@ page import="java.util.Calendar" %><%@
 page import="java.util.Collections" %><%@
@@ -73,6 +80,7 @@ page import="java.util.HashMap" %><%@
 page import="java.util.HashSet" %><%@
 page import="java.util.List" %><%@
 page import="java.util.Map" %><%@
+page import="java.util.ResourceBundle" %><%@
 page import="java.util.Set" %>
 
 <%@ page import="javax.portlet.PortletMode" %><%@
@@ -80,9 +88,11 @@ page import="javax.portlet.PortletRequest" %><%@
 page import="javax.portlet.PortletResponse" %><%@
 page import="javax.portlet.PortletURL" %>
 
-<portlet:defineObjects/>
+<portlet:defineObjects />
 
-<liferay-theme:defineObjects/>
+<liferay-frontend:defineObjects />
+
+<liferay-theme:defineObjects />
 
 <liferay-staging:defineObjects />
 

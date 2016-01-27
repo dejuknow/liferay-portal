@@ -14,11 +14,7 @@
 
 package com.liferay.nested.portlets.web.portlet.action;
 
-import aQute.bnd.annotation.metatype.Configurable;
-
-import com.liferay.nested.portlets.web.configuration.NestedPortletsConfiguration;
 import com.liferay.nested.portlets.web.constants.NestedPortletsPortletKeys;
-import com.liferay.nested.portlets.web.display.context.NestedPortletsDisplayContext;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.portlet.ConfigurationAction;
 import com.liferay.portal.kernel.portlet.DefaultConfigurationAction;
@@ -39,7 +35,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -50,12 +45,8 @@ import javax.portlet.PortletConfig;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.ConfigurationPolicy;
-import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
 /**
@@ -63,8 +54,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Peter Fellwock
  */
 @Component(
-	configurationPid = "com.liferay.nested.portlets.web.configuration.NestedPortletsConfiguration",
-	configurationPolicy = ConfigurationPolicy.OPTIONAL, immediate = true,
+	immediate = true,
 	property = {
 		"javax.portlet.name=" + NestedPortletsPortletKeys.NESTED_PORTLETS
 	},
@@ -79,37 +69,17 @@ public class NestedPortletsConfigurationAction
 	}
 
 	@Override
-	public void include(
-			PortletConfig portletConfig, HttpServletRequest request,
-			HttpServletResponse response)
-		throws Exception {
-
-		request.setAttribute(
-			NestedPortletsConfiguration.class.getName(),
-			_nestedPortletsConfiguration);
-
-		super.include(portletConfig, request, response);
-	}
-
-	@Override
 	public void processAction(
 			PortletConfig portletConfig, ActionRequest actionRequest,
 			ActionResponse actionResponse)
 		throws Exception {
 
-		String layoutTemplateId = getParameter(
-			actionRequest, "layoutTemplateId");
-
 		String portletResource = ParamUtil.getString(
 			actionRequest, "portletResource");
-
-		NestedPortletsDisplayContext nestedPortletsDisplayContext =
-			new NestedPortletsDisplayContext(
-				PortalUtil.getHttpServletRequest(actionRequest),
-				_nestedPortletsConfiguration);
-
-		String oldLayoutTemplateId =
-			nestedPortletsDisplayContext.getLayoutTemplateId();
+		String layoutTemplateId = getParameter(
+			actionRequest, "layoutTemplateId");
+		String oldLayoutTemplateId = ParamUtil.getString(
+			actionRequest, "oldLayoutTemplateId");
 
 		if (!oldLayoutTemplateId.equals(layoutTemplateId)) {
 			reorganizeNestedColumns(
@@ -127,13 +97,6 @@ public class NestedPortletsConfigurationAction
 	)
 	public void setServletContext(ServletContext servletContext) {
 		super.setServletContext(servletContext);
-	}
-
-	@Activate
-	@Modified
-	protected void activate(Map<String, Object> properties) {
-		_nestedPortletsConfiguration = Configurable.createConfigurable(
-			NestedPortletsConfiguration.class, properties);
 	}
 
 	protected List<String> getColumnNames(String content, String portletId) {
@@ -213,8 +176,7 @@ public class NestedPortletsConfigurationAction
 	private static final Pattern _pattern = Pattern.compile(
 		"processColumn[(]\"(.*?)\"(?:, *\"(?:.*?)\")?[)]", Pattern.DOTALL);
 
-	private volatile LayoutLocalService _layoutLocalService;
-	private volatile LayoutTemplateLocalService _layoutTemplateLocalService;
-	private volatile NestedPortletsConfiguration _nestedPortletsConfiguration;
+	private LayoutLocalService _layoutLocalService;
+	private LayoutTemplateLocalService _layoutTemplateLocalService;
 
 }

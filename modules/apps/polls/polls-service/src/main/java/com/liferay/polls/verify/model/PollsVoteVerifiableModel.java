@@ -14,9 +14,9 @@
 
 package com.liferay.polls.verify.model;
 
-import com.liferay.portal.verify.model.VerifiableAuditedModel;
-import com.liferay.portal.verify.model.VerifiableGroupedModel;
-import com.liferay.portal.verify.model.VerifiableUUIDModel;
+import com.liferay.portal.kernel.verify.model.VerifiableAuditedModel;
+import com.liferay.portal.kernel.verify.model.VerifiableGroupedModel;
+import com.liferay.portal.kernel.verify.model.VerifiableUUIDModel;
 
 /**
  * @author Miguel Pastor
@@ -58,6 +58,11 @@ public class PollsVoteVerifiableModel
 	@Override
 	public String getTableName() {
 		return "PollsVote";
+	}
+
+	@Override
+	public boolean isAnonymousUserAllowed() {
+		return true;
 	}
 
 	@Override

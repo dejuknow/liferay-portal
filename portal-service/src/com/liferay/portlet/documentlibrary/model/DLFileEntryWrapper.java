@@ -373,7 +373,7 @@ public class DLFileEntryWrapper implements DLFileEntry,
 	}
 
 	@Override
-	public Map<java.lang.String, com.liferay.portlet.dynamicdatamapping.DDMFormValues> getDDMFormValuesMap(
+	public Map<java.lang.String, com.liferay.dynamic.data.mapping.kernel.DDMFormValues> getDDMFormValuesMap(
 		long fileVersionId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _dlFileEntry.getDDMFormValuesMap(fileVersionId);
@@ -766,33 +766,6 @@ public class DLFileEntryWrapper implements DLFileEntry,
 	@Override
 	public java.lang.String getVersion() {
 		return _dlFileEntry.getVersion();
-	}
-
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link DLFileVersion#getUserId()}
-	*/
-	@Deprecated
-	@Override
-	public long getVersionUserId() {
-		return _dlFileEntry.getVersionUserId();
-	}
-
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link DLFileVersion#getUserName()}
-	*/
-	@Deprecated
-	@Override
-	public java.lang.String getVersionUserName() {
-		return _dlFileEntry.getVersionUserName();
-	}
-
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link DLFileVersion#getUserUuid()}
-	*/
-	@Deprecated
-	@Override
-	public java.lang.String getVersionUserUuid() {
-		return _dlFileEntry.getVersionUserUuid();
 	}
 
 	@Override
@@ -1291,14 +1264,6 @@ public class DLFileEntryWrapper implements DLFileEntry,
 	@Override
 	public StagedModelType getStagedModelType() {
 		return _dlFileEntry.getStagedModelType();
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedModel}
-	 */
-	@Deprecated
-	public DLFileEntry getWrappedDLFileEntry() {
-		return _dlFileEntry;
 	}
 
 	@Override

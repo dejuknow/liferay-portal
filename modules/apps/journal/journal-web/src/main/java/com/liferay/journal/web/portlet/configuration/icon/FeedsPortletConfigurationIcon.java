@@ -15,16 +15,12 @@
 package com.liferay.journal.web.portlet.configuration.icon;
 
 import com.liferay.journal.constants.JournalPortletKeys;
-import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.configuration.icon.BasePortletConfigurationIcon;
 import com.liferay.portal.model.User;
 import com.liferay.portal.util.PortalUtil;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
-import javax.portlet.WindowStateException;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Eudaldo Alonso
@@ -32,8 +28,8 @@ import javax.servlet.http.HttpServletRequest;
 public class FeedsPortletConfigurationIcon
 	extends BasePortletConfigurationIcon {
 
-	public FeedsPortletConfigurationIcon(HttpServletRequest request) {
-		super(request);
+	public FeedsPortletConfigurationIcon(PortletRequest portletRequest) {
+		super(portletRequest);
 	}
 
 	@Override
@@ -44,15 +40,11 @@ public class FeedsPortletConfigurationIcon
 	@Override
 	public String getURL() {
 		PortletURL portletURL = PortalUtil.getControlPanelPortletURL(
-			request, JournalPortletKeys.JOURNAL, PortletRequest.RENDER_PHASE);
+			portletRequest, JournalPortletKeys.JOURNAL,
+			PortletRequest.RENDER_PHASE);
 
 		portletURL.setParameter("mvcPath", "/view_feeds.jsp");
-
-		try {
-			portletURL.setWindowState(LiferayWindowState.POP_UP);
-		}
-		catch (WindowStateException wse) {
-		}
+		portletURL.setParameter("redirect", themeDisplay.getURLCurrent());
 
 		return portletURL.toString();
 	}
@@ -79,7 +71,7 @@ public class FeedsPortletConfigurationIcon
 
 	@Override
 	public boolean isUseDialog() {
-		return true;
+		return false;
 	}
 
 }

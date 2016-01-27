@@ -1,6 +1,6 @@
 <definition>
 	<command name="addPollCP">
-		<execute function="Click" locator1="MenuItem#ADD_POLL" value1="Add Poll" />
+		<execute function="Click" locator1="Button#PLUS" />
 
 		<execute function="Type" locator1="CPPollsAddquestion#TITLE_FIELD" value1="${pollsQuestionTitle}" />
 		<execute function="Type" locator1="CPPollsAddquestion#POLLS_QUESTION_FIELD" value1="${pollsQuestion}" />
@@ -62,7 +62,9 @@
 
 		<execute function="Select" locator1="Polls#TITLE_DROPDOWN_SELECT" value1="${pollsQuestionTitle}" />
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
-		<execute function="AssertClick" locator1="Message#SUCCESS" value1="You have successfully updated the setup." />
+
+		<execute macro="Alert#viewSetupUpdatedSuccessMessage" />
+
 		<execute function="AssertSelectedLabel" locator1="Polls#TITLE_DROPDOWN_SELECT" value1="${pollsQuestionTitle}" />
 
 		<execute function="SelectFrame" value1="relative=top" />
@@ -82,7 +84,7 @@
 				<execute function="AssertClick" locator1="MenuItem#DELETE" value1="Delete" />
 				<execute function="Confirm#waitForConfirmation" value1="Are you sure you want to delete this? It will be deleted immediately." />
 
-				<execute function="AssertTextEquals" locator1="CPPolls#SUCCESS_MESSAGE" value1="Your request completed successfully." />
+				<execute function="AssertTextEquals#assertPartialText" locator1="CPPolls#SUCCESS_MESSAGE" value1="Your request completed successfully." />
 			</then>
 		</while>
 	</command>
@@ -130,6 +132,6 @@
 		<execute function="AssertClick#assertPartialTextClickAt" locator1="Polls#POLL_QUESTION_CHOICE" value1="${pollsQuestionChoice}" />
 		<execute function="AssertClick" locator1="Button#VOTE" value1="Vote" />
 
-		<execute function="AssertTextEquals" locator1="PGPollsdisplayVotes#SUCCESS_MESSAGE" value1="Thank you for your vote." />
+		<execute function="AssertTextEquals#assertPartialText" locator1="PGPollsdisplayVotes#SUCCESS_MESSAGE" value1="Thank you for your vote." />
 	</command>
 </definition>

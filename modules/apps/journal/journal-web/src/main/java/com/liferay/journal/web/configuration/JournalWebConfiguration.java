@@ -16,13 +16,16 @@ package com.liferay.journal.web.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
-import com.liferay.configuration.admin.ConfigurationAdmin;
+import com.liferay.portal.metatype.annotations.ExtendedObjectClassDefinition;
 
 /**
  * @author Jürgen Kappler
  */
-@ConfigurationAdmin(category = "web-experience-management")
-@Meta.OCD(id = "com.liferay.journal.web.configuration.JournalWebConfiguration")
+@ExtendedObjectClassDefinition(category = "web-experience-management")
+@Meta.OCD(
+	id = "com.liferay.journal.web.configuration.JournalWebConfiguration",
+	localization = "content/Language", name = "%journal.web.configuration.name"
+)
 public interface JournalWebConfiguration {
 
 	@Meta.AD(deflt = "15", required = false)
@@ -36,24 +39,6 @@ public interface JournalWebConfiguration {
 
 	@Meta.AD(deflt = "true", required = false)
 	public boolean journalArticleForceAutogenerateId();
-
-	@Meta.AD(
-		deflt = "content|small-image|categorization|schedule|display-page|related-assets|permissions|custom-fields",
-		required = false
-	)
-	public String[] journalArticleFormAdd();
-
-	@Meta.AD(
-		deflt = "content|small-image|categorization|display-page|related-assets|custom-fields",
-		required = false
-	)
-	public String[] journalArticleFormDefaultValues();
-
-	@Meta.AD(
-		deflt = "content|small-image|categorization|schedule|display-page|related-assets|custom-fields",
-		required = false
-	)
-	public String[] journalArticleFormUpdate();
 
 	@Meta.AD(deflt = "true", required = false)
 	public boolean journalArticlesSearchWithIndex();

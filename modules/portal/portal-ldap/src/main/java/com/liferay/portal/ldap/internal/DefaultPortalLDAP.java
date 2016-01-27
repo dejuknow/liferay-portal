@@ -18,9 +18,12 @@ import com.liferay.portal.kernel.ldap.LDAPUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.log.LogUtil;
+import com.liferay.portal.kernel.security.ldap.LDAPSettings;
+import com.liferay.portal.kernel.security.ldap.PortalLDAP;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.PrefsPropsUtil;
 import com.liferay.portal.kernel.util.PropertiesUtil;
 import com.liferay.portal.kernel.util.Props;
@@ -34,8 +37,6 @@ import com.liferay.portal.ldap.configuration.ConfigurationProvider;
 import com.liferay.portal.ldap.configuration.LDAPServerConfiguration;
 import com.liferay.portal.ldap.configuration.SystemLDAPConfiguration;
 import com.liferay.portal.model.CompanyConstants;
-import com.liferay.portal.security.ldap.LDAPSettings;
-import com.liferay.portal.security.ldap.PortalLDAP;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -262,14 +263,21 @@ public class DefaultPortalLDAP implements PortalLDAP {
 				new String[mappedGroupAttributeIds.size()]));
 
 		if (_log.isDebugEnabled()) {
-			for (String attributeId : mappedGroupAttributeIds) {
-				Attribute attribute = attributes.get(attributeId);
+			if ((attributes == null) || (attributes.size() == 0)) {
+				_log.debug(
+					"No LDAP group attributes found for " +
+						fullDistinguishedName);
+			}
+			else {
+				for (String attributeId : mappedGroupAttributeIds) {
+					Attribute attribute = attributes.get(attributeId);
 
-				if (attribute == null) {
-					continue;
+					if (attribute == null) {
+						continue;
+					}
+
+					_log.debug("LDAP group attribute " + attribute.toString());
 				}
-
-				_log.debug("LDAP group attribute " + attribute.toString());
 			}
 		}
 
@@ -377,34 +385,14 @@ public class DefaultPortalLDAP implements PortalLDAP {
 			}
 		}
 
-		boolean hasProperties = false;
-
-		for (int ldapServerId = 0;; ldapServerId++) {
+		if (!ListUtil.isEmpty(ldapServerConfigurations)) {
 			LDAPServerConfiguration ldapServerConfiguration =
-				_ldapServerConfigurationProvider.getConfiguration(
-					companyId, ldapServerId);
+				ldapServerConfigurations.get(0);
 
-			String providerUrl = ldapServerConfiguration.baseProviderURL();
-
-			if (Validator.isNull(providerUrl)) {
-				break;
-			}
-
-			hasProperties = true;
-
-			if (hasUser(ldapServerId, companyId, screenName, emailAddress)) {
-				return ldapServerId;
-			}
+			return ldapServerConfiguration.ldapServerId();
 		}
 
-		if (hasProperties || ldapServerConfigurations.isEmpty()) {
-			return 0;
-		}
-
-		LDAPServerConfiguration ldapServerConfiguration =
-			ldapServerConfigurations.get(0);
-
-		return ldapServerConfiguration.ldapServerId();
+		return LDAPServerConfiguration.LDAP_SERVER_ID_DEFAULT;
 	}
 
 	@Override
@@ -528,6 +516,13 @@ public class DefaultPortalLDAP implements PortalLDAP {
 
 		try {
 			if (ldapContext == null) {
+				if (_log.isDebugEnabled()) {
+					_log.debug(
+						"No LDAP server configuration available for " +
+							"LDAP server " + ldapServerId + " and company " +
+								companyId);
+				}
+
 				return null;
 			}
 
@@ -609,6 +604,13 @@ public class DefaultPortalLDAP implements PortalLDAP {
 				}
 			}
 
+			if (_log.isDebugEnabled()) {
+				_log.debug(
+					"Unable to retrieve user with LDAP server " + ldapServerId +
+						", company " + companyId + ", loginMapping " +
+							loginMapping + ", and login " + login);
+			}
+
 			return null;
 		}
 		finally {
@@ -651,14 +653,21 @@ public class DefaultPortalLDAP implements PortalLDAP {
 			ldapContext, fullDistinguishedName, mappedUserAttributeIds);
 
 		if (_log.isDebugEnabled()) {
-			for (String attributeId : mappedUserAttributeIds) {
-				Attribute attribute = attributes.get(attributeId);
+			if ((attributes == null) || (attributes.size() == 0)) {
+				_log.debug(
+					"No LDAP user attributes found for:: " +
+						fullDistinguishedName);
+			}
+			else {
+				for (String attributeId : mappedUserAttributeIds) {
+					Attribute attribute = attributes.get(attributeId);
 
-				if (attribute == null) {
-					continue;
+					if (attribute == null) {
+						continue;
+					}
+
+					_log.debug("LDAP user attribute " + attribute.toString());
 				}
-
-				_log.debug("LDAP user attribute " + attribute.toString());
 			}
 		}
 
@@ -1082,10 +1091,10 @@ public class DefaultPortalLDAP implements PortalLDAP {
 		DefaultPortalLDAP.class);
 
 	private String _companySecurityAuthType;
-	private volatile ConfigurationProvider<LDAPServerConfiguration>
+	private ConfigurationProvider<LDAPServerConfiguration>
 		_ldapServerConfigurationProvider;
-	private volatile LDAPSettings _ldapSettings;
-	private volatile ConfigurationProvider<SystemLDAPConfiguration>
+	private LDAPSettings _ldapSettings;
+	private ConfigurationProvider<SystemLDAPConfiguration>
 		_systemLDAPConfigurationProvider;
 
 }

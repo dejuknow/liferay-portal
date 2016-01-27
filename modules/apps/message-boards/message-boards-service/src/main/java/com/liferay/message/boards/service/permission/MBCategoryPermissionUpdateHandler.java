@@ -14,8 +14,8 @@
 
 package com.liferay.message.boards.service.permission;
 
+import com.liferay.portal.kernel.security.permission.PermissionUpdateHandler;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.security.permission.PermissionUpdateHandler;
 import com.liferay.portlet.messageboards.model.MBCategory;
 import com.liferay.portlet.messageboards.service.MBCategoryLocalService;
 
@@ -57,6 +57,6 @@ public class MBCategoryPermissionUpdateHandler
 		_mbCategoryLocalService = mbCategoryLocalService;
 	}
 
-	private volatile MBCategoryLocalService _mbCategoryLocalService;
+	private MBCategoryLocalService _mbCategoryLocalService;
 
 }

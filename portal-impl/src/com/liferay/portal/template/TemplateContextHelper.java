@@ -53,6 +53,7 @@ import com.liferay.portal.kernel.util.TimeZoneUtil_IW;
 import com.liferay.portal.kernel.util.UnicodeFormatter_IW;
 import com.liferay.portal.kernel.util.Validator_IW;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.kernel.webserver.WebServerServletTokenUtil;
 import com.liferay.portal.kernel.xml.SAXReader;
 import com.liferay.portal.model.Layout;
 import com.liferay.portal.model.Theme;
@@ -79,7 +80,6 @@ import com.liferay.portal.theme.NavItem;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.SessionClicks_IW;
-import com.liferay.portal.webserver.WebServerServletTokenUtil;
 import com.liferay.portlet.PortletURLFactoryUtil;
 import com.liferay.portlet.expando.service.ExpandoColumnLocalService;
 import com.liferay.portlet.expando.service.ExpandoRowLocalService;
@@ -279,24 +279,25 @@ public class TemplateContextHelper {
 			Layout layout = themeDisplay.getLayout();
 			List<Layout> layouts = themeDisplay.getLayouts();
 
-			contextObjects.put("themeDisplay", themeDisplay);
+			contextObjects.put("bodyCssClass", StringPool.BLANK);
+			contextObjects.put("colorScheme", themeDisplay.getColorScheme());
 			contextObjects.put("company", themeDisplay.getCompany());
-			contextObjects.put("user", themeDisplay.getUser());
-			contextObjects.put("realUser", themeDisplay.getRealUser());
 			contextObjects.put("layout", layout);
 			contextObjects.put("layouts", layouts);
-			contextObjects.put("plid", String.valueOf(themeDisplay.getPlid()));
 			contextObjects.put(
 				"layoutTypePortlet", themeDisplay.getLayoutTypePortlet());
-			contextObjects.put(
-				"scopeGroupId", Long.valueOf(themeDisplay.getScopeGroupId()));
+			contextObjects.put("locale", themeDisplay.getLocale());
 			contextObjects.put(
 				"permissionChecker", themeDisplay.getPermissionChecker());
-			contextObjects.put("locale", themeDisplay.getLocale());
-			contextObjects.put("timeZone", themeDisplay.getTimeZone());
-			contextObjects.put("colorScheme", themeDisplay.getColorScheme());
+			contextObjects.put("plid", String.valueOf(themeDisplay.getPlid()));
 			contextObjects.put(
 				"portletDisplay", themeDisplay.getPortletDisplay());
+			contextObjects.put("realUser", themeDisplay.getRealUser());
+			contextObjects.put(
+				"scopeGroupId", Long.valueOf(themeDisplay.getScopeGroupId()));
+			contextObjects.put("themeDisplay", themeDisplay);
+			contextObjects.put("timeZone", themeDisplay.getTimeZone());
+			contextObjects.put("user", themeDisplay.getUser());
 
 			// Navigation items
 

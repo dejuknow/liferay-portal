@@ -18,12 +18,6 @@
 	$theme.runtime("com.liferay.portal.kernel.servlet.taglib.ui.BreadcrumbEntry", $portletProviderAction.VIEW, "", $!default_preferences)
 #end
 
-#macro (control_menu)
-	#if ($is_setup_complete && $is_signed_in)
-		$theme.runtime("com.liferay.portlet.admin.util.PortalControlMenuApplicationType$ControlMenu", $portletProviderAction.VIEW)
-	#end
-#end
-
 #macro (css $file_name)
 	#if ($file_name == $css_main_file)
 		<link class="lfr-css-file" href="$file_name" id="mainLiferayThemeCSS" rel="stylesheet" type="text/css" />
@@ -53,40 +47,24 @@ $languageUtil.format($locale, $lang_key, $arguments.toArray())#end
 	$theme.runtime("com.liferay.portal.kernel.servlet.taglib.ui.LanguageEntry", $portletProviderAction.VIEW, "", $!default_preferences)
 #end
 
-#macro (menu $menu)
-	#set ($menu_tag = $theme.getMenuTag())
-
-	$menu_tag.setMenu($menu)
-
-	$menu_tag.runTag()
-#end
-
 #macro (navigation_menu $default_preferences)
 	$theme.runtime("com.liferay.portal.theme.NavItem", $portletProviderAction.VIEW, "", $!default_preferences)
 #end
 
 #macro (product_menu)
-	#if ($is_setup_complete && $is_signed_in)
+	#if ($themeDisplay.isImpersonated() || ($is_setup_complete && $is_signed_in))
 		$theme.runtime("com.liferay.portlet.admin.util.PortalProductMenuApplicationType$ProductMenu", $portletProviderAction.VIEW)
 	#end
 #end
 
 #macro (product_menu_sidebar $state)
-	#if ($is_setup_complete && $is_signed_in)
+	#if ($themeDisplay.isImpersonated() || ($is_setup_complete && $is_signed_in))
 		<div class="$state lfr-product-menu-panel sidenav-fixed sidenav-menu-slider" id="sidenavSliderId">
 			<div class="product-menu sidebar sidenav-menu">
 				#product_menu()
 			</div>
 		</div>
 	#end
-#end
-
-#macro (quick_access $content_id)
-	#set ($quick_access_tag = $theme.getQuickAccessTag())
-
-	$quick_access_tag.setContentId($content_id)
-
-	$quick_access_tag.runTag()
 #end
 
 #macro (silently $foo)
@@ -100,11 +78,13 @@ $languageUtil.format($locale, $lang_key, $arguments.toArray())#end
 #end
 
 #macro (user_personal_bar)
-	#set ($render_portlet_boundary = $request.getAttribute("RENDER_PORTLET_BOUNDARY"))
+	#if ($themeDisplay.isImpersonated() || $is_setup_complete || !$is_signed_in))
+		#set ($render_portlet_boundary = $request.getAttribute("RENDER_PORTLET_BOUNDARY"))
 
-	$request.setAttribute("RENDER_PORTLET_BOUNDARY", false)
+		$request.setAttribute("RENDER_PORTLET_BOUNDARY", false)
 
-	$theme.runtime("com.liferay.portlet.admin.util.PortalUserPersonalBarApplicationType$UserPersonalBar", $portletProviderAction.VIEW)
+		$theme.runtime("com.liferay.portlet.admin.util.PortalUserPersonalBarApplicationType$UserPersonalBar", $portletProviderAction.VIEW)
 
-	$request.setAttribute("RENDER_PORTLET_BOUNDARY", $render_portlet_boundary)
+		$request.setAttribute("RENDER_PORTLET_BOUNDARY", $render_portlet_boundary)
+	#end
 #end

@@ -14,7 +14,7 @@
 
 package com.liferay.portlet;
 
-import com.liferay.portal.NoSuchPreferencesException;
+import com.liferay.portal.exception.NoSuchPreferencesException;
 import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
@@ -484,7 +484,8 @@ public class PortalPreferencesImplTest {
 		}
 
 		private final CyclicBarrier _cyclicBarrier = new CyclicBarrier(
-			2, new Runnable() {
+			2,
+			new Runnable() {
 
 				@Override
 				public void run() {
@@ -513,7 +514,8 @@ public class PortalPreferencesImplTest {
 		}
 
 		private final CyclicBarrier _cyclicBarrier = new CyclicBarrier(
-			2, new Runnable() {
+			2,
+			new Runnable() {
 
 				@Override
 				public void run() {

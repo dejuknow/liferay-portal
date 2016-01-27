@@ -22,10 +22,10 @@ import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMapFactory
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.PredicateFilter;
 import com.liferay.portal.model.Group;
-import com.liferay.portal.security.permission.PermissionChecker;
 
 import java.util.Collections;
 import java.util.List;
@@ -88,8 +88,7 @@ public class PanelCategoryRegistry {
 				@Override
 				public boolean filter(PanelCategory panelCategory) {
 					try {
-						return panelCategory.hasAccessPermission(
-							permissionChecker, group);
+						return panelCategory.isShow(permissionChecker, group);
 					}
 					catch (PortalException pe) {
 						_log.error(pe, pe);
@@ -110,9 +109,7 @@ public class PanelCategoryRegistry {
 
 		for (PanelCategory panelCategory : panelCategories) {
 			try {
-				if (panelCategory.hasAccessPermission(
-						permissionChecker, group)) {
-
+				if (panelCategory.isShow(permissionChecker, group)) {
 					return panelCategory;
 				}
 			}

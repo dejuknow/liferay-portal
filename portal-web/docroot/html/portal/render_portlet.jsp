@@ -768,7 +768,9 @@ Boolean portletVisibility = null;
 
 if (portlet.isActive() && portlet.isReady() && supportsMimeType && (invokerPortlet != null)) {
 	try {
-		invokerPortlet.render(renderRequestImpl, renderResponseImpl);
+		if (!PortalUtil.isSkipPortletContentProcesssing(group, request, layoutTypePortlet, portletDisplay, portletDisplay.getPortletName())) {
+			invokerPortlet.render(renderRequestImpl, renderResponseImpl);
+		}
 
 		portletVisibility = (Boolean)renderRequestImpl.getAttribute(WebKeys.PORTLET_CONFIGURATOR_VISIBILITY);
 

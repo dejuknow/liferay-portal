@@ -258,7 +258,7 @@ public class DDMIndexerImpl implements DDMIndexer {
 					indexType = ddmStructure.getFieldProperty(
 						fieldName, "indexType");
 				}
-				catch (PortalException e) {
+				catch (PortalException pe) {
 					throw new IllegalArgumentException(
 						"Unable to obtain index tpe for field " + fieldName +
 							" and DDM structure ID " + ddmStructureId);
@@ -400,6 +400,6 @@ public class DDMIndexerImpl implements DDMIndexer {
 
 	private static final Log _log = LogFactoryUtil.getLog(DDMIndexerImpl.class);
 
-	private volatile DDMStructureLocalService _ddmStructureLocalService;
+	private DDMStructureLocalService _ddmStructureLocalService;
 
 }

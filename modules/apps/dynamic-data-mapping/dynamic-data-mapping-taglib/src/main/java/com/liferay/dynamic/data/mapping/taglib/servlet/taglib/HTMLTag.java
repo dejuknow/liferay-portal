@@ -87,9 +87,9 @@ public class HTMLTag extends BaseHTMLTag {
 				return DDMFormValuesJSONDeserializerUtil.deserialize(
 					ddmForm, serializedDDMFormValues);
 			}
-			catch (PortalException e) {
+			catch (PortalException pe) {
 				if (_log.isDebugEnabled()) {
-					_log.debug(e, e);
+					_log.debug(pe, pe);
 				}
 			}
 		}

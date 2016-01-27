@@ -18,7 +18,9 @@ import com.liferay.portal.events.EventsProcessorUtil;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.search.SearchEngineUtil;
+import com.liferay.portal.kernel.search.SearchEngineHelperUtil;
+import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
+import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.CookieKeys;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -33,10 +35,6 @@ import com.liferay.portal.model.LayoutSet;
 import com.liferay.portal.model.PortletCategory;
 import com.liferay.portal.model.User;
 import com.liferay.portal.model.VirtualHost;
-import com.liferay.portal.security.auth.CompanyThreadLocal;
-import com.liferay.portal.security.auth.PrincipalThreadLocal;
-import com.liferay.portal.security.exportimport.UserImporterUtil;
-import com.liferay.portal.security.ldap.LDAPSettingsUtil;
 import com.liferay.portal.service.CompanyLocalServiceUtil;
 import com.liferay.portal.service.GroupLocalServiceUtil;
 import com.liferay.portal.service.LayoutSetLocalServiceUtil;
@@ -406,8 +404,9 @@ public class PortalInstances {
 				String xml = HttpUtil.URLtoString(
 					servletContext.getResource("/WEB-INF/liferay-display.xml"));
 
-				PortletCategory portletCategory = (PortletCategory)
-					WebAppPool.get(companyId, WebKeys.PORTLET_CATEGORY);
+				PortletCategory portletCategory =
+					(PortletCategory)WebAppPool.get(
+						companyId, WebKeys.PORTLET_CATEGORY);
 
 				if (portletCategory == null) {
 					portletCategory = new PortletCategory();
@@ -432,17 +431,6 @@ public class PortalInstances {
 
 				WebAppPool.put(
 					companyId, WebKeys.PORTLET_CATEGORY, portletCategory);
-			}
-			catch (Exception e) {
-				_log.error(e, e);
-			}
-
-			// LDAP import
-
-			try {
-				if (LDAPSettingsUtil.isImportOnStartup(companyId)) {
-					UserImporterUtil.importUsers(companyId);
-				}
 			}
 			catch (Exception e) {
 				_log.error(e, e);
@@ -527,12 +515,22 @@ public class PortalInstances {
 	}
 
 	private void _removeCompanyId(long companyId) {
+		try {
+			EventsProcessorUtil.process(
+				PropsKeys.APPLICATION_SHUTDOWN_EVENTS,
+				PropsValues.APPLICATION_SHUTDOWN_EVENTS,
+				new String[] {String.valueOf(companyId)});
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+		}
+
 		_companyIds = ArrayUtil.remove(_companyIds, companyId);
 		_webIds = null;
 
 		_getWebIds();
 
-		SearchEngineUtil.removeCompany(companyId);
+		SearchEngineHelperUtil.removeCompany(companyId);
 
 		WebAppPool.remove(companyId, WebKeys.PORTLET_CATEGORY);
 	}

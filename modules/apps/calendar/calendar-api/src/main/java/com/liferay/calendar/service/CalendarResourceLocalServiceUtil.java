@@ -16,8 +16,7 @@ package com.liferay.calendar.service;
 
 import aQute.bnd.annotation.ProviderType;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
+import com.liferay.osgi.util.ServiceTrackerFactory;
 
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -376,11 +375,12 @@ public class CalendarResourceLocalServiceUtil {
 
 	public static void updateAsset(long userId,
 		com.liferay.calendar.model.CalendarResource calendarResource,
-		long[] assetCategoryIds, java.lang.String[] assetTagNames)
+		long[] assetCategoryIds, java.lang.String[] assetTagNames,
+		java.lang.Double priority)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		getService()
 			.updateAsset(userId, calendarResource, assetCategoryIds,
-			assetTagNames);
+			assetTagNames, priority);
 	}
 
 	/**
@@ -409,21 +409,6 @@ public class CalendarResourceLocalServiceUtil {
 		return _serviceTracker.getService();
 	}
 
-	/**
-	 * @deprecated As of 6.2.0
-	 */
-	@Deprecated
-	public void setService(CalendarResourceLocalService service) {
-	}
-
-	private static ServiceTracker<CalendarResourceLocalService, CalendarResourceLocalService> _serviceTracker;
-
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(CalendarResourceLocalServiceUtil.class);
-
-		_serviceTracker = new ServiceTracker<CalendarResourceLocalService, CalendarResourceLocalService>(bundle.getBundleContext(),
-				CalendarResourceLocalService.class, null);
-
-		_serviceTracker.open();
-	}
+	private static ServiceTracker<CalendarResourceLocalService, CalendarResourceLocalService> _serviceTracker =
+		ServiceTrackerFactory.open(CalendarResourceLocalService.class);
 }

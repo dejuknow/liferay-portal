@@ -15,10 +15,10 @@
 package com.liferay.message.boards.web.social;
 
 import com.liferay.message.boards.web.constants.MBPortletKeys;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portlet.messageboards.model.MBCategory;
 import com.liferay.portlet.messageboards.model.MBMessage;
@@ -165,6 +165,6 @@ public class MBMessageActivityInterpreter
 
 	private static final String[] _CLASS_NAMES = {MBMessage.class.getName()};
 
-	private volatile MBMessageLocalService _mbMessageLocalService;
+	private MBMessageLocalService _mbMessageLocalService;
 
 }

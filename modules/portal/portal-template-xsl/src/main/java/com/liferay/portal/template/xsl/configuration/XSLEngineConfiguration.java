@@ -16,14 +16,15 @@ package com.liferay.portal.template.xsl.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
-import com.liferay.configuration.admin.ConfigurationAdmin;
+import com.liferay.portal.metatype.annotations.ExtendedObjectClassDefinition;
 
 /**
  * @author Peter Fellwock
  */
-@ConfigurationAdmin(category = "platform")
+@ExtendedObjectClassDefinition(category = "platform")
 @Meta.OCD(
-	id = "com.liferay.portal.template.xsl.configuration.XSLEngineConfiguration"
+	id = "com.liferay.portal.template.xsl.configuration.XSLEngineConfiguration",
+	localization = "content/Language", name = "%xsl.engine.configuration.name"
 )
 public interface XSLEngineConfiguration {
 

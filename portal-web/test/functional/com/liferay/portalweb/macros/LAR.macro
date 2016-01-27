@@ -1,12 +1,15 @@
 <definition>
 	<command name="addExportTemplateCP">
-		<execute function="Click" locator1="SitePagesExport#EXPORT_TEMPLATES_NEW_BUTTON" />
+		<execute function="Click" locator1="Button#PLUS" />
+
 		<execute function="Type" locator1="TextInput#NAME" value1="${exportTemplateName}" />
 		<execute function="Type" locator1="TextArea#DESCRIPTION" value1="${exportTemplateDescription}" />
 	</command>
 
 	<command name="configureExportSiteCP">
 		<execute macro="LAR#gotoExportSiteCmd" />
+
+		<execute function="Click" locator1="Button#PLUS" />
 
 		<execute macro="LAR#configureExportSiteOptionsCmd" />
 	</command>
@@ -329,7 +332,7 @@
 
 	<command name="gotoExportImportCmd">
 		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletNameBorderless" value="${portletNameBorderless}" />
+			<var name="portletName" value="${portletName}" />
 			<var name="portletOption" value="Export / Import" />
 		</execute>
 
@@ -337,19 +340,24 @@
 	</command>
 
 	<command name="gotoExportSiteCmd">
-		<execute macro="Page#gotoPublishingTools">
-			<var name="portletCategoryName" value="Publishing Tools" />
-			<var name="portletName" value="Export/Import" />
-			<var name="siteScopeName" value="${siteScopeName}" />
-		</execute>
+		<if>
+			<isset var="siteName" />
+			<then>
+				<execute macro="ProductMenu#gotoSite">
+					<var name="site" value="${siteScopeName}" />
+				</execute>
+			</then>
+		</if>
 
-		<execute function="AssertClick" locator1="SitePages#TOOLBAR_EXPORT" value1="Export" />
+		<execute macro="ProductMenu#gotoSitesPublishingTools">
+			<var name="portlet" value="Export" />
+		</execute>
 	</command>
 
 	<command name="gotoExportTemplateCP">
-		<execute function="AssertClick" locator1="SitePages#TOOLBAR_EXPORT" value1="Export" />
+		<execute function="Click" locator1="Icon#HEADER_VERTICAL_ELLIPSIS" />
 
-		<execute function="Click" locator1="SitePagesExport#EXPORT_TEMPLATE_BUTTON" />
+		<execute function="AssertClick" locator1="MenuItem#EXPORT_TEMPLATES" value1="Export Templates" />
 	</command>
 
 	<command name="gotoImportSiteCmd">
@@ -363,10 +371,8 @@
 		</if>
 
 		<execute macro="ProductMenu#gotoSitesPublishingTools">
-			<var name="portlet" value="Export/Import" />
+			<var name="portlet" value="Import" />
 		</execute>
-
-		<execute function="AssertClick" locator1="SitePages#TOOLBAR_IMPORT" value1="Import" />
 	</command>
 
 	<command name="importPortlet">
@@ -452,11 +458,12 @@
 	</command>
 
 	<command name="moveToTheRecycleBinExportTemplate">
-		<execute function="Click" locator1="SitePagesExport#EXPORT_TEMPLATE_BUTTON" />
-
 		<var name="key_exportTemplateName" value="${exportTemplateName}" />
 
+		<execute function="Click" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
+
 		<execute function="Click" locator1="SitePagesExport#EXPORT_TEMPLATES_TABLE_MOVE_TO_THE_RECYCLE_BIN_BUTTON" />
+
 		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="The Export Import Template ${exportTemplateName} was moved to the Recycle Bin." />
 	</command>
 
@@ -520,11 +527,21 @@
 			</elseif>
 			<else>
 				<execute function="AssertClickNoError" locator1="Button#CONTINUE" value1="Continue" />
+
 				<execute function="Pause" locator1="5000" />
+
+				<execute function="AssertVisible" locator1="Link#BACK" />
+
 				<execute function="AssertClickNoError" locator1="Button#CONTINUE" value1="Continue" />
+
 				<execute function="Pause" locator1="5000" />
+
+				<execute function="AssertVisible" locator1="Button#BACK" />
+
 				<execute function="AssertClickNoError" locator1="Button#IMPORT" value1="Import" />
+
 				<execute function="Pause" locator1="5000" />
+
 				<execute function="AssertTextEquals" locator1="ExportImport#CURRENT_AND_PREVIOUS_STATUS_1" value1="Successful" />
 				<execute function="SelectFrame" value1="relative=top" />
 			</else>
@@ -532,7 +549,8 @@
 	</command>
 
 	<command name="selectImportFileSiteCmd">
-		<execute function="AssertClick" locator1="SitePagesImport#NEW_IMPORT_PROCESS_NAVIGATION" value1="New Import Process" />
+		<execute function="Click" locator1="Button#PLUS" />
+
 		<execute function="AssertClick" locator1="SitePagesImport#SELECT_FILE_BUTTON" value1="Select File" />
 
 		<execute function="SikuliClick" locator1="OS#FILE_DIALOG_BOX_TYPE_FILE_NAME_ICON_PNG" />
@@ -568,9 +586,12 @@
 	</command>
 
 	<command name="setupContentTargeting" >
-		<execute macro="Page#gotoConfigurationCP">
-			<var name="portletName" value="Audience Targeting" />
-			<var name="siteScopeName" value="Site Name" />
+		<execute macro="ProductMenu#gotoSite">
+			<var name="site" value="Site Name" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoSitesConfiguration">
+			<var name="portlet" value="Audience Targeting" />
 		</execute>
 
 		<execute macro="ContentTargetingUserSegment#addCP">
@@ -580,9 +601,12 @@
 
 		<execute macro="ContentTargetingUserSegment#saveCP" />
 
-		<execute macro="Page#gotoConfigurationCP">
-			<var name="portletName" value="Audience Targeting" />
-			<var name="siteScopeName" value="Site Name" />
+		<execute macro="ProductMenu#gotoSite">
+			<var name="site" value="Site Name" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoSitesConfiguration">
+			<var name="portlet" value="Audience Targeting" />
 		</execute>
 
 		<execute macro="ContentTargetingCampaign#addCP">
@@ -599,9 +623,12 @@
 
 		<execute macro="ContentTargetingCampaign#saveCP" />
 
-		<execute macro="Page#gotoContentCP">
-			<var name="portletName" value="Web Content" />
-			<var name="siteScopeName" value="Site Name" />
+		<execute macro="ProductMenu#gotoSite">
+			<var name="site" value="Site Name" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoSitesContent">
+			<var name="portlet" value="Web Content" />
 		</execute>
 
 		<execute macro="WebContentNavigator#gotoAddCP" />
@@ -649,7 +676,7 @@
 		<execute function="Refresh" />
 
 		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletNameBorderless" value="${portletNameBorderless}" />
+			<var name="portletName" value="${portletName}" />
 			<var name="portletOption" value="Export/Import" />
 		</execute>
 
@@ -703,7 +730,7 @@
 		<execute function="Refresh" />
 
 		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletNameBorderless" value="${portletNameBorderless}" />
+			<var name="portletName" value="${portletName}" />
 			<var name="portletOption" value="Export/Import" />
 		</execute>
 

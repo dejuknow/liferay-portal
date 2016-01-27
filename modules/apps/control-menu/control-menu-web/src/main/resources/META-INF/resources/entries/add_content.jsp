@@ -16,26 +16,27 @@
 
 <%@ include file="/init.jsp" %>
 
-<portlet:renderURL var="addURL" windowState="<%= LiferayWindowState.EXCLUSIVE.toString() %>">
-	<portlet:param name="mvcPath" value="/add_panel.jsp" />
-	<portlet:param name="stateMaximized" value="<%= String.valueOf(themeDisplay.isStateMaximized()) %>" />
-	<portlet:param name="viewAssetEntries" value="<%= Boolean.TRUE.toString() %>" />
-</portlet:renderURL>
-
 <%
 Map<String, Object> data = new HashMap<String, Object>();
 
+PortletURL addURL = PortletURLFactoryUtil.create(request, ControlMenuPortletKeys.CONTROL_MENU, plid, PortletRequest.RENDER_PHASE);
+
+addURL.setParameter("mvcPath", "/add_panel.jsp");
+addURL.setParameter("stateMaximized", String.valueOf(themeDisplay.isStateMaximized()));
+addURL.setWindowState(LiferayWindowState.EXCLUSIVE);
+
 data.put("panelURL", addURL);
+
+data.put("qa-id", "add");
 %>
 
-<li>
-	<liferay-ui:icon
-		data="<%= data %>"
-		iconCssClass="icon-plus icon-monospaced"
-		id="addPanel"
-		label="<%= false %>"
-		linkCssClass="control-menu-icon"
-		message="add"
-		url="javascript:;"
-	/>
-</li>
+<liferay-ui:icon
+	data="<%= data %>"
+	icon="plus"
+	id="addPanel"
+	label="<%= false %>"
+	linkCssClass="control-menu-icon"
+	markupView="lexicon"
+	message="add"
+	url="javascript:;"
+/>

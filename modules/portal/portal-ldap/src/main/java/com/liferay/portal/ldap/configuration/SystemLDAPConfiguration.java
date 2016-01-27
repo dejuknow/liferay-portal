@@ -16,20 +16,24 @@ package com.liferay.portal.ldap.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
-import com.liferay.configuration.admin.ConfigurationAdmin;
+import com.liferay.portal.metatype.annotations.ExtendedObjectClassDefinition;
 
 /**
  * @author Michael C. Han
  */
-@ConfigurationAdmin(category = "platform")
+@ExtendedObjectClassDefinition(
+	category = "platform", factoryInstanceLabelAttribute = "companyId",
+	scope = ExtendedObjectClassDefinition.Scope.COMPANY
+)
 @Meta.OCD(
 	factory = true,
 	id = "com.liferay.portal.ldap.configuration.SystemLDAPConfiguration",
-	localization = "content/Language"
+	localization = "content/Language", name = "%system.ldap.configuration.name"
 )
 public interface SystemLDAPConfiguration extends CompanyScopedConfiguration {
 
 	@Meta.AD(deflt = "0", required = false)
+	@Override
 	public long companyId();
 
 	@Meta.AD(
@@ -40,33 +44,33 @@ public interface SystemLDAPConfiguration extends CompanyScopedConfiguration {
 	public String[] connectionProperties();
 
 	@Meta.AD(deflt = "age", required = false)
-	public String errorPasswordAge();
+	public String[] errorPasswordAgeKeywords();
 
 	@Meta.AD(deflt = "expired", required = false)
-	public String errorPasswordExpired();
+	public String[] errorPasswordExpiredKeywords();
 
 	@Meta.AD(deflt = "history", required = false)
-	public String errorPasswordHistory();
+	public String[] errorPasswordHistoryKeywords();
 
 	@Meta.AD(deflt = "not allowed to change", required = false)
-	public String errorPasswordNotChangeable();
+	public String[] errorPasswordNotChangeableKeywords();
 
 	@Meta.AD(deflt = "syntax", required = false)
-	public String errorPasswordSyntax();
+	public String[] errorPasswordSyntaxKeywords();
 
 	@Meta.AD(deflt = "trivial", required = false)
-	public String errorPasswordTrivial();
+	public String[] errorPasswordTrivialTextKeywords();
 
 	@Meta.AD(deflt = "retry limit", required = false)
-	public String errorUserLockout();
+	public String[] errorUserLockoutKeywords();
 
 	@Meta.AD(deflt = "com.sun.jndi.ldap.LdapCtxFactory", required = false)
 	public String factoryInitial();
 
-	@Meta.AD(deflt = "1000", required = false)
+	@Meta.AD(deflt = "1000", description = "%page-size-help", required = false)
 	public int pageSize();
 
-	@Meta.AD(deflt = "1000", required = false)
+	@Meta.AD(deflt = "1000", description = "%range-size-help", required = false)
 	public int rangeSize();
 
 	@Meta.AD(

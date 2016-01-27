@@ -19,10 +19,10 @@
 <%
 DLPortletToolbarContributor dlPortletToolbarContributor = (DLPortletToolbarContributor)request.getAttribute(DLWebKeys.DOCUMENT_LIBRARY_PORTLET_TOOLBAR_CONTRIBUTOR);
 
-List<Menu> menus = dlPortletToolbarContributor.getPortletTitleMenus(renderRequest);
+List<Menu> menus = dlPortletToolbarContributor.getPortletTitleMenus(renderRequest, renderResponse);
 %>
 
-<div id="addButtonContainer">
+<div id="<portlet:namespace />addButtonContainer">
 
 	<%
 	for (Menu menu : menus) {

@@ -41,15 +41,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @ProviderType
 public class AssetRendererFactoryRegistryUtil {
 
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link
-	 *             #getAssetRendererFactories(long)}
-	 */
-	@Deprecated
-	public static List<AssetRendererFactory<?>> getAssetRendererFactories() {
-		return _instance._getAssetRendererFactories();
-	}
-
 	public static List<AssetRendererFactory<?>> getAssetRendererFactories(
 		long companyId) {
 
@@ -78,14 +69,6 @@ public class AssetRendererFactoryRegistryUtil {
 		String type) {
 
 		return _instance._getAssetRendererFactoryByType(type);
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link #getClassNameIds( long)}
-	 */
-	@Deprecated
-	public static long[] getClassNameIds() {
-		return _instance._getClassNameIds(0, false);
 	}
 
 	public static long[] getClassNameIds(long companyId) {
@@ -160,10 +143,6 @@ public class AssetRendererFactoryRegistryUtil {
 		}
 
 		return filteredAssetRendererFactories;
-	}
-
-	private List<AssetRendererFactory<?>> _getAssetRendererFactories() {
-		return ListUtil.fromMapValues(_assetRenderFactoriesMapByClassName);
 	}
 
 	private List<AssetRendererFactory<?>> _getAssetRendererFactories(

@@ -181,7 +181,7 @@ public class CalendarBookingLocalServiceTest {
 		CalendarBooking calendarBooking =
 			CalendarBookingLocalServiceUtil.addCalendarBooking(
 				_user.getUserId(), calendar.getCalendarId(),
-				new long[] { invitedCalendar.getCalendarId() },
+				new long[] {invitedCalendar.getCalendarId()},
 				CalendarBookingConstants.PARENT_CALENDAR_BOOKING_ID_DEFAULT,
 				RandomTestUtil.randomLocaleStringMap(),
 				RandomTestUtil.randomLocaleStringMap(),
@@ -223,7 +223,7 @@ public class CalendarBookingLocalServiceTest {
 		CalendarBooking calendarBooking =
 			CalendarBookingLocalServiceUtil.addCalendarBooking(
 				_user.getUserId(), calendar.getCalendarId(),
-				new long[] { invitedCalendar.getCalendarId() },
+				new long[] {invitedCalendar.getCalendarId()},
 				CalendarBookingConstants.PARENT_CALENDAR_BOOKING_ID_DEFAULT,
 				RandomTestUtil.randomLocaleStringMap(),
 				RandomTestUtil.randomLocaleStringMap(),
@@ -262,7 +262,7 @@ public class CalendarBookingLocalServiceTest {
 		CalendarBooking calendarBooking =
 			CalendarBookingLocalServiceUtil.addCalendarBooking(
 				_user.getUserId(), calendar.getCalendarId(),
-				new long[] { invitedCalendar.getCalendarId() },
+				new long[] {invitedCalendar.getCalendarId()},
 				CalendarBookingConstants.PARENT_CALENDAR_BOOKING_ID_DEFAULT,
 				RandomTestUtil.randomLocaleStringMap(),
 				RandomTestUtil.randomLocaleStringMap(),
@@ -385,7 +385,7 @@ public class CalendarBookingLocalServiceTest {
 		CalendarBooking calendarBooking =
 			CalendarBookingLocalServiceUtil.addCalendarBooking(
 				_user.getUserId(), calendar.getCalendarId(),
-				new long[] { invitedCalendar.getCalendarId() },
+				new long[] {invitedCalendar.getCalendarId()},
 				CalendarBookingConstants.PARENT_CALENDAR_BOOKING_ID_DEFAULT,
 				RandomTestUtil.randomLocaleStringMap(),
 				RandomTestUtil.randomLocaleStringMap(),
@@ -404,7 +404,7 @@ public class CalendarBookingLocalServiceTest {
 		calendarBooking = CalendarBookingLocalServiceUtil.updateCalendarBooking(
 			_user.getUserId(), calendarBooking.getCalendarBookingId(),
 			calendar.getCalendarId(),
-			new long[] { invitedCalendar.getCalendarId() },
+			new long[] {invitedCalendar.getCalendarId()},
 			RandomTestUtil.randomLocaleStringMap(),
 			RandomTestUtil.randomLocaleStringMap(),
 			RandomTestUtil.randomString(), startTime, startTime + 36000000,
@@ -442,7 +442,7 @@ public class CalendarBookingLocalServiceTest {
 		CalendarBooking calendarBooking =
 			CalendarBookingLocalServiceUtil.addCalendarBooking(
 				_user.getUserId(), calendar.getCalendarId(),
-				new long[] { invitedCalendar.getCalendarId() },
+				new long[] {invitedCalendar.getCalendarId()},
 				CalendarBookingConstants.PARENT_CALENDAR_BOOKING_ID_DEFAULT,
 				RandomTestUtil.randomLocaleStringMap(),
 				RandomTestUtil.randomLocaleStringMap(),
@@ -650,7 +650,7 @@ public class CalendarBookingLocalServiceTest {
 		CalendarBooking calendarBooking =
 			CalendarBookingLocalServiceUtil.addCalendarBooking(
 				_user.getUserId(), calendar.getCalendarId(),
-				new long[] { invitedCalendar.getCalendarId() },
+				new long[] {invitedCalendar.getCalendarId()},
 				CalendarBookingConstants.PARENT_CALENDAR_BOOKING_ID_DEFAULT,
 				RandomTestUtil.randomLocaleStringMap(),
 				RandomTestUtil.randomLocaleStringMap(),
@@ -670,7 +670,7 @@ public class CalendarBookingLocalServiceTest {
 		calendarBooking = CalendarBookingLocalServiceUtil.updateCalendarBooking(
 			_user.getUserId(), calendarBooking.getCalendarBookingId(),
 			calendarBooking.getCalendarId(),
-			new long[] { invitedCalendar.getCalendarId() },
+			new long[] {invitedCalendar.getCalendarId()},
 			RandomTestUtil.randomLocaleStringMap(),
 			RandomTestUtil.randomLocaleStringMap(),
 			RandomTestUtil.randomString(), startTime, startTime + 36000000,
@@ -689,7 +689,7 @@ public class CalendarBookingLocalServiceTest {
 		calendarBooking = CalendarBookingLocalServiceUtil.updateCalendarBooking(
 			_user.getUserId(), calendarBooking.getCalendarBookingId(),
 			calendarBooking.getCalendarId(),
-			new long[] { invitedCalendar.getCalendarId() },
+			new long[] {invitedCalendar.getCalendarId()},
 			RandomTestUtil.randomLocaleStringMap(),
 			RandomTestUtil.randomLocaleStringMap(),
 			RandomTestUtil.randomString(), startTime, startTime + 37000000,
@@ -723,7 +723,7 @@ public class CalendarBookingLocalServiceTest {
 		oldDescriptionMap.put(LocaleUtil.BRAZIL, RandomTestUtil.randomString());
 		oldDescriptionMap.put(
 			LocaleUtil.GERMANY, RandomTestUtil.randomString());
-		oldDescriptionMap.put(LocaleUtil.UK, RandomTestUtil.randomString());
+		oldDescriptionMap.put(LocaleUtil.SPAIN, RandomTestUtil.randomString());
 		oldDescriptionMap.put(LocaleUtil.US, RandomTestUtil.randomString());
 
 		long startTime = System.currentTimeMillis();
@@ -739,7 +739,7 @@ public class CalendarBookingLocalServiceTest {
 		Map<Locale, String> newDescriptionMap = new HashMap<>();
 
 		newDescriptionMap.put(LocaleUtil.GERMANY, "");
-		newDescriptionMap.put(LocaleUtil.UK, RandomTestUtil.randomString());
+		newDescriptionMap.put(LocaleUtil.SPAIN, RandomTestUtil.randomString());
 		newDescriptionMap.put(
 			LocaleUtil.US, oldDescriptionMap.get(LocaleUtil.US));
 
@@ -757,8 +757,8 @@ public class CalendarBookingLocalServiceTest {
 			oldDescriptionMap.get(LocaleUtil.BRAZIL),
 			calendarBooking.getDescription(LocaleUtil.BRAZIL));
 		Assert.assertEquals(
-			newDescriptionMap.get(LocaleUtil.UK),
-			calendarBooking.getDescription(LocaleUtil.UK));
+			newDescriptionMap.get(LocaleUtil.SPAIN),
+			calendarBooking.getDescription(LocaleUtil.SPAIN));
 		Assert.assertEquals(
 			newDescriptionMap.get(LocaleUtil.US),
 			calendarBooking.getDescription(LocaleUtil.US));
@@ -785,7 +785,7 @@ public class CalendarBookingLocalServiceTest {
 
 		oldTitleMap.put(LocaleUtil.BRAZIL, RandomTestUtil.randomString());
 		oldTitleMap.put(LocaleUtil.GERMANY, RandomTestUtil.randomString());
-		oldTitleMap.put(LocaleUtil.UK, RandomTestUtil.randomString());
+		oldTitleMap.put(LocaleUtil.SPAIN, RandomTestUtil.randomString());
 		oldTitleMap.put(LocaleUtil.US, RandomTestUtil.randomString());
 
 		long startTime = System.currentTimeMillis();
@@ -801,7 +801,7 @@ public class CalendarBookingLocalServiceTest {
 		Map<Locale, String> newTitleMap = new HashMap<>();
 
 		newTitleMap.put(LocaleUtil.GERMANY, "");
-		newTitleMap.put(LocaleUtil.UK, RandomTestUtil.randomString());
+		newTitleMap.put(LocaleUtil.SPAIN, RandomTestUtil.randomString());
 		newTitleMap.put(LocaleUtil.US, oldTitleMap.get(LocaleUtil.US));
 
 		calendarBooking = CalendarBookingLocalServiceUtil.updateCalendarBooking(
@@ -818,8 +818,8 @@ public class CalendarBookingLocalServiceTest {
 			oldTitleMap.get(LocaleUtil.BRAZIL),
 			calendarBooking.getTitle(LocaleUtil.BRAZIL));
 		Assert.assertEquals(
-			newTitleMap.get(LocaleUtil.UK),
-			calendarBooking.getTitle(LocaleUtil.UK));
+			newTitleMap.get(LocaleUtil.SPAIN),
+			calendarBooking.getTitle(LocaleUtil.SPAIN));
 		Assert.assertEquals(
 			oldTitleMap.get(LocaleUtil.US),
 			calendarBooking.getTitle(LocaleUtil.US));

@@ -16,8 +16,7 @@ package com.liferay.calendar.service;
 
 import aQute.bnd.annotation.ProviderType;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
+import com.liferay.osgi.util.ServiceTrackerFactory;
 
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -337,9 +336,20 @@ public class CalendarLocalServiceUtil {
 		return getService().getPersistedModel(primaryKeyObj);
 	}
 
+	public static boolean hasStagingCalendar(
+		com.liferay.calendar.model.Calendar calendar)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().hasStagingCalendar(calendar);
+	}
+
 	public static void importCalendar(long calendarId, java.lang.String data,
 		java.lang.String type) throws java.lang.Exception {
 		getService().importCalendar(calendarId, data, type);
+	}
+
+	public static boolean isStagingCalendar(
+		com.liferay.calendar.model.Calendar calendar) {
+		return getService().isStagingCalendar(calendar);
 	}
 
 	public static java.util.List<com.liferay.calendar.model.Calendar> search(
@@ -429,21 +439,6 @@ public class CalendarLocalServiceUtil {
 		return _serviceTracker.getService();
 	}
 
-	/**
-	 * @deprecated As of 6.2.0
-	 */
-	@Deprecated
-	public void setService(CalendarLocalService service) {
-	}
-
-	private static ServiceTracker<CalendarLocalService, CalendarLocalService> _serviceTracker;
-
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(CalendarLocalServiceUtil.class);
-
-		_serviceTracker = new ServiceTracker<CalendarLocalService, CalendarLocalService>(bundle.getBundleContext(),
-				CalendarLocalService.class, null);
-
-		_serviceTracker.open();
-	}
+	private static ServiceTracker<CalendarLocalService, CalendarLocalService> _serviceTracker =
+		ServiceTrackerFactory.open(CalendarLocalService.class);
 }

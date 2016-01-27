@@ -16,6 +16,7 @@ package com.liferay.dynamic.data.lists.upgrade.v1_0_0;
 
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.security.xml.SecureXMLFactoryProviderUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
@@ -30,7 +31,6 @@ import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.liferay.portal.kernel.xml.UnsecureSAXReaderUtil;
 import com.liferay.portal.security.xml.SecureXMLFactoryProviderImpl;
-import com.liferay.portal.security.xml.SecureXMLFactoryProviderUtil;
 import com.liferay.portal.util.LocalizationImpl;
 import com.liferay.portal.xml.SAXReaderImpl;
 
@@ -83,7 +83,7 @@ public class UpgradeDynamicDataListsTest extends PowerMockito {
 			createLocalizationXML(new String[] {fieldsDisplay}));
 
 		UpgradeDynamicDataLists upgradeDynamicDataLists =
-			new UpgradeDynamicDataLists();
+			new UpgradeDynamicDataLists(null, null, null);
 
 		String xml = upgradeDynamicDataLists.toXML(expandoValuesMap);
 
@@ -122,7 +122,7 @@ public class UpgradeDynamicDataListsTest extends PowerMockito {
 			createLocalizationXML(new String[] {fieldsDisplay}));
 
 		UpgradeDynamicDataLists upgradeDynamicDataLists =
-			new UpgradeDynamicDataLists();
+			new UpgradeDynamicDataLists(null, null, null);
 
 		String xml = upgradeDynamicDataLists.toXML(expandoValuesMap);
 

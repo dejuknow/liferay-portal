@@ -14,7 +14,9 @@
 
 package com.liferay.layout.set.prototype.web.portlet;
 
-import com.liferay.layout.set.prototype.web.constants.LayoutSetPrototypePortletKeys;
+import com.liferay.application.list.PanelAppRegistry;
+import com.liferay.application.list.PanelCategoryRegistry;
+import com.liferay.layout.set.prototype.constants.LayoutSetPrototypePortletKeys;
 import com.liferay.portal.service.LayoutSetPrototypeService;
 
 import javax.portlet.Portlet;
@@ -50,11 +52,26 @@ import org.osgi.service.component.annotations.Reference;
 )
 public class SiteTemplateSettingsPortlet extends LayoutSetPrototypePortlet {
 
+	@Override
 	@Reference(unbind = "-")
 	protected void setLayoutSetPrototypeService(
 		LayoutSetPrototypeService layoutSetPrototypeService) {
 
 		this.layoutSetPrototypeService = layoutSetPrototypeService;
+	}
+
+	@Override
+	@Reference(unbind = "-")
+	protected void setPanelAppRegistry(PanelAppRegistry panelAppRegistry) {
+		this.panelAppRegistry = panelAppRegistry;
+	}
+
+	@Override
+	@Reference(unbind = "-")
+	protected void setPanelCategoryRegistry(
+		PanelCategoryRegistry panelCategoryRegistry) {
+
+		this.panelCategoryRegistry = panelCategoryRegistry;
 	}
 
 }

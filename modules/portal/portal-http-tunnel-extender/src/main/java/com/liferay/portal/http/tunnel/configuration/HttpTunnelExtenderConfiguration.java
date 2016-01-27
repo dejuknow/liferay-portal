@@ -16,14 +16,16 @@ package com.liferay.portal.http.tunnel.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
-import com.liferay.configuration.admin.ConfigurationAdmin;
+import com.liferay.portal.metatype.annotations.ExtendedObjectClassDefinition;
 
 /**
  * @author Miguel Pastor
  */
-@ConfigurationAdmin(category = "platform")
+@ExtendedObjectClassDefinition(category = "platform")
 @Meta.OCD(
-	id = "com.liferay.portal.http.tunnel.configuration.HttpTunnelExtenderConfiguration"
+	id = "com.liferay.portal.http.tunnel.configuration.HttpTunnelExtenderConfiguration",
+	localization = "content/Language",
+	name = "%http.tunnel.extender.configuration.name"
 )
 public interface HttpTunnelExtenderConfiguration {
 

@@ -42,7 +42,7 @@ if (portletTitleBasedNavigation) {
 }
 %>
 
-<div <%= portletName.equals(DLPortletKeys.DOCUMENT_LIBRARY_ADMIN) ? "class=\"container-fluid-1280\"" : StringPool.BLANK %>>
+<div <%= portletTitleBasedNavigation ? "class=\"container-fluid-1280\"" : StringPool.BLANK %>>
 	<c:if test="<%= !portletTitleBasedNavigation %>">
 		<liferay-ui:header
 			backURL="<%= redirect %>"
@@ -201,8 +201,7 @@ if (portletTitleBasedNavigation) {
 													li.append(childHTML);
 												}
 
-												<liferay-portlet:resourceURL copyCurrentRenderParameters="<%= false %>" var="uploadMultipleFileEntries">
-													<portlet:param name="mvcRenderCommandName" value="/document_library/upload_multiple_file_entries" />
+												<liferay-portlet:resourceURL copyCurrentRenderParameters="<%= false %>" id="/document_library/upload_multiple_file_entries" var="uploadMultipleFileEntries">
 													<portlet:param name="repositoryId" value="<%= String.valueOf(repositoryId) %>" />
 													<portlet:param name="folderId" value="<%= String.valueOf(folderId) %>" />
 												</liferay-portlet:resourceURL>

@@ -145,7 +145,7 @@ public class BaseJSONHandler extends BaseHandler {
 		}
 
 		if (exception.equals(
-				"com.liferay.portal.kernel.lock.DuplicateLockException")) {
+				"com.liferay.portal.lock.exception.DuplicateLockException")) {
 
 			SyncFile syncFile = getLocalSyncFile();
 
@@ -166,14 +166,15 @@ public class BaseJSONHandler extends BaseHandler {
 			SyncFileService.update(syncFile);
 		}
 		else if (exception.equals(
-					"com.liferay.portal.security.auth.PrincipalException")) {
+					"com.liferay.portal.kernel.security.auth." +
+						"PrincipalException")) {
 
 			SyncFileService.setStatuses(
 				getLocalSyncFile(), SyncFile.STATE_ERROR,
 				SyncFile.UI_EVENT_INVALID_PERMISSIONS);
 		}
 		else if (exception.equals(
-					"com.liferay.portlet.documentlibrary." +
+					"com.liferay.portlet.documentlibrary.exception." +
 						"FileExtensionException")) {
 
 			SyncFile syncFile = getLocalSyncFile();
@@ -184,9 +185,10 @@ public class BaseJSONHandler extends BaseHandler {
 			SyncFileService.update(syncFile);
 		}
 		else if (exception.equals(
-					"com.liferay.portlet.documentlibrary.FileNameException") ||
+					"com.liferay.portlet.documentlibrary.exception." +
+						"FileNameException") ||
 				 exception.equals(
-					 "com.liferay.portlet.documentlibrary." +
+					 "com.liferay.portlet.documentlibrary.exception." +
 						 "FolderNameException")) {
 
 			SyncFile syncFile = getLocalSyncFile();
@@ -197,8 +199,11 @@ public class BaseJSONHandler extends BaseHandler {
 			SyncFileService.update(syncFile);
 		}
 		else if (exception.equals(
-					"com.liferay.portlet.documentlibrary." +
-						"NoSuchFileEntryException")) {
+					"com.liferay.portlet.documentlibrary.exception." +
+						"NoSuchFileEntryException") ||
+				 exception.equals(
+					"com.liferay.portlet.documentlibrary.exception." +
+						"NoSuchFolderException")) {
 
 			SyncFile syncFile = getLocalSyncFile();
 

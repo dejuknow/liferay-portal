@@ -19,21 +19,27 @@
 <%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
 
 <%@ taglib uri="http://liferay.com/tld/aui" prefix="aui" %><%@
+taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %><%@
 taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %><%@
 taglib uri="http://liferay.com/tld/security" prefix="liferay-security" %><%@
 taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
 <%@ page import="com.liferay.password.policies.admin.web.search.OrganizationPasswordPolicyChecker" %><%@
+page import="com.liferay.password.policies.admin.web.search.PasswordPolicyChecker" %><%@
 page import="com.liferay.password.policies.admin.web.search.PasswordPolicyDisplayTerms" %><%@
 page import="com.liferay.password.policies.admin.web.search.PasswordPolicySearch" %><%@
 page import="com.liferay.password.policies.admin.web.search.UserPasswordPolicyChecker" %><%@
-page import="com.liferay.portal.DuplicatePasswordPolicyException" %><%@
-page import="com.liferay.portal.NoSuchPasswordPolicyException" %><%@
-page import="com.liferay.portal.PasswordPolicyNameException" %><%@
+page import="com.liferay.portal.exception.DuplicatePasswordPolicyException" %><%@
+page import="com.liferay.portal.exception.NoSuchPasswordPolicyException" %><%@
+page import="com.liferay.portal.exception.PasswordPolicyNameException" %><%@
 page import="com.liferay.portal.kernel.bean.BeanParamUtil" %><%@
+page import="com.liferay.portal.kernel.dao.search.SearchContainer" %><%@
 page import="com.liferay.portal.kernel.language.LanguageUtil" %><%@
+page import="com.liferay.portal.kernel.language.UnicodeLanguageUtil" %><%@
 page import="com.liferay.portal.kernel.portlet.LiferayWindowState" %><%@
+page import="com.liferay.portal.kernel.security.ldap.LDAPSettingsUtil" %><%@
+page import="com.liferay.portal.kernel.security.permission.ActionKeys" %><%@
 page import="com.liferay.portal.kernel.util.HtmlUtil" %><%@
 page import="com.liferay.portal.kernel.util.ParamUtil" %><%@
 page import="com.liferay.portal.kernel.util.StringPool" %><%@
@@ -43,8 +49,6 @@ page import="com.liferay.portal.model.OrganizationConstants" %><%@
 page import="com.liferay.portal.model.PasswordPolicy" %><%@
 page import="com.liferay.portal.model.PasswordPolicyRel" %><%@
 page import="com.liferay.portal.model.User" %><%@
-page import="com.liferay.portal.security.ldap.LDAPSettingsUtil" %><%@
-page import="com.liferay.portal.security.permission.ActionKeys" %><%@
 page import="com.liferay.portal.service.PasswordPolicyLocalServiceUtil" %><%@
 page import="com.liferay.portal.service.PasswordPolicyRelLocalServiceUtil" %><%@
 page import="com.liferay.portal.service.permission.PasswordPolicyPermissionUtil" %><%@
@@ -55,8 +59,8 @@ page import="com.liferay.portlet.usersadmin.search.OrganizationSearch" %><%@
 page import="com.liferay.portlet.usersadmin.search.OrganizationSearchTerms" %><%@
 page import="com.liferay.portlet.usersadmin.search.UserSearch" %><%@
 page import="com.liferay.portlet.usersadmin.search.UserSearchTerms" %><%@
-page import="com.liferay.portlet.usersadmin.util.UsersAdmin" %><%@
-page import="com.liferay.taglib.search.ResultRow" %>
+page import="com.liferay.taglib.search.ResultRow" %><%@
+page import="com.liferay.users.admin.kernel.util.UsersAdmin" %>
 
 <%@ page import="java.util.LinkedHashMap" %><%@
 page import="java.util.List" %>

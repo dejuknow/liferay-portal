@@ -16,6 +16,7 @@ package com.liferay.portal.lock.model;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.annotation.ImplementationClassName;
 import com.liferay.portal.kernel.util.Accessor;
 import com.liferay.portal.model.PersistedModel;
 
@@ -28,6 +29,7 @@ import com.liferay.portal.model.PersistedModel;
  * @see com.liferay.portal.lock.model.impl.LockModelImpl
  * @generated
  */
+@ImplementationClassName("com.liferay.portal.lock.model.impl.LockImpl")
 @ProviderType
 public interface Lock extends LockModel, PersistedModel {
 	/*

@@ -21,6 +21,8 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.trash.TrashHandler;
 import com.liferay.portal.kernel.trash.TrashHandlerRegistryUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
@@ -31,8 +33,6 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.User;
-import com.liferay.portal.security.permission.ActionKeys;
-import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.service.GroupLocalServiceUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.UserLocalServiceUtil;
@@ -125,15 +125,14 @@ public abstract class BaseSocialActivityInterpreter
 			ServiceContext serviceContext)
 		throws Exception {
 
-		PortletURL portletURL = getViewEntryPortletURL(
+		String viewEntryURL = getViewEntryURL(
 			className, classPK, serviceContext);
 
-		if (portletURL == null) {
-			return url;
+		if (Validator.isNotNull(viewEntryURL)) {
+			return viewEntryURL;
 		}
 
-		return HttpUtil.setParameter(
-			url, "noSuchEntryRedirect", portletURL.toString());
+		return HttpUtil.setParameter(url, "noSuchEntryRedirect", viewEntryURL);
 	}
 
 	protected String buildLink(String link, String text) {
@@ -529,7 +528,7 @@ public abstract class BaseSocialActivityInterpreter
 		return null;
 	}
 
-	protected PortletURL getViewEntryPortletURL(
+	protected String getViewEntryURL(
 			String className, long classPK, ServiceContext serviceContext)
 		throws Exception {
 
@@ -549,8 +548,10 @@ public abstract class BaseSocialActivityInterpreter
 		}
 
 		if (classPK == 0) {
-			return assetRendererFactory.getURLView(
+			PortletURL portletURL = assetRendererFactory.getURLView(
 				liferayPortletResponse, WindowState.MAXIMIZED);
+
+			return portletURL.toString();
 		}
 
 		AssetRenderer<?> assetRenderer = assetRendererFactory.getAssetRenderer(

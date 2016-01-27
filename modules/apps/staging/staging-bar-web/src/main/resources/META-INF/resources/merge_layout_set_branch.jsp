@@ -50,10 +50,12 @@ if (layoutSetBranches.contains(layoutSetBranch)) {
 		<aui:input name="layoutSetBranchId" type="hidden" value="<%= layoutSetBranchId %>" />
 		<aui:input name="mergeLayoutSetBranchId" type="hidden" />
 
-		<liferay-ui:search-container id="layoutSetBranchesSearchContainer">
+		<liferay-ui:search-container
+			id="layoutSetBranchesSearchContainer"
+			total="<%= layoutSetBranches.size() %>"
+		>
 			<liferay-ui:search-container-results
 				results="<%= layoutSetBranches %>"
-				total="<%= layoutSetBranches.size() %>"
 			/>
 
 			<liferay-ui:search-container-row
@@ -96,11 +98,7 @@ if (layoutSetBranches.contains(layoutSetBranch)) {
 		if (confirm(mergeLayoutSetBranchMessage)) {
 			var form = document.<portlet:namespace />fm4;
 
-			alert(form.<portlet:namespace />mergeLayoutSetBranchId.value);
-
 			form.<portlet:namespace />mergeLayoutSetBranchId.value = mergeLayoutSetBranchId;
-
-			alert(form.<portlet:namespace />mergeLayoutSetBranchId.value);
 
 			submitForm(form);
 		}

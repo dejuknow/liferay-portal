@@ -14,14 +14,14 @@
 
 package com.liferay.portal.portlet.container.test;
 
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUtil;
+import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Layout;
-import com.liferay.portal.security.permission.PermissionChecker;
-import com.liferay.portal.security.permission.PermissionCheckerFactoryUtil;
-import com.liferay.portal.security.permission.PermissionThreadLocal;
 import com.liferay.portal.util.test.LayoutTestUtil;
 
 import java.util.Dictionary;
@@ -83,8 +83,8 @@ public class BasePortletContainerTestCase {
 
 		ServiceRegistration<?> serviceRegistration =
 			bundleContext.registerService(
-				new String[] {Object.class.getName(), clazz.getName()},
-				object, properties);
+				new String[] {Object.class.getName(), clazz.getName()}, object,
+				properties);
 
 		serviceRegistrations.add(serviceRegistration);
 	}

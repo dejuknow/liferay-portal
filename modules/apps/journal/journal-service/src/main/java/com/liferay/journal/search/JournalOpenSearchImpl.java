@@ -24,11 +24,11 @@ import com.liferay.portal.kernel.search.HitsOpenSearchImpl;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.search.OpenSearch;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.Layout;
-import com.liferay.portal.security.permission.ActionKeys;
-import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.service.GroupLocalService;
 import com.liferay.portal.service.LayoutLocalService;
 import com.liferay.portal.service.LayoutSetLocalService;
@@ -215,12 +215,11 @@ public class JournalOpenSearchImpl extends HitsOpenSearchImpl {
 		_layoutSetLocalService = layoutSetLocalService;
 	}
 
-	private volatile AssetEntryLocalService _assetEntryLocalService;
-	private volatile GroupLocalService _groupLocalService;
-	private volatile JournalArticleService _journalArticleService;
-	private volatile JournalContentSearchLocalService
-		_journalContentSearchLocalService;
-	private volatile LayoutLocalService _layoutLocalService;
-	private volatile LayoutSetLocalService _layoutSetLocalService;
+	private AssetEntryLocalService _assetEntryLocalService;
+	private GroupLocalService _groupLocalService;
+	private JournalArticleService _journalArticleService;
+	private JournalContentSearchLocalService _journalContentSearchLocalService;
+	private LayoutLocalService _layoutLocalService;
+	private LayoutSetLocalService _layoutSetLocalService;
 
 }

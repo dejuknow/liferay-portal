@@ -32,6 +32,8 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextThreadLocal;
+import com.liferay.portal.service.persistence.CompanyProvider;
+import com.liferay.portal.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 import com.liferay.portal.workflow.kaleo.exception.NoSuchTaskAssignmentException;
@@ -282,7 +284,7 @@ public class KaleoTaskAssignmentPersistenceImpl extends BasePersistenceImpl<Kale
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching kaleo task assignment
-	 * @throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException if a matching kaleo task assignment could not be found
+	 * @throws NoSuchTaskAssignmentException if a matching kaleo task assignment could not be found
 	 */
 	@Override
 	public KaleoTaskAssignment findByCompanyId_First(long companyId,
@@ -333,7 +335,7 @@ public class KaleoTaskAssignmentPersistenceImpl extends BasePersistenceImpl<Kale
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching kaleo task assignment
-	 * @throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException if a matching kaleo task assignment could not be found
+	 * @throws NoSuchTaskAssignmentException if a matching kaleo task assignment could not be found
 	 */
 	@Override
 	public KaleoTaskAssignment findByCompanyId_Last(long companyId,
@@ -391,7 +393,7 @@ public class KaleoTaskAssignmentPersistenceImpl extends BasePersistenceImpl<Kale
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next kaleo task assignment
-	 * @throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException if a kaleo task assignment with the primary key could not be found
+	 * @throws NoSuchTaskAssignmentException if a kaleo task assignment with the primary key could not be found
 	 */
 	@Override
 	public KaleoTaskAssignment[] findByCompanyId_PrevAndNext(
@@ -799,7 +801,7 @@ public class KaleoTaskAssignmentPersistenceImpl extends BasePersistenceImpl<Kale
 	 * @param kaleoDefinitionId the kaleo definition ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching kaleo task assignment
-	 * @throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException if a matching kaleo task assignment could not be found
+	 * @throws NoSuchTaskAssignmentException if a matching kaleo task assignment could not be found
 	 */
 	@Override
 	public KaleoTaskAssignment findByKaleoDefinitionId_First(
@@ -852,7 +854,7 @@ public class KaleoTaskAssignmentPersistenceImpl extends BasePersistenceImpl<Kale
 	 * @param kaleoDefinitionId the kaleo definition ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching kaleo task assignment
-	 * @throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException if a matching kaleo task assignment could not be found
+	 * @throws NoSuchTaskAssignmentException if a matching kaleo task assignment could not be found
 	 */
 	@Override
 	public KaleoTaskAssignment findByKaleoDefinitionId_Last(
@@ -912,7 +914,7 @@ public class KaleoTaskAssignmentPersistenceImpl extends BasePersistenceImpl<Kale
 	 * @param kaleoDefinitionId the kaleo definition ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next kaleo task assignment
-	 * @throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException if a kaleo task assignment with the primary key could not be found
+	 * @throws NoSuchTaskAssignmentException if a kaleo task assignment with the primary key could not be found
 	 */
 	@Override
 	public KaleoTaskAssignment[] findByKaleoDefinitionId_PrevAndNext(
@@ -1349,7 +1351,7 @@ public class KaleoTaskAssignmentPersistenceImpl extends BasePersistenceImpl<Kale
 	 * @param kaleoClassPK the kaleo class p k
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching kaleo task assignment
-	 * @throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException if a matching kaleo task assignment could not be found
+	 * @throws NoSuchTaskAssignmentException if a matching kaleo task assignment could not be found
 	 */
 	@Override
 	public KaleoTaskAssignment findByKCN_KCPK_First(String kaleoClassName,
@@ -1407,7 +1409,7 @@ public class KaleoTaskAssignmentPersistenceImpl extends BasePersistenceImpl<Kale
 	 * @param kaleoClassPK the kaleo class p k
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching kaleo task assignment
-	 * @throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException if a matching kaleo task assignment could not be found
+	 * @throws NoSuchTaskAssignmentException if a matching kaleo task assignment could not be found
 	 */
 	@Override
 	public KaleoTaskAssignment findByKCN_KCPK_Last(String kaleoClassName,
@@ -1472,7 +1474,7 @@ public class KaleoTaskAssignmentPersistenceImpl extends BasePersistenceImpl<Kale
 	 * @param kaleoClassPK the kaleo class p k
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next kaleo task assignment
-	 * @throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException if a kaleo task assignment with the primary key could not be found
+	 * @throws NoSuchTaskAssignmentException if a kaleo task assignment with the primary key could not be found
 	 */
 	@Override
 	public KaleoTaskAssignment[] findByKCN_KCPK_PrevAndNext(
@@ -1985,7 +1987,7 @@ public class KaleoTaskAssignmentPersistenceImpl extends BasePersistenceImpl<Kale
 	 * @param assigneeClassName the assignee class name
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching kaleo task assignment
-	 * @throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException if a matching kaleo task assignment could not be found
+	 * @throws NoSuchTaskAssignmentException if a matching kaleo task assignment could not be found
 	 */
 	@Override
 	public KaleoTaskAssignment findByKCN_KCPK_ACN_First(String kaleoClassName,
@@ -2048,7 +2050,7 @@ public class KaleoTaskAssignmentPersistenceImpl extends BasePersistenceImpl<Kale
 	 * @param assigneeClassName the assignee class name
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching kaleo task assignment
-	 * @throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException if a matching kaleo task assignment could not be found
+	 * @throws NoSuchTaskAssignmentException if a matching kaleo task assignment could not be found
 	 */
 	@Override
 	public KaleoTaskAssignment findByKCN_KCPK_ACN_Last(String kaleoClassName,
@@ -2120,7 +2122,7 @@ public class KaleoTaskAssignmentPersistenceImpl extends BasePersistenceImpl<Kale
 	 * @param assigneeClassName the assignee class name
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next kaleo task assignment
-	 * @throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException if a kaleo task assignment with the primary key could not be found
+	 * @throws NoSuchTaskAssignmentException if a kaleo task assignment with the primary key could not be found
 	 */
 	@Override
 	public KaleoTaskAssignment[] findByKCN_KCPK_ACN_PrevAndNext(
@@ -2512,6 +2514,8 @@ public class KaleoTaskAssignmentPersistenceImpl extends BasePersistenceImpl<Kale
 		kaleoTaskAssignment.setNew(true);
 		kaleoTaskAssignment.setPrimaryKey(kaleoTaskAssignmentId);
 
+		kaleoTaskAssignment.setCompanyId(companyProvider.getCompanyId());
+
 		return kaleoTaskAssignment;
 	}
 
@@ -2520,7 +2524,7 @@ public class KaleoTaskAssignmentPersistenceImpl extends BasePersistenceImpl<Kale
 	 *
 	 * @param kaleoTaskAssignmentId the primary key of the kaleo task assignment
 	 * @return the kaleo task assignment that was removed
-	 * @throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException if a kaleo task assignment with the primary key could not be found
+	 * @throws NoSuchTaskAssignmentException if a kaleo task assignment with the primary key could not be found
 	 */
 	@Override
 	public KaleoTaskAssignment remove(long kaleoTaskAssignmentId)
@@ -2533,7 +2537,7 @@ public class KaleoTaskAssignmentPersistenceImpl extends BasePersistenceImpl<Kale
 	 *
 	 * @param primaryKey the primary key of the kaleo task assignment
 	 * @return the kaleo task assignment that was removed
-	 * @throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException if a kaleo task assignment with the primary key could not be found
+	 * @throws NoSuchTaskAssignmentException if a kaleo task assignment with the primary key could not be found
 	 */
 	@Override
 	public KaleoTaskAssignment remove(Serializable primaryKey)
@@ -2787,11 +2791,11 @@ public class KaleoTaskAssignmentPersistenceImpl extends BasePersistenceImpl<Kale
 	}
 
 	/**
-	 * Returns the kaleo task assignment with the primary key or throws a {@link com.liferay.portal.NoSuchModelException} if it could not be found.
+	 * Returns the kaleo task assignment with the primary key or throws a {@link com.liferay.portal.exception.NoSuchModelException} if it could not be found.
 	 *
 	 * @param primaryKey the primary key of the kaleo task assignment
 	 * @return the kaleo task assignment
-	 * @throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException if a kaleo task assignment with the primary key could not be found
+	 * @throws NoSuchTaskAssignmentException if a kaleo task assignment with the primary key could not be found
 	 */
 	@Override
 	public KaleoTaskAssignment findByPrimaryKey(Serializable primaryKey)
@@ -2811,11 +2815,11 @@ public class KaleoTaskAssignmentPersistenceImpl extends BasePersistenceImpl<Kale
 	}
 
 	/**
-	 * Returns the kaleo task assignment with the primary key or throws a {@link com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException} if it could not be found.
+	 * Returns the kaleo task assignment with the primary key or throws a {@link NoSuchTaskAssignmentException} if it could not be found.
 	 *
 	 * @param kaleoTaskAssignmentId the primary key of the kaleo task assignment
 	 * @return the kaleo task assignment
-	 * @throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException if a kaleo task assignment with the primary key could not be found
+	 * @throws NoSuchTaskAssignmentException if a kaleo task assignment with the primary key could not be found
 	 */
 	@Override
 	public KaleoTaskAssignment findByPrimaryKey(long kaleoTaskAssignmentId)
@@ -3184,6 +3188,8 @@ public class KaleoTaskAssignmentPersistenceImpl extends BasePersistenceImpl<Kale
 		finderCache.removeCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 	}
 
+	@ServiceReference(type = CompanyProviderWrapper.class)
+	protected CompanyProvider companyProvider;
 	@ServiceReference(type = EntityCache.class)
 	protected EntityCache entityCache;
 	@ServiceReference(type = FinderCache.class)

@@ -16,6 +16,7 @@ package com.liferay.exportimport.web.portlet.action;
 
 import com.liferay.exportimport.web.constants.ExportImportPortletKeys;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTask;
+import com.liferay.portal.kernel.backgroundtask.BackgroundTaskConstants;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskManagerUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
@@ -35,7 +36,10 @@ import com.liferay.portlet.exportimport.configuration.ExportImportConfigurationH
 import com.liferay.portlet.exportimport.configuration.ExportImportConfigurationSettingsMapFactory;
 import com.liferay.portlet.exportimport.model.ExportImportConfiguration;
 import com.liferay.portlet.exportimport.service.ExportImportConfigurationLocalService;
+import com.liferay.portlet.exportimport.service.ExportImportConfigurationService;
+import com.liferay.portlet.exportimport.service.ExportImportService;
 import com.liferay.portlet.exportimport.staging.StagingUtil;
+import com.liferay.portlet.trash.service.TrashEntryService;
 
 import java.io.Serializable;
 
@@ -155,7 +159,7 @@ public class EditPublishConfigurationMVCActionCommand
 		throws PortalException {
 
 		long backgroundTaskId = ParamUtil.getLong(
-			actionRequest, "backgroundTaskId");
+			actionRequest, BackgroundTaskConstants.BACKGROUND_TASK_ID);
 
 		BackgroundTask backgroundTask =
 			BackgroundTaskManagerUtil.getBackgroundTask(backgroundTaskId);
@@ -187,6 +191,29 @@ public class EditPublishConfigurationMVCActionCommand
 
 		_exportImportConfigurationLocalService =
 			exportImportConfigurationLocalService;
+	}
+
+	@Override
+	@Reference(unbind = "-")
+	protected void setExportImportConfigurationService(
+		ExportImportConfigurationService exportImportConfigurationService) {
+
+		this.exportImportConfigurationService =
+			exportImportConfigurationService;
+	}
+
+	@Override
+	@Reference(unbind = "-")
+	protected void setExportImportService(
+		ExportImportService exportImportService) {
+
+		this.exportImportService = exportImportService;
+	}
+
+	@Override
+	@Reference(unbind = "-")
+	protected void setTrashEntryService(TrashEntryService trashEntryService) {
+		this.trashEntryService = trashEntryService;
 	}
 
 	protected ExportImportConfiguration updatePublishConfiguration(
@@ -228,7 +255,7 @@ public class EditPublishConfigurationMVCActionCommand
 	private static final Log _log = LogFactoryUtil.getLog(
 		EditPublishConfigurationMVCActionCommand.class);
 
-	private volatile ExportImportConfigurationLocalService
+	private ExportImportConfigurationLocalService
 		_exportImportConfigurationLocalService;
 
 }

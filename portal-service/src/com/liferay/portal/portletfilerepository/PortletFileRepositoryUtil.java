@@ -53,6 +53,17 @@ public class PortletFileRepositoryUtil {
 
 	public static FileEntry addPortletFileEntry(
 			long groupId, long userId, String className, long classPK,
+			String portletId, long folderId, byte[] bytes, String fileName,
+			String mimeType, boolean indexingEnabled)
+		throws PortalException {
+
+		return getPortletFileRepository().addPortletFileEntry(
+			groupId, userId, className, classPK, portletId, folderId, bytes,
+			fileName, mimeType, indexingEnabled);
+	}
+
+	public static FileEntry addPortletFileEntry(
+			long groupId, long userId, String className, long classPK,
 			String portletId, long folderId, File file, String fileName,
 			String mimeType, boolean indexingEnabled)
 		throws PortalException {
@@ -303,6 +314,15 @@ public class PortletFileRepositoryUtil {
 
 		return getPortletFileRepository().movePortletFileEntryToTrash(
 			groupId, userId, folderId, fileName);
+	}
+
+	public static Folder movePortletFolder(
+			long groupId, long userId, long folderId, long parentFolderId,
+			ServiceContext serviceContext)
+		throws PortalException {
+
+		return getPortletFileRepository().movePortletFolder(
+			groupId, userId, folderId, parentFolderId, serviceContext);
 	}
 
 	public static void restorePortletFileEntryFromTrash(

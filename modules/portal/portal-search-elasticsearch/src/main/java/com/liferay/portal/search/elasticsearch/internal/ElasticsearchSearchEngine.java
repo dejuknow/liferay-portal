@@ -31,6 +31,7 @@ import com.liferay.portal.search.elasticsearch.connection.ElasticsearchConnectio
 import com.liferay.portal.search.elasticsearch.index.IndexFactory;
 import com.liferay.portal.search.elasticsearch.internal.util.LogUtil;
 
+import java.util.List;
 import java.util.Map;
 
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
@@ -52,8 +53,7 @@ import org.elasticsearch.client.ClusterAdminClient;
 import org.elasticsearch.client.IndicesAdminClient;
 import org.elasticsearch.cluster.metadata.RepositoryMetaData;
 import org.elasticsearch.common.Strings;
-import org.elasticsearch.common.collect.ImmutableList;
-import org.elasticsearch.common.settings.ImmutableSettings;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.repositories.RepositoryMissingException;
 
 import org.osgi.service.component.annotations.Activate;
@@ -111,6 +111,8 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 		try {
 			_indexFactory.createIndices(
 				_elasticsearchConnectionManager.getAdminClient(), companyId);
+
+			_elasticsearchConnectionManager.registerCompanyId(companyId);
 		}
 		catch (Exception e) {
 			throw new IllegalStateException(e);
@@ -165,6 +167,8 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 		try {
 			_indexFactory.deleteIndices(
 				_elasticsearchConnectionManager.getAdminClient(), companyId);
+
+			_elasticsearchConnectionManager.unregisterCompanyId(companyId);
 		}
 		catch (Exception e) {
 			if (_log.isWarnEnabled()) {
@@ -272,7 +276,7 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 		PutRepositoryRequestBuilder putRepositoryRequestBuilder =
 			clusterAdminClient.preparePutRepository(_BACKUP_REPOSITORY_NAME);
 
-		ImmutableSettings.Builder builder = ImmutableSettings.settingsBuilder();
+		Settings.Builder builder = Settings.builder();
 
 		builder.put("location", "es_backup");
 
@@ -296,7 +300,7 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 			GetRepositoriesResponse getRepositoriesResponse =
 				getRepositoriesRequestBuilder.get();
 
-			ImmutableList<RepositoryMetaData> repositoryMetaDatas =
+			List<RepositoryMetaData> repositoryMetaDatas =
 				getRepositoriesResponse.repositories();
 
 			if (repositoryMetaDatas.isEmpty()) {
@@ -364,8 +368,7 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 	private static final Log _log = LogFactoryUtil.getLog(
 		ElasticsearchSearchEngine.class);
 
-	private volatile ElasticsearchConnectionManager
-		_elasticsearchConnectionManager;
-	private volatile IndexFactory _indexFactory;
+	private ElasticsearchConnectionManager _elasticsearchConnectionManager;
+	private IndexFactory _indexFactory;
 
 }

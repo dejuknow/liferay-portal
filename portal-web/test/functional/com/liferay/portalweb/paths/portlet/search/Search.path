@@ -10,7 +10,7 @@
 <tbody>
 <tr>
 	<td>SEARCH_FIELD</td>
-	<td>//input[contains(@id,'searchkeywords')] | //input[contains(@name,'SearchPortlet_keywords')]</td>
+	<td>//input[contains(@data-qa-id,'searchInput')] | //input[contains(@id,'searchkeywords')] | //input[contains(@name,'SearchPortlet_keywords')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -42,6 +42,11 @@
 <tr>
 	<td>SEARCH_BUTTON</td>
 	<td>//button[contains(.,'${key_searchIDName}')] | //button[contains(.,'Search')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SEARCH_PORTLET_SEARCH_BUTTON</td>
+	<td>//a[contains(@onclick,'SearchPortlet_search')]</td>
 	<td></td>
 </tr>
 </tbody>

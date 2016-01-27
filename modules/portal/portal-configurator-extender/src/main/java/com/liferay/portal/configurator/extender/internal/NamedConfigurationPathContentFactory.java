@@ -31,8 +31,8 @@ import java.util.List;
 import org.osgi.service.component.annotations.Component;
 
 /**
-* @author Carlos Sierra Andrés
-*/
+ * @author Carlos Sierra Andrés
+ */
 @Component(immediate = true)
 public class NamedConfigurationPathContentFactory
 	implements NamedConfigurationContentFactory {
@@ -52,14 +52,15 @@ public class NamedConfigurationPathContentFactory
 
 		return ListUtil.fromEnumeration(
 			new MappingEnumeration<>(
-				entries, new Mapper<URL, NamedConfigurationContent>() {
+				entries,
+				new Mapper<URL, NamedConfigurationContent>() {
 
-				@Override
-				public NamedConfigurationContent map(URL url) {
-					return new PropertiesFileNamedConfigurationContent(url);
-				}
+					@Override
+					public NamedConfigurationContent map(URL url) {
+						return new PropertiesFileNamedConfigurationContent(url);
+					}
 
-			}));
+				}));
 	}
 
 }

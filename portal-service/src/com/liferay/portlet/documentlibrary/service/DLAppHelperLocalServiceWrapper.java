@@ -97,34 +97,11 @@ public class DLAppHelperLocalServiceWrapper implements DLAppHelperLocalService,
 			active, status);
 	}
 
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link #getFileShortcuts(long, long,
-	boolean, int)}
-	*/
-	@Deprecated
-	@Override
-	public java.util.List<com.liferay.portlet.documentlibrary.model.DLFileShortcut> getFileShortcuts(
-		long groupId, long folderId, int status) {
-		return _dlAppHelperLocalService.getFileShortcuts(groupId, folderId,
-			status);
-	}
-
 	@Override
 	public int getFileShortcutsCount(long groupId, long folderId,
 		boolean active, int status) {
 		return _dlAppHelperLocalService.getFileShortcutsCount(groupId,
 			folderId, active, status);
-	}
-
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link #getFileShortcutsCount(long,
-	long, boolean, int)}
-	*/
-	@Deprecated
-	@Override
-	public int getFileShortcutsCount(long groupId, long folderId, int status) {
-		return _dlAppHelperLocalService.getFileShortcutsCount(groupId,
-			folderId, status);
 	}
 
 	@Override
@@ -367,23 +344,6 @@ public class DLAppHelperLocalServiceWrapper implements DLAppHelperLocalService,
 		_dlAppHelperLocalService.updateStatus(userId, fileEntry,
 			latestFileVersion, oldStatus, newStatus, serviceContext,
 			workflowContext);
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
-	 */
-	@Deprecated
-	public DLAppHelperLocalService getWrappedDLAppHelperLocalService() {
-		return _dlAppHelperLocalService;
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #setWrappedService}
-	 */
-	@Deprecated
-	public void setWrappedDLAppHelperLocalService(
-		DLAppHelperLocalService dlAppHelperLocalService) {
-		_dlAppHelperLocalService = dlAppHelperLocalService;
 	}
 
 	@Override

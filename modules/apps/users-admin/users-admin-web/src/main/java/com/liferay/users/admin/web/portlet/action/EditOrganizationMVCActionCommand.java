@@ -14,24 +14,26 @@
 
 package com.liferay.users.admin.web.portlet.action;
 
-import com.liferay.portal.AddressCityException;
-import com.liferay.portal.AddressStreetException;
-import com.liferay.portal.AddressZipException;
-import com.liferay.portal.DuplicateOrganizationException;
-import com.liferay.portal.EmailAddressException;
-import com.liferay.portal.NoSuchCountryException;
-import com.liferay.portal.NoSuchListTypeException;
-import com.liferay.portal.NoSuchOrganizationException;
-import com.liferay.portal.NoSuchRegionException;
-import com.liferay.portal.OrganizationNameException;
-import com.liferay.portal.OrganizationParentException;
-import com.liferay.portal.PhoneNumberException;
-import com.liferay.portal.PhoneNumberExtensionException;
-import com.liferay.portal.RequiredOrganizationException;
-import com.liferay.portal.WebsiteURLException;
+import com.liferay.portal.exception.AddressCityException;
+import com.liferay.portal.exception.AddressStreetException;
+import com.liferay.portal.exception.AddressZipException;
+import com.liferay.portal.exception.DuplicateOrganizationException;
+import com.liferay.portal.exception.EmailAddressException;
+import com.liferay.portal.exception.NoSuchCountryException;
+import com.liferay.portal.exception.NoSuchListTypeException;
+import com.liferay.portal.exception.NoSuchOrganizationException;
+import com.liferay.portal.exception.NoSuchRegionException;
+import com.liferay.portal.exception.OrganizationNameException;
+import com.liferay.portal.exception.OrganizationParentException;
+import com.liferay.portal.exception.PhoneNumberException;
+import com.liferay.portal.exception.PhoneNumberExtensionException;
+import com.liferay.portal.exception.RequiredOrganizationException;
+import com.liferay.portal.exception.WebsiteURLException;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.FileUtil;
@@ -49,8 +51,6 @@ import com.liferay.portal.model.Organization;
 import com.liferay.portal.model.OrganizationConstants;
 import com.liferay.portal.model.Phone;
 import com.liferay.portal.model.Website;
-import com.liferay.portal.security.auth.PrincipalException;
-import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.service.OrganizationService;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
@@ -58,9 +58,9 @@ import com.liferay.portal.service.permission.GroupPermissionUtil;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.documentlibrary.service.DLAppLocalService;
-import com.liferay.portlet.sites.util.SitesUtil;
-import com.liferay.portlet.usersadmin.util.UsersAdminUtil;
+import com.liferay.sites.kernel.util.SitesUtil;
 import com.liferay.users.admin.constants.UsersAdminPortletKeys;
+import com.liferay.users.admin.kernel.util.UsersAdminUtil;
 
 import java.util.List;
 
@@ -152,9 +152,10 @@ public class EditOrganizationMVCActionCommand extends BaseMVCActionCommand {
 				if (e instanceof NoSuchListTypeException) {
 					NoSuchListTypeException nslte = (NoSuchListTypeException)e;
 
+					Class<?> clazz = e.getClass();
+
 					SessionErrors.add(
-						actionRequest,
-						e.getClass().getName() + nslte.getType());
+						actionRequest, clazz.getName() + nslte.getType());
 				}
 				else {
 					SessionErrors.add(actionRequest, e.getClass());
@@ -306,7 +307,7 @@ public class EditOrganizationMVCActionCommand extends BaseMVCActionCommand {
 		return organization;
 	}
 
-	private volatile DLAppLocalService _dlAppLocalService;
-	private volatile OrganizationService _organizationService;
+	private DLAppLocalService _dlAppLocalService;
+	private OrganizationService _organizationService;
 
 }

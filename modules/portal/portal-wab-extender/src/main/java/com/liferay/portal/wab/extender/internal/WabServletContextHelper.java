@@ -14,11 +14,13 @@
 
 package com.liferay.portal.wab.extender.internal;
 
+import com.liferay.osgi.util.BundleUtil;
+import com.liferay.portal.kernel.util.CharPool;
+import com.liferay.portal.kernel.util.StringPool;
+
 import java.io.IOException;
 
 import java.net.URL;
-
-import java.util.Enumeration;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.RequestDispatcher;
@@ -66,16 +68,23 @@ public class WabServletContextHelper extends ServletContextHelper {
 
 	@Override
 	public URL getResource(String name) {
-		if (name.charAt(0) != '/') {
-			name = '/' + name;
+		if (name == null) {
+			return null;
+		}
+
+		if (name.isEmpty()) {
+			name = StringPool.SLASH;
+		}
+		else if (name.charAt(0) != CharPool.SLASH) {
+			name = StringPool.SLASH.concat(name);
 		}
 
 		if (!_wabShapedBundle && !name.startsWith("/META-INF/resources")) {
-			return _getResourceInBundleOrFragments(
-				"/META-INF/resources" + name);
+			return BundleUtil.getResourceInBundleOrFragments(
+				_bundle, "/META-INF/resources" + name);
 		}
 
-		return _getResourceInBundleOrFragments(name);
+		return BundleUtil.getResourceInBundleOrFragments(_bundle, name);
 	}
 
 	@Override
@@ -132,30 +141,6 @@ public class WabServletContextHelper extends ServletContextHelper {
 	@Override
 	public String toString() {
 		return _string;
-	}
-
-	private URL _getResourceInBundleOrFragments(String name) {
-		String dirName = "/";
-		String fileName = name;
-
-		int index = name.lastIndexOf('/');
-
-		if (index > -1) {
-			dirName = name.substring(0, index);
-			fileName = name.substring(index + 1);
-		}
-		else if (index == 0) {
-			fileName = name.substring(1);
-		}
-
-		Enumeration<URL> enumeration = _bundle.findEntries(
-			dirName, fileName, false);
-
-		if ((enumeration == null) || !enumeration.hasMoreElements()) {
-			return null;
-		}
-
-		return enumeration.nextElement();
 	}
 
 	private final Bundle _bundle;

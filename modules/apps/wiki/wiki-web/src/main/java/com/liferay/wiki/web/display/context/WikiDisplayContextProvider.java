@@ -16,6 +16,7 @@ package com.liferay.wiki.web.display.context;
 
 import com.liferay.wiki.display.context.WikiDisplayContextFactory;
 import com.liferay.wiki.display.context.WikiEditPageDisplayContext;
+import com.liferay.wiki.display.context.WikiInfoPanelDisplayContext;
 import com.liferay.wiki.display.context.WikiListPagesDisplayContext;
 import com.liferay.wiki.display.context.WikiViewPageDisplayContext;
 import com.liferay.wiki.model.WikiNode;
@@ -64,6 +65,26 @@ public class WikiDisplayContextProvider {
 		return wikiEditPageDisplayContext;
 	}
 
+	public WikiInfoPanelDisplayContext getWikiInfoPanelDisplayContext(
+		HttpServletRequest request, HttpServletResponse response) {
+
+		Collection<WikiDisplayContextFactory> wikiDisplayContextFactories =
+			_wikiDisplayContextFactories.values();
+
+		WikiInfoPanelDisplayContext wikiInfoPanelDisplayContext =
+			new DefaultWikiInfoPanelDisplayContext(request, response);
+
+		for (WikiDisplayContextFactory wikiDisplayContextFactory :
+				wikiDisplayContextFactories) {
+
+			wikiInfoPanelDisplayContext =
+				wikiDisplayContextFactory.getWikiInfoPanelDisplayContext(
+					wikiInfoPanelDisplayContext, request, response);
+		}
+
+		return wikiInfoPanelDisplayContext;
+	}
+
 	public WikiListPagesDisplayContext getWikiListPagesDisplayContext(
 		HttpServletRequest request, HttpServletResponse response,
 		WikiNode wikiNode) {
@@ -110,9 +131,10 @@ public class WikiDisplayContextProvider {
 	protected void activate(BundleContext bundleContext) {
 		_bundleContext = bundleContext;
 
-		for (Map.Entry<ServiceReference<WikiDisplayContextFactory>,
-				WikiDisplayContextFactory> entry :
-					_wikiDisplayContextFactories.entrySet()) {
+		for (Map.Entry
+				<ServiceReference<WikiDisplayContextFactory>,
+					WikiDisplayContextFactory> entry :
+						_wikiDisplayContextFactories.entrySet()) {
 
 			if (entry.getValue() != null) {
 				continue;
@@ -156,8 +178,8 @@ public class WikiDisplayContextProvider {
 	}
 
 	private BundleContext _bundleContext;
-	private final Map<ServiceReference<WikiDisplayContextFactory>,
-		WikiDisplayContextFactory> _wikiDisplayContextFactories =
-			new ConcurrentSkipListMap<>();
+	private final Map
+		<ServiceReference<WikiDisplayContextFactory>, WikiDisplayContextFactory>
+			_wikiDisplayContextFactories = new ConcurrentSkipListMap<>();
 
 }

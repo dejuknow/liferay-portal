@@ -14,10 +14,15 @@
 
 package com.liferay.calendar.upgrade;
 
-import com.liferay.calendar.upgrade.v1_0_0.UpgradeCalendar;
-import com.liferay.calendar.upgrade.v1_0_0.UpgradeCalendarBooking;
-import com.liferay.calendar.upgrade.v1_0_0.UpgradeLastPublishDate;
+import com.liferay.calendar.upgrade.v1_0_1.UpgradeCalendar;
+import com.liferay.calendar.upgrade.v1_0_3.UpgradeCalendarResource;
+import com.liferay.calendar.upgrade.v1_0_3.UpgradeCompanyId;
+import com.liferay.calendar.upgrade.v1_0_3.UpgradeLastPublishDate;
 import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
+import com.liferay.portal.kernel.upgrade.DummyUpgradeStep;
+import com.liferay.portal.service.ClassNameLocalService;
+import com.liferay.portal.service.CompanyLocalService;
+import com.liferay.portal.service.UserLocalService;
 import com.liferay.portal.upgrade.registry.UpgradeStepRegistrator;
 
 import org.osgi.service.component.annotations.Component;
@@ -34,13 +39,51 @@ public class CalendarServiceUpgrade implements UpgradeStepRegistrator {
 	public void register(Registry registry) {
 		registry.register(
 			"com.liferay.calendar.service", "0.0.1", "1.0.0",
-			new UpgradeCalendar(), new UpgradeCalendarBooking(),
-			new UpgradeLastPublishDate());
+			new com.liferay.calendar.upgrade.v1_0_0.UpgradeCalendarBooking());
+
+		registry.register(
+			"com.liferay.calendar.service", "1.0.0", "1.0.1",
+			new com.liferay.calendar.upgrade.v1_0_1.UpgradeCalendarBooking(),
+			new UpgradeCalendar());
+
+		registry.register(
+			"com.liferay.calendar.service", "1.0.1", "1.0.2",
+			new DummyUpgradeStep());
+
+		registry.register(
+			"com.liferay.calendar.service", "1.0.2", "1.0.3",
+			new UpgradeCalendarResource(
+				_classNameLocalService, _companyLocalService,
+				_userLocalService),
+			new UpgradeCompanyId(), new UpgradeLastPublishDate());
+	}
+
+	@Reference(unbind = "-")
+	protected void setClassNameLocalService(
+		ClassNameLocalService classNameLocalService) {
+
+		_classNameLocalService = classNameLocalService;
+	}
+
+	@Reference(unbind = "-")
+	protected void setCompanyLocalService(
+		CompanyLocalService companyLocalService) {
+
+		_companyLocalService = companyLocalService;
 	}
 
 	@Reference(target = ModuleServiceLifecycle.PORTAL_INITIALIZED, unbind = "-")
 	protected void setModuleServiceLifecycle(
 		ModuleServiceLifecycle moduleServiceLifecycle) {
 	}
+
+	@Reference(unbind = "-")
+	protected void setUserLocalService(UserLocalService userLocalService) {
+		_userLocalService = userLocalService;
+	}
+
+	private ClassNameLocalService _classNameLocalService;
+	private CompanyLocalService _companyLocalService;
+	private UserLocalService _userLocalService;
 
 }

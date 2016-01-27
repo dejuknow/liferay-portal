@@ -5,18 +5,11 @@
 	<var name="portletName" value="Web Content Display" />
 
 	<set-up>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="SignIn#signInPortalInstanceSetUp" />
-			</then>
-		</if>
+		<execute macro="TestCase#setUpPortalInstance" />
 
 		<execute macro="User#firstLoginPG" />
 
-		<execute macro="Page#addPG">
+		<execute macro="Page#add">
 			<var name="pageName" value="Web Content Display Page" />
 		</execute>
 
@@ -65,7 +58,7 @@
 	</command>
 
 	<command name="AddNewWebContentViaAddContentPanel" priority="4">
-		<execute macro="Page#addPG">
+		<execute macro="Page#add">
 			<var name="pageName" value="Web Content Page" />
 		</execute>
 
@@ -93,22 +86,22 @@
 	</command>
 
 	<command name="AddPortletWCDSite" priority="4">
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Sites" />
+		<execute macro="ProductMenu#gotoControlPanelSites">
+			<var name="portlet" value="Sites" />
 		</execute>
 
 		<execute macro="Site#addBlankCP">
 			<var name="siteName" value="Site Name" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Sites" />
+		<execute macro="ProductMenu#gotoControlPanelSites">
+			<var name="portlet" value="Sites" />
 		</execute>
 
-		<execute macro="SitePage#addCP">
+		<execute macro="Page#add">
 			<var name="page" value="Public Pages" />
+			<var name="pageName" value="Site Page" />
 			<var name="siteName" value="Site Name" />
-			<var name="sitePageName" value="Site Page" />
 		</execute>
 
 		<execute macro="Page#gotoPG">
@@ -136,16 +129,18 @@
 	</command>
 
 	<command name="AddWebContentPortalScopeCurrentPage" priority="3">
-		<execute macro="Page#gotoPG">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
+		<for list="1,2,3" param="i">
+			<execute macro="Page#add">
+				<var name="pageName" value="Web Content Display Page${i}" />
+			</execute>
 
-		<execute macro="Page#addPG">
+			<execute macro="Portlet#addPG">
+				<var name="portletName" value="Web Content Display" />
+			</execute>
+		</for>
+
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Web Content Display Page1" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Web Content Display" />
 		</execute>
 
 		<execute macro="WebContentDisplayPortlet#configureScopePG">
@@ -160,19 +155,15 @@
 			<var name="scopeSelection" value="Web Content Display Page1" />
 		</execute>
 
-		<execute macro="Page#addPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Web Content Display Page2" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Web Content Display" />
 		</execute>
 
 		<execute macro="WebContentDisplayPortlet#configureScopePG">
 			<var name="scopeSelection" value="Web Content Display Page1" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Web Content Display Page2" />
 		</execute>
 
@@ -180,15 +171,7 @@
 			<var name="scopeSelection" value="Web Content Display Page1" />
 		</execute>
 
-		<execute macro="Page#addPG">
-			<var name="pageName" value="Web Content Display Page3" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Web Content Display" />
-		</execute>
-
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Web Content Display Page3" />
 		</execute>
 
@@ -197,7 +180,7 @@
 			<var name="scopeSelectionDefault" value="true" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Web Content Display Page1" />
 		</execute>
 
@@ -210,7 +193,7 @@
 			<var name="webContentContent" value="WC WebContent Content" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Web Content Display Page2" />
 		</execute>
 
@@ -220,7 +203,7 @@
 			<var name="webContentTitle" value="WC WebContent Title" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Web Content Display Page2" />
 		</execute>
 
@@ -228,31 +211,14 @@
 			<var name="webContentContent" value="WC WebContent Content" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Web Content Display Page3" />
 		</execute>
 
 		<execute macro="WebContent#viewDefaultPGViaWCD" />
 
 		<execute macro="WebContent#viewSelectNoPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
 			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="Page#gotoPG">
-			<var name="pageName" value="Web Content Display Page1" />
-		</execute>
-
-		<execute macro="WebContentDisplayPortlet#tearDownScopePG" />
-
-		<execute macro="Page#gotoPG">
-			<var name="pageName" value="Web Content Display Page2" />
-		</execute>
-
-		<execute macro="WebContentDisplayPortlet#tearDownScopePG" />
-
-		<execute macro="WebContent#tearDownCP">
-			<var name="contentScopeName" value="Web Content Display Page1" />
 		</execute>
 	</command>
 
@@ -338,7 +304,7 @@
 			<var name="pageName" value="Web Content Display Page" />
 		</execute>
 
-		<execute macro="WebContent#addPGViaWCD">
+		<execute macro="WebContent#addStructuredPGViaWCD">
 			<var name="structureFieldName" value="Text" />
 			<var name="structureName" value="WC Structure Name" />
 			<var name="webContentText" value="WC WebContent Text" />
@@ -458,7 +424,7 @@
 		</execute>
 
 		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Language" />
+			<var name="portletName" value="Language Selector" />
 		</execute>
 
 		<execute macro="WebContent#addPGViaWCD">
@@ -593,9 +559,12 @@
 	</command>
 
 	<command name="SelectWebContentScopeGlobal" priority="3">
-		<execute macro="Page#gotoContentCP">
-			<var name="portletName" value="Web Content" />
-			<var name="siteScopeName" value="Global" />
+		<execute macro="ProductMenu#gotoSite">
+			<var name="site" value="Global" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoSitesContent">
+			<var name="portlet" value="Web Content" />
 		</execute>
 
 		<execute macro="WebContentNavigator#gotoAddCP" />
@@ -638,10 +607,6 @@
 		<execute macro="WebContent#viewPGViaWCD">
 			<var name="webContentContent" value="WC WebContent Content" />
 		</execute>
-
-		<execute macro="WebContent#tearDownCP">
-			<var name="siteScopeName" value="Global" />
-		</execute>
 	</command>
 
 	<command name="ViewAllFileTypesEnabled" priority="4">
@@ -654,7 +619,7 @@
 			<var name="webContentTitle" value="WC WebContent Title" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoControlPanelSystem">
+		<execute macro="ProductMenu#gotoControlPanelConfiguration">
 			<var name="portlet" value="Server Administration" />
 		</execute>
 

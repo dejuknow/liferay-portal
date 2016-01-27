@@ -15,11 +15,13 @@
 package com.liferay.wiki.web.portlet.action;
 
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.wiki.constants.WikiPortletKeys;
+import com.liferay.wiki.constants.WikiWebKeys;
 import com.liferay.wiki.exception.NoSuchNodeException;
+import com.liferay.wiki.model.WikiNode;
 
 import javax.portlet.PortletException;
 import javax.portlet.RenderRequest;
@@ -33,9 +35,7 @@ import org.osgi.service.component.annotations.Component;
 @Component(
 	immediate = true,
 	property = {
-		"javax.portlet.name=" + WikiPortletKeys.WIKI,
 		"javax.portlet.name=" + WikiPortletKeys.WIKI_ADMIN,
-		"javax.portlet.name=" + WikiPortletKeys.WIKI_DISPLAY,
 		"mvc.command.name=/wiki/edit_node"
 	},
 	service = MVCRenderCommand.class
@@ -51,7 +51,9 @@ public class EditNodeMVCRenderCommand implements MVCRenderCommand {
 			long nodeId = ParamUtil.getLong(renderRequest, "nodeId");
 
 			if (nodeId > 0) {
-				ActionUtil.getNode(renderRequest);
+				WikiNode node = ActionUtil.getNode(renderRequest);
+
+				renderRequest.setAttribute(WikiWebKeys.WIKI_NODE, node);
 			}
 		}
 		catch (Exception e) {
@@ -67,7 +69,7 @@ public class EditNodeMVCRenderCommand implements MVCRenderCommand {
 			}
 		}
 
-		return "/wiki/edit_node.jsp";
+		return "/wiki_admin/edit_node.jsp";
 	}
 
 }

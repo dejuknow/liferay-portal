@@ -17,14 +17,13 @@ package com.liferay.wiki.asset;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.LiferayPortletURL;
-import com.liferay.portal.security.permission.PermissionChecker;
-import com.liferay.portal.theme.ThemeDisplay;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portlet.asset.model.AssetRenderer;
 import com.liferay.portlet.asset.model.AssetRendererFactory;
 import com.liferay.portlet.asset.model.BaseAssetRendererFactory;
 import com.liferay.wiki.constants.WikiPortletKeys;
+import com.liferay.wiki.exception.NoSuchPageException;
 import com.liferay.wiki.model.WikiPage;
-import com.liferay.wiki.model.WikiPageResource;
 import com.liferay.wiki.service.WikiPageLocalService;
 import com.liferay.wiki.service.WikiPageResourceLocalService;
 import com.liferay.wiki.service.permission.WikiPagePermissionChecker;
@@ -70,14 +69,20 @@ public class WikiPageAssetRendererFactory
 
 		if (page == null) {
 			if (type == TYPE_LATEST_APPROVED) {
-				page = _wikiPageLocalService.getPage(classPK);
+				try {
+					page = _wikiPageLocalService.getPage(classPK, Boolean.TRUE);
+				}
+				catch (NoSuchPageException nspe) {
+					page = _wikiPageLocalService.getPage(
+						classPK, (Boolean)null);
+				}
+			}
+			else if (type == TYPE_LATEST) {
+				page = _wikiPageLocalService.getPage(classPK, (Boolean)null);
 			}
 			else {
-				WikiPageResource pageResource =
-					_wikiPageResourceLocalService.getPageResource(classPK);
-
-				page = _wikiPageLocalService.getPage(
-					pageResource.getNodeId(), pageResource.getTitle(), null);
+				throw new IllegalArgumentException(
+					"Unknown asset renderer type " + type);
 			}
 		}
 
@@ -97,7 +102,7 @@ public class WikiPageAssetRendererFactory
 
 	@Override
 	public String getIconCssClass() {
-		return "icon-file-alt";
+		return "wiki";
 	}
 
 	@Override
@@ -139,11 +144,6 @@ public class WikiPageAssetRendererFactory
 		_servletContext = servletContext;
 	}
 
-	@Override
-	protected String getIconPath(ThemeDisplay themeDisplay) {
-		return themeDisplay.getPathThemeImages() + "/common/pages.png";
-	}
-
 	@Reference(unbind = "-")
 	protected void setWikiPageLocalService(
 		WikiPageLocalService wikiPageLocalService) {
@@ -158,8 +158,8 @@ public class WikiPageAssetRendererFactory
 		_wikiPageResourceLocalService = wikiPageResourceLocalService;
 	}
 
-	private volatile ServletContext _servletContext;
-	private volatile WikiPageLocalService _wikiPageLocalService;
-	private volatile WikiPageResourceLocalService _wikiPageResourceLocalService;
+	private ServletContext _servletContext;
+	private WikiPageLocalService _wikiPageLocalService;
+	private WikiPageResourceLocalService _wikiPageResourceLocalService;
 
 }

@@ -24,6 +24,7 @@ long[] classNameIds = GetterUtil.getLongValues(request.getAttribute("liferay-ui:
 long[] classTypeIds = GetterUtil.getLongValues(request.getAttribute("liferay-ui:asset-add-button:classTypeIds"));
 long[] groupIds = GetterUtil.getLongValues(request.getAttribute("liferay-ui:asset-add-button:groupIds"));
 String redirect = (String)request.getAttribute("liferay-ui:asset-add-button:redirect");
+boolean useDialog = GetterUtil.getBoolean(request.getAttribute("liferay-ui:asset-add-button:useDialog"), true);
 
 boolean hasAddPortletURLs = false;
 
@@ -35,8 +36,8 @@ for (long groupId : groupIds) {
 	}
 %>
 
-	<c:if test="<%= (addPortletURLs != null) && !addPortletURLs.isEmpty() %>">
-		<aui:nav cssClass="navbar-nav">
+	<c:if test="<%= hasAddPortletURLs %>">
+		<aui:nav>
 			<c:choose>
 				<c:when test="<%= addPortletURLs.size() == 1 %>">
 
@@ -49,7 +50,7 @@ for (long groupId : groupIds) {
 
 					AssetRendererFactory<?> assetRendererFactory = AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(_getClassName(entry.getKey()));
 
-					String message = _getMessage(entry.getKey(), addPortletURLs, locale);
+					String message = _getMessage(entry.getKey(), locale);
 
 					long curGroupId = groupId;
 
@@ -61,16 +62,13 @@ for (long groupId : groupIds) {
 					%>
 
 					<aui:nav-item
-						href="<%= _getURL(curGroupId, plid, entry.getValue(), assetRendererFactory.getPortletId(), message, addDisplayPageParameter, layout, pageContext, portletResponse) %>"
-						iconCssClass="<%= assetRendererFactory.getIconCssClass() %>"
-						iconSrc="<%= assetRendererFactory.getIconPath(portletRequest) %>"
+						href="<%= _getURL(curGroupId, plid, entry.getValue(), assetRendererFactory.getPortletId(), message, addDisplayPageParameter, layout, pageContext, portletResponse, useDialog) %>"
 						label='<%= LanguageUtil.format(request, (groupIds.length == 1) ? "add-x" : "add-x-in-x", new Object[] {HtmlUtil.escape(message), HtmlUtil.escape((GroupLocalServiceUtil.getGroup(groupId)).getDescriptiveName(locale))}, false) %>'
 					/>
 				</c:when>
 				<c:otherwise>
 					<aui:nav-item
 						dropdown="<%= true %>"
-						iconCssClass="icon-plus"
 						label='<%= LanguageUtil.format(request, (groupIds.length == 1) ? "add-new" : "add-new-in-x", HtmlUtil.escape((GroupLocalServiceUtil.getGroup(groupId)).getDescriptiveName(locale)), false) %>'
 					>
 
@@ -78,7 +76,7 @@ for (long groupId : groupIds) {
 						for (Map.Entry<String, PortletURL> entry : addPortletURLs.entrySet()) {
 							AssetRendererFactory<?> assetRendererFactory = AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(_getClassName(entry.getKey()));
 
-							String message = _getMessage(entry.getKey(), addPortletURLs, locale);
+							String message = _getMessage(entry.getKey(), locale);
 
 							long curGroupId = groupId;
 
@@ -90,9 +88,7 @@ for (long groupId : groupIds) {
 						%>
 
 							<aui:nav-item
-								href="<%= _getURL(curGroupId, plid, entry.getValue(), assetRendererFactory.getPortletId(), message, addDisplayPageParameter, layout, pageContext, portletResponse) %>"
-								iconCssClass="<%= assetRendererFactory.getIconCssClass() %>"
-								iconSrc="<%= assetRendererFactory.getIconPath(portletRequest) %>"
+								href="<%= _getURL(curGroupId, plid, entry.getValue(), assetRendererFactory.getPortletId(), message, addDisplayPageParameter, layout, pageContext, portletResponse, useDialog) %>"
 								label="<%= HtmlUtil.escape(message) %>"
 							/>
 
@@ -123,7 +119,7 @@ private String _getClassName(String className) {
 	return className;
 }
 
-private String _getMessage(String className, Map<String, PortletURL> addPortletURLs, Locale locale) {
+private String _getMessage(String className, Locale locale) {
 	String message = null;
 
 	int pos = className.indexOf(AssetUtil.CLASSNAME_SEPARATOR);
@@ -143,7 +139,7 @@ private String _getMessage(String className, Map<String, PortletURL> addPortletU
 	return message;
 }
 
-private String _getURL(long groupId, long plid, PortletURL addPortletURL, String portletId, String message, boolean addDisplayPageParameter, Layout layout, PageContext pageContext, PortletResponse portletResponse) {
+private String _getURL(long groupId, long plid, PortletURL addPortletURL, String portletId, String message, boolean addDisplayPageParameter, Layout layout, PageContext pageContext, PortletResponse portletResponse, boolean useDialog) {
 	addPortletURL.setParameter("hideDefaultSuccessMessage", Boolean.TRUE.toString());
 	addPortletURL.setParameter("groupId", String.valueOf(groupId));
 	addPortletURL.setParameter("showHeader", Boolean.FALSE.toString());
@@ -158,6 +154,10 @@ private String _getURL(long groupId, long plid, PortletURL addPortletURL, String
 		addPortletURLString = HttpUtil.addParameter(addPortletURLString, namespace + "layoutUuid", layout.getUuid());
 	}
 
-	return "javascript:Liferay.Util.openWindow({dialog: {destroyOnHide: true}, id: '" + portletResponse.getNamespace() + "editAsset', title: '" + HtmlUtil.escapeJS(LanguageUtil.format((HttpServletRequest)pageContext.getRequest(), "new-x", HtmlUtil.escape(message), false)) + "', uri: '" + HtmlUtil.escapeJS(addPortletURLString) + "'});";
+	if (useDialog) {
+		return "javascript:Liferay.Util.openWindow({dialog: {destroyOnHide: true}, dialogIframe: {bodyCssClass: 'dialog-with-footer'}, id: '" + portletResponse.getNamespace() + "editAsset', title: '" + HtmlUtil.escapeJS(LanguageUtil.format((HttpServletRequest) pageContext.getRequest(), "new-x", HtmlUtil.escape(message), false)) + "', uri: '" + HtmlUtil.escapeJS(addPortletURLString) + "'});";
+	}
+
+	return addPortletURLString;
 }
 %>

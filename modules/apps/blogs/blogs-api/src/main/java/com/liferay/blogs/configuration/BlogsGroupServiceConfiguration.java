@@ -16,13 +16,20 @@ package com.liferay.blogs.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
-import com.liferay.configuration.admin.ConfigurationAdmin;
+import com.liferay.portal.metatype.annotations.ExtendedObjectClassDefinition;
 
 /**
  * @author Sergio González
  */
-@ConfigurationAdmin(category = "collaboration")
-@Meta.OCD(id = "com.liferay.blogs.configuration.BlogsGroupServiceConfiguration")
+@ExtendedObjectClassDefinition(
+	category = "collaboration",
+	scope = ExtendedObjectClassDefinition.Scope.GROUP
+)
+@Meta.OCD(
+	id = "com.liferay.blogs.configuration.BlogsGroupServiceConfiguration",
+	localization = "content/Language",
+	name = "%blogs.group.service.configuration.name"
+)
 public interface BlogsGroupServiceConfiguration {
 
 	@Meta.AD(deflt = "true", required = false)

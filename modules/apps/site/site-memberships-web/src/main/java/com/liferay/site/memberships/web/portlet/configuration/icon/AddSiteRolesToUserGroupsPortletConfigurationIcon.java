@@ -19,15 +19,14 @@ import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.PortletProvider;
 import com.liferay.portal.kernel.portlet.PortletProviderUtil;
 import com.liferay.portal.kernel.portlet.configuration.icon.BasePortletConfigurationIcon;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.UserGroup;
 import com.liferay.portal.model.UserGroupRole;
-import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.service.permission.GroupPermissionUtil;
 
+import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Eudaldo Alonso
@@ -36,9 +35,9 @@ public class AddSiteRolesToUserGroupsPortletConfigurationIcon
 	extends BasePortletConfigurationIcon {
 
 	public AddSiteRolesToUserGroupsPortletConfigurationIcon(
-		HttpServletRequest request) {
+		PortletRequest portletRequest) {
 
-		super(request);
+		super(portletRequest);
 	}
 
 	@Override
@@ -50,7 +49,7 @@ public class AddSiteRolesToUserGroupsPortletConfigurationIcon
 	public String getURL() {
 		try {
 			PortletURL portletURL = PortletProviderUtil.getPortletURL(
-				request, UserGroupRole.class.getName(),
+				portletRequest, UserGroupRole.class.getName(),
 				PortletProvider.Action.EDIT);
 
 			portletURL.setParameter("className", UserGroup.class.getName());

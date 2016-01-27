@@ -24,6 +24,7 @@ import com.liferay.sync.engine.model.SyncFile;
 import com.liferay.sync.engine.model.SyncSite;
 import com.liferay.sync.engine.model.SyncSiteModelListener;
 import com.liferay.sync.engine.service.persistence.SyncSitePersistence;
+import com.liferay.sync.engine.util.FileKeyUtil;
 import com.liferay.sync.engine.util.FileUtil;
 
 import java.io.IOException;
@@ -52,7 +53,8 @@ import org.slf4j.LoggerFactory;
  */
 public class SyncSiteService {
 
-	public static SyncSite activateSyncSite(long syncSiteId, boolean reset)
+	public static SyncSite activateSyncSite(
+			long syncSiteId, List<SyncFile> syncFiles, boolean reset)
 		throws Exception {
 
 		// Sync site
@@ -81,6 +83,30 @@ public class SyncSiteService {
 
 		if (!Files.exists(Paths.get(filePathName))) {
 			Files.createDirectories(Paths.get(filePathName));
+
+			SyncFile syncFile = SyncFileService.fetchSyncFile(filePathName);
+
+			FileKeyUtil.writeFileKey(
+				Paths.get(filePathName),
+				String.valueOf(syncFile.getSyncFileId()), true);
+		}
+
+		// Sync files
+
+		for (SyncFile syncFile : syncFiles) {
+			SyncFile parentSyncFile = SyncFileService.fetchSyncFile(
+				syncFile.getRepositoryId(), syncFile.getSyncAccountId(),
+				syncFile.getParentFolderId());
+
+			String childFilePathName = FileUtil.getFilePathName(
+				parentSyncFile.getFilePathName(),
+				FileUtil.getSanitizedFileName(syncFile.getName(), null));
+
+			syncFile.setFilePathName(childFilePathName);
+			syncFile.setModifiedTime(0);
+			syncFile.setSyncAccountId(syncSite.getSyncAccountId());
+
+			SyncFileService.update(syncFile);
 		}
 
 		return syncSite;
@@ -104,6 +130,13 @@ public class SyncSiteService {
 			SyncSite syncSite = fetchSyncSite(syncSiteId);
 
 			_syncSitePersistence.deleteById(syncSiteId);
+
+			// Sync file
+
+			SyncFile syncFile = SyncFileService.fetchSyncFile(
+				syncSite.getFilePathName());
+
+			SyncFileService.deleteSyncFile(syncFile);
 
 			// Sync files
 
@@ -241,6 +274,15 @@ public class SyncSiteService {
 			FileUtil.getFilePathName(syncAccount.getFilePathName(), name));
 
 		update(syncSite);
+
+		// Sync file
+
+		SyncFile syncFile = SyncFileService.fetchSyncFile(filePathName);
+
+		syncFile.setName(name);
+		syncFile.setFilePathName(filePathName);
+
+		SyncFileService.update(syncFile);
 
 		// Sync files
 

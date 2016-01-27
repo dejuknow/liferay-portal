@@ -16,15 +16,15 @@ package com.liferay.xsl.content.web.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
-import com.liferay.configuration.admin.ConfigurationAdmin;
+import com.liferay.portal.metatype.annotations.ExtendedObjectClassDefinition;
 
 /**
  * @author Raymond Augé
  */
-@ConfigurationAdmin(category = "collaboration")
+@ExtendedObjectClassDefinition(category = "web-experience-management")
 @Meta.OCD(
 	id = "com.liferay.xsl.content.web.configuration.XSLContentConfiguration",
-	localization = "content/Language"
+	localization = "content/Language", name = "%xsl.content.configuration.name"
 )
 public interface XSLContentConfiguration {
 

@@ -14,9 +14,9 @@
 
 package com.liferay.social.networking.web.wall.social;
 
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.User;
-import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.UserLocalService;
 import com.liferay.portlet.social.model.BaseSocialActivityInterpreter;
@@ -152,8 +152,8 @@ public class WallActivityInterpreter extends BaseSocialActivityInterpreter {
 
 	private static final String[] _CLASS_NAMES = {WallEntry.class.getName()};
 
-	private volatile SocialRelationLocalService _socialRelationLocalService;
-	private volatile UserLocalService _userLocalService;
-	private volatile WallEntryLocalService _wallEntryLocalService;
+	private SocialRelationLocalService _socialRelationLocalService;
+	private UserLocalService _userLocalService;
+	private WallEntryLocalService _wallEntryLocalService;
 
 }

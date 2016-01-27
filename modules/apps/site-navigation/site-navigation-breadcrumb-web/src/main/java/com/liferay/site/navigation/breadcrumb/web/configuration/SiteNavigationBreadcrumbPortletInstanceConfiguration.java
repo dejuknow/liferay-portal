@@ -16,14 +16,19 @@ package com.liferay.site.navigation.breadcrumb.web.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
-import com.liferay.configuration.admin.ConfigurationAdmin;
+import com.liferay.portal.metatype.annotations.ExtendedObjectClassDefinition;
 
 /**
  * @author Juergen Kappler
  */
-@ConfigurationAdmin(category = "web-experience-management")
+@ExtendedObjectClassDefinition(
+	category = "web-experience-management",
+	scope = ExtendedObjectClassDefinition.Scope.PORTLET_INSTANCE
+)
 @Meta.OCD(
-	id = "com.liferay.site.navigation.breadcrumb.web.configuration.SiteNavigationBreadcrumbPortletInstanceConfiguration"
+	id = "com.liferay.site.navigation.breadcrumb.web.configuration.SiteNavigationBreadcrumbPortletInstanceConfiguration",
+	localization = "content/Language",
+	name = "%site.navigation.breadcrumb.portlet.instance.configuration.name"
 )
 public interface SiteNavigationBreadcrumbPortletInstanceConfiguration {
 

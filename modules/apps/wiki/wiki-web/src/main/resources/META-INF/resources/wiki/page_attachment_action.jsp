@@ -26,7 +26,7 @@ FileEntry attachmentsFileEntry = (FileEntry)row.getObject();
 WikiPage wikiPage = WikiPageAttachmentsUtil.getPage(attachmentsFileEntry.getFileEntryId());
 %>
 
-<liferay-ui:icon-menu icon="<%= StringPool.BLANK %>" message="<%= StringPool.BLANK %>">
+<liferay-ui:icon-menu direction="left-side" icon="<%= StringPool.BLANK %>" markupView="lexicon" message="<%= StringPool.BLANK %>">
 	<c:choose>
 		<c:when test="<%= viewTrashAttachments %>">
 			<c:if test="<%= WikiNodePermissionChecker.contains(permissionChecker, wikiPage.getNodeId(), ActionKeys.ADD_ATTACHMENT) %>">
@@ -46,7 +46,6 @@ WikiPage wikiPage = WikiPageAttachmentsUtil.getPage(attachmentsFileEntry.getFile
 				%>
 
 				<liferay-ui:icon
-					iconCssClass="icon-undo"
 					message="restore"
 					onClick="<%= taglibOnClick %>"
 					url="javascript:;"
@@ -78,7 +77,6 @@ WikiPage wikiPage = WikiPageAttachmentsUtil.getPage(attachmentsFileEntry.getFile
 				</portlet:actionURL>
 
 				<liferay-ui:icon-delete
-					message='<%= TrashUtil.isTrashEnabled(scopeGroupId) ? "remove" : "delete" %>'
 					trash="<%= TrashUtil.isTrashEnabled(scopeGroupId) %>"
 					url="<%= deleteURL %>"
 				/>

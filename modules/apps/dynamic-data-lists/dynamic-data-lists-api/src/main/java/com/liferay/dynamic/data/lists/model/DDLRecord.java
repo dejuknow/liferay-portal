@@ -16,6 +16,7 @@ package com.liferay.dynamic.data.lists.model;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.annotation.ImplementationClassName;
 import com.liferay.portal.kernel.util.Accessor;
 import com.liferay.portal.model.PersistedModel;
 
@@ -28,6 +29,7 @@ import com.liferay.portal.model.PersistedModel;
  * @see com.liferay.dynamic.data.lists.model.impl.DDLRecordModelImpl
  * @generated
  */
+@ImplementationClassName("com.liferay.dynamic.data.lists.model.impl.DDLRecordImpl")
 @ProviderType
 public interface DDLRecord extends DDLRecordModel, PersistedModel {
 	/*

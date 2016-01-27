@@ -84,9 +84,10 @@ public class ProductMenuDisplayContext {
 		List<PanelCategory> childPanelCategories = getChildPanelCategories();
 
 		if (!childPanelCategories.isEmpty()) {
-			PanelCategory firstChildPanelCategory = childPanelCategories.get(0);
+			PanelCategory lastChildPanelCategory = childPanelCategories.get(
+				childPanelCategories.size() - 1);
 
-			_rootPanelCategoryKey = firstChildPanelCategory.getKey();
+			_rootPanelCategoryKey = lastChildPanelCategory.getKey();
 
 			if (Validator.isNotNull(_themeDisplay.getPpid())) {
 				PanelCategoryHelper panelCategoryHelper =
@@ -98,7 +99,9 @@ public class ProductMenuDisplayContext {
 							PanelCategoryKeys.ROOT)) {
 
 					if (panelCategoryHelper.containsPortlet(
-							_themeDisplay.getPpid(), panelCategory)) {
+							_themeDisplay.getPpid(), panelCategory.getKey(),
+							_themeDisplay.getPermissionChecker(),
+							_themeDisplay.getScopeGroup())) {
 
 						_rootPanelCategoryKey = panelCategory.getKey();
 
@@ -111,6 +114,20 @@ public class ProductMenuDisplayContext {
 		return _rootPanelCategoryKey;
 	}
 
+	public boolean hasUserPanelCategory() {
+		List<PanelCategory> panelCategories = getChildPanelCategories();
+
+		for (PanelCategory panelCategory : panelCategories) {
+			String panelCategoryKey = panelCategory.getKey();
+
+			if (panelCategoryKey.equals(PanelCategoryKeys.USER)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	public boolean isShowProductMenu() {
 		Layout layout = _themeDisplay.getLayout();
 
@@ -120,10 +137,7 @@ public class ProductMenuDisplayContext {
 
 		List<PanelCategory> childPanelCategories = getChildPanelCategories();
 
-		// If only the Personal Panel is shown, then the product menu itself
-		// will not be shown to users
-
-		if (childPanelCategories.size() <= 1) {
+		if (childPanelCategories.isEmpty()) {
 			return false;
 		}
 

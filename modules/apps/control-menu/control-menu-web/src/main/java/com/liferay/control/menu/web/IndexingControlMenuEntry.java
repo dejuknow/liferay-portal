@@ -17,13 +17,15 @@ package com.liferay.control.menu.web;
 import com.liferay.control.menu.BaseControlMenuEntry;
 import com.liferay.control.menu.ControlMenuEntry;
 import com.liferay.control.menu.constants.ControlMenuCategoryKeys;
-import com.liferay.portal.kernel.backgroundtask.BackgroundTaskManager;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.search.IndexWriterHelper;
+import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.model.CompanyConstants;
-import com.liferay.portal.search.internal.background.task.ReindexPortalBackgroundTaskExecutor;
-import com.liferay.portal.search.internal.background.task.ReindexSingleIndexerBackgroundTaskExecutor;
 
 import java.util.Locale;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -31,7 +33,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 /**
- *
  * @author Julio Camarero
  */
 @Component(
@@ -46,13 +47,26 @@ public class IndexingControlMenuEntry
 	extends BaseControlMenuEntry implements ControlMenuEntry {
 
 	@Override
+	public Map<String, Object> getData(HttpServletRequest request) {
+		Map<String, Object> data = super.getData(request);
+
+		data.put("qa-id", "indexing");
+
+		return data;
+	}
+
+	@Override
 	public String getIconCssClass(HttpServletRequest request) {
 		return "icon-refresh";
 	}
 
 	@Override
 	public String getLabel(Locale locale) {
-		return "the-portal-is-currently-reindexing";
+		ResourceBundle resourceBundle = ResourceBundleUtil.getBundle(
+			"content.Language", locale, getClass());
+
+		return LanguageUtil.get(
+			resourceBundle, "the-portal-is-currently-reindexing");
 	}
 
 	@Override
@@ -61,31 +75,22 @@ public class IndexingControlMenuEntry
 	}
 
 	@Override
-	public boolean hasAccessPermission(HttpServletRequest request)
-		throws PortalException {
-
-		int count = _backgroundTaskManager.getBackgroundTasksCount(
-			CompanyConstants.SYSTEM,
-			new String[] {
-				ReindexPortalBackgroundTaskExecutor.class.getName(),
-				ReindexSingleIndexerBackgroundTaskExecutor.class.getName()
-			},
-			false);
+	public boolean isShow(HttpServletRequest request) throws PortalException {
+		int count = _indexWriterHelper.getReindexTaskCount(
+			CompanyConstants.SYSTEM, false);
 
 		if (count == 0) {
 			return false;
 		}
 
-		return super.hasAccessPermission(request);
+		return super.isShow(request);
 	}
 
 	@Reference(unbind = "-")
-	public void setBackgroundTaskManager(
-		BackgroundTaskManager backgroundTaskManager) {
-
-		_backgroundTaskManager = backgroundTaskManager;
+	public void setIndexWriterHelper(IndexWriterHelper indexWriterHelper) {
+		_indexWriterHelper = indexWriterHelper;
 	}
 
-	private volatile BackgroundTaskManager _backgroundTaskManager;
+	private IndexWriterHelper _indexWriterHelper;
 
 }

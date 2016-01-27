@@ -18,12 +18,11 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.calendar.model.CalendarBooking;
 
+import com.liferay.osgi.util.ServiceTrackerFactory;
+
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.service.ServiceContext;
-
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
 
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -191,7 +190,7 @@ public class CalendarBookingUtil {
 	* @param resourceBlockId the resource block ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching calendar booking
-	* @throws com.liferay.calendar.NoSuchBookingException if a matching calendar booking could not be found
+	* @throws NoSuchBookingException if a matching calendar booking could not be found
 	*/
 	public static CalendarBooking findByResourceBlockId_First(
 		long resourceBlockId,
@@ -223,7 +222,7 @@ public class CalendarBookingUtil {
 	* @param resourceBlockId the resource block ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching calendar booking
-	* @throws com.liferay.calendar.NoSuchBookingException if a matching calendar booking could not be found
+	* @throws NoSuchBookingException if a matching calendar booking could not be found
 	*/
 	public static CalendarBooking findByResourceBlockId_Last(
 		long resourceBlockId,
@@ -256,7 +255,7 @@ public class CalendarBookingUtil {
 	* @param resourceBlockId the resource block ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next calendar booking
-	* @throws com.liferay.calendar.NoSuchBookingException if a calendar booking with the primary key could not be found
+	* @throws NoSuchBookingException if a calendar booking with the primary key could not be found
 	*/
 	public static CalendarBooking[] findByResourceBlockId_PrevAndNext(
 		long calendarBookingId, long resourceBlockId,
@@ -360,7 +359,7 @@ public class CalendarBookingUtil {
 	* @param uuid the uuid
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching calendar booking
-	* @throws com.liferay.calendar.NoSuchBookingException if a matching calendar booking could not be found
+	* @throws NoSuchBookingException if a matching calendar booking could not be found
 	*/
 	public static CalendarBooking findByUuid_First(java.lang.String uuid,
 		OrderByComparator<CalendarBooking> orderByComparator)
@@ -386,7 +385,7 @@ public class CalendarBookingUtil {
 	* @param uuid the uuid
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching calendar booking
-	* @throws com.liferay.calendar.NoSuchBookingException if a matching calendar booking could not be found
+	* @throws NoSuchBookingException if a matching calendar booking could not be found
 	*/
 	public static CalendarBooking findByUuid_Last(java.lang.String uuid,
 		OrderByComparator<CalendarBooking> orderByComparator)
@@ -413,7 +412,7 @@ public class CalendarBookingUtil {
 	* @param uuid the uuid
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next calendar booking
-	* @throws com.liferay.calendar.NoSuchBookingException if a calendar booking with the primary key could not be found
+	* @throws NoSuchBookingException if a calendar booking with the primary key could not be found
 	*/
 	public static CalendarBooking[] findByUuid_PrevAndNext(
 		long calendarBookingId, java.lang.String uuid,
@@ -444,12 +443,12 @@ public class CalendarBookingUtil {
 	}
 
 	/**
-	* Returns the calendar booking where uuid = &#63; and groupId = &#63; or throws a {@link com.liferay.calendar.NoSuchBookingException} if it could not be found.
+	* Returns the calendar booking where uuid = &#63; and groupId = &#63; or throws a {@link NoSuchBookingException} if it could not be found.
 	*
 	* @param uuid the uuid
 	* @param groupId the group ID
 	* @return the matching calendar booking
-	* @throws com.liferay.calendar.NoSuchBookingException if a matching calendar booking could not be found
+	* @throws NoSuchBookingException if a matching calendar booking could not be found
 	*/
 	public static CalendarBooking findByUUID_G(java.lang.String uuid,
 		long groupId)
@@ -588,7 +587,7 @@ public class CalendarBookingUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching calendar booking
-	* @throws com.liferay.calendar.NoSuchBookingException if a matching calendar booking could not be found
+	* @throws NoSuchBookingException if a matching calendar booking could not be found
 	*/
 	public static CalendarBooking findByUuid_C_First(java.lang.String uuid,
 		long companyId, OrderByComparator<CalendarBooking> orderByComparator)
@@ -618,7 +617,7 @@ public class CalendarBookingUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching calendar booking
-	* @throws com.liferay.calendar.NoSuchBookingException if a matching calendar booking could not be found
+	* @throws NoSuchBookingException if a matching calendar booking could not be found
 	*/
 	public static CalendarBooking findByUuid_C_Last(java.lang.String uuid,
 		long companyId, OrderByComparator<CalendarBooking> orderByComparator)
@@ -649,7 +648,7 @@ public class CalendarBookingUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next calendar booking
-	* @throws com.liferay.calendar.NoSuchBookingException if a calendar booking with the primary key could not be found
+	* @throws NoSuchBookingException if a calendar booking with the primary key could not be found
 	*/
 	public static CalendarBooking[] findByUuid_C_PrevAndNext(
 		long calendarBookingId, java.lang.String uuid, long companyId,
@@ -756,7 +755,7 @@ public class CalendarBookingUtil {
 	* @param calendarId the calendar ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching calendar booking
-	* @throws com.liferay.calendar.NoSuchBookingException if a matching calendar booking could not be found
+	* @throws NoSuchBookingException if a matching calendar booking could not be found
 	*/
 	public static CalendarBooking findByCalendarId_First(long calendarId,
 		OrderByComparator<CalendarBooking> orderByComparator)
@@ -784,7 +783,7 @@ public class CalendarBookingUtil {
 	* @param calendarId the calendar ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching calendar booking
-	* @throws com.liferay.calendar.NoSuchBookingException if a matching calendar booking could not be found
+	* @throws NoSuchBookingException if a matching calendar booking could not be found
 	*/
 	public static CalendarBooking findByCalendarId_Last(long calendarId,
 		OrderByComparator<CalendarBooking> orderByComparator)
@@ -813,7 +812,7 @@ public class CalendarBookingUtil {
 	* @param calendarId the calendar ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next calendar booking
-	* @throws com.liferay.calendar.NoSuchBookingException if a calendar booking with the primary key could not be found
+	* @throws NoSuchBookingException if a calendar booking with the primary key could not be found
 	*/
 	public static CalendarBooking[] findByCalendarId_PrevAndNext(
 		long calendarBookingId, long calendarId,
@@ -922,7 +921,7 @@ public class CalendarBookingUtil {
 	* @param calendarResourceId the calendar resource ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching calendar booking
-	* @throws com.liferay.calendar.NoSuchBookingException if a matching calendar booking could not be found
+	* @throws NoSuchBookingException if a matching calendar booking could not be found
 	*/
 	public static CalendarBooking findByCalendarResourceId_First(
 		long calendarResourceId,
@@ -954,7 +953,7 @@ public class CalendarBookingUtil {
 	* @param calendarResourceId the calendar resource ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching calendar booking
-	* @throws com.liferay.calendar.NoSuchBookingException if a matching calendar booking could not be found
+	* @throws NoSuchBookingException if a matching calendar booking could not be found
 	*/
 	public static CalendarBooking findByCalendarResourceId_Last(
 		long calendarResourceId,
@@ -987,7 +986,7 @@ public class CalendarBookingUtil {
 	* @param calendarResourceId the calendar resource ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next calendar booking
-	* @throws com.liferay.calendar.NoSuchBookingException if a calendar booking with the primary key could not be found
+	* @throws NoSuchBookingException if a calendar booking with the primary key could not be found
 	*/
 	public static CalendarBooking[] findByCalendarResourceId_PrevAndNext(
 		long calendarBookingId, long calendarResourceId,
@@ -1098,7 +1097,7 @@ public class CalendarBookingUtil {
 	* @param parentCalendarBookingId the parent calendar booking ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching calendar booking
-	* @throws com.liferay.calendar.NoSuchBookingException if a matching calendar booking could not be found
+	* @throws NoSuchBookingException if a matching calendar booking could not be found
 	*/
 	public static CalendarBooking findByParentCalendarBookingId_First(
 		long parentCalendarBookingId,
@@ -1130,7 +1129,7 @@ public class CalendarBookingUtil {
 	* @param parentCalendarBookingId the parent calendar booking ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching calendar booking
-	* @throws com.liferay.calendar.NoSuchBookingException if a matching calendar booking could not be found
+	* @throws NoSuchBookingException if a matching calendar booking could not be found
 	*/
 	public static CalendarBooking findByParentCalendarBookingId_Last(
 		long parentCalendarBookingId,
@@ -1163,7 +1162,7 @@ public class CalendarBookingUtil {
 	* @param parentCalendarBookingId the parent calendar booking ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next calendar booking
-	* @throws com.liferay.calendar.NoSuchBookingException if a calendar booking with the primary key could not be found
+	* @throws NoSuchBookingException if a calendar booking with the primary key could not be found
 	*/
 	public static CalendarBooking[] findByParentCalendarBookingId_PrevAndNext(
 		long calendarBookingId, long parentCalendarBookingId,
@@ -1197,12 +1196,12 @@ public class CalendarBookingUtil {
 	}
 
 	/**
-	* Returns the calendar booking where calendarId = &#63; and parentCalendarBookingId = &#63; or throws a {@link com.liferay.calendar.NoSuchBookingException} if it could not be found.
+	* Returns the calendar booking where calendarId = &#63; and parentCalendarBookingId = &#63; or throws a {@link NoSuchBookingException} if it could not be found.
 	*
 	* @param calendarId the calendar ID
 	* @param parentCalendarBookingId the parent calendar booking ID
 	* @return the matching calendar booking
-	* @throws com.liferay.calendar.NoSuchBookingException if a matching calendar booking could not be found
+	* @throws NoSuchBookingException if a matching calendar booking could not be found
 	*/
 	public static CalendarBooking findByC_P(long calendarId,
 		long parentCalendarBookingId)
@@ -1262,12 +1261,12 @@ public class CalendarBookingUtil {
 	}
 
 	/**
-	* Returns the calendar booking where calendarId = &#63; and vEventUid = &#63; or throws a {@link com.liferay.calendar.NoSuchBookingException} if it could not be found.
+	* Returns the calendar booking where calendarId = &#63; and vEventUid = &#63; or throws a {@link NoSuchBookingException} if it could not be found.
 	*
 	* @param calendarId the calendar ID
 	* @param vEventUid the v event uid
 	* @return the matching calendar booking
-	* @throws com.liferay.calendar.NoSuchBookingException if a matching calendar booking could not be found
+	* @throws NoSuchBookingException if a matching calendar booking could not be found
 	*/
 	public static CalendarBooking findByC_V(long calendarId,
 		java.lang.String vEventUid)
@@ -1405,7 +1404,7 @@ public class CalendarBookingUtil {
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching calendar booking
-	* @throws com.liferay.calendar.NoSuchBookingException if a matching calendar booking could not be found
+	* @throws NoSuchBookingException if a matching calendar booking could not be found
 	*/
 	public static CalendarBooking findByC_S_First(long calendarId, int status,
 		OrderByComparator<CalendarBooking> orderByComparator)
@@ -1435,7 +1434,7 @@ public class CalendarBookingUtil {
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching calendar booking
-	* @throws com.liferay.calendar.NoSuchBookingException if a matching calendar booking could not be found
+	* @throws NoSuchBookingException if a matching calendar booking could not be found
 	*/
 	public static CalendarBooking findByC_S_Last(long calendarId, int status,
 		OrderByComparator<CalendarBooking> orderByComparator)
@@ -1466,7 +1465,7 @@ public class CalendarBookingUtil {
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next calendar booking
-	* @throws com.liferay.calendar.NoSuchBookingException if a calendar booking with the primary key could not be found
+	* @throws NoSuchBookingException if a calendar booking with the primary key could not be found
 	*/
 	public static CalendarBooking[] findByC_S_PrevAndNext(
 		long calendarBookingId, long calendarId, int status,
@@ -1673,7 +1672,7 @@ public class CalendarBookingUtil {
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching calendar booking
-	* @throws com.liferay.calendar.NoSuchBookingException if a matching calendar booking could not be found
+	* @throws NoSuchBookingException if a matching calendar booking could not be found
 	*/
 	public static CalendarBooking findByP_S_First(
 		long parentCalendarBookingId, int status,
@@ -1707,7 +1706,7 @@ public class CalendarBookingUtil {
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching calendar booking
-	* @throws com.liferay.calendar.NoSuchBookingException if a matching calendar booking could not be found
+	* @throws NoSuchBookingException if a matching calendar booking could not be found
 	*/
 	public static CalendarBooking findByP_S_Last(long parentCalendarBookingId,
 		int status, OrderByComparator<CalendarBooking> orderByComparator)
@@ -1741,7 +1740,7 @@ public class CalendarBookingUtil {
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next calendar booking
-	* @throws com.liferay.calendar.NoSuchBookingException if a calendar booking with the primary key could not be found
+	* @throws NoSuchBookingException if a calendar booking with the primary key could not be found
 	*/
 	public static CalendarBooking[] findByP_S_PrevAndNext(
 		long calendarBookingId, long parentCalendarBookingId, int status,
@@ -1806,7 +1805,7 @@ public class CalendarBookingUtil {
 	*
 	* @param calendarBookingId the primary key of the calendar booking
 	* @return the calendar booking that was removed
-	* @throws com.liferay.calendar.NoSuchBookingException if a calendar booking with the primary key could not be found
+	* @throws NoSuchBookingException if a calendar booking with the primary key could not be found
 	*/
 	public static CalendarBooking remove(long calendarBookingId)
 		throws com.liferay.calendar.exception.NoSuchBookingException {
@@ -1818,11 +1817,11 @@ public class CalendarBookingUtil {
 	}
 
 	/**
-	* Returns the calendar booking with the primary key or throws a {@link com.liferay.calendar.NoSuchBookingException} if it could not be found.
+	* Returns the calendar booking with the primary key or throws a {@link NoSuchBookingException} if it could not be found.
 	*
 	* @param calendarBookingId the primary key of the calendar booking
 	* @return the calendar booking
-	* @throws com.liferay.calendar.NoSuchBookingException if a calendar booking with the primary key could not be found
+	* @throws NoSuchBookingException if a calendar booking with the primary key could not be found
 	*/
 	public static CalendarBooking findByPrimaryKey(long calendarBookingId)
 		throws com.liferay.calendar.exception.NoSuchBookingException {
@@ -1929,21 +1928,6 @@ public class CalendarBookingUtil {
 		return _serviceTracker.getService();
 	}
 
-	/**
-	 * @deprecated As of 6.2.0
-	 */
-	@Deprecated
-	public void setPersistence(CalendarBookingPersistence persistence) {
-	}
-
-	private static ServiceTracker<CalendarBookingPersistence, CalendarBookingPersistence> _serviceTracker;
-
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(CalendarBookingUtil.class);
-
-		_serviceTracker = new ServiceTracker<CalendarBookingPersistence, CalendarBookingPersistence>(bundle.getBundleContext(),
-				CalendarBookingPersistence.class, null);
-
-		_serviceTracker.open();
-	}
+	private static ServiceTracker<CalendarBookingPersistence, CalendarBookingPersistence> _serviceTracker =
+		ServiceTrackerFactory.open(CalendarBookingPersistence.class);
 }

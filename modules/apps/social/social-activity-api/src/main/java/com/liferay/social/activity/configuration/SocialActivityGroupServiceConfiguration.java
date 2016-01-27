@@ -16,14 +16,18 @@ package com.liferay.social.activity.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
-import com.liferay.configuration.admin.ConfigurationAdmin;
+import com.liferay.portal.metatype.annotations.ExtendedObjectClassDefinition;
 
 /**
  * @author Roberto Díaz
  */
-@ConfigurationAdmin(category = "collaboration")
+@ExtendedObjectClassDefinition(
+	category = "collaboration", scope = ExtendedObjectClassDefinition.Scope.GROUP
+)
 @Meta.OCD(
-	id = "com.liferay.social.activity.configuration.SocialActivityGroupServiceConfiguration"
+	id = "com.liferay.social.activity.configuration.SocialActivityGroupServiceConfiguration",
+	localization = "content/Language",
+	name = "%social.activity.group.service.configuration.name"
 )
 public interface SocialActivityGroupServiceConfiguration {
 

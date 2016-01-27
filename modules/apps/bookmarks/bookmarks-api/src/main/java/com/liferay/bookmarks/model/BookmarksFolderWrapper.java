@@ -218,15 +218,6 @@ public class BookmarksFolderWrapper implements BookmarksFolder,
 	}
 
 	/**
-	* @deprecated As of 6.1.0, replaced by {@link #isApproved()}
-	*/
-	@Deprecated
-	@Override
-	public boolean getApproved() {
-		return _bookmarksFolder.getApproved();
-	}
-
-	/**
 	* Returns the company ID of this bookmarks folder.
 	*
 	* @return the company ID of this bookmarks folder
@@ -969,14 +960,6 @@ public class BookmarksFolderWrapper implements BookmarksFolder,
 	@Override
 	public StagedModelType getStagedModelType() {
 		return _bookmarksFolder.getStagedModelType();
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedModel}
-	 */
-	@Deprecated
-	public BookmarksFolder getWrappedBookmarksFolder() {
-		return _bookmarksFolder;
 	}
 
 	@Override

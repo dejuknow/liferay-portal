@@ -14,7 +14,7 @@
 
 package com.liferay.portal.service.impl;
 
-import com.liferay.portal.RequiredLayoutSetPrototypeException;
+import com.liferay.portal.exception.RequiredLayoutSetPrototypeException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -215,18 +215,6 @@ public class LayoutSetPrototypeLocalServiceImpl
 				deleteLayoutSetPrototype(layoutSetPrototype);
 			}
 		}
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link
-	 *             #getLayoutSetPrototypeByUuidAndCompanyId(String, long)}
-	 */
-	@Deprecated
-	@Override
-	public LayoutSetPrototype getLayoutSetPrototypeByUuid(String uuid)
-		throws PortalException {
-
-		return layoutSetPrototypePersistence.findByUuid_First(uuid, null);
 	}
 
 	@Override

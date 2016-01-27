@@ -29,7 +29,7 @@ import ${packagePath}.service.${entity.name}LocalServiceUtil;
 import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.LocaleException;
-import com.liferay.portal.NoSuchModelException;
+import com.liferay.portal.exception.NoSuchModelException;
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSON;
@@ -937,15 +937,6 @@ public class ${entity.name}ModelImpl extends BaseModelImpl<${entity.name}> imple
 	</#if>
 
 	<#if entity.isWorkflowEnabled()>
-		/**
-		 * @deprecated As of 6.1.0, replaced by {@link #isApproved}
-		 */
-		@Deprecated
-		@Override
-		public boolean getApproved() {
-			return isApproved();
-		}
-
 		@Override
 		public boolean isApproved() {
 			if (getStatus() == WorkflowConstants.STATUS_APPROVED) {

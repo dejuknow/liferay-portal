@@ -16,8 +16,7 @@ package com.liferay.portal.background.task.service;
 
 import aQute.bnd.annotation.ProviderType;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
+import com.liferay.osgi.util.ServiceTrackerFactory;
 
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -67,21 +66,6 @@ public class BackgroundTaskServiceUtil {
 		return _serviceTracker.getService();
 	}
 
-	/**
-	 * @deprecated As of 6.2.0
-	 */
-	@Deprecated
-	public void setService(BackgroundTaskService service) {
-	}
-
-	private static ServiceTracker<BackgroundTaskService, BackgroundTaskService> _serviceTracker;
-
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(BackgroundTaskServiceUtil.class);
-
-		_serviceTracker = new ServiceTracker<BackgroundTaskService, BackgroundTaskService>(bundle.getBundleContext(),
-				BackgroundTaskService.class, null);
-
-		_serviceTracker.open();
-	}
+	private static ServiceTracker<BackgroundTaskService, BackgroundTaskService> _serviceTracker =
+		ServiceTrackerFactory.open(BackgroundTaskService.class);
 }

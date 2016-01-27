@@ -19,10 +19,13 @@ import com.liferay.bookmarks.exception.EntryURLException;
 import com.liferay.bookmarks.exception.NoSuchEntryException;
 import com.liferay.bookmarks.exception.NoSuchFolderException;
 import com.liferay.bookmarks.model.BookmarksEntry;
+import com.liferay.bookmarks.model.BookmarksFolder;
 import com.liferay.bookmarks.service.BookmarksEntryService;
+import com.liferay.bookmarks.service.BookmarksFolderService;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.HttpUtil;
@@ -31,13 +34,12 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.model.TrashedModel;
-import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.asset.AssetCategoryException;
-import com.liferay.portlet.asset.AssetTagException;
+import com.liferay.portlet.asset.exception.AssetCategoryException;
+import com.liferay.portlet.asset.exception.AssetTagException;
 import com.liferay.portlet.trash.service.TrashEntryService;
 import com.liferay.portlet.trash.util.TrashUtil;
 
@@ -60,7 +62,8 @@ import org.osgi.service.component.annotations.Reference;
 	property = {
 		"javax.portlet.name=" + BookmarksPortletKeys.BOOKMARKS,
 		"javax.portlet.name=" + BookmarksPortletKeys.BOOKMARKS_ADMIN,
-		"mvc.command.name=/bookmarks/edit_entry"
+		"mvc.command.name=/bookmarks/edit_entry",
+		"mvc.command.name=/bookmarks/move_entry"
 	},
 	service = MVCActionCommand.class
 )
@@ -77,8 +80,8 @@ public class EditEntryMVCActionCommand extends BaseMVCActionCommand {
 			deleteEntryIds = new long[] {entryId};
 		}
 		else {
-			deleteEntryIds = StringUtil.split(
-				ParamUtil.getString(actionRequest, "deleteEntryIds"), 0L);
+			deleteEntryIds = ParamUtil.getLongValues(
+				actionRequest, "rowIdsBookmarksEntry");
 		}
 
 		List<TrashedModel> trashedModels = new ArrayList<>();
@@ -92,6 +95,23 @@ public class EditEntryMVCActionCommand extends BaseMVCActionCommand {
 			}
 			else {
 				_bookmarksEntryService.deleteEntry(deleteEntryId);
+			}
+		}
+
+		long[] deleteFolderIds = ParamUtil.getLongValues(
+			actionRequest, "rowIdsBookmarksFolder");
+
+		for (int i = 0; i < deleteFolderIds.length; i++) {
+			long deleteFolderId = deleteFolderIds[i];
+
+			if (moveToTrash) {
+				BookmarksFolder folder =
+					_bookmarksFolderService.moveFolderToTrash(deleteFolderId);
+
+				trashedModels.add(folder);
+			}
+			else {
+				_bookmarksFolderService.deleteFolder(deleteFolderId);
 			}
 		}
 
@@ -117,6 +137,9 @@ public class EditEntryMVCActionCommand extends BaseMVCActionCommand {
 			}
 			else if (cmd.equals(Constants.DELETE)) {
 				deleteEntry(actionRequest, false);
+			}
+			else if (cmd.equals(Constants.MOVE)) {
+				moveEntries(actionRequest);
 			}
 			else if (cmd.equals(Constants.MOVE_TO_TRASH)) {
 				deleteEntry(actionRequest, true);
@@ -182,6 +205,24 @@ public class EditEntryMVCActionCommand extends BaseMVCActionCommand {
 		}
 	}
 
+	protected void moveEntries(ActionRequest actionRequest) throws Exception {
+		long newFolderId = ParamUtil.getLong(actionRequest, "newFolderId");
+
+		long[] folderIds = ParamUtil.getLongValues(
+			actionRequest, "rowIdsBookmarksFolder");
+
+		for (long folderId : folderIds) {
+			_bookmarksFolderService.moveFolder(folderId, newFolderId);
+		}
+
+		long[] entryIds = ParamUtil.getLongValues(
+			actionRequest, "rowIdsBookmarksEntry");
+
+		for (long entryId : entryIds) {
+			_bookmarksEntryService.moveEntry(entryId, newFolderId);
+		}
+	}
+
 	protected void restoreTrashEntries(ActionRequest actionRequest)
 		throws Exception {
 
@@ -198,6 +239,13 @@ public class EditEntryMVCActionCommand extends BaseMVCActionCommand {
 		BookmarksEntryService bookmarksEntryService) {
 
 		_bookmarksEntryService = bookmarksEntryService;
+	}
+
+	@Reference(unbind = "-")
+	protected void setBookmarksFolderService(
+		BookmarksFolderService bookmarksFolderService) {
+
+		_bookmarksFolderService = bookmarksFolderService;
 	}
 
 	@Reference(unbind = "-")
@@ -259,7 +307,8 @@ public class EditEntryMVCActionCommand extends BaseMVCActionCommand {
 		return entry;
 	}
 
-	private volatile BookmarksEntryService _bookmarksEntryService;
-	private volatile TrashEntryService _trashEntryService;
+	private BookmarksEntryService _bookmarksEntryService;
+	private BookmarksFolderService _bookmarksFolderService;
+	private TrashEntryService _trashEntryService;
 
 }

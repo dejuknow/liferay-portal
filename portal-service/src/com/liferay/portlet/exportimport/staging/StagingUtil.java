@@ -53,6 +53,19 @@ public class StagingUtil {
 
 	public static String buildRemoteURL(
 		String remoteAddress, int remotePort, String remotePathContext,
+		boolean secureConnection) {
+
+		return _staging.buildRemoteURL(
+			remoteAddress, remotePort, remotePathContext, secureConnection);
+	}
+
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link #getRemoteSiteURL(Group,
+	 *             boolean)}
+	 */
+	@Deprecated
+	public static String buildRemoteURL(
+		String remoteAddress, int remotePort, String remotePathContext,
 		boolean secureConnection, long remoteGroupId, boolean privateLayout) {
 
 		return _staging.buildRemoteURL(
@@ -160,6 +173,20 @@ public class StagingUtil {
 			remoteGroupId, remotePrivateLayout, startDate, endDate);
 	}
 
+	public static void copyRemoteLayouts(
+			long sourceGroupId, boolean privateLayout,
+			Map<Long, Boolean> layoutIdMap, String name,
+			Map<String, String[]> parameterMap, String remoteAddress,
+			int remotePort, String remotePathContext, boolean secureConnection,
+			long remoteGroupId, boolean remotePrivateLayout)
+		throws PortalException {
+
+		_staging.copyRemoteLayouts(
+			sourceGroupId, privateLayout, layoutIdMap, name, parameterMap,
+			remoteAddress, remotePort, remotePathContext, secureConnection,
+			remoteGroupId, remotePrivateLayout);
+	}
+
 	public static void deleteLastImportSettings(
 			Group liveGroup, boolean privateLayout)
 		throws PortalException {
@@ -188,99 +215,6 @@ public class StagingUtil {
 		User user, long layoutSetBranchId, long plid) {
 
 		_staging.deleteRecentLayoutRevisionId(user, layoutSetBranchId, plid);
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link
-	 *             com.liferay.portlet.exportimport.service.StagingLocalService#disableStaging(
-	 *             Group, ServiceContext)}
-	 */
-	@Deprecated
-	public static void disableStaging(
-			Group scopeGroup, Group liveGroup, ServiceContext serviceContext)
-		throws Exception {
-
-		_staging.disableStaging(scopeGroup, liveGroup, serviceContext);
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link
-	 *             com.liferay.portlet.exportimport.service.StagingLocalService#disableStaging(
-	 *             Group, ServiceContext)}
-	 */
-	@Deprecated
-	public static void disableStaging(
-			Group liveGroup, ServiceContext serviceContext)
-		throws Exception {
-
-		_staging.disableStaging(liveGroup, serviceContext);
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link
-	 *             com.liferay.portlet.exportimport.service.StagingLocalService#disableStaging(
-	 *             PortletRequest, Group, ServiceContext)}
-	 */
-	@Deprecated
-	public static void disableStaging(
-			PortletRequest portletRequest, Group scopeGroup, Group liveGroup,
-			ServiceContext serviceContext)
-		throws Exception {
-
-		_staging.disableStaging(
-			portletRequest, scopeGroup, liveGroup, serviceContext);
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link
-	 *             com.liferay.portlet.exportimport.service.StagingLocalService#disableStaging(
-	 *             PortletRequest, Group, ServiceContext)}
-	 */
-	@Deprecated
-	public static void disableStaging(
-			PortletRequest portletRequest, Group liveGroup,
-			ServiceContext serviceContext)
-		throws Exception {
-
-		_staging.disableStaging(portletRequest, liveGroup, serviceContext);
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link
-	 *             com.liferay.portlet.exportimport.service.StagingLocalService#enableLocalStaging(
-	 *             long, Group, boolean, boolean, ServiceContext)}
-	 */
-	@Deprecated
-	public static void enableLocalStaging(
-			long userId, Group scopeGroup, Group liveGroup,
-			boolean branchingPublic, boolean branchingPrivate,
-			ServiceContext serviceContext)
-		throws Exception {
-
-		_staging.enableLocalStaging(
-			userId, scopeGroup, liveGroup, branchingPublic, branchingPrivate,
-			serviceContext);
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link
-	 *             com.liferay.portlet.exportimport.service.StagingLocalService#enableRemoteStaging(
-	 *             long, Group, boolean, boolean, String, int, String, boolean,
-	 *             long, ServiceContext)}
-	 */
-	@Deprecated
-	public static void enableRemoteStaging(
-			long userId, Group scopeGroup, Group liveGroup,
-			boolean branchingPublic, boolean branchingPrivate,
-			String remoteAddress, int remotePort, String remotePathContext,
-			boolean secureConnection, long remoteGroupId,
-			ServiceContext serviceContext)
-		throws Exception {
-
-		_staging.enableRemoteStaging(
-			userId, scopeGroup, liveGroup, branchingPublic, branchingPrivate,
-			remoteAddress, remotePort, remotePathContext, secureConnection,
-			remoteGroupId, serviceContext);
 	}
 
 	public static JSONArray getErrorMessagesJSONArray(
@@ -370,6 +304,13 @@ public class StagingUtil {
 		return _staging.getRecentLayoutSetBranchId(user, layoutSetId);
 	}
 
+	public static String getRemoteSiteURL(
+			Group stagingGroup, boolean privateLayout)
+		throws PortalException {
+
+		return _staging.getRemoteSiteURL(stagingGroup, privateLayout);
+	}
+
 	public static String getSchedulerGroupName(
 		String destinationName, long groupId) {
 
@@ -378,6 +319,12 @@ public class StagingUtil {
 
 	public static String getStagedPortletId(String portletId) {
 		return _staging.getStagedPortletId(portletId);
+	}
+
+	public static long[] getStagingAndLiveGroupIds(long groupId)
+		throws PortalException {
+
+		return _staging.getStagingAndLiveGroupIds(groupId);
 	}
 
 	public static Group getStagingGroup(long groupId) {
@@ -438,6 +385,16 @@ public class StagingUtil {
 		throws PortalException {
 
 		return _staging.hasWorkflowTask(userId, layoutRevision);
+	}
+
+	public static boolean isGroupAccessible(Group group, Group fromGroup) {
+		return _staging.isGroupAccessible(group, fromGroup);
+	}
+
+	public static boolean isGroupAccessible(long groupId, long fromGroupId)
+		throws PortalException {
+
+		return _staging.isGroupAccessible(groupId, fromGroupId);
 	}
 
 	public static boolean isIncomplete(Layout layout, long layoutSetBranchId) {
@@ -502,6 +459,17 @@ public class StagingUtil {
 		_staging.publishLayouts(
 			userId, sourceGroupId, targetGroupId, privateLayout, layoutIds,
 			parameterMap, startDate, endDate);
+	}
+
+	public static void publishLayouts(
+			long userId, long sourceGroupId, long targetGroupId,
+			boolean privateLayout, long[] layoutIds, String name,
+			Map<String, String[]> parameterMap)
+		throws PortalException {
+
+		_staging.publishLayouts(
+			userId, sourceGroupId, targetGroupId, privateLayout, layoutIds,
+			name, parameterMap);
 	}
 
 	/**
@@ -608,44 +576,51 @@ public class StagingUtil {
 	}
 
 	public static void setRecentLayoutBranchId(
-		HttpServletRequest request, long layoutSetBranchId, long plid,
-		long layoutBranchId) {
+			HttpServletRequest request, long layoutSetBranchId, long plid,
+			long layoutBranchId)
+		throws PortalException {
 
 		_staging.setRecentLayoutBranchId(
 			request, layoutSetBranchId, plid, layoutBranchId);
 	}
 
 	public static void setRecentLayoutBranchId(
-		User user, long layoutSetBranchId, long plid, long layoutBranchId) {
+			User user, long layoutSetBranchId, long plid, long layoutBranchId)
+		throws PortalException {
 
 		_staging.setRecentLayoutBranchId(
 			user, layoutSetBranchId, plid, layoutBranchId);
 	}
 
 	public static void setRecentLayoutRevisionId(
-		HttpServletRequest request, long layoutSetBranchId, long plid,
-		long layoutRevisionId) {
+			HttpServletRequest request, long layoutSetBranchId, long plid,
+			long layoutRevisionId)
+		throws PortalException {
 
 		_staging.setRecentLayoutRevisionId(
 			request, layoutSetBranchId, plid, layoutRevisionId);
 	}
 
 	public static void setRecentLayoutRevisionId(
-		User user, long layoutSetBranchId, long plid, long layoutRevisionId) {
+			User user, long layoutSetBranchId, long plid, long layoutRevisionId)
+		throws PortalException {
 
 		_staging.setRecentLayoutRevisionId(
 			user, layoutSetBranchId, plid, layoutRevisionId);
 	}
 
 	public static void setRecentLayoutSetBranchId(
-		HttpServletRequest request, long layoutSetId, long layoutSetBranchId) {
+			HttpServletRequest request, long layoutSetId,
+			long layoutSetBranchId)
+		throws PortalException {
 
 		_staging.setRecentLayoutSetBranchId(
 			request, layoutSetId, layoutSetBranchId);
 	}
 
 	public static void setRecentLayoutSetBranchId(
-		User user, long layoutSetId, long layoutSetBranchId) {
+			User user, long layoutSetId, long layoutSetBranchId)
+		throws PortalException {
 
 		_staging.setRecentLayoutSetBranchId(
 			user, layoutSetId, layoutSetBranchId);

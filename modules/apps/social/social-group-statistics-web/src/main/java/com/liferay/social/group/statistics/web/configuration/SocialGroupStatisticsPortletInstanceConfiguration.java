@@ -16,14 +16,19 @@ package com.liferay.social.group.statistics.web.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
-import com.liferay.configuration.admin.ConfigurationAdmin;
+import com.liferay.portal.metatype.annotations.ExtendedObjectClassDefinition;
 
 /**
  * @author Iván Zaera
  */
-@ConfigurationAdmin(category = "collaboration")
+@ExtendedObjectClassDefinition(
+	category = "collaboration",
+	scope = ExtendedObjectClassDefinition.Scope.PORTLET_INSTANCE
+)
 @Meta.OCD(
-	id = "com.liferay.social.group.statistics.web.configuration.SocialGroupStatisticsPortletInstanceConfiguration"
+	id = "com.liferay.social.group.statistics.web.configuration.SocialGroupStatisticsPortletInstanceConfiguration",
+	localization = "content/Language",
+	name = "%social.group.statistics.portlet.instance.configuration.name"
 )
 public interface SocialGroupStatisticsPortletInstanceConfiguration {
 

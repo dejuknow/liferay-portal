@@ -17,10 +17,10 @@ package com.liferay.wiki.web.portlet.action;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.wiki.constants.WikiPortletKeys;
 import com.liferay.wiki.exception.NoSuchNodeException;
 import com.liferay.wiki.exception.NoSuchPageException;
@@ -42,11 +42,8 @@ import org.osgi.service.component.annotations.Reference;
 @Component(
 	immediate = true,
 	property = {
-		"javax.portlet.name=" + WikiPortletKeys.WIKI,
 		"javax.portlet.name=" + WikiPortletKeys.WIKI_ADMIN,
-		"javax.portlet.name=" + WikiPortletKeys.WIKI_DISPLAY,
-		"mvc.command.name=/wiki/edit_node_attachment",
-		"mvc.command.name=/wiki/view_node_deleted_attachments"
+		"mvc.command.name=/wiki/edit_node_attachment"
 	},
 	service = MVCActionCommand.class
 )
@@ -103,7 +100,7 @@ public class EditNodeAttachmentMVCActionCommand extends BaseMVCActionCommand {
 		_wikiPageService = wikiPageService;
 	}
 
-	private volatile WikiPageLocalService _wikiPageLocalService;
-	private volatile WikiPageService _wikiPageService;
+	private WikiPageLocalService _wikiPageLocalService;
+	private WikiPageService _wikiPageService;
 
 }

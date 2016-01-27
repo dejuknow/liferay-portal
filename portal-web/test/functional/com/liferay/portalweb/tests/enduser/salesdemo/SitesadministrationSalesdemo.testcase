@@ -2,14 +2,7 @@
 	<property name="testray.main.component.name" value="Site Administration" />
 
 	<set-up>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="SignIn#signInPortalInstanceSetUp" />
-			</then>
-		</if>
+		<execute macro="TestCase#setUpPortalInstance" />
 
 		<execute macro="User#firstLoginPG" />
 	</set-up>
@@ -41,8 +34,8 @@
 		<var name="siteNameLists" value="Site1 Name,Site2 Name,Site3 Name" />
 
 		<for list="${siteNameLists}" param="siteNameListsCount" >
-			<execute macro="Page#gotoCP">
-				<var name="portletName" value="Sites" />
+			<execute macro="ProductMenu#gotoControlPanelSites">
+				<var name="portlet" value="Sites" />
 			</execute>
 
 			<execute macro="Site#addCommunityCP">
@@ -50,30 +43,27 @@
 			</execute>
 		</for>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Sites" />
+		<execute macro="ProductMenu#gotoControlPanelSites">
+			<var name="portlet" value="Sites" />
 		</execute>
 
 		<execute macro="Site#addBlankCP">
 			<var name="siteName" value="Staging Site Name" />
 		</execute>
 
-		<execute macro="Page#gotoPagesCP">
-			<var name="portletName" value="Site Pages" />
-			<var name="siteScopeName" value="Staging Site Name" />
-			<var name="siteURL" value="true" />
-		</execute>
-
-		<execute macro="SitePage#addCP">
+		<execute macro="ProductMenu#gotoSitesPages">
 			<var name="page" value="Public Pages" />
-			<var name="sitePageName" value="Site Page Name" />
+			<var name="site" value="Staging Site Name" />
+		</execute>
+
+		<execute macro="Page#add">
+			<var name="page" value="Public Pages" />
+			<var name="pageName" value="Site Page Name" />
 			<var name="siteScopeSelected" value="true" />
 		</execute>
 
-		<execute macro="Page#gotoPublishingTools">
-			<var name="portletName" value="Staging Configuration" />
-			<var name="siteScopeName" value="Staging Site Name" />
-			<var name="siteScopeSelected" value="true" />
+		<execute macro="ProductMenu#gotoSitesPublishingTools">
+			<var name="portlet" value="Staging" />
 		</execute>
 
 		<execute macro="Staging#activateStagingCP">
@@ -90,8 +80,8 @@
 
 		<execute macro="Staging#viewStagingLocalLivePG" />
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Sites" />
+		<execute macro="ProductMenu#gotoControlPanelSites">
+			<var name="portlet" value="Sites" />
 		</execute>
 
 		<execute macro="Site#addCP">
@@ -106,8 +96,10 @@
 			<var name="siteTemplate" value="Zoe Healthcare Theme" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Sites" />
+		<execute macro="Navigator#openURL" />
+
+		<execute macro="ProductMenu#gotoControlPanelSites">
+			<var name="portlet" value="Sites" />
 		</execute>
 
 		<for list="${allSiteNameLists}" param="allSiteNameListsCount" >
@@ -123,23 +115,23 @@
 			<var name="siteURL" value="true" />
 		</execute>
 
-		<execute function="Click#textClickAtClickDockbar" locator1="ControlMenu#MY_SITES" value1="My Sites" />
-
-		<for list="${allSiteNameLists}" param="allSiteNameListsCount" >
-			<execute macro="Dockbar#viewSitesViaMySitesDropDown">
-				<var name="siteName" value="${allSiteNameListsCount}" />
+		<for list="${allSiteNameLists}" param="site" >
+			<execute macro="ProductMenu#viewSite">
+				<var name="site" value="${site}" />
 			</execute>
 		</for>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Site Templates" />
+		<execute macro="ProductMenu#gotoControlPanelSites">
+			<var name="portlet" value="Site Templates" />
 		</execute>
 
 		<execute macro="SiteTemplates#addCP">
 			<var name="siteTemplateName" value="Site Template Name" />
 		</execute>
 
-		<execute function="AssertClick" locator1="SitePages#SITE_PAGES_LINK" value1="Site Pages" />
+		<execute macro="ProductMenu#gotoSiteViaLink">
+			<var name="site" value="Site Template Name" />
+		</execute>
 
 		<execute macro="Portlet#addPG">
 			<var name="portletName" value="Web Content Display" />
@@ -153,10 +145,19 @@
 
 		<execute function="Refresh" />
 
-		<execute macro="Page#addPG">
-			<var name="defaultURL" value="false" />
+		<execute macro="Page#add">
+			<var name="page" value="Pages" />
 			<var name="pageName" value="Video" />
-			<var name="pageType" value="2 Columns (70/30)" />
+			<var name="sitePageType" value="2 Columns (70/30)" />
+			<var name="siteScopeSelected" value="true" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoSiteViaLink">
+			<var name="site" value="Site Template Name" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoSitesPages">
+			<var name="page" value="Public Pages" />
 		</execute>
 
 		<execute macro="Portlet#addPG">
@@ -172,7 +173,7 @@
 		</execute>
 
 		<execute macro="Vimeo#addURL">
-			<var name="vimeoURL" value="http://vimeo.com/45677716" />
+			<var name="vimeoURL" value="http://vimeo.com/73779692" />
 		</execute>
 
 		<execute function="Refresh" />
@@ -188,9 +189,8 @@
 			<var name="enabledCheckbox" value="true" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
-			<var name="defaultURL" value="false" />
-			<var name="pageName" value="home" />
+		<execute macro="ProductMenu#gotoSitesPages">
+			<var name="page" value="Public Pages" />
 		</execute>
 
 		<execute macro="WebContent#addPGViaWCD">

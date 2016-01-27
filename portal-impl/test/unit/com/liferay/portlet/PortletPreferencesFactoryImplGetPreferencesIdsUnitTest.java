@@ -14,15 +14,15 @@
 
 package com.liferay.portlet;
 
+import com.liferay.portal.kernel.security.auth.PrincipalException;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.model.Layout;
 import com.liferay.portal.model.Portlet;
 import com.liferay.portal.model.impl.LayoutImpl;
 import com.liferay.portal.model.impl.PortletImpl;
-import com.liferay.portal.security.auth.PrincipalException;
-import com.liferay.portal.security.permission.ActionKeys;
-import com.liferay.portal.security.permission.PermissionChecker;
-import com.liferay.portal.security.permission.PermissionThreadLocal;
 import com.liferay.portal.service.PortletLocalServiceUtil;
 import com.liferay.portal.service.permission.LayoutPermissionUtil;
 import com.liferay.portal.tools.ToolDependencies;
@@ -42,10 +42,12 @@ import org.powermock.modules.junit4.PowerMockRunner;
  * @author Brian Wing Shun Chan
  * @author Jorge Ferrer
  */
-@PrepareForTest( {
-	LayoutPermissionUtil.class, PermissionThreadLocal.class,
-	PortletLocalServiceUtil.class
-})
+@PrepareForTest(
+	{
+		LayoutPermissionUtil.class, PermissionThreadLocal.class,
+		PortletLocalServiceUtil.class
+	}
+)
 @RunWith(PowerMockRunner.class)
 public class PortletPreferencesFactoryImplGetPreferencesIdsUnitTest {
 

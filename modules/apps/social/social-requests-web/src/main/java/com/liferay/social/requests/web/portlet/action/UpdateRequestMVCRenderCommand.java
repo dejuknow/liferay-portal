@@ -16,14 +16,14 @@ package com.liferay.social.requests.web.portlet.action;
 
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.social.NoSuchRequestException;
+import com.liferay.portlet.social.exception.NoSuchRequestException;
 import com.liferay.portlet.social.service.SocialRequestService;
 import com.liferay.social.requests.web.constants.SocialRequestsPortletKeys;
 
@@ -85,6 +85,6 @@ public class UpdateRequestMVCRenderCommand extends BaseMVCActionCommand {
 		_socialRequestService.updateRequest(requestId, status, themeDisplay);
 	}
 
-	private volatile SocialRequestService _socialRequestService;
+	private SocialRequestService _socialRequestService;
 
 }

@@ -19,8 +19,6 @@
 <%
 String randomId = workflowTaskDisplayContext.getWorkflowTaskRandomId();
 
-String tabs1 = ParamUtil.getString(request, "tabs1");
-
 String closeRedirect = ParamUtil.getString(request, "closeRedirect");
 
 ResultRow row = (ResultRow)request.getAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW);
@@ -28,7 +26,7 @@ ResultRow row = (ResultRow)request.getAttribute(WebKeys.SEARCH_CONTAINER_RESULT_
 WorkflowTask workflowTask = workflowTaskDisplayContext.getWorkflowTask();
 %>
 
-<liferay-ui:icon-menu direction="left-side" icon="<%= StringPool.BLANK %>" markupView="lexicon" message="<%= StringPool.BLANK %>" showExpanded="<%= (row == null) %>">
+<liferay-ui:icon-menu cssClass="lfr-asset-actions" direction="left-side" icon="<%= StringPool.BLANK %>" markupView="lexicon" message="<%= StringPool.BLANK %>" showExpanded="<%= (row == null) %>">
 	<c:if test="<%= !workflowTask.isCompleted() && workflowTaskDisplayContext.isAssignedToUser(workflowTask) %>">
 
 		<%
@@ -40,7 +38,6 @@ WorkflowTask workflowTask = workflowTaskDisplayContext.getWorkflowTask();
 
 			<liferay-portlet:actionURL name="completeWorkflowTask" portletName="<%= PortletKeys.MY_WORKFLOW_TASK %>" var="editURL">
 				<portlet:param name="mvcPath" value="/edit_workflow_task.jsp" />
-				<portlet:param name="tabs1" value="<%= tabs1 %>" />
 				<portlet:param name="redirect" value="<%= currentURL %>" />
 				<portlet:param name="closeRedirect" value="<%= closeRedirect %>" />
 				<portlet:param name="workflowTaskId" value="<%= StringUtil.valueOf(workflowTask.getWorkflowTaskId()) %>" />
@@ -148,7 +145,7 @@ WorkflowTask workflowTask = workflowTaskDisplayContext.getWorkflowTask();
 </div>
 
 <div class="hide" id="<%= randomId %>updateComments">
-	<aui:input cols="55" name="comment" rows="10" type="textarea" />
+	<aui:input cols="55" name="comment" placeholder="comment" rows="1" type="textarea" />
 </div>
 
 <aui:script use="liferay-workflow-tasks">

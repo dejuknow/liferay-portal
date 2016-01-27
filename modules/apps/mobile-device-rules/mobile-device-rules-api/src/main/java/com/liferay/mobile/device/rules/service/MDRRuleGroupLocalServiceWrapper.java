@@ -428,19 +428,6 @@ public class MDRRuleGroupLocalServiceWrapper implements MDRRuleGroupLocalService
 			andOperator, start, end);
 	}
 
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link #searchByKeywords(long,
-	String, LinkedHashMap, boolean, int, int)}
-	*/
-	@Deprecated
-	@Override
-	public java.util.List<com.liferay.mobile.device.rules.model.MDRRuleGroup> searchByKeywords(
-		long groupId, java.lang.String keywords, boolean andOperator,
-		int start, int end) {
-		return _mdrRuleGroupLocalService.searchByKeywords(groupId, keywords,
-			andOperator, start, end);
-	}
-
 	@Override
 	public java.util.List<com.liferay.mobile.device.rules.model.MDRRuleGroup> searchByKeywords(
 		long groupId, java.lang.String keywords,
@@ -450,16 +437,14 @@ public class MDRRuleGroupLocalServiceWrapper implements MDRRuleGroupLocalService
 			params, andOperator, start, end);
 	}
 
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link #searchByKeywordsCount(long,
-	String, LinkedHashMap, boolean)}
-	*/
-	@Deprecated
 	@Override
-	public int searchByKeywordsCount(long groupId, java.lang.String keywords,
-		boolean andOperator) {
-		return _mdrRuleGroupLocalService.searchByKeywordsCount(groupId,
-			keywords, andOperator);
+	public java.util.List<com.liferay.mobile.device.rules.model.MDRRuleGroup> searchByKeywords(
+		long groupId, java.lang.String keywords,
+		java.util.LinkedHashMap<java.lang.String, java.lang.Object> params,
+		boolean andOperator, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.mobile.device.rules.model.MDRRuleGroup> obc) {
+		return _mdrRuleGroupLocalService.searchByKeywords(groupId, keywords,
+			params, andOperator, start, end, obc);
 	}
 
 	@Override
@@ -468,17 +453,6 @@ public class MDRRuleGroupLocalServiceWrapper implements MDRRuleGroupLocalService
 		boolean andOperator) {
 		return _mdrRuleGroupLocalService.searchByKeywordsCount(groupId,
 			keywords, params, andOperator);
-	}
-
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link #searchCount(long, String,
-	LinkedHashMap, boolean)}
-	*/
-	@Deprecated
-	@Override
-	public int searchCount(long groupId, java.lang.String name,
-		boolean andOperator) {
-		return _mdrRuleGroupLocalService.searchCount(groupId, name, andOperator);
 	}
 
 	@Override
@@ -510,23 +484,6 @@ public class MDRRuleGroupLocalServiceWrapper implements MDRRuleGroupLocalService
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _mdrRuleGroupLocalService.updateRuleGroup(ruleGroupId, nameMap,
 			descriptionMap, serviceContext);
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
-	 */
-	@Deprecated
-	public MDRRuleGroupLocalService getWrappedMDRRuleGroupLocalService() {
-		return _mdrRuleGroupLocalService;
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #setWrappedService}
-	 */
-	@Deprecated
-	public void setWrappedMDRRuleGroupLocalService(
-		MDRRuleGroupLocalService mdrRuleGroupLocalService) {
-		_mdrRuleGroupLocalService = mdrRuleGroupLocalService;
 	}
 
 	@Override

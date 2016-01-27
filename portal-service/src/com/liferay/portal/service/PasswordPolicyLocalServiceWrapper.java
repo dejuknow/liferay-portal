@@ -44,34 +44,6 @@ public class PasswordPolicyLocalServiceWrapper
 		return _passwordPolicyLocalService.addPasswordPolicy(passwordPolicy);
 	}
 
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link #addPasswordPolicy(long,
-	boolean, String, String, boolean, boolean, long, boolean,
-	boolean, int, int, int, int, int, int, String, boolean, int,
-	boolean, long, long, int, boolean, int, long, long, long,
-	ServiceContext)}
-	*/
-	@Deprecated
-	@Override
-	public com.liferay.portal.model.PasswordPolicy addPasswordPolicy(
-		long userId, boolean defaultPolicy, java.lang.String name,
-		java.lang.String description, boolean changeable,
-		boolean changeRequired, long minAge, boolean checkSyntax,
-		boolean allowDictionaryWords, int minAlphanumeric, int minLength,
-		int minLowerCase, int minNumbers, int minSymbols, int minUpperCase,
-		boolean history, int historyCount, boolean expireable, long maxAge,
-		long warningTime, int graceLimit, boolean lockout, int maxFailure,
-		long lockoutDuration, long resetFailureCount, long resetTicketMaxAge)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _passwordPolicyLocalService.addPasswordPolicy(userId,
-			defaultPolicy, name, description, changeable, changeRequired,
-			minAge, checkSyntax, allowDictionaryWords, minAlphanumeric,
-			minLength, minLowerCase, minNumbers, minSymbols, minUpperCase,
-			history, historyCount, expireable, maxAge, warningTime, graceLimit,
-			lockout, maxFailure, lockoutDuration, resetFailureCount,
-			resetTicketMaxAge);
-	}
-
 	@Override
 	public com.liferay.portal.model.PasswordPolicy addPasswordPolicy(
 		long userId, boolean defaultPolicy, java.lang.String name,
@@ -327,18 +299,6 @@ public class PasswordPolicyLocalServiceWrapper
 		return _passwordPolicyLocalService.getPasswordPoliciesCount();
 	}
 
-	/**
-	* @deprecated As of 6.1.0
-	*/
-	@Deprecated
-	@Override
-	public com.liferay.portal.model.PasswordPolicy getPasswordPolicy(
-		long companyId, long organizationId, long locationId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _passwordPolicyLocalService.getPasswordPolicy(companyId,
-			organizationId, locationId);
-	}
-
 	@Override
 	public com.liferay.portal.model.PasswordPolicy getPasswordPolicy(
 		long companyId, long[] organizationIds)
@@ -415,33 +375,6 @@ public class PasswordPolicyLocalServiceWrapper
 		return _passwordPolicyLocalService.updatePasswordPolicy(passwordPolicy);
 	}
 
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link #updatePasswordPolicy(long,
-	String, String, boolean, boolean, long, boolean, boolean,
-	int, int, int, int, int, int, String, boolean, int, boolean,
-	long, long, int, boolean, int, long, long, long,
-	ServiceContext)}
-	*/
-	@Deprecated
-	@Override
-	public com.liferay.portal.model.PasswordPolicy updatePasswordPolicy(
-		long passwordPolicyId, java.lang.String name,
-		java.lang.String description, boolean changeable,
-		boolean changeRequired, long minAge, boolean checkSyntax,
-		boolean allowDictionaryWords, int minAlphanumeric, int minLength,
-		int minLowerCase, int minNumbers, int minSymbols, int minUpperCase,
-		boolean history, int historyCount, boolean expireable, long maxAge,
-		long warningTime, int graceLimit, boolean lockout, int maxFailure,
-		long lockoutDuration, long resetFailureCount, long resetTicketMaxAge)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _passwordPolicyLocalService.updatePasswordPolicy(passwordPolicyId,
-			name, description, changeable, changeRequired, minAge, checkSyntax,
-			allowDictionaryWords, minAlphanumeric, minLength, minLowerCase,
-			minNumbers, minSymbols, minUpperCase, history, historyCount,
-			expireable, maxAge, warningTime, graceLimit, lockout, maxFailure,
-			lockoutDuration, resetFailureCount, resetTicketMaxAge);
-	}
-
 	@Override
 	public com.liferay.portal.model.PasswordPolicy updatePasswordPolicy(
 		long passwordPolicyId, java.lang.String name,
@@ -462,23 +395,6 @@ public class PasswordPolicyLocalServiceWrapper
 			expireable, maxAge, warningTime, graceLimit, lockout, maxFailure,
 			lockoutDuration, resetFailureCount, resetTicketMaxAge,
 			serviceContext);
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
-	 */
-	@Deprecated
-	public PasswordPolicyLocalService getWrappedPasswordPolicyLocalService() {
-		return _passwordPolicyLocalService;
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #setWrappedService}
-	 */
-	@Deprecated
-	public void setWrappedPasswordPolicyLocalService(
-		PasswordPolicyLocalService passwordPolicyLocalService) {
-		_passwordPolicyLocalService = passwordPolicyLocalService;
 	}
 
 	@Override

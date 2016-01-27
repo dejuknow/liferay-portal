@@ -14,6 +14,8 @@
 
 package com.liferay.portal.soap.extender.test.util;
 
+import com.liferay.osgi.util.ServiceTrackerFactory;
+
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -31,10 +33,8 @@ public class WaiterUtil {
 			BundleContext bundleContext, String filterString, long timeout)
 		throws Exception {
 
-		ServiceTracker<?, ?> serviceTracker = new ServiceTracker<>(
-			bundleContext, bundleContext.createFilter(filterString), null);
-
-		serviceTracker.open();
+		ServiceTracker<?, ?> serviceTracker = ServiceTrackerFactory.open(
+			bundleContext, filterString);
 
 		try {
 			if (serviceTracker.waitForService(timeout) == null) {
@@ -58,16 +58,16 @@ public class WaiterUtil {
 			new ServiceTracker<Object, Object>(
 				bundleContext, bundleContext.createFilter(filterString), null) {
 
-			@Override
-			public void removedService(
-				ServiceReference<Object> reference, Object service) {
+				@Override
+				public void removedService(
+					ServiceReference<Object> reference, Object service) {
 
-				countDownLatch.countDown();
+					countDownLatch.countDown();
 
-				close();
-			}
+					close();
+				}
 
-		};
+			};
 
 		serviceTracker.open();
 
@@ -81,6 +81,7 @@ public class WaiterUtil {
 							" to disappear after " + timeout + "ms");
 				}
 			}
+
 		};
 	}
 

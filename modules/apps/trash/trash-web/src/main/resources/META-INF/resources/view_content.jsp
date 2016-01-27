@@ -267,7 +267,6 @@ renderResponse.setTitle(trashRenderer.getTitle(locale));
 									name="name"
 								>
 									<liferay-ui:icon
-										iconCssClass="<%= curTrashRenderer.getIconCssClass() %>"
 										label="<%= true %>"
 										message="<%= HtmlUtil.escape(curTrashRenderer.getTitle(locale)) %>"
 										method="get"
@@ -287,7 +286,7 @@ renderResponse.setTitle(trashRenderer.getTitle(locale));
 
 								<liferay-ui:search-container-column-jsp
 									align="right"
-									cssClass="entry-action"
+									cssClass="list-group-item-field"
 									path="/view_content_action.jsp"
 								/>
 							</liferay-ui:search-container-row>
@@ -326,7 +325,6 @@ renderResponse.setTitle(trashRenderer.getTitle(locale));
 									name="name"
 								>
 									<liferay-ui:icon
-										iconCssClass="<%= curTrashRenderer.getIconCssClass() %>"
 										label="<%= true %>"
 										message="<%= HtmlUtil.escape(curTrashRenderer.getTitle(locale)) %>"
 										method="get"
@@ -336,7 +334,7 @@ renderResponse.setTitle(trashRenderer.getTitle(locale));
 
 								<liferay-ui:search-container-column-jsp
 									align="right"
-									cssClass="entry-action"
+									cssClass="list-group-item-field"
 									path="/view_content_action.jsp"
 								/>
 							</liferay-ui:search-container-row>

@@ -16,14 +16,16 @@ package com.liferay.portal.search.solr.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
-import com.liferay.configuration.admin.ConfigurationAdmin;
+import com.liferay.portal.metatype.annotations.ExtendedObjectClassDefinition;
 
 /**
  * @author Michael C. Han
  */
-@ConfigurationAdmin(category = "platform")
+@ExtendedObjectClassDefinition(category = "platform")
 @Meta.OCD(
-	id = "com.liferay.portal.search.solr.configuration.SolrHttpClientFactoryConfiguration"
+	id = "com.liferay.portal.search.solr.configuration.SolrHttpClientFactoryConfiguration",
+	localization = "content/Language",
+	name = "%solr.http.client.factory.configuration.name"
 )
 public interface SolrHttpClientFactoryConfiguration {
 

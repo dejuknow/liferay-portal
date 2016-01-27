@@ -237,11 +237,11 @@ public class StringUtil {
 	}
 
 	/**
-	 * Returns <code>true</code> if the string contains the text as a comma
-	 * delimited list entry.
+	 * Returns <code>true</code> if the string contains the text as one or more
+	 * consecutive comma delimited list entries.
 	 *
 	 * <p>
-	 * Example:
+	 * Examples:
 	 * </p>
 	 *
 	 * <p>
@@ -249,22 +249,24 @@ public class StringUtil {
 	 * <code>
 	 * contains("one,two,three", "two") returns true
 	 * contains("one,two,three", "thr") returns false
+	 * contains("one,two,three", "one,two") returns true
 	 * </code>
 	 * </pre>
 	 * </p>
 	 *
 	 * @param  s the string in which to search
 	 * @param  text the text to search for in the string
-	 * @return <code>true</code> if the string contains the text as a comma
-	 *         delimited list entry; <code>false</code> otherwise
+	 * @return <code>true</code> if the string contains the text as one or more
+	 *         consecutive comma delimited list entries; <code>false</code>
+	 *         otherwise
 	 */
 	public static boolean contains(String s, String text) {
 		return contains(s, text, StringPool.COMMA);
 	}
 
 	/**
-	 * Returns <code>true</code> if the string contains the text as a delimited
-	 * list entry.
+	 * Returns <code>true</code> if the string contains the text as one or more
+	 * consecutive delimited list entries.
 	 *
 	 * <p>
 	 * Examples:
@@ -275,6 +277,7 @@ public class StringUtil {
 	 * <code>
 	 * contains("three...two...one", "two", "...") returns true
 	 * contains("three...two...one", "thr", "...") returns false
+	 * contains("three...two...one", "two...one", "...") returns true
 	 * </code>
 	 * </pre>
 	 * </p>
@@ -282,8 +285,8 @@ public class StringUtil {
 	 * @param  s the string in which to search
 	 * @param  text the text to search for in the string
 	 * @param  delimiter the delimiter
-	 * @return <code>true</code> if the string contains the text as a delimited
-	 *         list entry; <code>false</code> otherwise
+	 * @return <code>true</code> if the string contains the text as one or more
+	 *         consecutive delimited list entries; <code>false</code> otherwise
 	 */
 	public static boolean contains(String s, String text, String delimiter) {
 		if ((s == null) || (text == null) || (delimiter == null)) {
@@ -309,6 +312,68 @@ public class StringUtil {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Returns <code>true</code> if the string contains the text as one or more
+	 * consecutive comma delimited list entries, ignoring case.
+	 *
+	 * <p>
+	 * Examples:
+	 * </p>
+	 *
+	 * <p>
+	 * <pre>
+	 * <code>
+	 * containsIgnoreCase("one,two,three", "Two") returns true
+	 * containsIgnoreCase("one,two,three", "thr") returns false
+	 * containsIgnoreCase("one,two,three", "one,two") returns true
+	 * </code>
+	 * </pre>
+	 * </p>
+	 *
+	 * @param  s the string in which to search
+	 * @param  text the text to search for in the string
+	 * @return <code>true</code> if the string contains the text as one or more
+	 *         consecutive comma delimited list entries; <code>false</code>
+	 *         otherwise
+	 */
+	public static boolean containsIgnoreCase(String s, String text) {
+		return containsIgnoreCase(s, text, StringPool.COMMA);
+	}
+
+	/**
+	 * Returns <code>true</code> if the string contains the text as one or more
+	 * consecutive delimited list entries, ignoring case.
+	 *
+	 * <p>
+	 * Examples:
+	 * </p>
+	 *
+	 * <p>
+	 * <pre>
+	 * <code>
+	 * containsIgnoreCase("three...two...one", "Two", "...") returns true
+	 * containsIgnoreCase("three...two...one", "thr", "...") returns false
+	 * containsIgnoreCase("three...two...one", "two...one", "...") returns true
+	 * </code>
+	 * </pre>
+	 * </p>
+	 *
+	 * @param  s the string in which to search
+	 * @param  text the text to search for in the string
+	 * @param  delimiter the delimiter
+	 * @return <code>true</code> if the string contains the text as one or more
+	 *         consecutive delimited list entries; <code>false</code> otherwise
+	 */
+	public static boolean containsIgnoreCase(
+		String s, String text, String delimiter) {
+
+		if ((s == null) || (text == null) || (delimiter == null)) {
+			return false;
+		}
+
+		return contains(toLowerCase(s), toLowerCase(text), delimiter);
 	}
 
 	/**
@@ -441,6 +506,8 @@ public class StringUtil {
 				continue;
 			}
 
+			// Fast fallback for non-acsii code.
+
 			if ((c1 > 127) || (c2 > 127)) {
 
 				// Georgian alphabet needs to check both upper and lower case
@@ -450,6 +517,14 @@ public class StringUtil {
 
 					continue;
 				}
+
+				return false;
+			}
+
+			// Fast fallback for non-letter ascii code
+
+			if ((c1 < CharPool.UPPER_CASE_A) || (c1 > CharPool.LOWER_CASE_Z) ||
+				(c2 < CharPool.UPPER_CASE_A) || (c2 > CharPool.LOWER_CASE_Z)) {
 
 				return false;
 			}
@@ -3153,7 +3228,7 @@ public class StringUtil {
 	 * Splits string <code>s</code> around comma characters.
 	 *
 	 * <p>
-	 * Example:
+	 * Examples:
 	 * </p>
 	 *
 	 * <p>
@@ -3893,7 +3968,7 @@ public class StringUtil {
 	 * the opening parenthesis, the parenthetical suffix is not stripped.
 	 *
 	 * <p>
-	 * Example:
+	 * Examples:
 	 * </p>
 	 *
 	 * <p>
@@ -3935,7 +4010,7 @@ public class StringUtil {
 	 * characters comprising the string <code>s</code>.
 	 *
 	 * <p>
-	 * Example:
+	 * Examples:
 	 * </p>
 	 *
 	 * <p>
@@ -3968,7 +4043,7 @@ public class StringUtil {
 	 * integer.
 	 *
 	 * <p>
-	 * Example:
+	 * Examples:
 	 * </p>
 	 *
 	 * <p>
@@ -4705,6 +4780,13 @@ public class StringUtil {
 		int comparePoint = 0;
 
 		while (sIndex < s.length()) {
+			if (wildcardIndex == wildcard.length()) {
+
+				// Wildcard exhausted before s
+
+				return false;
+			}
+
 			char c = wildcard.charAt(wildcardIndex);
 
 			if (c == multipleWildcardCharacter) {

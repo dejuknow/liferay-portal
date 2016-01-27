@@ -16,8 +16,8 @@ package com.liferay.calendar.service.permission;
 
 import com.liferay.calendar.model.CalendarBooking;
 import com.liferay.calendar.service.CalendarBookingLocalService;
+import com.liferay.portal.kernel.security.permission.PermissionUpdateHandler;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.security.permission.PermissionUpdateHandler;
 
 import java.util.Date;
 
@@ -56,6 +56,6 @@ public class CalendarBookingPermissionUpdateHandler
 		_calendarBookingLocalService = calendarBookingLocalService;
 	}
 
-	private volatile CalendarBookingLocalService _calendarBookingLocalService;
+	private CalendarBookingLocalService _calendarBookingLocalService;
 
 }

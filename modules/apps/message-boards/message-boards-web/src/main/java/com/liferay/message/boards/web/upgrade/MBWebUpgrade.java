@@ -14,7 +14,6 @@
 
 package com.liferay.message.boards.web.upgrade;
 
-import com.liferay.message.boards.web.upgrade.v1_0_0.UpgradePortletId;
 import com.liferay.message.boards.web.upgrade.v1_0_0.UpgradePortletSettings;
 import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
 import com.liferay.portal.kernel.settings.SettingsFactory;
@@ -38,7 +37,6 @@ public class MBWebUpgrade implements UpgradeStepRegistrator {
 
 		registry.register(
 			"com.liferay.message.boards.web", "0.0.1", "1.0.0",
-			new UpgradePortletId(),
 			new UpgradePortletSettings(_settingsFactory));
 	}
 
@@ -52,6 +50,6 @@ public class MBWebUpgrade implements UpgradeStepRegistrator {
 		_settingsFactory = settingsFactory;
 	}
 
-	private volatile SettingsFactory _settingsFactory;
+	private SettingsFactory _settingsFactory;
 
 }

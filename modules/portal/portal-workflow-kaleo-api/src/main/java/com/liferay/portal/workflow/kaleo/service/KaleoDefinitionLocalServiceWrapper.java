@@ -243,6 +243,15 @@ public class KaleoDefinitionLocalServiceWrapper
 	}
 
 	@Override
+	public com.liferay.portal.workflow.kaleo.model.KaleoDefinition fetchLatestKaleoDefinition(
+		java.lang.String name,
+		com.liferay.portal.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _kaleoDefinitionLocalService.fetchLatestKaleoDefinition(name,
+			serviceContext);
+	}
+
+	@Override
 	public com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
 		return _kaleoDefinitionLocalService.getActionableDynamicQuery();
 	}
@@ -420,23 +429,6 @@ public class KaleoDefinitionLocalServiceWrapper
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _kaleoDefinitionLocalService.updateTitle(name, version, title,
 			serviceContext);
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
-	 */
-	@Deprecated
-	public KaleoDefinitionLocalService getWrappedKaleoDefinitionLocalService() {
-		return _kaleoDefinitionLocalService;
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #setWrappedService}
-	 */
-	@Deprecated
-	public void setWrappedKaleoDefinitionLocalService(
-		KaleoDefinitionLocalService kaleoDefinitionLocalService) {
-		_kaleoDefinitionLocalService = kaleoDefinitionLocalService;
 	}
 
 	@Override

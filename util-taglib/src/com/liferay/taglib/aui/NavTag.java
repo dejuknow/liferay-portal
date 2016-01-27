@@ -28,6 +28,9 @@ import com.liferay.portal.model.User;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.taglib.aui.base.BaseNavTag;
+import com.liferay.taglib.util.TagResourceBundleUtil;
+
+import java.util.ResourceBundle;
 
 import javax.portlet.PortletResponse;
 
@@ -52,6 +55,8 @@ public class NavTag extends BaseNavTag implements BodyTag {
 			(!_calledCollapsibleSetter || getCollapsible())) {
 
 			setCollapsible(true);
+
+			navBarTag.setDataTarget(_getNamespacedId());
 
 			ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
 				WebKeys.THEME_DISPLAY);
@@ -91,13 +96,20 @@ public class NavTag extends BaseNavTag implements BodyTag {
 			}
 			else if (icon.equals("user") && themeDisplay.isSignedIn()) {
 				try {
-					User user = themeDisplay.getUser();
-
 					sb.append("<img alt=\"");
-					sb.append(LanguageUtil.get(request, "my-account"));
+
+					ResourceBundle resourceBundle =
+						TagResourceBundleUtil.getResourceBundle(pageContext);
+
+					sb.append(LanguageUtil.get(resourceBundle, "my-account"));
+
 					sb.append("\" class=\"user-avatar-image\" ");
 					sb.append("src=\"");
+
+					User user = themeDisplay.getUser();
+
 					sb.append(user.getPortraitURL(themeDisplay));
+
 					sb.append("\">");
 				}
 				catch (Exception e) {
@@ -129,6 +141,28 @@ public class NavTag extends BaseNavTag implements BodyTag {
 
 		_calledCollapsibleSetter = false;
 		_namespacedId = null;
+	}
+
+	protected String getMarkupView() {
+		String markupView = StringPool.BLANK;
+
+		NavBarTag navBarTag = (NavBarTag)findAncestorWithClass(
+			this, NavBarTag.class);
+
+		if (navBarTag != null) {
+			markupView = navBarTag.getMarkupView();
+		}
+
+		return markupView;
+	}
+
+	@Override
+	protected String getPage() {
+		if (Validator.isNotNull(getMarkupView())) {
+			return "/html/taglib/aui/nav/" + getMarkupView() + "/page.jsp";
+		}
+
+		return "/html/taglib/aui/nav/lexicon/page.jsp";
 	}
 
 	@Override

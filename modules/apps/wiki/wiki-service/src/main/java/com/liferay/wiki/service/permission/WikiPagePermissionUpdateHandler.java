@@ -14,9 +14,9 @@
 
 package com.liferay.wiki.service.permission;
 
+import com.liferay.portal.kernel.security.permission.PermissionUpdateHandler;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.security.permission.PermissionUpdateHandler;
 import com.liferay.wiki.model.WikiPage;
 import com.liferay.wiki.service.WikiPageLocalService;
 
@@ -56,6 +56,6 @@ public class WikiPagePermissionUpdateHandler
 		_wikiPageLocalService = wikiPageLocalService;
 	}
 
-	private volatile WikiPageLocalService _wikiPageLocalService;
+	private WikiPageLocalService _wikiPageLocalService;
 
 }

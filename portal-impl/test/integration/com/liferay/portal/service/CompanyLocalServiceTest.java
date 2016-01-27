@@ -14,15 +14,16 @@
 
 package com.liferay.portal.service;
 
-import com.liferay.portal.AccountNameException;
-import com.liferay.portal.CompanyMxException;
-import com.liferay.portal.CompanyVirtualHostException;
-import com.liferay.portal.NoSuchAccountException;
-import com.liferay.portal.NoSuchPasswordPolicyException;
-import com.liferay.portal.NoSuchPreferencesException;
-import com.liferay.portal.NoSuchVirtualHostException;
-import com.liferay.portal.RequiredCompanyException;
+import com.liferay.portal.exception.AccountNameException;
+import com.liferay.portal.exception.CompanyMxException;
+import com.liferay.portal.exception.CompanyVirtualHostException;
+import com.liferay.portal.exception.NoSuchAccountException;
+import com.liferay.portal.exception.NoSuchPasswordPolicyException;
+import com.liferay.portal.exception.NoSuchPreferencesException;
+import com.liferay.portal.exception.NoSuchVirtualHostException;
+import com.liferay.portal.exception.RequiredCompanyException;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.test.randomizerbumpers.NumericStringRandomizerBumper;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.Sync;
@@ -32,8 +33,6 @@ import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.PrefsPropsUtil;
-import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.ReflectionUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.Account;
@@ -44,12 +43,10 @@ import com.liferay.portal.model.LayoutSetPrototype;
 import com.liferay.portal.model.OrganizationConstants;
 import com.liferay.portal.model.Role;
 import com.liferay.portal.model.User;
-import com.liferay.portal.security.auth.CompanyThreadLocal;
 import com.liferay.portal.service.persistence.PasswordPolicyUtil;
 import com.liferay.portal.service.persistence.PortalPreferencesUtil;
 import com.liferay.portal.service.persistence.PortletUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
-import com.liferay.portal.test.rule.MainServletTestRule;
 import com.liferay.portal.util.PortalInstances;
 import com.liferay.portal.util.PortletKeys;
 import com.liferay.portal.util.PropsValues;
@@ -58,7 +55,7 @@ import com.liferay.portlet.documentlibrary.model.DLFileEntryTypeConstants;
 import com.liferay.portlet.documentlibrary.service.DLAppLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryTypeLocalServiceUtil;
 import com.liferay.portlet.exportimport.service.StagingLocalServiceUtil;
-import com.liferay.portlet.sites.util.SitesUtil;
+import com.liferay.sites.kernel.util.SitesUtil;
 
 import java.io.File;
 
@@ -68,8 +65,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-import javax.portlet.PortletPreferences;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -92,7 +87,7 @@ public class CompanyLocalServiceTest {
 	@Rule
 	public static final AggregateTestRule aggregateTestRule =
 		new AggregateTestRule(
-			new LiferayIntegrationTestRule(), MainServletTestRule.INSTANCE,
+			new LiferayIntegrationTestRule(),
 			SynchronousDestinationTestRule.INSTANCE,
 			TransactionalTestRule.INSTANCE);
 
@@ -415,14 +410,6 @@ public class CompanyLocalServiceTest {
 		throws Exception {
 
 		Company company = addCompany();
-
-		PortletPreferences portletPreferences = PrefsPropsUtil.getPreferences(
-			company.getCompanyId(), true);
-
-		portletPreferences.setValue(
-			PropsKeys.LDAP_PASSWORD_POLICY_ENABLED, "true");
-
-		portletPreferences.store();
 
 		CompanyLocalServiceUtil.deleteCompany(company);
 	}

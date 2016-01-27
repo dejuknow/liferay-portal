@@ -16,15 +16,20 @@ package com.liferay.journal.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
-import com.liferay.configuration.admin.ConfigurationAdmin;
 import com.liferay.portal.kernel.settings.LocalizedValuesMap;
+import com.liferay.portal.metatype.annotations.ExtendedObjectClassDefinition;
 
 /**
  * @author Juergen Kappler
  */
-@ConfigurationAdmin(category = "web-experience-management")
+@ExtendedObjectClassDefinition(
+	category = "web-experience-management",
+	scope = ExtendedObjectClassDefinition.Scope.GROUP
+)
 @Meta.OCD(
-	id = "com.liferay.journal.configuration.JournalGroupServiceConfiguration"
+	id = "com.liferay.journal.configuration.JournalGroupServiceConfiguration",
+	localization = "content/Language",
+	name = "%journal.group.service.configuration.name"
 )
 public interface JournalGroupServiceConfiguration {
 

@@ -249,26 +249,27 @@ public class BatchablePipeTest {
 			new IntegerIncreasableEntry("test", 3);
 
 		ReflectionTestUtil.setFieldValue(
-			batchablePipe, "concurrentMap", new ConcurrentHashMap
+			batchablePipe, "concurrentMap",
+			new ConcurrentHashMap
 				<String, IncreasableEntryWrapper<String, Integer>>() {
 
-					@Override
-					public boolean replace(
-						String key,
-						IncreasableEntryWrapper<String, Integer> oldValue,
-						IncreasableEntryWrapper<String, Integer> newValue) {
+				@Override
+				public boolean replace(
+					String key,
+					IncreasableEntryWrapper<String, Integer> oldValue,
+					IncreasableEntryWrapper<String, Integer> newValue) {
 
-						if (oldValue.increasableEntry == increasbleEntry1) {
-							put(
-								key,
-								new IncreasableEntryWrapper<String, Integer>(
-									increasbleEntry2));
-						}
-
-						return super.replace(key, oldValue, newValue);
+					if (oldValue.increasableEntry == increasbleEntry1) {
+						put(
+							key,
+							new IncreasableEntryWrapper<String, Integer>(
+								increasbleEntry2));
 					}
 
-				});
+					return super.replace(key, oldValue, newValue);
+				}
+
+			});
 
 		Assert.assertTrue(batchablePipe.put(increasbleEntry1));
 		Assert.assertFalse(batchablePipe.put(increasbleEntry3));

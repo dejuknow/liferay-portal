@@ -18,18 +18,20 @@ import com.liferay.control.menu.BaseControlMenuEntry;
 import com.liferay.control.menu.ControlMenuEntry;
 import com.liferay.control.menu.constants.ControlMenuCategoryKeys;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Layout;
 import com.liferay.portal.model.LayoutTypePortlet;
-import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.service.permission.LayoutPermissionUtil;
 import com.liferay.portal.service.permission.PortletPermissionUtil;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.SessionClicks;
 
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -42,12 +44,21 @@ import org.osgi.service.component.annotations.Component;
 	immediate = true,
 	property = {
 		"control.menu.category.key=" + ControlMenuCategoryKeys.TOOLS,
-		"service.ranking:Integer=500"
+		"service.ranking:Integer=200"
 	},
 	service = ControlMenuEntry.class
 )
 public class ToggleControlsControlMenuEntry
 	extends BaseControlMenuEntry implements ControlMenuEntry {
+
+	@Override
+	public Map<String, Object> getData(HttpServletRequest request) {
+		Map<String, Object> data = super.getData(request);
+
+		data.put("qa-id", "showControls");
+
+		return data;
+	}
 
 	@Override
 	public String getIconCssClass(HttpServletRequest request) {
@@ -59,18 +70,18 @@ public class ToggleControlsControlMenuEntry
 				"visible"));
 
 		if (toggleControls.equals("visible")) {
-			stateCss = "icon-eye-open";
+			stateCss = "view";
 		}
 		else {
-			stateCss = "icon-eye-close";
+			stateCss = "hidden";
 		}
 
-		return "controls-state-icon " + stateCss;
+		return stateCss;
 	}
 
 	@Override
 	public String getLabel(Locale locale) {
-		return "edit-controls";
+		return LanguageUtil.get(locale, "edit-controls");
 	}
 
 	@Override
@@ -84,9 +95,7 @@ public class ToggleControlsControlMenuEntry
 	}
 
 	@Override
-	public boolean hasAccessPermission(HttpServletRequest request)
-		throws PortalException {
-
+	public boolean isShow(HttpServletRequest request) throws PortalException {
 		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
@@ -109,7 +118,7 @@ public class ToggleControlsControlMenuEntry
 			return false;
 		}
 
-		return super.hasAccessPermission(request);
+		return super.isShow(request);
 	}
 
 	protected boolean hasCustomizePermission(ThemeDisplay themeDisplay)

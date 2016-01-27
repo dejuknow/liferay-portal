@@ -16,6 +16,7 @@ package com.liferay.dynamic.data.lists.model;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.annotation.ImplementationClassName;
 import com.liferay.portal.kernel.util.Accessor;
 import com.liferay.portal.model.PersistedModel;
 
@@ -28,6 +29,7 @@ import com.liferay.portal.model.PersistedModel;
  * @see com.liferay.dynamic.data.lists.model.impl.DDLRecordSetModelImpl
  * @generated
  */
+@ImplementationClassName("com.liferay.dynamic.data.lists.model.impl.DDLRecordSetImpl")
 @ProviderType
 public interface DDLRecordSet extends DDLRecordSetModel, PersistedModel {
 	/*
@@ -61,8 +63,7 @@ public interface DDLRecordSet extends DDLRecordSetModel, PersistedModel {
 
 	public java.util.List<com.liferay.dynamic.data.lists.model.DDLRecord> getRecords();
 
-	public com.liferay.portal.kernel.util.UnicodeProperties getSettingsProperties();
+	public com.liferay.dynamic.data.mapping.storage.DDMFormValues getSettingsDDMFormValues();
 
-	public java.lang.String getSettingsProperty(java.lang.String key,
-		java.lang.String defaultValue);
+	public com.liferay.dynamic.data.lists.model.DDLRecordSetSettings getSettingsModel();
 }

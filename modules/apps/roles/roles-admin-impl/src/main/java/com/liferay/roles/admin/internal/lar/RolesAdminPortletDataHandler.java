@@ -57,6 +57,13 @@ public class RolesAdminPortletDataHandler extends BasePortletDataHandler {
 
 	public static final String NAMESPACE = "roles_admin";
 
+	public static final String SCHEMA_VERSION = "1.0.0";
+
+	@Override
+	public String getSchemaVersion() {
+		return SCHEMA_VERSION;
+	}
+
 	@Activate
 	protected void activate() {
 		setDataLevel(DataLevel.PORTAL);
@@ -224,7 +231,7 @@ public class RolesAdminPortletDataHandler extends BasePortletDataHandler {
 		_userLocalService = userLocalService;
 	}
 
-	private volatile RoleLocalService _roleLocalService;
-	private volatile UserLocalService _userLocalService;
+	private RoleLocalService _roleLocalService;
+	private UserLocalService _userLocalService;
 
 }

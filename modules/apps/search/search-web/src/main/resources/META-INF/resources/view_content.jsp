@@ -47,9 +47,10 @@ AssetRenderer<?> assetRenderer = assetEntry.getAssetRenderer();
 
 			<liferay-ui:icon
 				data="<%= data %>"
-				iconCssClass="icon-edit-sign"
+				icon="pencil"
 				label="<%= false %>"
-				message='<%= HtmlUtil.render(LanguageUtil.format(request, "edit-x-x", new Object[] {"hide-accessible", HtmlUtil.escape(assetRenderer.getTitle(locale))}, false)) %>'
+				markupView="lexicon"
+				message='<%= LanguageUtil.format(request, "edit-x-x", new Object[] {"hide-accessible", HtmlUtil.escape(assetRenderer.getTitle(locale))}, false) %>'
 				method="get"
 				url="<%= editPortletURL.toString() %>"
 				useDialog="<%= true %>"

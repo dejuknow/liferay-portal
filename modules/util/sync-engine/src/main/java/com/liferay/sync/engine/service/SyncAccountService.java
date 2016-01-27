@@ -39,6 +39,7 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
@@ -77,21 +78,11 @@ public class SyncAccountService {
 
 	public static SyncAccount addSyncAccount(
 			String filePathName, String login, int maxConnections,
-			String password, int pollInterval, SyncSite[] syncSites,
-			SyncUser syncUser, boolean trustSelfSigned, String url)
-		throws Exception {
-
-		return addSyncAccount(
-			filePathName, login, maxConnections, "", "", false, "", "",
-			password, pollInterval, syncSites, syncUser, trustSelfSigned, url);
-	}
-
-	public static SyncAccount addSyncAccount(
-			String filePathName, String login, int maxConnections,
 			String oAuthConsumerKey, String oAuthConsumerSecret,
 			boolean oAuthEnabled, String oAuthToken, String oAuthTokenSecret,
-			String password, int pollInterval, SyncSite[] syncSites,
-			SyncUser syncUser, boolean trustSelfSigned, String url)
+			String password, int pollInterval,
+			Map<SyncSite, List<SyncFile>> syncSites, SyncUser syncUser,
+			boolean trustSelfSigned, String url)
 		throws Exception {
 
 		// Sync account
@@ -124,46 +115,66 @@ public class SyncAccountService {
 		}
 
 		SyncFileService.addSyncFile(
-			null, null, null, filePathName, null,
-			String.valueOf(filePath.getFileName()), 0, 0, SyncFile.STATE_SYNCED,
-			syncAccount.getSyncAccountId(), SyncFile.TYPE_SYSTEM, false);
+			null, null, false, null, filePathName, null,
+			String.valueOf(filePath.getFileName()), 0, 0, 0,
+			SyncFile.STATE_SYNCED, syncAccount.getSyncAccountId(),
+			SyncFile.TYPE_SYSTEM);
 
 		// Sync sites
 
-		if (syncSites != null) {
-			for (SyncSite syncSite : syncSites) {
+		for (Map.Entry<SyncSite, List<SyncFile>> entry : syncSites.entrySet()) {
 
-				// Sync site
+			// Sync site
 
-				String syncSiteName = syncSite.getName();
+			SyncSite syncSite = entry.getKey();
 
-				if (!FileUtil.isValidFileName(syncSiteName)) {
-					syncSiteName = String.valueOf(syncSite.getGroupId());
-				}
+			String syncSiteName = syncSite.getName();
 
-				syncSite.setFilePathName(
-					FileUtil.getFilePathName(
-						syncAccount.getFilePathName(), syncSiteName));
+			if (!FileUtil.isValidFileName(syncSiteName)) {
+				syncSiteName = String.valueOf(syncSite.getGroupId());
+			}
 
-				syncSite.setRemoteSyncTime(-1);
-				syncSite.setSyncAccountId(syncAccount.getSyncAccountId());
+			syncSite.setFilePathName(
+				FileUtil.getFilePathName(
+					syncAccount.getFilePathName(), syncSiteName));
 
-				SyncSiteService.update(syncSite);
+			syncSite.setRemoteSyncTime(-1);
+			syncSite.setSyncAccountId(syncAccount.getSyncAccountId());
 
-				// Sync file
+			SyncSiteService.update(syncSite);
 
-				SyncFileService.addSyncFile(
-					null, null, null, syncSite.getFilePathName(), null,
-					syncSite.getName(), 0, syncSite.getGroupId(),
-					SyncFile.STATE_SYNCED, syncSite.getSyncAccountId(),
-					SyncFile.TYPE_SYSTEM, false);
+			// Sync file
 
-				if (syncSite.isActive() &&
-					!Files.exists(Paths.get(syncSite.getFilePathName()))) {
+			SyncFileService.addSyncFile(
+				null, null, false, null, syncSite.getFilePathName(), null,
+				syncSite.getName(), 0, syncSite.getGroupId(), 0,
+				SyncFile.STATE_SYNCED, syncSite.getSyncAccountId(),
+				SyncFile.TYPE_SYSTEM);
 
-					Files.createDirectories(
-						Paths.get(syncSite.getFilePathName()));
-				}
+			if (syncSite.isActive() &&
+				!Files.exists(Paths.get(syncSite.getFilePathName()))) {
+
+				Files.createDirectories(Paths.get(syncSite.getFilePathName()));
+			}
+
+			// Sync files
+
+			for (SyncFile childSyncFile : entry.getValue()) {
+				SyncFile parentSyncFile = SyncFileService.fetchSyncFile(
+					childSyncFile.getRepositoryId(),
+					syncSite.getSyncAccountId(),
+					childSyncFile.getParentFolderId());
+
+				String childFilePathName = FileUtil.getFilePathName(
+					parentSyncFile.getFilePathName(),
+					FileUtil.getSanitizedFileName(
+						childSyncFile.getName(), null));
+
+				childSyncFile.setFilePathName(childFilePathName);
+				childSyncFile.setModifiedTime(0);
+				childSyncFile.setSyncAccountId(syncSite.getSyncAccountId());
+
+				SyncFileService.update(childSyncFile);
 			}
 		}
 
@@ -405,8 +416,10 @@ public class SyncAccountService {
 			}
 			catch (Exception e1) {
 				try {
-					FileUtils.moveDirectory(
+					FileUtils.copyDirectory(
 						sourceFilePath.toFile(), targetFilePath.toFile());
+
+					FileUtil.deleteFile(sourceFilePath);
 
 					resetFileKeys = true;
 				}

@@ -15,7 +15,7 @@
 </tr>
 <tr>
 	<td>ADD</td>
-	<td>//a[contains(.,'Add')] | //button[contains(.,'Add')]</td>
+	<td>//a[contains(text(),'Add')] | //button[contains(@type,'submit') and contains(.,'Add')] | //button[contains(@type,'button') and contains(.,'Add')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -109,23 +109,23 @@
 	<td></td>
 </tr>
 <tr>
+	<td>ADD_USER</td>
+	<td>//button[contains(.,'Add Users')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>ADD_WIKI</td>
 	<td>//a[contains(@id,'addNodeButton') and contains(.,'Add Wiki')]</td>
 	<td></td>
 </tr>
 <tr>
-	<td>BASIC_PREVIEW</td>
-	<td>//button[contains(.,'Basic Preview')]</td>
-	<td></td>
-</tr>
-<tr>
 	<td>BACK</td>
-	<td>//a[@title='Back']</td>
+	<td>//a[@title='Back'] | //button[contains(.,'Back')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>BROWSE</td>
-	<td>//input[@id='_195_fileName']</td>
+	<td>//input[contains(@id,'fileName')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -195,7 +195,7 @@
 </tr>
 <tr>
 	<td>CLOSE_PANEL</td>
-	<td>//button[contains(@id,'closePanelAdd')]</td>
+	<td>//a[contains(@id,'closePanelAdd')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -235,12 +235,12 @@
 </tr>
 <tr>
 	<td>DEACTIVATE</td>
-	<td>//button[contains(.,'Deactivate')]</td>
+	<td>//*[@data-qa-id='deactivateButton'] | //button[contains(.,'Deactivate')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>DELETE</td>
-	<td>//button[contains(.,'Delete')]</td>
+	<td>//*[@data-qa-id='deleteButton'] | //button[contains(.,'Delete')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -290,7 +290,7 @@
 </tr>
 <tr>
 	<td>EDITOR_SWITCH</td>
-	<td>//button[contains(@id,'EditorSwitch')]</td>
+	<td>//button[contains(@id,'EditorSwitch')]/span/*[name()='svg'][contains(@class,'lexicon-icon-code')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -379,11 +379,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>NEW_TEMPLATE</td>
-	<td>//a[@role='menuitem' and contains(.,'New')]</td>
-	<td></td>
-</tr>
-<tr>
 	<td>NEXT</td>
 	<td>//button[contains(.,'Next')]</td>
 	<td></td>
@@ -415,7 +410,7 @@
 </tr>
 <tr>
 	<td>PLUS</td>
-	<td>//a[contains(@class,'btn') and span[contains(@class,'icon-plus')]] | //button[span[contains(@class,'icon-plus')]]</td>
+	<td>//*[@data-qa-id='addButton'] | //a[contains(@class,'btn') and span[contains(@class,'icon-plus')]] | //button[span[contains(@class,'icon-plus')]]</td>
 	<td></td>
 </tr>
 <tr>
@@ -520,7 +515,7 @@
 </tr>
 <tr>
 	<td>SEARCH</td>
-	<td>//button[contains(.,'Search')]</td>
+	<td>//*[@data-qa-id='searchButton'] | //button[contains(.,'Search')]</td>
 	<td></td>
 </tr>
 <tr>

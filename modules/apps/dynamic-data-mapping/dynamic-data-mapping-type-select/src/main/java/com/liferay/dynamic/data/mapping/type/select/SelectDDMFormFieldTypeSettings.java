@@ -16,6 +16,10 @@ package com.liferay.dynamic.data.mapping.type.select;
 
 import com.liferay.dynamic.data.mapping.annotations.DDMForm;
 import com.liferay.dynamic.data.mapping.annotations.DDMFormField;
+import com.liferay.dynamic.data.mapping.annotations.DDMFormLayout;
+import com.liferay.dynamic.data.mapping.annotations.DDMFormLayoutColumn;
+import com.liferay.dynamic.data.mapping.annotations.DDMFormLayoutPage;
+import com.liferay.dynamic.data.mapping.annotations.DDMFormLayoutRow;
 import com.liferay.dynamic.data.mapping.form.field.type.DefaultDDMFormFieldTypeSettings;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
 
@@ -23,22 +27,68 @@ import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
  * @author Marcellus Tavares
  */
 @DDMForm
+@DDMFormLayout(
+	{
+		@DDMFormLayoutPage(
+			title = "basic",
+			value = {
+				@DDMFormLayoutRow(
+					{
+						@DDMFormLayoutColumn(
+							size = 12,
+							value = {
+								"label", "tip", "required", "dataSourceType",
+								"options", "ddmDataProviderInstanceId"
+							}
+						)
+					}
+				)
+			}
+		),
+		@DDMFormLayoutPage(
+			title = "advanced",
+			value = {
+				@DDMFormLayoutRow(
+					{
+						@DDMFormLayoutColumn(
+							size = 12,
+							value = {
+								"predefinedValue", "visibilityExpression",
+								"validation", "fieldNamespace", "indexType",
+								"localizable", "readOnly", "dataType", "type",
+								"name", "showLabel", "repeatable", "multiple"
+							}
+						)
+					}
+				)
+			}
+		)
+	}
+)
 public interface SelectDDMFormFieldTypeSettings
 	extends DefaultDDMFormFieldTypeSettings {
 
 	@DDMFormField(
-		label = "%multiple",
-		properties = {
-			"setting.category=advanced", "setting.weight=2",
-			"showAsSwitcher=true"
-		}
+		label = "%create-list",
+		optionLabels = {"%manually", "%from-data-provider"},
+		optionValues = {"manual", "data-provider"}, predefinedValue = "manual",
+		type = "radio"
 	)
+	public String dataSourceType();
+
+	@DDMFormField(
+		label = "%choose-a-data-provider", type = "select",
+		visibilityExpression = "dataSourceType.equals(\"data-provider\")"
+	)
+	public long ddmDataProviderInstanceId();
+
+	@DDMFormField(label = "%multiple", properties = {"showAsSwitcher=true"})
 	public boolean multiple();
 
 	@DDMFormField(
 		dataType = "ddm-options", label = "%options",
-		properties = {"setting.category=basic", "setting.weight=0"},
-		type = "options"
+		properties = {"showLabel=false"}, required = true, type = "options",
+		visibilityExpression = "dataSourceType.equals(\"manual\")"
 	)
 	public DDMFormFieldOptions options();
 

@@ -58,8 +58,6 @@ public abstract class Watcher implements Runnable {
 
 		init();
 
-		walkFileTree(_baseFilePath);
-
 		WatcherRegistry.register(_watchEventListener.getSyncAccountId(), this);
 	}
 
@@ -209,7 +207,9 @@ public abstract class Watcher implements Runnable {
 
 		String fileName = String.valueOf(filePath.getFileName());
 
-		if (FileUtil.isIgnoredFilePath(filePath) || (fileName.length() > 255)) {
+		if (FileUtil.isIgnoredFilePath(filePath) ||
+			FileUtil.isUnsynced(filePath) || (fileName.length() > 255)) {
+
 			if (_logger.isDebugEnabled()) {
 				_logger.debug("Ignored file path {}", filePath);
 			}
@@ -297,13 +297,13 @@ public abstract class Watcher implements Runnable {
 	protected void processWatchEvent(String eventType, Path filePath)
 		throws IOException {
 
-		_watcherEventsLogger.trace("{}: {}", eventType, filePath);
-
 		if (!OSDetector.isLinux() &&
 			filePath.startsWith(_baseFilePath.resolve(".data"))) {
 
 			return;
 		}
+
+		_watcherEventsLogger.trace("{}: {}", eventType, filePath);
 
 		if (eventType.equals(SyncWatchEvent.EVENT_TYPE_CREATE)) {
 			if (isIgnoredFilePath(filePath)) {
@@ -345,6 +345,8 @@ public abstract class Watcher implements Runnable {
 			if (_downloadedFilePathNames.remove(filePath.toString()) ||
 				(removeCreatedFilePathName(filePath.toString()) &&
 				 !FileUtil.isValidChecksum(filePath)) ||
+				FileUtil.isIgnoredFileName(
+					String.valueOf(filePath.getFileName())) ||
 				Files.notExists(filePath) || Files.isDirectory(filePath)) {
 
 				return;

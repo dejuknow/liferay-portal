@@ -5,6 +5,8 @@ AUI.add(
 
 		var FieldTypes = Liferay.DDM.Renderer.FieldTypes;
 
+		var FormBuilderUtil = Liferay.DDL.FormBuilderUtil;
+
 		var CSS_FIELD = A.getClassName('form', 'builder', 'field');
 
 		var CSS_FIELD_CONTENT_TOOLBAR = A.getClassName('form', 'builder', 'field', 'content', 'toolbar');
@@ -13,9 +15,15 @@ AUI.add(
 
 		var CSS_FIELD_TOOLBAR_CONTAINER = A.getClassName('form', 'builder', 'field', 'toolbar', 'container');
 
+		var CSS_FIELD_SETTINGS_CONFIRMATION_MESSAGE = A.getClassName('lfr', 'ddl', 'field', 'settings', 'confirmation', 'message');
+
 		var CSS_FIELD_SETTINGS_MODAL = A.getClassName('lfr', 'ddl', 'field', 'settings', 'modal');
 
+		var CSS_FIELD_SETTINGS_SAVE = A.getClassName('lfr', 'ddl', 'field', 'settings', 'save');
+
 		var CSS_FORM_GROUP = A.getClassName('form', 'group');
+
+		var TPL_CONFIRMATION_MESSAGE = '<div class="' + CSS_FIELD_SETTINGS_CONFIRMATION_MESSAGE + '">' + Liferay.Language.get('cancel-without-saving') + '</div>';
 
 		var FormBuilderSettingsSupport = function() {
 		};
@@ -23,6 +31,9 @@ AUI.add(
 		FormBuilderSettingsSupport.ATTRS = {
 			builder: {
 				value: null
+			},
+
+			dataProviders: {
 			},
 
 			content: {
@@ -41,6 +52,8 @@ AUI.add(
 		FormBuilderSettingsSupport.prototype = {
 			initializer: function() {
 				var instance = this;
+
+				instance._confirmationMessage = A.Node.create(TPL_CONFIRMATION_MESSAGE);
 
 				instance._eventHandlers.push(
 					instance.after(instance._renderFormBuilderField, instance, 'render')
@@ -80,13 +93,15 @@ AUI.add(
 
 				var settingsModal = builder._fieldSettingsModal;
 
-				if (!instance._settingsModalEventHandlers) {
-					instance._settingsModalEventHandlers = [
-						settingsModal._modal.on('xyChange', instance._onSettingsModalXYChange)
-					];
-				}
-
 				return settingsModal;
+			},
+
+			hideSettingsModal: function() {
+				var instance = this;
+
+				var settingsModal = instance.getSettingsModal();
+
+				settingsModal.hide();
 			},
 
 			renderSettingsPanel: function() {
@@ -98,21 +113,7 @@ AUI.add(
 
 				settingsForm.render();
 
-				var settingsModal = instance.getSettingsModal();
-
-				var settingsModalBoundingBox = settingsModal._modal.get('boundingBox');
-
-				settingsModalBoundingBox.addClass(CSS_FIELD_SETTINGS_MODAL);
-
-				var settingsModalToolbar = settingsModal._modal.getToolbar('footer');
-
-				settingsModalToolbar.item(0).set('cssClass', 'btn-lg btn-primary');
-				settingsModalToolbar.item(1).set('cssClass', 'btn-lg btn-link');
-
-				var portletNode = A.one('#p_p_id' + instance.get('portletNamespace'));
-
-				settingsModal._modal.set('centered', portletNode);
-				settingsModal._modal.set('zIndex', Liferay.zIndex.OVERLAY);
+				instance._renderSettingsModal();
 			},
 
 			saveSettings: function() {
@@ -132,31 +133,56 @@ AUI.add(
 						field: instance
 					}
 				);
+
+				instance._previousSettings = JSON.stringify(instance.getSettings());
 			},
 
 			validate: Lang.emptyFn,
 
-			validateSettings: function(callback) {
+			_bindModalUI: function(settingsModal) {
+				var instance = this;
+
+				instance._modalEventHandlers = [
+					settingsModal.on('xyChange', instance._onModalXYChange),
+					settingsModal.on('visibleChange', A.bind('_onModalVisibleChange', instance))
+				];
+			},
+
+			_onClickModalClose: function() {
+				var instance = this;
+
+				instance.hideSettingsModal();
+			},
+
+			_onClickModalSave: function() {
 				var instance = this;
 
 				var settingsForm = instance.get('settingsForm');
 
-				settingsForm.hideErrorMessages();
 				settingsForm.clearValidationStatus();
+				settingsForm.hideErrorMessages();
 
-				if (callback) {
-					callback = A.bind(callback, instance);
-				}
-
-				settingsForm.submit(callback);
-
-				return false;
+				settingsForm.submit();
 			},
 
-			_onSettingsModalXYChange: function(event) {
-				var xy = event.newVal;
+			_onModalVisibleChange: function(event) {
+				var instance = this;
 
-				xy[1] = Math.max(90, xy[1]);
+				if (!event.newVal) {
+					var settings = JSON.stringify(instance.getSettings());
+
+					if (instance._previousSettings !== settings) {
+						instance._showConfirmationToolbar();
+
+						event.preventDefault();
+					}
+
+					(new A.EventHandle(instance._modalEventHandlers)).detach();
+				}
+			},
+
+			_onModalXYChange: function(event) {
+				event.newVal = FormBuilderUtil.normalizeModalXY(event.newVal);
 			},
 
 			_renderFormBuilderField: function() {
@@ -183,6 +209,95 @@ AUI.add(
 				}
 			},
 
+			_renderSettingsModal: function() {
+				var instance = this;
+
+				var settingsModal = instance.getSettingsModal()._modal;
+
+				var settingsModalBoundingBox = settingsModal.get('boundingBox');
+
+				settingsModalBoundingBox.addClass(CSS_FIELD_SETTINGS_MODAL);
+
+				var portletNode = A.one('#p_p_id' + instance.get('portletNamespace'));
+
+				settingsModal.set('centered', portletNode);
+				settingsModal.set('zIndex', Liferay.zIndex.OVERLAY);
+
+				instance._bindModalUI(settingsModal);
+
+				instance._previousSettings = JSON.stringify(instance.getSettings());
+
+				instance._showDefaultToolbar();
+			},
+
+			_showConfirmationToolbar: function() {
+				var instance = this;
+
+				var settingsModal = instance.getSettingsModal()._modal;
+
+				settingsModal.addToolbar(
+					[
+						{
+							cssClass: 'btn-lg btn-primary',
+							label: Liferay.Language.get('yes'),
+							on: {
+								click: function() {
+									instance._confirmationMessage.remove();
+
+									instance.hideSettingsModal();
+								}
+							}
+						},
+						{
+							cssClass: 'btn-lg btn-link',
+							label: Liferay.Language.get('no'),
+							on: {
+								click: function() {
+									instance._confirmationMessage.remove();
+
+									instance._showDefaultToolbar();
+								}
+							}
+						}
+					],
+					'footer'
+				);
+
+				var footerNode = settingsModal.getStdModNode(A.WidgetStdMod.FOOTER);
+
+				footerNode.prepend(instance._confirmationMessage);
+			},
+
+			_showDefaultToolbar: function() {
+				var instance = this;
+
+				var settingsModal = instance.getSettingsModal()._modal;
+
+				settingsModal.addToolbar(
+					[
+						{
+							cssClass: ['btn-lg btn-primary', CSS_FIELD_SETTINGS_SAVE].join(' '),
+							label: Liferay.Language.get('save'),
+							on: {
+								click: A.bind('_onClickModalSave', instance)
+							}
+						},
+						{
+							cssClass: 'btn-lg btn-link',
+							label: Liferay.Language.get('cancel'),
+							on: {
+								click: A.bind('_onClickModalClose', instance)
+							}
+						}
+					],
+					'footer'
+				);
+
+				var closeButton = settingsModal.toolbars.header.item(0);
+
+				closeButton.set('labelHTML', '<svg class="lexicon-icon"><use xlink:href="/o/frontend-theme-admin-web/admin/images/lexicon/icons.svg#times" /></svg>');
+			},
+
 			_updateSettingsFormValues: function() {
 				var instance = this;
 
@@ -202,6 +317,7 @@ AUI.add(
 
 				return new Liferay.DDL.FormBuilderSettingsForm(
 					{
+						dataProviders: instance.get('dataProviders'),
 						definition: fieldType.get('settings'),
 						field: instance,
 						layout: fieldType.get('settingsLayout'),
@@ -216,6 +332,6 @@ AUI.add(
 	},
 	'',
 	{
-		requires: ['liferay-ddl-form-builder-settings-form']
+		requires: ['liferay-ddl-form-builder-settings-form', 'liferay-ddl-form-builder-util']
 	}
 );

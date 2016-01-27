@@ -23,14 +23,14 @@
 					{$label}
 
 					{if $required}
-						<b>*</b>
+						<span class="icon-asterisk text-warning"></span>
 					{/if}
 				</label>
 			{/if}
 
 			<select class="form-control" dir="{$dir}" {if $readOnly}disabled{/if} id="{$name}" name="{$name}" {$multiple}>
 				{if not $readOnly}
-					<option dir="{$dir}" selected value="">
+					<option dir="{$dir}" disabled selected value="">
 						{$strings.chooseAnOption}
 					</option>
 				{/if}

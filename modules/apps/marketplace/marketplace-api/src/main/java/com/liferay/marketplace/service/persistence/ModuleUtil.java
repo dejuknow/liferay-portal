@@ -18,12 +18,11 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.marketplace.model.Module;
 
+import com.liferay.osgi.util.ServiceTrackerFactory;
+
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.service.ServiceContext;
-
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
 
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -182,7 +181,7 @@ public class ModuleUtil {
 	* @param uuid the uuid
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching module
-	* @throws com.liferay.marketplace.NoSuchModuleException if a matching module could not be found
+	* @throws NoSuchModuleException if a matching module could not be found
 	*/
 	public static Module findByUuid_First(java.lang.String uuid,
 		OrderByComparator<Module> orderByComparator)
@@ -208,7 +207,7 @@ public class ModuleUtil {
 	* @param uuid the uuid
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching module
-	* @throws com.liferay.marketplace.NoSuchModuleException if a matching module could not be found
+	* @throws NoSuchModuleException if a matching module could not be found
 	*/
 	public static Module findByUuid_Last(java.lang.String uuid,
 		OrderByComparator<Module> orderByComparator)
@@ -235,7 +234,7 @@ public class ModuleUtil {
 	* @param uuid the uuid
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next module
-	* @throws com.liferay.marketplace.NoSuchModuleException if a module with the primary key could not be found
+	* @throws NoSuchModuleException if a module with the primary key could not be found
 	*/
 	public static Module[] findByUuid_PrevAndNext(long moduleId,
 		java.lang.String uuid, OrderByComparator<Module> orderByComparator)
@@ -334,7 +333,7 @@ public class ModuleUtil {
 	* @param appId the app ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching module
-	* @throws com.liferay.marketplace.NoSuchModuleException if a matching module could not be found
+	* @throws NoSuchModuleException if a matching module could not be found
 	*/
 	public static Module findByAppId_First(long appId,
 		OrderByComparator<Module> orderByComparator)
@@ -360,7 +359,7 @@ public class ModuleUtil {
 	* @param appId the app ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching module
-	* @throws com.liferay.marketplace.NoSuchModuleException if a matching module could not be found
+	* @throws NoSuchModuleException if a matching module could not be found
 	*/
 	public static Module findByAppId_Last(long appId,
 		OrderByComparator<Module> orderByComparator)
@@ -387,7 +386,7 @@ public class ModuleUtil {
 	* @param appId the app ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next module
-	* @throws com.liferay.marketplace.NoSuchModuleException if a module with the primary key could not be found
+	* @throws NoSuchModuleException if a module with the primary key could not be found
 	*/
 	public static Module[] findByAppId_PrevAndNext(long moduleId, long appId,
 		OrderByComparator<Module> orderByComparator)
@@ -493,7 +492,7 @@ public class ModuleUtil {
 	* @param bundleSymbolicName the bundle symbolic name
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching module
-	* @throws com.liferay.marketplace.NoSuchModuleException if a matching module could not be found
+	* @throws NoSuchModuleException if a matching module could not be found
 	*/
 	public static Module findByBundleSymbolicName_First(
 		java.lang.String bundleSymbolicName,
@@ -525,7 +524,7 @@ public class ModuleUtil {
 	* @param bundleSymbolicName the bundle symbolic name
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching module
-	* @throws com.liferay.marketplace.NoSuchModuleException if a matching module could not be found
+	* @throws NoSuchModuleException if a matching module could not be found
 	*/
 	public static Module findByBundleSymbolicName_Last(
 		java.lang.String bundleSymbolicName,
@@ -558,7 +557,7 @@ public class ModuleUtil {
 	* @param bundleSymbolicName the bundle symbolic name
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next module
-	* @throws com.liferay.marketplace.NoSuchModuleException if a module with the primary key could not be found
+	* @throws NoSuchModuleException if a module with the primary key could not be found
 	*/
 	public static Module[] findByBundleSymbolicName_PrevAndNext(long moduleId,
 		java.lang.String bundleSymbolicName,
@@ -664,7 +663,7 @@ public class ModuleUtil {
 	* @param contextName the context name
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching module
-	* @throws com.liferay.marketplace.NoSuchModuleException if a matching module could not be found
+	* @throws NoSuchModuleException if a matching module could not be found
 	*/
 	public static Module findByContextName_First(java.lang.String contextName,
 		OrderByComparator<Module> orderByComparator)
@@ -693,7 +692,7 @@ public class ModuleUtil {
 	* @param contextName the context name
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching module
-	* @throws com.liferay.marketplace.NoSuchModuleException if a matching module could not be found
+	* @throws NoSuchModuleException if a matching module could not be found
 	*/
 	public static Module findByContextName_Last(java.lang.String contextName,
 		OrderByComparator<Module> orderByComparator)
@@ -722,7 +721,7 @@ public class ModuleUtil {
 	* @param contextName the context name
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next module
-	* @throws com.liferay.marketplace.NoSuchModuleException if a module with the primary key could not be found
+	* @throws NoSuchModuleException if a module with the primary key could not be found
 	*/
 	public static Module[] findByContextName_PrevAndNext(long moduleId,
 		java.lang.String contextName,
@@ -753,12 +752,12 @@ public class ModuleUtil {
 	}
 
 	/**
-	* Returns the module where appId = &#63; and contextName = &#63; or throws a {@link com.liferay.marketplace.NoSuchModuleException} if it could not be found.
+	* Returns the module where appId = &#63; and contextName = &#63; or throws a {@link NoSuchModuleException} if it could not be found.
 	*
 	* @param appId the app ID
 	* @param contextName the context name
 	* @return the matching module
-	* @throws com.liferay.marketplace.NoSuchModuleException if a matching module could not be found
+	* @throws NoSuchModuleException if a matching module could not be found
 	*/
 	public static Module findByA_CN(long appId, java.lang.String contextName)
 		throws com.liferay.marketplace.exception.NoSuchModuleException {
@@ -814,13 +813,13 @@ public class ModuleUtil {
 	}
 
 	/**
-	* Returns the module where appId = &#63; and bundleSymbolicName = &#63; and bundleVersion = &#63; or throws a {@link com.liferay.marketplace.NoSuchModuleException} if it could not be found.
+	* Returns the module where appId = &#63; and bundleSymbolicName = &#63; and bundleVersion = &#63; or throws a {@link NoSuchModuleException} if it could not be found.
 	*
 	* @param appId the app ID
 	* @param bundleSymbolicName the bundle symbolic name
 	* @param bundleVersion the bundle version
 	* @return the matching module
-	* @throws com.liferay.marketplace.NoSuchModuleException if a matching module could not be found
+	* @throws NoSuchModuleException if a matching module could not be found
 	*/
 	public static Module findByA_BSN_BV(long appId,
 		java.lang.String bundleSymbolicName, java.lang.String bundleVersion)
@@ -922,7 +921,7 @@ public class ModuleUtil {
 	*
 	* @param moduleId the primary key of the module
 	* @return the module that was removed
-	* @throws com.liferay.marketplace.NoSuchModuleException if a module with the primary key could not be found
+	* @throws NoSuchModuleException if a module with the primary key could not be found
 	*/
 	public static Module remove(long moduleId)
 		throws com.liferay.marketplace.exception.NoSuchModuleException {
@@ -934,11 +933,11 @@ public class ModuleUtil {
 	}
 
 	/**
-	* Returns the module with the primary key or throws a {@link com.liferay.marketplace.NoSuchModuleException} if it could not be found.
+	* Returns the module with the primary key or throws a {@link NoSuchModuleException} if it could not be found.
 	*
 	* @param moduleId the primary key of the module
 	* @return the module
-	* @throws com.liferay.marketplace.NoSuchModuleException if a module with the primary key could not be found
+	* @throws NoSuchModuleException if a module with the primary key could not be found
 	*/
 	public static Module findByPrimaryKey(long moduleId)
 		throws com.liferay.marketplace.exception.NoSuchModuleException {
@@ -1044,21 +1043,6 @@ public class ModuleUtil {
 		return _serviceTracker.getService();
 	}
 
-	/**
-	 * @deprecated As of 6.2.0
-	 */
-	@Deprecated
-	public void setPersistence(ModulePersistence persistence) {
-	}
-
-	private static ServiceTracker<ModulePersistence, ModulePersistence> _serviceTracker;
-
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(ModuleUtil.class);
-
-		_serviceTracker = new ServiceTracker<ModulePersistence, ModulePersistence>(bundle.getBundleContext(),
-				ModulePersistence.class, null);
-
-		_serviceTracker.open();
-	}
+	private static ServiceTracker<ModulePersistence, ModulePersistence> _serviceTracker =
+		ServiceTrackerFactory.open(ModulePersistence.class);
 }

@@ -16,13 +16,17 @@ package com.liferay.ip.geocoder.internal;
 
 import aQute.bnd.annotation.metatype.Meta;
 
-import com.liferay.configuration.admin.ConfigurationAdmin;
+import com.liferay.portal.metatype.annotations.ExtendedObjectClassDefinition;
 
 /**
  * @author Julio Camarero
  */
-@ConfigurationAdmin(category = "platform")
-@Meta.OCD(id = "com.liferay.ip.geocoder.internal.IPGeocoderConfiguration")
+@ExtendedObjectClassDefinition(category = "platform")
+@Meta.OCD(
+	id = "com.liferay.ip.geocoder.internal.IPGeocoderConfiguration",
+	localization = "content/Language",
+	name = "%ip.geocoder.service.configuration.name"
+)
 public interface IPGeocoderConfiguration {
 
 	@Meta.AD(

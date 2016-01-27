@@ -17,6 +17,7 @@ package com.liferay.message.boards.lar;
 import com.liferay.exportimport.lar.BaseStagedModelDataHandler;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.util.MapUtil;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.model.Layout;
@@ -27,7 +28,7 @@ import com.liferay.portlet.exportimport.lar.ExportImportPathUtil;
 import com.liferay.portlet.exportimport.lar.PortletDataContext;
 import com.liferay.portlet.exportimport.lar.StagedModelDataHandler;
 import com.liferay.portlet.exportimport.lar.StagedModelModifiedDateComparator;
-import com.liferay.portlet.messageboards.NoSuchDiscussionException;
+import com.liferay.portlet.messageboards.exception.NoSuchDiscussionException;
 import com.liferay.portlet.messageboards.model.MBDiscussion;
 import com.liferay.portlet.messageboards.model.MBMessage;
 import com.liferay.portlet.messageboards.model.MBThread;
@@ -148,7 +149,14 @@ public class MBDiscussionStagedModelDataHandler
 						rootMessage.getThreadId());
 			}
 			else {
-				throw new NoSuchDiscussionException();
+				StringBundler sb = new StringBundler(4);
+
+				sb.append("No discussion exists for class name ");
+				sb.append(discussion.getClassName());
+				sb.append(" and class PK ");
+				sb.append(newClassPK);
+
+				throw new NoSuchDiscussionException(sb.toString());
 			}
 		}
 
@@ -188,8 +196,8 @@ public class MBDiscussionStagedModelDataHandler
 		_mbMessageLocalService = mbMessageLocalService;
 	}
 
-	private volatile AssetEntryLocalService _assetEntryLocalService;
-	private volatile MBDiscussionLocalService _mbDiscussionLocalService;
-	private volatile MBMessageLocalService _mbMessageLocalService;
+	private AssetEntryLocalService _assetEntryLocalService;
+	private MBDiscussionLocalService _mbDiscussionLocalService;
+	private MBMessageLocalService _mbMessageLocalService;
 
 }

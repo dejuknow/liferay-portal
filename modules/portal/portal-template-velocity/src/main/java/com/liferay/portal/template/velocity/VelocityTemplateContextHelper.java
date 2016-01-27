@@ -18,7 +18,7 @@ import aQute.bnd.annotation.metatype.Configurable;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.template.TemplateConstants;
+import com.liferay.portal.kernel.template.TemplateContextContributor;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -31,6 +31,8 @@ import com.liferay.portal.template.velocity.configuration.VelocityEngineConfigur
 import com.liferay.portal.theme.PortletDisplay;
 import com.liferay.portal.theme.ThemeDisplay;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -48,6 +50,10 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
 import org.osgi.service.component.annotations.Modified;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
+import org.osgi.service.component.annotations.ReferencePolicyOption;
 
 /**
  * @author Brian Wing Shun Chan
@@ -79,25 +85,7 @@ public class VelocityTemplateContextHelper extends TemplateContextHelper {
 			WebKeys.THEME_DISPLAY);
 
 		if (themeDisplay != null) {
-
-			// Init
-
-			contextObjects.put(
-				"init",
-				themeDisplay.getPathContext() +
-					TemplateConstants.SERVLET_SEPARATOR +
-						"/classic/templates/init.vm");
-		}
-
-		// Theme
-
-		Theme theme = (Theme)request.getAttribute(WebKeys.THEME);
-
-		if ((theme == null) && (themeDisplay != null)) {
-			theme = themeDisplay.getTheme();
-		}
-
-		if (theme != null) {
+			Theme theme = themeDisplay.getTheme();
 
 			// Full css and templates path
 
@@ -109,10 +97,15 @@ public class VelocityTemplateContextHelper extends TemplateContextHelper {
 				servletContextName + theme.getVelocityResourceListener() +
 					theme.getCssPath());
 
-			contextObjects.put(
-				"fullTemplatesPath",
+			String fullTemplatesPath =
 				servletContextName + theme.getVelocityResourceListener() +
-					theme.getTemplatesPath());
+					theme.getTemplatesPath();
+
+			contextObjects.put("fullTemplatesPath", fullTemplatesPath);
+
+			// Init
+
+			contextObjects.put("init", fullTemplatesPath + "/init.vm");
 		}
 
 		// Insert custom vm variables
@@ -132,6 +125,14 @@ public class VelocityTemplateContextHelper extends TemplateContextHelper {
 					contextObjects.put(key, value);
 				}
 			}
+		}
+
+		// Custom template context contributors
+
+		for (TemplateContextContributor templateContextContributor :
+				_templateContextContributors) {
+
+			templateContextContributor.prepare(contextObjects, request);
 		}
 	}
 
@@ -190,10 +191,32 @@ public class VelocityTemplateContextHelper extends TemplateContextHelper {
 		}
 	}
 
+	@Reference(
+		cardinality = ReferenceCardinality.MULTIPLE,
+		policy = ReferencePolicy.DYNAMIC,
+		policyOption = ReferencePolicyOption.GREEDY,
+		target = "(type=" + TemplateContextContributor.TYPE_GLOBAL + ")",
+		unbind = "unregisterTemplateContextContributor"
+	)
+	protected synchronized void registerTemplateContextContributor(
+		TemplateContextContributor templateContextContributor) {
+
+		_templateContextContributors.add(templateContextContributor);
+	}
+
+	protected synchronized void unregisterTemplateContextContributor(
+		TemplateContextContributor templateContextContributor) {
+
+		_templateContextContributors.remove(templateContextContributor);
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		VelocityTemplateContextHelper.class);
 
 	private static volatile VelocityEngineConfiguration
 		_velocityEngineConfiguration;
+
+	private final List<TemplateContextContributor>
+		_templateContextContributors = new ArrayList<>();
 
 }

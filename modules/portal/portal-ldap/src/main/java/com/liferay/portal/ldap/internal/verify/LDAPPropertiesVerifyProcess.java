@@ -16,6 +16,7 @@ package com.liferay.portal.ldap.internal.verify;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.security.ldap.LDAPSettings;
 import com.liferay.portal.kernel.util.HashMapDictionary;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.PrefsProps;
@@ -32,7 +33,6 @@ import com.liferay.portal.ldap.constants.LegacyLDAPPropsKeys;
 import com.liferay.portal.ldap.exportimport.configuration.LDAPExportConfiguration;
 import com.liferay.portal.ldap.exportimport.configuration.LDAPImportConfiguration;
 import com.liferay.portal.model.Company;
-import com.liferay.portal.security.ldap.LDAPSettings;
 import com.liferay.portal.service.CompanyLocalService;
 import com.liferay.portal.verify.VerifyProcess;
 
@@ -176,65 +176,7 @@ public class LDAPPropertiesVerifyProcess extends VerifyProcess {
 		_ldapAuthConfigurationProvider.updateProperties(companyId, dictionary);
 	}
 
-	protected void verifyLDAPProperties() throws Exception {
-		List<Company> companies =_companyLocalService.getCompanies(false);
-
-		for (Company company : companies) {
-			long companyId = company.getCompanyId();
-
-			verifyLDAPAuthProperties(companyId);
-			verifyLDAPExportProperties(companyId);
-			verifyLDAPImportProperties(companyId);
-			verifySystemLDAPConfiguration(companyId);
-
-			long[] ldapServerIds = StringUtil.split(
-				_prefsProps.getString(companyId, "ldap.server.ids"), 0L);
-
-			Set<String> keys = new HashSet<>();
-
-			keys.addAll(
-				Arrays.asList(LegacyLDAPPropsKeys.NONPOSTFIXED_LDAP_KEYS));
-
-			for (long ldapServerId : ldapServerIds) {
-				String postfix = _ldapSettings.getPropertyPostfix(ldapServerId);
-
-				verifyLDAPServerConfiguration(companyId, ldapServerId, postfix);
-
-				for (int i = 0;
-						i < LegacyLDAPPropsKeys.SERVER_ID_POSTFIXED_KEYS.length;
-							i++) {
-
-					keys.add(
-						LegacyLDAPPropsKeys.SERVER_ID_POSTFIXED_KEYS[i] +
-							postfix);
-				}
-			}
-
-			if (_log.isInfoEnabled()) {
-				_log.info(
-					"Removing preference keys " + keys + " for company " +
-						companyId);
-			}
-
-			_companyLocalService.removePreferences(
-				companyId, keys.toArray(new String[keys.size()]));
-
-			UnicodeProperties properties = new UnicodeProperties();
-
-			properties.put("ldap.server.ids", StringPool.BLANK);
-
-			if (_log.isInfoEnabled()) {
-				_log.info(
-					"Removing LDAP server IDs " +
-						ListUtil.toList(ldapServerIds) + " for company " +
-							companyId);
-			}
-
-			_companyLocalService.updatePreferences(companyId, properties);
-		}
-	}
-
-	private void verifyLDAPExportProperties(long companyId) {
+	protected void verifyLDAPExportProperties(long companyId) {
 		Dictionary<String, Object> dictionary = new HashMapDictionary<>();
 
 		dictionary.put(
@@ -272,7 +214,7 @@ public class LDAPPropertiesVerifyProcess extends VerifyProcess {
 			companyId, dictionary);
 	}
 
-	private void verifyLDAPImportProperties(long companyId) {
+	protected void verifyLDAPImportProperties(long companyId) {
 		Dictionary<String, Object> dictionary = new HashMapDictionary<>();
 
 		dictionary.put(
@@ -338,7 +280,64 @@ public class LDAPPropertiesVerifyProcess extends VerifyProcess {
 			companyId, dictionary);
 	}
 
-	private void verifyLDAPServerConfiguration(
+	protected void verifyLDAPProperties() throws Exception {
+		List<Company> companies =_companyLocalService.getCompanies(false);
+
+		for (Company company : companies) {
+			long companyId = company.getCompanyId();
+
+			verifyLDAPAuthProperties(companyId);
+			verifyLDAPExportProperties(companyId);
+			verifyLDAPImportProperties(companyId);
+			verifySystemLDAPConfiguration(companyId);
+
+			long[] ldapServerIds = StringUtil.split(
+				_prefsProps.getString(companyId, "ldap.server.ids"), 0L);
+
+			Set<String> keys = new HashSet<>();
+
+			keys.addAll(
+				Arrays.asList(LegacyLDAPPropsKeys.NONPOSTFIXED_LDAP_KEYS));
+
+			for (long ldapServerId : ldapServerIds) {
+				String postfix = _ldapSettings.getPropertyPostfix(ldapServerId);
+
+				verifyLDAPServerConfiguration(companyId, ldapServerId, postfix);
+
+				for (int i = 0;
+						i < LegacyLDAPPropsKeys.POSTFIXED_LDAP_KEYS.length;
+							i++) {
+
+					keys.add(
+						LegacyLDAPPropsKeys.POSTFIXED_LDAP_KEYS[i] + postfix);
+				}
+			}
+
+			if (_log.isInfoEnabled()) {
+				_log.info(
+					"Removing preference keys " + keys + " for company " +
+						companyId);
+			}
+
+			_companyLocalService.removePreferences(
+				companyId, keys.toArray(new String[keys.size()]));
+
+			UnicodeProperties properties = new UnicodeProperties();
+
+			properties.put("ldap.server.ids", StringPool.BLANK);
+
+			if (_log.isInfoEnabled()) {
+				_log.info(
+					"Removing LDAP server IDs " +
+						ListUtil.toList(ldapServerIds) + " for company " +
+							companyId);
+			}
+
+			_companyLocalService.updatePreferences(companyId, properties);
+		}
+	}
+
+	protected void verifyLDAPServerConfiguration(
 		long companyId, long ldapServerId, String postfix) {
 
 		Dictionary<String, Object> dictionary = new HashMapDictionary<>();
@@ -374,7 +373,8 @@ public class LDAPPropertiesVerifyProcess extends VerifyProcess {
 			LDAPConstants.GROUP_DEFAULT_OBJECT_CLASSES,
 			_prefsProps.getStringArray(
 				companyId,
-				LegacyLDAPPropsKeys.LDAP_GROUP_DEFAULT_OBJECT_CLASSES + postfix,
+				LegacyLDAPPropsKeys.LDAP_GROUP_DEFAULT_OBJECT_CLASSES +
+					postfix,
 				StringPool.COMMA));
 		dictionary.put(
 			LDAPConstants.GROUP_MAPPINGS,
@@ -425,7 +425,8 @@ public class LDAPPropertiesVerifyProcess extends VerifyProcess {
 			LDAPConstants.USER_DEFAULT_OBJECT_CLASSES,
 			_prefsProps.getStringArray(
 				companyId,
-				LegacyLDAPPropsKeys.LDAP_USER_DEFAULT_OBJECT_CLASSES + postfix,
+				LegacyLDAPPropsKeys.LDAP_USER_DEFAULT_OBJECT_CLASSES +
+					postfix,
 				StringPool.COMMA));
 		dictionary.put(
 			LDAPConstants.USER_IGNORE_ATTRIBUTES,
@@ -461,7 +462,7 @@ public class LDAPPropertiesVerifyProcess extends VerifyProcess {
 			companyId, ldapServerId, dictionary);
 	}
 
-	private void verifySystemLDAPConfiguration(long companyId) {
+	protected void verifySystemLDAPConfiguration(long companyId) {
 		Dictionary<String, Object> dictionary = new HashMapDictionary<>();
 
 		Properties connectionProperties = _props.getProperties(
@@ -482,40 +483,55 @@ public class LDAPPropertiesVerifyProcess extends VerifyProcess {
 			connectionPropertiesList.toArray(
 				new String[connectionPropertiesList.size()]));
 		dictionary.put(
-			LDAPConstants.ERROR_PASSWORD_AGE,
-			_prefsProps.getString(
-				companyId, LegacyLDAPPropsKeys.LDAP_ERROR_PASSWORD_AGE, "age"));
+			LDAPConstants.ERROR_PASSWORD_AGE_KEYWORDS,
+			new String[] {
+				_prefsProps.getString(
+					companyId, LegacyLDAPPropsKeys.LDAP_ERROR_PASSWORD_AGE,
+					"age")
+			});
 		dictionary.put(
-			LDAPConstants.ERROR_PASSWORD_EXPIRED,
-			_prefsProps.getString(
-				companyId, LegacyLDAPPropsKeys.LDAP_ERROR_PASSWORD_EXPIRED,
-				"expired"));
+			LDAPConstants.ERROR_PASSWORD_EXPIRED_KEYWORDS,
+			new String[] {
+				_prefsProps.getString(
+					companyId, LegacyLDAPPropsKeys.LDAP_ERROR_PASSWORD_EXPIRED,
+					"expired")
+			});
 		dictionary.put(
-			LDAPConstants.ERROR_PASSWORD_HISTORY,
-			_prefsProps.getString(
-				companyId, LegacyLDAPPropsKeys.LDAP_ERROR_PASSWORD_HISTORY,
-				"history"));
+			LDAPConstants.ERROR_PASSWORD_HISTORY_KEYWORDS,
+			new String[] {
+				_prefsProps.getString(
+					companyId, LegacyLDAPPropsKeys.LDAP_ERROR_PASSWORD_HISTORY,
+					"history")
+			});
 		dictionary.put(
-			LDAPConstants.ERROR_PASSWORD_NOT_CHANGEABLE,
-			_prefsProps.getString(
-				companyId,
-				LegacyLDAPPropsKeys.LDAP_ERROR_PASSWORD_NOT_CHANGEABLE,
-				"not allowed to change"));
+			LDAPConstants.ERROR_PASSWORD_NOT_CHANGEABLE_KEYWORDS,
+			new String[] {
+				_prefsProps.getString(
+					companyId,
+					LegacyLDAPPropsKeys.LDAP_ERROR_PASSWORD_NOT_CHANGEABLE,
+					"not allowed to change")
+			});
 		dictionary.put(
-			LDAPConstants.ERROR_PASSWORD_SYNTAX,
-			_prefsProps.getString(
-				companyId, LegacyLDAPPropsKeys.LDAP_ERROR_PASSWORD_SYNTAX,
-				"syntax"));
+			LDAPConstants.ERROR_PASSWORD_SYNTAX_KEYWORDS,
+			new String[] {
+				_prefsProps.getString(
+					companyId, LegacyLDAPPropsKeys.LDAP_ERROR_PASSWORD_SYNTAX,
+					"syntax")
+			});
 		dictionary.put(
-			LDAPConstants.ERROR_PASSWORD_TRIVIAL,
-			_prefsProps.getString(
-				companyId, LegacyLDAPPropsKeys.LDAP_ERROR_PASSWORD_TRIVIAL,
-				"trivial"));
+			LDAPConstants.ERROR_PASSWORD_TRIVIAL_KEYWORDS,
+			new String[] {
+				_prefsProps.getString(
+					companyId, LegacyLDAPPropsKeys.LDAP_ERROR_PASSWORD_TRIVIAL,
+					"trivial")
+			});
 		dictionary.put(
-			LDAPConstants.ERROR_USER_LOCKOUT,
-			_prefsProps.getString(
-				companyId, LegacyLDAPPropsKeys.LDAP_ERROR_USER_LOCKOUT,
-				"retry limit"));
+			LDAPConstants.ERROR_USER_LOCKOUT_KEYWORDS,
+			new String[] {
+				_prefsProps.getString(
+					companyId, LegacyLDAPPropsKeys.LDAP_ERROR_USER_LOCKOUT,
+					"retry limit")
+			});
 		dictionary.put(
 			LDAPConstants.FACTORY_INITIAL,
 			_prefsProps.getString(
@@ -547,19 +563,19 @@ public class LDAPPropertiesVerifyProcess extends VerifyProcess {
 	private static final Log _log = LogFactoryUtil.getLog(
 		LDAPPropertiesVerifyProcess.class);
 
-	private volatile CompanyLocalService _companyLocalService;
-	private volatile ConfigurationProvider<LDAPAuthConfiguration>
+	private CompanyLocalService _companyLocalService;
+	private ConfigurationProvider<LDAPAuthConfiguration>
 		_ldapAuthConfigurationProvider;
-	private volatile ConfigurationProvider<LDAPExportConfiguration>
+	private ConfigurationProvider<LDAPExportConfiguration>
 		_ldapExportConfigurationProvider;
-	private volatile ConfigurationProvider<LDAPImportConfiguration>
+	private ConfigurationProvider<LDAPImportConfiguration>
 		_ldapImportConfigurationProvider;
-	private volatile ConfigurationProvider<LDAPServerConfiguration>
+	private ConfigurationProvider<LDAPServerConfiguration>
 		_ldapServerConfigurationProvider;
-	private volatile LDAPSettings _ldapSettings;
-	private volatile PrefsProps _prefsProps;
-	private volatile Props _props;
-	private volatile ConfigurationProvider<SystemLDAPConfiguration>
+	private LDAPSettings _ldapSettings;
+	private PrefsProps _prefsProps;
+	private Props _props;
+	private ConfigurationProvider<SystemLDAPConfiguration>
 		_systemLDAPConfigurationProvider;
 
 }

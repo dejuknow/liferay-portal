@@ -14,6 +14,8 @@
 
 package com.liferay.dynamic.data.lists.web.portlet;
 
+import aQute.bnd.annotation.metatype.Configurable;
+
 import com.liferay.dynamic.data.lists.constants.DDLPortletKeys;
 import com.liferay.dynamic.data.lists.constants.DDLWebKeys;
 import com.liferay.dynamic.data.lists.exception.NoSuchRecordException;
@@ -22,30 +24,37 @@ import com.liferay.dynamic.data.lists.model.DDLRecord;
 import com.liferay.dynamic.data.lists.model.DDLRecordSet;
 import com.liferay.dynamic.data.lists.service.DDLRecordService;
 import com.liferay.dynamic.data.lists.service.DDLRecordSetService;
-import com.liferay.portal.PortletPreferencesException;
+import com.liferay.dynamic.data.lists.web.configuration.DDLWebConfiguration;
+import com.liferay.portal.exception.PortletPreferencesException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.security.auth.PrincipalException;
 
 import java.io.IOException;
+
+import java.util.Map;
 
 import javax.portlet.Portlet;
 import javax.portlet.PortletException;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.ConfigurationPolicy;
+import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Marcellus Tavares
  */
 @Component(
-	immediate = true,
+	configurationPid = "com.liferay.dynamic.data.lists.web.configuration.DDLWebConfiguration",
+	configurationPolicy = ConfigurationPolicy.OPTIONAL, immediate = true,
 	property = {
 		"com.liferay.portlet.add-default-resource=true",
 		"com.liferay.portlet.css-class-wrapper=portlet-dynamic-data-lists",
@@ -86,6 +95,9 @@ public class DDLPortlet extends MVCPortlet {
 			setDDLRecordRequestAttribute(renderRequest);
 
 			setDDLRecordSetRequestAttribute(renderRequest);
+
+			renderRequest.setAttribute(
+				DDLWebConfiguration.class.getName(), _ddlWebConfiguration);
 		}
 		catch (NoSuchRecordException | NoSuchRecordSetException nsre) {
 
@@ -113,6 +125,13 @@ public class DDLPortlet extends MVCPortlet {
 		DDLRecordSetService ddlRecordSetService) {
 
 		_ddlRecordSetService = ddlRecordSetService;
+	}
+
+	@Activate
+	@Modified
+	protected void activate(Map<String, Object> properties) {
+		_ddlWebConfiguration = Configurable.createConfigurable(
+			DDLWebConfiguration.class, properties);
 	}
 
 	@Override
@@ -169,7 +188,8 @@ public class DDLPortlet extends MVCPortlet {
 
 	private static final Log _log = LogFactoryUtil.getLog(DDLPortlet.class);
 
-	private volatile DDLRecordService _ddlRecordService;
-	private volatile DDLRecordSetService _ddlRecordSetService;
+	private DDLRecordService _ddlRecordService;
+	private DDLRecordSetService _ddlRecordSetService;
+	private volatile DDLWebConfiguration _ddlWebConfiguration;
 
 }

@@ -38,7 +38,7 @@ public class DLFileEntryServiceWrapper implements DLFileEntryService,
 		java.lang.String sourceFileName, java.lang.String mimeType,
 		java.lang.String title, java.lang.String description,
 		java.lang.String changeLog, long fileEntryTypeId,
-		java.util.Map<java.lang.String, com.liferay.portlet.dynamicdatamapping.DDMFormValues> ddmFormValuesMap,
+		java.util.Map<java.lang.String, com.liferay.dynamic.data.mapping.kernel.DDMFormValues> ddmFormValuesMap,
 		java.io.File file, java.io.InputStream is, long size,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
@@ -52,17 +52,6 @@ public class DLFileEntryServiceWrapper implements DLFileEntryService,
 		long fileEntryId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _dlFileEntryService.cancelCheckOut(fileEntryId);
-	}
-
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link #checkInFileEntry(long,
-	String, ServiceContext)}
-	*/
-	@Deprecated
-	@Override
-	public void checkInFileEntry(long fileEntryId, java.lang.String lockUuid)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_dlFileEntryService.checkInFileEntry(fileEntryId, lockUuid);
 	}
 
 	@Override
@@ -80,31 +69,6 @@ public class DLFileEntryServiceWrapper implements DLFileEntryService,
 		throws com.liferay.portal.kernel.exception.PortalException {
 		_dlFileEntryService.checkInFileEntry(fileEntryId, major, changeLog,
 			serviceContext);
-	}
-
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link #checkOutFileEntry(long,
-	ServiceContext)}
-	*/
-	@Deprecated
-	@Override
-	public com.liferay.portlet.documentlibrary.model.DLFileEntry checkOutFileEntry(
-		long fileEntryId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _dlFileEntryService.checkOutFileEntry(fileEntryId);
-	}
-
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link #checkOutFileEntry(long,
-	String, long, ServiceContext)}
-	*/
-	@Deprecated
-	@Override
-	public com.liferay.portlet.documentlibrary.model.DLFileEntry checkOutFileEntry(
-		long fileEntryId, java.lang.String owner, long expirationTime)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _dlFileEntryService.checkOutFileEntry(fileEntryId, owner,
-			expirationTime);
 	}
 
 	@Override
@@ -399,7 +363,7 @@ public class DLFileEntryServiceWrapper implements DLFileEntryService,
 		java.lang.String mimeType, java.lang.String title,
 		java.lang.String description, java.lang.String changeLog,
 		boolean majorVersion, long fileEntryTypeId,
-		java.util.Map<java.lang.String, com.liferay.portlet.dynamicdatamapping.DDMFormValues> ddmFormValuesMap,
+		java.util.Map<java.lang.String, com.liferay.dynamic.data.mapping.kernel.DDMFormValues> ddmFormValuesMap,
 		java.io.File file, java.io.InputStream is, long size,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
@@ -430,23 +394,6 @@ public class DLFileEntryServiceWrapper implements DLFileEntryService,
 		java.lang.String lockUuid)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _dlFileEntryService.verifyFileEntryLock(fileEntryId, lockUuid);
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
-	 */
-	@Deprecated
-	public DLFileEntryService getWrappedDLFileEntryService() {
-		return _dlFileEntryService;
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #setWrappedService}
-	 */
-	@Deprecated
-	public void setWrappedDLFileEntryService(
-		DLFileEntryService dlFileEntryService) {
-		_dlFileEntryService = dlFileEntryService;
 	}
 
 	@Override

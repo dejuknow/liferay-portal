@@ -16,6 +16,7 @@ package com.liferay.exportimport.web.portlet.action;
 
 import com.liferay.exportimport.web.constants.ExportImportPortletKeys;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTask;
+import com.liferay.portal.kernel.backgroundtask.BackgroundTaskConstants;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskManagerUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
@@ -58,7 +59,7 @@ import org.osgi.service.component.annotations.Reference;
 @Component(
 	immediate = true,
 	property = {
-		"javax.portlet.name=" + ExportImportPortletKeys.EXPORT_IMPORT,
+		"javax.portlet.name=" + ExportImportPortletKeys.EXPORT,
 		"mvc.command.name=editExportConfiguration"
 	},
 	service = MVCActionCommand.class
@@ -122,14 +123,14 @@ public class EditExportConfigurationMVCActionCommand
 
 			if (moveToTrash) {
 				ExportImportConfiguration exportImportConfiguration =
-					_exportImportConfigurationService.
+					exportImportConfigurationService.
 						moveExportImportConfigurationToTrash(
 							deleteExportImportConfigurationId);
 
 				trashedModels.add(exportImportConfiguration);
 			}
 			else {
-				_exportImportConfigurationService.
+				exportImportConfigurationService.
 					deleteExportImportConfiguration(
 						deleteExportImportConfigurationId);
 			}
@@ -162,7 +163,7 @@ public class EditExportConfigurationMVCActionCommand
 				long exportImportConfigurationId = ParamUtil.getLong(
 					actionRequest, "exportImportConfigurationId");
 
-				_exportImportService.exportLayoutsAsFileInBackground(
+				exportImportService.exportLayoutsAsFileInBackground(
 					exportImportConfigurationId);
 			}
 			else if (cmd.equals(Constants.MOVE_TO_TRASH)) {
@@ -192,7 +193,7 @@ public class EditExportConfigurationMVCActionCommand
 		throws Exception {
 
 		long backgroundTaskId = ParamUtil.getLong(
-			actionRequest, "backgroundTaskId");
+			actionRequest, BackgroundTaskConstants.BACKGROUND_TASK_ID);
 
 		BackgroundTask backgroundTask =
 			BackgroundTaskManagerUtil.getBackgroundTask(backgroundTaskId);
@@ -203,7 +204,7 @@ public class EditExportConfigurationMVCActionCommand
 		long exportImportConfigurationId = MapUtil.getLong(
 			taskContextMap, "exportImportConfigurationId");
 
-		_exportImportService.exportLayoutsAsFileInBackground(
+		exportImportService.exportLayoutsAsFileInBackground(
 			exportImportConfigurationId);
 	}
 
@@ -214,7 +215,7 @@ public class EditExportConfigurationMVCActionCommand
 			ParamUtil.getString(actionRequest, "restoreTrashEntryIds"), 0L);
 
 		for (long restoreTrashEntryId : restoreTrashEntryIds) {
-			_trashEntryService.restoreEntry(restoreTrashEntryId);
+			trashEntryService.restoreEntry(restoreTrashEntryId);
 		}
 	}
 
@@ -222,19 +223,20 @@ public class EditExportConfigurationMVCActionCommand
 	protected void setExportImportConfigurationService(
 		ExportImportConfigurationService exportImportConfigurationService) {
 
-		_exportImportConfigurationService = exportImportConfigurationService;
+		this.exportImportConfigurationService =
+			exportImportConfigurationService;
 	}
 
 	@Reference(unbind = "-")
 	protected void setExportImportService(
 		ExportImportService exportImportService) {
 
-		_exportImportService = exportImportService;
+		this.exportImportService = exportImportService;
 	}
 
 	@Reference(unbind = "-")
 	protected void setTrashEntryService(TrashEntryService trashEntryService) {
-		_trashEntryService = trashEntryService;
+		this.trashEntryService = trashEntryService;
 	}
 
 	protected ExportImportConfiguration updateExportConfiguration(
@@ -254,12 +256,11 @@ public class EditExportConfigurationMVCActionCommand
 		}
 	}
 
+	protected ExportImportConfigurationService exportImportConfigurationService;
+	protected ExportImportService exportImportService;
+	protected TrashEntryService trashEntryService;
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		EditExportConfigurationMVCActionCommand.class);
-
-	private volatile ExportImportConfigurationService
-		_exportImportConfigurationService;
-	private volatile ExportImportService _exportImportService;
-	private volatile TrashEntryService _trashEntryService;
 
 }

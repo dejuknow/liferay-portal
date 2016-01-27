@@ -36,8 +36,6 @@
 
 		<h3 class="asset-title">
 			<a href="${viewURL}">
-				<i class="${assetRenderer.getIconCssClass()}"></i>
-
 				${entryTitle}
 			</a>
 		</h3>
@@ -70,7 +68,7 @@
 </#list>
 
 <#macro getDiscussion>
-	<#if validator.isNotNull(assetRenderer.getDiscussionPath()) && (getterUtil.getBoolean(enableComments))>
+	<#if getterUtil.getBoolean(enableComments) && assetRenderer.isCommentable()>
 		<br />
 
 		<#assign discussionURL = renderResponse.createActionURL() />
@@ -188,7 +186,7 @@
 </#macro>
 
 <#macro getRatings>
-	<#if getterUtil.getBoolean(enableRatings)>
+	<#if getterUtil.getBoolean(enableRatings) && assetRenderer.isRatable()>
 		<div class="asset-ratings">
 			<@liferay_ui["ratings"]
 				className=entry.getClassName()

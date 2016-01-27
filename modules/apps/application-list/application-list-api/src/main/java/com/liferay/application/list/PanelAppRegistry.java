@@ -22,11 +22,11 @@ import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMapListene
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.PredicateFilter;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Portlet;
-import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.service.PortletLocalService;
 
 import java.util.Collections;
@@ -47,14 +47,14 @@ import org.osgi.service.component.annotations.Reference;
 public class PanelAppRegistry {
 
 	public PanelApp getFirstPanelApp(
-		PanelCategory parentPanelCategory, PermissionChecker permissionChecker,
+		String parentPanelCategoryKey, PermissionChecker permissionChecker,
 		Group group) {
 
-		List<PanelApp> panelApps = getPanelApps(parentPanelCategory);
+		List<PanelApp> panelApps = getPanelApps(parentPanelCategoryKey);
 
 		for (PanelApp panelApp : panelApps) {
 			try {
-				if (panelApp.hasAccessPermission(permissionChecker, group)) {
+				if (panelApp.isShow(permissionChecker, group)) {
 					return panelApp;
 				}
 			}
@@ -106,8 +106,7 @@ public class PanelAppRegistry {
 				@Override
 				public boolean filter(PanelApp panelApp) {
 					try {
-						return panelApp.hasAccessPermission(
-							permissionChecker, group);
+						return panelApp.isShow(permissionChecker, group);
 					}
 					catch (PortalException pe) {
 						_log.error(pe, pe);
@@ -186,6 +185,13 @@ public class PanelAppRegistry {
 			else if (_log.isDebugEnabled()) {
 				_log.debug("Unable to get portlet " + panelApp.getPortletId());
 			}
+		}
+
+		@Override
+		public void keyRemoved(
+			ServiceTrackerMap<String, List<PanelApp>> serviceTrackerMap,
+			String panelCategoryKey, PanelApp panelApp,
+			List<PanelApp> panelApps) {
 		}
 
 	}

@@ -17,62 +17,52 @@
 <%@ include file="/management_bar_sort/init.jsp" %>
 
 <%
-Map<String, String> orderColumns = (Map<String, String>)request.getAttribute("liferay-frontend:management-bar-sort:orderColumns");
+boolean disabled = GetterUtil.getBoolean(request.getAttribute("liferay-frontend:management-bar-sort:disabled"));
+List<ManagementBarFilterItem> managementBarFilterItems = (List<ManagementBarFilterItem>)request.getAttribute("liferay-frontend:management-bar-sort:managementBarFilterItems");
 String orderByCol = (String)request.getAttribute("liferay-frontend:management-bar-sort:orderByCol");
 String orderByType = (String)request.getAttribute("liferay-frontend:management-bar-sort:orderByType");
 PortletURL portletURL = (PortletURL)request.getAttribute("liferay-frontend:management-bar-sort:portletURL");
 %>
 
-<c:if test="<%= !orderColumns.isEmpty() %>">
-	<li class="dropdown">
-		<a aria-expanded="true" class="dropdown-toggle" data-toggle="dropdown" href="javascript:;">
-			<span class="management-bar-item-title"><liferay-ui:message key="order-by" />: <liferay-ui:message key="<%= orderColumns.get(orderByCol) %>" /></span>
-			<span class="icon-sort"></span>
-		</a>
+<liferay-frontend:management-bar-filter
+	disabled="<%= disabled %>"
+	label="order-by"
+	managementBarFilterItems="<%= managementBarFilterItems %>"
+	value="<%= orderByCol %>"
+/>
 
-		<ul class="dropdown-menu">
+<%
+PortletURL orderByColAscURL = PortletURLUtil.clone(portletURL, liferayPortletResponse);
 
-			<%
-			PortletURL orderByColURL = PortletURLUtil.clone(portletURL, liferayPortletResponse);
+orderByColAscURL.setParameter("orderByCol", orderByCol);
+orderByColAscURL.setParameter("orderByType", "asc");
+%>
 
-			orderByColURL.setParameter("orderByType", orderByType);
-
-			for (String orderColumn : orderColumns.keySet()) {
-				orderByColURL.setParameter("orderByCol", orderColumn);
-			%>
-
-				<li class="<%= orderByCol.equals(orderColumn) ? "active" : StringPool.BLANK %>">
-					<aui:a href="<%= orderByColURL.toString() %>" label="<%= orderColumns.get(orderColumn) %>" />
-				</li>
-
-			<%
-			}
-			%>
-
-		</ul>
-	</li>
-</c:if>
-
-<li class="<%= ((Validator.isNotNull(orderByType)) && orderByType.equals("asc")) ? "active" : StringPool.BLANK %>">
-
-	<%
-	PortletURL orderByColAscURL = PortletURLUtil.clone(portletURL, liferayPortletResponse);
-
-	orderByColAscURL.setParameter("orderByCol", orderByCol);
-	orderByColAscURL.setParameter("orderByType", "asc");
-	%>
-
-	<a class="btn hidden-xs" href="<%= orderByColAscURL %>"><span class="icon-caret-up icon-monospaced"></span></a>
+<li>
+	<liferay-frontend:management-bar-button
+		active='<%= ((Validator.isNotNull(orderByType)) && orderByType.equals("asc")) %>'
+		cssClass="hidden-xs"
+		disabled="<%= disabled %>"
+		href="<%= orderByColAscURL.toString() %>"
+		icon="caret-top"
+		label="ascending"
+	/>
 </li>
 
-<li class="<%= ((Validator.isNotNull(orderByType)) && orderByType.equals("desc")) ? "active" : StringPool.BLANK %>">
+<%
+PortletURL orderByColDescURL = PortletURLUtil.clone(portletURL, liferayPortletResponse);
 
-	<%
-	PortletURL orderByColDescURL = PortletURLUtil.clone(portletURL, liferayPortletResponse);
+orderByColDescURL.setParameter("orderByCol", orderByCol);
+orderByColDescURL.setParameter("orderByType", "desc");
+%>
 
-	orderByColDescURL.setParameter("orderByCol", orderByCol);
-	orderByColDescURL.setParameter("orderByType", "desc");
-	%>
-
-	<a class="btn hidden-xs" href="<%= orderByColDescURL %>"><span class="icon-caret-down icon-monospaced"></span></a>
+<li>
+	<liferay-frontend:management-bar-button
+		active='<%= Validator.isNotNull(orderByType) && orderByType.equals("desc") %>'
+		cssClass="hidden-xs"
+		disabled="<%= disabled %>"
+		href="<%= orderByColDescURL.toString() %>"
+		icon="caret-bottom"
+		label="descending"
+	/>
 </li>

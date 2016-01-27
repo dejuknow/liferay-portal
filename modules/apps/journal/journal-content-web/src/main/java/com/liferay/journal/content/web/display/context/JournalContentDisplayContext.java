@@ -36,6 +36,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.PortletRequestModel;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
@@ -47,7 +48,6 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Layout;
-import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.service.permission.PortletPermissionUtil;
 import com.liferay.portal.theme.PortletDisplay;
 import com.liferay.portal.theme.ThemeDisplay;
@@ -169,8 +169,9 @@ public class JournalContentDisplayContext {
 				_articleDisplay =
 					JournalArticleLocalServiceUtil.getArticleDisplay(
 						article, null, null, themeDisplay.getLanguageId(), 1,
-					new PortletRequestModel(_portletRequest, _portletResponse),
-					themeDisplay);
+						new PortletRequestModel(
+							_portletRequest, _portletResponse),
+						themeDisplay);
 			}
 			catch (PortalException pe) {
 				_log.error(pe, pe);

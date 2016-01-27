@@ -64,14 +64,15 @@ SearchContainer searchContainer = new GroupSearch(liferayPortletRequest, iterato
 
 			<liferay-ui:search-container-column-text colspan="<%= 3 %>">
 				<liferay-frontend:horizontal-card
-					icon="icon-folder-close-alt"
-					imageCSSClass="icon-monospaced"
 					resultRow="<%= row %>"
 					text="<%= HtmlUtil.escape(curGroup.getDescriptiveName(locale)) %>"
 					url="<%= viewGroupURL.toString() %>"
-				/>
+				>
+					<liferay-frontend:horizontal-card-icon>
+						<span class="icon-folder-close-alt icon-monospaced"></span>
+					</liferay-frontend:horizontal-card-icon>
+				</liferay-frontend:horizontal-card>
 			</liferay-ui:search-container-column-text>
-
 		</liferay-ui:search-container-row>
 
 		<liferay-ui:search-iterator displayStyle="icon" markupView="lexicon" searchContainer="<%= searchContainer %>" />

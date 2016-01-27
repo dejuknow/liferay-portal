@@ -14,20 +14,21 @@
  * @param visible
  */
 {template .checkbox}
-	<div class="form-group form-inline{$visible ? '' : ' hide'}" data-fieldname="{$name}">
+	<div class="form-group form-inline{$visible ? '' : ' hide'} liferay-ddm-form-field-checkbox" data-fieldname="{$name}">
 		{if $showAsSwitcher}
 			<div class="checkbox">
 				<label class="control-label" for="{$name}">
 					<input class="hide toggle-switch" {if $readOnly}disabled{/if} id="{$name}" name="{$name}" type="checkbox" {$status} value="true" />
 
 					<span aria-hidden="true" class="toggle-switch-bar">
-						<span class="toggle-switch-handle">
-							{$label}
+						<span class="toggle-switch-handle"></span>
+					</span>
+					<span class="toggle-switch-text toggle-switch-text-right">
+						{$label}
 
-							{if $required}
-								<b>*</b>
-							{/if}
-						</span>
+						{if $required}
+							<span class="icon-asterisk text-warning"></span>
+						{/if}
 					</span>
 				</label>
 			</div>

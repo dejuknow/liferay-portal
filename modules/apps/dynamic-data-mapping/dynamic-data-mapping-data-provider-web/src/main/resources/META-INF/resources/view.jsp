@@ -46,18 +46,18 @@ ddmDataProviderSearch.setOrderByType(orderByType);
 		>
 
 			<%
+			searchContainer.setTotal(ddmDataProviderDisplayContext.getSearchContainerTotal(searchContainer));
+
 			request.setAttribute(WebKeys.SEARCH_CONTAINER, searchContainer);
 			%>
 
 			<liferay-ui:search-container-results
 				results="<%= ddmDataProviderDisplayContext.getSearchContainerResults(searchContainer) %>"
-				total="<%= ddmDataProviderDisplayContext.getSearchContainerTotal(searchContainer) %>"
 			/>
 
 			<liferay-ui:search-container-row
 				className="com.liferay.dynamic.data.mapping.model.DDMDataProviderInstance"
 				cssClass="entry-display-style"
-				escapedModel="<%= true %>"
 				keyProperty="dataProviderInstanceId"
 				modelVar="dataProviderInstance"
 			>
@@ -82,7 +82,6 @@ ddmDataProviderSearch.setOrderByType(orderByType);
 				<liferay-ui:search-container-column-jsp
 					path="/data_provider_action.jsp"
 				/>
-
 			</liferay-ui:search-container-row>
 
 			<liferay-ui:search-iterator displayStyle="descriptive" markupView="lexicon" />
@@ -111,4 +110,21 @@ ddmDataProviderSearch.setOrderByType(orderByType);
 		%>
 
 	</liferay-frontend:add-menu>
+</c:if>
+
+<c:if test="<%= windowState.equals(LiferayWindowState.POP_UP) %>">
+	<aui:script>
+		var modal = Liferay.Util.getWindow();
+
+		if (modal) {
+			var footerNode = modal.footerNode;
+
+			if (footerNode) {
+				modal.removeToolbar('footer');
+				modal.setStdModContent('footer', null);
+
+				modal.fillHeight(modal.bodyNode);
+			}
+		}
+	</aui:script>
 </c:if>

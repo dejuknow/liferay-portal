@@ -42,9 +42,9 @@ import java.util.regex.Pattern;
 public class BlogsEntryAttachmentFileEntryHelper {
 
 	public List<BlogsEntryAttachmentFileEntryReference>
-		addBlogsEntryAttachmentFileEntries(
-			long groupId, long userId, long blogsEntryId, long folderId,
-			List<FileEntry> tempFileEntries)
+			addBlogsEntryAttachmentFileEntries(
+				long groupId, long userId, long blogsEntryId, long folderId,
+				List<FileEntry> tempFileEntries)
 		throws PortalException {
 
 		List<BlogsEntryAttachmentFileEntryReference>
@@ -64,6 +64,19 @@ public class BlogsEntryAttachmentFileEntryHelper {
 		}
 
 		return blogsEntryAttachmentFileEntryReferences;
+	}
+
+	public FileEntry addBlogsEntryAttachmentFileEntry(
+			long groupId, long userId, long blogsEntryId, long folderId,
+			String fileName, String mimeType, byte[] bytes)
+		throws PortalException {
+
+		String uniqueFileName = getUniqueFileName(groupId, fileName, folderId);
+
+		return PortletFileRepositoryUtil.addPortletFileEntry(
+			groupId, userId, BlogsEntry.class.getName(), blogsEntryId,
+			BlogsConstants.SERVICE_NAME, folderId, bytes, uniqueFileName,
+			mimeType, true);
 	}
 
 	public FileEntry addBlogsEntryAttachmentFileEntry(
@@ -116,7 +129,8 @@ public class BlogsEntryAttachmentFileEntryHelper {
 	}
 
 	public String updateContent(
-		String content, List<BlogsEntryAttachmentFileEntryReference>
+		String content,
+		List<BlogsEntryAttachmentFileEntryReference>
 			blogsEntryAttachmentFileEntryReferences) {
 
 		for (BlogsEntryAttachmentFileEntryReference

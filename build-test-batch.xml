@@ -864,6 +864,8 @@
 							<antcall target="compile" />
 
 							<ant antfile="build-dist.xml" target="build-dist-${app.server.type}" />
+
+							<prepare-tomcat-setenv />
 						</else>
 					</if>
 
@@ -1037,6 +1039,23 @@
 		</sequential>
 	</macrodef>
 
+	<target name="compile-jsp">
+		<property name="testray.main.component.name" value="Compile JSP" />
+		<property name="testray.testcase.priority" value="5" />
+
+		<run-batch-test>
+			<test-action>
+				<ant dir="portal-web" target="compile-tomcat" />
+
+				<gradle-execute dir="modules" task="compileJSP" />
+			</test-action>
+
+			<test-set-up>
+				<prepare-test-build />
+			</test-set-up>
+		</run-batch-test>
+	</target>
+
 	<target name="functional-bundle-tomcat-mysql">
 		<set-tomcat-version-number liferay.portal.bundle="${test.portal.bundle.version}" />
 
@@ -1082,6 +1101,20 @@
 		<run-integration-test database.type="sybase" />
 	</target>
 
+	<target name="modules-functional">
+		<run-batch-test>
+			<test-action>
+				<antcall target="run-selenium-test">
+					<param name="test.class" value="${axis.variable}" />
+				</antcall>
+			</test-action>
+		</run-batch-test>
+	</target>
+
+	<target name="modules-functional-tomcat-mysql">
+		<run-functional-test app.server.type="tomcat" database.type="mysql" />
+	</target>
+
 	<target name="modules-integration-db2">
 		<run-modules-integration-test database.type="db2" />
 	</target>
@@ -1115,13 +1148,6 @@
 				<gradle-execute dir="modules" task="test">
 					<arg value="-Dtest.class.group.index=${axis.variable}" />
 				</gradle-execute>
-
-				<if>
-					<equals arg1="${axis.variable}" arg2="0" />
-					<then>
-						<gradle-execute dir="modules" task="compileJSP" />
-					</then>
-				</if>
 			</test-action>
 
 			<test-set-up>
@@ -1208,6 +1234,8 @@ ${output.content}</echo>
 			<test-action>
 				<database-test-run-test database.type="mysql">
 					<test-action>
+						<ant dir="portal-web" target="compile-tomcat" />
+
 						<run-poshi-validation />
 
 						<if>
@@ -1236,8 +1264,6 @@ ${output.content}</echo>
 		<record action="start" name="${project.dir}/sass-compiler-log" />
 
 		<gradle-execute dir="modules" task="buildCSS" />
-
-		<ant dir="portal-web" target="build-css" inheritAll="false" />
 
 		<record action="stop" name="${project.dir}/sass-compiler-log" />
 

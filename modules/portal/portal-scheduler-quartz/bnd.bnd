@@ -12,6 +12,7 @@ Import-Package: \
 	!javax.mail.*,\
 	!javax.transaction.*,\
 	*
-Include-Resource:\
-	classes,\
-	@lib/quartz.jar
+Include-Resource: @lib/quartz.jar
+Liferay-Releng-Module-Group-Description:
+Liferay-Releng-Module-Group-Title: Scheduling
+-include: ../../../marketplace/platform/bnd.bnd

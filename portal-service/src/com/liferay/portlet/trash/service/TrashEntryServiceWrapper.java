@@ -99,14 +99,14 @@ public class TrashEntryServiceWrapper implements TrashEntryService,
 	@Override
 	public com.liferay.portlet.trash.model.TrashEntryList getEntries(
 		long groupId)
-		throws com.liferay.portal.security.auth.PrincipalException {
+		throws com.liferay.portal.kernel.security.auth.PrincipalException {
 		return _trashEntryService.getEntries(groupId);
 	}
 
 	@Override
 	public java.util.List<com.liferay.portlet.trash.model.TrashEntry> getEntries(
 		long groupId, java.lang.String className)
-		throws com.liferay.portal.security.auth.PrincipalException {
+		throws com.liferay.portal.kernel.security.auth.PrincipalException {
 		return _trashEntryService.getEntries(groupId, className);
 	}
 
@@ -126,7 +126,7 @@ public class TrashEntryServiceWrapper implements TrashEntryService,
 	public com.liferay.portlet.trash.model.TrashEntryList getEntries(
 		long groupId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.trash.model.TrashEntry> obc)
-		throws com.liferay.portal.security.auth.PrincipalException {
+		throws com.liferay.portal.kernel.security.auth.PrincipalException {
 		return _trashEntryService.getEntries(groupId, start, end, obc);
 	}
 
@@ -239,22 +239,6 @@ public class TrashEntryServiceWrapper implements TrashEntryService,
 		long entryId, long overrideClassPK, java.lang.String name)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _trashEntryService.restoreEntry(entryId, overrideClassPK, name);
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
-	 */
-	@Deprecated
-	public TrashEntryService getWrappedTrashEntryService() {
-		return _trashEntryService;
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #setWrappedService}
-	 */
-	@Deprecated
-	public void setWrappedTrashEntryService(TrashEntryService trashEntryService) {
-		_trashEntryService = trashEntryService;
 	}
 
 	@Override

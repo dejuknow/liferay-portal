@@ -16,6 +16,10 @@ package com.liferay.dynamic.data.mapping.form.field.type;
 
 import com.liferay.dynamic.data.mapping.annotations.DDMForm;
 import com.liferay.dynamic.data.mapping.annotations.DDMFormField;
+import com.liferay.dynamic.data.mapping.annotations.DDMFormLayout;
+import com.liferay.dynamic.data.mapping.annotations.DDMFormLayoutColumn;
+import com.liferay.dynamic.data.mapping.annotations.DDMFormLayoutPage;
+import com.liferay.dynamic.data.mapping.annotations.DDMFormLayoutRow;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldValidation;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.portal.kernel.util.StringPool;
@@ -24,6 +28,41 @@ import com.liferay.portal.kernel.util.StringPool;
  * @author Marcellus Tavares
  */
 @DDMForm
+@DDMFormLayout(
+	{
+		@DDMFormLayoutPage(
+			title = "basic",
+			value = {
+				@DDMFormLayoutRow(
+					{
+						@DDMFormLayoutColumn(
+							size = 12,
+							value = {
+								"label", "predefinedValue", "required", "tip"
+							}
+						)
+					}
+				)
+			}
+		),
+		@DDMFormLayoutPage(
+			title = "advanced",
+			value = {
+				@DDMFormLayoutRow(
+					{
+						@DDMFormLayoutColumn(
+							size = 12,
+							value = {
+								"repeatable", "showLabel", "validation",
+								"visibilityExpression"
+							}
+						)
+					}
+				)
+			}
+		)
+	}
+)
 public interface DefaultDDMFormFieldTypeSettings
 	extends DDMFormFieldTypeSettings {
 
@@ -35,18 +74,16 @@ public interface DefaultDDMFormFieldTypeSettings
 		optionLabels = {
 			"%not-indexable", "%indexable-keyword", "%indexable-text"
 		},
-		optionValues = {StringPool.BLANK, "keyword", "text"},
-		type = "select", visibilityExpression = "false"
+		optionValues = {StringPool.BLANK, "keyword", "text"}, type = "select",
+		visibilityExpression = "false"
 	)
 	public String indexType();
 
 	@DDMFormField(
-		label = "%question",
-		properties = {
-			"placeholder=%type-your-question", "setting.category=basic",
-			"setting.weight=4"
-		},
-		required = true, tip = "%type-what-you-want-to-ask", type = "key-value"
+		label = "%label", properties = {"placeholder=%enter-a-field-label"},
+		required = true,
+		tip = "%enter-a-descriptive-field-label-that-guides-users-to-enter-the-information-you-want",
+		type = "key-value"
 	)
 	public LocalizedValue label();
 
@@ -55,61 +92,43 @@ public interface DefaultDDMFormFieldTypeSettings
 
 	@DDMFormField(
 		label = "%predefined-value",
-		properties = {"setting.category=advanced", "setting.weight=1"},
-		tip = "%set-the-default-value-of-a-field", type = "text"
+		properties = {"placeholder=%enter-a-default-value"},
+		tip = "%enter-a-default-value-that-is-submitted-if-no-other-value-is-entered",
+		type = "text"
 	)
 	public LocalizedValue predefinedValue();
 
 	@DDMFormField(label = "%read-only", visibilityExpression = "false")
 	public boolean readOnly();
 
-	@DDMFormField(
-		label = "%repeatable",
-		properties = {
-			"setting.category=advanced", "setting.weight=3",
-			"showAsSwitcher=true"
-		}
-	)
+	@DDMFormField(label = "%repeatable", properties = {"showAsSwitcher=true"})
 	public boolean repeatable();
 
 	@DDMFormField(
-		label = "%required",
-		properties = {
-			"setting.category=basic", "setting.weight=1", "showAsSwitcher=true"
-		}
+		label = "%required-field", properties = {"showAsSwitcher=true"}
 	)
 	public boolean required();
 
-	@DDMFormField(
-		label = "%show-label",
-		properties = {
-			"setting.category=advanced", "setting.weight=4",
-			"showAsSwitcher=true"
-		}
-	)
+	@DDMFormField(label = "%show-label", properties = {"showAsSwitcher=true"})
 	public boolean showLabel();
 
 	@DDMFormField(
 		label = "%help-text",
-		properties = {
-			"placeholder=%add-text-to-help-users-better-understand-what-you-want",
-			"setting.category=basic", "setting.weight=3"
-		},
+		properties = {"placeholder=%enter-text-to-help-users-understand"},
 		tip = "%type-a-short-comment-to-help-users-understand-the-question",
 		type = "text"
 	)
 	public LocalizedValue tip();
 
 	@DDMFormField(
-		dataType = "ddm-validation", label = "%validation",
-		properties = {"setting.category=advanced", "setting.weight=5"},
-		type = "validation"
+		dataType = "ddm-validation", label = "%validation", type = "validation"
 	)
 	public DDMFormFieldValidation validation();
 
 	@DDMFormField(
-		label = "%visibility",
-		properties = {"setting.category=advanced", "setting.weight=0"}
+		label = "%field-visibility-expression",
+		properties = {"placeholder=%Country.equals(\"US\")"},
+		tip = "%write-a-conditional-expression-to-control-whether-this-field-is-displayed"
 	)
 	public String visibilityExpression();
 

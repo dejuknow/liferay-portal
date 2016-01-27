@@ -14,8 +14,8 @@
 
 package com.liferay.blogs.service.permission;
 
+import com.liferay.portal.kernel.security.permission.PermissionUpdateHandler;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.security.permission.PermissionUpdateHandler;
 import com.liferay.portlet.blogs.model.BlogsEntry;
 import com.liferay.portlet.blogs.service.BlogsEntryLocalService;
 
@@ -55,6 +55,6 @@ public class BlogsEntryPermissionUpdateHandler
 		_blogsEntryLocalService = blogsEntryLocalService;
 	}
 
-	private volatile BlogsEntryLocalService _blogsEntryLocalService;
+	private BlogsEntryLocalService _blogsEntryLocalService;
 
 }

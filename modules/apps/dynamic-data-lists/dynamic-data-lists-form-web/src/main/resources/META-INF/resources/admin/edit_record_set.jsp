@@ -47,30 +47,53 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 		<aui:input name="recordSetId" type="hidden" value="<%= recordSetId %>" />
 		<aui:input name="groupId" type="hidden" value="<%= groupId %>" />
 		<aui:input name="ddmStructureId" type="hidden" value="<%= ddmStructureId %>" />
-		<aui:input name="publish" type="hidden" />
+		<aui:input name="serializedSettingsDDMFormValues" type="hidden" value="" />
+
+		<liferay-ui:error exception="<%= DDMFormLayoutValidationException.class %>" message="please-enter-a-valid-form-layout" />
+
+		<liferay-ui:error exception="<%= DDMFormLayoutValidationException.MustNotDuplicateFieldName.class %>">
+
+			<%
+			DDMFormLayoutValidationException.MustNotDuplicateFieldName mndfn = (DDMFormLayoutValidationException.MustNotDuplicateFieldName)errorException;
+			%>
+
+			<liferay-ui:message arguments="<%= StringUtil.merge(mndfn.getDuplicatedFieldNames(), StringPool.COMMA_AND_SPACE) %>" key="the-definition-field-name-x-was-defined-more-than-once" translateArguments="<%= false %>" />
+		</liferay-ui:error>
+
+		<liferay-ui:error exception="<%= DDMFormValidationException.class %>" message="please-enter-a-valid-form-definition" />
+
+		<liferay-ui:error exception="<%= DDMFormValidationException.MustNotDuplicateFieldName.class %>">
+
+			<%
+			DDMFormValidationException.MustNotDuplicateFieldName mndfn = (DDMFormValidationException.MustNotDuplicateFieldName)errorException;
+			%>
+
+			<liferay-ui:message arguments="<%= mndfn.getFieldName() %>" key="the-definition-field-name-x-was-defined-more-than-once" translateArguments="<%= false %>" />
+		</liferay-ui:error>
+
+		<liferay-ui:error exception="<%= DDMFormValidationException.MustSetOptionsForField.class %>">
+
+			<%
+			DDMFormValidationException.MustSetOptionsForField msoff = (DDMFormValidationException.MustSetOptionsForField)errorException;
+			%>
+
+			<liferay-ui:message arguments="<%= msoff.getFieldName() %>" key="at-least-one-option-should-be-set-for-field-x" translateArguments="<%= false %>" />
+		</liferay-ui:error>
+
+		<liferay-ui:error exception="<%= DDMFormValidationException.MustSetValidCharactersForFieldName.class %>">
+
+			<%
+			DDMFormValidationException.MustSetValidCharactersForFieldName msvcffn = (DDMFormValidationException.MustSetValidCharactersForFieldName)errorException;
+			%>
+
+			<liferay-ui:message arguments="<%= msvcffn.getFieldName() %>" key="invalid-characters-were-defined-for-field-name-x" translateArguments="<%= false %>" />
+		</liferay-ui:error>
 
 		<liferay-ui:error exception="<%= RecordSetNameException.class %>" message="please-enter-a-valid-form-name" />
-		<liferay-ui:error exception="<%= StructureDefinitionException .class %>" message="please-enter-a-valid-form-definition" />
-		<liferay-ui:error exception="<%= StructureLayoutException .class %>" message="please-enter-a-valid-form-layout" />
-		<liferay-ui:error exception="<%= StructureNameException .class %>" message="please-enter-a-valid-form-name" />
-
-		<c:if test="<%= ddlFormAdminDisplayContext.isRecordSetPublished() %>">
-			<div class="alert alert-success ddl-form-alert">
-				<div class="container-fluid-1280">
-					<button class="close" type="button">
-						<span aria-hidden="true">&times;</span>
-						<span class="sr-only"><liferay-ui:message key="close" /></span>
-					</button>
-
-					<liferay-util:buffer var="publishedLink">
-						<a href="<%= ddlFormAdminDisplayContext.getRecordSetLayoutURL() %>" target="_blank"><%= ddlFormAdminDisplayContext.getRecordSetLayoutURL() %></a>
-						<span class="icon-external-link"></span>
-					</liferay-util:buffer>
-
-					<liferay-ui:message arguments="<%= new Object[] {publishedLink} %>" key="form-published-at-x" />
-				</div>
-			</div>
-		</c:if>
+		<liferay-ui:error exception="<%= StorageException.class %>" message="please-enter-a-valid-form-settings" />
+		<liferay-ui:error exception="<%= StructureDefinitionException.class %>" message="please-enter-a-valid-form-definition" />
+		<liferay-ui:error exception="<%= StructureLayoutException.class %>" message="please-enter-a-valid-form-layout" />
+		<liferay-ui:error exception="<%= StructureNameException.class %>" message="please-enter-a-valid-form-name" />
 
 		<aui:fieldset cssClass="ddl-form-basic-info">
 			<div class="container-fluid-1280">
@@ -81,7 +104,7 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 				<aui:input name="name" type="hidden" />
 
 				<h2>
-					<liferay-ui:input-editor contents="<%= HtmlUtil.escape(LocalizationUtil.getLocalization(description, themeDisplay.getLanguageId())) %>" cssClass="ddl-form-description" editorName="alloyeditor" name="descriptionEditor" placeholder="form-description" showSource="<%= false %>" />
+					<liferay-ui:input-editor contents="<%= HtmlUtil.escape(LocalizationUtil.getLocalization(description, themeDisplay.getLanguageId())) %>" cssClass="ddl-form-description" editorName="alloyeditor" name="descriptionEditor" placeholder="add-a-short-description-for-this-page" showSource="<%= false %>" />
 				</h2>
 
 				<aui:input name="description" type="hidden" />
@@ -93,30 +116,52 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 			<aui:input name="layout" type="hidden" />
 
 			<div id="<portlet:namespace />formBuilder">
-				<span class="icon-refresh icon-spin" id="<portlet:namespace />loader"></span>
+				<span class="ddl-loader icon-refresh icon-spin" id="<portlet:namespace />loader"></span>
 			</div>
 		</aui:fieldset>
 
 		<div class="container-fluid-1280">
 			<aui:button-row cssClass="ddl-form-builder-buttons">
-				<aui:button cssClass="btn-lg ddl-button" disabled="<%= true %>" id="submit" primary="<%= true %>" type="submit" value="save">
-					<c:choose>
-						<c:when test="<%= !ddlFormAdminDisplayContext.isRecordSetPublished() %>">
-							<li>
-								<aui:a cssClass="ddl-button publish save" href="javascript:;"><%= LanguageUtil.get(request, "save-and-publish-live-page") %></aui:a>
-							</li>
-						</c:when>
-						<c:otherwise>
-							<li>
-								<aui:a cssClass="ddl-button save unpublish" href="javascript:;"><%= LanguageUtil.get(request, "save-and-unpublish-live-page") %></aui:a>
-							</li>
-						</c:otherwise>
-					</c:choose>
-				</aui:button>
+				<aui:button cssClass="btn-lg ddl-button" disabled="<%= true %>" id="submit" primary="<%= true %>" type="submit" value="save" />
 
 				<aui:button cssClass="btn-lg" href="<%= redirect %>" name="cancelButton" type="cancel" />
 			</aui:button-row>
 		</div>
+
+		<div class="container-fluid-1280 ddl-publish-modal hide" id="<portlet:namespace />publishModal">
+			<div class="alert alert-info">
+				<a href="<%= ddlFormAdminDisplayContext.getPreviewFormURL() %>" target="_blank">
+					<liferay-ui:message key="click-here-to-preview-the-form-in-a-new-window" />
+				</a>
+			</div>
+
+			<div class="form-group">
+				<label class="control-label ddl-publish-checkbox" for="<portlet:namespace />publishCheckbox">
+					<span class="pull-left">
+						<liferay-ui:message key="publish-form" />
+
+						<small><liferay-ui:message key="make-this-form-public" /></small>
+					</span>
+
+					<aui:input label="" name="publishCheckbox" type="toggle-switch" value="<%= ddlFormAdminDisplayContext.isFormPublished() %>" />
+				</label>
+			</div>
+
+			<div class="form-group">
+				<label><liferay-ui:message key="copy-this-url-to-share-the-form" /></label>
+
+				<div class="input-group">
+					<input class="form-control" type="text" readOnly value="<%= ddlFormAdminDisplayContext.getPublishedFormURL() %>" />
+
+					<span class="input-group-btn">
+						<button class="btn btn-default" type="button"><liferay-ui:message key="copy-url" /></button>
+					</span>
+				</div>
+			</div>
+		</div>
+
+		<liferay-portlet:resourceURL copyCurrentRenderParameters="<%= false %>" id="publishRecordSet" var="publishRecordSetURL" />
+
 		<aui:script>
 			var initHandler = Liferay.after(
 				'form:registered',
@@ -137,13 +182,19 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 							function() {
 								Liferay.DDM.Renderer.FieldTypes.register(fieldTypes);
 
-								new Liferay.DDL.Portlet(
-									{
-										definition: <%= ddlFormAdminDisplayContext.getSerializedDDMForm() %>,
-										editForm: event.form,
-										layout: <%= ddlFormAdminDisplayContext.getSerializedDDMFormLayout() %>,
-										namespace: '<portlet:namespace />'
-									}
+								Liferay.component(
+									'formPortlet',
+									new Liferay.DDL.Portlet(
+										{
+											dataProviders: <%= ddlFormAdminDisplayContext.getSerializedDDMDataProviders() %>,
+											definition: <%= ddlFormAdminDisplayContext.getSerializedDDMForm() %>,
+											editForm: event.form,
+											layout: <%= ddlFormAdminDisplayContext.getSerializedDDMFormLayout() %>,
+											namespace: '<portlet:namespace />',
+											publishRecordSetURL: '<%= publishRecordSetURL.toString() %>',
+											recordSetId: <%= recordSetId %>
+										}
+									)
 								);
 							},
 							['liferay-ddl-portlet'].concat(fieldModules)
@@ -158,6 +209,8 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 				if (event.portletId === '<%= portletDisplay.getRootPortletId() %>') {
 					initHandler.detach();
 
+					Liferay.namespace('DDL').destroySettings();
+
 					Liferay.detach('destroyPortlet', clearPortletHandlers);
 				}
 			};
@@ -165,4 +218,69 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 			Liferay.on('destroyPortlet', clearPortletHandlers);
 		</aui:script>
 	</aui:form>
+
+	<div class="container-fluid-1280 ddl-record-set-settings hide" id="<portlet:namespace />settings">
+		<%= request.getAttribute(DDMWebKeys.DYNAMIC_DATA_MAPPING_FORM_HTML) %>
+	</div>
+
+	<aui:script use="aui-base">
+		Liferay.namespace('DDL').destroySettings = function() {
+			var settingsNode = A.one('#<portlet:namespace />settingsModal');
+
+			if (settingsNode) {
+				Liferay.Util.getWindow('<portlet:namespace />settingsModal').destroy();
+			}
+		};
+
+		Liferay.namespace('DDL').openSettings = function() {
+			Liferay.Util.openWindow(
+				{
+					dialog: {
+						height: 620,
+						resizable: false,
+						'toolbars.footer': [
+							{
+								cssClass: 'btn-lg btn-primary',
+								label: '<liferay-ui:message key="done" />',
+								on: {
+									click: function() {
+										var ddmForm = Liferay.component('settingsDDMForm');
+
+										ddmForm.validate(
+											function(hasErrors) {
+												if (!hasErrors) {
+													Liferay.Util.getWindow('<portlet:namespace />settingsModal').hide();
+												}
+											}
+										);
+									}
+								}
+							},
+							{
+								cssClass: 'btn-lg btn-link',
+								label: '<liferay-ui:message key="cancel" />',
+								on: {
+									click: function() {
+										Liferay.Util.getWindow('<portlet:namespace />settingsModal').hide();
+									}
+								}
+							}
+						],
+						width: 720
+					},
+					id: '<portlet:namespace />settingsModal',
+					title: '<liferay-ui:message key="form-settings" />'
+				},
+				function(dialogWindow) {
+					var bodyNode = dialogWindow.bodyNode;
+
+					var settingsNode = A.one('#<portlet:namespace />settings');
+
+					settingsNode.show();
+
+					bodyNode.append(settingsNode);
+				}
+			);
+		};
+	</aui:script>
 </div>

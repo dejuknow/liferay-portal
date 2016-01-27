@@ -15,9 +15,9 @@
 package com.liferay.portal.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.model.Phone;
 import com.liferay.portal.model.User;
-import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.base.PhoneServiceBaseImpl;
 import com.liferay.portal.service.permission.CommonPermissionUtil;
@@ -28,25 +28,6 @@ import java.util.List;
  * @author Brian Wing Shun Chan
  */
 public class PhoneServiceImpl extends PhoneServiceBaseImpl {
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link #addPhone(String, long,
-	 *             String, String, int, boolean, ServiceContext)}
-	 */
-	@Deprecated
-	@Override
-	public Phone addPhone(
-			String className, long classPK, String number, String extension,
-			long typeId, boolean primary)
-		throws PortalException {
-
-		CommonPermissionUtil.check(
-			getPermissionChecker(), className, classPK, ActionKeys.UPDATE);
-
-		return phoneLocalService.addPhone(
-			getUserId(), className, classPK, number, extension, typeId,
-			primary);
-	}
 
 	@Override
 	public Phone addPhone(

@@ -15,9 +15,9 @@
 package com.liferay.portal.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.model.User;
 import com.liferay.portal.model.Website;
-import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.base.WebsiteServiceBaseImpl;
 import com.liferay.portal.service.permission.CommonPermissionUtil;
@@ -28,24 +28,6 @@ import java.util.List;
  * @author Brian Wing Shun Chan
  */
 public class WebsiteServiceImpl extends WebsiteServiceBaseImpl {
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link #addWebsite(String, long,
-	 *             String, int, boolean, ServiceContext)}
-	 */
-	@Deprecated
-	@Override
-	public Website addWebsite(
-			String className, long classPK, String url, long typeId,
-			boolean primary)
-		throws PortalException {
-
-		CommonPermissionUtil.check(
-			getPermissionChecker(), className, classPK, ActionKeys.UPDATE);
-
-		return websiteLocalService.addWebsite(
-			getUserId(), className, classPK, url, typeId, primary);
-	}
 
 	@Override
 	public Website addWebsite(

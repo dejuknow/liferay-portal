@@ -16,15 +16,17 @@ package com.liferay.portal.search.elasticsearch.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
-import com.liferay.configuration.admin.ConfigurationAdmin;
+import com.liferay.portal.metatype.annotations.ExtendedObjectClassDefinition;
 import com.liferay.portal.search.elasticsearch.connection.OperationMode;
 
 /**
  * @author Michael C. Han
  */
-@ConfigurationAdmin(category = "platform")
+@ExtendedObjectClassDefinition(category = "platform")
 @Meta.OCD(
-	id = "com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfiguration"
+	id = "com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfiguration",
+	localization = "content/Language",
+	name = "%elastic.search.configuration.name"
 )
 public interface ElasticsearchConfiguration {
 
@@ -51,6 +53,9 @@ public interface ElasticsearchConfiguration {
 
 	@Meta.AD(deflt = "9300-9400", required = false)
 	public String discoveryZenPingUnicastHostsPort();
+
+	@Meta.AD(deflt = "/https?:\\/\\/localhost(:[0-9]+)?/", required = false)
+	public String httpCORSAllowOrigin();
 
 	@Meta.AD(deflt = "", required = false)
 	public String[] httpCORSConfigurations();

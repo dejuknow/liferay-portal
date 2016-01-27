@@ -57,8 +57,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Jorge Ferrer
  */
 @Component(
-	property = {"service.ranking:Integer=-1000"},
-	service = WikiEngine.class
+	property = {"service.ranking:Integer=-1000"}, service = WikiEngine.class
 )
 public class JSPWikiEngine extends BaseInputEditorWikiEngine {
 
@@ -366,9 +365,8 @@ public class JSPWikiEngine extends BaseInputEditorWikiEngine {
 	private final Map<Long, LiferayJSPWikiEngine> _engines =
 		new ConcurrentHashMap<>();
 	private Properties _properties = new Properties();
-	private volatile ServletContext _servletContext;
-	private volatile WikiGroupServiceConfiguration
-		_wikiGroupServiceConfiguration;
-	private volatile WikiPageLocalService _wikiPageLocalService;
+	private ServletContext _servletContext;
+	private WikiGroupServiceConfiguration _wikiGroupServiceConfiguration;
+	private WikiPageLocalService _wikiPageLocalService;
 
 }

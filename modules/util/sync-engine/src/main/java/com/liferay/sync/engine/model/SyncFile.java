@@ -105,6 +105,8 @@ public class SyncFile extends StateAwareModel {
 
 	public static final int UI_EVENT_RESTORED_REMOTE = 27;
 
+	public static final int UI_EVENT_RESYNCING = 28;
+
 	public static final int UI_EVENT_TRASHED_LOCAL = 15;
 
 	public static final int UI_EVENT_TRASHED_REMOTE = 16;
@@ -295,6 +297,14 @@ public class SyncFile extends StateAwareModel {
 
 	public boolean isSystem() {
 		return type.equals(TYPE_SYSTEM);
+	}
+
+	public boolean isUnsynced() {
+		if (state == STATE_UNSYNCED) {
+			return true;
+		}
+
+		return false;
 	}
 
 	public void setChangeLog(String changeLog) {

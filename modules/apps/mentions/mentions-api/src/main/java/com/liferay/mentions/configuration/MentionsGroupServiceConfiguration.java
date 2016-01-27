@@ -16,15 +16,19 @@ package com.liferay.mentions.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
-import com.liferay.configuration.admin.ConfigurationAdmin;
 import com.liferay.portal.kernel.settings.LocalizedValuesMap;
+import com.liferay.portal.metatype.annotations.ExtendedObjectClassDefinition;
 
 /**
  * @author Sergio González
  */
-@ConfigurationAdmin(category = "collaboration")
+@ExtendedObjectClassDefinition(
+	category = "collaboration", scope = ExtendedObjectClassDefinition.Scope.GROUP
+)
 @Meta.OCD(
-	id = "com.liferay.mentions.configuration.MentionsGroupServiceConfiguration"
+	id = "com.liferay.mentions.configuration.MentionsGroupServiceConfiguration",
+	localization = "content/Language",
+	name = "%mentions.group.service.configuration.name"
 )
 public interface MentionsGroupServiceConfiguration {
 

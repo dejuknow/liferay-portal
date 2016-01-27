@@ -16,14 +16,19 @@ package com.liferay.journal.content.search.web.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
-import com.liferay.configuration.admin.ConfigurationAdmin;
+import com.liferay.portal.metatype.annotations.ExtendedObjectClassDefinition;
 
 /**
  * @author Juergen Kappler
  */
-@ConfigurationAdmin(category = "web-experience-management")
+@ExtendedObjectClassDefinition(
+	category = "web-experience-management",
+	scope = ExtendedObjectClassDefinition.Scope.PORTLET_INSTANCE
+)
 @Meta.OCD(
-	id = "com.liferay.journal.content.search.web.configuration.JournalContentSearchPortletInstanceConfiguration"
+	id = "com.liferay.journal.content.search.web.configuration.JournalContentSearchPortletInstanceConfiguration",
+	localization = "content/Language",
+	name = "%journal.content.search.portlet.instance.configuration.name"
 )
 public interface JournalContentSearchPortletInstanceConfiguration {
 

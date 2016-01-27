@@ -21,10 +21,10 @@ import com.liferay.portal.kernel.scheduler.SchedulerEngineHelper;
 import com.liferay.portal.kernel.scheduler.TimeUnit;
 import com.liferay.portal.kernel.scheduler.TriggerFactory;
 import com.liferay.portal.kernel.scheduler.TriggerFactoryUtil;
+import com.liferay.portal.kernel.security.ldap.LDAPUserImporter;
 import com.liferay.portal.ldap.configuration.ConfigurationProvider;
 import com.liferay.portal.ldap.exportimport.configuration.LDAPImportConfiguration;
 import com.liferay.portal.model.Company;
-import com.liferay.portal.security.ldap.LDAPUserImporter;
 import com.liferay.portal.service.CompanyLocalService;
 
 import java.util.List;
@@ -127,10 +127,10 @@ public class UserImportMessageListener
 	protected void setTriggerFactory(TriggerFactory triggerFactory) {
 	}
 
-	private volatile CompanyLocalService _companyLocalService;
-	private volatile ConfigurationProvider<LDAPImportConfiguration>
+	private CompanyLocalService _companyLocalService;
+	private ConfigurationProvider<LDAPImportConfiguration>
 		_ldapImportConfigurationProvider;
-	private volatile LDAPUserImporter _ldapUserImporter;
-	private volatile SchedulerEngineHelper _schedulerEngineHelper;
+	private LDAPUserImporter _ldapUserImporter;
+	private SchedulerEngineHelper _schedulerEngineHelper;
 
 }

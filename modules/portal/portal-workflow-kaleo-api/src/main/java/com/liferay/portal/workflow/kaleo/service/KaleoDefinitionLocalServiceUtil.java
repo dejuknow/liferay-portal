@@ -16,8 +16,7 @@ package com.liferay.portal.workflow.kaleo.service;
 
 import aQute.bnd.annotation.ProviderType;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
+import com.liferay.osgi.util.ServiceTrackerFactory;
 
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -227,6 +226,13 @@ public class KaleoDefinitionLocalServiceUtil {
 		return getService().fetchKaleoDefinition(kaleoDefinitionId);
 	}
 
+	public static com.liferay.portal.workflow.kaleo.model.KaleoDefinition fetchLatestKaleoDefinition(
+		java.lang.String name,
+		com.liferay.portal.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().fetchLatestKaleoDefinition(name, serviceContext);
+	}
+
 	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
 		return getService().getActionableDynamicQuery();
 	}
@@ -390,21 +396,6 @@ public class KaleoDefinitionLocalServiceUtil {
 		return _serviceTracker.getService();
 	}
 
-	/**
-	 * @deprecated As of 6.2.0
-	 */
-	@Deprecated
-	public void setService(KaleoDefinitionLocalService service) {
-	}
-
-	private static ServiceTracker<KaleoDefinitionLocalService, KaleoDefinitionLocalService> _serviceTracker;
-
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(KaleoDefinitionLocalServiceUtil.class);
-
-		_serviceTracker = new ServiceTracker<KaleoDefinitionLocalService, KaleoDefinitionLocalService>(bundle.getBundleContext(),
-				KaleoDefinitionLocalService.class, null);
-
-		_serviceTracker.open();
-	}
+	private static ServiceTracker<KaleoDefinitionLocalService, KaleoDefinitionLocalService> _serviceTracker =
+		ServiceTrackerFactory.open(KaleoDefinitionLocalService.class);
 }

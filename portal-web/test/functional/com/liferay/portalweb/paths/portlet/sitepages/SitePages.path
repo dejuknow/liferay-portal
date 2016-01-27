@@ -10,7 +10,7 @@
 <tbody>
 <tr>
 	<td>SITE_NAME</td>
-	<td>//div[contains(@class,'toolbar-group-content') and contains(.,'${key_siteName}')]</td>
+	<td>//span[contains(@class,'site-name') and contains(@title,'${key_siteName}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -26,22 +26,22 @@
 <!--NAVIGATION-->
 <tr>
 	<td>NAVIGATION_PUBLIC_PAGES</td>
-	<td>//li[contains(@id,'tabs')]/a[contains(.,'Public Pages')]</td>
+	<td>//a[contains(@title,'Public Pages')]/span[contains(@class,'icon-cog')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>NAVIGATION_PRIVATE_PAGES</td>
-	<td>//li[contains(@id,'tabs')]/a[contains(.,'Private Pages')]</td>
+	<td>//a[contains(@title,'Private Pages')]/span[contains(@class,'icon-cog')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>NAVIGATION_MY_PROFILE</td>
-	<td>//li[contains(@id,'tabs')]/a[contains(.,'My Profile')]</td>
+	<td>//a[contains(@title,'Profile')]//span/*[name()='svg'][contains(@class,'icon-cog')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>NAVIGATION_MY_DASHBOARD</td>
-	<td>//li[contains(@id,'tabs')]/a[contains(.,'My Dashboard')]</td>
+	<td>//a[contains(@title,'Dashboard')]//span/*[name()='svg'][contains(@class,'icon-cog')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -123,27 +123,27 @@
 </tr>
 <tr>
 	<td>PAGE_TREE_PAGE_ARROW_1</td>
-	<td>xpath=(//a[contains(@id,'layoutsTree_layout_')]/../../span[contains(@class,'tree-hitarea')])[1]</td>
+	<td>xpath=(//span[contains(@class,'tree-hitarea') and contains(@class,'icon-plus')])[1]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>PAGE_TREE_PAGE_ARROW_2</td>
-	<td>xpath=(//a[contains(@id,'layoutsTree_layout_')]/../../span[contains(@class,'tree-hitarea')])[2]</td>
+	<td>xpath=(//span[contains(@class,'tree-hitarea') and contains(@class,'icon-plus')])[2]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>PAGE_TREE_PAGE_ARROW_3</td>
-	<td>xpath=(//a[contains(@id,'layoutsTree_layout_')]/../../span[contains(@class,'tree-hitarea')])[3]</td>
+	<td>xpath=(//span[contains(@class,'tree-hitarea') and contains(@class,'icon-plus')])[3]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>PAGE_TREE_PAGE_ARROW_4</td>
-	<td>xpath=(//a[contains(@id,'layoutsTree_layout_')]/../../i[contains(@class,'tree-hitarea')])[4]</td>
+	<td>xpath=(//span[contains(@class,'tree-hitarea') and contains(@class,'icon-plus')])[4]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>PAGE_TREE_PAGE_SPECIFIC_PAGE</td>
-	<td>//a[span[contains(.,'${key_sitePageName}')]]</td>
+	<td>//a[span[contains(.,'${key_page}')]]</td>
 	<td></td>
 </tr>
 <tr>
@@ -153,52 +153,52 @@
 </tr>
 <tr>
 	<td>PAGE_TREE_PAGE_LINK</td>
-	<td>//div[@class='list-group-item']//span/a[contains(.,'${key_sitePageName}')]</td>
+	<td>//div[@class='list-group-item']//span/a[@title='${key_page}']</td>
 	<td></td>
 </tr>
 <tr>
-	<td>PAGE_TREE_PAGE_LINK_1</td>
-	<td>//span[a[contains(.,'${key_sitePageName}')]]//span[contains(@class,'icon-cog')]</td>
+	<td>PAGE_TREE_PAGE_EDIT_COG</td>
+	<td>//a[contains(@class,'tree-edit') and contains(.,'${key_page}')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>PAGE_TREE_PAGE_LINK_2</td>
-	<td>//span[a[contains(.,'${key_sitePageName}')]]//span[contains(@class,'icon-cog')]</td>
+	<td>xpath=(//span[contains(@class,'tree-label')])[3]/a</td>
 	<td></td>
 </tr>
 <tr>
 	<td>PAGE_TREE_PAGE_LINK_3</td>
-	<td>xpath=(//a[contains(@id,'layoutsTree_layout_')])[3]</td>
+	<td>xpath=(//span[contains(@class,'tree-label')])[4]/a</td>
 	<td></td>
 </tr>
 <tr>
 	<td>PAGE_TREE_PAGE_LINK_4</td>
-	<td>xpath=(//a[contains(@id,'layoutsTree_layout_')])[4]</td>
+	<td>xpath=(//span[contains(@class,'tree-label')])[5]/a</td>
 	<td></td>
 </tr>
 <tr>
 	<td>PAGE_TREE_PAGE_LINK_5</td>
-	<td>xpath=(//a[contains(@id,'layoutsTree_layout_')])[5]</td>
+	<td>xpath=(//span[contains(@class,'tree-label')])[6]/a</td>
 	<td></td>
 </tr>
 <tr>
 	<td>PAGE_TREE_PAGE_LINK_6</td>
-	<td>xpath=(//a[contains(@id,'layoutsTree_layout_')])[6]</td>
+	<td>xpath=(//span[contains(@class,'tree-label')])[7]/a</td>
 	<td></td>
 </tr>
 <tr>
 	<td>PAGE_TREE_PAGE_LINK_7</td>
-	<td>xpath=(//a[contains(@id,'layoutsTree_layout_')])[7]</td>
+	<td>xpath=(//span[contains(@class,'tree-label')])[8]/a</td>
 	<td></td>
 </tr>
 <tr>
 	<td>PAGE_TREE_PAGE_LINK_8</td>
-	<td>xpath=(//a[contains(@id,'layoutsTree_layout_')])[8]</td>
+	<td>xpath=(//span[contains(@class,'tree-label')])[9]/a</td>
 	<td></td>
 </tr>
 <tr>
 	<td>PAGE_TREE_PAGE_LINK_TO_PAGE</td>
-	<td>xpath=(//li[contains(@id,'layoutsTree_layoutId_2')]/div/span[contains(@class,'icon-link')])</td>
+	<td>//span[contains(@class,'icon-link')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -266,7 +266,7 @@
 <!--STAGING-->
 <tr>
 	<td>STAGING_SITE_PAGES_VARIATION_BUTTON</td>
-	<td>//ul[@aria-label='Site Pages']/li/a/span</td>
+	<td>//ul[contains(@aria-labelledby,'panel-manage-site_administration_pages')]//div[contains(@class,'nav-equal-height-heading')]/span[2]/div/a</td>
 	<td></td>
 </tr>
 <tr>
@@ -282,7 +282,7 @@
 <!--INCOMPLETE_STAGING_PAGE_VARIATION-->
 <tr>
 	<td>INCOMPLETE_STAGING_PAGE_VARIATION_INFO_MESSAGE</td>
-	<td>//form[contains(@class,'form edit-layout-form')]</td>
+	<td>//div[contains(@class,'manage-view')]</td>
 	<td></td>
 </tr>
 <tr>

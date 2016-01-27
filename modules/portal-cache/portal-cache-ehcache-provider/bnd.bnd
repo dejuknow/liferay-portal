@@ -45,8 +45,10 @@ Import-Package:\
 	!sun.misc,\
 	*
 Include-Resource:\
-	classes,\
 	@lib/ehcache.jar!/com/*,\
 	@lib/ehcache.jar!/net/*,\
 	@lib/ehcache.jar!/org/*,\
 	@lib/ehcache.jar!/META-INF/*
+Liferay-Releng-Module-Group-Description:
+Liferay-Releng-Module-Group-Title: Cache Engines
+-include: ../../../marketplace/platform/bnd.bnd

@@ -120,7 +120,7 @@ public class VerifyProperties extends VerifyProcess {
 
 		for (String propertyResourceName : propertiesResourceNames) {
 			try (InputStream inputStream = getPropertiesResourceAsStream(
-				propertyResourceName)) {
+					propertyResourceName)) {
 
 				if (inputStream != null) {
 					properties.load(inputStream);
@@ -1650,8 +1650,9 @@ public class VerifyProperties extends VerifyProcess {
 		"asset.publisher.filter.unlistable.entries",
 		"asset.publisher.query.form.configuration",
 		"asset.tag.permissions.enabled", "asset.tag.properties.default",
-		"asset.tag.properties.enabled", "auth.max.failures.limit",
-		"blogs.image.small.max.size", "breadcrumb.display.style.options",
+		"asset.tag.properties.enabled", "asset.tag.suggestions.enabled",
+		"auth.max.failures.limit", "blogs.image.small.max.size",
+		"breadcrumb.display.style.options",
 		"buffered.increment.parallel.queue.size",
 		"buffered.increment.serial.queue.size", "cas.validate.url",
 		"cluster.executor.heartbeat.interval",
@@ -1684,8 +1685,8 @@ public class VerifyProperties extends VerifyProcess {
 		"editor.wysiwyg.portal-web.docroot.html.portlet.bookmarks." +
 			"configuration.jsp",
 		"editor.wysiwyg.portal-web.docroot.html.portlet.document_library." +
-		"editor.wysiwyg.portal-web.docroot.html.portlet.invitation." +
-			"configuration.jsp",
+			"editor.wysiwyg.portal-web.docroot.html.portlet.invitation." +
+				"configuration.jsp",
 		"editor.wysiwyg.portal-web.docroot.html.portlet.journal." +
 			"configuration.jsp",
 		"editor.wysiwyg.portal-web.docroot.html.portlet.login.configuration." +
@@ -1694,14 +1695,19 @@ public class VerifyProperties extends VerifyProcess {
 			"configuration.jsp",
 		"editor.wysiwyg.portal-web.docroot.html.portlet.portal_settings." +
 			"email_notifications.jsp",
+		"ehcache.bootstrap.cache.loader.factory",
+		"ehcache.cache.event.listener.factory",
+		"ehcache.cache.manager.peer.listener.factory",
+		"ehcache.cache.manager.peer.provider.factory",
 		"ehcache.cache.manager.statistics.thread.pool.size",
+		"ehcache.multi.vm.config.location.peerProviderProperties",
 		"ehcache.statistics.enabled",
 		"hot.deploy.hook.custom.jsp.verification.enabled",
 		"hibernate.cache.region.factory_class",
 		"hibernate.cache.use_minimal_puts", "hibernate.cache.use_query_cache",
 		"hibernate.cache.use_second_level_cache",
 		"hibernate.cache.use_structured_entries", "icq.jar", "icq.login",
-		"icq.password", "index.filter.search.limit",
+		"icq.password", "index.filter.search.limit", "index.read.only",
 		"invitation.email.max.recipients", "invitation.email.message.body",
 		"invitation.email.message.subject", "javax.persistence.validation.mode",
 		"jbi.workflow.url", "json.deserializer.strict.mode",
@@ -1736,7 +1742,8 @@ public class VerifyProperties extends VerifyProcess {
 		"memory.cluster.scheduler.lock.cache.enabled",
 		"message.boards.email.message.added.signature",
 		"message.boards.email.message.updated.signature",
-		"message.boards.thread.locking.enabled", "msn.login", "msn.password",
+		"message.boards.thread.locking.enabled", "message.boards.thread.views",
+		"message.boards.thread.views.default", "msn.login", "msn.password",
 		"multicast.group.address[\"hibernate\"]",
 		"multicast.group.port[\"hibernate\"]",
 		"net.sf.ehcache.configurationResourceName",
@@ -1751,7 +1758,9 @@ public class VerifyProperties extends VerifyProcess {
 		"portal.security.manager.enable", "permissions.list.filter",
 		"permissions.thread.local.cache.max.size",
 		"permissions.user.check.algorithm", "persistence.provider",
-		"ratings.max.score", "ratings.min.score", "scheduler.classes",
+		"ratings.max.score", "ratings.min.score", "sc.image.max.size",
+		"sc.image.thumbnail.max.height", "sc.image.thumbnail.max.width",
+		"sc.product.comments.enabled", "scheduler.classes",
 		"schema.run.minimal", "search.container.page.iterator.page.values",
 		"service.builder.service.read.only.prefixes", "shard.available.names",
 		"shard.default.name", "shard.selector", "siteminder.auth.enabled",

@@ -21,20 +21,22 @@
 <aui:button-row>
 	<c:choose>
 		<c:when test="<%= ShutdownUtil.isInProcess() %>">
-			<aui:button cssClass="save-server-button" data-cmd="shutdown" value="cancel-shutdown" />
+			<aui:button cssClass="btn-lg save-server-button" data-cmd="shutdown" value="cancel-shutdown" />
 		</c:when>
 		<c:otherwise>
-			<aui:fieldset>
-				<aui:input label="number-of-minutes" name="minutes" size="3" type="text">
-					<aui:validator name="digits" />
-					<aui:validator name="min">1</aui:validator>
-					<aui:validator name="required" />
-				</aui:input>
+			<aui:fieldset-group markupView="lexicon">
+				<aui:fieldset>
+					<aui:input label="number-of-minutes" name="minutes" size="3" type="text">
+						<aui:validator name="digits" />
+						<aui:validator name="min">1</aui:validator>
+						<aui:validator name="required" />
+					</aui:input>
 
-				<aui:input cssClass="lfr-textarea-container" label="custom-message" name="message" type="textarea" />
-			</aui:fieldset>
+					<aui:input cssClass="lfr-textarea-container" label="custom-message" name="message" type="textarea" />
+				</aui:fieldset>
+			</aui:fieldset-group>
 
-			<aui:button cssClass="save-server-button" data-cmd="shutdown" value="shutdown" />
+			<aui:button cssClass="btn-lg save-server-button" data-cmd="shutdown" value="shutdown" />
 		</c:otherwise>
 	</c:choose>
 </aui:button-row>

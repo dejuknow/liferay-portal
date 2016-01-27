@@ -16,8 +16,7 @@ package com.liferay.portal.workflow.kaleo.service;
 
 import aQute.bnd.annotation.ProviderType;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
+import com.liferay.osgi.util.ServiceTrackerFactory;
 
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -65,21 +64,6 @@ public class KaleoDefinitionServiceUtil {
 		return _serviceTracker.getService();
 	}
 
-	/**
-	 * @deprecated As of 6.2.0
-	 */
-	@Deprecated
-	public void setService(KaleoDefinitionService service) {
-	}
-
-	private static ServiceTracker<KaleoDefinitionService, KaleoDefinitionService> _serviceTracker;
-
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(KaleoDefinitionServiceUtil.class);
-
-		_serviceTracker = new ServiceTracker<KaleoDefinitionService, KaleoDefinitionService>(bundle.getBundleContext(),
-				KaleoDefinitionService.class, null);
-
-		_serviceTracker.open();
-	}
+	private static ServiceTracker<KaleoDefinitionService, KaleoDefinitionService> _serviceTracker =
+		ServiceTrackerFactory.open(KaleoDefinitionService.class);
 }

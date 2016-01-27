@@ -2,6 +2,7 @@ package ${packagePath}.model;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.annotation.ImplementationClassName;
 import com.liferay.portal.kernel.util.Accessor;
 import com.liferay.portal.kernel.util.LocaleThreadLocal;
 import com.liferay.portal.model.NestedSetsTreeNodeModel;
@@ -26,6 +27,7 @@ import com.liferay.portal.model.TreeModel;
 	@Deprecated
 </#if>
 
+@ImplementationClassName("${packagePath}.model.impl.${entity.name}Impl")
 @ProviderType
 public interface ${entity.name} extends
 	${entity.name}Model

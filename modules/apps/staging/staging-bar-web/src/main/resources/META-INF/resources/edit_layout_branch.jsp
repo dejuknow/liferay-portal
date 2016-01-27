@@ -61,14 +61,11 @@ if (layoutBranch != null) {
 }
 %>
 
-<liferay-ui:header
-	backURL="<%= redirect %>"
-	localizeTitle="<%= true %>"
-	showBackURL="<%= true %>"
-	title="<%= title %>"
-/>
+<liferay-util:include page="/navigation.jsp" servletContext="<%= application %>">
+	<liferay-util:param name="navigationName" value="<%= title %>" />
+</liferay-util:include>
 
-<div data-namespace="<portlet:namespace />" id="<portlet:namespace /><%= (layoutBranch != null) ? "updateBranch" : "addBranch" %>">
+<div class="container-fluid-1280" data-namespace="<portlet:namespace />" id="<portlet:namespace /><%= (layoutBranch != null) ? "updateBranch" : "addBranch" %>">
 	<aui:model-context bean="<%= layoutBranch %>" model="<%= LayoutBranch.class %>" />
 
 	<portlet:actionURL name="editLayoutBranch" var="editLayoutBranchURL">
@@ -87,9 +84,9 @@ if (layoutBranch != null) {
 		<aui:input name="description" />
 
 		<aui:button-row>
-			<aui:button type="submit" value='<%= (layoutBranch != null) ? "update" : "add" %>' />
+			<aui:button cssClass="btn-lg" type="submit" value='<%= (layoutBranch != null) ? "update" : "add" %>' />
 
-			<aui:button href="<%= redirect %>" type="cancel" />
+			<aui:button cssClass="btn-lg" href="<%= redirect %>" type="cancel" />
 		</aui:button-row>
 	</aui:form>
 </div>

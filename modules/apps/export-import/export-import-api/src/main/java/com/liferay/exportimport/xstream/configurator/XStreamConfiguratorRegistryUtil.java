@@ -16,6 +16,7 @@ package com.liferay.exportimport.xstream.configurator;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.osgi.util.ServiceTrackerFactory;
 import com.liferay.portal.kernel.concurrent.ConcurrentHashSet;
 import com.liferay.portal.kernel.util.AggregateClassLoader;
 import com.liferay.portal.kernel.util.MapUtil;
@@ -47,7 +48,9 @@ public class XStreamConfiguratorRegistryUtil {
 			_instance._getXStreamConfigurators();
 
 		for (XStreamConfigurator xStreamConfigurator : xStreamConfigurators) {
-			classLoaders.add(xStreamConfigurator.getClass().getClassLoader());
+			Class<?> clazz = xStreamConfigurator.getClass();
+
+			classLoaders.add(clazz.getClassLoader());
 		}
 
 		// Temporary code to fetch class loaders from the old framework too
@@ -75,7 +78,7 @@ public class XStreamConfiguratorRegistryUtil {
 
 		_bundleContext = bundle.getBundleContext();
 
-		_serviceTracker = new ServiceTracker<>(
+		_serviceTracker = ServiceTrackerFactory.open(
 			_bundleContext, XStreamConfigurator.class,
 			new XStreamConfiguratorServiceTrackerCustomizer());
 

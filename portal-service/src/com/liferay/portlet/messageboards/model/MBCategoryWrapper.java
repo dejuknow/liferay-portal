@@ -225,15 +225,6 @@ public class MBCategoryWrapper implements MBCategory, ModelWrapper<MBCategory> {
 	}
 
 	/**
-	* @deprecated As of 6.1.0, replaced by {@link #isApproved()}
-	*/
-	@Deprecated
-	@Override
-	public boolean getApproved() {
-		return _mbCategory.getApproved();
-	}
-
-	/**
 	* Returns the category ID of this message boards category.
 	*
 	* @return the category ID of this message boards category
@@ -1010,14 +1001,6 @@ public class MBCategoryWrapper implements MBCategory, ModelWrapper<MBCategory> {
 	@Override
 	public StagedModelType getStagedModelType() {
 		return _mbCategory.getStagedModelType();
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedModel}
-	 */
-	@Deprecated
-	public MBCategory getWrappedMBCategory() {
-		return _mbCategory;
 	}
 
 	@Override

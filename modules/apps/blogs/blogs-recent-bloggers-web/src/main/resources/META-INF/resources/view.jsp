@@ -59,12 +59,14 @@ else {
 			try {
 				Group group = GroupLocalServiceUtil.getGroup(statsUser.getGroupId());
 				User user2 = UserLocalServiceUtil.getUserById(statsUser.getUserId());
-
 				Date now = new Date();
+				QueryDefinition<BlogsEntry> entriesCountQueryDefinition = new QueryDefinition<>(WorkflowConstants.STATUS_APPROVED);
 
-				int entryCount = BlogsEntryLocalServiceUtil.getGroupUserEntriesCount(group.getGroupId(), user2.getUserId(), now, WorkflowConstants.STATUS_APPROVED);
+				int entriesCount = BlogsEntryLocalServiceUtil.getGroupUserEntriesCount(group.getGroupId(), user2.getUserId(), now, entriesCountQueryDefinition);
 
-				List entries = BlogsEntryLocalServiceUtil.getGroupUserEntries(group.getGroupId(), user2.getUserId(), now, WorkflowConstants.STATUS_APPROVED, 0, 1);
+				QueryDefinition<BlogsEntry> entriesQueryDefinition = new QueryDefinition<>(WorkflowConstants.STATUS_APPROVED, 0, 1, null);
+
+				List entries = BlogsEntryLocalServiceUtil.getGroupUserEntries(group.getGroupId(), user2.getUserId(), now, entriesQueryDefinition);
 
 				if (entries.size() == 1) {
 					BlogsEntry entry = (BlogsEntry)entries.get(0);
@@ -88,7 +90,7 @@ else {
 
 						// Number of posts
 
-						row.addText(String.valueOf(entryCount), rowHREF);
+						row.addText(String.valueOf(entriesCount), rowHREF);
 
 						// Last post date
 

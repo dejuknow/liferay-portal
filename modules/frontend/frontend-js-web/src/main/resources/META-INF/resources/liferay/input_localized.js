@@ -133,16 +133,21 @@ AUI.add(
 
 						var eventHandles = [
 							A.after(instance._afterRenderUI, instance, 'renderUI'),
-							instance.on(
+							instance.after(
 								{
 									focusedChange: instance._onFocusedChange,
 									select: instance._onSelectFlag
 								}
 							),
-							inputPlaceholder.on('input', A.debounce(STR_INPUT_VALUE_CHANGE, 100, instance)),
 							Liferay.on('submitForm', A.rbind(STR_SUBMIT, instance, inputPlaceholder)),
 							inputPlaceholder.get('form').on('submit', A.rbind(STR_SUBMIT, instance, inputPlaceholder))
 						];
+
+						if (!instance.get('editor')) {
+							eventHandles.push(
+								inputPlaceholder.on('input', A.debounce(STR_INPUT_VALUE_CHANGE, 100, instance))
+							);
+						}
 
 						instance._eventHandles = eventHandles;
 
@@ -204,7 +209,9 @@ AUI.add(
 
 						var editor = instance.get('editor');
 
-						inputPlaceholder.val(instance.getValue(languageId));
+						var inputLanguageValue = instance.getValue(languageId) || defaultLanguageValue;
+
+						inputPlaceholder.val(inputLanguageValue);
 
 						inputPlaceholder.attr('dir', Liferay.Language.direction[languageId]);
 						inputPlaceholder.attr('placeholder', defaultLanguageValue);

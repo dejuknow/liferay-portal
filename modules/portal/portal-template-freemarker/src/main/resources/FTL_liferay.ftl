@@ -7,6 +7,14 @@ LPS-30525.
 
 <#setting number_format = "computer">
 
+<#if PortalJspTagLibs??>
+	<#assign liferay_ui = PortalJspTagLibs["/WEB-INF/tld/liferay-ui.tld"] />
+	<#assign liferay_portlet = PortalJspTagLibs["/WEB-INF/tld/liferay-portlet-ext.tld"] />
+<#elseif taglibLiferayHash??>
+	<#assign liferay_ui = taglibLiferayHash["/WEB-INF/tld/liferay-ui.tld"] />
+	<#assign liferay_portlet = taglibLiferayHash["/WEB-INF/tld/liferay-portlet-ext.tld"] />
+</#if>
+
 <#assign css_main_file = "" />
 <#assign is_signed_in = false />
 <#assign js_main_file = "" />
@@ -42,13 +50,11 @@ LPS-30525.
 <#macro breadcrumbs
 	default_preferences = ""
 >
-	${theme.runtime("com.liferay.portal.kernel.servlet.taglib.ui.BreadcrumbEntry", portletProviderAction.VIEW, "", default_preferences)}
-</#macro>
-
-<#macro control_menu>
-	<#if is_setup_complete && is_signed_in>
-		${theme.runtime("com.liferay.portlet.admin.util.PortalControlMenuApplicationType$ControlMenu", portletProviderAction.VIEW)}
-	</#if>
+	<@liferay_portlet["runtime"]
+		defaultPreferences=default_preferences
+		portletProviderAction=portletProviderAction.VIEW
+		portletProviderClassName="com.liferay.portal.kernel.servlet.taglib.ui.BreadcrumbEntry"
+	/>
 </#macro>
 
 <#macro css
@@ -90,25 +96,36 @@ ${languageUtil.format(locale, key, arguments)}</#macro>
 <#macro languages
 	default_preferences = ""
 >
-	${theme.runtime("com.liferay.portal.kernel.servlet.taglib.ui.LanguageEntry", portletProviderAction.VIEW, "", default_preferences)}
+	<@liferay_portlet["runtime"]
+		defaultPreferences=default_preferences
+		portletProviderAction=portletProviderAction.VIEW
+		portletProviderClassName="com.liferay.portal.kernel.servlet.taglib.ui.LanguageEntry"
+	/>
 </#macro>
 
 <#macro navigation_menu
 	default_preferences = ""
 >
-	${theme.runtime("com.liferay.portal.theme.NavItem", portletProviderAction.VIEW, "", default_preferences)}
+	<@liferay_portlet["runtime"]
+		defaultPreferences=default_preferences
+		portletProviderAction=portletProviderAction.VIEW
+		portletProviderClassName="com.liferay.portal.theme.NavItem"
+	/>
 </#macro>
 
 <#macro product_menu>
-	<#if is_setup_complete && is_signed_in>
-		${theme.runtime("com.liferay.portlet.admin.util.PortalProductMenuApplicationType$ProductMenu", portletProviderAction.VIEW)}
+	<#if themeDisplay.isImpersonated() || (is_setup_complete && is_signed_in)>
+		<@liferay_portlet["runtime"]
+			portletProviderAction=portletProviderAction.VIEW
+			portletProviderClassName="com.liferay.admin.kernel.util.PortalProductMenuApplicationType$ProductMenu"
+		/>
 	</#if>
 </#macro>
 
 <#macro product_menu_sidebar
 	state
 >
-	<#if is_setup_complete && is_signed_in>
+	<#if themeDisplay.isImpersonated() || (is_setup_complete && is_signed_in)>
 		<div class="${state} lfr-product-menu-panel sidenav-fixed sidenav-menu-slider" id="sidenavSliderId">
 			<div class="product-menu sidebar sidenav-menu">
 				<@liferay.product_menu />
@@ -117,17 +134,15 @@ ${languageUtil.format(locale, key, arguments)}</#macro>
 	</#if>
 </#macro>
 
-<#macro quick_access
-	content_id
->
-	${theme.quickAccess(content_id)}
-</#macro>
-
 <#macro search
 	default_preferences = ""
 >
 	<#if is_setup_complete>
-		${theme.runtime("com.liferay.portlet.admin.util.PortalSearchApplicationType$Search", portletProviderAction.VIEW, "", default_preferences)}
+		<@liferay_portlet["runtime"]
+			defaultPreferences=default_preferences
+			portletProviderAction=portletProviderAction.VIEW
+			portletProviderClassName="com.liferay.admin.kernel.util.PortalSearchApplicationType$Search"
+		/>
 	</#if>
 </#macro>
 
@@ -138,5 +153,10 @@ ${languageUtil.format(locale, key, arguments)}</#macro>
 </#macro>
 
 <#macro user_personal_bar>
-	${theme.runtime("com.liferay.portlet.admin.util.PortalUserPersonalBarApplicationType$UserPersonalBar", portletProviderAction.VIEW)}
+	<#if themeDisplay.isImpersonated() || is_setup_complete || !is_signed_in>
+		<@liferay_portlet["runtime"]
+			portletProviderAction=portletProviderAction.VIEW
+			portletProviderClassName="com.liferay.admin.kernel.util.PortalUserPersonalBarApplicationType$UserPersonalBar"
+		/>
+	</#if>
 </#macro>

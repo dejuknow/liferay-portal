@@ -16,14 +16,16 @@ package com.liferay.portal.upgrade.internal.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
-import com.liferay.configuration.admin.ConfigurationAdmin;
+import com.liferay.portal.metatype.annotations.ExtendedObjectClassDefinition;
 
 /**
  * @author Carlos Sierra Andrés
  */
-@ConfigurationAdmin(category = "platform")
+@ExtendedObjectClassDefinition(category = "platform")
 @Meta.OCD(
-	id = "com.liferay.portal.upgrade.internal.configuration.ReleaseManagerConfiguration"
+	id = "com.liferay.portal.upgrade.internal.configuration.ReleaseManagerConfiguration",
+	localization = "content/Language",
+	name = "%release.manager.configuration.name"
 )
 public interface ReleaseManagerConfiguration {
 

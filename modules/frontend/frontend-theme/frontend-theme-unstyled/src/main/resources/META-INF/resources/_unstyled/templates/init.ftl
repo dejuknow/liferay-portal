@@ -1,5 +1,11 @@
 <#-- ---------- Common variables ---------- -->
 
+<#assign liferay_control_menu=PortalJspTagLibs["/META-INF/resources/liferay-control-menu.tld"]>
+<#assign liferay_portlet=PortalJspTagLibs["/WEB-INF/tld/liferay-portlet-ext.tld"]>
+<#assign liferay_theme=PortalJspTagLibs["/WEB-INF/tld/liferay-theme.tld"]>
+<#assign liferay_ui=PortalJspTagLibs["/WEB-INF/tld/liferay-ui.tld"]>
+<#assign liferay_util=PortalJspTagLibs["/WEB-INF/tld/liferay-util.tld"]>
+
 <#assign theme_display = themeDisplay />
 <#assign portlet_display = portletDisplay />
 
@@ -7,11 +13,9 @@
 <#assign theme_settings = themeDisplay.getThemeSettings() />
 
 <#assign root_css_class = languageUtil.get(locale, "lang.dir") />
-<#assign css_class = htmlUtil.escape(theme_display.getColorScheme().getCssClass()) + " yui3-skin-sam" />
+<#assign css_class = htmlUtil.escape(bodyCssClass!) />
 
-<#assign liferay_product_menu_state = sessionClicks.get(request, "com.liferay.control.menu.web_productMenuState", "closed") />
-
-<#assign css_class = css_class + " " + liferay_product_menu_state />
+<#assign css_class = css_class + " " + htmlUtil.escape(theme_display.getColorScheme().getCssClass()) + " yui3-skin-sam" />
 
 <#assign liferay_toggle_controls = sessionClicks.get(request, "com.liferay.frontend.js.web_toggleControls", "visible") />
 
@@ -258,7 +262,7 @@
 	<#assign the_title = pageSubtitle + " - " + the_title />
 </#if>
 
-<#if tilesTitle != "">
+<#if tilesTitle?has_content>
 	<#assign the_title = languageUtil.get(locale, tilesTitle) />
 </#if>
 
@@ -266,11 +270,11 @@
 	<#assign the_title = page_group.getDescriptiveName(locale) />
 </#if>
 
-<#if tilesTitle == "">
+<#if !tilesTitle?has_content>
 	<#assign the_title = htmlUtil.escape(the_title) />
 </#if>
 
-<#if the_title != "" && company_name != site_name && !page_group.isLayoutPrototype()>
+<#if the_title ?has_content && company_name != site_name && !page_group.isLayoutPrototype()>
 	<#assign the_title = the_title + " - " + site_name />
 </#if>
 
@@ -352,7 +356,11 @@
 <#assign body_top_include = "${dir_include}/common/themes/body_top.jsp" />
 <#assign bottom_include = "${dir_include}/common/themes/bottom.jsp" />
 <#assign bottom_ext_include = bottom_include />
-<#assign content_include = "${dir_include}${tilesContent}" />
+
+<#if tilesContent?has_content>
+	<#assign content_include = "${dir_include}${tilesContent}" />
+</#if>
+
 <#assign top_head_include = "${dir_include}/common/themes/top_head.jsp" />
 <#assign top_messages_include = "${dir_include}/common/themes/top_messages.jsp" />
 

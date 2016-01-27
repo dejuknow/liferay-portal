@@ -19,6 +19,12 @@
 		<execute function="AssertClick" locator1="Form#PAGE_CONTROLS_ADD_NEW_PAGE" value1="Add new page" />
 	</command>
 
+	<command name="configureWorkflow">
+		<execute function="Select" locator1="AssetWorkflow#ALL_STRUCTURES_WORKFLOW_SELECT" value1="${workflowDefinition}" />
+
+		<execute macro="Button#clickDone" />
+	</command>
+
 	<command name="editDescription">
 		<execute function="Type#typeAceEditor" locator1="Form#DESCRIPTION_FIELD" value1="${formDescription}" />
 	</command>
@@ -26,9 +32,15 @@
 	<command name="editName">
 		<var name="key_columnSize" value="${columnSize}" />
 
-		<execute function="AssertElementPresent" locator1="Form#ADD_FIRST_FIELD" />
+		<execute function="AssertVisible" locator1="Form#ADD_FIRST_FIELD" />
+		<execute function="AssertVisible" locator1="Form#NAME_FIELD" />
+		<execute function="AssertVisible" locator1="Form#DESCRIPTION_FIELD" />
 
-		<execute function="Type#typeAceEditor" locator1="Form#NAME_FIELD" value1="${formName}" />
+		<execute function="Pause" locator1="5000" />
+
+		<execute function="Click" locator1="Form#NAME_FIELD" />
+
+		<execute function="Type#typeAlloyEditor" locator1="AlloyEditor#NAME_FIELD" value1="${formName}" />
 	</command>
 
 	<command name="editPageDescription">
@@ -63,7 +75,15 @@
 	<command name="save">
 		<execute function="AssertClick" locator1="Form#SAVE_BUTTON" value1="Save" />
 
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+	</command>
+
+	<command name="saveAndPublish">
+		<execute function="Click" locator1="Form#SAVE_BUTTON_DROPDOWN" />
+
+		<execute function="AssertClick" locator1="Form#SAVE_BUTTON_DROPDOWN_SAVE_AND_PUBLISH_LIVE_PAGE" value1="Save and Publish Live Page" />
+
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
 	</command>
 
 	<command name="saveWithoutFormName">

@@ -189,15 +189,6 @@ public class WikiNodeWrapper implements WikiNode, ModelWrapper<WikiNode> {
 		return _wikiNode.compareTo(wikiNode);
 	}
 
-	/**
-	* @deprecated As of 6.1.0, replaced by {@link #isApproved()}
-	*/
-	@Deprecated
-	@Override
-	public boolean getApproved() {
-		return _wikiNode.getApproved();
-	}
-
 	@Override
 	public long getAttachmentsFolderId() {
 		return _wikiNode.getAttachmentsFolderId();
@@ -895,14 +886,6 @@ public class WikiNodeWrapper implements WikiNode, ModelWrapper<WikiNode> {
 	@Override
 	public StagedModelType getStagedModelType() {
 		return _wikiNode.getStagedModelType();
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedModel}
-	 */
-	@Deprecated
-	public WikiNode getWrappedWikiNode() {
-		return _wikiNode;
 	}
 
 	@Override

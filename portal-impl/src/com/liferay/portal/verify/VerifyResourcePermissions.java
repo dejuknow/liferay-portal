@@ -20,6 +20,7 @@ import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.verify.model.VerifiableResourcedModel;
 import com.liferay.portal.model.Contact;
 import com.liferay.portal.model.Layout;
 import com.liferay.portal.model.ResourceConstants;
@@ -34,7 +35,6 @@ import com.liferay.portal.service.ResourcePermissionLocalServiceUtil;
 import com.liferay.portal.service.RoleLocalServiceUtil;
 import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.util.PortalInstances;
-import com.liferay.portal.verify.model.VerifiableResourcedModel;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -192,7 +192,7 @@ public class VerifyResourcePermissions extends VerifyProcess {
 				}
 			}
 			finally {
-				DataAccess.cleanUp(null, ps, rs);
+				DataAccess.cleanUp(ps, rs);
 			}
 
 			try {
@@ -224,7 +224,7 @@ public class VerifyResourcePermissions extends VerifyProcess {
 				}
 			}
 			finally {
-				DataAccess.cleanUp(null, ps, rs);
+				DataAccess.cleanUp(ps, rs);
 			}
 		}
 	}

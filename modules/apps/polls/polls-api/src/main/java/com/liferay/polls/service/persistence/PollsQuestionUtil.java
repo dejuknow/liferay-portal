@@ -16,14 +16,13 @@ package com.liferay.polls.service.persistence;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.osgi.util.ServiceTrackerFactory;
+
 import com.liferay.polls.model.PollsQuestion;
 
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.service.ServiceContext;
-
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
 
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -185,7 +184,7 @@ public class PollsQuestionUtil {
 	* @param uuid the uuid
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching polls question
-	* @throws com.liferay.polls.NoSuchQuestionException if a matching polls question could not be found
+	* @throws NoSuchQuestionException if a matching polls question could not be found
 	*/
 	public static PollsQuestion findByUuid_First(java.lang.String uuid,
 		OrderByComparator<PollsQuestion> orderByComparator)
@@ -211,7 +210,7 @@ public class PollsQuestionUtil {
 	* @param uuid the uuid
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching polls question
-	* @throws com.liferay.polls.NoSuchQuestionException if a matching polls question could not be found
+	* @throws NoSuchQuestionException if a matching polls question could not be found
 	*/
 	public static PollsQuestion findByUuid_Last(java.lang.String uuid,
 		OrderByComparator<PollsQuestion> orderByComparator)
@@ -238,7 +237,7 @@ public class PollsQuestionUtil {
 	* @param uuid the uuid
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next polls question
-	* @throws com.liferay.polls.NoSuchQuestionException if a polls question with the primary key could not be found
+	* @throws NoSuchQuestionException if a polls question with the primary key could not be found
 	*/
 	public static PollsQuestion[] findByUuid_PrevAndNext(long questionId,
 		java.lang.String uuid,
@@ -268,12 +267,12 @@ public class PollsQuestionUtil {
 	}
 
 	/**
-	* Returns the polls question where uuid = &#63; and groupId = &#63; or throws a {@link com.liferay.polls.NoSuchQuestionException} if it could not be found.
+	* Returns the polls question where uuid = &#63; and groupId = &#63; or throws a {@link NoSuchQuestionException} if it could not be found.
 	*
 	* @param uuid the uuid
 	* @param groupId the group ID
 	* @return the matching polls question
-	* @throws com.liferay.polls.NoSuchQuestionException if a matching polls question could not be found
+	* @throws NoSuchQuestionException if a matching polls question could not be found
 	*/
 	public static PollsQuestion findByUUID_G(java.lang.String uuid, long groupId)
 		throws com.liferay.polls.exception.NoSuchQuestionException {
@@ -411,7 +410,7 @@ public class PollsQuestionUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching polls question
-	* @throws com.liferay.polls.NoSuchQuestionException if a matching polls question could not be found
+	* @throws NoSuchQuestionException if a matching polls question could not be found
 	*/
 	public static PollsQuestion findByUuid_C_First(java.lang.String uuid,
 		long companyId, OrderByComparator<PollsQuestion> orderByComparator)
@@ -441,7 +440,7 @@ public class PollsQuestionUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching polls question
-	* @throws com.liferay.polls.NoSuchQuestionException if a matching polls question could not be found
+	* @throws NoSuchQuestionException if a matching polls question could not be found
 	*/
 	public static PollsQuestion findByUuid_C_Last(java.lang.String uuid,
 		long companyId, OrderByComparator<PollsQuestion> orderByComparator)
@@ -472,7 +471,7 @@ public class PollsQuestionUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next polls question
-	* @throws com.liferay.polls.NoSuchQuestionException if a polls question with the primary key could not be found
+	* @throws NoSuchQuestionException if a polls question with the primary key could not be found
 	*/
 	public static PollsQuestion[] findByUuid_C_PrevAndNext(long questionId,
 		java.lang.String uuid, long companyId,
@@ -578,7 +577,7 @@ public class PollsQuestionUtil {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching polls question
-	* @throws com.liferay.polls.NoSuchQuestionException if a matching polls question could not be found
+	* @throws NoSuchQuestionException if a matching polls question could not be found
 	*/
 	public static PollsQuestion findByGroupId_First(long groupId,
 		OrderByComparator<PollsQuestion> orderByComparator)
@@ -604,7 +603,7 @@ public class PollsQuestionUtil {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching polls question
-	* @throws com.liferay.polls.NoSuchQuestionException if a matching polls question could not be found
+	* @throws NoSuchQuestionException if a matching polls question could not be found
 	*/
 	public static PollsQuestion findByGroupId_Last(long groupId,
 		OrderByComparator<PollsQuestion> orderByComparator)
@@ -631,7 +630,7 @@ public class PollsQuestionUtil {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next polls question
-	* @throws com.liferay.polls.NoSuchQuestionException if a polls question with the primary key could not be found
+	* @throws NoSuchQuestionException if a polls question with the primary key could not be found
 	*/
 	public static PollsQuestion[] findByGroupId_PrevAndNext(long questionId,
 		long groupId, OrderByComparator<PollsQuestion> orderByComparator)
@@ -694,7 +693,7 @@ public class PollsQuestionUtil {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next polls question
-	* @throws com.liferay.polls.NoSuchQuestionException if a polls question with the primary key could not be found
+	* @throws NoSuchQuestionException if a polls question with the primary key could not be found
 	*/
 	public static PollsQuestion[] filterFindByGroupId_PrevAndNext(
 		long questionId, long groupId,
@@ -767,7 +766,7 @@ public class PollsQuestionUtil {
 	*
 	* @param questionId the primary key of the polls question
 	* @return the polls question that was removed
-	* @throws com.liferay.polls.NoSuchQuestionException if a polls question with the primary key could not be found
+	* @throws NoSuchQuestionException if a polls question with the primary key could not be found
 	*/
 	public static PollsQuestion remove(long questionId)
 		throws com.liferay.polls.exception.NoSuchQuestionException {
@@ -779,11 +778,11 @@ public class PollsQuestionUtil {
 	}
 
 	/**
-	* Returns the polls question with the primary key or throws a {@link com.liferay.polls.NoSuchQuestionException} if it could not be found.
+	* Returns the polls question with the primary key or throws a {@link NoSuchQuestionException} if it could not be found.
 	*
 	* @param questionId the primary key of the polls question
 	* @return the polls question
-	* @throws com.liferay.polls.NoSuchQuestionException if a polls question with the primary key could not be found
+	* @throws NoSuchQuestionException if a polls question with the primary key could not be found
 	*/
 	public static PollsQuestion findByPrimaryKey(long questionId)
 		throws com.liferay.polls.exception.NoSuchQuestionException {
@@ -890,21 +889,6 @@ public class PollsQuestionUtil {
 		return _serviceTracker.getService();
 	}
 
-	/**
-	 * @deprecated As of 6.2.0
-	 */
-	@Deprecated
-	public void setPersistence(PollsQuestionPersistence persistence) {
-	}
-
-	private static ServiceTracker<PollsQuestionPersistence, PollsQuestionPersistence> _serviceTracker;
-
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(PollsQuestionUtil.class);
-
-		_serviceTracker = new ServiceTracker<PollsQuestionPersistence, PollsQuestionPersistence>(bundle.getBundleContext(),
-				PollsQuestionPersistence.class, null);
-
-		_serviceTracker.open();
-	}
+	private static ServiceTracker<PollsQuestionPersistence, PollsQuestionPersistence> _serviceTracker =
+		ServiceTrackerFactory.open(PollsQuestionPersistence.class);
 }

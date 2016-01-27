@@ -16,37 +16,38 @@ package com.liferay.login.web.portlet.action;
 
 import com.liferay.login.web.constants.LoginPortletKeys;
 import com.liferay.login.web.portlet.util.LoginUtil;
-import com.liferay.portal.AddressCityException;
-import com.liferay.portal.AddressStreetException;
-import com.liferay.portal.AddressZipException;
-import com.liferay.portal.CompanyMaxUsersException;
-import com.liferay.portal.ContactBirthdayException;
-import com.liferay.portal.ContactNameException;
-import com.liferay.portal.DuplicateOpenIdException;
-import com.liferay.portal.EmailAddressException;
-import com.liferay.portal.GroupFriendlyURLException;
-import com.liferay.portal.NoSuchCountryException;
-import com.liferay.portal.NoSuchLayoutException;
-import com.liferay.portal.NoSuchListTypeException;
-import com.liferay.portal.NoSuchOrganizationException;
-import com.liferay.portal.NoSuchRegionException;
-import com.liferay.portal.OrganizationParentException;
-import com.liferay.portal.PhoneNumberException;
 import com.liferay.portal.RequiredFieldException;
-import com.liferay.portal.RequiredUserException;
 import com.liferay.portal.TermsOfUseException;
-import com.liferay.portal.UserEmailAddressException;
-import com.liferay.portal.UserIdException;
-import com.liferay.portal.UserPasswordException;
-import com.liferay.portal.UserScreenNameException;
-import com.liferay.portal.UserSmsException;
-import com.liferay.portal.WebsiteURLException;
+import com.liferay.portal.exception.AddressCityException;
+import com.liferay.portal.exception.AddressStreetException;
+import com.liferay.portal.exception.AddressZipException;
+import com.liferay.portal.exception.CompanyMaxUsersException;
+import com.liferay.portal.exception.ContactBirthdayException;
+import com.liferay.portal.exception.ContactNameException;
+import com.liferay.portal.exception.DuplicateOpenIdException;
+import com.liferay.portal.exception.EmailAddressException;
+import com.liferay.portal.exception.GroupFriendlyURLException;
+import com.liferay.portal.exception.NoSuchCountryException;
+import com.liferay.portal.exception.NoSuchLayoutException;
+import com.liferay.portal.exception.NoSuchListTypeException;
+import com.liferay.portal.exception.NoSuchOrganizationException;
+import com.liferay.portal.exception.NoSuchRegionException;
+import com.liferay.portal.exception.OrganizationParentException;
+import com.liferay.portal.exception.PhoneNumberException;
+import com.liferay.portal.exception.RequiredUserException;
+import com.liferay.portal.exception.UserEmailAddressException;
+import com.liferay.portal.exception.UserIdException;
+import com.liferay.portal.exception.UserPasswordException;
+import com.liferay.portal.exception.UserScreenNameException;
+import com.liferay.portal.exception.UserSmsException;
+import com.liferay.portal.exception.WebsiteURLException;
 import com.liferay.portal.kernel.captcha.CaptchaConfigurationException;
 import com.liferay.portal.kernel.captcha.CaptchaMaxChallengesException;
 import com.liferay.portal.kernel.captcha.CaptchaTextException;
 import com.liferay.portal.kernel.captcha.CaptchaUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.auth.session.AuthenticatedSessionManagerUtil;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
@@ -63,7 +64,6 @@ import com.liferay.portal.model.Company;
 import com.liferay.portal.model.CompanyConstants;
 import com.liferay.portal.model.Layout;
 import com.liferay.portal.model.User;
-import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.service.LayoutLocalService;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
@@ -248,39 +248,9 @@ public class CreateAccountMVCActionCommand extends BaseMVCActionCommand {
 			}
 		}
 		catch (Exception e) {
-			if (e instanceof AddressCityException ||
-				e instanceof AddressStreetException ||
-				e instanceof AddressZipException ||
-				e instanceof CaptchaConfigurationException ||
-				e instanceof CaptchaMaxChallengesException ||
-				e instanceof CaptchaTextException ||
-				e instanceof CompanyMaxUsersException ||
-				e instanceof ContactBirthdayException ||
-				e instanceof ContactNameException ||
-				e instanceof DuplicateOpenIdException ||
-				e instanceof EmailAddressException ||
-				e instanceof GroupFriendlyURLException ||
-				e instanceof NoSuchCountryException ||
-				e instanceof NoSuchListTypeException ||
-				e instanceof NoSuchOrganizationException ||
-				e instanceof NoSuchRegionException ||
-				e instanceof OrganizationParentException ||
-				e instanceof PhoneNumberException ||
-				e instanceof RequiredFieldException ||
-				e instanceof RequiredUserException ||
-				e instanceof TermsOfUseException ||
-				e instanceof UserEmailAddressException ||
-				e instanceof UserIdException ||
-				e instanceof UserPasswordException ||
-				e instanceof UserScreenNameException ||
-				e instanceof UserSmsException ||
-				e instanceof WebsiteURLException) {
-
-				SessionErrors.add(actionRequest, e.getClass(), e);
-			}
-			else if (e instanceof
-						UserEmailAddressException.MustNotBeDuplicate ||
-					 e instanceof UserScreenNameException.MustNotBeDuplicate) {
+			if (e instanceof
+					UserEmailAddressException.MustNotBeDuplicate ||
+				e instanceof UserScreenNameException.MustNotBeDuplicate) {
 
 				String emailAddress = ParamUtil.getString(
 					actionRequest, "emailAddress");
@@ -295,8 +265,38 @@ public class CreateAccountMVCActionCommand extends BaseMVCActionCommand {
 				}
 				else {
 					actionResponse.setRenderParameter(
-						"mvcPath", "update_account.jsp");
+						"mvcPath", "/update_account.jsp");
 				}
+			}
+			else if (e instanceof AddressCityException ||
+					 e instanceof AddressStreetException ||
+					 e instanceof AddressZipException ||
+					 e instanceof CaptchaConfigurationException ||
+					 e instanceof CaptchaMaxChallengesException ||
+					 e instanceof CaptchaTextException ||
+					 e instanceof CompanyMaxUsersException ||
+					 e instanceof ContactBirthdayException ||
+					 e instanceof ContactNameException ||
+					 e instanceof DuplicateOpenIdException ||
+					 e instanceof EmailAddressException ||
+					 e instanceof GroupFriendlyURLException ||
+					 e instanceof NoSuchCountryException ||
+					 e instanceof NoSuchListTypeException ||
+					 e instanceof NoSuchOrganizationException ||
+					 e instanceof NoSuchRegionException ||
+					 e instanceof OrganizationParentException ||
+					 e instanceof PhoneNumberException ||
+					 e instanceof RequiredFieldException ||
+					 e instanceof RequiredUserException ||
+					 e instanceof TermsOfUseException ||
+					 e instanceof UserEmailAddressException ||
+					 e instanceof UserIdException ||
+					 e instanceof UserPasswordException ||
+					 e instanceof UserScreenNameException ||
+					 e instanceof UserSmsException ||
+					 e instanceof WebsiteURLException) {
+
+				SessionErrors.add(actionRequest, e.getClass(), e);
 			}
 			else {
 				throw e;
@@ -518,8 +518,8 @@ public class CreateAccountMVCActionCommand extends BaseMVCActionCommand {
 
 	private static final boolean _AUTO_SCREEN_NAME = false;
 
-	private volatile LayoutLocalService _layoutLocalService;
-	private volatile UserLocalService _userLocalService;
-	private volatile UserService _userService;
+	private LayoutLocalService _layoutLocalService;
+	private UserLocalService _userLocalService;
+	private UserService _userService;
 
 }

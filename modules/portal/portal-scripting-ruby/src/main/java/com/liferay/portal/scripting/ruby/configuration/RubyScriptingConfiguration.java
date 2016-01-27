@@ -16,20 +16,22 @@ package com.liferay.portal.scripting.ruby.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
-import com.liferay.configuration.admin.ConfigurationAdmin;
+import com.liferay.portal.metatype.annotations.ExtendedObjectClassDefinition;
 
 /**
  * @author Michael C. Han
  */
-@ConfigurationAdmin(category = "platform")
+@ExtendedObjectClassDefinition(category = "platform")
 @Meta.OCD(
-	id = "com.liferay.portal.scripting.ruby.configuration.RubyScriptingConfiguration"
+	id = "com.liferay.portal.scripting.ruby.configuration.RubyScriptingConfiguration",
+	localization = "content/Language",
+	name = "%ruby.scripting.configuration.name"
+
 )
 public interface RubyScriptingConfiguration {
 
 	@Meta.AD(
-		deflt = "jit", optionValues = {"force", "jit", "none"},
-		required = false
+		deflt = "jit", optionValues = {"force", "jit", "none"}, required = false
 	)
 	public String compileMode();
 
@@ -39,7 +41,7 @@ public interface RubyScriptingConfiguration {
 	@Meta.AD(
 		deflt =
 			"classpath:/META-INF/jruby.home/lib/ruby/2.0," +
-			"classpath:/META-INF/jruby.home/lib/ruby/shared,",
+				"classpath:/META-INF/jruby.home/lib/ruby/shared,",
 		required = false
 	)
 	public String loadPaths();

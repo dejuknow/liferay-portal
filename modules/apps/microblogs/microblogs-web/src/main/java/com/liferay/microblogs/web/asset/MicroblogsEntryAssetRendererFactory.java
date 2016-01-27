@@ -19,8 +19,7 @@ import com.liferay.microblogs.model.MicroblogsEntry;
 import com.liferay.microblogs.service.MicroblogsEntryLocalService;
 import com.liferay.microblogs.service.permission.MicroblogsEntryPermission;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.security.permission.PermissionChecker;
-import com.liferay.portal.theme.ThemeDisplay;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portlet.asset.model.AssetRenderer;
 import com.liferay.portlet.asset.model.AssetRendererFactory;
 import com.liferay.portlet.asset.model.BaseAssetRendererFactory;
@@ -69,7 +68,7 @@ public class MicroblogsEntryAssetRendererFactory
 
 	@Override
 	public String getIconCssClass() {
-		return "icon-comment";
+		return "comments";
 	}
 
 	@Override
@@ -94,11 +93,6 @@ public class MicroblogsEntryAssetRendererFactory
 		_servletContext = servletContext;
 	}
 
-	@Override
-	protected String getIconPath(ThemeDisplay themeDisplay) {
-		return themeDisplay.getPathThemeImages() + "/microblogs/icon.png";
-	}
-
 	@Reference(unbind = "-")
 	protected void setMicroblogsEntryLocalService(
 		MicroblogsEntryLocalService microblogsEntryLocalService) {
@@ -106,7 +100,7 @@ public class MicroblogsEntryAssetRendererFactory
 		_microblogsEntryLocalService = microblogsEntryLocalService;
 	}
 
-	private volatile MicroblogsEntryLocalService _microblogsEntryLocalService;
-	private volatile ServletContext _servletContext;
+	private MicroblogsEntryLocalService _microblogsEntryLocalService;
+	private ServletContext _servletContext;
 
 }

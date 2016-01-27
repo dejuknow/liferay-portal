@@ -17,8 +17,10 @@ package com.liferay.sync.engine.documentlibrary.handler;
 import com.liferay.sync.engine.documentlibrary.event.Event;
 import com.liferay.sync.engine.documentlibrary.event.GetSyncContextEvent;
 import com.liferay.sync.engine.documentlibrary.model.SyncDLObjectUpdate;
+import com.liferay.sync.engine.documentlibrary.util.BatchDownloadEvent;
+import com.liferay.sync.engine.documentlibrary.util.BatchEventManager;
 import com.liferay.sync.engine.documentlibrary.util.FileEventUtil;
-import com.liferay.sync.engine.documentlibrary.util.comparator.SyncFileComparator;
+import com.liferay.sync.engine.documentlibrary.util.comparator.SyncFileSizeComparator;
 import com.liferay.sync.engine.filesystem.Watcher;
 import com.liferay.sync.engine.filesystem.util.WatcherRegistry;
 import com.liferay.sync.engine.model.SyncAccount;
@@ -175,12 +177,26 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 
 		SyncSite syncSite = (SyncSite)getParameterValue("syncSite");
 
-		syncSite = SyncSiteService.fetchSyncSite(
-			syncSite.getGroupId(), syncSite.getSyncAccountId());
+		if (syncSite != null) {
+			syncSite = SyncSiteService.fetchSyncSite(
+				syncSite.getGroupId(), syncSite.getSyncAccountId());
 
-		syncSite.setState(SyncSite.STATE_SYNCED);
+			syncSite.setState(SyncSite.STATE_SYNCED);
 
-		SyncSiteService.update(syncSite);
+			SyncSiteService.update(syncSite);
+		}
+		else {
+			SyncFile syncFile = SyncFileService.fetchSyncFile(
+				(Long)getParameterValue("repositoryId"), getSyncAccountId(),
+				(Long)getParameterValue("parentFolderId"));
+
+			if (syncFile != null) {
+				syncFile.setState(SyncFile.STATE_SYNCED);
+				syncFile.setUiEvent(SyncFile.UI_EVENT_NONE);
+
+				SyncFileService.update(syncFile);
+			}
+		}
 	}
 
 	@Override
@@ -238,6 +254,11 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 						getParameterValue("retrieveFromCache")));
 			}
 		}
+
+		BatchDownloadEvent batchDownloadEvent =
+			BatchEventManager.getBatchDownloadEvent(getSyncAccountId());
+
+		batchDownloadEvent.fireBatchEvent();
 	}
 
 	protected void addFile(SyncFile syncFile, String filePathName)
@@ -245,8 +266,10 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 
 		Path filePath = Paths.get(filePathName);
 
-		if (Files.exists(filePath) &&
-			(syncFile.isFolder() || !FileUtil.isModified(syncFile, filePath))) {
+		if (isParentUnsynced(syncFile) ||
+			(Files.exists(filePath) &&
+			 (syncFile.isFolder() ||
+			  !FileUtil.isModified(syncFile, filePath)))) {
 
 			return;
 		}
@@ -277,8 +300,7 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 
 		if (_logger.isDebugEnabled()) {
 			_logger.debug(
-				"Copying file {} to {}",
-				sourceSyncFile.getFilePathName(),
+				"Copying file {} to {}", sourceSyncFile.getFilePathName(),
 				targetSyncFile.getFilePathName());
 		}
 
@@ -452,6 +474,26 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 		return FileUtil.isIgnoredFilePath(FileUtil.getFilePath(filePathName));
 	}
 
+	protected boolean isParentUnsynced(SyncFile syncFile) {
+		Path filePath = Paths.get(syncFile.getFilePathName());
+
+		if (FileUtil.isUnsynced(filePath.getParent())) {
+			if (syncFile.isFolder()) {
+				syncFile.setFilePathName(filePath.toString());
+				syncFile.setModifiedTime(0);
+				syncFile.setState(SyncFile.STATE_UNSYNCED);
+				syncFile.setUiEvent(SyncFile.UI_EVENT_NONE);
+				syncFile.setSyncAccountId(getSyncAccountId());
+
+				SyncFileService.update(syncFile);
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
 	@Override
 	protected void logResponse(String response) {
 		try {
@@ -483,13 +525,28 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 			String targetFilePathName)
 		throws Exception {
 
+		if (isParentUnsynced(targetSyncFile)) {
+			deleteFile(sourceSyncFile, false);
+
+			return;
+		}
+
 		Path sourceFilePath = Paths.get(sourceSyncFile.getFilePathName());
 		Path targetFilePath = Paths.get(targetFilePathName);
 
 		sourceSyncFile = SyncFileService.updateSyncFile(
 			targetFilePath, targetSyncFile.getParentFolderId(), sourceSyncFile);
 
-		if (Files.exists(sourceFilePath)) {
+		if (sourceSyncFile.isUnsynced()) {
+			List<SyncFile> syncFiles = new ArrayList<>();
+
+			syncFiles.add(sourceSyncFile);
+
+			SyncFileService.resyncFolders(syncFiles);
+
+			return;
+		}
+		else if (Files.exists(sourceFilePath)) {
 			FileUtil.moveFile(sourceFilePath, targetFilePath);
 
 			sourceSyncFile.setState(SyncFile.STATE_SYNCED);
@@ -517,7 +574,7 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 		List<SyncFile> dependentSyncFiles = _dependentSyncFilesMap.remove(
 			getSyncAccountId() + "#" + syncFile.getTypePK());
 
-		if (dependentSyncFiles == null) {
+		if (syncFile.isUnsynced() || (dependentSyncFiles == null)) {
 			return;
 		}
 
@@ -571,13 +628,10 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 
 				if (sourceSyncFile != null) {
 					updateFile(sourceSyncFile, targetSyncFile, filePathName);
-
-					processDependentSyncFiles(sourceSyncFile);
-
-					return;
 				}
-
-				addFile(targetSyncFile, filePathName);
+				else {
+					addFile(targetSyncFile, filePathName);
+				}
 			}
 			else if (event.equals(SyncFile.EVENT_DELETE)) {
 				if (sourceSyncFile == null) {
@@ -589,28 +643,30 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 			else if (event.equals(SyncFile.EVENT_MOVE)) {
 				if (sourceSyncFile == null) {
 					addFile(targetSyncFile, filePathName);
-
-					processDependentSyncFiles(targetSyncFile);
-
-					return;
 				}
+				else if (sourceSyncFile.getParentFolderId() ==
+							targetSyncFile.getParentFolderId()) {
 
-				moveFile(sourceSyncFile, targetSyncFile, filePathName);
+					updateFile(sourceSyncFile, targetSyncFile, filePathName);
+				}
+				else {
+					moveFile(sourceSyncFile, targetSyncFile, filePathName);
+				}
 			}
 			else if (event.equals(SyncFile.EVENT_RESTORE)) {
 				if (sourceSyncFile != null) {
 					updateFile(sourceSyncFile, targetSyncFile, filePathName);
-
-					processDependentSyncFiles(sourceSyncFile);
-
+				}
+				else if (isParentUnsynced(targetSyncFile)) {
 					return;
 				}
+				else {
+					targetSyncFile.setLocalExtraSetting("restoreEvent", true);
 
-				targetSyncFile.setLocalExtraSetting("restoreEvent", true);
+					SyncFileService.update(targetSyncFile);
 
-				SyncFileService.update(targetSyncFile);
-
-				addFile(targetSyncFile, filePathName);
+					addFile(targetSyncFile, filePathName);
+				}
 			}
 			else if (event.equals(SyncFile.EVENT_TRASH)) {
 				if (sourceSyncFile == null) {
@@ -622,16 +678,26 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 			else if (event.equals(SyncFile.EVENT_UPDATE)) {
 				if (sourceSyncFile == null) {
 					addFile(targetSyncFile, filePathName);
-
-					processDependentSyncFiles(targetSyncFile);
-
-					return;
 				}
-
-				updateFile(sourceSyncFile, targetSyncFile, filePathName);
+				else {
+					updateFile(sourceSyncFile, targetSyncFile, filePathName);
+				}
 			}
 
 			processDependentSyncFiles(targetSyncFile);
+
+			if (getParameterValue("parentFolderId") != null) {
+				SyncFile syncFile = SyncFileService.fetchSyncFile(
+					(Long)getParameterValue("repositoryId"), getSyncAccountId(),
+					(Long)getParameterValue("parentFolderId"));
+
+				if (syncFile != null) {
+					syncFile.setState(SyncFile.STATE_IN_PROGRESS);
+					syncFile.setUiEvent(SyncFile.UI_EVENT_RESYNCING);
+
+					SyncFileService.update(syncFile);
+				}
+			}
 		}
 		catch (FileSystemException fse) {
 			String message = fse.getMessage();
@@ -689,9 +755,13 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 
 		SyncFileService.update(sourceSyncFile);
 
+		if (isParentUnsynced(sourceSyncFile)) {
+			return;
+		}
+
 		Path filePath = Paths.get(targetSyncFile.getFilePathName());
 
-		if (filePathChanged && !Files.exists(filePath)) {
+		if (!Files.exists(filePath)) {
 			if (targetSyncFile.isFolder()) {
 				Path targetFilePath = Paths.get(filePathName);
 
@@ -739,7 +809,7 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 	private static final ScheduledExecutorService _scheduledExecutorService =
 		Executors.newScheduledThreadPool(5);
 	private static final Comparator<SyncFile> _syncFileComparator =
-		new SyncFileComparator();
+		new SyncFileSizeComparator();
 
 	private final ScheduledFuture<?> _scheduledFuture;
 	private SyncDLObjectUpdate _syncDLObjectUpdate;

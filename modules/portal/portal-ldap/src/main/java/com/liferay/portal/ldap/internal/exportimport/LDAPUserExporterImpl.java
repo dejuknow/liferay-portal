@@ -17,6 +17,12 @@ package com.liferay.portal.ldap.internal.exportimport;
 import com.liferay.portal.kernel.ldap.LDAPUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.security.exportimport.UserExporter;
+import com.liferay.portal.kernel.security.exportimport.UserOperation;
+import com.liferay.portal.kernel.security.ldap.LDAPSettings;
+import com.liferay.portal.kernel.security.ldap.Modifications;
+import com.liferay.portal.kernel.security.ldap.PortalLDAP;
+import com.liferay.portal.kernel.security.ldap.PortalToLDAPConverter;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.ldap.GroupConverterKeys;
@@ -26,12 +32,6 @@ import com.liferay.portal.ldap.internal.PortalLDAPContext;
 import com.liferay.portal.model.Contact;
 import com.liferay.portal.model.User;
 import com.liferay.portal.model.UserGroup;
-import com.liferay.portal.security.exportimport.UserExporter;
-import com.liferay.portal.security.exportimport.UserOperation;
-import com.liferay.portal.security.ldap.LDAPSettings;
-import com.liferay.portal.security.ldap.Modifications;
-import com.liferay.portal.security.ldap.PortalLDAP;
-import com.liferay.portal.security.ldap.PortalToLDAPConverter;
 import com.liferay.portal.service.UserGroupLocalService;
 import com.liferay.portal.service.UserLocalService;
 
@@ -52,6 +52,8 @@ import javax.naming.directory.ModificationItem;
 import javax.naming.directory.SchemaViolationException;
 import javax.naming.ldap.LdapContext;
 
+import org.apache.commons.lang.time.StopWatch;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -62,10 +64,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Wesley Gong
  * @author Vilmos Papp
  */
-@Component(
-	configurationPid = "com.liferay.portal.authenticator.ldap.configuration.LDAPAuthConfiguration",
-	immediate = true, service = UserExporter.class
-)
+@Component(immediate = true, service = UserExporter.class)
 public class LDAPUserExporterImpl implements UserExporter {
 
 	@Override
@@ -75,12 +74,15 @@ public class LDAPUserExporterImpl implements UserExporter {
 
 		long companyId = contact.getCompanyId();
 
-		LDAPAuthConfiguration ldapAuthConfiguration =
-			_ldapAuthConfigurationProvider.getConfiguration(companyId);
+		StopWatch stopWatch = new StopWatch();
 
-		if (!ldapAuthConfiguration.enabled() ||
-			!_ldapSettings.isExportEnabled(companyId)) {
+		if (_log.isDebugEnabled()) {
+			stopWatch.start();
 
+			_log.debug("Exporting contact " + contact);
+		}
+
+		if (!_ldapSettings.isExportEnabled(companyId)) {
 			return;
 		}
 
@@ -145,6 +147,12 @@ public class LDAPUserExporterImpl implements UserExporter {
 			if (ldapContext != null) {
 				ldapContext.close();
 			}
+
+			if (_log.isDebugEnabled()) {
+				_log.debug(
+					"Finished exporting contact " + contact + " in " +
+						stopWatch.getTime() + "ms");
+			}
 		}
 	}
 
@@ -157,11 +165,16 @@ public class LDAPUserExporterImpl implements UserExporter {
 
 		long companyId = user.getCompanyId();
 
-		LDAPAuthConfiguration ldapAuthConfiguration =
-			_ldapAuthConfigurationProvider.getConfiguration(companyId);
+		StopWatch stopWatch = new StopWatch();
 
-		if (!ldapAuthConfiguration.enabled() ||
-			!_ldapSettings.isExportEnabled(companyId) ||
+		if (_log.isDebugEnabled()) {
+			stopWatch.start();
+
+			_log.debug(
+				"Exporting user " + user + " in user group " + userGroupId);
+		}
+
+		if (!_ldapSettings.isExportEnabled(companyId) ||
 			!_ldapSettings.isExportGroupEnabled(companyId)) {
 
 			return;
@@ -231,6 +244,12 @@ public class LDAPUserExporterImpl implements UserExporter {
 			if (ldapContext != null) {
 				ldapContext.close();
 			}
+
+			if (_log.isDebugEnabled()) {
+				_log.debug(
+					"Finished exporting user " + user + " in user group " +
+						userGroupId + " in " + stopWatch.getTime() + "ms");
+			}
 		}
 	}
 
@@ -247,12 +266,7 @@ public class LDAPUserExporterImpl implements UserExporter {
 
 		long companyId = user.getCompanyId();
 
-		LDAPAuthConfiguration ldapAuthConfiguration =
-			_ldapAuthConfigurationProvider.getConfiguration(companyId);
-
-		if (!ldapAuthConfiguration.enabled() ||
-			!_ldapSettings.isExportEnabled(companyId)) {
-
+		if (!_ldapSettings.isExportEnabled(companyId)) {
 			return;
 		}
 
@@ -348,6 +362,9 @@ public class LDAPUserExporterImpl implements UserExporter {
 			}
 		}
 		catch (NameNotFoundException nnfe) {
+			LDAPAuthConfiguration ldapAuthConfiguration =
+				_ldapAuthConfigurationProvider.getConfiguration(companyId);
+
 			if (ldapAuthConfiguration.required()) {
 				throw nnfe;
 			}
@@ -449,12 +466,12 @@ public class LDAPUserExporterImpl implements UserExporter {
 	private static final Log _log = LogFactoryUtil.getLog(
 		LDAPUserExporterImpl.class);
 
-	private volatile ConfigurationProvider<LDAPAuthConfiguration>
+	private ConfigurationProvider<LDAPAuthConfiguration>
 		_ldapAuthConfigurationProvider;
-	private volatile LDAPSettings _ldapSettings;
-	private volatile PortalLDAP _portalLDAP;
-	private volatile PortalToLDAPConverter _portalToLDAPConverter;
-	private volatile UserGroupLocalService _userGroupLocalService;
-	private volatile UserLocalService _userLocalService;
+	private LDAPSettings _ldapSettings;
+	private PortalLDAP _portalLDAP;
+	private PortalToLDAPConverter _portalToLDAPConverter;
+	private UserGroupLocalService _userGroupLocalService;
+	private UserLocalService _userLocalService;
 
 }

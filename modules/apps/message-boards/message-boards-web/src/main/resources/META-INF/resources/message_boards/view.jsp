@@ -17,9 +17,7 @@
 <%@ include file="/message_boards/init.jsp" %>
 
 <%
-String topLink = ParamUtil.getString(request, "topLink", "message-boards-home");
-
-String redirect = ParamUtil.getString(request, "redirect");
+String mvcRenderCommandName = ParamUtil.getString(request, "mvcRenderCommandName", "/message_boards/view");
 
 MBCategory category = (MBCategory)request.getAttribute(WebKeys.MESSAGE_BOARDS_CATEGORY);
 
@@ -45,8 +43,7 @@ boolean useAssetEntryQuery = Validator.isNotNull(assetTagName);
 
 PortletURL portletURL = renderResponse.createRenderURL();
 
-portletURL.setParameter("mvcRenderCommandName", "/message_boards/view");
-portletURL.setParameter("topLink", topLink);
+portletURL.setParameter("mvcRenderCommandName", mvcRenderCommandName);
 portletURL.setParameter("mbCategoryId", String.valueOf(categoryId));
 
 request.setAttribute("view.jsp-categoryDisplay", categoryDisplay);
@@ -63,7 +60,7 @@ request.setAttribute("view.jsp-portletURL", portletURL);
 	<portlet:param name="<%= Constants.CMD %>" value="<%= Constants.RESTORE %>" />
 </portlet:actionURL>
 
-<liferay-ui:trash-undo
+<liferay-trash:undo
 	portletURL="<%= restoreTrashEntriesURL %>"
 />
 
@@ -79,66 +76,31 @@ request.setAttribute("view.jsp-portletURL", portletURL);
 		<%@ include file="/message_boards/view_threads.jspf" %>
 
 	</c:when>
-	<c:when test='<%= topLink.equals("message-boards-home") %>'>
-
-		<%
-		boolean showAddCategoryButton = MBCategoryPermission.contains(permissionChecker, scopeGroupId, categoryId, ActionKeys.ADD_CATEGORY);
-		boolean showAddMessageButton = MBCategoryPermission.contains(permissionChecker, scopeGroupId, categoryId, ActionKeys.ADD_MESSAGE);
-		boolean showPermissionsButton = MBPermission.contains(permissionChecker, scopeGroupId, ActionKeys.PERMISSIONS);
-
-		if (showAddMessageButton && !themeDisplay.isSignedIn()) {
-			if (!allowAnonymousPosting) {
-				showAddMessageButton = false;
-			}
-		}
-		%>
-
-		<c:if test="<%= showAddCategoryButton || showAddMessageButton || showPermissionsButton %>">
+	<c:when test='<%= mvcRenderCommandName.equals("/message_boards/view") || mvcRenderCommandName.equals("/message_boards/view_category") %>'>
+		<c:if test="<%= MBPermission.contains(permissionChecker, scopeGroupId, ActionKeys.PERMISSIONS) %>">
 			<div class="category-buttons">
-				<c:if test="<%= showAddCategoryButton %>">
-					<portlet:renderURL var="editCategoryURL">
-						<portlet:param name="mvcRenderCommandName" value="/message_boards/edit_category" />
-						<portlet:param name="redirect" value="<%= currentURL %>" />
-						<portlet:param name="parentCategoryId" value="<%= String.valueOf(categoryId) %>" />
-					</portlet:renderURL>
 
-					<aui:button href="<%= editCategoryURL %>" value='<%= (category == null) ? "add-category[message-board]" : "add-subcategory[message-board]" %>' />
-				</c:if>
+				<%
+				String modelResource = "com.liferay.portlet.messageboards";
+				String modelResourceDescription = themeDisplay.getScopeGroupName();
+				String resourcePrimKey = String.valueOf(scopeGroupId);
 
-				<c:if test="<%= showAddMessageButton %>">
-					<portlet:renderURL var="editMessageURL">
-						<portlet:param name="mvcRenderCommandName" value="/message_boards/edit_message" />
-						<portlet:param name="redirect" value="<%= currentURL %>" />
-						<portlet:param name="mbCategoryId" value="<%= String.valueOf(categoryId) %>" />
-					</portlet:renderURL>
+				if (category != null) {
+					modelResource = MBCategory.class.getName();
+					modelResourceDescription = category.getName();
+					resourcePrimKey = String.valueOf(category.getCategoryId());
+				}
+				%>
 
-					<aui:button href="<%= editMessageURL %>" value="post-new-thread" />
-				</c:if>
+				<liferay-security:permissionsURL
+					modelResource="<%= modelResource %>"
+					modelResourceDescription="<%= HtmlUtil.escape(modelResourceDescription) %>"
+					resourcePrimKey="<%= resourcePrimKey %>"
+					var="permissionsURL"
+					windowState="<%= LiferayWindowState.POP_UP.toString() %>"
+				/>
 
-				<c:if test="<%= showPermissionsButton %>">
-
-					<%
-					String modelResource = "com.liferay.portlet.messageboards";
-					String modelResourceDescription = themeDisplay.getScopeGroupName();
-					String resourcePrimKey = String.valueOf(scopeGroupId);
-
-					if (category != null) {
-						modelResource = MBCategory.class.getName();
-						modelResourceDescription = category.getName();
-						resourcePrimKey = String.valueOf(category.getCategoryId());
-					}
-					%>
-
-					<liferay-security:permissionsURL
-						modelResource="<%= modelResource %>"
-						modelResourceDescription="<%= HtmlUtil.escape(modelResourceDescription) %>"
-						resourcePrimKey="<%= resourcePrimKey %>"
-						var="permissionsURL"
-						windowState="<%= LiferayWindowState.POP_UP.toString() %>"
-					/>
-
-					<aui:button href="<%= permissionsURL %>" useDialog="<%= true %>" value="permissions" />
-				</c:if>
+				<aui:button href="<%= permissionsURL %>" useDialog="<%= true %>" value="permissions" />
 			</div>
 
 			<%@ include file="/message_boards/category_subscriptions.jspf" %>
@@ -202,8 +164,15 @@ request.setAttribute("view.jsp-portletURL", portletURL);
 			%>
 
 			<portlet:renderURL var="backURL">
-				<portlet:param name="mvcRenderCommandName" value="/message_boards/view" />
-				<portlet:param name="mbCategoryId" value="<%= String.valueOf(parentCategoryId) %>" />
+				<c:choose>
+					<c:when test="<%= parentCategoryId == MBCategoryConstants.DEFAULT_PARENT_CATEGORY_ID %>">
+						<portlet:param name="mvcRenderCommandName" value="/message_boards/view" />
+					</c:when>
+					<c:otherwise>
+						<portlet:param name="mvcRenderCommandName" value="/message_boards/view_category" />
+						<portlet:param name="mbCategoryId" value="<%= String.valueOf(parentCategoryId) %>" />
+					</c:otherwise>
+				</c:choose>
 			</portlet:renderURL>
 
 			<liferay-ui:header
@@ -219,19 +188,19 @@ request.setAttribute("view.jsp-portletURL", portletURL);
 		</div>
 
 		<%
+		MBBreadcrumbUtil.addPortletBreadcrumbEntries(category, request, renderResponse);
+
 		if (category != null) {
 			PortalUtil.setPageSubtitle(category.getName(), request);
 			PortalUtil.setPageDescription(category.getDescription(), request);
-
-			MBUtil.addPortletBreadcrumbEntries(category, request, renderResponse);
 		}
 		%>
 
 	</c:when>
-	<c:when test='<%= topLink.equals("my-posts") || topLink.equals("my-subscriptions") || topLink.equals("recent-posts") %>'>
+	<c:when test='<%= mvcRenderCommandName.equals("/message_boards/view_my_posts") || mvcRenderCommandName.equals("/message_boards/view_my_subscriptions") || mvcRenderCommandName.equals("/message_boards/view_recent_posts") %>'>
 
 		<%
-		if ((topLink.equals("my-posts") || topLink.equals("my-subscriptions")) && themeDisplay.isSignedIn()) {
+		if ((mvcRenderCommandName.equals("/message_boards/view_my_posts") || mvcRenderCommandName.equals("/message_boards/view_my_subscriptions")) && themeDisplay.isSignedIn()) {
 			groupThreadsUserId = user.getUserId();
 		}
 
@@ -240,13 +209,13 @@ request.setAttribute("view.jsp-portletURL", portletURL);
 		}
 		%>
 
-		<c:if test='<%= topLink.equals("recent-posts") && (groupThreadsUserId > 0) %>'>
+		<c:if test='<%= mvcRenderCommandName.equals("/message_boards/view_recent_posts") && (groupThreadsUserId > 0) %>'>
 			<div class="alert alert-info">
 				<liferay-ui:message key="filter-by-user" />: <%= HtmlUtil.escape(PortalUtil.getUserName(groupThreadsUserId, StringPool.BLANK)) %>
 			</div>
 		</c:if>
 
-		<c:if test='<%= topLink.equals("my-subscriptions") %>'>
+		<c:if test='<%= mvcRenderCommandName.equals("/message_boards/view_my_subscriptions") %>'>
 			<liferay-ui:search-container
 				curParam="cur1"
 				deltaConfigurable="<%= false %>"
@@ -268,7 +237,7 @@ request.setAttribute("view.jsp-portletURL", portletURL);
 					<liferay-ui:search-container-row-parameter name="categorySubscriptionClassPKs" value="<%= categorySubscriptionClassPKs %>" />
 
 					<liferay-portlet:renderURL varImpl="rowURL">
-						<portlet:param name="mvcRenderCommandName" value="/message_boards/view" />
+						<portlet:param name="mvcRenderCommandName" value="/message_boards/view_category" />
 						<portlet:param name="mbCategoryId" value="<%= String.valueOf(curCategory.getCategoryId()) %>" />
 					</liferay-portlet:renderURL>
 
@@ -281,7 +250,7 @@ request.setAttribute("view.jsp-portletURL", portletURL);
 
 		<%@ include file="/message_boards/view_threads.jspf" %>
 
-		<c:if test='<%= enableRSS && topLink.equals("recent-posts") %>'>
+		<c:if test='<%= enableRSS && mvcRenderCommandName.equals("/message_boards/view_recent_posts") %>'>
 			<br />
 
 			<liferay-ui:rss
@@ -294,145 +263,17 @@ request.setAttribute("view.jsp-portletURL", portletURL);
 		</c:if>
 
 		<%
-		PortalUtil.setPageSubtitle(LanguageUtil.get(request, StringUtil.replace(topLink, StringPool.UNDERLINE, StringPool.DASH)), request);
-		PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, TextFormatter.format(topLink, TextFormatter.O)), portletURL.toString());
-		%>
+		String title = "message-boards-home";
 
-	</c:when>
-	<c:when test='<%= topLink.equals("statistics") %>'>
-		<liferay-ui:panel-container cssClass="statistics-panel" extended="<%= false %>" id="messageBoardsStatisticsPanelContainer" persistState="<%= true %>">
-			<liferay-ui:panel collapsible="<%= true %>" cssClass="statistics-panel-content" extended="<%= true %>" id="messageBoardsGeneralStatisticsPanel" persistState="<%= true %>" title="general">
-				<dl>
-					<dt>
-						<liferay-ui:message key="num-of-categories" />:
-					</dt>
-					<dd>
-						<%= numberFormat.format(categoryDisplay.getAllCategoriesCount()) %>
-					</dd>
-					<dt>
-						<liferay-ui:message key="num-of-posts" />:
-					</dt>
-					<dd>
-						<%= numberFormat.format(MBStatsUserLocalServiceUtil.getMessageCountByGroupId(scopeGroupId)) %>
-					</dd>
-					<dt>
-						<liferay-ui:message key="num-of-participants" />:
-					</dt>
-					<dd>
-						<%= numberFormat.format(MBStatsUserLocalServiceUtil.getStatsUsersByGroupIdCount(scopeGroupId)) %>
-					</dd>
-				</dl>
-			</liferay-ui:panel>
+		if (mvcRenderCommandName.equals("/message_boards/view_my_subscriptions")) {
+			title = "my-subscriptions";
+		}
+		else if (mvcRenderCommandName.equals("/message_boards/view_recent_posts")) {
+			title = "recent-posts";
+		}
 
-			<liferay-ui:panel collapsible="<%= true %>" cssClass="statistics-panel-content" extended="<%= true %>" id="messageBoardsTopPostersPanel" persistState="<%= true %>" title="top-posters">
-				<liferay-ui:search-container
-					emptyResultsMessage="there-are-no-top-posters"
-					iteratorURL="<%= portletURL %>"
-					total="<%= MBStatsUserLocalServiceUtil.getStatsUsersByGroupIdCount(scopeGroupId) %>"
-				>
-					<liferay-ui:search-container-results
-						results="<%= MBStatsUserLocalServiceUtil.getStatsUsersByGroupId(scopeGroupId, searchContainer.getStart(), searchContainer.getEnd()) %>"
-					/>
-
-					<liferay-ui:search-container-row
-						className="com.liferay.portlet.messageboards.model.MBStatsUser"
-						keyProperty="statsUserId"
-						modelVar="statsUser"
-					>
-						<liferay-ui:search-container-column-jsp
-							path="/message_boards/top_posters_user_display.jsp"
-						/>
-					</liferay-ui:search-container-row>
-
-					<liferay-ui:search-iterator />
-				</liferay-ui:search-container>
-			</liferay-ui:panel>
-		</liferay-ui:panel-container>
-
-		<%
-		PortalUtil.setPageSubtitle(LanguageUtil.get(request, StringUtil.replace(topLink, StringPool.UNDERLINE, StringPool.DASH)), request);
-		PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, TextFormatter.format(topLink, TextFormatter.O)), portletURL.toString());
-		%>
-
-	</c:when>
-	<c:when test='<%= topLink.equals("banned-users") %>'>
-		<liferay-ui:search-container
-			emptyResultsMessage="there-are-no-banned-users"
-			headerNames="banned-user,banned-by,ban-date"
-			iteratorURL="<%= portletURL %>"
-			total="<%= MBBanLocalServiceUtil.getBansCount(scopeGroupId) %>"
-		>
-			<liferay-ui:search-container-results
-				results="<%= MBBanLocalServiceUtil.getBans(scopeGroupId, searchContainer.getStart(), searchContainer.getEnd()) %>"
-			/>
-
-			<liferay-ui:search-container-row
-				className="com.liferay.portlet.messageboards.model.MBBan"
-				keyProperty="banId"
-				modelVar="ban"
-			>
-
-				<%
-				String bannedUserDisplayURL = StringPool.BLANK;
-
-				try {
-					User bannedUser = UserLocalServiceUtil.getUser(ban.getBanUserId());
-
-					bannedUserDisplayURL = bannedUser.getDisplayURL(themeDisplay);
-				}
-				catch (NoSuchUserException nsue) {
-				}
-				%>
-
-				<liferay-ui:search-container-column-text
-					href="<%= bannedUserDisplayURL %>"
-					name="banned-user"
-					value="<%= HtmlUtil.escape(PortalUtil.getUserName(ban.getBanUserId(), StringPool.BLANK)) %>"
-				/>
-
-				<%
-				String bannedByUserDisplayURL = StringPool.BLANK;
-
-				try {
-					User bannedByUser = UserLocalServiceUtil.getUser(ban.getUserId());
-
-					bannedByUserDisplayURL = bannedByUser.getDisplayURL(themeDisplay);
-				}
-				catch (NoSuchUserException nsue) {
-				}
-				%>
-
-				<liferay-ui:search-container-column-text
-					href="<%= bannedByUserDisplayURL %>"
-					name="banned-by"
-					value="<%= HtmlUtil.escape(PortalUtil.getUserName(ban.getUserId(), StringPool.BLANK)) %>"
-				/>
-
-				<liferay-ui:search-container-column-date
-					name="ban-date"
-					value="<%= ban.getCreateDate() %>"
-				/>
-
-				<c:if test="<%= PropsValues.MESSAGE_BOARDS_EXPIRE_BAN_INTERVAL > 0 %>">
-					<liferay-ui:search-container-column-date
-						name="unban-date"
-						value="<%= MBUtil.getUnbanDate(ban, PropsValues.MESSAGE_BOARDS_EXPIRE_BAN_INTERVAL) %>"
-					/>
-				</c:if>
-
-				<liferay-ui:search-container-column-jsp
-					align="right"
-					cssClass="entry-action"
-					path="/message_boards/ban_user_action.jsp"
-				/>
-			</liferay-ui:search-container-row>
-
-			<liferay-ui:search-iterator />
-		</liferay-ui:search-container>
-
-		<%
-		PortalUtil.setPageSubtitle(LanguageUtil.get(request, StringUtil.replace(topLink, StringPool.UNDERLINE, StringPool.DASH)), request);
-		PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, TextFormatter.format(topLink, TextFormatter.O)), portletURL.toString());
+		PortalUtil.setPageSubtitle(LanguageUtil.get(request, StringUtil.replace(title, StringPool.UNDERLINE, StringPool.DASH)), request);
+		PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, TextFormatter.format(title, TextFormatter.O)), portletURL.toString());
 		%>
 
 	</c:when>

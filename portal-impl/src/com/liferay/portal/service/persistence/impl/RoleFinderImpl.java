@@ -14,13 +14,14 @@
 
 package com.liferay.portal.service.persistence.impl;
 
-import com.liferay.portal.NoSuchRoleException;
+import com.liferay.portal.exception.NoSuchRoleException;
 import com.liferay.portal.kernel.dao.orm.QueryPos;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.SQLQuery;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.Type;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.security.permission.InlineSQLHelperUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
@@ -30,7 +31,6 @@ import com.liferay.portal.model.Group;
 import com.liferay.portal.model.ResourceAction;
 import com.liferay.portal.model.Role;
 import com.liferay.portal.model.impl.RoleImpl;
-import com.liferay.portal.security.permission.InlineSQLHelperUtil;
 import com.liferay.portal.service.ResourceActionLocalServiceUtil;
 import com.liferay.portal.service.persistence.RoleFinder;
 import com.liferay.util.dao.orm.CustomSQLUtil;
@@ -747,7 +747,7 @@ public class RoleFinderImpl extends RoleFinderBaseImpl implements RoleFinder {
 			sql = CustomSQLUtil.replaceKeywords(
 				sql, "lower(Role_.description)", StringPool.LIKE, true,
 				descriptions);
-			sql = StringUtil.replace(sql, "[$TYPE$]", getTypes(types));
+			sql = StringUtil.replace(sql, "[$TYPE$]", getTypes(types.length));
 			sql = StringUtil.replace(sql, "[$JOIN$]", getJoin(params));
 			sql = StringUtil.replace(sql, "[$WHERE$]", getWhere(params));
 			sql = CustomSQLUtil.replaceAndOperator(sql, andOperator);
@@ -815,7 +815,7 @@ public class RoleFinderImpl extends RoleFinderBaseImpl implements RoleFinder {
 			sql = CustomSQLUtil.replaceKeywords(
 				sql, "lower(Role_.description)", StringPool.LIKE, true,
 				descriptions);
-			sql = StringUtil.replace(sql, "[$TYPE$]", getTypes(types));
+			sql = StringUtil.replace(sql, "[$TYPE$]", getTypes(types.length));
 			sql = StringUtil.replace(sql, "[$JOIN$]", getJoin(params));
 			sql = StringUtil.replace(sql, "[$WHERE$]", getWhere(params));
 			sql = CustomSQLUtil.replaceAndOperator(sql, andOperator);
@@ -930,24 +930,20 @@ public class RoleFinderImpl extends RoleFinderBaseImpl implements RoleFinder {
 		return join;
 	}
 
-	protected String getTypes(Integer[] types) {
-		if (types.length == 0) {
+	protected String getTypes(int size) {
+		if (size == 0) {
 			return StringPool.BLANK;
 		}
 
-		StringBundler sb = new StringBundler(types.length * 2);
+		StringBundler sb = new StringBundler(size + 1);
 
 		sb.append(" AND (");
 
-		for (int i = 0; i < types.length; i++) {
-			sb.append("Role_.type_ = ?");
-
-			if ((i + 1) < types.length) {
-				sb.append(" OR ");
-			}
+		for (int i = 0; i < size - 1; i++) {
+			sb.append("Role_.type_ = ? OR ");
 		}
 
-		sb.append(StringPool.CLOSE_PARENTHESIS);
+		sb.append("Role_.type_ = ?)");
 
 		return sb.toString();
 	}

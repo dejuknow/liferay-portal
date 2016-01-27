@@ -21,6 +21,9 @@ import com.liferay.portal.kernel.util.Validator;
 
 import java.io.IOException;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -49,6 +52,11 @@ public abstract class BaseControlMenuEntry implements ControlMenuEntry {
 	}
 
 	@Override
+	public Map<String, Object> getData(HttpServletRequest request) {
+		return new HashMap<>();
+	}
+
+	@Override
 	public String getIconCssClass(HttpServletRequest request) {
 		return StringPool.BLANK;
 	}
@@ -66,23 +74,29 @@ public abstract class BaseControlMenuEntry implements ControlMenuEntry {
 	}
 
 	@Override
-	public boolean hasAccessPermission(HttpServletRequest request)
-		throws PortalException {
-
-		return true;
-	}
-
-	@Override
 	public int hashCode() {
 		return HashUtil.hash(0, getKey());
 	}
 
 	@Override
-	public boolean include(
+	public boolean includeBody(
 			HttpServletRequest request, HttpServletResponse response)
 		throws IOException {
 
 		return false;
+	}
+
+	@Override
+	public boolean includeIcon(
+			HttpServletRequest request, HttpServletResponse response)
+		throws IOException {
+
+		return false;
+	}
+
+	@Override
+	public boolean isShow(HttpServletRequest request) throws PortalException {
+		return true;
 	}
 
 	@Override

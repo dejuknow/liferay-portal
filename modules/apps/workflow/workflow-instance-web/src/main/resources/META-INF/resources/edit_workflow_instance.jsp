@@ -17,43 +17,49 @@
 <%@ include file="/init.jsp" %>
 
 <%
-String tabs2 = ParamUtil.getString(request, "tabs2");
-%>
+String redirect = ParamUtil.getString(request, "redirect");
 
-<portlet:renderURL var="backURL">
-	<portlet:param name="mvcPath" value="/view.jsp" />
-	<portlet:param name="tabs2" value="<%= tabs2 %>" />
-</portlet:renderURL>
-
-<%
 WorkflowInstanceEditDisplayContext workflowInstanceEditDisplayContext = null;
 
 if (portletName.equals(WorkflowInstancePortletKeys.WORKFLOW_INSTANCE)) {
-	workflowInstanceEditDisplayContext = new WorkflowInstanceEditDisplayContext(renderRequest, renderResponse);
+	workflowInstanceEditDisplayContext = new WorkflowInstanceEditDisplayContext(liferayPortletRequest, liferayPortletResponse);
 }
 else {
-	workflowInstanceEditDisplayContext = new MyWorkflowInstanceEditDisplayContext(renderRequest, renderResponse);
+	workflowInstanceEditDisplayContext = new MyWorkflowInstanceEditDisplayContext(liferayPortletRequest, liferayPortletResponse);
 }
 
 portletDisplay.setShowBackIcon(true);
-portletDisplay.setURLBack(backURL.toString());
+portletDisplay.setURLBack(redirect);
 
 renderResponse.setTitle(workflowInstanceEditDisplayContext.getHeaderTitle());
 %>
 
 <div class="container-fluid-1280">
-	<aui:row>
-		<aui:col cssClass="lfr-asset-column lfr-asset-column-details" width="<%= 75 %>">
-			<aui:row>
+	<aui:col cssClass="lfr-asset-column lfr-asset-column-details">
+		<aui:fieldset-group markupView="lexicon">
+			<aui:fieldset>
+
+				<%
+				request.removeAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW);
+				%>
+
+				<liferay-util:include page="/workflow_instance_action.jsp" servletContext="<%= application %>" />
+
 				<aui:col width="<%= 60 %>">
-					<aui:input name="state" type="resource" value="<%= workflowInstanceEditDisplayContext.getWorkflowInstanceState() %>" />
+					<aui:field-wrapper label="state">
+						<aui:fieldset>
+							<%= workflowInstanceEditDisplayContext.getWorkflowInstanceState() %>
+						</aui:fieldset>
+					</aui:field-wrapper>
 				</aui:col>
-
 				<aui:col width="<%= 33 %>">
-					<aui:input name="endDate" type="resource" value="<%= workflowInstanceEditDisplayContext.getWorkflowInstanceEndDate() %>" />
+					<aui:field-wrapper label="end-date">
+						<aui:fieldset>
+							<%= workflowInstanceEditDisplayContext.getWorkflowInstanceEndDate() %>
+						</aui:fieldset>
+					</aui:field-wrapper>
 				</aui:col>
-			</aui:row>
-
+			</aui:fieldset>
 			<liferay-ui:panel-container cssClass="task-panel-container" extended="<%= true %>" id="preview">
 
 				<%
@@ -63,7 +69,7 @@ renderResponse.setTitle(workflowInstanceEditDisplayContext.getHeaderTitle());
 				%>
 
 				<c:if test="<%= assetRenderer != null %>">
-					<liferay-ui:panel defaultState="open" title="<%= workflowInstanceEditDisplayContext.getPanelTitle() %>">
+					<liferay-ui:panel extended="<%= false %>" markupView="lexicon" title="<%= workflowInstanceEditDisplayContext.getPanelTitle() %>">
 						<div class="task-content-actions">
 							<liferay-ui:icon-list>
 								<c:if test="<%= assetRenderer.hasViewPermission(permissionChecker) %>">
@@ -80,15 +86,20 @@ renderResponse.setTitle(workflowInstanceEditDisplayContext.getHeaderTitle());
 										<portlet:param name="showEditURL" value="<%= Boolean.FALSE.toString() %>" />
 									</portlet:renderURL>
 
-									<liferay-ui:icon iconCssClass="icon-search" message="view[action]" method="get" url="<%= assetRenderer.isPreviewInContext() ? assetRenderer.getURLViewInContext((LiferayPortletRequest)renderRequest, (LiferayPortletResponse)renderResponse, null) : viewFullContentURL.toString() %>" />
+									<liferay-frontend:management-bar-button
+										href="<%= assetRenderer.isPreviewInContext() ? assetRenderer.getURLViewInContext(liferayPortletRequest, liferayPortletResponse, null) : viewFullContentURL.toString() %>"
+										icon="view"
+										label="view[action]"
+									/>
 								</c:if>
 							</liferay-ui:icon-list>
 						</div>
 
 						<h3 class="task-content-title">
 							<liferay-ui:icon
-								iconCssClass="<%= workflowInstanceEditDisplayContext.getIconCssClass() %>"
+								icon="<%= workflowInstanceEditDisplayContext.getIconCssClass() %>"
 								label="<%= true %>"
+								markupView="lexicon"
 								message="<%= workflowInstanceEditDisplayContext.getTaskContentTitleMessage() %>"
 							/>
 						</h3>
@@ -97,17 +108,9 @@ renderResponse.setTitle(workflowInstanceEditDisplayContext.getHeaderTitle());
 							assetRenderer="<%= assetRenderer %>"
 							template="<%= AssetRenderer.TEMPLATE_ABSTRACT %>"
 						/>
-
-						<c:if test="<%= assetEntry != null %>">
-							<liferay-ui:asset-metadata
-								className="<%= assetEntry.getClassName() %>"
-								classPK="<%= assetEntry.getClassPK() %>"
-								metadataFields='<%= new String[] {"author", "categories", "tags"} %>'
-							/>
-						</c:if>
 					</liferay-ui:panel>
 
-					<liferay-ui:panel title="comments">
+					<liferay-ui:panel markupView="lexicon" title="comments">
 						<liferay-ui:discussion
 							className="<%= assetRenderer.getClassName() %>"
 							classPK="<%= assetRenderer.getClassPK() %>"
@@ -119,8 +122,7 @@ renderResponse.setTitle(workflowInstanceEditDisplayContext.getHeaderTitle());
 				</c:if>
 
 				<c:if test="<%= !workflowInstanceEditDisplayContext.isWorkflowTasksEmpty() %>">
-					<liferay-ui:panel defaultState="open" title="tasks">
-
+					<liferay-ui:panel extended="<%= false %>" markupView="lexicon" title="tasks">
 						<liferay-ui:search-container
 							emptyResultsMessage="there-are-no-tasks"
 							iteratorURL="<%= renderResponse.createRenderURL() %>"
@@ -156,26 +158,16 @@ renderResponse.setTitle(workflowInstanceEditDisplayContext.getHeaderTitle());
 									name="completed"
 									value="<%= workflowInstanceEditDisplayContext.getTaskCompleted(workflowTask) %>"
 								/>
-
 							</liferay-ui:search-container-row>
 							<liferay-ui:search-iterator displayStyle="list" markupView="lexicon" />
 						</liferay-ui:search-container>
 					</liferay-ui:panel>
 				</c:if>
 
-				<liferay-ui:panel defaultState="closed" title="activities">
+				<liferay-ui:panel markupView="lexicon" title="activities">
 					<%@ include file="/workflow_logs.jspf" %>
 				</liferay-ui:panel>
 			</liferay-ui:panel-container>
-		</aui:col>
-
-		<aui:col cssClass="lfr-asset-column lfr-asset-column-actions" last="<%= true %>" width="<%= 25 %>">
-
-			<%
-			request.removeAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW);
-			%>
-
-			<liferay-util:include page="/workflow_instance_action.jsp" servletContext="<%= application %>" />
-		</aui:col>
-	</aui:row>
+		</aui:fieldset-group>
+	</aui:col>
 </div>

@@ -812,7 +812,7 @@ public class PortletWrapper implements Portlet, ModelWrapper<Portlet> {
 	* @return the permission propagator instance of the portlet
 	*/
 	@Override
-	public com.liferay.portal.security.permission.PermissionPropagator getPermissionPropagatorInstance() {
+	public com.liferay.portal.kernel.security.permission.PermissionPropagator getPermissionPropagatorInstance() {
 		return _portlet.getPermissionPropagatorInstance();
 	}
 
@@ -3512,14 +3512,6 @@ public class PortletWrapper implements Portlet, ModelWrapper<Portlet> {
 		}
 
 		return false;
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedModel}
-	 */
-	@Deprecated
-	public Portlet getWrappedPortlet() {
-		return _portlet;
 	}
 
 	@Override

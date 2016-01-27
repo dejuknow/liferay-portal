@@ -895,15 +895,6 @@ public class GroupWrapper implements Group, ModelWrapper<Group> {
 		return _group.isChild(groupId);
 	}
 
-	/**
-	* @deprecated As of 6.1.0, renamed to {@link #isRegularSite}
-	*/
-	@Deprecated
-	@Override
-	public boolean isCommunity() {
-		return _group.isCommunity();
-	}
-
 	@Override
 	public boolean isCompany() {
 		return _group.isCompany();
@@ -996,7 +987,7 @@ public class GroupWrapper implements Group, ModelWrapper<Group> {
 
 	@Override
 	public boolean isShowSite(
-		com.liferay.portal.security.permission.PermissionChecker permissionChecker,
+		com.liferay.portal.kernel.security.permission.PermissionChecker permissionChecker,
 		boolean privateSite)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _group.isShowSite(permissionChecker, privateSite);
@@ -1500,14 +1491,6 @@ public class GroupWrapper implements Group, ModelWrapper<Group> {
 		}
 
 		return false;
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedModel}
-	 */
-	@Deprecated
-	public Group getWrappedGroup() {
-		return _group;
 	}
 
 	@Override

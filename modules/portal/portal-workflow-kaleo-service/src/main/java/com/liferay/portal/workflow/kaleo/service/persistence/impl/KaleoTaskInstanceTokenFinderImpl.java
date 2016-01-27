@@ -254,17 +254,15 @@ public class KaleoTaskInstanceTokenFinderImpl
 				sql, kaleoTaskInstanceTokenQuery.isAndOperator());
 		}
 
-		if (kaleoTaskInstanceTokenQuery.getOrderByComparator() != null) {
+		OrderByComparator<KaleoTaskInstanceToken> obc =
+			kaleoTaskInstanceTokenQuery.getOrderByComparator();
+
+		if (obc != null) {
 			StringBundler sb = new StringBundler(sql);
 
-			appendOrderByComparator(
-				sb, _ORDER_BY_ENTITY_ALIAS,
-				kaleoTaskInstanceTokenQuery.getOrderByComparator());
+			appendOrderByComparator(sb, _ORDER_BY_ENTITY_ALIAS, obc);
 
 			sql = sb.toString();
-
-			OrderByComparator<KaleoTaskInstanceToken> obc =
-				kaleoTaskInstanceTokenQuery.getOrderByComparator();
 
 			String[] orderByFields = obc.getOrderByFields();
 
@@ -323,20 +321,15 @@ public class KaleoTaskInstanceTokenFinderImpl
 			return StringPool.BLANK;
 		}
 
-		StringBundler sb = new StringBundler(assetPrimaryKeys.length * 2 + 1);
+		StringBundler sb = new StringBundler(assetPrimaryKeys.length + 1);
 
-		sb.append("(");
+		sb.append(StringPool.OPEN_PARENTHESIS);
 
-		for (int i = 0; i < assetPrimaryKeys.length; i++) {
-			sb.append("(KaleoTaskInstanceToken.classPK = ?)");
-
-			if ((i + 1) < assetPrimaryKeys.length) {
-				sb.append(" OR ");
-			}
-			else {
-				sb.append(")");
-			}
+		for (int i = 0; i < assetPrimaryKeys.length - 1; i++) {
+			sb.append("(KaleoTaskInstanceToken.classPK = ?) OR ");
 		}
+
+		sb.append("(KaleoTaskInstanceToken.classPK = ?))");
 
 		return sb.toString();
 	}
@@ -345,32 +338,33 @@ public class KaleoTaskInstanceTokenFinderImpl
 		KaleoTaskInstanceTokenQuery kaleoTaskInstanceTokenQuery,
 		boolean firstCriteria) {
 
-		String[] assetTypes = CustomSQLUtil.keywords(
+		String[] assetTypes = kaleoTaskInstanceTokenQuery.getAssetTypes();
+
+		if (ArrayUtil.isEmpty(assetTypes)) {
+			return StringPool.BLANK;
+		}
+
+		assetTypes = CustomSQLUtil.keywords(
 			kaleoTaskInstanceTokenQuery.getAssetTypes());
 
 		if (ArrayUtil.isEmpty(assetTypes)) {
 			return StringPool.BLANK;
 		}
 
-		StringBundler sb = new StringBundler(assetTypes.length * 2 + 1);
+		StringBundler sb = new StringBundler(assetTypes.length + 1);
 
 		if (!firstCriteria) {
 			sb.append(" AND (");
 		}
 		else {
-			sb.append("(");
+			sb.append(StringPool.OPEN_PARENTHESIS);
 		}
 
-		for (int i = 0; i < assetTypes.length; i++) {
-			sb.append("(lower(KaleoTaskInstanceToken.className) LIKE ?)");
-
-			if ((i + 1) < assetTypes.length) {
-				sb.append(" OR ");
-			}
-			else {
-				sb.append(")");
-			}
+		for (int i = 0; i < assetTypes.length - 1; i++) {
+			sb.append("(lower(KaleoTaskInstanceToken.className) LIKE ?) OR ");
 		}
+
+		sb.append("(lower(KaleoTaskInstanceToken.className) LIKE ?))");
 
 		return sb.toString();
 	}
@@ -422,18 +416,11 @@ public class KaleoTaskInstanceTokenFinderImpl
 			return StringPool.BLANK;
 		}
 
-		StringBundler sb = new StringBundler(3);
-
-		if (!firstCriteria) {
-			sb.append("[$AND_OR_CONNECTOR$] (");
-		}
-		else {
-			sb.append("(");
+		if (firstCriteria) {
+			return FIRST_DUE_DATE_GT;
 		}
 
-		sb.append("KaleoTaskInstanceToken.dueDate >= ? [$AND_OR_NULL_CHECK$])");
-
-		return sb.toString();
+		return NOT_FIRST_DUE_DATE_GT;
 	}
 
 	protected String getDueDateLT(
@@ -446,18 +433,11 @@ public class KaleoTaskInstanceTokenFinderImpl
 			return StringPool.BLANK;
 		}
 
-		StringBundler sb = new StringBundler(3);
-
-		if (!firstCriteria) {
-			sb.append("[$AND_OR_CONNECTOR$] (");
-		}
-		else {
-			sb.append("(");
+		if (firstCriteria) {
+			return FIRST_DUE_DATE_LT;
 		}
 
-		sb.append("KaleoTaskInstanceToken.dueDate <= ? [$AND_OR_NULL_CHECK$])");
-
-		return sb.toString();
+		return NOT_FIRST_DUE_DATE_LT;
 	}
 
 	protected String getKaleoInstanceId(
@@ -488,20 +468,15 @@ public class KaleoTaskInstanceTokenFinderImpl
 			return StringPool.BLANK;
 		}
 
-		StringBundler sb = new StringBundler(roleIds.size() * 2 + 1);
+		StringBundler sb = new StringBundler(roleIds.size() + 1);
 
 		sb.append("AND (");
 
-		for (int i = 0; i < roleIds.size(); i++) {
-			sb.append("(KaleoTaskAssignmentInstance.assigneeClassPK = ?)");
-
-			if ((i + 1) < roleIds.size()) {
-				sb.append(" OR ");
-			}
-			else {
-				sb.append(")");
-			}
+		for (int i = 0; i < roleIds.size() - 1; i++) {
+			sb.append("(KaleoTaskAssignmentInstance.assigneeClassPK = ?) OR ");
 		}
+
+		sb.append("(KaleoTaskAssignmentInstance.assigneeClassPK = ?))");
 
 		return sb.toString();
 	}
@@ -601,10 +576,9 @@ public class KaleoTaskInstanceTokenFinderImpl
 			return sb.toString();
 		}
 
-		StringBundler sb = new StringBundler(3);
+		StringBundler sb = new StringBundler(2);
 
-		sb.append("AND ((");
-		sb.append("KaleoTaskAssignmentInstance.assigneeClassName = ?) ");
+		sb.append("AND ((KaleoTaskAssignmentInstance.assigneeClassName = ?) ");
 		sb.append("AND (KaleoTaskAssignmentInstance.assigneeClassPK = ?))");
 
 		return sb.toString();
@@ -637,20 +611,18 @@ public class KaleoTaskInstanceTokenFinderImpl
 			sb.append("[$AND_OR_CONNECTOR$] (");
 		}
 		else {
-			sb.append("(");
+			sb.append(StringPool.OPEN_PARENTHESIS);
 		}
 
 		for (int i = 0; i < taskNames.length; i++) {
 			sb.append(
 				"(lower(KaleoTaskInstanceToken.kaleoTaskName) LIKE lower(?))");
-
-			if ((i + 1) < taskNames.length) {
-				sb.append(" OR ");
-			}
-			else {
-				sb.append(")");
-			}
+			sb.append(" OR ");
 		}
+
+		sb.setIndex(sb.index() - 1);
+
+		sb.append(")");
 
 		return sb.toString();
 	}
@@ -871,6 +843,20 @@ public class KaleoTaskInstanceTokenFinderImpl
 
 		qPos.add(taskNames);
 	}
+
+	protected static final String FIRST_DUE_DATE_GT =
+		"(KaleoTaskInstanceToken.dueDate >= ? [$AND_OR_NULL_CHECK$])";
+
+	protected static final String FIRST_DUE_DATE_LT =
+		"(KaleoTaskInstanceToken.dueDate <= ? [$AND_OR_NULL_CHECK$])";
+
+	protected static final String NOT_FIRST_DUE_DATE_GT =
+		"[$AND_OR_CONNECTOR$] (KaleoTaskInstanceToken.dueDate >= ? " +
+			"[$AND_OR_NULL_CHECK$])";
+
+	protected static final String NOT_FIRST_DUE_DATE_LT =
+		"[$AND_OR_CONNECTOR$] (KaleoTaskInstanceToken.dueDate <= ? " +
+			"[$AND_OR_NULL_CHECK$])";
 
 	private static final String _ORDER_BY_ENTITY_ALIAS =
 		"KaleoTaskInstanceToken.";

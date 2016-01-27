@@ -17,6 +17,8 @@ package com.liferay.message.boards.trash;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.portlet.PortletProvider;
 import com.liferay.portal.kernel.portlet.PortletProviderUtil;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.trash.BaseTrashHandler;
 import com.liferay.portal.kernel.trash.TrashActionKeys;
 import com.liferay.portal.kernel.trash.TrashHandler;
@@ -26,8 +28,6 @@ import com.liferay.portal.kernel.trash.TrashRendererFactory;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.model.ContainerModel;
 import com.liferay.portal.model.LayoutConstants;
-import com.liferay.portal.security.permission.ActionKeys;
-import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.PortletURLFactoryUtil;
@@ -406,7 +406,8 @@ public class MBCategoryTrashHandler extends BaseTrashHandler {
 				portletRequest, portletId, plid, PortletRequest.RENDER_PHASE);
 		}
 
-		portletURL.setParameter("mvcRenderCommandName", "/message_boards/view");
+		portletURL.setParameter(
+			"mvcRenderCommandName", "/message_boards/view_category");
 
 		return portletURL;
 	}
@@ -446,8 +447,8 @@ public class MBCategoryTrashHandler extends BaseTrashHandler {
 		_trashRendererFactory = trashRendererFactory;
 	}
 
-	private volatile MBCategoryLocalService _mbCategoryLocalService;
-	private volatile MBThreadLocalService _mbThreadLocalService;
-	private volatile TrashRendererFactory _trashRendererFactory;
+	private MBCategoryLocalService _mbCategoryLocalService;
+	private MBThreadLocalService _mbThreadLocalService;
+	private TrashRendererFactory _trashRendererFactory;
 
 }

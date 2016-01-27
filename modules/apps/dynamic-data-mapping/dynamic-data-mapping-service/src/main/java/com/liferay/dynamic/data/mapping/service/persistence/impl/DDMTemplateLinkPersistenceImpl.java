@@ -35,6 +35,8 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
+import com.liferay.portal.service.persistence.CompanyProvider;
+import com.liferay.portal.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 
@@ -280,7 +282,7 @@ public class DDMTemplateLinkPersistenceImpl extends BasePersistenceImpl<DDMTempl
 	 * @param classNameId the class name ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching d d m template link
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchTemplateLinkException if a matching d d m template link could not be found
+	 * @throws NoSuchTemplateLinkException if a matching d d m template link could not be found
 	 */
 	@Override
 	public DDMTemplateLink findByClassNameId_First(long classNameId,
@@ -331,7 +333,7 @@ public class DDMTemplateLinkPersistenceImpl extends BasePersistenceImpl<DDMTempl
 	 * @param classNameId the class name ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching d d m template link
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchTemplateLinkException if a matching d d m template link could not be found
+	 * @throws NoSuchTemplateLinkException if a matching d d m template link could not be found
 	 */
 	@Override
 	public DDMTemplateLink findByClassNameId_Last(long classNameId,
@@ -389,7 +391,7 @@ public class DDMTemplateLinkPersistenceImpl extends BasePersistenceImpl<DDMTempl
 	 * @param classNameId the class name ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next d d m template link
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchTemplateLinkException if a d d m template link with the primary key could not be found
+	 * @throws NoSuchTemplateLinkException if a d d m template link with the primary key could not be found
 	 */
 	@Override
 	public DDMTemplateLink[] findByClassNameId_PrevAndNext(
@@ -788,7 +790,7 @@ public class DDMTemplateLinkPersistenceImpl extends BasePersistenceImpl<DDMTempl
 	 * @param templateId the template ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching d d m template link
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchTemplateLinkException if a matching d d m template link could not be found
+	 * @throws NoSuchTemplateLinkException if a matching d d m template link could not be found
 	 */
 	@Override
 	public DDMTemplateLink findByTemplateId_First(long templateId,
@@ -839,7 +841,7 @@ public class DDMTemplateLinkPersistenceImpl extends BasePersistenceImpl<DDMTempl
 	 * @param templateId the template ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching d d m template link
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchTemplateLinkException if a matching d d m template link could not be found
+	 * @throws NoSuchTemplateLinkException if a matching d d m template link could not be found
 	 */
 	@Override
 	public DDMTemplateLink findByTemplateId_Last(long templateId,
@@ -897,7 +899,7 @@ public class DDMTemplateLinkPersistenceImpl extends BasePersistenceImpl<DDMTempl
 	 * @param templateId the template ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next d d m template link
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchTemplateLinkException if a d d m template link with the primary key could not be found
+	 * @throws NoSuchTemplateLinkException if a d d m template link with the primary key could not be found
 	 */
 	@Override
 	public DDMTemplateLink[] findByTemplateId_PrevAndNext(long templateLinkId,
@@ -1112,12 +1114,12 @@ public class DDMTemplateLinkPersistenceImpl extends BasePersistenceImpl<DDMTempl
 			new String[] { Long.class.getName(), Long.class.getName() });
 
 	/**
-	 * Returns the d d m template link where classNameId = &#63; and classPK = &#63; or throws a {@link com.liferay.dynamic.data.mapping.NoSuchTemplateLinkException} if it could not be found.
+	 * Returns the d d m template link where classNameId = &#63; and classPK = &#63; or throws a {@link NoSuchTemplateLinkException} if it could not be found.
 	 *
 	 * @param classNameId the class name ID
 	 * @param classPK the class p k
 	 * @return the matching d d m template link
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchTemplateLinkException if a matching d d m template link could not be found
+	 * @throws NoSuchTemplateLinkException if a matching d d m template link could not be found
 	 */
 	@Override
 	public DDMTemplateLink findByC_C(long classNameId, long classPK)
@@ -1478,6 +1480,8 @@ public class DDMTemplateLinkPersistenceImpl extends BasePersistenceImpl<DDMTempl
 		ddmTemplateLink.setNew(true);
 		ddmTemplateLink.setPrimaryKey(templateLinkId);
 
+		ddmTemplateLink.setCompanyId(companyProvider.getCompanyId());
+
 		return ddmTemplateLink;
 	}
 
@@ -1486,7 +1490,7 @@ public class DDMTemplateLinkPersistenceImpl extends BasePersistenceImpl<DDMTempl
 	 *
 	 * @param templateLinkId the primary key of the d d m template link
 	 * @return the d d m template link that was removed
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchTemplateLinkException if a d d m template link with the primary key could not be found
+	 * @throws NoSuchTemplateLinkException if a d d m template link with the primary key could not be found
 	 */
 	@Override
 	public DDMTemplateLink remove(long templateLinkId)
@@ -1499,7 +1503,7 @@ public class DDMTemplateLinkPersistenceImpl extends BasePersistenceImpl<DDMTempl
 	 *
 	 * @param primaryKey the primary key of the d d m template link
 	 * @return the d d m template link that was removed
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchTemplateLinkException if a d d m template link with the primary key could not be found
+	 * @throws NoSuchTemplateLinkException if a d d m template link with the primary key could not be found
 	 */
 	@Override
 	public DDMTemplateLink remove(Serializable primaryKey)
@@ -1669,11 +1673,11 @@ public class DDMTemplateLinkPersistenceImpl extends BasePersistenceImpl<DDMTempl
 	}
 
 	/**
-	 * Returns the d d m template link with the primary key or throws a {@link com.liferay.portal.NoSuchModelException} if it could not be found.
+	 * Returns the d d m template link with the primary key or throws a {@link com.liferay.portal.exception.NoSuchModelException} if it could not be found.
 	 *
 	 * @param primaryKey the primary key of the d d m template link
 	 * @return the d d m template link
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchTemplateLinkException if a d d m template link with the primary key could not be found
+	 * @throws NoSuchTemplateLinkException if a d d m template link with the primary key could not be found
 	 */
 	@Override
 	public DDMTemplateLink findByPrimaryKey(Serializable primaryKey)
@@ -1693,11 +1697,11 @@ public class DDMTemplateLinkPersistenceImpl extends BasePersistenceImpl<DDMTempl
 	}
 
 	/**
-	 * Returns the d d m template link with the primary key or throws a {@link com.liferay.dynamic.data.mapping.NoSuchTemplateLinkException} if it could not be found.
+	 * Returns the d d m template link with the primary key or throws a {@link NoSuchTemplateLinkException} if it could not be found.
 	 *
 	 * @param templateLinkId the primary key of the d d m template link
 	 * @return the d d m template link
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchTemplateLinkException if a d d m template link with the primary key could not be found
+	 * @throws NoSuchTemplateLinkException if a d d m template link with the primary key could not be found
 	 */
 	@Override
 	public DDMTemplateLink findByPrimaryKey(long templateLinkId)
@@ -2064,6 +2068,8 @@ public class DDMTemplateLinkPersistenceImpl extends BasePersistenceImpl<DDMTempl
 		finderCache.removeCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 	}
 
+	@ServiceReference(type = CompanyProviderWrapper.class)
+	protected CompanyProvider companyProvider;
 	@ServiceReference(type = EntityCache.class)
 	protected EntityCache entityCache;
 	@ServiceReference(type = FinderCache.class)
