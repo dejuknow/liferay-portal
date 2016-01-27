@@ -36,6 +36,13 @@ public class SessionManager {
 		Session session = _sessions.get(syncAccountId);
 
 		if (session != null) {
+			if (ServerInfo.supportsDeviceRegistration(syncAccountId)) {
+				SyncAccount syncAccount = SyncAccountService.fetchSyncAccount(
+					syncAccountId);
+
+				session.addHeader("Sync-UUID", syncAccount.getUuid());
+			}
+
 			return session;
 		}
 
@@ -61,6 +68,8 @@ public class SessionManager {
 					syncAccount.isTrustSelfSigned(),
 					syncAccount.getMaxConnections());
 			}
+
+			session.addHeader("Sync-UUID", syncAccount.getUuid());
 
 			session.startTrackTransferRate();
 

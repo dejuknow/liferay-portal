@@ -28,6 +28,10 @@ import java.util.regex.Pattern;
  */
 public class ReleaseInfo {
 
+	public static final int getFeatureSet() {
+		return _FEATURE_SET;
+	}
+
 	public static final int getBuildNumber() {
 		return _BUILD_NUMBER;
 	}
@@ -81,6 +85,8 @@ public class ReleaseInfo {
 	}
 
 	private static final String _BUILD = "3013";
+
+	private static final int _FEATURE_SET = 1;
 
 	private static final int _BUILD_NUMBER = Integer.parseInt(_BUILD);
 
