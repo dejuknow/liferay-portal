@@ -28,7 +28,19 @@ import java.util.regex.Pattern;
  */
 public class ServerInfo {
 
-	public static boolean isServerCompatible(
+	public static boolean isServerCompatible(SyncContext syncContext) {
+		return isServerCompatible(syncContext.getPluginVersion(), 4);
+	}
+
+	public static boolean supportsPartialDownloads(long syncAccountId) {
+		return ServerInfo.isServerCompatible(syncAccountId, 5);
+	}
+
+	public static boolean supportsRetrieveFromCache(long syncAccountId) {
+		return ServerInfo.isServerCompatible(syncAccountId, 5);
+	}
+
+	protected static boolean isServerCompatible(
 		long syncAccountId, int minimumVersion) {
 
 		Boolean serverCompatible = _serverCompatibilityMap.get(
@@ -48,10 +60,6 @@ public class ServerInfo {
 			syncAccountId + "#" + minimumVersion, serverCompatible);
 
 		return serverCompatible;
-	}
-
-	public static boolean isServerCompatible(SyncContext syncContext) {
-		return isServerCompatible(syncContext.getPluginVersion(), 4);
 	}
 
 	protected static boolean isServerCompatible(

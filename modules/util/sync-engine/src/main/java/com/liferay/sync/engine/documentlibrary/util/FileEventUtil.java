@@ -274,7 +274,7 @@ public class FileEventUtil {
 
 		parameters.put("repositoryId", repositoryId);
 
-		if (ServerInfo.isServerCompatible(syncAccountId, 5)) {
+		if (ServerInfo.supportsRetrieveFromCache(syncAccountId)) {
 			parameters.put("retrieveFromCache", retrieveFromCache);
 		}
 

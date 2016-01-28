@@ -103,7 +103,7 @@ public class DownloadFileEvent extends BaseEvent {
 
 		Path tempFilePath = FileUtil.getTempFilePath(syncFile);
 
-		if (ServerInfo.isServerCompatible(getSyncAccountId(), 5) &&
+		if (ServerInfo.supportsPartialDownloads(getSyncAccountId()) &&
 			Files.exists(tempFilePath)) {
 
 			httpGet.setHeader(

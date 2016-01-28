@@ -72,7 +72,7 @@ public class GetSyncDLObjectUpdateEvent extends BaseEvent {
 		parameters.put("repositoryId", syncSite.getGroupId());
 
 		if ((syncSite.getRemoteSyncTime() == -1) &&
-			ServerInfo.isServerCompatible(getSyncAccountId(), 5)) {
+			ServerInfo.supportsRetrieveFromCache(getSyncAccountId())) {
 
 			parameters.put("retrieveFromCache", false);
 		}
