@@ -19,12 +19,12 @@ package com.liferay.sync.engine.util;
  */
 public class ReleaseInfo {
 
-	public static final int getFeatureSet() {
-		return _FEATURE_SET;
-	}
-
 	public static final int getBuildNumber() {
 		return _BUILD_NUMBER;
+	}
+
+	public static final int getFeatureSet() {
+		return _FEATURE_SET;
 	}
 
 	public static final String getVersion() {
@@ -33,9 +33,9 @@ public class ReleaseInfo {
 
 	private static final String _BUILD = "3013";
 
-	private static final int _FEATURE_SET = 1;
-
 	private static final int _BUILD_NUMBER = Integer.parseInt(_BUILD);
+
+	private static final int _FEATURE_SET = 1;
 
 	private static final String _VERSION = "3.0.13";
 

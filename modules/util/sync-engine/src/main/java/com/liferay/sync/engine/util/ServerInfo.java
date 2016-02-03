@@ -28,41 +28,49 @@ import java.util.regex.Pattern;
  */
 public class ServerInfo {
 
-	public static boolean isServerCompatible(SyncContext syncContext) {
-		return isServerCompatible(syncContext.getPluginVersion(), 4);
+	public static boolean isCompatible(SyncContext syncContext) {
+		return isCompatible(syncContext.getPluginVersion(), 4);
+	}
+
+	public static boolean supportsDeviceRegistration(long syncAccountId) {
+		return isCompatible(syncAccountId, 7);
 	}
 
 	public static boolean supportsPartialDownloads(long syncAccountId) {
-		return ServerInfo.isServerCompatible(syncAccountId, 5);
+		return isCompatible(syncAccountId, 5);
 	}
 
 	public static boolean supportsRetrieveFromCache(long syncAccountId) {
-		return ServerInfo.isServerCompatible(syncAccountId, 5);
+		return isCompatible(syncAccountId, 5);
 	}
 
-	protected static boolean isServerCompatible(
+	protected static boolean isCompatible(
 		long syncAccountId, int minimumVersion) {
 
-		Boolean serverCompatible = _serverCompatibilityMap.get(
+		Boolean compatible = _compatibilityMap.get(
 			syncAccountId + "#" + minimumVersion);
 
-		if (serverCompatible != null) {
-			return serverCompatible;
+		if (compatible != null) {
+			return compatible;
 		}
 
 		SyncAccount syncAccount = SyncAccountService.fetchSyncAccount(
 			syncAccountId);
 
-		serverCompatible = isServerCompatible(
-			syncAccount.getPluginVersion(), minimumVersion);
+		String pluginVersion = syncAccount.getPluginVersion();
 
-		_serverCompatibilityMap.put(
-			syncAccountId + "#" + minimumVersion, serverCompatible);
+		if (pluginVersion == null) {
+			return false;
+		}
 
-		return serverCompatible;
+		compatible = isCompatible(pluginVersion, minimumVersion);
+
+		_compatibilityMap.put(syncAccountId + "#" + minimumVersion, compatible);
+
+		return compatible;
 	}
 
-	protected static boolean isServerCompatible(
+	protected static boolean isCompatible(
 		String pluginVersion, int minimumVersion) {
 
 		Matcher matcher = _pattern.matcher(pluginVersion);
@@ -80,9 +88,9 @@ public class ServerInfo {
 		return true;
 	}
 
+	private static final Map<String, Boolean> _compatibilityMap =
+		new HashMap<>();
 	private static final Pattern _pattern = Pattern.compile(
 		"(?:[0-9]+\\.){3}([0-9]+)");
-	private static final Map<String, Boolean> _serverCompatibilityMap =
-		new HashMap<>();
 
 }

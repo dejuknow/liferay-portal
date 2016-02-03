@@ -23,6 +23,7 @@ import com.liferay.sync.engine.model.SyncAccount;
 import com.liferay.sync.engine.service.SyncAccountService;
 import com.liferay.sync.engine.util.OSDetector;
 import com.liferay.sync.engine.util.ReleaseInfo;
+import com.liferay.sync.engine.util.ServerInfo;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -38,6 +39,10 @@ import java.util.concurrent.TimeUnit;
 public class ServerEventUtil {
 
 	public static void registerSyncDevice(long syncAccountId) {
+		if (!ServerInfo.supportsDeviceRegistration(syncAccountId)) {
+			return;
+		}
+
 		Map<String, Object> parameters = new HashMap<>();
 
 		String type = null;
@@ -107,6 +112,10 @@ public class ServerEventUtil {
 	}
 
 	public static void unregisterSyncDevice(long syncAccountId) {
+		if (!ServerInfo.supportsDeviceRegistration(syncAccountId)) {
+			return;
+		}
+
 		Map<String, Object> parameters = new HashMap<>();
 
 		SyncAccount syncAccount = SyncAccountService.fetchSyncAccount(

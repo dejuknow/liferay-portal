@@ -17,6 +17,7 @@ package com.liferay.sync.engine.session;
 import com.liferay.sync.engine.model.SyncAccount;
 import com.liferay.sync.engine.service.SyncAccountService;
 import com.liferay.sync.engine.util.Encryptor;
+import com.liferay.sync.engine.util.ServerInfo;
 
 import java.net.URL;
 
@@ -69,7 +70,9 @@ public class SessionManager {
 					syncAccount.getMaxConnections());
 			}
 
-			session.addHeader("Sync-UUID", syncAccount.getUuid());
+			if (ServerInfo.supportsDeviceRegistration(syncAccountId)) {
+				session.addHeader("Sync-UUID", syncAccount.getUuid());
+			}
 
 			session.startTrackTransferRate();
 

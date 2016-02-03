@@ -47,7 +47,7 @@ public class RetryServerConnectionHandler extends GetSyncContextHandler {
 		SyncAccount syncAccount = SyncAccountService.fetchSyncAccount(
 			getSyncAccountId());
 
-		if (ServerInfo.isServerCompatible(syncContext)) {
+		if (ServerInfo.isCompatible(syncContext)) {
 			if (_logger.isDebugEnabled()) {
 				_logger.debug("Connected to {}", syncAccount.getUrl());
 			}
