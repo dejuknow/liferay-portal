@@ -58,7 +58,7 @@ public class BatchablePipeTest {
 		Assert.assertNotSame(increasbleEntry1, batchedIncreasableEntry);
 		Assert.assertEquals(
 			increasbleEntry1.getKey(), batchedIncreasableEntry.getKey());
-		Assert.assertEquals( 2, (int)batchedIncreasableEntry.getValue());
+		Assert.assertEquals(2, (int)batchedIncreasableEntry.getValue());
 		Assert.assertNull(batchablePipe.take());
 
 		// Batch 2 entries
@@ -249,26 +249,27 @@ public class BatchablePipeTest {
 			new IntegerIncreasableEntry("test", 3);
 
 		ReflectionTestUtil.setFieldValue(
-			batchablePipe, "concurrentMap", new ConcurrentHashMap
+			batchablePipe, "concurrentMap",
+			new ConcurrentHashMap
 				<String, IncreasableEntryWrapper<String, Integer>>() {
 
-					@Override
-					public boolean replace(
-						String key,
-						IncreasableEntryWrapper<String, Integer> oldValue,
-						IncreasableEntryWrapper<String, Integer> newValue) {
+				@Override
+				public boolean replace(
+					String key,
+					IncreasableEntryWrapper<String, Integer> oldValue,
+					IncreasableEntryWrapper<String, Integer> newValue) {
 
-						if (oldValue.increasableEntry == increasbleEntry1) {
-							put(
-								key,
-								new IncreasableEntryWrapper<String, Integer>(
-									increasbleEntry2));
-						}
-
-						return super.replace(key, oldValue, newValue);
+					if (oldValue.increasableEntry == increasbleEntry1) {
+						put(
+							key,
+							new IncreasableEntryWrapper<String, Integer>(
+								increasbleEntry2));
 					}
 
-				});
+					return super.replace(key, oldValue, newValue);
+				}
+
+			});
 
 		Assert.assertTrue(batchablePipe.put(increasbleEntry1));
 		Assert.assertFalse(batchablePipe.put(increasbleEntry3));
@@ -360,7 +361,7 @@ public class BatchablePipeTest {
 		Assert.assertNull(batchablePipe.take());
 	}
 
-	private class IntegerIncreasableEntry
+	private static class IntegerIncreasableEntry
 		extends IncreasableEntry<String, Integer> {
 
 		public IntegerIncreasableEntry(String key, Integer value) {

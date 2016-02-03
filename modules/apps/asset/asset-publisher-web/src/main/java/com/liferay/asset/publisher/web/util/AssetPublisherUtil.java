@@ -30,6 +30,11 @@ import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.BaseModelSearchResult;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
+import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.Accessor;
 import com.liferay.portal.kernel.util.ArrayUtil;
@@ -56,11 +61,6 @@ import com.liferay.portal.model.Layout;
 import com.liferay.portal.model.PortletConstants;
 import com.liferay.portal.model.PortletInstance;
 import com.liferay.portal.model.User;
-import com.liferay.portal.security.auth.PrincipalException;
-import com.liferay.portal.security.auth.PrincipalThreadLocal;
-import com.liferay.portal.security.permission.ActionKeys;
-import com.liferay.portal.security.permission.PermissionChecker;
-import com.liferay.portal.security.permission.ResourceActionsUtil;
 import com.liferay.portal.service.GroupLocalService;
 import com.liferay.portal.service.LayoutLocalService;
 import com.liferay.portal.service.PortletPreferencesLocalService;
@@ -88,15 +88,15 @@ import com.liferay.portlet.asset.service.AssetTagLocalService;
 import com.liferay.portlet.asset.service.persistence.AssetEntryQuery;
 import com.liferay.portlet.asset.util.AssetEntryQueryProcessor;
 import com.liferay.portlet.asset.util.AssetUtil;
+import com.liferay.portlet.configuration.kernel.util.PortletConfigurationUtil;
 import com.liferay.portlet.expando.model.ExpandoBridge;
-import com.liferay.portlet.sites.util.SitesUtil;
+import com.liferay.sites.kernel.util.SitesUtil;
 
 import java.io.IOException;
 import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -312,7 +312,7 @@ public class AssetPublisherUtil {
 			});
 		actionableDynamicQuery.setPerformActionMethod(
 			new ActionableDynamicQuery.PerformActionMethod
-					<com.liferay.portal.model.PortletPreferences>() {
+				<com.liferay.portal.model.PortletPreferences>() {
 
 				@Override
 				public void performAction(
@@ -1002,10 +1002,17 @@ public class AssetPublisherUtil {
 
 		definitionTerms.put("[$PORTAL_URL$]", company.getVirtualHostname());
 
+		definitionTerms.put(
+			"[$PORTLET_NAME$]",
+			HtmlUtil.escape(
+				PortalUtil.getPortletTitle(
+					AssetPublisherPortletKeys.ASSET_PUBLISHER,
+					themeDisplay.getLocale())));
+
 		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
 
 		definitionTerms.put(
-			"[$PORTLET_NAME$]", HtmlUtil.escape(portletDisplay.getTitle()));
+			"[$PORTLET_TITLE$]", HtmlUtil.escape(portletDisplay.getTitle()));
 
 		definitionTerms.put(
 			"[$SITE_NAME$]",
@@ -1081,26 +1088,8 @@ public class AssetPublisherUtil {
 				_layoutLocalService.getLayoutByUuidAndGroupId(
 					layoutUuid, siteGroupId, privateLayout);
 
-			Group scopeIdGroup = null;
-
-			if (scopeIdLayout.hasScopeGroup()) {
-				scopeIdGroup = scopeIdLayout.getScopeGroup();
-			}
-			else {
-				Map<Locale, String> nameMap = new HashMap<>();
-
-				nameMap.put(
-					LocaleUtil.getDefault(),
-					String.valueOf(scopeIdLayout.getPlid()));
-
-				scopeIdGroup = _groupLocalService.addGroup(
-					PrincipalThreadLocal.getUserId(),
-					GroupConstants.DEFAULT_PARENT_GROUP_ID,
-					Layout.class.getName(), scopeIdLayout.getPlid(),
-					GroupConstants.DEFAULT_LIVE_GROUP_ID, nameMap, null, 0,
-					true, GroupConstants.DEFAULT_MEMBERSHIP_RESTRICTION, null,
-					false, true, null);
-			}
+			Group scopeIdGroup = _groupLocalService.checkScopeGroup(
+				scopeIdLayout, PrincipalThreadLocal.getUserId());
 
 			return scopeIdGroup.getGroupId();
 		}
@@ -1219,12 +1208,21 @@ public class AssetPublisherUtil {
 
 		return getSubscriptionClassPK(
 			PortletKeys.PREFS_OWNER_ID_DEFAULT,
-				PortletKeys.PREFS_OWNER_TYPE_LAYOUT, plid, portletId);
+			PortletKeys.PREFS_OWNER_TYPE_LAYOUT, plid, portletId);
 	}
 
 	public static boolean isScopeIdSelectable(
 			PermissionChecker permissionChecker, String scopeId,
 			long companyGroupId, Layout layout)
+		throws PortalException {
+
+		return isScopeIdSelectable(
+			permissionChecker, scopeId, companyGroupId, layout, true);
+	}
+
+	public static boolean isScopeIdSelectable(
+			PermissionChecker permissionChecker, String scopeId,
+			long companyGroupId, Layout layout, boolean checkPermission)
 		throws PortalException {
 
 		long groupId = getGroupIdFromScopeId(
@@ -1258,10 +1256,12 @@ public class AssetPublisherUtil {
 				return false;
 			}
 
-			return GroupPermissionUtil.contains(
-				permissionChecker, group, ActionKeys.UPDATE);
+			if (checkPermission) {
+				return GroupPermissionUtil.contains(
+					permissionChecker, group, ActionKeys.UPDATE);
+			}
 		}
-		else if (groupId != companyGroupId) {
+		else if ((groupId != companyGroupId) && checkPermission) {
 			return GroupPermissionUtil.contains(
 				permissionChecker, groupId, ActionKeys.UPDATE);
 		}
@@ -1312,6 +1312,8 @@ public class AssetPublisherUtil {
 		subscriptionSender.setFrom(fromAddress, fromName);
 		subscriptionSender.setHtmlFormat(true);
 		subscriptionSender.setLocalizedBodyMap(localizedBodyMap);
+		subscriptionSender.setLocalizedPortletTitleMap(
+			PortletConfigurationUtil.getPortletTitleMap(portletPreferences));
 		subscriptionSender.setLocalizedSubjectMap(localizedSubjectMap);
 		subscriptionSender.setMailId("asset_entry", assetEntry.getEntryId());
 		subscriptionSender.setPortletId(

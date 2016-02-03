@@ -17,12 +17,15 @@ package com.liferay.dynamic.data.mapping.type.select;
 import com.liferay.dynamic.data.mapping.form.field.type.BaseDDMFormFieldRenderer;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldRenderer;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
+import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
 import com.liferay.dynamic.data.mapping.render.DDMFormFieldRenderingContext;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.template.Template;
 import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.template.TemplateResource;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.Validator;
 
 import java.util.HashMap;
 import java.util.List;
@@ -61,13 +64,26 @@ public class SelectDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 			"/META-INF/resources/select.soy");
 	}
 
+	protected DDMFormFieldOptions getDDMFormFieldOptions(
+		DDMFormField ddmFormField) {
+
+		String dataSourceType = GetterUtil.getString(
+			ddmFormField.getProperty("dataSourceType"), "manual");
+
+		if (Validator.equals(dataSourceType, "manual")) {
+			return ddmFormField.getDDMFormFieldOptions();
+		}
+
+		return new DDMFormFieldOptions();
+	}
+
 	protected List<Object> getOptions(
 		DDMFormField ddmFormField,
 		DDMFormFieldRenderingContext ddmFormFieldRenderingContext) {
 
 		SelectDDMFormFieldContextHelper selectDDMFormFieldContextHelper =
 			new SelectDDMFormFieldContextHelper(
-				ddmFormField.getDDMFormFieldOptions(),
+				getDDMFormFieldOptions(ddmFormField),
 				ddmFormFieldRenderingContext.getValue(),
 				ddmFormField.getPredefinedValue(),
 				ddmFormFieldRenderingContext.getLocale());

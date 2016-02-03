@@ -44,12 +44,14 @@ import com.liferay.portlet.asset.service.AssetEntryLocalServiceUtil;
 import com.liferay.portlet.asset.service.AssetEntryServiceUtil;
 import com.liferay.portlet.asset.service.AssetLinkLocalServiceUtil;
 import com.liferay.portlet.asset.util.comparator.AssetRendererFactoryTypeNameComparator;
+import com.liferay.taglib.util.TagResourceBundleUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import javax.portlet.PortletMode;
 import javax.portlet.PortletRequest;
@@ -163,7 +165,7 @@ public class InputAssetLinksDisplayContext {
 
 		_randomNamespace = PortalUtil.generateRandomKey(
 			_request, "taglib_ui_input_asset_links_page") +
-			StringPool.UNDERLINE;
+				StringPool.UNDERLINE;
 
 		return _randomNamespace;
 	}
@@ -190,8 +192,6 @@ public class InputAssetLinksDisplayContext {
 					"id", _getSelectorEntryId(assetRendererFactory));
 				selectorEntry.put(
 					"message", _getSelectorEntryMessage(assetRendererFactory));
-				selectorEntry.put(
-					"src", _getSelectorEntrySrc(assetRendererFactory));
 
 				selectorEntries.add(selectorEntry);
 			}
@@ -267,14 +267,15 @@ public class InputAssetLinksDisplayContext {
 			"href",
 			_getAssetBrowserPortletURL(assetRendererFactory).toString());
 
+		ResourceBundle resourceBundle = TagResourceBundleUtil.getResourceBundle(
+			_pageContext);
+
 		String typeName = assetRendererFactory.getTypeName(
 			_themeDisplay.getLocale());
 
-		HttpServletRequest request =
-			(HttpServletRequest)_pageContext.getRequest();
-
 		selectorEntryData.put(
-			"title", LanguageUtil.format(request, "select-x", typeName, false));
+			"title",
+			LanguageUtil.format(resourceBundle, "select-x", typeName, false));
 
 		selectorEntryData.put("type", assetRendererFactory.getClassName());
 
@@ -364,8 +365,6 @@ public class InputAssetLinksDisplayContext {
 				"id",
 				_getSelectorEntryId(assetRendererFactory, classType));
 			selectorEntry.put("message", _getSelectorEntryMessage(classType));
-			selectorEntry.put(
-				"src", _getSelectorEntrySrc(assetRendererFactory));
 
 			selectorEntries.add(selectorEntry);
 		}
@@ -387,12 +386,14 @@ public class InputAssetLinksDisplayContext {
 
 		selectorEntryData.put("href", portletURL.toString());
 
-		HttpServletRequest request =
-			(HttpServletRequest)_pageContext.getRequest();
+		ResourceBundle resourceBundle = TagResourceBundleUtil.getResourceBundle(
+			_pageContext);
 
 		selectorEntryData.put(
-			"title", LanguageUtil.format(
-				request, "select-x", classType.getName(), false));
+			"title",
+			LanguageUtil.format(
+				resourceBundle, "select-x", classType.getName(), false));
+
 		selectorEntryData.put("type", classType.getName());
 
 		return selectorEntryData;
@@ -432,12 +433,6 @@ public class InputAssetLinksDisplayContext {
 
 	private String _getSelectorEntryMessage(ClassType classType) {
 		return classType.getName();
-	}
-
-	private String _getSelectorEntrySrc(
-		AssetRendererFactory<?> assetRendererFactory) {
-
-		return assetRendererFactory.getIconPath(_portletRequest);
 	}
 
 	private boolean _isStagedLocally() {

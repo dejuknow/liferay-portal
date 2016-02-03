@@ -17,10 +17,10 @@ package com.liferay.exportimport.staging.permission;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.pacl.DoPrivileged;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.Group;
-import com.liferay.portal.security.permission.ActionKeys;
-import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.service.GroupLocalService;
 import com.liferay.portlet.exportimport.staging.permission.StagingPermission;
 
@@ -77,6 +77,7 @@ public class StagingPermissionImpl implements StagingPermission {
 
 		if (!actionId.equals(ActionKeys.ACCESS_IN_CONTROL_PANEL) &&
 			!actionId.equals(ActionKeys.ADD_TO_PAGE) &&
+			!actionId.equals(ActionKeys.ASSIGN_MEMBERS) &&
 			!actionId.equals(ActionKeys.CONFIGURATION) &&
 			!actionId.equals(ActionKeys.CUSTOMIZE) &&
 			!actionId.equals(ActionKeys.DELETE) &&
@@ -99,6 +100,6 @@ public class StagingPermissionImpl implements StagingPermission {
 	private static final Log _log = LogFactoryUtil.getLog(
 		StagingPermissionImpl.class);
 
-	private volatile GroupLocalService _groupLocalService;
+	private GroupLocalService _groupLocalService;
 
 }

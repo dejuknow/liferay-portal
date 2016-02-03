@@ -16,9 +16,8 @@ package com.liferay.portal.upgrade.v7_0_0;
 
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
-import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.util.CharPool;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
@@ -29,15 +28,13 @@ public class UpgradeRelease extends UpgradeProcess {
 
 	@Override
 	protected void doUpgrade() throws Exception {
-		Connection con = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 
 		try {
-			con = DataAccess.getUpgradeOptimizedConnection();
-
-			ps = con.prepareStatement(
-				"select distinct buildNumber from Release_");
+			ps = connection.prepareStatement(
+				"select distinct buildNumber from Release_ " +
+					"where schemaVersion is null");
 
 			rs = ps.executeQuery();
 
@@ -48,27 +45,26 @@ public class UpgradeRelease extends UpgradeProcess {
 
 				runSQL(
 					"update Release_ set schemaVersion = '" + schemaVersion +
-						"' where buildNumber = " + buildNumber);
+						"' where buildNumber = " + buildNumber +
+							" and schemaVersion is null");
 			}
 		}
 		finally {
-			DataAccess.cleanUp(con, ps, rs);
+			DataAccess.cleanUp(ps, rs);
 		}
 	}
 
 	protected String toSchemaVersion(String buildNumber) {
-		char[] chars = buildNumber.toCharArray();
+		StringBuilder sb = new StringBuilder(2 * buildNumber.length());
 
-		StringBundler sb = new StringBundler(2 * chars.length);
-
-		int i = 0;
-
-		for (; i < chars.length - 1; i++) {
-			sb.append(chars[i]);
-			sb.append(".");
+		for (int i = 0; i < buildNumber.length(); i++) {
+			sb.append(buildNumber.charAt(i));
+			sb.append(CharPool.PERIOD);
 		}
 
-		sb.append(chars[i]);
+		if (buildNumber.length() > 0) {
+			sb.setLength(sb.length() - 1);
+		}
 
 		return sb.toString();
 	}

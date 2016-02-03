@@ -16,8 +16,7 @@ package com.liferay.mobile.device.rules.service;
 
 import aQute.bnd.annotation.ProviderType;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
+import com.liferay.osgi.util.ServiceTrackerFactory;
 
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -122,21 +121,6 @@ public class MDRActionServiceUtil {
 		return _serviceTracker.getService();
 	}
 
-	/**
-	 * @deprecated As of 6.2.0
-	 */
-	@Deprecated
-	public void setService(MDRActionService service) {
-	}
-
-	private static ServiceTracker<MDRActionService, MDRActionService> _serviceTracker;
-
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(MDRActionServiceUtil.class);
-
-		_serviceTracker = new ServiceTracker<MDRActionService, MDRActionService>(bundle.getBundleContext(),
-				MDRActionService.class, null);
-
-		_serviceTracker.open();
-	}
+	private static ServiceTracker<MDRActionService, MDRActionService> _serviceTracker =
+		ServiceTrackerFactory.open(MDRActionService.class);
 }

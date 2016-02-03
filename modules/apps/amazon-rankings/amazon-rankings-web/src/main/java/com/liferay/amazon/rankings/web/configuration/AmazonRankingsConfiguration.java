@@ -16,14 +16,16 @@ package com.liferay.amazon.rankings.web.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
-import com.liferay.configuration.admin.ConfigurationAdmin;
+import com.liferay.portal.metatype.annotations.ExtendedObjectClassDefinition;
 
 /**
  * @author Jorge Ferrer
  */
-@ConfigurationAdmin(category = "other")
+@ExtendedObjectClassDefinition(category = "other")
 @Meta.OCD(
-	id = "com.liferay.amazon.rankings.web.configuration.AmazonRankingsConfiguration"
+	id = "com.liferay.amazon.rankings.web.configuration.AmazonRankingsConfiguration",
+	localization = "content/Language",
+	name = "%amazon.rankings.configuration.name"
 )
 public interface AmazonRankingsConfiguration {
 
@@ -37,8 +39,7 @@ public interface AmazonRankingsConfiguration {
 	public String amazonSecretAccessKey();
 
 	@Meta.AD(
-		deflt = "0066620996|0131412752|0201633612|0310205719|0310241448",
-		required = false
+		deflt = "0066620996|0131412752|0201633612|0310241448", required = false
 	)
 	public String[] isbns();
 

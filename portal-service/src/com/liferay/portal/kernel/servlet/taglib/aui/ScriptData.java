@@ -155,9 +155,9 @@ public class ScriptData implements Mergeable<ScriptData>, Serializable {
 			es6ModulesSB.writeTo(writer);
 
 			writer.write("},\nfunction(error) {\nconsole.error(error);\n});");
-			writer.write("\n// ]]>\n</script>");
 		}
-		else if (!auiModulesSet.isEmpty()) {
+
+		if (!auiModulesSet.isEmpty()) {
 			writer.write("AUI().use(");
 
 			for (String use : auiModulesSet) {
@@ -171,8 +171,10 @@ public class ScriptData implements Mergeable<ScriptData>, Serializable {
 
 			auiModulesSB.writeTo(writer);
 
-			writer.write("});\n// ]]>\n</script>");
+			writer.write("});");
 		}
+
+		writer.write("\n// ]]>\n</script>");
 	}
 
 	public static enum ModulesType {
@@ -289,18 +291,18 @@ public class ScriptData implements Mergeable<ScriptData>, Serializable {
 		return portletData;
 	}
 
+	private static final Pattern _validCharactersPattern = Pattern.compile(
+		"[0-9a-z_$]", Pattern.CASE_INSENSITIVE);
+	private static final Pattern _validFirstCharacterPattern = Pattern.compile(
+		"[a-z_$]", Pattern.CASE_INSENSITIVE);
 	private static final long serialVersionUID = 1L;
 
 	private final ConcurrentMap<String, PortletData> _portletDataMap =
 		new ConcurrentHashMap<>();
 	private final List<ObjectValuePair<StringBundler, Integer>> _sbIndexList =
 		new ArrayList<>();
-	private final Pattern _validCharactersPattern = Pattern.compile(
-		"[0-9a-z_$]", Pattern.CASE_INSENSITIVE);
-	private final Pattern _validFirstCharacterPattern = Pattern.compile(
-		"[a-z_$]", Pattern.CASE_INSENSITIVE);
 
-	private class PortletData implements Serializable {
+	private static class PortletData implements Serializable {
 
 		public void append(
 			String content, String modules, ModulesType modulesType) {

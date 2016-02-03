@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.service.persistence.BasePersistence;
 
+import com.liferay.wiki.exception.NoSuchNodeException;
 import com.liferay.wiki.model.WikiNode;
 
 /**
@@ -105,11 +106,11 @@ public interface WikiNodePersistence extends BasePersistence<WikiNode> {
 	* @param uuid the uuid
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching wiki node
-	* @throws com.liferay.wiki.NoSuchNodeException if a matching wiki node could not be found
+	* @throws NoSuchNodeException if a matching wiki node could not be found
 	*/
 	public WikiNode findByUuid_First(java.lang.String uuid,
 		com.liferay.portal.kernel.util.OrderByComparator<WikiNode> orderByComparator)
-		throws com.liferay.wiki.exception.NoSuchNodeException;
+		throws NoSuchNodeException;
 
 	/**
 	* Returns the first wiki node in the ordered set where uuid = &#63;.
@@ -127,11 +128,11 @@ public interface WikiNodePersistence extends BasePersistence<WikiNode> {
 	* @param uuid the uuid
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching wiki node
-	* @throws com.liferay.wiki.NoSuchNodeException if a matching wiki node could not be found
+	* @throws NoSuchNodeException if a matching wiki node could not be found
 	*/
 	public WikiNode findByUuid_Last(java.lang.String uuid,
 		com.liferay.portal.kernel.util.OrderByComparator<WikiNode> orderByComparator)
-		throws com.liferay.wiki.exception.NoSuchNodeException;
+		throws NoSuchNodeException;
 
 	/**
 	* Returns the last wiki node in the ordered set where uuid = &#63;.
@@ -150,12 +151,12 @@ public interface WikiNodePersistence extends BasePersistence<WikiNode> {
 	* @param uuid the uuid
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next wiki node
-	* @throws com.liferay.wiki.NoSuchNodeException if a wiki node with the primary key could not be found
+	* @throws NoSuchNodeException if a wiki node with the primary key could not be found
 	*/
 	public WikiNode[] findByUuid_PrevAndNext(long nodeId,
 		java.lang.String uuid,
 		com.liferay.portal.kernel.util.OrderByComparator<WikiNode> orderByComparator)
-		throws com.liferay.wiki.exception.NoSuchNodeException;
+		throws NoSuchNodeException;
 
 	/**
 	* Removes all the wiki nodes where uuid = &#63; from the database.
@@ -173,15 +174,15 @@ public interface WikiNodePersistence extends BasePersistence<WikiNode> {
 	public int countByUuid(java.lang.String uuid);
 
 	/**
-	* Returns the wiki node where uuid = &#63; and groupId = &#63; or throws a {@link com.liferay.wiki.NoSuchNodeException} if it could not be found.
+	* Returns the wiki node where uuid = &#63; and groupId = &#63; or throws a {@link NoSuchNodeException} if it could not be found.
 	*
 	* @param uuid the uuid
 	* @param groupId the group ID
 	* @return the matching wiki node
-	* @throws com.liferay.wiki.NoSuchNodeException if a matching wiki node could not be found
+	* @throws NoSuchNodeException if a matching wiki node could not be found
 	*/
 	public WikiNode findByUUID_G(java.lang.String uuid, long groupId)
-		throws com.liferay.wiki.exception.NoSuchNodeException;
+		throws NoSuchNodeException;
 
 	/**
 	* Returns the wiki node where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
@@ -211,7 +212,7 @@ public interface WikiNodePersistence extends BasePersistence<WikiNode> {
 	* @return the wiki node that was removed
 	*/
 	public WikiNode removeByUUID_G(java.lang.String uuid, long groupId)
-		throws com.liferay.wiki.exception.NoSuchNodeException;
+		throws NoSuchNodeException;
 
 	/**
 	* Returns the number of wiki nodes where uuid = &#63; and groupId = &#63;.
@@ -293,11 +294,11 @@ public interface WikiNodePersistence extends BasePersistence<WikiNode> {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching wiki node
-	* @throws com.liferay.wiki.NoSuchNodeException if a matching wiki node could not be found
+	* @throws NoSuchNodeException if a matching wiki node could not be found
 	*/
 	public WikiNode findByUuid_C_First(java.lang.String uuid, long companyId,
 		com.liferay.portal.kernel.util.OrderByComparator<WikiNode> orderByComparator)
-		throws com.liferay.wiki.exception.NoSuchNodeException;
+		throws NoSuchNodeException;
 
 	/**
 	* Returns the first wiki node in the ordered set where uuid = &#63; and companyId = &#63;.
@@ -317,11 +318,11 @@ public interface WikiNodePersistence extends BasePersistence<WikiNode> {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching wiki node
-	* @throws com.liferay.wiki.NoSuchNodeException if a matching wiki node could not be found
+	* @throws NoSuchNodeException if a matching wiki node could not be found
 	*/
 	public WikiNode findByUuid_C_Last(java.lang.String uuid, long companyId,
 		com.liferay.portal.kernel.util.OrderByComparator<WikiNode> orderByComparator)
-		throws com.liferay.wiki.exception.NoSuchNodeException;
+		throws NoSuchNodeException;
 
 	/**
 	* Returns the last wiki node in the ordered set where uuid = &#63; and companyId = &#63;.
@@ -342,12 +343,12 @@ public interface WikiNodePersistence extends BasePersistence<WikiNode> {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next wiki node
-	* @throws com.liferay.wiki.NoSuchNodeException if a wiki node with the primary key could not be found
+	* @throws NoSuchNodeException if a wiki node with the primary key could not be found
 	*/
 	public WikiNode[] findByUuid_C_PrevAndNext(long nodeId,
 		java.lang.String uuid, long companyId,
 		com.liferay.portal.kernel.util.OrderByComparator<WikiNode> orderByComparator)
-		throws com.liferay.wiki.exception.NoSuchNodeException;
+		throws NoSuchNodeException;
 
 	/**
 	* Removes all the wiki nodes where uuid = &#63; and companyId = &#63; from the database.
@@ -431,11 +432,11 @@ public interface WikiNodePersistence extends BasePersistence<WikiNode> {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching wiki node
-	* @throws com.liferay.wiki.NoSuchNodeException if a matching wiki node could not be found
+	* @throws NoSuchNodeException if a matching wiki node could not be found
 	*/
 	public WikiNode findByGroupId_First(long groupId,
 		com.liferay.portal.kernel.util.OrderByComparator<WikiNode> orderByComparator)
-		throws com.liferay.wiki.exception.NoSuchNodeException;
+		throws NoSuchNodeException;
 
 	/**
 	* Returns the first wiki node in the ordered set where groupId = &#63;.
@@ -453,11 +454,11 @@ public interface WikiNodePersistence extends BasePersistence<WikiNode> {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching wiki node
-	* @throws com.liferay.wiki.NoSuchNodeException if a matching wiki node could not be found
+	* @throws NoSuchNodeException if a matching wiki node could not be found
 	*/
 	public WikiNode findByGroupId_Last(long groupId,
 		com.liferay.portal.kernel.util.OrderByComparator<WikiNode> orderByComparator)
-		throws com.liferay.wiki.exception.NoSuchNodeException;
+		throws NoSuchNodeException;
 
 	/**
 	* Returns the last wiki node in the ordered set where groupId = &#63;.
@@ -476,11 +477,11 @@ public interface WikiNodePersistence extends BasePersistence<WikiNode> {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next wiki node
-	* @throws com.liferay.wiki.NoSuchNodeException if a wiki node with the primary key could not be found
+	* @throws NoSuchNodeException if a wiki node with the primary key could not be found
 	*/
 	public WikiNode[] findByGroupId_PrevAndNext(long nodeId, long groupId,
 		com.liferay.portal.kernel.util.OrderByComparator<WikiNode> orderByComparator)
-		throws com.liferay.wiki.exception.NoSuchNodeException;
+		throws NoSuchNodeException;
 
 	/**
 	* Returns all the wiki nodes that the user has permission to view where groupId = &#63;.
@@ -529,12 +530,12 @@ public interface WikiNodePersistence extends BasePersistence<WikiNode> {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next wiki node
-	* @throws com.liferay.wiki.NoSuchNodeException if a wiki node with the primary key could not be found
+	* @throws NoSuchNodeException if a wiki node with the primary key could not be found
 	*/
 	public WikiNode[] filterFindByGroupId_PrevAndNext(long nodeId,
 		long groupId,
 		com.liferay.portal.kernel.util.OrderByComparator<WikiNode> orderByComparator)
-		throws com.liferay.wiki.exception.NoSuchNodeException;
+		throws NoSuchNodeException;
 
 	/**
 	* Removes all the wiki nodes where groupId = &#63; from the database.
@@ -624,11 +625,11 @@ public interface WikiNodePersistence extends BasePersistence<WikiNode> {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching wiki node
-	* @throws com.liferay.wiki.NoSuchNodeException if a matching wiki node could not be found
+	* @throws NoSuchNodeException if a matching wiki node could not be found
 	*/
 	public WikiNode findByCompanyId_First(long companyId,
 		com.liferay.portal.kernel.util.OrderByComparator<WikiNode> orderByComparator)
-		throws com.liferay.wiki.exception.NoSuchNodeException;
+		throws NoSuchNodeException;
 
 	/**
 	* Returns the first wiki node in the ordered set where companyId = &#63;.
@@ -646,11 +647,11 @@ public interface WikiNodePersistence extends BasePersistence<WikiNode> {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching wiki node
-	* @throws com.liferay.wiki.NoSuchNodeException if a matching wiki node could not be found
+	* @throws NoSuchNodeException if a matching wiki node could not be found
 	*/
 	public WikiNode findByCompanyId_Last(long companyId,
 		com.liferay.portal.kernel.util.OrderByComparator<WikiNode> orderByComparator)
-		throws com.liferay.wiki.exception.NoSuchNodeException;
+		throws NoSuchNodeException;
 
 	/**
 	* Returns the last wiki node in the ordered set where companyId = &#63;.
@@ -669,11 +670,11 @@ public interface WikiNodePersistence extends BasePersistence<WikiNode> {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next wiki node
-	* @throws com.liferay.wiki.NoSuchNodeException if a wiki node with the primary key could not be found
+	* @throws NoSuchNodeException if a wiki node with the primary key could not be found
 	*/
 	public WikiNode[] findByCompanyId_PrevAndNext(long nodeId, long companyId,
 		com.liferay.portal.kernel.util.OrderByComparator<WikiNode> orderByComparator)
-		throws com.liferay.wiki.exception.NoSuchNodeException;
+		throws NoSuchNodeException;
 
 	/**
 	* Removes all the wiki nodes where companyId = &#63; from the database.
@@ -691,15 +692,15 @@ public interface WikiNodePersistence extends BasePersistence<WikiNode> {
 	public int countByCompanyId(long companyId);
 
 	/**
-	* Returns the wiki node where groupId = &#63; and name = &#63; or throws a {@link com.liferay.wiki.NoSuchNodeException} if it could not be found.
+	* Returns the wiki node where groupId = &#63; and name = &#63; or throws a {@link NoSuchNodeException} if it could not be found.
 	*
 	* @param groupId the group ID
 	* @param name the name
 	* @return the matching wiki node
-	* @throws com.liferay.wiki.NoSuchNodeException if a matching wiki node could not be found
+	* @throws NoSuchNodeException if a matching wiki node could not be found
 	*/
 	public WikiNode findByG_N(long groupId, java.lang.String name)
-		throws com.liferay.wiki.exception.NoSuchNodeException;
+		throws NoSuchNodeException;
 
 	/**
 	* Returns the wiki node where groupId = &#63; and name = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
@@ -729,7 +730,7 @@ public interface WikiNodePersistence extends BasePersistence<WikiNode> {
 	* @return the wiki node that was removed
 	*/
 	public WikiNode removeByG_N(long groupId, java.lang.String name)
-		throws com.liferay.wiki.exception.NoSuchNodeException;
+		throws NoSuchNodeException;
 
 	/**
 	* Returns the number of wiki nodes where groupId = &#63; and name = &#63;.
@@ -810,11 +811,11 @@ public interface WikiNodePersistence extends BasePersistence<WikiNode> {
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching wiki node
-	* @throws com.liferay.wiki.NoSuchNodeException if a matching wiki node could not be found
+	* @throws NoSuchNodeException if a matching wiki node could not be found
 	*/
 	public WikiNode findByG_S_First(long groupId, int status,
 		com.liferay.portal.kernel.util.OrderByComparator<WikiNode> orderByComparator)
-		throws com.liferay.wiki.exception.NoSuchNodeException;
+		throws NoSuchNodeException;
 
 	/**
 	* Returns the first wiki node in the ordered set where groupId = &#63; and status = &#63;.
@@ -834,11 +835,11 @@ public interface WikiNodePersistence extends BasePersistence<WikiNode> {
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching wiki node
-	* @throws com.liferay.wiki.NoSuchNodeException if a matching wiki node could not be found
+	* @throws NoSuchNodeException if a matching wiki node could not be found
 	*/
 	public WikiNode findByG_S_Last(long groupId, int status,
 		com.liferay.portal.kernel.util.OrderByComparator<WikiNode> orderByComparator)
-		throws com.liferay.wiki.exception.NoSuchNodeException;
+		throws NoSuchNodeException;
 
 	/**
 	* Returns the last wiki node in the ordered set where groupId = &#63; and status = &#63;.
@@ -859,12 +860,12 @@ public interface WikiNodePersistence extends BasePersistence<WikiNode> {
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next wiki node
-	* @throws com.liferay.wiki.NoSuchNodeException if a wiki node with the primary key could not be found
+	* @throws NoSuchNodeException if a wiki node with the primary key could not be found
 	*/
 	public WikiNode[] findByG_S_PrevAndNext(long nodeId, long groupId,
 		int status,
 		com.liferay.portal.kernel.util.OrderByComparator<WikiNode> orderByComparator)
-		throws com.liferay.wiki.exception.NoSuchNodeException;
+		throws NoSuchNodeException;
 
 	/**
 	* Returns all the wiki nodes that the user has permission to view where groupId = &#63; and status = &#63;.
@@ -917,12 +918,12 @@ public interface WikiNodePersistence extends BasePersistence<WikiNode> {
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next wiki node
-	* @throws com.liferay.wiki.NoSuchNodeException if a wiki node with the primary key could not be found
+	* @throws NoSuchNodeException if a wiki node with the primary key could not be found
 	*/
 	public WikiNode[] filterFindByG_S_PrevAndNext(long nodeId, long groupId,
 		int status,
 		com.liferay.portal.kernel.util.OrderByComparator<WikiNode> orderByComparator)
-		throws com.liferay.wiki.exception.NoSuchNodeException;
+		throws NoSuchNodeException;
 
 	/**
 	* Removes all the wiki nodes where groupId = &#63; and status = &#63; from the database.
@@ -1020,11 +1021,11 @@ public interface WikiNodePersistence extends BasePersistence<WikiNode> {
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching wiki node
-	* @throws com.liferay.wiki.NoSuchNodeException if a matching wiki node could not be found
+	* @throws NoSuchNodeException if a matching wiki node could not be found
 	*/
 	public WikiNode findByC_S_First(long companyId, int status,
 		com.liferay.portal.kernel.util.OrderByComparator<WikiNode> orderByComparator)
-		throws com.liferay.wiki.exception.NoSuchNodeException;
+		throws NoSuchNodeException;
 
 	/**
 	* Returns the first wiki node in the ordered set where companyId = &#63; and status = &#63;.
@@ -1044,11 +1045,11 @@ public interface WikiNodePersistence extends BasePersistence<WikiNode> {
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching wiki node
-	* @throws com.liferay.wiki.NoSuchNodeException if a matching wiki node could not be found
+	* @throws NoSuchNodeException if a matching wiki node could not be found
 	*/
 	public WikiNode findByC_S_Last(long companyId, int status,
 		com.liferay.portal.kernel.util.OrderByComparator<WikiNode> orderByComparator)
-		throws com.liferay.wiki.exception.NoSuchNodeException;
+		throws NoSuchNodeException;
 
 	/**
 	* Returns the last wiki node in the ordered set where companyId = &#63; and status = &#63;.
@@ -1069,12 +1070,12 @@ public interface WikiNodePersistence extends BasePersistence<WikiNode> {
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next wiki node
-	* @throws com.liferay.wiki.NoSuchNodeException if a wiki node with the primary key could not be found
+	* @throws NoSuchNodeException if a wiki node with the primary key could not be found
 	*/
 	public WikiNode[] findByC_S_PrevAndNext(long nodeId, long companyId,
 		int status,
 		com.liferay.portal.kernel.util.OrderByComparator<WikiNode> orderByComparator)
-		throws com.liferay.wiki.exception.NoSuchNodeException;
+		throws NoSuchNodeException;
 
 	/**
 	* Removes all the wiki nodes where companyId = &#63; and status = &#63; from the database.
@@ -1120,22 +1121,20 @@ public interface WikiNodePersistence extends BasePersistence<WikiNode> {
 	*
 	* @param nodeId the primary key of the wiki node
 	* @return the wiki node that was removed
-	* @throws com.liferay.wiki.NoSuchNodeException if a wiki node with the primary key could not be found
+	* @throws NoSuchNodeException if a wiki node with the primary key could not be found
 	*/
-	public WikiNode remove(long nodeId)
-		throws com.liferay.wiki.exception.NoSuchNodeException;
+	public WikiNode remove(long nodeId) throws NoSuchNodeException;
 
 	public WikiNode updateImpl(WikiNode wikiNode);
 
 	/**
-	* Returns the wiki node with the primary key or throws a {@link com.liferay.wiki.NoSuchNodeException} if it could not be found.
+	* Returns the wiki node with the primary key or throws a {@link NoSuchNodeException} if it could not be found.
 	*
 	* @param nodeId the primary key of the wiki node
 	* @return the wiki node
-	* @throws com.liferay.wiki.NoSuchNodeException if a wiki node with the primary key could not be found
+	* @throws NoSuchNodeException if a wiki node with the primary key could not be found
 	*/
-	public WikiNode findByPrimaryKey(long nodeId)
-		throws com.liferay.wiki.exception.NoSuchNodeException;
+	public WikiNode findByPrimaryKey(long nodeId) throws NoSuchNodeException;
 
 	/**
 	* Returns the wiki node with the primary key or returns <code>null</code> if it could not be found.

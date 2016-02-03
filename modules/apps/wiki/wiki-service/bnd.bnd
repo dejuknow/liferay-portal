@@ -24,7 +24,6 @@ Import-Package:\
 	!javax.imageio.*,\
 	!javax.mail.*,\
 	!javax.naming.*,\
-	!javax.sql,\
 	!junit.framework.*,\
 	!net.sf.akismet.*,\
 	!net.sf.ehcache.*,\
@@ -42,8 +41,6 @@ Import-Package:\
 	!org.jgroups.*,\
 	*
 Include-Resource:\
-	classes,\
-	custom-sql/default.xml=classes/META-INF/custom-sql/default.xml,\
 	@../../../../lib/portal/antlr2.jar,\
 	@../../../../lib/portal/antlr3.jar,\
 	@../../../../lib/portal/bnd.jar!/aQute/bnd/annotation/metatype/*,\
@@ -60,9 +57,12 @@ Include-Resource:\
 	@../../../../util-java/util-java.jar!/com/liferay/util/RSSUtil.class,\
 	@../../../../util-java/util-java.jar!/com/liferay/util/dao/orm/CustomSQL.class,\
 	@../../../../util-java/util-java.jar!/com/liferay/util/dao/orm/CustomSQLUtil.class
+Liferay-Releng-Module-Group-Description:
+Liferay-Releng-Module-Group-Title: Wiki
 Liferay-Service: true
 Require-Capability:\
 	liferay.extender;\
 	filter:="(&(liferay.extender=spring.extender)(version>=1.0)(!(version>=2.0)))"
 Spring-Context: META-INF/spring
+-include: ../../../../marketplace/collaboration/bnd.bnd
 -spring-dependency: com.liferay.portal.spring.extender.service.ServiceReference

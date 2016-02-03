@@ -20,17 +20,19 @@
 
 	<%
 	for (Portlet portlet : portlets) {
-		String portletDataHandlerClass = portlet.getPortletDataHandlerClass();
+		PortletDataHandler portletDataHandler = portlet.getPortletDataHandlerInstance();
 
-		if (portletDataHandlerClasses.contains(portletDataHandlerClass)) {
+		Class<?> portletDataHandlerClass = portletDataHandler.getClass();
+
+		String portletDataHandlerClassName = portletDataHandlerClass.getName();
+
+		if (portletDataHandlerClassNames.contains(portletDataHandlerClassName)) {
 			continue;
 		}
 
-		portletDataHandlerClasses.add(portletDataHandlerClass);
+		portletDataHandlerClassNames.add(portletDataHandlerClassName);
 
 		String portletTitle = PortalUtil.getPortletTitle(portlet, application, locale);
-
-		PortletDataHandler portletDataHandler = portlet.getPortletDataHandlerInstance();
 
 		PortletDataHandlerControl[] exportControls = portletDataHandler.getExportControls();
 		PortletDataHandlerControl[] metadataControls = portletDataHandler.getExportMetadataControls();
@@ -89,6 +91,7 @@
 								request.setAttribute("render_controls.jsp-manifestSummary", manifestSummary);
 								request.setAttribute("render_controls.jsp-parameterMap", parameterMap);
 								request.setAttribute("render_controls.jsp-portletDisabled", !portletDataHandler.isPublishToLiveByDefault());
+								request.setAttribute("render_controls.jsp-portletId", portlet.getPortletId());
 						%>
 
 								<aui:field-wrapper label='<%= ArrayUtil.isNotEmpty(metadataControls) ? "content" : StringPool.BLANK %>'>
@@ -106,6 +109,7 @@
 								request.setAttribute("render_controls.jsp-manifestSummary", manifestSummary);
 								request.setAttribute("render_controls.jsp-parameterMap", parameterMap);
 								request.setAttribute("render_controls.jsp-portletDisabled", !portletDataHandler.isPublishToLiveByDefault());
+								request.setAttribute("render_controls.jsp-portletId", portlet.getPortletId());
 						%>
 
 								<aui:field-wrapper label='<%= ArrayUtil.isNotEmpty(metadataControls) ? "content" : StringPool.BLANK %>'>
@@ -132,6 +136,7 @@
 
 								if (ArrayUtil.isNotEmpty(childrenControls)) {
 									request.setAttribute("render_controls.jsp-controls", childrenControls);
+									request.setAttribute("render_controls.jsp-portletId", portlet.getPortletId());
 						%>
 
 									<aui:field-wrapper label="content-metadata">

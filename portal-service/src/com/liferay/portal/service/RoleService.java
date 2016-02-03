@@ -23,6 +23,14 @@ import com.liferay.portal.kernel.security.access.control.AccessControlled;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
+import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.model.Group;
+import com.liferay.portal.model.Role;
+
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Provides the remote service interface for Role. Methods of this
@@ -65,32 +73,12 @@ public interface RoleService extends BaseService {
 	role.
 	* @return the role
 	*/
-	public com.liferay.portal.model.Role addRole(java.lang.String className,
-		long classPK, java.lang.String name,
-		java.util.Map<java.util.Locale, java.lang.String> titleMap,
-		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
-		int type, java.lang.String subtype,
+	public Role addRole(java.lang.String className, long classPK,
+		java.lang.String name, Map<Locale, java.lang.String> titleMap,
+		Map<Locale, java.lang.String> descriptionMap, int type,
+		java.lang.String subtype,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws PortalException;
-
-	/**
-	* Adds a role. The user is reindexed after role is added.
-	*
-	* @param name the role's name
-	* @param titleMap the role's localized titles (optionally
-	<code>null</code>)
-	* @param descriptionMap the role's localized descriptions (optionally
-	<code>null</code>)
-	* @param type the role's type (optionally <code>0</code>)
-	* @return the role
-	* @deprecated As of 6.2.0, replaced by {@link #addRole(String, long,
-	String, Map, Map, int, String, ServiceContext)}
-	*/
-	@java.lang.Deprecated
-	public com.liferay.portal.model.Role addRole(java.lang.String name,
-		java.util.Map<java.util.Locale, java.lang.String> titleMap,
-		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
-		int type) throws PortalException;
 
 	/**
 	* Adds the roles to the user. The user is reindexed after the roles are
@@ -110,8 +98,7 @@ public interface RoleService extends BaseService {
 	public void deleteRole(long roleId) throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public com.liferay.portal.model.Role fetchRole(long roleId)
-		throws PortalException;
+	public Role fetchRole(long roleId) throws PortalException;
 
 	/**
 	* Returns all the roles associated with the group.
@@ -120,8 +107,7 @@ public interface RoleService extends BaseService {
 	* @return the roles associated with the group
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.util.List<com.liferay.portal.model.Role> getGroupRoles(
-		long groupId) throws PortalException;
+	public List<Role> getGroupRoles(long groupId) throws PortalException;
 
 	/**
 	* Returns the OSGi service identifier.
@@ -143,8 +129,8 @@ public interface RoleService extends BaseService {
 	* @return the role with the name
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public com.liferay.portal.model.Role getRole(long companyId,
-		java.lang.String name) throws PortalException;
+	public Role getRole(long companyId, java.lang.String name)
+		throws PortalException;
 
 	/**
 	* Returns the role with the primary key.
@@ -153,16 +139,15 @@ public interface RoleService extends BaseService {
 	* @return the role with the primary key
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public com.liferay.portal.model.Role getRole(long roleId)
+	public Role getRole(long roleId) throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Role> getRoles(long companyId, int[] types)
 		throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.util.List<com.liferay.portal.model.Role> getRoles(
-		long companyId, int[] types) throws PortalException;
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.util.List<com.liferay.portal.model.Role> getRoles(int type,
-		java.lang.String subtype) throws PortalException;
+	public List<Role> getRoles(int type, java.lang.String subtype)
+		throws PortalException;
 
 	/**
 	* Returns all the user's roles within the user group.
@@ -172,8 +157,8 @@ public interface RoleService extends BaseService {
 	* @return the user's roles within the user group
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.util.List<com.liferay.portal.model.Role> getUserGroupGroupRoles(
-		long userId, long groupId) throws PortalException;
+	public List<Role> getUserGroupGroupRoles(long userId, long groupId)
+		throws PortalException;
 
 	/**
 	* Returns all the user's roles within the user group.
@@ -183,8 +168,8 @@ public interface RoleService extends BaseService {
 	* @return the user's roles within the user group
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.util.List<com.liferay.portal.model.Role> getUserGroupRoles(
-		long userId, long groupId) throws PortalException;
+	public List<Role> getUserGroupRoles(long userId, long groupId)
+		throws PortalException;
 
 	/**
 	* Returns the union of all the user's roles within the groups.
@@ -194,8 +179,7 @@ public interface RoleService extends BaseService {
 	* @return the union of all the user's roles within the groups
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.util.List<com.liferay.portal.model.Role> getUserRelatedRoles(
-		long userId, java.util.List<com.liferay.portal.model.Group> groups)
+	public List<Role> getUserRelatedRoles(long userId, List<Group> groups)
 		throws PortalException;
 
 	/**
@@ -205,8 +189,7 @@ public interface RoleService extends BaseService {
 	* @return the roles associated with the user
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.util.List<com.liferay.portal.model.Role> getUserRoles(
-		long userId) throws PortalException;
+	public List<Role> getUserRoles(long userId) throws PortalException;
 
 	/**
 	* Returns <code>true</code> if the user is associated with the named
@@ -241,16 +224,15 @@ public interface RoleService extends BaseService {
 		java.lang.String[] names, boolean inherited) throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.util.List<com.liferay.portal.model.Role> search(
-		long companyId, java.lang.String keywords, java.lang.Integer[] types,
-		java.util.LinkedHashMap<java.lang.String, java.lang.Object> params,
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Role> obc);
+	public List<Role> search(long companyId, java.lang.String keywords,
+		java.lang.Integer[] types,
+		LinkedHashMap<java.lang.String, java.lang.Object> params, int start,
+		int end, OrderByComparator<Role> obc);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int searchCount(long companyId, java.lang.String keywords,
 		java.lang.Integer[] types,
-		java.util.LinkedHashMap<java.lang.String, java.lang.Object> params);
+		LinkedHashMap<java.lang.String, java.lang.Object> params);
 
 	/**
 	* Removes the matching roles associated with the user. The user is
@@ -277,11 +259,9 @@ public interface RoleService extends BaseService {
 	role.
 	* @return the role with the primary key
 	*/
-	public com.liferay.portal.model.Role updateRole(long roleId,
-		java.lang.String name,
-		java.util.Map<java.util.Locale, java.lang.String> titleMap,
-		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
-		java.lang.String subtype,
+	public Role updateRole(long roleId, java.lang.String name,
+		Map<Locale, java.lang.String> titleMap,
+		Map<Locale, java.lang.String> descriptionMap, java.lang.String subtype,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws PortalException;
 }

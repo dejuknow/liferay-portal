@@ -15,7 +15,8 @@
 package com.liferay.portal.scheduler.quartz.internal;
 
 import com.liferay.portal.kernel.dao.db.DB;
-import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
+import com.liferay.portal.kernel.dao.db.DBManagerUtil;
+import com.liferay.portal.kernel.dao.db.DBType;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 
@@ -43,23 +44,23 @@ public class PortalJobStore extends JobStoreTX {
 		try {
 			Class<?> driverDelegateClass = StdJDBCDelegate.class;
 
-			DB db = DBFactoryUtil.getDB();
+			DB db = DBManagerUtil.getDB();
 
-			String dbType = db.getType();
+			DBType dbType = db.getDBType();
 
-			if (dbType.equals(DB.TYPE_DB2)) {
+			if (dbType == DBType.DB2) {
 				driverDelegateClass = DB2v8Delegate.class;
 			}
-			else if (dbType.equals(DB.TYPE_HYPERSONIC)) {
+			else if (dbType == DBType.HYPERSONIC) {
 				driverDelegateClass = HSQLDBDelegate.class;
 			}
-			else if (dbType.equals(DB.TYPE_POSTGRESQL)) {
+			else if (dbType == DBType.POSTGRESQL) {
 				driverDelegateClass = PostgreSQLDelegate.class;
 			}
-			else if (dbType.equals(DB.TYPE_SQLSERVER)) {
+			else if (dbType == DBType.SQLSERVER) {
 				driverDelegateClass = MSSQLDelegate.class;
 			}
-			else if (dbType.equals(DB.TYPE_SYBASE)) {
+			else if (dbType == DBType.SYBASE) {
 				driverDelegateClass = SybaseDelegate.class;
 			}
 
@@ -72,9 +73,9 @@ public class PortalJobStore extends JobStoreTX {
 			_driverDelegate = super.getDelegate();
 
 			if (_log.isInfoEnabled()) {
-				_log.info(
-					"Using driver delegate " +
-						_driverDelegate.getClass().getName());
+				Class<?> clazz = _driverDelegate.getClass();
+
+				_log.info("Using driver delegate " + clazz.getName());
 			}
 
 			return _driverDelegate;

@@ -15,7 +15,7 @@
 package com.liferay.roles.admin.internal.lar;
 
 import com.liferay.exportimport.lar.BaseStagedModelDataHandler;
-import com.liferay.portal.NoSuchResourceActionException;
+import com.liferay.portal.exception.NoSuchResourceActionException;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Junction;
 import com.liferay.portal.kernel.dao.orm.Property;
@@ -25,6 +25,8 @@ import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.security.permission.PermissionConversionFilter;
+import com.liferay.portal.kernel.security.permission.PermissionConverterUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.model.Group;
@@ -34,8 +36,6 @@ import com.liferay.portal.model.ResourceConstants;
 import com.liferay.portal.model.ResourcePermission;
 import com.liferay.portal.model.ResourceTypePermission;
 import com.liferay.portal.model.Role;
-import com.liferay.portal.security.permission.PermissionConversionFilter;
-import com.liferay.portal.security.permission.PermissionConverterUtil;
 import com.liferay.portal.service.GroupLocalService;
 import com.liferay.portal.service.ResourceBlockLocalService;
 import com.liferay.portal.service.ResourcePermissionLocalService;
@@ -125,8 +125,8 @@ public class RoleStagedModelDataHandler
 		List<ResourcePermission> groupResourcePermissions =
 			_resourcePermissionLocalService.getRoleResourcePermissions(
 				importedRole.getRoleId(),
-				new int[] {ResourceConstants.SCOPE_GROUP},
-				QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+				new int[] {ResourceConstants.SCOPE_GROUP}, QueryUtil.ALL_POS,
+				QueryUtil.ALL_POS);
 
 		for (ResourcePermission groupResourcePermission :
 				groupResourcePermissions) {
@@ -406,15 +406,14 @@ public class RoleStagedModelDataHandler
 	private static final Log _log = LogFactoryUtil.getLog(
 		RoleStagedModelDataHandler.class);
 
-	private volatile GroupLocalService _groupLocalService;
+	private GroupLocalService _groupLocalService;
 	private final PermissionConversionFilter _permissionConversionFilter =
 		new ImportExportPermissionConversionFilter();
-	private volatile ResourceBlockLocalService _resourceBlockLocalService;
-	private volatile ResourcePermissionLocalService
-		_resourcePermissionLocalService;
-	private volatile ResourcePermissionService _resourcePermissionService;
-	private volatile ResourceTypePermissionLocalService
+	private ResourceBlockLocalService _resourceBlockLocalService;
+	private ResourcePermissionLocalService _resourcePermissionLocalService;
+	private ResourcePermissionService _resourcePermissionService;
+	private ResourceTypePermissionLocalService
 		_resourceTypePermissionLocalService;
-	private volatile RoleLocalService _roleLocalService;
+	private RoleLocalService _roleLocalService;
 
 }

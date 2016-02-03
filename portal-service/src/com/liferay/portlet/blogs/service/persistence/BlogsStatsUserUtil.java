@@ -24,6 +24,7 @@ import com.liferay.portal.service.ServiceContext;
 
 import com.liferay.portlet.blogs.model.BlogsStatsUser;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -187,7 +188,7 @@ public class BlogsStatsUserUtil {
 	*/
 	public static BlogsStatsUser findByGroupId_First(long groupId,
 		OrderByComparator<BlogsStatsUser> orderByComparator)
-		throws com.liferay.portlet.blogs.NoSuchStatsUserException {
+		throws com.liferay.portlet.blogs.exception.NoSuchStatsUserException {
 		return getPersistence().findByGroupId_First(groupId, orderByComparator);
 	}
 
@@ -213,7 +214,7 @@ public class BlogsStatsUserUtil {
 	*/
 	public static BlogsStatsUser findByGroupId_Last(long groupId,
 		OrderByComparator<BlogsStatsUser> orderByComparator)
-		throws com.liferay.portlet.blogs.NoSuchStatsUserException {
+		throws com.liferay.portlet.blogs.exception.NoSuchStatsUserException {
 		return getPersistence().findByGroupId_Last(groupId, orderByComparator);
 	}
 
@@ -240,7 +241,7 @@ public class BlogsStatsUserUtil {
 	*/
 	public static BlogsStatsUser[] findByGroupId_PrevAndNext(long statsUserId,
 		long groupId, OrderByComparator<BlogsStatsUser> orderByComparator)
-		throws com.liferay.portlet.blogs.NoSuchStatsUserException {
+		throws com.liferay.portlet.blogs.exception.NoSuchStatsUserException {
 		return getPersistence()
 				   .findByGroupId_PrevAndNext(statsUserId, groupId,
 			orderByComparator);
@@ -343,7 +344,7 @@ public class BlogsStatsUserUtil {
 	*/
 	public static BlogsStatsUser findByUserId_First(long userId,
 		OrderByComparator<BlogsStatsUser> orderByComparator)
-		throws com.liferay.portlet.blogs.NoSuchStatsUserException {
+		throws com.liferay.portlet.blogs.exception.NoSuchStatsUserException {
 		return getPersistence().findByUserId_First(userId, orderByComparator);
 	}
 
@@ -369,7 +370,7 @@ public class BlogsStatsUserUtil {
 	*/
 	public static BlogsStatsUser findByUserId_Last(long userId,
 		OrderByComparator<BlogsStatsUser> orderByComparator)
-		throws com.liferay.portlet.blogs.NoSuchStatsUserException {
+		throws com.liferay.portlet.blogs.exception.NoSuchStatsUserException {
 		return getPersistence().findByUserId_Last(userId, orderByComparator);
 	}
 
@@ -396,7 +397,7 @@ public class BlogsStatsUserUtil {
 	*/
 	public static BlogsStatsUser[] findByUserId_PrevAndNext(long statsUserId,
 		long userId, OrderByComparator<BlogsStatsUser> orderByComparator)
-		throws com.liferay.portlet.blogs.NoSuchStatsUserException {
+		throws com.liferay.portlet.blogs.exception.NoSuchStatsUserException {
 		return getPersistence()
 				   .findByUserId_PrevAndNext(statsUserId, userId,
 			orderByComparator);
@@ -430,7 +431,7 @@ public class BlogsStatsUserUtil {
 	* @throws NoSuchStatsUserException if a matching blogs stats user could not be found
 	*/
 	public static BlogsStatsUser findByG_U(long groupId, long userId)
-		throws com.liferay.portlet.blogs.NoSuchStatsUserException {
+		throws com.liferay.portlet.blogs.exception.NoSuchStatsUserException {
 		return getPersistence().findByG_U(groupId, userId);
 	}
 
@@ -466,7 +467,7 @@ public class BlogsStatsUserUtil {
 	* @return the blogs stats user that was removed
 	*/
 	public static BlogsStatsUser removeByG_U(long groupId, long userId)
-		throws com.liferay.portlet.blogs.NoSuchStatsUserException {
+		throws com.liferay.portlet.blogs.exception.NoSuchStatsUserException {
 		return getPersistence().removeByG_U(groupId, userId);
 	}
 
@@ -567,7 +568,7 @@ public class BlogsStatsUserUtil {
 	*/
 	public static BlogsStatsUser findByG_NotE_First(long groupId,
 		int entryCount, OrderByComparator<BlogsStatsUser> orderByComparator)
-		throws com.liferay.portlet.blogs.NoSuchStatsUserException {
+		throws com.liferay.portlet.blogs.exception.NoSuchStatsUserException {
 		return getPersistence()
 				   .findByG_NotE_First(groupId, entryCount, orderByComparator);
 	}
@@ -597,7 +598,7 @@ public class BlogsStatsUserUtil {
 	*/
 	public static BlogsStatsUser findByG_NotE_Last(long groupId,
 		int entryCount, OrderByComparator<BlogsStatsUser> orderByComparator)
-		throws com.liferay.portlet.blogs.NoSuchStatsUserException {
+		throws com.liferay.portlet.blogs.exception.NoSuchStatsUserException {
 		return getPersistence()
 				   .findByG_NotE_Last(groupId, entryCount, orderByComparator);
 	}
@@ -629,7 +630,7 @@ public class BlogsStatsUserUtil {
 	public static BlogsStatsUser[] findByG_NotE_PrevAndNext(long statsUserId,
 		long groupId, int entryCount,
 		OrderByComparator<BlogsStatsUser> orderByComparator)
-		throws com.liferay.portlet.blogs.NoSuchStatsUserException {
+		throws com.liferay.portlet.blogs.exception.NoSuchStatsUserException {
 		return getPersistence()
 				   .findByG_NotE_PrevAndNext(statsUserId, groupId, entryCount,
 			orderByComparator);
@@ -743,7 +744,7 @@ public class BlogsStatsUserUtil {
 	*/
 	public static BlogsStatsUser findByC_NotE_First(long companyId,
 		int entryCount, OrderByComparator<BlogsStatsUser> orderByComparator)
-		throws com.liferay.portlet.blogs.NoSuchStatsUserException {
+		throws com.liferay.portlet.blogs.exception.NoSuchStatsUserException {
 		return getPersistence()
 				   .findByC_NotE_First(companyId, entryCount, orderByComparator);
 	}
@@ -773,7 +774,7 @@ public class BlogsStatsUserUtil {
 	*/
 	public static BlogsStatsUser findByC_NotE_Last(long companyId,
 		int entryCount, OrderByComparator<BlogsStatsUser> orderByComparator)
-		throws com.liferay.portlet.blogs.NoSuchStatsUserException {
+		throws com.liferay.portlet.blogs.exception.NoSuchStatsUserException {
 		return getPersistence()
 				   .findByC_NotE_Last(companyId, entryCount, orderByComparator);
 	}
@@ -805,7 +806,7 @@ public class BlogsStatsUserUtil {
 	public static BlogsStatsUser[] findByC_NotE_PrevAndNext(long statsUserId,
 		long companyId, int entryCount,
 		OrderByComparator<BlogsStatsUser> orderByComparator)
-		throws com.liferay.portlet.blogs.NoSuchStatsUserException {
+		throws com.liferay.portlet.blogs.exception.NoSuchStatsUserException {
 		return getPersistence()
 				   .findByC_NotE_PrevAndNext(statsUserId, companyId,
 			entryCount, orderByComparator);
@@ -839,8 +840,7 @@ public class BlogsStatsUserUtil {
 	* @param lastPostDate the last post date
 	* @return the matching blogs stats users
 	*/
-	public static List<BlogsStatsUser> findByU_L(long userId,
-		java.util.Date lastPostDate) {
+	public static List<BlogsStatsUser> findByU_L(long userId, Date lastPostDate) {
 		return getPersistence().findByU_L(userId, lastPostDate);
 	}
 
@@ -858,7 +858,7 @@ public class BlogsStatsUserUtil {
 	* @return the range of matching blogs stats users
 	*/
 	public static List<BlogsStatsUser> findByU_L(long userId,
-		java.util.Date lastPostDate, int start, int end) {
+		Date lastPostDate, int start, int end) {
 		return getPersistence().findByU_L(userId, lastPostDate, start, end);
 	}
 
@@ -877,7 +877,7 @@ public class BlogsStatsUserUtil {
 	* @return the ordered range of matching blogs stats users
 	*/
 	public static List<BlogsStatsUser> findByU_L(long userId,
-		java.util.Date lastPostDate, int start, int end,
+		Date lastPostDate, int start, int end,
 		OrderByComparator<BlogsStatsUser> orderByComparator) {
 		return getPersistence()
 				   .findByU_L(userId, lastPostDate, start, end,
@@ -900,7 +900,7 @@ public class BlogsStatsUserUtil {
 	* @return the ordered range of matching blogs stats users
 	*/
 	public static List<BlogsStatsUser> findByU_L(long userId,
-		java.util.Date lastPostDate, int start, int end,
+		Date lastPostDate, int start, int end,
 		OrderByComparator<BlogsStatsUser> orderByComparator,
 		boolean retrieveFromCache) {
 		return getPersistence()
@@ -918,9 +918,8 @@ public class BlogsStatsUserUtil {
 	* @throws NoSuchStatsUserException if a matching blogs stats user could not be found
 	*/
 	public static BlogsStatsUser findByU_L_First(long userId,
-		java.util.Date lastPostDate,
-		OrderByComparator<BlogsStatsUser> orderByComparator)
-		throws com.liferay.portlet.blogs.NoSuchStatsUserException {
+		Date lastPostDate, OrderByComparator<BlogsStatsUser> orderByComparator)
+		throws com.liferay.portlet.blogs.exception.NoSuchStatsUserException {
 		return getPersistence()
 				   .findByU_L_First(userId, lastPostDate, orderByComparator);
 	}
@@ -934,8 +933,7 @@ public class BlogsStatsUserUtil {
 	* @return the first matching blogs stats user, or <code>null</code> if a matching blogs stats user could not be found
 	*/
 	public static BlogsStatsUser fetchByU_L_First(long userId,
-		java.util.Date lastPostDate,
-		OrderByComparator<BlogsStatsUser> orderByComparator) {
+		Date lastPostDate, OrderByComparator<BlogsStatsUser> orderByComparator) {
 		return getPersistence()
 				   .fetchByU_L_First(userId, lastPostDate, orderByComparator);
 	}
@@ -949,10 +947,9 @@ public class BlogsStatsUserUtil {
 	* @return the last matching blogs stats user
 	* @throws NoSuchStatsUserException if a matching blogs stats user could not be found
 	*/
-	public static BlogsStatsUser findByU_L_Last(long userId,
-		java.util.Date lastPostDate,
+	public static BlogsStatsUser findByU_L_Last(long userId, Date lastPostDate,
 		OrderByComparator<BlogsStatsUser> orderByComparator)
-		throws com.liferay.portlet.blogs.NoSuchStatsUserException {
+		throws com.liferay.portlet.blogs.exception.NoSuchStatsUserException {
 		return getPersistence()
 				   .findByU_L_Last(userId, lastPostDate, orderByComparator);
 	}
@@ -966,8 +963,7 @@ public class BlogsStatsUserUtil {
 	* @return the last matching blogs stats user, or <code>null</code> if a matching blogs stats user could not be found
 	*/
 	public static BlogsStatsUser fetchByU_L_Last(long userId,
-		java.util.Date lastPostDate,
-		OrderByComparator<BlogsStatsUser> orderByComparator) {
+		Date lastPostDate, OrderByComparator<BlogsStatsUser> orderByComparator) {
 		return getPersistence()
 				   .fetchByU_L_Last(userId, lastPostDate, orderByComparator);
 	}
@@ -983,9 +979,9 @@ public class BlogsStatsUserUtil {
 	* @throws NoSuchStatsUserException if a blogs stats user with the primary key could not be found
 	*/
 	public static BlogsStatsUser[] findByU_L_PrevAndNext(long statsUserId,
-		long userId, java.util.Date lastPostDate,
+		long userId, Date lastPostDate,
 		OrderByComparator<BlogsStatsUser> orderByComparator)
-		throws com.liferay.portlet.blogs.NoSuchStatsUserException {
+		throws com.liferay.portlet.blogs.exception.NoSuchStatsUserException {
 		return getPersistence()
 				   .findByU_L_PrevAndNext(statsUserId, userId, lastPostDate,
 			orderByComparator);
@@ -997,7 +993,7 @@ public class BlogsStatsUserUtil {
 	* @param userId the user ID
 	* @param lastPostDate the last post date
 	*/
-	public static void removeByU_L(long userId, java.util.Date lastPostDate) {
+	public static void removeByU_L(long userId, Date lastPostDate) {
 		getPersistence().removeByU_L(userId, lastPostDate);
 	}
 
@@ -1008,7 +1004,7 @@ public class BlogsStatsUserUtil {
 	* @param lastPostDate the last post date
 	* @return the number of matching blogs stats users
 	*/
-	public static int countByU_L(long userId, java.util.Date lastPostDate) {
+	public static int countByU_L(long userId, Date lastPostDate) {
 		return getPersistence().countByU_L(userId, lastPostDate);
 	}
 
@@ -1048,7 +1044,7 @@ public class BlogsStatsUserUtil {
 	* @throws NoSuchStatsUserException if a blogs stats user with the primary key could not be found
 	*/
 	public static BlogsStatsUser remove(long statsUserId)
-		throws com.liferay.portlet.blogs.NoSuchStatsUserException {
+		throws com.liferay.portlet.blogs.exception.NoSuchStatsUserException {
 		return getPersistence().remove(statsUserId);
 	}
 
@@ -1064,7 +1060,7 @@ public class BlogsStatsUserUtil {
 	* @throws NoSuchStatsUserException if a blogs stats user with the primary key could not be found
 	*/
 	public static BlogsStatsUser findByPrimaryKey(long statsUserId)
-		throws com.liferay.portlet.blogs.NoSuchStatsUserException {
+		throws com.liferay.portlet.blogs.exception.NoSuchStatsUserException {
 		return getPersistence().findByPrimaryKey(statsUserId);
 	}
 
@@ -1169,13 +1165,6 @@ public class BlogsStatsUserUtil {
 		}
 
 		return _persistence;
-	}
-
-	/**
-	 * @deprecated As of 6.2.0
-	 */
-	@Deprecated
-	public void setPersistence(BlogsStatsUserPersistence persistence) {
 	}
 
 	private static BlogsStatsUserPersistence _persistence;

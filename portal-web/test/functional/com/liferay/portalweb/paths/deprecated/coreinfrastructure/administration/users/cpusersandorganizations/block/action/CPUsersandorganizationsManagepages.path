@@ -36,12 +36,12 @@
 <!--NAVIGATION-->
 <tr>
 	<td>NAVIGATION_MY_PROFILE</td>
-	<td>//li[contains(@id,'tabs')]/a[contains(.,'My Profile')]</td>
+	<td>//a[contains(@title,'Profile')]//span/*[name()='svg'][contains(@class,'icon-cog')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>NAVIGATION_MY_DASHBOARD</td>
-	<td>//li[contains(@id,'tabs')]/a[contains(.,'My Dashboard')]</td>
+	<td>//a[contains(@title,'Dashboard')]//span/*[name()='svg'][contains(@class,'icon-cog')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -87,7 +87,7 @@
 	<td></td>
 </tr>
 <tr>
-	<td>PAGE_TREE_PAGE_LINK_1</td>
+	<td>PAGE_TREE_PAGE_EDIT_COG</td>
 	<td>xpath=(//a[contains(@id,'layoutsTree_layout_')])[1]</td>
 	<td></td>
 </tr>
@@ -109,6 +109,11 @@
 <tr>
 	<td>PAGE_TREE_PAGE_LINK_3</td>
 	<td>xpath=(//a[contains(@id,'layoutsTree_layout_')])[3]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PAGE_TREE_MY_DASHBOARD_LINK_1</td>
+	<td>//a[contains(@id,'privateLayoutsTree')]</td>
 	<td></td>
 </tr>
 </tbody>

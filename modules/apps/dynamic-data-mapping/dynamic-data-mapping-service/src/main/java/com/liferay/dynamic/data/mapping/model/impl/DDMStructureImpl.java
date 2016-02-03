@@ -300,7 +300,7 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 			List<DDMStructure> structures, long groupId, final Locale locale)
 		throws PortalException {
 
-		if (getGroupId() == groupId ) {
+		if (getGroupId() == groupId) {
 			return getName(locale);
 		}
 
@@ -453,6 +453,7 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 
 					return true;
 				}
+
 			};
 
 		return ListUtil.filter(ddmFormFields, predicateFilter);

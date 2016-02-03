@@ -24,7 +24,6 @@ import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.model.Release;
 import com.liferay.portal.model.impl.ReleaseImpl;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
-import com.liferay.portal.test.rule.MainServletTestRule;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -49,8 +48,7 @@ public class SQLDateTest {
 	@Rule
 	public static final AggregateTestRule aggregateTestRule =
 		new AggregateTestRule(
-			new LiferayIntegrationTestRule(), MainServletTestRule.INSTANCE,
-			TransactionalTestRule.INSTANCE);
+			new LiferayIntegrationTestRule(), TransactionalTestRule.INSTANCE);
 
 	@Test
 	public void testMillisecondsHibernate() {
@@ -91,10 +89,9 @@ public class SQLDateTest {
 
 	protected long readTimeJDBC() throws SQLException {
 		try (Connection connection = DataAccess.getConnection();
-			Statement statement = connection.createStatement();
-
-			ResultSet resultSet = statement.executeQuery(
-				_READ_RELEASE_MODIFIED_DATE)) {
+				Statement statement = connection.createStatement();
+					ResultSet resultSet = statement.executeQuery(
+						_READ_RELEASE_MODIFIED_DATE)) {
 
 			Assert.assertTrue(resultSet.next());
 
@@ -127,8 +124,8 @@ public class SQLDateTest {
 
 	protected void writeTimeJDBC(long time) throws SQLException {
 		try (Connection connection = DataAccess.getConnection();
-			PreparedStatement preparedStatement = connection.prepareStatement(
-				_WRITE_RELEASE_MODIFIED_DATE)) {
+				PreparedStatement preparedStatement =
+					connection.prepareStatement(_WRITE_RELEASE_MODIFIED_DATE)) {
 
 			preparedStatement.setTimestamp(1, new Timestamp(time));
 

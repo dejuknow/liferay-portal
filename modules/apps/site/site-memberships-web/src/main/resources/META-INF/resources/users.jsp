@@ -50,38 +50,41 @@ List<User> users = UserLocalServiceUtil.search(company.getCompanyId(), searchTer
 userSearch.setResults(users);
 %>
 
-<c:if test="<%= usersCount > 0 %>">
-	<liferay-frontend:management-bar
-		includeCheckBox="<%= true %>"
-		searchContainerId="users"
-	>
-		<liferay-frontend:management-bar-buttons>
-			<liferay-frontend:management-bar-display-buttons
-				displayViews='<%= new String[] {"icon", "descriptive", "list"} %>'
-				portletURL="<%= PortletURLUtil.clone(viewUsersURL, renderResponse) %>"
-				selectedDisplayStyle="<%= displayStyle %>"
-			/>
-		</liferay-frontend:management-bar-buttons>
+<liferay-util:include page="/navigation_bar.jsp" servletContext="<%= application %>">
+	<liferay-util:param name="searchEnabled" value="<%= String.valueOf((usersCount > 0) || searchTerms.isSearch()) %>" />
+</liferay-util:include>
 
-		<liferay-frontend:management-bar-filters>
-			<liferay-frontend:management-bar-navigation
-				navigationKeys='<%= new String[] {"all"} %>'
-				portletURL="<%= PortletURLUtil.clone(viewUsersURL, renderResponse) %>"
-			/>
+<liferay-frontend:management-bar
+	disabled="<%= usersCount <= 0 %>"
+	includeCheckBox="<%= true %>"
+	searchContainerId="users"
+>
+	<liferay-frontend:management-bar-buttons>
+		<liferay-frontend:management-bar-display-buttons
+			displayViews='<%= new String[] {"icon", "descriptive", "list"} %>'
+			portletURL="<%= PortletURLUtil.clone(viewUsersURL, renderResponse) %>"
+			selectedDisplayStyle="<%= displayStyle %>"
+		/>
+	</liferay-frontend:management-bar-buttons>
 
-			<liferay-frontend:management-bar-sort
-				orderByCol="<%= orderByCol %>"
-				orderByType="<%= orderByType %>"
-				orderColumns='<%= new String[] {"first-name", "screen-name"} %>'
-				portletURL="<%= PortletURLUtil.clone(viewUsersURL, renderResponse) %>"
-			/>
-		</liferay-frontend:management-bar-filters>
+	<liferay-frontend:management-bar-filters>
+		<liferay-frontend:management-bar-navigation
+			navigationKeys='<%= new String[] {"all"} %>'
+			portletURL="<%= PortletURLUtil.clone(viewUsersURL, renderResponse) %>"
+		/>
 
-		<liferay-frontend:management-bar-action-buttons>
-			<liferay-frontend:management-bar-button href="javascript:;" iconCssClass="icon-trash" id="deleteSelectedUsers" />
-		</liferay-frontend:management-bar-action-buttons>
-	</liferay-frontend:management-bar>
-</c:if>
+		<liferay-frontend:management-bar-sort
+			orderByCol="<%= orderByCol %>"
+			orderByType="<%= orderByType %>"
+			orderColumns='<%= new String[] {"first-name", "screen-name"} %>'
+			portletURL="<%= PortletURLUtil.clone(viewUsersURL, renderResponse) %>"
+		/>
+	</liferay-frontend:management-bar-filters>
+
+	<liferay-frontend:management-bar-action-buttons>
+		<liferay-frontend:management-bar-button href="javascript:;" icon="trash" id="deleteSelectedUsers" label="delete" />
+	</liferay-frontend:management-bar-action-buttons>
+</liferay-frontend:management-bar>
 
 <liferay-util:include page="/info_message.jsp" servletContext="<%= application %>" />
 
@@ -91,12 +94,7 @@ userSearch.setResults(users);
 
 <aui:form action="<%= deleteGroupUsersURL %>" cssClass="container-fluid-1280" method="post" name="fm">
 	<aui:input name="tabs1" type="hidden" value="users" />
-	<aui:input name="assignmentsRedirect" type="hidden" />
-	<aui:input name="groupId" type="hidden" value="<%= String.valueOf(siteMembershipsDisplayContext.getGroupId()) %>" />
-	<aui:input name="p_u_i_d" type="hidden" />
 	<aui:input name="addUserIds" type="hidden" />
-	<aui:input name="addRoleIds" type="hidden" />
-	<aui:input name="removeRoleIds" type="hidden" />
 
 	<liferay-ui:membership-policy-error />
 
@@ -123,6 +121,19 @@ userSearch.setResults(users);
 
 		<liferay-ui:search-iterator displayStyle="<%= displayStyle %>" markupView="lexicon" />
 	</liferay-ui:search-container>
+</aui:form>
+
+<portlet:actionURL name="addGroupUsers" var="addGroupUsersURL" />
+
+<aui:form action="<%= addGroupUsersURL %>" cssClass="hide" method="post" name="addGroupUsersFm">
+	<aui:input name="tabs1" type="hidden" value="users" />
+</aui:form>
+
+<portlet:actionURL name="editUserGroupRole" var="editUserGroupRoleURL" />
+
+<aui:form action="<%= editUserGroupRoleURL %>" cssClass="hide" method="post" name="editUserGroupRoleFm">
+	<aui:input name="tabs1" type="hidden" value="users" />
+	<aui:input name="p_u_i_d" type="hidden" />
 </aui:form>
 
 <c:if test="<%= GroupPermissionUtil.contains(permissionChecker, siteMembershipsDisplayContext.getGroupId(), ActionKeys.ASSIGN_MEMBERS) %>">
@@ -153,6 +164,10 @@ userSearch.setResults(users);
 
 			var currentTarget = $(event.currentTarget);
 
+			var editUserGroupRoleFm = $(document.<portlet:namespace />editUserGroupRoleFm);
+
+			editUserGroupRoleFm.fm('p_u_i_d').val(currentTarget.data('userid'));
+
 			var itemSelectorDialog = new A.LiferayItemSelectorDialog(
 				{
 					eventName: '<portlet:namespace />selectUsersRoles',
@@ -161,11 +176,9 @@ userSearch.setResults(users);
 							var selectedItem = event.newVal;
 
 							if (selectedItem) {
-								form.fm('addRoleIds').val(selectedItem.addRoleIds);
-								form.fm('removeRoleIds').val(selectedItem.removeRoleIds);
-								form.fm('p_u_i_d').val(selectedItem.selUserId);
+								editUserGroupRoleFm.append(selectedItem);
 
-								submitForm(form, '<portlet:actionURL name="editUserGroupRole" />');
+								submitForm(editUserGroupRoleFm);
 							}
 						}
 					},
@@ -191,9 +204,11 @@ userSearch.setResults(users);
 							var selectedItem = event.newVal;
 
 							if (selectedItem) {
-								form.fm('addUserIds').val(selectedItem.addUserIds);
+								var addGroupUsersFm = $(document.<portlet:namespace />addGroupUsersFm);
 
-								submitForm(form, '<portlet:actionURL name="addGroupUsers" />');
+								addGroupUsersFm.append(selectedItem);
+
+								submitForm(addGroupUsersFm);
 							}
 						}
 					},

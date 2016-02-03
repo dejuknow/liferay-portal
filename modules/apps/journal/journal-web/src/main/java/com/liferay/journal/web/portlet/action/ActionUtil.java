@@ -40,6 +40,7 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.portlet.PortletRequestModel;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
@@ -56,7 +57,6 @@ import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.Node;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.liferay.portal.kernel.xml.XPath;
-import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
 import com.liferay.portal.theme.ThemeDisplay;
@@ -65,6 +65,7 @@ import com.liferay.portlet.documentlibrary.service.DLAppLocalServiceUtil;
 
 import java.io.Serializable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -76,6 +77,7 @@ import javax.portlet.ActionRequest;
 import javax.portlet.PortletRequest;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
+import javax.portlet.ResourceRequest;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -340,6 +342,26 @@ public class ActionUtil {
 		return article;
 	}
 
+	public static List<JournalArticle> getArticles(ResourceRequest request)
+		throws Exception {
+
+		long groupId = ParamUtil.getLong(request, "groupId");
+
+		String[] articleIds = ParamUtil.getStringValues(
+			request, "rowIdsJournalArticle");
+
+		List<JournalArticle> articles = new ArrayList<>();
+
+		for (String articleId : articleIds) {
+			JournalArticle article = JournalArticleServiceUtil.getArticle(
+				groupId, articleId);
+
+			articles.add(article);
+		}
+
+		return articles;
+	}
+
 	public static JournalFeed getFeed(HttpServletRequest request)
 		throws Exception {
 
@@ -397,6 +419,23 @@ public class ActionUtil {
 		return getFolder(request);
 	}
 
+	public static List<JournalFolder> getFolders(ResourceRequest request)
+		throws Exception {
+
+		long[] folderIds = ParamUtil.getLongValues(
+			request, "rowIdsJournalFolder");
+
+		List<JournalFolder> folders = new ArrayList<>();
+
+		for (long folderId : folderIds) {
+			JournalFolder folder = JournalFolderServiceUtil.getFolder(folderId);
+
+			folders.add(folder);
+		}
+
+		return folders;
+	}
+
 	public static Map<String, byte[]> getImages(String content, Fields fields)
 		throws Exception {
 
@@ -415,23 +454,30 @@ public class ActionUtil {
 				List<Serializable> values = valuesMap.get(locale);
 
 				for (int i = 0; i < values.size(); i++) {
-					StringBundler sb = new StringBundler(6);
-
-					sb.append(
-						getElementInstanceId(content, field.getName(), i));
-					sb.append(StringPool.UNDERLINE);
-					sb.append(field.getName());
-					sb.append(StringPool.UNDERLINE);
-					sb.append(i);
-					sb.append(StringPool.UNDERLINE);
-					sb.append(LanguageUtil.getLanguageId(locale));
 					JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
 						(String)values.get(i));
+
+					String type = jsonObject.getString("type");
+
+					if (type.equals("document")) {
+						continue;
+					}
 
 					String uuid = jsonObject.getString("uuid");
 					long groupId = jsonObject.getLong("groupId");
 
 					if (Validator.isNotNull(uuid) && (groupId > 0)) {
+						StringBundler sb = new StringBundler(7);
+
+						sb.append(
+							getElementInstanceId(content, field.getName(), i));
+						sb.append(StringPool.UNDERLINE);
+						sb.append(field.getName());
+						sb.append(StringPool.UNDERLINE);
+						sb.append(i);
+						sb.append(StringPool.UNDERLINE);
+						sb.append(LanguageUtil.getLanguageId(locale));
+
 						FileEntry fileEntry =
 							DLAppLocalServiceUtil.getFileEntryByUuidAndGroupId(
 								uuid, groupId);

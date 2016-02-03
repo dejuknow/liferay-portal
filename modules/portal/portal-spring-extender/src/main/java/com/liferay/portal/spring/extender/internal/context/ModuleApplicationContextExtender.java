@@ -16,7 +16,7 @@ package com.liferay.portal.spring.extender.internal.context;
 
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBContext;
-import com.liferay.portal.kernel.dao.db.DBFactory;
+import com.liferay.portal.kernel.dao.db.DBManager;
 import com.liferay.portal.kernel.dao.db.DBProcessContext;
 import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
 import com.liferay.portal.kernel.upgrade.UpgradeException;
@@ -138,7 +138,7 @@ public class ModuleApplicationContextExtender extends AbstractExtender {
 	private BundleContext _bundleContext;
 	private DependencyManager _dependencyManager;
 	private Logger _logger;
-	private volatile ServiceConfigurator _serviceConfigurator;
+	private ServiceConfigurator _serviceConfigurator;
 
 	private class ModuleApplicationContextExtension implements Extension {
 
@@ -256,9 +256,9 @@ public class ModuleApplicationContextExtender extends AbstractExtender {
 					public void upgrade(DBProcessContext dbProcessContext) {
 						DBContext dbContext = dbProcessContext.getDBContext();
 
-						DBFactory dbFactory = dbContext.getDBFactory();
+						DBManager dbManager = dbContext.getDBManager();
 
-						DB db = dbFactory.getDB();
+						DB db = dbManager.getDB();
 
 						try {
 							db.runSQLTemplateString(

@@ -22,14 +22,8 @@
 	<%
 	String emptyResultsMessage = null;
 
-	if (topLink.equals("my-posts")) {
-		emptyResultsMessage = "you-do-not-have-any-posts";
-	}
-	else if (topLink.equals("my-subscriptions")) {
+	if (mvcRenderCommandName.equals("/message_boards/view_my_subscriptions")) {
 		emptyResultsMessage = "you-are-not-subscribed-to-any-threads";
-	}
-	else if (topLink.equals("recent-posts")) {
-		emptyResultsMessage = "there-are-no-recent-posts";
 	}
 	else {
 		emptyResultsMessage = "there-are-no-threads-in-this-category";
@@ -56,32 +50,12 @@
 
 			results = AssetEntryServiceUtil.getEntries(assetEntryQuery);
 		}
-		else if (topLink.equals("my-posts")) {
-			total = MBThreadServiceUtil.getGroupThreadsCount(scopeGroupId, groupThreadsUserId, WorkflowConstants.STATUS_ANY);
-
-			searchContainer.setTotal(total);
-
-			results = MBThreadServiceUtil.getGroupThreads(scopeGroupId, groupThreadsUserId, WorkflowConstants.STATUS_ANY, searchContainer.getStart(), searchContainer.getEnd());
-		}
-		else if (topLink.equals("my-subscriptions")) {
+		else if (mvcRenderCommandName.equals("/message_boards/view_my_subscriptions")) {
 			total = MBThreadServiceUtil.getGroupThreadsCount(scopeGroupId, groupThreadsUserId, WorkflowConstants.STATUS_APPROVED, true);
 
 			searchContainer.setTotal(total);
 
 			results = MBThreadServiceUtil.getGroupThreads(scopeGroupId, groupThreadsUserId, WorkflowConstants.STATUS_APPROVED, true, searchContainer.getStart(), searchContainer.getEnd());
-		}
-		else if (topLink.equals("recent-posts")) {
-			Calendar calendar = Calendar.getInstance();
-
-			int offset = GetterUtil.getInteger(recentPostsDateOffset);
-
-			calendar.add(Calendar.DATE, -offset);
-
-			total = MBThreadServiceUtil.getGroupThreadsCount(scopeGroupId, groupThreadsUserId, calendar.getTime(), WorkflowConstants.STATUS_APPROVED);
-
-			searchContainer.setTotal(total);
-
-			results = MBThreadServiceUtil.getGroupThreads(scopeGroupId, groupThreadsUserId, calendar.getTime(), WorkflowConstants.STATUS_APPROVED, searchContainer.getStart(), searchContainer.getEnd());
 		}
 
 		searchContainer.setResults(results);
@@ -95,7 +69,7 @@
 		modelVar="result"
 	>
 
-		<%@ include file="/message_boards/cast_result.jspf" %>
+		<%@ include file="/message_boards/thread_cast_result.jspf" %>
 
 		<%
 		MBMessage message = MBMessageLocalServiceUtil.fetchMBMessage(thread.getRootMessageId());

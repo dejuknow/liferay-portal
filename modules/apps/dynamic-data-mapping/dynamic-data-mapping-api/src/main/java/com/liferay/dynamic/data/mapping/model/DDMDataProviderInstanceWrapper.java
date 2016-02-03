@@ -18,8 +18,12 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.ModelWrapper;
+import com.liferay.portal.service.ServiceContext;
 
+import com.liferay.portlet.expando.model.ExpandoBridge;
 import com.liferay.portlet.exportimport.lar.StagedModelType;
+
+import java.io.Serializable;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -184,6 +188,12 @@ public class DDMDataProviderInstanceWrapper implements DDMDataProviderInstance,
 		return _ddmDataProviderInstance.getCreateDate();
 	}
 
+	@Override
+	public java.util.List<com.liferay.portal.kernel.util.KeyValuePair> getData()
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _ddmDataProviderInstance.getData();
+	}
+
 	/**
 	* Returns the data provider instance ID of this d d m data provider instance.
 	*
@@ -288,7 +298,7 @@ public class DDMDataProviderInstanceWrapper implements DDMDataProviderInstance,
 	}
 
 	@Override
-	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
+	public ExpandoBridge getExpandoBridge() {
 		return _ddmDataProviderInstance.getExpandoBridge();
 	}
 
@@ -400,7 +410,7 @@ public class DDMDataProviderInstanceWrapper implements DDMDataProviderInstance,
 	}
 
 	@Override
-	public java.io.Serializable getPrimaryKeyObj() {
+	public Serializable getPrimaryKeyObj() {
 		return _ddmDataProviderInstance.getPrimaryKeyObj();
 	}
 
@@ -609,14 +619,12 @@ public class DDMDataProviderInstanceWrapper implements DDMDataProviderInstance,
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portlet.expando.model.ExpandoBridge expandoBridge) {
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
 		_ddmDataProviderInstance.setExpandoBridgeAttributes(expandoBridge);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.service.ServiceContext serviceContext) {
+	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
 		_ddmDataProviderInstance.setExpandoBridgeAttributes(serviceContext);
 	}
 
@@ -717,7 +725,7 @@ public class DDMDataProviderInstanceWrapper implements DDMDataProviderInstance,
 	}
 
 	@Override
-	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
+	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
 		_ddmDataProviderInstance.setPrimaryKeyObj(primaryKeyObj);
 	}
 
@@ -819,14 +827,6 @@ public class DDMDataProviderInstanceWrapper implements DDMDataProviderInstance,
 	@Override
 	public StagedModelType getStagedModelType() {
 		return _ddmDataProviderInstance.getStagedModelType();
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedModel}
-	 */
-	@Deprecated
-	public DDMDataProviderInstance getWrappedDDMDataProviderInstance() {
-		return _ddmDataProviderInstance;
 	}
 
 	@Override

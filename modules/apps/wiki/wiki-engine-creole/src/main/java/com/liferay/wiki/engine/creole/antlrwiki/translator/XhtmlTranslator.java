@@ -199,7 +199,15 @@ public class XhtmlTranslator extends XhtmlTranslationVisitor {
 			append("<a class=\"wikipage\" href=\"");
 
 			if (_viewPageURL != null) {
-				append(_viewPageURL.toString());
+				String viewPageURLString = _viewPageURL.toString();
+
+				int index = viewPageURLString.indexOf(StringPool.POUND);
+
+				if (index != -1) {
+					viewPageURLString = viewPageURLString.substring(0, index);
+				}
+
+				append(viewPageURLString);
 			}
 
 			append(StringPool.POUND);
@@ -259,7 +267,7 @@ public class XhtmlTranslator extends XhtmlTranslationVisitor {
 	}
 
 	protected String getHeadingMarkup(String prefix, String text) {
-		StringBundler sb = new StringBundler(5);
+		StringBundler sb = new StringBundler(4);
 
 		sb.append(_HEADING_ANCHOR_PREFIX);
 		sb.append(prefix);

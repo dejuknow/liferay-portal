@@ -2,109 +2,128 @@
 	<var name="assetType" value="Bookmarks Folder" />
 
 	<command name="addCP">
-		<execute function="AssertClick" locator1="NavListItem#ADD_FOLDER" value1="Add Folder" />
+		<execute function="Click" locator1="Button#PLUS" />
+
+		<execute function="AssertClick" locator1="MenuItem#FOLDER" value1="Folder" />
 
 		<execute function="Type" locator1="TextInput#NAME" value1="${folderName}" />
 		<execute function="Type" locator1="TextArea#DESCRIPTION" value1="${folderDescription}" />
+
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
 
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
 
-		<var name="key_folderName" value="${folderName}" />
-
-		<execute function="AssertTextEquals#assertPartialText" locator1="Bookmarks#FOLDERS_TABLE_FOLDER_NAME" value1="${folderName}" />
-		<execute function="AssertTextEquals#assertPartialText" locator1="Bookmarks#FOLDERS_TABLE_FOLDER_DESCRIPTION" value1="${folderDescription}" />
+		<execute macro="BookmarksFolder#viewFolder">
+			<var name="folderDescription" value="${folderDescription}" />
+			<var name="folderName" value="${folderName}" />
+		</execute>
 	</command>
 
 	<command name="addNullCP">
-		<execute function="AssertClick" locator1="NavListItem#ADD_FOLDER" value1="Add Folder" />
+		<execute function="Click" locator1="Button#PLUS" />
+
+		<execute function="AssertClick" locator1="MenuItem#FOLDER" value1="Folder" />
 
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
+
 		<execute function="AssertTextEquals#assertPartialText" locator1="TextInput#REQUIRED_ALERT" value1="Name" />
 		<execute function="AssertTextEquals#assertPartialText" locator1="TextInput#REQUIRED_ALERT" value1="Required" />
 		<execute function="AssertTextEquals#assertPartialText" locator1="TextInput#REQUIRED_ALERT" value1="This field is required." />
 	</command>
 
 	<command name="addNullSubfolderCP">
+		<var name="key_assetName" value="${folderName}" />
 		<var name="key_folderName" value="${folderName}" />
 
-		<execute function="AssertClick" locator1="Bookmarks#FOLDERS_TABLE_FOLDER_NAME" value1="${folderName}" />
+		<execute function="AssertClick" locator1="Bookmarks#DESCRIPTIVE_ENTRY_TITLE" value1="${folderName}" />
 
-		<execute function="AssertTextEquals" locator1="Bookmarks#FOLDER_NAME" value1="${folderName}" />
-		<execute function="AssertClick" locator1="NavListItem#ADD_SUBFOLDER" value1="Add Subfolder" />
+		<execute function="AssertTextEquals" locator1="Portlet#HEADER" value1="${folderName}" />
 
-		<execute function="AssertClick" locator1="CPBookmarksAddsubfolder#SAVE_BUTTON" value1="Save" />
+		<execute function="Click" locator1="Button#PLUS" />
 
-		<execute function="AssertTextEquals" locator1="CPBookmarksAddsubfolder#NAME_FIELD_LABEL" value1="Name Required" />
+		<execute function="AssertClick" locator1="MenuItem#SUBFOLDER" value1="Subfolder" />
 
-		<execute function="AssertElementPresent" locator1="Icon#ASTERISK" />
+		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
 
-		<execute function="AssertTextEquals" locator1="CPBookmarksAddsubfolder#NAME_FIELD_REQUIRED" value1="This field is required." />
+		<execute function="AssertTextEquals#assertPartialText" locator1="TextInput#REQUIRED_ALERT" value1="Name" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="TextInput#REQUIRED_ALERT" value1="Required" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="TextInput#REQUIRED_ALERT" value1="This field is required." />
 	</command>
 
 	<command name="addPG">
-		<execute function="AssertClick" locator1="NavListItem#ADD_FOLDER" value1="Add Folder" />
+		<execute function="Click#makeVisibleClickAt" locator1="Portlet#ICON_PLUS_SIGN" />
+
+		<execute function="AssertClick" locator1="MenuItem#FOLDER" value1="Folder" />
 
 		<execute function="Type" locator1="TextInput#NAME" value1="${folderName}" />
 		<execute function="Type" locator1="TextArea#DESCRIPTION" value1="${folderDescription}" />
+
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
 
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
 
-		<var name="key_folderName" value="${folderName}" />
-
-		<execute function="AssertTextEquals#assertPartialText" locator1="Bookmarks#FOLDERS_TABLE_FOLDER_NAME" value1="${folderName}" />
-		<execute function="AssertTextEquals#assertPartialText" locator1="Bookmarks#FOLDERS_TABLE_FOLDER_DESCRIPTION" value1="${folderDescription}" />
+		<execute macro="BookmarksFolder#viewFolder">
+			<var name="folderDescription" value="${folderDescription}" />
+			<var name="folderName" value="${folderName}" />
+		</execute>
 	</command>
 
 	<command name="addSubfolderCP">
-		<var name="key_folderName" value="${folderName}" />
+		<var name="key_assetName" value="${folderName}" />
 
-		<execute function="AssertClick" locator1="Bookmarks#FOLDERS_TABLE_FOLDER_NAME" value1="${folderName}" />
+		<execute function="AssertClick" locator1="Bookmarks#DESCRIPTIVE_ENTRY_TITLE" value1="${folderName}" />
 
-		<execute function="AssertTextEquals" locator1="Bookmarks#FOLDER_NAME" value1="${folderName}" />
-		<execute function="AssertClick" locator1="NavListItem#ADD_SUBFOLDER" value1="Add Subfolder" />
+		<execute function="AssertTextEquals" locator1="Portlet#HEADER" value1="${folderName}" />
+
+		<execute function="Click" locator1="Button#PLUS" />
+
+		<execute function="AssertClick" locator1="MenuItem#SUBFOLDER" value1="Subfolder" />
 
 		<var name="key_folderName" value="${subfolderName}" />
 
 		<execute function="Type" locator1="TextInput#NAME" value1="${subfolderName}" />
 		<execute function="Type" locator1="TextArea#DESCRIPTION" value1="${subfolderDescription}" />
+
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
 
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
 
-		<var name="key_folderName" value="${subfolderName}" />
+		<execute macro="BookmarksFolder#viewFolder">
+			<var name="folderDescription" value="${subfolderDescription}" />
+			<var name="folderName" value="${subfolderName}" />
+		</execute>
 
-		<execute function="AssertTextEquals" locator1="CPBookmarksFolder#FOLDERS_TABLE_FOLDER_NAME" value1="${subfolderName}" />
-		<execute function="AssertTextEquals#assertPartialText" locator1="CPBookmarksFolder#FOLDERS_TABLE_FOLDER_DESCRIPTION" value1="${subfolderDescription}" />
-
-		<var name="key_folderName" value="${folderName}" />
-
-		<execute function="AssertTextEquals" locator1="Bookmarks#FOLDER_NAME" value1="${folderName}" />
+		<execute function="AssertTextEquals" locator1="Portlet#HEADER" value1="${folderName}" />
 	</command>
 
 	<command name="addSubfolderPG">
-		<execute function="AssertClick" locator1="NavListItem#ADD_SUBFOLDER" value1="Add Subfolder" />
+		<execute function="Click#makeVisibleClickAt" locator1="Portlet#ICON_PLUS_SIGN" />
 
-		<execute function="Type" locator1="PGBookmarksAddSubfolder#NAME_FIELD" value1="${folderName}" />
-		<execute function="Type" locator1="PGBookmarksAddSubfolder#DESCRIPTION_FIELD" value1="${folderDescription}" />
-		<execute function="AssertClick" locator1="PGBookmarksAddSubfolder#SAVE_BUTTON" value1="Save" />
+		<execute function="AssertClick" locator1="MenuItem#SUBFOLDER" value1="Subfolder" />
 
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute function="Type" locator1="TextInput#NAME" value1="${folderName}" />
+		<execute function="Type" locator1="TextArea#DESCRIPTION" value1="${folderDescription}" />
 
-		<var name="key_folderName" value="${folderName}" />
+		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
 
-		<execute function="AssertTextEquals#assertPartialText" locator1="Bookmarks#FOLDERS_TABLE_FOLDER_NAME" value1="${folderName}" />
-		<execute function="AssertTextEquals#assertPartialText" locator1="Bookmarks#FOLDERS_TABLE_FOLDER_DESCRIPTION" value1="${folderDescription}" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+
+		<execute macro="BookmarksFolder#viewFolder">
+			<var name="folderDescription" value="${folderDescription}" />
+			<var name="folderName" value="${folderName}" />
+		</execute>
 	</command>
 
 	<command name="deletePG">
-		<var name="key_folderName" value="${folderName}" />
+		<var name="key_assetName" value="${folderName}" />
+		<var name="key_rowEntry" value="${folderName}" />
 
-		<execute function="AssertTextEquals#assertPartialText" locator1="Bookmarks#FOLDERS_TABLE_FOLDER_NAME" value1="${folderName}" />
-		<execute function="AssertElementPresent" locator1="Bookmarks#FOLDERS_TABLE_FOLDER_ACTIONS_DROPDOWN" />
-		<execute function="Click" locator1="Bookmarks#FOLDERS_TABLE_FOLDER_ACTIONS_DROPDOWN" />
+		<execute function="AssertTextEquals" locator1="Bookmarks#DESCRIPTIVE_ENTRY_TITLE" value1="${folderName}" />
+
+		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+
 		<execute function="AssertClick" locator1="MenuItem#MOVE_TO_THE_RECYCLE_BIN" value1="Move to the Recycle Bin" />
+
 		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="The ${assetType} ${folderName} was moved to the Recycle Bin. Undo" />
 
 		<execute macro="Navigator#openURL" />
@@ -117,64 +136,82 @@
 	</command>
 
 	<command name="editCP">
-		<execute function="Click" locator1="Bookmarks#FOLDERS_TABLE_FOLDER_ACTIONS_DROPDOWN_GENERIC" />
+		<var name="key_rowEntry" value="${folderName}" />
+
+		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+
 		<execute function="AssertClick" locator1="MenuItem#EDIT" value1="Edit" />
 
-		<var name="key_folderName" value="${folderName}" />
+		<execute function="Type" locator1="TextInput#NAME" value1="${folderNameEdit}" />
+		<execute function="Type" locator1="TextArea#DESCRIPTION" value1="${folderDescriptionEdit}" />
 
-		<execute function="Type" locator1="TextInput#NAME" value1="${folderName}" />
-		<execute function="Type" locator1="TextArea#DESCRIPTION" value1="${folderDescription}" />
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
 
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
-		<execute function="AssertTextEquals" locator1="Bookmarks#FOLDERS_TABLE_FOLDER_NAME" value1="${folderName}" />
-		<execute function="AssertTextEquals#assertPartialText" locator1="Bookmarks#FOLDERS_TABLE_FOLDER_DESCRIPTION" value1="${folderDescription}" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+
+		<execute macro="BookmarksFolder#viewFolder">
+			<var name="folderDescription" value="${folderDescriptionEdit}" />
+			<var name="folderName" value="${folderNameEdit}" />
+		</execute>
 	</command>
 
 	<command name="editPG">
-		<var name="key_folderName" value="${folderName}" />
+		<var name="key_rowEntry" value="${folderName}" />
 
-		<execute function="AssertTextEquals#assertPartialText" locator1="Bookmarks#FOLDERS_TABLE_FOLDER_NAME" value1="${folderName}" />
-		<execute function="AssertTextEquals#assertPartialText" locator1="Bookmarks#FOLDERS_TABLE_FOLDER_DESCRIPTION" value1="${folderDescription}" />
-		<execute function="Click" locator1="Bookmarks#FOLDERS_TABLE_FOLDER_ACTIONS_DROPDOWN" />
+		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+
 		<execute function="AssertClick" locator1="MenuItem#EDIT" value1="Edit" />
 
-		<execute function="Type" locator1="PGBookmarksEditFolder#NAME_FIELD" value1="${folderNameEdit}" />
-		<execute function="Type" locator1="PGBookmarksEditFolder#DESCRIPTION_FIELD" value1="${folderDescriptionEdit}" />
-		<execute function="AssertClick" locator1="PGBookmarksEditFolder#SAVE_BUTTON" value1="Save" />
+		<execute function="Type" locator1="TextInput#NAME" value1="${folderNameEdit}" />
+		<execute function="Type" locator1="TextArea#DESCRIPTION" value1="${folderDescriptionEdit}" />
 
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
 
-		<var name="key_folderName" value="${folderNameEdit}" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
 
-		<execute function="AssertTextEquals#assertPartialText" locator1="Bookmarks#FOLDERS_TABLE_FOLDER_NAME" value1="${folderNameEdit}" />
-		<execute function="AssertTextEquals#assertPartialText" locator1="Bookmarks#FOLDERS_TABLE_FOLDER_DESCRIPTION" value1="${folderDescriptionEdit}" />
+		<execute macro="BookmarksFolder#viewFolder">
+			<var name="folderDescription" value="${folderDescriptionEdit}" />
+			<var name="folderName" value="${folderNameEdit}" />
+		</execute>
 	</command>
 
 	<command name="editSubfolderCP">
-		<var name="key_folderName" value="${folderName}" />
+		<var name="key_assetName" value="${folderName}" />
+		<var name="key_rowEntry" value="${folderName}" />
 
-		<execute function="AssertClick" locator1="Bookmarks#FOLDERS_TABLE_FOLDER_NAME" value1="${folderName}" />
+		<execute function="AssertClick" locator1="Bookmarks#DESCRIPTIVE_ENTRY_TITLE" value1="${folderName}" />
 
-		<execute function="AssertTextEquals" locator1="Bookmarks#FOLDER_NAME" value1="${folderName}" />
-		<execute function="Click" locator1="CPBookmarksFolder#FOLDERS_TABLE_FOLDER_ACTIONS_BUTTON_GENERIC" />
-		<execute function="AssertClick" locator1="CPBookmarksFolder#FOLDER_ACTION_MENULIST_EDIT" value1="Edit" />
+		<execute function="AssertTextEquals" locator1="Portlet#HEADER" value1="${folderName}" />
+
+		<var name="key_rowEntry" value="${subfolderName}" />
+
+		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+
+		<execute function="AssertClick" locator1="MenuItem#EDIT" value1="Edit" />
 
 		<var name="key_folderName" value="${editSubfolderName}" />
 
 		<execute function="Type" locator1="TextInput#NAME" value1="${editSubfolderName}" />
 		<execute function="Type" locator1="TextArea#DESCRIPTION" value1="${editSubfolderDescription}" />
+
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
 
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
-		<execute function="AssertTextEquals" locator1="Bookmarks#FOLDERS_TABLE_FOLDER_NAME" value1="${editSubfolderName}" />
-		<execute function="AssertTextEquals#assertPartialText" locator1="Bookmarks#FOLDERS_TABLE_FOLDER_DESCRIPTION" value1="${editSubfolderDescription}" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+
+		<execute macro="BookmarksFolder#viewFolder">
+			<var name="folderDescription" value="${editSubfolderDescription}" />
+			<var name="folderName" value="${editSubfolderName}" />
+		</execute>
 	</command>
 
 	<command name="gotoPG">
+		<var name="key_assetName" value="${folderName}" />
+
+		<execute function="AssertClick#assertPartialTextClickAtAndWait" locator1="Bookmarks#DESCRIPTIVE_ENTRY_TITLE" value1="${folderName}" />
+
 		<var name="key_folderName" value="${folderName}" />
 
-		<execute function="AssertClick#assertPartialTextClickAtAndWait" locator1="Bookmarks#FOLDERS_TABLE_FOLDER_NAME" value1="${folderName}" />
+		<execute function="AssertVisible" locator1="Bookmarks#BREADCRUMB_FOLDER_NAME" />
 	</command>
 
 	<command name="gotoSubfolderPG">
@@ -195,44 +232,61 @@
 			</then>
 		</while>
 
-		<var name="key_folderName" value="${folderName}" />
+		<var name="key_assetName" value="${folderName}" />
 
-		<execute function="AssertClick#assertPartialTextClickAtAndWait" locator1="Bookmarks#FOLDERS_TABLE_FOLDER_NAME" value1="${folderName}" />
+		<execute function="AssertClick#assertPartialTextClickAtAndWait" locator1="Bookmarks#DESCRIPTIVE_ENTRY_TITLE" value1="${folderName}" />
+
+		<var name="key_assetName" value="${subfolderName}" />
+
+		<execute function="AssertClick#assertPartialTextClickAtAndWait" locator1="Bookmarks#DESCRIPTIVE_ENTRY_TITLE" value1="${subfolderName}" />
 
 		<var name="key_folderName" value="${subfolderName}" />
 
-		<execute function="AssertClick#assertPartialTextClickAtAndWait" locator1="Bookmarks#FOLDERS_TABLE_FOLDER_NAME" value1="${subfolderName}" />
+		<execute function="AssertVisible" locator1="Bookmarks#BREADCRUMB_FOLDER_NAME" />
 	</command>
 
 	<command name="mergeSubfolderToFolderCP">
-		<var name="key_folderName" value="${folderName}" />
+		<var name="key_assetName" value="${folderName}" />
 
-		<execute function="AssertClick" locator1="Bookmarks#FOLDERS_TABLE_FOLDER_NAME" value1="${folderName}" />
+		<execute function="AssertClick" locator1="Bookmarks#DESCRIPTIVE_ENTRY_TITLE" value1="${folderName}" />
 
-		<execute function="AssertTextEquals" locator1="Bookmarks#FOLDER_NAME" value1="${folderName}" />
+		<execute function="AssertTextEquals" locator1="Portlet#HEADER" value1="${folderName}" />
 
-		<execute function="Click" locator1="Bookmarks#FOLDERS_TABLE_FOLDER_ACTIONS_DROPDOWN_GENERIC" />
+		<var name="key_rowEntry" value="${subfolderName}" />
+
+		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
 
 		<execute function="AssertClick" locator1="MenuItem#EDIT" value1="Edit" />
 
 		<var name="key_folderName" value="${editSubfolderName}" />
 
-		<execute function="AssertElementPresent" locator1="Checkbox#MERGE_WITH_PARENT_FOLDER" />
+		<execute function="Click" locator1="Bookmarks#PARENT_FOLDER_PANEL" />
 
-		<execute function="Check" locator1="Checkbox#MERGE_WITH_PARENT_FOLDER" value1="Merge with Parent Folder" />
+		<execute function="Check#checkToggleSwitch" locator1="Checkbox#MERGE_WITH_PARENT_FOLDER" />
 
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
 
 		<var name="key_bookmarkName" value="${bookmarkName}" />
 
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
-		<execute function="AssertTextEquals" locator1="Bookmarks#BOOKMARKS_TABLE_NAME" value1="${bookmarkName}" />
-		<execute function="AssertTextEquals" locator1="Bookmarks#BOOKMARKS_TABLE_URL" value1="${bookmarkURL}" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+
+		<execute macro="Bookmark#viewBookmark">
+			<var name="bookmarkName" value="${bookmarkName}" />
+			<var name="bookmarkURL" value="${bookmarkURL}" />
+			<var name="key_assetName" value="${bookmarkName}" />
+		</execute>
 	</command>
 
 	<command name="moveSubfolderToRecycleBinPG">
-		<execute function="AssertClick" locator1="NavListItem#MOVE_TO_THE_RECYCLE_BIN" value1="Move to the Recycle Bin" />
-		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="The ${assetType} ${subfolderName} was moved to the Recycle Bin." />
+		<var name="key_rowEntry" value="${subfolderName}" />
+
+		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+
+		<execute function="AssertClick" locator1="MenuItem#MOVE_TO_THE_RECYCLE_BIN" value1="Move to the Recycle Bin" />
+
+		<var name="key_assetType" value="Bookmarks Folder" />
+
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="The ${assetType} ${subfolderName} was moved to the Recycle Bin. Undo" />
 	</command>
 
 	<command name="moveToRecycleBinCP">
@@ -242,23 +296,31 @@
 			<var name="portlet" value="Bookmarks" />
 		</execute>
 
-		<var name="key_folderName" value="${folderName}" />
+		<var name="key_assetName" value="${folderName}" />
 
-		<execute function="AssertTextEquals#assertPartialText" locator1="Bookmarks#FOLDERS_TABLE_FOLDER_NAME" value1="${folderName}" />
-		<execute function="AssertElementPresent" locator1="Bookmarks#FOLDERS_TABLE_FOLDER_ACTIONS_DROPDOWN" />
-		<execute function="Click" locator1="Bookmarks#FOLDERS_TABLE_FOLDER_ACTIONS_DROPDOWN" />
+		<execute function="AssertTextEquals" locator1="Bookmarks#DESCRIPTIVE_ENTRY_TITLE" value1="${folderName}" />
+
+		<var name="key_rowEntry" value="${folderName}" />
+
+		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+
 		<execute function="AssertClick" locator1="MenuItem#MOVE_TO_THE_RECYCLE_BIN" value1="Move to the Recycle Bin" />
+
 		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="The ${assetType} ${folderName} was moved to the Recycle Bin. Undo" />
 	</command>
 
 	<command name="subscribePG">
-		<var name="key_folderName" value="${folderName}" />
+		<var name="key_assetDescription" value="${folderDescription}" />
 
-		<execute function="AssertTextEquals#assertPartialText" locator1="Bookmarks#FOLDERS_TABLE_FOLDER_NAME" value1="${folderName}" />
-		<execute function="AssertTextEquals#assertPartialText" locator1="Bookmarks#FOLDERS_TABLE_FOLDER_NAME" value1="${folderDescription}" />
-		<execute function="Click" locator1="Bookmarks#FOLDERS_TABLE_FOLDER_ACTIONS_DROPDOWN" />
-		<execute function="AssertClick" locator1="MenuItem#SUBSCRIBE" value1="Subscribe" />
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Bookmarks#DESCRIPTIVE_ENTRY_DESCRIPTION" value1="${folderDescription}" />
+
+		<execute function="Click#clickAt" locator1="Icon#INFO" />
+
+		<execute function="Pause" locator1="1000" />
+
+		<execute function="Click" locator1="Icon#SUBSCRIBE" />
+
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
 	</command>
 
 	<command name="tearDownCP">
@@ -268,16 +330,17 @@
 			<var name="portlet" value="Bookmarks" />
 		</execute>
 
-		<while>
-			<condition function="IsElementPresent" locator1="Bookmarks#FOLDERS_TABLE_FOLDER_ACTIONS_DROPDOWN_GENERIC" />
+		<if>
+			<condition function="IsElementNotPresent" locator1="Message#EMPTY_INFO" />
 			<then>
-				<execute function="Click" locator1="Bookmarks#FOLDERS_TABLE_FOLDER_ACTIONS_DROPDOWN_GENERIC" />
+				<execute function="Check#checkAll" locator1="Checkbox#SELECT_ALL" />
 
-				<execute function="AssertClick" locator1="MenuItem#MOVE_TO_THE_RECYCLE_BIN" value1="Move to the Recycle Bin" />
+				<execute function="Click" locator1="Icon#DELETE" />
 
 				<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="moved to the Recycle Bin. Undo" />
+				<execute function="AssertElementPresent" locator1="Message#EMPTY_INFO" />
 			</then>
-		</while>
+		</if>
 
 		<execute macro="Navigator#openURL" />
 
@@ -288,17 +351,13 @@
 		<execute macro="RecycleBin#emptyCP" />
 	</command>
 
-	<command name="viewCP">
-		<var name="key_folderName" value="${folderName}" />
+	<command name="viewFolder">
+		<var name="key_assetName" value="${folderName}" />
 
-		<execute function="AssertTextEquals#assertPartialText" locator1="Bookmarks#FOLDERS_TABLE_FOLDER_NAME" value1="${folderName}" />
-		<execute function="AssertTextEquals#assertPartialText" locator1="Bookmarks#FOLDERS_TABLE_FOLDER_DESCRIPTION" value1="${folderDescription}" />
-	</command>
+		<execute function="AssertTextEquals" locator1="Bookmarks#DESCRIPTIVE_ENTRY_TITLE" value1="${folderName}" />
 
-	<command name="viewPG">
-		<var name="key_folderName" value="${folderName}" />
+		<var name="key_assetDescription" value="${folderDescription}" />
 
-		<execute function="AssertTextEquals#assertPartialText" locator1="Bookmarks#FOLDERS_TABLE_FOLDER_NAME" value1="${folderName}" />
-		<execute function="AssertTextEquals#assertPartialText" locator1="Bookmarks#FOLDERS_TABLE_FOLDER_DESCRIPTION" value1="${folderDescription}" />
+		<execute function="AssertTextEquals" locator1="Bookmarks#DESCRIPTIVE_ENTRY_DESCRIPTION" value1="${folderDescription}" />
 	</command>
 </definition>

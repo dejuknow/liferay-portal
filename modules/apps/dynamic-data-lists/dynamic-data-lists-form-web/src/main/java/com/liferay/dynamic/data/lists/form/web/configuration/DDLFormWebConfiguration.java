@@ -16,22 +16,24 @@ package com.liferay.dynamic.data.lists.form.web.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
-import com.liferay.configuration.admin.ConfigurationAdmin;
+import com.liferay.portal.metatype.annotations.ExtendedObjectClassDefinition;
 
 /**
  * @author Lino Alves
  */
-@ConfigurationAdmin(category = "productivity")
+@ExtendedObjectClassDefinition(
+	category = "productivity", scope = ExtendedObjectClassDefinition.Scope.GROUP
+)
 @Meta.OCD(
 	id = "com.liferay.dynamic.data.lists.form.web.configuration.DDLFormWebConfiguration",
-	name = "Dynamic Data Lists Form Configuration"
+	localization = "content/Language", name = "%ddl.form.web.configuration.name"
 )
 public interface DDLFormWebConfiguration {
 
-	@Meta.AD(deflt = "descriptive", required = false)
+	@Meta.AD(
+		deflt = "descriptive", optionLabels = {"Descriptive", "List"},
+		optionValues = {"descriptive", "list"}, required = false
+	)
 	public String defaultDisplayView();
-
-	@Meta.AD(deflt = "icon | descriptive | list", required = false)
-	public String[] supportedDisplayView();
 
 }

@@ -120,7 +120,7 @@
 </tr>
 <tr>
 	<td>ERROR_MESSAGE_EXPIRED_SESSION</td>
-	<td>//div[contains(@class,'popup-alert-warning')]</td>
+	<td>//div[contains(@class,'liferayalert-content')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -166,6 +166,11 @@
 <tr>
 	<td>DELETE_PAGE_ICON</td>
 	<td>//li[contains(@class,'lfr-nav-deletable') and contains(@class,'lfr-nav-hover')]/span[@class='delete-tab']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>LOADING_ANIMATION</td>
+	<td>//div[contains(@class,'loading-animation')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -218,7 +223,7 @@
 </tr>
 <tr>
 	<td>PAGE_TEMPLATE_1</td>
-	<td>//div[contains(@class,'navbar')]/ul/li/a[contains(.,'${key_pageName}')]</td>
+	<td>//div[contains(@class,'navbar')]/ul/li/a[contains(.,'${key_pageName}')] | //nav[@id='navigation']/ul/li/a[contains(.,'${key_pageName}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -243,7 +248,7 @@
 </tr>
 <tr>
 	<td>PAGE_1_STAGING_LIVE</td>
-	<td>//nav/ul/li[@id='layout_1']</td>
+	<td>//ul/li[@id='layout_1']/a</td>
 	<td></td>
 </tr>
 <tr>
@@ -253,7 +258,7 @@
 </tr>
 <tr>
 	<td>PAGE_TEMPLATE_2</td>
-	<td>//div[contains(@class,'navbar')]/ul/li[2]/a</td>
+	<td>xpath=((//nav[@id='navigation'] | //div[contains(@class,'navbar')])/ul/li/a)[2]</td>
 	<td></td>
 </tr>
 <tr>
@@ -263,7 +268,7 @@
 </tr>
 <tr>
 	<td>PAGE_2_STAGING_LIVE</td>
-	<td>//nav/ul/li[@id='layout_2']</td>
+	<td>//ul/li[@id='layout_2']/a</td>
 	<td></td>
 </tr>
 <tr>
@@ -273,12 +278,12 @@
 </tr>
 <tr>
 	<td>PAGE_3_STAGING_LIVE</td>
-	<td>//nav/ul/li[@id='layout_3']</td>
+	<td>//ul/li[@id='layout_3']/a</td>
 	<td></td>
 </tr>
 <tr>
 	<td>PAGE_TEMPLATE_3</td>
-	<td>//div[contains(@class,'navbar')]/ul/li[3]/a</td>
+	<td>xpath=((//nav[@id='navigation'] | //div[contains(@class,'navbar')])/ul/li/a)[3]</td>
 	<td></td>
 </tr>
 <tr>
@@ -288,27 +293,27 @@
 </tr>
 <tr>
 	<td>PAGE_TEMPLATE_4</td>
-	<td>//div[contains(@class,'navbar')]/ul/li[4]/a</td>
+	<td>xpath=((//nav[@id='navigation'] | //div[contains(@class,'navbar')])/ul/li/a)[2]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>PAGE_TEMPLATE_5</td>
-	<td>//div[contains(@class,'navbar')]/ul/li[5]/a</td>
+	<td>xpath=((//nav[@id='navigation'] | //div[contains(@class,'navbar')])/ul/li/a)[2]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>PAGE_TEMPLATE_6</td>
-	<td>//div[contains(@class,'navbar')]/ul/li[6]/a</td>
+	<td>xpath=((//nav[@id='navigation'] | //div[contains(@class,'navbar')])/ul/li/a)[2]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>PAGE_TEMPLATE_7</td>
-	<td>//div[contains(@class,'navbar')]/ul/li[7]/a</td>
+	<td>xpath=((//nav[@id='navigation'] | //div[contains(@class,'navbar')])/ul/li/a)[2]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>PAGE_DELETE</td>
-	<td>//a[contains(@title,'Delete')]/span</td>
+	<td>//ul[contains(@id,'layoutsNav')]/li[contains(@class,'remove-layout')]/a</td>
 	<td>Delete Page Button</td>
 </tr>
 <tr>
@@ -587,7 +592,7 @@
 </tr>
 <tr>
 	<td>SITE_ADMINISTRATION_PORTLET_TITLE</td>
-	<td>//span[contains(@class,'header-toolbar-title')]</td>
+	<td>//*[@data-qa-id='headerTitle']</td>
 	<td></td>
 </tr>
 <tr>

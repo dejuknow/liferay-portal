@@ -15,9 +15,8 @@
 package com.liferay.portlet.configuration.icon.minimize;
 
 import com.liferay.portal.kernel.portlet.configuration.icon.BasePortletConfigurationIcon;
-import com.liferay.portal.theme.PortletDisplay;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.portlet.PortletRequest;
 
 /**
  * @author Eudaldo Alonso
@@ -25,8 +24,8 @@ import javax.servlet.http.HttpServletRequest;
 public class MinimizePortletConfigurationIcon
 	extends BasePortletConfigurationIcon {
 
-	public MinimizePortletConfigurationIcon(HttpServletRequest request) {
-		super(request);
+	public MinimizePortletConfigurationIcon(PortletRequest portletRequest) {
+		super(portletRequest);
 	}
 
 	@Override
@@ -36,8 +35,6 @@ public class MinimizePortletConfigurationIcon
 
 	@Override
 	public String getMessage() {
-		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
-
 		if (portletDisplay.isStateMin()) {
 			return "restore";
 		}
@@ -47,23 +44,17 @@ public class MinimizePortletConfigurationIcon
 
 	@Override
 	public String getOnClick() {
-		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
-
 		return "Liferay.Portlet.minimize('#p_p_id_".concat(
 			portletDisplay.getId()).concat("_', this); return false;");
 	}
 
 	@Override
 	public String getURL() {
-		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
-
 		return portletDisplay.getURLMin();
 	}
 
 	@Override
 	public boolean isShow() {
-		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
-
 		return portletDisplay.isShowMinIcon();
 	}
 

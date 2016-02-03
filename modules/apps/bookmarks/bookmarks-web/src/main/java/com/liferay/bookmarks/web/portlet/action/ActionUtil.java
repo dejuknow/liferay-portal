@@ -14,7 +14,6 @@
 
 package com.liferay.bookmarks.web.portlet.action;
 
-import com.liferay.bookmarks.constants.BookmarksWebKeys;
 import com.liferay.bookmarks.exception.NoSuchEntryException;
 import com.liferay.bookmarks.exception.NoSuchFolderException;
 import com.liferay.bookmarks.model.BookmarksEntry;
@@ -23,11 +22,14 @@ import com.liferay.bookmarks.model.BookmarksFolderConstants;
 import com.liferay.bookmarks.service.BookmarksEntryServiceUtil;
 import com.liferay.bookmarks.service.BookmarksFolderServiceUtil;
 import com.liferay.bookmarks.service.permission.BookmarksResourcePermissionChecker;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.portlet.PortletRequest;
 
@@ -38,7 +40,35 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class ActionUtil {
 
-	public static void getEntry(HttpServletRequest request) throws Exception {
+	public static List<BookmarksEntry> getEntries(HttpServletRequest request)
+		throws Exception {
+
+		long[] entryIds = ParamUtil.getLongValues(
+			request, "rowIdsBookmarksEntry");
+
+		List<BookmarksEntry> entries = new ArrayList<>();
+
+		for (long entryId : entryIds) {
+			BookmarksEntry entry = BookmarksEntryServiceUtil.getEntry(entryId);
+
+			entries.add(entry);
+		}
+
+		return entries;
+	}
+
+	public static List<BookmarksEntry> getEntries(PortletRequest portletRequest)
+		throws Exception {
+
+		HttpServletRequest request = PortalUtil.getHttpServletRequest(
+			portletRequest);
+
+		return getEntries(request);
+	}
+
+	public static BookmarksEntry getEntry(HttpServletRequest request)
+		throws Exception {
+
 		long entryId = ParamUtil.getLong(request, "entryId");
 
 		BookmarksEntry entry = null;
@@ -51,19 +81,21 @@ public class ActionUtil {
 			}
 		}
 
-		request.setAttribute(BookmarksWebKeys.BOOKMARKS_ENTRY, entry);
+		return entry;
 	}
 
-	public static void getEntry(PortletRequest portletRequest)
+	public static BookmarksEntry getEntry(PortletRequest portletRequest)
 		throws Exception {
 
 		HttpServletRequest request = PortalUtil.getHttpServletRequest(
 			portletRequest);
 
-		getEntry(request);
+		return getEntry(request);
 	}
 
-	public static void getFolder(HttpServletRequest request) throws Exception {
+	public static BookmarksFolder getFolder(HttpServletRequest request)
+		throws Exception {
+
 		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
@@ -86,16 +118,49 @@ public class ActionUtil {
 				themeDisplay.getScopeGroupId(), ActionKeys.VIEW);
 		}
 
-		request.setAttribute(BookmarksWebKeys.BOOKMARKS_FOLDER, folder);
+		return folder;
 	}
 
-	public static void getFolder(PortletRequest portletRequest)
+	public static BookmarksFolder getFolder(PortletRequest portletRequest)
 		throws Exception {
 
 		HttpServletRequest request = PortalUtil.getHttpServletRequest(
 			portletRequest);
 
-		getFolder(request);
+		return getFolder(request);
+	}
+
+	public static List<BookmarksFolder> getFolders(HttpServletRequest request)
+		throws Exception {
+
+		long[] folderIds = ParamUtil.getLongValues(
+			request, "rowIdsBookmarksFolder");
+
+		List<BookmarksFolder> folders = new ArrayList<>();
+
+		for (long folderId : folderIds) {
+			if ((folderId > 0) &&
+				(folderId !=
+					BookmarksFolderConstants.DEFAULT_PARENT_FOLDER_ID)) {
+
+				BookmarksFolder folder = BookmarksFolderServiceUtil.getFolder(
+					folderId);
+
+				folders.add(folder);
+			}
+		}
+
+		return folders;
+	}
+
+	public static List<BookmarksFolder> getFolders(
+			PortletRequest portletRequest)
+		throws Exception {
+
+		HttpServletRequest request = PortalUtil.getHttpServletRequest(
+			portletRequest);
+
+		return getFolders(request);
 	}
 
 }

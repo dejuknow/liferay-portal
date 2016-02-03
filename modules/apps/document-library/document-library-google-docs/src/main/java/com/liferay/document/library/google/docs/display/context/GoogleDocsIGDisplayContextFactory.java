@@ -17,6 +17,8 @@ package com.liferay.document.library.google.docs.display.context;
 import com.liferay.document.library.google.docs.util.GoogleDocsMetadataHelper;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.storage.StorageEngine;
+import com.liferay.image.gallery.display.kernel.display.context.IGDisplayContextFactory;
+import com.liferay.image.gallery.display.kernel.display.context.IGViewFileVersionDisplayContext;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.repository.model.FileEntry;
@@ -25,8 +27,6 @@ import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portlet.documentlibrary.model.DLFileVersion;
 import com.liferay.portlet.documentlibrary.service.DLAppService;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryMetadataLocalService;
-import com.liferay.portlet.imagegallerydisplay.display.context.IGDisplayContextFactory;
-import com.liferay.portlet.imagegallerydisplay.display.context.IGViewFileVersionDisplayContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -111,10 +111,9 @@ public class GoogleDocsIGDisplayContextFactory
 		_storageEngine = storageEngine;
 	}
 
-	private volatile DDMStructureLocalService _ddmStructureLocalService;
-	private volatile DLAppService _dlAppService;
-	private volatile DLFileEntryMetadataLocalService
-		_dlFileEntryMetadataLocalService;
-	private volatile StorageEngine _storageEngine;
+	private DDMStructureLocalService _ddmStructureLocalService;
+	private DLAppService _dlAppService;
+	private DLFileEntryMetadataLocalService _dlFileEntryMetadataLocalService;
+	private StorageEngine _storageEngine;
 
 }

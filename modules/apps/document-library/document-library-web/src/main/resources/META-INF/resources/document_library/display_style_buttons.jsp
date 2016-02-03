@@ -19,6 +19,7 @@
 <%
 String navigation = ParamUtil.getString(request, "navigation", "home");
 
+int curEntry = ParamUtil.getInteger(request, "curEntry");
 int deltaEntry = ParamUtil.getInteger(request, "deltaEntry");
 
 long folderId = GetterUtil.getLong((String)request.getAttribute("view.jsp-folderId"));
@@ -35,8 +36,24 @@ String keywords = ParamUtil.getString(request, "keywords");
 
 PortletURL displayStyleURL = renderResponse.createRenderURL();
 
-displayStyleURL.setParameter("mvcRenderCommandName", Validator.isNull(keywords) ? "/document_library/view" : "/document_library/search");
+String mvcRenderCommandName = "/document_library/search";
+
+if (Validator.isNull(keywords)) {
+	if (folderId == DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
+		mvcRenderCommandName = "/document_library/view";
+	}
+	else {
+		mvcRenderCommandName = "/document_library/view_folder";
+	}
+}
+
+displayStyleURL.setParameter("mvcRenderCommandName", mvcRenderCommandName);
+
 displayStyleURL.setParameter("navigation", HtmlUtil.escapeJS(navigation));
+
+if (curEntry > 0) {
+	displayStyleURL.setParameter("curEntry", String.valueOf(curEntry));
+}
 
 if (deltaEntry > 0) {
 	displayStyleURL.setParameter("deltaEntry", String.valueOf(deltaEntry));

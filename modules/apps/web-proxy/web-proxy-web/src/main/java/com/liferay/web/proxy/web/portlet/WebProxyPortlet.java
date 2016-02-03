@@ -19,12 +19,11 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.servlet.BufferCacheServletResponse;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.HashMapDictionary;
-import com.liferay.portal.kernel.util.ServerDetector;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.model.Release;
 import com.liferay.portlet.RenderResponseImpl;
-import com.liferay.web.proxy.web.upgrade.WebProxyWebUpgrade;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -90,7 +89,9 @@ public class WebProxyPortlet extends PortletBridgePortlet {
 
 	@Override
 	public void destroy() {
-		_serviceRegistration.unregister();
+		if (_serviceRegistration != null) {
+			_serviceRegistration.unregister();
+		}
 
 		super.destroy();
 	}
@@ -151,13 +152,6 @@ public class WebProxyPortlet extends PortletBridgePortlet {
 			if (_log.isWarnEnabled()) {
 				_log.warn(e.getMessage());
 			}
-		}
-
-		if (!_enabled && ServerDetector.isWebLogic() && _log.isInfoEnabled()) {
-			_log.info(
-				"WebProxyPortlet will not be enabled unless Liferay's " +
-					"serializer.jar and xalan.jar files are copied to the " +
-						"JDK's endorsed directory");
 		}
 	}
 
@@ -225,9 +219,11 @@ public class WebProxyPortlet extends PortletBridgePortlet {
 		}
 	}
 
-	@Reference(unbind = "-")
-	protected void setWebProxyWebUpgrade(
-		WebProxyWebUpgrade webProxyWebUpgrade) {
+	@Reference(
+		target = "(&(release.bundle.symbolic.name=com.liferay.web.proxy.web)(release.schema.version=1.0.0))",
+		unbind = "-"
+	)
+	protected void setRelease(Release release) {
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

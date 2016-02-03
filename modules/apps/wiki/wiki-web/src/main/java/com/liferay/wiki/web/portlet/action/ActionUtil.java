@@ -17,6 +17,9 @@ package com.liferay.wiki.web.portlet.action;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationFactoryUtil;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.settings.PortletInstanceSettingsLocator;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -24,9 +27,6 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowThreadLocal;
 import com.liferay.portal.model.Layout;
-import com.liferay.portal.security.auth.PrincipalException;
-import com.liferay.portal.security.permission.ActionKeys;
-import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
 import com.liferay.portal.theme.PortletDisplay;
@@ -48,7 +48,9 @@ import com.liferay.wiki.util.WikiUtil;
 import com.liferay.wiki.web.configuration.WikiPortletInstanceOverriddenConfiguration;
 import com.liferay.wiki.web.util.WikiWebComponentProvider;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.portlet.PortletException;
@@ -291,12 +293,33 @@ public class ActionUtil {
 			node = ActionUtil.getFirstVisibleNode(portletRequest);
 		}
 
-		request.setAttribute(WikiWebKeys.WIKI_NODE, node);
-
 		return node;
 	}
 
-	public static void getPage(PortletRequest portletRequest) throws Exception {
+	public static List<WikiNode> getNodes(PortletRequest portletRequest)
+		throws PortalException {
+
+		long[] nodeIds = ParamUtil.getLongValues(
+			portletRequest, "rowIdsWikiNode");
+
+		if (nodeIds.length == 0) {
+			return Collections.emptyList();
+		}
+
+		List<WikiNode> nodes = new ArrayList<>();
+
+		for (long nodeId : nodeIds) {
+			if (nodeId != 0) {
+				nodes.add(WikiNodeServiceUtil.getNode(nodeId));
+			}
+		}
+
+		return nodes;
+	}
+
+	public static WikiPage getPage(PortletRequest portletRequest)
+		throws Exception {
+
 		HttpServletRequest request = PortalUtil.getHttpServletRequest(
 			portletRequest);
 
@@ -332,23 +355,42 @@ public class ActionUtil {
 			title = wikiGroupServiceConfiguration.frontPageName();
 		}
 
-		WikiPage page = null;
-
 		try {
-			page = WikiPageServiceUtil.getPage(nodeId, title, version);
+			return WikiPageServiceUtil.getPage(nodeId, title, version);
 		}
 		catch (NoSuchPageException nspe) {
 			if (title.equals(wikiGroupServiceConfiguration.frontPageName()) &&
 				(version == 0)) {
 
-				page = getFirstVisiblePage(nodeId, portletRequest);
+				return getFirstVisiblePage(nodeId, portletRequest);
 			}
 			else {
 				throw nspe;
 			}
 		}
+	}
 
-		request.setAttribute(WikiWebKeys.WIKI_PAGE, page);
+	public static List<WikiPage> getPages(PortletRequest portletRequest)
+		throws PortalException {
+
+		long nodeId = ParamUtil.getLong(portletRequest, "nodeId");
+
+		String[] titles = ParamUtil.getStringValues(
+			portletRequest, "rowIdsWikiPage");
+
+		if (titles.length == 0) {
+			return Collections.emptyList();
+		}
+
+		List<WikiPage> pages = new ArrayList<>();
+
+		for (String title : titles) {
+			if (Validator.isNotNull(title)) {
+				pages.add(WikiPageServiceUtil.getPage(nodeId, title));
+			}
+		}
+
+		return pages;
 	}
 
 	public static String viewNode(
@@ -357,6 +399,8 @@ public class ActionUtil {
 
 		try {
 			WikiNode node = ActionUtil.getNode(renderRequest);
+
+			renderRequest.setAttribute(WikiWebKeys.WIKI_NODE, node);
 
 			ActionUtil.getFirstVisiblePage(node.getNodeId(), renderRequest);
 		}

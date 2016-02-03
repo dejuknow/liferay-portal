@@ -34,6 +34,8 @@ page import="com.liferay.portal.kernel.language.LanguageUtil" %><%@
 page import="com.liferay.portal.kernel.language.UnicodeLanguageUtil" %><%@
 page import="com.liferay.portal.kernel.portlet.LiferayWindowState" %><%@
 page import="com.liferay.portal.kernel.search.Sort" %><%@
+page import="com.liferay.portal.kernel.security.permission.ActionKeys" %><%@
+page import="com.liferay.portal.kernel.security.permission.ResourceActionsUtil" %><%@
 page import="com.liferay.portal.kernel.util.HtmlUtil" %><%@
 page import="com.liferay.portal.kernel.util.ListUtil" %><%@
 page import="com.liferay.portal.kernel.util.OrderByComparator" %><%@
@@ -44,18 +46,18 @@ page import="com.liferay.portal.kernel.util.StringPool" %><%@
 page import="com.liferay.portal.kernel.util.StringUtil" %><%@
 page import="com.liferay.portal.kernel.util.Validator" %><%@
 page import="com.liferay.portal.kernel.util.WebKeys" %><%@
-page import="com.liferay.portal.security.permission.ActionKeys" %><%@
-page import="com.liferay.portal.security.permission.ResourceActionsUtil" %><%@
 page import="com.liferay.portal.util.PortalUtil" %><%@
 page import="com.liferay.portlet.PortletURLUtil" %><%@
-page import="com.liferay.portlet.asset.AssetCategoryNameException" %><%@
 page import="com.liferay.portlet.asset.AssetRendererFactoryRegistryUtil" %><%@
-page import="com.liferay.portlet.asset.DuplicateCategoryException" %><%@
-page import="com.liferay.portlet.asset.DuplicateCategoryPropertyException" %><%@
-page import="com.liferay.portlet.asset.DuplicateVocabularyException" %><%@
-page import="com.liferay.portlet.asset.NoSuchCategoryException" %><%@
-page import="com.liferay.portlet.asset.NoSuchVocabularyException" %><%@
-page import="com.liferay.portlet.asset.VocabularyNameException" %><%@
+page import="com.liferay.portlet.asset.exception.AssetCategoryNameException" %><%@
+page import="com.liferay.portlet.asset.exception.CategoryPropertyKeyException" %><%@
+page import="com.liferay.portlet.asset.exception.CategoryPropertyValueException" %><%@
+page import="com.liferay.portlet.asset.exception.DuplicateCategoryException" %><%@
+page import="com.liferay.portlet.asset.exception.DuplicateCategoryPropertyException" %><%@
+page import="com.liferay.portlet.asset.exception.DuplicateVocabularyException" %><%@
+page import="com.liferay.portlet.asset.exception.NoSuchCategoryException" %><%@
+page import="com.liferay.portlet.asset.exception.NoSuchVocabularyException" %><%@
+page import="com.liferay.portlet.asset.exception.VocabularyNameException" %><%@
 page import="com.liferay.portlet.asset.model.AssetCategory" %><%@
 page import="com.liferay.portlet.asset.model.AssetCategoryConstants" %><%@
 page import="com.liferay.portlet.asset.model.AssetCategoryDisplay" %><%@
@@ -84,14 +86,10 @@ page import="java.util.List" %>
 
 <%@ page import="javax.portlet.PortletURL" %>
 
-<portlet:defineObjects />
+<liferay-frontend:defineObjects />
 
 <liferay-theme:defineObjects />
 
-<%
-PortletURL currentURLObj = PortletURLUtil.getCurrent(liferayPortletRequest, liferayPortletResponse);
-
-String currentURL = currentURLObj.toString();
-%>
+<portlet:defineObjects />
 
 <%@ include file="/init-ext.jsp" %>

@@ -15,7 +15,6 @@
 package com.liferay.trash.web.messaging;
 
 import com.liferay.portal.kernel.messaging.BaseSchedulerEntryMessageListener;
-import com.liferay.portal.kernel.messaging.Destination;
 import com.liferay.portal.kernel.messaging.DestinationNames;
 import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
@@ -24,7 +23,7 @@ import com.liferay.portal.kernel.scheduler.TimeUnit;
 import com.liferay.portal.kernel.scheduler.TriggerFactory;
 import com.liferay.portal.kernel.scheduler.TriggerFactoryUtil;
 import com.liferay.portal.util.PropsValues;
-import com.liferay.portlet.trash.service.TrashEntryLocalService;
+import com.liferay.trash.kernel.service.TrashEntryLocalService;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -59,13 +58,6 @@ public class CheckEntryMessageListener
 		_trashEntryLocalService.checkEntries();
 	}
 
-	@Reference(
-		target = "(destination.name=" + DestinationNames.SCHEDULER_DISPATCH + ")",
-		unbind = "-"
-	)
-	protected void setDestination(Destination destination) {
-	}
-
 	@Reference(target = ModuleServiceLifecycle.PORTAL_INITIALIZED, unbind = "-")
 	protected void setModuleServiceLifecycle(
 		ModuleServiceLifecycle moduleServiceLifecycle) {
@@ -89,7 +81,7 @@ public class CheckEntryMessageListener
 	protected void setTriggerFactory(TriggerFactory triggerFactory) {
 	}
 
-	private volatile SchedulerEngineHelper _schedulerEngineHelper;
-	private volatile TrashEntryLocalService _trashEntryLocalService;
+	private SchedulerEngineHelper _schedulerEngineHelper;
+	private TrashEntryLocalService _trashEntryLocalService;
 
 }

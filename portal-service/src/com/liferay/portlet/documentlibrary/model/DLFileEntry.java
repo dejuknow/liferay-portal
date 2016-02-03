@@ -16,6 +16,7 @@ package com.liferay.portlet.documentlibrary.model;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.annotation.ImplementationClassName;
 import com.liferay.portal.kernel.util.Accessor;
 import com.liferay.portal.model.PersistedModel;
 import com.liferay.portal.model.TreeModel;
@@ -29,6 +30,7 @@ import com.liferay.portal.model.TreeModel;
  * @see com.liferay.portlet.documentlibrary.model.impl.DLFileEntryModelImpl
  * @generated
  */
+@ImplementationClassName("com.liferay.portlet.documentlibrary.model.impl.DLFileEntryImpl")
 @ProviderType
 public interface DLFileEntry extends DLFileEntryModel, PersistedModel, TreeModel {
 	/*
@@ -65,7 +67,7 @@ public interface DLFileEntry extends DLFileEntryModel, PersistedModel, TreeModel
 
 	public long getDataRepositoryId();
 
-	public java.util.Map<java.lang.String, com.liferay.portlet.dynamicdatamapping.DDMFormValues> getDDMFormValuesMap(
+	public java.util.Map<java.lang.String, com.liferay.dynamic.data.mapping.kernel.DDMFormValues> getDDMFormValuesMap(
 		long fileVersionId)
 		throws com.liferay.portal.kernel.exception.PortalException;
 
@@ -102,24 +104,6 @@ public interface DLFileEntry extends DLFileEntryModel, PersistedModel, TreeModel
 	public com.liferay.portal.kernel.lock.Lock getLock();
 
 	public java.lang.String getLuceneProperties();
-
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link DLFileVersion#getUserId()}
-	*/
-	@java.lang.Deprecated()
-	public long getVersionUserId();
-
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link DLFileVersion#getUserName()}
-	*/
-	@java.lang.Deprecated()
-	public java.lang.String getVersionUserName();
-
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link DLFileVersion#getUserUuid()}
-	*/
-	@java.lang.Deprecated()
-	public java.lang.String getVersionUserUuid();
 
 	public boolean hasLock();
 

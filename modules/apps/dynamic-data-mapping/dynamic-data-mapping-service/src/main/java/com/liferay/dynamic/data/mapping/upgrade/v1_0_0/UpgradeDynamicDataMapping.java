@@ -14,14 +14,17 @@
 
 package com.liferay.dynamic.data.mapping.upgrade.v1_0_0;
 
+import com.liferay.dynamic.data.mapping.io.DDMFormJSONDeserializerUtil;
 import com.liferay.dynamic.data.mapping.io.DDMFormJSONSerializerUtil;
 import com.liferay.dynamic.data.mapping.io.DDMFormLayoutJSONSerializerUtil;
+import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONDeserializerUtil;
 import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONSerializerUtil;
 import com.liferay.dynamic.data.mapping.io.DDMFormXSDDeserializerUtil;
 import com.liferay.dynamic.data.mapping.model.DDMContent;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
+import com.liferay.dynamic.data.mapping.model.DDMStorageLink;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMStructureConstants;
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
@@ -39,6 +42,7 @@ import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.upgrade.UpgradeException;
@@ -48,7 +52,9 @@ import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.MimeTypesUtil;
+import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -62,18 +68,34 @@ import com.liferay.portal.kernel.xml.Node;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.liferay.portal.kernel.xml.XPath;
 import com.liferay.portal.model.CompanyConstants;
+import com.liferay.portal.model.ResourceAction;
 import com.liferay.portal.model.ResourceConstants;
+import com.liferay.portal.model.ResourcePermission;
 import com.liferay.portal.model.RoleConstants;
+import com.liferay.portal.service.ResourceActionLocalService;
+import com.liferay.portal.service.ResourcePermissionLocalService;
 import com.liferay.portal.util.PortalUtil;
+import com.liferay.portlet.asset.model.AssetEntry;
+import com.liferay.portlet.asset.service.AssetEntryLocalService;
 import com.liferay.portlet.documentlibrary.model.DLFileEntry;
 import com.liferay.portlet.documentlibrary.model.DLFileEntryConstants;
 import com.liferay.portlet.documentlibrary.model.DLFileEntryTypeConstants;
+import com.liferay.portlet.documentlibrary.model.DLFileVersion;
+import com.liferay.portlet.documentlibrary.model.DLFolder;
 import com.liferay.portlet.documentlibrary.model.DLFolderConstants;
+import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalService;
+import com.liferay.portlet.documentlibrary.service.DLFileVersionLocalService;
+import com.liferay.portlet.documentlibrary.service.DLFolderLocalService;
 import com.liferay.portlet.documentlibrary.store.DLStoreUtil;
+import com.liferay.portlet.expando.model.ExpandoColumn;
+import com.liferay.portlet.expando.model.ExpandoRow;
+import com.liferay.portlet.expando.model.ExpandoValue;
+import com.liferay.portlet.expando.service.ExpandoRowLocalService;
+import com.liferay.portlet.expando.service.ExpandoTableLocalService;
+import com.liferay.portlet.expando.service.ExpandoValueLocalService;
 
 import java.io.File;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -84,11 +106,14 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Brian Wing Shun Chan
@@ -96,18 +121,106 @@ import java.util.Set;
  */
 public class UpgradeDynamicDataMapping extends UpgradeProcess {
 
+	public UpgradeDynamicDataMapping(
+		AssetEntryLocalService assetEntryLocalService,
+		DLFileEntryLocalService dlFileEntryLocalService,
+		DLFileVersionLocalService dlFileVersionLocalService,
+		DLFolderLocalService dlFolderLocalService,
+		ExpandoRowLocalService expandoRowLocalService,
+		ExpandoTableLocalService expandoTableLocalService,
+		ExpandoValueLocalService expandoValueLocalService,
+		ResourceActionLocalService resourceActionLocalService,
+		ResourcePermissionLocalService resourcePermissionLocalService) {
+
+		_assetEntryLocalService = assetEntryLocalService;
+		_dlFileEntryLocalService = dlFileEntryLocalService;
+		_dlFileVersionLocalService = dlFileVersionLocalService;
+		_dlFolderLocalService = dlFolderLocalService;
+		_expandoRowLocalService = expandoRowLocalService;
+		_expandoTableLocalService = expandoTableLocalService;
+		_expandoValueLocalService = expandoValueLocalService;
+		_resourceActionLocalService = resourceActionLocalService;
+		_resourcePermissionLocalService = resourcePermissionLocalService;
+	}
+
+	protected void addDDMContent(
+			String uuid_, long contentId, long groupId, long companyId,
+			long userId, String userName, Timestamp createDate,
+			Timestamp modifiedDate, String name, String description,
+			String data)
+		throws Exception {
+
+		PreparedStatement ps = null;
+
+		try {
+			StringBundler sb = new StringBundler(4);
+
+			sb.append("insert into DDMContent (uuid_, contentId, groupId, ");
+			sb.append("companyId, userId, userName, createDate, ");
+			sb.append("modifiedDate, name, description, data_) values (?, ?, ");
+			sb.append("?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+			String sql = sb.toString();
+
+			ps = connection.prepareStatement(sql);
+
+			ps.setString(1, uuid_);
+			ps.setLong(2, contentId);
+			ps.setLong(3, groupId);
+			ps.setLong(4, companyId);
+			ps.setLong(5, userId);
+			ps.setString(6, userName);
+			ps.setTimestamp(7, createDate);
+			ps.setTimestamp(8, modifiedDate);
+			ps.setString(9, name);
+			ps.setString(10, description);
+			ps.setString(11, data);
+
+			ps.executeUpdate();
+		}
+		catch (Exception e) {
+			_log.error("Unable to add dynamic data mapping content", e);
+
+			throw e;
+		}
+		finally {
+			DataAccess.cleanUp(ps);
+		}
+	}
+
+	protected void addDynamicContentElements(
+		Element dynamicElementElement, String name, String data) {
+
+		Map<Locale, String> localizationMap =
+			LocalizationUtil.getLocalizationMap(data);
+
+		for (Map.Entry<Locale, String> entry : localizationMap.entrySet()) {
+			String[] values = StringUtil.split(entry.getValue());
+
+			if (name.startsWith(StringPool.UNDERLINE)) {
+				values = new String[] {entry.getValue()};
+			}
+
+			for (String value : values) {
+				Element dynamicContentElement =
+					dynamicElementElement.addElement("dynamic-content");
+
+				dynamicContentElement.addAttribute(
+					"language-id", LanguageUtil.getLanguageId(entry.getKey()));
+				dynamicContentElement.addCDATA(value.trim());
+			}
+		}
+	}
+
 	protected void addStructureLayout(
 			String uuid_, long structureLayoutId, long groupId, long companyId,
 			long userId, String userName, Timestamp createDate,
 			Timestamp modifiedDate, long structureVersionId, String definition)
 		throws Exception {
 
-		Connection con = null;
 		PreparedStatement ps = null;
 
 		try {
-			con = DataAccess.getUpgradeOptimizedConnection();
-
 			StringBundler sb = new StringBundler(5);
 
 			sb.append("insert into DDMStructureLayout (uuid_, ");
@@ -118,7 +231,7 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 
 			String sql = sb.toString();
 
-			ps = con.prepareStatement(sql);
+			ps = connection.prepareStatement(sql);
 
 			ps.setString(1, uuid_);
 			ps.setLong(2, structureLayoutId);
@@ -141,7 +254,7 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 			throw e;
 		}
 		finally {
-			DataAccess.cleanUp(con, ps);
+			DataAccess.cleanUp(ps);
 		}
 	}
 
@@ -153,12 +266,9 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 			long statusByUserId, String statusByUserName, Timestamp statusDate)
 		throws Exception {
 
-		Connection con = null;
 		PreparedStatement ps = null;
 
 		try {
-			con = DataAccess.getUpgradeOptimizedConnection();
-
 			StringBundler sb = new StringBundler(6);
 
 			sb.append("insert into DDMStructureVersion (structureVersionId, ");
@@ -170,7 +280,7 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 
 			String sql = sb.toString();
 
-			ps = con.prepareStatement(sql);
+			ps = connection.prepareStatement(sql);
 
 			ps.setLong(1, structureVersionId);
 			ps.setLong(2, groupId);
@@ -201,7 +311,7 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 			throw e;
 		}
 		finally {
-			DataAccess.cleanUp(con, ps);
+			DataAccess.cleanUp(ps);
 		}
 	}
 
@@ -213,13 +323,10 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 			String statusByUserName, Timestamp statusDate)
 		throws Exception {
 
-		Connection con = null;
 		PreparedStatement ps = null;
 
 		try {
-			con = DataAccess.getUpgradeOptimizedConnection();
-
-			StringBundler sb = new StringBundler(5);
+			StringBundler sb = new StringBundler(6);
 
 			sb.append("insert into DDMTemplateVersion (templateVersionId, ");
 			sb.append("groupId, companyId, userId, userName, createDate, ");
@@ -230,7 +337,7 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 
 			String sql = sb.toString();
 
-			ps = con.prepareStatement(sql);
+			ps = connection.prepareStatement(sql);
 
 			ps.setLong(1, templateVersionId);
 			ps.setLong(2, groupId);
@@ -261,20 +368,71 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 			throw e;
 		}
 		finally {
-			DataAccess.cleanUp(con, ps);
+			DataAccess.cleanUp(ps);
+		}
+	}
+
+	protected String createNewDDMFormFieldName(
+			String fieldName, Set<String> existingFieldNames)
+		throws Exception {
+
+		String newFieldName = fieldName.replaceAll(
+			_INVALID_FIELD_NAME_CHARS_REGEX, StringPool.BLANK);
+
+		if (Validator.isNotNull(newFieldName) &&
+			!existingFieldNames.contains(newFieldName)) {
+
+			return newFieldName;
+		}
+
+		throw new UpgradeException(
+			String.format(
+				"Unable to automatically update field name \"%s\" because it " +
+					"only contains invalid characters or the updated value " +
+						"\"%s\" conflicts with a previous field name",
+				fieldName, newFieldName));
+	}
+
+	protected void deleteExpandoData(Set<Long> expandoRowIds)
+		throws PortalException {
+
+		Set<Long> expandoTableIds = new HashSet<>();
+
+		for (long expandoRowId : expandoRowIds) {
+			ExpandoRow expandoRow = _expandoRowLocalService.fetchExpandoRow(
+				expandoRowId);
+
+			if (expandoRow != null) {
+				expandoTableIds.add(expandoRow.getTableId());
+			}
+		}
+
+		for (long expandoTableId : expandoTableIds) {
+			try {
+				_expandoTableLocalService.deleteTable(expandoTableId);
+			}
+			catch (PortalException pe) {
+				_log.error("Unable delete expando table", pe);
+
+				throw pe;
+			}
 		}
 	}
 
 	@Override
 	protected void doUpgrade() throws Exception {
+		setUpClassNameIds();
+
+		upgradeExpandoStorageAdapter();
+
 		upgradeStructuresAndAddStructureVersionsAndLayouts();
 		upgradeTemplatesAndAddTemplateVersions();
 		upgradeXMLStorageAdapter();
 
 		upgradeFieldTypeReferences();
 
-		upgradeStructurePermissions();
-		upgradeTemplatePermissions();
+		upgradeStructuresPermissions();
+		upgradeTemplatesPermissions();
 	}
 
 	protected DDMForm getDDMForm(long structureId) throws Exception {
@@ -284,16 +442,13 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 			return ddmForm;
 		}
 
-		Connection con = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 
 		try {
-			con = DataAccess.getUpgradeOptimizedConnection();
-
-			ps = con.prepareStatement(
-				"select parentStructureId, definition from DDMStructure " +
-					"where structureId = ?" );
+			ps = connection.prepareStatement(
+				"select parentStructureId, definition, storageType from " +
+					"DDMStructure where structureId = ?");
 
 			ps.setLong(1, structureId);
 
@@ -302,16 +457,31 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 			if (rs.next()) {
 				long parentStructureId = rs.getLong("parentStructureId");
 				String definition = rs.getString("definition");
+				String storageType = rs.getString("storageType");
 
-				ddmForm = DDMFormXSDDeserializerUtil.deserialize(definition);
+				if (storageType.equals("expando") ||
+					storageType.equals("xml")) {
+
+					ddmForm = DDMFormXSDDeserializerUtil.deserialize(
+						definition);
+				}
+				else {
+					ddmForm = DDMFormJSONDeserializerUtil.deserialize(
+						definition);
+				}
 
 				if (parentStructureId > 0) {
 					DDMForm parentDDMForm = getDDMForm(parentStructureId);
 
-					List<DDMFormField> ddmFormFields =
-						ddmForm.getDDMFormFields();
+					Set<String> commonDDMFormFieldNames = SetUtil.intersect(
+						getDDMFormFieldsNames(parentDDMForm),
+						getDDMFormFieldsNames(ddmForm));
 
-					ddmFormFields.addAll(parentDDMForm.getDDMFormFields());
+					if (!commonDDMFormFieldNames.isEmpty()) {
+						throw new UpgradeException(
+							"Duplicate DDM form field names: " +
+								StringUtil.merge(commonDDMFormFieldNames));
+					}
 				}
 
 				_ddmForms.put(structureId, ddmForm);
@@ -324,8 +494,21 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 					structureId);
 		}
 		finally {
-			DataAccess.cleanUp(con, ps, rs);
+			DataAccess.cleanUp(ps, rs);
 		}
+	}
+
+	protected Set<String> getDDMFormFieldsNames(DDMForm ddmForm) {
+		Map<String, DDMFormField> ddmFormFieldsMap =
+			ddmForm.getDDMFormFieldsMap(true);
+
+		Set<String> ddmFormFieldsNames = new HashSet<>(ddmFormFieldsMap.size());
+
+		for (String ddmFormFieldName : ddmFormFieldsMap.keySet()) {
+			ddmFormFieldsNames.add(StringUtil.toLowerCase(ddmFormFieldName));
+		}
+
+		return ddmFormFieldsNames;
 	}
 
 	protected DDMFormValues getDDMFormValues(
@@ -342,6 +525,23 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 		DDMFormLayout ddmFormLayout = DDMUtil.getDefaultDDMFormLayout(ddmForm);
 
 		return DDMFormLayoutJSONSerializerUtil.serialize(ddmFormLayout);
+	}
+
+	protected Map<String, String> getExpandoValuesMap(long expandoRowId)
+		throws PortalException {
+
+		Map<String, String> fieldsMap = new HashMap<>();
+
+		List<ExpandoValue> expandoValues =
+			_expandoValueLocalService.getRowValues(expandoRowId);
+
+		for (ExpandoValue expandoValue : expandoValues) {
+			ExpandoColumn expandoColumn = expandoValue.getColumn();
+
+			fieldsMap.put(expandoColumn.getName(), expandoValue.getData());
+		}
+
+		return fieldsMap;
 	}
 
 	protected String getStructureModelResourceName(long classNameId)
@@ -394,12 +594,141 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 		return _structureClassNameIds.get(classPK);
 	}
 
+	protected boolean hasStructureVersion(long structureId, String version)
+		throws Exception {
+
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		try {
+			ps = connection.prepareStatement(
+				"select * from DDMStructureVersion where structureId = ? and " +
+					"version = ?");
+
+			ps.setLong(1, structureId);
+			ps.setString(2, version);
+
+			rs = ps.executeQuery();
+
+			return rs.next();
+		}
+		finally {
+			DataAccess.cleanUp(ps, rs);
+		}
+	}
+
+	protected boolean hasTemplateVersion(long templateId, String version)
+		throws Exception {
+
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		try {
+			ps = connection.prepareStatement(
+				"select * from DDMTemplateVersion where templateId = ? and " +
+					"version = ?");
+
+			ps.setLong(1, templateId);
+			ps.setString(2, version);
+
+			rs = ps.executeQuery();
+
+			return rs.next();
+		}
+		finally {
+			DataAccess.cleanUp(ps, rs);
+		}
+	}
+
+	protected boolean isInvalidFieldName(String fieldName) {
+		Matcher matcher = _invalidFieldNameCharsPattern.matcher(fieldName);
+
+		return matcher.find();
+	}
+
+	protected void populateStructureInvalidDDMFormFieldNamesMap(
+		long structureId, DDMForm ddmForm) {
+
+		Map<String, String> ddmFormFieldNamesMap = new HashMap<>();
+
+		Map<String, DDMFormField> ddmFormFieldMap = ddmForm.getDDMFormFieldsMap(
+			true);
+
+		for (DDMFormField ddmFormField : ddmFormFieldMap.values()) {
+			String oldName = (String)ddmFormField.getProperty("oldName");
+
+			if (oldName == null) {
+				continue;
+			}
+
+			ddmFormFieldNamesMap.put(oldName, ddmFormField.getName());
+		}
+
+		_structureInvalidDDMFormFieldNamesMap.put(
+			structureId, ddmFormFieldNamesMap);
+	}
+
+	protected String renameInvalidDDMFormFieldNames(
+		long structureId, String string) {
+
+		Map<String, String> ddmFormFieldNamesMap =
+			_structureInvalidDDMFormFieldNamesMap.get(structureId);
+
+		if ((ddmFormFieldNamesMap == null) || ddmFormFieldNamesMap.isEmpty()) {
+			return string;
+		}
+
+		Set<String> oldFieldNames = ddmFormFieldNamesMap.keySet();
+
+		String[] oldSub = oldFieldNames.toArray(
+			new String[oldFieldNames.size()]);
+
+		String[] newSub = new String[oldFieldNames.size()];
+
+		for (int i = 0; i < oldSub.length; i++) {
+			newSub[i] = ddmFormFieldNamesMap.get(oldSub[i]);
+		}
+
+		return StringUtil.replace(string, oldSub, newSub);
+	}
+
+	protected void setUpClassNameIds() {
+		_ddmContentClassNameId = PortalUtil.getClassNameId(DDMContent.class);
+
+		_expandoStorageAdapterClassNameId = PortalUtil.getClassNameId(
+			"com.liferay.portlet.dynamicdatamapping.storage." +
+				"ExpandoStorageAdapter");
+	}
+
 	protected String toJSON(DDMForm ddmForm) {
 		return DDMFormJSONSerializerUtil.serialize(ddmForm);
 	}
 
 	protected String toJSON(DDMFormValues ddmFormValues) {
 		return DDMFormValuesJSONSerializerUtil.serialize(ddmFormValues);
+	}
+
+	protected String toXML(Map<String, String> expandoValuesMap) {
+		Document document = SAXReaderUtil.createDocument();
+
+		Element rootElement = document.addElement("root");
+
+		for (Map.Entry<String, String> entry : expandoValuesMap.entrySet()) {
+			Element dynamicElementElement = rootElement.addElement(
+				"dynamic-element");
+
+			String name = entry.getKey();
+			String data = entry.getValue();
+
+			dynamicElementElement.addAttribute("name", name);
+			dynamicElementElement.addAttribute(
+				"default-language-id",
+				LocalizationUtil.getDefaultLanguageId(data));
+
+			addDynamicContentElements(dynamicElementElement, name, data);
+		}
+
+		return document.asXML();
 	}
 
 	protected void transformFieldTypeDDMFormFields(
@@ -422,17 +751,15 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 		ddmFormValuesTransformer.transform();
 	}
 
-	protected void updateContent(DDMForm ddmForm, long contentId)
+	protected void updateContent(
+			long structureId, long contentId, DDMForm ddmForm)
 		throws Exception {
 
-		Connection con = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 
 		try {
-			con = DataAccess.getUpgradeOptimizedConnection();
-
-			ps = con.prepareStatement(
+			ps = connection.prepareStatement(
 				"select companyId, data_ from DDMContent where contentId = ?");
 
 			ps.setLong(1, contentId);
@@ -446,25 +773,26 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 				DDMFormValues ddmFormValues = getDDMFormValues(
 					companyId, ddmForm, xml);
 
-				updateContent(contentId, toJSON(ddmFormValues));
+				String content = toJSON(ddmFormValues);
+
+				content = renameInvalidDDMFormFieldNames(structureId, content);
+
+				updateContent(contentId, content);
 			}
 		}
 		finally {
-			DataAccess.cleanUp(con, ps, rs);
+			DataAccess.cleanUp(ps, rs);
 		}
 	}
 
 	protected void updateContent(long contentId, String data_)
 		throws Exception {
 
-		Connection con = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 
 		try {
-			con = DataAccess.getUpgradeOptimizedConnection();
-
-			ps = con.prepareStatement(
+			ps = connection.prepareStatement(
 				"update DDMContent set data_= ? where contentId = ?");
 
 			ps.setString(1, data_);
@@ -473,17 +801,27 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 			ps.executeUpdate();
 		}
 		finally {
-			DataAccess.cleanUp(con, ps, rs);
+			DataAccess.cleanUp(ps, rs);
 		}
 	}
 
-	protected DDMForm updateDDMFormFields(DDMForm ddmForm) {
+	protected DDMForm updateDDMFormFields(DDMForm ddmForm) throws Exception {
 		DDMForm copyDDMForm = new DDMForm(ddmForm);
 
 		Map<String, DDMFormField> ddmFormFieldsMap =
 			copyDDMForm.getDDMFormFieldsMap(true);
 
 		for (DDMFormField ddmFormField : ddmFormFieldsMap.values()) {
+			String fieldName = ddmFormField.getName();
+
+			if (isInvalidFieldName(fieldName)) {
+				String newFieldName = createNewDDMFormFieldName(
+					fieldName, ddmFormFieldsMap.keySet());
+
+				ddmFormField.setName(newFieldName);
+				ddmFormField.setProperty("oldName", fieldName);
+			}
+
 			String dataType = ddmFormField.getDataType();
 
 			if (Validator.equals(dataType, "file-upload")) {
@@ -499,6 +837,22 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 		return copyDDMForm;
 	}
 
+	protected void updateDDMStorageLink(
+			long oldClassNameId, long classPK, long newClassNameId)
+		throws Exception {
+
+		runSQL(
+			"update DDMStorageLink set classNameId = " + newClassNameId +
+				" where classNameId = " +
+					oldClassNameId + " and classPK = " + classPK);
+	}
+
+	protected void updateDDMStructureStorageType() throws Exception {
+		runSQL(
+			"update DDMStructure set storageType = 'xml' where storageType = " +
+				"'expando'");
+	}
+
 	protected void updateStructureStorageType() throws Exception {
 		runSQL(
 			"update DDMStructure set storageType='json' where " +
@@ -511,14 +865,37 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 				"storageType = 'xml'");
 	}
 
+	protected void updateTemplateScript(long templateId, String script)
+		throws Exception {
+
+		PreparedStatement ps = null;
+
+		try {
+			ps = connection.prepareStatement(
+				"update DDMTemplate set script = ? where templateId = ?");
+
+			ps.setString(1, script);
+			ps.setLong(2, templateId);
+
+			ps.executeUpdate();
+		}
+		catch (Exception e) {
+			_log.error(
+				"Unable to update dynamic data mapping template with " +
+					"template ID " + templateId);
+
+			throw e;
+		}
+		finally {
+			DataAccess.cleanUp(ps);
+		}
+	}
+
 	protected void upgradeDDLFieldTypeReferences() throws Exception {
-		Connection con = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 
 		try {
-			con = DataAccess.getUpgradeOptimizedConnection();
-
 			StringBundler sb = new StringBundler(7);
 
 			sb.append("select DDLRecordVersion.*, DDMContent.data_, ");
@@ -529,7 +906,7 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 			sb.append("inner join DDMStructure on DDLRecordSet.");
 			sb.append("DDMStructureId = DDMStructure.structureId");
 
-			ps = con.prepareStatement(sb.toString());
+			ps = connection.prepareStatement(sb.toString());
 
 			rs = ps.executeQuery();
 
@@ -547,8 +924,9 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 
 				DDMForm ddmForm = getDDMForm(ddmStructureId);
 
-				DDMFormValues ddmFormValues = getDDMFormValues(
-					companyId, ddmForm, data_);
+				DDMFormValues ddmFormValues =
+					DDMFormValuesJSONDeserializerUtil.deserialize(
+						ddmForm, data_);
 
 				transformFieldTypeDDMFormFields(
 					groupId, companyId, userId, userName, createDate, entryId,
@@ -558,18 +936,15 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 			}
 		}
 		finally {
-			DataAccess.cleanUp(con, ps, rs);
+			DataAccess.cleanUp(ps, rs);
 		}
 	}
 
 	protected void upgradeDLFieldTypeReferences() throws Exception {
-		Connection con = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 
 		try {
-			con = DataAccess.getUpgradeOptimizedConnection();
-
 			StringBundler sb = new StringBundler(10);
 
 			sb.append("select DLFileVersion.*, DDMContent.contentId, ");
@@ -583,7 +958,7 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 			sb.append("fileVersionId and DLFileEntryMetadata.fileEntryId = ");
 			sb.append("DLFileVersion.fileEntryId");
 
-			ps = con.prepareStatement(sb.toString());
+			ps = connection.prepareStatement(sb.toString());
 
 			rs = ps.executeQuery();
 
@@ -601,8 +976,9 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 
 				DDMForm ddmForm = getDDMForm(ddmStructureId);
 
-				DDMFormValues ddmFormValues = getDDMFormValues(
-					companyId, ddmForm, data_);
+				DDMFormValues ddmFormValues =
+					DDMFormValuesJSONDeserializerUtil.deserialize(
+						ddmForm, data_);
 
 				transformFieldTypeDDMFormFields(
 					groupId, companyId, userId, userName, createDate, entryId,
@@ -612,7 +988,63 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 			}
 		}
 		finally {
-			DataAccess.cleanUp(con, ps, rs);
+			DataAccess.cleanUp(ps, rs);
+		}
+	}
+
+	protected void upgradeExpandoStorageAdapter() throws Exception {
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		try {
+			StringBundler sb = new StringBundler(5);
+
+			sb.append("select DDMStructure.*, DDMStorageLink.* from ");
+			sb.append("DDMStorageLink inner join DDMStructure on ");
+			sb.append("DDMStorageLink.structureId = DDMStructure.structureId ");
+			sb.append("where DDMStructure.storageType = 'expando'");
+
+			ps = connection.prepareStatement(sb.toString());
+
+			rs = ps.executeQuery();
+
+			Set<Long> expandoRowIds = new HashSet<>();
+
+			while (rs.next()) {
+				long groupId = rs.getLong("groupId");
+				long companyId = rs.getLong("companyId");
+				long userId = rs.getLong("userId");
+				String userName = rs.getString("userName");
+				Timestamp createDate = rs.getTimestamp("createDate");
+				long expandoRowId = rs.getLong("classPK");
+
+				Map<String, String> expandoValuesMap = getExpandoValuesMap(
+					expandoRowId);
+
+				String xml = toXML(expandoValuesMap);
+
+				addDDMContent(
+					PortalUUIDUtil.generate(), expandoRowId, groupId, companyId,
+					userId, userName, createDate, createDate,
+					DDMStorageLink.class.getName(), null, xml);
+
+				updateDDMStorageLink(
+					_expandoStorageAdapterClassNameId, expandoRowId,
+					_ddmContentClassNameId);
+
+				expandoRowIds.add(expandoRowId);
+			}
+
+			if (expandoRowIds.isEmpty()) {
+				return;
+			}
+
+			updateDDMStructureStorageType();
+
+			deleteExpandoData(expandoRowIds);
+		}
+		finally {
+			DataAccess.cleanUp(ps, rs);
 		}
 	}
 
@@ -625,13 +1057,10 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 			long structureId, String definition)
 		throws Exception {
 
-		Connection con = null;
 		PreparedStatement ps = null;
 
 		try {
-			con = DataAccess.getUpgradeOptimizedConnection();
-
-			ps = con.prepareStatement(
+			ps = connection.prepareStatement(
 				"update DDMStructure set definition = ? where structureId = ?");
 
 			ps.setString(1, definition);
@@ -647,65 +1076,44 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 			throw e;
 		}
 		finally {
-			DataAccess.cleanUp(con, ps);
+			DataAccess.cleanUp(ps);
 		}
 	}
 
-	protected void upgradeStructurePermissions() throws Exception {
-		Connection con = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
+	protected void upgradeStructurePermissions(long companyId, long structureId)
+		throws Exception {
 
-		try {
-			con = DataAccess.getUpgradeOptimizedConnection();
+		List<ResourcePermission> resourcePermissions =
+			_resourcePermissionLocalService.getResourcePermissions(
+				companyId, DDMStructure.class.getName(),
+				ResourceConstants.SCOPE_INDIVIDUAL,
+				StringUtil.valueOf(structureId));
 
-			StringBundler sb = new StringBundler(5);
+		for (ResourcePermission resourcePermission : resourcePermissions) {
+			Long classNameId = _structureClassNameIds.get(
+				Long.valueOf(resourcePermission.getPrimKey()));
 
-			sb.append("select resourcePermissionId, primKey from ");
-			sb.append("ResourcePermission where name = '");
-			sb.append(DDMStructure.class.getName());
-			sb.append("' and scope = ");
-			sb.append(ResourceConstants.SCOPE_INDIVIDUAL);
-
-			ps = con.prepareStatement(sb.toString());
-
-			rs = ps.executeQuery();
-
-			while (rs.next()) {
-				long resourcePermissionId = rs.getLong("resourcePermissionId");
-				long primKey = rs.getLong("primKey");
-
-				Long classNameId = _structureClassNameIds.get(primKey);
-
-				if (classNameId == null) {
-					continue;
-				}
-
-				String resourceName = getStructureModelResourceName(
-					classNameId);
-
-				runSQL(
-					"update ResourcePermission set name = '" + resourceName +
-						"' where resourcePermissionId = " +
-							resourcePermissionId);
+			if (classNameId == null) {
+				continue;
 			}
-		}
-		finally {
-			DataAccess.cleanUp(con, ps, rs);
+
+			String resourceName = getStructureModelResourceName(classNameId);
+
+			resourcePermission.setName(resourceName);
+
+			_resourcePermissionLocalService.updateResourcePermission(
+				resourcePermission);
 		}
 	}
 
 	protected void upgradeStructuresAndAddStructureVersionsAndLayouts()
 		throws Exception {
 
-		Connection con = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 
 		try {
-			con = DataAccess.getUpgradeOptimizedConnection();
-
-			ps = con.prepareStatement("select * from DDMStructure");
+			ps = connection.prepareStatement("select * from DDMStructure");
 
 			rs = ps.executeQuery();
 
@@ -718,6 +1126,7 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 				Timestamp modifiedDate = rs.getTimestamp("modifiedDate");
 				long parentStructureId = rs.getLong("parentStructureId");
 				long classNameId = rs.getLong("classNameId");
+				String version = rs.getString("version");
 				String name = rs.getString("name");
 				String description = rs.getString("description");
 				String storageType = rs.getString("storageType");
@@ -731,11 +1140,18 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 
 				ddmForm = updateDDMFormFields(ddmForm);
 
+				populateStructureInvalidDDMFormFieldNamesMap(
+					structureId, ddmForm);
+
 				String definition = toJSON(ddmForm);
 
 				upgradeStructureDefinition(structureId, definition);
 
 				// Structure version
+
+				if (hasStructureVersion(structureId, version)) {
+					continue;
+				}
 
 				long structureVersionId = increment();
 
@@ -758,52 +1174,54 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 			}
 		}
 		finally {
-			DataAccess.cleanUp(con, ps, rs);
+			DataAccess.cleanUp(ps, rs);
 		}
 	}
 
-	protected void upgradeTemplatePermissions() throws Exception {
-		Connection con = null;
+	protected void upgradeStructuresPermissions() throws Exception {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 
 		try {
-			con = DataAccess.getUpgradeOptimizedConnection();
-
-			StringBundler sb = new StringBundler(5);
-
-			sb.append("select resourcePermissionId, primKey from ");
-			sb.append("ResourcePermission where name = '");
-			sb.append(DDMTemplate.class.getName());
-			sb.append("' and scope = ");
-			sb.append(ResourceConstants.SCOPE_INDIVIDUAL);
-
-			ps = con.prepareStatement(sb.toString());
+			ps = connection.prepareStatement("select * from DDMStructure");
 
 			rs = ps.executeQuery();
 
 			while (rs.next()) {
-				long resourcePermissionId = rs.getLong("resourcePermissionId");
-				long primKey = rs.getLong("primKey");
+				long companyId = rs.getLong("companyId");
+				long structureId = rs.getLong("structureId");
 
-				Long resourceClassNameId = _templateResourceClassNameIds.get(
-					primKey);
-
-				if (resourceClassNameId == null) {
-					continue;
-				}
-
-				String resourceName = getTemplateModelResourceName(
-					resourceClassNameId);
-
-				runSQL(
-					"update ResourcePermission set name = '" + resourceName +
-						"' where resourcePermissionId = " +
-							resourcePermissionId);
+				upgradeStructurePermissions(companyId, structureId);
 			}
 		}
 		finally {
-			DataAccess.cleanUp(con, ps, rs);
+			DataAccess.cleanUp(ps, rs);
+		}
+	}
+
+	protected void upgradeTemplatePermissions(long companyId, long templateId)
+		throws Exception {
+
+		List<ResourcePermission> resourcePermissions =
+			_resourcePermissionLocalService.getResourcePermissions(
+				companyId, DDMTemplate.class.getName(),
+				ResourceConstants.SCOPE_INDIVIDUAL,
+				StringUtil.valueOf(templateId));
+
+		for (ResourcePermission resourcePermission : resourcePermissions) {
+			Long classNameId = _templateResourceClassNameIds.get(
+				Long.valueOf(resourcePermission.getPrimKey()));
+
+			if (classNameId == null) {
+				continue;
+			}
+
+			String resourceName = getTemplateModelResourceName(classNameId);
+
+			resourcePermission.setName(resourceName);
+
+			_resourcePermissionLocalService.updateResourcePermission(
+				resourcePermission);
 		}
 	}
 
@@ -811,33 +1229,29 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 			long templateId, long resourceClassNameId)
 		throws Exception {
 
-		Connection con = null;
 		PreparedStatement ps = null;
 
 		try {
-			con = DataAccess.getUpgradeOptimizedConnection();
-
-			ps = con.prepareStatement(
+			ps = connection.prepareStatement(
 				"update DDMTemplate set resourceClassNameId = ? where " +
 					"templateId = ?");
 
 			ps.setLong(1, resourceClassNameId);
 			ps.setLong(2, templateId);
+
+			ps.executeUpdate();
 		}
 		finally {
-			DataAccess.cleanUp(con, ps);
+			DataAccess.cleanUp(ps);
 		}
 	}
 
 	protected void upgradeTemplatesAndAddTemplateVersions() throws Exception {
-		Connection con = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 
 		try {
-			con = DataAccess.getUpgradeOptimizedConnection();
-
-			ps = con.prepareStatement("select * from DDMTemplate");
+			ps = connection.prepareStatement("select * from DDMTemplate");
 
 			rs = ps.executeQuery();
 
@@ -850,6 +1264,7 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 				long classNameId = rs.getLong("classNameId");
 				long classPK = rs.getLong("classPK");
 				long templateId = rs.getLong("templateId");
+				String version = rs.getString("version");
 				String name = rs.getString("name");
 				String description = rs.getString("description");
 				String language = rs.getString("language");
@@ -868,42 +1283,46 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 
 				// Template content
 
+				String updatedScript = renameInvalidDDMFormFieldNames(
+					classPK, script);
+
 				if (language.equals("xsd")) {
 					DDMForm ddmForm = DDMFormXSDDeserializerUtil.deserialize(
-						script);
+						updatedScript);
 
 					ddmForm = updateDDMFormFields(ddmForm);
 
-					script = toJSON(ddmForm);
+					updatedScript = toJSON(ddmForm);
+				}
 
-					upgradeTemplateScript(templateId, script);
+				if (!script.equals(updatedScript)) {
+					updateTemplateScript(templateId, updatedScript);
 				}
 
 				// Template version
 
-				addTemplateVersion(
-					increment(), groupId, companyId, userId, userName,
-					modifiedDate, classNameId, classPK, templateId, name,
-					description, language, script,
-					WorkflowConstants.STATUS_APPROVED, userId, userName,
-					modifiedDate);
+				if (!hasTemplateVersion(templateId, version)) {
+					addTemplateVersion(
+						increment(), groupId, companyId, userId, userName,
+						modifiedDate, classNameId, classPK, templateId, name,
+						description, language, updatedScript,
+						WorkflowConstants.STATUS_APPROVED, userId, userName,
+						modifiedDate);
+				}
 			}
 		}
 		finally {
-			DataAccess.cleanUp(con, ps, rs);
+			DataAccess.cleanUp(ps, rs);
 		}
 	}
 
 	protected void upgradeTemplateScript(long templateId, String script)
 		throws Exception {
 
-		Connection con = null;
 		PreparedStatement ps = null;
 
 		try {
-			con = DataAccess.getUpgradeOptimizedConnection();
-
-			ps = con.prepareStatement(
+			ps = connection.prepareStatement(
 				"update DDMTemplate set language = ?, script = ? where " +
 					"templateId = ?");
 
@@ -921,18 +1340,36 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 			throw e;
 		}
 		finally {
-			DataAccess.cleanUp(con, ps);
+			DataAccess.cleanUp(ps);
 		}
 	}
 
-	protected void upgradeXMLStorageAdapter() throws Exception {
-		Connection con = null;
+	protected void upgradeTemplatesPermissions() throws Exception {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 
 		try {
-			con = DataAccess.getUpgradeOptimizedConnection();
+			ps = connection.prepareStatement("select * from DDMTemplate");
 
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				long companyId = rs.getLong("companyId");
+				long templateId = rs.getLong("templateId");
+
+				upgradeTemplatePermissions(companyId, templateId);
+			}
+		}
+		finally {
+			DataAccess.cleanUp(ps, rs);
+		}
+	}
+
+	protected void upgradeXMLStorageAdapter() throws Exception {
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		try {
 			StringBundler sb = new StringBundler(5);
 
 			sb.append("select DDMStorageLink.classPK, DDMStorageLink.");
@@ -941,9 +1378,9 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 			sb.append("DDMStructure.structureId) where DDMStorageLink.");
 			sb.append("classNameId = ? and DDMStructure.storageType = ?");
 
-			ps = con.prepareStatement(sb.toString());
+			ps = connection.prepareStatement(sb.toString());
 
-			ps.setLong(1, PortalUtil.getClassNameId(DDMContent.class));
+			ps.setLong(1, _ddmContentClassNameId);
 			ps.setString(2, "xml");
 
 			rs = ps.executeQuery();
@@ -954,20 +1391,25 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 
 				DDMForm ddmForm = getDDMForm(structureId);
 
-				updateContent(ddmForm, classPK);
+				updateContent(structureId, classPK, ddmForm);
 			}
 
 			updateStructureStorageType();
 			updateStructureVersionStorageType();
 		}
 		finally {
-			DataAccess.cleanUp(con, ps, rs);
+			DataAccess.cleanUp(ps, rs);
 		}
 	}
+
+	private static final String _INVALID_FIELD_NAME_CHARS_REGEX =
+		"([\\p{Punct}&&[^_]]|\\p{Space})+";
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		UpgradeDynamicDataMapping.class);
 
+	private static final Pattern _invalidFieldNameCharsPattern =
+		Pattern.compile(_INVALID_FIELD_NAME_CHARS_REGEX);
 	private static final Map<String, String> _structureModelResourceNames =
 		new HashMap<>();
 	private static final Map<String, String> _templateModelResourceNames =
@@ -1008,12 +1450,26 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 				DDMTemplate.class.getName());
 	}
 
+	private final AssetEntryLocalService _assetEntryLocalService;
+	private long _ddmContentClassNameId;
 	private final Map<Long, DDMForm> _ddmForms = new HashMap<>();
+	private final DLFileEntryLocalService _dlFileEntryLocalService;
+	private final DLFileVersionLocalService _dlFileVersionLocalService;
+	private final DLFolderLocalService _dlFolderLocalService;
+	private final ExpandoRowLocalService _expandoRowLocalService;
+	private long _expandoStorageAdapterClassNameId;
+	private final ExpandoTableLocalService _expandoTableLocalService;
+	private final ExpandoValueLocalService _expandoValueLocalService;
+	private final ResourceActionLocalService _resourceActionLocalService;
+	private final ResourcePermissionLocalService
+		_resourcePermissionLocalService;
 	private final Map<Long, Long> _structureClassNameIds = new HashMap<>();
+	private final Map<Long, Map<String, String>>
+		_structureInvalidDDMFormFieldNamesMap = new HashMap<>();
 	private final Map<Long, Long> _templateResourceClassNameIds =
 		new HashMap<>();
 
-	private class DateDDMFormFieldValueTransformer
+	private static class DateDDMFormFieldValueTransformer
 		implements DDMFormFieldValueTransformer {
 
 		@Override
@@ -1047,7 +1503,7 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 
 	}
 
-	private class DDMFormValuesXSDDeserializer {
+	private static class DDMFormValuesXSDDeserializer {
 
 		public DDMFormValuesXSDDeserializer(long companyId) {
 			_companyId = companyId;
@@ -1392,8 +1848,8 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 
 			Map<String, Integer> dynamicContentValuesMap = new HashMap<>();
 
-			for (Element dynamicContentElement : dynamicElementElement.elements(
-				"dynamic-content")) {
+			for (Element dynamicContentElement :
+					dynamicElementElement.elements("dynamic-content")) {
 
 				String languageId = dynamicContentElement.attributeValue(
 					"language-id");
@@ -1593,60 +2049,36 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 				int viewCount)
 			throws Exception {
 
-			Connection con = null;
-			PreparedStatement ps = null;
+			AssetEntry assetEntry = _assetEntryLocalService.createAssetEntry(
+				entryId);
 
-			try {
-				con = DataAccess.getUpgradeOptimizedConnection();
+			assetEntry.setGroupId(groupId);
+			assetEntry.setCompanyId(companyId);
+			assetEntry.setUserId(userId);
+			assetEntry.setUserName(userName);
+			assetEntry.setCreateDate(createDate);
+			assetEntry.setModifiedDate(modifiedDate);
+			assetEntry.setClassNameId(classNameId);
+			assetEntry.setClassPK(classPK);
+			assetEntry.setClassUuid(classUuid);
+			assetEntry.setClassTypeId(classTypeId);
+			assetEntry.setVisible(visible);
+			assetEntry.setStartDate(startDate);
+			assetEntry.setEndDate(endDate);
+			assetEntry.setPublishDate(publishDate);
+			assetEntry.setExpirationDate(expirationDate);
+			assetEntry.setMimeType(mimeType);
+			assetEntry.setTitle(title);
+			assetEntry.setDescription(description);
+			assetEntry.setSummary(summary);
+			assetEntry.setUrl(url);
+			assetEntry.setLayoutUuid(layoutUuid);
+			assetEntry.setHeight(height);
+			assetEntry.setWidth(width);
+			assetEntry.setPriority(priority);
+			assetEntry.setViewCount(viewCount);
 
-				StringBundler sb = new StringBundler(9);
-
-				sb.append("insert into AssetEntry (entryId, groupId, ");
-				sb.append("companyId, userId, userName, createDate, ");
-				sb.append("modifiedDate, classNameId, classPK, classUuid, ");
-				sb.append("classTypeId, visible, startDate, endDate, ");
-				sb.append("publishDate, expirationDate, mimeType, title, ");
-				sb.append("description, summary, url, layoutUuid, height, ");
-				sb.append("width, priority, viewCount) values (?, ?, ?, ?, ");
-				sb.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ");
-				sb.append("?, ?, ?, ?, ?, ?)");
-
-				String sql = sb.toString();
-
-				ps = con.prepareStatement(sql);
-
-				ps.setLong(1, entryId);
-				ps.setLong(2, groupId);
-				ps.setLong(3, companyId);
-				ps.setLong(4, userId);
-				ps.setString(5, userName);
-				ps.setTimestamp(6, createDate);
-				ps.setTimestamp(7, modifiedDate);
-				ps.setLong(8, classNameId);
-				ps.setLong(9, classPK);
-				ps.setString(10, classUuid);
-				ps.setLong(11, classTypeId);
-				ps.setBoolean(12, visible);
-				ps.setTimestamp(13, startDate);
-				ps.setTimestamp(14, endDate);
-				ps.setTimestamp(15, publishDate);
-				ps.setTimestamp(16, expirationDate);
-				ps.setString(17, mimeType);
-				ps.setString(18, title);
-				ps.setString(19, description);
-				ps.setString(20, summary);
-				ps.setString(21, url);
-				ps.setString(22, layoutUuid);
-				ps.setInt(23, height);
-				ps.setInt(24, width);
-				ps.setDouble(25, priority);
-				ps.setInt(26, viewCount);
-
-				ps.executeUpdate();
-			}
-			finally {
-				DataAccess.cleanUp(con, ps);
-			}
+			_assetEntryLocalService.updateAssetEntry(assetEntry);
 		}
 
 		protected long addDDMDLFolder() throws Exception {
@@ -1680,64 +2112,39 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 				long custom2ImageId, boolean manualCheckInRequired)
 			throws Exception {
 
-			Connection con = null;
-			PreparedStatement ps = null;
+			DLFileEntry dlFileEntry =
+				_dlFileEntryLocalService.createDLFileEntry(fileEntryId);
 
-			try {
-				con = DataAccess.getUpgradeOptimizedConnection();
+			dlFileEntry.setUuid(uuid);
+			dlFileEntry.setGroupId(groupId);
+			dlFileEntry.setCompanyId(companyId);
+			dlFileEntry.setUserId(userId);
+			dlFileEntry.setUserName(userName);
+			dlFileEntry.setCreateDate(createDate);
+			dlFileEntry.setModifiedDate(modifiedDate);
+			dlFileEntry.setClassNameId(classNameId);
+			dlFileEntry.setClassPK(classPK);
+			dlFileEntry.setRepositoryId(repositoryId);
+			dlFileEntry.setFolderId(folderId);
+			dlFileEntry.setTreePath(treePath);
+			dlFileEntry.setName(name);
+			dlFileEntry.setFileName(fileName);
+			dlFileEntry.setExtension(extension);
+			dlFileEntry.setMimeType(mimeType);
+			dlFileEntry.setTitle(title);
+			dlFileEntry.setDescription(description);
+			dlFileEntry.setExtraSettings(extraSettings);
+			dlFileEntry.setFileEntryTypeId(fileEntryTypeId);
+			dlFileEntry.setVersion(version);
+			dlFileEntry.setSize(size);
+			dlFileEntry.setReadCount(readCount);
+			dlFileEntry.setSmallImageId(smallImageId);
+			dlFileEntry.setLargeImageId(largeImageId);
+			dlFileEntry.setCustom1ImageId(custom1ImageId);
+			dlFileEntry.setCustom2ImageId(custom2ImageId);
+			dlFileEntry.setManualCheckInRequired(manualCheckInRequired);
 
-				StringBundler sb = new StringBundler(9);
-
-				sb.append("insert into DLFileEntry (uuid_, fileEntryId, ");
-				sb.append("groupId, companyId, userId, userName, createDate, ");
-				sb.append("modifiedDate, classNameId, classPK, repositoryId, ");
-				sb.append("folderId, treePath, name, fileName, extension, ");
-				sb.append("mimeType, title, description, extraSettings, ");
-				sb.append("fileEntryTypeId, version, size_, readCount,  ");
-				sb.append("smallImageId, largeImageId, custom1ImageId, ");
-				sb.append("custom2ImageId, manualCheckInRequired) values (?, ");
-				sb.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ");
-				sb.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-
-				String sql = sb.toString();
-
-				ps = con.prepareStatement(sql);
-
-				ps.setString(1, uuid);
-				ps.setLong(2, fileEntryId);
-				ps.setLong(3, groupId);
-				ps.setLong(4, companyId);
-				ps.setLong(5, userId);
-				ps.setString(6, userName);
-				ps.setTimestamp(7, createDate);
-				ps.setTimestamp(8, modifiedDate);
-				ps.setLong(9, classNameId);
-				ps.setLong(10, classPK);
-				ps.setLong(11, repositoryId);
-				ps.setLong(12, folderId);
-				ps.setString(13, treePath);
-				ps.setString(14, name);
-				ps.setString(15, fileName);
-				ps.setString(16, extension);
-				ps.setString(17, mimeType);
-				ps.setString(18, title);
-				ps.setString(19, description);
-				ps.setString(20, extraSettings);
-				ps.setLong(21, fileEntryTypeId);
-				ps.setString(22, version);
-				ps.setLong(23, size);
-				ps.setInt(24, readCount);
-				ps.setLong(25, smallImageId);
-				ps.setLong(26, largeImageId);
-				ps.setLong(27, custom1ImageId);
-				ps.setLong(28, custom2ImageId);
-				ps.setBoolean(29, manualCheckInRequired);
-
-				ps.executeUpdate();
-			}
-			finally {
-				DataAccess.cleanUp(con, ps);
-			}
+			_dlFileEntryLocalService.updateDLFileEntry(dlFileEntry);
 		}
 
 		protected void addDLFileVersion(
@@ -1752,62 +2159,37 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 				String statusByUserName, Timestamp statusDate)
 			throws Exception {
 
-			Connection con = null;
-			PreparedStatement ps = null;
+			DLFileVersion dlFileVersion =
+				_dlFileVersionLocalService.createDLFileVersion(fileVersionId);
 
-			try {
-				con = DataAccess.getUpgradeOptimizedConnection();
+			dlFileVersion.setUuid(uuid);
+			dlFileVersion.setGroupId(groupId);
+			dlFileVersion.setCompanyId(companyId);
+			dlFileVersion.setUserId(userId);
+			dlFileVersion.setUserName(userName);
+			dlFileVersion.setCreateDate(createDate);
+			dlFileVersion.setModifiedDate(modifiedDate);
+			dlFileVersion.setRepositoryId(repositoryId);
+			dlFileVersion.setFolderId(folderId);
+			dlFileVersion.setFileEntryId(fileEntryId);
+			dlFileVersion.setTreePath(treePath);
+			dlFileVersion.setFileName(fileName);
+			dlFileVersion.setExtension(extension);
+			dlFileVersion.setMimeType(mimeType);
+			dlFileVersion.setTitle(title);
+			dlFileVersion.setDescription(description);
+			dlFileVersion.setChangeLog(changeLog);
+			dlFileVersion.setExtraSettings(extraSettings);
+			dlFileVersion.setFileEntryTypeId(fileEntryTypeId);
+			dlFileVersion.setVersion(version);
+			dlFileVersion.setSize(size);
+			dlFileVersion.setChecksum(checksum);
+			dlFileVersion.setStatus(status);
+			dlFileVersion.setStatusByUserId(statusByUserId);
+			dlFileVersion.setStatusByUserName(statusByUserName);
+			dlFileVersion.setStatusDate(statusDate);
 
-				StringBundler sb = new StringBundler(10);
-
-				sb.append("insert into DLFileVersion (uuid_, fileVersionId, ");
-				sb.append("groupId, companyId, userId, userName, createDate, ");
-				sb.append("modifiedDate, repositoryId, folderId, ");
-				sb.append("fileEntryId, treePath, fileName, extension, ");
-				sb.append("mimeType, title, description, changeLog, ");
-				sb.append("extraSettings, fileEntryTypeId, version, size_, ");
-				sb.append("checksum, status, statusByUserId, ");
-				sb.append("statusByUserName, statusDate) values (?, ?, ?, ?, ");
-				sb.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ");
-				sb.append("?, ?, ?, ?, ?, ?, ?)");
-
-				String sql = sb.toString();
-
-				ps = con.prepareStatement(sql);
-
-				ps.setString(1, uuid);
-				ps.setLong(2, fileVersionId);
-				ps.setLong(3, groupId);
-				ps.setLong(4, companyId);
-				ps.setLong(5, userId);
-				ps.setString(6, userName);
-				ps.setTimestamp(7, createDate);
-				ps.setTimestamp(8, modifiedDate);
-				ps.setLong(9, repositoryId);
-				ps.setLong(10, folderId);
-				ps.setLong(11, fileEntryId);
-				ps.setString(12, treePath);
-				ps.setString(13, fileName);
-				ps.setString(14, extension);
-				ps.setString(15, mimeType);
-				ps.setString(16, title);
-				ps.setString(17, description);
-				ps.setString(18, changeLog);
-				ps.setString(19, extraSettings);
-				ps.setLong(20, fileEntryTypeId);
-				ps.setString(21, version);
-				ps.setLong(22, size);
-				ps.setString(23, checksum);
-				ps.setInt(24, status);
-				ps.setLong(25, statusByUserId);
-				ps.setString(26, statusByUserName);
-				ps.setTimestamp(27, statusDate);
-
-				ps.executeUpdate();
-			}
-			finally {
-				DataAccess.cleanUp(con, ps);
-			}
+			_dlFileVersionLocalService.updateDLFileVersion(dlFileVersion);
 		}
 
 		protected void addDLFolder(
@@ -1817,53 +2199,29 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 				String name, String description, Timestamp lastPostDate)
 			throws Exception {
 
-			Connection con = null;
-			PreparedStatement ps = null;
+			DLFolder dlFolder = _dlFolderLocalService.createDLFolder(folderId);
 
-			try {
-				con = DataAccess.getUpgradeOptimizedConnection();
+			dlFolder.setUuid(uuid);
+			dlFolder.setGroupId(groupId);
+			dlFolder.setCompanyId(companyId);
+			dlFolder.setUserId(userId);
+			dlFolder.setUserName(userName);
+			dlFolder.setCreateDate(createDate);
+			dlFolder.setModifiedDate(modifiedDate);
+			dlFolder.setRepositoryId(repositoryId);
+			dlFolder.setMountPoint(false);
+			dlFolder.setParentFolderId(parentFolderId);
+			dlFolder.setName(name);
+			dlFolder.setDescription(description);
+			dlFolder.setLastPostDate(lastPostDate);
+			dlFolder.setDefaultFileEntryTypeId(0);
+			dlFolder.setHidden(false);
+			dlFolder.setStatus(WorkflowConstants.STATUS_APPROVED);
+			dlFolder.setStatusByUserId(0);
+			dlFolder.setStatusByUserName(StringPool.BLANK);
+			dlFolder.setRestrictionType(0);
 
-				StringBundler sb = new StringBundler(5);
-
-				sb.append("insert into DLFolder (uuid_, folderId, groupId, ");
-				sb.append("companyId, userId, userName, createDate, ");
-				sb.append("modifiedDate, repositoryId, mountPoint, ");
-				sb.append("parentFolderId, name, description, lastPostDate, ");
-				sb.append("defaultFileEntryTypeId, hidden_, status, ");
-				sb.append("statusByUserId, statusByUserName, restrictionType");
-				sb.append(") values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ");
-				sb.append("?, ?, ?, ?, ?, ?, ?)");
-
-				String sql = sb.toString();
-
-				ps = con.prepareStatement(sql);
-
-				ps.setString(1, uuid);
-				ps.setLong(2, folderId);
-				ps.setLong(3, groupId);
-				ps.setLong(4, companyId);
-				ps.setLong(5, userId);
-				ps.setString(6, userName);
-				ps.setTimestamp(7, createDate);
-				ps.setTimestamp(8, modifiedDate);
-				ps.setLong(9, repositoryId);
-				ps.setBoolean(10, false);
-				ps.setLong(11, parentFolderId);
-				ps.setString(12, name);
-				ps.setString(13, description);
-				ps.setTimestamp(14, lastPostDate);
-				ps.setLong(15, 0);
-				ps.setBoolean(16, false);
-				ps.setInt(17, WorkflowConstants.STATUS_APPROVED);
-				ps.setInt(18, 0);
-				ps.setString(19, StringPool.BLANK);
-				ps.setInt(20, 0);
-
-				ps.executeUpdate();
-			}
-			finally {
-				DataAccess.cleanUp(con, ps);
-			}
+			_dlFolderLocalService.updateDLFolder(dlFolder);
 		}
 
 		protected long addDLFolderTree(String ddmFormFieldName)
@@ -1924,77 +2282,12 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 			return entryVersionFolderId;
 		}
 
-		protected void addResourcePermissions(
-				int mvccVersion, long resourcePermissionId, long companyId,
-				String name, long scope, long primKey, long roleId,
-				long ownerId, long actionIds)
-			throws Exception {
+		protected long getActionBitwiseValue(String actionId)throws Exception {
+			ResourceAction resourceAction =
+				_resourceActionLocalService.getResourceAction(
+					DLFileEntry.class.getName(), actionId);
 
-			Connection con = null;
-			PreparedStatement ps = null;
-
-			try {
-				con = DataAccess.getUpgradeOptimizedConnection();
-
-				StringBundler sb = new StringBundler(4);
-
-				sb.append("insert into ResourcePermission (mvccVersion, ");
-				sb.append("resourcePermissionId, companyId, name, scope, ");
-				sb.append("primKey, roleId, ownerId, actionIds) values (?, ");
-				sb.append("?, ?, ?, ?, ?, ?, ?, ?)");
-
-				String sql = sb.toString();
-
-				ps = con.prepareStatement(sql);
-
-				ps.setLong(1, mvccVersion);
-				ps.setLong(2, resourcePermissionId);
-				ps.setLong(3, companyId);
-				ps.setString(4, name);
-				ps.setLong(5, scope);
-				ps.setLong(6, primKey);
-				ps.setLong(7, roleId);
-				ps.setLong(8, ownerId);
-				ps.setLong(9, actionIds);
-
-				ps.executeUpdate();
-			}
-			finally {
-				DataAccess.cleanUp(con, ps);
-			}
-		}
-
-		protected long getActionBitwiseValue(String action) throws Exception {
-			Connection con = null;
-			PreparedStatement ps = null;
-			ResultSet rs = null;
-
-			try {
-				con = DataAccess.getUpgradeOptimizedConnection();
-
-				StringBundler sb = new StringBundler(4);
-
-				sb.append("select bitwiseValue from ResourceAction where ");
-				sb.append("name = ? and actionId = ?");
-
-				String sql = sb.toString();
-
-				ps = con.prepareStatement(sql);
-
-				ps.setString(1, DLFileEntry.class.getName());
-				ps.setString(2, action);
-
-				rs = ps.executeQuery();
-
-				if (rs.next()) {
-					return rs.getLong("bitwiseValue");
-				}
-
-				return 0;
-			}
-			finally {
-				DataAccess.cleanUp(con, ps, rs);
-			}
+			return resourceAction.getBitwiseValue();
 		}
 
 		protected long getActionIdsLong(String[] actions) throws Exception {
@@ -2008,37 +2301,19 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 		}
 
 		protected long getDLFolderId(
-				long groupId, long parentFolderId, String name)
-			throws Exception {
-
-			Connection con = null;
-			PreparedStatement ps = null;
-			ResultSet rs = null;
+			long groupId, long parentFolderId, String name) {
 
 			try {
-				con = DataAccess.getUpgradeOptimizedConnection();
+				DLFolder dlFolder = _dlFolderLocalService.getFolder(
+					groupId, parentFolderId, name);
 
-				String sql =
-					"select folderId from DLFolder where groupId = ? and " +
-					"parentFolderId = ? and name = ?";
-
-				ps = con.prepareStatement(sql);
-
-				ps.setLong(1, groupId);
-				ps.setLong(2, parentFolderId);
-				ps.setString(3, name);
-
-				rs = ps.executeQuery();
-
-				if (rs.next()) {
-					return rs.getLong("folderId");
-				}
+				return dlFolder.getFolderId();
 			}
-			finally {
-				DataAccess.cleanUp(con, ps, rs);
-			}
+			catch (PortalException pe) {
+				_log.error("Unable to get DLfolder ID " + pe);
 
-			return 0;
+				return 0;
+			}
 		}
 
 		protected String getExtension(String fileName) {
@@ -2051,39 +2326,6 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 			}
 
 			return StringUtil.toLowerCase(extension);
-		}
-
-		protected long getRoleId(String roleName) throws Exception {
-			Connection con = null;
-			PreparedStatement ps = null;
-			ResultSet rs = null;
-
-			try {
-				con = DataAccess.getUpgradeOptimizedConnection();
-
-				StringBundler sb = new StringBundler(4);
-
-				sb.append("select roleId from role_ where companyId = ? and ");
-				sb.append("name = ?");
-
-				String sql = sb.toString();
-
-				ps = con.prepareStatement(sql);
-
-				ps.setLong(1, _companyId);
-				ps.setString(2, roleName);
-
-				rs = ps.executeQuery();
-
-				if (rs.next()) {
-					return rs.getLong("roleId");
-				}
-
-				return 0;
-			}
-			finally {
-				DataAccess.cleanUp(con, ps, rs);
-			}
 		}
 
 		protected String toJSON(long groupId, String fileEntryUuid) {
@@ -2133,24 +2375,21 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 
 				// Resource permissions
 
-				addResourcePermissions(
-					0, increment(), _companyId, DLFileEntry.class.getName(),
-					ResourceConstants.SCOPE_INDIVIDUAL, fileEntryId,
-					getRoleId(RoleConstants.OWNER), _userId,
+				_resourcePermissionLocalService.addResourcePermissions(
+					DLFileEntry.class.getName(), RoleConstants.OWNER,
+					ResourceConstants.SCOPE_INDIVIDUAL,
 					getActionIdsLong(_ownerPermissions));
 
 				if (_groupId > 0) {
-					addResourcePermissions(
-						0, increment(), _companyId, DLFileEntry.class.getName(),
-						ResourceConstants.SCOPE_INDIVIDUAL, fileEntryId,
-						getRoleId(RoleConstants.SITE_MEMBER), 0,
+					_resourcePermissionLocalService.addResourcePermissions(
+						DLFileEntry.class.getName(), RoleConstants.SITE_MEMBER,
+						ResourceConstants.SCOPE_INDIVIDUAL,
 						getActionIdsLong(_groupPermissions));
 				}
 
-				addResourcePermissions(
-					0, increment(), _companyId, DLFileEntry.class.getName(),
-					ResourceConstants.SCOPE_INDIVIDUAL, fileEntryId,
-					getRoleId(RoleConstants.GUEST), 0,
+				_resourcePermissionLocalService.addResourcePermissions(
+					DLFileEntry.class.getName(), RoleConstants.GUEST,
+					ResourceConstants.SCOPE_INDIVIDUAL,
 					getActionIdsLong(_guestPermissions));
 
 				// File version

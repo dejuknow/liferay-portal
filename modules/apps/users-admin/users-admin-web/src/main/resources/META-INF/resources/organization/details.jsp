@@ -54,7 +54,7 @@ User selUser = (User)request.getAttribute("user.selUser");
 	/>
 </liferay-util:buffer>
 
-<liferay-ui:error-marker key="errorSection" value="details" />
+<liferay-ui:error-marker key="<%= WebKeys.ERROR_SECTION %>" value="details" />
 
 <aui:model-context bean="<%= organization %>" model="<%= Organization.class %>" />
 
@@ -82,7 +82,7 @@ User selUser = (User)request.getAttribute("user.selUser");
 		</c:choose>
 
 		<c:choose>
-			<c:when test="<%= organization == null %>">
+			<c:when test="<%= organization == null && PropsValues.ORGANIZATIONS_TYPES.length > 1 %>">
 				<aui:select name="type">
 
 					<%
@@ -96,6 +96,9 @@ User selUser = (User)request.getAttribute("user.selUser");
 					%>
 
 				</aui:select>
+			</c:when>
+			<c:when test="<%= organization == null %>">
+				<aui:input name="type" type="hidden" value="<%= PropsValues.ORGANIZATIONS_TYPES[0] %>" />
 			</c:when>
 			<c:otherwise>
 				<aui:input name="typeLabel" type="resource" value="<%= LanguageUtil.get(request, organization.getType()) %>" />
@@ -179,10 +182,10 @@ if (parentOrganization != null) {
 <liferay-ui:search-container
 	headerNames="name,type,null"
 	id="parentOrganizationSearchContainer"
+	total="<%= parentOrganizations.size() %>"
 >
 	<liferay-ui:search-container-results
 		results="<%= parentOrganizations %>"
-		total="<%= parentOrganizations.size() %>"
 	/>
 
 	<liferay-ui:search-container-row
@@ -214,7 +217,7 @@ if (parentOrganization != null) {
 		</liferay-ui:search-container-column-text>
 	</liferay-ui:search-container-row>
 
-	<liferay-ui:search-iterator paginate="<%= false %>" />
+	<liferay-ui:search-iterator markupView="lexicon" paginate="<%= false %>" />
 </liferay-ui:search-container>
 
 <liferay-ui:icon

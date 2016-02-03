@@ -31,17 +31,7 @@
 </tr>
 <tr>
 	<td>SEARCH_TITLE</td>
-	<td>//div[@data-title='${key_webContentTitle}']/a/div/span[contains(@class,'entry-title')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>SEARCH_BODY</td>
-	<td>//div[@data-title='${key_webContentTitle}']/a/div/span[contains(@class,'entry-description')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>SEARCH_FOLDER</td>
-	<td>//div[@class='entry-metadata']//dl[contains(.,'Folder')]/dd[contains(.,'${key_webContentFolder}')]</td>
+	<td>//li[contains(@data-title,'${key_webContentTitle}')]//div[@class=' list-group-item-content']//a</td>
 	<td></td>
 </tr>
 <tr>
@@ -113,7 +103,7 @@
 </tr>
 <tr>
 	<td>ENTRY_ICON_WORKFLOW_STATUS</td>
-	<td>//div[@data-title='${key_webContentTitle}']//span[@class='workflow-status']/strong</td>
+	<td>//div[@data-title='${key_webContentTitle}']//span[@class='workflow-status']/span</td>
 	<td></td>
 </tr>
 <tr>
@@ -158,8 +148,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>ENTRY_DESCRIPTIVE_LAST_UPDATED</td>
-	<td>//li[contains(@data-title,'${key_webContentTitle}')]//h6[contains(.,'Last updated')]</td>
+	<td>ENTRY_DESCRIPTIVE_LAST_MODIFIED</td>
+	<td>//*[@data-qa-id='row' and contains(.,'${key_webContentTitle}')]//h6[contains(.,'modified')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -189,7 +179,7 @@
 </tr>
 <tr>
 	<td>ENTRY_DESCRIPTIVE_WORKFLOW_STATUS</td>
-	<td>//li[contains(@data-title,'${key_webContentTitle}')]//div[@class='status']</td>
+	<td>//li[contains(@data-title,'${key_webContentTitle}')]//span[@class='workflow-status']/span</td>
 	<td></td>
 </tr>
 <tr>

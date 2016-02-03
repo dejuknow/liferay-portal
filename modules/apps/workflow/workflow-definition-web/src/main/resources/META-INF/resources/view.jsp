@@ -17,25 +17,106 @@
 <%@ include file="/init.jsp" %>
 
 <%
-List<WorkflowDefinition> workflowDefinitions = (List<WorkflowDefinition>)request.getAttribute(WebKeys.WORKFLOW_DEFINITIONS);
+int cur = ParamUtil.getInteger(request, SearchContainer.DEFAULT_CUR_PARAM);
+int delta = ParamUtil.getInteger(request, SearchContainer.DEFAULT_DELTA_PARAM);
 
-PortletURL portletURL = renderResponse.createRenderURL();
+String navigation = ParamUtil.getString(request, "navigation", "definitions");
+String definitionsNavigation = ParamUtil.getString(request, "definitionsNavigation");
 
-portletURL.setParameter("mvcPath", "/view.jsp");
+String orderByCol = ParamUtil.getString(request, "orderByCol", "name");
+String orderByType = ParamUtil.getString(request, "orderByType", "asc");
+
+PortletURL navigationPortletURL = renderResponse.createRenderURL();
+
+navigationPortletURL.setParameter("mvcPath", "/view.jsp");
+
+if (delta > 0) {
+	navigationPortletURL.setParameter("delta", String.valueOf(delta));
+}
+
+navigationPortletURL.setParameter("orderBycol", orderByCol);
+navigationPortletURL.setParameter("orderByType", orderByType);
+
+PortletURL portletURL = PortletURLUtil.clone(navigationPortletURL, liferayPortletResponse);
+
+portletURL.setParameter("definitionsNavigation", definitionsNavigation);
+
+PortletURL displayStyleURL = PortletURLUtil.clone(portletURL, liferayPortletResponse);
+
+if (cur > 0) {
+	displayStyleURL.setParameter("cur", String.valueOf(cur));
+}
+
+PortletURL searchURL = renderResponse.createRenderURL();
+
+searchURL.setParameter("groupId", String.valueOf(themeDisplay.getScopeGroupId()));
+searchURL.setParameter("mvcPath", "/view.jsp");
+
+PortletURL viewDefinitionsURL = renderResponse.createRenderURL();
+
+viewDefinitionsURL.setParameter("navigation", "definitions");
+
+WorkflowDefinitionSearch workflowDefinitionSearch = new WorkflowDefinitionSearch(renderRequest, portletURL);
 %>
 
 <liferay-ui:error exception="<%= RequiredWorkflowDefinitionException.class %>" message="you-cannot-deactivate-or-delete-this-definition" />
 
 <liferay-util:include page="/add_button.jsp" servletContext="<%= application %>" />
 
-<div class="container-fluid-1280">
+<aui:nav-bar cssClass="collapse-basic-search" markupView="lexicon">
+	<aui:nav cssClass="navbar-nav">
+		<aui:nav-item
+			href="<%= viewDefinitionsURL %>"
+			label="definitions"
+			selected='<%= navigation.equals("definitions") %>'
+		/>
+	</aui:nav>
+	<aui:nav-bar-search>
+		<aui:form action="<%= searchURL.toString() %>" method="post" name="fm1">
+			<liferay-util:include page="/workflow_definition_search.jsp" servletContext="<%= application %>" />
+		</aui:form>
+	</aui:nav-bar-search>
+</aui:nav-bar>
+
+<liferay-frontend:management-bar
+	searchContainerId="workflowDefinitions"
+	>
+	<liferay-frontend:management-bar-buttons>
+		<liferay-frontend:management-bar-display-buttons
+			displayViews='<%= new String[] {"list"} %>'
+			portletURL="<%= displayStyleURL %>"
+			selectedDisplayStyle="list"
+		/>
+	</liferay-frontend:management-bar-buttons>
+	<liferay-frontend:management-bar-filters>
+		<liferay-frontend:management-bar-navigation
+			navigationKeys='<%= new String[] {"all"} %>'
+			navigationParam="definitionsNavigation"
+			portletURL="<%= navigationPortletURL %>"
+		/>
+
+		<liferay-frontend:management-bar-sort
+			orderByCol="<%= orderByCol %>"
+			orderByType="<%= orderByType %>"
+			orderColumns='<%= new String[] {"active", "name", "title"} %>'
+			portletURL="<%= portletURL %>"
+		/>
+	</liferay-frontend:management-bar-filters>
+</liferay-frontend:management-bar>
+
+<div class="container-fluid-1280 workflow-definition-container">
 	<liferay-ui:search-container
 		emptyResultsMessage="no-workflow-definitions-are-defined"
-		iteratorURL="<%= portletURL %>"
-		total="<%= workflowDefinitions.size() %>"
+		id="workflowDefinitions"
+		searchContainer="<%= workflowDefinitionSearch %>"
 	>
+
+		<%
+		request.setAttribute(WebKeys.SEARCH_CONTAINER, searchContainer);
+		%>
+
 		<liferay-ui:search-container-results
-			results="<%= ListUtil.subList(workflowDefinitions, searchContainer.getStart(), searchContainer.getEnd()) %>"
+			results="<%= workflowDefinitionDisplayContext.getSearchContainerResults(searchContainer) %>"
 		/>
 
 		<liferay-ui:search-container-row
@@ -45,22 +126,22 @@ portletURL.setParameter("mvcPath", "/view.jsp");
 
 			<liferay-ui:search-container-column-text
 				name="name"
-				value="<%= HtmlUtil.escape(workflowDefinition.getName()) %>"
+				value="<%= workflowDefinitionDisplayContext.getName(workflowDefinition) %>"
 			/>
 
 			<liferay-ui:search-container-column-text
 				name="title"
-				value="<%= HtmlUtil.escape(workflowDefinition.getTitle(themeDisplay.getLanguageId())) %>"
+				value="<%= workflowDefinitionDisplayContext.getTitle(workflowDefinition) %>"
 			/>
 
 			<liferay-ui:search-container-column-text
 				name="version"
-				value="<%= String.valueOf(workflowDefinition.getVersion()) %>"
+				value="<%= workflowDefinitionDisplayContext.getVersion(workflowDefinition) %>"
 			/>
 
 			<liferay-ui:search-container-column-text
 				name="active"
-				value='<%= workflowDefinition.isActive() ? LanguageUtil.get(request, "yes") : LanguageUtil.get(request, "no") %>'
+				value="<%= workflowDefinitionDisplayContext.getActive(workflowDefinition) %>"
 			/>
 
 			<liferay-ui:search-container-column-jsp

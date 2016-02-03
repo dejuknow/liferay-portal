@@ -67,7 +67,7 @@
 <!--DOCUMENT_INFO-->
 <tr>
 	<td>DOCUMENT_INFO_TITLE</td>
-	<td>//div[@class='document-info']/h2[@class='document-title']</td>
+	<td>//div[contains(@class,'document-info')]/h2[contains(@title,'${key_dmDocumentTitle}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -82,7 +82,7 @@
 </tr>
 <tr>
 	<td>DOCUMENT_INFO_RATING</td>
-	<td>//div[@class='document-info']/span[@class='lfr-asset-ratings']</td>
+	<td>//div[contains(@class,'document-info')]/span[@class='lfr-asset-ratings']</td>
 	<td></td>
 </tr>
 <tr>
@@ -97,22 +97,27 @@
 </tr>
 <tr>
 	<td>DOCUMENT_INFO_LINKS</td>
-	<td>//div[@class='document-info']/div[@class='entry-links']</td>
+	<td>//div[contains(@class,'document-info')]/div[@class='entry-links']</td>
 	<td></td>
 </tr>
 <tr>
 	<td>DOCUMENT_INFO_DESCRIPTION</td>
-	<td>//div[@class='document-info']/span[@class='document-description']</td>
+	<td>//div[contains(@class,'document-info')]/span[@class='document-description']</td>
 	<td></td>
 </tr>
 <tr>
 	<td>DOCUMENT_INFO_CATEGORIES</td>
-	<td>//div[@class='document-info']/div[@class='lfr-asset-categories']</td>
+	<td>//div[contains(@class,'document-info')]/div[@class='lfr-asset-categories']</td>
 	<td></td>
 </tr>
 <tr>
 	<td>DOCUMENT_INFO_TAGS</td>
-	<td>//div[@class='document-info']/div[@class='lfr-asset-tags']</td>
+	<td>//div[contains(@class,'document-info')]/div[@class='lfr-asset-tags']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>DOCUMENT_INFO_URL_LINK</td>
+	<td>//div[@class='asset-details-content']//span/a[@class='show-url-file']</td>
 	<td></td>
 </tr>
 <tr>
@@ -131,8 +136,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>DOCUMENT_INFO_DATE</td>
-	<td>//div[contains(@class,'lfr-asset-icon') and contains(@class,'icon-calendar')]</td>
+	<td>DOCUMENT_INFO_CREATED_DATE</td>
+	<td>//div[contains(@class,'sidebar-body') and contains(.,'Created')]//p</td>
 	<td></td>
 </tr>
 <tr>
@@ -156,6 +161,11 @@
 	<td></td>
 </tr>
 <!--DOCUMENT_DETAILS-->
+<tr>
+	<td>DOCUMENT_DETAILS_DROPDOWN</td>
+	<td>//li/a[contains(@class,'dropdown-toggle')]/span[contains(.,'Details')]</td>
+	<td></td>
+</tr>
 <tr>
 	<td>DOCUMENT_DETAILS_VERSION</td>
 	<td>//h3[contains(@class,'version') and not(contains(@class,'icon-lock'))]</td>
@@ -188,12 +198,17 @@
 </tr>
 <tr>
 	<td>DOCUMENT_DETAILS_DOWNLOAD</td>
-	<td>//div[@class='asset-details-content']//span[@class='download-document']/span/a/span</td>
+	<td>//span[@class='download-document']/span/a/span[contains(.,'Download (${key_dmDocumentSize}KB)')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>DOCUMENT_DETAILS_URL</td>
 	<td>//div[@class='asset-details-content']//span[@class='webdav-url']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>DOCUMENT_DETAILS_IMAGE_PREVIEW</td>
+	<td>//div[contains(@class,'preview-file-image-container')]/img</td>
 	<td></td>
 </tr>
 <tr>
@@ -210,6 +225,32 @@
 <tr>
 	<td></td>
 	<td></td>
+	<td></td>
+</tr>
+<!--MARKETING-->
+<tr>
+	<td>MARKETING_SELECT</td>
+	<td>//div[@class='lfr-ddm-container']//div[contains(.,'${key_marketingSelect}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>MARKETING_CAMPAIGN_THEME</td>
+	<td>//div[@class='lfr-ddm-container']//div[contains(.,'${key_campaignTheme}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>MARKETING_NEEDS_LEGAL_REVIEW</td>
+	<td>//div[@class='lfr-ddm-container']//div[contains(.,'${key_legalReview}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>MARKETING_BANNER_NAME</td>
+	<td>//div[@class='lfr-ddm-container']//div[contains(.,'${key_bannerName}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>MARKETING_BANNER_DESCRIPTION</td>
+	<td>//div[@class='lfr-ddm-container']//div[contains(.,'${key_bannerDescription}')]</td>
 	<td></td>
 </tr>
 <!--METADATA_PANEL-->
@@ -288,40 +329,21 @@
 	<td></td>
 	<td></td>
 </tr>
-<!--VERSION_HISTORY_TABLE-->
+<!--SOCIAL_OFFICE_RATING-->
 <tr>
-	<td>VERSION_HISTORY_TABLE_CHECKBOX</td>
-	<td>//td//input</td>
+	<td>SOCIAL_OFFICE_AVERAGE_RATING_STAR_ICON_PNG</td>
+	<td>so/icons/average_rating_star_icon.png</td>
 	<td></td>
 </tr>
 <tr>
-	<td>VERSION_HISTORY_TABLE_VERSION</td>
-	<td>//td[contains(.,'.')]</td>
+	<td></td>
+	<td></td>
 	<td></td>
 </tr>
+<!--VIDEO_GENERATION-->
 <tr>
-	<td>VERSION_HISTORY_TABLE_VERSION_GENERIC</td>
-	<td>//td[contains(.,'${key_dmDocumentVersionNumber}')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>VERSION_HISTORY_TABLE_DATE</td>
-	<td>//td[contains(.,'Ago')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>VERSION_HISTORY_TABLE_SIZE</td>
-	<td>//td[contains(.,'KB')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>VERSION_HISTORY_TABLE_STATUS</td>
-	<td>//td//span[@class='workflow-status']</td>
-	<td></td>
-</tr>
-<tr>
-	<td>VERSION_HISTORY_TABLE_DROPDOWN</td>
-	<td>//tr[contains(.,'${key_dmDocumentVersionNumber}')]/td[5]/div/a/i</td>
+	<td>VIDEO_GENERATION_THUMBNAIL_RESOLUTION</td>
+	<td>//head/title[contains(.,'${key_videoGenerationThumbnailResolution}')]</td>
 	<td></td>
 </tr>
 </tbody>

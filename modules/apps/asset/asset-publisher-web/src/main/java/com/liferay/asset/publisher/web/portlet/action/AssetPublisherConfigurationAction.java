@@ -19,6 +19,7 @@ import com.liferay.asset.publisher.web.constants.AssetPublisherPortletKeys;
 import com.liferay.asset.publisher.web.util.AssetPublisherUtil;
 import com.liferay.portal.kernel.portlet.ConfigurationAction;
 import com.liferay.portal.kernel.portlet.DefaultConfigurationAction;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.ArrayUtil;
@@ -37,7 +38,6 @@ import com.liferay.portal.model.Layout;
 import com.liferay.portal.model.LayoutRevision;
 import com.liferay.portal.model.LayoutSetBranch;
 import com.liferay.portal.model.LayoutTypePortletConstants;
-import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.service.GroupLocalService;
 import com.liferay.portal.service.LayoutLocalService;
 import com.liferay.portal.service.LayoutRevisionLocalService;
@@ -45,8 +45,8 @@ import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.PortletPreferencesImpl;
 import com.liferay.portlet.asset.AssetRendererFactoryRegistryUtil;
-import com.liferay.portlet.asset.AssetTagException;
-import com.liferay.portlet.asset.DuplicateQueryRuleException;
+import com.liferay.portlet.asset.exception.AssetTagException;
+import com.liferay.portlet.asset.exception.DuplicateQueryRuleException;
 import com.liferay.portlet.asset.model.AssetQueryRule;
 import com.liferay.portlet.asset.model.AssetRendererFactory;
 import com.liferay.portlet.asset.service.AssetTagLocalService;
@@ -280,7 +280,7 @@ public class AssetPublisherConfigurationAction
 			defaultAssetTypeId = GetterUtil.getLong(classNameIds[0]);
 		}
 
-		if (defaultAssetTypeId <= 0 ) {
+		if (defaultAssetTypeId <= 0) {
 			return null;
 		}
 
@@ -603,7 +603,15 @@ public class AssetPublisherConfigurationAction
 		String[] classNameIds = StringUtil.split(
 			getParameter(actionRequest, "classNameIds"));
 		String[] classTypeIds = getClassTypeIds(actionRequest, classNameIds);
+
 		String[] extensions = actionRequest.getParameterValues("extensions");
+
+		if ((extensions.length == 1) &&
+			extensions[0].equals(Boolean.FALSE.toString())) {
+
+			extensions = new String[0];
+		}
+
 		boolean subtypeFieldsFilterEnabled = getSubtypesFieldsFilterEnabled(
 			actionRequest, classNameIds);
 

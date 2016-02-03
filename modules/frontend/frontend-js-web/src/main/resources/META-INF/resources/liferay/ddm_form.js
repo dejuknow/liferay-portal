@@ -19,6 +19,8 @@ AUI.add(
 
 		var TPL_REPEATABLE_PLACEHOLDER = '<div class="lfr-ddm-repeatable-placeholder"></div>';
 
+		var TPL_REQUIRED_MARK = '<span class="icon-asterisk text-warning"><span class="hide-accessible">' + Liferay.Language.get('required') + '</span></span>';
+
 		var FieldTypes = Liferay.namespace('DDM.FieldTypes');
 
 		var getFieldClass = function(type) {
@@ -506,10 +508,14 @@ AUI.add(
 							labelNode.html(A.Escape.html(label));
 						}
 
+						var fieldDefinition = instance.getFieldDefinition();
+
+						if (fieldDefinition.required) {
+							labelNode.append(TPL_REQUIRED_MARK);
+						}
+
 						if (tipNode) {
 							var defaultLocale = instance.getDefaulLocale();
-
-							var fieldDefinition = instance.getFieldDefinition();
 
 							var tipsMap = fieldDefinition.tip;
 
@@ -1082,6 +1088,7 @@ AUI.add(
 												{
 													groupId: itemValue.groupId,
 													title: itemValue.title,
+													type: itemValue.type,
 													uuid: itemValue.uuid
 												}
 											);
@@ -1163,7 +1170,7 @@ AUI.add(
 					getDocumentLibrarySelectorURL: function() {
 						var instance = this;
 
-						return instance.getDocumentLibraryURL('com.liferay.item.selector.criteria.image.criterion.ImageItemSelectorCriterion');
+						return instance.getDocumentLibraryURL('com.liferay.journal.item.selector.criterion.JournalItemSelectorCriterion,com.liferay.item.selector.criteria.image.criterion.ImageItemSelectorCriterion');
 					},
 
 					getValue: function() {

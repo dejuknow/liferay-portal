@@ -18,6 +18,14 @@ import com.liferay.portal.kernel.bean.BeanPropertiesUtil;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.security.auth.PasswordModificationThreadLocal;
+import com.liferay.portal.kernel.security.exportimport.UserOperation;
+import com.liferay.portal.kernel.security.ldap.LDAPSettings;
+import com.liferay.portal.kernel.security.ldap.Modifications;
+import com.liferay.portal.kernel.security.ldap.PortalLDAP;
+import com.liferay.portal.kernel.security.ldap.PortalToLDAPConverter;
+import com.liferay.portal.kernel.security.pwd.PasswordEncryptor;
+import com.liferay.portal.kernel.security.pwd.PasswordEncryptorUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
@@ -31,13 +39,6 @@ import com.liferay.portal.model.Contact;
 import com.liferay.portal.model.Image;
 import com.liferay.portal.model.User;
 import com.liferay.portal.model.UserGroup;
-import com.liferay.portal.security.exportimport.UserOperation;
-import com.liferay.portal.security.ldap.LDAPSettings;
-import com.liferay.portal.security.ldap.Modifications;
-import com.liferay.portal.security.ldap.PortalLDAP;
-import com.liferay.portal.security.ldap.PortalToLDAPConverter;
-import com.liferay.portal.security.pwd.PasswordEncryptor;
-import com.liferay.portal.security.pwd.PasswordEncryptorUtil;
 import com.liferay.portal.service.ImageLocalService;
 import com.liferay.portlet.expando.model.ExpandoBridge;
 import com.liferay.portlet.expando.util.ExpandoConverterUtil;
@@ -65,10 +66,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Marcellus Tavares
  * @author Wesley Gong
  */
-@Component(
-	configurationPid = "com.liferay.portal.authenticator.ldap.configuration.LDAPAuthConfiguration",
-	immediate = true, service = PortalToLDAPConverter.class
-)
+@Component(immediate = true, service = PortalToLDAPConverter.class)
 public class DefaultPortalToLDAPConverter implements PortalToLDAPConverter {
 
 	public DefaultPortalToLDAPConverter() {
@@ -302,8 +300,9 @@ public class DefaultPortalToLDAPConverter implements PortalToLDAPConverter {
 		Modifications modifications = getModifications(
 			user, userMappings, _reservedUserFieldNames);
 
-		if (user.isPasswordModified() &&
-			Validator.isNotNull(user.getPasswordUnencrypted())) {
+		if (PasswordModificationThreadLocal.isPasswordModified() &&
+			Validator.isNotNull(
+				PasswordModificationThreadLocal.getPasswordUnencrypted())) {
 
 			String newPassword = getEncryptedPasswordForLDAP(
 				user, userMappings);
@@ -415,7 +414,8 @@ public class DefaultPortalToLDAPConverter implements PortalToLDAPConverter {
 	protected String getEncryptedPasswordForLDAP(
 		User user, Properties userMappings) {
 
-		String password = user.getPasswordUnencrypted();
+		String password =
+			PasswordModificationThreadLocal.getPasswordUnencrypted();
 
 		if (Validator.isNull(password)) {
 			return password;
@@ -613,14 +613,14 @@ public class DefaultPortalToLDAPConverter implements PortalToLDAPConverter {
 	private static final Log _log = LogFactoryUtil.getLog(
 		DefaultPortalToLDAPConverter.class);
 
-	private volatile ImageLocalService _imageLocalService;
-	private volatile ConfigurationProvider<LDAPAuthConfiguration>
+	private ImageLocalService _imageLocalService;
+	private ConfigurationProvider<LDAPAuthConfiguration>
 		_ldapAuthConfigurationProvider;
-	private volatile ConfigurationProvider<LDAPServerConfiguration>
+	private ConfigurationProvider<LDAPServerConfiguration>
 		_ldapServerConfigurationProvider;
-	private volatile LDAPSettings _ldapSettings;
-	private volatile PasswordEncryptor _passwordEncryptor;
-	private volatile PortalLDAP _portalLDAP;
+	private LDAPSettings _ldapSettings;
+	private PasswordEncryptor _passwordEncryptor;
+	private PortalLDAP _portalLDAP;
 	private final Map<String, String> _reservedContactFieldNames =
 		new HashMap<>();
 	private final Map<String, String> _reservedUserFieldNames = new HashMap<>();

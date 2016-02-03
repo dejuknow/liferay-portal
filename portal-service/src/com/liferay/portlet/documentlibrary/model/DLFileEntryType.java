@@ -16,6 +16,7 @@ package com.liferay.portlet.documentlibrary.model;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.annotation.ImplementationClassName;
 import com.liferay.portal.kernel.util.Accessor;
 import com.liferay.portal.model.PersistedModel;
 
@@ -28,6 +29,7 @@ import com.liferay.portal.model.PersistedModel;
  * @see com.liferay.portlet.documentlibrary.model.impl.DLFileEntryTypeModelImpl
  * @generated
  */
+@ImplementationClassName("com.liferay.portlet.documentlibrary.model.impl.DLFileEntryTypeImpl")
 @ProviderType
 public interface DLFileEntryType extends DLFileEntryTypeModel, PersistedModel {
 	/*
@@ -53,7 +55,7 @@ public interface DLFileEntryType extends DLFileEntryTypeModel, PersistedModel {
 			}
 		};
 
-	public java.util.List<com.liferay.portlet.dynamicdatamapping.DDMStructure> getDDMStructures();
+	public java.util.List<com.liferay.dynamic.data.mapping.kernel.DDMStructure> getDDMStructures();
 
 	public java.lang.String getUnambiguousName(
 		java.util.List<com.liferay.portlet.documentlibrary.model.DLFileEntryType> dlFileEntryTypes,

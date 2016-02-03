@@ -16,8 +16,7 @@ package com.liferay.journal.service;
 
 import aQute.bnd.annotation.ProviderType;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
+import com.liferay.osgi.util.ServiceTrackerFactory;
 
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -65,15 +64,6 @@ public class JournalFeedServiceUtil {
 		getService().deleteFeed(feedId);
 	}
 
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link #deleteFeed(long, String)}
-	*/
-	@Deprecated
-	public static void deleteFeed(long groupId, long feedId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().deleteFeed(groupId, feedId);
-	}
-
 	public static void deleteFeed(long groupId, java.lang.String feedId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		getService().deleteFeed(groupId, feedId);
@@ -87,15 +77,6 @@ public class JournalFeedServiceUtil {
 	public static com.liferay.journal.model.JournalFeed getFeed(long groupId,
 		java.lang.String feedId)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getFeed(groupId, feedId);
-	}
-
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link #getFeed(long, String)}
-	*/
-	@Deprecated
-	public static com.liferay.journal.model.JournalFeed getFeed(long groupId,
-		long feedId) throws com.liferay.portal.kernel.exception.PortalException {
 		return getService().getFeed(groupId, feedId);
 	}
 
@@ -130,21 +111,6 @@ public class JournalFeedServiceUtil {
 		return _serviceTracker.getService();
 	}
 
-	/**
-	 * @deprecated As of 6.2.0
-	 */
-	@Deprecated
-	public void setService(JournalFeedService service) {
-	}
-
-	private static ServiceTracker<JournalFeedService, JournalFeedService> _serviceTracker;
-
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(JournalFeedServiceUtil.class);
-
-		_serviceTracker = new ServiceTracker<JournalFeedService, JournalFeedService>(bundle.getBundleContext(),
-				JournalFeedService.class, null);
-
-		_serviceTracker.open();
-	}
+	private static ServiceTracker<JournalFeedService, JournalFeedService> _serviceTracker =
+		ServiceTrackerFactory.open(JournalFeedService.class);
 }

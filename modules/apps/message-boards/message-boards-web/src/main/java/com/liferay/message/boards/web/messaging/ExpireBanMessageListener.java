@@ -18,7 +18,6 @@ import aQute.bnd.annotation.metatype.Configurable;
 
 import com.liferay.message.boards.configuration.MBConfiguration;
 import com.liferay.portal.kernel.messaging.BaseSchedulerEntryMessageListener;
-import com.liferay.portal.kernel.messaging.Destination;
 import com.liferay.portal.kernel.messaging.DestinationNames;
 import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
@@ -72,13 +71,6 @@ public class ExpireBanMessageListener
 		_mbBanLocalService.expireBans();
 	}
 
-	@Reference(
-		target = "(destination.name=" + DestinationNames.SCHEDULER_DISPATCH + ")",
-		unbind = "-"
-	)
-	protected void setDestination(Destination destination) {
-	}
-
 	@Reference(unbind = "-")
 	protected void setMBBanLocalService(MBBanLocalService mbBanLocalService) {
 		_mbBanLocalService = mbBanLocalService;
@@ -100,8 +92,8 @@ public class ExpireBanMessageListener
 	protected void setTriggerFactory(TriggerFactory triggerFactory) {
 	}
 
-	private volatile MBBanLocalService _mbBanLocalService;
+	private MBBanLocalService _mbBanLocalService;
 	private volatile MBConfiguration _mbConfiguration;
-	private volatile SchedulerEngineHelper _schedulerEngineHelper;
+	private SchedulerEngineHelper _schedulerEngineHelper;
 
 }

@@ -1,53 +1,40 @@
 <definition>
-	<command name="addCP">
-		<var name="key_workflowAssetTitle" value="${workflowAssetTitle}" />
-		<var name="key_workflowComment" value="${workflowComment}" />
-
-		<execute function="Pause" locator1="1000" />
-
+	<command name="_openComments">
 		<if>
-			<equals arg1="${workflowTaskCompleted}" arg2="true" />
+			<condition function="IsElementNotPresent#isNotVisible" locator1="Comments#COMMENT_FIELD" />
 			<then>
-				<execute function="AssertClick" locator1="MenuItem#COMPLETED" value1="Completed" />
-
-				<execute function="AssertClick" locator1="CPMyworkflowtasks#TABLE_GENERIC_ASSET_TITLE" value1="${workflowAssetTitle}" />
+				<execute function="AssertClick" locator1="MyWorkflowTasksTask#COMMENTS" value1="Comments" />
 			</then>
-			<else>
-				<execute function="AssertClick" locator1="MyWorkflowTasks#TABLE_GENERIC_ASSET_TITLE" value1="${workflowAssetTitle}" />
-			</else>
 		</if>
+	</command>
 
-		<execute function="Pause" locator1="1000" />
-
-		<execute function="Click" locator1="Comments#COMMENT_FIELD" />
-
-		<execute function="Type" locator1="Comments#COMMENT_FIELD" value1="${workflowComment}" />
-		<execute function="AssertClick" locator1="Button#REPLY" value1="Reply" />
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
-
+	<command name="_viewBody">
 		<var name="key_entryComment" value="${workflowComment}" />
 
 		<execute function="AssertTextEquals" locator1="Comments#COMMENT_BODY" value1="${workflowComment}" />
 	</command>
 
-	<command name="viewCP">
-		<var name="key_workflowAssetTitle" value="${workflowAssetTitle}" />
-		<var name="key_workflowComment" value="${workflowComment}" />
+	<command name="add">
+		<execute macro="WorkflowComment#_openComments" />
 
-		<if>
-			<equals arg1="${workflowTaskCompleted}" arg2="true" />
-			<then>
-				<execute function="AssertClick" locator1="MenuItem#COMPLETED" value1="Completed" />
+		<execute macro="PageComment#reply">
+			<var name="commentBody" value="${workflowComment}" />
+		</execute>
 
-				<execute function="AssertClick" locator1="CPMyworkflowtasks#TABLE_GENERIC_ASSET_TITLE" value1="${workflowAssetTitle}" />
-			</then>
-			<else>
-				<execute function="AssertClick" locator1="MyWorkflowTasks#TABLE_GENERIC_ASSET_TITLE" value1="${workflowAssetTitle}" />
-			</else>
-		</if>
+		<execute macro="WorkflowComment#_openComments" />
 
-		<var name="key_entryComment" value="${workflowComment}" />
+		<execute macro="Alert#viewRequestCompletedSuccessMessage" />
 
-		<execute function="AssertTextEquals" locator1="Comments#COMMENT_BODY" value1="${workflowComment}" />
+		<execute macro="WorkflowComment#_viewBody">
+			<var name="workflowComment" value="${workflowComment}" />
+		</execute>
+	</command>
+
+	<command name="view">
+		<execute macro="WorkflowComment#_openComments" />
+
+		<execute macro="WorkflowComment#_viewBody">
+			<var name="workflowComment" value="${workflowComment}" />
+		</execute>
 	</command>
 </definition>

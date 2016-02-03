@@ -108,17 +108,17 @@ public class PingbackMethodImpl implements Method {
 				PINGBACK_ALREADY_REGISTERED,
 				"Pingback is already registered: " + dce.getMessage());
 		}
-		catch (InvalidSourceURIException isue) {
+		catch (InvalidSourceURIException isurie) {
 			return XmlRpcUtil.createFault(
-				SOURCE_URI_INVALID, isue.getMessage());
+				SOURCE_URI_INVALID, isurie.getMessage());
 		}
-		catch (DisabledPingbackException pde) {
+		catch (DisabledPingbackException dpe) {
 			return XmlRpcUtil.createFault(
-				XmlRpcConstants.REQUESTED_METHOD_NOT_FOUND, pde.getMessage());
+				XmlRpcConstants.REQUESTED_METHOD_NOT_FOUND, dpe.getMessage());
 		}
-		catch (UnavailableSourceURIException usue) {
+		catch (UnavailableSourceURIException usurie) {
 			return XmlRpcUtil.createFault(
-				SOURCE_URI_DOES_NOT_EXIST, usue.getMessage());
+				SOURCE_URI_DOES_NOT_EXIST, usurie.getMessage());
 		}
 		catch (Exception e) {
 			if (_log.isDebugEnabled()) {
@@ -398,11 +398,11 @@ public class PingbackMethodImpl implements Method {
 	private static final Log _log = LogFactoryUtil.getLog(
 		PingbackMethodImpl.class);
 
-	private volatile BlogsEntryLocalService _blogsEntryLocalService;
+	private BlogsEntryLocalService _blogsEntryLocalService;
 	private final CommentManager _commentManager;
-	private volatile PortletLocalService _portletLocalService;
+	private PortletLocalService _portletLocalService;
 	private String _sourceURI;
 	private String _targetURI;
-	private volatile UserLocalService _userLocalService;
+	private UserLocalService _userLocalService;
 
 }

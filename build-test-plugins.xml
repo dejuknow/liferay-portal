@@ -26,6 +26,8 @@ app.server.jboss.dir=${app.server.dir}
 
 auto.deploy.dir=${auto.deploy.dir}
 
+liferay.home=${liferay.home}
+
 plugins.includes=${plugins.includes}</echo>
 			</then>
 			<else>
@@ -33,6 +35,8 @@ plugins.includes=${plugins.includes}</echo>
 app.server.type=${app.server.type}
 
 auto.deploy.dir=${auto.deploy.dir}
+
+liferay.home=${liferay.home}
 
 plugins.includes=${plugins.includes}</echo>
 			</else>
@@ -128,7 +132,15 @@ app.server.tomcat.dir=${app.server.parent.dir}/tomcat-7.0.42</echo>
 									src="${plugin.war}"
 								/>
 
-								<echo append="true" file="${tstamp.value}/docroot/WEB-INF/src/portlet-ext.properties">${portlet.properties}</echo>
+								<if>
+									<available file="${tstamp.value}/docroot/WEB-INF/src" />
+									<then>
+										<echo append="true" file="${tstamp.value}/docroot/WEB-INF/src/portlet-ext.properties">${portlet.properties}</echo>
+									</then>
+									<else>
+										<echo append="true" file="${tstamp.value}/WEB-INF/classes/portlet-ext.properties">${portlet.properties}</echo>
+									</else>
+								</if>
 
 								<zip
 									basedir="${tstamp.value}"
@@ -256,6 +268,8 @@ app.server.type=${app.server.type}
 
 auto.deploy.dir=${auto.deploy.dir}
 
+liferay.home=${liferay.home}
+
 plugins.includes=${test.plugin}</echo>
 
 		<ant dir="${lp.plugins.dir}/${test.plugin.type}/${test.plugin}" target="clean" inheritAll="false" />
@@ -292,5 +306,17 @@ plugins.includes=${test.plugin}</echo>
 				</antcall>
 			</sequential>
 		</for>
+	</target>
+
+	<target name="test-plugins">
+		<fail message="Please set the property ${lp.plugins.dir}" unless="lp.plugins.dir" />
+
+		<antcall target="record-test-plugin-names">
+			<param name="test.plugin.groups.size" value="1" />
+		</antcall>
+
+		<antcall target="test-plugin-group">
+			<param name="test.plugin.group.index" value="0" />
+		</antcall>
 	</target>
 </project>

@@ -16,6 +16,7 @@ package com.liferay.portal.model;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.annotation.ImplementationClassName;
 import com.liferay.portal.kernel.util.Accessor;
 
 /**
@@ -27,6 +28,7 @@ import com.liferay.portal.kernel.util.Accessor;
  * @see com.liferay.portal.model.impl.UserTrackerModelImpl
  * @generated
  */
+@ImplementationClassName("com.liferay.portal.model.impl.UserTrackerImpl")
 @ProviderType
 public interface UserTracker extends UserTrackerModel, PersistedModel {
 	/*

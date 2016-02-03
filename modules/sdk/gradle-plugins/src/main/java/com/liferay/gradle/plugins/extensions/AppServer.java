@@ -14,7 +14,7 @@
 
 package com.liferay.gradle.plugins.extensions;
 
-import com.liferay.gradle.util.GradleUtil;
+import com.liferay.gradle.plugins.util.GradleUtil;
 import com.liferay.gradle.util.OSDetector;
 
 import java.io.File;
@@ -36,11 +36,15 @@ public class AppServer {
 
 	public AppServer(String name, Project project) {
 		_name = name;
-		_project = project;
+
+		this.project = project;
+	}
+
+	public void addAdditionalDependencies(String configurationName) {
 	}
 
 	public File getBinDir() {
-		return GradleUtil.toFile(_project, _binDir);
+		return GradleUtil.toFile(project, _binDir);
 	}
 
 	public String getCheckPath() {
@@ -48,15 +52,15 @@ public class AppServer {
 	}
 
 	public File getDeployDir() {
-		return GradleUtil.toFile(_project, _deployDir);
+		return GradleUtil.toFile(project, _deployDir);
 	}
 
 	public File getDir() {
-		return GradleUtil.toFile(_project, _dir);
+		return GradleUtil.toFile(project, _dir);
 	}
 
 	public File getLibGlobalDir() {
-		return GradleUtil.toFile(_project, _libGlobalDir);
+		return GradleUtil.toFile(project, _libGlobalDir);
 	}
 
 	public String getName() {
@@ -64,11 +68,11 @@ public class AppServer {
 	}
 
 	public File getPortalDir() {
-		return GradleUtil.toFile(_project, _portalDir);
+		return GradleUtil.toFile(project, _portalDir);
 	}
 
 	public int getPortNumber() {
-		return _portNumber;
+		return GradleUtil.toInteger(_portNumber);
 	}
 
 	public String getStartExecutable() {
@@ -141,7 +145,7 @@ public class AppServer {
 		_portalDir = portalDir;
 	}
 
-	public void setPortNumber(int portNumber) {
+	public void setPortNumber(Object portNumber) {
 		_portNumber = portNumber;
 	}
 
@@ -182,6 +186,8 @@ public class AppServer {
 		}
 	}
 
+	protected final Project project;
+
 	private Object _binDir;
 	private Object _checkPath = "/web/guest";
 	private Object _deployDir;
@@ -189,8 +195,7 @@ public class AppServer {
 	private Object _libGlobalDir;
 	private final String _name;
 	private Object _portalDir;
-	private int _portNumber = 8080;
-	private final Project _project;
+	private Object _portNumber = 8080;
 	private Object _startExecutable;
 	private final List<Object> _startExecutableArgs = new ArrayList<>();
 	private Object _stopExecutable;

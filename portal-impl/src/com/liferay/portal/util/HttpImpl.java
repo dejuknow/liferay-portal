@@ -227,7 +227,7 @@ public class HttpImpl implements Http {
 
 		String anchor = urlArray[1];
 
-		StringBundler sb = new StringBundler(7);
+		StringBundler sb = new StringBundler(6);
 
 		sb.append(url);
 
@@ -1334,13 +1334,13 @@ public class HttpImpl implements Http {
 		}
 
 		try (InputStream inputStream = urlConnection.getInputStream();
-			UnsyncByteArrayOutputStream unsyncByteArrayOutputStream =
-				new UnsyncByteArrayOutputStream()) {
+				UnsyncByteArrayOutputStream unsyncByteArrayOutputStream =
+					new UnsyncByteArrayOutputStream()) {
 
 			byte[] bytes = new byte[512];
 
 			for (int i = inputStream.read(bytes, 0, 512); i != -1;
-				i = inputStream.read(bytes, 0, 512)) {
+					i = inputStream.read(bytes, 0, 512)) {
 
 				unsyncByteArrayOutputStream.write(bytes, 0, i);
 			}
@@ -1807,7 +1807,7 @@ public class HttpImpl implements Http {
 	private final Credentials _proxyCredentials;
 	private final HttpClient _proxyHttpClient = new HttpClient();
 
-	private class FastProtocolSocketFactory
+	private static class FastProtocolSocketFactory
 		extends DefaultProtocolSocketFactory {
 
 		@Override

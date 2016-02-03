@@ -32,6 +32,7 @@ import com.liferay.portal.kernel.dao.orm.SQLQuery;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.security.permission.InlineSQLHelperUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringBundler;
@@ -39,9 +40,10 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.security.permission.InlineSQLHelperUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextThreadLocal;
+import com.liferay.portal.service.persistence.CompanyProvider;
+import com.liferay.portal.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 
@@ -212,7 +214,7 @@ public class JournalFeedPersistenceImpl extends BasePersistenceImpl<JournalFeed>
 
 			if (orderByComparator != null) {
 				query = new StringBundler(3 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(3);
@@ -294,7 +296,7 @@ public class JournalFeedPersistenceImpl extends BasePersistenceImpl<JournalFeed>
 	 * @param uuid the uuid
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching journal feed
-	 * @throws com.liferay.journal.NoSuchFeedException if a matching journal feed could not be found
+	 * @throws NoSuchFeedException if a matching journal feed could not be found
 	 */
 	@Override
 	public JournalFeed findByUuid_First(String uuid,
@@ -343,7 +345,7 @@ public class JournalFeedPersistenceImpl extends BasePersistenceImpl<JournalFeed>
 	 * @param uuid the uuid
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching journal feed
-	 * @throws com.liferay.journal.NoSuchFeedException if a matching journal feed could not be found
+	 * @throws NoSuchFeedException if a matching journal feed could not be found
 	 */
 	@Override
 	public JournalFeed findByUuid_Last(String uuid,
@@ -400,7 +402,7 @@ public class JournalFeedPersistenceImpl extends BasePersistenceImpl<JournalFeed>
 	 * @param uuid the uuid
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next journal feed
-	 * @throws com.liferay.journal.NoSuchFeedException if a journal feed with the primary key could not be found
+	 * @throws NoSuchFeedException if a journal feed with the primary key could not be found
 	 */
 	@Override
 	public JournalFeed[] findByUuid_PrevAndNext(long id, String uuid,
@@ -439,8 +441,9 @@ public class JournalFeedPersistenceImpl extends BasePersistenceImpl<JournalFeed>
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+			query = new StringBundler(4 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
 			query = new StringBundler(3);
@@ -645,12 +648,12 @@ public class JournalFeedPersistenceImpl extends BasePersistenceImpl<JournalFeed>
 			new String[] { String.class.getName(), Long.class.getName() });
 
 	/**
-	 * Returns the journal feed where uuid = &#63; and groupId = &#63; or throws a {@link com.liferay.journal.NoSuchFeedException} if it could not be found.
+	 * Returns the journal feed where uuid = &#63; and groupId = &#63; or throws a {@link NoSuchFeedException} if it could not be found.
 	 *
 	 * @param uuid the uuid
 	 * @param groupId the group ID
 	 * @return the matching journal feed
-	 * @throws com.liferay.journal.NoSuchFeedException if a matching journal feed could not be found
+	 * @throws NoSuchFeedException if a matching journal feed could not be found
 	 */
 	@Override
 	public JournalFeed findByUUID_G(String uuid, long groupId)
@@ -1022,7 +1025,7 @@ public class JournalFeedPersistenceImpl extends BasePersistenceImpl<JournalFeed>
 
 			if (orderByComparator != null) {
 				query = new StringBundler(4 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(4);
@@ -1109,7 +1112,7 @@ public class JournalFeedPersistenceImpl extends BasePersistenceImpl<JournalFeed>
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching journal feed
-	 * @throws com.liferay.journal.NoSuchFeedException if a matching journal feed could not be found
+	 * @throws NoSuchFeedException if a matching journal feed could not be found
 	 */
 	@Override
 	public JournalFeed findByUuid_C_First(String uuid, long companyId,
@@ -1165,7 +1168,7 @@ public class JournalFeedPersistenceImpl extends BasePersistenceImpl<JournalFeed>
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching journal feed
-	 * @throws com.liferay.journal.NoSuchFeedException if a matching journal feed could not be found
+	 * @throws NoSuchFeedException if a matching journal feed could not be found
 	 */
 	@Override
 	public JournalFeed findByUuid_C_Last(String uuid, long companyId,
@@ -1228,7 +1231,7 @@ public class JournalFeedPersistenceImpl extends BasePersistenceImpl<JournalFeed>
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next journal feed
-	 * @throws com.liferay.journal.NoSuchFeedException if a journal feed with the primary key could not be found
+	 * @throws NoSuchFeedException if a journal feed with the primary key could not be found
 	 */
 	@Override
 	public JournalFeed[] findByUuid_C_PrevAndNext(long id, String uuid,
@@ -1267,11 +1270,12 @@ public class JournalFeedPersistenceImpl extends BasePersistenceImpl<JournalFeed>
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+			query = new StringBundler(5 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
-			query = new StringBundler(3);
+			query = new StringBundler(4);
 		}
 
 		query.append(_SQL_SELECT_JOURNALFEED_WHERE);
@@ -1595,7 +1599,7 @@ public class JournalFeedPersistenceImpl extends BasePersistenceImpl<JournalFeed>
 
 			if (orderByComparator != null) {
 				query = new StringBundler(3 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(3);
@@ -1663,7 +1667,7 @@ public class JournalFeedPersistenceImpl extends BasePersistenceImpl<JournalFeed>
 	 * @param groupId the group ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching journal feed
-	 * @throws com.liferay.journal.NoSuchFeedException if a matching journal feed could not be found
+	 * @throws NoSuchFeedException if a matching journal feed could not be found
 	 */
 	@Override
 	public JournalFeed findByGroupId_First(long groupId,
@@ -1713,7 +1717,7 @@ public class JournalFeedPersistenceImpl extends BasePersistenceImpl<JournalFeed>
 	 * @param groupId the group ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching journal feed
-	 * @throws com.liferay.journal.NoSuchFeedException if a matching journal feed could not be found
+	 * @throws NoSuchFeedException if a matching journal feed could not be found
 	 */
 	@Override
 	public JournalFeed findByGroupId_Last(long groupId,
@@ -1770,7 +1774,7 @@ public class JournalFeedPersistenceImpl extends BasePersistenceImpl<JournalFeed>
 	 * @param groupId the group ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next journal feed
-	 * @throws com.liferay.journal.NoSuchFeedException if a journal feed with the primary key could not be found
+	 * @throws NoSuchFeedException if a journal feed with the primary key could not be found
 	 */
 	@Override
 	public JournalFeed[] findByGroupId_PrevAndNext(long id, long groupId,
@@ -1809,8 +1813,9 @@ public class JournalFeedPersistenceImpl extends BasePersistenceImpl<JournalFeed>
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+			query = new StringBundler(4 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
 			query = new StringBundler(3);
@@ -1962,10 +1967,10 @@ public class JournalFeedPersistenceImpl extends BasePersistenceImpl<JournalFeed>
 
 		if (orderByComparator != null) {
 			query = new StringBundler(3 +
-					(orderByComparator.getOrderByFields().length * 3));
+					(orderByComparator.getOrderByFields().length * 2));
 		}
 		else {
-			query = new StringBundler(3);
+			query = new StringBundler(4);
 		}
 
 		if (getDB().isSupportsInlineDistinct()) {
@@ -2039,7 +2044,7 @@ public class JournalFeedPersistenceImpl extends BasePersistenceImpl<JournalFeed>
 	 * @param groupId the group ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next journal feed
-	 * @throws com.liferay.journal.NoSuchFeedException if a journal feed with the primary key could not be found
+	 * @throws NoSuchFeedException if a journal feed with the primary key could not be found
 	 */
 	@Override
 	public JournalFeed[] filterFindByGroupId_PrevAndNext(long id, long groupId,
@@ -2082,11 +2087,12 @@ public class JournalFeedPersistenceImpl extends BasePersistenceImpl<JournalFeed>
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+			query = new StringBundler(5 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
-			query = new StringBundler(3);
+			query = new StringBundler(4);
 		}
 
 		if (getDB().isSupportsInlineDistinct()) {
@@ -2341,12 +2347,12 @@ public class JournalFeedPersistenceImpl extends BasePersistenceImpl<JournalFeed>
 			new String[] { Long.class.getName(), String.class.getName() });
 
 	/**
-	 * Returns the journal feed where groupId = &#63; and feedId = &#63; or throws a {@link com.liferay.journal.NoSuchFeedException} if it could not be found.
+	 * Returns the journal feed where groupId = &#63; and feedId = &#63; or throws a {@link NoSuchFeedException} if it could not be found.
 	 *
 	 * @param groupId the group ID
 	 * @param feedId the feed ID
 	 * @return the matching journal feed
-	 * @throws com.liferay.journal.NoSuchFeedException if a matching journal feed could not be found
+	 * @throws NoSuchFeedException if a matching journal feed could not be found
 	 */
 	@Override
 	public JournalFeed findByG_F(long groupId, String feedId)
@@ -2785,6 +2791,8 @@ public class JournalFeedPersistenceImpl extends BasePersistenceImpl<JournalFeed>
 
 		journalFeed.setUuid(uuid);
 
+		journalFeed.setCompanyId(companyProvider.getCompanyId());
+
 		return journalFeed;
 	}
 
@@ -2793,7 +2801,7 @@ public class JournalFeedPersistenceImpl extends BasePersistenceImpl<JournalFeed>
 	 *
 	 * @param id the primary key of the journal feed
 	 * @return the journal feed that was removed
-	 * @throws com.liferay.journal.NoSuchFeedException if a journal feed with the primary key could not be found
+	 * @throws NoSuchFeedException if a journal feed with the primary key could not be found
 	 */
 	@Override
 	public JournalFeed remove(long id) throws NoSuchFeedException {
@@ -2805,7 +2813,7 @@ public class JournalFeedPersistenceImpl extends BasePersistenceImpl<JournalFeed>
 	 *
 	 * @param primaryKey the primary key of the journal feed
 	 * @return the journal feed that was removed
-	 * @throws com.liferay.journal.NoSuchFeedException if a journal feed with the primary key could not be found
+	 * @throws NoSuchFeedException if a journal feed with the primary key could not be found
 	 */
 	@Override
 	public JournalFeed remove(Serializable primaryKey)
@@ -3042,11 +3050,11 @@ public class JournalFeedPersistenceImpl extends BasePersistenceImpl<JournalFeed>
 	}
 
 	/**
-	 * Returns the journal feed with the primary key or throws a {@link com.liferay.portal.NoSuchModelException} if it could not be found.
+	 * Returns the journal feed with the primary key or throws a {@link com.liferay.portal.exception.NoSuchModelException} if it could not be found.
 	 *
 	 * @param primaryKey the primary key of the journal feed
 	 * @return the journal feed
-	 * @throws com.liferay.journal.NoSuchFeedException if a journal feed with the primary key could not be found
+	 * @throws NoSuchFeedException if a journal feed with the primary key could not be found
 	 */
 	@Override
 	public JournalFeed findByPrimaryKey(Serializable primaryKey)
@@ -3066,11 +3074,11 @@ public class JournalFeedPersistenceImpl extends BasePersistenceImpl<JournalFeed>
 	}
 
 	/**
-	 * Returns the journal feed with the primary key or throws a {@link com.liferay.journal.NoSuchFeedException} if it could not be found.
+	 * Returns the journal feed with the primary key or throws a {@link NoSuchFeedException} if it could not be found.
 	 *
 	 * @param id the primary key of the journal feed
 	 * @return the journal feed
-	 * @throws com.liferay.journal.NoSuchFeedException if a journal feed with the primary key could not be found
+	 * @throws NoSuchFeedException if a journal feed with the primary key could not be found
 	 */
 	@Override
 	public JournalFeed findByPrimaryKey(long id) throws NoSuchFeedException {
@@ -3315,7 +3323,7 @@ public class JournalFeedPersistenceImpl extends BasePersistenceImpl<JournalFeed>
 
 			if (orderByComparator != null) {
 				query = new StringBundler(2 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 
 				query.append(_SQL_SELECT_JOURNALFEED);
 
@@ -3440,6 +3448,8 @@ public class JournalFeedPersistenceImpl extends BasePersistenceImpl<JournalFeed>
 		finderCache.removeCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 	}
 
+	@ServiceReference(type = CompanyProviderWrapper.class)
+	protected CompanyProvider companyProvider;
 	@ServiceReference(type = EntityCache.class)
 	protected EntityCache entityCache;
 	@ServiceReference(type = FinderCache.class)

@@ -16,7 +16,7 @@ package com.liferay.document.library.web.portlet.action;
 
 import com.liferay.document.library.web.constants.DLPortletKeys;
 import com.liferay.document.library.web.constants.DLWebKeys;
-import com.liferay.document.library.web.portlet.toolbar.item.DLPortletToolbarContributor;
+import com.liferay.document.library.web.portlet.toolbar.contributor.DLPortletToolbarContributor;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
 
 import javax.portlet.PortletException;
@@ -33,7 +33,8 @@ import org.osgi.service.component.annotations.Reference;
 	property = {
 		"javax.portlet.name=" + DLPortletKeys.DOCUMENT_LIBRARY,
 		"javax.portlet.name=" + DLPortletKeys.DOCUMENT_LIBRARY_ADMIN,
-		"mvc.command.name=/", "mvc.command.name=/document_library/view"
+		"mvc.command.name=/", "mvc.command.name=/document_library/view",
+		"mvc.command.name=/document_library/view_folder"
 	},
 	service = MVCRenderCommand.class
 )
@@ -63,6 +64,6 @@ public class DLViewMVCRenderCommand extends GetFolderMVCRenderCommand {
 		_dlPortletToolbarContributor = dlPortletToolbarContributor;
 	}
 
-	private volatile DLPortletToolbarContributor _dlPortletToolbarContributor;
+	private DLPortletToolbarContributor _dlPortletToolbarContributor;
 
 }

@@ -22,6 +22,8 @@ import com.liferay.portal.kernel.util.StringPool;
  */
 public class BackgroundTaskConstants {
 
+	public static final String BACKGROUND_TASK_ID = "backgroundTaskId";
+
 	public static final int ISOLATION_LEVEL_CLASS = 1;
 
 	public static final int ISOLATION_LEVEL_COMPANY = 2;
@@ -29,6 +31,8 @@ public class BackgroundTaskConstants {
 	public static final int ISOLATION_LEVEL_GROUP = 3;
 
 	public static final int ISOLATION_LEVEL_NOT_ISOLATED = 4;
+
+	public static final int ISOLATION_LEVEL_TASK_NAME = 5;
 
 	public static final String LABEL_CANCELLED = "cancelled";
 

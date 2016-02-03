@@ -1,17 +1,6 @@
 <definition>
 	<command name="gotoPG">
-		<execute macro="Page#openURL">
-			<var name="friendlyURL" value="${friendlyURL}" />
-			<var name="pageAccess" value="${pageAccess}" />
-			<var name="pageAccessURL" value="${pageAccessURL}" />
-			<var name="pageStaging" value="${pageStaging}" />
-			<var name="pageStagingURL" value="${pageStagingURL}" />
-			<var name="siteName" value="${siteName}" />
-			<var name="siteNameURL" value="${siteNameURL}" />
-			<var name="siteURL" value="true" />
-			<var name="specificURL" value="${specificURL}" />
-			<var name="virtualHostsURL" value="${virtualHostsURL}" />
-		</execute>
+		<execute macro="Navigator#openURL" />
 
 		<var name="key_pageName" value="${pageName}" />
 
@@ -37,17 +26,8 @@
 	</command>
 
 	<command name="viewLocalizedPG">
-		<execute macro="Page#openURL">
-			<var name="friendlyURL" value="${friendlyURL}" />
-			<var name="pageAccess" value="${pageAccess}" />
-			<var name="pageAccessURL" value="${pageAccessURL}" />
-			<var name="pageStaging" value="${pageStaging}" />
-			<var name="pageStagingURL" value="${pageStagingURL}" />
+		<execute macro="Navigator#openSiteURL">
 			<var name="siteName" value="${siteName}" />
-			<var name="siteNameURL" value="${siteNameURL}" />
-			<var name="siteURL" value="true" />
-			<var name="specificURL" value="${specificURL}" />
-			<var name="virtualHostsURL" value="${virtualHostsURL}" />
 		</execute>
 
 		<execute macro="SOUserBar#showEditControls" />
@@ -249,9 +229,12 @@
 			</else>
 		</if>
 
-		<execute macro="Page#gotoConfigurationCP">
-			<var name="portletName" value="Site Settings" />
-			<var name="siteScopeName" value="${siteName}" />
+		<execute macro="ProductMenu#gotoSite">
+			<var name="site" value="${siteName}" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoSitesConfiguration">
+			<var name="portlet" value="Site Settings" />
 		</execute>
 
 		<if>
@@ -453,7 +436,7 @@
 		<execute function="AssertTextEquals" locator1="SOSite#NAVIGATION_WIKI" value1="Wiki" />
 		<execute function="Click" locator1="SOSite#NAVIGATION_MEMBERS" value1="Members" />
 
-		<execute macro="Page#gotoMyProfile" />
+		<execute macro="UserBar#gotoProfile" />
 
 		<execute function="AssertClick" locator1="SOProfile#PROFILE_INFO_SITES" value1="${siteName}" />
 
@@ -602,7 +585,7 @@
 			</then>
 		</if>
 
-		<execute macro="Page#gotoMyProfile" />
+		<execute macro="UserBar#gotoProfile" />
 
 		<execute function="AssertTextNotPresent" value1="${siteName}" />
 	</command>

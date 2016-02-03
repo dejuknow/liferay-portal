@@ -8,6 +8,11 @@ AUI.add(
 
 		var instanceOf = A.instanceOf;
 		var isArray = Array.isArray;
+
+		var isFormBuilderField = function(value) {
+			return (value instanceof A.FormBuilderField);
+		};
+
 		var isObject = Lang.isObject;
 		var isString = Lang.isString;
 		var isUndefined = Lang.isUndefined;
@@ -15,7 +20,7 @@ AUI.add(
 		var DEFAULTS_FORM_VALIDATOR = A.config.FormValidator;
 
 		var MAP_HIDDEN_FIELD_ATTRS = {
-			checkbox: ['readOnly', 'required'],
+			checkbox: ['readOnly'],
 
 			DEFAULT: ['readOnly', 'width'],
 
@@ -42,7 +47,7 @@ AUI.add(
 						value: {}
 					},
 					name: {
-						validator: A.Lang.isString
+						validator: isString
 					}
 				},
 
@@ -139,8 +144,8 @@ AUI.add(
 							strings: {
 								asc: Liferay.Language.get('ascending'),
 								desc: Liferay.Language.get('descending'),
-								reverseSortBy: Liferay.Language.get('reverse-sort-by-x', ['{column}']),
-								sortBy: Liferay.Language.get('sort-by-x', ['{column}'])
+								reverseSortBy: Lang.sub(Liferay.Language.get('reverse-sort-by-x'), ['{column}']),
+								sortBy: Lang.sub(Liferay.Language.get('sort-by-x'), ['{column}'])
 							}
 						}
 					},
@@ -252,6 +257,7 @@ AUI.add(
 						instance.translationManager.after('defaultLocaleChange', instance._onDefaultLocaleChange, instance);
 						instance.translationManager.after('editingLocaleChange', instance._afterEditingLocaleChange, instance);
 
+						instance.on('drag:drag', A.DD.DDM.syncActiveShims, A.DD.DDM, true);
 						instance.on('model:change', instance._onPropertyModelChange);
 					},
 
@@ -279,6 +285,18 @@ AUI.add(
 						);
 
 						return fields;
+					},
+
+					eachParentField: function(field, fn) {
+						var instance = this;
+
+						var parent = field.get('parent');
+
+						while (isFormBuilderField(parent)) {
+							fn.call(instance, parent);
+
+							parent = parent.get('parent');
+						}
 					},
 
 					getContent: function() {
@@ -472,6 +490,26 @@ AUI.add(
 						}
 					},
 
+					_onMouseOutField: function(event) {
+						var instance = this;
+
+						var field = A.Widget.getByNode(event.currentTarget);
+
+						instance._setInvalidDDHandles(field, 'remove');
+
+						LiferayFormBuilder.superclass._onMouseOutField.apply(instance, arguments);
+					},
+
+					_onMouseOverField: function(event) {
+						var instance = this;
+
+						var field = A.Widget.getByNode(event.currentTarget);
+
+						instance._setInvalidDDHandles(field, 'add');
+
+						LiferayFormBuilder.superclass._onMouseOverField.apply(instance, arguments);
+					},
+
 					_onPropertyModelChange: function(event) {
 						var instance = this;
 
@@ -547,6 +585,45 @@ AUI.add(
 						return LiferayFormBuilder.superclass._setFields.apply(instance, arguments);
 					},
 
+					_setFieldsSortableListConfig: function() {
+						var instance = this;
+
+						var config = LiferayFormBuilder.superclass._setFieldsSortableListConfig.apply(instance, arguments);
+
+						config.dd.plugins = [
+							{
+								cfg: {
+									constrain: '#main-content'
+								},
+								fn: A.Plugin.DDConstrained
+							},
+							{
+								cfg: {
+									horizontal: false,
+									node: '#main-content'
+								},
+								fn: A.Plugin.DDNodeScroll
+							}
+						];
+
+						return config;
+					},
+
+					_setInvalidDDHandles: function(field, type) {
+						var instance = this;
+
+						var methodName = type + 'Invalid';
+
+						instance.eachParentField(
+							field,
+							function(parent) {
+								var parentBB = parent.get('boundingBox');
+
+								parentBB.dd[methodName]('#' + parentBB.attr('id'));
+							}
+						);
+					},
+
 					_toggleInputDirection: function(locale) {
 						var rtl = Liferay.Language.direction[locale] === 'rtl';
 
@@ -612,24 +689,22 @@ AUI.add(
 				return buffer.join('/');
 			},
 
-			normalizeKey: function(str) {
+			normalizeKey: function(key) {
 				var instance = this;
 
-				if (isString(str)) {
-					str = str.trim();
+				key = key.trim();
 
-					for (var i = 0; i < str.length; i++) {
-						var item = str[i];
+				for (var i = 0; i < key.length; i++) {
+					var item = key[i];
 
-						if (!A.Text.Unicode.test(item, 'L') && !A.Text.Unicode.test(item, 'N') && !A.Text.Unicode.test(item, 'Pd')) {
-							str = str.replace(item, STR_SPACE);
-						}
+					if (!A.Text.Unicode.test(item, 'L') && !A.Text.Unicode.test(item, 'N') && !A.Text.Unicode.test(item, 'Pd')) {
+						key = key.replace(item, STR_SPACE);
 					}
-
-					str = Liferay.Util.camelize(str, STR_SPACE);
 				}
 
-				return str;
+				key = Liferay.Util.camelize(key, STR_SPACE);
+
+				return key.replace(/\s+/ig, '');
 			},
 
 			normalizeValue: function(value) {

@@ -95,6 +95,9 @@ public interface ContentTypes {
 
 	public static final String TEXT_JAVASCRIPT = "text/javascript";
 
+	public static final String TEXT_JAVASCRIPT_UTF8 =
+		"text/javascript; charset=UTF-8";
+
 	public static final String TEXT_PLAIN = "text/plain";
 
 	public static final String TEXT_PLAIN_UTF8 = "text/plain; charset=UTF-8";

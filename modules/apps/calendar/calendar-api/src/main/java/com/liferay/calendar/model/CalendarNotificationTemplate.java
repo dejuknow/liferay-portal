@@ -16,6 +16,7 @@ package com.liferay.calendar.model;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.annotation.ImplementationClassName;
 import com.liferay.portal.kernel.util.Accessor;
 import com.liferay.portal.model.PersistedModel;
 
@@ -28,6 +29,7 @@ import com.liferay.portal.model.PersistedModel;
  * @see com.liferay.calendar.model.impl.CalendarNotificationTemplateModelImpl
  * @generated
  */
+@ImplementationClassName("com.liferay.calendar.model.impl.CalendarNotificationTemplateImpl")
 @ProviderType
 public interface CalendarNotificationTemplate
 	extends CalendarNotificationTemplateModel, PersistedModel {

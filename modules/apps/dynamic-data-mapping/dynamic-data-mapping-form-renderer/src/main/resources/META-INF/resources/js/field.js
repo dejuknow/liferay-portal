@@ -183,11 +183,11 @@ AUI.add(
 					getContextValue: function() {
 						var instance = this;
 
-						var value = instance.getLocalizedValue(instance.get('value'));
-
 						var predefinedValue = instance.get('predefinedValue');
 
-						if (!value && predefinedValue) {
+						var value = instance.getLocalizedValue(instance.get('value'));
+
+						if (!value && predefinedValue && !instance.get('readOnly')) {
 							value = instance.getLocalizedValue(predefinedValue);
 						}
 
@@ -300,7 +300,8 @@ AUI.add(
 								name: instance.getQualifiedName(),
 								readOnly: instance.get('readOnly'),
 								value: instance.getContextValue() || '',
-								visible: instance.get('visible')
+								visible: instance.get('visible'),
+								tip: instance.getLocalizedValue(instance.get('tip'))
 							}
 						);
 					},
@@ -392,7 +393,7 @@ AUI.add(
 					_afterValueChange: function() {
 						var instance = this;
 
-						instance.render();
+						instance.setValue(instance.getContextValue());
 					},
 
 					_createContainer: function() {

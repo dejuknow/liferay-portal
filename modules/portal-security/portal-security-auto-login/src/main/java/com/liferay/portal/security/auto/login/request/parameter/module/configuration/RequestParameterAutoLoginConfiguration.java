@@ -16,15 +16,18 @@ package com.liferay.portal.security.auto.login.request.parameter.module.configur
 
 import aQute.bnd.annotation.metatype.Meta;
 
-import com.liferay.configuration.admin.ConfigurationAdmin;
+import com.liferay.portal.metatype.annotations.ExtendedObjectClassDefinition;
 
 /**
  * @author Tomas Polesovsky
  */
-@ConfigurationAdmin(category = "platform")
+@ExtendedObjectClassDefinition(category = "platform")
 @Meta.OCD(
-	id = "com.liferay.portal.security.auto.login.request.parameter.module.configuration.RequestParameterAutoLoginConfiguration"
-)public interface RequestParameterAutoLoginConfiguration {
+	id = "com.liferay.portal.security.auto.login.request.parameter.module.configuration.RequestParameterAutoLoginConfiguration",
+	localization = "content/Language",
+	name = "%request.parameter.auto.login.configuration.name"
+)
+public interface RequestParameterAutoLoginConfiguration {
 
 	@Meta.AD(deflt = "false", required = false)
 	public boolean enabled();

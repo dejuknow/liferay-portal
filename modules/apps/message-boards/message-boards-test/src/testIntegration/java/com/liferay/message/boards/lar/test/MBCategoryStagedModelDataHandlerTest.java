@@ -92,9 +92,8 @@ public class MBCategoryStagedModelDataHandlerTest
 				group.getGroupId(), TestPropsValues.getUserId());
 
 		return MBCategoryServiceUtil.addCategory(
-				TestPropsValues.getUserId(), category.getCategoryId(),
-				RandomTestUtil.randomString(), StringPool.BLANK,
-				serviceContext);
+			TestPropsValues.getUserId(), category.getCategoryId(),
+			RandomTestUtil.randomString(), StringPool.BLANK, serviceContext);
 	}
 
 	@Override
@@ -128,6 +127,29 @@ public class MBCategoryStagedModelDataHandlerTest
 
 		MBCategoryLocalServiceUtil.getMBCategoryByUuidAndGroupId(
 			category.getUuid(), group.getGroupId());
+	}
+
+	@Override
+	protected void validateImportedStagedModel(
+			StagedModel stagedModel, StagedModel importedStagedModel)
+		throws Exception {
+
+		super.validateImportedStagedModel(stagedModel, importedStagedModel);
+
+		MBCategory category = (MBCategory)stagedModel;
+		MBCategory importedCategory = (MBCategory)importedStagedModel;
+
+		Assert.assertEquals(category.getName(), importedCategory.getName());
+		Assert.assertEquals(
+			category.getDescription(), importedCategory.getDescription());
+		Assert.assertEquals(
+			category.getDisplayStyle(), importedCategory.getDisplayStyle());
+		Assert.assertEquals(
+			category.getThreadCount(), importedCategory.getThreadCount());
+		Assert.assertEquals(
+			category.getMessageCount(), importedCategory.getMessageCount());
+		Assert.assertEquals(
+			category.getLastPostDate(), importedCategory.getLastPostDate());
 	}
 
 }

@@ -9,6 +9,11 @@
 </thead>
 <tbody>
 <tr>
+	<td>EDITED_SITE_PAGES_VARIATION</td>
+	<td>//span[contains(@class,'layout-set-branch-selector')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>STAGING_NAVIGATION</td>
 	<td>//ul[contains(@class,'nav-tabs')]/li/a[contains(.,'Staging')]</td>
 	<td></td>
@@ -16,6 +21,12 @@
 <tr>
 	<td></td>
 	<td></td>
+	<td></td>
+</tr>
+<!--PROCESSES-->
+<tr>
+	<td>SCHEDULED</td>
+	<td>//ul[contains(@id,'StagingProcessesPortlet')]/li/a[contains(@title,'Scheduled')]</td>
 	<td></td>
 </tr>
 <!--STAGING-->
@@ -92,27 +103,27 @@
 </tr>
 <tr>
 	<td>PAGE_VARIATION</td>
-	<td>//span[contains(.,'${key_pageVariationName}')]</td>
+	<td>//a[contains(.,'${key_pageVariationName}')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>SITE_PAGES_VARIATION</td>
-	<td>//a[span[contains(.,'${key_sitePagesVariationName}')]]</td>
+	<td>//a[contains(@class,'layout-set-branch-selector')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>SITE_PAGES_VARIATION_DROPDOWN</td>
-	<td>//span[contains(.,'${key_sitePagesVariationName}')]/following-sibling::i</td>
+	<td>//a[contains(@class,'staging-variation-selector') and contains(.,'${key_sitePagesVariationName}')]/span</td>
 	<td></td>
 </tr>
 <tr>
 	<td>PAGE_VARIATION_DROPDOWN</td>
-	<td>//span[contains(.,'${key_pageVariationName}')]/following-sibling::i</td>
+	<td>//a[contains(@class,'staging-variation-selector') and contains(.,'${key_pageVariationName}')]/span</td>
 	<td></td>
 </tr>
 <tr>
 	<td>MANAGE_VARIATIONS</td>
-	<td>//a[contains(@id,'manageLayoutSetBranches')]</td>
+	<td>//a[contains(@id,'manageLayoutSetRevisions')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -128,7 +139,7 @@
 <!--SITE_PAGES_VARIATION_MENULIST-->
 <tr>
 	<td>SITE_PAGES_VARIATION_MENULIST_NAME</td>
-	<td>//ul//a[contains(.,'${key_sitePagesVariationName}')]</td>
+	<td>xpath=(//ul//li//a[contains(.,'${key_sitePagesVariationName}')])[1]</td>
 	<td></td>
 </tr>
 <tr>
@@ -139,7 +150,7 @@
 <!--PAGE_VARIATION_MENULIST-->
 <tr>
 	<td>PAGE_VARIATION_MENULIST_NAME</td>
-	<td>//ul//a[contains(.,'${key_pageVariationName}')]</td>
+	<td>xpath=(//ul//li//a[contains(.,'${key_pageVariationName}')])[4]</td>
 	<td></td>
 </tr>
 <tr>
@@ -227,7 +238,7 @@
 </tr>
 <tr>
 	<td>STAGING_MENU_REVISION_DETAILS_MESSAGE</td>
-	<td>//div[contains(@id,'layoutRevisionDetails')]</td>
+	<td>//span[contains(@id,'layoutRevisionDetails')]/li/p</td>
 	<td></td>
 </tr>
 <tr>

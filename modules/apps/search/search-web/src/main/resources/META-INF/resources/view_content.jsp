@@ -28,6 +28,11 @@ AssetRenderer<?> assetRenderer = assetEntry.getAssetRenderer();
 %>
 
 <c:if test="<%= (assetEntry != null) && assetEntry.isVisible() %>">
+	<liferay-ui:header
+		localizeTitle="<%= false %>"
+		title="<%= assetRenderer.getTitle(locale) %>"
+	/>
+
 	<c:if test="<%= assetRenderer.hasEditPermission(permissionChecker) %>">
 		<div class="asset-actions lfr-meta-actions">
 
@@ -47,20 +52,16 @@ AssetRenderer<?> assetRenderer = assetEntry.getAssetRenderer();
 
 			<liferay-ui:icon
 				data="<%= data %>"
-				iconCssClass="icon-edit-sign"
+				icon="pencil"
 				label="<%= false %>"
-				message='<%= HtmlUtil.render(LanguageUtil.format(request, "edit-x-x", new Object[] {"hide-accessible", HtmlUtil.escape(assetRenderer.getTitle(locale))}, false)) %>'
+				markupView="lexicon"
+				message='<%= LanguageUtil.format(request, "edit-x-x", new Object[] {"hide-accessible", HtmlUtil.escape(assetRenderer.getTitle(locale))}, false) %>'
 				method="get"
 				url="<%= editPortletURL.toString() %>"
 				useDialog="<%= true %>"
 			/>
 		</div>
 	</c:if>
-
-	<liferay-ui:header
-		localizeTitle="<%= false %>"
-		title="<%= assetRenderer.getTitle(locale) %>"
-	/>
 
 	<liferay-ui:asset-display
 		assetEntry="<%= assetEntry %>"

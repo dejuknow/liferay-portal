@@ -144,7 +144,8 @@ public class MBThreadFlagStagedModelDataHandler
 			portletDataContext, MBMessage.class.getName(), rootMessageId);
 
 		MBMessage rootMessage =
-			(MBMessage)portletDataContext.getZipEntryAsObject(rootMessagePath);
+			(MBMessage)portletDataContext.getZipEntryAsObject(
+				element, rootMessagePath);
 
 		StagedModelDataHandlerUtil.importStagedModel(
 			portletDataContext, rootMessage);
@@ -197,9 +198,9 @@ public class MBThreadFlagStagedModelDataHandler
 		_userLocalService = userLocalService;
 	}
 
-	private volatile MBMessageLocalService _mbMessageLocalService;
-	private volatile MBThreadFlagLocalService _mbThreadFlagLocalService;
-	private volatile MBThreadLocalService _mbThreadLocalService;
-	private volatile UserLocalService _userLocalService;
+	private MBMessageLocalService _mbMessageLocalService;
+	private MBThreadFlagLocalService _mbThreadFlagLocalService;
+	private MBThreadLocalService _mbThreadLocalService;
+	private UserLocalService _userLocalService;
 
 }

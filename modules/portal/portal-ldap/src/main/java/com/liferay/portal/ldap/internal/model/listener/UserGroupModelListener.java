@@ -14,14 +14,16 @@
 
 package com.liferay.portal.ldap.internal.model.listener;
 
-import com.liferay.portal.ModelListenerException;
+import com.liferay.portal.exception.ModelListenerException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.security.exportimport.UserExporter;
+import com.liferay.portal.kernel.security.exportimport.UserOperation;
 import com.liferay.portal.ldap.internal.UserImportTransactionThreadLocal;
 import com.liferay.portal.model.BaseModelListener;
 import com.liferay.portal.model.ModelListener;
 import com.liferay.portal.model.User;
 import com.liferay.portal.model.UserGroup;
-import com.liferay.portal.security.exportimport.UserExporter;
-import com.liferay.portal.security.exportimport.UserOperation;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -82,8 +84,20 @@ public class UserGroupModelListener extends BaseModelListener<UserGroup> {
 		}
 
 		_userExporter.exportUser(userId, userGroupId, userOperation);
+
+		if (_log.isDebugEnabled()) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(
+					"Exporting user " + userId + " to user group " +
+						userGroupId + " with user operation " +
+							userOperation.name());
+			}
+		}
 	}
 
-	private volatile UserExporter _userExporter;
+	private static final Log _log = LogFactoryUtil.getLog(
+		UserGroupModelListener.class);
+
+	private UserExporter _userExporter;
 
 }

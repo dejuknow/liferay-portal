@@ -23,9 +23,7 @@ MBMessage message = (MBMessage)request.getAttribute(WebKeys.MESSAGE_BOARDS_MESSA
 
 long messageId = BeanParamUtil.getLong(message, request, "messageId");
 
-long categoryId = MBUtil.getCategoryId(request, message);
-
-MBUtil.addPortletBreadcrumbEntries(message, request, renderResponse);
+MBBreadcrumbUtil.addPortletBreadcrumbEntries(message, request, renderResponse);
 
 PortletURL portletURL = renderResponse.createRenderURL();
 
@@ -52,7 +50,7 @@ iteratorURL.setParameter("messageId", String.valueOf(messageId));
 	<portlet:param name="messageId" value="<%= String.valueOf(message.getMessageId()) %>" />
 </portlet:actionURL>
 
-<liferay-ui:trash-empty
+<liferay-trash:empty
 	confirmMessage="are-you-sure-you-want-to-remove-the-attachments-for-this-message"
 	emptyMessage="remove-the-attachments-for-this-message"
 	infoMessage="attachments-that-have-been-removed-for-more-than-x-will-be-automatically-deleted"
@@ -93,8 +91,9 @@ iteratorURL.setParameter("messageId", String.valueOf(messageId));
 			%>
 
 			<liferay-ui:icon
-				iconCssClass="<%= assetRenderer.getIconCssClass() %>"
+				icon="<%= assetRenderer.getIconCssClass() %>"
 				label="<%= true %>"
+				markupView="lexicon"
 				message="<%= TrashUtil.getOriginalTitle(fileEntry.getTitle()) %>"
 			/>
 		</liferay-ui:search-container-column-text>

@@ -260,17 +260,6 @@ public class LayoutSetPrototypeLocalServiceUtil {
 	}
 
 	/**
-	* @deprecated As of 6.2.0, replaced by {@link
-	#getLayoutSetPrototypeByUuidAndCompanyId(String, long)}
-	*/
-	@Deprecated
-	public static com.liferay.portal.model.LayoutSetPrototype getLayoutSetPrototypeByUuid(
-		java.lang.String uuid)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getLayoutSetPrototypeByUuid(uuid);
-	}
-
-	/**
 	* Returns the layout set prototype with the matching UUID and company.
 	*
 	* @param uuid the layout set prototype's UUID
@@ -397,13 +386,6 @@ public class LayoutSetPrototypeLocalServiceUtil {
 		}
 
 		return _service;
-	}
-
-	/**
-	 * @deprecated As of 6.2.0
-	 */
-	@Deprecated
-	public void setService(LayoutSetPrototypeLocalService service) {
 	}
 
 	private static LayoutSetPrototypeLocalService _service;

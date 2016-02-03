@@ -17,6 +17,11 @@ package com.liferay.portal.model;
 import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.service.ServiceContext;
+
+import com.liferay.portlet.expando.model.ExpandoBridge;
+
+import java.io.Serializable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -483,7 +488,7 @@ public class PortletWrapper implements Portlet, ModelWrapper<Portlet> {
 	}
 
 	@Override
-	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
+	public ExpandoBridge getExpandoBridge() {
 		return _portlet.getExpandoBridge();
 	}
 
@@ -812,7 +817,7 @@ public class PortletWrapper implements Portlet, ModelWrapper<Portlet> {
 	* @return the permission propagator instance of the portlet
 	*/
 	@Override
-	public com.liferay.portal.security.permission.PermissionPropagator getPermissionPropagatorInstance() {
+	public com.liferay.portal.kernel.security.permission.PermissionPropagator getPermissionPropagatorInstance() {
 		return _portlet.getPermissionPropagatorInstance();
 	}
 
@@ -1075,7 +1080,7 @@ public class PortletWrapper implements Portlet, ModelWrapper<Portlet> {
 	}
 
 	@Override
-	public java.io.Serializable getPrimaryKeyObj() {
+	public Serializable getPrimaryKeyObj() {
 		return _portlet.getPrimaryKeyObj();
 	}
 
@@ -2452,14 +2457,12 @@ public class PortletWrapper implements Portlet, ModelWrapper<Portlet> {
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portlet.expando.model.ExpandoBridge expandoBridge) {
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
 		_portlet.setExpandoBridgeAttributes(expandoBridge);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.service.ServiceContext serviceContext) {
+	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
 		_portlet.setExpandoBridgeAttributes(serviceContext);
 	}
 
@@ -2976,7 +2979,7 @@ public class PortletWrapper implements Portlet, ModelWrapper<Portlet> {
 	}
 
 	@Override
-	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
+	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
 		_portlet.setPrimaryKeyObj(primaryKeyObj);
 	}
 
@@ -3512,14 +3515,6 @@ public class PortletWrapper implements Portlet, ModelWrapper<Portlet> {
 		}
 
 		return false;
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedModel}
-	 */
-	@Deprecated
-	public Portlet getWrappedPortlet() {
-		return _portlet;
 	}
 
 	@Override

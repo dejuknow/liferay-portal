@@ -58,10 +58,10 @@ Collections.sort(customAttributesDisplays, new CustomAttributesDisplayComparator
 	<liferay-ui:search-container
 		emptyResultsMessage='<%= LanguageUtil.get(request, "custom-fields-are-not-enabled-for-any-resource") %>'
 		iteratorURL="<%= portletURL %>"
+		total="<%= customAttributesDisplays.size() %>"
 	>
 		<liferay-ui:search-container-results
 			results="<%= customAttributesDisplays %>"
-			total="<%= customAttributesDisplays.size() %>"
 		/>
 
 		<liferay-ui:search-container-row
@@ -85,8 +85,9 @@ Collections.sort(customAttributesDisplays, new CustomAttributesDisplayComparator
 				name="resource"
 			>
 				<liferay-ui:icon
-					iconCssClass="<%= customAttributesDisplay.getIconCssClass() %>"
+					icon="<%= customAttributesDisplay.getIconCssClass() %>"
 					label="<%= true %>"
+					markupView="lexicon"
 					message="<%= ResourceActionsUtil.getModelResource(locale, customAttributesDisplay.getClassName()) %>"
 				/>
 			</liferay-ui:search-container-column-text>

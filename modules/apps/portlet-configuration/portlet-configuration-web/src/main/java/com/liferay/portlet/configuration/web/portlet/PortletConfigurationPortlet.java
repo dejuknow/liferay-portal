@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.ConfigurationAction;
 import com.liferay.portal.kernel.portlet.PortletLayoutListener;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.security.permission.PermissionPropagator;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.settings.ArchivedSettings;
@@ -44,7 +45,7 @@ import com.liferay.portal.model.Portlet;
 import com.liferay.portal.model.PortletConstants;
 import com.liferay.portal.model.PortletPreferencesIds;
 import com.liferay.portal.model.PublicRenderParameter;
-import com.liferay.portal.security.permission.PermissionPropagator;
+import com.liferay.portal.model.Release;
 import com.liferay.portal.service.GroupLocalService;
 import com.liferay.portal.service.LayoutLocalService;
 import com.liferay.portal.service.PortletLocalService;
@@ -58,9 +59,8 @@ import com.liferay.portal.util.PortletKeys;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.PortletConfigFactoryUtil;
 import com.liferay.portlet.PortletConfigImpl;
-import com.liferay.portlet.configuration.web.upgrade.PortletConfigurationWebUpgrade;
+import com.liferay.portlet.configuration.kernel.util.PortletConfigurationUtil;
 import com.liferay.portlet.portletconfiguration.action.ActionUtil;
-import com.liferay.portlet.portletconfiguration.util.PortletConfigurationUtil;
 import com.liferay.portlet.portletconfiguration.util.PublicRenderParameterConfiguration;
 
 import java.io.IOException;
@@ -101,7 +101,6 @@ import org.osgi.service.component.annotations.Reference;
 	property = {
 		"com.liferay.portlet.add-default-resource=true",
 		"com.liferay.portlet.css-class-wrapper=portlet-configuration",
-		"com.liferay.portlet.header-portlet-css=/css/main.css",
 		"com.liferay.portlet.private-request-attributes=false",
 		"com.liferay.portlet.private-session-attributes=false",
 		"com.liferay.portlet.render-weight=50",
@@ -666,7 +665,10 @@ public class PortletConfigurationPortlet extends MVCPortlet {
 
 		Layout layout = themeDisplay.getLayout();
 
-		String scopeType = ParamUtil.getString(actionRequest, "scopeType");
+		String[] scopes = StringUtil.split(
+			ParamUtil.getString(actionRequest, "scope"));
+
+		String scopeType = scopes[0];
 
 		long scopeGroupId = 0;
 		String scopeName = null;
@@ -679,8 +681,7 @@ public class PortletConfigurationPortlet extends MVCPortlet {
 			scopeName = themeDisplay.translate("global");
 		}
 		else if (scopeType.equals("layout")) {
-			String scopeLayoutUuid = ParamUtil.getString(
-				actionRequest, "scopeLayoutUuid");
+			String scopeLayoutUuid = scopes[1];
 
 			Layout scopeLayout = _layoutLocalService.getLayoutByUuidAndGroupId(
 				scopeLayoutUuid, layout.getGroupId(), layout.isPrivateLayout());
@@ -841,11 +842,6 @@ public class PortletConfigurationPortlet extends MVCPortlet {
 	}
 
 	@Reference(unbind = "-")
-	protected void setPortletConfigurationWebUpgrade(
-		PortletConfigurationWebUpgrade portletConfigurationWebUpgrade) {
-	}
-
-	@Reference(unbind = "-")
 	protected void setPortletLocalService(
 		PortletLocalService portletLocalService) {
 
@@ -857,6 +853,13 @@ public class PortletConfigurationPortlet extends MVCPortlet {
 		PortletPreferencesLocalService portletPreferencesLocalService) {
 
 		_portletPreferencesLocalService = portletPreferencesLocalService;
+	}
+
+	@Reference(
+		target = "(&(release.bundle.symbolic.name=com.liferay.portlet.configuration.web)(release.schema.version=1.0.0))",
+		unbind = "-"
+	)
+	protected void setRelease(Release release) {
 	}
 
 	@Reference(unbind = "-")
@@ -944,15 +947,17 @@ public class PortletConfigurationPortlet extends MVCPortlet {
 
 		PortletPreferences portletPreferences = actionRequest.getPreferences();
 
-		String scopeType = ParamUtil.getString(actionRequest, "scopeType");
+		String[] scopes = StringUtil.split(
+			ParamUtil.getString(actionRequest, "scope"));
+
+		String scopeType = scopes[0];
 
 		portletPreferences.setValue("lfrScopeType", scopeType);
 
-		String scopeLayoutUuid = ParamUtil.getString(
-			actionRequest, "scopeLayoutUuid");
+		String scopeLayoutUuid = StringPool.BLANK;
 
-		if (!scopeType.equals("layout")) {
-			scopeLayoutUuid = StringPool.BLANK;
+		if ((scopes.length > 1) && scopeType.equals("layout")) {
+			scopeLayoutUuid = scopes[1];
 		}
 
 		portletPreferences.setValue("lfrScopeLayoutUuid", scopeLayoutUuid);
@@ -981,16 +986,15 @@ public class PortletConfigurationPortlet extends MVCPortlet {
 	private static final Log _log = LogFactoryUtil.getLog(
 		PortletConfigurationPortlet.class);
 
-	private volatile GroupLocalService _groupLocalService;
-	private volatile LayoutLocalService _layoutLocalService;
-	private volatile PortletLocalService _portletLocalService;
-	private volatile PortletPreferencesLocalService
-		_portletPreferencesLocalService;
+	private GroupLocalService _groupLocalService;
+	private LayoutLocalService _layoutLocalService;
+	private PortletLocalService _portletLocalService;
+	private PortletPreferencesLocalService _portletPreferencesLocalService;
 	private final ThreadLocal<PortletRequest> _portletRequestThreadLocal =
 		new AutoResetThreadLocal<>("_portletRequestThreadLocal");
-	private volatile ResourceBlockLocalService _resourceBlockLocalService;
-	private volatile ResourceBlockService _resourceBlockService;
-	private volatile ResourcePermissionService _resourcePermissionService;
+	private ResourceBlockLocalService _resourceBlockLocalService;
+	private ResourceBlockService _resourceBlockService;
+	private ResourcePermissionService _resourcePermissionService;
 
 	private class PortletConfigurationPortletPortletConfig
 		extends PortletConfigImpl {

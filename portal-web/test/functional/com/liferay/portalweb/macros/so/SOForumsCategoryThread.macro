@@ -73,7 +73,7 @@
 					</elseif>
 				</if>
 
-				<execute function="AssertTextEquals" locator1="MessageBoards#THREAD_TABLE_THREAD" value1="${threadSubject}" />
+				<execute function="AssertTextEquals" locator1="MessageBoards#THREAD_LIST_THREAD" value1="${threadSubject}" />
 				<execute function="AssertTextEquals" locator1="MessageBoards#THREAD_TABLE_STARTED_BY" value1="${userName}" />
 
 				<if>
@@ -99,12 +99,12 @@
 				<if>
 					<equals arg1="${currentUser}" arg2="${adminName}" />
 					<then>
-						<execute function="AssertElementPresent" locator1="MessageBoards#THREAD_TABLE_ACTIONS" />
+						<execute function="AssertElementPresent" locator1="MessageBoards#VERTICAL_ELLIPSIS" />
 					</then>
 					<elseif>
 						<equals arg1="${siteMember}" arg2="true" />
 						<then>
-							<execute function="AssertElementPresent" locator1="MessageBoards#THREAD_TABLE_ACTIONS" />
+							<execute function="AssertElementPresent" locator1="MessageBoards#VERTICAL_ELLIPSIS" />
 						</then>
 					</elseif>
 					<else>
@@ -112,7 +112,7 @@
 					</else>
 				</if>
 
-				<execute function="AssertClick" locator1="MessageBoards#THREAD_TABLE_THREAD" value1="${threadSubject}" />
+				<execute function="AssertClick" locator1="MessageBoards#THREAD_LIST_THREAD" value1="${threadSubject}" />
 			</else>
 		</if>
 
@@ -141,7 +141,7 @@
 			</else>
 		</if>
 
-		<execute function="AssertTextEquals" locator1="MessageBoardsThread#TITLE_HEADER" value1="${threadSubject}" />
+		<execute function="AssertTextEquals" locator1="Portlet#HEADER" value1="${threadSubject}" />
 
 		<if>
 			<equals arg1="${subCategoryEnabled}" arg2="true" />
@@ -158,14 +158,14 @@
 		<if>
 			<equals arg1="${anonymous}" arg2="true" />
 			<then>
-				<execute function="AssertElementNotPresent" locator1="MessageBoardsThread#MESSAGE_USERNAME_1" />
+				<execute function="AssertElementNotPresent" locator1="MessageBoardsThread#THREAD_USERNAME" />
 			</then>
 			<else>
-				<execute function="AssertTextEquals" locator1="MessageBoardsThread#MESSAGE_USERNAME_1" value1="${userName}" />
+				<execute function="AssertTextEquals#assertPartialText" locator1="MessageBoardsThread#THREAD_USERNAME" value1="${userName}" />
 			</else>
 		</if>
 
-		<execute function="AssertTextEquals" locator1="MessageBoardsThread#MESSAGE_SUBJECT_1" value1="${threadSubject}" />
+		<execute function="AssertTextEquals" locator1="MessageBoardsThread#THREAD_SUBJECT" value1="${threadSubject}" />
 
 		<if>
 			<isset var="mbThreadAttachment" />
@@ -283,21 +283,21 @@
 		<execute function="AssertTextEquals#assertPartialText" locator1="SOForums#BREADCRUMB_3" value1="${categoryName}" />
 		<execute function="AssertTextEquals#assertPartialText" locator1="SOForums#BREADCRUMB_4" value1="${threadSubject}" />
 
-		<execute function="AssertTextEquals" locator1="MessageBoardsThread#TITLE_HEADER" value1="${threadSubject}" />
+		<execute function="AssertTextEquals" locator1="Portlet#HEADER" value1="${threadSubject}" />
 		<execute function="AssertTextEquals" locator1="MessageBoardsThread#THREAD_CONTROLS_BACK" value1="${categoryName}" />
 		<execute function="AssertTextEquals" locator1="MessageBoardsThread#THREAD_CONTROLS_NAVIGATION" value1="Threads [ Previous | Next ]" />
 
 		<if>
 			<equals arg1="${anonymous}" arg2="true" />
 			<then>
-				<execute function="AssertElementNotPresent" locator1="MessageBoardsThread#MESSAGE_USERNAME_1" />
+				<execute function="AssertElementNotPresent" locator1="MessageBoardsThread#THREAD_USERNAME" />
 			</then>
 			<else>
-				<execute function="AssertTextEquals" locator1="MessageBoardsThread#MESSAGE_USERNAME_1" value1="${userName}" />
+				<execute function="AssertTextEquals#assertPartialText" locator1="MessageBoardsThread#THREAD_USERNAME" value1="${userName}" />
 			</else>
 		</if>
 
-		<execute function="AssertTextEquals" locator1="MessageBoardsThread#MESSAGE_SUBJECT_1" value1="${threadSubject}" />
+		<execute function="AssertTextEquals" locator1="MessageBoardsThread#THREAD_SUBJECT" value1="${threadSubject}" />
 
 		<if>
 			<isset var="mbThreadAttachment" />
@@ -344,7 +344,7 @@
 
 		<var name="key_categoryName" value="${categoryName}" />
 
-		<execute function="AssertTextEquals" locator1="MessageBoards#CATEGORY_TABLE_CATEGORY" value1="${categoryName}" />
+		<execute function="AssertTextEquals" locator1="MessageBoards#CATEGORY_LIST_CATEGORY" value1="${categoryName}" />
 
 		<if>
 			<isset var="categoryCount" />
@@ -376,7 +376,7 @@
 			</else>
 		</if>
 
-		<execute function="AssertClick" locator1="MessageBoards#CATEGORY_TABLE_CATEGORY" value1="${categoryName}" />
+		<execute function="AssertClick" locator1="MessageBoards#CATEGORY_LIST_CATEGORY" value1="${categoryName}" />
 
 		<execute macro="SOForumsCategoryThread#viewDetailsPG" />
 	</command>
@@ -482,21 +482,21 @@
 		<execute function="AssertTextEquals#assertPartialText" locator1="SOForums#BREADCRUMB_3" value1="${categoryName}" />
 		<execute function="AssertTextEquals#assertPartialText" locator1="SOForums#BREADCRUMB_4" value1="${threadSubject}" />
 
-		<execute function="AssertTextEquals" locator1="MessageBoardsThread#TITLE_HEADER" value1="${threadSubject}" />
+		<execute function="AssertTextEquals" locator1="Portlet#HEADER" value1="${threadSubject}" />
 		<execute function="AssertTextEquals" locator1="MessageBoardsThread#THREAD_CONTROLS_BACK" value1="${categoryName}" />
 		<execute function="AssertTextEquals" locator1="MessageBoardsThread#THREAD_CONTROLS_NAVIGATION" value1="Threads [ Previous | Next ]" />
 
 		<if>
 			<equals arg1="${anonymous}" arg2="true" />
 			<then>
-				<execute function="AssertElementNotPresent" locator1="MessageBoardsThread#MESSAGE_USERNAME_1" />
+				<execute function="AssertElementNotPresent" locator1="MessageBoardsThread#THREAD_USERNAME" />
 			</then>
 			<else>
-				<execute function="AssertTextEquals" locator1="MessageBoardsThread#MESSAGE_USERNAME_1" value1="${userName}" />
+				<execute function="AssertTextEquals#assertPartialText" locator1="MessageBoardsThread#THREAD_USERNAME" value1="${userName}" />
 			</else>
 		</if>
 
-		<execute function="AssertTextEquals" locator1="MessageBoardsThread#MESSAGE_SUBJECT_1" value1="${threadSubject}" />
+		<execute function="AssertTextEquals" locator1="MessageBoardsThread#THREAD_SUBJECT" value1="${threadSubject}" />
 
 		<if>
 			<isset var="mbThreadAttachment" />

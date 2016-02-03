@@ -85,6 +85,10 @@ public class LayoutStagingImpl implements LayoutStaging {
 
 	@Override
 	public LayoutStagingHandler getLayoutStagingHandler(Layout layout) {
+		if (layout == null) {
+			return null;
+		}
+
 		if (!ProxyUtil.isProxyClass(layout.getClass())) {
 			return null;
 		}
@@ -168,6 +172,6 @@ public class LayoutStagingImpl implements LayoutStaging {
 		_layoutSetBranchLocalService = layoutSetBranchLocalService;
 	}
 
-	private volatile LayoutSetBranchLocalService _layoutSetBranchLocalService;
+	private LayoutSetBranchLocalService _layoutSetBranchLocalService;
 
 }

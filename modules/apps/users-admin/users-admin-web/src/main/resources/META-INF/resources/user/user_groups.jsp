@@ -23,7 +23,7 @@ List<UserGroup> userGroups = (List<UserGroup>)request.getAttribute("user.userGro
 currentURLObj.setParameter("historyKey", renderResponse.getNamespace() + "userGroups");
 %>
 
-<liferay-ui:error-marker key="errorSection" value="user-groups" />
+<liferay-ui:error-marker key="<%= WebKeys.ERROR_SECTION %>" value="user-groups" />
 
 <liferay-ui:membership-policy-error />
 
@@ -69,7 +69,7 @@ currentURLObj.setParameter("historyKey", renderResponse.getNamespace() + "userGr
 		</c:if>
 	</liferay-ui:search-container-row>
 
-	<liferay-ui:search-iterator />
+	<liferay-ui:search-iterator markupView="lexicon" />
 </liferay-ui:search-container>
 
 <c:if test="<%= !portletName.equals(myAccountPortletId) %>">
@@ -144,8 +144,7 @@ currentURLObj.setParameter("historyKey", renderResponse.getNamespace() + "userGr
 					{
 						dialog: {
 							constrain: true,
-							modal: true,
-							width: 680
+							modal: true
 						},
 						id: '<portlet:namespace />selectUserGroup',
 						title: '<liferay-ui:message arguments="user-group" key="select-x" />',

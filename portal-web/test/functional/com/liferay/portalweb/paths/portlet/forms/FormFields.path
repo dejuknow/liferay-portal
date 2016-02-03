@@ -24,6 +24,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>FIELD_REMOVE</td>
+	<td>//div[contains(@class,'form-field-repeatable-toolbar')]//a[contains(@class,'delete-button') and not(contains(@class,'hide'))]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>FIELD_NAME</td>
 	<td>//div[@class='key-value-editor']</td>
 	<td></td>
@@ -31,6 +36,11 @@
 <tr>
 	<td></td>
 	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>HIDDEN_LABEL</td>
+	<td>xpath=(//div[contains(@class,'form-field-container')][2]//label[contains(.,'${key_fieldLabelHidden}')])</td>
 	<td></td>
 </tr>
 <!--CHECKBOX-->
@@ -42,6 +52,22 @@
 <tr>
 	<td>CHECKBOX_LABEL</td>
 	<td>//input[@type='checkbox' and contains(@id,'${key_fieldName}')]/../../label</td>
+	<td></td>
+</tr>
+<tr>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<!--DATE-->
+<tr>
+	<td>DATE_FIELD</td>
+	<td>//div[contains(@data-fieldname,'${key_fieldName}')]//input[@type='text' and contains(@aria-label,'${key_fieldLabel}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>DATE_LABEL</td>
+	<td>//div[contains(@data-fieldname,'${key_fieldName}')]//label[contains(.,'${key_fieldLabel}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -137,6 +163,17 @@
 	<td></td>
 	<td></td>
 </tr>
+<!--PARAGRAPH-->
+<tr>
+	<td>PARAGRAPH_BODY_TEXT_CONTENT</td>
+	<td>//div[contains(@class,'paragraph') and contains(@data-fieldname,'${key_fieldName}')]/p</td>
+	<td></td>
+</tr>
+<tr>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
 <!--SELECT-->
 <tr>
 	<td>SELECT_OPTION</td>
@@ -162,6 +199,27 @@
 <tr>
 	<td>SWITCHER_LABEL</td>
 	<td>//div[contains(@data-fieldname,'${key_fieldName}')]//label</td>
+	<td></td>
+</tr>
+<!--VALIDATION-->
+<tr>
+	<td>VALIDATION_TYPE</td>
+	<td>//div[contains(@data-fieldname,'validation')]/div/following-sibling::div//select[contains(@class,'type')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>VALIDATION_ARGUMENT</td>
+	<td>//div[contains(@data-fieldname,'validation')]/div/following-sibling::div//select[contains(@class,'validation')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>VALIDATION_INPUT</td>
+	<td>//input[contains(@class,'parameter-input')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>VALIDATION_ERROR_MESSAGE</td>
+	<td>//input[contains(@class,'message-input')]</td>
 	<td></td>
 </tr>
 <tr>

@@ -16,6 +16,7 @@ package com.liferay.calendar.model;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.annotation.ImplementationClassName;
 import com.liferay.portal.kernel.util.Accessor;
 import com.liferay.portal.model.PermissionedModel;
 
@@ -28,6 +29,7 @@ import com.liferay.portal.model.PermissionedModel;
  * @see com.liferay.calendar.model.impl.CalendarBookingModelImpl
  * @generated
  */
+@ImplementationClassName("com.liferay.calendar.model.impl.CalendarBookingImpl")
 @ProviderType
 public interface CalendarBooking extends CalendarBookingModel, PermissionedModel {
 	/*
@@ -75,8 +77,7 @@ public interface CalendarBooking extends CalendarBookingModel, PermissionedModel
 
 	public com.liferay.calendar.notification.NotificationType getSecondReminderNotificationType();
 
-	public java.util.TimeZone getTimeZone()
-		throws com.liferay.portal.kernel.exception.PortalException;
+	public java.util.TimeZone getTimeZone();
 
 	public boolean isMasterBooking();
 

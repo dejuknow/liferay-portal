@@ -24,12 +24,11 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.trash.TrashRenderer;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.security.permission.ActionKeys;
-import com.liferay.portal.security.permission.PermissionChecker;
-import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.asset.model.AssetRendererFactory;
 import com.liferay.portlet.asset.model.BaseJSPAssetRenderer;
@@ -74,11 +73,6 @@ public class CalendarBookingAssetRenderer
 	@Override
 	public long getGroupId() {
 		return _calendarBooking.getGroupId();
-	}
-
-	@Override
-	public String getIconPath(ThemeDisplay themeDisplay) {
-		return themeDisplay.getPathThemeImages() + "/common/date.png";
 	}
 
 	@Override
@@ -227,9 +221,37 @@ public class CalendarBookingAssetRenderer
 	}
 
 	@Override
+	public boolean isCommentable() {
+		try {
+			Calendar calendar = _calendarBooking.getCalendar();
+
+			return calendar.isEnableComments();
+		}
+		catch (Exception e) {
+			_log.error(e);
+		}
+
+		return false;
+	}
+
+	@Override
 	public boolean isPrintable() {
 		return true;
 	}
+
+	@Override
+	public boolean isRatable() {
+		try {
+			Calendar calendar = _calendarBooking.getCalendar();
+
+			return calendar.isEnableRatings();
+		}
+		catch (Exception e) {
+			_log.error(e);
+		}
+
+		return false;
+	};
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		CalendarBookingAssetRenderer.class);

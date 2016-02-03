@@ -38,12 +38,14 @@ import com.liferay.registry.collections.ServiceTrackerCollections;
 import com.liferay.registry.collections.ServiceTrackerMap;
 import com.liferay.taglib.aui.AUIUtil;
 import com.liferay.taglib.util.IncludeTag;
+import com.liferay.taglib.util.TagResourceBundleUtil;
 
 import java.io.IOException;
 
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
@@ -56,6 +58,24 @@ import javax.servlet.http.HttpServletResponse;
  * @author Brian Wing Shun Chan
  */
 public class InputEditorTag extends IncludeTag {
+
+	public static Editor getEditor(
+		HttpServletRequest request, String editorName) {
+
+		if (!BrowserSnifferUtil.isRtf(request)) {
+			return _serviceTrackerMap.getService("simple");
+		}
+
+		if (Validator.isNull(editorName)) {
+			return _serviceTrackerMap.getService(_EDITOR_WYSIWYG_DEFAULT);
+		}
+
+		if (!_serviceTrackerMap.containsKey(editorName)) {
+			return _serviceTrackerMap.getService(_EDITOR_WYSIWYG_DEFAULT);
+		}
+
+		return _serviceTrackerMap.getService(editorName);
+	}
 
 	public void setAllowBrowseDocuments(boolean allowBrowseDocuments) {
 		_allowBrowseDocuments = allowBrowseDocuments;
@@ -271,21 +291,7 @@ public class InputEditorTag extends IncludeTag {
 	}
 
 	protected Editor getEditor(HttpServletRequest request) {
-		String editorName = _editorName;
-
-		if (!BrowserSnifferUtil.isRtf(request)) {
-			return _serviceTrackerMap.getService("simple");
-		}
-
-		if (Validator.isNull(editorName)) {
-			return _serviceTrackerMap.getService(_EDITOR_WYSIWYG_DEFAULT);
-		}
-
-		if (!_serviceTrackerMap.containsKey(editorName)) {
-			return _serviceTrackerMap.getService(_EDITOR_WYSIWYG_DEFAULT);
-		}
-
-		return _serviceTrackerMap.getService(editorName);
+		return getEditor(request, _editorName);
 	}
 
 	protected String getEditorName(HttpServletRequest request) {
@@ -387,8 +393,12 @@ public class InputEditorTag extends IncludeTag {
 		request.setAttribute(
 			"liferay-ui:input-editor:onInitMethod", _onInitMethod);
 
+		ResourceBundle resourceBundle = TagResourceBundleUtil.getResourceBundle(
+			pageContext);
+
 		if (Validator.isNull(_placeholder)) {
-			_placeholder = LanguageUtil.get(request, "write-your-content-here");
+			_placeholder = LanguageUtil.get(
+				resourceBundle, "write-your-content-here");
 		}
 
 		request.setAttribute(

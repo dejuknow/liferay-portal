@@ -14,6 +14,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>BACK</td>
+	<td>//a[contains(.,'Back')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>CHANGE_EMAIL_ADDRESS</td>
 	<td>//div/a[contains(.,'Change Email Address')]</td>
 	<td></td>
@@ -26,6 +31,11 @@
 <tr>
 	<td>DETAILS</td>
 	<td>//a[contains(.,'Details')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>DOWNLOAD</td>
+	<td>//a[contains(@class,'taglib-icon')]/span[contains(@class,'taglib-text') and contains(.,'Download')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -84,8 +94,18 @@
 	<td></td>
 </tr>
 <tr>
+	<td>STAGING</td>
+	<td>//a[contains(@data-qa-id,'staging')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>SUBSCRIBE</td>
 	<td>//a/span[contains(@class,'taglib-text') and contains(.,'Subscribe')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>VIEW_IN_CONTEXT</td>
+	<td>//a[contains(.,'View in Context')]</td>
 	<td></td>
 </tr>
 <tr>

@@ -34,7 +34,6 @@ import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.PortletPreferencesFactoryUtil;
 import com.liferay.portlet.documentlibrary.model.DLFileEntryType;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
@@ -51,6 +50,15 @@ import javax.portlet.PortletPreferences;
  */
 public class UpgradePortletPreferences extends BaseUpgradePortletPreferences {
 
+	public UpgradePortletPreferences(
+		DateFormatFactoryUtil dateFormatFactoryUtil) {
+
+		_newDateFormat = dateFormatFactoryUtil.getSimpleDateFormat(
+			"yyyy-MM-dd");
+		_oldDateFormat = dateFormatFactoryUtil.getSimpleDateFormat(
+			"yyyyMMddHHmmss");
+	}
+
 	protected JSONObject getDDMStructureJSONObject(long structureId)
 		throws Exception {
 
@@ -61,15 +69,12 @@ public class UpgradePortletPreferences extends BaseUpgradePortletPreferences {
 			return ddmStructureJSONObject;
 		}
 
-		Connection con = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 
 		try {
-			con = DataAccess.getUpgradeOptimizedConnection();
-
-			ps = con.prepareStatement(
-				"select definition from DDMStructure where structureId = ?" );
+			ps = connection.prepareStatement(
+				"select definition from DDMStructure where structureId = ?");
 
 			ps.setLong(1, structureId);
 
@@ -91,7 +96,7 @@ public class UpgradePortletPreferences extends BaseUpgradePortletPreferences {
 				"Unable to find dynamic data mapping structure " + structureId);
 		}
 		finally {
-			DataAccess.cleanUp(con, ps, rs);
+			DataAccess.cleanUp(ps, rs);
 		}
 	}
 
@@ -130,13 +135,10 @@ public class UpgradePortletPreferences extends BaseUpgradePortletPreferences {
 	protected String getJournalArticleResourceUuid(String journalArticleUuid)
 		throws Exception {
 
-		Connection con = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 
 		try {
-			con = DataAccess.getUpgradeOptimizedConnection();
-
 			StringBundler sb = new StringBundler(5);
 
 			sb.append("select JournalArticleResource.uuid_ from ");
@@ -145,7 +147,7 @@ public class UpgradePortletPreferences extends BaseUpgradePortletPreferences {
 			sb.append("JournalArticleResource.resourcePrimKey where ");
 			sb.append("JournalArticle.uuid_ = ?");
 
-			ps = con.prepareStatement(sb.toString());
+			ps = connection.prepareStatement(sb.toString());
 
 			ps.setString(1, journalArticleUuid);
 
@@ -158,7 +160,7 @@ public class UpgradePortletPreferences extends BaseUpgradePortletPreferences {
 			return null;
 		}
 		finally {
-			DataAccess.cleanUp(con, ps, rs);
+			DataAccess.cleanUp(ps, rs);
 		}
 	}
 
@@ -217,7 +219,6 @@ public class UpgradePortletPreferences extends BaseUpgradePortletPreferences {
 			portletPreferences.getValue(_DL_CLASS_TYPE, "0"));
 
 		if (fileEntryTypeId > 0) {
-			Connection con = null;
 			PreparedStatement ps = null;
 			ResultSet rs = null;
 
@@ -225,11 +226,9 @@ public class UpgradePortletPreferences extends BaseUpgradePortletPreferences {
 				long fileEntryTypeClassNameId = PortalUtil.getClassNameId(
 					DLFileEntryType.class);
 
-				con = DataAccess.getUpgradeOptimizedConnection();
-
-				ps = con.prepareStatement(
+				ps = connection.prepareStatement(
 					"select structureId from DDMStructureLink where " +
-						"classNameId = ? and classPK = ?" );
+						"classNameId = ? and classPK = ?");
 
 				ps.setLong(1, fileEntryTypeClassNameId);
 				ps.setLong(2, fileEntryTypeId);
@@ -256,7 +255,7 @@ public class UpgradePortletPreferences extends BaseUpgradePortletPreferences {
 				}
 			}
 			finally {
-				DataAccess.cleanUp(con, ps, rs);
+				DataAccess.cleanUp(ps, rs);
 			}
 		}
 	}
@@ -372,9 +371,7 @@ public class UpgradePortletPreferences extends BaseUpgradePortletPreferences {
 	private static final Map<Long, JSONObject> _ddmSructureJSONObjects =
 		new HashMap<>();
 
-	private final DateFormat _newDateFormat =
-		DateFormatFactoryUtil.getSimpleDateFormat("yyyy-MM-dd");
-	private final DateFormat _oldDateFormat =
-		DateFormatFactoryUtil.getSimpleDateFormat("yyyyMMddHHmmss");
+	private final DateFormat _newDateFormat;
+	private final DateFormat _oldDateFormat;
 
 }

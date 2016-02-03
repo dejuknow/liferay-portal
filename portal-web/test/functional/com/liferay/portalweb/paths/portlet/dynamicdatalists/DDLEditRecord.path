@@ -110,6 +110,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>DOCUMENTS_AND_MEDIA_CHILD_FIELD_CHOOSE_FROM_DOCUMENT_LIBRARY_BUTTON_</td>
+	<td>xpath=(//div[@data-fieldname='${key_parentFieldName}'][2]/div/following-sibling::div//button/span)</td>
+	<td></td>
+</tr>
+<tr>
 	<td>DOCUMENTS_AND_MEDIA_CLEAR_BUTTON</td>
 	<td>//div[@data-fieldname='${key_fieldName}']//button[contains(.,'Clear')]</td>
 	<td></td>

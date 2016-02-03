@@ -14,7 +14,7 @@
 
 package com.liferay.exportimport.lar;
 
-import com.liferay.portal.NoSuchLayoutException;
+import com.liferay.portal.exception.NoSuchLayoutException;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Disjunction;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.security.xml.SecureXMLFactoryProviderUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.DateRange;
@@ -37,7 +38,6 @@ import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.MapUtil;
-import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StreamUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
@@ -64,7 +64,6 @@ import com.liferay.portal.model.StagedGroupedModel;
 import com.liferay.portal.model.StagedModel;
 import com.liferay.portal.model.SystemEventConstants;
 import com.liferay.portal.model.User;
-import com.liferay.portal.security.xml.SecureXMLFactoryProviderUtil;
 import com.liferay.portal.service.GroupLocalService;
 import com.liferay.portal.service.LayoutLocalService;
 import com.liferay.portal.service.LayoutService;
@@ -414,7 +413,8 @@ public class ExportImportHelperImpl implements ExportImportHelper {
 
 		Map<Long, Boolean> layoutIdMap = new LinkedHashMap<>();
 
-		String layoutIdsJSON = ParamUtil.getString(portletRequest, "layoutIds");
+		String layoutIdsJSON = GetterUtil.getString(
+			portletRequest.getAttribute("layoutIdMap"));
 
 		if (Validator.isNull(layoutIdsJSON)) {
 			return layoutIdMap;
@@ -625,7 +625,7 @@ public class ExportImportHelperImpl implements ExportImportHelper {
 
 	/**
 	 * @see com.liferay.portlet.exportimport.backgroundtask.LayoutRemoteStagingBackgroundTaskExecutor#getMissingRemoteParentLayouts(
-	 *      com.liferay.portal.security.auth.HttpPrincipal, Layout, long)
+	 *      com.liferay.portal.kernel.security.auth.HttpPrincipal, Layout, long)
 	 */
 	@Override
 	public List<Layout> getMissingParentLayouts(Layout layout, long liveGroupId)
@@ -1631,13 +1631,13 @@ public class ExportImportHelperImpl implements ExportImportHelper {
 	private static final Log _log = LogFactoryUtil.getLog(
 		ExportImportHelperImpl.class);
 
-	private volatile DLFileEntryLocalService _dlFileEntryLocalService;
-	private volatile GroupLocalService _groupLocalService;
-	private volatile LayoutLocalService _layoutLocalService;
-	private volatile LayoutService _layoutService;
-	private volatile PortletLocalService _portletLocalService;
-	private volatile SystemEventLocalService _systemEventLocalService;
-	private volatile UserLocalService _userLocalService;
+	private DLFileEntryLocalService _dlFileEntryLocalService;
+	private GroupLocalService _groupLocalService;
+	private LayoutLocalService _layoutLocalService;
+	private LayoutService _layoutService;
+	private PortletLocalService _portletLocalService;
+	private SystemEventLocalService _systemEventLocalService;
+	private UserLocalService _userLocalService;
 
 	private class ManifestSummaryElementProcessor implements ElementProcessor {
 

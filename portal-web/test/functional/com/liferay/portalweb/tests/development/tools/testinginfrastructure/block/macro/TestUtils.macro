@@ -45,22 +45,10 @@
 	</command>
 
 	<command name="typeIntoField">
-		<execute macro="Page#openURL">
-			<var name="friendlyURL" value="${friendlyURL}" />
-			<var name="pageAccess" value="${pageAccess}" />
-			<var name="pageStaging" value="${pageStaging}" />
-			<var name="siteName" value="${siteName}" />
-			<var name="siteNameURL" value="${siteNameURL}" />
-			<var name="siteURL" value="${siteURL}" />
-			<var name="specificURL" value="${specificURL}" />
-			<var name="virtualHostsURL" value="${virtualHostsURL}" />
+		<execute macro="Navigator#openURL" />
+
+		<execute macro="Page#add">
+			<var name="pageName" value="Test Page Name" />
 		</execute>
-
-		<execute function="Click#clickAtSidebarClickAtWaitForScript" locator1="Icon#ADD" value1="Add" />
-
-		<execute function="AssertClick" locator1="NavPill#PAGE" value1="Page" />
-		<execute function="Type" locator1="TextInput#NAME" value1="${text}" />
-
-		<execute function="AssertTextEquals" locator1="TextInput#NAME" value1="${text}" />
 	</command>
 </definition>

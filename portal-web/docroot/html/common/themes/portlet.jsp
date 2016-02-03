@@ -37,11 +37,11 @@ RenderResponseImpl renderResponseImpl = (RenderResponseImpl)PortletResponseImpl.
 
 String portletTitle = PortletConfigurationUtil.getPortletTitle(portletSetup, themeDisplay.getLanguageId());
 
-if (portletDisplay.isAccess() && portletDisplay.isActive() && (portletTitle == null)) {
+if (portletDisplay.isAccess() && portletDisplay.isActive() && Validator.isNull(portletTitle)) {
 	portletTitle = renderResponseImpl.getTitle();
 }
 
-if (portletTitle == null) {
+if (Validator.isNull(portletTitle)) {
 	portletTitle = PortalUtil.getPortletTitle(portlet, application, locale);
 }
 
@@ -49,9 +49,11 @@ portletDisplay.setTitle(portletTitle);
 
 // Portlet description
 
-String portletDescription = PortalUtil.getPortletDescription(portlet, application, locale);
+if (Validator.isNull(portletDisplay.getDescription())) {
+	String portletDescription = PortalUtil.getPortletDescription(portlet, application, locale);
 
-portletDisplay.setDescription(portletDescription);
+	portletDisplay.setDescription(portletDescription);
+}
 
 Group group = layout.getGroup();
 

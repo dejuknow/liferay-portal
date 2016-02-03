@@ -19,10 +19,17 @@
 <%
 ResultRow row = (ResultRow)request.getAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW);
 
-WikiPage wikiPage = (WikiPage)row.getObject();
+WikiPage wikiPage = null;
+
+if (row != null) {
+	wikiPage = (WikiPage)row.getObject();
+}
+else {
+	wikiPage = (WikiPage)request.getAttribute("info_panel.jsp-wikiPage");
+}
 %>
 
-<liferay-ui:icon-menu icon="<%= StringPool.BLANK %>" message="<%= StringPool.BLANK %>">
+<liferay-ui:icon-menu direction="left-side" icon="<%= StringPool.BLANK %>" markupView="lexicon" message="<%= StringPool.BLANK %>" showWhenSingleIcon="<%= true %>">
 	<c:if test="<%= (wikiPage.getStatus() == WorkflowConstants.STATUS_APPROVED) && WikiPagePermissionChecker.contains(permissionChecker, wikiPage, ActionKeys.UPDATE) %>">
 		<portlet:actionURL name="/wiki/edit_page" var="revertURL">
 			<portlet:param name="<%= Constants.CMD %>" value="<%= Constants.REVERT %>" />
@@ -37,5 +44,31 @@ WikiPage wikiPage = (WikiPage)row.getObject();
 			message="revert"
 			url="<%= revertURL %>"
 		/>
+	</c:if>
+
+	<c:if test="<%= row == null %>">
+		<portlet:renderURL var="compareVersionsURL" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
+			<portlet:param name="mvcRenderCommandName" value="/wiki/select_version" />
+			<portlet:param name="redirect" value="<%= currentURL %>" />
+			<portlet:param name="nodeId" value="<%= String.valueOf(wikiPage.getNodeId()) %>" />
+			<portlet:param name="title" value="<%= HtmlUtil.unescape(wikiPage.getTitle()) %>" />
+			<portlet:param name="sourceVersion" value="<%= String.valueOf(wikiPage.getVersion()) %>" />
+		</portlet:renderURL>
+
+		<%
+		Map<String, Object> data = new HashMap<String, Object>();
+
+		data.put("uri", compareVersionsURL);
+		%>
+
+		<liferay-ui:icon
+			cssClass="compare-to-link"
+			data="<%= data %>"
+			label="<%= true %>"
+			message="compare-to"
+			url="javascript:;"
+		/>
+
+		<%@ include file="/wiki/compare_versions_pop_up.jspf" %>
 	</c:if>
 </liferay-ui:icon-menu>

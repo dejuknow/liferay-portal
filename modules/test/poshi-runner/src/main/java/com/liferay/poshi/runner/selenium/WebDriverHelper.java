@@ -16,6 +16,7 @@ package com.liferay.poshi.runner.selenium;
 
 import com.liferay.poshi.runner.exception.PoshiRunnerWarningException;
 import com.liferay.poshi.runner.util.CharPool;
+import com.liferay.poshi.runner.util.FileUtil;
 import com.liferay.poshi.runner.util.GetterUtil;
 import com.liferay.poshi.runner.util.HtmlUtil;
 import com.liferay.poshi.runner.util.PropsValues;
@@ -26,7 +27,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,12 +40,17 @@ import junit.framework.TestCase;
 
 import net.jsourcerer.webdriver.jserrorcollector.JavaScriptError;
 
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Point;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
@@ -178,8 +189,8 @@ public class WebDriverHelper {
 		}
 	}
 
-	public static void executeJavaScriptMouseEvent(
-		WebDriver webDriver, String locator, String event) {
+	public static void executeJavaScriptEvent(
+		WebDriver webDriver, String locator, String eventType, String event) {
 
 		WebElement webElement = getWebElement(webDriver, locator);
 
@@ -197,8 +208,9 @@ public class WebDriverHelper {
 		StringBuilder sb = new StringBuilder(6);
 
 		sb.append("var element = arguments[0];");
-		sb.append("var event = document.createEvent('MouseEvents');");
-		sb.append("event.initEvent('");
+		sb.append("var event = document.createEvent('");
+		sb.append(eventType);
+		sb.append("');event.initEvent('");
 		sb.append(event);
 		sb.append("', true, false);");
 		sb.append("element.dispatchEvent(event);");
@@ -277,6 +289,31 @@ public class WebDriverHelper {
 		catch (Exception e) {
 			throw new WebDriverException();
 		}
+	}
+
+	public static String getCSSSource(String htmlSource) throws Exception {
+		Document htmlDocument = Jsoup.parse(htmlSource);
+
+		Elements elements = htmlDocument.select("link[type=text/css]");
+
+		StringBuilder sb = new StringBuilder();
+
+		for (Element element : elements) {
+			String href = element.attr("href");
+
+			if (!href.contains(PropsValues.PORTAL_URL)) {
+				href = PropsValues.PORTAL_URL + href;
+			}
+
+			Connection connection = Jsoup.connect(href);
+
+			Document document = connection.get();
+
+			sb.append(document.text());
+			sb.append("\n");
+		}
+
+		return sb.toString();
 	}
 
 	public static String getDefaultWindowHandle() {
@@ -398,8 +435,72 @@ public class WebDriverHelper {
 		return point.getY();
 	}
 
-	public static String getLocation(WebDriver webDriver) {
-		return webDriver.getCurrentUrl();
+	public static String getLocation(WebDriver webDriver) throws Exception {
+		List<Exception> exceptions = new ArrayList<>();
+
+		for (int i = 0; i < 3; i++) {
+			FutureTask<String> futureTask = new FutureTask<>(
+				new Callable<String>() {
+
+					@Override
+					public String call() throws Exception {
+						return _webDriver.getCurrentUrl();
+					}
+
+					private Callable<String> init(WebDriver webDriver)
+						throws Exception {
+
+						_webDriver = webDriver;
+
+						return this;
+					}
+
+					private WebDriver _webDriver;
+
+				}.init(webDriver));
+
+			Thread thread = new Thread(futureTask);
+
+			thread.start();
+
+			try {
+				String location = futureTask.get(
+					PropsValues.TIMEOUT_EXPLICIT_WAIT, TimeUnit.SECONDS);
+
+				return location;
+			}
+			catch (CancellationException ce) {
+				exceptions.add(ce);
+			}
+			catch (ExecutionException ee) {
+				exceptions.add(ee);
+			}
+			catch (InterruptedException ie) {
+				exceptions.add(ie);
+			}
+			catch (TimeoutException te) {
+				exceptions.add(te);
+			}
+			finally {
+				thread.interrupt();
+			}
+
+			System.out.println("WebDriverHelper#getLocation(WebDriver):");
+			System.out.println(webDriver.toString());
+
+			Set<String> windowHandles = webDriver.getWindowHandles();
+
+			for (String windowHandle : windowHandles) {
+				System.out.println(windowHandle);
+			}
+		}
+
+		if (!exceptions.isEmpty()) {
+			throw new Exception(exceptions.get(0));
+		}
+		else {
+			throw new TimeoutException();
+		}
 	}
 
 	public static int getNavigationBarHeight() {
@@ -606,31 +707,16 @@ public class WebDriverHelper {
 	}
 
 	public static void open(WebDriver webDriver, String url) {
-		String targetURL = "";
+		String targetURL = url.trim();
 
-		if (url.startsWith("/")) {
-			targetURL = PropsValues.PORTAL_URL + url;
-		}
-		else {
-			targetURL = url;
+		if (targetURL.startsWith("/")) {
+			targetURL = PropsValues.PORTAL_URL + targetURL;
 		}
 
-		for (int i = 0; i < 2; i++) {
-			try {
-				webDriver.get(targetURL);
+		webDriver.get(targetURL);
 
-				if (PropsValues.BROWSER_TYPE.equals("internetexplorer")) {
-					refresh(webDriver);
-				}
-
-				if (targetURL.equals(getLocation(webDriver))) {
-					break;
-				}
-
-				Thread.sleep(1000);
-			}
-			catch (Exception e) {
-			}
+		if (PropsValues.BROWSER_TYPE.equals("internetexplorer")) {
+			refresh(webDriver);
 		}
 	}
 
@@ -642,6 +728,22 @@ public class WebDriverHelper {
 		if (isAlertPresent(webDriver)) {
 			getConfirmation(webDriver);
 		}
+	}
+
+	public static void saveWebPage(String fileName, String htmlSource)
+		throws Exception {
+
+		if (!PropsValues.SAVE_WEB_PAGE) {
+			return;
+		}
+
+		StringBuilder sb = new StringBuilder(3);
+
+		sb.append("<style>");
+		sb.append(getCSSSource(htmlSource));
+		sb.append("</style></html>");
+
+		FileUtil.write(fileName, htmlSource.replace("<\\html>", sb.toString()));
 	}
 
 	public static void select(
@@ -676,7 +778,7 @@ public class WebDriverHelper {
 						optionWebElement.getAttribute("value");
 
 					if (optionWebElementValue.equals(value)) {
-						label = optionWebElement.getText();
+						label = optionWebElementValue;
 
 						break;
 					}
@@ -906,7 +1008,7 @@ public class WebDriverHelper {
 
 			return true;
 		}
-		catch (TimeoutException te) {
+		catch (org.openqa.selenium.TimeoutException te) {
 			return false;
 		}
 	}

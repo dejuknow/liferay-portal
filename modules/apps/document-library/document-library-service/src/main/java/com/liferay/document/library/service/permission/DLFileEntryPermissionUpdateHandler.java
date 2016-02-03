@@ -14,8 +14,8 @@
 
 package com.liferay.document.library.service.permission;
 
+import com.liferay.portal.kernel.security.permission.PermissionUpdateHandler;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.security.permission.PermissionUpdateHandler;
 import com.liferay.portlet.documentlibrary.model.DLFileEntry;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalService;
 
@@ -55,6 +55,6 @@ public class DLFileEntryPermissionUpdateHandler
 		_dLFileEntryLocalService = dLFileEntryLocalService;
 	}
 
-	private volatile DLFileEntryLocalService _dLFileEntryLocalService;
+	private DLFileEntryLocalService _dLFileEntryLocalService;
 
 }

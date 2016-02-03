@@ -2,14 +2,7 @@
 	<property name="testray.main.component.name" value="Permissions" />
 
 	<set-up>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="SignIn#signInPortalInstanceSetUp" />
-			</then>
-		</if>
+		<execute macro="TestCase#setUpPortalInstance" />
 
 		<execute macro="User#firstLoginPG" />
 	</set-up>
@@ -34,7 +27,7 @@
 		<var name="url1" value="http://localhost:8080/testxxx/?p_p_id=86&amp;p_p_lifecycle=0&amp;p_p_state=maximized&amp;_86_struts_action=%2Fportlet_configuration%2Fedit_configuration&amp;_86_portletResource=125" />
 		<var name="url2" value="http://localhost:8080/testxxx/?p_p_id=125&amp;p_p_state=maximized" />
 
-		<execute macro="Page#addPG">
+		<execute macro="Page#add">
 			<var name="pageName" value="testxxx" />
 		</execute>
 

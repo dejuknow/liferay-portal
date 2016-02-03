@@ -54,7 +54,7 @@ renderResponse.setTitle(LanguageUtil.get(request, "merge-tags"));
 	<aui:input name="groupId" type="hidden" value="<%= scopeGroupId %>" />
 
 	<aui:fieldset-group markupView="lexicon">
-		<aui:fieldset cssClass="col-md-4">
+		<aui:fieldset>
 			<label for="<portlet:namespace />assetTagsSelector">
 				<liferay-ui:message key="tags" />
 			</label>
@@ -127,7 +127,7 @@ renderResponse.setTitle(LanguageUtil.get(request, "merge-tags"));
 
 			var mergeTagNamesArray = mergeTagNames.split(',');
 
-			if(mergeTagNamesArray.length < 2) {
+			if (mergeTagNamesArray.length < 2) {
 				alert('<liferay-ui:message arguments="2" key="please-choose-at-least-x-tags" />');
 
 				return;

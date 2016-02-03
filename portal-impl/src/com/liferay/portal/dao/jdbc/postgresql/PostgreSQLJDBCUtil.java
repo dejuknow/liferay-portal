@@ -14,9 +14,6 @@
 
 package com.liferay.portal.dao.jdbc.postgresql;
 
-import com.liferay.portal.kernel.dao.db.DB;
-import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -68,14 +65,6 @@ public class PostgreSQLJDBCUtil {
 
 	public static boolean isPGStatement(Statement statement)
 		throws SQLException {
-
-		DB db = DBFactoryUtil.getDB();
-
-		String dbType = db.getType();
-
-		if (!dbType.equals(DB.TYPE_POSTGRESQL)) {
-			return false;
-		}
 
 		if (statement.isWrapperFor(PGStatement.class)) {
 			return true;

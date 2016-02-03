@@ -14,8 +14,8 @@
 
 package com.liferay.announcements.web.messaging;
 
+import com.liferay.announcements.kernel.service.AnnouncementsEntryLocalService;
 import com.liferay.portal.kernel.messaging.BaseSchedulerEntryMessageListener;
-import com.liferay.portal.kernel.messaging.Destination;
 import com.liferay.portal.kernel.messaging.DestinationNames;
 import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
@@ -24,7 +24,6 @@ import com.liferay.portal.kernel.scheduler.TimeUnit;
 import com.liferay.portal.kernel.scheduler.TriggerFactory;
 import com.liferay.portal.kernel.scheduler.TriggerFactoryUtil;
 import com.liferay.portal.util.PropsValues;
-import com.liferay.portlet.announcements.service.AnnouncementsEntryLocalService;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -68,13 +67,6 @@ public class CheckEntryMessageListener
 		_announcementsEntryLocalService = announcementsEntryLocalService;
 	}
 
-	@Reference(
-		target = "(destination.name=" + DestinationNames.SCHEDULER_DISPATCH + ")",
-		unbind = "-"
-	)
-	protected void setDestination(Destination destination) {
-	}
-
 	@Reference(target = ModuleServiceLifecycle.PORTAL_INITIALIZED, unbind = "-")
 	protected void setModuleServiceLifecycle(
 		ModuleServiceLifecycle moduleServiceLifecycle) {
@@ -91,8 +83,7 @@ public class CheckEntryMessageListener
 	protected void setTriggerFactory(TriggerFactory triggerFactory) {
 	}
 
-	private volatile AnnouncementsEntryLocalService
-		_announcementsEntryLocalService;
-	private volatile SchedulerEngineHelper _schedulerEngineHelper;
+	private AnnouncementsEntryLocalService _announcementsEntryLocalService;
+	private SchedulerEngineHelper _schedulerEngineHelper;
 
 }

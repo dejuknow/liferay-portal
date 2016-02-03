@@ -19,7 +19,6 @@ import aQute.bnd.annotation.metatype.Configurable;
 import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.journal.web.configuration.JournalWebConfiguration;
 import com.liferay.portal.kernel.messaging.BaseSchedulerEntryMessageListener;
-import com.liferay.portal.kernel.messaging.Destination;
 import com.liferay.portal.kernel.messaging.DestinationNames;
 import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
@@ -74,13 +73,6 @@ public class CheckArticleMessageListener
 		_journalArticleLocalService.checkArticles();
 	}
 
-	@Reference(
-		target = "(destination.name=" + DestinationNames.SCHEDULER_DISPATCH + ")",
-		unbind = "-"
-	)
-	protected void setDestination(Destination destination) {
-	}
-
 	@Reference(unbind = "-")
 	protected void setJournalArticleLocalService(
 		JournalArticleLocalService journalArticleLocalService) {
@@ -104,7 +96,7 @@ public class CheckArticleMessageListener
 	protected void setTriggerFactory(TriggerFactory triggerFactory) {
 	}
 
-	private volatile JournalArticleLocalService _journalArticleLocalService;
-	private volatile SchedulerEngineHelper _schedulerEngineHelper;
+	private JournalArticleLocalService _journalArticleLocalService;
+	private SchedulerEngineHelper _schedulerEngineHelper;
 
 }

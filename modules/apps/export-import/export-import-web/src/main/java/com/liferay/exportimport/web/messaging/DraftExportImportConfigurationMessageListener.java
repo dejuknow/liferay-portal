@@ -25,7 +25,6 @@ import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.messaging.BaseSchedulerEntryMessageListener;
-import com.liferay.portal.kernel.messaging.Destination;
 import com.liferay.portal.kernel.messaging.DestinationNames;
 import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
@@ -37,6 +36,9 @@ import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.model.Group;
+import com.liferay.portal.service.GroupLocalService;
+import com.liferay.portlet.exportimport.configuration.ExportImportConfigurationConstants;
 import com.liferay.portlet.exportimport.model.ExportImportConfiguration;
 import com.liferay.portlet.exportimport.service.ExportImportConfigurationLocalService;
 
@@ -87,9 +89,20 @@ public class DraftExportImportConfigurationMessageListener
 		DynamicQuery dynamicQuery =
 			_exportImportConfigurationLocalService.dynamicQuery();
 
-		Property property = PropertyFactoryUtil.forName("status");
+		Property typeProperty = PropertyFactoryUtil.forName("type");
 
-		dynamicQuery.add(property.eq(WorkflowConstants.STATUS_DRAFT));
+		dynamicQuery.add(
+			typeProperty.ne(
+				ExportImportConfigurationConstants.
+					TYPE_SCHEDULED_PUBLISH_LAYOUT_LOCAL));
+		dynamicQuery.add(
+			typeProperty.ne(
+				ExportImportConfigurationConstants.
+					TYPE_SCHEDULED_PUBLISH_LAYOUT_REMOTE));
+
+		Property statusProperty = PropertyFactoryUtil.forName("status");
+
+		dynamicQuery.add(statusProperty.eq(WorkflowConstants.STATUS_DRAFT));
 
 		Order order = OrderFactoryUtil.asc("createDate");
 
@@ -120,6 +133,10 @@ public class DraftExportImportConfigurationMessageListener
 			// automatically
 
 			for (BackgroundTask backgroundTask : backgroundTasks) {
+				if (isLiveGroup(backgroundTask.getGroupId())) {
+					continue;
+				}
+
 				_backgroundTaskLocalService.deleteBackgroundTask(
 					backgroundTask.getBackgroundTaskId());
 			}
@@ -154,18 +171,25 @@ public class DraftExportImportConfigurationMessageListener
 		return _backgroundTaskLocalService.dynamicQuery(dynamicQuery);
 	}
 
+	protected boolean isLiveGroup(long groupId) {
+		Group group = _groupLocalService.fetchGroup(groupId);
+
+		if (group == null) {
+			return false;
+		}
+
+		if (group.hasStagingGroup()) {
+			return true;
+		}
+
+		return false;
+	}
+
 	@Reference(unbind = "-")
 	protected void setBackgroundTaskLocalService(
 		BackgroundTaskLocalService backgroundTaskLocalService) {
 
 		_backgroundTaskLocalService = backgroundTaskLocalService;
-	}
-
-	@Reference(
-		target = "(destination.name=" + DestinationNames.SCHEDULER_DISPATCH + ")",
-		unbind = "-"
-	)
-	protected void setDestination(Destination destination) {
 	}
 
 	@Reference(unbind = "-")
@@ -175,6 +199,11 @@ public class DraftExportImportConfigurationMessageListener
 
 		_exportImportConfigurationLocalService =
 			exportImportConfigurationLocalService;
+	}
+
+	@Reference(unbind = "-")
+	protected void setGroupLocalService(GroupLocalService groupLocalService) {
+		_groupLocalService = groupLocalService;
 	}
 
 	@Reference(target = ModuleServiceLifecycle.PORTAL_INITIALIZED, unbind = "-")
@@ -193,9 +222,10 @@ public class DraftExportImportConfigurationMessageListener
 	protected void setTriggerFactory(TriggerFactory triggerFactory) {
 	}
 
-	private volatile BackgroundTaskLocalService _backgroundTaskLocalService;
-	private volatile ExportImportConfigurationLocalService
+	private BackgroundTaskLocalService _backgroundTaskLocalService;
+	private ExportImportConfigurationLocalService
 		_exportImportConfigurationLocalService;
-	private volatile SchedulerEngineHelper _schedulerEngineHelper;
+	private GroupLocalService _groupLocalService;
+	private SchedulerEngineHelper _schedulerEngineHelper;
 
 }

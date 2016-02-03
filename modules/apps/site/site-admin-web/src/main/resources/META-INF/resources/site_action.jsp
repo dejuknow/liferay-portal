@@ -31,7 +31,7 @@ if (row != null) {
 	userGroupUser = GetterUtil.getBoolean(row.getParameter("userGroupUser"));
 }
 else {
-	group = (Group)request.getAttribute("view_entries.jspf-site");
+	group = siteAdminDisplayContext.getGroup();
 
 	List<String> organizationNames = SitesUtil.getOrganizationNames(group, user);
 
@@ -48,15 +48,7 @@ boolean hasUpdatePermission = GroupPermissionUtil.contains(permissionChecker, gr
 <liferay-ui:icon-menu direction="left-side" icon="<%= StringPool.BLANK %>" markupView="lexicon" message="<%= StringPool.BLANK %>" showWhenSingleIcon="<%= true %>">
 
 	<%
-	PortletURL siteAdministrationURL = null;
-
-	PanelCategoryHelper panelCategoryHelper = (PanelCategoryHelper)request.getAttribute(ApplicationListWebKeys.PANEL_CATEGORY_HELPER);
-
-	String portletId = panelCategoryHelper.getFirstPortletId(PanelCategoryKeys.SITE_ADMINISTRATION, permissionChecker, group);
-
-	if (Validator.isNotNull(portletId)) {
-		siteAdministrationURL = PortalUtil.getControlPanelPortletURL(request, group, portletId, 0, 0, PortletRequest.RENDER_PHASE);
-	}
+	PortletURL siteAdministrationURL = siteAdminDisplayContext.getSiteAdministrationPortletURL(group);
 	%>
 
 	<c:if test="<%= siteAdministrationURL != null %>">
@@ -70,7 +62,7 @@ boolean hasUpdatePermission = GroupPermissionUtil.contains(permissionChecker, gr
 	<c:if test="<%= hasUpdatePermission %>">
 
 		<%
-		int childSitesCount = GroupLocalServiceUtil.getGroupsCount(company.getCompanyId(), group.getGroupId(), true);
+		int childSitesCount = siteAdminDisplayContext.getChildSitesCount(group);
 		%>
 
 		<c:if test="<%= (childSitesCount > 0) && (row != null) %>">
@@ -85,7 +77,7 @@ boolean hasUpdatePermission = GroupPermissionUtil.contains(permissionChecker, gr
 			/>
 		</c:if>
 
-		<c:if test="<%= !group.isCompany() && (PortalPermissionUtil.contains(permissionChecker, ActionKeys.ADD_COMMUNITY) || GroupPermissionUtil.contains(permissionChecker, group, ActionKeys.ADD_COMMUNITY)) %>">
+		<c:if test="<%= siteAdminDisplayContext.hasAddChildSitePermission(group) %>">
 			<liferay-portlet:renderURL varImpl="addSiteURL">
 				<portlet:param name="mvcPath" value="/edit_site.jsp" />
 				<portlet:param name="parentGroupSearchContainerPrimaryKeys" value="<%= String.valueOf(group.getGroupId()) %>" />
@@ -100,7 +92,7 @@ boolean hasUpdatePermission = GroupPermissionUtil.contains(permissionChecker, gr
 	</c:if>
 
 	<c:if test="<%= group.isCompany() && hasUpdatePermission %>">
-		<liferay-portlet:renderURL portletName="<%= PortletKeys.EXPORT_IMPORT %>" var="exportURL" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
+		<liferay-portlet:renderURL portletName="<%= ExportImportPortletKeys.EXPORT %>" var="exportURL" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
 			<portlet:param name="mvcRenderCommandName" value="exportLayouts" />
 			<portlet:param name="<%= Constants.CMD %>" value="<%= Constants.EXPORT %>" />
 			<portlet:param name="groupId" value="<%= String.valueOf(group.getGroupId()) %>" />
@@ -115,7 +107,7 @@ boolean hasUpdatePermission = GroupPermissionUtil.contains(permissionChecker, gr
 			useDialog="<%= true %>"
 		/>
 
-		<liferay-portlet:renderURL portletName="<%= PortletKeys.EXPORT_IMPORT %>" var="importURL" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
+		<liferay-portlet:renderURL portletName="<%= ExportImportPortletKeys.IMPORT %>" var="importURL" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
 			<portlet:param name="mvcRenderCommandName" value="importLayouts" />
 			<portlet:param name="<%= Constants.CMD %>" value="<%= Constants.VALIDATE %>" />
 			<portlet:param name="groupId" value="<%= String.valueOf(group.getGroupId()) %>" />
@@ -163,7 +155,7 @@ boolean hasUpdatePermission = GroupPermissionUtil.contains(permissionChecker, gr
 		/>
 	</c:if>
 
-	<c:if test="<%= !group.isCompany() && !(organizationUser || userGroupUser) && ((group.getType() == GroupConstants.TYPE_SITE_OPEN) || (group.getType() == GroupConstants.TYPE_SITE_RESTRICTED)) && GroupLocalServiceUtil.hasUserGroup(user.getUserId(), group.getGroupId()) && !SiteMembershipPolicyUtil.isMembershipRequired(user.getUserId(), group.getGroupId()) %>">
+	<c:if test="<%= siteAdminDisplayContext.hasEditAssignmentsPermission(group, organizationUser, userGroupUser) %>">
 		<portlet:actionURL name="editGroupAssignments" var="leaveURL">
 			<portlet:param name="redirect" value="<%= currentURL %>" />
 			<portlet:param name="groupId" value="<%= String.valueOf(group.getGroupId()) %>" />
@@ -176,7 +168,7 @@ boolean hasUpdatePermission = GroupPermissionUtil.contains(permissionChecker, gr
 		/>
 	</c:if>
 
-	<c:if test="<%= !group.isCompany() && hasUpdatePermission %>">
+	<c:if test="<%= !group.isCompany() && !group.isGuest() && hasUpdatePermission %>">
 		<c:choose>
 			<c:when test="<%= group.isActive() %>">
 				<portlet:actionURL name="deactivate" var="activateURL">
@@ -200,7 +192,7 @@ boolean hasUpdatePermission = GroupPermissionUtil.contains(permissionChecker, gr
 		</c:choose>
 	</c:if>
 
-	<c:if test="<%= !group.isCompany() && GroupPermissionUtil.contains(permissionChecker, group, ActionKeys.DELETE) && !PortalUtil.isSystemGroup(group.getGroupKey()) %>">
+	<c:if test="<%= siteAdminDisplayContext.hasDeleteGroupPermission(group) %>">
 		<portlet:actionURL name="deleteGroups" var="deleteURL">
 			<portlet:param name="redirect" value="<%= currentURL %>" />
 			<portlet:param name="groupId" value="<%= String.valueOf(group.getGroupId()) %>" />

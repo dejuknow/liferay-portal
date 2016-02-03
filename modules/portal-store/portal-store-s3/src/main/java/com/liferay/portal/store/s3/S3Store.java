@@ -51,8 +51,8 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.store.s3.configuration.S3StoreConfiguration;
-import com.liferay.portlet.documentlibrary.DuplicateFileException;
-import com.liferay.portlet.documentlibrary.NoSuchFileException;
+import com.liferay.portlet.documentlibrary.exception.DuplicateFileException;
+import com.liferay.portlet.documentlibrary.exception.NoSuchFileException;
 import com.liferay.portlet.documentlibrary.store.BaseStore;
 import com.liferay.portlet.documentlibrary.store.Store;
 
@@ -114,8 +114,8 @@ public class S3Store extends BaseStore {
 
 			_amazonS3.putObject(putObjectRequest);
 		}
-		catch (AmazonClientException amazonClientException) {
-			throw transform(amazonClientException);
+		catch (AmazonClientException ace) {
+			throw transform(ace);
 		}
 		finally {
 			StreamUtil.cleanUp(is);
@@ -158,8 +158,8 @@ public class S3Store extends BaseStore {
 
 			_amazonS3.deleteObject(deleteObjectRequest);
 		}
-		catch (AmazonClientException amazonClientException) {
-			throw transform(amazonClientException);
+		catch (AmazonClientException ace) {
+			throw transform(ace);
 		}
 	}
 
@@ -348,8 +348,8 @@ public class S3Store extends BaseStore {
 
 			_amazonS3.putObject(putObjectRequest);
 		}
-		catch (AmazonClientException amazonClientException) {
-			throw transform(amazonClientException);
+		catch (AmazonClientException ace) {
+			throw transform(ace);
 		}
 		finally {
 			StreamUtil.cleanUp(is);
@@ -424,8 +424,8 @@ public class S3Store extends BaseStore {
 				_amazonS3.deleteObjects(deleteObjectsRequest);
 			}
 		}
-		catch (AmazonClientException amazonClientException) {
-			throw transform(amazonClientException);
+		catch (AmazonClientException ace) {
+			throw transform(ace);
 		}
 	}
 
@@ -527,13 +527,13 @@ public class S3Store extends BaseStore {
 				return s3Object;
 			}
 		}
-		catch (AmazonClientException amazonClientException) {
-			if (isFileNotFound(amazonClientException)) {
+		catch (AmazonClientException ace) {
+			if (isFileNotFound(ace)) {
 				throw new NoSuchFileException(
 					companyId, repositoryId, fileName, versionLabel);
 			}
 
-			throw transform(amazonClientException);
+			throw transform(ace);
 		}
 	}
 
@@ -564,8 +564,8 @@ public class S3Store extends BaseStore {
 
 			return s3ObjectSummaries;
 		}
-		catch (AmazonClientException amazonClientException) {
-			throw transform(amazonClientException);
+		catch (AmazonClientException ace) {
+			throw transform(ace);
 		}
 	}
 
@@ -688,8 +688,8 @@ public class S3Store extends BaseStore {
 	private AmazonS3 _amazonS3;
 	private AWSCredentialsProvider _awsCredentialsProvider;
 	private String _bucketName;
-	private volatile S3FileCache _s3FileCache;
-	private volatile S3KeyTransformer _s3KeyTransformer;
+	private S3FileCache _s3FileCache;
+	private S3KeyTransformer _s3KeyTransformer;
 	private StorageClass _storageClass;
 
 }

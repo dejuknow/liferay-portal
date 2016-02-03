@@ -26,6 +26,10 @@ import com.liferay.portal.kernel.mail.SMTPAccount;
 import com.liferay.portal.kernel.messaging.DestinationNames;
 import com.liferay.portal.kernel.messaging.MessageBusUtil;
 import com.liferay.portal.kernel.notifications.UserNotificationManagerUtil;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.BaseModelPermissionCheckerUtil;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUtil;
 import com.liferay.portal.kernel.transaction.TransactionCommitCallbackUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ClassLoaderPool;
@@ -45,10 +49,6 @@ import com.liferay.portal.model.ResourceAction;
 import com.liferay.portal.model.Subscription;
 import com.liferay.portal.model.User;
 import com.liferay.portal.model.UserNotificationDeliveryConstants;
-import com.liferay.portal.security.permission.ActionKeys;
-import com.liferay.portal.security.permission.BaseModelPermissionCheckerUtil;
-import com.liferay.portal.security.permission.PermissionChecker;
-import com.liferay.portal.security.permission.PermissionCheckerFactoryUtil;
 import com.liferay.portal.service.CompanyLocalServiceUtil;
 import com.liferay.portal.service.GroupLocalServiceUtil;
 import com.liferay.portal.service.ResourceActionLocalServiceUtil;
@@ -223,6 +223,7 @@ public class SubscriptionSender implements Serializable {
 
 					return null;
 				}
+
 			}
 		);
 	}
@@ -370,6 +371,12 @@ public class SubscriptionSender implements Serializable {
 
 	public void setLocalizedBodyMap(Map<Locale, String> localizedBodyMap) {
 		this.localizedBodyMap = localizedBodyMap;
+	}
+
+	public void setLocalizedPortletTitleMap(
+		Map<Locale, String> localizedPortletTitleMap) {
+
+		this.localizedPortletTitleMap = localizedPortletTitleMap;
 	}
 
 	public void setLocalizedSubjectMap(
@@ -711,11 +718,35 @@ public class SubscriptionSender implements Serializable {
 			content = StringUtil.replace(content, key, valueString);
 		}
 
+		String portletName = StringPool.BLANK;
+
 		if (Validator.isNotNull(portletId)) {
-			String portletName = PortalUtil.getPortletTitle(portletId, locale);
+			portletName = PortalUtil.getPortletTitle(portletId, locale);
 
 			content = StringUtil.replace(
 				content, "[$PORTLET_NAME$]", portletName);
+		}
+
+		String portletTitle = portletName;
+
+		if (localizedPortletTitleMap != null) {
+			if (Validator.isNotNull(localizedPortletTitleMap.get(locale))) {
+				portletTitle = localizedPortletTitleMap.get(locale);
+			}
+			else {
+				Locale defaultLocale = LocaleUtil.getDefault();
+
+				if (Validator.isNotNull(
+						localizedPortletTitleMap.get(defaultLocale))) {
+
+					portletTitle = localizedPortletTitleMap.get(defaultLocale);
+				}
+			}
+		}
+
+		if (Validator.isNotNull(portletTitle)) {
+			content = StringUtil.replace(
+				content, "[$PORTLET_TITLE$]", portletTitle);
 		}
 
 		Company company = CompanyLocalServiceUtil.getCompany(companyId);
@@ -838,7 +869,7 @@ public class SubscriptionSender implements Serializable {
 	}
 
 	protected void sendNotification(User user) throws Exception {
-		if (currentUserId == user.getUserId() ) {
+		if (currentUserId == user.getUserId()) {
 			if (_log.isDebugEnabled()) {
 				_log.debug("Skip user " + currentUserId);
 			}
@@ -896,6 +927,7 @@ public class SubscriptionSender implements Serializable {
 	protected boolean htmlFormat;
 	protected String inReplyTo;
 	protected Map<Locale, String> localizedBodyMap;
+	protected Map<Locale, String> localizedPortletTitleMap;
 	protected Map<Locale, String> localizedSubjectMap;
 	protected String mailId;
 	protected String portletId;

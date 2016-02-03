@@ -14,6 +14,7 @@
 
 package com.liferay.sync.engine.service;
 
+import com.liferay.sync.engine.documentlibrary.util.ServerEventUtil;
 import com.liferay.sync.engine.model.ModelListener;
 import com.liferay.sync.engine.model.SyncAccount;
 import com.liferay.sync.engine.model.SyncAccountModelListener;
@@ -124,9 +125,10 @@ public class SyncAccountService {
 		}
 
 		SyncFileService.addSyncFile(
-			null, null, null, filePathName, null,
-			String.valueOf(filePath.getFileName()), 0, 0, SyncFile.STATE_SYNCED,
-			syncAccount.getSyncAccountId(), SyncFile.TYPE_SYSTEM, false);
+			null, null, false, null, filePathName, null,
+			String.valueOf(filePath.getFileName()), 0, 0, 0,
+			SyncFile.STATE_SYNCED, syncAccount.getSyncAccountId(),
+			SyncFile.TYPE_SYSTEM);
 
 		// Sync sites
 
@@ -152,18 +154,18 @@ public class SyncAccountService {
 
 				// Sync file
 
-				SyncFileService.addSyncFile(
-					null, null, null, syncSite.getFilePathName(), null,
-					syncSite.getName(), 0, syncSite.getGroupId(),
-					SyncFile.STATE_SYNCED, syncSite.getSyncAccountId(),
-					SyncFile.TYPE_SYSTEM, false);
-
 				if (syncSite.isActive() &&
 					!Files.exists(Paths.get(syncSite.getFilePathName()))) {
 
 					Files.createDirectories(
 						Paths.get(syncSite.getFilePathName()));
 				}
+
+				SyncFileService.addSyncFile(
+					null, null, false, null, syncSite.getFilePathName(), null,
+					syncSite.getName(), 0, syncSite.getGroupId(), 0,
+					SyncFile.STATE_SYNCED, syncSite.getSyncAccountId(),
+					SyncFile.TYPE_SYSTEM);
 			}
 		}
 
@@ -179,9 +181,19 @@ public class SyncAccountService {
 	}
 
 	public static void deleteSyncAccount(long syncAccountId) {
+		deleteSyncAccount(syncAccountId, true);
+	}
+
+	public static void deleteSyncAccount(
+		long syncAccountId, boolean unregister) {
+
 		try {
 
 			// Sync account
+
+			if (unregister) {
+				ServerEventUtil.unregisterSyncDevice(syncAccountId);
+			}
 
 			SyncAccount syncAccount = fetchSyncAccount(syncAccountId);
 
@@ -405,8 +417,10 @@ public class SyncAccountService {
 			}
 			catch (Exception e1) {
 				try {
-					FileUtils.moveDirectory(
+					FileUtils.copyDirectory(
 						sourceFilePath.toFile(), targetFilePath.toFile());
+
+					FileUtil.deleteFile(sourceFilePath);
 
 					resetFileKeys = true;
 				}

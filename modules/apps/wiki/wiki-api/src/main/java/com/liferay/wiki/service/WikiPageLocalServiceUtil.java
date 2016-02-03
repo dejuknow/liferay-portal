@@ -16,8 +16,7 @@ package com.liferay.wiki.service;
 
 import aQute.bnd.annotation.ProviderType;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
+import com.liferay.osgi.util.ServiceTrackerFactory;
 
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -184,17 +183,6 @@ public class WikiPageLocalServiceUtil {
 	public static void deletePage(long nodeId, java.lang.String title)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		getService().deletePage(nodeId, title);
-	}
-
-	/**
-	* @deprecated As of 6.2.0 replaced by {@link #discardDraft(long, String,
-	double)}
-	*/
-	@Deprecated
-	public static void deletePage(long nodeId, java.lang.String title,
-		double version)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().deletePage(nodeId, title, version);
 	}
 
 	public static void deletePage(com.liferay.wiki.model.WikiPage page)
@@ -414,6 +402,14 @@ public class WikiPageLocalServiceUtil {
 	public static java.util.List<com.liferay.wiki.model.WikiPage> getChildren(
 		long nodeId, boolean head, java.lang.String parentTitle, int status) {
 		return getService().getChildren(nodeId, head, parentTitle, status);
+	}
+
+	public static java.util.List<com.liferay.wiki.model.WikiPage> getChildren(
+		long nodeId, boolean head, java.lang.String parentTitle, int status,
+		int start, int end, com.liferay.portal.kernel.util.OrderByComparator obc) {
+		return getService()
+				   .getChildren(nodeId, head, parentTitle, status, start, end,
+			obc);
 	}
 
 	public static int getChildrenCount(long nodeId, boolean head,
@@ -667,29 +663,8 @@ public class WikiPageLocalServiceUtil {
 		return getService().getRecentChanges(groupId, nodeId, start, end);
 	}
 
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link #getRecentChanges(long, long,
-	int, int)}
-	*/
-	@Deprecated
-	public static java.util.List<com.liferay.wiki.model.WikiPage> getRecentChanges(
-		long nodeId, int start, int end)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getRecentChanges(nodeId, start, end);
-	}
-
 	public static int getRecentChangesCount(long groupId, long nodeId) {
 		return getService().getRecentChangesCount(groupId, nodeId);
-	}
-
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link #getRecentChangesCount(long,
-	long)}
-	*/
-	@Deprecated
-	public static int getRecentChangesCount(long nodeId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getRecentChangesCount(nodeId);
 	}
 
 	public static java.util.List<com.liferay.wiki.model.WikiPage> getRedirectorPages(
@@ -812,19 +787,6 @@ public class WikiPageLocalServiceUtil {
 		getService().movePage(userId, nodeId, title, newTitle, serviceContext);
 	}
 
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link #renamePage(long, long,
-	String, String, boolean, ServiceContext)}
-	*/
-	@Deprecated
-	public static void movePage(long userId, long nodeId,
-		java.lang.String title, java.lang.String newTitle, boolean strict,
-		com.liferay.portal.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService()
-			.movePage(userId, nodeId, title, newTitle, strict, serviceContext);
-	}
-
 	public static com.liferay.portal.kernel.repository.model.FileEntry movePageAttachmentToTrash(
 		long userId, long nodeId, java.lang.String title,
 		java.lang.String fileName)
@@ -925,11 +887,12 @@ public class WikiPageLocalServiceUtil {
 
 	public static void updateAsset(long userId,
 		com.liferay.wiki.model.WikiPage page, long[] assetCategoryIds,
-		java.lang.String[] assetTagNames, long[] assetLinkEntryIds)
+		java.lang.String[] assetTagNames, long[] assetLinkEntryIds,
+		java.lang.Double priority)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		getService()
 			.updateAsset(userId, page, assetCategoryIds, assetTagNames,
-			assetLinkEntryIds);
+			assetLinkEntryIds, priority);
 	}
 
 	public static com.liferay.wiki.model.WikiPage updatePage(long userId,
@@ -995,21 +958,6 @@ public class WikiPageLocalServiceUtil {
 		return _serviceTracker.getService();
 	}
 
-	/**
-	 * @deprecated As of 6.2.0
-	 */
-	@Deprecated
-	public void setService(WikiPageLocalService service) {
-	}
-
-	private static ServiceTracker<WikiPageLocalService, WikiPageLocalService> _serviceTracker;
-
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(WikiPageLocalServiceUtil.class);
-
-		_serviceTracker = new ServiceTracker<WikiPageLocalService, WikiPageLocalService>(bundle.getBundleContext(),
-				WikiPageLocalService.class, null);
-
-		_serviceTracker.open();
-	}
+	private static ServiceTracker<WikiPageLocalService, WikiPageLocalService> _serviceTracker =
+		ServiceTrackerFactory.open(WikiPageLocalService.class);
 }

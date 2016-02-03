@@ -4,14 +4,7 @@
 	<var name="globalSiteName" value="Global" />
 
 	<set-up>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="SignIn#signInPortalInstanceSetUp" />
-			</then>
-		</if>
+		<execute macro="TestCase#setUpPortalInstance" />
 
 		<execute macro="User#firstLoginPG" />
 	</set-up>
@@ -47,8 +40,8 @@
 	</tear-down>
 
 	<command name="AddPageAndChildPageTranslations" priority="3">
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Sites" />
+		<execute macro="ProductMenu#gotoControlPanelSites">
+			<var name="portlet" value="Sites" />
 		</execute>
 
 		<execute macro="Site#addBlankCP">
@@ -59,22 +52,20 @@
 			<var name="page" value="Public Pages" />
 		</execute>
 
-		<execute macro="SitePage#addCP">
+		<execute macro="Page#add">
 			<var name="page" value="Public Pages" />
-			<var name="sitePageName" value="Home" />
+			<var name="pageName" value="Home" />
 			<var name="siteScopeSelected" value="true" />
 		</execute>
 
 		<execute macro="SitePage#addPageTranslations">
+			<var name="page" value="Home" />
 			<var name="pageTranslation" value="es_ES" />
-			<var name="PageTranslationName" value="Casa" />
-			<var name="sitePageName" value="Home" />
+			<var name="pageTranslationName" value="Casa" />
 		</execute>
 
-		<execute macro="Page#openURL">
-			<var name="pageName" value="Home" />
+		<execute macro="Navigator#openSiteURL">
 			<var name="siteName" value="Site Name" />
-			<var name="siteURL" value="true" />
 		</execute>
 
 		<execute macro="Page#viewTranslationsPG">
@@ -84,28 +75,30 @@
 			<var name="sitePageURL" value="http://localhost:8080/es/web/site-name/home" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Sites" />
+		<execute macro="Navigator#openSiteURL">
+			<var name="siteName" value="Site Name" />
 		</execute>
 
-		<execute macro="SitePage#addChildCP">
+		<execute macro="Page#addChild">
 			<var name="page" value="Public Pages" />
 			<var name="siteChildPageName" value="Blog Page" />
 			<var name="siteName" value="Site Name" />
+			<var name="sitePageName" value="Home" />
+			<var name="siteScopeSelected" value="true" />
 		</execute>
 
-		<execute macro="SitePage#openPageTree" />
+		<execute macro="ProductMenu#gotoSitesPages">
+			<var name="page" value="Public Pages" />
+		</execute>
 
 		<execute macro="SitePage#addPageTranslations">
-			<var name="childPageName" value="Blog Page" />
+			<var name="page" value="Blog Page" />
 			<var name="pageTranslation" value="es_ES" />
-			<var name="PageTranslationName" value="Blog Página" />
+			<var name="pageTranslationName" value="Blog Página" />
 		</execute>
 
-		<execute macro="Page#openURL">
-			<var name="pageName" value="Blog Page" />
+		<execute macro="Navigator#openSiteURL">
 			<var name="siteName" value="Site Name" />
-			<var name="siteURL" value="true" />
 		</execute>
 
 		<execute macro="Page#viewTranslationsPG">
@@ -117,18 +110,16 @@
 	</command>
 
 	<command name="SitesTemplatePermissionPersistence" priority="3">
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Sites" />
+		<execute macro="ProductMenu#gotoControlPanelSites">
+			<var name="portlet" value="Sites" />
 		</execute>
 
 		<execute macro="Site#addCommunityCP">
 			<var name="siteName" value="Site Name" />
 		</execute>
 
-		<execute macro="Page#openURL">
-			<var name="pageName" value="Home" />
+		<execute macro="Navigator#openSiteURL">
 			<var name="siteName" value="Site Name" />
-			<var name="siteURL" value="true" />
 		</execute>
 
 		<execute macro="PermissionsInline#gotoConfigurationPG" >
@@ -139,10 +130,8 @@
 			<var name="roleList" value="Guest,Owner,Power User,Site Member,User" />
 		</execute>
 
-		<execute macro="Page#openURL">
-			<var name="pageName" value="Home" />
+		<execute macro="Navigator#openSiteURL">
 			<var name="siteName" value="Site Name" />
-			<var name="siteURL" value="true" />
 		</execute>
 
 		<execute macro="PermissionsInline#gotoConfigurationPG" >
@@ -153,10 +142,8 @@
 			<var name="roleList" value="Guest,Owner,Power User,Site Member,User" />
 		</execute>
 
-		<execute macro="Page#openURL">
-			<var name="pageName" value="Home" />
+		<execute macro="Navigator#openSiteURL">
 			<var name="siteName" value="Site Name" />
-			<var name="siteURL" value="true" />
 		</execute>
 
 		<execute macro="Portlet#addPG">
@@ -165,20 +152,22 @@
 
 		<execute function="Refresh" />
 
-		<var name="key_portletName" value="Asset Publisher" />
+		<execute macro="Portlet#viewTitle">
+			<var name="portletName" value="Asset Publisher" />
+		</execute>
 
-		<execute function="AssertTextEquals" locator1="BasePortlet#SPECIFIC_PORTLET_TITLE" value1="Asset Publisher" />
+		<execute function="Click" locator1="ControlMenu#INFO" />
 
 		<execute function="AssertTextEquals#assertPartialText" locator1="Message#CUSTOMIZED_PAGE_INFO" value1="This page has been changed since the last update from the site template." />
 		<execute function="AssertClick" locator1="Button#RESET_CHANGES" value1="Reset Changes" />
 
-		<execute macro="Page#openURL">
-			<var name="pageName" value="Home" />
+		<execute macro="Navigator#openSiteURL">
 			<var name="siteName" value="Site Name" />
-			<var name="siteURL" value="true" />
 		</execute>
 
-		<execute function="AssertTextNotPresent" locator1="BasePortlet#SPECIFIC_PORTLET_TITLE" value1="Asset Publisher" />
+		<execute macro="Portlet#viewNoSpecificPG">
+			<var name="portletName" value="Asset Publisher" />
+		</execute>
 
 		<execute macro="PermissionsInline#gotoConfigurationPG" >
 			<var name="portletName" value="Polls Display" />
@@ -188,10 +177,8 @@
 			<var name="roleList" value="Guest,Owner,Power User,Site Member,User" />
 		</execute>
 
-		<execute macro="Page#openURL">
-			<var name="pageName" value="Home" />
+		<execute macro="Navigator#openSiteURL">
 			<var name="siteName" value="Site Name" />
-			<var name="siteURL" value="true" />
 		</execute>
 
 		<execute macro="Polls#addPollPG">
@@ -203,8 +190,7 @@
 
 		<execute macro="Polls#viewPollPG">
 			<var name="pollsQuestion" value="What is the most important issue for this election?" />
-			<var name="pollsQuestionChoiceA" value="The Economy" />
-			<var name="pollsQuestionChoiceB" value="The National Debt" />
+			<var name="pollsQuestionChoiceList" value="The Economy,The National Debt" />
 		</execute>
 
 		<execute macro="PermissionsInline#gotoConfigurationPG" >
@@ -215,10 +201,8 @@
 			<var name="roleList" value="Guest,Owner,Power User,Site Member,User" />
 		</execute>
 
-		<execute macro="Page#openURL">
-			<var name="pageName" value="Home" />
+		<execute macro="Navigator#openSiteURL">
 			<var name="siteName" value="Site Name" />
-			<var name="siteURL" value="true" />
 		</execute>
 
 		<execute macro="MessageboardsThread#addPG">
@@ -226,17 +210,16 @@
 			<var name="threadSubject" value="Thread" />
 		</execute>
 
-		<execute macro="Page#openURL">
-			<var name="pageName" value="Home" />
+		<execute macro="Navigator#openSiteURL">
 			<var name="siteName" value="Site Name" />
-			<var name="siteURL" value="true" />
 		</execute>
 
 		<execute macro="MessageboardsThread#gotoPG">
+			<var name="lastPostUserName" value="Test Test" />
 			<var name="postCount" value="1" />
+			<var name="startedByUserName" value="Test Test" />
 			<var name="threadBody" value="This is the message boards thread." />
 			<var name="threadSubject" value="Thread" />
-			<var name="userName" value="Test Test" />
 		</execute>
 
 		<execute macro="MessageboardsThread#viewPG">
@@ -248,15 +231,16 @@
 
 		<execute function="Open" locator1="http://localhost:8080/web/site-name/home" />
 
-		<var name="key_portletName" value="Message Boards" />
-
-		<execute function="AssertTextEquals" locator1="BasePortlet#SPECIFIC_PORTLET_TITLE" value1="Message Boards" />
+		<execute macro="Portlet#viewTitle">
+			<var name="portletName" value="Message Boards" />
+		</execute>
 
 		<execute macro="MessageboardsThread#gotoPG">
+			<var name="lastPostUserName" value="Test Test" />
 			<var name="postCount" value="1" />
+			<var name="startedByUserName" value="Test Test" />
 			<var name="threadBody" value="This is the message boards thread." />
 			<var name="threadSubject" value="Thread" />
-			<var name="userName" value="Test Test" />
 		</execute>
 
 		<execute macro="MessageboardsThread#viewPG">
@@ -264,27 +248,24 @@
 			<var name="threadSubject" value="Thread" />
 		</execute>
 
-		<var name="key_portletName" value="Polls Display" />
-
-		<execute function="AssertTextEquals" locator1="BasePortlet#SPECIFIC_PORTLET_TITLE" value1="Polls Display" />
+		<execute macro="Portlet#viewTitle">
+			<var name="portletName" value="Polls Display" />
+		</execute>
 
 		<execute function="AssertTextEquals" locator1="BasePortlet#INFO_MESSAGE" value1="Please sign in to vote." />
 
 		<execute function="AssertElementPresent" locator1="Search#SEARCH_FIELD" />
 
-		<var name="key_portletName" value="User Statistics" />
+		<execute macro="Portlet#viewTitle">
+			<var name="portletName" value="User Statistics" />
+		</execute>
 
-		<execute function="AssertTextEquals" locator1="BasePortlet#SPECIFIC_PORTLET_TITLE" value1="User Statistics" />
+		<execute macro="SignIn#signInViaDockbar">
+			<var name="userEmailAddress" value="test@liferay.com" />
+			<var name="userPassword" value="test" />
+		</execute>
 
-		<var name="key_portletName" value="Upcoming Events" />
-
-		<execute function="AssertTextEquals" locator1="BasePortlet#SPECIFIC_PORTLET_TITLE" value1="Upcoming Events" />
-
-		<execute function="AssertClick" locator1="ControlMenu#USER_SIGN_IN" value1="Sign In" />
-
-		<execute function="Type" locator1="TextInput#EMAIL_ADDRESS" value1="test@liferay.com" />
-		<execute function="Type" locator1="TextInput#PASSWORD" value1="test" />
-		<execute function="Click" locator1="Button#SIGN_IN" value1="Sign In" />
+		<execute function="Open" locator1="http://localhost:8080/web/site-name/home" />
 
 		<execute macro="PermissionsInline#gotoConfigurationPG" >
 			<var name="portletName" value="Polls Display" />
@@ -295,10 +276,8 @@
 			<var name="roleList" value="Guest,Owner,Power User,Site Member,User" />
 		</execute>
 
-		<execute macro="Page#openURL">
-			<var name="pageName" value="Home" />
+		<execute macro="Navigator#openSiteURL">
 			<var name="siteName" value="Site Name" />
-			<var name="siteURL" value="true" />
 		</execute>
 
 		<execute macro="PermissionsInline#gotoConfigurationPG" >
@@ -319,8 +298,8 @@
 	</command>
 
 	<command name="ViewDefaultGlobalScopeLandingPage" priority="4">
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Sites" />
+		<execute macro="ProductMenu#gotoControlPanelSites">
+			<var name="portlet" value="Sites" />
 		</execute>
 
 		<execute macro="Site#addBlankCP">

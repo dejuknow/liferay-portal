@@ -16,18 +16,31 @@ package com.liferay.nested.portlets.web.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
-import com.liferay.configuration.admin.ConfigurationAdmin;
+import com.liferay.portal.metatype.annotations.ExtendedObjectClassDefinition;
 
 /**
  * @author Juergen Kappler
  */
-@ConfigurationAdmin(category = "web-experience-management")
+@ExtendedObjectClassDefinition(
+	category = "web-experience-management",
+	scope = ExtendedObjectClassDefinition.Scope.PORTLET_INSTANCE
+)
 @Meta.OCD(
-	id = "com.liferay.nested.portlets.web.configuration.NestedPortletsPortletInstanceConfiguration"
+	id = "com.liferay.nested.portlets.web.configuration.NestedPortletsPortletInstanceConfiguration",
+	localization = "content/Language",
+	name = "%nested.portlets.portlet.instance.configuration.name"
 )
 public interface NestedPortletsPortletInstanceConfiguration {
 
-	@Meta.AD(required = false)
+	@Meta.AD(
+		deflt = "2_columns_i", id = "layout.template.default", required = false
+	)
 	public String layoutTemplateId();
+
+	@Meta.AD(
+		deflt = "freeform,1_column", id = "layout.template.unsupported",
+		required = false
+	)
+	public String[] layoutTemplatesUnsupported();
 
 }

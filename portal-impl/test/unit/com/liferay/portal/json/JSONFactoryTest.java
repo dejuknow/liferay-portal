@@ -158,11 +158,11 @@ public class JSONFactoryTest {
 		map = (Map<?, ?>)JSONFactoryUtil.looseDeserialize(
 			"{\"class\":\"" + JSONFactoryUtil.class.getName() +
 				"\",\"foo\": \"boo\",\"jsonFactory\":{\"class\":\"" +
-				JSONFactoryImpl.class.getName() + "\"}}");
+					JSONFactoryImpl.class.getName() + "\"}}");
 
 		Assert.assertNotNull(map);
 		Assert.assertEquals(3, map.size());
-		Assert.assertEquals( JSONFactoryUtil.class.getName(), map.get("class"));
+		Assert.assertEquals(JSONFactoryUtil.class.getName(), map.get("class"));
 		Assert.assertEquals("boo", map.get("foo"));
 
 		map = (Map<?, ?>)map.get("jsonFactory");

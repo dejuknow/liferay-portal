@@ -28,6 +28,8 @@ import com.liferay.portal.util.InitUtil;
 import com.liferay.portal.util.JarUtil;
 import com.liferay.portal.util.PropsImpl;
 import com.liferay.portal.util.PropsValues;
+import com.liferay.registry.BasicRegistryImpl;
+import com.liferay.registry.RegistryUtil;
 
 import java.io.IOException;
 
@@ -141,6 +143,8 @@ public class DataSourceFactoryImplTest {
 	@NewEnv(type = NewEnv.Type.JVM)
 	@Test
 	public void testHikariCP() throws Exception {
+		RegistryUtil.setRegistry(new BasicRegistryImpl());
+
 		System.setProperty(
 			"portal:jdbc.default.liferay.pool.provider", "hikaricp");
 
@@ -160,8 +164,8 @@ public class DataSourceFactoryImplTest {
 		DataSource dataSource = null;
 
 		try (CaptureAppender captureAppender =
-			Log4JLoggerTestUtil.configureLog4JLogger(
-				JarUtil.class.getName(), Level.INFO)) {
+				Log4JLoggerTestUtil.configureLog4JLogger(
+					JarUtil.class.getName(), Level.INFO)) {
 
 			dataSource = DataSourceFactoryUtil.initDataSource(_properties);
 

@@ -17,14 +17,10 @@
 <%@ include file="/init.jsp" %>
 
 <%
-String redirect = ParamUtil.getString(request, "redirect");
-
 String saveCallback = ParamUtil.getString(request, "saveCallback");
 
 if (Validator.isNotNull(saveCallback)) {
 	saveCallback = "Liferay.Util.getOpener()['" + HtmlUtil.escapeJS(saveCallback) + "'](Liferay.Util.getWindow());";
-
-	redirect = null;
 }
 
 String className = ParamUtil.getString(request, "className");
@@ -33,25 +29,18 @@ long classPK = ParamUtil.getLong(request, "classPK");
 List<MDRRuleGroupInstance> ruleGroupInstances = MDRRuleGroupInstanceServiceUtil.getRuleGroupInstances(className, classPK, QueryUtil.ALL_POS, QueryUtil.ALL_POS, new RuleGroupInstancePriorityComparator());
 %>
 
-<liferay-ui:header
-	backURL="<%= redirect %>"
-	title="manage-rule-priorities"
-/>
-
-<div class="alert alert-info">
-	<liferay-ui:message key="to-manage-priorities,-drag-the-rule-to-the-desired-position" />
-</div>
-
-<div class="separator"><!-- --></div>
-
 <portlet:actionURL name="/mobile_device_rules/edit_rule_group_instance" var="editRuleGroupInstancesURL">
 	<portlet:param name="mvcRenderCommandName" value="/mobile_device_rules/edit_rule_group_instance" />
 </portlet:actionURL>
 
-<aui:form action="<%= editRuleGroupInstancesURL %>" method="post" name="fm" onSubmit='<%= renderResponse.getNamespace() + "saveRuleGroupInstancesPriorities()" %>'>
+<aui:form action="<%= editRuleGroupInstancesURL %>" cssClass="container-fluid-1280" method="post" name="fm" onSubmit='<%= renderResponse.getNamespace() + "saveRuleGroupInstancesPriorities()" %>'>
 	<aui:input name="<%= Constants.CMD %>" type="hidden" value="<%= Constants.UPDATE %>" />
 	<aui:input name="redirect" type="hidden" value="<%= currentURL %>" />
 	<aui:input name="ruleGroupsInstancesJSON" type="hidden" />
+
+	<div class="alert alert-info">
+		<liferay-ui:message key="to-manage-priorities,-drag-the-rule-to-the-desired-position" />
+	</div>
 
 	<div class="rule-group-instance-container" id="<portlet:namespace />ruleGroupInstancesPriorities">
 
@@ -62,15 +51,13 @@ List<MDRRuleGroupInstance> ruleGroupInstances = MDRRuleGroupInstanceServiceUtil.
 			MDRRuleGroup ruleGroup = ruleGroupInstance.getRuleGroup();
 		%>
 
-			<div class="rule-group-instance <%= (i == 0) ? "rule-group-instance-first" : StringPool.BLANK %>" data-rule-group-instance-id="<%= ruleGroupInstance.getRuleGroupInstanceId() %>">
-				<span class="icon icon-grip-dotted-vertical rule-group-instance-handle"></span>
+			<div class="list-group-item" data-rule-group-instance-id="<%= ruleGroupInstance.getRuleGroupInstanceId() %>">
+				<aui:icon cssClass="rule-group-handle" image="ellipsis-v" markupView="lexicon" />
 
-				<span class="rule-group-instance-label"><%= HtmlUtil.escape(ruleGroup.getName(locale)) %></span>
+				<strong><%= HtmlUtil.escape(ruleGroup.getName(locale)) %></strong>
 
-				<span class="rule-group-instance-priority">
-					<liferay-ui:message key="priority" />:
-
-					<span class="rule-group-instance-priority-value"><%= ruleGroupInstance.getPriority() %></span>
+				<span class="pull-right">
+					<liferay-ui:message key="priority" />: <strong class="rule-group-instance-priority-value"><%= ruleGroupInstance.getPriority() %></strong>
 				</span>
 			</div>
 
@@ -81,9 +68,9 @@ List<MDRRuleGroupInstance> ruleGroupInstances = MDRRuleGroupInstanceServiceUtil.
 	</div>
 
 	<aui:button-row>
-		<aui:button type="submit" />
+		<aui:button cssClass="btn-lg" type="submit" />
 
-		<aui:button onClick="<%= saveCallback %>" value="close" />
+		<aui:button cssClass="btn-lg" onClick="<%= saveCallback %>" value="close" />
 	</aui:button-row>
 </aui:form>
 
@@ -113,15 +100,15 @@ List<MDRRuleGroupInstance> ruleGroupInstances = MDRRuleGroupInstanceServiceUtil.
 		var sortable = new A.Sortable(
 			{
 				container: container,
-				handles: ['.rule-group-instance'],
-				nodes: '.rule-group-instance',
+				handles: ['.rule-group-handle'],
+				nodes: '.list-group-item',
 				on: {
 					moved: function(event) {
 						var instance = this;
 
 						var delegate = instance.delegate;
 
-						var nodes = container.all('.rule-group-instance');
+						var nodes = container.all('.list-group-item');
 
 						var dragNode = event.drag.get('dragNode');
 
@@ -146,7 +133,7 @@ List<MDRRuleGroupInstance> ruleGroupInstances = MDRRuleGroupInstanceServiceUtil.
 					var drag = event.target;
 					var dragNode = drag.get('dragNode');
 
-					var nodes = container.all('.rule-group-instance');
+					var nodes = container.all('.list-group-item');
 
 					nodes.each(
 						function(item, index, collection) {

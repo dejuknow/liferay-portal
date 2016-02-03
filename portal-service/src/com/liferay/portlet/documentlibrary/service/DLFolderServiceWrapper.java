@@ -157,6 +157,16 @@ public class DLFolderServiceWrapper implements DLFolderService,
 
 	@Override
 	public int getFoldersAndFileEntriesAndFileShortcutsCount(long groupId,
+		long folderId, java.lang.String[] mimeTypes,
+		boolean includeMountFolders,
+		com.liferay.portal.kernel.dao.orm.QueryDefinition<?> queryDefinition)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _dlFolderService.getFoldersAndFileEntriesAndFileShortcutsCount(groupId,
+			folderId, mimeTypes, includeMountFolders, queryDefinition);
+	}
+
+	@Override
+	public int getFoldersAndFileEntriesAndFileShortcutsCount(long groupId,
 		long folderId, int status, boolean includeMountFolders)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _dlFolderService.getFoldersAndFileEntriesAndFileShortcutsCount(groupId,
@@ -346,22 +356,6 @@ public class DLFolderServiceWrapper implements DLFolderService,
 		java.lang.String lockUuid)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _dlFolderService.verifyInheritableLock(folderId, lockUuid);
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
-	 */
-	@Deprecated
-	public DLFolderService getWrappedDLFolderService() {
-		return _dlFolderService;
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #setWrappedService}
-	 */
-	@Deprecated
-	public void setWrappedDLFolderService(DLFolderService dlFolderService) {
-		_dlFolderService = dlFolderService;
 	}
 
 	@Override

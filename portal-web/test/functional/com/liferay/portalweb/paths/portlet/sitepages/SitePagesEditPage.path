@@ -10,11 +10,6 @@
 <tbody>
 <!--DETAILS-->
 <tr>
-	<td>DETAILS_PANEL_TOGGLE</td>
-	<td>//li/a[contains(@id,'GroupPagesPortlet_details')]</td>
-	<td></td>
-</tr>
-<tr>
 	<td>LOCALIZED_FLAG_ICON</td>
 	<td>//li[@role='menuitem' and @data-value='${key_localizationName}']/a</td>
 	<td></td>
@@ -121,7 +116,7 @@
 </tr>
 <tr>
 	<td>PAGE_TYPE_EMBEDDED_DESCRIPTION_FIELD</td>
-	<td>//li[@data-search='Embedded']//div[contains(@class,'page-template-description')]</td>
+	<td>//li[@data-search='Embedded']//div[contains(@class,'page-template-title')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -131,7 +126,7 @@
 </tr>
 <tr>
 	<td>PAGE_TYPE_LINK_TO_URL_DESCRIPTION_FIELD</td>
-	<td>//li[@data-search='Link to URL']//div[contains(@class,'page-template-description')]</td>
+	<td>//li[@data-search='Link to URL']//div[contains(@class,'page-template-title')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -244,52 +239,6 @@
 <tr>
 	<td></td>
 	<td></td>
-	<td></td>
-</tr>
-<!--EMBEDDED_PORTLETS-->
-<tr>
-	<td>EMBEDDED_PORTLETS_PANEL_TOGGLE</td>
-	<td>//li/a[contains(@id,'embeddedPortlets')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>EMBEDDED_PORTLETS_CHECKBOX_1</td>
-	<td>//div[contains(@id,'embeddedPortlets')]//tbody/tr[1]/td[1]//input</td>
-	<td></td>
-</tr>
-<tr>
-	<td>EMBEDDED_PORTLETS_CHECKBOX_2</td>
-	<td>//div[contains(@id,'embeddedPortlets')]//tbody/tr[2]/td[1]//input</td>
-	<td></td>
-</tr>
-<tr>
-	<td>EMBEDDED_PORTLETS_PORTLET_ID_1</td>
-	<td>//div[contains(@id,'embeddedPortlets')]//tbody/tr[1]/td[2]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>EMBEDDED_PORTLETS_PORTLET_ID_2</td>
-	<td>//div[contains(@id,'embeddedPortlets')]//tbody/tr[2]/td[2]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>EMBEDDED_PORTLETS_TITLE_1</td>
-	<td>//div[contains(@id,'embeddedPortlets')]//tbody/tr[1]/td[3]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>EMBEDDED_PORTLETS_TITLE_2</td>
-	<td>//div[contains(@id,'embeddedPortlets')]//tbody/tr[2]/td[3]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>EMBEDDED_PORTLETS_STATUS_1</td>
-	<td>//div[contains(@id,'embeddedPortlets')]//tbody/tr[1]/td[4]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>EMBEDDED_PORTLETS_STATUS_2</td>
-	<td>//div[contains(@id,'embeddedPortlets')]//tbody/tr[2]/td[4]</td>
 	<td></td>
 </tr>
 <tr>

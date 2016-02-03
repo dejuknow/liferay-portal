@@ -36,7 +36,6 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.test.rule.HypersonicServerTestRule;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
-import com.liferay.portal.test.rule.MainServletTestRule;
 import com.liferay.portal.util.InitUtil;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.registry.BasicRegistryImpl;
@@ -44,11 +43,16 @@ import com.liferay.registry.RegistryUtil;
 
 import java.io.File;
 
+import java.lang.management.ManagementFactory;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Future;
+
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 
 import org.junit.Assert;
 import org.junit.ClassRule;
@@ -66,7 +70,6 @@ public class CounterLocalServiceTest {
 	public static final AggregateTestRule aggregateTestRule =
 		new AggregateTestRule(
 			false, new LiferayIntegrationTestRule(),
-			MainServletTestRule.INSTANCE, HypersonicServerTestRule.INSTANCE,
 			new BaseTestRule<>(
 				new BaseTestCallback<Void, Void>() {
 
@@ -76,7 +79,9 @@ public class CounterLocalServiceTest {
 					}
 
 					@Override
-					public Void beforeClass(Description description) {
+					public Void beforeClass(Description description)
+						throws Exception {
+
 						CounterLocalServiceUtil.reset(_COUNTER_NAME);
 
 						Counter counter = CounterLocalServiceUtil.createCounter(
@@ -84,10 +89,24 @@ public class CounterLocalServiceTest {
 
 						CounterLocalServiceUtil.updateCounter(counter);
 
+						MBeanServer mBeanServer =
+							ManagementFactory.getPlatformMBeanServer();
+
+						for (ObjectName objectName :
+								mBeanServer.queryNames(
+									null,
+									new ObjectName(
+										"com.zaxxer.hikari:type=Pool (*"))) {
+
+							mBeanServer.invoke(
+								objectName, "softEvictConnections", null, null);
+						}
+
 						return null;
 					}
 
-				}));
+				}),
+			HypersonicServerTestRule.INSTANCE);
 
 	@Test
 	public void testConcurrentIncrement() throws Exception {

@@ -1,5 +1,4 @@
 ;(function(A, Liferay) {
-	var AArray = A.Array;
 	var Util = Liferay.Util;
 
 	var STR_HEAD = 'head';
@@ -27,24 +26,26 @@
 
 			event.portlet.remove(true);
 
-			A.io.request(
-				themeDisplay.getPathMain() + '/portal/update_layout',
-				{
-					after: {
-						success: function() {
-							Liferay.fire('updatedLayout');
+			if (!event.nestedPortlet) {
+				A.io.request(
+					themeDisplay.getPathMain() + '/portal/update_layout',
+					{
+						after: {
+							success: function() {
+								Liferay.fire('updatedLayout');
+							}
+						},
+						data: {
+							cmd: 'delete',
+							doAsUserId: event.doAsUserId,
+							p_auth: Liferay.authToken,
+							p_l_id: event.plid,
+							p_p_id: event.portletId,
+							p_v_l_s_g_id: themeDisplay.getSiteGroupId()
 						}
-					},
-					data: {
-						cmd: 'delete',
-						doAsUserId: event.doAsUserId,
-						p_auth: Liferay.authToken,
-						p_l_id: event.plid,
-						p_p_id: event.portletId,
-						p_v_l_s_g_id: themeDisplay.getSiteGroupId()
 					}
-				}
-			);
+				);
+			}
 		},
 
 		_loadMarkupHeadElements: function(response, loadHTML) {
@@ -151,7 +152,6 @@
 
 			var beforePortletLoaded = options.beforePortletLoaded;
 			var onCompleteFn = options.onComplete;
-			var positionOptions = options.positionOptions;
 
 			var onComplete = function(portlet, portletId) {
 				if (onCompleteFn) {
@@ -276,40 +276,47 @@
 
 				portletBound = portletBound.one('> *');
 
-				var id = portletBound.attr('id');
+				var portletId;
 
-				var portletId = Util.getPortletId(id);
+				if (portletBound) {
+					var id = portletBound.attr('id');
 
-				portletBound.portletId = portletId;
+					portletId = Util.getPortletId(id);
 
-				placeHolder.hide();
-				placeHolder.placeAfter(portletBound);
+					portletBound.portletId = portletId;
 
-				placeHolder.remove();
+					placeHolder.hide();
+					placeHolder.placeAfter(portletBound);
 
-				instance.refreshLayout(portletBound);
+					placeHolder.remove();
 
-				if (window.location.hash) {
-					window.location.hash = 'p_p_id_' + portletId + '_';
-				}
+					instance.refreshLayout(portletBound);
 
-				portletBoundary = portletBound;
-
-				var Layout = Liferay.Layout;
-
-				if (Layout && Layout.INITIALIZED) {
-					Layout.updateCurrentPortletInfo(portletBoundary);
-
-					if (container) {
-						Layout.syncEmptyColumnClassUI(container);
+					if (window.location.hash) {
+						window.location.hash = 'p_p_id_' + portletId + '_';
 					}
 
-					Layout.syncDraggableClassUI();
-					Layout.updatePortletDropZones(portletBoundary);
-				}
+					portletBoundary = portletBound;
 
-				if (onComplete) {
-					onComplete(portletBoundary, portletId);
+					var Layout = Liferay.Layout;
+
+					if (Layout && Layout.INITIALIZED) {
+						Layout.updateCurrentPortletInfo(portletBoundary);
+
+						if (container) {
+							Layout.syncEmptyColumnClassUI(container);
+						}
+
+						Layout.syncDraggableClassUI();
+						Layout.updatePortletDropZones(portletBoundary);
+					}
+
+					if (onComplete) {
+						onComplete(portletBoundary, portletId);
+					}
+				}
+				else {
+					placeHolder.remove();
 				}
 
 				return portletId;
@@ -677,13 +684,12 @@
 		function(options) {
 			var instance = this;
 
-			var portlet = options.portlet;
-			var portletId = options.portletId;
-			var uri = options.uri;
-			var namespace = options.namespace;
-			var title = options.title;
-			var subTitle = options.subTitle;
 			var bodyCssClass = options.bodyCssClass;
+			var namespace = options.namespace;
+			var portlet = options.portlet;
+			var subTitle = options.subTitle;
+			var title = options.title;
+			var uri = options.uri;
 
 			portlet = A.one(portlet);
 

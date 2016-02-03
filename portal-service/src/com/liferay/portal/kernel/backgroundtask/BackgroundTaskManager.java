@@ -74,6 +74,10 @@ public interface BackgroundTaskManager {
 
 	public void deleteGroupBackgroundTasks(long groupId) throws PortalException;
 
+	public void deleteGroupBackgroundTasks(
+			long groupId, String name, String taskExecutorClassName)
+		throws PortalException;
+
 	public BackgroundTask fetchBackgroundTask(long backgroundTaskId);
 
 	public BackgroundTask fetchFirstBackgroundTask(
@@ -117,6 +121,10 @@ public interface BackgroundTaskManager {
 		OrderByComparator<BackgroundTask> orderByComparator);
 
 	public List<BackgroundTask> getBackgroundTasks(
+		long[] groupIds, String name, String taskExecutorClassName, int start,
+		int end, OrderByComparator<BackgroundTask> orderByComparator);
+
+	public List<BackgroundTask> getBackgroundTasks(
 		String taskExecutorClassName, int status);
 
 	public List<BackgroundTask> getBackgroundTasks(
@@ -148,6 +156,13 @@ public interface BackgroundTaskManager {
 
 	public int getBackgroundTasksCount(
 		long groupId, String[] taskExecutorClassNames, boolean completed);
+
+	public int getBackgroundTasksCount(
+		long[] groupIds, String name, String taskExecutorClassName);
+
+	public int getBackgroundTasksCount(
+		long[] groupIds, String name, String taskExecutorClassName,
+		boolean completed);
 
 	public String getBackgroundTaskStatusJSON(long backgroundTaskId);
 

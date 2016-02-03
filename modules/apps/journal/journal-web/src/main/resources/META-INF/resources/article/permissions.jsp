@@ -20,16 +20,10 @@
 JournalArticle article = journalDisplayContext.getArticle();
 %>
 
-<liferay-ui:error-marker key="errorSection" value="permissions" />
+<liferay-ui:error-marker key="<%= WebKeys.ERROR_SECTION %>" value="permissions" />
 
 <aui:model-context bean="<%= article %>" model="<%= JournalArticle.class %>" />
 
-<h3><liferay-ui:message key="permissions" /></h3>
-
-<c:if test="<%= (article == null) || article.isNew() %>">
-	<aui:field-wrapper cssClass="journal-article-permissions" label="permissions">
-		<liferay-ui:input-permissions
-			modelName="<%= JournalArticle.class.getName() %>"
-		/>
-	</aui:field-wrapper>
-</c:if>
+<liferay-ui:input-permissions
+	modelName="<%= JournalArticle.class.getName() %>"
+/>

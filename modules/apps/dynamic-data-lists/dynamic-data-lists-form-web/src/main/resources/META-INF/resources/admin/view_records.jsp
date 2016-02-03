@@ -20,6 +20,8 @@
 DDLFormViewRecordsDisplayContext ddlFormViewRecordsDisplayContext = new DDLFormViewRecordsDisplayContext(liferayPortletRequest, liferayPortletResponse, ddlFormAdminDisplayContext.getRecordSet());
 
 DDLRecordSet ddlRecordSet = ddlFormViewRecordsDisplayContext.getDDLRecordSet();
+
+renderResponse.setTitle(LanguageUtil.get(request, "form-entries"));
 %>
 
 <portlet:renderURL var="searchURL">
@@ -54,12 +56,14 @@ DDLRecordSet ddlRecordSet = ddlFormViewRecordsDisplayContext.getDDLRecordSet();
 			<%
 			DDMFormValues ddmFormValues = ddlFormViewRecordsDisplayContext.getDDMFormValues(record);
 
-			for (int i = 0; i < ddlFormViewRecordsDisplayContext.getTotalColumns(); i++) {
+			Map<String, List<DDMFormFieldValue>> ddmFormFieldValuesMap = ddmFormValues.getDDMFormFieldValuesMap();
+
+			for (DDMFormField ddmFormField : ddlFormViewRecordsDisplayContext.getDDMFormFields()) {
 			%>
 
 				<liferay-ui:search-container-column-text
-					name="<%= ddlFormViewRecordsDisplayContext.getColumnName(i, ddmFormValues) %>"
-					value="<%= ddlFormViewRecordsDisplayContext.getColumnValue(i, ddmFormValues) %>"
+					name="<%= ddlFormViewRecordsDisplayContext.getColumnName(ddmFormField) %>"
+					value="<%= ddlFormViewRecordsDisplayContext.getColumnValue(ddmFormField, ddmFormFieldValuesMap.get(ddmFormField.getName())) %>"
 				/>
 
 			<%

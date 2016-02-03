@@ -16,14 +16,13 @@ package com.liferay.social.networking.service.persistence;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.osgi.util.ServiceTrackerFactory;
+
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.service.ServiceContext;
 
 import com.liferay.social.networking.model.MeetupsRegistration;
-
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
 
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -191,7 +190,7 @@ public class MeetupsRegistrationUtil {
 	* @param meetupsEntryId the meetups entry ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching meetups registration
-	* @throws com.liferay.social.networking.NoSuchMeetupsRegistrationException if a matching meetups registration could not be found
+	* @throws NoSuchMeetupsRegistrationException if a matching meetups registration could not be found
 	*/
 	public static MeetupsRegistration findByMeetupsEntryId_First(
 		long meetupsEntryId,
@@ -222,7 +221,7 @@ public class MeetupsRegistrationUtil {
 	* @param meetupsEntryId the meetups entry ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching meetups registration
-	* @throws com.liferay.social.networking.NoSuchMeetupsRegistrationException if a matching meetups registration could not be found
+	* @throws NoSuchMeetupsRegistrationException if a matching meetups registration could not be found
 	*/
 	public static MeetupsRegistration findByMeetupsEntryId_Last(
 		long meetupsEntryId,
@@ -253,7 +252,7 @@ public class MeetupsRegistrationUtil {
 	* @param meetupsEntryId the meetups entry ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next meetups registration
-	* @throws com.liferay.social.networking.NoSuchMeetupsRegistrationException if a meetups registration with the primary key could not be found
+	* @throws NoSuchMeetupsRegistrationException if a meetups registration with the primary key could not be found
 	*/
 	public static MeetupsRegistration[] findByMeetupsEntryId_PrevAndNext(
 		long meetupsRegistrationId, long meetupsEntryId,
@@ -284,12 +283,12 @@ public class MeetupsRegistrationUtil {
 	}
 
 	/**
-	* Returns the meetups registration where userId = &#63; and meetupsEntryId = &#63; or throws a {@link com.liferay.social.networking.NoSuchMeetupsRegistrationException} if it could not be found.
+	* Returns the meetups registration where userId = &#63; and meetupsEntryId = &#63; or throws a {@link NoSuchMeetupsRegistrationException} if it could not be found.
 	*
 	* @param userId the user ID
 	* @param meetupsEntryId the meetups entry ID
 	* @return the matching meetups registration
-	* @throws com.liferay.social.networking.NoSuchMeetupsRegistrationException if a matching meetups registration could not be found
+	* @throws NoSuchMeetupsRegistrationException if a matching meetups registration could not be found
 	*/
 	public static MeetupsRegistration findByU_ME(long userId,
 		long meetupsEntryId)
@@ -430,7 +429,7 @@ public class MeetupsRegistrationUtil {
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching meetups registration
-	* @throws com.liferay.social.networking.NoSuchMeetupsRegistrationException if a matching meetups registration could not be found
+	* @throws NoSuchMeetupsRegistrationException if a matching meetups registration could not be found
 	*/
 	public static MeetupsRegistration findByME_S_First(long meetupsEntryId,
 		int status, OrderByComparator<MeetupsRegistration> orderByComparator)
@@ -460,7 +459,7 @@ public class MeetupsRegistrationUtil {
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching meetups registration
-	* @throws com.liferay.social.networking.NoSuchMeetupsRegistrationException if a matching meetups registration could not be found
+	* @throws NoSuchMeetupsRegistrationException if a matching meetups registration could not be found
 	*/
 	public static MeetupsRegistration findByME_S_Last(long meetupsEntryId,
 		int status, OrderByComparator<MeetupsRegistration> orderByComparator)
@@ -491,7 +490,7 @@ public class MeetupsRegistrationUtil {
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next meetups registration
-	* @throws com.liferay.social.networking.NoSuchMeetupsRegistrationException if a meetups registration with the primary key could not be found
+	* @throws NoSuchMeetupsRegistrationException if a meetups registration with the primary key could not be found
 	*/
 	public static MeetupsRegistration[] findByME_S_PrevAndNext(
 		long meetupsRegistrationId, long meetupsEntryId, int status,
@@ -557,7 +556,7 @@ public class MeetupsRegistrationUtil {
 	*
 	* @param meetupsRegistrationId the primary key of the meetups registration
 	* @return the meetups registration that was removed
-	* @throws com.liferay.social.networking.NoSuchMeetupsRegistrationException if a meetups registration with the primary key could not be found
+	* @throws NoSuchMeetupsRegistrationException if a meetups registration with the primary key could not be found
 	*/
 	public static MeetupsRegistration remove(long meetupsRegistrationId)
 		throws com.liferay.social.networking.exception.NoSuchMeetupsRegistrationException {
@@ -570,11 +569,11 @@ public class MeetupsRegistrationUtil {
 	}
 
 	/**
-	* Returns the meetups registration with the primary key or throws a {@link com.liferay.social.networking.NoSuchMeetupsRegistrationException} if it could not be found.
+	* Returns the meetups registration with the primary key or throws a {@link NoSuchMeetupsRegistrationException} if it could not be found.
 	*
 	* @param meetupsRegistrationId the primary key of the meetups registration
 	* @return the meetups registration
-	* @throws com.liferay.social.networking.NoSuchMeetupsRegistrationException if a meetups registration with the primary key could not be found
+	* @throws NoSuchMeetupsRegistrationException if a meetups registration with the primary key could not be found
 	*/
 	public static MeetupsRegistration findByPrimaryKey(
 		long meetupsRegistrationId)
@@ -679,21 +678,6 @@ public class MeetupsRegistrationUtil {
 		return _serviceTracker.getService();
 	}
 
-	/**
-	 * @deprecated As of 6.2.0
-	 */
-	@Deprecated
-	public void setPersistence(MeetupsRegistrationPersistence persistence) {
-	}
-
-	private static ServiceTracker<MeetupsRegistrationPersistence, MeetupsRegistrationPersistence> _serviceTracker;
-
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(MeetupsRegistrationUtil.class);
-
-		_serviceTracker = new ServiceTracker<MeetupsRegistrationPersistence, MeetupsRegistrationPersistence>(bundle.getBundleContext(),
-				MeetupsRegistrationPersistence.class, null);
-
-		_serviceTracker.open();
-	}
+	private static ServiceTracker<MeetupsRegistrationPersistence, MeetupsRegistrationPersistence> _serviceTracker =
+		ServiceTrackerFactory.open(MeetupsRegistrationPersistence.class);
 }

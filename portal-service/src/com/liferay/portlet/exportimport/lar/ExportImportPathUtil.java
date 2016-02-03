@@ -76,14 +76,14 @@ public class ExportImportPathUtil {
 	 *
 	 * <p>
 	 * For example, if you had the entity path of
-	 * <code>/group/10184/com.liferay.portlet.dynamicdatamapping.DDMStructure/10951.xml</code>,
+	 * <code>/group/10184/com.liferay.dynamic.data.mapping.kernel.DDMStructure/10951.xml</code>,
 	 * the returned expando-specific path would be the following:
 	 * </p>
 	 *
 	 * <p>
 	 * <pre>
 	 * <code>
-	 * /group/10184/com.liferay.portlet.dynamicdatamapping.DDMStructure/10951-expando.xml
+	 * /group/10184/com.liferay.dynamic.data.mapping.kernel.DDMStructure/10951-expando.xml
 	 * </code>
 	 * </pre>
 	 * </p>
@@ -114,7 +114,7 @@ public class ExportImportPathUtil {
 	public static String getLayoutPath(
 		PortletDataContext portletDataContext, long plid) {
 
-		StringBundler sb = new StringBundler(5);
+		StringBundler sb = new StringBundler(6);
 
 		sb.append(getRootPath(portletDataContext));
 		sb.append(StringPool.FORWARD_SLASH);

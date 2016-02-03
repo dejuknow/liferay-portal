@@ -182,20 +182,21 @@ public class SPIClassPathContextListenerTest {
 
 				}));
 
-		PortalClassLoaderUtil.setClassLoader(new ClassLoader() {
+		PortalClassLoaderUtil.setClassLoader(
+			new ClassLoader() {
 
-			@Override
-			public URL getResource(String name) {
-				URL url = resources.get(name);
+				@Override
+				public URL getResource(String name) {
+					URL url = resources.get(name);
 
-				if (url != null) {
-					return url;
+					if (url != null) {
+						return url;
+					}
+
+					return super.getResource(name);
 				}
 
-				return super.getResource(name);
-			}
-
-		});
+			});
 	}
 
 	@After
@@ -545,7 +546,7 @@ public class SPIClassPathContextListenerTest {
 
 	private File _portalServiceJarFile;
 
-	private class TestClass {
+	private static class TestClass {
 	}
 
 }

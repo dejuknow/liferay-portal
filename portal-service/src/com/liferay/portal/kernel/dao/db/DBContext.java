@@ -28,21 +28,21 @@ public class DBContext {
 		try {
 			return DataAccess.getUpgradeOptimizedConnection();
 		}
-		catch (SQLException e) {
-			throw new RuntimeException(e);
+		catch (SQLException sqle) {
+			throw new RuntimeException(sqle);
 		}
 	}
 
-	public DBFactory getDBFactory() {
-		return DBFactoryUtil.getDBFactory();
+	public DBManager getDBManager() {
+		return DBManagerUtil.getDBManager();
 	}
 
 	public Connection getUpgradeOptimizedConnection() {
 		try {
 			return DataAccess.getUpgradeOptimizedConnection();
 		}
-		catch (SQLException e) {
-			throw new RuntimeException(e);
+		catch (SQLException sqle) {
+			throw new RuntimeException(sqle);
 		}
 	}
 

@@ -16,8 +16,7 @@ package com.liferay.mobile.device.rules.service;
 
 import aQute.bnd.annotation.ProviderType;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
+import com.liferay.osgi.util.ServiceTrackerFactory;
 
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -394,18 +393,6 @@ public class MDRRuleGroupLocalServiceUtil {
 				   .search(groupId, name, params, andOperator, start, end);
 	}
 
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link #searchByKeywords(long,
-	String, LinkedHashMap, boolean, int, int)}
-	*/
-	@Deprecated
-	public static java.util.List<com.liferay.mobile.device.rules.model.MDRRuleGroup> searchByKeywords(
-		long groupId, java.lang.String keywords, boolean andOperator,
-		int start, int end) {
-		return getService()
-				   .searchByKeywords(groupId, keywords, andOperator, start, end);
-	}
-
 	public static java.util.List<com.liferay.mobile.device.rules.model.MDRRuleGroup> searchByKeywords(
 		long groupId, java.lang.String keywords,
 		java.util.LinkedHashMap<java.lang.String, java.lang.Object> params,
@@ -415,14 +402,14 @@ public class MDRRuleGroupLocalServiceUtil {
 			start, end);
 	}
 
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link #searchByKeywordsCount(long,
-	String, LinkedHashMap, boolean)}
-	*/
-	@Deprecated
-	public static int searchByKeywordsCount(long groupId,
-		java.lang.String keywords, boolean andOperator) {
-		return getService().searchByKeywordsCount(groupId, keywords, andOperator);
+	public static java.util.List<com.liferay.mobile.device.rules.model.MDRRuleGroup> searchByKeywords(
+		long groupId, java.lang.String keywords,
+		java.util.LinkedHashMap<java.lang.String, java.lang.Object> params,
+		boolean andOperator, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.mobile.device.rules.model.MDRRuleGroup> obc) {
+		return getService()
+				   .searchByKeywords(groupId, keywords, params, andOperator,
+			start, end, obc);
 	}
 
 	public static int searchByKeywordsCount(long groupId,
@@ -431,16 +418,6 @@ public class MDRRuleGroupLocalServiceUtil {
 		boolean andOperator) {
 		return getService()
 				   .searchByKeywordsCount(groupId, keywords, params, andOperator);
-	}
-
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link #searchCount(long, String,
-	LinkedHashMap, boolean)}
-	*/
-	@Deprecated
-	public static int searchCount(long groupId, java.lang.String name,
-		boolean andOperator) {
-		return getService().searchCount(groupId, name, andOperator);
 	}
 
 	public static int searchCount(long groupId, java.lang.String name,
@@ -475,21 +452,6 @@ public class MDRRuleGroupLocalServiceUtil {
 		return _serviceTracker.getService();
 	}
 
-	/**
-	 * @deprecated As of 6.2.0
-	 */
-	@Deprecated
-	public void setService(MDRRuleGroupLocalService service) {
-	}
-
-	private static ServiceTracker<MDRRuleGroupLocalService, MDRRuleGroupLocalService> _serviceTracker;
-
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(MDRRuleGroupLocalServiceUtil.class);
-
-		_serviceTracker = new ServiceTracker<MDRRuleGroupLocalService, MDRRuleGroupLocalService>(bundle.getBundleContext(),
-				MDRRuleGroupLocalService.class, null);
-
-		_serviceTracker.open();
-	}
+	private static ServiceTracker<MDRRuleGroupLocalService, MDRRuleGroupLocalService> _serviceTracker =
+		ServiceTrackerFactory.open(MDRRuleGroupLocalService.class);
 }

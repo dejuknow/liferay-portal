@@ -14,15 +14,16 @@
 
 package com.liferay.site.my.sites.web.portlet;
 
-import com.liferay.portal.MembershipRequestCommentsException;
+import com.liferay.portal.exception.MembershipRequestCommentsException;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.liveusers.LiveUsers;
-import com.liferay.portal.security.auth.PrincipalException;
+import com.liferay.portal.model.Release;
 import com.liferay.portal.service.MembershipRequestService;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
@@ -165,6 +166,13 @@ public class MySitesPortlet extends MVCPortlet {
 		_membershipRequestService = membershipRequestService;
 	}
 
+	@Reference(
+		target = "(&(release.bundle.symbolic.name=com.liferay.site.my.sites.web)(release.schema.version=1.0.0))",
+		unbind = "-"
+	)
+	protected void setRelease(Release release) {
+	}
+
 	@Reference(unbind = "-")
 	protected void setUserLocalService(UserLocalService userLocalService) {
 		_userLocalService = userLocalService;
@@ -175,8 +183,8 @@ public class MySitesPortlet extends MVCPortlet {
 		_userService = userService;
 	}
 
-	private volatile MembershipRequestService _membershipRequestService;
-	private volatile UserLocalService _userLocalService;
-	private volatile UserService _userService;
+	private MembershipRequestService _membershipRequestService;
+	private UserLocalService _userLocalService;
+	private UserService _userService;
 
 }

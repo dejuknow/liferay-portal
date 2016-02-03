@@ -45,6 +45,7 @@ page import="com.liferay.dynamic.data.lists.service.DDLRecordVersionServiceUtil"
 page import="com.liferay.dynamic.data.lists.service.permission.DDLPermission" %><%@
 page import="com.liferay.dynamic.data.lists.service.permission.DDLRecordSetPermission" %><%@
 page import="com.liferay.dynamic.data.lists.util.DDLUtil" %><%@
+page import="com.liferay.dynamic.data.lists.web.configuration.DDLWebConfiguration" %><%@
 page import="com.liferay.dynamic.data.lists.web.display.context.DDLDisplayContext" %><%@
 page import="com.liferay.dynamic.data.lists.web.display.context.DDLViewRecordsDisplayContext" %><%@
 page import="com.liferay.dynamic.data.lists.web.portlet.DDLPortletUtil" %><%@
@@ -69,8 +70,8 @@ page import="com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue" %><%@
 page import="com.liferay.dynamic.data.mapping.storage.DDMFormValues" %><%@
 page import="com.liferay.dynamic.data.mapping.storage.StorageEngineUtil" %><%@
 page import="com.liferay.dynamic.data.mapping.util.DDMUtil" %><%@
-page import="com.liferay.portal.NoSuchWorkflowDefinitionLinkException" %><%@
-page import="com.liferay.portal.PortletPreferencesException" %><%@
+page import="com.liferay.portal.exception.NoSuchWorkflowDefinitionLinkException" %><%@
+page import="com.liferay.portal.exception.PortletPreferencesException" %><%@
 page import="com.liferay.portal.kernel.bean.BeanParamUtil" %><%@
 page import="com.liferay.portal.kernel.dao.orm.QueryUtil" %><%@
 page import="com.liferay.portal.kernel.dao.search.DisplayTerms" %><%@
@@ -84,6 +85,7 @@ page import="com.liferay.portal.kernel.search.BaseModelSearchResult" %><%@
 page import="com.liferay.portal.kernel.search.Field" %><%@
 page import="com.liferay.portal.kernel.search.SearchContext" %><%@
 page import="com.liferay.portal.kernel.search.SearchContextFactory" %><%@
+page import="com.liferay.portal.kernel.security.permission.ActionKeys" %><%@
 page import="com.liferay.portal.kernel.util.Constants" %><%@
 page import="com.liferay.portal.kernel.util.GetterUtil" %><%@
 page import="com.liferay.portal.kernel.util.HtmlUtil" %><%@
@@ -106,14 +108,12 @@ page import="com.liferay.portal.kernel.workflow.WorkflowEngineManagerUtil" %><%@
 page import="com.liferay.portal.kernel.workflow.WorkflowHandlerRegistryUtil" %><%@
 page import="com.liferay.portal.model.*" %><%@
 page import="com.liferay.portal.model.impl.*" %><%@
-page import="com.liferay.portal.security.permission.ActionKeys" %><%@
 page import="com.liferay.portal.service.*" %><%@
 page import="com.liferay.portal.util.PortalUtil" %><%@
 page import="com.liferay.portal.util.PrefsPropsUtil" %><%@
 page import="com.liferay.portlet.PortletURLFactoryUtil" %><%@
-page import="com.liferay.portlet.PortletURLUtil" %><%@
-page import="com.liferay.portlet.documentlibrary.DuplicateFileEntryException" %><%@
-page import="com.liferay.portlet.documentlibrary.FileSizeException" %><%@
+page import="com.liferay.portlet.documentlibrary.exception.DuplicateFileEntryException" %><%@
+page import="com.liferay.portlet.documentlibrary.exception.FileSizeException" %><%@
 page import="com.liferay.taglib.search.ResultRow" %>
 
 <%@ page import="java.util.ArrayList" %><%@
@@ -126,18 +126,16 @@ page import="java.util.Set" %>
 page import="javax.portlet.PortletURL" %><%@
 page import="javax.portlet.WindowState" %>
 
-<portlet:defineObjects />
+<liferay-frontend:defineObjects />
 
 <liferay-theme:defineObjects />
 
+<portlet:defineObjects />
+
 <%
-WindowState windowState = liferayPortletRequest.getWindowState();
-
-PortletURL currentURLObj = PortletURLUtil.getCurrent(liferayPortletRequest, liferayPortletResponse);
-
-String currentURL = currentURLObj.toString();
-
 DDLDisplayContext ddlDisplayContext = new DDLDisplayContext(request);
+
+DDLWebConfiguration ddlWebConfiguration = (DDLWebConfiguration)request.getAttribute(DDLWebConfiguration.class.getName());
 %>
 
 <%@ include file="/init-ext.jsp" %>

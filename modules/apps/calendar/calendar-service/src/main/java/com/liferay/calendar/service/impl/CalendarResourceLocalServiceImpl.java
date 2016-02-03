@@ -18,7 +18,6 @@ import com.liferay.calendar.exception.CalendarResourceCodeException;
 import com.liferay.calendar.exception.CalendarResourceNameException;
 import com.liferay.calendar.exception.DuplicateCalendarResourceException;
 import com.liferay.calendar.model.Calendar;
-import com.liferay.calendar.model.CalendarBooking;
 import com.liferay.calendar.model.CalendarResource;
 import com.liferay.calendar.service.base.CalendarResourceLocalServiceBaseImpl;
 import com.liferay.calendar.service.configuration.CalendarServiceConfigurationValues;
@@ -130,7 +129,8 @@ public class CalendarResourceLocalServiceImpl
 		updateAsset(
 			calendarResource.getUserId(), calendarResource,
 			serviceContext.getAssetCategoryIds(),
-			serviceContext.getAssetTagNames());
+			serviceContext.getAssetTagNames(),
+			serviceContext.getAssetPriority());
 
 		return calendarResource;
 	}
@@ -160,23 +160,9 @@ public class CalendarResourceLocalServiceImpl
 			calendarResource.getCalendarResourceId());
 
 		for (Calendar calendar : calendars) {
-			calendarPersistence.remove(calendar);
+			calendar.setDefaultCalendar(false);
 
-			resourceLocalService.deleteResource(
-				calendar, ResourceConstants.SCOPE_INDIVIDUAL);
-
-			calendarNotificationTemplateLocalService.
-				deleteCalendarNotificationTemplates(calendar.getCalendarId());
-		}
-
-		// Calendar bookings
-
-		List<CalendarBooking> calendarBookings =
-			calendarBookingPersistence.findByCalendarResourceId(
-				calendarResource.getCalendarResourceId());
-
-		for (CalendarBooking calendarBooking : calendarBookings) {
-			calendarBookingLocalService.deleteCalendarBooking(calendarBooking);
+			calendarLocalService.deleteCalendar(calendar);
 		}
 
 		return calendarResource;
@@ -274,7 +260,7 @@ public class CalendarResourceLocalServiceImpl
 	@Override
 	public void updateAsset(
 			long userId, CalendarResource calendarResource,
-			long[] assetCategoryIds, String[] assetTagNames)
+			long[] assetCategoryIds, String[] assetTagNames, Double priority)
 		throws PortalException {
 
 		assetEntryLocalService.updateEntry(
@@ -286,7 +272,7 @@ public class CalendarResourceLocalServiceImpl
 			calendarResource.getUuid(), 0, assetCategoryIds, assetTagNames,
 			true, null, null, null, ContentTypes.TEXT,
 			calendarResource.getName(), calendarResource.getDescription(), null,
-			null, null, 0, 0, null);
+			null, null, 0, 0, priority);
 	}
 
 	@Override
@@ -315,7 +301,8 @@ public class CalendarResourceLocalServiceImpl
 		updateAsset(
 			calendarResource.getUserId(), calendarResource,
 			serviceContext.getAssetCategoryIds(),
-			serviceContext.getAssetTagNames());
+			serviceContext.getAssetTagNames(),
+			serviceContext.getAssetPriority());
 
 		return calendarResource;
 	}

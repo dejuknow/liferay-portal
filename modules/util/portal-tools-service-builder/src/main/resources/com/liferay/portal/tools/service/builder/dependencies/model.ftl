@@ -1,7 +1,7 @@
-package ${packagePath}.model;
+package ${apiPackagePath}.model;
 
 <#if entity.hasCompoundPK()>
-	import ${packagePath}.service.persistence.${entity.name}PK;
+	import ${apiPackagePath}.service.persistence.${entity.name}PK;
 </#if>
 
 import aQute.bnd.annotation.ProviderType;
@@ -29,7 +29,7 @@ import com.liferay.portal.model.WorkflowedModel;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portlet.expando.model.ExpandoBridge;
 import com.liferay.portlet.expando.util.ExpandoBridgeFactoryUtil;
-import com.liferay.portlet.trash.model.TrashEntry;
+import com.liferay.trash.kernel.model.TrashEntry;
 
 import java.io.Serializable;
 
@@ -187,7 +187,7 @@ public interface ${entity.name}Model extends
 
 		<#assign autoEscape = true>
 
-		<#assign modelName = packagePath + ".model." + entity.name>
+		<#assign modelName = apiPackagePath + ".model." + entity.name>
 
 		<#if modelHintsUtil.getHints(modelName, column.name)??>
 			<#assign hints = modelHintsUtil.getHints(modelName, column.name)>
@@ -421,13 +421,6 @@ public interface ${entity.name}Model extends
 
 	<#if entity.isWorkflowEnabled()>
 		/**
-		 * @deprecated As of 6.1.0, replaced by {@link #isApproved()}
-		 */
-		@Deprecated
-		@Override
-		public boolean getApproved();
-
-		/**
 		 * Returns <code>true</code> if this ${entity.humanName} is approved.
 		 *
 		 * @return <code>true</code> if this ${entity.humanName} is approved; <code>false</code> otherwise
@@ -594,19 +587,19 @@ public interface ${entity.name}Model extends
 	public Object clone();
 
 	@Override
-	public int compareTo(${packagePath}.model.${entity.name} ${entity.varName});
+	public int compareTo(${apiPackagePath}.model.${entity.name} ${entity.varName});
 
 	@Override
 	public int hashCode();
 
 	@Override
-	public CacheModel<${packagePath}.model.${entity.name}> toCacheModel();
+	public CacheModel<${apiPackagePath}.model.${entity.name}> toCacheModel();
 
 	@Override
-	public ${packagePath}.model.${entity.name} toEscapedModel();
+	public ${apiPackagePath}.model.${entity.name} toEscapedModel();
 
 	@Override
-	public ${packagePath}.model.${entity.name} toUnescapedModel();
+	public ${apiPackagePath}.model.${entity.name} toUnescapedModel();
 
 	@Override
 	public String toString();

@@ -92,7 +92,6 @@ import com.liferay.portlet.exportimport.lar.StagedModelType;
 import com.liferay.portlet.exportimport.lifecycle.ExportImportLifecycleManager;
 import com.liferay.portlet.exportimport.model.ExportImportConfiguration;
 import com.liferay.portlet.exportimport.staging.LayoutStagingUtil;
-import com.liferay.portlet.exportimport.xstream.XStreamAliasRegistryUtil;
 
 import java.io.File;
 import java.io.Serializable;
@@ -105,7 +104,6 @@ import java.util.concurrent.Callable;
 
 import org.apache.commons.lang.time.StopWatch;
 
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -173,11 +171,6 @@ public class LayoutExportController implements ExportController {
 
 			throw t;
 		}
-	}
-
-	@Activate
-	protected void activate() {
-		XStreamAliasRegistryUtil.register(LayoutImpl.class, "Layout");
 	}
 
 	protected File doExport(
@@ -287,6 +280,10 @@ public class LayoutExportController implements ExportController {
 					group.getClassPK());
 
 			headerElement.addAttribute("type-uuid", layoutPrototype.getUuid());
+
+			layoutIds = ExportImportHelperUtil.getAllLayoutIds(
+				portletDataContext.getGroupId(),
+				portletDataContext.isPrivateLayout());
 		}
 		else if (group.isLayoutSetPrototype()) {
 			type ="layout-set-prototype";
@@ -847,21 +844,20 @@ public class LayoutExportController implements ExportController {
 
 	private final DeletionSystemEventExporter _deletionSystemEventExporter =
 		DeletionSystemEventExporter.getInstance();
-	private volatile ExportImportLifecycleManager _exportImportLifecycleManager;
-	private volatile GroupLocalService _groupLocalService;
-	private volatile ImageLocalService _imageLocalService;
-	private volatile LayoutLocalService _layoutLocalService;
-	private volatile LayoutPrototypeLocalService _layoutPrototypeLocalService;
-	private volatile LayoutRevisionLocalService _layoutRevisionLocalService;
-	private volatile LayoutSetBranchLocalService _layoutSetBranchLocalService;
-	private volatile LayoutSetLocalService _layoutSetLocalService;
-	private volatile LayoutSetPrototypeLocalService
-		_layoutSetPrototypeLocalService;
+	private ExportImportLifecycleManager _exportImportLifecycleManager;
+	private GroupLocalService _groupLocalService;
+	private ImageLocalService _imageLocalService;
+	private LayoutLocalService _layoutLocalService;
+	private LayoutPrototypeLocalService _layoutPrototypeLocalService;
+	private LayoutRevisionLocalService _layoutRevisionLocalService;
+	private LayoutSetBranchLocalService _layoutSetBranchLocalService;
+	private LayoutSetLocalService _layoutSetLocalService;
+	private LayoutSetPrototypeLocalService _layoutSetPrototypeLocalService;
 	private final PermissionExporter _permissionExporter =
 		PermissionExporter.getInstance();
-	private volatile PortletExportController _portletExportController;
+	private PortletExportController _portletExportController;
 	private final ThemeExporter _themeExporter = ThemeExporter.getInstance();
-	private volatile UserLocalService _userLocalService;
+	private UserLocalService _userLocalService;
 
 	private class UpdateLayoutSetLastPublishDateCallable
 		implements Callable<Void> {

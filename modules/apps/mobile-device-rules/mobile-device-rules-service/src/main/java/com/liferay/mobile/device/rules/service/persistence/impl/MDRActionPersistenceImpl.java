@@ -40,6 +40,8 @@ import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextThreadLocal;
+import com.liferay.portal.service.persistence.CompanyProvider;
+import com.liferay.portal.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 
@@ -209,7 +211,7 @@ public class MDRActionPersistenceImpl extends BasePersistenceImpl<MDRAction>
 
 			if (orderByComparator != null) {
 				query = new StringBundler(3 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(3);
@@ -291,7 +293,7 @@ public class MDRActionPersistenceImpl extends BasePersistenceImpl<MDRAction>
 	 * @param uuid the uuid
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching m d r action
-	 * @throws com.liferay.mobile.device.rules.NoSuchActionException if a matching m d r action could not be found
+	 * @throws NoSuchActionException if a matching m d r action could not be found
 	 */
 	@Override
 	public MDRAction findByUuid_First(String uuid,
@@ -340,7 +342,7 @@ public class MDRActionPersistenceImpl extends BasePersistenceImpl<MDRAction>
 	 * @param uuid the uuid
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching m d r action
-	 * @throws com.liferay.mobile.device.rules.NoSuchActionException if a matching m d r action could not be found
+	 * @throws NoSuchActionException if a matching m d r action could not be found
 	 */
 	@Override
 	public MDRAction findByUuid_Last(String uuid,
@@ -397,7 +399,7 @@ public class MDRActionPersistenceImpl extends BasePersistenceImpl<MDRAction>
 	 * @param uuid the uuid
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next m d r action
-	 * @throws com.liferay.mobile.device.rules.NoSuchActionException if a m d r action with the primary key could not be found
+	 * @throws NoSuchActionException if a m d r action with the primary key could not be found
 	 */
 	@Override
 	public MDRAction[] findByUuid_PrevAndNext(long actionId, String uuid,
@@ -436,8 +438,9 @@ public class MDRActionPersistenceImpl extends BasePersistenceImpl<MDRAction>
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+			query = new StringBundler(4 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
 			query = new StringBundler(3);
@@ -642,12 +645,12 @@ public class MDRActionPersistenceImpl extends BasePersistenceImpl<MDRAction>
 			new String[] { String.class.getName(), Long.class.getName() });
 
 	/**
-	 * Returns the m d r action where uuid = &#63; and groupId = &#63; or throws a {@link com.liferay.mobile.device.rules.NoSuchActionException} if it could not be found.
+	 * Returns the m d r action where uuid = &#63; and groupId = &#63; or throws a {@link NoSuchActionException} if it could not be found.
 	 *
 	 * @param uuid the uuid
 	 * @param groupId the group ID
 	 * @return the matching m d r action
-	 * @throws com.liferay.mobile.device.rules.NoSuchActionException if a matching m d r action could not be found
+	 * @throws NoSuchActionException if a matching m d r action could not be found
 	 */
 	@Override
 	public MDRAction findByUUID_G(String uuid, long groupId)
@@ -1018,7 +1021,7 @@ public class MDRActionPersistenceImpl extends BasePersistenceImpl<MDRAction>
 
 			if (orderByComparator != null) {
 				query = new StringBundler(4 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(4);
@@ -1105,7 +1108,7 @@ public class MDRActionPersistenceImpl extends BasePersistenceImpl<MDRAction>
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching m d r action
-	 * @throws com.liferay.mobile.device.rules.NoSuchActionException if a matching m d r action could not be found
+	 * @throws NoSuchActionException if a matching m d r action could not be found
 	 */
 	@Override
 	public MDRAction findByUuid_C_First(String uuid, long companyId,
@@ -1161,7 +1164,7 @@ public class MDRActionPersistenceImpl extends BasePersistenceImpl<MDRAction>
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching m d r action
-	 * @throws com.liferay.mobile.device.rules.NoSuchActionException if a matching m d r action could not be found
+	 * @throws NoSuchActionException if a matching m d r action could not be found
 	 */
 	@Override
 	public MDRAction findByUuid_C_Last(String uuid, long companyId,
@@ -1224,7 +1227,7 @@ public class MDRActionPersistenceImpl extends BasePersistenceImpl<MDRAction>
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next m d r action
-	 * @throws com.liferay.mobile.device.rules.NoSuchActionException if a m d r action with the primary key could not be found
+	 * @throws NoSuchActionException if a m d r action with the primary key could not be found
 	 */
 	@Override
 	public MDRAction[] findByUuid_C_PrevAndNext(long actionId, String uuid,
@@ -1263,11 +1266,12 @@ public class MDRActionPersistenceImpl extends BasePersistenceImpl<MDRAction>
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+			query = new StringBundler(5 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
-			query = new StringBundler(3);
+			query = new StringBundler(4);
 		}
 
 		query.append(_SQL_SELECT_MDRACTION_WHERE);
@@ -1599,7 +1603,7 @@ public class MDRActionPersistenceImpl extends BasePersistenceImpl<MDRAction>
 
 			if (orderByComparator != null) {
 				query = new StringBundler(3 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(3);
@@ -1667,7 +1671,7 @@ public class MDRActionPersistenceImpl extends BasePersistenceImpl<MDRAction>
 	 * @param ruleGroupInstanceId the rule group instance ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching m d r action
-	 * @throws com.liferay.mobile.device.rules.NoSuchActionException if a matching m d r action could not be found
+	 * @throws NoSuchActionException if a matching m d r action could not be found
 	 */
 	@Override
 	public MDRAction findByRuleGroupInstanceId_First(long ruleGroupInstanceId,
@@ -1718,7 +1722,7 @@ public class MDRActionPersistenceImpl extends BasePersistenceImpl<MDRAction>
 	 * @param ruleGroupInstanceId the rule group instance ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching m d r action
-	 * @throws com.liferay.mobile.device.rules.NoSuchActionException if a matching m d r action could not be found
+	 * @throws NoSuchActionException if a matching m d r action could not be found
 	 */
 	@Override
 	public MDRAction findByRuleGroupInstanceId_Last(long ruleGroupInstanceId,
@@ -1776,7 +1780,7 @@ public class MDRActionPersistenceImpl extends BasePersistenceImpl<MDRAction>
 	 * @param ruleGroupInstanceId the rule group instance ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next m d r action
-	 * @throws com.liferay.mobile.device.rules.NoSuchActionException if a m d r action with the primary key could not be found
+	 * @throws NoSuchActionException if a m d r action with the primary key could not be found
 	 */
 	@Override
 	public MDRAction[] findByRuleGroupInstanceId_PrevAndNext(long actionId,
@@ -1815,8 +1819,9 @@ public class MDRActionPersistenceImpl extends BasePersistenceImpl<MDRAction>
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+			query = new StringBundler(4 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
 			query = new StringBundler(3);
@@ -2134,6 +2139,8 @@ public class MDRActionPersistenceImpl extends BasePersistenceImpl<MDRAction>
 
 		mdrAction.setUuid(uuid);
 
+		mdrAction.setCompanyId(companyProvider.getCompanyId());
+
 		return mdrAction;
 	}
 
@@ -2142,7 +2149,7 @@ public class MDRActionPersistenceImpl extends BasePersistenceImpl<MDRAction>
 	 *
 	 * @param actionId the primary key of the m d r action
 	 * @return the m d r action that was removed
-	 * @throws com.liferay.mobile.device.rules.NoSuchActionException if a m d r action with the primary key could not be found
+	 * @throws NoSuchActionException if a m d r action with the primary key could not be found
 	 */
 	@Override
 	public MDRAction remove(long actionId) throws NoSuchActionException {
@@ -2154,7 +2161,7 @@ public class MDRActionPersistenceImpl extends BasePersistenceImpl<MDRAction>
 	 *
 	 * @param primaryKey the primary key of the m d r action
 	 * @return the m d r action that was removed
-	 * @throws com.liferay.mobile.device.rules.NoSuchActionException if a m d r action with the primary key could not be found
+	 * @throws NoSuchActionException if a m d r action with the primary key could not be found
 	 */
 	@Override
 	public MDRAction remove(Serializable primaryKey)
@@ -2385,11 +2392,11 @@ public class MDRActionPersistenceImpl extends BasePersistenceImpl<MDRAction>
 	}
 
 	/**
-	 * Returns the m d r action with the primary key or throws a {@link com.liferay.portal.NoSuchModelException} if it could not be found.
+	 * Returns the m d r action with the primary key or throws a {@link com.liferay.portal.exception.NoSuchModelException} if it could not be found.
 	 *
 	 * @param primaryKey the primary key of the m d r action
 	 * @return the m d r action
-	 * @throws com.liferay.mobile.device.rules.NoSuchActionException if a m d r action with the primary key could not be found
+	 * @throws NoSuchActionException if a m d r action with the primary key could not be found
 	 */
 	@Override
 	public MDRAction findByPrimaryKey(Serializable primaryKey)
@@ -2409,11 +2416,11 @@ public class MDRActionPersistenceImpl extends BasePersistenceImpl<MDRAction>
 	}
 
 	/**
-	 * Returns the m d r action with the primary key or throws a {@link com.liferay.mobile.device.rules.NoSuchActionException} if it could not be found.
+	 * Returns the m d r action with the primary key or throws a {@link NoSuchActionException} if it could not be found.
 	 *
 	 * @param actionId the primary key of the m d r action
 	 * @return the m d r action
-	 * @throws com.liferay.mobile.device.rules.NoSuchActionException if a m d r action with the primary key could not be found
+	 * @throws NoSuchActionException if a m d r action with the primary key could not be found
 	 */
 	@Override
 	public MDRAction findByPrimaryKey(long actionId)
@@ -2659,7 +2666,7 @@ public class MDRActionPersistenceImpl extends BasePersistenceImpl<MDRAction>
 
 			if (orderByComparator != null) {
 				query = new StringBundler(2 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 
 				query.append(_SQL_SELECT_MDRACTION);
 
@@ -2784,6 +2791,8 @@ public class MDRActionPersistenceImpl extends BasePersistenceImpl<MDRAction>
 		finderCache.removeCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 	}
 
+	@ServiceReference(type = CompanyProviderWrapper.class)
+	protected CompanyProvider companyProvider;
 	@ServiceReference(type = EntityCache.class)
 	protected EntityCache entityCache;
 	@ServiceReference(type = FinderCache.class)

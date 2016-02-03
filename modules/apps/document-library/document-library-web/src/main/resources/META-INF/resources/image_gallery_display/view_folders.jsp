@@ -69,7 +69,7 @@ PortletURL portletURL = (PortletURL)request.getAttribute("view.jsp-portletURL");
 				AssetRenderer<?> assetRenderer = assetRendererFactory.getAssetRenderer(curFolder.getFolderId());
 				%>
 
-				<i class="<%= assetRenderer.getIconCssClass() %>"></i>
+				<liferay-ui:icon icon="<%= assetRenderer.getIconCssClass() %>" markupView="lexicon" />
 
 				<strong><%= curFolder.getName() %></strong>
 
@@ -116,27 +116,16 @@ PortletURL portletURL = (PortletURL)request.getAttribute("view.jsp-portletURL");
 			</c:if>
 		</liferay-ui:search-container-column-text>
 
-		<%
-		List subfolderIds = new ArrayList();
-
-		subfolderIds.add(Long.valueOf(curFolder.getFolderId()));
-
-		DLAppServiceUtil.getSubfolderIds(repositoryId, curFolder.getFolderId());
-
-		int subFoldersCount = subfolderIds.size() - 1;
-		int subEntriesCount = DLAppServiceUtil.getFoldersFileEntriesCount(repositoryId, subfolderIds, status);
-		%>
-
 		<liferay-ui:search-container-column-text
 			href="<%= rowURL %>"
 			name="num-of-folders"
-			value="<%= String.valueOf(subFoldersCount) %>"
+			value="<%= String.valueOf(DLAppServiceUtil.getFoldersCount(repositoryId, curFolder.getFolderId())) %>"
 		/>
 
 		<liferay-ui:search-container-column-text
 			href="<%= rowURL %>"
 			name="num-of-entries"
-			value="<%= String.valueOf(subEntriesCount) %>"
+			value="<%= String.valueOf(DLAppServiceUtil.getFoldersFileEntriesCount(repositoryId, Arrays.asList(curFolder.getFolderId()), status)) %>"
 		/>
 
 		<liferay-ui:search-container-column-jsp

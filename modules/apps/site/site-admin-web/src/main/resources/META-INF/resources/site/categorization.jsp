@@ -20,24 +20,14 @@
 Group liveGroup = (Group)request.getAttribute("site.liveGroup");
 %>
 
-<liferay-ui:error-marker key="errorSection" value="categorization" />
+<liferay-ui:error-marker key="<%= WebKeys.ERROR_SECTION %>" value="categorization" />
 
 <aui:model-context bean="<%= liveGroup %>" model="<%= Group.class %>" />
-
-<h3><liferay-ui:message key="categorization" /></h3>
 
 <liferay-ui:asset-categories-error />
 
 <liferay-ui:asset-tags-error />
 
-<aui:fieldset>
-	<aui:input name="categories" type="assetCategories" />
+<aui:input name="categories" type="assetCategories" />
 
-	<aui:input name="tags" type="assetTags" />
-</aui:fieldset>
-
-<aui:script>
-	function <portlet:namespace />getSuggestionsContent() {
-		return document.<portlet:namespace />fm.<portlet:namespace />description.value;
-	}
-</aui:script>
+<aui:input name="tags" type="assetTags" />

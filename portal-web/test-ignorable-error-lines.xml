@@ -14,6 +14,10 @@
 			<contains>Permission denied to access property 'type'</contains>
 			<matches></matches>
 		</ignore-error>
+		<ignore-error description="LRQA-21789">
+			<contains>mutating the [[Prototype]] of an object will cause your code to run very slowly</contains>
+			<matches></matches>
+		</ignore-error>
 	</javascript>
 	<log>
 		<ignore-error description="">

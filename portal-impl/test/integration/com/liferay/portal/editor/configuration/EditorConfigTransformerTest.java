@@ -28,7 +28,6 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.module.framework.test.ModuleFrameworkTestUtil;
 import com.liferay.portal.service.test.ServiceTestUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
-import com.liferay.portal.test.rule.MainServletTestRule;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portlet.RequestBackedPortletURLFactory;
 import com.liferay.registry.Registry;
@@ -55,8 +54,7 @@ public class EditorConfigTransformerTest {
 	@ClassRule
 	@Rule
 	public static final AggregateTestRule aggregateTestRule =
-		new AggregateTestRule(
-			new LiferayIntegrationTestRule(), MainServletTestRule.INSTANCE);
+		new LiferayIntegrationTestRule();
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
@@ -313,7 +311,7 @@ public class EditorConfigTransformerTest {
 	private ServiceRegistration<EditorOptionsContributor>
 		_editorOptionsContributorServiceRegistration2;
 
-	private class BasicHTMLEditorConfigContributor
+	private static class BasicHTMLEditorConfigContributor
 		implements EditorConfigContributor {
 
 		@Override
@@ -330,7 +328,7 @@ public class EditorConfigTransformerTest {
 
 	}
 
-	private class TestEditorConfigTransformer
+	private static class TestEditorConfigTransformer
 		implements EditorConfigTransformer {
 
 		@Override
@@ -356,7 +354,7 @@ public class EditorConfigTransformerTest {
 
 	}
 
-	private class TextEditorOptionsContributor
+	private static class TextEditorOptionsContributor
 		implements EditorOptionsContributor {
 
 		@Override
@@ -371,7 +369,7 @@ public class EditorConfigTransformerTest {
 
 	}
 
-	private class UploadImagesEditorOptionsContributor
+	private static class UploadImagesEditorOptionsContributor
 		implements EditorOptionsContributor {
 
 		@Override

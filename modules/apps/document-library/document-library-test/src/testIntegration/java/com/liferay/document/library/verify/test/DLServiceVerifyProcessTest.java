@@ -17,6 +17,11 @@ package com.liferay.document.library.verify.test;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.document.library.verify.DLServiceVerifyProcess;
 import com.liferay.dynamic.data.mapping.io.DDMFormXSDDeserializerUtil;
+import com.liferay.dynamic.data.mapping.kernel.DDMForm;
+import com.liferay.dynamic.data.mapping.kernel.DDMFormField;
+import com.liferay.dynamic.data.mapping.kernel.DDMFormFieldValue;
+import com.liferay.dynamic.data.mapping.kernel.DDMFormValues;
+import com.liferay.dynamic.data.mapping.kernel.UnlocalizedValue;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMFormTestUtil;
@@ -24,6 +29,9 @@ import com.liferay.dynamic.data.mapping.util.DDMBeanTranslatorUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.FileShortcut;
 import com.liferay.portal.kernel.repository.model.Folder;
+import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.rule.Sync;
@@ -38,9 +46,6 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.User;
-import com.liferay.portal.security.auth.PrincipalThreadLocal;
-import com.liferay.portal.security.permission.PermissionChecker;
-import com.liferay.portal.security.permission.PermissionThreadLocal;
 import com.liferay.portal.security.permission.SimplePermissionChecker;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.test.randomizerbumpers.TikaSafeRandomizerBumper;
@@ -58,11 +63,7 @@ import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryMetadataLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryTypeLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.service.DLFolderLocalServiceUtil;
-import com.liferay.portlet.dynamicdatamapping.DDMForm;
-import com.liferay.portlet.dynamicdatamapping.DDMFormField;
-import com.liferay.portlet.dynamicdatamapping.DDMFormFieldValue;
-import com.liferay.portlet.dynamicdatamapping.DDMFormValues;
-import com.liferay.portlet.dynamicdatamapping.UnlocalizedValue;
+import com.liferay.portlet.documentlibrary.service.DLTrashServiceUtil;
 import com.liferay.registry.Registry;
 import com.liferay.registry.RegistryUtil;
 
@@ -127,10 +128,10 @@ public class DLServiceVerifyProcessTest extends BaseVerifyProcessTestCase {
 
 		DLFileEntryType dlFileEntryType = dlFileEntry.getDLFileEntryType();
 
-		List<com.liferay.portlet.dynamicdatamapping.DDMStructure>
+		List<com.liferay.dynamic.data.mapping.kernel.DDMStructure>
 			ddmStructures = dlFileEntryType.getDDMStructures();
 
-		com.liferay.portlet.dynamicdatamapping.DDMStructure ddmStructure =
+		com.liferay.dynamic.data.mapping.kernel.DDMStructure ddmStructure =
 			ddmStructures.get(0);
 
 		DDMStructure modelDDMStructure =
@@ -166,10 +167,10 @@ public class DLServiceVerifyProcessTest extends BaseVerifyProcessTestCase {
 
 		DLFileEntryType dlFileEntryType = dlFileEntry.getDLFileEntryType();
 
-		List<com.liferay.portlet.dynamicdatamapping.DDMStructure>
+		List<com.liferay.dynamic.data.mapping.kernel.DDMStructure>
 			ddmStructures = dlFileEntryType.getDDMStructures();
 
-		com.liferay.portlet.dynamicdatamapping.DDMStructure ddmStructure =
+		com.liferay.dynamic.data.mapping.kernel.DDMStructure ddmStructure =
 			ddmStructures.get(0);
 
 		DDMStructureLocalServiceUtil.deleteDDMStructure(
@@ -209,7 +210,7 @@ public class DLServiceVerifyProcessTest extends BaseVerifyProcessTestCase {
 
 		FileEntry fileEntry = addFileEntry(parentFolder.getFolderId());
 
-		DLAppServiceUtil.moveFileEntryToTrash(fileEntry.getFileEntryId());
+		DLTrashServiceUtil.moveFileEntryToTrash(fileEntry.getFileEntryId());
 
 		DLFolderLocalServiceUtil.deleteFolder(
 			parentFolder.getFolderId(), false);
@@ -237,7 +238,7 @@ public class DLServiceVerifyProcessTest extends BaseVerifyProcessTestCase {
 
 		addFileEntry(parentFolder.getFolderId());
 
-		DLAppServiceUtil.moveFolderToTrash(parentFolder.getFolderId());
+		DLTrashServiceUtil.moveFolderToTrash(parentFolder.getFolderId());
 
 		DLFolderLocalServiceUtil.deleteFolder(
 			grandparentFolder.getFolderId(), false);
@@ -265,7 +266,7 @@ public class DLServiceVerifyProcessTest extends BaseVerifyProcessTestCase {
 			parentFolder.getFolderId(), fileEntry.getFileEntryId(),
 			serviceContext);
 
-		DLAppServiceUtil.moveFileShortcutToTrash(
+		DLTrashServiceUtil.moveFileShortcutToTrash(
 			fileShortcut.getFileShortcutId());
 
 		DLFolderLocalServiceUtil.deleteFolder(
@@ -294,7 +295,7 @@ public class DLServiceVerifyProcessTest extends BaseVerifyProcessTestCase {
 
 		addFileEntry(parentFolder.getFolderId());
 
-		DLAppServiceUtil.moveFolderToTrash(parentFolder.getFolderId());
+		DLTrashServiceUtil.moveFolderToTrash(parentFolder.getFolderId());
 
 		DLFolderLocalServiceUtil.deleteFolder(
 			grandparentFolder.getFolderId(), false);
@@ -318,7 +319,7 @@ public class DLServiceVerifyProcessTest extends BaseVerifyProcessTestCase {
 			RandomTestUtil.randomString(), RandomTestUtil.randomString(),
 			serviceContext);
 
-		DLAppServiceUtil.moveFolderToTrash(folder.getFolderId());
+		DLTrashServiceUtil.moveFolderToTrash(folder.getFolderId());
 
 		DLFolderLocalServiceUtil.deleteFolder(
 			parentFolder.getFolderId(), false);
@@ -349,7 +350,7 @@ public class DLServiceVerifyProcessTest extends BaseVerifyProcessTestCase {
 			RandomTestUtil.randomString(), RandomTestUtil.randomString(),
 			serviceContext);
 
-		DLAppServiceUtil.moveFolderToTrash(parentFolder.getFolderId());
+		DLTrashServiceUtil.moveFolderToTrash(parentFolder.getFolderId());
 
 		DLFolderLocalServiceUtil.deleteFolder(
 			grandparentFolder.getFolderId(), false);
@@ -383,16 +384,15 @@ public class DLServiceVerifyProcessTest extends BaseVerifyProcessTestCase {
 				RandomTestUtil.randomString(), StringPool.BLANK, new long[0],
 				serviceContext);
 
-		List<com.liferay.portlet.dynamicdatamapping.DDMStructure>
+		List<com.liferay.dynamic.data.mapping.kernel.DDMStructure>
 			ddmStructures = dlFileEntryType.getDDMStructures();
 
-		com.liferay.portlet.dynamicdatamapping.DDMStructure ddmStructure =
+		com.liferay.dynamic.data.mapping.kernel.DDMStructure ddmStructure =
 			ddmStructures.get(0);
 
-		Map<String,
-			com.liferay.portlet.dynamicdatamapping.DDMFormValues>
-				ddmFormValuesMap = getDDMFormValuesMap(
-					ddmStructure.getStructureKey(), user.getLocale());
+		Map<String, com.liferay.dynamic.data.mapping.kernel.DDMFormValues>
+			ddmFormValuesMap = getDDMFormValuesMap(
+				ddmStructure.getStructureKey(), user.getLocale());
 
 		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
 			RandomTestUtil.randomBytes(TikaSafeRandomizerBumper.INSTANCE));

@@ -14,10 +14,13 @@
 
 package com.liferay.portal.background.task.internal;
 
+import com.liferay.background.task.kernel.util.comparator.BackgroundTaskCompletionDateComparator;
+import com.liferay.background.task.kernel.util.comparator.BackgroundTaskCreateDateComparator;
 import com.liferay.portal.background.task.service.BackgroundTaskLocalService;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTask;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskManager;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.lock.LockManager;
 import com.liferay.portal.kernel.messaging.Destination;
 import com.liferay.portal.kernel.messaging.DestinationConfiguration;
 import com.liferay.portal.kernel.messaging.DestinationFactory;
@@ -26,8 +29,6 @@ import com.liferay.portal.kernel.util.ClassUtil;
 import com.liferay.portal.kernel.util.HashMapDictionary;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.portlet.backgroundtask.util.comparator.BackgroundTaskCompletionDateComparator;
-import com.liferay.portlet.backgroundtask.util.comparator.BackgroundTaskCreateDateComparator;
 
 import java.io.File;
 import java.io.InputStream;
@@ -168,6 +169,15 @@ public class BackgroundTaskManagerImpl implements BackgroundTaskManager {
 		throws PortalException {
 
 		_backgroundTaskLocalService.deleteGroupBackgroundTasks(groupId);
+	}
+
+	@Override
+	public void deleteGroupBackgroundTasks(
+			long groupId, String name, String taskExecutorClassName)
+		throws PortalException {
+
+		_backgroundTaskLocalService.deleteGroupBackgroundTasks(
+			groupId, name, taskExecutorClassName);
 	}
 
 	@Override
@@ -340,6 +350,19 @@ public class BackgroundTaskManagerImpl implements BackgroundTaskManager {
 
 	@Override
 	public List<BackgroundTask> getBackgroundTasks(
+		long[] groupIds, String name, String taskExecutorClassName, int start,
+		int end, OrderByComparator<BackgroundTask> orderByComparator) {
+
+		List<com.liferay.portal.background.task.model.BackgroundTask>
+			backgroundTasks = _backgroundTaskLocalService.getBackgroundTasks(
+				groupIds, name, taskExecutorClassName, start, end,
+				translate(orderByComparator));
+
+		return translate(backgroundTasks);
+	}
+
+	@Override
+	public List<BackgroundTask> getBackgroundTasks(
 		String taskExecutorClassName, int status) {
 
 		List<com.liferay.portal.background.task.model.BackgroundTask>
@@ -436,6 +459,23 @@ public class BackgroundTaskManagerImpl implements BackgroundTaskManager {
 	}
 
 	@Override
+	public int getBackgroundTasksCount(
+		long[] groupIds, String name, String taskExecutorClassName) {
+
+		return _backgroundTaskLocalService.getBackgroundTasksCount(
+			groupIds, name, taskExecutorClassName);
+	}
+
+	@Override
+	public int getBackgroundTasksCount(
+		long[] groupIds, String name, String taskExecutorClassName,
+		boolean completed) {
+
+		return _backgroundTaskLocalService.getBackgroundTasksCount(
+			groupIds, name, taskExecutorClassName, completed);
+	}
+
+	@Override
 	public String getBackgroundTaskStatusJSON(long backgroundTaskId) {
 		return _backgroundTaskLocalService.getBackgroundTaskStatusJSON(
 			backgroundTaskId);
@@ -453,6 +493,8 @@ public class BackgroundTaskManagerImpl implements BackgroundTaskManager {
 
 	@Activate
 	protected void activate(BundleContext bundleContext) {
+		_bundleContext = bundleContext;
+
 		registerDestination(
 			bundleContext, DestinationConfiguration.DESTINATION_TYPE_PARALLEL,
 			DestinationNames.BACKGROUND_TASK);
@@ -466,8 +508,15 @@ public class BackgroundTaskManagerImpl implements BackgroundTaskManager {
 		for (ServiceRegistration<Destination> serviceRegistration :
 				_serviceRegistrations) {
 
+			Destination destination = _bundleContext.getService(
+				serviceRegistration.getReference());
+
 			serviceRegistration.unregister();
+
+			destination.destroy();
 		}
+
+		_bundleContext = null;
 	}
 
 	protected ServiceRegistration<Destination> registerDestination(
@@ -507,6 +556,10 @@ public class BackgroundTaskManagerImpl implements BackgroundTaskManager {
 		_destinationFactory = destinationFactory;
 	}
 
+	@Reference(unbind = "-")
+	protected void setLockManager(LockManager lockManager) {
+	}
+
 	protected List<BackgroundTask> translate(
 		List<com.liferay.portal.background.task.model.BackgroundTask>
 			backgroundTaskModels) {
@@ -530,7 +583,7 @@ public class BackgroundTaskManagerImpl implements BackgroundTaskManager {
 
 	protected OrderByComparator
 		<com.liferay.portal.background.task.model.BackgroundTask>
-		translate(OrderByComparator<BackgroundTask> orderByComparator) {
+			translate(OrderByComparator<BackgroundTask> orderByComparator) {
 
 		if (orderByComparator instanceof
 				BackgroundTaskCompletionDateComparator) {
@@ -551,8 +604,9 @@ public class BackgroundTaskManagerImpl implements BackgroundTaskManager {
 			"Invalid class " + ClassUtil.getClassName(orderByComparator));
 	}
 
-	private volatile BackgroundTaskLocalService _backgroundTaskLocalService;
-	private volatile DestinationFactory _destinationFactory;
+	private BackgroundTaskLocalService _backgroundTaskLocalService;
+	private volatile BundleContext _bundleContext;
+	private DestinationFactory _destinationFactory;
 	private final Set<ServiceRegistration<Destination>> _serviceRegistrations =
 		new HashSet<>();
 

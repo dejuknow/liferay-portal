@@ -16,8 +16,11 @@ package com.liferay.portal.lock.service.persistence;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.lock.exception.NoSuchLockException;
 import com.liferay.portal.lock.model.Lock;
 import com.liferay.portal.service.persistence.BasePersistence;
+
+import java.util.Date;
 
 /**
  * The persistence interface for the lock service.
@@ -104,11 +107,11 @@ public interface LockPersistence extends BasePersistence<Lock> {
 	* @param uuid the uuid
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching lock
-	* @throws com.liferay.portal.lock.NoSuchLockException if a matching lock could not be found
+	* @throws NoSuchLockException if a matching lock could not be found
 	*/
 	public Lock findByUuid_First(java.lang.String uuid,
 		com.liferay.portal.kernel.util.OrderByComparator<Lock> orderByComparator)
-		throws com.liferay.portal.lock.exception.NoSuchLockException;
+		throws NoSuchLockException;
 
 	/**
 	* Returns the first lock in the ordered set where uuid = &#63;.
@@ -126,11 +129,11 @@ public interface LockPersistence extends BasePersistence<Lock> {
 	* @param uuid the uuid
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching lock
-	* @throws com.liferay.portal.lock.NoSuchLockException if a matching lock could not be found
+	* @throws NoSuchLockException if a matching lock could not be found
 	*/
 	public Lock findByUuid_Last(java.lang.String uuid,
 		com.liferay.portal.kernel.util.OrderByComparator<Lock> orderByComparator)
-		throws com.liferay.portal.lock.exception.NoSuchLockException;
+		throws NoSuchLockException;
 
 	/**
 	* Returns the last lock in the ordered set where uuid = &#63;.
@@ -149,11 +152,11 @@ public interface LockPersistence extends BasePersistence<Lock> {
 	* @param uuid the uuid
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next lock
-	* @throws com.liferay.portal.lock.NoSuchLockException if a lock with the primary key could not be found
+	* @throws NoSuchLockException if a lock with the primary key could not be found
 	*/
 	public Lock[] findByUuid_PrevAndNext(long lockId, java.lang.String uuid,
 		com.liferay.portal.kernel.util.OrderByComparator<Lock> orderByComparator)
-		throws com.liferay.portal.lock.exception.NoSuchLockException;
+		throws NoSuchLockException;
 
 	/**
 	* Removes all the locks where uuid = &#63; from the database.
@@ -241,11 +244,11 @@ public interface LockPersistence extends BasePersistence<Lock> {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching lock
-	* @throws com.liferay.portal.lock.NoSuchLockException if a matching lock could not be found
+	* @throws NoSuchLockException if a matching lock could not be found
 	*/
 	public Lock findByUuid_C_First(java.lang.String uuid, long companyId,
 		com.liferay.portal.kernel.util.OrderByComparator<Lock> orderByComparator)
-		throws com.liferay.portal.lock.exception.NoSuchLockException;
+		throws NoSuchLockException;
 
 	/**
 	* Returns the first lock in the ordered set where uuid = &#63; and companyId = &#63;.
@@ -265,11 +268,11 @@ public interface LockPersistence extends BasePersistence<Lock> {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching lock
-	* @throws com.liferay.portal.lock.NoSuchLockException if a matching lock could not be found
+	* @throws NoSuchLockException if a matching lock could not be found
 	*/
 	public Lock findByUuid_C_Last(java.lang.String uuid, long companyId,
 		com.liferay.portal.kernel.util.OrderByComparator<Lock> orderByComparator)
-		throws com.liferay.portal.lock.exception.NoSuchLockException;
+		throws NoSuchLockException;
 
 	/**
 	* Returns the last lock in the ordered set where uuid = &#63; and companyId = &#63;.
@@ -290,12 +293,12 @@ public interface LockPersistence extends BasePersistence<Lock> {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next lock
-	* @throws com.liferay.portal.lock.NoSuchLockException if a lock with the primary key could not be found
+	* @throws NoSuchLockException if a lock with the primary key could not be found
 	*/
 	public Lock[] findByUuid_C_PrevAndNext(long lockId, java.lang.String uuid,
 		long companyId,
 		com.liferay.portal.kernel.util.OrderByComparator<Lock> orderByComparator)
-		throws com.liferay.portal.lock.exception.NoSuchLockException;
+		throws NoSuchLockException;
 
 	/**
 	* Removes all the locks where uuid = &#63; and companyId = &#63; from the database.
@@ -320,8 +323,7 @@ public interface LockPersistence extends BasePersistence<Lock> {
 	* @param expirationDate the expiration date
 	* @return the matching locks
 	*/
-	public java.util.List<Lock> findByLtExpirationDate(
-		java.util.Date expirationDate);
+	public java.util.List<Lock> findByLtExpirationDate(Date expirationDate);
 
 	/**
 	* Returns a range of all the locks where expirationDate &lt; &#63;.
@@ -335,8 +337,8 @@ public interface LockPersistence extends BasePersistence<Lock> {
 	* @param end the upper bound of the range of locks (not inclusive)
 	* @return the range of matching locks
 	*/
-	public java.util.List<Lock> findByLtExpirationDate(
-		java.util.Date expirationDate, int start, int end);
+	public java.util.List<Lock> findByLtExpirationDate(Date expirationDate,
+		int start, int end);
 
 	/**
 	* Returns an ordered range of all the locks where expirationDate &lt; &#63;.
@@ -351,8 +353,8 @@ public interface LockPersistence extends BasePersistence<Lock> {
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching locks
 	*/
-	public java.util.List<Lock> findByLtExpirationDate(
-		java.util.Date expirationDate, int start, int end,
+	public java.util.List<Lock> findByLtExpirationDate(Date expirationDate,
+		int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<Lock> orderByComparator);
 
 	/**
@@ -369,8 +371,8 @@ public interface LockPersistence extends BasePersistence<Lock> {
 	* @param retrieveFromCache whether to retrieve from the finder cache
 	* @return the ordered range of matching locks
 	*/
-	public java.util.List<Lock> findByLtExpirationDate(
-		java.util.Date expirationDate, int start, int end,
+	public java.util.List<Lock> findByLtExpirationDate(Date expirationDate,
+		int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<Lock> orderByComparator,
 		boolean retrieveFromCache);
 
@@ -380,11 +382,11 @@ public interface LockPersistence extends BasePersistence<Lock> {
 	* @param expirationDate the expiration date
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching lock
-	* @throws com.liferay.portal.lock.NoSuchLockException if a matching lock could not be found
+	* @throws NoSuchLockException if a matching lock could not be found
 	*/
-	public Lock findByLtExpirationDate_First(java.util.Date expirationDate,
+	public Lock findByLtExpirationDate_First(Date expirationDate,
 		com.liferay.portal.kernel.util.OrderByComparator<Lock> orderByComparator)
-		throws com.liferay.portal.lock.exception.NoSuchLockException;
+		throws NoSuchLockException;
 
 	/**
 	* Returns the first lock in the ordered set where expirationDate &lt; &#63;.
@@ -393,7 +395,7 @@ public interface LockPersistence extends BasePersistence<Lock> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching lock, or <code>null</code> if a matching lock could not be found
 	*/
-	public Lock fetchByLtExpirationDate_First(java.util.Date expirationDate,
+	public Lock fetchByLtExpirationDate_First(Date expirationDate,
 		com.liferay.portal.kernel.util.OrderByComparator<Lock> orderByComparator);
 
 	/**
@@ -402,11 +404,11 @@ public interface LockPersistence extends BasePersistence<Lock> {
 	* @param expirationDate the expiration date
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching lock
-	* @throws com.liferay.portal.lock.NoSuchLockException if a matching lock could not be found
+	* @throws NoSuchLockException if a matching lock could not be found
 	*/
-	public Lock findByLtExpirationDate_Last(java.util.Date expirationDate,
+	public Lock findByLtExpirationDate_Last(Date expirationDate,
 		com.liferay.portal.kernel.util.OrderByComparator<Lock> orderByComparator)
-		throws com.liferay.portal.lock.exception.NoSuchLockException;
+		throws NoSuchLockException;
 
 	/**
 	* Returns the last lock in the ordered set where expirationDate &lt; &#63;.
@@ -415,7 +417,7 @@ public interface LockPersistence extends BasePersistence<Lock> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching lock, or <code>null</code> if a matching lock could not be found
 	*/
-	public Lock fetchByLtExpirationDate_Last(java.util.Date expirationDate,
+	public Lock fetchByLtExpirationDate_Last(Date expirationDate,
 		com.liferay.portal.kernel.util.OrderByComparator<Lock> orderByComparator);
 
 	/**
@@ -425,19 +427,19 @@ public interface LockPersistence extends BasePersistence<Lock> {
 	* @param expirationDate the expiration date
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next lock
-	* @throws com.liferay.portal.lock.NoSuchLockException if a lock with the primary key could not be found
+	* @throws NoSuchLockException if a lock with the primary key could not be found
 	*/
 	public Lock[] findByLtExpirationDate_PrevAndNext(long lockId,
-		java.util.Date expirationDate,
+		Date expirationDate,
 		com.liferay.portal.kernel.util.OrderByComparator<Lock> orderByComparator)
-		throws com.liferay.portal.lock.exception.NoSuchLockException;
+		throws NoSuchLockException;
 
 	/**
 	* Removes all the locks where expirationDate &lt; &#63; from the database.
 	*
 	* @param expirationDate the expiration date
 	*/
-	public void removeByLtExpirationDate(java.util.Date expirationDate);
+	public void removeByLtExpirationDate(Date expirationDate);
 
 	/**
 	* Returns the number of locks where expirationDate &lt; &#63;.
@@ -445,18 +447,18 @@ public interface LockPersistence extends BasePersistence<Lock> {
 	* @param expirationDate the expiration date
 	* @return the number of matching locks
 	*/
-	public int countByLtExpirationDate(java.util.Date expirationDate);
+	public int countByLtExpirationDate(Date expirationDate);
 
 	/**
-	* Returns the lock where className = &#63; and key = &#63; or throws a {@link com.liferay.portal.lock.NoSuchLockException} if it could not be found.
+	* Returns the lock where className = &#63; and key = &#63; or throws a {@link NoSuchLockException} if it could not be found.
 	*
 	* @param className the class name
 	* @param key the key
 	* @return the matching lock
-	* @throws com.liferay.portal.lock.NoSuchLockException if a matching lock could not be found
+	* @throws NoSuchLockException if a matching lock could not be found
 	*/
 	public Lock findByC_K(java.lang.String className, java.lang.String key)
-		throws com.liferay.portal.lock.exception.NoSuchLockException;
+		throws NoSuchLockException;
 
 	/**
 	* Returns the lock where className = &#63; and key = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
@@ -486,7 +488,7 @@ public interface LockPersistence extends BasePersistence<Lock> {
 	* @return the lock that was removed
 	*/
 	public Lock removeByC_K(java.lang.String className, java.lang.String key)
-		throws com.liferay.portal.lock.exception.NoSuchLockException;
+		throws NoSuchLockException;
 
 	/**
 	* Returns the number of locks where className = &#63; and key = &#63;.
@@ -524,22 +526,20 @@ public interface LockPersistence extends BasePersistence<Lock> {
 	*
 	* @param lockId the primary key of the lock
 	* @return the lock that was removed
-	* @throws com.liferay.portal.lock.NoSuchLockException if a lock with the primary key could not be found
+	* @throws NoSuchLockException if a lock with the primary key could not be found
 	*/
-	public Lock remove(long lockId)
-		throws com.liferay.portal.lock.exception.NoSuchLockException;
+	public Lock remove(long lockId) throws NoSuchLockException;
 
 	public Lock updateImpl(Lock lock);
 
 	/**
-	* Returns the lock with the primary key or throws a {@link com.liferay.portal.lock.NoSuchLockException} if it could not be found.
+	* Returns the lock with the primary key or throws a {@link NoSuchLockException} if it could not be found.
 	*
 	* @param lockId the primary key of the lock
 	* @return the lock
-	* @throws com.liferay.portal.lock.NoSuchLockException if a lock with the primary key could not be found
+	* @throws NoSuchLockException if a lock with the primary key could not be found
 	*/
-	public Lock findByPrimaryKey(long lockId)
-		throws com.liferay.portal.lock.exception.NoSuchLockException;
+	public Lock findByPrimaryKey(long lockId) throws NoSuchLockException;
 
 	/**
 	* Returns the lock with the primary key or returns <code>null</code> if it could not be found.

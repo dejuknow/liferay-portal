@@ -225,7 +225,7 @@ public class BaseIntrabandTest {
 
 			Assert.fail();
 		}
-		catch (ClosedIntrabandException cibe) {
+		catch (ClosedIntrabandException cie) {
 		}
 
 		// Register after close
@@ -236,7 +236,7 @@ public class BaseIntrabandTest {
 
 			Assert.fail();
 		}
-		catch (ClosedIntrabandException cibe) {
+		catch (ClosedIntrabandException cie) {
 		}
 
 		// Unregister after close
@@ -246,7 +246,7 @@ public class BaseIntrabandTest {
 
 			Assert.fail();
 		}
-		catch (ClosedIntrabandException cibe) {
+		catch (ClosedIntrabandException cie) {
 		}
 	}
 
@@ -345,7 +345,7 @@ public class BaseIntrabandTest {
 			Pipe pipe = Pipe.open();
 
 			try (SourceChannel sourceChannel = pipe.source();
-				final SinkChannel sinkChannel = pipe.sink()) {
+					final SinkChannel sinkChannel = pipe.sink()) {
 
 				Datagram requestDatagram = Datagram.createRequestDatagram(
 					_TYPE, _data);
@@ -923,7 +923,7 @@ public class BaseIntrabandTest {
 		Queue<Datagram> sendingQueue = new LinkedList<>();
 
 		try (SourceChannel sourceChannel = pipe.source();
-			SinkChannel sinkChannel = pipe.sink()) {
+				SinkChannel sinkChannel = pipe.sink()) {
 
 			sourceChannel.configureBlocking(false);
 			sinkChannel.configureBlocking(false);

@@ -15,23 +15,34 @@
 package com.liferay.blogs.web.portlet.action;
 
 import com.liferay.blogs.web.constants.BlogsPortletKeys;
+import com.liferay.portal.kernel.portlet.PortletLayoutFinder;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.struts.BaseFindActionHelper;
+import com.liferay.portal.struts.FindActionHelper;
 import com.liferay.portlet.blogs.model.BlogsEntry;
-import com.liferay.portlet.blogs.service.BlogsEntryLocalServiceUtil;
+import com.liferay.portlet.blogs.service.BlogsEntryLocalService;
 
 import javax.portlet.PortletURL;
+import javax.portlet.WindowState;
 
 import javax.servlet.http.HttpServletRequest;
+
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Sergio González
  */
+@Component(
+	immediate = true,
+	property = "model.class.name=com.liferay.portlet.blogs.model.BlogsEntry",
+	service = FindActionHelper.class
+)
 public class BlogsFindEntryHelper extends BaseFindActionHelper {
 
 	@Override
 	public long getGroupId(long primaryKey) throws Exception {
-		BlogsEntry entry = BlogsEntryLocalServiceUtil.getEntry(primaryKey);
+		BlogsEntry entry = _blogsEntryLocalService.getEntry(primaryKey);
 
 		return entry.getGroupId();
 	}
@@ -42,20 +53,11 @@ public class BlogsFindEntryHelper extends BaseFindActionHelper {
 	}
 
 	@Override
-	public String[] initPortletIds() {
-
-		// Order is important. See LPS-23770.
-
-		return new String[] {
-			BlogsPortletKeys.BLOGS_ADMIN, BlogsPortletKeys.BLOGS,
-			BlogsPortletKeys.BLOGS_AGGREGATOR
-		};
-	}
-
-	@Override
 	public PortletURL processPortletURL(
 			HttpServletRequest request, PortletURL portletURL)
 		throws Exception {
+
+		portletURL.setWindowState(WindowState.MAXIMIZED);
 
 		return portletURL;
 	}
@@ -64,7 +66,7 @@ public class BlogsFindEntryHelper extends BaseFindActionHelper {
 	public void setPrimaryKeyParameter(PortletURL portletURL, long primaryKey)
 		throws Exception {
 
-		BlogsEntry entry = BlogsEntryLocalServiceUtil.getEntry(primaryKey);
+		BlogsEntry entry = _blogsEntryLocalService.getEntry(primaryKey);
 
 		portletURL.setParameter("urlTitle", entry.getUrlTitle());
 	}
@@ -108,5 +110,30 @@ public class BlogsFindEntryHelper extends BaseFindActionHelper {
 				"mvcRenderCommandName", mvcRenderCommandName);
 		}
 	}
+
+	@Override
+	protected PortletLayoutFinder getPortletLayoutFinder() {
+		return _portletLayoutFinder;
+	}
+
+	@Reference(unbind = "-")
+	protected void setBlogsEntryLocalService(
+		BlogsEntryLocalService blogsEntryLocalService) {
+
+		_blogsEntryLocalService = blogsEntryLocalService;
+	}
+
+	@Reference(
+		target = "(model.class.name=com.liferay.portlet.blogs.model.BlogsEntry)",
+		unbind = "-"
+	)
+	protected void setPortletLayoutFinder(
+		PortletLayoutFinder portletPageFinder) {
+
+		_portletLayoutFinder = portletPageFinder;
+	}
+
+	private BlogsEntryLocalService _blogsEntryLocalService;
+	private PortletLayoutFinder _portletLayoutFinder;
 
 }

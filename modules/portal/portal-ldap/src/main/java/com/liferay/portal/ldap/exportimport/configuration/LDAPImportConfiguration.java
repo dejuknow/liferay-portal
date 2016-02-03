@@ -16,17 +16,20 @@ package com.liferay.portal.ldap.exportimport.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
-import com.liferay.configuration.admin.ConfigurationAdmin;
 import com.liferay.portal.ldap.configuration.CompanyScopedConfiguration;
+import com.liferay.portal.metatype.annotations.ExtendedObjectClassDefinition;
 
 /**
  * @author Michael C. Han
  */
-@ConfigurationAdmin(category = "platform")
+@ExtendedObjectClassDefinition(
+	category = "platform", factoryInstanceLabelAttribute = "companyId",
+	scope = ExtendedObjectClassDefinition.Scope.COMPANY
+)
 @Meta.OCD(
 	factory = true,
 	id = "com.liferay.portal.ldap.exportimport.configuration.LDAPImportConfiguration",
-	localization = "content/Language"
+	localization = "content/Language", name = "%ldap.import.configuration.name"
 )
 public interface LDAPImportConfiguration extends CompanyScopedConfiguration {
 
@@ -34,22 +37,34 @@ public interface LDAPImportConfiguration extends CompanyScopedConfiguration {
 	@Override
 	public long companyId();
 
-	@Meta.AD(deflt = "false", required = false)
+	@Meta.AD(
+		deflt = "false", description = "%import-create-role-per-group-help",
+		required = false
+	)
 	public boolean importCreateRolePerGroup();
 
 	@Meta.AD(deflt = "false", required = false)
 	public boolean importEnabled();
 
-	@Meta.AD(deflt = "true", required = false)
+	@Meta.AD(
+		deflt = "true", description = "%import-group-cache-enabled-help",
+		required = false
+	)
 	public boolean importGroupCacheEnabled();
 
 	@Meta.AD(deflt = "10", required = false)
 	public int importInterval();
 
-	@Meta.AD(deflt = "86400000", required = false)
+	@Meta.AD(
+		deflt = "86400000", description = "%import-lock-expiration-time-help",
+		required = false
+	)
 	public long importLockExpirationTime();
 
-	@Meta.AD(deflt = "user", optionValues = {"group", "user"}, required = false)
+	@Meta.AD(
+		deflt = "user", description = "%import-method-help",
+		optionValues = {"group", "user"}, required = false
+	)
 	public String importMethod();
 
 	@Meta.AD(deflt = "false", required = false)

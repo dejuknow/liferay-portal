@@ -14,10 +14,10 @@
 
 package com.liferay.users.admin.web.portlet.action;
 
-import com.liferay.portal.NoSuchOrgLaborException;
+import com.liferay.portal.exception.NoSuchOrgLaborException;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.servlet.SessionErrors;
-import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.users.admin.constants.UsersAdminPortletKeys;
 
 import javax.portlet.PortletException;

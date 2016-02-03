@@ -133,6 +133,39 @@ public class MBCategoryServiceWrapper implements MBCategoryService,
 	}
 
 	@Override
+	public java.util.List<java.lang.Object> getCategoriesAndThreads(
+		long groupId, long categoryId) {
+		return _mbCategoryService.getCategoriesAndThreads(groupId, categoryId);
+	}
+
+	@Override
+	public java.util.List<java.lang.Object> getCategoriesAndThreads(
+		long groupId, long categoryId, int status) {
+		return _mbCategoryService.getCategoriesAndThreads(groupId, categoryId,
+			status);
+	}
+
+	@Override
+	public java.util.List<java.lang.Object> getCategoriesAndThreads(
+		long groupId, long categoryId, int status, int start, int end) {
+		return _mbCategoryService.getCategoriesAndThreads(groupId, categoryId,
+			status, start, end);
+	}
+
+	@Override
+	public int getCategoriesAndThreadsCount(long groupId, long categoryId) {
+		return _mbCategoryService.getCategoriesAndThreadsCount(groupId,
+			categoryId);
+	}
+
+	@Override
+	public int getCategoriesAndThreadsCount(long groupId, long categoryId,
+		int status) {
+		return _mbCategoryService.getCategoriesAndThreadsCount(groupId,
+			categoryId, status);
+	}
+
+	@Override
 	public int getCategoriesCount(long groupId, long excludedCategoryId,
 		long parentCategoryId, int status) {
 		return _mbCategoryService.getCategoriesCount(groupId,
@@ -274,22 +307,6 @@ public class MBCategoryServiceWrapper implements MBCategoryService,
 			outServerPort, outUseSSL, outUserName, outPassword,
 			mailingListActive, allowAnonymousEmail, mergeWithParentCategory,
 			serviceContext);
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
-	 */
-	@Deprecated
-	public MBCategoryService getWrappedMBCategoryService() {
-		return _mbCategoryService;
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #setWrappedService}
-	 */
-	@Deprecated
-	public void setWrappedMBCategoryService(MBCategoryService mbCategoryService) {
-		_mbCategoryService = mbCategoryService;
 	}
 
 	@Override

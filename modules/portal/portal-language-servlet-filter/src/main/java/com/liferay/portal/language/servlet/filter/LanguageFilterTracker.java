@@ -50,10 +50,8 @@ public class LanguageFilterTracker {
 				public ServiceRegistration<Filter> addingService(
 					ServiceReference<ServletContextHelper> serviceReference) {
 
-					ServletContextHelper servletContextHelper =
-						bundleContext.getService(serviceReference);
-
-					Filter filter = new LanguageFilter(servletContextHelper);
+					Filter filter = new LanguageFilter(
+						serviceReference.getBundle());
 
 					Hashtable<String, Object> properties = new Hashtable<>();
 
@@ -78,7 +76,7 @@ public class LanguageFilterTracker {
 						"Language Filter");
 					properties.put(
 						HttpWhiteboardConstants.HTTP_WHITEBOARD_FILTER_PATTERN,
-							new String[] {"*.css", "*.js"});
+						new String[] {"*.css", "*.js"});
 
 					return bundleContext.registerService(
 						Filter.class, filter, properties);

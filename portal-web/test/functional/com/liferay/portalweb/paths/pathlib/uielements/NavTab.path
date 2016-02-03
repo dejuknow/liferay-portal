@@ -9,6 +9,16 @@
 </thead>
 <tbody>
 <tr>
+	<td>TAB_LINK</td>
+	<td>//ul[contains(@class,'nav-tabs')]//li[contains(.,'${key_tab}')]/a</td>
+	<td></td>
+</tr>
+<tr>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
 	<td>ACCOUNT_CREATED_NOTIFICATION</td>
 	<td>//ul[contains(@class,'nav-tabs')]/li/a[contains(.,'Account Created Notification')]</td>
 	<td></td>
@@ -21,11 +31,6 @@
 <tr>
 	<td>ALL_ORGANIZATIONS</td>
 	<td>//ul[contains(@class,'nav-tabs')]/li/a[contains(.,'All Organizations')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>ALL_USERS</td>
-	<td>//ul[contains(@class,'nav-tabs')]/li/a[contains(.,'All Users')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -89,11 +94,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>EXTERNAL_SERVICES</td>
-	<td>//ul[contains(@class,'nav-tabs')]/li/a[contains(.,'External Services')]</td>
-	<td></td>
-</tr>
-<tr>
 	<td>FACEBOOK</td>
 	<td>//ul[contains(@class,'nav-tabs')]/li/a[contains(.,'Facebook')]</td>
 	<td></td>
@@ -101,11 +101,6 @@
 <tr>
 	<td>FIELDS</td>
 	<td>//ul[contains(@class,'nav-tabs')]/li/a[contains(.,'Fields')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>FILE_UPLOADS</td>
-	<td>//ul[contains(@class,'nav-tabs')]/li/a[contains(.,'File Uploads')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -126,11 +121,6 @@
 <tr>
 	<td>LOG_LEVELS</td>
 	<td>//ul[contains(@class,'nav-tabs')]/li/a[contains(.,'Log Levels')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>MAIL</td>
-	<td>//ul[contains(@class,'nav-tabs')]/li/a[contains(.,'Mail')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -194,11 +184,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>RESOURCES</td>
-	<td>//ul[contains(@class,'nav-tabs')]/li/a[contains(.,'Resources')]</td>
-	<td></td>
-</tr>
-<tr>
 	<td>SCRIPT</td>
 	<td>//ul[contains(@class,'nav-tabs')]/li/a[contains(.,'Script')]</td>
 	<td></td>
@@ -236,6 +221,11 @@
 <tr>
 	<td>SYSTEM_PROPERTIES</td>
 	<td>//ul[contains(@class,'nav-tabs')]/li/a[contains(.,'System Properties')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>TAB_LINK</td>
+	<td>//ul[contains(@class,'nav-tabs')]//li[contains(.,'${key_tab}')]/a</td>
 	<td></td>
 </tr>
 <tr>

@@ -24,15 +24,6 @@
 				('onpopstate' in WIN || A.UA.gecko >= 2);
 	};
 
-	var filterConfig = null;
-
-	if (!COMBINE) {
-		filterConfig = {
-			replaceStr: '.js' + LiferayAUI.getStaticResourceURLParams(),
-			searchExp: '\\.js$'
-		};
-	}
-
 	window.YUI_config = {
 		base: PATH_JAVASCRIPT + '/aui/',
 		combine: COMBINE,
@@ -53,8 +44,18 @@
 			liferay: {
 				base: PATH_JAVASCRIPT + '/liferay/',
 				combine: COMBINE,
-				filter: filterConfig,
+				filter: Liferay.AUI.getFilterConfig(),
 				modules: {
+					'liferay-alert': {
+						path: 'alert.js',
+						requires: [
+							'aui-alert',
+							'aui-component',
+							'event-mouseenter',
+							'liferay-portlet-base',
+							'timers'
+						]
+					},
 					'liferay-asset-addon-entry-selector': {
 						path: 'asset_addon_entry_selector.js',
 						requires: [
@@ -211,15 +212,6 @@
 							'liferay-translation-manager'
 						]
 					},
-					'liferay-diff-version-comparator': {
-						path: 'diff_version_comparator.js',
-						requires: [
-							'aui-io-request',
-							'autocomplete-base',
-							'autocomplete-filters',
-							'liferay-portlet-base'
-						]
-					},
 					'liferay-dynamic-select': {
 						path: 'dynamic_select.js',
 						requires: [
@@ -300,15 +292,6 @@
 						path: 'icon.js',
 						requires: [
 							'aui-base'
-						]
-					},
-					'liferay-image-selector': {
-						path: 'image_selector.js',
-						requires: [
-							'aui-base',
-							'liferay-item-selector-dialog',
-							'liferay-portlet-base',
-							'uploader'
 						]
 					},
 					'liferay-inline-editor-base': {
@@ -421,39 +404,6 @@
 							'resize'
 						]
 					},
-					'liferay-layouts-tree': {
-						path: 'layouts_tree.js',
-						requires: [
-							'aui-tree-view'
-						]
-					},
-					'liferay-layouts-tree-check-content-display-page': {
-						path: 'layouts_tree_check_content_display_page.js',
-						requires: [
-							'aui-component',
-							'plugin'
-						]
-					},
-					'liferay-layouts-tree-node-task': {
-						path: 'layouts_tree_node_task.js',
-						requires: [
-							'aui-tree-node'
-						]
-					},
-					'liferay-layouts-tree-selectable': {
-						path: 'layouts_tree_selectable.js',
-						requires: [
-							'liferay-layouts-tree-node-task'
-						]
-					},
-					'liferay-layouts-tree-state': {
-						path: 'layouts_tree_state.js',
-						requires: [
-							'aui-base',
-							'aui-io-request',
-							'liferay-store'
-						]
-					},
 					'liferay-list-view': {
 						path: 'list_view.js',
 						requires: [
@@ -475,33 +425,6 @@
 						path: 'logo_selector.js',
 						requires: [
 							'aui-base'
-						]
-					},
-					'liferay-management-bar': {
-						path: 'management_bar.js',
-						requires: [
-							'aui-component',
-							'liferay-portlet-base'
-						]
-					},
-					'liferay-map-base': {
-						path: 'map_base.js',
-						requires: [
-							'aui-base'
-						]
-					},
-					'liferay-map-google': {
-						path: 'map_google.js',
-						requires: [
-							'liferay-map-base'
-						]
-					},
-					'liferay-map-openstreet': {
-						path: 'map_openstreet.js',
-						requires: [
-							'jsonp',
-							'liferay-map-base',
-							'timers'
 						]
 					},
 					'liferay-menu': {
@@ -597,6 +520,12 @@
 						requires: [
 							'aui-base',
 							'transition'
+						]
+					},
+					'liferay-notification': {
+						path: 'notification.js',
+						requires: [
+							'liferay-alert'
 						]
 					},
 					'liferay-pagination': {
@@ -722,7 +651,7 @@
 							'aui-io-request',
 							'aui-timer',
 							'cookie',
-							'liferay-notice'
+							'liferay-notification'
 						]
 					},
 					'liferay-sign-in-modal': {
@@ -829,6 +758,13 @@
 							'liferay-portlet-base',
 							'liferay-storage-formatter',
 							'uploader'
+						]
+					},
+					'liferay-url-preview': {
+						path: 'url_preview.js',
+						requires: [
+							'aui-component',
+							'liferay-util-window'
 						]
 					},
 					'liferay-util-window': {

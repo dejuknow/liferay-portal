@@ -101,7 +101,7 @@
 			<var name="soPage" value="${soPage}" />
 		</execute>
 
-		<execute macro="DMFolder#gotoPG">
+		<execute macro="DMNavigator#gotoFolderPG">
 			<var name="dmFolderName" value="${dmFolderName}" />
 		</execute>
 
@@ -327,24 +327,15 @@
 			<var name="soPage" value="${soPage}" />
 		</execute>
 
-		<execute macro="WikiPage#gotoAllPagesPG" />
+		<execute macro="WikiNavigator#gotoAllPagesPG" />
 
 		<execute macro="WikiPage#deletePG">
 			<var name="assetType" value="${assetType}" />
 			<var name="wikiPageTitle" value="FrontPage" />
 		</execute>
 
-		<execute macro="Page#openURL">
-			<var name="friendlyURL" value="${friendlyURL}" />
-			<var name="pageAccess" value="${pageAccess}" />
-			<var name="pageAccessURL" value="${pageAccessURL}" />
-			<var name="pageStaging" value="${pageStaging}" />
-			<var name="pageStagingURL" value="${pageStagingURL}" />
+		<execute macro="Navigator#openSiteURL">
 			<var name="siteName" value="${siteName}" />
-			<var name="siteNameURL" value="${siteNameURL}" />
-			<var name="siteURL" value="true" />
-			<var name="specificURL" value="${specificURL}" />
-			<var name="virtualHostsURL" value="${virtualHostsURL}" />
 		</execute>
 
 		<execute macro="SOBookmarks#deleteBookmarksEntry">
@@ -441,7 +432,7 @@
 			<var name="soPage" value="${soPage}" />
 		</execute>
 
-		<execute macro="DMFolder#gotoPG">
+		<execute macro="DMNavigator#gotoFolderPG">
 			<var name="dmFolderName" value="${dmFolderNameEdit}" />
 		</execute>
 
@@ -538,17 +529,8 @@
 			<var name="wikiPageContentEdit" value="${wikiPageContentEdit}" />
 		</execute>
 
-		<execute macro="Page#openURL">
-			<var name="friendlyURL" value="${friendlyURL}" />
-			<var name="pageAccess" value="${pageAccess}" />
-			<var name="pageAccessURL" value="${pageAccessURL}" />
-			<var name="pageStaging" value="${pageStaging}" />
-			<var name="pageStagingURL" value="${pageStagingURL}" />
+		<execute macro="Navigator#openSiteURL">
 			<var name="siteName" value="${siteName}" />
-			<var name="siteNameURL" value="${siteNameURL}" />
-			<var name="siteURL" value="true" />
-			<var name="specificURL" value="${specificURL}" />
-			<var name="virtualHostsURL" value="${virtualHostsURL}" />
 		</execute>
 
 		<execute macro="SOBookmarks#editBookmarksEntry">
@@ -578,7 +560,7 @@
 			</then>
 			<else>
 				<execute function="Click" locator1="ControlMenu#USER_NAME" />
-				<execute function="Click" locator1="ControlMenu#USER_MY_PROFILE" value1="My Profile" />
+				<execute function="Click" locator1="UserBar#USER_PROFILE" value1="Profile" />
 			</else>
 		</if>
 
@@ -1020,7 +1002,7 @@
 			</then>
 			<else>
 				<execute function="Click" locator1="ControlMenu#USER_NAME" />
-				<execute function="Click" locator1="ControlMenu#USER_MY_PROFILE" value1="My Profile" />
+				<execute function="Click" locator1="UserBar#USER_PROFILE" value1="Profile" />
 			</else>
 		</if>
 
@@ -1431,7 +1413,7 @@
 			</then>
 			<else>
 				<execute function="Click" locator1="ControlMenu#USER_NAME" />
-				<execute function="Click" locator1="ControlMenu#USER_MY_PROFILE" value1="My Profile" />
+				<execute function="Click" locator1="UserBar#USER_PROFILE" value1="Profile" />
 			</else>
 		</if>
 

@@ -15,7 +15,7 @@
 package com.liferay.layout.set.prototype.lar.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
-import com.liferay.layout.set.prototype.web.lar.LayoutSetPrototypeStagedModelDataHandler;
+import com.liferay.layout.set.prototype.lar.LayoutSetPrototypeStagedModelDataHandler;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.TransactionalTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
@@ -345,6 +345,27 @@ public class LayoutSetPrototypeStagedModelDataHandlerTest
 		validateLayouts(
 			importedLayoutSetPrototype, importedLayoutPrototype,
 			importedLayout);
+	}
+
+	@Override
+	protected void validateImportedStagedModel(
+			StagedModel stagedModel, StagedModel importedStagedModel)
+		throws Exception {
+
+		super.validateImportedStagedModel(stagedModel, importedStagedModel);
+
+		LayoutSetPrototype layoutSetPrototype = (LayoutSetPrototype)stagedModel;
+		LayoutSetPrototype importedLayoutSetPrototype =
+			(LayoutSetPrototype)importedStagedModel;
+
+		Assert.assertEquals(
+			layoutSetPrototype.getName(), importedLayoutSetPrototype.getName());
+		Assert.assertEquals(
+			layoutSetPrototype.getDescription(),
+			importedLayoutSetPrototype.getDescription());
+		Assert.assertEquals(
+			layoutSetPrototype.isActive(),
+			importedLayoutSetPrototype.isActive());
 	}
 
 	protected void validateLayouts(

@@ -27,11 +27,11 @@ import com.liferay.portal.kernel.repository.model.FileShortcut;
 import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.repository.model.RepositoryModelOperation;
+import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.security.auth.PrincipalThreadLocal;
-import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portlet.documentlibrary.model.DLFileEntry;
 import com.liferay.portlet.documentlibrary.model.DLFileEntryConstants;
 import com.liferay.portlet.documentlibrary.model.DLFileVersion;
@@ -213,6 +213,11 @@ public class LiferayFileEntry extends LiferayModel implements FileEntry {
 	public List<FileVersion> getFileVersions(int status) {
 		return RepositoryModelUtil.toFileVersions(
 			_dlFileEntry.getFileVersions(status));
+	}
+
+	@Override
+	public int getFileVersionsCount(int status) {
+		return _dlFileEntry.getFileVersionsCount(status);
 	}
 
 	@Override

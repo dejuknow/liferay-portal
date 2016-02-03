@@ -20,7 +20,6 @@ import com.liferay.portal.model.impl.PortletAppImpl;
 import com.liferay.portal.model.impl.PortletImpl;
 import com.liferay.portal.servlet.MainServlet;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
-import com.liferay.portal.test.rule.MainServletTestRule;
 import com.liferay.portal.test.rule.SyntheticBundleRule;
 import com.liferay.portal.test.rule.callback.MainServletTestCallback;
 import com.liferay.portal.util.test.AtomicState;
@@ -57,12 +56,21 @@ public class InvokerFilterContainerImplTest {
 	@Rule
 	public static final AggregateTestRule aggregateTestRule =
 		new AggregateTestRule(
-			new LiferayIntegrationTestRule(), MainServletTestRule.INSTANCE,
+			new LiferayIntegrationTestRule(),
 			new SyntheticBundleRule("bundle.invokerfiltercontainerimpl"));
 
 	@BeforeClass
 	public static void setUpClass() {
 		_atomicState = new AtomicState();
+
+		PortletContextFactory portletContextFactory =
+			new PortletContextFactoryImpl();
+
+		PortletContextFactoryUtil portletContextFactoryUtil =
+			new PortletContextFactoryUtil();
+
+		portletContextFactoryUtil.setPortletContextFactory(
+			portletContextFactory);
 
 		MainServlet mainServlet = MainServletTestCallback.getMainServlet();
 
@@ -80,7 +88,7 @@ public class InvokerFilterContainerImplTest {
 		portlet.setPortletClass("com.liferay.portlet.StrutsPortlet");
 		portlet.setPortletId("InvokerFilterContainerImplTest");
 
-		PortletContext portletContext = PortletContextFactory.create(
+		PortletContext portletContext = PortletContextFactoryUtil.create(
 			portlet, servletContext);
 
 		try {

@@ -22,6 +22,9 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.messaging.DestinationNames;
 import com.liferay.portal.kernel.messaging.MessageBusUtil;
+import com.liferay.portal.kernel.security.auth.AuthException;
+import com.liferay.portal.kernel.security.auth.AuthenticatedUserUUIDStoreUtil;
+import com.liferay.portal.kernel.security.auth.Authenticator;
 import com.liferay.portal.kernel.security.auth.session.AuthenticatedSessionManager;
 import com.liferay.portal.kernel.security.pacl.DoPrivileged;
 import com.liferay.portal.kernel.util.CookieKeys;
@@ -38,9 +41,6 @@ import com.liferay.portal.model.Company;
 import com.liferay.portal.model.CompanyConstants;
 import com.liferay.portal.model.User;
 import com.liferay.portal.model.UserTracker;
-import com.liferay.portal.security.auth.AuthException;
-import com.liferay.portal.security.auth.AuthenticatedUserUUIDStoreUtil;
-import com.liferay.portal.security.auth.Authenticator;
 import com.liferay.portal.service.CompanyLocalServiceUtil;
 import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.util.PortalUtil;
@@ -152,6 +152,8 @@ public class AuthenticatedSessionManagerImpl
 			HttpServletRequest request, HttpServletResponse response,
 			String login, String password, boolean rememberMe, String authType)
 		throws Exception {
+
+		request = PortalUtil.getOriginalServletRequest(request);
 
 		CookieKeys.validateSupportCookie(request);
 
@@ -330,65 +332,19 @@ public class AuthenticatedSessionManagerImpl
 
 		String domain = CookieKeys.getDomain(request);
 
-		Cookie companyIdCookie = new Cookie(
-			CookieKeys.COMPANY_ID, StringPool.BLANK);
-
-		if (Validator.isNotNull(domain)) {
-			companyIdCookie.setDomain(domain);
-		}
-
-		companyIdCookie.setMaxAge(0);
-		companyIdCookie.setPath(StringPool.SLASH);
-
-		Cookie idCookie = new Cookie(CookieKeys.ID, StringPool.BLANK);
-
-		if (Validator.isNotNull(domain)) {
-			idCookie.setDomain(domain);
-		}
-
-		idCookie.setMaxAge(0);
-		idCookie.setPath(StringPool.SLASH);
-
-		Cookie passwordCookie = new Cookie(
-			CookieKeys.PASSWORD, StringPool.BLANK);
-
-		if (Validator.isNotNull(domain)) {
-			passwordCookie.setDomain(domain);
-		}
-
-		passwordCookie.setMaxAge(0);
-		passwordCookie.setPath(StringPool.SLASH);
+		deleteCookie(request, response, CookieKeys.COMPANY_ID, domain);
+		deleteCookie(request, response, CookieKeys.GUEST_LANGUAGE_ID, domain);
+		deleteCookie(request, response, CookieKeys.ID, domain);
+		deleteCookie(request, response, CookieKeys.PASSWORD, domain);
 
 		boolean rememberMe = GetterUtil.getBoolean(
 			CookieKeys.getCookie(request, CookieKeys.REMEMBER_ME));
 
 		if (!rememberMe) {
-			Cookie loginCookie = new Cookie(CookieKeys.LOGIN, StringPool.BLANK);
-
-			if (Validator.isNotNull(domain)) {
-				loginCookie.setDomain(domain);
-			}
-
-			loginCookie.setMaxAge(0);
-			loginCookie.setPath(StringPool.SLASH);
-
-			CookieKeys.addCookie(request, response, loginCookie);
+			deleteCookie(request, response, CookieKeys.LOGIN, domain);
 		}
 
-		Cookie rememberMeCookie = new Cookie(
-			CookieKeys.REMEMBER_ME, StringPool.BLANK);
-
-		if (Validator.isNotNull(domain)) {
-			rememberMeCookie.setDomain(domain);
-		}
-
-		rememberMeCookie.setMaxAge(0);
-		rememberMeCookie.setPath(StringPool.SLASH);
-
-		CookieKeys.addCookie(request, response, companyIdCookie);
-		CookieKeys.addCookie(request, response, idCookie);
-		CookieKeys.addCookie(request, response, passwordCookie);
-		CookieKeys.addCookie(request, response, rememberMeCookie);
+		deleteCookie(request, response, CookieKeys.REMEMBER_ME, domain);
 
 		try {
 			session.invalidate();
@@ -474,6 +430,22 @@ public class AuthenticatedSessionManagerImpl
 			MessageBusUtil.sendMessage(
 				DestinationNames.LIVE_USERS, jsonObject.toString());
 		}
+	}
+
+	protected void deleteCookie(
+		HttpServletRequest request, HttpServletResponse response,
+		String cookieName, String domain) {
+
+		Cookie cookie = new Cookie(cookieName, StringPool.BLANK);
+
+		if (Validator.isNotNull(domain)) {
+			cookie.setDomain(domain);
+		}
+
+		cookie.setMaxAge(0);
+		cookie.setPath(StringPool.SLASH);
+
+		CookieKeys.addCookie(request, response, cookie);
 	}
 
 }

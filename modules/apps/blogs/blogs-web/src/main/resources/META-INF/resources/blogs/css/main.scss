@@ -109,11 +109,12 @@
 			}
 
 			.comments {
-				margin-right: 10px;
+				margin: 2px 20px 2px 0;
 			}
 
 			.ratings .taglib-ratings {
 				display: inline-block;
+				margin-right: 8px;
 				vertical-align: middle;
 
 				&.stars {
@@ -131,7 +132,6 @@
 
 			.taglib-social-bookmarks {
 				display: inline-block;
-				margin-top: 0;
 				vertical-align: middle;
 			}
 
@@ -320,10 +320,6 @@
 		border-color: #CCC;
 	}
 
-	.entry-options.inline {
-		background-color: #FFF;
-	}
-
 	.entry-footer .entry-social {
 		float: right;
 
@@ -337,6 +333,8 @@
 		position: relative;
 
 		h1 {
+			@include ellipsis;
+
 			font-size: 60px;
 			line-height: 80px;
 			margin-bottom: 25px;
@@ -359,6 +357,7 @@
 		a {
 			color: inherit;
 			font-weight: bold;
+			word-wrap: break-word;
 
 			&:hover {
 				text-decoration: none;

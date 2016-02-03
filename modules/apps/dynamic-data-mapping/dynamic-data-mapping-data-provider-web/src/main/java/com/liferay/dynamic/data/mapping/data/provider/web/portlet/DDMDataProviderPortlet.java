@@ -42,6 +42,7 @@ import org.osgi.service.component.annotations.Reference;
 	property = {
 		"com.liferay.portlet.css-class-wrapper=portlet-dynamic-data-mapping-data-provider",
 		"com.liferay.portlet.display-category=category.hidden",
+		"com.liferay.portlet.header-portlet-css=/css/main.css",
 		"com.liferay.portlet.instanceable=false",
 		"com.liferay.portlet.layout-cacheable=true",
 		"com.liferay.portlet.preferences-owned-by-group=true",
@@ -110,12 +111,10 @@ public class DDMDataProviderPortlet extends MVCPortlet {
 		_userLocalService = userLocalService;
 	}
 
-	private volatile DDMDataProviderInstanceService
-		_ddmDataProviderInstanceService;
-	private volatile DDMDataProviderTracker _ddmDataProviderTracker;
-	private volatile DDMFormRenderer _ddmFormRenderer;
-	private volatile DDMFormValuesJSONDeserializer
-		_ddmFormValuesJSONDeserializer;
-	private volatile UserLocalService _userLocalService;
+	private DDMDataProviderInstanceService _ddmDataProviderInstanceService;
+	private DDMDataProviderTracker _ddmDataProviderTracker;
+	private DDMFormRenderer _ddmFormRenderer;
+	private DDMFormValuesJSONDeserializer _ddmFormValuesJSONDeserializer;
+	private UserLocalService _userLocalService;
 
 }

@@ -19,12 +19,12 @@
 <%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
 
 <%@ taglib uri="http://liferay.com/tld/aui" prefix="aui" %><%@
+taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %><%@
 taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %><%@
 taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
-<%@ page import="com.liferay.iframe.web.configuration.IFrameConfiguration" %><%@
-page import="com.liferay.iframe.web.configuration.IFramePortletInstanceConfiguration" %><%@
+<%@ page import="com.liferay.iframe.web.configuration.IFramePortletInstanceConfiguration" %><%@
 page import="com.liferay.iframe.web.display.context.IFrameDisplayContext" %><%@
 page import="com.liferay.iframe.web.util.IFrameUtil" %><%@
 page import="com.liferay.portal.kernel.portlet.LiferayWindowState" %><%@
@@ -37,16 +37,14 @@ page import="com.liferay.portal.kernel.util.WebKeys" %>
 
 <%@ page import="javax.portlet.WindowState" %>
 
-<portlet:defineObjects />
+<liferay-frontend:defineObjects />
 
 <liferay-theme:defineObjects />
 
+<portlet:defineObjects />
+
 <%
-WindowState windowState = liferayPortletRequest.getWindowState();
-
-IFrameConfiguration iFrameConfiguration = (IFrameConfiguration)request.getAttribute(IFrameConfiguration.class.getName());
-
-IFrameDisplayContext iFrameDisplayContext = new IFrameDisplayContext(iFrameConfiguration, renderRequest);
+IFrameDisplayContext iFrameDisplayContext = new IFrameDisplayContext(renderRequest);
 
 IFramePortletInstanceConfiguration iFramePortletInstanceConfiguration = iFrameDisplayContext.getIFramePortletInstanceConfiguration();
 %>

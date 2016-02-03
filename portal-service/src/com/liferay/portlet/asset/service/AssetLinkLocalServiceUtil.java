@@ -107,6 +107,10 @@ public class AssetLinkLocalServiceUtil {
 		return getService().deleteAssetLink(linkId);
 	}
 
+	public static void deleteGroupLinks(long groupId) {
+		getService().deleteGroupLinks(groupId);
+	}
+
 	/**
 	* Deletes the asset link.
 	*
@@ -436,13 +440,6 @@ public class AssetLinkLocalServiceUtil {
 		}
 
 		return _service;
-	}
-
-	/**
-	 * @deprecated As of 6.2.0
-	 */
-	@Deprecated
-	public void setService(AssetLinkLocalService service) {
 	}
 
 	private static AssetLinkLocalService _service;

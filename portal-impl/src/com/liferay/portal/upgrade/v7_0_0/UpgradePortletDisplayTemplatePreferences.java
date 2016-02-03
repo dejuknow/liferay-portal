@@ -18,11 +18,9 @@ import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.portletdisplaytemplate.PortletDisplayTemplateManager;
 import com.liferay.portal.kernel.upgrade.BaseUpgradePortletPreferences;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portlet.PortletPreferencesFactoryUtil;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
@@ -40,14 +38,11 @@ public class UpgradePortletDisplayTemplatePreferences
 
 		String uuid = displayStyle.substring(DISPLAY_STYLE_PREFIX_6_2.length());
 
-		Connection con = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 
 		try {
-			con = DataAccess.getUpgradeOptimizedConnection();
-
-			ps = con.prepareStatement(
+			ps = connection.prepareStatement(
 				"select templateKey from DDMTemplate where groupId = ?" +
 					" and uuid_ = ?");
 
@@ -63,19 +58,13 @@ public class UpgradePortletDisplayTemplatePreferences
 			return null;
 		}
 		finally {
-			DataAccess.cleanUp(con, ps, rs);
+			DataAccess.cleanUp(ps, rs);
 		}
 	}
 
 	@Override
 	protected String getUpdatePortletPreferencesWhereClause() {
-		StringBundler sb = new StringBundler(5);
-
-		sb.append("(preferences like '%");
-		sb.append(DISPLAY_STYLE_PREFIX_6_2);
-		sb.append("%')");
-
-		return sb.toString();
+		return UPDATE_PORTLET_PREFERENCES_WHERE_CLAUSE;
 	}
 
 	protected void upgradeDisplayStyle(PortletPreferences portletPreferences)
@@ -119,5 +108,8 @@ public class UpgradePortletDisplayTemplatePreferences
 	}
 
 	protected static final String DISPLAY_STYLE_PREFIX_6_2 = "ddmTemplate_";
+
+	protected static final String UPDATE_PORTLET_PREFERENCES_WHERE_CLAUSE =
+		"(preferences like '%" + DISPLAY_STYLE_PREFIX_6_2 + "%')";
 
 }

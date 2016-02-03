@@ -29,7 +29,7 @@ if (row != null) {
 	article = (JournalArticle)row.getObject();
 }
 else {
-	article = (JournalArticle)request.getAttribute("view_entries.jsp-article");
+	article = (JournalArticle)request.getAttribute("info_panel.jsp-entry");
 }
 %>
 
@@ -91,7 +91,7 @@ else {
 		</liferay-portlet:renderURL>
 
 		<%
-		String taglibOnClick = "Liferay.fire('previewArticle', {title: '" + HtmlUtil.escapeJS(article.getTitle(locale)) + "', uri: '" + HtmlUtil.escapeJS(previewArticleContentURL.toString()) + "'});";
+		String taglibOnClick = "Liferay.fire('previewArticle', {title: '" + HtmlUtil.escapeJS(HtmlUtil.escape(article.getTitle(locale))) + "', uri: '" + HtmlUtil.escapeJS(previewArticleContentURL.toString()) + "'});";
 		%>
 
 		<liferay-ui:icon

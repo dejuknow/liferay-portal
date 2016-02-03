@@ -14,7 +14,7 @@
 
 package com.liferay.portal.verify;
 
-import com.liferay.portal.LayoutFriendlyURLException;
+import com.liferay.portal.exception.LayoutFriendlyURLException;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
@@ -192,7 +192,7 @@ public class VerifyLayout extends VerifyProcess {
 		runSQL(
 			"update Layout set layoutPrototypeLinkEnabled = [$FALSE$] where " +
 				"type_ = 'link_to_layout' and layoutPrototypeLinkEnabled = " +
-				"[$TRUE$]");
+					"[$TRUE$]");
 	}
 
 	protected void verifyUuid() throws Exception {

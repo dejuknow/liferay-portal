@@ -14,29 +14,33 @@
 
 package com.liferay.users.admin.web.portlet.action;
 
-import com.liferay.portal.AddressCityException;
-import com.liferay.portal.AddressStreetException;
-import com.liferay.portal.AddressZipException;
-import com.liferay.portal.CompanyMaxUsersException;
-import com.liferay.portal.ContactBirthdayException;
-import com.liferay.portal.ContactNameException;
-import com.liferay.portal.EmailAddressException;
-import com.liferay.portal.GroupFriendlyURLException;
-import com.liferay.portal.NoSuchCountryException;
-import com.liferay.portal.NoSuchListTypeException;
-import com.liferay.portal.NoSuchRegionException;
-import com.liferay.portal.NoSuchUserException;
-import com.liferay.portal.PhoneNumberException;
-import com.liferay.portal.PhoneNumberExtensionException;
-import com.liferay.portal.RequiredUserException;
-import com.liferay.portal.UserEmailAddressException;
-import com.liferay.portal.UserFieldException;
-import com.liferay.portal.UserIdException;
-import com.liferay.portal.UserPasswordException;
-import com.liferay.portal.UserReminderQueryException;
-import com.liferay.portal.UserScreenNameException;
-import com.liferay.portal.UserSmsException;
-import com.liferay.portal.WebsiteURLException;
+import com.liferay.admin.kernel.util.PortalMyAccountApplicationType;
+import com.liferay.announcements.kernel.model.AnnouncementsDelivery;
+import com.liferay.announcements.kernel.model.AnnouncementsEntryConstants;
+import com.liferay.announcements.kernel.service.AnnouncementsDeliveryLocalService;
+import com.liferay.portal.exception.AddressCityException;
+import com.liferay.portal.exception.AddressStreetException;
+import com.liferay.portal.exception.AddressZipException;
+import com.liferay.portal.exception.CompanyMaxUsersException;
+import com.liferay.portal.exception.ContactBirthdayException;
+import com.liferay.portal.exception.ContactNameException;
+import com.liferay.portal.exception.EmailAddressException;
+import com.liferay.portal.exception.GroupFriendlyURLException;
+import com.liferay.portal.exception.NoSuchCountryException;
+import com.liferay.portal.exception.NoSuchListTypeException;
+import com.liferay.portal.exception.NoSuchRegionException;
+import com.liferay.portal.exception.NoSuchUserException;
+import com.liferay.portal.exception.PhoneNumberException;
+import com.liferay.portal.exception.PhoneNumberExtensionException;
+import com.liferay.portal.exception.RequiredUserException;
+import com.liferay.portal.exception.UserEmailAddressException;
+import com.liferay.portal.exception.UserFieldException;
+import com.liferay.portal.exception.UserIdException;
+import com.liferay.portal.exception.UserPasswordException;
+import com.liferay.portal.exception.UserReminderQueryException;
+import com.liferay.portal.exception.UserScreenNameException;
+import com.liferay.portal.exception.UserSmsException;
+import com.liferay.portal.exception.WebsiteURLException;
 import com.liferay.portal.kernel.bean.BeanParamUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.portlet.DynamicActionRequest;
@@ -45,6 +49,9 @@ import com.liferay.portal.kernel.portlet.PortletProviderUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
+import com.liferay.portal.kernel.security.membershippolicy.MembershipPolicyException;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.CalendarFactoryUtil;
@@ -71,9 +78,6 @@ import com.liferay.portal.model.Phone;
 import com.liferay.portal.model.User;
 import com.liferay.portal.model.UserGroupRole;
 import com.liferay.portal.model.Website;
-import com.liferay.portal.security.auth.PrincipalException;
-import com.liferay.portal.security.membershippolicy.MembershipPolicyException;
-import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.service.ListTypeLocalService;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
@@ -85,16 +89,12 @@ import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.InvokerPortletImpl;
 import com.liferay.portlet.admin.util.AdminUtil;
-import com.liferay.portlet.admin.util.PortalMyAccountApplicationType;
-import com.liferay.portlet.announcements.model.AnnouncementsDelivery;
-import com.liferay.portlet.announcements.model.AnnouncementsEntryConstants;
 import com.liferay.portlet.announcements.model.impl.AnnouncementsDeliveryImpl;
-import com.liferay.portlet.announcements.service.AnnouncementsDeliveryLocalService;
 import com.liferay.portlet.documentlibrary.service.DLAppLocalService;
-import com.liferay.portlet.sites.util.SitesUtil;
-import com.liferay.portlet.usersadmin.util.UsersAdmin;
-import com.liferay.portlet.usersadmin.util.UsersAdminUtil;
+import com.liferay.sites.kernel.util.SitesUtil;
 import com.liferay.users.admin.constants.UsersAdminPortletKeys;
+import com.liferay.users.admin.kernel.util.UsersAdmin;
+import com.liferay.users.admin.kernel.util.UsersAdminUtil;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -382,7 +382,7 @@ public class EditUserMVCActionCommand extends BaseMVCActionCommand {
 			Group scopeGroup = themeDisplay.getScopeGroup();
 
 			if (scopeGroup.isUser() &&
-				(_userLocalService.fetchUserById(
+				(userLocalService.fetchUserById(
 					scopeGroup.getClassPK()) == null)) {
 
 				redirect = HttpUtil.setParameter(redirect, "doAsGroupId", 0);
@@ -428,9 +428,10 @@ public class EditUserMVCActionCommand extends BaseMVCActionCommand {
 				if (e instanceof NoSuchListTypeException) {
 					NoSuchListTypeException nslte = (NoSuchListTypeException)e;
 
+					Class<?> clazz = e.getClass();
+
 					SessionErrors.add(
-						actionRequest,
-						e.getClass().getName() + nslte.getType());
+						actionRequest, clazz.getName() + nslte.getType());
 				}
 				else {
 					SessionErrors.add(actionRequest, e.getClass(), e);
@@ -552,7 +553,7 @@ public class EditUserMVCActionCommand extends BaseMVCActionCommand {
 
 	@Reference(unbind = "-")
 	protected void setUserLocalService(UserLocalService userLocalService) {
-		_userLocalService = userLocalService;
+		this.userLocalService = userLocalService;
 	}
 
 	@Reference(unbind = "-")
@@ -784,11 +785,12 @@ public class EditUserMVCActionCommand extends BaseMVCActionCommand {
 		return new Object[] {user, oldScreenName, updateLanguageId};
 	}
 
-	private volatile AnnouncementsDeliveryLocalService
+	protected UserLocalService userLocalService;
+
+	private AnnouncementsDeliveryLocalService
 		_announcementsDeliveryLocalService;
-	private volatile DLAppLocalService _dlAppLocalService;
-	private volatile ListTypeLocalService _listTypeLocalService;
-	private volatile UserLocalService _userLocalService;
-	private volatile UserService _userService;
+	private DLAppLocalService _dlAppLocalService;
+	private ListTypeLocalService _listTypeLocalService;
+	private UserService _userService;
 
 }

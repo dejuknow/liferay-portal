@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.service.persistence.BasePersistence;
 
+import com.liferay.shopping.exception.NoSuchItemFieldException;
 import com.liferay.shopping.model.ShoppingItemField;
 
 /**
@@ -105,11 +106,11 @@ public interface ShoppingItemFieldPersistence extends BasePersistence<ShoppingIt
 	* @param itemId the item ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching shopping item field
-	* @throws com.liferay.shopping.NoSuchItemFieldException if a matching shopping item field could not be found
+	* @throws NoSuchItemFieldException if a matching shopping item field could not be found
 	*/
 	public ShoppingItemField findByItemId_First(long itemId,
 		com.liferay.portal.kernel.util.OrderByComparator<ShoppingItemField> orderByComparator)
-		throws com.liferay.shopping.exception.NoSuchItemFieldException;
+		throws NoSuchItemFieldException;
 
 	/**
 	* Returns the first shopping item field in the ordered set where itemId = &#63;.
@@ -127,11 +128,11 @@ public interface ShoppingItemFieldPersistence extends BasePersistence<ShoppingIt
 	* @param itemId the item ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching shopping item field
-	* @throws com.liferay.shopping.NoSuchItemFieldException if a matching shopping item field could not be found
+	* @throws NoSuchItemFieldException if a matching shopping item field could not be found
 	*/
 	public ShoppingItemField findByItemId_Last(long itemId,
 		com.liferay.portal.kernel.util.OrderByComparator<ShoppingItemField> orderByComparator)
-		throws com.liferay.shopping.exception.NoSuchItemFieldException;
+		throws NoSuchItemFieldException;
 
 	/**
 	* Returns the last shopping item field in the ordered set where itemId = &#63;.
@@ -150,12 +151,12 @@ public interface ShoppingItemFieldPersistence extends BasePersistence<ShoppingIt
 	* @param itemId the item ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next shopping item field
-	* @throws com.liferay.shopping.NoSuchItemFieldException if a shopping item field with the primary key could not be found
+	* @throws NoSuchItemFieldException if a shopping item field with the primary key could not be found
 	*/
 	public ShoppingItemField[] findByItemId_PrevAndNext(long itemFieldId,
 		long itemId,
 		com.liferay.portal.kernel.util.OrderByComparator<ShoppingItemField> orderByComparator)
-		throws com.liferay.shopping.exception.NoSuchItemFieldException;
+		throws NoSuchItemFieldException;
 
 	/**
 	* Removes all the shopping item fields where itemId = &#63; from the database.
@@ -200,22 +201,22 @@ public interface ShoppingItemFieldPersistence extends BasePersistence<ShoppingIt
 	*
 	* @param itemFieldId the primary key of the shopping item field
 	* @return the shopping item field that was removed
-	* @throws com.liferay.shopping.NoSuchItemFieldException if a shopping item field with the primary key could not be found
+	* @throws NoSuchItemFieldException if a shopping item field with the primary key could not be found
 	*/
 	public ShoppingItemField remove(long itemFieldId)
-		throws com.liferay.shopping.exception.NoSuchItemFieldException;
+		throws NoSuchItemFieldException;
 
 	public ShoppingItemField updateImpl(ShoppingItemField shoppingItemField);
 
 	/**
-	* Returns the shopping item field with the primary key or throws a {@link com.liferay.shopping.NoSuchItemFieldException} if it could not be found.
+	* Returns the shopping item field with the primary key or throws a {@link NoSuchItemFieldException} if it could not be found.
 	*
 	* @param itemFieldId the primary key of the shopping item field
 	* @return the shopping item field
-	* @throws com.liferay.shopping.NoSuchItemFieldException if a shopping item field with the primary key could not be found
+	* @throws NoSuchItemFieldException if a shopping item field with the primary key could not be found
 	*/
 	public ShoppingItemField findByPrimaryKey(long itemFieldId)
-		throws com.liferay.shopping.exception.NoSuchItemFieldException;
+		throws NoSuchItemFieldException;
 
 	/**
 	* Returns the shopping item field with the primary key or returns <code>null</code> if it could not be found.

@@ -24,6 +24,7 @@ import com.liferay.portal.service.ServiceContext;
 
 import com.liferay.portlet.asset.model.AssetEntry;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -187,7 +188,7 @@ public class AssetEntryUtil {
 	*/
 	public static AssetEntry findByGroupId_First(long groupId,
 		OrderByComparator<AssetEntry> orderByComparator)
-		throws com.liferay.portlet.asset.NoSuchEntryException {
+		throws com.liferay.portlet.asset.exception.NoSuchEntryException {
 		return getPersistence().findByGroupId_First(groupId, orderByComparator);
 	}
 
@@ -213,7 +214,7 @@ public class AssetEntryUtil {
 	*/
 	public static AssetEntry findByGroupId_Last(long groupId,
 		OrderByComparator<AssetEntry> orderByComparator)
-		throws com.liferay.portlet.asset.NoSuchEntryException {
+		throws com.liferay.portlet.asset.exception.NoSuchEntryException {
 		return getPersistence().findByGroupId_Last(groupId, orderByComparator);
 	}
 
@@ -240,7 +241,7 @@ public class AssetEntryUtil {
 	*/
 	public static AssetEntry[] findByGroupId_PrevAndNext(long entryId,
 		long groupId, OrderByComparator<AssetEntry> orderByComparator)
-		throws com.liferay.portlet.asset.NoSuchEntryException {
+		throws com.liferay.portlet.asset.exception.NoSuchEntryException {
 		return getPersistence()
 				   .findByGroupId_PrevAndNext(entryId, groupId,
 			orderByComparator);
@@ -343,7 +344,7 @@ public class AssetEntryUtil {
 	*/
 	public static AssetEntry findByCompanyId_First(long companyId,
 		OrderByComparator<AssetEntry> orderByComparator)
-		throws com.liferay.portlet.asset.NoSuchEntryException {
+		throws com.liferay.portlet.asset.exception.NoSuchEntryException {
 		return getPersistence()
 				   .findByCompanyId_First(companyId, orderByComparator);
 	}
@@ -371,7 +372,7 @@ public class AssetEntryUtil {
 	*/
 	public static AssetEntry findByCompanyId_Last(long companyId,
 		OrderByComparator<AssetEntry> orderByComparator)
-		throws com.liferay.portlet.asset.NoSuchEntryException {
+		throws com.liferay.portlet.asset.exception.NoSuchEntryException {
 		return getPersistence()
 				   .findByCompanyId_Last(companyId, orderByComparator);
 	}
@@ -400,7 +401,7 @@ public class AssetEntryUtil {
 	*/
 	public static AssetEntry[] findByCompanyId_PrevAndNext(long entryId,
 		long companyId, OrderByComparator<AssetEntry> orderByComparator)
-		throws com.liferay.portlet.asset.NoSuchEntryException {
+		throws com.liferay.portlet.asset.exception.NoSuchEntryException {
 		return getPersistence()
 				   .findByCompanyId_PrevAndNext(entryId, companyId,
 			orderByComparator);
@@ -503,7 +504,7 @@ public class AssetEntryUtil {
 	*/
 	public static AssetEntry findByVisible_First(boolean visible,
 		OrderByComparator<AssetEntry> orderByComparator)
-		throws com.liferay.portlet.asset.NoSuchEntryException {
+		throws com.liferay.portlet.asset.exception.NoSuchEntryException {
 		return getPersistence().findByVisible_First(visible, orderByComparator);
 	}
 
@@ -529,7 +530,7 @@ public class AssetEntryUtil {
 	*/
 	public static AssetEntry findByVisible_Last(boolean visible,
 		OrderByComparator<AssetEntry> orderByComparator)
-		throws com.liferay.portlet.asset.NoSuchEntryException {
+		throws com.liferay.portlet.asset.exception.NoSuchEntryException {
 		return getPersistence().findByVisible_Last(visible, orderByComparator);
 	}
 
@@ -556,7 +557,7 @@ public class AssetEntryUtil {
 	*/
 	public static AssetEntry[] findByVisible_PrevAndNext(long entryId,
 		boolean visible, OrderByComparator<AssetEntry> orderByComparator)
-		throws com.liferay.portlet.asset.NoSuchEntryException {
+		throws com.liferay.portlet.asset.exception.NoSuchEntryException {
 		return getPersistence()
 				   .findByVisible_PrevAndNext(entryId, visible,
 			orderByComparator);
@@ -587,7 +588,7 @@ public class AssetEntryUtil {
 	* @param publishDate the publish date
 	* @return the matching asset entries
 	*/
-	public static List<AssetEntry> findByPublishDate(java.util.Date publishDate) {
+	public static List<AssetEntry> findByPublishDate(Date publishDate) {
 		return getPersistence().findByPublishDate(publishDate);
 	}
 
@@ -603,8 +604,8 @@ public class AssetEntryUtil {
 	* @param end the upper bound of the range of asset entries (not inclusive)
 	* @return the range of matching asset entries
 	*/
-	public static List<AssetEntry> findByPublishDate(
-		java.util.Date publishDate, int start, int end) {
+	public static List<AssetEntry> findByPublishDate(Date publishDate,
+		int start, int end) {
 		return getPersistence().findByPublishDate(publishDate, start, end);
 	}
 
@@ -621,9 +622,8 @@ public class AssetEntryUtil {
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching asset entries
 	*/
-	public static List<AssetEntry> findByPublishDate(
-		java.util.Date publishDate, int start, int end,
-		OrderByComparator<AssetEntry> orderByComparator) {
+	public static List<AssetEntry> findByPublishDate(Date publishDate,
+		int start, int end, OrderByComparator<AssetEntry> orderByComparator) {
 		return getPersistence()
 				   .findByPublishDate(publishDate, start, end, orderByComparator);
 	}
@@ -642,9 +642,8 @@ public class AssetEntryUtil {
 	* @param retrieveFromCache whether to retrieve from the finder cache
 	* @return the ordered range of matching asset entries
 	*/
-	public static List<AssetEntry> findByPublishDate(
-		java.util.Date publishDate, int start, int end,
-		OrderByComparator<AssetEntry> orderByComparator,
+	public static List<AssetEntry> findByPublishDate(Date publishDate,
+		int start, int end, OrderByComparator<AssetEntry> orderByComparator,
 		boolean retrieveFromCache) {
 		return getPersistence()
 				   .findByPublishDate(publishDate, start, end,
@@ -659,10 +658,9 @@ public class AssetEntryUtil {
 	* @return the first matching asset entry
 	* @throws NoSuchEntryException if a matching asset entry could not be found
 	*/
-	public static AssetEntry findByPublishDate_First(
-		java.util.Date publishDate,
+	public static AssetEntry findByPublishDate_First(Date publishDate,
 		OrderByComparator<AssetEntry> orderByComparator)
-		throws com.liferay.portlet.asset.NoSuchEntryException {
+		throws com.liferay.portlet.asset.exception.NoSuchEntryException {
 		return getPersistence()
 				   .findByPublishDate_First(publishDate, orderByComparator);
 	}
@@ -674,8 +672,7 @@ public class AssetEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching asset entry, or <code>null</code> if a matching asset entry could not be found
 	*/
-	public static AssetEntry fetchByPublishDate_First(
-		java.util.Date publishDate,
+	public static AssetEntry fetchByPublishDate_First(Date publishDate,
 		OrderByComparator<AssetEntry> orderByComparator) {
 		return getPersistence()
 				   .fetchByPublishDate_First(publishDate, orderByComparator);
@@ -689,10 +686,9 @@ public class AssetEntryUtil {
 	* @return the last matching asset entry
 	* @throws NoSuchEntryException if a matching asset entry could not be found
 	*/
-	public static AssetEntry findByPublishDate_Last(
-		java.util.Date publishDate,
+	public static AssetEntry findByPublishDate_Last(Date publishDate,
 		OrderByComparator<AssetEntry> orderByComparator)
-		throws com.liferay.portlet.asset.NoSuchEntryException {
+		throws com.liferay.portlet.asset.exception.NoSuchEntryException {
 		return getPersistence()
 				   .findByPublishDate_Last(publishDate, orderByComparator);
 	}
@@ -704,8 +700,7 @@ public class AssetEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching asset entry, or <code>null</code> if a matching asset entry could not be found
 	*/
-	public static AssetEntry fetchByPublishDate_Last(
-		java.util.Date publishDate,
+	public static AssetEntry fetchByPublishDate_Last(Date publishDate,
 		OrderByComparator<AssetEntry> orderByComparator) {
 		return getPersistence()
 				   .fetchByPublishDate_Last(publishDate, orderByComparator);
@@ -721,9 +716,8 @@ public class AssetEntryUtil {
 	* @throws NoSuchEntryException if a asset entry with the primary key could not be found
 	*/
 	public static AssetEntry[] findByPublishDate_PrevAndNext(long entryId,
-		java.util.Date publishDate,
-		OrderByComparator<AssetEntry> orderByComparator)
-		throws com.liferay.portlet.asset.NoSuchEntryException {
+		Date publishDate, OrderByComparator<AssetEntry> orderByComparator)
+		throws com.liferay.portlet.asset.exception.NoSuchEntryException {
 		return getPersistence()
 				   .findByPublishDate_PrevAndNext(entryId, publishDate,
 			orderByComparator);
@@ -734,7 +728,7 @@ public class AssetEntryUtil {
 	*
 	* @param publishDate the publish date
 	*/
-	public static void removeByPublishDate(java.util.Date publishDate) {
+	public static void removeByPublishDate(Date publishDate) {
 		getPersistence().removeByPublishDate(publishDate);
 	}
 
@@ -744,7 +738,7 @@ public class AssetEntryUtil {
 	* @param publishDate the publish date
 	* @return the number of matching asset entries
 	*/
-	public static int countByPublishDate(java.util.Date publishDate) {
+	public static int countByPublishDate(Date publishDate) {
 		return getPersistence().countByPublishDate(publishDate);
 	}
 
@@ -754,8 +748,7 @@ public class AssetEntryUtil {
 	* @param expirationDate the expiration date
 	* @return the matching asset entries
 	*/
-	public static List<AssetEntry> findByExpirationDate(
-		java.util.Date expirationDate) {
+	public static List<AssetEntry> findByExpirationDate(Date expirationDate) {
 		return getPersistence().findByExpirationDate(expirationDate);
 	}
 
@@ -771,8 +764,8 @@ public class AssetEntryUtil {
 	* @param end the upper bound of the range of asset entries (not inclusive)
 	* @return the range of matching asset entries
 	*/
-	public static List<AssetEntry> findByExpirationDate(
-		java.util.Date expirationDate, int start, int end) {
+	public static List<AssetEntry> findByExpirationDate(Date expirationDate,
+		int start, int end) {
 		return getPersistence().findByExpirationDate(expirationDate, start, end);
 	}
 
@@ -789,9 +782,8 @@ public class AssetEntryUtil {
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching asset entries
 	*/
-	public static List<AssetEntry> findByExpirationDate(
-		java.util.Date expirationDate, int start, int end,
-		OrderByComparator<AssetEntry> orderByComparator) {
+	public static List<AssetEntry> findByExpirationDate(Date expirationDate,
+		int start, int end, OrderByComparator<AssetEntry> orderByComparator) {
 		return getPersistence()
 				   .findByExpirationDate(expirationDate, start, end,
 			orderByComparator);
@@ -811,9 +803,8 @@ public class AssetEntryUtil {
 	* @param retrieveFromCache whether to retrieve from the finder cache
 	* @return the ordered range of matching asset entries
 	*/
-	public static List<AssetEntry> findByExpirationDate(
-		java.util.Date expirationDate, int start, int end,
-		OrderByComparator<AssetEntry> orderByComparator,
+	public static List<AssetEntry> findByExpirationDate(Date expirationDate,
+		int start, int end, OrderByComparator<AssetEntry> orderByComparator,
 		boolean retrieveFromCache) {
 		return getPersistence()
 				   .findByExpirationDate(expirationDate, start, end,
@@ -828,10 +819,9 @@ public class AssetEntryUtil {
 	* @return the first matching asset entry
 	* @throws NoSuchEntryException if a matching asset entry could not be found
 	*/
-	public static AssetEntry findByExpirationDate_First(
-		java.util.Date expirationDate,
+	public static AssetEntry findByExpirationDate_First(Date expirationDate,
 		OrderByComparator<AssetEntry> orderByComparator)
-		throws com.liferay.portlet.asset.NoSuchEntryException {
+		throws com.liferay.portlet.asset.exception.NoSuchEntryException {
 		return getPersistence()
 				   .findByExpirationDate_First(expirationDate, orderByComparator);
 	}
@@ -843,8 +833,7 @@ public class AssetEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching asset entry, or <code>null</code> if a matching asset entry could not be found
 	*/
-	public static AssetEntry fetchByExpirationDate_First(
-		java.util.Date expirationDate,
+	public static AssetEntry fetchByExpirationDate_First(Date expirationDate,
 		OrderByComparator<AssetEntry> orderByComparator) {
 		return getPersistence()
 				   .fetchByExpirationDate_First(expirationDate,
@@ -859,10 +848,9 @@ public class AssetEntryUtil {
 	* @return the last matching asset entry
 	* @throws NoSuchEntryException if a matching asset entry could not be found
 	*/
-	public static AssetEntry findByExpirationDate_Last(
-		java.util.Date expirationDate,
+	public static AssetEntry findByExpirationDate_Last(Date expirationDate,
 		OrderByComparator<AssetEntry> orderByComparator)
-		throws com.liferay.portlet.asset.NoSuchEntryException {
+		throws com.liferay.portlet.asset.exception.NoSuchEntryException {
 		return getPersistence()
 				   .findByExpirationDate_Last(expirationDate, orderByComparator);
 	}
@@ -874,8 +862,7 @@ public class AssetEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching asset entry, or <code>null</code> if a matching asset entry could not be found
 	*/
-	public static AssetEntry fetchByExpirationDate_Last(
-		java.util.Date expirationDate,
+	public static AssetEntry fetchByExpirationDate_Last(Date expirationDate,
 		OrderByComparator<AssetEntry> orderByComparator) {
 		return getPersistence()
 				   .fetchByExpirationDate_Last(expirationDate, orderByComparator);
@@ -891,9 +878,8 @@ public class AssetEntryUtil {
 	* @throws NoSuchEntryException if a asset entry with the primary key could not be found
 	*/
 	public static AssetEntry[] findByExpirationDate_PrevAndNext(long entryId,
-		java.util.Date expirationDate,
-		OrderByComparator<AssetEntry> orderByComparator)
-		throws com.liferay.portlet.asset.NoSuchEntryException {
+		Date expirationDate, OrderByComparator<AssetEntry> orderByComparator)
+		throws com.liferay.portlet.asset.exception.NoSuchEntryException {
 		return getPersistence()
 				   .findByExpirationDate_PrevAndNext(entryId, expirationDate,
 			orderByComparator);
@@ -904,7 +890,7 @@ public class AssetEntryUtil {
 	*
 	* @param expirationDate the expiration date
 	*/
-	public static void removeByExpirationDate(java.util.Date expirationDate) {
+	public static void removeByExpirationDate(Date expirationDate) {
 		getPersistence().removeByExpirationDate(expirationDate);
 	}
 
@@ -914,7 +900,7 @@ public class AssetEntryUtil {
 	* @param expirationDate the expiration date
 	* @return the number of matching asset entries
 	*/
-	public static int countByExpirationDate(java.util.Date expirationDate) {
+	public static int countByExpirationDate(Date expirationDate) {
 		return getPersistence().countByExpirationDate(expirationDate);
 	}
 
@@ -999,7 +985,7 @@ public class AssetEntryUtil {
 	public static AssetEntry findByLayoutUuid_First(
 		java.lang.String layoutUuid,
 		OrderByComparator<AssetEntry> orderByComparator)
-		throws com.liferay.portlet.asset.NoSuchEntryException {
+		throws com.liferay.portlet.asset.exception.NoSuchEntryException {
 		return getPersistence()
 				   .findByLayoutUuid_First(layoutUuid, orderByComparator);
 	}
@@ -1029,7 +1015,7 @@ public class AssetEntryUtil {
 	public static AssetEntry findByLayoutUuid_Last(
 		java.lang.String layoutUuid,
 		OrderByComparator<AssetEntry> orderByComparator)
-		throws com.liferay.portlet.asset.NoSuchEntryException {
+		throws com.liferay.portlet.asset.exception.NoSuchEntryException {
 		return getPersistence()
 				   .findByLayoutUuid_Last(layoutUuid, orderByComparator);
 	}
@@ -1060,7 +1046,7 @@ public class AssetEntryUtil {
 	public static AssetEntry[] findByLayoutUuid_PrevAndNext(long entryId,
 		java.lang.String layoutUuid,
 		OrderByComparator<AssetEntry> orderByComparator)
-		throws com.liferay.portlet.asset.NoSuchEntryException {
+		throws com.liferay.portlet.asset.exception.NoSuchEntryException {
 		return getPersistence()
 				   .findByLayoutUuid_PrevAndNext(entryId, layoutUuid,
 			orderByComparator);
@@ -1094,7 +1080,7 @@ public class AssetEntryUtil {
 	* @throws NoSuchEntryException if a matching asset entry could not be found
 	*/
 	public static AssetEntry findByG_CU(long groupId, java.lang.String classUuid)
-		throws com.liferay.portlet.asset.NoSuchEntryException {
+		throws com.liferay.portlet.asset.exception.NoSuchEntryException {
 		return getPersistence().findByG_CU(groupId, classUuid);
 	}
 
@@ -1133,7 +1119,7 @@ public class AssetEntryUtil {
 	*/
 	public static AssetEntry removeByG_CU(long groupId,
 		java.lang.String classUuid)
-		throws com.liferay.portlet.asset.NoSuchEntryException {
+		throws com.liferay.portlet.asset.exception.NoSuchEntryException {
 		return getPersistence().removeByG_CU(groupId, classUuid);
 	}
 
@@ -1157,7 +1143,7 @@ public class AssetEntryUtil {
 	* @throws NoSuchEntryException if a matching asset entry could not be found
 	*/
 	public static AssetEntry findByC_C(long classNameId, long classPK)
-		throws com.liferay.portlet.asset.NoSuchEntryException {
+		throws com.liferay.portlet.asset.exception.NoSuchEntryException {
 		return getPersistence().findByC_C(classNameId, classPK);
 	}
 
@@ -1194,7 +1180,7 @@ public class AssetEntryUtil {
 	* @return the asset entry that was removed
 	*/
 	public static AssetEntry removeByC_C(long classNameId, long classPK)
-		throws com.liferay.portlet.asset.NoSuchEntryException {
+		throws com.liferay.portlet.asset.exception.NoSuchEntryException {
 		return getPersistence().removeByC_C(classNameId, classPK);
 	}
 
@@ -1245,7 +1231,7 @@ public class AssetEntryUtil {
 	* @throws NoSuchEntryException if a asset entry with the primary key could not be found
 	*/
 	public static AssetEntry remove(long entryId)
-		throws com.liferay.portlet.asset.NoSuchEntryException {
+		throws com.liferay.portlet.asset.exception.NoSuchEntryException {
 		return getPersistence().remove(entryId);
 	}
 
@@ -1261,7 +1247,7 @@ public class AssetEntryUtil {
 	* @throws NoSuchEntryException if a asset entry with the primary key could not be found
 	*/
 	public static AssetEntry findByPrimaryKey(long entryId)
-		throws com.liferay.portlet.asset.NoSuchEntryException {
+		throws com.liferay.portlet.asset.exception.NoSuchEntryException {
 		return getPersistence().findByPrimaryKey(entryId);
 	}
 
@@ -1771,13 +1757,6 @@ public class AssetEntryUtil {
 		}
 
 		return _persistence;
-	}
-
-	/**
-	 * @deprecated As of 6.2.0
-	 */
-	@Deprecated
-	public void setPersistence(AssetEntryPersistence persistence) {
 	}
 
 	private static AssetEntryPersistence _persistence;

@@ -14,17 +14,17 @@
 
 package com.liferay.users.admin.web.portlet.action;
 
-import com.liferay.portal.NoSuchOrganizationException;
+import com.liferay.portal.exception.NoSuchOrganizationException;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
+import com.liferay.portal.kernel.security.membershippolicy.MembershipPolicyException;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.Organization;
-import com.liferay.portal.security.auth.PrincipalException;
-import com.liferay.portal.security.membershippolicy.MembershipPolicyException;
 import com.liferay.portal.service.OrganizationLocalService;
 import com.liferay.portal.service.UserGroupService;
 import com.liferay.portal.service.UserService;
@@ -141,8 +141,8 @@ public class EditOrganizationAssignmentsMVCActionCommand
 		_userService.unsetOrganizationUsers(organizationId, removeUserIds);
 	}
 
-	private volatile OrganizationLocalService _organizationLocalService;
-	private volatile UserGroupService _userGroupService;
-	private volatile UserService _userService;
+	private OrganizationLocalService _organizationLocalService;
+	private UserGroupService _userGroupService;
+	private UserService _userService;
 
 }

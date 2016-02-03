@@ -20,7 +20,7 @@
 Layout selLayout = layoutsAdminDisplayContext.getSelLayout();
 %>
 
-<liferay-ui:error-marker key="errorSection" value="categorization" />
+<liferay-ui:error-marker key="<%= WebKeys.ERROR_SECTION %>" value="categorization" />
 
 <aui:model-context bean="<%= selLayout %>" model="<%= Layout.class %>" />
 
@@ -28,8 +28,6 @@ Layout selLayout = layoutsAdminDisplayContext.getSelLayout();
 
 <liferay-ui:asset-tags-error />
 
-<aui:fieldset>
-	<aui:input name="categories" type="assetCategories" />
+<aui:input name="categories" type="assetCategories" />
 
-	<aui:input name="tags" type="assetTags" />
-</aui:fieldset>
+<aui:input name="tags" type="assetTags" />

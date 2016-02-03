@@ -26,7 +26,7 @@ String organizationIdsString = ParamUtil.getString(request, "organizationsSearch
 currentURLObj.setParameter("historyKey", renderResponse.getNamespace() + "organizations");
 %>
 
-<liferay-ui:error-marker key="errorSection" value="organizations" />
+<liferay-ui:error-marker key="<%= WebKeys.ERROR_SECTION %>" value="organizations" />
 
 <liferay-ui:membership-policy-error />
 
@@ -92,7 +92,7 @@ currentURLObj.setParameter("historyKey", renderResponse.getNamespace() + "organi
 		</c:if>
 	</liferay-ui:search-container-row>
 
-	<liferay-ui:search-iterator />
+	<liferay-ui:search-iterator markupView="lexicon" />
 </liferay-ui:search-container>
 
 <c:if test="<%= !portletName.equals(myAccountPortletId) %>">

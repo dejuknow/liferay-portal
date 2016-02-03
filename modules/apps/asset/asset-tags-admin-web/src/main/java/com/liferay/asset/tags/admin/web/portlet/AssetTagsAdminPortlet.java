@@ -16,15 +16,15 @@ package com.liferay.asset.tags.admin.web.portlet;
 
 import com.liferay.asset.tags.admin.web.constants.AssetTagsAdminPortletKeys;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
-import com.liferay.portlet.asset.AssetTagException;
-import com.liferay.portlet.asset.DuplicateTagException;
-import com.liferay.portlet.asset.NoSuchTagException;
+import com.liferay.portlet.asset.exception.AssetTagException;
+import com.liferay.portlet.asset.exception.DuplicateTagException;
+import com.liferay.portlet.asset.exception.NoSuchTagException;
 import com.liferay.portlet.asset.model.AssetTag;
 import com.liferay.portlet.asset.service.AssetTagLocalService;
 import com.liferay.portlet.asset.service.AssetTagService;
@@ -190,7 +190,7 @@ public class AssetTagsAdminPortlet extends MVCPortlet {
 		_assetTagService = assetTagService;
 	}
 
-	private volatile AssetTagLocalService _assetTagLocalService;
-	private volatile AssetTagService _assetTagService;
+	private AssetTagLocalService _assetTagLocalService;
+	private AssetTagService _assetTagService;
 
 }

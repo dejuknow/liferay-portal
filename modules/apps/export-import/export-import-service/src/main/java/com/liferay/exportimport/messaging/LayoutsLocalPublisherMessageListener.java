@@ -15,12 +15,15 @@
 package com.liferay.exportimport.messaging;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.Destination;
 import com.liferay.portal.kernel.messaging.DestinationNames;
 import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.messaging.MessageStatus;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.MapUtil;
+import com.liferay.portal.model.Release;
 import com.liferay.portlet.exportimport.model.ExportImportConfiguration;
 import com.liferay.portlet.exportimport.service.ExportImportConfigurationLocalService;
 import com.liferay.portlet.exportimport.staging.StagingUtil;
@@ -71,8 +74,18 @@ public class LayoutsLocalPublisherMessageListener
 			message.getPayload());
 
 		ExportImportConfiguration exportImportConfiguration =
-			_exportImportConfigurationLocalService.getExportImportConfiguration(
-				exportImportConfigurationId);
+			_exportImportConfigurationLocalService.
+				fetchExportImportConfiguration(exportImportConfigurationId);
+
+		if (exportImportConfiguration == null) {
+			if (_log.isWarnEnabled()) {
+				_log.warn(
+					"Unable to find export import configuration with ID " +
+						exportImportConfigurationId);
+			}
+
+			return;
+		}
 
 		messageStatus.setPayload(exportImportConfiguration);
 
@@ -94,7 +107,7 @@ public class LayoutsLocalPublisherMessageListener
 		try {
 			StagingUtil.publishLayouts(
 				userId, sourceGroupId, targetGroupId, privateLayout, layoutIds,
-				parameterMap);
+				exportImportConfiguration.getName(), parameterMap);
 		}
 		finally {
 			resetThreadLocals();
@@ -117,7 +130,17 @@ public class LayoutsLocalPublisherMessageListener
 			exportImportConfigurationLocalService;
 	}
 
-	private volatile ExportImportConfigurationLocalService
+	@Reference(
+		target = "(&(release.bundle.symbolic.name=com.liferay.exportimport.service)(release.schema.version=1.0.0))",
+		unbind = "-"
+	)
+	protected void setRelease(Release release) {
+	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		LayoutsLocalPublisherMessageListener.class);
+
+	private ExportImportConfigurationLocalService
 		_exportImportConfigurationLocalService;
 
 }

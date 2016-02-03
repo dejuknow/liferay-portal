@@ -22,7 +22,6 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.BaseSchedulerEntryMessageListener;
-import com.liferay.portal.kernel.messaging.Destination;
 import com.liferay.portal.kernel.messaging.DestinationNames;
 import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
@@ -133,13 +132,6 @@ public class TempFileEntriesMessageListener
 		actionableDynamicQuery.performActions();
 	}
 
-	@Reference(
-		target = "(destination.name=" + DestinationNames.SCHEDULER_DISPATCH + ")",
-		unbind = "-"
-	)
-	protected void setDestination(Destination destination) {
-	}
-
 	@Reference(target = ModuleServiceLifecycle.PORTAL_INITIALIZED, unbind = "-")
 	protected void setModuleServiceLifecycle(
 		ModuleServiceLifecycle moduleServiceLifecycle) {
@@ -174,8 +166,8 @@ public class TempFileEntriesMessageListener
 		TempFileEntriesMessageListener.class);
 
 	private volatile DLConfiguration _dlConfiguration;
-	private volatile RepositoryLocalService _repositoryLocalService;
-	private volatile RepositoryProvider _repositoryProvider;
-	private volatile SchedulerEngineHelper _schedulerEngineHelper;
+	private RepositoryLocalService _repositoryLocalService;
+	private RepositoryProvider _repositoryProvider;
+	private SchedulerEngineHelper _schedulerEngineHelper;
 
 }

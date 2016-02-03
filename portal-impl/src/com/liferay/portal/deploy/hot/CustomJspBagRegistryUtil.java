@@ -299,7 +299,7 @@ public class CustomJspBagRegistryUtil {
 				sb.append("Custom JSP files:\n");
 
 				for (int i = 0; i < customJsps.size(); i++) {
-					String customJsp = customJsps.get(0);
+					String customJsp = customJsps.get(i);
 
 					sb.append(customJsp);
 
@@ -322,7 +322,7 @@ public class CustomJspBagRegistryUtil {
 				try {
 					verifyCustomJsps(contextId, customJspBag);
 				}
-				catch (DuplicateCustomJspException e) {
+				catch (DuplicateCustomJspException dcje) {
 					return null;
 				}
 			}
@@ -383,7 +383,7 @@ public class CustomJspBagRegistryUtil {
 							FileUtil.copyFile(
 								portalJspBackupFile, portalJspFile);
 						}
-						catch (IOException e) {
+						catch (IOException ioe) {
 							return;
 						}
 

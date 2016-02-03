@@ -16,12 +16,12 @@ package com.liferay.portal.search.elasticsearch.connection;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfiguration;
 import com.liferay.portal.search.elasticsearch.index.IndexFactory;
 import com.liferay.portal.search.elasticsearch.settings.SettingsContributor;
+
+import java.io.InputStream;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
@@ -32,7 +32,7 @@ import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.client.AdminClient;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.ClusterAdminClient;
-import org.elasticsearch.common.settings.ImmutableSettings;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.unit.TimeValue;
 
 /**
@@ -54,23 +54,15 @@ public abstract class BaseElasticsearchConnection
 
 	@Override
 	public void connect() {
-		ImmutableSettings.Builder builder = ImmutableSettings.settingsBuilder();
+		Settings.Builder builder = Settings.builder();
 
 		loadOptionalDefaultConfigurations(builder);
 
-		String[] additionalConfigurations =
+		String additionalConfigurations =
 			elasticsearchConfiguration.additionalConfigurations();
 
-		if (ArrayUtil.isNotEmpty(additionalConfigurations)) {
-			StringBundler sb = new StringBundler(
-				additionalConfigurations.length * 2);
-
-			for (String additionalConfiguration : additionalConfigurations) {
-				sb.append(additionalConfiguration);
-				sb.append(StringPool.NEW_LINE);
-			}
-
-			builder.loadFromSource(sb.toString());
+		if (Validator.isNotNull(additionalConfigurations)) {
+			builder.loadFromSource(additionalConfigurations);
 		}
 
 		loadRequiredDefaultConfigurations(builder);
@@ -130,22 +122,23 @@ public abstract class BaseElasticsearchConnection
 		_settingsContributors.add(settingsContributor);
 	}
 
-	protected abstract Client createClient(ImmutableSettings.Builder builder);
+	protected abstract Client createClient(Settings.Builder builder);
 
 	protected IndexFactory getIndexFactory() {
 		return _indexFactory;
 	}
 
-	protected void loadOptionalDefaultConfigurations(
-		ImmutableSettings.Builder builder) {
-
+	protected void loadOptionalDefaultConfigurations(Settings.Builder builder) {
 		try {
 			Class<?> clazz = getClass();
 
-			builder.classLoader(clazz.getClassLoader());
+			String defaultConfiguration =
+				"/META-INF/elasticsearch-optional-defaults.yml";
 
-			builder.loadFromClasspath(
-				"/META-INF/elasticsearch-optional-defaults.yml");
+			InputStream inputStream = clazz.getResourceAsStream(
+				defaultConfiguration);
+
+			builder.loadFromStream(defaultConfiguration, inputStream);
 		}
 		catch (Exception e) {
 			if (_log.isInfoEnabled()) {
@@ -155,9 +148,9 @@ public abstract class BaseElasticsearchConnection
 	}
 
 	protected abstract void loadRequiredDefaultConfigurations(
-		ImmutableSettings.Builder builder);
+		Settings.Builder builder);
 
-	protected void loadSettingsContributors(ImmutableSettings.Builder builder) {
+	protected void loadSettingsContributors(Settings.Builder builder) {
 		for (SettingsContributor settingsContributor : _settingsContributors) {
 			settingsContributor.populate(builder);
 		}

@@ -16,6 +16,7 @@ package com.liferay.mobile.device.rules.model;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.annotation.ImplementationClassName;
 import com.liferay.portal.kernel.util.Accessor;
 import com.liferay.portal.model.PersistedModel;
 
@@ -28,6 +29,7 @@ import com.liferay.portal.model.PersistedModel;
  * @see com.liferay.mobile.device.rules.model.impl.MDRRuleGroupModelImpl
  * @generated
  */
+@ImplementationClassName("com.liferay.mobile.device.rules.model.impl.MDRRuleGroupImpl")
 @ProviderType
 public interface MDRRuleGroup extends MDRRuleGroupModel, PersistedModel {
 	/*

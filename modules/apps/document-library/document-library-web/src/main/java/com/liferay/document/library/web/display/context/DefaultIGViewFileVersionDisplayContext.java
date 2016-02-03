@@ -17,11 +17,11 @@ package com.liferay.document.library.web.display.context;
 import com.liferay.document.library.web.display.context.logic.DLPortletInstanceSettingsHelper;
 import com.liferay.document.library.web.display.context.logic.UIItemsBuilder;
 import com.liferay.document.library.web.display.context.util.IGRequestHelper;
+import com.liferay.image.gallery.display.kernel.display.context.IGViewFileVersionDisplayContext;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.repository.model.FileShortcut;
 import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portal.kernel.servlet.taglib.ui.MenuItem;
-import com.liferay.portlet.imagegallerydisplay.display.context.IGViewFileVersionDisplayContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,12 +63,10 @@ public class DefaultIGViewFileVersionDisplayContext
 			_igRequestHelper);
 
 		if (fileShortcut == null) {
-			_uiItemsBuilder = new UIItemsBuilder(
-				request, response, fileVersion);
+			_uiItemsBuilder = new UIItemsBuilder(request, fileVersion);
 		}
 		else {
-			_uiItemsBuilder = new UIItemsBuilder(
-				request, response, fileShortcut);
+			_uiItemsBuilder = new UIItemsBuilder(request, fileShortcut);
 		}
 	}
 

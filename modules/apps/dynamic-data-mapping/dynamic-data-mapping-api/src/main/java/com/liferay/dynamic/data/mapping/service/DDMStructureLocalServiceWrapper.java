@@ -576,6 +576,12 @@ public class DDMStructureLocalServiceWrapper implements DDMStructureLocalService
 		return _ddmStructureLocalService.getActionableDynamicQuery();
 	}
 
+	@Override
+	public java.util.List<com.liferay.dynamic.data.mapping.model.DDMStructure> getChildrenStructures(
+		long parentStructureId) {
+		return _ddmStructureLocalService.getChildrenStructures(parentStructureId);
+	}
+
 	/**
 	* Returns all the structures matching the class name ID.
 	*
@@ -1321,23 +1327,6 @@ public class DDMStructureLocalServiceWrapper implements DDMStructureLocalService
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _ddmStructureLocalService.updateXSD(structureId, definition,
 			serviceContext);
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
-	 */
-	@Deprecated
-	public DDMStructureLocalService getWrappedDDMStructureLocalService() {
-		return _ddmStructureLocalService;
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #setWrappedService}
-	 */
-	@Deprecated
-	public void setWrappedDDMStructureLocalService(
-		DDMStructureLocalService ddmStructureLocalService) {
-		_ddmStructureLocalService = ddmStructureLocalService;
 	}
 
 	@Override

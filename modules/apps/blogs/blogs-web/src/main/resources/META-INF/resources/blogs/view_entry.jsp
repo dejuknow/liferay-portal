@@ -16,6 +16,8 @@
 
 <%@ include file="/blogs/init.jsp" %>
 
+<liferay-util:dynamic-include key="com.liferay.blogs.web#/blogs/view_entry.jsp#pre" />
+
 <%
 String mvcRenderCommandName = ParamUtil.getString(request, "mvcRenderCommandName");
 
@@ -24,10 +26,7 @@ String redirect = ParamUtil.getString(request, "redirect");
 if (Validator.isNull(redirect) || (mvcRenderCommandName.equals("/blogs/view_entry") && !portletId.equals(BlogsPortletKeys.BLOGS))) {
 	PortletURL portletURL = renderResponse.createRenderURL();
 
-	if (portletId.equals(BlogsPortletKeys.BLOGS_ADMIN)) {
-		portletURL.setParameter("mvcRenderCommandName", "/blogs_admin/view");
-	}
-	else if (portletId.equals(BlogsPortletKeys.BLOGS_AGGREGATOR)) {
+	if (portletId.equals(BlogsPortletKeys.BLOGS_AGGREGATOR)) {
 		portletURL.setParameter("mvcRenderCommandName", "/blogs_aggregator/view");
 	}
 	else {
@@ -204,3 +203,5 @@ PortalUtil.setPageKeywords(ListUtil.toString(assetTags, AssetTag.NAME_ACCESSOR),
 
 PortalUtil.addPortletBreadcrumbEntry(request, entry.getTitle(), currentURL);
 %>
+
+<liferay-util:dynamic-include key="com.liferay.blogs.web#/blogs/view_entry.jsp#post" />

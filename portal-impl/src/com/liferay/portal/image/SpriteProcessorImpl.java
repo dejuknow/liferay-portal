@@ -28,7 +28,6 @@ import com.liferay.portal.kernel.util.PropertiesUtil;
 import com.liferay.portal.kernel.util.SortedProperties;
 import com.liferay.portal.kernel.util.URLUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.util.PropertyComparator;
 
 import java.awt.Point;
 import java.awt.Transparency;
@@ -48,6 +47,7 @@ import java.net.URLConnection;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
 
@@ -81,7 +81,7 @@ public class SpriteProcessorImpl implements SpriteProcessor {
 			return null;
 		}
 
-		Collections.sort(imageURLs, new PropertyComparator("path"));
+		Collections.sort(imageURLs, _urlPathComparator);
 
 		File spriteRootDir = null;
 
@@ -266,6 +266,33 @@ public class SpriteProcessorImpl implements SpriteProcessor {
 			renderedImage = LookupDescriptor.create(
 				renderedImage, lookupTableJAI, null);
 		}
+		else if (sampleModel.getNumBands() == 1) {
+			List<Byte> bytesList = new ArrayList<>(
+				height * width * _NUM_OF_BANDS);
+
+			for (int i = 0; i < dataBuffer.getSize(); i++) {
+				byte elem = (byte)dataBuffer.getElem(i);
+
+				if (elem == -1) {
+					bytesList.add((byte)0);
+				}
+				else {
+					bytesList.add((byte)255);
+				}
+
+				bytesList.add(elem);
+				bytesList.add(elem);
+				bytesList.add(elem);
+			}
+
+			byte[] data = ArrayUtil.toArray(
+				bytesList.toArray(new Byte[bytesList.size()]));
+
+			DataBuffer newDataBuffer = new DataBufferByte(data, data.length);
+
+			renderedImage = createRenderedImage(
+				renderedImage, height, width, newDataBuffer);
+		}
 		else if (sampleModel.getNumBands() == 2) {
 			List<Byte> bytesList = new ArrayList<>(
 				height * width * _NUM_OF_BANDS);
@@ -397,5 +424,18 @@ public class SpriteProcessorImpl implements SpriteProcessor {
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		SpriteProcessorImpl.class);
+
+	private static final Comparator<URL> _urlPathComparator =
+		new Comparator<URL>() {
+
+			@Override
+			public int compare(URL url1, URL url2) {
+				String path1 = url1.getPath();
+				String path2 = url2.getPath();
+
+				return path1.compareToIgnoreCase(path2);
+			}
+
+		};
 
 }

@@ -18,7 +18,6 @@ import aQute.bnd.annotation.metatype.Configurable;
 
 import com.liferay.blogs.configuration.BlogsConfiguration;
 import com.liferay.portal.kernel.messaging.BaseSchedulerEntryMessageListener;
-import com.liferay.portal.kernel.messaging.Destination;
 import com.liferay.portal.kernel.messaging.DestinationNames;
 import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
@@ -78,13 +77,6 @@ public class CheckEntryMessageListener
 		_blogsEntryLocalService = blogsEntryLocalService;
 	}
 
-	@Reference(
-		target = "(destination.name=" + DestinationNames.SCHEDULER_DISPATCH + ")",
-		unbind = "-"
-	)
-	protected void setDestination(Destination destination) {
-	}
-
 	@Reference(target = ModuleServiceLifecycle.PORTAL_INITIALIZED, unbind = "-")
 	protected void setModuleServiceLifecycle(
 		ModuleServiceLifecycle moduleServiceLifecycle) {
@@ -102,7 +94,7 @@ public class CheckEntryMessageListener
 	}
 
 	private volatile BlogsConfiguration _blogsConfiguration;
-	private volatile BlogsEntryLocalService _blogsEntryLocalService;
-	private volatile SchedulerEngineHelper _schedulerEngineHelper;
+	private BlogsEntryLocalService _blogsEntryLocalService;
+	private SchedulerEngineHelper _schedulerEngineHelper;
 
 }

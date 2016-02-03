@@ -235,6 +235,7 @@ public class ArrayUtilTest {
 				public boolean filter(String string) {
 					return true;
 				}
+
 			};
 
 		Assert.assertEquals(0, ArrayUtil.count(array, predicateFilter));
@@ -883,7 +884,7 @@ public class ArrayUtilTest {
 
 		};
 
-	private class User {
+	private static class User {
 
 		public User(String name, int age) {
 			_name = name;

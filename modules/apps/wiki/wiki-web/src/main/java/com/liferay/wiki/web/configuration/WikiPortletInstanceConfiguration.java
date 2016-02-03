@@ -16,14 +16,19 @@ package com.liferay.wiki.web.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
-import com.liferay.configuration.admin.ConfigurationAdmin;
+import com.liferay.portal.metatype.annotations.ExtendedObjectClassDefinition;
 
 /**
  * @author Iván Zaera
  */
-@ConfigurationAdmin(category = "collaboration")
+@ExtendedObjectClassDefinition(
+	category = "collaboration",
+	scope = ExtendedObjectClassDefinition.Scope.PORTLET_INSTANCE
+)
 @Meta.OCD(
-	id = "com.liferay.wiki.configuration.WikiPortletInstanceConfiguration"
+	id = "com.liferay.wiki.configuration.WikiPortletInstanceConfiguration",
+	localization = "content/Language",
+	name = "%wiki.portlet.instance.configuration.name"
 )
 public interface WikiPortletInstanceConfiguration {
 

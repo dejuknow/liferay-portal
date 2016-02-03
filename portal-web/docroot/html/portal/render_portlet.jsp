@@ -46,6 +46,9 @@ boolean modeHelp = layoutTypePortlet.hasModeHelpPortletId(portletId);
 boolean modePreview = layoutTypePortlet.hasModePreviewPortletId(portletId);
 boolean modePrint = layoutTypePortlet.hasModePrintPortletId(portletId);
 
+boolean columnDisabled = layoutTypePortlet.isColumnDisabled(columnId);
+boolean customizable = layoutTypePortlet.isCustomizable();
+
 PortletPreferencesIds portletPreferencesIds = PortletPreferencesFactoryUtil.getPortletPreferencesIds(request, portletId);
 
 PortletPreferences portletPreferences = PortletPreferencesLocalServiceUtil.getStrictPreferences(portletPreferencesIds);
@@ -206,7 +209,7 @@ if ((!group.hasStagingGroup() || group.isStagingGroup()) &&
 	}
 }
 
-if (layoutTypePortlet.isCustomizable() && !layoutTypePortlet.isColumnDisabled(columnId) && !portlet.isPreferencesCompanyWide() && portlet.isPreferencesUniquePerLayout() && LayoutPermissionUtil.contains(permissionChecker, layout, ActionKeys.CUSTOMIZE)) {
+if (!columnDisabled && customizable && !portlet.isPreferencesCompanyWide() && portlet.isPreferencesUniquePerLayout() && LayoutPermissionUtil.contains(permissionChecker, layout, ActionKeys.CUSTOMIZE)) {
 	showConfigurationIcon = true;
 
 	if (PropsValues.PORTLET_CSS_ENABLED) {
@@ -260,7 +263,7 @@ if ((!themeDisplay.isSignedIn()) ||
 	showMaxIcon = PropsValues.LAYOUT_GUEST_SHOW_MAX_ICON;
 	showMinIcon = PropsValues.LAYOUT_GUEST_SHOW_MIN_ICON;
 
-	if (!(layoutTypePortlet.isCustomizable() && !layoutTypePortlet.isColumnDisabled(columnId) && LayoutPermissionUtil.contains(permissionChecker, layout, ActionKeys.CUSTOMIZE))) {
+	if (!(!columnDisabled && customizable && LayoutPermissionUtil.contains(permissionChecker, layout, ActionKeys.CUSTOMIZE))) {
 		showCloseIcon = false;
 		showMoveIcon = false;
 	}
@@ -268,7 +271,7 @@ if ((!themeDisplay.isSignedIn()) ||
 
 // Portlets cannot be moved if the column is not customizable
 
-if (layoutTypePortlet.isCustomizable() && layoutTypePortlet.isColumnDisabled(columnId)) {
+if (columnDisabled && customizable) {
 	showCloseIcon = false;
 	showMoveIcon = false;
 }
@@ -417,7 +420,38 @@ portletDisplay.setURLPortlet(themeDisplay.getCDNHost() + portletIcon);
 
 // URL close
 
-String urlClose = themeDisplay.getPathMain() + "/portal/update_layout?p_auth=" + AuthTokenUtil.getToken(request) + "&p_l_id=" + plid + "&p_p_id=" + portletDisplay.getId() + "&p_v_l_s_g_id=" + themeDisplay.getSiteGroupId() + "&doAsUserId=" + HttpUtil.encodeURL(themeDisplay.getDoAsUserId()) + "&" + Constants.CMD + "=" + Constants.DELETE + "&referer=" + HttpUtil.encodeURL(themeDisplay.getPathMain() + "/portal/layout?p_l_id=" + plid + "&doAsUserId=" + themeDisplay.getDoAsUserId()) + "&refresh=1";
+StringBundler sb = new StringBundler(18);
+
+sb.append(themeDisplay.getPathMain());
+sb.append("/portal/update_layout?p_auth=");
+sb.append(AuthTokenUtil.getToken(request));
+sb.append("&p_l_id=");
+sb.append(plid);
+sb.append("&p_p_id=");
+sb.append(portletDisplay.getId());
+sb.append("&p_v_l_s_g_id=");
+sb.append(themeDisplay.getSiteGroupId());
+sb.append("&doAsUserId=");
+sb.append(HttpUtil.encodeURL(themeDisplay.getDoAsUserId()));
+sb.append("&");
+sb.append(Constants.CMD);
+sb.append("=");
+sb.append(Constants.DELETE);
+sb.append("&referer=");
+
+StringBundler innerSB = new StringBundler(5);
+
+innerSB.append(themeDisplay.getPathMain());
+innerSB.append("/portal/layout?p_l_id=");
+innerSB.append(plid);
+innerSB.append("&doAsUserId=");
+innerSB.append(themeDisplay.getDoAsUserId());
+
+sb.append(HttpUtil.encodeURL(innerSB.toString()));
+
+sb.append("&refresh=1");
+
+String urlClose = sb.toString();
 
 if (themeDisplay.isAddSessionIdToURL()) {
 	urlClose = PortalUtil.getURLWithSessionId(urlClose, themeDisplay.getSessionId());
@@ -453,7 +487,7 @@ urlConfiguration.setParameter("redirect", currentURL);
 urlConfiguration.setParameter("returnToFullPageURL", currentURL);
 urlConfiguration.setParameter("portletConfiguration", Boolean.TRUE.toString());
 urlConfiguration.setParameter("portletResource", portletDisplay.getId());
-urlConfiguration.setParameter("resourcePrimKey", PortletPermissionUtil.getPrimaryKey(plid, portlet.getPortletId()));
+urlConfiguration.setParameter("resourcePrimKey", portletPrimaryKey);
 
 portletDisplay.setURLConfiguration(urlConfiguration.toString());
 
@@ -615,17 +649,19 @@ if (lifecycle.equals(PortletRequest.RENDER_PHASE)) {
 
 	Map<String, String[]> renderParameters = RenderParametersPool.get(request, plid, portletDisplay.getId());
 
-	for (Map.Entry<String, String[]> entry : renderParameters.entrySet()) {
-		String key = entry.getKey();
+	if (renderParameters != null) {
+		for (Map.Entry<String, String[]> entry : renderParameters.entrySet()) {
+			String key = entry.getKey();
 
-		if (key.startsWith(portletNamespace) || publicRenderParameterNames.contains(key)) {
-			if (key.startsWith(portletNamespace)) {
-				key = key.substring(portletNamespace.length());
+			if (key.startsWith(portletNamespace) || publicRenderParameterNames.contains(key)) {
+				if (key.startsWith(portletNamespace)) {
+					key = key.substring(portletNamespace.length());
+				}
+
+				String[] values = entry.getValue();
+
+				urlMax.setParameter(key, values);
 			}
-
-			String[] values = entry.getValue();
-
-			urlMax.setParameter(key, values);
 		}
 	}
 }
@@ -634,9 +670,38 @@ portletDisplay.setURLMax(urlMax.toString());
 
 // URL min
 
-String urlMin = themeDisplay.getPathMain() + "/portal/update_layout?p_l_id=" + plid + "&p_p_id=" + portletDisplay.getId() + "&p_p_restore=" + portletDisplay.isStateMin() + "&p_v_l_s_g_id=" + themeDisplay.getSiteGroupId() + "&doAsUserId=" + HttpUtil.encodeURL(themeDisplay.getDoAsUserId()) + "&" + Constants.CMD + "=minimize&referer=" + HttpUtil.encodeURL(themeDisplay.getPathMain() + "/portal/layout?p_auth=" + AuthTokenUtil.getToken(request) + "&p_l_id=" + plid + "&doAsUserId=" + themeDisplay.getDoAsUserId()) + "&refresh=1";
+sb = new StringBundler(16);
 
-portletDisplay.setURLMin(urlMin);
+sb.append(themeDisplay.getPathMain());
+sb.append("/portal/update_layout?p_l_id=");
+sb.append(plid);
+sb.append("&p_p_id=");
+sb.append(portletDisplay.getId());
+sb.append("&p_p_restore=");
+sb.append(portletDisplay.isStateMin());
+sb.append("&p_v_l_s_g_id=");
+sb.append(themeDisplay.getSiteGroupId());
+sb.append("&doAsUserId=");
+sb.append(HttpUtil.encodeURL(themeDisplay.getDoAsUserId()));
+sb.append("&");
+sb.append(Constants.CMD);
+sb.append("=minimize&referer=");
+
+innerSB = new StringBundler(7);
+
+innerSB.append(themeDisplay.getPathMain());
+innerSB.append("/portal/layout?p_auth=");
+innerSB.append(AuthTokenUtil.getToken(request));
+innerSB.append("&p_l_id=");
+innerSB.append(plid);
+innerSB.append("&doAsUserId=");
+innerSB.append(themeDisplay.getDoAsUserId());
+
+sb.append(HttpUtil.encodeURL(innerSB.toString()));
+
+sb.append("&refresh=1");
+
+portletDisplay.setURLMin(sb.toString());
 
 // URL portlet css
 
@@ -768,7 +833,9 @@ Boolean portletVisibility = null;
 
 if (portlet.isActive() && portlet.isReady() && supportsMimeType && (invokerPortlet != null)) {
 	try {
-		invokerPortlet.render(renderRequestImpl, renderResponseImpl);
+		if (!PortalUtil.isSkipPortletContentProcesssing(group, request, layoutTypePortlet, portletDisplay, portletDisplay.getPortletName())) {
+			invokerPortlet.render(renderRequestImpl, renderResponseImpl);
+		}
 
 		portletVisibility = (Boolean)renderRequestImpl.getAttribute(WebKeys.PORTLET_CONFIGURATOR_VISIBILITY);
 
@@ -827,7 +894,7 @@ Boolean renderPortletBoundary = GetterUtil.getBoolean(request.getAttribute(WebKe
 	String cssClasses = StringPool.BLANK;
 
 	if (themeDisplay.isFreeformLayout() && !themeDisplay.isStatePopUp() && !runtimePortlet && !layoutTypePortlet.hasStateMax()) {
-		StringBundler sb = new StringBundler(7);
+		sb = new StringBundler(7);
 
 		Properties freeformStyleProps = PropertiesUtil.load(portletSetup.getValue("portlet-freeform-styles", StringPool.BLANK));
 
@@ -847,7 +914,7 @@ Boolean renderPortletBoundary = GetterUtil.getBoolean(request.getAttribute(WebKe
 	}
 
 	if (!portletDisplay.isShowMoveIcon()) {
-		if (layoutTypePortlet.isCustomizable() && layoutTypePortlet.isColumnDisabled(columnId)) {
+		if (columnDisabled && customizable) {
 			cssClasses += " portlet-static";
 		}
 		else if (portlet.isStaticStart()) {

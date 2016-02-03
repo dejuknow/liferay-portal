@@ -20,17 +20,25 @@ import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationFactory;
 import com.liferay.portal.kernel.openid.OpenId;
 import com.liferay.portal.kernel.settings.CompanyServiceSettingsLocator;
+import com.liferay.portal.security.sso.openid.configuration.OpenIdConfiguration;
 import com.liferay.portal.security.sso.openid.constants.OpenIdConstants;
-import com.liferay.portal.security.sso.openid.module.configuration.OpenIdConfiguration;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 /**
+ * Serves as the core implementation of the OpenID protocol.
+ *
+ * <p>
+ * This class is utilized by many other classes via {@link
+ * com.liferay.portal.util.OpenIdUtil} which exposes all of its methods
+ * statically.
+ * </p>
+ *
  * @author Michael C. Han
  */
 @Component(
-	configurationPid = "com.liferay.portal.security.sso.openid.module.configuration.OpenIdConfiguration",
+	configurationPid = "com.liferay.portal.security.sso.openid.configuration.OpenIdConfiguration",
 	immediate = true, service = OpenId.class
 )
 public class OpenIdImpl implements OpenId {
@@ -62,6 +70,6 @@ public class OpenIdImpl implements OpenId {
 
 	private static final Log _log = LogFactoryUtil.getLog(OpenIdImpl.class);
 
-	private volatile ConfigurationFactory _configurationFactory;
+	private ConfigurationFactory _configurationFactory;
 
 }

@@ -16,10 +16,10 @@ package com.liferay.portal.search.internal.hits;
 
 import com.liferay.portal.kernel.search.FacetedSearcher;
 import com.liferay.portal.kernel.search.Hits;
+import com.liferay.portal.kernel.search.IndexSearcherHelperUtil;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.QueryConfig;
 import com.liferay.portal.kernel.search.SearchContext;
-import com.liferay.portal.kernel.search.SearchEngineUtil;
 import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.search.hits.HitsProcessor;
 import com.liferay.portal.kernel.util.ArrayUtil;
@@ -33,8 +33,7 @@ import org.osgi.service.component.annotations.Component;
  * @author Michael C. Han
  */
 @Component(
-	immediate = true, property = {"sort.order=1"},
-	service = HitsProcessor.class
+	immediate = true, property = {"sort.order=1"}, service = HitsProcessor.class
 )
 public class AlternateKeywordQueryHitsProcessor implements HitsProcessor {
 
@@ -57,8 +56,8 @@ public class AlternateKeywordQueryHitsProcessor implements HitsProcessor {
 
 		searchContext.overrideKeywords(spellCheckedKeywords);
 
-		String[] querySuggestions = SearchEngineUtil.suggestKeywordQueries(
-			searchContext, 5);
+		String[] querySuggestions =
+			IndexSearcherHelperUtil.suggestKeywordQueries(searchContext, 5);
 
 		if (ArrayUtil.isNotEmpty(querySuggestions)) {
 			searchContext.setKeywords(querySuggestions[0]);

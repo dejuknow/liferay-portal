@@ -14,7 +14,7 @@
 
 package com.liferay.portal.search.elasticsearch.settings;
 
-import org.elasticsearch.common.settings.ImmutableSettings;
+import org.elasticsearch.common.settings.Settings;
 
 /**
  * @author André de Oliveira
@@ -22,8 +22,10 @@ import org.elasticsearch.common.settings.ImmutableSettings;
 public interface IndexSettingsContributor
 	extends Comparable<IndexSettingsContributor> {
 
+	public void contribute(TypeMappingsHelper typeMappingsHelper);
+
 	public int getPriority();
 
-	public void populate(ImmutableSettings.Builder builder);
+	public void populate(Settings.Builder builder);
 
 }

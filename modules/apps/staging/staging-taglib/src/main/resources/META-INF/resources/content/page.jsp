@@ -17,7 +17,7 @@
 <%@ include file="/content/init.jsp" %>
 
 <c:if test="<%= !dataSiteLevelPortlets.isEmpty() %>">
-	<aui:fieldset cssClass="options-group" label="content">
+	<aui:fieldset collapsible="<%= true %>" cssClass="options-group" label="content" markupView="lexicon">
 		<ul class="lfr-tree list-unstyled">
 			<li class="tree-item">
 				<aui:input disabled="<%= disableInputs %>" name="<%= PortletDataHandlerKeys.PORTLET_DATA %>" type="hidden" value="<%= MapUtil.getBoolean(parameterMap, PortletDataHandlerKeys.PORTLET_DATA, true) %>" />
@@ -40,7 +40,7 @@
 										<aui:input checked="<%= selectedRange.equals(ExportImportDateUtil.RANGE_ALL) %>" disabled="<%= disableInputs %>" id="rangeAll" label="all" name="range" type="radio" value="<%= ExportImportDateUtil.RANGE_ALL %>" />
 
 										<c:if test="<%= !type.equals(Constants.EXPORT) %>">
-											<aui:input checked="<%= selectedRange.equals(ExportImportDateUtil.RANGE_FROM_LAST_PUBLISH_DATE) %>" disabled="<%= disableInputs %>"  id="rangeLastPublish" label="from-last-publish-date" name="range" type="radio" value="<%= ExportImportDateUtil.RANGE_FROM_LAST_PUBLISH_DATE %>" />
+											<aui:input checked="<%= selectedRange.equals(ExportImportDateUtil.RANGE_FROM_LAST_PUBLISH_DATE) %>" disabled="<%= disableInputs %>" id="rangeLastPublish" label="from-last-publish-date" name="range" type="radio" value="<%= ExportImportDateUtil.RANGE_FROM_LAST_PUBLISH_DATE %>" />
 										</c:if>
 
 										<aui:input checked="<%= selectedRange.equals(ExportImportDateUtil.RANGE_DATE_RANGE) %>" disabled="<%= disableInputs %>" helpMessage="export-date-range-help" id="rangeDateRange" label="date-range" name="range" type="radio" value="<%= ExportImportDateUtil.RANGE_DATE_RANGE %>" />
@@ -159,8 +159,9 @@
 						</liferay-util:buffer>
 
 						<liferay-ui:icon
-							iconCssClass="icon-calendar"
+							icon="calendar"
 							label="<%= true %>"
+							markupView="lexicon"
 							message='<%= LanguageUtil.get(request, "date-range") + selectedLabelsHTML %>'
 						/>
 					</li>

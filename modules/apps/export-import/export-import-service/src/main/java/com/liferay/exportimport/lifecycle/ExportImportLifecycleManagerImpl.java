@@ -67,6 +67,8 @@ public class ExportImportLifecycleManagerImpl
 
 	@Activate
 	protected void activate(BundleContext bundleContext) {
+		_bundleContext = bundleContext;
+
 		registerDestination(
 			bundleContext, DestinationConfiguration.DESTINATION_TYPE_SERIAL,
 			DestinationNames.EXPORT_IMPORT_LIFECYCLE_EVENT_ASYNC);
@@ -81,8 +83,15 @@ public class ExportImportLifecycleManagerImpl
 		for (ServiceRegistration<Destination> serviceRegistration :
 				_serviceRegistrations) {
 
+			Destination destination = _bundleContext.getService(
+				serviceRegistration.getReference());
+
 			serviceRegistration.unregister();
+
+			destination.destroy();
 		}
+
+		_bundleContext = null;
 	}
 
 	protected ServiceRegistration<Destination> registerDestination(
@@ -127,10 +136,11 @@ public class ExportImportLifecycleManagerImpl
 		_messageBus = messageBus;
 	}
 
-	private volatile DestinationFactory _destinationFactory;
-	private volatile ExportImportLifecycleEventFactory
+	private volatile BundleContext _bundleContext;
+	private DestinationFactory _destinationFactory;
+	private ExportImportLifecycleEventFactory
 		_exportImportLifecycleEventFactory;
-	private volatile MessageBus _messageBus;
+	private MessageBus _messageBus;
 	private final Set<ServiceRegistration<Destination>> _serviceRegistrations =
 		new HashSet<>();
 

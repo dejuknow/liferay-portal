@@ -38,7 +38,7 @@ public class MBSubscriptionSender
 
 	public void addMailingListSubscriber(long groupId, long categoryId) {
 		if (_calledAddMailingListSubscriber) {
-			throw new IllegalStateException();
+			throw new IllegalStateException("Method may only be called once");
 		}
 
 		_calledAddMailingListSubscriber = true;
@@ -88,7 +88,7 @@ public class MBSubscriptionSender
 	protected void sendNotification(User user) throws Exception {
 		sendEmailNotification(user);
 
-		if (currentUserId == user.getUserId() ) {
+		if (currentUserId == user.getUserId()) {
 			if (_log.isDebugEnabled()) {
 				_log.debug("Skip notification for user " + currentUserId);
 			}

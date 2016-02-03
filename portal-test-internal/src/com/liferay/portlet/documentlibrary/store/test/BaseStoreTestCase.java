@@ -21,8 +21,8 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.test.rule.ExpectedLog;
 import com.liferay.portal.test.rule.ExpectedLogs;
 import com.liferay.portal.test.rule.ExpectedType;
-import com.liferay.portlet.documentlibrary.DuplicateFileException;
-import com.liferay.portlet.documentlibrary.NoSuchFileException;
+import com.liferay.portlet.documentlibrary.exception.DuplicateFileException;
+import com.liferay.portlet.documentlibrary.exception.NoSuchFileException;
 import com.liferay.portlet.documentlibrary.store.BaseStore;
 import com.liferay.portlet.documentlibrary.store.Store;
 import com.liferay.portlet.documentlibrary.store.StoreFactory;
@@ -270,7 +270,7 @@ public abstract class BaseStoreTestCase {
 		addVersions(fileName, 1);
 
 		try (InputStream inputStream = store.getFileAsStream(
-			companyId, repositoryId, fileName)) {
+				companyId, repositoryId, fileName)) {
 
 			for (int i = 0; i < _DATA_SIZE; i++) {
 				Assert.assertEquals(
@@ -290,7 +290,7 @@ public abstract class BaseStoreTestCase {
 		addVersions(fileName, 5);
 
 		try (InputStream inputStream = store.getFileAsStream(
-			companyId, repositoryId, fileName, "1.5")) {
+				companyId, repositoryId, fileName, "1.5")) {
 
 			for (int i = 0; i < _DATA_SIZE; i++) {
 				Assert.assertEquals(

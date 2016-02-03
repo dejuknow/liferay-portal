@@ -20,7 +20,7 @@ AUI.add(
 
 					strings: {
 						value: {
-							addAnOption: Liferay.Language.get('add-an-option')
+							addOptionMessage: Liferay.Language.get('enter-an-option')
 						}
 					},
 
@@ -62,6 +62,32 @@ AUI.add(
 						return repeatedField;
 					},
 
+					clearValidationStatus: function() {
+						var instance = this;
+
+						instance.eachRepetition(
+							function(field) {
+								field.clearValidationStatus();
+							}
+						);
+
+						OptionsField.superclass.clearValidationStatus.apply(instance, arguments);
+					},
+
+					eachRepetition: function(fn) {
+						var instance = this;
+
+						var field = instance._mainField;
+
+						field.get('repetitions').forEach(fn, instance);
+					},
+
+					getContextValue: function() {
+						var instance = this;
+
+						return instance.getOptionsValues();
+					},
+
 					getLastField: function() {
 						var instance = this;
 
@@ -89,11 +115,9 @@ AUI.add(
 					getValue: function() {
 						var instance = this;
 
-						var field = instance._mainField;
-
 						var values = [];
 
-						field.get('repetitions').forEach(
+						instance.eachRepetition(
 							function(item) {
 								var key = item.get('key');
 
@@ -115,6 +139,32 @@ AUI.add(
 						return values;
 					},
 
+					hasErrors: function() {
+						var instance = this;
+
+						var hasErrors = false;
+
+						instance.eachRepetition(
+							function(field) {
+								if (field.hasErrors()) {
+									hasErrors = true;
+								}
+							}
+						);
+
+						return hasErrors;
+					},
+
+					hideErrorMessage: function() {
+						var instance = this;
+
+						instance.eachRepetition(
+							function(field) {
+								field.hideErrorMessage();
+							}
+						);
+					},
+
 					moveField: function(field, oldIndex, newIndex) {
 						var instance = this;
 
@@ -125,6 +175,23 @@ AUI.add(
 						repetitions.forEach(A.bind('_syncRepeatableField', field));
 					},
 
+					processValidation: function() {
+						var instance = this;
+
+						var value = instance.getValue();
+
+						if (value.length === 0 && instance.get('required')) {
+							instance.showErrorMessage(Liferay.Language.get('please-add-at-least-one-option'));
+
+							instance.showValidationStatus();
+
+							instance._mainField.focus();
+						}
+						else {
+							OptionsField.superclass.processValidation.apply(instance, arguments);
+						}
+					},
+
 					render: function() {
 						var instance = this;
 
@@ -132,9 +199,46 @@ AUI.add(
 
 						instance._clearRepetitions();
 
-						instance._renderFields();
+						instance._renderFields(instance.getOptionsValues());
 
 						return instance;
+					},
+
+					setValue: function(optionsValues) {
+						var instance = this;
+
+						instance._clearRepetitions();
+						instance._renderFields(optionsValues);
+					},
+
+					showErrorMessage: function(errorMessage) {
+						var instance = this;
+
+						var mainField = instance._mainField;
+
+						mainField.showErrorMessage(errorMessage);
+					},
+
+					showValidationStatus: function() {
+						var instance = this;
+
+						var hasErrors = instance.hasErrors();
+
+						var mainField = instance._mainField;
+
+						mainField.get('container').toggleClass('has-error', hasErrors);
+					},
+
+					updateContainer: function() {
+						var instance = this;
+
+						OptionsField.superclass.updateContainer.apply(instance, arguments);
+
+						instance.eachRepetition(
+							function(field) {
+								field.updateContainer();
+							}
+						);
 					},
 
 					_afterSortableListDragEnd: function(event) {
@@ -219,7 +323,7 @@ AUI.add(
 						instance._mainField = new Liferay.DDM.Field.KeyValue(
 							{
 								enableEvaluations: false,
-								placeholder: strings.addAnOption,
+								placeholder: strings.addOptionMessage,
 								repeatable: true,
 								showLabel: false,
 								visibilityExpression: 'true'
@@ -267,7 +371,7 @@ AUI.add(
 						}
 					},
 
-					_renderFields: function() {
+					_renderFields: function(optionsValues) {
 						var instance = this;
 
 						var container = instance.get('container');
@@ -278,9 +382,9 @@ AUI.add(
 
 						instance._syncFieldUI(mainField);
 
-						var optionsValues = instance.getOptionsValues();
+						var hasOptionValues = !!optionsValues.length;
 
-						if (optionsValues.length > 0) {
+						if (hasOptionValues) {
 							var optionValue = optionsValues.shift();
 
 							instance._restoreField(mainField, optionValue);
@@ -294,7 +398,7 @@ AUI.add(
 							}
 						);
 
-						if (optionsValues.length > 0) {
+						if (hasOptionValues) {
 							instance.addField();
 						}
 					},

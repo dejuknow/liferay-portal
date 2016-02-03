@@ -50,6 +50,13 @@ public class PasswordPolicyPortletDataHandler extends BasePortletDataHandler {
 
 	public static final String NAMESPACE = "password_policies_admin";
 
+	public static final String SCHEMA_VERSION = "1.0.0";
+
+	@Override
+	public String getSchemaVersion() {
+		return SCHEMA_VERSION;
+	}
+
 	@Activate
 	protected void activate() {
 		setDataLevel(DataLevel.PORTAL);
@@ -177,6 +184,6 @@ public class PasswordPolicyPortletDataHandler extends BasePortletDataHandler {
 	protected static final String RESOURCE_NAME =
 		"com.liferay.portlet.passwordpoliciesadmin";
 
-	private volatile PasswordPolicyLocalService _passwordPolicyLocalService;
+	private PasswordPolicyLocalService _passwordPolicyLocalService;
 
 }

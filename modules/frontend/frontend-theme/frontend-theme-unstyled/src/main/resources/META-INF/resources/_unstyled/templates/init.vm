@@ -7,11 +7,9 @@
 #set ($theme_settings = $themeDisplay.getThemeSettings())
 
 #set ($root_css_class = $languageUtil.get($locale, "lang.dir"))
-#set ($css_class = $htmlUtil.escape($theme_display.getColorScheme().getCssClass()) + " yui3-skin-sam")
+#set ($css_class = $htmlUtil.escape($!bodyCssClass))
 
-#set ($liferay_product_menu_state = $sessionClicks.get($request, "com.liferay.control.menu.web_productMenuState", "closed"))
-
-#set ($css_class = $css_class + " " + $liferay_product_menu_state)
+#set ($css_class = $css_class + " " + $htmlUtil.escape($theme_display.getColorScheme().getCssClass()) + " yui3-skin-sam")
 
 #set ($liferay_toggle_controls = $sessionClicks.get($request, "com.liferay.frontend.js.web_toggleControls", "visible"))
 
@@ -349,7 +347,11 @@
 #set ($body_top_include = "$dir_include/common/themes/body_top.jsp")
 #set ($bottom_include = "$dir_include/common/themes/bottom.jsp")
 #set ($bottom_ext_include = $bottom_include)
-#set ($content_include = "$dir_include$tilesContent")
+
+#if ($tilesContent)
+	#set ($content_include = "$dir_include$tilesContent")
+#end
+
 #set ($top_head_include = "$dir_include/common/themes/top_head.jsp")
 #set ($top_messages_include = "$dir_include/common/themes/top_messages.jsp")
 

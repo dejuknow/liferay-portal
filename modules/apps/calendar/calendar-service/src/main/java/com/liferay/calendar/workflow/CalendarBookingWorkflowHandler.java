@@ -17,13 +17,12 @@ package com.liferay.calendar.workflow;
 import com.liferay.calendar.model.CalendarBooking;
 import com.liferay.calendar.service.CalendarBookingLocalService;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.workflow.BaseWorkflowHandler;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.workflow.WorkflowHandler;
-import com.liferay.portal.security.permission.ResourceActionsUtil;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.theme.ThemeDisplay;
 
 import java.io.Serializable;
 
@@ -68,11 +67,6 @@ public class CalendarBookingWorkflowHandler
 			userId, classPK, status, serviceContext);
 	}
 
-	@Override
-	protected String getIconPath(ThemeDisplay themeDisplay) {
-		return themeDisplay.getPathThemeImages() + "/trees/page.png";
-	}
-
 	@Reference(unbind = "-")
 	protected void setCalendarBookingLocalService(
 		CalendarBookingLocalService calendarBookingLocalService) {
@@ -80,6 +74,6 @@ public class CalendarBookingWorkflowHandler
 		_calendarBookingLocalService = calendarBookingLocalService;
 	}
 
-	private volatile CalendarBookingLocalService _calendarBookingLocalService;
+	private CalendarBookingLocalService _calendarBookingLocalService;
 
 }

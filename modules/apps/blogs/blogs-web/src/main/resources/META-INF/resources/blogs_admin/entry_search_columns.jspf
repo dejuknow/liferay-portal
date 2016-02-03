@@ -17,32 +17,32 @@
 <c:choose>
 	<c:when test='<%= displayStyle.equals("descriptive") %>'>
 		<liferay-ui:search-container-column-user
+			cssClass="user-icon-lg"
 			showDetails="<%= false %>"
 			userId="<%= entry.getUserId() %>"
 		/>
 
 		<liferay-ui:search-container-column-text colspan="<%= 2 %>">
-			<liferay-ui:app-view-entry
-				actionJsp="/blogs_admin/entry_action.jsp"
-				actionJspServletContext="<%= application %>"
-				assetCategoryClassName="<%= BlogsEntry.class.getName() %>"
-				assetCategoryClassPK="<%= entry.getEntryId() %>"
-				assetTagClassName="<%= BlogsEntry.class.getName() %>"
-				assetTagClassPK="<%= entry.getEntryId() %>"
-				author="<%= entry.getUserName() %>"
-				createDate="<%= entry.getCreateDate() %>"
-				description="<%= entry.getDescription() %>"
-				displayDate="<%= entry.getDisplayDate() %>"
-				displayStyle="descriptive"
-				markupView="lexicon"
-				modifiedDate="<%= entry.getModifiedDate() %>"
-				rowCheckerId="<%= String.valueOf(entry.getEntryId()) %>"
-				rowCheckerName="<%= BlogsEntry.class.getSimpleName() %>"
-				showCheckbox="<%= true %>"
-				status="<%= entry.getStatus() %>"
-				title="<%= entry.getTitle() %>"
-				url="<%= rowURL.toString() %>"
-			/>
+
+			<%
+			Date modifiedDate = entry.getModifiedDate();
+
+			String modifiedDateDescription = LanguageUtil.getTimeDescription(request, System.currentTimeMillis() - modifiedDate.getTime(), true);
+			%>
+
+			<h5 class="text-default">
+				<liferay-ui:message arguments="<%= new String[] {entry.getUserName(), modifiedDateDescription} %>" key="x-modified-x-ago" />
+			</h5>
+
+			<h4>
+				<aui:a href="<%= rowURL.toString() %>">
+					<%= entry.getTitle() %>
+				</aui:a>
+			</h4>
+
+			<h5 class="text-default">
+				<aui:workflow-status markupView="lexicon" showIcon="<%= false %>" showLabel="<%= false %>" status="<%= entry.getStatus() %>" />
+			</h5>
 		</liferay-ui:search-container-column-text>
 
 		<liferay-ui:search-container-column-jsp
@@ -65,31 +65,35 @@
 			}
 			%>
 
-			<liferay-frontend:vertical-card
-				actionJsp="/blogs_admin/entry_action.jsp"
-				actionJspServletContext="<%= application %>"
-				cssClass="entry-display-style"
-				imageUrl='<%= Validator.isNotNull(entryImageURL) ? entryImageURL : themeDisplay.getPathThemeImages() + "/file_system/large/article.png" %>'
-				resultRow="<%= row %>"
-				rowChecker="<%= searchContainer.getRowChecker() %>"
-				title="<%= entry.getTitle() %>"
-				url="<%= rowURL.toString() %>"
-			>
-				<liferay-frontend:vertical-card-sticker-bottom>
-					<liferay-ui:user-portrait
-						cssClass="sticker sticker-bottom"
-						userId="<%= entry.getUserId() %>"
-					/>
-				</liferay-frontend:vertical-card-sticker-bottom>
-
-				<liferay-frontend:vertical-card-footer>
-					<aui:workflow-status markupView="lexicon" showIcon="<%= false %>" showLabel="<%= false %>" status="<%= entry.getStatus() %>" />
-				</liferay-frontend:vertical-card-footer>
-
-				<liferay-frontend:vertical-card-header>
-					<liferay-ui:message arguments="<%= new String[] {LanguageUtil.getTimeDescription(locale, System.currentTimeMillis() - entry.getModifiedDate().getTime(), true), HtmlUtil.escape(entry.getUserName())} %>" key="x-ago-by-x" translateArguments="<%= true %>" />
-				</liferay-frontend:vertical-card-header>
-			</liferay-frontend:vertical-card>
+			<c:choose>
+				<c:when test="<%= Validator.isNotNull(entryImageURL) %>">
+					<liferay-frontend:vertical-card
+						actionJsp="/blogs_admin/entry_action.jsp"
+						actionJspServletContext="<%= application %>"
+						cssClass="entry-display-style"
+						imageUrl="<%= entryImageURL %>"
+						resultRow="<%= row %>"
+						rowChecker="<%= searchContainer.getRowChecker() %>"
+						title="<%= entry.getTitle() %>"
+						url="<%= rowURL.toString() %>"
+					>
+						<%@ include file="/blogs_admin/entry_vertical_card.jspf" %>
+					</liferay-frontend:vertical-card>
+				</c:when>
+				<c:otherwise>
+					<liferay-frontend:icon-vertical-card
+						actionJsp="/blogs_admin/entry_action.jsp"
+						actionJspServletContext="<%= application %>"
+						icon="blogs"
+						resultRow="<%= row %>"
+						rowChecker="<%= searchContainer.getRowChecker() %>"
+						title="<%= entry.getTitle() %>"
+						url="<%= rowURL.toString() %>"
+					>
+						<%@ include file="/blogs_admin/entry_vertical_card.jspf" %>
+					</liferay-frontend:icon-vertical-card>
+				</c:otherwise>
+			</c:choose>
 		</liferay-ui:search-container-column-text>
 	</c:when>
 	<c:otherwise>

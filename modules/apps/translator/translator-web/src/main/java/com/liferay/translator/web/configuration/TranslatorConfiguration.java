@@ -16,16 +16,16 @@ package com.liferay.translator.web.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
-import com.liferay.configuration.admin.ConfigurationAdmin;
+import com.liferay.portal.metatype.annotations.ExtendedObjectClassDefinition;
 
 /**
  * @author Raymond Augé
  * @author Peter Fellwock
  */
-@ConfigurationAdmin(category = "other")
+@ExtendedObjectClassDefinition(category = "other")
 @Meta.OCD(
 	id = "com.liferay.translator.web.configuration.TranslatorConfiguration",
-	localization = "content/Language"
+	localization = "content/Language", name = "%translator.configuration.name"
 )
 public interface TranslatorConfiguration {
 
@@ -33,10 +33,10 @@ public interface TranslatorConfiguration {
 		"TRANSLATOR_TRANSLATION";
 
 	@Meta.AD(
-		deflt = "ar,bg,ca,cs,da,de,el,en,es,et,fi,fr,hi_IN,ht,hu,in,it,iw,ja,ko,lt,lv,mww,nb,nl,pl,pt_PT,ro,ru,sk,sl,sv,th,tr,uk,vi,zh_CN,zh_TW",
+		deflt = "ar|bg|ca|cs|da|de|el|en|es|et|fi|fr|hi_IN|ht|hu|in|it|iw|ja|ko|lt|lv|mww|nb|nl|pl|pt_PT|ro|ru|sk|sl|sv|th|tr|uk|vi|zh_CN|zh_TW",
 		id = "language.ids", required = false
 	)
-	public String languageIds();
+	public String[] languageIds();
 
 	@Meta.AD(deflt = "en_es", id = "translation.id", required = false)
 	public String translationId();

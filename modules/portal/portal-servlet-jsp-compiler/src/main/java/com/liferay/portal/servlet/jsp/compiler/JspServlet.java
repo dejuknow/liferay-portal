@@ -14,8 +14,15 @@
 
 package com.liferay.portal.servlet.jsp.compiler;
 
+import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.servlet.jsp.compiler.internal.JspBundleClassloader;
+import com.liferay.portal.servlet.jsp.compiler.internal.JspTagHandlerPool;
+import com.liferay.taglib.servlet.JspFactorySwapper;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -56,7 +63,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSessionAttributeListener;
 import javax.servlet.http.HttpSessionListener;
+import javax.servlet.jsp.JspFactory;
 
+import org.apache.jasper.runtime.JspFactoryImpl;
+import org.apache.jasper.runtime.TagHandlerPool;
 import org.apache.jasper.xmlparser.ParserUtils;
 import org.apache.jasper.xmlparser.TreeNode;
 
@@ -74,11 +84,6 @@ import org.osgi.framework.wiring.BundleWiring;
  * @author Raymond Augé
  */
 public class JspServlet extends HttpServlet {
-
-	public JspServlet() {
-		_jspBundle = FrameworkUtil.getBundle(
-			com.liferay.portal.servlet.jsp.compiler.JspServlet.class);
-	}
 
 	@Override
 	public void destroy() {
@@ -150,6 +155,21 @@ public class JspServlet extends HttpServlet {
 			throw new IllegalStateException();
 		}
 
+		Thread currentThread = Thread.currentThread();
+
+		ClassLoader contextClassLoader = currentThread.getContextClassLoader();
+
+		try {
+			currentThread.setContextClassLoader(classLoader);
+
+			JspFactory.setDefaultFactory(new JspFactoryImpl());
+
+			JspFactorySwapper.swap();
+		}
+		finally {
+			currentThread.setContextClassLoader(contextClassLoader);
+		}
+
 		List<Bundle> bundles = new ArrayList<>();
 
 		BundleReference bundleReference = (BundleReference)classLoader;
@@ -178,6 +198,19 @@ public class JspServlet extends HttpServlet {
 		defaults.put("httpMethods", "GET,POST,HEAD");
 		defaults.put("keepgenerated", "false");
 		defaults.put("logVerbosityLevel", "NONE");
+		defaults.put("saveBytecode", "true");
+
+		StringBundler sb = new StringBundler(4);
+
+		sb.append(_WORK_DIR);
+		sb.append(_bundle.getSymbolicName());
+		sb.append(StringPool.DASH);
+		sb.append(_bundle.getVersion());
+
+		defaults.put("scratchdir", sb.toString());
+
+		defaults.put(
+			TagHandlerPool.OPTION_TAGPOOL, JspTagHandlerPool.class.getName());
 
 		Enumeration<String> names = servletConfig.getInitParameterNames();
 		Set<String> nameSet = new HashSet<>(Collections.list(names));
@@ -215,6 +248,7 @@ public class JspServlet extends HttpServlet {
 
 					return value;
 				}
+
 			}
 		);
 
@@ -443,12 +477,17 @@ public class JspServlet extends HttpServlet {
 
 	private static final Class<?>[] _INTERFACES = {ServletContext.class};
 
+	private static final String _WORK_DIR =
+		PropsUtil.get(PropsKeys.LIFERAY_HOME) + File.separator + "work" +
+			File.separator;
+
+	private static final Bundle _jspBundle = FrameworkUtil.getBundle(
+		JspServlet.class);
 	private static final Pattern _originalJspPattern = Pattern.compile(
 		"^(?<file>.*)(\\.(portal|original))(?<extension>\\.(jsp|jspf))$");
 
 	private Bundle[] _allParticipatingBundles;
 	private Bundle _bundle;
-	private final Bundle _jspBundle;
 	private JspBundleClassloader _jspBundleClassloader;
 	private final HttpServlet _jspServlet =
 		new org.apache.jasper.servlet.JspServlet();

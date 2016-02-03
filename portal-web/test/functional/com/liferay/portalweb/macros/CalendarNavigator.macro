@@ -12,7 +12,11 @@
 	</command>
 
 	<command name="gotoAddCurrentSiteCalendars">
-		<var name="key_siteName" value="${siteName}" />
+		<execute macro="TestCase#getDefaultSiteName">
+			<return from="defaultSiteName" name="defaultSiteName" />
+		</execute>
+
+		<var name="key_siteName" value="${defaultSiteName}" />
 
 		<execute function="Click" locator1="Calendar#CURRENT_SITE_CALENDARS_MENULIST_ARROW" />
 
@@ -28,7 +32,7 @@
 
 		<execute function="AssertClick" locator1="Calendar#ADD_EVENT_BUTTON" value1="Add Event" />
 
-		<execute macro="CalendarEvent#_selectEventIframe" />
+		<execute macro="CalendarEvent#selectEventIframe" />
 
 		<execute macro="CalendarEvent#_viewNewEventIframe" />
 	</command>
@@ -53,13 +57,23 @@
 
 		<execute function="AssertClick#assertTextClickAtAndWait" locator1="Calendar#SCHEDULER_EVENT_DIALOG_BOX_EDIT_BUTTON" value1="Edit" />
 
-		<execute macro="CalendarEvent#_selectEventIframe" />
+		<execute macro="CalendarEvent#selectEventIframe" />
 	</command>
 
 	<command name="gotoAddEventToday">
 		<var method="StringUtil#upperCase('${viewType}')" name="viewTypeUppercase" />
 
-		<execute function="Click" locator1="PGCalendar#SCHEDULER_VIEW_${viewTypeUppercase}_CURRENT_DAY" />
+		<execute function="Click" locator1="Calendar#SCHEDULER_VIEW_${viewTypeUppercase}_CURRENT_DAY" />
+	</command>
+
+	<command name="gotoAddEventViaAssetPublisher">
+		<execute function="Click#makeVisibleClickAt" locator1="AP#ADD_ASSET_PLUS_ICON" />
+
+		<execute function="AssertClick" locator1="MenuItem#CALENDAR_EVENT" value1="Calendar Event" />
+
+		<execute macro="CalendarEvent#selectEventIframe" />
+
+		<execute macro="CalendarEvent#_viewNewEventIframe" />
 	</command>
 
 	<command name="gotoAddMyCalendars">
@@ -89,11 +103,53 @@
 	<command name="gotoConfiguration">
 		<execute macro="Portlet#gotoPortletOptions">
 			<var name="portletName" value="Calendar" />
-			<var name="portletNameBorderless" value="${portletNameBorderless}" />
+			<var name="portletName" value="${portletName}" />
 			<var name="portletOption" value="Configuration" />
 		</execute>
 
 		<execute function="SelectFrame" locator1="CalendarConfiguration#CALENDAR_CONFIGURATION_IFRAME" />
+	</command>
+
+	<command name="gotoCurrentSiteCalendarsManage">
+		<execute macro="TestCase#getDefaultSiteName">
+			<return from="defaultSiteName" name="defaultSiteName" />
+		</execute>
+
+		<var name="key_siteName" value="${defaultSiteName}" />
+
+		<execute function="Click" locator1="Calendar#CURRENT_SITE_CALENDARS_MENULIST_ARROW" />
+
+		<execute function="AssertClick" locator1="Calendar#CURRENT_SITE_CALENDARS_MENULIST_MANAGE_CALENDAR" value1="Manage Calendars" />
+	</command>
+
+	<command name="gotoEditEvent">
+		<execute macro="CalendarNavigator#gotoView">
+			<var name="viewType" value="Week" />
+		</execute>
+
+		<execute macro="CalendarScheduler#selectEvent">
+			<var name="eventTitle" value="${eventTitle}" />
+			<var name="eventType" value="${eventType}" />
+		</execute>
+
+		<execute macro="CalendarScheduler#viewEventTitleViaDialogBox">
+			<var name="eventTitle" value="${eventTitle}" />
+		</execute>
+
+		<execute macro="CalendarScheduler#gotoEditViaDialogBox" />
+	</command>
+
+	<command name="gotoEventDetails">
+		<execute macro="CalendarNavigator#gotoView">
+			<var name="viewType" value="Week" />
+		</execute>
+
+		<execute macro="CalendarScheduler#selectEvent">
+			<var name="eventTitle" value="${eventTitle}" />
+			<var name="eventType" value="${eventType}" />
+		</execute>
+
+		<execute macro="CalendarScheduler#gotoDetailsViaDialogBox" />
 	</command>
 
 	<command name="gotoMonthViaSmallCalendar">
@@ -119,6 +175,12 @@
 		</while>
 	</command>
 
+	<command name="gotoMyCalendarsManage">
+		<execute function="Click" locator1="Calendar#MY_CALENDARS_MENULIST_ARROW" />
+
+		<execute function="AssertClick" locator1="Calendar#MY_CALENDARS_MENULIST_MANAGE_CALENDAR" value1="Manage Calendars" />
+	</command>
+
 	<command name="gotoNextDay">
 		<execute macro="CalendarNavigator#gotoView">
 			<var name="viewType" value="Day" />
@@ -137,6 +199,16 @@
 		</execute>
 
 		<execute function="Click" locator1="Calendar#VIEW_PREVIOUS_BUTTON" />
+	</command>
+
+	<command name="gotoResourceCalendars">
+		<execute macro="CalendarNavigator#gotoResources" />
+
+		<var name="key_calendarResourceName" value="${calendarResourceName}" />
+
+		<execute function="Click" locator1="CalendarResources#RESOURCE_TABLE_ACTIONS" />
+
+		<execute function="AssertClick" locator1="CalendarResources#RESOURCE_MENULIST_VIEW_CALENDARS" value1="View Calendars" />
 	</command>
 
 	<command name="gotoResources">
@@ -159,6 +231,10 @@
 		<execute macro="CalendarNavigator#gotoView">
 			<var name="viewType" value="Day" />
 		</execute>
+	</command>
+
+	<command name="gotoToday">
+		<execute function="AssertClick" locator1="Calendar#VIEW_TODAY_BUTTON" value1="Today" />
 	</command>
 
 	<command name="gotoView">

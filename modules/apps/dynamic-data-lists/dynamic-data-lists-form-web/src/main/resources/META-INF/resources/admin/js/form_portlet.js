@@ -9,6 +9,9 @@ AUI.add(
 		var DDLPortlet = A.Component.create(
 			{
 				ATTRS: {
+					dataProviders: {
+					},
+
 					definition: {
 					},
 
@@ -20,6 +23,12 @@ AUI.add(
 					},
 
 					layout: {
+					},
+
+					publishRecordSetURL: {
+					},
+
+					recordSetId: {
 					}
 				},
 
@@ -28,6 +37,20 @@ AUI.add(
 				EXTENDS: A.Base,
 
 				NAME: 'liferay-ddl-portlet',
+
+				openDDMDataProvider: function(dataProviderURL) {
+					Liferay.Util.openWindow(
+						{
+							dialog: {
+								cssClass: 'dynamic-data-mapping-data-providers-modal',
+								destroyOnHide: true
+							},
+							id: 'ddmDataProvider',
+							title: Liferay.Language.get('data-providers'),
+							uri: dataProviderURL
+						}
+					);
+				},
 
 				prototype: {
 					initializer: function() {
@@ -63,11 +86,8 @@ AUI.add(
 
 						editForm.set('onSubmit', A.bind('_onSubmitEditForm', instance));
 
-						var rootNode = instance.get('rootNode');
-
 						instance._eventHandlers = [
-							rootNode.delegate('click', A.bind('_onClickButtons', instance), '.ddl-form-builder-buttons .ddl-button'),
-							rootNode.delegate('click', A.bind('_onClickCloseAlert', instance), '.ddl-form-alert .close'),
+							instance.one('#publishCheckbox').on('change', A.bind('_onChangePublishCheckbox', instance)),
 							Liferay.on('destroyPortlet', A.bind('_onDestroyPortlet', instance))
 						];
 					},
@@ -86,6 +106,31 @@ AUI.add(
 						var buttons = instance.all('.ddl-button');
 
 						Liferay.Util.toggleDisabled(buttons, false);
+					},
+
+					openPublishModal: function() {
+						var instance = this;
+
+						Liferay.Util.openWindow(
+							{
+								dialog: {
+									height: 360,
+									resizable: false,
+									width: 720
+								},
+								id: instance.ns('publishModalContainer'),
+								title: Liferay.Language.get('publish')
+							},
+							function(dialogWindow) {
+								var publishNode = instance.byId(instance.ns('publishModal'));
+
+								if (publishNode) {
+									publishNode.show();
+
+									dialogWindow.bodyNode.append(publishNode);
+								}
+							}
+						);
 					},
 
 					serializeFormBuilder: function() {
@@ -114,6 +159,12 @@ AUI.add(
 						var name = window[instance.ns('nameEditor')].getHTML();
 
 						instance.one('#name').val(name);
+
+						var settingsInput = instance.one('#serializedSettingsDDMFormValues');
+
+						var settings = Liferay.component('settingsDDMForm').toJSON();
+
+						settingsInput.val(JSON.stringify(settings));
 					},
 
 					submitForm: function() {
@@ -132,29 +183,26 @@ AUI.add(
 						submitForm(editForm.form);
 					},
 
-					_onClickButtons: function(event) {
+					_onChangePublishCheckbox: function(event) {
 						var instance = this;
 
-						var currentTarget = event.currentTarget;
+						var publishCheckbox = event.currentTarget;
 
-						var publishNode = instance.one('#publish');
+						var payload = instance.ns(
+							{
+								published: publishCheckbox.attr('checked'),
+								recordSetId: instance.get('recordSetId')
+							}
+						);
 
-						if (currentTarget.hasClass('publish')) {
-							publishNode.val('true');
-						}
-						else if (currentTarget.hasClass('unpublish')) {
-							publishNode.val('false');
-						}
-
-						if (currentTarget.hasClass('save')) {
-							instance.submitForm();
-						}
-					},
-
-					_onClickCloseAlert: function() {
-						var instance = this;
-
-						instance.one('.ddl-form-alert').hide();
+						A.io.request(
+							instance.get('publishRecordSetURL'),
+							{
+								data: payload,
+								dataType: 'JSON',
+								method: 'POST'
+							}
+						);
 					},
 
 					_onDestroyPortlet: function(event) {
@@ -180,6 +228,7 @@ AUI.add(
 
 						return new Liferay.DDL.FormBuilder(
 							{
+								dataProviders: instance.get('dataProviders'),
 								definition: instance.get('definition'),
 								pagesJSON: layout.pages,
 								portletNamespace: instance.get('namespace')

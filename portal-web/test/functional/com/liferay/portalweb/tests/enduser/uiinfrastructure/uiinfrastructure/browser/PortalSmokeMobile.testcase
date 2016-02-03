@@ -1,16 +1,10 @@
 <definition component-name="portal-user-interface">
 	<property name="browser.type" value="android" />
 	<property name="testray.main.component.name" value="User Interface" />
+	<property name="timeout.explicit.wait" value="180" />
 
 	<set-up>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="SignIn#signInPortalInstanceSetUp" />
-			</then>
-		</if>
+		<execute macro="TestCase#setUpPortalInstance" />
 
 		<execute macro="SignIn#signInTestSetup" />
 	</set-up>

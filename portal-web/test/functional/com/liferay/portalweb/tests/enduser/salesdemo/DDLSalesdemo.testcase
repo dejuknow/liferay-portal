@@ -2,14 +2,7 @@
 	<property name="testray.main.component.name" value="Dynamic Data Lists" />
 
 	<set-up>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="SignIn#signInPortalInstanceSetUp" />
-			</then>
-		</if>
+		<execute macro="TestCase#setUpPortalInstance" />
 
 		<execute macro="User#firstLoginPG" />
 	</set-up>
@@ -35,12 +28,16 @@
 	</tear-down>
 
 	<command name="Demo1" priority="3">
-		<execute macro="Page#addPG">
+		<execute macro="Page#add">
 			<var name="pageName" value="Company Picnic" />
 		</execute>
 
 		<execute macro="Page#gotoPG">
 			<var name="pageName" value="Company Picnic" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoEditPage">
+			<var name="page" value="Company Picnic" />
 		</execute>
 
 		<execute macro="Page#editPageLayoutColumn">
@@ -125,7 +122,7 @@
 			<var name="fieldName" value="WhatAreYouBringing" />
 		</execute>
 
-		<execute macro="DDLRecord#publishViaDDLDisplayPG" />
+		<execute macro="DDLRecord#publish" />
 
 		<execute macro="DDLRecord#addViaDDLDisplayPG">
 			<var name="ddlDataDefinitionName" value="Potluck Items" />
@@ -149,7 +146,7 @@
 			<var name="fieldName" value="WhatAreYouBringing" />
 		</execute>
 
-		<execute macro="DDLRecord#publishViaDDLDisplayPG" />
+		<execute macro="DDLRecord#publish" />
 
 		<execute function="AssertTextEquals" locator1="xpath=(//div[contains(@id,'ocerSearchContainer')]//thead/tr/th[1])" value1="First Name" />
 		<execute function="AssertTextEquals" locator1="xpath=(//div[contains(@id,'ocerSearchContainer')]//thead/tr/th[2])" value1="Last Name" />

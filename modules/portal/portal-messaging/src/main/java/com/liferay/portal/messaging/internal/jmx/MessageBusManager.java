@@ -121,9 +121,9 @@ public class MessageBusManager
 			_mbeanServiceRegistrations.put(
 				destination.getName(), serviceRegistration);
 		}
-		catch (NotCompliantMBeanException e) {
+		catch (NotCompliantMBeanException ncmbe) {
 			if (_log.isInfoEnabled()) {
-				_log.info("Unable to register destination mbean", e);
+				_log.info("Unable to register destination mbean", ncmbe);
 			}
 		}
 	}
@@ -157,7 +157,7 @@ public class MessageBusManager
 	private BundleContext _bundleContext;
 	private final Map<String, ServiceRegistration<DynamicMBean>>
 		_mbeanServiceRegistrations = new ConcurrentHashMap<>();
-	private volatile MessageBus _messageBus;
+	private MessageBus _messageBus;
 	private final Set<Destination> _queuedDestinations =
 		new ConcurrentHashSet<>();
 

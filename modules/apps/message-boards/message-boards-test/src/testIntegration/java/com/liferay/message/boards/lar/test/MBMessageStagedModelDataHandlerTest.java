@@ -15,7 +15,7 @@
 package com.liferay.message.boards.lar.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
-import com.liferay.portal.NoSuchModelException;
+import com.liferay.portal.exception.NoSuchModelException;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
@@ -35,8 +35,8 @@ import com.liferay.portal.model.StagedModel;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.persistence.RepositoryUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
-import com.liferay.portlet.documentlibrary.NoSuchFileEntryException;
-import com.liferay.portlet.documentlibrary.NoSuchFolderException;
+import com.liferay.portlet.documentlibrary.exception.NoSuchFileEntryException;
+import com.liferay.portlet.documentlibrary.exception.NoSuchFolderException;
 import com.liferay.portlet.documentlibrary.model.DLFileEntry;
 import com.liferay.portlet.documentlibrary.model.DLFolder;
 import com.liferay.portlet.exportimport.lar.ExportImportClassedModelUtil;
@@ -276,6 +276,27 @@ public class MBMessageStagedModelDataHandlerTest
 		Assert.assertEquals(
 			1, importedMessage.getAttachmentsFileEntriesCount());
 		Assert.assertTrue(importedMessage.isAnswer());
+	}
+
+	@Override
+	protected void validateImportedStagedModel(
+			StagedModel stagedModel, StagedModel importedStagedModel)
+		throws Exception {
+
+		super.validateImportedStagedModel(stagedModel, importedStagedModel);
+
+		MBMessage message = (MBMessage)stagedModel;
+		MBMessage importedMessage = (MBMessage)importedStagedModel;
+
+		Assert.assertEquals(message.getSubject(), importedMessage.getSubject());
+		Assert.assertEquals(message.getFormat(), importedMessage.getFormat());
+		Assert.assertEquals(
+			message.isAnonymous(), importedMessage.isAnonymous());
+		Assert.assertEquals(
+			message.getPriority(), importedMessage.getPriority(), 0L);
+		Assert.assertEquals(
+			message.isAllowPingbacks(), importedMessage.isAllowPingbacks());
+		Assert.assertEquals(message.isAnswer(), importedMessage.isAnswer());
 	}
 
 }

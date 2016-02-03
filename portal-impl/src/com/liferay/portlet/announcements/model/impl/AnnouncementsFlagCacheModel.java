@@ -16,11 +16,11 @@ package com.liferay.portlet.announcements.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.announcements.kernel.model.AnnouncementsFlag;
+
 import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.model.CacheModel;
-
-import com.liferay.portlet.announcements.model.AnnouncementsFlag;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -110,10 +110,14 @@ public class AnnouncementsFlagCacheModel implements CacheModel<AnnouncementsFlag
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
 		flagId = objectInput.readLong();
+
 		companyId = objectInput.readLong();
+
 		userId = objectInput.readLong();
 		createDate = objectInput.readLong();
+
 		entryId = objectInput.readLong();
+
 		value = objectInput.readInt();
 	}
 
@@ -121,10 +125,14 @@ public class AnnouncementsFlagCacheModel implements CacheModel<AnnouncementsFlag
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
 		objectOutput.writeLong(flagId);
+
 		objectOutput.writeLong(companyId);
+
 		objectOutput.writeLong(userId);
 		objectOutput.writeLong(createDate);
+
 		objectOutput.writeLong(entryId);
+
 		objectOutput.writeInt(value);
 	}
 

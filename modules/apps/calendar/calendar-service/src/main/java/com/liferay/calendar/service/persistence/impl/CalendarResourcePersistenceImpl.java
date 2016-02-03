@@ -31,6 +31,7 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.security.permission.InlineSQLHelperUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -41,9 +42,10 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.security.permission.InlineSQLHelperUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextThreadLocal;
+import com.liferay.portal.service.persistence.CompanyProvider;
+import com.liferay.portal.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 
@@ -230,7 +232,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 
 			if (orderByComparator != null) {
 				query = new StringBundler(3 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(3);
@@ -298,7 +300,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 	 * @param resourceBlockId the resource block ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching calendar resource
-	 * @throws com.liferay.calendar.NoSuchResourceException if a matching calendar resource could not be found
+	 * @throws NoSuchResourceException if a matching calendar resource could not be found
 	 */
 	@Override
 	public CalendarResource findByResourceBlockId_First(long resourceBlockId,
@@ -349,7 +351,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 	 * @param resourceBlockId the resource block ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching calendar resource
-	 * @throws com.liferay.calendar.NoSuchResourceException if a matching calendar resource could not be found
+	 * @throws NoSuchResourceException if a matching calendar resource could not be found
 	 */
 	@Override
 	public CalendarResource findByResourceBlockId_Last(long resourceBlockId,
@@ -407,7 +409,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 	 * @param resourceBlockId the resource block ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next calendar resource
-	 * @throws com.liferay.calendar.NoSuchResourceException if a calendar resource with the primary key could not be found
+	 * @throws NoSuchResourceException if a calendar resource with the primary key could not be found
 	 */
 	@Override
 	public CalendarResource[] findByResourceBlockId_PrevAndNext(
@@ -448,8 +450,9 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+			query = new StringBundler(4 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
 			query = new StringBundler(3);
@@ -737,7 +740,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 
 			if (orderByComparator != null) {
 				query = new StringBundler(3 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(3);
@@ -819,7 +822,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 	 * @param uuid the uuid
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching calendar resource
-	 * @throws com.liferay.calendar.NoSuchResourceException if a matching calendar resource could not be found
+	 * @throws NoSuchResourceException if a matching calendar resource could not be found
 	 */
 	@Override
 	public CalendarResource findByUuid_First(String uuid,
@@ -869,7 +872,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 	 * @param uuid the uuid
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching calendar resource
-	 * @throws com.liferay.calendar.NoSuchResourceException if a matching calendar resource could not be found
+	 * @throws NoSuchResourceException if a matching calendar resource could not be found
 	 */
 	@Override
 	public CalendarResource findByUuid_Last(String uuid,
@@ -927,7 +930,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 	 * @param uuid the uuid
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next calendar resource
-	 * @throws com.liferay.calendar.NoSuchResourceException if a calendar resource with the primary key could not be found
+	 * @throws NoSuchResourceException if a calendar resource with the primary key could not be found
 	 */
 	@Override
 	public CalendarResource[] findByUuid_PrevAndNext(long calendarResourceId,
@@ -966,8 +969,9 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+			query = new StringBundler(4 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
 			query = new StringBundler(3);
@@ -1173,12 +1177,12 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 			new String[] { String.class.getName(), Long.class.getName() });
 
 	/**
-	 * Returns the calendar resource where uuid = &#63; and groupId = &#63; or throws a {@link com.liferay.calendar.NoSuchResourceException} if it could not be found.
+	 * Returns the calendar resource where uuid = &#63; and groupId = &#63; or throws a {@link NoSuchResourceException} if it could not be found.
 	 *
 	 * @param uuid the uuid
 	 * @param groupId the group ID
 	 * @return the matching calendar resource
-	 * @throws com.liferay.calendar.NoSuchResourceException if a matching calendar resource could not be found
+	 * @throws NoSuchResourceException if a matching calendar resource could not be found
 	 */
 	@Override
 	public CalendarResource findByUUID_G(String uuid, long groupId)
@@ -1554,7 +1558,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 
 			if (orderByComparator != null) {
 				query = new StringBundler(4 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(4);
@@ -1641,7 +1645,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching calendar resource
-	 * @throws com.liferay.calendar.NoSuchResourceException if a matching calendar resource could not be found
+	 * @throws NoSuchResourceException if a matching calendar resource could not be found
 	 */
 	@Override
 	public CalendarResource findByUuid_C_First(String uuid, long companyId,
@@ -1697,7 +1701,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching calendar resource
-	 * @throws com.liferay.calendar.NoSuchResourceException if a matching calendar resource could not be found
+	 * @throws NoSuchResourceException if a matching calendar resource could not be found
 	 */
 	@Override
 	public CalendarResource findByUuid_C_Last(String uuid, long companyId,
@@ -1760,7 +1764,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next calendar resource
-	 * @throws com.liferay.calendar.NoSuchResourceException if a calendar resource with the primary key could not be found
+	 * @throws NoSuchResourceException if a calendar resource with the primary key could not be found
 	 */
 	@Override
 	public CalendarResource[] findByUuid_C_PrevAndNext(
@@ -1800,11 +1804,12 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+			query = new StringBundler(5 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
-			query = new StringBundler(3);
+			query = new StringBundler(4);
 		}
 
 		query.append(_SQL_SELECT_CALENDARRESOURCE_WHERE);
@@ -2130,7 +2135,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 
 			if (orderByComparator != null) {
 				query = new StringBundler(3 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(3);
@@ -2198,7 +2203,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 	 * @param groupId the group ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching calendar resource
-	 * @throws com.liferay.calendar.NoSuchResourceException if a matching calendar resource could not be found
+	 * @throws NoSuchResourceException if a matching calendar resource could not be found
 	 */
 	@Override
 	public CalendarResource findByGroupId_First(long groupId,
@@ -2249,7 +2254,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 	 * @param groupId the group ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching calendar resource
-	 * @throws com.liferay.calendar.NoSuchResourceException if a matching calendar resource could not be found
+	 * @throws NoSuchResourceException if a matching calendar resource could not be found
 	 */
 	@Override
 	public CalendarResource findByGroupId_Last(long groupId,
@@ -2307,7 +2312,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 	 * @param groupId the group ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next calendar resource
-	 * @throws com.liferay.calendar.NoSuchResourceException if a calendar resource with the primary key could not be found
+	 * @throws NoSuchResourceException if a calendar resource with the primary key could not be found
 	 */
 	@Override
 	public CalendarResource[] findByGroupId_PrevAndNext(
@@ -2347,8 +2352,9 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+			query = new StringBundler(4 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
 			query = new StringBundler(3);
@@ -2500,7 +2506,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 
 		if (orderByComparator != null) {
 			query = new StringBundler(3 +
-					(orderByComparator.getOrderByFields().length * 3));
+					(orderByComparator.getOrderByFields().length * 2));
 		}
 		else {
 			query = new StringBundler(3);
@@ -2552,7 +2558,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 	 * @param groupId the group ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next calendar resource
-	 * @throws com.liferay.calendar.NoSuchResourceException if a calendar resource with the primary key could not be found
+	 * @throws NoSuchResourceException if a calendar resource with the primary key could not be found
 	 */
 	@Override
 	public CalendarResource[] filterFindByGroupId_PrevAndNext(
@@ -2597,8 +2603,9 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+			query = new StringBundler(4 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
 			query = new StringBundler(3);
@@ -2936,7 +2943,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 
 			if (orderByComparator != null) {
 				query = new StringBundler(3 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(3);
@@ -3004,7 +3011,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 	 * @param active the active
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching calendar resource
-	 * @throws com.liferay.calendar.NoSuchResourceException if a matching calendar resource could not be found
+	 * @throws NoSuchResourceException if a matching calendar resource could not be found
 	 */
 	@Override
 	public CalendarResource findByActive_First(boolean active,
@@ -3055,7 +3062,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 	 * @param active the active
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching calendar resource
-	 * @throws com.liferay.calendar.NoSuchResourceException if a matching calendar resource could not be found
+	 * @throws NoSuchResourceException if a matching calendar resource could not be found
 	 */
 	@Override
 	public CalendarResource findByActive_Last(boolean active,
@@ -3113,7 +3120,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 	 * @param active the active
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next calendar resource
-	 * @throws com.liferay.calendar.NoSuchResourceException if a calendar resource with the primary key could not be found
+	 * @throws NoSuchResourceException if a calendar resource with the primary key could not be found
 	 */
 	@Override
 	public CalendarResource[] findByActive_PrevAndNext(
@@ -3153,8 +3160,9 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+			query = new StringBundler(4 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
 			query = new StringBundler(3);
@@ -3458,7 +3466,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 
 			if (orderByComparator != null) {
 				query = new StringBundler(4 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(4);
@@ -3545,7 +3553,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 	 * @param code the code
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching calendar resource
-	 * @throws com.liferay.calendar.NoSuchResourceException if a matching calendar resource could not be found
+	 * @throws NoSuchResourceException if a matching calendar resource could not be found
 	 */
 	@Override
 	public CalendarResource findByG_C_First(long groupId, String code,
@@ -3601,7 +3609,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 	 * @param code the code
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching calendar resource
-	 * @throws com.liferay.calendar.NoSuchResourceException if a matching calendar resource could not be found
+	 * @throws NoSuchResourceException if a matching calendar resource could not be found
 	 */
 	@Override
 	public CalendarResource findByG_C_Last(long groupId, String code,
@@ -3664,7 +3672,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 	 * @param code the code
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next calendar resource
-	 * @throws com.liferay.calendar.NoSuchResourceException if a calendar resource with the primary key could not be found
+	 * @throws NoSuchResourceException if a calendar resource with the primary key could not be found
 	 */
 	@Override
 	public CalendarResource[] findByG_C_PrevAndNext(long calendarResourceId,
@@ -3704,11 +3712,12 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+			query = new StringBundler(5 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
-			query = new StringBundler(3);
+			query = new StringBundler(4);
 		}
 
 		query.append(_SQL_SELECT_CALENDARRESOURCE_WHERE);
@@ -3879,7 +3888,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 
 		if (orderByComparator != null) {
 			query = new StringBundler(4 +
-					(orderByComparator.getOrderByFields().length * 3));
+					(orderByComparator.getOrderByFields().length * 2));
 		}
 		else {
 			query = new StringBundler(4);
@@ -3950,7 +3959,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 	 * @param code the code
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next calendar resource
-	 * @throws com.liferay.calendar.NoSuchResourceException if a calendar resource with the primary key could not be found
+	 * @throws NoSuchResourceException if a calendar resource with the primary key could not be found
 	 */
 	@Override
 	public CalendarResource[] filterFindByG_C_PrevAndNext(
@@ -3995,11 +4004,12 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+			query = new StringBundler(5 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
-			query = new StringBundler(3);
+			query = new StringBundler(4);
 		}
 
 		query.append(_SQL_SELECT_CALENDARRESOURCE_WHERE);
@@ -4939,7 +4949,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 
 			if (orderByComparator != null) {
 				query = new StringBundler(4 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(4);
@@ -5012,7 +5022,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 	 * @param active the active
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching calendar resource
-	 * @throws com.liferay.calendar.NoSuchResourceException if a matching calendar resource could not be found
+	 * @throws NoSuchResourceException if a matching calendar resource could not be found
 	 */
 	@Override
 	public CalendarResource findByG_A_First(long groupId, boolean active,
@@ -5068,7 +5078,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 	 * @param active the active
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching calendar resource
-	 * @throws com.liferay.calendar.NoSuchResourceException if a matching calendar resource could not be found
+	 * @throws NoSuchResourceException if a matching calendar resource could not be found
 	 */
 	@Override
 	public CalendarResource findByG_A_Last(long groupId, boolean active,
@@ -5131,7 +5141,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 	 * @param active the active
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next calendar resource
-	 * @throws com.liferay.calendar.NoSuchResourceException if a calendar resource with the primary key could not be found
+	 * @throws NoSuchResourceException if a calendar resource with the primary key could not be found
 	 */
 	@Override
 	public CalendarResource[] findByG_A_PrevAndNext(long calendarResourceId,
@@ -5171,11 +5181,12 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+			query = new StringBundler(5 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
-			query = new StringBundler(3);
+			query = new StringBundler(4);
 		}
 
 		query.append(_SQL_SELECT_CALENDARRESOURCE_WHERE);
@@ -5332,7 +5343,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 
 		if (orderByComparator != null) {
 			query = new StringBundler(4 +
-					(orderByComparator.getOrderByFields().length * 3));
+					(orderByComparator.getOrderByFields().length * 2));
 		}
 		else {
 			query = new StringBundler(4);
@@ -5389,7 +5400,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 	 * @param active the active
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next calendar resource
-	 * @throws com.liferay.calendar.NoSuchResourceException if a calendar resource with the primary key could not be found
+	 * @throws NoSuchResourceException if a calendar resource with the primary key could not be found
 	 */
 	@Override
 	public CalendarResource[] filterFindByG_A_PrevAndNext(
@@ -5434,11 +5445,12 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+			query = new StringBundler(5 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
-			query = new StringBundler(3);
+			query = new StringBundler(4);
 		}
 
 		query.append(_SQL_SELECT_CALENDARRESOURCE_WHERE);
@@ -5675,12 +5687,12 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 			new String[] { Long.class.getName(), Long.class.getName() });
 
 	/**
-	 * Returns the calendar resource where classNameId = &#63; and classPK = &#63; or throws a {@link com.liferay.calendar.NoSuchResourceException} if it could not be found.
+	 * Returns the calendar resource where classNameId = &#63; and classPK = &#63; or throws a {@link NoSuchResourceException} if it could not be found.
 	 *
 	 * @param classNameId the class name ID
 	 * @param classPK the class p k
 	 * @return the matching calendar resource
-	 * @throws com.liferay.calendar.NoSuchResourceException if a matching calendar resource could not be found
+	 * @throws NoSuchResourceException if a matching calendar resource could not be found
 	 */
 	@Override
 	public CalendarResource findByC_C(long classNameId, long classPK)
@@ -6022,7 +6034,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 
 			if (orderByComparator != null) {
 				query = new StringBundler(5 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(5);
@@ -6114,7 +6126,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 	 * @param active the active
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching calendar resource
-	 * @throws com.liferay.calendar.NoSuchResourceException if a matching calendar resource could not be found
+	 * @throws NoSuchResourceException if a matching calendar resource could not be found
 	 */
 	@Override
 	public CalendarResource findByC_C_A_First(long companyId, String code,
@@ -6175,7 +6187,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 	 * @param active the active
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching calendar resource
-	 * @throws com.liferay.calendar.NoSuchResourceException if a matching calendar resource could not be found
+	 * @throws NoSuchResourceException if a matching calendar resource could not be found
 	 */
 	@Override
 	public CalendarResource findByC_C_A_Last(long companyId, String code,
@@ -6243,7 +6255,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 	 * @param active the active
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next calendar resource
-	 * @throws com.liferay.calendar.NoSuchResourceException if a calendar resource with the primary key could not be found
+	 * @throws NoSuchResourceException if a calendar resource with the primary key could not be found
 	 */
 	@Override
 	public CalendarResource[] findByC_C_A_PrevAndNext(long calendarResourceId,
@@ -6285,10 +6297,11 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 
 		if (orderByComparator != null) {
 			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
-			query = new StringBundler(3);
+			query = new StringBundler(5);
 		}
 
 		query.append(_SQL_SELECT_CALENDARRESOURCE_WHERE);
@@ -6706,6 +6719,8 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 
 		calendarResource.setUuid(uuid);
 
+		calendarResource.setCompanyId(companyProvider.getCompanyId());
+
 		return calendarResource;
 	}
 
@@ -6714,7 +6729,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 	 *
 	 * @param calendarResourceId the primary key of the calendar resource
 	 * @return the calendar resource that was removed
-	 * @throws com.liferay.calendar.NoSuchResourceException if a calendar resource with the primary key could not be found
+	 * @throws NoSuchResourceException if a calendar resource with the primary key could not be found
 	 */
 	@Override
 	public CalendarResource remove(long calendarResourceId)
@@ -6727,7 +6742,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 	 *
 	 * @param primaryKey the primary key of the calendar resource
 	 * @return the calendar resource that was removed
-	 * @throws com.liferay.calendar.NoSuchResourceException if a calendar resource with the primary key could not be found
+	 * @throws NoSuchResourceException if a calendar resource with the primary key could not be found
 	 */
 	@Override
 	public CalendarResource remove(Serializable primaryKey)
@@ -7040,11 +7055,11 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 	}
 
 	/**
-	 * Returns the calendar resource with the primary key or throws a {@link com.liferay.portal.NoSuchModelException} if it could not be found.
+	 * Returns the calendar resource with the primary key or throws a {@link com.liferay.portal.exception.NoSuchModelException} if it could not be found.
 	 *
 	 * @param primaryKey the primary key of the calendar resource
 	 * @return the calendar resource
-	 * @throws com.liferay.calendar.NoSuchResourceException if a calendar resource with the primary key could not be found
+	 * @throws NoSuchResourceException if a calendar resource with the primary key could not be found
 	 */
 	@Override
 	public CalendarResource findByPrimaryKey(Serializable primaryKey)
@@ -7064,11 +7079,11 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 	}
 
 	/**
-	 * Returns the calendar resource with the primary key or throws a {@link com.liferay.calendar.NoSuchResourceException} if it could not be found.
+	 * Returns the calendar resource with the primary key or throws a {@link NoSuchResourceException} if it could not be found.
 	 *
 	 * @param calendarResourceId the primary key of the calendar resource
 	 * @return the calendar resource
-	 * @throws com.liferay.calendar.NoSuchResourceException if a calendar resource with the primary key could not be found
+	 * @throws NoSuchResourceException if a calendar resource with the primary key could not be found
 	 */
 	@Override
 	public CalendarResource findByPrimaryKey(long calendarResourceId)
@@ -7316,7 +7331,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 
 			if (orderByComparator != null) {
 				query = new StringBundler(2 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 
 				query.append(_SQL_SELECT_CALENDARRESOURCE);
 
@@ -7441,6 +7456,8 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 		finderCache.removeCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 	}
 
+	@ServiceReference(type = CompanyProviderWrapper.class)
+	protected CompanyProvider companyProvider;
 	@ServiceReference(type = EntityCache.class)
 	protected EntityCache entityCache;
 	@ServiceReference(type = FinderCache.class)

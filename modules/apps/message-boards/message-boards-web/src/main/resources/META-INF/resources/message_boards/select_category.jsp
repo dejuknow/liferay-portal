@@ -28,9 +28,9 @@ MBCategoryDisplay categoryDisplay = new MBCategoryDisplayImpl(scopeGroupId, cate
 
 String categoryName = null;
 
-if (category != null) {
-	MBUtil.addPortletBreadcrumbEntries(category, request, renderResponse);
+MBBreadcrumbUtil.addPortletBreadcrumbEntries(category, request, renderResponse);
 
+if (category != null) {
 	categoryName = category.getName();
 }
 else {
@@ -126,7 +126,7 @@ else {
 			data.put("name", categoryName);
 			%>
 
-			<aui:button cssClass="selector-button"  data="<%= data %>" value="choose-this-category" />
+			<aui:button cssClass="selector-button" data="<%= data %>" value="choose-this-category" />
 		</aui:button-row>
 
 		<liferay-ui:search-iterator />

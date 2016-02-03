@@ -182,9 +182,24 @@ public class BlogsEntryServiceWrapper implements BlogsEntryService,
 	}
 
 	@Override
+	public java.util.List<com.liferay.portlet.blogs.model.BlogsEntry> getGroupUserEntries(
+		long groupId, long userId, int[] statuses, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.blogs.model.BlogsEntry> obc) {
+		return _blogsEntryService.getGroupUserEntries(groupId, userId,
+			statuses, start, end, obc);
+	}
+
+	@Override
 	public int getGroupUserEntriesCount(long groupId, long userId, int status) {
 		return _blogsEntryService.getGroupUserEntriesCount(groupId, userId,
 			status);
+	}
+
+	@Override
+	public int getGroupUserEntriesCount(long groupId, long userId,
+		int[] statuses) {
+		return _blogsEntryService.getGroupUserEntriesCount(groupId, userId,
+			statuses);
 	}
 
 	@Override
@@ -292,22 +307,6 @@ public class BlogsEntryServiceWrapper implements BlogsEntryService,
 			displayDateYear, displayDateHour, displayDateMinute,
 			allowPingbacks, allowTrackbacks, trackbacks, coverImageCaption,
 			coverImageImageSelector, smallImageImageSelector, serviceContext);
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
-	 */
-	@Deprecated
-	public BlogsEntryService getWrappedBlogsEntryService() {
-		return _blogsEntryService;
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #setWrappedService}
-	 */
-	@Deprecated
-	public void setWrappedBlogsEntryService(BlogsEntryService blogsEntryService) {
-		_blogsEntryService = blogsEntryService;
 	}
 
 	@Override

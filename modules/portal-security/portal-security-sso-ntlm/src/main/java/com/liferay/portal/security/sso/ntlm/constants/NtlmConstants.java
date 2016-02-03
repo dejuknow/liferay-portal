@@ -15,7 +15,7 @@
 package com.liferay.portal.security.sso.ntlm.constants;
 
 /**
- * @author Mika Koivisto
+ * @author Michael C. Han
  */
 public class NtlmConstants {
 
