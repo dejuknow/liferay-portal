@@ -15,6 +15,10 @@
 package com.liferay.portal.service.permission;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.BaseModelPermissionChecker;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.spring.osgi.OSGiBeanProperties;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Layout;
@@ -26,10 +30,6 @@ import com.liferay.portal.model.ResourceConstants;
 import com.liferay.portal.model.ResourcePermission;
 import com.liferay.portal.model.User;
 import com.liferay.portal.model.impl.VirtualLayout;
-import com.liferay.portal.security.auth.PrincipalException;
-import com.liferay.portal.security.permission.ActionKeys;
-import com.liferay.portal.security.permission.BaseModelPermissionChecker;
-import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.service.GroupLocalServiceUtil;
 import com.liferay.portal.service.LayoutLocalServiceUtil;
 import com.liferay.portal.service.OrganizationLocalServiceUtil;
@@ -38,7 +38,7 @@ import com.liferay.portal.service.ResourcePermissionLocalServiceUtil;
 import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.exportimport.staging.permission.StagingPermissionUtil;
-import com.liferay.portlet.sites.util.SitesUtil;
+import com.liferay.sites.kernel.util.SitesUtil;
 
 import java.util.List;
 
@@ -171,36 +171,6 @@ public class LayoutPermissionImpl
 		return contains(permissionChecker, layout, false, actionId);
 	}
 
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link #contains(PermissionChecker,
-	 *             Layout, boolean, String)}
-	 */
-	@Deprecated
-	@Override
-	public boolean contains(
-			PermissionChecker permissionChecker, Layout layout,
-			String controlPanelCategory, boolean checkViewableGroup,
-			String actionId)
-		throws PortalException {
-
-		return contains(
-			permissionChecker, layout, checkViewableGroup, actionId);
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link #contains(PermissionChecker,
-	 *             Layout, String)}
-	 */
-	@Deprecated
-	@Override
-	public boolean contains(
-			PermissionChecker permissionChecker, Layout layout,
-			String controlPanelCategory, String actionId)
-		throws PortalException {
-
-		return contains(permissionChecker, layout, actionId);
-	}
-
 	@Override
 	public boolean contains(
 			PermissionChecker permissionChecker, long groupId,
@@ -211,22 +181,6 @@ public class LayoutPermissionImpl
 			groupId, privateLayout, layoutId);
 
 		return contains(permissionChecker, layout, actionId);
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link #contains(PermissionChecker,
-	 *             long, boolean, long, String)}
-	 */
-	@Deprecated
-	@Override
-	public boolean contains(
-			PermissionChecker permissionChecker, long groupId,
-			boolean privateLayout, long layoutId, String controlPanelCategory,
-			String actionId)
-		throws PortalException {
-
-		return contains(
-			permissionChecker, groupId, privateLayout, layoutId, actionId);
 	}
 
 	@Override
@@ -364,6 +318,10 @@ public class LayoutPermissionImpl
 
 			if (layout.isPrivateLayout()) {
 				addGuestPermission = false;
+
+				if (group.isUser() || group.isUserGroup()) {
+					addGroupPermission = false;
+				}
 			}
 
 			ResourceLocalServiceUtil.addResources(
@@ -384,39 +342,6 @@ public class LayoutPermissionImpl
 
 		return containsWithoutViewableGroup(
 			permissionChecker, layout, true, actionId);
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link
-	 *             #containsWithoutViewableGroup(PermissionChecker, Layout,
-	 *             boolean, String)}
-	 */
-	@Deprecated
-	@Override
-	public boolean containsWithoutViewableGroup(
-			PermissionChecker permissionChecker, Layout layout,
-			String controlPanelCategory, boolean checkLayoutUpdateable,
-			String actionId)
-		throws PortalException {
-
-		return containsWithoutViewableGroup(
-			permissionChecker, layout, checkLayoutUpdateable, actionId);
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link
-	 *             #containsWithoutViewableGroup(PermissionChecker, Layout,
-	 *             String)}
-	 */
-	@Deprecated
-	@Override
-	public boolean containsWithoutViewableGroup(
-			PermissionChecker permissionChecker, Layout layout,
-			String controlPanelCategory, String actionId)
-		throws PortalException {
-
-		return containsWithoutViewableGroup(
-			permissionChecker, layout, actionId);
 	}
 
 	protected boolean containsWithViewableGroup(

@@ -14,6 +14,7 @@
 
 package com.liferay.poshi.runner.selenium;
 
+import com.liferay.poshi.runner.PoshiRunnerContext;
 import com.liferay.poshi.runner.PoshiRunnerGetterUtil;
 import com.liferay.poshi.runner.exception.PoshiRunnerWarningException;
 import com.liferay.poshi.runner.util.AntCommands;
@@ -30,6 +31,7 @@ import com.liferay.poshi.runner.util.Validator;
 import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 
 import java.io.BufferedReader;
@@ -192,7 +194,7 @@ public class LiferaySeleniumHelper {
 		for (Element eventElement : eventElements) {
 			String level = eventElement.attributeValue("level");
 
-			if (level.equals("ERROR")) {
+			if (level.equals("ERROR") || level.equals("FATAL")) {
 				String timestamp = eventElement.attributeValue("timestamp");
 
 				if (_errorTimestamps.contains(timestamp)) {
@@ -305,7 +307,8 @@ public class LiferaySeleniumHelper {
 	}
 
 	public static void assertLocation(
-		LiferaySelenium liferaySelenium, String pattern) {
+			LiferaySelenium liferaySelenium, String pattern)
+		throws Exception {
 
 		TestCase.assertEquals(pattern, liferaySelenium.getLocation());
 	}
@@ -484,7 +487,8 @@ public class LiferaySeleniumHelper {
 	}
 
 	public static void assertNotLocation(
-		LiferaySelenium liferaySelenium, String pattern) {
+			LiferaySelenium liferaySelenium, String pattern)
+		throws Exception {
 
 		TestCase.assertTrue(
 			Validator.equals(pattern, liferaySelenium.getLocation()));
@@ -497,7 +501,7 @@ public class LiferaySeleniumHelper {
 		liferaySelenium.assertElementPresent(locator);
 
 		if (liferaySelenium.isPartialText(locator, pattern)) {
-			String text = liferaySelenium.getElementText(locator);
+			String text = liferaySelenium.getText(locator);
 
 			throw new Exception(
 				"\"" + text + "\" contains \"" + pattern + "\" at \"" +
@@ -528,7 +532,7 @@ public class LiferaySeleniumHelper {
 		liferaySelenium.assertElementPresent(locator);
 
 		if (liferaySelenium.isText(locator, pattern)) {
-			String text = liferaySelenium.getElementText(locator);
+			String text = liferaySelenium.getText(locator);
 
 			throw new Exception(
 				"Pattern \"" + pattern + "\" matches \"" + text + "\" at \"" +
@@ -582,7 +586,7 @@ public class LiferaySeleniumHelper {
 		liferaySelenium.assertElementPresent(locator);
 
 		if (liferaySelenium.isNotPartialText(locator, pattern)) {
-			String text = liferaySelenium.getElementText(locator);
+			String text = liferaySelenium.getText(locator);
 
 			throw new Exception(
 				"\"" + text + "\" does not contain \"" + pattern + "\" at \"" +
@@ -613,7 +617,7 @@ public class LiferaySeleniumHelper {
 		liferaySelenium.assertElementPresent(locator);
 
 		if (liferaySelenium.isNotText(locator, pattern)) {
-			String text = liferaySelenium.getElementText(locator);
+			String text = liferaySelenium.getText(locator);
 
 			throw new Exception(
 				"Pattern \"" + pattern + "\" does not match \"" + text +
@@ -1064,6 +1068,14 @@ public class LiferaySeleniumHelper {
 		return PropsValues.TCAT_ENABLED;
 	}
 
+	public static boolean isTestName(String testName) {
+		if (testName.equals(PoshiRunnerContext.getTestCaseCommandName())) {
+			return true;
+		}
+
+		return false;
+	}
+
 	public static boolean isTextNotPresent(
 		LiferaySelenium liferaySelenium, String pattern) {
 
@@ -1142,6 +1154,16 @@ public class LiferaySeleniumHelper {
 		captureScreen(
 			_CURRENT_DIR_NAME + "test-results/functional/screenshots/" +
 				"ScreenshotBeforeAction" + _screenshotErrorCount + ".jpg");
+	}
+
+	public static void selectFieldText() {
+		Keyboard keyboard = new DesktopKeyboard();
+
+		keyboard.keyDown(KeyEvent.VK_CONTROL);
+
+		keyboard.type("a");
+
+		keyboard.keyUp(KeyEvent.VK_CONTROL);
 	}
 
 	public static void sendEmail(
@@ -1833,7 +1855,7 @@ public class LiferaySeleniumHelper {
 
 				sb.append("<value><![CDATA[");
 				sb.append(exception.getMessage());
-				sb.append(")]]></value>\n");
+				sb.append("]]></value>\n");
 			}
 		}
 
@@ -1843,7 +1865,7 @@ public class LiferaySeleniumHelper {
 
 				sb.append("<value><![CDATA[");
 				sb.append(exception.getMessage());
-				sb.append(")]]></value>\n");
+				sb.append("]]></value>\n");
 			}
 		}
 

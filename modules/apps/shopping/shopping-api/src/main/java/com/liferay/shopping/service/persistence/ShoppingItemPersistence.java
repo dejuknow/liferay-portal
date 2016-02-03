@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.service.persistence.BasePersistence;
 
+import com.liferay.shopping.exception.NoSuchItemException;
 import com.liferay.shopping.model.ShoppingItem;
 
 /**
@@ -41,14 +42,14 @@ public interface ShoppingItemPersistence extends BasePersistence<ShoppingItem> {
 	 */
 
 	/**
-	* Returns the shopping item where smallImageId = &#63; or throws a {@link com.liferay.shopping.NoSuchItemException} if it could not be found.
+	* Returns the shopping item where smallImageId = &#63; or throws a {@link NoSuchItemException} if it could not be found.
 	*
 	* @param smallImageId the small image ID
 	* @return the matching shopping item
-	* @throws com.liferay.shopping.NoSuchItemException if a matching shopping item could not be found
+	* @throws NoSuchItemException if a matching shopping item could not be found
 	*/
 	public ShoppingItem findBySmallImageId(long smallImageId)
-		throws com.liferay.shopping.exception.NoSuchItemException;
+		throws NoSuchItemException;
 
 	/**
 	* Returns the shopping item where smallImageId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
@@ -75,7 +76,7 @@ public interface ShoppingItemPersistence extends BasePersistence<ShoppingItem> {
 	* @return the shopping item that was removed
 	*/
 	public ShoppingItem removeBySmallImageId(long smallImageId)
-		throws com.liferay.shopping.exception.NoSuchItemException;
+		throws NoSuchItemException;
 
 	/**
 	* Returns the number of shopping items where smallImageId = &#63;.
@@ -86,14 +87,14 @@ public interface ShoppingItemPersistence extends BasePersistence<ShoppingItem> {
 	public int countBySmallImageId(long smallImageId);
 
 	/**
-	* Returns the shopping item where mediumImageId = &#63; or throws a {@link com.liferay.shopping.NoSuchItemException} if it could not be found.
+	* Returns the shopping item where mediumImageId = &#63; or throws a {@link NoSuchItemException} if it could not be found.
 	*
 	* @param mediumImageId the medium image ID
 	* @return the matching shopping item
-	* @throws com.liferay.shopping.NoSuchItemException if a matching shopping item could not be found
+	* @throws NoSuchItemException if a matching shopping item could not be found
 	*/
 	public ShoppingItem findByMediumImageId(long mediumImageId)
-		throws com.liferay.shopping.exception.NoSuchItemException;
+		throws NoSuchItemException;
 
 	/**
 	* Returns the shopping item where mediumImageId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
@@ -120,7 +121,7 @@ public interface ShoppingItemPersistence extends BasePersistence<ShoppingItem> {
 	* @return the shopping item that was removed
 	*/
 	public ShoppingItem removeByMediumImageId(long mediumImageId)
-		throws com.liferay.shopping.exception.NoSuchItemException;
+		throws NoSuchItemException;
 
 	/**
 	* Returns the number of shopping items where mediumImageId = &#63;.
@@ -131,14 +132,14 @@ public interface ShoppingItemPersistence extends BasePersistence<ShoppingItem> {
 	public int countByMediumImageId(long mediumImageId);
 
 	/**
-	* Returns the shopping item where largeImageId = &#63; or throws a {@link com.liferay.shopping.NoSuchItemException} if it could not be found.
+	* Returns the shopping item where largeImageId = &#63; or throws a {@link NoSuchItemException} if it could not be found.
 	*
 	* @param largeImageId the large image ID
 	* @return the matching shopping item
-	* @throws com.liferay.shopping.NoSuchItemException if a matching shopping item could not be found
+	* @throws NoSuchItemException if a matching shopping item could not be found
 	*/
 	public ShoppingItem findByLargeImageId(long largeImageId)
-		throws com.liferay.shopping.exception.NoSuchItemException;
+		throws NoSuchItemException;
 
 	/**
 	* Returns the shopping item where largeImageId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
@@ -165,7 +166,7 @@ public interface ShoppingItemPersistence extends BasePersistence<ShoppingItem> {
 	* @return the shopping item that was removed
 	*/
 	public ShoppingItem removeByLargeImageId(long largeImageId)
-		throws com.liferay.shopping.exception.NoSuchItemException;
+		throws NoSuchItemException;
 
 	/**
 	* Returns the number of shopping items where largeImageId = &#63;.
@@ -245,11 +246,11 @@ public interface ShoppingItemPersistence extends BasePersistence<ShoppingItem> {
 	* @param categoryId the category ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching shopping item
-	* @throws com.liferay.shopping.NoSuchItemException if a matching shopping item could not be found
+	* @throws NoSuchItemException if a matching shopping item could not be found
 	*/
 	public ShoppingItem findByG_C_First(long groupId, long categoryId,
 		com.liferay.portal.kernel.util.OrderByComparator<ShoppingItem> orderByComparator)
-		throws com.liferay.shopping.exception.NoSuchItemException;
+		throws NoSuchItemException;
 
 	/**
 	* Returns the first shopping item in the ordered set where groupId = &#63; and categoryId = &#63;.
@@ -269,11 +270,11 @@ public interface ShoppingItemPersistence extends BasePersistence<ShoppingItem> {
 	* @param categoryId the category ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching shopping item
-	* @throws com.liferay.shopping.NoSuchItemException if a matching shopping item could not be found
+	* @throws NoSuchItemException if a matching shopping item could not be found
 	*/
 	public ShoppingItem findByG_C_Last(long groupId, long categoryId,
 		com.liferay.portal.kernel.util.OrderByComparator<ShoppingItem> orderByComparator)
-		throws com.liferay.shopping.exception.NoSuchItemException;
+		throws NoSuchItemException;
 
 	/**
 	* Returns the last shopping item in the ordered set where groupId = &#63; and categoryId = &#63;.
@@ -294,12 +295,12 @@ public interface ShoppingItemPersistence extends BasePersistence<ShoppingItem> {
 	* @param categoryId the category ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next shopping item
-	* @throws com.liferay.shopping.NoSuchItemException if a shopping item with the primary key could not be found
+	* @throws NoSuchItemException if a shopping item with the primary key could not be found
 	*/
 	public ShoppingItem[] findByG_C_PrevAndNext(long itemId, long groupId,
 		long categoryId,
 		com.liferay.portal.kernel.util.OrderByComparator<ShoppingItem> orderByComparator)
-		throws com.liferay.shopping.exception.NoSuchItemException;
+		throws NoSuchItemException;
 
 	/**
 	* Returns all the shopping items that the user has permission to view where groupId = &#63; and categoryId = &#63;.
@@ -353,12 +354,12 @@ public interface ShoppingItemPersistence extends BasePersistence<ShoppingItem> {
 	* @param categoryId the category ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next shopping item
-	* @throws com.liferay.shopping.NoSuchItemException if a shopping item with the primary key could not be found
+	* @throws NoSuchItemException if a shopping item with the primary key could not be found
 	*/
 	public ShoppingItem[] filterFindByG_C_PrevAndNext(long itemId,
 		long groupId, long categoryId,
 		com.liferay.portal.kernel.util.OrderByComparator<ShoppingItem> orderByComparator)
-		throws com.liferay.shopping.exception.NoSuchItemException;
+		throws NoSuchItemException;
 
 	/**
 	* Removes all the shopping items where groupId = &#63; and categoryId = &#63; from the database.
@@ -387,15 +388,15 @@ public interface ShoppingItemPersistence extends BasePersistence<ShoppingItem> {
 	public int filterCountByG_C(long groupId, long categoryId);
 
 	/**
-	* Returns the shopping item where companyId = &#63; and sku = &#63; or throws a {@link com.liferay.shopping.NoSuchItemException} if it could not be found.
+	* Returns the shopping item where companyId = &#63; and sku = &#63; or throws a {@link NoSuchItemException} if it could not be found.
 	*
 	* @param companyId the company ID
 	* @param sku the sku
 	* @return the matching shopping item
-	* @throws com.liferay.shopping.NoSuchItemException if a matching shopping item could not be found
+	* @throws NoSuchItemException if a matching shopping item could not be found
 	*/
 	public ShoppingItem findByC_S(long companyId, java.lang.String sku)
-		throws com.liferay.shopping.exception.NoSuchItemException;
+		throws NoSuchItemException;
 
 	/**
 	* Returns the shopping item where companyId = &#63; and sku = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
@@ -425,7 +426,7 @@ public interface ShoppingItemPersistence extends BasePersistence<ShoppingItem> {
 	* @return the shopping item that was removed
 	*/
 	public ShoppingItem removeByC_S(long companyId, java.lang.String sku)
-		throws com.liferay.shopping.exception.NoSuchItemException;
+		throws NoSuchItemException;
 
 	/**
 	* Returns the number of shopping items where companyId = &#63; and sku = &#63;.
@@ -463,22 +464,21 @@ public interface ShoppingItemPersistence extends BasePersistence<ShoppingItem> {
 	*
 	* @param itemId the primary key of the shopping item
 	* @return the shopping item that was removed
-	* @throws com.liferay.shopping.NoSuchItemException if a shopping item with the primary key could not be found
+	* @throws NoSuchItemException if a shopping item with the primary key could not be found
 	*/
-	public ShoppingItem remove(long itemId)
-		throws com.liferay.shopping.exception.NoSuchItemException;
+	public ShoppingItem remove(long itemId) throws NoSuchItemException;
 
 	public ShoppingItem updateImpl(ShoppingItem shoppingItem);
 
 	/**
-	* Returns the shopping item with the primary key or throws a {@link com.liferay.shopping.NoSuchItemException} if it could not be found.
+	* Returns the shopping item with the primary key or throws a {@link NoSuchItemException} if it could not be found.
 	*
 	* @param itemId the primary key of the shopping item
 	* @return the shopping item
-	* @throws com.liferay.shopping.NoSuchItemException if a shopping item with the primary key could not be found
+	* @throws NoSuchItemException if a shopping item with the primary key could not be found
 	*/
 	public ShoppingItem findByPrimaryKey(long itemId)
-		throws com.liferay.shopping.exception.NoSuchItemException;
+		throws NoSuchItemException;
 
 	/**
 	* Returns the shopping item with the primary key or returns <code>null</code> if it could not be found.

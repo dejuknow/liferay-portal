@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -28,6 +29,9 @@ import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.taglib.util.IncludeTag;
 import com.liferay.taglib.util.LexiconUtil;
+import com.liferay.taglib.util.TagResourceBundleUtil;
+
+import java.util.ResourceBundle;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -70,17 +74,24 @@ public class UserPortraitTag extends IncludeTag {
 	}
 
 	protected String getUserInitials(User user) {
-		if (Validator.isNull(_userName) && (user != null)) {
+		if (user != null) {
 			return user.getInitials();
 		}
 
 		String userName = _userName;
 
 		if (Validator.isNull(userName)) {
-			userName = LanguageUtil.get(request, "user");
+			ResourceBundle resourceBundle =
+				TagResourceBundleUtil.getResourceBundle(pageContext);
+
+			userName = LanguageUtil.get(resourceBundle, "user");
 		}
 
 		String[] userNames = StringUtil.split(userName, StringPool.SPACE);
+
+		if (userNames.length > 1) {
+			userNames = ArrayUtil.subset(userNames, 0, 2);
+		}
 
 		StringBundler sb = new StringBundler(userNames.length);
 

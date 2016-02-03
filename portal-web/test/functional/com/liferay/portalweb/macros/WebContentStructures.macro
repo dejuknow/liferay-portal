@@ -1,9 +1,7 @@
 <definition>
 	<command name="addCP">
 		<execute function="Click" locator1="Button#PLUS" />
-		<execute function="SelectFrame" />
 
-		<execute function="SelectFrame" locator1="DDMEditStructure#IFRAME" />
 		<execute function="Type#clickAtSendKeys" locator1="TextInput#NAME" value1="${structureName}" />
 
 		<if>
@@ -47,8 +45,6 @@
 
 				<execute function="AssertClick" locator1="DDMSelectStructure#DDM_STRUCTURE_TABLE_CHOOSE_BUTTON" value1="Choose" />
 				<execute function="SelectFrame" value1="relative=top" />
-
-				<execute function="SelectFrame" locator1="DDMEditStructure#IFRAME" />
 			</then>
 		</if>
 
@@ -57,9 +53,7 @@
 
 	<command name="addNullCP">
 		<execute function="Click" locator1="Button#PLUS" />
-		<execute function="SelectFrame" value1="relative=top" />
 
-		<execute function="SelectFrame" locator1="DDMEditStructure#IFRAME" />
 		<execute function="AssertElementNotPresent" locator1="TextInput#REQUIRED_ALERT" />
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
 		<execute function="AssertTextEquals" locator1="Message#ERROR_FIELD_REQUIRED" value1="This field is required." />
@@ -68,10 +62,12 @@
 	</command>
 
 	<command name="addPGViaWCD">
-		<execute function="Click" locator1="WCD#ADD_WEB_CONTENT" />
-		<execute function="AssertClick" locator1="WCD#ADD_BASIC_WEB_CONTENT" value1="Basic Web Content" />
+		<execute macro="WebContentNavigator#gotoAddPGViaWCD" />
 
-		<execute function="SelectFrame" locator1="IFrame#EDIT_ASSET" />
+		<execute macro="Panel#expandPanel">
+			<var name="panelHeading" value="Structure and Template" />
+		</execute>
+
 		<execute function="AssertClick" locator1="Button#SELECT" value1="Select" />
 		<execute function="SelectFrame" />
 
@@ -141,11 +137,13 @@
 			<equals arg1="${webContentHasReference}" arg2="true" />
 			<then>
 				<execute function="Confirm" value1="Are you sure you want to delete this? It will be deleted immediately." />
-				<execute function="AssertTextEquals" locator1="Message#ERROR_1" value1="Your request failed to complete." />
-				<execute function="AssertTextEquals" locator1="Message#ERROR_2" value1="The structure cannot be deleted because it is required by one or more templates." />
+
+				<execute macro="Alert#viewRequestFailedToComplete" />
+
+				<execute function="AssertTextEquals#assertPartialText" locator1="Message#ERROR_2" value1="The structure cannot be deleted because it is required by one or more templates." />
 			</then>
 			<else>
-				<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+				<execute macro="Alert#viewRequestCompletedSuccessMessage" />
 			</else>
 		</if>
 	</command>
@@ -200,13 +198,10 @@
 		<execute function="Type" locator1="NavBar#BASIC_SEARCH_FIELD" value1="${substructureName}" />
 		<execute function="Click" locator1="Icon#BASIC_SEARCH" />
 
-		<var name="key_listEntry" value="${substructureName}" />
+		<var name="key_rowEntry" value="${substructureName}" />
 
-		<execute function="Click" locator1="Icon#LIST_VERTICAL_ELLIPSIS" />
+		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
 		<execute function="AssertClick" locator1="MenuItem#EDIT_DEFAULT_VALUES" value1="Edit Default Values" />
-
-		<execute function="SelectFrameTop" />
-		<execute function="SelectFrame" locator1="DDMSelectStructure#DDM_STRUCTURES_IFRAME" />
 
 		<for list="${editSubstructureFieldNames}" param="structureFieldName">
 			<var name="key_fieldDefaultValue" value="${structureFieldName}" />
@@ -217,47 +212,35 @@
 
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
 
-		<execute function="SelectFrame" value1="relative=top" />
-		<execute function="SelectFrame" locator1="DDMSelectStructure#DDM_STRUCTURES_IFRAME" />
-		<execute function="Click" locator1="Icon#LIST_VERTICAL_ELLIPSIS" />
+		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
 		<execute function="AssertClick" locator1="MenuItem#EDIT_DEFAULT_VALUES" value1="Edit Default Values" />
-
-		<execute function="SelectFrameTop" />
-		<execute function="SelectFrame" locator1="DDMSelectStructure#DDM_STRUCTURES_IFRAME" />
 
 		<for list="${editSubstructureFieldNames}" param="structureFieldName">
 			<var name="key_fieldDefaultValue" value="${structureFieldName}" />
 
 			<execute function="AssertTextEquals" locator1="DDMField#DDM_INPUT" value1="Edited ${structureFieldName} Field" />
 		</for>
-	</command>
 
-	<command name="gotoCP">
-		<execute function="Click" locator1="Icon#HEADER_VERTICAL_ELLIPSIS" />
-		<execute function="AssertClick" locator1="MenuItem#STRUCTURES" value1="Structures" />
-
-		<execute function="SelectFrame" locator1="DDMSelectStructure#DDM_STRUCTURES_IFRAME" />
+		<execute function="SelectFrameTop" />
 	</command>
 
 	<command name="saveCP">
-		<execute macro="DDLDataDefinition#saveCP" />
+		<execute function="AssertClick" locator1="DDMEditStructure#SAVE_BUTTON" value1="Save" />
+
+		<execute macro="Alert#viewRequestCompletedSuccessMessage" />
 
 		<if>
 			<isset var="addRoleViewPermissions" />
 			<then>
-				<execute function="SelectFrame" locator1="IFrame#STRUCTURES" />
+				<var name="key_rowEntry" value="${structureName}" />
 
-				<var name="key_listEntry" value="${structureName}" />
-
-				<execute function="Click" locator1="Icon#LIST_VERTICAL_ELLIPSIS" />
+				<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
 				<execute function="AssertClick" locator1="MenuItem#PERMISSIONS_LEXICON" value1="Permissions" />
 
 				<execute macro="PermissionsInline#addOrRemoveViewPermissionFromAllRoles">
 					<var name="addOrRemoveViewPermission" value="Add" />
 					<var name="roleList" value="${addRoleViewPermissions}" />
 				</execute>
-
-				<execute function="SelectFrameTop" />
 			</then>
 		</if>
 	</command>
@@ -280,7 +263,7 @@
 				<execute function="Check#checkAll" locator1="Checkbox#SELECT_ALL" />
 				<execute function="ClickNoError" locator1="Icon#DELETE" />
 				<execute function="Confirm" value1="Are you sure you want to delete this? It will be deleted immediately." />
-				<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+				<execute macro="Alert#viewRequestCompletedSuccessMessage" />
 			</then>
 		</while>
 
@@ -293,7 +276,7 @@
 				<execute function="Check#checkAll" locator1="Checkbox#SELECT_ALL" />
 				<execute function="ClickNoError" locator1="Icon#DELETE" />
 				<execute function="Confirm" value1="Are you sure you want to delete this? It will be deleted immediately." />
-				<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+				<execute macro="Alert#viewRequestCompletedSuccessMessage" />
 			</then>
 		</while>
 
@@ -318,9 +301,6 @@
 		</if>
 
 		<execute function="AssertClick" locator1="DDMSelectStructure#DDM_STRUCTURE_TABLE_NAME" value1="${structureName}" />
-
-		<execute function="SelectFrameTop" />
-		<execute function="SelectFrame" locator1="DDMSelectStructure#DDM_STRUCTURES_IFRAME" />
 
 		<execute macro="WebContentNavigator#showStructureDetails" />
 

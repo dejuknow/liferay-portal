@@ -21,6 +21,8 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.servlet.ServletResponseUtil;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.ArrayUtil;
@@ -34,8 +36,6 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.model.User;
-import com.liferay.portal.security.permission.ActionKeys;
-import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.service.UserLocalService;
 import com.liferay.portal.service.permission.PortalPermissionUtil;
 import com.liferay.portal.service.permission.PortletPermissionUtil;
@@ -82,6 +82,8 @@ public class ExportUsersMVCActionCommand extends BaseMVCActionCommand {
 		throws Exception {
 
 		try {
+			hideDefaultSuccessMessage(actionRequest);
+
 			String keywords = ParamUtil.getString(actionRequest, "keywords");
 
 			if (Validator.isNotNull(keywords)) {
@@ -275,6 +277,6 @@ public class ExportUsersMVCActionCommand extends BaseMVCActionCommand {
 		_userLocalService = userLocalService;
 	}
 
-	private volatile UserLocalService _userLocalService;
+	private UserLocalService _userLocalService;
 
 }

@@ -14,6 +14,7 @@
 
 package com.liferay.dynamic.data.mapping.service.impl;
 
+import com.liferay.dynamic.data.mapping.background.task.DDMStructureIndexerBackgroundTaskExecutor;
 import com.liferay.dynamic.data.mapping.exception.InvalidStructureVersionException;
 import com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
 import com.liferay.dynamic.data.mapping.exception.RequiredStructureException;
@@ -40,12 +41,14 @@ import com.liferay.dynamic.data.mapping.util.impl.DDMFormTemplateSynchonizer;
 import com.liferay.dynamic.data.mapping.validator.DDMFormValidationException;
 import com.liferay.dynamic.data.mapping.validator.DDMFormValidator;
 import com.liferay.portal.LocaleException;
+import com.liferay.portal.background.task.service.BackgroundTaskLocalService;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.search.DDMStructureIndexer;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
+import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.transaction.TransactionCommitCallbackUtil;
 import com.liferay.portal.kernel.util.Constants;
@@ -60,14 +63,15 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.model.ResourceConstants;
 import com.liferay.portal.model.SystemEventConstants;
 import com.liferay.portal.model.User;
-import com.liferay.portal.security.auth.CompanyThreadLocal;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.permission.ModelPermissions;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 import com.liferay.portal.util.PortalUtil;
 
-import java.util.ArrayList;
+import java.io.Serializable;
+
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -509,9 +513,23 @@ public class DDMStructureLocalServiceImpl
 
 		// Resources
 
+		String resourceName =
+			DDMStructurePermission.getStructureModelResourceName(
+				structure.getClassNameId());
+
 		resourceLocalService.deleteResource(
-			structure.getCompanyId(), DDMStructure.class.getName(),
+			structure.getCompanyId(), resourceName,
 			ResourceConstants.SCOPE_INDIVIDUAL, structure.getStructureId());
+
+		// Background tasks
+
+		String backgroundTaskName =
+			DDMStructureIndexerBackgroundTaskExecutor.getBackgroundTaskName(
+				structure.getStructureId());
+
+		backgroundTaskLocalService.deleteGroupBackgroundTasks(
+			structure.getGroupId(), backgroundTaskName,
+			DDMStructureIndexerBackgroundTaskExecutor.class.getName());
 	}
 
 	/**
@@ -673,6 +691,12 @@ public class DDMStructureLocalServiceImpl
 		}
 
 		return null;
+	}
+
+	@Override
+	public List<DDMStructure> getChildrenStructures(long parentStructureId) {
+		return ddmStructurePersistence.findByParentStructureId(
+			parentStructureId);
 	}
 
 	/**
@@ -1518,48 +1542,9 @@ public class DDMStructureLocalServiceImpl
 
 		// Indexer
 
-		Indexer<?> indexer = IndexerRegistryUtil.nullSafeGetIndexer(
-			structure.getClassName());
-
-		if (indexer instanceof DDMStructureIndexer) {
-			DDMStructureIndexer ddmStructureIndexer =
-				(DDMStructureIndexer)indexer;
-
-			List<Long> ddmStructureIds = getChildrenStructureIds(
-				structure.getGroupId(), structure.getStructureId());
-
-			ddmStructureIndexer.reindexDDMStructures(ddmStructureIds);
-		}
+		reindexStructure(structure, serviceContext);
 
 		return structure;
-	}
-
-	protected void getChildrenStructureIds(
-			List<Long> structureIds, long groupId, long parentStructureId)
-		throws PortalException {
-
-		List<DDMStructure> structures = ddmStructurePersistence.findByG_P(
-			groupId, parentStructureId);
-
-		for (DDMStructure structure : structures) {
-			structureIds.add(structure.getStructureId());
-
-			getChildrenStructureIds(
-				structureIds, structure.getGroupId(),
-				structure.getStructureId());
-		}
-	}
-
-	protected List<Long> getChildrenStructureIds(long groupId, long structureId)
-		throws PortalException {
-
-		List<Long> structureIds = new ArrayList<>();
-
-		getChildrenStructureIds(structureIds, groupId, structureId);
-
-		structureIds.add(0, structureId);
-
-		return structureIds;
 	}
 
 	protected Set<String> getDDMFormFieldsNames(DDMForm ddmForm) {
@@ -1619,6 +1604,31 @@ public class DDMStructureLocalServiceImpl
 		return ddmTemplateLocalService.getTemplates(
 			structure.getGroupId(), classNameId, structure.getStructureId(),
 			type);
+	}
+
+	protected void reindexStructure(
+			DDMStructure structure, ServiceContext serviceContext)
+		throws PortalException {
+
+		Indexer<?> indexer = IndexerRegistryUtil.nullSafeGetIndexer(
+			structure.getClassName());
+
+		if (!(indexer instanceof DDMStructureIndexer)) {
+			return;
+		}
+
+		String backgroundTaskName =
+			DDMStructureIndexerBackgroundTaskExecutor.getBackgroundTaskName(
+				structure.getStructureId());
+
+		Map<String, Serializable> taskContextMap = new HashMap<>();
+
+		taskContextMap.put("structureId", structure.getStructureId());
+
+		backgroundTaskLocalService.addBackgroundTask(
+			structure.getUserId(), structure.getGroupId(), backgroundTaskName,
+			DDMStructureIndexerBackgroundTaskExecutor.class.getName(),
+			taskContextMap, serviceContext);
 	}
 
 	protected void syncStructureTemplatesFields(final DDMStructure structure) {
@@ -1745,6 +1755,9 @@ public class DDMStructureLocalServiceImpl
 			throw le;
 		}
 	}
+
+	@ServiceReference(type = BackgroundTaskLocalService.class)
+	protected BackgroundTaskLocalService backgroundTaskLocalService;
 
 	@ServiceReference(type = DDMFormValidator.class)
 	protected DDMFormValidator ddmFormValidator;

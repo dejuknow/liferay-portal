@@ -19,6 +19,7 @@
 <%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
 
 <%@ taglib uri="http://liferay.com/tld/aui" prefix="aui" %><%@
+taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %><%@
 taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %><%@
 taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %><%@
@@ -38,13 +39,13 @@ page import="com.liferay.portal.kernel.search.Field" %><%@
 page import="com.liferay.portal.kernel.search.FolderSearcher" %><%@
 page import="com.liferay.portal.kernel.search.Hits" %><%@
 page import="com.liferay.portal.kernel.search.HitsOpenSearchImpl" %><%@
+page import="com.liferay.portal.kernel.search.IndexSearcherHelperUtil" %><%@
 page import="com.liferay.portal.kernel.search.Indexer" %><%@
 page import="com.liferay.portal.kernel.search.IndexerRegistryUtil" %><%@
 page import="com.liferay.portal.kernel.search.OpenSearch" %><%@
 page import="com.liferay.portal.kernel.search.QueryConfig" %><%@
 page import="com.liferay.portal.kernel.search.SearchContext" %><%@
 page import="com.liferay.portal.kernel.search.SearchContextFactory" %><%@
-page import="com.liferay.portal.kernel.search.SearchEngineUtil" %><%@
 page import="com.liferay.portal.kernel.search.Summary" %><%@
 page import="com.liferay.portal.kernel.search.facet.AssetEntriesFacet" %><%@
 page import="com.liferay.portal.kernel.search.facet.Facet" %><%@
@@ -54,6 +55,9 @@ page import="com.liferay.portal.kernel.search.facet.collector.TermCollector" %><
 page import="com.liferay.portal.kernel.search.facet.config.FacetConfiguration" %><%@
 page import="com.liferay.portal.kernel.search.highlight.HighlightUtil" %><%@
 page import="com.liferay.portal.kernel.search.suggest.KeywordsSuggestionHolder" %><%@
+page import="com.liferay.portal.kernel.security.permission.ActionKeys" %><%@
+page import="com.liferay.portal.kernel.security.permission.ResourceActionsUtil" %><%@
+page import="com.liferay.portal.kernel.security.permission.comparator.ModelResourceComparator" %><%@
 page import="com.liferay.portal.kernel.util.ArrayUtil" %><%@
 page import="com.liferay.portal.kernel.util.CalendarFactoryUtil" %><%@
 page import="com.liferay.portal.kernel.util.Constants" %><%@
@@ -73,9 +77,6 @@ page import="com.liferay.portal.kernel.util.Validator" %><%@
 page import="com.liferay.portal.kernel.util.WebKeys" %><%@
 page import="com.liferay.portal.kernel.xml.Element" %><%@
 page import="com.liferay.portal.model.Group" %><%@
-page import="com.liferay.portal.security.permission.ActionKeys" %><%@
-page import="com.liferay.portal.security.permission.ResourceActionsUtil" %><%@
-page import="com.liferay.portal.security.permission.comparator.ModelResourceComparator" %><%@
 page import="com.liferay.portal.service.GroupLocalServiceUtil" %><%@
 page import="com.liferay.portal.util.PortalUtil" %><%@
 page import="com.liferay.portlet.PortalPreferences" %><%@
@@ -91,13 +92,13 @@ page import="com.liferay.portlet.asset.service.AssetEntryLocalServiceUtil" %><%@
 page import="com.liferay.portlet.asset.service.permission.AssetCategoryPermission" %><%@
 page import="com.liferay.search.facet.SearchFacet" %><%@
 page import="com.liferay.search.facet.util.SearchFacetTracker" %><%@
+page import="com.liferay.search.facet.util.comparator.SearchFacetComparator" %><%@
 page import="com.liferay.search.web.constants.SearchPortletKeys" %><%@
 page import="com.liferay.search.web.display.context.SearchDisplayContext" %><%@
 page import="com.liferay.search.web.facet.AssetEntriesSearchFacet" %><%@
 page import="com.liferay.taglib.aui.AUIUtil" %><%@
 page import="com.liferay.taglib.search.ResultRow" %><%@
-page import="com.liferay.taglib.servlet.PipingServletResponse" %><%@
-page import="com.liferay.util.PropertyComparator" %>
+page import="com.liferay.taglib.servlet.PipingServletResponse" %>
 
 <%@ page import="java.util.ArrayList" %><%@
 page import="java.util.Calendar" %><%@
@@ -115,17 +116,13 @@ page import="java.util.Map" %>
 page import="javax.portlet.PortletURL" %><%@
 page import="javax.portlet.WindowState" %>
 
-<portlet:defineObjects />
+<liferay-frontend:defineObjects />
 
 <liferay-theme:defineObjects />
 
+<portlet:defineObjects />
+
 <%
-WindowState windowState = liferayPortletRequest.getWindowState();
-
-PortletURL currentURLObj = PortletURLUtil.getCurrent(liferayPortletRequest, liferayPortletResponse);
-
-String currentURL = currentURLObj.toString();
-
 PortalPreferences portalPreferences = PortletPreferencesFactoryUtil.getPortalPreferences(request);
 
 SearchDisplayContext searchDisplayContext = new SearchDisplayContext(request, portletPreferences);

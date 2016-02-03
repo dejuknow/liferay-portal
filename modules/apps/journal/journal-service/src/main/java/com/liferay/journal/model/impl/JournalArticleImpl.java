@@ -36,9 +36,9 @@ import com.liferay.portal.kernel.templateparser.TransformerListener;
 import com.liferay.portal.kernel.util.LocaleThreadLocal;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
-import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.webserver.WebServerServletTokenUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.DocumentException;
@@ -50,13 +50,13 @@ import com.liferay.portal.service.ClassNameLocalServiceUtil;
 import com.liferay.portal.service.ImageLocalServiceUtil;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
-import com.liferay.portal.webserver.WebServerServletTokenUtil;
 import com.liferay.portlet.exportimport.lar.StagedModelType;
 
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * @author Brian Wing Shun Chan
@@ -153,8 +153,11 @@ public class JournalArticleImpl extends JournalArticleBaseImpl {
 
 	@Override
 	public String[] getAvailableLanguageIds() {
-		Set<String> availableLanguageIds = SetUtil.fromArray(
-			super.getAvailableLanguageIds());
+		Set<String> availableLanguageIds = new TreeSet<>();
+
+		for (String availableLanguageId : super.getAvailableLanguageIds()) {
+			availableLanguageIds.add(availableLanguageId);
+		}
 
 		Document document = getDocument();
 
@@ -168,15 +171,6 @@ public class JournalArticleImpl extends JournalArticleBaseImpl {
 
 		return availableLanguageIds.toArray(
 			new String[availableLanguageIds.size()]);
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link #getAvailableLanguageIds}
-	 */
-	@Deprecated
-	@Override
-	public String[] getAvailableLocales() {
-		return getAvailableLanguageIds();
 	}
 
 	@Override
@@ -224,15 +218,6 @@ public class JournalArticleImpl extends JournalArticleBaseImpl {
 		}
 
 		return _defaultLanguageId;
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link #getDefaultLanguageId}
-	 */
-	@Deprecated
-	@Override
-	public String getDefaultLocale() {
-		return getDefaultLanguageId();
 	}
 
 	@Override

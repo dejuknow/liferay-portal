@@ -16,23 +16,30 @@ package com.liferay.portal.search.elasticsearch.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
-import com.liferay.configuration.admin.ConfigurationAdmin;
+import com.liferay.portal.metatype.annotations.ExtendedObjectClassDefinition;
 import com.liferay.portal.search.elasticsearch.connection.OperationMode;
 
 /**
  * @author Michael C. Han
  */
-@ConfigurationAdmin(category = "platform")
+@ExtendedObjectClassDefinition(category = "platform")
 @Meta.OCD(
-	id = "com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfiguration"
+	id = "com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfiguration",
+	localization = "content/Language",
+	name = "%elastic.search.configuration.name"
 )
 public interface ElasticsearchConfiguration {
 
-	@Meta.AD(deflt = "", required = false)
-	public String[] additionalConfigurations();
+	@Meta.AD(description = "%additional-configurations-help", required = false)
+	public String additionalConfigurations();
 
-	@Meta.AD(deflt = "", required = false)
-	public String[] additionalIndexConfigurations();
+	@Meta.AD(
+		description = "%additional-index-configurations-help", required = false
+	)
+	public String additionalIndexConfigurations();
+
+	@Meta.AD(description = "%additional-type-mappings-help", required = false)
+	public String additionalTypeMappings();
 
 	@Meta.AD(deflt = "false", required = false)
 	public boolean bootstrapMlockAll();
@@ -52,8 +59,11 @@ public interface ElasticsearchConfiguration {
 	@Meta.AD(deflt = "9300-9400", required = false)
 	public String discoveryZenPingUnicastHostsPort();
 
-	@Meta.AD(deflt = "", required = false)
-	public String[] httpCORSConfigurations();
+	@Meta.AD(deflt = "/https?:\\/\\/localhost(:[0-9]+)?/", required = false)
+	public String httpCORSAllowOrigin();
+
+	@Meta.AD(description = "%http-cors-configurations-help", required = false)
+	public String httpCORSConfigurations();
 
 	@Meta.AD(deflt = "true", required = false)
 	public boolean httpCORSEnabled();
@@ -62,8 +72,7 @@ public interface ElasticsearchConfiguration {
 	public boolean httpEnabled();
 
 	@Meta.AD(
-		deflt = "true",
-		description = "Set to true to only log exceptions from Elasticsearch and not rethrow them.",
+		deflt = "true", description = "%log-exceptions-only-help",
 		required = false
 	)
 	public boolean logExceptionsOnly();

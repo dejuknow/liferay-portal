@@ -24,6 +24,7 @@ taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %><%@
 taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %><%@
 taglib uri="http://liferay.com/tld/security" prefix="liferay-security" %><%@
 taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
+taglib uri="http://liferay.com/tld/trash" prefix="liferay-trash" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %><%@
 taglib uri="http://liferay.com/tld/util" prefix="liferay-util" %>
 
@@ -34,24 +35,37 @@ page import="com.liferay.document.library.web.display.context.DLDisplayContextPr
 page import="com.liferay.document.library.web.display.context.IGDisplayContextProvider" %><%@
 page import="com.liferay.document.library.web.display.context.logic.DLPortletInstanceSettingsHelper" %><%@
 page import="com.liferay.document.library.web.display.context.logic.DLVisualizationHelper" %><%@
+page import="com.liferay.document.library.web.display.context.logic.UIItemsBuilder" %><%@
 page import="com.liferay.document.library.web.display.context.util.DLRequestHelper" %><%@
 page import="com.liferay.document.library.web.display.context.util.IGRequestHelper" %><%@
+page import="com.liferay.document.library.web.portlet.action.ActionUtil" %><%@
 page import="com.liferay.document.library.web.portlet.action.EditFileEntryMVCActionCommand" %><%@
-page import="com.liferay.document.library.web.portlet.toolbar.item.DLPortletToolbarContributor" %><%@
+page import="com.liferay.document.library.web.portlet.toolbar.contributor.DLPortletToolbarContributor" %><%@
 page import="com.liferay.document.library.web.search.EntriesChecker" %><%@
 page import="com.liferay.document.library.web.search.EntriesMover" %><%@
 page import="com.liferay.document.library.web.settings.internal.DLPortletInstanceSettings" %><%@
 page import="com.liferay.document.library.web.util.DLBreadcrumbUtil" %><%@
 page import="com.liferay.document.library.web.util.DLWebComponentProvider" %><%@
+page import="com.liferay.document.library.web.util.IGUtil" %><%@
+page import="com.liferay.dynamic.data.mapping.kernel.DDMFormValues" %><%@
+page import="com.liferay.dynamic.data.mapping.kernel.DDMStructure" %><%@
+page import="com.liferay.dynamic.data.mapping.kernel.DDMStructureManager" %><%@
+page import="com.liferay.dynamic.data.mapping.kernel.DDMStructureManagerUtil" %><%@
+page import="com.liferay.dynamic.data.mapping.kernel.NoSuchStructureException" %><%@
+page import="com.liferay.dynamic.data.mapping.kernel.StorageFieldRequiredException" %><%@
+page import="com.liferay.dynamic.data.mapping.kernel.StructureDefinitionException" %><%@
+page import="com.liferay.dynamic.data.mapping.kernel.StructureDuplicateElementException" %><%@
+page import="com.liferay.dynamic.data.mapping.kernel.StructureNameException" %><%@
 page import="com.liferay.dynamic.data.mapping.service.DDMStorageLinkLocalServiceUtil" %><%@
 page import="com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil" %><%@
 page import="com.liferay.dynamic.data.mapping.storage.StorageEngineUtil" %><%@
 page import="com.liferay.dynamic.data.mapping.util.DDMBeanTranslatorUtil" %><%@
 page import="com.liferay.dynamic.data.mapping.util.DDMUtil" %><%@
 page import="com.liferay.frontend.taglib.servlet.taglib.AddMenuItem" %><%@
-page import="com.liferay.portal.InvalidRepositoryException" %><%@
-page import="com.liferay.portal.NoSuchRepositoryException" %><%@
-page import="com.liferay.portal.NoSuchWorkflowDefinitionLinkException" %><%@
+page import="com.liferay.image.gallery.display.kernel.display.context.IGViewFileVersionDisplayContext" %><%@
+page import="com.liferay.portal.exception.InvalidRepositoryException" %><%@
+page import="com.liferay.portal.exception.NoSuchRepositoryException" %><%@
+page import="com.liferay.portal.exception.NoSuchWorkflowDefinitionLinkException" %><%@
 page import="com.liferay.portal.kernel.bean.BeanParamUtil" %><%@
 page import="com.liferay.portal.kernel.bean.BeanPropertiesUtil" %><%@
 page import="com.liferay.portal.kernel.dao.orm.QueryUtil" %><%@
@@ -89,7 +103,10 @@ page import="com.liferay.portal.kernel.search.SearchResult" %><%@
 page import="com.liferay.portal.kernel.search.SearchResultUtil" %><%@
 page import="com.liferay.portal.kernel.search.Sort" %><%@
 page import="com.liferay.portal.kernel.search.Summary" %><%@
+page import="com.liferay.portal.kernel.security.auth.PrincipalException" %><%@
+page import="com.liferay.portal.kernel.security.permission.ActionKeys" %><%@
 page import="com.liferay.portal.kernel.servlet.BrowserSnifferUtil" %><%@
+page import="com.liferay.portal.kernel.servlet.taglib.ui.JavaScriptMenuItem" %><%@
 page import="com.liferay.portal.kernel.servlet.taglib.ui.Menu" %><%@
 page import="com.liferay.portal.kernel.servlet.taglib.ui.MenuItem" %><%@
 page import="com.liferay.portal.kernel.servlet.taglib.ui.ToolbarItem" %><%@
@@ -132,8 +149,6 @@ page import="com.liferay.portal.model.User" %><%@
 page import="com.liferay.portal.model.WorkflowDefinitionLink" %><%@
 page import="com.liferay.portal.repository.registry.RepositoryClassDefinition" %><%@
 page import="com.liferay.portal.repository.registry.RepositoryClassDefinitionCatalogUtil" %><%@
-page import="com.liferay.portal.security.auth.PrincipalException" %><%@
-page import="com.liferay.portal.security.permission.ActionKeys" %><%@
 page import="com.liferay.portal.service.GroupLocalServiceUtil" %><%@
 page import="com.liferay.portal.service.GroupServiceUtil" %><%@
 page import="com.liferay.portal.service.PortletPreferencesLocalServiceUtil" %><%@
@@ -149,7 +164,6 @@ page import="com.liferay.portal.util.PropsValues" %><%@
 page import="com.liferay.portlet.PortalPreferences" %><%@
 page import="com.liferay.portlet.PortletPreferencesFactoryUtil" %><%@
 page import="com.liferay.portlet.PortletURLFactoryUtil" %><%@
-page import="com.liferay.portlet.PortletURLUtil" %><%@
 page import="com.liferay.portlet.asset.AssetRendererFactoryRegistryUtil" %><%@
 page import="com.liferay.portlet.asset.model.AssetEntry" %><%@
 page import="com.liferay.portlet.asset.model.AssetRenderer" %><%@
@@ -160,30 +174,31 @@ page import="com.liferay.portlet.asset.service.AssetTagServiceUtil" %><%@
 page import="com.liferay.portlet.asset.service.persistence.AssetEntryQuery" %><%@
 page import="com.liferay.portlet.asset.util.AssetUtil" %><%@
 page import="com.liferay.portlet.documentlibrary.DLGroupServiceSettings" %><%@
-page import="com.liferay.portlet.documentlibrary.DuplicateFileEntryException" %><%@
-page import="com.liferay.portlet.documentlibrary.DuplicateFileEntryTypeException" %><%@
-page import="com.liferay.portlet.documentlibrary.DuplicateFolderNameException" %><%@
-page import="com.liferay.portlet.documentlibrary.DuplicateRepositoryNameException" %><%@
-page import="com.liferay.portlet.documentlibrary.FileExtensionException" %><%@
-page import="com.liferay.portlet.documentlibrary.FileMimeTypeException" %><%@
-page import="com.liferay.portlet.documentlibrary.FileNameException" %><%@
-page import="com.liferay.portlet.documentlibrary.FileShortcutPermissionException" %><%@
-page import="com.liferay.portlet.documentlibrary.FileSizeException" %><%@
-page import="com.liferay.portlet.documentlibrary.FolderNameException" %><%@
-page import="com.liferay.portlet.documentlibrary.InvalidFileVersionException" %><%@
-page import="com.liferay.portlet.documentlibrary.InvalidFolderException" %><%@
-page import="com.liferay.portlet.documentlibrary.NoSuchFileEntryException" %><%@
-page import="com.liferay.portlet.documentlibrary.NoSuchFileException" %><%@
-page import="com.liferay.portlet.documentlibrary.NoSuchFolderException" %><%@
-page import="com.liferay.portlet.documentlibrary.NoSuchMetadataSetException" %><%@
-page import="com.liferay.portlet.documentlibrary.RepositoryNameException" %><%@
-page import="com.liferay.portlet.documentlibrary.RequiredFileEntryTypeException" %><%@
-page import="com.liferay.portlet.documentlibrary.SourceFileNameException" %><%@
 page import="com.liferay.portlet.documentlibrary.antivirus.AntivirusScannerException" %><%@
 page import="com.liferay.portlet.documentlibrary.constants.DLConstants" %><%@
 page import="com.liferay.portlet.documentlibrary.display.context.DLEditFileEntryDisplayContext" %><%@
 page import="com.liferay.portlet.documentlibrary.display.context.DLFilePicker" %><%@
 page import="com.liferay.portlet.documentlibrary.display.context.DLViewFileVersionDisplayContext" %><%@
+page import="com.liferay.portlet.documentlibrary.exception.DuplicateFileEntryException" %><%@
+page import="com.liferay.portlet.documentlibrary.exception.DuplicateFileEntryTypeException" %><%@
+page import="com.liferay.portlet.documentlibrary.exception.DuplicateFolderNameException" %><%@
+page import="com.liferay.portlet.documentlibrary.exception.DuplicateRepositoryNameException" %><%@
+page import="com.liferay.portlet.documentlibrary.exception.FileEntryLockException" %><%@
+page import="com.liferay.portlet.documentlibrary.exception.FileExtensionException" %><%@
+page import="com.liferay.portlet.documentlibrary.exception.FileMimeTypeException" %><%@
+page import="com.liferay.portlet.documentlibrary.exception.FileNameException" %><%@
+page import="com.liferay.portlet.documentlibrary.exception.FileShortcutPermissionException" %><%@
+page import="com.liferay.portlet.documentlibrary.exception.FileSizeException" %><%@
+page import="com.liferay.portlet.documentlibrary.exception.FolderNameException" %><%@
+page import="com.liferay.portlet.documentlibrary.exception.InvalidFileVersionException" %><%@
+page import="com.liferay.portlet.documentlibrary.exception.InvalidFolderException" %><%@
+page import="com.liferay.portlet.documentlibrary.exception.NoSuchFileEntryException" %><%@
+page import="com.liferay.portlet.documentlibrary.exception.NoSuchFileException" %><%@
+page import="com.liferay.portlet.documentlibrary.exception.NoSuchFolderException" %><%@
+page import="com.liferay.portlet.documentlibrary.exception.NoSuchMetadataSetException" %><%@
+page import="com.liferay.portlet.documentlibrary.exception.RepositoryNameException" %><%@
+page import="com.liferay.portlet.documentlibrary.exception.RequiredFileEntryTypeException" %><%@
+page import="com.liferay.portlet.documentlibrary.exception.SourceFileNameException" %><%@
 page import="com.liferay.portlet.documentlibrary.model.DLFileEntry" %><%@
 page import="com.liferay.portlet.documentlibrary.model.DLFileEntryConstants" %><%@
 page import="com.liferay.portlet.documentlibrary.model.DLFileEntryMetadata" %><%@
@@ -212,17 +227,6 @@ page import="com.liferay.portlet.documentlibrary.util.PDFProcessorUtil" %><%@
 page import="com.liferay.portlet.documentlibrary.util.RawMetadataProcessor" %><%@
 page import="com.liferay.portlet.documentlibrary.util.VideoProcessorUtil" %><%@
 page import="com.liferay.portlet.documentlibrary.util.comparator.RepositoryModelModifiedDateComparator" %><%@
-page import="com.liferay.portlet.dynamicdatamapping.DDMFormValues" %><%@
-page import="com.liferay.portlet.dynamicdatamapping.DDMStructure" %><%@
-page import="com.liferay.portlet.dynamicdatamapping.DDMStructureManager" %><%@
-page import="com.liferay.portlet.dynamicdatamapping.DDMStructureManagerUtil" %><%@
-page import="com.liferay.portlet.dynamicdatamapping.NoSuchStructureException" %><%@
-page import="com.liferay.portlet.dynamicdatamapping.StorageFieldRequiredException" %><%@
-page import="com.liferay.portlet.dynamicdatamapping.StructureDefinitionException" %><%@
-page import="com.liferay.portlet.dynamicdatamapping.StructureDuplicateElementException" %><%@
-page import="com.liferay.portlet.dynamicdatamapping.StructureNameException" %><%@
-page import="com.liferay.portlet.imagegallerydisplay.display.context.IGViewFileVersionDisplayContext" %><%@
-page import="com.liferay.portlet.imagegallerydisplay.util.IGUtil" %><%@
 page import="com.liferay.portlet.trash.model.TrashEntry" %><%@
 page import="com.liferay.portlet.trash.util.TrashUtil" %><%@
 page import="com.liferay.portlet.usersadmin.search.GroupSearch" %><%@
@@ -236,6 +240,7 @@ page import="com.liferay.taglib.util.PortalIncludeUtil" %>
 page import="java.text.Format" %>
 
 <%@ page import="java.util.ArrayList" %><%@
+page import="java.util.Arrays" %><%@
 page import="java.util.Date" %><%@
 page import="java.util.HashMap" %><%@
 page import="java.util.LinkedHashMap" %><%@
@@ -246,17 +251,13 @@ page import="java.util.Map" %>
 page import="javax.portlet.PortletURL" %><%@
 page import="javax.portlet.WindowState" %>
 
-<portlet:defineObjects />
+<liferay-frontend:defineObjects />
 
 <liferay-theme:defineObjects />
 
+<portlet:defineObjects />
+
 <%
-WindowState windowState = liferayPortletRequest.getWindowState();
-
-PortletURL currentURLObj = PortletURLUtil.getCurrent(liferayPortletRequest, liferayPortletResponse);
-
-String currentURL = currentURLObj.toString();
-
 DLWebComponentProvider dlWebComponentProvider = DLWebComponentProvider.getDLWebComponentProvider();
 
 DLDisplayContextProvider dlDisplayContextProvider = dlWebComponentProvider.getDLDisplayContextProvider();

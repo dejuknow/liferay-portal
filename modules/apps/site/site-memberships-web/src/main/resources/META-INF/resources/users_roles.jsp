@@ -43,7 +43,7 @@ roleSearch.setResults(roles);
 %>
 
 <aui:nav-bar cssClass="collapse-basic-search" markupView="lexicon">
-	<c:if test="<%= rolesCount > 0 %>">
+	<c:if test="<%= (rolesCount > 0) || searchTerms.isSearch() %>">
 		<aui:nav-bar-search>
 			<aui:form action="<%= portletURL.toString() %>" name="searchFm">
 				<liferay-ui:input-search autoFocus="<%= windowState.equals(WindowState.MAXIMIZED) %>" markupView="lexicon" />
@@ -52,27 +52,26 @@ roleSearch.setResults(roles);
 	</c:if>
 </aui:nav-bar>
 
-<c:if test="<%= rolesCount > 0 %>">
-	<liferay-frontend:management-bar
-		includeCheckBox="<%= true %>"
-		searchContainerId="userGroupRoleRole"
-	>
-		<liferay-frontend:management-bar-filters>
-			<liferay-frontend:management-bar-navigation
-				navigationKeys='<%= new String[] {"all"} %>'
-				portletURL="<%= PortletURLUtil.clone(portletURL, renderResponse) %>"
-			/>
-		</liferay-frontend:management-bar-filters>
+<liferay-frontend:management-bar
+	disabled="<%= rolesCount <= 0 %>"
+	includeCheckBox="<%= true %>"
+	searchContainerId="userGroupRoleRole"
+>
+	<liferay-frontend:management-bar-filters>
+		<liferay-frontend:management-bar-navigation
+			navigationKeys='<%= new String[] {"all"} %>'
+			portletURL="<%= PortletURLUtil.clone(portletURL, renderResponse) %>"
+		/>
+	</liferay-frontend:management-bar-filters>
 
-		<liferay-frontend:management-bar-buttons>
-			<liferay-frontend:management-bar-display-buttons
-				displayViews='<%= new String[] {"list"} %>'
-				portletURL="<%= PortletURLUtil.clone(portletURL, renderResponse) %>"
-				selectedDisplayStyle="<%= displayStyle %>"
-			/>
-		</liferay-frontend:management-bar-buttons>
-	</liferay-frontend:management-bar>
-</c:if>
+	<liferay-frontend:management-bar-buttons>
+		<liferay-frontend:management-bar-display-buttons
+			displayViews='<%= new String[] {"list"} %>'
+			portletURL="<%= PortletURLUtil.clone(portletURL, renderResponse) %>"
+			selectedDisplayStyle="<%= displayStyle %>"
+		/>
+	</liferay-frontend:management-bar-buttons>
+</liferay-frontend:management-bar>
 
 <aui:form cssClass="container-fluid-1280" name="fm">
 	<liferay-ui:membership-policy-error />
@@ -88,14 +87,10 @@ roleSearch.setResults(roles);
 			modelVar="role"
 		>
 			<liferay-ui:search-container-column-text
+				cssClass="text-strong"
 				name="title"
-			>
-				<liferay-ui:icon
-					iconCssClass="<%= RolesAdminUtil.getIconCssClass(role) %>"
-					label="<%= true %>"
-					message="<%= HtmlUtil.escape(role.getTitle(locale)) %>"
-				/>
-			</liferay-ui:search-container-column-text>
+				value="<%= HtmlUtil.escape(role.getTitle(locale)) %>"
+			/>
 
 			<liferay-ui:search-container-column-text
 				name="type"
@@ -112,29 +107,18 @@ roleSearch.setResults(roles);
 	</liferay-ui:search-container>
 </aui:form>
 
-<aui:script>
-	$('input[name="<portlet:namespace />rowIds"]').on(
-		'change',
+<aui:script use="liferay-search-container">
+	var searchContainer = Liferay.SearchContainer.get('<portlet:namespace />userGroupRoleRole');
+
+	searchContainer.on(
+		'rowToggled',
 		function(event) {
-			<portlet:namespace />updateUserGroupRole();
+			Liferay.Util.getOpener().Liferay.fire(
+				'<%= HtmlUtil.escapeJS(eventName) %>',
+				{
+					data: event.elements.allSelectedElements.getDOMNodes()
+				}
+			);
 		}
 	);
-
-	function <portlet:namespace />updateUserGroupRole() {
-		var Util = Liferay.Util;
-
-		var form = AUI.$(document.<portlet:namespace />fm);
-
-		var values = {
-			data: {
-				addRoleIds: Util.listCheckedExcept(form, '<portlet:namespace />allRowIds'),
-				removeRoleIds: Util.listUncheckedExcept(form, '<portlet:namespace />allRowIds'),
-				selUserId: <%= siteMembershipsDisplayContext.getUserId() %>
-			}
-		};
-
-		Util.getOpener().Liferay.fire('<%= HtmlUtil.escapeJS(eventName) %>', values);
-	}
-
-	<portlet:namespace />updateUserGroupRole();
 </aui:script>

@@ -58,6 +58,13 @@ public class BookmarksPortletDataHandler extends BasePortletDataHandler {
 
 	public static final String NAMESPACE = "bookmarks";
 
+	public static final String SCHEMA_VERSION = "1.0.0";
+
+	@Override
+	public String getSchemaVersion() {
+		return SCHEMA_VERSION;
+	}
+
 	@Activate
 	protected void activate() {
 		setDataPortletPreferences("rootFolderId");
@@ -210,9 +217,9 @@ public class BookmarksPortletDataHandler extends BasePortletDataHandler {
 		ModuleServiceLifecycle moduleServiceLifecycle) {
 	}
 
-	private volatile StagedModelRepository<BookmarksEntry>
+	private StagedModelRepository<BookmarksEntry>
 		_bookmarksEntryStagedModelRepository;
-	private volatile StagedModelRepository<BookmarksFolder>
+	private StagedModelRepository<BookmarksFolder>
 		_bookmarksFolderStagedModelRepository;
 
 }

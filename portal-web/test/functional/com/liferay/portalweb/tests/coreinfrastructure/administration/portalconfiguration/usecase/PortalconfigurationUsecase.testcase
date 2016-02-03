@@ -2,14 +2,7 @@
 	<property name="testray.main.component.name" value="Portal Instances" />
 
 	<set-up>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="SignIn#signInPortalInstanceSetUp" />
-			</then>
-		</if>
+		<execute macro="TestCase#setUpPortalInstance" />
 
 		<execute macro="User#firstLoginPG" />
 	</set-up>
@@ -31,8 +24,8 @@
 	</tear-down>
 
 	<command name="AddPortalInstance" priority="5">
-		<execute macro="ProductMenu#gotoControlPanelSystem">
-			<var name="portlet" value="Portal Instances" />
+		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+			<var name="portlet" value="Instances" />
 		</execute>
 
 		<execute macro="PortalInstances#addCP">
@@ -49,22 +42,26 @@
 	<command name="DefaultPortalLandingPage" priority="5">
 		<property name="portal.acceptance" value="true" />
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Portal Settings" />
+		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+			<var name="portlet" value="Instance Settings" />
 		</execute>
 
 		<execute macro="PortalSettings#editDefaultLandingPageCP">
 			<var name="defaultLandingPage" value="/web/guest/landing" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Sites" />
+		<execute macro="ProductMenu#gotoControlPanelSites">
+			<var name="portlet" value="Sites" />
 		</execute>
 
-		<execute macro="SitePage#addCP">
+		<execute macro="TestCase#getDefaultSiteName">
+			<return from="defaultSiteName" name="defaultSiteName" />
+		</execute>
+
+		<execute macro="Page#add">
 			<var name="page" value="Public Pages" />
-			<var name="siteName" value="Liferay" />
-			<var name="sitePageName" value="landing" />
+			<var name="pageName" value="landing" />
+			<var name="siteName" value="${defaultSiteName}" />
 		</execute>
 
 		<execute macro="User#logoutPG" />
@@ -74,12 +71,14 @@
 			<var name="userEmailAddress" value="test@liferay.com" />
 		</execute>
 
-		<execute function="AssertLocation" value1="http://localhost:8080/web/guest/landing" />
+		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
+
+		<execute function="AssertLocation" value1="${portalURL}/web/guest/landing" />
 	</command>
 
 	<command name="DeletePortalInstance" priority="5">
-		<execute macro="ProductMenu#gotoControlPanelSystem">
-			<var name="portlet" value="Portal Instances" />
+		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+			<var name="portlet" value="Instances" />
 		</execute>
 
 		<execute macro="PortalInstances#addCP">
@@ -94,8 +93,8 @@
 	</command>
 
 	<command name="PermissionCheckPortalInstances" priority="4">
-		<execute macro="ProductMenu#gotoControlPanelSystem">
-			<var name="portlet" value="Portal Instances" />
+		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+			<var name="portlet" value="Instances" />
 		</execute>
 
 		<execute macro="PortalInstances#addCP">
@@ -116,9 +115,12 @@
 			<var name="virtualHostsURL" value="http://www.able.com:8080" />
 		</execute>
 
-		<execute macro="Page#gotoContentCP">
-			<var name="portletName" value="Documents and Media" />
-			<var name="virtualHostsURL" value="http://www.able.com:8080" />
+		<execute macro="Navigator#openSpecificURL">
+			<var name="url" value="http://www.able.com:8080" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoSitesContent">
+			<var name="portlet" value="Documents and Media" />
 		</execute>
 
 		<execute macro="DMDocument#addCP">
@@ -149,13 +151,14 @@
 			<var name="virtualHostsURL" value="${otherInstanceAccessAttempt}" />
 		</execute>
 
-		<execute function="AssertTextEquals" locator1="Message#ERROR_1" value1="Your request failed to complete." />
-		<execute function="AssertTextEquals" locator1="Message#ERROR_2" value1="You do not have the required permissions." />
+		<execute macro="Alert#viewRequestFailedToComplete" />
+
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#ERROR_2" value1="You do not have the required permissions." />
 	</command>
 
 	<command name="ViewDeactivatedPortalInstance" priority="5">
-		<execute macro="ProductMenu#gotoControlPanelSystem">
-			<var name="portlet" value="Portal Instances" />
+		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+			<var name="portlet" value="Instances" />
 		</execute>
 
 		<execute macro="PortalInstances#addCP">
@@ -164,9 +167,9 @@
 			<var name="webId" value="www.able.com" />
 		</execute>
 
-		<execute macro="Page#openURL" />
+		<execute macro="Navigator#openURL" />
 
-		<execute macro="Page#addPG">
+		<execute macro="Page#add">
 			<var name="pageName" value="Blogs Page" />
 		</execute>
 
@@ -178,7 +181,7 @@
 			<var name="portletName" value="Blogs" />
 		</execute>
 
-		<execute macro="Page#addPG">
+		<execute macro="Page#add">
 			<var name="pageName" value="Wiki Page" />
 		</execute>
 
@@ -190,7 +193,7 @@
 			<var name="portletName" value="Wiki" />
 		</execute>
 
-		<execute macro="Page#addPG">
+		<execute macro="Page#add">
 			<var name="pageName" value="Language Page" />
 		</execute>
 
@@ -199,7 +202,7 @@
 		</execute>
 
 		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Language" />
+			<var name="portletName" value="Language Selector" />
 		</execute>
 
 		<execute macro="User#logoutPG" />
@@ -222,9 +225,12 @@
 			<var name="pageName" value="Language Page" />
 		</execute>
 
-		<execute macro="Page#addPG">
+		<execute macro="Navigator#openSpecificURL">
+			<var name="url" value="http://www.able.com:8080" />
+		</execute>
+
+		<execute macro="Page#add">
 			<var name="pageName" value="Web Content Page" />
-			<var name="virtualHostsURL" value="http://www.able.com:8080" />
 		</execute>
 
 		<execute macro="Page#gotoPG">
@@ -249,8 +255,8 @@
 
 		<execute macro="User#loginPG" />
 
-		<execute macro="ProductMenu#gotoControlPanelSystem">
-			<var name="portlet" value="Portal Instances" />
+		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+			<var name="portlet" value="Instances" />
 		</execute>
 
 		<execute macro="PortalInstances#deactivatePortalInstance">
@@ -265,16 +271,20 @@
 	</command>
 
 	<command name="ViewVirtualHostPrivateSitePage" priority="4">
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Portal Settings" />
+		<property name="custom.properties" value="virtual.hosts.valid.hosts=localhost,127.0.0.1,www.able.com,www.baker.com,www.charlie.com" />
+
+		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+			<var name="portlet" value="Instance Settings" />
 		</execute>
 
 		<execute macro="PortalSettings#editVirtualHostCP">
 			<var name="virtualHostName" value="www.able.com" />
 		</execute>
 
-		<execute macro="Page#gotoConfigurationCP">
-			<var name="portletName" value="Site Settings" />
+		<execute macro="Navigator#openURL" />
+
+		<execute macro="ProductMenu#gotoSitesConfiguration">
+			<var name="portlet" value="Site Settings" />
 		</execute>
 
 		<execute macro="Site#addVirtualHostsURLCP">
@@ -282,8 +292,10 @@
 			<var name="publicVirtualHosts" value="${publicPageVirtualHostURL}" />
 		</execute>
 
-		<execute macro="Page#gotoConfigurationCP">
-			<var name="portletName" value="Site Settings" />
+		<execute macro="Navigator#openURL" />
+
+		<execute macro="ProductMenu#gotoSitesConfiguration">
+			<var name="portlet" value="Site Settings" />
 		</execute>
 
 		<execute macro="Site#addVirtualHostsURLCP">
@@ -291,19 +303,23 @@
 			<var name="privateVirtualHosts" value="${privatePageVirtualHostURL}" />
 		</execute>
 
-		<execute macro="Page#gotoPagesCP">
-			<var name="portletName" value="Site Pages" />
+		<execute macro="ProductMenu#gotoControlPanelSites">
+			<var name="portlet" value="Sites" />
 		</execute>
 
-		<execute macro="SitePage#addCP">
+		<execute macro="Page#add">
 			<var name="page" value="Public Pages" />
-			<var name="sitePageName" value="Public Page" />
+			<var name="pageName" value="Public Page" />
 			<var name="siteScopeSelected" value="true" />
 		</execute>
 
-		<execute macro="SitePage#addCP">
+		<execute macro="ProductMenu#gotoControlPanelSites">
+			<var name="portlet" value="Sites" />
+		</execute>
+
+		<execute macro="Page#add">
 			<var name="page" value="Private Pages" />
-			<var name="sitePageName" value="Private Page" />
+			<var name="pageName" value="Private Page" />
 			<var name="siteScopeSelected" value="true" />
 		</execute>
 
@@ -311,19 +327,19 @@
 			<var name="virtualHostsURL" value="http://www.charlie.com:8080" />
 		</execute>
 
-		<execute function="AssertHTMLSourceTextPresent" locator1="http://www.charlie.com:8080" />
+		<var name="key_pageName" value="Welcome" />
+
+		<execute function="AssertElementPresent" locator1="Home#PAGE" value1="Welcome" />
 
 		<execute macro="User#loginUserPG">
 			<var name="password" value="test" />
-			<var name="siteNameURL" value="${virtualHostsURL}" />
 			<var name="userEmailAddress" value="test@liferay.com" />
-			<var name="virtualHostsURL" value="http://www.charlie.com:8080" />
+			<var name="virtualHostsURL" value="http://www.charlie.com:8080/group/guest" />
 		</execute>
 
 		<var name="key_pageName" value="Private Page" />
 
 		<execute function="AssertTextEquals" locator1="Home#PAGE" value1="Private Page" />
-		<execute function="AssertHTMLSourceTextPresent" value1="http://www.charlie.com:8080" />
 
 		<execute macro="User#logoutPG" />
 

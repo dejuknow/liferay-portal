@@ -16,24 +16,26 @@ package com.liferay.dynamic.data.lists.form.web.portlet.configuration.icon;
 
 import com.liferay.dynamic.data.lists.service.permission.DDLRecordSetPermission;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.portlet.configuration.icon.BasePortletConfigurationIcon;
+import com.liferay.portal.kernel.portlet.configuration.icon.BaseJSPPortletConfigurationIcon;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.model.User;
-import com.liferay.portal.security.permission.ActionKeys;
-import com.liferay.portal.theme.PortletDisplay;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.portlet.PortletRequest;
+
+import javax.servlet.ServletContext;
 
 /**
  * @author Rafael Praxedes
  */
 public class ExportDDLRecordSetPortletConfigurationIcon
-	extends BasePortletConfigurationIcon {
+	extends BaseJSPPortletConfigurationIcon {
 
 	public ExportDDLRecordSetPortletConfigurationIcon(
-		HttpServletRequest request) {
+		ServletContext servletContext, String jspPath,
+		PortletRequest portletRequest) {
 
-		super(request);
+		super(servletContext, jspPath, portletRequest);
 	}
 
 	@Override
@@ -48,10 +50,7 @@ public class ExportDDLRecordSetPortletConfigurationIcon
 
 	@Override
 	public boolean isShow() {
-		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
-
-		long recordSetId = ParamUtil.getLong(
-			request, portletDisplay.getNamespace() + "recordSetId");
+		long recordSetId = ParamUtil.getLong(portletRequest, "recordSetId");
 
 		if (recordSetId == 0) {
 			return false;

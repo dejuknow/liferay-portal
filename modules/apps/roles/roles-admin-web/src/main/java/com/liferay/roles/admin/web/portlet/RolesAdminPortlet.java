@@ -19,13 +19,17 @@ import com.liferay.application.list.PanelCategoryRegistry;
 import com.liferay.application.list.constants.ApplicationListWebKeys;
 import com.liferay.application.list.constants.PanelCategoryKeys;
 import com.liferay.application.list.display.context.logic.PanelCategoryHelper;
-import com.liferay.portal.DuplicateRoleException;
-import com.liferay.portal.NoSuchRoleException;
-import com.liferay.portal.RequiredRoleException;
-import com.liferay.portal.RoleAssignmentException;
-import com.liferay.portal.RoleNameException;
-import com.liferay.portal.RolePermissionsException;
+import com.liferay.portal.exception.DuplicateRoleException;
+import com.liferay.portal.exception.NoSuchRoleException;
+import com.liferay.portal.exception.RequiredRoleException;
+import com.liferay.portal.exception.RoleAssignmentException;
+import com.liferay.portal.exception.RoleNameException;
+import com.liferay.portal.exception.RolePermissionsException;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
+import com.liferay.portal.kernel.security.permission.comparator.ActionComparator;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.ArrayUtil;
@@ -41,10 +45,6 @@ import com.liferay.portal.model.GroupConstants;
 import com.liferay.portal.model.ResourceConstants;
 import com.liferay.portal.model.Role;
 import com.liferay.portal.model.RoleConstants;
-import com.liferay.portal.security.auth.PrincipalException;
-import com.liferay.portal.security.permission.ActionKeys;
-import com.liferay.portal.security.permission.ResourceActionsUtil;
-import com.liferay.portal.security.permission.comparator.ActionComparator;
 import com.liferay.portal.service.GroupService;
 import com.liferay.portal.service.ResourceBlockLocalService;
 import com.liferay.portal.service.ResourceBlockService;
@@ -173,6 +173,18 @@ public class RolesAdminPortlet extends MVCPortlet {
 		long roleId = ParamUtil.getLong(actionRequest, "roleId");
 
 		_roleService.deleteRole(roleId);
+	}
+
+	public void deleteRoles(
+			ActionRequest actionRequest, ActionResponse actionResponse)
+		throws Exception {
+
+		long[] deleteRoleIds = StringUtil.split(
+			ParamUtil.getString(actionRequest, "deleteRoleIds"), 0L);
+
+		for (long roleId : deleteRoleIds) {
+			_roleService.deleteRole(roleId);
+		}
 	}
 
 	public Role editRole(
@@ -662,14 +674,14 @@ public class RolesAdminPortlet extends MVCPortlet {
 		}
 	}
 
-	private volatile GroupService _groupService;
-	private volatile PanelAppRegistry _panelAppRegistry;
-	private volatile PanelCategoryRegistry _panelCategoryRegistry;
-	private volatile ResourceBlockLocalService _resourceBlockLocalService;
-	private volatile ResourceBlockService _resourceBlockService;
-	private volatile ResourcePermissionService _resourcePermissionService;
-	private volatile RoleLocalService _roleLocalService;
-	private volatile RoleService _roleService;
-	private volatile UserService _userService;
+	private GroupService _groupService;
+	private PanelAppRegistry _panelAppRegistry;
+	private PanelCategoryRegistry _panelCategoryRegistry;
+	private ResourceBlockLocalService _resourceBlockLocalService;
+	private ResourceBlockService _resourceBlockService;
+	private ResourcePermissionService _resourcePermissionService;
+	private RoleLocalService _roleLocalService;
+	private RoleService _roleService;
+	private UserService _userService;
 
 }

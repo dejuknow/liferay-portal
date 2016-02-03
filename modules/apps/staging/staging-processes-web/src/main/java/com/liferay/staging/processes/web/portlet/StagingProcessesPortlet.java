@@ -15,7 +15,7 @@
 package com.liferay.staging.processes.web.portlet;
 
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
-import com.liferay.staging.processes.web.constants.StagingProcessesPortletKeys;
+import com.liferay.staging.constants.StagingProcessesPortletKeys;
 
 import javax.portlet.Portlet;
 
@@ -38,8 +38,9 @@ import org.osgi.service.component.annotations.Component;
 		"com.liferay.portlet.show-portlet-inactive=false",
 		"com.liferay.portlet.system=true",
 		"com.liferay.portlet.use-default-template=true",
-		"javax.portlet.display-name=Staging Processes",
+		"javax.portlet.display-name=Staging",
 		"javax.portlet.expiration-cache=0",
+		"javax.portlet.init-param.mvc-command-names-default-views=processesList",
 		"javax.portlet.init-param.template-path=/",
 		"javax.portlet.init-param.view-template=/view.jsp",
 		"javax.portlet.name=" + StagingProcessesPortletKeys.STAGING_PROCESSES,

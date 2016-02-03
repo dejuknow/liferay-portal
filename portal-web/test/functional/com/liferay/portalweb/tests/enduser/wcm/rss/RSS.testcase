@@ -2,19 +2,12 @@
 	<property name="testray.main.component.name" value="RSS" />
 
 	<set-up>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="SignIn#signInPortalInstanceSetUp" />
-			</then>
-		</if>
+		<execute macro="TestCase#setUpPortalInstance" />
 
 		<execute macro="User#firstLoginPG" />
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Sites" />
+		<execute macro="ProductMenu#gotoControlPanelSites">
+			<var name="portlet" value="Sites" />
 		</execute>
 
 		<execute macro="Site#addBlankCP">
@@ -25,9 +18,9 @@
 			<var name="page" value="Public Pages" />
 		</execute>
 
-		<execute macro="SitePage#addCP">
+		<execute macro="Page#add">
 			<var name="page" value="Public Pages" />
-			<var name="sitePageName" value="Site Page Name" />
+			<var name="pageName" value="Site Page Name" />
 			<var name="siteScopeSelected" value="true" />
 		</execute>
 	</set-up>
@@ -41,7 +34,9 @@
 				<execute macro="PortalInstances#tearDownCP" />
 			</then>
 			<else>
-				<execute macro="Page#tearDownPG" />
+				<execute macro="Page#tearDownPG">
+					<var name="site" value="Liferay" />
+				</execute>
 
 				<execute macro="Site#tearDownCP" />
 			</else>
@@ -56,13 +51,13 @@
 		</execute>
 
 		<execute macro="Portlet#addPG">
-			<var name="portletName" value="RSS" />
+			<var name="portletName" value="RSS Publisher" />
 		</execute>
 
 		<execute function="Refresh" />
 
 		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="RSS" />
+			<var name="portletName" value="RSS Publisher" />
 			<var name="portletOption" value="Configuration" />
 		</execute>
 
@@ -82,7 +77,7 @@
 		</execute>
 
 		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="RSS" />
+			<var name="portletName" value="RSS Publisher" />
 			<var name="portletOption" value="Configuration" />
 		</execute>
 
@@ -116,13 +111,13 @@
 		</execute>
 
 		<execute macro="Portlet#addPG">
-			<var name="portletName" value="RSS" />
+			<var name="portletName" value="RSS Publisher" />
 		</execute>
 
 		<execute function="Refresh" />
 
 		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="RSS" />
+			<var name="portletName" value="RSS Publisher" />
 			<var name="portletOption" value="Configuration" />
 		</execute>
 
@@ -149,7 +144,7 @@
 		</execute>
 
 		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="RSS" />
+			<var name="portletName" value="RSS Publisher" />
 			<var name="portletOption" value="Configuration" />
 		</execute>
 
@@ -181,13 +176,13 @@
 		</execute>
 
 		<execute macro="Portlet#addPG">
-			<var name="portletName" value="RSS" />
+			<var name="portletName" value="RSS Publisher" />
 		</execute>
 
 		<execute function="Refresh" />
 
 		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="RSS" />
+			<var name="portletName" value="RSS Publisher" />
 			<var name="portletOption" value="Configuration" />
 		</execute>
 
@@ -221,13 +216,13 @@
 		</execute>
 
 		<execute macro="Portlet#addPG">
-			<var name="portletName" value="RSS" />
+			<var name="portletName" value="RSS Publisher" />
 		</execute>
 
 		<execute function="Refresh" />
 
 		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="RSS" />
+			<var name="portletName" value="RSS Publisher" />
 			<var name="portletOption" value="Configuration" />
 		</execute>
 
@@ -256,13 +251,13 @@
 		</execute>
 
 		<execute macro="Portlet#addPG">
-			<var name="portletName" value="RSS" />
+			<var name="portletName" value="RSS Publisher" />
 		</execute>
 
 		<execute function="Refresh" />
 
 		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="RSS" />
+			<var name="portletName" value="RSS Publisher" />
 			<var name="portletOption" value="Configuration" />
 		</execute>
 
@@ -282,7 +277,7 @@
 		</execute>
 
 		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="RSS" />
+			<var name="portletName" value="RSS Publisher" />
 			<var name="portletOption" value="Configuration" />
 		</execute>
 
@@ -313,7 +308,7 @@
 		</execute>
 
 		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="RSS" />
+			<var name="portletName" value="RSS Publisher" />
 			<var name="portletOption" value="Configuration" />
 		</execute>
 
@@ -335,18 +330,18 @@
 			<var name="pageName" value="Welcome" />
 		</execute>
 
-		<execute macro="Page#addPG">
+		<execute macro="Page#add">
 			<var name="pageName" value="Page Name" />
 		</execute>
 
 		<execute macro="Portlet#addPG">
-			<var name="portletName" value="RSS" />
+			<var name="portletName" value="RSS Publisher" />
 		</execute>
 
 		<execute function="Refresh" />
 
 		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="RSS" />
+			<var name="portletName" value="RSS Publisher" />
 			<var name="portletOption" value="Configuration" />
 		</execute>
 
@@ -370,7 +365,7 @@
 		</for>
 
 		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="RSS" />
+			<var name="portletName" value="RSS Publisher" />
 			<var name="portletOption" value="Configuration" />
 		</execute>
 
@@ -397,13 +392,13 @@
 		</execute>
 
 		<execute macro="Portlet#addPG">
-			<var name="portletName" value="RSS" />
+			<var name="portletName" value="RSS Publisher" />
 		</execute>
 
 		<execute function="Refresh" />
 
 		<execute macro="Portlet#viewSpecificPG">
-			<var name="portletName" value="RSS" />
+			<var name="portletName" value="RSS Publisher" />
 		</execute>
 
 		<execute macro="RSS#viewDefaultDisplayFeedTitle">
@@ -411,7 +406,7 @@
 		</execute>
 
 		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="RSS" />
+			<var name="portletName" value="RSS Publisher" />
 			<var name="portletOption" value="Configuration" />
 		</execute>
 
@@ -431,14 +426,14 @@
 	</command>
 
 	<command name="EnableRSSFeedFromAssetpublisher" priority="3">
-		<execute macro="Page#gotoPagesCP">
-			<var name="portletName" value="Site Pages" />
-			<var name="siteScopeName" value="Site Name" />
+		<execute macro="ProductMenu#gotoSitesPages">
+			<var name="page" value="Public Pages" />
+			<var name="site" value="Site Name" />
 		</execute>
 
-		<execute macro="SitePage#addCP">
+		<execute macro="Page#add">
 			<var name="page" value="Public Pages" />
-			<var name="sitePageName" value="Site Page Name 2" />
+			<var name="pageName" value="Site Page Name 2" />
 			<var name="siteScopeSelected" value="true" />
 		</execute>
 
@@ -449,7 +444,7 @@
 		</execute>
 
 		<execute macro="Portlet#addPG">
-			<var name="portletName" value="RSS" />
+			<var name="portletName" value="RSS Publisher" />
 		</execute>
 
 		<execute macro="Page#gotoPG">
@@ -476,7 +471,9 @@
 
 		<execute macro="AssetPublisherPortlet#enableRSSSubscription" />
 
-		<execute macro="RSS#save" />
+		<execute macro="IFrame#selectTopFrame" />
+
+		<execute macro="Button#clickSave" />
 
 		<execute macro="Page#gotoPG">
 			<var name="pageName" value="Site Page Name 2" />
@@ -493,7 +490,7 @@
 		</execute>
 
 		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="RSS" />
+			<var name="portletName" value="RSS Publisher" />
 			<var name="portletOption" value="Configuration" />
 		</execute>
 
@@ -531,18 +528,18 @@
 			<var name="pageName" value="Welcome" />
 		</execute>
 
-		<execute macro="Page#addPG">
+		<execute macro="Page#add">
 			<var name="pageName" value="Page Name" />
 		</execute>
 
 		<execute macro="Portlet#addPG">
-			<var name="portletName" value="RSS" />
+			<var name="portletName" value="RSS Publisher" />
 		</execute>
 
 		<execute function="Refresh" />
 
 		<execute macro="Portlet#viewSpecificPG">
-			<var name="portletName" value="RSS" />
+			<var name="portletName" value="RSS Publisher" />
 		</execute>
 
 		<execute macro="RSS#viewDefaultDisplayFeedTitle">
@@ -550,7 +547,7 @@
 		</execute>
 
 		<execute macro="Portlet#deletePG">
-			<var name="portletName" value="RSS" />
+			<var name="portletName" value="RSS Publisher" />
 		</execute>
 
 		<execute macro="Page#gotoPG">
@@ -558,7 +555,7 @@
 		</execute>
 
 		<execute macro="Portlet#viewNoSpecificPG">
-			<var name="portletName" value="RSS" />
+			<var name="portletName" value="RSS Publisher" />
 		</execute>
 	</command>
 </definition>

@@ -49,6 +49,16 @@
 	<td></td>
 </tr>
 <tr>
+	<td>MAJOR_VERSION</td>
+	<td>//input[contains(@id,'MajorVersion_1')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>MINOR_VERSION</td>
+	<td>//input[contains(@id,'MajorVersion_3')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>NONE</td>
 	<td>//label[contains(.,'None')]/input[@type='radio']</td>
 	<td></td>
@@ -66,11 +76,6 @@
 <tr>
 	<td>REMOTE_LIVE</td>
 	<td>//label[contains(.,'Remote Live')]/input[@type='radio']</td>
-	<td></td>
-</tr>
-<tr>
-	<td>STAGING</td>
-	<td>//a[contains(@title,'Staging')]</td>
 	<td></td>
 </tr>
 </tbody>

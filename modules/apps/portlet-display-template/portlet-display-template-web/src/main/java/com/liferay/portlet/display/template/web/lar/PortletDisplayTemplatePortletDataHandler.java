@@ -57,6 +57,8 @@ public class PortletDisplayTemplatePortletDataHandler
 
 	public static final String NAMESPACE = "portlet_display_template";
 
+	public static final String SCHEMA_VERSION = "1.0.0";
+
 	@Override
 	public StagedModelType[] getDeletionSystemEventStagedModelTypes() {
 		return getStagedModelTypes();
@@ -83,6 +85,11 @@ public class PortletDisplayTemplatePortletDataHandler
 		}
 
 		return totalModelCount;
+	}
+
+	@Override
+	public String getSchemaVersion() {
+		return SCHEMA_VERSION;
 	}
 
 	@Activate
@@ -224,7 +231,7 @@ public class PortletDisplayTemplatePortletDataHandler
 		ModuleServiceLifecycle moduleServiceLifecycle) {
 	}
 
-	private volatile DDMTemplateLocalService _ddmTemplateLocalService;
+	private DDMTemplateLocalService _ddmTemplateLocalService;
 	private StagedModelType[] _stagedModelTypes;
 
 }

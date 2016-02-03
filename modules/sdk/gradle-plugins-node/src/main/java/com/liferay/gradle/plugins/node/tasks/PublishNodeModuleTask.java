@@ -52,8 +52,6 @@ public class PublishNodeModuleTask extends ExecuteNpmTask {
 	@Override
 	public void executeNode() {
 		try {
-			setArgs(getCompleteArgs());
-
 			createNpmrcFile();
 			createPackageJsonFile();
 
@@ -94,6 +92,12 @@ public class PublishNodeModuleTask extends ExecuteNpmTask {
 	@Optional
 	public String getModuleLicense() {
 		return GradleUtil.toString(_moduleLicense);
+	}
+
+	@Input
+	@Optional
+	public String getModuleMain() {
+		return GradleUtil.toString(_moduleMain);
 	}
 
 	@Input
@@ -155,6 +159,10 @@ public class PublishNodeModuleTask extends ExecuteNpmTask {
 
 	public void setModuleLicense(Object moduleLicense) {
 		_moduleLicense = moduleLicense;
+	}
+
+	public void setModuleMain(Object moduleMain) {
+		_moduleMain = moduleMain;
 	}
 
 	public void setModuleName(Object moduleName) {
@@ -224,6 +232,12 @@ public class PublishNodeModuleTask extends ExecuteNpmTask {
 			map.put("license", license);
 		}
 
+		String main = getModuleMain();
+
+		if (Validator.isNotNull(main)) {
+			map.put("main", main);
+		}
+
 		map.put("name", getModuleName());
 
 		String repository = getModuleRepository();
@@ -246,15 +260,14 @@ public class PublishNodeModuleTask extends ExecuteNpmTask {
 			packageJsonFile.toPath(), json.getBytes(StandardCharsets.UTF_8));
 	}
 
-	protected List<Object> getCompleteArgs() {
-		List<Object> completeArgs = new ArrayList<>();
+	@Override
+	protected List<String> getCompleteArgs() {
+		List<String> completeArgs = super.getCompleteArgs();
 
 		completeArgs.add("publish");
 
 		completeArgs.add("--userconfig");
 		completeArgs.add(FileUtil.getAbsolutePath(getNpmrcFile()));
-
-		completeArgs.addAll(getArgs());
 
 		return completeArgs;
 	}
@@ -283,6 +296,7 @@ public class PublishNodeModuleTask extends ExecuteNpmTask {
 	private Object _moduleDescription;
 	private final List<Object> _moduleKeywords = new ArrayList<>();
 	private Object _moduleLicense;
+	private Object _moduleMain;
 	private Object _moduleName;
 	private Object _moduleRepository;
 	private Object _moduleVersion;

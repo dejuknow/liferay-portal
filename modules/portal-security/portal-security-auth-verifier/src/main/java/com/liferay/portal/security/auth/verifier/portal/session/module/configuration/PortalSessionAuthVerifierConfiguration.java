@@ -16,16 +16,20 @@ package com.liferay.portal.security.auth.verifier.portal.session.module.configur
 
 import aQute.bnd.annotation.metatype.Meta;
 
-import com.liferay.configuration.admin.ConfigurationAdmin;
+import com.liferay.portal.metatype.annotations.ExtendedObjectClassDefinition;
 import com.liferay.portal.security.auth.verifier.module.configuration.BaseAuthVerifierConfiguration;
 
 /**
  * @author Tomas Polesovsky
  */
-@ConfigurationAdmin(category = "platform")
+@ExtendedObjectClassDefinition(
+	category = "platform", factoryInstanceLabelAttribute = "urlsIncludes"
+)
 @Meta.OCD(
 	factory = true,
-	id = "com.liferay.portal.security.auth.verifier.portal.session.module.configuration.PortalSessionAuthVerifierConfiguration"
+	id = "com.liferay.portal.security.auth.verifier.portal.session.module.configuration.PortalSessionAuthVerifierConfiguration",
+	localization = "content/Language",
+	name = "%portal.session.auth.verifier.configuration.name"
 )
 public interface PortalSessionAuthVerifierConfiguration
 	extends BaseAuthVerifierConfiguration {

@@ -350,9 +350,22 @@ public class CalendarLocalServiceWrapper implements CalendarLocalService,
 	}
 
 	@Override
+	public boolean hasStagingCalendar(
+		com.liferay.calendar.model.Calendar calendar)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _calendarLocalService.hasStagingCalendar(calendar);
+	}
+
+	@Override
 	public void importCalendar(long calendarId, java.lang.String data,
 		java.lang.String type) throws java.lang.Exception {
 		_calendarLocalService.importCalendar(calendarId, data, type);
+	}
+
+	@Override
+	public boolean isStagingCalendar(
+		com.liferay.calendar.model.Calendar calendar) {
+		return _calendarLocalService.isStagingCalendar(calendar);
 	}
 
 	@Override
@@ -439,23 +452,6 @@ public class CalendarLocalServiceWrapper implements CalendarLocalService,
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _calendarLocalService.updateColor(calendarId, color,
 			serviceContext);
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
-	 */
-	@Deprecated
-	public CalendarLocalService getWrappedCalendarLocalService() {
-		return _calendarLocalService;
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #setWrappedService}
-	 */
-	@Deprecated
-	public void setWrappedCalendarLocalService(
-		CalendarLocalService calendarLocalService) {
-		_calendarLocalService = calendarLocalService;
 	}
 
 	@Override

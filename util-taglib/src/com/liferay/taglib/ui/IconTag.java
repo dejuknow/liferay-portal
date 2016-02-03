@@ -35,12 +35,14 @@ import com.liferay.portal.model.Theme;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.taglib.util.IncludeTag;
+import com.liferay.taglib.util.TagResourceBundleUtil;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import javax.portlet.PortletResponse;
 
@@ -74,6 +76,10 @@ public class IconTag extends IncludeTag {
 
 	public void setData(Map<String, Object> data) {
 		_data = data;
+	}
+
+	public void setIcon(String icon) {
+		_icon = icon;
 	}
 
 	public void setIconCssClass(String iconCssClass) {
@@ -154,6 +160,7 @@ public class IconTag extends IncludeTag {
 		_ariaRole = null;
 		_cssClass = null;
 		_data = null;
+		_icon = null;
 		_iconCssClass = null;
 		_id = null;
 		_image = null;
@@ -187,8 +194,11 @@ public class IconTag extends IncludeTag {
 		if (_useDialog && Validator.isNull(data.get("title"))) {
 			String message = getProcessedMessage();
 
+			ResourceBundle resourceBundle =
+				TagResourceBundleUtil.getResourceBundle(pageContext);
+
 			if (_localizeMessage) {
-				message = LanguageUtil.get(request, message);
+				message = LanguageUtil.get(resourceBundle, message);
 			}
 
 			data.put("title", HtmlUtil.stripHtml(message));
@@ -201,10 +211,13 @@ public class IconTag extends IncludeTag {
 		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
+		ResourceBundle resourceBundle = TagResourceBundleUtil.getResourceBundle(
+			pageContext);
+
 		String details = null;
 
 		if (_alt != null) {
-			details = " alt=\"" + LanguageUtil.get(request, _alt) + "\"";
+			details = " alt=\"" + LanguageUtil.get(resourceBundle, _alt) + "\"";
 		}
 		else if (isLabel()) {
 			details = " alt=\"\"";
@@ -213,18 +226,20 @@ public class IconTag extends IncludeTag {
 			StringBundler sb = new StringBundler(6);
 
 			sb.append(" alt=\"");
-			sb.append(LanguageUtil.get(request, getProcessedMessage()));
+			sb.append(LanguageUtil.get(resourceBundle, getProcessedMessage()));
 			sb.append("\"");
 
 			if (_toolTip) {
 				sb.append(" onmouseover=\"Liferay.Portal.ToolTip.show(this, '");
 				sb.append(
-					UnicodeLanguageUtil.get(request, getProcessedMessage()));
+					UnicodeLanguageUtil.get(
+						resourceBundle, getProcessedMessage()));
 				sb.append("')\"");
 			}
 			else {
 				sb.append(" title=\"");
-				sb.append(LanguageUtil.get(request, getProcessedMessage()));
+				sb.append(
+					LanguageUtil.get(resourceBundle, getProcessedMessage()));
 				sb.append("\"");
 			}
 
@@ -412,7 +427,7 @@ public class IconTag extends IncludeTag {
 		}
 
 		if (isForcePost()) {
-			StringBundler sb = new StringBundler(8);
+			StringBundler sb = new StringBundler(5);
 
 			sb.append("event.preventDefault();");
 			sb.append(onClick);
@@ -569,6 +584,7 @@ public class IconTag extends IncludeTag {
 		request.setAttribute("liferay-ui:icon:cssClass", _cssClass);
 		request.setAttribute("liferay-ui:icon:data", getData());
 		request.setAttribute("liferay-ui:icon:details", getDetails());
+		request.setAttribute("liferay-ui:icon:icon", _icon);
 		request.setAttribute("liferay-ui:icon:iconCssClass", _iconCssClass);
 		request.setAttribute("liferay-ui:icon:id", getId());
 		request.setAttribute("liferay-ui:icon:image", _image);
@@ -604,6 +620,7 @@ public class IconTag extends IncludeTag {
 	private String _ariaRole;
 	private String _cssClass;
 	private Map<String, Object> _data;
+	private String _icon;
 	private String _iconCssClass;
 	private String _id;
 	private String _image;

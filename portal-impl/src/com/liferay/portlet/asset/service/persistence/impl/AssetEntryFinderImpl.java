@@ -105,7 +105,8 @@ public class AssetEntryFinderImpl
 			String sql = CustomSQLUtil.get(FIND_BY_CLASS_NAME_ID);
 
 			sql = StringUtil.replace(
-				sql, "[$JOIN$]", CustomSQLUtil.get(
+				sql, "[$JOIN$]",
+				CustomSQLUtil.get(
 					DLFileEntryFinderImpl.JOIN_AE_BY_DL_FILE_ENTRY));
 			sql = StringUtil.replace(
 				sql, "[$WHERE$]", "DLFileEntry.treePath LIKE ? AND");
@@ -142,8 +143,8 @@ public class AssetEntryFinderImpl
 			String sql = CustomSQLUtil.get(FIND_BY_CLASS_NAME_ID);
 
 			sql = StringUtil.replace(
-				sql, "[$JOIN$]", CustomSQLUtil.get(
-					DLFolderFinderImpl.JOIN_AE_BY_DL_FOLDER));
+				sql, "[$JOIN$]",
+				CustomSQLUtil.get(DLFolderFinderImpl.JOIN_AE_BY_DL_FOLDER));
 			sql = StringUtil.replace(
 				sql, "[$WHERE$]", "DLFolder.treePath LIKE ? AND");
 
@@ -294,7 +295,7 @@ public class AssetEntryFinderImpl
 	protected SQLQuery buildAssetQuerySQL(
 		AssetEntryQuery entryQuery, boolean count, Session session) {
 
-		StringBundler sb = new StringBundler(64);
+		StringBundler sb = new StringBundler(52);
 
 		if (count) {
 			sb.append(

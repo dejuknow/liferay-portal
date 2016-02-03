@@ -14,6 +14,7 @@
 
 package com.liferay.portal.security.membershippolicy.util.test;
 
+import com.liferay.announcements.kernel.model.AnnouncementsDelivery;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.test.randomizerbumpers.NumericStringRandomizerBumper;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
@@ -43,7 +44,6 @@ import com.liferay.portal.service.RoleServiceUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.UserGroupServiceUtil;
 import com.liferay.portal.service.UserServiceUtil;
-import com.liferay.portlet.announcements.model.AnnouncementsDelivery;
 import com.liferay.portlet.asset.model.AssetCategory;
 import com.liferay.portlet.asset.model.AssetTag;
 import com.liferay.portlet.asset.model.AssetVocabulary;
@@ -95,7 +95,7 @@ public class MembershipPolicyTestUtil {
 
 		return OrganizationServiceUtil.addOrganization(
 			OrganizationConstants.DEFAULT_PARENT_ORGANIZATION_ID, name,
-			OrganizationConstants.TYPE_REGULAR_ORGANIZATION, 0, 0,
+			OrganizationConstants.TYPE_ORGANIZATION, 0, 0,
 			ListTypeConstants.ORGANIZATION_STATUS_DEFAULT, StringPool.BLANK,
 			false, populateServiceContext(Organization.class, true));
 	}

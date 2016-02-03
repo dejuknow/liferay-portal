@@ -15,7 +15,7 @@
 package com.liferay.portal.configuration.persistence;
 
 import com.liferay.portal.kernel.dao.db.DB;
-import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
+import com.liferay.portal.kernel.dao.db.DBManagerUtil;
 import com.liferay.portal.kernel.io.ReaderInputStream;
 import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayOutputStream;
 import com.liferay.portal.kernel.util.ReflectionUtil;
@@ -53,6 +53,7 @@ import org.apache.felix.cm.file.ConfigurationHandler;
 
 /**
  * @author Raymond Augé
+ * @author Sampsa Sohlman
  */
 public class ConfigurationPersistenceManager
 	implements NotCachablePersistenceManager, PersistenceManager,
@@ -210,7 +211,7 @@ public class ConfigurationPersistenceManager
 	}
 
 	protected String buildSQL(String sql) throws IOException {
-		DB db = DBFactoryUtil.getDB();
+		DB db = DBManagerUtil.getDB();
 
 		return db.buildSQL(sql);
 	}
@@ -496,20 +497,13 @@ public class ConfigurationPersistenceManager
 
 			preparedStatement = connection.prepareStatement(
 				buildSQL(
-					"select configurationId, dictionary from Configuration_ " +
-						"where configurationId = ?"),
-				ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
+					"update Configuration_ set dictionary = ? where " +
+						"configurationId = ?"));
 
-			preparedStatement.setString(1, pid);
+			preparedStatement.setString(1, outputStream.toString());
+			preparedStatement.setString(2, pid);
 
-			resultSet = preparedStatement.executeQuery();
-
-			if (resultSet.next()) {
-				resultSet.updateString(2, outputStream.toString());
-
-				resultSet.updateRow();
-			}
-			else {
+			if (preparedStatement.executeUpdate() == 0) {
 				preparedStatement = prepareStatement(
 					connection,
 					"insert into Configuration_ (configurationId, " +

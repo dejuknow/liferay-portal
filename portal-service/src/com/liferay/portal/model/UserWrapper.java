@@ -17,8 +17,12 @@ package com.liferay.portal.model;
 import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.service.ServiceContext;
 
+import com.liferay.portlet.expando.model.ExpandoBridge;
 import com.liferay.portlet.exportimport.lar.StagedModelType;
+
+import java.io.Serializable;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -686,7 +690,7 @@ public class UserWrapper implements User, ModelWrapper<User> {
 	}
 
 	@Override
-	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
+	public ExpandoBridge getExpandoBridge() {
 		return _user.getExpandoBridge();
 	}
 
@@ -980,61 +984,6 @@ public class UserWrapper implements User, ModelWrapper<User> {
 	}
 
 	/**
-	* @deprecated As of 6.2.0, replaced by {@link #getMySiteGroups}
-	*/
-	@Deprecated
-	@Override
-	public java.util.List<com.liferay.portal.model.Group> getMySites()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _user.getMySites();
-	}
-
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link #getMySiteGroups(String[],
-	int)}
-	*/
-	@Deprecated
-	@Override
-	public java.util.List<com.liferay.portal.model.Group> getMySites(
-		java.lang.String[] classNames, boolean includeControlPanel, int max)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _user.getMySites(classNames, includeControlPanel, max);
-	}
-
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link #getMySiteGroups(String[],
-	int)}
-	*/
-	@Deprecated
-	@Override
-	public java.util.List<com.liferay.portal.model.Group> getMySites(
-		java.lang.String[] classNames, int max)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _user.getMySites(classNames, max);
-	}
-
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link User#getMySiteGroups(int)}
-	*/
-	@Deprecated
-	@Override
-	public java.util.List<com.liferay.portal.model.Group> getMySites(
-		boolean includeControlPanel, int max)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _user.getMySites(includeControlPanel, max);
-	}
-
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link #getMySiteGroups(int)}
-	*/
-	@Deprecated
-	@Override
-	public java.util.List<com.liferay.portal.model.Group> getMySites(int max)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _user.getMySites(max);
-	}
-
-	/**
 	* Returns the open ID of this user.
 	*
 	* @return the open ID of this user
@@ -1163,7 +1112,7 @@ public class UserWrapper implements User, ModelWrapper<User> {
 	}
 
 	@Override
-	public java.io.Serializable getPrimaryKeyObj() {
+	public Serializable getPrimaryKeyObj() {
 		return _user.getPrimaryKeyObj();
 	}
 
@@ -1614,14 +1563,12 @@ public class UserWrapper implements User, ModelWrapper<User> {
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portlet.expando.model.ExpandoBridge expandoBridge) {
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
 		_user.setExpandoBridgeAttributes(expandoBridge);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.service.ServiceContext serviceContext) {
+	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
 		_user.setExpandoBridgeAttributes(serviceContext);
 	}
 
@@ -1901,7 +1848,7 @@ public class UserWrapper implements User, ModelWrapper<User> {
 	}
 
 	@Override
-	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
+	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
 		_user.setPrimaryKeyObj(primaryKeyObj);
 	}
 
@@ -2032,14 +1979,6 @@ public class UserWrapper implements User, ModelWrapper<User> {
 	@Override
 	public StagedModelType getStagedModelType() {
 		return _user.getStagedModelType();
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedModel}
-	 */
-	@Deprecated
-	public User getWrappedUser() {
-		return _user;
 	}
 
 	@Override

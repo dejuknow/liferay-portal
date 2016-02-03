@@ -14,7 +14,8 @@
 
 package com.liferay.portal.search;
 
-import com.liferay.portal.kernel.search.SearchEngineUtil;
+import com.liferay.portal.kernel.search.IndexAdminHelperUtil;
+import com.liferay.portal.kernel.search.SearchEngineHelper;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.rule.Sync;
@@ -23,7 +24,6 @@ import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
-import com.liferay.portal.test.rule.MainServletTestRule;
 import com.liferay.portal.util.PortalInstances;
 
 import java.util.HashMap;
@@ -43,7 +43,7 @@ public class BackupAndRestoreIndexesTest {
 	@Rule
 	public static final AggregateTestRule aggregateTestRule =
 		new AggregateTestRule(
-			new LiferayIntegrationTestRule(), MainServletTestRule.INSTANCE,
+			new LiferayIntegrationTestRule(),
 			SynchronousDestinationTestRule.INSTANCE);
 
 	@Test
@@ -56,8 +56,8 @@ public class BackupAndRestoreIndexesTest {
 
 			backupName = backupName + "-" + System.currentTimeMillis();
 
-			SearchEngineUtil.backup(
-				companyId, SearchEngineUtil.SYSTEM_ENGINE_ID, backupName);
+			IndexAdminHelperUtil.backup(
+				companyId, SearchEngineHelper.SYSTEM_ENGINE_ID, backupName);
 
 			backupNames.put(companyId, backupName);
 		}
@@ -67,9 +67,9 @@ public class BackupAndRestoreIndexesTest {
 		for (Map.Entry<Long, String> entry : backupNames.entrySet()) {
 			String backupName = entry.getValue();
 
-			SearchEngineUtil.restore(entry.getKey(), backupName);
+			IndexAdminHelperUtil.restore(entry.getKey(), backupName);
 
-			SearchEngineUtil.removeBackup(entry.getKey(), backupName);
+			IndexAdminHelperUtil.removeBackup(entry.getKey(), backupName);
 		}
 	}
 

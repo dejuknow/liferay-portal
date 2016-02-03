@@ -103,6 +103,12 @@ public class CalendarServiceWrapper implements CalendarService,
 	}
 
 	@Override
+	public boolean isManageableFromGroup(long calendarId, long groupId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _calendarService.isManageableFromGroup(calendarId, groupId);
+	}
+
+	@Override
 	public java.util.List<com.liferay.calendar.model.Calendar> search(
 		long companyId, long[] groupIds, long[] calendarResourceIds,
 		java.lang.String keywords, boolean andOperator, int start, int end,
@@ -215,22 +221,6 @@ public class CalendarServiceWrapper implements CalendarService,
 		int color, com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _calendarService.updateColor(calendarId, color, serviceContext);
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
-	 */
-	@Deprecated
-	public CalendarService getWrappedCalendarService() {
-		return _calendarService;
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #setWrappedService}
-	 */
-	@Deprecated
-	public void setWrappedCalendarService(CalendarService calendarService) {
-		_calendarService = calendarService;
 	}
 
 	@Override

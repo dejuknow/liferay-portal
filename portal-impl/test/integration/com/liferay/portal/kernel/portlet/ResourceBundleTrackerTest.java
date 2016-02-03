@@ -19,7 +19,6 @@ import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
-import com.liferay.portal.test.rule.MainServletTestRule;
 import com.liferay.portal.test.rule.SyntheticBundleRule;
 import com.liferay.registry.Filter;
 import com.liferay.registry.Registry;
@@ -53,7 +52,7 @@ public class ResourceBundleTrackerTest {
 	@Rule
 	public static final AggregateTestRule aggregateTestRule =
 		new AggregateTestRule(
-			new LiferayIntegrationTestRule(), MainServletTestRule.INSTANCE,
+			new LiferayIntegrationTestRule(),
 			new SyntheticBundleRule("bundle.resourcebundletracker"));
 
 	@BeforeClass
@@ -107,21 +106,25 @@ public class ResourceBundleTrackerTest {
 			registerResourceBundle(
 				createResourceBundle(
 					"common-key", "th_TH_TH", "th_TH_TH", "th_TH_TH"),
-				"th_TH_TH");
+				"th_TH_TH", 100);
+
+		PortletConfig portletConfig = _genericPortlet.getPortletConfig();
+
+		portletConfig.getResourceBundle(new Locale("th", "TH", "TH"));
+
 		ServiceRegistration<ResourceBundle> serviceRegistrationB =
 			registerResourceBundle(
 				createResourceBundle("common-key", "th_TH", "th_TH", "th_TH"),
-				"th_TH");
+				"th_TH", 100);
 		ServiceRegistration<ResourceBundle> serviceRegistrationC =
 			registerResourceBundle(
-				createResourceBundle("common-key", "th", "th", "th"), "th");
+				createResourceBundle("common-key", "th", "th", "th"), "th",
+				100);
 		ServiceRegistration<ResourceBundle> serviceRegistrationD =
 			registerResourceBundle(
 				createResourceBundle(
 					"common-key", "root-bundle", "root-bundle", "root-bundle"),
-				"");
-
-		PortletConfig portletConfig = _genericPortlet.getPortletConfig();
+				"", 100);
 
 		ResourceBundle portletResourceBundleA = portletConfig.getResourceBundle(
 			new Locale("th", "TH", "TH"));
@@ -163,12 +166,18 @@ public class ResourceBundleTrackerTest {
 
 		serviceRegistrationA.unregister();
 
+		portletResourceBundleA = portletConfig.getResourceBundle(
+			new Locale("th", "TH", "TH"));
+
 		Assert.assertFalse(portletResourceBundleA.containsKey("th_TH_TH"));
 		Assert.assertEquals(
 			"th_TH",
 			ResourceBundleUtil.getString(portletResourceBundleA, "common-key"));
 
 		serviceRegistrationB.unregister();
+
+		portletResourceBundleA = portletConfig.getResourceBundle(
+			new Locale("th", "TH", "TH"));
 
 		Assert.assertFalse(portletResourceBundleA.containsKey("th_TH"));
 		Assert.assertEquals(
@@ -177,12 +186,18 @@ public class ResourceBundleTrackerTest {
 
 		serviceRegistrationC.unregister();
 
+		portletResourceBundleA = portletConfig.getResourceBundle(
+			new Locale("th", "TH", "TH"));
+
 		Assert.assertFalse(portletResourceBundleA.containsKey("th"));
 		Assert.assertEquals(
 			"root-bundle",
 			ResourceBundleUtil.getString(portletResourceBundleA, "common-key"));
 
 		serviceRegistrationD.unregister();
+
+		portletResourceBundleA = portletConfig.getResourceBundle(
+			new Locale("th", "TH", "TH"));
 
 		Assert.assertFalse(portletResourceBundleA.containsKey("root-bundle"));
 		Assert.assertFalse(portletResourceBundleA.containsKey("common-key"));
@@ -196,6 +211,7 @@ public class ResourceBundleTrackerTest {
 
 		properties.put("javax.portlet.name", TestPortlet.PORTLET_NAME);
 		properties.put("language.id", "es_ES");
+		properties.put("service.ranking", 1000);
 
 		ServiceRegistration<ResourceBundle> serviceRegistration =
 			registry.registerService(
@@ -246,7 +262,7 @@ public class ResourceBundleTrackerTest {
 	}
 
 	protected ServiceRegistration<ResourceBundle> registerResourceBundle(
-		ResourceBundle resourceBundle, String languageId) {
+		ResourceBundle resourceBundle, String languageId, int ranking) {
 
 		Registry registry = RegistryUtil.getRegistry();
 
@@ -254,6 +270,7 @@ public class ResourceBundleTrackerTest {
 
 		properties.put("javax.portlet.name", TestPortlet.PORTLET_NAME);
 		properties.put("language.id", languageId);
+		properties.put("service.ranking", ranking);
 
 		return registry.registerService(
 			ResourceBundle.class, resourceBundle, properties);

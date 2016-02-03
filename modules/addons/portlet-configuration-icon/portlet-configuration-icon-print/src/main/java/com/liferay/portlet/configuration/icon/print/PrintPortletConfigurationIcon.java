@@ -15,9 +15,8 @@
 package com.liferay.portlet.configuration.icon.print;
 
 import com.liferay.portal.kernel.portlet.configuration.icon.BasePortletConfigurationIcon;
-import com.liferay.portal.theme.PortletDisplay;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.portlet.PortletRequest;
 
 /**
  * @author Eudaldo Alonso
@@ -25,8 +24,8 @@ import javax.servlet.http.HttpServletRequest;
 public class PrintPortletConfigurationIcon
 	extends BasePortletConfigurationIcon {
 
-	public PrintPortletConfigurationIcon(HttpServletRequest request) {
-		super(request);
+	public PrintPortletConfigurationIcon(PortletRequest portletRequest) {
+		super(portletRequest);
 	}
 
 	@Override
@@ -41,8 +40,6 @@ public class PrintPortletConfigurationIcon
 
 	@Override
 	public String getOnClick() {
-		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
-
 		return "location.href = '".concat(
 			portletDisplay.getURLPrint()).concat("'; return false;");
 	}
@@ -54,15 +51,11 @@ public class PrintPortletConfigurationIcon
 
 	@Override
 	public String getURL() {
-		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
-
 		return portletDisplay.getURLPrint();
 	}
 
 	@Override
 	public boolean isShow() {
-		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
-
 		return portletDisplay.isShowPrintIcon();
 	}
 

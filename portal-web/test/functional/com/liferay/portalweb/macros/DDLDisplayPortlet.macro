@@ -22,12 +22,16 @@
 		</if>
 
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="You have successfully updated the setup." />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="You have successfully updated the setup." />
 	</command>
 
 	<command name="viewDDLTemplateRecordFieldData">
 		<var name="key_ddlRecordFieldData" value="${ddlRecordFieldData}" />
 
 		<execute function="AssertTextEquals" locator1="PGDynamicdatalists#RECORD_TABLE_DISPLAY_FIELD" value1="${key_ddlRecordFieldData}" />
+	</command>
+
+	<command name="viewSpreadsheetContainer">
+		<execute function="AssertElementPresent" locator1="DDLSpreadsheet#SPREADSHEET_CONTAINER" />
 	</command>
 </definition>

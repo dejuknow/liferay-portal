@@ -217,7 +217,7 @@ public class CXFEndpointPublisher {
 					properties.put(
 						HttpWhiteboardConstants.
 							HTTP_WHITEBOARD_FILTER_INIT_PARAM_PREFIX +
-							authVerifierPropertyParts[0],
+								authVerifierPropertyParts[0],
 						authVerifierPropertyParts[1]);
 				}
 
@@ -274,7 +274,7 @@ public class CXFEndpointPublisher {
 						_logger.warn(
 							"Unable to unregister RemoteAccessFilter " +
 								"registration " +
-								_remoteAccessFilterServiceRegistration);
+									_remoteAccessFilterServiceRegistration);
 					}
 				}
 			}
@@ -288,7 +288,7 @@ public class CXFEndpointPublisher {
 						_logger.warn(
 							"Unable to unregister AuthVerifierFilter " +
 								"registration " +
-								_authVerifierFilterServiceRegistration);
+									_authVerifierFilterServiceRegistration);
 					}
 				}
 			}
@@ -332,7 +332,7 @@ public class CXFEndpointPublisher {
 			_servletContextHelperServiceRegistration;
 		private ServiceRegistration<Servlet> _servletServiceRegistration;
 
-		private class RemoteAccessFilter implements Filter {
+		private static class RemoteAccessFilter implements Filter {
 
 			@Override
 			public void destroy() {

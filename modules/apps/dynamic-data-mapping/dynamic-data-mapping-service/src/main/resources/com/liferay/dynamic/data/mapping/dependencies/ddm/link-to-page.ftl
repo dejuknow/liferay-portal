@@ -3,7 +3,7 @@
 <#assign layoutLocalService = serviceLocator.findService("com.liferay.portal.service.LayoutLocalService")>
 <#assign layoutService = serviceLocator.findService("com.liferay.portal.service.LayoutService")>
 
-<@aui["field-wrapper"] data=data>
+<@liferay_aui["field-wrapper"] data=data>
 	<#assign selectedPlid = 0>
 
 	<#assign fieldRawValue = paramUtil.getString(request, "${namespacedFieldName}", fieldRawValue)>
@@ -11,13 +11,15 @@
 	<#if (validator.isNotNull(fieldRawValue))>
 		<#assign fieldLayoutJSONObject = jsonFactoryUtil.createJSONObject(fieldRawValue)>
 
-		<#if (fieldLayoutJSONObject.getLong("groupId") > 0)>
-			<#assign selectedLayoutGroupId = fieldLayoutJSONObject.getLong("groupId")>
-		<#else>
+		<#assign selectedLayoutGroupId = getterUtil.getLong(fieldLayoutJSONObject.get("groupId"))>
+
+		<#if (selectedLayoutGroupId <= 0)>
 			<#assign selectedLayoutGroupId = scopeGroupId>
 		</#if>
 
-		<#assign selectedLayout = layoutLocalService.fetchLayout(selectedLayoutGroupId, fieldLayoutJSONObject.getBoolean("privateLayout"), fieldLayoutJSONObject.getLong("layoutId"))!"">
+		<#assign selectedLayoutLayoutId = getterUtil.getLong(fieldLayoutJSONObject.get("layoutId"))>
+
+		<#assign selectedLayout = layoutLocalService.fetchLayout(selectedLayoutGroupId, fieldLayoutJSONObject.getBoolean("privateLayout"), selectedLayoutLayoutId)!"">
 
 		<#if (validator.isNotNull(selectedLayout))>
 			<#assign selectedPlid = selectedLayout.getPlid()>
@@ -25,8 +27,8 @@
 	</#if>
 
 	<div class="form-group">
-		<@aui.select helpMessage=escape(fieldStructure.tip) name=namespacedFieldName label=escape(label) required=required showEmptyOption=!required>
-			<#if (validator.isNotNull(selectedLayout) && !layoutPermission.contains(permissionChecker, selectedLayout, "VIEW"))>
+		<@liferay_aui.select helpMessage=escape(fieldStructure.tip) name=namespacedFieldName label=escape(label) required=required showEmptyOption=!required>
+			<#if (selectedLayout?? && !layoutPermission.contains(permissionChecker, selectedLayout, "VIEW"))>
 				<optgroup label="${languageUtil.get(requestedLocale, "current")}">
 					<@getLayoutOption
 						layout = selectedLayout
@@ -49,7 +51,7 @@
 				privateLayout = true
 				selectedPlid = selectedPlid
 			/>
-		</@aui.select>
+		</@liferay_aui.select>
 	</div>
 
 	${fieldStructure.children}
@@ -62,7 +64,7 @@
 >
 	<#assign layoutJSON = escapeAttribute("{\"groupId\":${layout.getGroupId()},\"layoutId\":${layout.getLayoutId()},\"privateLayout\":${layout.isPrivateLayout()?string}}")>
 
-	<@aui.option selected=selected useModelValue=false value=layoutJSON>
+	<@liferay_aui.option selected=selected useModelValue=false value=layoutJSON>
 		<#list 0..level as i>
 			&ndash;&nbsp;
 		</#list>

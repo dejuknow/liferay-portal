@@ -14,7 +14,18 @@
 
 package com.liferay.taglib.portletext;
 
+import com.liferay.portal.kernel.portlet.configuration.icon.PortletConfigurationIcon;
+import com.liferay.portal.kernel.portlet.configuration.icon.PortletConfigurationIconTracker;
+import com.liferay.portal.kernel.util.JavaConstants;
+import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.theme.PortletDisplay;
+import com.liferay.portal.theme.ThemeDisplay;
+import com.liferay.portal.util.comparator.PortletConfigurationIconFactoryComparator;
 import com.liferay.taglib.ui.IconTag;
+
+import java.util.List;
+
+import javax.portlet.PortletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -23,8 +34,29 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class IconOptionsTag extends IconTag {
 
+	public List<PortletConfigurationIcon>
+		getPortletConfigurationIcons() {
+
+		if (_portletConfigurationIcons != null) {
+			return _portletConfigurationIcons;
+		}
+
+		_portletConfigurationIcons =
+			PortletConfigurationIconTracker.getPortletConfigurationIcons(
+				getPortletId(), getPortletRequest(),
+				PortletConfigurationIconFactoryComparator.INSTANCE);
+
+		return _portletConfigurationIcons;
+	}
+
 	public void setDirection(String direction) {
 		_direction = direction;
+	}
+
+	public void setPortletConfigurationIcons(
+		List<PortletConfigurationIcon> portletConfigurationIcons) {
+
+		_portletConfigurationIcons = portletConfigurationIcons;
 	}
 
 	public void setShowArrow(boolean showArrow) {
@@ -36,12 +68,27 @@ public class IconOptionsTag extends IconTag {
 		super.cleanUp();
 
 		_direction = "down";
+		_portletConfigurationIcons = null;
 		_showArrow = true;
 	}
 
 	@Override
 	protected String getPage() {
 		return "/html/taglib/portlet/icon_options/page.jsp";
+	}
+
+	protected String getPortletId() {
+		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
+			WebKeys.THEME_DISPLAY);
+
+		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
+
+		return portletDisplay.getRootPortletId();
+	}
+
+	protected PortletRequest getPortletRequest() {
+		return (PortletRequest)request.getAttribute(
+			JavaConstants.JAVAX_PORTLET_REQUEST);
 	}
 
 	@Override
@@ -51,9 +98,13 @@ public class IconOptionsTag extends IconTag {
 		request.setAttribute("liferay-ui:icon:direction", _direction);
 		request.setAttribute(
 			"liferay-ui:icon:showArrow", String.valueOf(_showArrow));
+		request.setAttribute(
+			"liferay-ui:icon-options:portletConfigurationIcons",
+			getPortletConfigurationIcons());
 	}
 
-	private static String _direction = "down";
-	private static boolean _showArrow = true;
+	private String _direction = "down";
+	private List<PortletConfigurationIcon> _portletConfigurationIcons;
+	private boolean _showArrow = true;
 
 }

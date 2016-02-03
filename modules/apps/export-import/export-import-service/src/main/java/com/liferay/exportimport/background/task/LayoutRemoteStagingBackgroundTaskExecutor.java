@@ -19,7 +19,7 @@ import static com.liferay.portlet.exportimport.lifecycle.ExportImportLifecycleCo
 import static com.liferay.portlet.exportimport.lifecycle.ExportImportLifecycleConstants.EVENT_PUBLICATION_LAYOUT_REMOTE_SUCCEEDED;
 import static com.liferay.portlet.exportimport.lifecycle.ExportImportLifecycleConstants.PROCESS_FLAG_LAYOUT_STAGING_IN_PROCESS;
 
-import com.liferay.portal.NoSuchLayoutException;
+import com.liferay.portal.exception.NoSuchLayoutException;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTask;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskExecutor;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskResult;
@@ -27,12 +27,13 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.security.auth.HttpPrincipal;
+import com.liferay.portal.kernel.util.ClassLoaderUtil;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.StreamUtil;
 import com.liferay.portal.model.Layout;
-import com.liferay.portal.security.auth.HttpPrincipal;
 import com.liferay.portal.service.LayoutLocalServiceUtil;
 import com.liferay.portal.service.http.LayoutServiceHttp;
 import com.liferay.portal.util.PropsValues;
@@ -85,12 +86,19 @@ public class LayoutRemoteStagingBackgroundTaskExecutor
 
 		clearBackgroundTaskStatus(backgroundTask);
 
+		Thread currentThread = Thread.currentThread();
+
+		ClassLoader contextClassLoader = currentThread.getContextClassLoader();
+
 		File file = null;
 		HttpPrincipal httpPrincipal = null;
 		MissingReferences missingReferences = null;
 		long stagingRequestId = 0L;
 
 		try {
+			currentThread.setContextClassLoader(
+				ClassLoaderUtil.getPortalClassLoader());
+
 			ExportImportThreadLocal.setLayoutStagingInProcess(true);
 
 			ExportImportLifecycleManagerUtil.fireExportImportLifecycleEvent(
@@ -160,6 +168,8 @@ public class LayoutRemoteStagingBackgroundTaskExecutor
 			throw new SystemException(t);
 		}
 		finally {
+			currentThread.setContextClassLoader(contextClassLoader);
+
 			if ((stagingRequestId > 0) && (httpPrincipal != null)) {
 				try {
 					StagingServiceHttp.cleanUpStagingRequest(

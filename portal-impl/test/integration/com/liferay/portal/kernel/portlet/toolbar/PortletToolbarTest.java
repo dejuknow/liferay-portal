@@ -20,13 +20,13 @@ import com.liferay.portal.kernel.servlet.taglib.ui.Menu;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
-import com.liferay.portal.test.rule.MainServletTestRule;
 import com.liferay.portal.test.rule.SyntheticBundleRule;
 import com.liferay.registry.dependency.ServiceDependencyManager;
 
 import java.util.List;
 
 import javax.portlet.PortletRequest;
+import javax.portlet.PortletResponse;
 
 import org.junit.Assert;
 import org.junit.ClassRule;
@@ -44,7 +44,7 @@ public class PortletToolbarTest {
 	@Rule
 	public static final AggregateTestRule aggregateTestRule =
 		new AggregateTestRule(
-			new LiferayIntegrationTestRule(), MainServletTestRule.INSTANCE,
+			new LiferayIntegrationTestRule(),
 			new SyntheticBundleRule("bundle.portlettoolbar"));
 
 	@Test
@@ -60,7 +60,8 @@ public class PortletToolbarTest {
 		serviceDependencyManager.waitForDependencies(1000);
 
 		List<Menu> menus = portletToolbar.getPortletTitleMenus(
-			RandomTestUtil.randomString(), Mockito.mock(PortletRequest.class));
+			RandomTestUtil.randomString(), Mockito.mock(PortletRequest.class),
+			Mockito.mock(PortletResponse.class));
 
 		for (Menu menu : menus) {
 			String label = menu.getLabel();

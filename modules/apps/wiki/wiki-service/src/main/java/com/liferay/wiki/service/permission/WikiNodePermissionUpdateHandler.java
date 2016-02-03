@@ -14,8 +14,8 @@
 
 package com.liferay.wiki.service.permission;
 
+import com.liferay.portal.kernel.security.permission.PermissionUpdateHandler;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.security.permission.PermissionUpdateHandler;
 import com.liferay.wiki.model.WikiNode;
 import com.liferay.wiki.service.WikiNodeLocalService;
 
@@ -55,6 +55,6 @@ public class WikiNodePermissionUpdateHandler
 		_wikiNodeLocalService = wikiNodeLocalService;
 	}
 
-	private volatile WikiNodeLocalService _wikiNodeLocalService;
+	private WikiNodeLocalService _wikiNodeLocalService;
 
 }

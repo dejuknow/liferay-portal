@@ -14,7 +14,7 @@
 
 package com.liferay.portal.security.ldap.bundle.ldapsettingsutil;
 
-import com.liferay.portal.security.ldap.LDAPSettings;
+import com.liferay.portal.kernel.security.ldap.LDAPSettings;
 
 import java.util.Properties;
 
@@ -59,6 +59,11 @@ public class TestLDAPSettings implements LDAPSettings {
 		properties.setProperty("ldapServerId", String.valueOf(ldapServerId));
 
 		return properties;
+	}
+
+	@Override
+	public String[] getErrorPasswordHistoryKeywords(long companyId) {
+		return new String[] {"history"};
 	}
 
 	@Override

@@ -46,7 +46,11 @@ userGroupSearch.setResults(userGroups);
 %>
 
 <aui:nav-bar cssClass="collapse-basic-search" markupView="lexicon">
-	<c:if test="<%= userGroupsCount > 0 %>">
+	<aui:nav cssClass="navbar-nav">
+		<aui:nav-item label="user-groups" selected="<%= true %>" />
+	</aui:nav>
+
+	<c:if test="<%= (userGroupsCount > 0) || searchTerms.isSearch() %>">
 		<aui:nav-bar-search>
 			<aui:form action="<%= viewUserGroupsURL.toString() %>" name="searchFm">
 				<liferay-ui:input-search autoFocus="<%= windowState.equals(WindowState.MAXIMIZED) %>" markupView="lexicon" />
@@ -55,34 +59,33 @@ userGroupSearch.setResults(userGroups);
 	</c:if>
 </aui:nav-bar>
 
-<c:if test="<%= userGroupsCount > 0 %>">
-	<liferay-frontend:management-bar
-		includeCheckBox="<%= true %>"
-		searchContainerId="userGroups"
-	>
-		<liferay-frontend:management-bar-buttons>
-			<liferay-frontend:management-bar-display-buttons
-				displayViews='<%= new String[] {"icon", "descriptive", "list"} %>'
-				portletURL="<%= PortletURLUtil.clone(viewUserGroupsURL, renderResponse) %>"
-				selectedDisplayStyle="<%= displayStyle %>"
-			/>
-		</liferay-frontend:management-bar-buttons>
+<liferay-frontend:management-bar
+	disabled="<%= userGroupsCount <= 0 %>"
+	includeCheckBox="<%= true %>"
+	searchContainerId="userGroups"
+>
+	<liferay-frontend:management-bar-buttons>
+		<liferay-frontend:management-bar-display-buttons
+			displayViews='<%= new String[] {"icon", "descriptive", "list"} %>'
+			portletURL="<%= PortletURLUtil.clone(viewUserGroupsURL, renderResponse) %>"
+			selectedDisplayStyle="<%= displayStyle %>"
+		/>
+	</liferay-frontend:management-bar-buttons>
 
-		<liferay-frontend:management-bar-filters>
-			<liferay-frontend:management-bar-navigation
-				navigationKeys='<%= new String[] {"all"} %>'
-				portletURL="<%= PortletURLUtil.clone(viewUserGroupsURL, renderResponse) %>"
-			/>
+	<liferay-frontend:management-bar-filters>
+		<liferay-frontend:management-bar-navigation
+			navigationKeys='<%= new String[] {"all"} %>'
+			portletURL="<%= PortletURLUtil.clone(viewUserGroupsURL, renderResponse) %>"
+		/>
 
-			<liferay-frontend:management-bar-sort
-				orderByCol="<%= orderByCol %>"
-				orderByType="<%= orderByType %>"
-				orderColumns='<%= new String[] {"name", "description"} %>'
-				portletURL="<%= PortletURLUtil.clone(viewUserGroupsURL, renderResponse) %>"
-			/>
-		</liferay-frontend:management-bar-filters>
-	</liferay-frontend:management-bar>
-</c:if>
+		<liferay-frontend:management-bar-sort
+			orderByCol="<%= orderByCol %>"
+			orderByType="<%= orderByType %>"
+			orderColumns='<%= new String[] {"name", "description"} %>'
+			portletURL="<%= PortletURLUtil.clone(viewUserGroupsURL, renderResponse) %>"
+		/>
+	</liferay-frontend:management-bar-filters>
+</liferay-frontend:management-bar>
 
 <aui:form cssClass="container-fluid-1280" name="fm">
 	<liferay-ui:search-container
@@ -108,21 +111,18 @@ userGroupSearch.setResults(userGroups);
 	</liferay-ui:search-container>
 </aui:form>
 
-<aui:script>
-	var Util = Liferay.Util;
+<aui:script use="liferay-search-container">
+	var searchContainer = Liferay.SearchContainer.get('<portlet:namespace />userGroups');
 
-	var form = AUI.$(document.<portlet:namespace />fm);
-
-	$('input[name="<portlet:namespace />rowIds"]').on(
-		'change',
+	searchContainer.on(
+		'rowToggled',
 		function(event) {
-			var values = {
-				data: {
-					addUserGroupIds: Util.listCheckedExcept(form, '<portlet:namespace />allRowIds')
+			Liferay.Util.getOpener().Liferay.fire(
+				'<%= HtmlUtil.escapeJS(eventName) %>',
+				{
+					data: event.elements.allSelectedElements.getDOMNodes()
 				}
-			};
-
-			Util.getOpener().Liferay.fire('<%= HtmlUtil.escapeJS(eventName) %>', values);
+			);
 		}
 	);
 </aui:script>

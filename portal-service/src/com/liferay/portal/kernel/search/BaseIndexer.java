@@ -14,9 +14,9 @@
 
 package com.liferay.portal.kernel.search;
 
-import com.liferay.portal.NoSuchCountryException;
-import com.liferay.portal.NoSuchModelException;
-import com.liferay.portal.NoSuchRegionException;
+import com.liferay.portal.exception.NoSuchCountryException;
+import com.liferay.portal.exception.NoSuchModelException;
+import com.liferay.portal.exception.NoSuchRegionException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
@@ -32,6 +32,8 @@ import com.liferay.portal.kernel.search.filter.TermsFilter;
 import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
 import com.liferay.portal.kernel.search.generic.MatchAllQuery;
 import com.liferay.portal.kernel.search.hits.HitsProcessorRegistryUtil;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.trash.TrashHandler;
 import com.liferay.portal.kernel.trash.TrashRenderer;
 import com.liferay.portal.kernel.util.ArrayUtil;
@@ -60,17 +62,13 @@ import com.liferay.portal.model.ResourcedModel;
 import com.liferay.portal.model.TrashedModel;
 import com.liferay.portal.model.User;
 import com.liferay.portal.model.WorkflowedModel;
-import com.liferay.portal.security.permission.PermissionChecker;
-import com.liferay.portal.security.permission.PermissionThreadLocal;
 import com.liferay.portal.service.CountryServiceUtil;
 import com.liferay.portal.service.GroupLocalServiceUtil;
-import com.liferay.portal.service.PortalPreferencesLocalServiceUtil;
 import com.liferay.portal.service.RegionServiceUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextThreadLocal;
 import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.util.PortalUtil;
-import com.liferay.portal.util.PortletKeys;
 import com.liferay.portlet.asset.AssetRendererFactoryRegistryUtil;
 import com.liferay.portlet.asset.model.AssetCategory;
 import com.liferay.portlet.asset.model.AssetEntry;
@@ -102,7 +100,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
 
@@ -117,7 +114,7 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 	@Override
 	public void delete(long companyId, String uid) throws SearchException {
 		try {
-			SearchEngineUtil.deleteDocument(
+			IndexWriterHelperUtil.deleteDocument(
 				getSearchEngineId(), companyId, uid, _commitImmediately);
 		}
 		catch (SearchException se) {
@@ -215,7 +212,7 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 
 		if (searchContext.getUserId() > 0) {
 			SearchPermissionChecker searchPermissionChecker =
-				SearchEngineUtil.getSearchPermissionChecker();
+				SearchEngineHelperUtil.getSearchPermissionChecker();
 
 			long[] groupIds = searchContext.getGroupIds();
 
@@ -229,8 +226,8 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 			facetBooleanFilter =
 				searchPermissionChecker.getPermissionBooleanFilter(
 					searchContext.getCompanyId(), groupIds,
-				searchContext.getUserId(), className, facetBooleanFilter,
-				searchContext);
+					searchContext.getUserId(), className, facetBooleanFilter,
+					searchContext);
 		}
 
 		return facetBooleanFilter;
@@ -317,7 +314,7 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 					clazz.getName())));
 
 		if (Validator.isNotNull(searchEngineId)) {
-			SearchEngine searchEngine = SearchEngineUtil.getSearchEngine(
+			SearchEngine searchEngine = SearchEngineHelperUtil.getSearchEngine(
 				searchEngineId);
 
 			if (searchEngine != null) {
@@ -326,7 +323,7 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 		}
 
 		if (_searchEngineId == null) {
-			_searchEngineId = SearchEngineUtil.getDefaultSearchEngineId();
+			_searchEngineId = SearchEngineHelperUtil.getDefaultSearchEngineId();
 		}
 
 		if (_log.isDebugEnabled()) {
@@ -427,30 +424,19 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 
 	@Override
 	public boolean isIndexerEnabled() {
-		PortletPreferences portletPreferences =
-			PortalPreferencesLocalServiceUtil.getPreferences(
-				PortletKeys.PREFS_OWNER_ID_DEFAULT,
-				PortletKeys.PREFS_OWNER_TYPE_COMPANY);
-
 		String className = getClassName();
 
-		String indexerEnabled = portletPreferences.getValue(
-			className.concat("_indexerEnabled"), null);
+		if (_indexerEnabled == null) {
+			String indexerEnabled = PropsUtil.get(
+				PropsKeys.INDEXER_ENABLED,
+				new com.liferay.portal.kernel.configuration.Filter(className));
 
-		if (indexerEnabled == null) {
-			if (_indexerEnabled == null) {
-				indexerEnabled = PropsUtil.get(
-					PropsKeys.INDEXER_ENABLED,
-					new com.liferay.portal.kernel.configuration.Filter(
-						className));
-
-				_indexerEnabled = GetterUtil.getBoolean(indexerEnabled, true);
-			}
+			_indexerEnabled = GetterUtil.getBoolean(indexerEnabled, true);
 
 			return _indexerEnabled;
 		}
 
-		return GetterUtil.getBoolean(indexerEnabled, true);
+		return _indexerEnabled;
 	}
 
 	@Override
@@ -539,7 +525,7 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 
 	@Override
 	public void reindex(Collection<T> collection) {
-		if (SearchEngineUtil.isIndexReadOnly() || !isIndexerEnabled() ||
+		if (IndexWriterHelperUtil.isIndexReadOnly() || !isIndexerEnabled() ||
 			collection.isEmpty()) {
 
 			return;
@@ -560,8 +546,8 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 	@Override
 	public void reindex(String className, long classPK) throws SearchException {
 		try {
-			if (SearchEngineUtil.isIndexReadOnly() || !isIndexerEnabled() ||
-				(classPK <= 0)) {
+			if (IndexWriterHelperUtil.isIndexReadOnly() ||
+				!isIndexerEnabled() || (classPK <= 0)) {
 
 				return;
 			}
@@ -584,7 +570,9 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 	@Override
 	public void reindex(String[] ids) throws SearchException {
 		try {
-			if (SearchEngineUtil.isIndexReadOnly() || !isIndexerEnabled()) {
+			if (IndexWriterHelperUtil.isIndexReadOnly() ||
+				!isIndexerEnabled()) {
+
 				return;
 			}
 
@@ -601,7 +589,9 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 	@Override
 	public void reindex(T object) throws SearchException {
 		try {
-			if (SearchEngineUtil.isIndexReadOnly() || !isIndexerEnabled()) {
+			if (IndexWriterHelperUtil.isIndexReadOnly() ||
+				!isIndexerEnabled()) {
+
 				return;
 			}
 
@@ -703,7 +693,7 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 
 		fullQuery.setQueryConfig(queryConfig);
 
-		return SearchEngineUtil.searchCount(searchContext, fullQuery);
+		return IndexSearcherHelperUtil.searchCount(searchContext, fullQuery);
 	}
 
 	public void setCommitImmediately(boolean commitImmediately) {
@@ -712,23 +702,7 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 
 	@Override
 	public void setIndexerEnabled(boolean indexerEnabled) {
-		PortletPreferences portletPreferences =
-			PortalPreferencesLocalServiceUtil.getPreferences(
-				PortletKeys.PREFS_OWNER_ID_DEFAULT,
-				PortletKeys.PREFS_OWNER_TYPE_COMPANY);
-
-		try {
-			String className = getClassName();
-
-			portletPreferences.setValue(
-				className.concat("_indexerEnabled"),
-				String.valueOf(indexerEnabled));
-
-			portletPreferences.store();
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-		}
+		_indexerEnabled = indexerEnabled;
 	}
 
 	public void setSelectAllLocales(boolean selectAllLocales) {
@@ -1461,7 +1435,7 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 
 		document.addUID(getClassName(), field1);
 
-		SearchEngineUtil.deleteDocument(
+		IndexWriterHelperUtil.deleteDocument(
 			getSearchEngineId(), companyId, document.get(Field.UID),
 			_commitImmediately);
 	}
@@ -1473,7 +1447,7 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 
 		document.addUID(getClassName(), field1, field2);
 
-		SearchEngineUtil.deleteDocument(
+		IndexWriterHelperUtil.deleteDocument(
 			getSearchEngineId(), companyId, document.get(Field.UID),
 			_commitImmediately);
 	}
@@ -1538,7 +1512,7 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 
 		fullQuery.setQueryConfig(queryConfig);
 
-		return SearchEngineUtil.search(searchContext, fullQuery);
+		return IndexSearcherHelperUtil.search(searchContext, fullQuery);
 	}
 
 	protected Document getBaseModelDocument(
@@ -1758,7 +1732,8 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 
 		String localizedAssetCategoryTitlesName =
 			prefix +
-			DocumentImpl.getLocalizedName(locale, Field.ASSET_CATEGORY_TITLES);
+				DocumentImpl.getLocalizedName(
+					locale, Field.ASSET_CATEGORY_TITLES);
 		String localizedContentName =
 			prefix + DocumentImpl.getLocalizedName(locale, Field.CONTENT);
 		String localizedDescriptionName =

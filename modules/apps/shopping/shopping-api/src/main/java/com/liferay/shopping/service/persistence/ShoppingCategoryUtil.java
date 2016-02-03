@@ -16,14 +16,13 @@ package com.liferay.shopping.service.persistence;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.osgi.util.ServiceTrackerFactory;
+
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.service.ServiceContext;
 
 import com.liferay.shopping.model.ShoppingCategory;
-
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
 
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -186,7 +185,7 @@ public class ShoppingCategoryUtil {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching shopping category
-	* @throws com.liferay.shopping.NoSuchCategoryException if a matching shopping category could not be found
+	* @throws NoSuchCategoryException if a matching shopping category could not be found
 	*/
 	public static ShoppingCategory findByGroupId_First(long groupId,
 		OrderByComparator<ShoppingCategory> orderByComparator)
@@ -212,7 +211,7 @@ public class ShoppingCategoryUtil {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching shopping category
-	* @throws com.liferay.shopping.NoSuchCategoryException if a matching shopping category could not be found
+	* @throws NoSuchCategoryException if a matching shopping category could not be found
 	*/
 	public static ShoppingCategory findByGroupId_Last(long groupId,
 		OrderByComparator<ShoppingCategory> orderByComparator)
@@ -239,7 +238,7 @@ public class ShoppingCategoryUtil {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next shopping category
-	* @throws com.liferay.shopping.NoSuchCategoryException if a shopping category with the primary key could not be found
+	* @throws NoSuchCategoryException if a shopping category with the primary key could not be found
 	*/
 	public static ShoppingCategory[] findByGroupId_PrevAndNext(
 		long categoryId, long groupId,
@@ -304,7 +303,7 @@ public class ShoppingCategoryUtil {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next shopping category
-	* @throws com.liferay.shopping.NoSuchCategoryException if a shopping category with the primary key could not be found
+	* @throws NoSuchCategoryException if a shopping category with the primary key could not be found
 	*/
 	public static ShoppingCategory[] filterFindByGroupId_PrevAndNext(
 		long categoryId, long groupId,
@@ -427,7 +426,7 @@ public class ShoppingCategoryUtil {
 	* @param parentCategoryId the parent category ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching shopping category
-	* @throws com.liferay.shopping.NoSuchCategoryException if a matching shopping category could not be found
+	* @throws NoSuchCategoryException if a matching shopping category could not be found
 	*/
 	public static ShoppingCategory findByG_P_First(long groupId,
 		long parentCategoryId,
@@ -460,7 +459,7 @@ public class ShoppingCategoryUtil {
 	* @param parentCategoryId the parent category ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching shopping category
-	* @throws com.liferay.shopping.NoSuchCategoryException if a matching shopping category could not be found
+	* @throws NoSuchCategoryException if a matching shopping category could not be found
 	*/
 	public static ShoppingCategory findByG_P_Last(long groupId,
 		long parentCategoryId,
@@ -493,7 +492,7 @@ public class ShoppingCategoryUtil {
 	* @param parentCategoryId the parent category ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next shopping category
-	* @throws com.liferay.shopping.NoSuchCategoryException if a shopping category with the primary key could not be found
+	* @throws NoSuchCategoryException if a shopping category with the primary key could not be found
 	*/
 	public static ShoppingCategory[] findByG_P_PrevAndNext(long categoryId,
 		long groupId, long parentCategoryId,
@@ -565,7 +564,7 @@ public class ShoppingCategoryUtil {
 	* @param parentCategoryId the parent category ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next shopping category
-	* @throws com.liferay.shopping.NoSuchCategoryException if a shopping category with the primary key could not be found
+	* @throws NoSuchCategoryException if a shopping category with the primary key could not be found
 	*/
 	public static ShoppingCategory[] filterFindByG_P_PrevAndNext(
 		long categoryId, long groupId, long parentCategoryId,
@@ -609,12 +608,12 @@ public class ShoppingCategoryUtil {
 	}
 
 	/**
-	* Returns the shopping category where groupId = &#63; and name = &#63; or throws a {@link com.liferay.shopping.NoSuchCategoryException} if it could not be found.
+	* Returns the shopping category where groupId = &#63; and name = &#63; or throws a {@link NoSuchCategoryException} if it could not be found.
 	*
 	* @param groupId the group ID
 	* @param name the name
 	* @return the matching shopping category
-	* @throws com.liferay.shopping.NoSuchCategoryException if a matching shopping category could not be found
+	* @throws NoSuchCategoryException if a matching shopping category could not be found
 	*/
 	public static ShoppingCategory findByG_N(long groupId, java.lang.String name)
 		throws com.liferay.shopping.exception.NoSuchCategoryException {
@@ -703,7 +702,7 @@ public class ShoppingCategoryUtil {
 	*
 	* @param categoryId the primary key of the shopping category
 	* @return the shopping category that was removed
-	* @throws com.liferay.shopping.NoSuchCategoryException if a shopping category with the primary key could not be found
+	* @throws NoSuchCategoryException if a shopping category with the primary key could not be found
 	*/
 	public static ShoppingCategory remove(long categoryId)
 		throws com.liferay.shopping.exception.NoSuchCategoryException {
@@ -715,11 +714,11 @@ public class ShoppingCategoryUtil {
 	}
 
 	/**
-	* Returns the shopping category with the primary key or throws a {@link com.liferay.shopping.NoSuchCategoryException} if it could not be found.
+	* Returns the shopping category with the primary key or throws a {@link NoSuchCategoryException} if it could not be found.
 	*
 	* @param categoryId the primary key of the shopping category
 	* @return the shopping category
-	* @throws com.liferay.shopping.NoSuchCategoryException if a shopping category with the primary key could not be found
+	* @throws NoSuchCategoryException if a shopping category with the primary key could not be found
 	*/
 	public static ShoppingCategory findByPrimaryKey(long categoryId)
 		throws com.liferay.shopping.exception.NoSuchCategoryException {
@@ -822,21 +821,6 @@ public class ShoppingCategoryUtil {
 		return _serviceTracker.getService();
 	}
 
-	/**
-	 * @deprecated As of 6.2.0
-	 */
-	@Deprecated
-	public void setPersistence(ShoppingCategoryPersistence persistence) {
-	}
-
-	private static ServiceTracker<ShoppingCategoryPersistence, ShoppingCategoryPersistence> _serviceTracker;
-
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(ShoppingCategoryUtil.class);
-
-		_serviceTracker = new ServiceTracker<ShoppingCategoryPersistence, ShoppingCategoryPersistence>(bundle.getBundleContext(),
-				ShoppingCategoryPersistence.class, null);
-
-		_serviceTracker.open();
-	}
+	private static ServiceTracker<ShoppingCategoryPersistence, ShoppingCategoryPersistence> _serviceTracker =
+		ServiceTrackerFactory.open(ShoppingCategoryPersistence.class);
 }

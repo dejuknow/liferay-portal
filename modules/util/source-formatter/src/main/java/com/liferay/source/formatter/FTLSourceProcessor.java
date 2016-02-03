@@ -14,17 +14,21 @@
 
 package com.liferay.source.formatter;
 
+import com.liferay.portal.kernel.io.unsync.UnsyncBufferedReader;
+import com.liferay.portal.kernel.io.unsync.UnsyncStringReader;
 import com.liferay.portal.kernel.util.CharPool;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.tools.ToolsUtil;
 
 import java.io.File;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.tools.ToolsUtil;
 
 /**
  * @author Hugo Huijser
@@ -41,7 +45,9 @@ public class FTLSourceProcessor extends BaseSourceProcessor {
 			File file, String fileName, String absolutePath, String content)
 		throws Exception {
 
-		Matcher matcher = _singleParameterTag.matcher(content);
+		content = sortLiferayVariables(content);
+
+		Matcher matcher = _singleParameterTagPattern.matcher(content);
 
 		while (matcher.find()) {
 			String match = matcher.group();
@@ -66,7 +72,7 @@ public class FTLSourceProcessor extends BaseSourceProcessor {
 			content = StringUtil.replace(content, match, replacement);
 		}
 
-		matcher = _multiParameterTag.matcher(content);
+		matcher = _multiParameterTagPattern.matcher(content);
 
 		while (matcher.find()) {
 			String match = matcher.group();
@@ -118,7 +124,7 @@ public class FTLSourceProcessor extends BaseSourceProcessor {
 			}
 		}
 
-		return trimContent(content, false);
+		return formatFTL(content);
 	}
 
 	@Override
@@ -131,10 +137,80 @@ public class FTLSourceProcessor extends BaseSourceProcessor {
 		return getFileNames(excludes, getIncludes());
 	}
 
+	protected String formatFTL(String content) throws Exception {
+		StringBundler sb = new StringBundler();
+
+		try (UnsyncBufferedReader unsyncBufferedReader =
+				new UnsyncBufferedReader(new UnsyncStringReader(content))) {
+
+			String line = null;
+
+			while ((line = unsyncBufferedReader.readLine()) != null) {
+				line = trimLine(line, false);
+
+				String trimmedLine = StringUtil.trimLeading(line);
+
+				if (trimmedLine.startsWith("<#assign ")) {
+					line = formatWhitespace(line, trimmedLine, true);
+
+					line = formatIncorrectSyntax(line, "=[", "= [", false);
+					line = formatIncorrectSyntax(line, "+[", "+ [", false);
+				}
+
+				sb.append(line);
+				sb.append("\n");
+			}
+		}
+
+		String newContent = sb.toString();
+
+		if (newContent.endsWith("\n")) {
+			newContent = newContent.substring(0, newContent.length() - 1);
+		}
+
+		return newContent;
+	}
+
+	protected String sortLiferayVariables(String content) {
+		Matcher matcher = _liferayVariablesPattern.matcher(content);
+
+		while (matcher.find()) {
+			String match = matcher.group();
+
+			Matcher matcher2 = _liferayVariablePattern.matcher(match);
+
+			String previousVariable = null;
+
+			while (matcher2.find()) {
+				String variable = matcher2.group();
+
+				if (Validator.isNotNull(previousVariable) &&
+					(previousVariable.compareTo(variable) > 0)) {
+
+					String replacement = StringUtil.replaceFirst(
+						match, previousVariable, variable);
+					replacement = StringUtil.replaceLast(
+						replacement, variable, previousVariable);
+
+					return StringUtil.replace(content, match, replacement);
+				}
+
+				previousVariable = variable;
+			}
+		}
+
+		return content;
+	}
+
 	private static final String[] _INCLUDES = new String[] {"**/*.ftl"};
 
-	private Pattern _multiParameterTag = Pattern.compile("\n(\t*)<@.+=.+=.+/>");
-	private Pattern _singleParameterTag = Pattern.compile(
+	private Pattern _liferayVariablePattern = Pattern.compile(
+		"^\t*<#assign liferay_.*>\n", Pattern.MULTILINE);
+	private Pattern _liferayVariablesPattern = Pattern.compile(
+		"(^\t*<#assign liferay_.*>\n)+", Pattern.MULTILINE);
+	private Pattern _multiParameterTagPattern = Pattern.compile(
+		"\n(\t*)<@.+=.+=.+/>");
+	private Pattern _singleParameterTagPattern = Pattern.compile(
 		"(<@[\\w\\.]+ \\w+)( )?=([^=]+?)/>");
 
 }

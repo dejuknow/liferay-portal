@@ -21,7 +21,6 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.bundle.mvcactioncommand.Tes
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
-import com.liferay.portal.test.rule.MainServletTestRule;
 import com.liferay.portal.test.rule.SyntheticBundleRule;
 import com.liferay.registry.Filter;
 import com.liferay.registry.Registry;
@@ -57,7 +56,7 @@ public class MVCActionCommandTest {
 	@Rule
 	public static final AggregateTestRule aggregateTestRule =
 		new AggregateTestRule(
-			new LiferayIntegrationTestRule(), MainServletTestRule.INSTANCE,
+			new LiferayIntegrationTestRule(),
 			new SyntheticBundleRule("bundle.mvcactioncommand"));
 
 	@BeforeClass
@@ -167,7 +166,7 @@ public class MVCActionCommandTest {
 	private static ServiceTracker<GenericPortlet, GenericPortlet>
 		_genericPortletServiceTracker;
 
-	private class MockLiferayPortletRequest
+	private static class MockLiferayPortletRequest
 		extends MockActionRequest implements LiferayPortletRequest {
 
 		@Override

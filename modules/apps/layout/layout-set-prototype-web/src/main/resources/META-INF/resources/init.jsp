@@ -29,14 +29,16 @@ taglib uri="http://liferay.com/tld/util" prefix="liferay-util" %>
 <%@ page import="com.liferay.application.list.constants.ApplicationListWebKeys" %><%@
 page import="com.liferay.application.list.constants.PanelCategoryKeys" %><%@
 page import="com.liferay.application.list.display.context.logic.PanelCategoryHelper" %><%@
-page import="com.liferay.layout.set.prototype.web.constants.LayoutSetPrototypePortletKeys" %><%@
-page import="com.liferay.portal.NoSuchLayoutSetPrototypeException" %><%@
-page import="com.liferay.portal.RequiredLayoutSetPrototypeException" %><%@
+page import="com.liferay.exportimport.web.constants.ExportImportPortletKeys" %><%@
+page import="com.liferay.layout.set.prototype.constants.LayoutSetPrototypePortletKeys" %><%@
+page import="com.liferay.portal.exception.NoSuchLayoutSetPrototypeException" %><%@
+page import="com.liferay.portal.exception.RequiredLayoutSetPrototypeException" %><%@
 page import="com.liferay.portal.kernel.dao.search.EmptyOnClickRowChecker" %><%@
 page import="com.liferay.portal.kernel.dao.search.ResultRow" %><%@
 page import="com.liferay.portal.kernel.dao.search.SearchContainer" %><%@
 page import="com.liferay.portal.kernel.language.LanguageUtil" %><%@
 page import="com.liferay.portal.kernel.portlet.LiferayWindowState" %><%@
+page import="com.liferay.portal.kernel.security.permission.ActionKeys" %><%@
 page import="com.liferay.portal.kernel.util.Constants" %><%@
 page import="com.liferay.portal.kernel.util.GetterUtil" %><%@
 page import="com.liferay.portal.kernel.util.OrderByComparator" %><%@
@@ -48,7 +50,6 @@ page import="com.liferay.portal.kernel.util.WebKeys" %><%@
 page import="com.liferay.portal.model.Group" %><%@
 page import="com.liferay.portal.model.LayoutSetPrototype" %><%@
 page import="com.liferay.portal.model.impl.LayoutSetPrototypeImpl" %><%@
-page import="com.liferay.portal.security.permission.ActionKeys" %><%@
 page import="com.liferay.portal.service.LayoutSetPrototypeLocalServiceUtil" %><%@
 page import="com.liferay.portal.service.LayoutSetPrototypeServiceUtil" %><%@
 page import="com.liferay.portal.service.permission.GroupPermissionUtil" %><%@
@@ -56,11 +57,9 @@ page import="com.liferay.portal.service.permission.LayoutSetPrototypePermissionU
 page import="com.liferay.portal.service.permission.PortalPermissionUtil" %><%@
 page import="com.liferay.portal.util.CustomJspRegistryUtil" %><%@
 page import="com.liferay.portal.util.PortalUtil" %><%@
-page import="com.liferay.portal.util.PortletKeys" %><%@
 page import="com.liferay.portal.util.PropsValues" %><%@
 page import="com.liferay.portal.util.comparator.LayoutSetPrototypeCreateDateComparator" %><%@
-page import="com.liferay.portlet.PortletURLUtil" %><%@
-page import="com.liferay.portlet.sites.util.SitesUtil" %>
+page import="com.liferay.sites.kernel.util.SitesUtil" %>
 
 <%@ page import="java.util.Set" %>
 
@@ -68,16 +67,10 @@ page import="com.liferay.portlet.sites.util.SitesUtil" %>
 page import="javax.portlet.PortletURL" %><%@
 page import="javax.portlet.WindowState" %>
 
-<portlet:defineObjects />
+<liferay-frontend:defineObjects />
 
 <liferay-theme:defineObjects />
 
-<%
-WindowState windowState = liferayPortletRequest.getWindowState();
-
-PortletURL currentURLObj = PortletURLUtil.getCurrent(liferayPortletRequest, liferayPortletResponse);
-
-String currentURL = currentURLObj.toString();
-%>
+<portlet:defineObjects />
 
 <%@ include file="/init-ext.jsp" %>

@@ -21,17 +21,11 @@ ResultRow row = (ResultRow)request.getAttribute(WebKeys.SEARCH_CONTAINER_RESULT_
 
 BookmarksFolder folder = null;
 
-long folderId = 0;
-
 if (row != null) {
 	folder = (BookmarksFolder)row.getObject();
-
-	folderId = folder.getFolderId();
 }
 else {
-	folder = (BookmarksFolder)request.getAttribute("view.jsp-folder");
-
-	folderId = GetterUtil.getLong((String)request.getAttribute("view.jsp-folderId"));
+	folder = (BookmarksFolder)request.getAttribute("info_panel.jsp-folder");
 }
 
 String modelResource = null;
@@ -43,7 +37,7 @@ boolean showPermissionsURL = false;
 if (folder != null) {
 	modelResource = BookmarksFolder.class.getName();
 	modelResourceDescription = folder.getName();
-	resourcePrimKey = String.valueOf(folderId);
+	resourcePrimKey = String.valueOf(folder.getFolderId());
 
 	showPermissionsURL = BookmarksFolderPermissionChecker.contains(permissionChecker, folder, ActionKeys.PERMISSIONS);
 }
@@ -55,20 +49,14 @@ else {
 	showPermissionsURL = GroupPermissionUtil.contains(permissionChecker, scopeGroupId, ActionKeys.PERMISSIONS);
 }
 
-String cssClass = StringPool.BLANK;
-String listGroupItemCssClass = StringPool.BLANK;
-
 boolean view = false;
 
 if (row == null) {
-	cssClass = "list-group nav";
-	listGroupItemCssClass = "list-group-item";
-
 	view = true;
 }
 %>
 
-<liferay-ui:icon-menu cssClass="<%= cssClass %>" icon="<%= StringPool.BLANK %>" message="<%= StringPool.BLANK %>" showExpanded="<%= view %>" showWhenSingleIcon="<%= view %>">
+<liferay-ui:icon-menu direction="left-side" icon="<%= StringPool.BLANK %>" markupView="lexicon" message="<%= StringPool.BLANK %>" showWhenSingleIcon="<%= true %>">
 	<c:if test="<%= (folder != null) && BookmarksFolderPermissionChecker.contains(permissionChecker, folder, ActionKeys.UPDATE) %>">
 		<portlet:renderURL var="editURL">
 			<portlet:param name="mvcRenderCommandName" value="/bookmarks/edit_folder" />
@@ -78,10 +66,19 @@ if (row == null) {
 		</portlet:renderURL>
 
 		<liferay-ui:icon
-			cssClass="<%= listGroupItemCssClass %>"
-			iconCssClass="icon-edit"
 			message="edit"
 			url="<%= editURL %>"
+		/>
+
+		<portlet:renderURL var="moveURL">
+			<portlet:param name="mvcRenderCommandName" value="/bookmarks/move_entry" />
+			<portlet:param name="redirect" value="<%= currentURL %>" />
+			<portlet:param name="rowIdsBookmarksFolder" value="<%= String.valueOf(folder.getFolderId()) %>" />
+		</portlet:renderURL>
+
+		<liferay-ui:icon
+			message="move"
+			url="<%= moveURL %>"
 		/>
 	</c:if>
 
@@ -95,8 +92,6 @@ if (row == null) {
 		/>
 
 		<liferay-ui:icon
-			cssClass="<%= listGroupItemCssClass %>"
-			iconCssClass="icon-lock"
 			message="permissions"
 			method="get"
 			url="<%= permissionsURL %>"
@@ -104,68 +99,17 @@ if (row == null) {
 		/>
 	</c:if>
 
-	<c:if test="<%= BookmarksFolderPermissionChecker.contains(permissionChecker, scopeGroupId, folderId, ActionKeys.SUBSCRIBE) && (bookmarksGroupServiceOverriddenConfiguration.emailEntryAddedEnabled() || bookmarksGroupServiceOverriddenConfiguration.emailEntryUpdatedEnabled()) %>">
-		<c:choose>
-			<c:when test="<%= (folder == null) ? SubscriptionLocalServiceUtil.isSubscribed(user.getCompanyId(), user.getUserId(), BookmarksFolder.class.getName(), scopeGroupId) : SubscriptionLocalServiceUtil.isSubscribed(user.getCompanyId(), user.getUserId(), BookmarksFolder.class.getName(), folder.getFolderId()) %>">
-				<portlet:actionURL name="/bookmarks/edit_folder" var="unsubscribeURL">
-					<portlet:param name="<%= Constants.CMD %>" value="<%= Constants.UNSUBSCRIBE %>" />
-					<portlet:param name="redirect" value="<%= currentURL %>" />
-					<portlet:param name="folderId" value="<%= String.valueOf(folderId) %>" />
-				</portlet:actionURL>
-
-				<liferay-ui:icon
-					cssClass="<%= listGroupItemCssClass %>"
-					iconCssClass="icon-remove-sign"
-					message="unsubscribe"
-					url="<%= unsubscribeURL %>"
-				/>
-			</c:when>
-			<c:otherwise>
-				<portlet:actionURL name="/bookmarks/edit_folder" var="subscribeURL">
-					<portlet:param name="<%= Constants.CMD %>" value="<%= Constants.SUBSCRIBE %>" />
-					<portlet:param name="redirect" value="<%= currentURL %>" />
-					<portlet:param name="folderId" value="<%= String.valueOf(folderId) %>" />
-				</portlet:actionURL>
-
-				<liferay-ui:icon
-					cssClass="<%= listGroupItemCssClass %>"
-					iconCssClass="icon-ok-sign"
-					message="subscribe"
-					url="<%= subscribeURL %>"
-				/>
-			</c:otherwise>
-		</c:choose>
-	</c:if>
-
-	<c:if test="<%= BookmarksFolderPermissionChecker.contains(permissionChecker, scopeGroupId, folderId, ActionKeys.ADD_FOLDER) %>">
-		<portlet:renderURL var="addFolderURL">
-			<portlet:param name="mvcRenderCommandName" value="/bookmarks/edit_folder" />
-			<portlet:param name="redirect" value="<%= currentURL %>" />
-			<portlet:param name="parentFolderId" value="<%= String.valueOf(folderId) %>" />
-		</portlet:renderURL>
-
-		<liferay-ui:icon cssClass="<%= listGroupItemCssClass %>" iconCssClass="icon-plus" message='<%= (folder != null) ? "add-subfolder" : "add-folder" %>' url="<%= addFolderURL %>" />
-	</c:if>
-
-	<c:if test="<%= BookmarksFolderPermissionChecker.contains(permissionChecker, scopeGroupId, folderId, ActionKeys.ADD_ENTRY) %>">
-		<portlet:renderURL var="editEntryURL">
-			<portlet:param name="mvcRenderCommandName" value="/bookmarks/edit_entry" />
-			<portlet:param name="redirect" value="<%= currentURL %>" />
-			<portlet:param name="folderId" value="<%= String.valueOf(folderId) %>" />
-		</portlet:renderURL>
-
-		<liferay-ui:icon
-			cssClass="<%= listGroupItemCssClass %>"
-			iconCssClass="icon-plus"
-			message="add-bookmark"
-			url="<%= editEntryURL %>"
-		/>
-	</c:if>
-
 	<c:if test="<%= (folder != null) && BookmarksFolderPermissionChecker.contains(permissionChecker, folder, ActionKeys.DELETE) %>">
 		<portlet:renderURL var="redirectURL">
-			<portlet:param name="mvcRenderCommandName" value="/bookmarks/view" />
-			<portlet:param name="folderId" value="<%= String.valueOf(folder.getParentFolderId()) %>" />
+			<c:choose>
+				<c:when test="<%= folder.getParentFolderId() == BookmarksFolderConstants.DEFAULT_PARENT_FOLDER_ID %>">
+					<portlet:param name="mvcRenderCommandName" value="/bookmarks/view" />
+				</c:when>
+				<c:otherwise>
+					<portlet:param name="mvcRenderCommandName" value="/bookmarks/view_folder" />
+					<portlet:param name="folderId" value="<%= String.valueOf(folder.getParentFolderId()) %>" />
+				</c:otherwise>
+			</c:choose>
 		</portlet:renderURL>
 
 		<portlet:actionURL name="/bookmarks/edit_folder" var="deleteURL">
@@ -175,7 +119,6 @@ if (row == null) {
 		</portlet:actionURL>
 
 		<liferay-ui:icon-delete
-			cssClass="<%= listGroupItemCssClass %>"
 			trash="<%= TrashUtil.isTrashEnabled(scopeGroupId) %>"
 			url="<%= deleteURL %>"
 		/>

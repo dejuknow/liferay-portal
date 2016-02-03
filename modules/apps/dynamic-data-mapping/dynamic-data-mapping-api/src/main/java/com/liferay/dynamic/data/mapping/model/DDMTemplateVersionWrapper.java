@@ -18,6 +18,11 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.ModelWrapper;
+import com.liferay.portal.service.ServiceContext;
+
+import com.liferay.portlet.expando.model.ExpandoBridge;
+
+import java.io.Serializable;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -197,15 +202,6 @@ public class DDMTemplateVersionWrapper implements DDMTemplateVersion,
 		return _ddmTemplateVersion.compareTo(ddmTemplateVersion);
 	}
 
-	/**
-	* @deprecated As of 6.1.0, replaced by {@link #isApproved()}
-	*/
-	@Deprecated
-	@Override
-	public boolean getApproved() {
-		return _ddmTemplateVersion.getApproved();
-	}
-
 	@Override
 	public java.lang.String[] getAvailableLanguageIds() {
 		return _ddmTemplateVersion.getAvailableLanguageIds();
@@ -345,7 +341,7 @@ public class DDMTemplateVersionWrapper implements DDMTemplateVersion,
 	}
 
 	@Override
-	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
+	public ExpandoBridge getExpandoBridge() {
 		return _ddmTemplateVersion.getExpandoBridge();
 	}
 
@@ -457,7 +453,7 @@ public class DDMTemplateVersionWrapper implements DDMTemplateVersion,
 	}
 
 	@Override
-	public java.io.Serializable getPrimaryKeyObj() {
+	public Serializable getPrimaryKeyObj() {
 		return _ddmTemplateVersion.getPrimaryKeyObj();
 	}
 
@@ -826,14 +822,12 @@ public class DDMTemplateVersionWrapper implements DDMTemplateVersion,
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portlet.expando.model.ExpandoBridge expandoBridge) {
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
 		_ddmTemplateVersion.setExpandoBridgeAttributes(expandoBridge);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.service.ServiceContext serviceContext) {
+	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
 		_ddmTemplateVersion.setExpandoBridgeAttributes(serviceContext);
 	}
 
@@ -934,7 +928,7 @@ public class DDMTemplateVersionWrapper implements DDMTemplateVersion,
 	}
 
 	@Override
-	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
+	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
 		_ddmTemplateVersion.setPrimaryKeyObj(primaryKeyObj);
 	}
 
@@ -1101,14 +1095,6 @@ public class DDMTemplateVersionWrapper implements DDMTemplateVersion,
 		}
 
 		return false;
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedModel}
-	 */
-	@Deprecated
-	public DDMTemplateVersion getWrappedDDMTemplateVersion() {
-		return _ddmTemplateVersion;
 	}
 
 	@Override

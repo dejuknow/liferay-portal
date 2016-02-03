@@ -83,17 +83,6 @@ public class AssetTagServiceUtil {
 	}
 
 	/**
-	* @deprecated As of 6.2.0, replaced by {@link #getGroupTagsDisplay(long,
-	String, int, int)}
-	*/
-	@Deprecated
-	public static com.liferay.portal.kernel.json.JSONObject getJSONGroupTags(
-		long groupId, java.lang.String name, int start, int end)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getJSONGroupTags(groupId, name, start, end);
-	}
-
-	/**
 	* Returns the OSGi service identifier.
 	*
 	* @return the OSGi service identifier
@@ -196,13 +185,6 @@ public class AssetTagServiceUtil {
 		}
 
 		return _service;
-	}
-
-	/**
-	 * @deprecated As of 6.2.0
-	 */
-	@Deprecated
-	public void setService(AssetTagService service) {
 	}
 
 	private static AssetTagService _service;

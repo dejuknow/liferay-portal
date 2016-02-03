@@ -18,18 +18,19 @@ import com.liferay.document.library.web.constants.DLPortletKeys;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.repository.model.FileShortcut;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.model.TrashedModel;
-import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
-import com.liferay.portlet.documentlibrary.FileShortcutPermissionException;
-import com.liferay.portlet.documentlibrary.NoSuchFileEntryException;
-import com.liferay.portlet.documentlibrary.NoSuchFileShortcutException;
+import com.liferay.portlet.documentlibrary.exception.FileShortcutPermissionException;
+import com.liferay.portlet.documentlibrary.exception.NoSuchFileEntryException;
+import com.liferay.portlet.documentlibrary.exception.NoSuchFileShortcutException;
 import com.liferay.portlet.documentlibrary.model.DLFileShortcutConstants;
 import com.liferay.portlet.documentlibrary.service.DLAppService;
+import com.liferay.portlet.documentlibrary.service.DLTrashService;
 import com.liferay.portlet.trash.util.TrashUtil;
 
 import javax.portlet.ActionRequest;
@@ -61,7 +62,7 @@ public class EditFileShortcutMVCActionCommand extends BaseMVCActionCommand {
 			actionRequest, "fileShortcutId");
 
 		if (moveToTrash) {
-			FileShortcut fileShortcut = _dlAppService.moveFileShortcutToTrash(
+			FileShortcut fileShortcut = _dlTrashService.moveFileShortcutToTrash(
 				fileShortcutId);
 
 			if (fileShortcut.getModel() instanceof TrashedModel) {
@@ -119,6 +120,11 @@ public class EditFileShortcutMVCActionCommand extends BaseMVCActionCommand {
 		_dlAppService = dlAppService;
 	}
 
+	@Reference(unbind = "-")
+	protected void setDLTrashService(DLTrashService dlTrashService) {
+		_dlTrashService = dlTrashService;
+	}
+
 	protected void updateFileShortcut(ActionRequest actionRequest)
 		throws Exception {
 
@@ -148,6 +154,7 @@ public class EditFileShortcutMVCActionCommand extends BaseMVCActionCommand {
 		}
 	}
 
-	private volatile DLAppService _dlAppService;
+	private DLAppService _dlAppService;
+	private DLTrashService _dlTrashService;
 
 }

@@ -16,14 +16,19 @@ package com.liferay.iframe.web.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
-import com.liferay.configuration.admin.ConfigurationAdmin;
+import com.liferay.portal.metatype.annotations.ExtendedObjectClassDefinition;
 
 /**
  * @author Juergen Kappler
  */
-@ConfigurationAdmin(category = "web-experience-management")
+@ExtendedObjectClassDefinition(
+	category = "web-experience-management",
+	scope = ExtendedObjectClassDefinition.Scope.PORTLET_INSTANCE
+)
 @Meta.OCD(
-	id = "com.liferay.iframe.web.configuration.IFramePortletInstanceConfiguration"
+	id = "com.liferay.iframe.web.configuration.IFramePortletInstanceConfiguration",
+	localization = "content/Language",
+	name = "%iframe.portlet.instance.configuration.name"
 )
 public interface IFramePortletInstanceConfiguration {
 
@@ -33,7 +38,7 @@ public interface IFramePortletInstanceConfiguration {
 	@Meta.AD(deflt = "false", required = false)
 	public boolean auth();
 
-	@Meta.AD(required = false)
+	@Meta.AD(deflt = "basic", required = false)
 	public String authType();
 
 	@Meta.AD(required = false)
@@ -48,7 +53,10 @@ public interface IFramePortletInstanceConfiguration {
 	@Meta.AD(deflt = "#000000", required = false)
 	public String bordercolor();
 
-	@Meta.AD(required = false)
+	@Meta.AD(deflt = "true", required = false)
+	public boolean dynamicUrlEnabled();
+
+	@Meta.AD(deflt = "post", required = false)
 	public String formMethod();
 
 	@Meta.AD(required = false)
@@ -66,8 +74,8 @@ public interface IFramePortletInstanceConfiguration {
 	@Meta.AD(deflt = "600", required = false)
 	public String heightNormal();
 
-	@Meta.AD(required = false)
-	public String hiddenVariables();
+	@Meta.AD(deflt = "var1=hello|var2=world", required = false)
+	public String[] hiddenVariables();
 
 	@Meta.AD(deflt = "0", required = false)
 	public String hspace();

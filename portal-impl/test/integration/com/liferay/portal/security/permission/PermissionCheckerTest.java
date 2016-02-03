@@ -14,6 +14,9 @@
 
 package com.liferay.portal.security.permission;
 
+import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.rule.Sync;
@@ -32,15 +35,7 @@ import com.liferay.portal.model.Role;
 import com.liferay.portal.model.RoleConstants;
 import com.liferay.portal.model.User;
 import com.liferay.portal.service.UserLocalServiceUtil;
-import com.liferay.portal.test.log.CaptureAppender;
-import com.liferay.portal.test.log.Log4JLoggerTestUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
-import com.liferay.portal.test.rule.MainServletTestRule;
-
-import java.util.List;
-
-import org.apache.log4j.Level;
-import org.apache.log4j.spi.LoggingEvent;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -58,17 +53,12 @@ public class PermissionCheckerTest {
 	@Rule
 	public static final AggregateTestRule aggregateTestRule =
 		new AggregateTestRule(
-			new LiferayIntegrationTestRule(), MainServletTestRule.INSTANCE,
+			new LiferayIntegrationTestRule(),
 			SynchronousDestinationTestRule.INSTANCE);
 
 	@Before
 	public void setUp() throws Exception {
 		_group = GroupTestUtil.addGroup();
-
-		String loggerName = AdvancedPermissionChecker.class.getName();
-
-		_captureAppender = Log4JLoggerTestUtil.configureLog4JLogger(
-			loggerName, Level.ALL);
 	}
 
 	@Test
@@ -83,49 +73,14 @@ public class PermissionCheckerTest {
 		String withoutExceptionPortletId = "11";
 		String withoutExceptionActionId = "VIEW";
 
-		try {
-			Assert.assertFalse(
-				permissionChecker.hasPermission(
-					_group.getGroupId(), withExceptionPortletId,
-					_group.getGroupId(), withExceptionActionId));
-
-			Assert.assertFalse(
-				permissionChecker.hasPermission(
-					_group.getGroupId(), withoutExceptionPortletId,
-					_group.getGroupId(), withoutExceptionActionId));
-		}
-		catch (Exception e) {
-			Assert.fail();
-		}
-
-		boolean hasWithException = false;
-		boolean hasWithoutException = false;
-
-		String withExceptionMessage =
-			"Guest does not have permission to " + withExceptionActionId +
-				" on " + withExceptionPortletId + " with primary key " +
-					_group.getGroupId();
-		String withoutExceptionMessage =
-			"Guest does not have permission to " + withoutExceptionActionId +
-				" on " + withoutExceptionPortletId + " with primary key " +
-					_group.getGroupId();
-
-		List<LoggingEvent> loggingEvents = _captureAppender.getLoggingEvents();
-
-		for (LoggingEvent loggingEvent : loggingEvents) {
-			String message = loggingEvent.getRenderedMessage();
-
-			if (message.equals(withExceptionMessage)) {
-				hasWithException = true;
-			}
-
-			if (message.equals(withoutExceptionMessage)) {
-				hasWithoutException = true;
-			}
-		}
-
-		Assert.assertTrue(hasWithException);
-		Assert.assertFalse(hasWithoutException);
+		Assert.assertFalse(
+			permissionChecker.hasPermission(
+				_group.getGroupId(), withExceptionPortletId,
+				_group.getGroupId(), withExceptionActionId));
+		Assert.assertFalse(
+			permissionChecker.hasPermission(
+				_group.getGroupId(), withoutExceptionPortletId,
+				_group.getGroupId(), withoutExceptionActionId));
 	}
 
 	@Test
@@ -284,13 +239,19 @@ public class PermissionCheckerTest {
 
 	@Test
 	public void testIsOmniAdminWithCompanyAdmin() throws Exception {
+		long companyId = CompanyThreadLocal.getCompanyId();
+
 		_company = CompanyTestUtil.addCompany();
 
-		User adminUser = UserTestUtil.addCompanyAdminUser(_company);
+		CompanyThreadLocal.setCompanyId(_company.getCompanyId());
 
-		PermissionChecker permissionChecker = _getPermissionChecker(adminUser);
+		_user = UserTestUtil.addCompanyAdminUser(_company);
+
+		PermissionChecker permissionChecker = _getPermissionChecker(_user);
 
 		Assert.assertFalse(permissionChecker.isOmniadmin());
+
+		CompanyThreadLocal.setCompanyId(companyId);
 	}
 
 	@Test
@@ -422,8 +383,6 @@ public class PermissionCheckerTest {
 
 		return PermissionCheckerFactoryUtil.create(user);
 	}
-
-	private CaptureAppender _captureAppender;
 
 	@DeleteAfterTestRun
 	private Company _company;

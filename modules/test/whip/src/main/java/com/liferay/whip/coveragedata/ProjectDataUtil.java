@@ -87,8 +87,8 @@ public class ProjectDataUtil {
 		ByteArrayOutputStream byteArrayOutputStream =
 			new ByteArrayOutputStream();
 
-		try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(
-				byteArrayOutputStream) {
+		try (ObjectOutputStream objectOutputStream =
+				new ObjectOutputStream(byteArrayOutputStream) {
 
 					@Override
 					protected void writeStreamHeader() {
@@ -116,8 +116,8 @@ public class ProjectDataUtil {
 
 	private static ProjectData _readProjectData(File dataFile) {
 		try (FileInputStream fileInputStream = new FileInputStream(dataFile);
-			ObjectInputStream objectInputStream = new ObjectInputStream(
-				fileInputStream)) {
+				ObjectInputStream objectInputStream = new ObjectInputStream(
+					fileInputStream)) {
 
 			return (ProjectData)objectInputStream.readObject();
 		}
@@ -130,8 +130,8 @@ public class ProjectDataUtil {
 		ProjectData projectData, File dataFile) {
 
 		try (FileOutputStream fileOutputStream = new FileOutputStream(dataFile);
-			ObjectOutputStream objectOutputStream = new ObjectOutputStream(
-				fileOutputStream)) {
+				ObjectOutputStream objectOutputStream = new ObjectOutputStream(
+					fileOutputStream)) {
 
 			objectOutputStream.writeObject(projectData);
 		}

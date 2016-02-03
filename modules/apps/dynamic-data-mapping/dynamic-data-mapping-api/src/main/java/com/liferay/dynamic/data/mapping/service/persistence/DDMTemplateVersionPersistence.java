@@ -16,6 +16,7 @@ package com.liferay.dynamic.data.mapping.service.persistence;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.dynamic.data.mapping.exception.NoSuchTemplateVersionException;
 import com.liferay.dynamic.data.mapping.model.DDMTemplateVersion;
 
 import com.liferay.portal.service.persistence.BasePersistence;
@@ -105,11 +106,11 @@ public interface DDMTemplateVersionPersistence extends BasePersistence<DDMTempla
 	* @param templateId the template ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching d d m template version
-	* @throws com.liferay.dynamic.data.mapping.NoSuchTemplateVersionException if a matching d d m template version could not be found
+	* @throws NoSuchTemplateVersionException if a matching d d m template version could not be found
 	*/
 	public DDMTemplateVersion findByTemplateId_First(long templateId,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMTemplateVersion> orderByComparator)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchTemplateVersionException;
+		throws NoSuchTemplateVersionException;
 
 	/**
 	* Returns the first d d m template version in the ordered set where templateId = &#63;.
@@ -127,11 +128,11 @@ public interface DDMTemplateVersionPersistence extends BasePersistence<DDMTempla
 	* @param templateId the template ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching d d m template version
-	* @throws com.liferay.dynamic.data.mapping.NoSuchTemplateVersionException if a matching d d m template version could not be found
+	* @throws NoSuchTemplateVersionException if a matching d d m template version could not be found
 	*/
 	public DDMTemplateVersion findByTemplateId_Last(long templateId,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMTemplateVersion> orderByComparator)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchTemplateVersionException;
+		throws NoSuchTemplateVersionException;
 
 	/**
 	* Returns the last d d m template version in the ordered set where templateId = &#63;.
@@ -150,12 +151,12 @@ public interface DDMTemplateVersionPersistence extends BasePersistence<DDMTempla
 	* @param templateId the template ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next d d m template version
-	* @throws com.liferay.dynamic.data.mapping.NoSuchTemplateVersionException if a d d m template version with the primary key could not be found
+	* @throws NoSuchTemplateVersionException if a d d m template version with the primary key could not be found
 	*/
 	public DDMTemplateVersion[] findByTemplateId_PrevAndNext(
 		long templateVersionId, long templateId,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMTemplateVersion> orderByComparator)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchTemplateVersionException;
+		throws NoSuchTemplateVersionException;
 
 	/**
 	* Removes all the d d m template versions where templateId = &#63; from the database.
@@ -173,16 +174,15 @@ public interface DDMTemplateVersionPersistence extends BasePersistence<DDMTempla
 	public int countByTemplateId(long templateId);
 
 	/**
-	* Returns the d d m template version where templateId = &#63; and version = &#63; or throws a {@link com.liferay.dynamic.data.mapping.NoSuchTemplateVersionException} if it could not be found.
+	* Returns the d d m template version where templateId = &#63; and version = &#63; or throws a {@link NoSuchTemplateVersionException} if it could not be found.
 	*
 	* @param templateId the template ID
 	* @param version the version
 	* @return the matching d d m template version
-	* @throws com.liferay.dynamic.data.mapping.NoSuchTemplateVersionException if a matching d d m template version could not be found
+	* @throws NoSuchTemplateVersionException if a matching d d m template version could not be found
 	*/
 	public DDMTemplateVersion findByT_V(long templateId,
-		java.lang.String version)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchTemplateVersionException;
+		java.lang.String version) throws NoSuchTemplateVersionException;
 
 	/**
 	* Returns the d d m template version where templateId = &#63; and version = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
@@ -213,8 +213,7 @@ public interface DDMTemplateVersionPersistence extends BasePersistence<DDMTempla
 	* @return the d d m template version that was removed
 	*/
 	public DDMTemplateVersion removeByT_V(long templateId,
-		java.lang.String version)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchTemplateVersionException;
+		java.lang.String version) throws NoSuchTemplateVersionException;
 
 	/**
 	* Returns the number of d d m template versions where templateId = &#63; and version = &#63;.
@@ -296,11 +295,11 @@ public interface DDMTemplateVersionPersistence extends BasePersistence<DDMTempla
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching d d m template version
-	* @throws com.liferay.dynamic.data.mapping.NoSuchTemplateVersionException if a matching d d m template version could not be found
+	* @throws NoSuchTemplateVersionException if a matching d d m template version could not be found
 	*/
 	public DDMTemplateVersion findByT_S_First(long templateId, int status,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMTemplateVersion> orderByComparator)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchTemplateVersionException;
+		throws NoSuchTemplateVersionException;
 
 	/**
 	* Returns the first d d m template version in the ordered set where templateId = &#63; and status = &#63;.
@@ -320,11 +319,11 @@ public interface DDMTemplateVersionPersistence extends BasePersistence<DDMTempla
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching d d m template version
-	* @throws com.liferay.dynamic.data.mapping.NoSuchTemplateVersionException if a matching d d m template version could not be found
+	* @throws NoSuchTemplateVersionException if a matching d d m template version could not be found
 	*/
 	public DDMTemplateVersion findByT_S_Last(long templateId, int status,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMTemplateVersion> orderByComparator)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchTemplateVersionException;
+		throws NoSuchTemplateVersionException;
 
 	/**
 	* Returns the last d d m template version in the ordered set where templateId = &#63; and status = &#63;.
@@ -345,12 +344,12 @@ public interface DDMTemplateVersionPersistence extends BasePersistence<DDMTempla
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next d d m template version
-	* @throws com.liferay.dynamic.data.mapping.NoSuchTemplateVersionException if a d d m template version with the primary key could not be found
+	* @throws NoSuchTemplateVersionException if a d d m template version with the primary key could not be found
 	*/
 	public DDMTemplateVersion[] findByT_S_PrevAndNext(long templateVersionId,
 		long templateId, int status,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMTemplateVersion> orderByComparator)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchTemplateVersionException;
+		throws NoSuchTemplateVersionException;
 
 	/**
 	* Removes all the d d m template versions where templateId = &#63; and status = &#63; from the database.
@@ -397,22 +396,22 @@ public interface DDMTemplateVersionPersistence extends BasePersistence<DDMTempla
 	*
 	* @param templateVersionId the primary key of the d d m template version
 	* @return the d d m template version that was removed
-	* @throws com.liferay.dynamic.data.mapping.NoSuchTemplateVersionException if a d d m template version with the primary key could not be found
+	* @throws NoSuchTemplateVersionException if a d d m template version with the primary key could not be found
 	*/
 	public DDMTemplateVersion remove(long templateVersionId)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchTemplateVersionException;
+		throws NoSuchTemplateVersionException;
 
 	public DDMTemplateVersion updateImpl(DDMTemplateVersion ddmTemplateVersion);
 
 	/**
-	* Returns the d d m template version with the primary key or throws a {@link com.liferay.dynamic.data.mapping.NoSuchTemplateVersionException} if it could not be found.
+	* Returns the d d m template version with the primary key or throws a {@link NoSuchTemplateVersionException} if it could not be found.
 	*
 	* @param templateVersionId the primary key of the d d m template version
 	* @return the d d m template version
-	* @throws com.liferay.dynamic.data.mapping.NoSuchTemplateVersionException if a d d m template version with the primary key could not be found
+	* @throws NoSuchTemplateVersionException if a d d m template version with the primary key could not be found
 	*/
 	public DDMTemplateVersion findByPrimaryKey(long templateVersionId)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchTemplateVersionException;
+		throws NoSuchTemplateVersionException;
 
 	/**
 	* Returns the d d m template version with the primary key or returns <code>null</code> if it could not be found.

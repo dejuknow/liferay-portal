@@ -91,6 +91,13 @@ public class DLPortletDataHandler extends BasePortletDataHandler {
 
 	public static final String NAMESPACE = "document_library";
 
+	public static final String SCHEMA_VERSION = "1.0.0";
+
+	@Override
+	public String getSchemaVersion() {
+		return SCHEMA_VERSION;
+	}
+
 	@Override
 	public String getServiceName() {
 		return DLConstants.SERVICE_NAME;
@@ -394,6 +401,7 @@ public class DLPortletDataHandler extends BasePortletDataHandler {
 			});
 		exportActionableDynamicQuery.setPerformActionMethod(
 			new ActionableDynamicQuery.PerformActionMethod<DLFileShortcut>() {
+
 				@Override
 				public void performAction(DLFileShortcut dlFileShortcut)
 					throws PortalException {
@@ -405,6 +413,7 @@ public class DLPortletDataHandler extends BasePortletDataHandler {
 					StagedModelDataHandlerUtil.exportStagedModel(
 						portletDataContext, fileShortcut);
 				}
+
 			});
 		exportActionableDynamicQuery.setStagedModelType(
 			new StagedModelType(DLFileShortcutConstants.getClassName()));
@@ -497,6 +506,7 @@ public class DLPortletDataHandler extends BasePortletDataHandler {
 					StagedModelDataHandlerUtil.exportStagedModel(
 						portletDataContext, fileEntry);
 				}
+
 			});
 		exportActionableDynamicQuery.setStagedModelType(
 			new StagedModelType(DLFileEntryConstants.getClassName()));
@@ -656,11 +666,11 @@ public class DLPortletDataHandler extends BasePortletDataHandler {
 		_repositoryLocalService = repositoryLocalService;
 	}
 
-	private volatile DLAppLocalService _dlAppLocalService;
-	private volatile DLFileEntryLocalService _dlFileEntryLocalService;
-	private volatile DLFileEntryTypeLocalService _dlFileEntryTypeLocalService;
-	private volatile DLFileShortcutLocalService _dlFileShortcutLocalService;
-	private volatile DLFolderLocalService _dlFolderLocalService;
-	private volatile RepositoryLocalService _repositoryLocalService;
+	private DLAppLocalService _dlAppLocalService;
+	private DLFileEntryLocalService _dlFileEntryLocalService;
+	private DLFileEntryTypeLocalService _dlFileEntryTypeLocalService;
+	private DLFileShortcutLocalService _dlFileShortcutLocalService;
+	private DLFolderLocalService _dlFolderLocalService;
+	private RepositoryLocalService _repositoryLocalService;
 
 }

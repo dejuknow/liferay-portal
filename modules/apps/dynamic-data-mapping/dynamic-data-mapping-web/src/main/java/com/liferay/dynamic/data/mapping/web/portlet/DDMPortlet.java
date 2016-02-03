@@ -14,6 +14,8 @@
 
 package com.liferay.dynamic.data.mapping.web.portlet;
 
+import aQute.bnd.annotation.metatype.Configurable;
+
 import com.liferay.dynamic.data.mapping.constants.DDMPortletKeys;
 import com.liferay.dynamic.data.mapping.constants.DDMWebKeys;
 import com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
@@ -31,19 +33,27 @@ import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
+import com.liferay.dynamic.data.mapping.validator.DDMFormLayoutValidationException;
+import com.liferay.dynamic.data.mapping.validator.DDMFormValidationException;
+import com.liferay.dynamic.data.mapping.validator.DDMFormValidationException.MustNotDuplicateFieldName;
+import com.liferay.dynamic.data.mapping.validator.DDMFormValidationException.MustSetOptionsForField;
+import com.liferay.dynamic.data.mapping.validator.DDMFormValidationException.MustSetValidCharactersForFieldName;
+import com.liferay.dynamic.data.mapping.web.configuration.DDMWebConfiguration;
 import com.liferay.portal.LocaleException;
-import com.liferay.portal.PortletPreferencesException;
+import com.liferay.portal.exception.PortletPreferencesException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.util.PortalUtil;
 
 import java.io.IOException;
+
+import java.util.Map;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -52,14 +62,18 @@ import javax.portlet.PortletException;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.ConfigurationPolicy;
+import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Leonardo Barros
  */
 @Component(
-	immediate = true,
+	configurationPid = "com.liferay.dynamic.data.mapping.web.configuration.DDMWebConfiguration",
+	configurationPolicy = ConfigurationPolicy.OPTIONAL, immediate = true,
 	property = {
 		"com.liferay.portlet.add-default-resource=true",
 		"com.liferay.portlet.autopropagated-parameters=refererPortletName",
@@ -112,7 +126,12 @@ public class DDMPortlet extends MVCPortlet {
 
 				include("/error.jsp", actionRequest, actionResponse);
 			}
-			else if (e instanceof LocaleException ||
+			else if (e instanceof DDMFormLayoutValidationException ||
+					 e instanceof DDMFormValidationException ||
+					 e instanceof LocaleException ||
+					 e instanceof MustNotDuplicateFieldName ||
+					 e instanceof MustSetOptionsForField ||
+					 e instanceof MustSetValidCharactersForFieldName ||
 					 e instanceof RequiredStructureException ||
 					 e instanceof StructureDefinitionException ||
 					 e instanceof StructureDuplicateElementException ||
@@ -151,6 +170,9 @@ public class DDMPortlet extends MVCPortlet {
 			setDDMTemplateRequestAttribute(request);
 
 			setDDMStructureRequestAttribute(request);
+
+			request.setAttribute(
+				DDMWebConfiguration.class.getName(), ddmWebConfiguration);
 		}
 		catch (NoSuchStructureException nsse) {
 
@@ -181,6 +203,13 @@ public class DDMPortlet extends MVCPortlet {
 		}
 
 		super.render(request, response);
+	}
+
+	@Activate
+	@Modified
+	protected void activate(Map<String, Object> properties) {
+		this.ddmWebConfiguration = Configurable.createConfigurable(
+			DDMWebConfiguration.class, properties);
 	}
 
 	@Reference(unbind = "-")
@@ -232,8 +261,9 @@ public class DDMPortlet extends MVCPortlet {
 		}
 	}
 
-	protected DDMStructureLocalService ddmStructureLocalService;
-	protected DDMTemplateLocalService ddmTemplateLocalService;
+	protected volatile DDMStructureLocalService ddmStructureLocalService;
+	protected volatile DDMTemplateLocalService ddmTemplateLocalService;
+	protected volatile DDMWebConfiguration ddmWebConfiguration;
 
 	private static final Log _log = LogFactoryUtil.getLog(DDMPortlet.class);
 

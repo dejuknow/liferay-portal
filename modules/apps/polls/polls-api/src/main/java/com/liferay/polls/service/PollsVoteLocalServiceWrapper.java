@@ -204,6 +204,12 @@ public class PollsVoteLocalServiceWrapper implements PollsVoteLocalService,
 	}
 
 	@Override
+	public com.liferay.polls.model.PollsVote fetchQuestionUserVote(
+		long questionId, long userId) {
+		return _pollsVoteLocalService.fetchQuestionUserVote(questionId, userId);
+	}
+
+	@Override
 	public com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
 		return _pollsVoteLocalService.getActionableDynamicQuery();
 	}
@@ -345,12 +351,6 @@ public class PollsVoteLocalServiceWrapper implements PollsVoteLocalService,
 		return _pollsVoteLocalService.getQuestionVotesCount(questionId);
 	}
 
-	@Override
-	public com.liferay.polls.model.PollsVote getVote(long questionId,
-		long userId) throws com.liferay.portal.kernel.exception.PortalException {
-		return _pollsVoteLocalService.getVote(questionId, userId);
-	}
-
 	/**
 	* Updates the polls vote in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	*
@@ -361,23 +361,6 @@ public class PollsVoteLocalServiceWrapper implements PollsVoteLocalService,
 	public com.liferay.polls.model.PollsVote updatePollsVote(
 		com.liferay.polls.model.PollsVote pollsVote) {
 		return _pollsVoteLocalService.updatePollsVote(pollsVote);
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
-	 */
-	@Deprecated
-	public PollsVoteLocalService getWrappedPollsVoteLocalService() {
-		return _pollsVoteLocalService;
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #setWrappedService}
-	 */
-	@Deprecated
-	public void setWrappedPollsVoteLocalService(
-		PollsVoteLocalService pollsVoteLocalService) {
-		_pollsVoteLocalService = pollsVoteLocalService;
 	}
 
 	@Override

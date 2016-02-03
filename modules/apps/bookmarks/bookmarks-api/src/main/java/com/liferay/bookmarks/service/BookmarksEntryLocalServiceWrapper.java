@@ -526,10 +526,10 @@ public class BookmarksEntryLocalServiceWrapper
 	public void updateAsset(long userId,
 		com.liferay.bookmarks.model.BookmarksEntry entry,
 		long[] assetCategoryIds, java.lang.String[] assetTagNames,
-		long[] assetLinkEntryIds)
+		long[] assetLinkEntryIds, java.lang.Double priority)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		_bookmarksEntryLocalService.updateAsset(userId, entry,
-			assetCategoryIds, assetTagNames, assetLinkEntryIds);
+			assetCategoryIds, assetTagNames, assetLinkEntryIds, priority);
 	}
 
 	/**
@@ -559,23 +559,6 @@ public class BookmarksEntryLocalServiceWrapper
 		long userId, com.liferay.bookmarks.model.BookmarksEntry entry,
 		int status) throws com.liferay.portal.kernel.exception.PortalException {
 		return _bookmarksEntryLocalService.updateStatus(userId, entry, status);
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
-	 */
-	@Deprecated
-	public BookmarksEntryLocalService getWrappedBookmarksEntryLocalService() {
-		return _bookmarksEntryLocalService;
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #setWrappedService}
-	 */
-	@Deprecated
-	public void setWrappedBookmarksEntryLocalService(
-		BookmarksEntryLocalService bookmarksEntryLocalService) {
-		_bookmarksEntryLocalService = bookmarksEntryLocalService;
 	}
 
 	@Override

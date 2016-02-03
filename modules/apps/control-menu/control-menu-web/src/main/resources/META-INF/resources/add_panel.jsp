@@ -23,26 +23,19 @@
 			<%
 			Group group = layout.getGroup();
 
-			boolean hasLayoutAddPermission = false;
-
-			if (layout.getParentLayoutId() == LayoutConstants.DEFAULT_PARENT_LAYOUT_ID) {
-				hasLayoutAddPermission = GroupPermissionUtil.contains(permissionChecker, group, ActionKeys.ADD_LAYOUT);
-			}
-			else {
-				hasLayoutAddPermission = LayoutPermissionUtil.contains(permissionChecker, layout, ActionKeys.ADD_LAYOUT);
-			}
-
 			boolean hasLayoutCustomizePermission = LayoutPermissionUtil.contains(permissionChecker, layout, ActionKeys.CUSTOMIZE);
 			boolean hasLayoutUpdatePermission = LayoutPermissionUtil.contains(permissionChecker, layout, ActionKeys.UPDATE);
 			%>
 
-			<c:if test="<%= !group.isControlPanel() && (hasLayoutAddPermission || hasLayoutUpdatePermission || (layoutTypePortlet.isCustomizable() && layoutTypePortlet.isCustomizedView() && hasLayoutCustomizePermission)) %>">
+			<c:if test="<%= !group.isControlPanel() && (hasLayoutUpdatePermission || (layoutTypePortlet.isCustomizable() && layoutTypePortlet.isCustomizedView() && hasLayoutCustomizePermission)) %>">
 				<div class="add-content-menu" id="<portlet:namespace />addPanelContainer">
-					<aui:button cssClass="close" name="closePanelAdd" value="&times;" />
+					<h4 class="sidebar-header">
+						<span><liferay-ui:message key="add" /></span>
+
+						<aui:icon cssClass="close" id="closePanelAdd" image="times" markupView="lexicon" url="javascript:;" />
+					</h4>
 
 					<%
-					String[] tabs1Names = new String[0];
-
 					boolean stateMaximized = ParamUtil.getBoolean(request, "stateMaximized");
 
 					LayoutTypeController layoutTypeController = layoutTypePortlet.getLayoutTypeController();
@@ -51,41 +44,58 @@
 
 					boolean hasAddContentPermission = hasAddApplicationsPermission && !group.isLayoutPrototype();
 
-					if (hasAddContentPermission) {
-						tabs1Names = ArrayUtil.append(tabs1Names, "content");
-					}
-
-					if (hasAddApplicationsPermission) {
-						tabs1Names = ArrayUtil.append(tabs1Names, "applications");
-					}
-
 					String selectedTab = GetterUtil.getString(SessionClicks.get(request, "com.liferay.control.menu.web_addPanelTab", "content"));
 					%>
 
-					<h1><liferay-ui:message key="add" /></h1>
-
-					<liferay-ui:tabs
-						names="<%= StringUtil.merge(tabs1Names) %>"
-						refresh="<%= false %>"
-						type="pills"
-						value="<%= selectedTab %>"
-					>
-						<c:if test="<%= hasAddContentPermission %>">
-							<liferay-ui:section>
-								<liferay-util:include page="/add_content.jsp" servletContext="<%= application %>" />
-							</liferay-ui:section>
-						</c:if>
-
+					<div aria-multiselectable="true" class="panel-group" id="<portlet:namespace />Accordion" role="tablist">
 						<c:if test="<%= hasAddApplicationsPermission %>">
-							<liferay-ui:section>
-								<liferay-util:include page="/add_application.jsp" servletContext="<%= application %>" />
-							</liferay-ui:section>
+							<div class="panel">
+								<div class="panel-heading" id="<portlet:namespace />addApplicationHeading" role="tab">
+									<div class="panel-title">
+										<div aria-controls="#<portlet:namespace />addApplicationCollapse" aria-expanded="<%= selectedTab.equals("applications") %>" class="collapse-icon collapse-icon-middle panel-toggler <%= selectedTab.equals("applications") ? StringPool.BLANK : "collapsed" %>" class="collapsed" data-parent="#<portlet:namespace />Accordion" data-toggle="collapse" href="#<portlet:namespace />addApplicationCollapse" role="button">
+											<span class="category-name"><liferay-ui:message key="applications" /></span>
+
+											<aui:icon cssClass="collapse-icon-closed" image="angle-right" markupView="lexicon" />
+
+											<aui:icon cssClass="collapse-icon-open" image="angle-down" markupView="lexicon" />
+										</div>
+									</div>
+								</div>
+
+								<div aria-expanded="false" aria-labelledby="<portlet:namespace />addApplicationHeading" class="collapse panel-collapse <%= selectedTab.equals("applications") ? "in" : StringPool.BLANK %>" id="<portlet:namespace />addApplicationCollapse" role="tabpanel">
+									<div class="panel-body">
+										<liferay-util:include page="/add_application.jsp" servletContext="<%= application %>" />
+									</div>
+								</div>
+							</div>
 						</c:if>
-					</liferay-ui:tabs>
+
+						<c:if test="<%= hasAddContentPermission %>">
+							<div class="panel">
+								<div class="panel-heading" id="<portlet:namespace />addContentHeading" role="tab">
+									<div class="panel-title">
+										<div aria-controls="#<portlet:namespace />addContentCollapse" aria-expanded="<%= selectedTab.equals("content") %>" class="collapse-icon collapse-icon-middle panel-toggler <%= selectedTab.equals("content") ? StringPool.BLANK : "collapsed" %>" class="collapsed" data-parent="#<portlet:namespace />Accordion" data-toggle="collapse" href="#<portlet:namespace />addContentCollapse" role="button">
+											<span class="category-name"><liferay-ui:message key="content" /></span>
+
+											<aui:icon cssClass="collapse-icon-closed" image="angle-right" markupView="lexicon" />
+
+											<aui:icon cssClass="collapse-icon-open" image="angle-down" markupView="lexicon" />
+										</div>
+									</div>
+								</div>
+
+								<div aria-expanded="false" aria-labelledby="<portlet:namespace />addContentHeading" class="collapse panel-collapse <%= selectedTab.equals("content") ? "in" : StringPool.BLANK %>" id="<portlet:namespace />addContentCollapse" role="tabpanel">
+									<div class="panel-body">
+										<liferay-util:include page="/add_content.jsp" servletContext="<%= application %>" />
+									</div>
+								</div>
+							</div>
+						</c:if>
+					</div>
 
 					<span class="added-message hide" id="<portlet:namespace />addedMessage">
 						<span class="alert-success message">
-							<liferay-ui:icon iconCssClass="icon-ok-sign" /> <span id="<portlet:namespace />portletName"></span> <liferay-ui:message key="added" />
+							<aui:icon image="check" markupView="lexicon" /> <span id="<portlet:namespace />portletName"></span> <liferay-ui:message key="added" />
 
 							<a class="content-link" href="javascript:;" id="<portlet:namespace />contentLink"><liferay-ui:message key="skip-to-content" /></a>
 						</span>

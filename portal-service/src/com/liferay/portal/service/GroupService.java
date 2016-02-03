@@ -23,6 +23,17 @@ import com.liferay.portal.kernel.security.access.control.AccessControlled;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
+import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.model.Group;
+import com.liferay.portal.model.Organization;
+import com.liferay.portal.model.Portlet;
+import com.liferay.portal.model.UserGroup;
+
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Provides the remote service interface for Group. Methods of this
@@ -48,17 +59,6 @@ public interface GroupService extends BaseService {
 	 */
 
 	/**
-	* @deprecated As of 6.2.0, replaced by {@link #addGroup(long, String,
-	String, int, String, boolean, boolean, ServiceContext)}
-	*/
-	@java.lang.Deprecated
-	public com.liferay.portal.model.Group addGroup(java.lang.String name,
-		java.lang.String description, int type, java.lang.String friendlyURL,
-		boolean site, boolean active,
-		com.liferay.portal.service.ServiceContext serviceContext)
-		throws PortalException;
-
-	/**
 	* Adds a group.
 	*
 	* @param parentGroupId the primary key of the parent group
@@ -81,62 +81,33 @@ public interface GroupService extends BaseService {
 	tag names for the group, and can set whether the group is for
 	staging
 	* @return the group
+	* @throws PortalException if a portal exception occurred
 	* @deprecated As of 7.0.0, replaced by {@link #addGroup(long, long, Map,
 	Map, int, boolean, int, String, boolean, boolean,
 	ServiceContext)}
 	*/
 	@java.lang.Deprecated
-	public com.liferay.portal.model.Group addGroup(long parentGroupId,
-		long liveGroupId, java.lang.String name, java.lang.String description,
-		int type, boolean manualMembership, int membershipRestriction,
+	public Group addGroup(long parentGroupId, long liveGroupId,
+		java.lang.String name, java.lang.String description, int type,
+		boolean manualMembership, int membershipRestriction,
 		java.lang.String friendlyURL, boolean site, boolean active,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws PortalException;
 
-	public com.liferay.portal.model.Group addGroup(long parentGroupId,
-		long liveGroupId,
-		java.util.Map<java.util.Locale, java.lang.String> nameMap,
-		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
-		int type, boolean manualMembership, int membershipRestriction,
+	public Group addGroup(long parentGroupId, long liveGroupId,
+		Map<Locale, java.lang.String> nameMap,
+		Map<Locale, java.lang.String> descriptionMap, int type,
+		boolean manualMembership, int membershipRestriction,
 		java.lang.String friendlyURL, boolean site, boolean active,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws PortalException;
 
-	public com.liferay.portal.model.Group addGroup(long parentGroupId,
-		long liveGroupId,
-		java.util.Map<java.util.Locale, java.lang.String> nameMap,
-		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
-		int type, boolean manualMembership, int membershipRestriction,
+	public Group addGroup(long parentGroupId, long liveGroupId,
+		Map<Locale, java.lang.String> nameMap,
+		Map<Locale, java.lang.String> descriptionMap, int type,
+		boolean manualMembership, int membershipRestriction,
 		java.lang.String friendlyURL, boolean site, boolean inheritContent,
 		boolean active, com.liferay.portal.service.ServiceContext serviceContext)
-		throws PortalException;
-
-	/**
-	* Adds the group using the group default live group ID.
-	*
-	* @param parentGroupId the primary key of the parent group
-	* @param name the entity's name
-	* @param description the group's description (optionally
-	<code>null</code>)
-	* @param type the group's type. For more information see {@link
-	GroupConstants}.
-	* @param friendlyURL the group's friendlyURL
-	* @param site whether the group is to be associated with a main site
-	* @param active whether the group is active
-	* @param serviceContext the service context to be applied (optionally
-	<code>null</code>). Can set asset category IDs and asset tag
-	names for the group, and can set whether the group is for
-	staging
-	* @return the group
-	* @deprecated As of 6.2.0, replaced by {@link #addGroup(long, long, Map,
-	Map, int, boolean, int, String, boolean, boolean,
-	ServiceContext)}
-	*/
-	@java.lang.Deprecated
-	public com.liferay.portal.model.Group addGroup(long parentGroupId,
-		java.lang.String name, java.lang.String description, int type,
-		java.lang.String friendlyURL, boolean site, boolean active,
-		com.liferay.portal.service.ServiceContext serviceContext)
 		throws PortalException;
 
 	/**
@@ -144,6 +115,7 @@ public interface GroupService extends BaseService {
 	*
 	* @param roleId the primary key of the role
 	* @param groupIds the primary keys of the groups
+	* @throws PortalException if a portal exception occurred
 	*/
 	public void addRoleGroups(long roleId, long[] groupIds)
 		throws PortalException;
@@ -153,6 +125,7 @@ public interface GroupService extends BaseService {
 	* Staging.
 	*
 	* @param groupId the primary key of the group
+	* @throws PortalException if a portal exception occurred
 	*/
 	public void checkRemoteStagingGroup(long groupId) throws PortalException;
 
@@ -163,10 +136,11 @@ public interface GroupService extends BaseService {
 	* The group is unstaged and its assets and resources including layouts,
 	* membership requests, subscriptions, teams, blogs, bookmarks, calendar
 	* events, image gallery, journals, message boards, polls, shopping related
-	* entities, software catalog, and wikis are also deleted.
+	* entities, and wikis are also deleted.
 	* </p>
 	*
 	* @param groupId the primary key of the group
+	* @throws PortalException if a portal exception occurred
 	*/
 	public void deleteGroup(long groupId) throws PortalException;
 
@@ -179,10 +153,10 @@ public interface GroupService extends BaseService {
 	*
 	* @param companyId the primary key of the company
 	* @return the group associated with the company
+	* @throws PortalException if a portal exception occurred
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public com.liferay.portal.model.Group getCompanyGroup(long companyId)
-		throws PortalException;
+	public Group getCompanyGroup(long companyId) throws PortalException;
 
 	/**
 	* Returns the group with the name.
@@ -190,19 +164,36 @@ public interface GroupService extends BaseService {
 	* @param companyId the primary key of the company
 	* @param groupKey the group key
 	* @return the group with the group key
+	* @throws PortalException if a portal exception occurred
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public com.liferay.portal.model.Group getGroup(long companyId,
-		java.lang.String groupKey) throws PortalException;
+	public Group getGroup(long companyId, java.lang.String groupKey)
+		throws PortalException;
 
 	/**
 	* Returns the group with the primary key.
 	*
 	* @param groupId the primary key of the group
 	* @return the group with the primary key
+	* @throws PortalException if a portal exception occurred
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public com.liferay.portal.model.Group getGroup(long groupId)
+	public Group getGroup(long groupId) throws PortalException;
+
+	/**
+	* Returns the group's display URL.
+	*
+	* @param groupId the primary key of the group
+	* @param privateLayout whether the layout set is private to the group
+	* @param secureConnection whether the generated URL uses a secure
+	connection
+	* @return the group's display URL
+	* @throws PortalException if a group with the primary key could not be
+	found or if a portal exception occurred
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public java.lang.String getGroupDisplayURL(long groupId,
+		boolean privateLayout, boolean secureConnection)
 		throws PortalException;
 
 	/**
@@ -213,11 +204,11 @@ public interface GroupService extends BaseService {
 	* @param site whether the group is to be associated with a main site
 	* @return the matching groups, or <code>null</code> if no matches were
 	found
+	* @throws PortalException if a portal exception occurred
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.util.List<com.liferay.portal.model.Group> getGroups(
-		long companyId, long parentGroupId, boolean site)
-		throws PortalException;
+	public List<Group> getGroups(long companyId, long parentGroupId,
+		boolean site) throws PortalException;
 
 	/**
 	* Returns a range of all the site groups for which the user has control
@@ -228,29 +219,11 @@ public interface GroupService extends BaseService {
 	inclusive)
 	* @return the range of site groups for which the user has Control Panel
 	access
+	* @throws PortalException if a portal exception occurred
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.util.List<com.liferay.portal.model.Group> getManageableSiteGroups(
-		java.util.Collection<com.liferay.portal.model.Portlet> portlets, int max)
-		throws PortalException;
-
-	/**
-	* Returns a range of all the site groups for which the user has control
-	* panel access.
-	*
-	* @param portlets the portlets to manage
-	* @param max the upper bound of the range of groups to consider (not
-	inclusive)
-	* @return the range of site groups for which the user has Control Panel
-	access
-	* @deprecated As of 6.2.0, replaced by {@link
-	#getManageableSiteGroups(Collection, int)}
-	*/
-	@java.lang.Deprecated
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.util.List<com.liferay.portal.model.Group> getManageableSites(
-		java.util.Collection<com.liferay.portal.model.Portlet> portlets, int max)
-		throws PortalException;
+	public List<Group> getManageableSiteGroups(Collection<Portlet> portlets,
+		int max) throws PortalException;
 
 	/**
 	* Returns the OSGi service identifier.
@@ -264,10 +237,10 @@ public interface GroupService extends BaseService {
 	*
 	* @param organizations the organizations
 	* @return the groups associated with the organizations
+	* @throws PortalException if a portal exception occurred
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.util.List<com.liferay.portal.model.Group> getOrganizationsGroups(
-		java.util.List<com.liferay.portal.model.Organization> organizations)
+	public List<Group> getOrganizationsGroups(List<Organization> organizations)
 		throws PortalException;
 
 	/**
@@ -276,20 +249,21 @@ public interface GroupService extends BaseService {
 	* @param companyId the primary key of the company
 	* @param userId the primary key of the user
 	* @return the group directly associated with the user
+	* @throws PortalException if a portal exception occurred
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public com.liferay.portal.model.Group getUserGroup(long companyId,
-		long userId) throws PortalException;
+	public Group getUserGroup(long companyId, long userId)
+		throws PortalException;
 
 	/**
 	* Returns the groups associated with the user groups.
 	*
 	* @param userGroups the user groups
 	* @return the groups associated with the user groups
+	* @throws PortalException if a portal exception occurred
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.util.List<com.liferay.portal.model.Group> getUserGroupsGroups(
-		java.util.List<com.liferay.portal.model.UserGroup> userGroups)
+	public List<Group> getUserGroupsGroups(List<UserGroup> userGroups)
 		throws PortalException;
 
 	/**
@@ -312,10 +286,14 @@ public interface GroupService extends BaseService {
 	* @param end the upper bound of the range of groups to consider (not
 	inclusive)
 	* @return the range of groups associated with the user's organizations
+	* @throws PortalException if a portal exception occurred
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.util.List<com.liferay.portal.model.Group> getUserOrganizationsGroups(
-		long userId, int start, int end) throws PortalException;
+	public List<Group> getUserOrganizationsGroups(long userId, int start,
+		int end) throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Group> getUserSitesGroups() throws PortalException;
 
 	/**
 	* Returns the guest or current user's groups &quot;sites&quot; associated
@@ -344,26 +322,14 @@ public interface GroupService extends BaseService {
 	*
 	* @param classNames the group entity class names (optionally
 	<code>null</code>). For more information see {@link
-	#getUserSitesGroups(String[], int)}.
+	#getUserSitesGroups(long, String[], int)}.
 	* @param max the maximum number of groups to return
 	* @return the user's groups &quot;sites&quot;
-	* @deprecated As of 6.2.0, replaced by {@link #getUserSitesGroups(String[],
-	int)}
+	* @throws PortalException if a portal exception occurred
 	*/
-	@java.lang.Deprecated
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.util.List<com.liferay.portal.model.Group> getUserPlaces(
-		java.lang.String[] classNames, int max) throws PortalException;
-
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link #getUserSitesGroups(long,
-	String[], int)}
-	*/
-	@java.lang.Deprecated
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.util.List<com.liferay.portal.model.Group> getUserPlaces(
-		long userId, java.lang.String[] classNames,
-		boolean includeControlPanel, int max) throws PortalException;
+	public List<Group> getUserSitesGroups(java.lang.String[] classNames, int max)
+		throws PortalException;
 
 	/**
 	* Returns the user's groups &quot;sites&quot; associated with the group
@@ -396,124 +362,20 @@ public interface GroupService extends BaseService {
 	#getUserSitesGroups(long, String[], int)}.
 	* @param max the maximum number of groups to return
 	* @return the user's groups &quot;sites&quot;
-	* @deprecated As of 6.2.0, replaced by {@link #getUserSitesGroups(long,
-	String[], int)}
-	*/
-	@java.lang.Deprecated
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.util.List<com.liferay.portal.model.Group> getUserPlaces(
-		long userId, java.lang.String[] classNames, int max)
-		throws PortalException;
-
-	/**
-	* Returns the number of the guest or current user's groups
-	* &quot;sites&quot; associated with the group entity class names, including
-	* the Control Panel group if the user is permitted to view the Control
-	* Panel.
-	*
-	* @return the number of user's groups &quot;sites&quot;
-	* @deprecated As of 6.2.0, replaced by {@link #getUserSitesGroupsCount()}
-	*/
-	@java.lang.Deprecated
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public int getUserPlacesCount() throws PortalException;
-
-	/**
-	* Returns the guest or current user's layout set group, organization
-	* groups, inherited organization groups, and site groups.
-	*
-	* @return the user's layout set group, organization groups, and
-	inherited organization groups, and site groups
-	* @deprecated As of 6.2.0, replaced by {@link #getUserSitesGroups}
-	*/
-	@java.lang.Deprecated
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.util.List<com.liferay.portal.model.Group> getUserSites()
-		throws PortalException;
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.util.List<com.liferay.portal.model.Group> getUserSitesGroups()
-		throws PortalException;
-
-	/**
-	* Returns the guest or current user's groups &quot;sites&quot; associated
-	* with the group entity class names, including the Control Panel group if
-	* the user is permitted to view the Control Panel.
-	*
-	* <ul>
-	* <li>
-	* Class name &quot;User&quot; includes the user's layout set
-	* group.
-	* </li>
-	* <li>
-	* Class name &quot;Organization&quot; includes the user's
-	* immediate organization groups and inherited organization groups.
-	* </li>
-	* <li>
-	* Class name &quot;Group&quot; includes the user's immediate
-	* organization groups and site groups.
-	* </li>
-	* <li>
-	* A <code>classNames</code>
-	* value of <code>null</code> includes the user's layout set group,
-	* organization groups, inherited organization groups, and site groups.
-	* </li>
-	* </ul>
-	*
-	* @param classNames the group entity class names (optionally
-	<code>null</code>). For more information see {@link
-	#getUserSitesGroups(long, String[], int)}.
-	* @param max the maximum number of groups to return
-	* @return the user's groups &quot;sites&quot;
+	* @throws PortalException if a portal exception occurred
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.util.List<com.liferay.portal.model.Group> getUserSitesGroups(
+	public List<Group> getUserSitesGroups(long userId,
 		java.lang.String[] classNames, int max) throws PortalException;
 
 	/**
-	* Returns the user's groups &quot;sites&quot; associated with the group
-	* entity class names, including the Control Panel group if the user is
-	* permitted to view the Control Panel.
-	*
-	* <ul>
-	* <li>
-	* Class name &quot;User&quot; includes the user's layout set
-	* group.
-	* </li>
-	* <li>
-	* Class name &quot;Organization&quot; includes the user's
-	* immediate organization groups and inherited organization groups.
-	* </li>
-	* <li>
-	* Class name &quot;Group&quot; includes the user's immediate
-	* organization groups and site groups.
-	* </li>
-	* <li>
-	* A <code>classNames</code>
-	* value of <code>null</code> includes the user's layout set group,
-	* organization groups, inherited organization groups, and site groups.
-	* </li>
-	* </ul>
-	*
-	* @param userId the primary key of the user
-	* @param classNames the group entity class names (optionally
-	<code>null</code>). For more information see {@link
-	#getUserSitesGroups(long, String[], int)}.
-	* @param max the maximum number of groups to return
-	* @return the user's groups &quot;sites&quot;
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.util.List<com.liferay.portal.model.Group> getUserSitesGroups(
-		long userId, java.lang.String[] classNames, int max)
-		throws PortalException;
-
-	/**
 	* Returns the number of the guest or current user's groups
 	* &quot;sites&quot; associated with the group entity class names, including
 	* the Control Panel group if the user is permitted to view the Control
 	* Panel.
 	*
 	* @return the number of user's groups &quot;sites&quot;
+	* @throws PortalException if a portal exception occurred
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getUserSitesGroupsCount() throws PortalException;
@@ -527,26 +389,23 @@ public interface GroupService extends BaseService {
 	* @param groupId the primary key of the group
 	* @return <code>true</code> if the user is associated with the group;
 	<code>false</code> otherwise
+	* @throws PortalException if a portal exception occurred
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public boolean hasUserGroup(long userId, long groupId)
 		throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.util.List<com.liferay.portal.model.Group> search(
-		long companyId, long[] classNameIds, java.lang.String keywords,
-		java.util.LinkedHashMap<java.lang.String, java.lang.Object> params,
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Group> obc)
-		throws PortalException;
+	public List<Group> search(long companyId, long[] classNameIds,
+		java.lang.String keywords,
+		LinkedHashMap<java.lang.String, java.lang.Object> params, int start,
+		int end, OrderByComparator<Group> obc) throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.util.List<com.liferay.portal.model.Group> search(
-		long companyId, long[] classNameIds, java.lang.String name,
-		java.lang.String description,
-		java.util.LinkedHashMap<java.lang.String, java.lang.Object> params,
-		boolean andOperator, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Group> obc)
+	public List<Group> search(long companyId, long[] classNameIds,
+		java.lang.String name, java.lang.String description,
+		LinkedHashMap<java.lang.String, java.lang.Object> params,
+		boolean andOperator, int start, int end, OrderByComparator<Group> obc)
 		throws PortalException;
 
 	/**
@@ -578,12 +437,12 @@ public interface GroupService extends BaseService {
 	* @param end the upper bound of the range of groups to return (not
 	inclusive)
 	* @return the matching groups ordered by name
+	* @throws PortalException if a portal exception occurred
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.util.List<com.liferay.portal.model.Group> search(
-		long companyId, java.lang.String name, java.lang.String description,
-		java.lang.String[] params, int start, int end)
-		throws PortalException;
+	public List<Group> search(long companyId, java.lang.String name,
+		java.lang.String description, java.lang.String[] params, int start,
+		int end) throws PortalException;
 
 	/**
 	* Returns the number of groups and organization groups that match the name
@@ -612,6 +471,7 @@ public interface GroupService extends BaseService {
 	*
 	* @param roleId the primary key of the role
 	* @param groupIds the primary keys of the groups
+	* @throws PortalException if a portal exception occurred
 	*/
 	public void setRoleGroups(long roleId, long[] groupIds)
 		throws PortalException;
@@ -621,6 +481,7 @@ public interface GroupService extends BaseService {
 	*
 	* @param roleId the primary key of the role
 	* @param groupIds the primary keys of the groups
+	* @throws PortalException if a portal exception occurred
 	*/
 	public void unsetRoleGroups(long roleId, long[] groupIds)
 		throws PortalException;
@@ -632,9 +493,10 @@ public interface GroupService extends BaseService {
 	* @param friendlyURL the group's new friendlyURL (optionally
 	<code>null</code>)
 	* @return the group
+	* @throws PortalException if a portal exception occurred
 	*/
-	public com.liferay.portal.model.Group updateFriendlyURL(long groupId,
-		java.lang.String friendlyURL) throws PortalException;
+	public Group updateFriendlyURL(long groupId, java.lang.String friendlyURL)
+		throws PortalException;
 
 	/**
 	* Updates the group.
@@ -652,29 +514,30 @@ public interface GroupService extends BaseService {
 	more information see {@link GroupConstants}.
 	* @param friendlyURL the group's new friendlyURL (optionally
 	<code>null</code>)
+	* @param inheritContent whether to inherit content from the parent
+	group
 	* @param active whether the group is active
 	* @param serviceContext the service context to be applied (optionally
 	<code>null</code>). Can set the asset category IDs and asset
 	tag names for the group.
 	* @return the group
+	* @throws PortalException if a portal exception occurred
 	* @deprecated As of 7.0.0, replaced by {@link #updateGroup(long, long, Map,
 	Map, int, boolean, int, String, boolean, boolean,
 	ServiceContext)}
 	*/
 	@java.lang.Deprecated
-	public com.liferay.portal.model.Group updateGroup(long groupId,
-		long parentGroupId, java.lang.String name,
-		java.lang.String description, int type, boolean manualMembership,
-		int membershipRestriction, java.lang.String friendlyURL,
-		boolean inheritContent, boolean active,
+	public Group updateGroup(long groupId, long parentGroupId,
+		java.lang.String name, java.lang.String description, int type,
+		boolean manualMembership, int membershipRestriction,
+		java.lang.String friendlyURL, boolean inheritContent, boolean active,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws PortalException;
 
-	public com.liferay.portal.model.Group updateGroup(long groupId,
-		long parentGroupId,
-		java.util.Map<java.util.Locale, java.lang.String> nameMap,
-		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
-		int type, boolean manualMembership, int membershipRestriction,
+	public Group updateGroup(long groupId, long parentGroupId,
+		Map<Locale, java.lang.String> nameMap,
+		Map<Locale, java.lang.String> descriptionMap, int type,
+		boolean manualMembership, int membershipRestriction,
 		java.lang.String friendlyURL, boolean inheritContent, boolean active,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws PortalException;
@@ -686,11 +549,12 @@ public interface GroupService extends BaseService {
 	* @param typeSettings the group's new type settings (optionally
 	<code>null</code>)
 	* @return the group
+	* @throws PortalException if a portal exception occurred
 	*/
-	public com.liferay.portal.model.Group updateGroup(long groupId,
-		java.lang.String typeSettings) throws PortalException;
+	public Group updateGroup(long groupId, java.lang.String typeSettings)
+		throws PortalException;
 
 	public void updateStagedPortlets(long groupId,
-		java.util.Map<java.lang.String, java.lang.String> stagedPortletIds)
+		Map<java.lang.String, java.lang.String> stagedPortletIds)
 		throws PortalException;
 }

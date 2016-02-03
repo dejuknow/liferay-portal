@@ -47,51 +47,48 @@ userSearchContainer.setResults(users);
 RowChecker rowChecker = new EmptyOnClickRowChecker(renderResponse);
 %>
 
-<c:if test="<%= usersCount > 0 %>">
-	<liferay-frontend:management-bar
-		includeCheckBox="<%= true %>"
-		searchContainerId="users"
-	>
-		<liferay-frontend:management-bar-filters>
-			<liferay-frontend:management-bar-navigation
-				navigationKeys='<%= new String[] {"all"} %>'
-				portletURL="<%= portletURL %>"
-			/>
+<liferay-util:include page="/navigation_bar.jsp" servletContext="<%= application %>">
+	<liferay-util:param name="searchEnabled" value="<%= String.valueOf((usersCount > 0) || searchTerms.isSearch()) %>" />
+</liferay-util:include>
 
-			<liferay-frontend:management-bar-sort
-				orderByCol="<%= orderByCol %>"
-				orderByType="<%= orderByType %>"
-				orderColumns='<%= new String[] {"first-name", "screen-name"} %>'
-				portletURL="<%= PortletURLUtil.clone(portletURL, renderResponse) %>"
-			/>
-		</liferay-frontend:management-bar-filters>
+<liferay-frontend:management-bar
+	disabled="<%= usersCount <= 0 %>"
+	includeCheckBox="<%= true %>"
+	searchContainerId="users"
+>
+	<liferay-frontend:management-bar-filters>
+		<liferay-frontend:management-bar-navigation
+			navigationKeys='<%= new String[] {"all"} %>'
+			portletURL="<%= portletURL %>"
+		/>
 
-		<liferay-frontend:management-bar-buttons>
-			<liferay-frontend:management-bar-display-buttons
-				displayViews='<%= new String[] {"icon", "descriptive", "list"} %>'
-				portletURL="<%= PortletURLUtil.clone(portletURL, renderResponse) %>"
-				selectedDisplayStyle="<%= displayStyle %>"
-			/>
-		</liferay-frontend:management-bar-buttons>
+		<liferay-frontend:management-bar-sort
+			orderByCol="<%= orderByCol %>"
+			orderByType="<%= orderByType %>"
+			orderColumns='<%= new String[] {"first-name", "screen-name"} %>'
+			portletURL="<%= PortletURLUtil.clone(portletURL, renderResponse) %>"
+		/>
+	</liferay-frontend:management-bar-filters>
 
-		<liferay-frontend:management-bar-action-buttons>
-			<liferay-frontend:management-bar-button href="javascript:;" iconCssClass="icon-trash" id="deleteUsers" />
-		</liferay-frontend:management-bar-action-buttons>
-	</liferay-frontend:management-bar>
-</c:if>
+	<liferay-frontend:management-bar-buttons>
+		<liferay-frontend:management-bar-display-buttons
+			displayViews='<%= new String[] {"icon", "descriptive", "list"} %>'
+			portletURL="<%= PortletURLUtil.clone(portletURL, renderResponse) %>"
+			selectedDisplayStyle="<%= displayStyle %>"
+		/>
+	</liferay-frontend:management-bar-buttons>
 
-<aui:button-row cssClass="text-center">
-	<aui:button cssClass="btn-lg btn-primary" id="addUsers" value="add-team-members" />
-</aui:button-row>
+	<liferay-frontend:management-bar-action-buttons>
+		<liferay-frontend:management-bar-button href="javascript:;" icon="trash" id="deleteUsers" label="delete" />
+	</liferay-frontend:management-bar-action-buttons>
+</liferay-frontend:management-bar>
 
 <portlet:actionURL name="deleteTeamUsers" var="deleteTeamUsersURL" />
 
 <aui:form action="<%= deleteTeamUsersURL %>" cssClass="container-fluid-1280" method="post" name="fm">
 	<aui:input name="tabs1" type="hidden" value="<%= tabs1 %>" />
 	<aui:input name="redirect" type="hidden" value="<%= currentURL %>" />
-	<aui:input name="assignmentsRedirect" type="hidden" />
 	<aui:input name="teamId" type="hidden" value="<%= String.valueOf(team.getTeamId()) %>" />
-	<aui:input name="addUserIds" type="hidden" />
 
 	<liferay-ui:search-container
 		emptyResultsMessage="there-are-no-members.-you-can-add-a-member-by-clicking-the-button-on-the-top-of-this-box"
@@ -119,6 +116,18 @@ RowChecker rowChecker = new EmptyOnClickRowChecker(renderResponse);
 	</liferay-ui:search-container>
 </aui:form>
 
+<portlet:actionURL name="addTeamUsers" var="addTeamUsersURL" />
+
+<aui:form action="<%= addTeamUsersURL %>" cssClass="hide" name="addTeamUsersFm">
+	<aui:input name="tabs1" type="hidden" value="<%= tabs1 %>" />
+	<aui:input name="redirect" type="hidden" value="<%= currentURL %>" />
+	<aui:input name="teamId" type="hidden" value="<%= String.valueOf(team.getTeamId()) %>" />
+</aui:form>
+
+<liferay-frontend:add-menu>
+	<liferay-frontend:add-menu-item id="addUsers" title='<%= LanguageUtil.get(request, "add-team-members") %>' url="javascript:;" />
+</liferay-frontend:add-menu>
+
 <aui:script use="liferay-item-selector-dialog">
 	var Util = Liferay.Util;
 
@@ -143,9 +152,11 @@ RowChecker rowChecker = new EmptyOnClickRowChecker(renderResponse);
 							var selectedItem = event.newVal;
 
 							if (selectedItem) {
-								form.fm('addUserIds').val(selectedItem.value);
+								var addTeamUsersFm = $(document.<portlet:namespace />addTeamUsersFm);
 
-								submitForm(form, '<portlet:actionURL name="addTeamUsers" />');
+								addTeamUsersFm.append(selectedItem);
+
+								submitForm(addTeamUsersFm);
 							}
 						}
 					},

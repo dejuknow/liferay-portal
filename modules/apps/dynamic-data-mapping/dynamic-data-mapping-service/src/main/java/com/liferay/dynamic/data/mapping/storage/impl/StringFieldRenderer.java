@@ -111,6 +111,10 @@ public class StringFieldRenderer extends BaseFieldRenderer {
 
 		JSONArray jsonArray = JSONFactoryUtil.createJSONArray(json);
 
+		if (jsonArray.length() == 0) {
+			return StringPool.BLANK;
+		}
+
 		StringBundler sb = new StringBundler(jsonArray.length() * 2);
 
 		for (int i = 0; i < jsonArray.length(); i++) {
@@ -122,10 +126,11 @@ public class StringFieldRenderer extends BaseFieldRenderer {
 			}
 
 			sb.append(label.getString(locale));
+			sb.append(StringPool.COMMA_AND_SPACE);
+		}
 
-			if ((i + 1) < jsonArray.length()) {
-				sb.append(StringPool.COMMA_AND_SPACE);
-			}
+		if (sb.index() > 0) {
+			sb.setIndex(sb.index() - 1);
 		}
 
 		return sb.toString();

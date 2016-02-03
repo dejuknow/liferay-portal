@@ -36,16 +36,12 @@ if (article != null) {
 }
 %>
 
-<liferay-ui:error-marker key="errorSection" value="related-assets" />
+<liferay-ui:error-marker key="<%= WebKeys.ERROR_SECTION %>" value="related-assets" />
 
 <aui:model-context bean="<%= article %>" model="<%= JournalArticle.class %>" />
 
-<h3><liferay-ui:message key="related-assets" /></h3>
-
-<aui:fieldset>
-	<liferay-ui:input-asset-links
-		assetEntryId="<%= assetEntryId %>"
-		className="<%= JournalArticle.class.getName() %>"
-		classPK="<%= classPK %>"
-	/>
-</aui:fieldset>
+<liferay-ui:input-asset-links
+	assetEntryId="<%= assetEntryId %>"
+	className="<%= JournalArticle.class.getName() %>"
+	classPK="<%= classPK %>"
+/>

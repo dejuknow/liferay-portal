@@ -31,6 +31,8 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextThreadLocal;
+import com.liferay.portal.service.persistence.CompanyProvider;
+import com.liferay.portal.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 
@@ -208,7 +210,7 @@ public class WallEntryPersistenceImpl extends BasePersistenceImpl<WallEntry>
 
 			if (orderByComparator != null) {
 				query = new StringBundler(3 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(3);
@@ -276,7 +278,7 @@ public class WallEntryPersistenceImpl extends BasePersistenceImpl<WallEntry>
 	 * @param groupId the group ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching wall entry
-	 * @throws com.liferay.social.networking.NoSuchWallEntryException if a matching wall entry could not be found
+	 * @throws NoSuchWallEntryException if a matching wall entry could not be found
 	 */
 	@Override
 	public WallEntry findByGroupId_First(long groupId,
@@ -325,7 +327,7 @@ public class WallEntryPersistenceImpl extends BasePersistenceImpl<WallEntry>
 	 * @param groupId the group ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching wall entry
-	 * @throws com.liferay.social.networking.NoSuchWallEntryException if a matching wall entry could not be found
+	 * @throws NoSuchWallEntryException if a matching wall entry could not be found
 	 */
 	@Override
 	public WallEntry findByGroupId_Last(long groupId,
@@ -382,7 +384,7 @@ public class WallEntryPersistenceImpl extends BasePersistenceImpl<WallEntry>
 	 * @param groupId the group ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next wall entry
-	 * @throws com.liferay.social.networking.NoSuchWallEntryException if a wall entry with the primary key could not be found
+	 * @throws NoSuchWallEntryException if a wall entry with the primary key could not be found
 	 */
 	@Override
 	public WallEntry[] findByGroupId_PrevAndNext(long wallEntryId,
@@ -421,8 +423,9 @@ public class WallEntryPersistenceImpl extends BasePersistenceImpl<WallEntry>
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+			query = new StringBundler(4 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
 			query = new StringBundler(3);
@@ -708,7 +711,7 @@ public class WallEntryPersistenceImpl extends BasePersistenceImpl<WallEntry>
 
 			if (orderByComparator != null) {
 				query = new StringBundler(3 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(3);
@@ -776,7 +779,7 @@ public class WallEntryPersistenceImpl extends BasePersistenceImpl<WallEntry>
 	 * @param userId the user ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching wall entry
-	 * @throws com.liferay.social.networking.NoSuchWallEntryException if a matching wall entry could not be found
+	 * @throws NoSuchWallEntryException if a matching wall entry could not be found
 	 */
 	@Override
 	public WallEntry findByUserId_First(long userId,
@@ -825,7 +828,7 @@ public class WallEntryPersistenceImpl extends BasePersistenceImpl<WallEntry>
 	 * @param userId the user ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching wall entry
-	 * @throws com.liferay.social.networking.NoSuchWallEntryException if a matching wall entry could not be found
+	 * @throws NoSuchWallEntryException if a matching wall entry could not be found
 	 */
 	@Override
 	public WallEntry findByUserId_Last(long userId,
@@ -882,7 +885,7 @@ public class WallEntryPersistenceImpl extends BasePersistenceImpl<WallEntry>
 	 * @param userId the user ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next wall entry
-	 * @throws com.liferay.social.networking.NoSuchWallEntryException if a wall entry with the primary key could not be found
+	 * @throws NoSuchWallEntryException if a wall entry with the primary key could not be found
 	 */
 	@Override
 	public WallEntry[] findByUserId_PrevAndNext(long wallEntryId, long userId,
@@ -921,8 +924,9 @@ public class WallEntryPersistenceImpl extends BasePersistenceImpl<WallEntry>
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+			query = new StringBundler(4 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
 			query = new StringBundler(3);
@@ -1219,7 +1223,7 @@ public class WallEntryPersistenceImpl extends BasePersistenceImpl<WallEntry>
 
 			if (orderByComparator != null) {
 				query = new StringBundler(4 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(4);
@@ -1292,7 +1296,7 @@ public class WallEntryPersistenceImpl extends BasePersistenceImpl<WallEntry>
 	 * @param userId the user ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching wall entry
-	 * @throws com.liferay.social.networking.NoSuchWallEntryException if a matching wall entry could not be found
+	 * @throws NoSuchWallEntryException if a matching wall entry could not be found
 	 */
 	@Override
 	public WallEntry findByG_U_First(long groupId, long userId,
@@ -1348,7 +1352,7 @@ public class WallEntryPersistenceImpl extends BasePersistenceImpl<WallEntry>
 	 * @param userId the user ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching wall entry
-	 * @throws com.liferay.social.networking.NoSuchWallEntryException if a matching wall entry could not be found
+	 * @throws NoSuchWallEntryException if a matching wall entry could not be found
 	 */
 	@Override
 	public WallEntry findByG_U_Last(long groupId, long userId,
@@ -1410,7 +1414,7 @@ public class WallEntryPersistenceImpl extends BasePersistenceImpl<WallEntry>
 	 * @param userId the user ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next wall entry
-	 * @throws com.liferay.social.networking.NoSuchWallEntryException if a wall entry with the primary key could not be found
+	 * @throws NoSuchWallEntryException if a wall entry with the primary key could not be found
 	 */
 	@Override
 	public WallEntry[] findByG_U_PrevAndNext(long wallEntryId, long groupId,
@@ -1449,11 +1453,12 @@ public class WallEntryPersistenceImpl extends BasePersistenceImpl<WallEntry>
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+			query = new StringBundler(5 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
-			query = new StringBundler(3);
+			query = new StringBundler(4);
 		}
 
 		query.append(_SQL_SELECT_WALLENTRY_WHERE);
@@ -1716,6 +1721,8 @@ public class WallEntryPersistenceImpl extends BasePersistenceImpl<WallEntry>
 		wallEntry.setNew(true);
 		wallEntry.setPrimaryKey(wallEntryId);
 
+		wallEntry.setCompanyId(companyProvider.getCompanyId());
+
 		return wallEntry;
 	}
 
@@ -1724,7 +1731,7 @@ public class WallEntryPersistenceImpl extends BasePersistenceImpl<WallEntry>
 	 *
 	 * @param wallEntryId the primary key of the wall entry
 	 * @return the wall entry that was removed
-	 * @throws com.liferay.social.networking.NoSuchWallEntryException if a wall entry with the primary key could not be found
+	 * @throws NoSuchWallEntryException if a wall entry with the primary key could not be found
 	 */
 	@Override
 	public WallEntry remove(long wallEntryId) throws NoSuchWallEntryException {
@@ -1736,7 +1743,7 @@ public class WallEntryPersistenceImpl extends BasePersistenceImpl<WallEntry>
 	 *
 	 * @param primaryKey the primary key of the wall entry
 	 * @return the wall entry that was removed
-	 * @throws com.liferay.social.networking.NoSuchWallEntryException if a wall entry with the primary key could not be found
+	 * @throws NoSuchWallEntryException if a wall entry with the primary key could not be found
 	 */
 	@Override
 	public WallEntry remove(Serializable primaryKey)
@@ -1948,11 +1955,11 @@ public class WallEntryPersistenceImpl extends BasePersistenceImpl<WallEntry>
 	}
 
 	/**
-	 * Returns the wall entry with the primary key or throws a {@link com.liferay.portal.NoSuchModelException} if it could not be found.
+	 * Returns the wall entry with the primary key or throws a {@link com.liferay.portal.exception.NoSuchModelException} if it could not be found.
 	 *
 	 * @param primaryKey the primary key of the wall entry
 	 * @return the wall entry
-	 * @throws com.liferay.social.networking.NoSuchWallEntryException if a wall entry with the primary key could not be found
+	 * @throws NoSuchWallEntryException if a wall entry with the primary key could not be found
 	 */
 	@Override
 	public WallEntry findByPrimaryKey(Serializable primaryKey)
@@ -1972,11 +1979,11 @@ public class WallEntryPersistenceImpl extends BasePersistenceImpl<WallEntry>
 	}
 
 	/**
-	 * Returns the wall entry with the primary key or throws a {@link com.liferay.social.networking.NoSuchWallEntryException} if it could not be found.
+	 * Returns the wall entry with the primary key or throws a {@link NoSuchWallEntryException} if it could not be found.
 	 *
 	 * @param wallEntryId the primary key of the wall entry
 	 * @return the wall entry
-	 * @throws com.liferay.social.networking.NoSuchWallEntryException if a wall entry with the primary key could not be found
+	 * @throws NoSuchWallEntryException if a wall entry with the primary key could not be found
 	 */
 	@Override
 	public WallEntry findByPrimaryKey(long wallEntryId)
@@ -2222,7 +2229,7 @@ public class WallEntryPersistenceImpl extends BasePersistenceImpl<WallEntry>
 
 			if (orderByComparator != null) {
 				query = new StringBundler(2 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 
 				query.append(_SQL_SELECT_WALLENTRY);
 
@@ -2342,6 +2349,8 @@ public class WallEntryPersistenceImpl extends BasePersistenceImpl<WallEntry>
 		finderCache.removeCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 	}
 
+	@ServiceReference(type = CompanyProviderWrapper.class)
+	protected CompanyProvider companyProvider;
 	@ServiceReference(type = EntityCache.class)
 	protected EntityCache entityCache;
 	@ServiceReference(type = FinderCache.class)

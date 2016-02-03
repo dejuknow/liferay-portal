@@ -49,7 +49,7 @@ if (iteratorURL != null) {
 	</div>
 </c:if>
 
-<div class="lfr-search-container <%= resultRows.isEmpty() ? "hide" : StringPool.BLANK %> <%= searchContainer.getCssClass() %>">
+<div class="lfr-search-container lfr-search-container-wrapper <%= resultRows.isEmpty() ? "hide" : StringPool.BLANK %> <%= searchContainer.getCssClass() %>">
 	<c:if test="<%= PropsValues.SEARCH_CONTAINER_SHOW_PAGINATION_TOP && (resultRows.size() > PropsValues.SEARCH_CONTAINER_SHOW_PAGINATION_TOP_DELTA) && paginate %>">
 		<div class="taglib-search-iterator-page-iterator-top">
 			<liferay-ui:search-paginator id='<%= id + "PageIteratorTop" %>' searchContainer="<%= searchContainer %>" type="<%= type %>" />
@@ -59,7 +59,7 @@ if (iteratorURL != null) {
 	<div id="<%= namespace + id %>SearchContainer">
 		<table class="table table-bordered table-hover table-striped">
 
-		<c:if test="<%= headerNames != null %>">
+		<c:if test="<%= ListUtil.isNotNull(headerNames) %>">
 			<thead class="table-columns">
 				<tr>
 
@@ -153,7 +153,7 @@ if (iteratorURL != null) {
 										<a href="<%= url %>">
 									</c:when>
 									<c:otherwise>
-										<a href="<%= StringUtil.replace(orderByJS, new String[] { "orderKey", "orderByType" }, new String[] { orderKey, orderByType }) %>">
+										<a href="<%= StringUtil.replace(orderByJS, new String[] {"orderKey", "orderByType"}, new String[] {orderKey, orderByType}) %>">
 									</c:otherwise>
 								</c:choose>
 						</c:if>

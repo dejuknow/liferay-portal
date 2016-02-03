@@ -40,6 +40,8 @@ import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextThreadLocal;
+import com.liferay.portal.service.persistence.CompanyProvider;
+import com.liferay.portal.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 
@@ -209,7 +211,7 @@ public class DDMContentPersistenceImpl extends BasePersistenceImpl<DDMContent>
 
 			if (orderByComparator != null) {
 				query = new StringBundler(3 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(3);
@@ -291,7 +293,7 @@ public class DDMContentPersistenceImpl extends BasePersistenceImpl<DDMContent>
 	 * @param uuid the uuid
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching d d m content
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchContentException if a matching d d m content could not be found
+	 * @throws NoSuchContentException if a matching d d m content could not be found
 	 */
 	@Override
 	public DDMContent findByUuid_First(String uuid,
@@ -340,7 +342,7 @@ public class DDMContentPersistenceImpl extends BasePersistenceImpl<DDMContent>
 	 * @param uuid the uuid
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching d d m content
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchContentException if a matching d d m content could not be found
+	 * @throws NoSuchContentException if a matching d d m content could not be found
 	 */
 	@Override
 	public DDMContent findByUuid_Last(String uuid,
@@ -397,7 +399,7 @@ public class DDMContentPersistenceImpl extends BasePersistenceImpl<DDMContent>
 	 * @param uuid the uuid
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next d d m content
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchContentException if a d d m content with the primary key could not be found
+	 * @throws NoSuchContentException if a d d m content with the primary key could not be found
 	 */
 	@Override
 	public DDMContent[] findByUuid_PrevAndNext(long contentId, String uuid,
@@ -436,8 +438,9 @@ public class DDMContentPersistenceImpl extends BasePersistenceImpl<DDMContent>
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+			query = new StringBundler(4 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
 			query = new StringBundler(3);
@@ -642,12 +645,12 @@ public class DDMContentPersistenceImpl extends BasePersistenceImpl<DDMContent>
 			new String[] { String.class.getName(), Long.class.getName() });
 
 	/**
-	 * Returns the d d m content where uuid = &#63; and groupId = &#63; or throws a {@link com.liferay.dynamic.data.mapping.NoSuchContentException} if it could not be found.
+	 * Returns the d d m content where uuid = &#63; and groupId = &#63; or throws a {@link NoSuchContentException} if it could not be found.
 	 *
 	 * @param uuid the uuid
 	 * @param groupId the group ID
 	 * @return the matching d d m content
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchContentException if a matching d d m content could not be found
+	 * @throws NoSuchContentException if a matching d d m content could not be found
 	 */
 	@Override
 	public DDMContent findByUUID_G(String uuid, long groupId)
@@ -1018,7 +1021,7 @@ public class DDMContentPersistenceImpl extends BasePersistenceImpl<DDMContent>
 
 			if (orderByComparator != null) {
 				query = new StringBundler(4 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(4);
@@ -1105,7 +1108,7 @@ public class DDMContentPersistenceImpl extends BasePersistenceImpl<DDMContent>
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching d d m content
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchContentException if a matching d d m content could not be found
+	 * @throws NoSuchContentException if a matching d d m content could not be found
 	 */
 	@Override
 	public DDMContent findByUuid_C_First(String uuid, long companyId,
@@ -1161,7 +1164,7 @@ public class DDMContentPersistenceImpl extends BasePersistenceImpl<DDMContent>
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching d d m content
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchContentException if a matching d d m content could not be found
+	 * @throws NoSuchContentException if a matching d d m content could not be found
 	 */
 	@Override
 	public DDMContent findByUuid_C_Last(String uuid, long companyId,
@@ -1224,7 +1227,7 @@ public class DDMContentPersistenceImpl extends BasePersistenceImpl<DDMContent>
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next d d m content
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchContentException if a d d m content with the primary key could not be found
+	 * @throws NoSuchContentException if a d d m content with the primary key could not be found
 	 */
 	@Override
 	public DDMContent[] findByUuid_C_PrevAndNext(long contentId, String uuid,
@@ -1263,11 +1266,12 @@ public class DDMContentPersistenceImpl extends BasePersistenceImpl<DDMContent>
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+			query = new StringBundler(5 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
-			query = new StringBundler(3);
+			query = new StringBundler(4);
 		}
 
 		query.append(_SQL_SELECT_DDMCONTENT_WHERE);
@@ -1590,7 +1594,7 @@ public class DDMContentPersistenceImpl extends BasePersistenceImpl<DDMContent>
 
 			if (orderByComparator != null) {
 				query = new StringBundler(3 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(3);
@@ -1658,7 +1662,7 @@ public class DDMContentPersistenceImpl extends BasePersistenceImpl<DDMContent>
 	 * @param groupId the group ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching d d m content
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchContentException if a matching d d m content could not be found
+	 * @throws NoSuchContentException if a matching d d m content could not be found
 	 */
 	@Override
 	public DDMContent findByGroupId_First(long groupId,
@@ -1707,7 +1711,7 @@ public class DDMContentPersistenceImpl extends BasePersistenceImpl<DDMContent>
 	 * @param groupId the group ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching d d m content
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchContentException if a matching d d m content could not be found
+	 * @throws NoSuchContentException if a matching d d m content could not be found
 	 */
 	@Override
 	public DDMContent findByGroupId_Last(long groupId,
@@ -1764,7 +1768,7 @@ public class DDMContentPersistenceImpl extends BasePersistenceImpl<DDMContent>
 	 * @param groupId the group ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next d d m content
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchContentException if a d d m content with the primary key could not be found
+	 * @throws NoSuchContentException if a d d m content with the primary key could not be found
 	 */
 	@Override
 	public DDMContent[] findByGroupId_PrevAndNext(long contentId, long groupId,
@@ -1803,8 +1807,9 @@ public class DDMContentPersistenceImpl extends BasePersistenceImpl<DDMContent>
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+			query = new StringBundler(4 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
 			query = new StringBundler(3);
@@ -2091,7 +2096,7 @@ public class DDMContentPersistenceImpl extends BasePersistenceImpl<DDMContent>
 
 			if (orderByComparator != null) {
 				query = new StringBundler(3 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(3);
@@ -2159,7 +2164,7 @@ public class DDMContentPersistenceImpl extends BasePersistenceImpl<DDMContent>
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching d d m content
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchContentException if a matching d d m content could not be found
+	 * @throws NoSuchContentException if a matching d d m content could not be found
 	 */
 	@Override
 	public DDMContent findByCompanyId_First(long companyId,
@@ -2210,7 +2215,7 @@ public class DDMContentPersistenceImpl extends BasePersistenceImpl<DDMContent>
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching d d m content
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchContentException if a matching d d m content could not be found
+	 * @throws NoSuchContentException if a matching d d m content could not be found
 	 */
 	@Override
 	public DDMContent findByCompanyId_Last(long companyId,
@@ -2268,7 +2273,7 @@ public class DDMContentPersistenceImpl extends BasePersistenceImpl<DDMContent>
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next d d m content
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchContentException if a d d m content with the primary key could not be found
+	 * @throws NoSuchContentException if a d d m content with the primary key could not be found
 	 */
 	@Override
 	public DDMContent[] findByCompanyId_PrevAndNext(long contentId,
@@ -2307,8 +2312,9 @@ public class DDMContentPersistenceImpl extends BasePersistenceImpl<DDMContent>
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+			query = new StringBundler(4 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
 			query = new StringBundler(3);
@@ -2626,6 +2632,8 @@ public class DDMContentPersistenceImpl extends BasePersistenceImpl<DDMContent>
 
 		ddmContent.setUuid(uuid);
 
+		ddmContent.setCompanyId(companyProvider.getCompanyId());
+
 		return ddmContent;
 	}
 
@@ -2634,7 +2642,7 @@ public class DDMContentPersistenceImpl extends BasePersistenceImpl<DDMContent>
 	 *
 	 * @param contentId the primary key of the d d m content
 	 * @return the d d m content that was removed
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchContentException if a d d m content with the primary key could not be found
+	 * @throws NoSuchContentException if a d d m content with the primary key could not be found
 	 */
 	@Override
 	public DDMContent remove(long contentId) throws NoSuchContentException {
@@ -2646,7 +2654,7 @@ public class DDMContentPersistenceImpl extends BasePersistenceImpl<DDMContent>
 	 *
 	 * @param primaryKey the primary key of the d d m content
 	 * @return the d d m content that was removed
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchContentException if a d d m content with the primary key could not be found
+	 * @throws NoSuchContentException if a d d m content with the primary key could not be found
 	 */
 	@Override
 	public DDMContent remove(Serializable primaryKey)
@@ -2887,11 +2895,11 @@ public class DDMContentPersistenceImpl extends BasePersistenceImpl<DDMContent>
 	}
 
 	/**
-	 * Returns the d d m content with the primary key or throws a {@link com.liferay.portal.NoSuchModelException} if it could not be found.
+	 * Returns the d d m content with the primary key or throws a {@link com.liferay.portal.exception.NoSuchModelException} if it could not be found.
 	 *
 	 * @param primaryKey the primary key of the d d m content
 	 * @return the d d m content
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchContentException if a d d m content with the primary key could not be found
+	 * @throws NoSuchContentException if a d d m content with the primary key could not be found
 	 */
 	@Override
 	public DDMContent findByPrimaryKey(Serializable primaryKey)
@@ -2911,11 +2919,11 @@ public class DDMContentPersistenceImpl extends BasePersistenceImpl<DDMContent>
 	}
 
 	/**
-	 * Returns the d d m content with the primary key or throws a {@link com.liferay.dynamic.data.mapping.NoSuchContentException} if it could not be found.
+	 * Returns the d d m content with the primary key or throws a {@link NoSuchContentException} if it could not be found.
 	 *
 	 * @param contentId the primary key of the d d m content
 	 * @return the d d m content
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchContentException if a d d m content with the primary key could not be found
+	 * @throws NoSuchContentException if a d d m content with the primary key could not be found
 	 */
 	@Override
 	public DDMContent findByPrimaryKey(long contentId)
@@ -3161,7 +3169,7 @@ public class DDMContentPersistenceImpl extends BasePersistenceImpl<DDMContent>
 
 			if (orderByComparator != null) {
 				query = new StringBundler(2 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 
 				query.append(_SQL_SELECT_DDMCONTENT);
 
@@ -3286,6 +3294,8 @@ public class DDMContentPersistenceImpl extends BasePersistenceImpl<DDMContent>
 		finderCache.removeCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 	}
 
+	@ServiceReference(type = CompanyProviderWrapper.class)
+	protected CompanyProvider companyProvider;
 	@ServiceReference(type = EntityCache.class)
 	protected EntityCache entityCache;
 	@ServiceReference(type = FinderCache.class)

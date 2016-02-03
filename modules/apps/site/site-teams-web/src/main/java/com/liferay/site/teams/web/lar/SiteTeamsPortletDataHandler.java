@@ -44,6 +44,13 @@ public class SiteTeamsPortletDataHandler extends BasePortletDataHandler {
 
 	public static final String NAMESPACE = "site_teams";
 
+	public static final String SCHEMA_VERSION = "1.0.0";
+
+	@Override
+	public String getSchemaVersion() {
+		return SCHEMA_VERSION;
+	}
+
 	@Activate
 	protected void activate() {
 		setDataAlwaysStaged(true);
@@ -52,6 +59,7 @@ public class SiteTeamsPortletDataHandler extends BasePortletDataHandler {
 				NAMESPACE, "site-teams", true, true, null,
 				Team.class.getName()));
 		setPublishToLiveByDefault(true);
+		setRank(80);
 	}
 
 	@Override
@@ -128,6 +136,6 @@ public class SiteTeamsPortletDataHandler extends BasePortletDataHandler {
 		_teamLocalService = teamLocalService;
 	}
 
-	private volatile TeamLocalService _teamLocalService;
+	private TeamLocalService _teamLocalService;
 
 }

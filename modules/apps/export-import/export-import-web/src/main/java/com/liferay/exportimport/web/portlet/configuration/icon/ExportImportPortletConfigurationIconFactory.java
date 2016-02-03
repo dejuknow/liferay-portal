@@ -18,7 +18,7 @@ import com.liferay.portal.kernel.portlet.configuration.icon.BasePortletConfigura
 import com.liferay.portal.kernel.portlet.configuration.icon.PortletConfigurationIcon;
 import com.liferay.portal.kernel.portlet.configuration.icon.PortletConfigurationIconFactory;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.portlet.PortletRequest;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -30,13 +30,13 @@ public class ExportImportPortletConfigurationIconFactory
 	extends BasePortletConfigurationIconFactory {
 
 	@Override
-	public PortletConfigurationIcon create(HttpServletRequest request) {
-		return new ExportImportPortletConfigurationIcon(request);
+	public PortletConfigurationIcon create(PortletRequest portletRequest) {
+		return new ExportImportPortletConfigurationIcon(portletRequest);
 	}
 
 	@Override
 	public double getWeight() {
-		return 11.0;
+		return 15.0;
 	}
 
 }

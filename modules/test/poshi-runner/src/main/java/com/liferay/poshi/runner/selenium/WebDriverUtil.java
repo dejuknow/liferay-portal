@@ -40,6 +40,7 @@ import org.openqa.selenium.safari.SafariDriver;
 
 /**
  * @author Brian Wing Shun Chan
+ * @author Kenji Heigel
  * @author Michael Hashimoto
  */
 public class WebDriverUtil extends PropsValues {
@@ -61,6 +62,8 @@ public class WebDriverUtil extends PropsValues {
 
 		desiredCapabilities.setCapability("browserName", "Browser");
 		desiredCapabilities.setCapability("deviceName", "deviceName");
+		desiredCapabilities.setCapability(
+			"newCommandTimeout", PropsValues.TIMEOUT_EXPLICIT_WAIT);
 		desiredCapabilities.setCapability("platformName", "Android");
 		desiredCapabilities.setCapability("platformVersion", "4.4");
 
@@ -81,6 +84,8 @@ public class WebDriverUtil extends PropsValues {
 		desiredCapabilities.setCapability("browserName", "Chrome");
 		desiredCapabilities.setCapability(
 			"deviceName", PropsValues.MOBILE_DEVICE_NAME);
+		desiredCapabilities.setCapability(
+			"newCommandTimeout", PropsValues.TIMEOUT_EXPLICIT_WAIT);
 		desiredCapabilities.setCapability("platformName", "Android");
 		desiredCapabilities.setCapability("platformVersion", "5.0.1");
 
@@ -200,7 +205,7 @@ public class WebDriverUtil extends PropsValues {
 		desiredCapabilities.setCapability(
 			"platform", PropsValues.SELENIUM_DESIRED_CAPABILITIES_PLATFORM);
 		desiredCapabilities.setCapability(
-			"version", PropsValues.SELENIUM_DESIRED_CAPABILITIES_VERSION);
+			"version", PropsValues.BROWSER_VERSION);
 
 		URL url = null;
 
@@ -215,12 +220,15 @@ public class WebDriverUtil extends PropsValues {
 	}
 
 	private WebDriver _getIOSMobileDriver() {
-		DesiredCapabilities desiredCapabilities = DesiredCapabilities.android();
+		DesiredCapabilities desiredCapabilities = DesiredCapabilities.iphone();
 
 		desiredCapabilities.setCapability("browserName", "Safari");
 		desiredCapabilities.setCapability("deviceName", "iPhone 5s");
+		desiredCapabilities.setCapability(
+			"newCommandTimeout", PropsValues.TIMEOUT_EXPLICIT_WAIT);
 		desiredCapabilities.setCapability("platformName", "iOS");
-		desiredCapabilities.setCapability("platformVersion", "8.2");
+		desiredCapabilities.setCapability(
+			"platformVersion", PropsValues.BROWSER_VERSION);
 
 		URL url = null;
 

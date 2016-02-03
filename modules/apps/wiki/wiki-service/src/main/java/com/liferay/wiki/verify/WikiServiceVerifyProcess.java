@@ -119,7 +119,7 @@ public class WikiServiceVerifyProcess extends VerifyProcess {
 		for (WikiPage page : pages) {
 			try {
 				_wikiPageLocalService.updateAsset(
-					page.getUserId(), page, null, null, null);
+					page.getUserId(), page, null, null, null, null);
 			}
 			catch (Exception e) {
 				if (_log.isWarnEnabled()) {
@@ -149,7 +149,7 @@ public class WikiServiceVerifyProcess extends VerifyProcess {
 
 	private final VerifyResourcePermissions _verifyResourcePermissions =
 		new VerifyResourcePermissions();
-	private volatile WikiPageLocalService _wikiPageLocalService;
-	private volatile WikiPageResourceLocalService _wikiPageResourceLocalService;
+	private WikiPageLocalService _wikiPageLocalService;
+	private WikiPageResourceLocalService _wikiPageResourceLocalService;
 
 }

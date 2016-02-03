@@ -23,9 +23,9 @@ import com.liferay.portal.kernel.search.BaseIndexer;
 import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.search.IndexWriterHelperUtil;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.SearchContext;
-import com.liferay.portal.kernel.search.SearchEngineUtil;
 import com.liferay.portal.kernel.search.Summary;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.util.ArrayUtil;
@@ -159,7 +159,7 @@ public class ExportImportConfigurationIndexer
 
 		Document document = getDocument(exportImportConfiguration);
 
-		SearchEngineUtil.updateDocument(
+		IndexWriterHelperUtil.updateDocument(
 			getSearchEngineId(), exportImportConfiguration.getCompanyId(),
 			document, isCommitImmediately());
 	}
@@ -241,6 +241,17 @@ public class ExportImportConfigurationIndexer
 			(Map<String, String[]>)settingsMap.get("parameterMap");
 
 		for (Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
+			String parameterName = entry.getKey();
+
+			if (!Field.validateFieldName(parameterName)) {
+				if (_log.isWarnEnabled()) {
+					_log.warn(
+						"Skipping invalid parameter name: " + parameterName);
+				}
+
+				continue;
+			}
+
 			String[] parameterValues = ArrayUtil.clone(entry.getValue());
 
 			for (int i = 0; i < parameterValues.length; i++) {
@@ -304,7 +315,7 @@ public class ExportImportConfigurationIndexer
 						Document document = getDocument(
 							exportImportConfiguration);
 
-						indexableActionableDynamicQuery.addDocument(document);
+						indexableActionableDynamicQuery.addDocuments(document);
 					}
 					catch (PortalException pe) {
 						if (_log.isWarnEnabled()) {
@@ -339,7 +350,7 @@ public class ExportImportConfigurationIndexer
 	private static final Log _log = LogFactoryUtil.getLog(
 		ExportImportConfigurationIndexer.class);
 
-	private volatile ExportImportConfigurationLocalService
+	private ExportImportConfigurationLocalService
 		_exportImportConfigurationLocalService;
 
 }

@@ -44,16 +44,18 @@ import com.liferay.portal.kernel.search.DDMStructureIndexer;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.DocumentImpl;
 import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.search.IndexWriterHelperUtil;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.search.Query;
 import com.liferay.portal.kernel.search.SearchContext;
-import com.liferay.portal.kernel.search.SearchEngineUtil;
 import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.search.Summary;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.QueryFilter;
 import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -65,8 +67,6 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.security.permission.ActionKeys;
-import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.trash.util.TrashUtil;
@@ -248,7 +248,7 @@ public class JournalArticleIndexer
 	public void reindexDDMStructures(List<Long> ddmStructureIds)
 		throws SearchException {
 
-		if (SearchEngineUtil.isIndexReadOnly() || !isIndexerEnabled()) {
+		if (IndexWriterHelperUtil.isIndexReadOnly() || !isIndexerEnabled()) {
 			return;
 		}
 
@@ -448,7 +448,7 @@ public class JournalArticleIndexer
 			return;
 		}
 
-		SearchEngineUtil.updateDocument(
+		IndexWriterHelperUtil.updateDocument(
 			getSearchEngineId(), journalArticle.getCompanyId(),
 			getDocument(latestIndexableArticle), isCommitImmediately());
 	}
@@ -617,7 +617,7 @@ public class JournalArticleIndexer
 
 			Document document = getDocument(article);
 
-			SearchEngineUtil.deleteDocument(
+			IndexWriterHelperUtil.deleteDocument(
 				getSearchEngineId(), article.getCompanyId(),
 				document.get(Field.UID), isCommitImmediately());
 
@@ -803,7 +803,7 @@ public class JournalArticleIndexer
 					try {
 						Document document = getDocument(article);
 
-						indexableActionableDynamicQuery.addDocument(document);
+						indexableActionableDynamicQuery.addDocuments(document);
 					}
 					catch (PortalException pe) {
 						if (_log.isWarnEnabled()) {
@@ -824,7 +824,7 @@ public class JournalArticleIndexer
 	protected void reindexArticleVersions(JournalArticle article)
 		throws PortalException {
 
-		SearchEngineUtil.updateDocuments(
+		IndexWriterHelperUtil.updateDocuments(
 			getSearchEngineId(), article.getCompanyId(),
 			getArticleVersions(article), isCommitImmediately());
 	}
@@ -856,9 +856,9 @@ public class JournalArticleIndexer
 	private static final Log _log = LogFactoryUtil.getLog(
 		JournalArticleIndexer.class);
 
-	private volatile DDMStructureLocalService _ddmStructureLocalService;
-	private volatile JournalArticleLocalService _journalArticleLocalService;
-	private volatile JournalContent _journalContent;
-	private volatile JournalConverter _journalConverter;
+	private DDMStructureLocalService _ddmStructureLocalService;
+	private JournalArticleLocalService _journalArticleLocalService;
+	private JournalContent _journalContent;
+	private JournalConverter _journalConverter;
 
 }

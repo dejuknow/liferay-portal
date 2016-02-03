@@ -142,7 +142,7 @@ public class AccountUtil {
 	* @throws NoSuchAccountException if a account with the primary key could not be found
 	*/
 	public static Account remove(long accountId)
-		throws com.liferay.portal.NoSuchAccountException {
+		throws com.liferay.portal.exception.NoSuchAccountException {
 		return getPersistence().remove(accountId);
 	}
 
@@ -158,7 +158,7 @@ public class AccountUtil {
 	* @throws NoSuchAccountException if a account with the primary key could not be found
 	*/
 	public static Account findByPrimaryKey(long accountId)
-		throws com.liferay.portal.NoSuchAccountException {
+		throws com.liferay.portal.exception.NoSuchAccountException {
 		return getPersistence().findByPrimaryKey(accountId);
 	}
 
@@ -266,13 +266,6 @@ public class AccountUtil {
 		}
 
 		return _persistence;
-	}
-
-	/**
-	 * @deprecated As of 6.2.0
-	 */
-	@Deprecated
-	public void setPersistence(AccountPersistence persistence) {
 	}
 
 	private static AccountPersistence _persistence;

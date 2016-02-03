@@ -14,14 +14,14 @@
 
 package com.liferay.users.admin.web.portlet;
 
+import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Organization;
 import com.liferay.portal.model.Portlet;
 import com.liferay.portal.model.Role;
 import com.liferay.portal.model.RoleConstants;
 import com.liferay.portal.model.UserGroupRole;
-import com.liferay.portal.security.permission.ActionKeys;
-import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.service.OrganizationLocalService;
 import com.liferay.portal.service.UserGroupRoleLocalService;
 import com.liferay.portal.service.permission.OrganizationPermissionUtil;
@@ -39,7 +39,10 @@ import org.osgi.service.component.annotations.Reference;
  * @author Zsolt Berentey
  */
 @Component(
-	property = {"javax.portlet.name=" + UsersAdminPortletKeys.USERS_ADMIN},
+	property = {
+		"javax.portlet.name=" + UsersAdminPortletKeys.MY_ORGANIZATIONS,
+		"javax.portlet.name=" + UsersAdminPortletKeys.USERS_ADMIN
+	},
 	service = ControlPanelEntry.class
 )
 public class UsersControlPanelEntry extends BaseControlPanelEntry {
@@ -109,7 +112,7 @@ public class UsersControlPanelEntry extends BaseControlPanelEntry {
 		_userGroupRoleLocalService = userGroupRoleLocalService;
 	}
 
-	private volatile OrganizationLocalService _organizationLocalService;
-	private volatile UserGroupRoleLocalService _userGroupRoleLocalService;
+	private OrganizationLocalService _organizationLocalService;
+	private UserGroupRoleLocalService _userGroupRoleLocalService;
 
 }

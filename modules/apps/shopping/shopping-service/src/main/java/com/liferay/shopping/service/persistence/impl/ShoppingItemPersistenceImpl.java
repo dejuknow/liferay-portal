@@ -26,6 +26,7 @@ import com.liferay.portal.kernel.dao.orm.SQLQuery;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.security.permission.InlineSQLHelperUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringBundler;
@@ -33,9 +34,10 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.security.permission.InlineSQLHelperUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextThreadLocal;
+import com.liferay.portal.service.persistence.CompanyProvider;
+import com.liferay.portal.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 
@@ -101,11 +103,11 @@ public class ShoppingItemPersistenceImpl extends BasePersistenceImpl<ShoppingIte
 			new String[] { Long.class.getName() });
 
 	/**
-	 * Returns the shopping item where smallImageId = &#63; or throws a {@link com.liferay.shopping.NoSuchItemException} if it could not be found.
+	 * Returns the shopping item where smallImageId = &#63; or throws a {@link NoSuchItemException} if it could not be found.
 	 *
 	 * @param smallImageId the small image ID
 	 * @return the matching shopping item
-	 * @throws com.liferay.shopping.NoSuchItemException if a matching shopping item could not be found
+	 * @throws NoSuchItemException if a matching shopping item could not be found
 	 */
 	@Override
 	public ShoppingItem findBySmallImageId(long smallImageId)
@@ -312,11 +314,11 @@ public class ShoppingItemPersistenceImpl extends BasePersistenceImpl<ShoppingIte
 			new String[] { Long.class.getName() });
 
 	/**
-	 * Returns the shopping item where mediumImageId = &#63; or throws a {@link com.liferay.shopping.NoSuchItemException} if it could not be found.
+	 * Returns the shopping item where mediumImageId = &#63; or throws a {@link NoSuchItemException} if it could not be found.
 	 *
 	 * @param mediumImageId the medium image ID
 	 * @return the matching shopping item
-	 * @throws com.liferay.shopping.NoSuchItemException if a matching shopping item could not be found
+	 * @throws NoSuchItemException if a matching shopping item could not be found
 	 */
 	@Override
 	public ShoppingItem findByMediumImageId(long mediumImageId)
@@ -523,11 +525,11 @@ public class ShoppingItemPersistenceImpl extends BasePersistenceImpl<ShoppingIte
 			new String[] { Long.class.getName() });
 
 	/**
-	 * Returns the shopping item where largeImageId = &#63; or throws a {@link com.liferay.shopping.NoSuchItemException} if it could not be found.
+	 * Returns the shopping item where largeImageId = &#63; or throws a {@link NoSuchItemException} if it could not be found.
 	 *
 	 * @param largeImageId the large image ID
 	 * @return the matching shopping item
-	 * @throws com.liferay.shopping.NoSuchItemException if a matching shopping item could not be found
+	 * @throws NoSuchItemException if a matching shopping item could not be found
 	 */
 	@Override
 	public ShoppingItem findByLargeImageId(long largeImageId)
@@ -857,7 +859,7 @@ public class ShoppingItemPersistenceImpl extends BasePersistenceImpl<ShoppingIte
 
 			if (orderByComparator != null) {
 				query = new StringBundler(4 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(4);
@@ -930,7 +932,7 @@ public class ShoppingItemPersistenceImpl extends BasePersistenceImpl<ShoppingIte
 	 * @param categoryId the category ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching shopping item
-	 * @throws com.liferay.shopping.NoSuchItemException if a matching shopping item could not be found
+	 * @throws NoSuchItemException if a matching shopping item could not be found
 	 */
 	@Override
 	public ShoppingItem findByG_C_First(long groupId, long categoryId,
@@ -986,7 +988,7 @@ public class ShoppingItemPersistenceImpl extends BasePersistenceImpl<ShoppingIte
 	 * @param categoryId the category ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching shopping item
-	 * @throws com.liferay.shopping.NoSuchItemException if a matching shopping item could not be found
+	 * @throws NoSuchItemException if a matching shopping item could not be found
 	 */
 	@Override
 	public ShoppingItem findByG_C_Last(long groupId, long categoryId,
@@ -1049,7 +1051,7 @@ public class ShoppingItemPersistenceImpl extends BasePersistenceImpl<ShoppingIte
 	 * @param categoryId the category ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next shopping item
-	 * @throws com.liferay.shopping.NoSuchItemException if a shopping item with the primary key could not be found
+	 * @throws NoSuchItemException if a shopping item with the primary key could not be found
 	 */
 	@Override
 	public ShoppingItem[] findByG_C_PrevAndNext(long itemId, long groupId,
@@ -1088,11 +1090,12 @@ public class ShoppingItemPersistenceImpl extends BasePersistenceImpl<ShoppingIte
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+			query = new StringBundler(5 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
-			query = new StringBundler(3);
+			query = new StringBundler(4);
 		}
 
 		query.append(_SQL_SELECT_SHOPPINGITEM_WHERE);
@@ -1248,10 +1251,10 @@ public class ShoppingItemPersistenceImpl extends BasePersistenceImpl<ShoppingIte
 
 		if (orderByComparator != null) {
 			query = new StringBundler(4 +
-					(orderByComparator.getOrderByFields().length * 3));
+					(orderByComparator.getOrderByFields().length * 2));
 		}
 		else {
-			query = new StringBundler(4);
+			query = new StringBundler(5);
 		}
 
 		if (getDB().isSupportsInlineDistinct()) {
@@ -1331,7 +1334,7 @@ public class ShoppingItemPersistenceImpl extends BasePersistenceImpl<ShoppingIte
 	 * @param categoryId the category ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next shopping item
-	 * @throws com.liferay.shopping.NoSuchItemException if a shopping item with the primary key could not be found
+	 * @throws NoSuchItemException if a shopping item with the primary key could not be found
 	 */
 	@Override
 	public ShoppingItem[] filterFindByG_C_PrevAndNext(long itemId,
@@ -1377,10 +1380,11 @@ public class ShoppingItemPersistenceImpl extends BasePersistenceImpl<ShoppingIte
 
 		if (orderByComparator != null) {
 			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
-			query = new StringBundler(3);
+			query = new StringBundler(5);
 		}
 
 		if (getDB().isSupportsInlineDistinct()) {
@@ -1651,12 +1655,12 @@ public class ShoppingItemPersistenceImpl extends BasePersistenceImpl<ShoppingIte
 			new String[] { Long.class.getName(), String.class.getName() });
 
 	/**
-	 * Returns the shopping item where companyId = &#63; and sku = &#63; or throws a {@link com.liferay.shopping.NoSuchItemException} if it could not be found.
+	 * Returns the shopping item where companyId = &#63; and sku = &#63; or throws a {@link NoSuchItemException} if it could not be found.
 	 *
 	 * @param companyId the company ID
 	 * @param sku the sku
 	 * @return the matching shopping item
-	 * @throws com.liferay.shopping.NoSuchItemException if a matching shopping item could not be found
+	 * @throws NoSuchItemException if a matching shopping item could not be found
 	 */
 	@Override
 	public ShoppingItem findByC_S(long companyId, String sku)
@@ -2150,6 +2154,8 @@ public class ShoppingItemPersistenceImpl extends BasePersistenceImpl<ShoppingIte
 		shoppingItem.setNew(true);
 		shoppingItem.setPrimaryKey(itemId);
 
+		shoppingItem.setCompanyId(companyProvider.getCompanyId());
+
 		return shoppingItem;
 	}
 
@@ -2158,7 +2164,7 @@ public class ShoppingItemPersistenceImpl extends BasePersistenceImpl<ShoppingIte
 	 *
 	 * @param itemId the primary key of the shopping item
 	 * @return the shopping item that was removed
-	 * @throws com.liferay.shopping.NoSuchItemException if a shopping item with the primary key could not be found
+	 * @throws NoSuchItemException if a shopping item with the primary key could not be found
 	 */
 	@Override
 	public ShoppingItem remove(long itemId) throws NoSuchItemException {
@@ -2170,7 +2176,7 @@ public class ShoppingItemPersistenceImpl extends BasePersistenceImpl<ShoppingIte
 	 *
 	 * @param primaryKey the primary key of the shopping item
 	 * @return the shopping item that was removed
-	 * @throws com.liferay.shopping.NoSuchItemException if a shopping item with the primary key could not be found
+	 * @throws NoSuchItemException if a shopping item with the primary key could not be found
 	 */
 	@Override
 	public ShoppingItem remove(Serializable primaryKey)
@@ -2378,11 +2384,11 @@ public class ShoppingItemPersistenceImpl extends BasePersistenceImpl<ShoppingIte
 	}
 
 	/**
-	 * Returns the shopping item with the primary key or throws a {@link com.liferay.portal.NoSuchModelException} if it could not be found.
+	 * Returns the shopping item with the primary key or throws a {@link com.liferay.portal.exception.NoSuchModelException} if it could not be found.
 	 *
 	 * @param primaryKey the primary key of the shopping item
 	 * @return the shopping item
-	 * @throws com.liferay.shopping.NoSuchItemException if a shopping item with the primary key could not be found
+	 * @throws NoSuchItemException if a shopping item with the primary key could not be found
 	 */
 	@Override
 	public ShoppingItem findByPrimaryKey(Serializable primaryKey)
@@ -2402,11 +2408,11 @@ public class ShoppingItemPersistenceImpl extends BasePersistenceImpl<ShoppingIte
 	}
 
 	/**
-	 * Returns the shopping item with the primary key or throws a {@link com.liferay.shopping.NoSuchItemException} if it could not be found.
+	 * Returns the shopping item with the primary key or throws a {@link NoSuchItemException} if it could not be found.
 	 *
 	 * @param itemId the primary key of the shopping item
 	 * @return the shopping item
-	 * @throws com.liferay.shopping.NoSuchItemException if a shopping item with the primary key could not be found
+	 * @throws NoSuchItemException if a shopping item with the primary key could not be found
 	 */
 	@Override
 	public ShoppingItem findByPrimaryKey(long itemId)
@@ -2652,7 +2658,7 @@ public class ShoppingItemPersistenceImpl extends BasePersistenceImpl<ShoppingIte
 
 			if (orderByComparator != null) {
 				query = new StringBundler(2 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 
 				query.append(_SQL_SELECT_SHOPPINGITEM);
 
@@ -2777,6 +2783,8 @@ public class ShoppingItemPersistenceImpl extends BasePersistenceImpl<ShoppingIte
 		finderCache.removeCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 	}
 
+	@ServiceReference(type = CompanyProviderWrapper.class)
+	protected CompanyProvider companyProvider;
 	@ServiceReference(type = EntityCache.class)
 	protected EntityCache entityCache;
 	@ServiceReference(type = FinderCache.class)

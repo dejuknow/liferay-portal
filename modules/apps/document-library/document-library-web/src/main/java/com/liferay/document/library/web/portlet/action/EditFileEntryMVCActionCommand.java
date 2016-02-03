@@ -16,6 +16,7 @@ package com.liferay.document.library.web.portlet.action;
 
 import com.liferay.document.library.web.constants.DLPortletKeys;
 import com.liferay.document.library.web.settings.internal.DLPortletInstanceSettings;
+import com.liferay.dynamic.data.mapping.kernel.StorageFieldRequiredException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -30,6 +31,7 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.repository.capabilities.TrashCapability;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.Folder;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.servlet.ServletResponseConstants;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
@@ -53,7 +55,6 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.model.TrashedModel;
-import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
 import com.liferay.portal.theme.PortletDisplay;
@@ -61,25 +62,26 @@ import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PrefsPropsUtil;
 import com.liferay.portlet.PortletURLImpl;
-import com.liferay.portlet.asset.AssetCategoryException;
-import com.liferay.portlet.asset.AssetTagException;
+import com.liferay.portlet.asset.exception.AssetCategoryException;
+import com.liferay.portlet.asset.exception.AssetTagException;
 import com.liferay.portlet.asset.model.AssetVocabulary;
-import com.liferay.portlet.documentlibrary.DuplicateFileEntryException;
-import com.liferay.portlet.documentlibrary.DuplicateFolderNameException;
-import com.liferay.portlet.documentlibrary.FileExtensionException;
-import com.liferay.portlet.documentlibrary.FileMimeTypeException;
-import com.liferay.portlet.documentlibrary.FileNameException;
-import com.liferay.portlet.documentlibrary.FileSizeException;
-import com.liferay.portlet.documentlibrary.InvalidFileEntryTypeException;
-import com.liferay.portlet.documentlibrary.InvalidFileVersionException;
-import com.liferay.portlet.documentlibrary.NoSuchFileEntryException;
-import com.liferay.portlet.documentlibrary.NoSuchFolderException;
-import com.liferay.portlet.documentlibrary.SourceFileNameException;
 import com.liferay.portlet.documentlibrary.antivirus.AntivirusScannerException;
+import com.liferay.portlet.documentlibrary.exception.DuplicateFileEntryException;
+import com.liferay.portlet.documentlibrary.exception.DuplicateFolderNameException;
+import com.liferay.portlet.documentlibrary.exception.FileEntryLockException;
+import com.liferay.portlet.documentlibrary.exception.FileExtensionException;
+import com.liferay.portlet.documentlibrary.exception.FileMimeTypeException;
+import com.liferay.portlet.documentlibrary.exception.FileNameException;
+import com.liferay.portlet.documentlibrary.exception.FileSizeException;
+import com.liferay.portlet.documentlibrary.exception.InvalidFileEntryTypeException;
+import com.liferay.portlet.documentlibrary.exception.InvalidFileVersionException;
+import com.liferay.portlet.documentlibrary.exception.NoSuchFileEntryException;
+import com.liferay.portlet.documentlibrary.exception.NoSuchFolderException;
+import com.liferay.portlet.documentlibrary.exception.SourceFileNameException;
 import com.liferay.portlet.documentlibrary.model.DLFileEntry;
 import com.liferay.portlet.documentlibrary.service.DLAppService;
+import com.liferay.portlet.documentlibrary.service.DLTrashService;
 import com.liferay.portlet.documentlibrary.util.DLUtil;
-import com.liferay.portlet.dynamicdatamapping.StorageFieldRequiredException;
 import com.liferay.portlet.trash.service.TrashEntryService;
 import com.liferay.portlet.trash.util.TrashUtil;
 
@@ -375,7 +377,7 @@ public class EditFileEntryMVCActionCommand extends BaseMVCActionCommand {
 		FileEntry fileEntry = _dlAppService.getFileEntry(fileEntryId);
 
 		if (fileEntry.isRepositoryCapabilityProvided(TrashCapability.class)) {
-			fileEntry = _dlAppService.moveFileEntryToTrash(fileEntryId);
+			fileEntry = _dlTrashService.moveFileEntryToTrash(fileEntryId);
 
 			TrashUtil.addTrashSessionMessages(
 				actionRequest, (TrashedModel)fileEntry.getModel());
@@ -665,8 +667,9 @@ public class EditFileEntryMVCActionCommand extends BaseMVCActionCommand {
 				PropsKeys.DL_FILE_EXTENSIONS, StringPool.COMMA);
 		}
 		else {
-			ThemeDisplay themeDisplay = (ThemeDisplay)
-				portletRequest.getAttribute(WebKeys.THEME_DISPLAY);
+			ThemeDisplay themeDisplay =
+				(ThemeDisplay)portletRequest.getAttribute(
+					WebKeys.THEME_DISPLAY);
 
 			PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
 
@@ -837,6 +840,7 @@ public class EditFileEntryMVCActionCommand extends BaseMVCActionCommand {
 			}
 		}
 		else if (e instanceof DuplicateLockException ||
+				 e instanceof FileEntryLockException.MustOwnLock ||
 				 e instanceof InvalidFileVersionException ||
 				 e instanceof NoSuchFileEntryException ||
 				 e instanceof PrincipalException) {
@@ -895,6 +899,11 @@ public class EditFileEntryMVCActionCommand extends BaseMVCActionCommand {
 	}
 
 	@Reference(unbind = "-")
+	protected void setDLTrashService(DLTrashService dlTrashService) {
+		_dlTrashService = dlTrashService;
+	}
+
+	@Reference(unbind = "-")
 	protected void setTrashEntryService(TrashEntryService trashEntryService) {
 		_trashEntryService = trashEntryService;
 	}
@@ -936,6 +945,10 @@ public class EditFileEntryMVCActionCommand extends BaseMVCActionCommand {
 		}
 
 		InputStream inputStream = null;
+
+		if (cmd.equals(Constants.ADD_DYNAMIC)) {
+			title = uploadPortletRequest.getFileName("file");
+		}
 
 		try {
 			String contentType = uploadPortletRequest.getContentType("file");
@@ -1024,7 +1037,8 @@ public class EditFileEntryMVCActionCommand extends BaseMVCActionCommand {
 	private static final Log _log = LogFactoryUtil.getLog(
 		EditFileEntryMVCActionCommand.class);
 
-	private volatile DLAppService _dlAppService;
-	private volatile TrashEntryService _trashEntryService;
+	private DLAppService _dlAppService;
+	private DLTrashService _dlTrashService;
+	private TrashEntryService _trashEntryService;
 
 }

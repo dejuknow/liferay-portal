@@ -15,11 +15,13 @@
 package com.liferay.document.library.web.social;
 
 import com.liferay.document.library.web.constants.DLPortletKeys;
+import com.liferay.document.library.web.util.DLResourceBundleLoader;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.util.ResourceBundleLoader;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portlet.asset.AssetRendererFactoryRegistryUtil;
 import com.liferay.portlet.asset.model.AssetRenderer;
@@ -119,6 +121,11 @@ public class DLFileEntryActivityInterpreter
 	}
 
 	@Override
+	protected ResourceBundleLoader getResourceBundleLoader() {
+		return DLResourceBundleLoader.INSTANCE;
+	}
+
+	@Override
 	protected String getTitlePattern(
 		String groupName, SocialActivity activity) {
 
@@ -179,6 +186,6 @@ public class DLFileEntryActivityInterpreter
 
 	private static final String[] _CLASS_NAMES = {DLFileEntry.class.getName()};
 
-	private volatile DLAppLocalService _dlAppLocalService;
+	private DLAppLocalService _dlAppLocalService;
 
 }

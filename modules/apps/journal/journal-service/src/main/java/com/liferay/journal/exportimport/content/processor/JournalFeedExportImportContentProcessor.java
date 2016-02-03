@@ -15,7 +15,7 @@
 package com.liferay.journal.exportimport.content.processor;
 
 import com.liferay.exportimport.content.processor.ExportImportContentProcessor;
-import com.liferay.exportimport.content.processor.base.BaseExportImportContentProcessor;
+import com.liferay.exportimport.content.processor.base.BaseTextExportImportContentProcessor;
 import com.liferay.journal.model.JournalFeed;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -44,7 +44,7 @@ import org.osgi.service.component.annotations.Reference;
 	}
 )
 public class JournalFeedExportImportContentProcessor
-	extends BaseExportImportContentProcessor {
+	extends BaseTextExportImportContentProcessor {
 
 	@Override
 	public String replaceExportContentReferences(
@@ -149,7 +149,7 @@ public class JournalFeedExportImportContentProcessor
 	private static final Log _log = LogFactoryUtil.getLog(
 		JournalFeedExportImportContentProcessor.class);
 
-	private volatile GroupLocalService _groupLocalService;
-	private volatile LayoutLocalService _layoutLocalService;
+	private GroupLocalService _groupLocalService;
+	private LayoutLocalService _layoutLocalService;
 
 }

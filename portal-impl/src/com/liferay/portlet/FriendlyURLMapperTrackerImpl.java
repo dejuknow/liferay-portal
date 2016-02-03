@@ -26,7 +26,6 @@ import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.UnsecureSAXReaderUtil;
 import com.liferay.portal.model.Portlet;
-import com.liferay.portal.model.PortletApp;
 import com.liferay.registry.Filter;
 import com.liferay.registry.Registry;
 import com.liferay.registry.RegistryUtil;
@@ -36,10 +35,9 @@ import com.liferay.registry.ServiceTracker;
 import com.liferay.registry.ServiceTrackerCustomizer;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import javax.servlet.ServletContext;
 
 /**
  * @author Raymond Augé
@@ -142,8 +140,17 @@ public class FriendlyURLMapperTrackerImpl implements FriendlyURLMapperTracker {
 					friendlyURLRoutes = _portlet.getFriendlyURLRoutes();
 				}
 
-				friendlyURLMapper.setRouter(
-					newFriendlyURLRouter(friendlyURLRoutes));
+				String xml = null;
+
+				if (Validator.isNotNull(friendlyURLRoutes)) {
+					Class<?> clazz = friendlyURLMapper.getClass();
+
+					ClassLoader classLoader = clazz.getClassLoader();
+
+					xml = StringUtil.read(classLoader, friendlyURLRoutes);
+				}
+
+				friendlyURLMapper.setRouter(newFriendlyURLRouter(xml));
 			}
 			catch (Exception e) {
 				_log.error(e, e);
@@ -157,37 +164,33 @@ public class FriendlyURLMapperTrackerImpl implements FriendlyURLMapperTracker {
 		@Override
 		public void modifiedService(
 			ServiceReference<FriendlyURLMapper> serviceReference,
-			FriendlyURLMapper service) {
+			FriendlyURLMapper friendlyURLMapper) {
 		}
 
 		@Override
 		public void removedService(
 			ServiceReference<FriendlyURLMapper> serviceReference,
-			FriendlyURLMapper service) {
+			FriendlyURLMapper friendlyURLMapper) {
 
 			Registry registry = RegistryUtil.getRegistry();
 
 			registry.ungetService(serviceReference);
 		}
 
-		protected Router newFriendlyURLRouter(String friendlyURLRoutes)
-			throws Exception {
-
-			if (Validator.isNull(friendlyURLRoutes)) {
+		protected Router newFriendlyURLRouter(String xml) throws Exception {
+			if (Validator.isNull(xml)) {
 				return null;
 			}
-
-			Router router = new RouterImpl();
-
-			ClassLoader classLoader = getClassLoader();
-
-			String xml = StringUtil.read(classLoader, friendlyURLRoutes);
 
 			Document document = UnsecureSAXReaderUtil.read(xml, true);
 
 			Element rootElement = document.getRootElement();
 
-			for (Element routeElement : rootElement.elements("route")) {
+			List<Element> routeElements = rootElement.elements("route");
+
+			Router router = new RouterImpl(routeElements.size());
+
+			for (Element routeElement : routeElements) {
 				String pattern = routeElement.elementText("pattern");
 
 				Route route = router.addRoute(pattern);
@@ -233,14 +236,6 @@ public class FriendlyURLMapperTrackerImpl implements FriendlyURLMapperTracker {
 			}
 
 			return router;
-		}
-
-		private ClassLoader getClassLoader() {
-			PortletApp portletApp = _portlet.getPortletApp();
-
-			ServletContext servletContext = portletApp.getServletContext();
-
-			return servletContext.getClassLoader();
 		}
 
 	}

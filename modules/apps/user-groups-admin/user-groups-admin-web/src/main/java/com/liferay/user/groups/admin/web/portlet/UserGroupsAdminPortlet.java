@@ -14,23 +14,23 @@
 
 package com.liferay.user.groups.admin.web.portlet;
 
-import com.liferay.portal.DuplicateUserGroupException;
-import com.liferay.portal.NoSuchUserGroupException;
-import com.liferay.portal.RequiredUserGroupException;
-import com.liferay.portal.UserGroupNameException;
+import com.liferay.portal.exception.DuplicateUserGroupException;
+import com.liferay.portal.exception.NoSuchUserGroupException;
+import com.liferay.portal.exception.RequiredUserGroupException;
+import com.liferay.portal.exception.UserGroupNameException;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
+import com.liferay.portal.kernel.security.membershippolicy.MembershipPolicyException;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.model.UserGroup;
-import com.liferay.portal.security.auth.PrincipalException;
-import com.liferay.portal.security.membershippolicy.MembershipPolicyException;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
 import com.liferay.portal.service.UserGroupService;
 import com.liferay.portal.service.UserService;
-import com.liferay.portlet.sites.util.SitesUtil;
-import com.liferay.user.groups.admin.web.constants.UserGroupsAdminPortletKeys;
+import com.liferay.sites.kernel.util.SitesUtil;
+import com.liferay.user.groups.admin.constants.UserGroupsAdminPortletKeys;
 
 import java.io.IOException;
 
@@ -206,7 +206,7 @@ public class UserGroupsAdminPortlet extends MVCPortlet {
 		_userService = userService;
 	}
 
-	private volatile UserGroupService _userGroupService;
-	private volatile UserService _userService;
+	private UserGroupService _userGroupService;
+	private UserService _userService;
 
 }

@@ -14,8 +14,8 @@
 
 package com.liferay.journal.internal;
 
+import com.liferay.journal.kernel.util.JournalConverterManager;
 import com.liferay.journal.util.JournalConverter;
-import com.liferay.portlet.journal.util.JournalConverterManager;
 
 import java.util.Locale;
 
@@ -40,6 +40,6 @@ public class JournalConverterManagerImpl implements JournalConverterManager {
 		_journalConverter = journalConverter;
 	}
 
-	private volatile JournalConverter _journalConverter;
+	private JournalConverter _journalConverter;
 
 }

@@ -47,6 +47,8 @@ import javax.portlet.ResourceRequest;
 import javax.portlet.ResourceResponse;
 import javax.portlet.WindowState;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * @author Brian Wing Shun Chan
  * @author Raymond Augé
@@ -276,6 +278,12 @@ public class MVCPortlet extends LiferayPortlet {
 					renderRequest, renderResponse);
 			}
 
+			if (MVCRenderConstants.MVC_PATH_VALUE_SKIP_DISPATCH.equals(
+					mvcPath)) {
+
+				return;
+			}
+
 			renderRequest.setAttribute(
 				getMVCPathAttributeName(renderResponse.getNamespace()),
 				mvcPath);
@@ -477,7 +485,8 @@ public class MVCPortlet extends LiferayPortlet {
 	}
 
 	protected String getMVCPathAttributeName(String namespace) {
-		return namespace.concat(StringPool.PERIOD).concat(_MVC_PATH);
+		return namespace.concat(StringPool.PERIOD).concat(
+			MVCRenderConstants.MVC_PATH_REQUEST_ATTRIBUTE_NAME);
 	}
 
 	protected String getPath(
@@ -534,7 +543,18 @@ public class MVCPortlet extends LiferayPortlet {
 			PortletResponse portletResponse, String lifecycle)
 		throws IOException, PortletException {
 
-		PortletContext portletContext = getPortletContext();
+		HttpServletRequest httpServletRequest =
+			PortalUtil.getHttpServletRequest(portletRequest);
+
+		PortletContext portletContext =
+			(PortletContext)httpServletRequest.getAttribute(
+				MVCRenderConstants.
+					PORTLET_CONTEXT_OVERRIDE_REQUEST_ATTIBUTE_NAME_PREFIX +
+						path);
+
+		if (portletContext == null) {
+			portletContext = getPortletContext();
+		}
 
 		PortletRequestDispatcher portletRequestDispatcher =
 			portletContext.getRequestDispatcher(path);
@@ -619,9 +639,6 @@ public class MVCPortlet extends LiferayPortlet {
 
 		return null;
 	}
-
-	private static final String _MVC_PATH =
-		MVCPortlet.class.getName() + "#MVC_PATH";
 
 	private static final Log _log = LogFactoryUtil.getLog(MVCPortlet.class);
 

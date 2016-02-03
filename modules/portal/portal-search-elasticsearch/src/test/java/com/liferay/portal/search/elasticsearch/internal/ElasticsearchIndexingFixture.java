@@ -60,9 +60,17 @@ import java.util.HashMap;
  */
 public class ElasticsearchIndexingFixture implements IndexingFixture {
 
-	public ElasticsearchIndexingFixture(String subdirName) throws Exception {
+	public ElasticsearchIndexingFixture(String subdirName, String indexName)
+		throws Exception {
+
 		_elasticsearchFixture = new ElasticsearchFixture(
 			subdirName, _properties);
+
+		_indexName = indexName;
+	}
+
+	public ElasticsearchFixture getElasticsearchFixture() {
+		return _elasticsearchFixture;
 	}
 
 	@Override
@@ -84,6 +92,8 @@ public class ElasticsearchIndexingFixture implements IndexingFixture {
 	public void setUp() throws Exception {
 		_elasticsearchFixture.setUp();
 
+		_elasticsearchFixture.createIndex(_indexName);
+
 		ElasticsearchConnectionManager elasticsearchConnectionManager =
 			new TestElasticsearchConnectionManager(_elasticsearchFixture);
 
@@ -101,7 +111,7 @@ public class ElasticsearchIndexingFixture implements IndexingFixture {
 
 		return new ElasticsearchFilterTranslator() {
 			{
-				setBooleanQueryTranslator(new BooleanFilterTranslatorImpl());
+				setBooleanFilterTranslator(new BooleanFilterTranslatorImpl());
 				setDateRangeTermFilterTranslator(
 					new DateRangeTermFilterTranslatorImpl());
 				setExistsFilterTranslator(new ExistsFilterTranslatorImpl());
@@ -190,6 +200,7 @@ public class ElasticsearchIndexingFixture implements IndexingFixture {
 	}
 
 	private final ElasticsearchFixture _elasticsearchFixture;
+	private final String _indexName;
 	private IndexSearcher _indexSearcher;
 	private IndexWriter _indexWriter;
 	private final HashMap<String, Object> _properties = new HashMap<>();

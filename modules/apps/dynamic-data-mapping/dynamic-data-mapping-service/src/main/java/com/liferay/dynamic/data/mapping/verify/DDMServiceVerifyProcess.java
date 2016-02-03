@@ -40,7 +40,6 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.verify.VerifyProcess;
 
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -55,7 +54,6 @@ import org.osgi.service.component.annotations.Reference;
 )
 public class DDMServiceVerifyProcess extends VerifyProcess {
 
-	@Activate
 	@Override
 	protected void doVerify() throws Exception {
 		verifyStructures();
@@ -296,16 +294,15 @@ public class DDMServiceVerifyProcess extends VerifyProcess {
 	private static final Log _log = LogFactoryUtil.getLog(
 		DDMServiceVerifyProcess.class);
 
-	private volatile DDMContentLocalService _ddmContentLocalService;
-	private volatile DDMFormLayoutValidator _ddmFormLayoutValidator;
-	private volatile DDMFormValidator _ddmFormValidator;
-	private volatile DDMFormValuesJSONDeserializer
-		_ddmFormValuesJSONDeserializer;
-	private volatile DDMFormValuesValidator _ddmFormValuesValidator;
-	private volatile DDMStorageLinkLocalService _ddmStorageLinkLocalService;
-	private volatile DDMStructureLinkLocalService _ddmStructureLinkLocalService;
-	private volatile DDMStructureLocalService _ddmStructureLocalService;
-	private volatile DDMTemplateLinkLocalService _ddmTemplateLinkLocalService;
-	private volatile DDMTemplateLocalService _ddmTemplateLocalService;
+	private DDMContentLocalService _ddmContentLocalService;
+	private DDMFormLayoutValidator _ddmFormLayoutValidator;
+	private DDMFormValidator _ddmFormValidator;
+	private DDMFormValuesJSONDeserializer _ddmFormValuesJSONDeserializer;
+	private DDMFormValuesValidator _ddmFormValuesValidator;
+	private DDMStorageLinkLocalService _ddmStorageLinkLocalService;
+	private DDMStructureLinkLocalService _ddmStructureLinkLocalService;
+	private DDMStructureLocalService _ddmStructureLocalService;
+	private DDMTemplateLinkLocalService _ddmTemplateLinkLocalService;
+	private DDMTemplateLocalService _ddmTemplateLocalService;
 
 }

@@ -20,7 +20,7 @@
 String redirect = ParamUtil.getString(request, "redirect");
 
 ConfigurationModel configurationModel = (ConfigurationModel)request.getAttribute(ConfigurationAdminWebKeys.CONFIGURATION_MODEL);
-String ddmFormHTML = (String)request.getAttribute(DDMWebKeys.DYNAMIC_DATA_MAPPING_FORM_HTML);
+String ddmFormHTML = (String)request.getAttribute(ConfigurationAdminWebKeys.CONFIGURATION_MODEL_FORM_HTML);
 
 portletDisplay.setShowBackIcon(true);
 portletDisplay.setURLBack(redirect);
@@ -38,30 +38,28 @@ renderResponse.setTitle(configurationModel.getName());
 		<aui:input name="pid" type="hidden" value="<%= configurationModel.getID() %>" />
 
 		<div class="lfr-ddm-container" id="lfr-ddm-container">
-			<%= ddmFormHTML %>
+			<aui:fieldset-group>
+				<c:if test="<%= !configurationModel.hasConfiguration() %>">
+					<aui:alert closeable="<%= false %>" id="errorAlert" type="info">
+						<liferay-ui:message key="this-configuration-was-not-saved-yet" />
+					</aui:alert>
+				</c:if>
+
+				<%= ddmFormHTML %>
+			</aui:fieldset-group>
 		</div>
 
 		<aui:button-row>
 			<c:choose>
-				<c:when test="<%= configurationModel.getConfiguration() != null %>">
-					<aui:button type="submit" value="update" />
-
-					<aui:button onClick='<%= renderResponse.getNamespace() + "deleteConfiguration();" %>' value="delete" />
+				<c:when test="<%= configurationModel.hasConfiguration() %>">
+					<aui:button cssClass="btn-lg" type="submit" value="update" />
 				</c:when>
 				<c:otherwise>
-					<aui:button type="submit" value="save" />
+					<aui:button cssClass="btn-lg" type="submit" value="save" />
 				</c:otherwise>
 			</c:choose>
 
-			<aui:button href="<%= redirect %>" type="cancel" />
+			<aui:button cssClass="btn-lg" href="<%= redirect %>" type="cancel" />
 		</aui:button-row>
 	</aui:form>
 </div>
-
-<aui:script>
-	function <portlet:namespace />deleteConfiguration() {
-		document.<portlet:namespace />fm.action = '<%= deleteConfigurationActionURL %>';
-
-		submitForm(document.<portlet:namespace />fm);
-	}
-</aui:script>

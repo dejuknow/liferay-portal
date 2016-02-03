@@ -16,6 +16,7 @@ package com.liferay.portlet.exportimport.model;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.annotation.ImplementationClassName;
 import com.liferay.portal.kernel.util.Accessor;
 import com.liferay.portal.model.PersistedModel;
 
@@ -28,6 +29,7 @@ import com.liferay.portal.model.PersistedModel;
  * @see com.liferay.portlet.exportimport.model.impl.ExportImportConfigurationModelImpl
  * @generated
  */
+@ImplementationClassName("com.liferay.portlet.exportimport.model.impl.ExportImportConfigurationImpl")
 @ProviderType
 public interface ExportImportConfiguration
 	extends ExportImportConfigurationModel, PersistedModel {

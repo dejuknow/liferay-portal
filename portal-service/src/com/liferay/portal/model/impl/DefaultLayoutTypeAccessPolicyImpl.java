@@ -16,9 +16,13 @@ package com.liferay.portal.model.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.portlet.PortletModeFactory;
+import com.liferay.portal.kernel.security.auth.AuthTokenUtil;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -28,11 +32,6 @@ import com.liferay.portal.model.Layout;
 import com.liferay.portal.model.LayoutTypeAccessPolicy;
 import com.liferay.portal.model.LayoutTypePortlet;
 import com.liferay.portal.model.Portlet;
-import com.liferay.portal.security.auth.AuthTokenUtil;
-import com.liferay.portal.security.auth.PrincipalException;
-import com.liferay.portal.security.permission.ActionKeys;
-import com.liferay.portal.security.permission.PermissionChecker;
-import com.liferay.portal.security.permission.PermissionThreadLocal;
 import com.liferay.portal.service.permission.LayoutPermissionUtil;
 import com.liferay.portal.service.permission.PortletPermissionUtil;
 import com.liferay.portal.theme.ThemeDisplay;
@@ -66,8 +65,8 @@ public class DefaultLayoutTypeAccessPolicyImpl
 		}
 
 		throw new PrincipalException.MustHavePermission(
-				PortalUtil.getUserId(request), portlet.getDisplayName(),
-				portlet.getPortletId(), ActionKeys.ACCESS);
+			PortalUtil.getUserId(request), portlet.getDisplayName(),
+			portlet.getPortletId(), ActionKeys.ACCESS);
 	}
 
 	@Override
@@ -163,8 +162,6 @@ public class DefaultLayoutTypeAccessPolicyImpl
 	protected boolean isAccessGrantedByPortletAuthenticationToken(
 		HttpServletRequest request, Layout layout, Portlet portlet) {
 
-		String portletId = portlet.getPortletId();
-
 		if (!portlet.isAddDefaultResource()) {
 			return false;
 		}
@@ -173,29 +170,8 @@ public class DefaultLayoutTypeAccessPolicyImpl
 			return true;
 		}
 
-		String namespace = PortalUtil.getPortletNamespace(portletId);
-
-		String strutsAction = ParamUtil.getString(
-			request, namespace + "struts_action");
-
-		if (Validator.isNull(strutsAction)) {
-			strutsAction = ParamUtil.getString(request, "struts_action");
-		}
-
-		String requestPortletAuthenticationToken = ParamUtil.getString(
-			request, "p_p_auth");
-
-		if (Validator.isNull(requestPortletAuthenticationToken)) {
-			HttpServletRequest originalRequest =
-				PortalUtil.getOriginalServletRequest(request);
-
-			requestPortletAuthenticationToken = ParamUtil.getString(
-				originalRequest, "p_p_auth");
-		}
-
 		if (AuthTokenUtil.isValidPortletInvocationToken(
-				request, layout.getPlid(), portletId, strutsAction,
-				requestPortletAuthenticationToken)) {
+				request, layout, portlet)) {
 
 			return true;
 		}

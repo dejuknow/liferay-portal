@@ -16,10 +16,11 @@ package com.liferay.portal.kernel.upgrade.util;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.cache.MultiVMPoolUtil;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.search.SearchEngineUtil;
+import com.liferay.portal.kernel.search.IndexWriterHelperUtil;
 import com.liferay.portal.kernel.upgrade.UpgradeException;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -140,10 +141,10 @@ public class UpgradeProcessUtil {
 
 		boolean ranUpgradeProcess = false;
 
-		boolean tempIndexReadOnly = SearchEngineUtil.isIndexReadOnly();
+		boolean tempIndexReadOnly = IndexWriterHelperUtil.isIndexReadOnly();
 
 		if (indexOnUpgrade) {
-			SearchEngineUtil.setIndexReadOnly(true);
+			IndexWriterHelperUtil.setIndexReadOnly(true);
 		}
 
 		try {
@@ -157,7 +158,11 @@ public class UpgradeProcessUtil {
 			}
 		}
 		finally {
-			SearchEngineUtil.setIndexReadOnly(tempIndexReadOnly);
+			IndexWriterHelperUtil.setIndexReadOnly(tempIndexReadOnly);
+
+			if (ranUpgradeProcess) {
+				MultiVMPoolUtil.clear();
+			}
 		}
 
 		return ranUpgradeProcess;

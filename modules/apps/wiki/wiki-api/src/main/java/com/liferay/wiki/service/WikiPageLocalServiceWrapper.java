@@ -186,17 +186,6 @@ public class WikiPageLocalServiceWrapper implements WikiPageLocalService,
 		_wikiPageLocalService.deletePage(nodeId, title);
 	}
 
-	/**
-	* @deprecated As of 6.2.0 replaced by {@link #discardDraft(long, String,
-	double)}
-	*/
-	@Deprecated
-	@Override
-	public void deletePage(long nodeId, java.lang.String title, double version)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_wikiPageLocalService.deletePage(nodeId, title, version);
-	}
-
 	@Override
 	public void deletePage(com.liferay.wiki.model.WikiPage page)
 		throws com.liferay.portal.kernel.exception.PortalException {
@@ -441,6 +430,14 @@ public class WikiPageLocalServiceWrapper implements WikiPageLocalService,
 		long nodeId, boolean head, java.lang.String parentTitle, int status) {
 		return _wikiPageLocalService.getChildren(nodeId, head, parentTitle,
 			status);
+	}
+
+	@Override
+	public java.util.List<com.liferay.wiki.model.WikiPage> getChildren(
+		long nodeId, boolean head, java.lang.String parentTitle, int status,
+		int start, int end, com.liferay.portal.kernel.util.OrderByComparator obc) {
+		return _wikiPageLocalService.getChildren(nodeId, head, parentTitle,
+			status, start, end, obc);
 	}
 
 	@Override
@@ -739,32 +736,9 @@ public class WikiPageLocalServiceWrapper implements WikiPageLocalService,
 			end);
 	}
 
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link #getRecentChanges(long, long,
-	int, int)}
-	*/
-	@Deprecated
-	@Override
-	public java.util.List<com.liferay.wiki.model.WikiPage> getRecentChanges(
-		long nodeId, int start, int end)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _wikiPageLocalService.getRecentChanges(nodeId, start, end);
-	}
-
 	@Override
 	public int getRecentChangesCount(long groupId, long nodeId) {
 		return _wikiPageLocalService.getRecentChangesCount(groupId, nodeId);
-	}
-
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link #getRecentChangesCount(long,
-	long)}
-	*/
-	@Deprecated
-	@Override
-	public int getRecentChangesCount(long nodeId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _wikiPageLocalService.getRecentChangesCount(nodeId);
 	}
 
 	@Override
@@ -901,20 +875,6 @@ public class WikiPageLocalServiceWrapper implements WikiPageLocalService,
 			serviceContext);
 	}
 
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link #renamePage(long, long,
-	String, String, boolean, ServiceContext)}
-	*/
-	@Deprecated
-	@Override
-	public void movePage(long userId, long nodeId, java.lang.String title,
-		java.lang.String newTitle, boolean strict,
-		com.liferay.portal.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_wikiPageLocalService.movePage(userId, nodeId, title, newTitle, strict,
-			serviceContext);
-	}
-
 	@Override
 	public com.liferay.portal.kernel.repository.model.FileEntry movePageAttachmentToTrash(
 		long userId, long nodeId, java.lang.String title,
@@ -1026,10 +986,10 @@ public class WikiPageLocalServiceWrapper implements WikiPageLocalService,
 	@Override
 	public void updateAsset(long userId, com.liferay.wiki.model.WikiPage page,
 		long[] assetCategoryIds, java.lang.String[] assetTagNames,
-		long[] assetLinkEntryIds)
+		long[] assetLinkEntryIds, java.lang.Double priority)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		_wikiPageLocalService.updateAsset(userId, page, assetCategoryIds,
-			assetTagNames, assetLinkEntryIds);
+			assetTagNames, assetLinkEntryIds, priority);
 	}
 
 	@Override
@@ -1093,23 +1053,6 @@ public class WikiPageLocalServiceWrapper implements WikiPageLocalService,
 	public void validateTitle(java.lang.String title)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		_wikiPageLocalService.validateTitle(title);
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
-	 */
-	@Deprecated
-	public WikiPageLocalService getWrappedWikiPageLocalService() {
-		return _wikiPageLocalService;
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #setWrappedService}
-	 */
-	@Deprecated
-	public void setWrappedWikiPageLocalService(
-		WikiPageLocalService wikiPageLocalService) {
-		_wikiPageLocalService = wikiPageLocalService;
 	}
 
 	@Override

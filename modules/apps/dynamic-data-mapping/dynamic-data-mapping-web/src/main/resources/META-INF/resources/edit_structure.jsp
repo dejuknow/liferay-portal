@@ -19,7 +19,6 @@
 <%
 String redirect = ParamUtil.getString(request, "redirect");
 String closeRedirect = ParamUtil.getString(request, "closeRedirect");
-boolean showBackURL = ParamUtil.getBoolean(request, "showBackURL", true);
 
 String portletResourceNamespace = ParamUtil.getString(request, "portletResourceNamespace", renderResponse.getNamespace());
 
@@ -72,6 +71,8 @@ String fieldsJSONArrayString = StringPool.BLANK;
 if (fieldsJSONArray != null) {
 	fieldsJSONArrayString = fieldsJSONArray.toString();
 }
+
+boolean showBackURL = ParamUtil.getBoolean(request, "showBackURL", true);
 %>
 
 <portlet:actionURL name="addStructure" var="addStructureURL">
@@ -101,6 +102,46 @@ if (Validator.isNotNull(requestUpdateStructureURL)) {
 		<aui:input name="definition" type="hidden" />
 		<aui:input name="status" type="hidden" />
 		<aui:input name="saveAndContinue" type="hidden" value="<%= false %>" />
+
+		<liferay-ui:error exception="<%= DDMFormLayoutValidationException.class %>" message="please-enter-a-valid-form-layout" />
+
+		<liferay-ui:error exception="<%= DDMFormLayoutValidationException.MustNotDuplicateFieldName.class %>">
+
+			<%
+			DDMFormLayoutValidationException.MustNotDuplicateFieldName mndfn = (DDMFormLayoutValidationException.MustNotDuplicateFieldName)errorException;
+			%>
+
+			<liferay-ui:message arguments="<%= StringUtil.merge(mndfn.getDuplicatedFieldNames(), StringPool.COMMA_AND_SPACE) %>" key="the-definition-field-name-x-was-defined-more-than-once" translateArguments="<%= false %>" />
+		</liferay-ui:error>
+
+		<liferay-ui:error exception="<%= DDMFormValidationException.class %>" message="please-enter-a-valid-form-definition" />
+
+		<liferay-ui:error exception="<%= DDMFormValidationException.MustNotDuplicateFieldName.class %>">
+
+			<%
+			DDMFormValidationException.MustNotDuplicateFieldName mndfn = (DDMFormValidationException.MustNotDuplicateFieldName)errorException;
+			%>
+
+			<liferay-ui:message arguments="<%= mndfn.getFieldName() %>" key="the-definition-field-name-x-was-defined-more-than-once" translateArguments="<%= false %>" />
+		</liferay-ui:error>
+
+		<liferay-ui:error exception="<%= DDMFormValidationException.MustSetOptionsForField.class %>">
+
+			<%
+			DDMFormValidationException.MustSetOptionsForField msoff = (DDMFormValidationException.MustSetOptionsForField)errorException;
+			%>
+
+			<liferay-ui:message arguments="<%= msoff.getFieldName() %>" key="at-least-one-option-should-be-set-for-field-x" translateArguments="<%= false %>" />
+		</liferay-ui:error>
+
+		<liferay-ui:error exception="<%= DDMFormValidationException.MustSetValidCharactersForFieldName.class %>">
+
+			<%
+			DDMFormValidationException.MustSetValidCharactersForFieldName msvcffn = (DDMFormValidationException.MustSetValidCharactersForFieldName)errorException;
+			%>
+
+			<liferay-ui:message arguments="<%= msvcffn.getFieldName() %>" key="invalid-characters-were-defined-for-field-name-x" translateArguments="<%= false %>" />
+		</liferay-ui:error>
 
 		<liferay-ui:error exception="<%= LocaleException.class %>">
 
@@ -217,7 +258,7 @@ if (Validator.isNotNull(requestUpdateStructureURL)) {
 										<aui:select disabled="<%= structure != null %>" name="storageType">
 
 										<%
-										for (StorageType storageType : StorageType.values()) {
+										for (String storageType : StorageType.getTypes()) {
 										%>
 
 											<aui:option label="<%= storageType %>" value="<%= storageType %>" />
@@ -236,7 +277,7 @@ if (Validator.isNotNull(requestUpdateStructureURL)) {
 						</c:choose>
 					</aui:row>
 
-				<c:if test="<%= !ddmServiceConfiguration.autogenerateStructureKey() %>">
+				<c:if test="<%= !ddmWebConfiguration.autogenerateStructureKey() %>">
 					<aui:input disabled="<%= (structure != null) ? true : false %>" label='<%= LanguageUtil.format(request, "x-key", ddmDisplay.getStructureName(locale), false) %>' name="structureKey" />
 				</c:if>
 
@@ -271,13 +312,13 @@ if (Validator.isNotNull(requestUpdateStructureURL)) {
 	<%@ include file="/form_builder.jspf" %>
 
 	<aui:button-row>
-		<aui:button onClick='<%= renderResponse.getNamespace() + "saveStructure(false);" %>' primary="<%= true %>" value='<%= LanguageUtil.get(request, "save") %>' />
+		<aui:button cssClass="btn-lg" onClick='<%= renderResponse.getNamespace() + "saveStructure(false);" %>' primary="<%= true %>" value='<%= LanguageUtil.get(request, "save") %>' />
 
 		<c:if test="<%= ddmDisplay.isVersioningEnabled() %>">
-			<aui:button onClick='<%= renderResponse.getNamespace() + "saveStructure(true);" %>' value='<%= LanguageUtil.get(request, "save-draft") %>' />
+			<aui:button cssClass="btn-lg" onClick='<%= renderResponse.getNamespace() + "saveStructure(true);" %>' value='<%= LanguageUtil.get(request, "save-draft") %>' />
 		</c:if>
 
-		<aui:button href="<%= redirect %>" type="cancel" />
+		<aui:button cssClass="btn-lg" href="<%= redirect %>" type="cancel" />
 	</aui:button-row>
 </div>
 

@@ -32,13 +32,18 @@ boolean viewResults = ParamUtil.getBoolean(request, "viewResults");
 if (viewResults && !PollsQuestionPermissionChecker.contains(permissionChecker, question, ActionKeys.UPDATE)) {
 	viewResults = false;
 }
+
+renderResponse.setTitle(question.getTitle(locale));
+
+portletDisplay.setShowBackIcon(true);
+portletDisplay.setURLBack(redirect);
 %>
 
 <portlet:actionURL var="viewQuestionActionURL">
 	<portlet:param name="struts_action" value="/polls/view_question" />
 </portlet:actionURL>
 
-<aui:form action="<%= viewQuestionActionURL %>" method="post" name="fm">
+<aui:form action="<%= viewQuestionActionURL %>" cssClass="container-fluid-1280" method="post" name="fm">
 	<portlet:renderURL var="viewQuestionRenderURL">
 		<portlet:param name="struts_action" value="/polls/view_question" />
 		<portlet:param name="redirect" value="<%= redirect %>" />
@@ -53,13 +58,6 @@ if (viewResults && !PollsQuestionPermissionChecker.contains(permissionChecker, q
 	<liferay-ui:error exception="<%= NoSuchChoiceException.class %>" message="please-select-an-option" />
 
 	<aui:fieldset>
-		<liferay-ui:header
-			backURL="<%= redirect %>"
-			escapeXml="<%= false %>"
-			localizeTitle="<%= false %>"
-			title="<%= question.getTitle(locale) %>"
-		/>
-
 		<span>
 			<%= StringUtil.replace(question.getDescription(locale), StringPool.NEW_LINE, "<br />") %>
 		</span>
@@ -100,9 +98,9 @@ if (viewResults && !PollsQuestionPermissionChecker.contains(permissionChecker, q
 				</c:if>
 
 				<aui:button-row>
-					<aui:button type="submit" value="vote[action]" />
+					<aui:button cssClass="btn-lg" type="submit" value="vote[action]" />
 
-					<aui:button href="<%= redirect %>" type="cancel" />
+					<aui:button cssClass="btn-lg" href="<%= redirect %>" type="cancel" />
 				</aui:button-row>
 
 				<%

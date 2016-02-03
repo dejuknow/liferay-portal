@@ -28,7 +28,6 @@ Import-Package:\
 	!org.relaxng.datatype.*,\
 	*
 Include-Resource:\
-	classes,\
 	lib/commons-io.jar=lib/commons-io.jar,\
 	lib/httpclient.jar=lib/httpclient.jar,\
 	lib/httpcore.jar=lib/httpcore.jar,\
@@ -43,3 +42,6 @@ Include-Resource:\
 	lib/stax2-api.jar=lib/stax2-api.jar,\
 	lib/woodstox-core-asl.jar=lib/woodstox-core-asl.jar,\
 	lib/zookeeper.jar=lib/zookeeper.jar
+Liferay-Releng-Module-Group-Description:
+Liferay-Releng-Module-Group-Title: Solr
+-include: ../../../marketplace/platform/bnd.bnd

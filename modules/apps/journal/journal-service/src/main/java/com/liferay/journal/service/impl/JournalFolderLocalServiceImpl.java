@@ -45,6 +45,7 @@ import com.liferay.portal.kernel.util.ObjectValuePair;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.SetUtil;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.TreeModelTasksAdapter;
 import com.liferay.portal.kernel.util.TreePathUtil;
@@ -117,7 +118,8 @@ public class JournalFolderLocalServiceImpl
 		updateAsset(
 			userId, folder, serviceContext.getAssetCategoryIds(),
 			serviceContext.getAssetTagNames(),
-			serviceContext.getAssetLinkEntryIds());
+			serviceContext.getAssetLinkEntryIds(),
+			serviceContext.getAssetPriority());
 
 		return folder;
 	}
@@ -387,15 +389,23 @@ public class JournalFolderLocalServiceImpl
 
 	@Override
 	public List<Object> getFoldersAndArticles(
-		long groupId, long folderId, int start, int end,
+		long groupId, long folderId, int status, int start, int end,
 		OrderByComparator<?> obc) {
 
-		QueryDefinition<?> queryDefinition = new QueryDefinition<Object>(
-			WorkflowConstants.STATUS_ANY, start, end,
-			(OrderByComparator<Object>)obc);
+		QueryDefinition<?> queryDefinition = new QueryDefinition<>(
+			status, start, end, (OrderByComparator<Object>)obc);
 
 		return journalFolderFinder.findF_A_ByG_F(
 			groupId, folderId, queryDefinition);
+	}
+
+	@Override
+	public List<Object> getFoldersAndArticles(
+		long groupId, long folderId, int start, int end,
+		OrderByComparator<?> obc) {
+
+		return getFoldersAndArticles(
+			groupId, folderId, WorkflowConstants.STATUS_ANY, start, end, obc);
 	}
 
 	@Override
@@ -777,7 +787,7 @@ public class JournalFolderLocalServiceImpl
 	@Override
 	public void updateAsset(
 			long userId, JournalFolder folder, long[] assetCategoryIds,
-			String[] assetTagNames, long[] assetLinkEntryIds)
+			String[] assetTagNames, long[] assetLinkEntryIds, Double priority)
 		throws PortalException {
 
 		AssetEntry assetEntry = assetEntryLocalService.updateEntry(
@@ -786,7 +796,7 @@ public class JournalFolderLocalServiceImpl
 			folder.getFolderId(), folder.getUuid(), 0, assetCategoryIds,
 			assetTagNames, true, null, null, null, ContentTypes.TEXT_PLAIN,
 			folder.getName(), folder.getDescription(), null, null, null, 0, 0,
-			null);
+			priority);
 
 		assetLinkLocalService.updateLinks(
 			userId, assetEntry.getEntryId(), assetLinkEntryIds,
@@ -1049,7 +1059,8 @@ public class JournalFolderLocalServiceImpl
 		updateAsset(
 			userId, folder, serviceContext.getAssetCategoryIds(),
 			serviceContext.getAssetTagNames(),
-			serviceContext.getAssetLinkEntryIds());
+			serviceContext.getAssetLinkEntryIds(),
+			serviceContext.getAssetPriority());
 
 		// Dynamic data mapping
 
@@ -1425,13 +1436,25 @@ public class JournalFolderLocalServiceImpl
 						article.getDDMStructureKey(), true);
 
 				if (ddmStructure == null) {
-					throw new InvalidDDMStructureException();
+					StringBundler sb = new StringBundler(7);
+
+					sb.append("No DDM structure exists for group ");
+					sb.append(article.getGroupId());
+					sb.append(", class name ");
+					sb.append(classNameId);
+					sb.append(", and structure key ");
+					sb.append(article.getDDMStructureKey());
+					sb.append(" that includes ancestor structures");
+
+					throw new InvalidDDMStructureException(sb.toString());
 				}
 
 				if (!ArrayUtil.contains(
 						ddmStructureIds, ddmStructure.getStructureId())) {
 
-					throw new InvalidDDMStructureException();
+					throw new InvalidDDMStructureException(
+						"Invalid DDM structure " +
+							ddmStructure.getStructureId());
 				}
 			}
 		}

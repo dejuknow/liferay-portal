@@ -33,6 +33,10 @@ public class GroupConstants {
 
 	public static final long DEFAULT_PARENT_GROUP_ID = 0;
 
+	public static final String FORMS = "Forms";
+
+	public static final String FORMS_FRIENDLY_URL = "/forms";
+
 	public static final String GLOBAL = "Global";
 
 	public static final String GLOBAL_FRIENDLY_URL = "/global";
@@ -42,7 +46,7 @@ public class GroupConstants {
 	public static final int MEMBERSHIP_RESTRICTION_TO_PARENT_SITE_MEMBERS = 1;
 
 	public static final String[] SYSTEM_GROUPS = {
-		CONTROL_PANEL, GUEST, GroupConstants.USER_PERSONAL_SITE
+		CONTROL_PANEL, FORMS, GUEST, GroupConstants.USER_PERSONAL_SITE
 	};
 
 	public static final String TYPE_SETTINGS_KEY_INHERIT_LOCALES =

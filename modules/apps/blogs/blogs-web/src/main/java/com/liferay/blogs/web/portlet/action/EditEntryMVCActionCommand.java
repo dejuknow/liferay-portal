@@ -26,9 +26,11 @@ import com.liferay.portal.kernel.portlet.JSONPortletResponseUtil;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
+import com.liferay.portal.kernel.portletfilerepository.PortletFileRepositoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector;
@@ -48,29 +50,28 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.model.TrashedModel;
-import com.liferay.portal.portletfilerepository.PortletFileRepositoryUtil;
-import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.PortletURLImpl;
-import com.liferay.portlet.asset.AssetCategoryException;
-import com.liferay.portlet.asset.AssetTagException;
+import com.liferay.portlet.asset.exception.AssetCategoryException;
+import com.liferay.portlet.asset.exception.AssetTagException;
 import com.liferay.portlet.blogs.BlogsEntryAttachmentFileEntryHelper;
 import com.liferay.portlet.blogs.BlogsEntryAttachmentFileEntryReference;
-import com.liferay.portlet.blogs.EntryContentException;
-import com.liferay.portlet.blogs.EntryCoverImageCropException;
-import com.liferay.portlet.blogs.EntryDescriptionException;
-import com.liferay.portlet.blogs.EntryDisplayDateException;
-import com.liferay.portlet.blogs.EntrySmallImageNameException;
-import com.liferay.portlet.blogs.EntrySmallImageScaleException;
-import com.liferay.portlet.blogs.EntryTitleException;
-import com.liferay.portlet.blogs.NoSuchEntryException;
+import com.liferay.portlet.blogs.BlogsEntryImageSelectorHelper;
+import com.liferay.portlet.blogs.exception.EntryContentException;
+import com.liferay.portlet.blogs.exception.EntryCoverImageCropException;
+import com.liferay.portlet.blogs.exception.EntryDescriptionException;
+import com.liferay.portlet.blogs.exception.EntryDisplayDateException;
+import com.liferay.portlet.blogs.exception.EntrySmallImageNameException;
+import com.liferay.portlet.blogs.exception.EntrySmallImageScaleException;
+import com.liferay.portlet.blogs.exception.EntryTitleException;
+import com.liferay.portlet.blogs.exception.NoSuchEntryException;
 import com.liferay.portlet.blogs.model.BlogsEntry;
 import com.liferay.portlet.blogs.service.BlogsEntryLocalService;
 import com.liferay.portlet.blogs.service.BlogsEntryService;
-import com.liferay.portlet.documentlibrary.FileSizeException;
+import com.liferay.portlet.documentlibrary.exception.FileSizeException;
 import com.liferay.portlet.trash.service.TrashEntryService;
 import com.liferay.portlet.trash.util.TrashUtil;
 
@@ -192,10 +193,10 @@ public class EditEntryMVCActionCommand extends BaseMVCActionCommand {
 					_transactionAttribute, updateEntryCallable);
 
 				entry = (BlogsEntry)returnValue[0];
-				oldUrlTitle = ((String)returnValue[1]);
+				oldUrlTitle = (String)returnValue[1];
 				blogsEntryAttachmentFileEntryReferences =
-					((List<BlogsEntryAttachmentFileEntryReference>)
-						returnValue[2]);
+					(List<BlogsEntryAttachmentFileEntryReference>)
+						returnValue[2];
 			}
 			else if (cmd.equals(Constants.DELETE)) {
 				deleteEntries(actionRequest, false);
@@ -493,17 +494,40 @@ public class EditEntryMVCActionCommand extends BaseMVCActionCommand {
 		String coverImageCaption = ParamUtil.getString(
 			actionRequest, "coverImageCaption");
 
-		ImageSelector coverImageImageSelector = new ImageSelector(
-			coverImageFileEntryId, coverImageURL,
-			coverImageFileEntryCropRegion);
+		long oldCoverImageId = 0;
+		String oldCoverImageURL = StringPool.BLANK;
+		long oldSmallImageId = 0;
+		String oldSmallImageURL = StringPool.BLANK;
+
+		if (entryId != 0) {
+			BlogsEntry entry = _blogsEntryLocalService.getBlogsEntry(entryId);
+
+			oldCoverImageId = entry.getCoverImageFileEntryId();
+			oldCoverImageURL = entry.getCoverImageURL();
+			oldSmallImageId = entry.getSmallImageId();
+			oldSmallImageURL = entry.getSmallImageURL();
+		}
+
+		BlogsEntryImageSelectorHelper blogsEntryCoverImageSelectorHelper =
+			new BlogsEntryImageSelectorHelper(
+				coverImageFileEntryId, oldCoverImageId,
+				coverImageFileEntryCropRegion, coverImageURL, oldCoverImageURL);
+
+		ImageSelector coverImageImageSelector =
+			blogsEntryCoverImageSelectorHelper.getImageSelector();
 
 		long smallImageFileEntryId = ParamUtil.getLong(
 			actionRequest, "smallImageFileEntryId");
 		String smallImageURL = ParamUtil.getString(
 			actionRequest, "smallImageURL");
 
-		ImageSelector smallImageImageSelector = new ImageSelector(
-			smallImageFileEntryId, smallImageURL, null);
+		BlogsEntryImageSelectorHelper blogsEntrySmallImageSelectorHelper =
+			new BlogsEntryImageSelectorHelper(
+				smallImageFileEntryId, oldSmallImageId, StringPool.BLANK,
+				smallImageURL, oldSmallImageURL);
+
+		ImageSelector smallImageImageSelector =
+			blogsEntrySmallImageSelectorHelper.getImageSelector();
 
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(
 			BlogsEntry.class.getName(), actionRequest);
@@ -620,6 +644,24 @@ public class EditEntryMVCActionCommand extends BaseMVCActionCommand {
 			}
 		}
 
+		if (blogsEntryCoverImageSelectorHelper.isFileEntryTempFile()) {
+			_blogsEntryLocalService.addOriginalImageFileEntry(
+				themeDisplay.getUserId(), entry.getGroupId(),
+				entry.getEntryId(), coverImageImageSelector);
+
+			PortletFileRepositoryUtil.deletePortletFileEntry(
+				coverImageFileEntryId);
+		}
+
+		if (blogsEntrySmallImageSelectorHelper.isFileEntryTempFile()) {
+			_blogsEntryLocalService.addOriginalImageFileEntry(
+				themeDisplay.getUserId(), entry.getGroupId(),
+				entry.getEntryId(), smallImageImageSelector);
+
+			PortletFileRepositoryUtil.deletePortletFileEntry(
+				smallImageFileEntryId);
+		}
+
 		return new Object[] {
 			entry, oldUrlTitle, blogsEntryAttachmentFileEntryReferences
 		};
@@ -632,9 +674,9 @@ public class EditEntryMVCActionCommand extends BaseMVCActionCommand {
 		TransactionAttribute.Factory.create(
 			Propagation.REQUIRED, new Class<?>[] {Exception.class});
 
-	private volatile BlogsEntryLocalService _blogsEntryLocalService;
-	private volatile BlogsEntryService _blogsEntryService;
-	private volatile TrashEntryService _trashEntryService;
+	private BlogsEntryLocalService _blogsEntryLocalService;
+	private BlogsEntryService _blogsEntryService;
+	private TrashEntryService _trashEntryService;
 
 	private class UpdateEntryCallable implements Callable<Object[]> {
 

@@ -23,16 +23,16 @@ import com.liferay.portal.kernel.search.BaseIndexer;
 import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.search.IndexWriterHelperUtil;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.SearchContext;
-import com.liferay.portal.kernel.search.SearchEngineUtil;
 import com.liferay.portal.kernel.search.Summary;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.UserGroup;
 import com.liferay.portal.service.UserGroupLocalService;
-import com.liferay.user.groups.admin.web.constants.UserGroupsAdminPortletKeys;
+import com.liferay.user.groups.admin.constants.UserGroupsAdminPortletKeys;
 
 import java.util.LinkedHashMap;
 import java.util.Locale;
@@ -58,7 +58,6 @@ public class UserGroupIndexer extends BaseIndexer<UserGroup> {
 	public static final String CLASS_NAME = UserGroup.class.getName();
 
 	public UserGroupIndexer() {
-		setCommitImmediately(true);
 		setDefaultSelectedFieldNames(
 			Field.COMPANY_ID, Field.UID, Field.USER_GROUP_ID);
 		setPermissionAware(true);
@@ -151,7 +150,7 @@ public class UserGroupIndexer extends BaseIndexer<UserGroup> {
 	protected void doReindex(UserGroup userGroup) throws Exception {
 		Document document = getDocument(userGroup);
 
-		SearchEngineUtil.updateDocument(
+		IndexWriterHelperUtil.updateDocument(
 			getSearchEngineId(), userGroup.getCompanyId(), document,
 			isCommitImmediately());
 	}
@@ -169,7 +168,7 @@ public class UserGroupIndexer extends BaseIndexer<UserGroup> {
 					try {
 						Document document = getDocument(userGroup);
 
-						indexableActionableDynamicQuery.addDocument(document);
+						indexableActionableDynamicQuery.addDocuments(document);
 					}
 					catch (PortalException pe) {
 						if (_log.isWarnEnabled()) {
@@ -197,6 +196,6 @@ public class UserGroupIndexer extends BaseIndexer<UserGroup> {
 	private static final Log _log = LogFactoryUtil.getLog(
 		UserGroupIndexer.class);
 
-	private volatile UserGroupLocalService _userGroupLocalService;
+	private UserGroupLocalService _userGroupLocalService;
 
 }

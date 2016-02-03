@@ -5,18 +5,11 @@
 	<var name="portletName" value="Wiki" />
 
 	<set-up>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="SignIn#signInPortalInstanceSetUp" />
-			</then>
-		</if>
+		<execute macro="TestCase#setUpPortalInstance" />
 
 		<execute macro="User#firstLoginPG" />
 
-		<execute macro="Page#addPG">
+		<execute macro="Page#add">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -26,6 +19,12 @@
 
 		<execute macro="Portlet#addPG">
 			<var name="portletName" value="${portletName}" />
+		</execute>
+
+		<execute macro="Portlet#dragAndDropPortletToColumnPG">
+			<var name="columnNumberFrom" value="1" />
+			<var name="columnNumberTo" value="2" />
+			<var name="portletName" value="Wiki" />
 		</execute>
 	</set-up>
 
@@ -47,10 +46,113 @@
 		</if>
 	</tear-down>
 
-	<command name="AddPageWithCustomContentHeading" priority="4">
-		<execute macro="WikiNavigator#gotoAllPages" />
+	<command name="ActivateInitialStagingWithWikiAttachment" priority="4">
+		<execute macro="ProductMenu#gotoControlPanelSites">
+			<var name="portlet" value="Sites" />
+		</execute>
 
-		<execute function="AssertClick" locator1="Wiki#ADD_PAGE" value1="Add Page" />
+		<execute macro="Site#addCP">
+			<var name="siteName" value="Site Name" />
+			<var name="siteType" value="Blank" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoControlPanelSites">
+			<var name="portlet" value="Sites" />
+		</execute>
+
+		<execute macro="Page#add">
+			<var name="page" value="Public Pages" />
+			<var name="pageName" value="Staging Test Page" />
+			<var name="siteName" value="Site Name" />
+		</execute>
+
+		<execute macro="Page#gotoPG">
+			<var name="pageName" value="Staging Test Page" />
+			<var name="siteName" value="Site Name" />
+			<var name="siteURL" value="true" />
+		</execute>
+
+		<execute macro="Portlet#addPG">
+			<var name="portletName" value="Wiki" />
+		</execute>
+
+		<execute macro="Portlet#dragAndDropPortletToColumnPG">
+			<var name="columnNumberFrom" value="1" />
+			<var name="columnNumberTo" value="2" />
+			<var name="portletName" value="Wiki" />
+		</execute>
+
+		<execute macro="Page#gotoPG">
+			<var name="pageName" value="Staging Test Page" />
+			<var name="siteName" value="Site Name" />
+			<var name="siteURL" value="true" />
+		</execute>
+
+		<execute macro="WikiNavigator#gotoAllPagesPG" />
+
+		<execute macro="WikiPage#addPG">
+			<var name="wikiPageContent" value="Wiki Page Content" />
+			<var name="wikiPageTitle" value="Wiki Page Title" />
+		</execute>
+
+		<execute macro="WikiNavigator#gotoPG">
+			<var name="wikiPageTitle" value="Wiki Page Title" />
+		</execute>
+
+		<execute macro="WikiPage#addAttachmentViaPageEdit">
+			<var name="attachmentFileName" value="Document_1.jpg" />
+			<var name="panelHeading" value="Attachments" />
+			<var name="wikiPageTitle" value="Wiki Page Title" />
+		</execute>
+
+		<execute macro="Navigator#openSiteURL">
+			<var name="siteName" value="Site Name" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoSitesPublishingTools">
+			<var name="portlet" value="Staging" />
+		</execute>
+
+		<execute macro="Staging#activateStagingCP">
+			<var name="siteName" value="Site Name" />
+		</execute>
+
+		<execute macro="Page#gotoPG">
+			<var name="pageName" value="Staging Test Page" />
+			<var name="siteName" value="Site Name" />
+			<var name="siteURL" value="true" />
+		</execute>
+
+		<execute macro="WikiNavigator#gotoPG">
+			<var name="wikiPageTitle" value="Wiki Page Title" />
+		</execute>
+
+		<execute macro="WikiPage#viewAttachmentPG">
+			<var name="attachmentFileName" value="Document_1.jpg" />
+			<var name="wikiPageTitle" value="Wiki Page Title" />
+		</execute>
+
+		<execute macro="Page#gotoPG">
+			<var name="pageName" value="Staging Test Page" />
+			<var name="pageStaging" value="true" />
+			<var name="siteName" value="Site Name" />
+			<var name="siteURL" value="true" />
+		</execute>
+
+		<execute macro="WikiNavigator#gotoPG">
+			<var name="wikiPageTitle" value="Wiki Page Title" />
+		</execute>
+
+		<execute macro="WikiPage#viewAttachmentPG">
+			<var name="attachmentFileName" value="Document_1.jpg" />
+			<var name="wikiPageTitle" value="Wiki Page Title" />
+		</execute>
+	</command>
+
+	<command name="AddPageWithCustomContentHeading" priority="4">
+		<execute macro="WikiNavigator#gotoAllPagesPG" />
+
+		<execute function="Click#makeVisibleClickAt" locator1="Portlet#ICON_PLUS_SIGN" />
 
 		<execute macro="WikiEntry#addPageTitle">
 			<var name="wikiPageTitle" value="Wiki Page Title" />
@@ -84,14 +186,14 @@
 			<var name="pageName" value="Wiki Test Page" />
 		</execute>
 
-		<execute macro="WikiNavigator#gotoAllPages" />
+		<execute macro="WikiNavigator#gotoAllPagesPG" />
 
 		<execute macro="WikiTable#viewEntry">
 			<var name="draftStatus" value="Approved" />
 			<var name="wikiPageTitle" value="Wiki Page Title" />
 		</execute>
 
-		<execute macro="WikiTable#gotoEntry">
+		<execute macro="WikiNavigator#gotoEntryViaPGTable">
 			<var name="wikiPageTitle" value="Wiki Page Title" />
 		</execute>
 
@@ -157,17 +259,19 @@
 	</command>
 
 	<command name="DeleteDeleteWikiFrontpage" priority="5">
+		<property name="portal.acceptance" value="true" />
+
 		<execute macro="Navigator#openURL" />
 
 		<execute macro="ProductMenu#gotoSitesContent">
 			<var name="portlet" value="Wiki" />
 		</execute>
 
-		<execute macro="WikiNode#gotoCP">
+		<execute macro="WikiNavigator#gotoNode">
 			<var name="wikiNodeName" value="Main" />
 		</execute>
 
-		<execute macro="WikiPage#gotoCP">
+		<execute macro="WikiNavigator#gotoCP">
 			<var name="wikiPageTitle" value="FrontPage" />
 		</execute>
 
@@ -182,7 +286,7 @@
 			<var name="portlet" value="Wiki" />
 		</execute>
 
-		<execute macro="WikiNode#gotoCP">
+		<execute macro="WikiNavigator#gotoNode">
 			<var name="wikiNodeName" value="Main" />
 		</execute>
 
@@ -218,11 +322,11 @@
 			<var name="portlet" value="Wiki" />
 		</execute>
 
-		<execute macro="WikiNode#gotoCP">
+		<execute macro="WikiNavigator#gotoNode">
 			<var name="wikiNodeName" value="Main" />
 		</execute>
 
-		<execute macro="WikiPage#gotoFrontPageCP" />
+		<execute macro="WikiNavigator#gotoFrontPageCP" />
 
 		<execute macro="WikiPage#viewFrontPageDefaultCP">
 			<var name="wikiPageTitle" value="FrontPage" />
@@ -236,34 +340,27 @@
 			<var name="portlet" value="Wiki" />
 		</execute>
 
-		<execute macro="WikiTable#gotoNode">
+		<execute macro="WikiNavigator#gotoNode">
 			<var name="wikiNodeName" value="Main" />
 		</execute>
 
-		<execute function="AssertClick" locator1="Wiki#ADD_PAGE" value1="Add Page" />
-
-		<execute macro="WikiEntry#addPageTitle">
+		<execute macro="WikiPage#addCP">
+			<var name="wikiPageContent" value="Wiki Page Content 1" />
 			<var name="wikiPageTitle" value="Wiki Page 1" />
 		</execute>
-
-		<execute macro="WikiEntry#addPageContent">
-			<var name="wikiPageContent" value="Wiki Page Content 1" />
-		</execute>
-
-		<execute macro="WikiEntry#publish" />
 
 		<execute macro="Page#gotoPG">
 			<var name="pageName" value="Wiki Test Page" />
 		</execute>
 
-		<execute macro="WikiNavigator#gotoAllPages" />
+		<execute macro="WikiNavigator#gotoAllPagesPG" />
 
 		<execute macro="WikiTable#viewEntry">
 			<var name="draftStatus" value="Approved" />
 			<var name="wikiPageTitle" value="Wiki Page 1" />
 		</execute>
 
-		<execute macro="WikiTable#gotoEntry">
+		<execute macro="WikiNavigator#gotoEntryViaPGTable">
 			<var name="wikiPageTitle" value="Wiki Page 1" />
 		</execute>
 
@@ -286,9 +383,9 @@
 			<var name="pageName" value="Wiki Test Page" />
 		</execute>
 
-		<execute macro="WikiNavigator#gotoAllPages" />
+		<execute macro="WikiNavigator#gotoAllPagesPG" />
 
-		<execute macro="WikiTable#gotoEntry">
+		<execute macro="WikiNavigator#gotoEntryViaPGTable">
 			<var name="wikiPageTitle" value="Wiki Page 1" />
 		</execute>
 
@@ -307,34 +404,27 @@
 			<var name="portlet" value="Wiki" />
 		</execute>
 
-		<execute macro="WikiTable#gotoNode">
+		<execute macro="WikiNavigator#gotoNode">
 			<var name="wikiNodeName" value="Main" />
 		</execute>
 
-		<execute function="AssertClick" locator1="Wiki#ADD_PAGE" value1="Add Page" />
-
-		<execute macro="WikiEntry#addPageTitle">
+		<execute macro="WikiPage#addCP">
+			<var name="wikiPageContent" value="Wiki Page Content 1" />
 			<var name="wikiPageTitle" value="Wiki Page 1" />
 		</execute>
-
-		<execute macro="WikiEntry#addPageContent">
-			<var name="wikiPageContent" value="Wiki Page Content 1" />
-		</execute>
-
-		<execute macro="WikiEntry#publish" />
 
 		<execute macro="Page#gotoPG">
 			<var name="pageName" value="Wiki Test Page" />
 		</execute>
 
-		<execute macro="WikiNavigator#gotoAllPages" />
+		<execute macro="WikiNavigator#gotoAllPagesPG" />
 
 		<execute macro="WikiTable#viewEntry">
 			<var name="draftStatus" value="Approved" />
 			<var name="wikiPageTitle" value="Wiki Page 1" />
 		</execute>
 
-		<execute macro="WikiTable#gotoEntry">
+		<execute macro="WikiNavigator#gotoEntryViaPGTable">
 			<var name="wikiPageTitle" value="Wiki Page 1" />
 		</execute>
 
@@ -350,9 +440,9 @@
 			<var name="pageName" value="Wiki Test Page" />
 		</execute>
 
-		<execute macro="WikiNavigator#gotoAllPages" />
+		<execute macro="WikiNavigator#gotoAllPagesPG" />
 
-		<execute macro="WikiTable#gotoEntry">
+		<execute macro="WikiNavigator#gotoEntryViaPGTable">
 			<var name="wikiPageTitle" value="Wiki Page 1" />
 		</execute>
 
@@ -366,17 +456,19 @@
 	</command>
 
 	<command name="RestoreDeleteWikiFrontpage" priority="5">
+		<property name="portal.acceptance" value="true" />
+
 		<execute macro="Navigator#openURL" />
 
 		<execute macro="ProductMenu#gotoSitesContent">
 			<var name="portlet" value="Wiki" />
 		</execute>
 
-		<execute macro="WikiNode#gotoCP">
+		<execute macro="WikiNavigator#gotoNode">
 			<var name="wikiNodeName" value="Main" />
 		</execute>
 
-		<execute macro="WikiPage#gotoCP">
+		<execute macro="WikiNavigator#gotoCP">
 			<var name="wikiPageTitle" value="FrontPage" />
 		</execute>
 
@@ -391,7 +483,7 @@
 			<var name="portlet" value="Wiki" />
 		</execute>
 
-		<execute macro="WikiNode#gotoCP">
+		<execute macro="WikiNavigator#gotoNode">
 			<var name="wikiNodeName" value="Main" />
 		</execute>
 
@@ -416,11 +508,11 @@
 			<var name="portlet" value="Wiki" />
 		</execute>
 
-		<execute macro="WikiNode#gotoCP">
+		<execute macro="WikiNavigator#gotoNode">
 			<var name="wikiNodeName" value="Main" />
 		</execute>
 
-		<execute macro="WikiPage#gotoFrontPageCP" />
+		<execute macro="WikiNavigator#gotoFrontPageCP" />
 
 		<execute macro="WikiPage#viewFrontPageCP">
 			<var name="wikiFrontPageContent" value="Wiki FrontPage Content" />
@@ -439,7 +531,7 @@
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
-		<execute macro="WikiPage#addAttachmentViaPageDetailsPG">
+		<execute macro="WikiPage#addAttachmentViaPageEdit">
 			<var name="attachmentFileName" value="Document_1.txt" />
 			<var name="wikiPageTitle" value="FrontPage" />
 		</execute>
@@ -458,7 +550,7 @@
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
-		<execute macro="WikiPage#gotoPG">
+		<execute macro="WikiNavigator#gotoPG">
 			<var name="wikiPageTitle" value="Wiki FrontPage Child Page Title" />
 		</execute>
 
@@ -496,7 +588,8 @@
 			<var name="wikiPageContentEdit"><![CDATA[<script>alert("xss")</script>]]></var>
 		</execute>
 
-		<execute function="Click#clickAtSidebarClickAtWaitForScript" locator1="Icon#ADD" value1="Add" />
+		<execute function="Click#clickAtSidebarClickAtWaitForScript" locator1="ControlMenu#ADD" />
+
 		<execute function="AssertAlertNotPresent" />
 	</command>
 

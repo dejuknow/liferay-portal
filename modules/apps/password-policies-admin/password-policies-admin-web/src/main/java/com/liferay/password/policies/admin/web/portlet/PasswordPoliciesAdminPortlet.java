@@ -15,17 +15,17 @@
 package com.liferay.password.policies.admin.web.portlet;
 
 import com.liferay.password.policies.admin.constants.PasswordPoliciesAdminPortletKeys;
-import com.liferay.portal.DuplicatePasswordPolicyException;
-import com.liferay.portal.NoSuchPasswordPolicyException;
-import com.liferay.portal.PasswordPolicyNameException;
-import com.liferay.portal.RequiredPasswordPolicyException;
+import com.liferay.portal.exception.DuplicatePasswordPolicyException;
+import com.liferay.portal.exception.NoSuchPasswordPolicyException;
+import com.liferay.portal.exception.PasswordPolicyNameException;
+import com.liferay.portal.exception.RequiredPasswordPolicyException;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.model.PasswordPolicy;
-import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.service.OrganizationService;
 import com.liferay.portal.service.PasswordPolicyService;
 import com.liferay.portal.service.ServiceContext;
@@ -70,6 +70,18 @@ import org.osgi.service.component.annotations.Reference;
 	service = Portlet.class
 )
 public class PasswordPoliciesAdminPortlet extends MVCPortlet {
+
+	public void deletePasswordPolicies(
+			ActionRequest actionRequest, ActionResponse actionResponse)
+		throws Exception {
+
+		long[] passwordPolicyIds = StringUtil.split(
+			ParamUtil.getString(actionRequest, "passwordPolicyIds"), 0L);
+
+		for (long passwordPolicyId : passwordPolicyIds) {
+			_passwordPolicyService.deletePasswordPolicy(passwordPolicyId);
+		}
+	}
 
 	public void deletePasswordPolicy(
 			ActionRequest actionRequest, ActionResponse actionResponse)
@@ -252,8 +264,8 @@ public class PasswordPoliciesAdminPortlet extends MVCPortlet {
 		_userService = userService;
 	}
 
-	private volatile OrganizationService _organizationService;
-	private volatile PasswordPolicyService _passwordPolicyService;
-	private volatile UserService _userService;
+	private OrganizationService _organizationService;
+	private PasswordPolicyService _passwordPolicyService;
+	private UserService _userService;
 
 }

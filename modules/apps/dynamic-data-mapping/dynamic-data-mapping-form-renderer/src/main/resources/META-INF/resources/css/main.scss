@@ -1,19 +1,6 @@
 @import "bourbon";
 
-.ddl-form-builder-app {
-	&.container-fluid-1280 {
-		.row {
-			margin-left: 20px;
-			margin-right: 20px;
-		}
-	}
-}
-
 .lfr-ddm-form-container {
-	.lfr-ddm-form-page-title + .row {
-		margin-top: 40px;
-	}
-
 	.form-control-feedback {
 		margin-left: -20px;
 	}
@@ -35,6 +22,10 @@
 			}
 		}
 
+		.icon-asterisk {
+			margin-left: 4px;
+		}
+
 		.icon-spinner {
 			@include animation(spin 1000ms infinite linear);
 		}
@@ -49,6 +40,13 @@
 			position: absolute;
 			right: 15px;
 			top: 0;
+		}
+
+		.liferay-ddm-form-field-tip {
+			color: #869CAD;
+			font-size: 12px;
+			font-weight: 400;
+			line-height: 16px;
 		}
 
 		.liferay-ddm-form-field-date .input-group-addon {
@@ -69,17 +67,26 @@
 		margin-bottom: 40px;
 	}
 
-	.row {
-		min-height: auto;
+	.lfr-ddm-form-page-title + .row {
+		margin-top: 40px;
 	}
 
 	.lfr-ddm-form-pagination-controls {
 		padding-top: 20px;
 	}
 
-	.help-block {
-		font-size: 14px;
-		margin-top: -45px;
+	.row {
+		min-height: auto;
+	}
+}
+
+.multi-step-progress-bar {
+	> .complete {
+		color: #65B6F0;
+
+		.divider {
+			background-color: #65B6F0;
+		}
 	}
 }
 
@@ -91,19 +98,9 @@
 		padding: 0;
 	}
 
-	.lfr-ddm-form-page-title,
-	.lfr-ddm-form-page-description {
+	.lfr-ddm-form-page-description,
+	.lfr-ddm-form-page-title {
 		padding-left: $side-spacing;
 		padding-right: $side-spacing;
-	}
-}
-
-.multi-step-progress-bar {
-	> .complete {
-		color: #65B6F0;
-
-		.divider {
-			background-color: #65B6F0;
-		}
 	}
 }

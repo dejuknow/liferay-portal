@@ -142,6 +142,8 @@ public interface WebKeys {
 
 	public static final String ENCRYPT = "shuo";
 
+	public static final String ERROR_SECTION = "errorSection";
+
 	public static final String EXPANDO_COLUMN = "EXPANDO_COLUMN";
 
 	public static final String EXTEND_SESSION = "EXTEND_SESSION";
@@ -151,8 +153,6 @@ public interface WebKeys {
 	public static final String FACEBOOK_INCOMPLETE_USER_ID = "FACEBOOK_INCOMPLETE_USER_ID";
 
 	public static final String FACEBOOK_USER_EMAIL_ADDRESS = "FACEBOOK_USER_EMAIL_ADDRESS";
-
-	public static final String FILE_ITEM_THRESHOLD_SIZE_EXCEEDED = "FILE_ITEM_THRESHOLD_SIZE_EXCEEDED";
 
 	public static final String FORGOT_PASSWORD_REMINDER_ATTEMPTS = "FORGOT_PASSWORD_REMINDER_ATTEMPTS";
 
@@ -314,6 +314,8 @@ public interface WebKeys {
 	public static final String MESSAGE_BOARDS_CATEGORY = "MESSAGE_BOARDS_CATEGORY";
 
 	public static final String MESSAGE_BOARDS_MESSAGE = "MESSAGE_BOARDS_MESSAGE";
+
+	public static final String MESSAGE_BOARDS_MESSAGE_DISPLAY = "MESSAGE_BOARDS_MESSAGE_DISPLAY";
 
 	public static final String MESSAGE_BOARDS_TREE_WALKER = "MESSAGE_BOARDS_TREE_WALKER";
 
@@ -529,19 +531,11 @@ public interface WebKeys {
 
 	public static final String SHOPPING_ORDER = "SHOPPING_ORDER";
 
-	public static final String SINGLE_PAGE_APPLICATION_CLEAR_CACHE = "SINGLE_PAGE_APPLICATION_CLEAR_CACHE";
+	public static final String SINGLE_PAGE_APPLICATION_CLEAR_CACHE = "LIFERAY_SHARED_SINGLE_PAGE_APPLICATION_CLEAR_CACHE";
 
 	public static final String SINGLE_PAGE_APPLICATION_LAST_PORTLET_ID = "SINGLE_PAGE_APPLICATION_LAST_PORTLET_ID";
 
 	public static final String SITE_ADMINISTRATION_CATEGORIES_MAP = "SITES_ADMINISTRATION_CATEGORIES_MAP";
-
-	public static final String SOFTWARE_CATALOG_FRAMEWORK_VERSION = "SOFTWARE_CATALOG_FRAMEWORK_VERSION";
-
-	public static final String SOFTWARE_CATALOG_LICENSE = "SOFTWARE_CATALOG_LICENSE";
-
-	public static final String SOFTWARE_CATALOG_PRODUCT_ENTRY = "SOFTWARE_CATALOG_PRODUCT_ENTRY";
-
-	public static final String SOFTWARE_CATALOG_PRODUCT_VERSION = "SOFTWARE_CATALOG_PRODUCT_VERSION";
 
 	public static final String SOURCE_NAME = "SOURCE_NAME";
 
@@ -593,6 +587,8 @@ public interface WebKeys {
 	public static final String TASK_LIST = "TASK_LIST";
 
 	public static final String TEAM = "TEAM";
+
+	public static final String TEMPLATE = "TEMPLATE";
 
 	public static final String THEME = "THEME";
 

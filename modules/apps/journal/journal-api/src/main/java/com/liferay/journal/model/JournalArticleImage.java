@@ -16,6 +16,7 @@ package com.liferay.journal.model;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.annotation.ImplementationClassName;
 import com.liferay.portal.kernel.util.Accessor;
 import com.liferay.portal.model.PersistedModel;
 
@@ -28,6 +29,7 @@ import com.liferay.portal.model.PersistedModel;
  * @see com.liferay.journal.model.impl.JournalArticleImageModelImpl
  * @generated
  */
+@ImplementationClassName("com.liferay.journal.model.impl.JournalArticleImageImpl")
 @ProviderType
 public interface JournalArticleImage extends JournalArticleImageModel,
 	PersistedModel {

@@ -47,6 +47,10 @@ public interface TemplateManager {
 		Map<String, Object> contextObjects, String applicationName,
 		HttpServletRequest request, HttpServletResponse response);
 
+	public void addTaglibSupport(
+		Map<String, Object> contextObjects, HttpServletRequest request,
+		HttpServletResponse response);
+
 	public void addTaglibTheme(
 		Map<String, Object> contextObjects, String string,
 		HttpServletRequest request, HttpServletResponse response);
@@ -60,17 +64,17 @@ public interface TemplateManager {
 	public String[] getRestrictedVariables();
 
 	public Template getTemplate(
+		List<TemplateResource> templateResources, boolean restricted);
+
+	public Template getTemplate(
+		List<TemplateResource> templateResources,
+		TemplateResource errorTemplateResource, boolean restricted);
+
+	public Template getTemplate(
 		TemplateResource templateResource, boolean restricted);
 
 	public Template getTemplate(
 		TemplateResource templateResource,
-		TemplateResource errorTemplateResource, boolean restricted);
-
-	public Template getTemplates(
-		List<TemplateResource> templateResources, boolean restricted);
-
-	public Template getTemplates(
-		List<TemplateResource> templateResources,
 		TemplateResource errorTemplateResource, boolean restricted);
 
 	public void init() throws TemplateException;

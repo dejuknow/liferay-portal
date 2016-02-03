@@ -184,10 +184,6 @@ svn://svn.liferay.com/repos/public/alloy/trunk/sandbox/taglibs.
 		</copy>
 	</target>
 
-	<target name="build-css">
-		<ant dir="../portal-web" target="build-css" />
-	</target>
-
 	<target name="build-db">
 		<ant dir="../sql" target="build-db" />
 	</target>
@@ -634,6 +630,7 @@ svn://svn.liferay.com/repos/public/alloy/trunk/sandbox/taglibs.
 			outputproperty="build-service.output"
 		>
 			<jvmarg if:true="${jvm.debug}" value="${jpda.settings}" />
+			<jvmarg value="-Dfile.encoding=UTF-8" />
 			<jvmarg value="-Xms512m" />
 			<jvmarg value="-Xmx1024m" />
 			<jvmarg value="-Xss2048k" />
@@ -732,12 +729,6 @@ svn://svn.liferay.com/repos/public/alloy/trunk/sandbox/taglibs.
 		</antcall>
 	</target>
 
-	<target name="build-service-portlet-flags">
-		<antcall target="build-service">
-			<param name="service.file" value="${basedir}/src/com/liferay/portlet/flags/service.xml" />
-		</antcall>
-	</target>
-
 	<target name="build-service-portlet-messageboards">
 		<antcall target="build-service">
 			<param name="service.file" value="${basedir}/src/com/liferay/portlet/messageboards/service.xml" />
@@ -756,12 +747,6 @@ svn://svn.liferay.com/repos/public/alloy/trunk/sandbox/taglibs.
 		</antcall>
 	</target>
 
-	<target name="build-service-portlet-softwarecatalog">
-		<antcall target="build-service">
-			<param name="service.file" value="${basedir}/src/com/liferay/portlet/softwarecatalog/service.xml" />
-		</antcall>
-	</target>
-
 	<target name="build-service-portlet-trash">
 		<antcall target="build-service">
 			<param name="service.file" value="${basedir}/src/com/liferay/portlet/trash/service.xml" />
@@ -776,11 +761,9 @@ svn://svn.liferay.com/repos/public/alloy/trunk/sandbox/taglibs.
 		<antcall target="build-service-portlet-documentlibrary" />
 		<antcall target="build-service-portlet-expando" />
 		<antcall target="build-service-portlet-exportimport" />
-		<antcall target="build-service-portlet-flags" />
 		<antcall target="build-service-portlet-messageboards" />
 		<antcall target="build-service-portlet-ratings" />
 		<antcall target="build-service-portlet-social" />
-		<antcall target="build-service-portlet-softwarecatalog" />
 		<antcall target="build-service-portlet-trash" />
 	</target>
 
@@ -903,12 +886,6 @@ svn://svn.liferay.com/repos/public/alloy/trunk/sandbox/taglibs.
 		</antcall>
 	</target>
 
-	<target name="build-wsdd-portlet-flags">
-		<antcall target="build-wsdd">
-			<param name="service.file" value="${basedir}/src/com/liferay/portlet/flags/service.xml" />
-		</antcall>
-	</target>
-
 	<target name="build-wsdd-portlet-messageboards">
 		<antcall target="build-wsdd">
 			<param name="service.file" value="${basedir}/src/com/liferay/portlet/messageboards/service.xml" />
@@ -927,12 +904,6 @@ svn://svn.liferay.com/repos/public/alloy/trunk/sandbox/taglibs.
 		</antcall>
 	</target>
 
-	<target name="build-wsdd-portlet-softwarecatalog">
-		<antcall target="build-wsdd">
-			<param name="service.file" value="${basedir}/src/com/liferay/portlet/softwarecatalog/service.xml" />
-		</antcall>
-	</target>
-
 	<target name="build-wsdd-portlet-trash">
 		<antcall target="build-wsdd">
 			<param name="service.file" value="${basedir}/src/com/liferay/portlet/trash/service.xml" />
@@ -946,11 +917,9 @@ svn://svn.liferay.com/repos/public/alloy/trunk/sandbox/taglibs.
 		<antcall target="build-wsdd-portlet-documentlibrary" />
 		<antcall target="build-wsdd-portlet-expando" />
 		<antcall target="build-wsdd-portlet-exportimport" />
-		<antcall target="build-wsdd-portlet-flags" />
 		<antcall target="build-wsdd-portlet-messageboards" />
 		<antcall target="build-wsdd-portlet-ratings" />
 		<antcall target="build-wsdd-portlet-social" />
-		<antcall target="build-wsdd-portlet-softwarecatalog" />
 		<antcall target="build-wsdd-portlet-trash" />
 	</target>
 
@@ -1017,7 +986,6 @@ svn://svn.liferay.com/repos/public/alloy/trunk/sandbox/taglibs.
 			<jvmarg if:true="${jvm.debug}" value="${jpda.settings}" />
 			<jvmarg value="-Xmx512m" />
 			<jvmarg value="-Xss2048k" />
-			<jvmarg value="-Dsource.formatter.check.modules.service.util=${source.formatter.check.modules.service.util}" />
 			<jvmarg value="-Dsource.formatter.check.unprocessed.exceptions=${source.formatter.check.unprocessed.exceptions}" />
 			<jvmarg value="-Dsource.formatter.excludes=${source.formatter.excludes}" />
 			<arg value="format.current.branch=${format.current.branch}" />

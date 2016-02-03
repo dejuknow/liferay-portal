@@ -148,7 +148,6 @@ boolean choiceField = checkboxField || radioField;
 			className="<%= model.getName() %>"
 			classPK="<%= _getClassPK(bean, classPK) %>"
 			classTypePK="<%= classTypePK %>"
-			contentCallback='<%= portletResponse.getNamespace() + "getSuggestionsContent" %>'
 			ignoreRequestValue="<%= ignoreRequestValue %>"
 		/>
 	</c:when>
@@ -157,7 +156,6 @@ boolean choiceField = checkboxField || radioField;
 			autoFocus="<%= autoFocus %>"
 			className="<%= model.getName() %>"
 			classPK="<%= _getClassPK(bean, classPK) %>"
-			contentCallback='<%= portletResponse.getNamespace() + "getSuggestionsContent" %>'
 			id="<%= namespace + id %>"
 			ignoreRequestValue="<%= ignoreRequestValue %>"
 		/>
@@ -347,7 +345,6 @@ boolean choiceField = checkboxField || radioField;
 						textareaNode.setData('resizeInstance', resizeInstance);
 					</aui:script>
 				</c:if>
-
 			</c:when>
 			<c:otherwise>
 				<input <%= type.equals("image") ? "alt=\"" + LanguageUtil.get(request, title) + "\"" : StringPool.BLANK %> class="<%= fieldCssClass %>" <%= disabled ? "disabled" : StringPool.BLANK %> id="<%= namespace + id %>" <%= (max != null) ? "max=\"" + max + "\"": StringPool.BLANK %> <%= (min != null) ? "min=\"" + min + "\"": StringPool.BLANK %> <%= multiple ? "multiple" : StringPool.BLANK %> name="<%= namespace + name %>" <%= Validator.isNotNull(onChange) ? "onChange=\"" + onChange + "\"" : StringPool.BLANK %> <%= Validator.isNotNull(onClick) ? "onClick=\"" + onClick + "\"" : StringPool.BLANK %> <%= Validator.isNotNull(placeholder) ? "placeholder=\"" + LanguageUtil.get(request, placeholder) + "\"" : StringPool.BLANK %> <%= Validator.isNotNull(title) ? "title=\"" + LanguageUtil.get(request, title) + "\"" : StringPool.BLANK %> type="<%= Validator.isNull(type) ? "text" : type %>" <%= !type.equals("image") ? "value=\"" + HtmlUtil.escapeAttribute(valueString) + "\"" : StringPool.BLANK %> <%= AUIUtil.buildData(data) %> <%= InlineUtil.buildDynamicAttributes(dynamicAttributes) %> />

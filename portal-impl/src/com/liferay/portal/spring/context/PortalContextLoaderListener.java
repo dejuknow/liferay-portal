@@ -17,14 +17,13 @@ package com.liferay.portal.spring.context;
 import com.liferay.portal.bean.BeanLocatorImpl;
 import com.liferay.portal.dao.orm.hibernate.FieldInterceptionHelperUtil;
 import com.liferay.portal.deploy.hot.CustomJspBagRegistryUtil;
-import com.liferay.portal.deploy.hot.IndexerPostProcessorRegistry;
 import com.liferay.portal.deploy.hot.ServiceWrapperRegistry;
 import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.cache.CacheRegistryUtil;
 import com.liferay.portal.kernel.cache.MultiVMPoolUtil;
 import com.liferay.portal.kernel.cache.SingleVMPoolUtil;
 import com.liferay.portal.kernel.cache.thread.local.ThreadLocalCacheManager;
-import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
+import com.liferay.portal.kernel.dao.db.DBManagerUtil;
 import com.liferay.portal.kernel.deploy.DeployManagerUtil;
 import com.liferay.portal.kernel.deploy.hot.HotDeployUtil;
 import com.liferay.portal.kernel.exception.LoggedExceptionInInitializerError;
@@ -110,10 +109,6 @@ public class PortalContextLoaderListener extends ContextLoaderListener {
 
 		ThreadLocalCacheManager.destroy();
 
-		if (_indexerPostProcessorRegistry != null) {
-			_indexerPostProcessorRegistry.close();
-		}
-
 		if (_serviceWrapperRegistry != null) {
 			_serviceWrapperRegistry.close();
 		}
@@ -186,14 +181,11 @@ public class PortalContextLoaderListener extends ContextLoaderListener {
 
 	@Override
 	public void contextInitialized(ServletContextEvent servletContextEvent) {
-		try {
-			Class.forName(SystemProperties.class.getName());
-		}
-		catch (ClassNotFoundException cnfe) {
-			throw new RuntimeException(cnfe);
-		}
+		Thread currentThread = Thread.currentThread();
 
-		DBFactoryUtil.reset();
+		SystemProperties.load(currentThread.getContextClassLoader());
+
+		DBManagerUtil.reset();
 		DeployManagerUtil.reset();
 		InstancePool.reset();
 		MethodCache.reset();
@@ -278,8 +270,6 @@ public class PortalContextLoaderListener extends ContextLoaderListener {
 
 				@Override
 				public void dependenciesFulfilled() {
-					_indexerPostProcessorRegistry =
-						new IndexerPostProcessorRegistry();
 					_serviceWrapperRegistry = new ServiceWrapperRegistry();
 				}
 
@@ -421,7 +411,6 @@ public class PortalContextLoaderListener extends ContextLoaderListener {
 	}
 
 	private ArrayApplicationContext _arrayApplicationContext;
-	private IndexerPostProcessorRegistry _indexerPostProcessorRegistry;
 	private ServiceWrapperRegistry _serviceWrapperRegistry;
 
 }

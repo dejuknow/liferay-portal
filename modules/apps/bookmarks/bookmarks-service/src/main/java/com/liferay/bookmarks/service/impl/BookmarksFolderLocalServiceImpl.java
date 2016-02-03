@@ -31,6 +31,7 @@ import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.ContentTypes;
+import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.TreeModelTasksAdapter;
 import com.liferay.portal.kernel.util.TreePathUtil;
@@ -98,7 +99,8 @@ public class BookmarksFolderLocalServiceImpl
 		updateAsset(
 			userId, folder, serviceContext.getAssetCategoryIds(),
 			serviceContext.getAssetTagNames(),
-			serviceContext.getAssetLinkEntryIds());
+			serviceContext.getAssetLinkEntryIds(),
+			serviceContext.getAssetPriority());
 
 		return folder;
 	}
@@ -281,8 +283,17 @@ public class BookmarksFolderLocalServiceImpl
 	public List<Object> getFoldersAndEntries(
 		long groupId, long folderId, int status, int start, int end) {
 
+		return getFoldersAndEntries(
+			groupId, folderId, status, start, end, null);
+	}
+
+	@Override
+	public List<Object> getFoldersAndEntries(
+		long groupId, long folderId, int status, int start, int end,
+		OrderByComparator obc) {
+
 		QueryDefinition<?> queryDefinition = new QueryDefinition<>(
-			status, start, end, null);
+			status, start, end, obc);
 
 		return bookmarksFolderFinder.findF_E_ByG_F(
 			groupId, folderId, queryDefinition);
@@ -587,7 +598,7 @@ public class BookmarksFolderLocalServiceImpl
 	@Override
 	public void updateAsset(
 			long userId, BookmarksFolder folder, long[] assetCategoryIds,
-			String[] assetTagNames, long[] assetLinkEntryIds)
+			String[] assetTagNames, long[] assetLinkEntryIds, Double priority)
 		throws PortalException {
 
 		AssetEntry assetEntry = assetEntryLocalService.updateEntry(
@@ -596,7 +607,7 @@ public class BookmarksFolderLocalServiceImpl
 			folder.getFolderId(), folder.getUuid(), 0, assetCategoryIds,
 			assetTagNames, true, null, null, null, ContentTypes.TEXT_PLAIN,
 			folder.getName(), folder.getDescription(), null, null, null, 0, 0,
-			null);
+			priority);
 
 		assetLinkLocalService.updateLinks(
 			userId, assetEntry.getEntryId(), assetLinkEntryIds,
@@ -669,7 +680,8 @@ public class BookmarksFolderLocalServiceImpl
 		updateAsset(
 			userId, folder, serviceContext.getAssetCategoryIds(),
 			serviceContext.getAssetTagNames(),
-			serviceContext.getAssetLinkEntryIds());
+			serviceContext.getAssetLinkEntryIds(),
+			serviceContext.getAssetPriority());
 
 		if (oldParentFolderId != parentFolderId) {
 			rebuildTree(

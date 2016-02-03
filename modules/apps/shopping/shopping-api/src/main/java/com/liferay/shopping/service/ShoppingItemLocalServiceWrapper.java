@@ -412,10 +412,27 @@ public class ShoppingItemLocalServiceWrapper implements ShoppingItemLocalService
 	}
 
 	@Override
+	public java.util.List<com.liferay.shopping.model.ShoppingItem> search(
+		long groupId, long[] categoryIds, java.lang.String keywords, int start,
+		int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.shopping.model.ShoppingItem> obc) {
+		return _shoppingItemLocalService.search(groupId, categoryIds, keywords,
+			start, end, obc);
+	}
+
+	@Override
 	public int searchCount(long groupId, long[] categoryIds,
 		java.lang.String keywords) {
 		return _shoppingItemLocalService.searchCount(groupId, categoryIds,
 			keywords);
+	}
+
+	@Override
+	public int searchCount(long groupId, long[] categoryIds,
+		java.lang.String keywords,
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.shopping.model.ShoppingItem> obc) {
+		return _shoppingItemLocalService.searchCount(groupId, categoryIds,
+			keywords, obc);
 	}
 
 	@Override
@@ -451,23 +468,6 @@ public class ShoppingItemLocalServiceWrapper implements ShoppingItemLocalService
 	public com.liferay.shopping.model.ShoppingItem updateShoppingItem(
 		com.liferay.shopping.model.ShoppingItem shoppingItem) {
 		return _shoppingItemLocalService.updateShoppingItem(shoppingItem);
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
-	 */
-	@Deprecated
-	public ShoppingItemLocalService getWrappedShoppingItemLocalService() {
-		return _shoppingItemLocalService;
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #setWrappedService}
-	 */
-	@Deprecated
-	public void setWrappedShoppingItemLocalService(
-		ShoppingItemLocalService shoppingItemLocalService) {
-		_shoppingItemLocalService = shoppingItemLocalService;
 	}
 
 	@Override

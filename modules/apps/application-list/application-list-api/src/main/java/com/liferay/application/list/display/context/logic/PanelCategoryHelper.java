@@ -19,10 +19,11 @@ import com.liferay.application.list.PanelAppRegistry;
 import com.liferay.application.list.PanelCategory;
 import com.liferay.application.list.PanelCategoryRegistry;
 import com.liferay.application.list.constants.PanelCategoryKeys;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.User;
-import com.liferay.portal.security.permission.PermissionChecker;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -38,12 +39,6 @@ public class PanelCategoryHelper {
 		_panelCategoryRegistry = panelCategoryRegistry;
 	}
 
-	public boolean containsPortlet(
-		String portletId, PanelCategory panelCategory) {
-
-		return containsPortlet(portletId, panelCategory.getKey());
-	}
-
 	public boolean containsPortlet(String portletId, String panelCategoryKey) {
 		for (PanelCategory curPanelCategory :
 				_panelCategoryRegistry.getChildPanelCategories(
@@ -53,7 +48,7 @@ public class PanelCategoryHelper {
 				return true;
 			}
 
-			if (containsPortlet(portletId, curPanelCategory)) {
+			if (containsPortlet(portletId, curPanelCategory.getKey())) {
 				return true;
 			}
 		}
@@ -61,9 +56,58 @@ public class PanelCategoryHelper {
 		return hasPortlet(portletId, panelCategoryKey);
 	}
 
+	public boolean containsPortlet(
+		String portletId, String panelCategoryKey,
+		PermissionChecker permissionChecker, Group group) {
+
+		for (PanelCategory curPanelCategory :
+				_panelCategoryRegistry.getChildPanelCategories(
+					panelCategoryKey, permissionChecker, group)) {
+
+			if (hasPortlet(
+					portletId, curPanelCategory.getKey(), permissionChecker,
+					group)) {
+
+				return true;
+			}
+
+			if (containsPortlet(
+					portletId, curPanelCategory.getKey(), permissionChecker,
+					group)) {
+
+				return true;
+			}
+		}
+
+		return hasPortlet(
+			portletId, panelCategoryKey, permissionChecker, group);
+	}
+
+	public List<PanelApp> getAllPanelApps(String panelCategoryKey) {
+		List<PanelApp> panelApps = new ArrayList<>();
+
+		panelApps.addAll(_panelAppRegistry.getPanelApps(panelCategoryKey));
+
+		for (PanelCategory childPanelCategory :
+				_panelCategoryRegistry.getChildPanelCategories(
+					panelCategoryKey)) {
+
+			panelApps.addAll(getAllPanelApps(childPanelCategory.getKey()));
+		}
+
+		return panelApps;
+	}
+
 	public String getFirstPortletId(
 		String panelCategoryKey, PermissionChecker permissionChecker,
 		Group group) {
+
+		PanelApp panelApp = _panelAppRegistry.getFirstPanelApp(
+			panelCategoryKey, permissionChecker, group);
+
+		if (panelApp != null) {
+			return panelApp.getPortletId();
+		}
 
 		List<PanelCategory> panelCategories =
 			_panelCategoryRegistry.getChildPanelCategories(
@@ -74,8 +118,8 @@ public class PanelCategoryHelper {
 		}
 
 		for (PanelCategory panelCategory : panelCategories) {
-			PanelApp panelApp = _panelAppRegistry.getFirstPanelApp(
-				panelCategory, permissionChecker, group);
+			panelApp = _panelAppRegistry.getFirstPanelApp(
+				panelCategory.getKey(), permissionChecker, group);
 
 			if (panelApp != null) {
 				return panelApp.getPortletId();
@@ -117,6 +161,22 @@ public class PanelCategoryHelper {
 	private boolean hasPortlet(String portletId, String panelCategoryKey) {
 		Iterable<PanelApp> panelApps = _panelAppRegistry.getPanelApps(
 			panelCategoryKey);
+
+		for (PanelApp panelApp : panelApps) {
+			if (portletId.equals(panelApp.getPortletId())) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private boolean hasPortlet(
+		String portletId, String panelCategoryKey,
+		PermissionChecker permissionChecker, Group group) {
+
+		Iterable<PanelApp> panelApps = _panelAppRegistry.getPanelApps(
+			panelCategoryKey, permissionChecker, group);
 
 		for (PanelApp panelApp : panelApps) {
 			if (portletId.equals(panelApp.getPortletId())) {

@@ -32,6 +32,7 @@ import com.liferay.portal.kernel.dao.orm.SQLQuery;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.security.permission.InlineSQLHelperUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.SetUtil;
@@ -41,9 +42,10 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.security.permission.InlineSQLHelperUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextThreadLocal;
+import com.liferay.portal.service.persistence.CompanyProvider;
+import com.liferay.portal.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 
@@ -214,7 +216,7 @@ public class DDLRecordSetPersistenceImpl extends BasePersistenceImpl<DDLRecordSe
 
 			if (orderByComparator != null) {
 				query = new StringBundler(3 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(3);
@@ -296,7 +298,7 @@ public class DDLRecordSetPersistenceImpl extends BasePersistenceImpl<DDLRecordSe
 	 * @param uuid the uuid
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching d d l record set
-	 * @throws com.liferay.dynamic.data.lists.NoSuchRecordSetException if a matching d d l record set could not be found
+	 * @throws NoSuchRecordSetException if a matching d d l record set could not be found
 	 */
 	@Override
 	public DDLRecordSet findByUuid_First(String uuid,
@@ -345,7 +347,7 @@ public class DDLRecordSetPersistenceImpl extends BasePersistenceImpl<DDLRecordSe
 	 * @param uuid the uuid
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching d d l record set
-	 * @throws com.liferay.dynamic.data.lists.NoSuchRecordSetException if a matching d d l record set could not be found
+	 * @throws NoSuchRecordSetException if a matching d d l record set could not be found
 	 */
 	@Override
 	public DDLRecordSet findByUuid_Last(String uuid,
@@ -402,7 +404,7 @@ public class DDLRecordSetPersistenceImpl extends BasePersistenceImpl<DDLRecordSe
 	 * @param uuid the uuid
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next d d l record set
-	 * @throws com.liferay.dynamic.data.lists.NoSuchRecordSetException if a d d l record set with the primary key could not be found
+	 * @throws NoSuchRecordSetException if a d d l record set with the primary key could not be found
 	 */
 	@Override
 	public DDLRecordSet[] findByUuid_PrevAndNext(long recordSetId, String uuid,
@@ -441,8 +443,9 @@ public class DDLRecordSetPersistenceImpl extends BasePersistenceImpl<DDLRecordSe
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+			query = new StringBundler(4 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
 			query = new StringBundler(3);
@@ -647,12 +650,12 @@ public class DDLRecordSetPersistenceImpl extends BasePersistenceImpl<DDLRecordSe
 			new String[] { String.class.getName(), Long.class.getName() });
 
 	/**
-	 * Returns the d d l record set where uuid = &#63; and groupId = &#63; or throws a {@link com.liferay.dynamic.data.lists.NoSuchRecordSetException} if it could not be found.
+	 * Returns the d d l record set where uuid = &#63; and groupId = &#63; or throws a {@link NoSuchRecordSetException} if it could not be found.
 	 *
 	 * @param uuid the uuid
 	 * @param groupId the group ID
 	 * @return the matching d d l record set
-	 * @throws com.liferay.dynamic.data.lists.NoSuchRecordSetException if a matching d d l record set could not be found
+	 * @throws NoSuchRecordSetException if a matching d d l record set could not be found
 	 */
 	@Override
 	public DDLRecordSet findByUUID_G(String uuid, long groupId)
@@ -1023,7 +1026,7 @@ public class DDLRecordSetPersistenceImpl extends BasePersistenceImpl<DDLRecordSe
 
 			if (orderByComparator != null) {
 				query = new StringBundler(4 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(4);
@@ -1110,7 +1113,7 @@ public class DDLRecordSetPersistenceImpl extends BasePersistenceImpl<DDLRecordSe
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching d d l record set
-	 * @throws com.liferay.dynamic.data.lists.NoSuchRecordSetException if a matching d d l record set could not be found
+	 * @throws NoSuchRecordSetException if a matching d d l record set could not be found
 	 */
 	@Override
 	public DDLRecordSet findByUuid_C_First(String uuid, long companyId,
@@ -1166,7 +1169,7 @@ public class DDLRecordSetPersistenceImpl extends BasePersistenceImpl<DDLRecordSe
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching d d l record set
-	 * @throws com.liferay.dynamic.data.lists.NoSuchRecordSetException if a matching d d l record set could not be found
+	 * @throws NoSuchRecordSetException if a matching d d l record set could not be found
 	 */
 	@Override
 	public DDLRecordSet findByUuid_C_Last(String uuid, long companyId,
@@ -1229,7 +1232,7 @@ public class DDLRecordSetPersistenceImpl extends BasePersistenceImpl<DDLRecordSe
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next d d l record set
-	 * @throws com.liferay.dynamic.data.lists.NoSuchRecordSetException if a d d l record set with the primary key could not be found
+	 * @throws NoSuchRecordSetException if a d d l record set with the primary key could not be found
 	 */
 	@Override
 	public DDLRecordSet[] findByUuid_C_PrevAndNext(long recordSetId,
@@ -1269,11 +1272,12 @@ public class DDLRecordSetPersistenceImpl extends BasePersistenceImpl<DDLRecordSe
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+			query = new StringBundler(5 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
-			query = new StringBundler(3);
+			query = new StringBundler(4);
 		}
 
 		query.append(_SQL_SELECT_DDLRECORDSET_WHERE);
@@ -1600,7 +1604,7 @@ public class DDLRecordSetPersistenceImpl extends BasePersistenceImpl<DDLRecordSe
 
 			if (orderByComparator != null) {
 				query = new StringBundler(3 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(3);
@@ -1668,7 +1672,7 @@ public class DDLRecordSetPersistenceImpl extends BasePersistenceImpl<DDLRecordSe
 	 * @param groupId the group ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching d d l record set
-	 * @throws com.liferay.dynamic.data.lists.NoSuchRecordSetException if a matching d d l record set could not be found
+	 * @throws NoSuchRecordSetException if a matching d d l record set could not be found
 	 */
 	@Override
 	public DDLRecordSet findByGroupId_First(long groupId,
@@ -1718,7 +1722,7 @@ public class DDLRecordSetPersistenceImpl extends BasePersistenceImpl<DDLRecordSe
 	 * @param groupId the group ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching d d l record set
-	 * @throws com.liferay.dynamic.data.lists.NoSuchRecordSetException if a matching d d l record set could not be found
+	 * @throws NoSuchRecordSetException if a matching d d l record set could not be found
 	 */
 	@Override
 	public DDLRecordSet findByGroupId_Last(long groupId,
@@ -1776,7 +1780,7 @@ public class DDLRecordSetPersistenceImpl extends BasePersistenceImpl<DDLRecordSe
 	 * @param groupId the group ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next d d l record set
-	 * @throws com.liferay.dynamic.data.lists.NoSuchRecordSetException if a d d l record set with the primary key could not be found
+	 * @throws NoSuchRecordSetException if a d d l record set with the primary key could not be found
 	 */
 	@Override
 	public DDLRecordSet[] findByGroupId_PrevAndNext(long recordSetId,
@@ -1815,8 +1819,9 @@ public class DDLRecordSetPersistenceImpl extends BasePersistenceImpl<DDLRecordSe
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+			query = new StringBundler(4 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
 			query = new StringBundler(3);
@@ -1968,10 +1973,10 @@ public class DDLRecordSetPersistenceImpl extends BasePersistenceImpl<DDLRecordSe
 
 		if (orderByComparator != null) {
 			query = new StringBundler(3 +
-					(orderByComparator.getOrderByFields().length * 3));
+					(orderByComparator.getOrderByFields().length * 2));
 		}
 		else {
-			query = new StringBundler(3);
+			query = new StringBundler(4);
 		}
 
 		if (getDB().isSupportsInlineDistinct()) {
@@ -2046,7 +2051,7 @@ public class DDLRecordSetPersistenceImpl extends BasePersistenceImpl<DDLRecordSe
 	 * @param groupId the group ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next d d l record set
-	 * @throws com.liferay.dynamic.data.lists.NoSuchRecordSetException if a d d l record set with the primary key could not be found
+	 * @throws NoSuchRecordSetException if a d d l record set with the primary key could not be found
 	 */
 	@Override
 	public DDLRecordSet[] filterFindByGroupId_PrevAndNext(long recordSetId,
@@ -2090,11 +2095,12 @@ public class DDLRecordSetPersistenceImpl extends BasePersistenceImpl<DDLRecordSe
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+			query = new StringBundler(5 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
-			query = new StringBundler(3);
+			query = new StringBundler(4);
 		}
 
 		if (getDB().isSupportsInlineDistinct()) {
@@ -2807,12 +2813,12 @@ public class DDLRecordSetPersistenceImpl extends BasePersistenceImpl<DDLRecordSe
 			new String[] { Long.class.getName(), String.class.getName() });
 
 	/**
-	 * Returns the d d l record set where groupId = &#63; and recordSetKey = &#63; or throws a {@link com.liferay.dynamic.data.lists.NoSuchRecordSetException} if it could not be found.
+	 * Returns the d d l record set where groupId = &#63; and recordSetKey = &#63; or throws a {@link NoSuchRecordSetException} if it could not be found.
 	 *
 	 * @param groupId the group ID
 	 * @param recordSetKey the record set key
 	 * @return the matching d d l record set
-	 * @throws com.liferay.dynamic.data.lists.NoSuchRecordSetException if a matching d d l record set could not be found
+	 * @throws NoSuchRecordSetException if a matching d d l record set could not be found
 	 */
 	@Override
 	public DDLRecordSet findByG_R(long groupId, String recordSetKey)
@@ -3253,6 +3259,8 @@ public class DDLRecordSetPersistenceImpl extends BasePersistenceImpl<DDLRecordSe
 
 		ddlRecordSet.setUuid(uuid);
 
+		ddlRecordSet.setCompanyId(companyProvider.getCompanyId());
+
 		return ddlRecordSet;
 	}
 
@@ -3261,7 +3269,7 @@ public class DDLRecordSetPersistenceImpl extends BasePersistenceImpl<DDLRecordSe
 	 *
 	 * @param recordSetId the primary key of the d d l record set
 	 * @return the d d l record set that was removed
-	 * @throws com.liferay.dynamic.data.lists.NoSuchRecordSetException if a d d l record set with the primary key could not be found
+	 * @throws NoSuchRecordSetException if a d d l record set with the primary key could not be found
 	 */
 	@Override
 	public DDLRecordSet remove(long recordSetId)
@@ -3274,7 +3282,7 @@ public class DDLRecordSetPersistenceImpl extends BasePersistenceImpl<DDLRecordSe
 	 *
 	 * @param primaryKey the primary key of the d d l record set
 	 * @return the d d l record set that was removed
-	 * @throws com.liferay.dynamic.data.lists.NoSuchRecordSetException if a d d l record set with the primary key could not be found
+	 * @throws NoSuchRecordSetException if a d d l record set with the primary key could not be found
 	 */
 	@Override
 	public DDLRecordSet remove(Serializable primaryKey)
@@ -3504,11 +3512,11 @@ public class DDLRecordSetPersistenceImpl extends BasePersistenceImpl<DDLRecordSe
 	}
 
 	/**
-	 * Returns the d d l record set with the primary key or throws a {@link com.liferay.portal.NoSuchModelException} if it could not be found.
+	 * Returns the d d l record set with the primary key or throws a {@link com.liferay.portal.exception.NoSuchModelException} if it could not be found.
 	 *
 	 * @param primaryKey the primary key of the d d l record set
 	 * @return the d d l record set
-	 * @throws com.liferay.dynamic.data.lists.NoSuchRecordSetException if a d d l record set with the primary key could not be found
+	 * @throws NoSuchRecordSetException if a d d l record set with the primary key could not be found
 	 */
 	@Override
 	public DDLRecordSet findByPrimaryKey(Serializable primaryKey)
@@ -3528,11 +3536,11 @@ public class DDLRecordSetPersistenceImpl extends BasePersistenceImpl<DDLRecordSe
 	}
 
 	/**
-	 * Returns the d d l record set with the primary key or throws a {@link com.liferay.dynamic.data.lists.NoSuchRecordSetException} if it could not be found.
+	 * Returns the d d l record set with the primary key or throws a {@link NoSuchRecordSetException} if it could not be found.
 	 *
 	 * @param recordSetId the primary key of the d d l record set
 	 * @return the d d l record set
-	 * @throws com.liferay.dynamic.data.lists.NoSuchRecordSetException if a d d l record set with the primary key could not be found
+	 * @throws NoSuchRecordSetException if a d d l record set with the primary key could not be found
 	 */
 	@Override
 	public DDLRecordSet findByPrimaryKey(long recordSetId)
@@ -3778,7 +3786,7 @@ public class DDLRecordSetPersistenceImpl extends BasePersistenceImpl<DDLRecordSe
 
 			if (orderByComparator != null) {
 				query = new StringBundler(2 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 
 				query.append(_SQL_SELECT_DDLRECORDSET);
 
@@ -3903,6 +3911,8 @@ public class DDLRecordSetPersistenceImpl extends BasePersistenceImpl<DDLRecordSe
 		finderCache.removeCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 	}
 
+	@ServiceReference(type = CompanyProviderWrapper.class)
+	protected CompanyProvider companyProvider;
 	@ServiceReference(type = EntityCache.class)
 	protected EntityCache entityCache;
 	@ServiceReference(type = FinderCache.class)

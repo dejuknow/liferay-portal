@@ -18,14 +18,12 @@ import aQute.bnd.annotation.metatype.Configurable;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.MapUtil;
-import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfiguration;
 import com.liferay.portal.search.elasticsearch.index.IndexFactory;
 import com.liferay.portal.search.elasticsearch.internal.util.LogUtil;
+import com.liferay.portal.search.elasticsearch.internal.util.ResourceUtil;
 import com.liferay.portal.search.elasticsearch.settings.IndexSettingsContributor;
 
 import java.util.HashMap;
@@ -41,8 +39,8 @@ import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsReques
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.client.AdminClient;
 import org.elasticsearch.client.IndicesAdminClient;
-import org.elasticsearch.common.settings.ImmutableSettings;
-import org.elasticsearch.common.settings.ImmutableSettings.Builder;
+import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.common.settings.Settings.Builder;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -59,8 +57,6 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
 	configurationPid = "com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfiguration",
 	immediate = true,
 	property = {
-		"indexConfigFileName=" + IndexSettingsConstants.FILE,
-		"typeMappings." + LiferayTypeMappingsConstants.TYPE + "=" + LiferayTypeMappingsConstants.FILE,
 		"typeMappings.KeywordQueryDocumentType=/META-INF/mappings/keyword-query-type-mappings.json",
 		"typeMappings.SpellCheckDocumentType=/META-INF/mappings/spellcheck-type-mappings.json"
 	}
@@ -77,16 +73,13 @@ public class CompanyIndexFactory implements IndexFactory {
 			return;
 		}
 
-		CreateIndexRequestBuilder createIndexRequestBuilder =
-			indicesAdminClient.prepareCreate(String.valueOf(companyId));
+		LiferayDocumentTypeFactory liferayDocumentTypeFactory =
+			new LiferayDocumentTypeFactory(
+				String.valueOf(companyId), indicesAdminClient);
 
-		addMappings(createIndexRequestBuilder);
-		setSettings(createIndexRequestBuilder);
+		createIndex(companyId, indicesAdminClient, liferayDocumentTypeFactory);
 
-		CreateIndexResponse createIndexResponse =
-			createIndexRequestBuilder.get();
-
-		LogUtil.logActionResponse(_log, createIndexResponse);
+		updateLiferayDocumentType(liferayDocumentTypeFactory);
 	}
 
 	@Override
@@ -108,28 +101,8 @@ public class CompanyIndexFactory implements IndexFactory {
 		LogUtil.logActionResponse(_log, deleteIndexResponse);
 	}
 
-	public void setIndexConfigFileName(String indexConfigFileName) {
-		_indexConfigFileName = indexConfigFileName;
-	}
-
 	public void setTypeMappings(Map<String, String> typeMappings) {
 		_typeMappings = typeMappings;
-	}
-
-	protected static Map<String, String> getTypeMappings(
-		Map<String, Object> properties) {
-
-		Map<String, String> typeMappings = new HashMap<>();
-
-		for (String key : properties.keySet()) {
-			if (key.startsWith(_PREFIX)) {
-				String value = MapUtil.getString(properties, key);
-
-				typeMappings.put(key.substring(_PREFIX.length()), value);
-			}
-		}
-
-		return typeMappings;
 	}
 
 	@Activate
@@ -141,8 +114,8 @@ public class CompanyIndexFactory implements IndexFactory {
 
 		setAdditionalIndexConfigurations(
 			elasticsearchConfiguration.additionalIndexConfigurations());
-		setIndexConfigFileName(
-			MapUtil.getString(properties, "indexConfigFileName"));
+		setAdditionalTypeMappings(
+			elasticsearchConfiguration.additionalTypeMappings());
 
 		Map<String, String> typeMappings = getTypeMappings(properties);
 
@@ -152,7 +125,8 @@ public class CompanyIndexFactory implements IndexFactory {
 	@Reference(
 		cardinality = ReferenceCardinality.MULTIPLE,
 		policy = ReferencePolicy.DYNAMIC,
-		policyOption = ReferencePolicyOption.GREEDY
+		policyOption = ReferencePolicyOption.GREEDY,
+		unbind = "removeIndexSettingsContributor"
 	)
 	protected void addIndexSettingsContributor(
 		IndexSettingsContributor indexSettingsContributor) {
@@ -165,13 +139,49 @@ public class CompanyIndexFactory implements IndexFactory {
 		throws Exception {
 
 		for (Map.Entry<String, String> entry : _typeMappings.entrySet()) {
-			Class<?> clazz = getClass();
+			String mappingDefinition = ResourceUtil.getResourceAsString(
+				getClass(), entry.getValue());
 
-			String typeMapping = StringUtil.read(
-				clazz.getClassLoader(), entry.getValue());
-
-			createIndexRequestBuilder.addMapping(entry.getKey(), typeMapping);
+			createIndexRequestBuilder.addMapping(
+				entry.getKey(), mappingDefinition);
 		}
+	}
+
+	protected void createIndex(
+			long companyId, IndicesAdminClient indicesAdminClient,
+			LiferayDocumentTypeFactory liferayDocumentTypeFactory)
+		throws Exception {
+
+		CreateIndexRequestBuilder createIndexRequestBuilder =
+			indicesAdminClient.prepareCreate(String.valueOf(companyId));
+
+		addMappings(createIndexRequestBuilder);
+		setSettings(createIndexRequestBuilder, liferayDocumentTypeFactory);
+
+		liferayDocumentTypeFactory.createRequiredDefaultTypeMappings(
+			createIndexRequestBuilder);
+
+		CreateIndexResponse createIndexResponse =
+			createIndexRequestBuilder.get();
+
+		LogUtil.logActionResponse(_log, createIndexResponse);
+	}
+
+	protected Map<String, String> getTypeMappings(
+		Map<String, Object> properties) {
+
+		Map<String, String> typeMappings = new HashMap<>();
+
+		for (String key : properties.keySet()) {
+			if (key.startsWith(_TYPE_MAPPINGS_PREFIX)) {
+				String value = MapUtil.getString(properties, key);
+
+				typeMappings.put(
+					key.substring(_TYPE_MAPPINGS_PREFIX.length()), value);
+			}
+		}
+
+		return typeMappings;
 	}
 
 	protected boolean hasIndex(
@@ -188,35 +198,38 @@ public class CompanyIndexFactory implements IndexFactory {
 	}
 
 	protected void loadAdditionalIndexConfigurations(Builder builder) {
-		if (ArrayUtil.isEmpty(_additionalIndexConfigurations)) {
+		if (Validator.isNull(_additionalIndexConfigurations)) {
 			return;
 		}
 
-		String source = StringUtil.merge(
-			_additionalIndexConfigurations, StringPool.NEW_LINE);
-
-		builder.loadFromSource(source);
+		builder.loadFromSource(_additionalIndexConfigurations);
 	}
 
-	protected void loadIndexConfigFile(ImmutableSettings.Builder builder) {
-		if (Validator.isNull(_indexConfigFileName)) {
+	protected void loadAdditionalTypeMappings(
+		LiferayDocumentTypeFactory liferayDocumentTypeFactory) {
+
+		if (Validator.isNull(_additionalTypeMappings)) {
 			return;
 		}
 
-		Class<?> clazz = getClass();
-
-		builder.classLoader(clazz.getClassLoader());
-
-		builder.loadFromClasspath(_indexConfigFileName);
+		liferayDocumentTypeFactory.addTypeMappings(_additionalTypeMappings);
 	}
 
-	protected void loadIndexSettingsContributors(
-		ImmutableSettings.Builder builder) {
-
+	protected void loadIndexSettingsContributors(Settings.Builder builder) {
 		for (IndexSettingsContributor indexSettingsContributor :
 				_indexSettingsContributors) {
 
 			indexSettingsContributor.populate(builder);
+		}
+	}
+
+	protected void loadTypeMappingsContributors(
+		LiferayDocumentTypeFactory liferayDocumentTypeFactory) {
+
+		for (IndexSettingsContributor indexSettingsContributor :
+				_indexSettingsContributors) {
+
+			indexSettingsContributor.contribute(liferayDocumentTypeFactory);
 		}
 	}
 
@@ -227,17 +240,22 @@ public class CompanyIndexFactory implements IndexFactory {
 	}
 
 	protected void setAdditionalIndexConfigurations(
-		String[] additionalIndexConfigurations) {
+		String additionalIndexConfigurations) {
 
 		_additionalIndexConfigurations = additionalIndexConfigurations;
 	}
 
+	protected void setAdditionalTypeMappings(String additionalTypeMappings) {
+		_additionalTypeMappings = additionalTypeMappings;
+	}
+
 	protected void setSettings(
-		CreateIndexRequestBuilder createIndexRequestBuilder) {
+		CreateIndexRequestBuilder createIndexRequestBuilder,
+		LiferayDocumentTypeFactory liferayDocumentTypeFactory) {
 
-		ImmutableSettings.Builder builder = ImmutableSettings.settingsBuilder();
+		Settings.Builder builder = Settings.settingsBuilder();
 
-		loadIndexConfigFile(builder);
+		liferayDocumentTypeFactory.createRequiredDefaultAnalyzers(builder);
 
 		loadAdditionalIndexConfigurations(builder);
 
@@ -246,13 +264,23 @@ public class CompanyIndexFactory implements IndexFactory {
 		createIndexRequestBuilder.setSettings(builder);
 	}
 
-	private static final String _PREFIX = "typeMappings.";
+	protected void updateLiferayDocumentType(
+		LiferayDocumentTypeFactory liferayDocumentTypeFactory) {
+
+		loadAdditionalTypeMappings(liferayDocumentTypeFactory);
+
+		loadTypeMappingsContributors(liferayDocumentTypeFactory);
+
+		liferayDocumentTypeFactory.createOptionalDefaultTypeMappings();
+	}
+
+	private static final String _TYPE_MAPPINGS_PREFIX = "typeMappings.";
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		CompanyIndexFactory.class);
 
-	private String[] _additionalIndexConfigurations;
-	private String _indexConfigFileName;
+	private volatile String _additionalIndexConfigurations;
+	private String _additionalTypeMappings;
 	private final Set<IndexSettingsContributor> _indexSettingsContributors =
 		new ConcurrentSkipListSet<>();
 	private Map<String, String> _typeMappings = new HashMap<>();

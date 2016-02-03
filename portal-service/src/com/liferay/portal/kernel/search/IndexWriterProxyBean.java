@@ -53,6 +53,11 @@ public class IndexWriterProxyBean
 	}
 
 	@Override
+	public void commit(SearchContext searchContext) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public void deleteDocument(SearchContext searchContext, String uid) {
 		throw new UnsupportedOperationException();
 	}
@@ -79,7 +84,8 @@ public class IndexWriterProxyBean
 
 		String searchEngineId = searchContext.getSearchEngineId();
 
-		return SearchEngineUtil.getSearchWriterDestinationName(searchEngineId);
+		return SearchEngineHelperUtil.getSearchWriterDestinationName(
+			searchEngineId);
 	}
 
 	@Override

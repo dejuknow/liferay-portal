@@ -16,8 +16,7 @@ package com.liferay.wiki.service;
 
 import aQute.bnd.annotation.ProviderType;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
+import com.liferay.osgi.util.ServiceTrackerFactory;
 
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -129,17 +128,6 @@ public class WikiPageServiceUtil {
 		getService().deletePage(nodeId, title);
 	}
 
-	/**
-	* @deprecated As of 6.2.0 replaced by {@link #discardDraft(long, String,
-	double)}
-	*/
-	@Deprecated
-	public static void deletePage(long nodeId, java.lang.String title,
-		double version)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().deletePage(nodeId, title, version);
-	}
-
 	public static void deletePageAttachment(long nodeId,
 		java.lang.String title, java.lang.String fileName)
 		throws com.liferay.portal.kernel.exception.PortalException {
@@ -193,20 +181,6 @@ public class WikiPageServiceUtil {
 		return getService().getNodePages(nodeId, max);
 	}
 
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link #getNodePagesRSS(long, int,
-	String, double, String, String, String, String)}
-	*/
-	@Deprecated
-	public static java.lang.String getNodePagesRSS(long nodeId, int max,
-		java.lang.String type, double version, java.lang.String displayStyle,
-		java.lang.String feedURL, java.lang.String entryURL)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService()
-				   .getNodePagesRSS(nodeId, max, type, version, displayStyle,
-			feedURL, entryURL);
-	}
-
 	public static java.lang.String getNodePagesRSS(long nodeId, int max,
 		java.lang.String type, double version, java.lang.String displayStyle,
 		java.lang.String feedURL, java.lang.String entryURL,
@@ -256,6 +230,11 @@ public class WikiPageServiceUtil {
 		return getService().getPage(nodeId, title, version);
 	}
 
+	public static com.liferay.wiki.model.WikiPage getPage(long pageId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().getPage(pageId);
+	}
+
 	public static java.util.List<com.liferay.wiki.model.WikiPage> getPages(
 		long groupId, long nodeId, boolean head, int status, int start,
 		int end,
@@ -299,21 +278,6 @@ public class WikiPageServiceUtil {
 		return getService().getPagesCount(groupId, userId, nodeId, status);
 	}
 
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link #getPagesRSS(long, String,
-	int, String, double, String, String, String, String, Locale)}
-	*/
-	@Deprecated
-	public static java.lang.String getPagesRSS(long companyId, long nodeId,
-		java.lang.String title, int max, java.lang.String type, double version,
-		java.lang.String displayStyle, java.lang.String feedURL,
-		java.lang.String entryURL, java.util.Locale locale)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService()
-				   .getPagesRSS(companyId, nodeId, title, max, type, version,
-			displayStyle, feedURL, entryURL, locale);
-	}
-
 	public static java.lang.String getPagesRSS(long nodeId,
 		java.lang.String title, int max, java.lang.String type, double version,
 		java.lang.String displayStyle, java.lang.String feedURL,
@@ -340,18 +304,6 @@ public class WikiPageServiceUtil {
 		java.lang.String folderName)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService().getTempFileNames(nodeId, folderName);
-	}
-
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link #renamePage(long, String,
-	String, ServiceContext)}
-	*/
-	@Deprecated
-	public static void movePage(long nodeId, java.lang.String title,
-		java.lang.String newTitle,
-		com.liferay.portal.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().movePage(nodeId, title, newTitle, serviceContext);
 	}
 
 	public static com.liferay.portal.kernel.repository.model.FileEntry movePageAttachmentToTrash(
@@ -422,21 +374,6 @@ public class WikiPageServiceUtil {
 		return _serviceTracker.getService();
 	}
 
-	/**
-	 * @deprecated As of 6.2.0
-	 */
-	@Deprecated
-	public void setService(WikiPageService service) {
-	}
-
-	private static ServiceTracker<WikiPageService, WikiPageService> _serviceTracker;
-
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(WikiPageServiceUtil.class);
-
-		_serviceTracker = new ServiceTracker<WikiPageService, WikiPageService>(bundle.getBundleContext(),
-				WikiPageService.class, null);
-
-		_serviceTracker.open();
-	}
+	private static ServiceTracker<WikiPageService, WikiPageService> _serviceTracker =
+		ServiceTrackerFactory.open(WikiPageService.class);
 }

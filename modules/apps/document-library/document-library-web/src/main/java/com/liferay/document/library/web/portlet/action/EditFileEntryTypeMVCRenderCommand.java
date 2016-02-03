@@ -15,19 +15,19 @@
 package com.liferay.document.library.web.portlet.action;
 
 import com.liferay.document.library.web.constants.DLPortletKeys;
+import com.liferay.dynamic.data.mapping.kernel.DDMStructure;
+import com.liferay.dynamic.data.mapping.kernel.DDMStructureManagerUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException;
+import com.liferay.portlet.documentlibrary.exception.NoSuchFileEntryTypeException;
 import com.liferay.portlet.documentlibrary.model.DLFileEntryMetadata;
 import com.liferay.portlet.documentlibrary.model.DLFileEntryType;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryTypeService;
 import com.liferay.portlet.documentlibrary.util.DLUtil;
-import com.liferay.portlet.dynamicdatamapping.DDMStructure;
-import com.liferay.portlet.dynamicdatamapping.DDMStructureManagerUtil;
 
 import javax.portlet.PortletException;
 import javax.portlet.RenderRequest;
@@ -110,6 +110,6 @@ public class EditFileEntryTypeMVCRenderCommand implements MVCRenderCommand {
 		_dlFileEntryTypeService = dlFileEntryTypeService;
 	}
 
-	private volatile DLFileEntryTypeService _dlFileEntryTypeService;
+	private DLFileEntryTypeService _dlFileEntryTypeService;
 
 }

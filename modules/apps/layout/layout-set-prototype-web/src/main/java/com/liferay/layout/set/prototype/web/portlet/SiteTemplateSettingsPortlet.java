@@ -14,13 +14,11 @@
 
 package com.liferay.layout.set.prototype.web.portlet;
 
-import com.liferay.layout.set.prototype.web.constants.LayoutSetPrototypePortletKeys;
-import com.liferay.portal.service.LayoutSetPrototypeService;
+import com.liferay.layout.set.prototype.constants.LayoutSetPrototypePortletKeys;
 
 import javax.portlet.Portlet;
 
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Eudaldo Alonso
@@ -49,12 +47,4 @@ import org.osgi.service.component.annotations.Reference;
 	service = {Portlet.class}
 )
 public class SiteTemplateSettingsPortlet extends LayoutSetPrototypePortlet {
-
-	@Reference(unbind = "-")
-	protected void setLayoutSetPrototypeService(
-		LayoutSetPrototypeService layoutSetPrototypeService) {
-
-		this.layoutSetPrototypeService = layoutSetPrototypeService;
-	}
-
 }

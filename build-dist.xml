@@ -986,7 +986,9 @@ release was successful.</echo>
 
 		<ant dir="portal-impl" inheritall="false" target="compile-test" />
 
-		<ant inheritall="false" target="format-javadoc" />
+		<ant inheritall="false" target="format-javadoc">
+			<property name="generate.xml" value="true" />
+		</ant>
 
 		<delete>
 			<fileset dir="${lp.plugins.dir}" includes="**/javadocs-all.xml,**/javadocs-rt.xml" />
@@ -996,7 +998,10 @@ release was successful.</echo>
 
 		<ant dir="${lp.plugins.dir}" inheritall="false" target="clean" />
 		<ant dir="${lp.plugins.dir}" inheritall="false" target="compile" />
-		<ant dir="${lp.plugins.dir}" inheritall="false" target="format-javadoc" />
+
+		<ant dir="${lp.plugins.dir}" inheritall="false" target="format-javadoc">
+			<property name="generate.xml" value="true" />
+		</ant>
 
 		<parallel>
 			<if>
@@ -1848,8 +1853,8 @@ this task.
 		</echo>
 
 		<replace file="${app.server.tomcat.dir}/conf/catalina.properties">
-			<replacetoken><![CDATA[common.loader=${catalina.base}/lib,${catalina.base}/lib/*.jar,${catalina.home}/lib,${catalina.home}/lib/*.jar]]></replacetoken>
-			<replacevalue><![CDATA[common.loader=${catalina.base}/lib,${catalina.base}/lib/*.jar,${catalina.home}/lib,${catalina.home}/lib/*.jar,${catalina.home}/lib/ext,${catalina.home}/lib/ext/*.jar]]></replacevalue>
+			<replacetoken><![CDATA[common.loader="${catalina.base}/lib","${catalina.base}/lib/*.jar","${catalina.home}/lib","${catalina.home}/lib/*.jar"]]></replacetoken>
+			<replacevalue><![CDATA[common.loader="${catalina.base}/lib","${catalina.base}/lib/*.jar","${catalina.home}/lib","${catalina.home}/lib/*.jar","${catalina.home}/lib/ext","${catalina.home}/lib/ext/*.jar"]]></replacevalue>
 		</replace>
 
 		<replace file="${app.server.tomcat.dir}/conf/server.xml">
@@ -2783,7 +2788,8 @@ and put it in ${app.server.parent.dir}. Then rerun this task.
 	</target>
 
 	<target name="update-plugins-includes">
-		<echo file="${lp.plugins.dir}/build.${user.name}.properties">
+		<echo file="${lp.plugins.dir}/build.${user.name}.properties">liferay.home=${liferay.home}
+
 plugins.includes=</echo>
 
 		<xmltask source="${lp.plugins.dir}/summary.xml">

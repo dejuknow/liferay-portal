@@ -14,22 +14,22 @@
 
 package com.liferay.document.library.web.display.context;
 
+import com.liferay.image.gallery.display.kernel.display.context.IGDisplayContextFactory;
+import com.liferay.image.gallery.display.kernel.display.context.IGViewFileVersionDisplayContext;
 import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerList;
 import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerListFactory;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.repository.model.FileShortcut;
 import com.liferay.portal.kernel.repository.model.FileVersion;
-import com.liferay.portlet.imagegallerydisplay.display.context.IGDisplayContextFactory;
-import com.liferay.portlet.imagegallerydisplay.display.context.IGViewFileVersionDisplayContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 
 /**
  * @author Iván Zaera
@@ -98,11 +98,14 @@ public class IGDisplayContextProvider {
 	}
 
 	@Activate
-	protected void activate(BundleContext bundleContext)
-		throws InvalidSyntaxException {
-
+	protected void activate(BundleContext bundleContext) {
 		_igDisplayContextFactories = ServiceTrackerListFactory.open(
 			bundleContext, IGDisplayContextFactory.class);
+	}
+
+	@Deactivate
+	protected void deactivate(BundleContext bundleContext) {
+		_igDisplayContextFactories.close();
 	}
 
 	private ServiceTrackerList<IGDisplayContextFactory, IGDisplayContextFactory>

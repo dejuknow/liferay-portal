@@ -14,9 +14,9 @@
 
 package com.liferay.portal.service.impl;
 
-import com.liferay.portal.LayoutSetBranchNameException;
-import com.liferay.portal.NoSuchLayoutSetBranchException;
-import com.liferay.portal.RequiredLayoutSetBranchException;
+import com.liferay.portal.exception.LayoutSetBranchNameException;
+import com.liferay.portal.exception.NoSuchLayoutSetBranchException;
+import com.liferay.portal.exception.RequiredLayoutSetBranchException;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
@@ -291,6 +291,11 @@ public class LayoutSetBranchLocalServiceImpl
 		layoutRevisionLocalService.deleteLayoutSetBranchLayoutRevisions(
 			layoutSetBranch.getLayoutSetBranchId());
 
+		// Recent layout sets
+
+		recentLayoutSetBranchLocalService.deleteRecentLayoutSetBranches(
+			layoutSetBranch.getLayoutSetBranchId());
+
 		return layoutSetBranch;
 	}
 
@@ -357,21 +362,6 @@ public class LayoutSetBranchLocalServiceImpl
 
 		return layoutSetBranchPersistence.findByG_P_M_First(
 			groupId, privateLayout, true, null);
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link #getUserLayoutSetBranch(long,
-	 *             long, boolean, long, long)}
-	 */
-	@Deprecated
-	@Override
-	public LayoutSetBranch getUserLayoutSetBranch(
-			long userId, long groupId, boolean privateLayout,
-			long layoutSetBranchId)
-		throws PortalException {
-
-		return getUserLayoutSetBranch(
-			userId, groupId, privateLayout, 0, layoutSetBranchId);
 	}
 
 	@Override

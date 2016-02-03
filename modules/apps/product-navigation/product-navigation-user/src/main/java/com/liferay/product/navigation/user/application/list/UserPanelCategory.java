@@ -45,17 +45,12 @@ public class UserPanelCategory extends BaseJSPPanelCategory {
 
 	@Override
 	public String getHeaderJspPath() {
-		return "/user.jsp";
-	}
-
-	@Override
-	public String getIconCssClass() {
-		return "icon-user";
+		return "/user_header.jsp";
 	}
 
 	@Override
 	public String getJspPath() {
-		return null;
+		return "/user_body.jsp";
 	}
 
 	@Override
@@ -69,11 +64,21 @@ public class UserPanelCategory extends BaseJSPPanelCategory {
 	}
 
 	@Override
+	public boolean include(
+			HttpServletRequest request, HttpServletResponse response)
+		throws IOException {
+
+		request.setAttribute(ApplicationListWebKeys.PANEL_CATEGORY, this);
+
+		return super.include(request, response);
+	}
+
+	@Override
 	public boolean includeHeader(
 			HttpServletRequest request, HttpServletResponse response)
 		throws IOException {
 
-		request.setAttribute(ApplicationListWebKeys.PANEL_APP, this);
+		request.setAttribute(ApplicationListWebKeys.PANEL_CATEGORY, this);
 
 		return super.includeHeader(request, response);
 	}

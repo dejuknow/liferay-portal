@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 
 <custom-sql>
-	<sql id="com.liferay.portal.security.permission.InlineSQLHelper.filterByResourceBlockId">
+	<sql id="com.liferay.portal.kernel.security.permission.InlineSQLHelper.filterByResourceBlockId">
 		<![CDATA[
 			WHERE
 				(resourceBlockId IN ([$USER_RESOURCE_BLOCK_ID$]))
 		]]>
 	</sql>
-	<sql id="com.liferay.portal.security.permission.InlineSQLHelper.filterByResourceBlockIdOwner">
+	<sql id="com.liferay.portal.kernel.security.permission.InlineSQLHelper.filterByResourceBlockIdOwner">
 		<![CDATA[
 			WHERE
 				(
@@ -19,7 +19,7 @@
 				)
 		]]>
 	</sql>
-	<sql id="com.liferay.portal.security.permission.InlineSQLHelper.findByResourceBlockId">
+	<sql id="com.liferay.portal.kernel.security.permission.InlineSQLHelper.findByResourceBlockId">
 		<![CDATA[
 			SELECT
 				resourceBlock.resourceBlockId
@@ -39,7 +39,7 @@
 				(resourceBlock.name = '[$RESOURCE_BLOCK_NAME$]')
 		]]>
 	</sql>
-	<sql id="com.liferay.portal.security.permission.InlineSQLHelper.joinResourcePermission">
+	<sql id="com.liferay.portal.kernel.security.permission.InlineSQLHelper.joinResourcePermission">
 		<![CDATA[
 			INNER JOIN ResourcePermission ON
 				(ResourcePermission.companyId = [$COMPANY_ID$]) AND
@@ -56,6 +56,27 @@
 				ResourceBlock
 			WHERE
 				(referenceCount <= 0) AND
+				(resourceBlockId = ?)
+		]]>
+	</sql>
+	<sql id="com.liferay.portal.service.impl.ResourceBlockLocalServiceImpl.releaseResourceBlock">
+		<![CDATA[
+			UPDATE
+				ResourceBlock
+			SET
+				referenceCount = (referenceCount - 1)
+			WHERE
+				(resourceBlockId = ?)
+		]]>
+	</sql>
+	<sql id="com.liferay.portal.service.impl.ResourceBlockLocalServiceImpl.retainResourceBlock">
+		<![CDATA[
+			UPDATE
+				ResourceBlock
+			SET
+				referenceCount = (referenceCount + 1)
+			WHERE
+				(referenceCount > 0) AND
 				(resourceBlockId = ?)
 		]]>
 	</sql>
@@ -89,27 +110,6 @@
 						(Role_.roleId = ResourcePermission.roleId)
 				) AND
 				(Role_.name = ?)
-		]]>
-	</sql>
-	<sql id="com.liferay.portal.service.impl.ResourceBlockLocalServiceImpl.releaseResourceBlock">
-		<![CDATA[
-			UPDATE
-				ResourceBlock
-			SET
-				referenceCount = (referenceCount - 1)
-			WHERE
-				(resourceBlockId = ?)
-		]]>
-	</sql>
-	<sql id="com.liferay.portal.service.impl.ResourceBlockLocalServiceImpl.retainResourceBlock">
-		<![CDATA[
-			UPDATE
-				ResourceBlock
-			SET
-				referenceCount = (referenceCount + 1)
-			WHERE
-				(referenceCount > 0) AND
-				(resourceBlockId = ?)
 		]]>
 	</sql>
 	<sql id="com.liferay.portal.service.impl.ResourcePermissionLocalServiceImpl.updateActionIds">
@@ -511,22 +511,6 @@
 				Layout
 			WHERE
 				(friendlyURL = '' OR friendlyURL IS NULL)
-		]]>
-	</sql>
-	<sql id="com.liferay.portal.service.persistence.LayoutFinder.findByScopeGroup">
-		<![CDATA[
-			SELECT
-				{Layout.*}
-			FROM
-				Layout
-			INNER JOIN
-				Group_ ON
-					(Group_.companyId = Layout.companyId) AND
-					(Group_.classNameId = [$CLASS_NAME_ID_COM.LIFERAY.PORTAL.MODEL.LAYOUT$]) AND
-					(Group_.classPK = Layout.plid)
-			WHERE
-				(Layout.groupId = ?) AND
-				(Layout.privateLayout = ?)
 		]]>
 	</sql>
 	<sql id="com.liferay.portal.service.persistence.LayoutFinder.findByC_P_P">
@@ -1766,17 +1750,6 @@
 					(lower(UserGroup.name) LIKE ? [$AND_OR_NULL_CHECK$]) [$AND_OR_CONNECTOR$]
 					(lower(UserGroup.description) LIKE ? [$AND_OR_NULL_CHECK$])
 				)
-		]]>
-	</sql>
-	<sql id="com.liferay.portal.service.persistence.UserGroupFinder.findByC_N">
-		<![CDATA[
-			SELECT
-				{UserGroup.*}
-			FROM
-				UserGroup
-			WHERE
-				(UserGroup.companyId = ?) AND
-				(lower(UserGroup.name) = ?)
 		]]>
 	</sql>
 	<sql id="com.liferay.portal.service.persistence.UserGroupFinder.findByC_N_D">

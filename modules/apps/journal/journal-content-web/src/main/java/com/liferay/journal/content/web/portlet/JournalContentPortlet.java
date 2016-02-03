@@ -54,7 +54,6 @@ import org.osgi.service.component.annotations.Reference;
 		"com.liferay.portlet.add-default-resource=true",
 		"com.liferay.portlet.css-class-wrapper=portlet-journal-content",
 		"com.liferay.portlet.display-category=category.cms",
-		"com.liferay.portlet.header-portlet-css=/css/main.css",
 		"com.liferay.portlet.icon=/icons/journal_content.png",
 		"com.liferay.portlet.instanceable=true",
 		"com.liferay.portlet.layout-cacheable=true",
@@ -214,8 +213,8 @@ public class JournalContentPortlet extends MVCPortlet {
 		_journalArticleLocalService = null;
 	}
 
-	private volatile ExportArticleUtil _exportArticleUtil;
-	private volatile JournalArticleLocalService _journalArticleLocalService;
-	private volatile JournalContent _journalContent;
+	private ExportArticleUtil _exportArticleUtil;
+	private JournalArticleLocalService _journalArticleLocalService;
+	private JournalContent _journalContent;
 
 }

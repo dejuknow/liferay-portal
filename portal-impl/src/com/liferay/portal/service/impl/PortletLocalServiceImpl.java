@@ -14,7 +14,8 @@
 
 package com.liferay.portal.service.impl;
 
-import com.liferay.portal.PortletIdException;
+import com.liferay.admin.kernel.util.PortalMyAccountApplicationType;
+import com.liferay.portal.exception.PortletIdException;
 import com.liferay.portal.kernel.application.type.ApplicationType;
 import com.liferay.portal.kernel.cluster.Clusterable;
 import com.liferay.portal.kernel.configuration.Configuration;
@@ -35,6 +36,8 @@ import com.liferay.portal.kernel.portlet.PortletProviderUtil;
 import com.liferay.portal.kernel.scheduler.SchedulerEntryImpl;
 import com.liferay.portal.kernel.scheduler.TimeUnit;
 import com.liferay.portal.kernel.scheduler.TriggerFactoryUtil;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.portal.kernel.servlet.ServletContextUtil;
 import com.liferay.portal.kernel.spring.aop.Skip;
 import com.liferay.portal.kernel.transaction.Transactional;
@@ -71,8 +74,6 @@ import com.liferay.portal.model.impl.PortletFilterImpl;
 import com.liferay.portal.model.impl.PortletImpl;
 import com.liferay.portal.model.impl.PortletURLListenerImpl;
 import com.liferay.portal.model.impl.PublicRenderParameterImpl;
-import com.liferay.portal.security.permission.ActionKeys;
-import com.liferay.portal.security.permission.ResourceActionsUtil;
 import com.liferay.portal.service.base.PortletLocalServiceBaseImpl;
 import com.liferay.portal.service.permission.PortletPermissionUtil;
 import com.liferay.portal.servlet.ComboServlet;
@@ -82,12 +83,11 @@ import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.util.WebAppPool;
 import com.liferay.portlet.PortletBagFactory;
 import com.liferay.portlet.PortletConfigFactoryUtil;
-import com.liferay.portlet.PortletContextFactory;
+import com.liferay.portlet.PortletContextFactoryUtil;
 import com.liferay.portlet.PortletInstanceFactoryUtil;
 import com.liferay.portlet.PortletPreferencesFactoryUtil;
 import com.liferay.portlet.PortletQNameUtil;
 import com.liferay.portlet.UndeployedPortlet;
-import com.liferay.portlet.admin.util.PortalMyAccountApplicationType;
 import com.liferay.portlet.expando.model.CustomAttributesDisplay;
 import com.liferay.util.ContentUtil;
 
@@ -235,16 +235,6 @@ public class PortletLocalServiceImpl extends PortletLocalServiceBaseImpl {
 		_portletsMaps.clear();
 	}
 
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #clonePortlet(String)}
-	 */
-	@Deprecated
-	@Override
-	@Skip
-	public Portlet clonePortlet(long companyId, String portletId) {
-		return clonePortlet(portletId);
-	}
-
 	@Override
 	@Skip
 	public Portlet clonePortlet(String portletId) {
@@ -338,6 +328,17 @@ public class PortletLocalServiceImpl extends PortletLocalServiceBaseImpl {
 
 		resourceActionLocalService.checkResourceActions(
 			portlet.getPortletId(), portletActions);
+
+		List<String> modelNames = ResourceActionsUtil.getPortletModelResources(
+			portlet.getPortletId());
+
+		for (String modelName : modelNames) {
+			List<String> modelActions =
+				ResourceActionsUtil.getModelResourceActions(modelName);
+
+			resourceActionLocalService.checkResourceActions(
+				modelName, modelActions);
+		}
 
 		PortletCategory portletCategory = (PortletCategory)WebAppPool.get(
 			portlet.getCompanyId(), WebKeys.PORTLET_CATEGORY);
@@ -862,14 +863,14 @@ public class PortletLocalServiceImpl extends PortletLocalServiceBaseImpl {
 					PortletInstanceFactoryUtil.clear(portlet);
 
 					PortletConfigFactoryUtil.destroy(portlet);
-					PortletContextFactory.destroy(portlet);
+					PortletContextFactoryUtil.destroy(portlet);
 				}
 
 				portlet = entry.getValue();
 
 				_portletsMap.put(entry.getKey(), portlet);
 
-				portletBagFactory.create(portlet);
+				portletBagFactory.create(portlet, true);
 			}
 
 			// Sprite images
@@ -892,7 +893,7 @@ public class PortletLocalServiceImpl extends PortletLocalServiceBaseImpl {
 					PortletInstanceFactoryUtil.clear(portlet);
 
 					PortletConfigFactoryUtil.destroy(portlet);
-					PortletContextFactory.destroy(portlet);
+					PortletContextFactoryUtil.destroy(portlet);
 				}
 			}
 

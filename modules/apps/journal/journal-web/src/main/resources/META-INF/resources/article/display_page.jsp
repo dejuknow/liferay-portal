@@ -63,9 +63,11 @@ boolean changeStructure = GetterUtil.getBoolean(request.getAttribute("edit_artic
 		Group parentGroup = themeDisplay.getSiteGroup();
 		%>
 
-		<liferay-ui:error-marker key="errorSection" value="display-page" />
+		<liferay-ui:error-marker key="<%= WebKeys.ERROR_SECTION %>" value="display-page" />
 
-		<h3><liferay-ui:message key="display-page" /> <liferay-ui:icon-help message="default-display-page-help" /></h3>
+		<div class="alert alert-info">
+			<liferay-ui:message key="default-display-page-help" />
+		</div>
 
 		<div id="<portlet:namespace />pagesContainer">
 			<aui:input id="pagesContainerInput" ignoreRequestValue="<%= true %>" name="layoutUuid" type="hidden" value="<%= layoutUuid %>" />
@@ -81,9 +83,9 @@ boolean changeStructure = GetterUtil.getBoolean(request.getAttribute("edit_artic
 			</div>
 		</div>
 
-		<div>
-			<aui:button name="chooseDisplayPage" value="choose" />
-		</div>
+		<aui:button-row>
+			<aui:button cssClass="btn-lg" name="chooseDisplayPage" value="choose" />
+		</aui:button-row>
 
 		<c:if test="<%= (article != null) && Validator.isNotNull(layoutUuid) %>">
 

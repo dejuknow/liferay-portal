@@ -23,13 +23,13 @@ import com.liferay.portal.kernel.repository.RepositoryProviderUtil;
 import com.liferay.portal.kernel.repository.capabilities.TrashCapability;
 import com.liferay.portal.kernel.repository.capabilities.UnsupportedCapabilityException;
 import com.liferay.portal.kernel.repository.model.Folder;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.trash.TrashActionKeys;
 import com.liferay.portal.kernel.trash.TrashHandler;
 import com.liferay.portal.kernel.trash.TrashRenderer;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.ContainerModel;
-import com.liferay.portal.security.permission.ActionKeys;
-import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portlet.asset.AssetRendererFactoryRegistryUtil;
 import com.liferay.portlet.asset.model.AssetRendererFactory;
@@ -41,7 +41,7 @@ import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalService;
 import com.liferay.portlet.documentlibrary.service.DLFolderLocalService;
 import com.liferay.portlet.documentlibrary.service.permission.DLFolderPermission;
 import com.liferay.portlet.documentlibrary.util.DLUtil;
-import com.liferay.portlet.trash.RestoreEntryException;
+import com.liferay.portlet.trash.exception.RestoreEntryException;
 import com.liferay.portlet.trash.model.TrashEntry;
 import com.liferay.portlet.trash.model.TrashEntryConstants;
 
@@ -402,8 +402,8 @@ public class DLFolderTrashHandler extends DLBaseTrashHandler {
 	private static final Log _log = LogFactoryUtil.getLog(
 		DLFolderTrashHandler.class);
 
-	private volatile DLAppLocalService _dlAppLocalService;
-	private volatile DLFileEntryLocalService _dlFileEntryLocalService;
-	private volatile DLFolderLocalService _dlFolderLocalService;
+	private DLAppLocalService _dlAppLocalService;
+	private DLFileEntryLocalService _dlFileEntryLocalService;
+	private DLFolderLocalService _dlFolderLocalService;
 
 }

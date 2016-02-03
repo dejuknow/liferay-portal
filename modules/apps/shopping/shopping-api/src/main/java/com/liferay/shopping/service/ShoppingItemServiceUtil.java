@@ -16,8 +16,7 @@ package com.liferay.shopping.service;
 
 import aQute.bnd.annotation.ProviderType;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
+import com.liferay.osgi.util.ServiceTrackerFactory;
 
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -136,21 +135,6 @@ public class ShoppingItemServiceUtil {
 		return _serviceTracker.getService();
 	}
 
-	/**
-	 * @deprecated As of 6.2.0
-	 */
-	@Deprecated
-	public void setService(ShoppingItemService service) {
-	}
-
-	private static ServiceTracker<ShoppingItemService, ShoppingItemService> _serviceTracker;
-
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(ShoppingItemServiceUtil.class);
-
-		_serviceTracker = new ServiceTracker<ShoppingItemService, ShoppingItemService>(bundle.getBundleContext(),
-				ShoppingItemService.class, null);
-
-		_serviceTracker.open();
-	}
+	private static ServiceTracker<ShoppingItemService, ShoppingItemService> _serviceTracker =
+		ServiceTrackerFactory.open(ShoppingItemService.class);
 }

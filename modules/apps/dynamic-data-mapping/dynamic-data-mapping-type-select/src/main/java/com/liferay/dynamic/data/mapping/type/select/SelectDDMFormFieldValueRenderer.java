@@ -20,8 +20,10 @@ import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.Validator;
 
 import java.util.Locale;
 
@@ -44,19 +46,30 @@ public class SelectDDMFormFieldValueRenderer
 		DDMFormFieldOptions ddmFormFieldOptions = getDDMFormFieldOptions(
 			ddmFormFieldValue);
 
+		if (optionsValuesJSONArray.length() == 0) {
+			return StringPool.BLANK;
+		}
+
 		StringBundler sb = new StringBundler(
-			optionsValuesJSONArray.length() * 2);
+			optionsValuesJSONArray.length() * 2 - 1);
 
 		for (int i = 0; i < optionsValuesJSONArray.length(); i++) {
-			if (i > 0) {
-				sb.append(StringPool.COMMA_AND_SPACE);
+			String optionValue = optionsValuesJSONArray.getString(i);
+
+			if (isManualDataSourceType(ddmFormFieldValue.getDDMFormField())) {
+				LocalizedValue optionLabel =
+					ddmFormFieldOptions.getOptionLabels(optionValue);
+
+				sb.append(optionLabel.getString(locale));
+			}
+			else {
+				sb.append(optionValue);
 			}
 
-			LocalizedValue optionLabel = ddmFormFieldOptions.getOptionLabels(
-				optionsValuesJSONArray.getString(i));
-
-			sb.append(optionLabel.getString(locale));
+			sb.append(StringPool.COMMA_AND_SPACE);
 		}
+
+		sb.setIndex(sb.index() - 1);
 
 		return sb.toString();
 	}
@@ -69,6 +82,17 @@ public class SelectDDMFormFieldValueRenderer
 		return ddmFormField.getDDMFormFieldOptions();
 	}
 
+	protected boolean isManualDataSourceType(DDMFormField ddmFormField) {
+		String dataSourceType = GetterUtil.getString(
+			ddmFormField.getProperty("dataSourceType"), "manual");
+
+		if (Validator.equals(dataSourceType, "manual")) {
+			return true;
+		}
+
+		return false;
+	}
+
 	@Reference(unbind = "-")
 	protected void setSelectDDMFormFieldValueAccessor(
 		SelectDDMFormFieldValueAccessor selectDDMFormFieldValueAccessor) {
@@ -76,7 +100,6 @@ public class SelectDDMFormFieldValueRenderer
 		_selectDDMFormFieldValueAccessor = selectDDMFormFieldValueAccessor;
 	}
 
-	private volatile SelectDDMFormFieldValueAccessor
-		_selectDDMFormFieldValueAccessor;
+	private SelectDDMFormFieldValueAccessor _selectDDMFormFieldValueAccessor;
 
 }

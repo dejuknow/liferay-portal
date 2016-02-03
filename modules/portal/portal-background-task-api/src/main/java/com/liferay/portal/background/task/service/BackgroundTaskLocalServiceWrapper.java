@@ -168,6 +168,14 @@ public class BackgroundTaskLocalServiceWrapper
 		_backgroundTaskLocalService.deleteGroupBackgroundTasks(groupId);
 	}
 
+	@Override
+	public void deleteGroupBackgroundTasks(long groupId, java.lang.String name,
+		java.lang.String taskExecutorClassName)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		_backgroundTaskLocalService.deleteGroupBackgroundTasks(groupId, name,
+			taskExecutorClassName);
+	}
+
 	/**
 	* @throws PortalException
 	*/
@@ -378,6 +386,15 @@ public class BackgroundTaskLocalServiceWrapper
 			taskExecutorClassNames, status);
 	}
 
+	@Override
+	public java.util.List<com.liferay.portal.background.task.model.BackgroundTask> getBackgroundTasks(
+		long[] groupIds, java.lang.String name,
+		java.lang.String taskExecutorClassName, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.background.task.model.BackgroundTask> orderByComparator) {
+		return _backgroundTaskLocalService.getBackgroundTasks(groupIds, name,
+			taskExecutorClassName, start, end, orderByComparator);
+	}
+
 	/**
 	* Returns a range of all the background tasks.
 	*
@@ -479,6 +496,20 @@ public class BackgroundTaskLocalServiceWrapper
 	}
 
 	@Override
+	public int getBackgroundTasksCount(long[] groupIds, java.lang.String name,
+		java.lang.String taskExecutorClassName) {
+		return _backgroundTaskLocalService.getBackgroundTasksCount(groupIds,
+			name, taskExecutorClassName);
+	}
+
+	@Override
+	public int getBackgroundTasksCount(long[] groupIds, java.lang.String name,
+		java.lang.String taskExecutorClassName, boolean completed) {
+		return _backgroundTaskLocalService.getBackgroundTasksCount(groupIds,
+			name, taskExecutorClassName, completed);
+	}
+
+	@Override
 	public com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
 		return _backgroundTaskLocalService.getIndexableActionableDynamicQuery();
 	}
@@ -520,23 +551,6 @@ public class BackgroundTaskLocalServiceWrapper
 	public com.liferay.portal.background.task.model.BackgroundTask updateBackgroundTask(
 		com.liferay.portal.background.task.model.BackgroundTask backgroundTask) {
 		return _backgroundTaskLocalService.updateBackgroundTask(backgroundTask);
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
-	 */
-	@Deprecated
-	public BackgroundTaskLocalService getWrappedBackgroundTaskLocalService() {
-		return _backgroundTaskLocalService;
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #setWrappedService}
-	 */
-	@Deprecated
-	public void setWrappedBackgroundTaskLocalService(
-		BackgroundTaskLocalService backgroundTaskLocalService) {
-		_backgroundTaskLocalService = backgroundTaskLocalService;
 	}
 
 	@Override

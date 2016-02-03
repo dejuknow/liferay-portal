@@ -14,10 +14,9 @@
 
 package com.liferay.configuration.admin.web.portlet.action;
 
-import com.liferay.configuration.admin.ExtendedMetaTypeService;
 import com.liferay.configuration.admin.web.constants.ConfigurationAdminPortletKeys;
 import com.liferay.configuration.admin.web.model.ConfigurationModel;
-import com.liferay.configuration.admin.web.util.ConfigurationHelper;
+import com.liferay.configuration.admin.web.util.ConfigurationModelRetriever;
 import com.liferay.configuration.admin.web.util.ConfigurationModelToDDMFormConverter;
 import com.liferay.configuration.admin.web.util.DDMFormValuesToPropertiesConverter;
 import com.liferay.dynamic.data.mapping.form.values.factory.DDMFormValuesFactory;
@@ -37,16 +36,15 @@ import java.io.IOException;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Map;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletException;
 
-import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -57,7 +55,7 @@ import org.osgi.service.component.annotations.Reference;
 @Component(
 	immediate = true,
 	property = {
-		"javax.portlet.name=" + ConfigurationAdminPortletKeys.CONFIGURATION_ADMIN,
+		"javax.portlet.name=" + ConfigurationAdminPortletKeys.SYSTEM_SETTINGS,
 		"mvc.command.name=bindConfiguration"
 	},
 	service = MVCActionCommand.class
@@ -80,14 +78,21 @@ public class BindConfigurationMVCActionCommand implements MVCActionCommand {
 			_log.debug("Binding attributes for service " + pid);
 		}
 
-		ConfigurationHelper configurationHelper = new ConfigurationHelper(
-			_bundleContext, _configurationAdmin, _extendedMetaTypeService,
-			themeDisplay.getLanguageId());
+		ConfigurationModel configurationModel = null;
 
-		ConfigurationModel configurationModel =
-			configurationHelper.getConfigurationModel(pid);
+		Map<String, ConfigurationModel> configurationModels =
+			_configurationModelRetriever.getConfigurationModels(
+				themeDisplay.getLanguageId());
 
-		Configuration configuration = configurationHelper.getConfiguration(pid);
+		if (Validator.isNotNull(factoryPid)) {
+			configurationModel = configurationModels.get(factoryPid);
+		}
+		else {
+			configurationModel = configurationModels.get(pid);
+		}
+
+		Configuration configuration =
+			_configurationModelRetriever.getConfiguration(pid);
 
 		ConfigurationModelToDDMFormConverter
 			configurationModelToDDMFormConverter =
@@ -115,11 +120,6 @@ public class BindConfigurationMVCActionCommand implements MVCActionCommand {
 		configureTargetService(configurationModel, configuration, properties);
 
 		return true;
-	}
-
-	@Activate
-	protected void activate(BundleContext bundleContext) {
-		_bundleContext = bundleContext;
 	}
 
 	protected void configureTargetService(
@@ -176,6 +176,12 @@ public class BindConfigurationMVCActionCommand implements MVCActionCommand {
 				configuredProperties.put(key, value);
 			}
 
+			if (configurationModel.isCompanyFactory()) {
+				configuredProperties.put(
+					ConfigurationModel.PROPERTY_KEY_COMPANY_ID,
+					ConfigurationModel.PROPERTY_VALUE_COMPANY_ID_DEFAULT);
+			}
+
 			configuration.update(configuredProperties);
 		}
 		catch (IOException e) {
@@ -197,17 +203,17 @@ public class BindConfigurationMVCActionCommand implements MVCActionCommand {
 	}
 
 	@Reference(unbind = "-")
+	protected void setConfigurationModelRetriever(
+		ConfigurationModelRetriever configurationModelRetriever) {
+
+		_configurationModelRetriever = configurationModelRetriever;
+	}
+
+	@Reference(unbind = "-")
 	protected void setDDMFormValuesFactory(
 		DDMFormValuesFactory ddmFormValuesFactory) {
 
 		_ddmFormValuesFactory = ddmFormValuesFactory;
-	}
-
-	@Reference(unbind = "-")
-	protected void setExtendedMetaTypeService(
-		ExtendedMetaTypeService extendedMetaTypeService) {
-
-		_extendedMetaTypeService = extendedMetaTypeService;
 	}
 
 	@Reference(unbind = "-")
@@ -218,10 +224,9 @@ public class BindConfigurationMVCActionCommand implements MVCActionCommand {
 	private static final Log _log = LogFactoryUtil.getLog(
 		BindConfigurationMVCActionCommand.class);
 
-	private BundleContext _bundleContext;
-	private volatile ConfigurationAdmin _configurationAdmin;
-	private volatile DDMFormValuesFactory _ddmFormValuesFactory;
-	private volatile ExtendedMetaTypeService _extendedMetaTypeService;
-	private volatile JSONFactory _jsonFactory;
+	private ConfigurationAdmin _configurationAdmin;
+	private ConfigurationModelRetriever _configurationModelRetriever;
+	private DDMFormValuesFactory _ddmFormValuesFactory;
+	private JSONFactory _jsonFactory;
 
 }

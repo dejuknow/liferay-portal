@@ -31,6 +31,7 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.security.permission.InlineSQLHelperUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringBundler;
@@ -38,9 +39,10 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.security.permission.InlineSQLHelperUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextThreadLocal;
+import com.liferay.portal.service.persistence.CompanyProvider;
+import com.liferay.portal.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 
@@ -220,7 +222,7 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 
 			if (orderByComparator != null) {
 				query = new StringBundler(3 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(3);
@@ -288,7 +290,7 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 	 * @param resourceBlockId the resource block ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching calendar
-	 * @throws com.liferay.calendar.NoSuchCalendarException if a matching calendar could not be found
+	 * @throws NoSuchCalendarException if a matching calendar could not be found
 	 */
 	@Override
 	public Calendar findByResourceBlockId_First(long resourceBlockId,
@@ -339,7 +341,7 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 	 * @param resourceBlockId the resource block ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching calendar
-	 * @throws com.liferay.calendar.NoSuchCalendarException if a matching calendar could not be found
+	 * @throws NoSuchCalendarException if a matching calendar could not be found
 	 */
 	@Override
 	public Calendar findByResourceBlockId_Last(long resourceBlockId,
@@ -397,7 +399,7 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 	 * @param resourceBlockId the resource block ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next calendar
-	 * @throws com.liferay.calendar.NoSuchCalendarException if a calendar with the primary key could not be found
+	 * @throws NoSuchCalendarException if a calendar with the primary key could not be found
 	 */
 	@Override
 	public Calendar[] findByResourceBlockId_PrevAndNext(long calendarId,
@@ -436,8 +438,9 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+			query = new StringBundler(4 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
 			query = new StringBundler(3);
@@ -722,7 +725,7 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 
 			if (orderByComparator != null) {
 				query = new StringBundler(3 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(3);
@@ -804,7 +807,7 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 	 * @param uuid the uuid
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching calendar
-	 * @throws com.liferay.calendar.NoSuchCalendarException if a matching calendar could not be found
+	 * @throws NoSuchCalendarException if a matching calendar could not be found
 	 */
 	@Override
 	public Calendar findByUuid_First(String uuid,
@@ -853,7 +856,7 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 	 * @param uuid the uuid
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching calendar
-	 * @throws com.liferay.calendar.NoSuchCalendarException if a matching calendar could not be found
+	 * @throws NoSuchCalendarException if a matching calendar could not be found
 	 */
 	@Override
 	public Calendar findByUuid_Last(String uuid,
@@ -910,7 +913,7 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 	 * @param uuid the uuid
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next calendar
-	 * @throws com.liferay.calendar.NoSuchCalendarException if a calendar with the primary key could not be found
+	 * @throws NoSuchCalendarException if a calendar with the primary key could not be found
 	 */
 	@Override
 	public Calendar[] findByUuid_PrevAndNext(long calendarId, String uuid,
@@ -949,8 +952,9 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+			query = new StringBundler(4 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
 			query = new StringBundler(3);
@@ -1155,12 +1159,12 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 			new String[] { String.class.getName(), Long.class.getName() });
 
 	/**
-	 * Returns the calendar where uuid = &#63; and groupId = &#63; or throws a {@link com.liferay.calendar.NoSuchCalendarException} if it could not be found.
+	 * Returns the calendar where uuid = &#63; and groupId = &#63; or throws a {@link NoSuchCalendarException} if it could not be found.
 	 *
 	 * @param uuid the uuid
 	 * @param groupId the group ID
 	 * @return the matching calendar
-	 * @throws com.liferay.calendar.NoSuchCalendarException if a matching calendar could not be found
+	 * @throws NoSuchCalendarException if a matching calendar could not be found
 	 */
 	@Override
 	public Calendar findByUUID_G(String uuid, long groupId)
@@ -1532,7 +1536,7 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 
 			if (orderByComparator != null) {
 				query = new StringBundler(4 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(4);
@@ -1619,7 +1623,7 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching calendar
-	 * @throws com.liferay.calendar.NoSuchCalendarException if a matching calendar could not be found
+	 * @throws NoSuchCalendarException if a matching calendar could not be found
 	 */
 	@Override
 	public Calendar findByUuid_C_First(String uuid, long companyId,
@@ -1675,7 +1679,7 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching calendar
-	 * @throws com.liferay.calendar.NoSuchCalendarException if a matching calendar could not be found
+	 * @throws NoSuchCalendarException if a matching calendar could not be found
 	 */
 	@Override
 	public Calendar findByUuid_C_Last(String uuid, long companyId,
@@ -1738,7 +1742,7 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next calendar
-	 * @throws com.liferay.calendar.NoSuchCalendarException if a calendar with the primary key could not be found
+	 * @throws NoSuchCalendarException if a calendar with the primary key could not be found
 	 */
 	@Override
 	public Calendar[] findByUuid_C_PrevAndNext(long calendarId, String uuid,
@@ -1777,11 +1781,12 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+			query = new StringBundler(5 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
-			query = new StringBundler(3);
+			query = new StringBundler(4);
 		}
 
 		query.append(_SQL_SELECT_CALENDAR_WHERE);
@@ -2117,7 +2122,7 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 
 			if (orderByComparator != null) {
 				query = new StringBundler(4 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(4);
@@ -2190,7 +2195,7 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 	 * @param calendarResourceId the calendar resource ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching calendar
-	 * @throws com.liferay.calendar.NoSuchCalendarException if a matching calendar could not be found
+	 * @throws NoSuchCalendarException if a matching calendar could not be found
 	 */
 	@Override
 	public Calendar findByG_C_First(long groupId, long calendarResourceId,
@@ -2246,7 +2251,7 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 	 * @param calendarResourceId the calendar resource ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching calendar
-	 * @throws com.liferay.calendar.NoSuchCalendarException if a matching calendar could not be found
+	 * @throws NoSuchCalendarException if a matching calendar could not be found
 	 */
 	@Override
 	public Calendar findByG_C_Last(long groupId, long calendarResourceId,
@@ -2309,7 +2314,7 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 	 * @param calendarResourceId the calendar resource ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next calendar
-	 * @throws com.liferay.calendar.NoSuchCalendarException if a calendar with the primary key could not be found
+	 * @throws NoSuchCalendarException if a calendar with the primary key could not be found
 	 */
 	@Override
 	public Calendar[] findByG_C_PrevAndNext(long calendarId, long groupId,
@@ -2348,11 +2353,12 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+			query = new StringBundler(5 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
-			query = new StringBundler(3);
+			query = new StringBundler(4);
 		}
 
 		query.append(_SQL_SELECT_CALENDAR_WHERE);
@@ -2510,7 +2516,7 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 
 		if (orderByComparator != null) {
 			query = new StringBundler(4 +
-					(orderByComparator.getOrderByFields().length * 3));
+					(orderByComparator.getOrderByFields().length * 2));
 		}
 		else {
 			query = new StringBundler(4);
@@ -2566,7 +2572,7 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 	 * @param calendarResourceId the calendar resource ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next calendar
-	 * @throws com.liferay.calendar.NoSuchCalendarException if a calendar with the primary key could not be found
+	 * @throws NoSuchCalendarException if a calendar with the primary key could not be found
 	 */
 	@Override
 	public Calendar[] filterFindByG_C_PrevAndNext(long calendarId,
@@ -2611,11 +2617,12 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+			query = new StringBundler(5 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
-			query = new StringBundler(3);
+			query = new StringBundler(4);
 		}
 
 		query.append(_SQL_SELECT_CALENDAR_WHERE);
@@ -2993,7 +3000,7 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 
 			if (orderByComparator != null) {
 				query = new StringBundler(5 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(5);
@@ -3071,7 +3078,7 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 	 * @param defaultCalendar the default calendar
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching calendar
-	 * @throws com.liferay.calendar.NoSuchCalendarException if a matching calendar could not be found
+	 * @throws NoSuchCalendarException if a matching calendar could not be found
 	 */
 	@Override
 	public Calendar findByG_C_D_First(long groupId, long calendarResourceId,
@@ -3132,7 +3139,7 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 	 * @param defaultCalendar the default calendar
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching calendar
-	 * @throws com.liferay.calendar.NoSuchCalendarException if a matching calendar could not be found
+	 * @throws NoSuchCalendarException if a matching calendar could not be found
 	 */
 	@Override
 	public Calendar findByG_C_D_Last(long groupId, long calendarResourceId,
@@ -3200,7 +3207,7 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 	 * @param defaultCalendar the default calendar
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next calendar
-	 * @throws com.liferay.calendar.NoSuchCalendarException if a calendar with the primary key could not be found
+	 * @throws NoSuchCalendarException if a calendar with the primary key could not be found
 	 */
 	@Override
 	public Calendar[] findByG_C_D_PrevAndNext(long calendarId, long groupId,
@@ -3243,10 +3250,11 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 
 		if (orderByComparator != null) {
 			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
-			query = new StringBundler(3);
+			query = new StringBundler(5);
 		}
 
 		query.append(_SQL_SELECT_CALENDAR_WHERE);
@@ -3413,7 +3421,7 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 
 		if (orderByComparator != null) {
 			query = new StringBundler(5 +
-					(orderByComparator.getOrderByFields().length * 3));
+					(orderByComparator.getOrderByFields().length * 2));
 		}
 		else {
 			query = new StringBundler(5);
@@ -3474,7 +3482,7 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 	 * @param defaultCalendar the default calendar
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next calendar
-	 * @throws com.liferay.calendar.NoSuchCalendarException if a calendar with the primary key could not be found
+	 * @throws NoSuchCalendarException if a calendar with the primary key could not be found
 	 */
 	@Override
 	public Calendar[] filterFindByG_C_D_PrevAndNext(long calendarId,
@@ -3522,10 +3530,11 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 
 		if (orderByComparator != null) {
 			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
-			query = new StringBundler(3);
+			query = new StringBundler(5);
 		}
 
 		query.append(_SQL_SELECT_CALENDAR_WHERE);
@@ -3922,6 +3931,8 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 
 		calendar.setUuid(uuid);
 
+		calendar.setCompanyId(companyProvider.getCompanyId());
+
 		return calendar;
 	}
 
@@ -3930,7 +3941,7 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 	 *
 	 * @param calendarId the primary key of the calendar
 	 * @return the calendar that was removed
-	 * @throws com.liferay.calendar.NoSuchCalendarException if a calendar with the primary key could not be found
+	 * @throws NoSuchCalendarException if a calendar with the primary key could not be found
 	 */
 	@Override
 	public Calendar remove(long calendarId) throws NoSuchCalendarException {
@@ -3942,7 +3953,7 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 	 *
 	 * @param primaryKey the primary key of the calendar
 	 * @return the calendar that was removed
-	 * @throws com.liferay.calendar.NoSuchCalendarException if a calendar with the primary key could not be found
+	 * @throws NoSuchCalendarException if a calendar with the primary key could not be found
 	 */
 	@Override
 	public Calendar remove(Serializable primaryKey)
@@ -4217,11 +4228,11 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 	}
 
 	/**
-	 * Returns the calendar with the primary key or throws a {@link com.liferay.portal.NoSuchModelException} if it could not be found.
+	 * Returns the calendar with the primary key or throws a {@link com.liferay.portal.exception.NoSuchModelException} if it could not be found.
 	 *
 	 * @param primaryKey the primary key of the calendar
 	 * @return the calendar
-	 * @throws com.liferay.calendar.NoSuchCalendarException if a calendar with the primary key could not be found
+	 * @throws NoSuchCalendarException if a calendar with the primary key could not be found
 	 */
 	@Override
 	public Calendar findByPrimaryKey(Serializable primaryKey)
@@ -4241,11 +4252,11 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 	}
 
 	/**
-	 * Returns the calendar with the primary key or throws a {@link com.liferay.calendar.NoSuchCalendarException} if it could not be found.
+	 * Returns the calendar with the primary key or throws a {@link NoSuchCalendarException} if it could not be found.
 	 *
 	 * @param calendarId the primary key of the calendar
 	 * @return the calendar
-	 * @throws com.liferay.calendar.NoSuchCalendarException if a calendar with the primary key could not be found
+	 * @throws NoSuchCalendarException if a calendar with the primary key could not be found
 	 */
 	@Override
 	public Calendar findByPrimaryKey(long calendarId)
@@ -4489,7 +4500,7 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 
 			if (orderByComparator != null) {
 				query = new StringBundler(2 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 
 				query.append(_SQL_SELECT_CALENDAR);
 
@@ -4614,6 +4625,8 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 		finderCache.removeCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 	}
 
+	@ServiceReference(type = CompanyProviderWrapper.class)
+	protected CompanyProvider companyProvider;
 	@ServiceReference(type = EntityCache.class)
 	protected EntityCache entityCache;
 	@ServiceReference(type = FinderCache.class)

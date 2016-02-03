@@ -14,8 +14,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>STATUS_LABEL</td>
-	<td>//span[contains(@class,'workflow-status')]/strong</td>
+	<td>VERSION</td>
+	<td>//span[@class='workflow-version']/span[@class='workflow-value']</td>
 	<td></td>
 </tr>
 <tr>
@@ -30,7 +30,7 @@
 </tr>
 <tr>
 	<td>SELECT_STRUCTURE</td>
-	<td>//a[contains(.,'Select')]/span</td>
+	<td>//button[contains(.,'Select')]/span</td>
 	<td></td>
 </tr>
 <tr>
@@ -50,7 +50,7 @@
 </tr>
 <tr>
 	<td>SELECT_TEMPLATE</td>
-	<td>xpath=(//a[contains(.,'Select')]/span)[2]</td>
+	<td>//button[contains(@id,'selectTemplate')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -119,47 +119,6 @@
 	<td></td>
 	<td></td>
 </tr>
-<!--MENU-->
-<tr>
-	<td>MENU_CONTENT</td>
-	<td>//a[contains(@id,'contentLink')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>MENU_CATEGORIZATION</td>
-	<td>//a[contains(@id,'categorizationLink')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>MENU_SCHEDULE</td>
-	<td>//a[contains(@id,'scheduleLink')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>MENU_DISPLAY_PAGE</td>
-	<td>//a[contains(@id,'displayPageLink')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>MENU_RELATED_ASSETS</td>
-	<td>//a[contains(@id,'relatedAssetsLink')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>MENU_PERMISSIONS</td>
-	<td>//a[contains(@id,'permissionsLink')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>MENU_CUSTOM_FIELDS</td>
-	<td>//a[contains(@id,'customFieldsLink')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td></td>
-	<td></td>
-	<td></td>
-</tr>
 <!--RELATED_ASSETS-->
 <tr>
 	<td>RELATED_ASSETS_SELECT</td>
@@ -179,7 +138,7 @@
 <!--DISPLAY_PAGE-->
 <tr>
 	<td>DISPLAY_PAGE_CHOOSE</td>
-	<td>//div[contains(@id,'displayPage')]/div/button[contains(.,'Choose')]</td>
+	<td>//button[contains(@id,'DisplayPage') and contains(.,'Choose')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -193,6 +152,11 @@
 	<td></td>
 </tr>
 <!--PERMISSIONS-->
+<tr>
+	<td>PERMISSIONS_HEADER</td>
+	<td>//div[@id='PermissionsTitle']/a</td>
+	<td></td>
+</tr>
 <tr>
 	<td>PERMISSIONS_VIEWABLE_BY_SELECT</td>
 	<td>//select[contains(@id,'inputPermissionsViewRole')]</td>

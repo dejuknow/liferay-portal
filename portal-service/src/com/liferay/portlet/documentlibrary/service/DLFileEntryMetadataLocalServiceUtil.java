@@ -287,16 +287,6 @@ public class DLFileEntryMetadataLocalServiceUtil {
 		return getService().getFileEntryMetadata(fileEntryMetadataId);
 	}
 
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link
-	#getFileVersionFileEntryMetadatasCount(long)}
-	*/
-	@Deprecated
-	public static long getFileEntryMetadataCount(long fileEntryId,
-		long fileVersionId) {
-		return getService().getFileEntryMetadataCount(fileEntryId, fileVersionId);
-	}
-
 	public static java.util.List<com.liferay.portlet.documentlibrary.model.DLFileEntryMetadata> getFileVersionFileEntryMetadatas(
 		long fileVersionId) {
 		return getService().getFileVersionFileEntryMetadatas(fileVersionId);
@@ -345,9 +335,9 @@ public class DLFileEntryMetadataLocalServiceUtil {
 	}
 
 	public static void updateFileEntryMetadata(long companyId,
-		java.util.List<com.liferay.portlet.dynamicdatamapping.DDMStructure> ddmStructures,
+		java.util.List<com.liferay.dynamic.data.mapping.kernel.DDMStructure> ddmStructures,
 		long fileEntryId, long fileVersionId,
-		java.util.Map<java.lang.String, com.liferay.portlet.dynamicdatamapping.DDMFormValues> ddmFormValuesMap,
+		java.util.Map<java.lang.String, com.liferay.dynamic.data.mapping.kernel.DDMFormValues> ddmFormValuesMap,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		getService()
@@ -357,7 +347,7 @@ public class DLFileEntryMetadataLocalServiceUtil {
 
 	public static void updateFileEntryMetadata(long fileEntryTypeId,
 		long fileEntryId, long fileVersionId,
-		java.util.Map<java.lang.String, com.liferay.portlet.dynamicdatamapping.DDMFormValues> ddmFormValuesMap,
+		java.util.Map<java.lang.String, com.liferay.dynamic.data.mapping.kernel.DDMFormValues> ddmFormValuesMap,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		getService()
@@ -374,13 +364,6 @@ public class DLFileEntryMetadataLocalServiceUtil {
 		}
 
 		return _service;
-	}
-
-	/**
-	 * @deprecated As of 6.2.0
-	 */
-	@Deprecated
-	public void setService(DLFileEntryMetadataLocalService service) {
 	}
 
 	private static DLFileEntryMetadataLocalService _service;

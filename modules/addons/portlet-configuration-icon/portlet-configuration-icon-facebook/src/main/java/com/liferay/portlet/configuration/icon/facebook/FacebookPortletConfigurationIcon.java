@@ -18,12 +18,10 @@ import com.liferay.portal.kernel.portlet.configuration.icon.BasePortletConfigura
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.theme.PortletDisplay;
 import com.liferay.portlet.PortletPreferencesFactoryUtil;
 
 import javax.portlet.PortletPreferences;
-
-import javax.servlet.http.HttpServletRequest;
+import javax.portlet.PortletRequest;
 
 /**
  * @author Eudaldo Alonso
@@ -31,8 +29,8 @@ import javax.servlet.http.HttpServletRequest;
 public class FacebookPortletConfigurationIcon
 	extends BasePortletConfigurationIcon {
 
-	public FacebookPortletConfigurationIcon(HttpServletRequest request) {
-		super(request);
+	public FacebookPortletConfigurationIcon(PortletRequest portletRequest) {
+		super(portletRequest);
 	}
 
 	@Override
@@ -47,8 +45,6 @@ public class FacebookPortletConfigurationIcon
 
 	@Override
 	public String getURL() {
-		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
-
 		PortletPreferences portletSetup =
 			PortletPreferencesFactoryUtil.getStrictLayoutPortletSetup(
 				themeDisplay.getLayout(), portletDisplay.getId());
@@ -67,8 +63,6 @@ public class FacebookPortletConfigurationIcon
 
 	@Override
 	public boolean isShow() {
-		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
-
 		PortletPreferences portletSetup =
 			PortletPreferencesFactoryUtil.getStrictLayoutPortletSetup(
 				themeDisplay.getLayout(), portletDisplay.getId());

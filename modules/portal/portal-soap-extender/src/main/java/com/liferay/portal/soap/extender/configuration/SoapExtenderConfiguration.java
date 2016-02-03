@@ -16,15 +16,19 @@ package com.liferay.portal.soap.extender.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
-import com.liferay.configuration.admin.ConfigurationAdmin;
+import com.liferay.portal.metatype.annotations.ExtendedObjectClassDefinition;
 
 /**
  * @author Carlos Sierra Andrés
  */
-@ConfigurationAdmin(category = "platform")
+@ExtendedObjectClassDefinition(
+	category = "platform", factoryInstanceLabelAttribute = "contextPaths"
+)
 @Meta.OCD(
 	factory = true,
-	id = "com.liferay.portal.soap.extender.configuration.SoapExtenderConfiguration"
+	id = "com.liferay.portal.soap.extender.configuration.SoapExtenderConfiguration",
+	localization = "content/Language",
+	name = "%soap.extender.configuration.name"
 )
 public interface SoapExtenderConfiguration {
 

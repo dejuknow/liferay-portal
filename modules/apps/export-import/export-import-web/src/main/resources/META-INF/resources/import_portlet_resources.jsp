@@ -274,17 +274,7 @@ ManifestSummary manifestSummary = ExportImportHelperUtil.getManifestSummary(them
 				<liferay-staging:deletions cmd="<%= Constants.IMPORT %>" />
 
 				<aui:fieldset cssClass="options-group" label="permissions">
-					<ul class="lfr-tree list-unstyled">
-						<li class="tree-item">
-							<aui:input helpMessage="export-import-portlet-permissions-help" label="permissions" name="<%= PortletDataHandlerKeys.PERMISSIONS %>" type="checkbox" />
-
-							<ul id="<portlet:namespace />permissionsUl">
-								<li class="tree-item">
-									<aui:input label="permissions-assigned-to-roles" name="permissionsAssignedToRoles" type="checkbox" value="<%= true %>" />
-								</li>
-							</ul>
-						</li>
-					</ul>
+					<aui:input helpMessage="export-import-portlet-permissions-help" label="permissions" name="<%= PortletDataHandlerKeys.PERMISSIONS %>" type="checkbox" />
 				</aui:fieldset>
 			</c:if>
 
@@ -295,9 +285,11 @@ ManifestSummary manifestSummary = ExportImportHelperUtil.getManifestSummary(them
 				<portlet:param name="portletResource" value="<%= String.valueOf(portletResource) %>" />
 			</portlet:renderURL>
 
-			<aui:button href="<%= importPortletURL %>" name="back1" value="back" />
+			<aui:button-row>
+				<aui:button cssClass="btn-lg" href="<%= importPortletURL %>" name="back1" value="back" />
 
-			<aui:button name="continue" primary="<%= true %>" value="continue" />
+				<aui:button cssClass="btn-lg" name="continue" primary="<%= true %>" value="continue" />
+			</aui:button-row>
 		</div>
 
 		<div class="hide" id="<portlet:namespace />importStrategy">
@@ -310,15 +302,15 @@ ManifestSummary manifestSummary = ExportImportHelperUtil.getManifestSummary(them
 			</aui:fieldset>
 
 			<aui:fieldset cssClass="options-group" label="authorship-of-the-content">
-				<aui:input checked="<%= true %>" data-name='<%= LanguageUtil.get(request, "use-the-original-author") %>' helpMessage="use-the-original-author-help"  id="currentUserId" label="use-the-original-author" name="<%= PortletDataHandlerKeys.USER_ID_STRATEGY %>" type="radio" value="<%= UserIdStrategy.CURRENT_USER_ID %>" />
+				<aui:input checked="<%= true %>" data-name='<%= LanguageUtil.get(request, "use-the-original-author") %>' helpMessage="use-the-original-author-help" id="currentUserId" label="use-the-original-author" name="<%= PortletDataHandlerKeys.USER_ID_STRATEGY %>" type="radio" value="<%= UserIdStrategy.CURRENT_USER_ID %>" />
 
 				<aui:input data-name='<%= LanguageUtil.get(request, "always-use-my-user-id") %>' helpMessage="use-the-current-user-as-author-help" id="alwaysCurrentUserId" label="use-the-current-user-as-author" name="<%= PortletDataHandlerKeys.USER_ID_STRATEGY %>" type="radio" value="<%= UserIdStrategy.ALWAYS_CURRENT_USER_ID %>" />
 			</aui:fieldset>
 
 			<aui:button-row>
-				<aui:button name="back" value="back" />
+				<aui:button cssClass="btn-lg" name="back" value="back" />
 
-				<aui:button type="submit" value="import" />
+				<aui:button cssClass="btn-lg" type="submit" value="import" />
 			</aui:button-row>
 		</div>
 	</aui:form>

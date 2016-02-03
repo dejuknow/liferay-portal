@@ -14,8 +14,7 @@
 
 package com.liferay.portal.js.bundle.config.extender;
 
-import aQute.lib.converter.Converter;
-
+import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.StreamUtil;
 
 import java.io.IOException;
@@ -50,7 +49,7 @@ import org.osgi.service.component.annotations.Reference;
 	property = {
 		"osgi.http.whiteboard.servlet.name=JS Bundle Config Servlet",
 		"osgi.http.whiteboard.servlet.pattern=/js_bundle_config",
-		"service.ranking:Integer=" + Details.MAX_VALUE_LESS_1K
+		"service.ranking:Integer=" + (Integer.MAX_VALUE - 1000)
 	},
 	service = {JSBundleConfigServlet.class, Servlet.class}
 )
@@ -63,8 +62,6 @@ public class JSBundleConfigServlet extends HttpServlet {
 		throws Exception {
 
 		_logger = new Logger(componentContext.getBundleContext());
-
-		setDetails(Converter.cnv(Details.class, properties));
 	}
 
 	protected JSBundleConfigTracker getJSBundleConfigTracker() {
@@ -76,7 +73,7 @@ public class JSBundleConfigServlet extends HttpServlet {
 			HttpServletRequest request, HttpServletResponse response)
 		throws IOException {
 
-		response.setContentType(Details.CONTENT_TYPE);
+		response.setContentType(ContentTypes.TEXT_JAVASCRIPT_UTF8);
 
 		ServletOutputStream servletOutputStream = response.getOutputStream();
 
@@ -109,10 +106,6 @@ public class JSBundleConfigServlet extends HttpServlet {
 		printWriter.close();
 	}
 
-	protected void setDetails(Details details) {
-		_details = details;
-	}
-
 	@Reference(unbind = "-")
 	protected void setJSBundleConfigTracker(
 		JSBundleConfigTracker jsBundleConfigTracker) {
@@ -120,8 +113,7 @@ public class JSBundleConfigServlet extends HttpServlet {
 		_jsBundleConfigTracker = jsBundleConfigTracker;
 	}
 
-	private volatile Details _details;
-	private volatile JSBundleConfigTracker _jsBundleConfigTracker;
+	private JSBundleConfigTracker _jsBundleConfigTracker;
 	private Logger _logger;
 
 }

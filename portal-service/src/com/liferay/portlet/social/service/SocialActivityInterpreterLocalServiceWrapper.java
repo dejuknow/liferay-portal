@@ -78,19 +78,6 @@ public class SocialActivityInterpreterLocalServiceWrapper
 	}
 
 	/**
-	* @deprecated As of 6.2.0, replaced by {@link #interpret(String,
-	SocialActivity, ServiceContext)}
-	*/
-	@Deprecated
-	@Override
-	public com.liferay.portlet.social.model.SocialActivityFeedEntry interpret(
-		com.liferay.portlet.social.model.SocialActivity activity,
-		com.liferay.portal.theme.ThemeDisplay themeDisplay) {
-		return _socialActivityInterpreterLocalService.interpret(activity,
-			themeDisplay);
-	}
-
-	/**
 	* Creates a human readable activity feed entry for the activity using an
 	* available compatible activity interpreter.
 	*
@@ -129,23 +116,6 @@ public class SocialActivityInterpreterLocalServiceWrapper
 	public void updateActivitySet(long activityId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		_socialActivityInterpreterLocalService.updateActivitySet(activityId);
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
-	 */
-	@Deprecated
-	public SocialActivityInterpreterLocalService getWrappedSocialActivityInterpreterLocalService() {
-		return _socialActivityInterpreterLocalService;
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #setWrappedService}
-	 */
-	@Deprecated
-	public void setWrappedSocialActivityInterpreterLocalService(
-		SocialActivityInterpreterLocalService socialActivityInterpreterLocalService) {
-		_socialActivityInterpreterLocalService = socialActivityInterpreterLocalService;
 	}
 
 	@Override

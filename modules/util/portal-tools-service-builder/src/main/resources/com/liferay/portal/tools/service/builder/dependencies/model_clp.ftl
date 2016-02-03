@@ -1,19 +1,19 @@
-package ${packagePath}.model;
+package ${apiPackagePath}.model;
 
-import ${packagePath}.service.ClpSerializer;
+import ${apiPackagePath}.service.ClpSerializer;
 
 <#if entity.hasLocalService() && entity.hasColumns()>
-	import ${packagePath}.service.${entity.name}LocalServiceUtil;
+	import ${apiPackagePath}.service.${entity.name}LocalServiceUtil;
 </#if>
 
 <#if entity.hasCompoundPK()>
-	import ${packagePath}.service.persistence.${entity.name}PK;
+	import ${apiPackagePath}.service.persistence.${entity.name}PK;
 </#if>
 
 import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.LocaleException;
-import com.liferay.portal.NoSuchModelException;
+import com.liferay.portal.exception.NoSuchModelException;
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
@@ -646,15 +646,6 @@ public class ${entity.name}Clp extends BaseModelImpl<${entity.name}> implements 
 	</#if>
 
 	<#if entity.isWorkflowEnabled()>
-		/**
-		 * @deprecated As of 6.1.0, replaced by {@link #isApproved}
-		 */
-		@Deprecated
-		@Override
-		public boolean getApproved() {
-			return isApproved();
-		}
-
 		@Override
 		public boolean isApproved() {
 			if (getStatus() == WorkflowConstants.STATUS_APPROVED) {
@@ -1065,7 +1056,7 @@ public class ${entity.name}Clp extends BaseModelImpl<${entity.name}> implements 
 	</#list>
 
 	private BaseModel<?> _${entity.varName}RemoteModel;
-	private Class<?> _clpSerializerClass = ${packagePath}.service.ClpSerializer.class;
+	private Class<?> _clpSerializerClass = ${apiPackagePath}.service.ClpSerializer.class;
 	private boolean _entityCacheEnabled;
 	private boolean _finderCacheEnabled;
 

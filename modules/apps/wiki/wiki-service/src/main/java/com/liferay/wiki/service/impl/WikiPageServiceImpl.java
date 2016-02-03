@@ -20,6 +20,7 @@ import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.module.configuration.ConfigurationFactory;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.settings.GroupServiceSettingsLocator;
 import com.liferay.portal.kernel.util.CalendarFactoryUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
@@ -30,7 +31,6 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 import com.liferay.portal.util.PortalUtil;
@@ -215,18 +215,6 @@ public class WikiPageServiceImpl extends WikiPageServiceBaseImpl {
 		wikiPageLocalService.deletePage(nodeId, title);
 	}
 
-	/**
-	 * @deprecated As of 6.2.0 replaced by {@link #discardDraft(long, String,
-	 *             double)}
-	 */
-	@Deprecated
-	@Override
-	public void deletePage(long nodeId, String title, double version)
-		throws PortalException {
-
-		discardDraft(nodeId, title, version);
-	}
-
 	@Override
 	public void deletePageAttachment(long nodeId, String title, String fileName)
 		throws PortalException {
@@ -350,21 +338,6 @@ public class WikiPageServiceImpl extends WikiPageServiceBaseImpl {
 		return pages;
 	}
 
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link #getNodePagesRSS(long, int,
-	 *             String, double, String, String, String, String)}
-	 */
-	@Deprecated
-	@Override
-	public String getNodePagesRSS(
-			long nodeId, int max, String type, double version,
-			String displayStyle, String feedURL, String entryURL)
-		throws PortalException {
-
-		return getNodePagesRSS(
-			nodeId, max, type, version, displayStyle, feedURL, entryURL, null);
-	}
-
 	@Override
 	public String getNodePagesRSS(
 			long nodeId, int max, String type, double version,
@@ -395,6 +368,14 @@ public class WikiPageServiceImpl extends WikiPageServiceBaseImpl {
 			groupId, nodeId, true, WorkflowConstants.STATUS_APPROVED);
 
 		return WikiUtil.filterOrphans(pages);
+	}
+
+	@Override
+	public WikiPage getPage(long pageId) throws PortalException {
+		WikiPagePermissionChecker.check(
+			getPermissionChecker(), pageId, ActionKeys.VIEW);
+
+		return wikiPageLocalService.getPage(pageId);
 	}
 
 	@Override
@@ -553,23 +534,6 @@ public class WikiPageServiceImpl extends WikiPageServiceBaseImpl {
 		}
 	}
 
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link #getPagesRSS(long, String,
-	 *             int, String, double, String, String, String, String, Locale)}
-	 */
-	@Deprecated
-	@Override
-	public String getPagesRSS(
-			long companyId, long nodeId, String title, int max, String type,
-			double version, String displayStyle, String feedURL,
-			String entryURL, Locale locale)
-		throws PortalException {
-
-		return getPagesRSS(
-			nodeId, title, max, type, version, displayStyle, feedURL, entryURL,
-			null, locale);
-	}
-
 	@Override
 	public String getPagesRSS(
 			long nodeId, String title, int max, String type, double version,
@@ -630,20 +594,6 @@ public class WikiPageServiceImpl extends WikiPageServiceBaseImpl {
 
 		return wikiPageLocalService.getTempFileNames(
 			node.getGroupId(), getUserId(), folderName);
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link #renamePage(long, String,
-	 *             String, ServiceContext)}
-	 */
-	@Deprecated
-	@Override
-	public void movePage(
-			long nodeId, String title, String newTitle,
-			ServiceContext serviceContext)
-		throws PortalException {
-
-		renamePage(nodeId, title, newTitle, serviceContext);
 	}
 
 	@Override

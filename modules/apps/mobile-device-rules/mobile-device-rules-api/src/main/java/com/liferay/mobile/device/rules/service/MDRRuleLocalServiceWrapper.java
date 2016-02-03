@@ -394,6 +394,13 @@ public class MDRRuleLocalServiceWrapper implements MDRRuleLocalService,
 	}
 
 	@Override
+	public java.util.List<com.liferay.mobile.device.rules.model.MDRRule> getRules(
+		long ruleGroupId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.mobile.device.rules.model.MDRRule> obc) {
+		return _mdrRuleLocalService.getRules(ruleGroupId, start, end, obc);
+	}
+
+	@Override
 	public int getRulesCount(long ruleGroupId) {
 		return _mdrRuleLocalService.getRulesCount(ruleGroupId);
 	}
@@ -431,23 +438,6 @@ public class MDRRuleLocalServiceWrapper implements MDRRuleLocalService,
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _mdrRuleLocalService.updateRule(ruleId, nameMap, descriptionMap,
 			type, typeSettingsProperties, serviceContext);
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
-	 */
-	@Deprecated
-	public MDRRuleLocalService getWrappedMDRRuleLocalService() {
-		return _mdrRuleLocalService;
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #setWrappedService}
-	 */
-	@Deprecated
-	public void setWrappedMDRRuleLocalService(
-		MDRRuleLocalService mdrRuleLocalService) {
-		_mdrRuleLocalService = mdrRuleLocalService;
 	}
 
 	@Override

@@ -6,18 +6,11 @@
 	<var name="portletName" value="Friends Directory" />
 
 	<set-up>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="SignIn#signInPortalInstanceSetUp" />
-			</then>
-		</if>
+		<execute macro="TestCase#setUpPortalInstance" />
 
 		<execute macro="User#firstLoginPG" />
 
-		<execute macro="Page#addPG">
+		<execute macro="Page#add">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -44,7 +37,7 @@
 				<execute macro="Page#tearDownPG" />
 
 				<execute macro="Page#tearDownPG">
-					<var name="siteName" value="test" />
+					<var name="site" value="test" />
 					<var name="siteURL" value="true" />
 				</execute>
 			</else>
@@ -59,8 +52,8 @@
 		<var name="userMiddleName" value="usermn" />
 		<var name="userScreenName" value="usersn" />
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Users and Organizations" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
 		<execute macro="User#addCP">
@@ -71,8 +64,8 @@
 			<var name="userScreenName" value="${userScreenName}" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Users and Organizations" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
 		<execute macro="User#editPasswordCP">
@@ -84,13 +77,21 @@
 
 		<execute macro="ProductMenu#gotoPersonalSite" />
 
-		<execute macro="ProductMenu#gotoSitesPages">
-			<var name="portlet" value="Site Pages" />
+		<execute macro="ProductMenuHelper#expandPanelSites" />
+
+		<execute macro="ProductMenuHelper#expandCategory">
+			<var name="category" value="Pages" />
 		</execute>
 
-		<execute macro="SitePage#addFromMyProfile">
-			<var name="pageName" value="Friends Request Page" />
-		</execute>
+		<var name="key_page" value="My Profile" />
+
+		<execute function="Click" locator1="ProductMenu#ADD_PAGE_ICON" />
+
+		<execute function="Type#typeClickAt" locator1="TextInput#NAME" value1="Friends Request Page" />
+
+		<execute function="AssertClick" locator1="Button#ADD_PAGE_BTN" value1="Add Page" />
+
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
 
 		<execute macro="Page#gotoPG">
 			<var name="pageName" value="${pageName}" />
@@ -108,9 +109,8 @@
 			<var name="portletName" value="Requests" />
 		</execute>
 
-		<execute macro="Page#openURL">
+		<execute macro="Navigator#openSiteURL">
 			<var name="siteName" value="test" />
-			<var name="siteURL" value="true" />
 		</execute>
 
 		<execute macro="ProductMenuHelper#openProductMenu" />

@@ -31,18 +31,18 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.BaseIndexer;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.search.IndexWriterHelperUtil;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.SearchContext;
-import com.liferay.portal.kernel.search.SearchEngineUtil;
 import com.liferay.portal.kernel.search.Summary;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.model.Group;
-import com.liferay.portal.security.permission.ActionKeys;
-import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.service.GroupLocalService;
 
 import java.util.Locale;
@@ -132,7 +132,7 @@ public class BookmarksEntryIndexer extends BaseIndexer<BookmarksEntry> {
 	protected void doReindex(BookmarksEntry bookmarksEntry) throws Exception {
 		Document document = getDocument(bookmarksEntry);
 
-		SearchEngineUtil.updateDocument(
+		IndexWriterHelperUtil.updateDocument(
 			getSearchEngineId(), bookmarksEntry.getCompanyId(), document,
 			isCommitImmediately());
 	}
@@ -191,7 +191,7 @@ public class BookmarksEntryIndexer extends BaseIndexer<BookmarksEntry> {
 					try {
 						Document document = getDocument(entry);
 
-						indexableActionableDynamicQuery.addDocument(document);
+						indexableActionableDynamicQuery.addDocuments(document);
 					}
 					catch (PortalException pe) {
 						if (_log.isWarnEnabled()) {
@@ -276,8 +276,8 @@ public class BookmarksEntryIndexer extends BaseIndexer<BookmarksEntry> {
 	private static final Log _log = LogFactoryUtil.getLog(
 		BookmarksEntryIndexer.class);
 
-	private volatile BookmarksEntryLocalService _bookmarksEntryLocalService;
-	private volatile BookmarksFolderLocalService _bookmarksFolderLocalService;
-	private volatile GroupLocalService _groupLocalService;
+	private BookmarksEntryLocalService _bookmarksEntryLocalService;
+	private BookmarksFolderLocalService _bookmarksFolderLocalService;
+	private GroupLocalService _groupLocalService;
 
 }

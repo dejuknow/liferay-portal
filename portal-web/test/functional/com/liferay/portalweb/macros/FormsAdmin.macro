@@ -1,16 +1,59 @@
 <definition>
+	<var name="formDescription" value="Created Form Description" />
 	<var name="formName" value="Created Form Name" />
 
 	<command name="deleteForm">
-		<var name="key_formName" value="${formName}" />
+		<var name="key_rowEntry" value="${formName}" />
 
-		<execute function="Click" locator1="FormsAdmin#FORMS_TABLE_ELLIPSIS" />
+		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
 
 		<execute function="AssertClick" locator1="MenuItem#DELETE" value1="Delete" />
 
 		<execute function="Confirm" value1="Are you sure you want to delete this? It will be deleted immediately." />
 
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+	</command>
+
+	<command name="editDataProvider">
+		<execute macro="FormFields#editText">
+			<var name="fieldName" value="DataProviderPortlet_name" />
+			<var name="fieldValue" value="${name}" />
+		</execute>
+
+		<execute macro="FormFields#editText">
+			<var name="fieldName" value="$url" />
+			<var name="fieldValue" value="${url}" />
+		</execute>
+
+		<execute macro="FormFields#editText">
+			<var name="fieldName" value="$key" />
+			<var name="fieldValue" value="${displayedAttribute}" />
+		</execute>
+
+		<execute macro="FormFields#editText">
+			<var name="fieldName" value="$value" />
+			<var name="fieldValue" value="${storedAttribute}" />
+		</execute>
+
+		<execute macro="FormFields#editText">
+			<var name="fieldName" value="$username" />
+			<var name="fieldValue" value="${username}" />
+		</execute>
+
+		<execute macro="FormFields#editText">
+			<var name="fieldName" value="$password" />
+			<var name="fieldValue" value="${password}" />
+		</execute>
+	</command>
+
+	<command name="saveDataProvider">
+		<execute function="SelectFrame" value1="relative=top" />
+
+		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
+
+		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
+
+		<execute macro="Alert#viewRequestCompletedSuccessMessage" />
 	</command>
 
 	<command name="searchFormEntry">
@@ -29,7 +72,7 @@
 
 				<execute function="Confirm" value1="Are you sure you want to delete this? It will be deleted immediately." />
 
-				<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+				<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
 			</then>
 		</while>
 	</command>
@@ -45,8 +88,14 @@
 		<var name="key_formName" value="${formName}" />
 
 		<execute function="AssertTextEquals" locator1="FormsAdmin#FORMS_TABLE_NAME" value1="${formName}" />
+
+		<var name="key_formDescription" value="${formDescription}" />
+
 		<execute function="AssertTextEquals" locator1="FormsAdmin#FORMS_TABLE_DESCRIPTION" value1="${formDescription}" />
-		<execute function="AssertElementPresent" locator1="FormsAdmin#FORMS_TABLE_ELLIPSIS" />
+
+		<var name="key_rowEntry" value="${formName}" />
+
+		<execute function="AssertElementPresent" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
 	</command>
 
 	<command name="viewFormEntry">
@@ -54,6 +103,14 @@
 		<var name="key_fieldValue" value="${fieldValue}" />
 
 		<execute function="AssertTextEquals" locator1="FormsAdmin#FORM_ENTRY_TABLE_ENTRY" value1="${fieldValue}" />
+	</command>
+
+	<command name="viewFormIcon">
+		<var name="key_formName" value="${formName}" />
+
+		<execute function="AssertElementPresent" locator1="FormsAdmin#FORM_ICON_DISPLAY_THUMBNAIL" />
+
+		<execute function="AssertTextEquals" locator1="FormsAdmin#FORM_ICON_DISPLAY_NAME" value1="${formName}" />
 	</command>
 
 	<command name="viewNoFormEntries">

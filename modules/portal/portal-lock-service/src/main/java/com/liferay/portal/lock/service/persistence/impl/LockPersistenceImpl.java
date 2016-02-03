@@ -38,6 +38,8 @@ import com.liferay.portal.lock.model.impl.LockModelImpl;
 import com.liferay.portal.lock.service.persistence.LockPersistence;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.MVCCModel;
+import com.liferay.portal.service.persistence.CompanyProvider;
+import com.liferay.portal.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 
@@ -208,7 +210,7 @@ public class LockPersistenceImpl extends BasePersistenceImpl<Lock>
 
 			if (orderByComparator != null) {
 				query = new StringBundler(3 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(3);
@@ -290,7 +292,7 @@ public class LockPersistenceImpl extends BasePersistenceImpl<Lock>
 	 * @param uuid the uuid
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching lock
-	 * @throws com.liferay.portal.lock.NoSuchLockException if a matching lock could not be found
+	 * @throws NoSuchLockException if a matching lock could not be found
 	 */
 	@Override
 	public Lock findByUuid_First(String uuid,
@@ -338,7 +340,7 @@ public class LockPersistenceImpl extends BasePersistenceImpl<Lock>
 	 * @param uuid the uuid
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching lock
-	 * @throws com.liferay.portal.lock.NoSuchLockException if a matching lock could not be found
+	 * @throws NoSuchLockException if a matching lock could not be found
 	 */
 	@Override
 	public Lock findByUuid_Last(String uuid,
@@ -393,7 +395,7 @@ public class LockPersistenceImpl extends BasePersistenceImpl<Lock>
 	 * @param uuid the uuid
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next lock
-	 * @throws com.liferay.portal.lock.NoSuchLockException if a lock with the primary key could not be found
+	 * @throws NoSuchLockException if a lock with the primary key could not be found
 	 */
 	@Override
 	public Lock[] findByUuid_PrevAndNext(long lockId, String uuid,
@@ -430,8 +432,9 @@ public class LockPersistenceImpl extends BasePersistenceImpl<Lock>
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+			query = new StringBundler(4 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
 			query = new StringBundler(3);
@@ -758,7 +761,7 @@ public class LockPersistenceImpl extends BasePersistenceImpl<Lock>
 
 			if (orderByComparator != null) {
 				query = new StringBundler(4 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(4);
@@ -845,7 +848,7 @@ public class LockPersistenceImpl extends BasePersistenceImpl<Lock>
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching lock
-	 * @throws com.liferay.portal.lock.NoSuchLockException if a matching lock could not be found
+	 * @throws NoSuchLockException if a matching lock could not be found
 	 */
 	@Override
 	public Lock findByUuid_C_First(String uuid, long companyId,
@@ -898,7 +901,7 @@ public class LockPersistenceImpl extends BasePersistenceImpl<Lock>
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching lock
-	 * @throws com.liferay.portal.lock.NoSuchLockException if a matching lock could not be found
+	 * @throws NoSuchLockException if a matching lock could not be found
 	 */
 	@Override
 	public Lock findByUuid_C_Last(String uuid, long companyId,
@@ -959,7 +962,7 @@ public class LockPersistenceImpl extends BasePersistenceImpl<Lock>
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next lock
-	 * @throws com.liferay.portal.lock.NoSuchLockException if a lock with the primary key could not be found
+	 * @throws NoSuchLockException if a lock with the primary key could not be found
 	 */
 	@Override
 	public Lock[] findByUuid_C_PrevAndNext(long lockId, String uuid,
@@ -998,11 +1001,12 @@ public class LockPersistenceImpl extends BasePersistenceImpl<Lock>
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+			query = new StringBundler(5 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
-			query = new StringBundler(3);
+			query = new StringBundler(4);
 		}
 
 		query.append(_SQL_SELECT_LOCK_WHERE);
@@ -1317,7 +1321,7 @@ public class LockPersistenceImpl extends BasePersistenceImpl<Lock>
 
 			if (orderByComparator != null) {
 				query = new StringBundler(3 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(3);
@@ -1396,7 +1400,7 @@ public class LockPersistenceImpl extends BasePersistenceImpl<Lock>
 	 * @param expirationDate the expiration date
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching lock
-	 * @throws com.liferay.portal.lock.NoSuchLockException if a matching lock could not be found
+	 * @throws NoSuchLockException if a matching lock could not be found
 	 */
 	@Override
 	public Lock findByLtExpirationDate_First(Date expirationDate,
@@ -1446,7 +1450,7 @@ public class LockPersistenceImpl extends BasePersistenceImpl<Lock>
 	 * @param expirationDate the expiration date
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching lock
-	 * @throws com.liferay.portal.lock.NoSuchLockException if a matching lock could not be found
+	 * @throws NoSuchLockException if a matching lock could not be found
 	 */
 	@Override
 	public Lock findByLtExpirationDate_Last(Date expirationDate,
@@ -1503,7 +1507,7 @@ public class LockPersistenceImpl extends BasePersistenceImpl<Lock>
 	 * @param expirationDate the expiration date
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next lock
-	 * @throws com.liferay.portal.lock.NoSuchLockException if a lock with the primary key could not be found
+	 * @throws NoSuchLockException if a lock with the primary key could not be found
 	 */
 	@Override
 	public Lock[] findByLtExpirationDate_PrevAndNext(long lockId,
@@ -1542,8 +1546,9 @@ public class LockPersistenceImpl extends BasePersistenceImpl<Lock>
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+			query = new StringBundler(4 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
 			query = new StringBundler(3);
@@ -1743,12 +1748,12 @@ public class LockPersistenceImpl extends BasePersistenceImpl<Lock>
 			new String[] { String.class.getName(), String.class.getName() });
 
 	/**
-	 * Returns the lock where className = &#63; and key = &#63; or throws a {@link com.liferay.portal.lock.NoSuchLockException} if it could not be found.
+	 * Returns the lock where className = &#63; and key = &#63; or throws a {@link NoSuchLockException} if it could not be found.
 	 *
 	 * @param className the class name
 	 * @param key the key
 	 * @return the matching lock
-	 * @throws com.liferay.portal.lock.NoSuchLockException if a matching lock could not be found
+	 * @throws NoSuchLockException if a matching lock could not be found
 	 */
 	@Override
 	public Lock findByC_K(String className, String key)
@@ -2165,6 +2170,8 @@ public class LockPersistenceImpl extends BasePersistenceImpl<Lock>
 
 		lock.setUuid(uuid);
 
+		lock.setCompanyId(companyProvider.getCompanyId());
+
 		return lock;
 	}
 
@@ -2173,7 +2180,7 @@ public class LockPersistenceImpl extends BasePersistenceImpl<Lock>
 	 *
 	 * @param lockId the primary key of the lock
 	 * @return the lock that was removed
-	 * @throws com.liferay.portal.lock.NoSuchLockException if a lock with the primary key could not be found
+	 * @throws NoSuchLockException if a lock with the primary key could not be found
 	 */
 	@Override
 	public Lock remove(long lockId) throws NoSuchLockException {
@@ -2185,7 +2192,7 @@ public class LockPersistenceImpl extends BasePersistenceImpl<Lock>
 	 *
 	 * @param primaryKey the primary key of the lock
 	 * @return the lock that was removed
-	 * @throws com.liferay.portal.lock.NoSuchLockException if a lock with the primary key could not be found
+	 * @throws NoSuchLockException if a lock with the primary key could not be found
 	 */
 	@Override
 	public Lock remove(Serializable primaryKey) throws NoSuchLockException {
@@ -2365,11 +2372,11 @@ public class LockPersistenceImpl extends BasePersistenceImpl<Lock>
 	}
 
 	/**
-	 * Returns the lock with the primary key or throws a {@link com.liferay.portal.NoSuchModelException} if it could not be found.
+	 * Returns the lock with the primary key or throws a {@link com.liferay.portal.exception.NoSuchModelException} if it could not be found.
 	 *
 	 * @param primaryKey the primary key of the lock
 	 * @return the lock
-	 * @throws com.liferay.portal.lock.NoSuchLockException if a lock with the primary key could not be found
+	 * @throws NoSuchLockException if a lock with the primary key could not be found
 	 */
 	@Override
 	public Lock findByPrimaryKey(Serializable primaryKey)
@@ -2389,11 +2396,11 @@ public class LockPersistenceImpl extends BasePersistenceImpl<Lock>
 	}
 
 	/**
-	 * Returns the lock with the primary key or throws a {@link com.liferay.portal.lock.NoSuchLockException} if it could not be found.
+	 * Returns the lock with the primary key or throws a {@link NoSuchLockException} if it could not be found.
 	 *
 	 * @param lockId the primary key of the lock
 	 * @return the lock
-	 * @throws com.liferay.portal.lock.NoSuchLockException if a lock with the primary key could not be found
+	 * @throws NoSuchLockException if a lock with the primary key could not be found
 	 */
 	@Override
 	public Lock findByPrimaryKey(long lockId) throws NoSuchLockException {
@@ -2636,7 +2643,7 @@ public class LockPersistenceImpl extends BasePersistenceImpl<Lock>
 
 			if (orderByComparator != null) {
 				query = new StringBundler(2 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 
 				query.append(_SQL_SELECT_LOCK);
 
@@ -2761,6 +2768,8 @@ public class LockPersistenceImpl extends BasePersistenceImpl<Lock>
 		finderCache.removeCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 	}
 
+	@ServiceReference(type = CompanyProviderWrapper.class)
+	protected CompanyProvider companyProvider;
 	@ServiceReference(type = EntityCache.class)
 	protected EntityCache entityCache;
 	@ServiceReference(type = FinderCache.class)

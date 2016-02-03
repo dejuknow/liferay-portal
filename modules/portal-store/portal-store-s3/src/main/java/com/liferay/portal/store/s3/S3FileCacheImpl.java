@@ -90,7 +90,7 @@ public class S3FileCacheImpl implements S3FileCache {
 	public File getCacheFile(S3Object s3Object, String fileName)
 		throws IOException {
 
-		StringBundler sb = new StringBundler(5);
+		StringBundler sb = new StringBundler(4);
 
 		sb.append(getCacheDirName());
 		sb.append(
@@ -211,7 +211,7 @@ public class S3FileCacheImpl implements S3FileCache {
 	private AtomicInteger _cacheDirCleanUpExpunge;
 	private AtomicInteger _cacheDirCleanUpFrequency;
 	private int _calledCleanUpCacheFilesCount;
-	private volatile S3KeyTransformer _s3KeyTransformer;
+	private S3KeyTransformer _s3KeyTransformer;
 	private volatile S3StoreConfiguration _s3StoreConfiguration;
 
 }

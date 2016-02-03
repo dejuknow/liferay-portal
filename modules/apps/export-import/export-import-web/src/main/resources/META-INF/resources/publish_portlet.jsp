@@ -87,7 +87,7 @@ portletURL.setParameter("tabs3", "current-and-previous");
 			<liferay-ui:section>
 
 				<%
-				int incompleteBackgroundTaskCount = BackgroundTaskManagerUtil.getBackgroundTasksCount(themeDisplay.getScopeGroupId(), selPortlet.getPortletId(), BackgroundTaskExecutorNames.PORTLET_STAGING_BACKGROUND_TASK_EXECUTOR, false);
+				int incompleteBackgroundTaskCount = BackgroundTaskManagerUtil.getBackgroundTasksCount(StagingUtil.getStagingAndLiveGroupIds(themeDisplay.getScopeGroupId()), selPortlet.getPortletId(), BackgroundTaskExecutorNames.PORTLET_STAGING_BACKGROUND_TASK_EXECUTOR, false);
 				%>
 
 				<div class="<%= (incompleteBackgroundTaskCount == 0) ? "hide" : "in-progress" %>" id="<portlet:namespace />incompleteProcessMessage">
@@ -310,8 +310,9 @@ portletURL.setParameter("tabs3", "current-and-previous");
 											</liferay-util:buffer>
 
 											<liferay-ui:icon
-												iconCssClass="icon-calendar"
+												iconCssClass="calendar"
 												label="<%= true %>"
+												markupView="lexicon"
 												message='<%= LanguageUtil.get(request, "date-range") + selectedLabelsHTML %>'
 											/>
 										</li>
@@ -438,19 +439,14 @@ portletURL.setParameter("tabs3", "current-and-previous");
 							<liferay-staging:deletions cmd="<%= Constants.PUBLISH %>" />
 
 							<aui:fieldset cssClass="options-group" label="permissions">
-
-								<%
-								Map<String, String[]> parameterMap = Collections.emptyMap();
-								%>
-
-								<%@ include file="/permissions.jspf" %>
+								<aui:input helpMessage='<%= group.isCompany() ? "publish-global-permissions-help" : "export-import-permissions-help" %>' label="permissions" name="<%= PortletDataHandlerKeys.PERMISSIONS %>" type="toggle-switch" />
 							</aui:fieldset>
 						</c:if>
 
 						<aui:button-row>
-							<aui:button type="submit" value="publish-to-live" />
+							<aui:button cssClass="btn-lg" type="submit" value="publish-to-live" />
 
-							<aui:button onClick='<%= renderResponse.getNamespace() + "copyFromLive();" %>' value="copy-from-live" />
+							<aui:button cssClass="btn-lg" onClick='<%= renderResponse.getNamespace() + "copyFromLive();" %>' value="copy-from-live" />
 						</aui:button-row>
 					</div>
 				</aui:form>

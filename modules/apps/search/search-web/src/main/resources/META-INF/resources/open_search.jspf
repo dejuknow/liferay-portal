@@ -15,7 +15,7 @@
 --%>
 
 <aui:button-row>
-	<aui:button onClick='<%= renderResponse.getNamespace() + "addSearchProvider();" %>' value='<%= LanguageUtil.format(request, "add-x-as-a-search-provider", HtmlUtil.escape(company.getName()), false) %>' />
+	<aui:button cssClass="btn-lg" onClick='<%= renderResponse.getNamespace() + "addSearchProvider();" %>' value='<%= LanguageUtil.format(request, "add-x-as-a-search-provider", HtmlUtil.escape(company.getName()), false) %>' />
 </aui:button-row>
 
 <%
@@ -84,10 +84,10 @@ for (int i = 0; i < openSearchInstances.size(); i++) {
 
 		<liferay-ui:search-container
 			searchContainer="<%= openSearchSearchContainer %>"
+			total="<%= totalRows %>"
 		>
 			<liferay-ui:search-container-results
 				results="<%= resultRows %>"
-				total="<%= totalRows %>"
 			/>
 			<div class="section-title">
 

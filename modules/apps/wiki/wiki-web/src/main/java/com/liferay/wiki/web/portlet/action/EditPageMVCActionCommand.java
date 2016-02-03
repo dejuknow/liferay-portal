@@ -17,6 +17,7 @@ package com.liferay.wiki.web.portlet.action;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -25,19 +26,20 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.model.Layout;
-import com.liferay.portal.security.auth.PrincipalException;
+import com.liferay.portal.model.TrashedModel;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
 import com.liferay.portal.struts.StrutsActionPortletURL;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portlet.PortletResponseImpl;
 import com.liferay.portlet.PortletURLImpl;
-import com.liferay.portlet.asset.AssetCategoryException;
-import com.liferay.portlet.asset.AssetTagException;
+import com.liferay.portlet.asset.exception.AssetCategoryException;
+import com.liferay.portlet.asset.exception.AssetTagException;
 import com.liferay.portlet.trash.model.TrashEntry;
 import com.liferay.portlet.trash.service.TrashEntryLocalService;
 import com.liferay.portlet.trash.service.TrashEntryService;
 import com.liferay.portlet.trash.util.TrashUtil;
+import com.liferay.wiki.WikiAttachmentsHelper;
 import com.liferay.wiki.configuration.WikiGroupServiceConfiguration;
 import com.liferay.wiki.constants.WikiPortletKeys;
 import com.liferay.wiki.exception.DuplicatePageException;
@@ -53,6 +55,9 @@ import com.liferay.wiki.service.WikiPageResourceLocalService;
 import com.liferay.wiki.service.WikiPageService;
 import com.liferay.wiki.web.util.WikiWebComponentProvider;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletRequest;
@@ -63,6 +68,7 @@ import org.osgi.service.component.annotations.Reference;
 /**
  * @author Brian Wing Shun Chan
  * @author Jorge Ferrer
+ * @author Roberto Díaz
  */
 @Component(
 	immediate = true,
@@ -76,6 +82,13 @@ import org.osgi.service.component.annotations.Reference;
 )
 public class EditPageMVCActionCommand extends BaseMVCActionCommand {
 
+	@Reference(unbind = "-")
+	public void setWikiAttachmentsHelper(
+		WikiAttachmentsHelper wikiAttachmentsHelper) {
+
+		_wikiAttachmentsHelper = wikiAttachmentsHelper;
+	}
+
 	protected void deletePage(ActionRequest actionRequest, boolean moveToTrash)
 		throws Exception {
 
@@ -83,28 +96,46 @@ public class EditPageMVCActionCommand extends BaseMVCActionCommand {
 		String title = ParamUtil.getString(actionRequest, "title");
 		double version = ParamUtil.getDouble(actionRequest, "version");
 
-		WikiPage wikiPage = null;
+		String[] deletePageTitles = null;
 
-		if (moveToTrash) {
-			if (version > 0) {
-				wikiPage = _wikiPageService.movePageToTrash(
-					nodeId, title, version);
-			}
-			else {
-				wikiPage = _wikiPageService.movePageToTrash(nodeId, title);
-			}
+		if (Validator.isNotNull(title)) {
+			deletePageTitles = new String[] {title};
 		}
 		else {
-			if (version > 0) {
-				_wikiPageService.discardDraft(nodeId, title, version);
+			deletePageTitles = ParamUtil.getStringValues(
+				actionRequest, "rowIdsWikiPage");
+		}
+
+		List<TrashedModel> trashedModels = new ArrayList<>();
+
+		for (String deletePageTitle : deletePageTitles) {
+			if (moveToTrash) {
+				WikiPage trashedWikiPage = null;
+
+				if (version > 0) {
+					trashedWikiPage = _wikiPageService.movePageToTrash(
+						nodeId, deletePageTitle, version);
+				}
+				else {
+					trashedWikiPage = _wikiPageService.movePageToTrash(
+						nodeId, deletePageTitle);
+				}
+
+				trashedModels.add(trashedWikiPage);
 			}
 			else {
-				_wikiPageService.deletePage(nodeId, title);
+				if (version > 0) {
+					_wikiPageService.discardDraft(
+						nodeId, deletePageTitle, version);
+				}
+				else {
+					_wikiPageService.deletePage(nodeId, deletePageTitle);
+				}
 			}
 		}
 
-		if (moveToTrash && (wikiPage != null)) {
-			TrashUtil.addTrashSessionMessages(actionRequest, wikiPage);
+		if (moveToTrash && !trashedModels.isEmpty()) {
+			TrashUtil.addTrashSessionMessages(actionRequest, trashedModels);
 
 			hideDefaultSuccessMessage(actionRequest);
 		}
@@ -364,13 +395,16 @@ public class EditPageMVCActionCommand extends BaseMVCActionCommand {
 			}
 		}
 
+		_wikiAttachmentsHelper.addAttachments(actionRequest);
+
 		return page;
 	}
 
-	private volatile TrashEntryLocalService _trashEntryLocalService;
-	private volatile TrashEntryService _trashEntryService;
-	private volatile WikiPageLocalService _wikiPageLocalService;
-	private volatile WikiPageResourceLocalService _wikiPageResourceLocalService;
-	private volatile WikiPageService _wikiPageService;
+	private TrashEntryLocalService _trashEntryLocalService;
+	private TrashEntryService _trashEntryService;
+	private WikiAttachmentsHelper _wikiAttachmentsHelper;
+	private WikiPageLocalService _wikiPageLocalService;
+	private WikiPageResourceLocalService _wikiPageResourceLocalService;
+	private WikiPageService _wikiPageService;
 
 }

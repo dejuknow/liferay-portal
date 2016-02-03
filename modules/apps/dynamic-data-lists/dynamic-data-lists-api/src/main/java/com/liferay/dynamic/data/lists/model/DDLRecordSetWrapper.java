@@ -18,8 +18,12 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.ModelWrapper;
+import com.liferay.portal.service.ServiceContext;
 
+import com.liferay.portlet.expando.model.ExpandoBridge;
 import com.liferay.portlet.exportimport.lar.StagedModelType;
+
+import java.io.Serializable;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -317,7 +321,7 @@ public class DDLRecordSetWrapper implements DDLRecordSet,
 	}
 
 	@Override
-	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
+	public ExpandoBridge getExpandoBridge() {
 		return _ddlRecordSet.getExpandoBridge();
 	}
 
@@ -449,7 +453,7 @@ public class DDLRecordSetWrapper implements DDLRecordSet,
 	}
 
 	@Override
-	public java.io.Serializable getPrimaryKeyObj() {
+	public Serializable getPrimaryKeyObj() {
 		return _ddlRecordSet.getPrimaryKeyObj();
 	}
 
@@ -499,14 +503,13 @@ public class DDLRecordSetWrapper implements DDLRecordSet,
 	}
 
 	@Override
-	public com.liferay.portal.kernel.util.UnicodeProperties getSettingsProperties() {
-		return _ddlRecordSet.getSettingsProperties();
+	public com.liferay.dynamic.data.mapping.storage.DDMFormValues getSettingsDDMFormValues() {
+		return _ddlRecordSet.getSettingsDDMFormValues();
 	}
 
 	@Override
-	public java.lang.String getSettingsProperty(java.lang.String key,
-		java.lang.String defaultValue) {
-		return _ddlRecordSet.getSettingsProperty(key, defaultValue);
+	public com.liferay.dynamic.data.lists.model.DDLRecordSetSettings getSettingsModel() {
+		return _ddlRecordSet.getSettingsModel();
 	}
 
 	/**
@@ -693,14 +696,12 @@ public class DDLRecordSetWrapper implements DDLRecordSet,
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portlet.expando.model.ExpandoBridge expandoBridge) {
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
 		_ddlRecordSet.setExpandoBridgeAttributes(expandoBridge);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.service.ServiceContext serviceContext) {
+	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
 		_ddlRecordSet.setExpandoBridgeAttributes(serviceContext);
 	}
 
@@ -821,7 +822,7 @@ public class DDLRecordSetWrapper implements DDLRecordSet,
 	}
 
 	@Override
-	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
+	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
 		_ddlRecordSet.setPrimaryKeyObj(primaryKeyObj);
 	}
 
@@ -952,14 +953,6 @@ public class DDLRecordSetWrapper implements DDLRecordSet,
 	@Override
 	public StagedModelType getStagedModelType() {
 		return _ddlRecordSet.getStagedModelType();
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedModel}
-	 */
-	@Deprecated
-	public DDLRecordSet getWrappedDDLRecordSet() {
-		return _ddlRecordSet;
 	}
 
 	@Override

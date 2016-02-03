@@ -63,6 +63,20 @@ public class ShoppingCategoryServiceWrapper implements ShoppingCategoryService,
 	}
 
 	@Override
+	public java.util.List<java.lang.Object> getCategoriesAndItems(
+		long groupId, long categoryId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<?> obc) {
+		return _shoppingCategoryService.getCategoriesAndItems(groupId,
+			categoryId, start, end, obc);
+	}
+
+	@Override
+	public int getCategoriesAndItemsCount(long groupId, long categoryId) {
+		return _shoppingCategoryService.getCategoriesAndItemsCount(groupId,
+			categoryId);
+	}
+
+	@Override
 	public int getCategoriesCount(long groupId, long parentCategoryId) {
 		return _shoppingCategoryService.getCategoriesCount(groupId,
 			parentCategoryId);
@@ -101,23 +115,6 @@ public class ShoppingCategoryServiceWrapper implements ShoppingCategoryService,
 		return _shoppingCategoryService.updateCategory(categoryId,
 			parentCategoryId, name, description, mergeWithParentCategory,
 			serviceContext);
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
-	 */
-	@Deprecated
-	public ShoppingCategoryService getWrappedShoppingCategoryService() {
-		return _shoppingCategoryService;
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #setWrappedService}
-	 */
-	@Deprecated
-	public void setWrappedShoppingCategoryService(
-		ShoppingCategoryService shoppingCategoryService) {
-		_shoppingCategoryService = shoppingCategoryService;
 	}
 
 	@Override

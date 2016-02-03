@@ -1,7 +1,7 @@
 <definition>
 	<command name="configureDisplaySettingsPG">
 		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletNameBorderless" value="${portletNameBorderless}" />
+			<var name="portletName" value="${portletName}" />
 			<var name="portletOption" value="Configuration" />
 		</execute>
 
@@ -78,11 +78,12 @@
 		<if>
 			<equals arg1="${currentDisplayStyleViews}" arg2="" />
 			<then>
-				<execute function="AssertClick" locator1="Message#ERROR_1" value1="Your request failed to complete." />
+				<execute macro="Alert#viewRequestFailedToComplete" />
+
 				<execute function="AssertClick" locator1="Message#ERROR_2" value1="Display style views cannot be empty." />
 			</then>
 			<else>
-				<execute function="AssertClick" locator1="Message#SUCCESS" value1="You have successfully updated the setup." />
+				<execute macro="Alert#viewSetupUpdatedSuccessMessage" />
 			</else>
 		</if>
 	</command>
@@ -107,7 +108,7 @@
 		<execute function="SelectFrame" locator1="IFrame#CONFIGURATION" />
 		<execute function="AssertTextEquals" locator1="DocumentsAndMediaConfiguration#DISPLAY_SETTINGS_ROOT_FOLDER_FIELD" value1="${dmFolderName}" />
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="You have successfully updated the setup." />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="You have successfully updated the setup." />
 		<execute function="SelectFrame" value1="relative=top" />
 	</command>
 
@@ -119,16 +120,22 @@
 
 		<execute function="SelectFrame" locator1="IFrame#CONFIGURATION" />
 
-		<execute function="AssertClick" locator1="NavPill#SCOPE" value1="Scope" />
+		<execute macro="Navigator#gotoNavItem">
+			<var name="navItem" value="Scope" />
+		</execute>
 
-		<execute function="AssertClick" locator1="MenuItem#SCOPE" value1="${currentScope}" />
+		<execute function="Select" locator1="Select#SCOPE" value1="Global" />
 
-		<execute function="AssertClick" locator1="MenuItem#GLOBAL" value1="Global" />
+		<execute function="AssertSelectedLabel" locator1="Select#SCOPE" value1="Global" />
+
+		<execute function="Click" locator1="Button#SAVE" />
+
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="You have successfully updated the setup." />
 	</command>
 
 	<command name="viewDefaultConfigurationDisplaySettingsPG">
 		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletNameBorderless" value="${portletNameBorderless}" />
+			<var name="portletName" value="${portletName}" />
 			<var name="portletOption" value="Configuration" />
 		</execute>
 
@@ -151,17 +158,17 @@
 		<var name="key_portletName" value="Documents and Media" />
 
 		<execute function="AssertTextEquals" locator1="BasePortlet#TITLE" value1="Documents and Media" />
-		<execute function="AssertTextEquals" locator1="Message#INFO" value1="There are no documents or media files in this folder." />
+		<execute function="AssertTextEquals" locator1="Message#EMPTY_INFO" value1="There are no documents or media files in this folder." />
 	</command>
 
 	<command name="viewNoPermissionCP">
 		<execute function="AssertTextEquals" locator1="DocumentsAndMedia#PORTLET_TITLE" value1="Documents and Media" />
-		<execute function="AssertTextEquals" locator1="Message#INFO" value1="There are no documents or media files in this folder." />
+		<execute function="AssertTextEquals" locator1="Message#EMPTY_INFO" value1="There are no documents or media files in this folder." />
 	</command>
 
 	<command name="viewRootFolderPG">
 		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletNameBorderless" value="${portletNameBorderless}" />
+			<var name="portletName" value="${portletName}" />
 			<var name="portletOption" value="Configuration" />
 		</execute>
 

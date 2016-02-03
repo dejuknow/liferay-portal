@@ -81,7 +81,7 @@ else {
 		hits = AssetEntryLocalServiceUtil.search(themeDisplay.getCompanyId(), new long[] {searchTerms.getGroupId()}, themeDisplay.getUserId(), assetRendererFactory.getClassName(), subtypeSelectionId, searchTerms.getUserName(), searchTerms.getTitle(), searchTerms.getDescription(), null, null, showNonindexable, statuses, searchTerms.isAndOperator(), assetBrowserSearch.getStart(), assetBrowserSearch.getEnd());
 	}
 	else {
-		hits = AssetEntryLocalServiceUtil.search(themeDisplay.getCompanyId(), selectedGroupIds, themeDisplay.getUserId(), assetRendererFactory.getClassName(), subtypeSelectionId, searchTerms.getKeywords(), showNonindexable, statuses, assetBrowserSearch.getStart(), assetBrowserSearch.getEnd());
+		hits = AssetEntryLocalServiceUtil.search(themeDisplay.getCompanyId(), ArrayUtil.clone(selectedGroupIds), themeDisplay.getUserId(), assetRendererFactory.getClassName(), subtypeSelectionId, searchTerms.getKeywords(), showNonindexable, statuses, assetBrowserSearch.getStart(), assetBrowserSearch.getEnd());
 	}
 
 	assetEntriesTotal = hits.getLength();
@@ -178,7 +178,7 @@ else {
 
 			<liferay-ui:search-container-column-text
 				name="user-name"
-				value="<%= HtmlUtil.escape(PortalUtil.getUserName(assetEntry)) %>"
+				value="<%= PortalUtil.getUserName(assetEntry) %>"
 			/>
 
 			<liferay-ui:search-container-column-date

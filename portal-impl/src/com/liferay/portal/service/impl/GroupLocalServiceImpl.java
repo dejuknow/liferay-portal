@@ -14,16 +14,16 @@
 
 package com.liferay.portal.service.impl;
 
-import com.liferay.portal.DuplicateGroupException;
-import com.liferay.portal.GroupFriendlyURLException;
-import com.liferay.portal.GroupInheritContentException;
-import com.liferay.portal.GroupKeyException;
-import com.liferay.portal.GroupParentException;
 import com.liferay.portal.LocaleException;
-import com.liferay.portal.NoSuchGroupException;
-import com.liferay.portal.NoSuchLayoutSetException;
-import com.liferay.portal.PendingBackgroundTaskException;
-import com.liferay.portal.RequiredGroupException;
+import com.liferay.portal.exception.DuplicateGroupException;
+import com.liferay.portal.exception.GroupFriendlyURLException;
+import com.liferay.portal.exception.GroupInheritContentException;
+import com.liferay.portal.exception.GroupKeyException;
+import com.liferay.portal.exception.GroupParentException;
+import com.liferay.portal.exception.NoSuchGroupException;
+import com.liferay.portal.exception.NoSuchLayoutSetException;
+import com.liferay.portal.exception.PendingBackgroundTaskException;
+import com.liferay.portal.exception.RequiredGroupException;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTask;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskConstants;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskManagerUtil;
@@ -37,6 +37,10 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.DestinationNames;
 import com.liferay.portal.kernel.scheduler.SchedulerEngineHelperUtil;
 import com.liferay.portal.kernel.scheduler.StorageType;
+import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
+import com.liferay.portal.kernel.security.permission.RolePermissions;
 import com.liferay.portal.kernel.spring.aop.Skip;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
@@ -86,17 +90,12 @@ import com.liferay.portal.model.UserGroupRole;
 import com.liferay.portal.model.UserPersonalSite;
 import com.liferay.portal.model.WorkflowDefinitionLink;
 import com.liferay.portal.model.impl.LayoutImpl;
-import com.liferay.portal.security.auth.CompanyThreadLocal;
-import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.security.permission.PermissionCacheUtil;
-import com.liferay.portal.security.permission.ResourceActionsUtil;
-import com.liferay.portal.security.permission.RolePermissions;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.base.GroupLocalServiceBaseImpl;
 import com.liferay.portal.theme.ThemeLoader;
 import com.liferay.portal.theme.ThemeLoaderFactory;
 import com.liferay.portal.util.PortalUtil;
-import com.liferay.portal.util.PortletCategoryKeys;
 import com.liferay.portal.util.PortletKeys;
 import com.liferay.portal.util.PropsUtil;
 import com.liferay.portal.util.PropsValues;
@@ -308,7 +307,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 
 		if (className.equals(Group.class.getName())) {
 			if (!site && (liveGroupId == 0) &&
-				!groupKey.equals(GroupConstants.CONTROL_PANEL)) {
+				!(groupKey.equals(GroupConstants.CONTROL_PANEL) ||
+				  groupKey.equals(GroupConstants.FORMS))) {
 
 				throw new IllegalArgumentException();
 			}
@@ -470,126 +470,6 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 	}
 
 	/**
-	 * Adds the group using the default live group.
-	 *
-	 * @param      userId the primary key of the group's creator/owner
-	 * @param      parentGroupId the primary key of the parent group
-	 * @param      className the entity's class name
-	 * @param      classPK the primary key of the entity's instance
-	 * @param      name the entity's name
-	 * @param      description the group's description (optionally
-	 *             <code>null</code>)
-	 * @param      type the group's type. For more information see {@link
-	 *             GroupConstants}.
-	 * @param      friendlyURL the group's friendlyURL
-	 * @param      site whether the group is to be associated with a main site
-	 * @param      active whether the group is active
-	 * @param      serviceContext the service context to be applied (optionally
-	 *             <code>null</code>). Can set asset category IDs and asset tag
-	 *             names for the group, and whether the group is for staging.
-	 * @return     the group
-	 * @throws     PortalException if a portal exception occurred
-	 * @deprecated As of 6.2.0, replaced by {@link #addGroup(long, long, String,
-	 *             long, long, Map, Map, int, boolean, int, String, boolean,
-	 *             boolean, ServiceContext)}
-	 */
-	@Deprecated
-	@Override
-	public Group addGroup(
-			long userId, long parentGroupId, String className, long classPK,
-			String name, String description, int type, String friendlyURL,
-			boolean site, boolean active, ServiceContext serviceContext)
-		throws PortalException {
-
-		return addGroup(
-			userId, parentGroupId, className, classPK,
-			GroupConstants.DEFAULT_LIVE_GROUP_ID, getLocalizationMap(name),
-			getLocalizationMap(description), type, true,
-			GroupConstants.DEFAULT_MEMBERSHIP_RESTRICTION, friendlyURL, site,
-			active, serviceContext);
-	}
-
-	/**
-	 * Adds a group.
-	 *
-	 * @param      userId the primary key of the group's creator/owner
-	 * @param      className the entity's class name
-	 * @param      classPK the primary key of the entity's instance
-	 * @param      liveGroupId the primary key of the live group
-	 * @param      name the entity's name
-	 * @param      description the group's description (optionally
-	 *             <code>null</code>)
-	 * @param      type the group's type. For more information see {@link
-	 *             GroupConstants}.
-	 * @param      friendlyURL the group's friendlyURL (optionally
-	 *             <code>null</code>)
-	 * @param      site whether the group is to be associated with a main site
-	 * @param      active whether the group is active
-	 * @param      serviceContext the service context to be applied (optionally
-	 *             <code>null</code>). Can set asset category IDs and asset tag
-	 *             names for the group, and whether the group is for staging.
-	 * @return     the group
-	 * @throws     PortalException if a portal exception occurred
-	 * @deprecated As of 6.2.0, replaced by {@link #addGroup(long, long, String,
-	 *             long, long, Map, Map, int, boolean, int, String, boolean,
-	 *             boolean, ServiceContext)}
-	 */
-	@Deprecated
-	@Override
-	public Group addGroup(
-			long userId, String className, long classPK, long liveGroupId,
-			String name, String description, int type, String friendlyURL,
-			boolean site, boolean active, ServiceContext serviceContext)
-		throws PortalException {
-
-		return addGroup(
-			userId, GroupConstants.DEFAULT_PARENT_GROUP_ID, className, classPK,
-			liveGroupId, getLocalizationMap(name),
-			getLocalizationMap(description), type, true,
-			GroupConstants.DEFAULT_MEMBERSHIP_RESTRICTION, friendlyURL, site,
-			active, serviceContext);
-	}
-
-	/**
-	 * Adds the group using the default live group.
-	 *
-	 * @param      userId the primary key of the group's creator/owner
-	 * @param      className the entity's class name
-	 * @param      classPK the primary key of the entity's instance
-	 * @param      name the entity's name
-	 * @param      description the group's description (optionally
-	 *             <code>null</code>)
-	 * @param      type the group's type. For more information see {@link
-	 *             GroupConstants}.
-	 * @param      friendlyURL the group's friendlyURL
-	 * @param      site whether the group is to be associated with a main site
-	 * @param      active whether the group is active
-	 * @param      serviceContext the service context to be applied (optionally
-	 *             <code>null</code>). Can set asset category IDs and asset tag
-	 *             names for the group, and whether the group is for staging.
-	 * @return     the group
-	 * @throws     PortalException if a portal exception occurred
-	 * @deprecated As of 6.2.0, replaced by {@link #addGroup(long, long, String,
-	 *             long, long, Map, Map, int, boolean, int, String, boolean,
-	 *             boolean, ServiceContext)}
-	 */
-	@Deprecated
-	@Override
-	public Group addGroup(
-			long userId, String className, long classPK, String name,
-			String description, int type, String friendlyURL, boolean site,
-			boolean active, ServiceContext serviceContext)
-		throws PortalException {
-
-		return addGroup(
-			userId, GroupConstants.DEFAULT_PARENT_GROUP_ID, className, classPK,
-			GroupConstants.DEFAULT_LIVE_GROUP_ID, getLocalizationMap(name),
-			getLocalizationMap(description), type, true,
-			GroupConstants.DEFAULT_MEMBERSHIP_RESTRICTION, friendlyURL, site,
-			active, serviceContext);
-	}
-
-	/**
 	 * Adds the groups to the role.
 	 *
 	 * @param roleId the primary key of the role
@@ -643,6 +523,28 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 		}
 	}
 
+	@Override
+	public Group checkScopeGroup(Layout layout, long userId)
+		throws PortalException {
+
+		if (layout.hasScopeGroup()) {
+			return layout.getScopeGroup();
+		}
+
+		Map<Locale, String> nameMap = new HashMap<>();
+
+		nameMap.put(LocaleUtil.getDefault(), String.valueOf(layout.getPlid()));
+
+		Group scopeGroup = groupLocalService.addGroup(
+			userId, GroupConstants.DEFAULT_PARENT_GROUP_ID,
+			Layout.class.getName(), layout.getPlid(),
+			GroupConstants.DEFAULT_LIVE_GROUP_ID, nameMap, null, 0, true,
+			GroupConstants.DEFAULT_MEMBERSHIP_RESTRICTION, null, false, true,
+			null);
+
+		return scopeGroup;
+	}
+
 	/**
 	 * Creates systems groups and other related data needed by the system on the
 	 * very first startup. Also takes care of creating the Control Panel groups
@@ -684,6 +586,11 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 				if (groupKey.equals(GroupConstants.CONTROL_PANEL)) {
 					type = GroupConstants.TYPE_SITE_PRIVATE;
 					friendlyURL = GroupConstants.CONTROL_PANEL_FRIENDLY_URL;
+					site = false;
+				}
+				else if (groupKey.equals(GroupConstants.FORMS)) {
+					type = GroupConstants.TYPE_SITE_PRIVATE;
+					friendlyURL = GroupConstants.FORMS_FRIENDLY_URL;
 					site = false;
 				}
 				else if (groupKey.equals(GroupConstants.GUEST)) {
@@ -739,7 +646,7 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 	 * The group is unstaged and its assets and resources including layouts,
 	 * membership requests, subscriptions, teams, blogs, bookmarks, events,
 	 * image gallery, journals, message boards, polls, shopping related
-	 * entities, software catalog, and wikis are also deleted.
+	 * entities, and wikis are also deleted.
 	 * </p>
 	 *
 	 * @param  group the group
@@ -890,12 +797,6 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 				classNameLocalService.getClassNameId(Group.class),
 				group.getGroupId());
 
-			// Software catalog
-
-			scFrameworkVersionLocalService.deleteFrameworkVersions(
-				group.getGroupId());
-			scProductEntryLocalService.deleteProductEntries(group.getGroupId());
-
 			// Resources
 
 			List<ResourcePermission> resourcePermissions =
@@ -997,7 +898,7 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 	 * The group is unstaged and its assets and resources including layouts,
 	 * membership requests, subscriptions, teams, blogs, bookmarks, events,
 	 * image gallery, journals, message boards, polls, shopping related
-	 * entities, software catalog, and wikis are also deleted.
+	 * entities, and wikis are also deleted.
 	 * </p>
 	 *
 	 * @param  groupId the primary key of the group
@@ -1478,38 +1379,6 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 
 		return groupPersistence.findByC_C_C(
 			companyId, classNameId, layoutSetPrototypeId);
-	}
-
-	/**
-	 * Returns a range of all groups that are children of the parent group and
-	 * that have at least one layout.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end -
-	 * start</code> instances. <code>start</code> and <code>end</code> are not
-	 * primary keys, they are indexes in the result set. Thus, <code>0</code>
-	 * refers to the first result in the set. Setting both <code>start</code>
-	 * and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full
-	 * result set.
-	 * </p>
-	 *
-	 * @param      companyId the primary key of the company
-	 * @param      parentGroupId the primary key of the parent group
-	 * @param      site whether the group is to be associated with a main site
-	 * @param      start the lower bound of the range of groups to return
-	 * @param      end the upper bound of the range of groups to return (not
-	 *             inclusive)
-	 * @return     the range of matching groups
-	 * @deprecated As of 6.2.0, replaced by {@link #getLayoutsGroups(long, long,
-	 *             boolean, int, int, OrderByComparator)}
-	 */
-	@Deprecated
-	@Override
-	public List<Group> getLayoutsGroups(
-		long companyId, long parentGroupId, boolean site, int start, int end) {
-
-		return getLayoutsGroups(
-			companyId, parentGroupId, site, start, end, null);
 	}
 
 	/**
@@ -4137,53 +4006,16 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 			group, role, Layout.class.getName(),
 			new String[] {ActionKeys.VIEW});
 
-		setRolePermissions(
-			group, role, "com.liferay.portlet.blogs",
-			new String[] {
-				ActionKeys.ADD_ENTRY, ActionKeys.PERMISSIONS,
-				ActionKeys.SUBSCRIBE
-			});
-
 		// Power User role
 
 		role = roleLocalService.getRole(
 			group.getCompanyId(), RoleConstants.POWER_USER);
-
-		List<Portlet> portlets = portletLocalService.getPortlets(
-			group.getCompanyId(), false, false);
-
-		for (Portlet portlet : portlets) {
-			List<String> actions =
-				ResourceActionsUtil.getPortletResourceActions(
-					portlet.getPortletId());
-
-			String controlPanelEntryCategory = GetterUtil.getString(
-				portlet.getControlPanelEntryCategory());
-
-			if (actions.contains(ActionKeys.ACCESS_IN_CONTROL_PANEL) &&
-				controlPanelEntryCategory.startsWith(
-					PortletCategoryKeys.SITE_ADMINISTRATION)) {
-
-				setRolePermissions(
-					group, role, portlet.getPortletId(),
-					new String[] {ActionKeys.ACCESS_IN_CONTROL_PANEL});
-			}
-		}
 
 		setRolePermissions(
 			group, role, Group.class.getName(),
 			new String[] {
 				ActionKeys.MANAGE_LAYOUTS, ActionKeys.VIEW_SITE_ADMINISTRATION
 			});
-
-		setRolePermissions(group, role, "com.liferay.portlet.asset");
-		setRolePermissions(group, role, "com.liferay.portlet.blogs");
-		setRolePermissions(group, role, "com.liferay.portlet.bookmarks");
-		setRolePermissions(group, role, "com.liferay.portlet.documentlibrary");
-		setRolePermissions(group, role, "com.liferay.portlet.imagegallery");
-		setRolePermissions(group, role, "com.liferay.portlet.journal");
-		setRolePermissions(group, role, "com.liferay.portlet.messageboards");
-		setRolePermissions(group, role, "com.liferay.portlet.wiki");
 	}
 
 	protected boolean isParentGroup(long parentGroupId, long groupId)

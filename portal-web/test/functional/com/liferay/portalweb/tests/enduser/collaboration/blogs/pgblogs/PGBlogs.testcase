@@ -4,18 +4,11 @@
 	<var name="pageName" value="Blogs Page" />
 
 	<set-up>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="SignIn#signInPortalInstanceSetUp" />
-			</then>
-		</if>
+		<execute macro="TestCase#setUpPortalInstance" />
 
 		<execute macro="User#firstLoginPG" />
 
-		<execute macro="Page#addPG">
+		<execute macro="Page#add">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -45,12 +38,12 @@
 
 				<execute macro="Blogs#tearDownConfigurationDisplaySettingsPG">
 					<var name="pageName" value="${pageName}" />
-					<var name="portletNameBorderless" value="Blogs" />
+					<var name="portletName" value="Blogs" />
 				</execute>
 
 				<execute macro="Blogs#tearDownConfigurationScopePG">
 					<var name="pageName" value="${pageName}" />
-					<var name="portletNameBorderless" value="Blogs" />
+					<var name="portletName" value="Blogs" />
 				</execute>
 
 				<execute macro="Page#tearDownPG" />
@@ -67,6 +60,8 @@
 	</tear-down>
 
 	<command name="AddBlogsEntries" priority="5">
+		<property name="portal.acceptance" value="true" />
+
 		<var name="blogsEntryCounterList" value="1,2,3" />
 
 		<execute macro="Page#gotoPG">
@@ -316,7 +311,7 @@
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
-		<execute macro="Page#addPG">
+		<execute macro="Page#add">
 			<var name="pageName" value="${pageName2}" />
 		</execute>
 
@@ -469,10 +464,13 @@
 	</command>
 
 	<command name="AddBlogsEntryWithTrackbackURL" priority="4">
+		<property name="custom.properties" value="blogs.trackback.enabled=true" />
+
 		<var name="entryContent" value="Blogs Entry1 Content" />
 		<var name="entryContent2" value="Blogs Entry2 Content" />
 		<var name="entryTitle" value="Blogs Entry1 Title" />
 		<var name="entryTitle2" value="Blogs Entry2 Title" />
+		<var name="ipAddress" value="${getIPAddress()}" />
 
 		<execute macro="Page#gotoPG">
 			<var name="pageName" value="${pageName}" />
@@ -515,13 +513,13 @@
 
 	<command name="AddPortletToOrganizationSitePublicPage" priority="4">
 		<var name="orgName" value="Organization Name" />
-		<var name="orgType" value="Regular Organization" />
+		<var name="orgType" value="Organization" />
 		<var name="page" value="Public Pages" />
+		<var name="pageName" value="${pageName}" />
 		<var name="siteName" value="Organization Name" />
-		<var name="sitePageName" value="${pageName}" />
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Users and Organizations" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
 		<execute macro="Organization#addCP">
@@ -529,22 +527,24 @@
 			<var name="orgType" value="${orgType}" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Users and Organizations" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Users and Organizations" />
 		</execute>
+
+		<execute macro="UsersAndOrganizationsNavigator#gotoOrganizations" />
 
 		<execute macro="Organization#addSiteCP">
 			<var name="orgName" value="${orgName}" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Sites" />
+		<execute macro="ProductMenu#gotoControlPanelSites">
+			<var name="portlet" value="Sites" />
 		</execute>
 
-		<execute macro="SitePage#addCP">
+		<execute macro="Page#add">
+			<var name="page" value="Public Pages" />
+			<var name="pageName" value="${pageName}" />
 			<var name="siteName" value="${siteName}" />
-			<var name="sitePageName" value="${sitePageName}" />
-			<var name="sitePagePrivacy" value="${sitePagePrivacy}" />
 		</execute>
 
 		<execute macro="Page#gotoPG">
@@ -567,6 +567,8 @@
 	</command>
 
 	<command name="DeleteBlogsEntries" priority="5">
+		<property name="portal.acceptance" value="true" />
+
 		<var name="blogsEntryCounterList" value="1,2,3" />
 		<var name="blogsEntryCounterList2" value="3,2,1" />
 
@@ -840,6 +842,8 @@
 	</command>
 
 	<command name="MoveToRecycleBinBlogsEntry" priority="5">
+		<property name="portal.acceptance" value="true" />
+
 		<execute macro="Page#gotoPG">
 			<var name="pageName" value="Blogs Page" />
 		</execute>
@@ -919,6 +923,8 @@
 	</command>
 
 	<command name="SaveBlogsEntryDraft" priority="5">
+		<property name="portal.acceptance" value="true" />
+
 		<execute macro="Page#gotoPG">
 			<var name="pageName" value="Blogs Page" />
 		</execute>
@@ -948,6 +954,8 @@
 	</command>
 
 	<command name="SaveBlogsEntryDraftAuto" priority="5">
+		<property name="portal.acceptance" value="true" />
+
 		<execute macro="Page#gotoPG">
 			<var name="pageName" value="Blogs Page" />
 		</execute>
@@ -1015,7 +1023,7 @@
 		<var name="blogsEntrySearchNoResult" value="Blogs1,Entry1,Content1,Blogs1 Entry1 Content1" />
 		<var name="blogsEntrySearchResult" value="Blogs,Entry,Content,Blogs Entry Content" />
 
-		<execute macro="Page#addPG">
+		<execute macro="Page#add">
 			<var name="pageName" value="Search Page" />
 		</execute>
 
@@ -1028,11 +1036,11 @@
 			<var name="entryTitle" value="Blogs Entry Title" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
-			<var name="pageName" value="Search Page" />
-		</execute>
-
 		<for list="${blogsEntrySearchResult}" param="searchTerm">
+			<execute macro="Page#gotoPG">
+				<var name="pageName" value="Search Page" />
+			</execute>
+
 			<execute macro="Search#searchPG">
 				<var name="searchTerm" value="${searchTerm}" />
 			</execute>
@@ -1044,11 +1052,11 @@
 			</execute>
 		</for>
 
-		<execute macro="Page#gotoPG">
-			<var name="pageName" value="Search Page" />
-		</execute>
-
 		<for list="${blogsEntrySearchNoResult}" param="searchTerm">
+			<execute macro="Page#gotoPG">
+				<var name="pageName" value="Search Page" />
+			</execute>
+
 			<execute macro="Search#searchPG">
 				<var name="searchTerm" value="${searchTerm}" />
 			</execute>
@@ -1065,7 +1073,7 @@
 		<var name="blogsEntrySearchNoResult" value="&quot;Blogs1&quot;,&quot;Entry1&quot;,&quot;Content1&quot;,&quot;Blogs1 Entry1 Content1&quot;" />
 		<var name="blogsEntrySearchResult" value="&quot;Blogs&quot;,&quot;Entry&quot;,&quot;Content&quot;,&quot;Blogs Entry Content&quot;" />
 
-		<execute macro="Page#addPG">
+		<execute macro="Page#add">
 			<var name="pageName" value="Search Page" />
 		</execute>
 
@@ -1078,11 +1086,11 @@
 			<var name="entryTitle" value="Blogs Entry Title" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
-			<var name="pageName" value="Search Page" />
-		</execute>
-
 		<for list="${blogsEntrySearchResult}" param="searchTerm">
+			<execute macro="Page#gotoPG">
+				<var name="pageName" value="Search Page" />
+			</execute>
+
 			<execute macro="Search#searchPG">
 				<var name="searchTerm" value="${searchTerm}" />
 			</execute>
@@ -1094,11 +1102,11 @@
 			</execute>
 		</for>
 
-		<execute macro="Page#gotoPG">
-			<var name="pageName" value="Search Page" />
-		</execute>
-
 		<for list="${blogsEntrySearchNoResult}" param="searchTerm">
+			<execute macro="Page#gotoPG">
+				<var name="pageName" value="Search Page" />
+			</execute>
+
 			<execute macro="Search#searchPG">
 				<var name="searchTerm" value="${searchTerm}" />
 			</execute>
@@ -1115,7 +1123,7 @@
 		<var name="blogsEntrySearchNoResult" value="Blogs1,Entry1,Title1,Blogs1 Entry1 Title1" />
 		<var name="blogsEntrySearchResult" value="Blogs,Entry,Title,Blogs Entry Title" />
 
-		<execute macro="Page#addPG">
+		<execute macro="Page#add">
 			<var name="pageName" value="Search Page" />
 		</execute>
 
@@ -1128,11 +1136,11 @@
 			<var name="entryTitle" value="Blogs Entry Title" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
-			<var name="pageName" value="Search Page" />
-		</execute>
-
 		<for list="${blogsEntrySearchResult}" param="searchTerm">
+			<execute macro="Page#gotoPG">
+				<var name="pageName" value="Search Page" />
+			</execute>
+
 			<execute macro="Search#searchPG">
 				<var name="searchTerm" value="${searchTerm}" />
 			</execute>
@@ -1144,11 +1152,11 @@
 			</execute>
 		</for>
 
-		<execute macro="Page#gotoPG">
-			<var name="pageName" value="Search Page" />
-		</execute>
-
 		<for list="${blogsEntrySearchNoResult}" param="searchTerm">
+			<execute macro="Page#gotoPG">
+				<var name="pageName" value="Search Page" />
+			</execute>
+
 			<execute macro="Search#searchPG">
 				<var name="searchTerm" value="${searchTerm}" />
 			</execute>
@@ -1165,7 +1173,7 @@
 		<var name="blogsEntrySearchNoResult" value="&quot;Blogs1&quot;,&quot;Entry1&quot;,&quot;Title1&quot;,&quot;Blogs1&quot;,&quot;Entry1&quot;,&quot;Title1&quot;" />
 		<var name="blogsEntrySearchResult" value="&quot;Blogs&quot;,&quot;Entry&quot;,&quot;Title&quot;,&quot;Blogs Entry Title&quot;" />
 
-		<execute macro="Page#addPG">
+		<execute macro="Page#add">
 			<var name="pageName" value="Search Page" />
 		</execute>
 
@@ -1182,11 +1190,11 @@
 			<var name="entryTitle" value="Blogs Entry Title" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
-			<var name="pageName" value="Search Page" />
-		</execute>
-
 		<for list="${blogsEntrySearchResult}" param="searchTerm" >
+			<execute macro="Page#gotoPG">
+				<var name="pageName" value="Search Page" />
+			</execute>
+
 			<execute macro="Search#searchPG">
 				<var name="searchTerm" value="${searchTerm}" />
 			</execute>
@@ -1198,11 +1206,11 @@
 			</execute>
 		</for>
 
-		<execute macro="Page#gotoPG">
-			<var name="pageName" value="Search Page" />
-		</execute>
-
 		<for list="${blogsEntrySearchNoResult}" param="searchTerm" >
+			<execute macro="Page#gotoPG">
+				<var name="pageName" value="Search Page" />
+			</execute>
+
 			<execute macro="Search#searchPG">
 				<var name="searchTerm" value="${searchTerm}" />
 			</execute>
@@ -1243,7 +1251,7 @@
 	</command>
 
 	<command name="UserFlagsEntryAndAdminViewsNotificationInGmail" priority="4">
-		<execute macro="ProductMenu#gotoControlPanelSystem">
+		<execute macro="ProductMenu#gotoControlPanelConfiguration">
 			<var name="portlet" value="Server Administration" />
 		</execute>
 
@@ -1252,8 +1260,8 @@
 			<var method="TestPropsUtil#get('email.password.1')" name="userPassword" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Users and Organizations" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
 		<execute macro="User#addCP">
@@ -1263,8 +1271,8 @@
 			<var name="userScreenName" value="usersn1" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Roles" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Roles" />
 		</execute>
 
 		<execute macro="Role#assignRegRoleCP">
@@ -1318,7 +1326,7 @@
 	<command name="UserSubscribeToBlogsAndViewEntryInGmail" priority="3">
 		<property name="custom.properties" value="pop.server.notifications.enabled=true{line.separator}pop.server.subdomain=" />
 
-		<execute macro="ProductMenu#gotoControlPanelSystem">
+		<execute macro="ProductMenu#gotoControlPanelConfiguration">
 			<var name="portlet" value="Server Administration" />
 		</execute>
 
@@ -1327,8 +1335,8 @@
 			<var method="TestPropsUtil#get('email.password.1')" name="userPassword" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Users and Organizations" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
 		<execute macro="User#addCP">
@@ -1338,8 +1346,8 @@
 			<var name="userScreenName" value="usersn" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Users and Organizations" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
 		<execute macro="User#editPasswordCP">
@@ -1347,8 +1355,8 @@
 			<var name="userScreenName" value="usersn" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Users and Organizations" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
 		<execute macro="User#editUserSiteCP">
@@ -1526,8 +1534,8 @@
 			<var name="entryTitle" value="Blogs Entry Title" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Users and Organizations" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
 		<execute macro="User#addCP">
@@ -1537,8 +1545,8 @@
 			<var name="userScreenName" value="usersn" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Users and Organizations" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
 		<execute macro="User#editPasswordCP">
@@ -1589,6 +1597,17 @@
 	<command name="ViewBlogsEntryViewCount" priority="3">
 		<var name="entryContent" value="Blogs Entry Content" />
 		<var name="entryTitle" value="Blogs Entry Title" />
+
+		<execute macro="Portlet#gotoPortletOptions">
+			<var name="portletName" value="Blogs" />
+			<var name="portletOption" value="Configuration" />
+		</execute>
+
+		<execute macro="BlogsConfiguration#selectConfigurationIFrame" />
+
+		<execute function="Check" locator1="Checkbox#ENABLE_VIEW_COUNT" />
+
+		<execute macro="IFrame#saveConfiguration" />
 
 		<execute macro="Page#gotoPG">
 			<var name="pageName" value="${pageName}" />
@@ -1956,7 +1975,7 @@
 		<execute macro="BlogsConfiguration#selectConfigurationIFrame" />
 
 		<execute macro="BlogsNavigator#gotoConfigurationPermissionsPG">
-			<var name="portletNameBorderless" value="Blogs" />
+			<var name="portletName" value="Blogs" />
 		</execute>
 
 		<execute macro="Role#removePermissionPG">
@@ -1988,7 +2007,7 @@
 		<execute macro="BlogsConfiguration#selectConfigurationIFrame" />
 
 		<execute macro="BlogsNavigator#gotoConfigurationPermissionsPG">
-			<var name="portletNameBorderless" value="Blogs" />
+			<var name="portletName" value="Blogs" />
 		</execute>
 
 		<execute macro="PermissionsInline#viewPermissionsRemoved">

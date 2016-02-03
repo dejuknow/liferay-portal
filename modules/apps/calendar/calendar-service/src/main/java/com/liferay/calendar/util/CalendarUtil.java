@@ -18,8 +18,11 @@ import com.liferay.calendar.constants.CalendarActionKeys;
 import com.liferay.calendar.model.Calendar;
 import com.liferay.calendar.model.CalendarBooking;
 import com.liferay.calendar.model.CalendarResource;
+import com.liferay.calendar.recurrence.Recurrence;
+import com.liferay.calendar.recurrence.RecurrenceSerializer;
 import com.liferay.calendar.service.CalendarBookingServiceUtil;
 import com.liferay.calendar.service.CalendarResourceLocalServiceUtil;
+import com.liferay.calendar.service.CalendarServiceUtil;
 import com.liferay.calendar.service.permission.CalendarPermission;
 import com.liferay.calendar.util.comparator.CalendarNameComparator;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
@@ -27,12 +30,12 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.security.permission.ActionKeys;
-import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.service.WorkflowDefinitionLinkLocalServiceUtil;
 import com.liferay.portal.service.WorkflowInstanceLinkLocalServiceUtil;
 import com.liferay.portal.theme.ThemeDisplay;
@@ -84,10 +87,16 @@ public class CalendarUtil {
 				displayTimeZone = _utcTimeZone;
 			}
 
+			long maxStartTime = Math.max(
+				calendarBooking.getStartTime(), startTime);
+
 			java.util.Calendar startTimeJCalendar = JCalendarUtil.getJCalendar(
-				calendarBooking.getStartTime(), displayTimeZone);
+				maxStartTime, displayTimeZone);
+
+			long minEndTime = Math.min(calendarBooking.getEndTime(), endTime);
+
 			java.util.Calendar endTimeJCalendar = JCalendarUtil.getJCalendar(
-				calendarBooking.getEndTime(), displayTimeZone);
+				minEndTime, displayTimeZone);
 
 			long days = JCalendarUtil.getDaysBetween(
 				startTimeJCalendar, endTimeJCalendar);
@@ -270,13 +279,25 @@ public class CalendarUtil {
 		jsonObject.put(
 			"parentCalendarBookingId",
 			calendarBooking.getParentCalendarBookingId());
-		jsonObject.put("recurrence", calendarBooking.getRecurrence());
-		jsonObject.put("secondReminder", calendarBooking.getSecondReminder());
-		jsonObject.put(
-			"secondReminderType", calendarBooking.getSecondReminder());
+
+		String recurrence = calendarBooking.getRecurrence();
 
 		java.util.Calendar startTimeJCalendar = JCalendarUtil.getJCalendar(
 			calendarBooking.getStartTime(), timeZone);
+
+		if (calendarBooking.isRecurring()) {
+			Recurrence recurrenceObj = RecurrenceUtil.inTimeZone(
+				calendarBooking.getRecurrenceObj(), startTimeJCalendar,
+				timeZone);
+
+			recurrence = RecurrenceSerializer.serialize(recurrenceObj);
+		}
+
+		jsonObject.put("recurrence", recurrence);
+
+		jsonObject.put("secondReminder", calendarBooking.getSecondReminder());
+		jsonObject.put(
+			"secondReminderType", calendarBooking.getSecondReminder());
 
 		_addTimeProperties(jsonObject, "startTime", startTimeJCalendar);
 
@@ -324,7 +345,8 @@ public class CalendarUtil {
 	}
 
 	public static JSONObject toCalendarJSONObject(
-		ThemeDisplay themeDisplay, Calendar calendar) {
+			ThemeDisplay themeDisplay, Calendar calendar)
+		throws PortalException {
 
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
@@ -349,6 +371,12 @@ public class CalendarUtil {
 			WorkflowDefinitionLinkLocalServiceUtil.hasWorkflowDefinitionLink(
 				themeDisplay.getCompanyId(), calendarResource.getGroupId(),
 				CalendarBooking.class.getName()));
+
+		jsonObject.put(
+			"manageable",
+			CalendarServiceUtil.isManageableFromGroup(
+				calendar.getCalendarId(), themeDisplay.getScopeGroupId()));
+
 		jsonObject.put("name", calendar.getName(themeDisplay.getLocale()));
 		jsonObject.put(
 			"permissions",
@@ -379,7 +407,8 @@ public class CalendarUtil {
 	}
 
 	public static JSONArray toCalendarsJSONArray(
-		ThemeDisplay themeDisplay, List<Calendar> calendars) {
+			ThemeDisplay themeDisplay, List<Calendar> calendars)
+		throws PortalException {
 
 		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
 

@@ -16,8 +16,6 @@ package com.liferay.portal.util;
 
 import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.portal.kernel.dao.db.DB;
-import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
@@ -32,10 +30,12 @@ import com.liferay.portal.model.Layout;
 import com.liferay.portal.model.LayoutFriendlyURLComposite;
 import com.liferay.portal.model.LayoutQueryStringComposite;
 import com.liferay.portal.model.LayoutSet;
+import com.liferay.portal.model.LayoutTypePortlet;
 import com.liferay.portal.model.Portlet;
 import com.liferay.portal.model.ResourcePermission;
 import com.liferay.portal.model.User;
 import com.liferay.portal.service.PortletLocalServiceUtil;
+import com.liferay.portal.theme.PortletDisplay;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portlet.InvokerPortlet;
 import com.liferay.portlet.PortletInstanceFactoryUtil;
@@ -45,8 +45,6 @@ import java.io.IOException;
 import java.io.Serializable;
 
 import java.net.InetAddress;
-
-import java.sql.SQLException;
 
 import java.util.Date;
 import java.util.List;
@@ -308,9 +306,10 @@ public class PortalUtil {
 	}
 
 	public static LayoutQueryStringComposite
-		getActualLayoutQueryStringComposite(
-			long groupId, boolean privateLayout, String friendlyURL,
-			Map<String, String[]> params, Map<String, Object> requestContext)
+			getActualLayoutQueryStringComposite(
+				long groupId, boolean privateLayout, String friendlyURL,
+				Map<String, String[]> params,
+				Map<String, Object> requestContext)
 		throws PortalException {
 
 		return getPortal().getActualLayoutQueryStringComposite(
@@ -359,24 +358,6 @@ public class PortalUtil {
 		throws PortalException {
 
 		return getPortal().getAncestorSiteGroupIds(groupId);
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link
-	 *             com.liferay.portal.security.auth.AuthTokenWhitelistUtil#getPortletCSRFWhitelistActions}
-	 */
-	@Deprecated
-	public static Set<String> getAuthTokenIgnoreActions() {
-		return getPortal().getAuthTokenIgnoreActions();
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link
-	 *             com.liferay.portal.security.auth.AuthTokenWhitelistUtil#getPortletCSRFWhitelist}
-	 */
-	@Deprecated
-	public static Set<String> getAuthTokenIgnorePortlets() {
-		return getPortal().getAuthTokenIgnorePortlets();
 	}
 
 	/**
@@ -498,14 +479,6 @@ public class PortalUtil {
 
 		return getPortal().getCanonicalURL(
 			completeURL, themeDisplay, layout, forceLayoutFriendlyURL);
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getCDNHost(boolean)}
-	 */
-	@Deprecated
-	public static String getCDNHost() {
-		return getPortal().getCDNHost();
 	}
 
 	/**
@@ -846,14 +819,6 @@ public class PortalUtil {
 		return getPortal().getDate(month, day, year, timeZone, clazz);
 	}
 
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link DBFactoryUtil#getDB()}
-	 */
-	@Deprecated
-	public static DB getDB() {
-		return DBFactoryUtil.getDB();
-	}
-
 	public static long getDefaultCompanyId() {
 		return getPortal().getDefaultCompanyId();
 	}
@@ -1184,6 +1149,13 @@ public class PortalUtil {
 		return getPortal().getLayoutRelativeURL(layout, themeDisplay, doAsUser);
 	}
 
+	public static String getLayoutSetDisplayURL(
+			LayoutSet layoutSet, boolean secureConnection)
+		throws PortalException {
+
+		return getPortal().getLayoutSetDisplayURL(layoutSet, secureConnection);
+	}
+
 	public static String getLayoutSetFriendlyURL(
 			LayoutSet layoutSet, ThemeDisplay themeDisplay)
 		throws PortalException {
@@ -1263,28 +1235,6 @@ public class PortalUtil {
 		return getPortal().getMailId(mx, popPortletPrefix, ids);
 	}
 
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link
-	 *             #getBaseModel(ResourcePermission)}
-	 */
-	@Deprecated
-	public static BaseModel<?> getModel(ResourcePermission resourcePermission)
-		throws PortalException {
-
-		return getPortal().getBaseModel(resourcePermission);
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getBaseModel(String,
-	 *             String)}
-	 */
-	@Deprecated
-	public static BaseModel<?> getModel(String modelName, String primKey)
-		throws PortalException {
-
-		return getPortal().getBaseModel(modelName, primKey);
-	}
-
 	public static String getNetvibesURL(
 			Portlet portlet, ThemeDisplay themeDisplay)
 		throws PortalException {
@@ -1303,14 +1253,6 @@ public class PortalUtil {
 		HttpServletRequest request) {
 
 		return getPortal().getOriginalServletRequest(request);
-	}
-
-	/**
-	 * @deprecated As of 6.2.0 renamed to {@link #getSiteGroupId(long)}
-	 */
-	@Deprecated
-	public static long getParentGroupId(long scopeGroupId) {
-		return getPortal().getParentGroupId(scopeGroupId);
 	}
 
 	public static String getPathContext() {
@@ -1402,14 +1344,6 @@ public class PortalUtil {
 	}
 
 	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getPortalPort(boolean)}
-	 */
-	@Deprecated
-	public static int getPortalPort() {
-		return getPortal().getPortalPort();
-	}
-
-	/**
 	 * @deprecated As of 7.0.0, replaced by {@link
 	 *             #getPortalServerPort(boolean)}
 	 */
@@ -1470,37 +1404,6 @@ public class PortalUtil {
 
 	public static String getPortalWebDir() {
 		return getPortal().getPortalWebDir();
-	}
-
-	/**
-	 * @deprecated As of 6.2.0 replaced by {@link
-	 *             com.liferay.portal.security.auth.AuthTokenWhitelistUtil#getPortletInvocationWhitelist}
-	 */
-	@Deprecated
-	public static Set<String> getPortletAddDefaultResourceCheckWhitelist() {
-		return getPortal().getPortletAddDefaultResourceCheckWhitelist();
-	}
-
-	/**
-	 * @deprecated As of 6.2.0 replaced by {@link
-	 *             com.liferay.portal.security.auth.AuthTokenWhitelistUtil#getPortletInvocationWhitelistActions}
-	 */
-	@Deprecated
-	public static Set<String>
-		getPortletAddDefaultResourceCheckWhitelistActions() {
-
-		return getPortal().getPortletAddDefaultResourceCheckWhitelistActions();
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link
-	 *             #getPortletBreadcrumbs(HttpServletRequest)}
-	 */
-	@Deprecated
-	public static List<BreadcrumbEntry> getPortletBreadcrumbList(
-		HttpServletRequest request) {
-
-		return getPortal().getPortletBreadcrumbList(request);
 	}
 
 	/**
@@ -2001,9 +1904,10 @@ public class PortalUtil {
 	 */
 	@Deprecated
 	public static LayoutFriendlyURLComposite
-		getVirtualLayoutFriendlyURLComposite(
-			boolean privateLayout, String friendlyURL,
-			Map<String, String[]> params, Map<String, Object> requestContext)
+			getVirtualLayoutFriendlyURLComposite(
+				boolean privateLayout, String friendlyURL,
+				Map<String, String[]> params,
+				Map<String, Object> requestContext)
 		throws PortalException {
 
 		return getPortal().getVirtualLayoutFriendlyURLComposite(
@@ -2051,17 +1955,6 @@ public class PortalUtil {
 			portletConfig, resourceRequest, resourceResponse);
 	}
 
-	/**
-	 * @deprecated As of 6.2.0, with no direct replacement
-	 */
-	@Deprecated
-	public static boolean isAllowAddPortletDefaultResource(
-			HttpServletRequest request, Portlet portlet)
-		throws PortalException {
-
-		return getPortal().isAllowAddPortletDefaultResource(request, portlet);
-	}
-
 	public static boolean isCDNDynamicResourcesEnabled(
 			HttpServletRequest request)
 		throws PortalException {
@@ -2071,26 +1964,6 @@ public class PortalUtil {
 
 	public static boolean isCDNDynamicResourcesEnabled(long companyId) {
 		return getPortal().isCDNDynamicResourcesEnabled(companyId);
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, renamed to {@link #isGroupAdmin(User, long)}
-	 */
-	@Deprecated
-	public static boolean isCommunityAdmin(User user, long groupId)
-		throws Exception {
-
-		return getPortal().isCommunityAdmin(user, groupId);
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, renamed to {@link #isGroupOwner(User, long)}
-	 */
-	@Deprecated
-	public static boolean isCommunityOwner(User user, long groupId)
-		throws Exception {
-
-		return getPortal().isCommunityOwner(user, groupId);
 	}
 
 	public static boolean isCompanyAdmin(User user) throws Exception {
@@ -2195,6 +2068,25 @@ public class PortalUtil {
 		return getPortal().isSecure(request);
 	}
 
+	public static boolean isSkipPortletContentProcesssing(
+			Group group, HttpServletRequest htpServletRequest,
+			LayoutTypePortlet layoutTypePortlet, PortletDisplay portletDisplay,
+			String portletName)
+		throws Exception {
+
+		return getPortal().isSkipPortletContentProcessing(
+			group, htpServletRequest, layoutTypePortlet, portletDisplay,
+			portletName);
+	}
+
+	public static boolean isSkipPortletContentRendering(
+		Group group, LayoutTypePortlet layoutTypePortlet,
+		PortletDisplay portletDisplay, String portletName) {
+
+		return getPortal().isSkipPortletContentRendering(
+			group, layoutTypePortlet, portletDisplay, portletName);
+	}
+
 	public static boolean isSystemGroup(String groupName) {
 		return getPortal().isSystemGroup(groupName);
 	}
@@ -2223,37 +2115,8 @@ public class PortalUtil {
 		getPortal().resetCDNHosts();
 	}
 
-	/**
-	 * @deprecated As of 6.2.0 replaced by {@link
-	 *             com.liferay.portal.security.auth.AuthTokenWhitelistUtil#resetPortletInvocationWhitelist}
-	 */
-	@Deprecated
-	public static Set<String> resetPortletAddDefaultResourceCheckWhitelist() {
-		return getPortal().resetPortletAddDefaultResourceCheckWhitelist();
-	}
-
-	/**
-	 * @deprecated As of 6.2.0 replaced by {@link
-	 *             com.liferay.portal.security.auth.AuthTokenWhitelistUtil#resetPortletInvocationWhitelistActions}
-	 */
-	@Deprecated
-	public static Set<String>
-		resetPortletAddDefaultResourceCheckWhitelistActions() {
-
-		return getPortal().
-			resetPortletAddDefaultResourceCheckWhitelistActions();
-	}
-
 	public static String resetPortletParameters(String url, String portletId) {
 		return getPortal().resetPortletParameters(url, portletId);
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link DB#runSQL(String)}
-	 */
-	@Deprecated
-	public static void runSQL(String sql) throws IOException, SQLException {
-		DBFactoryUtil.getDB().runSQL(sql);
 	}
 
 	public static void sendError(

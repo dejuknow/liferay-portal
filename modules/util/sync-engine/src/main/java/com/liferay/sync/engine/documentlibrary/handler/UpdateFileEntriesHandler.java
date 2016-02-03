@@ -38,6 +38,15 @@ public class UpdateFileEntriesHandler extends BaseJSONHandler {
 	}
 
 	@Override
+	public boolean handlePortalException(String exception) throws Exception {
+		if (exception.endsWith("UploadException")) {
+			return true;
+		}
+
+		return super.handlePortalException(exception);
+	}
+
+	@Override
 	public void processResponse(String response) throws Exception {
 		Map<String, Handler> handlers = (Map<String, Handler>)getParameterValue(
 			"handlers");
@@ -47,23 +56,14 @@ public class UpdateFileEntriesHandler extends BaseJSONHandler {
 		Iterator<Map.Entry<String, JsonNode>> fields = rootJsonNode.fields();
 
 		while (fields.hasNext()) {
+			Map.Entry<String, JsonNode> field = fields.next();
+
+			Handler handler = handlers.remove(field.getKey());
+
 			try {
-				Map.Entry<String, JsonNode> field = fields.next();
-
-				Handler handler = handlers.get(field.getKey());
-
 				JsonNode fieldValue = field.getValue();
 
-				String exception = null;
-
-				if (fieldValue.isNull()) {
-					exception =
-						"com.liferay.portal.kernel.jsonwebservice." +
-							"NoSuchJSONWebServiceException";
-				}
-				else {
-					exception = handler.getException(fieldValue.textValue());
-				}
+				String exception = handler.getException(fieldValue.textValue());
 
 				if (handler.handlePortalException(exception)) {
 					continue;
@@ -84,11 +84,26 @@ public class UpdateFileEntriesHandler extends BaseJSONHandler {
 					_logger.debug(e.getMessage(), e);
 				}
 			}
+			finally {
+				handler.removeEvent();
+			}
 		}
 
 		Path filePath = (Path)getParameterValue("zipFilePath");
 
 		FileUtil.deleteFile(filePath);
+	}
+
+	@Override
+	public void removeEvent() {
+		Map<String, Handler> handlers = (Map<String, Handler>)getParameterValue(
+			"handlers");
+
+		for (Handler handler : handlers.values()) {
+			handler.removeEvent();
+		}
+
+		super.removeEvent();
 	}
 
 	private static final Logger _logger = LoggerFactory.getLogger(

@@ -21,14 +21,20 @@ String redirect = ParamUtil.getString(request, "redirect");
 
 ResultRow row = (ResultRow)request.getAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW);
 
-FileVersion fileVersion = (FileVersion)row.getObject();
+FileVersion fileVersion = null;
+
+if (row != null) {
+	fileVersion = (FileVersion)row.getObject();
+}
+else {
+	fileVersion = (FileVersion)request.getAttribute("info_panel.jsp-fileVersion");
+}
 
 FileEntry fileEntry = fileVersion.getFileEntry();
 %>
 
-<liferay-ui:icon-menu direction='<%= "down" %>' icon="<%= StringPool.BLANK %>" message="<%= StringPool.BLANK %>">
+<liferay-ui:icon-menu direction="left-side" icon="<%= StringPool.BLANK %>" markupView="lexicon" message="<%= StringPool.BLANK %>" showWhenSingleIcon="<%= true %>">
 	<liferay-ui:icon
-		iconCssClass="icon-download"
 		message="download"
 		method="get"
 		url="<%= DLUtil.getPreviewURL(fileEntry, fileVersion, themeDisplay, StringPool.BLANK) %>"
@@ -42,7 +48,6 @@ FileEntry fileEntry = fileVersion.getFileEntry();
 	</portlet:renderURL>
 
 	<liferay-ui:icon
-		iconCssClass="icon-search"
 		message="view[action]"
 		url="<%= viewFileVersionURL %>"
 	/>
@@ -62,7 +67,6 @@ FileEntry fileEntry = fileVersion.getFileEntry();
 		</portlet:actionURL>
 
 		<liferay-ui:icon
-			iconCssClass="icon-undo"
 			message="revert"
 			url="<%= revertURL %>"
 		/>
@@ -80,5 +84,69 @@ FileEntry fileEntry = fileVersion.getFileEntry();
 			message="delete-version"
 			url="<%= deleteURL %>"
 		/>
+	</c:if>
+
+	<%
+	boolean comparableFileEntry = DocumentConversionUtil.isComparableVersion(fileVersion.getExtension());
+	%>
+
+	<c:if test="<%= comparableFileEntry %>">
+		<portlet:renderURL var="selectFileVersionURL" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
+			<portlet:param name="mvcRenderCommandName" value="/document_library/select_file_version" />
+			<portlet:param name="redirect" value="<%= viewFileEntryURL %>" />
+			<portlet:param name="fileEntryId" value="<%= String.valueOf(fileEntry.getFileEntryId()) %>" />
+			<portlet:param name="version" value="<%= String.valueOf(fileVersion.getVersion()) %>" />
+		</portlet:renderURL>
+
+		<%
+		Map<String, Object> data = new HashMap<String, Object>();
+
+		data.put("uri", selectFileVersionURL);
+		%>
+
+		<liferay-ui:icon
+			cssClass="compare-to-link"
+			data="<%= data %>"
+			label="<%= true %>"
+			message="compare-to"
+			url="javascript:;"
+		/>
+
+		<aui:script sandbox="<%= true %>">
+			$('body').on(
+				'click',
+				'.compare-to-link a',
+				function(event) {
+					var currentTarget = $(event.currentTarget);
+
+					Liferay.Util.selectEntity(
+						{
+							dialog: {
+								constrain: true,
+								destroyOnHide: true,
+								modal: true
+							},
+							eventName: '<portlet:namespace />selectFileVersionFm',
+							id: '<portlet:namespace />compareFileVersions' + currentTarget.attr('id'),
+							title: '<liferay-ui:message key="compare-versions" />',
+							uri: currentTarget.data('uri')
+						},
+						function(event) {
+							<portlet:renderURL var="compareVersionURL">
+								<portlet:param name="mvcRenderCommandName" value="/document_library/compare_versions" />
+								<portlet:param name="backURL" value="<%= currentURL %>" />
+							</portlet:renderURL>
+
+							var uri = '<%= compareVersionURL %>';
+
+							uri = Liferay.Util.addParams('<portlet:namespace />sourceFileVersionId=' + event.sourceversion, uri);
+							uri = Liferay.Util.addParams('<portlet:namespace />targetFileVersionId=' + event.targetversion, uri);
+
+							location.href = uri;
+						}
+					);
+				}
+			);
+		</aui:script>
 	</c:if>
 </liferay-ui:icon-menu>

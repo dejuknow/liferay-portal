@@ -61,11 +61,13 @@ portletURL.setParameter("roleId", String.valueOf(role.getRoleId()));
 
 <c:choose>
 	<c:when test="<%= !portletName.equals(PortletKeys.SERVER_ADMIN) %>">
-		<liferay-ui:header
-			backURL="<%= backURL %>"
-			localizeTitle="<%= false %>"
-			title="<%= role.getTitle(locale) %>"
-		/>
+
+		<%
+		portletDisplay.setShowBackIcon(true);
+		portletDisplay.setURLBack(backURL);
+
+		renderResponse.setTitle(role.getTitle(locale));
+		%>
 
 		<liferay-util:include page="/edit_role_tabs.jsp" servletContext="<%= application %>">
 			<liferay-util:param name="tabs1" value="define-permissions" />
@@ -86,7 +88,7 @@ portletURL.setParameter("roleId", String.valueOf(role.getRoleId()));
 <liferay-ui:success key="permissionDeleted" message="the-permission-was-deleted" />
 <liferay-ui:success key="permissionsUpdated" message="the-role-permissions-were-updated" />
 
-<aui:container id="permissionContainer">
+<aui:container cssClass="container-fluid-1280" id="permissionContainer">
 	<aui:row>
 		<c:if test="<%= !portletName.equals(PortletKeys.SERVER_ADMIN) %>">
 			<aui:col width="<%= 25 %>">
@@ -137,7 +139,6 @@ portletURL.setParameter("roleId", String.valueOf(role.getRoleId()));
 		var groupsHTML = '';
 
 		for (var i = 0; i < selectedGroupIds.length; i++) {
-			var id = selectedGroupIds[i];
 			var name = selectedGroupNames[i];
 
 			groupsHTML += '<span class="lfr-token"><span class="lfr-token-text">' + name + '</span><a class="icon icon-remove lfr-token-close" href="javascript:<portlet:namespace />removeGroup(' + i + ', \'' + target + '\' );"></a></span>';
@@ -152,7 +153,6 @@ portletURL.setParameter("roleId", String.valueOf(role.getRoleId()));
 </aui:script>
 
 <aui:script use="aui-io-request,aui-loading-mask-deprecated,aui-parse-content,aui-toggler,autocomplete-base,autocomplete-filters,liferay-notice">
-	var AArray = A.Array;
 	var AParseContent = A.Plugin.ParseContent;
 
 	var notification;
@@ -300,12 +300,14 @@ portletURL.setParameter("roleId", String.valueOf(role.getRoleId()));
 		return notification;
 	}
 
+	var originalSelectedValues = [];
+
 	function processNavigationLinks() {
 		var permissionContainerNode = A.one('#<portlet:namespace />permissionContainer');
 
 		var permissionContentContainerNode = permissionContainerNode.one('#<portlet:namespace />permissionContentContainer');
 
-		var navigationLink = permissionContainerNode.delegate(
+		permissionContainerNode.delegate(
 			'click',
 			function(event) {
 				event.preventDefault();
@@ -343,12 +345,47 @@ portletURL.setParameter("roleId", String.valueOf(role.getRoleId()));
 								permissionContentContainerNode.empty();
 
 								permissionContentContainerNode.setContent(responseData);
+
+								var checkedNodes = permissionContentContainerNode.all(':checked');
+
+								originalSelectedValues = checkedNodes.val();
 							}
 						}
 					}
 				);
 			},
 			'.permission-navigation-link'
+		);
+	}
+
+	function processTargetCheckboxes() {
+		var permissionContainerNode = A.one('#<portlet:namespace />permissionContainer');
+
+		permissionContainerNode.delegate(
+			'change',
+			function(event) {
+				var unselectedTargetsNode = permissionContainerNode.one('#<portlet:namespace />unselectedTargets');
+
+				var unselectedTargets = unselectedTargetsNode.val().split(',');
+
+				var checkbox = event.currentTarget;
+
+				var value = checkbox.val();
+
+				if (checkbox.get('checked')) {
+					var index = unselectedTargets.indexOf(value);
+
+					if (index != -1) {
+						unselectedTargets.splice(index, 1);
+					}
+				}
+				else if (originalSelectedValues.indexOf(value) != -1) {
+					unselectedTargets.push(value);
+				}
+
+				unselectedTargetsNode.val(unselectedTargets.join(','));
+			},
+			':checkbox'
 		);
 	}
 
@@ -392,6 +429,7 @@ portletURL.setParameter("roleId", String.valueOf(role.getRoleId()));
 
 			createLiveSearch();
 			processNavigationLinks();
+			processTargetCheckboxes();
 		}
 	);
 </aui:script>
@@ -402,7 +440,6 @@ portletURL.setParameter("roleId", String.valueOf(role.getRoleId()));
 
 		form.fm('redirect').val('<%= HtmlUtil.escapeJS(portletURL.toString()) %>');
 		form.fm('selectedTargets').val(Liferay.Util.listCheckedExcept(form, '<portlet:namespace />allRowIds'));
-		form.fm('unselectedTargets').val(Liferay.Util.listUncheckedExcept(form, '<portlet:namespace />allRowIds'));
 
 		submitForm(form);
 	}

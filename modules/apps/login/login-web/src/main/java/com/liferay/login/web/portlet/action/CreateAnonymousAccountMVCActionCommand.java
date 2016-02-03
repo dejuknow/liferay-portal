@@ -15,11 +15,11 @@
 package com.liferay.login.web.portlet.action;
 
 import com.liferay.login.web.constants.LoginPortletKeys;
-import com.liferay.portal.CompanyMaxUsersException;
-import com.liferay.portal.ContactNameException;
-import com.liferay.portal.EmailAddressException;
-import com.liferay.portal.GroupFriendlyURLException;
-import com.liferay.portal.UserEmailAddressException;
+import com.liferay.portal.exception.CompanyMaxUsersException;
+import com.liferay.portal.exception.ContactNameException;
+import com.liferay.portal.exception.EmailAddressException;
+import com.liferay.portal.exception.GroupFriendlyURLException;
+import com.liferay.portal.exception.UserEmailAddressException;
 import com.liferay.portal.kernel.captcha.CaptchaConfigurationException;
 import com.liferay.portal.kernel.captcha.CaptchaTextException;
 import com.liferay.portal.kernel.captcha.CaptchaUtil;
@@ -31,6 +31,7 @@ import com.liferay.portal.kernel.portlet.JSONPortletResponseUtil;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.Constants;
@@ -42,7 +43,6 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.model.Company;
 import com.liferay.portal.model.User;
-import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
 import com.liferay.portal.service.UserLocalService;
@@ -223,16 +223,6 @@ public class CreateAnonymousAccountMVCActionCommand
 				JSONPortletResponseUtil.writeJSON(
 					actionRequest, actionResponse, jsonObject);
 			}
-			else if (e instanceof CaptchaConfigurationException ||
-					 e instanceof CaptchaTextException ||
-					 e instanceof CompanyMaxUsersException ||
-					 e instanceof ContactNameException ||
-					 e instanceof EmailAddressException ||
-					 e instanceof GroupFriendlyURLException ||
-					 e instanceof UserEmailAddressException) {
-
-				SessionErrors.add(actionRequest, e.getClass(), e);
-			}
 			else if (e instanceof
 						UserEmailAddressException.MustNotBeDuplicate) {
 
@@ -246,6 +236,16 @@ public class CreateAnonymousAccountMVCActionCommand
 					sendRedirect(
 						actionRequest, actionResponse, portletURL.toString());
 				}
+			}
+			else if (e instanceof CaptchaConfigurationException ||
+					 e instanceof CaptchaTextException ||
+					 e instanceof CompanyMaxUsersException ||
+					 e instanceof ContactNameException ||
+					 e instanceof EmailAddressException ||
+					 e instanceof GroupFriendlyURLException ||
+					 e instanceof UserEmailAddressException) {
+
+				SessionErrors.add(actionRequest, e.getClass(), e);
 			}
 			else {
 				_log.error("Unable to create anonymous account", e);
@@ -319,7 +319,7 @@ public class CreateAnonymousAccountMVCActionCommand
 	private static final Log _log = LogFactoryUtil.getLog(
 		CreateAnonymousAccountMVCActionCommand.class);
 
-	private volatile UserLocalService _userLocalService;
-	private volatile UserService _userService;
+	private UserLocalService _userLocalService;
+	private UserService _userService;
 
 }

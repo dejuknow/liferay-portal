@@ -17,76 +17,72 @@
 <%@ include file="/message_boards/init.jsp" %>
 
 <%
-String topLink = ParamUtil.getString(request, "topLink", "message-boards-home");
+String mvcRenderCommandName = ParamUtil.getString(request, "mvcRenderCommandName");
 
 MBCategory category = (MBCategory)request.getAttribute(WebKeys.MESSAGE_BOARDS_CATEGORY);
 
 long categoryId = MBUtil.getCategoryId(request, category);
-
-PortletURL portletURL = renderResponse.createRenderURL();
-
-portletURL.setParameter("mvcRenderCommandName", "/message_boards/view");
 %>
 
-<aui:nav-bar>
+<aui:nav-bar cssClass="collapse-basic-search" markupView="lexicon">
 	<aui:nav cssClass="navbar-nav">
 
 		<%
-		String label = "message-boards-home";
+		PortletURL messageBoardsHomeURL = renderResponse.createRenderURL();
 
-		portletURL.setParameter("topLink", label);
-		portletURL.setParameter("tag", StringPool.BLANK);
+		messageBoardsHomeURL.setParameter("mvcRenderCommandName", "/message_boards/view");
+		messageBoardsHomeURL.setParameter("tag", StringPool.BLANK);
 		%>
 
-		<aui:nav-item cssClass='<%= topLink.equals(label) ? "active" : StringPool.BLANK %>' href="<%= portletURL.toString() %>" label="<%= label %>" selected="<%= topLink.equals(label) %>" />
+		<aui:nav-item cssClass='<%= (mvcRenderCommandName.equals("/message_boards/view") || mvcRenderCommandName.equals("/message_boards/view_category")) ? "active" : StringPool.BLANK %>' href="<%= messageBoardsHomeURL.toString() %>" label="message-boards-home" selected='<%= (mvcRenderCommandName.equals("/message_boards/view") || mvcRenderCommandName.equals("/message_boards/view_category")) %>' />
 
 		<%
-		label = "recent-posts";
+		PortletURL viewRecentPostsURL = renderResponse.createRenderURL();
 
-		portletURL.setParameter("topLink", label);
+		viewRecentPostsURL.setParameter("mvcRenderCommandName", "/message_boards/view_recent_posts");
 		%>
 
-		<aui:nav-item cssClass='<%= topLink.equals(label) ? "active" : StringPool.BLANK %>' href="<%= portletURL.toString() %>" label="<%= label %>" selected="<%= topLink.equals(label) %>" />
+		<aui:nav-item cssClass='<%= mvcRenderCommandName.equals("/message_boards/view_recent_posts") ? "active" : StringPool.BLANK %>' href="<%= viewRecentPostsURL.toString() %>" label="recent-posts" selected='<%= mvcRenderCommandName.equals("/message_boards/view_recent_posts") %>' />
 
 		<c:if test="<%= themeDisplay.isSignedIn() && !portletName.equals(MBPortletKeys.MESSAGE_BOARDS_ADMIN) %>">
 
 			<%
-			label = "my-posts";
+			PortletURL viewMyPostsURL = renderResponse.createRenderURL();
 
-			portletURL.setParameter("topLink", label);
+			viewMyPostsURL.setParameter("mvcRenderCommandName", "/message_boards/view_my_posts");
 			%>
 
-			<aui:nav-item cssClass='<%= topLink.equals(label) ? "active" : StringPool.BLANK %>' href="<%= portletURL.toString() %>" label="<%= label %>" selected="<%= topLink.equals(label) %>" />
+			<aui:nav-item cssClass='<%= mvcRenderCommandName.equals("/message_boards/view_my_posts") ? "active" : StringPool.BLANK %>' href="<%= viewMyPostsURL.toString() %>" label="my-posts" selected='<%= mvcRenderCommandName.equals("/message_boards/view_my_posts") %>' />
 
 			<c:if test="<%= mbGroupServiceSettings.isEmailMessageAddedEnabled() || mbGroupServiceSettings.isEmailMessageUpdatedEnabled() %>">
 
 				<%
-				label = "my-subscriptions";
+				PortletURL viewMySubscriptionsURL = renderResponse.createRenderURL();
 
-				portletURL.setParameter("topLink", label);
+				viewMySubscriptionsURL.setParameter("mvcRenderCommandName", "/message_boards/view_my_subscriptions");
 				%>
 
-				<aui:nav-item cssClass='<%= topLink.equals(label) ? "active" : StringPool.BLANK %>' href="<%= portletURL.toString() %>" label="<%= label %>" selected="<%= topLink.equals(label) %>" />
+				<aui:nav-item cssClass='<%= mvcRenderCommandName.equals("/message_boards/view_my_subscriptions") ? "active" : StringPool.BLANK %>' href="<%= viewMySubscriptionsURL.toString() %>" label="my-subscriptions" selected='<%= mvcRenderCommandName.equals("/message_boards/view_my_subscriptions") %>' />
 			</c:if>
 		</c:if>
 
 		<%
-		label = "statistics";
+		PortletURL viewStatisticsURL = renderResponse.createRenderURL();
 
-		portletURL.setParameter("topLink", label);
+		viewStatisticsURL.setParameter("mvcRenderCommandName", "/message_boards/view_statistics");
 		%>
 
-		<aui:nav-item cssClass='<%= topLink.equals(label) ? "active" : StringPool.BLANK %>' href="<%= portletURL.toString() %>" label="<%= label %>" selected="<%= topLink.equals(label) %>" />
+		<aui:nav-item cssClass='<%= mvcRenderCommandName.equals("/message_boards/view_statistics") ? "active" : StringPool.BLANK %>' href="<%= viewStatisticsURL.toString() %>" label="statistics" selected='<%= mvcRenderCommandName.equals("/message_boards/view_statistics") %>' />
 
 		<c:if test="<%= MBPermission.contains(permissionChecker, scopeGroupId, ActionKeys.BAN_USER) %>">
 
 			<%
-			label = "banned-users";
+			PortletURL bannedUsersURL = renderResponse.createRenderURL();
 
-			portletURL.setParameter("topLink", label);
+			bannedUsersURL.setParameter("mvcRenderCommandName", "/message_boards/view_banned_users");
 			%>
 
-			<aui:nav-item cssClass='<%= topLink.equals(label) ? "active" : StringPool.BLANK %>' href="<%= portletURL.toString() %>" label="<%= label %>" selected="<%= topLink.equals(label) %>" />
+			<aui:nav-item cssClass='<%= mvcRenderCommandName.equals("/message_boards/view_banned_users") ? "active" : StringPool.BLANK %>' href="<%= bannedUsersURL.toString() %>" label="banned-users" selected='<%= mvcRenderCommandName.equals("/message_boards/view_banned_users") %>' />
 		</c:if>
 	</aui:nav>
 
@@ -103,15 +99,13 @@ portletURL.setParameter("mvcRenderCommandName", "/message_boards/view");
 					<aui:input name="breadcrumbsCategoryId" type="hidden" value="<%= categoryId %>" />
 					<aui:input name="searchCategoryId" type="hidden" value="<%= categoryId %>" />
 
-					<liferay-ui:input-search id="keywords1" />
+					<liferay-ui:input-search id="keywords1" markupView="lexicon" />
 				</aui:form>
 			</div>
 		</aui:nav-bar-search>
 	</c:if>
 </aui:nav-bar>
 
-<c:if test="<%= layout.isTypeControlPanel() %>">
-	<div id="breadcrumb">
-		<liferay-ui:breadcrumb showCurrentGroup="<%= false %>" showGuestGroup="<%= false %>" showLayout="<%= false %>" showPortletBreadcrumb="<%= true %>" />
-	</div>
-</c:if>
+<div id="breadcrumb">
+	<liferay-ui:breadcrumb showCurrentGroup="<%= false %>" showGuestGroup="<%= false %>" showLayout="<%= false %>" showPortletBreadcrumb="<%= true %>" />
+</div>

@@ -14,8 +14,8 @@
 
 package com.liferay.message.boards.service.permission;
 
+import com.liferay.portal.kernel.security.permission.PermissionUpdateHandler;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.security.permission.PermissionUpdateHandler;
 import com.liferay.portlet.messageboards.model.MBDiscussion;
 import com.liferay.portlet.messageboards.service.MBDiscussionLocalService;
 
@@ -57,6 +57,6 @@ public class MBDiscussionPermissionUpdateHandler
 		_mbDiscussionLocalService = mbDiscussionLocalService;
 	}
 
-	private volatile MBDiscussionLocalService _mbDiscussionLocalService;
+	private MBDiscussionLocalService _mbDiscussionLocalService;
 
 }

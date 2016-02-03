@@ -22,12 +22,15 @@ import com.liferay.portal.kernel.servlet.ServletResponseUtil;
 import com.liferay.portal.kernel.util.AggregateResourceBundle;
 import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.ResourceBundleLoader;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.language.LanguageResources;
 import com.liferay.portal.servlet.filters.BasePortalFilter;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 import java.net.URL;
 
@@ -41,15 +44,15 @@ import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.osgi.service.http.context.ServletContextHelper;
+import org.osgi.framework.Bundle;
 
 /**
  * @author Carlos Sierra Andrés
  */
 public class LanguageFilter extends BasePortalFilter {
 
-	public LanguageFilter(ServletContextHelper servletContextHelper) {
-		_servletContextHelper = servletContextHelper;
+	public LanguageFilter(Bundle bundle) {
+		_bundle = bundle;
 	}
 
 	protected ResourceBundle getResourceBundle(Locale locale) {
@@ -63,7 +66,7 @@ public class LanguageFilter extends BasePortalFilter {
 
 		ResourceBundleUtil.loadResourceBundles(
 			_resourceBundles, locale,
-			new ResourceBundleUtil.ResourceBundleLoader() {
+			new ResourceBundleLoader() {
 
 				@Override
 				public ResourceBundle loadResourceBundle(String languageId) {
@@ -76,14 +79,18 @@ public class LanguageFilter extends BasePortalFilter {
 						name = "content/Language_" + languageId + ".properties";
 					}
 
-					URL url = _servletContextHelper.getResource(name);
+					URL url = _bundle.getResource(name);
 
 					if (url == null) {
 						return null;
 					}
 
 					try {
-						return new PropertyResourceBundle(url.openStream());
+						InputStreamReader inputStreamReader =
+							new InputStreamReader(
+								url.openStream(), StringPool.UTF8);
+
+						return new PropertyResourceBundle(inputStreamReader);
 					}
 					catch (IOException ioe) {
 						return null;
@@ -152,8 +159,8 @@ public class LanguageFilter extends BasePortalFilter {
 
 	private static final Log _log = LogFactoryUtil.getLog(LanguageFilter.class);
 
+	private final Bundle _bundle;
 	private final Map<String, ResourceBundle> _resourceBundles =
 		new ConcurrentHashMap<>();
-	private final ServletContextHelper _servletContextHelper;
 
 }

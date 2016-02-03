@@ -86,10 +86,6 @@
 		</if>
 	</command>
 
-	<command name="_selectEventIframe">
-		<execute function="SelectFrame" locator1="CalendarEditEvent#EDIT_EVENT_IFRAME" />
-	</command>
-
 	<command name="_viewNewEventIframe">
 		<execute function="AssertElementPresent#assertVisible" locator1="CalendarEditEvent#START_DATE" />
 		<execute function="AssertElementPresent#assertVisible" locator1="CalendarEditEvent#START_DATE_TIME" />
@@ -98,225 +94,84 @@
 	</command>
 
 	<command name="add">
-		<execute macro="CalendarEvent#editTitle">
-			<var name="eventTitle" value="${eventTitle}" />
+		<execute macro="TestCase#getDefaultSiteName">
+			<return from="defaultSiteName" name="defaultSiteName" />
 		</execute>
 
 		<if>
 			<equals arg1="${eventType}" arg2="Regular" />
 			<then>
-				<execute function="AssertNotChecked" locator1="CalendarEditEvent#ALL_DAY_CHECKBOX" />
-				<execute function="AssertNotChecked" locator1="CalendarEditEvent#REPEAT_CHECKBOX" />
-
-				<var locator="CalendarEditEvent#END_DATE" name="endDate" />
-				<var locator="CalendarEditEvent#END_DATE_TIME" name="endDateTime" />
-				<var locator="CalendarEditEvent#START_DATE" name="startDate" />
-				<var locator="CalendarEditEvent#START_DATE_TIME" name="startDateTime" />
-
-				<execute macro="CalendarEvent#selectCalendar">
+				<execute macro="CalendarEvent#addRegular">
 					<var name="calendarName" value="${calendarName}" />
-				</execute>
-
-				<if>
-					<equals arg1="${optionSet}" arg2="true" />
-					<then>
-						<execute macro="CalendarEvent#_options">
-							<var name="optionSetValue" value="${optionSetValue}" />
-							<var name="specificOptionSetValue" value="${specificOptionSetValue}" />
-						</execute>
-					</then>
-				</if>
-
-				<if>
-					<equals arg1="${resourcesAvailability}" arg2="true" />
-					<then>
-						<execute macro="CalendarEvent#resourcesAvailability" />
-					</then>
-				</if>
-
-				<if>
-					<equals arg1="${reminders}" arg2="true" />
-					<then>
-						<execute macro="CalendarEvent#configureReminders">
-							<var name="duration1" value="${duration1}" />
-							<var name="duration2" value="${duration2}" />
-							<var name="number1" value="${number1}" />
-							<var name="number2" value="${number2}" />
-						</execute>
-					</then>
-				</if>
-
-				<if>
-					<equals arg1="${workflow}" arg2="true" />
-					<then>
-						<execute function="AssertClick" locator1="Button#SUBMIT_FOR_PUBLICATION" value1="Submit for Publication" />
-					</then>
-					<else>
-						<execute macro="CalendarEvent#publish" />
-					</else>
-				</if>
-
-				<execute macro="Page#gotoPG">
 					<var name="defaultURL" value="${defaultURL}" />
+					<var name="duration1" value="${duration1}" />
+					<var name="duration2" value="${duration2}" />
+					<var name="eventTitle" value="${eventTitle}" />
 					<var name="nodePort" value="${nodePort}" />
+					<var name="number1" value="${number1}" />
+					<var name="number2" value="${number2}" />
+					<var name="optionSet" value="${optionSet}" />
+					<var name="optionSetValue" value="${optionSetValue}" />
 					<var name="pageName" value="${pageName}" />
 					<var name="pageStaging" value="${pageStaging}" />
-					<var name="siteName" value="${siteName}" />
+					<var name="reminders" value="${reminders}" />
+					<var name="resourcesAvailability" value="${resourcesAvailability}" />
+					<var name="siteName" value="${defaultSiteName}" />
 					<var name="siteURL" value="${siteURL}" />
-					<var name="soDashboard" value="${soDashboard}" />
-					<var name="soPage" value="${soPage}" />
-				</execute>
-
-				<execute macro="CalendarScheduler#_viewRegularEventTitleViaMonthView">
-					<var name="endDate" value="${endDate}" />
-					<var name="endDateTime" value="${endDateTime}" />
-					<var name="eventTitle" value="${eventTitle}" />
-					<var name="startDate" value="${startDate}" />
-					<var name="startDateTime" value="${startDateTime}" />
+					<var name="specificOptionSetValue" value="${specificOptionSetValue}" />
+					<var name="workflow" value="${workflow}" />
 				</execute>
 			</then>
 			<elseif>
 				<equals arg1="${eventType}" arg2="All Day" />
 				<then>
-					<var name="endDateTime" value="11:59 PM" />
-					<var name="startDateTime" value="12:00 AM" />
-
-					<execute function="Check" locator1="CalendarEditEvent#ALL_DAY_CHECKBOX" />
-					<execute function="AssertElementNotPresent#assertNotVisible" locator1="CalendarEditEvent#START_DATE_TIME" />
-					<execute function="AssertElementNotPresent#assertNotVisible" locator1="CalendarEditEvent#END_DATE_TIME" />
-
-					<var locator="CalendarEditEvent#END_DATE" name="endDate" />
-					<var locator="CalendarEditEvent#START_DATE" name="startDate" />
-
-					<execute macro="CalendarEvent#selectCalendar">
+					<execute macro="CalendarEvent#addAllDay">
 						<var name="calendarName" value="${calendarName}" />
-					</execute>
-
-					<if>
-						<equals arg1="${optionSet}" arg2="true" />
-						<then>
-							<execute macro="CalendarEvent#_options">
-								<var name="optionSetValue" value="${optionSetValue}" />
-								<var name="specificOptionSetValue" value="${specificOptionSetValue}" />
-							</execute>
-						</then>
-					</if>
-
-					<if>
-						<equals arg1="${reminders}" arg2="true" />
-						<then>
-							<execute macro="CalendarEvent#configureReminders">
-								<var name="duration1" value="${duration1}" />
-								<var name="duration2" value="${duration2}" />
-								<var name="number1" value="${number1}" />
-								<var name="number2" value="${number2}" />
-							</execute>
-						</then>
-					</if>
-
-					<if>
-						<equals arg1="${workflow}" arg2="true" />
-						<then>
-							<execute function="AssertClick" locator1="Button#SUBMIT_FOR_PUBLICATION" value1="Submit for Publication" />
-						</then>
-						<else>
-							<execute macro="CalendarEvent#publish" />
-						</else>
-					</if>
-
-					<execute macro="Page#gotoPG">
 						<var name="defaultURL" value="${defaultURL}" />
+						<var name="duration1" value="${duration1}" />
+						<var name="duration2" value="${duration2}" />
+						<var name="eventTitle" value="${eventTitle}" />
 						<var name="nodePort" value="${nodePort}" />
+						<var name="number1" value="${number1}" />
+						<var name="number2" value="${number2}" />
+						<var name="optionSet" value="${optionSet}" />
+						<var name="optionSetValue" value="${optionSetValue}" />
 						<var name="pageName" value="${pageName}" />
-						<var name="soDashboard" value="${soDashboard}" />
-						<var name="soPage" value="${soPage}" />
+						<var name="pageStaging" value="${pageStaging}" />
+						<var name="reminders" value="${reminders}" />
+						<var name="resourcesAvailability" value="${resourcesAvailability}" />
+						<var name="siteName" value="${defaultSiteName}" />
+						<var name="siteURL" value="${siteURL}" />
+						<var name="specificOptionSetValue" value="${specificOptionSetValue}" />
+						<var name="workflow" value="${workflow}" />
 					</execute>
-
-					<var name="key_endDate" value="${endDate}" />
-					<var name="key_endDateTime" value="${endDateTime}" />
-					<var name="key_startDate" value="${startDate}" />
-					<var name="key_startDateTime" value="${startDateTime}" />
-
-					<if>
-						<equals arg1="${reminders}" arg2="true" />
-						<then>
-							<execute function="AssertElementPresent" locator1="Calendar#SCHEDULER_EVENT_ALL_DAY_WITH_REMINDER" />
-							<execute function="AssertTextEquals" locator1="Calendar#SCHEDULER_EVENT_ALL_DAY_TITLE_WITH_REMINDER" value1="${eventTitle}" />
-						</then>
-						<else>
-							<execute function="AssertElementPresent" locator1="Calendar#SCHEDULER_EVENT_ALL_DAY" />
-							<execute function="AssertTextEquals" locator1="Calendar#SCHEDULER_EVENT_ALL_DAY_TITLE" value1="${eventTitle}" />
-						</else>
-					</if>
 				</then>
 			</elseif>
 			<elseif>
 				<equals arg1="${eventType}" arg2="Repeating" />
 				<then>
-					<var locator="CalendarEditEvent#END_DATE" name="endDate" />
-					<var locator="CalendarEditEvent#END_DATE_TIME" name="endDateTime" />
-					<var locator="CalendarEditEvent#START_DATE" name="startDate" />
-					<var locator="CalendarEditEvent#START_DATE_TIME" name="startDateTime" />
-
-					<execute macro="CalendarEvent#setRepeating">
-						<var name="frequency" value="${frequency}" />
-						<var name="month" value="${month}" />
-						<var name="numberOfOccurrences" value="${numberOfOccurrences}" />
-						<var name="position" value="${position}" />
-						<var name="weekday" value="${weekday}" />
-					</execute>
-
-					<execute macro="CalendarEvent#selectCalendar">
+					<execute macro="CalendarEvent#addRepeating">
 						<var name="calendarName" value="${calendarName}" />
-					</execute>
-
-					<if>
-						<equals arg1="${optionSet}" arg2="true" />
-						<then>
-							<execute macro="CalendarEvent#_options">
-								<var name="optionSetValue" value="${optionSetValue}" />
-								<var name="specificOptionSetValue" value="${specificOptionSetValue}" />
-							</execute>
-						</then>
-					</if>
-
-					<if>
-						<equals arg1="${reminders}" arg2="true" />
-						<then>
-							<execute macro="CalendarEvent#configureReminders">
-								<var name="duration1" value="${duration1}" />
-								<var name="duration2" value="${duration2}" />
-								<var name="number1" value="${number1}" />
-								<var name="number2" value="${number2}" />
-							</execute>
-						</then>
-					</if>
-
-					<if>
-						<equals arg1="${workflow}" arg2="true" />
-						<then>
-							<execute function="AssertClick" locator1="Button#SUBMIT_FOR_PUBLICATION" value1="Submit for Publication" />
-						</then>
-						<else>
-							<execute macro="CalendarEvent#publish" />
-						</else>
-					</if>
-
-					<execute macro="Page#gotoPG">
 						<var name="defaultURL" value="${defaultURL}" />
+						<var name="duration1" value="${duration1}" />
+						<var name="duration2" value="${duration2}" />
+						<var name="eventTitle" value="${eventTitle}" />
+						<var name="frequency" value="${frequency}" />
 						<var name="nodePort" value="${nodePort}" />
+						<var name="number1" value="${number1}" />
+						<var name="number2" value="${number2}" />
+						<var name="numberOfOccurrences" value="${numberOfOccurrences}" />
+						<var name="optionSet" value="${optionSet}" />
+						<var name="optionSetValue" value="${optionSetValue}" />
 						<var name="pageName" value="${pageName}" />
-						<var name="soDashboard" value="${soDashboard}" />
-						<var name="soPage" value="${soPage}" />
+						<var name="pageStaging" value="${pageStaging}" />
+						<var name="reminders" value="${reminders}" />
+						<var name="resourcesAvailability" value="${resourcesAvailability}" />
+						<var name="siteName" value="${defaultSiteName}" />
+						<var name="siteURL" value="${siteURL}" />
+						<var name="specificOptionSetValue" value="${specificOptionSetValue}" />
+						<var name="workflow" value="${workflow}" />
 					</execute>
-
-					<var name="key_endDate" value="${endDate}" />
-					<var name="key_endDateTime" value="${endDateTime}" />
-					<var name="key_startDate" value="${startDate}" />
-					<var name="key_startDateTime" value="${startDateTime}" />
-
-					<execute function="AssertElementPresent" locator1="Calendar#SCHEDULER_EVENT_REPEAT" />
-					<execute function="AssertTextEquals" locator1="Calendar#SCHEDULER_EVENT_REPEAT_TITLE" value1="${eventTitle}" />
 				</then>
 			</elseif>
 		</if>
@@ -337,6 +192,90 @@
 					<var name="user" value="${user}" />
 				</execute>
 			</then>
+		</if>
+	</command>
+
+	<command name="addAllDay">
+		<execute macro="CalendarEvent#editTitle">
+			<var name="eventTitle" value="${eventTitle}" />
+		</execute>
+
+		<var name="endDateTime" value="11:59 PM" />
+		<var name="startDateTime" value="12:00 AM" />
+
+		<execute function="Check" locator1="CalendarEditEvent#ALL_DAY_CHECKBOX" />
+		<execute function="AssertElementNotPresent#assertNotVisible" locator1="CalendarEditEvent#START_DATE_TIME" />
+		<execute function="AssertElementNotPresent#assertNotVisible" locator1="CalendarEditEvent#END_DATE_TIME" />
+
+		<var locator="CalendarEditEvent#END_DATE" name="endDate" />
+		<var locator="CalendarEditEvent#START_DATE" name="startDate" />
+
+		<execute macro="CalendarEvent#selectCalendar">
+			<var name="calendarName" value="${calendarName}" />
+		</execute>
+
+		<if>
+			<equals arg1="${optionSet}" arg2="true" />
+			<then>
+				<execute macro="CalendarEvent#_options">
+					<var name="optionSetValue" value="${optionSetValue}" />
+					<var name="specificOptionSetValue" value="${specificOptionSetValue}" />
+				</execute>
+			</then>
+		</if>
+
+		<if>
+			<equals arg1="${reminders}" arg2="true" />
+			<then>
+				<execute macro="CalendarEvent#configureReminders">
+					<var name="duration1" value="${duration1}" />
+					<var name="duration2" value="${duration2}" />
+					<var name="number1" value="${number1}" />
+					<var name="number2" value="${number2}" />
+				</execute>
+			</then>
+		</if>
+
+		<if>
+			<equals arg1="${workflow}" arg2="true" />
+			<then>
+				<execute function="AssertClick" locator1="Button#SUBMIT_FOR_PUBLICATION" value1="Submit for Publication" />
+			</then>
+			<else>
+				<execute macro="CalendarEvent#publish" />
+			</else>
+		</if>
+
+		<execute macro="TestCase#getDefaultSiteName">
+			<return from="defaultSiteName" name="defaultSiteName" />
+		</execute>
+
+		<execute macro="Page#gotoPG">
+			<var name="defaultURL" value="${defaultURL}" />
+			<var name="nodePort" value="${nodePort}" />
+			<var name="pageName" value="${pageName}" />
+			<var name="pageStaging" value="${pageStaging}" />
+			<var name="siteName" value="${defaultSiteName}" />
+			<var name="siteURL" value="${siteURL}" />
+			<var name="soDashboard" value="${soDashboard}" />
+			<var name="soPage" value="${soPage}" />
+		</execute>
+
+		<var name="key_endDate" value="${endDate}" />
+		<var name="key_endDateTime" value="${endDateTime}" />
+		<var name="key_startDate" value="${startDate}" />
+		<var name="key_startDateTime" value="${startDateTime}" />
+
+		<if>
+			<equals arg1="${reminders}" arg2="true" />
+			<then>
+				<execute function="AssertElementPresent" locator1="Calendar#SCHEDULER_EVENT_ALL_DAY_WITH_REMINDER" />
+				<execute function="AssertTextEquals" locator1="Calendar#SCHEDULER_EVENT_ALL_DAY_TITLE_WITH_REMINDER" value1="${eventTitle}" />
+			</then>
+			<else>
+				<execute function="AssertElementPresent" locator1="Calendar#SCHEDULER_EVENT_ALL_DAY" />
+				<execute function="AssertTextEquals" locator1="Calendar#SCHEDULER_EVENT_ALL_DAY_TITLE" value1="${eventTitle}" />
+			</else>
 		</if>
 	</command>
 
@@ -366,7 +305,7 @@
 
 					<execute function="AssertClick" locator1="Button#REPLY" value1="Reply" />
 
-					<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+					<execute macro="Alert#viewRequestCompletedSuccessMessage" />
 				</for>
 			</then>
 			<else>
@@ -374,7 +313,7 @@
 
 				<execute function="AssertClick" locator1="Button#REPLY" value1="Reply" />
 
-				<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+				<execute macro="Alert#viewRequestCompletedSuccessMessage" />
 			</else>
 		</if>
 
@@ -397,6 +336,161 @@
 		</if>
 
 		<execute function="SelectFrame" value1="relative=top" />
+	</command>
+
+	<command name="addRegular">
+		<execute macro="CalendarEvent#editTitle">
+			<var name="eventTitle" value="${eventTitle}" />
+		</execute>
+
+		<execute function="AssertNotChecked" locator1="CalendarEditEvent#ALL_DAY_CHECKBOX" />
+		<execute function="AssertNotChecked" locator1="CalendarEditEvent#REPEAT_CHECKBOX" />
+
+		<var locator="CalendarEditEvent#END_DATE" name="endDate" />
+		<var locator="CalendarEditEvent#END_DATE_TIME" name="endDateTime" />
+		<var locator="CalendarEditEvent#START_DATE" name="startDate" />
+		<var locator="CalendarEditEvent#START_DATE_TIME" name="startDateTime" />
+
+		<execute macro="CalendarEvent#selectCalendar">
+			<var name="calendarName" value="${calendarName}" />
+		</execute>
+
+		<if>
+			<equals arg1="${optionSet}" arg2="true" />
+			<then>
+				<execute macro="CalendarEvent#_options">
+					<var name="optionSetValue" value="${optionSetValue}" />
+					<var name="specificOptionSetValue" value="${specificOptionSetValue}" />
+				</execute>
+			</then>
+		</if>
+
+		<if>
+			<equals arg1="${resourcesAvailability}" arg2="true" />
+			<then>
+				<execute macro="CalendarEvent#resourcesAvailability" />
+			</then>
+		</if>
+
+		<if>
+			<equals arg1="${reminders}" arg2="true" />
+			<then>
+				<execute macro="CalendarEvent#configureReminders">
+					<var name="duration1" value="${duration1}" />
+					<var name="duration2" value="${duration2}" />
+					<var name="number1" value="${number1}" />
+					<var name="number2" value="${number2}" />
+				</execute>
+			</then>
+		</if>
+
+		<if>
+			<equals arg1="${workflow}" arg2="true" />
+			<then>
+				<execute function="AssertClick" locator1="Button#SUBMIT_FOR_PUBLICATION" value1="Submit for Publication" />
+			</then>
+			<else>
+				<execute macro="CalendarEvent#publish" />
+			</else>
+		</if>
+
+		<execute macro="TestCase#getDefaultSiteName">
+			<return from="defaultSiteName" name="defaultSiteName" />
+		</execute>
+
+		<execute macro="Page#gotoPG">
+			<var name="defaultURL" value="${defaultURL}" />
+			<var name="nodePort" value="${nodePort}" />
+			<var name="pageName" value="${pageName}" />
+			<var name="pageStaging" value="${pageStaging}" />
+			<var name="siteName" value="${defaultSiteName}" />
+			<var name="siteURL" value="${siteURL}" />
+			<var name="soDashboard" value="${soDashboard}" />
+			<var name="soPage" value="${soPage}" />
+		</execute>
+
+		<execute macro="CalendarScheduler#_viewRegularEventTitleViaMonthView">
+			<var name="endDate" value="${endDate}" />
+			<var name="endDateTime" value="${endDateTime}" />
+			<var name="eventTitle" value="${eventTitle}" />
+			<var name="startDate" value="${startDate}" />
+			<var name="startDateTime" value="${startDateTime}" />
+		</execute>
+	</command>
+
+	<command name="addRepeating">
+		<execute macro="CalendarEvent#editTitle">
+			<var name="eventTitle" value="${eventTitle}" />
+		</execute>
+
+		<var locator="CalendarEditEvent#END_DATE" name="endDate" />
+		<var locator="CalendarEditEvent#END_DATE_TIME" name="endDateTime" />
+		<var locator="CalendarEditEvent#START_DATE" name="startDate" />
+		<var locator="CalendarEditEvent#START_DATE_TIME" name="startDateTime" />
+
+		<execute macro="CalendarEvent#setRepeating">
+			<var name="frequency" value="${frequency}" />
+			<var name="numberOfOccurrences" value="${numberOfOccurrences}" />
+		</execute>
+
+		<execute macro="CalendarEvent#selectCalendar">
+			<var name="calendarName" value="${calendarName}" />
+		</execute>
+
+		<if>
+			<equals arg1="${optionSet}" arg2="true" />
+			<then>
+				<execute macro="CalendarEvent#_options">
+					<var name="optionSetValue" value="${optionSetValue}" />
+					<var name="specificOptionSetValue" value="${specificOptionSetValue}" />
+				</execute>
+			</then>
+		</if>
+
+		<if>
+			<equals arg1="${reminders}" arg2="true" />
+			<then>
+				<execute macro="CalendarEvent#configureReminders">
+					<var name="duration1" value="${duration1}" />
+					<var name="duration2" value="${duration2}" />
+					<var name="number1" value="${number1}" />
+					<var name="number2" value="${number2}" />
+				</execute>
+			</then>
+		</if>
+
+		<if>
+			<equals arg1="${workflow}" arg2="true" />
+			<then>
+				<execute function="AssertClick" locator1="Button#SUBMIT_FOR_PUBLICATION" value1="Submit for Publication" />
+			</then>
+			<else>
+				<execute macro="CalendarEvent#publish" />
+			</else>
+		</if>
+
+		<execute macro="TestCase#getDefaultSiteName">
+			<return from="defaultSiteName" name="defaultSiteName" />
+		</execute>
+
+		<execute macro="Page#gotoPG">
+			<var name="defaultURL" value="${defaultURL}" />
+			<var name="nodePort" value="${nodePort}" />
+			<var name="pageName" value="${pageName}" />
+			<var name="pageStaging" value="${pageStaging}" />
+			<var name="siteName" value="${defaultSiteName}" />
+			<var name="siteURL" value="${siteURL}" />
+			<var name="soDashboard" value="${soDashboard}" />
+			<var name="soPage" value="${soPage}" />
+		</execute>
+
+		<var name="key_endDate" value="${endDate}" />
+		<var name="key_endDateTime" value="${endDateTime}" />
+		<var name="key_startDate" value="${startDate}" />
+		<var name="key_startDateTime" value="${startDateTime}" />
+
+		<execute function="AssertElementPresent" locator1="Calendar#SCHEDULER_EVENT_REPEAT" />
+		<execute function="AssertTextEquals" locator1="Calendar#SCHEDULER_EVENT_REPEAT_TITLE" value1="${eventTitle}" />
 	</command>
 
 	<command name="addRSVP">
@@ -439,7 +533,7 @@
 
 		<execute function="AssertClick" locator1="Calendar#ADD_EVENT_BUTTON" value1="Add Event" />
 
-		<execute macro="CalendarEvent#_selectEventIframe" />
+		<execute macro="CalendarEvent#selectEventIframe" />
 
 		<execute function="Type" locator1="TextInput#TITLE" value1="${eventTitle}" />
 
@@ -571,6 +665,14 @@
 		<execute macro="CalendarScheduler#saveEvent" />
 	</command>
 
+	<command name="assertEventNotEditable">
+		<execute function="AssertElementNotPresent" locator1="Calendar#SCHEDULER_EVENT_DIALOG_BOX_EDIT_BUTTON" />
+	</command>
+
+	<command name="clickPublish">
+		<execute function="AssertClick" locator1="Button#SUBMIT" value1="Publish" />
+	</command>
+
 	<command name="configureReminders">
 		<if>
 			<condition function="IsElementPresent" locator1="CalendarEditEvent#REMINDERS_PANEL_COLLAPSED" />
@@ -678,7 +780,7 @@
 			</else>
 		</if>
 
-		<execute function="AssertTextEquals" locator1="CalendarViewEventDetails#COMMENTS_SUCCESS" value1="Your request processed successfully." />
+		<execute function="AssertTextEquals" locator1="CalendarViewEventDetails#COMMENTS_SUCCESS" value1="Your request completed successfully." />
 
 		<execute function="SelectFrame" value1="relative=top" />
 	</command>
@@ -786,6 +888,11 @@
 	</command>
 
 	<command name="edit">
+		<execute macro="CalendarNavigator#gotoEditEvent">
+			<var name="eventTitle" value="${eventTitle}" />
+			<var name="eventType" value="${eventType}" />
+		</execute>
+
 		<if>
 			<isset var="endDateTimeEdit" />
 			<then>
@@ -805,23 +912,6 @@
 				<var name="startDateTime" value="08:30 AM" />
 			</else>
 		</if>
-
-		<execute macro="CalendarNavigator#gotoView">
-			<var name="viewType" value="Week" />
-		</execute>
-
-		<execute macro="CalendarScheduler#selectEvent">
-			<var name="eventTitle" value="${eventTitle}" />
-			<var name="eventType" value="${eventType}" />
-		</execute>
-
-		<execute macro="CalendarScheduler#viewEventTitleViaDialogBox">
-			<var name="eventTitle" value="${eventTitle}" />
-		</execute>
-
-		<execute function="AssertClick" locator1="Calendar#SCHEDULER_EVENT_DIALOG_BOX_EDIT_BUTTON" value1="Edit" />
-
-		<execute function="SelectFrame" locator1="CalendarEditEvent#EDIT_EVENT_IFRAME" />
 
 		<if>
 			<equals arg1="${eventType}" arg2="All Day" />
@@ -930,17 +1020,26 @@
 			<then>
 				<execute function="AssertElementPresent" locator1="CalendarEditEvent#ARE_YOU_SURE_DIALOG_BOX_HEADER" value1="Are you sure?" />
 				<execute function="AssertTextEquals" locator1="CalendarEditEvent#ARE_YOU_SURE_DIALOG_BOX_BODY" value1="You are about to make changes that will only affect your calendar (${calendarName})." />
+
 				<execute function="AssertClick" locator1="CalendarEditEvent#SAVE_CHANGES_BUTTON" value1="Save changes." />
 			</then>
 		</if>
 
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute macro="Alert#viewRequestCompletedSuccessMessage" />
+
 		<execute function="SelectFrame" value1="relative=top" />
+
+		<execute macro="TestCase#getDefaultSiteName">
+			<return from="defaultSiteName" name="defaultSiteName" />
+		</execute>
 
 		<execute macro="Page#gotoPG">
 			<var name="defaultURL" value="${defaultURL}" />
 			<var name="nodePort" value="${nodePort}" />
 			<var name="pageName" value="${pageName}" />
+			<var name="pageStaging" value="${pageStaging}" />
+			<var name="siteName" value="${defaultSiteName}" />
+			<var name="siteURL" value="${siteURL}" />
 			<var name="soDashboard" value="${soDashboard}" />
 			<var name="soPage" value="${soPage}" />
 		</execute>
@@ -1055,6 +1154,17 @@
 		<execute function="AssertTextEquals#assertPartialText" locator1="CalendarAgendaView#SCHEDULER_EVENT_SPECIFIC" value1="${eventTitleEdit}" />
 	</command>
 
+	<command name="gotoConfigureRelatedAssets">
+		<if>
+			<condition function="IsElementPresent" locator1="CalendarEditEvent#RELATED_ASSETS_PANEL_COLLAPSED" />
+			<then>
+				<execute function="Click" locator1="CalendarEditEvent#RELATED_ASSETS_PANEL_COLLAPSED" />
+
+				<execute function="AssertElementPresent" locator1="CalendarEditEvent#RELATED_ASSETS_PANEL_EXPANDED" />
+			</then>
+		</if>
+	</command>
+
 	<command name="gotoRepeatConfiguration">
 		<execute function="Click" locator1="CalendarEditEvent#REPEAT_CHECKBOX" />
 	</command>
@@ -1076,9 +1186,34 @@
 	</command>
 
 	<command name="publish">
+		<execute macro="CalendarEvent#clickPublish" />
+
+		<execute macro="Alert#viewRequestCompletedSuccessMessage" />
+	</command>
+
+	<command name="publishRepeating">
 		<execute function="AssertClick" locator1="Button#SUBMIT" value1="Publish" />
 
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute function="AssertElementPresent" locator1="CalendarEditEvent#RECURRING_EVENT_DIALOG_BOX_HEADER" />
+
+		<var method="StringUtil#replace('${saveOption}', ' ', '_')" name="saveOptionPath" />
+
+		<var method="StringUtil#upperCase('${saveOptionPath}')" name="saveOptionPath" />
+
+		<execute function="AssertClick" locator1="CalendarEditEvent#${saveOptionPath}_BUTTON" value1="${saveOption}" />
+
+		<execute macro="Alert#viewRequestCompletedSuccessMessage" />
+	</command>
+
+	<command name="publishWithUserNotification">
+		<execute function="AssertClick" locator1="Button#SUBMIT" value1="Publish" />
+
+		<execute function="AssertElementPresent" locator1="CalendarEditEvent#ARE_YOU_SURE_DIALOG_BOX_HEADER" value1="Are you sure?" />
+		<execute function="AssertTextEquals" locator1="CalendarEditEvent#ARE_YOU_SURE_DIALOG_BOX_BODY" value1="Invited users will be notified." />
+
+		<execute function="AssertClick" locator1="CalendarEditEvent#SAVE_CHANGES_BUTTON" value1="Save changes." />
+
+		<execute macro="Alert#viewRequestCompletedSuccessMessage" />
 	</command>
 
 	<command name="rate4Stars">
@@ -1105,6 +1240,20 @@
 		<execute function="AssertElementPresent" locator1="CalendarEditEvent#INVITATIONS_RESOURCES_AVAILABILITY_SCHEDULER_EVENT_GENERIC" />
 	</command>
 
+	<command name="saveEventUserInvite">
+		<execute function="AssertElementPresent" locator1="CalendarEditEvent#ARE_YOU_SURE_DIALOG_BOX_HEADER" value1="Are you sure?" />
+		<execute function="AssertTextEquals" locator1="CalendarEditEvent#ARE_YOU_SURE_DIALOG_BOX_BODY" value1="Invited users will be notified." />
+
+		<execute function="AssertClick" locator1="CalendarEditEvent#SAVE_CHANGES_BUTTON" value1="Save changes." />
+	</command>
+
+	<command name="saveEventUserInviteCancel">
+		<execute function="AssertElementPresent" locator1="CalendarEditEvent#ARE_YOU_SURE_DIALOG_BOX_HEADER" value1="Are you sure?" />
+		<execute function="AssertTextEquals" locator1="CalendarEditEvent#ARE_YOU_SURE_DIALOG_BOX_BODY" value1="Invited users will be notified." />
+
+		<execute function="AssertClick" locator1="CalendarEditEvent#DO_NOT_CHANGE_THE_EVENT_BUTTON" value1="Do not change the event." />
+	</command>
+
 	<command name="selectCalendar">
 		<if>
 			<isset var="calendarName" />
@@ -1114,6 +1263,10 @@
 				<execute function="Select" locator1="CalendarEditEvent#DETAILS_CALENDAR_SELECT" value1="${calendarName}" />
 			</then>
 		</if>
+	</command>
+
+	<command name="selectEventIframe">
+		<execute function="SelectFrame" locator1="CalendarEditEvent#EDIT_EVENT_IFRAME" />
 	</command>
 
 	<command name="selectRepeatFrequency">
@@ -1148,12 +1301,9 @@
 		<execute function="AssertSelectedLabel" locator1="CalendarEditEvent#REPEAT_REPEAT_EVERY_DROPDOWN" value1="1" />
 
 		<if>
-			<isset var="position" />
+			<equals arg1="${frequency}" arg2="Monthly" />
 			<then>
 				<execute function="Click" locator1="CalendarEditEvent#REPEAT_REPEAT_ON_DAY_OF_THE_WEEK_RADIO" />
-
-				<execute function="Select" locator1="CalendarEditEvent#REPEAT_REPEAT_ON_DAY_OF_THE_WEEK_POSITION_DROPDOWN" value1="${position}" />
-				<execute function="Select" locator1="CalendarEditEvent#REPEAT_REPEAT_ON_DAY_OF_THE_WEEK_WEEKDAY_DROPDOWN" value1="${weekday}" />
 			</then>
 		</if>
 
@@ -1180,38 +1330,31 @@
 		<execute function="Pause" value1="1000" />
 
 		<if>
-			<and>
-				<isset var="position" />
-				<isset var="month" />
-			</and>
+			<equals arg1="${frequency}" arg2="Monthly" />
 			<then>
-				<execute function="AssertTextEquals" locator1="CalendarEditEvent#REPEAT_DIALOG_SUMMARY" value1="${frequency}, On The ${position} ${weekday} Of ${month}" />
 
-				<execute function="AssertClick" locator1="CalendarEditEvent#REPEAT_DONE_BUTTON" value1="Done" />
+				<execute function="AssertTextEquals#assertPartialText" locator1="CalendarEditEvent#REPEAT_DIALOG_SUMMARY" value1="${frequency}" />
 
-				<execute function="AssertTextEquals" locator1="CalendarEditEvent#REPEAT_SUMMARY" value1="${frequency}, On The ${position} ${weekday} Of ${month}" />
+				<var locator="CalendarEditEvent#REPEAT_MONTHLY_CURRENT_DAY" name="currentDay" />
+				<var method="StringUtil#lowerCase('${currentDay}')" name="currentDay" />
+				<var method="StringUtil#upperCaseFirstLetter('${currentDay}')" name="currentDay" />
+
+				<execute function="AssertTextEquals#assertPartialText" locator1="CalendarEditEvent#REPEAT_DIALOG_SUMMARY" value1="${currentDay}" />
+				<execute function="AssertTextEquals#assertPartialText" locator1="CalendarEditEvent#REPEAT_DIALOG_SUMMARY" value1="${numberOfOccurrences} Times" />
+
+				<execute macro="CalendarEvent#viewRepeatingMonthPosition" />
 			</then>
 			<elseif>
-				<and>
-					<isset var="position" />
-					<isset var="numberOfOccurrences" />
-				</and>
+				<equals arg1="${frequency}" arg2="Weekly" />
 				<then>
-					<execute function="AssertTextEquals" locator1="CalendarEditEvent#REPEAT_DIALOG_SUMMARY" value1="${frequency}, On ${position} ${weekday}, ${numberOfOccurrences} Times" />
+					<execute function="AssertTextEquals#assertPartialText" locator1="CalendarEditEvent#REPEAT_DIALOG_SUMMARY" value1="${frequency}" />
 
-					<execute function="AssertClick" locator1="CalendarEditEvent#REPEAT_DONE_BUTTON" value1="Done" />
+					<var locator="CalendarEditEvent#REPEAT_WEEKLY_CURRENT_DAY" name="currentDay" />
+					<var method="StringUtil#lowerCase('${currentDay}')" name="currentDay" />
+					<var method="StringUtil#upperCaseFirstLetter('${currentDay}')" name="currentDay" />
 
-					<execute function="AssertTextEquals" locator1="CalendarEditEvent#REPEAT_SUMMARY" value1="${frequency}, On ${position} ${weekday}, ${numberOfOccurrences} Times" />
-				</then>
-			</elseif>
-			<elseif>
-				<isset var="position" />
-				<then>
-					<execute function="AssertTextEquals" locator1="CalendarEditEvent#REPEAT_DIALOG_SUMMARY" value1="${frequency} On ${position} ${weekday}" />
-
-					<execute function="AssertClick" locator1="CalendarEditEvent#REPEAT_DONE_BUTTON" value1="Done" />
-
-					<execute function="AssertTextEquals" locator1="CalendarEditEvent#REPEAT_SUMMARY" value1="${frequency} On ${position} ${weekday}" />
+					<execute function="AssertTextEquals#assertPartialText" locator1="CalendarEditEvent#REPEAT_DIALOG_SUMMARY" value1="${currentDay}" />"
+					<execute function="AssertTextEquals#assertPartialText" locator1="CalendarEditEvent#REPEAT_DIALOG_SUMMARY" value1="${numberOfOccurrences} Times" />"
 				</then>
 			</elseif>
 			<elseif>
@@ -1235,6 +1378,30 @@
 				</then>
 			</elseif>
 		</if>
+
+		<execute function="Check" locator1="CalendarEditEvent#REPEAT_CHECKBOX" />
+	</command>
+
+	<command name="setRepeatingYearly">
+		<execute macro="CalendarEvent#gotoRepeatConfiguration" />
+
+		<execute macro="CalendarEvent#selectRepeatFrequency">
+			<var name="frequency" value="Yearly" />
+		</execute>
+
+		<execute function="AssertSelectedLabel" locator1="CalendarEditEvent#REPEAT_REPEAT_EVERY_DROPDOWN" value1="1" />
+
+		<execute function="Click" locator1="CalendarEditEvent#REPEAT_REPEAT_ON_DAY_OF_THE_WEEK_RADIO" />
+
+		<execute function="Pause" value1="1000" />
+
+		<execute function="Click" locator1="CalendarEditEvent#REPEAT_DIALOG_SUMMARY" />
+
+		<execute function="Pause" value1="1000" />
+
+		<execute function="AssertTextEquals" locator1="CalendarEditEvent#REPEAT_DIALOG_SUMMARY" value1="${yearlyRecurrenceSummary}" />
+
+		<execute function="AssertClick" locator1="CalendarEditEvent#REPEAT_DONE_BUTTON" value1="Done" />
 
 		<execute function="Check" locator1="CalendarEditEvent#REPEAT_CHECKBOX" />
 	</command>
@@ -1285,7 +1452,7 @@
 		<if>
 			<equals arg1="${marketplace}" arg2="true" />
 			<then>
-				<execute macro="Page#addPG">
+				<execute macro="Page#add">
 					<var name="defaultURL" value="${defaultURL}" />
 					<var name="nodePort" value="${nodePort}" />
 					<var name="pageName" value="Marketplace Calendar Testing" />
@@ -1340,6 +1507,11 @@
 		<execute macro="CalendarNavigator#gotoView">
 			<var name="viewType" value="Week" />
 		</execute>
+	</command>
+
+	<command name="viewApprovedEventRSVPButtons">
+		<execute function="AssertTextEquals" locator1="CalendarViewEventDetails#MAYBE_BUTTON" value1="Maybe" />
+		<execute function="AssertTextEquals" locator1="CalendarViewEventDetails#DECLINE_BUTTON" value1="Decline" />
 	</command>
 
 	<command name="viewApprovedRSVP">
@@ -1423,6 +1595,27 @@
 		<execute macro="CalendarEvent#viewTitleViaDetails">
 			<var name="eventTitle" value="${eventTitle}" />
 		</execute>
+	</command>
+
+	<command name="viewDetailsInPortlet">
+		<execute function="AssertTextEquals" locator1="CalendarViewEventDetails#EVENT_TITLE" value1="${eventTitle}" />
+
+		<execute macro="CalendarEvent#viewDetailsResources">
+			<var name="calendarName" value="${calendarName}" />
+		</execute>
+
+		<execute function="AssertElementPresent" locator1="CalendarViewEventDetails#START_DATE_FIELD" />
+		<execute function="AssertElementPresent" locator1="CalendarViewEventDetails#END_DATE_FIELD" />
+
+		<if>
+			<isset var="relatedAssetTitle" />
+			<then>
+				<execute function="AssertTextEquals" locator1="AssetRelatedAssets#HEADER" value1="Related Assets:" />
+				<execute function="AssertTextEquals" locator1="AssetRelatedAssets#ASSET_TITLE" value1="${relatedAssetTitle}" />
+			</then>
+		</if>
+
+		<execute macro="CalendarEvent#viewApprovedEventRSVPButtons" />
 	</command>
 
 	<command name="viewDetailsRate4Stars">
@@ -1534,8 +1727,12 @@
 	</command>
 
 	<command name="viewInvitedUserRSVPWithApprovedWorkflow">
+		<execute macro="TestCase#getDefaultSiteName">
+			<return from="defaultSiteName" name="defaultSiteName" />
+		</execute>
+
 		<var name="key_siteCalendarName" value="${siteCalendarName}" />
-		<var name="key_siteName" value="${siteName}" />
+		<var name="key_siteName" value="${defaultSiteName}" />
 
 		<execute function="AssertClick" locator1="Calendar#CURRENT_SITE_CALENDARS_CALENDAR" value1="${siteCalendarName}" />
 
@@ -1548,8 +1745,12 @@
 	</command>
 
 	<command name="viewNoUserInviteWithUnapprovedWorkflow">
+		<execute macro="TestCase#getDefaultSiteName">
+			<return from="defaultSiteName" name="defaultSiteName" />
+		</execute>
+
 		<var name="key_siteCalendarName" value="${siteCalendarName}" />
-		<var name="key_siteName" value="${siteName}" />
+		<var name="key_siteName" value="${defaultSiteName}" />
 
 		<execute function="AssertClick" locator1="Calendar#CURRENT_SITE_CALENDARS_CALENDAR" value1="${siteCalendarName}" />
 
@@ -1563,8 +1764,79 @@
 	<command name="viewRepeatingEventErrorMessage">
 		<execute function="Click" locator1="Button#PUBLISH" />
 
-		<execute function="AssertTextEquals" locator1="Message#ERROR_1" value1="Your request failed to complete." />
-		<execute function="AssertTextEquals" locator1="Message#ERROR_2" value1="The last repeating date should come after the event start date." />
+		<execute macro="Alert#viewRequestFailedToComplete" />
+
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#ERROR_2" value1="The last repeating date should come after the event start date." />
+	</command>
+
+	<command name="viewRepeatingEventViaViewDetails">
+		<execute function="AssertTextEquals" locator1="PGCalendarVieweventdetails#EVENT_TITLE" value1="${eventTitle}" />
+
+		<if>
+			<equals arg1="${frequency}" arg2="Daily" />
+			<then>
+				<execute function="AssertTextEquals" locator1="PGCalendarVieweventdetails#REPEAT_OCCURRENCE_SUMMARY" value1="Daily, ${numberOfOccurrences} Times" />
+			</then>
+			<elseif>
+				<equals arg1="${frequency}" arg2="Weekly" />
+				<then>
+					<var method="selenium#getCurrentDayName()" name="today" />
+
+					<execute function="AssertTextEquals" locator1="PGCalendarVieweventdetails#REPEAT_OCCURRENCE_SUMMARY" value1="Weekly, on ${today}, ${numberOfOccurrences} Times" />
+				</then>
+			</elseif>
+			<elseif>
+				<equals arg1="${frequency}" arg2="Yearly" />
+				<then>
+					<execute function="AssertTextEquals" locator1="PGCalendarVieweventdetails#REPEAT_OCCURRENCE_SUMMARY" value1="${yearlyRecurrenceSummary}" />
+				</then>
+			</elseif>
+			<elseif>
+				<equals arg1="${frequency}" arg2="Monthly" />
+				<then>
+					<var method="selenium#getCurrentDayName()" name="today" />
+
+					<execute function="AssertTextEquals#assertPartialText" locator1="PGCalendarVieweventdetails#REPEAT_OCCURRENCE_SUMMARY" value1="Monthly" />
+					<execute function="AssertTextEquals#assertPartialText" locator1="PGCalendarVieweventdetails#REPEAT_OCCURRENCE_SUMMARY" value1="${numberOfOccurrences} Times" />
+					<execute function="AssertTextEquals#assertPartialText" locator1="PGCalendarVieweventdetails#REPEAT_OCCURRENCE_SUMMARY" value1="${today} " />
+				</then>
+			</elseif>
+		</if>
+	</command>
+
+	<command name="viewRepeatingMonthPosition">
+		<var locator="CalendarEditEvent#REPEAT_MONTHLY_CURRENT_MONTH_POSITION" name="repeatingMonthPosition" />
+
+		<if>
+			<equals arg1="${repeatingMonthPosition}" arg2="1" />
+			<then>
+				<execute function="AssertTextEquals#assertPartialText" locator1="CalendarEditEvent#REPEAT_DIALOG_SUMMARY" value1="First" />
+			</then>
+			<elseif>
+				<equals arg1="${repeatingMonthPosition}" arg2="2" />
+				<then>
+					<execute function="AssertTextEquals#assertPartialText" locator1="CalendarEditEvent#REPEAT_DIALOG_SUMMARY" value1="Second" />
+				</then>
+			</elseif>
+			<elseif>
+				<equals arg1="${repeatingMonthPosition}" arg2="3" />
+				<then>
+					<execute function="AssertTextEquals#assertPartialText" locator1="CalendarEditEvent#REPEAT_DIALOG_SUMMARY" value1="Third" />
+				</then>
+			</elseif>
+			<elseif>
+				<equals arg1="${repeatingMonthPosition}" arg2="4" />
+				<then>
+					<execute function="AssertTextEquals#assertPartialText" locator1="CalendarEditEvent#REPEAT_DIALOG_SUMMARY" value1="Fourth" />
+				</then>
+			</elseif>
+			<elseif>
+				<equals arg1="${repeatingMonthPosition}" arg2="-1" />
+				<then>
+					<execute function="AssertTextEquals#assertPartialText" locator1="CalendarEditEvent#REPEAT_DIALOG_SUMMARY" value1="Last" />
+				</then>
+			</elseif>
+		</if>
 	</command>
 
 	<command name="viewRepeatWeekStartDay">
@@ -1593,6 +1865,41 @@
 		<var name="key_resource" value="${resourceName}" />
 
 		<execute function="AssertTextEquals" locator1="CalendarEditEvent#INVITATIONS_PENDING" value1="${resourceName}" />
+	</command>
+
+	<command name="viewSiteCalendarEventNotPresent">
+		<execute macro="TestCase#getDefaultSiteName">
+			<return from="defaultSiteName" name="defaultSiteName" />
+		</execute>
+
+		<var name="key_siteName" value="${defaultSiteName}" />
+
+		<execute function="AssertElementNotPresent" locator1="Calendar#CURRENT_SITE_CALENDARS_HEADER" value1="${defaultSiteName}'s Calendars" />
+
+		<var name="key_endDateTime" value="${endDateTime}" />
+		<var name="key_startDateTime" value="${startDateTime}" />
+
+		<execute function="AssertElementNotPresent" locator1="Calendar#SCHEDULER_EVENT_SPECIFIC_EVENT_TIMES" />
+	</command>
+
+	<command name="viewSiteCalendarEventWithDefaultPermissions">
+		<execute macro="TestCase#getDefaultSiteName">
+			<return from="defaultSiteName" name="defaultSiteName" />
+		</execute>
+
+		<var name="key_siteName" value="${defaultSiteName}" />
+
+		<execute function="AssertTextEquals" locator1="Calendar#CURRENT_SITE_CALENDARS_HEADER" value1="${defaultSiteName}'s Calendars" />
+
+		<var name="key_endDateTime" value="${endDateTime}" />
+		<var name="key_startDateTime" value="${startDateTime}" />
+
+		<execute function="Click" locator1="Calendar#SCHEDULER_EVENT_SPECIFIC_EVENT_TIMES" />
+
+		<var name="key_calendarName" value="${calendarName}" />
+
+		<execute function="AssertTextEquals" locator1="Calendar#SCHEDULER_EVENT_CALENDAR_NAME" value1="${calendarName}" />
+		<execute function="AssertNotVisible" locator1="Calendar#SCHEDULER_EVENT_DIALOG_BOX_EVENT_TITLE" value1="${eventTitle}" />
 	</command>
 
 	<command name="viewSiteRSVPWithApprovedWorkflow">
@@ -1630,8 +1937,12 @@
 		<execute function="AssertTextEquals#assertPartialText" locator1="CalendarViewEventDetails#END_DATE_FIELD" value1="${endDateTime}" />
 	</command>
 
+	<command name="viewTitle">
+		<execute function="AssertTextEquals" locator1="TextInput#TITLE" value1="${eventTitle}" />
+	</command>
+
 	<command name="viewTitleViaDetails">
-		<execute macro="CalendarScheduler#_gotoDetailsViaDialogBox" />
+		<execute macro="CalendarScheduler#gotoDetailsViaDialogBox" />
 
 		<execute function="AssertTextEquals" locator1="CalendarViewEventDetails#EVENT_TITLE" value1="${eventTitle}" />
 	</command>
@@ -1664,5 +1975,15 @@
 			<var name="user" value="${user}" />
 			<var name="usersList" value="${usersList}" />
 		</execute>
+	</command>
+
+	<command name="viewViaAssetPublisher">
+		<var name="key_assetTitle" value="${eventTitle}" />
+
+		<execute function="AssertTextEquals" locator1="AP#ASSET_ABSTRACT_TITLE" value1="${eventTitle}" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="AP#ASSET_ABSTRACT_DESCRIPTION" value1="${calendarName}" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="AP#ASSET_ABSTRACT_DESCRIPTION" value1="Resources:" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="AP#ASSET_ABSTRACT_DESCRIPTION" value1="Start Date:" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="AP#ASSET_ABSTRACT_DESCRIPTION" value1="End Date:" />
 	</command>
 </definition>

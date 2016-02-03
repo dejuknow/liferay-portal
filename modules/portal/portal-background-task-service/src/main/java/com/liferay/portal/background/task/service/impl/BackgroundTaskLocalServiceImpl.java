@@ -27,6 +27,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.messaging.DestinationNames;
 import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.messaging.MessageBusUtil;
+import com.liferay.portal.kernel.portletfilerepository.PortletFileRepositoryUtil;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.transaction.TransactionCommitCallbackUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
@@ -35,8 +36,9 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.model.CompanyConstants;
 import com.liferay.portal.model.User;
-import com.liferay.portal.portletfilerepository.PortletFileRepositoryUtil;
+import com.liferay.portal.model.UserConstants;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 import com.liferay.portal.util.PortletKeys;
@@ -218,7 +220,7 @@ public class BackgroundTaskLocalServiceImpl
 					Message message = new Message();
 
 					message.put(
-						"backgroundTaskId",
+						BackgroundTaskConstants.BACKGROUND_TASK_ID,
 						backgroundTask.getBackgroundTaskId());
 					message.put("name", backgroundTask.getName());
 					message.put("status", status);
@@ -301,6 +303,20 @@ public class BackgroundTaskLocalServiceImpl
 
 		List<BackgroundTask> backgroundTasks =
 			backgroundTaskPersistence.findByGroupId(groupId);
+
+		for (BackgroundTask backgroundTask : backgroundTasks) {
+			deleteBackgroundTask(backgroundTask);
+		}
+	}
+
+	@Override
+	public void deleteGroupBackgroundTasks(
+			long groupId, String name, String taskExecutorClassName)
+		throws PortalException {
+
+		List<BackgroundTask> backgroundTasks =
+			backgroundTaskPersistence.findByG_N_T(
+				groupId, name, taskExecutorClassName);
 
 		for (BackgroundTask backgroundTask : backgroundTasks) {
 			deleteBackgroundTask(backgroundTask);
@@ -411,6 +427,16 @@ public class BackgroundTaskLocalServiceImpl
 
 	@Override
 	public List<BackgroundTask> getBackgroundTasks(
+		long[] groupIds, String name, String taskExecutorClassName, int start,
+		int end, OrderByComparator<BackgroundTask> orderByComparator) {
+
+		return backgroundTaskPersistence.findByG_N_T(
+			groupIds, name, taskExecutorClassName, start, end,
+			orderByComparator);
+	}
+
+	@Override
+	public List<BackgroundTask> getBackgroundTasks(
 		String taskExecutorClassName, int status) {
 
 		return backgroundTaskPersistence.findByT_S(
@@ -492,6 +518,23 @@ public class BackgroundTaskLocalServiceImpl
 			groupId, taskExecutorClassNames, completed);
 	}
 
+	@Override
+	public int getBackgroundTasksCount(
+		long[] groupIds, String name, String taskExecutorClassName) {
+
+		return backgroundTaskPersistence.countByG_N_T(
+			groupIds, name, taskExecutorClassName);
+	}
+
+	@Override
+	public int getBackgroundTasksCount(
+		long[] groupIds, String name, String taskExecutorClassName,
+		boolean completed) {
+
+		return backgroundTaskPersistence.countByG_N_T_C(
+			groupIds, name, taskExecutorClassName, completed);
+	}
+
 	@Clusterable(onMaster = true)
 	@Override
 	public String getBackgroundTaskStatusJSON(long backgroundTaskId) {
@@ -521,7 +564,8 @@ public class BackgroundTaskLocalServiceImpl
 
 		Message message = new Message();
 
-		message.put("backgroundTaskId", backgroundTaskId);
+		message.put(
+			BackgroundTaskConstants.BACKGROUND_TASK_ID, backgroundTaskId);
 
 		MessageBusUtil.sendMessage(DestinationNames.BACKGROUND_TASK, message);
 	}
@@ -531,7 +575,8 @@ public class BackgroundTaskLocalServiceImpl
 	public void triggerBackgroundTask(long backgroundTaskId) {
 		Message message = new Message();
 
-		message.put("backgroundTaskId", backgroundTaskId);
+		message.put(
+			BackgroundTaskConstants.BACKGROUND_TASK_ID, backgroundTaskId);
 
 		MessageBusUtil.sendMessage(DestinationNames.BACKGROUND_TASK, message);
 	}
@@ -543,17 +588,28 @@ public class BackgroundTaskLocalServiceImpl
 			ServiceContext serviceContext)
 		throws PortalException {
 
-		User user = userPersistence.findByPrimaryKey(userId);
+		User user = null;
+
+		if (userId != UserConstants.USER_ID_DEFAULT) {
+			user = userPersistence.findByPrimaryKey(userId);
+		}
 
 		final long backgroundTaskId = counterLocalService.increment();
 
 		BackgroundTask backgroundTask = backgroundTaskPersistence.create(
 			backgroundTaskId);
 
-		backgroundTask.setCompanyId(user.getCompanyId());
+		if (user != null) {
+			backgroundTask.setCompanyId(user.getCompanyId());
+			backgroundTask.setUserName(user.getFullName());
+		}
+		else {
+			backgroundTask.setCompanyId(CompanyConstants.SYSTEM);
+			backgroundTask.setUserName(StringPool.BLANK);
+		}
+
 		backgroundTask.setGroupId(groupId);
 		backgroundTask.setUserId(userId);
-		backgroundTask.setUserName(user.getFullName());
 		backgroundTask.setName(name);
 
 		if (ArrayUtil.isNotEmpty(servletContextNames)) {

@@ -5,14 +5,21 @@ buildService {
 }
 
 dependencies {
+	compile group: "com.liferay", name: "com.liferay.portal.spring.extender", version: "1.0.2"
+	// @formatter:off
+	compile group: "com.liferay.portal", name: "portal-service", version: liferay.portalVersion
 	compile group: "com.liferay.portal", name: "portal-impl", version: liferay.portalVersion
-	compile project(":apps:configuration-admin:configuration-admin-api")
+	// @formatter:on
 	compile project(":apps:dynamic-data-mapping:dynamic-data-mapping-api")
+	compile project(":apps:dynamic-data-mapping:dynamic-data-mapping-data-provider")
 	compile project(":apps:dynamic-data-mapping:dynamic-data-mapping-io")
 	compile project(":apps:dynamic-data-mapping:dynamic-data-mapping-validator")
 	compile project(":apps:export-import:export-import-api")
 	compile project(":apps:mobile-device-rules:mobile-device-rules-api")
 	compile project(":core:osgi-service-tracker-collections")
+	compile project(":portal:portal-background-task-api")
+	compile project(":portal:portal-instance-lifecycle")
+	compile project(":portal:portal-metatype")
 	compile project(":portal:portal-upgrade")
 
 	provided group: "com.liferay.portal", name: "util-java", version: liferay.portalVersion

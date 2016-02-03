@@ -58,10 +58,10 @@ renderResponse.setTitle(((tag == null) ? LanguageUtil.get(request, "new-tag") : 
 	<aui:model-context bean="<%= tag %>" model="<%= AssetTag.class %>" />
 
 	<aui:fieldset-group markupView="lexicon">
-		<aui:fieldset cssClass="col-md-4">
+		<aui:fieldset>
 			<aui:input name="tagId" type="hidden" value="<%= tagId %>" />
 
-			<aui:input autoFocus="<%= true %>" cssClass="tag-name" name="name" />
+			<aui:input autoFocus="<%= true %>" cssClass="tag-name" name="name" placeholder="name" />
 		</aui:fieldset>
 	</aui:fieldset-group>
 

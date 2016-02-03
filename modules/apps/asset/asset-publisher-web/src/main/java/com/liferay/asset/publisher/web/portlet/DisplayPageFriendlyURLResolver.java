@@ -20,6 +20,7 @@ import com.liferay.journal.model.JournalArticleConstants;
 import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.portlet.FriendlyURLResolver;
+import com.liferay.portal.kernel.security.auth.AuthTokenUtil;
 import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.InheritableMap;
 import com.liferay.portal.kernel.util.ListUtil;
@@ -30,7 +31,6 @@ import com.liferay.portal.model.Layout;
 import com.liferay.portal.model.LayoutFriendlyURLComposite;
 import com.liferay.portal.model.LayoutTypePortletConstants;
 import com.liferay.portal.model.PortletInstance;
-import com.liferay.portal.security.auth.AuthTokenUtil;
 import com.liferay.portal.service.LayoutLocalService;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.asset.AssetRendererFactoryRegistryUtil;
@@ -219,8 +219,8 @@ public class DisplayPageFriendlyURLResolver implements FriendlyURLResolver {
 		_layoutLocalService = layoutLocalService;
 	}
 
-	private volatile AssetTagLocalService _assetTagLocalService;
-	private volatile JournalArticleLocalService _journalArticleLocalService;
-	private volatile LayoutLocalService _layoutLocalService;
+	private AssetTagLocalService _assetTagLocalService;
+	private JournalArticleLocalService _journalArticleLocalService;
+	private LayoutLocalService _layoutLocalService;
 
 }

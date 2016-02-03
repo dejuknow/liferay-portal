@@ -17,6 +17,7 @@ package com.liferay.wiki.web.portlet.action;
 import com.liferay.portal.kernel.flash.FlashMagicBytesUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.portletfilerepository.PortletFileRepositoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.servlet.ServletResponseUtil;
 import com.liferay.portal.kernel.struts.BaseStrutsAction;
@@ -25,9 +26,8 @@ import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.portletfilerepository.PortletFileRepositoryUtil;
 import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.documentlibrary.NoSuchFileException;
+import com.liferay.portlet.documentlibrary.exception.NoSuchFileException;
 import com.liferay.portlet.trash.util.TrashUtil;
 import com.liferay.wiki.exception.NoSuchPageException;
 import com.liferay.wiki.importer.impl.mediawiki.MediaWikiImporter;
@@ -138,6 +138,6 @@ public class GetPageAttachmentAction extends BaseStrutsAction {
 	private static final Log _log = LogFactoryUtil.getLog(
 		GetPageAttachmentAction.class);
 
-	private volatile WikiPageService _wikiPageService;
+	private WikiPageService _wikiPageService;
 
 }

@@ -51,7 +51,7 @@ else if (tabs1.equals("my-meetups")) {
 	%>
 
 	<aui:button-row>
-		<aui:button href="<%= addMeetupsEntryURL.toString() %>" primary="<%= true %>" value="add-meetup" />
+		<aui:button cssClass="btn-lg" href="<%= addMeetupsEntryURL.toString() %>" primary="<%= true %>" value="add-meetup" />
 	</aui:button-row>
 
 	<br />
@@ -117,7 +117,6 @@ for (int i = 0; i < meetupsEntries.size(); i++) {
 			</c:if>
 
 			<liferay-ui:icon-list>
-
 				<c:if test="<%= permissionChecker.isCompanyAdmin(company.getCompanyId()) %>">
 
 					<%

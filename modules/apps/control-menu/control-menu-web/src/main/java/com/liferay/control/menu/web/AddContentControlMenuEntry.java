@@ -18,12 +18,11 @@ import com.liferay.control.menu.BaseJSPControlMenuEntry;
 import com.liferay.control.menu.ControlMenuEntry;
 import com.liferay.control.menu.constants.ControlMenuCategoryKeys;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.model.Layout;
-import com.liferay.portal.model.LayoutConstants;
+import com.liferay.portal.model.LayoutTypeController;
 import com.liferay.portal.model.LayoutTypePortlet;
-import com.liferay.portal.security.permission.ActionKeys;
-import com.liferay.portal.service.permission.GroupPermissionUtil;
 import com.liferay.portal.service.permission.LayoutPermissionUtil;
 import com.liferay.portal.theme.ThemeDisplay;
 
@@ -39,7 +38,7 @@ import org.osgi.service.component.annotations.Reference;
 @Component(
 	immediate = true,
 	property = {
-		"control.menu.category.key=" + ControlMenuCategoryKeys.TOOLS,
+		"control.menu.category.key=" + ControlMenuCategoryKeys.USER,
 		"service.ranking:Integer=100"
 	},
 	service = ControlMenuEntry.class
@@ -48,16 +47,18 @@ public class AddContentControlMenuEntry
 	extends BaseJSPControlMenuEntry implements ControlMenuEntry {
 
 	@Override
-	public String getJspPath() {
+	public String getIconJspPath() {
 		return "/entries/add_content.jsp";
 	}
 
 	@Override
-	public boolean hasAccessPermission(HttpServletRequest request)
-		throws PortalException {
-
+	public boolean isShow(HttpServletRequest request) throws PortalException {
 		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
 			WebKeys.THEME_DISPLAY);
+
+		if (themeDisplay.isStateMaximized()) {
+			return false;
+		}
 
 		Layout layout = themeDisplay.getLayout();
 
@@ -65,14 +66,27 @@ public class AddContentControlMenuEntry
 			return false;
 		}
 
-		if (!(hasAddLayoutPermission(themeDisplay) ||
-			  hasCustomizePermission(themeDisplay) ||
+		LayoutTypePortlet layoutTypePortlet =
+			themeDisplay.getLayoutTypePortlet();
+
+		LayoutTypeController layoutTypeController =
+			layoutTypePortlet.getLayoutTypeController();
+
+		if (layoutTypeController.isFullPageDisplayable()) {
+			return false;
+		}
+
+		if (!hasAddContentOrApplicationPermission(themeDisplay)) {
+			return false;
+		}
+
+		if (!(hasCustomizePermission(themeDisplay) ||
 			  hasUpdateLayoutPermission(themeDisplay))) {
 
 			return false;
 		}
 
-		return super.hasAccessPermission(request);
+		return super.isShow(request);
 	}
 
 	@Override
@@ -84,21 +98,16 @@ public class AddContentControlMenuEntry
 		super.setServletContext(servletContext);
 	}
 
-	protected boolean hasAddLayoutPermission(ThemeDisplay themeDisplay)
-		throws PortalException {
+	protected boolean hasAddContentOrApplicationPermission(
+		ThemeDisplay themeDisplay) {
 
 		Layout layout = themeDisplay.getLayout();
 
-		if (layout.getParentLayoutId() ==
-				LayoutConstants.DEFAULT_PARENT_LAYOUT_ID) {
-
-			return GroupPermissionUtil.contains(
-				themeDisplay.getPermissionChecker(), layout.getGroup(),
-				ActionKeys.ADD_LAYOUT);
+		if (layout.isLayoutPrototypeLinkActive()) {
+			return false;
 		}
 
-		return LayoutPermissionUtil.contains(
-			themeDisplay.getPermissionChecker(), layout, ActionKeys.ADD_LAYOUT);
+		return true;
 	}
 
 	protected boolean hasCustomizePermission(ThemeDisplay themeDisplay)

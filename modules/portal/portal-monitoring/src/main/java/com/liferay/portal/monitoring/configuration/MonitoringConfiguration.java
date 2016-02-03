@@ -16,14 +16,15 @@ package com.liferay.portal.monitoring.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
-import com.liferay.configuration.admin.ConfigurationAdmin;
+import com.liferay.portal.metatype.annotations.ExtendedObjectClassDefinition;
 
 /**
  * @author Michael C. Han
  */
-@ConfigurationAdmin(category = "platform")
+@ExtendedObjectClassDefinition(category = "platform")
 @Meta.OCD(
-	id = "com.liferay.portal.monitoring.configuration.MonitoringConfiguration"
+	id = "com.liferay.portal.monitoring.configuration.MonitoringConfiguration",
+	localization = "content/Language", name = "%monitoring.configuration.name"
 )
 public interface MonitoringConfiguration {
 

@@ -14,13 +14,14 @@
 
 package com.liferay.social.networking.web.members.social;
 
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.util.HtmlUtil;
+import com.liferay.portal.kernel.util.ResourceBundleLoader;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Organization;
 import com.liferay.portal.model.User;
-import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.service.OrganizationLocalService;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.UserLocalService;
@@ -29,6 +30,7 @@ import com.liferay.portlet.social.model.SocialActivity;
 import com.liferay.portlet.social.model.SocialActivityInterpreter;
 import com.liferay.social.networking.constants.SocialNetworkingPortletKeys;
 import com.liferay.social.networking.members.social.MembersActivityKeys;
+import com.liferay.social.networking.web.util.SocialNetworkingResourceBundleLoader;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -71,6 +73,11 @@ public class MembersActivityInterpreter extends BaseSocialActivityInterpreter {
 		sb.append("/profile");
 
 		return sb.toString();
+	}
+
+	@Override
+	protected ResourceBundleLoader getResourceBundleLoader() {
+		return SocialNetworkingResourceBundleLoader.INSTANCE;
 	}
 
 	@Override
@@ -146,7 +153,7 @@ public class MembersActivityInterpreter extends BaseSocialActivityInterpreter {
 
 	private static final String[] _CLASS_NAMES = {Organization.class.getName()};
 
-	private volatile OrganizationLocalService _organizationLocalService;
-	private volatile UserLocalService _userLocalService;
+	private OrganizationLocalService _organizationLocalService;
+	private UserLocalService _userLocalService;
 
 }

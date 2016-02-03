@@ -18,8 +18,12 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.ModelWrapper;
+import com.liferay.portal.service.ServiceContext;
 
+import com.liferay.portlet.expando.model.ExpandoBridge;
 import com.liferay.portlet.exportimport.lar.StagedModelType;
+
+import java.io.Serializable;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -373,7 +377,7 @@ public class DLFileEntryWrapper implements DLFileEntry,
 	}
 
 	@Override
-	public Map<java.lang.String, com.liferay.portlet.dynamicdatamapping.DDMFormValues> getDDMFormValuesMap(
+	public Map<java.lang.String, com.liferay.dynamic.data.mapping.kernel.DDMFormValues> getDDMFormValuesMap(
 		long fileVersionId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _dlFileEntry.getDDMFormValuesMap(fileVersionId);
@@ -401,7 +405,7 @@ public class DLFileEntryWrapper implements DLFileEntry,
 	}
 
 	@Override
-	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
+	public ExpandoBridge getExpandoBridge() {
 		return _dlFileEntry.getExpandoBridge();
 	}
 
@@ -613,7 +617,7 @@ public class DLFileEntryWrapper implements DLFileEntry,
 	}
 
 	@Override
-	public java.io.Serializable getPrimaryKeyObj() {
+	public Serializable getPrimaryKeyObj() {
 		return _dlFileEntry.getPrimaryKeyObj();
 	}
 
@@ -766,33 +770,6 @@ public class DLFileEntryWrapper implements DLFileEntry,
 	@Override
 	public java.lang.String getVersion() {
 		return _dlFileEntry.getVersion();
-	}
-
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link DLFileVersion#getUserId()}
-	*/
-	@Deprecated
-	@Override
-	public long getVersionUserId() {
-		return _dlFileEntry.getVersionUserId();
-	}
-
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link DLFileVersion#getUserName()}
-	*/
-	@Deprecated
-	@Override
-	public java.lang.String getVersionUserName() {
-		return _dlFileEntry.getVersionUserName();
-	}
-
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link DLFileVersion#getUserUuid()}
-	*/
-	@Deprecated
-	@Override
-	public java.lang.String getVersionUserUuid() {
-		return _dlFileEntry.getVersionUserUuid();
 	}
 
 	@Override
@@ -962,14 +939,12 @@ public class DLFileEntryWrapper implements DLFileEntry,
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portlet.expando.model.ExpandoBridge expandoBridge) {
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
 		_dlFileEntry.setExpandoBridgeAttributes(expandoBridge);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.service.ServiceContext serviceContext) {
+	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
 		_dlFileEntry.setExpandoBridgeAttributes(serviceContext);
 	}
 
@@ -1125,7 +1100,7 @@ public class DLFileEntryWrapper implements DLFileEntry,
 	}
 
 	@Override
-	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
+	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
 		_dlFileEntry.setPrimaryKeyObj(primaryKeyObj);
 	}
 
@@ -1291,14 +1266,6 @@ public class DLFileEntryWrapper implements DLFileEntry,
 	@Override
 	public StagedModelType getStagedModelType() {
 		return _dlFileEntry.getStagedModelType();
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedModel}
-	 */
-	@Deprecated
-	public DLFileEntry getWrappedDLFileEntry() {
-		return _dlFileEntry;
 	}
 
 	@Override

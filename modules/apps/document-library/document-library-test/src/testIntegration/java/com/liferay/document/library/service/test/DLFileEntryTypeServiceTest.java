@@ -15,17 +15,18 @@
 package com.liferay.document.library.service.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
-import com.liferay.document.library.events.AddDefaultDocumentLibraryStructuresAction;
 import com.liferay.dynamic.data.mapping.io.DDMFormXSDDeserializerUtil;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMStructureTestUtil;
 import com.liferay.dynamic.data.mapping.util.DDMBeanTranslatorUtil;
-import com.liferay.portal.kernel.events.SimpleAction;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.Folder;
+import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.rule.Sync;
@@ -42,9 +43,6 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.User;
-import com.liferay.portal.security.auth.PrincipalThreadLocal;
-import com.liferay.portal.security.permission.PermissionChecker;
-import com.liferay.portal.security.permission.PermissionThreadLocal;
 import com.liferay.portal.security.permission.SimplePermissionChecker;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
@@ -57,8 +55,6 @@ import com.liferay.portlet.documentlibrary.model.DLFolderConstants;
 import com.liferay.portlet.documentlibrary.service.DLAppLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.service.DLAppServiceUtil;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryTypeLocalServiceUtil;
-import com.liferay.registry.Registry;
-import com.liferay.registry.RegistryUtil;
 
 import java.util.List;
 import java.util.Locale;
@@ -89,15 +85,6 @@ public class DLFileEntryTypeServiceTest {
 	public void setUp() throws Exception {
 		setUpPermissionThreadLocal();
 		setUpPrincipalThreadLocal();
-
-		Registry registry = RegistryUtil.getRegistry();
-
-		SimpleAction simpleAction = registry.getService(
-			AddDefaultDocumentLibraryStructuresAction.class);
-
-		String companyIdString = String.valueOf(TestPropsValues.getCompanyId());
-
-		simpleAction.run(new String[] {companyIdString});
 
 		_group = GroupTestUtil.addGroup();
 
@@ -165,7 +152,7 @@ public class DLFileEntryTypeServiceTest {
 				"Test Structure", StringPool.BLANK, new long[0],
 				serviceContext);
 
-		List<com.liferay.portlet.dynamicdatamapping.DDMStructure>
+		List<com.liferay.dynamic.data.mapping.kernel.DDMStructure>
 			ddmStructures = dlFileEntryType.getDDMStructures();
 
 		Assert.assertEquals(1, ddmStructures.size());

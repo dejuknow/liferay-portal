@@ -18,12 +18,11 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.mobile.device.rules.model.MDRAction;
 
+import com.liferay.osgi.util.ServiceTrackerFactory;
+
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.service.ServiceContext;
-
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
 
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -185,7 +184,7 @@ public class MDRActionUtil {
 	* @param uuid the uuid
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching m d r action
-	* @throws com.liferay.mobile.device.rules.NoSuchActionException if a matching m d r action could not be found
+	* @throws NoSuchActionException if a matching m d r action could not be found
 	*/
 	public static MDRAction findByUuid_First(java.lang.String uuid,
 		OrderByComparator<MDRAction> orderByComparator)
@@ -211,7 +210,7 @@ public class MDRActionUtil {
 	* @param uuid the uuid
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching m d r action
-	* @throws com.liferay.mobile.device.rules.NoSuchActionException if a matching m d r action could not be found
+	* @throws NoSuchActionException if a matching m d r action could not be found
 	*/
 	public static MDRAction findByUuid_Last(java.lang.String uuid,
 		OrderByComparator<MDRAction> orderByComparator)
@@ -238,7 +237,7 @@ public class MDRActionUtil {
 	* @param uuid the uuid
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next m d r action
-	* @throws com.liferay.mobile.device.rules.NoSuchActionException if a m d r action with the primary key could not be found
+	* @throws NoSuchActionException if a m d r action with the primary key could not be found
 	*/
 	public static MDRAction[] findByUuid_PrevAndNext(long actionId,
 		java.lang.String uuid, OrderByComparator<MDRAction> orderByComparator)
@@ -267,12 +266,12 @@ public class MDRActionUtil {
 	}
 
 	/**
-	* Returns the m d r action where uuid = &#63; and groupId = &#63; or throws a {@link com.liferay.mobile.device.rules.NoSuchActionException} if it could not be found.
+	* Returns the m d r action where uuid = &#63; and groupId = &#63; or throws a {@link NoSuchActionException} if it could not be found.
 	*
 	* @param uuid the uuid
 	* @param groupId the group ID
 	* @return the matching m d r action
-	* @throws com.liferay.mobile.device.rules.NoSuchActionException if a matching m d r action could not be found
+	* @throws NoSuchActionException if a matching m d r action could not be found
 	*/
 	public static MDRAction findByUUID_G(java.lang.String uuid, long groupId)
 		throws com.liferay.mobile.device.rules.exception.NoSuchActionException {
@@ -408,7 +407,7 @@ public class MDRActionUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching m d r action
-	* @throws com.liferay.mobile.device.rules.NoSuchActionException if a matching m d r action could not be found
+	* @throws NoSuchActionException if a matching m d r action could not be found
 	*/
 	public static MDRAction findByUuid_C_First(java.lang.String uuid,
 		long companyId, OrderByComparator<MDRAction> orderByComparator)
@@ -438,7 +437,7 @@ public class MDRActionUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching m d r action
-	* @throws com.liferay.mobile.device.rules.NoSuchActionException if a matching m d r action could not be found
+	* @throws NoSuchActionException if a matching m d r action could not be found
 	*/
 	public static MDRAction findByUuid_C_Last(java.lang.String uuid,
 		long companyId, OrderByComparator<MDRAction> orderByComparator)
@@ -469,7 +468,7 @@ public class MDRActionUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next m d r action
-	* @throws com.liferay.mobile.device.rules.NoSuchActionException if a m d r action with the primary key could not be found
+	* @throws NoSuchActionException if a m d r action with the primary key could not be found
 	*/
 	public static MDRAction[] findByUuid_C_PrevAndNext(long actionId,
 		java.lang.String uuid, long companyId,
@@ -580,7 +579,7 @@ public class MDRActionUtil {
 	* @param ruleGroupInstanceId the rule group instance ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching m d r action
-	* @throws com.liferay.mobile.device.rules.NoSuchActionException if a matching m d r action could not be found
+	* @throws NoSuchActionException if a matching m d r action could not be found
 	*/
 	public static MDRAction findByRuleGroupInstanceId_First(
 		long ruleGroupInstanceId, OrderByComparator<MDRAction> orderByComparator)
@@ -610,7 +609,7 @@ public class MDRActionUtil {
 	* @param ruleGroupInstanceId the rule group instance ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching m d r action
-	* @throws com.liferay.mobile.device.rules.NoSuchActionException if a matching m d r action could not be found
+	* @throws NoSuchActionException if a matching m d r action could not be found
 	*/
 	public static MDRAction findByRuleGroupInstanceId_Last(
 		long ruleGroupInstanceId, OrderByComparator<MDRAction> orderByComparator)
@@ -641,7 +640,7 @@ public class MDRActionUtil {
 	* @param ruleGroupInstanceId the rule group instance ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next m d r action
-	* @throws com.liferay.mobile.device.rules.NoSuchActionException if a m d r action with the primary key could not be found
+	* @throws NoSuchActionException if a m d r action with the primary key could not be found
 	*/
 	public static MDRAction[] findByRuleGroupInstanceId_PrevAndNext(
 		long actionId, long ruleGroupInstanceId,
@@ -704,7 +703,7 @@ public class MDRActionUtil {
 	*
 	* @param actionId the primary key of the m d r action
 	* @return the m d r action that was removed
-	* @throws com.liferay.mobile.device.rules.NoSuchActionException if a m d r action with the primary key could not be found
+	* @throws NoSuchActionException if a m d r action with the primary key could not be found
 	*/
 	public static MDRAction remove(long actionId)
 		throws com.liferay.mobile.device.rules.exception.NoSuchActionException {
@@ -716,11 +715,11 @@ public class MDRActionUtil {
 	}
 
 	/**
-	* Returns the m d r action with the primary key or throws a {@link com.liferay.mobile.device.rules.NoSuchActionException} if it could not be found.
+	* Returns the m d r action with the primary key or throws a {@link NoSuchActionException} if it could not be found.
 	*
 	* @param actionId the primary key of the m d r action
 	* @return the m d r action
-	* @throws com.liferay.mobile.device.rules.NoSuchActionException if a m d r action with the primary key could not be found
+	* @throws NoSuchActionException if a m d r action with the primary key could not be found
 	*/
 	public static MDRAction findByPrimaryKey(long actionId)
 		throws com.liferay.mobile.device.rules.exception.NoSuchActionException {
@@ -827,21 +826,6 @@ public class MDRActionUtil {
 		return _serviceTracker.getService();
 	}
 
-	/**
-	 * @deprecated As of 6.2.0
-	 */
-	@Deprecated
-	public void setPersistence(MDRActionPersistence persistence) {
-	}
-
-	private static ServiceTracker<MDRActionPersistence, MDRActionPersistence> _serviceTracker;
-
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(MDRActionUtil.class);
-
-		_serviceTracker = new ServiceTracker<MDRActionPersistence, MDRActionPersistence>(bundle.getBundleContext(),
-				MDRActionPersistence.class, null);
-
-		_serviceTracker.open();
-	}
+	private static ServiceTracker<MDRActionPersistence, MDRActionPersistence> _serviceTracker =
+		ServiceTrackerFactory.open(MDRActionPersistence.class);
 }

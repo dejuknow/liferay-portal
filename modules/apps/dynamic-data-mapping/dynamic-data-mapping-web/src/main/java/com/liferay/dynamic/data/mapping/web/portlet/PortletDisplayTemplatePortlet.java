@@ -14,20 +14,26 @@
 
 package com.liferay.dynamic.data.mapping.web.portlet;
 
-import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
-import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
+import aQute.bnd.annotation.metatype.Configurable;
+
+import com.liferay.dynamic.data.mapping.web.configuration.DDMWebConfiguration;
 import com.liferay.portal.util.PortletKeys;
+
+import java.util.Map;
 
 import javax.portlet.Portlet;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ConfigurationPolicy;
+import org.osgi.service.component.annotations.Modified;
 
 /**
  * @author Marcellus Tavares
  */
 @Component(
-	immediate = true,
+	configurationPid = "com.liferay.dynamic.data.mapping.web.configuration.DDMWebConfiguration",
+	configurationPolicy = ConfigurationPolicy.OPTIONAL, immediate = true,
 	property = {
 		"com.liferay.portlet.add-default-resource=true",
 		"com.liferay.portlet.autopropagated-parameters=scopeTitle",
@@ -56,18 +62,12 @@ import org.osgi.service.component.annotations.Reference;
 )
 public class PortletDisplayTemplatePortlet extends DDMPortlet {
 
-	@Reference(unbind = "-")
-	protected void setDDMStructureLocalService(
-		DDMStructureLocalService ddmStructureLocalService) {
-
-		this.ddmStructureLocalService = ddmStructureLocalService;
-	}
-
-	@Reference(unbind = "-")
-	protected void setDDMTemplateLocalService(
-		DDMTemplateLocalService ddmTemplateLocalService) {
-
-		this.ddmTemplateLocalService = ddmTemplateLocalService;
+	@Activate
+	@Modified
+	@Override
+	protected void activate(Map<String, Object> properties) {
+		this.ddmWebConfiguration = Configurable.createConfigurable(
+			DDMWebConfiguration.class, properties);
 	}
 
 }

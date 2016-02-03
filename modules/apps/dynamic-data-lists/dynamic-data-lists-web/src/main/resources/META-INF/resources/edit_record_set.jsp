@@ -89,7 +89,7 @@ if (ddlDisplayContext.isAdminPortlet()) {
 		<aui:input name="description" />
 
 		<div class="form-group">
-			<aui:input label="data-definition" name="ddmStructureNameDisplay" required="<%= true %>" type="resource"  value="<%= ddmStructureName %>" />
+			<aui:input label="data-definition" name="ddmStructureNameDisplay" required="<%= true %>" type="resource" value="<%= ddmStructureName %>" />
 
 			<liferay-ui:icon
 				iconCssClass="icon-search"
@@ -144,9 +144,9 @@ if (ddlDisplayContext.isAdminPortlet()) {
 		</c:if>
 
 		<aui:button-row>
-			<aui:button name="saveButton" type="submit" value="save" />
+			<aui:button cssClass="btn-lg" name="saveButton" type="submit" value="save" />
 
-			<aui:button href="<%= redirect %>" name="cancelButton" type="cancel" />
+			<aui:button cssClass="btn-lg" href="<%= redirect %>" name="cancelButton" type="cancel" />
 		</aui:button-row>
 	</aui:fieldset>
 </aui:form>

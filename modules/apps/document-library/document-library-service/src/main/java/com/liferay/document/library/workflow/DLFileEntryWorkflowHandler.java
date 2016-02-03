@@ -15,15 +15,14 @@
 package com.liferay.document.library.workflow;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.workflow.BaseWorkflowHandler;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.workflow.WorkflowHandler;
 import com.liferay.portal.model.WorkflowDefinitionLink;
-import com.liferay.portal.security.permission.ResourceActionsUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.WorkflowDefinitionLinkLocalService;
-import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portlet.asset.AssetRendererFactoryRegistryUtil;
 import com.liferay.portlet.asset.model.AssetRenderer;
 import com.liferay.portlet.asset.model.AssetRendererFactory;
@@ -155,11 +154,6 @@ public class DLFileEntryWorkflowHandler
 			userId, classPK, status, serviceContext, workflowContext);
 	}
 
-	@Override
-	protected String getIconPath(ThemeDisplay themeDisplay) {
-		return themeDisplay.getPathThemeImages() + "/common/clip.png";
-	}
-
 	@Reference(unbind = "-")
 	protected void setDLFileEntryLocalService(
 		DLFileEntryLocalService dlFileEntryLocalService) {
@@ -191,10 +185,10 @@ public class DLFileEntryWorkflowHandler
 
 	private static final boolean _VISIBLE = false;
 
-	private volatile DLFileEntryLocalService _dlFileEntryLocalService;
-	private volatile DLFileVersionLocalService _dlFileVersionLocalService;
-	private volatile DLFolderLocalService _dlFolderLocalService;
-	private volatile WorkflowDefinitionLinkLocalService
+	private DLFileEntryLocalService _dlFileEntryLocalService;
+	private DLFileVersionLocalService _dlFileVersionLocalService;
+	private DLFolderLocalService _dlFolderLocalService;
+	private WorkflowDefinitionLinkLocalService
 		_workflowDefinitionLinkLocalService;
 
 }

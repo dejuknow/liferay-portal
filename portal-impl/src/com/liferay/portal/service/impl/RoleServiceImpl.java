@@ -15,15 +15,15 @@
 package com.liferay.portal.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.security.membershippolicy.OrganizationMembershipPolicyUtil;
+import com.liferay.portal.kernel.security.membershippolicy.RoleMembershipPolicyUtil;
+import com.liferay.portal.kernel.security.membershippolicy.SiteMembershipPolicyUtil;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Role;
 import com.liferay.portal.model.RoleConstants;
 import com.liferay.portal.model.User;
-import com.liferay.portal.security.membershippolicy.OrganizationMembershipPolicyUtil;
-import com.liferay.portal.security.membershippolicy.RoleMembershipPolicyUtil;
-import com.liferay.portal.security.membershippolicy.SiteMembershipPolicyUtil;
-import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.base.RoleServiceBaseImpl;
 import com.liferay.portal.service.permission.PortalPermissionUtil;
@@ -91,30 +91,6 @@ public class RoleServiceImpl extends RoleServiceBaseImpl {
 		}
 
 		return role;
-	}
-
-	/**
-	 * Adds a role. The user is reindexed after role is added.
-	 *
-	 * @param      name the role's name
-	 * @param      titleMap the role's localized titles (optionally
-	 *             <code>null</code>)
-	 * @param      descriptionMap the role's localized descriptions (optionally
-	 *             <code>null</code>)
-	 * @param      type the role's type (optionally <code>0</code>)
-	 * @return     the role
-	 * @deprecated As of 6.2.0, replaced by {@link #addRole(String, long,
-	 *             String, Map, Map, int, String, ServiceContext)}
-	 */
-	@Deprecated
-	@Override
-	public Role addRole(
-			String name, Map<Locale, String> titleMap,
-			Map<Locale, String> descriptionMap, int type)
-		throws PortalException {
-
-		return addRole(
-			null, 0, name, titleMap, descriptionMap, type, null, null);
 	}
 
 	/**

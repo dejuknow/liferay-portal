@@ -61,7 +61,6 @@ recordSetSearch.setOrderByType(orderByType);
 			<liferay-ui:search-container-row
 				className="com.liferay.dynamic.data.lists.model.DDLRecordSet"
 				cssClass="entry-display-style"
-				escapedModel="<%= true %>"
 				keyProperty="recordSetId"
 				modelVar="recordSet"
 			>
@@ -106,7 +105,6 @@ recordSetSearch.setOrderByType(orderByType);
 						/>
 					</c:otherwise>
 				</c:choose>
-
 			</liferay-ui:search-container-row>
 
 			<liferay-ui:search-iterator displayStyle="<%= displayStyle %>" markupView="lexicon" />

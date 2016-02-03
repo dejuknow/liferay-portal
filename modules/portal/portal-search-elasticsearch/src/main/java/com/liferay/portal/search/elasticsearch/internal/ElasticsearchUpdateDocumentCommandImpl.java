@@ -81,6 +81,10 @@ public class ElasticsearchUpdateDocumentCommandImpl
 		BulkResponse bulkResponse = doUpdateDocuments(
 			documentType, searchContext, Arrays.asList(document), deleteFirst);
 
+		if (bulkResponse.hasFailures()) {
+			throw new SearchException(bulkResponse.buildFailureMessage());
+		}
+
 		BulkItemResponse[] bulkItemResponses = bulkResponse.getItems();
 
 		for (BulkItemResponse bulkItemResponse : bulkItemResponses) {
@@ -191,8 +195,7 @@ public class ElasticsearchUpdateDocumentCommandImpl
 		ElasticsearchUpdateDocumentCommandImpl.class);
 
 	private volatile ElasticsearchConfiguration _elasticsearchConfiguration;
-	private volatile ElasticsearchConnectionManager
-		_elasticsearchConnectionManager;
-	private volatile ElasticsearchDocumentFactory _elasticsearchDocumentFactory;
+	private ElasticsearchConnectionManager _elasticsearchConnectionManager;
+	private ElasticsearchDocumentFactory _elasticsearchDocumentFactory;
 
 }

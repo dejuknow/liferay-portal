@@ -14,6 +14,9 @@
 
 package com.liferay.portal.verify.model;
 
+import com.liferay.portal.kernel.verify.model.VerifiableAuditedModel;
+import com.liferay.portal.kernel.verify.model.VerifiableResourcedModel;
+import com.liferay.portal.kernel.verify.model.VerifiableUUIDModel;
 import com.liferay.portal.model.Layout;
 
 /**
@@ -56,6 +59,11 @@ public class LayoutVerifiableModel
 	@Override
 	public String getUserIdColumnName() {
 		return "userId";
+	}
+
+	@Override
+	public boolean isAnonymousUserAllowed() {
+		return false;
 	}
 
 	@Override

@@ -16,6 +16,7 @@ package com.liferay.dynamic.data.mapping.service.persistence;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 
 import com.liferay.portal.service.persistence.BasePersistence;
@@ -105,11 +106,11 @@ public interface DDMStructurePersistence extends BasePersistence<DDMStructure> {
 	* @param uuid the uuid
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public DDMStructure findByUuid_First(java.lang.String uuid,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMStructure> orderByComparator)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
+		throws NoSuchStructureException;
 
 	/**
 	* Returns the first d d m structure in the ordered set where uuid = &#63;.
@@ -127,11 +128,11 @@ public interface DDMStructurePersistence extends BasePersistence<DDMStructure> {
 	* @param uuid the uuid
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public DDMStructure findByUuid_Last(java.lang.String uuid,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMStructure> orderByComparator)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
+		throws NoSuchStructureException;
 
 	/**
 	* Returns the last d d m structure in the ordered set where uuid = &#63;.
@@ -150,12 +151,12 @@ public interface DDMStructurePersistence extends BasePersistence<DDMStructure> {
 	* @param uuid the uuid
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a d d m structure with the primary key could not be found
+	* @throws NoSuchStructureException if a d d m structure with the primary key could not be found
 	*/
 	public DDMStructure[] findByUuid_PrevAndNext(long structureId,
 		java.lang.String uuid,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMStructure> orderByComparator)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
+		throws NoSuchStructureException;
 
 	/**
 	* Removes all the d d m structures where uuid = &#63; from the database.
@@ -173,15 +174,15 @@ public interface DDMStructurePersistence extends BasePersistence<DDMStructure> {
 	public int countByUuid(java.lang.String uuid);
 
 	/**
-	* Returns the d d m structure where uuid = &#63; and groupId = &#63; or throws a {@link com.liferay.dynamic.data.mapping.NoSuchStructureException} if it could not be found.
+	* Returns the d d m structure where uuid = &#63; and groupId = &#63; or throws a {@link NoSuchStructureException} if it could not be found.
 	*
 	* @param uuid the uuid
 	* @param groupId the group ID
 	* @return the matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public DDMStructure findByUUID_G(java.lang.String uuid, long groupId)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
+		throws NoSuchStructureException;
 
 	/**
 	* Returns the d d m structure where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
@@ -211,7 +212,7 @@ public interface DDMStructurePersistence extends BasePersistence<DDMStructure> {
 	* @return the d d m structure that was removed
 	*/
 	public DDMStructure removeByUUID_G(java.lang.String uuid, long groupId)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
+		throws NoSuchStructureException;
 
 	/**
 	* Returns the number of d d m structures where uuid = &#63; and groupId = &#63;.
@@ -293,12 +294,12 @@ public interface DDMStructurePersistence extends BasePersistence<DDMStructure> {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public DDMStructure findByUuid_C_First(java.lang.String uuid,
 		long companyId,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMStructure> orderByComparator)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
+		throws NoSuchStructureException;
 
 	/**
 	* Returns the first d d m structure in the ordered set where uuid = &#63; and companyId = &#63;.
@@ -319,12 +320,12 @@ public interface DDMStructurePersistence extends BasePersistence<DDMStructure> {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public DDMStructure findByUuid_C_Last(java.lang.String uuid,
 		long companyId,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMStructure> orderByComparator)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
+		throws NoSuchStructureException;
 
 	/**
 	* Returns the last d d m structure in the ordered set where uuid = &#63; and companyId = &#63;.
@@ -346,12 +347,12 @@ public interface DDMStructurePersistence extends BasePersistence<DDMStructure> {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a d d m structure with the primary key could not be found
+	* @throws NoSuchStructureException if a d d m structure with the primary key could not be found
 	*/
 	public DDMStructure[] findByUuid_C_PrevAndNext(long structureId,
 		java.lang.String uuid, long companyId,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMStructure> orderByComparator)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
+		throws NoSuchStructureException;
 
 	/**
 	* Removes all the d d m structures where uuid = &#63; and companyId = &#63; from the database.
@@ -435,11 +436,11 @@ public interface DDMStructurePersistence extends BasePersistence<DDMStructure> {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public DDMStructure findByGroupId_First(long groupId,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMStructure> orderByComparator)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
+		throws NoSuchStructureException;
 
 	/**
 	* Returns the first d d m structure in the ordered set where groupId = &#63;.
@@ -457,11 +458,11 @@ public interface DDMStructurePersistence extends BasePersistence<DDMStructure> {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public DDMStructure findByGroupId_Last(long groupId,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMStructure> orderByComparator)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
+		throws NoSuchStructureException;
 
 	/**
 	* Returns the last d d m structure in the ordered set where groupId = &#63;.
@@ -480,12 +481,12 @@ public interface DDMStructurePersistence extends BasePersistence<DDMStructure> {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a d d m structure with the primary key could not be found
+	* @throws NoSuchStructureException if a d d m structure with the primary key could not be found
 	*/
 	public DDMStructure[] findByGroupId_PrevAndNext(long structureId,
 		long groupId,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMStructure> orderByComparator)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
+		throws NoSuchStructureException;
 
 	/**
 	* Returns all the d d m structures that the user has permission to view where groupId = &#63;.
@@ -534,12 +535,12 @@ public interface DDMStructurePersistence extends BasePersistence<DDMStructure> {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a d d m structure with the primary key could not be found
+	* @throws NoSuchStructureException if a d d m structure with the primary key could not be found
 	*/
 	public DDMStructure[] filterFindByGroupId_PrevAndNext(long structureId,
 		long groupId,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMStructure> orderByComparator)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
+		throws NoSuchStructureException;
 
 	/**
 	* Returns all the d d m structures that the user has permission to view where groupId = any &#63;.
@@ -749,11 +750,11 @@ public interface DDMStructurePersistence extends BasePersistence<DDMStructure> {
 	* @param parentStructureId the parent structure ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public DDMStructure findByParentStructureId_First(long parentStructureId,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMStructure> orderByComparator)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
+		throws NoSuchStructureException;
 
 	/**
 	* Returns the first d d m structure in the ordered set where parentStructureId = &#63;.
@@ -771,11 +772,11 @@ public interface DDMStructurePersistence extends BasePersistence<DDMStructure> {
 	* @param parentStructureId the parent structure ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public DDMStructure findByParentStructureId_Last(long parentStructureId,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMStructure> orderByComparator)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
+		throws NoSuchStructureException;
 
 	/**
 	* Returns the last d d m structure in the ordered set where parentStructureId = &#63;.
@@ -794,12 +795,12 @@ public interface DDMStructurePersistence extends BasePersistence<DDMStructure> {
 	* @param parentStructureId the parent structure ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a d d m structure with the primary key could not be found
+	* @throws NoSuchStructureException if a d d m structure with the primary key could not be found
 	*/
 	public DDMStructure[] findByParentStructureId_PrevAndNext(
 		long structureId, long parentStructureId,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMStructure> orderByComparator)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
+		throws NoSuchStructureException;
 
 	/**
 	* Removes all the d d m structures where parentStructureId = &#63; from the database.
@@ -881,11 +882,11 @@ public interface DDMStructurePersistence extends BasePersistence<DDMStructure> {
 	* @param classNameId the class name ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public DDMStructure findByClassNameId_First(long classNameId,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMStructure> orderByComparator)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
+		throws NoSuchStructureException;
 
 	/**
 	* Returns the first d d m structure in the ordered set where classNameId = &#63;.
@@ -903,11 +904,11 @@ public interface DDMStructurePersistence extends BasePersistence<DDMStructure> {
 	* @param classNameId the class name ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public DDMStructure findByClassNameId_Last(long classNameId,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMStructure> orderByComparator)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
+		throws NoSuchStructureException;
 
 	/**
 	* Returns the last d d m structure in the ordered set where classNameId = &#63;.
@@ -926,12 +927,12 @@ public interface DDMStructurePersistence extends BasePersistence<DDMStructure> {
 	* @param classNameId the class name ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a d d m structure with the primary key could not be found
+	* @throws NoSuchStructureException if a d d m structure with the primary key could not be found
 	*/
 	public DDMStructure[] findByClassNameId_PrevAndNext(long structureId,
 		long classNameId,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMStructure> orderByComparator)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
+		throws NoSuchStructureException;
 
 	/**
 	* Removes all the d d m structures where classNameId = &#63; from the database.
@@ -1014,12 +1015,12 @@ public interface DDMStructurePersistence extends BasePersistence<DDMStructure> {
 	* @param structureKey the structure key
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public DDMStructure findByStructureKey_First(
 		java.lang.String structureKey,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMStructure> orderByComparator)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
+		throws NoSuchStructureException;
 
 	/**
 	* Returns the first d d m structure in the ordered set where structureKey = &#63;.
@@ -1038,11 +1039,11 @@ public interface DDMStructurePersistence extends BasePersistence<DDMStructure> {
 	* @param structureKey the structure key
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public DDMStructure findByStructureKey_Last(java.lang.String structureKey,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMStructure> orderByComparator)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
+		throws NoSuchStructureException;
 
 	/**
 	* Returns the last d d m structure in the ordered set where structureKey = &#63;.
@@ -1062,12 +1063,12 @@ public interface DDMStructurePersistence extends BasePersistence<DDMStructure> {
 	* @param structureKey the structure key
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a d d m structure with the primary key could not be found
+	* @throws NoSuchStructureException if a d d m structure with the primary key could not be found
 	*/
 	public DDMStructure[] findByStructureKey_PrevAndNext(long structureId,
 		java.lang.String structureKey,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMStructure> orderByComparator)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
+		throws NoSuchStructureException;
 
 	/**
 	* Removes all the d d m structures where structureKey = &#63; from the database.
@@ -1155,11 +1156,11 @@ public interface DDMStructurePersistence extends BasePersistence<DDMStructure> {
 	* @param parentStructureId the parent structure ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public DDMStructure findByG_P_First(long groupId, long parentStructureId,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMStructure> orderByComparator)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
+		throws NoSuchStructureException;
 
 	/**
 	* Returns the first d d m structure in the ordered set where groupId = &#63; and parentStructureId = &#63;.
@@ -1179,11 +1180,11 @@ public interface DDMStructurePersistence extends BasePersistence<DDMStructure> {
 	* @param parentStructureId the parent structure ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public DDMStructure findByG_P_Last(long groupId, long parentStructureId,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMStructure> orderByComparator)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
+		throws NoSuchStructureException;
 
 	/**
 	* Returns the last d d m structure in the ordered set where groupId = &#63; and parentStructureId = &#63;.
@@ -1204,12 +1205,12 @@ public interface DDMStructurePersistence extends BasePersistence<DDMStructure> {
 	* @param parentStructureId the parent structure ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a d d m structure with the primary key could not be found
+	* @throws NoSuchStructureException if a d d m structure with the primary key could not be found
 	*/
 	public DDMStructure[] findByG_P_PrevAndNext(long structureId, long groupId,
 		long parentStructureId,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMStructure> orderByComparator)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
+		throws NoSuchStructureException;
 
 	/**
 	* Returns all the d d m structures that the user has permission to view where groupId = &#63; and parentStructureId = &#63;.
@@ -1263,12 +1264,12 @@ public interface DDMStructurePersistence extends BasePersistence<DDMStructure> {
 	* @param parentStructureId the parent structure ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a d d m structure with the primary key could not be found
+	* @throws NoSuchStructureException if a d d m structure with the primary key could not be found
 	*/
 	public DDMStructure[] filterFindByG_P_PrevAndNext(long structureId,
 		long groupId, long parentStructureId,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMStructure> orderByComparator)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
+		throws NoSuchStructureException;
 
 	/**
 	* Removes all the d d m structures where groupId = &#63; and parentStructureId = &#63; from the database.
@@ -1366,11 +1367,11 @@ public interface DDMStructurePersistence extends BasePersistence<DDMStructure> {
 	* @param classNameId the class name ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public DDMStructure findByG_C_First(long groupId, long classNameId,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMStructure> orderByComparator)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
+		throws NoSuchStructureException;
 
 	/**
 	* Returns the first d d m structure in the ordered set where groupId = &#63; and classNameId = &#63;.
@@ -1390,11 +1391,11 @@ public interface DDMStructurePersistence extends BasePersistence<DDMStructure> {
 	* @param classNameId the class name ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public DDMStructure findByG_C_Last(long groupId, long classNameId,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMStructure> orderByComparator)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
+		throws NoSuchStructureException;
 
 	/**
 	* Returns the last d d m structure in the ordered set where groupId = &#63; and classNameId = &#63;.
@@ -1415,12 +1416,12 @@ public interface DDMStructurePersistence extends BasePersistence<DDMStructure> {
 	* @param classNameId the class name ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a d d m structure with the primary key could not be found
+	* @throws NoSuchStructureException if a d d m structure with the primary key could not be found
 	*/
 	public DDMStructure[] findByG_C_PrevAndNext(long structureId, long groupId,
 		long classNameId,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMStructure> orderByComparator)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
+		throws NoSuchStructureException;
 
 	/**
 	* Returns all the d d m structures that the user has permission to view where groupId = &#63; and classNameId = &#63;.
@@ -1474,12 +1475,12 @@ public interface DDMStructurePersistence extends BasePersistence<DDMStructure> {
 	* @param classNameId the class name ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a d d m structure with the primary key could not be found
+	* @throws NoSuchStructureException if a d d m structure with the primary key could not be found
 	*/
 	public DDMStructure[] filterFindByG_C_PrevAndNext(long structureId,
 		long groupId, long classNameId,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMStructure> orderByComparator)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
+		throws NoSuchStructureException;
 
 	/**
 	* Returns all the d d m structures that the user has permission to view where groupId = any &#63; and classNameId = &#63;.
@@ -1708,11 +1709,11 @@ public interface DDMStructurePersistence extends BasePersistence<DDMStructure> {
 	* @param classNameId the class name ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public DDMStructure findByC_C_First(long companyId, long classNameId,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMStructure> orderByComparator)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
+		throws NoSuchStructureException;
 
 	/**
 	* Returns the first d d m structure in the ordered set where companyId = &#63; and classNameId = &#63;.
@@ -1732,11 +1733,11 @@ public interface DDMStructurePersistence extends BasePersistence<DDMStructure> {
 	* @param classNameId the class name ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public DDMStructure findByC_C_Last(long companyId, long classNameId,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMStructure> orderByComparator)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
+		throws NoSuchStructureException;
 
 	/**
 	* Returns the last d d m structure in the ordered set where companyId = &#63; and classNameId = &#63;.
@@ -1757,12 +1758,12 @@ public interface DDMStructurePersistence extends BasePersistence<DDMStructure> {
 	* @param classNameId the class name ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a d d m structure with the primary key could not be found
+	* @throws NoSuchStructureException if a d d m structure with the primary key could not be found
 	*/
 	public DDMStructure[] findByC_C_PrevAndNext(long structureId,
 		long companyId, long classNameId,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMStructure> orderByComparator)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
+		throws NoSuchStructureException;
 
 	/**
 	* Removes all the d d m structures where companyId = &#63; and classNameId = &#63; from the database.
@@ -1782,17 +1783,16 @@ public interface DDMStructurePersistence extends BasePersistence<DDMStructure> {
 	public int countByC_C(long companyId, long classNameId);
 
 	/**
-	* Returns the d d m structure where groupId = &#63; and classNameId = &#63; and structureKey = &#63; or throws a {@link com.liferay.dynamic.data.mapping.NoSuchStructureException} if it could not be found.
+	* Returns the d d m structure where groupId = &#63; and classNameId = &#63; and structureKey = &#63; or throws a {@link NoSuchStructureException} if it could not be found.
 	*
 	* @param groupId the group ID
 	* @param classNameId the class name ID
 	* @param structureKey the structure key
 	* @return the matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public DDMStructure findByG_C_S(long groupId, long classNameId,
-		java.lang.String structureKey)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
+		java.lang.String structureKey) throws NoSuchStructureException;
 
 	/**
 	* Returns the d d m structure where groupId = &#63; and classNameId = &#63; and structureKey = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
@@ -1826,8 +1826,7 @@ public interface DDMStructurePersistence extends BasePersistence<DDMStructure> {
 	* @return the d d m structure that was removed
 	*/
 	public DDMStructure removeByG_C_S(long groupId, long classNameId,
-		java.lang.String structureKey)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
+		java.lang.String structureKey) throws NoSuchStructureException;
 
 	/**
 	* Returns the number of d d m structures where groupId = &#63; and classNameId = &#63; and structureKey = &#63;.
@@ -1918,12 +1917,12 @@ public interface DDMStructurePersistence extends BasePersistence<DDMStructure> {
 	* @param description the description
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public DDMStructure findByG_N_D_First(long groupId, java.lang.String name,
 		java.lang.String description,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMStructure> orderByComparator)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
+		throws NoSuchStructureException;
 
 	/**
 	* Returns the first d d m structure in the ordered set where groupId = &#63; and name = &#63; and description = &#63;.
@@ -1946,12 +1945,12 @@ public interface DDMStructurePersistence extends BasePersistence<DDMStructure> {
 	* @param description the description
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a matching d d m structure could not be found
+	* @throws NoSuchStructureException if a matching d d m structure could not be found
 	*/
 	public DDMStructure findByG_N_D_Last(long groupId, java.lang.String name,
 		java.lang.String description,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMStructure> orderByComparator)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
+		throws NoSuchStructureException;
 
 	/**
 	* Returns the last d d m structure in the ordered set where groupId = &#63; and name = &#63; and description = &#63;.
@@ -1975,12 +1974,12 @@ public interface DDMStructurePersistence extends BasePersistence<DDMStructure> {
 	* @param description the description
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a d d m structure with the primary key could not be found
+	* @throws NoSuchStructureException if a d d m structure with the primary key could not be found
 	*/
 	public DDMStructure[] findByG_N_D_PrevAndNext(long structureId,
 		long groupId, java.lang.String name, java.lang.String description,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMStructure> orderByComparator)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
+		throws NoSuchStructureException;
 
 	/**
 	* Returns all the d d m structures that the user has permission to view where groupId = &#63; and name = &#63; and description = &#63;.
@@ -2039,12 +2038,12 @@ public interface DDMStructurePersistence extends BasePersistence<DDMStructure> {
 	* @param description the description
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a d d m structure with the primary key could not be found
+	* @throws NoSuchStructureException if a d d m structure with the primary key could not be found
 	*/
 	public DDMStructure[] filterFindByG_N_D_PrevAndNext(long structureId,
 		long groupId, java.lang.String name, java.lang.String description,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMStructure> orderByComparator)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
+		throws NoSuchStructureException;
 
 	/**
 	* Removes all the d d m structures where groupId = &#63; and name = &#63; and description = &#63; from the database.
@@ -2105,22 +2104,22 @@ public interface DDMStructurePersistence extends BasePersistence<DDMStructure> {
 	*
 	* @param structureId the primary key of the d d m structure
 	* @return the d d m structure that was removed
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a d d m structure with the primary key could not be found
+	* @throws NoSuchStructureException if a d d m structure with the primary key could not be found
 	*/
 	public DDMStructure remove(long structureId)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
+		throws NoSuchStructureException;
 
 	public DDMStructure updateImpl(DDMStructure ddmStructure);
 
 	/**
-	* Returns the d d m structure with the primary key or throws a {@link com.liferay.dynamic.data.mapping.NoSuchStructureException} if it could not be found.
+	* Returns the d d m structure with the primary key or throws a {@link NoSuchStructureException} if it could not be found.
 	*
 	* @param structureId the primary key of the d d m structure
 	* @return the d d m structure
-	* @throws com.liferay.dynamic.data.mapping.NoSuchStructureException if a d d m structure with the primary key could not be found
+	* @throws NoSuchStructureException if a d d m structure with the primary key could not be found
 	*/
 	public DDMStructure findByPrimaryKey(long structureId)
-		throws com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
+		throws NoSuchStructureException;
 
 	/**
 	* Returns the d d m structure with the primary key or returns <code>null</code> if it could not be found.

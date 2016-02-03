@@ -38,6 +38,7 @@ import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.xml.Attribute;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.UnsecureSAXReaderUtil;
@@ -53,6 +54,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -68,6 +70,12 @@ public class JournalTransformerTest {
 	@Rule
 	public static final AggregateTestRule aggregateTestRule =
 		new LiferayIntegrationTestRule();
+
+	@Before
+	public void setUp() throws Exception {
+		_ddmStructure = DDMStructureTestUtil.addStructure(
+			JournalArticle.class.getName());
+	}
 
 	@Test
 	public void testContentTransformerListener() throws Exception {
@@ -170,6 +178,48 @@ public class JournalTransformerTest {
 		content = JournalUtil.transform(
 			null, tokens, Constants.VIEW, "fr_CA",
 			UnsecureSAXReaderUtil.read(xml), null, script,
+			TemplateConstants.LANG_TYPE_VM);
+
+		Assert.assertEquals("Joe Bloggs", content);
+	}
+
+	@Test
+	public void testLocaleTransformerListenerNestedFieldWithNoTranslation()
+		throws Exception {
+
+		Map<String, String> tokens = getTokens();
+
+		Map<Locale, String> contents = new HashMap<>();
+
+		contents.put(LocaleUtil.US, "Joe Bloggs");
+
+		String xml = DDMStructureTestUtil.getSampleStructuredContent(
+			contents, LanguageUtil.getLanguageId(LocaleUtil.US));
+
+		Document document = UnsecureSAXReaderUtil.read(xml);
+
+		Element rootElement = document.getRootElement();
+
+		Attribute availableLocalesAttribute = rootElement.attribute(
+			"available-locales");
+
+		availableLocalesAttribute.setValue("en_US,pt_BR");
+
+		Element dynamicElement = (Element)document.selectSingleNode(
+			"//dynamic-element");
+
+		dynamicElement.addElement("nestedElement");
+
+		String script = "$name.getData()";
+
+		String content = JournalUtil.transform(
+			null, tokens, Constants.VIEW, "en_US", document, null, script,
+			TemplateConstants.LANG_TYPE_VM);
+
+		Assert.assertEquals("Joe Bloggs", content);
+
+		content = JournalUtil.transform(
+			null, tokens, Constants.VIEW, "pt_BR", document, null, script,
 			TemplateConstants.LANG_TYPE_VM);
 
 		Assert.assertEquals("Joe Bloggs", content);
@@ -293,6 +343,8 @@ public class JournalTransformerTest {
 					DDMStructure.class.getName())));
 		tokens.put(
 			"article_group_id", String.valueOf(TestPropsValues.getGroupId()));
+		tokens.put(
+			"ddm_structure_id", String.valueOf(_ddmStructure.getStructureId()));
 		tokens.put(
 			"company_id", String.valueOf(TestPropsValues.getCompanyId()));
 

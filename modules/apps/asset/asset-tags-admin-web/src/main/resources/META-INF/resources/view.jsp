@@ -27,6 +27,8 @@ if (Validator.isNotNull(keywords)) {
 
 SearchContainer tagsSearchContainer = new SearchContainer(renderRequest, renderResponse.createRenderURL(), null, "there-are-no-tags.-you-can-add-a-tag-by-clicking-the-plus-button-on-the-bottom-right-corner");
 
+tagsSearchContainer.setSearch(Validator.isNotNull(keywords));
+
 String orderByCol = ParamUtil.getString(request, "orderByCol", "name");
 
 tagsSearchContainer.setOrderByCol(orderByCol);
@@ -67,7 +69,7 @@ tagsSearchContainer.setResults(tags);
 
 <aui:nav-bar cssClass="collapse-basic-search" markupView="lexicon">
 	<aui:nav cssClass="navbar-nav">
-		<aui:nav-item cssClass="active" label="tags" />
+		<aui:nav-item label="tags" selected="<%= true %>" />
 	</aui:nav>
 
 	<c:if test="<%= Validator.isNotNull(keywords) || (tagsCount > 0) %>">
@@ -79,40 +81,39 @@ tagsSearchContainer.setResults(tags);
 	</c:if>
 </aui:nav-bar>
 
-<c:if test="<%= Validator.isNotNull(keywords) || (tagsCount > 0) %>">
-	<liferay-frontend:management-bar
-		includeCheckBox="<%= true %>"
-		searchContainerId="assetTags"
-	>
-		<liferay-frontend:management-bar-filters>
-			<liferay-frontend:management-bar-navigation
-				navigationKeys='<%= new String[] {"all"} %>'
-				portletURL="<%= renderResponse.createRenderURL() %>"
-			/>
+<liferay-frontend:management-bar
+	disabled="<%= tagsCount <= 0 %>"
+	includeCheckBox="<%= true %>"
+	searchContainerId="assetTags"
+>
+	<liferay-frontend:management-bar-filters>
+		<liferay-frontend:management-bar-navigation
+			navigationKeys='<%= new String[] {"all"} %>'
+			portletURL="<%= renderResponse.createRenderURL() %>"
+		/>
 
-			<liferay-frontend:management-bar-sort
-				orderByCol="<%= orderByCol %>"
-				orderByType="<%= orderByType %>"
-				orderColumns='<%= new String[] {"name", "usages"} %>'
-				portletURL="<%= renderResponse.createRenderURL() %>"
-			/>
-		</liferay-frontend:management-bar-filters>
+		<liferay-frontend:management-bar-sort
+			orderByCol="<%= orderByCol %>"
+			orderByType="<%= orderByType %>"
+			orderColumns='<%= new String[] {"name", "usages"} %>'
+			portletURL="<%= renderResponse.createRenderURL() %>"
+		/>
+	</liferay-frontend:management-bar-filters>
 
-		<liferay-frontend:management-bar-buttons>
-			<liferay-frontend:management-bar-display-buttons
-				displayViews='<%= new String[] {"list"} %>'
-				portletURL="<%= portletURL %>"
-				selectedDisplayStyle="<%= displayStyle %>"
-			/>
-		</liferay-frontend:management-bar-buttons>
+	<liferay-frontend:management-bar-buttons>
+		<liferay-frontend:management-bar-display-buttons
+			displayViews='<%= new String[] {"list"} %>'
+			portletURL="<%= portletURL %>"
+			selectedDisplayStyle="<%= displayStyle %>"
+		/>
+	</liferay-frontend:management-bar-buttons>
 
-		<liferay-frontend:management-bar-action-buttons>
-			<liferay-frontend:management-bar-button href="javascript:;" iconCssClass="icon-random" id="mergeSelectedTags" />
+	<liferay-frontend:management-bar-action-buttons>
+		<liferay-frontend:management-bar-button href="javascript:;" icon="change" id="mergeSelectedTags" label="merge" />
 
-			<liferay-frontend:management-bar-button href="javascript:;" iconCssClass="icon-trash" id="deleteSelectedTags" />
-		</liferay-frontend:management-bar-action-buttons>
-	</liferay-frontend:management-bar>
-</c:if>
+		<liferay-frontend:management-bar-button href="javascript:;" icon="trash" id="deleteSelectedTags" label="delete" />
+	</liferay-frontend:management-bar-action-buttons>
+</liferay-frontend:management-bar>
 
 <portlet:actionURL name="deleteTag" var="deleteTagURL">
 	<portlet:param name="redirect" value="<%= currentURL %>" />
@@ -130,8 +131,9 @@ tagsSearchContainer.setResults(tags);
 			modelVar="tag"
 		>
 			<liferay-ui:search-container-column-text
+				cssClass="text-strong"
 				name="name"
-				property="name"
+				value="<%= tag.getName() %>"
 			/>
 
 			<liferay-ui:search-container-column-text

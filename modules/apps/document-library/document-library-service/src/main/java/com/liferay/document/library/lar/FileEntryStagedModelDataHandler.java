@@ -14,6 +14,13 @@
 
 package com.liferay.document.library.lar;
 
+import com.liferay.dynamic.data.mapping.exportimport.content.processor.DDMFormValuesExportImportContentProcessor;
+import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONDeserializer;
+import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONSerializer;
+import com.liferay.dynamic.data.mapping.kernel.DDMFormValues;
+import com.liferay.dynamic.data.mapping.kernel.DDMStructure;
+import com.liferay.dynamic.data.mapping.storage.StorageEngine;
+import com.liferay.dynamic.data.mapping.util.DDMBeanTranslatorUtil;
 import com.liferay.exportimport.lar.BaseStagedModelDataHandler;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -48,11 +55,9 @@ import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalService;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryMetadataLocalService;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryTypeLocalService;
 import com.liferay.portlet.documentlibrary.service.DLFileVersionLocalService;
+import com.liferay.portlet.documentlibrary.service.DLTrashService;
 import com.liferay.portlet.documentlibrary.util.DLProcessorRegistryUtil;
 import com.liferay.portlet.documentlibrary.util.DLProcessorThreadLocal;
-import com.liferay.portlet.dynamicdatamapping.DDMFormValues;
-import com.liferay.portlet.dynamicdatamapping.DDMStructure;
-import com.liferay.portlet.dynamicdatamapping.StorageEngineManagerUtil;
 import com.liferay.portlet.exportimport.lar.ExportImportPathUtil;
 import com.liferay.portlet.exportimport.lar.ExportImportThreadLocal;
 import com.liferay.portlet.exportimport.lar.PortletDataContext;
@@ -415,7 +420,7 @@ public class FileEntryStagedModelDataHandler
 					fileEntry.getSize(), serviceContext);
 
 				if (fileEntry.isInTrash()) {
-					importedFileEntry = _dlAppService.moveFileEntryToTrash(
+					importedFileEntry = _dlTrashService.moveFileEntryToTrash(
 						importedFileEntry.getFileEntryId());
 				}
 			}
@@ -583,6 +588,46 @@ public class FileEntryStagedModelDataHandler
 		}
 	}
 
+	protected void exportDDMFormValues(
+			PortletDataContext portletDataContext, DDMStructure ddmStructure,
+			FileEntry fileEntry, Element fileEntryElement)
+		throws Exception {
+
+		FileVersion fileVersion = fileEntry.getFileVersion();
+
+		DLFileEntryMetadata dlFileEntryMetadata =
+			_dlFileEntryMetadataLocalService.fetchFileEntryMetadata(
+				ddmStructure.getStructureId(), fileVersion.getFileVersionId());
+
+		if (dlFileEntryMetadata == null) {
+			return;
+		}
+
+		Element structureFields = fileEntryElement.addElement(
+			"structure-fields");
+
+		String ddmFormValuesPath = ExportImportPathUtil.getModelPath(
+			ddmStructure,
+			String.valueOf(dlFileEntryMetadata.getDDMStorageId()));
+
+		structureFields.addAttribute("ddm-form-values-path", ddmFormValuesPath);
+
+		structureFields.addAttribute("structureUuid", ddmStructure.getUuid());
+
+		com.liferay.dynamic.data.mapping.storage.DDMFormValues ddmFormValues =
+			_storageEngine.getDDMFormValues(
+				dlFileEntryMetadata.getDDMStorageId());
+
+		ddmFormValues =
+			_ddmFormValuesExportImportContentProcessor.
+				replaceExportContentReferences(
+					portletDataContext, fileEntry, ddmFormValues, false, false);
+
+		portletDataContext.addZipEntry(
+			ddmFormValuesPath,
+			_ddmFormValuesJSONSerializer.serialize(ddmFormValues));
+	}
+
 	protected void exportMetaData(
 			PortletDataContext portletDataContext, Element fileEntryElement,
 			FileEntry fileEntry)
@@ -608,35 +653,33 @@ public class FileEntryStagedModelDataHandler
 		List<DDMStructure> ddmStructures = dlFileEntryType.getDDMStructures();
 
 		for (DDMStructure ddmStructure : ddmStructures) {
-			FileVersion fileVersion = fileEntry.getFileVersion();
-
-			DLFileEntryMetadata dlFileEntryMetadata =
-				_dlFileEntryMetadataLocalService.fetchFileEntryMetadata(
-					ddmStructure.getStructureId(),
-					fileVersion.getFileVersionId());
-
-			if (dlFileEntryMetadata == null) {
-				continue;
-			}
-
-			Element structureFields = fileEntryElement.addElement(
-				"structure-fields");
-
-			String path = ExportImportPathUtil.getModelPath(
-				ddmStructure,
-				String.valueOf(dlFileEntryMetadata.getDDMStorageId()));
-
-			structureFields.addAttribute("path", path);
-
-			structureFields.addAttribute(
-				"structureUuid", ddmStructure.getUuid());
-
-			DDMFormValues ddmFormValues =
-				StorageEngineManagerUtil.getDDMFormValues(
-					dlFileEntryMetadata.getDDMStorageId());
-
-			portletDataContext.addZipEntry(path, ddmFormValues);
+			exportDDMFormValues(
+				portletDataContext, ddmStructure, fileEntry, fileEntryElement);
 		}
+	}
+
+	protected DDMFormValues getImportDDMFormValues(
+			PortletDataContext portletDataContext,
+			Element structureFieldsElement, DDMStructure ddmStructure)
+		throws Exception {
+
+		String ddmFormValuesPath = structureFieldsElement.attributeValue(
+			"ddm-form-values-path");
+
+		String serializedDDMFormValues = portletDataContext.getZipEntryAsString(
+			ddmFormValuesPath);
+
+		com.liferay.dynamic.data.mapping.storage.DDMFormValues ddmFormValues =
+			_ddmFormValuesJSONDeserializer.deserialize(
+				DDMBeanTranslatorUtil.translate(ddmStructure.getDDMForm()),
+				serializedDDMFormValues);
+
+		ddmFormValues =
+			_ddmFormValuesExportImportContentProcessor.
+				replaceImportContentReferences(
+					portletDataContext, ddmStructure, ddmFormValues);
+
+		return DDMBeanTranslatorUtil.translate(ddmFormValues);
 	}
 
 	protected void importMetaData(
@@ -682,15 +725,36 @@ public class FileEntryStagedModelDataHandler
 				continue;
 			}
 
-			String path = structureFieldsElement.attributeValue("path");
-
-			DDMFormValues ddmFormValues =
-				(DDMFormValues)portletDataContext.getZipEntryAsObject(path);
+			DDMFormValues ddmFormValues = getImportDDMFormValues(
+				portletDataContext, structureFieldsElement, ddmStructure);
 
 			serviceContext.setAttribute(
 				DDMFormValues.class.getName() + ddmStructure.getStructureId(),
 				ddmFormValues);
 		}
+	}
+
+	@Reference(unbind = "-")
+	protected void setDDMFormValuesExportImportContentProcessor(
+		DDMFormValuesExportImportContentProcessor
+			ddmFormValuesExportImportContentProcessor) {
+
+		_ddmFormValuesExportImportContentProcessor =
+			ddmFormValuesExportImportContentProcessor;
+	}
+
+	@Reference(unbind = "-")
+	protected void setDDMFormValuesJSONDeserializer(
+		DDMFormValuesJSONDeserializer ddmFormValuesJSONDeserializer) {
+
+		_ddmFormValuesJSONDeserializer = ddmFormValuesJSONDeserializer;
+	}
+
+	@Reference(unbind = "-")
+	protected void setDDMFormValuesJSONSerializer(
+		DDMFormValuesJSONSerializer ddmFormValuesJSONSerializer) {
+
+		_ddmFormValuesJSONSerializer = ddmFormValuesJSONSerializer;
 	}
 
 	@Reference(unbind = "-")
@@ -732,10 +796,20 @@ public class FileEntryStagedModelDataHandler
 	}
 
 	@Reference(unbind = "-")
+	protected void setDLTrashService(DLTrashService dlTrashService) {
+		_dlTrashService = dlTrashService;
+	}
+
+	@Reference(unbind = "-")
 	protected void setRepositoryLocalService(
 		RepositoryLocalService repositoryLocalService) {
 
 		_repositoryLocalService = repositoryLocalService;
+	}
+
+	@Reference(unbind = "-")
+	protected void setStorageEngine(StorageEngine storageEngine) {
+		_storageEngine = storageEngine;
 	}
 
 	@Override
@@ -798,13 +872,18 @@ public class FileEntryStagedModelDataHandler
 	private static final Log _log = LogFactoryUtil.getLog(
 		FileEntryStagedModelDataHandler.class);
 
-	private volatile DLAppLocalService _dlAppLocalService;
-	private volatile DLAppService _dlAppService;
-	private volatile DLFileEntryLocalService _dlFileEntryLocalService;
-	private volatile DLFileEntryMetadataLocalService
-		_dlFileEntryMetadataLocalService;
-	private volatile DLFileEntryTypeLocalService _dlFileEntryTypeLocalService;
-	private volatile DLFileVersionLocalService _dlFileVersionLocalService;
-	private volatile RepositoryLocalService _repositoryLocalService;
+	private DDMFormValuesExportImportContentProcessor
+		_ddmFormValuesExportImportContentProcessor;
+	private DDMFormValuesJSONDeserializer _ddmFormValuesJSONDeserializer;
+	private DDMFormValuesJSONSerializer _ddmFormValuesJSONSerializer;
+	private DLAppLocalService _dlAppLocalService;
+	private DLAppService _dlAppService;
+	private DLFileEntryLocalService _dlFileEntryLocalService;
+	private DLFileEntryMetadataLocalService _dlFileEntryMetadataLocalService;
+	private DLFileEntryTypeLocalService _dlFileEntryTypeLocalService;
+	private DLFileVersionLocalService _dlFileVersionLocalService;
+	private DLTrashService _dlTrashService;
+	private RepositoryLocalService _repositoryLocalService;
+	private StorageEngine _storageEngine;
 
 }

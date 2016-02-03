@@ -28,7 +28,7 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
 import com.liferay.portal.theme.ThemeDisplay;
-import com.liferay.portlet.trash.RestoreEntryException;
+import com.liferay.portlet.trash.exception.RestoreEntryException;
 import com.liferay.portlet.trash.model.TrashEntry;
 import com.liferay.portlet.trash.service.TrashEntryService;
 import com.liferay.portlet.trash.util.TrashUtil;
@@ -59,7 +59,6 @@ import org.osgi.service.component.annotations.Reference;
 	property = {
 		"com.liferay.portlet.css-class-wrapper=portlet-trash",
 		"com.liferay.portlet.display-category=category.hidden",
-		"com.liferay.portlet.header-portlet-css=/css/main.css",
 		"com.liferay.portlet.icon=/icons/trash.png",
 		"com.liferay.portlet.preferences-owned-by-group=true",
 		"com.liferay.portlet.private-request-attributes=false",
@@ -89,8 +88,8 @@ public class TrashPortlet extends MVCPortlet {
 			return;
 		}
 
-		long[] deleteEntryIds = StringUtil.split(
-			ParamUtil.getString(actionRequest, "deleteThrashEntryIds"), 0L);
+		long[] deleteEntryIds = ParamUtil.getLongValues(
+			actionRequest, "rowIds");
 
 		if (deleteEntryIds.length > 0) {
 			for (int i = 0; i < deleteEntryIds.length; i++) {
@@ -274,6 +273,6 @@ public class TrashPortlet extends MVCPortlet {
 		_trashEntryService = trashEntryService;
 	}
 
-	private volatile TrashEntryService _trashEntryService;
+	private TrashEntryService _trashEntryService;
 
 }

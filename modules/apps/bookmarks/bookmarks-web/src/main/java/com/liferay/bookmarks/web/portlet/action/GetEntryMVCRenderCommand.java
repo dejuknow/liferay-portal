@@ -14,10 +14,12 @@
 
 package com.liferay.bookmarks.web.portlet.action;
 
+import com.liferay.bookmarks.constants.BookmarksWebKeys;
 import com.liferay.bookmarks.exception.NoSuchEntryException;
+import com.liferay.bookmarks.model.BookmarksEntry;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.servlet.SessionErrors;
-import com.liferay.portal.security.auth.PrincipalException;
 
 import javax.portlet.PortletException;
 import javax.portlet.RenderRequest;
@@ -34,7 +36,9 @@ public abstract class GetEntryMVCRenderCommand implements MVCRenderCommand {
 		throws PortletException {
 
 		try {
-			ActionUtil.getEntry(renderRequest);
+			BookmarksEntry entry = ActionUtil.getEntry(renderRequest);
+
+			renderRequest.setAttribute(BookmarksWebKeys.BOOKMARKS_ENTRY, entry);
 		}
 		catch (Exception e) {
 			if (e instanceof NoSuchEntryException ||

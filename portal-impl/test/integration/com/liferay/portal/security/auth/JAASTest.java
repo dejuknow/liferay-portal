@@ -32,7 +32,6 @@ import com.liferay.portal.security.jaas.JAASHelper;
 import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.servlet.MainServlet;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
-import com.liferay.portal.test.rule.MainServletTestRule;
 import com.liferay.portal.test.rule.callback.MainServletTestCallback;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PropsValues;
@@ -79,8 +78,7 @@ public class JAASTest {
 	@ClassRule
 	@Rule
 	public static final AggregateTestRule aggregateTestRule =
-		new AggregateTestRule(
-			new LiferayIntegrationTestRule(), MainServletTestRule.INSTANCE);
+		new LiferayIntegrationTestRule();
 
 	@Before
 	public void setUp() throws Exception {
@@ -418,7 +416,7 @@ public class JAASTest {
 	private Field _jaasEnabledField;
 	private User _user;
 
-	private class JAASAction extends Action {
+	private static class JAASAction extends Action {
 
 		public boolean isRan() {
 			return _ran;
@@ -435,7 +433,7 @@ public class JAASTest {
 
 	}
 
-	private class JAASCallbackHandler implements CallbackHandler {
+	private static class JAASCallbackHandler implements CallbackHandler {
 
 		public JAASCallbackHandler(String name, String password) {
 			_name = name;
@@ -471,7 +469,7 @@ public class JAASTest {
 
 	}
 
-	private class JAASConfiguration extends Configuration {
+	private static class JAASConfiguration extends Configuration {
 
 		@Override
 		public AppConfigurationEntry[] getAppConfigurationEntry(String name) {

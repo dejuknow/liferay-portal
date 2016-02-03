@@ -16,7 +16,7 @@ package com.liferay.portal.service.base;
 
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.dao.db.DB;
-import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
+import com.liferay.portal.kernel.dao.db.DBManagerUtil;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdate;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdateFactoryUtil;
 import com.liferay.portal.kernel.exception.SystemException;
@@ -39,6 +39,7 @@ import com.liferay.portal.service.persistence.UserPersistence;
 import com.liferay.portal.util.PortalUtil;
 
 import com.liferay.portlet.expando.service.persistence.ExpandoRowPersistence;
+import com.liferay.portlet.exportimport.service.persistence.ExportImportConfigurationFinder;
 import com.liferay.portlet.exportimport.service.persistence.ExportImportConfigurationPersistence;
 
 import javax.sql.DataSource;
@@ -605,6 +606,25 @@ public abstract class UserGroupServiceBaseImpl extends BaseServiceImpl
 	}
 
 	/**
+	 * Returns the export import configuration finder.
+	 *
+	 * @return the export import configuration finder
+	 */
+	public ExportImportConfigurationFinder getExportImportConfigurationFinder() {
+		return exportImportConfigurationFinder;
+	}
+
+	/**
+	 * Sets the export import configuration finder.
+	 *
+	 * @param exportImportConfigurationFinder the export import configuration finder
+	 */
+	public void setExportImportConfigurationFinder(
+		ExportImportConfigurationFinder exportImportConfigurationFinder) {
+		this.exportImportConfigurationFinder = exportImportConfigurationFinder;
+	}
+
+	/**
 	 * Returns the user group group role local service.
 	 *
 	 * @return the user group group role local service
@@ -713,7 +733,7 @@ public abstract class UserGroupServiceBaseImpl extends BaseServiceImpl
 		try {
 			DataSource dataSource = userGroupPersistence.getDataSource();
 
-			DB db = DBFactoryUtil.getDB();
+			DB db = DBManagerUtil.getDB();
 
 			sql = db.buildSQL(sql);
 			sql = PortalUtil.transformSQL(sql);
@@ -786,6 +806,8 @@ public abstract class UserGroupServiceBaseImpl extends BaseServiceImpl
 	protected com.liferay.portlet.exportimport.service.ExportImportConfigurationService exportImportConfigurationService;
 	@BeanReference(type = ExportImportConfigurationPersistence.class)
 	protected ExportImportConfigurationPersistence exportImportConfigurationPersistence;
+	@BeanReference(type = ExportImportConfigurationFinder.class)
+	protected ExportImportConfigurationFinder exportImportConfigurationFinder;
 	@BeanReference(type = com.liferay.portal.service.UserGroupGroupRoleLocalService.class)
 	protected com.liferay.portal.service.UserGroupGroupRoleLocalService userGroupGroupRoleLocalService;
 	@BeanReference(type = com.liferay.portal.service.UserGroupGroupRoleService.class)

@@ -16,7 +16,6 @@ package com.liferay.portal.jsonwebservice.action;
 
 import com.liferay.portal.json.data.FileData;
 import com.liferay.portal.json.transformer.BeanAnalyzerTransformer;
-import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.javadoc.JavadocManagerUtil;
 import com.liferay.portal.kernel.javadoc.JavadocMethod;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -117,9 +116,7 @@ public class JSONWebServiceDiscoverAction implements JSONWebServiceAction {
 
 	}
 
-	private List<Map<String, Object>> _buildJsonWebServiceActionMappingMaps()
-		throws PortalException {
-
+	private List<Map<String, Object>> _buildJsonWebServiceActionMappingMaps() {
 		List<JSONWebServiceActionMapping> jsonWebServiceActionMappings =
 			JSONWebServiceActionsManagerUtil.getJSONWebServiceActionMappings(
 				_contextName);
@@ -167,14 +164,7 @@ public class JSONWebServiceDiscoverAction implements JSONWebServiceAction {
 			for (int i = 0; i < methodParameters.length; i++) {
 				MethodParameter methodParameter = methodParameters[i];
 
-				Class<?>[] genericTypes = null;
-
-				try {
-					genericTypes = methodParameter.getGenericTypes();
-				}
-				catch (ClassNotFoundException cnfe) {
-					throw new PortalException(cnfe);
-				}
+				Class<?>[] genericTypes = methodParameter.getGenericTypes();
 
 				Map<String, String> parameterMap = new HashMap<>();
 

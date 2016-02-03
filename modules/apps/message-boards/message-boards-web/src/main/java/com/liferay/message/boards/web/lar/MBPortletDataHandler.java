@@ -73,6 +73,13 @@ public class MBPortletDataHandler extends BasePortletDataHandler {
 
 	public static final String NAMESPACE = "message_boards";
 
+	public static final String SCHEMA_VERSION = "1.0.0";
+
+	@Override
+	public String getSchemaVersion() {
+		return SCHEMA_VERSION;
+	}
+
 	@Override
 	public String getServiceName() {
 		return MBConstants.SERVICE_NAME;
@@ -368,11 +375,11 @@ public class MBPortletDataHandler extends BasePortletDataHandler {
 		_mbThreadLocalService = mbThreadLocalService;
 	}
 
-	private volatile MBBanLocalService _mbBanLocalService;
-	private volatile MBCategoryLocalService _mbCategoryLocalService;
-	private volatile MBMessageLocalService _mbMessageLocalService;
-	private volatile MBStatsUserLocalService _mbStatsUserLocalService;
-	private volatile MBThreadFlagLocalService _mbThreadFlagLocalService;
-	private volatile MBThreadLocalService _mbThreadLocalService;
+	private MBBanLocalService _mbBanLocalService;
+	private MBCategoryLocalService _mbCategoryLocalService;
+	private MBMessageLocalService _mbMessageLocalService;
+	private MBStatsUserLocalService _mbStatsUserLocalService;
+	private MBThreadFlagLocalService _mbThreadFlagLocalService;
+	private MBThreadLocalService _mbThreadLocalService;
 
 }

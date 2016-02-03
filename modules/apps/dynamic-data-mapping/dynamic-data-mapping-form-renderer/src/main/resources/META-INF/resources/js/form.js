@@ -26,8 +26,7 @@ AUI.add(
 						value: {
 							next: Liferay.Language.get('next'),
 							previous: Liferay.Language.get('previous'),
-							requestErrorMessage: Liferay.Language.get('there-was-an-error-when-trying-to-validate-your-form'),
-							submit: Liferay.Language.get('submit')
+							requestErrorMessage: Liferay.Language.get('there-was-an-error-when-trying-to-validate-your-form')
 						}
 					}
 				},
@@ -111,11 +110,11 @@ AUI.add(
 					toJSON: function() {
 						var instance = this;
 
-						var definition = instance.get('definition');
+						var defaultLanguageId = themeDisplay.getLanguageId();
 
 						return {
-							availableLanguageIds: definition.availableLanguageIds,
-							defaultLanguageId: definition.defaultLanguageId,
+							availableLanguageIds: [defaultLanguageId],
+							defaultLanguageId: defaultLanguageId,
 							fieldValues: AArray.invoke(instance.getImmediateFields(), 'toJSON')
 						};
 					},
@@ -128,6 +127,12 @@ AUI.add(
 								field.render();
 							}
 						);
+
+						var submitButton = instance.getSubmitButton();
+
+						if (submitButton) {
+							submitButton.attr('disabled', false);
+						}
 					},
 
 					_onDOMSubmitForm: function(event) {

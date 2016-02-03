@@ -32,6 +32,7 @@ import com.liferay.portal.kernel.dao.orm.SQLQuery;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.security.permission.InlineSQLHelperUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.SetUtil;
@@ -41,9 +42,10 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.security.permission.InlineSQLHelperUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextThreadLocal;
+import com.liferay.portal.service.persistence.CompanyProvider;
+import com.liferay.portal.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 
@@ -220,7 +222,7 @@ public class DDMDataProviderInstancePersistenceImpl extends BasePersistenceImpl<
 
 			if (orderByComparator != null) {
 				query = new StringBundler(3 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(3);
@@ -302,7 +304,7 @@ public class DDMDataProviderInstancePersistenceImpl extends BasePersistenceImpl<
 	 * @param uuid the uuid
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching d d m data provider instance
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchDataProviderInstanceException if a matching d d m data provider instance could not be found
+	 * @throws NoSuchDataProviderInstanceException if a matching d d m data provider instance could not be found
 	 */
 	@Override
 	public DDMDataProviderInstance findByUuid_First(String uuid,
@@ -353,7 +355,7 @@ public class DDMDataProviderInstancePersistenceImpl extends BasePersistenceImpl<
 	 * @param uuid the uuid
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching d d m data provider instance
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchDataProviderInstanceException if a matching d d m data provider instance could not be found
+	 * @throws NoSuchDataProviderInstanceException if a matching d d m data provider instance could not be found
 	 */
 	@Override
 	public DDMDataProviderInstance findByUuid_Last(String uuid,
@@ -411,7 +413,7 @@ public class DDMDataProviderInstancePersistenceImpl extends BasePersistenceImpl<
 	 * @param uuid the uuid
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next d d m data provider instance
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchDataProviderInstanceException if a d d m data provider instance with the primary key could not be found
+	 * @throws NoSuchDataProviderInstanceException if a d d m data provider instance with the primary key could not be found
 	 */
 	@Override
 	public DDMDataProviderInstance[] findByUuid_PrevAndNext(
@@ -452,8 +454,9 @@ public class DDMDataProviderInstancePersistenceImpl extends BasePersistenceImpl<
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+			query = new StringBundler(4 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
 			query = new StringBundler(3);
@@ -659,12 +662,12 @@ public class DDMDataProviderInstancePersistenceImpl extends BasePersistenceImpl<
 			new String[] { String.class.getName(), Long.class.getName() });
 
 	/**
-	 * Returns the d d m data provider instance where uuid = &#63; and groupId = &#63; or throws a {@link com.liferay.dynamic.data.mapping.NoSuchDataProviderInstanceException} if it could not be found.
+	 * Returns the d d m data provider instance where uuid = &#63; and groupId = &#63; or throws a {@link NoSuchDataProviderInstanceException} if it could not be found.
 	 *
 	 * @param uuid the uuid
 	 * @param groupId the group ID
 	 * @return the matching d d m data provider instance
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchDataProviderInstanceException if a matching d d m data provider instance could not be found
+	 * @throws NoSuchDataProviderInstanceException if a matching d d m data provider instance could not be found
 	 */
 	@Override
 	public DDMDataProviderInstance findByUUID_G(String uuid, long groupId)
@@ -1043,7 +1046,7 @@ public class DDMDataProviderInstancePersistenceImpl extends BasePersistenceImpl<
 
 			if (orderByComparator != null) {
 				query = new StringBundler(4 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(4);
@@ -1130,7 +1133,7 @@ public class DDMDataProviderInstancePersistenceImpl extends BasePersistenceImpl<
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching d d m data provider instance
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchDataProviderInstanceException if a matching d d m data provider instance could not be found
+	 * @throws NoSuchDataProviderInstanceException if a matching d d m data provider instance could not be found
 	 */
 	@Override
 	public DDMDataProviderInstance findByUuid_C_First(String uuid,
@@ -1188,7 +1191,7 @@ public class DDMDataProviderInstancePersistenceImpl extends BasePersistenceImpl<
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching d d m data provider instance
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchDataProviderInstanceException if a matching d d m data provider instance could not be found
+	 * @throws NoSuchDataProviderInstanceException if a matching d d m data provider instance could not be found
 	 */
 	@Override
 	public DDMDataProviderInstance findByUuid_C_Last(String uuid,
@@ -1253,7 +1256,7 @@ public class DDMDataProviderInstancePersistenceImpl extends BasePersistenceImpl<
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next d d m data provider instance
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchDataProviderInstanceException if a d d m data provider instance with the primary key could not be found
+	 * @throws NoSuchDataProviderInstanceException if a d d m data provider instance with the primary key could not be found
 	 */
 	@Override
 	public DDMDataProviderInstance[] findByUuid_C_PrevAndNext(
@@ -1297,11 +1300,12 @@ public class DDMDataProviderInstancePersistenceImpl extends BasePersistenceImpl<
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+			query = new StringBundler(5 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
-			query = new StringBundler(3);
+			query = new StringBundler(4);
 		}
 
 		query.append(_SQL_SELECT_DDMDATAPROVIDERINSTANCE_WHERE);
@@ -1631,7 +1635,7 @@ public class DDMDataProviderInstancePersistenceImpl extends BasePersistenceImpl<
 
 			if (orderByComparator != null) {
 				query = new StringBundler(3 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(3);
@@ -1699,7 +1703,7 @@ public class DDMDataProviderInstancePersistenceImpl extends BasePersistenceImpl<
 	 * @param groupId the group ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching d d m data provider instance
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchDataProviderInstanceException if a matching d d m data provider instance could not be found
+	 * @throws NoSuchDataProviderInstanceException if a matching d d m data provider instance could not be found
 	 */
 	@Override
 	public DDMDataProviderInstance findByGroupId_First(long groupId,
@@ -1750,7 +1754,7 @@ public class DDMDataProviderInstancePersistenceImpl extends BasePersistenceImpl<
 	 * @param groupId the group ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching d d m data provider instance
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchDataProviderInstanceException if a matching d d m data provider instance could not be found
+	 * @throws NoSuchDataProviderInstanceException if a matching d d m data provider instance could not be found
 	 */
 	@Override
 	public DDMDataProviderInstance findByGroupId_Last(long groupId,
@@ -1808,7 +1812,7 @@ public class DDMDataProviderInstancePersistenceImpl extends BasePersistenceImpl<
 	 * @param groupId the group ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next d d m data provider instance
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchDataProviderInstanceException if a d d m data provider instance with the primary key could not be found
+	 * @throws NoSuchDataProviderInstanceException if a d d m data provider instance with the primary key could not be found
 	 */
 	@Override
 	public DDMDataProviderInstance[] findByGroupId_PrevAndNext(
@@ -1850,8 +1854,9 @@ public class DDMDataProviderInstancePersistenceImpl extends BasePersistenceImpl<
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+			query = new StringBundler(4 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
 			query = new StringBundler(3);
@@ -2004,10 +2009,10 @@ public class DDMDataProviderInstancePersistenceImpl extends BasePersistenceImpl<
 
 		if (orderByComparator != null) {
 			query = new StringBundler(3 +
-					(orderByComparator.getOrderByFields().length * 3));
+					(orderByComparator.getOrderByFields().length * 2));
 		}
 		else {
-			query = new StringBundler(3);
+			query = new StringBundler(4);
 		}
 
 		if (getDB().isSupportsInlineDistinct()) {
@@ -2084,7 +2089,7 @@ public class DDMDataProviderInstancePersistenceImpl extends BasePersistenceImpl<
 	 * @param groupId the group ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next d d m data provider instance
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchDataProviderInstanceException if a d d m data provider instance with the primary key could not be found
+	 * @throws NoSuchDataProviderInstanceException if a d d m data provider instance with the primary key could not be found
 	 */
 	@Override
 	public DDMDataProviderInstance[] filterFindByGroupId_PrevAndNext(
@@ -2131,11 +2136,12 @@ public class DDMDataProviderInstancePersistenceImpl extends BasePersistenceImpl<
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+			query = new StringBundler(5 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
-			query = new StringBundler(3);
+			query = new StringBundler(4);
 		}
 
 		if (getDB().isSupportsInlineDistinct()) {
@@ -2972,7 +2978,7 @@ public class DDMDataProviderInstancePersistenceImpl extends BasePersistenceImpl<
 
 			if (orderByComparator != null) {
 				query = new StringBundler(3 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(3);
@@ -3040,7 +3046,7 @@ public class DDMDataProviderInstancePersistenceImpl extends BasePersistenceImpl<
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching d d m data provider instance
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchDataProviderInstanceException if a matching d d m data provider instance could not be found
+	 * @throws NoSuchDataProviderInstanceException if a matching d d m data provider instance could not be found
 	 */
 	@Override
 	public DDMDataProviderInstance findByCompanyId_First(long companyId,
@@ -3091,7 +3097,7 @@ public class DDMDataProviderInstancePersistenceImpl extends BasePersistenceImpl<
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching d d m data provider instance
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchDataProviderInstanceException if a matching d d m data provider instance could not be found
+	 * @throws NoSuchDataProviderInstanceException if a matching d d m data provider instance could not be found
 	 */
 	@Override
 	public DDMDataProviderInstance findByCompanyId_Last(long companyId,
@@ -3149,7 +3155,7 @@ public class DDMDataProviderInstancePersistenceImpl extends BasePersistenceImpl<
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next d d m data provider instance
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchDataProviderInstanceException if a d d m data provider instance with the primary key could not be found
+	 * @throws NoSuchDataProviderInstanceException if a d d m data provider instance with the primary key could not be found
 	 */
 	@Override
 	public DDMDataProviderInstance[] findByCompanyId_PrevAndNext(
@@ -3191,8 +3197,9 @@ public class DDMDataProviderInstancePersistenceImpl extends BasePersistenceImpl<
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByFields().length * 6));
+			query = new StringBundler(4 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
 			query = new StringBundler(3);
@@ -3520,6 +3527,8 @@ public class DDMDataProviderInstancePersistenceImpl extends BasePersistenceImpl<
 
 		ddmDataProviderInstance.setUuid(uuid);
 
+		ddmDataProviderInstance.setCompanyId(companyProvider.getCompanyId());
+
 		return ddmDataProviderInstance;
 	}
 
@@ -3528,7 +3537,7 @@ public class DDMDataProviderInstancePersistenceImpl extends BasePersistenceImpl<
 	 *
 	 * @param dataProviderInstanceId the primary key of the d d m data provider instance
 	 * @return the d d m data provider instance that was removed
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchDataProviderInstanceException if a d d m data provider instance with the primary key could not be found
+	 * @throws NoSuchDataProviderInstanceException if a d d m data provider instance with the primary key could not be found
 	 */
 	@Override
 	public DDMDataProviderInstance remove(long dataProviderInstanceId)
@@ -3541,7 +3550,7 @@ public class DDMDataProviderInstancePersistenceImpl extends BasePersistenceImpl<
 	 *
 	 * @param primaryKey the primary key of the d d m data provider instance
 	 * @return the d d m data provider instance that was removed
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchDataProviderInstanceException if a d d m data provider instance with the primary key could not be found
+	 * @throws NoSuchDataProviderInstanceException if a d d m data provider instance with the primary key could not be found
 	 */
 	@Override
 	public DDMDataProviderInstance remove(Serializable primaryKey)
@@ -3794,11 +3803,11 @@ public class DDMDataProviderInstancePersistenceImpl extends BasePersistenceImpl<
 	}
 
 	/**
-	 * Returns the d d m data provider instance with the primary key or throws a {@link com.liferay.portal.NoSuchModelException} if it could not be found.
+	 * Returns the d d m data provider instance with the primary key or throws a {@link com.liferay.portal.exception.NoSuchModelException} if it could not be found.
 	 *
 	 * @param primaryKey the primary key of the d d m data provider instance
 	 * @return the d d m data provider instance
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchDataProviderInstanceException if a d d m data provider instance with the primary key could not be found
+	 * @throws NoSuchDataProviderInstanceException if a d d m data provider instance with the primary key could not be found
 	 */
 	@Override
 	public DDMDataProviderInstance findByPrimaryKey(Serializable primaryKey)
@@ -3818,11 +3827,11 @@ public class DDMDataProviderInstancePersistenceImpl extends BasePersistenceImpl<
 	}
 
 	/**
-	 * Returns the d d m data provider instance with the primary key or throws a {@link com.liferay.dynamic.data.mapping.NoSuchDataProviderInstanceException} if it could not be found.
+	 * Returns the d d m data provider instance with the primary key or throws a {@link NoSuchDataProviderInstanceException} if it could not be found.
 	 *
 	 * @param dataProviderInstanceId the primary key of the d d m data provider instance
 	 * @return the d d m data provider instance
-	 * @throws com.liferay.dynamic.data.mapping.NoSuchDataProviderInstanceException if a d d m data provider instance with the primary key could not be found
+	 * @throws NoSuchDataProviderInstanceException if a d d m data provider instance with the primary key could not be found
 	 */
 	@Override
 	public DDMDataProviderInstance findByPrimaryKey(long dataProviderInstanceId)
@@ -4072,7 +4081,7 @@ public class DDMDataProviderInstancePersistenceImpl extends BasePersistenceImpl<
 
 			if (orderByComparator != null) {
 				query = new StringBundler(2 +
-						(orderByComparator.getOrderByFields().length * 3));
+						(orderByComparator.getOrderByFields().length * 2));
 
 				query.append(_SQL_SELECT_DDMDATAPROVIDERINSTANCE);
 
@@ -4197,6 +4206,8 @@ public class DDMDataProviderInstancePersistenceImpl extends BasePersistenceImpl<
 		finderCache.removeCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 	}
 
+	@ServiceReference(type = CompanyProviderWrapper.class)
+	protected CompanyProvider companyProvider;
 	@ServiceReference(type = EntityCache.class)
 	protected EntityCache entityCache;
 	@ServiceReference(type = FinderCache.class)

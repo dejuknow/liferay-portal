@@ -41,7 +41,9 @@ import org.osgi.service.component.annotations.Reference;
 		"com.liferay.portlet.header-portlet-css=/css/main.css",
 		"com.liferay.portlet.instanceable=false",
 		"com.liferay.portlet.private-request-attributes=false",
+		"com.liferay.portlet.system=true",
 		"com.liferay.portlet.use-default-template=false",
+		"javax.portlet.display-name=Product Menu",
 		"javax.portlet.init-param.view-template=/portlet/view.jsp",
 		"javax.portlet.name=" + ProductNavigationProductMenuPortletKeys.PRODUCT_NAVIGATION_PRODUCT_MENU,
 		"javax.portlet.supported-public-render-parameter=layoutSetBranchId",
@@ -86,7 +88,7 @@ public class ProductNavigationProductMenuPortlet extends MVCPortlet {
 		_panelCategoryRegistry = panelCategoryRegistry;
 	}
 
-	private volatile PanelAppRegistry _panelAppRegistry;
-	private volatile PanelCategoryRegistry _panelCategoryRegistry;
+	private PanelAppRegistry _panelAppRegistry;
+	private PanelCategoryRegistry _panelCategoryRegistry;
 
 }

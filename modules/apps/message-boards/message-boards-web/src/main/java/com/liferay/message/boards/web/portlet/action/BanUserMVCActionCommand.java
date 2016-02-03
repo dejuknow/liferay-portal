@@ -17,10 +17,10 @@ package com.liferay.message.boards.web.portlet.action;
 import com.liferay.message.boards.web.constants.MBPortletKeys;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
 import com.liferay.portlet.messageboards.model.MBBan;
@@ -83,14 +83,25 @@ public class BanUserMVCActionCommand extends BaseMVCActionCommand {
 	}
 
 	protected void unbanUser(ActionRequest actionRequest) throws Exception {
+		long[] banUserIds = null;
+
 		long banUserId = ParamUtil.getLong(actionRequest, "banUserId");
+
+		if (banUserId > 0) {
+			banUserIds = new long[] {banUserId};
+		}
+		else {
+			banUserIds = ParamUtil.getLongValues(actionRequest, "rowIds");
+		}
 
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(
 			MBBan.class.getName(), actionRequest);
 
-		_mbBanService.deleteBan(banUserId, serviceContext);
+		for (long curBanUserId : banUserIds) {
+			_mbBanService.deleteBan(curBanUserId, serviceContext);
+		}
 	}
 
-	private volatile MBBanService _mbBanService;
+	private MBBanService _mbBanService;
 
 }

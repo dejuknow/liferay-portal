@@ -57,6 +57,7 @@ import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -131,7 +132,8 @@ public class BookmarksEntryLocalServiceImpl
 		updateAsset(
 			userId, entry, serviceContext.getAssetCategoryIds(),
 			serviceContext.getAssetTagNames(),
-			serviceContext.getAssetLinkEntryIds());
+			serviceContext.getAssetLinkEntryIds(),
+			serviceContext.getAssetPriority());
 
 		// Social
 
@@ -552,7 +554,7 @@ public class BookmarksEntryLocalServiceImpl
 
 					Document document = indexer.getDocument(entry);
 
-					indexableActionableDynamicQuery.addDocument(document);
+					indexableActionableDynamicQuery.addDocuments(document);
 				}
 
 			});
@@ -583,7 +585,7 @@ public class BookmarksEntryLocalServiceImpl
 	@Override
 	public void updateAsset(
 			long userId, BookmarksEntry entry, long[] assetCategoryIds,
-			String[] assetTagNames, long[] assetLinkEntryIds)
+			String[] assetTagNames, long[] assetLinkEntryIds, Double priority)
 		throws PortalException {
 
 		AssetEntry assetEntry = assetEntryLocalService.updateEntry(
@@ -592,7 +594,7 @@ public class BookmarksEntryLocalServiceImpl
 			entry.getEntryId(), entry.getUuid(), 0, assetCategoryIds,
 			assetTagNames, true, null, null, null, ContentTypes.TEXT_PLAIN,
 			entry.getName(), entry.getDescription(), null, entry.getUrl(), null,
-			0, 0, null);
+			0, 0, priority);
 
 		assetLinkLocalService.updateLinks(
 			userId, assetEntry.getEntryId(), assetLinkEntryIds,
@@ -631,7 +633,8 @@ public class BookmarksEntryLocalServiceImpl
 		updateAsset(
 			userId, entry, serviceContext.getAssetCategoryIds(),
 			serviceContext.getAssetTagNames(),
-			serviceContext.getAssetLinkEntryIds());
+			serviceContext.getAssetLinkEntryIds(),
+			serviceContext.getAssetPriority());
 
 		// Social
 
@@ -761,9 +764,18 @@ public class BookmarksEntryLocalServiceImpl
 		}
 
 		String entryTitle = entry.getName();
-		String entryURL =
-			layoutFullURL + Portal.FRIENDLY_URL_SEPARATOR + "bookmarks" +
-				StringPool.SLASH + entry.getEntryId();
+
+		StringBundler sb = new StringBundler(7);
+
+		sb.append(layoutFullURL);
+		sb.append(Portal.FRIENDLY_URL_SEPARATOR);
+		sb.append("bookmarks");
+		sb.append(StringPool.SLASH);
+		sb.append("folder");
+		sb.append(StringPool.SLASH);
+		sb.append(entry.getFolderId());
+
+		String entryURL = sb.toString();
 
 		String fromName =
 			bookmarksGroupServiceOverriddenConfiguration.emailFromName();

@@ -16,8 +16,7 @@ package com.liferay.dynamic.data.lists.service;
 
 import aQute.bnd.annotation.ProviderType;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
+import com.liferay.osgi.util.ServiceTrackerFactory;
 
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -509,11 +508,11 @@ public class DDLRecordLocalServiceUtil {
 		com.liferay.dynamic.data.lists.model.DDLRecord record,
 		com.liferay.dynamic.data.lists.model.DDLRecordVersion recordVersion,
 		long[] assetCategoryIds, java.lang.String[] assetTagNames,
-		java.util.Locale locale)
+		java.util.Locale locale, java.lang.Double priority)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		getService()
 			.updateAsset(userId, record, recordVersion, assetCategoryIds,
-			assetTagNames, locale);
+			assetTagNames, locale, priority);
 	}
 
 	/**
@@ -571,21 +570,6 @@ public class DDLRecordLocalServiceUtil {
 		return _serviceTracker.getService();
 	}
 
-	/**
-	 * @deprecated As of 6.2.0
-	 */
-	@Deprecated
-	public void setService(DDLRecordLocalService service) {
-	}
-
-	private static ServiceTracker<DDLRecordLocalService, DDLRecordLocalService> _serviceTracker;
-
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(DDLRecordLocalServiceUtil.class);
-
-		_serviceTracker = new ServiceTracker<DDLRecordLocalService, DDLRecordLocalService>(bundle.getBundleContext(),
-				DDLRecordLocalService.class, null);
-
-		_serviceTracker.open();
-	}
+	private static ServiceTracker<DDLRecordLocalService, DDLRecordLocalService> _serviceTracker =
+		ServiceTrackerFactory.open(DDLRecordLocalService.class);
 }

@@ -99,8 +99,6 @@ public interface PropsKeys {
 
 	public static final String ASSET_RENDERER_ENABLED = "asset.renderer.enabled.";
 
-	public static final String ASSET_TAG_SUGGESTIONS_ENABLED = "asset.tag.suggestions.enabled";
-
 	public static final String ASSET_VOCABULARY_DEFAULT = "asset.vocabulary.default";
 
 	public static final String AUDIT_MESSAGE_COM_LIFERAY_PORTAL_MODEL_LAYOUT_VIEW = "audit.message.com.liferay.portal.model.Layout.VIEW";
@@ -759,15 +757,13 @@ public interface PropsKeys {
 
 	public static final String EHCACHE_BOOTSTRAP_CACHE_LOADER_ENABLED = "ehcache.bootstrap.cache.loader.enabled";
 
-	public static final String EHCACHE_BOOTSTRAP_CACHE_LOADER_FACTORY = "ehcache.bootstrap.cache.loader.factory";
+	public static final String EHCACHE_BOOTSTRAP_CACHE_LOADER_PROPERTIES = "ehcache.bootstrap.cache.loader.properties";
 
-	public static final String EHCACHE_CACHE_EVENT_LISTENER_FACTORY = "ehcache.cache.event.listener.factory";
+	public static final String EHCACHE_BOOTSTRAP_CACHE_LOADER_PROPERTIES_DEFAULT = "ehcache.bootstrap.cache.loader.properties.default";
 
-	public static final String EHCACHE_CACHE_MANAGER_PEER_LISTENER_FACTORY = "ehcache.cache.manager.peer.listener.factory";
+	public static final String EHCACHE_CLUSTER_LINK_REPLICATOR_PROPERTIES = "ehcache.cluster.link.replicator.properties";
 
-	public static final String EHCACHE_CACHE_MANAGER_PEER_PROVIDER_FACTORY = "ehcache.cache.manager.peer.provider.factory";
-
-	public static final String EHCACHE_CLUSTER_LINK_REPLICATION_ENABLED = "ehcache.cluster.link.replication.enabled";
+	public static final String EHCACHE_CLUSTER_LINK_REPLICATOR_PROPERTIES_DEFAULT = "ehcache.cluster.link.replicator.properties.default";
 
 	public static final String EHCACHE_MULTI_VM_CONFIG_LOCATION = "ehcache.multi.vm.config.location";
 
@@ -881,8 +877,6 @@ public interface PropsKeys {
 
 	public static final String IMAGEMAGICK_RESOURCE_LIMIT = "imagemagick.resource.limit.";
 
-	public static final String INDEX_COMMIT_IMMEDIATELY = "index.commit.immediately";
-
 	public static final String INDEX_DATE_FORMAT_PATTERN = "index.date.format.pattern";
 
 	public static final String INDEX_DUMP_COMPRESSION_ENABLED = "index.dump.compression.enabled";
@@ -894,8 +888,6 @@ public interface PropsKeys {
 	public static final String INDEX_ON_UPGRADE = "index.on.upgrade";
 
 	public static final String INDEX_PERMISSION_FILTER_SEARCH_AMPLIFICATION_FACTOR = "index.permission.filter.search.amplification.factor";
-
-	public static final String INDEX_READ_ONLY = "index.read.only";
 
 	public static final String INDEX_SEARCH_COLLATED_SPELL_CHECK_RESULT_ENABLED = "index.search.collated.spell.check.result.enabled";
 
@@ -1143,106 +1135,6 @@ public interface PropsKeys {
 
 	public static final String LDAP_ATTRS_TRANSFORMER_IMPL = "ldap.attrs.transformer.impl";
 
-	public static final String LDAP_AUTH_ENABLED = "ldap.auth.enabled";
-
-	public static final String LDAP_AUTH_METHOD = "ldap.auth.method";
-
-	public static final String LDAP_AUTH_PASSWORD_ENCRYPTION_ALGORITHM = "ldap.auth.password.encryption.algorithm";
-
-	public static final String LDAP_AUTH_REQUIRED = "ldap.auth.required";
-
-	public static final String LDAP_AUTH_SEARCH_FILTER = "ldap.auth.search.filter";
-
-	public static final String LDAP_BASE_DN = "ldap.base.dn";
-
-	public static final String LDAP_BASE_PROVIDER_URL = "ldap.base.provider.url";
-
-	public static final String LDAP_CONNECTION_PROPERTY_PREFIX = "ldap.connection.";
-
-	public static final String LDAP_CONTACT_CUSTOM_MAPPINGS = "ldap.contact.custom.mappings";
-
-	public static final String LDAP_CONTACT_MAPPINGS = "ldap.contact.mappings";
-
-	public static final String LDAP_ERROR_PASSWORD_AGE = "ldap.error.password.age";
-
-	public static final String LDAP_ERROR_PASSWORD_EXPIRED = "ldap.error.password.expired";
-
-	public static final String LDAP_ERROR_PASSWORD_HISTORY = "ldap.error.password.history";
-
-	public static final String LDAP_ERROR_PASSWORD_NOT_CHANGEABLE = "ldap.error.password.not.changeable";
-
-	public static final String LDAP_ERROR_PASSWORD_SYNTAX = "ldap.error.password.syntax";
-
-	public static final String LDAP_ERROR_PASSWORD_TRIVIAL = "ldap.error.password.trivial";
-
-	public static final String LDAP_ERROR_USER_LOCKOUT = "ldap.error.user.lockout";
-
-	public static final String LDAP_EXPORT_ENABLED = "ldap.export.enabled";
-
-	public static final String LDAP_EXPORT_GROUP_ENABLED = "ldap.export.group.enabled";
-
-	public static final String LDAP_FACTORY_INITIAL = "ldap.factory.initial";
-
-	public static final String LDAP_GROUP_DEFAULT_OBJECT_CLASSES = "ldap.group.default.object.classes";
-
-	public static final String LDAP_GROUP_MAPPINGS = "ldap.group.mappings";
-
-	public static final String LDAP_GROUPS_DN = "ldap.groups.dn";
-
-	public static final String LDAP_IMPORT_CREATE_ROLE_PER_GROUP = "ldap.import.create.role.per.group";
-
-	public static final String LDAP_IMPORT_ENABLED = "ldap.import.enabled";
-
-	public static final String LDAP_IMPORT_GROUP_CACHE_ENABLED = "ldap.import.group.cache.enabled";
-
-	public static final String LDAP_IMPORT_GROUP_SEARCH_FILTER = "ldap.import.group.search.filter";
-
-	public static final String LDAP_IMPORT_GROUP_SEARCH_FILTER_ENABLED = "ldap.import.group.search.filter.enabled";
-
-	public static final String LDAP_IMPORT_INTERVAL = "ldap.import.interval";
-
-	public static final String LDAP_IMPORT_LOCK_EXPIRATION_TIME = "ldap.import.lock.expiration.time";
-
-	public static final String LDAP_IMPORT_METHOD = "ldap.import.method";
-
-	public static final String LDAP_IMPORT_ON_STARTUP = "ldap.import.on.startup";
-
-	public static final String LDAP_IMPORT_USER_PASSWORD_AUTOGENERATED = "ldap.import.user.password.autogenerated";
-
-	public static final String LDAP_IMPORT_USER_PASSWORD_DEFAULT = "ldap.import.user.password.default";
-
-	public static final String LDAP_IMPORT_USER_PASSWORD_ENABLED = "ldap.import.user.password.enabled";
-
-	public static final String LDAP_IMPORT_USER_SEARCH_FILTER = "ldap.import.user.search.filter";
-
-	public static final String LDAP_IMPORT_USER_SYNC_STRATEGY = "ldap.import.user.sync.strategy";
-
-	public static final String LDAP_PAGE_SIZE = "ldap.page.size";
-
-	public static final String LDAP_PASSWORD_POLICY_ENABLED = "ldap.password.policy.enabled";
-
-	public static final String LDAP_RANGE_SIZE = "ldap.range.size";
-
-	public static final String LDAP_REFERRAL = "ldap.referral";
-
-	public static final String LDAP_SECURITY_CREDENTIALS = "ldap.security.credentials";
-
-	public static final String LDAP_SECURITY_PRINCIPAL = "ldap.security.principal";
-
-	public static final String LDAP_SERVER_NAME = "ldap.server.name";
-
-	public static final String LDAP_USER_CUSTOM_MAPPINGS = "ldap.user.custom.mappings";
-
-	public static final String LDAP_USER_DEFAULT_OBJECT_CLASSES = "ldap.user.default.object.classes";
-
-	public static final String LDAP_USER_IGNORE_ATTRIBUTES = "ldap.user.ignore.attributes";
-
-	public static final String LDAP_USER_IMPL = "ldap.user.impl";
-
-	public static final String LDAP_USER_MAPPINGS = "ldap.user.mappings";
-
-	public static final String LDAP_USERS_DN = "ldap.users.dn";
-
 	public static final String LIBRARY_DOWNLOAD_URL = "library.download.url.";
 
 	public static final String LIFERAY_HOME = "liferay.home";
@@ -1432,10 +1324,6 @@ public interface PropsKeys {
 	public static final String MESSAGE_BOARDS_THREAD_PREVIOUS_AND_NEXT_NAVIGATION_ENABLED = "message.boards.thread.previous.and.next.navigation.enabled";
 
 	public static final String MESSAGE_BOARDS_THREAD_PRIORITIES = "message.boards.thread.priorities";
-
-	public static final String MESSAGE_BOARDS_THREAD_VIEWS = "message.boards.thread.views";
-
-	public static final String MESSAGE_BOARDS_THREAD_VIEWS_DEFAULT = "message.boards.thread.views.default";
 
 	public static final String MESSAGE_BOARDS_USER_RANKS = "message.boards.user.ranks";
 
@@ -1952,14 +1840,6 @@ public interface PropsKeys {
 	public static final String SANDBOX_DEPLOY_LISTENERS = "sandbox.deploy.listeners";
 
 	public static final String SANITIZER_IMPL = "sanitizer.impl";
-
-	public static final String SC_IMAGE_MAX_SIZE = "sc.image.max.size";
-
-	public static final String SC_IMAGE_THUMBNAIL_MAX_HEIGHT = "sc.image.thumbnail.max.height";
-
-	public static final String SC_IMAGE_THUMBNAIL_MAX_WIDTH = "sc.image.thumbnail.max.width";
-
-	public static final String SC_PRODUCT_COMMENTS_ENABLED = "sc.product.comments.enabled";
 
 	public static final String SCHEDULER_DESCRIPTION_MAX_LENGTH = "scheduler.description.max.length";
 

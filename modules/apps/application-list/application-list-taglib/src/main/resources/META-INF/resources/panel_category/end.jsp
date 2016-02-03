@@ -16,25 +16,31 @@
 
 <%@ include file="/panel_category/init.jsp" %>
 
-<c:if test="<%= !panelApps.isEmpty() %>">
-	<ul aria-labelledby="<%= id %>" class="nav nav-equal-height" role="menu">
-
-		<%
-		for (PanelApp panelApp : panelApps) {
-		%>
-
-			<liferay-application-list:panel-app panelApp="<%= panelApp %>" />
-
-		<%
-		}
-		%>
-
-	</ul>
+<c:if test="<%= showBody %>">
+	<liferay-application-list:panel-category-body panelApps="<%= panelApps %>" panelCategory="<%= panelCategory %>" />
 </c:if>
 
-<liferay-application-list:panel panelCategory="<%= panelCategory %>" />
-
-<c:if test="<%= !panelApps.isEmpty() || showHeader %>">
+<c:if test="<%= !panelApps.isEmpty() && showHeader %>">
 		</div>
 	</div>
+
+	<c:if test="<%= persistState %>">
+		<aui:script position="auto" use="liferay-store,io-request,parse-content">
+			var collapse = $('#<%= id %>');
+
+			collapse.on(
+				'hidden.bs.collapse',
+				function(event) {
+					Liferay.Store('<%= PanelCategory.class.getName() %><%= id %>', 'closed');
+				}
+			);
+
+			collapse.on(
+				'shown.bs.collapse',
+				function(event) {
+					Liferay.Store('<%= PanelCategory.class.getName() %><%= id %>', 'open');
+				}
+			);
+		</aui:script>
+	</c:if>
 </c:if>

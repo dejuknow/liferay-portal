@@ -1,6 +1,6 @@
 <definition>
 	<command name="addCP">
-		<execute function="AssertClick" locator1="NavBar#ADD" value1="Add" />
+		<execute function="Click" locator1="Button#PLUS" />
 
 		<if>
 			<equals arg1="${roleType}" arg2="Organization" />
@@ -36,7 +36,7 @@
 
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
 
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
 	</command>
 
 	<command name="addStagingAdminRole">
@@ -49,13 +49,14 @@
 			<var name="roleType" value="Site" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Roles" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Roles" />
 		</execute>
 
 		<execute macro="Role#definePermissionsCP">
 			<var name="permissionDefinitionKeys" value="SITE_ADMIN_PAGES_SITE_PAGES_GENERAL_PERMISSIONS_ACTION_CHECKBOX,SITE_ADMIN_PAGES_SITE_PAGES_RESOURCE_PERMISSIONS_SITE_ACTION_CHECKBOX,SITE_ADMIN_PAGES_SITE_PAGES_RESOURCE_PERMISSIONS_PAGE_ACTION_CHECKBOX,SITE_ADMIN_PAGES_SITE_PAGES_RESOURCE_PERMISSIONS_PAGE_VARIATION_ACTION_CHECKBOX,SITE_ADMIN_PAGES_SITE_PAGES_RESOURCE_PERMISSIONS_SITE_PAGES_VARIATION_ACTION_CHECKBOX" />
 			<var name="roleName" value="${roleName}" />
+			<var name="roleType" value="Site" />
 		</execute>
 	</command>
 
@@ -76,7 +77,7 @@
 		<execute function="AssertTextEquals" locator1="RolesAssignMembers#ORGANIZATION_TABLE_NAME" value1="${orgName}" />
 		<execute function="Check" locator1="RolesAssignMembers#ORGANIZATION_TABLE_CHECKBOX" />
 		<execute function="AssertClick" locator1="Button#UPDATE_ASSOCIATIONS" value1="Update Associations" />
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
 		<execute function="AssertChecked" locator1="RolesAssignMembers#ORGANIZATION_TABLE_CHECKBOX" />
 	</command>
 
@@ -97,7 +98,7 @@
 		<execute function="AssertTextEquals" locator1="RolesAssignMembers#SITE_TABLE_NAME" value1="${siteName}" />
 		<execute function="Check" locator1="RolesAssignMembers#SITE_TABLE_CHECKBOX" />
 		<execute function="AssertClick" locator1="Button#UPDATE_ASSOCIATIONS" value1="Update Associations" />
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
 		<execute function="AssertChecked" locator1="RolesAssignMembers#SITE_TABLE_CHECKBOX" />
 	</command>
 
@@ -118,7 +119,7 @@
 		<execute function="AssertTextEquals" locator1="RolesAssignMembers#USER_GROUP_TABLE_NAME" value1="${userGroupName}" />
 		<execute function="Check" locator1="RolesAssignMembers#USER_GROUP_TABLE_CHECKBOX" />
 		<execute function="AssertClick" locator1="Button#UPDATE_ASSOCIATIONS" value1="Update Associations" />
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
 		<execute function="AssertChecked" locator1="RolesAssignMembers#USER_GROUP_TABLE_CHECKBOX" />
 	</command>
 
@@ -126,19 +127,29 @@
 		<var name="key_roleName" value="${roleName}" />
 
 		<execute function="Type#sendKeys" locator1="NavBar#BASIC_SEARCH_FIELD" value1="${roleName}" />
-		<execute function="AssertClick" locator1="Button#SEARCH" value1="Search" />
+
+		<execute function="Click" locator1="Button#SUBMIT" />
+
 		<execute function="Click" locator1="Roles#ROLE_TABLE_ACTIONS" />
+
 		<execute function="AssertClick" locator1="MenuItem#ASSIGN_MEMBERS" value1="Assign Members" />
 
 		<var name="key_userScreenName" value="${userScreenName}" />
 
-		<execute function="AssertClick" locator1="NavTab#AVAILABLE" value1="Available" />
-		<execute function="Type" locator1="Search#SEARCH_FIELD" value1="${userScreenName}" />
-		<execute function="AssertClick" locator1="Button#SEARCH" value1="Search" />
+		<execute function="AssertClick" locator1="CPRolesAssignmembersUsergroups#MANAGEMENT_BAR_STATUS_DROPDOWN" value1="Current" />
+
+		<execute function="AssertClick" locator1="CPRolesAssignmembersUsergroups#MANAGEMENT_BAR_STATUS_AVAILABLE" value1="Available" />
+
+		<execute function="Type#sendKeys" locator1="NavBar#BASIC_SEARCH_FIELD" value1="${userScreenName}" />
+
+		<execute function="Click" locator1="Button#SUBMIT" />
+
 		<execute function="AssertTextEquals" locator1="RolesAssignMembers#USER_TABLE_SCREEN_NAME" value1="${userScreenName}" />
 		<execute function="Check" locator1="RolesAssignMembers#USER_TABLE_CHECKBOX" />
+
 		<execute function="AssertClick" locator1="Button#UPDATE_ASSOCIATIONS" value1="Update Associations" />
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
 		<execute function="AssertChecked" locator1="RolesAssignMembers#USER_TABLE_CHECKBOX" />
 	</command>
 
@@ -153,6 +164,7 @@
 			<var name="permissionNavigationValue" value="${permissionNavigationValue}" />
 			<var name="remove" value="${remove}" />
 			<var name="roleName" value="${roleName}" />
+			<var name="roleType" value="${roleType}" />
 			<var name="roleUser" value="${roleUser}" />
 			<var name="siteNameScope" value="${siteNameScope}" />
 		</execute>
@@ -162,6 +174,7 @@
 		<execute macro="Role#definePermissionCmdCP">
 			<var name="permissionDefinitionKey" value="${permissionDefinitionKey}" />
 			<var name="roleName" value="${roleName}" />
+			<var name="roleType" value="${roleType}" />
 			<var name="roleUser" value="${roleUser}" />
 		</execute>
 
@@ -174,12 +187,20 @@
 	</command>
 
 	<command name="definePermissionPG">
-		<var method="StringUtil#replace('${roleName}', ' ', '-')" name="key_roleName" />
-		<var method="StringUtil#lowerCase('${key_roleName}')" name="key_roleName" />
+		<var name="key_roleName" value="${roleName}" />
+
+		<if>
+			<condition function="IsElementPresent#isElementPresentAfterWait" locator1="IFrame#DIALOG" />
+			<then>
+				<execute function="SelectFrame" locator1="IFrame#DIALOG" />
+			</then>
+		</if>
 
 		<execute function="Check" locator1="Permissions#${permissionDefinitionKey}" />
+
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
-		<execute function="AssertTextEquals" locator1="Permissions#SUCCESS_MESSAGE" value1="Your request completed successfully." />
+
+		<execute function="AssertTextEquals#assertPartialText" locator1="Permissions#SUCCESS_MESSAGE" value1="Your request completed successfully." />
 		<execute function="AssertChecked" locator1="Permissions#${permissionDefinitionKey}" />
 	</command>
 
@@ -187,6 +208,7 @@
 		<execute macro="Role#definePermissionCmdCP">
 			<var name="permissionDefinitionKeys" value="${permissionDefinitionKeys}" />
 			<var name="roleName" value="${roleName}" />
+			<var name="roleType" value="${roleType}" />
 			<var name="roleUser" value="${roleUser}" />
 		</execute>
 	</command>
@@ -194,7 +216,7 @@
 	<command name="deleteCP">
 		<execute function="Type#sendKeys" locator1="NavBar#BASIC_SEARCH_FIELD" value1="Name" />
 
-		<execute function="AssertClick" locator1="Button#SEARCH" value1="Search" />
+		<execute function="Click" locator1="Button#SUBMIT" />
 
 		<var name="key_roleName" value="${roleName}" />
 
@@ -241,19 +263,36 @@
 
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
 
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
 	</command>
 
 	<command name="editPermissionCmdCP">
 		<var name="key_roleName" value="${roleName}" />
 
+		<if>
+			<equals arg1="${roleType}" arg2="Organization" />
+			<then>
+				<execute function="AssertClick" locator1="MenuItem#ORGANIZATION_ROLES" value1="Organization Roles" />
+			</then>
+			<elseif>
+				<equals arg1="${roleType}" arg2="Site" />
+				<then>
+					<execute function="AssertClick" locator1="MenuItem#SITE_ROLES" value1="Site Roles" />
+				</then>
+			</elseif>
+			<else>
+				<execute function="AssertClick" locator1="MenuItem#REGULAR_ROLES" value1="Regular Roles" />
+			</else>
+		</if>
+
 		<execute function="Type#sendKeys" locator1="NavBar#BASIC_SEARCH_FIELD" value1="${roleName}" />
-		<execute function="AssertClick" locator1="Button#SEARCH" value1="Search" />
+
+		<execute function="Click" locator1="Button#SUBMIT" />
 
 		<if>
 			<isset var="roleUser" />
 			<then>
-				<execute function="AssertTextEquals" locator1="//tr[contains(.,'${roleName}') and contains(.,'${roleUser}')]/td[1]/a" value1="${roleUser}" />
+				<execute function="AssertTextEquals" locator1="//tr[contains(.,'${roleName}') and contains(.,'${roleUser}')]/td[2]/a" value1="${roleUser}" />
 				<execute function="Click" locator1="Roles#ROLE_TABLE_ACTIONS" />
 			</then>
 			<else>
@@ -262,11 +301,11 @@
 			</else>
 		</if>
 
-		<execute function="AssertClick" locator1="MenuItem#DEFINE_PERMISSIONS" value1="Define Permissions" />
+		<execute function="AssertClick" locator1="Roles#ROLE_TABLE_DEFINE_PERMISSIONS" value1="Define Permissions" />
 
 		<if>
 			<and>
-				<condition function="IsElementPresent" locator1="Message#INFO" />
+				<condition function="IsElementPresent#isElementPresentAfterWait" locator1="Message#INFO" />
 				<condition function="IsVisible" locator1="Message#INFO" />
 			</and>
 			<then>
@@ -364,7 +403,7 @@
 					<contains string="${permissionDefinitionKey}" substring="SITE_ADMIN_APPLICATIONS_LANGUAGE" />
 					<then>
 						<var name="permissionNavigationKey" value="SITE_ADMIN_APPLICATIONS_LANGUAGE" />
-						<var name="permissionNavigationValue" value="Language" />
+						<var name="permissionNavigationValue" value="Language Selector" />
 					</then>
 				</elseif>
 				<elseif>
@@ -502,8 +541,7 @@
 					<var name="key_siteNameScope" value="${siteNameScope}" />
 
 					<execute function="SelectFrame" locator1="RolesPermissionsSelectSite#SELECT_SITE_IFRAME" />
-					<execute function="AssertTextEquals" locator1="RolesPermissionsSelectSite#SCOPE_SITES_TABLE_NAME" value1="${siteNameScope}" />
-					<execute function="Click" locator1="RolesPermissionsSelectSite#SCOPE_SITES_TABLE_CHOOSE_BUTTON" value1="Choose" />
+					<execute function="AssertClick" locator1="RolesPermissionsSelectSite#SCOPE_SITES_TABLE_NAME" value1="${siteNameScope}" />
 
 					<var name="key_siteNameScope" value="${siteNameScope}" />
 					<var method="StringUtil#replace('${permissionDefinitionKey}', 'CHECKBOX', 'SITE_SCOPE')" name="permissionDefinitionKeySiteScope" />
@@ -516,7 +554,7 @@
 
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
 
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="The role permissions were updated." />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="The role permissions were updated." />
 	</command>
 
 	<command name="localizeRoleDescriptionCmd">
@@ -681,6 +719,7 @@
 			<var name="permissionNavigationValue" value="${permissionNavigationValue}" />
 			<var name="remove" value="true" />
 			<var name="roleName" value="${roleName}" />
+			<var name="roleType" value="${roleType}" />
 			<var name="roleUser" value="${roleUser}" />
 			<var name="siteNameScope" value="${siteNameScope}" />
 		</execute>
@@ -697,9 +736,16 @@
 		<var method="StringUtil#replace('${roleName}', ' ', '-')" name="key_roleName" />
 		<var method="StringUtil#lowerCase('${key_roleName}')" name="key_roleName" />
 
+		<if>
+			<condition function="IsElementPresent#isElementPresentAfterWait" locator1="IFrame#DIALOG" />
+			<then>
+				<execute function="SelectFrame" locator1="IFrame#DIALOG" />
+			</then>
+		</if>
+
 		<execute function="Uncheck" locator1="Permissions#${permissionDefinitionKey}" />
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
-		<execute function="AssertTextEquals" locator1="Permissions#SUCCESS_MESSAGE" value1="Your request completed successfully." />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Permissions#SUCCESS_MESSAGE" value1="Your request completed successfully." />
 		<execute function="AssertNotChecked" locator1="Permissions#${permissionDefinitionKey}" />
 	</command>
 
@@ -718,8 +764,8 @@
 	</command>
 
 	<command name="tearDownCP">
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Roles" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Roles" />
 		</execute>
 
 		<execute function="Type#sendKeys" locator1="NavBar#BASIC_SEARCH_FIELD" value1="Name" />
@@ -752,7 +798,7 @@
 		<execute function="AssertTextEquals" locator1="RolesAssignMembers#ORGANIZATION_TABLE_NAME" value1="${orgName}" />
 		<execute function="Uncheck" locator1="RolesAssignMembers#ORGANIZATION_TABLE_CHECKBOX" />
 		<execute function="AssertClick" locator1="Button#UPDATE_ASSOCIATIONS" value1="Update Associations" />
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
 	</command>
 
 	<command name="unassignMembersSitesCP">
@@ -772,7 +818,7 @@
 		<execute function="AssertTextEquals" locator1="RolesAssignMembers#SITE_TABLE_NAME" value1="${siteName}" />
 		<execute function="Uncheck" locator1="RolesAssignMembers#SITE_TABLE_CHECKBOX" />
 		<execute function="AssertClick" locator1="Button#UPDATE_ASSOCIATIONS" value1="Update Associations" />
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
 		<execute function="AssertNotChecked" locator1="RolesAssignMembers#SITE_TABLE_CHECKBOX" />
 	</command>
 
@@ -793,7 +839,7 @@
 		<execute function="AssertTextEquals" locator1="RolesAssignMembers#USER_GROUP_TABLE_NAME" value1="${userGroupName}" />
 		<execute function="Uncheck" locator1="RolesAssignMembers#USER_GROUP_TABLE_CHECKBOX" />
 		<execute function="AssertClick" locator1="Button#UPDATE_ASSOCIATIONS" value1="Update Associations" />
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
 	</command>
 
 	<command name="unassignRegRoleCP">
@@ -811,30 +857,63 @@
 		<execute function="AssertTextEquals" locator1="RolesAssignMembers#USER_TABLE_SCREEN_NAME" value1="${userScreenName}" />
 		<execute function="Uncheck" locator1="RolesAssignMembers#USER_TABLE_CHECKBOX" />
 		<execute function="AssertClick" locator1="Button#UPDATE_ASSOCIATIONS" value1="Update Associations" />
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
 	</command>
 
 	<command name="viewCP">
+		<if>
+			<equals arg1="${roleType}" arg2="Organization" />
+			<then>
+				<execute function="AssertClick" locator1="MenuItem#ORGANIZATION_ROLES" value1="Organization Roles" />
+			</then>
+			<elseif>
+				<equals arg1="${roleType}" arg2="Site" />
+				<then>
+					<execute function="AssertClick" locator1="MenuItem#SITE_ROLES" value1="Site Roles" />
+				</then>
+			</elseif>
+			<else>
+				<execute function="AssertClick" locator1="MenuItem#REGULAR_ROLES" value1="Regular Roles" />
+			</else>
+		</if>
+
 		<var name="key_roleName" value="${roleName}" />
 
-		<execute function="AssertClick" locator1="Button#SEARCH" value1="Search" />
 		<execute function="AssertTextEquals" locator1="Roles#ROLE_TABLE_TITLE" value1="${roleName}" />
 		<execute function="AssertTextEquals" locator1="Roles#ROLE_TABLE_TYPE" value1="${roleType}" />
+
 		<execute function="Click" locator1="Roles#ROLE_TABLE_ACTIONS" />
+
 		<execute function="AssertClick" locator1="MenuItem#EDIT" value1="Edit" />
 
-		<execute function="AssertTextEquals" locator1="Portlet#H3_HEADER" value1="${roleName}" />
+		<execute function="AssertTextEquals" locator1="Home#SITE_ADMINISTRATION_PORTLET_TITLE" value1="${roleName}" />
 		<execute function="AssertTextEquals" locator1="TextInput#NAME" value1="${roleName}" />
 	</command>
 
 	<command name="viewDefaultCP">
 		<execute function="Type#sendKeys" locator1="NavBar#BASIC_SEARCH_FIELD" value1="Name" />
-		<execute function="AssertClick" locator1="Button#SEARCH" value1="Search" />
+		<execute function="Click" locator1="Button#SUBMIT" />
 
-		<execute function="AssertTextEquals" locator1="CPRoles#INFO_MESSAGE" value1="No roles were found." />
+		<execute function="AssertTextEquals" locator1="Message#EMPTY_INFO" value1="No roles were found." />
 	</command>
 
 	<command name="viewNoXSSCP">
+		<if>
+			<equals arg1="${roleType}" arg2="Organization" />
+			<then>
+				<execute function="AssertClick" locator1="MenuItem#ORGANIZATION_ROLES" value1="Organization Roles" />
+			</then>
+			<elseif>
+				<equals arg1="${roleType}" arg2="Site" />
+				<then>
+					<execute function="AssertClick" locator1="MenuItem#SITE_ROLES" value1="Site Roles" />
+				</then>
+			</elseif>
+			<else>
+				<execute function="AssertClick" locator1="MenuItem#REGULAR_ROLES" value1="Regular Roles" />
+			</else>
+		</if>
+
 		<var name="key_roleName" value="${roleName}" />
 
 		<execute function="AssertAlertNotPresent" />
@@ -1018,7 +1097,6 @@
 			<equals arg1="${remove}" arg2="true" />
 			<then>
 				<execute function="AssertElementNotPresent" locator1="RolesPermissionsSummary#PERMISSION_TABLE_PERMISSIONS" value1="${permissionNavigationValue}" />
-				<execute function="AssertElementNotPresent" locator1="RolesPermissionsSummary#PERMISSION_TABLE_PERMISSIONS" value1="${permissionDefinitionValue}" />
 				<execute function="AssertElementNotPresent" locator1="RolesPermissionsSummary#PERMISSION_TABLE_REMOVE" value1="Remove" />
 			</then>
 			<else>
@@ -1030,7 +1108,6 @@
 				</while>
 
 				<execute function="AssertTextEquals#assertPartialText" locator1="RolesPermissionsSummary#PERMISSION_TABLE_PERMISSIONS" value1="${permissionNavigationValue}" />
-				<execute function="AssertTextEquals#assertPartialText" locator1="RolesPermissionsSummary#PERMISSION_TABLE_PERMISSIONS" value1="${permissionDefinitionValue}" />
 				<execute function="AssertTextEquals" locator1="RolesPermissionsSummary#PERMISSION_TABLE_REMOVE" value1="Remove" />
 			</else>
 		</if>

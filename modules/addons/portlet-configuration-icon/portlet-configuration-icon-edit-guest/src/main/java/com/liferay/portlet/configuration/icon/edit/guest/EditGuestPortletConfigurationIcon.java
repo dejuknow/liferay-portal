@@ -15,9 +15,8 @@
 package com.liferay.portlet.configuration.icon.edit.guest;
 
 import com.liferay.portal.kernel.portlet.configuration.icon.BasePortletConfigurationIcon;
-import com.liferay.portal.theme.PortletDisplay;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.portlet.PortletRequest;
 
 /**
  * @author Eudaldo Alonso
@@ -25,8 +24,8 @@ import javax.servlet.http.HttpServletRequest;
 public class EditGuestPortletConfigurationIcon
 	extends BasePortletConfigurationIcon {
 
-	public EditGuestPortletConfigurationIcon(HttpServletRequest request) {
-		super(request);
+	public EditGuestPortletConfigurationIcon(PortletRequest portletRequest) {
+		super(portletRequest);
 	}
 
 	@Override
@@ -36,15 +35,11 @@ public class EditGuestPortletConfigurationIcon
 
 	@Override
 	public String getURL() {
-		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
-
 		return portletDisplay.getURLEditGuest();
 	}
 
 	@Override
 	public boolean isShow() {
-		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
-
 		return portletDisplay.isShowEditGuestIcon();
 	}
 

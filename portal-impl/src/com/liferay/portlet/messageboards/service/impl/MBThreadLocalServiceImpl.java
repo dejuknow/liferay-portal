@@ -20,7 +20,9 @@ import com.liferay.portal.kernel.increment.BufferedIncrement;
 import com.liferay.portal.kernel.increment.NumberIncrement;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.portletfilerepository.PortletFileRepositoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.Indexer;
@@ -36,14 +38,13 @@ import com.liferay.portal.model.Group;
 import com.liferay.portal.model.ResourceConstants;
 import com.liferay.portal.model.SystemEventConstants;
 import com.liferay.portal.model.User;
-import com.liferay.portal.portletfilerepository.PortletFileRepositoryUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portlet.asset.model.AssetEntry;
 import com.liferay.portlet.documentlibrary.model.DLFolderConstants;
 import com.liferay.portlet.exportimport.lar.ExportImportThreadLocal;
-import com.liferay.portlet.messageboards.NoSuchCategoryException;
-import com.liferay.portlet.messageboards.SplitThreadException;
 import com.liferay.portlet.messageboards.constants.MBConstants;
+import com.liferay.portlet.messageboards.exception.NoSuchCategoryException;
+import com.liferay.portlet.messageboards.exception.SplitThreadException;
 import com.liferay.portlet.messageboards.model.MBCategory;
 import com.liferay.portlet.messageboards.model.MBCategoryConstants;
 import com.liferay.portlet.messageboards.model.MBMessage;
@@ -122,7 +123,8 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 				MBThread.class.getName(), thread.getThreadId(),
 				thread.getUuid(), 0, new long[0], new String[0], false, null,
 				null, null, null, String.valueOf(thread.getRootMessageId()),
-				null, null, null, null, 0, 0, null);
+				null, null, null, null, 0, 0,
+				serviceContext.getAssetPriority());
 		}
 
 		return thread;
@@ -317,21 +319,6 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 		}
 	}
 
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link #getGroupThreads(long,
-	 *             QueryDefinition)}
-	 */
-	@Deprecated
-	@Override
-	public List<MBThread> getGroupThreads(
-		long groupId, int status, int start, int end) {
-
-		QueryDefinition<MBThread> queryDefinition = new QueryDefinition<>(
-			status, start, end, null);
-
-		return getGroupThreads(groupId, queryDefinition);
-	}
-
 	@Override
 	public List<MBThread> getGroupThreads(
 		long groupId, long userId, boolean subscribed, boolean includeAnonymous,
@@ -366,54 +353,6 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 			groupId, userId, subscribed, true, queryDefinition);
 	}
 
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link #getGroupThreads(long, long,
-	 *             boolean, boolean, QueryDefinition)}
-	 */
-	@Deprecated
-	@Override
-	public List<MBThread> getGroupThreads(
-		long groupId, long userId, int status, boolean subscribed,
-		boolean includeAnonymous, int start, int end) {
-
-		QueryDefinition<MBThread> queryDefinition = new QueryDefinition<>(
-			status, start, end, null);
-
-		return getGroupThreads(
-			groupId, userId, subscribed, includeAnonymous, queryDefinition);
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link #getGroupThreads(long, long,
-	 *             boolean, QueryDefinition)}
-	 */
-	@Deprecated
-	@Override
-	public List<MBThread> getGroupThreads(
-		long groupId, long userId, int status, boolean subscribed, int start,
-		int end) {
-
-		QueryDefinition<MBThread> queryDefinition = new QueryDefinition<>(
-			status, start, end, null);
-
-		return getGroupThreads(groupId, userId, subscribed, queryDefinition);
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link #getGroupThreads(long, long,
-	 *             QueryDefinition)}
-	 */
-	@Deprecated
-	@Override
-	public List<MBThread> getGroupThreads(
-		long groupId, long userId, int status, int start, int end) {
-
-		QueryDefinition<MBThread> queryDefinition = new QueryDefinition<>(
-			status, start, end, null);
-
-		return getGroupThreads(groupId, userId, false, queryDefinition);
-	}
-
 	@Override
 	public List<MBThread> getGroupThreads(
 		long groupId, long userId, QueryDefinition<MBThread> queryDefinition) {
@@ -437,19 +376,6 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 				queryDefinition.getStatus(), queryDefinition.getStart(),
 				queryDefinition.getEnd());
 		}
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link #getGroupThreadsCount(long,
-	 *             QueryDefinition)}
-	 */
-	@Deprecated
-	@Override
-	public int getGroupThreadsCount(long groupId, int status) {
-		QueryDefinition<MBThread> queryDefinition = new QueryDefinition<>(
-			status);
-
-		return getGroupThreadsCount(groupId, queryDefinition);
 	}
 
 	@Override
@@ -484,52 +410,6 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 
 		return getGroupThreadsCount(
 			groupId, userId, subscribed, true, queryDefinition);
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link #getGroupThreadsCount(long,
-	 *             long, QueryDefinition)}
-	 */
-	@Deprecated
-	@Override
-	public int getGroupThreadsCount(long groupId, long userId, int status) {
-		QueryDefinition<MBThread> queryDefinition = new QueryDefinition<>(
-			status);
-
-		return getGroupThreadsCount(groupId, userId, false, queryDefinition);
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link #getGroupThreadsCount(long,
-	 *             long, boolean, QueryDefinition)}
-	 */
-	@Deprecated
-	@Override
-	public int getGroupThreadsCount(
-		long groupId, long userId, int status, boolean subscribed) {
-
-		QueryDefinition<MBThread> queryDefinition = new QueryDefinition<>(
-			status);
-
-		return getGroupThreadsCount(
-			groupId, userId, subscribed, true, queryDefinition);
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link #getGroupThreadsCount(long,
-	 *             long, boolean, boolean, QueryDefinition)}
-	 */
-	@Deprecated
-	@Override
-	public int getGroupThreadsCount(
-		long groupId, long userId, int status, boolean subscribed,
-		boolean includeAnonymous) {
-
-		QueryDefinition<MBThread> queryDefinition = new QueryDefinition<>(
-			status);
-
-		return getGroupThreadsCount(
-			groupId, userId, subscribed, includeAnonymous, queryDefinition);
 	}
 
 	@Override
@@ -1094,13 +974,16 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 		MBMessage message = mbMessagePersistence.findByPrimaryKey(messageId);
 
 		if (message.isRoot()) {
-			throw new SplitThreadException();
+			throw new SplitThreadException(
+				"Unable to split message " + messageId +
+					" because it is a root message");
 		}
 
 		MBCategory category = message.getCategory();
 		MBThread oldThread = message.getThread();
 		MBMessage rootMessage = mbMessagePersistence.findByPrimaryKey(
 			oldThread.getRootMessageId());
+		long oldAttachmentsFolderId = message.getAttachmentsFolderId();
 
 		// Message flags
 
@@ -1155,6 +1038,11 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 		message.setParentMessageId(0);
 
 		mbMessagePersistence.update(message);
+
+		// Attachments
+
+		moveAttachmentsFolders(
+			message, oldAttachmentsFolderId, oldThread, thread, serviceContext);
 
 		// Indexer
 
@@ -1279,22 +1167,30 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 		return thread;
 	}
 
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link #incrementViewCounter(long,
-	 *             int)}
-	 */
-	@Deprecated
-	@Override
-	public MBThread updateThread(long threadId, int viewCount)
+	protected void moveAttachmentsFolders(
+			MBMessage message, long oldAttachmentsFolderId, MBThread oldThread,
+			MBThread newThread, ServiceContext serviceContext)
 		throws PortalException {
 
-		MBThread thread = mbThreadPersistence.findByPrimaryKey(threadId);
+		if (oldAttachmentsFolderId !=
+				DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
 
-		thread.setViewCount(viewCount);
+			Folder newThreadFolder = newThread.addAttachmentsFolder();
 
-		mbThreadPersistence.update(thread);
+			PortletFileRepositoryUtil.movePortletFolder(
+				message.getGroupId(), message.getUserId(),
+				oldAttachmentsFolderId, newThreadFolder.getFolderId(),
+				serviceContext);
+		}
 
-		return thread;
+		List<MBMessage> childMessages = mbMessagePersistence.findByT_P(
+			oldThread.getThreadId(), message.getMessageId());
+
+		for (MBMessage childMessage : childMessages) {
+			moveAttachmentsFolders(
+				childMessage, childMessage.getAttachmentsFolderId(), oldThread,
+				newThread, serviceContext);
+		}
 	}
 
 	protected void moveChildrenMessages(

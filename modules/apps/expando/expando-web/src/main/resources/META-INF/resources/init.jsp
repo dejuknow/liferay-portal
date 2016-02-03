@@ -29,6 +29,8 @@ page import="com.liferay.expando.web.search.CustomFieldChecker" %><%@
 page import="com.liferay.portal.kernel.dao.search.SearchContainer" %><%@
 page import="com.liferay.portal.kernel.language.LanguageUtil" %><%@
 page import="com.liferay.portal.kernel.portlet.LiferayWindowState" %><%@
+page import="com.liferay.portal.kernel.security.permission.ActionKeys" %><%@
+page import="com.liferay.portal.kernel.security.permission.ResourceActionsUtil" %><%@
 page import="com.liferay.portal.kernel.util.CalendarFactoryUtil" %><%@
 page import="com.liferay.portal.kernel.util.GetterUtil" %><%@
 page import="com.liferay.portal.kernel.util.HtmlUtil" %><%@
@@ -40,17 +42,15 @@ page import="com.liferay.portal.kernel.util.StringUtil" %><%@
 page import="com.liferay.portal.kernel.util.TextFormatter" %><%@
 page import="com.liferay.portal.kernel.util.UnicodeProperties" %><%@
 page import="com.liferay.portal.kernel.util.WebKeys" %><%@
-page import="com.liferay.portal.security.permission.ActionKeys" %><%@
-page import="com.liferay.portal.security.permission.ResourceActionsUtil" %><%@
 page import="com.liferay.portal.service.PortletLocalServiceUtil" %><%@
 page import="com.liferay.portal.service.permission.PortletPermissionUtil" %><%@
 page import="com.liferay.portal.util.PortalUtil" %><%@
 page import="com.liferay.portlet.PortletURLUtil" %><%@
-page import="com.liferay.portlet.expando.ColumnNameException" %><%@
-page import="com.liferay.portlet.expando.ColumnTypeException" %><%@
-page import="com.liferay.portlet.expando.DuplicateColumnNameException" %><%@
-page import="com.liferay.portlet.expando.NoSuchColumnException" %><%@
-page import="com.liferay.portlet.expando.ValueDataException" %><%@
+page import="com.liferay.portlet.expando.exception.ColumnNameException" %><%@
+page import="com.liferay.portlet.expando.exception.ColumnTypeException" %><%@
+page import="com.liferay.portlet.expando.exception.DuplicateColumnNameException" %><%@
+page import="com.liferay.portlet.expando.exception.NoSuchColumnException" %><%@
+page import="com.liferay.portlet.expando.exception.ValueDataException" %><%@
 page import="com.liferay.portlet.expando.model.CustomAttributesDisplay" %><%@
 page import="com.liferay.portlet.expando.model.ExpandoBridge" %><%@
 page import="com.liferay.portlet.expando.model.ExpandoColumn" %><%@
@@ -75,16 +75,10 @@ page import="java.util.Map" %>
 <%@ page import="javax.portlet.PortletURL" %><%@
 page import="javax.portlet.WindowState" %>
 
+<liferay-frontend:defineObjects />
+
 <liferay-theme:defineObjects />
 
 <portlet:defineObjects />
-
-<%
-WindowState windowState = liferayPortletRequest.getWindowState();
-
-PortletURL currentURLObj = PortletURLUtil.getCurrent(liferayPortletRequest, liferayPortletResponse);
-
-String currentURL = currentURLObj.toString();
-%>
 
 <%@ include file="/init-ext.jsp" %>

@@ -37,11 +37,17 @@ public class MarketplaceServiceUpgrade implements UpgradeStepRegistrator {
 	public void register(Registry registry) {
 		registry.register(
 			"com.liferay.marketplace.service", "0.0.1", "1.0.0",
-			new UpgradeCompanyId(),
 			new UpgradeExpando(
 				_expandoColumnLocalService, _expandoTableLocalService,
-				_expandoValueLocalService),
+				_expandoValueLocalService));
+
+		registry.register(
+			"com.liferay.marketplace.service", "1.0.0", "1.0.1",
 			new UpgradeModule());
+
+		registry.register(
+			"com.liferay.marketplace.service", "1.0.1", "1.0.2",
+			new UpgradeCompanyId());
 	}
 
 	@Reference(unbind = "-")
@@ -70,8 +76,8 @@ public class MarketplaceServiceUpgrade implements UpgradeStepRegistrator {
 		ModuleServiceLifecycle moduleServiceLifecycle) {
 	}
 
-	private volatile ExpandoColumnLocalService _expandoColumnLocalService;
-	private volatile ExpandoTableLocalService _expandoTableLocalService;
-	private volatile ExpandoValueLocalService _expandoValueLocalService;
+	private ExpandoColumnLocalService _expandoColumnLocalService;
+	private ExpandoTableLocalService _expandoTableLocalService;
+	private ExpandoValueLocalService _expandoValueLocalService;
 
 }

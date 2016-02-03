@@ -50,7 +50,7 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	immediate = true,
-	property = {"javax.portlet.name=" + PollsPortletKeys.POLLS_DISPLAY},
+	property = {"javax.portlet.name=" + PollsPortletKeys.POLLS},
 	service = ExportImportPortletPreferencesProcessor.class
 )
 public class PollsDisplayExportImportPortletPreferencesProcessor
@@ -180,7 +180,7 @@ public class PollsDisplayExportImportPortletPreferencesProcessor
 	private static final Log _log = LogFactoryUtil.getLog(
 		PollsDisplayExportImportPortletPreferencesProcessor.class);
 
-	private volatile ReferencedStagedModelImporterCapability
+	private ReferencedStagedModelImporterCapability
 		_referencedStagedModelImporterCapability;
 
 }

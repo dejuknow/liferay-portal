@@ -25,10 +25,10 @@ import com.liferay.portal.kernel.dao.orm.QueryDefinition;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.portlet.PortletRequestModel;
 import com.liferay.portal.kernel.search.Hits;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.theme.ThemeDisplay;
 
@@ -818,15 +818,50 @@ public class JournalArticleServiceImpl extends JournalArticleServiceBaseImpl {
 	 */
 	@Override
 	public List<JournalArticle> getArticlesByStructureId(
-		long groupId, String ddmStructureKey, int start, int end,
+		long groupId, String ddmStructureKey, int status, int start, int end,
 		OrderByComparator<JournalArticle> obc) {
 
 		QueryDefinition<JournalArticle> queryDefinition = new QueryDefinition<>(
-			WorkflowConstants.STATUS_ANY, start, end, obc);
+			status, start, end, obc);
 
 		return journalArticleFinder.filterFindByG_C_S(
 			groupId, JournalArticleConstants.CLASSNAME_ID_DEFAULT,
 			ddmStructureKey, queryDefinition);
+	}
+
+	/**
+	 * Returns an ordered range of all the web content articles matching the
+	 * group, default class name ID, and DDM structure key.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end -
+	 * start</code> instances. <code>start</code> and <code>end</code> are not
+	 * primary keys, they are indexes in the result set. Thus, <code>0</code>
+	 * refers to the first result in the set. Setting both <code>start</code>
+	 * and <code>end</code> to {@link
+	 * com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full
+	 * result set.
+	 * </p>
+	 *
+	 * @param  groupId the primary key of the web content article's group
+	 * @param  ddmStructureKey the primary key of the web content article's DDM
+	 *         structure
+	 * @param  start the lower bound of the range of web content articles to
+	 *         return
+	 * @param  end the upper bound of the range of web content articles to
+	 *         return (not inclusive)
+	 * @param  obc the comparator to order the web content articles
+	 * @return the range of matching web content articles ordered by the
+	 *         comparator
+	 */
+	@Override
+	public List<JournalArticle> getArticlesByStructureId(
+		long groupId, String ddmStructureKey, int start, int end,
+		OrderByComparator<JournalArticle> obc) {
+
+		return getArticlesByStructureId(
+			groupId, ddmStructureKey, WorkflowConstants.STATUS_ANY, start, end,
+			obc);
 	}
 
 	/**
@@ -919,8 +954,28 @@ public class JournalArticleServiceImpl extends JournalArticleServiceBaseImpl {
 		long groupId, String ddmStructureKey) {
 
 		return getArticlesCountByStructureId(
+			groupId, ddmStructureKey, WorkflowConstants.STATUS_ANY);
+	}
+
+	/**
+	 * Returns the number of web content articles matching the group, default
+	 * class name ID, and DDM structure key.
+	 *
+	 * @param  groupId the primary key of the web content article's group
+	 * @param  ddmStructureKey the primary key of the web content article's DDM
+	 *         structure
+	 * @param  status the web content article's workflow status. For more
+	 *         information see {@link WorkflowConstants} for constants starting
+	 *         with the "STATUS_" prefix.
+	 * @return the number of matching web content articles
+	 */
+	@Override
+	public int getArticlesCountByStructureId(
+		long groupId, String ddmStructureKey, int status) {
+
+		return getArticlesCountByStructureId(
 			groupId, JournalArticleConstants.CLASSNAME_ID_DEFAULT,
-			ddmStructureKey, WorkflowConstants.STATUS_ANY);
+			ddmStructureKey, status);
 	}
 
 	/**
@@ -2146,24 +2201,6 @@ public class JournalArticleServiceImpl extends JournalArticleServiceBaseImpl {
 		return journalArticleLocalService.updateArticle(
 			getUserId(), groupId, folderId, articleId, version, content,
 			serviceContext);
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link
-	 *             #updateArticleTranslation(long, String, double, Locale,
-	 *             String, String, String, Map, ServiceContext)}
-	 */
-	@Deprecated
-	@Override
-	public JournalArticle updateArticleTranslation(
-			long groupId, String articleId, double version, Locale locale,
-			String title, String description, String content,
-			Map<String, byte[]> images)
-		throws PortalException {
-
-		return updateArticleTranslation(
-			groupId, articleId, version, locale, title, description, content,
-			images, null);
 	}
 
 	/**

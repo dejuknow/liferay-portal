@@ -2,7 +2,7 @@
 	<command name="addCP">
 		<var name="key_userGroupName" value="${userGroupName}" />
 
-		<execute function="AssertClick" locator1="NavBar#ADD" value1="Add" />
+		<execute function="Click" locator1="Button#PLUS" />
 
 		<execute function="Type" locator1="TextInput#NAME" value1="${userGroupName}" />
 
@@ -18,21 +18,24 @@
 		<if>
 			<equals arg1="${userGroupNameVariation}" arg2="Asterik" />
 			<then>
-				<execute function="AssertTextEquals" locator1="Message#ERROR_1" value1="Your request failed to complete." />
-				<execute function="AssertTextEquals" locator1="Message#ERROR_2" value1="The User Group Name cannot be blank, numeric or a reserved word such as null. The User Group Name cannot contain the following invalid characters: , *." />
+				<execute macro="Alert#viewRequestFailedToComplete" />
+
+				<execute function="AssertTextEquals#assertPartialText" locator1="Message#ERROR_2" value1="The User Group Name cannot be blank, numeric or a reserved word such as null. The User Group Name cannot contain the following invalid characters: , *." />
 			</then>
 			<elseif>
 				<equals arg1="${userGroupNameVariation}" arg2="Comma" />
 				<then>
-					<execute function="AssertTextEquals" locator1="Message#ERROR_1" value1="Your request failed to complete." />
-					<execute function="AssertTextEquals" locator1="Message#ERROR_2" value1="The User Group Name cannot be blank, numeric or a reserved word such as null. The User Group Name cannot contain the following invalid characters: , *." />
+					<execute macro="Alert#viewRequestFailedToComplete" />
+
+					<execute function="AssertTextEquals#assertPartialText" locator1="Message#ERROR_2" value1="The User Group Name cannot be blank, numeric or a reserved word such as null. The User Group Name cannot contain the following invalid characters: , *." />
 				</then>
 			</elseif>
 			<elseif>
 				<equals arg1="${userGroupNameVariation}" arg2="Duplicate" />
 				<then>
-					<execute function="AssertTextEquals" locator1="Message#ERROR_1" value1="Your request failed to complete." />
-					<execute function="AssertTextEquals" locator1="Message#ERROR_2" value1="Please enter a unique name." />
+					<execute macro="Alert#viewRequestFailedToComplete" />
+
+					<execute function="AssertTextEquals#assertPartialText" locator1="Message#ERROR_2" value1="Please enter a unique name." />
 				</then>
 			</elseif>
 			<elseif>
@@ -44,12 +47,17 @@
 			<elseif>
 				<equals arg1="${userGroupNameVariation}" arg2="Number" />
 				<then>
-					<execute function="AssertTextEquals" locator1="Message#ERROR_1" value1="Your request failed to complete." />
-					<execute function="AssertTextEquals" locator1="Message#ERROR_2" value1="The User Group Name cannot be blank, numeric or a reserved word such as null. The User Group Name cannot contain the following invalid characters: , *." />
+					<execute macro="Alert#viewRequestFailedToComplete" />
+
+					<execute function="AssertTextEquals#assertPartialText" locator1="Message#ERROR_2" value1="The User Group Name cannot be blank, numeric or a reserved word such as null. The User Group Name cannot contain the following invalid characters: , *." />
 				</then>
 			</elseif>
 			<else>
-				<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+				<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+
+				<execute function="Refresh" />
+
+				<execute function="AssertTextEquals" locator1="UserGroups#USER_GROUP_TABLE_NAME" value1="${userGroupName}" />
 			</else>
 		</if>
 	</command>
@@ -57,24 +65,25 @@
 	<command name="addPageCP">
 		<var name="key_userGroupName" value="${userGroupName}" />
 
-		<execute function="Type" locator1="TextInput#KEYWORDS" value1="${userGroupName}" />
-		<execute function="AssertClick" locator1="Button#SEARCH" value1="Search" />
-		<execute function="Click" locator1="UserGroups#USER_GROUP_TABLE_ACTIONS" />
-		<execute function="AssertClick" locator1="MenuItem#MANAGE_SITE_PAGES" value1="Manage Site Pages" />
+		<execute function="Type" locator1="TextInput#SEARCH" value1="${userGroupName}" />
+
+		<execute function="Click" locator1="Button#SUBMIT" />
+
+		<execute function="Click" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
+
+		<execute function="AssertClick" locator1="MenuItem#MANAGE_PAGES" value1="Manage Pages" />
 
 		<execute function="Pause" locator1="5000" />
-
-		<execute function="SelectFrame" locator1="IFrame#MANAGE_SITE_PAGES" />
 
 		<if>
 			<equals arg1="${sitePagePrivacy}" arg2="Private" />
 			<then>
-				<execute function="AssertClick" locator1="SitePages#NAVIGATION_PRIVATE_PAGES" value1="Private Pages" />
+				<execute function="Click" locator1="SitePages#NAVIGATION_MY_DASHBOARD" />
 			</then>
 			<elseif>
 				<equals arg1="${sitePagePrivacy}" arg2="Public" />
 				<then>
-					<execute function="AssertClick" locator1="SitePages#NAVIGATION_PUBLIC_PAGES" value1="Public Pages" />
+					<execute function="Click" locator1="SitePages#NAVIGATION_MY_PROFILE" />
 				</then>
 			</elseif>
 			<else>
@@ -82,17 +91,17 @@
 			</else>
 		</if>
 
-		<execute function="AssertClick" locator1="SitePages#TOOLBAR_ADD_PAGE" value1="Add Page" />
+		<execute function="Click" locator1="Button#ADD_PAGE" />
 
 		<execute function="Type#mouseOverFocusType" locator1="TextInput#PAGE_NAME_FIELD" value1="${sitePageName}" />
 
-		<execute function="AssertClick" locator1="Button#ADD_PAGE" value1="Add Page" />
+		<execute function="AssertClick" locator1="Button#ADD_PAGE_BTN" value1="Add Page" />
 
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
 
-		<execute macro="UserGroup#expandRootCP" />
+		<var name="key_page" value="${sitePageName}" />
 
-		<execute function="AssertTextEquals" locator1="SitePages#PAGE_TREE_PAGE_LINK_1" value1="${sitePageName}" />
+		<execute function="AssertTextEquals" locator1="SitePages#PAGE_TREE_PAGE_LINK" value1="${sitePageName}" />
 	</command>
 
 	<command name="addSiteCP">
@@ -124,83 +133,123 @@
 
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
 
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
 	</command>
 
 	<command name="assignAllMembersCP">
 		<var name="key_userGroupName" value="${userGroupName}" />
 
-		<execute function="Type" locator1="TextInput#KEYWORDS" value1="${userGroupName}" />
-		<execute function="AssertClick" locator1="Button#SEARCH" value1="Search" />
+		<execute function="Type" locator1="TextInput#SEARCH" value1="${userGroupName}" />
+
+		<execute function="Click" locator1="Button#SUBMIT" />
+
 		<execute function="AssertTextEquals" locator1="UserGroups#USER_GROUP_TABLE_NAME" value1="${userGroupName}" />
-		<execute function="Click" locator1="UserGroups#USER_GROUP_TABLE_ACTIONS" />
+		<execute function="Click" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
+
 		<execute function="AssertClick" locator1="MenuItem#ASSIGN_MEMBERS" value1="Assign Members" />
 
-		<execute function="AssertClick" locator1="UserGroupsAssignUsers#AVAILABLE_TAB" value1="Available" />
-		<execute function="Check" locator1="Checkbox#SELECT_ALL" />
-		<execute function="AssertClick" locator1="Button#UPDATE_ASSOCIATIONS" value1="Update Associations" />
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute function="AssertClick" locator1="Button#ADD_USER" value1="Add Users" />
 
-		<execute function="AssertClick" locator1="UserGroupsAssignUsers#CURRENT_TAB" value1="Current" />
-		<execute function="AssertChecked" locator1="Checkbox#SELECT_ALL" />
+		<execute function="Check" locator1="Checkbox#SELECT_ALL" />
+
+		<execute function="AssertClick" locator1="Button#UPDATE_ASSOCIATIONS" value1="Update Associations" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+
+		<execute function="AssertClick" locator1="Button#ADD" value1="Add" />
+
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
 	</command>
 
 	<command name="assignMemberCP">
-		<var name="key_userGroupName" value="${userGroupName}" />
+		<execute function="Type" locator1="TextInput#SEARCH" value1="${userGroupName}" />
 
-		<execute function="Type" locator1="TextInput#KEYWORDS" value1="${userGroupName}" />
-		<execute function="AssertClick" locator1="Button#SEARCH" value1="Search" />
-		<execute function="AssertTextEquals" locator1="UserGroups#USER_GROUP_TABLE_NAME" value1="${userGroupName}" />
-		<execute function="Click" locator1="UserGroups#USER_GROUP_TABLE_ACTIONS" />
+		<execute function="Click" locator1="Button#SUBMIT" />
+
+		<var name="key_rowEntry" value="${userGroupName}" />
+
+		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+
 		<execute function="AssertClick" locator1="MenuItem#ASSIGN_MEMBERS" value1="Assign Members" />
+
+		<execute function="AssertVisible" locator1="NavBar#USERS" />
+
+		<execute function="Click" locator1="Button#PLUS" />
+
+		<execute function="AssertElementPresent#assertVisible" locator1="Button#ADD" />
+
+		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
+
+		<execute function="Type" locator1="TextInput#SEARCH" value1="${userScreenName}" />
+
+		<execute function="Click" locator1="Button#SUBMIT" />
 
 		<var name="key_userScreenName" value="${userScreenName}" />
 
-		<execute function="AssertClick" locator1="UserGroupsAssignUsers#AVAILABLE_TAB" value1="Available" />
-		<execute function="Type" locator1="TextInput#KEYWORDS" value1="${userScreenName}" />
-		<execute function="AssertClick" locator1="Button#SEARCH" value1="Search" />
-		<execute function="AssertTextEquals" locator1="UserGroupsAssignUsers#USER_TABLE_SCREEN_NAME" value1="${userScreenName}" />
 		<execute function="Check" locator1="UserGroupsAssignUsers#USER_TABLE_CHECKBOX" />
-		<execute function="AssertClick" locator1="Button#UPDATE_ASSOCIATIONS" value1="Update Associations" />
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
 
-		<execute function="AssertClick" locator1="UserGroupsAssignUsers#CURRENT_TAB" value1="Current" />
-		<execute function="AssertChecked" locator1="UserGroupsAssignUsers#USER_TABLE_CHECKBOX" />
+		<execute function="Pause" locator1="5000" />
+
+		<execute function="SelectFrameTop" />
+
+		<execute function="AssertClick#assertTextClickAtWaitForLastScript" locator1="Button#ADD" value1="Add" />
+
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+
+		<execute function="Refresh" />
+
 		<execute function="AssertTextEquals" locator1="UserGroupsAssignUsers#USER_TABLE_SCREEN_NAME" value1="${userScreenName}" />
 	</command>
 
 	<command name="deleteCP">
+		<execute function="Type" locator1="TextInput#SEARCH" value1="${userGroupName}" />
+
+		<execute function="Click" locator1="Button#SUBMIT" />
+
 		<var name="key_userGroupName" value="${userGroupName}" />
 
-		<execute function="Type" locator1="TextInput#KEYWORDS" value1="${userGroupName}" />
-		<execute function="AssertClick" locator1="Button#SEARCH" value1="Search" />
-
 		<execute function="AssertTextEquals" locator1="UserGroups#USER_GROUP_TABLE_NAME" value1="${userGroupName}" />
-		<execute function="Click" locator1="UserGroups#USER_GROUP_TABLE_ACTIONS" />
+
+		<var name="key_rowEntry" value="${userGroupName}" />
+
+		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+
 		<execute function="AssertClickNoError" locator1="MenuItem#DELETE" value1="Delete" />
+
 		<execute function="Confirm" value1="Are you sure you want to delete this? It will be deleted immediately." />
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+
+		<execute function="Refresh" />
+
 		<execute function="AssertElementNotPresent" locator1="UserGroups#USER_GROUP_TABLE_NAME" value1="${userGroupName}" />
 	</command>
 
 	<command name="deleteUserCP">
+		<execute function="Type" locator1="TextInput#SEARCH" value1="${userGroupName}" />
+
+		<execute function="Click" locator1="Button#SUBMIT" />
+
 		<var name="key_userGroupName" value="${userGroupName}" />
 
-		<execute function="Type" locator1="TextInput#KEYWORDS" value1="${userGroupName}" />
-		<execute function="AssertClick" locator1="Button#SEARCH" value1="Search" />
-
 		<execute function="AssertTextEquals" locator1="UserGroups#USER_GROUP_TABLE_NAME" value1="${userGroupName}" />
-		<execute function="Click" locator1="UserGroups#USER_GROUP_TABLE_ACTIONS" />
+
+		<var name="key_rowEntry" value="${userGroupName}" />
+
+		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+
 		<execute function="AssertClickNoError" locator1="MenuItem#DELETE" value1="Delete" />
+
 		<execute function="Confirm" value1="Are you sure you want to delete this? It will be deleted immediately." />
-		<execute function="AssertTextEquals" locator1="Message#ERROR_1" value1="Your request failed to complete." />
-		<execute function="AssertTextEquals" locator1="Message#ERROR_2" value1="You cannot delete user groups that have users." />
+
+		<execute macro="Alert#viewRequestFailedToComplete" />
+
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#ERROR_2" value1="You cannot delete user groups that have users." />
 	</command>
 
 	<command name="editCP">
 		<var name="key_userGroupName" value="${userGroupName}" />
 
-		<execute function="Click" locator1="UserGroups#USER_GROUP_TABLE_ACTIONS" />
+		<execute function="Click" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
 
 		<execute function="AssertClick" locator1="MenuItem#EDIT" value1="Edit" />
 
@@ -208,15 +257,15 @@
 
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
 
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
 	</command>
 
 	<command name="expandRootCP">
 		<execute function="Click" locator1="CPUsergroupsSitepages#PAGE_TREE_ROOT_ARROW" />
-		<execute function="AssertElementPresent#assertElementPresent" locator1="CPUsergroupsSitepages#PAGE_TREE_PAGE_LINK_1" />
+		<execute function="AssertElementPresent#assertElementPresent" locator1="CPUsergroupsSitepages#PAGE_TREE_PAGE_EDIT_COG" />
 
 		<if>
-			<condition function="IsElementNotPresent#isNotVisible" locator1="CPUsergroupsSitepages#PAGE_TREE_PAGE_LINK_1" />
+			<condition function="IsElementNotPresent#isNotVisible" locator1="CPUsergroupsSitepages#PAGE_TREE_PAGE_EDIT_COG" />
 			<then>
 				<execute function="Click" locator1="CPUsergroupsSitepages#PAGE_TREE_ROOT_ARROW" />
 			</then>
@@ -226,92 +275,96 @@
 	<command name="gotoActionsCmd">
 		<var name="key_userGroupName" value="${userGroupName}" />
 
-		<execute function="Type" locator1="TextInput#KEYWORDS" value1="${userGroupName}" />
+		<execute function="Type" locator1="TextInput#SEARCH" value1="${userGroupName}" />
 
-		<execute function="AssertClick" locator1="Button#SEARCH" value1="Search" />
+		<execute function="Click" locator1="Button#SUBMIT" />
 
 		<execute function="AssertTextEquals" locator1="UserGroups#USER_GROUP_TABLE_NAME" value1="${userGroupName}" />
 
-		<execute function="Click" locator1="UserGroups#USER_GROUP_TABLE_ACTIONS" />
+		<execute function="Click" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
 	</command>
 
-	<command name="gotoManageSitePages">
+	<command name="gotoManagePages">
 		<var name="key_userGroupName" value="${userGroupName}" />
 
-		<execute function="Click" locator1="UserGroups#USER_GROUP_TABLE_ACTIONS" />
-		<execute function="AssertClick" locator1="MenuItem#MANAGE_SITE_PAGES" value1="Manage Site Pages" />
+		<execute function="Click" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
+		<execute function="AssertClick" locator1="MenuItem#MANAGE_PAGES" value1="Manage Pages" />
 	</command>
 
 	<command name="removeMemberCP">
-		<execute function="Type" locator1="TextInput#KEYWORDS" value1="${userGroupName}" />
-		<execute function="AssertClick" locator1="Button#SEARCH" value1="Search" />
+		<execute function="Type" locator1="TextInput#SEARCH" value1="${userGroupName}" />
+
+		<execute function="Click" locator1="Button#SUBMIT" />
 
 		<var name="key_userGroupName" value="${userGroupName}" />
 
 		<execute function="AssertTextEquals" locator1="UserGroups#USER_GROUP_TABLE_NAME" value1="${userGroupName}" />
-		<execute function="Click" locator1="UserGroups#USER_GROUP_TABLE_ACTIONS" />
+		<execute function="Click" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
+
 		<execute function="AssertClick" locator1="MenuItem#ASSIGN_MEMBERS" value1="Assign Members" />
 
 		<var name="key_userScreenName" value="${userScreenName}" />
 
-		<execute function="AssertClick" locator1="UserGroupsAssignUsers#CURRENT_TAB" value1="Current" />
-		<execute function="Type" locator1="TextInput#KEYWORDS" value1="${userScreenName}" />
-		<execute function="AssertClick" locator1="Button#SEARCH" value1="Search" />
-		<execute function="AssertTextEquals" locator1="UserGroupsAssignUsers#USER_TABLE_SCREEN_NAME" value1="${userScreenName}" />
-		<execute function="Uncheck" locator1="UserGroupsAssignUsers#USER_TABLE_CHECKBOX" />
-		<execute function="AssertClick" locator1="Button#UPDATE_ASSOCIATIONS" value1="Update Associations" />
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
-		<execute function="AssertTextEquals" locator1="Message#INFO" value1="No users were found." />
+		<execute function="Check" locator1="UserGroupsAssignUsers#USER_TABLE_CHECKBOX" />
+
+		<execute function="Click" locator1="Toolbar#MANAGEMENT_BAR_TRASH_ICON_BUTTON" />
+
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute function="AssertTextEquals" locator1="Message#EMPTY_INFO" value1="No users were found." />
 	</command>
 
 	<command name="searchCP">
 		<var name="key_userGroupName" value="${userGroupName}" />
 
-		<execute function="Type" locator1="TextInput#KEYWORDS" value1="${userGroupName}" />
-		<execute function="AssertClick" locator1="Button#SEARCH" value1="Search" />
+		<execute function="Type" locator1="TextInput#SEARCH" value1="${userGroupName}" />
+		<execute function="Click" locator1="Button#SUBMIT" />
 		<execute function="AssertTextEquals" locator1="UserGroups#USER_GROUP_TABLE_NAME" value1="${userGroupName}" />
 
-		<execute function="Type" locator1="TextInput#KEYWORDS" value1="UG1 UserGroup1 Name1" />
-		<execute function="AssertClick" locator1="Button#SEARCH" value1="Search" />
+		<execute function="Type" locator1="TextInput#SEARCH" value1="UG1 UserGroup1 Name1" />
+		<execute function="Click" locator1="Button#SUBMIT" />
 		<execute function="AssertTextNotPresent" locator1="UserGroups#USER_GROUP_TABLE_NAME" value1="${userGroupName}" />
 	</command>
 
 	<command name="searchMembersInUserGroupCP">
-		<execute function="Type" locator1="TextInput#KEYWORDS" value1="${searchTerm}" />
+		<execute function="Type" locator1="TextInput#SEARCH" value1="${searchTerm}" />
 
-		<execute function="AssertClick" locator1="Button#SEARCH" value1="Search" />
+		<execute function="Click" locator1="Button#SUBMIT" />
 	</command>
 
 	<command name="tearDownCP">
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="User Groups" />
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="User Groups" />
 		</execute>
 
 		<if>
-			<condition function="IsVisible" locator1="Checkbox#SELECT_ALL" />
+			<condition function="IsElementNotPresent" locator1="Message#EMPTY_INFO" />
 			<then>
-				<execute function="Check" locator1="Checkbox#SELECT_ALL" />
-				<execute function="AssertClickNoError" locator1="Button#DELETE" value1="Delete" />
+				<execute function="Check#checkAll" locator1="Checkbox#SELECT_ALL" />
+				<execute function="Click" locator1="Icon#DELETE" />
 				<execute function="Confirm" value1="Are you sure you want to delete this? It will be deleted immediately." />
-				<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+				<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
 				<execute function="AssertTextEquals" locator1="Message#INFO" value1="No user groups were found." />
 			</then>
 		</if>
 	</command>
 
 	<command name="viewAssignMemberCP">
+		<execute function="Type" locator1="TextInput#SEARCH" value1="${userGroupName}" />
+
+		<execute function="Click" locator1="Button#SUBMIT" />
+
 		<var name="key_userGroupName" value="${userGroupName}" />
 
-		<execute function="Type" locator1="TextInput#KEYWORDS" value1="${userGroupName}" />
-		<execute function="AssertClick" locator1="Button#SEARCH" value1="Search" />
 		<execute function="AssertTextEquals" locator1="UserGroups#USER_GROUP_TABLE_NAME" value1="${userGroupName}" />
-		<execute function="Click" locator1="UserGroups#USER_GROUP_TABLE_ACTIONS" />
+
+		<var name="key_rowEntry" value="${userGroupName}" />
+
+		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+
 		<execute function="AssertClick" locator1="MenuItem#ASSIGN_MEMBERS" value1="Assign Members" />
 
 		<var name="key_userScreenName" value="${userScreenName}" />
 
-		<execute function="AssertClick" locator1="UserGroupsAssignUsers#CURRENT_TAB" value1="Current" />
-		<execute function="AssertChecked" locator1="UserGroupsAssignUsers#USER_TABLE_CHECKBOX" />
 		<execute function="AssertTextEquals" locator1="UserGroupsAssignUsers#USER_TABLE_SCREEN_NAME" value1="${userScreenName}" />
 	</command>
 
@@ -319,48 +372,52 @@
 		<if>
 			<equals arg1="${userGroupNameVariation}" arg2="Asterik" />
 			<then>
-				<execute function="AssertTextEquals" locator1="Message#INFO" value1="No user groups were found." />
+				<execute function="AssertTextEquals" locator1="Message#EMPTY_INFO" value1="No user groups were found." />
 			</then>
 			<elseif>
 				<equals arg1="${userGroupNameVariation}" arg2="Comma" />
 				<then>
-					<execute function="AssertTextEquals" locator1="Message#INFO" value1="No user groups were found." />
+					<execute function="AssertTextEquals" locator1="Message#EMPTY_INFO" value1="No user groups were found." />
 				</then>
 			</elseif>
 			<elseif>
 				<equals arg1="${userGroupNameVariation}" arg2="Null" />
 				<then>
-					<execute function="AssertTextEquals" locator1="Message#INFO" value1="No user groups were found." />
+					<execute function="AssertTextEquals" locator1="Message#EMPTY_INFO" value1="No user groups were found." />
 				</then>
 			</elseif>
 			<elseif>
 				<equals arg1="${userGroupNameVariation}" arg2="Number" />
 				<then>
-					<execute function="AssertTextEquals" locator1="Message#INFO" value1="No user groups were found." />
+					<execute function="AssertTextEquals" locator1="Message#EMPTY_INFO" value1="No user groups were found." />
 				</then>
 			</elseif>
 			<else>
+				<execute function="Type" locator1="TextInput#SEARCH" value1="${userGroupName}" />
+
+				<execute function="Click" locator1="Button#SUBMIT" />
+
 				<var name="key_userGroupName" value="${userGroupName}" />
 
-				<execute function="Type" locator1="TextInput#KEYWORDS" value1="${userGroupName}" />
-				<execute function="AssertClick" locator1="Button#SEARCH" value1="Search" />
 				<execute function="AssertTextEquals" locator1="UserGroups#USER_GROUP_TABLE_NAME" value1="${userGroupName}" />
-				<execute function="AssertElementPresent" locator1="UserGroups#USER_GROUP_TABLE_ACTIONS" />
+				<execute function="AssertElementPresent" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
 				<execute function="AssertElementPresent" locator1="Checkbox#SELECT_ALL" />
 				<execute function="AssertElementPresent" locator1="UserGroups#USER_GROUP_TABLE_CHECKBOX" />
-				<execute function="AssertElementPresent" locator1="NavBar#ADD" value1="Add" />
-				<execute function="AssertTextEquals" locator1="Button#DELETE" value1="Delete" />
-				<execute function="AssertElementPresent" locator1="TextInput#KEYWORDS" />
-				<execute function="AssertTextEquals" locator1="Button#SEARCH" value1="Search" />
-				<execute function="AssertElementPresent" locator1="NavBar#SEARCH_TOGGLE_ADVANCED" />
+				<execute function="AssertElementPresent" locator1="Button#PLUS" />
+				<execute function="AssertElementPresent" locator1="TextInput#SEARCH" />
+				<execute function="AssertElementPresent" locator1="Button#SUBMIT" />
 			</else>
 		</if>
+	</command>
+
+	<command name="viewDefault">
+		<execute function="AssertTextEquals" locator1="Message#EMPTY_INFO" value1="No user groups were found." />
 	</command>
 
 	<command name="viewPG">
 		<var name="key_userGroupName" value="${userGroupName}" />
 
-		<execute function="Click" locator1="UserGroups#USER_GROUP_TABLE_ACTIONS" />
+		<execute function="Click" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
 		<execute function="AssertClick" locator1="MenuItem#EDIT" value1="Edit" />
 		<execute function="AssertClick#assertPartialTextClickAt" locator1="UserGroupsEditUserGroup#PUBLIC_PAGES_OPEN_PAGES" value1="Open Pages" />
 		<execute function="SelectWindow" locator1="home - ${userGroupName} - Liferay" />
@@ -377,21 +434,24 @@
 	</command>
 
 	<command name="viewPortletCP">
-		<execute function="AssertTextEquals" locator1="NavBar#ADD" value1="Add" />
-		<execute function="AssertElementPresent" locator1="TextInput#KEYWORDS" />
-		<execute function="AssertElementPresent" locator1="Button#SEARCH" value1="Search" />
-		<execute function="AssertElementPresent" locator1="NavBar#SEARCH_TOGGLE_ADVANCED" />
+		<execute function="AssertElementPresent" locator1="Button#PLUS" />
+		<execute function="AssertElementPresent" locator1="TextInput#SEARCH" />
+		<execute function="AssertElementPresent" locator1="Button#SUBMIT" value1="Search" />
 		<execute function="AssertElementPresent" locator1="Icon#HEADER_VERTICAL_ELLIPSIS" />
-		<execute function="AssertElementPresent" locator1="Message#INFO" value1="No user groups were found." />
+		<execute function="AssertElementPresent" locator1="Message#EMPTY_INFO" value1="No user groups were found." />
 	</command>
 
 	<command name="viewRemoveMemberCP">
 		<var name="key_userGroupName" value="${userGroupName}" />
 
-		<execute function="Type" locator1="TextInput#KEYWORDS" value1="${userGroupName}" />
-		<execute function="AssertClick" locator1="Button#SEARCH" value1="Search" />
+		<execute function="Type" locator1="TextInput#SEARCH" value1="${userGroupName}" />
+
+		<execute function="Click" locator1="Button#SUBMIT" />
+
 		<execute function="AssertTextEquals" locator1="UserGroups#USER_GROUP_TABLE_NAME" value1="${userGroupName}" />
+
 		<execute function="AssertClick" locator1="UserGroups#USER_GROUP_TABLE_NAME_LINK" value1="${userGroupName}" />
+
 		<execute function="AssertTextNotPresent" value1="${userFirstName}" />
 	</command>
 </definition>

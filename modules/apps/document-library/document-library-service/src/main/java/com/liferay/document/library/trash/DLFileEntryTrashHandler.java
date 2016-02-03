@@ -24,19 +24,18 @@ import com.liferay.portal.kernel.repository.RepositoryProviderUtil;
 import com.liferay.portal.kernel.repository.capabilities.TrashCapability;
 import com.liferay.portal.kernel.repository.capabilities.UnsupportedCapabilityException;
 import com.liferay.portal.kernel.repository.model.FileEntry;
-import com.liferay.portal.kernel.repository.util.RepositoryTrashUtil;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.Filter;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.trash.TrashActionKeys;
 import com.liferay.portal.kernel.trash.TrashHandler;
 import com.liferay.portal.kernel.trash.TrashHandlerRegistryUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.ContainerModel;
 import com.liferay.portal.model.TrashedModel;
-import com.liferay.portal.security.permission.ActionKeys;
-import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portlet.documentlibrary.model.DLFileEntry;
 import com.liferay.portlet.documentlibrary.model.DLFileEntryConstants;
@@ -46,11 +45,12 @@ import com.liferay.portlet.documentlibrary.service.DLAppLocalService;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalService;
 import com.liferay.portlet.documentlibrary.service.DLFileVersionLocalService;
 import com.liferay.portlet.documentlibrary.service.DLFolderLocalService;
+import com.liferay.portlet.documentlibrary.service.DLTrashLocalService;
 import com.liferay.portlet.documentlibrary.service.permission.DLFileEntryPermission;
 import com.liferay.portlet.documentlibrary.service.permission.DLFolderPermission;
 import com.liferay.portlet.documentlibrary.util.DLUtil;
 import com.liferay.portlet.documentlibrary.util.DLValidatorUtil;
-import com.liferay.portlet.trash.RestoreEntryException;
+import com.liferay.portlet.trash.exception.RestoreEntryException;
 import com.liferay.portlet.trash.model.TrashEntry;
 import com.liferay.portlet.trash.model.TrashEntryConstants;
 
@@ -273,7 +273,7 @@ public class DLFileEntryTrashHandler extends DLBaseTrashHandler {
 
 		DocumentRepository documentRepository = getDocumentRepository(classPK);
 
-		RepositoryTrashUtil.moveFileEntryFromTrash(
+		_dlTrashLocalService.moveFileEntryFromTrash(
 			userId, documentRepository.getRepositoryId(), classPK,
 			containerModelId, serviceContext);
 	}
@@ -296,7 +296,7 @@ public class DLFileEntryTrashHandler extends DLBaseTrashHandler {
 			return;
 		}
 
-		RepositoryTrashUtil.restoreFileEntryFromTrash(
+		_dlTrashLocalService.restoreFileEntryFromTrash(
 			userId, dlFileEntry.getRepositoryId(), classPK);
 	}
 
@@ -477,12 +477,20 @@ public class DLFileEntryTrashHandler extends DLBaseTrashHandler {
 		_dlFolderLocalService = dlFolderLocalService;
 	}
 
+	@Reference(unbind = "-")
+	protected void setDLTrashLocalService(
+		DLTrashLocalService dlTrashLocalService) {
+
+		_dlTrashLocalService = dlTrashLocalService;
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		DLFileEntryTrashHandler.class);
 
-	private volatile DLAppLocalService _dlAppLocalService;
-	private volatile DLFileEntryLocalService _dlFileEntryLocalService;
-	private volatile DLFileVersionLocalService _dlFileVersionLocalService;
-	private volatile DLFolderLocalService _dlFolderLocalService;
+	private DLAppLocalService _dlAppLocalService;
+	private DLFileEntryLocalService _dlFileEntryLocalService;
+	private DLFileVersionLocalService _dlFileVersionLocalService;
+	private DLFolderLocalService _dlFolderLocalService;
+	private DLTrashLocalService _dlTrashLocalService;
 
 }

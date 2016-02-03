@@ -1,7 +1,7 @@
 Bundle-Name: Liferay Frontend Theme Unstyled
 Bundle-SymbolicName: com.liferay.frontend.theme.unstyled
-Bundle-Version: 1.0.2
-Include-Resource:\
-	classes,\
-	META-INF/resources=src/main/resources/META-INF/resources
+Bundle-Version: 1.0.4
+Liferay-Releng-Module-Group-Description:
+Liferay-Releng-Module-Group-Title: Themes
 -donotcopy: (npm-debug\.log)
+-include: ../../../../marketplace/platform/bnd.bnd

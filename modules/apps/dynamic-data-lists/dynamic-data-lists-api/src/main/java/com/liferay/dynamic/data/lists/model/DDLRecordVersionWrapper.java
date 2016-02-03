@@ -18,6 +18,11 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.ModelWrapper;
+import com.liferay.portal.service.ServiceContext;
+
+import com.liferay.portlet.expando.model.ExpandoBridge;
+
+import java.io.Serializable;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -177,15 +182,6 @@ public class DDLRecordVersionWrapper implements DDLRecordVersion,
 	}
 
 	/**
-	* @deprecated As of 6.1.0, replaced by {@link #isApproved()}
-	*/
-	@Deprecated
-	@Override
-	public boolean getApproved() {
-		return _ddlRecordVersion.getApproved();
-	}
-
-	/**
 	* Returns the company ID of this d d l record version.
 	*
 	* @return the company ID of this d d l record version
@@ -226,7 +222,7 @@ public class DDLRecordVersionWrapper implements DDLRecordVersion,
 	}
 
 	@Override
-	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
+	public ExpandoBridge getExpandoBridge() {
 		return _ddlRecordVersion.getExpandoBridge();
 	}
 
@@ -251,7 +247,7 @@ public class DDLRecordVersionWrapper implements DDLRecordVersion,
 	}
 
 	@Override
-	public java.io.Serializable getPrimaryKeyObj() {
+	public Serializable getPrimaryKeyObj() {
 		return _ddlRecordVersion.getPrimaryKeyObj();
 	}
 
@@ -544,14 +540,12 @@ public class DDLRecordVersionWrapper implements DDLRecordVersion,
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portlet.expando.model.ExpandoBridge expandoBridge) {
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
 		_ddlRecordVersion.setExpandoBridgeAttributes(expandoBridge);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.service.ServiceContext serviceContext) {
+	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
 		_ddlRecordVersion.setExpandoBridgeAttributes(serviceContext);
 	}
 
@@ -581,7 +575,7 @@ public class DDLRecordVersionWrapper implements DDLRecordVersion,
 	}
 
 	@Override
-	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
+	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
 		_ddlRecordVersion.setPrimaryKeyObj(primaryKeyObj);
 	}
 
@@ -748,14 +742,6 @@ public class DDLRecordVersionWrapper implements DDLRecordVersion,
 		}
 
 		return false;
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedModel}
-	 */
-	@Deprecated
-	public DDLRecordVersion getWrappedDDLRecordVersion() {
-		return _ddlRecordVersion;
 	}
 
 	@Override

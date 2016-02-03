@@ -82,6 +82,54 @@ public class DDMImplTest extends BaseDDMTestCase {
 	}
 
 	@Test
+	public void testMergeAfterNewFieldIsAddedAndPublishingContentAtBranch()
+		throws Exception {
+
+		DDMForm ddmForm = createDDMForm();
+
+		addDDMFormFields(
+			ddmForm,
+			createTextDDMFormField("Text1807", "", true, false, false));
+
+		DDMStructure ddmStructure = createStructure("Test Structure", ddmForm);
+
+		Field existingField = createField(
+			ddmStructure.getStructureId(), "Text1807", null, null);
+
+		Field existingFieldsDisplayField = createFieldsDisplayField(
+			ddmStructure.getStructureId(), "Text1807_INSTANCE_hgfs");
+
+		Fields existingFields = createFields(
+			existingField, existingFieldsDisplayField);
+
+		ddmStructure.setDDMForm(ddmForm);
+
+		Field newField = createField(
+			ddmStructure.getStructureId(), "Test2", null, null);
+
+		Field newFieldsDisplayField = createFieldsDisplayField(
+			ddmStructure.getStructureId(),
+			"Text1807_INSTANCE_hgfs,Text1853_INSTANCE_cgac");
+
+		Fields newFields = createFields(newField, newFieldsDisplayField);
+
+		Fields mergedFields = _ddmImpl.mergeFields(newFields, existingFields);
+
+		Field fieldsDisplayField = mergedFields.get(
+			DDMImpl.FIELDS_DISPLAY_NAME);
+
+		Assert.assertNotNull(fieldsDisplayField);
+
+		String fieldsDisplayValue = (String)fieldsDisplayField.getValue();
+
+		String[] fieldsDisplayValues = StringUtil.split(fieldsDisplayValue);
+
+		testValues(
+			fieldsDisplayValues, "Text1807_INSTANCE_hgfs",
+			"Text1853_INSTANCE_cgac");
+	}
+
+	@Test
 	public void testMergeFieldsAfterFieldValueIsRemovedFromTheMiddleOfSeries()
 		throws Exception {
 
@@ -100,7 +148,7 @@ public class DDMImplTest extends BaseDDMTestCase {
 		Field existingFieldsDisplayField = createFieldsDisplayField(
 			ddmStructure.getStructureId(),
 			"Content_INSTANCE_ovho,Content_INSTANCE_zuvh," +
-			"Content_INSTANCE_yiek");
+				"Content_INSTANCE_yiek");
 
 		Fields existingFields = createFields(
 			existingContentField, existingFieldsDisplayField);
@@ -199,7 +247,7 @@ public class DDMImplTest extends BaseDDMTestCase {
 		Field newFieldsDisplayField = createFieldsDisplayField(
 			ddmStructure.getStructureId(),
 			"Content_INSTANCE_ovho,Content_INSTANCE_zuvh," +
-			"Content_INSTANCE_yiek");
+				"Content_INSTANCE_yiek");
 
 		Fields newFields = createFields(newContentField, newFieldsDisplayField);
 
@@ -293,7 +341,7 @@ public class DDMImplTest extends BaseDDMTestCase {
 		Field existingFieldsDisplayField = createFieldsDisplayField(
 			ddmStructure.getStructureId(),
 			"Name_INSTANCE_rztm,Phone_INSTANCE_ovho,Phone_INSTANCE_krvx," +
-			"Name_INSTANCE_rght,Phone_INSTANCE_latb");
+				"Name_INSTANCE_rght,Phone_INSTANCE_latb");
 
 		Fields existingFields = createFields(
 			existingNameField, existingPhoneField, existingFieldsDisplayField);
@@ -313,8 +361,8 @@ public class DDMImplTest extends BaseDDMTestCase {
 		Field newFieldsDisplayField = createFieldsDisplayField(
 			ddmStructure.getStructureId(),
 			"Name_INSTANCE_rztm,Phone_INSTANCE_ovho,Name_INSTANCE_rght," +
-			"Phone_INSTANCE_latb,Phone_INSTANCE_uytw,Name_INSTANCE_jwop," +
-			"Phone_INSTANCE_yhgl");
+				"Phone_INSTANCE_latb,Phone_INSTANCE_uytw,Name_INSTANCE_jwop," +
+					"Phone_INSTANCE_yhgl");
 
 		Fields newFields = createFields(
 			newNameField, newPhoneField, newFieldsDisplayField);
@@ -369,7 +417,7 @@ public class DDMImplTest extends BaseDDMTestCase {
 		Field existingFieldsDisplayField = createFieldsDisplayField(
 			ddmStructure.getStructureId(),
 			"Separator_INSTANCE_rztm,Content_INSTANCE_ovho," +
-			"Separator_INSTANCE_krvx,Content_INSTANCE_yiek");
+				"Separator_INSTANCE_krvx,Content_INSTANCE_yiek");
 
 		Fields existingFields = createFields(
 			existingContentField, existingFieldsDisplayField);
@@ -381,8 +429,8 @@ public class DDMImplTest extends BaseDDMTestCase {
 		Field newFieldsDisplayField = createFieldsDisplayField(
 			ddmStructure.getStructureId(),
 			"Separator_INSTANCE_rztm,Content_INSTANCE_ovho," +
-			"Separator_INSTANCE_krvx,Content_INSTANCE_yiek," +
-			"Separator_INSTANCE_yhrw,Content_INSTANCE_jtvx");
+				"Separator_INSTANCE_krvx,Content_INSTANCE_yiek," +
+					"Separator_INSTANCE_yhrw,Content_INSTANCE_jtvx");
 
 		Fields newFields = createFields(newContentField, newFieldsDisplayField);
 
@@ -527,7 +575,7 @@ public class DDMImplTest extends BaseDDMTestCase {
 		Field existingFieldsDisplayField = createFieldsDisplayField(
 			ddmStructure.getStructureId(),
 			"Name_INSTANCE_rztm,NameNested_INSTANCE_ovho,Name_INSTANCE_krvx," +
-			"NameNested_INSTANCE_rght");
+				"NameNested_INSTANCE_rght");
 
 		Fields existingFields = createFields(
 			existingNameField, existingNameNestedField,
@@ -542,7 +590,7 @@ public class DDMImplTest extends BaseDDMTestCase {
 		Field newFieldsDisplayField = createFieldsDisplayField(
 			ddmStructure.getStructureId(),
 			"Name_INSTANCE_rztm,NameNested_INSTANCE_ovho,Name_INSTANCE_krvx," +
-			"NameNested_INSTANCE_rght");
+				"NameNested_INSTANCE_rght");
 
 		Fields newFields = createFields(
 			newNameField, newNameNestedField, newFieldsDisplayField);

@@ -144,7 +144,7 @@ public class ClusterGroupUtil {
 	* @throws NoSuchClusterGroupException if a cluster group with the primary key could not be found
 	*/
 	public static ClusterGroup remove(long clusterGroupId)
-		throws com.liferay.portal.NoSuchClusterGroupException {
+		throws com.liferay.portal.exception.NoSuchClusterGroupException {
 		return getPersistence().remove(clusterGroupId);
 	}
 
@@ -160,7 +160,7 @@ public class ClusterGroupUtil {
 	* @throws NoSuchClusterGroupException if a cluster group with the primary key could not be found
 	*/
 	public static ClusterGroup findByPrimaryKey(long clusterGroupId)
-		throws com.liferay.portal.NoSuchClusterGroupException {
+		throws com.liferay.portal.exception.NoSuchClusterGroupException {
 		return getPersistence().findByPrimaryKey(clusterGroupId);
 	}
 
@@ -265,13 +265,6 @@ public class ClusterGroupUtil {
 		}
 
 		return _persistence;
-	}
-
-	/**
-	 * @deprecated As of 6.2.0
-	 */
-	@Deprecated
-	public void setPersistence(ClusterGroupPersistence persistence) {
 	}
 
 	private static ClusterGroupPersistence _persistence;

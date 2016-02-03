@@ -19,8 +19,6 @@
 <%
 String redirect = ParamUtil.getString(request, "redirect");
 String closeRedirect = ParamUtil.getString(request, "closeRedirect");
-boolean showBackURL = ParamUtil.getBoolean(request, "showBackURL", true);
-boolean showHeader = ParamUtil.getBoolean(request, "showHeader", true);
 
 String portletResource = ParamUtil.getString(request, "portletResource");
 
@@ -46,7 +44,7 @@ if ((structure == null) && (template != null)) {
 
 String type = BeanParamUtil.getString(template, request, "type", DDMTemplateConstants.TEMPLATE_TYPE_FORM);
 String mode = BeanParamUtil.getString(template, request, "mode", DDMTemplateConstants.TEMPLATE_MODE_CREATE);
-String language = BeanParamUtil.getString(template, request, "language", ddmServiceConfiguration.defaultTemplateLanguage());
+String language = BeanParamUtil.getString(template, request, "language", ddmDisplay.getDefaultTemplateLanguage());
 String script = BeanParamUtil.getString(template, request, "script");
 
 if (Validator.isNull(script) && type.equals(DDMTemplateConstants.TEMPLATE_TYPE_DISPLAY)) {
@@ -76,7 +74,9 @@ if (Validator.isNotNull(structureAvailableFields)) {
 	scopeAvailableFields = structureAvailableFields;
 }
 
+boolean showBackURL = ParamUtil.getBoolean(request, "showBackURL", true);
 boolean showCacheableInput = ParamUtil.getBoolean(request, "showCacheableInput");
+boolean showHeader = ParamUtil.getBoolean(request, "showHeader", true);
 %>
 
 <portlet:actionURL name="addTemplate" var="addTemplateURL">
@@ -109,7 +109,7 @@ boolean showCacheableInput = ParamUtil.getBoolean(request, "showCacheableInput")
 		<liferay-ui:error exception="<%= TemplateSmallImageNameException.class %>">
 
 			<%
-			String[] imageExtensions = PrefsPropsUtil.getStringArray(DDMServiceConfigurationKeys.DYNAMIC_DATA_MAPPING_IMAGE_EXTENSIONS, ",");
+			String[] imageExtensions = ddmServiceConfiguration.smallImageExtensions();
 			%>
 
 			<liferay-ui:message key="image-names-must-end-with-one-of-the-following-extensions" /> <%= StringUtil.merge(imageExtensions, StringPool.COMMA) %>.
@@ -118,7 +118,7 @@ boolean showCacheableInput = ParamUtil.getBoolean(request, "showCacheableInput")
 		<liferay-ui:error exception="<%= TemplateSmallImageSizeException.class %>">
 
 			<%
-			long imageMaxSize = PrefsPropsUtil.getLong(DDMServiceConfigurationKeys.DYNAMIC_DATA_MAPPING_IMAGE_SMALL_MAX_SIZE);
+			long imageMaxSize = ddmServiceConfiguration.smallImageMaxSize();
 			%>
 
 			<liferay-ui:message arguments="<%= TextFormatter.formatStorageSize(imageMaxSize, locale) %>" key="please-enter-a-small-image-with-a-valid-file-size-no-larger-than-x" translateArguments="<%= false %>" />
@@ -243,7 +243,7 @@ boolean showCacheableInput = ParamUtil.getBoolean(request, "showCacheableInput")
 						</aui:select>
 					</c:if>
 
-				<c:if test="<%= !ddmServiceConfiguration.autogenerateTemplateKey() %>">
+				<c:if test="<%= !ddmWebConfiguration.autogenerateTemplateKey() %>">
 					<aui:input disabled="<%= (template != null) ? true : false %>" name="templateKey" />
 				</c:if>
 
@@ -436,14 +436,14 @@ boolean showCacheableInput = ParamUtil.getBoolean(request, "showCacheableInput")
 		String taglibOnClick = "Liferay.fire('" + liferayPortletResponse.getNamespace() + "saveTemplate');";
 		%>
 
-		<aui:button onClick="<%= taglibOnClick %>" primary="<%= true %>" value='<%= LanguageUtil.get(request, "save") %>' />
+		<aui:button cssClass="btn-lg" onClick="<%= taglibOnClick %>" primary="<%= true %>" value='<%= LanguageUtil.get(request, "save") %>' />
 
-		<aui:button onClick='<%= renderResponse.getNamespace() + "saveAndContinueTemplate();" %>' value='<%= LanguageUtil.get(request, "save-and-continue") %>' />
+		<aui:button cssClass="btn-lg" onClick='<%= renderResponse.getNamespace() + "saveAndContinueTemplate();" %>' value='<%= LanguageUtil.get(resourceBundle, "save-and-continue") %>' />
 
 	<c:if test="<%= ddmDisplay.isVersioningEnabled() %>">
-		<aui:button onClick='<%= renderResponse.getNamespace() + "saveDraftTemplate();" %>' value='<%= LanguageUtil.get(request, "save-draft") %>' />
+		<aui:button cssClass="btn-lg" onClick='<%= renderResponse.getNamespace() + "saveDraftTemplate();" %>' value='<%= LanguageUtil.get(request, "save-draft") %>' />
 	</c:if>
 
-		<aui:button href="<%= redirect %>" type="cancel" />
+		<aui:button cssClass="btn-lg" href="<%= redirect %>" type="cancel" />
 	</aui:button-row>
 </div>

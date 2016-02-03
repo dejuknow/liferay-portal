@@ -34,7 +34,7 @@ String siteRoleSyncEntitiesEventName = liferayPortletResponse.getNamespace() + "
 String organizationRoleSyncEntitiesEventName = liferayPortletResponse.getNamespace() + "syncOrganizationRoles";
 %>
 
-<liferay-ui:error-marker key="errorSection" value="roles" />
+<liferay-ui:error-marker key="<%= WebKeys.ERROR_SECTION %>" value="roles" />
 
 <liferay-ui:membership-policy-error />
 
@@ -88,7 +88,7 @@ String organizationRoleSyncEntitiesEventName = liferayPortletResponse.getNamespa
 		</c:if>
 	</liferay-ui:search-container-row>
 
-	<liferay-ui:search-iterator />
+	<liferay-ui:search-iterator markupView="lexicon" />
 </liferay-ui:search-container>
 
 <c:if test="<%= !portletName.equals(myAccountPortletId) %>">
@@ -111,8 +111,7 @@ String organizationRoleSyncEntitiesEventName = liferayPortletResponse.getNamespa
 					{
 						dialog: {
 							constrain: true,
-							modal: true,
-							width: 600
+							modal: true
 						},
 
 						<%
@@ -187,7 +186,7 @@ String organizationRoleSyncEntitiesEventName = liferayPortletResponse.getNamespa
 		/>
 	</liferay-ui:search-container-row>
 
-	<liferay-ui:search-iterator />
+	<liferay-ui:search-iterator markupView="lexicon" />
 </liferay-ui:search-container>
 
 <h3><liferay-ui:message key="organization-roles" /></h3>
@@ -250,7 +249,7 @@ String organizationRoleSyncEntitiesEventName = liferayPortletResponse.getNamespa
 			</c:if>
 		</liferay-ui:search-container-row>
 
-		<liferay-ui:search-iterator />
+		<liferay-ui:search-iterator markupView="lexicon" />
 	</liferay-ui:search-container>
 
 	<c:if test="<%= !portletName.equals(myAccountPortletId) %>">
@@ -327,6 +326,7 @@ String organizationRoleSyncEntitiesEventName = liferayPortletResponse.getNamespa
 				Liferay.Util.selectEntity(
 					{
 						dialog: {
+							constrain: true,
 							modal: true
 						},
 
@@ -420,7 +420,7 @@ String organizationRoleSyncEntitiesEventName = liferayPortletResponse.getNamespa
 				</c:if>
 			</liferay-ui:search-container-row>
 
-			<liferay-ui:search-iterator />
+			<liferay-ui:search-iterator markupView="lexicon" />
 		</liferay-ui:search-container>
 
 		<c:if test="<%= !portletName.equals(myAccountPortletId) %>">
@@ -493,8 +493,7 @@ String organizationRoleSyncEntitiesEventName = liferayPortletResponse.getNamespa
 							{
 								dialog: {
 									constrain: true,
-									modal: true,
-									width: 600
+									modal: true
 								},
 
 								<%
@@ -572,7 +571,7 @@ String organizationRoleSyncEntitiesEventName = liferayPortletResponse.getNamespa
 			/>
 		</liferay-ui:search-container-row>
 
-		<liferay-ui:search-iterator />
+		<liferay-ui:search-iterator markupView="lexicon" />
 	</liferay-ui:search-container>
 </c:if>
 

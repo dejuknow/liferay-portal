@@ -48,7 +48,7 @@ else {
 	/>
 
 	<liferay-ui:search-container-row
-		className="com.liferay.portlet.announcements.model.AnnouncementsDelivery"
+		className="com.liferay.announcements.kernel.model.AnnouncementsDelivery"
 		escapedModel="<%= true %>"
 		keyProperty="deliveryId"
 		modelVar="delivery"
@@ -71,5 +71,5 @@ else {
 		/>
 	</liferay-ui:search-container-row>
 
-	<liferay-ui:search-iterator />
+	<liferay-ui:search-iterator markupView="lexicon" />
 </liferay-ui:search-container>

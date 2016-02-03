@@ -26,12 +26,12 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.User;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.portlet.messageboards.MailingListEmailAddressException;
-import com.liferay.portlet.messageboards.MailingListInServerNameException;
-import com.liferay.portlet.messageboards.MailingListInUserNameException;
-import com.liferay.portlet.messageboards.MailingListOutEmailAddressException;
-import com.liferay.portlet.messageboards.MailingListOutServerNameException;
-import com.liferay.portlet.messageboards.MailingListOutUserNameException;
+import com.liferay.portlet.messageboards.exception.MailingListEmailAddressException;
+import com.liferay.portlet.messageboards.exception.MailingListInServerNameException;
+import com.liferay.portlet.messageboards.exception.MailingListInUserNameException;
+import com.liferay.portlet.messageboards.exception.MailingListOutEmailAddressException;
+import com.liferay.portlet.messageboards.exception.MailingListOutServerNameException;
+import com.liferay.portlet.messageboards.exception.MailingListOutUserNameException;
 import com.liferay.portlet.messageboards.messaging.MailingListRequest;
 import com.liferay.portlet.messageboards.model.MBMailingList;
 import com.liferay.portlet.messageboards.service.base.MBMailingListLocalServiceBaseImpl;
@@ -249,23 +249,27 @@ public class MBMailingListLocalServiceImpl
 		}
 
 		if (!Validator.isEmailAddress(emailAddress)) {
-			throw new MailingListEmailAddressException();
+			throw new MailingListEmailAddressException(emailAddress);
 		}
 		else if (Validator.isNull(inServerName)) {
-			throw new MailingListInServerNameException();
+			throw new MailingListInServerNameException(
+				"In server name is null");
 		}
 		else if (Validator.isNull(inUserName)) {
-			throw new MailingListInUserNameException();
+			throw new MailingListInUserNameException("In user name is null");
 		}
 		else if (Validator.isNull(outEmailAddress)) {
-			throw new MailingListOutEmailAddressException();
+			throw new MailingListOutEmailAddressException(
+				"Out email address is null");
 		}
 		else if (outCustom) {
 			if (Validator.isNull(outServerName)) {
-				throw new MailingListOutServerNameException();
+				throw new MailingListOutServerNameException(
+					"Out server name is null");
 			}
 			else if (Validator.isNull(outUserName)) {
-				throw new MailingListOutUserNameException();
+				throw new MailingListOutUserNameException(
+					"Out user name is null");
 			}
 		}
 	}

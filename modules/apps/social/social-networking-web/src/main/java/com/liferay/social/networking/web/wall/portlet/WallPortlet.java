@@ -15,11 +15,11 @@
 package com.liferay.social.networking.web.wall.portlet;
 
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.User;
-import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.service.GroupLocalService;
 import com.liferay.portal.service.UserLocalService;
 import com.liferay.portal.service.permission.UserPermissionUtil;
@@ -172,9 +172,9 @@ public class WallPortlet extends MVCPortlet {
 		_wallEntryLocalService = wallEntryLocalService;
 	}
 
-	private volatile GroupLocalService _groupLocalService;
-	private volatile SocialRelationLocalService _socialRelationLocalService;
-	private volatile UserLocalService _userLocalService;
-	private volatile WallEntryLocalService _wallEntryLocalService;
+	private GroupLocalService _groupLocalService;
+	private SocialRelationLocalService _socialRelationLocalService;
+	private UserLocalService _userLocalService;
+	private WallEntryLocalService _wallEntryLocalService;
 
 }

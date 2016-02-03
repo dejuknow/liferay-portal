@@ -16,6 +16,8 @@
 
 <%@ include file="/init.jsp" %>
 
+<liferay-util:dynamic-include key="com.liferay.calendar.web#/view_calendar_booking.jsp#pre" />
+
 <%
 String backURL = ParamUtil.getString(request, "backURL");
 
@@ -231,16 +233,14 @@ AssetEntry layoutAssetEntry = AssetEntryLocalServiceUtil.getEntry(CalendarBookin
 		<%
 		Frequency frequency = recurrence.getFrequency();
 
-		PositionalWeekday positionalWeekday = null;
+		PositionalWeekday positionalWeekday = recurrence.getPositionalWeekday();
 
 		JSONSerializer jsonSerializer = JSONFactoryUtil.createJSONSerializer();
 
-		List<Weekday> weekdays = new ArrayList<Weekday>();
+		List<String> weekdayValues = new ArrayList<>();
 
-		for (PositionalWeekday curPositionalWeekday : recurrence.getPositionalWeekdays()) {
-			positionalWeekday = curPositionalWeekday;
-
-			weekdays.add(curPositionalWeekday.getWeekday());
+		for (Weekday weekday : recurrence.getWeekdays()) {
+			weekdayValues.add(weekday.getValue());
 		}
 		%>
 
@@ -261,7 +261,7 @@ AssetEntry layoutAssetEntry = AssetEntryLocalServiceUtil.getEntry(CalendarBookin
 			interval: <%= recurrence.getInterval() %>,
 			positionalWeekday: positionalWeekday,
 			untilDate: untilDate,
-			weekdays: <%= jsonSerializer.serialize(weekdays) %>
+			weekdays: <%= jsonSerializer.serialize(weekdayValues) %>
 		};
 
 		var recurrenceSummary = Liferay.RecurrenceUtil.getSummary(recurrence);
@@ -269,3 +269,5 @@ AssetEntry layoutAssetEntry = AssetEntryLocalServiceUtil.getEntry(CalendarBookin
 		summaryNode.html(recurrenceSummary);
 	</aui:script>
 </c:if>
+
+<liferay-util:dynamic-include key="com.liferay.calendar.web#/view_calendar_booking.jsp#post" />

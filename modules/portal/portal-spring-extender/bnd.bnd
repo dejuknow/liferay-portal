@@ -15,6 +15,7 @@ Import-Package:\
 	com.liferay.portal.kernel.configuration,\
 	com.liferay.portal.kernel.exception,\
 	com.liferay.portal.kernel.io.unsync,\
+	com.liferay.portal.kernel.messaging.config,\
 	com.liferay.portal.kernel.log,\
 	com.liferay.portal.kernel.spring.util,\
 	com.liferay.portal.kernel.util,\
@@ -67,10 +68,12 @@ Import-Package:\
 	\
 	*
 Include-Resource:\
-	classes,\
 	@lib/org.apache.felix.utils.jar!/org/apache/felix/utils/extender/*,\
 	@lib/org.apache.felix.utils.jar!/org/apache/felix/utils/log/*
+Liferay-Releng-Module-Group-Description:
+Liferay-Releng-Module-Group-Title: Runtime
 Provide-Capability:\
 	liferay.extender;\
 	liferay.extender="spring.extender";\
 	version:Version="${plugin.full.version}"
+-include: ../../../marketplace/platform/bnd.bnd

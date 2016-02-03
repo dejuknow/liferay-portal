@@ -24,6 +24,7 @@ import com.liferay.dynamic.data.mapping.util.impl.DDMImpl;
 import com.liferay.journal.util.JournalConverter;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
@@ -478,6 +479,8 @@ public class JournalConverterImpl implements JournalConverter {
 				"name", dynamicContentElement.attributeValue("name"));
 			jsonObject.put(
 				"title", dynamicContentElement.attributeValue("title"));
+			jsonObject.put(
+				"type", dynamicContentElement.attributeValue("type"));
 
 			serializable = jsonObject.toString();
 		}
@@ -822,6 +825,8 @@ public class JournalConverterImpl implements JournalConverter {
 				"name", jsonObject.getString("name"));
 			dynamicContentElement.addAttribute(
 				"title", jsonObject.getString("title"));
+			dynamicContentElement.addAttribute(
+				"type", jsonObject.getString("type"));
 			dynamicContentElement.addCDATA(fieldValue);
 		}
 		else if (DDMImpl.TYPE_DDM_LINK_TO_PAGE.equals(fieldType) &&
@@ -868,7 +873,14 @@ public class JournalConverterImpl implements JournalConverter {
 		else if (DDMImpl.TYPE_SELECT.equals(fieldType) &&
 				 Validator.isNotNull(fieldValue)) {
 
-			JSONArray jsonArray = JSONFactoryUtil.createJSONArray(fieldValue);
+			JSONArray jsonArray = null;
+
+			try {
+				jsonArray = JSONFactoryUtil.createJSONArray(fieldValue);
+			}
+			catch (JSONException jsone) {
+				return;
+			}
 
 			if (multiple) {
 				for (int i = 0; i < jsonArray.length(); i++) {
@@ -1052,8 +1064,8 @@ public class JournalConverterImpl implements JournalConverter {
 	private final Map<String, String> _ddmDataTypes;
 	private final Map<String, String> _ddmMetadataAttributes;
 	private final Map<String, String> _ddmTypesToJournalTypes;
-	private volatile DLAppLocalService _dlAppLocalService;
-	private volatile GroupLocalService _groupLocalService;
+	private DLAppLocalService _dlAppLocalService;
+	private GroupLocalService _groupLocalService;
 	private final Map<String, String> _journalTypesToDDMTypes;
 	private final Pattern _oldDocumentLibraryURLPattern = Pattern.compile(
 		"uuid=([^&]+)&groupId=([^&]+)");

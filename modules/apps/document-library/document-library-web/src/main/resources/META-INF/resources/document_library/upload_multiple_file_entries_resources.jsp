@@ -107,7 +107,7 @@ else {
 
 	<aui:model-context bean="<%= fileVersion %>" model="<%= DLFileVersion.class %>" />
 
-	<liferay-ui:panel-container extended="<%= false %>" id="documentLibraryAssetPanelContainer" persistState="<%= true %>">
+	<liferay-ui:panel-container extended="<%= false %>" id="documentLibraryAssetPanelContainer" markupView="lexicon" persistState="<%= true %>">
 		<div class="selected-files-count">
 			<liferay-ui:message key="no-files-selected" />
 		</div>
@@ -116,7 +116,7 @@ else {
 			<aui:input name="description" />
 
 			<c:if test="<%= !fileEntryTypes.isEmpty() %>">
-				<liferay-ui:panel collapsible="<%= true %>" cssClass="document-type" persistState="<%= true %>" title="document-type">
+				<liferay-ui:panel collapsible="<%= true %>" cssClass="document-type" markupView="lexicon" persistState="<%= true %>" title="document-type">
 					<aui:input name="fileEntryTypeId" type="hidden" value="<%= (fileEntryTypeId > 0) ? fileEntryTypeId : 0 %>" />
 					<aui:input name="defaultLanguageId" type="hidden" value="<%= themeDisplay.getLanguageId() %>" />
 
@@ -128,8 +128,7 @@ else {
 							for (DLFileEntryType curFileEntryType : fileEntryTypes) {
 							%>
 
-								<liferay-portlet:resourceURL copyCurrentRenderParameters="<%= false %>" var="viewFileEntryTypeURL">
-									<portlet:param name="mvcRenderCommandName" value="/document_library/upload_multiple_file_entries" />
+								<liferay-portlet:resourceURL copyCurrentRenderParameters="<%= false %>" id="/document_library/upload_multiple_file_entries" var="viewFileEntryTypeURL">
 									<portlet:param name="repositoryId" value="<%= String.valueOf(repositoryId) %>" />
 									<portlet:param name="folderId" value="<%= String.valueOf(folderId) %>" />
 									<portlet:param name="fileEntryTypeId" value="<%= String.valueOf(curFileEntryType.getFileEntryTypeId()) %>" />
@@ -137,7 +136,6 @@ else {
 
 								<liferay-ui:icon
 									cssClass="upload-multiple-document-types"
-									iconCssClass="icon-file-alt"
 									id='<%= "fileEntryType_" + String.valueOf(curFileEntryType.getFileEntryTypeId()) %>'
 									message="<%= HtmlUtil.escape(curFileEntryType.getName(locale)) %>"
 									method="get"
@@ -233,7 +231,7 @@ else {
 		</c:if>
 
 		<c:if test="<%= (folder == null) || folder.isSupportsSocial() %>">
-			<liferay-ui:panel cssClass="categorization-panel" defaultState="closed" extended="<%= false %>" id="dlFileEntryCategorizationPanel" persistState="<%= true %>" title="categorization">
+			<liferay-ui:panel cssClass="categorization-panel" defaultState="closed" extended="<%= false %>" id="dlFileEntryCategorizationPanel" markupView="lexicon" persistState="<%= true %>" title="categorization">
 				<aui:fieldset>
 					<aui:input classPK="<%= assetClassPK %>" classTypePK="<%= fileEntryTypeId %>" model="<%= DLFileEntry.class %>" name="categories" type="assetCategories" />
 
@@ -253,11 +251,3 @@ else {
 
 	<aui:button type="submit" value="<%= dlEditFileEntryDisplayContext.getPublishButtonLabel() %>" />
 </aui:form>
-
-<aui:script>
-	<c:if test="<%= (folder == null) || folder.isSupportsSocial() %>">
-		function <portlet:namespace />getSuggestionsContent() {
-			return document.<portlet:namespace />fm2.<portlet:namespace />description.value;
-		}
-	</c:if>
-</aui:script>

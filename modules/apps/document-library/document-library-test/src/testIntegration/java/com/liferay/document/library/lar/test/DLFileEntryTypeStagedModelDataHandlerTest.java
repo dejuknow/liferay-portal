@@ -15,6 +15,7 @@
 package com.liferay.document.library.lar.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.dynamic.data.mapping.kernel.DDMStructureManagerUtil;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.test.util.DDMStructureTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
@@ -31,7 +32,6 @@ import com.liferay.portlet.documentlibrary.model.DLFileEntryMetadata;
 import com.liferay.portlet.documentlibrary.model.DLFileEntryType;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryTypeLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.util.DLUtil;
-import com.liferay.portlet.dynamicdatamapping.DDMStructureManagerUtil;
 
 import java.util.HashMap;
 import java.util.List;
@@ -138,6 +138,24 @@ public class DLFileEntryTypeStagedModelDataHandlerTest
 
 		DDMStructureManagerUtil.getStructureByUuidAndGroupId(
 			ddmStructure.getUuid(), group.getGroupId());
+	}
+
+	@Override
+	protected void validateImportedStagedModel(
+			StagedModel stagedModel, StagedModel importedStagedModel)
+		throws Exception {
+
+		super.validateImportedStagedModel(stagedModel, importedStagedModel);
+
+		DLFileEntryType dlFileEntryType = (DLFileEntryType)stagedModel;
+		DLFileEntryType importedDlFileEntryType =
+			(DLFileEntryType)importedStagedModel;
+
+		Assert.assertEquals(
+			dlFileEntryType.getName(), importedDlFileEntryType.getName());
+		Assert.assertEquals(
+			dlFileEntryType.getDescription(),
+			importedDlFileEntryType.getDescription());
 	}
 
 }

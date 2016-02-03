@@ -25,16 +25,18 @@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %><%@
 taglib uri="http://liferay.com/tld/util" prefix="liferay-util" %>
 
-<%@ page import="com.liferay.portal.DuplicateGroupException" %><%@
-page import="com.liferay.portal.GroupKeyException" %><%@
-page import="com.liferay.portal.MembershipRequestCommentsException" %><%@
-page import="com.liferay.portal.RequiredGroupException" %><%@
+<%@ page import="com.liferay.portal.exception.DuplicateGroupException" %><%@
+page import="com.liferay.portal.exception.GroupKeyException" %><%@
+page import="com.liferay.portal.exception.MembershipRequestCommentsException" %><%@
+page import="com.liferay.portal.exception.RequiredGroupException" %><%@
 page import="com.liferay.portal.kernel.dao.orm.QueryUtil" %><%@
 page import="com.liferay.portal.kernel.dao.search.EmptyOnClickRowChecker" %><%@
 page import="com.liferay.portal.kernel.dao.search.ResultRow" %><%@
 page import="com.liferay.portal.kernel.dao.search.RowChecker" %><%@
 page import="com.liferay.portal.kernel.language.LanguageUtil" %><%@
 page import="com.liferay.portal.kernel.portlet.LiferayWindowState" %><%@
+page import="com.liferay.portal.kernel.security.membershippolicy.SiteMembershipPolicyUtil" %><%@
+page import="com.liferay.portal.kernel.security.permission.ActionKeys" %><%@
 page import="com.liferay.portal.kernel.util.GetterUtil" %><%@
 page import="com.liferay.portal.kernel.util.HtmlUtil" %><%@
 page import="com.liferay.portal.kernel.util.ListUtil" %><%@
@@ -58,8 +60,6 @@ page import="com.liferay.portal.model.User" %><%@
 page import="com.liferay.portal.model.UserGroup" %><%@
 page import="com.liferay.portal.model.UserGroupGroupRole" %><%@
 page import="com.liferay.portal.model.UserGroupRole" %><%@
-page import="com.liferay.portal.security.membershippolicy.SiteMembershipPolicyUtil" %><%@
-page import="com.liferay.portal.security.permission.ActionKeys" %><%@
 page import="com.liferay.portal.service.CompanyLocalServiceUtil" %><%@
 page import="com.liferay.portal.service.GroupLocalServiceUtil" %><%@
 page import="com.liferay.portal.service.MembershipRequestLocalServiceUtil" %><%@
@@ -75,10 +75,8 @@ page import="com.liferay.portal.util.PortalUtil" %><%@
 page import="com.liferay.portlet.PortletURLUtil" %><%@
 page import="com.liferay.portlet.rolesadmin.search.RoleSearch" %><%@
 page import="com.liferay.portlet.rolesadmin.search.RoleSearchTerms" %><%@
-page import="com.liferay.portlet.rolesadmin.util.RolesAdminUtil" %><%@
 page import="com.liferay.portlet.sites.search.UserGroupGroupRoleRoleChecker" %><%@
 page import="com.liferay.portlet.sites.search.UserGroupRoleRoleChecker" %><%@
-page import="com.liferay.portlet.sites.util.SitesUtil" %><%@
 page import="com.liferay.portlet.sitesadmin.search.OrganizationSiteMembershipChecker" %><%@
 page import="com.liferay.portlet.sitesadmin.search.UserGroupSiteMembershipChecker" %><%@
 page import="com.liferay.portlet.sitesadmin.search.UserSiteMembershipChecker" %><%@
@@ -88,9 +86,10 @@ page import="com.liferay.portlet.usersadmin.search.OrganizationSearch" %><%@
 page import="com.liferay.portlet.usersadmin.search.OrganizationSearchTerms" %><%@
 page import="com.liferay.portlet.usersadmin.search.UserSearch" %><%@
 page import="com.liferay.portlet.usersadmin.search.UserSearchTerms" %><%@
-page import="com.liferay.portlet.usersadmin.util.UsersAdmin" %><%@
-page import="com.liferay.portlet.usersadmin.util.UsersAdminUtil" %><%@
-page import="com.liferay.site.memberships.web.display.context.SiteMembershipsDisplayContext" %>
+page import="com.liferay.site.memberships.web.display.context.SiteMembershipsDisplayContext" %><%@
+page import="com.liferay.sites.kernel.util.SitesUtil" %><%@
+page import="com.liferay.users.admin.kernel.util.UsersAdmin" %><%@
+page import="com.liferay.users.admin.kernel.util.UsersAdminUtil" %>
 
 <%@ page import="java.util.ArrayList" %><%@
 page import="java.util.HashMap" %><%@
@@ -101,17 +100,13 @@ page import="java.util.Map" %>
 <%@ page import="javax.portlet.PortletURL" %><%@
 page import="javax.portlet.WindowState" %>
 
-<portlet:defineObjects />
+<liferay-frontend:defineObjects />
 
 <liferay-theme:defineObjects />
 
+<portlet:defineObjects />
+
 <%
-WindowState windowState = liferayPortletRequest.getWindowState();
-
-PortletURL currentURLObj = PortletURLUtil.getCurrent(liferayPortletRequest, liferayPortletResponse);
-
-String currentURL = currentURLObj.toString();
-
 SiteMembershipsDisplayContext siteMembershipsDisplayContext = new SiteMembershipsDisplayContext(request, liferayPortletResponse);
 %>
 

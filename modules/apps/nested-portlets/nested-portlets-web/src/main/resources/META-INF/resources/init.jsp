@@ -23,29 +23,25 @@ taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %><%@
 taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
-<%@ page import="com.liferay.nested.portlets.web.configuration.NestedPortletsConfiguration" %><%@
+<%@ page import="com.liferay.nested.portlets.web.constants.NestedPortletsWebKeys" %><%@
 page import="com.liferay.nested.portlets.web.display.context.NestedPortletsDisplayContext" %><%@
+page import="com.liferay.portal.kernel.layoutconfiguration.util.RuntimePageUtil" %><%@
 page import="com.liferay.portal.kernel.log.Log" %><%@
 page import="com.liferay.portal.kernel.log.LogFactoryUtil" %><%@
+page import="com.liferay.portal.kernel.security.permission.ActionKeys" %><%@
 page import="com.liferay.portal.kernel.template.StringTemplateResource" %><%@
 page import="com.liferay.portal.kernel.util.Constants" %><%@
 page import="com.liferay.portal.kernel.util.HtmlUtil" %><%@
 page import="com.liferay.portal.kernel.util.Validator" %><%@
-page import="com.liferay.portal.layoutconfiguration.util.RuntimePageUtil" %><%@
 page import="com.liferay.portal.model.LayoutTemplate" %><%@
-page import="com.liferay.portal.security.permission.ActionKeys" %><%@
 page import="com.liferay.portal.service.permission.LayoutPermissionUtil" %>
-
-<%@ page import="java.util.List" %>
-
-<portlet:defineObjects />
 
 <liferay-theme:defineObjects />
 
-<%
-NestedPortletsConfiguration nestedPortletsConfiguration = (NestedPortletsConfiguration)request.getAttribute(NestedPortletsConfiguration.class.getName());
+<portlet:defineObjects />
 
-NestedPortletsDisplayContext nestedPortletsDisplayContext = new NestedPortletsDisplayContext(request, nestedPortletsConfiguration);
+<%
+NestedPortletsDisplayContext nestedPortletsDisplayContext = new NestedPortletsDisplayContext(request);
 %>
 
 <%@ include file="/init-ext.jsp" %>

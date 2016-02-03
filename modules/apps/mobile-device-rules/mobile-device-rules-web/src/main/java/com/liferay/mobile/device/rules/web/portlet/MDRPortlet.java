@@ -15,10 +15,19 @@
 package com.liferay.mobile.device.rules.web.portlet;
 
 import com.liferay.mobile.device.rules.constants.MDRPortletKeys;
-import com.liferay.mobile.device.rules.web.upgrade.MDRWebUpgrade;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.model.Release;
+
+import java.io.IOException;
 
 import javax.portlet.Portlet;
+import javax.portlet.PortletContext;
+import javax.portlet.PortletException;
+import javax.portlet.PortletRequestDispatcher;
+import javax.portlet.PortletSession;
+import javax.portlet.ResourceRequest;
+import javax.portlet.ResourceResponse;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -52,8 +61,35 @@ import org.osgi.service.component.annotations.Reference;
 )
 public class MDRPortlet extends MVCPortlet {
 
-	@Reference(unbind = "-")
-	protected void setMDRWebUpgrade(MDRWebUpgrade mdrWebUpgrade) {
+	@Override
+	public void serveResource(
+			ResourceRequest resourceRequest, ResourceResponse resourceResponse)
+		throws IOException, PortletException {
+
+		String resourceID = GetterUtil.getString(
+			resourceRequest.getResourceID());
+
+		if (resourceID.equals("getMobileDeviceRules")) {
+			PortletSession portletSession = resourceRequest.getPortletSession();
+
+			PortletContext portletContext = portletSession.getPortletContext();
+
+			PortletRequestDispatcher portletRequestDispatcher =
+				portletContext.getRequestDispatcher(
+					"/layout/mobile_device_rules_rule_group_instances.jsp");
+
+			portletRequestDispatcher.include(resourceRequest, resourceResponse);
+		}
+		else {
+			super.serveResource(resourceRequest, resourceResponse);
+		}
+	}
+
+	@Reference(
+		target = "(&(release.bundle.symbolic.name=com.liferay.mobile.device.rules.web)(release.schema.version=1.0.0))",
+		unbind = "-"
+	)
+	protected void setRelease(Release release) {
 	}
 
 }

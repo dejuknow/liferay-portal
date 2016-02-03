@@ -22,6 +22,7 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.AggregateResourceBundle;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.LocaleThreadLocal;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.PortalClassLoaderUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
@@ -31,9 +32,12 @@ import com.liferay.portal.kernel.util.Validator;
 
 import java.lang.reflect.Method;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TreeSet;
@@ -61,13 +65,43 @@ public class DDMFormFactoryHelper {
 
 		Class<?> returnType = _method.getReturnType();
 
+		if (returnType.isArray()) {
+			returnType = returnType.getComponentType();
+		}
+
 		if (returnType.isAssignableFrom(boolean.class) ||
 			returnType.isAssignableFrom(Boolean.class)) {
 
 			return "boolean";
 		}
+		else if (returnType.isAssignableFrom(double.class) ||
+				 returnType.isAssignableFrom(Double.class)) {
 
-		return "string";
+			return "double";
+		}
+		else if (returnType.isAssignableFrom(float.class) ||
+				 returnType.isAssignableFrom(Float.class)) {
+
+			return "float";
+		}
+		else if (returnType.isAssignableFrom(int.class) ||
+				 returnType.isAssignableFrom(Integer.class)) {
+
+			return "integer";
+		}
+		else if (returnType.isAssignableFrom(long.class) ||
+				 returnType.isAssignableFrom(Long.class)) {
+
+			return "long";
+		}
+		else if (returnType.isAssignableFrom(short.class) ||
+				 returnType.isAssignableFrom(Short.class)) {
+
+			return "short";
+		}
+		else {
+			return "string";
+		}
 	}
 
 	public LocalizedValue getDDMFormFieldLabel() {
@@ -120,11 +154,14 @@ public class DDMFormFactoryHelper {
 
 		String predefinedValue = _ddmFormField.predefinedValue();
 
-		if (Validator.isNull(predefinedValue)) {
-			return localizedValue;
-		}
+		String fieldType = getDDMFormFieldType();
 
-		localizedValue.addString(_defaultLocale, predefinedValue);
+		if (Validator.isNotNull(predefinedValue)) {
+			localizedValue.addString(_defaultLocale, predefinedValue);
+		}
+		else if (fieldType.equals("checkbox")) {
+			localizedValue.addString(_defaultLocale, Boolean.FALSE.toString());
+		}
 
 		return localizedValue;
 	}
@@ -219,18 +256,51 @@ public class DDMFormFactoryHelper {
 		return false;
 	}
 
+	public boolean isDDMFormFieldRepeatable() {
+		Class<?> returnType = _method.getReturnType();
+
+		if (returnType.isArray()) {
+			return true;
+		}
+
+		return false;
+	}
+
 	public boolean isDDMFormFieldRequired() {
 		return _ddmFormField.required();
 	}
 
 	public boolean isLocalizableValue(String value) {
-		if (isLocalizableDDMForm() &&
-			StringUtil.startsWith(value, StringPool.PERCENT)) {
-
+		if (StringUtil.startsWith(value, StringPool.PERCENT)) {
 			return true;
 		}
 
 		return false;
+	}
+
+	protected void collectResourceBundles(
+		Class<?> clazz, List<ResourceBundle> resourceBundles, Locale locale) {
+
+		for (Class<?> interfaceClass : clazz.getInterfaces()) {
+			collectResourceBundles(interfaceClass, resourceBundles, locale);
+		}
+
+		String resourceBundleBaseName = getResourceBundleBaseName(clazz);
+
+		if (Validator.isNull(resourceBundleBaseName)) {
+			return;
+		}
+
+		try {
+			ResourceBundle resourceBundle = ResourceBundleUtil.getBundle(
+				resourceBundleBaseName, locale, clazz.getClassLoader());
+
+			if (resourceBundle != null) {
+				resourceBundles.add(resourceBundle);
+			}
+		}
+		catch (MissingResourceException mre) {
+		}
 	}
 
 	protected LocalizedValue createLocalizedValue(String property) {
@@ -264,13 +334,19 @@ public class DDMFormFactoryHelper {
 	}
 
 	protected ResourceBundle getResourceBundle(Locale locale) {
+		List<ResourceBundle> resourceBundles = new ArrayList<>();
+
 		ResourceBundle portalResourceBundle = ResourceBundleUtil.getBundle(
 			"content.Language", locale, PortalClassLoaderUtil.getClassLoader());
 
-		return new AggregateResourceBundle(
-			portalResourceBundle,
-			ResourceBundleUtil.getBundle(
-				"content.Language", locale, getClass()));
+		resourceBundles.add(portalResourceBundle);
+
+		collectResourceBundles(_clazz, resourceBundles, locale);
+
+		ResourceBundle[] resourceBundlesArray = resourceBundles.toArray(
+			new ResourceBundle[resourceBundles.size()]);
+
+		return new AggregateResourceBundle(resourceBundlesArray);
 	}
 
 	protected String getResourceBundleBaseName(Class<?> clazz) {
@@ -284,28 +360,7 @@ public class DDMFormFactoryHelper {
 			return ddmForm.localization();
 		}
 
-		for (Class<?> interfaceClass : clazz.getInterfaces()) {
-			if (!interfaceClass.isAnnotationPresent(DDMForm.class)) {
-				continue;
-			}
-
-			String resourceBundleBaseName = getResourceBundleBaseName(
-				interfaceClass);
-
-			if (Validator.isNotNull(resourceBundleBaseName)) {
-				return resourceBundleBaseName;
-			}
-		}
-
-		return null;
-	}
-
-	protected boolean isLocalizableDDMForm() {
-		if (Validator.isNotNull(getResourceBundleBaseName(_clazz))) {
-			return true;
-		}
-
-		return false;
+		return "content.Language";
 	}
 
 	protected void setAvailableLocales() {
@@ -327,7 +382,11 @@ public class DDMFormFactoryHelper {
 
 	protected void setDefaultLocale() {
 		if (Validator.isNull(_ddmForm.defaultLanguageId())) {
-			_defaultLocale = LocaleUtil.getDefault();
+			_defaultLocale = LocaleThreadLocal.getThemeDisplayLocale();
+
+			if (_defaultLocale == null) {
+				_defaultLocale = LocaleUtil.getDefault();
+			}
 
 			return;
 		}

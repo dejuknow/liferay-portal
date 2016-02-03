@@ -21,7 +21,7 @@ import com.liferay.journal.model.JournalArticleModel;
 import com.liferay.journal.model.JournalArticleSoap;
 
 import com.liferay.portal.LocaleException;
-import com.liferay.portal.NoSuchModelException;
+import com.liferay.portal.exception.NoSuchModelException;
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSON;
@@ -1577,15 +1577,6 @@ public class JournalArticleModelImpl extends BaseModelImpl<JournalArticle>
 		}
 
 		return true;
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #isApproved}
-	 */
-	@Deprecated
-	@Override
-	public boolean getApproved() {
-		return isApproved();
 	}
 
 	@Override

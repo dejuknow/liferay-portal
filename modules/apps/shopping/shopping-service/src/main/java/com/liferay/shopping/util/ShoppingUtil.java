@@ -368,9 +368,14 @@ public class ShoppingUtil {
 					rangeId = (i + 1) / 2;
 				}
 
-				insuranceRate = GetterUtil.getDouble(
-					shoppingGroupServiceOverriddenConfiguration.
-						getInsurance()[rangeId]);
+				String[] insurances =
+					shoppingGroupServiceOverriddenConfiguration.getInsurance();
+
+				if (insurances.length < rangeId) {
+					continue;
+				}
+
+				insuranceRate = GetterUtil.getDouble(insurances[rangeId]);
 			}
 		}
 
@@ -850,7 +855,7 @@ public class ShoppingUtil {
 				int arrayPos = 0;
 
 				for (arrayPos = i / numOfRepeats; arrayPos >= vArray.length;
-					 arrayPos = arrayPos - vArray.length) {
+						arrayPos = arrayPos - vArray.length) {
 				}
 
 				if (!fieldsValues.contains(vArray[arrayPos].trim())) {

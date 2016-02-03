@@ -20,6 +20,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import com.liferay.sync.engine.service.persistence.BasePersistenceImpl;
+import com.liferay.sync.engine.util.FileUtil;
 
 /**
  * @author Shinn Lok
@@ -102,6 +103,16 @@ public class SyncSite extends StateAwareModel {
 
 	public long getRemoteSyncTime() {
 		return remoteSyncTime;
+	}
+
+	public String getSanitizedName() {
+		String name = getName();
+
+		if (!FileUtil.isValidFileName(name)) {
+			name = String.valueOf(getGroupId());
+		}
+
+		return name;
 	}
 
 	public boolean getSite() {

@@ -3,6 +3,11 @@
 		<execute function="Click" locator1="WCD#EDIT_WEB_CONTENT" />
 
 		<execute function="SelectFrame" locator1="IFrame#EDIT_ASSET" />
+
+		<execute macro="Panel#expandPanel">
+			<var name="panelHeading" value="Structure and Template" />
+		</execute>
+
 		<execute function="AssertTextEquals" locator1="WCEditWebContent#SELECTED_STRUCTURE" value1="${structureName}" />
 		<execute function="AssertClick" locator1="WCEditWebContent#SELECT_TEMPLATE" value1="Select" />
 
@@ -16,6 +21,11 @@
 
 		<execute function="SelectFrame" value1="relative=top" />
 		<execute function="SelectFrame" locator1="IFrame#EDIT_ASSET" />
+
+		<execute macro="Panel#expandPanel">
+			<var name="panelHeading" value="Structure and Template" />
+		</execute>
+
 		<execute function="AssertTextEquals" locator1="WCEditWebContent#SELECTED_TEMPLATE" value1="${templateName}" />
 		<execute function="AssertClick#pauseAssertTextClickAt" locator1="Button#PUBLISH" value1="Publish" />
 
@@ -27,25 +37,28 @@
 
 		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
 
-		<execute function="AssertClick" locator1="NavPill#PERMISSIONS" value1="Permissions" />
+		<execute macro="Navigator#gotoNavItem">
+			<var name="navItem" value="Permissions" />
+		</execute>
 	</command>
 
 	<command name="configureScopePG">
 		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletNameBorderless" value="${portletNameBorderless}" />
+			<var name="portletName" value="${portletName}" />
 			<var name="portletOption" value="Configuration" />
 		</execute>
 
 		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
-		<execute function="AssertClick" locator1="NavPill#SCOPE" value1="Scope" />
 
-		<var name="key_scopeSelection" value="${scopeSelection}" />
+		<execute macro="Navigator#gotoNavItem">
+			<var name="navItem" value="Scope" />
+		</execute>
 
-		<execute function="Click#pauseClickAt" locator1="WCDConfigurationScope#SCOPE_MENULIST" />
-		<execute function="AssertClick#assertPartialTextClickAt" locator1="WCDConfigurationScope#SCOPE_MENULIST_SELECTION" value1="${scopeSelection}" />
+		<execute function="Select" locator1="Select#SCOPE" value1="regexp:.*${scopeSelection}.*" />
 
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="You have successfully updated the setup." />
-		<execute function="AssertTextEquals" locator1="WCDConfigurationScope#SCOPE_MENULIST" value1="${scopeSelection}" />
+		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
+
+		<execute macro="Alert#viewSetupUpdatedSuccessMessage" />
 	</command>
 
 	<command name="configureSetupPG">
@@ -130,15 +143,20 @@
 				<execute function="Click" locator1="WCD#EDIT_WEB_CONTENT" />
 
 				<execute function="SelectFrame" locator1="IFrame#EDIT_ASSET" />
+
+				<execute macro="Panel#expandPanel">
+					<var name="panelHeading" value="Structure and Template" />
+				</execute>
+
 				<execute function="AssertTextEquals" locator1="WCEditWebContent#SELECTED_STRUCTURE" value1="${structureName}" />
 				<execute function="ClickNoError" locator1="WCEditWebContent#EDIT_TEMPLATE" />
 				<execute function="Confirm" value1="Editing the current template deletes all unsaved content." />
 			</else>
 		</if>
 
-		<execute function="SelectFrame" value1="relative=top" />
-		<execute function="SelectFrame" locator1="IFrame#DDL" />
-		<execute function="Type" locator1="TextInput#NAME" value1="Template Edit" />
+		<execute function="SelectFrameTop" />
+		<execute function="SelectFrame" locator1="IFrame#EDIT_ASSET" />
+		<execute function="Type#clickAtSendKeys" locator1="TextInput#NAME" value1="Template Edit" />
 
 		<if>
 			<isset var="templateScript" />
@@ -160,6 +178,11 @@
 
 				<execute function="SelectFrame" value1="relative=top" />
 				<execute function="SelectFrame" locator1="IFrame#EDIT_ASSET" />
+
+				<execute macro="Panel#expandPanel">
+					<var name="panelHeading" value="Structure and Template" />
+				</execute>
+
 				<execute function="AssertTextEquals" locator1="WCEditWebContent#SELECTED_TEMPLATE" value1="${templateName}" />
 				<execute function="AssertClick#pauseAssertTextClickAt" locator1="Button#PUBLISH" value1="Publish" />
 
@@ -183,14 +206,14 @@
 
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
 
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="You have successfully updated the setup." />
+		<execute macro="Alert#viewSetupUpdatedSuccessMessage" />
 
 		<execute function="SelectFrame" value1="relative=top" />
 	</command>
 
 	<command name="searchWebContent">
 		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletNameBorderless" value="${portletNameBorderless}" />
+			<var name="portletName" value="${portletName}" />
 			<var name="portletOption" value="Configuration" />
 		</execute>
 
@@ -227,7 +250,7 @@
 
 				<execute function="AssertTextEquals" locator1="Message#INFO_ARTICLE" value1="${webContentTitle} (Modified)" />
 				<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
-				<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="You have successfully updated the setup." />
+				<execute macro="Alert#viewSetupUpdatedSuccessMessage" />
 			</then>
 		</if>
 
@@ -236,7 +259,7 @@
 
 	<command name="searchWebContentNo">
 		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletNameBorderless" value="${portletNameBorderless}" />
+			<var name="portletName" value="${portletName}" />
 			<var name="portletOption" value="Configuration" />
 		</execute>
 
@@ -257,7 +280,7 @@
 	<command name="selectWebContent">
 		<execute macro="Portlet#gotoPortletOptions">
 			<var name="portletName" value="Web Content Display" />
-			<var name="portletNameBorderless" value="${portletNameBorderless}" />
+			<var name="portletName" value="${portletName}" />
 			<var name="portletOption" value="Configuration" />
 		</execute>
 
@@ -274,7 +297,7 @@
 		<execute function="SelectFrame" value1="relative=top" />
 		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
-		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="You have successfully updated the setup." />
+		<execute macro="Alert#viewSetupUpdatedSuccessMessage" />
 		<execute function="SelectFrame" value1="relative=top" />
 	</command>
 
@@ -314,13 +337,16 @@
 		</if>
 
 		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletNameBorderless" value="${portletNameBorderless}" />
+			<var name="portletName" value="${portletName}" />
 			<var name="portletOption" value="Configuration" />
 		</execute>
 
 		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
-		<execute function="AssertClick" locator1="NavPill#SCOPE" value1="Scope" />
-		<execute function="AssertTextEquals" locator1="WCDConfigurationScope#SCOPE_MENULIST" value1="${scopeSelection}" />
+		<execute macro="Navigator#gotoNavItem">
+			<var name="navItem" value="Scope" />
+		</execute>
+
+		<execute function="AssertSelectedLabel" locator1="Select#SCOPE" value1="${scopeSelection}" />
 	</command>
 
 	<command name="viewContentPageBreak">
