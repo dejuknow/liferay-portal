@@ -167,13 +167,13 @@
 			<var name="userEmailAddress" value="userea@liferay.com" />
 		</execute>
 
-		<execute macro="SitePage#viewDefaultSiteTemplatePagesPG">
+		<execute macro="Page#viewDefaultSiteTemplatePagesPG">
 			<var name="pageName" value="Home" />
 			<var name="siteName" value="Organization Name 1" />
 			<var name="siteTemplate" value="Community" />
 		</execute>
 
-		<execute macro="SitePage#viewDefaultSiteTemplatePagesPG">
+		<execute macro="Page#viewDefaultSiteTemplatePagesPG">
 			<var name="pageName" value="Home" />
 			<var name="siteName" value="Organization Name 2" />
 			<var name="siteTemplate" value="Intranet" />
@@ -393,7 +393,7 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -504,7 +504,7 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -517,7 +517,7 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -551,7 +551,6 @@
 		<execute macro="Page#add">
 			<var name="pageName" value="Test Private Page" />
 			<var name="sitePagePrivacy" value="Private" />
-			<var name="siteScopeSelected" value="true" />
 		</execute>
 
 		<execute macro="User#logoutPG" />
@@ -605,7 +604,6 @@
 		</execute>
 
 		<execute function="AssertLocation" value1="http://www.able.com:8080/test-private-page" />
-		<execute function="Pause" locator1="1073" />
 
 		<execute macro="User#firstLoginPG">
 			<var name="password" value="test" />
@@ -660,7 +658,6 @@
 		<execute macro="Page#add">
 			<var name="page" value="Public Pages" />
 			<var name="pageName" value="Site Page Name" />
-			<var name="siteScopeSelected" value="true" />
 		</execute>
 
 		<execute macro="ProductMenu#gotoControlPanelConfiguration">
@@ -786,6 +783,7 @@
 		<execute macro="UserGroup#addPageCP">
 			<var name="page" value="Profile" />
 			<var name="sitePageName" value="site Page Name" />
+			<var name="sitePagePrivacy" value="Public" />
 			<var name="userGroupName" value="User Group Name" />
 		</execute>
 
@@ -930,7 +928,7 @@
 			<var name="userEmailAddress" value="userea@liferay.com" />
 		</execute>
 
-		<execute macro="SitePage#viewDefaultSiteTemplatePagesPG">
+		<execute macro="Page#viewDefaultSiteTemplatePagesPG">
 			<var name="pageName" value="Home" />
 			<var name="siteName" value="Site1 Name" />
 			<var name="siteTemplate" value="Community" />
@@ -1004,7 +1002,6 @@
 		<for list="Home,Arenas" param="publicPageName" >
 			<execute macro="Page#add">
 				<var name="pageName" value="${publicPageName}" />
-				<var name="siteScopeSelected" value="true" />
 			</execute>
 		</for>
 
@@ -1026,7 +1023,6 @@
 			<execute macro="Page#add">
 				<var name="pageName" value="${privatePageName}" />
 				<var name="sitePagePrivacy" value="Private" />
-				<var name="siteScopeSelected" value="true" />
 			</execute>
 		</for>
 
@@ -1039,7 +1035,7 @@
 
 		<execute macro="ProductMenu#gotoPublicPages" />
 
-		<execute macro="SitePage#addJavaScript">
+		<execute macro="Page#addJavaScript">
 			<var name="javaScript" value="alert('Welcome to Russia.');" />
 			<var name="sitePageName" value="Arenas" />
 		</execute>
@@ -1049,7 +1045,7 @@
 		<execute macro="Page#viewCustomLogoPG" />
 
 		<for list="Arena Baltika,Zenit Arena,Kazan Arena" param="childPageName" >
-			<execute macro="Page#viewChildPG">
+			<execute macro="Page#viewChildPageDropdown">
 				<var name="childPageName" value="${childPageName}" />
 				<var name="javaScriptPage" value="Welcome to Russia." />
 				<var name="pageName" value="Arenas" />
@@ -1061,7 +1057,7 @@
 
 		<execute macro="ProductMenu#gotoPublicPages" />
 
-		<execute macro="SitePage#addJavaScript">
+		<execute macro="Page#addJavaScript">
 			<var name="javaScript" value=" " />
 			<var name="sitePageName" value="Arenas" />
 		</execute>
@@ -1117,7 +1113,7 @@
 
 		<execute function="Open" locator1="http://localhost:8080/web/russia2018" />
 
-		<execute macro="ProductMenu#gotoSitesPublishingTools">
+		<execute macro="ProductMenu#gotoSitesPublishing">
 			<var name="portlet" value="Export" />
 		</execute>
 
@@ -1127,7 +1123,7 @@
 
 		<execute function="AssertTextEquals" locator1="SitePagesExport#CURRENT_AND_PREVIOUS_STATUS" value1="Successful" />
 
-		<var method="selenium#getElementText('//tr/td[5]/span/a')" name="valueName" />
+		<var method="selenium#getText('//tr/td[7]/span/a')" name="valueName" />
 
 		<echo message="value name ${valueName}" />
 
@@ -1163,7 +1159,7 @@
 		</execute>
 
 		<for list="Arena Baltika,Zenit Arena,Kazan Arena" param="childPageName" >
-			<execute macro="Page#viewChildPG">
+			<execute macro="Page#viewChildPageDropdown">
 				<var name="childPageName" value="${childPageName}" />
 				<var name="pageName" value="Arenas" />
 				<var name="viewChildPageDropdown" value="PAGE_2" />
@@ -1218,7 +1214,7 @@
 			<var name="site" value="Site Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -1258,7 +1254,7 @@
 			<var name="site" value="Site Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Teams" />
 		</execute>
 
@@ -1271,7 +1267,7 @@
 			<var name="site" value="Site Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Teams" />
 		</execute>
 
@@ -1284,7 +1280,7 @@
 			<var name="site" value="Site Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Teams" />
 		</execute>
 
@@ -1300,7 +1296,7 @@
 			<var name="site" value="Site Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Teams" />
 		</execute>
 
@@ -1313,7 +1309,7 @@
 			<var name="site" value="Site Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Teams" />
 		</execute>
 
@@ -1401,7 +1397,7 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Teams" />
 		</execute>
 
@@ -1412,7 +1408,7 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Teams" />
 		</execute>
 
@@ -1433,7 +1429,7 @@
 			<var name="site" value="Site Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Teams" />
 		</execute>
 
@@ -1530,7 +1526,7 @@
 			<var name="site" value="Site Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Teams" />
 		</execute>
 

@@ -230,7 +230,7 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 				"privateLayout", String.valueOf(privateLayout));
 		}
 
-		validateTypeSettingsProperties(typeSettingsProperties);
+		validateTypeSettingsProperties(layout, typeSettingsProperties);
 
 		layout.setTypeSettingsProperties(typeSettingsProperties);
 
@@ -1428,7 +1428,21 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 	public List<Layout> getScopeGroupLayouts(long parentGroupId)
 		throws PortalException {
 
+		if (PropsValues.LAYOUT_SCOPE_GROUP_FINDER_ENABLED) {
+			return layoutFinder.findByScopeGroup(parentGroupId);
+		}
+
 		Group parentGroup = groupPersistence.findByPrimaryKey(parentGroupId);
+
+		if (PropsValues.LAYOUT_SCOPE_GROUP_FINDER_THRESHOLD >= 0) {
+			int count = groupLocalService.getGroupsCount(
+				parentGroup.getCompanyId(), Layout.class.getName(),
+				parentGroupId);
+
+			if (count >= PropsValues.LAYOUT_SCOPE_GROUP_FINDER_THRESHOLD) {
+				return layoutFinder.findByScopeGroup(parentGroupId);
+			}
+		}
 
 		List<Group> groups = groupLocalService.getGroups(
 			parentGroup.getCompanyId(), Layout.class.getName(), parentGroupId);
@@ -1453,7 +1467,22 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 			long parentGroupId, boolean privateLayout)
 		throws PortalException {
 
+		if (PropsValues.LAYOUT_SCOPE_GROUP_FINDER_ENABLED) {
+			return layoutFinder.findByScopeGroup(parentGroupId, privateLayout);
+		}
+
 		Group parentGroup = groupPersistence.findByPrimaryKey(parentGroupId);
+
+		if (PropsValues.LAYOUT_SCOPE_GROUP_FINDER_THRESHOLD >= 0) {
+			int count = groupLocalService.getGroupsCount(
+				parentGroup.getCompanyId(), Layout.class.getName(),
+				parentGroupId);
+
+			if (count >= PropsValues.LAYOUT_SCOPE_GROUP_FINDER_THRESHOLD) {
+				return layoutFinder.findByScopeGroup(
+					parentGroupId, privateLayout);
+			}
+		}
 
 		List<Group> groups = groupLocalService.getGroups(
 			parentGroup.getCompanyId(), Layout.class.getName(), parentGroupId);
@@ -2346,10 +2375,10 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 
 		typeSettingsProperties.fastLoad(typeSettings);
 
-		validateTypeSettingsProperties(typeSettingsProperties);
-
 		Layout layout = layoutPersistence.findByG_P_L(
 			groupId, privateLayout, layoutId);
+
+		validateTypeSettingsProperties(layout, typeSettingsProperties);
 
 		layout.setModifiedDate(now);
 		layout.setTypeSettings(typeSettingsProperties.toString());
@@ -2893,7 +2922,7 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 	}
 
 	protected void validateTypeSettingsProperties(
-			UnicodeProperties typeSettingsProperties)
+			Layout layout, UnicodeProperties typeSettingsProperties)
 		throws PortalException {
 
 		String sitemapChangeFrequency = typeSettingsProperties.getProperty(

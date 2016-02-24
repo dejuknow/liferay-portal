@@ -1,13 +1,13 @@
 <definition>
 	<command name="_gotoAddPGViaAP">
+		<execute function="Click#makeVisibleClickAt" locator1="AP#ADD_ASSET_PLUS_ICON" />
+
 		<if>
 			<equals arg1="${assetTypeConfigured}" arg2="true" />
 			<then>
-				<execute function="Click" locator1="AP#ADD_BASIC_WEB_CONTENT_MENU_ITEM" />
+				<execute function="AssertClick" locator1="AP#ADD_BASIC_WEB_CONTENT_LINK" value1="Add Basic Web Content" />
 			</then>
 			<else>
-				<execute function="Click#makeVisibleClickAt" locator1="AP#ADD_ASSET_PLUS_ICON" />
-
 				<execute function="AssertClick" locator1="MenuItem#BASIC_WEB_CONTENT" value1="Basic Web Content" />
 			</else>
 		</if>
@@ -738,7 +738,7 @@
 	<command name="copyCP">
 		<var name="key_rowEntry" value="${webContentTitle}" />
 
-		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
 		<execute function="AssertClick" locator1="MenuItem#COPY" value1="Copy" />
 
 		<execute function="AssertClick" locator1="Button#COPY" value1="Copy" />
@@ -772,7 +772,7 @@
 	<command name="deleteWithDisabledRB">
 		<var name="key_rowEntry" value="${entryTitle}" />
 
-		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
 
 		<execute function="ClickNoError" locator1="MenuItem#DELETE" />
 
@@ -838,7 +838,7 @@
 	<command name="editDisplayPagePGViaAP">
 		<var name="key_assetTitle" value="${assetTitle}" />
 
-		<execute function="Click" locator1="Icon#EDIT" />
+		<execute function="Click#makeVisibleClickAt" locator1="Icon#EDIT" />
 
 		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
 
@@ -895,7 +895,7 @@
 	<command name="editPGViaAP">
 		<var name="key_assetTitle" value="${assetTitle}" />
 
-		<execute function="Click" locator1="AP#ASSET_ABSTRACT_EDIT" />
+		<execute function="Click#makeVisibleClickAt" locator1="AP#ASSET_ABSTRACT_EDIT" />
 
 		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
 		<execute function="Type#mouseOverFocusType" locator1="TextInput#TITLE" value1="${webContentTitleEdit}" />
@@ -943,7 +943,7 @@
 	<command name="expireSpecificVersionCP">
 		<var name="key_rowEntry" value="${webContentTitle}" />
 
-		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
 
 		<execute function="AssertClick" locator1="MenuItem#VIEW_HISTORY" value1="View History" />
 
@@ -990,7 +990,7 @@
 	<command name="gotoViewSpecificVersionHistoryCP">
 		<var name="key_rowEntry" value="${webContentTitle}" />
 
-		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
 
 		<execute function="AssertClick" locator1="MenuItem#VIEW_HISTORY" value1="View History" />
 	</command>
@@ -1027,7 +1027,7 @@
 
 		<execute function="Check#checkAll" locator1="Checkbox#SELECT_ALL" />
 
-		<execute function="Click" locator1="Icon#DELETE" />
+		<execute function="Click" locator1="Icon#MOVE_TO_RECYCLE_BIN" />
 
 		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="moved to the Recycle Bin. Undo" />
 	</command>
@@ -1155,6 +1155,16 @@
 		<execute macro="WebContent#publish" />
 	</command>
 
+	<command name="subscribeCP">
+		<execute function="Click#clickAt" locator1="Icon#INFO" />
+
+		<execute function="Pause" locator1="1000" />
+
+		<execute function="Click" locator1="Icon#SUBSCRIBE" />
+
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+	</command>
+
 	<command name="tearDownCP">
 		<execute macro="Navigator#openURL" />
 
@@ -1170,7 +1180,7 @@
 			<condition function="IsElementPresent#pauseIsElementPresent" locator1="WC#ENTRY_DESCRIPTIVE_THUMBNAIL_GENERIC" />
 			<then>
 				<execute function="Check#checkAll" locator1="Checkbox#SELECT_ALL" />
-				<execute function="Click" locator1="Icon#DELETE" />
+				<execute function="Click" locator1="Icon#MOVE_TO_RECYCLE_BIN" />
 				<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="moved to the Recycle Bin. Undo" />
 			</then>
 		</if>
@@ -1337,7 +1347,7 @@
 			<var name="displayStyle" value="Descriptive" />
 		</execute>
 
-		<execute function="AssertTextEquals" locator1="Message#EMPTY_INFO" value1="No web content was found" />
+		<execute function="AssertTextEquals" locator1="Message#EMPTY_INFO" value1="No web content was found." />
 		<execute function="AssertElementNotPresent" locator1="WC#ENTRY_DESCRIPTIVE_THUMBNAIL" />
 		<execute function="AssertElementNotPresent" locator1="WC#ENTRY_DESCRIPTIVE_TITLE" />
 	</command>
@@ -1347,7 +1357,8 @@
 	</command>
 
 	<command name="viewDefaultPGViaWCD">
-		<execute function="AssertTextEquals" locator1="Message#INFO" value1="Select existing web content or add some web content to be displayed in this portlet." />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#INFO" value1="This application is not visible to users yet" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#INFO" value1="Select Web Content to make it visible" />
 	</command>
 
 	<command name="viewDisplayPagePGViaAP">
@@ -1433,7 +1444,7 @@
 	<command name="viewLinkToPagePGViaWCD">
 		<execute function="AssertClick" locator1="WCD#WEB_CONTENT_LINK_TO_PAGE" value1="Link to Page" />
 
-		<execute macro="Page#viewChildPG">
+		<execute macro="Page#viewChildPageDropdown">
 			<var name="childPageName" value="${childPageName}" />
 			<var name="javaScriptPage" value="${javaScriptPage}" />
 			<var name="viewChildPageDropdown" value="${viewChildPageDropdown}" />
@@ -1490,7 +1501,7 @@
 			<var name="portletTitle" value="Web Content" />
 		</execute>
 
-		<execute function="AssertElementPresent" locator1="WC#NAVBAR_CONTAINER" />
+		<execute function="AssertElementPresent" locator1="NavBar#CONTAINER" />
 		<execute function="AssertTextEquals" locator1="Message#EMPTY_INFO" value1="No web content was found" />
 	</command>
 

@@ -69,7 +69,7 @@
 
 		<execute function="Click" locator1="Button#SUBMIT" />
 
-		<execute function="Click" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
 
 		<execute function="AssertClick" locator1="MenuItem#MANAGE_PAGES" value1="Manage Pages" />
 
@@ -144,7 +144,7 @@
 		<execute function="Click" locator1="Button#SUBMIT" />
 
 		<execute function="AssertTextEquals" locator1="UserGroups#USER_GROUP_TABLE_NAME" value1="${userGroupName}" />
-		<execute function="Click" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
 
 		<execute function="AssertClick" locator1="MenuItem#ASSIGN_MEMBERS" value1="Assign Members" />
 
@@ -165,9 +165,13 @@
 
 		<execute function="Click" locator1="Button#SUBMIT" />
 
+		<execute function="Pause" locator1="5000" />
+
 		<var name="key_rowEntry" value="${userGroupName}" />
 
-		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+		<execute function="AssertElementPresent" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
 
 		<execute function="AssertClick" locator1="MenuItem#ASSIGN_MEMBERS" value1="Assign Members" />
 
@@ -179,9 +183,9 @@
 
 		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
 
-		<execute function="Type" locator1="TextInput#SEARCH" value1="${userScreenName}" />
-
-		<execute function="Click" locator1="Button#SUBMIT" />
+		<execute macro="User#searchCP">
+			<var name="searchTerm" value="${userScreenName}" />
+		</execute>
 
 		<var name="key_userScreenName" value="${userScreenName}" />
 
@@ -205,13 +209,15 @@
 
 		<execute function="Click" locator1="Button#SUBMIT" />
 
+		<execute function="Pause" locator1="5000" />
+
 		<var name="key_userGroupName" value="${userGroupName}" />
 
 		<execute function="AssertTextEquals" locator1="UserGroups#USER_GROUP_TABLE_NAME" value1="${userGroupName}" />
 
 		<var name="key_rowEntry" value="${userGroupName}" />
 
-		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
 
 		<execute function="AssertClickNoError" locator1="MenuItem#DELETE" value1="Delete" />
 
@@ -229,13 +235,15 @@
 
 		<execute function="Click" locator1="Button#SUBMIT" />
 
+		<execute function="Pause" locator1="5000" />
+
 		<var name="key_userGroupName" value="${userGroupName}" />
 
 		<execute function="AssertTextEquals" locator1="UserGroups#USER_GROUP_TABLE_NAME" value1="${userGroupName}" />
 
 		<var name="key_rowEntry" value="${userGroupName}" />
 
-		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
 
 		<execute function="AssertClickNoError" locator1="MenuItem#DELETE" value1="Delete" />
 
@@ -247,9 +255,11 @@
 	</command>
 
 	<command name="editCP">
+		<execute function="Pause" locator1="5000" />
+
 		<var name="key_userGroupName" value="${userGroupName}" />
 
-		<execute function="Click" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
 
 		<execute function="AssertClick" locator1="MenuItem#EDIT" value1="Edit" />
 
@@ -279,15 +289,17 @@
 
 		<execute function="Click" locator1="Button#SUBMIT" />
 
+		<execute function="Pause" locator1="5000" />
+
 		<execute function="AssertTextEquals" locator1="UserGroups#USER_GROUP_TABLE_NAME" value1="${userGroupName}" />
 
-		<execute function="Click" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
 	</command>
 
 	<command name="gotoManagePages">
 		<var name="key_userGroupName" value="${userGroupName}" />
 
-		<execute function="Click" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
 		<execute function="AssertClick" locator1="MenuItem#MANAGE_PAGES" value1="Manage Pages" />
 	</command>
 
@@ -296,10 +308,12 @@
 
 		<execute function="Click" locator1="Button#SUBMIT" />
 
+		<execute function="Pause" locator1="5000" />
+
 		<var name="key_userGroupName" value="${userGroupName}" />
 
 		<execute function="AssertTextEquals" locator1="UserGroups#USER_GROUP_TABLE_NAME" value1="${userGroupName}" />
-		<execute function="Click" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
 
 		<execute function="AssertClick" locator1="MenuItem#ASSIGN_MEMBERS" value1="Assign Members" />
 
@@ -359,7 +373,7 @@
 
 		<var name="key_rowEntry" value="${userGroupName}" />
 
-		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
 
 		<execute function="AssertClick" locator1="MenuItem#ASSIGN_MEMBERS" value1="Assign Members" />
 
@@ -397,6 +411,8 @@
 
 				<execute function="Click" locator1="Button#SUBMIT" />
 
+				<execute function="Pause" locator1="5000" />
+
 				<var name="key_userGroupName" value="${userGroupName}" />
 
 				<execute function="AssertTextEquals" locator1="UserGroups#USER_GROUP_TABLE_NAME" value1="${userGroupName}" />
@@ -415,15 +431,15 @@
 	</command>
 
 	<command name="viewPG">
+		<execute function="Pause" locator1="5000" />
+
 		<var name="key_userGroupName" value="${userGroupName}" />
 
-		<execute function="Click" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
 		<execute function="AssertClick" locator1="MenuItem#EDIT" value1="Edit" />
 		<execute function="AssertClick#assertPartialTextClickAt" locator1="UserGroupsEditUserGroup#PUBLIC_PAGES_OPEN_PAGES" value1="Open Pages" />
 		<execute function="SelectWindow" locator1="home - ${userGroupName} - Liferay" />
 
-		<execute function="Pause" locator1="1073" />
-		<execute function="Pause" locator1="1073" />
 		<execute function="AssertTextEquals" locator1="Home#SITE_NAME" value1="${siteName}" />
 
 		<var name="key_portletName" value="${portletName}" />

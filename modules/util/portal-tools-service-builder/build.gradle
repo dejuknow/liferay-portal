@@ -20,10 +20,8 @@ dependencies {
 	compile group: "log4j", name: "log4j", version: "1.2.17"
 	compile group: "org.freemarker", name: "freemarker", transitive: false, version: "2.3.23"
 
-	// @formatter:off
-	provided group: "com.liferay.portal", name: "portal-service", version: liferay.portalVersion
 	provided group: "com.liferay.portal", name: "portal-impl", version: liferay.portalVersion
-	// @formatter:on
+	provided group: "com.liferay.portal", name: "portal-service", version: liferay.portalVersion
 	provided group: "com.liferay.portal", name: "util-java", version: liferay.portalVersion
 	provided group: "org.apache.ant", name: "ant", transitive: false, version: "1.9.4"
 	provided group: "org.apache.maven", name: "maven-plugin-api", transitive: false, version: "3.0.4"
@@ -39,4 +37,9 @@ formatXML {
 
 liferay {
 	deployDir = "../../../tools/sdk/tmp/portal-tools/portal-tools-service-builder"
+}
+
+updateFileVersions {
+	match(/\t\t\t\t<version>(.+)<\/version>/, "samples/pom.xml")
+	match(/com\.liferay\.portal\.tools\.service\.builder=(.+)/, "../../sdk/gradle-plugins/src/main/resources/com/liferay/gradle/plugins/dependencies/portal-tools.properties")
 }

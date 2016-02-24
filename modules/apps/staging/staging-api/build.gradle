@@ -1,9 +1,0 @@
-configurations {
-	compile {
-		transitive = false
-	}
-}
-
-liferay {
-	deployDir = file("${liferayHome}/osgi/modules")
-}

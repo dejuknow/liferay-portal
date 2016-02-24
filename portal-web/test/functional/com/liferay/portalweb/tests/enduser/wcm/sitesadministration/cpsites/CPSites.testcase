@@ -57,9 +57,9 @@
 			<var name="siteName" value="Site Name" />
 		</execute>
 
-		<execute macro="Site#viewChildChildCP">
-			<var name="childChildSiteName" value="Child Child SiteName" />
-			<var name="childSiteName" value="Child SiteName" />
+		<execute macro="Site#viewChildCP">
+			<var name="childSiteName" value="Child Child SiteName" />
+			<var name="siteName" value="Child SiteName" />
 		</execute>
 	</command>
 
@@ -109,7 +109,6 @@
 		<execute macro="Page#add">
 			<var name="page" value="Public Pages" />
 			<var name="pageName" value="Test Public Page" />
-			<var name="siteScopeSelected" value="true" />
 		</execute>
 
 		<execute macro="ProductMenu#gotoSite">
@@ -393,7 +392,6 @@
 		<execute macro="Page#add">
 			<var name="page" value="Public Pages" />
 			<var name="pageName" value="Site Page" />
-			<var name="siteScopeSelected" value="true" />
 		</execute>
 
 		<execute macro="ProductMenu#gotoSite">
@@ -414,7 +412,7 @@
 			<var name="page" value="Public Pages" />
 		</execute>
 
-		<execute macro="SitePage#viewFriendlyURLCP">
+		<execute macro="Page#viewFriendlyURL">
 			<var name="siteFriendlyURL" value="/site-name" />
 			<var name="sitePageName" value="Site Page" />
 		</execute>
@@ -477,7 +475,7 @@
 			<var name="site" value="Site Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesPublishingTools">
+		<execute macro="ProductMenu#gotoSitesPublishing">
 			<var name="portlet" value="Staging" />
 		</execute>
 
@@ -540,6 +538,10 @@
 			<var name="portlet" value="Sites" />
 		</execute>
 
+		<execute macro="Site#searchInputCP">
+			<var name="siteName" value="Child SiteName" />
+		</execute>
+
 		<execute macro="Page#add">
 			<var name="page" value="Public Pages" />
 			<var name="pageName" value="Site Page" />
@@ -559,6 +561,10 @@
 			<var name="portlet" value="Sites" />
 		</execute>
 
+		<execute macro="Site#searchInputCP">
+			<var name="siteName" value="Child ChildSiteName" />
+		</execute>
+
 		<execute macro="Page#add">
 			<var name="page" value="Public Pages" />
 			<var name="pageName" value="Site Page" />
@@ -574,9 +580,9 @@
 			<var name="siteName" value="Site Name" />
 		</execute>
 
-		<execute macro="Site#viewChildChildCP">
-			<var name="childChildSiteName" value="Child ChildSiteName" />
-			<var name="childSiteName" value="Child SiteName" />
+		<execute macro="Site#viewChildCP">
+			<var name="childSiteName" value="Child ChildSiteName" />
+			<var name="siteName" value="Child SiteName" />
 		</execute>
 
 		<execute macro="Page#gotoPG">
@@ -636,6 +642,10 @@
 			<var name="portlet" value="Sites" />
 		</execute>
 
+		<execute macro="Site#searchInputCP">
+			<var name="siteName" value="Child Site1Name" />
+		</execute>
+
 		<execute macro="Page#add">
 			<var name="page" value="Public Pages" />
 			<var name="pageName" value="Site Page" />
@@ -655,6 +665,10 @@
 			<var name="portlet" value="Sites" />
 		</execute>
 
+		<execute macro="Site#searchInputCP">
+			<var name="siteName" value="Child ChildSite1Name" />
+		</execute>
+
 		<execute macro="Page#add">
 			<var name="page" value="Public Pages" />
 			<var name="pageName" value="Site Page" />
@@ -674,6 +688,10 @@
 			<var name="portlet" value="Sites" />
 		</execute>
 
+		<execute macro="Site#searchInputCP">
+			<var name="siteName" value="Child ChildSite2Name" />
+		</execute>
+
 		<execute macro="Page#add">
 			<var name="page" value="Public Pages" />
 			<var name="pageName" value="Site Page" />
@@ -691,6 +709,10 @@
 
 		<execute macro="ProductMenu#gotoControlPanelSites">
 			<var name="portlet" value="Sites" />
+		</execute>
+
+		<execute macro="Site#searchInputCP">
+			<var name="siteName" value="Child Site2Name" />
 		</execute>
 
 		<execute macro="Page#add">

@@ -1,0 +1,126 @@
+@import "bourbon";
+
+.lfr-ddm-form-container {
+	.form-control-feedback {
+		margin-left: -20px;
+	}
+
+	.icon-angle-left {
+		font-size: inherit;
+	}
+
+	.required-warning {
+		margin-bottom: 25px;
+
+		.icon-asterisk {
+			margin-left: 4px;
+		}
+	}
+
+	.input-group-addon .form-control-feedback {
+		left: -18px;
+	}
+
+	.lfr-ddm-form-field-container {
+		position: relative;
+
+		&.has-error .liferay-ddm-form-field-date .input-group-addon {
+			border-width: 0 0 2px 0;
+		}
+
+		@include keyframes(spin) {
+			100% {
+				transform: rotate(359deg);
+			}
+		}
+
+		.icon-asterisk {
+			margin-left: 4px;
+		}
+
+		.lfr-ddm-form-field-repeatable-add-button {
+			position: absolute;
+			right: 0;
+			top: 0;
+		}
+
+		.lfr-ddm-form-field-repeatable-delete-button {
+			position: absolute;
+			right: 15px;
+			top: 0;
+		}
+
+		.liferay-ddm-form-field-date .input-group-addon {
+			cursor: pointer;
+		}
+
+		select.form-control[multiple] {
+			height: auto;
+		}
+
+		textarea {
+			overflow-y: hidden;
+		}
+	}
+
+	.lfr-ddm-form-page {
+		display: none;
+		padding-top: 25px;
+
+		&.active {
+			display: block;
+		}
+	}
+
+	.lfr-ddm-form-page-description {
+		margin-bottom: 40px;
+	}
+
+	.lfr-ddm-form-page-title + .row {
+		margin-top: 40px;
+	}
+
+	.lfr-ddm-form-pagination-controls {
+		padding-top: 20px;
+	}
+
+	.row {
+		min-height: auto;
+	}
+}
+
+.liferay-ddm-form-field-tip {
+	color: #869CAD;
+	font-size: 12px;
+	font-weight: 400;
+	line-height: 16px;
+}
+
+.multi-step-progress-bar {
+	> .complete {
+		color: #65B6F0;
+
+		.divider {
+			background-color: #65B6F0;
+		}
+	}
+}
+
+.portal-popup {
+	$side-spacing: 34px;
+	padding: 0;
+
+	&.open {
+		padding: 0;
+	}
+
+	.lfr-ddm-form-page-description,
+	.lfr-ddm-form-page-title {
+		padding-left: $side-spacing;
+		padding-right: $side-spacing;
+	}
+
+	.required-warning {
+		margin: 0 0 25px 35px;
+	}
+}

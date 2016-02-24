@@ -438,7 +438,7 @@
 <!--SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_RESOURCE_PERMISSIONS_DOCUMENTS-->
 <tr>
 	<td>SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_RESOURCE_PERMISSIONS_DOCUMENTS_ADD_DOCUMENT_CHECKBOX</td>
-	<td>//tbody//input[contains(@value,'documentlibraryADD_DOCUMENT')]</td>
+	<td>//tbody//input[contains(@value,'document.libraryADD_DOCUMENT')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -1056,12 +1056,12 @@
 <!--USER_MY_ACCOUNT_MY_WORKFLOW_TASKS_GENERAL_PERMISSIONS-->
 <tr>
 	<td>USER_MY_ACCOUNT_MY_WORKFLOW_TASKS_ACCESS_IN_MY_ACCOUNT_CHECKBOX</td>
-	<td>//input[contains(@value,'ACCESS_IN_CONTROL_PANEL')]</td>
+	<td>//input[contains(@value,'MyWorkflowTaskPortletACCESS_IN_CONTROL_PANEL')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>USER_MY_ACCOUNT_MY_WORKFLOW_TASKS_VIEW_CHECKBOX</td>
-	<td>//input[contains(@value,'VIEW')]</td>
+	<td>//input[contains(@value,'MyWorkflowTaskPortletVIEW')]</td>
 	<td></td>
 </tr>
 </tbody>

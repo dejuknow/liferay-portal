@@ -58,6 +58,17 @@ public class VerifyProperties extends VerifyProcess {
 			verifyObsoleteSystemProperty(key);
 		}
 
+		Properties systemProperties = SystemProperties.getProperties();
+
+		for (String[] keys : _MODULARIZED_SYSTEM_KEYS) {
+			String oldKey = keys[0];
+			String newKey = keys[1];
+			String moduleName = keys[2];
+
+			verifyModularizedSystemProperty(
+				systemProperties, oldKey, newKey, moduleName);
+		}
+
 		// portal.properties
 
 		Properties portalProperties = loadPortalProperties();
@@ -168,7 +179,19 @@ public class VerifyProperties extends VerifyProcess {
 		if (portalProperties.containsKey(oldKey)) {
 			_log.error(
 				"Portal property \"" + oldKey + "\" was modularized to " +
-					moduleName + " as \"" + newKey);
+					moduleName + " as \"" + newKey + "\"");
+		}
+	}
+
+	protected void verifyModularizedSystemProperty(
+			Properties systemProperties, String oldKey, String newKey,
+			String moduleName)
+		throws Exception {
+
+		if (systemProperties.containsKey(oldKey)) {
+			_log.error(
+				"System property \"" + oldKey + "\" was modularized to " +
+					moduleName + " as \"" + newKey + "\"");
 		}
 	}
 
@@ -777,6 +800,25 @@ public class VerifyProperties extends VerifyProcess {
 			"verified.account.required",
 			"com.liferay.portal.security.sso.facebook.connect"
 		},
+
+		// Flags
+
+		new String[] {"flags.email.body", "email.body", "com.liferay.flags"},
+		new String[] {
+			"flags.email.from.address", "email.from.address",
+			"com.liferay.flags"
+		},
+		new String[] {
+			"flags.email.from.name", "email.from.name", "com.liferay.flags"
+		},
+		new String[] {
+			"flags.email.subject", "email.subject", "com.liferay.flags"
+		},
+		new String[] {
+			"flags.guest.users.enabled", "guest.users.enabled",
+			"com.liferay.flags"
+		},
+		new String[] {"flags.reasons", "reasons", "com.liferay.flags"},
 
 		// FreeMarker Engine
 
@@ -1642,6 +1684,28 @@ public class VerifyProperties extends VerifyProcess {
 		}
 	};
 
+	private static final String[][] _MODULARIZED_SYSTEM_KEYS = {
+
+		// Calendar
+
+		new String[] {
+			"ical4j.compatibility.outlook", "ical4j.compatibility.outlook",
+			"com.liferay.calendar.service"
+		},
+		new String[] {
+			"ical4j.parsing.relaxed", "ical4j.parsing.relaxed",
+			"com.liferay.calendar.service"
+		},
+		new String[] {
+			"ical4j.unfolding.relaxed", "ical4j.unfolding.relaxed",
+			"com.liferay.calendar.service"
+		},
+		new String[] {
+			"ical4j.validation.relaxed", "ical4j.validation.relaxed",
+			"com.liferay.calendar.service"
+		}
+	};
+
 	private static final String[] _OBSOLETE_PORTAL_KEYS = new String[] {
 		"aim.login", "aim.login", "amazon.access.key.id",
 		"amazon.associate.tag", "amazon.secret.access.key",
@@ -1657,6 +1721,7 @@ public class VerifyProperties extends VerifyProcess {
 		"buffered.increment.serial.queue.size", "cas.validate.url",
 		"cluster.executor.heartbeat.interval",
 		"com.liferay.filters.doubleclick.DoubleClickFilter",
+		"com.liferay.portal.servlet.filters.audit.AuditFilter",
 		"com.liferay.portal.servlet.filters.doubleclick.DoubleClickFilter",
 		"com.liferay.portal.servlet.filters.charbufferpool." +
 			"CharBufferPoolFilter",
@@ -1674,6 +1739,7 @@ public class VerifyProperties extends VerifyProcess {
 		"default.user.public.layout.wap.theme.id",
 		"default.wap.color.scheme.id", "default.wap.theme.id",
 		"discussion.thread.view", "dl.file.entry.read.count.enabled",
+		"dl.folder.menu.visible", "dockbar.add.portlets",
 		"dockbar.administrative.links.show.in.pop.up",
 		"dynamic.data.lists.record.set.force.autogenerate.key",
 		"dynamic.data.lists.template.language.parser[ftl]",
@@ -1749,8 +1815,9 @@ public class VerifyProperties extends VerifyProcess {
 		"memory.cluster.scheduler.lock.cache.enabled",
 		"message.boards.email.message.added.signature",
 		"message.boards.email.message.updated.signature",
-		"message.boards.thread.locking.enabled", "message.boards.thread.views",
-		"message.boards.thread.views.default",
+		"message.boards.thread.locking.enabled",
+		"message.boards.thread.previous.and.next.navigation.enabled",
+		"message.boards.thread.views", "message.boards.thread.views.default",
 		"mobile.device.styling.wap.enabled", "msn.login", "msn.password",
 		"multicast.group.address[\"hibernate\"]",
 		"multicast.group.port[\"hibernate\"]",

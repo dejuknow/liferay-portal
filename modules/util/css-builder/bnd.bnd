@@ -1,6 +1,6 @@
 Bundle-Name: Liferay CSS Builder
 Bundle-SymbolicName: com.liferay.css.builder
-Bundle-Version: 1.0.14
+Bundle-Version: 1.0.15
 Export-Package: com.liferay.css.builder
 Include-Resource:\
 	@../../../portal-impl/portal-impl.jar!/com/liferay/portal/tools/ArgumentsMap.class,\
@@ -11,7 +11,7 @@ Include-Resource:\
 	@../../../portal-service/portal-service.jar!/com/liferay/portal/kernel/io/unsync/UnsyncStringReader.class,\
 	@../../../portal-service/portal-service.jar!/com/liferay/portal/kernel/log/*,\
 	@../../../portal-service/portal-service.jar!/com/liferay/portal/kernel/memory/SoftReferenceThreadLocal.class,\
-	@../../../portal-service/portal-service.jar!/com/liferay/portal/kernel/model/ModelHintsConstants.class
+	@../../../portal-service/portal-service.jar!/com/liferay/portal/kernel/model/ModelHintsConstants.class,\
 	@../../../portal-service/portal-service.jar!/com/liferay/portal/kernel/regex/PatternFactory.class,\
 	@../../../portal-service/portal-service.jar!/com/liferay/portal/kernel/search/Document.class,\
 	@../../../portal-service/portal-service.jar!/com/liferay/portal/kernel/search/Field.class,\
@@ -32,6 +32,5 @@ Include-Resource:\
 	@../../../portal-service/portal-service.jar!/com/liferay/portal/kernel/util/StringUtil.class,\
 	@../../../portal-service/portal-service.jar!/com/liferay/portal/kernel/util/SystemEnv.class,\
 	@../../../portal-service/portal-service.jar!/com/liferay/portal/kernel/util/SystemProperties.class,\
-	@../../../portal-service/portal-service.jar!/com/liferay/portal/kernel/util/Validator.class,\
+	@../../../portal-service/portal-service.jar!/com/liferay/portal/kernel/util/Validator.class
 Main-Class: com.liferay.css.builder.CSSBuilder
-Private-Package: com.liferay.css.builder.sass

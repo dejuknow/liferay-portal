@@ -223,7 +223,7 @@
 
 		<execute function="AssertTextEquals" locator1="Bookmarks#DESCRIPTIVE_ENTRY_TITLE" value1="${bookmarkName}" />
 
-		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
 
 		<execute function="AssertClick" locator1="MenuItem#MOVE_TO_THE_RECYCLE_BIN" value1="Move to the Recycle Bin" />
 
@@ -243,7 +243,7 @@
 		<var name="bookmarkURL" value="${bookmarkURL}" />
 		<var name="key_rowEntry" value="${bookmarkName}" />
 
-		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
 
 		<execute function="AssertClick" locator1="MenuItem#EDIT" value1="Edit" />
 
@@ -273,7 +273,7 @@
 		<var name="bookmarkURL" value="${bookmarkURL}" />
 		<var name="key_rowEntry" value="${bookmarkName}" />
 
-		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
 
 		<execute function="AssertClick" locator1="MenuItem#EDIT" value1="Edit" />
 
@@ -311,7 +311,7 @@
 
 		<var name="key_rowEntry" value="${bookmarkName}" />
 
-		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
 
 		<execute function="AssertClick" locator1="MenuItem#MOVE" value1="Move" />
 
@@ -348,7 +348,7 @@
 
 		<var name="key_rowEntry" value="${bookmarkName}" />
 
-		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
 
 		<execute function="AssertClick" locator1="MenuItem#MOVE" value1="Move" />
 
@@ -393,7 +393,7 @@
 
 		<var name="key_rowEntry" value="${bookmarkName}" />
 
-		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
 
 		<execute function="AssertClick" locator1="MenuItem#MOVE_TO_THE_RECYCLE_BIN" value1="Move to the Recycle Bin" />
 
@@ -404,21 +404,11 @@
 	<command name="moveToRecycleBinPG">
 		<var name="key_rowEntry" value="${bookmarkName}" />
 
-		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
 
 		<execute function="AssertClick" locator1="MenuItem#MOVE_TO_THE_RECYCLE_BIN" value1="Move to the Recycle Bin" />
 
 		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="moved to the Recycle Bin. Undo" />
-	</command>
-
-	<command name="searchCP">
-		<execute function="Type" locator1="NavBar#BASIC_SEARCH_FIELD" value1="${bookmarkName}" />
-
-		<execute function="Click" locator1="NavBar#SEARCH_BUTTON" />
-
-		<var name="key_bookmarkName" value="${bookmarkName}" />
-
-		<execute function="AssertTextEquals" locator1="Bookmarks#SEARCH_TABLE_ENTRY_NAME" value1="${bookmarkName}" />
 	</command>
 
 	<command name="searchNullCP">
@@ -430,49 +420,6 @@
 
 		<execute function="AssertTextNotPresent" locator1="Bookmarks#SEARCH_TABLE_ENTRY_NAME" value1="${bookmarkName}" />
 		<execute function="AssertTextNotPresent" locator1="Bookmarks#SEARCH_TABLE_ENTRY_NAME" value1="${bookmar2Name}" />
-	</command>
-
-	<command name="searchPG">
-		<if>
-			<equals arg1="${bookmarkSearch}" arg2="Entry" />
-			<then>
-				<var name="key_bookmarkName" value="${bookmarkName}" />
-
-				<execute function="Type" locator1="NavBar#BASIC_SEARCH_FIELD" value1="${bookmarkName}" />
-
-				<execute function="Click" locator1="NavBar#SEARCH_BUTTON" />
-
-				<var name="key_bookmarkName" value="${bookmarkName}" />
-
-				<execute function="AssertTextEquals" locator1="Bookmarks#SEARCH_TABLE_ENTRY_NAME" value1="${bookmarkName}" />
-			</then>
-			<elseif>
-				<equals arg1="${bookmarkSearch}" arg2="Null" />
-				<then>
-					<var name="key_bookmarkName" value="${bookmarkName}" />
-
-					<execute function="Type" locator1="NavBar#BASIC_SEARCH_FIELD" value1="asdf" />
-
-					<execute function="Click" locator1="NavBar#SEARCH_BUTTON" />
-
-					<execute function="AssertTextEquals" locator1="Message#INFO" value1="No entries were found that matched the keywords: asdf." />
-				</then>
-			</elseif>
-			<elseif>
-				<equals arg1="${bookmarkSearch}" arg2="Quotes" />
-				<then>
-					<var name="quotes"><![CDATA["${bookmarkName}"]]></var>
-
-					<execute function="Type" locator1="NavBar#BASIC_SEARCH_FIELD" value1="${quotes}" />
-
-					<execute function="Click" locator1="NavBar#SEARCH_BUTTON" />
-
-					<var name="key_bookmarkName" value="${bookmarkName}" />
-
-					<execute function="AssertTextEquals" locator1="Bookmarks#SEARCH_TABLE_ENTRY_NAME" value1="${bookmarkName}" />
-				</then>
-			</elseif>
-		</if>
 	</command>
 
 	<command name="tearDownCP">
@@ -487,7 +434,7 @@
 			<then>
 				<execute function="Check#checkAll" locator1="Checkbox#SELECT_ALL" />
 
-				<execute function="Click" locator1="Icon#DELETE" />
+				<execute function="Click" locator1="Icon#MOVE_TO_RECYCLE_BIN" />
 
 				<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="moved to the Recycle Bin. Undo" />
 				<execute function="AssertElementPresent" locator1="Message#EMPTY_INFO" />
@@ -510,19 +457,7 @@
 
 		<execute function="AssertClick" locator1="Bookmarks#DESCRIPTIVE_ENTRY_TITLE" value1="${bookmarkName}" />
 
-		<var method="selenium#getLocation()" name="currentURL" />
-
-		<if>
-			<equals arg1="${bookmarkURL}/" arg2="${currentURL}" />
-			<then>
-				<var name="currentURL" value="${bookmarkURL}" />
-			</then>
-		</if>
-
-		<execute macro="TestUtils#assertEquals">
-			<var name="actual" value="${currentURL}" />
-			<var name="expected" value="${bookmarkURL}" />
-		</execute>
+		<execute function="AssertLocation" value1="${bookmarkURL}/" />
 	</command>
 
 	<command name="viewBookmarkViaAP">

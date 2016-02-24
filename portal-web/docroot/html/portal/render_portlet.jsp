@@ -175,8 +175,6 @@ boolean showEditDefaultsIcon = false;
 boolean showEditGuestIcon = false;
 boolean showExportImportIcon = false;
 boolean showHelpIcon = false;
-boolean showMaxIcon = portlet.hasWindowState(responseContentType, WindowState.MAXIMIZED);
-boolean showMinIcon = portlet.hasWindowState(responseContentType, WindowState.MINIMIZED);
 boolean showMoveIcon = !stateMax && !themeDisplay.isStateExclusive();
 boolean showPortletCssIcon = false;
 boolean showPortletIcon = (portletResourcePortlet != null) ? Validator.isNotNull(portletResourcePortlet.getIcon()) : Validator.isNotNull(portlet.getIcon());
@@ -221,7 +219,13 @@ if (group.isLayoutPrototype()) {
 	showExportImportIcon = false;
 }
 
-if ((group.isStaged() || group.isStagedRemotely()) && !group.hasLocalOrRemoteStagingGroup()) {
+Group checkingStagingGroup = group;
+
+if (checkingStagingGroup.isControlPanel()) {
+	checkingStagingGroup = GroupLocalServiceUtil.fetchGroup(themeDisplay.getSiteGroupId());
+}
+
+if ((checkingStagingGroup.isStaged() || checkingStagingGroup.isStagedRemotely()) && !checkingStagingGroup.hasLocalOrRemoteStagingGroup() && checkingStagingGroup.isStagedPortlet(portletId)) {
 	showStagingIcon = true;
 }
 
@@ -259,9 +263,6 @@ if (responseContentType.equals(ContentTypes.XHTML_MP) && portlet.hasMultipleMime
 if ((!themeDisplay.isSignedIn()) ||
 	(group.hasStagingGroup() && !group.isStagingGroup()) ||
 	(!LayoutPermissionUtil.contains(permissionChecker, layout, ActionKeys.UPDATE))) {
-
-	showMaxIcon = PropsValues.LAYOUT_GUEST_SHOW_MAX_ICON;
-	showMinIcon = PropsValues.LAYOUT_GUEST_SHOW_MIN_ICON;
 
 	if (!(!columnDisabled && customizable && LayoutPermissionUtil.contains(permissionChecker, layout, ActionKeys.CUSTOMIZE))) {
 		showCloseIcon = false;
@@ -312,8 +313,6 @@ LayoutTypeController layoutTypeController = layoutTypePortlet.getLayoutTypeContr
 
 if (layoutTypeController.isFullPageDisplayable()) {
 	showCloseIcon = false;
-	showMaxIcon = false;
-	showMinIcon = false;
 }
 
 long previousScopeGroupId = themeDisplay.getScopeGroupId();
@@ -383,8 +382,6 @@ portletDisplay.setShowEditDefaultsIcon(showEditDefaultsIcon);
 portletDisplay.setShowEditGuestIcon(showEditGuestIcon);
 portletDisplay.setShowExportImportIcon(showExportImportIcon);
 portletDisplay.setShowHelpIcon(showHelpIcon);
-portletDisplay.setShowMaxIcon(showMaxIcon);
-portletDisplay.setShowMinIcon(showMinIcon);
 portletDisplay.setShowMoveIcon(showMoveIcon);
 portletDisplay.setShowPortletCssIcon(showPortletCssIcon);
 portletDisplay.setShowPortletIcon(showPortletIcon);
@@ -476,9 +473,6 @@ if (portlet.getConfigurationActionInstance() != null) {
 		urlConfiguration.setParameter("settingsScope", settingsScope);
 	}
 }
-else if (PortletPermissionUtil.contains(permissionChecker, layout, portletDisplay.getId(), ActionKeys.PERMISSIONS)) {
-	urlConfiguration.setParameter("mvcPath", "/edit_permissions.jsp");
-}
 else {
 	urlConfiguration.setParameter("mvcPath", "/edit_sharing.jsp");
 }
@@ -491,9 +485,10 @@ urlConfiguration.setParameter("resourcePrimKey", portletPrimaryKey);
 
 portletDisplay.setURLConfiguration(urlConfiguration.toString());
 
-StringBuilder urlConfigurationJSSB = new StringBuilder(14);
+StringBuilder urlConfigurationJSSB = new StringBuilder(15);
 
-urlConfigurationJSSB.append("Liferay.Portlet.openWindow({bodyCssClass: 'dialog-with-footer',");
+urlConfigurationJSSB.append("Liferay.Portlet.openWindow({bodyCssClass: 'dialog-with-footer', ");
+urlConfigurationJSSB.append("destroyOnHide: true, ");
 urlConfigurationJSSB.append("namespace: '");
 urlConfigurationJSSB.append(portletDisplay.getNamespace());
 urlConfigurationJSSB.append("', portlet: '#p_p_id_");
@@ -799,8 +794,6 @@ if (themeDisplay.isWidget()) {
 if (group.isControlPanel()) {
 	portletDisplay.setShowBackIcon(false);
 	portletDisplay.setShowConfigurationIcon(false);
-	portletDisplay.setShowMaxIcon(false);
-	portletDisplay.setShowMinIcon(false);
 	portletDisplay.setShowMoveIcon(false);
 	portletDisplay.setShowPortletCssIcon(false);
 
@@ -937,15 +930,12 @@ Boolean renderPortletBoundary = GetterUtil.getBoolean(request.getAttribute(WebKe
 		cssClasses += StringPool.SPACE + portletResourcePortlet.getCssClassWrapper();
 	}
 
-	String defaultScreenCssClasses = StringPool.BLANK;
-
 	if ((portletVisibility != null) && !layout.isTypeControlPanel()) {
-		defaultScreenCssClasses += " lfr-configurator-visibility";
+		cssClasses += " lfr-configurator-visibility";
 	}
 	%>
 
 	<div class="<%= cssClasses %>" id="p_p_id<%= HtmlUtil.escapeAttribute(renderResponseImpl.getNamespace()) %>" <%= freeformStyles %>>
-		<div class="<%= defaultScreenCssClasses %>" id="p_p_id<%= HtmlUtil.escapeAttribute(renderResponseImpl.getNamespace()) %>-defaultScreen">
 </c:if>
 
 <c:choose>
@@ -1097,7 +1087,6 @@ else {
 </aui:script>
 
 <c:if test="<%= renderPortletBoundary %>">
-		</div>
 	</div>
 </c:if>
 

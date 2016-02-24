@@ -16,6 +16,7 @@ package com.liferay.source.formatter;
 
 import com.liferay.portal.kernel.io.unsync.UnsyncBufferedReader;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringReader;
+import com.liferay.portal.kernel.nio.charset.CharsetDecoderUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -38,6 +39,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
+import java.nio.ByteBuffer;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CodingErrorAction;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -545,6 +549,21 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		processErrorMessage(fileName, "plus: " + fileName + " " + lineCount);
 	}
 
+	protected void checkUTF8(File file, String fileName) throws Exception {
+		byte[] bytes = FileUtil.getBytes(file);
+
+		try {
+			CharsetDecoder charsetDecoder =
+				CharsetDecoderUtil.getCharsetDecoder(
+					StringPool.UTF8, CodingErrorAction.REPORT);
+
+			charsetDecoder.decode(ByteBuffer.wrap(bytes));
+		}
+		catch (Exception e) {
+			processErrorMessage(fileName, "UTF-8: " + fileName);
+		}
+	}
+
 	protected abstract String doFormat(
 			File file, String fileName, String absolutePath, String content)
 		throws Exception;
@@ -626,6 +645,18 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 			if (!content.contains(copyright)) {
 				processErrorMessage(fileName, "(c): " + fileName);
 			}
+			else if (!content.startsWith(copyright) &&
+					 !content.startsWith("<%--\n" + copyright)) {
+
+				processErrorMessage(
+					fileName, "File must start with copyright: " + fileName);
+			}
+		}
+		else if (!content.startsWith(copyright) &&
+				 !content.startsWith("<%--\n" + copyright)) {
+
+			processErrorMessage(
+				fileName, "File must start with copyright: " + fileName);
 		}
 
 		if (fileName.endsWith(".jsp") || fileName.endsWith(".jspf")) {
@@ -794,6 +825,8 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 
 		_errorMessagesMap.remove(fileName);
 
+		checkUTF8(file, fileName);
+
 		String newContent = doFormat(file, fileName, absolutePath, content);
 
 		newContent = StringUtil.replace(
@@ -807,10 +840,6 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 	}
 
 	protected final void format(String fileName) throws Exception {
-		if (!fileName.endsWith("ExportImportLifecycleEventTest.java")) {
-			//return;
-		}
-
 		if (!_isMatchPath(fileName)) {
 			return;
 		}
@@ -888,7 +917,7 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		}
 
 		JavaClass javaClass = new JavaClass(
-			javaClassName, packagePath, file, fileName, absolutePath,
+			javaClassName, packagePath, file, fileName, absolutePath, content,
 			javaClassContent, javaClassLineCount, StringPool.TAB, null,
 			javaTermAccessLevelModifierExcludes, javaSourceProcessor);
 
@@ -1126,8 +1155,8 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 
 		_annotationsExclusions = SetUtil.fromArray(
 			new String[] {
-				"ArquillianResource", "BeanReference", "Inject", "Mock",
-				"Reference", "ServiceReference", "SuppressWarnings"
+				"ArquillianResource", "BeanReference", "Captor", "Inject",
+				"Mock", "Reference", "ServiceReference", "SuppressWarnings"
 			});
 
 		return _annotationsExclusions;
@@ -1453,6 +1482,33 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		String beforePos = content.substring(0, pos);
 
 		return StringUtil.count(beforePos, StringPool.NEW_LINE) + 1;
+	}
+
+	protected int getLineLength(String line) {
+		int lineLength = 0;
+
+		int tabLength = 4;
+
+		for (char c : line.toCharArray()) {
+			if (c == CharPool.TAB) {
+				for (int i = 0; i < tabLength; i++) {
+					lineLength++;
+				}
+
+				tabLength = 4;
+			}
+			else {
+				lineLength++;
+
+				tabLength--;
+
+				if (tabLength <= 0) {
+					tabLength = 4;
+				}
+			}
+		}
+
+		return lineLength;
 	}
 
 	protected String getMainReleaseVersion() {
@@ -2060,7 +2116,7 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 	protected static Pattern attributeNamePattern = Pattern.compile(
 		"[a-z]+[-_a-zA-Z0-9]*");
 	protected static Pattern bndContentDirPattern = Pattern.compile(
-		"\tcontent=(.*?)(,\\\\|\n)");
+		"\\scontent=(.*?)(,\\\\|\n)");
 	protected static Pattern emptyCollectionPattern = Pattern.compile(
 		"Collections\\.EMPTY_(LIST|MAP|SET)");
 	protected static Pattern javaSourceInsideJSPTagPattern = Pattern.compile(

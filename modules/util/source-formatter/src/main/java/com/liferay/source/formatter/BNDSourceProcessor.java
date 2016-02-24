@@ -40,6 +40,8 @@ public class BNDSourceProcessor extends BaseSourceProcessor {
 			File file, String fileName, String absolutePath, String content)
 		throws Exception {
 
+		content = trimContent(content, false);
+
 		// LPS-61288
 
 		if (fileName.endsWith("-web/bnd.bnd") &&
@@ -47,9 +49,11 @@ public class BNDSourceProcessor extends BaseSourceProcessor {
 
 			processErrorMessage(
 				fileName,
-				"Do not include the header Liferay-Require-SchemaVersion in web " +
-					"modules: " + fileName);
+				"Do not include the header Liferay-Require-SchemaVersion in " +
+					"web modules: " + fileName);
 		}
+
+		content = StringUtil.replace(content, " \\\n", "\\\n");
 
 		Matcher matcher = _incorrectTabPattern.matcher(content);
 
@@ -65,9 +69,12 @@ public class BNDSourceProcessor extends BaseSourceProcessor {
 				content, matcher.group(1), StringPool.SPACE, matcher.start());
 		}
 
-		content = sortDefinitions(content);
+		content = BNDImportsFormatter.formatBNDImports(
+			content, _exportsPattern);
+		content = BNDImportsFormatter.formatBNDImports(
+			content, _importsPattern);
 
-		return trimContent(content, false);
+		return sortDefinitions(content);
 	}
 
 	@Override
@@ -118,6 +125,12 @@ public class BNDSourceProcessor extends BaseSourceProcessor {
 
 	private Pattern _bndDefinitionPattern = Pattern.compile(
 		"^[A-Za-z-][\\s\\S]*?([^\\\\]\n|\\Z)", Pattern.MULTILINE);
+	private Pattern _exportsPattern = Pattern.compile(
+		"\nExport-Package:\\\\\n(.*?\n)[^\t]",
+		Pattern.DOTALL | Pattern.MULTILINE);
+	private Pattern _importsPattern = Pattern.compile(
+		"\nImport-Package:\\\\\n(.*?\n)[^\t]",
+		Pattern.DOTALL | Pattern.MULTILINE);
 	private Pattern _incorrectTabPattern = Pattern.compile(
 		"\n[^\t].*:\\\\\n(\t{2,})[^\t]");
 	private Pattern _singleValueOnMultipleLinesPattern = Pattern.compile(

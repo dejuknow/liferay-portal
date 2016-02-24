@@ -69,7 +69,7 @@
 	<command name="addRoleViewPermissions">
 		<var name="key_rowEntry" value="${templateName}" />
 
-		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
 
 		<execute function="AssertClick" locator1="MenuItem#PERMISSIONS_LEXICON" value1="Permissions" />
 
@@ -82,6 +82,10 @@
 	</command>
 
 	<command name="addStructure">
+		<execute macro="Panel#expandPanel">
+			<var name="panelHeading" value="Details" />
+		</execute>
+
 		<execute function="AssertClick" locator1="DDMEditTemplate#DETAILS_SELECT_STRUCTURE" value1="Select" />
 
 		<execute function="SelectFrameTop" />

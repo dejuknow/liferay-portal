@@ -22,7 +22,6 @@ import com.liferay.taglib.ui.AssetLinksTag;
 import com.liferay.taglib.ui.AssetTagsSummaryTag;
 import com.liferay.taglib.ui.BreadcrumbTag;
 import com.liferay.taglib.ui.DiscussionTag;
-import com.liferay.taglib.ui.FlagsTag;
 import com.liferay.taglib.ui.IconTag;
 import com.liferay.taglib.ui.JournalArticleTag;
 import com.liferay.taglib.ui.MySitesTag;
@@ -118,11 +117,6 @@ public interface VelocityTaglib {
 
 	public void doAsURL(long doAsUserId) throws Exception;
 
-	public void flags(
-			String className, long classPK, String contentTitle, boolean label,
-			String message, long reportedUserId)
-		throws Exception;
-
 	public AssetCategoriesSummaryTag<?> getAssetCategoriesSummaryTag()
 		throws Exception;
 
@@ -133,8 +127,6 @@ public interface VelocityTaglib {
 	public BreadcrumbTag getBreadcrumbTag() throws Exception;
 
 	public DiscussionTag getDiscussionTag() throws Exception;
-
-	public FlagsTag getFlagsTag() throws Exception;
 
 	public IconTag getIconTag() throws Exception;
 

@@ -14,6 +14,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>CLOSE_ADD_PANEL</td>
+	<td>//a[contains(@id,'closePanelAdd') and contains(@class,'close')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td></td>
 	<td></td>
 	<td></td>
@@ -62,12 +67,12 @@
 </tr>
 <tr>
 	<td>SIDEBAR_PANEL_HEADING_COLLAPSED</td>
-	<td>//div[@aria-expanded='false' and contains(.,'${key_panelHeading}')]</td>]
+	<td>//div[contains(@id,'addPanel')]//div[@aria-expanded='false' and contains(.,'${key_panelHeading}')]</td>]
 	<td></td>
 </tr>
 <tr>
 	<td>SIDEBAR_PANEL_HEADING_EXPANDED</td>
-	<td>//div[@aria-expanded='true' and contains(.,'${key_panelHeading}')]</td>
+	<td>//div[contains(@id,'addPanel')]//div[@aria-expanded='true' and contains(.,'${key_panelHeading}')]</td>
 	<td></td>
 </tr>
 </tbody>

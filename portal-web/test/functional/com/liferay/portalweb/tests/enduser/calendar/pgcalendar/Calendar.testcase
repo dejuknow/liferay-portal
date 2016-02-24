@@ -348,7 +348,7 @@
 			<var name="site" value="Liferay" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -423,7 +423,7 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -543,7 +543,7 @@
 			<var name="siteName" value="Site Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesPublishingTools">
+		<execute macro="ProductMenu#gotoSitesPublishing">
 			<var name="portlet" value="Staging" />
 		</execute>
 
@@ -880,7 +880,7 @@
 			<var name="site" value="Liferay" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -1259,7 +1259,7 @@
 			<var name="site" value="Liferay" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -1578,7 +1578,7 @@
 			<var name="eventTitle" value="Calendar Event Title" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesPublishingTools">
+		<execute macro="ProductMenu#gotoSitesPublishing">
 			<var name="portlet" value="Staging" />
 		</execute>
 
@@ -2258,8 +2258,6 @@
 	</command>
 
 	<command name="DeleteEventRegular"  priority="5">
-		<property name="portal.acceptance" value="true" />
-
 		<var name="eventTitle" value="Calendar Event Regular Title" />
 		<var name="eventType" value="Regular" />
 
@@ -3777,7 +3775,7 @@
 		</execute>
 
 		<execute macro="CalendarEvent#viewComment">
-			<var name="calendarName" value="Liferay" />
+			<var name="calendarName" value="${calendarName}" />
 			<var name="eventComment" value="Calendar Event Regular Comment" />
 			<var name="eventTitle" value="Calendar Event Regular Title" />
 			<var name="eventType" value="Regular" />
@@ -4124,8 +4122,6 @@
 	</command>
 
 	<command name="SearchForOtherCalendars" priority="5">
-		<property name="portal.acceptance" value="true" />
-
 		<var name="eventType" value="Regular" />
 		<var name="userEmailAddress" value="userea@liferay.com" />
 		<var name="userFirstName" value="userfn" />
@@ -4580,8 +4576,6 @@
 	</command>
 
 	<command name="ViewCalendarTimeZoneDefaults" priority="5">
-		<property name="portal.acceptance" value="true" />
-
 		<execute macro="UserBar#gotoMyAccount" />
 
 		<execute macro="User#editUserDisplaySettingsTimeZonePacific">
@@ -4890,7 +4884,7 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -5132,7 +5126,7 @@
 			<var name="site" value="Liferay" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -5446,7 +5440,7 @@
 			<var name="site" value="Site A" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -5469,7 +5463,7 @@
 			<var name="site" value="Site C" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 

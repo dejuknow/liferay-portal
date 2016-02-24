@@ -33,7 +33,7 @@
 	<command name="DeleteExportTemplate" priority="4">
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesPublishingTools">
+		<execute macro="ProductMenu#gotoSitesPublishing">
 			<var name="portlet" value="Export" />
 		</execute>
 
@@ -74,7 +74,7 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesPublishingTools">
+		<execute macro="ProductMenu#gotoSitesPublishing">
 			<var name="portlet" value="Export" />
 		</execute>
 
@@ -119,7 +119,7 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesPublishingTools">
+		<execute macro="ProductMenu#gotoSitesPublishing">
 			<var name="portlet" value="Export" />
 		</execute>
 
@@ -142,7 +142,7 @@
 			<var name="exportTemplateName" value="Export Template Name" />
 		</execute>
 
-		<var method="selenium#getElementText('//div[contains(@id,'backgroundTasksSearchContainer')]//table//tr/td[6]/span/a/span')" name="valueName" />
+		<var method="selenium#getText('//div[contains(@id,\'exportLayoutProcessesSearchContainer\')]//table//tr/td[7]/span/a/span')" name="valueName" />
 
 		<echo message="value name ${valueName}" />
 
@@ -185,7 +185,7 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesPublishingTools">
+		<execute macro="ProductMenu#gotoSitesPublishing">
 			<var name="portlet" value="Export" />
 		</execute>
 
@@ -213,7 +213,7 @@
 
 		<execute function="AssertTextEquals#assertPartialText" locator1="SitePagesExport#CURRENT_AND_PREVIOUS_STATUS" value1="Successful" />
 
-		<var method="selenium#getElementText('//div[contains(@id,'backgroundTasksSearchContainer')]//table//tr/td[6]/span/a/span')" name="valueName" />
+		<var method="selenium#getText('//div[contains(@id,\'exportLayoutProcessesSearchContainer\')]//table//tr/td[7]/span/a/span')" name="valueName" />
 
 		<echo message="value name ${valueName}" />
 
@@ -383,7 +383,7 @@
 
 		<execute function="AssertTextEquals#assertPartialText" locator1="SitePagesExport#CURRENT_AND_PREVIOUS_STATUS" value1="Successful" />
 
-		<var method="selenium#getElementText('//tr/td[6]/span/a')" name="valueName" />
+		<var method="selenium#getText('//tr/td[7]/span/a')" name="valueName" />
 
 		<echo message="value name ${valueName}" />
 
@@ -432,7 +432,7 @@
 
 		<execute function="AssertTextEquals#assertPartialText" locator1="SitePagesExport#CURRENT_AND_PREVIOUS_STATUS" value1="Successful" />
 
-		<var method="selenium#getElementText('//tr/td[6]/span/a')" name="valueName" />
+		<var method="selenium#getText('//tr/td[7]/span/a')" name="valueName" />
 
 		<echo message="value name ${valueName}" />
 
@@ -498,9 +498,9 @@
 
 		<var name="key_entryTitle" value="Blogs Entry Title" />
 
-		<execute function="AssertElementNotPresent" locator1="PGBlogs#ENTRY_EDIT" value1="Edit" />
-		<execute function="AssertElementNotPresent" locator1="PGBlogs#ENTRY_PERMISSIONS" value1="Permissions" />
-		<execute function="AssertElementNotPresent" locator1="PGBlogs#ENTRY_RECYCLE_BIN" value1="Move to the Recycle Bin" />
+		<execute function="AssertElementNotPresent" locator1="Link#EDIT" value1="Edit" />
+		<execute function="AssertElementNotPresent" locator1="Link#PERMISSIONS" value1="Permissions" />
+		<execute function="AssertElementNotPresent" locator1="Link#MOVE_TO_THE_RECYCLING_BIN" value1="Move to the Recycle Bin" />
 
 		<execute macro="LAR#configureExportSiteCP" />
 
@@ -508,7 +508,7 @@
 
 		<execute function="AssertTextEquals#assertPartialText" locator1="SitePagesExport#CURRENT_AND_PREVIOUS_STATUS" value1="Successful" />
 
-		<var method="selenium#getElementText('//tr/td[6]/span/a')" name="valueName" />
+		<var method="selenium#getText('//tr/td[7]/span/a')" name="valueName" />
 
 		<echo message="value name ${valueName}" />
 
@@ -540,13 +540,12 @@
 
 		<var name="key_entryTitle" value="Blogs Entry Title" />
 
-		<execute function="AssertElementNotPresent" locator1="PGBlogs#ENTRY_EDIT" value1="Edit" />
-		<execute function="AssertElementNotPresent" locator1="PGBlogs#ENTRY_PERMISSIONS" value1="Permissions" />
-		<execute function="AssertElementNotPresent" locator1="PGBlogs#ENTRY_RECYCLE_BIN" value1="Move to the Recycle Bin" />
+		<execute function="AssertElementNotPresent" locator1="Link#EDIT" value1="Edit" />
+		<execute function="AssertElementNotPresent" locator1="Link#PERMISSIONS" value1="Permissions" />
+		<execute function="AssertElementNotPresent" locator1="Link#MOVE_TO_THE_RECYCLING_BIN" value1="Move to the Recycle Bin" />
 	</command>
 
 	<command name="ExportImportSampleLARPortlet" priority="5">
-		<property name="portal.acceptance" value="true" />
 		<property name="portlet.plugins.includes" value="sample-lar-portlet" />
 
 		<execute macro="Page#add">
@@ -565,7 +564,7 @@
 
 		<execute macro="SampleLARPortlet#addSampleBooking" />
 
-		<var method="selenium#getElementText('//tbody[@class=\'table-data\']/tr/td[2]')" name="bookingNumber" />
+		<var method="selenium#getText('//tbody[@class=\'table-data\']/tr/td[2]')" name="bookingNumber" />
 
 		<echo message="Booking Number ${bookingNumber}" />
 
@@ -594,7 +593,6 @@
 			<var name="page" value="Public Pages" />
 			<var name="pageName" value="Test Site Page" />
 			<var name="siteName" value="Test Site Name" />
-			<var name="siteURL" value="true" />
 		</execute>
 
 		<execute macro="Page#gotoPG">
@@ -687,7 +685,7 @@
 
 		<execute function="AssertTextEquals#assertPartialText" locator1="SitePagesExport#CURRENT_AND_PREVIOUS_STATUS" value1="Successful" />
 
-		<var method="selenium#getElementText('//tr/td[6]/span/a')" name="valueName" />
+		<var method="selenium#getText('//tr/td[7]/span/a')" name="valueName" />
 
 		<echo message="value name ${valueName}" />
 
@@ -757,7 +755,7 @@
 			<var name="uploadFileName" value="DM Document Title" />
 		</execute>
 
-		<execute macro="BlogsEntry#publishCP" />
+		<execute macro="BlogsEntry#publish" />
 
 		<execute macro="LAR#configureExportSiteCP">
 			<var name="mainContent" value="Blogs" />
@@ -769,7 +767,7 @@
 
 		<execute function="AssertTextEquals#assertPartialText" locator1="SitePagesExport#CURRENT_AND_PREVIOUS_STATUS" value1="Successful" />
 
-		<var method="selenium#getElementText('//tr/td[6]/span/a')" name="valueName" />
+		<var method="selenium#getText('//tr/td[7]/span/a')" name="valueName" />
 
 		<echo message="value name ${valueName}" />
 
@@ -798,7 +796,7 @@
 	<command name="ExportImportWithExportTemplate" priority="4">
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesPublishingTools">
+		<execute macro="ProductMenu#gotoSitesPublishing">
 			<var name="portlet" value="Export" />
 		</execute>
 
@@ -822,7 +820,7 @@
 			<var name="exportTemplateName" value="Export Template Name" />
 		</execute>
 
-		<var method="selenium#getElementText('//div[contains(@id,'backgroundTasksSearchContainer')]//table//tr/td[6]/span/a/span')" name="valueName" />
+		<var method="selenium#getText('//div[contains(@id,\'exportLayoutProcessesSearchContainer\')]//table//tr/td[7]/span/a/span')" name="valueName" />
 
 		<echo message="value name ${valueName}" />
 
@@ -912,7 +910,7 @@
 
 		<execute function="AssertTextEquals#assertPartialText" locator1="SitePagesExport#CURRENT_AND_PREVIOUS_STATUS" value1="Successful" />
 
-		<var method="selenium#getElementText('//tr/td[6]/span/a')" name="valueName" />
+		<var method="selenium#getText('//tr/td[7]/span/a')" name="valueName" />
 
 		<echo message="value name ${valueName}" />
 
@@ -959,6 +957,8 @@
 			<var name="portlet" value="Bookmarks" />
 		</execute>
 
+		<execute function="AssertTextEquals" locator1="Portlet#HEADER" value1="Bookmarks" />
+
 		<execute macro="LAR#importPortlet">
 			<var name="cannotImport" value="true" />
 			<var name="larFileName" value="bookmarks-corrupted.portlet.lar" />
@@ -969,7 +969,7 @@
 	<command name="SearchExportTemplate" priority="4">
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesPublishingTools">
+		<execute macro="ProductMenu#gotoSitesPublishing">
 			<var name="portlet" value="Export" />
 		</execute>
 
@@ -989,7 +989,7 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesPublishingTools">
+		<execute macro="ProductMenu#gotoSitesPublishing">
 			<var name="portlet" value="Export" />
 		</execute>
 

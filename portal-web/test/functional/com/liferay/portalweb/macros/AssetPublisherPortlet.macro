@@ -380,11 +380,11 @@
 	<command name="configureManualAssetSelectionPG">
 		<execute macro="Portlet#gotoPortletOptions">
 			<var name="portletName" value="Asset Publisher" />
-			<var name="portletName" value="${portletName}" />
 			<var name="portletOption" value="Configuration" />
 		</execute>
 
 		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
+
 		<execute function="Click" locator1="APConfiguration#ASSET_SELECTION_MANUAL" />
 
 		<if>
@@ -649,24 +649,20 @@
 		<execute function="AssertClick" locator1="MenuItem#RESTORE" value1="Restore" />
 	</command>
 
-	<command name="saveArchivedSetupPG">
-		<execute macro="AssetPublisherPortlet#gotoConfigurationPG" />
+	<command name="saveConfigurationTemplatePG">
+		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
 
-		<execute function="Click" locator1="APConfiguration#ASSET_SELECTION_MANUAL" />
-
-		<execute macro="Button#clickSave" />
-
-		<execute function="AssertClick" locator1="Configuration#ARCHIVE_RESTORE" value1="Archive/Restore Setup" />
+		<execute function="AssertClick" locator1="Configuration#SAVE_CONFIGURATION_TEMPLATE" value1="Save Current Configuration as Template" />
 
 		<execute function="AssertTextEquals" locator1="Message#EMPTY_INFO" value1="There are no archived setups." />
 
-		<execute function="Type" locator1="TextInput#NAME" value1="${archiveName}" />
+		<execute function="Type" locator1="TextInput#NAME" value1="${configurationName}" />
 
 		<execute macro="Button#clickSave" />
 
-		<var name="key_archiveName" value="${archiveName}" />
+		<var name="key_configurationName" value="${configurationName}" />
 
-		<execute function="AssertTextEquals" locator1="APConfigurationArchivedsetup#ARCHIVED_SETUPS_TABLE_NAME" value1="${archiveName}" />
+		<execute function="AssertTextEquals" locator1="Configuration#CONFIGURATION_TEMPLATE_TABLE_NAME" value1="${configurationName}" />
 
 		<execute macro="Alert#viewRequestCompletedSuccessMessage" />
 
@@ -851,25 +847,31 @@
 	</command>
 
 	<command name="viewContentSharingPG">
-		<var name="key_siteScope" value="${siteScope1}" />
+		<execute function="Click#makeVisibleClickAt" locator1="AP#ADD_ASSET_PLUS_ICON" />
 
-		<execute function="AssertTextEquals" locator1="AP#ADD_NEW_DROPDOWN_IN_SCOPED_SITE" value1="Add New in ${siteScope1}" />
+		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
 
-		<var name="key_siteScope" value="${siteScope2}" />
+		<execute function="Select" locator1="Select#SCOPE" value1="${siteScope1}" />
 
-		<execute function="AssertTextEquals" locator1="AP#ADD_NEW_DROPDOWN_IN_SCOPED_SITE" value1="Add New in ${siteScope2}" />
+		<execute function="AssertSelectedLabel" locator1="Select#SCOPE" value1="${siteScope1}" />
 
-		<var name="key_assetTitle" value="${assetTitle}" />
+		<execute function="Select" locator1="Select#SCOPE" value1="${siteScope2}" />
 
-		<execute function="AssertTextEquals" locator1="AP#ASSET_ABSTRACT_TITLE" value1="${assetTitle}" />
-		<execute function="AssertTextEquals#assertPartialText" locator1="AP#ASSET_ABSTRACT_DESCRIPTION" value1="${assetContent}" />
+		<execute function="AssertSelectedLabel" locator1="Select#SCOPE" value1="${siteScope2}" />
+
+		<execute function="Refresh" />
+
+		<execute macro="AssetPublisherPortlet#viewPG">
+			<var name="assetContent" value="${assetContent}" />
+			<var name="assetTitle" value="${assetTitle}" />
+		</execute>
 	</command>
 
 	<command name="viewCustomADTRichSummaryPG">
 		<var name="key_assetTitle" value="${assetTitle}" />
 
 		<execute function="AssertTextEquals" locator1="AP#ASSET_RICH_SUMMARY_TITLE" value1="${assetTitle}" />
-		<execute function="AssertTextEquals#assertPartialText" locator1="AP#ASSET_ABSTRACT_DESCRIPTION" value1="${assetDescription}" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="AP#CUSTOM_ASSET_ABSTRACT_DESCRIPTION" value1="${assetDescription}" />
 		<execute function="AssertElementPresent" locator1="Link#READ_MORE" />
 		<execute function="AssertElementPresent" locator1="Icon#PRINT" />
 		<execute function="AssertElementPresent" locator1="Icon#FLAG" />
@@ -881,15 +883,15 @@
 			<then>
 				<execute function="AssertElementNotPresent" locator1="Comments#BE_THE_FIRST_LINK" />
 				<execute function="AssertElementNotPresent" locator1="Comments#SUBSCRIBE_TO_COMMENTS_LINK" />
-				<execute function="AssertElementNotPresent" locator1="Icon#EDIT" />
+				<execute function="AssertElementNotPresent" locator1="Icon#CUSTOM_EDIT" />
 			</then>
 			<else>
 				<execute function="AssertElementPresent" locator1="Comments#SUBSCRIBE_TO_COMMENTS_LINK" />
-				<execute function="AssertElementPresent" locator1="Icon#EDIT" />
+				<execute function="AssertElementPresent" locator1="Icon#CUSTOM_EDIT" />
 			</else>
 		</if>
 
-		<execute function="AssertClick" locator1="Button#SHARE" value1="Share" />
+		<execute function="Click" locator1="Icon#SHARE" value1="Share" />
 
 		<execute function="AssertElementPresent" locator1="Icon#TWITTER" />
 		<execute function="AssertElementPresent" locator1="Icon#FACEBOOK" />
@@ -914,10 +916,11 @@
 
 		<execute function="Click" locator1="APConfiguration#ASSET_SELECTION_DYNAMIC" />
 
-		<execute function="AssertElementPresent" locator1="APConfiguration#SOURCE_DROPDOWN" />
-		<execute function="AssertElementPresent" locator1="APConfiguration#FILTER_DROPDOWN" />
-		<execute function="AssertElementPresent" locator1="APConfiguration#CUSTOM_USER_DROPDOWN" />
-		<execute function="AssertElementPresent" locator1="APConfiguration#ORDERING_AND_GROUPING_DROPDOWN" />
+		<for list="Source,Filter,Custom User Attributes,Ordering and Grouping" param="panelHeading">
+			<var name="key_panelHeading" value="${panelHeading}" />
+
+			<execute function="AssertElementPresent" locator1="Panel#PANEL_HEADING_COLLAPSED" value1="${panelHeading}" />
+		</for>
 
 		<execute function="SelectFrameTop" />
 	</command>
@@ -1004,15 +1007,17 @@
 	<command name="viewMultipleSiteScopesAddDropdowns">
 		<var name="key_siteScope" value="${siteName1}" />
 
-		<execute function="AssertClick" locator1="AP#ADD_NEW_DROPDOWN_IN_SCOPED_SITE" value1="Add New in ${siteName1}" />
+		<execute function="Click#makeVisibleClickAt" locator1="AP#ADD_ASSET_PLUS_ICON" />
 
-		<execute function="AssertElementPresent" locator1="MenuItem#BASIC_WEB_CONTENT" value1="Basic Web Content" />
+		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
 
-		<var name="key_siteScope" value="${siteName2}" />
+		<execute function="Select" locator1="Select#SCOPE" value1="${siteName1}" />
 
-		<execute function="AssertClick" locator1="AP#ADD_NEW_DROPDOWN_IN_SCOPED_SITE" value1="Add New in ${siteName2}" />
+		<execute function="AssertSelectedLabel" locator1="Select#SCOPE" value1="${siteName1}" />
 
-		<execute function="AssertElementPresent" locator1="AP#ADD_NEW_2_BASIC_WEB_CONTENT" value1="Basic Web Content" />
+		<execute function="Select" locator1="Select#SCOPE" value1="${siteName2}" />
+
+		<execute function="AssertSelectedLabel" locator1="Select#SCOPE" value1="${siteName2}" />
 	</command>
 
 	<command name="viewNoEditLinkPG">
@@ -1115,7 +1120,7 @@
 			<var name="panelHeading" value="Asset Entries" />
 		</execute>
 
-		<execute function="AssertTextEquals" locator1="Message#INFO" value1="No assets selected." />
+		<execute function="AssertTextEquals" locator1="Message#EMPTY_INFO" value1="No assets selected." />
 
 		<execute function="SelectFrameTop" />
 	</command>

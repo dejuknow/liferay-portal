@@ -1,5 +1,15 @@
 <definition>
 	<command name="configureAnonymousPostingCP">
+		<execute macro="Navigator#openURL" />
+
+		<execute macro="ProductMenu#gotoSitesContent">
+			<var name="portlet" value="Message Boards" />
+		</execute>
+
+		<execute function="Click" locator1="BasePortlet#OPTIONS_ICON" />
+
+		<execute function="AssertClick" locator1="BasePortlet#OPTIONS_MENULIST_CONFIGURATION" value1="Configuration" />
+
 		<execute function="Pause" locator1="10000" />
 
 		<execute function="SelectFrame" locator1="IFrame#CONFIGURATION" />
@@ -161,7 +171,8 @@
 
 	<command name="searchPG">
 		<execute function="Type" locator1="NavBar#BASIC_SEARCH_FIELD" value1="${searchTerm}" />
-		<execute function="AssertClick" locator1="NavBar#BASIC_SEARCH_BUTTON" value1="Search" />
+
+		<execute function="KeyPress" locator1="NavBar#BASIC_SEARCH_FIELD" value1="\RETURN" />
 	</command>
 
 	<command name="subscribePG">
@@ -288,7 +299,7 @@
 
 	<command name="viewNoPermissionCP">
 		<execute function="AssertTextEquals" locator1="MessageBoardsAdmin#PORTLET_TITLE" value1="Message Boards" />
-		<execute function="AssertElementPresent" locator1="MessageBoardsAdmin#NAVBAR_CONTAINER" />
+		<execute function="AssertElementPresent" locator1="NavBar#CONTAINER" />
 		<execute function="AssertTextEquals#assertText" locator1="Message#INFO" value1="There are no threads in this category." />
 	</command>
 
@@ -302,7 +313,6 @@
 		<var name="key_threadSubject" value="${threadSubject}" />
 
 		<execute function="AssertTextEquals" locator1="MessageBoardsSearch#SEARCH_RESULTS_ENTRY_TITLE" value1="${threadSubject}" />
-		<execute function="AssertTextEquals" locator1="MessageBoardsSearch#SEARCH_RESULTS_ENTRY_DESCRIPTION" value1="${threadBody}" />
 
 		<if>
 			<isset var="mbThreadAttachment" />

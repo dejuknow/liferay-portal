@@ -35,12 +35,6 @@
 		<execute function="AssertClick" locator1="DDL#TOOLBAR_ADD" value1="Add ${ddlDataDefinitionName}" />
 	</command>
 
-	<command name="changeDefaultLanguage">
-		<execute function="AssertClick" locator1="Translation#CHANGE_DEFAULT_LANGUAGE" value1="Change" />
-
-		<execute function="Select" locator1="Translation#DEFAULT_LANGUAGE_SELECT" value1="${defaultLanguage}" />
-	</command>
-
 	<command name="deleteCP">
 		<execute function="Type" locator1="NavBar#BASIC_SEARCH_FIELD" value1="${ddlListName}" />
 
@@ -103,9 +97,11 @@
 	</command>
 
 	<command name="editTranslation">
+		<execute function="Click" locator1="Translation#ADD" />
+
 		<var name="key_localizedLanguage" value="${localizedLanguage}" />
 
-		<execute function="AssertClick" locator1="Translation#AVAILABLE_TRANSLATION" value1="${localizedLanguage}" />
+		<execute function="AssertClick" locator1="Translation#ADD_MENULIST_LANGUAGE" value1="${localizedLanguage}" />
 	</command>
 
 	<command name="editViaRecordViewCP">
@@ -391,6 +387,10 @@
 		<execute macro="Alert#viewRequestCompletedSuccessMessage" />
 	</command>
 
+	<command name="viewDefaultLanguage">
+		<execute function="AssertTextEquals" locator1="Translation#DEFAULT_LANGUAGE" value1="${defaultLanguage}" />
+	</command>
+
 	<command name="viewEditPreview">
 		<var name="key_fieldName" value="${fieldName}" />
 
@@ -426,7 +426,7 @@
 		<var name="key_fieldFieldLabel" value="${fieldFieldLabel}" />
 		<var name="key_rowEntry" value="${ddlRecordFieldData}" />
 
-		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
 		<execute function="AssertClick" locator1="MenuItem#VIEW" value1="View" />
 
 		<if>
@@ -718,7 +718,7 @@
 
 		<var name="key_rowEntry" value="${ddlRecordFieldData}" />
 
-		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
 		<execute function="AssertClick" locator1="MenuItem#VIEW" value1="View" />
 
 		<if>
@@ -764,6 +764,14 @@
 				<execute function="AssertElementNotPresent" locator1="xpath=(//div[@data-fieldname='Text'])[3]" />
 			</else>
 		</if>
+	</command>
+
+	<command name="viewViaAnchorLink">
+		<var name="key_ddlRecordFieldData" value="${ddlRecordFieldData}" />
+
+		<execute function="AssertClick" locator1="DDL#RECORD_TABLE_COLUMN_ONE_RECORD_1" value1="${ddlRecordFieldData}" />
+
+		<execute function="AssertTextEquals#assertPartialText" locator1="DDLRecord#FIELD_1" value1="${fieldFieldLabel} ${ddlRecordFieldData}" />
 	</command>
 
 	<command name="viewViaDDLDisplayPG">

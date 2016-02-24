@@ -90,9 +90,9 @@
 			</execute>
 
 			<execute macro="Page#add">
-				<var name="page" value="Private Pages" />
 				<var name="pageName" value="${pageName}" />
 				<var name="siteName" value="Organization Name" />
+				<var name="sitePagePrivacy" value="Private Pages" />
 			</execute>
 		</for>
 
@@ -146,7 +146,6 @@
 		<execute macro="User#logoutPG" />
 
 		<execute macro="User#firstLoginPG">
-			<var name="loginViaDockbar" value="true" />
 			<var name="password" value="test" />
 			<var name="userEmailAddress" value="test@liferay.com" />
 			<var name="virtualHostsURL" value="http://www.baker.com:8080" />
@@ -170,7 +169,6 @@
 		</for>
 
 		<execute macro="User#firstLoginPG">
-			<var name="loginViaDockbar" value="true" />
 			<var name="password" value="test" />
 			<var name="userEmailAddress" value="test@liferay.com" />
 			<var name="virtualHostsURL" value="http://www.able.com:8080" />
@@ -179,7 +177,6 @@
 		<execute macro="Page#add">
 			<var name="pageName" value="Web Content Page" />
 			<var name="siteName" value="http://www.able.com:8080" />
-			<var name="siteURL" value="true" />
 			<var name="virtualHostsURL" value="http://www.able.com:8080" />
 		</execute>
 
@@ -304,19 +301,19 @@
 			<var name="pageName" value="Asset Publisher Page" />
 		</execute>
 
-		<execute macro="AssetPublisherPortlet#gotoConfigurationPG" />
+		<execute macro="AssetPublisherPortlet#configureManualAssetSelectionPG" />
 
-		<execute function="Click" locator1="APConfiguration#ASSET_SELECTION_MANUAL" />
+		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
 
 		<execute function="AssertClick" locator1="APConfigurationManual#ASSET_SELECTION_MANUAL_ASSET_ENTRIES_SELECT" value1="Select" />
 
-		<var name="key_assetEntryType" value="Global Document Type Name" />
+		<for list="Global Document Type Name,Local Document Type Name" param="assetEntryType">
+			<var name="key_assetEntryType" value="${assetEntryType}" />
 
-		<execute function="AssertTextEquals" locator1="APConfigurationManual#ASSET_SELECTION_MANUAL_ASSET_ENTRIES_MENULIST_ITEM" value1="Global Document Type Name" />
+			<execute function="AssertTextEquals" locator1="APConfigurationManual#ASSET_SELECTION_MANUAL_ASSET_ENTRIES_MENULIST_ITEM" value1="${assetEntryType}" />
+		</for>
 
-		<var name="key_assetEntryType" value="Local Document Type Name" />
-
-		<execute function="AssertTextEquals" locator1="APConfigurationManual#ASSET_SELECTION_MANUAL_ASSET_ENTRIES_MENULIST_ITEM" value1="Local Document Type Name" />
+		<execute macro="IFrame#selectTopFrame" />
 	</command>
 
 	<command name="AssetPublisherCategoriesLocalization" priority="3">
@@ -1136,8 +1133,6 @@
 	</command>
 
 	<command name="AssetPublisherSiteAndGlobalScopeAccessibility" priority="5">
-		<property name="portal.acceptance" value="true" />
-
 		<execute macro="ProductMenu#gotoControlPanelSites">
 			<var name="portlet" value="Sites" />
 		</execute>
@@ -1802,7 +1797,7 @@
 
 		<execute macro="BlogsNavigator#gotoSettings" />
 
-		<execute macro="BlogsEntry#addRelatedAssetPG">
+		<execute macro="BlogsEntry#addRelatedAsset">
 			<var name="assetTitle" value="Blogs Entry1 Title" />
 			<var name="assetType" value="Blogs Entry" />
 		</execute>
@@ -1990,7 +1985,7 @@
 
 		<execute macro="BlogsNavigator#gotoSettings" />
 
-		<execute macro="BlogsEntry#addRelatedAssetPG">
+		<execute macro="BlogsEntry#addRelatedAsset">
 			<var name="assetTitle" value="WC WebContent Title" />
 			<var name="assetType" value="Basic Web Content" />
 		</execute>
@@ -2193,7 +2188,5 @@
 			<var name="webContentContent" value="WC WebContent Content" />
 			<var name="webContentTitle" value="WC WebContent Title" />
 		</execute>
-
-		<execute function="Pause" locator1="1073" />
 	</command>
 </definition>

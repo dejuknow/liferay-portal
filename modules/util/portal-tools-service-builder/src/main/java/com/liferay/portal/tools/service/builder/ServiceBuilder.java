@@ -1673,7 +1673,7 @@ public class ServiceBuilder {
 			returnTypeGenericsName.contains(
 				"com.liferay.social.kernel.model.SocialActivityDefinition") ||
 			returnTypeGenericsName.equals("java.util.List<java.lang.Object>") ||
-			returnValueName.equals("com.liferay.portal.model.Lock") ||
+			returnValueName.equals("com.liferay.portal.kernel.lock.model.Lock") ||
 			returnValueName.equals(
 				"com.liferay.message.boards.kernel.model.MBMessageDisplay") ||
 			returnValueName.startsWith("java.io") ||
@@ -1977,9 +1977,6 @@ public class ServiceBuilder {
 				if (exception.startsWith("NoSuch")) {
 					content = StringUtil.replace(
 						content, "PortalException", "NoSuchModelException");
-					content = StringUtil.replace(
-						content, "kernel.exception.NoSuchModelException",
-						"NoSuchModelException");
 				}
 
 				content = StringUtil.replace(content, "\r\n", "\n");
@@ -1995,8 +1992,18 @@ public class ServiceBuilder {
 					content = StringUtil.replace(
 						content, "PortalException", "NoSuchModelException");
 					content = StringUtil.replace(
-						content, "kernel.exception.NoSuchModelException",
-						"NoSuchModelException");
+						content, "portal.exception.NoSuchModelException",
+						"portal.kernel.exception.NoSuchModelException");
+
+					ToolsUtil.writeFileRaw(
+						exceptionFile, content, _modifiedFileNames);
+				}
+				else if (content.contains(
+							"portal.exception.NoSuchModelException")) {
+
+					content = StringUtil.replace(
+						content, "portal.exception.NoSuchModelException",
+						"portal.kernel.exception.NoSuchModelException");
 
 					ToolsUtil.writeFileRaw(
 						exceptionFile, content, _modifiedFileNames);

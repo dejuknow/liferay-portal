@@ -55,10 +55,9 @@
 		<execute macro="Page#add">
 			<var name="page" value="Public Pages" />
 			<var name="pageName" value="Home" />
-			<var name="siteScopeSelected" value="true" />
 		</execute>
 
-		<execute macro="SitePage#addPageTranslations">
+		<execute macro="Page#addPageTranslations">
 			<var name="page" value="Home" />
 			<var name="pageTranslation" value="es_ES" />
 			<var name="pageTranslationName" value="Casa" />
@@ -91,7 +90,7 @@
 			<var name="page" value="Public Pages" />
 		</execute>
 
-		<execute macro="SitePage#addPageTranslations">
+		<execute macro="Page#addPageTranslations">
 			<var name="page" value="Blog Page" />
 			<var name="pageTranslation" value="es_ES" />
 			<var name="pageTranslationName" value="Blog Página" />
@@ -217,7 +216,6 @@
 		<execute macro="MessageboardsThread#gotoPG">
 			<var name="lastPostUserName" value="Test Test" />
 			<var name="postCount" value="1" />
-			<var name="startedByUserName" value="Test Test" />
 			<var name="threadBody" value="This is the message boards thread." />
 			<var name="threadSubject" value="Thread" />
 		</execute>
@@ -238,7 +236,6 @@
 		<execute macro="MessageboardsThread#gotoPG">
 			<var name="lastPostUserName" value="Test Test" />
 			<var name="postCount" value="1" />
-			<var name="startedByUserName" value="Test Test" />
 			<var name="threadBody" value="This is the message boards thread." />
 			<var name="threadSubject" value="Thread" />
 		</execute>
@@ -260,7 +257,7 @@
 			<var name="portletName" value="User Statistics" />
 		</execute>
 
-		<execute macro="SignIn#signInViaDockbar">
+		<execute macro="SignIn#signIn">
 			<var name="userEmailAddress" value="test@liferay.com" />
 			<var name="userPassword" value="test" />
 		</execute>

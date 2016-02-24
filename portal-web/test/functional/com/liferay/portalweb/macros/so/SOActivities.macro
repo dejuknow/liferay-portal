@@ -483,7 +483,6 @@
 			<var name="lastPostUserName" value="Test Test" />
 			<var name="messageBoardsThreadURL" value="${messageBoardsThreadURL}" />
 			<var name="postCount" value="1" />
-			<var name="startedByUserName" value="Test Test" />
 			<var name="threadBody" value="${threadBody}" />
 			<var name="threadSubject" value="${threadSubject}" />
 		</execute>
@@ -507,12 +506,11 @@
 			<var name="soPage" value="${soPage}" />
 		</execute>
 
-		<execute macro="BlogsEntry#editPG">
+		<execute macro="Blogs#editDraftPG">
 			<var name="entryContent" value="${entryContent}" />
 			<var name="entryContentEdit" value="${entryContentEdit}" />
 			<var name="entryTitle" value="${entryTitle}" />
 			<var name="entryTitleEdit" value="${entryTitleEdit}" />
-			<var name="saveAsDraft" value="${saveAsDraft}" />
 		</execute>
 
 		<execute macro="Page#gotoPG">

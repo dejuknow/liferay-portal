@@ -439,28 +439,31 @@
 
 		<execute function="AssertClick" locator1="Wiki#DESCRIPTIVE_VIEW_ENTRY_TITLE" value1="${wikiPageTitle}" />
 
-		<execute function="AssertClick" locator1="Wiki#LINK_DETAILS" value1="Details" />
-		<execute function="AssertClick" locator1="Wiki#PAGE_TABS_HISTORY" value1="History" />
+		<execute function="Click" locator1="Icon#INFO" />
 
-		<var name="key_wikiActivity" value="${wikiPageVersionNew}" />
+		<execute function="AssertClick" locator1="NavBar#DETAILS" value1="Details" />
 
-		<execute function="Click" locator1="Wiki#HISTORY_ACTIVITIES_ACTIONS" />
+		<execute function="AssertClick" locator1="MenuItem#VERSIONS" value1="Versions" />
+
+		<var name="key_wikiPageVersion" value="${wikiPageVersionNew}" />
+
+		<execute function="Click" locator1="Wiki#COMPARE_VERSIONS_VERSION_ACTIONS" />
 
 		<execute function="AssertClick" locator1="Wiki#HISTORY_ACTIVITIES_TABLE_COMPARE_TO_LINK" value1="Compare to..." />
 
-		<execute function="SelectFrame" locator1="WikiCompareVersions#IFRAME" />
+		<execute function="SelectFrame" locator1="Wiki#COMPARE_VERSIONS_IFRAME" />
 
-		<var name="key_wikiPageVersionNew" value="${wikiPageVersionNew}" />
+		<var name="key_wikiPageVersion" value="${wikiPageVersionNew}" />
 
-		<execute function="AssertTextEquals" locator1="WikiCompareVersions#NEW_VERSION" value1="${wikiPageVersionNew}" />
-		<execute function="AssertElementPresent" locator1="WikiCompareVersions#NEW_VERSION_DATE" />
+		<execute function="AssertTextEquals" locator1="Wiki#COMPARE_VERSIONS_VERSION" value1="${wikiPageVersionNew}" />
+		<execute function="AssertElementPresent" locator1="Wiki#COMPARE_VERSIONS_DATE" />
 
-		<var name="key_wikiPageVersionOld" value="${wikiPageVersionOld}" />
+		<var name="key_wikiPageVersion" value="${wikiPageVersionOld}" />
 
-		<execute function="AssertTextEquals" locator1="WikiCompareVersions#OLD_VERSION" value1="${wikiPageVersionOld}" />
-		<execute function="AssertElementPresent" locator1="WikiCompareVersions#OLD_VERSION_DATE" />
+		<execute function="AssertTextEquals" locator1="Wiki#COMPARE_VERSIONS_VERSION" value1="${wikiPageVersionOld}" />
+		<execute function="AssertElementPresent" locator1="Wiki#COMPARE_VERSIONS_DATE" />
 
-		<execute function="AssertClick" locator1="WikiCompareVersions#CHOOSE_BUTTON" value1="Choose" />
+		<execute function="AssertClick" locator1="Wiki#COMPARE_VERSIONS_VERSION_LINK" value1="${wikiPageVersionOld}" />
 
 		<execute function="SelectFrame" value1="relative=top" />
 
@@ -649,7 +652,7 @@
 	<command name="editComment">
 		<var name="key_entryComment" value="${entryComment}" />
 
-		<execute function="AssertTextEquals" locator1="Comments#COMMENT_BODY" value1="${entryComment}" />
+		<execute function="AssertTextEquals" locator1="Comments#COMMENT_BODY_SPECIFIC" value1="${entryComment}" />
 
 		<execute function="AssertClick" locator1="Comments#EDIT_LINK" value1="Edit" />
 
@@ -1180,7 +1183,7 @@
 		<var name="key_entryComment" value="${entryComment}" />
 		<var name="key_wikiPageTitle" value="${wikiPageTitle}" />
 
-		<execute function="AssertTextEquals" locator1="Comments#COMMENT_BODY" value1="${entryComment}" />
+		<execute function="AssertTextEquals" locator1="Comments#COMMENT_BODY_SPECIFIC" value1="${entryComment}" />
 	</command>
 
 	<command name="viewCommentRatingBad">
@@ -1213,33 +1216,20 @@
 		<execute function="AssertTextEquals" locator1="Portlet#H1_HEADER" value1="FrontPage" />
 		<execute function="AssertTextEquals" locator1="Wiki#BODY" value1="${wikiPageContent}" />
 
-		<if>
-			<equals arg1="${pageStaging}" arg2="true" />
-			<then>
-				<execute function="AssertElementPresent" locator1="Wiki#LINK_ADD_CHILD_PAGE" />
-				<execute function="AssertElementPresent" locator1="Comments#BE_THE_FIRST_LINK" />
-				<execute function="AssertElementPresent" locator1="Comments#SUBSCRIBE_TO_COMMENTS_LINK" />
-			</then>
-			<else>
-				<execute function="AssertElementNotPresent" locator1="Wiki#LINK_ADD_CHILD_PAGE" />
-				<execute function="AssertElementNotPresent" locator1="Comments#BE_THE_FIRST_LINK" />
-				<execute function="AssertElementNotPresent" locator1="Comments#SUBSCRIBE_TO_COMMENTS_LINK" />
-			</else>
-		</if>
-
+		<execute function="AssertElementPresent" locator1="Wiki#LINK_ADD_CHILD_PAGE" />
+		<execute function="AssertElementPresent" locator1="Comments#SUBSCRIBE_TO_COMMENTS_LINK" />
 		<execute function="AssertElementPresent" locator1="Wiki#LINK_ATTACHMENTS" />
 		<execute function="AssertElementPresent" locator1="Wiki#ADT_SOCIAL_LAST_MODIFIED_MESSAGE" />
 		<execute function="AssertElementPresent" locator1="Icon#DETAILS" />
 		<execute function="AssertElementPresent" locator1="Icon#PRINT" />
 		<execute function="AssertElementPresent" locator1="SocialBookmarks#TWITTER" />
 		<execute function="AssertElementPresent" locator1="SocialBookmarks#GOOGLE_PLUS" />
-		<execute function="AssertElementNotPresent" locator1="Comments#PANEL_TOGGLE" />
 		<execute function="AssertElementPresent" locator1="Ratings#YOUR_RATING_LABEL" />
 		<execute function="AssertElementPresent" locator1="Ratings#AVERAGE_LABEL" />
 	</command>
 
 	<command name="viewDefaultPGViaWD">
-		<execute function="AssertTextEquals" locator1="Message#INFO_1" value1="This page is empty. Edit it to add some text." />
+		<execute function="AssertTextEquals" locator1="Wiki#FRONTPAGE_DEFAULT_MESSAGE" value1="This page is empty. Edit it to add some text." />
 		<execute function="AssertTextEquals" locator1="Portlet#H3_HEADER" value1="FrontPage" />
 		<execute function="AssertTextNotPresent" value1="${wikiPageContent}" />
 		<execute function="AssertElementNotPresent" locator1="Wiki#BODY" />
@@ -1250,7 +1240,7 @@
 
 		<execute function="AssertTextEquals#assertPartialText" locator1="Wiki#PAGE_HEADER" value1="FrontPage" />
 		<execute function="AssertTextEquals" locator1="Wiki#BODY" value1="${wikiFrontPageContent}" />
-		<execute function="AssertElementNotPresent" locator1="Message#INFO_1" />
+		<execute function="AssertElementNotPresent" locator1="Wiki#FRONTPAGE_DEFAULT_MESSAGE" />
 		<execute function="AssertTextNotPresent" value1="This page is empty. Edit it to add some text." />
 	</command>
 
@@ -1258,7 +1248,6 @@
 		<execute function="AssertTextEquals" locator1="Portlet#H3_HEADER" value1="FrontPage" />
 		<execute function="AssertTextEquals" locator1="Wiki#BODY" value1="${wikiPageContent}" />
 		<execute function="AssertElementPresent" locator1="Wiki#LINK_ADD_CHILD_PAGE" />
-		<execute function="AssertElementPresent" locator1="Wiki#LINK_ATTACHMENTS" />
 		<execute function="AssertTextEquals" locator1="Wiki#LINK_EDIT" value1="Edit" />
 		<execute function="AssertTextEquals" locator1="Wiki#LINK_DETAILS" value1="Details" />
 		<execute function="AssertTextEquals" locator1="Wiki#LINK_PRINT" value1="Print" />
@@ -1269,7 +1258,7 @@
 	</command>
 
 	<command name="viewFrontPageDefaultCP">
-		<execute function="AssertTextEquals" locator1="Message#INFO_1" value1="This page is empty. Edit it to add some text." />
+		<execute function="AssertTextEquals" locator1="Wiki#FRONTPAGE_DEFAULT_MESSAGE" value1="This page is empty. Edit it to add some text." />
 		<execute function="AssertTextNotPresent" value1="${wikiFrontPageContent}" />
 	</command>
 
@@ -1467,7 +1456,9 @@
 	</command>
 
 	<command name="viewRSS">
-		<execute function="AssertClick" locator1="Link#RSS" value1="RSS" />
+		<execute function="Click" locator1="Icon#INFO" />
+
+		<execute function="AssertClick" locator1="WikiRSS#FEED_LINK" value1="Feed" />
 
 		<execute function="SelectWindow" locator1="title=${wikiPageTitle}" />
 

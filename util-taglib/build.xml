@@ -110,14 +110,8 @@
 
 		<pathconvert property="tld.files" pathsep=" ">
 			<path>
-				<fileset dir="${project.dir}">
-					<exclude name="**/bin/**" />
-					<exclude name="**/build/**" />
-					<exclude name="**/classes/**" />
-					<exclude name="**/portal-web/**" />
-					<exclude name="**/sdk/**" />
-					<exclude name="**/test/**" />
-					<include name="**/liferay-*.tld" />
+				<fileset dir="${project.dir}/util-taglib/src/META-INF">
+					<include name="*.tld" />
 				</fileset>
 			</path>
 		</pathconvert>
@@ -132,18 +126,16 @@
 			<arg line="-d ${doc.taglibs.dir}" />
 			<arg line="${tld.files}" />
 		</java>
+
+		<copy overwrite="true" todir="${doc.taglibs.dir}/images" preservelastmodified="true">
+			<fileset dir="${project.dir}/util-taglib/src/META-INF/images" />
+		</copy>
 	</target>
 
 	<target name="validate-tld">
 		<schemavalidate>
-			<fileset dir="${project.dir}" >
-				<exclude name="**/bin/**" />
-				<exclude name="**/build/**" />
-				<exclude name="**/classes/**" />
-				<exclude name="**/portal-web/**" />
-				<exclude name="**/sdk/**" />
-				<exclude name="**/test/**" />
-				<include name="**/liferay-*.tld" />
+			<fileset dir="${project.dir}/util-taglib/src/META-INF">
+				<include name="*.tld" />
 			</fileset>
 		</schemavalidate>
 	</target>

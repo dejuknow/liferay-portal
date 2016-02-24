@@ -1,9 +1,0 @@
-dependencies {
-	compile project(":apps:dynamic-data-mapping:dynamic-data-mapping-taglib")
-	compile project(":portal:portal-metatype")
-	compile project(":portal:portal-upgrade")
-}
-
-liferay {
-	deployDir = file("${liferayHome}/osgi/modules")
-}

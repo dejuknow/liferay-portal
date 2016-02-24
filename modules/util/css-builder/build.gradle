@@ -13,15 +13,13 @@ buildPluginDescriptor {
 
 dependencies {
 	compile group: "com.liferay", name: "com.liferay.rtl.css", version: "1.0.4"
-	compile group: "com.liferay", name: "com.liferay.sass.compiler.jni", version: "2.0.1"
-	compile group: "com.liferay", name: "com.liferay.sass.compiler.ruby", version: "2.0.1"
+	compile group: "com.liferay", name: "com.liferay.sass.compiler.jni", version: "2.0.2"
+	compile group: "com.liferay", name: "com.liferay.sass.compiler.ruby", version: "2.0.2"
 	compile group: "org.apache.ant", name: "ant", version: "1.9.4"
 	compile group: "org.slf4j", name: "slf4j-log4j12", version: "1.7.2"
 
-	// @formatter:off
-	provided group: "com.liferay.portal", name: "portal-service", version: liferay.portalVersion
 	provided group: "com.liferay.portal", name: "portal-impl", version: liferay.portalVersion
-	// @formatter:on
+	provided group: "com.liferay.portal", name: "portal-service", version: liferay.portalVersion
 	provided group: "org.apache.maven", name: "maven-plugin-api", transitive: false, version: "3.0.4"
 }
 
@@ -31,4 +29,13 @@ formatSource {
 
 liferay {
 	deployDir = "../../../tools/sdk/tmp/portal-tools/css-builder"
+}
+
+test {
+	dependsOn ":apps:platform:frontend:frontend-common-css:buildCssCommon"
+}
+
+updateFileVersions {
+	match(/\t\t\t\t<version>(.+)<\/version>/, "samples/pom.xml")
+	match(/com\.liferay\.css\.builder=(.+)/, "../../sdk/gradle-plugins/src/main/resources/com/liferay/gradle/plugins/dependencies/portal-tools.properties")
 }

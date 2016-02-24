@@ -18,7 +18,6 @@ import com.liferay.journal.kernel.util.JournalConverterManagerUtil;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil;
 import com.liferay.portal.kernel.upgrade.BaseUpgradePortletPreferences;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -28,6 +27,7 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.upgrade.AutoBatchPreparedStatementUtil;
 import com.liferay.portal.upgrade.v6_2_0.util.JournalFeedTable;
 
 import java.sql.Connection;
@@ -236,7 +236,9 @@ public class UpgradeJournal extends BaseUpgradePortletPreferences {
 				"select groupId from Group_ where classNameId = ? and " +
 					"classPK = ?");
 
-			ps.setLong(1, PortalUtil.getClassNameId(Company.class.getName()));
+			ps.setLong(
+				1,
+				PortalUtil.getClassNameId("com.liferay.portal.model.Company"));
 			ps.setLong(2, companyId);
 
 			rs = ps.executeQuery();
@@ -345,34 +347,44 @@ public class UpgradeJournal extends BaseUpgradePortletPreferences {
 
 	protected void updateAssetEntryClassTypeId() throws Exception {
 		Connection con = null;
-		PreparedStatement ps = null;
+		PreparedStatement ps1 = null;
 		ResultSet rs = null;
 
 		try {
 			con = DataAccess.getUpgradeOptimizedConnection();
 
-			ps = con.prepareStatement(
+			ps1 = con.prepareStatement(
 				"select companyId, groupId, resourcePrimKey, structureId " +
 					"from JournalArticle where structureId != ''");
 
-			rs = ps.executeQuery();
+			rs = ps1.executeQuery();
 
-			while (rs.next()) {
-				long groupId = rs.getLong("groupId");
-				long companyId = rs.getLong("companyId");
-				long resourcePrimKey = rs.getLong("resourcePrimKey");
-				String structureId = rs.getString("structureId");
+			try (PreparedStatement ps2 =
+					AutoBatchPreparedStatementUtil.autoBatch(
+						con.prepareStatement(
+							"update AssetEntry set classTypeId = ? where " +
+								"classPK = ?"))) {
 
-				long ddmStructureId = getDDMStructureId(
-					groupId, getCompanyGroupId(companyId), structureId);
+				while (rs.next()) {
+					long groupId = rs.getLong("groupId");
+					long companyId = rs.getLong("companyId");
+					long resourcePrimKey = rs.getLong("resourcePrimKey");
+					String structureId = rs.getString("structureId");
 
-				runSQL(
-					"update AssetEntry set classTypeId = " +
-						ddmStructureId + " where classPK = " + resourcePrimKey);
+					long ddmStructureId = getDDMStructureId(
+						groupId, getCompanyGroupId(companyId), structureId);
+
+					ps2.setLong(1, ddmStructureId);
+					ps2.setLong(2, resourcePrimKey);
+
+					ps2.addBatch();
+				}
+
+				ps2.executeBatch();
 			}
 		}
 		finally {
-			DataAccess.cleanUp(con, ps, rs);
+			DataAccess.cleanUp(con, ps1, rs);
 		}
 	}
 

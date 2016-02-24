@@ -18,7 +18,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import com.liferay.sync.engine.documentlibrary.event.Event;
 import com.liferay.sync.engine.filesystem.Watcher;
-import com.liferay.sync.engine.filesystem.util.WatcherRegistry;
+import com.liferay.sync.engine.filesystem.util.WatcherManager;
 import com.liferay.sync.engine.model.SyncAccount;
 import com.liferay.sync.engine.model.SyncFile;
 import com.liferay.sync.engine.service.SyncAccountService;
@@ -153,6 +153,10 @@ public class BaseJSONHandler extends BaseHandler {
 		else if (exception.endsWith("DuplicateLockException")) {
 			SyncFile syncFile = getLocalSyncFile();
 
+			if (syncFile == null) {
+				return true;
+			}
+
 			syncFile.setState(SyncFile.STATE_ERROR);
 			syncFile.setUiEvent(SyncFile.UI_EVENT_DUPLICATE_LOCK);
 
@@ -160,6 +164,10 @@ public class BaseJSONHandler extends BaseHandler {
 		}
 		else if (exception.endsWith("FileExtensionException")) {
 			SyncFile syncFile = getLocalSyncFile();
+
+			if (syncFile == null) {
+				return true;
+			}
 
 			syncFile.setState(SyncFile.STATE_ERROR);
 			syncFile.setUiEvent(SyncFile.UI_EVENT_INVALID_FILE_EXTENSION);
@@ -171,6 +179,10 @@ public class BaseJSONHandler extends BaseHandler {
 
 			SyncFile syncFile = getLocalSyncFile();
 
+			if (syncFile == null) {
+				return true;
+			}
+
 			syncFile.setState(SyncFile.STATE_ERROR);
 			syncFile.setUiEvent(SyncFile.UI_EVENT_INVALID_FILE_NAME);
 
@@ -181,11 +193,14 @@ public class BaseJSONHandler extends BaseHandler {
 
 			SyncFile syncFile = getLocalSyncFile();
 
+			if (syncFile == null) {
+				return true;
+			}
+
 			Path filePath = Paths.get(syncFile.getFilePathName());
 
 			if (Files.exists(filePath)) {
-				Watcher watcher = WatcherRegistry.getWatcher(
-					getSyncAccountId());
+				Watcher watcher = WatcherManager.getWatcher(getSyncAccountId());
 
 				List<String> deletedFilePathNames =
 					watcher.getDeletedFilePathNames();
@@ -201,8 +216,14 @@ public class BaseJSONHandler extends BaseHandler {
 			retryServerConnection(SyncAccount.UI_EVENT_SYNC_WEB_MISSING);
 		}
 		else if (exception.endsWith("PrincipalException")) {
+			SyncFile syncFile = getLocalSyncFile();
+
+			if (syncFile == null) {
+				return true;
+			}
+
 			SyncFileService.setStatuses(
-				getLocalSyncFile(), SyncFile.STATE_ERROR,
+				syncFile, SyncFile.STATE_ERROR,
 				SyncFile.UI_EVENT_INVALID_PERMISSIONS);
 		}
 		else if (exception.endsWith("SyncClientMinBuildException")) {
@@ -251,6 +272,10 @@ public class BaseJSONHandler extends BaseHandler {
 	@Override
 	public Void handleResponse(HttpResponse httpResponse) {
 		try {
+			if (isEventCancelled()) {
+				return null;
+			}
+
 			StatusLine statusLine = httpResponse.getStatusLine();
 
 			if (statusLine.getStatusCode() != HttpStatus.SC_OK) {
@@ -273,6 +298,8 @@ public class BaseJSONHandler extends BaseHandler {
 		}
 		finally {
 			processFinally();
+
+			removeEvent();
 		}
 
 		return null;

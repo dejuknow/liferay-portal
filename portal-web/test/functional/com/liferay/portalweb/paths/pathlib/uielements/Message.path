@@ -115,7 +115,7 @@
 </tr>
 <tr>
 	<td>INFO_NO_RESULTS_FOUND</td>
-	<td>//div[contains(@id,'EmptyResultsMessage') and contains(@class,'alert-info')]</td>
+	<td>//div[contains(@id,'EmptyResultsMessage')]//p</td>
 	<td></td>
 </tr>
 <tr>
@@ -136,6 +136,11 @@
 <tr>
 	<td>NO_COMMENTS</td>
 	<td>//div[contains(.,'No comments yet')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>NO_TOP_POSTERS</td>
+	<td>//p[contains(.,'There are no top posters.')]</td>
 	<td></td>
 </tr>
 <tr>

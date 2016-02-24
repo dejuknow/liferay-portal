@@ -28,7 +28,7 @@
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
-		<execute function="Click" locator1="Icon#DISPLAY_STYLE_DESCRIPTIVE" />
+		<execute macro="DMPortlet#setDescriptiveView" />
 	</set-up>
 
 	<tear-down>
@@ -52,8 +52,6 @@
 	</tear-down>
 
 	<command name="AddDocument" priority="5">
-		<property name="portal.acceptance" value="true" />
-
 		<var name="dmDocumentDescription" value="DM Document Description" />
 
 		<execute macro="Page#gotoPG">
@@ -250,8 +248,6 @@
 			<var name="dmDocumentTypeName" value="DM Document Type Name" />
 		</execute>
 
-		<execute function="SelectFrameTop" value1="relative=top" />
-
 		<execute macro="ProductMenu#gotoSitesContent">
 			<var name="portlet" value="Documents and Media" />
 		</execute>
@@ -274,8 +270,6 @@
 			<var name="dmDocumentTypeName" value="DM Document Type 1 Name" />
 		</execute>
 
-		<execute function="SelectFrameTop" value1="relative=top" />
-
 		<execute macro="ProductMenu#gotoSitesContent">
 			<var name="portlet" value="Documents and Media" />
 		</execute>
@@ -296,8 +290,6 @@
 			<var name="dmDocumentTypeName" value="DM Document Type 2 Name" />
 		</execute>
 
-		<execute function="SelectFrameTop" value1="relative=top" />
-
 		<execute macro="ProductMenu#gotoSitesContent">
 			<var name="portlet" value="Documents and Media" />
 		</execute>
@@ -317,8 +309,6 @@
 			<var name="dmDocumentTypeFieldNames" value="Text Box" />
 			<var name="dmDocumentTypeName" value="DM Document Type 3 Name" />
 		</execute>
-
-		<execute function="SelectFrameTop" value1="relative=top" />
 
 		<execute macro="ProductMenu#gotoSitesContent">
 			<var name="portlet" value="Documents and Media" />
@@ -929,8 +919,6 @@
 			<var name="dmDocumentTypeName" value="DM Document Type Name" />
 		</execute>
 
-		<execute function="SelectFrameTop" value1="relative=top" />
-
 		<execute macro="ProductMenu#gotoSitesContent">
 			<var name="portlet" value="Documents and Media" />
 		</execute>
@@ -1165,8 +1153,6 @@
 			<var name="dmDocumentTypeName" value="DM Document Type Name" />
 		</execute>
 
-		<execute function="SelectFrameTop" value1="relative=top" />
-
 		<execute macro="ProductMenu#gotoSitesContent">
 			<var name="portlet" value="Documents and Media" />
 		</execute>
@@ -1186,8 +1172,6 @@
 			<var name="dmDocumentTypeName" value="DM Document Type Name" />
 			<var name="dmDocumentTypeNameEdit" value="DM Document Type Name Edit" />
 		</execute>
-
-		<execute function="SelectFrameTop" value1="relative=top" />
 
 		<execute macro="ProductMenu#gotoSitesContent">
 			<var name="portlet" value="Documents and Media" />

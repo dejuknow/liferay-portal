@@ -749,22 +749,20 @@
 
 		<execute macro="DDLDataDefinition#saveCP" />
 
-		<execute function="SelectFrame" locator1="DDMSelectStructure#DDM_STRUCTURES_IFRAME_1" />
 		<execute function="Type" locator1="NavBar#BASIC_SEARCH_FIELD" value1="${ddlDataDefinitionName}" />
 		<execute function="Click" locator1="Icon#BASIC_SEARCH" />
-		<execute function="Click" locator1="DDMSelectStructure#DDM_STRUCTURE_ELLIPSIS_1" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="DDMSelectStructure#DDM_STRUCTURE_ELLIPSIS_1" />
 		<execute function="AssertClick" locator1="MenuItem#MANAGE_TEMPLATES" value1="Manage Templates" />
 
-		<execute function="Click" locator1="Button#BACK" />
+		<execute function="Click" locator1="Icon#ANGLE_LEFT_BACK" />
 
 		<var name="key_ddlDataDefinitionName" value="${ddlDataDefinitionName}" />
 
 		<execute function="Click" locator1="DDMSelectStructure#DDM_STRUCTURE_TABLE_NAME_LINK" value1="${ddlDataDefinitionName}" />
 
-		<execute function="AssertTextEquals" locator1="DDMEditStructure#HEADER_TITLE" value1="${ddlDataDefinitionName}" />
-		<execute function="AssertTextEquals" locator1="TextInput#NAME" value1="${ddlDataDefinitionName}" />
+		<execute function="AssertTextEquals" locator1="Portlet#HEADER" value1="${ddlDataDefinitionName}" />
 
-		<execute function="SelectFrame" value1="relative=top" />
+		<execute function="AssertTextEquals" locator1="TextInput#NAME" value1="${ddlDataDefinitionName}" />
 
 		<execute macro="DynamicDataMapping#viewField">
 			<var name="fieldFieldLabel" value="Text" />
@@ -822,11 +820,11 @@
 			<var name="portlet" value="Dynamic Data Lists" />
 		</execute>
 
-		<execute macro="DDLDataDefinition#editPermissionsCP">
+		<execute macro="DDLNavigator#gotoDataDefinitionPermissions">
 			<var name="ddlDataDefinitionName" value="${ddlDataDefinitionName}" />
 		</execute>
 
-		<execute macro="PermissionsInline#addOrRemoveViewPermissionFromAllRoles">
+		<execute macro="DDLDataDefinition#editPermissionsCP">
 			<var name="addOrRemoveViewPermission" value="Add" />
 			<var name="roleList" value="Guest" />
 		</execute>
@@ -1361,7 +1359,7 @@
 		</execute>
 
 		<execute macro="Role#definePermissionCmdCP">
-			<var name="permissionDefinitionKey" value="USER_MY_ACCOUNT_MY_WORKFLOW_TASKS_ACCESS_IN_MY_ACCOUNT_CHECKBOX" />
+			<var name="permissionDefinitionKey" value="USER_MY_ACCOUNT_MY_WORKFLOW_TASKS_VIEW_CHECKBOX" />
 			<var name="permissionDefinitionValue" value="View" />
 			<var name="roleName" value="Authenticated" />
 			<var name="roleUser" value="User" />
@@ -1599,9 +1597,17 @@
 	</command>
 
 	<command name="EditDefaultLanguageAndPublishRecord" priority="3">
-		<description message="This is a use case for LPS-59154." />
+		<description message="This is a use case for LPS-59154 and LPS-62523." />
 
 		<execute macro="Navigator#openURL" />
+
+		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+			<var name="portlet" value="Instance Settings" />
+		</execute>
+
+		<execute macro="PortalSettings#configureCurrentLanguagesCP">
+			<var name="defaultPortalLanguage" value="Spanish (Spain)" />
+		</execute>
 
 		<execute macro="ProductMenu#gotoSitesContent">
 			<var name="portlet" value="Dynamic Data Lists" />
@@ -1646,13 +1652,13 @@
 			<var name="ddlListName" value="List Name" />
 		</execute>
 
+		<execute macro="DDLRecord#viewDefaultLanguage">
+			<var name="defaultLanguage" value="Spanish (Spain)" />
+		</execute>
+
 		<execute macro="DDLRecord#populateFieldText">
 			<var name="ddlRecordFieldData" value="Text Spanish" />
 			<var name="fieldName" value="Text" />
-		</execute>
-
-		<execute macro="DDLRecord#changeDefaultLanguage">
-			<var name="defaultLanguage" value="Spanish (Spain)" />
 		</execute>
 
 		<execute macro="DDLRecord#editTranslation">
@@ -1736,13 +1742,13 @@
 			<var name="ddlDataDefinitionName" value="Data Definition" />
 		</execute>
 
+		<execute macro="DDLRecord#viewDefaultLanguage">
+			<var name="defaultLanguage" value="Spanish (Spain)" />
+		</execute>
+
 		<execute macro="DDLRecord#populateFieldText">
 			<var name="ddlRecordFieldData" value="Text Spanish" />
 			<var name="fieldName" value="Text" />
-		</execute>
-
-		<execute macro="DDLRecord#changeDefaultLanguage">
-			<var name="defaultLanguage" value="Spanish (Spain)" />
 		</execute>
 
 		<execute macro="DDLRecord#editTranslation">

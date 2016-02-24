@@ -46,6 +46,8 @@
 
 		<execute function="AssertElementPresent" locator1="ProductMenu#PRODUCT_MENU_TABS_CONTROL_PANEL_EXPANDED" />
 
+		<var name="key_panelId" value="control_panel" />
+
 		<execute function="AssertVisible" locator1="ProductMenu#PRODUCT_MENU_TABS_EXPANDED_PANEL" />
 	</command>
 
@@ -60,6 +62,8 @@
 		</if>
 
 		<execute function="AssertElementPresent" locator1="ProductMenu#PRODUCT_MENU_TABS_SITES_EXPANDED" />
+
+		<var name="key_panelId" value="site" />
 
 		<execute function="AssertVisible" locator1="ProductMenu#PRODUCT_MENU_TABS_EXPANDED_PANEL" />
 	</command>
@@ -76,6 +80,8 @@
 
 		<execute function="AssertElementPresent" locator1="ProductMenu#PRODUCT_MENU_TABS_USER_EXPANDED" />
 
+		<var name="key_panelId" value="user" />
+
 		<execute function="AssertVisible" locator1="ProductMenu#PRODUCT_MENU_TABS_EXPANDED_PANEL" />
 	</command>
 
@@ -90,7 +96,9 @@
 	<command name="gotoPortlet">
 		<var name="key_portlet" value="${portlet}" />
 
-		<execute function="AssertClick" locator1="ProductMenu#PORTLET" value1="${portlet}" />
+		<execute function="AssertClick#assertPartialTextClickAt" locator1="ProductMenu#PORTLET" value1="${portlet}" />
+
+		<execute function="AssertVisible" locator1="ProductMenu#PORTLET_SELECTED" />
 
 		<execute macro-mobile="MobileNavigator#clickRemoveIcon" />
 	</command>
@@ -98,7 +106,12 @@
 	<command name="gotoSite">
 		<var name="key_site" value="${site}" />
 
-		<execute function="AssertClick" locator1="ProductMenu#SITE" value1="${site}" />
+		<execute function="Type" locator1="TextInput#SEARCH" value1="${site}" />
+		<execute function="AssertElementPresent" locator1="Icon#BASIC_SEARCH" />
+
+		<execute function="Click" locator1="Icon#BASIC_SEARCH" />
+
+		<execute function="AssertClick" locator1="ContentRow#ENTRY_CONTENT_ROW_TD_1_SITE_LINK" value1="${site}" />
 	</command>
 
 	<command name="gotoTab">
@@ -134,14 +147,11 @@
 
 	<command name="openSitesPopup">
 		<if>
-			<and>
-				<condition function="IsElementPresent" locator1="ProductMenu#SITES_POPUP" />
-				<condition function="IsNotVisible" locator1="ProductMenu#SITES_POPUP" />
-			</and>
+			<condition function="IsElementNotPresent" locator1="ProductMenu#SITES_MODAL_TITLE" />
 			<then>
 				<execute function="Click" locator1="ProductMenu#SITES_COMPASS" />
 
-				<execute function="AssertVisible" locator1="ProductMenu#SITES_POPUP" />
+				<execute function="AssertVisible" locator1="ProductMenu#SITES_MODAL_TITLE" />
 			</then>
 		</if>
 	</command>

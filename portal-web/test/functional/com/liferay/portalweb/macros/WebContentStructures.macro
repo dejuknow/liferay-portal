@@ -88,12 +88,10 @@
 
 		<execute macro="DDLDataDefinition#saveCP" />
 
-		<execute function="SelectFrame" locator1="IFrame#STRUCTURES" />
-
 		<var name="key_ddlDataDefinitionName" value="${structureName}" />
 
 		<execute function="AssertClickNoError" locator1="DDMSelectStructure#DDM_STRUCTURE_TABLE_CHOOSE_BUTTON" value1="Choose" />
-		<execute function="Confirm" value1="Selecting a new structure changes the available input fields and available templates. Do you want to proceed?" />
+		<execute function="Confirm#assertConfirmationNoWait" value1="Selecting a new structure changes the available input fields and available templates. Do you want to proceed?" />
 		<execute function="SelectFrame" value1="relative=top" />
 
 		<execute function="SelectFrame" locator1="IFrame#EDIT_ASSET" />
@@ -130,7 +128,7 @@
 
 		<execute function="Type" locator1="NavBar#BASIC_SEARCH_FIELD" value1="${structureName}" />
 		<execute function="Click" locator1="Icon#BASIC_SEARCH" />
-		<execute function="Click" locator1="DDMSelectStructure#DDM_STRUCTURE_ELLIPSIS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="DDMSelectStructure#DDM_STRUCTURE_ELLIPSIS" />
 		<execute function="AssertClickNoError" locator1="MenuItem#DELETE" value1="Delete" />
 
 		<if>
@@ -189,7 +187,7 @@
 			</then>
 		</if>
 
-		<execute macro="DDLDataDefinition#saveCP" />
+		<execute macro="WebContentStructures#saveCP" />
 	</command>
 
 	<command name="editSubstructureDefaultValuesCP">
@@ -200,7 +198,7 @@
 
 		<var name="key_rowEntry" value="${substructureName}" />
 
-		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
 		<execute function="AssertClick" locator1="MenuItem#EDIT_DEFAULT_VALUES" value1="Edit Default Values" />
 
 		<for list="${editSubstructureFieldNames}" param="structureFieldName">
@@ -212,7 +210,7 @@
 
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
 
-		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
 		<execute function="AssertClick" locator1="MenuItem#EDIT_DEFAULT_VALUES" value1="Edit Default Values" />
 
 		<for list="${editSubstructureFieldNames}" param="structureFieldName">
@@ -234,7 +232,7 @@
 			<then>
 				<var name="key_rowEntry" value="${structureName}" />
 
-				<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+				<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
 				<execute function="AssertClick" locator1="MenuItem#PERMISSIONS_LEXICON" value1="Permissions" />
 
 				<execute function="SelectFrame" locator1="IFrame#DIALOG" />

@@ -40,8 +40,7 @@ public class FileEventManager {
 			Set<Event> events = _eventMap.get(syncFile.getSyncFileId());
 
 			if (events == null) {
-				events = Collections.newSetFromMap(
-					new ConcurrentHashMap<Event, Boolean>());
+				events = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
 				_eventMap.put(syncFile.getSyncFileId(), events);
 			}

@@ -15,7 +15,6 @@
 package com.liferay.portal.upgrade.v6_0_0;
 
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
-import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 import com.liferay.portal.kernel.util.PortalUtil;
 
@@ -69,7 +68,7 @@ public class UpgradeGroup extends UpgradeProcess {
 			con = DataAccess.getUpgradeOptimizedConnection();
 
 			long classNameId = PortalUtil.getClassNameId(
-				Layout.class.getName());
+				"com.liferay.portal.model.Layout");
 
 			ps = con.prepareStatement(
 				"select groupId, classPK from Group_ where classNameId = " +

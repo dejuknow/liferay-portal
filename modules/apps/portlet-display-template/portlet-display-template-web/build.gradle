@@ -1,8 +1,0 @@
-dependencies {
-	compile project(":apps:dynamic-data-mapping:dynamic-data-mapping-service")
-	compile project(":apps:portlet-display-template:portlet-display-template")
-}
-
-liferay {
-	deployDir = file("${liferayHome}/osgi/modules")
-}

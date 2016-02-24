@@ -8,6 +8,10 @@ buildDir = file("build_gradle")
 
 task deploy(type: Copy)
 
+assemble {
+	dependsOn gulpBuild
+}
+
 cache {
 	task(gulpBuild) {
 		baseDir = "dist"
@@ -30,8 +34,10 @@ clean {
 }
 
 deploy {
-	dependsOn gulpBuild
+	dependsOn assemble
+	description = "Assembles the project and deploys it to Liferay."
 	from "dist"
+	group = "build"
 	into new File(project.properties["liferay.home"], "deploy")
 }
 

@@ -35,16 +35,6 @@
 		<execute function="SelectFrame" value1="relative=top" />
 	</command>
 
-	<command name="configurePermissionsPG">
-		<execute function="SelectFrame" value1="relative=top" />
-
-		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
-
-		<execute macro="Navigator#gotoNavItem">
-			<var name="navItem" value="Permissions" />
-		</execute>
-	</command>
-
 	<command name="configureScopePG">
 		<execute macro="Portlet#gotoPortletOptions">
 			<var name="portletName" value="${portletName}" />
@@ -129,7 +119,7 @@
 			<then>
 				<execute function="SelectFrame" locator1="IFrame#DIALOG" />
 
-				<execute function="Check" locator1="WCDConfiguration#ENABLE_VIEW_COUNT_INCREMENT_CHECKBOX" />
+				<execute function="Check#checkToggleSwitch" locator1="WCDConfiguration#ENABLE_VIEW_COUNT_INCREMENT_CHECKBOX" />
 
 				<execute function="SelectFrame" value1="relative=top" />
 			</then>

@@ -1,4 +1,5 @@
 <definition component-name="portal-social-networking">
+	<property name="custom.properties" value="default.layout.template.id=1_column" />
 	<property name="testray.main.component.name" value="Social Networking" />
 
 	<set-up>
@@ -291,6 +292,8 @@
 		<execute macro="LanguagePortlet#selectLanguagePG">
 			<var name="language" value="French (France)" />
 		</execute>
+
+		<execute macro="ProductMenuHelper#expandPanelControlPanel" />
 
 		<execute macro="Page#gotoSALocalizedCP">
 			<var name="adminLocalized" value="Administration du portail" />

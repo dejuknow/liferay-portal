@@ -15,7 +15,7 @@
 package com.liferay.sync.engine.filesystem;
 
 import com.liferay.sync.engine.filesystem.listener.WatchEventListener;
-import com.liferay.sync.engine.filesystem.util.WatcherRegistry;
+import com.liferay.sync.engine.filesystem.util.WatcherManager;
 import com.liferay.sync.engine.model.SyncAccount;
 import com.liferay.sync.engine.model.SyncFile;
 import com.liferay.sync.engine.model.SyncSite;
@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
@@ -50,19 +51,15 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class Watcher implements Runnable {
 
-	public Watcher(Path filePath, WatchEventListener watchEventListener)
-		throws IOException {
-
+	public Watcher(Path filePath, WatchEventListener watchEventListener) {
 		_baseFilePath = filePath;
 		_watchEventListener = watchEventListener;
 
 		init();
-
-		WatcherRegistry.register(_watchEventListener.getSyncAccountId(), this);
 	}
 
 	public void close() {
-		WatcherRegistry.unregister(_watchEventListener.getSyncAccountId());
+		WatcherManager.removeWatcher(_watchEventListener.getSyncAccountId());
 	}
 
 	public List<String> getDeletedFilePathNames() {
@@ -256,8 +253,7 @@ public abstract class Watcher implements Runnable {
 		SyncAccount syncAccount = SyncAccountService.fetchSyncAccount(
 			_watchEventListener.getSyncAccountId());
 
-		Path syncAccountFilePath = java.nio.file.Paths.get(
-			syncAccount.getFilePathName());
+		Path syncAccountFilePath = Paths.get(syncAccount.getFilePathName());
 
 		if (!FileUtil.exists(syncAccountFilePath)) {
 			if (_logger.isTraceEnabled()) {

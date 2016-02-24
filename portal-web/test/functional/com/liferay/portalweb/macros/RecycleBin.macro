@@ -21,9 +21,11 @@
 			<var name="panelHeading" value="Recycle Bin" />
 		</execute>
 
-		<execute function="Check#checkToggleSwitch" locator1="Checkbox#ENABLE_RECYCLE_BIN" />
+		<execute function="Uncheck#uncheckToggleSwitchNoErrorNoAssert" locator1="Checkbox#ENABLE_RECYCLE_BIN" />
 
 		<execute function="Confirm" value1="Disabling the Recycle Bin prevents the restoring of content that has been moved to the Recycle Bin." />
+
+		<execute function="AssertNotChecked#assertNotCheckedToggleSwitch" locator1="Checkbox#ENABLE_RECYCLE_BIN" />
 
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
 
@@ -86,7 +88,7 @@
 		<execute function="AssertClick" locator1="RecycleBin#RECYCLE_BIN_FOLDER_WARNING_CHOOSE_THIS_FOLDER_BUTTON" value1="Choose This Folder" />
 		<execute function="SelectFrameTop" value1="relative=top" />
 
-		<execute function="AssertTextEquals" locator1="Message#RECYCLE_BIN_RESTORE_SUCCESS" value1="The ${assetType2} ${documentName} was restored to ${assetRestoreLocation}." />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#RECYCLE_BIN_RESTORE_SUCCESS" value1="The ${assetType2} ${documentName} was restored to ${assetRestoreLocation}." />
 	</command>
 
 	<command name="restoreCP">
@@ -102,7 +104,7 @@
 				<execute function="AssertTextEquals#assertPartialText" locator1="Message#RECYCLE_BIN_RESTORE_SUCCESS" value1="${assetType}" />
 			</then>
 			<else>
-				<execute function="AssertTextEquals" locator1="Message#RECYCLE_BIN_RESTORE_SUCCESS" value1="The item was restored." />
+				<execute function="AssertTextEquals#assertPartialText" locator1="Message#RECYCLE_BIN_RESTORE_SUCCESS" value1="The item was restored." />
 			</else>
 		</if>
 

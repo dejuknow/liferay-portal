@@ -206,8 +206,7 @@ public class ScriptingPortlet extends GenericPortlet {
 			ScriptingHelperUtil.getPortletObjects(
 				portletConfig, portletContext, portletRequest, portletResponse);
 
-		ScriptingUtil.exec(
-			null, portletObjects, language, script, StringPool.EMPTY_ARRAY);
+		ScriptingUtil.exec(null, portletObjects, language, script);
 	}
 
 	protected void doRender(

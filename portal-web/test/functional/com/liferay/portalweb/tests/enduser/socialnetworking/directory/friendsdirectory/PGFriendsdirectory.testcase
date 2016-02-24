@@ -1,4 +1,5 @@
 <definition component-name="portal-social-networking">
+	<property name="custom.properties" value="default.layout.template.id=1_column" />
 	<property name="portlet.plugins.includes" value="social-networking-portlet" />
 	<property name="testray.main.component.name" value="Social Networking" />
 
@@ -91,7 +92,7 @@
 
 		<execute function="AssertClick" locator1="Button#ADD_PAGE_BTN" value1="Add Page" />
 
-		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute macro="Alert#viewPageAddedSuccessMessage" />
 
 		<execute macro="Page#gotoPG">
 			<var name="pageName" value="${pageName}" />

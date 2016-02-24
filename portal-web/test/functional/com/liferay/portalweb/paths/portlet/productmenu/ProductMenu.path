@@ -45,12 +45,17 @@
 </tr>
 <tr>
 	<td>SITES_COMPASS</td>
-	<td>//a[contains(@id,'manageSitesLink')]</td>
+	<td>//span/*[name()='svg'][contains(@class,'sites')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>SITES_POPUP</td>
 	<td>//div[div[contains(@id,'siteSelectorContent')] and contains(@class,'popover-content')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SITES_MODAL_TITLE</td>
+	<td>//h3[@class='modal-title']</td>
 	<td></td>
 </tr>
 <tr>
@@ -79,8 +84,18 @@
 	<td></td>
 </tr>
 <tr>
+	<td>PRIVATE_PAGES_SELECTED</td>
+	<td>//span[contains(@class,'selected-layout-set')]/*[@data-qa-id='goToPrivatePages']</td>
+	<td></td>
+</tr>
+<tr>
 	<td>PUBLIC_PAGES</td>
 	<td>//*[@data-qa-id='goToPublicPages']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PUBLIC_PAGES_SELECTED</td>
+	<td>//span[contains(@class,'selected-layout-set')]/*[@data-qa-id='goToPublicPages']</td>
 	<td></td>
 </tr>
 <tr>
@@ -121,6 +136,11 @@
 <tr>
 	<td>PORTLET</td>
 	<td>//div[a[@aria-expanded='true']]//a[contains(@id,'Portlet') and contains(@data-title,'${key_portlet}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PORTLET_SELECTED</td>
+	<td>//li[@class='active']//*[@data-qa-id='app' and contains(@data-title,'${key_portlet}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -236,7 +256,7 @@
 </tr>
 <tr>
 	<td>PRODUCT_MENU_TABS_EXPANDED_PANEL</td>
-	<td>//div[@class='collapse panel-collapse in' or @class='panel-collapse collapse in']</td>
+	<td>//div[(@class='collapse panel-collapse in' or @class='panel-collapse collapse in') and contains(@id,'${key_panelId}')]</td>
 	<td></td>
 </tr>
 <tr>

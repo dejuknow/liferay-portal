@@ -1,5 +1,7 @@
 <definition>
 	<command name="_gotoPendingFilter">
+		<execute function="Pause" locator1="5000" />
+
 		<execute function="Click" locator1="Dropdown#FILTER" />
 
 		<var name="key_filterValue" value="Pending" />
@@ -23,7 +25,7 @@
 		<if>
 			<condition function="IsElementPresent" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
 			<then>
-				<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+				<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
 				<execute function="Click" locator1="MenuItem#EDIT" />
 
 				<var name="key_workflowResourceValue" value="Knowledge Base Article" />
@@ -37,7 +39,7 @@
 		<for list="Blogs Entry,Calendar Event,Comments,Message Boards Message,Page Revision,Wiki Page" param="workflowResourceValue">
 			<var name="key_rowEntry" value="${workflowResourceValue}" />
 
-			<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+			<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
 
 			<execute function="Click" locator1="MenuItem#EDIT" />
 
@@ -134,7 +136,7 @@
 			<var name="workflowTask" value="${workflowTask}" />
 		</execute>
 
-		<execute function="Click" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
 
 		<execute function="AssertClick" locator1="MenuItem#APPROVE" value1="Approve" />
 
@@ -148,21 +150,6 @@
 			<var name="workflowAssetType" value="${workflowAssetType}" />
 			<var name="workflowTask" value="${workflowTask}" />
 		</execute>
-	</command>
-
-	<command name="approveTaskByNotifications">
-		<execute function="AssertClick" locator1="NotificationsDockbar#COUNT_ALERT" value1="${notificationCount}" />
-		<execute function="AssertClick" locator1="NotificationsDockbar#NOTIFICATIONS_CONTENT_GENERIC" value1="${notificationContent}" />
-
-		<execute function="SelectFrame" locator1="MyWorkflowTasksTask#MANAGE_MY_ACCOUNT_IFRAME" />
-		<execute function="AssertTextEquals#assertText" locator1="MyWorkflowTasksTask#ASSIGNED_TO" value1="${userName}" />
-		<execute function="Click" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
-
-		<execute function="AssertClick" locator1="MenuItem#APPROVE" value1="Approve" />
-
-		<execute function="AssertClick" locator1="Button#OK" value1="OK" />
-
-		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
 	</command>
 
 	<command name="assignToMeTaskByActions">
@@ -220,19 +207,7 @@
 			<var name="workflowTask" value="${workflowTask}" />
 		</execute>
 
-		<if>
-			<equals arg1="${assignToMeKey}" arg2="ASSIGN_TO_ME" />
-			<then>
-				<execute function="Click" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
-
-				<execute function="AssertClick" locator1="MyWorkflowTasksTask#ASSIGN_TO_ME" value1="Assign to Me" />
-			</then>
-			<else>
-				<execute function="Click" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
-
-				<execute function="AssertClick" locator1="MyWorkflowTasksTask#MENU_ASSIGN_TO_ME" value1="Assign to Me" />
-			</else>
-		</if>
+		<execute macro="Workflow#clickAssignToMeByDetails" />
 
 		<execute macro="Workflow#confirmAndViewSucessMessageViaDetails" />
 
@@ -246,25 +221,22 @@
 		</execute>
 	</command>
 
-	<command name="assignToMeTaskByNotifications">
-		<execute function="AssertClick" locator1="NotificationsDockbar#COUNT_ALERT" value1="${notificationCount}" />
-		<execute function="AssertClick" locator1="NotificationsDockbar#NOTIFICATIONS_CONTENT_GENERIC" value1="${notificationContent}" />
+	<command name="clickApproveByDetails">
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
 
-		<execute function="SelectFrame" locator1="MyWorkflowTasksTask#MANAGE_MY_ACCOUNT_IFRAME" />
-		<execute function="AssertTextEquals#assertText" locator1="MyWorkflowTasksTask#ASSIGNED_TO" value1="Nobody" />
-		<execute function="Click" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
+		<execute function="AssertClick" locator1="MyWorkflowTasksTask#MENU_APPROVE" value1="Approve" />
+	</command>
+
+	<command name="clickAssignToMeByDetails">
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
 
 		<execute function="AssertClick" locator1="MyWorkflowTasksTask#MENU_ASSIGN_TO_ME" value1="Assign to Me" />
-
-		<execute function="AssertClick" locator1="Button#OK" value1="OK" />
-
-		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
 	</command>
 
 	<command name="configureWorkflow">
 		<var name="key_rowEntry" value="${workflowResourceValue}" />
 
-		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
 
 		<execute function="Click" locator1="MenuItem#EDIT" />
 
@@ -286,7 +258,7 @@
 
 	<command name="configureWorkflowViaFolderInfo">
 		<execute function="Click" locator1="Icon#INFO" />
-		<execute function="Click" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
 		<execute function="AssertClick" locator1="MenuItem#EDIT" value1="Edit" />
 
 		<execute function="Select" locator1="AssetWorkflow#ALL_STRUCTURES_WORKFLOW_SELECT" value1="${workflowDefinition}" />
@@ -374,6 +346,8 @@
 	</command>
 
 	<command name="gotoCompletedFilter">
+		<execute function="Pause" locator1="5000" />
+
 		<execute function="Click" locator1="Dropdown#FILTER" />
 
 		<var name="key_filterValue" value="Completed" />
@@ -467,7 +441,7 @@
 			<var name="workflowTask" value="${workflowTask}" />
 		</execute>
 
-		<execute function="Click" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
 
 		<execute function="AssertClick" locator1="MenuItem#REJECT" value1="Reject" />
 
@@ -525,7 +499,7 @@
 			<var name="workflowTask" value="${workflowTask}" />
 		</execute>
 
-		<execute function="Click" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
 
 		<execute function="AssertClick" locator1="MenuItem#RESUBMIT" value1="Resubmit" />
 
@@ -551,7 +525,7 @@
 		<var name="key_rowEntry" value="User" />
 		<var name="noWorkflow" value="No Workflow" />
 
-		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
 
 		<execute function="Click" locator1="MenuItem#EDIT" />
 
@@ -991,7 +965,7 @@
 
 		<var name="key_workflowAssetTitle" value="${workflowAssetTitle}" />
 
-		<execute function="Click" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
 
 		<execute function="AssertClick" locator1="MenuItem#WITHDRAW_SUBMISSION" value1="Withdraw Submission" />
 
@@ -1019,7 +993,7 @@
 			<var name="workflowDefinition" value="${workflowDefinition}" />
 		</execute>
 
-		<execute function="Click" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
 
 		<execute function="AssertClick" locator1="MenuItem#WITHDRAW_SUBMISSION" value1="Withdraw Submission" />
 

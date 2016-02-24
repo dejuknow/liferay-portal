@@ -849,6 +849,23 @@ public class LayoutTypePortletImpl
 	}
 
 	@Override
+	public void removeCustomization(UnicodeProperties typeSettingsProperties) {
+		for (String columnId : getColumns()) {
+			if (!isColumnCustomizable(columnId)) {
+				continue;
+			}
+
+			if (GetterUtil.getBoolean(
+					getTypeSettingsProperty(
+						CustomizedPages.namespaceColumnId(columnId)))) {
+
+				typeSettingsProperties.remove(
+					CustomizedPages.namespaceColumnId(columnId));
+			}
+		}
+	}
+
+	@Override
 	public void removeModeAboutPortletId(String portletId) {
 		setModeAbout(StringUtil.removeFromList(getModeAbout(), portletId));
 	}
