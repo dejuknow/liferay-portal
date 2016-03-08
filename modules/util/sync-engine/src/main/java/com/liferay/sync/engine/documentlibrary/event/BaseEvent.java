@@ -64,7 +64,7 @@ public abstract class BaseEvent implements Event {
 	}
 
 	public void executeAsynchronousGet(HttpGet httpGet) throws Exception {
-		Session session = SessionManager.getSession(_syncAccountId);
+		Session session = getSession();
 
 		_httpGet = httpGet;
 
@@ -88,7 +88,7 @@ public abstract class BaseEvent implements Event {
 			Handler<Void> handler)
 		throws Exception {
 
-		Session session = SessionManager.getSession(_syncAccountId);
+		Session session = getSession();
 
 		_httpPost = new HttpPost(urlPath);
 
@@ -96,7 +96,7 @@ public abstract class BaseEvent implements Event {
 	}
 
 	public void executeGet(String urlPath) throws Exception {
-		Session session = SessionManager.getSession(_syncAccountId);
+		Session session = getSession();
 
 		SyncAccount syncAccount = SyncAccountService.fetchSyncAccount(
 			_syncAccountId);
@@ -109,7 +109,7 @@ public abstract class BaseEvent implements Event {
 	public void executePost(String urlPath, Map<String, Object> parameters)
 		throws Exception {
 
-		Session session = SessionManager.getSession(_syncAccountId);
+		Session session = getSession();
 
 		SyncAccount syncAccount = SyncAccountService.fetchSyncAccount(
 			_syncAccountId);
@@ -155,18 +155,7 @@ public abstract class BaseEvent implements Event {
 
 		try {
 			if (_logger.isTraceEnabled()) {
-				Class<?> clazz = this.getClass();
-
-				SyncFile syncFile = (SyncFile)getParameterValue("syncFile");
-
-				if (syncFile != null) {
-					_logger.trace(
-						"Processing event {} file path {}",
-						clazz.getSimpleName(), syncFile.getFilePathName());
-				}
-				else {
-					_logger.trace("Processing event {}", clazz.getSimpleName());
-				}
+				logEvent();
 			}
 
 			processRequest();
@@ -178,8 +167,29 @@ public abstract class BaseEvent implements Event {
 		}
 	}
 
+	protected Session getSession() {
+		return SessionManager.getSession(_syncAccountId);
+	}
+
+	protected void logEvent() {
+		Class<?> clazz = getClass();
+
+		SyncFile syncFile = (SyncFile)getParameterValue("syncFile");
+
+		if (syncFile != null) {
+			_logger.trace(
+				"Processing event {} file path {}", clazz.getSimpleName(),
+				syncFile.getFilePathName());
+		}
+		else {
+			_logger.trace("Processing event {}", clazz.getSimpleName());
+		}
+	}
+
 	protected void processAsynchronousRequest() throws Exception {
-		BatchEvent batchEvent = BatchEventManager.getBatchEvent(_syncAccountId);
+		SyncFile syncFile = (SyncFile)getParameterValue("syncFile");
+
+		BatchEvent batchEvent = BatchEventManager.getBatchEvent(syncFile);
 
 		if (!batchEvent.addEvent(this)) {
 			executeAsynchronousPost(_urlPath, _parameters);

@@ -8,7 +8,7 @@
 
 		<execute function="AssertClick" locator1="SODocuments#VERSION_HISTORY_DELETE_VERSION" value1="Delete Version" />
 
-		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute macro="Alert#viewSuccessMessage" />
 	</command>
 
 	<command name="revertPGDocumentVersion">
@@ -20,7 +20,7 @@
 
 		<execute function="AssertClick" locator1="SODocuments#VERSION_HISTORY_REVERT" value1="Revert" />
 
-		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute macro="Alert#viewSuccessMessage" />
 		<execute function="AssertTextEquals" locator1="Portlet#H3_HEADER" value1="${dmDocumentRevertTitle}" />
 		<execute function="AssertElementPresent" locator1="DocumentsAndMediaDocument#DOCUMENT_INFO_THUMBNAIL" />
 		<execute function="AssertTextEquals" locator1="DocumentsAndMediaDocument#DOCUMENT_INFO_DESCRIPTION" value1="${dmDocumentRevertDescription}" />
@@ -59,8 +59,8 @@
 				<execute function="Check" locator1="Checkbox#SELECT_ALL" />
 				<execute function="AssertClick#waitForDMHomeAssertTextEqualsClick" locator1="Toolbar#ACTIONS" value1="Actions" />
 				<execute function="AssertElementPresent" locator1="MenuItem#MOVE_TO_THE_RECYCLE_BIN" />
-				<execute function="AssertClick" locator1="MenuItem#MOVE_TO_THE_RECYCLE_BIN" value1="Move to the Recycle Bin" />
-				<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="moved to the Recycle Bin. Undo" />
+				<execute macro="PortletEntry#clickMoveToRecycleBin" />
+				<execute function="AssertElementPresent" locator1="Message#SUCCESS" />
 			</then>
 		</if>
 
@@ -68,8 +68,8 @@
 			<var name="siteName" value="test" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoPrivateSite">
-			<var name="site" value="test" />
+		<execute macro="Navigator#openSiteURL">
+			<var name="siteName" value="test" />
 		</execute>
 
 		<execute macro="ProductMenu#gotoSitesContent">
@@ -405,9 +405,9 @@
 		<if>
 			<isset var="commentBody" />
 			<then>
-				<var name="key_commentBody" value="${commentBody}" />
+				<var name="key_entryComment" value="${commentBody}" />
 
-				<execute function="AssertTextEquals" locator1="Comments#COMMENT_BODY" value1="${commentBody}" />
+				<execute function="AssertTextEquals" locator1="Comments#COMMENT_BODY_SPECIFIC" value1="${commentBody}" />
 			</then>
 			<else>
 				<execute macro="DMDocument#viewDocumentNoCommentsCmdPG" />

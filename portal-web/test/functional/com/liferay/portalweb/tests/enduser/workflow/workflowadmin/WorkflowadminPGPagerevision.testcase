@@ -25,7 +25,6 @@
 		</execute>
 
 		<execute macro="Page#add">
-			<var name="page" value="Public Pages" />
 			<var name="pageName" value="Site Page Name" />
 			<var name="siteName" value="${siteName}" />
 			<var name="sitePagePrivacy" value="${sitePagePrivacy}" />
@@ -35,7 +34,7 @@
 			<var name="site" value="${siteName}" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesPublishingTools">
+		<execute macro="ProductMenu#gotoSitesPublishing">
 			<var name="portlet" value="Staging" />
 		</execute>
 
@@ -77,8 +76,6 @@
 	</tear-down>
 
 	<command name="ApprovePageRevisionPG" priority="5">
-		<property name="portal.acceptance" value="true" />
-
 		<var name="pageName" value="Page Revision Page" />
 
 		<execute macro="Page#gotoPG">
@@ -174,7 +171,7 @@
 			<var name="siteURL" value="true" />
 		</execute>
 
-		<execute macro="Page#viewPG">
+		<execute macro="Page#view">
 			<var name="pageName" value="${pageName}" />
 			<var name="siteName" value="${siteName}" />
 			<var name="siteURL" value="true" />
@@ -188,7 +185,7 @@
 			<var name="workflowAssetTitle" value="${pageName}" />
 		</execute>
 
-		<execute macro="Page#viewPG">
+		<execute macro="Page#view">
 			<var name="pageName" value="${pageName}" />
 			<var name="siteName" value="${siteName}" />
 			<var name="siteURL" value="true" />
@@ -196,8 +193,6 @@
 	</command>
 
 	<command name="RejectPageRevisionPG" priority="4">
-		<property name="portal.acceptance" value="true" />
-
 		<var name="pageName" value="Page Revision Page" />
 
 		<execute macro="Page#gotoPG">

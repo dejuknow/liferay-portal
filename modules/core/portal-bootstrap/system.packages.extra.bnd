@@ -17,8 +17,10 @@ Export-Package:\
 	!com.liferay.portal.jcr.jackrabbit,\
 	!com.liferay.portal.jericho,\
 	!com.liferay.portal.license.*,\
+	!com.liferay.portal.messaging,\
 	!com.liferay.portal.microsofttranslator,\
 	!com.liferay.portal.minifier,\
+	!com.liferay.portal.monitoring.statistics,\
 	!com.liferay.portal.nio.intraband.proxy,\
 	!com.liferay.portal.scripting.beanshell,\
 	!com.liferay.portal.scripting.groovy,\
@@ -56,7 +58,7 @@ Export-Package:\
 	!org.jcp.xml.*,\
 	!overview.html,\
 	!portal-impl-overview.html,\
-	!portal-service-overview.html,\
+	!portal-kernel-overview.html,\
 	!resource-actions,\
 	!trax,\
 	!unicode-license.txt,\
@@ -212,6 +214,7 @@ Include-Resource:\
 	@../../../lib/portal/bnd.jar!/aQute/bnd/header/*,\
 	@../../../lib/portal/bnd.jar!/aQute/bnd/osgi/*,\
 	@../../../lib/portal/bnd.jar!/aQute/bnd/version/*,\
+	@../../../lib/portal/ccpp.jar,\
 	@../../../lib/portal/commons-beanutils.jar,\
 	@../../../lib/portal/commons-chain.jar,\
 	@../../../lib/portal/commons-codec.jar,\
@@ -259,4 +262,4 @@ Include-Resource:\
 	@../../../lib/portal/xmlsec.jar,\
 	@../../../lib/portal/xstream.jar,\
 	@../../../portal-impl/portal-impl.jar,\
-	@../../../portal-service/portal-service.jar
+	@../../../portal-kernel/portal-kernel.jar

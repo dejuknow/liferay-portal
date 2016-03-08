@@ -20,7 +20,7 @@ feature or API will be dropped in an upcoming version.
 replaces an old API, in spite of the old API being kept in Liferay Portal for
 backwards compatibility.
 
-*This document has been reviewed through commit `8e34a45`.*
+*This document has been reviewed through commit `bd04797`.*
 
 ## Breaking Changes Contribution Guidelines
 
@@ -412,13 +412,13 @@ properly even when JavaScript is disabled.
 
 ---------------------------------------
 
-### Using util-taglib No Longer Binds You to Using portal-service's javax.servlet.jsp Implementation
+### Using util-taglib No Longer Binds You to Using portal-kernel's javax.servlet.jsp Implementation
 - **Date:** 2014-Jun-19
 - **JIRA Ticket:** LPS-47682
 
 #### What changed?
 
-Several APIs in `portal-service.jar` contained references to the
+Several APIs in `portal-kernel.jar` contained references to the
 `javax.servlet.jsp` package. This forced `util-taglib`, which depended on many
 of the package's features, to be bound to the same JSP implementation.
 
@@ -447,7 +447,7 @@ parameter.
 
 #### Why was this change made?
 
-As stated previously, the use of the `javax.servlet.jsp` API in `portal-service`
+As stated previously, the use of the `javax.servlet.jsp` API in `portal-kernel`
 prevented the use of any other JSP impl within plugins (OSGi or otherwise). This
 limited what Liferay could change with respect to providing its own JSP
 implementation within OSGi.
@@ -592,15 +592,15 @@ minor benefit.
 
 ---------------------------------------
 
-### Moved MVCPortlet, ActionCommand and ActionCommandCache from util-bridges.jar to portal-service.jar
+### Moved MVCPortlet, ActionCommand and ActionCommandCache from util-bridges.jar to portal-kernel.jar
 - **Date:** 2014-Sep-26
 - **JIRA Ticket:** LPS-50156
 
 #### What changed?
 
 The classes from package `com.liferay.util.bridges.mvc` in `util-bridges.jar`
-were moved to a new package `com.liferay.portal.kernel.portlet.bridges.mvc`
-in `portal-service.jar`.
+were moved to a new package `com.liferay.portal.kernel.portlet.bridges.mvc` in
+`portal-kernel.jar`.
 
 Old classes:
 
@@ -985,8 +985,8 @@ IDs.
 
 #### What changed?
 
-The class `AssetPublisherUtil` from the `portal-service` module has been moved
-to the module `AssetPublisher` and it is no longer a part of the public API.
+The class `AssetPublisherUtil` from the `portal-kernel` module has been moved to
+the module `AssetPublisher` and it is no longer a part of the public API.
 
 #### Who is affected?
 
@@ -3196,6 +3196,32 @@ services from `DLAppService` was the only sensible solution to this circularity.
 
 ---------------------------------------
 
+### Deprecated the liferay-ui:flags Tag and Replaced with liferay-flags:flags
+- **Date:** 2015-Dec-02
+- **JIRA Ticket:** LPS-60967
+
+#### What changed?
+
+The `liferay-ui:flags` tag has been deprecated and replaced with the
+`liferay-flags:flags` tag.
+
+#### Who is affected?
+
+Plugins or templates that are using the `liferay-ui:flags` tag need to update
+their usage of the tag.
+
+#### How should I update my code?
+
+You should import the `liferay-flags` tag library (if necessary) and update the
+tag namespace from `liferay-ui:flags` to `liferay-flags:flags`.
+
+#### Why was this change made?
+
+This change was made as a part of the ongoing strategy to modularize Liferay
+Portal by means of an OSGi container.
+
+---------------------------------------
+
 ### Removed the liferay-ui:diff Tag and Replaced with liferay-frontend:diff
 - **Date:** 2015-Dec-14
 - **JIRA Ticket:** LPS-61326
@@ -3345,8 +3371,7 @@ view, you need to add the init parameter
 
 Lexicon patterns require the ability to specify different configuration options
 depending on the view of the portlet by adding or removing options. This can be
-easily achieved by using the `PortletConfigurationIcon` and
-`PortletConfigurationIconFactory` classes.
+easily achieved by using the `PortletConfigurationIcon` classes.
 
 ---------------------------------------
 
@@ -3428,7 +3453,7 @@ importer only sees a subset of the package.
 
 #### Who is affected?
 
-The `portal-service` and `portal-impl` folders have many packages with the same
+The `portal-kernel` and `portal-impl` folders have many packages with the same
 name. Therefore, all of these packages are affected by the split package
 problem.
 
@@ -3447,6 +3472,8 @@ else.
 
 - `com.liferay.mail.util` &rarr; `com.liferay.mail.kernel.util`
 
+- `com.liferay.portal.exception` &rarr; `com.liferay.portal.kernel.exception`
+
 - `com.liferay.portal.jdbc.pool.metrics` &rarr; `com.liferay.portal.kernel.jdbc.pool.metrics`
 
 - `com.liferay.portal.kernel.mail` &rarr; `com.liferay.mail.kernel.model`
@@ -3454,6 +3481,14 @@ else.
 - `com.liferay.portal.layoutconfiguration.util` &rarr; `com.liferay.portal.kernel.layoutconfiguration.util`
 
 - `com.liferay.portal.layoutconfiguration.util.xml` &rarr; `com.liferay.portal.kernel.layoutconfiguration.util.xml`
+
+- `com.liferay.portal.mail` &rarr; `com.liferay.portal.kernel.mail`
+
+- `com.liferay.portal.model` &rarr; `com.liferay.portal.kernel.model`
+
+- `com.liferay.portal.model.adapter` &rarr; `com.liferay.portal.kernel.model.adapter`
+
+- `com.liferay.portal.model.impl` &rarr; `com.liferay.portal.kernel.model.impl`
 
 - `com.liferay.portal.portletfilerepository` &rarr; `com.liferay.portal.kernel.portletfilerepository`
 
@@ -3475,7 +3510,17 @@ else.
 
 - `com.liferay.portal.security.xml` &rarr; `com.liferay.portal.kernel.security.xml`
 
+- `com.liferay.portal.service.configuration` &rarr; `com.liferay.portal.kernel.service.configuration`
+
+- `com.liferay.portal.service.http` &rarr; `com.liferay.portal.kernel.service.http`
+
+- `com.liferay.portal.service.permission` &rarr; `com.liferay.portal.kernel.service.permission`
+
+- `com.liferay.portal.service.persistence.impl` &rarr; `com.liferay.portal.kernel.service.persistence.impl`
+
 - `com.liferay.portal.theme` &rarr; `com.liferay.portal.kernel.theme`
+
+- `com.liferay.portal.util` &rarr; `com.liferay.portal.kernel.util`
 
 - `com.liferay.portal.util.comparator` &rarr; `com.liferay.portal.kernel.util.comparator`
 
@@ -3483,9 +3528,13 @@ else.
 
 - `com.liferay.portal.webserver` &rarr; `com.liferay.portal.kernel.webserver`
 
+- `com.liferay.portlet` &rarr; `com.liferay.kernel.portlet`
+
 - `com.liferay.portlet.admin.util` &rarr; `com.liferay.admin.kernel.util`
 
 - `com.liferay.portlet.announcements` &rarr; `com.liferay.announcements.kernel`
+
+- `com.liferay.portlet.asset` &rarr; `com.liferay.asset.kernel`
 
 - `com.liferay.portlet.backgroundtask.util.comparator` &rarr; `com.liferay.background.task.kernel.util.comparator`
 
@@ -3500,6 +3549,8 @@ else.
 - `com.liferay.portlet.blogs.service.persistence` &rarr; `com.liferay.blogs.service.persistence`
 
 - `com.liferay.portlet.blogs.util.comparator` &rarr; `com.liferay.blogs.kernel.util.comparator`
+
+- `com.liferay.portlet.documentlibrary` &rarr; `com.liferay.document.library.kernel`
 
 - `com.liferay.portlet.dynamicdatamapping` &rarr; `com.liferay.dynamic.data.mapping.kernel`
 
@@ -3711,23 +3762,242 @@ This change was made because WAP is an obsolete functionality.
 
 ---------------------------------------
 
-### The aui:layout taglib has been removed with no direct replacement
-- **Date:** 2015-Feb-8
+### Removed the aui:layout Tag with No Direct Replacement
+- **Date:** 2016-Feb-08
 - **JIRA Ticket:** LPS-62935
 
 #### What changed?
 
-The `aui:layout` taglib has been removed with no direct replacement.
+The `aui:layout` tag has been removed with no direct replacement.
 
 #### Who is affected?
 
-Plugins or templates that are using the `aui:layout` tag need
-to remove their usage of the tag.
+Plugins or templates that are using the `aui:layout` tag must remove their usage
+of the tag.
 
 #### How should I update my code?
 
-There is no direct replacement. You should removeany usages of the `aui:layout` tag.
+There is no direct replacement. You should remove all usages of the `aui:layout`
+tag.
 
 #### Why was this change made?
 
-This change was made as a part of the ongoing strategy to remove deprecated taglibs.
+This change was made as a part of the ongoing strategy to remove deprecated
+tags.
+
+---------------------------------------
+
+### Deprecated the liferay-portlet:icon-back Tag with No Direct Replacement
+- **Date:** 2016-Feb-10
+- **JIRA Ticket:** LPS-63101
+
+#### What changed?
+
+The `liferay-portlet:icon-back` tag has been deprecated with no direct
+replacement.
+
+#### Who is affected?
+
+Plugins or templates that are using the `liferay-portlet:icon-back` tag must
+remove their usage of the tag.
+
+#### How should I update my code?
+
+There is no direct replacement. You should remove all usages of the
+`liferay-portlet:icon-back` tag.
+
+#### Why was this change made?
+
+This change was made as a part of the ongoing strategy to deprecate unused tags.
+
+---------------------------------------
+
+### Deprecated the liferay-security:encrypt Tag with No Direct Replacement
+- **Date:** 2016-Feb-10
+- **JIRA Ticket:** LPS-63106
+
+#### What changed?
+
+The `liferay-security:encrypt` tag has been deprecated with no direct
+replacement.
+
+#### Who is affected?
+
+Plugins or templates that are using the `liferay-security:encrypt` tag must
+remove their usage of the tag.
+
+#### How should I update my code?
+
+There is no direct replacement. You should remove all usages of the
+`liferay-security:encrypt` tag.
+
+#### Why was this change made?
+
+This change was made as a part of the ongoing strategy to deprecate unused tags.
+
+---------------------------------------
+
+### Removed the Ability to Specify Class Loaders in Scripting
+- **Date:** 2016-Feb-17
+- **JIRA Ticket:** LPS-63180
+
+#### What changed?
+
+- `com.liferay.portal.kernel.scripting.ScriptingExecutor` no longer uses the
+provided class loaders in the eval methods.
+- `com.liferay.portal.kernel.scripting.Scripting` no longer uses the provided
+class loaders and servlet context names in eval and exec methods.
+
+#### Who is affected?
+
+- All implementations of `com.liferay.portal.kernel.scripting.ScriptingExecutor`
+are affected.
+- All classes that call `com.liferay.portal.kernel.scripting.Scripting` are
+affected.
+
+#### How should I update my code?
+
+You should remove class loader and servlect context parameters from calls to the
+modified methods.
+
+#### Why was this change made?
+
+This change was made since custom class loader management is no longer necessary
+in the OSGi container.
+
+---------------------------------------
+
+### User Operation and Importer/Exporter Classes and Utilities Have Been Moved or Removed From portal-kernel
+- **Date:** 2016-Feb-17
+- **JIRA Ticket:** LPS-63205
+
+#### What changed?
+
+- `com.liferay.portal.kernel.security.exportimport.UserImporter`,
+`com.liferay.portal.kernel.security.exportimport.UserExporter`,
+and `com.liferay.portal.kernel.security.exportimport.UserOperation`  have been
+moved from portal-kernel to the portal-security-export-import-api module.
+
+- `com.liferay.portal.kernel.security.exportimport.UserImporterUtil` and
+`com.liferay.portal.kernel.security.exportimport.UserExporterUtil` have been
+removed with no replacement.
+
+#### Who is affected?
+
+- All implementations of
+`com.liferay.portal.kernel.security.exportimport.UserImporter` or
+`com.liferay.portal.kernel.security.exportimport.UserExporter`
+are affected.
+
+- All code that uses
+`com.liferay.portal.kernel.security.exportimport.UserImporterUtil`,
+`com.liferay.portal.kernel.security.exportimport.UserExporterUtil`,
+`com.liferay.portal.kernel.security.exportimport.UserImporter`, or
+`com.liferay.portal.kernel.security.exportimport.UserExporter`
+is affected.
+
+#### How should I update my code?
+
+If you are in an OSGi module, you can simply inject the UserImporter or
+UserExporter references
+
+    @Reference
+    private UserExporter_userExporter;
+
+    @Reference
+    private UserImporter _userImporter;
+
+If you are in a legacy WAR or WAB, you will need a snippet like:
+
+    Bundle bundle = FrameworkUtil.getBundle(getClass());
+
+    BundleContext bundleContext = bundle.getBundleContext();
+
+    ServiceReference<UserImporter> serviceReference =
+        bundleContext.getServiceReference(UserImporter.class);
+
+    UserImporter userImporter = bundleContext.getService(serviceReference);
+
+#### Why was this change made?
+
+The change was made to improve modularity of the user import/export subsystem in
+the product.
+
+---------------------------------------
+
+### Deprecated Category Entry for Users
+- **Date:** 2016-Feb-22
+- **JIRA Ticket:** LPS-63466
+
+#### What changed?
+
+The category entry for Site Administration &rarr; Users has been deprecated in
+favor of Site Administration &rarr; Members.
+
+#### Who is affected?
+
+All developers who specified a `control-panel-entry-category` to be visible in
+Site Administration &rarr; Users are affected.
+
+#### How should I update my code?
+
+You should change the entry from `site_administration.users` to
+`site_administration.members` to make it visible in the category.
+
+#### Why was this change made?
+
+This change standardizes naming conventions and separates concepts between Users
+in the Control Panel and Site Members.
+
+---------------------------------------
+
+### Deprecated Category Entry for Pages
+- **Date:** 2016-Feb-25
+- **JIRA Ticket:** LPS-63667
+
+#### What changed?
+
+The category entry for Site Administration &rarr; Pages has been deprecated in
+favor of Site Administration &rarr; Navigation.
+
+#### Who is affected?
+
+All developers who specified a `control-panel-entry-category` to be visible in
+Site Administration &rarr; Pages are affected.
+
+#### How should I update my code?
+
+You should change the entry from `site_administration.pages` to
+`site_administration.navigation` to make it visible in the category.
+
+#### Why was this change made?
+
+This change standardizes naming conventions and separates concepts in the
+Product Menu.
+
+---------------------------------------
+
+### FlagsEntryService.addEntry Method Throws PortalException
+- **Date:** 2016-Mar-04
+- **JIRA Ticket:** LPS-63109
+
+#### What changed?
+
+The method `FlagsEntryService.addEntry` now throws a `PortalException` if the
+`reporterEmailAddress` is not a valid email address.
+
+#### Who is affected?
+
+Any caller of the method `FlagsEntryService.addEntry` is affected.
+
+#### How should I update my code?
+
+You should consider checking for the `PortalException` in try-catch blocks and
+adapt your code accordingly.
+
+#### Why was this change made?
+
+This change prevents providing an incorrect email address when adding flag
+entries.
+
+---------------------------------------

@@ -25,6 +25,7 @@ import com.liferay.portal.kernel.dao.db.DBManagerUtil;
 import com.liferay.portal.kernel.dao.jdbc.DataSourceFactoryUtil;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.log.SanitizerLogWrapper;
+import com.liferay.portal.kernel.upgrade.dao.orm.UpgradeOptimizedConnectionProviderRegistryUtil;
 import com.liferay.portal.kernel.util.ClassLoaderUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
@@ -38,6 +39,7 @@ import com.liferay.portal.module.framework.ModuleFrameworkUtilAdapter;
 import com.liferay.portal.security.lang.DoPrivilegedUtil;
 import com.liferay.portal.security.lang.SecurityManagerUtil;
 import com.liferay.portal.spring.context.ArrayApplicationContext;
+import com.liferay.portal.upgrade.dao.orm.UpgradeOptimizedConnectionProviderRegistryImpl;
 import com.liferay.util.log4j.Log4JUtil;
 
 import com.sun.syndication.io.XmlReader;
@@ -143,6 +145,12 @@ public class InitUtil {
 
 		DBManagerUtil.setDBManager(DoPrivilegedUtil.wrap(new DBManagerImpl()));
 
+		// Upgrade optimized connection provider registry
+
+		UpgradeOptimizedConnectionProviderRegistryUtil.
+			setUpgradeOptimizedConnectionProviderRegistry(
+				new UpgradeOptimizedConnectionProviderRegistryImpl());
+
 		// ROME
 
 		XmlReader.setDefaultEncoding(StringPool.UTF8);
@@ -156,17 +164,18 @@ public class InitUtil {
 	}
 
 	public synchronized static void initWithSpring(
-		boolean initModuleFramework) {
+		boolean initModuleFramework, boolean registerContext) {
 
 		List<String> configLocations = ListUtil.fromArray(
 			PropsUtil.getArray(
 				com.liferay.portal.kernel.util.PropsKeys.SPRING_CONFIGS));
 
-		initWithSpring(configLocations, initModuleFramework);
+		initWithSpring(configLocations, initModuleFramework, registerContext);
 	}
 
 	public synchronized static void initWithSpring(
-		List<String> configLocations, boolean initModuleFramework) {
+		List<String> configLocations, boolean initModuleFramework,
+		boolean registerContext) {
 
 		if (_initialized) {
 			return;
@@ -189,28 +198,35 @@ public class InitUtil {
 				ModuleFrameworkUtilAdapter.initFramework();
 			}
 
-			ApplicationContext applicationContext = new ArrayApplicationContext(
-				PropsValues.SPRING_INFRASTRUCTURE_CONFIGS);
+			ApplicationContext infrastructureApplicationContext =
+				new ArrayApplicationContext(
+					PropsValues.SPRING_INFRASTRUCTURE_CONFIGS);
 
 			if (initModuleFramework) {
-				ModuleFrameworkUtilAdapter.registerContext(applicationContext);
+				ModuleFrameworkUtilAdapter.registerContext(
+					infrastructureApplicationContext);
 
 				ModuleFrameworkUtilAdapter.startFramework();
 			}
 
-			applicationContext = new ClassPathXmlApplicationContext(
-				configLocations.toArray(new String[configLocations.size()]),
-				applicationContext);
+			ApplicationContext appApplicationContext =
+				new ClassPathXmlApplicationContext(
+					configLocations.toArray(new String[configLocations.size()]),
+					infrastructureApplicationContext);
 
 			BeanLocator beanLocator = new BeanLocatorImpl(
-				ClassLoaderUtil.getPortalClassLoader(), applicationContext);
+				ClassLoaderUtil.getPortalClassLoader(), appApplicationContext);
 
 			PortalBeanLocatorUtil.setBeanLocator(beanLocator);
 
 			if (initModuleFramework) {
-				ModuleFrameworkUtilAdapter.registerContext(applicationContext);
-
 				ModuleFrameworkUtilAdapter.startRuntime();
+			}
+
+			_appApplicationContext = appApplicationContext;
+
+			if (initModuleFramework && registerContext) {
+				registerContext();
 			}
 		}
 		catch (Exception e) {
@@ -222,6 +238,12 @@ public class InitUtil {
 
 	public static boolean isInitialized() {
 		return _initialized;
+	}
+
+	public static void registerContext() {
+		if (_appApplicationContext != null) {
+			ModuleFrameworkUtilAdapter.registerContext(_appApplicationContext);
+		}
 	}
 
 	public synchronized static void stopModuleFramework() {
@@ -244,6 +266,7 @@ public class InitUtil {
 
 	private static final boolean _PRINT_TIME = false;
 
+	private static ApplicationContext _appApplicationContext;
 	private static boolean _initialized;
 	private static boolean _neverInitialized = true;
 

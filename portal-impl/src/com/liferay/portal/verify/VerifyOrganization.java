@@ -14,16 +14,22 @@
 
 package com.liferay.portal.verify;
 
-import com.liferay.asset.kernel.model.AssetEntry;
-import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
-import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
+import com.liferay.portal.kernel.concurrent.ThrowableAwareRunnable;
+import com.liferay.portal.kernel.concurrent.ThrowableAwareRunnablesExecutorUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Organization;
+import com.liferay.portal.kernel.service.ClassNameLocalServiceUtil;
 import com.liferay.portal.kernel.service.OrganizationLocalServiceUtil;
-import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.util.LoggingTimer;
+import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.upgrade.AutoBatchPreparedStatementUtil;
 import com.liferay.portal.util.PortalInstances;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,87 +40,121 @@ public class VerifyOrganization extends VerifyProcess {
 
 	@Override
 	protected void doVerify() throws Exception {
-		rebuildTree();
+		List<ThrowableAwareRunnable> throwableAwareRunnables =
+			new ArrayList<>();
 
-		updateOrganizationAssets();
-
-		updateOrganizationAssetEntries();
-	}
-
-	protected void rebuildTree() throws Exception {
-		long[] companyIds = PortalInstances.getCompanyIdsBySQL();
-
-		for (long companyId : companyIds) {
-			OrganizationLocalServiceUtil.rebuildTree(companyId);
-		}
-	}
-
-	protected void updateOrganizationAssetEntries() throws Exception {
-		ActionableDynamicQuery actionableDynamicQuery =
-			OrganizationLocalServiceUtil.getActionableDynamicQuery();
-
-		actionableDynamicQuery.setPerformActionMethod(
-			new ActionableDynamicQuery.PerformActionMethod<Organization>() {
+		throwableAwareRunnables.add(
+			new ThrowableAwareRunnable() {
 
 				@Override
-				public void performAction(Organization organization) {
-					try {
-						AssetEntry assetEntry =
-							AssetEntryLocalServiceUtil.getEntry(
-								Organization.class.getName(),
-								organization.getOrganizationId());
-
-						if (Validator.isNotNull(assetEntry.getClassUuid())) {
-							return;
-						}
-
-						assetEntry.setClassUuid(organization.getUuid());
-
-						AssetEntryLocalServiceUtil.updateAssetEntry(assetEntry);
-					}
-					catch (Exception e) {
-						if (_log.isWarnEnabled()) {
-							_log.warn(
-								"Unable to update asset entry for " +
-									"organization " +
-										organization.getOrganizationId(),
-								e);
-						}
-					}
+				protected void doRun() throws Exception {
+					rebuildTree();
 				}
 
 			});
 
-		actionableDynamicQuery.performActions();
+		throwableAwareRunnables.add(
+			new ThrowableAwareRunnable() {
+
+				@Override
+				protected void doRun() throws Exception {
+					updateOrganizationAssets();
+				}
+
+			});
+
+		throwableAwareRunnables.add(
+			new ThrowableAwareRunnable() {
+
+				@Override
+				protected void doRun() throws Exception {
+					updateOrganizationAssetEntries();
+				}
+
+			});
+
+		ThrowableAwareRunnablesExecutorUtil.execute(throwableAwareRunnables);
+	}
+
+	protected void rebuildTree() throws Exception {
+		try (LoggingTimer loggingTimer = new LoggingTimer()) {
+			long[] companyIds = PortalInstances.getCompanyIdsBySQL();
+
+			for (long companyId : companyIds) {
+				OrganizationLocalServiceUtil.rebuildTree(companyId);
+			}
+		}
+	}
+
+	protected void updateOrganizationAssetEntries() throws Exception {
+		StringBundler sb = new StringBundler();
+
+		sb.append("select AssetEntry.entryId, Organization_.uuid_ from ");
+		sb.append("AssetEntry, Organization_ where AssetEntry.classNameId = ");
+
+		long classNameId = ClassNameLocalServiceUtil.getClassNameId(
+			Organization.class.getName());
+
+		sb.append(classNameId);
+
+		sb.append(" and AssetEntry.classPK = Organization_.organizationId ");
+		sb.append("and AssetEntry.classUuid is null");
+
+		try (LoggingTimer loggingTimer = new LoggingTimer();
+
+			PreparedStatement ps1 = connection.prepareStatement(sb.toString());
+			ResultSet rs = ps1.executeQuery()) {
+
+			try (PreparedStatement ps2 =
+					AutoBatchPreparedStatementUtil.autoBatch(
+						connection.prepareStatement(
+							"update AssetEntry set classUuid = ? where " +
+								"entryId = ?"))) {
+
+				while (rs.next()) {
+					long entryId = rs.getLong("AssetEntry.entryId");
+					String uuid = rs.getString("Organization_.uuid_");
+
+					ps2.setString(1, uuid);
+					ps2.setLong(2, entryId);
+
+					ps2.addBatch();
+				}
+
+				ps2.executeBatch();
+			}
+		}
 	}
 
 	protected void updateOrganizationAssets() throws Exception {
-		List<Organization> organizations =
-			OrganizationLocalServiceUtil.getNoAssetOrganizations();
+		try (LoggingTimer loggingTimer = new LoggingTimer()) {
+			List<Organization> organizations =
+				OrganizationLocalServiceUtil.getNoAssetOrganizations();
 
-		if (_log.isDebugEnabled()) {
-			_log.debug(
-				"Processing " + organizations.size() + " organizations with " +
-					"no asset");
-		}
-
-		for (Organization organization : organizations) {
-			try {
-				OrganizationLocalServiceUtil.updateAsset(
-					organization.getUserId(), organization, null, null);
+			if (_log.isDebugEnabled()) {
+				_log.debug(
+					"Processing " + organizations.size() + " organizations " +
+						"with no asset");
 			}
-			catch (Exception e) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(
-						"Unable to update asset for organization " +
-							organization.getOrganizationId() + ": " +
-								e.getMessage());
+
+			for (Organization organization : organizations) {
+				try {
+					OrganizationLocalServiceUtil.updateAsset(
+						organization.getUserId(), organization, null, null);
+				}
+				catch (Exception e) {
+					if (_log.isWarnEnabled()) {
+						_log.warn(
+							"Unable to update asset for organization " +
+								organization.getOrganizationId() + ": " +
+									e.getMessage());
+					}
 				}
 			}
-		}
 
-		if (_log.isDebugEnabled()) {
-			_log.debug("Assets verified for organizations");
+			if (_log.isDebugEnabled()) {
+				_log.debug("Assets verified for organizations");
+			}
 		}
 	}
 

@@ -1,4 +1,5 @@
 <definition component-name="portal-knowledge-base">
+	<property name="custom.properties" value="default.layout.template.id=1_column" />
 	<property name="portlet.plugins.includes" value="knowledge-base-portlet" />
 	<property name="testray.main.component.name" value="Knowledge Base" />
 
@@ -14,7 +15,7 @@
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoEditPage">
+		<execute macro="SitePageNavigator#gotoEditPage">
 			<var name="page" value="${pageName}" />
 		</execute>
 
@@ -22,7 +23,7 @@
 			<var name="columnName" value="1_column" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -67,7 +68,7 @@
 			<var name="kbArticleTitle" value="${kbArticleTitle}" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -76,7 +77,7 @@
 			<var name="kbArticleTitle" value="${kbChildArticleTitle}" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -100,7 +101,7 @@
 			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
@@ -121,7 +122,7 @@
 			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
@@ -135,7 +136,7 @@
 			<var name="kbSuggestionBody" value="Knowledge Base Article Suggestion" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
@@ -164,7 +165,7 @@
 			<var name="kbArticleTitle" value="" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
@@ -190,7 +191,7 @@
 			</execute>
 		</for>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
@@ -205,7 +206,7 @@
 			</execute>
 		</for>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
@@ -238,7 +239,7 @@
 			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
@@ -272,7 +273,7 @@
 			<var name="kbArticleTitle" value="Knowledge Base Article Title Child" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
@@ -303,7 +304,7 @@
 			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
@@ -316,7 +317,7 @@
 			<var name="enableSocialBookmarkSites" value="twitter,facebook,plusone,addthis,blinklist,delicious,digg,evernote,linkedin,newsvine,reddit,slashdot,stumbleupon,technorati,tuenti" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
@@ -328,7 +329,7 @@
 			</execute>
 		</for>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
@@ -342,7 +343,7 @@
 			<var name="enableSocialBookmarkSites" value="facebook,plusone,addthis,blinklist,delicious,digg,evernote,linkedin" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
@@ -371,7 +372,7 @@
 			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
@@ -400,7 +401,7 @@
 			<var name="kbChildArticleTitle" value="Knowledge Base Article Parent Title 1 Child 1" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
@@ -412,7 +413,7 @@
 			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title 1" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
@@ -452,7 +453,7 @@
 			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
@@ -461,7 +462,7 @@
 			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
@@ -471,7 +472,7 @@
 			<var name="kbArticleTitleEdit" value="Knowledge Base Article Title Edit" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
@@ -493,7 +494,7 @@
 			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
@@ -505,7 +506,7 @@
 			<var name="subscribe" value="false" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
@@ -528,7 +529,7 @@
 			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
@@ -562,7 +563,7 @@
 			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title 1 Child 1" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
@@ -611,7 +612,7 @@
 			<var name="kbArticleTitleEdit" value="KB Article Title Edit" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
@@ -655,7 +656,7 @@
 			<var name="kbPriority" value="2.0" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
@@ -677,7 +678,7 @@
 			<var name="kbArticleTitle" value="Knowledge Base Article1 Title" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
@@ -717,7 +718,7 @@
 			<var name="suggestionCount" value="1" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
@@ -763,13 +764,13 @@
 			<var name="kbArticleTitle" value="Knowledge Base Article2 Title" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
 		<var attribute="href" locator="//div[@class='kbarticle-navigation']/ul/li/a[contains(.,'Knowledge Base Article2 Title')]" name="kbAricleFriendlyURL" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Welcome" />
 		</execute>
 
@@ -797,7 +798,7 @@
 			</execute>
 		</for>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
@@ -878,13 +879,13 @@
 			<var name="kbArticleTitle" value="Knowledge Base Article2 Title" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
 		<var attribute="href" locator="//div[@class='kbarticle-navigation']/ul/li/a[contains(.,'Knowledge Base Article2 Title')]" name="kbAricleFriendlyURL" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Welcome" />
 		</execute>
 
@@ -912,7 +913,7 @@
 			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
@@ -925,7 +926,7 @@
 			<var name="enableSocialBookmarkSites" value="${socialBookmarkSites}" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
@@ -961,7 +962,7 @@
 			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
@@ -991,7 +992,7 @@
 			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
@@ -1004,7 +1005,7 @@
 			<var name="useStarRatings" value="true" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
@@ -1063,7 +1064,7 @@
 			<var name="kbChildArticleTitle" value="Knowledge Base Article Parent Title 3 Child 1" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
@@ -1104,7 +1105,7 @@
 	</command>
 
 	<command name="ViewKBArticleWithoutConfiguration" priority="4">
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
@@ -1121,7 +1122,7 @@
 			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
@@ -1143,7 +1144,7 @@
 			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
@@ -1162,7 +1163,7 @@
 			<var name="useStarRatings" value="true" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
@@ -1172,7 +1173,7 @@
 			<var name="useThumbsRatings" value="true" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
@@ -1206,7 +1207,7 @@
 			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
@@ -1236,7 +1237,7 @@
 			<var name="kbChildArticleTitle" value="Knowledge Base Article Parent Title 1 Child 1" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
@@ -1261,7 +1262,7 @@
 			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 

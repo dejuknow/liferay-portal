@@ -17,6 +17,7 @@ package com.liferay.portal.verify;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.LoggingTimer;
 import com.liferay.portal.kernel.util.SystemProperties;
 import com.liferay.portal.util.PropsUtil;
 import com.liferay.portlet.documentlibrary.store.StoreFactory;
@@ -56,6 +57,17 @@ public class VerifyProperties extends VerifyProcess {
 
 		for (String key : _OBSOLETE_SYSTEM_KEYS) {
 			verifyObsoleteSystemProperty(key);
+		}
+
+		Properties systemProperties = SystemProperties.getProperties();
+
+		for (String[] keys : _MODULARIZED_SYSTEM_KEYS) {
+			String oldKey = keys[0];
+			String newKey = keys[1];
+			String moduleName = keys[2];
+
+			verifyModularizedSystemProperty(
+				systemProperties, oldKey, newKey, moduleName);
 		}
 
 		// portal.properties
@@ -139,24 +151,28 @@ public class VerifyProperties extends VerifyProcess {
 			Properties portalProperties, String oldKey, String newKey)
 		throws Exception {
 
-		if (portalProperties.containsKey(oldKey)) {
-			_log.error(
-				"Portal property \"" + oldKey +
-					"\" was migrated to the system property \"" + newKey +
-						"\"");
+		try (LoggingTimer loggingTimer = new LoggingTimer()) {
+			if (portalProperties.containsKey(oldKey)) {
+				_log.error(
+					"Portal property \"" + oldKey +
+						"\" was migrated to the system property \"" + newKey +
+							"\"");
+			}
 		}
 	}
 
 	protected void verifyMigratedSystemProperty(String oldKey, String newKey)
 		throws Exception {
 
-		String value = SystemProperties.get(oldKey);
+		try (LoggingTimer loggingTimer = new LoggingTimer()) {
+			String value = SystemProperties.get(oldKey);
 
-		if (value != null) {
-			_log.error(
-				"System property \"" + oldKey +
-					"\" was migrated to the portal property \"" + newKey +
-						"\"");
+			if (value != null) {
+				_log.error(
+					"System property \"" + oldKey +
+						"\" was migrated to the portal property \"" + newKey +
+							"\"");
+			}
 		}
 	}
 
@@ -165,10 +181,26 @@ public class VerifyProperties extends VerifyProcess {
 			String moduleName)
 		throws Exception {
 
-		if (portalProperties.containsKey(oldKey)) {
-			_log.error(
-				"Portal property \"" + oldKey + "\" was modularized to " +
-					moduleName + " as \"" + newKey);
+		try (LoggingTimer loggingTimer = new LoggingTimer()) {
+			if (portalProperties.containsKey(oldKey)) {
+				_log.error(
+					"Portal property \"" + oldKey + "\" was modularized to " +
+						moduleName + " as \"" + newKey + "\"");
+			}
+		}
+	}
+
+	protected void verifyModularizedSystemProperty(
+			Properties systemProperties, String oldKey, String newKey,
+			String moduleName)
+		throws Exception {
+
+		try (LoggingTimer loggingTimer = new LoggingTimer()) {
+			if (systemProperties.containsKey(oldKey)) {
+				_log.error(
+					"System property \"" + oldKey + "\" was modularized to " +
+						moduleName + " as \"" + newKey + "\"");
+			}
 		}
 	}
 
@@ -176,16 +208,20 @@ public class VerifyProperties extends VerifyProcess {
 			Properties portalProperties, String key)
 		throws Exception {
 
-		if (portalProperties.containsKey(key)) {
-			_log.error("Portal property \"" + key + "\" is obsolete");
+		try (LoggingTimer loggingTimer = new LoggingTimer()) {
+			if (portalProperties.containsKey(key)) {
+				_log.error("Portal property \"" + key + "\" is obsolete");
+			}
 		}
 	}
 
 	protected void verifyObsoleteSystemProperty(String key) throws Exception {
-		String value = SystemProperties.get(key);
+		try (LoggingTimer loggingTimer = new LoggingTimer()) {
+			String value = SystemProperties.get(key);
 
-		if (value != null) {
-			_log.error("System property \"" + key + "\" is obsolete");
+			if (value != null) {
+				_log.error("System property \"" + key + "\" is obsolete");
+			}
 		}
 	}
 
@@ -193,22 +229,26 @@ public class VerifyProperties extends VerifyProcess {
 			Properties portalProperties, String oldKey, String newKey)
 		throws Exception {
 
-		if (portalProperties.containsKey(oldKey)) {
-			_log.error(
-				"Portal property \"" + oldKey + "\" was renamed to \"" +
-					newKey + "\"");
+		try (LoggingTimer loggingTimer = new LoggingTimer()) {
+			if (portalProperties.containsKey(oldKey)) {
+				_log.error(
+					"Portal property \"" + oldKey + "\" was renamed to \"" +
+						newKey + "\"");
+			}
 		}
 	}
 
 	protected void verifyRenamedSystemProperty(String oldKey, String newKey)
 		throws Exception {
 
-		String value = SystemProperties.get(oldKey);
+		try (LoggingTimer loggingTimer = new LoggingTimer()) {
+			String value = SystemProperties.get(oldKey);
 
-		if (value != null) {
-			_log.error(
-				"System property \"" + oldKey + "\" was renamed to \"" +
-					newKey + "\"");
+			if (value != null) {
+				_log.error(
+					"System property \"" + oldKey + "\" was renamed to \"" +
+						newKey + "\"");
+			}
 		}
 	}
 
@@ -777,6 +817,25 @@ public class VerifyProperties extends VerifyProcess {
 			"verified.account.required",
 			"com.liferay.portal.security.sso.facebook.connect"
 		},
+
+		// Flags
+
+		new String[] {"flags.email.body", "email.body", "com.liferay.flags"},
+		new String[] {
+			"flags.email.from.address", "email.from.address",
+			"com.liferay.flags"
+		},
+		new String[] {
+			"flags.email.from.name", "email.from.name", "com.liferay.flags"
+		},
+		new String[] {
+			"flags.email.subject", "email.subject", "com.liferay.flags"
+		},
+		new String[] {
+			"flags.guest.users.enabled", "guest.users.enabled",
+			"com.liferay.flags"
+		},
+		new String[] {"flags.reasons", "reasons", "com.liferay.flags"},
 
 		// FreeMarker Engine
 
@@ -1642,6 +1701,28 @@ public class VerifyProperties extends VerifyProcess {
 		}
 	};
 
+	private static final String[][] _MODULARIZED_SYSTEM_KEYS = {
+
+		// Calendar
+
+		new String[] {
+			"ical4j.compatibility.outlook", "ical4j.compatibility.outlook",
+			"com.liferay.calendar.service"
+		},
+		new String[] {
+			"ical4j.parsing.relaxed", "ical4j.parsing.relaxed",
+			"com.liferay.calendar.service"
+		},
+		new String[] {
+			"ical4j.unfolding.relaxed", "ical4j.unfolding.relaxed",
+			"com.liferay.calendar.service"
+		},
+		new String[] {
+			"ical4j.validation.relaxed", "ical4j.validation.relaxed",
+			"com.liferay.calendar.service"
+		}
+	};
+
 	private static final String[] _OBSOLETE_PORTAL_KEYS = new String[] {
 		"aim.login", "aim.login", "amazon.access.key.id",
 		"amazon.associate.tag", "amazon.secret.access.key",
@@ -1657,6 +1738,7 @@ public class VerifyProperties extends VerifyProcess {
 		"buffered.increment.serial.queue.size", "cas.validate.url",
 		"cluster.executor.heartbeat.interval",
 		"com.liferay.filters.doubleclick.DoubleClickFilter",
+		"com.liferay.portal.servlet.filters.audit.AuditFilter",
 		"com.liferay.portal.servlet.filters.doubleclick.DoubleClickFilter",
 		"com.liferay.portal.servlet.filters.charbufferpool." +
 			"CharBufferPoolFilter",
@@ -1674,6 +1756,7 @@ public class VerifyProperties extends VerifyProcess {
 		"default.user.public.layout.wap.theme.id",
 		"default.wap.color.scheme.id", "default.wap.theme.id",
 		"discussion.thread.view", "dl.file.entry.read.count.enabled",
+		"dl.folder.menu.visible", "dockbar.add.portlets",
 		"dockbar.administrative.links.show.in.pop.up",
 		"dynamic.data.lists.record.set.force.autogenerate.key",
 		"dynamic.data.lists.template.language.parser[ftl]",
@@ -1749,8 +1832,9 @@ public class VerifyProperties extends VerifyProcess {
 		"memory.cluster.scheduler.lock.cache.enabled",
 		"message.boards.email.message.added.signature",
 		"message.boards.email.message.updated.signature",
-		"message.boards.thread.locking.enabled", "message.boards.thread.views",
-		"message.boards.thread.views.default",
+		"message.boards.thread.locking.enabled",
+		"message.boards.thread.previous.and.next.navigation.enabled",
+		"message.boards.thread.views", "message.boards.thread.views.default",
 		"mobile.device.styling.wap.enabled", "msn.login", "msn.password",
 		"multicast.group.address[\"hibernate\"]",
 		"multicast.group.port[\"hibernate\"]",

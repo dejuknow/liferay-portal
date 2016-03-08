@@ -4,6 +4,7 @@
 	<var name="userPasswordReminderAnswer" value="test" />
 
 	<command name="_signIn">
+		<execute function="AssertClick" locator1="UserBar#USER_SIGN_IN" value1="Sign In" />
 		<execute function="Type" locator1="TextInput#EMAIL_ADDRESS" value1="${userEmailAddress}" />
 		<execute function="Type" locator1="TextInput#PASSWORD" value1="${userPassword}" />
 
@@ -33,16 +34,6 @@
 		<execute function="AssertClick" locator1="Button#SIGN_IN" value1="Sign In" />
 	</command>
 
-	<command name="_signInViaDockbar">
-		<execute function="AssertClick" locator1="UserBar#USER_SIGN_IN" value1="Sign In" />
-
-		<execute macro="SignIn#_signIn">
-			<var name="rememberMe" value="${rememberMe}" />
-			<var name="userEmailAddress" value="${userEmailAddress}" />
-			<var name="userPassword" value="${userPassword}" />
-		</execute>
-	</command>
-
 	<command name="agreeToTermsOfUse" summary="Agree to Liferay Portal Terms of Use">
 		<execute function="AssertClick" locator1="Button#I_AGREE" value1="I Agree" />
 
@@ -53,7 +44,7 @@
 		<execute function="Type" locator1="TextInput#NEW_PASSWORD" value1="${userNewPassword}" />
 		<execute function="Type" locator1="TextInput#ENTER_AGAIN" value1="${userNewPassword}" />
 
-		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
+		<execute macro="Button#clickSave" />
 
 		<execute function="AssertElementNotPresent" locator1="Button#SAVE" value1="Save" />
 	</command>
@@ -61,7 +52,7 @@
 	<command name="setPasswordReminder" summary="Enter '${userPasswordReminderAnswer}' as password reminder">
 		<execute function="Type" locator1="TextInput#ANSWER" value1="${userPasswordReminderAnswer}" />
 
-		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
+		<execute macro="Button#clickSave" />
 	</command>
 
 	<command name="signIn" summary="Sign in to Liferay Portal as '${userEmailAddress}' using the password '${userPassword}'">
@@ -181,16 +172,6 @@
 				<execute macro="SignIn#setPasswordReminder" />
 			</then>
 		</if>
-	</command>
-
-	<command name="signInViaDockbar">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="SignIn#_signInViaDockbar">
-			<var name="rememberMe" value="${rememberMe}" />
-			<var name="userEmailAddress" value="${userEmailAddress}" />
-			<var name="userPassword" value="${userPassword}" />
-		</execute>
 	</command>
 
 	<command name="signInViaGoogle">

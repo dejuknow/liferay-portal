@@ -70,9 +70,9 @@
 
 		<execute function="Check" locator1="RolesPermissions#CONTROL_PANEL_USERS_ROLES_GENERAL_PERMISSIONS_ACCESS_IN_CONTROL_PANEL_CHECKBOX" />
 
-		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
+		<execute macro="Button#clickSave" />
 
-		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="The role permissions were updated." />
+		<execute function="AssertElementPresent" locator1="Message#SUCCESS" />
 
 		<execute macro="User#logoutAndLoginPG">
 			<var name="userLoginEmailAddress" value="userea@liferay.com" />
@@ -186,7 +186,7 @@
 			<var name="site" value="Parent Site Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -202,7 +202,7 @@
 			<var name="site" value="Parent Site Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -218,7 +218,7 @@
 			<var name="site" value="Child SiteName" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -234,7 +234,7 @@
 			<var name="site" value="Child SiteName" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -318,7 +318,7 @@
 			<var name="site" value="Child SiteName1" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -379,14 +379,13 @@
 
 		<var name="key_siteName" value="Site Name" />
 
-		<execute function="Click" locator1="Sites#SITE_TABLE_ACTIONS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Sites#SITE_TABLE_ACTIONS" />
 		<execute function="AssertClick" locator1="MenuItem#ADD_CHILD_SITE" value1="Add Child Site" />
 
 		<execute function="Type" locator1="TextInput#NAME" value1="Child SiteName2" />
 		<execute function="Click" locator1="Button#SAVE" value1="Save" />
 
-		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
-		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute macro="PortletEntry#save" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -395,12 +394,12 @@
 
 		<var name="key_siteName" value="Child SiteName1" />
 
-		<execute function="Click" locator1="Sites#SITE_TABLE_ACTIONS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Sites#SITE_TABLE_ACTIONS" />
 		<execute function="AssertElementNotPresent#assertNotVisible" locator1="MenuItem#SITE_ADMINISTRATION" value1="Site Administration" />
 
 		<var name="key_siteName" value="Child SiteName2" />
 
-		<execute function="Click" locator1="Sites#SITE_TABLE_ACTIONS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Sites#SITE_TABLE_ACTIONS" />
 		<execute function="AssertTextEquals" locator1="MenuItem#SITE_ADMINISTRATION" value1="Site Administration" />
 
 		<execute macro="Permissions#definePermissionLoginUserCP">
@@ -419,12 +418,12 @@
 
 		<var name="key_siteName" value="Child SiteName1" />
 
-		<execute function="Click" locator1="Sites#SITE_TABLE_ACTIONS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Sites#SITE_TABLE_ACTIONS" />
 		<execute function="AssertTextEquals" locator1="MenuItem#SITE_ADMINISTRATION" value1="Site Administration" />
 
 		<var name="key_siteName" value="Child SiteName2" />
 
-		<execute function="Click" locator1="Sites#SITE_TABLE_ACTIONS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Sites#SITE_TABLE_ACTIONS" />
 		<execute function="AssertTextEquals" locator1="MenuItem#SITE_ADMINISTRATION" value1="Site Administration" />
 
 		<execute macro="Permissions#removePermissionLoginUserCP">
@@ -443,12 +442,12 @@
 
 		<var name="key_siteName" value="Child SiteName1" />
 
-		<execute function="Click" locator1="Sites#SITE_TABLE_ACTIONS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Sites#SITE_TABLE_ACTIONS" />
 		<execute function="AssertElementNotPresent#assertNotVisible" locator1="MenuItem#SITE_ADMINISTRATION" value1="Site Administration" />
 
 		<var name="key_siteName" value="Child SiteName2" />
 
-		<execute function="Click" locator1="Sites#SITE_TABLE_ACTIONS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Sites#SITE_TABLE_ACTIONS" />
 		<execute function="AssertTextEquals" locator1="MenuItem#SITE_ADMINISTRATION" value1="Site Administration" />
 	</command>
 
@@ -477,7 +476,6 @@
 		</execute>
 
 		<execute macro="Page#add">
-			<var name="page" value="Public Pages" />
 			<var name="pageName" value="Site Page" />
 			<var name="siteName" value="Site Name" />
 		</execute>
@@ -520,12 +518,12 @@
 
 		<var name="key_siteName" value="Liferay" />
 
-		<execute function="Click" locator1="Sites#SITE_TABLE_ACTIONS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Sites#SITE_TABLE_ACTIONS" />
 		<execute function="AssertTextEquals" locator1="MenuItem#SITE_ADMINISTRATION" value1="Site Administration" />
 
 		<var name="key_siteName" value="Site Name" />
 
-		<execute function="Click" locator1="Sites#SITE_TABLE_ACTIONS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Sites#SITE_TABLE_ACTIONS" />
 		<execute function="AssertTextEquals" locator1="MenuItem#SITE_ADMINISTRATION" value1="Site Administration" />
 
 		<execute macro="Permissions#removePermissionLoginUserCP">

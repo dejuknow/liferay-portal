@@ -170,7 +170,6 @@ import com.liferay.portal.kernel.util.MethodKey;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PortalInetSocketAddressEventListener;
-import com.liferay.portal.kernel.util.PortalPortEventListener;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PortletCategoryKeys;
 import com.liferay.portal.kernel.util.PortletKeys;
@@ -639,7 +638,8 @@ public class PortalImpl implements Portal {
 	@Deprecated
 	@Override
 	public void addPortalPortEventListener(
-		PortalPortEventListener portalPortEventListener) {
+		com.liferay.portal.kernel.util.PortalPortEventListener
+			portalPortEventListener) {
 
 		if (!_portalPortEventListeners.contains(portalPortEventListener)) {
 			_portalPortEventListeners.add(portalPortEventListener);
@@ -740,6 +740,11 @@ public class PortalImpl implements Portal {
 		}
 
 		if (layout.isTypeControlPanel()) {
+			if (Validator.isNotNull(themeDisplay.getPpid())) {
+				url = HttpUtil.setParameter(
+					url, "p_p_id", themeDisplay.getPpid());
+			}
+
 			if (themeDisplay.getDoAsGroupId() > 0) {
 				url = HttpUtil.setParameter(
 					url, "doAsGroupId", themeDisplay.getDoAsGroupId());
@@ -3949,17 +3954,25 @@ public class PortalImpl implements Portal {
 					refererPlid);
 			}
 
-			LayoutSet virtualHostLayoutSet = virtualHostLayout.getLayoutSet();
+			return getPortalURL(virtualHostLayout.getLayoutSet(), themeDisplay);
+		}
 
-			String virtualHostname = virtualHostLayoutSet.getVirtualHostname();
+		return getPortalURL(
+			serverName, themeDisplay.getServerPort(), themeDisplay.isSecure());
+	}
 
-			String domain = HttpUtil.getDomain(themeDisplay.getURLPortal());
+	@Override
+	public String getPortalURL(LayoutSet layoutSet, ThemeDisplay themeDisplay) {
+		String serverName = themeDisplay.getServerName();
 
-			if (Validator.isNotNull(virtualHostname) &&
-				domain.startsWith(virtualHostname)) {
+		String virtualHostname = layoutSet.getVirtualHostname();
 
-				serverName = virtualHostname;
-			}
+		String domain = HttpUtil.getDomain(themeDisplay.getURLPortal());
+
+		if (Validator.isNotNull(virtualHostname) &&
+			domain.startsWith(virtualHostname)) {
+
+			serverName = virtualHostname;
 		}
 
 		return getPortalURL(
@@ -4043,7 +4056,7 @@ public class PortalImpl implements Portal {
 	public String getPortalURL(ThemeDisplay themeDisplay)
 		throws PortalException {
 
-		return getPortalURL(null, themeDisplay);
+		return getPortalURL((Layout)null, themeDisplay);
 	}
 
 	@Override
@@ -6397,7 +6410,8 @@ public class PortalImpl implements Portal {
 	@Deprecated
 	@Override
 	public void removePortalPortEventListener(
-		PortalPortEventListener portalPortEventListener) {
+		com.liferay.portal.kernel.util.PortalPortEventListener
+			portalPortEventListener) {
 
 		_portalPortEventListeners.remove(portalPortEventListener);
 	}
@@ -7976,8 +7990,8 @@ public class PortalImpl implements Portal {
 	 */
 	@Deprecated
 	protected void notifyPortalPortEventListeners(int portalPort) {
-		for (PortalPortEventListener portalPortEventListener :
-				_portalPortEventListeners) {
+		for (com.liferay.portal.kernel.util.PortalPortEventListener
+				portalPortEventListener : _portalPortEventListeners) {
 
 			portalPortEventListener.portalPortConfigured(portalPort);
 		}
@@ -8109,8 +8123,8 @@ public class PortalImpl implements Portal {
 	 *             #_portalInetSocketAddressEventListeners}
 	 */
 	@Deprecated
-	private final List<PortalPortEventListener> _portalPortEventListeners =
-		new ArrayList<>();
+	private final List<com.liferay.portal.kernel.util.PortalPortEventListener>
+		_portalPortEventListeners = new ArrayList<>();
 
 	private final AtomicReference<InetSocketAddress>
 		_portalServerInetSocketAddress = new AtomicReference<>();

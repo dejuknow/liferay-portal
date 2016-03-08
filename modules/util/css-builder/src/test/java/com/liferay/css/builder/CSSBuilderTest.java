@@ -102,17 +102,18 @@ public class CSSBuilderTest {
 	private void _testSassToCssBuilder(String compiler) throws Exception {
 		CSSBuilder cssBuilder = new CSSBuilder(
 			_docrootDirName, false,
-			"../../frontend/frontend-common-css/tmp/META-INF/resources", 6,
-			new String[0], compiler);
+			"../../apps/platform/frontend/frontend-common-css/tmp/META-INF" +
+				"/resources",
+			6, new String[0], compiler);
 
 		cssBuilder.execute(Arrays.asList(new String[] {"/css"}));
 
+		File cssFile = new File(_docrootDirName + "/css/.sass-cache/test.css");
+
+		Assert.assertFalse(cssFile.exists());
+
 		String expectedCacheContent = _read(
 			_docrootDirName + "/expected/test.css");
-		String actualTestCacheContent = _read(
-			_docrootDirName + "/css/.sass-cache/test.css");
-
-		Assert.assertEquals(expectedCacheContent, actualTestCacheContent);
 
 		String actualMainCacheContent = _read(
 			_docrootDirName + "/css/.sass-cache/main.css");
@@ -124,12 +125,13 @@ public class CSSBuilderTest {
 
 		Assert.assertFalse(file.exists());
 
-		String expectedRtlCacheContent = _read(
-			_docrootDirName + "/expected/test_rtl.css");
-		String actualTestRtlCacheContent = _read(
+		File rtlCssFile = new File(
 			_docrootDirName + "/css/.sass-cache/test_rtl.css");
 
-		Assert.assertEquals(expectedRtlCacheContent, actualTestRtlCacheContent);
+		Assert.assertFalse(rtlCssFile.exists());
+
+		String expectedRtlCacheContent = _read(
+			_docrootDirName + "/expected/test_rtl.css");
 
 		String actualMainRtlCacheContent = _read(
 			_docrootDirName + "/css/.sass-cache/main_rtl.css");

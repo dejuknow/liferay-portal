@@ -32,11 +32,11 @@
 			<var name="pageName" value="Company Picnic" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Company Picnic" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoEditPage">
+		<execute macro="SitePageNavigator#gotoEditPage">
 			<var name="page" value="Company Picnic" />
 		</execute>
 
@@ -44,7 +44,7 @@
 			<var name="columnName" value="1_column" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Company Picnic" />
 		</execute>
 
@@ -96,7 +96,7 @@
 
 		<execute macro="DDLList#saveViaDDLDisplayPG" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Company Picnic" />
 		</execute>
 
@@ -122,7 +122,7 @@
 			<var name="fieldName" value="WhatAreYouBringing" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="DDLRecord#addViaDDLDisplayPG">
 			<var name="ddlDataDefinitionName" value="Potluck Items" />
@@ -146,7 +146,7 @@
 			<var name="fieldName" value="WhatAreYouBringing" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute function="AssertTextEquals" locator1="xpath=(//div[contains(@id,'ocerSearchContainer')]//thead/tr/th[1])" value1="First Name" />
 		<execute function="AssertTextEquals" locator1="xpath=(//div[contains(@id,'ocerSearchContainer')]//thead/tr/th[2])" value1="Last Name" />
@@ -177,7 +177,7 @@
 			<var name="configureCheckBoxName" value="TEMPLATES_SPREADSHEET_VIEW_CHECKBOX" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Company Picnic" />
 		</execute>
 

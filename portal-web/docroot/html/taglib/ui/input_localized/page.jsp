@@ -59,10 +59,10 @@
 			</aui:script>
 		</c:when>
 		<c:when test='<%= type.equals("input") %>'>
-			<input aria-describedby="<portlet:namespace /><%= HtmlUtil.escapeAttribute(id + fieldSuffix) %>_desc" class="language-value <%= cssClass %>" dir="<%= mainLanguageDir %>" <%= disabled ? "disabled=\"disabled\"" : "" %> id="<portlet:namespace /><%= id + HtmlUtil.getAUICompatibleId(fieldSuffix) %>" name="<portlet:namespace /><%= HtmlUtil.escapeAttribute(name + fieldSuffix) %>" <%= Validator.isNotNull(placeholder) ? "placeholder=\"" + LanguageUtil.get(request, placeholder) + "\"" : StringPool.BLANK %> type="text" value="<%= HtmlUtil.escapeAttribute(mainLanguageValue) %>" <%= InlineUtil.buildDynamicAttributes(dynamicAttributes) %> />
+			<input aria-describedby="<portlet:namespace /><%= HtmlUtil.escapeAttribute(id + fieldSuffix) %>_desc" class="language-value <%= cssClass %>" dir="<%= mainLanguageDir %>" <%= disabled ? "disabled=\"disabled\"" : "" %> id="<portlet:namespace /><%= id + HtmlUtil.getAUICompatibleId(fieldSuffix) %>" name="<portlet:namespace /><%= HtmlUtil.escapeAttribute(name + fieldSuffix) %>" <%= Validator.isNotNull(placeholder) ? "placeholder=\"" + LanguageUtil.get(resourceBundle, placeholder) + "\"" : StringPool.BLANK %> type="text" value="<%= HtmlUtil.escapeAttribute(mainLanguageValue) %>" <%= InlineUtil.buildDynamicAttributes(dynamicAttributes) %> />
 		</c:when>
 		<c:when test='<%= type.equals("textarea") %>'>
-			<textarea aria-describedby="<portlet:namespace /><%= HtmlUtil.escapeAttribute(id + fieldSuffix) %>_desc" class="language-value <%= cssClass %>" dir="<%= mainLanguageDir %>" <%= disabled ? "disabled=\"disabled\"" : "" %> id="<portlet:namespace /><%= id + HtmlUtil.getAUICompatibleId(fieldSuffix) %>" name="<portlet:namespace /><%= HtmlUtil.escapeAttribute(name + fieldSuffix) %>" <%= Validator.isNotNull(placeholder) ? "placeholder=\"" + LanguageUtil.get(request, placeholder) + "\"" : StringPool.BLANK %> <%= InlineUtil.buildDynamicAttributes(dynamicAttributes) %>><%= HtmlUtil.escape(mainLanguageValue) %></textarea>
+			<textarea aria-describedby="<portlet:namespace /><%= HtmlUtil.escapeAttribute(id + fieldSuffix) %>_desc" class="language-value <%= cssClass %>" dir="<%= mainLanguageDir %>" <%= disabled ? "disabled=\"disabled\"" : "" %> id="<portlet:namespace /><%= id + HtmlUtil.getAUICompatibleId(fieldSuffix) %>" name="<portlet:namespace /><%= HtmlUtil.escapeAttribute(name + fieldSuffix) %>" <%= Validator.isNotNull(placeholder) ? "placeholder=\"" + LanguageUtil.get(resourceBundle, placeholder) + "\"" : StringPool.BLANK %> <%= InlineUtil.buildDynamicAttributes(dynamicAttributes) %>><%= HtmlUtil.escape(mainLanguageValue) %></textarea>
 
 			<c:if test="<%= autoSize %>">
 				<aui:script use="aui-autosize-deprecated">
@@ -158,11 +158,16 @@
 						if (languageIds.contains(curLanguageId)) {
 							itemCssClass += " lfr-input-localized";
 						}
+
+						Map<String, Object> data = new HashMap<String, Object>();
+
+						data.put("languageid", curLanguageId);
 					%>
 
-						<li class="palette-item <%= itemCssClass %>" data-index="<%= index++ %>" data-value="<%= curLanguageId %>" role="menuitem" style="display: inline-block;">
-							<a class="palette-item-inner" href="javascript:void(0);">
-								<img alt="<%= HtmlUtil.escapeAttribute(curLocale.getDisplayName(LocaleUtil.fromLanguageId(LanguageUtil.getLanguageId(request)))) %> <liferay-ui:message key="translation" />" class="lfr-input-localized-flag" data-languageid="<%= curLanguageId %>" src="<%= themeDisplay.getPathThemeImages() %>/language/<%= curLanguageId %>.png" />
+						<li class="palette-item <%= itemCssClass %>" data-index="<%= index++ %>" data-value="<%= curLanguageId %>" role="menuitem" style="display: inline-block;" title="<%= HtmlUtil.escapeAttribute(curLocale.getDisplayName(LocaleUtil.fromLanguageId(LanguageUtil.getLanguageId(request)))) %> <liferay-ui:message key="translation" />">
+							<a class="palette-item-inner" data-languageid="<%= curLanguageId %>" href="javascript:;">
+								<aui:icon cssClass="lfr-input-localized-flag" image='<%= StringUtil.toLowerCase(StringUtil.replace(curLanguageId, "_", "-")) %>' markupView="lexicon" />
+
 								<div class='<%= errorLocales.contains(curLocale) ? "lfr-input-localized-state lfr-input-localized-state-error" : "lfr-input-localized-state" %>'></div>
 							</a>
 						</li>

@@ -21,17 +21,15 @@ import com.liferay.portal.kernel.model.PortletApp;
 import com.liferay.portal.kernel.portlet.LiferayPortletContext;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequestDispatcher;
 import com.liferay.portal.kernel.portlet.LiferayPortletURL;
-import com.liferay.portal.kernel.servlet.DynamicServletRequest;
 import com.liferay.portal.kernel.servlet.URLEncoder;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.JavaConstants;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.servlet.NamespaceServletRequest;
+import com.liferay.portal.servlet.DynamicServletRequestUtil;
 import com.liferay.portal.struts.StrutsURLEncoder;
 
 import java.io.IOException;
@@ -139,35 +137,9 @@ public class PortletRequestDispatcherImpl
 		PortletRequestImpl portletRequestImpl,
 		Map<String, String[]> parameterMap) {
 
-		DynamicServletRequest dynamicServletRequest = null;
-
-		if (portletRequestImpl.isPrivateRequestAttributes()) {
-			String portletNamespace = PortalUtil.getPortletNamespace(
-				portletRequestImpl.getPortletName());
-
-			dynamicServletRequest = new NamespaceServletRequest(
-				httpServletRequest, portletNamespace, portletNamespace);
-		}
-		else {
-			dynamicServletRequest = new DynamicServletRequest(
-				httpServletRequest);
-		}
-
-		for (Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
-			String name = entry.getKey();
-
-			String[] values = entry.getValue();
-
-			String[] oldValues = dynamicServletRequest.getParameterValues(name);
-
-			if (oldValues != null) {
-				values = ArrayUtil.append(values, oldValues);
-			}
-
-			dynamicServletRequest.setParameterValues(name, values);
-		}
-
-		return dynamicServletRequest;
+		return DynamicServletRequestUtil.createDynamicServletRequest(
+			httpServletRequest, portletRequestImpl.getPortlet(), parameterMap,
+			true);
 	}
 
 	protected void dispatch(
@@ -217,17 +189,15 @@ public class PortletRequestDispatcherImpl
 
 			for (String urlPattern : servletURLPatterns) {
 				if (urlPattern.endsWith("/*")) {
-					urlPattern = urlPattern.substring(
-						0, urlPattern.length() - 2);
+					int length = urlPattern.length() - 2;
 
-					if ((pathNoQueryString.length() > urlPattern.length()) &&
-						pathNoQueryString.startsWith(urlPattern) &&
-						(pathNoQueryString.charAt(urlPattern.length()) ==
-							CharPool.SLASH)) {
+					if ((pathNoQueryString.length() > length) &&
+						pathNoQueryString.regionMatches(
+							0, urlPattern, 0, length) &&
+						(pathNoQueryString.charAt(length) == CharPool.SLASH)) {
 
-						pathInfo = pathNoQueryString.substring(
-							urlPattern.length());
-						servletPath = urlPattern;
+						pathInfo = pathNoQueryString.substring(length);
+						servletPath = urlPattern.substring(0, length);
 
 						break;
 					}

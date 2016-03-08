@@ -14,14 +14,11 @@
 
 package com.liferay.portal.upgrade.v7_0_0;
 
+import com.liferay.portal.kernel.dao.orm.WildcardMode;
+import com.liferay.portal.kernel.upgrade.UpgradeException;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
+import com.liferay.portal.kernel.util.LoggingTimer;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.upgrade.AutoBatchPreparedStatementUtil;
-
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 /**
  * @author Preston Crary
@@ -29,87 +26,183 @@ import java.sql.SQLException;
 public class UpgradeKernelPackage extends UpgradeProcess {
 
 	@Override
-	protected void doUpgrade() throws SQLException {
-		upgradeTable("Counter", "name");
-		upgradeTable("ClassName_", "value");
-		upgradeTable("ResourceBlock", "name");
-		upgradeTable("ResourcePermission", "name");
+	protected void doUpgrade() throws UpgradeException {
+		try {
+			upgradeTable(
+				"Counter", "name", getClassNames(), WildcardMode.SURROUND);
+			upgradeTable(
+				"ClassName_", "value", getClassNames(), WildcardMode.SURROUND);
+			upgradeTable(
+				"ResourceAction", "name", getClassNames(),
+				WildcardMode.SURROUND);
+			upgradeTable(
+				"ResourceBlock", "name", getClassNames(),
+				WildcardMode.SURROUND);
+			upgradeTable(
+				"ResourcePermission", "name", getClassNames(),
+				WildcardMode.SURROUND);
+
+			upgradeTable(
+				"ResourceAction", "name", getResourceNames(),
+				WildcardMode.LEADING);
+			upgradeTable(
+				"ResourceBlock", "name", getResourceNames(),
+				WildcardMode.LEADING);
+			upgradeTable(
+				"ResourcePermission", "name", getResourceNames(),
+				WildcardMode.LEADING);
+		}
+		catch (Exception e) {
+			throw new UpgradeException(e);
+		}
 	}
 
 	protected String[][] getClassNames() {
 		return _CLASS_NAMES;
 	}
 
-	protected void upgradeTable(String tableName, String columnName)
-		throws SQLException {
-
-		StringBundler updateSB = new StringBundler(7);
-
-		updateSB.append("update ");
-		updateSB.append(tableName);
-		updateSB.append(" set ");
-		updateSB.append(columnName);
-		updateSB.append(" = ? where ");
-		updateSB.append(columnName);
-		updateSB.append(" = ?");
-
-		String updateSQL = updateSB.toString();
-
-		for (String[] className : getClassNames()) {
-			StringBundler selectSB = new StringBundler(9);
-
-			selectSB.append("select ");
-			selectSB.append(columnName);
-			selectSB.append(" from ");
-			selectSB.append(tableName);
-			selectSB.append(" where ");
-			selectSB.append(columnName);
-			selectSB.append(" like '%");
-			selectSB.append(className[0]);
-			selectSB.append("%'");
-
-			upgradeTable(columnName, selectSB.toString(), updateSQL, className);
-		}
+	protected String[][] getResourceNames() {
+		return _RESOURCE_NAMES;
 	}
 
 	protected void upgradeTable(
-			String columnName, String selectSQL, String updateSQL,
-			String[] className)
-		throws SQLException {
+			String tableName, String columnName, String[][] names,
+			WildcardMode wildcardMode)
+		throws Exception {
 
-		try (PreparedStatement ps1 = connection.prepareStatement(selectSQL);
-			ResultSet rs = ps1.executeQuery();
-			PreparedStatement ps2 = AutoBatchPreparedStatementUtil.autoBatch(
-				connection.prepareStatement(updateSQL))) {
+		StringBundler sb1 = new StringBundler(7);
 
-			while (rs.next()) {
-				String oldValue = rs.getString(columnName);
+		sb1.append("update ");
+		sb1.append(tableName);
+		sb1.append(" set ");
+		sb1.append(columnName);
+		sb1.append(" = replace(");
+		sb1.append(columnName);
+		sb1.append(", '");
 
-				String newValue = StringUtil.replace(
-					oldValue, className[0], className[1]);
+		String tableSQL = sb1.toString();
 
-				ps2.setString(1, newValue);
-				ps2.setString(2, oldValue);
+		try (LoggingTimer loggingTimer = new LoggingTimer(tableName)) {
+			StringBundler sb2 = new StringBundler(9);
 
-				ps2.addBatch();
+			for (String[] name : names) {
+				sb2.append(tableSQL);
+				sb2.append(name[0]);
+				sb2.append("', '");
+				sb2.append(name[1]);
+				sb2.append("') where ");
+				sb2.append(columnName);
+
+				if (wildcardMode.equals(WildcardMode.LEADING) ||
+					wildcardMode.equals(WildcardMode.SURROUND)) {
+
+					sb2.append(" like '%");
+				}
+				else {
+					sb2.append(" like '");
+				}
+
+				sb2.append(name[0]);
+
+				if (wildcardMode.equals(WildcardMode.SURROUND) ||
+					wildcardMode.equals(WildcardMode.TRAILING)) {
+
+					sb2.append("%'");
+				}
+				else {
+					sb2.append("'");
+				}
+
+				runSQL(sb2.toString());
+
+				sb2.setIndex(0);
 			}
-
-			ps2.executeBatch();
 		}
 	}
 
 	private static final String[][] _CLASS_NAMES = new String[][] {
 		{
-			"com.liferay.portlet.announcements.model.AnnouncementsDelivery",
-			"com.liferay.announcements.kernel.model.AnnouncementsDelivery"
+			"com.liferay.counter.model.Counter",
+			"com.liferay.counter.kernel.model.Counter"
 		},
 		{
-			"com.liferay.portlet.announcements.model.AnnouncementsEntry",
-			"com.liferay.announcements.kernel.model.AnnouncementsEntry"
+			"com.liferay.portal.kernel.mail.Account",
+			"com.liferay.mail.kernel.model.Account"
 		},
 		{
-			"com.liferay.portlet.announcements.model.AnnouncementsFlag",
-			"com.liferay.announcements.kernel.model.AnnouncementsFlag"
+			"com.liferay.portal.model.BackgroundTask",
+			"com.liferay.portal.background.task.model.BackgroundTask"
+		},
+		{
+			"com.liferay.portal.model.Lock",
+			"com.liferay.portal.lock.model.Lock"
+		},
+		{
+			"com.liferay.portal.model.", "com.liferay.portal.kernel.model."
+		},
+		{
+			"com.liferay.portlet.announcements.model.",
+			"com.liferay.announcements.kernel.model."
+		},
+		{
+			"com.liferay.portlet.asset.model.",
+			"com.liferay.asset.kernel.model."
+		},
+		{
+			"com.liferay.portlet.blogs.model.",
+			"com.liferay.blogs.kernel.model."
+		},
+		{
+			"com.liferay.portlet.documentlibrary.model.",
+			"com.liferay.document.library.kernel.model."
+		},
+		{
+			"com.liferay.portlet.documentlibrary.util.",
+			"com.liferay.document.library.kernel.util."
+		},
+		{
+			"com.liferay.portlet.expando.model.",
+			"com.liferay.expando.kernel.model."
+		},
+		{
+			"com.liferay.portlet.messageboards.model.",
+			"com.liferay.message.boards.kernel.model."
+		},
+		{
+			"com.liferay.portlet.mobiledevicerules.model.",
+			"com.liferay.mobile.device.rules.model."
+		},
+		{
+			"com.liferay.portlet.ratings.model.",
+			"com.liferay.ratings.kernel.model."
+		},
+		{
+			"com.liferay.portlet.social.model.",
+			"com.liferay.social.kernel.model."
+		},
+		{
+			"com.liferay.portlet.trash.model.",
+			"com.liferay.trash.kernel.model."
+		},
+		{
+			"com.liferay.socialnetworking.model.",
+			"com.liferay.social.networking.model."
+		}
+	};
+
+	private static final String[][] _RESOURCE_NAMES = new String[][] {
+		{
+			"com.liferay.portlet.asset", "com.liferay.asset"
+		},
+		{
+			"com.liferay.portlet.blogs", "com.liferay.blogs"
+		},
+		{
+			"com.liferay.portlet.documentlibrary",
+			"com.liferay.document.library"
+		},
+		{
+			"com.liferay.portlet.messageboards", "com.liferay.message.boards"
 		}
 	};
 

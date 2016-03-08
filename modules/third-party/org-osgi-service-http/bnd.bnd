@@ -1,0 +1,13 @@
+Bundle-Description: Includes Http Service packages from the OSGi Compendium specification.
+Bundle-SymbolicName: org.osgi.service.http
+Bundle-Version: 3.5.0-20150611.165350-3.LIFERAY-PATCHED-1
+Export-Package:\
+	org.osgi.service.http;version=1.2.1,\
+	org.osgi.service.http.context;version=1.0,\
+	org.osgi.service.http.runtime;version=1.0,\
+	org.osgi.service.http.runtime.dto;version=1.0,\
+	org.osgi.service.http.whiteboard;version=1.0
+Include-Resource: @lib/org.eclipse.osgi.services.jar!/org/osgi/service/http/**
+Liferay-Releng-Module-Group-Description:
+Liferay-Releng-Module-Group-Title: Remote Service Engines
+-include: ../../../marketplace/platform/bnd.bnd

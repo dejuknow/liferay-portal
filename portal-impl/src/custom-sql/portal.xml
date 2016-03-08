@@ -232,6 +232,19 @@
 				(Group_.type_ != 4)
 		]]>
 	</sql>
+	<sql id="com.liferay.portal.kernel.service.persistence.GroupFinder.findByL_TS_S_RSGC">
+		<![CDATA[
+			SELECT
+				DISTINCT {Group_.*}
+			FROM
+				Group_
+			WHERE
+				(Group_.liveGroupId != ?) AND
+				(CAST_CLOB_TEXT(Group_.typeSettings) like ?) AND
+				(Group_.site = ?) AND
+				(Group_.remoteStagingGroupCount > ?)
+		]]>
+	</sql>
 	<sql id="com.liferay.portal.kernel.service.persistence.GroupFinder.findByC_C_PG_N_D">
 		<![CDATA[
 			SELECT
@@ -437,6 +450,22 @@
 				Layout
 			WHERE
 				(friendlyURL = '' OR friendlyURL IS NULL)
+		]]>
+	</sql>
+	<sql id="com.liferay.portal.kernel.service.persistence.LayoutFinder.findByScopeGroup">
+		<![CDATA[
+			SELECT
+				{Layout.*}
+			FROM
+				Layout
+			INNER JOIN
+				Group_ ON
+					(Group_.companyId = Layout.companyId) AND
+					(Group_.classNameId = [$CLASS_NAME_ID_COM.LIFERAY.PORTAL.MODEL.LAYOUT$]) AND
+					(Group_.classPK = Layout.plid)
+			WHERE
+				(Layout.groupId = ?) AND
+				(Layout.privateLayout = ?)
 		]]>
 	</sql>
 	<sql id="com.liferay.portal.kernel.service.persistence.LayoutFinder.findByC_P_P">

@@ -14,9 +14,9 @@
 
 package com.liferay.portal.upgrade.v7_0_0;
 
-import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.model.ReleaseConstants;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
+import com.liferay.portal.kernel.util.LoggingTimer;
 import com.liferay.portal.kernel.util.StringBundler;
 
 import java.io.IOException;
@@ -36,21 +36,16 @@ public class UpgradeModules extends UpgradeProcess {
 
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
-		PreparedStatement ps = null;
-		ResultSet rs = null;
+		StringBundler sb = new StringBundler(5);
 
-		try {
-			StringBundler sb = new StringBundler(5);
+		sb.append("insert into Release_ (mvccVersion, releaseId, ");
+		sb.append("createDate, modifiedDate, servletContextName, ");
+		sb.append("schemaVersion, buildNumber, buildDate, verified, ");
+		sb.append("state_, testString) values (?, ?, ?, ?, ?, ?, ?, ?, ");
+		sb.append("?, ?, ?)");
 
-			sb.append("insert into Release_ (mvccVersion, releaseId, ");
-			sb.append("createDate, modifiedDate, servletContextName, ");
-			sb.append("schemaVersion, buildNumber, buildDate, verified, ");
-			sb.append("state_, testString) values (?, ?, ?, ?, ?, ?, ?, ?, ");
-			sb.append("?, ?, ?)");
-
-			String sql = sb.toString();
-
-			ps = connection.prepareStatement(sql);
+		try (PreparedStatement ps = connection.prepareStatement(
+				sb.toString())) {
 
 			for (String bundleSymbolicName : bundleSymbolicNames) {
 				ps.setLong(1, 0);
@@ -70,9 +65,6 @@ public class UpgradeModules extends UpgradeProcess {
 
 			ps.executeBatch();
 		}
-		finally {
-			DataAccess.cleanUp(ps, rs);
-		}
 	}
 
 	@Override
@@ -85,24 +77,17 @@ public class UpgradeModules extends UpgradeProcess {
 	protected boolean hasServiceComponent(String buildNamespace)
 		throws SQLException {
 
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-
-		try {
-			ps = connection.prepareStatement(
+		try (PreparedStatement ps = connection.prepareStatement(
 				"select serviceComponentId from ServiceComponent " +
-					"where buildNamespace = ?");
+					"where buildNamespace = ?")) {
 
 			ps.setString(1, buildNamespace);
 
-			rs = ps.executeQuery();
-
-			if (rs.next()) {
-				return true;
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next()) {
+					return true;
+				}
 			}
-		}
-		finally {
-			DataAccess.cleanUp(ps, rs);
 		}
 
 		return false;
@@ -111,41 +96,38 @@ public class UpgradeModules extends UpgradeProcess {
 	protected void updateConvertedLegacyModules()
 		throws IOException, SQLException {
 
-		for (String[] convertedLegacyModule : _convertedLegacyModules) {
-			String oldServletContextName = convertedLegacyModule[0];
-			String newServletContextName = convertedLegacyModule[1];
-			String buildNamespace = convertedLegacyModule[2];
+		try (LoggingTimer loggingTimer = new LoggingTimer()) {
+			for (String[] convertedLegacyModule : _convertedLegacyModules) {
+				String oldServletContextName = convertedLegacyModule[0];
+				String newServletContextName = convertedLegacyModule[1];
+				String buildNamespace = convertedLegacyModule[2];
 
-			PreparedStatement ps = null;
-			ResultSet rs = null;
+				try (PreparedStatement ps = connection.prepareStatement(
+						"select servletContextName, buildNumber from Release_" +
+							" where servletContextName = ?")) {
 
-			try {
-				ps = connection.prepareStatement(
-					"select servletContextName, buildNumber from Release_ " +
-						"where servletContextName = ?");
+					ps.setString(1, oldServletContextName);
 
-				ps.setString(1, oldServletContextName);
-
-				rs = ps.executeQuery();
-
-				if (!rs.next()) {
-					if (hasServiceComponent(buildNamespace)) {
-						addRelease(newServletContextName);
+					try (ResultSet rs = ps.executeQuery()) {
+						if (!rs.next()) {
+							if (hasServiceComponent(buildNamespace)) {
+								addRelease(newServletContextName);
+							}
+						}
+						else {
+							updateServletContextName(
+								oldServletContextName, newServletContextName);
+						}
 					}
 				}
-				else {
-					updateServletContextName(
-						oldServletContextName, newServletContextName);
-				}
-			}
-			finally {
-				DataAccess.cleanUp(ps, rs);
 			}
 		}
 	}
 
 	protected void updateExtractedModules() throws SQLException {
-		addRelease(_bundleSymbolicNames);
+		try (LoggingTimer loggingTimer = new LoggingTimer()) {
+			addRelease(_bundleSymbolicNames);
+		}
 	}
 
 	protected void updateServletContextName(
@@ -168,31 +150,35 @@ public class UpgradeModules extends UpgradeProcess {
 		"com.liferay.bookmarks.service", "com.liferay.bookmarks.web",
 		"com.liferay.calendar.web", "com.liferay.comment.page.comments.web",
 		"com.liferay.currency.converter.web", "com.liferay.dictionary.web",
+		"com.liferay.document.library.service",
 		"com.liferay.document.library.web",
 		"com.liferay.dynamic.data.lists.service",
 		"com.liferay.dynamic.data.lists.web",
 		"com.liferay.dynamic.data.mapping.service",
 		"com.liferay.exportimport.service", "com.liferay.exportimport.web",
 		"com.liferay.flags.web", "com.liferay.hello.velocity.web",
-		"com.liferay.iframe.web", "com.liferay.invitation.web",
-		"com.liferay.item.selector.web",
+		"com.liferay.hello.world.web", "com.liferay.iframe.web",
+		"com.liferay.invitation.web", "com.liferay.item.selector.web",
 		"com.liferay.journal.content.search.web",
 		"com.liferay.journal.content.web", "com.liferay.journal.service",
 		"com.liferay.journal.web", "com.liferay.layout.admin.web",
-		"com.liferay.loan.calculator.web", "com.liferay.message.boards.web",
+		"com.liferay.license.manager.web", "com.liferay.loan.calculator.web",
+		"com.liferay.login.web", "com.liferay.message.boards.web",
+		"com.liferay.mobile.device.rules.service",
 		"com.liferay.mobile.device.rules.web", "com.liferay.my.account.web",
 		"com.liferay.nested.portlets.web", "com.liferay.network.utilities.web",
 		"com.liferay.password.generator.web", "com.liferay.plugins.admin.web",
-		"com.liferay.polls.service", "com.liferay.portal.instances.web",
-		"com.liferay.portal.lock.service",
-		"com.liferay.portal.scheduler.quartz",
+		"com.liferay.polls.service",
+		"com.liferay.portal.background.task.service",
+		"com.liferay.portal.instances.web", "com.liferay.portal.lock.service",
+		"com.liferay.portal.scheduler.quartz", "com.liferay.portal.search.web",
 		"com.liferay.portal.settings.web",
 		"com.liferay.portlet.configuration.css.web",
 		"com.liferay.portlet.configuration.web", "com.liferay.quick.note.web",
 		"com.liferay.ratings.page.ratings.web", "com.liferay.rss.web",
-		"com.liferay.search.web", "com.liferay.server.admin.web",
-		"com.liferay.shopping.service", "com.liferay.shopping.web",
-		"com.liferay.site.browser.web", "com.liferay.site.my.sites.web",
+		"com.liferay.server.admin.web", "com.liferay.shopping.service",
+		"com.liferay.shopping.web", "com.liferay.site.browser.web",
+		"com.liferay.site.my.sites.web",
 		"com.liferay.site.navigation.breadcrumb.web",
 		"com.liferay.site.navigation.directory.web",
 		"com.liferay.site.navigation.language.web",
@@ -224,6 +210,9 @@ public class UpgradeModules extends UpgradeProcess {
 		},
 		{
 			"microblogs-portlet", "com.liferay.microblogs.service", "Microblogs"
+		},
+		{
+			"so-portlet", "com.liferay.invitation.invite.members.service", "SO"
 		}
 	};
 

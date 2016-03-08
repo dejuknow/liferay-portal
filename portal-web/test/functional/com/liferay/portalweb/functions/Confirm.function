@@ -5,6 +5,16 @@
 		<execute selenium="assertJavaScriptErrors" />
 
 		<execute selenium="assertLiferayErrors" />
+
+		<execute function="WaitForSPARefresh" />
+	</command>
+
+	<command name="assertConfirmationNoWait">
+		<execute selenium="assertConfirmation" />
+
+		<execute selenium="assertJavaScriptErrors" />
+
+		<execute selenium="assertLiferayErrors" />
 	</command>
 
 	<command name="assertPartialConfirmation">
@@ -13,6 +23,8 @@
 		<execute selenium="assertJavaScriptErrors" />
 
 		<execute selenium="assertLiferayErrors" />
+
+		<execute function="WaitForSPARefresh" />
 	</command>
 
 	<command name="waitForConfirmation">
@@ -21,5 +33,7 @@
 		<execute selenium="assertJavaScriptErrors" />
 
 		<execute selenium="assertLiferayErrors" />
+
+		<execute function="WaitForSPARefresh" />
 	</command>
 </definition>

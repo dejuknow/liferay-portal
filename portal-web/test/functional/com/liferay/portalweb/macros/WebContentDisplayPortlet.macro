@@ -35,16 +35,6 @@
 		<execute function="SelectFrame" value1="relative=top" />
 	</command>
 
-	<command name="configurePermissionsPG">
-		<execute function="SelectFrame" value1="relative=top" />
-
-		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
-
-		<execute macro="Navigator#gotoNavItem">
-			<var name="navItem" value="Permissions" />
-		</execute>
-	</command>
-
 	<command name="configureScopePG">
 		<execute macro="Portlet#gotoPortletOptions">
 			<var name="portletName" value="${portletName}" />
@@ -59,9 +49,7 @@
 
 		<execute function="Select" locator1="Select#SCOPE" value1="regexp:.*${scopeSelection}.*" />
 
-		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
-
-		<execute macro="Alert#viewSetupUpdatedSuccessMessage" />
+		<execute macro="PortletEntry#save" />
 	</command>
 
 	<command name="configureSetupPG">
@@ -129,7 +117,7 @@
 			<then>
 				<execute function="SelectFrame" locator1="IFrame#DIALOG" />
 
-				<execute function="Check" locator1="WCDConfiguration#ENABLE_VIEW_COUNT_INCREMENT_CHECKBOX" />
+				<execute function="Check#checkToggleSwitch" locator1="WCDConfiguration#ENABLE_VIEW_COUNT_INCREMENT_CHECKBOX" />
 
 				<execute function="SelectFrame" value1="relative=top" />
 			</then>
@@ -174,7 +162,7 @@
 			</then>
 		</if>
 
-		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
+		<execute macro="Button#clickSave" />
 
 		<if>
 			<equals arg1="${editTemplateButton}" arg2="true" />
@@ -213,9 +201,7 @@
 	<command name="saveConfiguration">
 		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
 
-		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
-
-		<execute macro="Alert#viewSetupUpdatedSuccessMessage" />
+		<execute macro="PortletEntry#save" />
 
 		<execute function="SelectFrame" value1="relative=top" />
 	</command>
@@ -258,8 +244,8 @@
 				<execute function="SelectFrame" locator1="IFrame#DIALOG" />
 
 				<execute function="AssertTextEquals" locator1="Message#INFO_ARTICLE" value1="${webContentTitle} (Modified)" />
-				<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
-				<execute macro="Alert#viewSetupUpdatedSuccessMessage" />
+				<execute macro="Button#clickSave" />
+				<execute macro="Alert#viewSuccessMessage" />
 			</then>
 		</if>
 
@@ -304,8 +290,8 @@
 		<execute function="AssertClick" locator1="Link#WEB_CONTENT_ARTICLE" value1="${webContentTitle}" />
 		<execute function="SelectFrame" value1="relative=top" />
 		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
-		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
-		<execute macro="Alert#viewSetupUpdatedSuccessMessage" />
+		<execute macro="Button#clickSave" />
+		<execute macro="Alert#viewSuccessMessage" />
 		<execute function="SelectFrame" value1="relative=top" />
 	</command>
 
@@ -323,7 +309,7 @@
 
 		<execute function="AssertTextEquals#assertPartialText" locator1="WCD#RELATED_ASSETS" value1="${relatedAssetTitle}" />
 
-		<execute function="Type#typeAlloyEditor" locator1="Comments#COMMENT_FIELD" value1="Hello!" />
+		<execute function="Type#typeEditor" locator1="Comments#COMMENT_FIELD" value1="Hello!" />
 
 		<execute function="AssertClick" locator1="Button#REPLY" value1="Reply" />
 

@@ -325,7 +325,7 @@
 			<var name="fieldName" value="phoneOffice" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -411,7 +411,7 @@
 			<var name="fieldName" value="location" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -491,7 +491,7 @@
 			<var name="fieldName" value="quantity" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -589,7 +589,7 @@
 			<var name="fieldName" value="title" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -675,7 +675,7 @@
 			<var name="fieldName" value="title" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -781,7 +781,7 @@
 			<var name="fieldName" value="title" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -870,7 +870,7 @@
 			<var name="fieldName" value="${fieldName}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -966,7 +966,7 @@
 			<var name="fieldName" value="${fieldName}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -1061,7 +1061,7 @@
 			<var name="fieldName" value="${fieldName}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -1156,7 +1156,7 @@
 			<var name="fieldName" value="${fieldName}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -1249,7 +1249,7 @@
 			<var name="fieldName" value="${fieldName}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -1344,7 +1344,7 @@
 			<var name="fieldName" value="${fieldName}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -1439,7 +1439,7 @@
 			<var name="fieldName" value="${fieldName}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -1534,11 +1534,11 @@
 
 		<execute macro="DDLRecord#populateFieldLinkToPage">
 			<var name="ddlRecordFieldData" value="${ddlRecordFieldData}" />
-			<var name="fieldFieldLabel" value="${fieldFieldLabel}" />
 			<var name="fieldName" value="${fieldName}" />
+			<var name="pagePrivacy" value="Public" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -1554,6 +1554,10 @@
 			<var name="ddlRecordFieldData" value="${ddlRecordFieldData}" />
 			<var name="field" value="${field}" />
 			<var name="fieldFieldLabel" value="${fieldFieldLabel}" />
+		</execute>
+
+		<execute macro="DDLRecord#viewLinkToPageLink">
+			<var name="ddlRecordFieldData" value="${ddlRecordFieldData}" />
 		</execute>
 	</command>
 
@@ -1633,7 +1637,7 @@
 			<var name="fieldName" value="${fieldName}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -1728,7 +1732,7 @@
 			<var name="fieldName" value="${fieldName}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -1823,7 +1827,7 @@
 			<var name="fieldName" value="${fieldName}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -1918,7 +1922,7 @@
 			<var name="fieldName" value="${fieldName}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -2013,7 +2017,7 @@
 			<var name="fieldName" value="${fieldName}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -2541,7 +2545,6 @@
 
 		<execute macro="DDLTemplate#deleteTemplateCP">
 			<var name="ddlDataDefinitionName" value="${ddlDataDefinitionName}" />
-			<var name="ddlDisplayTemplateName" value="${ddlDisplayTemplateName}" />
 			<var name="ddlTemplateName" value="${ddlDisplayTemplateName}" />
 		</execute>
 	</command>
@@ -2594,7 +2597,6 @@
 
 		<execute macro="DDLTemplate#deleteTemplateCP">
 			<var name="ddlDataDefinitionName" value="${ddlDataDefinitionName}" />
-			<var name="ddlDisplayTemplateName" value="${ddlDisplayTemplateName}" />
 			<var name="ddlTemplateName" value="${ddlDisplayTemplateName}" />
 		</execute>
 	</command>
@@ -2764,7 +2766,7 @@
 			<var name="fieldName" value="${fieldName}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -2878,7 +2880,7 @@
 			<var name="fieldName" value="${fieldNameEdit}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -2994,7 +2996,7 @@
 			<var name="fieldName" value="${fieldNameEdit}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -3099,7 +3101,7 @@
 			<var name="fieldShowLabel" value="${fieldShowLabel}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -3612,7 +3614,7 @@
 			<var name="fieldName" value="${fieldName}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -3630,7 +3632,7 @@
 			<var name="fieldName" value="${fieldName}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -3706,7 +3708,7 @@
 			<var name="fieldName" value="${fieldName}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -3723,7 +3725,7 @@
 			<var name="fieldName" value="${fieldName}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -4026,7 +4028,7 @@
 			<var name="fieldName" value="${fieldName}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -4182,7 +4184,7 @@
 			<var name="fieldPredefinedValue" value="${fieldPredefinedValue}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -4217,7 +4219,7 @@
 			<var name="fieldName" value="${fieldName}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -4581,7 +4583,7 @@
 			<var name="fieldName" value="${fieldName}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -4593,8 +4595,10 @@
 			<var name="ddlListName" value="${ddlListName}" />
 		</execute>
 
-		<execute function="AssertClick" locator1="//div[contains(@id,'ocerSearchContainer')]//tr/td[1]/a" value1="${ddlRecordFieldData}" />
-		<execute function="AssertTextEquals" locator1="DDLRecord#FIELD_1" value1="${fieldFieldLabel} ${ddlRecordFieldData}" />
+		<execute macro="DDLRecord#viewViaAnchorLink">
+			<var name="ddlRecordFieldData" value="${ddlRecordFieldData}" />
+			<var name="fieldFieldLabel" value="${fieldFieldLabel}" />
+		</execute>
 	</command>
 
 	<command name="ViewNoDuplicatesInOriginalAfterCopy" priority="3">

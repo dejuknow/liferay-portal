@@ -130,7 +130,7 @@
 </tr>
 <tr>
 	<td>ERROR_MESSAGE_ALERT_ERROR</td>
-	<td>//div[@class='portlet-content']/h3[contains(@class, 'alert-danger')]</td>
+	<td>//section[@id='content']/h3[contains(@class, 'alert-danger')] | //div[@class='portlet-content']/h3[contains(@class, 'alert-danger')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -209,6 +209,11 @@
 <tr>
 	<td>PAGE</td>
 	<td>//div[contains(@class,'navbar')]/ul/li/a[contains(.,'${key_pageName}')]</td>
+	<td>Page</td>
+</tr>
+<tr>
+	<td>PAGE_ACTIVE</td>
+	<td>//div[contains(@class,'navbar')]/ul/li[contains(@class,'active')]/a[contains(.,'${key_pageName}')]</td>
 	<td>Page</td>
 </tr>
 <tr>
@@ -596,12 +601,12 @@
 	<td></td>
 </tr>
 <tr>
-	<td>SITE_ADMINISTRATION_USERS</td>
-	<td>//div[@id='panel-manage-site_administration.users']/div</td>
+	<td>SITE_ADMINISTRATION_MEMBERS</td>
+	<td>//div[@id='panel-manage-site_administration.members']/div</td>
 	<td></td>
 </tr>
 <tr>
-	<td>SITE_ADMINISTRATION_USERS_SITE_MEMBERSHIPS</td>
+	<td>SITE_ADMINISTRATION_MEMBERS_SITE_MEMBERSHIPS</td>
 	<td>//ul[contains(@class,'category-portlets')]/li[contains(.,'Site Memberships')]/span/a/span</td>
 	<td></td>
 </tr>
@@ -611,7 +616,7 @@
 	<td></td>
 </tr>
 <tr>
-	<td>SITE_ADMINISTRATION_USERS_SITE_TEAMS</td>
+	<td>SITE_ADMINISTRATION_MEMBERS_SITE_TEAMS</td>
 	<td>//ul[contains(@class,'category-portlets')]/li[contains(.,'Site Teams')]/span/a/span</td>
 	<td></td>
 </tr>

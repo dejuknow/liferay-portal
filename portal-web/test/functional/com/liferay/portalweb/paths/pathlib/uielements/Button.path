@@ -24,6 +24,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>ADD_CATEGORY</td>
+	<td>//span[contains(.,'Add Category')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>ADD_COMMUNITY_SITE</td>
 	<td>//button[contains(.,'Add Community Site')]</td>
 	<td></td>
@@ -89,6 +94,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>ADD_SUBCATEGORY</td>
+	<td>//span[contains(.,'Add Subcategory')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>ADD_SUBFOLDER</td>
 	<td>//a[contains(.,'Add Subfolder')]</td>
 	<td></td>
@@ -120,7 +130,7 @@
 </tr>
 <tr>
 	<td>BACK</td>
-	<td>//a[@title='Back'] | //button[contains(.,'Back')]</td>
+	<td>//a[@title='Back'] | //a[contains(@id,'back')] | //button[contains(.,'Back')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -140,12 +150,22 @@
 </tr>
 <tr>
 	<td>CANCEL_CHECKOUT</td>
-	<td>//button[contains(.,'Cancel Checkout')]</td>
+	<td>//a[contains(@class,'btn') and contains(.,'Cancel Checkout')] | //button[contains(.,'Cancel Checkout')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>CHANGE</td>
 	<td>//button[contains(.,'Change')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CHANGE_LOGO</td>
+	<td>//button[contains(@class,'edit-logo')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CHANGE_LOGO</td>
+	<td>//button[contains(@class,'edit-logo') and contains(.,'Change')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -160,12 +180,12 @@
 </tr>
 <tr>
 	<td>CHECKIN</td>
-	<td>//button[contains(.,'Checkin')]</td>
+	<td>//a[contains(@class,'btn') and contains(.,'Checkin')] | //button[contains(.,'Checkin')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>CHECKOUT</td>
-	<td>//button[contains(.,'Checkout')]</td>
+	<td>//a[contains(@class,'btn') and contains(.,'Checkout')] | //button[contains(.,'Checkout')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -176,6 +196,11 @@
 <tr>
 	<td>CHOOSE_THIS_FOLDER</td>
 	<td>//button[contains(.,'Choose This Folder')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CLEAR</td>
+	<td>//button[contains(.,'Clear')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -204,18 +229,13 @@
 	<td></td>
 </tr>
 <tr>
-	<td>COG</td>
-	<td>//button[contains(@id,'settingsIcon')]</td>
-	<td></td>
-</tr>
-<tr>
 	<td>COMPARE_VERSIONS</td>
 	<td>//button[contains(@id,'compare')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>CONFIRM</td>
-	<td>//button[contains(.,'Confirms')]</td>
+	<td>//button[contains(.,'Confirm')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -270,12 +290,12 @@
 </tr>
 <tr>
 	<td>DOWNLOAD</td>
-	<td>//button[contains(.,'Download')]</td>
+	<td>//a[contains(@class,'btn') and contains(.,'Download')] | //button[contains(.,'Download')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>EDIT</td>
-	<td>//a[contains(@id,'edit') and contains(@class,'btn')] | //button[contains(.,'Edit')]</td>
+	<td>//a[contains(@class,'btn') and contains(.,'Edit')] | //a[contains(@id,'edit') and contains(@class,'btn')] | //button[contains(.,'Edit')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -339,6 +359,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>INFO</td>
+	<td>//a[contains(@class,'btn') and contains(.,'Info')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>INVOKE</td>
 	<td>//button[contains(.,'Invoke')]</td>
 	<td></td>
@@ -354,8 +379,13 @@
 	<td></td>
 </tr>
 <tr>
+	<td>MORE_MESSAGES</td>
+	<td>//a[contains(@class,'btn') and contains(.,'More Messages')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>MOVE</td>
-	<td>//button[contains(.,'Move')]</td>
+	<td>//a[contains(@class,'btn') and contains(.,'Move')] | //button[contains(.,'Move')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -375,7 +405,7 @@
 </tr>
 <tr>
 	<td>MOVE_TO_THE_RECYCLE_BIN</td>
-	<td>//button[contains(.,'Move to the Recycle Bin')]</td>
+	<td>//a[contains(@class,'btn') and contains(.,'Move to the Recycle Bin')] | //button[contains(.,'Move to the Recycle Bin')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -415,7 +445,12 @@
 </tr>
 <tr>
 	<td>POST</td>
-	<td>//button[contains(.,'Post')]</td>
+	<td>//button[contains(.,'Post') and not(contains(@class,'disabled'))]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>POST_NEW_THREAD</td>
+	<td>//span[contains(.,'Post New Thread')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -436,6 +471,11 @@
 <tr>
 	<td>PUBLISH_TO_LIVE</td>
 	<td>//button[contains(.,'Publish to Live')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>RECYCLE_BIN</td>
+	<td>//a[@data-qa-id='recycle-binButton']</td>
 	<td></td>
 </tr>
 <tr>

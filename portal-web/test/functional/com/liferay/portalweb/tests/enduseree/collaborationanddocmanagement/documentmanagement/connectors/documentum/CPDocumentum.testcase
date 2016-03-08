@@ -43,7 +43,7 @@
 			<var name="portlet" value="Documents and Media" />
 		</execute>
 
-		<execute macro="DMRepository#gotoAdd" />
+		<execute macro="DMNavigator#gotoAddRepositoryCP" />
 
 		<execute macro="DMRepository#select">
 			<var name="dmRepositoryName" value="Documentum Repository Name" />
@@ -55,7 +55,7 @@
 			<var name="dmRepositoryFieldName" value="documentum" />
 		</execute>
 
-		<execute macro="DMRepository#save" />
+		<execute macro="PortletEntry#save" />
 
 		<execute macro="DMRepository#gotoCP">
 			<var name="dmRepositoryName" value="Documentum Repository Name" />

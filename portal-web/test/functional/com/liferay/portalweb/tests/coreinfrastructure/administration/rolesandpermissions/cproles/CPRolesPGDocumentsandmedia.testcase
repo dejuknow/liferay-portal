@@ -35,7 +35,9 @@
 		</if>
 	</tear-down>
 
-	<command name="AddDMDocumentRegRole" priority="4">
+	<command name="AddDMDocumentRegRole" priority="5">
+		<property name="portal.acceptance" value="true" />
+
 		<execute macro="Permissions#setUpRegRoleLoginUserPG">
 			<var name="pageName" value="Documents and Media Page" />
 			<var name="portletName" value="Documents and Media" />
@@ -48,7 +50,7 @@
 			<var name="userScreenName" value="usersn" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Documents and Media Page" />
 		</execute>
 
@@ -62,7 +64,7 @@
 			<var name="userLoginFullName" value="userfn userln" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Documents and Media Page" />
 		</execute>
 
@@ -79,7 +81,7 @@
 			<var name="userLoginFullName" value="userfn userln" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Documents and Media Page" />
 		</execute>
 
@@ -286,7 +288,7 @@
 			<var name="userLoginFullName" value="userfn userln" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Documents and Media Page" />
 		</execute>
 
@@ -314,7 +316,7 @@
 			<var name="userLoginFullName" value="userfn userln" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Documents and Media Page" />
 		</execute>
 
@@ -350,7 +352,7 @@
 			<var name="userLoginFullName" value="userfn userln" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Documents and Media Page" />
 		</execute>
 
@@ -379,7 +381,7 @@
 
 		<execute macro="User#logoutPG" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Documents and Media Page" />
 		</execute>
 
@@ -409,7 +411,7 @@
 
 		<execute macro="User#logoutPG" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Documents and Media Page" />
 		</execute>
 
@@ -433,7 +435,7 @@
 
 		<execute macro="User#logoutPG" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Documents and Media Page" />
 		</execute>
 

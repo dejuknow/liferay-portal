@@ -6,7 +6,7 @@
 	<property name="deploy.dir" value="${app.server.lib.portal.dir}" />
 	<property name="jar.file" value="${ant.project.name}" />
 	<property name="manifest.bundle.name" value="Liferay Util Taglib" />
-	<property name="manifest.bundle.symbolic.name" value="util-taglib" />
+	<property name="manifest.bundle.symbolic.name" value="com.liferay.util.taglib" />
 
 	<macrodef name="clean">
 		<sequential>
@@ -103,6 +103,28 @@
 		</java>
 	</target>
 
+	<target name="jar-tlddoc" depends="taglibdoc">
+		<zip destfile="util-taglib-tlddoc.jar">
+			<zipfileset dir="${doc.dir}/taglibs" />
+		</zip>
+	</target>
+
+	<target name="publish-portal-release" depends="jar,jar-javadoc,jar-sources,jar-tlddoc">
+		<publish-portal-artifact >
+			<attach classifier="javadoc" file="${artifact.name}-javadoc.jar" />
+			<attach classifier="sources" file="${artifact.name}-sources.jar" />
+			<attach classifier="tlddoc" file="${artifact.name}-tlddoc.jar" />
+		</publish-portal-artifact>
+	</target>
+
+	<target name="publish-portal-snapshot" depends="jar,jar-javadoc,jar-sources,jar-tlddoc">
+		<publish-portal-artifact snapshot="true">
+			<attach classifier="javadoc" file="${artifact.name}-javadoc.jar" />
+			<attach classifier="sources" file="${artifact.name}-sources.jar" />
+			<attach classifier="tlddoc" file="${artifact.name}-tlddoc.jar" />
+		</publish-portal-artifact>
+	</target>
+
 	<target name="taglibdoc" depends="validate-tld">
 		<property name="doc.taglibs.dir" value="${doc.dir}/taglibs" />
 
@@ -110,14 +132,8 @@
 
 		<pathconvert property="tld.files" pathsep=" ">
 			<path>
-				<fileset dir="${project.dir}">
-					<exclude name="**/bin/**" />
-					<exclude name="**/build/**" />
-					<exclude name="**/classes/**" />
-					<exclude name="**/portal-web/**" />
-					<exclude name="**/sdk/**" />
-					<exclude name="**/test/**" />
-					<include name="**/liferay-*.tld" />
+				<fileset dir="${project.dir}/util-taglib/src/META-INF">
+					<include name="*.tld" />
 				</fileset>
 			</path>
 		</pathconvert>
@@ -132,18 +148,16 @@
 			<arg line="-d ${doc.taglibs.dir}" />
 			<arg line="${tld.files}" />
 		</java>
+
+		<copy overwrite="true" todir="${doc.taglibs.dir}/images" preservelastmodified="true">
+			<fileset dir="${project.dir}/util-taglib/src/META-INF/images" />
+		</copy>
 	</target>
 
 	<target name="validate-tld">
 		<schemavalidate>
-			<fileset dir="${project.dir}" >
-				<exclude name="**/bin/**" />
-				<exclude name="**/build/**" />
-				<exclude name="**/classes/**" />
-				<exclude name="**/portal-web/**" />
-				<exclude name="**/sdk/**" />
-				<exclude name="**/test/**" />
-				<include name="**/liferay-*.tld" />
+			<fileset dir="${project.dir}/util-taglib/src/META-INF">
+				<include name="*.tld" />
 			</fileset>
 		</schemavalidate>
 	</target>

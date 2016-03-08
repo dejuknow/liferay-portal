@@ -1,9 +1,0 @@
-dependencies {
-	compile project(":apps:application-list:application-list-api")
-	compile project(":apps:users-admin:users-admin-web")
-	compile project(":portal:portal-upgrade")
-}
-
-liferay {
-	deployDir = file("${liferayHome}/osgi/modules")
-}

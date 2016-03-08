@@ -535,6 +535,17 @@ public class GroupServiceImpl extends GroupServiceBaseImpl {
 
 		User user = userPersistence.findByPrimaryKey(userId);
 
+		boolean checkPermissions = true;
+
+		if (userId == getUserId()) {
+			checkPermissions = false;
+		}
+
+		if (checkPermissions) {
+			UserPermissionUtil.check(
+				getPermissionChecker(), userId, ActionKeys.VIEW);
+		}
+
 		if (user.isDefaultUser()) {
 			return Collections.emptyList();
 		}
@@ -555,6 +566,10 @@ public class GroupServiceImpl extends GroupServiceBaseImpl {
 				userSiteGroups.add(user.getGroup());
 
 				if (userSiteGroups.size() == max) {
+					if (checkPermissions) {
+						return filterGroups(new ArrayList<>(userSiteGroups));
+					}
+
 					return new ArrayList<>(userSiteGroups);
 				}
 			}
@@ -587,6 +602,11 @@ public class GroupServiceImpl extends GroupServiceBaseImpl {
 						if (userSiteGroups.add(group) &&
 							(userSiteGroups.size() == max)) {
 
+							if (checkPermissions) {
+								return filterGroups(
+									new ArrayList<>(userSiteGroups));
+							}
+
 							return new ArrayList<>(userSiteGroups);
 						}
 					}
@@ -599,11 +619,20 @@ public class GroupServiceImpl extends GroupServiceBaseImpl {
 						if (userSiteGroups.add(group) &&
 							(userSiteGroups.size() == max)) {
 
+							if (checkPermissions) {
+								return filterGroups(
+									new ArrayList<>(userSiteGroups));
+							}
+
 							return new ArrayList<>(userSiteGroups);
 						}
 					}
 				}
 			}
+		}
+
+		if (checkPermissions) {
+			return filterGroups(new ArrayList<>(userSiteGroups));
 		}
 
 		return new ArrayList<>(userSiteGroups);

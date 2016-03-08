@@ -146,7 +146,7 @@
 			<var name="nodePort" value="${nodePort}" />
 			<var name="pageName" value="${pageName1}" />
 			<var name="pageTemplateName" value="${pageTemplateName}" />
-			<var name="pageType" value="${pageType}" />
+			<var name="sitePageType" value="${pageType}" />
 		</execute>
 
 		<execute macro="Portlet#addPG">
@@ -319,7 +319,7 @@
 			<var name="nodePort" value="${nodePort}" />
 			<var name="pageName" value="${pageName2}" />
 			<var name="pageTemplateName" value="${pageTemplateName}" />
-			<var name="pageType" value="${pageType}" />
+			<var name="sitePageType" value="${pageType}" />
 		</execute>
 
 		<execute macro="Portlet#addPG">
@@ -465,7 +465,7 @@
 			<var name="nodePort" value="${nodePort}" />
 			<var name="pageName" value="${pageName3}" />
 			<var name="pageTemplateName" value="${pageTemplateName}" />
-			<var name="pageType" value="${pageType}" />
+			<var name="sitePageType" value="${pageType}" />
 		</execute>
 
 		<execute macro="Portlet#addPG">
@@ -512,22 +512,13 @@
 		</execute>
 
 		<execute macro="MessageboardsThread#addPG">
-			<var name="anonymous" value="${anonymous}" />
-			<var name="fontSize" value="${fontSize}" />
-			<var name="key_fontSize" value="${key_fontSize}" />
-			<var name="markAsQuestion" value="false" />
-			<var name="mbThreadAttachment" value="${mbThreadAttachment}" />
 			<var name="preview" value="${preview}" />
 			<var name="priority" value="${priority}" />
 			<var name="saveAsDraft" value="${saveAsDraft}" />
 			<var name="source" value="${source}" />
-			<var name="threadAddTag" value="${threadAddTag}" />
 			<var name="threadBody" value="${mbThreadBody}" />
-			<var name="threadPriority" value="${threadPriority}" />
 			<var name="threadSubject" value="${mbThreadSubject}" />
 			<var name="userName" value="${userName}" />
-			<var name="viewableBy" value="${viewableBy}" />
-			<var name="viewableBySelection" value="${viewableBySelection}" />
 		</execute>
 
 		<execute macro="Page#gotoPG">
@@ -548,7 +539,6 @@
 
 		<execute macro="MessageboardsThread#viewPG">
 			<var name="fontSize" value="${fontSize}" />
-			<var name="markAsQuestion" value="false" />
 			<var name="postCount" value="1" />
 			<var name="threadBody" value="${mbThreadBody}" />
 			<var name="threadBody2" value="${threadBody2}" />
@@ -563,7 +553,7 @@
 			<var name="nodePort" value="${nodePort}" />
 			<var name="pageName" value="${pageName4}" />
 			<var name="pageTemplateName" value="${pageTemplateName}" />
-			<var name="pageType" value="${pageType}" />
+			<var name="sitePageType" value="${pageType}" />
 		</execute>
 
 		<execute macro="Portlet#addPG">
@@ -632,7 +622,7 @@
 			<var name="nodePort" value="${nodePort}" />
 			<var name="pageName" value="${pageName5}" />
 			<var name="pageTemplateName" value="${pageTemplateName}" />
-			<var name="pageType" value="${pageType}" />
+			<var name="sitePageType" value="${pageType}" />
 		</execute>
 
 		<execute macro="Portlet#addPG">
@@ -763,7 +753,7 @@
 			<var name="nodePort" value="${nodePort}" />
 			<var name="pageName" value="${pageName6}" />
 			<var name="pageTemplateName" value="${pageTemplateName}" />
-			<var name="pageType" value="${pageType}" />
+			<var name="sitePageType" value="${pageType}" />
 		</execute>
 
 		<execute macro="Portlet#addPG">

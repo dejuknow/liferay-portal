@@ -40,8 +40,8 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Query;
 import com.liferay.portal.kernel.dao.orm.QueryPos;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
-import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SQLQuery;
+import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.exception.NoSuchModelException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
@@ -96,7 +96,7 @@ import java.util.Map;
 import java.util.Set;
 
 <#list referenceList as tempEntity>
-	<#if tempEntity.hasColumns() && (entity.name == "Counter" || tempEntity.name != "Counter")>
+	<#if tempEntity.hasColumns() && ((entity.name == "Counter") || (tempEntity.name != "Counter"))>
 		import ${tempEntity.apiPackagePath}.service.persistence.${tempEntity.name}Persistence;
 	</#if>
 </#list>
@@ -1845,7 +1845,7 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 		private static final String _FILTER_ENTITY_TABLE_FILTER_PK_COLUMN = "${entity.alias}.${entity.filterPKColumn.DBName}";
 
 		<#if entity.isPermissionedModel()>
-			<#if entity.hasColumn("userId") >
+			<#if entity.hasColumn("userId")>
 				private static final String _FILTER_ENTITY_TABLE_FILTER_USERID_COLUMN = "${entity.alias}.userId";
 			<#else>
 				private static final String _FILTER_ENTITY_TABLE_FILTER_USERID_COLUMN = null;
@@ -1943,7 +1943,7 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 
 <#function bindParameter finderColsList>
 	<#list finderColsList as finderCol>
-		<#if !finderCol.hasArrayableOperator() || finderCol.type == "String">
+		<#if !finderCol.hasArrayableOperator() || (finderCol.type == "String")>
 			<#return true>
 		</#if>
 	</#list>
@@ -1971,7 +1971,7 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 				qPos.add(
 					<#if finderCol.type == "Date">
 						new Timestamp(${finderCol.name}.getTime())
-					<#elseif finderCol.type == "String" && !finderCol.isCaseSensitive()>
+					<#elseif (finderCol.type == "String") && !finderCol.isCaseSensitive()>
 						StringUtil.toLowerCase(${finderCol.name})
 					<#else>
 						${finderCol.name}

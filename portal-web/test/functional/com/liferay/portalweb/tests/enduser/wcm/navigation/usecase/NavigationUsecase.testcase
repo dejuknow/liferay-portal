@@ -107,9 +107,6 @@
 
 		<execute function="AssertTextEquals" locator1="ProductMenu#PRIVATE_PAGE_LINK" value1="Test User Group Private Page" />
 
-		<execute function="Pause" locator1="1073" />
-		<execute function="Pause" locator1="1073" />
-
 		<execute macro="User#logoutUserPG" />
 
 		<execute macro="User#loginPG">
@@ -129,7 +126,7 @@
 			<var name="portletName" value="Navigation Menu" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Navigation Display Test Page" />
 		</execute>
 
@@ -145,11 +142,11 @@
 		<execute function="SelectFrame" locator1="IFrame#CONFIGURATION" />
 
 		<execute function="Select" locator1="Select#DISPLAY_TEMPLATE" value1="Bar minimally styled" />
-		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
-		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="You have successfully updated the setup." />
+		<execute macro="Button#clickSave" />
+		<execute macro="Alert#viewSuccessMessage" />
 		<execute function="SelectFrame" value1="relative=top" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Navigation Display Test Page" />
 		</execute>
 
@@ -161,7 +158,7 @@
 			<var name="pageName" value="Navigation Page" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Navigation Page" />
 		</execute>
 
@@ -204,7 +201,7 @@
 			<var name="userEmailAddress" value="userea@liferay.com" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Navigation Page" />
 		</execute>
 

@@ -45,6 +45,7 @@ import com.liferay.portal.kernel.search.QueryConfig;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.search.Sort;
+import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.ArrayUtil;
@@ -340,12 +341,13 @@ public class OrganizationLocalServiceImpl
 	public Organization deleteOrganization(Organization organization)
 		throws PortalException {
 
-		if ((userLocalService.getOrganizationUsersCount(
+		if (!CompanyThreadLocal.isDeleteInProcess() &&
+			((userLocalService.getOrganizationUsersCount(
 				organization.getOrganizationId(),
 				WorkflowConstants.STATUS_APPROVED) > 0) ||
-			(organizationPersistence.countByC_P(
-				organization.getCompanyId(),
-				organization.getOrganizationId()) > 0)) {
+			 (organizationPersistence.countByC_P(
+				 organization.getCompanyId(),
+				 organization.getOrganizationId()) > 0))) {
 
 			throw new RequiredOrganizationException();
 		}
@@ -1617,9 +1619,9 @@ public class OrganizationLocalServiceImpl
 		assetEntryLocalService.updateEntry(
 			userId, companyGroup.getGroupId(), null, null,
 			Organization.class.getName(), organization.getOrganizationId(),
-			organization.getUuid(), 0, assetCategoryIds, assetTagNames, false,
-			null, null, null, null, organization.getName(), StringPool.BLANK,
-			null, null, null, 0, 0, null);
+			organization.getUuid(), 0, assetCategoryIds, assetTagNames, true,
+			false, null, null, null, null, organization.getName(),
+			StringPool.BLANK, null, null, null, 0, 0, null);
 	}
 
 	/**

@@ -4072,9 +4072,9 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 		assetEntryLocalService.updateEntry(
 			userId, companyGroup.getGroupId(), user.getCreateDate(),
 			user.getModifiedDate(), User.class.getName(), user.getUserId(),
-			user.getUuid(), 0, assetCategoryIds, assetTagNames, false, null,
-			null, null, null, user.getFullName(), null, null, null, null, 0, 0,
-			null);
+			user.getUuid(), 0, assetCategoryIds, assetTagNames, true, false,
+			null, null, null, null, user.getFullName(), null, null, null, null,
+			0, 0, null);
 	}
 
 	/**
@@ -5829,13 +5829,13 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 		try {
 			if (authType.equals(CompanyConstants.AUTH_TYPE_EA)) {
 				AuthPipeline.onFailureByEmailAddress(
-					PropsKeys.AUTH_FAILURE, user.getCompanyId(), login,
-					headerMap, parameterMap);
+					PropsKeys.AUTH_FAILURE, user.getCompanyId(),
+					user.getEmailAddress(), headerMap, parameterMap);
 			}
 			else if (authType.equals(CompanyConstants.AUTH_TYPE_SN)) {
 				AuthPipeline.onFailureByScreenName(
-					PropsKeys.AUTH_FAILURE, user.getCompanyId(), login,
-					headerMap, parameterMap);
+					PropsKeys.AUTH_FAILURE, user.getCompanyId(),
+					user.getScreenName(), headerMap, parameterMap);
 			}
 			else if (authType.equals(CompanyConstants.AUTH_TYPE_ID)) {
 				AuthPipeline.onFailureByUserId(
@@ -5867,12 +5867,12 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 					if (authType.equals(CompanyConstants.AUTH_TYPE_EA)) {
 						AuthPipeline.onMaxFailuresByEmailAddress(
 							PropsKeys.AUTH_MAX_FAILURES, user.getCompanyId(),
-							login, headerMap, parameterMap);
+							user.getEmailAddress(), headerMap, parameterMap);
 					}
 					else if (authType.equals(CompanyConstants.AUTH_TYPE_SN)) {
 						AuthPipeline.onMaxFailuresByScreenName(
 							PropsKeys.AUTH_MAX_FAILURES, user.getCompanyId(),
-							login, headerMap, parameterMap);
+							user.getScreenName(), headerMap, parameterMap);
 					}
 					else if (authType.equals(CompanyConstants.AUTH_TYPE_ID)) {
 						AuthPipeline.onMaxFailuresByUserId(
@@ -6188,14 +6188,14 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 
 		for (long oldGroupId : oldGroupIds) {
 			if (!ArrayUtil.contains(newGroupIds, oldGroupId)) {
-				unsetGroupUsers(
+				userLocalService.unsetGroupUsers(
 					oldGroupId, new long[] {userId}, serviceContext);
 			}
 		}
 
 		for (long newGroupId : newGroupIds) {
 			if (!ArrayUtil.contains(oldGroupIds, newGroupId)) {
-				addGroupUsers(newGroupId, new long[] {userId});
+				userLocalService.addGroupUsers(newGroupId, new long[] {userId});
 			}
 		}
 

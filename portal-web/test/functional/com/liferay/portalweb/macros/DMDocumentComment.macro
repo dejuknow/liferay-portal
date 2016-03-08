@@ -12,7 +12,7 @@
 
 		<execute function="Pause" locator1="3000" />
 
-		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute macro="Alert#viewSuccessMessage" />
 	</command>
 
 	<command name="viewPG">
@@ -22,6 +22,6 @@
 
 		<var name="key_entryComment" value="${commentBody}" />
 
-		<execute function="AssertTextEquals#assertPartialText" locator1="Comments#COMMENT_BODY" value1="${commentBody}" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Comments#COMMENT_BODY_SPECIFIC" value1="${commentBody}" />
 	</command>
 </definition>

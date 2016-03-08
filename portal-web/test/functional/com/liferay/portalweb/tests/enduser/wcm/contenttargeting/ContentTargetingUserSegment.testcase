@@ -25,7 +25,6 @@
 		</execute>
 
 		<execute macro="Page#add">
-			<var name="page" value="Public Pages" />
 			<var name="pageName" value="Test Page Name" />
 			<var name="siteName" value="Site Name" />
 		</execute>
@@ -150,8 +149,11 @@
 			<var name="portlet" value="Sites" />
 		</execute>
 
+		<execute macro="Site#searchInputCP">
+			<var name="siteName" value="Child SiteName" />
+		</execute>
+
 		<execute macro="Page#add">
-			<var name="page" value="Public Pages" />
 			<var name="pageName" value="Test Page Name" />
 			<var name="siteName" value="Child SiteName" />
 		</execute>
@@ -276,7 +278,7 @@
 			<var name="webContentTitle" value="Web Content Title" />
 		</execute>
 
-		<execute macro="WebContent#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="WebContent#viewTitle">
 			<var name="webContentTitle" value="WC WebContent Title" />
@@ -1287,7 +1289,7 @@
 			<var name="webContentTitle" value="WC Male View Title" />
 		</execute>
 
-		<execute macro="WebContent#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="WebContent#viewTitle">
 			<var name="webContentTitle" value="WC Male View Title" />

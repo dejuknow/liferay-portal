@@ -20,7 +20,7 @@ import com.liferay.sync.engine.documentlibrary.model.SyncDLObjectUpdate;
 import com.liferay.sync.engine.documentlibrary.util.FileEventUtil;
 import com.liferay.sync.engine.documentlibrary.util.comparator.SyncFileComparator;
 import com.liferay.sync.engine.filesystem.Watcher;
-import com.liferay.sync.engine.filesystem.util.WatcherRegistry;
+import com.liferay.sync.engine.filesystem.util.WatcherManager;
 import com.liferay.sync.engine.model.SyncAccount;
 import com.liferay.sync.engine.model.SyncFile;
 import com.liferay.sync.engine.model.SyncSite;
@@ -38,6 +38,7 @@ import com.liferay.sync.engine.util.SyncEngineUtil;
 
 import java.io.IOException;
 
+import java.nio.file.AccessDeniedException;
 import java.nio.file.FileSystemException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -62,7 +63,6 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 
 import org.slf4j.Logger;
@@ -77,22 +77,20 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 		super(event);
 
 		GetSyncContextEvent getSyncContextEvent = new GetSyncContextEvent(
-			event.getSyncAccountId(), Collections.<String, Object>emptyMap()) {
+			getSyncAccountId(), Collections.<String, Object>emptyMap()) {
 
 			@Override
 			public void executePost(
 					String urlPath, Map<String, Object> parameters)
 				throws Exception {
 
-				Session session = SessionManager.getSession(getSyncAccountId());
-
-				HttpClient anonymousHttpClient =
-					session.getAnonymousHttpClient();
-
 				SyncAccount syncAccount = SyncAccountService.fetchSyncAccount(
 					getSyncAccountId());
 
-				HttpResponse httpResponse = anonymousHttpClient.execute(
+				Session session = SessionManager.getSession(
+					getSyncAccountId(), true);
+
+				HttpResponse httpResponse = session.execute(
 					new HttpPost(
 						syncAccount.getUrl() + "/api/jsonws" + urlPath));
 
@@ -189,6 +187,8 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 			if (response.startsWith("\"")) {
 				response = StringEscapeUtils.unescapeJava(response);
 
+				response = response.replaceAll("\n", "\\n");
+
 				response = response.substring(1, response.length() - 1);
 			}
 
@@ -253,12 +253,12 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 
 		syncFile.setFilePathName(filePathName);
 		syncFile.setSyncAccountId(getSyncAccountId());
-		syncFile.setUiEvent(SyncFile.UI_EVENT_ADDED_REMOTE);
 
 		if (syncFile.isFolder()) {
 			Files.createDirectories(filePath);
 
 			syncFile.setState(SyncFile.STATE_SYNCED);
+			syncFile.setUiEvent(SyncFile.UI_EVENT_ADDED_REMOTE);
 
 			SyncFileService.update(syncFile);
 
@@ -266,6 +266,8 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 				filePath, String.valueOf(syncFile.getSyncFileId()), false);
 		}
 		else {
+			syncFile.setUiEvent(SyncFile.UI_EVENT_DOWNLOADING);
+
 			SyncFileService.update(syncFile);
 
 			downloadFile(syncFile, null, 0, false);
@@ -291,20 +293,27 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 			tempFilePath, String.valueOf(targetSyncFile.getSyncFileId()),
 			false);
 
-		Watcher watcher = WatcherRegistry.getWatcher(getSyncAccountId());
+		Watcher watcher = WatcherManager.getWatcher(getSyncAccountId());
 
-		List<String> downloadedFilePathNames =
-			watcher.getDownloadedFilePathNames();
-
-		downloadedFilePathNames.add(targetSyncFile.getFilePathName());
+		watcher.addDownloadedFilePathName(targetSyncFile.getFilePathName());
 
 		boolean exists = Files.exists(
 			Paths.get(targetSyncFile.getFilePathName()));
 
-		Files.move(
-			tempFilePath, Paths.get(targetSyncFile.getFilePathName()),
-			StandardCopyOption.ATOMIC_MOVE,
-			StandardCopyOption.REPLACE_EXISTING);
+		try {
+			Files.move(
+				tempFilePath, Paths.get(targetSyncFile.getFilePathName()),
+				StandardCopyOption.ATOMIC_MOVE,
+				StandardCopyOption.REPLACE_EXISTING);
+		}
+		catch (AccessDeniedException ade) {
+			targetSyncFile.setState(SyncFile.STATE_ERROR);
+			targetSyncFile.setUiEvent(SyncFile.UI_EVENT_ACCESS_DENIED_LOCAL);
+
+			SyncFileService.update(targetSyncFile);
+
+			return;
+		}
 
 		targetSyncFile.setState(SyncFile.STATE_SYNCED);
 
@@ -325,14 +334,16 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 		SyncFileService.update(targetSyncFile);
 	}
 
-	protected void deleteFile(SyncFile sourceSyncFile, boolean trashed)
+	protected void deleteFile(SyncFile sourceSyncFile, SyncFile targetSyncFile)
 		throws Exception {
 
 		if (sourceSyncFile.getUiEvent() == SyncFile.UI_EVENT_DELETED_LOCAL) {
 			return;
 		}
 
-		if (trashed) {
+		sourceSyncFile.setModifiedTime(targetSyncFile.getModifiedTime());
+
+		if (targetSyncFile.getEvent() == SyncFile.EVENT_TRASH) {
 			sourceSyncFile.setUiEvent(SyncFile.UI_EVENT_TRASHED_REMOTE);
 		}
 		else {
@@ -347,13 +358,10 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 			return;
 		}
 
-		final Watcher watcher = WatcherRegistry.getWatcher(getSyncAccountId());
-
-		final List<String> deletedFilePathNames =
-			watcher.getDeletedFilePathNames();
+		final Watcher watcher = WatcherManager.getWatcher(getSyncAccountId());
 
 		if (sourceSyncFile.isFile()) {
-			deletedFilePathNames.add(sourceSyncFile.getFilePathName());
+			watcher.addDeletedFilePathName(sourceSyncFile.getFilePathName());
 
 			FileUtil.deleteFile(sourceFilePath);
 
@@ -373,7 +381,7 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 						return super.postVisitDirectory(filePath, ioe);
 					}
 
-					deletedFilePathNames.add(filePath.toString());
+					watcher.addDeletedFilePathName(filePath.toString());
 
 					FileUtil.deleteFile(filePath);
 
@@ -396,7 +404,7 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 						Path filePath, BasicFileAttributes basicFileAttributes)
 					throws IOException {
 
-					deletedFilePathNames.add(filePath.toString());
+					watcher.addDeletedFilePathName(filePath.toString());
 
 					FileUtil.deleteFile(filePath);
 
@@ -456,6 +464,8 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 		try {
 			if (response.startsWith("\"")) {
 				response = StringEscapeUtils.unescapeJava(response);
+
+				response = response.replaceAll("\n", "\\n");
 
 				response = response.substring(1, response.length() - 1);
 			}
@@ -583,7 +593,7 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 					return;
 				}
 
-				deleteFile(sourceSyncFile, false);
+				deleteFile(sourceSyncFile, targetSyncFile);
 			}
 			else if (event.equals(SyncFile.EVENT_MOVE)) {
 				if (sourceSyncFile == null) {
@@ -616,7 +626,7 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 					return;
 				}
 
-				deleteFile(sourceSyncFile, true);
+				deleteFile(sourceSyncFile, targetSyncFile);
 			}
 			else if (event.equals(SyncFile.EVENT_UPDATE)) {
 				if (sourceSyncFile == null) {
@@ -683,6 +693,8 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 		sourceSyncFile.setLockUserName(targetSyncFile.getLockUserName());
 		sourceSyncFile.setModifiedTime(targetSyncFile.getModifiedTime());
 		sourceSyncFile.setSize(targetSyncFile.getSize());
+		sourceSyncFile.setUserId(targetSyncFile.getUserId());
+		sourceSyncFile.setUserName(targetSyncFile.getUserName());
 		sourceSyncFile.setVersion(targetSyncFile.getVersion());
 		sourceSyncFile.setVersionId(targetSyncFile.getVersionId());
 

@@ -577,20 +577,19 @@ public class MBMessageServiceImpl extends MBMessageServiceBaseImpl {
 	}
 
 	@Override
-	public MBMessageDisplay getMessageDisplay(
-			long messageId, int status, boolean includePrevAndNext)
+	public MBMessageDisplay getMessageDisplay(long messageId, int status)
 		throws PortalException {
 
 		MBMessagePermission.check(
 			getPermissionChecker(), messageId, ActionKeys.VIEW);
 
 		return mbMessageLocalService.getMessageDisplay(
-			getGuestOrUserId(), messageId, status, includePrevAndNext);
+			getGuestOrUserId(), messageId, status);
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #getMessageDisplay(long, int,
-	 *             boolean)}
+	 * @deprecated As of 7.0.0, replaced by {@link #getMessageDisplay(long,
+	 *             int)}
 	 */
 	@Deprecated
 	@Override
@@ -728,6 +727,12 @@ public class MBMessageServiceImpl extends MBMessageServiceBaseImpl {
 	@Override
 	public void updateAnswer(long messageId, boolean answer, boolean cascade)
 		throws PortalException {
+
+		MBMessage message = mbMessagePersistence.findByPrimaryKey(messageId);
+
+		MBMessagePermission.check(
+			getPermissionChecker(), message.getRootMessageId(),
+			ActionKeys.UPDATE);
 
 		mbMessageLocalService.updateAnswer(messageId, answer, cascade);
 	}

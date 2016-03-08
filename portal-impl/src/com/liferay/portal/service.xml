@@ -464,6 +464,12 @@
 			<finder-column name="liveGroupId" />
 			<finder-column name="groupKey" />
 		</finder>
+		<finder name="G_C_C_P" return-type="Collection" db-index="false">
+			<finder-column name="groupId" comparator="&gt;" />
+			<finder-column name="companyId" />
+			<finder-column name="classNameId" />
+			<finder-column name="parentGroupId" />
+		</finder>
 		<finder name="C_C_L_GK" return-type="Group" unique="true">
 			<finder-column name="companyId" />
 			<finder-column name="classNameId" />
@@ -719,6 +725,7 @@
 		<reference package-path="com.liferay.portal" entity="LayoutRevision" />
 		<reference package-path="com.liferay.portal" entity="LayoutSetBranch" />
 		<reference package-path="com.liferay.portal" entity="RecentLayoutBranch" />
+		<reference package-path="com.liferay.portal" entity="Resource" />
 		<reference package-path="com.liferay.portal" entity="User" />
 	</entity>
 	<entity name="LayoutFriendlyURL" uuid="true" local-service="true" remote-service="false">
@@ -3342,6 +3349,7 @@
 		<exception>GroupInheritContent</exception>
 		<exception>GroupKey</exception>
 		<exception>GroupParent</exception>
+		<exception>ImageResolution</exception>
 		<exception>ImageType</exception>
 		<exception>InvalidRepository</exception>
 		<exception>LayoutBranchName</exception>

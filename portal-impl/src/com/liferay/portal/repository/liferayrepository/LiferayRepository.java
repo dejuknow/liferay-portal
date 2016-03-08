@@ -125,8 +125,6 @@ public class LiferayRepository
 			fileEntryTypeId, ddmFormValuesMap, file, null, size,
 			serviceContext);
 
-		addFileEntryResources(dlFileEntry, serviceContext);
-
 		return new LiferayFileEntry(dlFileEntry);
 	}
 
@@ -148,8 +146,6 @@ public class LiferayRepository
 			getGroupId(), getRepositoryId(), toFolderId(folderId),
 			sourceFileName, mimeType, title, description, changeLog,
 			fileEntryTypeId, ddmFormValuesMap, null, is, size, serviceContext);
-
-		addFileEntryResources(dlFileEntry, serviceContext);
 
 		return new LiferayFileEntry(dlFileEntry);
 	}
@@ -269,12 +265,12 @@ public class LiferayRepository
 
 	@Override
 	public void checkInFileEntry(
-			long userId, long fileEntryId, boolean major, String changeLog,
-			ServiceContext serviceContext)
+			long userId, long fileEntryId, boolean majorVersion,
+			String changeLog, ServiceContext serviceContext)
 		throws PortalException {
 
 		dlFileEntryService.checkInFileEntry(
-			fileEntryId, major, changeLog, serviceContext);
+			fileEntryId, majorVersion, changeLog, serviceContext);
 	}
 
 	@Override

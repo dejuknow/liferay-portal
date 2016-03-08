@@ -45,7 +45,6 @@
 		</execute>
 
 		<execute macro="Page#add">
-			<var name="page" value="Public Pages" />
 			<var name="pageName" value="Site Page Name" />
 			<var name="siteName" value="Site Name" />
 		</execute>
@@ -56,7 +55,7 @@
 			<var name="siteURL" value="true" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoEditPage">
+		<execute macro="SitePageNavigator#gotoEditPage">
 			<var name="page" value="Site Page Name" />
 		</execute>
 
@@ -159,7 +158,6 @@
 		</execute>
 
 		<execute macro="Page#add">
-			<var name="page" value="Public Pages" />
 			<var name="pageName" value="Site Page Name" />
 			<var name="siteName" value="Site Name" />
 		</execute>
@@ -170,7 +168,7 @@
 			<var name="siteURL" value="true" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoEditPage">
+		<execute macro="SitePageNavigator#gotoEditPage">
 			<var name="page" value="Site Page Name" />
 		</execute>
 
@@ -193,8 +191,6 @@
 		<execute macro="Portlet#addPG">
 			<var name="portletName" value="Wiki" />
 		</execute>
-
-		<execute function="Refresh" />
 
 		<execute macro="Portlet#viewSpecificPG">
 			<var name="portletName" value="Wiki" />
@@ -284,7 +280,6 @@
 		</execute>
 
 		<execute macro="Page#add">
-			<var name="page" value="Public Pages" />
 			<var name="pageName" value="Site Page Name" />
 			<var name="siteName" value="Site Name" />
 		</execute>
@@ -295,7 +290,7 @@
 			<var name="siteURL" value="true" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoEditPage">
+		<execute macro="SitePageNavigator#gotoEditPage">
 			<var name="page" value="Site Page Name" />
 		</execute>
 
@@ -461,7 +456,7 @@
 			<var name="userScreenName" value="usersn" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesPages">
+		<execute macro="SitePageNavigator#gotoPages">
 			<var name="page" value="Public Pages" />
 			<var name="site" value="Liferay" />
 		</execute>
@@ -470,7 +465,7 @@
 			<var name="pageName" value="Site Page Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesPages">
+		<execute macro="SitePageNavigator#gotoPages">
 			<var name="page" value="Public Pages" />
 		</execute>
 
@@ -479,7 +474,7 @@
 			<var name="sitePageName" value="Site Page Name" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Site Page Name" />
 		</execute>
 
@@ -502,7 +497,7 @@
 			<var name="userEmailAddress" value="userea@liferay.com" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Site Page Name" />
 		</execute>
 
@@ -560,7 +555,7 @@
 			<var name="userEmailAddress" value="userea@liferay.com" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Site Page Name" />
 		</execute>
 

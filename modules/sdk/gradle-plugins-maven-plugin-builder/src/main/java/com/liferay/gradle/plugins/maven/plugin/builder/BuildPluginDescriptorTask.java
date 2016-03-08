@@ -40,6 +40,8 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -50,12 +52,15 @@ import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.Dependency;
+import org.gradle.api.artifacts.ResolvedConfiguration;
+import org.gradle.api.artifacts.ResolvedDependency;
 import org.gradle.api.artifacts.maven.Conf2ScopeMappingContainer;
 import org.gradle.api.file.CopySpec;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
 import org.gradle.api.plugins.JavaPlugin;
+import org.gradle.api.specs.Spec;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputDirectory;
 import org.gradle.api.tasks.InputFiles;
@@ -78,6 +83,10 @@ public class BuildPluginDescriptorTask extends DefaultTask {
 			Conf2ScopeMappingContainer.COMPILE);
 		_configurationScopeMappings.put(
 			"provided", Conf2ScopeMappingContainer.PROVIDED);
+
+		_pomRepositories.put(
+			"liferay-public",
+			"http://repository.liferay.com/nexus/content/groups/public");
 	}
 
 	@TaskAction
@@ -119,6 +128,7 @@ public class BuildPluginDescriptorTask extends DefaultTask {
 		_configurationScopeMappings.put(configurationName, scope);
 	}
 
+	@SuppressWarnings("unchecked")
 	public BuildPluginDescriptorTask forcedExclusions(
 		Iterable<String> forcedExclusions) {
 
@@ -183,6 +193,11 @@ public class BuildPluginDescriptorTask extends DefaultTask {
 	}
 
 	@Input
+	public Map<String, Object> getPomRepositories() {
+		return _pomRepositories;
+	}
+
+	@Input
 	public String getPomVersion() {
 		return GradleUtil.toString(_pomVersion);
 	}
@@ -195,6 +210,20 @@ public class BuildPluginDescriptorTask extends DefaultTask {
 	@Input
 	public boolean isUseSetterComments() {
 		return _useSetterComments;
+	}
+
+	public BuildPluginDescriptorTask pomRepositories(
+		Map<String, ?> pomRepositories) {
+
+		_pomRepositories.putAll(pomRepositories);
+
+		return this;
+	}
+
+	public BuildPluginDescriptorTask pomRepository(String id, Object url) {
+		_pomRepositories.put(id, url);
+
+		return this;
 	}
 
 	public void setClassesDir(Object classesDir) {
@@ -243,6 +272,12 @@ public class BuildPluginDescriptorTask extends DefaultTask {
 		_pomGroupId = pomGroupId;
 	}
 
+	public void setPomRepositories(Map<String, ?> pomRepositories) {
+		_pomRepositories.clear();
+
+		pomRepositories(pomRepositories);
+	}
+
 	public void setPomVersion(Object pomVersion) {
 		_pomVersion = pomVersion;
 	}
@@ -256,8 +291,8 @@ public class BuildPluginDescriptorTask extends DefaultTask {
 	}
 
 	protected void appendDependencyElements(
-		Document doc, Element dependenciesElement, String configurationName,
-		String scope) {
+		Document document, Element dependenciesElement,
+		String configurationName, String scope) {
 
 		Project project = getProject();
 
@@ -271,38 +306,78 @@ public class BuildPluginDescriptorTask extends DefaultTask {
 			return;
 		}
 
-		Set<Dependency> dependencies = configuration.getDependencies();
-
 		Set<String> forcedExclusions = getForcedExclusions();
 
-		for (Dependency dependency : dependencies) {
-			Element dependencyElement = doc.createElement("dependency");
+		ResolvedConfiguration resolvedConfiguration =
+			configuration.getResolvedConfiguration();
+
+		for (Dependency dependency : configuration.getDependencies()) {
+			Element dependencyElement = document.createElement("dependency");
 
 			dependenciesElement.appendChild(dependencyElement);
 
+			final String dependencyGroup = dependency.getGroup();
+			final String dependencyName = dependency.getName();
+
 			XMLUtil.appendElement(
-				doc, dependencyElement, "groupId", dependency.getGroup());
+				document, dependencyElement, "groupId", dependencyGroup);
 			XMLUtil.appendElement(
-				doc, dependencyElement, "artifactId", dependency.getName());
+				document, dependencyElement, "artifactId", dependencyName);
+
+			String dependencyVersion = dependency.getVersion();
+
+			Set<ResolvedDependency> resolvedDependencies =
+				resolvedConfiguration.getFirstLevelModuleDependencies(
+					new Spec<Dependency>() {
+
+						@Override
+						public boolean isSatisfiedBy(Dependency dependency) {
+							if (dependencyGroup.equals(dependency.getGroup()) &&
+								dependencyName.equals(dependency.getName())) {
+
+								return true;
+							}
+
+							return false;
+						}
+
+					});
+
+			if (!resolvedDependencies.isEmpty()) {
+				Iterator<ResolvedDependency> iterator =
+					resolvedDependencies.iterator();
+
+				ResolvedDependency resolvedDependency = iterator.next();
+
+				dependencyVersion = resolvedDependency.getModuleVersion();
+			}
+			else if (_logger.isWarnEnabled()) {
+				_logger.warn(
+					"Unable to find resolved module version for " + dependency);
+			}
+
 			XMLUtil.appendElement(
-				doc, dependencyElement, "version", dependency.getVersion());
-			XMLUtil.appendElement(doc, dependencyElement, "scope", scope);
+				document, dependencyElement, "version", dependencyVersion);
+
+			XMLUtil.appendElement(document, dependencyElement, "scope", scope);
 
 			if (!forcedExclusions.isEmpty()) {
-				Element exclusionsElement = doc.createElement("exclusions");
+				Element exclusionsElement = document.createElement(
+					"exclusions");
 
 				dependencyElement.appendChild(exclusionsElement);
 
 				for (String dependencyNotation : forcedExclusions) {
 					appendDependencyExclusionElement(
-						doc, exclusionsElement, dependencyNotation);
+						document, exclusionsElement, dependencyNotation);
 				}
 			}
 		}
 	}
 
 	protected void appendDependencyExclusionElement(
-		Document doc, Element exclusionsElement, String dependencyNotation) {
+		Document document, Element exclusionsElement,
+		String dependencyNotation) {
 
 		String[] tokens = parseDependencyNotation(dependencyNotation);
 
@@ -310,19 +385,31 @@ public class BuildPluginDescriptorTask extends DefaultTask {
 		String artifactId = tokens[1];
 
 		appendDependencyExclusionElement(
-			doc, exclusionsElement, groupId, artifactId);
+			document, exclusionsElement, groupId, artifactId);
 	}
 
 	protected void appendDependencyExclusionElement(
-		Document doc, Element exclusionsElement, String groupId,
+		Document document, Element exclusionsElement, String groupId,
 		String artifactId) {
 
-		Element exclusionElement = doc.createElement("exclusion");
+		Element exclusionElement = document.createElement("exclusion");
 
 		exclusionsElement.appendChild(exclusionElement);
 
-		XMLUtil.appendElement(doc, exclusionElement, "artifactId", artifactId);
-		XMLUtil.appendElement(doc, exclusionElement, "groupId", groupId);
+		XMLUtil.appendElement(
+			document, exclusionElement, "artifactId", artifactId);
+		XMLUtil.appendElement(document, exclusionElement, "groupId", groupId);
+	}
+
+	protected void appendRepositoryElement(
+		Document document, Element repositoriesElement, String id, String url) {
+
+		Element repositoryElement = document.createElement("repository");
+
+		repositoriesElement.appendChild(repositoryElement);
+
+		XMLUtil.appendElement(document, repositoryElement, "id", id);
+		XMLUtil.appendElement(document, repositoryElement, "url", url);
 	}
 
 	protected void buildPluginDescriptor(final File pomFile) throws Exception {
@@ -387,6 +474,8 @@ public class BuildPluginDescriptorTask extends DefaultTask {
 		XMLUtil.appendElement(
 			document, projectElement, "packaging", "maven-plugin");
 
+		// Build
+
 		Element buildElement = document.createElement("build");
 
 		projectElement.appendChild(buildElement);
@@ -425,6 +514,8 @@ public class BuildPluginDescriptorTask extends DefaultTask {
 				document, configurationElement, "goalPrefix", goalPrefix);
 		}
 
+		// Dependencies
+
 		Element dependenciesElement = document.createElement("dependencies");
 
 		projectElement.appendChild(dependenciesElement);
@@ -440,6 +531,24 @@ public class BuildPluginDescriptorTask extends DefaultTask {
 
 			appendDependencyElements(
 				document, dependenciesElement, configurationName, scope);
+		}
+
+		// Repositories
+
+		Map<String, Object> pomRepositories = getPomRepositories();
+
+		if (!pomRepositories.isEmpty()) {
+			Element repositoriesElement = document.createElement(
+				"repositories");
+
+			projectElement.appendChild(repositoriesElement);
+
+			for (Map.Entry<String, Object> entry : pomRepositories.entrySet()) {
+				String id = entry.getKey();
+				String url = GradleUtil.toString(entry.getValue());
+
+				appendRepositoryElement(document, repositoriesElement, id, url);
+			}
 		}
 
 		XMLUtil.write(document, pomFile);
@@ -621,6 +730,7 @@ public class BuildPluginDescriptorTask extends DefaultTask {
 	private Object _outputDir;
 	private Object _pomArtifactId;
 	private Object _pomGroupId;
+	private final Map<String, Object> _pomRepositories = new LinkedHashMap<>();
 	private Object _pomVersion;
 	private Object _sourceDir;
 	private boolean _useSetterComments = true;

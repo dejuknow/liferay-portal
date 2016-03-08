@@ -1527,7 +1527,6 @@
 			<var name="pageName" value="${pageName}" />
 			<var name="siteName" value="${userScreenName}" />
 			<var name="sitePagePrivacy" value="Private" />
-			<var name="siteURL" value="true" />
 		</execute>
 
 		<execute macro="Portlet#addPG">
@@ -1656,7 +1655,6 @@
 			<var name="pageName" value="${pageName}" />
 			<var name="siteName" value="${userScreenName1}" />
 			<var name="sitePagePrivacy" value="Private" />
-			<var name="siteURL" value="true" />
 		</execute>
 
 		<execute macro="Portlet#addPG">
@@ -1676,7 +1674,6 @@
 			<var name="pageName" value="${pageName}" />
 			<var name="siteName" value="${userScreenName2}" />
 			<var name="sitePagePrivacy" value="Private" />
-			<var name="siteURL" value="true" />
 		</execute>
 
 		<execute macro="Portlet#addPG">
@@ -2355,7 +2352,6 @@
 			<var name="pageName" value="${pageName}" />
 			<var name="siteName" value="${userScreenName}" />
 			<var name="sitePagePrivacy" value="Private" />
-			<var name="siteURL" value="true" />
 		</execute>
 
 		<execute macro="Portlet#addPG">
@@ -2717,7 +2713,7 @@
 			<var name="site" value="${siteName1}" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -2734,7 +2730,7 @@
 			<var name="site" value="${siteName2}" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -2751,7 +2747,7 @@
 			<var name="site" value="Liferay" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -2768,7 +2764,7 @@
 			<var name="site" value="Liferay" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -3158,7 +3154,7 @@
 			<var name="site" value="${siteName}" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -3175,7 +3171,7 @@
 			<var name="site" value="${siteName}" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 

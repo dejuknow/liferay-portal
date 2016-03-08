@@ -5,25 +5,28 @@
 
 	<command name="_showDetails">
 		<if>
-			<condition function="IsElementNotPresent#isNotVisible" locator1="CPDynamicdatalistsDatadefinitionsManagetemplatesAdddisplay#DETAILS_LANGUAGE_SELECT" />
+			<condition function="IsElementNotPresent#isNotVisible" locator1="DDMEditTemplate#DETAILS_LANGUAGE_SELECT" />
 			<then>
-				<execute function="AssertClick" locator1="CPDynamicdatalistsDatadefinitionsManagetemplatesAdddisplay#DETAILS" value1="Details" />
+				<execute function="AssertClick" locator1="DDMEditTemplate#DETAILS" value1="Details" />
 			</then>
 		</if>
 
-		<execute function="AssertVisible" locator1="CPDynamicdatalistsDatadefinitionsManagetemplatesAdddisplay#DETAILS_LANGUAGE_SELECT" />
+		<execute function="AssertVisible" locator1="DDMEditTemplate#DETAILS_LANGUAGE_SELECT" />
 	</command>
 
 	<command name="addDisplayTemplateCP">
 		<execute macro="DDLNavigator#gotoManageDataDefinitions" />
 
-		<execute function="SelectFrame" locator1="DDMSelectStructure#DDM_STRUCTURES_IFRAME_1" />
 		<execute function="Type" locator1="NavBar#BASIC_SEARCH_FIELD" value1="${ddlDataDefinitionName}" />
 		<execute function="Click" locator1="Icon#BASIC_SEARCH" />
-		<execute function="Click" locator1="DDMSelectStructure#DDM_STRUCTURE_ELLIPSIS_1" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="DDMSelectStructure#DDM_STRUCTURE_ELLIPSIS_1" />
 		<execute function="AssertClick" locator1="MenuItem#MANAGE_TEMPLATES" value1="Manage Templates" />
 
-		<execute function="AssertElementPresent" locator1="Portlet#H3_HEADER" value1="Templates for Structure: ${ddlDataDefinitionName}" />
+		<execute function="AssertElementPresent#assertVisible" locator1="Portlet#HEADER" value1="Templates for Structure: ${ddlDataDefinitionName}" />
+
+		<var name="key_assetTitle" value="Templates" />
+
+		<execute function="AssertElementPresent#assertVisible" locator1="NavBar#ASSET_TITLE" value1="Templates" />
 
 		<execute function="Click" locator1="Button#PLUS" />
 
@@ -35,10 +38,12 @@
 
 		<execute function="Select" locator1="DDMEditTemplate#DETAILS_LANGUAGE_SELECT" value1="${ddlDisplayTemplateLanguage}" />
 
+		<execute function="Pause" locator1="5000" />
+
 		<if>
 			<isset var="ddlDisplayTemplateTextFieldScript" />
 			<then>
-				<execute function="AssertClick#assertTextClick" locator1="DDMEditTemplate#DATA_LIST_RECORD_FIELDS_TEXT" value1="${ddlDisplayTemplateTextFieldScript}" />
+				<execute function="AssertClick" locator1="DDMEditTemplate#DATA_LIST_RECORD_FIELDS_TEXT" value1="${ddlDisplayTemplateTextFieldScript}" />
 			</then>
 		</if>
 
@@ -56,11 +61,11 @@
 			</then>
 		</if>
 
-		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
+		<execute function="Pause" locator1="3000" />
 
-		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute function="SelectFrameTop" />
 
-		<execute function="SelectFrame" value1="relative=top" />
+		<execute macro="PortletEntry#save" />
 	</command>
 
 	<command name="addDisplayTemplateTemplateViaDDLDisplayPG">
@@ -76,7 +81,7 @@
 
 		<execute function="Type#typeAceEditor" locator1="DDMEditTemplate#SCRIPT_CONTENT_FIELD_TEXT_AREA" value1="${ddlDisplayTemplateScript}" />
 
-		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
+		<execute macro="Button#clickSave" />
 
 		<execute function="SelectFrame" value1="relative=top" />
 	</command>
@@ -84,21 +89,22 @@
 	<command name="addFormTemplateCP">
 		<execute macro="DDLNavigator#gotoManageDataDefinitions" />
 
-		<execute function="SelectFrame" locator1="DDMSelectStructure#DDM_STRUCTURES_IFRAME_1" />
 		<execute function="Type" locator1="NavBar#BASIC_SEARCH_FIELD" value1="${ddlDataDefinitionName}" />
 		<execute function="Click" locator1="Icon#BASIC_SEARCH" />
-		<execute function="Click" locator1="DDMSelectStructure#DDM_STRUCTURE_ELLIPSIS_1" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="DDMSelectStructure#DDM_STRUCTURE_ELLIPSIS_1" />
 		<execute function="AssertClick" locator1="MenuItem#MANAGE_TEMPLATES" value1="Manage Templates" />
 
-		<execute function="AssertElementPresent" locator1="Portlet#H3_HEADER" value1="Templates for Structure: Data Definition" />
+		<execute function="AssertElementPresent#assertVisible" locator1="Portlet#HEADER" value1="Templates for Structure: Data Definition" />
+
+		<var name="key_assetTitle" value="Templates" />
+
+		<execute function="AssertElementPresent#assertVisible" locator1="NavBar#ASSET_TITLE" value1="Templates" />
 
 		<execute function="Click" locator1="Button#PLUS" />
 
 		<execute function="AssertClick" locator1="MenuItem#ADD_FORM_TEMPLATE" value1="Add Form Template" />
 
 		<execute function="Type#clickAtSendKeys" locator1="TextInput#NAME" value1="${ddlFormTemplateName}" />
-
-		<execute function="SelectFrame" value1="relative=top" />
 	</command>
 
 	<command name="addFormTemplateViaDDLDisplayPG">
@@ -111,10 +117,10 @@
 
 	<command name="copyCP">
 		<execute macro="DDLNavigator#gotoManageDataDefinitions" />
-		<execute function="SelectFrame" locator1="DDMSelectStructure#DDM_STRUCTURES_IFRAME_1" />
+
 		<execute function="Type" locator1="NavBar#BASIC_SEARCH_FIELD" value1="${ddlDataDefinitionName}" />
 		<execute function="Click" locator1="Icon#BASIC_SEARCH" />
-		<execute function="Click" locator1="DDMSelectStructure#DDM_STRUCTURE_ELLIPSIS_1" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="DDMSelectStructure#DDM_STRUCTURE_ELLIPSIS_1" />
 		<execute function="AssertClick" locator1="MenuItem#MANAGE_TEMPLATES" value1="Manage Templates" />
 
 		<var name="key_ddlTemplateName" value="${ddlTemplateName}" />
@@ -122,9 +128,11 @@
 		<execute function="Click" locator1="DDMSelectTemplate#TEMPLATE_TABLE_ELLIPSIS" />
 		<execute function="AssertClick" locator1="MenuItem#COPY" value1="Copy" />
 
+		<execute function="SelectFrame" locator1="IFrame#COPY_STRUCTURE" />
+
 		<execute function="Type" locator1="TextInput#NAME" value1="${dataDefinitionTemplateCopyName}" />
 		<execute function="AssertClick" locator1="Button#COPY" value1="Copy" />
-		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully. The page will be refreshed when you close this dialog. Alternatively you can hide this dialog." />
+		<execute function="AssertElementPresent" locator1="Message#SUCCESS" />
 		<execute function="AssertClick" locator1="Button#CLOSE" value1="Close" />
 
 		<var name="key_ddlTemplateName" value="${dataDefinitionTemplateCopyName}" />
@@ -137,10 +145,9 @@
 	<command name="deleteTemplateCP">
 		<execute macro="DDLNavigator#gotoManageDataDefinitions" />
 
-		<execute function="SelectFrame" locator1="DDMSelectStructure#DDM_STRUCTURES_IFRAME_1" />
 		<execute function="Type" locator1="NavBar#BASIC_SEARCH_FIELD" value1="${ddlDataDefinitionName}" />
 		<execute function="Click" locator1="Icon#BASIC_SEARCH" />
-		<execute function="Click" locator1="DDMSelectStructure#DDM_STRUCTURE_ELLIPSIS_1" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="DDMSelectStructure#DDM_STRUCTURE_ELLIPSIS_1" />
 		<execute function="AssertClick" locator1="MenuItem#MANAGE_TEMPLATES" value1="Manage Templates" />
 
 		<execute function="Type" locator1="NavBar#BASIC_SEARCH_FIELD" value1="${ddlTemplateName}" />
@@ -148,7 +155,7 @@
 		<execute function="Check#checkAll" locator1="DDMSelectTemplate#TEMPLATE_TABLE_ALL_CHECKBOX" />
 		<execute function="ClickNoError" locator1="Icon#DELETE" />
 		<execute function="Confirm" value1="Are you sure you want to delete this? It will be deleted immediately." />
-		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute macro="Alert#viewSuccessMessage" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -158,26 +165,22 @@
 
 		<execute macro="DDLNavigator#gotoManageDataDefinitions" />
 
-		<execute function="SelectFrame" locator1="DDMSelectStructure#DDM_STRUCTURES_IFRAME_1" />
 		<execute function="Type" locator1="NavBar#BASIC_SEARCH_FIELD" value1="${ddlDataDefinitionName}" />
 		<execute function="Click" locator1="Icon#BASIC_SEARCH" />
-		<execute function="Click" locator1="DDMSelectStructure#DDM_STRUCTURE_ELLIPSIS_1" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="DDMSelectStructure#DDM_STRUCTURE_ELLIPSIS_1" />
 		<execute function="AssertClick" locator1="MenuItem#MANAGE_TEMPLATES" value1="Manage Templates" />
 
-		<execute function="Type" locator1="NavBar#BASIC_SEARCH_FIELD" value1="${ddlDisplayTemplateName}" />
+		<execute function="Type" locator1="NavBar#BASIC_SEARCH_FIELD" value1="${ddlTemplateName}" />
 		<execute function="Click" locator1="Icon#BASIC_SEARCH" />
-		<execute function="AssertTextEquals" locator1="Message#DDM_TEMPLATE_INFO" value1="There are no templates." />
-
-		<execute function="SelectFrame" value1="relative=top" />
+		<execute function="AssertTextEquals" locator1="Message#DDM_TEMPLATE_INFO" value1="There are no results." />
 	</command>
 
 	<command name="editDisplayTemplateCP">
 		<execute macro="DDLNavigator#gotoManageDataDefinitions" />
 
-		<execute function="SelectFrame" locator1="DDMSelectStructure#DDM_STRUCTURES_IFRAME_1" />
 		<execute function="Type" locator1="NavBar#BASIC_SEARCH_FIELD" value1="${ddlDataDefinitionName}" />
 		<execute function="Click" locator1="Icon#BASIC_SEARCH" />
-		<execute function="Click" locator1="DDMSelectStructure#DDM_STRUCTURE_ELLIPSIS_1" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="DDMSelectStructure#DDM_STRUCTURE_ELLIPSIS_1" />
 		<execute function="AssertClick" locator1="MenuItem#MANAGE_TEMPLATES" value1="Manage Templates" />
 
 		<var name="key_ddlTemplateName" value="${ddlDisplayTemplateName}" />
@@ -194,18 +197,15 @@
 		<execute function="AssertClick" locator1="CPDynamicdatalistsDatadefinitionsManagetemplatesEditdisplay#DATA_LIST_RECORD_FIELDS_TEXT" value1="${ddlDisplayTemplateTextFieldScriptEdit}" />
 		<execute function="AssertClick" locator1="DDMEditStructure#SAVE_BUTTON" value1="Save" />
 
-		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
-
-		<execute function="SelectFrame" value1="relative=top" />
+		<execute macro="Alert#viewSuccessMessage" />
 	</command>
 
 	<command name="editFormTemplateCP">
 		<execute macro="DDLNavigator#gotoManageDataDefinitions" />
 
-		<execute function="SelectFrame" locator1="DDMSelectStructure#DDM_STRUCTURES_IFRAME_1" />
 		<execute function="Type" locator1="NavBar#BASIC_SEARCH_FIELD" value1="${ddlDataDefinitionName}" />
 		<execute function="Click" locator1="Icon#BASIC_SEARCH" />
-		<execute function="Click" locator1="DDMSelectStructure#DDM_STRUCTURE_ELLIPSIS_1" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="DDMSelectStructure#DDM_STRUCTURE_ELLIPSIS_1" />
 		<execute function="AssertClick" locator1="MenuItem#MANAGE_TEMPLATES" value1="Manage Templates" />
 
 		<execute function="Type" locator1="DDMSelectTemplate#TOOLBAR_SEARCH_FIELD" value1="${ddlFormTemplateName}" />
@@ -214,13 +214,9 @@
 		<execute function="AssertClick" locator1="MenuItem#EDIT" value1="Edit" />
 
 		<execute function="Type" locator1="CPDynamicdatalistsDatadefinitionsManagetemplatesEditform#NAME_FIELD" value1="${ddlFormTemplateNameEdit}" />
-
-		<execute function="SelectFrame" value1="relative=top" />
 	</command>
 
 	<command name="editFormTemplateModeCP">
-		<execute function="SelectFrame" locator1="DDMSelectStructure#DDM_STRUCTURES_IFRAME_1" />
-
 		<if>
 			<condition function="IsElementNotPresent#isNotVisible" locator1="DDMEditStructure#DETAILS_MODE_SELECT" />
 			<then>
@@ -231,8 +227,6 @@
 		<execute function="Pause" locator1="3000" />
 		<execute function="Select" locator1="DDMEditStructure#DETAILS_MODE_SELECT" value1="${ddlFormTemplateMode}" />
 		<execute function="Pause" locator1="3000" />
-
-		<execute function="SelectFrame" value1="relative=top" />
 	</command>
 
 	<command name="editFormTemplatePG">
@@ -244,38 +238,28 @@
 	<command name="gotoManageTemplatesCmd">
 		<execute macro="DDLNavigator#gotoManageDataDefinitions" />
 
-		<execute function="SelectFrame" locator1="DDMSelectStructure#DDM_STRUCTURES_IFRAME_1" />
-
 		<var name="key_ddlDataDefinitionName" value="${ddlDataDefinitionName}" />
 
-		<execute function="Click" locator1="DDMSelectStructure#DDM_STRUCTURE_ELLIPSIS" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="DDMSelectStructure#DDM_STRUCTURE_ELLIPSIS" />
 		<execute function="AssertClick" locator1="MenuItem#MANAGE_TEMPLATES" value1="Manage Templates" />
 	</command>
 
 	<command name="saveAndContinueFormTemplateCP">
-		<execute function="SelectFrame" locator1="DDMEditStructure#IFRAME" />
-
 		<execute function="AssertClick" locator1="Button#SAVE_AND_CONTINUE" value1="Save and Continue" />
 
-		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
-
-		<execute function="SelectFrame" value1="relative=top" />
+		<execute macro="Alert#viewSuccessMessage" />
 	</command>
 
 	<command name="saveFormTemplateCP">
-		<execute function="SelectFrame" locator1="DDMEditStructure#IFRAME" />
-
 		<execute function="AssertClick" locator1="DDMEditStructure#SAVE_BUTTON" value1="Save" />
 
-		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
-
-		<execute function="SelectFrame" value1="relative=top" />
+		<execute macro="Alert#viewSuccessMessage" />
 	</command>
 
 	<command name="saveFormTemplateViaDDLDisplayPG">
 		<execute macro="DynamicDataMapping#selectDynamicDataMappingFrame" />
 
-		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
+		<execute macro="Button#clickSave" />
 
 		<execute function="SelectFrame" value1="relative=top" />
 	</command>
@@ -283,8 +267,8 @@
 	<command name="selectDisplayTemplateViaDDLDisplayPG">
 		<execute function="SelectFrame" locator1="DDLConfiguration#CONFIGURATION_IFRAME" />
 		<execute function="Select" locator1="DDLConfiguration#TEMPLATES_DISPLAY_TEMPLATE_SELECT" value1="${ddlDisplayTemplateName}" />
-		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
-		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="You have successfully updated the setup." />
+		<execute macro="Button#clickSave" />
+		<execute macro="Alert#viewSuccessMessage" />
 		<execute function="AssertSelectedLabel" locator1="DDLConfiguration#TEMPLATES_DISPLAY_TEMPLATE_SELECT" value1="${ddlDisplayTemplateName}" />
 
 		<execute function="SelectFrameTop" />
@@ -295,9 +279,7 @@
 
 		<execute function="Select" locator1="DDLConfiguration#TEMPLATES_FORM_TEMPLATE_SELECT" value1="${ddlFormTemplateName}" />
 
-		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
-
-		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="You have successfully updated the setup." />
+		<execute macro="PortletEntry#save" />
 		<execute function="AssertSelectedLabel" locator1="DDLConfiguration#TEMPLATES_FORM_TEMPLATE_SELECT" value1="${ddlFormTemplateName}" />
 
 		<execute function="SelectFrameTop" />
@@ -311,8 +293,6 @@
 		</execute>
 
 		<execute macro="DDLNavigator#gotoManageDataDefinitions" />
-
-		<execute function="SelectFrame" locator1="DDMSelectStructure#DDM_STRUCTURES_IFRAME_1" />
 
 		<if>
 			<not>
@@ -328,7 +308,7 @@
 		<if>
 			<condition function="IsElementPresent" locator1="DDMSelectStructure#DDM_STRUCTURE_ELLIPSIS" />
 			<then>
-				<execute function="Click" locator1="DDMSelectStructure#DDM_STRUCTURE_ELLIPSIS" />
+				<execute function="Click#waitForMenuToggleJSClick" locator1="DDMSelectStructure#DDM_STRUCTURE_ELLIPSIS" />
 				<execute function="AssertClick" locator1="MenuItem#MANAGE_TEMPLATES" value1="Manage Templates" />
 				<if>
 					<condition function="IsElementPresent" locator1="DDMSelectTemplate#TEMPLATE_TABLE_ELLIPSIS_1" />
@@ -336,7 +316,7 @@
 						<execute function="Check#checkAll" locator1="DDMSelectTemplate#TEMPLATE_TABLE_ALL_CHECKBOX" />
 						<execute function="ClickNoError" locator1="Icon#DELETE" />
 						<execute function="Confirm" value1="Are you sure you want to delete this? It will be deleted immediately." />
-						<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+						<execute macro="Alert#viewSuccessMessage" />
 					</then>
 				</if>
 			</then>
@@ -348,9 +328,7 @@
 			<var name="ddlDataDefinitionName" value="${ddlDataDefinitionName}" />
 		</execute>
 
-		<execute function="AssertTextEquals" locator1="Message#DDM_TEMPLATE_INFO" value1="There are no templates." />
-
-		<execute function="SelectFrame" value1="relative=top" />
+		<execute function="AssertTextEquals" locator1="Message#DDM_TEMPLATE_INFO" value1="There are no results." />
 	</command>
 
 	<command name="viewDisplayTemplateCP">
@@ -362,10 +340,9 @@
 
 		<execute function="AssertClick" locator1="DDMSelectTemplate#TEMPLATE_TABLE_NAME" value1="${ddlTemplateName}" />
 
-		<execute function="AssertTextEquals" locator1="DDMEditTemplate#HEADER_TITLE" value1="${ddlTemplateName} (${ddlDataDefinitionName})" />
-		<execute function="AssertTextEquals" locator1="CPDynamicdatalistsDatadefinitionsManagetemplatesEditdisplay#NAME_FIELD" value1="${ddlTemplateName}" />
+		<execute function="AssertTextEquals" locator1="Portlet#HEADER" value1="${ddlTemplateName} (${ddlDataDefinitionName})" />
 
-		<execute function="SelectFrame" value1="relative=top" />
+		<execute function="AssertTextEquals" locator1="CPDynamicdatalistsDatadefinitionsManagetemplatesEditdisplay#NAME_FIELD" value1="${ddlTemplateName}" />
 	</command>
 
 	<command name="viewFormTemplateCP">
@@ -377,10 +354,9 @@
 
 		<execute function="AssertClick" locator1="DDMSelectTemplate#TEMPLATE_TABLE_NAME" value1="${ddlTemplateName}" />
 
-		<execute function="AssertTextEquals#assertPartialText" locator1="DDMEditStructure#HEADER_TITLE" value1="${ddlTemplateName} (${ddlDataDefinitionName})" />
-		<execute function="AssertTextEquals" locator1="CPDynamicdatalistsDatadefinitionsManagetemplatesEditform#NAME_FIELD" value1="${ddlTemplateName}" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Portlet#HEADER" value1="${ddlTemplateName} (${ddlDataDefinitionName})" />
 
-		<execute function="SelectFrame" value1="relative=top" />
+		<execute function="AssertTextEquals" locator1="CPDynamicdatalistsDatadefinitionsManagetemplatesEditform#NAME_FIELD" value1="${ddlTemplateName}" />
 	</command>
 
 	<command name="viewNoDuplicateTemplateCP">
@@ -402,8 +378,6 @@
 		<var name="key_ddlTemplateName" value="${ddlTemplateName}" />
 
 		<execute function="AssertElementNotPresent" locator1="DDMSelectTemplate#TEMPLATE_TABLE_NAME" />
-
-		<execute function="SelectFrame" value1="relative=top" />
 	</command>
 
 	<command name="viewWithNoPermissions">

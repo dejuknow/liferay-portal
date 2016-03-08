@@ -1,4 +1,5 @@
 <definition component-name="portal-collaboration">
+	<property name="custom.properties" value="default.layout.template.id=1_column" />
 	<property name="portlet.plugins.includes" value="notifications-portlet" />
 	<property name="testray.main.component.name" value="Notifications" />
 
@@ -14,15 +15,7 @@
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoEditPage">
-			<var name="page" value="${pageName}" />
-		</execute>
-
-		<execute macro="Page#editPageLayoutColumn">
-			<var name="columnName" value="1_column" />
-		</execute>
-
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -32,7 +25,7 @@
 
 		<execute macro="DMDocument#enableActionsMenuOnPortlet" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -90,7 +83,7 @@
 	</tear-down>
 
 	<command name="ViewNoWebsiteNotificationForNewDocumentInFolder" priority="4">
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -106,7 +99,7 @@
 			<var name="notificationType" value="Website" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -132,7 +125,7 @@
 			<var name="userEmailAddress" value="userea@liferay.com" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -163,7 +156,7 @@
 	</command>
 
 	<command name="ViewNoWebsiteNotificationForUpdatedDocumentInFolder" priority="4">
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -179,7 +172,7 @@
 			<var name="notificationType" value="Website" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -211,7 +204,7 @@
 			<var name="userEmailAddress" value="userea@liferay.com" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -241,7 +234,7 @@
 	</command>
 
 	<command name="ViewWebsiteNotificationForNewDocumentInFolder" priority="4">
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -267,7 +260,7 @@
 			<var name="userEmailAddress" value="userea@liferay.com" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -308,14 +301,6 @@
 			<var name="contentBody" value="DM Document Title" />
 		</execute>
 
-		<execute macro="DMNavigator#gotoFolderPG">
-			<var name="dmFolderName" value="DM Folder Name" />
-		</execute>
-
-		<execute macro="DMNavigator#gotoDocumentPG">
-			<var name="dmDocumentTitle" value="DM Document Title" />
-		</execute>
-
 		<execute macro="DMDocument#viewDocumentTitleCmdPG">
 			<var name="dmDocumentTitle" value="DM Document Title" />
 		</execute>
@@ -326,7 +311,7 @@
 	</command>
 
 	<command name="ViewWebsiteNotificationForUpdatedDocumentInFolder" priority="4">
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -358,7 +343,7 @@
 			<var name="userEmailAddress" value="userea@liferay.com" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -396,14 +381,6 @@
 
 		<execute macro="Notifications#navigateToContent">
 			<var name="contentBody" value="DM Document Title Edit" />
-		</execute>
-
-		<execute macro="DMNavigator#gotoFolderPG">
-			<var name="dmFolderName" value="DM Folder Name" />
-		</execute>
-
-		<execute macro="DMNavigator#gotoDocumentPG">
-			<var name="dmDocumentTitle" value="DM Document Title Edit" />
 		</execute>
 
 		<execute macro="DMDocument#viewDocumentTitleCmdPG">

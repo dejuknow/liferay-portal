@@ -199,10 +199,17 @@ Format format = FastDateFormatFactoryUtil.getSimpleDateFormat(simpleDateFormatPa
 
 						var formInstance = Liferay.Form.get(formId);
 
-						if (formInstance) {
+						if (formInstance && formInstance.formValidator) {
 							formInstance.formValidator.validateField('<%= namespace + HtmlUtil.escapeAttribute(name) %>');
 						}
 					}
+				}
+			);
+
+			Liferay.once(
+				'screenLoad',
+				function() {
+					datePicker.destroy();
 				}
 			);
 

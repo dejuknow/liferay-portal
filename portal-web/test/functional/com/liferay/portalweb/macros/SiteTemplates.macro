@@ -8,7 +8,7 @@
 		<execute macro="ProductMenuHelper#openProductMenu" />
 
 		<execute macro="ProductMenuHelper#expandCategory">
-			<var name="category" value="Pages" />
+			<var name="category" value="Navigation" />
 		</execute>
 
 		<var name="key_page" value="${sitePageName}" />
@@ -20,7 +20,7 @@
 		<execute function="Type#clickAtSendKeys" locator1="TextInput#NAME" value1="${siteChildPageName}" />
 		<execute function="AssertClick" locator1="Button#ADD_PAGE_BTN" value1="Add Page" />
 
-		<execute macro="Alert#viewRequestCompletedSuccessMessage" />
+		<execute macro="Alert#viewSuccessMessage" />
 	</command>
 
 	<command name="addCP">
@@ -37,7 +37,7 @@
 			</then>
 		</if>
 
-		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
+		<execute macro="Button#clickSave" />
 
 		<execute macro="SiteAdmin#viewPortletTitle">
 			<var name="portletTitle" value="Site Template Settings" />
@@ -57,7 +57,7 @@
 		<execute macro="ProductMenuHelper#openProductMenu" />
 
 		<execute macro="ProductMenuHelper#expandCategory">
-			<var name="category" value="Pages" />
+			<var name="category" value="Navigation" />
 		</execute>
 
 		<var name="key_page" value="${sitePageName}" />
@@ -76,14 +76,14 @@
 					<equals arg1="${pageTemplateAutoApplyChanges}" arg2="true" />
 					<then>
 						<execute function="AssertTextEquals" locator1="SitePagesEditPage#PAGE_TYPE_TEMPLATE_AUTOMATICALLY_APPLY_CHANGES_LABEL"  value1="Automatically apply changes done to the page template." />
-						<execute function="Check" locator1="SitePagesEditPage#PAGE_TYPE_TEMPLATE_AUTOMATICALLY_APPLY_CHANGES_CHECKBOX" value1="${pageType}" />
+						<execute function="Check#checkToggleSwitch" locator1="SitePagesEditPage#PAGE_TYPE_TEMPLATE_AUTOMATICALLY_APPLY_CHANGES_CHECKBOX" value1="${pageType}" />
 					</then>
 				</if>
 
 				<if>
 					<equals arg1="${pageType}" arg2="Link to URL" />
 					<then>
-						<execute macro="SitePage#addSitePageTypeLinkToURLCP">
+						<execute macro="Page#_addPageTypeLinkToURL">
 							<var name="pageTypeDescription" value="${pageTypeDescription}" />
 							<var name="pageTypeURL" value="${pageTypeURL}" />
 						</execute>
@@ -130,7 +130,7 @@
 		<execute function="AssertClickNoError" locator1="MenuItem#DELETE" value1="Delete" />
 		<execute function="Confirm" value1="Are you sure you want to delete this? It will be deleted immediately." />
 
-		<execute macro="Alert#viewRequestCompletedSuccessMessage" />
+		<execute macro="Alert#viewSuccessMessage" />
 	</command>
 
 	<command name="editCP">
@@ -139,7 +139,7 @@
 		</execute>
 
 		<execute function="Type" locator1="TextInput#NAME" value1="${siteTemplateName} Edit" />
-		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
+		<execute macro="Button#clickSave" />
 	</command>
 
 	<command name="editTemplateStatusCP">
@@ -159,7 +159,7 @@
 			</then>
 		</if>
 
-		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
+		<execute macro="Button#clickSave" />
 	</command>
 
 	<command name="gotoSettingsCP">
@@ -193,8 +193,6 @@
 	</command>
 
 	<command name="resetPageChanges">
-		<execute function="Refresh" />
-
 		<execute function="Click" locator1="ControlMenu#INFO" />
 
 		<execute function="AssertTextEquals#assertPartialText" locator1="Message#CUSTOMIZED_PAGE_INFO" value1="This page has been changed since the last update from the site template." />
@@ -220,7 +218,7 @@
 				<execute function="Click" locator1="SiteTemplates#SITE_TEMPLATE_TABLE_ACTIONS" />
 				<execute function="AssertClickNoError" locator1="MenuItem#DELETE" value1="Delete" />
 				<execute function="Confirm" value1="Are you sure you want to delete this? It will be deleted immediately." />
-				<execute macro="Alert#viewRequestCompletedSuccessMessage" />
+				<execute macro="Alert#viewSuccessMessage" />
 			</then>
 		</while>
 	</command>
@@ -237,7 +235,7 @@
 			</then>
 		</if>
 
-		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
+		<execute macro="Button#clickSave" />
 	</command>
 
 	<command name="viewDefaultCP">

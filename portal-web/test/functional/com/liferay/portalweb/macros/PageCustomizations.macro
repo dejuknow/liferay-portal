@@ -2,7 +2,7 @@
 	<command name="enableSectionCustomizableCP">
 		<var name="key_columnId" value="${columnId}" />
 
-		<execute macro="ProductMenu#gotoEditPage">
+		<execute macro="SitePageNavigator#gotoEditPage">
 			<var name="page" value="${sitePageName}" />
 		</execute>
 
@@ -14,27 +14,38 @@
 			<var name="panelHeading" value="Customization Settings" />
 		</execute>
 
-		<execute function="Check" locator1="SitePagesEditPage#CUSTOMIZATION_SETTINGS_CUSTOMIZABLE_COLUMN" />
+		<execute function="Check#checkToggleSwitch" locator1="SitePagesEditPage#CUSTOMIZATION_SETTINGS_CUSTOMIZABLE_COLUMN" />
 
-		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
+		<execute macro="PortletEntry#save" />
 
-		<execute macro="Alert#viewRequestCompletedSuccessMessage" />
+		<execute macro="Navigator#gotoTab">
+			<var name="tab" value="Advanced" />
+		</execute>
 
 		<execute macro="Panel#expandPanel">
 			<var name="panelHeading" value="Customization Settings" />
 		</execute>
 
-		<execute function="AssertChecked" locator1="SitePagesEditPage#CUSTOMIZATION_SETTINGS_CUSTOMIZABLE_COLUMN" value1="Customizable" />
+		<execute function="Check#checkToggleSwitch" locator1="SitePagesEditPage#CUSTOMIZATION_SETTINGS_SHOW_CUSTOMIZABLE_SECTIONS" />
+
+		<execute function="AssertChecked" locator1="SitePagesEditPage#CUSTOMIZATION_SETTINGS_CUSTOMIZABLE_COLUMN" />
 	</command>
 
 	<command name="enableSectionCustomizablePG">
 		<var name="key_columnId" value="${columnId}" />
 
-		<execute function="Check" locator1="SitePagesEditPage#CUSTOMIZATION_SETTINGS_CUSTOMIZABLE_COLUMN_CHECKBOX" value1="Customizable" />
+		<execute function="Check#checkToggleSwitch" locator1="SitePagesEditPage#CUSTOMIZATION_SETTINGS_SHOW_CUSTOMIZABLE_SECTIONS" />
+
+		<execute function="Check#checkToggleSwitch" locator1="SitePagesEditPage#CUSTOMIZATION_SETTINGS_CUSTOMIZABLE_COLUMN_CHECKBOX" />
+
 		<execute function="AssertClick#pauseAssertTextClickAt" locator1="Button#SAVE" value1="Save" />
 	</command>
 
 	<command name="gotoCustomizationSettingsPG">
+		<execute macro="Navigator#gotoTab">
+			<var name="tab" value="Advanced" />
+		</execute>
+
 		<execute macro="Panel#expandPanel">
 			<var name="panelHeading" value="Customization Settings" />
 		</execute>

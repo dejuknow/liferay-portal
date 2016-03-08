@@ -15,7 +15,7 @@
 package com.liferay.sync.engine.filesystem;
 
 import com.liferay.sync.engine.filesystem.listener.WatchEventListener;
-import com.liferay.sync.engine.filesystem.util.WatcherRegistry;
+import com.liferay.sync.engine.filesystem.util.WatcherManager;
 import com.liferay.sync.engine.model.SyncAccount;
 import com.liferay.sync.engine.model.SyncFile;
 import com.liferay.sync.engine.model.SyncSite;
@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
@@ -50,30 +51,34 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class Watcher implements Runnable {
 
-	public Watcher(Path filePath, WatchEventListener watchEventListener)
-		throws IOException {
-
+	public Watcher(Path filePath, WatchEventListener watchEventListener) {
 		_baseFilePath = filePath;
 		_watchEventListener = watchEventListener;
 
 		init();
+	}
 
-		WatcherRegistry.register(_watchEventListener.getSyncAccountId(), this);
+	public void addDeletedFilePathName(String filePathName) {
+		_deletedFilePathNames.add(filePathName);
+	}
+
+	public void addDownloadedFilePathName(String filePathName) {
+		_downloadedFilePathNames.add(filePathName);
 	}
 
 	public void close() {
-		WatcherRegistry.unregister(_watchEventListener.getSyncAccountId());
-	}
-
-	public List<String> getDeletedFilePathNames() {
-		return _deletedFilePathNames;
-	}
-
-	public List<String> getDownloadedFilePathNames() {
-		return _downloadedFilePathNames;
+		WatcherManager.removeWatcher(_watchEventListener.getSyncAccountId());
 	}
 
 	public abstract void registerFilePath(Path filePath) throws IOException;
+
+	public void removeDeletedFilePathName(String filePathName) {
+		_deletedFilePathNames.remove(filePathName);
+	}
+
+	public void removeDownloadedFilePathName(String filePathName) {
+		_downloadedFilePathNames.remove(filePathName);
+	}
 
 	public abstract void unregisterFilePath(Path filePath);
 
@@ -256,8 +261,7 @@ public abstract class Watcher implements Runnable {
 		SyncAccount syncAccount = SyncAccountService.fetchSyncAccount(
 			_watchEventListener.getSyncAccountId());
 
-		Path syncAccountFilePath = java.nio.file.Paths.get(
-			syncAccount.getFilePathName());
+		Path syncAccountFilePath = Paths.get(syncAccount.getFilePathName());
 
 		if (!FileUtil.exists(syncAccountFilePath)) {
 			if (_logger.isTraceEnabled()) {
@@ -327,7 +331,12 @@ public abstract class Watcher implements Runnable {
 
 			removeCreatedFilePathName(filePath.toString());
 
-			if (_deletedFilePathNames.remove(filePath.toString())) {
+			if (_deletedFilePathNames.remove(filePath.toString()) ||
+				FileUtil.isIgnoredFileName(
+					String.valueOf(filePath.getFileName())) ||
+				FileUtil.isHidden(filePath) || FileUtil.isShortcut(filePath) ||
+				FileUtil.isTempFile(filePath)) {
+
 				return;
 			}
 
@@ -345,7 +354,9 @@ public abstract class Watcher implements Runnable {
 				 !FileUtil.isValidChecksum(filePath)) ||
 				FileUtil.isIgnoredFileName(
 					String.valueOf(filePath.getFileName())) ||
-				Files.notExists(filePath) || Files.isDirectory(filePath)) {
+				Files.notExists(filePath) || Files.isDirectory(filePath) ||
+				FileUtil.isHidden(filePath) || FileUtil.isShortcut(filePath) ||
+				FileUtil.isTempFile(filePath)) {
 
 				return;
 			}
@@ -355,6 +366,12 @@ public abstract class Watcher implements Runnable {
 		else if (eventType.equals(SyncWatchEvent.EVENT_TYPE_RENAME_FROM)) {
 			removeCreatedFilePathName(filePath.toString());
 
+			if (FileUtil.isHidden(filePath) || FileUtil.isShortcut(filePath) ||
+				FileUtil.isTempFile(filePath)) {
+
+				return;
+			}
+
 			processMissingFilePath(filePath);
 
 			fireWatchEventListener(
@@ -362,7 +379,10 @@ public abstract class Watcher implements Runnable {
 		}
 		else if (eventType.equals(SyncWatchEvent.EVENT_TYPE_RENAME_TO)) {
 			if (_downloadedFilePathNames.remove(filePath.toString()) ||
-				isIgnoredFilePath(filePath)) {
+				FileUtil.isIgnoredFileName(
+					String.valueOf(filePath.getFileName())) ||
+				Files.notExists(filePath) || Files.isDirectory(filePath) ||
+				FileUtil.isHidden(filePath) || FileUtil.isShortcut(filePath)) {
 
 				return;
 			}

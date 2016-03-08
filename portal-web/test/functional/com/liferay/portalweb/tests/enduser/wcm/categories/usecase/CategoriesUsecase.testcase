@@ -85,7 +85,7 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -119,7 +119,7 @@
 			<var name="pageName" value="Category Page Name" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Category Page Name" />
 		</execute>
 
@@ -151,7 +151,7 @@
 			<var name="vocabularyName" value="Vocabulary Name" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Category Page Name" />
 		</execute>
 
@@ -164,7 +164,7 @@
 			<var name="userLoginFullName" value="userfn userln" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Category Page Name" />
 		</execute>
 
@@ -201,7 +201,6 @@
 		</execute>
 
 		<execute macro="Page#add">
-			<var name="page" value="Public Pages" />
 			<var name="pageName" value="${pageName}" />
 			<var name="siteName" value="${siteName}" />
 		</execute>
@@ -235,7 +234,7 @@
 			<var name="site" value="${siteName}" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -266,6 +265,7 @@
 			<var name="permissionNavigationKey" value="SITE_ADMIN_CONTENT_CATEGORIES" />
 			<var name="permissionNavigationValue" value="Categories" />
 			<var name="roleName" value="Category Role Name" />
+			<var name="roleType" value="Site" />
 		</execute>
 
 		<execute macro="ProductMenu#gotoControlPanelUsers">
@@ -278,6 +278,7 @@
 			<var name="permissionNavigationKey" value="SITE_ADMIN_CONTENT_CATEGORIES" />
 			<var name="permissionNavigationValue" value="Categories" />
 			<var name="roleName" value="Category Role Name" />
+			<var name="roleType" value="Site" />
 		</execute>
 
 		<execute macro="ProductMenu#gotoControlPanelUsers">
@@ -290,6 +291,7 @@
 			<var name="permissionNavigationKey" value="SITE_ADMIN_CONTENT_CATEGORIES" />
 			<var name="permissionNavigationValue" value="Categories" />
 			<var name="roleName" value="Category Role Name" />
+			<var name="roleType" value="Site" />
 		</execute>
 
 		<execute macro="ProductMenu#gotoControlPanelUsers">
@@ -302,6 +304,7 @@
 			<var name="permissionNavigationKey" value="SITE_ADMIN_CONTENT_CATEGORIES" />
 			<var name="permissionNavigationValue" value="Categories" />
 			<var name="roleName" value="Category Role Name" />
+			<var name="roleType" value="Site" />
 		</execute>
 
 		<execute macro="ProductMenu#gotoControlPanelUsers">
@@ -314,6 +317,7 @@
 			<var name="permissionNavigationKey" value="SITE_ADMIN_CONTENT_CATEGORIES" />
 			<var name="permissionNavigationValue" value="Categories" />
 			<var name="roleName" value="Category Role Name" />
+			<var name="roleType" value="Site" />
 		</execute>
 
 		<execute macro="ProductMenu#gotoControlPanelUsers">
@@ -576,7 +580,7 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -867,7 +871,6 @@
 		</execute>
 
 		<execute macro="Page#add">
-			<var name="page" value="Public Pages" />
 			<var name="pageName" value="Test Page Name" />
 			<var name="siteName" value="Site Name" />
 		</execute>
@@ -960,7 +963,7 @@
 
 		<execute function="AssertTextEquals" locator1="SitePagesExport#CURRENT_AND_PREVIOUS_STATUS" value1="Successful" />
 
-		<var method="selenium#getElementText('//tr/td[5]/span/a')" name="valueName" />
+		<var method="selenium#getText('//tr/td[5]/span/a')" name="valueName" />
 
 		<echo message="value name ${valueName}" />
 
@@ -1245,7 +1248,7 @@
 			<var name="vocabularyName" value="Topic" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Search Page" />
 		</execute>
 

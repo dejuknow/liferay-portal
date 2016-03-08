@@ -19,7 +19,6 @@
 		</execute>
 
 		<execute macro="Page#add">
-			<var name="page" value="Public Pages" />
 			<var name="pageName" value="Test Page" />
 			<var name="siteName" value="Site Name" />
 		</execute>
@@ -61,7 +60,7 @@
 			<var name="webContentTitle" value="Web Content Title" />
 		</execute>
 
-		<execute macro="WebContent#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="WebContent#deleteWithDisabledRB">
 			<var name="entryTitle" value="Web Content Title" />
@@ -617,8 +616,6 @@
 			<var name="portletName" value="Web Content Display" />
 		</execute>
 
-		<execute function="Refresh" />
-
 		<execute macro="WebContent#addPGViaWCD">
 			<var name="webContentContent" value="WC Content" />
 			<var name="webContentTitle" value="WC Title" />
@@ -628,7 +625,7 @@
 			<var name="siteName" value="Site Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesPublishingTools">
+		<execute macro="ProductMenu#gotoSitesPublishing">
 			<var name="portlet" value="Staging" />
 		</execute>
 
@@ -647,8 +644,6 @@
 		<execute macro="Portlet#addPG">
 			<var name="portletName" value="Blogs" />
 		</execute>
-
-		<execute function="Refresh" />
 
 		<execute macro="Blogs#addEntry">
 			<var name="entryContent" value="Blogs Entry Content" />
@@ -754,7 +749,7 @@
 			<var name="templateFieldNames" value="Text" />
 		</execute>
 
-		<execute macro="WebContentTemplates#save" />
+		<execute macro="PortletEntry#save" />
 
 		<execute macro="Navigator#openSiteURL">
 			<var name="siteName" value="Site Name" />
@@ -773,7 +768,7 @@
 			<var name="webContentTitle" value="WC WebContent Title" />
 		</execute>
 
-		<execute macro="WebContent#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="WebContent#viewTitle">
 			<var name="webContentTitle" value="WC WebContent Title" />
@@ -1130,8 +1125,7 @@
 			<var name="siteScopeName" value="Site Name" />
 		</execute>
 
-		<execute macro="MessageboardsThread#addCPWithAttachment">
-			<var name="mbAttachmentFile" value="Document_1.doc" />
+		<execute macro="MessageboardsThread#addCP">
 			<var name="threadBody" value="MB Body" />
 			<var name="threadSubject" value="MB Subject" />
 		</execute>
@@ -1191,33 +1185,16 @@
 		</execute>
 
 		<execute macro="MessageboardsThread#viewCP">
-			<var name="mbAttachmentFile" value="1 Recently Removed Attachment" />
 			<var name="postsNumber" value="2" />
 			<var name="threadBody" value="MB Body" />
 			<var name="threadSubject" value="MB Subject" />
 			<var name="userName" value="Test Test" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#gotoCP">
-			<var name="categoryName" value="MB Category Name" />
-			<var name="siteScopeName" value="Site Name" />
 		</execute>
 
 		<execute macro="MessageboardsThread#viewReplyCP">
-			<var name="postsNumber" value="2" />
-			<var name="threadBody" value="MB Body" />
-			<var name="threadBody2" value="MB Body Reply" />
+			<var name="threadBody" value="MB Body Reply" />
 			<var name="threadSubject" value="MB Subject" />
 			<var name="userName" value="Test Test" />
-			<var name="userName2" value="Test Test" />
 		</execute>
 	</command>
 
@@ -1255,7 +1232,7 @@
 			<var name="webContentTitle" value="Web Content Title" />
 		</execute>
 
-		<execute macro="WebContent#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="WebContent#viewTitle">
 			<var name="webContentTitle" value="Web Content Title" />
@@ -1342,7 +1319,7 @@
 			<var name="webContentTitle" value="Web Content Title" />
 		</execute>
 
-		<execute macro="WebContent#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="WebContent#viewTitle">
 			<var name="webContentTitle" value="Web Content Title" />

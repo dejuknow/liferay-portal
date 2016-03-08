@@ -13,7 +13,7 @@
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -45,7 +45,7 @@
 	</tear-down>
 
 	<command name="AddFormTemplate" priority="3">
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -71,7 +71,7 @@
 
 		<execute macro="DDLList#saveViaDDLDisplayPG" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -111,7 +111,7 @@
 			<var name="ddlFormTemplateName" value="Form Template" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -132,7 +132,7 @@
 			<var name="fieldName" value="Text" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 	</command>
 
 	<command name="AddList" priority="4">
@@ -160,7 +160,7 @@
 
 		<execute macro="DDLDataDefinition#saveCP" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -174,7 +174,7 @@
 
 		<execute macro="DDLList#saveViaDDLDisplayPG" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -213,7 +213,7 @@
 
 		<execute macro="DDLDataDefinition#saveCP" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -227,7 +227,7 @@
 
 		<execute macro="DDLList#saveViaDDLDisplayPG" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -242,7 +242,7 @@
 			<var name="fieldName" value="${fieldName}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="DDLRecord#viewViaDDLDisplayPG">
 			<var name="ddlListName" value="${ddlListName}" />
@@ -289,7 +289,7 @@
 
 		<execute macro="DDLList#saveCP" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -297,7 +297,7 @@
 			<var name="ddlListName" value="DDL List" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -312,7 +312,7 @@
 			<var name="fieldName" value="DocumentsAndMedia" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="DDLRecord#viewViaDDLDisplayPG">
 			<var name="ddlListName" value="DDL List" />
@@ -349,7 +349,7 @@
 
 		<execute macro="DDLDataDefinition#save" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -363,7 +363,7 @@
 
 		<execute macro="DDLList#saveViaDDLDisplayPG" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -384,9 +384,9 @@
 			<var name="fieldName" value="Integer" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -400,7 +400,7 @@
 	</command>
 
 	<command name="AddVelocityDisplayTemplate" priority="3">
-		<property name="custom.properties" value="freemarker.engine.restricted.variables=${line.separator}velocity.engine.restricted.variables=" />
+		<property name="custom.properties" value="freemarker.engine.restricted.variables=${line.separator}restricted.variables=" />
 
 		<var name="ddlDisplayTemplateScript">
 			<![CDATA[
@@ -416,7 +416,7 @@
 			]]>
 		</var>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -436,7 +436,7 @@
 
 		<execute macro="DDLList#saveViaDDLDisplayPG" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -448,9 +448,9 @@
 			<var name="fieldName" value="Name" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -460,7 +460,7 @@
 			<var name="ddlDisplayTemplateScript" value="${ddlDisplayTemplateScript}" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -472,7 +472,7 @@
 			<var name="ddlDisplayTemplateName" value="Velocity Template" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -504,7 +504,7 @@
 
 		<execute macro="DDLDataDefinition#saveCP" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -518,7 +518,7 @@
 
 		<execute macro="DDLList#saveViaDDLDisplayPG" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -528,7 +528,7 @@
 			<var name="ddlListName" value="${ddlListName}" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -562,7 +562,7 @@
 
 		<execute macro="DDLDataDefinition#saveCP" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -576,7 +576,7 @@
 
 		<execute macro="DDLList#saveViaDDLDisplayPG" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -586,7 +586,7 @@
 			<var name="ddlListName" value="${ddlListName}" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -619,7 +619,7 @@
 
 		<execute macro="DDLDataDefinition#saveCP" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -633,7 +633,7 @@
 
 		<execute macro="DDLList#saveViaDDLDisplayPG" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -648,7 +648,7 @@
 			<var name="fieldName" value="${fieldName}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="DDLRecord#deleteViaDDLDisplayPG">
 			<var name="ddlDataDefinitionName" value="${ddlDataDefinitionName}" />
@@ -709,7 +709,7 @@
 
 		<execute macro="DDLList#saveCP" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -721,7 +721,7 @@
 			<var name="ddlFormTemplateName" value="DDL Form Template" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -735,9 +735,9 @@
 			<var name="fieldName" value="Text" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -776,7 +776,7 @@
 
 		<execute macro="DDLDataDefinition#saveCP" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -791,7 +791,7 @@
 
 		<execute macro="DDLList#saveViaDDLDisplayPG" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -801,7 +801,7 @@
 			<var name="ddlListNameEdit" value="${ddlListNameEdit}" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -837,7 +837,7 @@
 
 		<execute macro="DDLDataDefinition#saveCP" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -851,7 +851,7 @@
 
 		<execute macro="DDLList#saveViaDDLDisplayPG" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -866,9 +866,9 @@
 			<var name="fieldName" value="${fieldName}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -882,7 +882,7 @@
 			<var name="fieldName" value="${fieldName}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="DDLRecord#viewViaDDLDisplayPG">
 			<var name="ddlListName" value="${ddlListName}" />
@@ -919,7 +919,7 @@
 
 		<execute macro="DDLDataDefinition#saveCP" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -933,7 +933,7 @@
 
 		<execute macro="DDLList#saveViaDDLDisplayPG" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -948,9 +948,9 @@
 			<var name="fieldName" value="${fieldName}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -964,7 +964,7 @@
 			<var name="fieldName" value="${fieldName}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="DDLRecord#viewViaDDLDisplayPG">
 			<var name="ddlListName" value="${ddlListName}" />
@@ -1031,9 +1031,9 @@
 			<var name="fieldName" value="Text" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Dynamic Data Lists Display Page" />
 		</execute>
 
@@ -1041,7 +1041,7 @@
 			<var name="ddlListName" value="DDL List Name" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Dynamic Data Lists Display Page" />
 		</execute>
 
@@ -1064,7 +1064,7 @@
 			<var name="field" value="Text" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Dynamic Data Lists Display Page" />
 		</execute>
 
@@ -1180,9 +1180,9 @@
 			<var name="fieldName" value="Text" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Dynamic Data Lists Display Page" />
 		</execute>
 
@@ -1190,7 +1190,7 @@
 			<var name="ddlListName" value="DDL List Name" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Dynamic Data Lists Display Page" />
 		</execute>
 
@@ -1268,7 +1268,7 @@
 
 		<execute macro="DDLList#saveCP" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -1297,7 +1297,7 @@
 
 		<execute macro="DDLList#saveViaDDLDisplayPG" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -1315,7 +1315,7 @@
 
 		<execute macro="DDLList#saveViaDDLDisplayPG" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -1361,7 +1361,7 @@
 
 		<execute macro="DDLDataDefinition#saveCP" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -1375,7 +1375,7 @@
 
 		<execute macro="DDLList#saveViaDDLDisplayPG" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -1391,7 +1391,7 @@
 			<var name="fieldPredefinedValue" value="${fieldPredefinedValue}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="DDLRecord#viewViaDDLDisplayPG">
 			<var name="ddlListName" value="${ddlListName}" />
@@ -1400,7 +1400,7 @@
 			<var name="fieldFieldLabel" value="${fieldFieldLabel}" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -1422,7 +1422,7 @@
 			<var name="fieldName" value="${fieldName}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="DDLRecord#viewViaDDLDisplayPG">
 			<var name="ddlListName" value="${ddlListName}" />
@@ -1474,7 +1474,7 @@
 
 		<execute macro="DDLDataDefinition#saveCP" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -1488,7 +1488,7 @@
 
 		<execute macro="DDLList#saveViaDDLDisplayPG" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -1504,7 +1504,7 @@
 			<var name="fieldPredefinedValue" value="${fieldPredefinedValue}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="DDLRecord#viewViaDDLDisplayPG">
 			<var name="ddlListName" value="${ddlListName}" />
@@ -1513,7 +1513,7 @@
 			<var name="fieldFieldLabel" value="${fieldFieldLabel}" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -1535,7 +1535,7 @@
 			<var name="fieldName" value="${fieldName}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="DDLRecord#viewViaDDLDisplayPG">
 			<var name="ddlListName" value="${ddlListName}" />
@@ -1579,7 +1579,7 @@
 
 		<execute macro="DDLDataDefinition#saveCP" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -1593,7 +1593,7 @@
 
 		<execute macro="DDLList#saveViaDDLDisplayPG" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -1609,7 +1609,7 @@
 			<var name="fieldPredefinedValue" value="${fieldPredefinedValue}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="DDLRecord#viewViaDDLDisplayPG">
 			<var name="ddlListName" value="${ddlListName}" />
@@ -1618,7 +1618,7 @@
 			<var name="fieldFieldLabel" value="${fieldFieldLabel}" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -1640,7 +1640,7 @@
 			<var name="fieldName" value="${fieldName}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="DDLRecord#viewViaDDLDisplayPG">
 			<var name="ddlListName" value="${ddlListName}" />
@@ -1686,16 +1686,16 @@
 			<var name="portlet" value="Dynamic Data Lists" />
 		</execute>
 
-		<execute macro="DDLDataDefinition#editPermissionsCP">
+		<execute macro="DDLNavigator#gotoDataDefinitionPermissions">
 			<var name="ddlDataDefinitionName" value="${ddlDataDefinitionName}" />
 		</execute>
 
-		<execute macro="PermissionsInline#addOrRemoveViewPermissionFromAllRoles">
+		<execute macro="DDLDataDefinition#editPermissionsCP">
 			<var name="addOrRemoveViewPermission" value="Add" />
 			<var name="roleList" value="Guest" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -1710,7 +1710,7 @@
 
 		<execute macro="DDLList#saveViaDDLDisplayPG" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -1725,11 +1725,11 @@
 			<var name="fieldName" value="${fieldName}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="User#logoutPG" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -1776,7 +1776,7 @@
 
 		<execute macro="DDLDataDefinition#saveCP" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -1790,7 +1790,7 @@
 
 		<execute macro="DDLList#saveViaDDLDisplayPG" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -1806,7 +1806,7 @@
 			<var name="fieldPredefinedValue" value="${fieldPredefinedValue}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="DDLRecord#viewViaDDLDisplayPG">
 			<var name="ddlListName" value="${ddlListName}" />
@@ -1816,7 +1816,7 @@
 			<var name="fieldFieldLabel" value="${fieldFieldLabel}" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -1838,7 +1838,7 @@
 			<var name="fieldName" value="${fieldName}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="DDLRecord#viewViaDDLDisplayPG">
 			<var name="ddlListName" value="${ddlListName}" />
@@ -1875,7 +1875,7 @@
 
 		<execute macro="DDLDataDefinition#saveCP" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -1889,7 +1889,7 @@
 
 		<execute macro="DDLList#saveViaDDLDisplayPG" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -1904,14 +1904,16 @@
 			<var name="fieldName" value="${fieldName}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
-		<execute function="AssertClick" locator1="//div[contains(@id,'ocerSearchContainer')]//tr/td[1]/a" value1="${ddlRecordFieldData}" />
-		<execute function="AssertTextEquals" locator1="DDLRecord#FIELD_1" value1="Text ${ddlRecordFieldData}" />
+		<execute macro="DDLRecord#viewViaAnchorLink">
+			<var name="ddlRecordFieldData" value="${ddlRecordFieldData}" />
+			<var name="fieldFieldLabel" value="${fieldFieldLabel}" />
+		</execute>
 	</command>
 
 	<command name="ViewListRecordWithUploadedFreeMarkerDisplayTemplate" priority="5">
-		<property name="custom.properties" value="freemarker.engine.restricted.variables=${line.separator}velocity.engine.restricted.variables=" />
+		<property name="custom.properties" value="freemarker.engine.restricted.variables=${line.separator}restricted.variables=" />
 		<property name="portal.acceptance" value="true" />
 
 		<var name="ddlDataDefinitionName" value="Data Definition" />
@@ -1986,7 +1988,7 @@
 			<var name="fieldName" value="${fieldName}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -2005,9 +2007,9 @@
 			<var name="fieldName" value="${fieldName}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -2019,7 +2021,7 @@
 			<var name="ddlDisplayTemplateName" value="${ddlDisplayTemplateName}" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -2033,7 +2035,7 @@
 	</command>
 
 	<command name="ViewListRecordWithUploadedVelocityDisplayTemplate" priority="3">
-		<property name="custom.properties" value="freemarker.engine.restricted.variables=${line.separator}velocity.engine.restricted.variables=" />
+		<property name="custom.properties" value="freemarker.engine.restricted.variables=${line.separator}restricted.variables=" />
 
 		<var name="ddlDataDefinitionName" value="Data Definition" />
 		<var name="ddlDisplayTemplateLanguage" value="Velocity (.vm)" />
@@ -2107,7 +2109,7 @@
 			<var name="fieldName" value="${fieldName}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -2126,9 +2128,9 @@
 			<var name="fieldName" value="${fieldName}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -2140,7 +2142,7 @@
 			<var name="ddlDisplayTemplateName" value="${ddlDisplayTemplateName}" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -2149,7 +2151,7 @@
 	</command>
 
 	<command name="ViewListRecordWithVelocityDisplayTemplate" priority="4">
-		<property name="custom.properties" value="freemarker.engine.restricted.variables=${line.separator}velocity.engine.restricted.variables=" />
+		<property name="custom.properties" value="freemarker.engine.restricted.variables=${line.separator}restricted.variables=" />
 
 		<var name="ddlDataDefinitionDescription" value="Data Definition Description" />
 		<var name="ddlDataDefinitionName" value="Data Definition" />
@@ -2241,7 +2243,7 @@
 			<var name="fieldName" value="${fieldName}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -2260,9 +2262,9 @@
 			<var name="fieldName" value="${fieldName}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -2274,7 +2276,7 @@
 			<var name="ddlDisplayTemplateName" value="${ddlDisplayTemplateName}" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -2316,7 +2318,7 @@
 
 		<execute macro="DDLDataDefinition#saveCP" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -2330,7 +2332,7 @@
 
 		<execute macro="DDLList#saveViaDDLDisplayPG" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -2346,7 +2348,7 @@
 			<var name="fieldPredefinedValue" value="${fieldPredefinedValue}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="DDLRecord#viewViaDDLDisplayPG">
 			<var name="ddlListName" value="${ddlListName}" />
@@ -2356,7 +2358,7 @@
 			<var name="fieldFieldLabel" value="${fieldFieldLabel}" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -2378,7 +2380,7 @@
 			<var name="fieldName" value="${fieldName}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="DDLRecord#viewViaDDLDisplayPG">
 			<var name="ddlListName" value="${ddlListName}" />
@@ -2392,7 +2394,7 @@
 	<command name="ViewPortletWithSpreadsheetViewDisabled" priority="4">
 		<description message="This is a use case for LPS-59146." />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -2406,7 +2408,7 @@
 
 		<execute macro="DDLList#saveViaDDLDisplayPG" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -2416,7 +2418,7 @@
 			<var name="ddlListName" value="List Name" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -2428,7 +2430,7 @@
 			<var name="ddlListName" value="List Name" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -2471,7 +2473,7 @@
 
 		<execute macro="DDLDataDefinition#saveCP" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -2485,7 +2487,7 @@
 
 		<execute macro="DDLList#saveViaDDLDisplayPG" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -2501,7 +2503,7 @@
 			<var name="fieldPredefinedValue" value="${fieldPredefinedValue}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="DDLRecord#viewViaDDLDisplayPG">
 			<var name="ddlListName" value="${ddlListName}" />
@@ -2510,7 +2512,7 @@
 			<var name="fieldFieldLabel" value="${fieldFieldLabel}" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -2532,7 +2534,7 @@
 			<var name="fieldName" value="${fieldName}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="DDLRecord#viewViaDDLDisplayPG">
 			<var name="ddlListName" value="${ddlListName}" />
@@ -2576,7 +2578,7 @@
 
 		<execute macro="DDLDataDefinition#saveCP" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -2590,7 +2592,7 @@
 
 		<execute macro="DDLList#saveViaDDLDisplayPG" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -2606,7 +2608,7 @@
 			<var name="fieldPredefinedValue" value="${fieldPredefinedValue}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="DDLRecord#viewViaDDLDisplayPG">
 			<var name="ddlListName" value="${ddlListName}" />
@@ -2615,7 +2617,7 @@
 			<var name="fieldFieldLabel" value="${fieldFieldLabel}" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -2637,7 +2639,7 @@
 			<var name="fieldName" value="${fieldName}" />
 		</execute>
 
-		<execute macro="DDLRecord#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="DDLRecord#viewViaDDLDisplayPG">
 			<var name="ddlListName" value="${ddlListName}" />

@@ -80,7 +80,7 @@
 			<var name="wikiPageTitle" value="${wikiPageTitle}" />
 		</execute>
 
-		<execute macro="WikiPage#viewAttachmentPG">
+		<execute macro="WikiPage#viewAttachmentPGViaEdit">
 			<var name="attachmentFileName" value="${attachmentFileName}" />
 			<var name="attachmentFileSize" value="${attachmentFileSize}" />
 			<var name="wikiPageTitle" value="FrontPage" />
@@ -156,7 +156,7 @@
 			<var name="wikiPageTitle" value="${wikiPageTitle}" />
 		</execute>
 
-		<execute macro="WikiPage#viewAttachmentPG">
+		<execute macro="WikiPage#viewAttachmentPGViaEdit">
 			<var name="attachmentFileName" value="${attachmentFileName1}" />
 			<var name="attachmentFileSize" value="${attachmentFileSize1}" />
 			<var name="numberOfAttachments" value="3" />
@@ -172,7 +172,7 @@
 			<var name="wikiPageTitle" value="${wikiPageTitle}" />
 		</execute>
 
-		<execute macro="WikiPage#viewAttachmentPG">
+		<execute macro="WikiPage#viewAttachmentPGViaEdit">
 			<var name="attachmentFileName" value="${attachmentFileName2}" />
 			<var name="attachmentFileSize" value="${attachmentFileSize2}" />
 			<var name="numberOfAttachments" value="3" />
@@ -188,7 +188,7 @@
 			<var name="wikiPageTitle" value="${wikiPageTitle}" />
 		</execute>
 
-		<execute macro="WikiPage#viewAttachmentPG">
+		<execute macro="WikiPage#viewAttachmentPGViaEdit">
 			<var name="attachmentFileName" value="${attachmentFileName3}" />
 			<var name="attachmentFileSize" value="${attachmentFileSize3}" />
 			<var name="numberOfAttachments" value="3" />
@@ -713,41 +713,6 @@
 		</execute>
 	</command>
 
-	<command name="AddSOWikiFrontPageDraft" priority="4">
-		<var name="wikiPageContent" value="Wiki FrontPage Content" />
-		<var name="wikiPageTitle" value="FrontPage" />
-
-		<execute macro="Page#gotoPG">
-			<var name="siteName" value="${siteName}" />
-			<var name="siteURL" value="true" />
-		</execute>
-
-		<execute macro="WikiPage#saveAsDraftFrontPagePG">
-			<var name="wikiPageContent" value="${wikiPageContent}" />
-		</execute>
-
-		<execute macro="Page#gotoPG">
-			<var name="siteName" value="${siteName}" />
-			<var name="siteURL" value="true" />
-		</execute>
-
-		<execute macro="WikiPage#viewSaveAsDraftFrontPagePG">
-			<var name="wikiPageContent" value="${wikiPageContent}" />
-			<var name="wikiPageRevision" value="1.1" />
-			<var name="wikiPageTitle" value="${wikiPageTitle}" />
-			<var name="wikiPageUsername" value="${adminName}" />
-		</execute>
-
-		<execute macro="Page#gotoPG">
-			<var name="siteName" value="${siteName}" />
-			<var name="siteURL" value="true" />
-		</execute>
-
-		<execute macro="WikiPage#addFrontPageDraftPG">
-			<var name="wikiPageContent" value="${wikiPageContent}" />
-		</execute>
-	</command>
-
 	<command name="AddSOWikiFrontPageTag" priority="3">
 		<var name="tagName" value="Tag Name 1" />
 		<var name="wikiPageContent" value="Wiki FrontPage Content" />
@@ -920,9 +885,9 @@
 			<var name="pageFormat" value="Creole" />
 		</execute>
 
-		<execute function="Type#typeAlloyEditor" locator1="AlloyEditor#CONTENT_FIELD" value1="${wikiPageContent1}${wikiPageContent2}" />
+		<execute function="Type#typeEditor" locator1="AlloyEditor#CONTENT_FIELD" value1="${wikiPageContent1}${wikiPageContent2}" />
 
-		<execute macro="WikiEntry#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="Page#gotoPG">
 			<var name="siteName" value="${siteName}" />
@@ -979,7 +944,7 @@
 
 		<execute function="Type#typeAceEditor" locator1="TextArea#ACE_EDITOR" value1="${welcomeToLiferay}" />
 
-		<execute macro="WikiEntry#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="Page#gotoPG">
 			<var name="siteName" value="${siteName}" />
@@ -1035,7 +1000,7 @@
 			<var name="wikiPageContent" value="${wikiPageMediaWikiContent}" />
 		</execute>
 
-		<execute macro="WikiEntry#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="Page#gotoPG">
 			<var name="siteName" value="${siteName}" />
@@ -1636,7 +1601,7 @@
 			<var name="wikiPageTitle" value="${wikiPageTitle}" />
 		</execute>
 
-		<execute macro="WikiPage#editCommentPG">
+		<execute macro="WikiPage#editComment">
 			<var name="commentBody" value="${commentBody}" />
 			<var name="commentBodyEdit" value="${commentBodyEdit}" />
 			<var name="wikiPageTitle" value="${wikiPageTitle}" />
@@ -1911,7 +1876,7 @@
 			<var name="wikiPageTitle" value="${wikiPageTitle}" />
 		</execute>
 
-		<execute macro="WikiPage#viewAttachmentPG">
+		<execute macro="WikiPage#viewAttachmentPGViaEdit">
 			<var name="attachmentFileName" value="${documentName1}" />
 			<var name="numberOfAttachments" value="2" />
 			<var name="wikiPageTitle" value="FrontPage" />
@@ -1926,7 +1891,7 @@
 			<var name="wikiPageTitle" value="${wikiPageTitle}" />
 		</execute>
 
-		<execute macro="WikiPage#viewAttachmentPG">
+		<execute macro="WikiPage#viewAttachmentPGViaEdit">
 			<var name="attachmentFileName" value="${documentName2}" />
 			<var name="numberOfAttachments" value="2" />
 			<var name="wikiPageTitle" value="FrontPage" />
@@ -1941,7 +1906,7 @@
 			<var name="wikiPageTitle" value="${wikiPageTitle}" />
 		</execute>
 
-		<execute macro="WikiPage#viewAttachmentPG">
+		<execute macro="WikiPage#viewAttachmentPGViaEdit">
 			<var name="attachmentFileName" value="${documentName3}" />
 			<var name="numberOfAttachments" value="1" />
 			<var name="wikiPageTitle" value="${wikiChildPageTitle}" />
@@ -2048,7 +2013,7 @@
 		</execute>
 
 		<execute function="AssertTextNotPresent" value1="${wikiChildPageTitle2}" />
-		<execute function="AssertClick" locator1="Wiki#NAVIGATION_ALL_PAGES" value1="All Pages" />
+		<execute function="AssertClick" locator1="WikiTable#NAVIGATION_ALL_PAGES" value1="All Pages" />
 
 		<execute function="AssertTextNotPresent" value1="${wikiChildPageTitle2}" />
 	</command>
@@ -3240,8 +3205,8 @@
 
 		<var name="key_attachmentFileName" value="${attachmentFileName}" />
 
-		<execute function="AssertElementNotPresent" locator1="Wiki#LINK_EDIT" value1="Edit" />
-		<execute function="AssertClick" locator1="Wiki#LINK_ATTACHMENTS" value1="1 Attachment" />
+		<execute function="AssertElementNotPresent" locator1="Link#EDIT" value1="Edit" />
+		<execute function="AssertClick" locator1="Link#ATTACHMENTS" value1="1 Attachment" />
 
 		<execute function="AssertElementNotPresent" locator1="Button#ADD_ATTACHMENTS" />
 		<execute function="AssertElementNotPresent" locator1="Wiki#ATTACHMENT_TABLE_MOVE_TO_THE_RECYCLE_BIN" value1="Move to the Recycle Bin" />
@@ -3253,13 +3218,13 @@
 
 		<var name="key_wikiPageTitle" value="${wikiChildPageTitle}" />
 
-		<execute function="AssertClick" locator1="Wiki#NAVIGATION_ALL_PAGES" value1="All Pages" />
+		<execute function="AssertClick" locator1="WikiTable#NAVIGATION_ALL_PAGES" value1="All Pages" />
 
-		<execute function="AssertElementNotPresent" locator1="Wiki#ALL_PAGES_TABLE_VERTICAL_ELLIPSIS" />
+		<execute function="AssertElementNotPresent" locator1="WikiTable#ALL_PAGES_VERTICAL_ELLIPSIS" />
 		<execute function="AssertElementNotPresent" locator1="MenuItem#EDIT" />
-		<execute function="AssertClick" locator1="Wiki#ALL_PAGES_TABLE_PAGE_NAME" value1="${wikiChildPageTitle}" />
+		<execute function="AssertClick" locator1="WikiTable#ALL_PAGES_WIKI_PAGE_TITLE" value1="${wikiChildPageTitle}" />
 
-		<execute function="AssertElementNotPresent" locator1="Wiki#LINK_EDIT" value1="Edit" />
+		<execute function="AssertElementNotPresent" locator1="Link#EDIT" value1="Edit" />
 	</command>
 
 	<command name="ViewSOWikiFrontPageChildPageAsGuest" priority="4">
@@ -3366,7 +3331,7 @@
 		</execute>
 
 		<execute function="AssertTextNotPresent" value1="${wikiChildPageTitle2}" />
-		<execute function="AssertClick" locator1="Wiki#NAVIGATION_ALL_PAGES" value1="All Pages" />
+		<execute function="AssertClick" locator1="WikiTable#NAVIGATION_ALL_PAGES" value1="All Pages" />
 
 		<execute function="AssertTextNotPresent" value1="${wikiChildPageTitle2}" />
 	</command>

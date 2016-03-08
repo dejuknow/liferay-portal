@@ -1,5 +1,7 @@
 <definition default="click" summary="Click on '${locator1}'">
 	<command name="click">
+		<execute function="WaitForSPARefresh" />
+
 		<execute selenium="waitForVisible" />
 
 		<execute selenium="mouseOver" />
@@ -8,6 +10,8 @@
 	</command>
 
 	<command name="makeVisibleClick">
+		<execute function="WaitForSPARefresh" />
+
 		<execute selenium="mouseOver" />
 
 		<execute selenium="makeVisible" />
@@ -16,8 +20,18 @@
 	</command>
 
 	<command name="pauseClick">
+		<execute function="WaitForSPARefresh" />
+
 		<execute argument1="1000" selenium="pause" />
 
 		<execute function="ClickNoError#click" />
+	</command>
+
+	<command name="waitForMenuToggleJSClick">
+		<execute argument1="//script[contains(@src,'/o/frontend-js-web/liferay/menu_toggle.js')]" selenium="waitForElementPresent" />
+
+		<execute argument1="3000" selenium="pause" />
+
+		<execute function="Click" />
 	</command>
 </definition>

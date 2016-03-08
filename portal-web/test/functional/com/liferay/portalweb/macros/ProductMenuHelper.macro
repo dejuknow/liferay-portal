@@ -1,4 +1,18 @@
 <definition>
+	<command name="addFirstPage">
+		<execute function="Click" locator1="SitePages#PAGES_ELLIPSIS" />
+
+		<if>
+			<equals arg1="${sitePagePrivacy}" arg2="Private" />
+			<then>
+				<execute function="Click" locator1="SitePages#ADD_PRIVATE_PAGE_MENUITEM" />
+			</then>
+			<else>
+				<execute function="Click" locator1="SitePages#ADD_PUBLIC_PAGE_MENUITEM" />
+			</else>
+		</if>
+	</command>
+
 	<command name="expandCategory">
 		<var name="key_category" value="${category}" />
 
@@ -46,6 +60,8 @@
 
 		<execute function="AssertElementPresent" locator1="ProductMenu#PRODUCT_MENU_TABS_CONTROL_PANEL_EXPANDED" />
 
+		<var name="key_panelId" value="control_panel" />
+
 		<execute function="AssertVisible" locator1="ProductMenu#PRODUCT_MENU_TABS_EXPANDED_PANEL" />
 	</command>
 
@@ -60,6 +76,8 @@
 		</if>
 
 		<execute function="AssertElementPresent" locator1="ProductMenu#PRODUCT_MENU_TABS_SITES_EXPANDED" />
+
+		<var name="key_panelId" value="site" />
 
 		<execute function="AssertVisible" locator1="ProductMenu#PRODUCT_MENU_TABS_EXPANDED_PANEL" />
 	</command>
@@ -76,21 +94,26 @@
 
 		<execute function="AssertElementPresent" locator1="ProductMenu#PRODUCT_MENU_TABS_USER_EXPANDED" />
 
+		<var name="key_panelId" value="user" />
+
 		<execute function="AssertVisible" locator1="ProductMenu#PRODUCT_MENU_TABS_EXPANDED_PANEL" />
-	</command>
-
-	<command name="gotoAddPage">
-		<var name="key_page" value="${page}" />
-
-		<execute function="AssertClick#assertPartialTextClickAt" locator1="ProductMenu#PAGES" value1="${page}" />
-
-		<execute macro="ProductMenuHelper#openProductMenu" />
 	</command>
 
 	<command name="gotoPortlet">
 		<var name="key_portlet" value="${portlet}" />
+		<var name="key_portletLocalization" value="${portletLocalization}" />
 
-		<execute function="AssertClick" locator1="ProductMenu#PORTLET" value1="${portlet}" />
+		<execute function="AssertClick#assertPartialTextClickAt" locator1="ProductMenu#PORTLET" value1="${portlet}" />
+
+		<if>
+			<isset var="portletLocalization" />
+			<then>
+				<execute function="AssertVisible" locator1="ProductMenu#PORTLET_SELECTED_TRANSLATION" />
+			</then>
+			<else>
+				<execute function="AssertVisible" locator1="ProductMenu#PORTLET_SELECTED" />
+			</else>
+		</if>
 
 		<execute macro-mobile="MobileNavigator#clickRemoveIcon" />
 	</command>
@@ -98,7 +121,12 @@
 	<command name="gotoSite">
 		<var name="key_site" value="${site}" />
 
-		<execute function="AssertClick" locator1="ProductMenu#SITE" value1="${site}" />
+		<execute function="Type" locator1="TextInput#SEARCH" value1="${site}" />
+		<execute function="AssertElementPresent" locator1="Icon#BASIC_SEARCH" />
+
+		<execute function="Click" locator1="Icon#BASIC_SEARCH" />
+
+		<execute function="AssertClick" locator1="ContentRow#ENTRY_CONTENT_ROW_TD_1_SITE_LINK" value1="${site}" />
 	</command>
 
 	<command name="gotoTab">
@@ -108,16 +136,6 @@
 	</command>
 
 	<command name="openProductMenu">
-		<if>
-			<and>
-				<condition function="IsElementPresent" locator1="Button#CLOSE_PANEL" />
-				<condition function="IsVisible" locator1="Button#CLOSE_PANEL" />
-			</and>
-			<then>
-				<execute function="Click#clickAt" locator1="ControlMenu#ADD" />
-			</then>
-		</if>
-
 		<if>
 			<not>
 				<condition function="IsElementPresent" locator1="ProductMenu#PRODUCT_MENU_OPENED" />
@@ -134,14 +152,11 @@
 
 	<command name="openSitesPopup">
 		<if>
-			<and>
-				<condition function="IsElementPresent" locator1="ProductMenu#SITES_POPUP" />
-				<condition function="IsNotVisible" locator1="ProductMenu#SITES_POPUP" />
-			</and>
+			<condition function="IsElementNotPresent" locator1="ProductMenu#SITES_MODAL_TITLE" />
 			<then>
 				<execute function="Click" locator1="ProductMenu#SITES_COMPASS" />
 
-				<execute function="AssertVisible" locator1="ProductMenu#SITES_POPUP" />
+				<execute function="AssertVisible" locator1="ProductMenu#SITES_MODAL_TITLE" />
 			</then>
 		</if>
 	</command>

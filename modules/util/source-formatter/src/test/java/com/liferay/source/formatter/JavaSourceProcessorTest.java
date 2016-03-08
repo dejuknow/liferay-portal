@@ -83,9 +83,9 @@ public class JavaSourceProcessorTest extends BaseSourceProcessorTestCase {
 				"missing parentheses:", "missing parentheses:",
 				"missing parentheses:", "missing parentheses:",
 				"missing parentheses:", "redundant parentheses:",
-				"redundant parentheses:", "redundant parentheses:"
+				"redundant parentheses:"
 			},
-			new Integer[] {25, 29, 33, 39, 43, 43, 47, 51});
+			new Integer[] {25, 29, 33, 39, 43, 47, 51});
 	}
 
 	@Test
@@ -96,6 +96,11 @@ public class JavaSourceProcessorTest extends BaseSourceProcessorTestCase {
 	@Test
 	public void testIncorrectClose() throws Exception {
 		test("IncorrectClose.testjava");
+	}
+
+	@Test
+	public void testIncorrectCopyright() throws Exception {
+		test("IncorrectCopyright.testjava", "File must start with copyright:");
 	}
 
 	@Test

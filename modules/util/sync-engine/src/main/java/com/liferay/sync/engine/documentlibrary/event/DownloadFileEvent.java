@@ -66,7 +66,7 @@ public class DownloadFileEvent extends BaseEvent {
 
 		if ((boolean)getParameterValue("batch")) {
 			BatchDownloadEvent batchDownloadEvent =
-				BatchEventManager.getBatchDownloadEvent(getSyncAccountId());
+				BatchEventManager.getBatchDownloadEvent(syncFile);
 
 			if (batchDownloadEvent.addEvent(this)) {
 				return;
@@ -106,8 +106,12 @@ public class DownloadFileEvent extends BaseEvent {
 		if (ServerInfo.supportsPartialDownloads(getSyncAccountId()) &&
 			Files.exists(tempFilePath)) {
 
-			httpGet.setHeader(
-				"Range", "bytes=" + Files.size(tempFilePath) + "-");
+			long size = Files.size(tempFilePath);
+
+			if (syncFile.getSize() > size) {
+				httpGet.setHeader(
+					"Range", "bytes=" + Files.size(tempFilePath) + "-");
+			}
 		}
 
 		executeAsynchronousGet(httpGet);

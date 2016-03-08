@@ -315,7 +315,7 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 		}
 		else if (!className.equals(Company.class.getName()) &&
 				 !className.equals(Organization.class.getName()) &&
-				 className.startsWith("com.liferay.portal.model.")) {
+				 className.startsWith("com.liferay.portal.kernel.model.")) {
 
 			if (site) {
 				throw new IllegalArgumentException();
@@ -867,17 +867,20 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 					group.getGroupId(), RoleConstants.TYPE_SITE);
 			}
 			else {
+				if (!group.isStagingGroup() || group.isStagedRemotely()) {
+
+					// Group roles
+
+					userGroupRoleLocalService.deleteUserGroupRolesByGroupId(
+						group.getGroupId());
+
+					// User group roles
+
+					userGroupGroupRoleLocalService.
+						deleteUserGroupGroupRolesByGroupId(group.getGroupId());
+				}
+
 				groupPersistence.remove(group);
-
-				// Group roles
-
-				userGroupRoleLocalService.deleteUserGroupRolesByGroupId(
-					group.getGroupId());
-
-				// User group roles
-
-				userGroupGroupRoleLocalService.
-					deleteUserGroupGroupRolesByGroupId(group.getGroupId());
 			}
 
 			// Permission cache
@@ -1569,6 +1572,11 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 		return group.getAncestors();
 	}
 
+	@Override
+	public List<Group> getStagedSites() {
+		return groupFinder.findByL_TS_S_RSGC(0, "staged=true", true, 0);
+	}
+
 	/**
 	 * Returns the staging group.
 	 *
@@ -1940,6 +1948,9 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 	 */
 	@Override
 	public void rebuildTree(long companyId) throws PortalException {
+		final long classNameId = classNameLocalService.getClassNameId(
+			Group.class);
+
 		TreePathUtil.rebuildTree(
 			companyId, GroupConstants.DEFAULT_PARENT_GROUP_ID, StringPool.SLASH,
 			new TreeModelTasksAdapter<Group>() {
@@ -1949,8 +1960,8 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 					long previousId, long companyId, long parentPrimaryKey,
 					int size) {
 
-					return groupPersistence.findByG_C_P(
-						previousId, companyId, parentPrimaryKey,
+					return groupPersistence.findByG_C_C_P(
+						previousId, companyId, classNameId, parentPrimaryKey,
 						QueryUtil.ALL_POS, size, new GroupIdComparator(true));
 				}
 
@@ -3064,9 +3075,9 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 		assetEntryLocalService.updateEntry(
 			userId, companyGroup.getGroupId(), null, null,
 			Group.class.getName(), group.getGroupId(), null, 0,
-			assetCategoryIds, assetTagNames, false, null, null, null, null,
-			group.getDescriptiveName(), group.getDescription(), null, null,
-			null, 0, 0, null);
+			assetCategoryIds, assetTagNames, true, false, null, null, null,
+			null, group.getDescriptiveName(), group.getDescription(), null,
+			null, null, 0, 0, null);
 	}
 
 	/**

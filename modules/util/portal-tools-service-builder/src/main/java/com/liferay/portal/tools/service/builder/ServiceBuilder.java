@@ -74,6 +74,7 @@ import java.io.InputStream;
 import java.net.URL;
 
 import java.nio.charset.StandardCharsets;
+import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
@@ -232,7 +233,7 @@ public class ServiceBuilder {
 			String message =
 				"Please set these arguments. Sample values are:\n" +
 				"\n" +
-				"\tservice.api.dir=${basedir}/../portal-service/src\n" +
+				"\tservice.api.dir=${basedir}/../portal-kernel/src\n" +
 				"\tservice.auto.import.default.references=true\n" +
 				"\tservice.auto.namespace.tables=false\n" +
 				"\tservice.bean.locator.util=com.liferay.portal.kernel.bean.PortalBeanLocatorUtil\n" +
@@ -1673,7 +1674,7 @@ public class ServiceBuilder {
 			returnTypeGenericsName.contains(
 				"com.liferay.social.kernel.model.SocialActivityDefinition") ||
 			returnTypeGenericsName.equals("java.util.List<java.lang.Object>") ||
-			returnValueName.equals("com.liferay.portal.model.Lock") ||
+			returnValueName.equals("com.liferay.portal.kernel.lock.model.Lock") ||
 			returnValueName.equals(
 				"com.liferay.message.boards.kernel.model.MBMessageDisplay") ||
 			returnValueName.startsWith("java.io") ||
@@ -1977,9 +1978,6 @@ public class ServiceBuilder {
 				if (exception.startsWith("NoSuch")) {
 					content = StringUtil.replace(
 						content, "PortalException", "NoSuchModelException");
-					content = StringUtil.replace(
-						content, "kernel.exception.NoSuchModelException",
-						"NoSuchModelException");
 				}
 
 				content = StringUtil.replace(content, "\r\n", "\n");
@@ -1995,8 +1993,18 @@ public class ServiceBuilder {
 					content = StringUtil.replace(
 						content, "PortalException", "NoSuchModelException");
 					content = StringUtil.replace(
-						content, "kernel.exception.NoSuchModelException",
-						"NoSuchModelException");
+						content, "portal.exception.NoSuchModelException",
+						"portal.kernel.exception.NoSuchModelException");
+
+					ToolsUtil.writeFileRaw(
+						exceptionFile, content, _modifiedFileNames);
+				}
+				else if (content.contains(
+							"portal.exception.NoSuchModelException")) {
+
+					content = StringUtil.replace(
+						content, "portal.exception.NoSuchModelException",
+						"portal.kernel.exception.NoSuchModelException");
 
 					ToolsUtil.writeFileRaw(
 						exceptionFile, content, _modifiedFileNames);
@@ -3544,14 +3552,16 @@ public class ServiceBuilder {
 			if (Validator.isNotNull(createTableSQL)) {
 				_createSQLTables(sqlFile, createTableSQL, entity, true);
 
-				Path updateSQLFilePath = _getUpdateSQLFilePath();
+				List<Path> updateSQLFilePaths = _getUpdateSQLFilePaths();
 
-				if ((updateSQLFilePath != null) &&
-					Files.exists(updateSQLFilePath)) {
+				for (Path updateSQLFilePath : updateSQLFilePaths) {
+					if ((updateSQLFilePath != null) &&
+						Files.exists(updateSQLFilePath)) {
 
-					_createSQLTables(
-						updateSQLFilePath.toFile(), createTableSQL, entity,
-						false);
+						_createSQLTables(
+							updateSQLFilePath.toFile(), createTableSQL, entity,
+							false);
+					}
 				}
 			}
 		}
@@ -4448,9 +4458,19 @@ public class ServiceBuilder {
 		return transients;
 	}
 
-	private Path _getUpdateSQLFilePath() throws IOException {
+	private List<Path> _getUpdateSQLFilePaths() throws IOException {
 		if (!_osgiModule) {
-			return Paths.get(_sqlDirName, "update-6.2.0-7.0.0.sql");
+			final List<Path> updateSQLFilePaths = new ArrayList<>();
+
+			try (DirectoryStream<Path> paths = Files.newDirectoryStream(
+					Paths.get(_sqlDirName), "update-6.2.0-7.0.0*.sql")) {
+
+				for (Path path : paths) {
+					updateSQLFilePaths.add(path);
+				}
+			}
+
+			return updateSQLFilePaths;
 		}
 
 		final AtomicReference<Path> atomicReference = new AtomicReference<>();
@@ -4493,7 +4513,7 @@ public class ServiceBuilder {
 
 			});
 
-		return atomicReference.get();
+		return Arrays.asList(atomicReference.get());
 	}
 
 	private Version _getUpdateSQLFileVersion(Path path) {

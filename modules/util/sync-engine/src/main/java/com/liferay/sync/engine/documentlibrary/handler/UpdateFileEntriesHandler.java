@@ -38,15 +38,6 @@ public class UpdateFileEntriesHandler extends BaseJSONHandler {
 	}
 
 	@Override
-	public boolean handlePortalException(String exception) throws Exception {
-		if (exception.endsWith("UploadException")) {
-			return true;
-		}
-
-		return super.handlePortalException(exception);
-	}
-
-	@Override
 	public void processResponse(String response) throws Exception {
 		Map<String, Handler> handlers = (Map<String, Handler>)getParameterValue(
 			"handlers");
@@ -80,8 +71,8 @@ public class UpdateFileEntriesHandler extends BaseJSONHandler {
 				handler.processResponse(fieldValue.toString());
 			}
 			catch (Exception e) {
-				if (_logger.isDebugEnabled()) {
-					_logger.debug(e.getMessage(), e);
+				if (!isEventCancelled()) {
+					_logger.error(e.getMessage(), e);
 				}
 			}
 			finally {

@@ -1,4 +1,5 @@
 <definition component-name="portal-collaboration">
+	<property name="custom.properties" value="default.layout.template.id=1_column" />
 	<property name="testray.main.component.name" value="Announcements" />
 
 	<var name="pageName" value="Announcements Page" />
@@ -38,6 +39,7 @@
 
 	<command name="AddAnnouncementsEntry" priority="5">
 		<property name="portal.acceptance" value="true" />
+		<property name="test.name.skip.portal.instance" value="PGAnnouncements#AddAnnouncementsEntry" />
 
 		<var name="announcementType" value="General" />
 		<var name="distributionScope" value="General" />
@@ -45,7 +47,7 @@
 		<var name="entryTitle" value="Announcements Entry Title" />
 		<var name="entryURL" value="http://www.liferay.com" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -56,7 +58,7 @@
 			<var name="entryURL" value="${entryURL}" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -76,15 +78,7 @@
 		<var name="entryTitle" value="Announcements Entry Title" />
 		<var name="entryURL" value="http://www.liferay.com" />
 
-		<execute macro="Page#add">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Announcements" />
-		</execute>
-
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -95,14 +89,14 @@
 			<var name="entryURL" value="${entryURL}" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
 		<execute function="AssertTextNotPresent" value1="${entryTitle}" />
 		<execute function="Pause" locator1="120000" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -122,7 +116,7 @@
 		<var name="entryURL" value="http://www.liferay.com" />
 		<var name="expirationDate" value="12/31/2013" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -134,19 +128,17 @@
 			<var name="expirationDate" value="${expirationDate}" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
 		<execute function="AssertTextNotPresent" value1="${entryTitle}" />
+
 		<execute function="Click" locator1="Announcements#NAVIGATION_MANAGE_ENTRIES" />
 
 		<execute function="Select#selectAndWait" locator1="AnnouncementsManageEntries#DISTRIBUTION_SCOPE_SELECT" value1="${distributionScope}" />
 
-		<var name="key_entryTitle" value="${entryTitle}" />
-
-		<execute function="AssertTextEquals" locator1="AnnouncementsManageEntries#ENTRY_TABLE_TITLE" value1="${entryTitle}" />
-		<execute function="AssertTextEquals" locator1="AnnouncementsManageEntries#ENTRY_TABLE_TYPE" value1="${distributionScope}" />
+		<execute function="AssertTextEquals" locator1="Message#NO_ENTRIES" value1="No entries were found." />
 	</command>
 
 	<command name="AddAnnouncementsEntryPriorityImportant" priority="4">
@@ -157,7 +149,7 @@
 		<var name="entryURL" value="http://www.liferay.com" />
 		<var name="priority" value="Important" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -169,7 +161,7 @@
 			<var name="priority" value="${priority}" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -202,7 +194,6 @@
 		</execute>
 
 		<execute macro="Page#add">
-			<var name="page" value="Public Pages" />
 			<var name="pageName" value="${pageName}" />
 			<var name="siteName" value="${siteName}" />
 		</execute>
@@ -240,13 +231,14 @@
 
 	<command name="DeleteAnnouncementsEntry" priority="5">
 		<property name="portal.acceptance" value="true" />
+		<property name="test.name.skip.portal.instance" value="PGAnnouncements#DeleteAnnouncementsEntry" />
 
 		<var name="distributionScope" value="General" />
 		<var name="entryContent" value="Announcements Entry Content" />
 		<var name="entryTitle" value="Announcements Entry Title" />
 		<var name="entryURL" value="http://www.liferay.com" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -257,7 +249,7 @@
 			<var name="entryURL" value="${entryURL}" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -275,6 +267,7 @@
 
 	<command name="EditAnnouncementsEntry" priority="5">
 		<property name="portal.acceptance" value="true" />
+		<property name="test.name.skip.portal.instance" value="PGAnnouncements#EditAnnouncementsEntry" />
 
 		<var name="distributionScope" value="General" />
 		<var name="entryContent" value="Announcements Entry Content" />
@@ -284,7 +277,7 @@
 		<var name="entryURL" value="http://www.liferay.com" />
 		<var name="entryURLEdit" value="http://www.alloyui.com" />
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -295,7 +288,7 @@
 			<var name="entryURL" value="${entryURL}" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -308,127 +301,57 @@
 			<var name="entryURLEdit" value="${entryURLEdit}" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#viewEditPG">
-			<var name="distributionScope" value="${distributionScope}" />
-			<var name="entryContentEdit" value="${entryContentEdit}" />
-			<var name="entryTitleEdit" value="${entryTitleEdit}" />
-		</execute>
-	</command>
-
-	<command name="HideAnnouncementsEntry" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<var name="distributionScope" value="General" />
-		<var name="entryContent" value="Announcements Entry Content" />
-		<var name="entryTitle" value="Announcements Entry Title" />
-		<var name="entryURL" value="http://www.liferay.com" />
-
-		<execute macro="Page#gotoPG">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#addPG">
-			<var name="distributionScope" value="${distributionScope}" />
-			<var name="entryContent" value="${entryContent}" />
-			<var name="entryTitle" value="${entryTitle}" />
-			<var name="entryURL" value="${entryURL}" />
-		</execute>
-
-		<execute macro="Page#gotoPG">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#markAsReadPG">
-			<var name="entryTitle" value="${entryTitle}" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#showPG">
-			<var name="entryTitle" value="${entryTitle}" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#hidePG">
-			<var name="entryTitle" value="${entryTitle}" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#viewHiddenPG">
-			<var name="entryContent" value="${entryContent}" />
-			<var name="entryTitle" value="${entryTitle}" />
-		</execute>
-	</command>
-
-	<command name="MarkAsReadAnnouncementsEntry" priority="4">
-		<var name="distributionScope" value="General" />
-		<var name="entryContent" value="Announcements Entry Content" />
-		<var name="entryTitle" value="Announcements Entry Title" />
-		<var name="entryURL" value="http://www.liferay.com" />
-
-		<execute macro="Page#gotoPG">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#addPG">
-			<var name="distributionScope" value="${distributionScope}" />
-			<var name="entryContent" value="${entryContent}" />
-			<var name="entryTitle" value="${entryTitle}" />
-			<var name="entryURL" value="${entryURL}" />
-		</execute>
-
-		<execute macro="Page#gotoPG">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#markAsReadPG">
-			<var name="entryTitle" value="${entryTitle}" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#viewHiddenPG">
-			<var name="entryContent" value="${entryContent}" />
-			<var name="entryTitle" value="${entryTitle}" />
-		</execute>
-	</command>
-
-	<command name="ShowAnnouncementsEntry" priority="4">
-		<var name="announcementType" value="General" />
-		<var name="distributionScope" value="General" />
-		<var name="entryContent" value="Announcements Entry Content" />
-		<var name="entryTitle" value="Announcements Entry Title" />
-		<var name="entryURL" value="http://www.liferay.com" />
-
-		<execute macro="Page#gotoPG">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#addPG">
-			<var name="distributionScope" value="${distributionScope}" />
-			<var name="entryContent" value="${entryContent}" />
-			<var name="entryTitle" value="${entryTitle}" />
-			<var name="entryURL" value="${entryURL}" />
-		</execute>
-
-		<execute macro="Page#gotoPG">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#markAsReadPG">
-			<var name="entryTitle" value="${entryTitle}" />
-		</execute>
-
-		<execute macro="Page#gotoPG">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#showPG">
-			<var name="entryTitle" value="${entryTitle}" />
 		</execute>
 
 		<execute macro="AnnouncementsEntry#viewPG">
-			<var name="announcementType" value="${announcementType}" />
+			<var name="announcementType" value="General" />
+			<var name="distributionScope" value="${distributionScope}" />
+			<var name="entryContent" value="${entryContentEdit}" />
+			<var name="entryTitle" value="${entryTitleEdit}" />
+		</execute>
+	</command>
+
+	<command name="ViewPreviousAnnouncementEntries" priority="5">
+		<property name="portal.acceptance" value="true" />
+		<property name="test.name.skip.portal.instance" value="PGAnnouncements#ViewPreviousAnnouncementEntries" />
+
+		<var name="distributionScope" value="General" />
+		<var name="entryContent" value="Announcements Entry Content" />
+		<var name="entryTitle" value="Announcements Entry Title" />
+		<var name="entryURL" value="http://www.liferay.com" />
+
+		<execute macro="Navigator#gotoPage">
+			<var name="pageName" value="${pageName}" />
+		</execute>
+
+		<execute macro="AnnouncementsEntry#addPG">
 			<var name="distributionScope" value="${distributionScope}" />
 			<var name="entryContent" value="${entryContent}" />
+			<var name="entryTitle" value="${entryTitle}" />
+			<var name="entryURL" value="${entryURL}" />
+		</execute>
+
+		<execute macro="Navigator#gotoPage">
+			<var name="pageName" value="${pageName}" />
+		</execute>
+
+		<execute macro="AnnouncementsEntry#markAsReadPG">
+			<var name="entryContent" value="${entryContent}" />
+			<var name="entryTitle" value="${entryTitle}" />
+		</execute>
+
+		<execute macro="AnnouncementsEntry#viewPreviousPG">
+			<var name="announcementType" value="General" />
+			<var name="distributionScope" value="${distributionScope}" />
+			<var name="entryContent" value="${entryContent}" />
+			<var name="entryTitle" value="${entryTitle}" />
+		</execute>
+
+		<execute function="AssertClick" locator1="Announcements#NAVIGATION_ENTRIES_NEW" value1="New" />
+
+		<execute macro="AnnouncementsEntry#viewNoPG">
 			<var name="entryTitle" value="${entryTitle}" />
 		</execute>
 	</command>

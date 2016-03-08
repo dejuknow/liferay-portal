@@ -14,6 +14,7 @@
 
 package com.liferay.portal.upgrade.util;
 
+import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
@@ -21,7 +22,17 @@ import com.liferay.portal.kernel.util.StringBundler;
 
 import java.io.IOException;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * @author Brian Wing Shun Chan
@@ -30,32 +41,34 @@ public abstract class UpgradeCompanyId extends UpgradeProcess {
 
 	@Override
 	protected void doUpgrade() throws Exception {
+		List<Callable<Void>> callables = new ArrayList<>();
+
 		for (TableUpdater tableUpdater : getTableUpdaters()) {
-			if (hasColumn(tableUpdater.getTableName(), "companyId")) {
-				if (_log.isInfoEnabled()) {
-					_log.info("Skipping table " + tableUpdater.getTableName());
-				}
-
-				continue;
+			if (!hasColumn(tableUpdater.getTableName(), "companyId")) {
+				tableUpdater.setCreateCompanyIdColumn(true);
 			}
 
-			if (_log.isInfoEnabled()) {
-				_log.info(
-					"Adding column companyId to table " +
-						tableUpdater.getTableName());
+			callables.add(tableUpdater);
+		}
+
+		ExecutorService executorService = Executors.newFixedThreadPool(
+			callables.size());
+
+		try {
+			List<Future<Void>> futures = executorService.invokeAll(callables);
+
+			for (Future<Void> future : futures) {
+				future.get();
 			}
-
-			runSQL(
-				"alter table " + tableUpdater.getTableName() +
-					" add companyId LONG");
-
-			tableUpdater.update();
+		}
+		finally {
+			executorService.shutdown();
 		}
 	}
 
 	protected abstract TableUpdater[] getTableUpdaters();
 
-	protected class TableUpdater {
+	protected class TableUpdater implements Callable<Void> {
 
 		public TableUpdater(
 			String tableName, String foreignTableName,
@@ -78,18 +91,78 @@ public abstract class UpgradeCompanyId extends UpgradeProcess {
 			_foreignNamesArray = foreignNamesArray;
 		}
 
+		@Override
+		public final Void call() throws Exception {
+			try {
+				_con = DataAccess.getUpgradeOptimizedConnection();
+
+				if (_createCompanyIdColumn) {
+					if (_log.isInfoEnabled()) {
+						_log.info(
+							"Adding column companyId to table " + _tableName);
+					}
+
+					runSQL(
+						_con,
+						"alter table " + _tableName +" add companyId LONG");
+				}
+				else {
+					if (_log.isInfoEnabled()) {
+						_log.info(
+							"Skipping the creation of companyId column for " +
+								"table " + _tableName);
+					}
+				}
+
+				update();
+			}
+			finally {
+				DataAccess.cleanUp(_con);
+			}
+
+			return null;
+		}
+
 		public String getTableName() {
 			return _tableName;
 		}
 
+		public void setCreateCompanyIdColumn(boolean createCompanyIdColumn) {
+			_createCompanyIdColumn = createCompanyIdColumn;
+		}
+
 		public void update() throws IOException, SQLException {
 			for (String[] foreignNames : _foreignNamesArray) {
-				runSQL(getUpdateSQL(foreignNames[0], foreignNames[1]));
+				runSQL(_con, getUpdateSQL(foreignNames[0], foreignNames[1]));
 			}
 		}
 
+		protected List<Long> getCompanyIds() throws SQLException {
+			List<Long> companyIds = new ArrayList<>();
+
+			try (PreparedStatement ps = _con.prepareStatement(
+					"select companyId from Company");
+				ResultSet rs = ps.executeQuery()) {
+
+				while (rs.next()) {
+					long companyId = rs.getLong(1);
+
+					companyIds.add(companyId);
+				}
+			}
+
+			return companyIds;
+		}
+
 		protected String getSelectSQL(
-			String foreignTableName, String foreignColumnName) {
+				String foreignTableName, String foreignColumnName)
+			throws SQLException {
+
+			List<Long> companyIds = getCompanyIds();
+
+			if (companyIds.size() == 1) {
+				return String.valueOf(companyIds.get(0));
+			}
 
 			StringBundler sb = new StringBundler(10);
 
@@ -120,13 +193,16 @@ public abstract class UpgradeCompanyId extends UpgradeProcess {
 		}
 
 		protected String getUpdateSQL(
-			String foreignTableName, String foreignColumnName) {
+				String foreignTableName, String foreignColumnName)
+			throws SQLException {
 
 			return getUpdateSQL(
 				getSelectSQL(foreignTableName, foreignColumnName));
 		}
 
 		private final String _columnName;
+		private Connection _con;
+		private boolean _createCompanyIdColumn;
 		private final String[][] _foreignNamesArray;
 		private final String _tableName;
 

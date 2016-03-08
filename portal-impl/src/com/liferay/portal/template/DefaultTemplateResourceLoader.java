@@ -23,7 +23,6 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.pacl.DoPrivileged;
 import com.liferay.portal.kernel.template.ClassLoaderTemplateResource;
-import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.template.TemplateException;
 import com.liferay.portal.kernel.template.TemplateResource;
 import com.liferay.portal.kernel.template.TemplateResourceLoader;
@@ -279,13 +278,17 @@ public class DefaultTemplateResourceLoader implements TemplateResourceLoader {
 				templateResourceParsers) {
 
 			try {
+				if (!templateResourceParser.isTemplateResourceValid(
+						templateId, getName())) {
+
+					continue;
+				}
+
 				TemplateResource templateResource =
 					templateResourceParser.getTemplateResource(templateId);
 
 				if (templateResource != null) {
-					if ((_modificationCheckInterval != 0) &&
-						!_name.equals(TemplateConstants.LANG_TYPE_VM)) {
-
+					if (_modificationCheckInterval != 0) {
 						templateResource = new CacheTemplateResource(
 							templateResource);
 					}
@@ -308,10 +311,6 @@ public class DefaultTemplateResourceLoader implements TemplateResourceLoader {
 
 	private void _updateCache(
 		String templateId, TemplateResource templateResource) {
-
-		if (!(templateResource instanceof CacheTemplateResource)) {
-			return;
-		}
 
 		if (templateResource == null) {
 			_singleVMPortalCache.put(

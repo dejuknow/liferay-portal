@@ -320,6 +320,36 @@ public class WebDriverHelper {
 		return _defaultWindowHandle;
 	}
 
+	public static String getEditorName(WebDriver webDriver, String locator) {
+		String titleAttribute = getAttribute(webDriver, locator + "@title");
+
+		if (titleAttribute.contains("Rich Text Editor,")) {
+			int x = titleAttribute.indexOf(",");
+			int y = titleAttribute.indexOf(",", x + 1);
+
+			if (y == -1) {
+				y = titleAttribute.length();
+			}
+
+			return titleAttribute.substring(x + 2, y);
+		}
+
+		String idAttribute = getAttribute(webDriver, locator + "@id");
+
+		if (idAttribute.contains("cke__")) {
+			int x = idAttribute.indexOf("cke__");
+			int y = idAttribute.indexOf("cke__", x + 1);
+
+			if (y == -1) {
+				y = idAttribute.length();
+			}
+
+			return idAttribute.substring(x + 4, y);
+		}
+
+		return idAttribute;
+	}
+
 	public static int getElementHeight(WebDriver webDriver, String locator) {
 		WebElement webElement = getWebElement(webDriver, locator, "1");
 
@@ -942,6 +972,26 @@ public class WebDriverHelper {
 		javascriptExecutor.executeScript(sb.toString());
 	}
 
+	public static void typeEditor(
+		WebDriver webDriver, String locator, String value) {
+
+		WrapsDriver wrapsDriver = (WrapsDriver)getWebElement(
+			webDriver, locator);
+
+		JavascriptExecutor javascriptExecutor =
+			(JavascriptExecutor)wrapsDriver.getWrappedDriver();
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("CKEDITOR.instances[\"");
+		sb.append(getEditorName(webDriver, locator));
+		sb.append("\"].setData(\"");
+		sb.append(HtmlUtil.escapeJS(value.replace("\\", "\\\\")));
+		sb.append("\");");
+
+		javascriptExecutor.executeScript(sb.toString());
+	}
+
 	public static void uncheck(WebDriver webdDriver, String locator) {
 		WebElement webElement = getWebElement(webdDriver, locator);
 
@@ -1024,7 +1074,7 @@ public class WebDriverHelper {
 			(JavascriptExecutor)wrappedWebDriver;
 
 		javascriptExecutor.executeScript(
-			"arguments[0].scrollIntoView();", webElement);
+			"arguments[0].scrollIntoView(false);", webElement);
 	}
 
 	protected static void selectByRegexpText(

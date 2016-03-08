@@ -20,14 +20,20 @@ import com.liferay.poshi.runner.logger.LoggerUtil;
 import com.liferay.poshi.runner.logger.SummaryLoggerHandler;
 import com.liferay.poshi.runner.logger.XMLLoggerHandler;
 import com.liferay.poshi.runner.selenium.LiferaySelenium;
+import com.liferay.poshi.runner.selenium.LiferaySeleniumHelper;
 import com.liferay.poshi.runner.selenium.SeleniumUtil;
 import com.liferay.poshi.runner.util.ExternalMethod;
+import com.liferay.poshi.runner.util.FileUtil;
 import com.liferay.poshi.runner.util.GetterUtil;
 import com.liferay.poshi.runner.util.PropsUtil;
 import com.liferay.poshi.runner.util.PropsValues;
 import com.liferay.poshi.runner.util.RegexUtil;
 import com.liferay.poshi.runner.util.StringUtil;
 import com.liferay.poshi.runner.util.Validator;
+
+import groovy.lang.Binding;
+
+import groovy.util.GroovyScriptEngine;
 
 import java.lang.reflect.Method;
 
@@ -39,6 +45,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.dom4j.Element;
+
+import org.openqa.selenium.StaleElementReferenceException;
 
 /**
  * @author Karen Dang
@@ -159,6 +167,9 @@ public class PoshiRunnerExecutor {
 			else if (childElementName.equals("execute")) {
 				if (childElement.attributeValue("function") != null) {
 					runFunctionExecuteElement(childElement);
+				}
+				else if (childElement.attributeValue("groovy-script") != null) {
+					runGroovyScriptElement(childElement);
 				}
 				else if (childElement.attributeValue("macro") != null) {
 					runMacroExecuteElement(childElement, "macro");
@@ -426,6 +437,57 @@ public class PoshiRunnerExecutor {
 
 			_functionExecuteElement = null;
 			_functionWarningMessage = null;
+		}
+	}
+
+	public static void runGroovyScriptElement(Element executeElement)
+		throws Exception {
+
+		PoshiRunnerStackTraceUtil.setCurrentElement(executeElement);
+
+		XMLLoggerHandler.updateStatus(executeElement, "pending");
+
+		List<Element> executeArgElements = executeElement.elements("arg");
+
+		Binding binding = new Binding();
+
+		if (!executeArgElements.isEmpty()) {
+			List<String> arguments = new ArrayList<>();
+
+			for (Element executeArgElement : executeArgElements) {
+				arguments.add(executeArgElement.attributeValue("value"));
+			}
+
+			binding.setVariable(
+				"args", arguments.toArray(new String[arguments.size()]));
+		}
+
+		String status = "fail";
+
+		try {
+			String fileName = PoshiRunnerVariablesUtil.replaceCommandVars(
+				executeElement.attributeValue("groovy-script"));
+
+			String fileSeparator = FileUtil.getSeparator();
+
+			GroovyScriptEngine groovyScriptEngine = new GroovyScriptEngine(
+				LiferaySeleniumHelper.getSourceDirFilePath(
+					fileSeparator + PropsValues.TEST_DEPENDENCIES_DIR_NAME +
+						fileSeparator + fileName));
+
+			Object result = groovyScriptEngine.run(fileName, binding);
+
+			String returnVariable = executeElement.attributeValue("return");
+
+			if (returnVariable != null) {
+				PoshiRunnerVariablesUtil.putIntoCommandMap(
+					returnVariable, result.toString());
+			}
+
+			status = "pass";
+		}
+		finally {
+			XMLLoggerHandler.updateStatus(executeElement, status);
 		}
 	}
 
@@ -765,19 +827,39 @@ public class PoshiRunnerExecutor {
 
 		Class<?> clazz = liferaySelenium.getClass();
 
-		try {
-			Method method = clazz.getMethod(
-				selenium,
-				parameterClasses.toArray(new Class[parameterClasses.size()]));
+		Method method = clazz.getMethod(
+			selenium,
+			parameterClasses.toArray(new Class[parameterClasses.size()]));
 
+		try {
 			_returnObject = method.invoke(
 				liferaySelenium,
-				(Object[])arguments.toArray(new String[arguments.size()]));
+				arguments.toArray(new String[arguments.size()]));
 		}
-		catch (Exception e) {
-			Throwable throwable = e.getCause();
+		catch (Exception e1) {
+			Throwable throwable = e1.getCause();
 
-			throw new Exception(throwable.getMessage(), e);
+			if (throwable instanceof StaleElementReferenceException) {
+				System.out.println(
+					"\nElement turned stale while running " + selenium +
+						". Retrying in " +
+							PropsValues.TEST_RETRY_COMMAND_WAIT_TIME +
+								"seconds.");
+
+				try {
+					_returnObject = method.invoke(
+						liferaySelenium,
+						arguments.toArray(new String[arguments.size()]));
+				}
+				catch (Exception e2) {
+					throwable = e2.getCause();
+
+					throw new Exception(throwable.getMessage(), e2);
+				}
+			}
+			else {
+				throw new Exception(throwable.getMessage(), e1);
+			}
 		}
 	}
 

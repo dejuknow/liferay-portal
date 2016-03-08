@@ -29,13 +29,13 @@
 	<td></td>
 </tr>
 <tr>
-	<td>MY_PENDING_ENTRIES_PANEL_COLLAPSED</td>
-	<td>//div[contains(@class,'panel') and contains(@role,'tab')]//a[contains(@data-toggle,'collapse') and contains(.,'My Pending Entries')]</td>
+	<td>ENTRY_COMMENTS_COUNT</td>
+	<td>//a[contains(.,'${key_entryTitle}')]/../../../../../div[contains(@class,'entry-footer')]//a</td>
 	<td></td>
 </tr>
 <tr>
 	<td>PERMISSIONS</td>
-	<td>//a[contains(.,'Permissions')]</td>
+	<td>//a[@data-title='Permissions']</td>
 	<td></td>
 </tr>
 <tr>
@@ -223,6 +223,16 @@
 <tr>
 	<td>SEARCH_RESULTS_ENTRY_DESCRIPTION</td>
 	<td>//a[@class='entry-link']/div/span[@class='entry-description' and contains(.,'${key_entryContent}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SEARCH_RESULTS_ENTRY_COMMENT</td>
+	<td>//span[@class='entry-title' and contains(.,'${key_entryTitle}')]//..//..//..//div[@class='entry-discussion']/a/span[@class='body']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SEARCH_RESULTS_HIGHLIGHTED</td>
+	<td>//span[@class='entry-title' and contains(.,'${key_entryTitle}')]//..//..//..//span[@class='highlight']</td>
 	<td></td>
 </tr>
 </tbody>

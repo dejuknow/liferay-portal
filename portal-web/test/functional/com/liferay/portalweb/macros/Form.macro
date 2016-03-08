@@ -16,7 +16,7 @@
 	<command name="addPage">
 		<execute function="Click" locator1="Form#PAGE_CONTROLS_ELLIPSIS_ICON" />
 
-		<execute function="AssertClick" locator1="Form#PAGE_CONTROLS_ADD_NEW_PAGE" value1="Add new page" />
+		<execute function="AssertClick" locator1="Form#PAGE_CONTROLS_ADD_NEW_PAGE" value1="Add New Page" />
 	</command>
 
 	<command name="clickPublishSwitcher">
@@ -69,7 +69,7 @@
 
 		<execute function="Click" locator1="Form#NAME_FIELD" />
 
-		<execute function="Type#typeAlloyEditor" locator1="AlloyEditor#NAME_FIELD" value1="${formName}" />
+		<execute function="Type#typeEditor" locator1="AlloyEditor#NAME_FIELD" value1="${formName}" />
 	</command>
 
 	<command name="editPageDescription">
@@ -82,7 +82,7 @@
 
 	<command name="gotoAddAdditionalField">
 		<var name="key_columnSize" value="${columnSize}" />
-		<var name="key_previousFieldName" value="${previousFieldName}" />
+		<var name="key_previousFieldLabel" value="${previousFieldLabel}" />
 
 		<execute function="Click#makeVisibleClickAt" locator1="Form#ADD_ADDITIONAL_FIELD" />
 
@@ -121,7 +121,7 @@
 	<command name="save">
 		<execute function="AssertClick" locator1="Form#SAVE_BUTTON" value1="Save" />
 
-		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute macro="Alert#viewSuccessMessage" />
 	</command>
 
 	<command name="saveAndPublish">
@@ -129,15 +129,13 @@
 
 		<execute function="AssertClick" locator1="Form#SAVE_BUTTON_DROPDOWN_SAVE_AND_PUBLISH_LIVE_PAGE" value1="Save and Publish Live Page" />
 
-		<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute macro="Alert#viewSuccessMessage" />
 	</command>
 
 	<command name="saveWithoutFormName">
-		<execute function="AssertClick" locator1="Form#SAVE_BUTTON" value1="Save" />
+		<execute function="AssertClick" locator1="Form#SAVE_BUTTON_DISABLED" value1="Save" />
 
-		<execute macro="Alert#viewRequestFailedToComplete" />
-
-		<execute function="AssertTextEquals#assertPartialText" locator1="Message#ERROR_2" value1="Please enter a valid form name." />
+		<execute function="AssertElementNotPresent" locator1="Message#SUCCESS" value1="Your request completed successfully." />
 	</command>
 
 	<command name="viewFormName">
@@ -145,21 +143,13 @@
 	</command>
 
 	<command name="viewFormNotPublished">
-		<var locator="Form#PUBLISH_FORM_PUBLIC_URL" name="publishFormURL" />
-
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="${publishFormURL}" />
-		</execute>
+		<execute macro="FormsAdminNavigator#openPublishURL" />
 
 		<execute function="AssertTextEquals" locator1="Message#ERROR_3_ALT" value1="This form is not available or it was not published." />
 	</command>
 
 	<command name="viewFormPublish">
-		<var locator="Form#PUBLISH_FORM_PUBLIC_URL" name="publishFormURL" />
-
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="${publishFormURL}" />
-		</execute>
+		<execute macro="FormsAdminNavigator#openPublishURL" />
 
 		<var name="key_formName" value="${formName}" />
 
@@ -171,7 +161,5 @@
 		</execute>
 
 		<execute function="AssertElementPresent" locator1="Button#SUBMIT" value1="Submit" />
-
-		<execute macro="Navigator#openURL" />
 	</command>
 </definition>

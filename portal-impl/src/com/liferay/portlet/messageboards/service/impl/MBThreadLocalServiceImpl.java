@@ -121,10 +121,10 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 				message.getUserId(), message.getGroupId(),
 				thread.getStatusDate(), thread.getLastPostDate(),
 				MBThread.class.getName(), thread.getThreadId(),
-				thread.getUuid(), 0, new long[0], new String[0], false, null,
-				null, null, null, String.valueOf(thread.getRootMessageId()),
-				null, null, null, null, 0, 0,
-				serviceContext.getAssetPriority());
+				thread.getUuid(), 0, new long[0], new String[0], true, false,
+				null, null, null, null,
+				String.valueOf(thread.getRootMessageId()), null, null, null,
+				null, 0, 0, serviceContext.getAssetPriority());
 		}
 
 		return thread;
@@ -1001,8 +1001,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 		if (Validator.isNotNull(subject)) {
 			MBMessageDisplay messageDisplay =
 				mbMessageLocalService.getMessageDisplay(
-					userId, messageId, WorkflowConstants.STATUS_ANY,
-					MBThreadConstants.THREAD_VIEW_TREE, false);
+					userId, messageId, WorkflowConstants.STATUS_ANY);
 
 			MBTreeWalker treeWalker = messageDisplay.getTreeWalker();
 

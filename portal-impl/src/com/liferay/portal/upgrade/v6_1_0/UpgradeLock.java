@@ -17,8 +17,6 @@ package com.liferay.portal.upgrade.v6_1_0;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 import com.liferay.portal.upgrade.v6_1_0.util.LockTable;
 
-import java.sql.SQLException;
-
 /**
  * @author Brian Wing Shun Chan
  */
@@ -26,14 +24,9 @@ public class UpgradeLock extends UpgradeProcess {
 
 	@Override
 	protected void doUpgrade() throws Exception {
-		try {
-			runSQL("alter_column_type Lock_ owner VARCHAR(300) null");
-		}
-		catch (SQLException sqle) {
-			upgradeTable(
-				LockTable.TABLE_NAME, LockTable.TABLE_COLUMNS,
-				LockTable.TABLE_SQL_CREATE, LockTable.TABLE_SQL_ADD_INDEXES);
-		}
+		alter(
+			LockTable.class,
+			new AlterColumnType("owner", "VARCHAR(300) null"));
 	}
 
 }

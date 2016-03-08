@@ -1,12 +1,18 @@
-Bundle-Version: 7.0.0
+Bundle-Name: ${manifest.bundle.name}
+Bundle-SymbolicName: ${manifest.bundle.symbolic.name}
+Bundle-Version: 1.0.1
 Export-Package:\
 	com.liferay.alloy.taglib.*,\
 	com.liferay.taglib.*
 Import-Package:\
 	!com.liferay.portal.freemarker,\
+	\
 	!jodd.*,\
+	\
 	!org.dom4j.*,\
+	\
 	!org.json.*,\
+	\
 	com.liferay.*,\
 	*
 Include-Resource:\

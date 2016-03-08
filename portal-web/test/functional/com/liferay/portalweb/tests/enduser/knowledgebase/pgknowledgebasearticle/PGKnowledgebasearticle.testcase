@@ -1,4 +1,5 @@
 <definition component-name="portal-knowledge-base">
+	<property name="custom.properties" value="default.layout.template.id=1_column" />
 	<property name="portlet.plugins.includes" value="knowledge-base-portlet" />
 	<property name="testray.main.component.name" value="Knowledge Base" />
 
@@ -14,7 +15,7 @@
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoEditPage">
+		<execute macro="SitePageNavigator#gotoEditPage">
 			<var name="page" value="${pageName}" />
 		</execute>
 
@@ -22,7 +23,7 @@
 			<var name="columnName" value="1_column" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
@@ -59,7 +60,7 @@
 			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Article Page" />
 		</execute>
 
@@ -68,7 +69,7 @@
 			<var name="pageName" value="Knowledge Base Article Page" />
 		</execute>
 
-		<execute macro="Page#gotoPG">
+		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Article Page" />
 		</execute>
 

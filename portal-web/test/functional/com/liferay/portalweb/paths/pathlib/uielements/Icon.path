@@ -70,7 +70,7 @@
 </tr>
 <tr>
 	<td>DELETE</td>
-	<td>//*[@data-qa-id='deleteButton'] | //a[contains(@title,'Delete')]/span[contains(@class,'icon-monospaced')]</td>
+	<td>//*[contains(@data-qa-id,'deleteButton')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -114,6 +114,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>CUSTOM_EDIT</td>
+	<td>//a[contains(@class,'taglib-icon')]/i[contains(@class,'icon-edit')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>EDIT_CONTROLS</td>
 	<td>//li[contains(@id,'toggleControls')]/a[i[contains(@class,'icon-eye-close') or contains(@class,'icon-eye-open')]]</td>
 	<td></td>
@@ -144,6 +149,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>INFO_ACTIVE</td>
+	<td>//*[contains(@class,'active') and contains(@class,'open') and @data-qa-id='infoButton']</td>
+	<td></td>
+</tr>
+<tr>
 	<td>INFO_ALL_ENTRIES</td>
 	<td>//div[contains(@class,'management-bar-no-collapse on')]//a[contains(@class,'infoPanelToggler')]</td>
 	<td></td>
@@ -161,6 +171,11 @@
 <tr>
 	<td>MOVE</td>
 	<td>//*[@data-qa-id='moveButton'] | //a[contains(@href,'editEntry')]/span[contains(@class,'icon-move')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>MOVE_TO_RECYCLE_BIN</td>
+	<td>//a[contains(@data-qa-id,'recycle-binButton')]/span[contains(@class,'icon-monospaced')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -190,7 +205,7 @@
 </tr>
 <tr>
 	<td>TOOLTIP</td>
-	<td>//span[@class='taglib-icon-help']</td>
+	<td>//span/*[name()='svg'][contains(@class,'icon-question')]</td>
 	<td></td>
 </tr>
 <tr>

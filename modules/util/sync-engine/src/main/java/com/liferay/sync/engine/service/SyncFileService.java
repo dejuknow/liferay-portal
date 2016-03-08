@@ -224,9 +224,7 @@ public class SyncFileService {
 		deleteSyncFile(syncFile, true);
 	}
 
-	public static void deleteSyncFile(
-		final SyncFile syncFile, final boolean notify) {
-
+	public static void deleteSyncFile(SyncFile syncFile, boolean notify) {
 		try {
 
 			// Sync file
@@ -235,6 +233,19 @@ public class SyncFileService {
 
 			// Sync files
 
+			deleteSyncFiles(syncFile, notify);
+		}
+		catch (SQLException sqle) {
+			if (_logger.isDebugEnabled()) {
+				_logger.debug(sqle.getMessage(), sqle);
+			}
+		}
+	}
+
+	public static void deleteSyncFiles(
+		final SyncFile syncFile, final boolean notify) {
+
+		try {
 			if (!syncFile.isFolder()) {
 				return;
 			}
@@ -252,6 +263,8 @@ public class SyncFileService {
 							continue;
 						}
 
+						childSyncFile.setModifiedTime(
+							syncFile.getModifiedTime());
 						childSyncFile.setUiEvent(syncFile.getUiEvent());
 
 						doDeleteSyncFile(childSyncFile, notify);
@@ -408,21 +421,6 @@ public class SyncFileService {
 
 		try {
 			return _syncFilePersistence.findByPF_L(filePathName, localSyncTime);
-		}
-		catch (SQLException sqle) {
-			if (_logger.isDebugEnabled()) {
-				_logger.debug(sqle.getMessage(), sqle);
-			}
-
-			return Collections.emptyList();
-		}
-	}
-
-	public static List<SyncFile> findSyncFilesByRepositoryId(
-		long repositoryId, long syncAccountId) {
-
-		try {
-			return _syncFilePersistence.findByR_S(repositoryId, syncAccountId);
 		}
 		catch (SQLException sqle) {
 			if (_logger.isDebugEnabled()) {
@@ -752,6 +750,10 @@ public class SyncFileService {
 	public static SyncFile updateFileSyncFile(
 			Path filePath, long syncAccountId, SyncFile syncFile)
 		throws Exception {
+
+		if (Files.notExists(filePath)) {
+			return null;
+		}
 
 		// Local sync file
 

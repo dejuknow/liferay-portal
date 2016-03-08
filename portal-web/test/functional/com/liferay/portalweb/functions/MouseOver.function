@@ -1,5 +1,7 @@
 <definition default="mouseOver" summary="Mouse over '${locator1}'">
 	<command name="mouseOver">
+		<execute function="WaitForSPARefresh" />
+
 		<execute selenium="waitForVisible" />
 
 		<execute selenium="mouseOver" />
@@ -10,11 +12,15 @@
 	</command>
 
 	<command name="mouseOverClickNavigation">
+		<execute function="WaitForSPARefresh" />
+
 		<execute argument1="//nav[@id='navigation']" argument2="" selenium="clickAt" />
 
 		<execute argument1="//script[contains(@src,'/frontend-js-web/liferay/sign_in_modal.js')]" selenium="waitForElementPresent" />
 
 		<execute function="MouseOver#mouseOver" />
+
+		<execute argument1="1000" selenium="pause" />
 
 		<execute selenium="assertJavaScriptErrors" />
 
@@ -22,6 +28,8 @@
 	</command>
 
 	<command name="mouseOverNotVisible">
+		<execute function="WaitForSPARefresh" />
+
 		<execute selenium="waitForElementPresent" />
 
 		<execute selenium="mouseOver" />
@@ -34,6 +42,8 @@
 	</command>
 
 	<command name="partialTextMouseOver">
+		<execute function="WaitForSPARefresh" />
+
 		<execute function="AssertTextEquals#assertPartialText" />
 
 		<execute selenium="mouseOver" />
@@ -44,6 +54,8 @@
 	</command>
 
 	<command name="textMouseOver">
+		<execute function="WaitForSPARefresh" />
+
 		<execute function="AssertTextEquals#assertText" />
 
 		<execute selenium="mouseOver" />
@@ -54,6 +66,8 @@
 	</command>
 
 	<command name="textMouseOverClickNavigation">
+		<execute function="WaitForSPARefresh" />
+
 		<execute argument1="//nav[@id='navigation']" argument2="" selenium="clickAt" />
 
 		<execute argument1="//script[contains(@src,'/aui/sortable/sortable')]" selenium="waitForElementPresent" />
@@ -66,6 +80,8 @@
 	</command>
 
 	<command name="valueMouseOver">
+		<execute function="WaitForSPARefresh" />
+
 		<execute function="AssertTextEquals#assertValue" />
 
 		<execute selenium="mouseOver" />

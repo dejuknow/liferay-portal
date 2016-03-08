@@ -9,10 +9,10 @@
 			</and>
 			<then>
 				<execute function="AssertClick" locator1="Panel#PANEL_HEADING_COLLAPSED" value1="${panelHeading}" />
-
-				<execute function="AssertElementPresent" locator1="Panel#PANEL_HEADING_EXPANDED" value1="${panelHeading}" />
 			</then>
 		</if>
+
+		<execute function="AssertElementPresent" locator1="Panel#PANEL_HEADING_EXPANDED" value1="${panelHeading}" />
 	</command>
 
 	<command name="expandSidebarPanel">

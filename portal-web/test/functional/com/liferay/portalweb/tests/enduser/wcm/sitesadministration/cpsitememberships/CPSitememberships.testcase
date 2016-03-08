@@ -51,7 +51,7 @@
 			<var name="site" value="Site Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -90,7 +90,7 @@
 			<var name="site" value="Site Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -106,7 +106,7 @@
 			<var name="site" value="Site Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -134,7 +134,7 @@
 			<var name="site" value="Site Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Teams" />
 		</execute>
 
@@ -165,17 +165,15 @@
 		</execute>
 
 		<execute macro="Page#add">
-			<var name="page" value="Public Pages" />
 			<var name="pageName" value="Site Page" />
 			<var name="siteName" value="Site Name" />
-			<var name="siteURL" value="true" />
 		</execute>
 
 		<execute macro="ProductMenu#gotoSite">
 			<var name="site" value="Site Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Teams" />
 		</execute>
 
@@ -236,7 +234,7 @@
 			<var name="site" value="Site Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -252,7 +250,7 @@
 			<var name="site" value="Site Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Teams" />
 		</execute>
 
@@ -270,7 +268,7 @@
 			<var name="site" value="Site Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -298,7 +296,7 @@
 			<var name="site" value="Site Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Teams" />
 		</execute>
 
@@ -328,7 +326,7 @@
 			<var name="siteName" value="Site Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Teams" />
 		</execute>
 
@@ -383,7 +381,7 @@
 			<var name="site" value="Site Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -399,7 +397,7 @@
 			<var name="site" value="Site Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -415,7 +413,7 @@
 			<var name="site" value="Child SiteName" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -431,7 +429,7 @@
 			<var name="site" value="Child SiteName" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -447,7 +445,7 @@
 			<var name="site" value="Child SiteName" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -462,7 +460,7 @@
 			<var name="site" value="Site Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -477,7 +475,7 @@
 			<var name="site" value="Child SiteName" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -515,7 +513,6 @@
 		</execute>
 
 		<execute macro="Page#add">
-			<var name="page" value="Public Pages" />
 			<var name="pageName" value="Site Page" />
 			<var name="siteName" value="Organization Name 1" />
 		</execute>
@@ -573,7 +570,7 @@
 			<var name="site" value="Organization Name 1" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -604,7 +601,7 @@
 			<var name="site" value="Organization Name 1" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -620,7 +617,7 @@
 			<var name="site" value="Organization Name 1" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -632,7 +629,7 @@
 			<var name="site" value="Organization Name 1" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -644,7 +641,7 @@
 			<var name="site" value="Organization Name 1" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -656,7 +653,7 @@
 			<var name="site" value="Organization Name 1" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -691,7 +688,7 @@
 			<var name="site" value="Site Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -706,7 +703,7 @@
 			<var name="site" value="Site Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -739,7 +736,7 @@
 			<var name="site" value="Site Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -749,7 +746,7 @@
 			<var name="site" value="Site Name" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -855,11 +852,19 @@
 			<var name="userScreenName" value="user1" />
 		</execute>
 
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Users and Organizations" />
+		</execute>
+
 		<execute macro="User#addCP">
 			<var name="userEmailAddress" value="5670@liferay.com" />
 			<var name="userFirstName" value="userfnTest2" />
 			<var name="userLastName" value="Two" />
 			<var name="userScreenName" value="screen2" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
 		<execute macro="User#addCP">
@@ -871,7 +876,7 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
@@ -1053,7 +1058,7 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoSitesUsers">
+		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 

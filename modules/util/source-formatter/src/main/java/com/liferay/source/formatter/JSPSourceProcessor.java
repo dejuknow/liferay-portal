@@ -345,12 +345,16 @@ public class JSPSourceProcessor extends BaseSourceProcessor {
 		newContent = fixEmptyLineInNestedTags(
 			newContent, _emptyLineInNestedTagsPattern3, false);
 
+		newContent = fixMissingEmptyLinesBetweenTags(newContent);
+
 		if (_stripJSPImports && !_jspContents.isEmpty()) {
 			try {
 				newContent = formatJSPImportsOrTaglibs(
-					fileName, newContent, _jspImportPattern, true);
+					fileName, newContent, _compressedJSPImportPattern,
+					_uncompressedJSPImportPattern, true);
 				newContent = formatJSPImportsOrTaglibs(
-					fileName, newContent, _jspTaglibPattern, false);
+					fileName, newContent, _compressedJSPTaglibPattern,
+					_uncompressedJSPTaglibPattern, false);
 			}
 			catch (RuntimeException re) {
 				_stripJSPImports = false;
@@ -430,6 +434,10 @@ public class JSPSourceProcessor extends BaseSourceProcessor {
 			processErrorMessage(
 				fileName, "Do not use Registry in modules: " + fileName);
 		}
+
+		// LPS-62786
+
+		checkPropertyUtils(fileName, newContent);
 
 		Matcher matcher = _javaClassPattern.matcher(newContent);
 
@@ -556,6 +564,23 @@ public class JSPSourceProcessor extends BaseSourceProcessor {
 				content = StringUtil.replaceFirst(
 					content, StringPool.NEW_LINE, StringPool.BLANK,
 					matcher.end(1));
+			}
+		}
+
+		return content;
+	}
+
+	protected String fixMissingEmptyLinesBetweenTags(String content) {
+		Matcher matcher = _missingEmptyLineBetweenTagsPattern.matcher(content);
+
+		while (matcher.find()) {
+			String tabs1 = matcher.group(1);
+			String tabs2 = matcher.group(3);
+			String tagName = matcher.group(2);
+
+			if (tabs1.equals(tabs2) && !tagName.equals("when")) {
+				return StringUtil.replaceFirst(
+					content, "\n", "\n\n", matcher.end(1));
 			}
 		}
 
@@ -1071,15 +1096,15 @@ public class JSPSourceProcessor extends BaseSourceProcessor {
 	}
 
 	protected String formatJSPImportsOrTaglibs(
-			String fileName, String content, Pattern pattern,
-			boolean checkUnusedImports)
+			String fileName, String content, Pattern compressedPattern,
+			Pattern uncompressedPattern, boolean checkUnusedImports)
 		throws IOException {
 
 		if (fileName.endsWith("init-ext.jsp")) {
 			return content;
 		}
 
-		Matcher matcher = pattern.matcher(content);
+		Matcher matcher = compressedPattern.matcher(content);
 
 		if (!matcher.find()) {
 			return content;
@@ -1087,7 +1112,7 @@ public class JSPSourceProcessor extends BaseSourceProcessor {
 
 		String imports = matcher.group();
 
-		imports = StringUtil.replace(
+		String newImports = StringUtil.replace(
 			imports, new String[] {"<%@\r\n", "<%@\n", " %><%@ "},
 			new String[] {"\r\n<%@ ", "\n<%@ ", " %>\n<%@ "});
 
@@ -1095,7 +1120,7 @@ public class JSPSourceProcessor extends BaseSourceProcessor {
 			List<String> importLines = new ArrayList<>();
 
 			UnsyncBufferedReader unsyncBufferedReader =
-				new UnsyncBufferedReader(new UnsyncStringReader(imports));
+				new UnsyncBufferedReader(new UnsyncStringReader(newImports));
 
 			String line = null;
 
@@ -1111,35 +1136,16 @@ public class JSPSourceProcessor extends BaseSourceProcessor {
 			addJSPUnusedImports(fileName, importLines, unneededImports);
 
 			for (String unneededImport : unneededImports) {
-				imports = StringUtil.replace(
-					imports, unneededImport, StringPool.BLANK);
+				newImports = StringUtil.replace(
+					newImports, unneededImport, StringPool.BLANK);
 			}
 		}
 
+		content = StringUtil.replaceFirst(content, imports, newImports);
+
 		ImportsFormatter importsFormatter = new JSPImportsFormatter();
 
-		imports = importsFormatter.format(imports);
-
-		String beforeImports = content.substring(0, matcher.start());
-
-		if (Validator.isNull(imports)) {
-			beforeImports = StringUtil.replaceLast(
-				beforeImports, "\n", StringPool.BLANK);
-		}
-
-		String afterImports = content.substring(matcher.end());
-
-		if (Validator.isNull(afterImports)) {
-			imports = StringUtil.replaceLast(imports, "\n", StringPool.BLANK);
-
-			content = beforeImports + imports;
-
-			return content;
-		}
-
-		content = beforeImports + imports + "\n" + afterImports;
-
-		return content;
+		return importsFormatter.format(content, uncompressedPattern);
 	}
 
 	protected String formatLogFileName(String absolutePath, String content) {
@@ -1484,8 +1490,7 @@ public class JSPSourceProcessor extends BaseSourceProcessor {
 			return _utilTaglibDirName;
 		}
 
-		File utilTaglibDir = getFile(
-			"util-taglib", BaseSourceProcessor.PORTAL_MAX_DIR_LEVEL);
+		File utilTaglibDir = getFile("util-taglib", PORTAL_MAX_DIR_LEVEL);
 
 		if (utilTaglibDir != null) {
 			_utilTaglibDirName = utilTaglibDir.getAbsolutePath();
@@ -1939,6 +1944,10 @@ public class JSPSourceProcessor extends BaseSourceProcessor {
 	};
 
 	private Set<String> _checkedForIncludesFileNames = new HashSet<>();
+	private final Pattern _compressedJSPImportPattern = Pattern.compile(
+		"(<.*\n*page.import=\".*>\n*)+", Pattern.MULTILINE);
+	private final Pattern _compressedJSPTaglibPattern = Pattern.compile(
+		"(<.*\n*taglib uri=\".*>\n*)+", Pattern.MULTILINE);
 	private final Pattern _defineObjectsPattern = Pattern.compile(
 		"\n\t*(<.*:defineObjects />)\n");
 	private final List<String> _duplicateImportClassNames = new ArrayList<>();
@@ -1959,20 +1968,18 @@ public class JSPSourceProcessor extends BaseSourceProcessor {
 		"\n(private|protected|public).* class ([A-Za-z0-9]+) " +
 			"([\\s\\S]*?)\n\\}\n");
 	private final Map<String, String> _jspContents = new HashMap<>();
-	private final Pattern _jspImportPattern = Pattern.compile(
-		"(<.*\n*page.import=\".*>\n*)+", Pattern.MULTILINE);
 	private final Pattern _jspIncludeFilePattern = Pattern.compile(
 		"/.*[.]jsp[f]?");
 	private final Pattern _jspTagAttributes = Pattern.compile(
 		"<[-\\w]+:[-\\w]+ (.*?[^%])>");
 	private final Pattern _jspTagAttributeValue = Pattern.compile(
 		"('|\")<%= (.+?) %>('|\")");
-	private final Pattern _jspTaglibPattern = Pattern.compile(
-		"(<.*\n*taglib uri=\".*>\n*)+", Pattern.MULTILINE);
 	private final Pattern _logPattern = Pattern.compile(
 		"Log _log = LogFactoryUtil\\.getLog\\(\"(.*?)\"\\)");
 	private final Pattern _missingEmptyLineBetweenDefineOjbectsPattern =
 		Pattern.compile("<.*:defineObjects />\n<.*:defineObjects />\n");
+	private final Pattern _missingEmptyLineBetweenTagsPattern = Pattern.compile(
+		"\n(\t*)</[a-z-]+:([a-z-]+)>\n(\t*)<[a-z-]+");
 	private boolean _moveFrequentlyUsedImportsToCommonInit;
 	private Set<String> _primitiveTagAttributeDataTypes;
 	private final Pattern _redirectBackURLPattern = Pattern.compile(
@@ -1992,6 +1999,10 @@ public class JSPSourceProcessor extends BaseSourceProcessor {
 	private final Pattern _taglibLanguageKeyPattern3 = Pattern.compile(
 		"(liferay-ui:)(?:input-resource) .*id=\"([^<=%\\[\\s]+)\"(?!.*title=" +
 			"(?:'|\").+(?:'|\"))");
+	private final Pattern _uncompressedJSPImportPattern = Pattern.compile(
+		"(<.*page.import=\".*>\n*)+", Pattern.MULTILINE);
+	private final Pattern _uncompressedJSPTaglibPattern = Pattern.compile(
+		"(<.*taglib uri=\".*>\n*)+", Pattern.MULTILINE);
 	private List<String> _unusedVariablesExcludes;
 	private String _utilTaglibDirName;
 	private final Pattern _xssPattern = Pattern.compile(
