@@ -552,7 +552,6 @@ app.server.type=@{app.server.type}]]></echo>
 				<test-set-up>
 					<if>
 						<and>
-							<matches pattern="http" string="@{test.license.xml.url}" />
 							<matches pattern="http" string="@{test.portal.bundle.zip.url}" />
 							<matches pattern="http" string="@{test.sql.zip.url}" />
 						</and>
@@ -567,9 +566,14 @@ app.server.type=@{app.server.type}]]></echo>
 								<param name="test.fix.pack.base.url" value="@{test.fix.pack.base.url}" />
 							</antcall>
 
-							<antcall target="deploy-license-xml">
-								<param name="test.build.license.xml.zip.url" value="@{test.license.xml.url}" />
-							</antcall>
+							<if>
+								<matches pattern="http" string="@{test.license.xml.url}" />
+								<then>
+									<antcall target="deploy-license-xml">
+										<param name="test.build.license.xml.zip.url" value="@{test.license.xml.url}" />
+									</antcall>
+								</then>
+							</if>
 
 							<antcall target="deploy-sql-zip">
 								<param name="test.sql.zip.url" value="@{test.sql.zip.url}" />
@@ -771,6 +775,18 @@ app.server.type=@{app.server.type}]]></echo>
 		/>
 	</target>
 
+	<target name="functional-jboss64-mysql56-jdk8">
+		<run-functional-test app.server.type="jboss" database.type="mysql" />
+	</target>
+
+	<target name="functional-resin40-mysql56-jdk7">
+		<run-functional-test app.server.type="resin" database.type="mysql" />
+	</target>
+
+	<target name="functional-tcserver26-mysql56-jdk7">
+		<run-functional-test app.server.type="tcserver" database.type="mysql" />
+	</target>
+
 	<target name="functional-tomcat8-hypersonic20-jdk7">
 		<run-functional-test app.server.type="tomcat" database.type="hypersonic" />
 	</target>
@@ -787,8 +803,24 @@ app.server.type=@{app.server.type}]]></echo>
 		<antcall target="functional-tomcat8-mysql56-jdk7" />
 	</target>
 
+	<target name="functional-tomcat8-oracle12-jdk7">
+		<run-functional-test app.server.type="tomcat" database.type="oracle" />
+	</target>
+
 	<target name="functional-tomcat8-postgresql94-jdk8">
 		<run-functional-test app.server.type="tomcat" database.type="postgresql" />
+	</target>
+
+	<target name="functional-tomcat8-sybase16-jdk7">
+		<run-functional-test app.server.type="tomcat" database.type="sybase" />
+	</target>
+
+	<target name="functional-weblogic121-mysql56-jdk7">
+		<run-functional-test app.server.type="weblogic" database.type="mysql" />
+	</target>
+
+	<target name="functional-websphere85-mysql56-jdk7">
+		<run-functional-test app.server.type="websphere" database.type="mysql" />
 	</target>
 
 	<target name="functional-wildfly10-mariadb100-jdk8">
@@ -1092,11 +1124,39 @@ ${output.content}</echo>
 						<if>
 							<isset property="modules.base.dir.names.with.changes" />
 							<then>
-								<for list="${modules.base.dir.names.with.changes}" param="modules.base.dir.name">
+								<for list="${modules.base.dir.names.with.changes}" param="module.base.dir.name">
 									<sequential>
-										<echo>Executing baseline on @{modules.base.dir.name}.</echo>
+										<var name="module.baseline.task.name" unset="true" />
+										<var name="modules.base.dir.name" unset="true" />
 
-										<gradle-execute dir="@{modules.base.dir.name}" task="baseline" />
+										<propertyregex
+											input="@{module.base.dir.name}"
+											override="true"
+											property="modules.base.dir.name"
+											regexp="(.*/modules)(/.*)"
+											replace="\1"
+										/>
+
+										<propertyregex
+											input="@{module.base.dir.name}"
+											override="true"
+											property="module.baseline.task.name"
+											regexp="(.*/modules)(/.*)"
+											replace="\2"
+										/>
+
+										<antelope:stringutil property="module.baseline.task.name" string="${module.baseline.task.name}">
+											<antelope:replace regex="/" replacement=":" />
+										</antelope:stringutil>
+
+										<var name="module.baseline.task.name" value="${module.baseline.task.name}:baseline" />
+
+										<echo>Executing ${module.baseline.task.name} on ${modules.base.dir.name}.</echo>
+
+										<gradle-execute dir="${modules.base.dir.name}" forcedcacheenabled="false" task="${module.baseline.task.name}" />
+
+										<var name="module.baseline.task.name" unset="true" />
+										<var name="modules.base.dir.name" unset="true" />
 									</sequential>
 								</for>
 							</then>

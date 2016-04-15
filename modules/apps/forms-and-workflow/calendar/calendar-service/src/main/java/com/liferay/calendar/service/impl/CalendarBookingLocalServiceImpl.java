@@ -372,7 +372,7 @@ public class CalendarBookingLocalServiceImpl
 		Date now = new Date();
 
 		java.util.Calendar startTimeJCalendar = JCalendarUtil.getJCalendar(
-			startTime);
+			startTime, calendarBooking.getTimeZone());
 
 		Recurrence recurrenceObj = calendarBooking.getRecurrenceObj();
 

@@ -85,6 +85,11 @@ public abstract class BaseMobileDriverImpl
 	}
 
 	@Override
+	public void assertAccessible() throws Exception {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public void assertAlert(String pattern) throws Exception {
 		LiferaySeleniumHelper.assertAlert(this, pattern);
 	}
@@ -569,6 +574,11 @@ public abstract class BaseMobileDriverImpl
 
 	@Override
 	public String getCurrentDayName() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public String getCurrentHour() {
 		throw new UnsupportedOperationException();
 	}
 

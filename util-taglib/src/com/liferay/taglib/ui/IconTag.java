@@ -377,6 +377,8 @@ public class IconTag extends IncludeTag {
 			id = PortalUtil.generateRandomKey(request, IconTag.class.getName());
 		}
 
+		id = HtmlUtil.getAUICompatibleId(id);
+
 		return id;
 	}
 
@@ -625,6 +627,6 @@ public class IconTag extends IncludeTag {
 	private String _target = "_self";
 	private boolean _toolTip;
 	private String _url;
-	private boolean _useDialog = false;
+	private boolean _useDialog;
 
 }

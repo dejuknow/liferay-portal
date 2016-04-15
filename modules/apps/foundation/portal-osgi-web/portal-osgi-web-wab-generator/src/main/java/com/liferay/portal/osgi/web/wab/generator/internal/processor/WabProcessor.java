@@ -23,6 +23,7 @@ import aQute.bnd.osgi.JarResource;
 import aQute.bnd.osgi.Resource;
 import aQute.bnd.version.Version;
 
+import com.liferay.petra.xml.XMLUtil;
 import com.liferay.portal.events.GlobalStartupAction;
 import com.liferay.portal.kernel.deploy.auto.AutoDeployException;
 import com.liferay.portal.kernel.deploy.auto.AutoDeployListener;
@@ -60,8 +61,8 @@ import com.liferay.portal.kernel.xml.XPath;
 import com.liferay.portal.osgi.web.wab.generator.internal.introspection.ClassLoaderSource;
 import com.liferay.portal.osgi.web.wab.generator.internal.introspection.Source;
 import com.liferay.portal.osgi.web.wab.generator.internal.util.AntUtil;
+import com.liferay.portal.osgi.web.wab.generator.internal.util.ManifestUtil;
 import com.liferay.portal.util.PropsValues;
-import com.liferay.util.xml.XMLUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -526,21 +527,12 @@ public class WabProcessor {
 	}
 
 	protected boolean isValidOSGiBundle() {
-		Manifest manifest = null;
-
 		try {
-			manifest = getManifest();
+			return ManifestUtil.isValidOSGiBundle(getManifest());
 		}
 		catch (IOException ioe) {
 			return false;
 		}
-
-		Attributes attributes = manifest.getMainAttributes();
-
-		String bundleSymbolicName = GetterUtil.getString(
-			attributes.getValue(Constants.BUNDLE_SYMBOLICNAME));
-
-		return Validator.isNotNull(bundleSymbolicName);
 	}
 
 	protected void processBundleClasspath(

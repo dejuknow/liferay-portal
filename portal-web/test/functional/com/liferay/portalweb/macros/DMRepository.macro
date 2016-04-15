@@ -12,12 +12,11 @@
 	</command>
 
 	<command name="addSharepoint">
-		<if>
-			<condition function="IsNotVisible" locator1="DocumentsAndMediaEditRepository#SITE_URL_FIELD" />
-			<then>
-				<execute function="AssertClick" locator1="Panel#ENTRY_REPOSITORY_CONFIGURATION" value1="Repository Configuration" />
-			</then>
-		</if>
+		<execute macro="Panel#expandPanel">
+			<var name="panelHeading" value="Repository Configuration" />
+		</execute>
+
+		<execute function="Select" locator1="DocumentsAndMediaEditRepository#REPOSITORY_TYPE_SELECT" value1="Sharepoint" />
 
 		<execute function="Type" locator1="DocumentsAndMediaEditRepository#SITE_URL_FIELD" value1="${dmRepositorySiteURL}" />
 		<execute function="Type" locator1="DocumentsAndMediaEditRepository#LIBRARY_NAME_FIELD" value1="${dmRepositoryLibraryName}" />

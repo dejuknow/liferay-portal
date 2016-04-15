@@ -209,7 +209,9 @@ public abstract class Watcher implements Runnable {
 
 		String fileName = String.valueOf(filePath.getFileName());
 
-		if (FileUtil.isIgnoredFilePath(filePath) || (fileName.length() > 255)) {
+		if (FileUtil.isIgnoredFilePath(filePath) ||
+			FileUtil.isUnsynced(filePath) || (fileName.length() > 255)) {
+
 			if (_logger.isDebugEnabled()) {
 				_logger.debug("Ignored file path {}", filePath);
 			}
@@ -284,11 +286,10 @@ public abstract class Watcher implements Runnable {
 						"Missing sync site file path {}", missingFilePath);
 				}
 
+				syncSite.setActive(false);
 				syncSite.setUiEvent(SyncSite.UI_EVENT_SYNC_SITE_FOLDER_MISSING);
 
 				SyncSiteService.update(syncSite);
-
-				SyncSiteService.deactivateSyncSite(syncSite.getSyncSiteId());
 			}
 		}
 	}
@@ -372,8 +373,11 @@ public abstract class Watcher implements Runnable {
 				SyncWatchEvent.EVENT_TYPE_RENAME_FROM, filePath);
 		}
 		else if (eventType.equals(SyncWatchEvent.EVENT_TYPE_RENAME_TO)) {
-			if (_downloadedFilePathNames.remove(filePath.toString()) ||
-				FileUtil.isIgnoredFileName(
+			if (_downloadedFilePathNames.remove(filePath.toString())) {
+				return;
+			}
+
+			if (FileUtil.isIgnoredFileName(
 					String.valueOf(filePath.getFileName())) ||
 				FileUtil.isHidden(filePath) || FileUtil.isShortcut(filePath)) {
 

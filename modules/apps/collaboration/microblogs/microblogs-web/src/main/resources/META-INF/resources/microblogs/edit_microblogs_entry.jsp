@@ -69,7 +69,7 @@ String formName = "fm" + formId;
 
 String formCssClass = "microblogs-entry-form";
 
-boolean comment = GetterUtil.getBoolean((String)request.getAttribute("view_comments.jsp-comment"), false);
+boolean comment = GetterUtil.getBoolean((String)request.getAttribute("view_comments.jsp-comment"));
 
 if (comment) {
 	formCssClass += " reply";
@@ -202,7 +202,7 @@ if (comment) {
 			}
 			%>
 
-			<aui:select inlineLabel="true" label="viewable-by" name="socialRelationType" value="<%= socialRelationType %>">
+			<aui:select inlineLabel="<%= Boolean.TRUE.toString() %>" label="viewable-by" name="socialRelationType" value="<%= socialRelationType %>">
 				<aui:option label="everyone" value="<%= MicroblogsEntryConstants.TYPE_EVERYONE %>" />
 				<aui:option label="connections" value="<%= SocialRelationConstants.TYPE_BI_CONNECTION %>" />
 				<aui:option label="followers" value="<%= SocialRelationConstants.TYPE_UNI_FOLLOWER %>" />

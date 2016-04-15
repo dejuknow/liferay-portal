@@ -1327,6 +1327,10 @@
 			<var name="columnName" value="1 Column" />
 		</execute>
 
+		<execute macro="Navigator#gotoPage">
+			<var name="pageName" value="Knowledge Base Display Page 1" />
+		</execute>
+
 		<execute macro="Portlet#addPG">
 			<var name="portletName" value="Knowledge Base Display" />
 		</execute>
@@ -1351,6 +1355,10 @@
 
 		<execute macro="Page#editPageLayoutColumn">
 			<var name="columnName" value="1 Column" />
+		</execute>
+
+		<execute macro="Navigator#gotoPage">
+			<var name="pageName" value="Knowledge Base Display Page 2" />
 		</execute>
 
 		<execute macro="Portlet#addPG">

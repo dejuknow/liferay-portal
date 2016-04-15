@@ -178,7 +178,7 @@ AUI.add(
 								message = error.message;
 							}
 							else if (errorType === STATUS_CODE.SC_FILE_EXTENSION_EXCEPTION) {
-								message = Lang.sub(Liferay.Language.get('please-enter-a-file-with-a-valid-extension-x'), [instance.get('validExtensions')]);
+								message = Lang.sub(Liferay.Language.get('please-enter-a-file-with-a-valid-extension-x'), [error.message]);
 							}
 							else if (errorType === STATUS_CODE.SC_FILE_NAME_EXCEPTION) {
 								message = Liferay.Language.get('please-enter-a-file-with-a-valid-file-name');
@@ -260,11 +260,7 @@ AUI.add(
 					_onItemUploadCancel: function(event) {
 						var instance = this;
 
-						var uploadItemViewer = instance._uploadItemViewer;
-
-						if (uploadItemViewer) {
-							uploadItemViewer.hide();
-						}
+						instance._uploadItemViewer.hide();
 					},
 
 					_onItemUploadComplete: function(itemData) {
@@ -272,9 +268,7 @@ AUI.add(
 
 						var uploadItemViewer = instance._uploadItemViewer;
 
-						if (uploadItemViewer) {
-							uploadItemViewer.updateCurrentImage(itemData);
-						}
+						uploadItemViewer.updateCurrentImage(itemData);
 
 						instance._onItemSelected(uploadItemViewer);
 					},
@@ -282,11 +276,7 @@ AUI.add(
 					_onItemUploadError: function(event) {
 						var instance = this;
 
-						var uploadItemViewer = instance._uploadItemViewer;
-
-						if (uploadItemViewer) {
-							uploadItemViewer.hide();
-						}
+						instance._uploadItemViewer.hide();
 
 						instance._getUploadErrorMessage(event.error).show();
 					},
@@ -321,6 +311,10 @@ AUI.add(
 						var instance = this;
 
 						var returnType = instance.get('uploadItemReturnType');
+
+						if (!file.type.match(/image.*/)) {
+							preview = Liferay.ThemeDisplay.getPathThemeImages() + '/file_system/large/default.png';
+						}
 
 						var linkNode = A.Node.create(
 							Lang.sub(

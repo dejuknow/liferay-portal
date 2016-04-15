@@ -31,14 +31,11 @@ Group group = themeDisplay.getScopeGroup();
 		try {
 			long contactsPlid = PortalUtil.getPlidFromPortletId(group.getGroupId(), false, ContactsPortletKeys.CONTACTS_CENTER);
 
-			portletURL = PortletURLFactoryUtil.create(request, ContactsPortletKeys.CONTACTS_CENTER, contactsPlid, PortletRequest.RENDER_PHASE);
+			if (contactsPlid > 0) {
+				portletURL = PortletURLFactoryUtil.create(request, ContactsPortletKeys.CONTACTS_CENTER, contactsPlid, PortletRequest.RENDER_PHASE);
+			}
 		}
 		catch (Exception e) {
-			portletURL = renderResponse.createRenderURL();
-
-			portletURL.setWindowState(WindowState.MAXIMIZED);
-
-			portletURL.setParameter("mvcPath", "/view.jsp");
 		}
 		%>
 

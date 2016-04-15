@@ -16,7 +16,6 @@ package com.liferay.sync.engine;
 
 import com.j256.ormlite.support.ConnectionSource;
 
-import com.liferay.sync.engine.documentlibrary.util.BatchEventManager;
 import com.liferay.sync.engine.documentlibrary.util.FileEventUtil;
 import com.liferay.sync.engine.documentlibrary.util.ServerEventUtil;
 import com.liferay.sync.engine.filesystem.SyncWatchEventProcessor;
@@ -219,11 +218,10 @@ public class SyncEngine {
 						"Missing sync site file path {}", syncSiteFilePath);
 				}
 
+				syncSite.setActive(false);
 				syncSite.setUiEvent(SyncSite.UI_EVENT_SYNC_SITE_FOLDER_MISSING);
 
 				SyncSiteService.update(syncSite);
-
-				SyncSiteService.deactivateSyncSite(syncSite.getSyncSiteId());
 			}
 		}
 
@@ -358,8 +356,6 @@ public class SyncEngine {
 						syncSite.getGroupId(), syncAccount.getSyncAccountId(),
 						syncSite, true);
 				}
-
-				BatchEventManager.fireBatchDownloadEvents();
 			}
 
 		};

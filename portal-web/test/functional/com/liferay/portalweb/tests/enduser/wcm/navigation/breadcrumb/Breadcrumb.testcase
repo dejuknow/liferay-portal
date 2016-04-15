@@ -309,8 +309,7 @@
 			<var name="breadcrumbListVisible" value="Parent Page Name,Child Page Name" />
 		</execute>
 
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Parent Page Name" />
+		<execute macro="Navigator#openSiteURL">
 			<var name="siteName" value="Site Name" />
 		</execute>
 
@@ -339,8 +338,7 @@
 
 		<execute macro="Breadcrumb#saveDisplayPreview" />
 
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Parent Page Name" />
+		<execute macro="Navigator#openSiteURL">
 			<var name="siteName" value="Site Name" />
 		</execute>
 
@@ -409,9 +407,7 @@
 
 		<execute macro="Breadcrumb#saveDisplayPreview" />
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Welcome" />
-		</execute>
+		<execute macro="Navigator#openURL" />
 
 		<execute macro="Page#gotoChildPagePG">
 			<var name="childPageName" value="Child Page Name" />
@@ -503,8 +499,7 @@
 
 		<execute macro="Breadcrumb#saveDisplayPreview" />
 
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Parent Page Name" />
+		<execute macro="Navigator#openSiteURL">
 			<var name="siteName" value="Child SiteName" />
 		</execute>
 
@@ -555,9 +550,7 @@
 
 		<execute macro="Breadcrumb#saveDisplayPreview" />
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Welcome" />
-		</execute>
+		<execute macro="Navigator#openURL" />
 
 		<execute macro="Page#gotoChildPagePG">
 			<var name="childPageName" value="Child Page Name" />
@@ -605,9 +598,7 @@
 
 		<execute macro="Breadcrumb#saveDisplayPreview" />
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Welcome" />
-		</execute>
+		<execute macro="Navigator#openURL" />
 
 		<execute macro="Page#gotoChildPagePG">
 			<var name="childPageName" value="Child Page Name" />
@@ -667,9 +658,7 @@
 			<var name="breadcrumbListVisible" value="Liferay,Welcome,Child Page Name" />
 		</execute>
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Welcome" />
-		</execute>
+		<execute macro="Navigator#openURL" />
 
 		<execute macro="Page#gotoChildPagePG">
 			<var name="childPageName" value="Child Page Name" />

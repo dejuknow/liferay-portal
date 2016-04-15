@@ -10,6 +10,8 @@
 	</command>
 
 	<command name="gotoAddRepositoryCP">
+		<execute function="AssertVisible" locator1="Button#PLUS" />
+
 		<execute function="Click" locator1="Button#PLUS" />
 
 		<execute function="AssertClick" locator1="MenuItem#REPOSITORY" value1="Repository" />

@@ -169,7 +169,7 @@ if (Validator.isNotNull(keywords)) {
 	}
 	%>
 
-	<c:if test="<%= showDragAndDropZone && !showSearchInfo %>">
+	<c:if test="<%= showDragAndDropZone && !showSearchInfo && DLFolderPermission.contains(permissionChecker, scopeGroupId, folderId, ActionKeys.ADD_DOCUMENT) %>">
 		<liferay-util:buffer var="selectFileHTML">
 			<label class="btn btn-default" for="<%= randomNamespace %>InputFile"><liferay-ui:message key="select-file" /></label>
 
@@ -195,7 +195,6 @@ if (Validator.isNotNull(keywords)) {
 				className="com.liferay.portal.kernel.repository.model.RepositoryEntry"
 				modelVar="repositoryEntry"
 			>
-
 				<c:choose>
 					<c:when test='<%= displayStyle.equals("list") %>'>
 
@@ -259,7 +258,6 @@ if (Validator.isNotNull(keywords)) {
 
 							<liferay-ui:search-container-column-text name="title">
 								<a href="<%= HtmlUtil.escapeHREF(viewFolderURL.toString()) %>" title="<%= HtmlUtil.escapeAttribute(folder.getName()) %>">
-
 									<i class="icon-folder-open"></i>
 
 									<span class="taglib-text">

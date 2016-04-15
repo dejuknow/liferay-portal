@@ -181,44 +181,62 @@ if (portletTitleBasedNavigation) {
 		}
 		%>
 
+		<div class="sidebar-header">
+			<h4><%= fileVersion.getTitle() %></h4>
+		</div>
+
 		<liferay-ui:tabs names="<%= tabsNames %>" refresh="<%= false %>" type="dropdown">
 			<liferay-ui:section>
 				<div class="sidebar-body">
-					<c:if test="<%= dlViewFileVersionDisplayContext.isVersionInfoVisible() %>">
-						<h3 class="version <%= fileEntry.isCheckedOut() ? "icon-lock" : StringPool.BLANK %>">
-							<liferay-ui:message key="version" /> <%= HtmlUtil.escape(fileVersion.getVersion()) %>
-						</h3>
-					</c:if>
+					<dl>
+						<c:if test="<%= dlViewFileVersionDisplayContext.isVersionInfoVisible() %>">
+							<dt class="h5">
+								<span class="version <%= fileEntry.isCheckedOut() ? "icon-lock" : StringPool.BLANK %>">
+									<liferay-ui:message key="version" />
+								</span>
+							</dt>
 
-					<div>
-						<aui:model-context bean="<%= fileVersion %>" model="<%= DLFileVersion.class %>" />
+							<dd>
+								<%= HtmlUtil.escape(fileVersion.getVersion()) %>
+							</dd>
+						</c:if>
 
-						<aui:workflow-status model="<%= DLFileEntry.class %>" showIcon="<%= false %>" showLabel="<%= false %>" status="<%= fileVersion.getStatus() %>" />
-					</div>
+						<dt class="h5">
+							<liferay-ui:message key="status" />
+						</dt>
 
-					<div>
-						<h5><strong><liferay-ui:message key="created" /></strong></h5>
+						<dd>
+							<aui:model-context bean="<%= fileVersion %>" model="<%= DLFileVersion.class %>" />
 
-						<p>
+							<aui:workflow-status model="<%= DLFileEntry.class %>" showIcon="<%= false %>" showLabel="<%= false %>" status="<%= fileVersion.getStatus() %>" />
+						</dd>
+
+						<dt class="h5">
+							<liferay-ui:message key="created" />
+						</dt>
+
+						<dd>
 							<liferay-ui:message arguments="<%= new Object[] {HtmlUtil.escape(fileVersion.getUserName()), dateFormatDateTime.format(fileVersion.getCreateDate())} %>" key="by-x-on-x" translateArguments="<%= false %>" />
-						</p>
-					</div>
+						</dd>
 
-					<div>
-						<h5><strong><liferay-ui:message key="modified" /></strong></h5>
+						<dt class="h5">
+							<liferay-ui:message key="modified" />
+						</dt>
 
-						<p>
+						<dd>
 							<liferay-ui:message arguments="<%= new Object[] {HtmlUtil.escape(fileVersion.getStatusByUserName()), dateFormatDateTime.format(fileVersion.getModifiedDate())} %>" key="by-x-on-x" translateArguments="<%= false %>" />
-						</p>
-					</div>
+						</dd>
 
-					<c:if test="<%= Validator.isNotNull(fileVersion.getDescription()) %>">
-						<h5><strong><liferay-ui:message key="description" /></strong></h5>
+						<c:if test="<%= Validator.isNotNull(fileVersion.getDescription()) %>">
+							<dt class="h5">
+								<liferay-ui:message key="description" />
+							</dt>
 
-						<p>
-							<%= fileEntry.getDescription() %>
-						</p>
-					</c:if>
+							<dd>
+								<%= fileEntry.getDescription() %>
+							</dd>
+						</c:if>
+					</dl>
 
 					<c:if test="<%= dlViewFileVersionDisplayContext.isDownloadLinkVisible() %>">
 						<span class="download-document">
@@ -310,7 +328,6 @@ if (portletTitleBasedNavigation) {
 					%>
 
 							<liferay-ui:panel collapsible="<%= true %>" cssClass="metadata" extended="<%= true %>" id="documentLibraryMetadataPanel" markupView="lexicon" persistState="<%= true %>" title="<%= HtmlUtil.escape(ddmStructure.getName(locale)) %>">
-
 								<liferay-ddm:html
 									classNameId="<%= PortalUtil.getClassNameId(com.liferay.dynamic.data.mapping.model.DDMStructure.class) %>"
 									classPK="<%= ddmStructure.getPrimaryKey() %>"
@@ -366,7 +383,6 @@ if (portletTitleBasedNavigation) {
 				%>
 
 							<liferay-ui:panel collapsible="<%= true %>" cssClass="lfr-asset-metadata" id="documentLibraryAssetMetadataPanel" markupView="lexicon" persistState="<%= true %>" title="<%= name %>">
-
 								<liferay-ddm:html
 									classNameId="<%= PortalUtil.getClassNameId(com.liferay.dynamic.data.mapping.model.DDMStructure.class) %>"
 									classPK="<%= ddmStructure.getPrimaryKey() %>"

@@ -318,6 +318,8 @@
 		<execute function="Click#pauseClickAt" locator1="SitePagesEditPage#FRIENDLY_URL_LOCALIZED" />
 		<execute function="Type" locator1="SitePagesEditPage#FRIENDLY_URL_FIELD" value1=" " />
 		<execute function="AssertClick#pauseAssertTextClickAt" locator1="Button#SAVE" value1="Save" />
+
+		<execute macro="Alert#viewSuccessMessage" />
 	</command>
 
 	<command name="deleteLivePG">
@@ -431,7 +433,7 @@
 	<command name="gotoChildPagePG">
 		<var name="key_pageName" value="${pageName}" />
 
-		<execute function="MouseOver#mouseOverClickNavigation" locator1="Home#PAGE" />
+		<execute function="MouseOver" locator1="Home#PAGE" />
 
 		<var name="key_childPageName" value="${childPageName}" />
 

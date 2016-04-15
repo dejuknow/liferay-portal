@@ -14,6 +14,8 @@
 
 package com.liferay.poshi.runner.selenium;
 
+import com.deque.axe.AXE;
+
 import com.liferay.poshi.runner.util.FileUtil;
 import com.liferay.poshi.runner.util.GetterUtil;
 import com.liferay.poshi.runner.util.OSDetector;
@@ -26,7 +28,11 @@ import java.awt.Robot;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
+import java.io.File;
 import java.io.StringReader;
+
+import java.net.URI;
+import java.net.URL;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -44,6 +50,9 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
 import junit.framework.TestCase;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
@@ -156,6 +165,33 @@ public abstract class BaseWebDriverImpl
 	@Override
 	public void antCommand(String fileName, String target) throws Exception {
 		LiferaySeleniumHelper.antCommand(this, fileName, target);
+	}
+
+	@Override
+	public void assertAccessible() throws Exception {
+		WebDriver webDriver = WebDriverUtil.getWebDriver();
+
+		String sourceDirFilePath = LiferaySeleniumHelper.getSourceDirFilePath(
+			getTestDependenciesDirName());
+
+		File file = new File(sourceDirFilePath + "/axe.min.js");
+
+		URI uri = file.toURI();
+
+		URL url = uri.toURL();
+
+		AXE.Builder axeBuilder = new AXE.Builder(webDriver, url);
+
+		axeBuilder = axeBuilder.options(
+			PropsValues.ACCESSIBILITY_STANDARDS_JSON);
+
+		JSONObject jsonObject = axeBuilder.analyze();
+
+		JSONArray jsonArray = jsonObject.getJSONArray("violations");
+
+		if (jsonArray.length() != 0) {
+			throw new Exception(AXE.report(jsonArray));
+		}
 	}
 
 	@Override
@@ -811,6 +847,13 @@ public abstract class BaseWebDriverImpl
 		return StringUtil.valueOf(
 			calendar.getDisplayName(
 				Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.US));
+	}
+
+	@Override
+	public String getCurrentHour() {
+		Calendar calendar = Calendar.getInstance();
+
+		return StringUtil.valueOf(calendar.get(Calendar.HOUR_OF_DAY));
 	}
 
 	@Override

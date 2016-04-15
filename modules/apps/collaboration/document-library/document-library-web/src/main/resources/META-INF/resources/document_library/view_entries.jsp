@@ -229,7 +229,6 @@ if (portletTitleBasedNavigation && (folderId != DLFolderConstants.DEFAULT_PARENT
 			className="Object"
 			modelVar="result"
 		>
-
 			<%@ include file="/document_library/cast_result.jspf" %>
 
 			<c:choose>
@@ -310,7 +309,7 @@ if (portletTitleBasedNavigation && (folderId != DLFolderConstants.DEFAULT_PARENT
 							</c:choose>
 
 							<liferay-ui:search-container-column-jsp
-								colspan="2"
+								colspan="<%= 2 %>"
 								path="/document_library/view_file_entry_descriptive.jsp"
 							/>
 
@@ -485,7 +484,7 @@ if (portletTitleBasedNavigation && (folderId != DLFolderConstants.DEFAULT_PARENT
 							/>
 
 							<liferay-ui:search-container-column-jsp
-								colspan="2"
+								colspan="<%= 2 %>"
 								path="/document_library/view_folder_descriptive.jsp"
 							/>
 

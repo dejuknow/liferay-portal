@@ -45,8 +45,6 @@ import com.liferay.journal.configuration.JournalServiceConfigurationValues;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.model.JournalArticleConstants;
 import com.liferay.journal.service.JournalArticleLocalService;
-import com.liferay.journal.service.JournalArticleService;
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
@@ -419,8 +417,6 @@ public class FileSystemImporter extends BaseImporter {
 			InputStream inputStream)
 		throws Exception {
 
-		String language = getDDMStructureLanguage(fileName);
-
 		fileName = FileUtil.stripExtension(fileName);
 
 		String name = getName(fileName);
@@ -447,26 +443,13 @@ public class FileSystemImporter extends BaseImporter {
 
 		String content = StringUtil.read(inputStream);
 
-		DDMForm ddmForm = null;
-
-		if (language.equals(TemplateConstants.LANG_TYPE_XML)) {
-			if (isJournalStructureXSD(content)) {
-				content = journalConverter.getDDMXSD(content);
-			}
-
-			_ddmXML.validateXML(content);
-
-			ddmForm = _ddmFormXSDDeserializer.deserialize(content);
-		}
-		else {
-			ddmForm = _ddmFormJSONDeserializer.deserialize(content);
-		}
-
-		DDMFormLayout ddmFormLayout = _ddm.getDefaultDDMFormLayout(ddmForm);
-
-		setServiceContext(fileName);
-
 		try {
+			DDMForm ddmForm = _ddmFormJSONDeserializer.deserialize(content);
+
+			DDMFormLayout ddmFormLayout = _ddm.getDefaultDDMFormLayout(ddmForm);
+
+			setServiceContext(fileName);
+
 			if (!updateModeEnabled || (ddmStructure == null)) {
 				ddmStructure = ddmStructureLocalService.addStructure(
 					userId, groupId, parentDDMStructureKey,
@@ -998,8 +981,7 @@ public class FileSystemImporter extends BaseImporter {
 
 			if (Validator.isNotNull(layoutPrototypeUuid)) {
 				boolean layoutPrototypeLinkEnabled = GetterUtil.getBoolean(
-					layoutJSONObject.getString("layoutPrototypeLinkEnabled"),
-					false);
+					layoutJSONObject.getString("layoutPrototypeLinkEnabled"));
 
 				serviceContext.setAttribute(
 					"layoutPrototypeLinkEnabled", layoutPrototypeLinkEnabled);
@@ -1354,18 +1336,6 @@ public class FileSystemImporter extends BaseImporter {
 		}
 	}
 
-	protected String getDDMStructureLanguage(String fileName) {
-		String extension = FileUtil.getExtension(fileName);
-
-		if (extension.equals(TemplateConstants.LANG_TYPE_JSON) ||
-			extension.equals(TemplateConstants.LANG_TYPE_XML)) {
-
-			return extension;
-		}
-
-		return TemplateConstants.LANG_TYPE_XML;
-	}
-
 	protected String getDDMTemplateLanguage(String fileName) {
 		String extension = FileUtil.getExtension(fileName);
 
@@ -1558,9 +1528,8 @@ public class FileSystemImporter extends BaseImporter {
 
 		for (String ddmStructureKey : _ddmStructures) {
 			List<JournalArticle> journalArticles =
-				_journalArticleService.getArticlesByStructureId(
-					getGroupId(), ddmStructureKey, QueryUtil.ALL_POS,
-					QueryUtil.ALL_POS, null);
+				_journalArticleLocalService.getStructureArticles(
+					getGroupId(), ddmStructureKey);
 
 			for (JournalArticle journalArticle : journalArticles) {
 				if ((primaryKeys != null) &&
@@ -1675,7 +1644,7 @@ public class FileSystemImporter extends BaseImporter {
 	protected void setDDMStructureLocalService(
 		DDMStructureLocalService ddmStructureLocalService) {
 
-		ddmStructureLocalService = ddmStructureLocalService;
+		this.ddmStructureLocalService = ddmStructureLocalService;
 	}
 
 	@Reference(unbind = "-")
@@ -1724,13 +1693,6 @@ public class FileSystemImporter extends BaseImporter {
 		JournalArticleLocalService journalArticleLocalService) {
 
 		_journalArticleLocalService = journalArticleLocalService;
-	}
-
-	@Reference(unbind = "-")
-	protected void setJournalArticleService(
-		JournalArticleService journalArticleService) {
-
-		_journalArticleService = journalArticleService;
 	}
 
 	@Reference(unbind = "-")
@@ -2015,7 +1977,6 @@ public class FileSystemImporter extends BaseImporter {
 	private IndexerRegistry _indexerRegistry;
 	private IndexWriterHelper _indexWriterHelper;
 	private JournalArticleLocalService _journalArticleLocalService;
-	private JournalArticleService _journalArticleService;
 	private JSONFactory _jsonFactory;
 	private LayoutLocalService _layoutLocalService;
 	private LayoutPrototypeLocalService _layoutPrototypeLocalService;

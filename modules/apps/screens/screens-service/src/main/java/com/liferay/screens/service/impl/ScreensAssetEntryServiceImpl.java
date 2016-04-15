@@ -166,7 +166,8 @@ public class ScreensAssetEntryServiceImpl
 		return filteredAssetEntries;
 	}
 
-	protected JSONObject getAssetObjectJSONObject(AssetEntry assetEntry)
+	protected JSONObject getAssetObjectJSONObject(
+			AssetEntry assetEntry, Locale locale)
 		throws PortalException {
 
 		String className = assetEntry.getClassName();
@@ -177,8 +178,12 @@ public class ScreensAssetEntryServiceImpl
 			return getFileEntryJSONObject(assetEntry);
 		}
 		else if (className.equals(
-					"com.liferay.portlet.journal.model.JournalArticle")) {
+					"com.liferay.dynamic.data.lists.model.DDLRecord")) {
 
+			return screensDDLRecordService.getDDLRecord(
+				assetEntry.getClassPK(), locale);
+		}
+		else if (className.equals("com.liferay.journal.model.JournalArticle")) {
 			return getJournalArticleJSONObject(assetEntry);
 		}
 
@@ -191,9 +196,12 @@ public class ScreensAssetEntryServiceImpl
 		FileEntry fileEntry = dlAppService.getFileEntry(
 			assetEntry.getClassPK());
 
-		JSONObject fileEntryJSONObject = JSONFactoryUtil.createJSONObject(
-			JSONFactoryUtil.looseSerialize(fileEntry));
+		JSONObject fileEntryJSONObject = JSONFactoryUtil.createJSONObject();
 
+		fileEntryJSONObject.put(
+			"fileEntry",
+			JSONFactoryUtil.createJSONObject(
+				JSONFactoryUtil.looseSerialize(fileEntry)));
 		fileEntryJSONObject.put("url", getFileEntryPreviewURL(fileEntry));
 
 		return fileEntryJSONObject;
@@ -237,10 +245,23 @@ public class ScreensAssetEntryServiceImpl
 				journalArticleResource.getArticleId());
 		}
 
-		JSONObject journalArticleJSONObject = JSONFactoryUtil.createJSONObject(
+		JSONObject journalArticleJSONObject =
+			JSONFactoryUtil.createJSONObject();
+
+		journalArticleJSONObject.put(
+			"DDMStructure",
+			JSONFactoryUtil.createJSONObject(
+				JSONFactoryUtil.looseSerialize(
+					journalArticle.getDDMStructure())));
+
+		JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
 			JSONFactoryUtil.looseSerialize(journalArticle));
 
-		journalArticleJSONObject.remove("content");
+		journalArticleJSONObject.put("modelAttributes", jsonObject);
+		journalArticleJSONObject.put(
+			"modelValues", jsonObject.getString("content"));
+
+		jsonObject.remove("content");
 
 		return journalArticleJSONObject;
 	}
@@ -256,10 +277,11 @@ public class ScreensAssetEntryServiceImpl
 				JSONFactoryUtil.looseSerialize(assetEntry));
 
 			jsonObject.put("description", assetEntry.getDescription(locale));
-			jsonObject.put("object", getAssetObjectJSONObject(assetEntry));
+			jsonObject.put("locale", String.valueOf(locale));
+			jsonObject.put(
+				"object", getAssetObjectJSONObject(assetEntry, locale));
 			jsonObject.put("summary", assetEntry.getSummary(locale));
 			jsonObject.put("title", assetEntry.getTitle(locale));
-
 			jsonArray.put(jsonObject);
 		}
 

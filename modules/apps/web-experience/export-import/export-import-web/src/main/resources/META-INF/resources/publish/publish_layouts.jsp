@@ -87,8 +87,6 @@ if (configuredPublish) {
 
 treeId = treeId + privateLayout + layoutSetBranchId;
 
-UnicodeProperties liveGroupTypeSettings = liveGroup.getTypeSettingsProperties();
-
 PortletURL portletURL = renderResponse.createActionURL();
 
 if (group.isStaged() && group.isStagedRemotely()) {
@@ -164,9 +162,9 @@ response.setHeader("Ajax-ID", request.getHeader("Ajax-ID"));
 					String layoutPrototypeName = (String)missingLayoutPrototype.getObject(2);
 				%>
 
-				<li>
-					<%= ResourceActionsUtil.getModelResource(locale, layoutPrototypeClassName) %>: <strong><%= HtmlUtil.escape(layoutPrototypeName) %></strong> (<%= HtmlUtil.escape(layoutPrototypeUuid) %>)
-				</li>
+					<li>
+						<%= ResourceActionsUtil.getModelResource(locale, layoutPrototypeClassName) %>: <strong><%= HtmlUtil.escape(layoutPrototypeName) %></strong> (<%= HtmlUtil.escape(layoutPrototypeUuid) %>)
+					</li>
 
 				<%
 				}
@@ -253,7 +251,7 @@ response.setHeader("Ajax-ID", request.getHeader("Ajax-ID"));
 
 					<c:if test="<%= !localPublishing %>">
 						<aui:fieldset collapsed="<%= true %>" collapsible="<%= true %>" cssClass="options-group" label="remote-live-connection-settings">
-							<%@ include file="/publish/publish_layouts_remote_options.jspf" %>
+							<liferay-staging:remote-options exportImportConfigurationId="<%= exportImportConfigurationId %>" privateLayout="<%= privateLayout %>" />
 						</aui:fieldset>
 					</c:if>
 				</aui:fieldset-group>

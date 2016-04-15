@@ -239,6 +239,19 @@
 					}
 				);
 			}
+			else if (A.UA.safari) {
+				A.use(
+					'node-event-html5',
+					function(A) {
+						A.getWin().on(
+							'pagehide',
+							function(event) {
+								Util.enableFormButtons(inputs, form);
+							}
+						);
+					}
+				);
+			}
 		},
 
 		disableToggleBoxes: function(checkBoxId, toggleBoxId, checkDisabled) {
@@ -1627,7 +1640,7 @@
 			if (!urlPreview) {
 				urlPreview = new Liferay.UrlPreview(
 					{
-						title: event.title,
+						title: Util.escapeHTML(event.title),
 						url: event.uri
 					}
 				);
@@ -1635,7 +1648,7 @@
 				instance._urlPreview = urlPreview;
 			}
 			else {
-				urlPreview.set('title', event.title);
+				urlPreview.set('title', Util.escapeHTML(event.title));
 				urlPreview.set('url', event.uri);
 			}
 

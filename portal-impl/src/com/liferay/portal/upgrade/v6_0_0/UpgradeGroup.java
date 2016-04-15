@@ -14,12 +14,16 @@
 
 package com.liferay.portal.upgrade.v6_0_0;
 
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 import com.liferay.portal.kernel.util.LoggingTimer;
 import com.liferay.portal.kernel.util.PortalUtil;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 
 /**
  * @author Wesley Gong
@@ -28,7 +32,28 @@ public class UpgradeGroup extends UpgradeProcess {
 
 	@Override
 	protected void doUpgrade() throws Exception {
+		updateGlobalFriendlyURLs();
 		updateParentGroupId();
+	}
+
+	protected long getGroupId(long companyId, String friendlyURL)
+		throws Exception {
+
+		try (PreparedStatement ps = connection.prepareStatement(
+				"select groupId from Group_ where companyId = ? and " +
+					"friendlyURL = ?")) {
+
+			ps.setLong(1, companyId);
+			ps.setString(2, friendlyURL);
+
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next()) {
+					return rs.getLong(1);
+				}
+			}
+		}
+
+		return 0;
 	}
 
 	protected Object[] getLayout(long plid) throws Exception {
@@ -43,6 +68,62 @@ public class UpgradeGroup extends UpgradeProcess {
 				}
 
 				return null;
+			}
+		}
+	}
+
+	protected String getNewFriendlyURL(long companyId, long groupId)
+		throws Exception {
+
+		String friendlyURL = null;
+
+		int i = 1;
+
+		while (groupId > 0) {
+			friendlyURL = GroupConstants.GLOBAL_FRIENDLY_URL + i;
+
+			groupId = getGroupId(companyId, friendlyURL);
+
+			i++;
+		}
+
+		return friendlyURL;
+	}
+
+	protected void updateGlobalFriendlyURL(long companyId) throws Exception {
+		long groupId = getGroupId(
+			companyId, GroupConstants.GLOBAL_FRIENDLY_URL);
+
+		if (groupId == 0) {
+			return;
+		}
+
+		String friendlyURL = getNewFriendlyURL(companyId, groupId);
+
+		if (_log.isInfoEnabled()) {
+			_log.info(
+				"Updating friendly URL " + GroupConstants.GLOBAL_FRIENDLY_URL +
+					" of global group " + groupId + " to " + friendlyURL);
+		}
+
+		try (PreparedStatement ps = connection.prepareStatement(
+				"update Group_ set friendlyURL = ? where groupId = ?")) {
+
+			ps.setString(1, friendlyURL);
+			ps.setLong(2, groupId);
+
+			ps.execute();
+		}
+	}
+
+	protected void updateGlobalFriendlyURLs() throws Exception {
+		try (Statement s = connection.createStatement()) {
+			String query = "select companyId from Company";
+
+			try (ResultSet rs = s.executeQuery(query)) {
+				while (rs.next()) {
+					updateGlobalFriendlyURL(rs.getLong(1));
+				}
 			}
 		}
 	}
@@ -77,5 +158,7 @@ public class UpgradeGroup extends UpgradeProcess {
 
 	private static final String _GET_LAYOUT =
 		"select * from Layout where plid = ?";
+
+	private static final Log _log = LogFactoryUtil.getLog(UpgradeGroup.class);
 
 }

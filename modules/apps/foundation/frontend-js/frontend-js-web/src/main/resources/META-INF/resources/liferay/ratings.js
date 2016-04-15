@@ -214,18 +214,25 @@ AUI.add(
 				_registerRating: function(config) {
 					var instance = this;
 
-					var ratings = Liferay.Ratings.StarRating;
+					var ratings = null;
 
 					if (config.type === 'like') {
 						ratings = Liferay.Ratings.LikeRating;
+					}
+					else if (config.type === 'stars') {
+						ratings = Liferay.Ratings.StarRating;
 					}
 					else if (config.type === 'thumbs') {
 						ratings = Liferay.Ratings.ThumbRating;
 					}
 
-					var ratingInstance = new ratings(config);
+					var ratingInstance = null;
 
-					instance._INSTANCES[config.id || config.namespace] = ratingInstance;
+					if (ratings && document.getElementById(config.containerId)) {
+						ratingInstance = new ratings(config);
+
+						instance._INSTANCES[config.id || config.namespace] = ratingInstance;
+					}
 
 					return ratingInstance;
 				},

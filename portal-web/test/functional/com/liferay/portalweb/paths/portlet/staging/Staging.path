@@ -39,6 +39,11 @@
 	<td>//h6[contains(.,'Successful')]</td>
 	<td></td>
 </tr>
+<tr>
+	<td>PROCESS_FAILED</td>
+	<td>//h6[contains(.,'Failed')]</td>
+	<td></td>
+</tr>
 <!--STAGING-->
 <tr>
 	<td>STAGING_NEW_PUBLICATION_PROCESS_NAVIGATION</td>
@@ -52,7 +57,17 @@
 </tr>
 <tr>
 	<td>STAGING_STATUS</td>
-	<td>//tr/td[contains(@class,'status-column')]</td>
+	<td>xpath=(//h6[contains(text(),'Successful')])[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>STAGING_STATUS</td>
+	<td>xpath=(//h6[contains(text(),'Successful')])[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>STAGING_STATUS_PORTLET</td>
+	<td>//h5[contains(text(),'Successful')]</td>
 	<td></td>
 </tr>
 <tr>

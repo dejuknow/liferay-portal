@@ -74,7 +74,6 @@ renderResponse.setTitle(LanguageUtil.get(request, "form-entries"));
 			rowChecker="<%= new EmptyOnClickRowChecker(renderResponse) %>"
 			searchContainer="<%= ddlFormViewRecordsDisplayContext.getRecordSearchContainer() %>"
 		>
-
 			<liferay-ui:search-container-row
 				className="com.liferay.dynamic.data.lists.model.DDLRecord"
 				cssClass="entry-display-style selectable"
@@ -120,7 +119,6 @@ renderResponse.setTitle(LanguageUtil.get(request, "form-entries"));
 			</liferay-ui:search-container-row>
 
 			<liferay-ui:search-iterator displayStyle="<%= ddlFormViewRecordsDisplayContext.getDisplayStyle() %>" markupView="lexicon" paginate="<%= false %>" searchContainer="<%= ddlFormViewRecordsDisplayContext.getRecordSearchContainer() %>" />
-
 		</liferay-ui:search-container>
 	</aui:form>
 </div>

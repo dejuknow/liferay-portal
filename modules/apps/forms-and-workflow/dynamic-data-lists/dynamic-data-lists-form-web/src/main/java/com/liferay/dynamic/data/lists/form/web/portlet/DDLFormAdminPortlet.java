@@ -56,7 +56,7 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowDefinition;
-import com.liferay.portal.kernel.workflow.WorkflowDefinitionManagerUtil;
+import com.liferay.portal.kernel.workflow.WorkflowDefinitionManager;
 import com.liferay.portal.kernel.workflow.WorkflowEngineManager;
 
 import java.io.IOException;
@@ -70,6 +70,8 @@ import javax.portlet.Portlet;
 import javax.portlet.PortletException;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
+
+import javax.servlet.Servlet;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -130,6 +132,35 @@ public class DDLFormAdminPortlet extends MVCPortlet {
 		}
 
 		super.render(renderRequest, renderResponse);
+	}
+
+	protected void addWorkflowDefinitionDDMFormFieldOptionLabels(
+			DDMFormFieldOptions ddmFormFieldOptions, ThemeDisplay themeDisplay)
+		throws PortalException {
+
+		if (!_workflowEngineManager.isDeployed()) {
+			return;
+		}
+
+		List<WorkflowDefinition> workflowDefinitions =
+			_workflowDefinitionManager.getActiveWorkflowDefinitions(
+				themeDisplay.getCompanyId(), QueryUtil.ALL_POS,
+				QueryUtil.ALL_POS, null);
+
+		for (WorkflowDefinition workflowDefinition : workflowDefinitions) {
+			String value =
+				workflowDefinition.getName() + StringPool.AT +
+					workflowDefinition.getVersion();
+
+			String version = LanguageUtil.format(
+				themeDisplay.getLocale(), "version-x",
+				workflowDefinition.getVersion(), false);
+
+			String label = workflowDefinition.getName() + " (" + version + ")";
+
+			ddmFormFieldOptions.addOptionLabel(
+				value, themeDisplay.getLocale(), label);
+		}
 	}
 
 	protected DDMFormRenderingContext createDDMFormRenderingContext(
@@ -235,23 +266,8 @@ public class DDLFormAdminPortlet extends MVCPortlet {
 		ddmFormFieldOptions.addOptionLabel(
 			StringPool.BLANK, locale, LanguageUtil.get(locale, "no-workflow"));
 
-		List<WorkflowDefinition> workflowDefinitions =
-			WorkflowDefinitionManagerUtil.getActiveWorkflowDefinitions(
-				themeDisplay.getCompanyId(), QueryUtil.ALL_POS,
-				QueryUtil.ALL_POS, null);
-
-		for (WorkflowDefinition workflowDefinition : workflowDefinitions) {
-			String value =
-				workflowDefinition.getName() + StringPool.AT +
-					workflowDefinition.getVersion();
-
-			String version = LanguageUtil.format(
-				locale, "version-x", workflowDefinition.getVersion(), false);
-
-			String label = workflowDefinition.getName() + " (" + version + ")";
-
-			ddmFormFieldOptions.addOptionLabel(value, locale, label);
-		}
+		addWorkflowDefinitionDDMFormFieldOptionLabels(
+			ddmFormFieldOptions, themeDisplay);
 
 		return ddmFormFieldOptions;
 	}
@@ -295,6 +311,14 @@ public class DDLFormAdminPortlet extends MVCPortlet {
 
 		_ddmDataProviderInstanceLocalService =
 			ddmDataProviderInstanceLocalService;
+	}
+
+	@Reference(
+		target = "(osgi.http.whiteboard.servlet.name=DDMFormEvaluatorServlet)",
+		unbind = "-"
+	)
+	protected void setDDMFormEvaluatorServlet(Servlet ddmFormEvaluatorServlet) {
+		_ddmFormEvaluatorServlet = ddmFormEvaluatorServlet;
 	}
 
 	@Reference(unbind = "-")
@@ -392,7 +416,7 @@ public class DDLFormAdminPortlet extends MVCPortlet {
 				renderRequest, renderResponse,
 				_ddlFormWebConfigurationActivator.getDDLFormWebConfiguration(),
 				_ddlRecordLocalService, _ddlRecordSetService,
-				_ddmDataProviderInstanceLocalService,
+				_ddmDataProviderInstanceLocalService, _ddmFormEvaluatorServlet,
 				_ddmFormFieldTypeServicesTracker,
 				_ddmFormFieldTypesJSONSerializer, _ddmFormJSONSerializer,
 				_ddmFormLayoutJSONSerializer, _ddmFormRenderer,
@@ -416,6 +440,13 @@ public class DDLFormAdminPortlet extends MVCPortlet {
 	}
 
 	@Reference(unbind = "-")
+	protected void setWorkflowDefinitionManager(
+		WorkflowDefinitionManager workflowDefinitionManager) {
+
+		_workflowDefinitionManager = workflowDefinitionManager;
+	}
+
+	@Reference(unbind = "-")
 	protected void setWorkflowEngineManager(
 		WorkflowEngineManager workflowEngineManager) {
 
@@ -431,6 +462,7 @@ public class DDLFormAdminPortlet extends MVCPortlet {
 	private DDLRecordSetService _ddlRecordSetService;
 	private DDMDataProviderInstanceLocalService
 		_ddmDataProviderInstanceLocalService;
+	private Servlet _ddmFormEvaluatorServlet;
 	private DDMFormFieldTypeServicesTracker _ddmFormFieldTypeServicesTracker;
 	private DDMFormFieldTypesJSONSerializer _ddmFormFieldTypesJSONSerializer;
 	private DDMFormJSONSerializer _ddmFormJSONSerializer;
@@ -440,6 +472,7 @@ public class DDLFormAdminPortlet extends MVCPortlet {
 	private JSONFactory _jsonFactory;
 	private StorageAdapterRegistry _storageAdapterRegistry;
 	private StorageEngine _storageEngine;
+	private WorkflowDefinitionManager _workflowDefinitionManager;
 	private WorkflowEngineManager _workflowEngineManager;
 
 }

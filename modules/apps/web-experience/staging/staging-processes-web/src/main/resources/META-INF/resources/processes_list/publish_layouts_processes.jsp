@@ -54,6 +54,12 @@ OrderByComparator<BackgroundTask> orderByComparator = BackgroundTaskComparatorFa
 	<aui:input name="redirect" type="hidden" value="<%= currentURL.toString() %>" />
 	<aui:input name="deleteBackgroundTaskIds" type="hidden" />
 
+	<%@ include file="/error/error_auth_exception.jspf" %>
+
+	<%@ include file="/error/error_remote_export_exception.jspf" %>
+
+	<%@ include file="/error/error_remote_options_exception.jspf" %>
+
 	<liferay-ui:search-container
 		emptyResultsMessage="no-publication-processes-were-found"
 		id="<%= searchContainerId %>"
@@ -63,7 +69,6 @@ OrderByComparator<BackgroundTask> orderByComparator = BackgroundTaskComparatorFa
 		orderByType="<%= orderByType %>"
 		rowChecker="<%= new EmptyOnClickRowChecker(liferayPortletResponse) %>"
 	>
-
 		<liferay-ui:search-container-results>
 
 			<%
@@ -135,9 +140,7 @@ OrderByComparator<BackgroundTask> orderByComparator = BackgroundTaskComparatorFa
 						</h6>
 
 						<h5 id="<portlet:namespace />backgroundTaskName<%= backgroundTask.getBackgroundTaskId() %>">
-
 							<%= HtmlUtil.escape(backgroundTaskName) %>
-
 						</h5>
 
 						<c:if test="<%= backgroundTask.isInProgress() %>">

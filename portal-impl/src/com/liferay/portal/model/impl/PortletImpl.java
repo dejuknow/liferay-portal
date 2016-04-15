@@ -86,6 +86,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
@@ -3501,11 +3504,33 @@ public class PortletImpl extends PortletBaseImpl {
 	 */
 	@Override
 	public void setReady(boolean ready) {
-		_readyMap.put(getRootPortletId(), ready);
+		Lock lock = _readyLock.get(getRootPortletId());
 
-		Registry registry = RegistryUtil.getRegistry();
+		if (lock == null) {
+			Lock newLock = new ReentrantLock();
 
-		synchronized (_serviceRegistrars) {
+			lock = _readyLock.putIfAbsent(getRootPortletId(), newLock);
+
+			if (lock == null) {
+				lock = newLock;
+			}
+		}
+
+		try {
+			lock.lock();
+
+			if (lock != _readyLock.get(getRootPortletId())) {
+				return;
+			}
+
+			Boolean readyMapValue = _readyMap.get(getRootPortletId());
+
+			if ((readyMapValue != null) && (ready == readyMapValue)) {
+				return;
+			}
+
+			Registry registry = RegistryUtil.getRegistry();
+
 			if (ready) {
 				ServiceRegistrar<Portlet> serviceRegistrar =
 					registry.getServiceRegistrar(Portlet.class);
@@ -3525,6 +3550,11 @@ public class PortletImpl extends PortletBaseImpl {
 
 				serviceRegistrar.destroy();
 			}
+
+			_readyMap.put(getRootPortletId(), ready);
+		}
+		finally {
+			lock.unlock();
 		}
 	}
 
@@ -3965,13 +3995,24 @@ public class PortletImpl extends PortletBaseImpl {
 
 	@Override
 	public void unsetReady() {
-		_readyMap.remove(getRootPortletId());
+		Lock lock = _readyLock.get(getRootPortletId());
 
-		synchronized (_serviceRegistrars) {
-			ServiceRegistrar<Portlet> serviceRegistrar =
-				_serviceRegistrars.remove(getRootPortletId());
+		if (lock != null) {
+			try {
+				lock.lock();
 
-			serviceRegistrar.destroy();
+				_readyMap.remove(getRootPortletId());
+
+				ServiceRegistrar<Portlet> serviceRegistrar =
+					_serviceRegistrars.remove(getRootPortletId());
+
+				serviceRegistrar.destroy();
+
+				_readyLock.remove(getRootPortletId(), lock);
+			}
+			finally {
+				lock.unlock();
+			}
 		}
 	}
 
@@ -3980,11 +4021,13 @@ public class PortletImpl extends PortletBaseImpl {
 	 */
 	private static final Log _log = LogFactoryUtil.getLog(PortletImpl.class);
 
+	private static final ConcurrentMap<String, Lock> _readyLock =
+		new ConcurrentHashMap<>();
+
 	/**
 	 * Map of the ready states of all portlets keyed by their root portlet ID.
 	 */
-	private static final Map<String, Boolean> _readyMap =
-		new ConcurrentHashMap<>();
+	private static final Map<String, Boolean> _readyMap = new HashMap<>();
 
 	private static final Map<String, ServiceRegistrar<Portlet>>
 		_serviceRegistrars = new HashMap<>();

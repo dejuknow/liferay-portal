@@ -151,17 +151,36 @@ Format format = FastDateFormatFactoryUtil.getSimpleDateFormat(simpleDateFormatPa
 							if (date) {
 								datePicker.updateValue(date[0]);
 							}
+							else if (<%= nullable %> && !date) {
+								datePicker.updateValue('');
+							}
 						},
 						selectionChange: function(event) {
-							if (isNaN(event.newSelection[0])) {
+							var newSelection = event.newSelection[0];
+
+							var nullable = <%= nullable %>;
+
+							var date = A.DataType.Date.parse(newSelection);
+							var invalidNumber = isNaN(newSelection);
+
+							if (invalidNumber && !nullable) {
 								event.newSelection[0] = new Date();
+							}
+							else if (invalidNumber && !date && nullable) {
+								var selection = new Date();
+
+								if (!newSelection) {
+									selection = '';
+								}
+
+								event.newSelection[0] = selection;
 							}
 
 							datePicker.updateValue(event.newSelection[0]);
 						}
 					},
 					popover: {
-						zIndex: Liferay.zIndex.TOOLTIP
+						zIndex: Liferay.zIndex.OVERLAY
 					},
 					trigger: '#<%= nameId %>'
 				}
@@ -180,11 +199,19 @@ Format format = FastDateFormatFactoryUtil.getSimpleDateFormat(simpleDateFormatPa
 
 				var container = instance.get('container');
 
-				if (date) {
-					container.one('#<%= dayParamId %>').val(date.getDate());
-					container.one('#<%= monthParamId %>').val(date.getMonth());
-					container.one('#<%= yearParamId %>').val(date.getFullYear());
+				var dateVal = '';
+				var monthVal = '';
+				var yearVal = '';
+
+				if (date && !isNaN(date)) {
+					dateVal = date.getDate();
+					monthVal = date.getMonth();
+					yearVal = date.getFullYear();
 				}
+
+				container.one('#<%= dayParamId %>').val(dateVal);
+				container.one('#<%= monthParamId %>').val(monthVal);
+				container.one('#<%= yearParamId %>').val(yearVal);
 			};
 
 			datePicker.after(
