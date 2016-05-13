@@ -104,6 +104,7 @@
 	.asset-entry-abstract .asset-entry-abstract-image img {
 		display: block;
 		margin: 0 auto;
+		max-height: 100%;
 	}
 
 	.asset-entry-abstract .taglib-icon {
@@ -158,9 +159,11 @@
 			/>
 		</#if>
 
-		<div class="asset-entry-abstract-image">
-			<img src="${assetRenderer.getThumbnailPath(renderRequest)}" />
-		</div>
+		<#if assetRenderer.getThumbnailPath(renderRequest)??>
+			<div class="asset-entry-abstract-image">
+				<img src="${assetRenderer.getThumbnailPath(renderRequest)}" />
+			</div>
+		</#if>
 
 		<#assign assetURL = assetPublisherHelper.getAssetViewURL(renderRequest, renderResponse, asset) />
 

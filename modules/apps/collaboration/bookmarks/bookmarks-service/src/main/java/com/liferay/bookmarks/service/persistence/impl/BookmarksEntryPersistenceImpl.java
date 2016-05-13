@@ -58,6 +58,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -725,7 +726,7 @@ public class BookmarksEntryPersistenceImpl extends BasePersistenceImpl<Bookmarks
 
 			if ((list != null) && !list.isEmpty()) {
 				for (BookmarksEntry bookmarksEntry : list) {
-					if (!Validator.equals(uuid, bookmarksEntry.getUuid())) {
+					if (!Objects.equals(uuid, bookmarksEntry.getUuid())) {
 						list = null;
 
 						break;
@@ -1200,8 +1201,8 @@ public class BookmarksEntryPersistenceImpl extends BasePersistenceImpl<Bookmarks
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchEntryException(msg.toString());
@@ -1245,7 +1246,7 @@ public class BookmarksEntryPersistenceImpl extends BasePersistenceImpl<Bookmarks
 		if (result instanceof BookmarksEntry) {
 			BookmarksEntry bookmarksEntry = (BookmarksEntry)result;
 
-			if (!Validator.equals(uuid, bookmarksEntry.getUuid()) ||
+			if (!Objects.equals(uuid, bookmarksEntry.getUuid()) ||
 					(groupId != bookmarksEntry.getGroupId())) {
 				result = null;
 			}
@@ -1541,7 +1542,7 @@ public class BookmarksEntryPersistenceImpl extends BasePersistenceImpl<Bookmarks
 
 			if ((list != null) && !list.isEmpty()) {
 				for (BookmarksEntry bookmarksEntry : list) {
-					if (!Validator.equals(uuid, bookmarksEntry.getUuid()) ||
+					if (!Objects.equals(uuid, bookmarksEntry.getUuid()) ||
 							(companyId != bookmarksEntry.getCompanyId())) {
 						list = null;
 
@@ -12499,8 +12500,8 @@ public class BookmarksEntryPersistenceImpl extends BasePersistenceImpl<Bookmarks
 					primaryKey);
 
 			if (bookmarksEntry == null) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+				if (_log.isDebugEnabled()) {
+					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchEntryException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
@@ -12865,8 +12866,8 @@ public class BookmarksEntryPersistenceImpl extends BasePersistenceImpl<Bookmarks
 		BookmarksEntry bookmarksEntry = fetchByPrimaryKey(primaryKey);
 
 		if (bookmarksEntry == null) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+			if (_log.isDebugEnabled()) {
+				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
 			throw new NoSuchEntryException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +

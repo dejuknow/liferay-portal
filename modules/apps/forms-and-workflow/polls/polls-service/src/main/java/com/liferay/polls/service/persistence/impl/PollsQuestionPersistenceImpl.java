@@ -56,6 +56,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -203,7 +204,7 @@ public class PollsQuestionPersistenceImpl extends BasePersistenceImpl<PollsQuest
 
 			if ((list != null) && !list.isEmpty()) {
 				for (PollsQuestion pollsQuestion : list) {
-					if (!Validator.equals(uuid, pollsQuestion.getUuid())) {
+					if (!Objects.equals(uuid, pollsQuestion.getUuid())) {
 						list = null;
 
 						break;
@@ -676,8 +677,8 @@ public class PollsQuestionPersistenceImpl extends BasePersistenceImpl<PollsQuest
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchQuestionException(msg.toString());
@@ -721,7 +722,7 @@ public class PollsQuestionPersistenceImpl extends BasePersistenceImpl<PollsQuest
 		if (result instanceof PollsQuestion) {
 			PollsQuestion pollsQuestion = (PollsQuestion)result;
 
-			if (!Validator.equals(uuid, pollsQuestion.getUuid()) ||
+			if (!Objects.equals(uuid, pollsQuestion.getUuid()) ||
 					(groupId != pollsQuestion.getGroupId())) {
 				result = null;
 			}
@@ -1015,7 +1016,7 @@ public class PollsQuestionPersistenceImpl extends BasePersistenceImpl<PollsQuest
 
 			if ((list != null) && !list.isEmpty()) {
 				for (PollsQuestion pollsQuestion : list) {
-					if (!Validator.equals(uuid, pollsQuestion.getUuid()) ||
+					if (!Objects.equals(uuid, pollsQuestion.getUuid()) ||
 							(companyId != pollsQuestion.getCompanyId())) {
 						list = null;
 
@@ -2539,8 +2540,8 @@ public class PollsQuestionPersistenceImpl extends BasePersistenceImpl<PollsQuest
 					primaryKey);
 
 			if (pollsQuestion == null) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+				if (_log.isDebugEnabled()) {
+					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchQuestionException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
@@ -2765,8 +2766,8 @@ public class PollsQuestionPersistenceImpl extends BasePersistenceImpl<PollsQuest
 		PollsQuestion pollsQuestion = fetchByPrimaryKey(primaryKey);
 
 		if (pollsQuestion == null) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+			if (_log.isDebugEnabled()) {
+				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
 			throw new NoSuchQuestionException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +

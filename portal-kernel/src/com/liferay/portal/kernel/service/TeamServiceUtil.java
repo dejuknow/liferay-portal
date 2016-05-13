@@ -40,6 +40,10 @@ public class TeamServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to {@link com.liferay.portal.service.impl.TeamServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
+	public static boolean hasUserTeam(long userId, long teamId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().hasUserTeam(userId, teamId);
+	}
 
 	/**
 	* @deprecated As of 7.0.0, replaced by {@link #addTeam(long, String,
@@ -54,29 +58,9 @@ public class TeamServiceUtil {
 
 	public static com.liferay.portal.kernel.model.Team addTeam(long groupId,
 		java.lang.String name, java.lang.String description,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService().addTeam(groupId, name, description, serviceContext);
-	}
-
-	public static void deleteTeam(long teamId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().deleteTeam(teamId);
-	}
-
-	public static java.util.List<com.liferay.portal.kernel.model.Team> getGroupTeams(
-		long groupId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getGroupTeams(groupId);
-	}
-
-	/**
-	* Returns the OSGi service identifier.
-	*
-	* @return the OSGi service identifier
-	*/
-	public static java.lang.String getOSGiServiceIdentifier() {
-		return getService().getOSGiServiceIdentifier();
 	}
 
 	public static com.liferay.portal.kernel.model.Team getTeam(long groupId,
@@ -90,6 +74,33 @@ public class TeamServiceUtil {
 		return getService().getTeam(teamId);
 	}
 
+	public static com.liferay.portal.kernel.model.Team updateTeam(long teamId,
+		java.lang.String name, java.lang.String description)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().updateTeam(teamId, name, description);
+	}
+
+	public static int searchCount(long groupId, java.lang.String name,
+		java.lang.String description,
+		java.util.LinkedHashMap<java.lang.String, java.lang.Object> params) {
+		return getService().searchCount(groupId, name, description, params);
+	}
+
+	/**
+	* Returns the OSGi service identifier.
+	*
+	* @return the OSGi service identifier
+	*/
+	public static java.lang.String getOSGiServiceIdentifier() {
+		return getService().getOSGiServiceIdentifier();
+	}
+
+	public static java.util.List<com.liferay.portal.kernel.model.Team> getGroupTeams(
+		long groupId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().getGroupTeams(groupId);
+	}
+
 	public static java.util.List<com.liferay.portal.kernel.model.Team> getUserTeams(
 		long userId) throws com.liferay.portal.kernel.exception.PortalException {
 		return getService().getUserTeams(userId);
@@ -101,11 +112,6 @@ public class TeamServiceUtil {
 		return getService().getUserTeams(userId, groupId);
 	}
 
-	public static boolean hasUserTeam(long userId, long teamId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().hasUserTeam(userId, teamId);
-	}
-
 	public static java.util.List<com.liferay.portal.kernel.model.Team> search(
 		long groupId, java.lang.String name, java.lang.String description,
 		java.util.LinkedHashMap<java.lang.String, java.lang.Object> params,
@@ -115,16 +121,9 @@ public class TeamServiceUtil {
 				   .search(groupId, name, description, params, start, end, obc);
 	}
 
-	public static int searchCount(long groupId, java.lang.String name,
-		java.lang.String description,
-		java.util.LinkedHashMap<java.lang.String, java.lang.Object> params) {
-		return getService().searchCount(groupId, name, description, params);
-	}
-
-	public static com.liferay.portal.kernel.model.Team updateTeam(long teamId,
-		java.lang.String name, java.lang.String description)
+	public static void deleteTeam(long teamId)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().updateTeam(teamId, name, description);
+		getService().deleteTeam(teamId);
 	}
 
 	public static TeamService getService() {

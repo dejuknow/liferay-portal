@@ -277,7 +277,7 @@ public abstract class BlogsEntryLocalServiceBaseImpl
 	public ActionableDynamicQuery getActionableDynamicQuery() {
 		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
 
-		actionableDynamicQuery.setBaseLocalService(com.liferay.blogs.kernel.service.BlogsEntryLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(blogsEntryLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(BlogsEntry.class);
 
@@ -290,7 +290,7 @@ public abstract class BlogsEntryLocalServiceBaseImpl
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
 		IndexableActionableDynamicQuery indexableActionableDynamicQuery = new IndexableActionableDynamicQuery();
 
-		indexableActionableDynamicQuery.setBaseLocalService(com.liferay.blogs.kernel.service.BlogsEntryLocalServiceUtil.getService());
+		indexableActionableDynamicQuery.setBaseLocalService(blogsEntryLocalService);
 		indexableActionableDynamicQuery.setClassLoader(getClassLoader());
 		indexableActionableDynamicQuery.setModelClass(BlogsEntry.class);
 
@@ -301,7 +301,7 @@ public abstract class BlogsEntryLocalServiceBaseImpl
 
 	protected void initActionableDynamicQuery(
 		ActionableDynamicQuery actionableDynamicQuery) {
-		actionableDynamicQuery.setBaseLocalService(com.liferay.blogs.kernel.service.BlogsEntryLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(blogsEntryLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(BlogsEntry.class);
 
@@ -1287,7 +1287,7 @@ public abstract class BlogsEntryLocalServiceBaseImpl
 		}
 	}
 
-	@BeanReference(type = com.liferay.blogs.kernel.service.BlogsEntryLocalService.class)
+	@BeanReference(type = BlogsEntryLocalService.class)
 	protected BlogsEntryLocalService blogsEntryLocalService;
 	@BeanReference(type = BlogsEntryPersistence.class)
 	protected BlogsEntryPersistence blogsEntryPersistence;

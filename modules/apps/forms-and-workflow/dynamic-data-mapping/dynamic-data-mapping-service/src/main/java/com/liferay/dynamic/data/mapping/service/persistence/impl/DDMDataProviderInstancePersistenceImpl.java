@@ -59,6 +59,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -207,8 +208,7 @@ public class DDMDataProviderInstancePersistenceImpl extends BasePersistenceImpl<
 
 			if ((list != null) && !list.isEmpty()) {
 				for (DDMDataProviderInstance ddmDataProviderInstance : list) {
-					if (!Validator.equals(uuid,
-								ddmDataProviderInstance.getUuid())) {
+					if (!Objects.equals(uuid, ddmDataProviderInstance.getUuid())) {
 						list = null;
 
 						break;
@@ -688,8 +688,8 @@ public class DDMDataProviderInstancePersistenceImpl extends BasePersistenceImpl<
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchDataProviderInstanceException(msg.toString());
@@ -733,7 +733,7 @@ public class DDMDataProviderInstancePersistenceImpl extends BasePersistenceImpl<
 		if (result instanceof DDMDataProviderInstance) {
 			DDMDataProviderInstance ddmDataProviderInstance = (DDMDataProviderInstance)result;
 
-			if (!Validator.equals(uuid, ddmDataProviderInstance.getUuid()) ||
+			if (!Objects.equals(uuid, ddmDataProviderInstance.getUuid()) ||
 					(groupId != ddmDataProviderInstance.getGroupId())) {
 				result = null;
 			}
@@ -1030,8 +1030,7 @@ public class DDMDataProviderInstancePersistenceImpl extends BasePersistenceImpl<
 
 			if ((list != null) && !list.isEmpty()) {
 				for (DDMDataProviderInstance ddmDataProviderInstance : list) {
-					if (!Validator.equals(uuid,
-								ddmDataProviderInstance.getUuid()) ||
+					if (!Objects.equals(uuid, ddmDataProviderInstance.getUuid()) ||
 							(companyId != ddmDataProviderInstance.getCompanyId())) {
 						list = null;
 
@@ -3564,8 +3563,8 @@ public class DDMDataProviderInstancePersistenceImpl extends BasePersistenceImpl<
 					primaryKey);
 
 			if (ddmDataProviderInstance == null) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+				if (_log.isDebugEnabled()) {
+					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchDataProviderInstanceException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
@@ -3815,8 +3814,8 @@ public class DDMDataProviderInstancePersistenceImpl extends BasePersistenceImpl<
 		DDMDataProviderInstance ddmDataProviderInstance = fetchByPrimaryKey(primaryKey);
 
 		if (ddmDataProviderInstance == null) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+			if (_log.isDebugEnabled()) {
+				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
 			throw new NoSuchDataProviderInstanceException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +

@@ -62,6 +62,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -205,7 +206,7 @@ public class TeamPersistenceImpl extends BasePersistenceImpl<Team>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (Team team : list) {
-					if (!Validator.equals(uuid, team.getUuid())) {
+					if (!Objects.equals(uuid, team.getUuid())) {
 						list = null;
 
 						break;
@@ -673,8 +674,8 @@ public class TeamPersistenceImpl extends BasePersistenceImpl<Team>
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchTeamException(msg.toString());
@@ -718,7 +719,7 @@ public class TeamPersistenceImpl extends BasePersistenceImpl<Team>
 		if (result instanceof Team) {
 			Team team = (Team)result;
 
-			if (!Validator.equals(uuid, team.getUuid()) ||
+			if (!Objects.equals(uuid, team.getUuid()) ||
 					(groupId != team.getGroupId())) {
 				result = null;
 			}
@@ -1010,7 +1011,7 @@ public class TeamPersistenceImpl extends BasePersistenceImpl<Team>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (Team team : list) {
-					if (!Validator.equals(uuid, team.getUuid()) ||
+					if (!Objects.equals(uuid, team.getUuid()) ||
 							(companyId != team.getCompanyId())) {
 						list = null;
 
@@ -2359,8 +2360,8 @@ public class TeamPersistenceImpl extends BasePersistenceImpl<Team>
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchTeamException(msg.toString());
@@ -2404,7 +2405,7 @@ public class TeamPersistenceImpl extends BasePersistenceImpl<Team>
 			Team team = (Team)result;
 
 			if ((groupId != team.getGroupId()) ||
-					!Validator.equals(name, team.getName())) {
+					!Objects.equals(name, team.getName())) {
 				result = null;
 			}
 		}
@@ -2798,8 +2799,8 @@ public class TeamPersistenceImpl extends BasePersistenceImpl<Team>
 			Team team = (Team)session.get(TeamImpl.class, primaryKey);
 
 			if (team == null) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+				if (_log.isDebugEnabled()) {
+					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchTeamException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
@@ -3019,8 +3020,8 @@ public class TeamPersistenceImpl extends BasePersistenceImpl<Team>
 		Team team = fetchByPrimaryKey(primaryKey);
 
 		if (team == null) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+			if (_log.isDebugEnabled()) {
+				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
 			throw new NoSuchTeamException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +

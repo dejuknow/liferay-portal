@@ -17,6 +17,7 @@ package com.liferay.sync.engine.documentlibrary.handler;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import com.liferay.sync.engine.documentlibrary.event.Event;
+import com.liferay.sync.engine.documentlibrary.util.FileEventUtil;
 import com.liferay.sync.engine.model.SyncFile;
 import com.liferay.sync.engine.session.Session;
 import com.liferay.sync.engine.session.SessionManager;
@@ -150,6 +151,11 @@ public class DownloadFilesHandler extends BaseHandler {
 				catch (Exception e) {
 					if (!isEventCancelled()) {
 						_logger.error(e.getMessage(), e);
+
+						downloadFileHandler.removeEvent();
+
+						FileEventUtil.downloadFile(
+							getSyncAccountId(), syncFile, false);
 					}
 				}
 				finally {
@@ -158,8 +164,10 @@ public class DownloadFilesHandler extends BaseHandler {
 			}
 		}
 		catch (Exception e) {
-			if (!isEventCancelled() && _logger.isDebugEnabled()) {
-				_logger.debug(e.getMessage(), e);
+			if (!isEventCancelled()) {
+				_logger.error(e.getMessage(), e);
+
+				retryEvent();
 			}
 		}
 		finally {

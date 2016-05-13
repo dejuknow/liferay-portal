@@ -18,4 +18,23 @@
 
 		</div>
 	</div>
-</div>
+</fieldset>
+
+<c:if test="<%= collapsible %>">
+	<aui:script sandbox="<%= true %>" use="aui-base,liferay-store">
+		var storeTask = A.debounce(Liferay.Store, 100);
+
+		$('#<%= id %>Content').on(
+			'hide.bs.collapse show.bs.collapse',
+			function(event) {
+				if (event.target.id === '<%= id %>Content') {
+					storeTask(
+						{
+							'<%= id %>': (event.type === 'hide')
+						}
+					);
+				}
+			}
+		);
+	</aui:script>
+</c:if>

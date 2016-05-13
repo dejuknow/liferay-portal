@@ -85,6 +85,11 @@ public abstract class BaseMobileDriverImpl
 	}
 
 	@Override
+	public void assertAccessible() throws Exception {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public void assertAlert(String pattern) throws Exception {
 		LiferaySeleniumHelper.assertAlert(this, pattern);
 	}
@@ -573,6 +578,11 @@ public abstract class BaseMobileDriverImpl
 	}
 
 	@Override
+	public String getCurrentHour() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public String getCurrentMonth() {
 		throw new UnsupportedOperationException();
 	}
@@ -1051,9 +1061,7 @@ public abstract class BaseMobileDriverImpl
 			return isInViewport(locator);
 		}
 		else {
-			if (!webElement.isDisplayed()) {
-				WebDriverHelper.scrollWebElementIntoView(this, webElement);
-			}
+			WebDriverHelper.scrollWebElementIntoView(this, webElement);
 
 			return webElement.isDisplayed();
 		}
@@ -1289,6 +1297,11 @@ public abstract class BaseMobileDriverImpl
 		}
 
 		LiferaySeleniumHelper.saveScreenshotBeforeAction(this, actionFailed);
+	}
+
+	@Override
+	public void scrollBy(String coordString) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override

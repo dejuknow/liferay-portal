@@ -269,6 +269,16 @@ public class BaseHandler implements Handler<Void> {
 		return _event.isCancelled();
 	}
 
+	protected void retryEvent() {
+		if (isEventCancelled()) {
+			return;
+		}
+
+		removeEvent();
+
+		_event.run();
+	}
+
 	protected void retryServerConnection(int uiEvent) {
 		if (!(_event instanceof GetSyncContextEvent) &&
 			ConnectionRetryUtil.retryInProgress(getSyncAccountId())) {

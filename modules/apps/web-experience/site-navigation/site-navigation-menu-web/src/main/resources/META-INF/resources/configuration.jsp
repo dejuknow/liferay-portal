@@ -42,7 +42,7 @@ String rootLayoutType = siteNavigationMenuDisplayContext.getRootLayoutType();
 					</div>
 
 					<div id="<portlet:namespace />customDisplayOptions">
-						<aui:select id ="rootLayoutType" label="root-layout" name="preferences--rootLayoutType--" value="<%= rootLayoutType %>">
+						<aui:select id="rootLayoutType" label="root-layout" name="preferences--rootLayoutType--" value="<%= rootLayoutType %>">
 							<aui:option label="parent-at-level" value="absolute" />
 							<aui:option label="relative-parent-up-by" value="relative" />
 							<aui:option label="select" value="select" />
@@ -75,7 +75,7 @@ String rootLayoutType = siteNavigationMenuDisplayContext.getRootLayoutType();
 									if (layoutDescriptionLayout != null) {
 								%>
 
-										<aui:option label="<%= layoutDescription.getDisplayName() %>" selected="<%= Validator.equals(layoutDescriptionLayout.getUuid(), siteNavigationMenuDisplayContext.getRootLayoutUuid()) %>" value="<%= layoutDescriptionLayout.getUuid() %>" />
+										<aui:option label="<%= layoutDescription.getDisplayName() %>" selected="<%= Objects.equals(layoutDescriptionLayout.getUuid(), siteNavigationMenuDisplayContext.getRootLayoutUuid()) %>" value="<%= layoutDescriptionLayout.getUuid() %>" />
 
 								<%
 									}

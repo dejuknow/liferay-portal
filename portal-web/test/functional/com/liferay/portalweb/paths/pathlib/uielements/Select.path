@@ -49,6 +49,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>EXPORT_IMPORT_CONTENT</td>
+	<td>//select[contains(@id,'PORTLET_DATA')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>GENDER</td>
 	<td>//div[label[contains(.,'Gender')]]/select</td>
 	<td></td>

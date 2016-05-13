@@ -20,12 +20,12 @@ import com.liferay.expando.kernel.model.ExpandoBridge;
 
 import com.liferay.portal.kernel.model.ModelWrapper;
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Serializable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * <p>
@@ -115,34 +115,13 @@ public class AnnouncementsDeliveryWrapper implements AnnouncementsDelivery,
 	}
 
 	@Override
-	public java.lang.Object clone() {
-		return new AnnouncementsDeliveryWrapper((AnnouncementsDelivery)_announcementsDelivery.clone());
+	public AnnouncementsDelivery toEscapedModel() {
+		return new AnnouncementsDeliveryWrapper(_announcementsDelivery.toEscapedModel());
 	}
 
 	@Override
-	public int compareTo(
-		com.liferay.announcements.kernel.model.AnnouncementsDelivery announcementsDelivery) {
-		return _announcementsDelivery.compareTo(announcementsDelivery);
-	}
-
-	/**
-	* Returns the company ID of this announcements delivery.
-	*
-	* @return the company ID of this announcements delivery
-	*/
-	@Override
-	public long getCompanyId() {
-		return _announcementsDelivery.getCompanyId();
-	}
-
-	/**
-	* Returns the delivery ID of this announcements delivery.
-	*
-	* @return the delivery ID of this announcements delivery
-	*/
-	@Override
-	public long getDeliveryId() {
-		return _announcementsDelivery.getDeliveryId();
+	public AnnouncementsDelivery toUnescapedModel() {
+		return new AnnouncementsDeliveryWrapper(_announcementsDelivery.toUnescapedModel());
 	}
 
 	/**
@@ -153,26 +132,6 @@ public class AnnouncementsDeliveryWrapper implements AnnouncementsDelivery,
 	@Override
 	public boolean getEmail() {
 		return _announcementsDelivery.getEmail();
-	}
-
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _announcementsDelivery.getExpandoBridge();
-	}
-
-	/**
-	* Returns the primary key of this announcements delivery.
-	*
-	* @return the primary key of this announcements delivery
-	*/
-	@Override
-	public long getPrimaryKey() {
-		return _announcementsDelivery.getPrimaryKey();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _announcementsDelivery.getPrimaryKeyObj();
 	}
 
 	/**
@@ -186,36 +145,6 @@ public class AnnouncementsDeliveryWrapper implements AnnouncementsDelivery,
 	}
 
 	/**
-	* Returns the type of this announcements delivery.
-	*
-	* @return the type of this announcements delivery
-	*/
-	@Override
-	public java.lang.String getType() {
-		return _announcementsDelivery.getType();
-	}
-
-	/**
-	* Returns the user ID of this announcements delivery.
-	*
-	* @return the user ID of this announcements delivery
-	*/
-	@Override
-	public long getUserId() {
-		return _announcementsDelivery.getUserId();
-	}
-
-	/**
-	* Returns the user uuid of this announcements delivery.
-	*
-	* @return the user uuid of this announcements delivery
-	*/
-	@Override
-	public java.lang.String getUserUuid() {
-		return _announcementsDelivery.getUserUuid();
-	}
-
-	/**
 	* Returns the website of this announcements delivery.
 	*
 	* @return the website of this announcements delivery
@@ -223,11 +152,6 @@ public class AnnouncementsDeliveryWrapper implements AnnouncementsDelivery,
 	@Override
 	public boolean getWebsite() {
 		return _announcementsDelivery.getWebsite();
-	}
-
-	@Override
-	public int hashCode() {
-		return _announcementsDelivery.hashCode();
 	}
 
 	@Override
@@ -276,6 +200,106 @@ public class AnnouncementsDeliveryWrapper implements AnnouncementsDelivery,
 	}
 
 	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _announcementsDelivery.getExpandoBridge();
+	}
+
+	@Override
+	public com.liferay.portal.kernel.model.CacheModel<AnnouncementsDelivery> toCacheModel() {
+		return _announcementsDelivery.toCacheModel();
+	}
+
+	@Override
+	public int compareTo(AnnouncementsDelivery announcementsDelivery) {
+		return _announcementsDelivery.compareTo(announcementsDelivery);
+	}
+
+	@Override
+	public int hashCode() {
+		return _announcementsDelivery.hashCode();
+	}
+
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _announcementsDelivery.getPrimaryKeyObj();
+	}
+
+	@Override
+	public java.lang.Object clone() {
+		return new AnnouncementsDeliveryWrapper((AnnouncementsDelivery)_announcementsDelivery.clone());
+	}
+
+	/**
+	* Returns the type of this announcements delivery.
+	*
+	* @return the type of this announcements delivery
+	*/
+	@Override
+	public java.lang.String getType() {
+		return _announcementsDelivery.getType();
+	}
+
+	/**
+	* Returns the user uuid of this announcements delivery.
+	*
+	* @return the user uuid of this announcements delivery
+	*/
+	@Override
+	public java.lang.String getUserUuid() {
+		return _announcementsDelivery.getUserUuid();
+	}
+
+	@Override
+	public java.lang.String toString() {
+		return _announcementsDelivery.toString();
+	}
+
+	@Override
+	public java.lang.String toXmlString() {
+		return _announcementsDelivery.toXmlString();
+	}
+
+	/**
+	* Returns the company ID of this announcements delivery.
+	*
+	* @return the company ID of this announcements delivery
+	*/
+	@Override
+	public long getCompanyId() {
+		return _announcementsDelivery.getCompanyId();
+	}
+
+	/**
+	* Returns the delivery ID of this announcements delivery.
+	*
+	* @return the delivery ID of this announcements delivery
+	*/
+	@Override
+	public long getDeliveryId() {
+		return _announcementsDelivery.getDeliveryId();
+	}
+
+	/**
+	* Returns the primary key of this announcements delivery.
+	*
+	* @return the primary key of this announcements delivery
+	*/
+	@Override
+	public long getPrimaryKey() {
+		return _announcementsDelivery.getPrimaryKey();
+	}
+
+	/**
+	* Returns the user ID of this announcements delivery.
+	*
+	* @return the user ID of this announcements delivery
+	*/
+	@Override
+	public long getUserId() {
+		return _announcementsDelivery.getUserId();
+	}
+
+	@Override
 	public void persist() {
 		_announcementsDelivery.persist();
 	}
@@ -316,14 +340,14 @@ public class AnnouncementsDeliveryWrapper implements AnnouncementsDelivery,
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
-		_announcementsDelivery.setExpandoBridgeAttributes(baseModel);
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
+		_announcementsDelivery.setExpandoBridgeAttributes(expandoBridge);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
-		_announcementsDelivery.setExpandoBridgeAttributes(expandoBridge);
+	public void setExpandoBridgeAttributes(
+		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
+		_announcementsDelivery.setExpandoBridgeAttributes(baseModel);
 	}
 
 	@Override
@@ -402,31 +426,6 @@ public class AnnouncementsDeliveryWrapper implements AnnouncementsDelivery,
 	}
 
 	@Override
-	public com.liferay.portal.kernel.model.CacheModel<com.liferay.announcements.kernel.model.AnnouncementsDelivery> toCacheModel() {
-		return _announcementsDelivery.toCacheModel();
-	}
-
-	@Override
-	public com.liferay.announcements.kernel.model.AnnouncementsDelivery toEscapedModel() {
-		return new AnnouncementsDeliveryWrapper(_announcementsDelivery.toEscapedModel());
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _announcementsDelivery.toString();
-	}
-
-	@Override
-	public com.liferay.announcements.kernel.model.AnnouncementsDelivery toUnescapedModel() {
-		return new AnnouncementsDeliveryWrapper(_announcementsDelivery.toUnescapedModel());
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _announcementsDelivery.toXmlString();
-	}
-
-	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
@@ -438,7 +437,7 @@ public class AnnouncementsDeliveryWrapper implements AnnouncementsDelivery,
 
 		AnnouncementsDeliveryWrapper announcementsDeliveryWrapper = (AnnouncementsDeliveryWrapper)obj;
 
-		if (Validator.equals(_announcementsDelivery,
+		if (Objects.equals(_announcementsDelivery,
 					announcementsDeliveryWrapper._announcementsDelivery)) {
 			return true;
 		}

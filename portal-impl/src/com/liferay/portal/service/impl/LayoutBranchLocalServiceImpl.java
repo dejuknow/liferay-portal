@@ -96,10 +96,12 @@ public class LayoutBranchLocalServiceImpl
 			layoutRevision.getLayoutSetBranchId(), layoutRevision.getPlid(),
 			name, description, master, serviceContext);
 
+		serviceContext.setAttribute("major", Boolean.TRUE.toString());
+
 		layoutRevisionLocalService.addLayoutRevision(
 			layoutBranch.getUserId(), layoutRevision.getLayoutSetBranchId(),
 			layoutBranch.getLayoutBranchId(),
-			LayoutRevisionConstants.DEFAULT_PARENT_LAYOUT_REVISION_ID, false,
+			LayoutRevisionConstants.DEFAULT_PARENT_LAYOUT_REVISION_ID, true,
 			layoutRevision.getPlid(), layoutRevision.getLayoutRevisionId(),
 			layoutRevision.isPrivateLayout(), layoutRevision.getName(),
 			layoutRevision.getTitle(), layoutRevision.getDescription(),

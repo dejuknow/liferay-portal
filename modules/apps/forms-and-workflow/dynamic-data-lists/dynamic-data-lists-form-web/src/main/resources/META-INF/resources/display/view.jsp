@@ -19,11 +19,11 @@
 <%
 String redirect = ParamUtil.getString(request, "redirect", currentURL);
 
-DDLRecordSet recordSet = ddlFormDisplayContext.getRecordSet();
+long recordSetId = ddlFormDisplayContext.getRecordSetId();
 %>
 
 <c:choose>
-	<c:when test="<%= (recordSet == null) %>">
+	<c:when test="<%= (recordSetId == 0) %>">
 		<div class="alert alert-info">
 			<liferay-ui:message key="select-an-existing-form-or-add-a-form-to-be-displayed-in-this-application" />
 		</div>
@@ -44,13 +44,16 @@ DDLRecordSet recordSet = ddlFormDisplayContext.getRecordSet();
 							<aui:input name="redirect" type="hidden" value="<%= redirect %>" />
 						</c:if>
 
+						<%
+						DDLRecordSet recordSet = ddlFormDisplayContext.getRecordSet();
+						%>
+
 						<aui:input name="groupId" type="hidden" value="<%= recordSet.getGroupId() %>" />
 						<aui:input name="recordSetId" type="hidden" value="<%= recordSet.getRecordSetId() %>" />
 						<aui:input name="availableLanguageId" type="hidden" value="<%= themeDisplay.getLanguageId() %>" />
 						<aui:input name="defaultLanguageId" type="hidden" value="<%= themeDisplay.getLanguageId() %>" />
 						<aui:input name="workflowAction" type="hidden" value="<%= WorkflowConstants.ACTION_PUBLISH %>" />
 
-						<liferay-ui:error exception="<%= CaptchaMaxChallengesException.class %>" message="maximum-number-of-captcha-attempts-exceeded" />
 						<liferay-ui:error exception="<%= CaptchaTextException.class %>" message="text-verification-failed" />
 						<liferay-ui:error exception="<%= DDMFormRenderingException.class %>" message="unable-to-render-the-selected-form" />
 						<liferay-ui:error exception="<%= DDMFormValuesValidationException.class %>" message="field-validation-failed" />
@@ -85,7 +88,7 @@ DDLRecordSet recordSet = ddlFormDisplayContext.getRecordSet();
 							DDMFormValuesValidationException.RequiredValue rv = (DDMFormValuesValidationException.RequiredValue)errorException;
 							%>
 
-							<liferay-ui:message arguments="<%= rv.getFieldName() %>" key="no-value-defined-for-field-x" translateArguments="<%= false %>" />
+							<liferay-ui:message arguments="<%= rv.getFieldName() %>" key="no-value-is-defined-for-field-x" translateArguments="<%= false %>" />
 						</liferay-ui:error>
 
 						<liferay-ui:error exception="<%= NoSuchRecordSetException.class %>" message="the-selected-form-no-longer-exists" />
@@ -109,7 +112,7 @@ DDLRecordSet recordSet = ddlFormDisplayContext.getRecordSet();
 						</div>
 
 						<div class="container-fluid-1280 ddl-form-builder-app">
-							<%= request.getAttribute(DDMWebKeys.DYNAMIC_DATA_MAPPING_FORM_HTML) %>
+							<%= ddlFormDisplayContext.getDDMFormHTML() %>
 						</div>
 					</aui:form>
 				</div>

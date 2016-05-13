@@ -20,12 +20,12 @@ import com.liferay.expando.kernel.model.ExpandoBridge;
 
 import com.liferay.portal.kernel.model.ModelWrapper;
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Serializable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * <p>
@@ -107,24 +107,58 @@ public class DLSyncEventWrapper implements DLSyncEvent,
 	}
 
 	@Override
-	public java.lang.Object clone() {
-		return new DLSyncEventWrapper((DLSyncEvent)_dlSyncEvent.clone());
+	public DLSyncEvent toEscapedModel() {
+		return new DLSyncEventWrapper(_dlSyncEvent.toEscapedModel());
 	}
 
 	@Override
-	public int compareTo(
-		com.liferay.document.library.kernel.model.DLSyncEvent dlSyncEvent) {
+	public DLSyncEvent toUnescapedModel() {
+		return new DLSyncEventWrapper(_dlSyncEvent.toUnescapedModel());
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _dlSyncEvent.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _dlSyncEvent.isEscapedModel();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _dlSyncEvent.isNew();
+	}
+
+	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _dlSyncEvent.getExpandoBridge();
+	}
+
+	@Override
+	public com.liferay.portal.kernel.model.CacheModel<DLSyncEvent> toCacheModel() {
+		return _dlSyncEvent.toCacheModel();
+	}
+
+	@Override
+	public int compareTo(DLSyncEvent dlSyncEvent) {
 		return _dlSyncEvent.compareTo(dlSyncEvent);
 	}
 
-	/**
-	* Returns the company ID of this d l sync event.
-	*
-	* @return the company ID of this d l sync event
-	*/
 	@Override
-	public long getCompanyId() {
-		return _dlSyncEvent.getCompanyId();
+	public int hashCode() {
+		return _dlSyncEvent.hashCode();
+	}
+
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _dlSyncEvent.getPrimaryKeyObj();
+	}
+
+	@Override
+	public java.lang.Object clone() {
+		return new DLSyncEventWrapper((DLSyncEvent)_dlSyncEvent.clone());
 	}
 
 	/**
@@ -137,9 +171,34 @@ public class DLSyncEventWrapper implements DLSyncEvent,
 		return _dlSyncEvent.getEvent();
 	}
 
+	/**
+	* Returns the type of this d l sync event.
+	*
+	* @return the type of this d l sync event
+	*/
 	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _dlSyncEvent.getExpandoBridge();
+	public java.lang.String getType() {
+		return _dlSyncEvent.getType();
+	}
+
+	@Override
+	public java.lang.String toString() {
+		return _dlSyncEvent.toString();
+	}
+
+	@Override
+	public java.lang.String toXmlString() {
+		return _dlSyncEvent.toXmlString();
+	}
+
+	/**
+	* Returns the company ID of this d l sync event.
+	*
+	* @return the company ID of this d l sync event
+	*/
+	@Override
+	public long getCompanyId() {
+		return _dlSyncEvent.getCompanyId();
 	}
 
 	/**
@@ -162,11 +221,6 @@ public class DLSyncEventWrapper implements DLSyncEvent,
 		return _dlSyncEvent.getPrimaryKey();
 	}
 
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _dlSyncEvent.getPrimaryKeyObj();
-	}
-
 	/**
 	* Returns the sync event ID of this d l sync event.
 	*
@@ -178,16 +232,6 @@ public class DLSyncEventWrapper implements DLSyncEvent,
 	}
 
 	/**
-	* Returns the type of this d l sync event.
-	*
-	* @return the type of this d l sync event
-	*/
-	@Override
-	public java.lang.String getType() {
-		return _dlSyncEvent.getType();
-	}
-
-	/**
 	* Returns the type p k of this d l sync event.
 	*
 	* @return the type p k of this d l sync event
@@ -195,26 +239,6 @@ public class DLSyncEventWrapper implements DLSyncEvent,
 	@Override
 	public long getTypePK() {
 		return _dlSyncEvent.getTypePK();
-	}
-
-	@Override
-	public int hashCode() {
-		return _dlSyncEvent.hashCode();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _dlSyncEvent.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _dlSyncEvent.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _dlSyncEvent.isNew();
 	}
 
 	@Override
@@ -248,14 +272,14 @@ public class DLSyncEventWrapper implements DLSyncEvent,
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
-		_dlSyncEvent.setExpandoBridgeAttributes(baseModel);
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
+		_dlSyncEvent.setExpandoBridgeAttributes(expandoBridge);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
-		_dlSyncEvent.setExpandoBridgeAttributes(expandoBridge);
+	public void setExpandoBridgeAttributes(
+		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
+		_dlSyncEvent.setExpandoBridgeAttributes(baseModel);
 	}
 
 	@Override
@@ -324,31 +348,6 @@ public class DLSyncEventWrapper implements DLSyncEvent,
 	}
 
 	@Override
-	public com.liferay.portal.kernel.model.CacheModel<com.liferay.document.library.kernel.model.DLSyncEvent> toCacheModel() {
-		return _dlSyncEvent.toCacheModel();
-	}
-
-	@Override
-	public com.liferay.document.library.kernel.model.DLSyncEvent toEscapedModel() {
-		return new DLSyncEventWrapper(_dlSyncEvent.toEscapedModel());
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _dlSyncEvent.toString();
-	}
-
-	@Override
-	public com.liferay.document.library.kernel.model.DLSyncEvent toUnescapedModel() {
-		return new DLSyncEventWrapper(_dlSyncEvent.toUnescapedModel());
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _dlSyncEvent.toXmlString();
-	}
-
-	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
@@ -360,7 +359,7 @@ public class DLSyncEventWrapper implements DLSyncEvent,
 
 		DLSyncEventWrapper dlSyncEventWrapper = (DLSyncEventWrapper)obj;
 
-		if (Validator.equals(_dlSyncEvent, dlSyncEventWrapper._dlSyncEvent)) {
+		if (Objects.equals(_dlSyncEvent, dlSyncEventWrapper._dlSyncEvent)) {
 			return true;
 		}
 

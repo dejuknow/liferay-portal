@@ -24,6 +24,7 @@ import com.liferay.sync.engine.model.SyncFile;
 import com.liferay.sync.engine.service.SyncAccountService;
 import com.liferay.sync.engine.session.Session;
 import com.liferay.sync.engine.session.SessionManager;
+import com.liferay.sync.engine.util.ServerInfo;
 
 import java.util.Map;
 
@@ -137,6 +138,12 @@ public abstract class BaseEvent implements Event {
 
 	@Override
 	public String getURLPath() {
+		if (ServerInfo.supportsModuleFramework(_syncAccountId)) {
+			String urlPath = _urlPath.replace("/sync-web/", "/o/sync-web/");
+
+			return urlPath.replace("/sync-web.", "/sync.");
+		}
+
 		return _urlPath;
 	}
 
@@ -192,12 +199,12 @@ public abstract class BaseEvent implements Event {
 		BatchEvent batchEvent = BatchEventManager.getBatchEvent(syncFile);
 
 		if (!batchEvent.addEvent(this)) {
-			executeAsynchronousPost(_urlPath, _parameters);
+			executeAsynchronousPost(getURLPath(), _parameters);
 		}
 	}
 
 	protected void processRequest() throws Exception {
-		executePost(_urlPath, _parameters);
+		executePost(getURLPath(), _parameters);
 	}
 
 	private static final Logger _logger = LoggerFactory.getLogger(

@@ -79,12 +79,7 @@ public class DownloadFileEvent extends BaseEvent {
 			getSyncAccountId());
 
 		sb.append(syncAccount.getUrl());
-
-		if (ServerInfo.supportsModuleFramework(getSyncAccountId())) {
-			sb.append("/o");
-		}
-
-		sb.append(_URL_PATH);
+		sb.append(getURLPath());
 		sb.append("/");
 		sb.append(syncFile.getRepositoryId());
 		sb.append("/");

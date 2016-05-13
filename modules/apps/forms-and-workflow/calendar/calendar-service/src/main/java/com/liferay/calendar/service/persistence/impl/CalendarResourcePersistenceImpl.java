@@ -59,6 +59,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -726,7 +727,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 
 			if ((list != null) && !list.isEmpty()) {
 				for (CalendarResource calendarResource : list) {
-					if (!Validator.equals(uuid, calendarResource.getUuid())) {
+					if (!Objects.equals(uuid, calendarResource.getUuid())) {
 						list = null;
 
 						break;
@@ -1202,8 +1203,8 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchResourceException(msg.toString());
@@ -1247,7 +1248,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 		if (result instanceof CalendarResource) {
 			CalendarResource calendarResource = (CalendarResource)result;
 
-			if (!Validator.equals(uuid, calendarResource.getUuid()) ||
+			if (!Objects.equals(uuid, calendarResource.getUuid()) ||
 					(groupId != calendarResource.getGroupId())) {
 				result = null;
 			}
@@ -1543,7 +1544,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 
 			if ((list != null) && !list.isEmpty()) {
 				for (CalendarResource calendarResource : list) {
-					if (!Validator.equals(uuid, calendarResource.getUuid()) ||
+					if (!Objects.equals(uuid, calendarResource.getUuid()) ||
 							(companyId != calendarResource.getCompanyId())) {
 						list = null;
 
@@ -3452,7 +3453,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 			if ((list != null) && !list.isEmpty()) {
 				for (CalendarResource calendarResource : list) {
 					if ((groupId != calendarResource.getGroupId()) ||
-							!Validator.equals(code, calendarResource.getCode())) {
+							!Objects.equals(code, calendarResource.getCode())) {
 						list = null;
 
 						break;
@@ -4376,7 +4377,7 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 				for (CalendarResource calendarResource : list) {
 					if (!ArrayUtil.contains(groupIds,
 								calendarResource.getGroupId()) ||
-							!Validator.equals(code, calendarResource.getCode())) {
+							!Objects.equals(code, calendarResource.getCode())) {
 						list = null;
 
 						break;
@@ -5712,8 +5713,8 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchResourceException(msg.toString());
@@ -6756,8 +6757,8 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 					primaryKey);
 
 			if (calendarResource == null) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+				if (_log.isDebugEnabled()) {
+					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchResourceException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
@@ -7067,8 +7068,8 @@ public class CalendarResourcePersistenceImpl extends BasePersistenceImpl<Calenda
 		CalendarResource calendarResource = fetchByPrimaryKey(primaryKey);
 
 		if (calendarResource == null) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+			if (_log.isDebugEnabled()) {
+				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
 			throw new NoSuchResourceException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +

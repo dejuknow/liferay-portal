@@ -4,7 +4,7 @@
 
 		<!-- Configure IdP (Identity Provider) on http://localhost:8080 with database lportal and saml deployed -->
 
-		<execute macro="ProductMenu#gotoControlPanelApps">
+		<execute macro="ProductMenu#gotoControlPanelConfiguration">
 			<var name="portlet" value="SAML Admin" />
 		</execute>
 
@@ -42,7 +42,7 @@
 			<var name="url" value="http://www.able.com:9080" />
 		</execute>
 
-		<execute macro="ProductMenu#gotoControlPanelApps">
+		<execute macro="ProductMenu#gotoControlPanelConfiguration">
 			<var name="portlet" value="SAML Admin" />
 		</execute>
 
@@ -78,7 +78,7 @@
 
 		<execute macro="Navigator#openURL" />
 
-		<execute macro="ProductMenu#gotoControlPanelApps">
+		<execute macro="ProductMenu#gotoControlPanelConfiguration">
 			<var name="portlet" value="SAML Admin" />
 		</execute>
 

@@ -437,8 +437,6 @@ AUI.add(
 					_createContactList: function(config) {
 						var instance = this;
 
-						var contactsResultContainer = config.contactsResultContainer;
-
 						var contactsResult = config.contactsResult;
 						var contactsResultURL = config.contactsResultURL;
 						var contactsSearchInput = config.contactsSearchInput;
@@ -549,7 +547,7 @@ AUI.add(
 
 						var portletURL = new Liferay.PortletURL.createURL(config.baseRenderURL);
 
-						portletURL.setParameter('mvcPath', '/edit_entry.jsp');
+						portletURL.setParameter('mvcPath', '/contacts_center/edit_entry.jsp');
 						portletURL.setParameter('redirect', contact.redirect);
 						portletURL.setParameter('entryId', contact.entryId);
 						portletURL.setPortletId('com_liferay_contacts_web_portlet_ContactsCenterPortlet');
@@ -862,9 +860,7 @@ AUI.add(
 					_showButton: function(node) {
 						node.show();
 
-						if (node.hasClass('btn-hidden')) {
-							node.removeClass('btn-hidden');
-						}
+						node.removeClass('hidden');
 					},
 
 					_updateContactsResult: function(event) {

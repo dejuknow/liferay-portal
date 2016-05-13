@@ -230,7 +230,7 @@ public abstract class AnnouncementsDeliveryLocalServiceBaseImpl
 	public ActionableDynamicQuery getActionableDynamicQuery() {
 		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
 
-		actionableDynamicQuery.setBaseLocalService(com.liferay.announcements.kernel.service.AnnouncementsDeliveryLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(announcementsDeliveryLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(AnnouncementsDelivery.class);
 
@@ -243,7 +243,7 @@ public abstract class AnnouncementsDeliveryLocalServiceBaseImpl
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
 		IndexableActionableDynamicQuery indexableActionableDynamicQuery = new IndexableActionableDynamicQuery();
 
-		indexableActionableDynamicQuery.setBaseLocalService(com.liferay.announcements.kernel.service.AnnouncementsDeliveryLocalServiceUtil.getService());
+		indexableActionableDynamicQuery.setBaseLocalService(announcementsDeliveryLocalService);
 		indexableActionableDynamicQuery.setClassLoader(getClassLoader());
 		indexableActionableDynamicQuery.setModelClass(AnnouncementsDelivery.class);
 
@@ -254,7 +254,7 @@ public abstract class AnnouncementsDeliveryLocalServiceBaseImpl
 
 	protected void initActionableDynamicQuery(
 		ActionableDynamicQuery actionableDynamicQuery) {
-		actionableDynamicQuery.setBaseLocalService(com.liferay.announcements.kernel.service.AnnouncementsDeliveryLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(announcementsDeliveryLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(AnnouncementsDelivery.class);
 
@@ -480,7 +480,7 @@ public abstract class AnnouncementsDeliveryLocalServiceBaseImpl
 		}
 	}
 
-	@BeanReference(type = com.liferay.announcements.kernel.service.AnnouncementsDeliveryLocalService.class)
+	@BeanReference(type = AnnouncementsDeliveryLocalService.class)
 	protected AnnouncementsDeliveryLocalService announcementsDeliveryLocalService;
 	@BeanReference(type = AnnouncementsDeliveryPersistence.class)
 	protected AnnouncementsDeliveryPersistence announcementsDeliveryPersistence;

@@ -14,6 +14,8 @@
 
 package com.liferay.portal.kernel.patcher;
 
+import aQute.bnd.annotation.ProviderType;
+
 import java.io.File;
 
 import java.util.Properties;
@@ -23,6 +25,7 @@ import java.util.Properties;
  * @author Brian Wing Shun Chan
  * @author Zoltán Takács
  */
+@ProviderType
 public interface Patcher {
 
 	public static final String PATCHER_PROPERTIES = "patcher.properties";
@@ -41,6 +44,9 @@ public interface Patcher {
 	public static final String PROPERTY_PATCHING_TOOL_VERSION =
 		"patching.tool.version";
 
+	public static final String PROPERTY_PATCHING_TOOL_VERSION_DISPLAY_NAME =
+		"patching.tool.version.display.name";
+
 	public boolean applyPatch(File patchFile);
 
 	public String[] getFixedIssues();
@@ -50,6 +56,8 @@ public interface Patcher {
 	public File getPatchDirectory();
 
 	public int getPatchingToolVersion();
+
+	public String getPatchingToolVersionDisplayName();
 
 	public String[] getPatchLevels();
 

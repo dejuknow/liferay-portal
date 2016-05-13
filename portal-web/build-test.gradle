@@ -11,7 +11,7 @@ buildscript {
 		}
 
 		maven {
-			url "http://cdn.repository.liferay.com/nexus/content/groups/public"
+			url "https://cdn.lfrs.sl/repository.liferay.com/nexus/content/groups/public"
 		}
 	}
 }
@@ -38,7 +38,7 @@ poshiRunner {
 		poshiPropertiesFile = new File(projectDir.parentFile, project.properties["poshiRunnerExtProperties"])
 	}
 
-	version = "1.0.38"
+	version = "1.0.40"
 }
 
 repositories {
@@ -47,7 +47,7 @@ repositories {
 	}
 
 	maven {
-		url "http://cdn.repository.liferay.com/nexus/content/groups/public"
+		url "https://cdn.lfrs.sl/repository.liferay.com/nexus/content/groups/public"
 	}
 }
 
@@ -57,7 +57,7 @@ updateGradleCache << {
 }
 
 if (GradleUtil.getProperty(project, "local", false)) {
-	File localPoshiDir = file("../tools/sdk/tmp/portal-tools/poshi-runner")
+	File localPoshiDir = file("../tools/sdk/dependencies/com.liferay.poshi.runner/lib")
 
 	dependencies {
 		poshiRunner fileTree(dir: localPoshiDir, include: "*.jar")

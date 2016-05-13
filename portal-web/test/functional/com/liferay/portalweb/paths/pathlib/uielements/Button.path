@@ -144,6 +144,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>BROWSE_IMAGE</td>
+	<td>//button[contains(@class,'browse-image')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>CALCULATE</td>
 	<td>//button[contains(.,'Calculate')]</td>
 	<td></td>
@@ -240,7 +245,7 @@
 </tr>
 <tr>
 	<td>CONFIRM</td>
-	<td>//button[contains(.,'Confirm')]</td>
+	<td>//a[contains(@class,'btn') and contains(.,'Confirm')] | //button[contains(.,'Confirm')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -369,6 +374,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>INVITE_MEMBERS</td>
+	<td>//a[contains(@id,'InviteMembersPortlet') and contains(@class,'btn')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>INVOKE</td>
 	<td>//button[contains(.,'Invoke')]</td>
 	<td></td>
@@ -489,6 +499,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>REMOVE_IMAGE</td>
+	<td>//button[contains(@id,'removeImage')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>REMOVE_REDIRECT</td>
 	<td>//button[contains(.,'Remove Redirect')]</td>
 	<td></td>
@@ -606,6 +621,11 @@
 <tr>
 	<td>SEND</td>
 	<td>//button[contains(.,'Send')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SEND_INVITATIONS</td>
+	<td>//button[contains(@id,'InviteMembersPortlet')]//span[contains(.,'Send Invitations')]</td>
 	<td></td>
 </tr>
 <tr>

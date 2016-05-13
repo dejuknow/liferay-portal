@@ -130,6 +130,9 @@ public class AssetUtil {
 			PortletURL portletURL)
 		throws Exception {
 
+		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
+			WebKeys.THEME_DISPLAY);
+
 		AssetCategory assetCategory = AssetCategoryLocalServiceUtil.getCategory(
 			assetCategoryId);
 
@@ -142,14 +145,14 @@ public class AssetUtil {
 				"categoryId", String.valueOf(ancestorCategory.getCategoryId()));
 
 			PortalUtil.addPortletBreadcrumbEntry(
-				request, ancestorCategory.getTitleCurrentValue(),
+				request, ancestorCategory.getTitle(themeDisplay.getLocale()),
 				portletURL.toString());
 		}
 
 		portletURL.setParameter("categoryId", String.valueOf(assetCategoryId));
 
 		PortalUtil.addPortletBreadcrumbEntry(
-			request, assetCategory.getTitleCurrentValue(),
+			request, assetCategory.getTitle(themeDisplay.getLocale()),
 			portletURL.toString());
 	}
 

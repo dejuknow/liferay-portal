@@ -131,14 +131,14 @@ public class SyncWatchEventProcessor implements Runnable {
 
 	@Override
 	public void run() {
-		SyncAccount syncAccount = SyncAccountService.fetchSyncAccount(
-			_syncAccountId);
-
-		if (syncAccount.getState() != SyncAccount.STATE_CONNECTED) {
-			return;
-		}
-
 		try {
+			SyncAccount syncAccount = SyncAccountService.fetchSyncAccount(
+				_syncAccountId);
+
+			if (syncAccount.getState() != SyncAccount.STATE_CONNECTED) {
+				return;
+			}
+
 			doRun();
 		}
 		catch (Exception e) {
@@ -830,8 +830,7 @@ public class SyncWatchEventProcessor implements Runnable {
 
 			FileUtil.checkFilePath(filePath);
 
-			FileUtil.moveFile(
-				filePath, java.nio.file.Paths.get(sanitizedFilePathName));
+			FileUtil.moveFile(filePath, Paths.get(sanitizedFilePathName));
 
 			return true;
 		}

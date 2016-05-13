@@ -115,6 +115,8 @@ public class DownloadFileHandler extends BaseHandler {
 				return;
 			}
 
+			removeEvent();
+
 			SyncFile syncFile = getLocalSyncFile();
 
 			if (syncFile == null) {
@@ -122,8 +124,6 @@ public class DownloadFileHandler extends BaseHandler {
 			}
 
 			if ((boolean)getParameterValue("patch")) {
-				removeEvent();
-
 				FileEventUtil.downloadFile(getSyncAccountId(), syncFile, false);
 			}
 			else {

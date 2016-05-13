@@ -24,6 +24,7 @@ import com.liferay.dynamic.data.mapping.util.FieldsToDDMFormValuesConverter;
 import com.liferay.dynamic.data.mapping.util.impl.DDMFieldsCounter;
 import com.liferay.dynamic.data.mapping.util.impl.DDMImpl;
 import com.liferay.journal.util.JournalConverter;
+import com.liferay.petra.xml.XMLUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
@@ -51,7 +52,6 @@ import com.liferay.portal.kernel.xml.DocumentException;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.liferay.portal.kernel.xml.XPath;
-import com.liferay.util.xml.XMLUtil;
 
 import java.io.Serializable;
 
@@ -60,6 +60,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -200,6 +201,7 @@ public class JournalConverterImpl implements JournalConverter {
 		}
 	}
 
+	@Override
 	public DDMFormValues getDDMFormValues(
 			DDMStructure ddmStructure, Fields fields)
 		throws PortalException {
@@ -207,6 +209,10 @@ public class JournalConverterImpl implements JournalConverter {
 		return _fieldsToDDMFormValuesConverter.convert(ddmStructure, fields);
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, with no direct replacement
+	 */
+	@Deprecated
 	@Override
 	public String getDDMXSD(String journalXSD) throws Exception {
 		Locale defaultLocale = LocaleUtil.getSiteDefault();
@@ -214,6 +220,10 @@ public class JournalConverterImpl implements JournalConverter {
 		return getDDMXSD(journalXSD, defaultLocale);
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, with no direct replacement
+	 */
+	@Deprecated
 	@Override
 	public String getDDMXSD(String journalXSD, Locale defaultLocale)
 		throws Exception {
@@ -236,6 +246,10 @@ public class JournalConverterImpl implements JournalConverter {
 		return XMLUtil.formatXML(document);
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, with no direct replacement
+	 */
+	@Deprecated
 	@Override
 	public String getJournalXSD(String ddmXSD) throws Exception {
 		Document document = SAXReaderUtil.read(ddmXSD);
@@ -816,8 +830,8 @@ public class JournalConverterImpl implements JournalConverter {
 
 		String parentType = parentElement.attributeValue("type");
 
-		if (Validator.equals(parentType, "list") ||
-			Validator.equals(parentType, "multi-list")) {
+		if (Objects.equals(parentType, "list") ||
+			Objects.equals(parentType, "multi-list")) {
 
 			Element metadataElement = dynamicElementElement.element(
 				"meta-data");
@@ -1041,7 +1055,10 @@ public class JournalConverterImpl implements JournalConverter {
 
 				removeAttribute(element, "index-type");
 
-				element.addAttribute("name", "option" + StringUtil.randomId());
+				element.addAttribute(
+					"name",
+					"option" + parentElement.attributeValue("name") +
+						StringUtil.randomString(8));
 				element.addAttribute("type", "option");
 				element.addAttribute("value", decodeURL(type));
 

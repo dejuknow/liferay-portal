@@ -19,12 +19,12 @@ import aQute.bnd.annotation.ProviderType;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Serializable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * <p>
@@ -113,14 +113,88 @@ public class ResourceBlockWrapper implements ResourceBlock,
 	}
 
 	@Override
+	public CacheModel<ResourceBlock> toCacheModel() {
+		return _resourceBlock.toCacheModel();
+	}
+
+	@Override
+	public ResourceBlock toEscapedModel() {
+		return new ResourceBlockWrapper(_resourceBlock.toEscapedModel());
+	}
+
+	@Override
+	public ResourceBlock toUnescapedModel() {
+		return new ResourceBlockWrapper(_resourceBlock.toUnescapedModel());
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _resourceBlock.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _resourceBlock.isEscapedModel();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _resourceBlock.isNew();
+	}
+
+	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _resourceBlock.getExpandoBridge();
+	}
+
+	@Override
+	public int compareTo(ResourceBlock resourceBlock) {
+		return _resourceBlock.compareTo(resourceBlock);
+	}
+
+	@Override
+	public int hashCode() {
+		return _resourceBlock.hashCode();
+	}
+
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _resourceBlock.getPrimaryKeyObj();
+	}
+
+	@Override
 	public java.lang.Object clone() {
 		return new ResourceBlockWrapper((ResourceBlock)_resourceBlock.clone());
 	}
 
+	/**
+	* Returns the name of this resource block.
+	*
+	* @return the name of this resource block
+	*/
 	@Override
-	public int compareTo(
-		com.liferay.portal.kernel.model.ResourceBlock resourceBlock) {
-		return _resourceBlock.compareTo(resourceBlock);
+	public java.lang.String getName() {
+		return _resourceBlock.getName();
+	}
+
+	/**
+	* Returns the permissions hash of this resource block.
+	*
+	* @return the permissions hash of this resource block
+	*/
+	@Override
+	public java.lang.String getPermissionsHash() {
+		return _resourceBlock.getPermissionsHash();
+	}
+
+	@Override
+	public java.lang.String toString() {
+		return _resourceBlock.toString();
+	}
+
+	@Override
+	public java.lang.String toXmlString() {
+		return _resourceBlock.toXmlString();
 	}
 
 	/**
@@ -131,11 +205,6 @@ public class ResourceBlockWrapper implements ResourceBlock,
 	@Override
 	public long getCompanyId() {
 		return _resourceBlock.getCompanyId();
-	}
-
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _resourceBlock.getExpandoBridge();
 	}
 
 	/**
@@ -159,26 +228,6 @@ public class ResourceBlockWrapper implements ResourceBlock,
 	}
 
 	/**
-	* Returns the name of this resource block.
-	*
-	* @return the name of this resource block
-	*/
-	@Override
-	public java.lang.String getName() {
-		return _resourceBlock.getName();
-	}
-
-	/**
-	* Returns the permissions hash of this resource block.
-	*
-	* @return the permissions hash of this resource block
-	*/
-	@Override
-	public java.lang.String getPermissionsHash() {
-		return _resourceBlock.getPermissionsHash();
-	}
-
-	/**
 	* Returns the primary key of this resource block.
 	*
 	* @return the primary key of this resource block
@@ -186,11 +235,6 @@ public class ResourceBlockWrapper implements ResourceBlock,
 	@Override
 	public long getPrimaryKey() {
 		return _resourceBlock.getPrimaryKey();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _resourceBlock.getPrimaryKeyObj();
 	}
 
 	/**
@@ -211,26 +255,6 @@ public class ResourceBlockWrapper implements ResourceBlock,
 	@Override
 	public long getResourceBlockId() {
 		return _resourceBlock.getResourceBlockId();
-	}
-
-	@Override
-	public int hashCode() {
-		return _resourceBlock.hashCode();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _resourceBlock.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _resourceBlock.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _resourceBlock.isNew();
 	}
 
 	@Override
@@ -349,31 +373,6 @@ public class ResourceBlockWrapper implements ResourceBlock,
 	}
 
 	@Override
-	public CacheModel<com.liferay.portal.kernel.model.ResourceBlock> toCacheModel() {
-		return _resourceBlock.toCacheModel();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.model.ResourceBlock toEscapedModel() {
-		return new ResourceBlockWrapper(_resourceBlock.toEscapedModel());
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _resourceBlock.toString();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.model.ResourceBlock toUnescapedModel() {
-		return new ResourceBlockWrapper(_resourceBlock.toUnescapedModel());
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _resourceBlock.toXmlString();
-	}
-
-	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
@@ -385,7 +384,7 @@ public class ResourceBlockWrapper implements ResourceBlock,
 
 		ResourceBlockWrapper resourceBlockWrapper = (ResourceBlockWrapper)obj;
 
-		if (Validator.equals(_resourceBlock, resourceBlockWrapper._resourceBlock)) {
+		if (Objects.equals(_resourceBlock, resourceBlockWrapper._resourceBlock)) {
 			return true;
 		}
 

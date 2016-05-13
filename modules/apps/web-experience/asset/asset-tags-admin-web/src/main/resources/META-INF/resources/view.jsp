@@ -81,7 +81,6 @@
 		id="assetTags"
 		searchContainer="<%= assetTagsDisplayContext.getTagsSearchContainer() %>"
 	>
-
 		<liferay-ui:search-container-row
 			className="com.liferay.asset.kernel.model.AssetTag"
 			keyProperty="tagId"
@@ -93,7 +92,7 @@
 			%>
 
 			<c:choose>
-				<c:when test='<%= Validator.equals(assetTagsDisplayContext.getDisplayStyle(), "descriptive") %>'>
+				<c:when test='<%= Objects.equals(assetTagsDisplayContext.getDisplayStyle(), "descriptive") %>'>
 					<liferay-ui:search-container-column-icon
 						icon="tag"
 						toggleRowChecker="<%= true %>"
@@ -115,7 +114,7 @@
 						path="/tag_action.jsp"
 					/>
 				</c:when>
-				<c:when test='<%= Validator.equals(assetTagsDisplayContext.getDisplayStyle(), "icon") %>'>
+				<c:when test='<%= Objects.equals(assetTagsDisplayContext.getDisplayStyle(), "icon") %>'>
 
 					<%
 					row.setCssClass("entry-card lfr-asset-item");
@@ -136,7 +135,7 @@
 						</liferay-frontend:icon-vertical-card>
 					</liferay-ui:search-container-column-text>
 				</c:when>
-				<c:when test='<%= Validator.equals(assetTagsDisplayContext.getDisplayStyle(), "list") %>'>
+				<c:when test='<%= Objects.equals(assetTagsDisplayContext.getDisplayStyle(), "list") %>'>
 					<liferay-ui:search-container-column-text
 						cssClass="content-column title-column name-column"
 						name="name"

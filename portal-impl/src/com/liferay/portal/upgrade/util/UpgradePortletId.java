@@ -35,8 +35,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * @author Brian Wing Shun Chan
+ * @author     Brian Wing Shun Chan
+ * @deprecated As of 7.0.0, replaced by {@link
+ *             com.liferay.portal.kernel.upgrade.BaseUpgradePortletId}
  */
+@Deprecated
 public class UpgradePortletId extends UpgradeProcess {
 
 	@Override
@@ -113,6 +116,34 @@ public class UpgradePortletId extends UpgradeProcess {
 				"1_WAR_googlemapsportlet"
 			}
 		};
+	}
+
+	protected String getTypeSettingsCriteria(String portletId) {
+		StringBundler sb = new StringBundler(21);
+
+		sb.append("typeSettings like '%=");
+		sb.append(portletId);
+		sb.append(",%' OR typeSettings like '%=");
+		sb.append(portletId);
+		sb.append("\n%' OR typeSettings like '%=");
+		sb.append(portletId);
+		sb.append("%' OR typeSettings like '%,");
+		sb.append(portletId);
+		sb.append(",%' OR typeSettings like '%,");
+		sb.append(portletId);
+		sb.append("\n%' OR typeSettings like '%,");
+		sb.append(portletId);
+		sb.append("%' OR typeSettings like '%=");
+		sb.append(portletId);
+		sb.append("_INSTANCE_%' OR typeSettings like '%,");
+		sb.append(portletId);
+		sb.append("_INSTANCE_%' OR typeSettings like '%=");
+		sb.append(portletId);
+		sb.append("_USER_%' OR typeSettings like '%,");
+		sb.append(portletId);
+		sb.append("_USER_%'");
+
+		return sb.toString();
 	}
 
 	protected String[] getUninstanceablePortletIds() {
@@ -200,33 +231,61 @@ public class UpgradePortletId extends UpgradeProcess {
 		}
 	}
 
+	protected void updateLayoutRevision(
+			long layoutRevisionId, String typeSettings)
+		throws Exception {
+
+		String sql =
+			"update LayoutRevision set typeSettings = ? " +
+				"where layoutRevisionId = " + layoutRevisionId;
+
+		try (PreparedStatement ps = connection.prepareStatement(sql)) {
+			ps.setString(1, typeSettings);
+
+			ps.executeUpdate();
+		}
+		catch (SQLException sqle) {
+			if (_log.isWarnEnabled()) {
+				_log.warn(sqle, sqle);
+			}
+		}
+	}
+
+	protected void updateLayoutRevisions(
+			String oldRootPortletId, String newRootPortletId,
+			boolean exactMatch)
+		throws Exception {
+
+		String sql =
+			"select layoutRevisionId, typeSettings from LayoutRevision where " +
+				getTypeSettingsCriteria(oldRootPortletId);
+
+		try (PreparedStatement ps = connection.prepareStatement(sql);
+			ResultSet rs = ps.executeQuery()) {
+
+			while (rs.next()) {
+				long layoutRevisionId = rs.getLong("layoutRevisionId");
+				String typeSettings = rs.getString("typeSettings");
+
+				String newTypeSettings = getNewTypeSettings(
+					typeSettings, oldRootPortletId, newRootPortletId,
+					exactMatch);
+
+				updateLayoutRevision(layoutRevisionId, newTypeSettings);
+			}
+		}
+	}
+
 	protected void updateLayouts(
 			String oldRootPortletId, String newRootPortletId,
 			boolean exactMatch)
 		throws Exception {
 
-		StringBundler sb = new StringBundler(18);
+		String sql =
+			"select plid, typeSettings from Layout where " +
+				getTypeSettingsCriteria(oldRootPortletId);
 
-		sb.append("select plid, typeSettings from Layout where typeSettings ");
-		sb.append("like '%=");
-		sb.append(oldRootPortletId);
-		sb.append(",%' OR typeSettings like '%=");
-		sb.append(oldRootPortletId);
-		sb.append("\n%' OR typeSettings like '%,");
-		sb.append(oldRootPortletId);
-		sb.append(",%' OR typeSettings like '%,");
-		sb.append(oldRootPortletId);
-		sb.append("\n%' OR typeSettings like '%=");
-		sb.append(oldRootPortletId);
-		sb.append("_INSTANCE_%' OR typeSettings like '%,");
-		sb.append(oldRootPortletId);
-		sb.append("_INSTANCE_%' OR typeSettings like '%=");
-		sb.append(oldRootPortletId);
-		sb.append("_USER_%' OR typeSettings like '%,");
-		sb.append(oldRootPortletId);
-		sb.append("_USER_%'");
-
-		try (PreparedStatement ps = connection.prepareStatement(sb.toString());
+		try (PreparedStatement ps = connection.prepareStatement(sql);
 			ResultSet rs = ps.executeQuery()) {
 
 			while (rs.next()) {
@@ -387,6 +446,8 @@ public class UpgradePortletId extends UpgradeProcess {
 				String newRootPortletId = renamePortletIds[1];
 
 				updatePortlet(oldRootPortletId, newRootPortletId);
+				updateLayoutRevisions(
+					oldRootPortletId, newRootPortletId, false);
 				updateLayouts(oldRootPortletId, newRootPortletId, false);
 			}
 		}
@@ -419,10 +480,11 @@ public class UpgradePortletId extends UpgradeProcess {
 				String newPortletInstanceKey =
 					newPortletInstance.getPortletInstanceKey();
 
-				updateResourcePermission(
-					portletId, newPortletInstanceKey, false);
 				updateInstanceablePortletPreferences(
 					portletId, newPortletInstanceKey);
+				updateResourcePermission(
+					portletId, newPortletInstanceKey, false);
+				updateLayoutRevisions(portletId, newPortletInstanceKey, true);
 				updateLayouts(portletId, newPortletInstanceKey, true);
 			}
 		}

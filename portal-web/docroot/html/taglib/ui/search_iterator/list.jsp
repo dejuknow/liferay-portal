@@ -113,7 +113,7 @@ if (iteratorURL != null) {
 						}
 					}
 
-					if (Validator.equals(orderByType, "asc")) {
+					if (Objects.equals(orderByType, "asc")) {
 						orderByType = "desc";
 					}
 					else {
@@ -134,7 +134,6 @@ if (iteratorURL != null) {
 							width="1%"
 						</c:if>
 					>
-
 						<c:if test="<%= orderKey != null %>">
 							<div class="table-sort-liner">
 

@@ -24,7 +24,9 @@ import java.util.Map;
 
 /**
  * @author Brian Wing Shun Chan
+ * @deprecated As of 7.0.0, with no direct replacement
  */
+@Deprecated
 public class PKParser {
 
 	public PKParser(String pk) {

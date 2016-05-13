@@ -117,7 +117,6 @@ LayoutsTreeDisplayContext layoutsTreeDisplayContext = new LayoutsTreeDisplayCont
 								</c:if>
 
 								<c:if test="<%= layoutsTreeDisplayContext.isShowAddBothRootLayoutButtons() %>">
-
 									<li class="divider"></li>
 
 									<%
@@ -190,7 +189,6 @@ LayoutsTreeDisplayContext layoutsTreeDisplayContext = new LayoutsTreeDisplayCont
 								</c:if>
 
 								<c:if test="<%= layoutsTreeDisplayContext.isShowAddBothRootLayoutButtons() %>">
-
 									<li class="divider"></li>
 
 									<%
@@ -316,22 +314,7 @@ LayoutsTreeDisplayContext layoutsTreeDisplayContext = new LayoutsTreeDisplayCont
 			if (confirm('<%= UnicodeLanguageUtil.get(resourceBundle, "are-you-sure-you-want-to-delete-the-selected-page") %>')) {
 				var link = event.currentTarget;
 
-				A.io.request(
-					link.attr('href'),
-					{
-						after: {
-							success: function(event, id, obj) {
-								var response = this.get('responseData');
-
-								var container = A.one('#<portlet:namespace/>layoutsTreeContainer');
-
-								container.plug(A.Plugin.ParseContent);
-
-								container.setContent(response);
-							}
-						}
-					}
-				);
+				submitForm(document.hrefFm, link.attr('href'));
 			}
 		},
 		'.layout-tree-delete'

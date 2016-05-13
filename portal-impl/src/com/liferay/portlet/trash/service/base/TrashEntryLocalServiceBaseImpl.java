@@ -231,7 +231,7 @@ public abstract class TrashEntryLocalServiceBaseImpl
 	public ActionableDynamicQuery getActionableDynamicQuery() {
 		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
 
-		actionableDynamicQuery.setBaseLocalService(com.liferay.trash.kernel.service.TrashEntryLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(trashEntryLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(TrashEntry.class);
 
@@ -244,7 +244,7 @@ public abstract class TrashEntryLocalServiceBaseImpl
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
 		IndexableActionableDynamicQuery indexableActionableDynamicQuery = new IndexableActionableDynamicQuery();
 
-		indexableActionableDynamicQuery.setBaseLocalService(com.liferay.trash.kernel.service.TrashEntryLocalServiceUtil.getService());
+		indexableActionableDynamicQuery.setBaseLocalService(trashEntryLocalService);
 		indexableActionableDynamicQuery.setClassLoader(getClassLoader());
 		indexableActionableDynamicQuery.setModelClass(TrashEntry.class);
 
@@ -255,7 +255,7 @@ public abstract class TrashEntryLocalServiceBaseImpl
 
 	protected void initActionableDynamicQuery(
 		ActionableDynamicQuery actionableDynamicQuery) {
-		actionableDynamicQuery.setBaseLocalService(com.liferay.trash.kernel.service.TrashEntryLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(trashEntryLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(TrashEntry.class);
 
@@ -667,7 +667,7 @@ public abstract class TrashEntryLocalServiceBaseImpl
 		}
 	}
 
-	@BeanReference(type = com.liferay.trash.kernel.service.TrashEntryLocalService.class)
+	@BeanReference(type = TrashEntryLocalService.class)
 	protected TrashEntryLocalService trashEntryLocalService;
 	@BeanReference(type = TrashEntryPersistence.class)
 	protected TrashEntryPersistence trashEntryPersistence;

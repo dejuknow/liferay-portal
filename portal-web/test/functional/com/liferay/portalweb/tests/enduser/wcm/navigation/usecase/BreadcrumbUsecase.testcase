@@ -1,4 +1,5 @@
 <definition component-name="portal-breadcrumb">
+	<property name="portal.release" value="true" />
 	<property name="testray.main.component.name" value="Navigation" />
 
 	<set-up>
@@ -84,8 +85,7 @@
 			<var name="breadcrumbListVisible" value="Liferay" />
 		</execute>
 
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Parent Page Name" />
+		<execute macro="Navigator#openSiteURL">
 			<var name="siteName" value="Site Name" />
 		</execute>
 
@@ -113,8 +113,7 @@
 			<var name="breadcrumbListNotVisible" value="Parent Page Name,Child Page Name" />
 		</execute>
 
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Parent Page Name" />
+		<execute macro="Navigator#openSiteURL">
 			<var name="siteName" value="Site Name" />
 		</execute>
 
@@ -140,8 +139,7 @@
 			<var name="breadcrumbListVisible" value="Liferay,Site Name,Parent Page Name,Child Page Name" />
 		</execute>
 
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Parent Page Name" />
+		<execute macro="Navigator#openSiteURL">
 			<var name="siteName" value="Site Name" />
 		</execute>
 

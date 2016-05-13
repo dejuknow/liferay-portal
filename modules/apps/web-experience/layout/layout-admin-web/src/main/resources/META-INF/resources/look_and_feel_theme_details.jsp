@@ -52,11 +52,11 @@ PluginPackage selPluginPackage = selTheme.getPluginPackage();
 	</aui:col>
 
 	<aui:col span="<%= 10 %>">
-		<c:if test="<%= (selPluginPackage != null) && Validator.isNotNull(selPluginPackage.getName()) %>">
+		<c:if test="<%= Validator.isNotNull(selTheme.getName()) %>">
 			<h4><liferay-ui:message key="name" /></h4>
 
 			<p class="text-default">
-				<%= HtmlUtil.escape(selPluginPackage.getName()) %>
+				<%= HtmlUtil.escape(selTheme.getName()) %>
 			</p>
 		</c:if>
 
@@ -114,8 +114,9 @@ Map<String, ThemeSetting> configurableSettings = selTheme.getConfigurableSetting
 	<h4><liferay-ui:message key="settings" /></h4>
 
 	<%
-	for (String name : configurableSettings.keySet()) {
-		ThemeSetting themeSetting = configurableSettings.get(name);
+	for (Map.Entry<String, ThemeSetting> entry : configurableSettings.entrySet()) {
+		String name = entry.getKey();
+		ThemeSetting themeSetting = entry.getValue();
 
 		String type = GetterUtil.getString(themeSetting.getType(), "text");
 		String value = StringPool.BLANK;

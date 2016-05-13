@@ -17,8 +17,11 @@ package com.liferay.util;
 import java.util.Stack;
 
 /**
- * @author Brian Wing Shun Chan
+ * @author     Brian Wing Shun Chan
+ * @deprecated As of 7.0.0, replaced by
+ *             {com.liferay.petra.collection.stack.FiniteStack}
  */
+@Deprecated
 public class FiniteStack<E> extends Stack<E> {
 
 	public FiniteStack(int maxSize) {

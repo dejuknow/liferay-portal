@@ -230,7 +230,7 @@ public abstract class JournalArticleImageLocalServiceBaseImpl
 	public ActionableDynamicQuery getActionableDynamicQuery() {
 		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
 
-		actionableDynamicQuery.setBaseLocalService(com.liferay.journal.service.JournalArticleImageLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(journalArticleImageLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(JournalArticleImage.class);
 
@@ -243,7 +243,7 @@ public abstract class JournalArticleImageLocalServiceBaseImpl
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
 		IndexableActionableDynamicQuery indexableActionableDynamicQuery = new IndexableActionableDynamicQuery();
 
-		indexableActionableDynamicQuery.setBaseLocalService(com.liferay.journal.service.JournalArticleImageLocalServiceUtil.getService());
+		indexableActionableDynamicQuery.setBaseLocalService(journalArticleImageLocalService);
 		indexableActionableDynamicQuery.setClassLoader(getClassLoader());
 		indexableActionableDynamicQuery.setModelClass(JournalArticleImage.class);
 
@@ -255,7 +255,7 @@ public abstract class JournalArticleImageLocalServiceBaseImpl
 
 	protected void initActionableDynamicQuery(
 		ActionableDynamicQuery actionableDynamicQuery) {
-		actionableDynamicQuery.setBaseLocalService(com.liferay.journal.service.JournalArticleImageLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(journalArticleImageLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(JournalArticleImage.class);
 
@@ -462,7 +462,7 @@ public abstract class JournalArticleImageLocalServiceBaseImpl
 		}
 	}
 
-	@BeanReference(type = com.liferay.journal.service.JournalArticleImageLocalService.class)
+	@BeanReference(type = JournalArticleImageLocalService.class)
 	protected JournalArticleImageLocalService journalArticleImageLocalService;
 	@BeanReference(type = JournalArticleImagePersistence.class)
 	protected JournalArticleImagePersistence journalArticleImagePersistence;

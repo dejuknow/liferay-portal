@@ -28,7 +28,11 @@ public abstract class ThrowableAwareRunnable implements Runnable {
 	}
 
 	public boolean hasException() {
-		return (_throwable != null);
+		if (_throwable != null) {
+			return true;
+		}
+
+		return false;
 	}
 
 	@Override
@@ -37,7 +41,7 @@ public abstract class ThrowableAwareRunnable implements Runnable {
 			doRun();
 		}
 		catch (Exception e) {
-			_log.error("Unable to process runnable: " + e.getMessage());
+			_log.error("Unable to process runnable: " + e.getMessage(), e);
 
 			_throwable = e;
 		}

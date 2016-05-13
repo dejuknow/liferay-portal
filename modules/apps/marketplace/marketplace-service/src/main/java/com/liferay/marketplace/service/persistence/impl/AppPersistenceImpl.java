@@ -55,6 +55,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -196,7 +197,7 @@ public class AppPersistenceImpl extends BasePersistenceImpl<App>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (App app : list) {
-					if (!Validator.equals(uuid, app.getUuid())) {
+					if (!Objects.equals(uuid, app.getUuid())) {
 						list = null;
 
 						break;
@@ -744,7 +745,7 @@ public class AppPersistenceImpl extends BasePersistenceImpl<App>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (App app : list) {
-					if (!Validator.equals(uuid, app.getUuid()) ||
+					if (!Objects.equals(uuid, app.getUuid()) ||
 							(companyId != app.getCompanyId())) {
 						list = null;
 
@@ -1731,8 +1732,8 @@ public class AppPersistenceImpl extends BasePersistenceImpl<App>
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchAppException(msg.toString());
@@ -2015,7 +2016,7 @@ public class AppPersistenceImpl extends BasePersistenceImpl<App>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (App app : list) {
-					if (!Validator.equals(category, app.getCategory())) {
+					if (!Objects.equals(category, app.getCategory())) {
 						list = null;
 
 						break;
@@ -2622,8 +2623,8 @@ public class AppPersistenceImpl extends BasePersistenceImpl<App>
 			App app = (App)session.get(AppImpl.class, primaryKey);
 
 			if (app == null) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+				if (_log.isDebugEnabled()) {
+					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchAppException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
@@ -2838,6 +2839,7 @@ public class AppPersistenceImpl extends BasePersistenceImpl<App>
 		appImpl.setCategory(app.getCategory());
 		appImpl.setIconURL(app.getIconURL());
 		appImpl.setVersion(app.getVersion());
+		appImpl.setRequired(app.isRequired());
 
 		return appImpl;
 	}
@@ -2855,8 +2857,8 @@ public class AppPersistenceImpl extends BasePersistenceImpl<App>
 		App app = fetchByPrimaryKey(primaryKey);
 
 		if (app == null) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+			if (_log.isDebugEnabled()) {
+				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
 			throw new NoSuchAppException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +

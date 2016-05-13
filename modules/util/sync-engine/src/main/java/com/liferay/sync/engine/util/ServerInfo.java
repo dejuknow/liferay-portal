@@ -28,34 +28,53 @@ import java.util.Map;
 public class ServerInfo {
 
 	public static boolean isCompatible(SyncContext syncContext) {
-		return isCompatible(
-			syncContext.getPluginVersion(), "6.2.0.4", "7.0.0.1");
+		return isCompatible(syncContext.getPluginVersion(), "1.0.0", "6.2.0.4");
 	}
 
 	public static boolean supportsDeviceRegistration(long syncAccountId) {
-		return isCompatible(syncAccountId, "6.2.0.7", "7.0.0.1");
+		return isCompatible(syncAccountId, "1.0.0", "6.2.0.7");
 	}
 
 	public static boolean supportsModuleFramework(long syncAccountId) {
-		return isCompatible(syncAccountId, "7.0.0.1");
+		return isCompatible(syncAccountId, "1.0.0");
 	}
 
 	public static boolean supportsPartialDownloads(long syncAccountId) {
-		return isCompatible(syncAccountId, "6.2.0.5", "7.0.0.1");
+		return isCompatible(syncAccountId, "1.0.0", "6.2.0.5");
 	}
 
 	public static boolean supportsRetrieveFromCache(long syncAccountId) {
-		return isCompatible(syncAccountId, "6.2.0.5", "7.0.0.1");
+		return isCompatible(syncAccountId, "1.0.0", "6.2.0.5");
 	}
 
 	protected static int getPluginMajorVersion(String pluginVersion) {
 		String[] pluginVersionParts = pluginVersion.split("\\.");
 
+		if (pluginVersionParts.length == 3) {
+			return Integer.valueOf(pluginVersionParts[0]);
+		}
+
 		return Integer.valueOf(pluginVersionParts[0] + pluginVersionParts[1]);
 	}
 
+	protected static int getPluginMinorVersion(String pluginVersion) {
+		String[] pluginVersionParts = pluginVersion.split("\\.");
+
+		if (pluginVersionParts.length == 3) {
+			return Integer.valueOf(pluginVersionParts[1]);
+		}
+
+		return Integer.valueOf(pluginVersionParts[2]);
+	}
+
 	protected static int getPluginPatchVersion(String pluginVersion) {
-		return Integer.valueOf(pluginVersion.split("\\.")[3]);
+		String[] pluginVersionParts = pluginVersion.split("\\.");
+
+		if (pluginVersionParts.length == 3) {
+			return Integer.valueOf(pluginVersionParts[2]);
+		}
+
+		return Integer.valueOf(pluginVersionParts[3]);
 	}
 
 	protected static boolean isCompatible(

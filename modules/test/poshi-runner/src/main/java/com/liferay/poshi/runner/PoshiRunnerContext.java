@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -491,8 +492,8 @@ public class PoshiRunnerContext {
 		int classCommandNameIndex = 0;
 		Map<Set<String>, Collection<String>> map = multimap.asMap();
 
-		for (Set<String> key : map.keySet()) {
-			List<String> classCommandNameGroup = new ArrayList(map.get(key));
+		for (Collection<String> value : map.values()) {
+			List<String> classCommandNameGroup = new ArrayList(value);
 
 			Collections.sort(classCommandNameGroup);
 
@@ -576,7 +577,7 @@ public class PoshiRunnerContext {
 
 		StringBuilder sb = new StringBuilder();
 
-		int groupSize = _getAllocatedTestGroupSize(classCommandNames.size());
+		int groupSize = 15;
 
 		List<List<String>> partitions = Lists.partition(
 			classCommandNames, groupSize);
@@ -589,7 +590,9 @@ public class PoshiRunnerContext {
 			List<String> partition = partitions.get(i);
 
 			for (int j = 0; j < partition.size(); j++) {
-				sb.append(partition.get(j));
+				sb.append(i);
+				sb.append("_");
+				sb.append(j);
 
 				if (j < (partition.size() - 1)) {
 					sb.append(" ");
@@ -597,6 +600,16 @@ public class PoshiRunnerContext {
 			}
 
 			sb.append("\n");
+
+			for (int j = 0; j < partition.size(); j++) {
+				sb.append("RUN_TEST_CASE_METHOD_GROUP_");
+				sb.append(i);
+				sb.append("_");
+				sb.append(j);
+				sb.append("=");
+				sb.append(partition.get(j));
+				sb.append("\n");
+			}
 		}
 
 		sb.append("RUN_TEST_CASE_METHOD_GROUPS=");
@@ -687,9 +700,7 @@ public class PoshiRunnerContext {
 		for (String testCaseClassName : _testCaseClassNames) {
 			Element rootElement = getTestCaseRootElement(testCaseClassName);
 
-			if (Validator.equals(
-					rootElement.attributeValue("ignore"), "true")) {
-
+			if (Objects.equals(rootElement.attributeValue("ignore"), "true")) {
 				continue;
 			}
 
@@ -896,7 +907,7 @@ public class PoshiRunnerContext {
 					classType + "#" + classCommandName,
 					_getCommandReturns(commandElement));
 
-				if (Validator.equals(classType, "test-case") &&
+				if (Objects.equals(classType, "test-case") &&
 					Validator.isNotNull(
 						commandElement.attributeValue("description"))) {
 

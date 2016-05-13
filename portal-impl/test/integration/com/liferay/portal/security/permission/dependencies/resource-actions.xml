@@ -59,10 +59,11 @@
 		<root>true</root>
 		<permissions>
 			<supports>
-				<action-key>ADD_SITE_TEST</action-key>
+				<action-key>ADD_SITE_TEST_1</action-key>
+				<action-key>ADD_SITE_TEST_2</action-key>
 			</supports>
 			<site-member-defaults>
-				<action-key>ADD_SITE_TEST</action-key>
+				<action-key>ADD_SITE_TEST_1</action-key>
 			</site-member-defaults>
 			<guest-defaults />
 			<guest-unsupported />

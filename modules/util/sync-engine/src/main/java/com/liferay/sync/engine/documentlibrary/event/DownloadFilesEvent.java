@@ -18,7 +18,6 @@ import com.liferay.sync.engine.documentlibrary.handler.DownloadFilesHandler;
 import com.liferay.sync.engine.documentlibrary.handler.Handler;
 import com.liferay.sync.engine.model.SyncAccount;
 import com.liferay.sync.engine.service.SyncAccountService;
-import com.liferay.sync.engine.util.ServerInfo;
 
 import java.util.Map;
 
@@ -45,17 +44,8 @@ public class DownloadFilesEvent extends BaseEvent {
 		SyncAccount syncAccount = SyncAccountService.fetchSyncAccount(
 			getSyncAccountId());
 
-		StringBuilder sb = new StringBuilder();
-
-		sb.append(syncAccount.getUrl());
-
-		if (ServerInfo.supportsModuleFramework(getSyncAccountId())) {
-			sb.append("/o");
-		}
-
-		sb.append(_URL_PATH);
-
-		executeAsynchronousPost(sb.toString(), getParameters(), _handler);
+		executeAsynchronousPost(
+			syncAccount.getUrl() + getURLPath(), getParameters(), _handler);
 	}
 
 	private static final String _URL_PATH = "/sync-web/download/zip";

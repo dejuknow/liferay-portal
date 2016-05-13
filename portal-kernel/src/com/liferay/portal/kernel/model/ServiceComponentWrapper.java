@@ -19,12 +19,12 @@ import aQute.bnd.annotation.ProviderType;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Serializable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * <p>
@@ -106,24 +106,58 @@ public class ServiceComponentWrapper implements ServiceComponent,
 	}
 
 	@Override
-	public java.lang.Object clone() {
-		return new ServiceComponentWrapper((ServiceComponent)_serviceComponent.clone());
+	public CacheModel<ServiceComponent> toCacheModel() {
+		return _serviceComponent.toCacheModel();
 	}
 
 	@Override
-	public int compareTo(
-		com.liferay.portal.kernel.model.ServiceComponent serviceComponent) {
+	public ServiceComponent toEscapedModel() {
+		return new ServiceComponentWrapper(_serviceComponent.toEscapedModel());
+	}
+
+	@Override
+	public ServiceComponent toUnescapedModel() {
+		return new ServiceComponentWrapper(_serviceComponent.toUnescapedModel());
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _serviceComponent.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _serviceComponent.isEscapedModel();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _serviceComponent.isNew();
+	}
+
+	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _serviceComponent.getExpandoBridge();
+	}
+
+	@Override
+	public int compareTo(ServiceComponent serviceComponent) {
 		return _serviceComponent.compareTo(serviceComponent);
 	}
 
-	/**
-	* Returns the build date of this service component.
-	*
-	* @return the build date of this service component
-	*/
 	@Override
-	public long getBuildDate() {
-		return _serviceComponent.getBuildDate();
+	public int hashCode() {
+		return _serviceComponent.hashCode();
+	}
+
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _serviceComponent.getPrimaryKeyObj();
+	}
+
+	@Override
+	public java.lang.Object clone() {
+		return new ServiceComponentWrapper((ServiceComponent)_serviceComponent.clone());
 	}
 
 	/**
@@ -137,16 +171,6 @@ public class ServiceComponentWrapper implements ServiceComponent,
 	}
 
 	/**
-	* Returns the build number of this service component.
-	*
-	* @return the build number of this service component
-	*/
-	@Override
-	public long getBuildNumber() {
-		return _serviceComponent.getBuildNumber();
-	}
-
-	/**
 	* Returns the data of this service component.
 	*
 	* @return the data of this service component
@@ -157,13 +181,48 @@ public class ServiceComponentWrapper implements ServiceComponent,
 	}
 
 	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _serviceComponent.getExpandoBridge();
+	public java.lang.String getIndexesSQL() {
+		return _serviceComponent.getIndexesSQL();
 	}
 
 	@Override
-	public java.lang.String getIndexesSQL() {
-		return _serviceComponent.getIndexesSQL();
+	public java.lang.String getSequencesSQL() {
+		return _serviceComponent.getSequencesSQL();
+	}
+
+	@Override
+	public java.lang.String getTablesSQL() {
+		return _serviceComponent.getTablesSQL();
+	}
+
+	@Override
+	public java.lang.String toString() {
+		return _serviceComponent.toString();
+	}
+
+	@Override
+	public java.lang.String toXmlString() {
+		return _serviceComponent.toXmlString();
+	}
+
+	/**
+	* Returns the build date of this service component.
+	*
+	* @return the build date of this service component
+	*/
+	@Override
+	public long getBuildDate() {
+		return _serviceComponent.getBuildDate();
+	}
+
+	/**
+	* Returns the build number of this service component.
+	*
+	* @return the build number of this service component
+	*/
+	@Override
+	public long getBuildNumber() {
+		return _serviceComponent.getBuildNumber();
 	}
 
 	/**
@@ -186,16 +245,6 @@ public class ServiceComponentWrapper implements ServiceComponent,
 		return _serviceComponent.getPrimaryKey();
 	}
 
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _serviceComponent.getPrimaryKeyObj();
-	}
-
-	@Override
-	public java.lang.String getSequencesSQL() {
-		return _serviceComponent.getSequencesSQL();
-	}
-
 	/**
 	* Returns the service component ID of this service component.
 	*
@@ -204,31 +253,6 @@ public class ServiceComponentWrapper implements ServiceComponent,
 	@Override
 	public long getServiceComponentId() {
 		return _serviceComponent.getServiceComponentId();
-	}
-
-	@Override
-	public java.lang.String getTablesSQL() {
-		return _serviceComponent.getTablesSQL();
-	}
-
-	@Override
-	public int hashCode() {
-		return _serviceComponent.hashCode();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _serviceComponent.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _serviceComponent.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _serviceComponent.isNew();
 	}
 
 	@Override
@@ -337,31 +361,6 @@ public class ServiceComponentWrapper implements ServiceComponent,
 	}
 
 	@Override
-	public CacheModel<com.liferay.portal.kernel.model.ServiceComponent> toCacheModel() {
-		return _serviceComponent.toCacheModel();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.model.ServiceComponent toEscapedModel() {
-		return new ServiceComponentWrapper(_serviceComponent.toEscapedModel());
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _serviceComponent.toString();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.model.ServiceComponent toUnescapedModel() {
-		return new ServiceComponentWrapper(_serviceComponent.toUnescapedModel());
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _serviceComponent.toXmlString();
-	}
-
-	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
@@ -373,7 +372,7 @@ public class ServiceComponentWrapper implements ServiceComponent,
 
 		ServiceComponentWrapper serviceComponentWrapper = (ServiceComponentWrapper)obj;
 
-		if (Validator.equals(_serviceComponent,
+		if (Objects.equals(_serviceComponent,
 					serviceComponentWrapper._serviceComponent)) {
 			return true;
 		}

@@ -61,7 +61,7 @@ if (ddmFormValues != null) {
 
 	String ddmFormValueDefaultLanguageId = LocaleUtil.toLanguageId(ddmFormValues.getDefaultLocale());
 
-	if (!Validator.equals(defaultLanguageId, ddmFormValueDefaultLanguageId)) {
+	if (!Objects.equals(defaultLanguageId, ddmFormValueDefaultLanguageId)) {
 		changeableDefaultLanguage = true;
 	}
 
@@ -101,53 +101,59 @@ else {
 	<portlet:param name="mvcPath" value="/edit_record.jsp" />
 </portlet:actionURL>
 
-<div class="container-fluid-1280 sidenav-container sidenav-right" id="<portlet:namespace />recordPanel">
+<liferay-frontend:management-bar>
+	<liferay-frontend:management-bar-buttons>
+		<liferay-frontend:management-bar-sidenav-toggler-button />
+	</liferay-frontend:management-bar-buttons>
+</liferay-frontend:management-bar>
 
-<c:if test="<%= recordVersion != null %>">
-	<div class="sidenav-menu-slider">
-		<div class="sidebar sidebar-default sidenav-menu">
-			<liferay-ui:tabs names="details,versions" refresh="<%= false %>" type="dropdown">
-				<liferay-ui:section>
-					<div class="sidebar-body">
+<div class="container-fluid-1280 sidenav-container sidenav-right" id="<portlet:namespace />infoPanelId">
+	<c:if test="<%= recordVersion != null %>">
+		<div class="sidenav-menu-slider">
+			<div class="sidebar sidebar-default sidenav-menu">
+				<div class="sidebar-header">
+					<aui:icon cssClass="icon-monospaced sidenav-close text-default visible-xs-inline-block" image="times" markupView="lexicon" url="javascript:;" />
+				</div>
 
-						<h3 class="version">
-							<liferay-ui:message key="version" /> <%= HtmlUtil.escape(recordVersion.getVersion()) %>
-						</h3>
+				<liferay-ui:tabs names="details,versions" refresh="<%= false %>" type="dropdown">
+					<liferay-ui:section>
+						<div class="sidebar-body">
+							<h3 class="version">
+								<liferay-ui:message key="version" /> <%= HtmlUtil.escape(recordVersion.getVersion()) %>
+							</h3>
 
-						<div>
-							<aui:model-context bean="<%= recordVersion %>" model="<%= DDLRecordVersion.class %>" />
+							<div>
+								<aui:model-context bean="<%= recordVersion %>" model="<%= DDLRecordVersion.class %>" />
 
-							<aui:workflow-status model="<%= DDLRecord.class %>" status="<%= recordVersion.getStatus() %>" />
+								<aui:workflow-status model="<%= DDLRecord.class %>" status="<%= recordVersion.getStatus() %>" />
+							</div>
+
+							<div>
+								<h5><strong><liferay-ui:message key="created" /></strong></h5>
+
+								<p>
+
+									<%
+									Format dateFormatDateTime = FastDateFormatFactoryUtil.getDateTime(locale, timeZone);
+									%>
+
+									<liferay-ui:message arguments="<%= new Object[] {HtmlUtil.escape(recordVersion.getUserName()), dateFormatDateTime.format(recordVersion.getCreateDate())} %>" key="by-x-on-x" translateArguments="<%= false %>" />
+								</p>
+							</div>
 						</div>
+					</liferay-ui:section>
 
-						<div>
-							<h5><strong><liferay-ui:message key="created" /></strong></h5>
-
-							<p>
-
-								<%
-								Format dateFormatDateTime = FastDateFormatFactoryUtil.getDateTime(locale, timeZone);
-								%>
-
-								<liferay-ui:message arguments="<%= new Object[] {HtmlUtil.escape(recordVersion.getUserName()), dateFormatDateTime.format(recordVersion.getCreateDate())} %>" key="by-x-on-x" translateArguments="<%= false %>" />
-							</p>
+					<liferay-ui:section>
+						<div class="sidebar-body">
+							<liferay-util:include page="/view_record_history.jsp" servletContext="<%= application %>">
+								<liferay-util:param name="redirect" value="<%= redirect %>" />
+							</liferay-util:include>
 						</div>
-
-					</div>
-				</liferay-ui:section>
-
-				<liferay-ui:section>
-					<div class="sidebar-body">
-						<liferay-util:include page="/view_record_history.jsp" servletContext="<%= application %>">
-							<liferay-util:param name="redirect" value="<%= redirect %>" />
-						</liferay-util:include>
-					</div>
-				</liferay-ui:section>
-			</liferay-ui:tabs>
+					</liferay-ui:section>
+				</liferay-ui:tabs>
+			</div>
 		</div>
-
-	</div>
-</c:if>
+	</c:if>
 
 	<div class="sidenav-content">
 		<aui:form action="<%= (record == null) ? addRecordURL : updateRecordURL %>" cssClass="container-fluid-1280" enctype="multipart/form-data" method="post" name="fm">
@@ -282,18 +288,6 @@ else {
 			document.<portlet:namespace />fm.<portlet:namespace />workflowAction.value = <%= WorkflowConstants.ACTION_PUBLISH %>;
 		}
 	}
-
-	<c:if test="<%= recordVersion != null %>">
-		$('#<portlet:namespace />recordPanel').sideNavigation(
-			{
-				gutter: 15,
-				position: 'right',
-				type: 'relative',
-				typeMobile: 'fixed',
-				width: 320
-			}
-		);
-	</c:if>
 </aui:script>
 
 <%

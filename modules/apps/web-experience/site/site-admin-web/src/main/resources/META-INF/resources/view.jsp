@@ -37,6 +37,15 @@ PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, "sites")
 if (group != null) {
 	SitesUtil.addPortletBreadcrumbEntries(group, request, mainURL);
 
+	portletDisplay.setShowBackIcon(true);
+
+	PortletURL backURL = renderResponse.createRenderURL();
+
+	backURL.setParameter("mvcPath", "/view.jsp");
+	backURL.setParameter("groupId", String.valueOf(group.getParentGroupId()));
+
+	portletDisplay.setURLBack(backURL.toString());
+
 	renderResponse.setTitle(HtmlUtil.escape(group.getDescriptiveName(locale)));
 }
 %>
@@ -74,11 +83,24 @@ if (group != null) {
 				<liferay-ui:error exception="<%= NoSuchLayoutSetException.class %>">
 
 					<%
+					Group curGroup = GroupLocalServiceUtil.getGroup(scopeGroupId);
+
 					NoSuchLayoutSetException nslse = (NoSuchLayoutSetException)errorException;
 
-					PKParser pkParser = new PKParser(nslse.getMessage());
+					String message = nslse.getMessage();
 
-					Group curGroup = GroupLocalServiceUtil.getGroup(pkParser.getLong("groupId"));
+					int index = message.indexOf("{");
+
+					if (index > 0) {
+						try {
+							JSONObject jsonObject = JSONFactoryUtil.createJSONObject(message.substring(index));
+
+							curGroup = GroupLocalServiceUtil.getGroup(jsonObject.getLong("groupId"));
+						}
+						catch (Exception e) {
+							_log.error(e, e);
+						}
+					}
 					%>
 
 					<liferay-ui:message arguments="<%= HtmlUtil.escape(curGroup.getDescriptiveName(locale)) %>" key="site-x-does-not-have-any-private-pages" translateArguments="<%= false %>" />
@@ -95,3 +117,9 @@ if (group != null) {
 		</div>
 	</div>
 </div>
+
+<liferay-util:include page="/add_button.jsp" servletContext="<%= application %>" />
+
+<%!
+private static Log _log = LogFactoryUtil.getLog("com_liferay_site_admin_web.view_jsp");
+%>

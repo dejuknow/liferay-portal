@@ -37,6 +37,11 @@ public class UnregisterSyncDeviceEvent extends BaseEvent {
 		return _handler;
 	}
 
+	@Override
+	protected void processRequest() throws Exception {
+		executeAsynchronousPost(getURLPath(), getParameters());
+	}
+
 	private static final String _URL_PATH =
 		"/sync-web.syncdevice/unregister-sync-device";
 

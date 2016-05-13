@@ -43,16 +43,24 @@ public class PhoneServiceUtil {
 	public static com.liferay.portal.kernel.model.Phone addPhone(
 		java.lang.String className, long classPK, java.lang.String number,
 		java.lang.String extension, long typeId, boolean primary,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
 				   .addPhone(className, classPK, number, extension, typeId,
 			primary, serviceContext);
 	}
 
-	public static void deletePhone(long phoneId)
+	public static com.liferay.portal.kernel.model.Phone getPhone(long phoneId)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().deletePhone(phoneId);
+		return getService().getPhone(phoneId);
+	}
+
+	public static com.liferay.portal.kernel.model.Phone updatePhone(
+		long phoneId, java.lang.String number, java.lang.String extension,
+		long typeId, boolean primary)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .updatePhone(phoneId, number, extension, typeId, primary);
 	}
 
 	/**
@@ -64,23 +72,15 @@ public class PhoneServiceUtil {
 		return getService().getOSGiServiceIdentifier();
 	}
 
-	public static com.liferay.portal.kernel.model.Phone getPhone(long phoneId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getPhone(phoneId);
-	}
-
 	public static java.util.List<com.liferay.portal.kernel.model.Phone> getPhones(
 		java.lang.String className, long classPK)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService().getPhones(className, classPK);
 	}
 
-	public static com.liferay.portal.kernel.model.Phone updatePhone(
-		long phoneId, java.lang.String number, java.lang.String extension,
-		long typeId, boolean primary)
+	public static void deletePhone(long phoneId)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService()
-				   .updatePhone(phoneId, number, extension, typeId, primary);
+		getService().deletePhone(phoneId);
 	}
 
 	public static PhoneService getService() {

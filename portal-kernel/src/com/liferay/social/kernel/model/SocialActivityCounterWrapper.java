@@ -20,12 +20,12 @@ import com.liferay.expando.kernel.model.ExpandoBridge;
 
 import com.liferay.portal.kernel.model.ModelWrapper;
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Serializable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * <p>
@@ -157,14 +157,13 @@ public class SocialActivityCounterWrapper implements SocialActivityCounter,
 	}
 
 	@Override
-	public java.lang.Object clone() {
-		return new SocialActivityCounterWrapper((SocialActivityCounter)_socialActivityCounter.clone());
+	public SocialActivityCounter toEscapedModel() {
+		return new SocialActivityCounterWrapper(_socialActivityCounter.toEscapedModel());
 	}
 
 	@Override
-	public int compareTo(
-		com.liferay.social.kernel.model.SocialActivityCounter socialActivityCounter) {
-		return _socialActivityCounter.compareTo(socialActivityCounter);
+	public SocialActivityCounter toUnescapedModel() {
+		return new SocialActivityCounterWrapper(_socialActivityCounter.toUnescapedModel());
 	}
 
 	/**
@@ -178,13 +177,123 @@ public class SocialActivityCounterWrapper implements SocialActivityCounter,
 	}
 
 	/**
-	* Returns the activity counter ID of this social activity counter.
+	* Returns <code>true</code> if this social activity counter is active.
 	*
-	* @return the activity counter ID of this social activity counter
+	* @return <code>true</code> if this social activity counter is active; <code>false</code> otherwise
 	*/
 	@Override
-	public long getActivityCounterId() {
-		return _socialActivityCounter.getActivityCounterId();
+	public boolean isActive() {
+		return _socialActivityCounter.isActive();
+	}
+
+	@Override
+	public boolean isActivePeriod(int periodLength) {
+		return _socialActivityCounter.isActivePeriod(periodLength);
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _socialActivityCounter.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _socialActivityCounter.isEscapedModel();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _socialActivityCounter.isNew();
+	}
+
+	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _socialActivityCounter.getExpandoBridge();
+	}
+
+	@Override
+	public com.liferay.portal.kernel.model.CacheModel<SocialActivityCounter> toCacheModel() {
+		return _socialActivityCounter.toCacheModel();
+	}
+
+	@Override
+	public int compareTo(SocialActivityCounter socialActivityCounter) {
+		return _socialActivityCounter.compareTo(socialActivityCounter);
+	}
+
+	/**
+	* Returns the current value of this social activity counter.
+	*
+	* @return the current value of this social activity counter
+	*/
+	@Override
+	public int getCurrentValue() {
+		return _socialActivityCounter.getCurrentValue();
+	}
+
+	/**
+	* Returns the end period of this social activity counter.
+	*
+	* @return the end period of this social activity counter
+	*/
+	@Override
+	public int getEndPeriod() {
+		return _socialActivityCounter.getEndPeriod();
+	}
+
+	/**
+	* Returns the grace value of this social activity counter.
+	*
+	* @return the grace value of this social activity counter
+	*/
+	@Override
+	public int getGraceValue() {
+		return _socialActivityCounter.getGraceValue();
+	}
+
+	/**
+	* Returns the owner type of this social activity counter.
+	*
+	* @return the owner type of this social activity counter
+	*/
+	@Override
+	public int getOwnerType() {
+		return _socialActivityCounter.getOwnerType();
+	}
+
+	/**
+	* Returns the start period of this social activity counter.
+	*
+	* @return the start period of this social activity counter
+	*/
+	@Override
+	public int getStartPeriod() {
+		return _socialActivityCounter.getStartPeriod();
+	}
+
+	/**
+	* Returns the total value of this social activity counter.
+	*
+	* @return the total value of this social activity counter
+	*/
+	@Override
+	public int getTotalValue() {
+		return _socialActivityCounter.getTotalValue();
+	}
+
+	@Override
+	public int hashCode() {
+		return _socialActivityCounter.hashCode();
+	}
+
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _socialActivityCounter.getPrimaryKeyObj();
+	}
+
+	@Override
+	public java.lang.Object clone() {
+		return new SocialActivityCounterWrapper((SocialActivityCounter)_socialActivityCounter.clone());
 	}
 
 	/**
@@ -195,6 +304,36 @@ public class SocialActivityCounterWrapper implements SocialActivityCounter,
 	@Override
 	public java.lang.String getClassName() {
 		return _socialActivityCounter.getClassName();
+	}
+
+	/**
+	* Returns the name of this social activity counter.
+	*
+	* @return the name of this social activity counter
+	*/
+	@Override
+	public java.lang.String getName() {
+		return _socialActivityCounter.getName();
+	}
+
+	@Override
+	public java.lang.String toString() {
+		return _socialActivityCounter.toString();
+	}
+
+	@Override
+	public java.lang.String toXmlString() {
+		return _socialActivityCounter.toXmlString();
+	}
+
+	/**
+	* Returns the activity counter ID of this social activity counter.
+	*
+	* @return the activity counter ID of this social activity counter
+	*/
+	@Override
+	public long getActivityCounterId() {
+		return _socialActivityCounter.getActivityCounterId();
 	}
 
 	/**
@@ -228,41 +367,6 @@ public class SocialActivityCounterWrapper implements SocialActivityCounter,
 	}
 
 	/**
-	* Returns the current value of this social activity counter.
-	*
-	* @return the current value of this social activity counter
-	*/
-	@Override
-	public int getCurrentValue() {
-		return _socialActivityCounter.getCurrentValue();
-	}
-
-	/**
-	* Returns the end period of this social activity counter.
-	*
-	* @return the end period of this social activity counter
-	*/
-	@Override
-	public int getEndPeriod() {
-		return _socialActivityCounter.getEndPeriod();
-	}
-
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _socialActivityCounter.getExpandoBridge();
-	}
-
-	/**
-	* Returns the grace value of this social activity counter.
-	*
-	* @return the grace value of this social activity counter
-	*/
-	@Override
-	public int getGraceValue() {
-		return _socialActivityCounter.getGraceValue();
-	}
-
-	/**
 	* Returns the group ID of this social activity counter.
 	*
 	* @return the group ID of this social activity counter
@@ -273,26 +377,6 @@ public class SocialActivityCounterWrapper implements SocialActivityCounter,
 	}
 
 	/**
-	* Returns the name of this social activity counter.
-	*
-	* @return the name of this social activity counter
-	*/
-	@Override
-	public java.lang.String getName() {
-		return _socialActivityCounter.getName();
-	}
-
-	/**
-	* Returns the owner type of this social activity counter.
-	*
-	* @return the owner type of this social activity counter
-	*/
-	@Override
-	public int getOwnerType() {
-		return _socialActivityCounter.getOwnerType();
-	}
-
-	/**
 	* Returns the primary key of this social activity counter.
 	*
 	* @return the primary key of this social activity counter
@@ -300,66 +384,6 @@ public class SocialActivityCounterWrapper implements SocialActivityCounter,
 	@Override
 	public long getPrimaryKey() {
 		return _socialActivityCounter.getPrimaryKey();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _socialActivityCounter.getPrimaryKeyObj();
-	}
-
-	/**
-	* Returns the start period of this social activity counter.
-	*
-	* @return the start period of this social activity counter
-	*/
-	@Override
-	public int getStartPeriod() {
-		return _socialActivityCounter.getStartPeriod();
-	}
-
-	/**
-	* Returns the total value of this social activity counter.
-	*
-	* @return the total value of this social activity counter
-	*/
-	@Override
-	public int getTotalValue() {
-		return _socialActivityCounter.getTotalValue();
-	}
-
-	@Override
-	public int hashCode() {
-		return _socialActivityCounter.hashCode();
-	}
-
-	/**
-	* Returns <code>true</code> if this social activity counter is active.
-	*
-	* @return <code>true</code> if this social activity counter is active; <code>false</code> otherwise
-	*/
-	@Override
-	public boolean isActive() {
-		return _socialActivityCounter.isActive();
-	}
-
-	@Override
-	public boolean isActivePeriod(int periodLength) {
-		return _socialActivityCounter.isActivePeriod(periodLength);
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _socialActivityCounter.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _socialActivityCounter.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _socialActivityCounter.isNew();
 	}
 
 	@Override
@@ -448,14 +472,14 @@ public class SocialActivityCounterWrapper implements SocialActivityCounter,
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
-		_socialActivityCounter.setExpandoBridgeAttributes(baseModel);
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
+		_socialActivityCounter.setExpandoBridgeAttributes(expandoBridge);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
-		_socialActivityCounter.setExpandoBridgeAttributes(expandoBridge);
+	public void setExpandoBridgeAttributes(
+		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
+		_socialActivityCounter.setExpandoBridgeAttributes(baseModel);
 	}
 
 	@Override
@@ -544,31 +568,6 @@ public class SocialActivityCounterWrapper implements SocialActivityCounter,
 	}
 
 	@Override
-	public com.liferay.portal.kernel.model.CacheModel<com.liferay.social.kernel.model.SocialActivityCounter> toCacheModel() {
-		return _socialActivityCounter.toCacheModel();
-	}
-
-	@Override
-	public com.liferay.social.kernel.model.SocialActivityCounter toEscapedModel() {
-		return new SocialActivityCounterWrapper(_socialActivityCounter.toEscapedModel());
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _socialActivityCounter.toString();
-	}
-
-	@Override
-	public com.liferay.social.kernel.model.SocialActivityCounter toUnescapedModel() {
-		return new SocialActivityCounterWrapper(_socialActivityCounter.toUnescapedModel());
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _socialActivityCounter.toXmlString();
-	}
-
-	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
@@ -580,7 +579,7 @@ public class SocialActivityCounterWrapper implements SocialActivityCounter,
 
 		SocialActivityCounterWrapper socialActivityCounterWrapper = (SocialActivityCounterWrapper)obj;
 
-		if (Validator.equals(_socialActivityCounter,
+		if (Objects.equals(_socialActivityCounter,
 					socialActivityCounterWrapper._socialActivityCounter)) {
 			return true;
 		}

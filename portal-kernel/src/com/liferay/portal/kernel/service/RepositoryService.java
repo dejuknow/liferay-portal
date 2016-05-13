@@ -51,13 +51,16 @@ public interface RepositoryService extends BaseService {
 	public Repository addRepository(long groupId, long classNameId,
 		long parentFolderId, java.lang.String name,
 		java.lang.String description, java.lang.String portletId,
-		UnicodeProperties typeSettingsProperties,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		UnicodeProperties typeSettingsProperties, ServiceContext serviceContext)
 		throws PortalException;
 
-	public void checkRepository(long repositoryId) throws PortalException;
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public Repository getRepository(long repositoryId)
+		throws PortalException;
 
-	public void deleteRepository(long repositoryId) throws PortalException;
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public UnicodeProperties getTypeSettingsProperties(long repositoryId)
+		throws PortalException;
 
 	/**
 	* Returns the OSGi service identifier.
@@ -65,10 +68,6 @@ public interface RepositoryService extends BaseService {
 	* @return the OSGi service identifier
 	*/
 	public java.lang.String getOSGiServiceIdentifier();
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public Repository getRepository(long repositoryId)
-		throws PortalException;
 
 	/**
 	* @deprecated As of 7.0.0, with no direct replacement
@@ -93,9 +92,9 @@ public interface RepositoryService extends BaseService {
 	public java.lang.String[] getSupportedParameters(long classNameId,
 		java.lang.String configuration);
 
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public UnicodeProperties getTypeSettingsProperties(long repositoryId)
-		throws PortalException;
+	public void checkRepository(long repositoryId) throws PortalException;
+
+	public void deleteRepository(long repositoryId) throws PortalException;
 
 	public void updateRepository(long repositoryId, java.lang.String name,
 		java.lang.String description) throws PortalException;

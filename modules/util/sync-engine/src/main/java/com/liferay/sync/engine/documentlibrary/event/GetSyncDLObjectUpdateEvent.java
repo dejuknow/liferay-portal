@@ -89,7 +89,7 @@ public class GetSyncDLObjectUpdateEvent extends BaseEvent {
 
 		parameters.put("syncSite", syncSite);
 
-		executePost(_URL_PATH, parameters);
+		executePost(getURLPath(), parameters);
 	}
 
 	private static final String _URL_PATH =

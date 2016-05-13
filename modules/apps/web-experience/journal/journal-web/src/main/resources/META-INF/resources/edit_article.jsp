@@ -58,7 +58,7 @@ else if (Validator.isNotNull(ddmStructureKey)) {
 
 String ddmTemplateKey = ParamUtil.getString(request, "ddmTemplateKey");
 
-if (Validator.isNull(ddmTemplateKey) && (article != null) && Validator.equals(article.getDDMStructureKey(), ddmStructureKey)) {
+if (Validator.isNull(ddmTemplateKey) && (article != null) && Objects.equals(article.getDDMStructureKey(), ddmStructureKey)) {
 	ddmTemplateKey = article.getDDMTemplateKey();
 }
 
@@ -88,7 +88,7 @@ boolean changeableDefaultLanguage = journalWebConfiguration.changeableDefaultLan
 if (article != null) {
 	String articleDefaultLanguageId = LocalizationUtil.getDefaultLanguageId(article.getContent(), LocaleUtil.getSiteDefault());
 
-	if (!Validator.equals(defaultLanguageId, articleDefaultLanguageId)) {
+	if (!Objects.equals(defaultLanguageId, articleDefaultLanguageId)) {
 		changeableDefaultLanguage = true;
 	}
 
@@ -171,6 +171,7 @@ request.setAttribute("edit_article.jsp-changeStructure", changeStructure);
 
 <portlet:actionURL var="editArticleActionURL" windowState="<%= WindowState.MAXIMIZED.toString() %>">
 	<portlet:param name="mvcPath" value="/edit_article.jsp" />
+	<portlet:param name="ddmStructureKey" value="<%= ddmStructureKey %>" />
 </portlet:actionURL>
 
 <portlet:renderURL var="editArticleRenderURL" windowState="<%= WindowState.MAXIMIZED.toString() %>">
@@ -227,7 +228,7 @@ request.setAttribute("edit_article.jsp-changeStructure", changeStructure);
 	if ((article != null) && (version > 0)) {
 		approved = article.isApproved();
 
-		 if (workflowEnabled) {
+		if (workflowEnabled) {
 			pending = article.isPending();
 		}
 	}

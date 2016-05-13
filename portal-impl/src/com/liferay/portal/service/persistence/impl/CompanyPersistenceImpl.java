@@ -38,7 +38,6 @@ import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.impl.CompanyImpl;
 import com.liferay.portal.model.impl.CompanyModelImpl;
 
@@ -50,6 +49,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -117,8 +117,8 @@ public class CompanyPersistenceImpl extends BasePersistenceImpl<Company>
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchCompanyException(msg.toString());
@@ -159,7 +159,7 @@ public class CompanyPersistenceImpl extends BasePersistenceImpl<Company>
 		if (result instanceof Company) {
 			Company company = (Company)result;
 
-			if (!Validator.equals(webId, company.getWebId())) {
+			if (!Objects.equals(webId, company.getWebId())) {
 				result = null;
 			}
 		}
@@ -348,8 +348,8 @@ public class CompanyPersistenceImpl extends BasePersistenceImpl<Company>
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchCompanyException(msg.toString());
@@ -390,7 +390,7 @@ public class CompanyPersistenceImpl extends BasePersistenceImpl<Company>
 		if (result instanceof Company) {
 			Company company = (Company)result;
 
-			if (!Validator.equals(mx, company.getMx())) {
+			if (!Objects.equals(mx, company.getMx())) {
 				result = null;
 			}
 		}
@@ -586,8 +586,8 @@ public class CompanyPersistenceImpl extends BasePersistenceImpl<Company>
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchCompanyException(msg.toString());
@@ -1496,8 +1496,8 @@ public class CompanyPersistenceImpl extends BasePersistenceImpl<Company>
 			Company company = (Company)session.get(CompanyImpl.class, primaryKey);
 
 			if (company == null) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+				if (_log.isDebugEnabled()) {
+					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchCompanyException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
@@ -1652,8 +1652,8 @@ public class CompanyPersistenceImpl extends BasePersistenceImpl<Company>
 		Company company = fetchByPrimaryKey(primaryKey);
 
 		if (company == null) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+			if (_log.isDebugEnabled()) {
+				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
 			throw new NoSuchCompanyException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +

@@ -66,6 +66,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -209,7 +210,7 @@ public class AssetTagPersistenceImpl extends BasePersistenceImpl<AssetTag>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (AssetTag assetTag : list) {
-					if (!Validator.equals(uuid, assetTag.getUuid())) {
+					if (!Objects.equals(uuid, assetTag.getUuid())) {
 						list = null;
 
 						break;
@@ -682,8 +683,8 @@ public class AssetTagPersistenceImpl extends BasePersistenceImpl<AssetTag>
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchTagException(msg.toString());
@@ -727,7 +728,7 @@ public class AssetTagPersistenceImpl extends BasePersistenceImpl<AssetTag>
 		if (result instanceof AssetTag) {
 			AssetTag assetTag = (AssetTag)result;
 
-			if (!Validator.equals(uuid, assetTag.getUuid()) ||
+			if (!Objects.equals(uuid, assetTag.getUuid()) ||
 					(groupId != assetTag.getGroupId())) {
 				result = null;
 			}
@@ -1019,7 +1020,7 @@ public class AssetTagPersistenceImpl extends BasePersistenceImpl<AssetTag>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (AssetTag assetTag : list) {
-					if (!Validator.equals(uuid, assetTag.getUuid()) ||
+					if (!Objects.equals(uuid, assetTag.getUuid()) ||
 							(companyId != assetTag.getCompanyId())) {
 						list = null;
 
@@ -2838,8 +2839,8 @@ public class AssetTagPersistenceImpl extends BasePersistenceImpl<AssetTag>
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchTagException(msg.toString());
@@ -2884,7 +2885,7 @@ public class AssetTagPersistenceImpl extends BasePersistenceImpl<AssetTag>
 			AssetTag assetTag = (AssetTag)result;
 
 			if ((groupId != assetTag.getGroupId()) ||
-					!Validator.equals(name, assetTag.getName())) {
+					!Objects.equals(name, assetTag.getName())) {
 				result = null;
 			}
 		}
@@ -4827,8 +4828,8 @@ public class AssetTagPersistenceImpl extends BasePersistenceImpl<AssetTag>
 					primaryKey);
 
 			if (assetTag == null) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+				if (_log.isDebugEnabled()) {
+					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchTagException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
@@ -5049,8 +5050,8 @@ public class AssetTagPersistenceImpl extends BasePersistenceImpl<AssetTag>
 		AssetTag assetTag = fetchByPrimaryKey(primaryKey);
 
 		if (assetTag == null) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+			if (_log.isDebugEnabled()) {
+				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
 			throw new NoSuchTagException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +

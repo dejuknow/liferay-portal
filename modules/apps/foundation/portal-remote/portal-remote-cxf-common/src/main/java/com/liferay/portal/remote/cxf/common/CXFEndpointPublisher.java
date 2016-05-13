@@ -179,7 +179,7 @@ public class CXFEndpointPublisher {
 				contextName);
 			properties.put(
 				HttpWhiteboardConstants.HTTP_WHITEBOARD_SERVLET_NAME,
-				"CXFServlet");
+				CXFNonSpringServlet.class.getName());
 			properties.put(
 				HttpWhiteboardConstants.HTTP_WHITEBOARD_SERVLET_PATTERN, "/*");
 
@@ -210,10 +210,10 @@ public class CXFEndpointPublisher {
 					contextName);
 				properties.put(
 					HttpWhiteboardConstants.HTTP_WHITEBOARD_FILTER_NAME,
-					"AuthVerifierFilter");
+					AuthVerifierFilter.class.getName());
 				properties.put(
 					HttpWhiteboardConstants.HTTP_WHITEBOARD_FILTER_SERVLET,
-					"CXFServlet");
+					CXFNonSpringServlet.class.getName());
 
 				for (String authVerifierProperty :
 						authVerifierPropertiesArray) {
@@ -239,10 +239,10 @@ public class CXFEndpointPublisher {
 					contextName);
 				properties.put(
 					HttpWhiteboardConstants.HTTP_WHITEBOARD_FILTER_NAME,
-					"RemoteAccessFilter");
+					RemoteAccessFilter.class.getName());
 				properties.put(
 					HttpWhiteboardConstants.HTTP_WHITEBOARD_FILTER_SERVLET,
-					"CXFServlet");
+					CXFNonSpringServlet.class.getName());
 
 				_remoteAccessFilterServiceRegistration =
 					_bundleContext.registerService(

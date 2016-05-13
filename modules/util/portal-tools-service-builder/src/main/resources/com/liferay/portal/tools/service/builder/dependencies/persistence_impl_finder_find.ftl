@@ -1740,8 +1740,8 @@ that may or may not be enforced with a unique index at the database level. Case
 				</#if>
 			</#list>
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new ${noSuchEntity}Exception(msg.toString());
@@ -1822,7 +1822,7 @@ that may or may not be enforced with a unique index at the database level. Case
 					<#if finderCol.isPrimitiveType(false)>
 						(${finderCol.name} != ${entity.varName}.get${finderCol.methodName}())
 					<#else>
-						!Validator.equals(${finderCol.name}, ${entity.varName}.get${finderCol.methodName}())
+						!Objects.equals(${finderCol.name}, ${entity.varName}.get${finderCol.methodName}())
 					</#if>
 
 					<#if finderCol_has_next>

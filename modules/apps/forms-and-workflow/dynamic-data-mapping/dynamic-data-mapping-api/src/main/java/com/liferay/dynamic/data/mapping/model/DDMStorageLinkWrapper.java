@@ -20,12 +20,12 @@ import com.liferay.expando.kernel.model.ExpandoBridge;
 
 import com.liferay.portal.kernel.model.ModelWrapper;
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Serializable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * <p>
@@ -107,14 +107,64 @@ public class DDMStorageLinkWrapper implements DDMStorageLink,
 	}
 
 	@Override
-	public java.lang.Object clone() {
-		return new DDMStorageLinkWrapper((DDMStorageLink)_ddmStorageLink.clone());
+	public DDMStorageLink toEscapedModel() {
+		return new DDMStorageLinkWrapper(_ddmStorageLink.toEscapedModel());
 	}
 
 	@Override
-	public int compareTo(
-		com.liferay.dynamic.data.mapping.model.DDMStorageLink ddmStorageLink) {
+	public DDMStorageLink toUnescapedModel() {
+		return new DDMStorageLinkWrapper(_ddmStorageLink.toUnescapedModel());
+	}
+
+	@Override
+	public DDMStructure getStructure()
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _ddmStorageLink.getStructure();
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _ddmStorageLink.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _ddmStorageLink.isEscapedModel();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _ddmStorageLink.isNew();
+	}
+
+	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _ddmStorageLink.getExpandoBridge();
+	}
+
+	@Override
+	public com.liferay.portal.kernel.model.CacheModel<DDMStorageLink> toCacheModel() {
+		return _ddmStorageLink.toCacheModel();
+	}
+
+	@Override
+	public int compareTo(DDMStorageLink ddmStorageLink) {
 		return _ddmStorageLink.compareTo(ddmStorageLink);
+	}
+
+	@Override
+	public int hashCode() {
+		return _ddmStorageLink.hashCode();
+	}
+
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _ddmStorageLink.getPrimaryKeyObj();
+	}
+
+	@Override
+	public java.lang.Object clone() {
+		return new DDMStorageLinkWrapper((DDMStorageLink)_ddmStorageLink.clone());
 	}
 
 	/**
@@ -125,6 +175,32 @@ public class DDMStorageLinkWrapper implements DDMStorageLink,
 	@Override
 	public java.lang.String getClassName() {
 		return _ddmStorageLink.getClassName();
+	}
+
+	@Override
+	public java.lang.String getStorageType()
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _ddmStorageLink.getStorageType();
+	}
+
+	/**
+	* Returns the uuid of this d d m storage link.
+	*
+	* @return the uuid of this d d m storage link
+	*/
+	@Override
+	public java.lang.String getUuid() {
+		return _ddmStorageLink.getUuid();
+	}
+
+	@Override
+	public java.lang.String toString() {
+		return _ddmStorageLink.toString();
+	}
+
+	@Override
+	public java.lang.String toXmlString() {
+		return _ddmStorageLink.toXmlString();
 	}
 
 	/**
@@ -157,11 +233,6 @@ public class DDMStorageLinkWrapper implements DDMStorageLink,
 		return _ddmStorageLink.getCompanyId();
 	}
 
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _ddmStorageLink.getExpandoBridge();
-	}
-
 	/**
 	* Returns the primary key of this d d m storage link.
 	*
@@ -170,11 +241,6 @@ public class DDMStorageLinkWrapper implements DDMStorageLink,
 	@Override
 	public long getPrimaryKey() {
 		return _ddmStorageLink.getPrimaryKey();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _ddmStorageLink.getPrimaryKeyObj();
 	}
 
 	/**
@@ -187,18 +253,6 @@ public class DDMStorageLinkWrapper implements DDMStorageLink,
 		return _ddmStorageLink.getStorageLinkId();
 	}
 
-	@Override
-	public java.lang.String getStorageType()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _ddmStorageLink.getStorageType();
-	}
-
-	@Override
-	public com.liferay.dynamic.data.mapping.model.DDMStructure getStructure()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _ddmStorageLink.getStructure();
-	}
-
 	/**
 	* Returns the structure ID of this d d m storage link.
 	*
@@ -207,36 +261,6 @@ public class DDMStorageLinkWrapper implements DDMStorageLink,
 	@Override
 	public long getStructureId() {
 		return _ddmStorageLink.getStructureId();
-	}
-
-	/**
-	* Returns the uuid of this d d m storage link.
-	*
-	* @return the uuid of this d d m storage link
-	*/
-	@Override
-	public java.lang.String getUuid() {
-		return _ddmStorageLink.getUuid();
-	}
-
-	@Override
-	public int hashCode() {
-		return _ddmStorageLink.hashCode();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _ddmStorageLink.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _ddmStorageLink.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _ddmStorageLink.isNew();
 	}
 
 	@Override
@@ -285,14 +309,14 @@ public class DDMStorageLinkWrapper implements DDMStorageLink,
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
-		_ddmStorageLink.setExpandoBridgeAttributes(baseModel);
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
+		_ddmStorageLink.setExpandoBridgeAttributes(expandoBridge);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
-		_ddmStorageLink.setExpandoBridgeAttributes(expandoBridge);
+	public void setExpandoBridgeAttributes(
+		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
+		_ddmStorageLink.setExpandoBridgeAttributes(baseModel);
 	}
 
 	@Override
@@ -351,31 +375,6 @@ public class DDMStorageLinkWrapper implements DDMStorageLink,
 	}
 
 	@Override
-	public com.liferay.portal.kernel.model.CacheModel<com.liferay.dynamic.data.mapping.model.DDMStorageLink> toCacheModel() {
-		return _ddmStorageLink.toCacheModel();
-	}
-
-	@Override
-	public com.liferay.dynamic.data.mapping.model.DDMStorageLink toEscapedModel() {
-		return new DDMStorageLinkWrapper(_ddmStorageLink.toEscapedModel());
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _ddmStorageLink.toString();
-	}
-
-	@Override
-	public com.liferay.dynamic.data.mapping.model.DDMStorageLink toUnescapedModel() {
-		return new DDMStorageLinkWrapper(_ddmStorageLink.toUnescapedModel());
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _ddmStorageLink.toXmlString();
-	}
-
-	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
@@ -387,7 +386,7 @@ public class DDMStorageLinkWrapper implements DDMStorageLink,
 
 		DDMStorageLinkWrapper ddmStorageLinkWrapper = (DDMStorageLinkWrapper)obj;
 
-		if (Validator.equals(_ddmStorageLink,
+		if (Objects.equals(_ddmStorageLink,
 					ddmStorageLinkWrapper._ddmStorageLink)) {
 			return true;
 		}

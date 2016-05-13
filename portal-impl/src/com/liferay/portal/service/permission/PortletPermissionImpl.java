@@ -23,7 +23,6 @@ import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutTypePortlet;
 import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.model.PortletConstants;
-import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.impl.VirtualLayout;
 import com.liferay.portal.kernel.portlet.ControlPanelEntry;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
@@ -33,7 +32,6 @@ import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.service.PortletLocalServiceUtil;
-import com.liferay.portal.kernel.service.ResourcePermissionLocalServiceUtil;
 import com.liferay.portal.kernel.service.permission.GroupPermissionUtil;
 import com.liferay.portal.kernel.service.permission.LayoutPermissionUtil;
 import com.liferay.portal.kernel.service.permission.PortletPermission;
@@ -284,6 +282,13 @@ public class PortletPermissionImpl implements PortletPermission {
 			boolean checkStagingPermission)
 		throws PortalException {
 
+		Portlet portlet = PortletLocalServiceUtil.getPortletById(
+			permissionChecker.getCompanyId(), portletId);
+
+		if ((portlet == null) || portlet.isUndeployedPortlet()) {
+			return false;
+		}
+
 		String name = null;
 		String resourcePermissionPrimKey = null;
 
@@ -295,25 +300,35 @@ public class PortletPermissionImpl implements PortletPermission {
 				groupId, name, resourcePermissionPrimKey, actionId);
 		}
 
-		if ((layout instanceof VirtualLayout) && layout.isTypeControlPanel()) {
+		Group group = GroupLocalServiceUtil.fetchGroup(groupId);
+
+		if (group == null) {
+			group = layout.getGroup();
+
+			groupId = layout.getGroupId();
+		}
+
+		if ((group.isControlPanel() || layout.isTypeControlPanel()) &&
+			actionId.equals(ActionKeys.VIEW)) {
+
+			return true;
+		}
+
+		if (layout instanceof VirtualLayout) {
+			if (layout.isCustomizable() && !actionId.equals(ActionKeys.VIEW)) {
+				if (actionId.equals(ActionKeys.ADD_TO_PAGE)) {
+					return hasAddToPagePermission(
+						permissionChecker, layout, portletId, actionId);
+				}
+
+				return hasCustomizePermission(
+					permissionChecker, layout, portletId, actionId);
+			}
+
 			VirtualLayout virtualLayout = (VirtualLayout)layout;
 
 			layout = virtualLayout.getSourceLayout();
 		}
-
-		if (!actionId.equals(ActionKeys.VIEW) &&
-			(layout instanceof VirtualLayout)) {
-
-			if (actionId.equals(ActionKeys.ADD_TO_PAGE)) {
-				return hasAddToPagePermission(
-					permissionChecker, layout, portletId, actionId);
-			}
-
-			return hasCustomizePermission(
-				permissionChecker, layout, portletId, actionId);
-		}
-
-		Group group = layout.getGroup();
 
 		if (!group.isLayoutSetPrototype() &&
 			actionId.equals(ActionKeys.CONFIGURATION) &&
@@ -321,8 +336,6 @@ public class PortletPermissionImpl implements PortletPermission {
 
 			return false;
 		}
-
-		groupId = layout.getGroupId();
 
 		String rootPortletId = PortletConstants.getRootPortletId(portletId);
 
@@ -336,26 +349,7 @@ public class PortletPermissionImpl implements PortletPermission {
 			}
 		}
 
-		if (group.isControlPanel() && actionId.equals(ActionKeys.VIEW)) {
-			return true;
-		}
-
 		resourcePermissionPrimKey = getPrimaryKey(layout.getPlid(), portletId);
-
-		boolean useDefaultPortletPermissions = false;
-
-		int count =
-			ResourcePermissionLocalServiceUtil.getResourcePermissionsCount(
-				permissionChecker.getCompanyId(), rootPortletId,
-				ResourceConstants.SCOPE_INDIVIDUAL, resourcePermissionPrimKey);
-
-		if (count == 0) {
-			useDefaultPortletPermissions = true;
-		}
-
-		if (useDefaultPortletPermissions) {
-			resourcePermissionPrimKey = rootPortletId;
-		}
 
 		if (strict) {
 			return permissionChecker.hasPermission(

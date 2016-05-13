@@ -19,12 +19,12 @@ import aQute.bnd.annotation.ProviderType;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Serializable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * <p>
@@ -115,14 +115,78 @@ public class RecentLayoutSetBranchWrapper implements RecentLayoutSetBranch,
 	}
 
 	@Override
+	public CacheModel<RecentLayoutSetBranch> toCacheModel() {
+		return _recentLayoutSetBranch.toCacheModel();
+	}
+
+	@Override
+	public RecentLayoutSetBranch toEscapedModel() {
+		return new RecentLayoutSetBranchWrapper(_recentLayoutSetBranch.toEscapedModel());
+	}
+
+	@Override
+	public RecentLayoutSetBranch toUnescapedModel() {
+		return new RecentLayoutSetBranchWrapper(_recentLayoutSetBranch.toUnescapedModel());
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _recentLayoutSetBranch.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _recentLayoutSetBranch.isEscapedModel();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _recentLayoutSetBranch.isNew();
+	}
+
+	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _recentLayoutSetBranch.getExpandoBridge();
+	}
+
+	@Override
+	public int compareTo(RecentLayoutSetBranch recentLayoutSetBranch) {
+		return _recentLayoutSetBranch.compareTo(recentLayoutSetBranch);
+	}
+
+	@Override
+	public int hashCode() {
+		return _recentLayoutSetBranch.hashCode();
+	}
+
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _recentLayoutSetBranch.getPrimaryKeyObj();
+	}
+
+	@Override
 	public java.lang.Object clone() {
 		return new RecentLayoutSetBranchWrapper((RecentLayoutSetBranch)_recentLayoutSetBranch.clone());
 	}
 
+	/**
+	* Returns the user uuid of this recent layout set branch.
+	*
+	* @return the user uuid of this recent layout set branch
+	*/
 	@Override
-	public int compareTo(
-		com.liferay.portal.kernel.model.RecentLayoutSetBranch recentLayoutSetBranch) {
-		return _recentLayoutSetBranch.compareTo(recentLayoutSetBranch);
+	public java.lang.String getUserUuid() {
+		return _recentLayoutSetBranch.getUserUuid();
+	}
+
+	@Override
+	public java.lang.String toString() {
+		return _recentLayoutSetBranch.toString();
+	}
+
+	@Override
+	public java.lang.String toXmlString() {
+		return _recentLayoutSetBranch.toXmlString();
 	}
 
 	/**
@@ -133,11 +197,6 @@ public class RecentLayoutSetBranchWrapper implements RecentLayoutSetBranch,
 	@Override
 	public long getCompanyId() {
 		return _recentLayoutSetBranch.getCompanyId();
-	}
-
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _recentLayoutSetBranch.getExpandoBridge();
 	}
 
 	/**
@@ -190,11 +249,6 @@ public class RecentLayoutSetBranchWrapper implements RecentLayoutSetBranch,
 		return _recentLayoutSetBranch.getPrimaryKey();
 	}
 
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _recentLayoutSetBranch.getPrimaryKeyObj();
-	}
-
 	/**
 	* Returns the recent layout set branch ID of this recent layout set branch.
 	*
@@ -213,36 +267,6 @@ public class RecentLayoutSetBranchWrapper implements RecentLayoutSetBranch,
 	@Override
 	public long getUserId() {
 		return _recentLayoutSetBranch.getUserId();
-	}
-
-	/**
-	* Returns the user uuid of this recent layout set branch.
-	*
-	* @return the user uuid of this recent layout set branch
-	*/
-	@Override
-	public java.lang.String getUserUuid() {
-		return _recentLayoutSetBranch.getUserUuid();
-	}
-
-	@Override
-	public int hashCode() {
-		return _recentLayoutSetBranch.hashCode();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _recentLayoutSetBranch.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _recentLayoutSetBranch.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _recentLayoutSetBranch.isNew();
 	}
 
 	@Override
@@ -371,31 +395,6 @@ public class RecentLayoutSetBranchWrapper implements RecentLayoutSetBranch,
 	}
 
 	@Override
-	public CacheModel<com.liferay.portal.kernel.model.RecentLayoutSetBranch> toCacheModel() {
-		return _recentLayoutSetBranch.toCacheModel();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.model.RecentLayoutSetBranch toEscapedModel() {
-		return new RecentLayoutSetBranchWrapper(_recentLayoutSetBranch.toEscapedModel());
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _recentLayoutSetBranch.toString();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.model.RecentLayoutSetBranch toUnescapedModel() {
-		return new RecentLayoutSetBranchWrapper(_recentLayoutSetBranch.toUnescapedModel());
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _recentLayoutSetBranch.toXmlString();
-	}
-
-	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
@@ -407,7 +406,7 @@ public class RecentLayoutSetBranchWrapper implements RecentLayoutSetBranch,
 
 		RecentLayoutSetBranchWrapper recentLayoutSetBranchWrapper = (RecentLayoutSetBranchWrapper)obj;
 
-		if (Validator.equals(_recentLayoutSetBranch,
+		if (Objects.equals(_recentLayoutSetBranch,
 					recentLayoutSetBranchWrapper._recentLayoutSetBranch)) {
 			return true;
 		}

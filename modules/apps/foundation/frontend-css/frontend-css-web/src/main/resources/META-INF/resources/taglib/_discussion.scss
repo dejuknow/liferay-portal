@@ -75,15 +75,19 @@
 @include sm {
 	.lfr-discussion-body {
 		.lfr-discussion-controls {
-			width: 100%;
 			position: absolute;
-			top: 0;
 			right: 0;
+			top: 0;
+			width: 50%;
 
 			& > div {
 				float: right;
 				margin-right: 12px;
 			}
+		}
+
+		.lfr-discussion-message .lfr-discussion-message-author {
+			width: 50%;
 		}
 	}
 }

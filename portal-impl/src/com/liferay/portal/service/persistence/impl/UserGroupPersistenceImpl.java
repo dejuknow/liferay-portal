@@ -64,6 +64,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -208,7 +209,7 @@ public class UserGroupPersistenceImpl extends BasePersistenceImpl<UserGroup>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (UserGroup userGroup : list) {
-					if (!Validator.equals(uuid, userGroup.getUuid())) {
+					if (!Objects.equals(uuid, userGroup.getUuid())) {
 						list = null;
 
 						break;
@@ -1161,7 +1162,7 @@ public class UserGroupPersistenceImpl extends BasePersistenceImpl<UserGroup>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (UserGroup userGroup : list) {
-					if (!Validator.equals(uuid, userGroup.getUuid()) ||
+					if (!Objects.equals(uuid, userGroup.getUuid()) ||
 							(companyId != userGroup.getCompanyId())) {
 						list = null;
 
@@ -3860,8 +3861,8 @@ public class UserGroupPersistenceImpl extends BasePersistenceImpl<UserGroup>
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchUserGroupException(msg.toString());
@@ -3906,7 +3907,7 @@ public class UserGroupPersistenceImpl extends BasePersistenceImpl<UserGroup>
 			UserGroup userGroup = (UserGroup)result;
 
 			if ((companyId != userGroup.getCompanyId()) ||
-					!Validator.equals(name, userGroup.getName())) {
+					!Objects.equals(name, userGroup.getName())) {
 				result = null;
 			}
 		}
@@ -4267,8 +4268,8 @@ public class UserGroupPersistenceImpl extends BasePersistenceImpl<UserGroup>
 					primaryKey);
 
 			if (userGroup == null) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+				if (_log.isDebugEnabled()) {
+					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchUserGroupException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
@@ -4517,8 +4518,8 @@ public class UserGroupPersistenceImpl extends BasePersistenceImpl<UserGroup>
 		UserGroup userGroup = fetchByPrimaryKey(primaryKey);
 
 		if (userGroup == null) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+			if (_log.isDebugEnabled()) {
+				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
 			throw new NoSuchUserGroupException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +

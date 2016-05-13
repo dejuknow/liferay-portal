@@ -1,4 +1,5 @@
 <definition component-name="portal-plugins-osgi">
+	<property name="portal.release" value="true" />
 	<property name="plugins.deployment.type" value="osgi" />
 	<property name="testray.main.component.name" value="Portal Services" />
 
@@ -7,7 +8,7 @@
 	</set-up>
 
 	<command name="ScriptingExecutorWebSmoke" priority="4">
-		<property name="web.plugins.includes" value="sample-scripting-executor-hook" />
+		<property name="hook.plugins.includes" value="sample-scripting-executor-hook" />
 
 		<var name="appName" value="sample-scripting-executor-hook" />
 		<var name="portletName" value="sample-scripting-executor-hook" />

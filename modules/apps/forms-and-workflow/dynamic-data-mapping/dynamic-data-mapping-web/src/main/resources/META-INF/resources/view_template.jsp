@@ -109,13 +109,11 @@ TemplateSearchTerms templateSearchTerms = (TemplateSearchTerms)templateSearch.ge
 	<aui:input name="deleteTemplateIds" type="hidden" />
 
 	<div class="container-fluid-1280" id="<portlet:namespace />entriesContainer">
-
 		<liferay-ui:search-container
 			id="ddmTemplates"
 			rowChecker="<%= new EmptyOnClickRowChecker(renderResponse) %>"
 			searchContainer="<%= templateSearch %>"
 		>
-
 			<liferay-ui:search-container-results>
 				<%@ include file="/template_search_results.jspf" %>
 			</liferay-ui:search-container-results>
@@ -197,7 +195,7 @@ TemplateSearchTerms templateSearchTerms = (TemplateSearchTerms)templateSearch.ge
 						cssClass="structure-column text-column"
 						href="<%= rowHREF %>"
 						name="structure"
-						value="<%= structureName %>"
+						value="<%= HtmlUtil.escape(structureName) %>"
 					/>
 				</c:if>
 
@@ -206,7 +204,7 @@ TemplateSearchTerms templateSearchTerms = (TemplateSearchTerms)templateSearch.ge
 						cssClass="text-column type-column"
 						href="<%= rowHREF %>"
 						name="type"
-						value="<%= ddmDisplay.getTemplateType(template, locale) %>"
+						value="<%= HtmlUtil.escape(ddmDisplay.getTemplateType(template, locale)) %>"
 					/>
 				</c:if>
 

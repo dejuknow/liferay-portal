@@ -25,7 +25,7 @@
 </tr>
 <tr>
 	<td>DDM_TEMPLATE_INFO</td>
-	<td>//div[contains(@id,'DDMPortlet')]//div[contains(@class,'empty-result-message')]//div[@class='card-footer']</td>
+	<td>//div[contains(@id,'DDMPortlet')]//div[contains(@class,'empty-result-message')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -35,12 +35,12 @@
 </tr>
 <tr>
 	<td>EMPTY_INFO</td>
-	<td>//div[contains(@class,'empty-result-message')]//div[@class='card-footer']</td>
+	<td>//div[contains(@class,'empty-result-message')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>EMPTY_INFO_2</td>
-	<td>//div[contains(@class,'panel-default')][2]//div[contains(@class,'empty-result-message')]//div[@class='card-footer']</td>
+	<td>//div[contains(@class,'panel-default')][2]//div[contains(@class,'empty-result-message')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -159,11 +159,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>NO_TOP_POSTERS</td>
-	<td>//p[contains(.,'There are no top posters.')]</td>
-	<td></td>
-</tr>
-<tr>
 	<td>RECYCLE_BIN_RESTORE_SUCCESS</td>
 	<td>//div[contains(@class,'alert-success') and em[contains(@class,'restore')]] | //div[contains(@class,'alert-success') and contains(.,'restored')]</td>
 	<td></td>
@@ -176,6 +171,11 @@
 <tr>
 	<td>REQUIRED_INFO</td>
 	<td>//div[contains(@class,'required') and contains(@role,'alert')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SEE_MORE_DETAILS_LINK</td>
+	<td>//a[contains(.,'See More Details')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -226,6 +226,11 @@
 <tr>
 	<td>UNIQUE_SUCCESS</td>
 	<td>//div[contains(@class,'alert') and contains(@class,'alert-success') and contains(.,'${key_uniqueSuccess}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>URL_ERROR</td>
+	<td>//code[@class='lfr-url-error']</td>
 	<td></td>
 </tr>
 <tr>

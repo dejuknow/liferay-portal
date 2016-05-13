@@ -113,7 +113,6 @@ themes = ListUtil.sort(themes, new ThemeNameComparator(orderByType.equals("asc")
 					<liferay-ui:search-container-column-text
 						colspan="<%= 2 %>"
 					>
-
 						<h5>
 							<c:choose>
 								<c:when test="<%= !themeId.equals(theme.getThemeId()) %>">
@@ -150,6 +149,7 @@ themes = ListUtil.sort(themes, new ThemeNameComparator(orderByType.equals("asc")
 						<liferay-frontend:vertical-card
 							cssClass='<%= themeId.equals(theme.getThemeId()) ? StringPool.BLANK : "selector-button" %>'
 							data="<%= data %>"
+							imageCSSClass="aspect-ratio-4-to-3"
 							imageUrl='<%= theme.getStaticResourcePath() + theme.getImagesPath() + "/thumbnail.png" %>'
 							subtitle="<%= author %>"
 							title="<%= theme.getName() %>"
