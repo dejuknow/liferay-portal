@@ -249,7 +249,7 @@ public abstract class KaleoTaskAssignmentLocalServiceBaseImpl
 	public ActionableDynamicQuery getActionableDynamicQuery() {
 		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
 
-		actionableDynamicQuery.setBaseLocalService(com.liferay.portal.workflow.kaleo.service.KaleoTaskAssignmentLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(kaleoTaskAssignmentLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(KaleoTaskAssignment.class);
 
@@ -263,7 +263,7 @@ public abstract class KaleoTaskAssignmentLocalServiceBaseImpl
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
 		IndexableActionableDynamicQuery indexableActionableDynamicQuery = new IndexableActionableDynamicQuery();
 
-		indexableActionableDynamicQuery.setBaseLocalService(com.liferay.portal.workflow.kaleo.service.KaleoTaskAssignmentLocalServiceUtil.getService());
+		indexableActionableDynamicQuery.setBaseLocalService(kaleoTaskAssignmentLocalService);
 		indexableActionableDynamicQuery.setClassLoader(getClassLoader());
 		indexableActionableDynamicQuery.setModelClass(KaleoTaskAssignment.class);
 
@@ -275,7 +275,7 @@ public abstract class KaleoTaskAssignmentLocalServiceBaseImpl
 
 	protected void initActionableDynamicQuery(
 		ActionableDynamicQuery actionableDynamicQuery) {
-		actionableDynamicQuery.setBaseLocalService(com.liferay.portal.workflow.kaleo.service.KaleoTaskAssignmentLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(kaleoTaskAssignmentLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(KaleoTaskAssignment.class);
 
@@ -1205,7 +1205,7 @@ public abstract class KaleoTaskAssignmentLocalServiceBaseImpl
 	protected com.liferay.portal.workflow.kaleo.service.KaleoTaskLocalService kaleoTaskLocalService;
 	@BeanReference(type = KaleoTaskPersistence.class)
 	protected KaleoTaskPersistence kaleoTaskPersistence;
-	@BeanReference(type = com.liferay.portal.workflow.kaleo.service.KaleoTaskAssignmentLocalService.class)
+	@BeanReference(type = KaleoTaskAssignmentLocalService.class)
 	protected KaleoTaskAssignmentLocalService kaleoTaskAssignmentLocalService;
 	@BeanReference(type = KaleoTaskAssignmentPersistence.class)
 	protected KaleoTaskAssignmentPersistence kaleoTaskAssignmentPersistence;

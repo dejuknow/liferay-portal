@@ -59,7 +59,7 @@ define("frontend-js-spa-web@1.0.6/liferay/app/App.es", ['exports', 'senna/src/ap
 
 			var _this = _possibleConstructorReturn(this, _App.call(this));
 
-			_this.blacklist = {};
+			_this.portletsBlacklist = {};
 			_this.validStatusCodes = [];
 
 			var exceptionsSelector = ':not([target="_blank"]):not([data-senna-off]):not([data-resource-href])';
@@ -86,8 +86,22 @@ define("frontend-js-spa-web@1.0.6/liferay/app/App.es", ['exports', 'senna/src/ap
 			return _this;
 		}
 
+		LiferayApp.prototype.getCacheExpirationTime = function getCacheExpirationTime() {
+			return Liferay.SPA.cacheExpirationTime;
+		};
+
 		LiferayApp.prototype.getValidStatusCodes = function getValidStatusCodes() {
 			return this.validStatusCodes;
+		};
+
+		LiferayApp.prototype.isCacheEnabled = function isCacheEnabled() {
+			return this.getCacheExpirationTime() > -1;
+		};
+
+		LiferayApp.prototype.isScreenCacheExpired = function isScreenCacheExpired(screen) {
+			var lastModifiedInterval = new Date().getTime() - screen.getCacheLastModified();
+
+			return lastModifiedInterval > this.getCacheExpirationTime();
 		};
 
 		LiferayApp.prototype.onBeforeNavigate = function onBeforeNavigate(event) {
@@ -102,18 +116,18 @@ define("frontend-js-spa-web@1.0.6/liferay/app/App.es", ['exports', 'senna/src/ap
 		};
 
 		LiferayApp.prototype.onDocClickDelegate_ = function onDocClickDelegate_(event) {
-			var inBlacklist = false;
+			var inPortletsBlacklist = false;
 
-			Object.keys(this.blacklist).forEach(function (portletId) {
+			Object.keys(this.portletsBlacklist).forEach(function (portletId) {
 				var boundaryId = _Utils2.default.getPortletBoundaryId(portletId);
 				var portlets = document.querySelectorAll('[id^="' + boundaryId + '"]');
 
-				inBlacklist = Array.prototype.slice.call(portlets).some(function (portlet) {
+				inPortletsBlacklist = Array.prototype.slice.call(portlets).some(function (portlet) {
 					return _dom2.default.contains(portlet, event.delegateTarget);
 				});
 			});
 
-			if (inBlacklist) {
+			if (inPortletsBlacklist) {
 				return;
 			}
 
@@ -128,7 +142,7 @@ define("frontend-js-spa-web@1.0.6/liferay/app/App.es", ['exports', 'senna/src/ap
 			});
 
 			if (event.error) {
-				if (event.error.invalidStatus || event.error.requestError) {
+				if (event.error.invalidStatus || event.error.requestError || event.error.timeout) {
 					if (event.form) {
 						event.form.submit();
 					} else {
@@ -155,8 +169,8 @@ define("frontend-js-spa-web@1.0.6/liferay/app/App.es", ['exports', 'senna/src/ap
 			});
 		};
 
-		LiferayApp.prototype.setBlacklist = function setBlacklist(blacklist) {
-			this.blacklist = blacklist;
+		LiferayApp.prototype.setPortletsBlacklist = function setPortletsBlacklist(portletsBlacklist) {
+			this.portletsBlacklist = portletsBlacklist;
 		};
 
 		LiferayApp.prototype.setValidStatusCodes = function setValidStatusCodes(validStatusCodes) {
@@ -166,7 +180,6 @@ define("frontend-js-spa-web@1.0.6/liferay/app/App.es", ['exports', 'senna/src/ap
 		return LiferayApp;
 	}(_App3.default);
 
-	LiferayApp.prototype.registerMetalComponent && LiferayApp.prototype.registerMetalComponent(LiferayApp, 'LiferayApp')
 	exports.default = LiferayApp;
 });
 //# sourceMappingURL=App.es.js.map

@@ -14,7 +14,6 @@
 
 package com.liferay.portal.action;
 
-import com.liferay.portal.kernel.deploy.hot.HotDeployUtil;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
@@ -25,7 +24,6 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.PortalLifecycleUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -82,10 +80,6 @@ public class SetupWizardAction extends Action {
 
 				if (ParamUtil.getBoolean(request, "defaultDatabase")) {
 					PropsValues.SETUP_WIZARD_ENABLED = false;
-
-					HotDeployUtil.setCapturePrematureEvents(false);
-
-					PortalLifecycleUtil.flushInits();
 				}
 			}
 

@@ -19,7 +19,6 @@ import com.liferay.portal.kernel.memory.FinalizeManager;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.URLCodec;
-import com.liferay.portal.kernel.util.Validator;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,6 +42,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.tools.JavaFileObject;
@@ -145,7 +145,7 @@ public class JspJavaFileObjectResolver implements JavaFileObjectResolver {
 
 			fileName = jarFileURL.getFile();
 		}
-		else if (Validator.equals(url.getProtocol(), "vfs")) {
+		else if (Objects.equals(url.getProtocol(), "vfs")) {
 
 			// JBoss uses a custom vfs protocol to represent JAR files
 
@@ -157,13 +157,13 @@ public class JspJavaFileObjectResolver implements JavaFileObjectResolver {
 				fileName = fileName.substring(0, index + 4);
 			}
 		}
-		else if (Validator.equals(url.getProtocol(), "wsjar")) {
+		else if (Objects.equals(url.getProtocol(), "wsjar")) {
 
 			// WebSphere uses a custom wsjar protocol to represent JAR files
 
 			fileName = url.getFile();
 
-			String protocol = "file:/";
+			String protocol = "file:";
 
 			int index = fileName.indexOf(protocol);
 
@@ -177,7 +177,7 @@ public class JspJavaFileObjectResolver implements JavaFileObjectResolver {
 				fileName = fileName.substring(0, index);
 			}
 		}
-		else if (Validator.equals(url.getProtocol(), "zip")) {
+		else if (Objects.equals(url.getProtocol(), "zip")) {
 
 			// Weblogic uses a custom zip protocol to represent JAR files
 
@@ -188,6 +188,12 @@ public class JspJavaFileObjectResolver implements JavaFileObjectResolver {
 			if (index > 0) {
 				fileName = fileName.substring(0, index);
 			}
+		}
+		else {
+
+			// Ignore files that we do not know how to handle
+
+			return null;
 		}
 
 		return new File(URLCodec.decodeURL(fileName, StringPool.UTF8));
@@ -266,6 +272,14 @@ public class JspJavaFileObjectResolver implements JavaFileObjectResolver {
 		for (URL url : urls) {
 			try {
 				File file = getFile(url);
+
+				if (file == null) {
+					_logger.log(
+						Logger.LOG_WARNING,
+						"Ignoring " + url + " while handling system bundle");
+
+					continue;
+				}
 
 				try (FileSystem fileSystem = FileSystems.newFileSystem(
 						file.toPath(), null)) {

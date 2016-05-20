@@ -57,6 +57,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -199,7 +200,7 @@ public class MBBanPersistenceImpl extends BasePersistenceImpl<MBBan>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (MBBan mbBan : list) {
-					if (!Validator.equals(uuid, mbBan.getUuid())) {
+					if (!Objects.equals(uuid, mbBan.getUuid())) {
 						list = null;
 
 						break;
@@ -668,8 +669,8 @@ public class MBBanPersistenceImpl extends BasePersistenceImpl<MBBan>
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchBanException(msg.toString());
@@ -713,7 +714,7 @@ public class MBBanPersistenceImpl extends BasePersistenceImpl<MBBan>
 		if (result instanceof MBBan) {
 			MBBan mbBan = (MBBan)result;
 
-			if (!Validator.equals(uuid, mbBan.getUuid()) ||
+			if (!Objects.equals(uuid, mbBan.getUuid()) ||
 					(groupId != mbBan.getGroupId())) {
 				result = null;
 			}
@@ -1004,7 +1005,7 @@ public class MBBanPersistenceImpl extends BasePersistenceImpl<MBBan>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (MBBan mbBan : list) {
-					if (!Validator.equals(uuid, mbBan.getUuid()) ||
+					if (!Objects.equals(uuid, mbBan.getUuid()) ||
 							(companyId != mbBan.getCompanyId())) {
 						list = null;
 
@@ -2992,8 +2993,8 @@ public class MBBanPersistenceImpl extends BasePersistenceImpl<MBBan>
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchBanException(msg.toString());
@@ -3404,8 +3405,8 @@ public class MBBanPersistenceImpl extends BasePersistenceImpl<MBBan>
 			MBBan mbBan = (MBBan)session.get(MBBanImpl.class, primaryKey);
 
 			if (mbBan == null) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+				if (_log.isDebugEnabled()) {
+					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchBanException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
@@ -3652,8 +3653,8 @@ public class MBBanPersistenceImpl extends BasePersistenceImpl<MBBan>
 		MBBan mbBan = fetchByPrimaryKey(primaryKey);
 
 		if (mbBan == null) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+			if (_log.isDebugEnabled()) {
+				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
 			throw new NoSuchBanException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +

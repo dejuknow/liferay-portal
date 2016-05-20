@@ -1,0 +1,10 @@
+;
+; Do not manually edit this file. See
+; https://github.com/git-commands/git-subrepo#readme for more information.
+;
+[subrepo]
+	cmdver = liferay
+	commit = 8811729d56cd6de7c3e043ef8b27983de0d12b5c
+	mode = push
+	parent = 0ad8b383163c592e5c0429b86e3d682df4d49d9f
+	remote = git@github.com:liferay/com-liferay-image-uploader.git

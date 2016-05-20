@@ -20,13 +20,13 @@ import com.liferay.expando.kernel.model.ExpandoBridge;
 
 import com.liferay.portal.kernel.model.ModelWrapper;
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Serializable;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * <p>
@@ -189,14 +189,58 @@ public class KaleoTaskAssignmentWrapper implements KaleoTaskAssignment,
 	}
 
 	@Override
-	public java.lang.Object clone() {
-		return new KaleoTaskAssignmentWrapper((KaleoTaskAssignment)_kaleoTaskAssignment.clone());
+	public KaleoTaskAssignment toEscapedModel() {
+		return new KaleoTaskAssignmentWrapper(_kaleoTaskAssignment.toEscapedModel());
 	}
 
 	@Override
-	public int compareTo(
-		com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment kaleoTaskAssignment) {
+	public KaleoTaskAssignment toUnescapedModel() {
+		return new KaleoTaskAssignmentWrapper(_kaleoTaskAssignment.toUnescapedModel());
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _kaleoTaskAssignment.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _kaleoTaskAssignment.isEscapedModel();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _kaleoTaskAssignment.isNew();
+	}
+
+	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _kaleoTaskAssignment.getExpandoBridge();
+	}
+
+	@Override
+	public com.liferay.portal.kernel.model.CacheModel<KaleoTaskAssignment> toCacheModel() {
+		return _kaleoTaskAssignment.toCacheModel();
+	}
+
+	@Override
+	public int compareTo(KaleoTaskAssignment kaleoTaskAssignment) {
 		return _kaleoTaskAssignment.compareTo(kaleoTaskAssignment);
+	}
+
+	@Override
+	public int hashCode() {
+		return _kaleoTaskAssignment.hashCode();
+	}
+
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _kaleoTaskAssignment.getPrimaryKeyObj();
+	}
+
+	@Override
+	public java.lang.Object clone() {
+		return new KaleoTaskAssignmentWrapper((KaleoTaskAssignment)_kaleoTaskAssignment.clone());
 	}
 
 	/**
@@ -217,16 +261,6 @@ public class KaleoTaskAssignmentWrapper implements KaleoTaskAssignment,
 	@Override
 	public java.lang.String getAssigneeClassName() {
 		return _kaleoTaskAssignment.getAssigneeClassName();
-	}
-
-	/**
-	* Returns the assignee class p k of this kaleo task assignment.
-	*
-	* @return the assignee class p k of this kaleo task assignment
-	*/
-	@Override
-	public long getAssigneeClassPK() {
-		return _kaleoTaskAssignment.getAssigneeClassPK();
 	}
 
 	/**
@@ -260,13 +294,43 @@ public class KaleoTaskAssignmentWrapper implements KaleoTaskAssignment,
 	}
 
 	/**
-	* Returns the company ID of this kaleo task assignment.
+	* Returns the kaleo class name of this kaleo task assignment.
 	*
-	* @return the company ID of this kaleo task assignment
+	* @return the kaleo class name of this kaleo task assignment
 	*/
 	@Override
-	public long getCompanyId() {
-		return _kaleoTaskAssignment.getCompanyId();
+	public java.lang.String getKaleoClassName() {
+		return _kaleoTaskAssignment.getKaleoClassName();
+	}
+
+	/**
+	* Returns the user name of this kaleo task assignment.
+	*
+	* @return the user name of this kaleo task assignment
+	*/
+	@Override
+	public java.lang.String getUserName() {
+		return _kaleoTaskAssignment.getUserName();
+	}
+
+	/**
+	* Returns the user uuid of this kaleo task assignment.
+	*
+	* @return the user uuid of this kaleo task assignment
+	*/
+	@Override
+	public java.lang.String getUserUuid() {
+		return _kaleoTaskAssignment.getUserUuid();
+	}
+
+	@Override
+	public java.lang.String toString() {
+		return _kaleoTaskAssignment.toString();
+	}
+
+	@Override
+	public java.lang.String toXmlString() {
+		return _kaleoTaskAssignment.toXmlString();
 	}
 
 	/**
@@ -279,9 +343,34 @@ public class KaleoTaskAssignmentWrapper implements KaleoTaskAssignment,
 		return _kaleoTaskAssignment.getCreateDate();
 	}
 
+	/**
+	* Returns the modified date of this kaleo task assignment.
+	*
+	* @return the modified date of this kaleo task assignment
+	*/
 	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _kaleoTaskAssignment.getExpandoBridge();
+	public Date getModifiedDate() {
+		return _kaleoTaskAssignment.getModifiedDate();
+	}
+
+	/**
+	* Returns the assignee class p k of this kaleo task assignment.
+	*
+	* @return the assignee class p k of this kaleo task assignment
+	*/
+	@Override
+	public long getAssigneeClassPK() {
+		return _kaleoTaskAssignment.getAssigneeClassPK();
+	}
+
+	/**
+	* Returns the company ID of this kaleo task assignment.
+	*
+	* @return the company ID of this kaleo task assignment
+	*/
+	@Override
+	public long getCompanyId() {
+		return _kaleoTaskAssignment.getCompanyId();
 	}
 
 	/**
@@ -292,16 +381,6 @@ public class KaleoTaskAssignmentWrapper implements KaleoTaskAssignment,
 	@Override
 	public long getGroupId() {
 		return _kaleoTaskAssignment.getGroupId();
-	}
-
-	/**
-	* Returns the kaleo class name of this kaleo task assignment.
-	*
-	* @return the kaleo class name of this kaleo task assignment
-	*/
-	@Override
-	public java.lang.String getKaleoClassName() {
-		return _kaleoTaskAssignment.getKaleoClassName();
 	}
 
 	/**
@@ -345,16 +424,6 @@ public class KaleoTaskAssignmentWrapper implements KaleoTaskAssignment,
 	}
 
 	/**
-	* Returns the modified date of this kaleo task assignment.
-	*
-	* @return the modified date of this kaleo task assignment
-	*/
-	@Override
-	public Date getModifiedDate() {
-		return _kaleoTaskAssignment.getModifiedDate();
-	}
-
-	/**
 	* Returns the primary key of this kaleo task assignment.
 	*
 	* @return the primary key of this kaleo task assignment
@@ -362,11 +431,6 @@ public class KaleoTaskAssignmentWrapper implements KaleoTaskAssignment,
 	@Override
 	public long getPrimaryKey() {
 		return _kaleoTaskAssignment.getPrimaryKey();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _kaleoTaskAssignment.getPrimaryKeyObj();
 	}
 
 	/**
@@ -377,46 +441,6 @@ public class KaleoTaskAssignmentWrapper implements KaleoTaskAssignment,
 	@Override
 	public long getUserId() {
 		return _kaleoTaskAssignment.getUserId();
-	}
-
-	/**
-	* Returns the user name of this kaleo task assignment.
-	*
-	* @return the user name of this kaleo task assignment
-	*/
-	@Override
-	public java.lang.String getUserName() {
-		return _kaleoTaskAssignment.getUserName();
-	}
-
-	/**
-	* Returns the user uuid of this kaleo task assignment.
-	*
-	* @return the user uuid of this kaleo task assignment
-	*/
-	@Override
-	public java.lang.String getUserUuid() {
-		return _kaleoTaskAssignment.getUserUuid();
-	}
-
-	@Override
-	public int hashCode() {
-		return _kaleoTaskAssignment.hashCode();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _kaleoTaskAssignment.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _kaleoTaskAssignment.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _kaleoTaskAssignment.isNew();
 	}
 
 	@Override
@@ -512,14 +536,14 @@ public class KaleoTaskAssignmentWrapper implements KaleoTaskAssignment,
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
-		_kaleoTaskAssignment.setExpandoBridgeAttributes(baseModel);
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
+		_kaleoTaskAssignment.setExpandoBridgeAttributes(expandoBridge);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
-		_kaleoTaskAssignment.setExpandoBridgeAttributes(expandoBridge);
+	public void setExpandoBridgeAttributes(
+		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
+		_kaleoTaskAssignment.setExpandoBridgeAttributes(baseModel);
 	}
 
 	@Override
@@ -648,31 +672,6 @@ public class KaleoTaskAssignmentWrapper implements KaleoTaskAssignment,
 	}
 
 	@Override
-	public com.liferay.portal.kernel.model.CacheModel<com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment> toCacheModel() {
-		return _kaleoTaskAssignment.toCacheModel();
-	}
-
-	@Override
-	public com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment toEscapedModel() {
-		return new KaleoTaskAssignmentWrapper(_kaleoTaskAssignment.toEscapedModel());
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _kaleoTaskAssignment.toString();
-	}
-
-	@Override
-	public com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment toUnescapedModel() {
-		return new KaleoTaskAssignmentWrapper(_kaleoTaskAssignment.toUnescapedModel());
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _kaleoTaskAssignment.toXmlString();
-	}
-
-	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
@@ -684,7 +683,7 @@ public class KaleoTaskAssignmentWrapper implements KaleoTaskAssignment,
 
 		KaleoTaskAssignmentWrapper kaleoTaskAssignmentWrapper = (KaleoTaskAssignmentWrapper)obj;
 
-		if (Validator.equals(_kaleoTaskAssignment,
+		if (Objects.equals(_kaleoTaskAssignment,
 					kaleoTaskAssignmentWrapper._kaleoTaskAssignment)) {
 			return true;
 		}

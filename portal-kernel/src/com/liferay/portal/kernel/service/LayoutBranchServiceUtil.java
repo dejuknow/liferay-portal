@@ -43,16 +43,20 @@ public class LayoutBranchServiceUtil {
 	public static com.liferay.portal.kernel.model.LayoutBranch addLayoutBranch(
 		long layoutRevisionId, java.lang.String name,
 		java.lang.String description, boolean master,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
 				   .addLayoutBranch(layoutRevisionId, name, description,
 			master, serviceContext);
 	}
 
-	public static void deleteLayoutBranch(long layoutBranchId)
+	public static com.liferay.portal.kernel.model.LayoutBranch updateLayoutBranch(
+		long layoutBranchId, java.lang.String name,
+		java.lang.String description, ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().deleteLayoutBranch(layoutBranchId);
+		return getService()
+				   .updateLayoutBranch(layoutBranchId, name, description,
+			serviceContext);
 	}
 
 	/**
@@ -64,14 +68,9 @@ public class LayoutBranchServiceUtil {
 		return getService().getOSGiServiceIdentifier();
 	}
 
-	public static com.liferay.portal.kernel.model.LayoutBranch updateLayoutBranch(
-		long layoutBranchId, java.lang.String name,
-		java.lang.String description,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+	public static void deleteLayoutBranch(long layoutBranchId)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService()
-				   .updateLayoutBranch(layoutBranchId, name, description,
-			serviceContext);
+		getService().deleteLayoutBranch(layoutBranchId);
 	}
 
 	public static LayoutBranchService getService() {

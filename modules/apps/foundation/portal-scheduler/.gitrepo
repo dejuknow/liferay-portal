@@ -1,0 +1,10 @@
+;
+; Do not manually edit this file. See
+; https://github.com/git-commands/git-subrepo#readme for more information.
+;
+[subrepo]
+	cmdver = liferay
+	commit = b78d083c03386d756f942ee523e90aa6eb2950c3
+	mode = push
+	parent = 261ab09781b6073a0377c68304bbd6fc6bae9665
+	remote = git@github.com:liferay/com-liferay-portal-scheduler.git

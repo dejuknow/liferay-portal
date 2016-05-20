@@ -49,7 +49,7 @@ public class LayoutPrototypeServiceUtil {
 	public static com.liferay.portal.kernel.model.LayoutPrototype addLayoutPrototype(
 		java.util.Map<java.util.Locale, java.lang.String> nameMap,
 		java.lang.String description, boolean active,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
 				   .addLayoutPrototype(nameMap, description, active,
@@ -59,17 +59,11 @@ public class LayoutPrototypeServiceUtil {
 	public static com.liferay.portal.kernel.model.LayoutPrototype addLayoutPrototype(
 		java.util.Map<java.util.Locale, java.lang.String> nameMap,
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
-		boolean active,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		boolean active, ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
 				   .addLayoutPrototype(nameMap, descriptionMap, active,
 			serviceContext);
-	}
-
-	public static void deleteLayoutPrototype(long layoutPrototypeId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().deleteLayoutPrototype(layoutPrototypeId);
 	}
 
 	public static com.liferay.portal.kernel.model.LayoutPrototype fetchLayoutPrototype(
@@ -82,6 +76,33 @@ public class LayoutPrototypeServiceUtil {
 		long layoutPrototypeId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService().getLayoutPrototype(layoutPrototypeId);
+	}
+
+	/**
+	* @deprecated As of 7.0.0, replaced by {@link #updateLayoutPrototype(long,
+	Map, Map, boolean, ServiceContext)}
+	*/
+	@Deprecated
+	public static com.liferay.portal.kernel.model.LayoutPrototype updateLayoutPrototype(
+		long layoutPrototypeId,
+		java.util.Map<java.util.Locale, java.lang.String> nameMap,
+		java.lang.String description, boolean active,
+		ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .updateLayoutPrototype(layoutPrototypeId, nameMap,
+			description, active, serviceContext);
+	}
+
+	public static com.liferay.portal.kernel.model.LayoutPrototype updateLayoutPrototype(
+		long layoutPrototypeId,
+		java.util.Map<java.util.Locale, java.lang.String> nameMap,
+		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
+		boolean active, ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .updateLayoutPrototype(layoutPrototypeId, nameMap,
+			descriptionMap, active, serviceContext);
 	}
 
 	/**
@@ -100,32 +121,9 @@ public class LayoutPrototypeServiceUtil {
 		return getService().search(companyId, active, obc);
 	}
 
-	/**
-	* @deprecated As of 7.0.0, replaced by {@link #updateLayoutPrototype(long,
-	Map, Map, boolean, ServiceContext)}
-	*/
-	@Deprecated
-	public static com.liferay.portal.kernel.model.LayoutPrototype updateLayoutPrototype(
-		long layoutPrototypeId,
-		java.util.Map<java.util.Locale, java.lang.String> nameMap,
-		java.lang.String description, boolean active,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+	public static void deleteLayoutPrototype(long layoutPrototypeId)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService()
-				   .updateLayoutPrototype(layoutPrototypeId, nameMap,
-			description, active, serviceContext);
-	}
-
-	public static com.liferay.portal.kernel.model.LayoutPrototype updateLayoutPrototype(
-		long layoutPrototypeId,
-		java.util.Map<java.util.Locale, java.lang.String> nameMap,
-		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
-		boolean active,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService()
-				   .updateLayoutPrototype(layoutPrototypeId, nameMap,
-			descriptionMap, active, serviceContext);
+		getService().deleteLayoutPrototype(layoutPrototypeId);
 	}
 
 	public static LayoutPrototypeService getService() {

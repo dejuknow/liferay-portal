@@ -59,6 +59,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -202,7 +203,7 @@ public class DDLRecordSetPersistenceImpl extends BasePersistenceImpl<DDLRecordSe
 
 			if ((list != null) && !list.isEmpty()) {
 				for (DDLRecordSet ddlRecordSet : list) {
-					if (!Validator.equals(uuid, ddlRecordSet.getUuid())) {
+					if (!Objects.equals(uuid, ddlRecordSet.getUuid())) {
 						list = null;
 
 						break;
@@ -675,8 +676,8 @@ public class DDLRecordSetPersistenceImpl extends BasePersistenceImpl<DDLRecordSe
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchRecordSetException(msg.toString());
@@ -720,7 +721,7 @@ public class DDLRecordSetPersistenceImpl extends BasePersistenceImpl<DDLRecordSe
 		if (result instanceof DDLRecordSet) {
 			DDLRecordSet ddlRecordSet = (DDLRecordSet)result;
 
-			if (!Validator.equals(uuid, ddlRecordSet.getUuid()) ||
+			if (!Objects.equals(uuid, ddlRecordSet.getUuid()) ||
 					(groupId != ddlRecordSet.getGroupId())) {
 				result = null;
 			}
@@ -1011,7 +1012,7 @@ public class DDLRecordSetPersistenceImpl extends BasePersistenceImpl<DDLRecordSe
 
 			if ((list != null) && !list.isEmpty()) {
 				for (DDLRecordSet ddlRecordSet : list) {
-					if (!Validator.equals(uuid, ddlRecordSet.getUuid()) ||
+					if (!Objects.equals(uuid, ddlRecordSet.getUuid()) ||
 							(companyId != ddlRecordSet.getCompanyId())) {
 						list = null;
 
@@ -2838,8 +2839,8 @@ public class DDLRecordSetPersistenceImpl extends BasePersistenceImpl<DDLRecordSe
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchRecordSetException(msg.toString());
@@ -2884,8 +2885,7 @@ public class DDLRecordSetPersistenceImpl extends BasePersistenceImpl<DDLRecordSe
 			DDLRecordSet ddlRecordSet = (DDLRecordSet)result;
 
 			if ((groupId != ddlRecordSet.getGroupId()) ||
-					!Validator.equals(recordSetKey,
-						ddlRecordSet.getRecordSetKey())) {
+					!Objects.equals(recordSetKey, ddlRecordSet.getRecordSetKey())) {
 				result = null;
 			}
 		}
@@ -3296,8 +3296,8 @@ public class DDLRecordSetPersistenceImpl extends BasePersistenceImpl<DDLRecordSe
 					primaryKey);
 
 			if (ddlRecordSet == null) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+				if (_log.isDebugEnabled()) {
+					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchRecordSetException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
@@ -3524,8 +3524,8 @@ public class DDLRecordSetPersistenceImpl extends BasePersistenceImpl<DDLRecordSe
 		DDLRecordSet ddlRecordSet = fetchByPrimaryKey(primaryKey);
 
 		if (ddlRecordSet == null) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+			if (_log.isDebugEnabled()) {
+				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
 			throw new NoSuchRecordSetException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +

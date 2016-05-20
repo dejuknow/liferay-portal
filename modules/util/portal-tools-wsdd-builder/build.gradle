@@ -15,7 +15,7 @@ dependencies {
 	compile group: "axis", name: "axis-wsdl4j", version: "1.5.1"
 	compile group: "com.liferay", name: "org.apache.axis", version: "1.4.LIFERAY-PATCHED-1"
 	compile group: "commons-discovery", name: "commons-discovery", version: "0.2"
-	compile group: "commons-logging", name: "commons-logging", version: "1.0.4"
+	compile group: "commons-logging", name: "commons-logging", version: "1.2"
 	compile group: "dom4j", name: "dom4j", version: "1.6.1"
 	compile group: "javax.activation", name: "activation", version: "1.1"
 	compile group: "javax.mail", name: "mail", version: "1.4"
@@ -37,7 +37,7 @@ formatSource {
 }
 
 liferay {
-	deployDir = "../../../tools/sdk/tmp/portal-tools/portal-tools-wsdd-builder"
+	deployDir = "../../../tools/sdk/dependencies/com.liferay.portal.tools.wsdd.builder/lib"
 }
 
 updateFileVersions {

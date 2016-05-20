@@ -236,7 +236,7 @@ public abstract class MeetupsRegistrationLocalServiceBaseImpl
 	public ActionableDynamicQuery getActionableDynamicQuery() {
 		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
 
-		actionableDynamicQuery.setBaseLocalService(com.liferay.social.networking.service.MeetupsRegistrationLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(meetupsRegistrationLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(MeetupsRegistration.class);
 
@@ -250,7 +250,7 @@ public abstract class MeetupsRegistrationLocalServiceBaseImpl
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
 		IndexableActionableDynamicQuery indexableActionableDynamicQuery = new IndexableActionableDynamicQuery();
 
-		indexableActionableDynamicQuery.setBaseLocalService(com.liferay.social.networking.service.MeetupsRegistrationLocalServiceUtil.getService());
+		indexableActionableDynamicQuery.setBaseLocalService(meetupsRegistrationLocalService);
 		indexableActionableDynamicQuery.setClassLoader(getClassLoader());
 		indexableActionableDynamicQuery.setModelClass(MeetupsRegistration.class);
 
@@ -262,7 +262,7 @@ public abstract class MeetupsRegistrationLocalServiceBaseImpl
 
 	protected void initActionableDynamicQuery(
 		ActionableDynamicQuery actionableDynamicQuery) {
-		actionableDynamicQuery.setBaseLocalService(com.liferay.social.networking.service.MeetupsRegistrationLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(meetupsRegistrationLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(MeetupsRegistration.class);
 
@@ -625,7 +625,7 @@ public abstract class MeetupsRegistrationLocalServiceBaseImpl
 	protected com.liferay.social.networking.service.MeetupsEntryLocalService meetupsEntryLocalService;
 	@BeanReference(type = MeetupsEntryPersistence.class)
 	protected MeetupsEntryPersistence meetupsEntryPersistence;
-	@BeanReference(type = com.liferay.social.networking.service.MeetupsRegistrationLocalService.class)
+	@BeanReference(type = MeetupsRegistrationLocalService.class)
 	protected MeetupsRegistrationLocalService meetupsRegistrationLocalService;
 	@BeanReference(type = MeetupsRegistrationPersistence.class)
 	protected MeetupsRegistrationPersistence meetupsRegistrationPersistence;

@@ -41,7 +41,7 @@ public class PasswordPolicyServiceWrapper implements PasswordPolicyService,
 		int historyCount, boolean expireable, long maxAge, long warningTime,
 		int graceLimit, boolean lockout, int maxFailure, long lockoutDuration,
 		long resetFailureCount, long resetTicketMaxAge,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _passwordPolicyService.addPasswordPolicy(name, description,
 			changeable, changeRequired, minAge, checkSyntax,
@@ -53,26 +53,10 @@ public class PasswordPolicyServiceWrapper implements PasswordPolicyService,
 	}
 
 	@Override
-	public void deletePasswordPolicy(long passwordPolicyId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_passwordPolicyService.deletePasswordPolicy(passwordPolicyId);
-	}
-
-	@Override
 	public com.liferay.portal.kernel.model.PasswordPolicy fetchPasswordPolicy(
 		long passwordPolicyId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _passwordPolicyService.fetchPasswordPolicy(passwordPolicyId);
-	}
-
-	/**
-	* Returns the OSGi service identifier.
-	*
-	* @return the OSGi service identifier
-	*/
-	@Override
-	public java.lang.String getOSGiServiceIdentifier() {
-		return _passwordPolicyService.getOSGiServiceIdentifier();
 	}
 
 	@Override
@@ -86,7 +70,7 @@ public class PasswordPolicyServiceWrapper implements PasswordPolicyService,
 		boolean expireable, long maxAge, long warningTime, int graceLimit,
 		boolean lockout, int maxFailure, long lockoutDuration,
 		long resetFailureCount, long resetTicketMaxAge,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _passwordPolicyService.updatePasswordPolicy(passwordPolicyId,
 			name, description, changeable, changeRequired, minAge, checkSyntax,
@@ -95,6 +79,22 @@ public class PasswordPolicyServiceWrapper implements PasswordPolicyService,
 			expireable, maxAge, warningTime, graceLimit, lockout, maxFailure,
 			lockoutDuration, resetFailureCount, resetTicketMaxAge,
 			serviceContext);
+	}
+
+	/**
+	* Returns the OSGi service identifier.
+	*
+	* @return the OSGi service identifier
+	*/
+	@Override
+	public java.lang.String getOSGiServiceIdentifier() {
+		return _passwordPolicyService.getOSGiServiceIdentifier();
+	}
+
+	@Override
+	public void deletePasswordPolicy(long passwordPolicyId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		_passwordPolicyService.deletePasswordPolicy(passwordPolicyId);
 	}
 
 	@Override

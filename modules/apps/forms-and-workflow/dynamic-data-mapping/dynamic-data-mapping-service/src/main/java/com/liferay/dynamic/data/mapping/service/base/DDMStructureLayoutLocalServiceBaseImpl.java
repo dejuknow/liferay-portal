@@ -250,7 +250,7 @@ public abstract class DDMStructureLayoutLocalServiceBaseImpl
 	public ActionableDynamicQuery getActionableDynamicQuery() {
 		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
 
-		actionableDynamicQuery.setBaseLocalService(com.liferay.dynamic.data.mapping.service.DDMStructureLayoutLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(ddmStructureLayoutLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(DDMStructureLayout.class);
 
@@ -263,7 +263,7 @@ public abstract class DDMStructureLayoutLocalServiceBaseImpl
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
 		IndexableActionableDynamicQuery indexableActionableDynamicQuery = new IndexableActionableDynamicQuery();
 
-		indexableActionableDynamicQuery.setBaseLocalService(com.liferay.dynamic.data.mapping.service.DDMStructureLayoutLocalServiceUtil.getService());
+		indexableActionableDynamicQuery.setBaseLocalService(ddmStructureLayoutLocalService);
 		indexableActionableDynamicQuery.setClassLoader(getClassLoader());
 		indexableActionableDynamicQuery.setModelClass(DDMStructureLayout.class);
 
@@ -275,7 +275,7 @@ public abstract class DDMStructureLayoutLocalServiceBaseImpl
 
 	protected void initActionableDynamicQuery(
 		ActionableDynamicQuery actionableDynamicQuery) {
-		actionableDynamicQuery.setBaseLocalService(com.liferay.dynamic.data.mapping.service.DDMStructureLayoutLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(ddmStructureLayoutLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(DDMStructureLayout.class);
 
@@ -578,7 +578,7 @@ public abstract class DDMStructureLayoutLocalServiceBaseImpl
 		}
 	}
 
-	@BeanReference(type = com.liferay.dynamic.data.mapping.service.DDMStructureLayoutLocalService.class)
+	@BeanReference(type = DDMStructureLayoutLocalService.class)
 	protected DDMStructureLayoutLocalService ddmStructureLayoutLocalService;
 	@BeanReference(type = DDMStructureLayoutPersistence.class)
 	protected DDMStructureLayoutPersistence ddmStructureLayoutPersistence;

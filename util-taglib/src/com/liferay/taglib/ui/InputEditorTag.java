@@ -29,6 +29,7 @@ import com.liferay.portal.kernel.util.JavaConstants;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.registry.Registry;
@@ -42,6 +43,9 @@ import com.liferay.taglib.util.IncludeTag;
 import com.liferay.taglib.util.TagResourceBundleUtil;
 
 import java.io.IOException;
+
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
 
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -417,7 +421,11 @@ public class InputEditorTag extends IncludeTag {
 			"liferay-ui:input-editor:toolbarSet", getToolbarSet());
 		request.setAttribute("liferay-ui:input-editor:width", _width);
 
-		request.setAttribute("liferay-ui:input-editor:data", getData());
+		request.setAttribute(
+			"liferay-ui:input-editor:data",
+			ProxyUtil.newProxyInstance(
+				ClassLoader.getSystemClassLoader(), new Class<?>[] {Map.class},
+				new LazyDataInvocationHandler()));
 	}
 
 	private static final String _EDITOR_WYSIWYG_DEFAULT = PropsUtil.get(
@@ -473,5 +481,22 @@ public class InputEditorTag extends IncludeTag {
 	private boolean _skipEditorLoading;
 	private String _toolbarSet = _TOOLBAR_SET_DEFAULT;
 	private String _width;
+
+	private class LazyDataInvocationHandler implements InvocationHandler {
+
+		@Override
+		public Object invoke(Object proxy, Method method, Object[] args)
+			throws ReflectiveOperationException {
+
+			if (_data == null) {
+				_data = getData();
+			}
+
+			return method.invoke(_data, args);
+		}
+
+		private Map<String, Object> _data;
+
+	}
 
 }

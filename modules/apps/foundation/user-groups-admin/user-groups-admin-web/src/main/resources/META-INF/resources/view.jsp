@@ -45,6 +45,12 @@ SearchContainer userGroupSearchContainer = new UserGroupSearch(renderRequest, po
 
 UserGroupDisplayTerms searchTerms = (UserGroupDisplayTerms)userGroupSearchContainer.getSearchTerms();
 
+boolean hasAddUserGroupPermission = PortalPermissionUtil.contains(permissionChecker, ActionKeys.ADD_USER_GROUP);
+
+if (!searchTerms.isSearch() && hasAddUserGroupPermission) {
+	userGroupSearchContainer.setEmptyResultsMessageCssClass("taglib-empty-result-message-header-has-plus-btn");
+}
+
 PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, "user-groups"), null);
 %>
 
@@ -105,7 +111,6 @@ PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, "user-gr
 	</div>
 
 	<%@ include file="/view_flat_user_groups.jspf" %>
-
 </aui:form>
 
 <aui:script>

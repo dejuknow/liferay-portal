@@ -21,10 +21,12 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 
 import java.io.IOException;
+
+import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -46,7 +48,7 @@ public abstract class BasePanelCategory implements PanelCategory {
 
 		PanelCategory panelCategory = (PanelCategory)obj;
 
-		if (Validator.equals(getKey(), panelCategory.getKey())) {
+		if (Objects.equals(getKey(), panelCategory.getKey())) {
 			return true;
 		}
 
@@ -91,9 +93,11 @@ public abstract class BasePanelCategory implements PanelCategory {
 		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
+		String ppid = ParamUtil.getString(
+			request, "selPpid", themeDisplay.getPpid());
+
 		return panelCategoryHelper.containsPortlet(
-			themeDisplay.getPpid(), getKey(),
-			themeDisplay.getPermissionChecker(), group);
+			ppid, getKey(), themeDisplay.getPermissionChecker(), group);
 	}
 
 	@Override

@@ -39,7 +39,6 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Time;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PersistenceTestRule;
 
@@ -59,6 +58,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -458,6 +458,15 @@ public class JournalArticlePersistenceTest {
 		_persistence.countByG_NotL(0L, StringPool.NULL);
 
 		_persistence.countByG_NotL(0L, (String)null);
+	}
+
+	@Test
+	public void testCountByG_NotLArrayable() throws Exception {
+		_persistence.countByG_NotL(RandomTestUtil.nextLong(),
+			new String[] {
+				RandomTestUtil.randomString(), StringPool.BLANK, StringPool.NULL,
+				null, null
+			});
 	}
 
 	@Test
@@ -880,7 +889,7 @@ public class JournalArticlePersistenceTest {
 
 		JournalArticle existingJournalArticle = _persistence.findByPrimaryKey(newJournalArticle.getPrimaryKey());
 
-		Assert.assertTrue(Validator.equals(existingJournalArticle.getUuid(),
+		Assert.assertTrue(Objects.equals(existingJournalArticle.getUuid(),
 				ReflectionTestUtil.invoke(existingJournalArticle,
 					"getOriginalUuid", new Class<?>[0])));
 		Assert.assertEquals(Long.valueOf(existingJournalArticle.getGroupId()),
@@ -894,7 +903,7 @@ public class JournalArticlePersistenceTest {
 				existingJournalArticle.getClassNameId()),
 			ReflectionTestUtil.<Long>invoke(existingJournalArticle,
 				"getOriginalClassNameId", new Class<?>[0]));
-		Assert.assertTrue(Validator.equals(
+		Assert.assertTrue(Objects.equals(
 				existingJournalArticle.getDDMStructureKey(),
 				ReflectionTestUtil.invoke(existingJournalArticle,
 					"getOriginalDDMStructureKey", new Class<?>[0])));
@@ -902,7 +911,7 @@ public class JournalArticlePersistenceTest {
 		Assert.assertEquals(Long.valueOf(existingJournalArticle.getGroupId()),
 			ReflectionTestUtil.<Long>invoke(existingJournalArticle,
 				"getOriginalGroupId", new Class<?>[0]));
-		Assert.assertTrue(Validator.equals(
+		Assert.assertTrue(Objects.equals(
 				existingJournalArticle.getArticleId(),
 				ReflectionTestUtil.invoke(existingJournalArticle,
 					"getOriginalArticleId", new Class<?>[0])));

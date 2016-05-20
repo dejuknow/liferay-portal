@@ -22,7 +22,7 @@ import java.io.File;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -72,7 +72,7 @@ public class TaskCache implements PatternFilterable {
 	}
 
 	@Override
-	public TaskCache exclude(String ... excludes) {
+	public TaskCache exclude(String... excludes) {
 		_patternFilterable.exclude(excludes);
 
 		return this;
@@ -110,25 +110,8 @@ public class TaskCache implements PatternFilterable {
 		return _project;
 	}
 
-	public Set<Task> getSkippedTaskDependencies() {
-		Set<Task> skippedTaskDependencies = new HashSet<>();
-
-		for (Object skippedDependencyTask : _skippedTaskDependencies) {
-			skippedDependencyTask = GradleUtil.toObject(skippedDependencyTask);
-
-			if (skippedDependencyTask instanceof Task) {
-				skippedTaskDependencies.add((Task)skippedDependencyTask);
-			}
-			else {
-				String taskName = GradleUtil.toString(skippedDependencyTask);
-
-				Task task = GradleUtil.getTask(_project, taskName);
-
-				skippedTaskDependencies.add(task);
-			}
-		}
-
-		return skippedTaskDependencies;
+	public Set<Object> getSkippedTaskDependencies() {
+		return _skippedTaskDependencies;
 	}
 
 	public Task getTask() {
@@ -163,7 +146,7 @@ public class TaskCache implements PatternFilterable {
 	}
 
 	@Override
-	public TaskCache include(String ... includes) {
+	public TaskCache include(String... includes) {
 		_patternFilterable.include(includes);
 
 		return this;
@@ -199,7 +182,7 @@ public class TaskCache implements PatternFilterable {
 		skipTaskDependency(skippedTaskDependencies);
 	}
 
-	public void setSkippedTaskDependencies(Object ... skippedTaskDependencies) {
+	public void setSkippedTaskDependencies(Object... skippedTaskDependencies) {
 		setSkippedTaskDependencies(Arrays.asList(skippedTaskDependencies));
 	}
 
@@ -209,7 +192,7 @@ public class TaskCache implements PatternFilterable {
 		testFile(testFiles);
 	}
 
-	public void setTestFiles(Object ... testFiles) {
+	public void setTestFiles(Object... testFiles) {
 		setTestFiles(Arrays.asList(testFiles));
 	}
 
@@ -222,7 +205,7 @@ public class TaskCache implements PatternFilterable {
 		return this;
 	}
 
-	public TaskCache skipTaskDependency(Object ... skippedTaskDependencies) {
+	public TaskCache skipTaskDependency(Object... skippedTaskDependencies) {
 		return skipTaskDependency(Arrays.asList(skippedTaskDependencies));
 	}
 
@@ -232,7 +215,7 @@ public class TaskCache implements PatternFilterable {
 		return this;
 	}
 
-	public TaskCache testFile(Object ... testFiles) {
+	public TaskCache testFile(Object... testFiles) {
 		return testFile(Arrays.asList(testFiles));
 	}
 
@@ -241,7 +224,7 @@ public class TaskCache implements PatternFilterable {
 	private final String _name;
 	private final PatternFilterable _patternFilterable = new PatternSet();
 	private final Project _project;
-	private final List<Object> _skippedTaskDependencies = new ArrayList<>();
+	private final Set<Object> _skippedTaskDependencies = new LinkedHashSet<>();
 	private final List<Object> _testFiles = new ArrayList<>();
 
 }

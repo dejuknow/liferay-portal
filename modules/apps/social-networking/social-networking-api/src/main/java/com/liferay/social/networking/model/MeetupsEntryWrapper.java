@@ -20,13 +20,13 @@ import com.liferay.expando.kernel.model.ExpandoBridge;
 
 import com.liferay.portal.kernel.model.ModelWrapper;
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Serializable;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * <p>
@@ -164,59 +164,53 @@ public class MeetupsEntryWrapper implements MeetupsEntry,
 	}
 
 	@Override
-	public java.lang.Object clone() {
-		return new MeetupsEntryWrapper((MeetupsEntry)_meetupsEntry.clone());
+	public MeetupsEntry toEscapedModel() {
+		return new MeetupsEntryWrapper(_meetupsEntry.toEscapedModel());
 	}
 
 	@Override
-	public int compareTo(
-		com.liferay.social.networking.model.MeetupsEntry meetupsEntry) {
-		return _meetupsEntry.compareTo(meetupsEntry);
+	public MeetupsEntry toUnescapedModel() {
+		return new MeetupsEntryWrapper(_meetupsEntry.toUnescapedModel());
 	}
 
-	/**
-	* Returns the company ID of this meetups entry.
-	*
-	* @return the company ID of this meetups entry
-	*/
 	@Override
-	public long getCompanyId() {
-		return _meetupsEntry.getCompanyId();
+	public boolean isCachedModel() {
+		return _meetupsEntry.isCachedModel();
 	}
 
-	/**
-	* Returns the create date of this meetups entry.
-	*
-	* @return the create date of this meetups entry
-	*/
 	@Override
-	public Date getCreateDate() {
-		return _meetupsEntry.getCreateDate();
+	public boolean isEscapedModel() {
+		return _meetupsEntry.isEscapedModel();
 	}
 
-	/**
-	* Returns the description of this meetups entry.
-	*
-	* @return the description of this meetups entry
-	*/
 	@Override
-	public java.lang.String getDescription() {
-		return _meetupsEntry.getDescription();
-	}
-
-	/**
-	* Returns the end date of this meetups entry.
-	*
-	* @return the end date of this meetups entry
-	*/
-	@Override
-	public Date getEndDate() {
-		return _meetupsEntry.getEndDate();
+	public boolean isNew() {
+		return _meetupsEntry.isNew();
 	}
 
 	@Override
 	public ExpandoBridge getExpandoBridge() {
 		return _meetupsEntry.getExpandoBridge();
+	}
+
+	@Override
+	public com.liferay.portal.kernel.model.CacheModel<MeetupsEntry> toCacheModel() {
+		return _meetupsEntry.toCacheModel();
+	}
+
+	/**
+	* Returns the price of this meetups entry.
+	*
+	* @return the price of this meetups entry
+	*/
+	@Override
+	public double getPrice() {
+		return _meetupsEntry.getPrice();
+	}
+
+	@Override
+	public int compareTo(MeetupsEntry meetupsEntry) {
+		return _meetupsEntry.compareTo(meetupsEntry);
 	}
 
 	/**
@@ -230,43 +224,18 @@ public class MeetupsEntryWrapper implements MeetupsEntry,
 	}
 
 	/**
-	* Returns the meetups entry ID of this meetups entry.
+	* Returns the total attendees of this meetups entry.
 	*
-	* @return the meetups entry ID of this meetups entry
+	* @return the total attendees of this meetups entry
 	*/
 	@Override
-	public long getMeetupsEntryId() {
-		return _meetupsEntry.getMeetupsEntryId();
+	public int getTotalAttendees() {
+		return _meetupsEntry.getTotalAttendees();
 	}
 
-	/**
-	* Returns the modified date of this meetups entry.
-	*
-	* @return the modified date of this meetups entry
-	*/
 	@Override
-	public Date getModifiedDate() {
-		return _meetupsEntry.getModifiedDate();
-	}
-
-	/**
-	* Returns the price of this meetups entry.
-	*
-	* @return the price of this meetups entry
-	*/
-	@Override
-	public double getPrice() {
-		return _meetupsEntry.getPrice();
-	}
-
-	/**
-	* Returns the primary key of this meetups entry.
-	*
-	* @return the primary key of this meetups entry
-	*/
-	@Override
-	public long getPrimaryKey() {
-		return _meetupsEntry.getPrimaryKey();
+	public int hashCode() {
+		return _meetupsEntry.hashCode();
 	}
 
 	@Override
@@ -274,24 +243,19 @@ public class MeetupsEntryWrapper implements MeetupsEntry,
 		return _meetupsEntry.getPrimaryKeyObj();
 	}
 
-	/**
-	* Returns the start date of this meetups entry.
-	*
-	* @return the start date of this meetups entry
-	*/
 	@Override
-	public Date getStartDate() {
-		return _meetupsEntry.getStartDate();
+	public java.lang.Object clone() {
+		return new MeetupsEntryWrapper((MeetupsEntry)_meetupsEntry.clone());
 	}
 
 	/**
-	* Returns the thumbnail ID of this meetups entry.
+	* Returns the description of this meetups entry.
 	*
-	* @return the thumbnail ID of this meetups entry
+	* @return the description of this meetups entry
 	*/
 	@Override
-	public long getThumbnailId() {
-		return _meetupsEntry.getThumbnailId();
+	public java.lang.String getDescription() {
+		return _meetupsEntry.getDescription();
 	}
 
 	/**
@@ -302,26 +266,6 @@ public class MeetupsEntryWrapper implements MeetupsEntry,
 	@Override
 	public java.lang.String getTitle() {
 		return _meetupsEntry.getTitle();
-	}
-
-	/**
-	* Returns the total attendees of this meetups entry.
-	*
-	* @return the total attendees of this meetups entry
-	*/
-	@Override
-	public int getTotalAttendees() {
-		return _meetupsEntry.getTotalAttendees();
-	}
-
-	/**
-	* Returns the user ID of this meetups entry.
-	*
-	* @return the user ID of this meetups entry
-	*/
-	@Override
-	public long getUserId() {
-		return _meetupsEntry.getUserId();
 	}
 
 	/**
@@ -345,23 +289,103 @@ public class MeetupsEntryWrapper implements MeetupsEntry,
 	}
 
 	@Override
-	public int hashCode() {
-		return _meetupsEntry.hashCode();
+	public java.lang.String toString() {
+		return _meetupsEntry.toString();
 	}
 
 	@Override
-	public boolean isCachedModel() {
-		return _meetupsEntry.isCachedModel();
+	public java.lang.String toXmlString() {
+		return _meetupsEntry.toXmlString();
 	}
 
+	/**
+	* Returns the create date of this meetups entry.
+	*
+	* @return the create date of this meetups entry
+	*/
 	@Override
-	public boolean isEscapedModel() {
-		return _meetupsEntry.isEscapedModel();
+	public Date getCreateDate() {
+		return _meetupsEntry.getCreateDate();
 	}
 
+	/**
+	* Returns the end date of this meetups entry.
+	*
+	* @return the end date of this meetups entry
+	*/
 	@Override
-	public boolean isNew() {
-		return _meetupsEntry.isNew();
+	public Date getEndDate() {
+		return _meetupsEntry.getEndDate();
+	}
+
+	/**
+	* Returns the modified date of this meetups entry.
+	*
+	* @return the modified date of this meetups entry
+	*/
+	@Override
+	public Date getModifiedDate() {
+		return _meetupsEntry.getModifiedDate();
+	}
+
+	/**
+	* Returns the start date of this meetups entry.
+	*
+	* @return the start date of this meetups entry
+	*/
+	@Override
+	public Date getStartDate() {
+		return _meetupsEntry.getStartDate();
+	}
+
+	/**
+	* Returns the company ID of this meetups entry.
+	*
+	* @return the company ID of this meetups entry
+	*/
+	@Override
+	public long getCompanyId() {
+		return _meetupsEntry.getCompanyId();
+	}
+
+	/**
+	* Returns the meetups entry ID of this meetups entry.
+	*
+	* @return the meetups entry ID of this meetups entry
+	*/
+	@Override
+	public long getMeetupsEntryId() {
+		return _meetupsEntry.getMeetupsEntryId();
+	}
+
+	/**
+	* Returns the primary key of this meetups entry.
+	*
+	* @return the primary key of this meetups entry
+	*/
+	@Override
+	public long getPrimaryKey() {
+		return _meetupsEntry.getPrimaryKey();
+	}
+
+	/**
+	* Returns the thumbnail ID of this meetups entry.
+	*
+	* @return the thumbnail ID of this meetups entry
+	*/
+	@Override
+	public long getThumbnailId() {
+		return _meetupsEntry.getThumbnailId();
+	}
+
+	/**
+	* Returns the user ID of this meetups entry.
+	*
+	* @return the user ID of this meetups entry
+	*/
+	@Override
+	public long getUserId() {
+		return _meetupsEntry.getUserId();
 	}
 
 	@Override
@@ -415,14 +439,14 @@ public class MeetupsEntryWrapper implements MeetupsEntry,
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
-		_meetupsEntry.setExpandoBridgeAttributes(baseModel);
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
+		_meetupsEntry.setExpandoBridgeAttributes(expandoBridge);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
-		_meetupsEntry.setExpandoBridgeAttributes(expandoBridge);
+	public void setExpandoBridgeAttributes(
+		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
+		_meetupsEntry.setExpandoBridgeAttributes(baseModel);
 	}
 
 	@Override
@@ -561,31 +585,6 @@ public class MeetupsEntryWrapper implements MeetupsEntry,
 	}
 
 	@Override
-	public com.liferay.portal.kernel.model.CacheModel<com.liferay.social.networking.model.MeetupsEntry> toCacheModel() {
-		return _meetupsEntry.toCacheModel();
-	}
-
-	@Override
-	public com.liferay.social.networking.model.MeetupsEntry toEscapedModel() {
-		return new MeetupsEntryWrapper(_meetupsEntry.toEscapedModel());
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _meetupsEntry.toString();
-	}
-
-	@Override
-	public com.liferay.social.networking.model.MeetupsEntry toUnescapedModel() {
-		return new MeetupsEntryWrapper(_meetupsEntry.toUnescapedModel());
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _meetupsEntry.toXmlString();
-	}
-
-	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
@@ -597,7 +596,7 @@ public class MeetupsEntryWrapper implements MeetupsEntry,
 
 		MeetupsEntryWrapper meetupsEntryWrapper = (MeetupsEntryWrapper)obj;
 
-		if (Validator.equals(_meetupsEntry, meetupsEntryWrapper._meetupsEntry)) {
+		if (Objects.equals(_meetupsEntry, meetupsEntryWrapper._meetupsEntry)) {
 			return true;
 		}
 

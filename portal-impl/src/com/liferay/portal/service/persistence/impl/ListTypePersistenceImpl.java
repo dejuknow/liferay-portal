@@ -38,7 +38,6 @@ import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.impl.ListTypeImpl;
 import com.liferay.portal.model.impl.ListTypeModelImpl;
 
@@ -50,6 +49,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -193,7 +193,7 @@ public class ListTypePersistenceImpl extends BasePersistenceImpl<ListType>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (ListType listType : list) {
-					if (!Validator.equals(type, listType.getType())) {
+					if (!Objects.equals(type, listType.getType())) {
 						list = null;
 
 						break;
@@ -666,8 +666,8 @@ public class ListTypePersistenceImpl extends BasePersistenceImpl<ListType>
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchListTypeException(msg.toString());
@@ -711,8 +711,8 @@ public class ListTypePersistenceImpl extends BasePersistenceImpl<ListType>
 		if (result instanceof ListType) {
 			ListType listType = (ListType)result;
 
-			if (!Validator.equals(name, listType.getName()) ||
-					!Validator.equals(type, listType.getType())) {
+			if (!Objects.equals(name, listType.getName()) ||
+					!Objects.equals(type, listType.getType())) {
 				result = null;
 			}
 		}
@@ -1101,8 +1101,8 @@ public class ListTypePersistenceImpl extends BasePersistenceImpl<ListType>
 					primaryKey);
 
 			if (listType == null) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+				if (_log.isDebugEnabled()) {
+					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchListTypeException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
@@ -1248,8 +1248,8 @@ public class ListTypePersistenceImpl extends BasePersistenceImpl<ListType>
 		ListType listType = fetchByPrimaryKey(primaryKey);
 
 		if (listType == null) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+			if (_log.isDebugEnabled()) {
+				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
 			throw new NoSuchListTypeException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +

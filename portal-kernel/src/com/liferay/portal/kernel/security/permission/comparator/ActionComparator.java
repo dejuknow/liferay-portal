@@ -18,6 +18,8 @@ import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 
 import java.io.Serializable;
 
+import java.text.Collator;
+
 import java.util.Comparator;
 import java.util.Locale;
 
@@ -32,10 +34,12 @@ public class ActionComparator implements Comparator<String>, Serializable {
 
 	@Override
 	public int compare(String action1, String action2) {
+		Collator collator = Collator.getInstance(_locale);
+
 		action1 = ResourceActionsUtil.getAction(_locale, action1);
 		action2 = ResourceActionsUtil.getAction(_locale, action2);
 
-		return action1.compareTo(action2);
+		return collator.compare(action1, action2);
 	}
 
 	private final Locale _locale;

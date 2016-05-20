@@ -44,16 +44,9 @@ if (row != null) {
 	}
 }
 else {
-	if (portletName.equals(DLPortletKeys.MEDIA_GALLERY_DISPLAY)) {
-		folder = (Folder)request.getAttribute("info_panel.jsp-folder");
+	folder = (Folder)request.getAttribute("info_panel.jsp-folder");
 
-		repositoryId = GetterUtil.getLong((String)request.getAttribute("view.jsp-repositoryId"));
-	}
-	else {
-		folder = (Folder)request.getAttribute("info_panel.jsp-folder");
-
-		repositoryId = GetterUtil.getLong((String)request.getAttribute("view_entries.jsp-repositoryId"));
-	}
+	repositoryId = GetterUtil.getLong((String)request.getAttribute("view.jsp-repositoryId"));
 }
 
 long folderId = DLFolderConstants.DEFAULT_PARENT_FOLDER_ID;
@@ -370,12 +363,12 @@ if ((row == null) && portletName.equals(DLPortletKeys.MEDIA_GALLERY_DISPLAY)) {
 					</portlet:renderURL>
 
 					<portlet:actionURL name="/document_library/edit_folder" var="deleteURL">
-						<portlet:param name="<%= Constants.CMD %>" value="<%= ((folder.getModel() instanceof DLFolder) && TrashUtil.isTrashEnabled(scopeGroupId)) ? Constants.MOVE_TO_TRASH : Constants.DELETE %>" />
+						<portlet:param name="<%= Constants.CMD %>" value="<%= ((folder.getModel() instanceof DLFolder) && DLTrashUtil.isTrashEnabled(scopeGroupId, repositoryId)) ? Constants.MOVE_TO_TRASH : Constants.DELETE %>" />
 						<portlet:param name="redirect" value="<%= (view || folderSelected) ? redirectURL : redirect %>" />
 						<portlet:param name="folderId" value="<%= String.valueOf(folderId) %>" />
 					</portlet:actionURL>
 
-					<liferay-ui:icon-delete trash="<%= ((folder.getModel() instanceof DLFolder) && TrashUtil.isTrashEnabled(scopeGroupId)) %>" url="<%= deleteURL %>" />
+					<liferay-ui:icon-delete trash="<%= ((folder.getModel() instanceof DLFolder) && DLTrashUtil.isTrashEnabled(scopeGroupId, repositoryId)) %>" url="<%= deleteURL %>" />
 				</c:when>
 				<c:otherwise>
 					<portlet:renderURL var="redirectURL">

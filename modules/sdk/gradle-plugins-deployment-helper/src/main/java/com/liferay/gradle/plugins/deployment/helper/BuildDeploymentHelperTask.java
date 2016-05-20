@@ -31,6 +31,7 @@ import org.gradle.api.file.FileTree;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.JavaExec;
+import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.SkipWhenEmpty;
 import org.gradle.util.GUtil;
@@ -53,7 +54,7 @@ public class BuildDeploymentHelperTask extends JavaExec {
 	}
 
 	public BuildDeploymentHelperTask deploymentFiles(
-		Object ... deploymentFiles) {
+		Object... deploymentFiles) {
 
 		return deploymentFiles(Arrays.asList(deploymentFiles));
 	}
@@ -93,6 +94,7 @@ public class BuildDeploymentHelperTask extends JavaExec {
 	}
 
 	@Input
+	@Optional
 	public File getDeploymentPath() {
 		return GradleUtil.toFile(getProject(), _deploymentPath);
 	}
@@ -108,7 +110,7 @@ public class BuildDeploymentHelperTask extends JavaExec {
 		deploymentFiles(deploymentFiles);
 	}
 
-	public void setDeploymentFiles(Object ... deploymentFiles) {
+	public void setDeploymentFiles(Object... deploymentFiles) {
 		setDeploymentFiles(Arrays.asList(deploymentFiles));
 	}
 
@@ -125,12 +127,16 @@ public class BuildDeploymentHelperTask extends JavaExec {
 
 		GUtil.addToCollection(completeArgs, getArgs());
 
-		completeArgs.add("deployment.files=" + getDeploymentFileNames());
+		completeArgs.add("--fileNames=" + getDeploymentFileNames());
 		completeArgs.add(
-			"deployment.output.file=" +
-				FileUtil.getAbsolutePath(getOutputFile()));
-		completeArgs.add(
-			"deployment.path=" + FileUtil.getAbsolutePath(getDeploymentPath()));
+			"--outputFile=" + FileUtil.getAbsolutePath(getOutputFile()));
+
+		File deploymentPath = getDeploymentPath();
+
+		if (deploymentPath != null) {
+			completeArgs.add(
+				"--path=" + FileUtil.getAbsolutePath(deploymentPath));
+		}
 
 		return completeArgs;
 	}

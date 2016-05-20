@@ -21,6 +21,8 @@ import com.liferay.gradle.util.Validator;
 
 import java.io.File;
 
+import java.nio.charset.StandardCharsets;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -49,6 +51,7 @@ import org.gradle.util.GUtil;
 public class BuildCSSTask extends JavaExec {
 
 	public BuildCSSTask() {
+		setDefaultCharacterEncoding(StandardCharsets.UTF_8.toString());
 		setDirNames("/");
 		setMain("com.liferay.css.builder.CSSBuilder");
 	}
@@ -59,7 +62,7 @@ public class BuildCSSTask extends JavaExec {
 		return this;
 	}
 
-	public BuildCSSTask dirNames(Object ... dirNames) {
+	public BuildCSSTask dirNames(Object... dirNames) {
 		return dirNames(Arrays.asList(dirNames));
 	}
 
@@ -190,7 +193,7 @@ public class BuildCSSTask extends JavaExec {
 	}
 
 	public BuildCSSTask rtlExcludedPathRegexps(
-		Object ... rtlExcludedPathRegexps) {
+		Object... rtlExcludedPathRegexps) {
 
 		return rtlExcludedPathRegexps(Arrays.asList(rtlExcludedPathRegexps));
 	}
@@ -201,7 +204,7 @@ public class BuildCSSTask extends JavaExec {
 		dirNames(dirNames);
 	}
 
-	public void setDirNames(Object ... dirNames) {
+	public void setDirNames(Object... dirNames) {
 		setDirNames(Arrays.asList(dirNames));
 	}
 
@@ -229,7 +232,7 @@ public class BuildCSSTask extends JavaExec {
 		rtlExcludedPathRegexps(rtlExcludedPathRegexps);
 	}
 
-	public void setRtlExcludedPathRegexps(Object ... rtlExcludedPathRegexps) {
+	public void setRtlExcludedPathRegexps(Object... rtlExcludedPathRegexps) {
 		setRtlExcludedPathRegexps(Arrays.asList(rtlExcludedPathRegexps));
 	}
 

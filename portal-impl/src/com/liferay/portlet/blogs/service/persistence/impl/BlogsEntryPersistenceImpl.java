@@ -71,6 +71,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -216,7 +217,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (BlogsEntry blogsEntry : list) {
-					if (!Validator.equals(uuid, blogsEntry.getUuid())) {
+					if (!Objects.equals(uuid, blogsEntry.getUuid())) {
 						list = null;
 
 						break;
@@ -689,8 +690,8 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchEntryException(msg.toString());
@@ -734,7 +735,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		if (result instanceof BlogsEntry) {
 			BlogsEntry blogsEntry = (BlogsEntry)result;
 
-			if (!Validator.equals(uuid, blogsEntry.getUuid()) ||
+			if (!Objects.equals(uuid, blogsEntry.getUuid()) ||
 					(groupId != blogsEntry.getGroupId())) {
 				result = null;
 			}
@@ -1027,7 +1028,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (BlogsEntry blogsEntry : list) {
-					if (!Validator.equals(uuid, blogsEntry.getUuid()) ||
+					if (!Objects.equals(uuid, blogsEntry.getUuid()) ||
 							(companyId != blogsEntry.getCompanyId())) {
 						list = null;
 
@@ -2895,8 +2896,8 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchEntryException(msg.toString());
@@ -2941,7 +2942,7 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 			BlogsEntry blogsEntry = (BlogsEntry)result;
 
 			if ((groupId != blogsEntry.getGroupId()) ||
-					!Validator.equals(urlTitle, blogsEntry.getUrlTitle())) {
+					!Objects.equals(urlTitle, blogsEntry.getUrlTitle())) {
 				result = null;
 			}
 		}
@@ -18984,8 +18985,8 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 					primaryKey);
 
 			if (blogsEntry == null) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+				if (_log.isDebugEnabled()) {
+					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchEntryException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
@@ -19088,15 +19089,13 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 
 			try {
 				blogsEntry.setTitle(SanitizerUtil.sanitize(companyId, groupId,
-						userId,
-						com.liferay.blogs.kernel.model.BlogsEntry.class.getName(),
-						entryId, ContentTypes.TEXT_PLAIN, Sanitizer.MODE_ALL,
+						userId, BlogsEntry.class.getName(), entryId,
+						ContentTypes.TEXT_PLAIN, Sanitizer.MODE_ALL,
 						blogsEntry.getTitle(), null));
 
 				blogsEntry.setContent(SanitizerUtil.sanitize(companyId,
-						groupId, userId,
-						com.liferay.blogs.kernel.model.BlogsEntry.class.getName(),
-						entryId, ContentTypes.TEXT_HTML, Sanitizer.MODE_ALL,
+						groupId, userId, BlogsEntry.class.getName(), entryId,
+						ContentTypes.TEXT_HTML, Sanitizer.MODE_ALL,
 						blogsEntry.getContent(), null));
 			}
 			catch (SanitizerException se) {
@@ -19381,8 +19380,8 @@ public class BlogsEntryPersistenceImpl extends BasePersistenceImpl<BlogsEntry>
 		BlogsEntry blogsEntry = fetchByPrimaryKey(primaryKey);
 
 		if (blogsEntry == null) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+			if (_log.isDebugEnabled()) {
+				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
 			throw new NoSuchEntryException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +

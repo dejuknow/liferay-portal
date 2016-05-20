@@ -258,7 +258,7 @@ public abstract class DLFileEntryTypeLocalServiceBaseImpl
 	public ActionableDynamicQuery getActionableDynamicQuery() {
 		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
 
-		actionableDynamicQuery.setBaseLocalService(com.liferay.document.library.kernel.service.DLFileEntryTypeLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(dlFileEntryTypeLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(DLFileEntryType.class);
 
@@ -271,7 +271,7 @@ public abstract class DLFileEntryTypeLocalServiceBaseImpl
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
 		IndexableActionableDynamicQuery indexableActionableDynamicQuery = new IndexableActionableDynamicQuery();
 
-		indexableActionableDynamicQuery.setBaseLocalService(com.liferay.document.library.kernel.service.DLFileEntryTypeLocalServiceUtil.getService());
+		indexableActionableDynamicQuery.setBaseLocalService(dlFileEntryTypeLocalService);
 		indexableActionableDynamicQuery.setClassLoader(getClassLoader());
 		indexableActionableDynamicQuery.setModelClass(DLFileEntryType.class);
 
@@ -283,7 +283,7 @@ public abstract class DLFileEntryTypeLocalServiceBaseImpl
 
 	protected void initActionableDynamicQuery(
 		ActionableDynamicQuery actionableDynamicQuery) {
-		actionableDynamicQuery.setBaseLocalService(com.liferay.document.library.kernel.service.DLFileEntryTypeLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(dlFileEntryTypeLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(DLFileEntryType.class);
 
@@ -469,8 +469,8 @@ public abstract class DLFileEntryTypeLocalServiceBaseImpl
 	 */
 	@Override
 	public void addDLFolderDLFileEntryTypes(long folderId,
-		List<DLFileEntryType> DLFileEntryTypes) {
-		dlFolderPersistence.addDLFileEntryTypes(folderId, DLFileEntryTypes);
+		List<DLFileEntryType> dlFileEntryTypes) {
+		dlFolderPersistence.addDLFileEntryTypes(folderId, dlFileEntryTypes);
 	}
 
 	/**
@@ -508,8 +508,8 @@ public abstract class DLFileEntryTypeLocalServiceBaseImpl
 	 */
 	@Override
 	public void deleteDLFolderDLFileEntryTypes(long folderId,
-		List<DLFileEntryType> DLFileEntryTypes) {
-		dlFolderPersistence.removeDLFileEntryTypes(folderId, DLFileEntryTypes);
+		List<DLFileEntryType> dlFileEntryTypes) {
+		dlFolderPersistence.removeDLFileEntryTypes(folderId, dlFileEntryTypes);
 	}
 
 	/**
@@ -1062,7 +1062,7 @@ public abstract class DLFileEntryTypeLocalServiceBaseImpl
 		}
 	}
 
-	@BeanReference(type = com.liferay.document.library.kernel.service.DLFileEntryTypeLocalService.class)
+	@BeanReference(type = DLFileEntryTypeLocalService.class)
 	protected DLFileEntryTypeLocalService dlFileEntryTypeLocalService;
 	@BeanReference(type = DLFileEntryTypePersistence.class)
 	protected DLFileEntryTypePersistence dlFileEntryTypePersistence;

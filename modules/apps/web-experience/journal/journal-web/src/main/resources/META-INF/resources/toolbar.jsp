@@ -28,11 +28,8 @@ String searchContainerId = ParamUtil.getString(request, "searchContainerId");
 	<liferay-frontend:management-bar-buttons>
 		<c:if test="<%= journalDisplayContext.isShowInfoPanel() %>">
 			<liferay-frontend:management-bar-sidenav-toggler-button
-				disabled="<%= false %>"
-				href="javascript:;"
 				icon="info-circle"
 				label="info"
-				sidenavId='<%= liferayPortletResponse.getNamespace() + "infoPanelId" %>'
 			/>
 		</c:if>
 
@@ -47,7 +44,7 @@ String searchContainerId = ParamUtil.getString(request, "searchContainerId");
 	String label = null;
 
 	if (journalDisplayContext.isNavigationStructure()) {
-		label = LanguageUtil.get(request, "structure") + StringPool.COLON + StringPool.SPACE + journalDisplayContext.getDDMStructureName();
+		label = LanguageUtil.get(request, "structure") + StringPool.COLON + StringPool.SPACE + HtmlUtil.escape(journalDisplayContext.getDDMStructureName());
 	}
 	%>
 
@@ -98,11 +95,8 @@ String searchContainerId = ParamUtil.getString(request, "searchContainerId");
 	<liferay-frontend:management-bar-action-buttons>
 		<c:if test="<%= journalDisplayContext.isShowInfoPanel() %>">
 			<liferay-frontend:management-bar-sidenav-toggler-button
-				disabled="<%= false %>"
-				href="javascript:;"
 				icon="info-circle"
 				label="info"
-				sidenavId='<%= liferayPortletResponse.getNamespace() + "infoPanelId" %>'
 			/>
 		</c:if>
 
@@ -138,6 +132,13 @@ String searchContainerId = ParamUtil.getString(request, "searchContainerId");
 <aui:script use="liferay-item-selector-dialog">
 	var form = $(document.<portlet:namespace />fm);
 
+	<portlet:renderURL var="selectStructureURL" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
+		<portlet:param name="mvcPath" value="/select_structure.jsp" />
+		<portlet:param name="folderId" value="<%= String.valueOf(journalDisplayContext.getFolderId()) %>" />
+		<portlet:param name="navigationStartsOn" value="<%= DDMNavigationHelper.SELECT_STRUCTURE %>" />
+		<portlet:param name="ddmStructureKey" value="<%= journalDisplayContext.getDDMStructureKey() %>" />
+	</portlet:renderURL>
+
 	<portlet:renderURL var="viewDDMStructureArticlesURL">
 		<portlet:param name="navigation" value="structure" />
 		<portlet:param name="folderId" value="<%= String.valueOf(JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID) %>" />
@@ -167,7 +168,7 @@ String searchContainerId = ParamUtil.getString(request, "searchContainerId");
 					},
 					'strings.add': '<liferay-ui:message key="done" />',
 					title: '<liferay-ui:message key="select-structure" />',
-					url: '<portlet:renderURL windowState="<%= LiferayWindowState.POP_UP.toString() %>"><portlet:param name="mvcPath" value="/select_structure.jsp" /><portlet:param name="navigationStartsOn" value="<%= DDMNavigationHelper.SELECT_STRUCTURE %>" /><portlet:param name="ddmStructureKey" value="<%= journalDisplayContext.getDDMStructureKey() %>" /></portlet:renderURL>'
+					url: '<%= selectStructureURL %>'
 				}
 			);
 

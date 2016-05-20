@@ -227,7 +227,7 @@ public abstract class PortalPreferencesLocalServiceBaseImpl
 	public ActionableDynamicQuery getActionableDynamicQuery() {
 		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
 
-		actionableDynamicQuery.setBaseLocalService(com.liferay.portal.kernel.service.PortalPreferencesLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(portalPreferencesLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(PortalPreferences.class);
 
@@ -240,7 +240,7 @@ public abstract class PortalPreferencesLocalServiceBaseImpl
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
 		IndexableActionableDynamicQuery indexableActionableDynamicQuery = new IndexableActionableDynamicQuery();
 
-		indexableActionableDynamicQuery.setBaseLocalService(com.liferay.portal.kernel.service.PortalPreferencesLocalServiceUtil.getService());
+		indexableActionableDynamicQuery.setBaseLocalService(portalPreferencesLocalService);
 		indexableActionableDynamicQuery.setClassLoader(getClassLoader());
 		indexableActionableDynamicQuery.setModelClass(PortalPreferences.class);
 
@@ -252,7 +252,7 @@ public abstract class PortalPreferencesLocalServiceBaseImpl
 
 	protected void initActionableDynamicQuery(
 		ActionableDynamicQuery actionableDynamicQuery) {
-		actionableDynamicQuery.setBaseLocalService(com.liferay.portal.kernel.service.PortalPreferencesLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(portalPreferencesLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(PortalPreferences.class);
 
@@ -422,7 +422,7 @@ public abstract class PortalPreferencesLocalServiceBaseImpl
 		}
 	}
 
-	@BeanReference(type = com.liferay.portal.kernel.service.PortalPreferencesLocalService.class)
+	@BeanReference(type = PortalPreferencesLocalService.class)
 	protected PortalPreferencesLocalService portalPreferencesLocalService;
 	@BeanReference(type = PortalPreferencesPersistence.class)
 	protected PortalPreferencesPersistence portalPreferencesPersistence;

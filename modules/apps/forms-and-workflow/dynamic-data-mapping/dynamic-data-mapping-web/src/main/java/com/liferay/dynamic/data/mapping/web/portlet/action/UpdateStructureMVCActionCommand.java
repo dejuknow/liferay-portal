@@ -56,6 +56,8 @@ public class UpdateStructureMVCActionCommand extends DDMBaseMVCActionCommand {
 
 		DDMStructure structure = updateStructure(actionRequest);
 
+		addSuccessMessage(actionRequest, actionResponse);
+
 		setRedirectAttribute(actionRequest, structure);
 	}
 

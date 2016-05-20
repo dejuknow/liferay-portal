@@ -62,6 +62,8 @@ public class UpdateTemplateMVCActionCommand
 
 		updatePortletPreferences(actionRequest, template);
 
+		addSuccessMessage(actionRequest, actionResponse);
+
 		setRedirectAttribute(actionRequest, template);
 	}
 

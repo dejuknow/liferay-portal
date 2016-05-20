@@ -1,4 +1,4 @@
-define("frontend-js-metal-web@1.0.6/metal-popover/src/Popover", ['exports', 'metal/src/metal', 'metal-tooltip/src/Tooltip', 'metal-jquery-adapter/src/JQueryAdapter', './Popover.soy'], function (exports, _metal, _Tooltip, _JQueryAdapter) {
+define("frontend-js-metal-web@1.0.6/metal-popover/src/Popover", ['exports', 'metal/src/metal', 'metal-soy/src/Soy', 'metal-tooltip/src/Tooltip', './Popover.soy', 'metal-jquery-adapter/src/JQueryAdapter'], function (exports, _metal, _Soy, _Tooltip, _Popover, _JQueryAdapter) {
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
@@ -6,6 +6,10 @@ define("frontend-js-metal-web@1.0.6/metal-popover/src/Popover", ['exports', 'met
 	});
 
 	var _metal2 = _interopRequireDefault(_metal);
+
+	var _Soy2 = _interopRequireDefault(_Soy);
+
+	var _Popover2 = _interopRequireDefault(_Popover);
 
 	var _JQueryAdapter2 = _interopRequireDefault(_JQueryAdapter);
 
@@ -73,17 +77,23 @@ define("frontend-js-metal-web@1.0.6/metal-popover/src/Popover", ['exports', 'met
 		return Popover;
 	}(_Tooltip.TooltipBase);
 
-	Popover.prototype.registerMetalComponent && Popover.prototype.registerMetalComponent(Popover, 'Popover')
-
+	_Soy2.default.register(Popover, _Popover2.default);
 
 	/**
-  * Attributes definition.
+  * State definition.
   * @type {!Object}
   * @static
   */
-	Popover.ATTRS = {
+	Popover.STATE = {
+		/**
+   * The popover's content.
+   * @type {string}
+   */
 		content: {
-			validator: _metal2.default.isString
+			isHtml: true,
+			validator: function validator(val) {
+				return _metal2.default.isString(val) || _metal2.default.isFunction(val);
+			}
 		},
 
 		/**
@@ -94,6 +104,15 @@ define("frontend-js-metal-web@1.0.6/metal-popover/src/Popover", ['exports', 'met
 		triggerEvents: {
 			validator: Array.isArray,
 			value: ['click', 'click']
+		},
+
+		/**
+   * Flag indicating if an arrow should be rendered for the popover.
+   * @type {boolean}
+   * @default true
+   */
+		withArrow: {
+			value: true
 		}
 	};
 
@@ -103,8 +122,6 @@ define("frontend-js-metal-web@1.0.6/metal-popover/src/Popover", ['exports', 'met
   * @static
   */
 	Popover.Align = _Tooltip.TooltipBase.Align;
-
-	Popover.ELEMENT_CLASSES = 'popover';
 
 	exports.default = Popover;
 	_JQueryAdapter2.default.register('popover', Popover);

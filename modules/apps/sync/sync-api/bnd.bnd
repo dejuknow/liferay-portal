@@ -1,0 +1,6 @@
+Bundle-Name: Liferay Sync API
+Bundle-SymbolicName: com.liferay.sync.api
+Bundle-Version: 1.0.2
+Export-Package: com.liferay.sync.*
+Liferay-Releng-Module-Group-Description:
+Liferay-Releng-Module-Group-Title: Sync Connector

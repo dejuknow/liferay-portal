@@ -16,7 +16,13 @@ package com.liferay.screens.service.base;
 
 import com.liferay.asset.kernel.service.persistence.AssetEntryPersistence;
 
+import com.liferay.blogs.kernel.service.persistence.BlogsEntryPersistence;
+
 import com.liferay.document.library.kernel.service.persistence.DLFileEntryPersistence;
+
+import com.liferay.dynamic.data.lists.service.persistence.DDLRecordPersistence;
+import com.liferay.dynamic.data.lists.service.persistence.DDLRecordSetPersistence;
+import com.liferay.dynamic.data.mapping.service.persistence.DDMStructurePersistence;
 
 import com.liferay.journal.service.persistence.JournalArticlePersistence;
 import com.liferay.journal.service.persistence.JournalArticleResourcePersistence;
@@ -135,6 +141,177 @@ public abstract class ScreensAssetEntryServiceBaseImpl extends BaseServiceImpl
 	public void setCounterLocalService(
 		com.liferay.counter.kernel.service.CounterLocalService counterLocalService) {
 		this.counterLocalService = counterLocalService;
+	}
+
+	/**
+	 * Returns the d d l record local service.
+	 *
+	 * @return the d d l record local service
+	 */
+	public com.liferay.dynamic.data.lists.service.DDLRecordLocalService getDDLRecordLocalService() {
+		return ddlRecordLocalService;
+	}
+
+	/**
+	 * Sets the d d l record local service.
+	 *
+	 * @param ddlRecordLocalService the d d l record local service
+	 */
+	public void setDDLRecordLocalService(
+		com.liferay.dynamic.data.lists.service.DDLRecordLocalService ddlRecordLocalService) {
+		this.ddlRecordLocalService = ddlRecordLocalService;
+	}
+
+	/**
+	 * Returns the d d l record remote service.
+	 *
+	 * @return the d d l record remote service
+	 */
+	public com.liferay.dynamic.data.lists.service.DDLRecordService getDDLRecordService() {
+		return ddlRecordService;
+	}
+
+	/**
+	 * Sets the d d l record remote service.
+	 *
+	 * @param ddlRecordService the d d l record remote service
+	 */
+	public void setDDLRecordService(
+		com.liferay.dynamic.data.lists.service.DDLRecordService ddlRecordService) {
+		this.ddlRecordService = ddlRecordService;
+	}
+
+	/**
+	 * Returns the d d l record persistence.
+	 *
+	 * @return the d d l record persistence
+	 */
+	public DDLRecordPersistence getDDLRecordPersistence() {
+		return ddlRecordPersistence;
+	}
+
+	/**
+	 * Sets the d d l record persistence.
+	 *
+	 * @param ddlRecordPersistence the d d l record persistence
+	 */
+	public void setDDLRecordPersistence(
+		DDLRecordPersistence ddlRecordPersistence) {
+		this.ddlRecordPersistence = ddlRecordPersistence;
+	}
+
+	/**
+	 * Returns the d d l record set local service.
+	 *
+	 * @return the d d l record set local service
+	 */
+	public com.liferay.dynamic.data.lists.service.DDLRecordSetLocalService getDDLRecordSetLocalService() {
+		return ddlRecordSetLocalService;
+	}
+
+	/**
+	 * Sets the d d l record set local service.
+	 *
+	 * @param ddlRecordSetLocalService the d d l record set local service
+	 */
+	public void setDDLRecordSetLocalService(
+		com.liferay.dynamic.data.lists.service.DDLRecordSetLocalService ddlRecordSetLocalService) {
+		this.ddlRecordSetLocalService = ddlRecordSetLocalService;
+	}
+
+	/**
+	 * Returns the d d l record set remote service.
+	 *
+	 * @return the d d l record set remote service
+	 */
+	public com.liferay.dynamic.data.lists.service.DDLRecordSetService getDDLRecordSetService() {
+		return ddlRecordSetService;
+	}
+
+	/**
+	 * Sets the d d l record set remote service.
+	 *
+	 * @param ddlRecordSetService the d d l record set remote service
+	 */
+	public void setDDLRecordSetService(
+		com.liferay.dynamic.data.lists.service.DDLRecordSetService ddlRecordSetService) {
+		this.ddlRecordSetService = ddlRecordSetService;
+	}
+
+	/**
+	 * Returns the d d l record set persistence.
+	 *
+	 * @return the d d l record set persistence
+	 */
+	public DDLRecordSetPersistence getDDLRecordSetPersistence() {
+		return ddlRecordSetPersistence;
+	}
+
+	/**
+	 * Sets the d d l record set persistence.
+	 *
+	 * @param ddlRecordSetPersistence the d d l record set persistence
+	 */
+	public void setDDLRecordSetPersistence(
+		DDLRecordSetPersistence ddlRecordSetPersistence) {
+		this.ddlRecordSetPersistence = ddlRecordSetPersistence;
+	}
+
+	/**
+	 * Returns the d d m structure local service.
+	 *
+	 * @return the d d m structure local service
+	 */
+	public com.liferay.dynamic.data.mapping.service.DDMStructureLocalService getDDMStructureLocalService() {
+		return ddmStructureLocalService;
+	}
+
+	/**
+	 * Sets the d d m structure local service.
+	 *
+	 * @param ddmStructureLocalService the d d m structure local service
+	 */
+	public void setDDMStructureLocalService(
+		com.liferay.dynamic.data.mapping.service.DDMStructureLocalService ddmStructureLocalService) {
+		this.ddmStructureLocalService = ddmStructureLocalService;
+	}
+
+	/**
+	 * Returns the d d m structure remote service.
+	 *
+	 * @return the d d m structure remote service
+	 */
+	public com.liferay.dynamic.data.mapping.service.DDMStructureService getDDMStructureService() {
+		return ddmStructureService;
+	}
+
+	/**
+	 * Sets the d d m structure remote service.
+	 *
+	 * @param ddmStructureService the d d m structure remote service
+	 */
+	public void setDDMStructureService(
+		com.liferay.dynamic.data.mapping.service.DDMStructureService ddmStructureService) {
+		this.ddmStructureService = ddmStructureService;
+	}
+
+	/**
+	 * Returns the d d m structure persistence.
+	 *
+	 * @return the d d m structure persistence
+	 */
+	public DDMStructurePersistence getDDMStructurePersistence() {
+		return ddmStructurePersistence;
+	}
+
+	/**
+	 * Sets the d d m structure persistence.
+	 *
+	 * @param ddmStructurePersistence the d d m structure persistence
+	 */
+	public void setDDMStructurePersistence(
+		DDMStructurePersistence ddmStructurePersistence) {
+		this.ddmStructurePersistence = ddmStructurePersistence;
 	}
 
 	/**
@@ -517,6 +694,63 @@ public abstract class ScreensAssetEntryServiceBaseImpl extends BaseServiceImpl
 	}
 
 	/**
+	 * Returns the blogs entry local service.
+	 *
+	 * @return the blogs entry local service
+	 */
+	public com.liferay.blogs.kernel.service.BlogsEntryLocalService getBlogsEntryLocalService() {
+		return blogsEntryLocalService;
+	}
+
+	/**
+	 * Sets the blogs entry local service.
+	 *
+	 * @param blogsEntryLocalService the blogs entry local service
+	 */
+	public void setBlogsEntryLocalService(
+		com.liferay.blogs.kernel.service.BlogsEntryLocalService blogsEntryLocalService) {
+		this.blogsEntryLocalService = blogsEntryLocalService;
+	}
+
+	/**
+	 * Returns the blogs entry remote service.
+	 *
+	 * @return the blogs entry remote service
+	 */
+	public com.liferay.blogs.kernel.service.BlogsEntryService getBlogsEntryService() {
+		return blogsEntryService;
+	}
+
+	/**
+	 * Sets the blogs entry remote service.
+	 *
+	 * @param blogsEntryService the blogs entry remote service
+	 */
+	public void setBlogsEntryService(
+		com.liferay.blogs.kernel.service.BlogsEntryService blogsEntryService) {
+		this.blogsEntryService = blogsEntryService;
+	}
+
+	/**
+	 * Returns the blogs entry persistence.
+	 *
+	 * @return the blogs entry persistence
+	 */
+	public BlogsEntryPersistence getBlogsEntryPersistence() {
+		return blogsEntryPersistence;
+	}
+
+	/**
+	 * Sets the blogs entry persistence.
+	 *
+	 * @param blogsEntryPersistence the blogs entry persistence
+	 */
+	public void setBlogsEntryPersistence(
+		BlogsEntryPersistence blogsEntryPersistence) {
+		this.blogsEntryPersistence = blogsEntryPersistence;
+	}
+
+	/**
 	 * Returns the d l app local service.
 	 *
 	 * @return the d l app local service
@@ -651,7 +885,7 @@ public abstract class ScreensAssetEntryServiceBaseImpl extends BaseServiceImpl
 		}
 	}
 
-	@BeanReference(type = com.liferay.screens.service.ScreensAssetEntryService.class)
+	@BeanReference(type = ScreensAssetEntryService.class)
 	protected ScreensAssetEntryService screensAssetEntryService;
 	@BeanReference(type = com.liferay.screens.service.ScreensDDLRecordService.class)
 	protected com.liferay.screens.service.ScreensDDLRecordService screensDDLRecordService;
@@ -659,6 +893,24 @@ public abstract class ScreensAssetEntryServiceBaseImpl extends BaseServiceImpl
 	protected com.liferay.screens.service.ScreensJournalArticleService screensJournalArticleService;
 	@ServiceReference(type = com.liferay.counter.kernel.service.CounterLocalService.class)
 	protected com.liferay.counter.kernel.service.CounterLocalService counterLocalService;
+	@ServiceReference(type = com.liferay.dynamic.data.lists.service.DDLRecordLocalService.class)
+	protected com.liferay.dynamic.data.lists.service.DDLRecordLocalService ddlRecordLocalService;
+	@ServiceReference(type = com.liferay.dynamic.data.lists.service.DDLRecordService.class)
+	protected com.liferay.dynamic.data.lists.service.DDLRecordService ddlRecordService;
+	@ServiceReference(type = DDLRecordPersistence.class)
+	protected DDLRecordPersistence ddlRecordPersistence;
+	@ServiceReference(type = com.liferay.dynamic.data.lists.service.DDLRecordSetLocalService.class)
+	protected com.liferay.dynamic.data.lists.service.DDLRecordSetLocalService ddlRecordSetLocalService;
+	@ServiceReference(type = com.liferay.dynamic.data.lists.service.DDLRecordSetService.class)
+	protected com.liferay.dynamic.data.lists.service.DDLRecordSetService ddlRecordSetService;
+	@ServiceReference(type = DDLRecordSetPersistence.class)
+	protected DDLRecordSetPersistence ddlRecordSetPersistence;
+	@ServiceReference(type = com.liferay.dynamic.data.mapping.service.DDMStructureLocalService.class)
+	protected com.liferay.dynamic.data.mapping.service.DDMStructureLocalService ddmStructureLocalService;
+	@ServiceReference(type = com.liferay.dynamic.data.mapping.service.DDMStructureService.class)
+	protected com.liferay.dynamic.data.mapping.service.DDMStructureService ddmStructureService;
+	@ServiceReference(type = DDMStructurePersistence.class)
+	protected DDMStructurePersistence ddmStructurePersistence;
 	@ServiceReference(type = com.liferay.journal.service.JournalArticleLocalService.class)
 	protected com.liferay.journal.service.JournalArticleLocalService journalArticleLocalService;
 	@ServiceReference(type = com.liferay.journal.service.JournalArticleService.class)
@@ -699,6 +951,12 @@ public abstract class ScreensAssetEntryServiceBaseImpl extends BaseServiceImpl
 	protected com.liferay.asset.kernel.service.AssetEntryService assetEntryService;
 	@ServiceReference(type = AssetEntryPersistence.class)
 	protected AssetEntryPersistence assetEntryPersistence;
+	@ServiceReference(type = com.liferay.blogs.kernel.service.BlogsEntryLocalService.class)
+	protected com.liferay.blogs.kernel.service.BlogsEntryLocalService blogsEntryLocalService;
+	@ServiceReference(type = com.liferay.blogs.kernel.service.BlogsEntryService.class)
+	protected com.liferay.blogs.kernel.service.BlogsEntryService blogsEntryService;
+	@ServiceReference(type = BlogsEntryPersistence.class)
+	protected BlogsEntryPersistence blogsEntryPersistence;
 	@ServiceReference(type = com.liferay.document.library.kernel.service.DLAppLocalService.class)
 	protected com.liferay.document.library.kernel.service.DLAppLocalService dlAppLocalService;
 	@ServiceReference(type = com.liferay.document.library.kernel.service.DLAppService.class)

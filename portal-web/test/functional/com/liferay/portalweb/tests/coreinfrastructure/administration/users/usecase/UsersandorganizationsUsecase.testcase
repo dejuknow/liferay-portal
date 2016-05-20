@@ -1,4 +1,5 @@
 <definition component-name="portal-user-management-and-portal-configuration">
+	<property name="portal.release" value="true" />
 	<property name="testray.main.component.name" value="Users and Organizations" />
 
 	<set-up>
@@ -111,7 +112,7 @@
 
 		<execute macro="UserBar#gotoProfile" />
 
-		<execute function="AssertTextEquals" locator1="Home#SITE_NAME" value1="&lt;userfn&gt; userln" />
+		<execute function="AssertTextEquals" locator1="Home#USER_NAME_HEADER" value1="&lt;userfn&gt; userln" />
 	</command>
 
 	<command name="CannotViewSiteSettingsInUserPersonalSite" priority="4">
@@ -152,11 +153,19 @@
 			<var name="userScreenName" value="usersn1" />
 		</execute>
 
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Users and Organizations" />
+		</execute>
+
 		<execute macro="User#addCP">
 			<var name="userEmailAddress" value="userea2@liferay.com" />
 			<var name="userFirstName" value="userfn2" />
 			<var name="userLastName" value="userln2" />
 			<var name="userScreenName" value="usersn2" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoControlPanelUsers">
+			<var name="portlet" value="Users and Organizations" />
 		</execute>
 
 		<execute macro="User#addCP">
@@ -585,22 +594,19 @@
 
 		<execute macro="User#basicSearchCP">
 			<var name="userBasicSearch" value="Basic" />
-			<var name="userFirstName" value="userfn1" />
-			<var name="userLastName" value="userln1" />
+			<var name="userName" value="userfn1 userln1" />
 			<var name="userScreenName" value="usersn1" />
 		</execute>
 
 		<execute macro="User#basicSearchCP">
 			<var name="userBasicSearch" value="Basic" />
-			<var name="userFirstName" value="userfn2" />
-			<var name="userLastName" value="userln2" />
+			<var name="userName" value="userfn2 userln2" />
 			<var name="userScreenName" value="usersn2" />
 		</execute>
 
 		<execute macro="User#basicSearchCP">
 			<var name="userBasicSearch" value="Basic" />
-			<var name="userFirstName" value="userfn3" />
-			<var name="userLastName" value="userln3" />
+			<var name="userName" value="userfn3 userln3" />
 			<var name="userScreenName" value="usersn3" />
 		</execute>
 
@@ -754,8 +760,7 @@
 		</execute>
 
 		<execute macro="User#activateCP">
-			<var name="userFirstName" value="userfn2" />
-			<var name="userLastName" value="userln2" />
+			<var name="userName" value="userfn2 userln2" />
 			<var name="userScreenName" value="usersn2" />
 		</execute>
 
@@ -893,7 +898,7 @@
 		</execute>
 	</command>
 
-	<command  name="OrganizationUserManagement" priority="3">
+	<command name="OrganizationUserManagement" priority="3">
 		<execute macro="ProductMenu#gotoControlPanelUsers">
 			<var name="portlet" value="Users and Organizations" />
 		</execute>

@@ -949,18 +949,6 @@ public class VerifyProperties extends VerifyProcess {
 			"journal.article.force.autogenerate.id", "com.liferay.journal.web"
 		},
 		new String[] {
-			"journal.article.form.add", "journal.article.form.add",
-			"com.liferay.journal.web"
-		},
-		new String[] {
-			"journal.article.form.default.values",
-			"journal.article.form.default.values", "com.liferay.journal.web"
-		},
-		new String[] {
-			"journal.article.form.update", "journal.article.form.update",
-			"com.liferay.journal.web"
-		},
-		new String[] {
 			"journal.articles.search.with.index",
 			"journal.articles.search.with.index", "com.liferay.journal.web"
 		},
@@ -1796,8 +1784,9 @@ public class VerifyProperties extends VerifyProcess {
 		"invitation.email.max.recipients", "invitation.email.message.body",
 		"invitation.email.message.subject", "javax.persistence.validation.mode",
 		"jbi.workflow.url", "json.deserializer.strict.mode",
-		"journal.article.form.translate", "journal.article.types",
-		"journal.articles.page.delta.values",
+		"journal.article.form.add", "journal.article.form.default.values",
+		"journal.article.form.update", "journal.article.form.translate",
+		"journal.article.types", "journal.articles.page.delta.values",
 		"journal.template.language.parser[css]",
 		"journal.template.language.parser[ftl]",
 		"journal.template.language.parser[vm]",
@@ -1860,7 +1849,7 @@ public class VerifyProperties extends VerifyProcess {
 		"sites.form.update.advanced", "sites.form.update.main",
 		"sites.form.update.miscellaneous", "sites.form.update.seo",
 		"staging.lock.enabled", "social.activity.sets.bundling.enabled",
-		"table.mapper.cacheless.mapping.table.names", "tck.url",
+		"table.mapper.cache.mapping.table.names", "tck.url",
 		"user.groups.indexer.enabled", "users.form.add.identification",
 		"users.indexer.enabled", "users.form.add.main",
 		"users.form.add.miscellaneous", "users.form.my.account.identification",

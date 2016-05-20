@@ -121,6 +121,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.portlet.PortletRequest;
@@ -1886,23 +1887,29 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 
 		AssetEntry assetEntry = null;
 
+		Date publishDate = null;
+
 		if (addDraftAssetEntry) {
 			assetEntry = assetEntryLocalService.updateEntry(
 				userId, page.getGroupId(), page.getCreateDate(),
 				page.getModifiedDate(), WikiPage.class.getName(),
 				page.getPrimaryKey(), page.getUuid(), 0, assetCategoryIds,
-				assetTagNames, true, false, null, null, null,
+				assetTagNames, true, false, null, null, publishDate, null,
 				ContentTypes.TEXT_HTML, page.getTitle(), null, null, null, null,
 				0, 0, priority);
 		}
 		else {
+			if (page.isApproved()) {
+				publishDate = page.getCreateDate();
+			}
+
 			assetEntry = assetEntryLocalService.updateEntry(
 				userId, page.getGroupId(), page.getCreateDate(),
 				page.getModifiedDate(), WikiPage.class.getName(),
 				page.getResourcePrimKey(), page.getUuid(), 0, assetCategoryIds,
-				assetTagNames, true, page.isApproved(), null, null, null,
-				ContentTypes.TEXT_HTML, page.getTitle(), null, null, null, null,
-				0, 0, priority);
+				assetTagNames, true, page.isApproved(), null, null, publishDate,
+				null, ContentTypes.TEXT_HTML, page.getTitle(), null, null, null,
+				null, 0, 0, priority);
 		}
 
 		assetLinkLocalService.updateLinks(
@@ -2044,8 +2051,8 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 						page.getModifiedDate(), WikiPage.class.getName(),
 						page.getResourcePrimKey(), page.getUuid(), 0,
 						assetCategoryIds, assetTagNames, true, true, null, null,
-						null, ContentTypes.TEXT_HTML, page.getTitle(), null,
-						null, null, null, 0, 0, null);
+						page.getCreateDate(), null, ContentTypes.TEXT_HTML,
+						page.getTitle(), null, null, null, null, 0, 0, null);
 
 					// Asset Links
 
@@ -2927,7 +2934,7 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 
 		String pageContent = null;
 
-		if (Validator.equals(page.getFormat(), "creole")) {
+		if (Objects.equals(page.getFormat(), "creole")) {
 			pageContent = wikiEngineRenderer.convert(
 				page, null, null, attachmentURLPrefix);
 		}
@@ -3004,7 +3011,7 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 		int notificationType =
 			UserNotificationDefinition.NOTIFICATION_TYPE_ADD_ENTRY;
 
-		if (serviceContext.isCommandUpdate()) {
+		if (update) {
 			notificationType =
 				UserNotificationDefinition.NOTIFICATION_TYPE_UPDATE_ENTRY;
 		}

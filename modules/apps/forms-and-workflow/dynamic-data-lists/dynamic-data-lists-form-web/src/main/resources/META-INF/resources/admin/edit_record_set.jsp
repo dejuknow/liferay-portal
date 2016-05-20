@@ -73,6 +73,8 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 			<liferay-ui:message arguments="<%= mndfn.getFieldName() %>" key="the-definition-field-name-x-was-defined-more-than-once" translateArguments="<%= false %>" />
 		</liferay-ui:error>
 
+		<liferay-ui:error exception="<%= DDMFormValidationException.MustSetFieldsForForm.class %>" message="please-add-at-least-one-field" />
+
 		<liferay-ui:error exception="<%= DDMFormValidationException.MustSetOptionsForField.class %>">
 
 			<%
@@ -204,6 +206,7 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 											definition: <%= ddlFormAdminDisplayContext.getSerializedDDMForm() %>,
 											description: '<%= HtmlUtil.escapeJS(description) %>',
 											editForm: event.form,
+											evaluatorURL: '<%= ddlFormAdminDisplayContext.getDDMFormEvaluatorServletURL() %>',
 											layout: <%= ddlFormAdminDisplayContext.getSerializedDDMFormLayout() %>,
 											name: '<%= HtmlUtil.escapeJS(name) %>',
 											namespace: '<portlet:namespace />',

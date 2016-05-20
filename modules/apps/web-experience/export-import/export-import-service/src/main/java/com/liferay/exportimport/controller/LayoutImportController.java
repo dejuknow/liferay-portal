@@ -47,6 +47,7 @@ import com.liferay.exportimport.lar.DeletionSystemEventImporter;
 import com.liferay.exportimport.lar.LayoutCache;
 import com.liferay.exportimport.lar.PermissionImporter;
 import com.liferay.exportimport.lar.ThemeImporter;
+import com.liferay.exportimport.portlet.data.handler.provider.PortletDataHandlerProvider;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskThreadLocal;
 import com.liferay.portal.kernel.exception.LayoutPrototypeException;
 import com.liferay.portal.kernel.exception.LocaleException;
@@ -1019,7 +1020,8 @@ public class LayoutImportController implements ImportController {
 			}
 
 			PortletDataHandler portletDataHandler =
-				portlet.getPortletDataHandlerInstance();
+				_portletDataHandlerProvider.provide(
+					portletDataContext.getCompanyId(), portletId);
 
 			if (portletDataHandler == null) {
 				continue;
@@ -1313,7 +1315,10 @@ public class LayoutImportController implements ImportController {
 			if (sourceCompanyGroupId == sourceGroupId) {
 				companySourceGroup = true;
 			}
-			else if (group.isStaged() || group.hasStagingGroup()) {
+			else if ((group.isStaged() || group.hasStagingGroup()) &&
+					 !(group.isStagedRemotely() &&
+					   group.hasRemoteStagingGroup())) {
+
 				Group sourceGroup = _groupLocalService.fetchGroup(
 					sourceGroupId);
 
@@ -1353,11 +1358,8 @@ public class LayoutImportController implements ImportController {
 			String schemaVersion = GetterUtil.getString(
 				portletElement.attributeValue("schema-version"));
 
-			Portlet portlet = _portletLocalService.getPortletById(
-				companyId, portletId);
-
 			PortletDataHandler portletDataHandler =
-				portlet.getPortletDataHandlerInstance();
+				_portletDataHandlerProvider.provide(companyId, portletId);
 
 			if (!portletDataHandler.validateSchemaVersion(schemaVersion)) {
 				StringBundler sb = new StringBundler(6);
@@ -1477,6 +1479,10 @@ public class LayoutImportController implements ImportController {
 	private LayoutSetPrototypeLocalService _layoutSetPrototypeLocalService;
 	private final PermissionImporter _permissionImporter =
 		PermissionImporter.getInstance();
+
+	@Reference
+	private PortletDataHandlerProvider _portletDataHandlerProvider;
+
 	private PortletImportController _portletImportController;
 	private PortletLocalService _portletLocalService;
 	private final ThemeImporter _themeImporter = ThemeImporter.getInstance();

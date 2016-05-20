@@ -25,6 +25,8 @@ String usersListView = (String)request.getAttribute("view.jsp-usersListView");
 
 PortletURL portletURL = (PortletURL)request.getAttribute("view.jsp-portletURL");
 
+String keywords = ParamUtil.getString(request, "keywords");
+
 LinkedHashMap<String, Object> organizationParams = new LinkedHashMap<String, Object>();
 
 boolean showList = true;
@@ -39,6 +41,8 @@ if (filterManageableOrganizations) {
 		organizationParams.put("organizationsTree", userOrganizations);
 	}
 }
+
+boolean hasAddOrganizationPermission = PortalPermissionUtil.contains(permissionChecker, ActionKeys.ADD_ORGANIZATION);
 %>
 
 <c:choose>
@@ -46,6 +50,12 @@ if (filterManageableOrganizations) {
 
 		<%
 		SearchContainer searchContainer = new OrganizationSearch(renderRequest, portletURL);
+
+		OrganizationSearchTerms searchTerms = (OrganizationSearchTerms)searchContainer.getSearchTerms();
+
+		if (!searchTerms.isSearch() && hasAddOrganizationPermission) {
+			searchContainer.setEmptyResultsMessageCssClass("taglib-empty-result-message-header-has-plus-btn");
+		}
 
 		RowChecker rowChecker = new OrganizationChecker(renderResponse);
 
@@ -106,12 +116,13 @@ if (filterManageableOrganizations) {
 				</c:if>
 
 				<%
-				OrganizationSearchTerms searchTerms = (OrganizationSearchTerms)organizationSearchContainer.getSearchTerms();
+				long parentOrganizationId = OrganizationConstants.DEFAULT_PARENT_ORGANIZATION_ID;
 
-				long parentOrganizationId = ParamUtil.getLong(request, "parentOrganizationId", OrganizationConstants.DEFAULT_PARENT_ORGANIZATION_ID);
-
-				if (parentOrganizationId <= 0) {
+				if (Validator.isNotNull(keywords)) {
 					parentOrganizationId = OrganizationConstants.ANY_PARENT_ORGANIZATION_ID;
+				}
+				else {
+					parentOrganizationId = ParamUtil.getLong(request, "parentOrganizationId", OrganizationConstants.DEFAULT_PARENT_ORGANIZATION_ID);
 				}
 				%>
 
@@ -156,7 +167,7 @@ if (filterManageableOrganizations) {
 	</c:otherwise>
 </c:choose>
 
-<c:if test="<%= PortalPermissionUtil.contains(permissionChecker, ActionKeys.ADD_ORGANIZATION) %>">
+<c:if test="<%= hasAddOrganizationPermission %>">
 	<liferay-frontend:add-menu>
 		<portlet:renderURL var="viewUsersURL">
 			<portlet:param name="toolbarItem" value="<%= toolbarItem %>" />

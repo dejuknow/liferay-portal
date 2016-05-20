@@ -27,10 +27,13 @@ import com.liferay.portal.kernel.portlet.LiferayPortletURL;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.theme.PortletDisplay;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
@@ -101,6 +104,10 @@ public abstract class BaseAssetRenderer<T> implements AssetRenderer<T> {
 		return null;
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, with no direct replacement
+	 */
+	@Deprecated
 	@Override
 	public Date getDisplayDate() {
 		return null;
@@ -132,7 +139,7 @@ public abstract class BaseAssetRenderer<T> implements AssetRenderer<T> {
 	@Deprecated
 	@Override
 	public String getPreviewPath(
-			PortletRequest portletRequest, PortletResponse PortletResponse)
+			PortletRequest portletRequest, PortletResponse portletResponse)
 		throws Exception {
 
 		return StringPool.BLANK;
@@ -215,7 +222,7 @@ public abstract class BaseAssetRenderer<T> implements AssetRenderer<T> {
 			group = layout.getGroup();
 		}
 
-		if (group.hasStagingGroup()) {
+		if (group.hasStagingGroup() && _STAGING_LIVE_GROUP_LOCKING_ENABLED) {
 			return null;
 		}
 
@@ -421,6 +428,10 @@ public abstract class BaseAssetRenderer<T> implements AssetRenderer<T> {
 	}
 
 	private static final String[] _AVAILABLE_LANGUAGE_IDS = new String[0];
+
+	private static final boolean _STAGING_LIVE_GROUP_LOCKING_ENABLED =
+		GetterUtil.getBoolean(
+			PropsUtil.get(PropsKeys.STAGING_LIVE_GROUP_LOCKING_ENABLED));
 
 	private static final DDMFormValuesReader _nullDDMFormValuesReader =
 		new NullDDMFormValuesReader();

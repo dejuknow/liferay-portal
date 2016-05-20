@@ -1,6 +1,6 @@
 Bundle-Name: Liferay Calendar Service
 Bundle-SymbolicName: com.liferay.calendar.service
-Bundle-Version: 1.1.1
+Bundle-Version: 2.0.0
 Export-Package:\
 	com.liferay.calendar.model.impl,\
 	com.liferay.calendar.notification.impl,\
@@ -8,7 +8,7 @@ Export-Package:\
 	com.liferay.calendar.service.configuration,\
 	com.liferay.calendar.service.configuration.configurator,\
 	com.liferay.calendar.service.permission,\
-	com.liferay.calendar.upgrade.*,\
+	com.liferay.calendar.upgrade.v1_0_2,\
 	com.liferay.calendar.util,\
 	com.liferay.calendar.workflow
 Import-Package:\
@@ -22,7 +22,7 @@ Import-Package:\
 	*
 Liferay-Releng-Module-Group-Description:
 Liferay-Releng-Module-Group-Title: Calendar
-Liferay-Require-SchemaVersion: 1.0.3
+Liferay-Require-SchemaVersion: 1.0.5
 Liferay-Service: true
 -liferay-includeresource:\
 	@backport-util-concurrent-*.jar,\

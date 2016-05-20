@@ -246,7 +246,7 @@ public abstract class KaleoNotificationLocalServiceBaseImpl
 	public ActionableDynamicQuery getActionableDynamicQuery() {
 		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
 
-		actionableDynamicQuery.setBaseLocalService(com.liferay.portal.workflow.kaleo.service.KaleoNotificationLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(kaleoNotificationLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(KaleoNotification.class);
 
@@ -259,7 +259,7 @@ public abstract class KaleoNotificationLocalServiceBaseImpl
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
 		IndexableActionableDynamicQuery indexableActionableDynamicQuery = new IndexableActionableDynamicQuery();
 
-		indexableActionableDynamicQuery.setBaseLocalService(com.liferay.portal.workflow.kaleo.service.KaleoNotificationLocalServiceUtil.getService());
+		indexableActionableDynamicQuery.setBaseLocalService(kaleoNotificationLocalService);
 		indexableActionableDynamicQuery.setClassLoader(getClassLoader());
 		indexableActionableDynamicQuery.setModelClass(KaleoNotification.class);
 
@@ -271,7 +271,7 @@ public abstract class KaleoNotificationLocalServiceBaseImpl
 
 	protected void initActionableDynamicQuery(
 		ActionableDynamicQuery actionableDynamicQuery) {
-		actionableDynamicQuery.setBaseLocalService(com.liferay.portal.workflow.kaleo.service.KaleoNotificationLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(kaleoNotificationLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(KaleoNotification.class);
 
@@ -1151,7 +1151,7 @@ public abstract class KaleoNotificationLocalServiceBaseImpl
 	protected com.liferay.portal.workflow.kaleo.service.KaleoNodeLocalService kaleoNodeLocalService;
 	@BeanReference(type = KaleoNodePersistence.class)
 	protected KaleoNodePersistence kaleoNodePersistence;
-	@BeanReference(type = com.liferay.portal.workflow.kaleo.service.KaleoNotificationLocalService.class)
+	@BeanReference(type = KaleoNotificationLocalService.class)
 	protected KaleoNotificationLocalService kaleoNotificationLocalService;
 	@BeanReference(type = KaleoNotificationPersistence.class)
 	protected KaleoNotificationPersistence kaleoNotificationPersistence;

@@ -54,6 +54,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -197,7 +198,7 @@ public class PollsVotePersistenceImpl extends BasePersistenceImpl<PollsVote>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (PollsVote pollsVote : list) {
-					if (!Validator.equals(uuid, pollsVote.getUuid())) {
+					if (!Objects.equals(uuid, pollsVote.getUuid())) {
 						list = null;
 
 						break;
@@ -670,8 +671,8 @@ public class PollsVotePersistenceImpl extends BasePersistenceImpl<PollsVote>
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchVoteException(msg.toString());
@@ -715,7 +716,7 @@ public class PollsVotePersistenceImpl extends BasePersistenceImpl<PollsVote>
 		if (result instanceof PollsVote) {
 			PollsVote pollsVote = (PollsVote)result;
 
-			if (!Validator.equals(uuid, pollsVote.getUuid()) ||
+			if (!Objects.equals(uuid, pollsVote.getUuid()) ||
 					(groupId != pollsVote.getGroupId())) {
 				result = null;
 			}
@@ -1006,7 +1007,7 @@ public class PollsVotePersistenceImpl extends BasePersistenceImpl<PollsVote>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (PollsVote pollsVote : list) {
-					if (!Validator.equals(uuid, pollsVote.getUuid()) ||
+					if (!Objects.equals(uuid, pollsVote.getUuid()) ||
 							(companyId != pollsVote.getCompanyId())) {
 						list = null;
 
@@ -3207,8 +3208,8 @@ public class PollsVotePersistenceImpl extends BasePersistenceImpl<PollsVote>
 					primaryKey);
 
 			if (pollsVote == null) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+				if (_log.isDebugEnabled()) {
+					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchVoteException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
@@ -3468,8 +3469,8 @@ public class PollsVotePersistenceImpl extends BasePersistenceImpl<PollsVote>
 		PollsVote pollsVote = fetchByPrimaryKey(primaryKey);
 
 		if (pollsVote == null) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+			if (_log.isDebugEnabled()) {
+				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
 			throw new NoSuchVoteException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +

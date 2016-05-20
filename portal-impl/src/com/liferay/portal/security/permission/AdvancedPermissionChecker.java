@@ -371,7 +371,6 @@ public class AdvancedPermissionChecker extends BasePermissionChecker {
 
 		stopWatch.start();
 
-		boolean checkOwnerPermission = false;
 		Group group = null;
 
 		try {
@@ -399,8 +398,6 @@ public class AdvancedPermissionChecker extends BasePermissionChecker {
 				// Site" group.
 
 				if (group.isUser() && (group.getClassPK() == getUserId())) {
-					checkOwnerPermission = true;
-
 					group = GroupLocalServiceUtil.getGroup(
 						getCompanyId(), GroupConstants.USER_PERSONAL_SITE);
 
@@ -422,15 +419,8 @@ public class AdvancedPermissionChecker extends BasePermissionChecker {
 		}
 
 		try {
-			if (checkOwnerPermission) {
-				value = hasOwnerPermission(
-					getCompanyId(), name, primKey, getUserId(), actionId);
-			}
-
-			if ((value == null) || !value) {
-				value = hasPermissionImpl(
-					groupId, name, primKey, roleIds, actionId);
-			}
+			value = hasPermissionImpl(
+				groupId, name, primKey, roleIds, actionId);
 
 			if (_log.isDebugEnabled()) {
 				_log.debug(
@@ -601,6 +591,9 @@ public class AdvancedPermissionChecker extends BasePermissionChecker {
 		List<Resource> resources = getResources(
 			companyId, groupId, name, primKey, actionId);
 
+		resources = fixMissingResources(
+			companyId, groupId, name, primKey, actionId, resources);
+
 		logHasUserPermission(groupId, name, primKey, actionId, stopWatch, 3);
 
 		// Check if user has access to perform the action on the given resource
@@ -730,12 +723,61 @@ public class AdvancedPermissionChecker extends BasePermissionChecker {
 		}
 	}
 
-	protected String fixLegacyPrimaryKey(
-		long companyId, String name, String primKey) {
+	protected List<Resource> fixMissingResources(
+			long companyId, long groupId, String name, String primKey,
+			String actionId, List<Resource> resources)
+		throws Exception {
 
-		if (((primKey.length() == 1) && (primKey.charAt(0) == 48)) ||
-			(primKey.equals(String.valueOf(companyId)) &&
-			 !name.equals(Company.class.getName()))) {
+		int count =
+			ResourcePermissionLocalServiceUtil.getResourcePermissionsCount(
+				companyId, name, ResourceConstants.SCOPE_INDIVIDUAL, primKey);
+
+		if (count > 0) {
+			return resources;
+		}
+
+		String newIndividualResourcePrimKey = null;
+
+		if (primKey.contains(PortletConstants.LAYOUT_SEPARATOR)) {
+
+			// Using defaults because custom permissions defined for portlet
+			// resource are not defined
+
+			newIndividualResourcePrimKey = name;
+
+			if (_log.isDebugEnabled()) {
+				String message =
+					"Using defaults because custom permissions for " +
+						"portlet resource " + name + " are not defined";
+
+				_log.debug(message, new IllegalArgumentException(message));
+			}
+		}
+
+		else if ((groupId > 0) &&
+				 ResourceActionsUtil.isRootModelResource(name)) {
+
+			// Using defaults because custom permissions defined for root model
+			// resource are not defined
+
+			newIndividualResourcePrimKey = name;
+
+			if (_log.isDebugEnabled()) {
+				String message =
+					"Using defaults because custom permissions for " +
+						"root model resource " + name + " are not defined";
+
+				_log.debug(message, new IllegalArgumentException(message));
+			}
+		}
+
+		else if (primKey.equals("0") ||
+				 primKey.equals(String.valueOf(ResourceConstants.PRIMKEY_DNE))
+					 ||
+				 (primKey.equals(String.valueOf(companyId)) &&
+				  !name.equals(Company.class.getName()))) {
+
+			newIndividualResourcePrimKey = name;
 
 			if (_log.isWarnEnabled()) {
 				StringBundler sb = new StringBundler(9);
@@ -753,11 +795,22 @@ public class AdvancedPermissionChecker extends BasePermissionChecker {
 				_log.warn(
 					sb.toString(), new IllegalArgumentException(sb.toString()));
 			}
-
-			return name;
 		}
 
-		return primKey;
+		if (newIndividualResourcePrimKey != null) {
+			Resource individualResource = resources.get(0);
+
+			if (individualResource.getScope() !=
+					ResourceConstants.SCOPE_INDIVIDUAL) {
+
+				throw new IllegalArgumentException(
+					"The first resource must be an individual scope");
+			}
+
+			individualResource.setPrimKey(name);
+		}
+
+		return resources;
 	}
 
 	/**
@@ -882,10 +935,11 @@ public class AdvancedPermissionChecker extends BasePermissionChecker {
 					resourceBlockIdsBag);
 			}
 
-			primKey = fixLegacyPrimaryKey(companyId, name, primKey);
-
 			List<Resource> resources = getResources(
 				companyId, groupId, name, primKey, actionId);
+
+			resources = fixMissingResources(
+				companyId, groupId, name, primKey, actionId, resources);
 
 			return ResourceLocalServiceUtil.hasUserPermissions(
 				defaultUserId, groupId, resources, actionId,
@@ -911,11 +965,6 @@ public class AdvancedPermissionChecker extends BasePermissionChecker {
 		try {
 			if (!signedIn) {
 				return hasGuestPermission(groupId, name, primKey, actionId);
-			}
-
-			if (ResourceBlockLocalServiceUtil.isSupported(name)) {
-				return hasUserPermissionImpl(
-					groupId, name, primKey, roleIds, actionId);
 			}
 
 			return hasUserPermissionImpl(
@@ -947,8 +996,6 @@ public class AdvancedPermissionChecker extends BasePermissionChecker {
 
 			companyId = group.getCompanyId();
 		}
-
-		primKey = fixLegacyPrimaryKey(companyId, name, primKey);
 
 		try {
 			boolean hasPermission = doCheckPermission(

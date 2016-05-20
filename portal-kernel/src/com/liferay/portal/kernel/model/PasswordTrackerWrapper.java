@@ -19,13 +19,13 @@ import aQute.bnd.annotation.ProviderType;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Serializable;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * <p>
@@ -107,14 +107,98 @@ public class PasswordTrackerWrapper implements PasswordTracker,
 	}
 
 	@Override
+	public CacheModel<PasswordTracker> toCacheModel() {
+		return _passwordTracker.toCacheModel();
+	}
+
+	@Override
+	public PasswordTracker toEscapedModel() {
+		return new PasswordTrackerWrapper(_passwordTracker.toEscapedModel());
+	}
+
+	@Override
+	public PasswordTracker toUnescapedModel() {
+		return new PasswordTrackerWrapper(_passwordTracker.toUnescapedModel());
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _passwordTracker.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _passwordTracker.isEscapedModel();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _passwordTracker.isNew();
+	}
+
+	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _passwordTracker.getExpandoBridge();
+	}
+
+	@Override
+	public int compareTo(PasswordTracker passwordTracker) {
+		return _passwordTracker.compareTo(passwordTracker);
+	}
+
+	@Override
+	public int hashCode() {
+		return _passwordTracker.hashCode();
+	}
+
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _passwordTracker.getPrimaryKeyObj();
+	}
+
+	@Override
 	public java.lang.Object clone() {
 		return new PasswordTrackerWrapper((PasswordTracker)_passwordTracker.clone());
 	}
 
+	/**
+	* Returns the password of this password tracker.
+	*
+	* @return the password of this password tracker
+	*/
 	@Override
-	public int compareTo(
-		com.liferay.portal.kernel.model.PasswordTracker passwordTracker) {
-		return _passwordTracker.compareTo(passwordTracker);
+	public java.lang.String getPassword() {
+		return _passwordTracker.getPassword();
+	}
+
+	/**
+	* Returns the user uuid of this password tracker.
+	*
+	* @return the user uuid of this password tracker
+	*/
+	@Override
+	public java.lang.String getUserUuid() {
+		return _passwordTracker.getUserUuid();
+	}
+
+	@Override
+	public java.lang.String toString() {
+		return _passwordTracker.toString();
+	}
+
+	@Override
+	public java.lang.String toXmlString() {
+		return _passwordTracker.toXmlString();
+	}
+
+	/**
+	* Returns the create date of this password tracker.
+	*
+	* @return the create date of this password tracker
+	*/
+	@Override
+	public Date getCreateDate() {
+		return _passwordTracker.getCreateDate();
 	}
 
 	/**
@@ -128,21 +212,6 @@ public class PasswordTrackerWrapper implements PasswordTracker,
 	}
 
 	/**
-	* Returns the create date of this password tracker.
-	*
-	* @return the create date of this password tracker
-	*/
-	@Override
-	public Date getCreateDate() {
-		return _passwordTracker.getCreateDate();
-	}
-
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _passwordTracker.getExpandoBridge();
-	}
-
-	/**
 	* Returns the mvcc version of this password tracker.
 	*
 	* @return the mvcc version of this password tracker
@@ -150,16 +219,6 @@ public class PasswordTrackerWrapper implements PasswordTracker,
 	@Override
 	public long getMvccVersion() {
 		return _passwordTracker.getMvccVersion();
-	}
-
-	/**
-	* Returns the password of this password tracker.
-	*
-	* @return the password of this password tracker
-	*/
-	@Override
-	public java.lang.String getPassword() {
-		return _passwordTracker.getPassword();
 	}
 
 	/**
@@ -182,11 +241,6 @@ public class PasswordTrackerWrapper implements PasswordTracker,
 		return _passwordTracker.getPrimaryKey();
 	}
 
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _passwordTracker.getPrimaryKeyObj();
-	}
-
 	/**
 	* Returns the user ID of this password tracker.
 	*
@@ -195,36 +249,6 @@ public class PasswordTrackerWrapper implements PasswordTracker,
 	@Override
 	public long getUserId() {
 		return _passwordTracker.getUserId();
-	}
-
-	/**
-	* Returns the user uuid of this password tracker.
-	*
-	* @return the user uuid of this password tracker
-	*/
-	@Override
-	public java.lang.String getUserUuid() {
-		return _passwordTracker.getUserUuid();
-	}
-
-	@Override
-	public int hashCode() {
-		return _passwordTracker.hashCode();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _passwordTracker.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _passwordTracker.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _passwordTracker.isNew();
 	}
 
 	@Override
@@ -343,31 +367,6 @@ public class PasswordTrackerWrapper implements PasswordTracker,
 	}
 
 	@Override
-	public CacheModel<com.liferay.portal.kernel.model.PasswordTracker> toCacheModel() {
-		return _passwordTracker.toCacheModel();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.model.PasswordTracker toEscapedModel() {
-		return new PasswordTrackerWrapper(_passwordTracker.toEscapedModel());
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _passwordTracker.toString();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.model.PasswordTracker toUnescapedModel() {
-		return new PasswordTrackerWrapper(_passwordTracker.toUnescapedModel());
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _passwordTracker.toXmlString();
-	}
-
-	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
@@ -379,7 +378,7 @@ public class PasswordTrackerWrapper implements PasswordTracker,
 
 		PasswordTrackerWrapper passwordTrackerWrapper = (PasswordTrackerWrapper)obj;
 
-		if (Validator.equals(_passwordTracker,
+		if (Objects.equals(_passwordTracker,
 					passwordTrackerWrapper._passwordTracker)) {
 			return true;
 		}

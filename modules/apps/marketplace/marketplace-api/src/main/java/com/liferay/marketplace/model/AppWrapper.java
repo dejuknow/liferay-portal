@@ -22,13 +22,13 @@ import com.liferay.exportimport.kernel.lar.StagedModelType;
 
 import com.liferay.portal.kernel.model.ModelWrapper;
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Serializable;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * <p>
@@ -72,6 +72,7 @@ public class AppWrapper implements App, ModelWrapper<App> {
 		attributes.put("category", getCategory());
 		attributes.put("iconURL", getIconURL());
 		attributes.put("version", getVersion());
+		attributes.put("required", getRequired());
 
 		return attributes;
 	}
@@ -155,31 +156,98 @@ public class AppWrapper implements App, ModelWrapper<App> {
 		if (version != null) {
 			setVersion(version);
 		}
+
+		Boolean required = (Boolean)attributes.get("required");
+
+		if (required != null) {
+			setRequired(required);
+		}
 	}
 
 	@Override
-	public java.lang.String[] addContextName(java.lang.String contextName) {
-		return _app.addContextName(contextName);
+	public App toEscapedModel() {
+		return new AppWrapper(_app.toEscapedModel());
+	}
+
+	@Override
+	public App toUnescapedModel() {
+		return new AppWrapper(_app.toUnescapedModel());
+	}
+
+	/**
+	* Returns the required of this app.
+	*
+	* @return the required of this app
+	*/
+	@Override
+	public boolean getRequired() {
+		return _app.getRequired();
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _app.isCachedModel();
+	}
+
+	@Override
+	public boolean isDownloaded()
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _app.isDownloaded();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _app.isEscapedModel();
+	}
+
+	@Override
+	public boolean isInstalled() {
+		return _app.isInstalled();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _app.isNew();
+	}
+
+	/**
+	* Returns <code>true</code> if this app is required.
+	*
+	* @return <code>true</code> if this app is required; <code>false</code> otherwise
+	*/
+	@Override
+	public boolean isRequired() {
+		return _app.isRequired();
+	}
+
+	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _app.getExpandoBridge();
+	}
+
+	@Override
+	public com.liferay.portal.kernel.model.CacheModel<App> toCacheModel() {
+		return _app.toCacheModel();
+	}
+
+	@Override
+	public int compareTo(App app) {
+		return _app.compareTo(app);
+	}
+
+	@Override
+	public int hashCode() {
+		return _app.hashCode();
+	}
+
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _app.getPrimaryKeyObj();
 	}
 
 	@Override
 	public java.lang.Object clone() {
 		return new AppWrapper((App)_app.clone());
-	}
-
-	@Override
-	public int compareTo(com.liferay.marketplace.model.App app) {
-		return _app.compareTo(app);
-	}
-
-	/**
-	* Returns the app ID of this app.
-	*
-	* @return the app ID of this app
-	*/
-	@Override
-	public long getAppId() {
-		return _app.getAppId();
 	}
 
 	/**
@@ -193,31 +261,6 @@ public class AppWrapper implements App, ModelWrapper<App> {
 	}
 
 	/**
-	* Returns the company ID of this app.
-	*
-	* @return the company ID of this app
-	*/
-	@Override
-	public long getCompanyId() {
-		return _app.getCompanyId();
-	}
-
-	@Override
-	public java.lang.String[] getContextNames() {
-		return _app.getContextNames();
-	}
-
-	/**
-	* Returns the create date of this app.
-	*
-	* @return the create date of this app
-	*/
-	@Override
-	public Date getCreateDate() {
-		return _app.getCreateDate();
-	}
-
-	/**
 	* Returns the description of this app.
 	*
 	* @return the description of this app
@@ -225,11 +268,6 @@ public class AppWrapper implements App, ModelWrapper<App> {
 	@Override
 	public java.lang.String getDescription() {
 		return _app.getDescription();
-	}
-
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _app.getExpandoBridge();
 	}
 
 	@Override
@@ -258,41 +296,6 @@ public class AppWrapper implements App, ModelWrapper<App> {
 	}
 
 	/**
-	* Returns the modified date of this app.
-	*
-	* @return the modified date of this app
-	*/
-	@Override
-	public Date getModifiedDate() {
-		return _app.getModifiedDate();
-	}
-
-	/**
-	* Returns the primary key of this app.
-	*
-	* @return the primary key of this app
-	*/
-	@Override
-	public long getPrimaryKey() {
-		return _app.getPrimaryKey();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _app.getPrimaryKeyObj();
-	}
-
-	/**
-	* Returns the remote app ID of this app.
-	*
-	* @return the remote app ID of this app
-	*/
-	@Override
-	public long getRemoteAppId() {
-		return _app.getRemoteAppId();
-	}
-
-	/**
 	* Returns the title of this app.
 	*
 	* @return the title of this app
@@ -300,16 +303,6 @@ public class AppWrapper implements App, ModelWrapper<App> {
 	@Override
 	public java.lang.String getTitle() {
 		return _app.getTitle();
-	}
-
-	/**
-	* Returns the user ID of this app.
-	*
-	* @return the user ID of this app
-	*/
-	@Override
-	public long getUserId() {
-		return _app.getUserId();
 	}
 
 	/**
@@ -353,34 +346,93 @@ public class AppWrapper implements App, ModelWrapper<App> {
 	}
 
 	@Override
-	public int hashCode() {
-		return _app.hashCode();
+	public java.lang.String toString() {
+		return _app.toString();
 	}
 
 	@Override
-	public boolean isCachedModel() {
-		return _app.isCachedModel();
+	public java.lang.String toXmlString() {
+		return _app.toXmlString();
 	}
 
 	@Override
-	public boolean isDownloaded()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _app.isDownloaded();
+	public java.lang.String[] addContextName(java.lang.String contextName) {
+		return _app.addContextName(contextName);
 	}
 
 	@Override
-	public boolean isEscapedModel() {
-		return _app.isEscapedModel();
+	public java.lang.String[] getContextNames() {
+		return _app.getContextNames();
 	}
 
+	/**
+	* Returns the create date of this app.
+	*
+	* @return the create date of this app
+	*/
 	@Override
-	public boolean isInstalled() {
-		return _app.isInstalled();
+	public Date getCreateDate() {
+		return _app.getCreateDate();
 	}
 
+	/**
+	* Returns the modified date of this app.
+	*
+	* @return the modified date of this app
+	*/
 	@Override
-	public boolean isNew() {
-		return _app.isNew();
+	public Date getModifiedDate() {
+		return _app.getModifiedDate();
+	}
+
+	/**
+	* Returns the app ID of this app.
+	*
+	* @return the app ID of this app
+	*/
+	@Override
+	public long getAppId() {
+		return _app.getAppId();
+	}
+
+	/**
+	* Returns the company ID of this app.
+	*
+	* @return the company ID of this app
+	*/
+	@Override
+	public long getCompanyId() {
+		return _app.getCompanyId();
+	}
+
+	/**
+	* Returns the primary key of this app.
+	*
+	* @return the primary key of this app
+	*/
+	@Override
+	public long getPrimaryKey() {
+		return _app.getPrimaryKey();
+	}
+
+	/**
+	* Returns the remote app ID of this app.
+	*
+	* @return the remote app ID of this app
+	*/
+	@Override
+	public long getRemoteAppId() {
+		return _app.getRemoteAppId();
+	}
+
+	/**
+	* Returns the user ID of this app.
+	*
+	* @return the user ID of this app
+	*/
+	@Override
+	public long getUserId() {
+		return _app.getUserId();
 	}
 
 	@Override
@@ -444,14 +496,14 @@ public class AppWrapper implements App, ModelWrapper<App> {
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
-		_app.setExpandoBridgeAttributes(baseModel);
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
+		_app.setExpandoBridgeAttributes(expandoBridge);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
-		_app.setExpandoBridgeAttributes(expandoBridge);
+	public void setExpandoBridgeAttributes(
+		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
+		_app.setExpandoBridgeAttributes(baseModel);
 	}
 
 	@Override
@@ -507,6 +559,16 @@ public class AppWrapper implements App, ModelWrapper<App> {
 	@Override
 	public void setRemoteAppId(long remoteAppId) {
 		_app.setRemoteAppId(remoteAppId);
+	}
+
+	/**
+	* Sets whether this app is required.
+	*
+	* @param required the required of this app
+	*/
+	@Override
+	public void setRequired(boolean required) {
+		_app.setRequired(required);
 	}
 
 	/**
@@ -570,31 +632,6 @@ public class AppWrapper implements App, ModelWrapper<App> {
 	}
 
 	@Override
-	public com.liferay.portal.kernel.model.CacheModel<com.liferay.marketplace.model.App> toCacheModel() {
-		return _app.toCacheModel();
-	}
-
-	@Override
-	public com.liferay.marketplace.model.App toEscapedModel() {
-		return new AppWrapper(_app.toEscapedModel());
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _app.toString();
-	}
-
-	@Override
-	public com.liferay.marketplace.model.App toUnescapedModel() {
-		return new AppWrapper(_app.toUnescapedModel());
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _app.toXmlString();
-	}
-
-	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
@@ -606,7 +643,7 @@ public class AppWrapper implements App, ModelWrapper<App> {
 
 		AppWrapper appWrapper = (AppWrapper)obj;
 
-		if (Validator.equals(_app, appWrapper._app)) {
+		if (Objects.equals(_app, appWrapper._app)) {
 			return true;
 		}
 

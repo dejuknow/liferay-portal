@@ -18,12 +18,12 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.model.ModelWrapper;
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Serializable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * <p>
@@ -112,14 +112,123 @@ public class ExpandoColumnWrapper implements ExpandoColumn,
 	}
 
 	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _expandoColumn.getExpandoBridge();
+	}
+
+	@Override
+	public ExpandoColumn toEscapedModel() {
+		return new ExpandoColumnWrapper(_expandoColumn.toEscapedModel());
+	}
+
+	@Override
+	public ExpandoColumn toUnescapedModel() {
+		return new ExpandoColumnWrapper(_expandoColumn.toUnescapedModel());
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _expandoColumn.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _expandoColumn.isEscapedModel();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _expandoColumn.isNew();
+	}
+
+	@Override
+	public com.liferay.portal.kernel.model.CacheModel<ExpandoColumn> toCacheModel() {
+		return _expandoColumn.toCacheModel();
+	}
+
+	@Override
+	public com.liferay.portal.kernel.util.UnicodeProperties getTypeSettingsProperties() {
+		return _expandoColumn.getTypeSettingsProperties();
+	}
+
+	@Override
+	public int compareTo(ExpandoColumn expandoColumn) {
+		return _expandoColumn.compareTo(expandoColumn);
+	}
+
+	/**
+	* Returns the type of this expando column.
+	*
+	* @return the type of this expando column
+	*/
+	@Override
+	public int getType() {
+		return _expandoColumn.getType();
+	}
+
+	@Override
+	public int hashCode() {
+		return _expandoColumn.hashCode();
+	}
+
+	@Override
+	public Serializable getDefaultValue() {
+		return _expandoColumn.getDefaultValue();
+	}
+
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _expandoColumn.getPrimaryKeyObj();
+	}
+
+	@Override
 	public java.lang.Object clone() {
 		return new ExpandoColumnWrapper((ExpandoColumn)_expandoColumn.clone());
 	}
 
+	/**
+	* Returns the default data of this expando column.
+	*
+	* @return the default data of this expando column
+	*/
 	@Override
-	public int compareTo(
-		com.liferay.expando.kernel.model.ExpandoColumn expandoColumn) {
-		return _expandoColumn.compareTo(expandoColumn);
+	public java.lang.String getDefaultData() {
+		return _expandoColumn.getDefaultData();
+	}
+
+	@Override
+	public java.lang.String getDisplayName(java.util.Locale locale) {
+		return _expandoColumn.getDisplayName(locale);
+	}
+
+	/**
+	* Returns the name of this expando column.
+	*
+	* @return the name of this expando column
+	*/
+	@Override
+	public java.lang.String getName() {
+		return _expandoColumn.getName();
+	}
+
+	/**
+	* Returns the type settings of this expando column.
+	*
+	* @return the type settings of this expando column
+	*/
+	@Override
+	public java.lang.String getTypeSettings() {
+		return _expandoColumn.getTypeSettings();
+	}
+
+	@Override
+	public java.lang.String toString() {
+		return _expandoColumn.toString();
+	}
+
+	@Override
+	public java.lang.String toXmlString() {
+		return _expandoColumn.toXmlString();
 	}
 
 	/**
@@ -143,41 +252,6 @@ public class ExpandoColumnWrapper implements ExpandoColumn,
 	}
 
 	/**
-	* Returns the default data of this expando column.
-	*
-	* @return the default data of this expando column
-	*/
-	@Override
-	public java.lang.String getDefaultData() {
-		return _expandoColumn.getDefaultData();
-	}
-
-	@Override
-	public Serializable getDefaultValue() {
-		return _expandoColumn.getDefaultValue();
-	}
-
-	@Override
-	public java.lang.String getDisplayName(java.util.Locale locale) {
-		return _expandoColumn.getDisplayName(locale);
-	}
-
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _expandoColumn.getExpandoBridge();
-	}
-
-	/**
-	* Returns the name of this expando column.
-	*
-	* @return the name of this expando column
-	*/
-	@Override
-	public java.lang.String getName() {
-		return _expandoColumn.getName();
-	}
-
-	/**
 	* Returns the primary key of this expando column.
 	*
 	* @return the primary key of this expando column
@@ -185,11 +259,6 @@ public class ExpandoColumnWrapper implements ExpandoColumn,
 	@Override
 	public long getPrimaryKey() {
 		return _expandoColumn.getPrimaryKey();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _expandoColumn.getPrimaryKeyObj();
 	}
 
 	/**
@@ -200,51 +269,6 @@ public class ExpandoColumnWrapper implements ExpandoColumn,
 	@Override
 	public long getTableId() {
 		return _expandoColumn.getTableId();
-	}
-
-	/**
-	* Returns the type of this expando column.
-	*
-	* @return the type of this expando column
-	*/
-	@Override
-	public int getType() {
-		return _expandoColumn.getType();
-	}
-
-	/**
-	* Returns the type settings of this expando column.
-	*
-	* @return the type settings of this expando column
-	*/
-	@Override
-	public java.lang.String getTypeSettings() {
-		return _expandoColumn.getTypeSettings();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.util.UnicodeProperties getTypeSettingsProperties() {
-		return _expandoColumn.getTypeSettingsProperties();
-	}
-
-	@Override
-	public int hashCode() {
-		return _expandoColumn.hashCode();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _expandoColumn.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _expandoColumn.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _expandoColumn.isNew();
 	}
 
 	@Override
@@ -288,14 +312,14 @@ public class ExpandoColumnWrapper implements ExpandoColumn,
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
-		_expandoColumn.setExpandoBridgeAttributes(baseModel);
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
+		_expandoColumn.setExpandoBridgeAttributes(expandoBridge);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
-		_expandoColumn.setExpandoBridgeAttributes(expandoBridge);
+	public void setExpandoBridgeAttributes(
+		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
+		_expandoColumn.setExpandoBridgeAttributes(baseModel);
 	}
 
 	@Override
@@ -370,31 +394,6 @@ public class ExpandoColumnWrapper implements ExpandoColumn,
 	}
 
 	@Override
-	public com.liferay.portal.kernel.model.CacheModel<com.liferay.expando.kernel.model.ExpandoColumn> toCacheModel() {
-		return _expandoColumn.toCacheModel();
-	}
-
-	@Override
-	public com.liferay.expando.kernel.model.ExpandoColumn toEscapedModel() {
-		return new ExpandoColumnWrapper(_expandoColumn.toEscapedModel());
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _expandoColumn.toString();
-	}
-
-	@Override
-	public com.liferay.expando.kernel.model.ExpandoColumn toUnescapedModel() {
-		return new ExpandoColumnWrapper(_expandoColumn.toUnescapedModel());
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _expandoColumn.toXmlString();
-	}
-
-	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
@@ -406,7 +405,7 @@ public class ExpandoColumnWrapper implements ExpandoColumn,
 
 		ExpandoColumnWrapper expandoColumnWrapper = (ExpandoColumnWrapper)obj;
 
-		if (Validator.equals(_expandoColumn, expandoColumnWrapper._expandoColumn)) {
+		if (Objects.equals(_expandoColumn, expandoColumnWrapper._expandoColumn)) {
 			return true;
 		}
 

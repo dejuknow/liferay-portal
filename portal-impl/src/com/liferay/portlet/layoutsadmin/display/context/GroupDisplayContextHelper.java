@@ -21,6 +21,7 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.util.PropsValues;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -38,11 +39,23 @@ public class GroupDisplayContextHelper {
 			return _group;
 		}
 
+		if (!PropsValues.STAGING_LIVE_GROUP_LOCKING_ENABLED &&
+			(getSelGroup() != null)) {
+
+			_group = getSelGroup();
+
+			return _group;
+		}
+
 		if (getStagingGroup() != null) {
 			_group = getStagingGroup();
 		}
 		else {
 			_group = getLiveGroup();
+		}
+
+		if (_group == null) {
+			_group = getSelGroup();
 		}
 
 		return _group;
@@ -91,6 +104,10 @@ public class GroupDisplayContextHelper {
 		}
 
 		_liveGroup = StagingUtil.getLiveGroup(group.getGroupId());
+
+		if (_liveGroup == null) {
+			_liveGroup = group;
+		}
 
 		return _liveGroup;
 	}

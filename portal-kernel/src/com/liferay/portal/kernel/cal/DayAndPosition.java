@@ -96,7 +96,11 @@ public class DayAndPosition implements Cloneable, Serializable {
 	 *         <code>false</code> otherwise
 	 */
 	public static boolean isValidDayPosition(int p) {
-		return ((p >= -53) && (p <= 53));
+		if ((p >= -53) && (p <= 53)) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -166,9 +170,13 @@ public class DayAndPosition implements Cloneable, Serializable {
 
 		DayAndPosition that = (DayAndPosition)obj;
 
-		return
-			(getDayOfWeek() == that.getDayOfWeek()) &&
-			(getDayPosition() == that.getDayPosition());
+		if ((getDayOfWeek() == that.getDayOfWeek()) &&
+			(getDayPosition() == that.getDayPosition())) {
+
+			return true;
+		}
+
+		return false;
 	}
 
 	/**

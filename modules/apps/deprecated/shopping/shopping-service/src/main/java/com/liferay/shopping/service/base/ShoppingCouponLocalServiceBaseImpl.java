@@ -233,7 +233,7 @@ public abstract class ShoppingCouponLocalServiceBaseImpl
 	public ActionableDynamicQuery getActionableDynamicQuery() {
 		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
 
-		actionableDynamicQuery.setBaseLocalService(com.liferay.shopping.service.ShoppingCouponLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(shoppingCouponLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(ShoppingCoupon.class);
 
@@ -246,7 +246,7 @@ public abstract class ShoppingCouponLocalServiceBaseImpl
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
 		IndexableActionableDynamicQuery indexableActionableDynamicQuery = new IndexableActionableDynamicQuery();
 
-		indexableActionableDynamicQuery.setBaseLocalService(com.liferay.shopping.service.ShoppingCouponLocalServiceUtil.getService());
+		indexableActionableDynamicQuery.setBaseLocalService(shoppingCouponLocalService);
 		indexableActionableDynamicQuery.setClassLoader(getClassLoader());
 		indexableActionableDynamicQuery.setModelClass(ShoppingCoupon.class);
 
@@ -257,7 +257,7 @@ public abstract class ShoppingCouponLocalServiceBaseImpl
 
 	protected void initActionableDynamicQuery(
 		ActionableDynamicQuery actionableDynamicQuery) {
-		actionableDynamicQuery.setBaseLocalService(com.liferay.shopping.service.ShoppingCouponLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(shoppingCouponLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(ShoppingCoupon.class);
 
@@ -595,7 +595,7 @@ public abstract class ShoppingCouponLocalServiceBaseImpl
 		}
 	}
 
-	@BeanReference(type = com.liferay.shopping.service.ShoppingCouponLocalService.class)
+	@BeanReference(type = ShoppingCouponLocalService.class)
 	protected ShoppingCouponLocalService shoppingCouponLocalService;
 	@BeanReference(type = ShoppingCouponPersistence.class)
 	protected ShoppingCouponPersistence shoppingCouponPersistence;

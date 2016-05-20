@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.exception.NestableException;
 
 /**
  * @author Brian Wing Shun Chan
+ * @see com.liferay.petra.mail.MailEngineException
  */
 public class MailEngineException extends NestableException {
 

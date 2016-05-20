@@ -19,12 +19,12 @@ import aQute.bnd.annotation.ProviderType;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Serializable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * <p>
@@ -115,115 +115,23 @@ public class ResourceTypePermissionWrapper implements ResourceTypePermission,
 	}
 
 	@Override
-	public java.lang.Object clone() {
-		return new ResourceTypePermissionWrapper((ResourceTypePermission)_resourceTypePermission.clone());
+	public CacheModel<ResourceTypePermission> toCacheModel() {
+		return _resourceTypePermission.toCacheModel();
 	}
 
 	@Override
-	public int compareTo(
-		com.liferay.portal.kernel.model.ResourceTypePermission resourceTypePermission) {
-		return _resourceTypePermission.compareTo(resourceTypePermission);
-	}
-
-	/**
-	* Returns the action IDs of this resource type permission.
-	*
-	* @return the action IDs of this resource type permission
-	*/
-	@Override
-	public long getActionIds() {
-		return _resourceTypePermission.getActionIds();
-	}
-
-	/**
-	* Returns the company ID of this resource type permission.
-	*
-	* @return the company ID of this resource type permission
-	*/
-	@Override
-	public long getCompanyId() {
-		return _resourceTypePermission.getCompanyId();
+	public ResourceTypePermission toEscapedModel() {
+		return new ResourceTypePermissionWrapper(_resourceTypePermission.toEscapedModel());
 	}
 
 	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _resourceTypePermission.getExpandoBridge();
-	}
-
-	/**
-	* Returns the group ID of this resource type permission.
-	*
-	* @return the group ID of this resource type permission
-	*/
-	@Override
-	public long getGroupId() {
-		return _resourceTypePermission.getGroupId();
-	}
-
-	/**
-	* Returns the mvcc version of this resource type permission.
-	*
-	* @return the mvcc version of this resource type permission
-	*/
-	@Override
-	public long getMvccVersion() {
-		return _resourceTypePermission.getMvccVersion();
-	}
-
-	/**
-	* Returns the name of this resource type permission.
-	*
-	* @return the name of this resource type permission
-	*/
-	@Override
-	public java.lang.String getName() {
-		return _resourceTypePermission.getName();
-	}
-
-	/**
-	* Returns the primary key of this resource type permission.
-	*
-	* @return the primary key of this resource type permission
-	*/
-	@Override
-	public long getPrimaryKey() {
-		return _resourceTypePermission.getPrimaryKey();
+	public ResourceTypePermission toUnescapedModel() {
+		return new ResourceTypePermissionWrapper(_resourceTypePermission.toUnescapedModel());
 	}
 
 	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _resourceTypePermission.getPrimaryKeyObj();
-	}
-
-	/**
-	* Returns the resource type permission ID of this resource type permission.
-	*
-	* @return the resource type permission ID of this resource type permission
-	*/
-	@Override
-	public long getResourceTypePermissionId() {
-		return _resourceTypePermission.getResourceTypePermissionId();
-	}
-
-	/**
-	* Returns the role ID of this resource type permission.
-	*
-	* @return the role ID of this resource type permission
-	*/
-	@Override
-	public long getRoleId() {
-		return _resourceTypePermission.getRoleId();
-	}
-
-	@Override
-	public boolean hasAction(
-		com.liferay.portal.kernel.model.ResourceAction resourceAction) {
+	public boolean hasAction(ResourceAction resourceAction) {
 		return _resourceTypePermission.hasAction(resourceAction);
-	}
-
-	@Override
-	public int hashCode() {
-		return _resourceTypePermission.hashCode();
 	}
 
 	@Override
@@ -249,6 +157,121 @@ public class ResourceTypePermissionWrapper implements ResourceTypePermission,
 	@Override
 	public boolean isNew() {
 		return _resourceTypePermission.isNew();
+	}
+
+	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _resourceTypePermission.getExpandoBridge();
+	}
+
+	@Override
+	public int compareTo(ResourceTypePermission resourceTypePermission) {
+		return _resourceTypePermission.compareTo(resourceTypePermission);
+	}
+
+	@Override
+	public int hashCode() {
+		return _resourceTypePermission.hashCode();
+	}
+
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _resourceTypePermission.getPrimaryKeyObj();
+	}
+
+	@Override
+	public java.lang.Object clone() {
+		return new ResourceTypePermissionWrapper((ResourceTypePermission)_resourceTypePermission.clone());
+	}
+
+	/**
+	* Returns the name of this resource type permission.
+	*
+	* @return the name of this resource type permission
+	*/
+	@Override
+	public java.lang.String getName() {
+		return _resourceTypePermission.getName();
+	}
+
+	@Override
+	public java.lang.String toString() {
+		return _resourceTypePermission.toString();
+	}
+
+	@Override
+	public java.lang.String toXmlString() {
+		return _resourceTypePermission.toXmlString();
+	}
+
+	/**
+	* Returns the action IDs of this resource type permission.
+	*
+	* @return the action IDs of this resource type permission
+	*/
+	@Override
+	public long getActionIds() {
+		return _resourceTypePermission.getActionIds();
+	}
+
+	/**
+	* Returns the company ID of this resource type permission.
+	*
+	* @return the company ID of this resource type permission
+	*/
+	@Override
+	public long getCompanyId() {
+		return _resourceTypePermission.getCompanyId();
+	}
+
+	/**
+	* Returns the group ID of this resource type permission.
+	*
+	* @return the group ID of this resource type permission
+	*/
+	@Override
+	public long getGroupId() {
+		return _resourceTypePermission.getGroupId();
+	}
+
+	/**
+	* Returns the mvcc version of this resource type permission.
+	*
+	* @return the mvcc version of this resource type permission
+	*/
+	@Override
+	public long getMvccVersion() {
+		return _resourceTypePermission.getMvccVersion();
+	}
+
+	/**
+	* Returns the primary key of this resource type permission.
+	*
+	* @return the primary key of this resource type permission
+	*/
+	@Override
+	public long getPrimaryKey() {
+		return _resourceTypePermission.getPrimaryKey();
+	}
+
+	/**
+	* Returns the resource type permission ID of this resource type permission.
+	*
+	* @return the resource type permission ID of this resource type permission
+	*/
+	@Override
+	public long getResourceTypePermissionId() {
+		return _resourceTypePermission.getResourceTypePermissionId();
+	}
+
+	/**
+	* Returns the role ID of this resource type permission.
+	*
+	* @return the role ID of this resource type permission
+	*/
+	@Override
+	public long getRoleId() {
+		return _resourceTypePermission.getRoleId();
 	}
 
 	@Override
@@ -367,31 +390,6 @@ public class ResourceTypePermissionWrapper implements ResourceTypePermission,
 	}
 
 	@Override
-	public CacheModel<com.liferay.portal.kernel.model.ResourceTypePermission> toCacheModel() {
-		return _resourceTypePermission.toCacheModel();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.model.ResourceTypePermission toEscapedModel() {
-		return new ResourceTypePermissionWrapper(_resourceTypePermission.toEscapedModel());
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _resourceTypePermission.toString();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.model.ResourceTypePermission toUnescapedModel() {
-		return new ResourceTypePermissionWrapper(_resourceTypePermission.toUnescapedModel());
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _resourceTypePermission.toXmlString();
-	}
-
-	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
@@ -403,7 +401,7 @@ public class ResourceTypePermissionWrapper implements ResourceTypePermission,
 
 		ResourceTypePermissionWrapper resourceTypePermissionWrapper = (ResourceTypePermissionWrapper)obj;
 
-		if (Validator.equals(_resourceTypePermission,
+		if (Objects.equals(_resourceTypePermission,
 					resourceTypePermissionWrapper._resourceTypePermission)) {
 			return true;
 		}

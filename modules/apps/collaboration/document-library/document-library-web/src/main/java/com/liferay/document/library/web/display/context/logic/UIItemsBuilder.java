@@ -18,6 +18,7 @@ import com.liferay.document.library.display.context.DLUIItemKeys;
 import com.liferay.document.library.kernel.model.DLFileEntryConstants;
 import com.liferay.document.library.kernel.model.DLFolderConstants;
 import com.liferay.document.library.kernel.util.DLUtil;
+import com.liferay.document.library.web.util.DLTrashUtil;
 import com.liferay.portal.kernel.bean.BeanParamUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
@@ -57,7 +58,6 @@ import com.liferay.portal.kernel.util.TextFormatter;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.taglib.security.PermissionsURLTag;
-import com.liferay.trash.kernel.util.TrashUtil;
 
 import java.util.List;
 
@@ -571,8 +571,7 @@ public class UIItemsBuilder {
 				null, DLFileEntryConstants.getClassName(),
 				HtmlUtil.unescape(_fileEntry.getTitle()), null,
 				String.valueOf(_fileEntry.getFileEntryId()),
-				LiferayWindowState.POP_UP.toString(), null, _request
-			);
+				LiferayWindowState.POP_UP.toString(), null, _request);
 		}
 		catch (Exception e) {
 			throw new SystemException("Unable to create permissions URL", e);
@@ -870,8 +869,8 @@ public class UIItemsBuilder {
 
 	private boolean _isTrashEnabled() throws PortalException {
 		if (_trashEnabled == null) {
-			_trashEnabled = TrashUtil.isTrashEnabled(
-				_themeDisplay.getScopeGroupId());
+			_trashEnabled = DLTrashUtil.isTrashEnabled(
+				_themeDisplay.getScopeGroupId(), _fileEntry.getRepositoryId());
 		}
 
 		return _trashEnabled;

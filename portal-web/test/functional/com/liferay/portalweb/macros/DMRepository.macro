@@ -12,12 +12,11 @@
 	</command>
 
 	<command name="addSharepoint">
-		<if>
-			<condition function="IsNotVisible" locator1="DocumentsAndMediaEditRepository#SITE_URL_FIELD" />
-			<then>
-				<execute function="AssertClick" locator1="Panel#ENTRY_REPOSITORY_CONFIGURATION" value1="Repository Configuration" />
-			</then>
-		</if>
+		<execute macro="Panel#expandPanel">
+			<var name="panelHeading" value="Repository Configuration" />
+		</execute>
+
+		<execute function="Select" locator1="DocumentsAndMediaEditRepository#REPOSITORY_TYPE_SELECT" value1="Sharepoint" />
 
 		<execute function="Type" locator1="DocumentsAndMediaEditRepository#SITE_URL_FIELD" value1="${dmRepositorySiteURL}" />
 		<execute function="Type" locator1="DocumentsAndMediaEditRepository#LIBRARY_NAME_FIELD" value1="${dmRepositoryLibraryName}" />
@@ -30,9 +29,7 @@
 	<command name="gotoCP">
 		<var name="key_dmRepositoryName" value="${dmRepositoryName}" />
 
-		<execute function="MakeVisible" locator1="DocumentsAndMedia#ICON_FOLDER_THUMBNAIL_GENERIC" />
-
-		<execute function="AssertClick" locator1="DocumentsAndMedia#FILTER_REPOSITORY" value1="${dmRepositoryName}" />
+		<execute function="AssertClick" locator1="DocumentsAndMedia#REPOSITORY_FOLDER_NAME_DESCRIPTIVE_VIEW" value1="${dmRepositoryName}" />
 
 		<var name="key_dmFolderName" value="${dmRepositoryName}" />
 
@@ -72,9 +69,11 @@
 		</while>
 	</command>
 
-	<command name="viewCP">
+	<command name="viewBreadcrumb">
 		<var name="key_dmFolderName" value="${dmRepositoryName}" />
 
-		<execute function="AssertTextEquals" locator1="DocumentsAndMedia#BREADCRUMB_LAST" value1="${dmRepositoryName}" />
+		<var method="StringUtil#upperCase('${dmRepositoryName}')" name="breadcrumbNameUppercase" />
+
+		<execute function="AssertTextEquals" locator1="DocumentsAndMedia#BREADCRUMB_LAST" value1="${breadcrumbNameUppercase}" />
 	</command>
 </definition>

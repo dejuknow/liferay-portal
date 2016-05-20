@@ -1341,6 +1341,8 @@ public interface PropsKeys {
 
 	public static final String MODULE_FRAMEWORK_BEGINNING_START_LEVEL = "module.framework.beginning.start.level";
 
+	public static final String MODULE_FRAMEWORK_DYNAMIC_INSTALL_START_LEVEL = "module.framework.dynamic.install.start.level";
+
 	public static final String MODULE_FRAMEWORK_INITIAL_BUNDLES = "module.framework.initial.bundles";
 
 	public static final String MODULE_FRAMEWORK_PORTAL_DIR = "module.framework.portal.dir";
@@ -1781,6 +1783,8 @@ public interface PropsKeys {
 
 	public static final String RETRY_ADVICE_MAX_RETRIES = "retry.advice.max.retries";
 
+	public static final String RETRY_DATA_SOURCE_MAX_RETRIES = "retry.data.source.max.retries";
+
 	public static final String ROBOTS_TXT_WITH_SITEMAP = "robots.txt.with.sitemap";
 
 	public static final String ROBOTS_TXT_WITHOUT_SITEMAP = "robots.txt.without.sitemap";
@@ -2091,6 +2095,8 @@ public interface PropsKeys {
 
 	public static final String STAGING_DRAFT_EXPORT_IMPORT_CONFIGURATION_CLEAN_UP_COUNT = "staging.draft.export.import.configuration.clean.up.count";
 
+	public static final String STAGING_LIVE_GROUP_LOCKING_ENABLED = "staging.live.group.locking.enabled";
+
 	public static final String STAGING_LIVE_GROUP_REMOTE_STAGING_ENABLED = "staging.live.group.remote.staging.enabled";
 
 	public static final String STAGING_REMOTE_TRANSFER_BUFFER_SIZE = "staging.remote.transfer.buffer.size";
@@ -2115,7 +2121,13 @@ public interface PropsKeys {
 
 	public static final String SYSTEM_SITE_ROLES = "system.site.roles";
 
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link #TABLE_MAPPER_CACHELESS_MAPPING_TABLE_NAMES}
+	 */
+	@Deprecated
 	public static final String TABLE_MAPPER_CACHE_MAPPING_TABLE_NAMES = "table.mapper.cache.mapping.table.names";
+
+	public static final String TABLE_MAPPER_CACHELESS_MAPPING_TABLE_NAMES = "table.mapper.cacheless.mapping.table.names";
 
 	public static final String TERMS_OF_USE_REQUIRED = "terms.of.use.required";
 

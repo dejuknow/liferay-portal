@@ -107,14 +107,14 @@ public class CalendarBookingLocalServiceImpl
 
 		long calendarBookingId = counterLocalService.increment();
 
-		for (Locale locale : descriptionMap.keySet()) {
+		for (Map.Entry<Locale, String> entry : descriptionMap.entrySet()) {
 			String sanitizedDescription = SanitizerUtil.sanitize(
 				calendar.getCompanyId(), calendar.getGroupId(), userId,
 				CalendarBooking.class.getName(), calendarBookingId,
-				ContentTypes.TEXT_HTML, Sanitizer.MODE_ALL,
-				descriptionMap.get(locale), null);
+				ContentTypes.TEXT_HTML, Sanitizer.MODE_ALL, entry.getValue(),
+				null);
 
-			descriptionMap.put(locale, sanitizedDescription);
+			descriptionMap.put(entry.getKey(), sanitizedDescription);
 		}
 
 		java.util.Calendar startTimeJCalendar = JCalendarUtil.getJCalendar(
@@ -167,7 +167,8 @@ public class CalendarBookingLocalServiceImpl
 
 		calendarBooking.setVEventUid(vEventUid);
 		calendarBooking.setTitleMap(titleMap, serviceContext.getLocale());
-		calendarBooking.setDescriptionMap(descriptionMap);
+		calendarBooking.setDescriptionMap(
+			descriptionMap, serviceContext.getLocale());
 		calendarBooking.setLocation(location);
 		calendarBooking.setStartTime(startTimeJCalendar.getTimeInMillis());
 		calendarBooking.setEndTime(endTimeJCalendar.getTimeInMillis());
@@ -372,7 +373,7 @@ public class CalendarBookingLocalServiceImpl
 		Date now = new Date();
 
 		java.util.Calendar startTimeJCalendar = JCalendarUtil.getJCalendar(
-			startTime);
+			startTime, calendarBooking.getTimeZone());
 
 		Recurrence recurrenceObj = calendarBooking.getRecurrenceObj();
 
@@ -773,8 +774,12 @@ public class CalendarBookingLocalServiceImpl
 
 		boolean visible = false;
 
+		Date publishDate = null;
+
 		if (calendarBooking.isApproved()) {
 			visible = true;
+
+			publishDate = calendarBooking.getCreateDate();
 		}
 
 		String summary = HtmlUtil.extractText(
@@ -785,10 +790,10 @@ public class CalendarBookingLocalServiceImpl
 			calendarBooking.getCreateDate(), calendarBooking.getModifiedDate(),
 			CalendarBooking.class.getName(),
 			calendarBooking.getCalendarBookingId(), calendarBooking.getUuid(),
-			0, assetCategoryIds, assetTagNames, true, visible, null, null, null,
-			ContentTypes.TEXT_HTML, calendarBooking.getTitle(),
-			calendarBooking.getDescription(), summary, null, null, 0, 0,
-			priority);
+			0, assetCategoryIds, assetTagNames, true, visible, null, null,
+			publishDate, null, ContentTypes.TEXT_HTML,
+			calendarBooking.getTitle(), calendarBooking.getDescription(),
+			summary, null, null, 0, 0, priority);
 
 		assetLinkLocalService.updateLinks(
 			userId, assetEntry.getEntryId(), assetLinkEntryIds,
@@ -811,14 +816,14 @@ public class CalendarBookingLocalServiceImpl
 		CalendarBooking calendarBooking =
 			calendarBookingPersistence.findByPrimaryKey(calendarBookingId);
 
-		for (Locale locale : descriptionMap.keySet()) {
+		for (Map.Entry<Locale, String> entry : descriptionMap.entrySet()) {
 			String sanitizedDescription = SanitizerUtil.sanitize(
 				calendar.getCompanyId(), calendar.getGroupId(), userId,
 				CalendarBooking.class.getName(), calendarBookingId,
-				ContentTypes.TEXT_HTML, Sanitizer.MODE_ALL,
-				descriptionMap.get(locale), null);
+				ContentTypes.TEXT_HTML, Sanitizer.MODE_ALL, entry.getValue(),
+				null);
 
-			descriptionMap.put(locale, sanitizedDescription);
+			descriptionMap.put(entry.getKey(), sanitizedDescription);
 		}
 
 		java.util.Calendar startTimeJCalendar = JCalendarUtil.getJCalendar(
@@ -858,7 +863,8 @@ public class CalendarBookingLocalServiceImpl
 
 		updatedDescriptionMap.putAll(descriptionMap);
 
-		calendarBooking.setDescriptionMap(updatedDescriptionMap);
+		calendarBooking.setDescriptionMap(
+			updatedDescriptionMap, serviceContext.getLocale());
 
 		calendarBooking.setLocation(location);
 		calendarBooking.setStartTime(startTimeJCalendar.getTimeInMillis());

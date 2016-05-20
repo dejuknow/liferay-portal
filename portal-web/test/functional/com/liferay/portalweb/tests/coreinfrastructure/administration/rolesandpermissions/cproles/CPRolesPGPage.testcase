@@ -1,4 +1,5 @@
 <definition component-name="portal-permissions">
+	<property name="portal.release" value="true" />
 	<property name="testray.main.component.name" value="Permissions" />
 
 	<set-up>
@@ -19,7 +20,7 @@
 	</tear-down>
 
 	<command name="RemoveNoGuestInlineView" priority="5">
-		<property name="portal.acceptance" value="true" />
+		<property name="portal.acceptance" value="false" />
 
 		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Welcome" />
@@ -31,7 +32,7 @@
 
 		<var name="key_roleName" value="guest" />
 
-		<execute function="Click" locator1="Permissions#INLINE_PERMISSIONS_VIEW" />
-		<execute function="AssertChecked" locator1="Permissions#INLINE_PERMISSIONS_VIEW" />
+		<execute function="Click" locator1="Permissions#INLINE_PERMISSIONS_VIEW_CHECKBOX" />
+		<execute function="AssertChecked" locator1="Permissions#INLINE_PERMISSIONS_VIEW_CHECKBOX" />
 	</command>
 </definition>

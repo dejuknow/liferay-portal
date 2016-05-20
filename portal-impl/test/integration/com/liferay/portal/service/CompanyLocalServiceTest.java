@@ -33,9 +33,11 @@ import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.LayoutSetPrototype;
+import com.liferay.portal.kernel.model.Organization;
 import com.liferay.portal.kernel.model.OrganizationConstants;
 import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.model.UserGroup;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.AccountLocalServiceUtil;
 import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
@@ -46,6 +48,7 @@ import com.liferay.portal.kernel.service.OrganizationLocalServiceUtil;
 import com.liferay.portal.kernel.service.PasswordPolicyLocalServiceUtil;
 import com.liferay.portal.kernel.service.RoleLocalServiceUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.UserGroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.service.VirtualHostLocalServiceUtil;
 import com.liferay.portal.kernel.service.persistence.PasswordPolicyUtil;
@@ -58,12 +61,15 @@ import com.liferay.portal.kernel.test.rule.SynchronousDestinationTestRule;
 import com.liferay.portal.kernel.test.rule.TransactionalTestRule;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
+import com.liferay.portal.kernel.test.util.UserGroupTestUtil;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.ReflectionUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.portal.test.rule.callback.SybaseDump;
+import com.liferay.portal.test.rule.callback.SybaseDumpTransactionLog;
 import com.liferay.portal.util.PortalInstances;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.sites.kernel.util.SitesUtil;
@@ -91,6 +97,7 @@ import org.springframework.mock.web.MockServletContext;
  * @author Mika Koivisto
  * @author Dale Shan
  */
+@SybaseDumpTransactionLog(dumpBefore = {SybaseDump.CLASS, SybaseDump.METHOD})
 @Sync
 public class CompanyLocalServiceTest {
 
@@ -252,6 +259,70 @@ public class CompanyLocalServiceTest {
 		group = GroupLocalServiceUtil.fetchGroup(group.getGroupId());
 
 		Assert.assertNull(group);
+	}
+
+	@Test
+	public void testAddAndDeleteCompanyWithStagedOrganizationSite()
+		throws Exception {
+
+		Company company = addCompany();
+
+		User companyAdminUser = UserTestUtil.addCompanyAdminUser(company);
+
+		Organization companyOrganzation =
+			OrganizationLocalServiceUtil.addOrganization(
+				companyAdminUser.getUserId(),
+				OrganizationConstants.DEFAULT_PARENT_ORGANIZATION_ID,
+				RandomTestUtil.randomString(), true);
+
+		Group companyOrganizationGroup = companyOrganzation.getGroup();
+
+		GroupTestUtil.enableLocalStaging(
+			companyOrganizationGroup, companyAdminUser.getUserId());
+
+		CompanyLocalServiceUtil.deleteCompany(company);
+
+		companyOrganzation = OrganizationLocalServiceUtil.fetchOrganization(
+			companyOrganzation.getOrganizationId());
+
+		Assert.assertNull(companyOrganzation);
+
+		companyOrganizationGroup = GroupLocalServiceUtil.fetchGroup(
+			companyOrganizationGroup.getGroupId());
+
+		Assert.assertNull(companyOrganizationGroup);
+	}
+
+	@Test
+	public void testAddAndDeleteCompanyWithUserGroup() throws Exception {
+		Company company = addCompany();
+
+		long companyId = company.getCompanyId();
+
+		long userId = UserLocalServiceUtil.getDefaultUserId(companyId);
+
+		Group group = GroupTestUtil.addGroup(
+			companyId, userId, GroupConstants.DEFAULT_PARENT_GROUP_ID);
+
+		UserGroup userGroup = UserGroupTestUtil.addUserGroup(
+			group.getGroupId());
+
+		User user = addUser(
+			companyId, userId, group.getGroupId(),
+			getServiceContext(companyId));
+
+		UserGroupLocalServiceUtil.addUserUserGroup(user.getUserId(), userGroup);
+
+		CompanyLocalServiceUtil.deleteCompany(company.getCompanyId());
+
+		userGroup = UserGroupLocalServiceUtil.fetchUserGroup(
+			userGroup.getUserGroupId());
+
+		Assert.assertNull(userGroup);
+
+		user = UserLocalServiceUtil.fetchUser(user.getUserId());
+
+		Assert.assertNull(user);
 	}
 
 	@Test(expected = NoSuchAccountException.class)

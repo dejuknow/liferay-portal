@@ -19,6 +19,9 @@ import com.liferay.exportimport.resources.importer.util.Importer;
 import com.liferay.exportimport.resources.importer.util.ImporterException;
 import com.liferay.exportimport.resources.importer.util.ImporterFactory;
 import com.liferay.exportimport.resources.importer.util.PluginPackageProperties;
+import com.liferay.osgi.service.tracker.collections.map.ServiceReferenceMapper;
+import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMap;
+import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMapFactory;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.Destination;
@@ -28,9 +31,10 @@ import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.messaging.MessageBusUtil;
 import com.liferay.portal.kernel.messaging.MessageListener;
 import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.model.Release;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.CompanyLocalService;
-import com.liferay.portal.kernel.servlet.ServletContextPool;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.util.HashMap;
@@ -39,7 +43,11 @@ import java.util.Map;
 
 import javax.servlet.ServletContext;
 
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
 /**
@@ -54,10 +62,43 @@ import org.osgi.service.component.annotations.Reference;
 public class ResourcesImporterHotDeployMessageListener
 	extends HotDeployMessageListener {
 
+	@Activate
+	protected void activate(final BundleContext bundleContext) {
+		_serviceTrackerMap = ServiceTrackerMapFactory.openSingleValueMap(
+			bundleContext, ServletContext.class, null,
+			new ServiceReferenceMapper<String, ServletContext>() {
+
+				@Override
+				public void map(
+					ServiceReference<ServletContext> serviceReference,
+					ServiceReferenceMapper.Emitter<String> emitter) {
+
+					try {
+						ServletContext servletContext =
+							bundleContext.getService(serviceReference);
+
+						String servletContextName = GetterUtil.getString(
+							servletContext.getServletContextName());
+
+						emitter.emit(servletContextName);
+					}
+					finally {
+						bundleContext.ungetService(serviceReference);
+					}
+				}
+
+			});
+	}
+
+	@Deactivate
+	protected void deactivate() {
+		_serviceTrackerMap.close();
+	}
+
 	protected void initialize(Message message) throws Exception {
 		String servletContextName = message.getString("servletContextName");
 
-		ServletContext servletContext = ServletContextPool.get(
+		ServletContext servletContext = _serviceTrackerMap.getService(
 			servletContextName);
 
 		if (servletContext == null) {
@@ -69,10 +110,10 @@ public class ResourcesImporterHotDeployMessageListener
 
 		String resourcesDir = pluginPackageProperties.getResourcesDir();
 
-		if ((servletContext.getResource(
-				ImporterFactory.RESOURCES_DIR) == null) &&
-			(servletContext.getResource(
-				ImporterFactory.TEMPLATES_DIR) == null) &&
+		if ((servletContext.getResource(ImporterFactory.RESOURCES_DIR) ==
+				null) &&
+			(servletContext.getResource(ImporterFactory.TEMPLATES_DIR) ==
+				null) &&
 			Validator.isNull(resourcesDir)) {
 
 			return;
@@ -118,6 +159,13 @@ public class ResourcesImporterHotDeployMessageListener
 	@Reference(unbind = "-")
 	protected void setImporterFactory(ImporterFactory importerFactory) {
 		_importerFactory = importerFactory;
+	}
+
+	@Reference(
+		target = "(&(release.bundle.symbolic.name=com.liferay.exportimport.service)(release.schema.version=1.0.0))",
+		unbind = "-"
+	)
+	protected void setRelease(Release release) {
 	}
 
 	private void _importResources(
@@ -209,5 +257,6 @@ public class ResourcesImporterHotDeployMessageListener
 
 	private CompanyLocalService _companyLocalService;
 	private ImporterFactory _importerFactory;
+	private ServiceTrackerMap<String, ServletContext> _serviceTrackerMap;
 
 }

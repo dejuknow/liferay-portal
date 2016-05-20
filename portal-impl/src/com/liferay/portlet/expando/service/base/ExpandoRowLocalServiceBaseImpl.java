@@ -230,7 +230,7 @@ public abstract class ExpandoRowLocalServiceBaseImpl
 	public ActionableDynamicQuery getActionableDynamicQuery() {
 		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
 
-		actionableDynamicQuery.setBaseLocalService(com.liferay.expando.kernel.service.ExpandoRowLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(expandoRowLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(ExpandoRow.class);
 
@@ -243,7 +243,7 @@ public abstract class ExpandoRowLocalServiceBaseImpl
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
 		IndexableActionableDynamicQuery indexableActionableDynamicQuery = new IndexableActionableDynamicQuery();
 
-		indexableActionableDynamicQuery.setBaseLocalService(com.liferay.expando.kernel.service.ExpandoRowLocalServiceUtil.getService());
+		indexableActionableDynamicQuery.setBaseLocalService(expandoRowLocalService);
 		indexableActionableDynamicQuery.setClassLoader(getClassLoader());
 		indexableActionableDynamicQuery.setModelClass(ExpandoRow.class);
 
@@ -254,7 +254,7 @@ public abstract class ExpandoRowLocalServiceBaseImpl
 
 	protected void initActionableDynamicQuery(
 		ActionableDynamicQuery actionableDynamicQuery) {
-		actionableDynamicQuery.setBaseLocalService(com.liferay.expando.kernel.service.ExpandoRowLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(expandoRowLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(ExpandoRow.class);
 
@@ -653,7 +653,7 @@ public abstract class ExpandoRowLocalServiceBaseImpl
 	protected com.liferay.expando.kernel.service.ExpandoColumnLocalService expandoColumnLocalService;
 	@BeanReference(type = ExpandoColumnPersistence.class)
 	protected ExpandoColumnPersistence expandoColumnPersistence;
-	@BeanReference(type = com.liferay.expando.kernel.service.ExpandoRowLocalService.class)
+	@BeanReference(type = ExpandoRowLocalService.class)
 	protected ExpandoRowLocalService expandoRowLocalService;
 	@BeanReference(type = ExpandoRowPersistence.class)
 	protected ExpandoRowPersistence expandoRowPersistence;

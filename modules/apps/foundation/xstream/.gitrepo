@@ -1,0 +1,10 @@
+;
+; Do not manually edit this file. See
+; https://github.com/git-commands/git-subrepo#readme for more information.
+;
+[subrepo]
+	cmdver = liferay
+	commit = c400df90ad0605bb865ee66212888e78cd8ad847
+	mode = push
+	parent = e3efb3dd18616b4e11ac1addb4e51d1878153cb6
+	remote = git@github.com:liferay/com-liferay-xstream.git

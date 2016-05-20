@@ -23,6 +23,7 @@ import com.liferay.product.navigation.control.menu.BaseProductNavigationControlM
 import com.liferay.product.navigation.control.menu.ProductNavigationControlMenuEntry;
 import com.liferay.product.navigation.control.menu.constants.ProductNavigationControlMenuCategoryKeys;
 
+import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -49,16 +50,12 @@ public class IndexingProductNavigationControlMenuEntry
 
 	@Override
 	public Map<String, Object> getData(HttpServletRequest request) {
-		Map<String, Object> data = super.getData(request);
-
-		data.put("qa-id", "indexing");
-
-		return data;
+		return _data;
 	}
 
 	@Override
-	public String getIconCssClass(HttpServletRequest request) {
-		return "icon-refresh";
+	public String getIcon(HttpServletRequest request) {
+		return "reload";
 	}
 
 	@Override
@@ -91,6 +88,9 @@ public class IndexingProductNavigationControlMenuEntry
 	public void setIndexWriterHelper(IndexWriterHelper indexWriterHelper) {
 		_indexWriterHelper = indexWriterHelper;
 	}
+
+	private static final Map<String, Object> _data =
+		Collections.<String, Object>singletonMap("qa-id", "indexing");
 
 	private IndexWriterHelper _indexWriterHelper;
 

@@ -21,13 +21,13 @@ import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.exportimport.kernel.lar.StagedModelType;
 
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Serializable;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * <p>
@@ -159,59 +159,18 @@ public class RepositoryEntryWrapper implements RepositoryEntry,
 	}
 
 	@Override
-	public java.lang.Object clone() {
-		return new RepositoryEntryWrapper((RepositoryEntry)_repositoryEntry.clone());
+	public CacheModel<RepositoryEntry> toCacheModel() {
+		return _repositoryEntry.toCacheModel();
 	}
 
 	@Override
-	public int compareTo(
-		com.liferay.portal.kernel.model.RepositoryEntry repositoryEntry) {
-		return _repositoryEntry.compareTo(repositoryEntry);
-	}
-
-	/**
-	* Returns the company ID of this repository entry.
-	*
-	* @return the company ID of this repository entry
-	*/
-	@Override
-	public long getCompanyId() {
-		return _repositoryEntry.getCompanyId();
-	}
-
-	/**
-	* Returns the create date of this repository entry.
-	*
-	* @return the create date of this repository entry
-	*/
-	@Override
-	public Date getCreateDate() {
-		return _repositoryEntry.getCreateDate();
+	public RepositoryEntry toEscapedModel() {
+		return new RepositoryEntryWrapper(_repositoryEntry.toEscapedModel());
 	}
 
 	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _repositoryEntry.getExpandoBridge();
-	}
-
-	/**
-	* Returns the group ID of this repository entry.
-	*
-	* @return the group ID of this repository entry
-	*/
-	@Override
-	public long getGroupId() {
-		return _repositoryEntry.getGroupId();
-	}
-
-	/**
-	* Returns the last publish date of this repository entry.
-	*
-	* @return the last publish date of this repository entry
-	*/
-	@Override
-	public Date getLastPublishDate() {
-		return _repositoryEntry.getLastPublishDate();
+	public RepositoryEntry toUnescapedModel() {
+		return new RepositoryEntryWrapper(_repositoryEntry.toUnescapedModel());
 	}
 
 	/**
@@ -224,6 +183,56 @@ public class RepositoryEntryWrapper implements RepositoryEntry,
 		return _repositoryEntry.getManualCheckInRequired();
 	}
 
+	@Override
+	public boolean isCachedModel() {
+		return _repositoryEntry.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _repositoryEntry.isEscapedModel();
+	}
+
+	/**
+	* Returns <code>true</code> if this repository entry is manual check in required.
+	*
+	* @return <code>true</code> if this repository entry is manual check in required; <code>false</code> otherwise
+	*/
+	@Override
+	public boolean isManualCheckInRequired() {
+		return _repositoryEntry.isManualCheckInRequired();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _repositoryEntry.isNew();
+	}
+
+	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _repositoryEntry.getExpandoBridge();
+	}
+
+	@Override
+	public int compareTo(RepositoryEntry repositoryEntry) {
+		return _repositoryEntry.compareTo(repositoryEntry);
+	}
+
+	@Override
+	public int hashCode() {
+		return _repositoryEntry.hashCode();
+	}
+
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _repositoryEntry.getPrimaryKeyObj();
+	}
+
+	@Override
+	public java.lang.Object clone() {
+		return new RepositoryEntryWrapper((RepositoryEntry)_repositoryEntry.clone());
+	}
+
 	/**
 	* Returns the mapped ID of this repository entry.
 	*
@@ -232,71 +241,6 @@ public class RepositoryEntryWrapper implements RepositoryEntry,
 	@Override
 	public java.lang.String getMappedId() {
 		return _repositoryEntry.getMappedId();
-	}
-
-	/**
-	* Returns the modified date of this repository entry.
-	*
-	* @return the modified date of this repository entry
-	*/
-	@Override
-	public Date getModifiedDate() {
-		return _repositoryEntry.getModifiedDate();
-	}
-
-	/**
-	* Returns the mvcc version of this repository entry.
-	*
-	* @return the mvcc version of this repository entry
-	*/
-	@Override
-	public long getMvccVersion() {
-		return _repositoryEntry.getMvccVersion();
-	}
-
-	/**
-	* Returns the primary key of this repository entry.
-	*
-	* @return the primary key of this repository entry
-	*/
-	@Override
-	public long getPrimaryKey() {
-		return _repositoryEntry.getPrimaryKey();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _repositoryEntry.getPrimaryKeyObj();
-	}
-
-	/**
-	* Returns the repository entry ID of this repository entry.
-	*
-	* @return the repository entry ID of this repository entry
-	*/
-	@Override
-	public long getRepositoryEntryId() {
-		return _repositoryEntry.getRepositoryEntryId();
-	}
-
-	/**
-	* Returns the repository ID of this repository entry.
-	*
-	* @return the repository ID of this repository entry
-	*/
-	@Override
-	public long getRepositoryId() {
-		return _repositoryEntry.getRepositoryId();
-	}
-
-	/**
-	* Returns the user ID of this repository entry.
-	*
-	* @return the user ID of this repository entry
-	*/
-	@Override
-	public long getUserId() {
-		return _repositoryEntry.getUserId();
 	}
 
 	/**
@@ -330,33 +274,113 @@ public class RepositoryEntryWrapper implements RepositoryEntry,
 	}
 
 	@Override
-	public int hashCode() {
-		return _repositoryEntry.hashCode();
+	public java.lang.String toString() {
+		return _repositoryEntry.toString();
 	}
 
 	@Override
-	public boolean isCachedModel() {
-		return _repositoryEntry.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _repositoryEntry.isEscapedModel();
+	public java.lang.String toXmlString() {
+		return _repositoryEntry.toXmlString();
 	}
 
 	/**
-	* Returns <code>true</code> if this repository entry is manual check in required.
+	* Returns the create date of this repository entry.
 	*
-	* @return <code>true</code> if this repository entry is manual check in required; <code>false</code> otherwise
+	* @return the create date of this repository entry
 	*/
 	@Override
-	public boolean isManualCheckInRequired() {
-		return _repositoryEntry.isManualCheckInRequired();
+	public Date getCreateDate() {
+		return _repositoryEntry.getCreateDate();
 	}
 
+	/**
+	* Returns the last publish date of this repository entry.
+	*
+	* @return the last publish date of this repository entry
+	*/
 	@Override
-	public boolean isNew() {
-		return _repositoryEntry.isNew();
+	public Date getLastPublishDate() {
+		return _repositoryEntry.getLastPublishDate();
+	}
+
+	/**
+	* Returns the modified date of this repository entry.
+	*
+	* @return the modified date of this repository entry
+	*/
+	@Override
+	public Date getModifiedDate() {
+		return _repositoryEntry.getModifiedDate();
+	}
+
+	/**
+	* Returns the company ID of this repository entry.
+	*
+	* @return the company ID of this repository entry
+	*/
+	@Override
+	public long getCompanyId() {
+		return _repositoryEntry.getCompanyId();
+	}
+
+	/**
+	* Returns the group ID of this repository entry.
+	*
+	* @return the group ID of this repository entry
+	*/
+	@Override
+	public long getGroupId() {
+		return _repositoryEntry.getGroupId();
+	}
+
+	/**
+	* Returns the mvcc version of this repository entry.
+	*
+	* @return the mvcc version of this repository entry
+	*/
+	@Override
+	public long getMvccVersion() {
+		return _repositoryEntry.getMvccVersion();
+	}
+
+	/**
+	* Returns the primary key of this repository entry.
+	*
+	* @return the primary key of this repository entry
+	*/
+	@Override
+	public long getPrimaryKey() {
+		return _repositoryEntry.getPrimaryKey();
+	}
+
+	/**
+	* Returns the repository entry ID of this repository entry.
+	*
+	* @return the repository entry ID of this repository entry
+	*/
+	@Override
+	public long getRepositoryEntryId() {
+		return _repositoryEntry.getRepositoryEntryId();
+	}
+
+	/**
+	* Returns the repository ID of this repository entry.
+	*
+	* @return the repository ID of this repository entry
+	*/
+	@Override
+	public long getRepositoryId() {
+		return _repositoryEntry.getRepositoryId();
+	}
+
+	/**
+	* Returns the user ID of this repository entry.
+	*
+	* @return the user ID of this repository entry
+	*/
+	@Override
+	public long getUserId() {
+		return _repositoryEntry.getUserId();
 	}
 
 	@Override
@@ -545,31 +569,6 @@ public class RepositoryEntryWrapper implements RepositoryEntry,
 	}
 
 	@Override
-	public CacheModel<com.liferay.portal.kernel.model.RepositoryEntry> toCacheModel() {
-		return _repositoryEntry.toCacheModel();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.model.RepositoryEntry toEscapedModel() {
-		return new RepositoryEntryWrapper(_repositoryEntry.toEscapedModel());
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _repositoryEntry.toString();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.model.RepositoryEntry toUnescapedModel() {
-		return new RepositoryEntryWrapper(_repositoryEntry.toUnescapedModel());
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _repositoryEntry.toXmlString();
-	}
-
-	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
@@ -581,7 +580,7 @@ public class RepositoryEntryWrapper implements RepositoryEntry,
 
 		RepositoryEntryWrapper repositoryEntryWrapper = (RepositoryEntryWrapper)obj;
 
-		if (Validator.equals(_repositoryEntry,
+		if (Objects.equals(_repositoryEntry,
 					repositoryEntryWrapper._repositoryEntry)) {
 			return true;
 		}

@@ -78,9 +78,8 @@ public class ViewJournalSourcePortletConfigurationIcon
 			return StringPool.BLANK;
 		}
 
-		return
-			"var sourceModal = " + getWindowJS(portletRequest, article) +
-				" return false;";
+		return "var sourceModal = " + getWindowJS(portletRequest, article) +
+			" return false;";
 	}
 
 	@Override
@@ -201,7 +200,8 @@ public class ViewJournalSourcePortletConfigurationIcon
 		sb.append(portletDisplay.getId());
 		sb.append("', title: '");
 		sb.append(
-			HtmlUtil.escapeJS(article.getTitle(themeDisplay.getLocale())));
+			HtmlUtil.escapeJS(
+				HtmlUtil.escape(article.getTitle(themeDisplay.getLocale()))));
 		sb.append("'});");
 
 		return sb.toString();

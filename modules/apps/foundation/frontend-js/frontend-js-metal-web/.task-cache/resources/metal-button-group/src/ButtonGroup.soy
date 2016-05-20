@@ -1,15 +1,13 @@
-{namespace Templates.ButtonGroup}
+{namespace ButtonGroup}
 
 /**
  * This renders the main element.
  * @param buttons
  * @param? elementClasses
- * @param id
  * @param? selected
- * @skipUpdates elementClasses selected
  */
 {template .render}
-	<div id="{$id}" class="btn-group component{$elementClasses ? ' ' + $elementClasses : ''}">
+	<div class="btn-group component{$elementClasses ? ' ' + $elementClasses : ''}">
 		{foreach $button in $buttons}
 			{let $type: $button.type ? $button.type : 'button' /}
 			{let $cssClass: $button.cssClass ? $button.cssClass : 'btn btn-default' /}
@@ -33,7 +31,7 @@
  * @param label
  * @param selected
  */
-{template .selectedClass private="true"}
+{template .selectedClass kind="text"}
 	{if $selected}
 		{foreach $selectedValue in $selected}
 			{if $selectedValue == $label}

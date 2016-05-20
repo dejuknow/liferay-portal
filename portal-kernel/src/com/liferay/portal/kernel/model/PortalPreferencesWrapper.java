@@ -19,12 +19,12 @@ import aQute.bnd.annotation.ProviderType;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Serializable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * <p>
@@ -99,19 +99,88 @@ public class PortalPreferencesWrapper implements PortalPreferences,
 	}
 
 	@Override
-	public java.lang.Object clone() {
-		return new PortalPreferencesWrapper((PortalPreferences)_portalPreferences.clone());
+	public CacheModel<PortalPreferences> toCacheModel() {
+		return _portalPreferences.toCacheModel();
 	}
 
 	@Override
-	public int compareTo(
-		com.liferay.portal.kernel.model.PortalPreferences portalPreferences) {
-		return _portalPreferences.compareTo(portalPreferences);
+	public PortalPreferences toEscapedModel() {
+		return new PortalPreferencesWrapper(_portalPreferences.toEscapedModel());
+	}
+
+	@Override
+	public PortalPreferences toUnescapedModel() {
+		return new PortalPreferencesWrapper(_portalPreferences.toUnescapedModel());
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _portalPreferences.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _portalPreferences.isEscapedModel();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _portalPreferences.isNew();
 	}
 
 	@Override
 	public ExpandoBridge getExpandoBridge() {
 		return _portalPreferences.getExpandoBridge();
+	}
+
+	@Override
+	public int compareTo(PortalPreferences portalPreferences) {
+		return _portalPreferences.compareTo(portalPreferences);
+	}
+
+	/**
+	* Returns the owner type of this portal preferences.
+	*
+	* @return the owner type of this portal preferences
+	*/
+	@Override
+	public int getOwnerType() {
+		return _portalPreferences.getOwnerType();
+	}
+
+	@Override
+	public int hashCode() {
+		return _portalPreferences.hashCode();
+	}
+
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _portalPreferences.getPrimaryKeyObj();
+	}
+
+	@Override
+	public java.lang.Object clone() {
+		return new PortalPreferencesWrapper((PortalPreferences)_portalPreferences.clone());
+	}
+
+	/**
+	* Returns the preferences of this portal preferences.
+	*
+	* @return the preferences of this portal preferences
+	*/
+	@Override
+	public java.lang.String getPreferences() {
+		return _portalPreferences.getPreferences();
+	}
+
+	@Override
+	public java.lang.String toString() {
+		return _portalPreferences.toString();
+	}
+
+	@Override
+	public java.lang.String toXmlString() {
+		return _portalPreferences.toXmlString();
 	}
 
 	/**
@@ -135,16 +204,6 @@ public class PortalPreferencesWrapper implements PortalPreferences,
 	}
 
 	/**
-	* Returns the owner type of this portal preferences.
-	*
-	* @return the owner type of this portal preferences
-	*/
-	@Override
-	public int getOwnerType() {
-		return _portalPreferences.getOwnerType();
-	}
-
-	/**
 	* Returns the portal preferences ID of this portal preferences.
 	*
 	* @return the portal preferences ID of this portal preferences
@@ -155,16 +214,6 @@ public class PortalPreferencesWrapper implements PortalPreferences,
 	}
 
 	/**
-	* Returns the preferences of this portal preferences.
-	*
-	* @return the preferences of this portal preferences
-	*/
-	@Override
-	public java.lang.String getPreferences() {
-		return _portalPreferences.getPreferences();
-	}
-
-	/**
 	* Returns the primary key of this portal preferences.
 	*
 	* @return the primary key of this portal preferences
@@ -172,31 +221,6 @@ public class PortalPreferencesWrapper implements PortalPreferences,
 	@Override
 	public long getPrimaryKey() {
 		return _portalPreferences.getPrimaryKey();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _portalPreferences.getPrimaryKeyObj();
-	}
-
-	@Override
-	public int hashCode() {
-		return _portalPreferences.hashCode();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _portalPreferences.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _portalPreferences.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _portalPreferences.isNew();
 	}
 
 	@Override
@@ -295,31 +319,6 @@ public class PortalPreferencesWrapper implements PortalPreferences,
 	}
 
 	@Override
-	public CacheModel<com.liferay.portal.kernel.model.PortalPreferences> toCacheModel() {
-		return _portalPreferences.toCacheModel();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.model.PortalPreferences toEscapedModel() {
-		return new PortalPreferencesWrapper(_portalPreferences.toEscapedModel());
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _portalPreferences.toString();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.model.PortalPreferences toUnescapedModel() {
-		return new PortalPreferencesWrapper(_portalPreferences.toUnescapedModel());
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _portalPreferences.toXmlString();
-	}
-
-	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
@@ -331,7 +330,7 @@ public class PortalPreferencesWrapper implements PortalPreferences,
 
 		PortalPreferencesWrapper portalPreferencesWrapper = (PortalPreferencesWrapper)obj;
 
-		if (Validator.equals(_portalPreferences,
+		if (Objects.equals(_portalPreferences,
 					portalPreferencesWrapper._portalPreferences)) {
 			return true;
 		}

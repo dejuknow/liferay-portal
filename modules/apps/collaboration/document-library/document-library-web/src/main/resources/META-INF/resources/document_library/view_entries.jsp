@@ -60,7 +60,7 @@ EntriesChecker entriesChecker = new EntriesChecker(liferayPortletRequest, lifera
 entriesChecker.setCssClass("entry-selector");
 entriesChecker.setRememberCheckBoxStateURLRegex("^(?!.*" + liferayPortletResponse.getNamespace() + "redirect).*(folderId=" + String.valueOf(folderId) + ")");
 
-EntriesMover entriesMover = new EntriesMover(scopeGroupId);
+EntriesMover entriesMover = new EntriesMover(scopeGroupId, repositoryId);
 
 String[] entryColumns = dlPortletInstanceSettingsHelper.getEntryColumns();
 
@@ -229,7 +229,6 @@ if (portletTitleBasedNavigation && (folderId != DLFolderConstants.DEFAULT_PARENT
 			className="Object"
 			modelVar="result"
 		>
-
 			<%@ include file="/document_library/cast_result.jspf" %>
 
 			<c:choose>
@@ -310,7 +309,7 @@ if (portletTitleBasedNavigation && (folderId != DLFolderConstants.DEFAULT_PARENT
 							</c:choose>
 
 							<liferay-ui:search-container-column-jsp
-								colspan="2"
+								colspan="<%= 2 %>"
 								path="/document_library/view_file_entry_descriptive.jsp"
 							/>
 
@@ -485,7 +484,7 @@ if (portletTitleBasedNavigation && (folderId != DLFolderConstants.DEFAULT_PARENT
 							/>
 
 							<liferay-ui:search-container-column-jsp
-								colspan="2"
+								colspan="<%= 2 %>"
 								path="/document_library/view_folder_descriptive.jsp"
 							/>
 
@@ -598,7 +597,11 @@ if (portletTitleBasedNavigation && (folderId != DLFolderConstants.DEFAULT_PARENT
 	</liferay-ui:search-container>
 </div>
 
-<%@ include file="/document_library/version_details.jspf" %>
+<%
+request.setAttribute("edit_file_entry.jsp-checkedOut", true);
+%>
+
+<liferay-util:include page="/document_library/version_details.jsp" servletContext="<%= application %>" />
 
 <%!
 private static Log _log = LogFactoryUtil.getLog("com_liferay_document_library_web.document_library.view_entries_jsp");

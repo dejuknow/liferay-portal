@@ -142,14 +142,16 @@ public class ThemeImpl extends PluginBaseImpl implements Theme {
 
 		String servletContextName = getServletContextName();
 
-		String portalPathContext = PortalUtil.getPathContext();
-
 		if (ServletContextPool.containsKey(servletContextName)) {
 			ServletContext servletContext = ServletContextPool.get(
 				servletContextName);
 
-			return portalPathContext.concat(servletContext.getContextPath());
+			String proxyPath = PortalUtil.getPathProxy();
+
+			return proxyPath.concat(servletContext.getContextPath());
 		}
+
+		String portalPathContext = PortalUtil.getPathContext();
 
 		return portalPathContext.concat(
 			StringPool.SLASH.concat(servletContextName));
@@ -292,11 +294,13 @@ public class ThemeImpl extends PluginBaseImpl implements Theme {
 	public Properties getSettingsProperties() {
 		Properties properties = new Properties();
 
-		for (String key : _themeSettingsMap.keySet()) {
-			ThemeSetting setting = _themeSettingsMap.get(key);
+		for (Map.Entry<String, ThemeSetting> entry :
+				_themeSettingsMap.entrySet()) {
+
+			ThemeSetting setting = entry.getValue();
 
 			if (setting != null) {
-				properties.setProperty(key, setting.getValue());
+				properties.setProperty(entry.getKey(), setting.getValue());
 			}
 		}
 

@@ -228,7 +228,7 @@ public abstract class AssetTagStatsLocalServiceBaseImpl
 	public ActionableDynamicQuery getActionableDynamicQuery() {
 		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
 
-		actionableDynamicQuery.setBaseLocalService(com.liferay.asset.kernel.service.AssetTagStatsLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(assetTagStatsLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(AssetTagStats.class);
 
@@ -241,7 +241,7 @@ public abstract class AssetTagStatsLocalServiceBaseImpl
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
 		IndexableActionableDynamicQuery indexableActionableDynamicQuery = new IndexableActionableDynamicQuery();
 
-		indexableActionableDynamicQuery.setBaseLocalService(com.liferay.asset.kernel.service.AssetTagStatsLocalServiceUtil.getService());
+		indexableActionableDynamicQuery.setBaseLocalService(assetTagStatsLocalService);
 		indexableActionableDynamicQuery.setClassLoader(getClassLoader());
 		indexableActionableDynamicQuery.setModelClass(AssetTagStats.class);
 
@@ -252,7 +252,7 @@ public abstract class AssetTagStatsLocalServiceBaseImpl
 
 	protected void initActionableDynamicQuery(
 		ActionableDynamicQuery actionableDynamicQuery) {
-		actionableDynamicQuery.setBaseLocalService(com.liferay.asset.kernel.service.AssetTagStatsLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(assetTagStatsLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(AssetTagStats.class);
 
@@ -476,7 +476,7 @@ public abstract class AssetTagStatsLocalServiceBaseImpl
 		}
 	}
 
-	@BeanReference(type = com.liferay.asset.kernel.service.AssetTagStatsLocalService.class)
+	@BeanReference(type = AssetTagStatsLocalService.class)
 	protected AssetTagStatsLocalService assetTagStatsLocalService;
 	@BeanReference(type = AssetTagStatsPersistence.class)
 	protected AssetTagStatsPersistence assetTagStatsPersistence;

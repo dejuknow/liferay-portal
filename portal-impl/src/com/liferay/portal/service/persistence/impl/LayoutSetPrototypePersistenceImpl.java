@@ -58,6 +58,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -205,7 +206,7 @@ public class LayoutSetPrototypePersistenceImpl extends BasePersistenceImpl<Layou
 
 			if ((list != null) && !list.isEmpty()) {
 				for (LayoutSetPrototype layoutSetPrototype : list) {
-					if (!Validator.equals(uuid, layoutSetPrototype.getUuid())) {
+					if (!Objects.equals(uuid, layoutSetPrototype.getUuid())) {
 						list = null;
 
 						break;
@@ -1173,7 +1174,7 @@ public class LayoutSetPrototypePersistenceImpl extends BasePersistenceImpl<Layou
 
 			if ((list != null) && !list.isEmpty()) {
 				for (LayoutSetPrototype layoutSetPrototype : list) {
-					if (!Validator.equals(uuid, layoutSetPrototype.getUuid()) ||
+					if (!Objects.equals(uuid, layoutSetPrototype.getUuid()) ||
 							(companyId != layoutSetPrototype.getCompanyId())) {
 						list = null;
 
@@ -4003,8 +4004,8 @@ public class LayoutSetPrototypePersistenceImpl extends BasePersistenceImpl<Layou
 					primaryKey);
 
 			if (layoutSetPrototype == null) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+				if (_log.isDebugEnabled()) {
+					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchLayoutSetPrototypeException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
@@ -4249,8 +4250,8 @@ public class LayoutSetPrototypePersistenceImpl extends BasePersistenceImpl<Layou
 		LayoutSetPrototype layoutSetPrototype = fetchByPrimaryKey(primaryKey);
 
 		if (layoutSetPrototype == null) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+			if (_log.isDebugEnabled()) {
+				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
 			throw new NoSuchLayoutSetPrototypeException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +

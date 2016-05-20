@@ -57,32 +57,18 @@ public interface AssetEntryService extends BaseService {
 	public AssetEntry fetchEntry(long entryId) throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<AssetEntry> getCompanyEntries(long companyId, int start, int end);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public int getCompanyEntriesCount(long companyId);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<AssetEntry> getEntries(AssetEntryQuery entryQuery)
-		throws PortalException;
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public int getEntriesCount(AssetEntryQuery entryQuery)
-		throws PortalException;
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public AssetEntry getEntry(long entryId) throws PortalException;
-
-	/**
-	* Returns the OSGi service identifier.
-	*
-	* @return the OSGi service identifier
-	*/
-	public java.lang.String getOSGiServiceIdentifier();
 
 	public AssetEntry incrementViewCounter(java.lang.String className,
 		long classPK) throws PortalException;
 
+	/**
+	* @deprecated As of 7.0.0, replaced by {@link #updateEntry(long, Date,
+	Date, String, long, String, long, long[], String[], boolean,
+	boolean, Date, Date, Date, Date, String, String, String,
+	String, String, String, int, int, Double)}
+	*/
+	@java.lang.Deprecated
 	public AssetEntry updateEntry(long groupId, Date createDate,
 		Date modifiedDate, java.lang.String className, long classPK,
 		java.lang.String classUuid, long classTypeId, long[] categoryIds,
@@ -93,11 +79,21 @@ public interface AssetEntryService extends BaseService {
 		java.lang.String url, java.lang.String layoutUuid, int height,
 		int width, java.lang.Double priority) throws PortalException;
 
+	public AssetEntry updateEntry(long groupId, Date createDate,
+		Date modifiedDate, java.lang.String className, long classPK,
+		java.lang.String classUuid, long classTypeId, long[] categoryIds,
+		java.lang.String[] tagNames, boolean listable, boolean visible,
+		Date startDate, Date endDate, Date publishDate, Date expirationDate,
+		java.lang.String mimeType, java.lang.String title,
+		java.lang.String description, java.lang.String summary,
+		java.lang.String url, java.lang.String layoutUuid, int height,
+		int width, java.lang.Double priority) throws PortalException;
+
 	/**
 	* @deprecated As of 7.0.0, replaced by {@link #updateEntry(long, Date,
 	Date, String, long, String, long, long[], String[], boolean,
-	boolean, Date, Date, Date, String, String, String, String,
-	String, String, int, int, Double)}
+	boolean, Date, Date, Date, Date, String, String, String,
+	String, String, String, int, int, Double)}
 	*/
 	@java.lang.Deprecated
 	public AssetEntry updateEntry(long groupId, Date createDate,
@@ -109,4 +105,25 @@ public interface AssetEntryService extends BaseService {
 		java.lang.String summary, java.lang.String url,
 		java.lang.String layoutUuid, int height, int width,
 		java.lang.Integer priority, boolean sync) throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getCompanyEntriesCount(long companyId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getEntriesCount(AssetEntryQuery entryQuery)
+		throws PortalException;
+
+	/**
+	* Returns the OSGi service identifier.
+	*
+	* @return the OSGi service identifier
+	*/
+	public java.lang.String getOSGiServiceIdentifier();
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<AssetEntry> getCompanyEntries(long companyId, int start, int end);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<AssetEntry> getEntries(AssetEntryQuery entryQuery)
+		throws PortalException;
 }

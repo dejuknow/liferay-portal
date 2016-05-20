@@ -31,6 +31,7 @@ import com.liferay.portal.kernel.util.TextFormatter;
 import com.liferay.portal.kernel.util.Tuple;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.tools.ToolsUtil;
+import com.liferay.portal.xml.SAXReaderFactory;
 import com.liferay.source.formatter.util.FileUtil;
 
 import java.io.File;
@@ -46,17 +47,30 @@ import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.tools.ant.types.selectors.SelectorUtils;
+
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
 
 /**
  * @author Brian Wing Shun Chan
@@ -66,20 +80,48 @@ import org.apache.tools.ant.types.selectors.SelectorUtils;
  */
 public abstract class BaseSourceProcessor implements SourceProcessor {
 
+	public static final int PLUGINS_MAX_DIR_LEVEL = 3;
+
 	public static final int PORTAL_MAX_DIR_LEVEL = 7;
 
 	@Override
 	public final void format() throws Exception {
 		preFormat();
 
-		for (String fileName : getFileNames()) {
-			try {
-				format(fileName);
-			}
-			catch (Exception e) {
-				throw new RuntimeException("Unable to format " + fileName, e);
-			}
+		List<String> fileNames = getFileNames();
+
+		ExecutorService executorService = Executors.newFixedThreadPool(
+			sourceFormatterArgs.getProcessorThreadCount());
+
+		List<Future<Void>> futures = new ArrayList<>(fileNames.size());
+
+		for (final String fileName : fileNames) {
+			Future<Void> future = executorService.submit(
+				new Callable<Void>() {
+
+					@Override
+					public Void call() throws Exception {
+						try {
+							format(fileName);
+
+							return null;
+						}
+						catch (Exception e) {
+							throw new RuntimeException(
+								"Unable to format " + fileName, e);
+						}
+					}
+
+				});
+
+			futures.add(future);
 		}
+
+		for (Future<Void> future : futures) {
+			future.get();
+		}
+
+		executorService.shutdown();
 
 		postFormat();
 
@@ -117,6 +159,19 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 	@Override
 	public List<String> getModifiedFileNames() {
 		return _modifiedFileNames;
+	}
+
+	@Override
+	public void processErrorMessage(String fileName, String message) {
+		List<String> errorMessages = _errorMessagesMap.get(fileName);
+
+		if (errorMessages == null) {
+			errorMessages = new ArrayList<>();
+		}
+
+		errorMessages.add(message);
+
+		_errorMessagesMap.put(fileName, errorMessages);
 	}
 
 	@Override
@@ -172,6 +227,41 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 				fileName,
 				"Use Collections.empty" + collectionType + "(): " + fileName +
 					" " + lineCount);
+		}
+	}
+
+	protected void checkGetterUtilGet(String fileName, String content)
+		throws Exception {
+
+		Matcher matcher = getterUtilGetPattern.matcher(content);
+
+		while (matcher.find()) {
+			List<String> parametersList = getParameterList(matcher.group());
+
+			if (parametersList.size() != 2) {
+				continue;
+			}
+
+			String defaultVariableName =
+				"DEFAULT_" + StringUtil.toUpperCase(matcher.group(1));
+
+			Field defaultValuefield = GetterUtil.class.getDeclaredField(
+				defaultVariableName);
+
+			String defaultValue = String.valueOf(defaultValuefield.get(null));
+
+			String value = parametersList.get(1);
+
+			if (value.equals("StringPool.BLANK")) {
+				value = StringPool.BLANK;
+			}
+
+			if (Objects.equals(value, defaultValue)) {
+				processErrorMessage(
+					fileName,
+					"No need to pass default value: " + fileName + " " +
+						getLineCount(content, matcher.start()));
+			}
 		}
 	}
 
@@ -323,7 +413,7 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		}
 
 		if (_portalLanguageProperties == null) {
-			_portalLanguageProperties = new Properties();
+			Properties portalLanguageProperties = new Properties();
 
 			File portalLanguagePropertiesFile = new File(
 				getFile("portal-impl", PORTAL_MAX_DIR_LEVEL),
@@ -332,7 +422,9 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 			InputStream inputStream = new FileInputStream(
 				portalLanguagePropertiesFile);
 
-			_portalLanguageProperties.load(inputStream);
+			portalLanguageProperties.load(inputStream);
+
+			_portalLanguageProperties = portalLanguageProperties;
 		}
 
 		Matcher matcher = pattern.matcher(content);
@@ -389,6 +481,44 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		}
 	}
 
+	protected void checkOrder(
+		String fileName, Element rootElement, String elementName,
+		String parentElementName, ElementComparator elementComparator) {
+
+		if (rootElement == null) {
+			return;
+		}
+
+		List<Element> elements = rootElement.elements(elementName);
+
+		Element previousElement = null;
+
+		for (Element element : elements) {
+			if ((previousElement != null) &&
+				(elementComparator.compare(previousElement, element) > 0)) {
+
+				StringBundler sb = new StringBundler(8);
+
+				sb.append("order ");
+				sb.append(elementName);
+				sb.append(": ");
+				sb.append(fileName);
+				sb.append(StringPool.SPACE);
+
+				if (Validator.isNotNull(parentElementName)) {
+					sb.append(parentElementName);
+					sb.append(StringPool.SPACE);
+				}
+
+				sb.append(elementComparator.getElementName(element));
+
+				processErrorMessage(fileName, sb.toString());
+			}
+
+			previousElement = element;
+		}
+	}
+
 	protected String checkPrincipalException(String content) {
 		String newContent = content;
 
@@ -407,6 +537,10 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 	}
 
 	protected void checkPropertyUtils(String fileName, String content) {
+		if (fileName.endsWith("TypeConvertorUtil.java")) {
+			return;
+		}
+
 		if (content.contains("org.apache.commons.beanutils.PropertyUtils")) {
 			processErrorMessage(
 				fileName,
@@ -443,27 +577,7 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		Matcher matcher = stringUtilReplacePattern.matcher(content);
 
 		while (matcher.find()) {
-			String replaceCall = matcher.group();
-
-			int x = replaceCall.length();
-
-			while (true) {
-				x = replaceCall.lastIndexOf(
-					StringPool.CLOSE_PARENTHESIS, x - 1);
-
-				replaceCall = replaceCall.substring(0, x + 1);
-
-				if (getLevel(replaceCall) == 0) {
-					break;
-				}
-			}
-
-			x = replaceCall.indexOf(StringPool.OPEN_PARENTHESIS);
-
-			String parameters = replaceCall.substring(
-				x + 1, replaceCall.length() - 1);
-
-			List<String> parametersList = splitParameters(parameters);
+			List<String> parametersList = getParameterList(matcher.group());
 
 			if (parametersList.size() != 3) {
 				return;
@@ -848,8 +962,15 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 
 			String attribute = s.substring(0, x);
 
-			if (!isAttributName(attribute)) {
+			String trimmedAttribute = StringUtil.trim(attribute);
+
+			if (!isAttributName(trimmedAttribute)) {
 				return line;
+			}
+
+			if (!attribute.equals(trimmedAttribute)) {
+				return StringUtil.replace(
+					line, attribute + "=", trimmedAttribute + "=");
 			}
 
 			if (Validator.isNotNull(previousAttribute) &&
@@ -864,6 +985,11 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 
 			if ((delimeter != CharPool.APOSTROPHE) &&
 				(delimeter != CharPool.QUOTE)) {
+
+				if (delimeter == CharPool.SPACE) {
+					return StringUtil.replace(
+						line, attribute + "= ", attribute + "=");
+				}
 
 				if (delimeter != CharPool.AMPERSAND) {
 					processErrorMessage(
@@ -1027,7 +1153,7 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 	protected String formatJavaTerms(
 			String javaClassName, String packagePath, File file,
 			String fileName, String absolutePath, String content,
-			String javaClassContent, int javaClassLineCount,
+			String javaClassContent, int javaClassLineCount, String indent,
 			List<String> checkJavaFieldTypesExcludes,
 			List<String> javaTermAccessLevelModifierExcludes,
 			List<String> javaTermSortExcludes,
@@ -1047,7 +1173,7 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 
 		JavaClass javaClass = new JavaClass(
 			javaClassName, packagePath, file, fileName, absolutePath, content,
-			javaClassContent, javaClassLineCount, StringPool.TAB, null,
+			javaClassContent, javaClassLineCount, indent + StringPool.TAB, null,
 			javaTermAccessLevelModifierExcludes, javaSourceProcessor);
 
 		String newJavaClassContent = javaClass.formatJavaTerms(
@@ -1215,6 +1341,7 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		linePart = formatIncorrectSyntax(linePart, "]{", "] {", false);
 
 		if (javaSource) {
+			linePart = formatIncorrectSyntax(linePart, " ...", "...", false);
 			linePart = formatIncorrectSyntax(linePart, " [", "[", false);
 			linePart = formatIncorrectSyntax(linePart, "{ ", "{", false);
 			linePart = formatIncorrectSyntax(linePart, " }", "}", false);
@@ -1492,24 +1619,20 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 
 		List<String> fileNames = new ArrayList<>();
 
-		for (int i = 0; i < 3; i++) {
-			fileNames = getFileNames(basedir, new String[0], includes);
+		for (int i = 0; i < PLUGINS_MAX_DIR_LEVEL; i++) {
+			File sharedDir = new File(basedir + "shared");
 
-			if (!fileNames.isEmpty()) {
+			if (sharedDir.exists()) {
+				fileNames = getFileNames(basedir, new String[0], includes);
+
 				break;
 			}
 
-			basedir = "../" + basedir;
+			basedir = basedir + "../";
 		}
 
 		for (String fileName : fileNames) {
-			if (!fileName.startsWith(
-					sourceFormatterArgs.getBaseDirName() + "shared")) {
-
-				break;
-			}
-
-			File file = new File(basedir + fileName);
+			File file = new File(fileName);
 
 			String content = FileUtil.read(file);
 
@@ -1731,7 +1854,7 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 
 		return getLevel(
 			s, new String[] {increaseLevelString},
-			new String[] {decreaseLevelString}, 0);	
+			new String[] {decreaseLevelString}, 0);
 	}
 
 	protected int getLevel(
@@ -1756,6 +1879,23 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		}
 
 		return level;
+	}
+
+	protected String getLine(String content, int lineCount) {
+		int nextLineStartPos = getLineStartPos(content, lineCount);
+
+		if (nextLineStartPos == -1) {
+			return null;
+		}
+
+		int nextLineEndPos = content.indexOf(
+			CharPool.NEW_LINE, nextLineStartPos);
+
+		if (nextLineEndPos == -1) {
+			return content.substring(nextLineStartPos);
+		}
+
+		return content.substring(nextLineStartPos, nextLineEndPos);
 	}
 
 	protected int getLineCount(String content, int pos) {
@@ -1787,6 +1927,20 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		}
 
 		return lineLength;
+	}
+
+	protected int getLineStartPos(String content, int lineCount) {
+		int x = 0;
+
+		for (int i = 1; i < lineCount; i++) {
+			x = content.indexOf(CharPool.NEW_LINE, x + 1);
+
+			if (x == -1) {
+				return x;
+			}
+		}
+
+		return x + 1;
 	}
 
 	protected String getMainReleaseVersion() {
@@ -1966,6 +2120,72 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		}
 
 		return null;
+	}
+
+	protected List<String> getParameterList(String methodCall) {
+		String parameters = null;
+
+		int x = -1;
+
+		while (true) {
+			x = methodCall.indexOf(StringPool.CLOSE_PARENTHESIS, x + 1);
+
+			parameters = methodCall.substring(0, x + 1);
+
+			if ((getLevel(parameters, "(", ")") == 0) &&
+				(getLevel(parameters, "{", "}") == 0)) {
+
+				break;
+			}
+		}
+
+		x = parameters.indexOf(StringPool.OPEN_PARENTHESIS);
+
+		parameters = parameters.substring(x + 1, parameters.length() - 1);
+
+		return splitParameters(parameters);
+	}
+
+	protected List<String> getPluginsInsideModulesDirectoryNames()
+		throws Exception {
+
+		if (_pluginsInsideModulesDirectoryNames != null) {
+			return _pluginsInsideModulesDirectoryNames;
+		}
+
+		List<String> pluginsInsideModulesDirectoryNames = new ArrayList<>();
+
+		List<String> pluginBuildFileNames = getFileNames(
+			new String[0],
+			new String[] {
+				"**/modules/apps/**/build.xml",
+				"**/modules/private/apps/**/build.xml"
+			});
+
+		for (String pluginBuildFileName : pluginBuildFileNames) {
+			pluginBuildFileName = StringUtil.replace(
+				pluginBuildFileName, StringPool.BACK_SLASH, StringPool.SLASH);
+
+			File file = new File(pluginBuildFileName);
+
+			String absolutePath = getAbsolutePath(file);
+
+			int x = absolutePath.indexOf("/modules/apps/");
+
+			if (x == -1) {
+				x = absolutePath.indexOf("/modules/private/apps/");
+			}
+
+			int y = absolutePath.lastIndexOf(StringPool.SLASH);
+
+			pluginsInsideModulesDirectoryNames.add(
+				absolutePath.substring(x, y + 1));
+		}
+
+		_pluginsInsideModulesDirectoryNames =
+			pluginsInsideModulesDirectoryNames;
+
+		return _pluginsInsideModulesDirectoryNames;
 	}
 
 	protected String getProperty(String key) {
@@ -2165,29 +2385,39 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 	}
 
 	protected boolean isModulesFile(String absolutePath) {
-		return absolutePath.contains("/modules/");
+		return isModulesFile(absolutePath, false);
 	}
 
-	protected void preFormat() throws Exception {
+	protected boolean isModulesFile(
+		String absolutePath, boolean includePlugins) {
+
+		if (includePlugins) {
+			return absolutePath.contains("/modules/");
+		}
+
+		try {
+			for (String directoryName :
+					getPluginsInsideModulesDirectoryNames()) {
+
+				if (absolutePath.contains(directoryName)) {
+					return false;
+				}
+			}
+		}
+		catch (Exception e) {
+		}
+
+		return absolutePath.contains("/modules/");
 	}
 
 	protected void postFormat() throws Exception {
 	}
 
-	protected void printError(String fileName, String message) {
-		_sourceFormatterHelper.printError(fileName, message);
+	protected void preFormat() throws Exception {
 	}
 
-	protected void processErrorMessage(String fileName, String message) {
-		List<String> errorMessages = _errorMessagesMap.get(fileName);
-
-		if (errorMessages == null) {
-			errorMessages = new ArrayList<>();
-		}
-
-		errorMessages.add(message);
-
-		_errorMessagesMap.put(fileName, errorMessages);
+	protected void printError(String fileName, String message) {
+		_sourceFormatterHelper.printError(fileName, message);
 	}
 
 	protected void processFormattedFile(
@@ -2221,6 +2451,12 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		_modifiedFileNames.add(file.getAbsolutePath());
 	}
 
+	protected Document readXML(String content) throws DocumentException {
+		SAXReader saxReader = SAXReaderFactory.getSAXReader(null, false, false);
+
+		return saxReader.read(new UnsyncStringReader(content));
+	}
+
 	protected String replacePrimitiveWrapperInstantiation(String line) {
 		return StringUtil.replace(
 			line,
@@ -2233,6 +2469,44 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 				"Double.valueOf(", "Float.valueOf(", "Integer.valueOf(",
 				"Long.valueOf(", "Short.valueOf("
 			});
+	}
+
+	protected String sortDefinitions(
+		String content, Comparator<String> comparator) {
+
+		String previousDefinition = null;
+
+		Matcher matcher = _definitionPattern.matcher(content);
+
+		while (matcher.find()) {
+			String definition = matcher.group();
+
+			if (Validator.isNotNull(matcher.group(1))) {
+				definition = definition.substring(0, definition.length() - 1);
+			}
+
+			if (Validator.isNotNull(previousDefinition)) {
+				int value = comparator.compare(previousDefinition, definition);
+
+				if (value > 0) {
+					content = StringUtil.replaceFirst(
+						content, previousDefinition, definition);
+					content = StringUtil.replaceLast(
+						content, definition, previousDefinition);
+
+					return content;
+				}
+
+				if (value == 0) {
+					return StringUtil.replaceFirst(
+						content, previousDefinition + "\n", StringPool.BLANK);
+				}
+			}
+
+			previousDefinition = definition;
+		}
+
+		return content;
 	}
 
 	protected String sortHTMLAttributes(
@@ -2261,7 +2535,9 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 
 			String linePart = parameters.substring(0, x);
 
-			if (getLevel(linePart) == 0) {
+			if ((getLevel(linePart, "(", ")") == 0) &&
+				(getLevel(linePart, "{", "}") == 0)) {
+
 				parametersList.add(StringUtil.trim(linePart));
 
 				parameters = parameters.substring(x + 1);
@@ -2411,6 +2687,10 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		"\\scontent=(.*?)(,\\\\|\n|$)");
 	protected static Pattern emptyCollectionPattern = Pattern.compile(
 		"Collections\\.EMPTY_(LIST|MAP|SET)");
+	protected static Pattern getterUtilGetPattern = Pattern.compile(
+		"GetterUtil\\.get(Boolean|Double|Float|Integer|Number|Object|Short|" +
+			"String)\\((.*?)\\);\n",
+		Pattern.DOTALL);
 	protected static Pattern javaSourceInsideJSPTagPattern = Pattern.compile(
 		"<%=(.+?)%>");
 	protected static Pattern jsonObjectPutBlockPattern = Pattern.compile(
@@ -2420,7 +2700,7 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 	protected static Pattern languageKeyPattern = Pattern.compile(
 		"LanguageUtil.(?:get|format)\\([^;%]+|Liferay.Language.get\\('([^']+)");
 	protected static Pattern mergeLangPattern = Pattern.compile(
-		"mergeLang \\{\\s*sourceDirs = \\[(.*)\\]");
+		"mergeLang \\{\\s*sourceDirs = \\[(.*?)\\]", Pattern.DOTALL);
 	protected static boolean portalSource;
 	protected static Pattern principalExceptionPattern = Pattern.compile(
 		"SessionErrors\\.contains\\(\n?\t*(renderR|r)equest, " +
@@ -2441,6 +2721,8 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 	protected static Pattern taglibSessionKeyPattern = Pattern.compile(
 		"<liferay-ui:error [^>]+>|<liferay-ui:success [^>]+>",
 		Pattern.MULTILINE);
+	protected static Pattern validatorEqualsPattern = Pattern.compile(
+		"\\WValidator\\.equals\\(");
 
 	protected SourceFormatterArgs sourceFormatterArgs;
 
@@ -2589,20 +2871,28 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 	}
 
 	private Set<String> _annotationsExclusions;
-	private Map<String, Tuple> _bndFileLocationAndContentMap = new HashMap<>();
-	private Map<String, Properties> _bndLanguagePropertiesMap = new HashMap<>();
+	private final Map<String, Tuple> _bndFileLocationAndContentMap =
+		new HashMap<>();
+	private final Map<String, Properties> _bndLanguagePropertiesMap =
+		new HashMap<>();
 	private Map<String, String> _compatClassNamesMap;
 	private String _copyright;
-	private Map<String, List<String>> _errorMessagesMap = new HashMap<>();
+	private final Pattern _definitionPattern = Pattern.compile(
+		"^[A-Za-z-][\\s\\S]*?([^\\\\]\n|\\Z)", Pattern.MULTILINE);
+	private Map<String, List<String>> _errorMessagesMap =
+		new ConcurrentHashMap<>();
 	private String[] _excludes;
 	private SourceMismatchException _firstSourceMismatchException;
 	private Set<String> _immutableFieldTypes;
 	private String _mainReleaseVersion;
-	private final List<String> _modifiedFileNames = new ArrayList<>();
-	private Map<String, Properties> _moduleLangLanguageProperties =
+	private final List<String> _modifiedFileNames =
+		new CopyOnWriteArrayList<>();
+	private final Map<String, Properties> _moduleLangLanguageProperties =
 		new HashMap<>();
-	private Map<String, Properties> _moduleLanguageProperties = new HashMap<>();
+	private final Map<String, Properties> _moduleLanguageProperties =
+		new HashMap<>();
 	private String _oldCopyright;
+	private List<String> _pluginsInsideModulesDirectoryNames;
 	private Properties _portalLanguageProperties;
 	private Properties _properties;
 	private List<String> _runOutsidePortalExcludes;

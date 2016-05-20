@@ -109,6 +109,8 @@ public class AddTemplateMVCActionCommand extends DDMBaseMVCActionCommand {
 
 		updatePortletPreferences(actionRequest, template);
 
+		addSuccessMessage(actionRequest, actionResponse);
+
 		setRedirectAttribute(actionRequest, template);
 	}
 

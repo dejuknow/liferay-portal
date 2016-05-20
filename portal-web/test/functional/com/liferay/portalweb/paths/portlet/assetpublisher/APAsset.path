@@ -15,7 +15,7 @@
 </tr>
 <tr>
 	<td>ASSET_TITLE_HEADER</td>
-	<td>//h3[@class='header-title']/span</td>
+	<td>//div[@class='h2']/span[2]</td>
 	<td></td>
 </tr>
 <tr>

@@ -94,6 +94,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>USER_NAME_HEADER</td>
+	<td>//div[@id='heading']//span[@class='site-name'] | //div[@id='heading']//div[contains(@class,'site-name')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>SITE_NAME_LOGO</td>
 	<td>//h1[@class='site-title']/a/img</td>
 	<td></td>
@@ -120,7 +125,7 @@
 </tr>
 <tr>
 	<td>ERROR_MESSAGE_EXPIRED_SESSION</td>
-	<td>//div[contains(@class,'liferayalert-content')]</td>
+	<td>//div[contains(@class,'liferayalert')]//div</td>
 	<td></td>
 </tr>
 <tr>

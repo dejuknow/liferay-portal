@@ -1,4 +1,5 @@
 <definition component-name="portal-user-interface">
+	<property name="portal.release" value="true" />
 	<property name="testray.main.component.name" value="User Interface" />
 
 	<set-up>
@@ -85,8 +86,6 @@
 			<var name="entryContent" value="Blogs Content" />
 			<var name="entryTitle" value="Blogs Title" />
 		</execute>
-
-		<execute macro="PortletEntry#publish" />
 
 		<execute macro="Alert#viewSuccessMessageText">
 			<var name="sucessMessage" value="Your request completed successfully." />

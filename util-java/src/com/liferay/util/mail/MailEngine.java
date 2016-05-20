@@ -67,6 +67,7 @@ import javax.mail.internet.MimeMultipart;
  * @author Neil Griffin
  * @author Thiago Moreira
  * @author Brett Swaim
+ * @see com.liferay.petra.mail.MailEngine
  */
 public class MailEngine {
 
@@ -534,7 +535,7 @@ public class MailEngine {
 
 		try {
 			boolean smtpAuth = GetterUtil.getBoolean(
-				_getSMTPProperty(session, "auth"), false);
+				_getSMTPProperty(session, "auth"));
 			String smtpHost = _getSMTPProperty(session, "host");
 			int smtpPort = GetterUtil.getInteger(
 				_getSMTPProperty(session, "port"), Account.PORT_SMTP);
