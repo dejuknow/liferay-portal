@@ -30,6 +30,7 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
 import java.io.File;
@@ -49,7 +50,7 @@ import java.util.Map;
  * @author Brian Wing Shun Chan
  * @author Raymond Augé
  * @author Levente Hudák
- * @see    com.liferay.journal.service.impl.JournalArticleLocalServiceImpl
+ * @see    JournalArticleLocalServiceImpl
  */
 public class JournalArticleServiceImpl extends JournalArticleServiceBaseImpl {
 
@@ -1289,7 +1290,8 @@ public class JournalArticleServiceImpl extends JournalArticleServiceBaseImpl {
 
 	@Override
 	public List<JournalArticle> getLayoutArticles(long groupId) {
-		return journalArticlePersistence.filterFindByG_NotL(groupId, null);
+		return journalArticlePersistence.filterFindByG_NotL(
+			groupId, new String[] {null, StringPool.BLANK});
 	}
 
 	/**

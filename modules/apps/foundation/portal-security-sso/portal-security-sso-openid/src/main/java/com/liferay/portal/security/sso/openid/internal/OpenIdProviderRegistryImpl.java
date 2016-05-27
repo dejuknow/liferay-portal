@@ -16,7 +16,6 @@ package com.liferay.portal.security.sso.openid.internal;
 
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.security.sso.openid.OpenIdProvider;
 import com.liferay.portal.security.sso.openid.OpenIdProviderRegistry;
 
@@ -26,6 +25,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -61,7 +61,7 @@ public class OpenIdProviderRegistryImpl implements OpenIdProviderRegistry {
 	@Override
 	public OpenIdProvider getOpenIdProvider(URL url) {
 		for (OpenIdProvider openIdProvider : _openIdProviders.values()) {
-			if (Validator.equals(openIdProvider.getUrl(), url.getHost())) {
+			if (Objects.equals(openIdProvider.getUrl(), url.getHost())) {
 				return openIdProvider;
 			}
 		}
@@ -90,7 +90,9 @@ public class OpenIdProviderRegistryImpl implements OpenIdProviderRegistry {
 
 		Map<String, OpenIdProvider> openIdProviders = new HashMap<>(2);
 
-		for (String key : properties.keySet()) {
+		for (Map.Entry<String, Object> entry : properties.entrySet()) {
+			String key = entry.getKey();
+
 			int index = key.indexOf("[");
 
 			if (index < 0) {
@@ -109,7 +111,7 @@ public class OpenIdProviderRegistryImpl implements OpenIdProviderRegistry {
 				openIdProviders.put(name, openIdProvider);
 			}
 
-			String value = GetterUtil.getString(properties.get(key));
+			String value = GetterUtil.getString(entry.getValue());
 
 			if (key.startsWith(_OPEN_ID_AX_SCHEMA)) {
 				openIdProvider.setAxSchema(StringUtil.split(value));

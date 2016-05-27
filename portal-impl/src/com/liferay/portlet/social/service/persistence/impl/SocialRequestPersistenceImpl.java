@@ -54,6 +54,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -200,7 +201,7 @@ public class SocialRequestPersistenceImpl extends BasePersistenceImpl<SocialRequ
 
 			if ((list != null) && !list.isEmpty()) {
 				for (SocialRequest socialRequest : list) {
-					if (!Validator.equals(uuid, socialRequest.getUuid())) {
+					if (!Objects.equals(uuid, socialRequest.getUuid())) {
 						list = null;
 
 						break;
@@ -673,8 +674,8 @@ public class SocialRequestPersistenceImpl extends BasePersistenceImpl<SocialRequ
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchRequestException(msg.toString());
@@ -718,7 +719,7 @@ public class SocialRequestPersistenceImpl extends BasePersistenceImpl<SocialRequ
 		if (result instanceof SocialRequest) {
 			SocialRequest socialRequest = (SocialRequest)result;
 
-			if (!Validator.equals(uuid, socialRequest.getUuid()) ||
+			if (!Objects.equals(uuid, socialRequest.getUuid()) ||
 					(groupId != socialRequest.getGroupId())) {
 				result = null;
 			}
@@ -1011,7 +1012,7 @@ public class SocialRequestPersistenceImpl extends BasePersistenceImpl<SocialRequ
 
 			if ((list != null) && !list.isEmpty()) {
 				for (SocialRequest socialRequest : list) {
-					if (!Validator.equals(uuid, socialRequest.getUuid()) ||
+					if (!Objects.equals(uuid, socialRequest.getUuid()) ||
 							(companyId != socialRequest.getCompanyId())) {
 						list = null;
 
@@ -4691,8 +4692,8 @@ public class SocialRequestPersistenceImpl extends BasePersistenceImpl<SocialRequ
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchRequestException(msg.toString());
@@ -6522,8 +6523,8 @@ public class SocialRequestPersistenceImpl extends BasePersistenceImpl<SocialRequ
 					primaryKey);
 
 			if (socialRequest == null) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+				if (_log.isDebugEnabled()) {
+					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchRequestException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
@@ -6878,8 +6879,8 @@ public class SocialRequestPersistenceImpl extends BasePersistenceImpl<SocialRequ
 		SocialRequest socialRequest = fetchByPrimaryKey(primaryKey);
 
 		if (socialRequest == null) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+			if (_log.isDebugEnabled()) {
+				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
 			throw new NoSuchRequestException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +

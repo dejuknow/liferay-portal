@@ -25,7 +25,15 @@ ConfigurationModel factoryConfigurationModel = (ConfigurationModel)request.getAt
 portletDisplay.setShowBackIcon(true);
 portletDisplay.setURLBack(redirect);
 
-renderResponse.setTitle(factoryConfigurationModel.getName());
+ResourceBundleLoaderProvider resourceBundleLoaderProvider = (ResourceBundleLoaderProvider)request.getAttribute(ConfigurationAdminWebKeys.RESOURCE_BUNDLE_LOADER_PROVIDER);
+
+ResourceBundleLoader resourceBundleLoader = resourceBundleLoaderProvider.getResourceBundleLoader(factoryConfigurationModel.getBundleSymbolicName());
+
+ResourceBundle componentResourceBundle = resourceBundleLoader.loadResourceBundle(LanguageUtil.getLanguageId(request));
+
+String factoryConfigurationModelName = (componentResourceBundle != null) ? LanguageUtil.get(componentResourceBundle, factoryConfigurationModel.getName()) : factoryConfigurationModel.getName();
+
+renderResponse.setTitle(factoryConfigurationModelName);
 %>
 
 <aui:nav-bar markupView="lexicon">
@@ -45,14 +53,14 @@ renderResponse.setTitle(factoryConfigurationModel.getName());
 	</portlet:renderURL>
 
 	<liferay-frontend:add-menu-item
-		title="add-entry"
+		title='<%= LanguageUtil.get(resourceBundle, "add-entry") %>'
 		url="<%= createFactoryConfigURL %>"
 	/>
 </liferay-frontend:add-menu>
 
 <div class="container-fluid-1280">
 	<liferay-ui:search-container
-		emptyResultsMessage='<%= LanguageUtil.format(request, "no-entries-for-x-have-been-added-yet", factoryConfigurationModel.getName()) %>'
+		emptyResultsMessage='<%= LanguageUtil.format(request, "no-entries-for-x-have-been-added-yet", factoryConfigurationModelName) %>'
 		total="<%= configurationModelIterator.getTotal() %>"
 	>
 		<liferay-ui:search-container-results

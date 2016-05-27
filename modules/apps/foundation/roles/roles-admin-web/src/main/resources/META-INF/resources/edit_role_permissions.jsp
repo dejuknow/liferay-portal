@@ -353,20 +353,26 @@ if (!portletName.equals(PortletKeys.SERVER_ADMIN)) {
 
 				var unselectedTargets = unselectedTargetsNode.val().split(',');
 
-				var checkbox = event.currentTarget;
+				var form = A.one(document.<portlet:namespace />fm);
 
-				var value = checkbox.val();
+				form.all('input[type=checkbox]').each(
+					function(item, index) {
+						var checkbox = A.one(item);
 
-				if (checkbox.get('checked')) {
-					var index = unselectedTargets.indexOf(value);
+						var value = checkbox.val();
 
-					if (index != -1) {
-						unselectedTargets.splice(index, 1);
+						if (checkbox.get('checked')) {
+							var unselectedTargetIndex = unselectedTargets.indexOf(value);
+
+							if (unselectedTargetIndex != -1) {
+								unselectedTargets.splice(unselectedTargetIndex, 1);
+							}
+						}
+						else if (originalSelectedValues.indexOf(value) != -1) {
+							unselectedTargets.push(value);
+						}
 					}
-				}
-				else if (originalSelectedValues.indexOf(value) != -1) {
-					unselectedTargets.push(value);
-				}
+				);
 
 				unselectedTargetsNode.val(unselectedTargets.join(','));
 			},

@@ -33,17 +33,10 @@ public class EmailAddressServiceWrapper implements EmailAddressService,
 	@Override
 	public com.liferay.portal.kernel.model.EmailAddress addEmailAddress(
 		java.lang.String className, long classPK, java.lang.String address,
-		long typeId, boolean primary,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		long typeId, boolean primary, ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _emailAddressService.addEmailAddress(className, classPK,
 			address, typeId, primary, serviceContext);
-	}
-
-	@Override
-	public void deleteEmailAddress(long emailAddressId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_emailAddressService.deleteEmailAddress(emailAddressId);
 	}
 
 	/**
@@ -69,10 +62,12 @@ public class EmailAddressServiceWrapper implements EmailAddressService,
 	}
 
 	@Override
-	public java.util.List<com.liferay.portal.kernel.model.EmailAddress> getEmailAddresses(
-		java.lang.String className, long classPK)
+	public com.liferay.portal.kernel.model.EmailAddress updateEmailAddress(
+		long emailAddressId, java.lang.String address, long typeId,
+		boolean primary)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _emailAddressService.getEmailAddresses(className, classPK);
+		return _emailAddressService.updateEmailAddress(emailAddressId, address,
+			typeId, primary);
 	}
 
 	/**
@@ -86,12 +81,16 @@ public class EmailAddressServiceWrapper implements EmailAddressService,
 	}
 
 	@Override
-	public com.liferay.portal.kernel.model.EmailAddress updateEmailAddress(
-		long emailAddressId, java.lang.String address, long typeId,
-		boolean primary)
+	public java.util.List<com.liferay.portal.kernel.model.EmailAddress> getEmailAddresses(
+		java.lang.String className, long classPK)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _emailAddressService.updateEmailAddress(emailAddressId, address,
-			typeId, primary);
+		return _emailAddressService.getEmailAddresses(className, classPK);
+	}
+
+	@Override
+	public void deleteEmailAddress(long emailAddressId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		_emailAddressService.deleteEmailAddress(emailAddressId);
 	}
 
 	@Override

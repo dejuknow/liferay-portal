@@ -19,12 +19,12 @@ import aQute.bnd.annotation.ProviderType;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Serializable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * <p>
@@ -157,14 +157,18 @@ public class UserNotificationEventWrapper implements UserNotificationEvent,
 	}
 
 	@Override
-	public java.lang.Object clone() {
-		return new UserNotificationEventWrapper((UserNotificationEvent)_userNotificationEvent.clone());
+	public CacheModel<UserNotificationEvent> toCacheModel() {
+		return _userNotificationEvent.toCacheModel();
 	}
 
 	@Override
-	public int compareTo(
-		com.liferay.portal.kernel.model.UserNotificationEvent userNotificationEvent) {
-		return _userNotificationEvent.compareTo(userNotificationEvent);
+	public UserNotificationEvent toEscapedModel() {
+		return new UserNotificationEventWrapper(_userNotificationEvent.toEscapedModel());
+	}
+
+	@Override
+	public UserNotificationEvent toUnescapedModel() {
+		return new UserNotificationEventWrapper(_userNotificationEvent.toUnescapedModel());
 	}
 
 	/**
@@ -188,26 +192,6 @@ public class UserNotificationEventWrapper implements UserNotificationEvent,
 	}
 
 	/**
-	* Returns the company ID of this user notification event.
-	*
-	* @return the company ID of this user notification event
-	*/
-	@Override
-	public long getCompanyId() {
-		return _userNotificationEvent.getCompanyId();
-	}
-
-	/**
-	* Returns the deliver by of this user notification event.
-	*
-	* @return the deliver by of this user notification event
-	*/
-	@Override
-	public long getDeliverBy() {
-		return _userNotificationEvent.getDeliverBy();
-	}
-
-	/**
 	* Returns the delivered of this user notification event.
 	*
 	* @return the delivered of this user notification event
@@ -215,121 +199,6 @@ public class UserNotificationEventWrapper implements UserNotificationEvent,
 	@Override
 	public boolean getDelivered() {
 		return _userNotificationEvent.getDelivered();
-	}
-
-	/**
-	* Returns the delivery type of this user notification event.
-	*
-	* @return the delivery type of this user notification event
-	*/
-	@Override
-	public int getDeliveryType() {
-		return _userNotificationEvent.getDeliveryType();
-	}
-
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _userNotificationEvent.getExpandoBridge();
-	}
-
-	/**
-	* Returns the mvcc version of this user notification event.
-	*
-	* @return the mvcc version of this user notification event
-	*/
-	@Override
-	public long getMvccVersion() {
-		return _userNotificationEvent.getMvccVersion();
-	}
-
-	/**
-	* Returns the payload of this user notification event.
-	*
-	* @return the payload of this user notification event
-	*/
-	@Override
-	public java.lang.String getPayload() {
-		return _userNotificationEvent.getPayload();
-	}
-
-	/**
-	* Returns the primary key of this user notification event.
-	*
-	* @return the primary key of this user notification event
-	*/
-	@Override
-	public long getPrimaryKey() {
-		return _userNotificationEvent.getPrimaryKey();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _userNotificationEvent.getPrimaryKeyObj();
-	}
-
-	/**
-	* Returns the timestamp of this user notification event.
-	*
-	* @return the timestamp of this user notification event
-	*/
-	@Override
-	public long getTimestamp() {
-		return _userNotificationEvent.getTimestamp();
-	}
-
-	/**
-	* Returns the type of this user notification event.
-	*
-	* @return the type of this user notification event
-	*/
-	@Override
-	public java.lang.String getType() {
-		return _userNotificationEvent.getType();
-	}
-
-	/**
-	* Returns the user ID of this user notification event.
-	*
-	* @return the user ID of this user notification event
-	*/
-	@Override
-	public long getUserId() {
-		return _userNotificationEvent.getUserId();
-	}
-
-	/**
-	* Returns the user notification event ID of this user notification event.
-	*
-	* @return the user notification event ID of this user notification event
-	*/
-	@Override
-	public long getUserNotificationEventId() {
-		return _userNotificationEvent.getUserNotificationEventId();
-	}
-
-	/**
-	* Returns the user uuid of this user notification event.
-	*
-	* @return the user uuid of this user notification event
-	*/
-	@Override
-	public java.lang.String getUserUuid() {
-		return _userNotificationEvent.getUserUuid();
-	}
-
-	/**
-	* Returns the uuid of this user notification event.
-	*
-	* @return the uuid of this user notification event
-	*/
-	@Override
-	public java.lang.String getUuid() {
-		return _userNotificationEvent.getUuid();
-	}
-
-	@Override
-	public int hashCode() {
-		return _userNotificationEvent.hashCode();
 	}
 
 	/**
@@ -375,6 +244,161 @@ public class UserNotificationEventWrapper implements UserNotificationEvent,
 	@Override
 	public boolean isNew() {
 		return _userNotificationEvent.isNew();
+	}
+
+	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _userNotificationEvent.getExpandoBridge();
+	}
+
+	@Override
+	public int compareTo(UserNotificationEvent userNotificationEvent) {
+		return _userNotificationEvent.compareTo(userNotificationEvent);
+	}
+
+	/**
+	* Returns the delivery type of this user notification event.
+	*
+	* @return the delivery type of this user notification event
+	*/
+	@Override
+	public int getDeliveryType() {
+		return _userNotificationEvent.getDeliveryType();
+	}
+
+	@Override
+	public int hashCode() {
+		return _userNotificationEvent.hashCode();
+	}
+
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _userNotificationEvent.getPrimaryKeyObj();
+	}
+
+	@Override
+	public java.lang.Object clone() {
+		return new UserNotificationEventWrapper((UserNotificationEvent)_userNotificationEvent.clone());
+	}
+
+	/**
+	* Returns the payload of this user notification event.
+	*
+	* @return the payload of this user notification event
+	*/
+	@Override
+	public java.lang.String getPayload() {
+		return _userNotificationEvent.getPayload();
+	}
+
+	/**
+	* Returns the type of this user notification event.
+	*
+	* @return the type of this user notification event
+	*/
+	@Override
+	public java.lang.String getType() {
+		return _userNotificationEvent.getType();
+	}
+
+	/**
+	* Returns the user uuid of this user notification event.
+	*
+	* @return the user uuid of this user notification event
+	*/
+	@Override
+	public java.lang.String getUserUuid() {
+		return _userNotificationEvent.getUserUuid();
+	}
+
+	/**
+	* Returns the uuid of this user notification event.
+	*
+	* @return the uuid of this user notification event
+	*/
+	@Override
+	public java.lang.String getUuid() {
+		return _userNotificationEvent.getUuid();
+	}
+
+	@Override
+	public java.lang.String toString() {
+		return _userNotificationEvent.toString();
+	}
+
+	@Override
+	public java.lang.String toXmlString() {
+		return _userNotificationEvent.toXmlString();
+	}
+
+	/**
+	* Returns the company ID of this user notification event.
+	*
+	* @return the company ID of this user notification event
+	*/
+	@Override
+	public long getCompanyId() {
+		return _userNotificationEvent.getCompanyId();
+	}
+
+	/**
+	* Returns the deliver by of this user notification event.
+	*
+	* @return the deliver by of this user notification event
+	*/
+	@Override
+	public long getDeliverBy() {
+		return _userNotificationEvent.getDeliverBy();
+	}
+
+	/**
+	* Returns the mvcc version of this user notification event.
+	*
+	* @return the mvcc version of this user notification event
+	*/
+	@Override
+	public long getMvccVersion() {
+		return _userNotificationEvent.getMvccVersion();
+	}
+
+	/**
+	* Returns the primary key of this user notification event.
+	*
+	* @return the primary key of this user notification event
+	*/
+	@Override
+	public long getPrimaryKey() {
+		return _userNotificationEvent.getPrimaryKey();
+	}
+
+	/**
+	* Returns the timestamp of this user notification event.
+	*
+	* @return the timestamp of this user notification event
+	*/
+	@Override
+	public long getTimestamp() {
+		return _userNotificationEvent.getTimestamp();
+	}
+
+	/**
+	* Returns the user ID of this user notification event.
+	*
+	* @return the user ID of this user notification event
+	*/
+	@Override
+	public long getUserId() {
+		return _userNotificationEvent.getUserId();
+	}
+
+	/**
+	* Returns the user notification event ID of this user notification event.
+	*
+	* @return the user notification event ID of this user notification event
+	*/
+	@Override
+	public long getUserNotificationEventId() {
+		return _userNotificationEvent.getUserNotificationEventId();
 	}
 
 	@Override
@@ -563,31 +587,6 @@ public class UserNotificationEventWrapper implements UserNotificationEvent,
 	}
 
 	@Override
-	public CacheModel<com.liferay.portal.kernel.model.UserNotificationEvent> toCacheModel() {
-		return _userNotificationEvent.toCacheModel();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.model.UserNotificationEvent toEscapedModel() {
-		return new UserNotificationEventWrapper(_userNotificationEvent.toEscapedModel());
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _userNotificationEvent.toString();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.model.UserNotificationEvent toUnescapedModel() {
-		return new UserNotificationEventWrapper(_userNotificationEvent.toUnescapedModel());
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _userNotificationEvent.toXmlString();
-	}
-
-	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
@@ -599,7 +598,7 @@ public class UserNotificationEventWrapper implements UserNotificationEvent,
 
 		UserNotificationEventWrapper userNotificationEventWrapper = (UserNotificationEventWrapper)obj;
 
-		if (Validator.equals(_userNotificationEvent,
+		if (Objects.equals(_userNotificationEvent,
 					userNotificationEventWrapper._userNotificationEvent)) {
 			return true;
 		}

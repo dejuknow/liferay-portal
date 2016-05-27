@@ -89,7 +89,15 @@
 	</command>
 
 	<command name="save">
+		<execute function="Click" locator1="FormFields#FIELD_NAME" />
+
 		<execute function="AssertClick" locator1="Button#ADD" value1="Add" />
+	</command>
+
+	<command name="saveEdit">
+		<execute function="Click" locator1="FormFields#FIELD_NAME" />
+
+		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
 	</command>
 
 	<command name="selectRadioOption">
@@ -141,6 +149,14 @@
 		<execute function="AssertElementPresent#assertVisible" locator1="FormFields#DATE_FIELD" />
 	</command>
 
+	<command name="viewDateFieldNotPresent">
+		<var name="key_fieldLabel" value="${fieldLabel}" />
+		<var name="key_fieldName" value="${fieldName}" />
+
+		<execute function="AssertElementNotPresent" locator1="FormFields#DATE_LABEL" />
+		<execute function="AssertElementNotPresent" locator1="FormFields#DATE_FIELD" />
+	</command>
+
 	<command name="viewDateLabel">
 		<var name="key_fieldLabel" value="${fieldLabel}" />
 		<var name="key_fieldName" value="${fieldName}" />
@@ -157,6 +173,13 @@
 
 	<command name="viewFormName">
 		<execute function="AssertTextEquals" locator1="FormFields#FIELD_NAME" value1="Field Name:${fieldName}" />
+	</command>
+
+	<command name="viewMultilineTextValue">
+		<var name="key_fieldName" value="${fieldName}" />
+		<var name="key_fieldValue" value="${fieldValue}" />
+
+		<execute function="AssertTextEquals" locator1="FormFields#TEXT_MULTILINE_FIELD" value1="${fieldValue}" />
 	</command>
 
 	<command name="viewOptionsLabel">

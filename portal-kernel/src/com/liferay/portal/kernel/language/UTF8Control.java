@@ -40,6 +40,11 @@ public class UTF8Control extends Control {
 	public static final UTF8Control INSTANCE = new UTF8Control();
 
 	@Override
+	public Locale getFallbackLocale(String baseName, Locale locale) {
+		return null;
+	}
+
+	@Override
 	public ResourceBundle newBundle(
 			String baseName, Locale locale, String format,
 			ClassLoader classLoader, boolean reload)
@@ -52,30 +57,61 @@ public class UTF8Control extends Control {
 			return null;
 		}
 
-		if (!reload) {
-			ResourceBundle resourceBundle = _resourceBundles.get(url);
-
-			if (resourceBundle != null) {
-				return resourceBundle;
-			}
-		}
-
 		URLConnection urlConnection = url.openConnection();
 
 		urlConnection.setUseCaches(!reload);
+
+		if (!reload) {
+			CachedResourceBundle cachedResourceBundle =
+				_cachedResourceBundles.get(url);
+
+			if (cachedResourceBundle != null) {
+				if (urlConnection.getLastModified() <=
+						cachedResourceBundle.getLastModified()) {
+
+					return cachedResourceBundle.getResourceBundle();
+				}
+			}
+		}
 
 		try (InputStream inputStream = urlConnection.getInputStream()) {
 			ResourceBundle resourceBundle = new PropertyResourceBundle(
 				new InputStreamReader(inputStream, StringPool.UTF8));
 
-			_resourceBundles.put(url, resourceBundle);
+			CachedResourceBundle cachedResourceBundle =
+				new CachedResourceBundle(
+					resourceBundle, urlConnection.getLastModified());
+
+			_cachedResourceBundles.put(url, cachedResourceBundle);
 
 			return resourceBundle;
 		}
 	}
 
-	private static final Map<URL, ResourceBundle> _resourceBundles =
+	private static final Map<URL, CachedResourceBundle> _cachedResourceBundles =
 		new ConcurrentReferenceValueHashMap<>(
 			FinalizeManager.SOFT_REFERENCE_FACTORY);
+
+	private static final class CachedResourceBundle {
+
+		public CachedResourceBundle(
+			ResourceBundle resourceBundle, long lastModified) {
+
+			_resourceBundle = resourceBundle;
+			_lastModified = lastModified;
+		}
+
+		public long getLastModified() {
+			return _lastModified;
+		}
+
+		public ResourceBundle getResourceBundle() {
+			return _resourceBundle;
+		}
+
+		private final long _lastModified;
+		private final ResourceBundle _resourceBundle;
+
+	}
 
 }

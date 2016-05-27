@@ -71,6 +71,10 @@ public class ResourceActionsUtil {
 		return getResourceActions().getActionsNames(request, name, actionIds);
 	}
 
+	public static String getCompositeModelName(String... classNames) {
+		return getResourceActions().getCompositeModelName(classNames);
+	}
+
 	public static String getCompositeModelNameSeparator() {
 		return getResourceActions().getCompositeModelNameSeparator();
 	}
@@ -223,6 +227,10 @@ public class ResourceActionsUtil {
 			companyId, group, modelResource, roleTypes);
 	}
 
+	public static String[] getRootModelResources() {
+		return getResourceActions().getRootModelResources();
+	}
+
 	public static boolean hasModelResourceActions(String name) {
 		return getResourceActions().hasModelResourceActions(name);
 	}
@@ -233,6 +241,10 @@ public class ResourceActionsUtil {
 
 	public static boolean isPortalModelResource(String modelResource) {
 		return getResourceActions().isPortalModelResource(modelResource);
+	}
+
+	public static boolean isRootModelResource(String modelResource) {
+		return getResourceActions().isRootModelResource(modelResource);
 	}
 
 	public static void read(

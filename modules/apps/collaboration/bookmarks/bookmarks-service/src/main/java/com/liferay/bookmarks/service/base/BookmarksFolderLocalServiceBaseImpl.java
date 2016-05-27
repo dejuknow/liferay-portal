@@ -275,7 +275,7 @@ public abstract class BookmarksFolderLocalServiceBaseImpl
 	public ActionableDynamicQuery getActionableDynamicQuery() {
 		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
 
-		actionableDynamicQuery.setBaseLocalService(com.liferay.bookmarks.service.BookmarksFolderLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(bookmarksFolderLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(BookmarksFolder.class);
 
@@ -288,7 +288,7 @@ public abstract class BookmarksFolderLocalServiceBaseImpl
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
 		IndexableActionableDynamicQuery indexableActionableDynamicQuery = new IndexableActionableDynamicQuery();
 
-		indexableActionableDynamicQuery.setBaseLocalService(com.liferay.bookmarks.service.BookmarksFolderLocalServiceUtil.getService());
+		indexableActionableDynamicQuery.setBaseLocalService(bookmarksFolderLocalService);
 		indexableActionableDynamicQuery.setClassLoader(getClassLoader());
 		indexableActionableDynamicQuery.setModelClass(BookmarksFolder.class);
 
@@ -299,7 +299,7 @@ public abstract class BookmarksFolderLocalServiceBaseImpl
 
 	protected void initActionableDynamicQuery(
 		ActionableDynamicQuery actionableDynamicQuery) {
-		actionableDynamicQuery.setBaseLocalService(com.liferay.bookmarks.service.BookmarksFolderLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(bookmarksFolderLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(BookmarksFolder.class);
 
@@ -1110,7 +1110,7 @@ public abstract class BookmarksFolderLocalServiceBaseImpl
 	protected BookmarksEntryPersistence bookmarksEntryPersistence;
 	@BeanReference(type = BookmarksEntryFinder.class)
 	protected BookmarksEntryFinder bookmarksEntryFinder;
-	@BeanReference(type = com.liferay.bookmarks.service.BookmarksFolderLocalService.class)
+	@BeanReference(type = BookmarksFolderLocalService.class)
 	protected BookmarksFolderLocalService bookmarksFolderLocalService;
 	@BeanReference(type = BookmarksFolderPersistence.class)
 	protected BookmarksFolderPersistence bookmarksFolderPersistence;

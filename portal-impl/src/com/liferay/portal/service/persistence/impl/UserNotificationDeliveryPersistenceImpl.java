@@ -39,7 +39,6 @@ import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.impl.UserNotificationDeliveryImpl;
 import com.liferay.portal.model.impl.UserNotificationDeliveryModelImpl;
 
@@ -51,6 +50,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -661,8 +661,8 @@ public class UserNotificationDeliveryPersistenceImpl extends BasePersistenceImpl
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchUserNotificationDeliveryException(msg.toString());
@@ -719,7 +719,7 @@ public class UserNotificationDeliveryPersistenceImpl extends BasePersistenceImpl
 			UserNotificationDelivery userNotificationDelivery = (UserNotificationDelivery)result;
 
 			if ((userId != userNotificationDelivery.getUserId()) ||
-					!Validator.equals(portletId,
+					!Objects.equals(portletId,
 						userNotificationDelivery.getPortletId()) ||
 					(classNameId != userNotificationDelivery.getClassNameId()) ||
 					(notificationType != userNotificationDelivery.getNotificationType()) ||
@@ -1150,8 +1150,8 @@ public class UserNotificationDeliveryPersistenceImpl extends BasePersistenceImpl
 					primaryKey);
 
 			if (userNotificationDelivery == null) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+				if (_log.isDebugEnabled()) {
+					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchUserNotificationDeliveryException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
@@ -1311,8 +1311,8 @@ public class UserNotificationDeliveryPersistenceImpl extends BasePersistenceImpl
 		UserNotificationDelivery userNotificationDelivery = fetchByPrimaryKey(primaryKey);
 
 		if (userNotificationDelivery == null) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+			if (_log.isDebugEnabled()) {
+				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
 			throw new NoSuchUserNotificationDeliveryException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +

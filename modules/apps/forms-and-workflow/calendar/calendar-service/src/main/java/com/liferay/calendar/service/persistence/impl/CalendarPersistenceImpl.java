@@ -55,6 +55,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -711,7 +712,7 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (Calendar calendar : list) {
-					if (!Validator.equals(uuid, calendar.getUuid())) {
+					if (!Objects.equals(uuid, calendar.getUuid())) {
 						list = null;
 
 						break;
@@ -1184,8 +1185,8 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchCalendarException(msg.toString());
@@ -1229,7 +1230,7 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 		if (result instanceof Calendar) {
 			Calendar calendar = (Calendar)result;
 
-			if (!Validator.equals(uuid, calendar.getUuid()) ||
+			if (!Objects.equals(uuid, calendar.getUuid()) ||
 					(groupId != calendar.getGroupId())) {
 				result = null;
 			}
@@ -1521,7 +1522,7 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (Calendar calendar : list) {
-					if (!Validator.equals(uuid, calendar.getUuid()) ||
+					if (!Objects.equals(uuid, calendar.getUuid()) ||
 							(companyId != calendar.getCompanyId())) {
 						list = null;
 
@@ -3967,8 +3968,8 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 					primaryKey);
 
 			if (calendar == null) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+				if (_log.isDebugEnabled()) {
+					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchCalendarException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
@@ -4240,8 +4241,8 @@ public class CalendarPersistenceImpl extends BasePersistenceImpl<Calendar>
 		Calendar calendar = fetchByPrimaryKey(primaryKey);
 
 		if (calendar == null) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+			if (_log.isDebugEnabled()) {
+				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
 			throw new NoSuchCalendarException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +

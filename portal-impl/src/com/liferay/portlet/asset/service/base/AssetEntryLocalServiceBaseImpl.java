@@ -242,7 +242,7 @@ public abstract class AssetEntryLocalServiceBaseImpl
 	public ActionableDynamicQuery getActionableDynamicQuery() {
 		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
 
-		actionableDynamicQuery.setBaseLocalService(com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(assetEntryLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(AssetEntry.class);
 
@@ -255,7 +255,7 @@ public abstract class AssetEntryLocalServiceBaseImpl
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
 		IndexableActionableDynamicQuery indexableActionableDynamicQuery = new IndexableActionableDynamicQuery();
 
-		indexableActionableDynamicQuery.setBaseLocalService(com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil.getService());
+		indexableActionableDynamicQuery.setBaseLocalService(assetEntryLocalService);
 		indexableActionableDynamicQuery.setClassLoader(getClassLoader());
 		indexableActionableDynamicQuery.setModelClass(AssetEntry.class);
 
@@ -266,7 +266,7 @@ public abstract class AssetEntryLocalServiceBaseImpl
 
 	protected void initActionableDynamicQuery(
 		ActionableDynamicQuery actionableDynamicQuery) {
-		actionableDynamicQuery.setBaseLocalService(com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(assetEntryLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(AssetEntry.class);
 
@@ -352,8 +352,8 @@ public abstract class AssetEntryLocalServiceBaseImpl
 	 */
 	@Override
 	public void addAssetCategoryAssetEntries(long categoryId,
-		List<AssetEntry> AssetEntries) {
-		assetCategoryPersistence.addAssetEntries(categoryId, AssetEntries);
+		List<AssetEntry> assetEntries) {
+		assetCategoryPersistence.addAssetEntries(categoryId, assetEntries);
 	}
 
 	/**
@@ -389,8 +389,8 @@ public abstract class AssetEntryLocalServiceBaseImpl
 	 */
 	@Override
 	public void deleteAssetCategoryAssetEntries(long categoryId,
-		List<AssetEntry> AssetEntries) {
-		assetCategoryPersistence.removeAssetEntries(categoryId, AssetEntries);
+		List<AssetEntry> assetEntries) {
+		assetCategoryPersistence.removeAssetEntries(categoryId, assetEntries);
 	}
 
 	/**
@@ -481,8 +481,8 @@ public abstract class AssetEntryLocalServiceBaseImpl
 	 */
 	@Override
 	public void addAssetTagAssetEntries(long tagId,
-		List<AssetEntry> AssetEntries) {
-		assetTagPersistence.addAssetEntries(tagId, AssetEntries);
+		List<AssetEntry> assetEntries) {
+		assetTagPersistence.addAssetEntries(tagId, assetEntries);
 	}
 
 	/**
@@ -517,8 +517,8 @@ public abstract class AssetEntryLocalServiceBaseImpl
 	 */
 	@Override
 	public void deleteAssetTagAssetEntries(long tagId,
-		List<AssetEntry> AssetEntries) {
-		assetTagPersistence.removeAssetEntries(tagId, AssetEntries);
+		List<AssetEntry> assetEntries) {
+		assetTagPersistence.removeAssetEntries(tagId, assetEntries);
 	}
 
 	/**
@@ -1197,7 +1197,7 @@ public abstract class AssetEntryLocalServiceBaseImpl
 		}
 	}
 
-	@BeanReference(type = com.liferay.asset.kernel.service.AssetEntryLocalService.class)
+	@BeanReference(type = AssetEntryLocalService.class)
 	protected AssetEntryLocalService assetEntryLocalService;
 	@BeanReference(type = AssetEntryPersistence.class)
 	protected AssetEntryPersistence assetEntryPersistence;

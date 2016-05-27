@@ -42,7 +42,7 @@ import org.apache.tools.ant.DirectoryScanner;
  */
 public class PluginsSummaryBuilder {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		ToolDependencies.wireBasic();
 
 		File pluginsDir = new File(System.getProperty("plugins.dir"));
@@ -50,21 +50,16 @@ public class PluginsSummaryBuilder {
 		new PluginsSummaryBuilder(pluginsDir);
 	}
 
-	public PluginsSummaryBuilder(File pluginsDir) {
+	public PluginsSummaryBuilder(File pluginsDir) throws Exception {
 		_pluginsDir = pluginsDir;
 
 		String latestHASH = null;
 
-		try {
-			latestHASH = _getLatestHASH(pluginsDir);
-
-			_createPluginsSummary();
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
+		latestHASH = _getLatestHASH(pluginsDir);
 
 		_latestHASH = latestHASH;
+
+		_createPluginsSummary();
 	}
 
 	private void _createPluginsSummary() throws Exception {
@@ -172,9 +167,8 @@ public class PluginsSummaryBuilder {
 	private Set<String> _extractTicketIds(File pluginDir, String range)
 		throws Exception {
 
-		Set<String> ticketIds = new TreeSet<String>(
-			new NaturalOrderStringComparator()
-		);
+		Set<String> ticketIds = new TreeSet<>(
+			new NaturalOrderStringComparator());
 
 		Runtime runtime = Runtime.getRuntime();
 

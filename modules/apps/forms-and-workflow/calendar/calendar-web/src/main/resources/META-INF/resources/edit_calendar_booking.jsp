@@ -27,9 +27,13 @@ if (allDay) {
 	calendarBookingTimeZone = utcTimeZone;
 }
 
-java.util.Calendar nowJCalendar = CalendarFactoryUtil.getCalendar(calendarBookingTimeZone);
+java.util.Calendar defaultStartTimeJCalendar = CalendarFactoryUtil.getCalendar(calendarBookingTimeZone);
 
-long date = ParamUtil.getLong(request, "date", nowJCalendar.getTimeInMillis());
+defaultStartTimeJCalendar.add(java.util.Calendar.HOUR, 1);
+
+defaultStartTimeJCalendar.set(java.util.Calendar.MINUTE, 0);
+
+long date = ParamUtil.getLong(request, "date", defaultStartTimeJCalendar.getTimeInMillis());
 
 long calendarBookingId = BeanPropertiesUtil.getLong(calendarBooking, "calendarBookingId");
 
@@ -37,7 +41,7 @@ int instanceIndex = BeanParamUtil.getInteger(calendarBooking, request, "instance
 
 long calendarId = BeanParamUtil.getLong(calendarBooking, request, "calendarId", defaultCalendar.getCalendarId());
 
-long startTime = BeanPropertiesUtil.getLong(calendarBooking, "startTime", nowJCalendar.getTimeInMillis());
+long startTime = BeanPropertiesUtil.getLong(calendarBooking, "startTime", defaultStartTimeJCalendar.getTimeInMillis());
 
 java.util.Calendar startTimeJCalendar = JCalendarUtil.getJCalendar(startTime, calendarBookingTimeZone);
 
@@ -59,7 +63,7 @@ startTimeJCalendar.setFirstDayOfWeek(weekStartsOn + 1);
 
 startTime = startTimeJCalendar.getTimeInMillis();
 
-java.util.Calendar defaultEndTimeJCalendar = (java.util.Calendar)nowJCalendar.clone();
+java.util.Calendar defaultEndTimeJCalendar = (java.util.Calendar)startTimeJCalendar.clone();
 
 defaultEndTimeJCalendar.add(java.util.Calendar.MINUTE, defaultDuration);
 
@@ -254,7 +258,7 @@ while (manageableCalendarsIterator.hasNext()) {
 
 	<aui:fieldset markupView="lexicon">
 		<liferay-ui:panel-container extended="<%= true %>" id="calendarBookingDetailsPanelContainer" persistState="<%= true %>">
-			<liferay-ui:panel collapsible="<%= true %>" defaultState="closed" extended="<%= false %>" id="calendarBookingDetailsPanel" persistState="<%= true %>" title="details">
+			<liferay-ui:panel collapsible="<%= true %>" defaultState="closed" extended="<%= false %>" id="calendarBookingDetailsPanel" markupView="lexicon" persistState="<%= true %>" title="details">
 				<aui:select label="calendar" name="calendarId">
 
 					<%
@@ -292,7 +296,7 @@ while (manageableCalendarsIterator.hasNext()) {
 				</c:if>
 			</liferay-ui:panel>
 
-			<liferay-ui:panel collapsible="<%= true %>" defaultState='<%= BrowserSnifferUtil.isMobile(request) ? "closed" : "open" %>' extended="<%= false %>" id="calendarBookingInvitationPanel" persistState="<%= true %>" title="invitations">
+			<liferay-ui:panel collapsible="<%= true %>" defaultState='<%= BrowserSnifferUtil.isMobile(request) ? "closed" : "open" %>' extended="<%= false %>" id="calendarBookingInvitationPanel" markupView="lexicon" persistState="<%= true %>" title="invitations">
 				<c:if test="<%= invitable %>">
 					<aui:input inputCssClass="calendar-portlet-invite-resources-input" label="" name="inviteResource" placeholder="add-people-groups-rooms" type="text" />
 
@@ -360,58 +364,57 @@ while (manageableCalendarsIterator.hasNext()) {
 				</aui:row>
 			</liferay-ui:panel>
 
-			<liferay-ui:panel collapsible="<%= true %>" defaultState="closed" extended="<%= false %>" id="calendarBookingReminderPanel" persistState="<%= true %>" title="reminders">
+			<liferay-ui:panel collapsible="<%= true %>" defaultState="closed" extended="<%= false %>" id="calendarBookingReminderPanel" markupView="lexicon" persistState="<%= true %>" title="reminders">
 				<div class="calendar-booking-reminders" id="<portlet:namespace />reminders"></div>
 			</liferay-ui:panel>
 
-			<liferay-ui:panel collapsible="<%= true %>" defaultState="closed" extended="<%= false %>" id="calendarBookingCategorizationPanel" persistState="<%= true %>" title="categorization">
+			<liferay-ui:panel collapsible="<%= true %>" defaultState="closed" extended="<%= false %>" id="calendarBookingCategorizationPanel" markupView="lexicon" persistState="<%= true %>" title="categorization">
 				<aui:input classPK="<%= calendarBookingId %>" name="categories" type="assetCategories" />
 
 				<aui:input classPK="<%= calendarBookingId %>" name="tags" type="assetTags" />
 			</liferay-ui:panel>
 
-			<liferay-ui:panel collapsible="<%= true %>" defaultState="closed" extended="<%= false %>" id="calendarBookingAssetLinksPanel" persistState="<%= true %>" title="related-assets">
+			<liferay-ui:panel collapsible="<%= true %>" defaultState="closed" extended="<%= false %>" id="calendarBookingAssetLinksPanel" markupView="lexicon" persistState="<%= true %>" title="related-assets">
 				<liferay-ui:input-asset-links
 					className="<%= CalendarBooking.class.getName() %>"
 					classPK="<%= calendarBookingId %>"
 				/>
 			</liferay-ui:panel>
 		</liferay-ui:panel-container>
+
+		<aui:button-row>
+			<div class="alert alert-info <%= (hasWorkflowDefinitionLink && approved) ? StringPool.BLANK : "hide" %>" id="<portlet:namespace />approvalProcessAlert">
+				<liferay-ui:message arguments="<%= ResourceActionsUtil.getModelResource(locale, CalendarBooking.class.getName()) %>" key="this-x-is-approved.-publishing-these-changes-will-cause-it-to-be-unpublished-and-go-through-the-approval-process-again" translateArguments="<%= false %>" />
+			</div>
+
+			<%
+			String publishButtonLabel = "publish";
+
+			if (hasWorkflowDefinitionLink) {
+				publishButtonLabel = "submit-for-publication";
+			}
+			%>
+
+			<aui:button name="publishButton" type="submit" value="<%= publishButtonLabel %>" />
+
+			<aui:button name="saveButton" primary="<%= false %>" type="submit" value="save-as-draft" />
+
+			<c:if test="<%= calendarBooking != null %>">
+				<liferay-security:permissionsURL
+					modelResource="<%= CalendarBooking.class.getName() %>"
+					modelResourceDescription="<%= calendarBooking.getTitle(locale) %>"
+					redirect="<%= redirectURL %>"
+					resourceGroupId="<%= calendarBooking.getGroupId() %>"
+					resourcePrimKey="<%= String.valueOf(calendarBooking.getCalendarBookingId()) %>"
+					var="permissionsCalendarBookingURL"
+				/>
+
+				<aui:button href="<%= permissionsCalendarBookingURL %>" value="permissions" />
+			</c:if>
+		</aui:button-row>
 	</aui:fieldset>
 
 	<%@ include file="/calendar_booking_recurrence_container.jspf" %>
-
-	<aui:button-row>
-
-		<div class="alert alert-info <%= (hasWorkflowDefinitionLink && approved) ? StringPool.BLANK : "hide" %>" id="<portlet:namespace />approvalProcessAlert">
-			<liferay-ui:message arguments="<%= ResourceActionsUtil.getModelResource(locale, CalendarBooking.class.getName()) %>" key="this-x-is-approved.-publishing-these-changes-will-cause-it-to-be-unpublished-and-go-through-the-approval-process-again" translateArguments="<%= false %>" />
-		</div>
-
-		<%
-		String publishButtonLabel = "publish";
-
-		if (hasWorkflowDefinitionLink) {
-			publishButtonLabel = "submit-for-publication";
-		}
-		%>
-
-		<aui:button name="publishButton" type="submit" value="<%= publishButtonLabel %>" />
-
-		<aui:button name="saveButton" primary="<%= false %>" type="submit" value="save-as-draft" />
-
-		<c:if test="<%= calendarBooking != null %>">
-			<liferay-security:permissionsURL
-				modelResource="<%= CalendarBooking.class.getName() %>"
-				modelResourceDescription="<%= calendarBooking.getTitle(locale) %>"
-				redirect="<%= redirectURL %>"
-				resourceGroupId="<%= calendarBooking.getGroupId() %>"
-				resourcePrimKey="<%= String.valueOf(calendarBooking.getCalendarBookingId()) %>"
-				var="permissionsCalendarBookingURL"
-			/>
-
-			<aui:button href="<%= permissionsCalendarBookingURL %>" value="permissions" />
-		</c:if>
-	</aui:button-row>
 </aui:form>
 
 <aui:script>
@@ -466,13 +469,13 @@ while (manageableCalendarsIterator.hasNext()) {
 	String titleCurrentValue = ParamUtil.getString(request, "titleCurrentValue");
 	%>
 
-	<c:if test="<%= Validator.isNotNull(titleCurrentValue) && ((calendarBooking == null) || !Validator.equals(titleCurrentValue, calendarBooking.getTitle(locale))) %>">
+	<c:if test="<%= Validator.isNotNull(titleCurrentValue) && ((calendarBooking == null) || !Objects.equals(titleCurrentValue, calendarBooking.getTitle(locale))) %>">
 		document.<portlet:namespace />fm.<portlet:namespace />title.value = '<%= HtmlUtil.escapeJS(titleCurrentValue) %>';
 		document.<portlet:namespace />fm.<portlet:namespace />title_<%= themeDisplay.getLanguageId() %>.value = '<%= HtmlUtil.escapeJS(titleCurrentValue) %>';
 	</c:if>
 </aui:script>
 
-<aui:script use="json,liferay-calendar-date-picker-util,liferay-calendar-interval-selector,liferay-calendar-list,liferay-calendar-recurrence-util,liferay-calendar-reminders,liferay-calendar-simple-menu">
+<aui:script use="json,liferay-calendar-date-picker-util,liferay-calendar-interval-selector,liferay-calendar-list,liferay-calendar-recurrence-util,liferay-calendar-reminders,liferay-calendar-simple-menu,liferay-calendar-util">
 	var defaultCalendarId = <%= calendarId %>;
 
 	var scheduler = window.<portlet:namespace />scheduler;

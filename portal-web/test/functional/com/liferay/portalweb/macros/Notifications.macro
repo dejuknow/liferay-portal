@@ -1,8 +1,8 @@
 <definition>
 	<command name="acceptRequest">
-		<var name="key_requestsContent" value="${requestsContent}" />
+		<var name="key_requestsTitle" value="${requestsTitle}" />
 
-		<execute function="AssertTextEquals" locator1="Notifications#NOTIFICATIONS_CONTENT" value1="${requestsContent}" />
+		<execute function="AssertTextEquals" locator1="Notifications#NOTIFICATIONS_TITLE" value1="${requestsTitle}" />
 
 		<execute function="AssertClick" locator1="Button#CONFIRM" value1="Confirm" />
 	</command>
@@ -53,7 +53,7 @@
 	<command name="navigateToContent">
 		<var name="key_contentBody" value="${contentBody}" />
 
-		<execute function="Click#partialTextClickAtAndWait" locator1="Notifications#NOTIFICATIONS_CONTENT" value1="${contentBody}" />
+		<execute function="Click#partialTextClickAt" locator1="Notifications#NOTIFICATIONS_CONTENT" value1="${contentBody}" />
 	</command>
 
 	<command name="tearDownUnreadNotifications">
@@ -164,9 +164,9 @@
 	</command>
 
 	<command name="viewRequest">
-		<var name="key_requestsContent" value="${requestsContent}" />
+		<execute function="Click" locator1="Notifications#REQUESTS_LIST_TAB" />
 
-		<execute function="AssertTextEquals" locator1="Notifications#NOTIFICATIONS_CONTENT" value1="${requestsContent}" />
+		<execute function="AssertTextEquals" locator1="Notifications#NOTIFICATIONS_TITLE" value1="${requestsTitle}" />
 	</command>
 
 	<command name="viewUpdatedComment">

@@ -691,9 +691,8 @@ public class Recurrence implements Serializable {
 	 * @return long
 	 */
 	protected static long getMonthNumber(Calendar cal) {
-		return
-			((cal.get(Calendar.YEAR) - 1970) * 12L) +
-				((cal.get(Calendar.MONTH) - Calendar.JANUARY));
+		return ((cal.get(Calendar.YEAR) - 1970) * 12L) +
+			((cal.get(Calendar.MONTH) - Calendar.JANUARY));
 	}
 
 	/**
@@ -729,9 +728,8 @@ public class Recurrence implements Serializable {
 			(tempCal.getFirstDayOfWeek() - Calendar.THURSDAY) * 24L * 60 * 60 *
 				1000;
 
-		return
-			(tempCal.getTime().getTime() - weekEpoch) /
-				(7 * 24 * 60 * 60 * 1000);
+		return (tempCal.getTime().getTime() - weekEpoch) /
+			(7 * 24 * 60 * 60 * 1000);
 	}
 
 	/**
@@ -1050,7 +1048,11 @@ public class Recurrence implements Serializable {
 		if (position > 0) {
 			int candidatePosition = ((candidate.get(field) - 1) / 7) + 1;
 
-			return (position == candidatePosition);
+			if (position == candidatePosition) {
+				return true;
+			}
+
+			return false;
 		}
 		else {
 
@@ -1060,7 +1062,11 @@ public class Recurrence implements Serializable {
 				((candidate.getActualMaximum(field) - candidate.get(field)) /
 					7) + 1;
 
-			return (-position == negativeCandidatePosition);
+			if (-position == negativeCandidatePosition) {
+				return true;
+			}
+
+			return false;
 		}
 	}
 
@@ -1139,7 +1145,7 @@ public class Recurrence implements Serializable {
 	/**
 	 * Field interval
 	 */
-	protected int occurrence = 0;
+	protected int occurrence;
 
 	/**
 	 * Field until

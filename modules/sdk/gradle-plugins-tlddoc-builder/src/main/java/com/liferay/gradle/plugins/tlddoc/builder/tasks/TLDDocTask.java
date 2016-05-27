@@ -30,8 +30,10 @@ import org.gradle.api.file.FileCollection;
 import org.gradle.api.file.FileTree;
 import org.gradle.api.file.FileTreeElement;
 import org.gradle.api.specs.Spec;
+import org.gradle.api.tasks.InputDirectory;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.JavaExec;
+import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.SkipWhenEmpty;
 import org.gradle.api.tasks.util.PatternFilterable;
@@ -71,7 +73,7 @@ public class TLDDocTask extends JavaExec implements PatternFilterable {
 	}
 
 	@Override
-	public TLDDocTask exclude(String ... excludes) {
+	public TLDDocTask exclude(String... excludes) {
 		_patternFilterable.exclude(excludes);
 
 		return this;
@@ -111,6 +113,12 @@ public class TLDDocTask extends JavaExec implements PatternFilterable {
 		return fileTree.matching(_patternFilterable);
 	}
 
+	@InputDirectory
+	@Optional
+	public File getXsltDir() {
+		return GradleUtil.toFile(getProject(), _xsltDir);
+	}
+
 	@Override
 	public TLDDocTask include(
 		@SuppressWarnings("rawtypes") Closure includeSpec) {
@@ -135,7 +143,7 @@ public class TLDDocTask extends JavaExec implements PatternFilterable {
 	}
 
 	@Override
-	public TLDDocTask include(String ... includes) {
+	public TLDDocTask include(String... includes) {
 		_patternFilterable.include(includes);
 
 		return this;
@@ -165,7 +173,11 @@ public class TLDDocTask extends JavaExec implements PatternFilterable {
 		_source.add(source);
 	}
 
-	public TLDDocTask source(Object ... sources) {
+	public void setXsltDir(Object xsltDir) {
+		_xsltDir = xsltDir;
+	}
+
+	public TLDDocTask source(Object... sources) {
 		for (Object source : sources) {
 			_source.add(source);
 		}
@@ -179,6 +191,13 @@ public class TLDDocTask extends JavaExec implements PatternFilterable {
 		args.add("-d");
 		args.add(FileUtil.relativize(getDestinationDir(), getWorkingDir()));
 
+		File xsltDir = getXsltDir();
+
+		if (xsltDir != null) {
+			args.add("-xslt");
+			args.add(FileUtil.relativize(xsltDir, getWorkingDir()));
+		}
+
 		for (File file : getSource()) {
 			args.add(FileUtil.relativize(file, getWorkingDir()));
 		}
@@ -189,5 +208,6 @@ public class TLDDocTask extends JavaExec implements PatternFilterable {
 	private Object _destinationDir;
 	private final PatternFilterable _patternFilterable = new PatternSet();
 	private final List<Object> _source = new ArrayList<>();
+	private Object _xsltDir;
 
 }

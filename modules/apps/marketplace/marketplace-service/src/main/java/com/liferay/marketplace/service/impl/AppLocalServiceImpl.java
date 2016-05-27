@@ -26,7 +26,6 @@ import com.liferay.marketplace.service.base.AppLocalServiceBaseImpl;
 import com.liferay.marketplace.util.ContextUtil;
 import com.liferay.marketplace.util.comparator.AppTitleComparator;
 import com.liferay.portal.kernel.deploy.DeployManagerUtil;
-import com.liferay.portal.kernel.deploy.auto.context.AutoDeploymentContext;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -40,10 +39,10 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PropertiesUtil;
 import com.liferay.portal.kernel.util.ReleaseInfo;
 import com.liferay.portal.kernel.util.StreamUtil;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.SystemProperties;
-import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.io.File;
@@ -53,15 +52,11 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Dictionary;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import org.osgi.framework.Bundle;
@@ -177,6 +172,7 @@ public class AppLocalServiceImpl extends AppLocalServiceBaseImpl {
 			app.setTitle(pluginPackage.getName());
 			app.setDescription(pluginPackage.getLongDescription());
 			app.setVersion(pluginPackage.getVersion());
+			app.setRequired(true);
 
 			app.addContextName(pluginPackage.getContext());
 
@@ -255,13 +251,7 @@ public class AppLocalServiceImpl extends AppLocalServiceBaseImpl {
 			throw new NoSuchFileException();
 		}
 
-		String tmpDir =
-			SystemProperties.get(SystemProperties.TMP_DIR) + StringPool.SLASH +
-				Time.getTimestamp();
-
 		InputStream inputStream = null;
-
-		ZipFile zipFile = null;
 
 		try {
 			inputStream = DLStoreUtil.getFileAsStream(
@@ -272,107 +262,32 @@ public class AppLocalServiceImpl extends AppLocalServiceBaseImpl {
 					"Unable to open file at " + app.getFilePath());
 			}
 
-			File liferayPackageFile = FileUtil.createTempFile(inputStream);
+			StringBundler sb = new StringBundler(5);
 
-			zipFile = new ZipFile(liferayPackageFile);
+			sb.append(SystemProperties.get(SystemProperties.TMP_DIR));
+			sb.append(StringPool.SLASH);
+			sb.append(encodeSafeFileName(app.getTitle()));
+			sb.append(StringPool.PERIOD);
+			sb.append(FileUtil.getExtension(app.getFileName()));
 
-			Enumeration<ZipEntry> enu =
-				(Enumeration<ZipEntry>)zipFile.entries();
+			File file = new File(sb.toString());
 
-			while (enu.hasMoreElements()) {
-				ZipEntry zipEntry = enu.nextElement();
+			FileUtil.write(file, inputStream);
 
-				String fileName = zipEntry.getName();
+			List<Bundle> bundles = BundleManagerUtil.installLPKG(file);
 
-				if (!fileName.endsWith(".jar") && !fileName.endsWith(".war") &&
-					!fileName.endsWith(".xml") && !fileName.endsWith(".zip") &&
-					!fileName.equals("liferay-marketplace.properties")) {
+			for (int i = 1; i < bundles.size(); i++) {
+				Bundle bundle = bundles.get(i);
 
-					continue;
-				}
+				Dictionary<String, String> headers = bundle.getHeaders();
 
-				if (_log.isInfoEnabled()) {
-					_log.info(
-						"Extracting " + fileName + " from app " +
-							app.getAppId());
-				}
+				String contextName = ContextUtil.getContextName(
+					GetterUtil.getString(headers.get("Web-ContextPath")));
 
-				InputStream zipInputStream = null;
-
-				try {
-					zipInputStream = zipFile.getInputStream(zipEntry);
-
-					if (fileName.equals("liferay-marketplace.properties")) {
-						String propertiesString = StringUtil.read(
-							zipInputStream);
-
-						Properties properties = PropertiesUtil.load(
-							propertiesString);
-
-						processMarketplaceProperties(properties);
-					}
-					else {
-						File pluginPackageFile = new File(
-							tmpDir + StringPool.SLASH + fileName);
-
-						FileUtil.write(pluginPackageFile, zipInputStream);
-
-						String bundleSymbolicName = StringPool.BLANK;
-						String bundleVersion = StringPool.BLANK;
-						String contextName = StringPool.BLANK;
-
-						AutoDeploymentContext autoDeploymentContext =
-							new AutoDeploymentContext();
-
-						if (fileName.endsWith(".jar")) {
-							Manifest manifest = BundleManagerUtil.getManifest(
-								pluginPackageFile);
-
-							Attributes attributes =
-								manifest.getMainAttributes();
-
-							bundleSymbolicName = GetterUtil.getString(
-								attributes.getValue("Bundle-SymbolicName"));
-							bundleVersion = GetterUtil.getString(
-								attributes.getValue("Bundle-Version"));
-
-							String contextPath = GetterUtil.getString(
-								attributes.getValue("Web-ContextPath"));
-
-							contextName = ContextUtil.getContextName(
-								contextPath);
-						}
-						else {
-							contextName = ContextUtil.getContextName(fileName);
-
-							autoDeploymentContext.setContext(contextName);
-						}
-
-						autoDeploymentContext.setFile(pluginPackageFile);
-
-						DeployManagerUtil.deploy(autoDeploymentContext);
-
-						if (Validator.isNotNull(bundleSymbolicName) ||
-							Validator.isNotNull(contextName)) {
-
-							moduleLocalService.addModule(
-								app.getUserId(), app.getAppId(),
-								bundleSymbolicName, bundleVersion, contextName);
-						}
-					}
-				}
-				finally {
-					StreamUtil.cleanUp(zipInputStream);
-				}
+				moduleLocalService.addModule(
+					app.getUserId(), app.getAppId(), bundle.getSymbolicName(),
+					String.valueOf(bundle.getVersion()), contextName);
 			}
-		}
-		catch (ZipException ze) {
-			if (_log.isInfoEnabled()) {
-				_log.info(
-					"Deleting corrupt package from app " + app.getAppId(), ze);
-			}
-
-			deleteApp(app);
 		}
 		catch (IOException ioe) {
 			throw new PortalException(ioe.getMessage());
@@ -381,36 +296,9 @@ public class AppLocalServiceImpl extends AppLocalServiceBaseImpl {
 			_log.error(e, e);
 		}
 		finally {
-			FileUtil.deltree(tmpDir);
-
-			if (zipFile != null) {
-				try {
-					zipFile.close();
-				}
-				catch (IOException ioe) {
-				}
-			}
-
 			StreamUtil.cleanUp(inputStream);
 
 			clearInstalledAppsCache();
-		}
-	}
-
-	@Override
-	public void processMarketplaceProperties(Properties properties)
-		throws PortalException {
-
-		long[] supersedesRemoteAppIds = StringUtil.split(
-			properties.getProperty("supersedes-remote-app-ids"), 0L);
-
-		for (long supersedesRemoteAppId : supersedesRemoteAppIds) {
-			App supersedesApp = appPersistence.fetchByRemoteAppId(
-				supersedesRemoteAppId);
-
-			if ((supersedesApp != null) && supersedesApp.isInstalled()) {
-				uninstallApp(supersedesRemoteAppId);
-			}
 		}
 	}
 
@@ -461,16 +349,19 @@ public class AppLocalServiceImpl extends AppLocalServiceBaseImpl {
 		String category = properties.getProperty("category");
 		String iconURL = properties.getProperty("icon-url");
 		String version = properties.getProperty("version");
+		boolean required = GetterUtil.getBoolean(
+			properties.getProperty("required"));
 
 		return updateApp(
 			userId, remoteAppId, title, description, category, iconURL, version,
-			file);
+			required, file);
 	}
 
 	@Override
 	public App updateApp(
 			long userId, long remoteAppId, String title, String description,
-			String category, String iconURL, String version, File file)
+			String category, String iconURL, String version, boolean required,
+			File file)
 		throws PortalException {
 
 		// App
@@ -502,6 +393,7 @@ public class AppLocalServiceImpl extends AppLocalServiceBaseImpl {
 		app.setCategory(category);
 		app.setIconURL(iconURL);
 		app.setVersion(version);
+		app.setRequired(required);
 
 		appPersistence.update(app);
 
@@ -524,6 +416,17 @@ public class AppLocalServiceImpl extends AppLocalServiceBaseImpl {
 		clearInstalledAppsCache();
 
 		return app;
+	}
+
+	protected String encodeSafeFileName(String fileName) {
+		if (fileName == null) {
+			return StringPool.BLANK;
+		}
+
+		fileName = FileUtil.encodeSafeFileName(fileName);
+
+		return StringUtil.replace(
+			fileName, _SAFE_FILE_NAME_1, _SAFE_FILE_NAME_2);
 	}
 
 	protected Properties getMarketplaceProperties(File liferayPackageFile) {
@@ -588,6 +491,23 @@ public class AppLocalServiceImpl extends AppLocalServiceBaseImpl {
 			throw new AppVersionException();
 		}
 	}
+
+	/**
+	 * @see com.liferay.portal.util.FileImpl#_SAFE_FILE_NAME_1
+	 */
+	private static final String[] _SAFE_FILE_NAME_1 = {
+		StringPool.BACK_SLASH, StringPool.COLON, StringPool.GREATER_THAN,
+		StringPool.LESS_THAN, StringPool.PIPE, StringPool.QUESTION,
+		StringPool.QUOTE, StringPool.SLASH, StringPool.STAR
+	};
+
+	/**
+	 * @see com.liferay.portal.util.FileImpl#_SAFE_FILE_NAME_2
+	 */
+	private static final String[] _SAFE_FILE_NAME_2 = {
+		"_BSL_", "_COL_", "_GT_", "_LT_", "_PIP_", "_QUE_", "_QUO_", "_SL_",
+		"_ST_"
+	};
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		AppLocalServiceImpl.class);

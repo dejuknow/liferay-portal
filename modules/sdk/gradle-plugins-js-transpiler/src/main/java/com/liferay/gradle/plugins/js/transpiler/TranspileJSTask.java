@@ -24,7 +24,6 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Callable;
 
 import org.gradle.api.Action;
 import org.gradle.api.Project;
@@ -43,20 +42,6 @@ import org.gradle.util.GUtil;
 public class TranspileJSTask extends ExecuteNodeScriptTask {
 
 	public TranspileJSTask() {
-		dependsOn(JSTranspilerPlugin.DOWNLOAD_LFR_AMD_LOADER_TASK_NAME);
-		dependsOn(JSTranspilerPlugin.DOWNLOAD_METAL_CLI_TASK_NAME);
-
-		setScriptFile(
-			new Callable<File>() {
-
-				@Override
-				public File call() throws Exception {
-					return new File(
-						getNodeDir(), "node_modules/metal-cli/index.js");
-				}
-
-			});
-
 		soySrcInclude("**/*.soy");
 		srcInclude("**/*.es.js", "**/*.soy.js");
 	}
@@ -136,6 +121,11 @@ public class TranspileJSTask extends ExecuteNodeScriptTask {
 		return _sourceMaps;
 	}
 
+	@Input
+	public List<String> getSoyDependencies() {
+		return GradleUtil.toStringList(_soyDependencies);
+	}
+
 	public List<String> getSoySrcIncludes() {
 		return GradleUtil.toStringList(_soySrcIncludes);
 	}
@@ -179,6 +169,16 @@ public class TranspileJSTask extends ExecuteNodeScriptTask {
 		_sourceMaps = sourceMaps;
 	}
 
+	public void setSoyDependencies(Iterable<?> soyDependencies) {
+		_soyDependencies.clear();
+
+		soyDependency(soyDependencies);
+	}
+
+	public void setSoyDependencies(Object... soyDependencies) {
+		setSoyDependencies(Arrays.asList(soyDependencies));
+	}
+
 	public void setSoySkipMetalGeneration(boolean soySkipMetalGeneration) {
 		_soySkipMetalGeneration = soySkipMetalGeneration;
 	}
@@ -189,7 +189,7 @@ public class TranspileJSTask extends ExecuteNodeScriptTask {
 		soySrcInclude(soySrcIncludes);
 	}
 
-	public void setSoySrcIncludes(Object ... soySrcIncludes) {
+	public void setSoySrcIncludes(Object... soySrcIncludes) {
 		setSoySrcIncludes(Arrays.asList(soySrcIncludes));
 	}
 
@@ -199,8 +199,18 @@ public class TranspileJSTask extends ExecuteNodeScriptTask {
 		srcInclude(srcIncludes);
 	}
 
-	public void setSrcIncludes(Object ... srcIncludes) {
+	public void setSrcIncludes(Object... srcIncludes) {
 		setSrcIncludes(Arrays.asList(srcIncludes));
+	}
+
+	public TranspileJSTask soyDependency(Iterable<?> soyDependencies) {
+		GUtil.addToCollection(_soyDependencies, soyDependencies);
+
+		return this;
+	}
+
+	public TranspileJSTask soyDependency(Object... soyDependencies) {
+		return soyDependency(Arrays.asList(soyDependencies));
 	}
 
 	public TranspileJSTask soySrcInclude(Iterable<?> soySrcIncludes) {
@@ -209,7 +219,7 @@ public class TranspileJSTask extends ExecuteNodeScriptTask {
 		return this;
 	}
 
-	public TranspileJSTask soySrcInclude(Object ... soySrcIncludes) {
+	public TranspileJSTask soySrcInclude(Object... soySrcIncludes) {
 		return soySrcInclude(Arrays.asList(soySrcIncludes));
 	}
 
@@ -219,7 +229,7 @@ public class TranspileJSTask extends ExecuteNodeScriptTask {
 		return this;
 	}
 
-	public TranspileJSTask srcInclude(Object ... srcIncludes) {
+	public TranspileJSTask srcInclude(Object... srcIncludes) {
 		return srcInclude(Arrays.asList(srcIncludes));
 	}
 
@@ -265,24 +275,25 @@ public class TranspileJSTask extends ExecuteNodeScriptTask {
 			}
 		}
 
+		List<String> soyDependencies = getSoyDependencies();
+
+		if (!soyDependencies.isEmpty()) {
+			completeArgs.add("--soyDeps");
+			completeArgs.addAll(soyDependencies);
+		}
+
 		completeArgs.add("--soyDest");
 		completeArgs.add(destination);
 
 		completeArgs.add("--soySrc");
-
-		for (String soySrcInclude : getSoySrcIncludes()) {
-			completeArgs.add(soySrcInclude);
-		}
+		completeArgs.addAll(getSoySrcIncludes());
 
 		if (isSoySkipMetalGeneration()) {
 			completeArgs.add("--soySkipMetalGeneration");
 		}
 
 		completeArgs.add("--src");
-
-		for (String srcInclude : getSrcIncludes()) {
-			completeArgs.add(srcInclude);
-		}
+		completeArgs.addAll(getSrcIncludes());
 
 		return completeArgs;
 	}
@@ -293,6 +304,7 @@ public class TranspileJSTask extends ExecuteNodeScriptTask {
 	private Object _modules = "amd";
 	private Object _sourceDir;
 	private SourceMaps _sourceMaps = SourceMaps.ENABLED;
+	private final Set<Object> _soyDependencies = new LinkedHashSet<>();
 	private boolean _soySkipMetalGeneration;
 	private final Set<Object> _soySrcIncludes = new LinkedHashSet<>();
 	private final Set<Object> _srcIncludes = new LinkedHashSet<>();

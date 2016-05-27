@@ -56,20 +56,19 @@ define("frontend-js-spa-web@1.0.6/liferay/surface/Surface.es", ['exports', 'meta
 			return _possibleConstructorReturn(this, _Surface.apply(this, arguments));
 		}
 
-		LiferaySurface.prototype.addContent = function addContent(scrrenId, content) {
+		LiferaySurface.prototype.addContent = function addContent(screenId, content) {
 			if (_core2.default.isString(content)) {
 				content = _dom2.default.buildFragment(content);
 			}
 
 			Liferay.DOMTaskRunner.runTasks(content);
 
-			return _Surface.prototype.addContent.call(this, scrrenId, content);
+			return _Surface.prototype.addContent.call(this, screenId, content);
 		};
 
 		return LiferaySurface;
 	}(_Surface3.default);
 
-	LiferaySurface.prototype.registerMetalComponent && LiferaySurface.prototype.registerMetalComponent(LiferaySurface, 'LiferaySurface')
 	exports.default = LiferaySurface;
 });
 //# sourceMappingURL=Surface.es.js.map

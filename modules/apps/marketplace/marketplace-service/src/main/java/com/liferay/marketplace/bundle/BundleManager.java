@@ -14,18 +14,28 @@
 
 package com.liferay.marketplace.bundle;
 
+import com.liferay.portal.kernel.deploy.auto.AutoDeployException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.FileUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.StreamUtil;
+import com.liferay.portal.lpkg.deployer.LPKGDeployer;
+import com.liferay.portal.lpkg.deployer.LPKGVerifier;
+import com.liferay.portal.util.ShutdownUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -36,6 +46,7 @@ import org.osgi.framework.BundleException;
 import org.osgi.framework.Version;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Joan Kim
@@ -112,6 +123,36 @@ public class BundleManager {
 		return null;
 	}
 
+	public List<Bundle> installLPKG(File file) throws Exception {
+		_lpkgVerifier.verify(file);
+
+		File installFile = new File(getInstallDirName(), file.getName());
+
+		boolean moved = FileUtil.move(file, installFile);
+
+		if (!moved) {
+			throw new AutoDeployException(
+				"Unable to move LPKG to install directory");
+		}
+
+		if (isRestartRequired(installFile)) {
+			ShutdownUtil.shutdown(0);
+
+			return Collections.emptyList();
+		}
+
+		List<Bundle> bundles = _lpkgDeployer.deploy(
+			_bundleContext, installFile);
+
+		for (int i = 1; i < bundles.size(); i++) {
+			Bundle bundle = bundles.get(i);
+
+			bundle.start();
+		}
+
+		return bundles;
+	}
+
 	public boolean isInstalled(Bundle bundle) {
 		if (ArrayUtil.contains(_INSTALLED_BUNDLE_STATES, bundle.getState())) {
 			return true;
@@ -155,6 +196,57 @@ public class BundleManager {
 		_bundleContext = bundleContext;
 	}
 
+	protected String getInstallDirName() throws Exception {
+		String[] autoDeployDirNames = PropsUtil.getArray(
+			PropsKeys.MODULE_FRAMEWORK_AUTO_DEPLOY_DIRS);
+
+		if (ArrayUtil.isEmpty(autoDeployDirNames)) {
+			throw new AutoDeployException(
+				"The portal property \"" +
+					PropsKeys.MODULE_FRAMEWORK_AUTO_DEPLOY_DIRS +
+						"\" is not set");
+		}
+
+		String autoDeployDirName = autoDeployDirNames[0];
+
+		for (String curDirName : autoDeployDirNames) {
+			if (curDirName.endsWith("/marketplace")) {
+				autoDeployDirName = curDirName;
+
+				break;
+			}
+		}
+
+		return autoDeployDirName;
+	}
+
+	protected boolean isRestartRequired(File file) {
+		try (ZipFile zipFile = new ZipFile(file)) {
+			ZipEntry zipEntry = zipFile.getEntry(
+				"liferay-marketplace.properties");
+
+			if (zipEntry == null) {
+				return false;
+			}
+
+			Properties properties = new Properties();
+
+			properties.load(zipFile.getInputStream(zipEntry));
+
+			return GetterUtil.getBoolean(
+				properties.getProperty("restart-required"), true);
+		}
+		catch (Exception e) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(
+					"Unable to read liferay-marketplace.properties from " +
+						file.getName());
+			}
+		}
+
+		return false;
+	}
+
 	private static final int[] _INSTALLED_BUNDLE_STATES = {
 		Bundle.ACTIVE, Bundle.INSTALLED, Bundle.RESOLVED
 	};
@@ -162,5 +254,11 @@ public class BundleManager {
 	private static final Log _log = LogFactoryUtil.getLog(BundleManager.class);
 
 	private BundleContext _bundleContext;
+
+	@Reference
+	private LPKGDeployer _lpkgDeployer;
+
+	@Reference
+	private LPKGVerifier _lpkgVerifier;
 
 }

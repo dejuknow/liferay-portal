@@ -16,13 +16,18 @@ package com.liferay.site.admin.web.servlet.taglib.ui;
 
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.LayoutSetPrototype;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.servlet.taglib.ui.FormNavigatorConstants;
 import com.liferay.portal.kernel.servlet.taglib.ui.FormNavigatorEntry;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 
 import java.util.Locale;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -53,7 +58,25 @@ public class SitePagesFormNavigatorEntry extends BaseSiteFormNavigatorEntry {
 
 	@Override
 	public boolean isVisible(User user, Group group) {
-		if ((group == null) || !group.isCompany()) {
+		if ((group != null) && group.isCompany()) {
+			return false;
+		}
+
+		if (group != null) {
+			return true;
+		}
+
+		ServiceContext serviceContext =
+			ServiceContextThreadLocal.getServiceContext();
+
+		ThemeDisplay themeDisplay = serviceContext.getThemeDisplay();
+
+		HttpServletRequest request = themeDisplay.getRequest();
+
+		LayoutSetPrototype layoutSetPrototype =
+			(LayoutSetPrototype)request.getAttribute("site.layoutSetPrototype");
+
+		if (layoutSetPrototype != null) {
 			return true;
 		}
 

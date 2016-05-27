@@ -36,7 +36,6 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.Validator;
 
 import com.liferay.portlet.social.model.impl.SocialActivityCounterImpl;
 import com.liferay.portlet.social.model.impl.SocialActivityCounterModelImpl;
@@ -53,6 +52,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -1849,8 +1849,8 @@ public class SocialActivityCounterPersistenceImpl extends BasePersistenceImpl<So
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchActivityCounterException(msg.toString());
@@ -1911,7 +1911,7 @@ public class SocialActivityCounterPersistenceImpl extends BasePersistenceImpl<So
 			if ((groupId != socialActivityCounter.getGroupId()) ||
 					(classNameId != socialActivityCounter.getClassNameId()) ||
 					(classPK != socialActivityCounter.getClassPK()) ||
-					!Validator.equals(name, socialActivityCounter.getName()) ||
+					!Objects.equals(name, socialActivityCounter.getName()) ||
 					(ownerType != socialActivityCounter.getOwnerType()) ||
 					(startPeriod != socialActivityCounter.getStartPeriod())) {
 				result = null;
@@ -2206,8 +2206,8 @@ public class SocialActivityCounterPersistenceImpl extends BasePersistenceImpl<So
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchActivityCounterException(msg.toString());
@@ -2268,7 +2268,7 @@ public class SocialActivityCounterPersistenceImpl extends BasePersistenceImpl<So
 			if ((groupId != socialActivityCounter.getGroupId()) ||
 					(classNameId != socialActivityCounter.getClassNameId()) ||
 					(classPK != socialActivityCounter.getClassPK()) ||
-					!Validator.equals(name, socialActivityCounter.getName()) ||
+					!Objects.equals(name, socialActivityCounter.getName()) ||
 					(ownerType != socialActivityCounter.getOwnerType()) ||
 					(endPeriod != socialActivityCounter.getEndPeriod())) {
 				result = null;
@@ -2779,8 +2779,8 @@ public class SocialActivityCounterPersistenceImpl extends BasePersistenceImpl<So
 					primaryKey);
 
 			if (socialActivityCounter == null) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+				if (_log.isDebugEnabled()) {
+					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchActivityCounterException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
@@ -2987,8 +2987,8 @@ public class SocialActivityCounterPersistenceImpl extends BasePersistenceImpl<So
 		SocialActivityCounter socialActivityCounter = fetchByPrimaryKey(primaryKey);
 
 		if (socialActivityCounter == null) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+			if (_log.isDebugEnabled()) {
+				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
 			throw new NoSuchActivityCounterException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +

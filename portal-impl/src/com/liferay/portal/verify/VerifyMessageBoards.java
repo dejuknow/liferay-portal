@@ -106,8 +106,9 @@ public class VerifyMessageBoards extends VerifyProcess {
 						thread.getStatusDate(), thread.getLastPostDate(),
 						MBThread.class.getName(), thread.getThreadId(), null, 0,
 						new long[0], new String[0], true, false, null, null,
-						null, null, String.valueOf(thread.getRootMessageId()),
-						null, null, null, null, 0, 0, null);
+						null, null, null,
+						String.valueOf(thread.getRootMessageId()), null, null,
+						null, null, 0, 0, null);
 				}
 				catch (Exception e) {
 					if (_log.isWarnEnabled()) {

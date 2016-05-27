@@ -228,7 +228,7 @@ public abstract class PasswordPolicyRelLocalServiceBaseImpl
 	public ActionableDynamicQuery getActionableDynamicQuery() {
 		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
 
-		actionableDynamicQuery.setBaseLocalService(com.liferay.portal.kernel.service.PasswordPolicyRelLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(passwordPolicyRelLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(PasswordPolicyRel.class);
 
@@ -241,7 +241,7 @@ public abstract class PasswordPolicyRelLocalServiceBaseImpl
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
 		IndexableActionableDynamicQuery indexableActionableDynamicQuery = new IndexableActionableDynamicQuery();
 
-		indexableActionableDynamicQuery.setBaseLocalService(com.liferay.portal.kernel.service.PasswordPolicyRelLocalServiceUtil.getService());
+		indexableActionableDynamicQuery.setBaseLocalService(passwordPolicyRelLocalService);
 		indexableActionableDynamicQuery.setClassLoader(getClassLoader());
 		indexableActionableDynamicQuery.setModelClass(PasswordPolicyRel.class);
 
@@ -253,7 +253,7 @@ public abstract class PasswordPolicyRelLocalServiceBaseImpl
 
 	protected void initActionableDynamicQuery(
 		ActionableDynamicQuery actionableDynamicQuery) {
-		actionableDynamicQuery.setBaseLocalService(com.liferay.portal.kernel.service.PasswordPolicyRelLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(passwordPolicyRelLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(PasswordPolicyRel.class);
 
@@ -461,7 +461,7 @@ public abstract class PasswordPolicyRelLocalServiceBaseImpl
 		}
 	}
 
-	@BeanReference(type = com.liferay.portal.kernel.service.PasswordPolicyRelLocalService.class)
+	@BeanReference(type = PasswordPolicyRelLocalService.class)
 	protected PasswordPolicyRelLocalService passwordPolicyRelLocalService;
 	@BeanReference(type = PasswordPolicyRelPersistence.class)
 	protected PasswordPolicyRelPersistence passwordPolicyRelPersistence;

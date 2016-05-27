@@ -16,7 +16,7 @@ package com.liferay.portal.remote.http.tunnel.extender;
 
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.remote.http.tunnel.configuration.HttpTunnelExtenderConfiguration;
+import com.liferay.portal.remote.http.tunnel.extender.configuration.HttpTunnelExtenderConfiguration;
 import com.liferay.portal.servlet.TunnelServlet;
 import com.liferay.portal.servlet.filters.authverifier.AuthVerifierFilter;
 
@@ -182,7 +182,7 @@ public class HttpTunnelExtender extends AbstractExtender {
 					_httpTunnelExtenderConfiguration.hostsAllowed()));
 			properties.put(
 				HttpWhiteboardConstants.HTTP_WHITEBOARD_FILTER_NAME,
-				"AuthVerifierFilter");
+				AuthVerifierFilter.class.getName());
 			properties.put(
 				HttpWhiteboardConstants.HTTP_WHITEBOARD_FILTER_PATTERN,
 				"/api/liferay/do");
@@ -225,7 +225,7 @@ public class HttpTunnelExtender extends AbstractExtender {
 				"liferay.http.tunnel." + _bundle.getSymbolicName());
 			properties.put(
 				HttpWhiteboardConstants.HTTP_WHITEBOARD_SERVLET_NAME,
-				"HttpTunnelServlet");
+				TunnelServlet.class.getName());
 			properties.put(
 				HttpWhiteboardConstants.HTTP_WHITEBOARD_SERVLET_PATTERN,
 				"/api/liferay/do");

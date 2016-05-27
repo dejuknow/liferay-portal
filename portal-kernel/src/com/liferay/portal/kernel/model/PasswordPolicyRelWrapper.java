@@ -19,12 +19,12 @@ import aQute.bnd.annotation.ProviderType;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Serializable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * <p>
@@ -106,14 +106,58 @@ public class PasswordPolicyRelWrapper implements PasswordPolicyRel,
 	}
 
 	@Override
-	public java.lang.Object clone() {
-		return new PasswordPolicyRelWrapper((PasswordPolicyRel)_passwordPolicyRel.clone());
+	public CacheModel<PasswordPolicyRel> toCacheModel() {
+		return _passwordPolicyRel.toCacheModel();
 	}
 
 	@Override
-	public int compareTo(
-		com.liferay.portal.kernel.model.PasswordPolicyRel passwordPolicyRel) {
+	public PasswordPolicyRel toEscapedModel() {
+		return new PasswordPolicyRelWrapper(_passwordPolicyRel.toEscapedModel());
+	}
+
+	@Override
+	public PasswordPolicyRel toUnescapedModel() {
+		return new PasswordPolicyRelWrapper(_passwordPolicyRel.toUnescapedModel());
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _passwordPolicyRel.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _passwordPolicyRel.isEscapedModel();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _passwordPolicyRel.isNew();
+	}
+
+	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _passwordPolicyRel.getExpandoBridge();
+	}
+
+	@Override
+	public int compareTo(PasswordPolicyRel passwordPolicyRel) {
 		return _passwordPolicyRel.compareTo(passwordPolicyRel);
+	}
+
+	@Override
+	public int hashCode() {
+		return _passwordPolicyRel.hashCode();
+	}
+
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _passwordPolicyRel.getPrimaryKeyObj();
+	}
+
+	@Override
+	public java.lang.Object clone() {
+		return new PasswordPolicyRelWrapper((PasswordPolicyRel)_passwordPolicyRel.clone());
 	}
 
 	/**
@@ -124,6 +168,16 @@ public class PasswordPolicyRelWrapper implements PasswordPolicyRel,
 	@Override
 	public java.lang.String getClassName() {
 		return _passwordPolicyRel.getClassName();
+	}
+
+	@Override
+	public java.lang.String toString() {
+		return _passwordPolicyRel.toString();
+	}
+
+	@Override
+	public java.lang.String toXmlString() {
+		return _passwordPolicyRel.toXmlString();
 	}
 
 	/**
@@ -154,11 +208,6 @@ public class PasswordPolicyRelWrapper implements PasswordPolicyRel,
 	@Override
 	public long getCompanyId() {
 		return _passwordPolicyRel.getCompanyId();
-	}
-
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _passwordPolicyRel.getExpandoBridge();
 	}
 
 	/**
@@ -199,31 +248,6 @@ public class PasswordPolicyRelWrapper implements PasswordPolicyRel,
 	@Override
 	public long getPrimaryKey() {
 		return _passwordPolicyRel.getPrimaryKey();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _passwordPolicyRel.getPrimaryKeyObj();
-	}
-
-	@Override
-	public int hashCode() {
-		return _passwordPolicyRel.hashCode();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _passwordPolicyRel.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _passwordPolicyRel.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _passwordPolicyRel.isNew();
 	}
 
 	@Override
@@ -337,31 +361,6 @@ public class PasswordPolicyRelWrapper implements PasswordPolicyRel,
 	}
 
 	@Override
-	public CacheModel<com.liferay.portal.kernel.model.PasswordPolicyRel> toCacheModel() {
-		return _passwordPolicyRel.toCacheModel();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.model.PasswordPolicyRel toEscapedModel() {
-		return new PasswordPolicyRelWrapper(_passwordPolicyRel.toEscapedModel());
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _passwordPolicyRel.toString();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.model.PasswordPolicyRel toUnescapedModel() {
-		return new PasswordPolicyRelWrapper(_passwordPolicyRel.toUnescapedModel());
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _passwordPolicyRel.toXmlString();
-	}
-
-	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
@@ -373,7 +372,7 @@ public class PasswordPolicyRelWrapper implements PasswordPolicyRel,
 
 		PasswordPolicyRelWrapper passwordPolicyRelWrapper = (PasswordPolicyRelWrapper)obj;
 
-		if (Validator.equals(_passwordPolicyRel,
+		if (Objects.equals(_passwordPolicyRel,
 					passwordPolicyRelWrapper._passwordPolicyRel)) {
 			return true;
 		}

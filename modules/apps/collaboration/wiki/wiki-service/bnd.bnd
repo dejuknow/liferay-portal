@@ -7,16 +7,13 @@ Export-Package:\
 	com.liferay.wiki.importer.impl,\
 	com.liferay.wiki.lar,\
 	com.liferay.wiki.model.impl,\
-	com.liferay.wiki.notifications,\
 	com.liferay.wiki.search,\
-	com.liferay.wiki.service.configuration.configurator,\
 	com.liferay.wiki.service.permission,\
 	com.liferay.wiki.service.util,\
 	com.liferay.wiki.social,\
 	com.liferay.wiki.trash,\
 	com.liferay.wiki.util,\
 	com.liferay.wiki.util.comparator,\
-	com.liferay.wiki.validator,\
 	com.liferay.wiki.verify
 Import-Package:\
 	!com.liferay.portal.tools.sql,\
@@ -58,7 +55,7 @@ Liferay-Releng-Module-Group-Description:
 Liferay-Releng-Module-Group-Title: Wiki
 Liferay-Require-SchemaVersion: 1.0.0
 Liferay-Service: true
--liferay-includeresource:\
+-includeresource:\
 	@../../../../../lib/portal/antlr2.jar,\
 	@../../../../../lib/portal/antlr3.jar,\
 	@../../../../../lib/portal/bnd.jar!/aQute/bnd/annotation/metatype/*,\

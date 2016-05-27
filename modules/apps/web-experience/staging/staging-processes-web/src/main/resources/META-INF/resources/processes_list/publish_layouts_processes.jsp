@@ -54,6 +54,12 @@ OrderByComparator<BackgroundTask> orderByComparator = BackgroundTaskComparatorFa
 	<aui:input name="redirect" type="hidden" value="<%= currentURL.toString() %>" />
 	<aui:input name="deleteBackgroundTaskIds" type="hidden" />
 
+	<%@ include file="/error/error_auth_exception.jspf" %>
+
+	<%@ include file="/error/error_remote_export_exception.jspf" %>
+
+	<%@ include file="/error/error_remote_options_exception.jspf" %>
+
 	<liferay-ui:search-container
 		emptyResultsMessage="no-publication-processes-were-found"
 		id="<%= searchContainerId %>"
@@ -63,7 +69,6 @@ OrderByComparator<BackgroundTask> orderByComparator = BackgroundTaskComparatorFa
 		orderByType="<%= orderByType %>"
 		rowChecker="<%= new EmptyOnClickRowChecker(liferayPortletResponse) %>"
 	>
-
 		<liferay-ui:search-container-results>
 
 			<%
@@ -135,9 +140,7 @@ OrderByComparator<BackgroundTask> orderByComparator = BackgroundTaskComparatorFa
 						</h6>
 
 						<h5 id="<portlet:namespace />backgroundTaskName<%= backgroundTask.getBackgroundTaskId() %>">
-
 							<%= HtmlUtil.escape(backgroundTaskName) %>
-
 						</h5>
 
 						<c:if test="<%= backgroundTask.isInProgress() %>">
@@ -168,7 +171,7 @@ OrderByComparator<BackgroundTask> orderByComparator = BackgroundTaskComparatorFa
 
 									String phase = GetterUtil.getString(backgroundTaskStatus.getAttribute("phase"));
 
-									if (phase.equals(Constants.EXPORT) && !Validator.equals(cmd, Constants.PUBLISH_TO_REMOTE)) {
+									if (phase.equals(Constants.EXPORT) && !Objects.equals(cmd, Constants.PUBLISH_TO_REMOTE)) {
 										base = 50;
 									}
 
@@ -178,7 +181,7 @@ OrderByComparator<BackgroundTask> orderByComparator = BackgroundTaskComparatorFa
 
 								<div class="active progress progress-striped progress-xs">
 									<div class="progress-bar" style="width: <%= percentage %>%;">
-										<c:if test="<%= (allProgressBarCountersTotal > 0) && (!Validator.equals(cmd, Constants.PUBLISH_TO_REMOTE) || (percentage < 100)) %>">
+										<c:if test="<%= (allProgressBarCountersTotal > 0) && (!Objects.equals(cmd, Constants.PUBLISH_TO_REMOTE) || (percentage < 100)) %>">
 											<%= percentage + StringPool.PERCENT %>
 										</c:if>
 									</div>
@@ -190,7 +193,7 @@ OrderByComparator<BackgroundTask> orderByComparator = BackgroundTaskComparatorFa
 								%>
 
 								<c:choose>
-									<c:when test="<%= Validator.equals(cmd, Constants.PUBLISH_TO_REMOTE) && (percentage == 100) %>">
+									<c:when test="<%= Objects.equals(cmd, Constants.PUBLISH_TO_REMOTE) && (percentage == 100) %>">
 										<div class="progress-current-item">
 											<strong><liferay-ui:message key="please-wait-as-the-publication-processes-on-the-remote-site" /></strong>
 										</div>

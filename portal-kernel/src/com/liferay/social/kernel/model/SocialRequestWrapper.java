@@ -20,12 +20,12 @@ import com.liferay.expando.kernel.model.ExpandoBridge;
 
 import com.liferay.portal.kernel.model.ModelWrapper;
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Serializable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * <p>
@@ -156,14 +156,78 @@ public class SocialRequestWrapper implements SocialRequest,
 	}
 
 	@Override
-	public java.lang.Object clone() {
-		return new SocialRequestWrapper((SocialRequest)_socialRequest.clone());
+	public SocialRequest toEscapedModel() {
+		return new SocialRequestWrapper(_socialRequest.toEscapedModel());
 	}
 
 	@Override
-	public int compareTo(
-		com.liferay.social.kernel.model.SocialRequest socialRequest) {
+	public SocialRequest toUnescapedModel() {
+		return new SocialRequestWrapper(_socialRequest.toUnescapedModel());
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _socialRequest.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _socialRequest.isEscapedModel();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _socialRequest.isNew();
+	}
+
+	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _socialRequest.getExpandoBridge();
+	}
+
+	@Override
+	public com.liferay.portal.kernel.model.CacheModel<SocialRequest> toCacheModel() {
+		return _socialRequest.toCacheModel();
+	}
+
+	@Override
+	public int compareTo(SocialRequest socialRequest) {
 		return _socialRequest.compareTo(socialRequest);
+	}
+
+	/**
+	* Returns the status of this social request.
+	*
+	* @return the status of this social request
+	*/
+	@Override
+	public int getStatus() {
+		return _socialRequest.getStatus();
+	}
+
+	/**
+	* Returns the type of this social request.
+	*
+	* @return the type of this social request
+	*/
+	@Override
+	public int getType() {
+		return _socialRequest.getType();
+	}
+
+	@Override
+	public int hashCode() {
+		return _socialRequest.hashCode();
+	}
+
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _socialRequest.getPrimaryKeyObj();
+	}
+
+	@Override
+	public java.lang.Object clone() {
+		return new SocialRequestWrapper((SocialRequest)_socialRequest.clone());
 	}
 
 	/**
@@ -174,6 +238,56 @@ public class SocialRequestWrapper implements SocialRequest,
 	@Override
 	public java.lang.String getClassName() {
 		return _socialRequest.getClassName();
+	}
+
+	/**
+	* Returns the extra data of this social request.
+	*
+	* @return the extra data of this social request
+	*/
+	@Override
+	public java.lang.String getExtraData() {
+		return _socialRequest.getExtraData();
+	}
+
+	/**
+	* Returns the receiver user uuid of this social request.
+	*
+	* @return the receiver user uuid of this social request
+	*/
+	@Override
+	public java.lang.String getReceiverUserUuid() {
+		return _socialRequest.getReceiverUserUuid();
+	}
+
+	/**
+	* Returns the user uuid of this social request.
+	*
+	* @return the user uuid of this social request
+	*/
+	@Override
+	public java.lang.String getUserUuid() {
+		return _socialRequest.getUserUuid();
+	}
+
+	/**
+	* Returns the uuid of this social request.
+	*
+	* @return the uuid of this social request
+	*/
+	@Override
+	public java.lang.String getUuid() {
+		return _socialRequest.getUuid();
+	}
+
+	@Override
+	public java.lang.String toString() {
+		return _socialRequest.toString();
+	}
+
+	@Override
+	public java.lang.String toXmlString() {
+		return _socialRequest.toXmlString();
 	}
 
 	/**
@@ -216,21 +330,6 @@ public class SocialRequestWrapper implements SocialRequest,
 		return _socialRequest.getCreateDate();
 	}
 
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _socialRequest.getExpandoBridge();
-	}
-
-	/**
-	* Returns the extra data of this social request.
-	*
-	* @return the extra data of this social request
-	*/
-	@Override
-	public java.lang.String getExtraData() {
-		return _socialRequest.getExtraData();
-	}
-
 	/**
 	* Returns the group ID of this social request.
 	*
@@ -261,11 +360,6 @@ public class SocialRequestWrapper implements SocialRequest,
 		return _socialRequest.getPrimaryKey();
 	}
 
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _socialRequest.getPrimaryKeyObj();
-	}
-
 	/**
 	* Returns the receiver user ID of this social request.
 	*
@@ -274,16 +368,6 @@ public class SocialRequestWrapper implements SocialRequest,
 	@Override
 	public long getReceiverUserId() {
 		return _socialRequest.getReceiverUserId();
-	}
-
-	/**
-	* Returns the receiver user uuid of this social request.
-	*
-	* @return the receiver user uuid of this social request
-	*/
-	@Override
-	public java.lang.String getReceiverUserUuid() {
-		return _socialRequest.getReceiverUserUuid();
 	}
 
 	/**
@@ -297,26 +381,6 @@ public class SocialRequestWrapper implements SocialRequest,
 	}
 
 	/**
-	* Returns the status of this social request.
-	*
-	* @return the status of this social request
-	*/
-	@Override
-	public int getStatus() {
-		return _socialRequest.getStatus();
-	}
-
-	/**
-	* Returns the type of this social request.
-	*
-	* @return the type of this social request
-	*/
-	@Override
-	public int getType() {
-		return _socialRequest.getType();
-	}
-
-	/**
 	* Returns the user ID of this social request.
 	*
 	* @return the user ID of this social request
@@ -324,46 +388,6 @@ public class SocialRequestWrapper implements SocialRequest,
 	@Override
 	public long getUserId() {
 		return _socialRequest.getUserId();
-	}
-
-	/**
-	* Returns the user uuid of this social request.
-	*
-	* @return the user uuid of this social request
-	*/
-	@Override
-	public java.lang.String getUserUuid() {
-		return _socialRequest.getUserUuid();
-	}
-
-	/**
-	* Returns the uuid of this social request.
-	*
-	* @return the uuid of this social request
-	*/
-	@Override
-	public java.lang.String getUuid() {
-		return _socialRequest.getUuid();
-	}
-
-	@Override
-	public int hashCode() {
-		return _socialRequest.hashCode();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _socialRequest.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _socialRequest.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _socialRequest.isNew();
 	}
 
 	@Override
@@ -422,14 +446,14 @@ public class SocialRequestWrapper implements SocialRequest,
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
-		_socialRequest.setExpandoBridgeAttributes(baseModel);
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
+		_socialRequest.setExpandoBridgeAttributes(expandoBridge);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
-		_socialRequest.setExpandoBridgeAttributes(expandoBridge);
+	public void setExpandoBridgeAttributes(
+		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
+		_socialRequest.setExpandoBridgeAttributes(baseModel);
 	}
 
 	@Override
@@ -568,31 +592,6 @@ public class SocialRequestWrapper implements SocialRequest,
 	}
 
 	@Override
-	public com.liferay.portal.kernel.model.CacheModel<com.liferay.social.kernel.model.SocialRequest> toCacheModel() {
-		return _socialRequest.toCacheModel();
-	}
-
-	@Override
-	public com.liferay.social.kernel.model.SocialRequest toEscapedModel() {
-		return new SocialRequestWrapper(_socialRequest.toEscapedModel());
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _socialRequest.toString();
-	}
-
-	@Override
-	public com.liferay.social.kernel.model.SocialRequest toUnescapedModel() {
-		return new SocialRequestWrapper(_socialRequest.toUnescapedModel());
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _socialRequest.toXmlString();
-	}
-
-	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
@@ -604,7 +603,7 @@ public class SocialRequestWrapper implements SocialRequest,
 
 		SocialRequestWrapper socialRequestWrapper = (SocialRequestWrapper)obj;
 
-		if (Validator.equals(_socialRequest, socialRequestWrapper._socialRequest)) {
+		if (Objects.equals(_socialRequest, socialRequestWrapper._socialRequest)) {
 			return true;
 		}
 

@@ -22,13 +22,13 @@ import com.liferay.exportimport.kernel.lar.StagedModelType;
 
 import com.liferay.portal.kernel.model.ModelWrapper;
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Serializable;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * <p>
@@ -138,74 +138,28 @@ public class RatingsEntryWrapper implements RatingsEntry,
 	}
 
 	@Override
-	public java.lang.Object clone() {
-		return new RatingsEntryWrapper((RatingsEntry)_ratingsEntry.clone());
+	public RatingsEntry toEscapedModel() {
+		return new RatingsEntryWrapper(_ratingsEntry.toEscapedModel());
 	}
 
 	@Override
-	public int compareTo(
-		com.liferay.ratings.kernel.model.RatingsEntry ratingsEntry) {
-		return _ratingsEntry.compareTo(ratingsEntry);
+	public RatingsEntry toUnescapedModel() {
+		return new RatingsEntryWrapper(_ratingsEntry.toUnescapedModel());
 	}
 
-	/**
-	* Returns the fully qualified class name of this ratings entry.
-	*
-	* @return the fully qualified class name of this ratings entry
-	*/
 	@Override
-	public java.lang.String getClassName() {
-		return _ratingsEntry.getClassName();
+	public boolean isCachedModel() {
+		return _ratingsEntry.isCachedModel();
 	}
 
-	/**
-	* Returns the class name ID of this ratings entry.
-	*
-	* @return the class name ID of this ratings entry
-	*/
 	@Override
-	public long getClassNameId() {
-		return _ratingsEntry.getClassNameId();
+	public boolean isEscapedModel() {
+		return _ratingsEntry.isEscapedModel();
 	}
 
-	/**
-	* Returns the class p k of this ratings entry.
-	*
-	* @return the class p k of this ratings entry
-	*/
 	@Override
-	public long getClassPK() {
-		return _ratingsEntry.getClassPK();
-	}
-
-	/**
-	* Returns the company ID of this ratings entry.
-	*
-	* @return the company ID of this ratings entry
-	*/
-	@Override
-	public long getCompanyId() {
-		return _ratingsEntry.getCompanyId();
-	}
-
-	/**
-	* Returns the create date of this ratings entry.
-	*
-	* @return the create date of this ratings entry
-	*/
-	@Override
-	public Date getCreateDate() {
-		return _ratingsEntry.getCreateDate();
-	}
-
-	/**
-	* Returns the entry ID of this ratings entry.
-	*
-	* @return the entry ID of this ratings entry
-	*/
-	@Override
-	public long getEntryId() {
-		return _ratingsEntry.getEntryId();
+	public boolean isNew() {
+		return _ratingsEntry.isNew();
 	}
 
 	@Override
@@ -213,29 +167,9 @@ public class RatingsEntryWrapper implements RatingsEntry,
 		return _ratingsEntry.getExpandoBridge();
 	}
 
-	/**
-	* Returns the modified date of this ratings entry.
-	*
-	* @return the modified date of this ratings entry
-	*/
 	@Override
-	public Date getModifiedDate() {
-		return _ratingsEntry.getModifiedDate();
-	}
-
-	/**
-	* Returns the primary key of this ratings entry.
-	*
-	* @return the primary key of this ratings entry
-	*/
-	@Override
-	public long getPrimaryKey() {
-		return _ratingsEntry.getPrimaryKey();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _ratingsEntry.getPrimaryKeyObj();
+	public com.liferay.portal.kernel.model.CacheModel<RatingsEntry> toCacheModel() {
+		return _ratingsEntry.toCacheModel();
 	}
 
 	/**
@@ -248,14 +182,34 @@ public class RatingsEntryWrapper implements RatingsEntry,
 		return _ratingsEntry.getScore();
 	}
 
+	@Override
+	public int compareTo(RatingsEntry ratingsEntry) {
+		return _ratingsEntry.compareTo(ratingsEntry);
+	}
+
+	@Override
+	public int hashCode() {
+		return _ratingsEntry.hashCode();
+	}
+
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _ratingsEntry.getPrimaryKeyObj();
+	}
+
+	@Override
+	public java.lang.Object clone() {
+		return new RatingsEntryWrapper((RatingsEntry)_ratingsEntry.clone());
+	}
+
 	/**
-	* Returns the user ID of this ratings entry.
+	* Returns the fully qualified class name of this ratings entry.
 	*
-	* @return the user ID of this ratings entry
+	* @return the fully qualified class name of this ratings entry
 	*/
 	@Override
-	public long getUserId() {
-		return _ratingsEntry.getUserId();
+	public java.lang.String getClassName() {
+		return _ratingsEntry.getClassName();
 	}
 
 	/**
@@ -289,23 +243,93 @@ public class RatingsEntryWrapper implements RatingsEntry,
 	}
 
 	@Override
-	public int hashCode() {
-		return _ratingsEntry.hashCode();
+	public java.lang.String toString() {
+		return _ratingsEntry.toString();
 	}
 
 	@Override
-	public boolean isCachedModel() {
-		return _ratingsEntry.isCachedModel();
+	public java.lang.String toXmlString() {
+		return _ratingsEntry.toXmlString();
 	}
 
+	/**
+	* Returns the create date of this ratings entry.
+	*
+	* @return the create date of this ratings entry
+	*/
 	@Override
-	public boolean isEscapedModel() {
-		return _ratingsEntry.isEscapedModel();
+	public Date getCreateDate() {
+		return _ratingsEntry.getCreateDate();
 	}
 
+	/**
+	* Returns the modified date of this ratings entry.
+	*
+	* @return the modified date of this ratings entry
+	*/
 	@Override
-	public boolean isNew() {
-		return _ratingsEntry.isNew();
+	public Date getModifiedDate() {
+		return _ratingsEntry.getModifiedDate();
+	}
+
+	/**
+	* Returns the class name ID of this ratings entry.
+	*
+	* @return the class name ID of this ratings entry
+	*/
+	@Override
+	public long getClassNameId() {
+		return _ratingsEntry.getClassNameId();
+	}
+
+	/**
+	* Returns the class p k of this ratings entry.
+	*
+	* @return the class p k of this ratings entry
+	*/
+	@Override
+	public long getClassPK() {
+		return _ratingsEntry.getClassPK();
+	}
+
+	/**
+	* Returns the company ID of this ratings entry.
+	*
+	* @return the company ID of this ratings entry
+	*/
+	@Override
+	public long getCompanyId() {
+		return _ratingsEntry.getCompanyId();
+	}
+
+	/**
+	* Returns the entry ID of this ratings entry.
+	*
+	* @return the entry ID of this ratings entry
+	*/
+	@Override
+	public long getEntryId() {
+		return _ratingsEntry.getEntryId();
+	}
+
+	/**
+	* Returns the primary key of this ratings entry.
+	*
+	* @return the primary key of this ratings entry
+	*/
+	@Override
+	public long getPrimaryKey() {
+		return _ratingsEntry.getPrimaryKey();
+	}
+
+	/**
+	* Returns the user ID of this ratings entry.
+	*
+	* @return the user ID of this ratings entry
+	*/
+	@Override
+	public long getUserId() {
+		return _ratingsEntry.getUserId();
 	}
 
 	@Override
@@ -374,14 +398,14 @@ public class RatingsEntryWrapper implements RatingsEntry,
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
-		_ratingsEntry.setExpandoBridgeAttributes(baseModel);
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
+		_ratingsEntry.setExpandoBridgeAttributes(expandoBridge);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
-		_ratingsEntry.setExpandoBridgeAttributes(expandoBridge);
+	public void setExpandoBridgeAttributes(
+		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
+		_ratingsEntry.setExpandoBridgeAttributes(baseModel);
 	}
 
 	@Override
@@ -470,31 +494,6 @@ public class RatingsEntryWrapper implements RatingsEntry,
 	}
 
 	@Override
-	public com.liferay.portal.kernel.model.CacheModel<com.liferay.ratings.kernel.model.RatingsEntry> toCacheModel() {
-		return _ratingsEntry.toCacheModel();
-	}
-
-	@Override
-	public com.liferay.ratings.kernel.model.RatingsEntry toEscapedModel() {
-		return new RatingsEntryWrapper(_ratingsEntry.toEscapedModel());
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _ratingsEntry.toString();
-	}
-
-	@Override
-	public com.liferay.ratings.kernel.model.RatingsEntry toUnescapedModel() {
-		return new RatingsEntryWrapper(_ratingsEntry.toUnescapedModel());
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _ratingsEntry.toXmlString();
-	}
-
-	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
@@ -506,7 +505,7 @@ public class RatingsEntryWrapper implements RatingsEntry,
 
 		RatingsEntryWrapper ratingsEntryWrapper = (RatingsEntryWrapper)obj;
 
-		if (Validator.equals(_ratingsEntry, ratingsEntryWrapper._ratingsEntry)) {
+		if (Objects.equals(_ratingsEntry, ratingsEntryWrapper._ratingsEntry)) {
 			return true;
 		}
 

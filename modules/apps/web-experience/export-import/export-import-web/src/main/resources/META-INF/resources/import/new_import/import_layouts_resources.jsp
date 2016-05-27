@@ -114,6 +114,7 @@ ManifestSummary manifestSummary = ExportImportHelperUtil.getManifestSummary(user
 
 	<aui:input name="redirect" type="hidden" value="<%= portletURL.toString() %>" />
 
+	<aui:input name="<%= PortletDataHandlerKeys.LAYOUT_SET_PROTOTYPE_SETTINGS %>" type="hidden" value="<%= true %>" />
 	<aui:input name="<%= PortletDataHandlerKeys.LAYOUT_SET_SETTINGS %>" type="hidden" value="<%= true %>" />
 	<aui:input name="<%= PortletDataHandlerKeys.LOGO %>" type="hidden" value="<%= true %>" />
 	<aui:input name="<%= PortletDataHandlerKeys.PORTLET_ARCHIVED_SETUPS_ALL %>" type="hidden" value="<%= true %>" />
@@ -160,15 +161,20 @@ ManifestSummary manifestSummary = ExportImportHelperUtil.getManifestSummary(user
 				</dl>
 			</aui:fieldset>
 
-			<c:if test="<%= !group.isLayoutPrototype() && !group.isLayoutSetPrototype() && !group.isCompany() %>">
-				<aui:fieldset collapsible="<%= true %>" cssClass="options-group" label="pages">
-					<aui:input id="publicPages" label="public-pages" name="privateLayout" type="radio" value="<%= false %>" />
+			<c:choose>
+				<c:when test="<%= !group.isLayoutPrototype() && !group.isLayoutSetPrototype() && !group.isCompany() %>">
+					<aui:fieldset collapsible="<%= true %>" cssClass="options-group" label="pages">
+						<aui:input id="publicPages" label="public-pages" name="privateLayout" type="radio" value="<%= false %>" />
 
-					<aui:input id="privatePages" label="private-pages" name="privateLayout" type="radio" value="<%= true %>" />
+						<aui:input id="privatePages" label="private-pages" name="privateLayout" type="radio" value="<%= true %>" />
 
-					<aui:input helpMessage="delete-missing-layouts-help" label="delete-missing-layouts" name="<%= PortletDataHandlerKeys.DELETE_MISSING_LAYOUTS %>" type="checkbox" value="<%= false %>" />
-				</aui:fieldset>
-			</c:if>
+						<aui:input helpMessage="delete-missing-layouts-help" label="delete-missing-layouts" name="<%= PortletDataHandlerKeys.DELETE_MISSING_LAYOUTS %>" type="checkbox" value="<%= false %>" />
+					</aui:fieldset>
+				</c:when>
+				<c:otherwise>
+					<aui:input name="privateLayout" type="hidden" value="<%= true %>" />
+				</c:otherwise>
+			</c:choose>
 
 			<%
 			List<Portlet> dataPortlets = ListUtil.sort(manifestSummary.getDataPortlets(), new PortletTitleComparator(application, locale));
@@ -275,15 +281,15 @@ ManifestSummary manifestSummary = ExportImportHelperUtil.getManifestSummary(user
 
 																				if (ArrayUtil.isNotEmpty(childrenControls)) {
 																					request.setAttribute("render_controls.jsp-controls", childrenControls);
-																				%>
+																		%>
 
-																				<aui:field-wrapper label="content-metadata">
-																					<ul class="lfr-tree list-unstyled">
-																						<liferay-util:include page="/render_controls.jsp" servletContext="<%= application %>" />
-																					</ul>
-																				</aui:field-wrapper>
+																					<aui:field-wrapper label="content-metadata">
+																						<ul class="lfr-tree list-unstyled">
+																							<liferay-util:include page="/render_controls.jsp" servletContext="<%= application %>" />
+																						</ul>
+																					</aui:field-wrapper>
 
-																				<%
+																		<%
 																				}
 																			}
 																		}

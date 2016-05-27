@@ -25,8 +25,6 @@ MBCategory category = (MBCategory)request.getAttribute(WebKeys.MESSAGE_BOARDS_CA
 
 long categoryId = MBUtil.getCategoryId(request, category);
 
-MBCategoryDisplay categoryDisplay = new MBCategoryDisplayImpl(scopeGroupId, categoryId);
-
 Set<Long> categorySubscriptionClassPKs = null;
 Set<Long> threadSubscriptionClassPKs = null;
 
@@ -51,8 +49,6 @@ String keywords = ParamUtil.getString(request, "keywords");
 if (Validator.isNotNull(keywords)) {
 	portletURL.setParameter("keywords", keywords);
 }
-
-request.setAttribute("view.jsp-categoryDisplay", categoryDisplay);
 
 request.setAttribute("view.jsp-categorySubscriptionClassPKs", categorySubscriptionClassPKs);
 request.setAttribute("view.jsp-threadSubscriptionClassPKs", threadSubscriptionClassPKs);
@@ -82,7 +78,6 @@ MBListDisplayContext mbListDisplayContext = mbDisplayContextProvider.getMbListDi
 		/>
 
 		<%@ include file="/message_boards/view_threads.jspf" %>
-
 	</c:when>
 	<c:when test='<%= mbListDisplayContext.isShowSearch() || mvcRenderCommandName.equals("/message_boards/view") || mvcRenderCommandName.equals("/message_boards/view_category") || mbListDisplayContext.isShowMyPosts() || mbListDisplayContext.isShowRecentPosts() %>'>
 
@@ -281,14 +276,6 @@ MBListDisplayContext mbListDisplayContext = mbDisplayContextProvider.getMbListDi
 					</c:if>
 
 					<%
-					String entriesEmptyResultsMessage = "you-do-not-have-any-posts";
-
-					if (mbListDisplayContext.isShowRecentPosts()) {
-						entriesEmptyResultsMessage = "there-are-no-recent-posts";
-					}
-
-					entriesSearchContainer.setEmptyResultsMessage(entriesEmptyResultsMessage);
-
 					request.setAttribute("view.jsp-displayStyle", "descriptive");
 					request.setAttribute("view.jsp-entriesSearchContainer", entriesSearchContainer);
 					%>
@@ -335,6 +322,8 @@ MBListDisplayContext mbListDisplayContext = mbDisplayContextProvider.getMbListDi
 		if (groupThreadsUserId > 0) {
 			portletURL.setParameter("groupThreadsUserId", String.valueOf(groupThreadsUserId));
 		}
+
+		MBCategoryDisplay categoryDisplay = new MBCategoryDisplayImpl(scopeGroupId, categoryId);
 		%>
 
 		<div class="main-content-body">

@@ -60,18 +60,13 @@ public interface LayoutPrototypeService extends BaseService {
 	@java.lang.Deprecated
 	public LayoutPrototype addLayoutPrototype(
 		Map<Locale, java.lang.String> nameMap, java.lang.String description,
-		boolean active,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		boolean active, ServiceContext serviceContext)
 		throws PortalException;
 
 	public LayoutPrototype addLayoutPrototype(
 		Map<Locale, java.lang.String> nameMap,
 		Map<Locale, java.lang.String> descriptionMap, boolean active,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws PortalException;
-
-	public void deleteLayoutPrototype(long layoutPrototypeId)
-		throws PortalException;
+		ServiceContext serviceContext) throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public LayoutPrototype fetchLayoutPrototype(long layoutPrototypeId)
@@ -80,6 +75,21 @@ public interface LayoutPrototypeService extends BaseService {
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public LayoutPrototype getLayoutPrototype(long layoutPrototypeId)
 		throws PortalException;
+
+	/**
+	* @deprecated As of 7.0.0, replaced by {@link #updateLayoutPrototype(long,
+	Map, Map, boolean, ServiceContext)}
+	*/
+	@java.lang.Deprecated
+	public LayoutPrototype updateLayoutPrototype(long layoutPrototypeId,
+		Map<Locale, java.lang.String> nameMap, java.lang.String description,
+		boolean active, ServiceContext serviceContext)
+		throws PortalException;
+
+	public LayoutPrototype updateLayoutPrototype(long layoutPrototypeId,
+		Map<Locale, java.lang.String> nameMap,
+		Map<Locale, java.lang.String> descriptionMap, boolean active,
+		ServiceContext serviceContext) throws PortalException;
 
 	/**
 	* Returns the OSGi service identifier.
@@ -93,20 +103,6 @@ public interface LayoutPrototypeService extends BaseService {
 		java.lang.Boolean active, OrderByComparator<LayoutPrototype> obc)
 		throws PortalException;
 
-	/**
-	* @deprecated As of 7.0.0, replaced by {@link #updateLayoutPrototype(long,
-	Map, Map, boolean, ServiceContext)}
-	*/
-	@java.lang.Deprecated
-	public LayoutPrototype updateLayoutPrototype(long layoutPrototypeId,
-		Map<Locale, java.lang.String> nameMap, java.lang.String description,
-		boolean active,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws PortalException;
-
-	public LayoutPrototype updateLayoutPrototype(long layoutPrototypeId,
-		Map<Locale, java.lang.String> nameMap,
-		Map<Locale, java.lang.String> descriptionMap, boolean active,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+	public void deleteLayoutPrototype(long layoutPrototypeId)
 		throws PortalException;
 }

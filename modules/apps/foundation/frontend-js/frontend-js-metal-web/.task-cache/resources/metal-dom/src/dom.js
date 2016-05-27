@@ -38,7 +38,9 @@ define("frontend-js-metal-web@1.0.6/metal-dom/src/dom", ['exports', 'metal/src/m
 
 		dom.addClassesWithNative_ = function addClassesWithNative_(element, classes) {
 			classes.split(' ').forEach(function (className) {
-				element.classList.add(className);
+				if (className) {
+					element.classList.add(className);
+				}
 			});
 		};
 
@@ -114,11 +116,11 @@ define("frontend-js-metal-web@1.0.6/metal-dom/src/dom", ['exports', 'metal/src/m
 		};
 
 		dom.enterDocument = function enterDocument(node) {
-			dom.append(document.body, node);
+			node && dom.append(document.body, node);
 		};
 
 		dom.exitDocument = function exitDocument(node) {
-			if (node.parentNode) {
+			if (node && node.parentNode) {
 				node.parentNode.removeChild(node);
 			}
 		};
@@ -253,7 +255,9 @@ define("frontend-js-metal-web@1.0.6/metal-dom/src/dom", ['exports', 'metal/src/m
 
 		dom.removeClassesWithNative_ = function removeClassesWithNative_(element, classes) {
 			classes.split(' ').forEach(function (className) {
-				element.classList.remove(className);
+				if (className) {
+					element.classList.remove(className);
+				}
 			});
 		};
 

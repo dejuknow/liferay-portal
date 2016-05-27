@@ -46,7 +46,7 @@ import org.osgi.service.component.annotations.Reference;
 @Component(
 	immediate = true,
 	property = {
-		"osgi.http.whiteboard.servlet.name=JS Loader Modules Servlet",
+		"osgi.http.whiteboard.servlet.name=com.liferay.frontend.js.loader.modules.extender.JSLoaderModulesServlet",
 		"osgi.http.whiteboard.servlet.pattern=/js_loader_modules",
 		"service.ranking:Integer=" + Details.MAX_VALUE_LESS_1K
 	},
@@ -97,7 +97,7 @@ public class JSLoaderModulesServlet extends HttpServlet {
 			printWriter.write('@');
 			printWriter.write(jsLoaderModule.getVersion());
 			printWriter.write("': '");
-			printWriter.write(PortalUtil.getPathContext());
+			printWriter.write(PortalUtil.getPathProxy());
 			printWriter.write(jsLoaderModule.getContextPath());
 			printWriter.write("'");
 
@@ -108,7 +108,7 @@ public class JSLoaderModulesServlet extends HttpServlet {
 				printWriter.write("'");
 				printWriter.write(jsLoaderModule.getName());
 				printWriter.write("': '");
-				printWriter.write(PortalUtil.getPathContext());
+				printWriter.write(PortalUtil.getPathProxy());
 				printWriter.write(jsLoaderModule.getContextPath());
 				printWriter.write("'");
 			}

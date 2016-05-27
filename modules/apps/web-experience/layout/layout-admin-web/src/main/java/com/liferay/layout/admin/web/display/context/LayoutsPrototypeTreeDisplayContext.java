@@ -23,7 +23,8 @@ import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.kernel.util.Validator;
+
+import java.util.Objects;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
@@ -54,10 +55,10 @@ public class LayoutsPrototypeTreeDisplayContext
 
 		Layout layout = getLayout();
 
+		editLayoutURL.setParameter(
+			"backURL", PortalUtil.getCurrentURL(liferayPortletRequest));
 		editLayoutURL.setParameter("selPlid", String.valueOf(layout.getPlid()));
-
 		editLayoutURL.setParameter("privateLayout", Boolean.TRUE.toString());
-		editLayoutURL.setParameter("viewLayout", Boolean.TRUE.toString());
 
 		return editLayoutURL.toString();
 	}
@@ -92,7 +93,7 @@ public class LayoutsPrototypeTreeDisplayContext
 		Layout layout = getLayout();
 
 		if ((layout.getPlid() == themeDisplay.getPlid()) ||
-			Validator.equals(
+			Objects.equals(
 				LayoutAdminPortletKeys.LAYOUT_PROTOTYPE_PAGE,
 				themeDisplay.getPpid())) {
 

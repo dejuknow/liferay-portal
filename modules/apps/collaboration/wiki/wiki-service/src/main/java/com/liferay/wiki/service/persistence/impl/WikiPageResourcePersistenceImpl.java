@@ -51,6 +51,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -198,7 +199,7 @@ public class WikiPageResourcePersistenceImpl extends BasePersistenceImpl<WikiPag
 
 			if ((list != null) && !list.isEmpty()) {
 				for (WikiPageResource wikiPageResource : list) {
-					if (!Validator.equals(uuid, wikiPageResource.getUuid())) {
+					if (!Objects.equals(uuid, wikiPageResource.getUuid())) {
 						list = null;
 
 						break;
@@ -674,8 +675,8 @@ public class WikiPageResourcePersistenceImpl extends BasePersistenceImpl<WikiPag
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchPageResourceException(msg.toString());
@@ -719,7 +720,7 @@ public class WikiPageResourcePersistenceImpl extends BasePersistenceImpl<WikiPag
 		if (result instanceof WikiPageResource) {
 			WikiPageResource wikiPageResource = (WikiPageResource)result;
 
-			if (!Validator.equals(uuid, wikiPageResource.getUuid()) ||
+			if (!Objects.equals(uuid, wikiPageResource.getUuid()) ||
 					(groupId != wikiPageResource.getGroupId())) {
 				result = null;
 			}
@@ -1014,7 +1015,7 @@ public class WikiPageResourcePersistenceImpl extends BasePersistenceImpl<WikiPag
 
 			if ((list != null) && !list.isEmpty()) {
 				for (WikiPageResource wikiPageResource : list) {
-					if (!Validator.equals(uuid, wikiPageResource.getUuid()) ||
+					if (!Objects.equals(uuid, wikiPageResource.getUuid()) ||
 							(companyId != wikiPageResource.getCompanyId())) {
 						list = null;
 
@@ -1518,8 +1519,8 @@ public class WikiPageResourcePersistenceImpl extends BasePersistenceImpl<WikiPag
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchPageResourceException(msg.toString());
@@ -1564,7 +1565,7 @@ public class WikiPageResourcePersistenceImpl extends BasePersistenceImpl<WikiPag
 			WikiPageResource wikiPageResource = (WikiPageResource)result;
 
 			if ((nodeId != wikiPageResource.getNodeId()) ||
-					!Validator.equals(title, wikiPageResource.getTitle())) {
+					!Objects.equals(title, wikiPageResource.getTitle())) {
 				result = null;
 			}
 		}
@@ -1978,8 +1979,8 @@ public class WikiPageResourcePersistenceImpl extends BasePersistenceImpl<WikiPag
 					primaryKey);
 
 			if (wikiPageResource == null) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+				if (_log.isDebugEnabled()) {
+					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchPageResourceException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
@@ -2158,8 +2159,8 @@ public class WikiPageResourcePersistenceImpl extends BasePersistenceImpl<WikiPag
 		WikiPageResource wikiPageResource = fetchByPrimaryKey(primaryKey);
 
 		if (wikiPageResource == null) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+			if (_log.isDebugEnabled()) {
+				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
 			throw new NoSuchPageResourceException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +

@@ -19,8 +19,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * @author Adolfo Pérez
+ * @author     Adolfo Pérez
+ * @deprecated As of 7.0.0, replaced by {@link
+ *             com.liferay.portal.kernel.upgrade.BaseReplacePortletId}
  */
+@Deprecated
 public class ReplacePortletId extends UpgradePortletId {
 
 	protected boolean hasPortlet(String portletId) throws SQLException {

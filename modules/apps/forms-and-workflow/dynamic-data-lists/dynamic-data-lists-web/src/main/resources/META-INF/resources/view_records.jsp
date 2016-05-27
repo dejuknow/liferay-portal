@@ -87,7 +87,7 @@ recordSearchContainer.setOrderByType(ddlViewRecordsDisplayContext.getOrderByType
 <aui:nav-bar cssClass="collapse-basic-search" markupView="lexicon">
 	<c:if test="<%= ddlDisplayContext.isAdminPortlet() %>">
 		<aui:nav cssClass="navbar-nav">
-			<aui:nav-item label="<%= recordSet.getName(locale) %>" selected="<%= true %>" />
+			<aui:nav-item label="<%= HtmlUtil.escape(recordSet.getName(locale)) %>" selected="<%= true %>" />
 		</aui:nav>
 	</c:if>
 
@@ -108,9 +108,7 @@ recordSearchContainer.setOrderByType(ddlViewRecordsDisplayContext.getOrderByType
 	includeCheckBox="<%= !user.isDefaultUser() %>"
 	searchContainerId="ddlRecord"
 >
-
 	<liferay-frontend:management-bar-filters>
-
 		<liferay-frontend:management-bar-navigation
 			navigationKeys='<%= new String[] {"all"} %>'
 			portletURL="<%= portletURL %>"
@@ -178,11 +176,11 @@ recordSearchContainer.setOrderByType(ddlViewRecordsDisplayContext.getOrderByType
 				// Columns
 
 				for (DDMFormField ddmFormField : ddmFormfields) {
-				%>
+			%>
 
 					<%@ include file="/record_row_value.jspf" %>
 
-				<%
+			<%
 				}
 
 				if (hasUpdatePermission) {

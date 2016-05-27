@@ -39,7 +39,6 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 
 import java.io.Serializable;
@@ -50,6 +49,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -641,8 +641,8 @@ public class DDMStructureVersionPersistenceImpl extends BasePersistenceImpl<DDMS
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchStructureVersionException(msg.toString());
@@ -687,7 +687,7 @@ public class DDMStructureVersionPersistenceImpl extends BasePersistenceImpl<DDMS
 			DDMStructureVersion ddmStructureVersion = (DDMStructureVersion)result;
 
 			if ((structureId != ddmStructureVersion.getStructureId()) ||
-					!Validator.equals(version, ddmStructureVersion.getVersion())) {
+					!Objects.equals(version, ddmStructureVersion.getVersion())) {
 				result = null;
 			}
 		}
@@ -1599,8 +1599,8 @@ public class DDMStructureVersionPersistenceImpl extends BasePersistenceImpl<DDMS
 					primaryKey);
 
 			if (ddmStructureVersion == null) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+				if (_log.isDebugEnabled()) {
+					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchStructureVersionException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
@@ -1789,8 +1789,8 @@ public class DDMStructureVersionPersistenceImpl extends BasePersistenceImpl<DDMS
 		DDMStructureVersion ddmStructureVersion = fetchByPrimaryKey(primaryKey);
 
 		if (ddmStructureVersion == null) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+			if (_log.isDebugEnabled()) {
+				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
 			throw new NoSuchStructureVersionException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +

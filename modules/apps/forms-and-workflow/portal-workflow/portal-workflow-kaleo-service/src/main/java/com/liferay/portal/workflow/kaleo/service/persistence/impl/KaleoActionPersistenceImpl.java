@@ -34,7 +34,6 @@ import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 import com.liferay.portal.workflow.kaleo.exception.NoSuchActionException;
 import com.liferay.portal.workflow.kaleo.model.KaleoAction;
@@ -51,6 +50,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -1231,7 +1231,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (KaleoAction kaleoAction : list) {
-					if (!Validator.equals(kaleoClassName,
+					if (!Objects.equals(kaleoClassName,
 								kaleoAction.getKaleoClassName()) ||
 							(kaleoClassPK != kaleoAction.getKaleoClassPK())) {
 						list = null;
@@ -1839,10 +1839,10 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (KaleoAction kaleoAction : list) {
-					if (!Validator.equals(kaleoClassName,
+					if (!Objects.equals(kaleoClassName,
 								kaleoAction.getKaleoClassName()) ||
 							(kaleoClassPK != kaleoAction.getKaleoClassPK()) ||
-							!Validator.equals(executionType,
+							!Objects.equals(executionType,
 								kaleoAction.getExecutionType())) {
 						list = null;
 
@@ -2521,8 +2521,8 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 					primaryKey);
 
 			if (kaleoAction == null) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+				if (_log.isDebugEnabled()) {
+					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchActionException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
@@ -2767,8 +2767,8 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 		KaleoAction kaleoAction = fetchByPrimaryKey(primaryKey);
 
 		if (kaleoAction == null) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+			if (_log.isDebugEnabled()) {
+				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
 			throw new NoSuchActionException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +

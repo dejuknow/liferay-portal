@@ -38,7 +38,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.time.StopWatch;
 
-import org.elasticsearch.Version;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.node.Node;
@@ -203,17 +202,18 @@ public class EmbeddedElasticsearchConnection
 	}
 
 	protected void configurePlugin(String name, Settings settings) {
-		String version = Version.CURRENT.toString();
-
-		String zip = "/plugins/" + name + "-" + version + ".zip";
+		EmbeddedElasticsearchPluginManager embeddedElasticsearchPluginManager =
+			new EmbeddedElasticsearchPluginManager(
+				name, settings.get("path.plugins"),
+				new PluginManagerFactoryImpl(settings),
+				new PluginZipFactoryImpl());
 
 		try {
-			EmbeddedElasticsearchPluginManager.installPlugin(
-				name, zip, getClass(), settings);
+			embeddedElasticsearchPluginManager.install();
 		}
 		catch (IOException ioe) {
 			throw new RuntimeException(
-				"Unable to install " + name + " plugin from " + zip, ioe);
+				"Unable to install " + name + " plugin", ioe);
 		}
 	}
 
@@ -255,7 +255,7 @@ public class EmbeddedElasticsearchConnection
 					elasticsearchConfiguration.clusterName());
 		}
 
-		_node = new Node(settingsBuilder.build());
+		_node = createNode(settingsBuilder.build());
 
 		_node.start();
 
@@ -271,6 +271,23 @@ public class EmbeddedElasticsearchConnection
 		}
 
 		return client;
+	}
+
+	protected Node createNode(Settings settings) {
+		Thread thread = Thread.currentThread();
+
+		ClassLoader contextClassLoader = thread.getContextClassLoader();
+
+		Class<?> clazz = getClass();
+
+		thread.setContextClassLoader(clazz.getClassLoader());
+
+		try {
+			return new Node(settings);
+		}
+		finally {
+			thread.setContextClassLoader(contextClassLoader);
+		}
 	}
 
 	@Deactivate

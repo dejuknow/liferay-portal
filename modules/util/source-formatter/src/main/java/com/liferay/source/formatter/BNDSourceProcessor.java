@@ -14,9 +14,11 @@
 
 package com.liferay.source.formatter;
 
+import com.liferay.portal.kernel.util.CharPool;
+import com.liferay.portal.kernel.util.NaturalOrderStringComparator;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.tools.ImportPackage;
 import com.liferay.portal.tools.ImportsFormatter;
 
 import java.io.File;
@@ -34,6 +36,105 @@ public class BNDSourceProcessor extends BaseSourceProcessor {
 	@Override
 	public String[] getIncludes() {
 		return _INCLUDES;
+	}
+
+	protected void checkDirectoryAndBundleName(
+		String fileName, String absolutePath, String content) {
+
+		if (!portalSource || !isModulesFile(absolutePath) ||
+			!fileName.endsWith("/bnd.bnd") ||
+			absolutePath.contains("/testIntegration/") ||
+			absolutePath.contains("/third-party/")) {
+
+			return;
+		}
+
+		int x = absolutePath.lastIndexOf(StringPool.SLASH);
+
+		int y = absolutePath.lastIndexOf(StringPool.SLASH, x - 1);
+
+		String dirName = absolutePath.substring(y + 1, x);
+
+		if (dirName.endsWith("-taglib-web")) {
+			String newDirName = dirName.substring(0, dirName.length() - 4);
+
+			processErrorMessage(
+				fileName,
+				"Rename module '" + dirName + "' to '" + newDirName + "'");
+		}
+
+		Matcher matcher = _bundleNamePattern.matcher(content);
+
+		if (matcher.find()) {
+			String strippedBundleName = StringUtil.removeChars(
+				matcher.group(1), CharPool.DASH, CharPool.SPACE);
+
+			strippedBundleName = strippedBundleName.replaceAll(
+				"Implementation$", "Impl");
+			strippedBundleName = strippedBundleName.replaceAll(
+				"Utilities$", "Util");
+
+			String expectedBundleName =
+				"liferay" + StringUtil.removeChars(dirName, CharPool.DASH);
+
+			if (!strippedBundleName.equalsIgnoreCase(expectedBundleName)) {
+				processErrorMessage(fileName, "Bundle-Name: " + fileName);
+			}
+		}
+
+		matcher = _bundleSymbolicNamePattern.matcher(content);
+
+		if (matcher.find()) {
+			String bundleSymbolicName = matcher.group(1);
+
+			String expectedBundleSymbolicName =
+				"com.liferay." +
+					StringUtil.replace(
+						dirName, StringPool.DASH, StringPool.PERIOD);
+
+			if (!expectedBundleSymbolicName.contains(".import.") &&
+				!expectedBundleSymbolicName.contains(".private.") &&
+				!bundleSymbolicName.equalsIgnoreCase(
+					expectedBundleSymbolicName)) {
+
+				processErrorMessage(
+					fileName, "Bundle-SymbolicName: " + fileName);
+			}
+		}
+	}
+
+	protected void checkWildcardImports(
+		String fileName, String absolutePath, String content, Pattern pattern) {
+
+		if (absolutePath.contains("/portal-kernel/") ||
+			absolutePath.contains("/util-bridges/") ||
+			absolutePath.contains("/util-java/") ||
+			absolutePath.contains("/util-taglib/") ||
+			fileName.endsWith("/system.packages.extra.bnd")) {
+
+			return;
+		}
+
+		Matcher matcher = pattern.matcher(content);
+
+		if (!matcher.find()) {
+			return;
+		}
+
+		String imports = matcher.group(2);
+
+		matcher = _wilcardImportPattern.matcher(imports);
+
+		while (matcher.find()) {
+			String wildcardImport = matcher.group(1);
+
+			if (wildcardImport.matches("^!?com\\.liferay\\..+")) {
+				processErrorMessage(
+					fileName,
+					"Do not use wildcard in Export-Package '" + wildcardImport +
+						"': " + fileName);
+			}
+		}
 	}
 
 	@Override
@@ -62,22 +163,28 @@ public class BNDSourceProcessor extends BaseSourceProcessor {
 
 		Matcher matcher = _incorrectTabPattern.matcher(content);
 
-		while (matcher.find()) {
+		if (matcher.find()) {
 			content = StringUtil.replaceFirst(
 				content, matcher.group(1), StringPool.TAB, matcher.start());
 		}
 
 		matcher = _singleValueOnMultipleLinesPattern.matcher(content);
 
-		while (matcher.find()) {
+		if (matcher.find()) {
 			content = StringUtil.replaceFirst(
 				content, matcher.group(1), StringPool.SPACE, matcher.start());
 		}
+
+		checkWildcardImports(fileName, absolutePath, content, _exportsPattern);
 
 		ImportsFormatter importsFormatter = new BNDImportsFormatter();
 
 		content = importsFormatter.format(content, _exportsPattern);
 		content = importsFormatter.format(content, _importsPattern);
+
+		checkDirectoryAndBundleName(fileName, absolutePath, content);
+
+		content = formatBundleClassPath(content);
 
 		if (portalSource && isModulesFile(absolutePath) &&
 			!fileName.endsWith("test-bnd.bnd")) {
@@ -85,12 +192,23 @@ public class BNDSourceProcessor extends BaseSourceProcessor {
 			content = formatIncludeResource(content);
 		}
 
-		return sortDefinitions(content);
+		return sortDefinitions(content, new DefinitionComparator());
 	}
 
 	@Override
 	protected List<String> doGetFileNames() throws Exception {
 		return getFileNames(new String[0], getIncludes());
+	}
+
+	protected String formatBundleClassPath(String content) {
+		Matcher matcher = _bundleClassPathPattern.matcher(content);
+
+		if (matcher.find()) {
+			return sortDefinitionProperties(
+				content, matcher.group(), new NaturalOrderStringComparator());
+		}
+
+		return content;
 	}
 
 	protected String formatIncludeResource(String content) {
@@ -140,47 +258,46 @@ public class BNDSourceProcessor extends BaseSourceProcessor {
 				}
 			}
 
-			return StringUtil.replace(
-				content, includeResources, replacement);
+			return StringUtil.replace(content, includeResources, replacement);
 		}
 
-		return content;
+		return sortDefinitionProperties(
+			content, includeResources, new IncludeResourceComparator());
 	}
 
-	protected String sortDefinitions(String content) {
-		String previousDefinition = null;
+	protected String sortDefinitionProperties(
+		String content, String properties, Comparator<String> comparator) {
 
-		DefinitionComparator definitionComparator = new DefinitionComparator();
+		String[] lines = StringUtil.splitLines(properties);
 
-		Matcher matcher = _bndDefinitionPattern.matcher(content);
+		if (lines.length == 1) {
+			return content;
+		}
 
-		while (matcher.find()) {
-			String definition = matcher.group();
+		String previousProperty = null;
 
-			if (Validator.isNotNull(matcher.group(1))) {
-				definition = definition.substring(0, definition.length() - 1);
+		for (int i = 1; i < lines.length; i++) {
+			String property = StringUtil.trim(lines[i]);
+
+			if (property.endsWith(",\\")) {
+				property = property.substring(0, property.length() - 2);
 			}
 
-			if (Validator.isNotNull(previousDefinition)) {
-				int value = definitionComparator.compare(
-					previousDefinition, definition);
+			if (previousProperty != null) {
+				int value = comparator.compare(previousProperty, property);
 
 				if (value > 0) {
-					content = StringUtil.replaceFirst(
-						content, previousDefinition, definition);
-					content = StringUtil.replaceLast(
-						content, definition, previousDefinition);
+					String replacement = StringUtil.replaceFirst(
+						properties, previousProperty, property);
 
-					return content;
-				}
+					replacement = StringUtil.replaceLast(
+						replacement, property, previousProperty);
 
-				if (value == 0) {
-					return StringUtil.replaceFirst(
-						content, previousDefinition + "\n", StringPool.BLANK);
+					return StringUtil.replace(content, properties, replacement);
 				}
 			}
 
-			previousDefinition = definition;
+			previousProperty = property;
 		}
 
 		return content;
@@ -196,21 +313,27 @@ public class BNDSourceProcessor extends BaseSourceProcessor {
 
 	private static final String[] _INCLUDES = new String[] {"**/*.bnd"};
 
-	private Pattern _bndDefinitionPattern = Pattern.compile(
-		"^[A-Za-z-][\\s\\S]*?([^\\\\]\n|\\Z)", Pattern.MULTILINE);
-	private Pattern _exportsPattern = Pattern.compile(
-		"\nExport-Package:\\\\\n(.*?\n)[^\t]",
+	private final Pattern _bundleClassPathPattern = Pattern.compile(
+		"^Bundle-ClassPath:[\\s\\S]*?([^\\\\]\n|\\Z)", Pattern.MULTILINE);
+	private final Pattern _bundleNamePattern = Pattern.compile(
+		"^Bundle-Name: (.*)\n", Pattern.MULTILINE);
+	private final Pattern _bundleSymbolicNamePattern = Pattern.compile(
+		"^Bundle-SymbolicName: (.*)\n", Pattern.MULTILINE);
+	private final Pattern _exportsPattern = Pattern.compile(
+		"\nExport-Package:(\\\\\n| )(.*?\n|\\Z)[^\t]",
 		Pattern.DOTALL | Pattern.MULTILINE);
-	private Pattern _importsPattern = Pattern.compile(
-		"\nImport-Package:\\\\\n(.*?\n)[^\t]",
+	private final Pattern _importsPattern = Pattern.compile(
+		"\nImport-Package:(\\\\\n| )(.*?\n|\\Z)[^\t]",
 		Pattern.DOTALL | Pattern.MULTILINE);
-	private Pattern _includeResourcePattern = Pattern.compile(
-		"^(-liferay)?-includeresource:[\\s\\S]*?([^\\\\]\n|\\Z)",
+	private final Pattern _includeResourcePattern = Pattern.compile(
+		"^(-includeresource|Include-Resource):[\\s\\S]*?([^\\\\]\n|\\Z)",
 		Pattern.MULTILINE);
-	private Pattern _incorrectTabPattern = Pattern.compile(
+	private final Pattern _incorrectTabPattern = Pattern.compile(
 		"\n[^\t].*:\\\\\n(\t{2,})[^\t]");
-	private Pattern _singleValueOnMultipleLinesPattern = Pattern.compile(
+	private final Pattern _singleValueOnMultipleLinesPattern = Pattern.compile(
 		"\n.*:(\\\\\n\t).*(\n[^\t]|\\Z)");
+	private final Pattern _wilcardImportPattern = Pattern.compile(
+		"(\\S+\\*)(,\\\\\n|\n|\\Z)");
 
 	private static class DefinitionComparator implements Comparator<String> {
 
@@ -223,6 +346,45 @@ public class BNDSourceProcessor extends BaseSourceProcessor {
 			}
 
 			return definition1.compareTo(definition2);
+		}
+
+	}
+
+	private static class IncludeResourceComparator
+		implements Comparator<String> {
+
+		@Override
+		public int compare(String includeResource1, String includeResource2) {
+			if (includeResource1.startsWith(StringPool.AT) ^
+				includeResource2.startsWith(StringPool.AT)) {
+
+				if (includeResource1.startsWith(StringPool.AT)) {
+					return 1;
+				}
+
+				return -1;
+			}
+
+			int pos1 = includeResource1.indexOf(".jar!/");
+			int pos2 = includeResource2.indexOf(".jar!/");
+
+			if ((pos1 == -1) || (pos2 == -1)) {
+				return includeResource1.compareToIgnoreCase(includeResource2);
+			}
+
+			String jarFileName1 = includeResource1.substring(0, pos1);
+			String jarFileName2 = includeResource1.substring(0, pos2);
+
+			if (!jarFileName1.equals(jarFileName2)) {
+				return includeResource1.compareToIgnoreCase(includeResource2);
+			}
+
+			ImportPackage importPackage1 = new ImportPackage(
+				includeResource1.substring(pos1 + 6), false, includeResource1);
+			ImportPackage importPackage2 = new ImportPackage(
+				includeResource2.substring(pos2 + 6), false, includeResource2);
+
+			return importPackage1.compareTo(importPackage2);
 		}
 
 	}

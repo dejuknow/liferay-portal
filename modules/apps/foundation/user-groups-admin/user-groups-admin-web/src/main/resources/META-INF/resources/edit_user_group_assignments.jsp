@@ -46,6 +46,10 @@ SearchContainer userSearchContainer = new UserSearch(renderRequest, searchURL);
 
 UserSearchTerms searchTerms = (UserSearchTerms)userSearchContainer.getSearchTerms();
 
+if (!searchTerms.isSearch()) {
+	userSearchContainer.setEmptyResultsMessageCssClass("taglib-empty-result-message-header-has-plus-btn");
+}
+
 LinkedHashMap<String, Object> userParams = new LinkedHashMap<String, Object>();
 
 if (filterManageableOrganizations) {
@@ -178,7 +182,7 @@ PortalUtil.addPortletBreadcrumbEntry(request, userGroup.getName(), null);
 							}
 						}
 					},
-					title: '<liferay-ui:message arguments="<%= userGroup.getName() %>" key="add-users-to-x" />',
+					title: '<liferay-ui:message arguments="<%= HtmlUtil.escape(userGroup.getName()) %>" key="add-users-to-x" />',
 					url: '<%= selectUsersURL %>'
 				}
 			);

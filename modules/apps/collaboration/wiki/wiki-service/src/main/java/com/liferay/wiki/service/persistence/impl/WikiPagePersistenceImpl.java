@@ -64,6 +64,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -209,7 +210,7 @@ public class WikiPagePersistenceImpl extends BasePersistenceImpl<WikiPage>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (WikiPage wikiPage : list) {
-					if (!Validator.equals(uuid, wikiPage.getUuid())) {
+					if (!Objects.equals(uuid, wikiPage.getUuid())) {
 						list = null;
 
 						break;
@@ -682,8 +683,8 @@ public class WikiPagePersistenceImpl extends BasePersistenceImpl<WikiPage>
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchPageException(msg.toString());
@@ -727,7 +728,7 @@ public class WikiPagePersistenceImpl extends BasePersistenceImpl<WikiPage>
 		if (result instanceof WikiPage) {
 			WikiPage wikiPage = (WikiPage)result;
 
-			if (!Validator.equals(uuid, wikiPage.getUuid()) ||
+			if (!Objects.equals(uuid, wikiPage.getUuid()) ||
 					(groupId != wikiPage.getGroupId())) {
 				result = null;
 			}
@@ -1021,7 +1022,7 @@ public class WikiPagePersistenceImpl extends BasePersistenceImpl<WikiPage>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (WikiPage wikiPage : list) {
-					if (!Validator.equals(uuid, wikiPage.getUuid()) ||
+					if (!Objects.equals(uuid, wikiPage.getUuid()) ||
 							(companyId != wikiPage.getCompanyId())) {
 						list = null;
 
@@ -2613,7 +2614,7 @@ public class WikiPagePersistenceImpl extends BasePersistenceImpl<WikiPage>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (WikiPage wikiPage : list) {
-					if (!Validator.equals(format, wikiPage.getFormat())) {
+					if (!Objects.equals(format, wikiPage.getFormat())) {
 						list = null;
 
 						break;
@@ -4256,7 +4257,7 @@ public class WikiPagePersistenceImpl extends BasePersistenceImpl<WikiPage>
 			if ((list != null) && !list.isEmpty()) {
 				for (WikiPage wikiPage : list) {
 					if ((nodeId != wikiPage.getNodeId()) ||
-							!Validator.equals(title, wikiPage.getTitle())) {
+							!Objects.equals(title, wikiPage.getTitle())) {
 						list = null;
 
 						break;
@@ -5379,7 +5380,7 @@ public class WikiPagePersistenceImpl extends BasePersistenceImpl<WikiPage>
 			if ((list != null) && !list.isEmpty()) {
 				for (WikiPage wikiPage : list) {
 					if ((nodeId != wikiPage.getNodeId()) ||
-							!Validator.equals(parentTitle,
+							!Objects.equals(parentTitle,
 								wikiPage.getParentTitle())) {
 						list = null;
 
@@ -5967,7 +5968,7 @@ public class WikiPagePersistenceImpl extends BasePersistenceImpl<WikiPage>
 			if ((list != null) && !list.isEmpty()) {
 				for (WikiPage wikiPage : list) {
 					if ((nodeId != wikiPage.getNodeId()) ||
-							!Validator.equals(redirectTitle,
+							!Objects.equals(redirectTitle,
 								wikiPage.getRedirectTitle())) {
 						list = null;
 
@@ -7019,8 +7020,8 @@ public class WikiPagePersistenceImpl extends BasePersistenceImpl<WikiPage>
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchPageException(msg.toString());
@@ -10975,8 +10976,8 @@ public class WikiPagePersistenceImpl extends BasePersistenceImpl<WikiPage>
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchPageException(msg.toString());
@@ -11023,7 +11024,7 @@ public class WikiPagePersistenceImpl extends BasePersistenceImpl<WikiPage>
 			WikiPage wikiPage = (WikiPage)result;
 
 			if ((nodeId != wikiPage.getNodeId()) ||
-					!Validator.equals(title, wikiPage.getTitle()) ||
+					!Objects.equals(title, wikiPage.getTitle()) ||
 					(version != wikiPage.getVersion())) {
 				result = null;
 			}
@@ -11340,7 +11341,7 @@ public class WikiPagePersistenceImpl extends BasePersistenceImpl<WikiPage>
 			if ((list != null) && !list.isEmpty()) {
 				for (WikiPage wikiPage : list) {
 					if ((nodeId != wikiPage.getNodeId()) ||
-							!Validator.equals(title, wikiPage.getTitle()) ||
+							!Objects.equals(title, wikiPage.getTitle()) ||
 							(head != wikiPage.getHead())) {
 						list = null;
 
@@ -11966,7 +11967,7 @@ public class WikiPagePersistenceImpl extends BasePersistenceImpl<WikiPage>
 			if ((list != null) && !list.isEmpty()) {
 				for (WikiPage wikiPage : list) {
 					if ((nodeId != wikiPage.getNodeId()) ||
-							!Validator.equals(title, wikiPage.getTitle()) ||
+							!Objects.equals(title, wikiPage.getTitle()) ||
 							(status != wikiPage.getStatus())) {
 						list = null;
 
@@ -12595,7 +12596,7 @@ public class WikiPagePersistenceImpl extends BasePersistenceImpl<WikiPage>
 				for (WikiPage wikiPage : list) {
 					if ((nodeId != wikiPage.getNodeId()) ||
 							(head != wikiPage.getHead()) ||
-							!Validator.equals(parentTitle,
+							!Objects.equals(parentTitle,
 								wikiPage.getParentTitle())) {
 						list = null;
 
@@ -13225,7 +13226,7 @@ public class WikiPagePersistenceImpl extends BasePersistenceImpl<WikiPage>
 				for (WikiPage wikiPage : list) {
 					if ((nodeId != wikiPage.getNodeId()) ||
 							(head != wikiPage.getHead()) ||
-							!Validator.equals(redirectTitle,
+							!Objects.equals(redirectTitle,
 								wikiPage.getRedirectTitle())) {
 						list = null;
 
@@ -16039,7 +16040,7 @@ public class WikiPagePersistenceImpl extends BasePersistenceImpl<WikiPage>
 				for (WikiPage wikiPage : list) {
 					if ((groupId != wikiPage.getGroupId()) ||
 							(nodeId != wikiPage.getNodeId()) ||
-							!Validator.equals(title, wikiPage.getTitle()) ||
+							!Objects.equals(title, wikiPage.getTitle()) ||
 							(head != wikiPage.getHead())) {
 						list = null;
 
@@ -18200,7 +18201,7 @@ public class WikiPagePersistenceImpl extends BasePersistenceImpl<WikiPage>
 				for (WikiPage wikiPage : list) {
 					if ((nodeId != wikiPage.getNodeId()) ||
 							(head != wikiPage.getHead()) ||
-							!Validator.equals(parentTitle,
+							!Objects.equals(parentTitle,
 								wikiPage.getParentTitle()) ||
 							(status != wikiPage.getStatus())) {
 						list = null;
@@ -18851,7 +18852,7 @@ public class WikiPagePersistenceImpl extends BasePersistenceImpl<WikiPage>
 				for (WikiPage wikiPage : list) {
 					if ((nodeId != wikiPage.getNodeId()) ||
 							(head != wikiPage.getHead()) ||
-							!Validator.equals(parentTitle,
+							!Objects.equals(parentTitle,
 								wikiPage.getParentTitle()) ||
 							(status == wikiPage.getStatus())) {
 						list = null;
@@ -19522,7 +19523,7 @@ public class WikiPagePersistenceImpl extends BasePersistenceImpl<WikiPage>
 				for (WikiPage wikiPage : list) {
 					if ((nodeId != wikiPage.getNodeId()) ||
 							(head != wikiPage.getHead()) ||
-							!Validator.equals(redirectTitle,
+							!Objects.equals(redirectTitle,
 								wikiPage.getRedirectTitle()) ||
 							(status != wikiPage.getStatus())) {
 						list = null;
@@ -20173,7 +20174,7 @@ public class WikiPagePersistenceImpl extends BasePersistenceImpl<WikiPage>
 				for (WikiPage wikiPage : list) {
 					if ((nodeId != wikiPage.getNodeId()) ||
 							(head != wikiPage.getHead()) ||
-							!Validator.equals(redirectTitle,
+							!Objects.equals(redirectTitle,
 								wikiPage.getRedirectTitle()) ||
 							(status == wikiPage.getStatus())) {
 						list = null;
@@ -20854,7 +20855,7 @@ public class WikiPagePersistenceImpl extends BasePersistenceImpl<WikiPage>
 					if ((groupId != wikiPage.getGroupId()) ||
 							(nodeId != wikiPage.getNodeId()) ||
 							(head != wikiPage.getHead()) ||
-							!Validator.equals(parentTitle,
+							!Objects.equals(parentTitle,
 								wikiPage.getParentTitle()) ||
 							(status != wikiPage.getStatus())) {
 						list = null;
@@ -22172,8 +22173,8 @@ public class WikiPagePersistenceImpl extends BasePersistenceImpl<WikiPage>
 					primaryKey);
 
 			if (wikiPage == null) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+				if (_log.isDebugEnabled()) {
+					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchPageException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
@@ -22276,9 +22277,8 @@ public class WikiPagePersistenceImpl extends BasePersistenceImpl<WikiPage>
 
 			try {
 				wikiPage.setTitle(SanitizerUtil.sanitize(companyId, groupId,
-						userId,
-						com.liferay.wiki.model.WikiPage.class.getName(),
-						pageId, ContentTypes.TEXT_PLAIN, Sanitizer.MODE_ALL,
+						userId, WikiPage.class.getName(), pageId,
+						ContentTypes.TEXT_PLAIN, Sanitizer.MODE_ALL,
 						wikiPage.getTitle(), null));
 			}
 			catch (SanitizerException se) {
@@ -22995,8 +22995,8 @@ public class WikiPagePersistenceImpl extends BasePersistenceImpl<WikiPage>
 		WikiPage wikiPage = fetchByPrimaryKey(primaryKey);
 
 		if (wikiPage == null) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+			if (_log.isDebugEnabled()) {
+				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
 			throw new NoSuchPageException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +

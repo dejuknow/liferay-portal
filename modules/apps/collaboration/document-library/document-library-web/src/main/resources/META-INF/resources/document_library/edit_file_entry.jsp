@@ -382,32 +382,32 @@ if (portletTitleBasedNavigation) {
 								List<DDMStructure> ddmStructures = dlFileEntryType.getDDMStructures();
 
 								for (DDMStructure ddmStructure : ddmStructures) {
-										com.liferay.dynamic.data.mapping.storage.DDMFormValues ddmFormValues = null;
+									com.liferay.dynamic.data.mapping.storage.DDMFormValues ddmFormValues = null;
 
-										try {
-											DLFileEntryMetadata fileEntryMetadata = DLFileEntryMetadataLocalServiceUtil.getFileEntryMetadata(ddmStructure.getStructureId(), fileVersionId);
+									try {
+										DLFileEntryMetadata fileEntryMetadata = DLFileEntryMetadataLocalServiceUtil.getFileEntryMetadata(ddmStructure.getStructureId(), fileVersionId);
 
-											ddmFormValues = dlEditFileEntryDisplayContext.getDDMFormValues(fileEntryMetadata.getDDMStorageId());
-										}
-										catch (Exception e) {
-										}
+										ddmFormValues = dlEditFileEntryDisplayContext.getDDMFormValues(fileEntryMetadata.getDDMStorageId());
+									}
+									catch (Exception e) {
+									}
 						%>
 
-										<c:if test="<%= !dlEditFileEntryDisplayContext.isDDMStructureVisible(ddmStructure) %>">
-											<div class="hide">
-										</c:if>
+									<c:if test="<%= !dlEditFileEntryDisplayContext.isDDMStructureVisible(ddmStructure) %>">
+										<div class="hide">
+									</c:if>
 
-										<liferay-ddm:html
-											classNameId="<%= PortalUtil.getClassNameId(com.liferay.dynamic.data.mapping.model.DDMStructure.class) %>"
-											classPK="<%= ddmStructure.getPrimaryKey() %>"
-											ddmFormValues="<%= ddmFormValues %>"
-											fieldsNamespace="<%= String.valueOf(ddmStructure.getPrimaryKey()) %>"
-											requestedLocale="<%= locale %>"
-										/>
+									<liferay-ddm:html
+										classNameId="<%= PortalUtil.getClassNameId(com.liferay.dynamic.data.mapping.model.DDMStructure.class) %>"
+										classPK="<%= ddmStructure.getPrimaryKey() %>"
+										ddmFormValues="<%= ddmFormValues %>"
+										fieldsNamespace="<%= String.valueOf(ddmStructure.getPrimaryKey()) %>"
+										requestedLocale="<%= locale %>"
+									/>
 
-										<c:if test="<%= !dlEditFileEntryDisplayContext.isDDMStructureVisible(ddmStructure) %>">
-											</div>
-										</c:if>
+									<c:if test="<%= !dlEditFileEntryDisplayContext.isDDMStructureVisible(ddmStructure) %>">
+										</div>
+									</c:if>
 
 						<%
 								}
@@ -432,7 +432,11 @@ if (portletTitleBasedNavigation) {
 
 							<aui:input checked="<%= true %>" label="minor-version" name="majorVersion" type="radio" value="<%= false %>" />
 
-							<aui:input label="change-log" model="<%= null %>" name="changeLog" type="textarea" />
+							<aui:model-context />
+
+							<aui:input label="change-log" name="changeLog" type="textarea" />
+
+							<aui:model-context bean="<%= fileVersion %>" model="<%= DLFileVersion.class %>" />
 						</div>
 					</c:if>
 				</c:if>
@@ -513,7 +517,12 @@ if (portletTitleBasedNavigation) {
 </div>
 
 <c:if test="<%= (fileEntry != null) && checkedOut %>">
-	<%@ include file="/document_library/version_details.jspf" %>
+
+	<%
+	request.setAttribute("edit_file_entry.jsp-checkedOut", checkedOut);
+	%>
+
+	<liferay-util:include page="/document_library/version_details.jsp" servletContext="<%= application %>" />
 </c:if>
 
 <aui:script>

@@ -42,7 +42,7 @@ public abstract class BaseAppServerTask extends DefaultTask {
 		GUtil.addToCollection(_executableArgs, executableArgs);
 	}
 
-	public void executableArgs(Object ... executableArgs) {
+	public void executableArgs(Object... executableArgs) {
 		executableArgs(Arrays.asList(executableArgs));
 	}
 
@@ -119,7 +119,7 @@ public abstract class BaseAppServerTask extends DefaultTask {
 		executableArgs(executableArgs);
 	}
 
-	public void setExecutableArgs(Object ... executableArgs) {
+	public void setExecutableArgs(Object... executableArgs) {
 		setExecutableArgs(Arrays.asList(executableArgs));
 	}
 
@@ -141,7 +141,6 @@ public abstract class BaseAppServerTask extends DefaultTask {
 
 		Slf4jStream slf4jStream = Slf4jStream.ofCaller();
 
-		processExecutor.redirectError(slf4jStream.asWarn());
 		processExecutor.redirectOutput(slf4jStream.asWarn());
 
 		return processExecutor;

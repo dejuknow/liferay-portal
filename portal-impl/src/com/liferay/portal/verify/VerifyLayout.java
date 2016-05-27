@@ -15,6 +15,11 @@
 package com.liferay.portal.verify;
 
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
+import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.dao.orm.Projection;
+import com.liferay.portal.kernel.dao.orm.ProjectionFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.Property;
+import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.exception.LayoutFriendlyURLException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
@@ -39,18 +44,22 @@ import java.util.List;
  */
 public class VerifyLayout extends VerifyProcess {
 
-	protected void deleteOrphanedLayouts() throws Exception {
+	protected void deleteLinkedOrphanedLayouts() throws Exception {
 		try (LoggingTimer loggingTimer = new LoggingTimer()) {
-			runSQL(
-				"delete from Layout where layoutPrototypeUuid != '' and " +
-					"layoutPrototypeUuid not in (select uuid_ from " +
-						"LayoutPrototype)");
+			StringBundler sb = new StringBundler(3);
+
+			sb.append("delete from Layout where layoutPrototypeUuid != '' ");
+			sb.append("and layoutPrototypeUuid not in (select uuid_ from ");
+			sb.append("LayoutPrototype) and layoutPrototypeLinkEnabled = TRUE");
+
+			runSQL(sb.toString());
 		}
 	}
 
 	@Override
 	protected void doVerify() throws Exception {
-		deleteOrphanedLayouts();
+		deleteLinkedOrphanedLayouts();
+		updateUnlinkedOrphanedLayouts();
 		verifyFriendlyURL();
 		verifyLayoutIdFriendlyURL();
 		verifyLayoutPrototypeLinkEnabled();
@@ -89,6 +98,19 @@ public class VerifyLayout extends VerifyProcess {
 		return layouts;
 	}
 
+	protected void updateUnlinkedOrphanedLayouts() throws Exception {
+		try (LoggingTimer loggingTimer = new LoggingTimer()) {
+			StringBundler sb = new StringBundler(4);
+
+			sb.append("update Layout set layoutPrototypeUuid = null where ");
+			sb.append("layoutPrototypeUuid != '' and layoutPrototypeUuid not ");
+			sb.append("in (select uuid_ from LayoutPrototype) and ");
+			sb.append("layoutPrototypeLinkEnabled = FALSE");
+
+			runSQL(sb.toString());
+		}
+	}
+
 	protected void verifyFriendlyURL() throws Exception {
 		try (LoggingTimer loggingTimer = new LoggingTimer()) {
 			List<Layout> layouts =
@@ -108,6 +130,46 @@ public class VerifyLayout extends VerifyProcess {
 						layoutFriendlyURL.getLanguageId());
 				}
 			}
+
+			ActionableDynamicQuery actionableDynamicQuery =
+				LayoutFriendlyURLLocalServiceUtil.getActionableDynamicQuery();
+
+			actionableDynamicQuery.setAddCriteriaMethod(
+				new ActionableDynamicQuery.AddCriteriaMethod() {
+
+					@Override
+					public void addCriteria(DynamicQuery dynamicQuery) {
+						DynamicQuery layoutDynamicQuery =
+							LayoutLocalServiceUtil.dynamicQuery();
+
+						Projection projection = ProjectionFactoryUtil.property(
+							"plid");
+
+						layoutDynamicQuery.setProjection(projection);
+
+						Property plidProperty = PropertyFactoryUtil.forName(
+							"plid");
+
+						dynamicQuery.add(
+							plidProperty.notIn(layoutDynamicQuery));
+					}
+
+				});
+			actionableDynamicQuery.setPerformActionMethod(
+				new ActionableDynamicQuery.
+					PerformActionMethod<LayoutFriendlyURL>() {
+
+					@Override
+					public void performAction(
+						LayoutFriendlyURL layoutFriendlyURL) {
+
+						LayoutFriendlyURLLocalServiceUtil.
+							deleteLayoutFriendlyURL(layoutFriendlyURL);
+					}
+
+				});
+
+			actionableDynamicQuery.performActions();
 		}
 	}
 
@@ -147,7 +209,7 @@ public class VerifyLayout extends VerifyProcess {
 
 		for (LayoutFriendlyURL layoutFriendlyURL : layoutFriendlyURLs) {
 			if (!oldFriendlyURL.equals(layoutFriendlyURL.getFriendlyURL())) {
-				return true;
+				continue;
 			}
 
 			try {
@@ -159,7 +221,7 @@ public class VerifyLayout extends VerifyProcess {
 				int type = lfurle.getType();
 
 				if (type == LayoutFriendlyURLException.DUPLICATE) {
-					return true;
+					continue;
 				}
 				else {
 					throw lfurle;

@@ -1,4 +1,5 @@
 <definition component-name="portal-collaboration">
+	<property name="portal.release" value="true" />
 	<property name="custom.properties" value="default.layout.template.id=1_column" />
 	<property name="testray.main.component.name" value="Announcements" />
 
@@ -103,7 +104,7 @@
 		</execute>
 
 		<execute macro="AnnouncementsEntry#addPG">
-			<var name="distributionScope" value="Liferay" />
+			<var name="distributionScope" value="Liferay DXP" />
 			<var name="entryContent" value="Announcements Entry2 Scoped Content" />
 			<var name="entryTitle" value="Announcements Entry2 Scoped Title" />
 			<var name="entryURL" value="http://www.yahoo.com" />
@@ -125,7 +126,7 @@
 
 		<execute macro="AnnouncementsEntry#viewPG">
 			<var name="announcementType" value="${announcementType}" />
-			<var name="distributionScope" value="Liferay" />
+			<var name="distributionScope" value="Liferay DXP" />
 			<var name="entryContent" value="Announcements Entry2 Scoped Content" />
 			<var name="entryTitle" value="Announcements Entry2 Scoped Title" />
 		</execute>
@@ -169,7 +170,7 @@
 		</execute>
 
 		<execute macro="AnnouncementsEntry#viewViaEntriesPG">
-			<var name="distributionScope" value="Liferay" />
+			<var name="distributionScope" value="Liferay DXP" />
 			<var name="entryContent" value="Announcements Entry2 Scoped Content" />
 			<var name="entryTitle" value="Announcements Entry2 Scoped Title" />
 		</execute>

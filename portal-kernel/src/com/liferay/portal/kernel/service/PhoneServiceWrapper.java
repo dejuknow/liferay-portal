@@ -34,16 +34,25 @@ public class PhoneServiceWrapper implements PhoneService,
 	public com.liferay.portal.kernel.model.Phone addPhone(
 		java.lang.String className, long classPK, java.lang.String number,
 		java.lang.String extension, long typeId, boolean primary,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _phoneService.addPhone(className, classPK, number, extension,
 			typeId, primary, serviceContext);
 	}
 
 	@Override
-	public void deletePhone(long phoneId)
+	public com.liferay.portal.kernel.model.Phone getPhone(long phoneId)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		_phoneService.deletePhone(phoneId);
+		return _phoneService.getPhone(phoneId);
+	}
+
+	@Override
+	public com.liferay.portal.kernel.model.Phone updatePhone(long phoneId,
+		java.lang.String number, java.lang.String extension, long typeId,
+		boolean primary)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _phoneService.updatePhone(phoneId, number, extension, typeId,
+			primary);
 	}
 
 	/**
@@ -57,12 +66,6 @@ public class PhoneServiceWrapper implements PhoneService,
 	}
 
 	@Override
-	public com.liferay.portal.kernel.model.Phone getPhone(long phoneId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _phoneService.getPhone(phoneId);
-	}
-
-	@Override
 	public java.util.List<com.liferay.portal.kernel.model.Phone> getPhones(
 		java.lang.String className, long classPK)
 		throws com.liferay.portal.kernel.exception.PortalException {
@@ -70,12 +73,9 @@ public class PhoneServiceWrapper implements PhoneService,
 	}
 
 	@Override
-	public com.liferay.portal.kernel.model.Phone updatePhone(long phoneId,
-		java.lang.String number, java.lang.String extension, long typeId,
-		boolean primary)
+	public void deletePhone(long phoneId)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _phoneService.updatePhone(phoneId, number, extension, typeId,
-			primary);
+		_phoneService.deletePhone(phoneId);
 	}
 
 	@Override

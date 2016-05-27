@@ -1,0 +1,10 @@
+;
+; Do not manually edit this file. See
+; https://github.com/git-commands/git-subrepo#readme for more information.
+;
+[subrepo]
+	cmdver = liferay
+	commit = 8059ab00888a6c68beaa85b20428bb9ce8b59640
+	mode = push
+	parent = 5c21a10ff94bb7a37eedf4897f1145d4dbb4faff
+	remote = git@github.com:liferay/com-liferay-portal-background-task.git

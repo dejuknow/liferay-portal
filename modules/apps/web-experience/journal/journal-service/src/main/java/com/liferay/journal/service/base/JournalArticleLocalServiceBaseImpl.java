@@ -283,7 +283,7 @@ public abstract class JournalArticleLocalServiceBaseImpl
 	public ActionableDynamicQuery getActionableDynamicQuery() {
 		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
 
-		actionableDynamicQuery.setBaseLocalService(com.liferay.journal.service.JournalArticleLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(journalArticleLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(JournalArticle.class);
 
@@ -296,7 +296,7 @@ public abstract class JournalArticleLocalServiceBaseImpl
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
 		IndexableActionableDynamicQuery indexableActionableDynamicQuery = new IndexableActionableDynamicQuery();
 
-		indexableActionableDynamicQuery.setBaseLocalService(com.liferay.journal.service.JournalArticleLocalServiceUtil.getService());
+		indexableActionableDynamicQuery.setBaseLocalService(journalArticleLocalService);
 		indexableActionableDynamicQuery.setClassLoader(getClassLoader());
 		indexableActionableDynamicQuery.setModelClass(JournalArticle.class);
 
@@ -307,7 +307,7 @@ public abstract class JournalArticleLocalServiceBaseImpl
 
 	protected void initActionableDynamicQuery(
 		ActionableDynamicQuery actionableDynamicQuery) {
-		actionableDynamicQuery.setBaseLocalService(com.liferay.journal.service.JournalArticleLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(journalArticleLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(JournalArticle.class);
 
@@ -1529,7 +1529,7 @@ public abstract class JournalArticleLocalServiceBaseImpl
 		}
 	}
 
-	@BeanReference(type = com.liferay.journal.service.JournalArticleLocalService.class)
+	@BeanReference(type = JournalArticleLocalService.class)
 	protected JournalArticleLocalService journalArticleLocalService;
 	@BeanReference(type = JournalArticlePersistence.class)
 	protected JournalArticlePersistence journalArticlePersistence;

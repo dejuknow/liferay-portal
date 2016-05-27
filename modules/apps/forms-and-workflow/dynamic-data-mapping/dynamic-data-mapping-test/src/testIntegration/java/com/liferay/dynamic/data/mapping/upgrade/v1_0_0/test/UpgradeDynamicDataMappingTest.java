@@ -15,16 +15,6 @@
 package com.liferay.dynamic.data.mapping.upgrade.v1_0_0.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
-import com.liferay.asset.kernel.service.AssetEntryLocalService;
-import com.liferay.document.library.kernel.service.DLFileEntryLocalService;
-import com.liferay.document.library.kernel.service.DLFileVersionLocalService;
-import com.liferay.document.library.kernel.service.DLFolderLocalService;
-import com.liferay.dynamic.data.mapping.io.DDMFormJSONDeserializer;
-import com.liferay.dynamic.data.mapping.io.DDMFormJSONSerializer;
-import com.liferay.dynamic.data.mapping.io.DDMFormLayoutJSONSerializer;
-import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONDeserializer;
-import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONSerializer;
-import com.liferay.dynamic.data.mapping.io.DDMFormXSDDeserializer;
 import com.liferay.dynamic.data.mapping.model.DDMContent;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
 import com.liferay.dynamic.data.mapping.model.DDMStorageLink;
@@ -41,18 +31,13 @@ import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.service.DDMStructureVersionLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateVersionLocalServiceUtil;
-import com.liferay.dynamic.data.mapping.upgrade.v1_0_0.UpgradeDynamicDataMapping;
-import com.liferay.dynamic.data.mapping.util.DDM;
 import com.liferay.expando.kernel.model.ExpandoColumn;
 import com.liferay.expando.kernel.model.ExpandoColumnConstants;
 import com.liferay.expando.kernel.model.ExpandoRow;
 import com.liferay.expando.kernel.model.ExpandoTable;
 import com.liferay.expando.kernel.service.ExpandoColumnLocalServiceUtil;
-import com.liferay.expando.kernel.service.ExpandoRowLocalService;
 import com.liferay.expando.kernel.service.ExpandoRowLocalServiceUtil;
-import com.liferay.expando.kernel.service.ExpandoTableLocalService;
 import com.liferay.expando.kernel.service.ExpandoTableLocalServiceUtil;
-import com.liferay.expando.kernel.service.ExpandoValueLocalService;
 import com.liferay.expando.kernel.service.ExpandoValueLocalServiceUtil;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBManagerUtil;
@@ -60,8 +45,7 @@ import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.ResourcePermission;
-import com.liferay.portal.kernel.service.ResourceActionLocalService;
-import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
+import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.portal.kernel.service.ResourcePermissionLocalServiceUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
@@ -69,12 +53,15 @@ import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.upgrade.UpgradeException;
+import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 import com.liferay.portal.kernel.upgrade.UpgradeStep;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.portal.upgrade.registry.UpgradeStepRegistrator;
 import com.liferay.registry.Registry;
 import com.liferay.registry.RegistryUtil;
 
@@ -113,6 +100,7 @@ public class UpgradeDynamicDataMappingTest {
 		_timestamp = new Timestamp(System.currentTimeMillis());
 
 		setUpClassNameIds();
+		setUpModelResourceNames();
 		setUpPrimaryKeys();
 		setUpUpgradeDynamicDataMapping();
 	}
@@ -842,6 +830,66 @@ public class UpgradeDynamicDataMappingTest {
 	}
 
 	@Test
+	public void testUpgradeTemplateFreemarkerScriptDateFields()
+		throws Exception {
+
+		addStructure(
+			_structureId, DDMStructureConstants.DEFAULT_PARENT_STRUCTURE_ID,
+			DDMStructureConstants.VERSION_DEFAULT,
+			read("ddm-structure-with-two-date-fields.xsd"), "xml");
+
+		addTemplate(
+			_templateId, _structureId, null,
+			read("ddm-template-with-two-date-fields.ftl"), "ftl",
+			DDMTemplateConstants.TEMPLATE_TYPE_DISPLAY);
+
+		_upgradeDynamicDataMapping.upgrade();
+
+		String actualDefinition = getTemplateScript(_templateId);
+
+		String[] dateFieldNames = new String[] {"date1", "date2"};
+
+		StringBundler sb = null;
+
+		for (String dateFieldName : dateFieldNames) {
+
+			// Assign statement
+
+			sb = new StringBundler(5);
+
+			sb.append("<#assign ");
+			sb.append(dateFieldName);
+			sb.append("_Data = getterUtil.getString(");
+			sb.append(dateFieldName);
+			sb.append(".getData())>");
+
+			Assert.assertTrue(actualDefinition.contains(sb.toString()));
+
+			// If statement
+
+			sb = new StringBundler(3);
+
+			sb.append("<#if validator.isNotNull(");
+			sb.append(dateFieldName);
+			sb.append("_Data)>");
+
+			Assert.assertTrue(actualDefinition.contains(sb.toString()));
+
+			// Date parse statement
+
+			sb = new StringBundler(5);
+
+			sb.append("<#assign ");
+			sb.append(dateFieldName);
+			sb.append("_DateObj = dateUtil.parseDate(\"yyyy-MM-dd\", ");
+			sb.append(dateFieldName);
+			sb.append("_Data, locale)>");
+
+			Assert.assertTrue(actualDefinition.contains(sb.toString()));
+		}
+	}
+
+	@Test
 	public void testUpgradeTemplatePermissions() throws Exception {
 		addStructure(
 			_structureId, DDMStructureConstants.DEFAULT_PARENT_STRUCTURE_ID,
@@ -917,6 +965,64 @@ public class UpgradeDynamicDataMappingTest {
 		String actualDefinition = getTemplateScript(_templateId);
 
 		Assert.assertEquals(expectedDefinition, actualDefinition);
+	}
+
+	@Test
+	public void testUpgradeTemplateVelocityScriptDateFields() throws Exception {
+		addStructure(
+			_structureId, DDMStructureConstants.DEFAULT_PARENT_STRUCTURE_ID,
+			DDMStructureConstants.VERSION_DEFAULT,
+			read("ddm-structure-with-two-date-fields.xsd"), "xml");
+
+		addTemplate(
+			_templateId, _structureId, null,
+			read("ddm-template-with-two-date-fields.vm"), "vm",
+			DDMTemplateConstants.TEMPLATE_TYPE_DISPLAY);
+
+		_upgradeDynamicDataMapping.upgrade();
+
+		String actualDefinition = getTemplateScript(_templateId);
+
+		String[] dateFieldNames = new String[] {"$date1", "$date2"};
+
+		StringBundler sb = null;
+
+		for (String dateFieldName : dateFieldNames) {
+
+			// Assign statement
+
+			sb = new StringBundler(5);
+
+			sb.append("#set (");
+			sb.append(dateFieldName);
+			sb.append("_Data = $getterUtil.getString(");
+			sb.append(dateFieldName);
+			sb.append(".getData()))");
+
+			Assert.assertTrue(actualDefinition.contains(sb.toString()));
+
+			// If statement
+
+			sb = new StringBundler(3);
+
+			sb.append("#if ($validator.isNotNull(");
+			sb.append(dateFieldName);
+			sb.append("_Data))");
+
+			Assert.assertTrue(actualDefinition.contains(sb.toString()));
+
+			// Date parse statement
+
+			sb = new StringBundler(5);
+
+			sb.append("#set (");
+			sb.append(dateFieldName);
+			sb.append("_DateObj = $dateUtil.parseDate(\"yyyy-MM-dd\", ");
+			sb.append(dateFieldName);
+			sb.append("_Data, $locale))");
+
+			Assert.assertTrue(actualDefinition.contains(sb.toString()));
+		}
 	}
 
 	@Test
@@ -1012,26 +1118,27 @@ public class UpgradeDynamicDataMappingTest {
 	protected void addContent(long contentId, String data) throws Exception {
 		StringBundler sb = new StringBundler(4);
 
-		sb.append("insert into DDMContent (contentId, groupId, companyId, ");
-		sb.append("userId, userName, createDate, modifiedDate, name, ");
-		sb.append("description, data_) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ");
-		sb.append("?)");
+		sb.append("insert into DDMContent (uuid_, contentId, groupId, ");
+		sb.append("companyId, userId, userName, createDate, modifiedDate, ");
+		sb.append("name, description, data_) values (?, ?, ?, ?, ?, ?, ?, ?, ");
+		sb.append("?, ?, ?)");
 
 		String sql = sb.toString();
 
 		try (Connection con = DataAccess.getUpgradeOptimizedConnection();
 			PreparedStatement ps = con.prepareStatement(sql)) {
 
-			ps.setLong(1, contentId);
-			ps.setLong(2, _group.getGroupId());
-			ps.setLong(3, _group.getCompanyId());
-			ps.setLong(4, TestPropsValues.getUserId());
-			ps.setString(5, null);
-			ps.setTimestamp(6, _timestamp);
+			ps.setString(1, PortalUUIDUtil.generate());
+			ps.setLong(2, contentId);
+			ps.setLong(3, _group.getGroupId());
+			ps.setLong(4, _group.getCompanyId());
+			ps.setLong(5, TestPropsValues.getUserId());
+			ps.setString(6, null);
 			ps.setTimestamp(7, _timestamp);
-			ps.setString(8, DDMStorageLink.class.getName());
-			ps.setString(9, StringPool.BLANK);
-			ps.setString(10, data);
+			ps.setTimestamp(8, _timestamp);
+			ps.setString(9, DDMStorageLink.class.getName());
+			ps.setString(10, StringPool.BLANK);
+			ps.setString(11, data);
 
 			ps.executeUpdate();
 		}
@@ -1099,37 +1206,38 @@ public class UpgradeDynamicDataMappingTest {
 
 		StringBundler sb = new StringBundler(7);
 
-		sb.append("insert into DDMStructure (structureId, groupId, ");
+		sb.append("insert into DDMStructure (uuid_, structureId, groupId, ");
 		sb.append("companyId, userId, userName, versionUserId, ");
 		sb.append("versionUserName, createDate, modifiedDate, ");
 		sb.append("parentStructureId, classNameId, structureKey, version, ");
 		sb.append("name, description, definition, storageType, type_) ");
 		sb.append("values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ");
-		sb.append("?, ?)");
+		sb.append("?, ?, ?)");
 
 		String sql = sb.toString();
 
 		try (Connection con = DataAccess.getUpgradeOptimizedConnection();
 			PreparedStatement ps = con.prepareStatement(sql)) {
 
-			ps.setLong(1, structureId);
-			ps.setLong(2, _group.getGroupId());
-			ps.setLong(3, _group.getCompanyId());
-			ps.setLong(4, TestPropsValues.getUserId());
-			ps.setString(5, null);
-			ps.setLong(6, TestPropsValues.getUserId());
-			ps.setString(7, null);
-			ps.setTimestamp(8, _timestamp);
+			ps.setString(1, PortalUUIDUtil.generate());
+			ps.setLong(2, structureId);
+			ps.setLong(3, _group.getGroupId());
+			ps.setLong(4, _group.getCompanyId());
+			ps.setLong(5, TestPropsValues.getUserId());
+			ps.setString(6, null);
+			ps.setLong(7, TestPropsValues.getUserId());
+			ps.setString(8, null);
 			ps.setTimestamp(9, _timestamp);
-			ps.setLong(10, parentStructureId);
-			ps.setLong(11, _classNameIdDDLRecordSet);
-			ps.setString(12, StringUtil.randomString());
-			ps.setString(13, version);
-			ps.setString(14, StringUtil.randomString());
-			ps.setString(15, StringPool.BLANK);
-			ps.setString(16, definition);
-			ps.setString(17, storageType);
-			ps.setInt(18, DDMStructureConstants.TYPE_DEFAULT);
+			ps.setTimestamp(10, _timestamp);
+			ps.setLong(11, parentStructureId);
+			ps.setLong(12, _classNameIdDDLRecordSet);
+			ps.setString(13, StringUtil.randomString());
+			ps.setString(14, version);
+			ps.setString(15, StringUtil.randomString());
+			ps.setString(16, StringPool.BLANK);
+			ps.setString(17, definition);
+			ps.setString(18, storageType);
+			ps.setInt(19, DDMStructureConstants.TYPE_DEFAULT);
 
 			ps.executeUpdate();
 		}
@@ -1140,40 +1248,40 @@ public class UpgradeDynamicDataMappingTest {
 			String language, String type)
 		throws Exception {
 
-		StringBundler sb = new StringBundler(7);
+		StringBundler sb = new StringBundler(6);
 
-		sb.append("insert into DDMTemplate (templateId, groupId, companyId, ");
-		sb.append("userId, userName, versionUserId, versionUserName, ");
-		sb.append("createDate, modifiedDate, classNameId, classPK, ");
-		sb.append("resourceClassNameId, templateKey, version, name, mode_, ");
-		sb.append("language, script, type_) values (?, ?, ?, ?, ?, ?, ?, ?, ");
-		sb.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ");
-		sb.append("?)");
+		sb.append("insert into DDMTemplate (uuid_, templateId, groupId, ");
+		sb.append("companyId, userId, userName, versionUserId, ");
+		sb.append("versionUserName, createDate, modifiedDate, classNameId, ");
+		sb.append("classPK, resourceClassNameId, templateKey, version, name, ");
+		sb.append("mode_, language, script, type_) values (?, ?, ?, ?, ?, ?, ");
+		sb.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		String sql = sb.toString();
 
 		try (Connection con = DataAccess.getUpgradeOptimizedConnection();
 			PreparedStatement ps = con.prepareStatement(sql)) {
 
-			ps.setLong(1, templateId);
-			ps.setLong(2, _group.getGroupId());
-			ps.setLong(3, _group.getCompanyId());
-			ps.setLong(4, TestPropsValues.getUserId());
-			ps.setString(5, null);
-			ps.setLong(6, TestPropsValues.getUserId());
-			ps.setString(7, null);
-			ps.setTimestamp(8, _timestamp);
+			ps.setString(1, PortalUUIDUtil.generate());
+			ps.setLong(2, templateId);
+			ps.setLong(3, _group.getGroupId());
+			ps.setLong(4, _group.getCompanyId());
+			ps.setLong(5, TestPropsValues.getUserId());
+			ps.setString(6, null);
+			ps.setLong(7, TestPropsValues.getUserId());
+			ps.setString(8, null);
 			ps.setTimestamp(9, _timestamp);
-			ps.setLong(10, _classNameIdDDMStructure);
-			ps.setLong(11, structureId);
-			ps.setLong(12, _classNameIdDDLRecordSet);
-			ps.setString(13, StringUtil.randomString());
-			ps.setString(14, version);
-			ps.setString(15, StringUtil.randomString());
-			ps.setString(16, DDMTemplateConstants.TEMPLATE_MODE_CREATE);
-			ps.setString(17, language);
-			ps.setString(18, script);
-			ps.setString(19, type);
+			ps.setTimestamp(10, _timestamp);
+			ps.setLong(11, _classNameIdDDMStructure);
+			ps.setLong(12, structureId);
+			ps.setLong(13, _classNameIdDDLRecordSet);
+			ps.setString(14, StringUtil.randomString());
+			ps.setString(15, version);
+			ps.setString(16, StringUtil.randomString());
+			ps.setString(17, DDMTemplateConstants.TEMPLATE_MODE_CREATE);
+			ps.setString(18, language);
+			ps.setString(19, script);
+			ps.setString(20, type);
 
 			ps.executeUpdate();
 		}
@@ -1325,6 +1433,46 @@ public class UpgradeDynamicDataMappingTest {
 				"ExpandoStorageAdapter");
 	}
 
+	protected void setUpModelResourceNames() {
+		_structureModelResourceNames.put(
+			"com.liferay.document.library.kernel.model.DLFileEntryMetadata",
+			ResourceActionsUtil.getCompositeModelName(
+				"com.liferay.portlet.documentlibrary.model.DLFileEntryMetadata",
+				DDMStructure.class.getName()));
+
+		_structureModelResourceNames.put(
+			"com.liferay.document.library.kernel.util.RawMetadataProcessor",
+			DDMStructure.class.getName());
+
+		_structureModelResourceNames.put(
+			"com.liferay.portlet.dynamicdatalists.model.DDLRecordSet",
+			ResourceActionsUtil.getCompositeModelName(
+				"com.liferay.dynamic.data.lists.model.DDLRecordSet",
+				DDMStructure.class.getName()));
+
+		_structureModelResourceNames.put(
+			"com.liferay.portlet.journal.model.JournalArticle",
+			ResourceActionsUtil.getCompositeModelName(
+				"com.liferay.journal.model.JournalArticle",
+				DDMStructure.class.getName()));
+
+		_templateModelResourceNames.put(
+			"com.liferay.portlet.display.template.PortletDisplayTemplate",
+			DDMTemplate.class.getName());
+
+		_templateModelResourceNames.put(
+			"com.liferay.portlet.dynamicdatalists.model.DDLRecordSet",
+			ResourceActionsUtil.getCompositeModelName(
+				"com.liferay.dynamic.data.lists.model.DDLRecordSet",
+				DDMTemplate.class.getName()));
+
+		_templateModelResourceNames.put(
+			"com.liferay.portlet.journal.model.JournalArticle",
+			ResourceActionsUtil.getCompositeModelName(
+				"com.liferay.journal.model.JournalArticle",
+				DDMTemplate.class.getName()));
+	}
+
 	protected void setUpPrimaryKeys() {
 		_structureId = RandomTestUtil.randomLong();
 		_parentStructureId = RandomTestUtil.randomLong();
@@ -1336,102 +1484,30 @@ public class UpgradeDynamicDataMappingTest {
 	protected void setUpUpgradeDynamicDataMapping() {
 		Registry registry = RegistryUtil.getRegistry();
 
-		AssetEntryLocalService assetEntryLocalService = registry.getService(
-			AssetEntryLocalService.class);
+		UpgradeStepRegistrator upgradeStepRegistror = registry.getService(
+			"com.liferay.dynamic.data.mapping.upgrade.DDMServiceUpgrade");
 
-		DLFileEntryLocalService dlFileEntryLocalService = registry.getService(
-			DLFileEntryLocalService.class);
+		upgradeStepRegistror.register(
+			new UpgradeStepRegistrator.Registry() {
 
-		DLFileVersionLocalService dlFileVersionLocalService =
-			registry.getService(DLFileVersionLocalService.class);
+				@Override
+				public void register(
+					String bundleSymbolicName, String fromSchemaVersionString,
+					String toSchemaVersionString, UpgradeStep... upgradeSteps) {
 
-		DDM ddm = registry.getService(DDM.class);
+					for (UpgradeStep upgradeStep : upgradeSteps) {
+						Class<?> clazz = upgradeStep.getClass();
 
-		DDMFormJSONDeserializer ddmFormJSONDeserializer = registry.getService(
-			DDMFormJSONDeserializer.class);
+						String className = clazz.getName();
 
-		DDMFormJSONSerializer ddmFormJSONSerializer = registry.getService(
-			DDMFormJSONSerializer.class);
+						if (className.contains("UpgradeDynamicDataMapping")) {
+							_upgradeDynamicDataMapping =
+								(UpgradeProcess)upgradeStep;
+						}
+					}
+				}
 
-		DDMFormLayoutJSONSerializer ddmFormLayoutJSONSerializer =
-			registry.getService(DDMFormLayoutJSONSerializer.class);
-
-		DDMFormValuesJSONDeserializer ddmFormValuesJSONDeserializer =
-			registry.getService(DDMFormValuesJSONDeserializer.class);
-
-		DDMFormValuesJSONSerializer ddmFormValuesJSONSerializer =
-			registry.getService(DDMFormValuesJSONSerializer.class);
-
-		DDMFormXSDDeserializer ddmFormXSDDeserializer = registry.getService(
-			DDMFormXSDDeserializer.class);
-
-		DLFolderLocalService dlFolderLocalService = registry.getService(
-			DLFolderLocalService.class);
-
-		ExpandoRowLocalService expandoRowLocalService = registry.getService(
-			ExpandoRowLocalService.class);
-
-		ExpandoTableLocalService expandoTableLocalService = registry.getService(
-			ExpandoTableLocalService.class);
-
-		ExpandoValueLocalService expandoValueLocalService = registry.getService(
-			ExpandoValueLocalService.class);
-
-		ResourceActionLocalService resourceActionLocalService =
-			registry.getService(ResourceActionLocalService.class);
-
-		ResourcePermissionLocalService resourcePermissionLocalService =
-			registry.getService(ResourcePermissionLocalService.class);
-
-		_upgradeDynamicDataMapping = new UpgradeDynamicDataMapping(
-			assetEntryLocalService, ddm, ddmFormJSONDeserializer,
-			ddmFormJSONSerializer, ddmFormLayoutJSONSerializer,
-			ddmFormValuesJSONDeserializer, ddmFormValuesJSONSerializer,
-			ddmFormXSDDeserializer, dlFileEntryLocalService,
-			dlFileVersionLocalService, dlFolderLocalService,
-			expandoRowLocalService, expandoTableLocalService,
-			expandoValueLocalService, resourceActionLocalService,
-			resourcePermissionLocalService);
-	}
-
-	private static final Map<String, String> _structureModelResourceNames =
-		new HashMap<>();
-	private static final Map<String, String> _templateModelResourceNames =
-		new HashMap<>();
-
-	static {
-		_structureModelResourceNames.put(
-			"com.liferay.document.library.kernel.model.DLFileEntryMetadata",
-			"com.liferay.portlet.documentlibrary.model.DLFileEntryMetadata-" +
-				DDMStructure.class.getName());
-
-		_structureModelResourceNames.put(
-			"com.liferay.document.library.kernel.util.RawMetadataProcessor",
-			DDMStructure.class.getName());
-
-		_structureModelResourceNames.put(
-			"com.liferay.portlet.dynamicdatalists.model.DDLRecordSet",
-			"com.liferay.dynamic.data.lists.model.DDLRecordSet-" +
-				DDMStructure.class.getName());
-
-		_structureModelResourceNames.put(
-			"com.liferay.portlet.journal.model.JournalArticle",
-			"com.liferay.journal.model.JournalArticle-" +
-				DDMStructure.class.getName());
-
-		_templateModelResourceNames.put(
-			"com.liferay.portlet.display.template.PortletDisplayTemplate",
-			DDMTemplate.class.getName());
-
-		_templateModelResourceNames.put(
-			"com.liferay.portlet.dynamicdatalists.model.DDLRecordSet",
-			"com.liferay.dynamic.data.lists.model.DDLRecordSet-" +
-				DDMTemplate.class.getName());
-
-		_templateModelResourceNames.put(
-			"com.liferay.portlet.journal.model.JournalArticle",
-			"com.liferay.journal.model.JournalArticle-" +
-				DDMTemplate.class.getName());
+			});
 	}
 
 	private long _classNameIdDDLRecordSet;
@@ -1446,8 +1522,12 @@ public class UpgradeDynamicDataMappingTest {
 	private long _parentStructureId;
 	private long _storageLinkId;
 	private long _structureId;
+	private final Map<String, String> _structureModelResourceNames =
+		new HashMap<>();
 	private long _templateId;
+	private final Map<String, String> _templateModelResourceNames =
+		new HashMap<>();
 	private Timestamp _timestamp;
-	private UpgradeDynamicDataMapping _upgradeDynamicDataMapping;
+	private UpgradeProcess _upgradeDynamicDataMapping;
 
 }

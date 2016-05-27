@@ -14,10 +14,9 @@
 
 package com.liferay.nested.portlets.web.upgrade;
 
-import com.liferay.nested.portlets.web.constants.NestedPortletsPortletKeys;
+import com.liferay.nested.portlets.web.upgrade.v1_0_0.UpgradePortletId;
 import com.liferay.portal.kernel.upgrade.DummyUpgradeStep;
 import com.liferay.portal.upgrade.registry.UpgradeStepRegistrator;
-import com.liferay.portal.upgrade.util.UpgradePortletId;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -36,18 +35,7 @@ public class NestedPortletWebUpgrade implements UpgradeStepRegistrator {
 
 		registry.register(
 			"com.liferay.nested.portlets.web", "0.0.1", "1.0.0",
-			new UpgradePortletId() {
-
-				@Override
-				protected String[][] getRenamePortletIdsArray() {
-					return new String[][] {
-						new String[] {
-							"118", NestedPortletsPortletKeys.NESTED_PORTLETS
-						}
-					};
-				}
-
-			});
+			new UpgradePortletId());
 	}
 
 }

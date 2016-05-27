@@ -63,6 +63,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
@@ -362,7 +363,8 @@ public class JavadocFormatter {
 			return null;
 		}
 
-		comment = ToolsUtil.stripFullyQualifiedClassNames(comment, _imports);
+		comment = ToolsUtil.stripFullyQualifiedClassNames(
+			comment, _imports, _packagePath);
 
 		if (!comment.contains("* @deprecated ") ||
 			_hasAnnotation(abstractBaseJavaEntity, "Deprecated")) {
@@ -383,7 +385,8 @@ public class JavadocFormatter {
 		for (DocletTag docletTag : docletTags) {
 			String value = docletTag.getValue();
 
-			value = ToolsUtil.stripFullyQualifiedClassNames(value, _imports);
+			value = ToolsUtil.stripFullyQualifiedClassNames(
+				value, _imports, _packagePath);
 
 			value = _trimMultilineText(value);
 
@@ -670,7 +673,8 @@ public class JavadocFormatter {
 			Dom4jDocUtil.add(paramElement, "required", true);
 		}
 
-		value = ToolsUtil.stripFullyQualifiedClassNames(value, _imports);
+		value = ToolsUtil.stripFullyQualifiedClassNames(
+			value, _imports, _packagePath);
 
 		value = _trimMultilineText(value);
 
@@ -720,7 +724,8 @@ public class JavadocFormatter {
 			Dom4jDocUtil.add(returnElement, "required", true);
 		}
 
-		comment = ToolsUtil.stripFullyQualifiedClassNames(comment, _imports);
+		comment = ToolsUtil.stripFullyQualifiedClassNames(
+			comment, _imports, _packagePath);
 
 		comment = _trimMultilineText(comment);
 
@@ -764,7 +769,8 @@ public class JavadocFormatter {
 			Dom4jDocUtil.add(throwsElement, "required", true);
 		}
 
-		value = ToolsUtil.stripFullyQualifiedClassNames(value, _imports);
+		value = ToolsUtil.stripFullyQualifiedClassNames(
+			value, _imports, _packagePath);
 
 		value = _trimMultilineText(value);
 
@@ -876,6 +882,7 @@ public class JavadocFormatter {
 		}
 
 		_imports = JavaImportsFormatter.getImports(originalContent);
+		_packagePath = ToolsUtil.getPackagePath(fileName);
 
 		JavaClass javaClass = _getJavaClass(
 			fileName, new UnsyncStringReader(originalContent));
@@ -1167,7 +1174,7 @@ public class JavadocFormatter {
 
 		if (Validator.isNotNull(comment)) {
 			comment = ToolsUtil.stripFullyQualifiedClassNames(
-				comment, _imports);
+				comment, _imports, _packagePath);
 
 			sb.append(_wrapText(comment, indent + " * "));
 		}
@@ -1367,7 +1374,7 @@ public class JavadocFormatter {
 
 		if (Validator.isNotNull(comment)) {
 			comment = ToolsUtil.stripFullyQualifiedClassNames(
-				comment, _imports);
+				comment, _imports, _packagePath);
 
 			sb.append(_wrapText(comment, indent + " * "));
 		}
@@ -1426,7 +1433,7 @@ public class JavadocFormatter {
 
 		if (Validator.isNotNull(comment)) {
 			comment = ToolsUtil.stripFullyQualifiedClassNames(
-				comment, _imports);
+				comment, _imports, _packagePath);
 
 			sb.append(_wrapText(comment, indent + " * "));
 		}
@@ -2046,7 +2053,7 @@ public class JavadocFormatter {
 				Element javaClassRootElement =
 					javaClassDocument.getRootElement();
 
-				if (Validator.equals(
+				if (Objects.equals(
 						_formattedString(javadocElement),
 						_formattedString(javaClassRootElement))) {
 
@@ -2236,6 +2243,7 @@ public class JavadocFormatter {
 	private final double _lowestSupportedJavaVersion;
 	private final Set<String> _modifiedFileNames = new HashSet<>();
 	private final String _outputFilePrefix;
+	private String _packagePath;
 	private final Pattern _paragraphTagPattern = Pattern.compile(
 		"(^.*?(?=\n\n|$)+|(?<=<p>\n).*?(?=\n</p>))", Pattern.DOTALL);
 	private final boolean _updateJavadocs;

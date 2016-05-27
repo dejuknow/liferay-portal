@@ -9,38 +9,24 @@
 </thead>
 <tbody>
 <tr>
-	<td>NAVIGATION_USER_SEGMENTS</td>
-	<td>//ul[contains(@class,'nav-pills')]/li/a[contains(.,'User Segments')]</td>
+	<td>PLUS_LINK</td>
+	<td>xpath=(//div[contains(@class,'lfr-form-row')]//button[contains(@class,'add-row')])[${key_indexNumber}]</td>
+	<td></td>
+</tr>
+<!--FORM-->
+<tr>
+	<td>FORM_SEARCH_FIELD</td>
+	<td>//input[contains(@id,'ContentTargetingPortlet_searchPanel')]</td>
 	<td></td>
 </tr>
 <tr>
-	<td>NAVIGATION_CAMPAIGNS</td>
-	<td>//ul[contains(@class,'nav-pills')]/li/a[contains(.,'Campaigns')]</td>
+	<td>FORM_BUILDER</td>
+	<td>//div[contains(@class,'form-builder-drop-container')]</td>
 	<td></td>
 </tr>
 <tr>
-	<td>ADD_USER_SEGMENT_BUTTON</td>
-	<td>//ul[@aria-label='Audience Targeting']/li/a[contains(.,'Add User Segment')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>ADD_CAMPAIGN_BUTTON</td>
-	<td>//ul[@aria-label='Audience Targeting']/li/a[contains(.,'Add Campaign')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>DELETE_CAMPAIGN_BUTTON</td>
-	<td>//li[contains(@id,'deleteCampaigns')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>DELETE_USER_SEGMENT_BUTTON</td>
-	<td>//li[contains(@id,'deleteUserSegments')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>CHECKBOX_ALL</td>
-	<td>//input[@title='Select All']</td>
+	<td>FORM_FIELD_COLLAPSED</td>
+	<td>//div[contains(@class,'toggler-header-collapsed')]//h2[contains(.,'${key_fieldName}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -48,40 +34,30 @@
 	<td></td>
 	<td></td>
 </tr>
-<!--CAMPAIGN_TABLE-->
+<!--CARD-->
 <tr>
-	<td>CAMPAIGN_TABLE_CHECKBOX_ALL</td>
-	<td>//th[contains(@id,'campaigns')]/input[@title='Select All'] | //th[contains(@id,'campaigns')]/input[contains(@name,'allRowIds')]</td>
+	<td>CARD_CONTENT_TITLE_GENERIC</td>
+	<td>//span[contains(@class,'lfr-card-title-text')]</td>
 	<td></td>
 </tr>
 <tr>
-	<td>CAMPAIGN_TABLE_CHECKBOX</td>
-	<td>//tr[contains(.,'${key_campaignName}')]/td[1]//input</td>
+	<td>CARD_CONTENT_TITLE_GENERIC_LINK</td>
+	<td>//span[contains(@class,'lfr-card-title-text')]//a</td>
 	<td></td>
 </tr>
 <tr>
-	<td>CAMPAIGN_TABLE_NAME</td>
-	<td>//tr[contains(.,'${key_campaignName}')]/td[2]</td>
+	<td>CARD_CONTENT_TITLE</td>
+	<td>//span[contains(@class,'lfr-card-title-text') and contains(.,'${key_contentTitle}')]</td>
 	<td></td>
 </tr>
 <tr>
-	<td>CAMPAIGN_TABLE_DESCRIPTION</td>
-	<td>//tr[contains(.,'${key_campaignName}')]/td[3]</td>
+	<td>CARD_CONTENT_TITLE_LINK</td>
+	<td>//span[contains(@class,'lfr-card-title-text') and contains(.,'${key_contentTitle}')]//a</td>
 	<td></td>
 </tr>
 <tr>
-	<td>CAMPAIGN_TABLE_PRIORITY</td>
-	<td>//tr[contains(.,'${key_campaignName}')]/td[6]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>CAMPAIGN_TABLE_STATUS</td>
-	<td>//tr[contains(.,'${key_campaignName}')]/td[7]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>CAMPAIGN_TABLE_ACTIONS</td>
-	<td>//tr[contains(.,'${key_campaignName}')]/td[8]//div/a[@title='Actions']</td>
+	<td>CARD_CONTENT_TYPE</td>
+	<td>//span[contains(@class,'lfr-card-subtitle-text') and contains(.,'${key_contentType}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -89,10 +65,35 @@
 	<td></td>
 	<td></td>
 </tr>
-<!--ACTIONS_MENULIST-->
+<!--OTHERWISE_PANEL-->
 <tr>
-	<td>ACTIONS_MENULIST_REPORTS</td>
-	<td>//ul/li/a[contains(.,'Reports')]</td>
+	<td>OTHERWISE_PANEL</td>
+	<td>//div[contains(@class,'field-row')]//div[contains(.,'Otherwise')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>OTHERWISE_PANEL_DONT_DISPLAY_ANYTHING_RADIO</td>
+	<td>//input[contains(@id,'DefaultValueDont')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>OTHERWISE_PANEL_DISPLAY_THIS_CONTENT_RADIO</td>
+	<td>//label[contains(.,'Display this content')]/input</td>
+	<td></td>
+</tr>
+<tr>
+	<td>OTHERWISE_PANEL_SELECT_CONTENT</td>
+	<td>//div[contains(@class,'field-row')]//div[contains(.,'Otherwise')]//div/a[@title='Select Content']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>OTHERWISE_PANEL_SELECTED_CONTENT_TITLE</td>
+	<td>//div[contains(@class,'field-row')]//div[contains(.,'Otherwise')]//span[contains(@class,'lfr-card-title-text') and contains(.,'${key_contentTitle}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>OTHERWISE_PANEL_SELECTED_CONTENT_TYPE</td>
+	<td>//div[contains(@class,'field-row')]//div[contains(.,'Otherwise')]//span[contains(@class,'lfr-card-subtitle-text') and contains(.,'${key_contentType}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -100,30 +101,56 @@
 	<td></td>
 	<td></td>
 </tr>
-<!--USER_SEGMENT_TABLE-->
+<!--PREVIEW-->
 <tr>
-	<td>USER_SEGMENT_TABLE_CHECKBOX_ALL</td>
-	<td>//th[contains(@id,'userSegments')]/input[@title='Select All'] | //th[contains(@id,'userSegments')]/input[contains(@name,'allRowIds')]</td>
+	<td>PREVIEW</td>
+	<td>//div[//li[contains(@id,'PreviewContent')] and contains(@class,'open')]//a[contains(.,'${key_previewEntry}')]</td>
 	<td></td>
 </tr>
 <tr>
-	<td>USER_SEGMENT_TABLE_CHECKBOX</td>
-	<td>//tr[contains(.,'${key_userSegmentName}')]/td[1]//input</td>
+	<td>PREVIEW_BUTTON</td>
+	<td>//div[contains(@class,'portlet-content') and contains(.,'${key_portletName}')]//div[contains(@class,'preview-button')]/button</td>
 	<td></td>
 </tr>
 <tr>
-	<td>USER_SEGMENT_TABLE_NAME</td>
-	<td>//tr[contains(.,'${key_userSegmentName}')]/td[2]</td>
+	<td>PREVIEW_BUTTON_EXPANDED</td>
+	<td>//div[contains(@class,'preview-button')]/button[@aria-expanded='true']</td>
 	<td></td>
 </tr>
 <tr>
-	<td>USER_SEGMENT_TABLE_DESCRIPTION</td>
-	<td>//tr[contains(.,'${key_userSegmentName}')]/td[3]</td>
+	<td>PREVIEW_ENTRY_SELECTED</td>
+	<td>//div[contains(@class,'open')]//li[@class='active' and contains(.,'${key_viewEntrySelected}')]</td>
 	<td></td>
 </tr>
 <tr>
-	<td>USER_SEGMENT_TABLE_ACTIONS</td>
-	<td>//tr[contains(.,'${key_userSegmentName}')]/td[4]//div/a[@title='Actions']</td>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<!--REPORT_TABLE-->
+<tr>
+	<td>REPORT_TABLE_CONTENT</td>
+	<td>//*[@data-qa-id='row'][contains(.,'${key_reportTitle}')]/td[normalize-space(.//text())='${key_contentReports}']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>REPORT_TABLE_TITLE</td>
+	<td>//*[@data-qa-id='row'][contains(.,'${key_reportTitle}')]/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>REPORT_TABLE_TYPE</td>
+	<td>//*[@data-qa-id='row'][contains(.,'${key_reportTitle}')]/td[2]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>REPORT_TABLE_EVENT</td>
+	<td>//*[@data-qa-id='row'][contains(.,'${key_reportTitle}')]/td[3]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>REPORT_TABLE_COUNT</td>
+	<td>//*[@data-qa-id='row'][contains(.,'${key_reportTitle}')]/td[4]</td>
 	<td></td>
 </tr>
 </tbody>

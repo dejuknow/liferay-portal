@@ -110,20 +110,12 @@
 				<var method="TestPropsUtil#get('browser.type')" name="browserType" />
 
 				<if>
-					<equals arg1="${browserType}" arg2="internetexplorer" />
+					<equals arg1="${browserType}" arg2="safari" />
 					<then>
-						<execute function="MouseDown#javaScriptMouseDown" locator1="ControlMenu#ADD" />
+						<execute function="Pause" locator1="10000" />
 
-						<execute function="MouseUp#javaScriptMouseUp" locator1="ControlMenu#ADD" />
+						<execute function="Click#clickAt" locator1="ControlMenu#ADD" />
 					</then>
-					<elseif>
-						<equals arg1="${browserType}" arg2="safari" />
-						<then>
-							<execute function="Pause" locator1="10000" />
-
-							<execute function="Click#clickAt" locator1="ControlMenu#ADD" />
-						</then>
-					</elseif>
 					<else>
 						<execute function="Click#clickAt" locator1="ControlMenu#ADD" />
 					</else>
@@ -136,9 +128,7 @@
 
 		<execute function="Pause" locator1="5000" />
 
-		<execute macro="Panel#expandSidebarPanel">
-			<var name="panelHeading" value="Applications" />
-		</execute>
+		<execute macro="Panel#expandSidebarApplicationsPanel" />
 
 		<execute function="Type#sendKeysApplicationSearch" locator1="NavBar#APPLICATION_SEARCH_FIELD" value1="${portletName}" />
 
@@ -316,9 +306,7 @@
 
 		<execute function="Click#clickAtSidebarClickAtWaitForScript" locator1="ControlMenu#ADD" value1="Add" />
 
-		<execute macro="Panel#expandSidebarPanel">
-			<var name="panelHeading" value="Applications" />
-		</execute>
+		<execute macro="Panel#expandSidebarApplicationsPanel" />
 
 		<execute function="Type#sendKeysApplicationSearch" locator1="NavBar#APPLICATION_SEARCH_FIELD" value1="${portletName}" />
 
@@ -417,11 +405,12 @@
 	<command name="viewPortletOptionsMenulist">
 		<execute function="Click#makeVisibleClickAt" locator1="BasePortlet#OPTIONS_ICON" />
 
-		<execute function="AssertTextEquals" locator1="BasePortlet#OPTIONS_MENULIST_LOOK_AND_FEEL" value1="Look and Feel Configuration" />
-		<execute function="AssertTextEquals" locator1="BasePortlet#OPTIONS_MENULIST_CONFIGURATION" value1="Configuration" />
-		<execute function="AssertTextEquals" locator1="BasePortlet#OPTIONS_MENULIST_CONFIGURATION_TEMPLATES" value1="Configuration Templates" />
-		<execute function="AssertTextEquals" locator1="BasePortlet#OPTIONS_MENULIST_EXPORT_IMPORT" value1="Export / Import" />
-		<execute function="AssertTextEquals" locator1="BasePortlet#OPTION_MENULIST_REMOVE" value1="Remove" />
+		<execute function="AssertTextEquals" locator1="MenuItem#LOOK_AND_FEEL" value1="Look and Feel Configuration" />
+		<execute function="AssertTextEquals" locator1="MenuItem#CONFIGURATION_PORTLET_OPTION" value1="Configuration" />
+		<execute function="AssertTextEquals" locator1="MenuItem#TEMPLATES" value1="Configuration Templates" />
+		<execute function="AssertTextEquals" locator1="MenuItem#EXPORT_IMPORT" value1="Export / Import" />
+		<execute function="AssertTextEquals" locator1="MenuItem#PERMISSIONS" value1="Permissions" />
+		<execute function="AssertTextEquals" locator1="MenuItem#REMOVE" value1="Remove" />
 	</command>
 
 	<command name="viewSpecificPG">

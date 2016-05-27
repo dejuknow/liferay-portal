@@ -20,13 +20,13 @@ import com.liferay.expando.kernel.model.ExpandoBridge;
 
 import com.liferay.portal.kernel.model.ModelWrapper;
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Serializable;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * <p>
@@ -130,59 +130,58 @@ public class AssetCategoryPropertyWrapper implements AssetCategoryProperty,
 	}
 
 	@Override
-	public java.lang.Object clone() {
-		return new AssetCategoryPropertyWrapper((AssetCategoryProperty)_assetCategoryProperty.clone());
+	public AssetCategoryProperty toEscapedModel() {
+		return new AssetCategoryPropertyWrapper(_assetCategoryProperty.toEscapedModel());
 	}
 
 	@Override
-	public int compareTo(
-		com.liferay.asset.kernel.model.AssetCategoryProperty assetCategoryProperty) {
-		return _assetCategoryProperty.compareTo(assetCategoryProperty);
+	public AssetCategoryProperty toUnescapedModel() {
+		return new AssetCategoryPropertyWrapper(_assetCategoryProperty.toUnescapedModel());
 	}
 
-	/**
-	* Returns the category ID of this asset category property.
-	*
-	* @return the category ID of this asset category property
-	*/
 	@Override
-	public long getCategoryId() {
-		return _assetCategoryProperty.getCategoryId();
+	public boolean isCachedModel() {
+		return _assetCategoryProperty.isCachedModel();
 	}
 
-	/**
-	* Returns the category property ID of this asset category property.
-	*
-	* @return the category property ID of this asset category property
-	*/
 	@Override
-	public long getCategoryPropertyId() {
-		return _assetCategoryProperty.getCategoryPropertyId();
+	public boolean isEscapedModel() {
+		return _assetCategoryProperty.isEscapedModel();
 	}
 
-	/**
-	* Returns the company ID of this asset category property.
-	*
-	* @return the company ID of this asset category property
-	*/
 	@Override
-	public long getCompanyId() {
-		return _assetCategoryProperty.getCompanyId();
-	}
-
-	/**
-	* Returns the create date of this asset category property.
-	*
-	* @return the create date of this asset category property
-	*/
-	@Override
-	public Date getCreateDate() {
-		return _assetCategoryProperty.getCreateDate();
+	public boolean isNew() {
+		return _assetCategoryProperty.isNew();
 	}
 
 	@Override
 	public ExpandoBridge getExpandoBridge() {
 		return _assetCategoryProperty.getExpandoBridge();
+	}
+
+	@Override
+	public com.liferay.portal.kernel.model.CacheModel<AssetCategoryProperty> toCacheModel() {
+		return _assetCategoryProperty.toCacheModel();
+	}
+
+	@Override
+	public int compareTo(AssetCategoryProperty assetCategoryProperty) {
+		return _assetCategoryProperty.compareTo(assetCategoryProperty);
+	}
+
+	@Override
+	public int hashCode() {
+		return _assetCategoryProperty.hashCode();
+	}
+
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _assetCategoryProperty.getPrimaryKeyObj();
+	}
+
+	@Override
+	public java.lang.Object clone() {
+		return new AssetCategoryPropertyWrapper((AssetCategoryProperty)_assetCategoryProperty.clone());
 	}
 
 	/**
@@ -193,41 +192,6 @@ public class AssetCategoryPropertyWrapper implements AssetCategoryProperty,
 	@Override
 	public java.lang.String getKey() {
 		return _assetCategoryProperty.getKey();
-	}
-
-	/**
-	* Returns the modified date of this asset category property.
-	*
-	* @return the modified date of this asset category property
-	*/
-	@Override
-	public Date getModifiedDate() {
-		return _assetCategoryProperty.getModifiedDate();
-	}
-
-	/**
-	* Returns the primary key of this asset category property.
-	*
-	* @return the primary key of this asset category property
-	*/
-	@Override
-	public long getPrimaryKey() {
-		return _assetCategoryProperty.getPrimaryKey();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _assetCategoryProperty.getPrimaryKeyObj();
-	}
-
-	/**
-	* Returns the user ID of this asset category property.
-	*
-	* @return the user ID of this asset category property
-	*/
-	@Override
-	public long getUserId() {
-		return _assetCategoryProperty.getUserId();
 	}
 
 	/**
@@ -261,23 +225,83 @@ public class AssetCategoryPropertyWrapper implements AssetCategoryProperty,
 	}
 
 	@Override
-	public int hashCode() {
-		return _assetCategoryProperty.hashCode();
+	public java.lang.String toString() {
+		return _assetCategoryProperty.toString();
 	}
 
 	@Override
-	public boolean isCachedModel() {
-		return _assetCategoryProperty.isCachedModel();
+	public java.lang.String toXmlString() {
+		return _assetCategoryProperty.toXmlString();
 	}
 
+	/**
+	* Returns the create date of this asset category property.
+	*
+	* @return the create date of this asset category property
+	*/
 	@Override
-	public boolean isEscapedModel() {
-		return _assetCategoryProperty.isEscapedModel();
+	public Date getCreateDate() {
+		return _assetCategoryProperty.getCreateDate();
 	}
 
+	/**
+	* Returns the modified date of this asset category property.
+	*
+	* @return the modified date of this asset category property
+	*/
 	@Override
-	public boolean isNew() {
-		return _assetCategoryProperty.isNew();
+	public Date getModifiedDate() {
+		return _assetCategoryProperty.getModifiedDate();
+	}
+
+	/**
+	* Returns the category ID of this asset category property.
+	*
+	* @return the category ID of this asset category property
+	*/
+	@Override
+	public long getCategoryId() {
+		return _assetCategoryProperty.getCategoryId();
+	}
+
+	/**
+	* Returns the category property ID of this asset category property.
+	*
+	* @return the category property ID of this asset category property
+	*/
+	@Override
+	public long getCategoryPropertyId() {
+		return _assetCategoryProperty.getCategoryPropertyId();
+	}
+
+	/**
+	* Returns the company ID of this asset category property.
+	*
+	* @return the company ID of this asset category property
+	*/
+	@Override
+	public long getCompanyId() {
+		return _assetCategoryProperty.getCompanyId();
+	}
+
+	/**
+	* Returns the primary key of this asset category property.
+	*
+	* @return the primary key of this asset category property
+	*/
+	@Override
+	public long getPrimaryKey() {
+		return _assetCategoryProperty.getPrimaryKey();
+	}
+
+	/**
+	* Returns the user ID of this asset category property.
+	*
+	* @return the user ID of this asset category property
+	*/
+	@Override
+	public long getUserId() {
+		return _assetCategoryProperty.getUserId();
 	}
 
 	@Override
@@ -331,14 +355,14 @@ public class AssetCategoryPropertyWrapper implements AssetCategoryProperty,
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
-		_assetCategoryProperty.setExpandoBridgeAttributes(baseModel);
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
+		_assetCategoryProperty.setExpandoBridgeAttributes(expandoBridge);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
-		_assetCategoryProperty.setExpandoBridgeAttributes(expandoBridge);
+	public void setExpandoBridgeAttributes(
+		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
+		_assetCategoryProperty.setExpandoBridgeAttributes(baseModel);
 	}
 
 	@Override
@@ -427,31 +451,6 @@ public class AssetCategoryPropertyWrapper implements AssetCategoryProperty,
 	}
 
 	@Override
-	public com.liferay.portal.kernel.model.CacheModel<com.liferay.asset.kernel.model.AssetCategoryProperty> toCacheModel() {
-		return _assetCategoryProperty.toCacheModel();
-	}
-
-	@Override
-	public com.liferay.asset.kernel.model.AssetCategoryProperty toEscapedModel() {
-		return new AssetCategoryPropertyWrapper(_assetCategoryProperty.toEscapedModel());
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _assetCategoryProperty.toString();
-	}
-
-	@Override
-	public com.liferay.asset.kernel.model.AssetCategoryProperty toUnescapedModel() {
-		return new AssetCategoryPropertyWrapper(_assetCategoryProperty.toUnescapedModel());
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _assetCategoryProperty.toXmlString();
-	}
-
-	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
@@ -463,7 +462,7 @@ public class AssetCategoryPropertyWrapper implements AssetCategoryProperty,
 
 		AssetCategoryPropertyWrapper assetCategoryPropertyWrapper = (AssetCategoryPropertyWrapper)obj;
 
-		if (Validator.equals(_assetCategoryProperty,
+		if (Objects.equals(_assetCategoryProperty,
 					assetCategoryPropertyWrapper._assetCategoryProperty)) {
 			return true;
 		}

@@ -31,17 +31,13 @@ else {
 	statusId = MembershipRequestConstants.STATUS_PENDING;
 }
 
-long groupId = ParamUtil.getLong(request, "groupId", themeDisplay.getSiteGroupId());
-
-Group group = GroupLocalServiceUtil.getGroup(groupId);
-
 String displayStyle = portalPreferences.getValue(SiteMembershipsPortletKeys.SITE_MEMBERSHIPS_ADMIN, "display-style", "icon");
 
 PortletURL portletURL = renderResponse.createRenderURL();
 
 portletURL.setParameter("mvcPath", "/view_membership_requests.jsp");
 portletURL.setParameter("tabs1", tabs1);
-portletURL.setParameter("groupId", String.valueOf(group.getGroupId()));
+portletURL.setParameter("groupId", String.valueOf(scopeGroupId));
 
 SearchContainer siteMembershipSearch = new SearchContainer(renderRequest, portletURL, null, "no-requests-were-found");
 
@@ -63,11 +59,11 @@ siteMembershipSearch.setOrderByComparator(orderByComparator);
 
 siteMembershipSearch.setOrderByType(orderByType);
 
-int membershipRequestCount = MembershipRequestLocalServiceUtil.searchCount(group.getGroupId(), statusId);
+int membershipRequestCount = MembershipRequestLocalServiceUtil.searchCount(scopeGroupId, statusId);
 
 siteMembershipSearch.setTotal(membershipRequestCount);
 
-List results = MembershipRequestLocalServiceUtil.search(group.getGroupId(), statusId, siteMembershipSearch.getStart(), siteMembershipSearch.getEnd(), siteMembershipSearch.getOrderByComparator());
+List results = MembershipRequestLocalServiceUtil.search(scopeGroupId, statusId, siteMembershipSearch.getStart(), siteMembershipSearch.getEnd(), siteMembershipSearch.getOrderByComparator());
 
 siteMembershipSearch.setResults(results);
 
@@ -150,7 +146,7 @@ renderResponse.setTitle(LanguageUtil.get(request, "membership-requests"));
 		>
 			<c:choose>
 				<c:when test='<%= tabs1.equals("pending") %>'>
-					 <%@ include file="/view_membership_requests_pending_columns.jspf" %>
+					<%@ include file="/view_membership_requests_pending_columns.jspf" %>
 				</c:when>
 				<c:otherwise>
 					<%@ include file="/view_membership_requests_columns.jspf" %>

@@ -14,17 +14,20 @@
 
 package com.liferay.polls.upgrade.v1_0_0;
 
+import com.liferay.polls.constants.PollsPortletKeys;
+import com.liferay.portal.kernel.upgrade.BaseUpgradePortletId;
+
 /**
  * @author Miguel Pastor
+ * @author Peter Fellwock
  */
-public class UpgradePortletId
-	extends com.liferay.portal.upgrade.util.UpgradePortletId {
+public class UpgradePortletId extends BaseUpgradePortletId {
 
 	@Override
 	protected String[][] getRenamePortletIdsArray() {
 		return new String[][] {
-			new String[] {"25", "25_WAR_pollsweb"},
-			new String[] {"59", "59_WAR_pollsweb"}
+			new String[] {"25", PollsPortletKeys.POLLS},
+			new String[] {"59", PollsPortletKeys.POLLS_DISPLAY}
 		};
 	}
 

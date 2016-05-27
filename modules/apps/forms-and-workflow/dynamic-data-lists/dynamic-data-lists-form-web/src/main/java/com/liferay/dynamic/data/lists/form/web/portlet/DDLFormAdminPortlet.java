@@ -26,6 +26,7 @@ import com.liferay.dynamic.data.mapping.constants.DDMWebKeys;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeServicesTracker;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderer;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingContext;
+import com.liferay.dynamic.data.mapping.form.values.factory.DDMFormValuesFactory;
 import com.liferay.dynamic.data.mapping.io.DDMFormFieldTypesJSONSerializer;
 import com.liferay.dynamic.data.mapping.io.DDMFormJSONSerializer;
 import com.liferay.dynamic.data.mapping.io.DDMFormLayoutJSONSerializer;
@@ -41,6 +42,7 @@ import com.liferay.dynamic.data.mapping.storage.StorageAdapterRegistry;
 import com.liferay.dynamic.data.mapping.storage.StorageEngine;
 import com.liferay.dynamic.data.mapping.util.DDMFormFactory;
 import com.liferay.dynamic.data.mapping.util.DDMFormLayoutFactory;
+import com.liferay.dynamic.data.mapping.util.DDMFormValuesMerger;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactory;
@@ -56,7 +58,7 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowDefinition;
-import com.liferay.portal.kernel.workflow.WorkflowDefinitionManagerUtil;
+import com.liferay.portal.kernel.workflow.WorkflowDefinitionManager;
 import com.liferay.portal.kernel.workflow.WorkflowEngineManager;
 
 import java.io.IOException;
@@ -70,6 +72,8 @@ import javax.portlet.Portlet;
 import javax.portlet.PortletException;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
+
+import javax.servlet.Servlet;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -88,7 +92,6 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
 		"com.liferay.portlet.header-portlet-css=/admin/css/main.css",
 		"com.liferay.portlet.icon=/admin/icons/form.png",
 		"com.liferay.portlet.instanceable=false",
-		"com.liferay.portlet.layout-cacheable=true",
 		"com.liferay.portlet.preferences-owned-by-group=true",
 		"com.liferay.portlet.private-request-attributes=false",
 		"com.liferay.portlet.private-session-attributes=false",
@@ -130,6 +133,35 @@ public class DDLFormAdminPortlet extends MVCPortlet {
 		}
 
 		super.render(renderRequest, renderResponse);
+	}
+
+	protected void addWorkflowDefinitionDDMFormFieldOptionLabels(
+			DDMFormFieldOptions ddmFormFieldOptions, ThemeDisplay themeDisplay)
+		throws PortalException {
+
+		if (!_workflowEngineManager.isDeployed()) {
+			return;
+		}
+
+		List<WorkflowDefinition> workflowDefinitions =
+			_workflowDefinitionManager.getActiveWorkflowDefinitions(
+				themeDisplay.getCompanyId(), QueryUtil.ALL_POS,
+				QueryUtil.ALL_POS, null);
+
+		for (WorkflowDefinition workflowDefinition : workflowDefinitions) {
+			String value =
+				workflowDefinition.getName() + StringPool.AT +
+					workflowDefinition.getVersion();
+
+			String version = LanguageUtil.format(
+				themeDisplay.getLocale(), "version-x",
+				workflowDefinition.getVersion(), false);
+
+			String label = workflowDefinition.getName() + " (" + version + ")";
+
+			ddmFormFieldOptions.addOptionLabel(
+				value, themeDisplay.getLocale(), label);
+		}
 	}
 
 	protected DDMFormRenderingContext createDDMFormRenderingContext(
@@ -235,23 +267,8 @@ public class DDLFormAdminPortlet extends MVCPortlet {
 		ddmFormFieldOptions.addOptionLabel(
 			StringPool.BLANK, locale, LanguageUtil.get(locale, "no-workflow"));
 
-		List<WorkflowDefinition> workflowDefinitions =
-			WorkflowDefinitionManagerUtil.getActiveWorkflowDefinitions(
-				themeDisplay.getCompanyId(), QueryUtil.ALL_POS,
-				QueryUtil.ALL_POS, null);
-
-		for (WorkflowDefinition workflowDefinition : workflowDefinitions) {
-			String value =
-				workflowDefinition.getName() + StringPool.AT +
-					workflowDefinition.getVersion();
-
-			String version = LanguageUtil.format(
-				locale, "version-x", workflowDefinition.getVersion(), false);
-
-			String label = workflowDefinition.getName() + " (" + version + ")";
-
-			ddmFormFieldOptions.addOptionLabel(value, locale, label);
-		}
+		addWorkflowDefinitionDDMFormFieldOptionLabels(
+			ddmFormFieldOptions, themeDisplay);
 
 		return ddmFormFieldOptions;
 	}
@@ -259,7 +276,7 @@ public class DDLFormAdminPortlet extends MVCPortlet {
 	@Reference(
 		cardinality = ReferenceCardinality.OPTIONAL,
 		policy = ReferencePolicy.DYNAMIC,
-		policyOption = ReferencePolicyOption.GREEDY, unbind = "-"
+		policyOption = ReferencePolicyOption.GREEDY
 	)
 	protected void setDDLFormWebConfigurationActivator(
 		DDLFormWebConfigurationActivator ddlFormWebConfigurationActivator) {
@@ -295,6 +312,14 @@ public class DDLFormAdminPortlet extends MVCPortlet {
 
 		_ddmDataProviderInstanceLocalService =
 			ddmDataProviderInstanceLocalService;
+	}
+
+	@Reference(
+		target = "(osgi.http.whiteboard.servlet.name=com.liferay.dynamic.data.mapping.form.evaluator.internal.servlet.DDMFormEvaluatorServlet)",
+		unbind = "-"
+	)
+	protected void setDDMFormEvaluatorServlet(Servlet ddmFormEvaluatorServlet) {
+		_ddmFormEvaluatorServlet = ddmFormEvaluatorServlet;
 	}
 
 	@Reference(unbind = "-")
@@ -348,6 +373,20 @@ public class DDLFormAdminPortlet extends MVCPortlet {
 	}
 
 	@Reference(unbind = "-")
+	protected void setDDMFormValuesFactory(
+		DDMFormValuesFactory ddmFormValuesFactory) {
+
+		_ddmFormValuesFactory = ddmFormValuesFactory;
+	}
+
+	@Reference(unbind = "-")
+	protected void setDDMFormValuesMerger(
+		DDMFormValuesMerger ddmFormValuesMerger) {
+
+		_ddmFormValuesMerger = ddmFormValuesMerger;
+	}
+
+	@Reference(unbind = "-")
 	protected void setDDMStructureLocalService(
 		DDMStructureLocalService ddmStructureLocalService) {
 
@@ -392,10 +431,11 @@ public class DDLFormAdminPortlet extends MVCPortlet {
 				renderRequest, renderResponse,
 				_ddlFormWebConfigurationActivator.getDDLFormWebConfiguration(),
 				_ddlRecordLocalService, _ddlRecordSetService,
-				_ddmDataProviderInstanceLocalService,
+				_ddmDataProviderInstanceLocalService, _ddmFormEvaluatorServlet,
 				_ddmFormFieldTypeServicesTracker,
 				_ddmFormFieldTypesJSONSerializer, _ddmFormJSONSerializer,
 				_ddmFormLayoutJSONSerializer, _ddmFormRenderer,
+				_ddmFormValuesFactory, _ddmFormValuesMerger,
 				_ddmStructureLocalService, _jsonFactory, _storageEngine,
 				_workflowEngineManager);
 
@@ -416,10 +456,23 @@ public class DDLFormAdminPortlet extends MVCPortlet {
 	}
 
 	@Reference(unbind = "-")
+	protected void setWorkflowDefinitionManager(
+		WorkflowDefinitionManager workflowDefinitionManager) {
+
+		_workflowDefinitionManager = workflowDefinitionManager;
+	}
+
+	@Reference(unbind = "-")
 	protected void setWorkflowEngineManager(
 		WorkflowEngineManager workflowEngineManager) {
 
 		_workflowEngineManager = workflowEngineManager;
+	}
+
+	protected void unsetDDLFormWebConfigurationActivator(
+		DDLFormWebConfigurationActivator ddlFormWebConfigurationActivator) {
+
+		_ddlFormWebConfigurationActivator = null;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
@@ -431,15 +484,19 @@ public class DDLFormAdminPortlet extends MVCPortlet {
 	private DDLRecordSetService _ddlRecordSetService;
 	private DDMDataProviderInstanceLocalService
 		_ddmDataProviderInstanceLocalService;
+	private Servlet _ddmFormEvaluatorServlet;
 	private DDMFormFieldTypeServicesTracker _ddmFormFieldTypeServicesTracker;
 	private DDMFormFieldTypesJSONSerializer _ddmFormFieldTypesJSONSerializer;
 	private DDMFormJSONSerializer _ddmFormJSONSerializer;
 	private DDMFormLayoutJSONSerializer _ddmFormLayoutJSONSerializer;
 	private DDMFormRenderer _ddmFormRenderer;
+	private DDMFormValuesFactory _ddmFormValuesFactory;
+	private DDMFormValuesMerger _ddmFormValuesMerger;
 	private DDMStructureLocalService _ddmStructureLocalService;
 	private JSONFactory _jsonFactory;
 	private StorageAdapterRegistry _storageAdapterRegistry;
 	private StorageEngine _storageEngine;
+	private WorkflowDefinitionManager _workflowDefinitionManager;
 	private WorkflowEngineManager _workflowEngineManager;
 
 }

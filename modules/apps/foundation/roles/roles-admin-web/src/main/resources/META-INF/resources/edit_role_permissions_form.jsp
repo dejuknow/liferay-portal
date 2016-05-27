@@ -192,7 +192,7 @@ if (Validator.isNotNull(portletResource)) {
 
 				row.addText(PortalUtil.getPortletLongTitle(curPortlet, application, locale) + ": " + _getActionLabel(request, themeDisplay, resource, actionId));
 
-				row.addJSP("/edit_role_permissions_resource_scope.jsp");
+				row.addJSP("/edit_role_permissions_resource_scope.jsp", application, request, response);
 
 				resultRows.add(row);
 			}
@@ -203,7 +203,6 @@ if (Validator.isNotNull(portletResource)) {
 			<aui:input name="relatedPortletResources" type="hidden" value="<%= StringUtil.merge(relatedPortletResources) %>" />
 
 			<liferay-ui:search-iterator paginate="<%= false %>" searchContainer="<%= searchContainer %>" />
-
 		</div>
 	</c:if>
 

@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.osgi.framework.Bundle;
@@ -69,11 +70,7 @@ public class SoyPortletHelper {
 	}
 
 	public String getTemplateNamespace(String path) {
-		if (_moduleName == null) {
-			return path;
-		}
-
-		return "Templates.".concat(path).concat(".render");
+		return path.concat(".render");
 	}
 
 	protected JSONObject createContextJSONObject(
@@ -82,7 +79,7 @@ public class SoyPortletHelper {
 		JSONObject contextJSONObject = JSONFactoryUtil.createJSONObject();
 
 		for (String key : template.getKeys()) {
-			if (Validator.equals(key, TemplateConstants.NAMESPACE)) {
+			if (Objects.equals(key, TemplateConstants.NAMESPACE)) {
 				continue;
 			}
 
@@ -161,13 +158,14 @@ public class SoyPortletHelper {
 			return Collections.emptySet();
 		}
 
-		Set<String> requiredModules = new LinkedHashSet<>(
-			additionalRequiredModules);
+		Set<String> requiredModules = new LinkedHashSet<>();
 
 		String controllerName = getControllerName(path);
 
 		requiredModules.add(
 			_moduleName.concat(StringPool.SLASH).concat(controllerName));
+
+		requiredModules.addAll(additionalRequiredModules);
 
 		return requiredModules;
 	}

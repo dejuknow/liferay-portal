@@ -174,14 +174,14 @@ public class PoshiRunnerExecutor {
 				else if (childElement.attributeValue("macro") != null) {
 					runMacroExecuteElement(childElement, "macro");
 				}
-				else if ((childElement.attributeValue(
-							"macro-desktop") != null) &&
+				else if ((childElement.attributeValue("macro-desktop") !=
+							null) &&
 						 !PropsValues.MOBILE_BROWSER) {
 
 					runMacroExecuteElement(childElement, "macro-desktop");
 				}
-				else if ((childElement.attributeValue(
-							"macro-mobile") != null) &&
+				else if ((childElement.attributeValue("macro-mobile") !=
+							null) &&
 						 PropsValues.MOBILE_BROWSER) {
 
 					runMacroExecuteElement(childElement, "macro-mobile");
@@ -457,7 +457,9 @@ public class PoshiRunnerExecutor {
 			List<String> arguments = new ArrayList<>();
 
 			for (Element executeArgElement : executeArgElements) {
-				arguments.add(executeArgElement.attributeValue("value"));
+				arguments.add(
+					PoshiRunnerVariablesUtil.replaceCommandVars(
+						executeArgElement.attributeValue("value")));
 			}
 
 			binding.setVariable(
@@ -778,6 +780,7 @@ public class PoshiRunnerExecutor {
 						selenium.equals("assertNotLocation") ||
 						selenium.equals("assertTextNotPresent") ||
 						selenium.equals("assertTextPresent") ||
+						selenium.equals("scrollBy") ||
 						selenium.equals("waitForConfirmation") ||
 						selenium.equals("waitForTextNotPresent") ||
 						selenium.equals("waitForTextPresent")) {

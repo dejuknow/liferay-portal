@@ -33,6 +33,10 @@ AUI.add(
 						validator: Lang.isString,
 						value: ''
 					},
+					editItemURL: {
+						validator: Lang.isString,
+						value: ''
+					},
 					maxFileSize: {
 						setter: Lang.toInt,
 						value: Liferay.PropsValues.UPLOAD_SERVLET_REQUEST_IMPL_MAX_SIZE
@@ -41,7 +45,7 @@ AUI.add(
 						validator: Lang.isString,
 						value: ''
 					},
-					uploadItemUrl: {
+					uploadItemURL: {
 						validator: Lang.isString,
 						value: ''
 					}
@@ -60,15 +64,19 @@ AUI.add(
 						instance._itemViewer = new A.LiferayItemViewer(
 							{
 								btnCloseCaption: instance.get('closeCaption'),
-								links: instance.all('.item-preview')
+								editItemURL: instance.get('editItemURL'),
+								links: instance.all('.item-preview'),
+								uploadItemURL: instance.get('uploadItemURL')
 							}
 						);
 
 						instance._uploadItemViewer = new A.LiferayItemViewer(
 							{
 								btnCloseCaption: instance.get('closeCaption'),
+								editItemURL: instance.get('editItemURL'),
 								links: '',
-								renderControls: false
+								renderControls: false,
+								uploadItemURL: instance.get('uploadItemURL')
 							}
 						);
 
@@ -178,7 +186,7 @@ AUI.add(
 								message = error.message;
 							}
 							else if (errorType === STATUS_CODE.SC_FILE_EXTENSION_EXCEPTION) {
-								message = Lang.sub(Liferay.Language.get('please-enter-a-file-with-a-valid-extension-x'), [instance.get('validExtensions')]);
+								message = Lang.sub(Liferay.Language.get('please-enter-a-file-with-a-valid-extension-x'), [error.message]);
 							}
 							else if (errorType === STATUS_CODE.SC_FILE_NAME_EXCEPTION) {
 								message = Liferay.Language.get('please-enter-a-file-with-a-valid-file-name');
@@ -260,11 +268,7 @@ AUI.add(
 					_onItemUploadCancel: function(event) {
 						var instance = this;
 
-						var uploadItemViewer = instance._uploadItemViewer;
-
-						if (uploadItemViewer) {
-							uploadItemViewer.hide();
-						}
+						instance._uploadItemViewer.hide();
 					},
 
 					_onItemUploadComplete: function(itemData) {
@@ -272,9 +276,7 @@ AUI.add(
 
 						var uploadItemViewer = instance._uploadItemViewer;
 
-						if (uploadItemViewer) {
-							uploadItemViewer.updateCurrentImage(itemData);
-						}
+						uploadItemViewer.updateCurrentImage(itemData);
 
 						instance._onItemSelected(uploadItemViewer);
 					},
@@ -282,11 +284,7 @@ AUI.add(
 					_onItemUploadError: function(event) {
 						var instance = this;
 
-						var uploadItemViewer = instance._uploadItemViewer;
-
-						if (uploadItemViewer) {
-							uploadItemViewer.hide();
-						}
+						instance._uploadItemViewer.hide();
 
 						instance._getUploadErrorMessage(event.error).show();
 					},
@@ -322,6 +320,10 @@ AUI.add(
 
 						var returnType = instance.get('uploadItemReturnType');
 
+						if (!file.type.match(/image.*/)) {
+							preview = Liferay.ThemeDisplay.getPathThemeImages() + '/file_system/large/default.png';
+						}
+
 						var linkNode = A.Node.create(
 							Lang.sub(
 								UPLOAD_ITEM_LINK_TPL,
@@ -339,7 +341,7 @@ AUI.add(
 						instance._uploadItemViewer.set(STR_LINKS, new A.NodeList(linkNode));
 						instance._uploadItemViewer.show();
 
-						instance._itemSelectorUploader.startUpload(file, instance.get('uploadItemUrl'));
+						instance._itemSelectorUploader.startUpload(file, instance.get('uploadItemURL'));
 					}
 				}
 			}

@@ -19,12 +19,12 @@ import aQute.bnd.annotation.ProviderType;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Serializable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * <p>
@@ -196,28 +196,49 @@ public class OrgLaborWrapper implements OrgLabor, ModelWrapper<OrgLabor> {
 	}
 
 	@Override
-	public java.lang.Object clone() {
-		return new OrgLaborWrapper((OrgLabor)_orgLabor.clone());
+	public CacheModel<OrgLabor> toCacheModel() {
+		return _orgLabor.toCacheModel();
 	}
 
 	@Override
-	public int compareTo(com.liferay.portal.kernel.model.OrgLabor orgLabor) {
-		return _orgLabor.compareTo(orgLabor);
+	public ListType getType()
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _orgLabor.getType();
 	}
 
-	/**
-	* Returns the company ID of this org labor.
-	*
-	* @return the company ID of this org labor
-	*/
 	@Override
-	public long getCompanyId() {
-		return _orgLabor.getCompanyId();
+	public OrgLabor toEscapedModel() {
+		return new OrgLaborWrapper(_orgLabor.toEscapedModel());
+	}
+
+	@Override
+	public OrgLabor toUnescapedModel() {
+		return new OrgLaborWrapper(_orgLabor.toUnescapedModel());
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _orgLabor.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _orgLabor.isEscapedModel();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _orgLabor.isNew();
 	}
 
 	@Override
 	public ExpandoBridge getExpandoBridge() {
 		return _orgLabor.getExpandoBridge();
+	}
+
+	@Override
+	public int compareTo(OrgLabor orgLabor) {
+		return _orgLabor.compareTo(orgLabor);
 	}
 
 	/**
@@ -258,51 +279,6 @@ public class OrgLaborWrapper implements OrgLabor, ModelWrapper<OrgLabor> {
 	@Override
 	public int getMonOpen() {
 		return _orgLabor.getMonOpen();
-	}
-
-	/**
-	* Returns the mvcc version of this org labor.
-	*
-	* @return the mvcc version of this org labor
-	*/
-	@Override
-	public long getMvccVersion() {
-		return _orgLabor.getMvccVersion();
-	}
-
-	/**
-	* Returns the org labor ID of this org labor.
-	*
-	* @return the org labor ID of this org labor
-	*/
-	@Override
-	public long getOrgLaborId() {
-		return _orgLabor.getOrgLaborId();
-	}
-
-	/**
-	* Returns the organization ID of this org labor.
-	*
-	* @return the organization ID of this org labor
-	*/
-	@Override
-	public long getOrganizationId() {
-		return _orgLabor.getOrganizationId();
-	}
-
-	/**
-	* Returns the primary key of this org labor.
-	*
-	* @return the primary key of this org labor
-	*/
-	@Override
-	public long getPrimaryKey() {
-		return _orgLabor.getPrimaryKey();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _orgLabor.getPrimaryKeyObj();
 	}
 
 	/**
@@ -385,22 +361,6 @@ public class OrgLaborWrapper implements OrgLabor, ModelWrapper<OrgLabor> {
 		return _orgLabor.getTueOpen();
 	}
 
-	@Override
-	public com.liferay.portal.kernel.model.ListType getType()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _orgLabor.getType();
-	}
-
-	/**
-	* Returns the type ID of this org labor.
-	*
-	* @return the type ID of this org labor
-	*/
-	@Override
-	public long getTypeId() {
-		return _orgLabor.getTypeId();
-	}
-
 	/**
 	* Returns the wed close of this org labor.
 	*
@@ -427,18 +387,83 @@ public class OrgLaborWrapper implements OrgLabor, ModelWrapper<OrgLabor> {
 	}
 
 	@Override
-	public boolean isCachedModel() {
-		return _orgLabor.isCachedModel();
+	public Serializable getPrimaryKeyObj() {
+		return _orgLabor.getPrimaryKeyObj();
 	}
 
 	@Override
-	public boolean isEscapedModel() {
-		return _orgLabor.isEscapedModel();
+	public java.lang.Object clone() {
+		return new OrgLaborWrapper((OrgLabor)_orgLabor.clone());
 	}
 
 	@Override
-	public boolean isNew() {
-		return _orgLabor.isNew();
+	public java.lang.String toString() {
+		return _orgLabor.toString();
+	}
+
+	@Override
+	public java.lang.String toXmlString() {
+		return _orgLabor.toXmlString();
+	}
+
+	/**
+	* Returns the company ID of this org labor.
+	*
+	* @return the company ID of this org labor
+	*/
+	@Override
+	public long getCompanyId() {
+		return _orgLabor.getCompanyId();
+	}
+
+	/**
+	* Returns the mvcc version of this org labor.
+	*
+	* @return the mvcc version of this org labor
+	*/
+	@Override
+	public long getMvccVersion() {
+		return _orgLabor.getMvccVersion();
+	}
+
+	/**
+	* Returns the org labor ID of this org labor.
+	*
+	* @return the org labor ID of this org labor
+	*/
+	@Override
+	public long getOrgLaborId() {
+		return _orgLabor.getOrgLaborId();
+	}
+
+	/**
+	* Returns the organization ID of this org labor.
+	*
+	* @return the organization ID of this org labor
+	*/
+	@Override
+	public long getOrganizationId() {
+		return _orgLabor.getOrganizationId();
+	}
+
+	/**
+	* Returns the primary key of this org labor.
+	*
+	* @return the primary key of this org labor
+	*/
+	@Override
+	public long getPrimaryKey() {
+		return _orgLabor.getPrimaryKey();
+	}
+
+	/**
+	* Returns the type ID of this org labor.
+	*
+	* @return the type ID of this org labor
+	*/
+	@Override
+	public long getTypeId() {
+		return _orgLabor.getTypeId();
 	}
 
 	@Override
@@ -677,31 +702,6 @@ public class OrgLaborWrapper implements OrgLabor, ModelWrapper<OrgLabor> {
 	}
 
 	@Override
-	public CacheModel<com.liferay.portal.kernel.model.OrgLabor> toCacheModel() {
-		return _orgLabor.toCacheModel();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.model.OrgLabor toEscapedModel() {
-		return new OrgLaborWrapper(_orgLabor.toEscapedModel());
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _orgLabor.toString();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.model.OrgLabor toUnescapedModel() {
-		return new OrgLaborWrapper(_orgLabor.toUnescapedModel());
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _orgLabor.toXmlString();
-	}
-
-	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
@@ -713,7 +713,7 @@ public class OrgLaborWrapper implements OrgLabor, ModelWrapper<OrgLabor> {
 
 		OrgLaborWrapper orgLaborWrapper = (OrgLaborWrapper)obj;
 
-		if (Validator.equals(_orgLabor, orgLaborWrapper._orgLabor)) {
+		if (Objects.equals(_orgLabor, orgLaborWrapper._orgLabor)) {
 			return true;
 		}
 

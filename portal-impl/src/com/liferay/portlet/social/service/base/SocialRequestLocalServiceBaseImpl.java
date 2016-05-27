@@ -242,7 +242,7 @@ public abstract class SocialRequestLocalServiceBaseImpl
 	public ActionableDynamicQuery getActionableDynamicQuery() {
 		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
 
-		actionableDynamicQuery.setBaseLocalService(com.liferay.social.kernel.service.SocialRequestLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(socialRequestLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(SocialRequest.class);
 
@@ -255,7 +255,7 @@ public abstract class SocialRequestLocalServiceBaseImpl
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
 		IndexableActionableDynamicQuery indexableActionableDynamicQuery = new IndexableActionableDynamicQuery();
 
-		indexableActionableDynamicQuery.setBaseLocalService(com.liferay.social.kernel.service.SocialRequestLocalServiceUtil.getService());
+		indexableActionableDynamicQuery.setBaseLocalService(socialRequestLocalService);
 		indexableActionableDynamicQuery.setClassLoader(getClassLoader());
 		indexableActionableDynamicQuery.setModelClass(SocialRequest.class);
 
@@ -266,7 +266,7 @@ public abstract class SocialRequestLocalServiceBaseImpl
 
 	protected void initActionableDynamicQuery(
 		ActionableDynamicQuery actionableDynamicQuery) {
-		actionableDynamicQuery.setBaseLocalService(com.liferay.social.kernel.service.SocialRequestLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(socialRequestLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(SocialRequest.class);
 
@@ -592,7 +592,7 @@ public abstract class SocialRequestLocalServiceBaseImpl
 		}
 	}
 
-	@BeanReference(type = com.liferay.social.kernel.service.SocialRequestLocalService.class)
+	@BeanReference(type = SocialRequestLocalService.class)
 	protected SocialRequestLocalService socialRequestLocalService;
 	@BeanReference(type = SocialRequestPersistence.class)
 	protected SocialRequestPersistence socialRequestPersistence;

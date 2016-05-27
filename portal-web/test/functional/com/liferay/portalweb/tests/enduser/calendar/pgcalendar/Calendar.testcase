@@ -1,5 +1,6 @@
 <definition component-name="portal-calendar">
-	<property name="custom.properties" value="default.layout.template.id=1_column" />
+	<property name="portal.release" value="true" />
+	<property name="custom.properties" value="default.layout.template.id=1_column${line.separator}company.default.time.zone=America/Los_Angeles" />
 	<property name="testray.main.component.name" value="Calendar" />
 
 	<var name="pageName" value="Calendar Page" />
@@ -2367,6 +2368,7 @@
 
 	<command name="DeleteEventRegular"  priority="5">
 		<property name="portal.acceptance" value="true" />
+		<property name="test.name.skip.portal.instance" value="Calendar#DeleteEventRegular" />
 
 		<execute macro="TestCase#getSiteName">
 			<return from="siteName" name="siteName" />
@@ -2442,6 +2444,7 @@
 
 	<command name="DeleteEventRepeatingAllFollowing" priority="5">
 		<property name="portal.acceptance" value="true" />
+		<property name="test.name.skip.portal.instance" value="Calendar#DeleteEventRepeatingAllFollowing" />
 
 		<var name="eventTitle" value="Calendar Event Repeating Title" />
 		<var name="eventType" value="Repeating" />
@@ -3194,13 +3197,11 @@
 			<var name="eventTitle" value="Original Event Title" />
 		</execute>
 
-		<execute macro="CalendarScheduler#gotoEditViaDialogBox" />
-
-		<execute macro="CalendarEvent#editTitle">
+		<execute macro="CalendarScheduler#editTitle">
 			<var name="eventTitle" value="Edited Title" />
 		</execute>
 
-		<execute macro="CalendarEvent#publishRepeating">
+		<execute macro="CalendarScheduler#saveRepeatingEvent">
 			<var name="saveOption" value="All Events in the Series" />
 		</execute>
 
@@ -4358,15 +4359,6 @@
 
 		<execute macro="User#editPasswordCP">
 			<var name="userEmailAddress" value="userea1@liferay.com" />
-			<var name="userScreenName" value="usersn1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#unassignRegularRoleCP">
-			<var name="roleName" value="Power User" />
 			<var name="userScreenName" value="usersn1" />
 		</execute>
 

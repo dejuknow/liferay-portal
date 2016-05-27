@@ -56,6 +56,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -199,7 +200,7 @@ public class WebsitePersistenceImpl extends BasePersistenceImpl<Website>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (Website website : list) {
-					if (!Validator.equals(uuid, website.getUuid())) {
+					if (!Objects.equals(uuid, website.getUuid())) {
 						list = null;
 
 						break;
@@ -755,7 +756,7 @@ public class WebsitePersistenceImpl extends BasePersistenceImpl<Website>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (Website website : list) {
-					if (!Validator.equals(uuid, website.getUuid()) ||
+					if (!Objects.equals(uuid, website.getUuid()) ||
 							(companyId != website.getCompanyId())) {
 						list = null;
 
@@ -4102,8 +4103,8 @@ public class WebsitePersistenceImpl extends BasePersistenceImpl<Website>
 			Website website = (Website)session.get(WebsiteImpl.class, primaryKey);
 
 			if (website == null) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+				if (_log.isDebugEnabled()) {
+					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchWebsiteException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
@@ -4408,8 +4409,8 @@ public class WebsitePersistenceImpl extends BasePersistenceImpl<Website>
 		Website website = fetchByPrimaryKey(primaryKey);
 
 		if (website == null) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+			if (_log.isDebugEnabled()) {
+				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
 			throw new NoSuchWebsiteException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +

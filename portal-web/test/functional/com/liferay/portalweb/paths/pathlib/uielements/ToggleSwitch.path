@@ -10,13 +10,23 @@
 <tbody>
 <tr>
 	<td>ACTIVE</td>
-	<td>//label[contains(.,'Active')]//span[contains(@class,'toggle-switch-handle')]</td>
+	<td>//label[contains(.,'Active')]//input</td>
 	<td></td>
 </tr>
 
 <tr>
 	<td>ALLOW_SITE_ADMIN_MODIFY_PAGES</td>
 	<td>//label[contains(.,'Allow site administrators to modify')]//span[contains(@class,'toggle-switch-handle')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>DELETE_PORTLET_DATA</td>
+	<td>//label[contains(@for,'DELETE_PORTLET_DATA')]//input</td>
+	<td></td>
+</tr>
+<tr>
+	<td>REPLICATE_INDIVIDUAL_DELETIONS</td>
+	<td>//label[contains(.,'Replicate Individual Deletions')]//input</td>
 	<td></td>
 </tr>
 <tr>

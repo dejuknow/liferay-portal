@@ -49,7 +49,6 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.RSSUtil;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.xml.Attribute;
 import com.liferay.portal.kernel.xml.Document;
@@ -65,6 +64,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author Juan Fernández
@@ -243,6 +243,19 @@ public class JournalTestUtil {
 			_getLocalizedMap(description), _getLocalizedMap(content),
 			defaultLocale, expirationDate, workflowEnabled, approved,
 			serviceContext);
+	}
+
+	public static JournalArticle addArticle(
+			long groupId, long folderId, ServiceContext serviceContext)
+		throws Exception {
+
+		return addArticle(
+			groupId, folderId, JournalArticleConstants.CLASSNAME_ID_DEFAULT,
+			StringPool.BLANK, true,
+			_getLocalizedMap(RandomTestUtil.randomString()),
+			_getLocalizedMap(RandomTestUtil.randomString()),
+			_getLocalizedMap(RandomTestUtil.randomString()), null,
+			LocaleUtil.getSiteDefault(), null, false, false, serviceContext);
 	}
 
 	public static JournalArticle addArticle(
@@ -726,7 +739,7 @@ public class JournalTestUtil {
 
 			String type = dynamicElementElement.attributeValue("type");
 
-			if (Validator.equals(type, "selection_break")) {
+			if (Objects.equals(type, "selection_break")) {
 				continue;
 			}
 
@@ -912,9 +925,9 @@ public class JournalTestUtil {
 
 			// Option element should not contain index type atribute
 
-			if ((Validator.equals(parentType, "list") ||
-				 Validator.equals(parentType, "multi-list")) &&
-				Validator.equals(attribute.getName(), "index-type")) {
+			if ((Objects.equals(parentType, "list") ||
+				 Objects.equals(parentType, "multi-list")) &&
+				Objects.equals(attribute.getName(), "index-type")) {
 
 				continue;
 			}

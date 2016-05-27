@@ -7,7 +7,6 @@ import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
 import com.liferay.exportimport.kernel.lar.StagedModelType;
 import com.liferay.portal.kernel.model.ModelWrapper;
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Serializable;
 
@@ -16,6 +15,7 @@ import java.sql.Blob;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * <p>
@@ -88,12 +88,12 @@ public class ${entity.name}Wrapper implements ${entity.name}, ModelWrapper<${ent
 	}
 
 	<#list methods as method>
+		<#assign parameters = method.parameters>
+
 		<#if !method.isConstructor() && !method.isStatic() && method.isPublic() && !(method.name == "equals" && (parameters?size == 1))>
 			<#if method.name == "getStagedModelType">
 				<#assign hasGetStagedModelTypeMethod = true>
 			</#if>
-
-			<#assign parameters = method.parameters>
 
 			${serviceBuilder.getJavadocComment(method)}
 
@@ -164,7 +164,7 @@ public class ${entity.name}Wrapper implements ${entity.name}, ModelWrapper<${ent
 
 		${entity.name}Wrapper ${entity.varName}Wrapper = (${entity.name}Wrapper)obj;
 
-		if (Validator.equals(_${entity.varName}, ${entity.varName}Wrapper._${entity.varName})) {
+		if (Objects.equals(_${entity.varName}, ${entity.varName}Wrapper._${entity.varName})) {
 			return true;
 		}
 

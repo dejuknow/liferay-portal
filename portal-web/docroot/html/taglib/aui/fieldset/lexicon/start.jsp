@@ -21,9 +21,14 @@ if (Validator.isNull(label)) {
 	collapsible = false;
 	collapsed = false;
 }
+else if (collapsible) {
+	boolean defaultState = collapsed;
+
+	collapsed = GetterUtil.getBoolean(SessionClicks.get(request, id, null), defaultState);
+}
 %>
 
-<div aria-labelledby="<%= id %>Title" class="<%= collapsible ? "panel panel-default" : StringPool.BLANK %> <%= cssClass %>" <%= Validator.isNotNull(id) ? "id=\"" + namespace + id + "\"" : StringPool.BLANK %> <%= InlineUtil.buildDynamicAttributes(dynamicAttributes) %> role="group">
+<fieldset aria-labelledby="<%= id %>Title" class="<%= collapsible ? "panel panel-default" : StringPool.BLANK %> <%= cssClass %>" <%= Validator.isNotNull(id) ? "id=\"" + namespace + id + "\"" : StringPool.BLANK %> <%= InlineUtil.buildDynamicAttributes(dynamicAttributes) %> role="group">
 	<c:if test="<%= Validator.isNotNull(label) %>">
 		<liferay-util:buffer var="header">
 			<liferay-ui:message key="<%= label %>" localizeKey="<%= localizeLabel %>" />

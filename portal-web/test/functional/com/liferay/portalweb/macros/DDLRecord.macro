@@ -198,10 +198,10 @@
 			<then>
 				<var name="key_parentFieldName" value="${parentFieldName}" />
 
-				<execute function="AssertClick" locator1="DDLEditRecord#DOCUMENTS_AND_MEDIA_CHILD_FIELD_CHOOSE_FROM_DOCUMENT_LIBRARY_BUTTON_" value1="Choose from Document Library" />
+				<execute function="AssertClick" locator1="DDLEditRecord#DOCUMENTS_AND_MEDIA_CHILD_FIELD_CHOOSE_FROM_DOCUMENT_LIBRARY_BUTTON_" value1="Select" />
 			</then>
 			<else>
-				<execute function="AssertClick" locator1="DDLEditRecord#DOCUMENTS_AND_MEDIA_CHOOSE_FROM_DOCUMENT_LIBRARY_BUTTON" value1="Choose from Document Library" />
+				<execute function="AssertClick" locator1="DDLEditRecord#DOCUMENTS_AND_MEDIA_CHOOSE_FROM_DOCUMENT_LIBRARY_BUTTON" value1="Select" />
 			</else>
 		</if>
 
@@ -250,7 +250,7 @@
 		<var name="key_ddlRecordFieldData" value="${ddlRecordFieldData}" />
 		<var name="key_fieldName" value="${fieldName}" />
 
-		<execute function="AssertClick" locator1="DDLEditRecord#LINK_TO_PAGE_SELECT_PAGE_BUTTON" value1="Select Page" />
+		<execute function="AssertClick" locator1="DDLEditRecord#LINK_TO_PAGE_SELECT_PAGE_BUTTON" value1="Select" />
 
 		<var name="key_navItem" value="${pagePrivacy} Pages" />
 
@@ -607,6 +607,12 @@
 				<execute function="AssertTextEquals" locator1="DDLEditRecord#TEXT_BOX_FIELD" value1="${fieldPredefinedValue}" />
 			</then>
 		</if>
+	</command>
+
+	<command name="viewFieldRepeatedNotPresent">
+		<execute function="AssertTextEquals" locator1="xpath=(//div[@data-fieldname='${fieldName}'][1]//a[contains(@class,'ddm-repeatable-add-button')]/../div//input)" value1="${ddlRecordFieldData}" />
+		<execute function="AssertElementNotPresent" locator1="xpath=(//div[@data-fieldname='${fieldName}'][2]//a[contains(@class,'ddm-repeatable-add-button')]/../div//input)" />
+		<execute function="AssertElementNotPresent" locator1="xpath=(//div[@data-fieldname='${fieldName}'][3]//a[contains(@class,'ddm-repeatable-add-button')]/../div//input)" />
 	</command>
 
 	<command name="viewFirstFieldCP">

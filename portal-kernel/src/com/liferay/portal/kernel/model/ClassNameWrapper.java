@@ -19,12 +19,12 @@ import aQute.bnd.annotation.ProviderType;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Serializable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * <p>
@@ -84,13 +84,58 @@ public class ClassNameWrapper implements ClassName, ModelWrapper<ClassName> {
 	}
 
 	@Override
-	public java.lang.Object clone() {
-		return new ClassNameWrapper((ClassName)_className.clone());
+	public CacheModel<ClassName> toCacheModel() {
+		return _className.toCacheModel();
 	}
 
 	@Override
-	public int compareTo(com.liferay.portal.kernel.model.ClassName className) {
+	public ClassName toEscapedModel() {
+		return new ClassNameWrapper(_className.toEscapedModel());
+	}
+
+	@Override
+	public ClassName toUnescapedModel() {
+		return new ClassNameWrapper(_className.toUnescapedModel());
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _className.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _className.isEscapedModel();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _className.isNew();
+	}
+
+	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _className.getExpandoBridge();
+	}
+
+	@Override
+	public int compareTo(ClassName className) {
 		return _className.compareTo(className);
+	}
+
+	@Override
+	public int hashCode() {
+		return _className.hashCode();
+	}
+
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _className.getPrimaryKeyObj();
+	}
+
+	@Override
+	public java.lang.Object clone() {
+		return new ClassNameWrapper((ClassName)_className.clone());
 	}
 
 	/**
@@ -104,6 +149,26 @@ public class ClassNameWrapper implements ClassName, ModelWrapper<ClassName> {
 	}
 
 	/**
+	* Returns the value of this class name.
+	*
+	* @return the value of this class name
+	*/
+	@Override
+	public java.lang.String getValue() {
+		return _className.getValue();
+	}
+
+	@Override
+	public java.lang.String toString() {
+		return _className.toString();
+	}
+
+	@Override
+	public java.lang.String toXmlString() {
+		return _className.toXmlString();
+	}
+
+	/**
 	* Returns the class name ID of this class name.
 	*
 	* @return the class name ID of this class name
@@ -111,11 +176,6 @@ public class ClassNameWrapper implements ClassName, ModelWrapper<ClassName> {
 	@Override
 	public long getClassNameId() {
 		return _className.getClassNameId();
-	}
-
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _className.getExpandoBridge();
 	}
 
 	/**
@@ -136,41 +196,6 @@ public class ClassNameWrapper implements ClassName, ModelWrapper<ClassName> {
 	@Override
 	public long getPrimaryKey() {
 		return _className.getPrimaryKey();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _className.getPrimaryKeyObj();
-	}
-
-	/**
-	* Returns the value of this class name.
-	*
-	* @return the value of this class name
-	*/
-	@Override
-	public java.lang.String getValue() {
-		return _className.getValue();
-	}
-
-	@Override
-	public int hashCode() {
-		return _className.hashCode();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _className.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _className.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _className.isNew();
 	}
 
 	@Override
@@ -254,31 +279,6 @@ public class ClassNameWrapper implements ClassName, ModelWrapper<ClassName> {
 	}
 
 	@Override
-	public CacheModel<com.liferay.portal.kernel.model.ClassName> toCacheModel() {
-		return _className.toCacheModel();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.model.ClassName toEscapedModel() {
-		return new ClassNameWrapper(_className.toEscapedModel());
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _className.toString();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.model.ClassName toUnescapedModel() {
-		return new ClassNameWrapper(_className.toUnescapedModel());
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _className.toXmlString();
-	}
-
-	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
@@ -290,7 +290,7 @@ public class ClassNameWrapper implements ClassName, ModelWrapper<ClassName> {
 
 		ClassNameWrapper classNameWrapper = (ClassNameWrapper)obj;
 
-		if (Validator.equals(_className, classNameWrapper._className)) {
+		if (Objects.equals(_className, classNameWrapper._className)) {
 			return true;
 		}
 

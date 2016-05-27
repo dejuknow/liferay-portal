@@ -101,7 +101,6 @@ AssetCategoryUtil.addPortletBreadcrumbEntry(assetCategoriesDisplayContext.getVoc
 		id="assetCategories"
 		searchContainer="<%= assetCategoriesDisplayContext.getCategoriesSearchContainer() %>"
 	>
-
 		<liferay-ui:search-container-row
 			className="com.liferay.asset.kernel.model.AssetCategory"
 			keyProperty="categoryId"
@@ -114,7 +113,7 @@ AssetCategoryUtil.addPortletBreadcrumbEntry(assetCategoriesDisplayContext.getVoc
 			</portlet:renderURL>
 
 			<c:choose>
-				<c:when test='<%= Validator.equals(assetCategoriesDisplayContext.getDisplayStyle(), "descriptive") %>'>
+				<c:when test='<%= Objects.equals(assetCategoriesDisplayContext.getDisplayStyle(), "descriptive") %>'>
 					<liferay-ui:search-container-column-icon
 						icon="categories"
 						toggleRowChecker="<%= true %>"
@@ -140,7 +139,7 @@ AssetCategoryUtil.addPortletBreadcrumbEntry(assetCategoriesDisplayContext.getVoc
 						path="/category_action.jsp"
 					/>
 				</c:when>
-				<c:when test='<%= Validator.equals(assetCategoriesDisplayContext.getDisplayStyle(), "icon") %>'>
+				<c:when test='<%= Objects.equals(assetCategoriesDisplayContext.getDisplayStyle(), "icon") %>'>
 
 					<%
 					row.setCssClass("entry-card lfr-asset-item");
@@ -153,7 +152,7 @@ AssetCategoryUtil.addPortletBreadcrumbEntry(assetCategoriesDisplayContext.getVoc
 							icon="categories"
 							resultRow="<%= row %>"
 							rowChecker="<%= searchContainer.getRowChecker() %>"
-							subtitle="<%= curCategory.getDescription() %>"
+							subtitle="<%= curCategory.getDescription(locale) %>"
 							title="<%= curCategory.getName() %>"
 							url="<%= rowURL != null ? rowURL.toString() : null %>"
 						>
@@ -163,7 +162,7 @@ AssetCategoryUtil.addPortletBreadcrumbEntry(assetCategoriesDisplayContext.getVoc
 						</liferay-frontend:icon-vertical-card>
 					</liferay-ui:search-container-column-text>
 				</c:when>
-				<c:when test='<%= Validator.equals(assetCategoriesDisplayContext.getDisplayStyle(), "list") %>'>
+				<c:when test='<%= Objects.equals(assetCategoriesDisplayContext.getDisplayStyle(), "list") %>'>
 					<liferay-ui:search-container-column-text
 						cssClass="content-column name-column title-column"
 						href="<%= rowURL %>"

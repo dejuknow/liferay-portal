@@ -166,6 +166,10 @@ PortalUtil.addPortletBreadcrumbEntry(request, passwordPolicy.getName(), null);
 				<%
 				UserSearchTerms searchTerms = (UserSearchTerms)userSearchContainer.getSearchTerms();
 
+				if (!searchTerms.isSearch()) {
+					userSearchContainer.setEmptyResultsMessageCssClass("taglib-empty-result-message-header-has-plus-btn");
+				}
+
 				LinkedHashMap<String, Object> userParams = new LinkedHashMap<String, Object>();
 
 				userParams.put("usersPasswordPolicies", Long.valueOf(passwordPolicy.getPasswordPolicyId()));
@@ -189,6 +193,10 @@ PortalUtil.addPortletBreadcrumbEntry(request, passwordPolicy.getName(), null);
 
 				<%
 				OrganizationSearchTerms searchTerms = (OrganizationSearchTerms)organizationSearchContainer.getSearchTerms();
+
+				if (!searchTerms.isSearch()) {
+					organizationSearchContainer.setEmptyResultsMessageCssClass("taglib-empty-result-message-header-has-plus-btn");
+				}
 
 				LinkedHashMap<String, Object> organizationParams = new LinkedHashMap<String, Object>();
 
@@ -245,7 +253,7 @@ PortalUtil.addPortletBreadcrumbEntry(request, passwordPolicy.getName(), null);
 							}
 						}
 					},
-					title: '<liferay-ui:message arguments="<%= passwordPolicy.getName() %>" key="add-members-to-x" />',
+					title: '<liferay-ui:message arguments="<%= HtmlUtil.escape(passwordPolicy.getName()) %>" key="add-members-to-x" />',
 					url: '<%= selectMembersURL %>'
 				}
 			);

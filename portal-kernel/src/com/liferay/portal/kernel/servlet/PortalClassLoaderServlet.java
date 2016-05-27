@@ -128,8 +128,8 @@ public class PortalClassLoaderServlet
 	private static final Log _log = LogFactoryUtil.getLog(
 		PortalClassLoaderServlet.class);
 
-	private boolean _calledPortalDestroy;
-	private HttpServlet _servlet;
+	private volatile boolean _calledPortalDestroy;
+	private volatile HttpServlet _servlet;
 	private ServletConfig _servletConfig;
 
 }

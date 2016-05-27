@@ -139,6 +139,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>ASSIGN_FORM</td>
+	<td>//a[@role='menuitem' and contains(.,'Assign Form')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>ASSIGNED_TO_ME</td>
 	<td>//a[@role='menuitem' and contains(.,'Assigned to Me')]</td>
 	<td></td>
@@ -234,6 +239,21 @@
 	<td></td>
 </tr>
 <tr>
+	<td>COLOR_EFFECT_BRIGHTNESS</td>
+	<td>//div[@class='dropdown dropup open']//a[contains(.,'Brightness')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>COLOR_EFFECT_SATURATION</td>
+	<td>//div[@class='dropdown dropup open']//a[contains(.,'Saturation')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>COLOR_EFFECT_CONTRAST</td>
+	<td>//div[@class='dropdown dropup open']//a[contains(.,'Contrast')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>COMMUNITY_SITE</td>
 	<td>//a[contains(@id,'menuItem') and contains(.,'Community Site')]</td>
 	<td></td>
@@ -245,7 +265,12 @@
 </tr>
 <tr>
 	<td>CONFIGURATION</td>
-	<td>//div[contains(@class,'open')]//a[@role='menuitem']//span[contains(.,'Configuration')] | //div[contains(@class,'open')]//a[@role='menuitem' and .='Configuration']</td>
+	<td>//div[contains(@class,'open')]//a[@role='menuitem']//span[.='Configuration'] | //div[contains(@class,'open')]//a[@role='menuitem' and .='Configuration']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CONFIGURATION_PORTLET_OPTION</td>
+	<td>//div[contains(@class,'open')]//li[contains(@class,'portlet-configuration')]/a[@role='menuitem' and contains(.,'Configuration')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -341,6 +366,16 @@
 <tr>
 	<td>EDIT_DEFAULT_VALUES</td>
 	<td>//a[@role='menuitem' and contains(.,'Edit Default Values')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>EDIT_WITH_IMAGE_EDITOR</td>
+	<td>//div[contains(@class,'open')]//a[@role='menuitem']//span[contains(.,'Edit With Image Editor')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ENTRIES_PERMISSIONS</td>
+	<td>//div[contains(@class,'open')]//a[@role='menuitem']//span[.='Entries Permissions']</td>
 	<td></td>
 </tr>
 <tr>
@@ -519,11 +554,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>METADATA</td>
-	<td>//ul[contains(@class,'dropdown-menu')]/li/a[contains(.,'Metadata')]</td>
-	<td></td>
-</tr>
-<tr>
 	<td>METADATA_SETS</td>
 	<td>//a[@role='menuitem']//span[contains(.,'Metadata Sets')]</td>
 	<td></td>
@@ -585,7 +615,7 @@
 </tr>
 <tr>
 	<td>PERMISSIONS</td>
-	<td>//div[contains(@class,'open')]//a[contains(.,'Permissions')] | //li[contains(@class,'open')]//a[contains(.,'Permissions')] | //ul[contains(@class,'dropdown')]//a[contains(.,'Permissions')] | //a[@title='Permissions' and @role='menuitem']/span</td>
+	<td>//div[contains(@class,'open')]//a[@role='menuitem']//span[.='Permissions'] | //div[contains(@class,'open')]//a[@role='menuitem' and .='Permissions']</td>
 	<td></td>
 </tr>
 <tr>
@@ -794,8 +824,13 @@
 	<td></td>
 </tr>
 <tr>
+	<td>STAGING</td>
+	<td>//div[contains(@class,'open')]//a[@role='menuitem']//span[contains(.,'Staging')] | //a[@role='menuitem' and contains(.,'Staging')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>STAGING_CONFIGURATION</td>
-	<td>//a[contains(@id,'staging-configuration')]</td>
+	<td>//a[contains(@id,'configuration') and contains(.,'Staging Configuration')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -831,6 +866,21 @@
 <tr>
 	<td>THREAD</td>
 	<td>//div[contains(@class,'open')]//a[contains(.,'Thread')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>TRANSFORM_ROTATE</td>
+	<td>//div[@class=&quot;dropdown dropup open&quot;]//a[contains(.,'Rotate')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>TRANSFORM_CROP</td>
+	<td>//div[@class=&quot;dropdown dropup open&quot;]//a[contains(.,'Crop')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>TRANSFORM_RESIZE</td>
+	<td>//div[@class=&quot;dropdown dropup open&quot;]//a[contains(.,'Resize')]</td>
 	<td></td>
 </tr>
 <tr>

@@ -47,6 +47,13 @@ public class AssetRendererFactoryRegistryUtil {
 		return _instance._getAssetRendererFactories(companyId);
 	}
 
+	public static List<AssetRendererFactory<?>> getAssetRendererFactories(
+		long companyId, boolean filterSelectable) {
+
+		return _instance._getAssetRendererFactories(
+			companyId, filterSelectable);
+	}
+
 	public static <T> AssetRendererFactory<T> getAssetRendererFactoryByClass(
 		Class<T> clazz) {
 
@@ -130,15 +137,16 @@ public class AssetRendererFactoryRegistryUtil {
 		Map<String, AssetRendererFactory<?>> filteredAssetRendererFactories =
 			new ConcurrentHashMap<>();
 
-		for (String className : assetRendererFactories.keySet()) {
-			AssetRendererFactory<?> assetRendererFactory =
-				assetRendererFactories.get(className);
+		for (Map.Entry<String, AssetRendererFactory<?>> entry :
+				assetRendererFactories.entrySet()) {
+
+			AssetRendererFactory<?> assetRendererFactory = entry.getValue();
 
 			if (assetRendererFactory.isActive(companyId) &&
 				(!filterSelectable || assetRendererFactory.isSelectable())) {
 
 				filteredAssetRendererFactories.put(
-					className, assetRendererFactory);
+					entry.getKey(), assetRendererFactory);
 			}
 		}
 
@@ -151,6 +159,15 @@ public class AssetRendererFactoryRegistryUtil {
 		return ListUtil.fromMapValues(
 			_filterAssetRendererFactories(
 				companyId, _assetRenderFactoriesMapByClassName, false));
+	}
+
+	private List<AssetRendererFactory<?>> _getAssetRendererFactories(
+		long companyId, boolean filterSelectable) {
+
+		return ListUtil.fromMapValues(
+			_filterAssetRendererFactories(
+				companyId, _assetRenderFactoriesMapByClassName,
+				filterSelectable));
 	}
 
 	private <T> AssetRendererFactory<T> _getAssetRendererFactoryByClass(

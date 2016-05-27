@@ -54,6 +54,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -201,7 +202,7 @@ public class DDMStructureLayoutPersistenceImpl extends BasePersistenceImpl<DDMSt
 
 			if ((list != null) && !list.isEmpty()) {
 				for (DDMStructureLayout ddmStructureLayout : list) {
-					if (!Validator.equals(uuid, ddmStructureLayout.getUuid())) {
+					if (!Objects.equals(uuid, ddmStructureLayout.getUuid())) {
 						list = null;
 
 						break;
@@ -678,8 +679,8 @@ public class DDMStructureLayoutPersistenceImpl extends BasePersistenceImpl<DDMSt
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchStructureLayoutException(msg.toString());
@@ -723,7 +724,7 @@ public class DDMStructureLayoutPersistenceImpl extends BasePersistenceImpl<DDMSt
 		if (result instanceof DDMStructureLayout) {
 			DDMStructureLayout ddmStructureLayout = (DDMStructureLayout)result;
 
-			if (!Validator.equals(uuid, ddmStructureLayout.getUuid()) ||
+			if (!Objects.equals(uuid, ddmStructureLayout.getUuid()) ||
 					(groupId != ddmStructureLayout.getGroupId())) {
 				result = null;
 			}
@@ -1018,7 +1019,7 @@ public class DDMStructureLayoutPersistenceImpl extends BasePersistenceImpl<DDMSt
 
 			if ((list != null) && !list.isEmpty()) {
 				for (DDMStructureLayout ddmStructureLayout : list) {
-					if (!Validator.equals(uuid, ddmStructureLayout.getUuid()) ||
+					if (!Objects.equals(uuid, ddmStructureLayout.getUuid()) ||
 							(companyId != ddmStructureLayout.getCompanyId())) {
 						list = null;
 
@@ -1518,8 +1519,8 @@ public class DDMStructureLayoutPersistenceImpl extends BasePersistenceImpl<DDMSt
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchStructureLayoutException(msg.toString());
@@ -1929,8 +1930,8 @@ public class DDMStructureLayoutPersistenceImpl extends BasePersistenceImpl<DDMSt
 					primaryKey);
 
 			if (ddmStructureLayout == null) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+				if (_log.isDebugEnabled()) {
+					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchStructureLayoutException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
@@ -2138,8 +2139,8 @@ public class DDMStructureLayoutPersistenceImpl extends BasePersistenceImpl<DDMSt
 		DDMStructureLayout ddmStructureLayout = fetchByPrimaryKey(primaryKey);
 
 		if (ddmStructureLayout == null) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+			if (_log.isDebugEnabled()) {
+				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
 			throw new NoSuchStructureLayoutException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +

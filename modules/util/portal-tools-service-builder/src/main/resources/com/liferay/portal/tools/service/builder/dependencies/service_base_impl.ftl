@@ -371,7 +371,7 @@ import ${apiPackagePath}.service.${entity.name}${sessionTypeName}Service;
 			public ActionableDynamicQuery getActionableDynamicQuery() {
 				ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
 
-				actionableDynamicQuery.setBaseLocalService(${apiPackagePath}.service.${entity.name}LocalServiceUtil.getService());
+				actionableDynamicQuery.setBaseLocalService(${entity.varName}LocalService);
 				actionableDynamicQuery.setClassLoader(getClassLoader());
 				actionableDynamicQuery.setModelClass(${entity.name}.class);
 
@@ -398,7 +398,7 @@ import ${apiPackagePath}.service.${entity.name}${sessionTypeName}Service;
 			public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
 				IndexableActionableDynamicQuery indexableActionableDynamicQuery = new IndexableActionableDynamicQuery();
 
-				indexableActionableDynamicQuery.setBaseLocalService(${apiPackagePath}.service.${entity.name}LocalServiceUtil.getService());
+				indexableActionableDynamicQuery.setBaseLocalService(${entity.varName}LocalService);
 				indexableActionableDynamicQuery.setClassLoader(getClassLoader());
 				indexableActionableDynamicQuery.setModelClass(${entity.name}.class);
 
@@ -422,7 +422,7 @@ import ${apiPackagePath}.service.${entity.name}${sessionTypeName}Service;
 			}
 
 			protected void initActionableDynamicQuery(ActionableDynamicQuery actionableDynamicQuery) {
-				actionableDynamicQuery.setBaseLocalService(${apiPackagePath}.service.${entity.name}LocalServiceUtil.getService());
+				actionableDynamicQuery.setBaseLocalService(${entity.varName}LocalService);
 				actionableDynamicQuery.setClassLoader(getClassLoader());
 				actionableDynamicQuery.setModelClass(${entity.name}.class);
 
@@ -771,8 +771,8 @@ import ${apiPackagePath}.service.${entity.name}${sessionTypeName}Service;
 				</#list>
 				 */
 				@Override
-				public void add${tempEntity.name}${entity.names}(${tempEntity.PKClassName} ${tempEntity.PKVarName}, List<${entity.name}> ${entity.names}) <#if (serviceBaseExceptions?size gt 0)>throws ${stringUtil.merge(serviceBaseExceptions)} </#if>{
-					${tempEntity.varName}Persistence.add${entity.names}(${tempEntity.PKVarName}, ${entity.names});
+				public void add${tempEntity.name}${entity.names}(${tempEntity.PKClassName} ${tempEntity.PKVarName}, List<${entity.name}> ${entity.varNames}) <#if (serviceBaseExceptions?size gt 0)>throws ${stringUtil.merge(serviceBaseExceptions)} </#if>{
+					${tempEntity.varName}Persistence.add${entity.names}(${tempEntity.PKVarName}, ${entity.varNames});
 				}
 
 				<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "clear" + tempEntity.name + entity.names, [tempEntity.PKClassName], [])>
@@ -831,8 +831,8 @@ import ${apiPackagePath}.service.${entity.name}${sessionTypeName}Service;
 				</#list>
 				 */
 				@Override
-				public void delete${tempEntity.name}${entity.names}(${tempEntity.PKClassName} ${tempEntity.PKVarName}, List<${entity.name}> ${entity.names}) <#if (serviceBaseExceptions?size gt 0)>throws ${stringUtil.merge(serviceBaseExceptions)} </#if>{
-					${tempEntity.varName}Persistence.remove${entity.names}(${tempEntity.PKVarName}, ${entity.names});
+				public void delete${tempEntity.name}${entity.names}(${tempEntity.PKClassName} ${tempEntity.PKVarName}, List<${entity.name}> ${entity.varNames}) <#if (serviceBaseExceptions?size gt 0)>throws ${stringUtil.merge(serviceBaseExceptions)} </#if>{
+					${tempEntity.varName}Persistence.remove${entity.names}(${tempEntity.PKVarName}, ${entity.varNames});
 				}
 
 				/**

@@ -14,16 +14,39 @@
 
 package com.liferay.exportimport.resources.importer.util;
 
+import com.liferay.asset.kernel.service.AssetTagLocalService;
 import com.liferay.document.library.kernel.model.DLFolderConstants;
+import com.liferay.document.library.kernel.service.DLAppLocalService;
+import com.liferay.document.library.kernel.service.DLFileEntryLocalService;
+import com.liferay.document.library.kernel.service.DLFolderLocalService;
 import com.liferay.dynamic.data.lists.model.DDLRecordSet;
+import com.liferay.dynamic.data.mapping.io.DDMFormJSONDeserializer;
+import com.liferay.dynamic.data.mapping.io.DDMFormXSDDeserializer;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMTemplateConstants;
+import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
+import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
+import com.liferay.dynamic.data.mapping.util.DDMXML;
+import com.liferay.exportimport.resources.importer.portlet.preferences.PortletPreferencesTranslator;
+import com.liferay.journal.service.JournalArticleLocalService;
+import com.liferay.portal.kernel.portlet.PortletPreferencesFactory;
+import com.liferay.portal.kernel.search.IndexerRegistry;
+import com.liferay.portal.kernel.service.LayoutLocalService;
+import com.liferay.portal.kernel.service.LayoutPrototypeLocalService;
+import com.liferay.portal.kernel.service.LayoutSetLocalService;
+import com.liferay.portal.kernel.service.LayoutSetPrototypeLocalService;
+import com.liferay.portal.kernel.service.PortletPreferencesLocalService;
+import com.liferay.portal.kernel.service.RepositoryLocalService;
+import com.liferay.portal.kernel.service.ThemeLocalService;
 import com.liferay.portal.kernel.util.FileUtil;
+import com.liferay.portal.kernel.util.MimeTypes;
+import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.xml.SAXReader;
+import com.liferay.portal.search.index.IndexStatusManager;
 
 import java.io.File;
 import java.io.InputStream;
@@ -35,14 +58,47 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.osgi.service.component.annotations.Component;
-
 /**
  * @author Raymond Augé
  * @author Ryan Park
  */
-@Component(immediate = true, service = ResourceImporter.class)
 public class ResourceImporter extends FileSystemImporter {
+
+	public ResourceImporter(
+		AssetTagLocalService assetTagLocalService,
+		DDMFormJSONDeserializer ddmFormJSONDeserializer,
+		DDMFormXSDDeserializer ddmFormXSDDeserializer,
+		DDMStructureLocalService ddmStructureLocalService,
+		DDMTemplateLocalService ddmTemplateLocalService, DDMXML ddmxml,
+		DLAppLocalService dlAppLocalService,
+		DLFileEntryLocalService dlFileEntryLocalService,
+		DLFolderLocalService dlFolderLocalService,
+		IndexStatusManager indexStatusManager, IndexerRegistry indexerRegistry,
+		JournalArticleLocalService journalArticleLocalService,
+		LayoutLocalService layoutLocalService,
+		LayoutPrototypeLocalService layoutPrototypeLocalService,
+		LayoutSetLocalService layoutSetLocalService,
+		LayoutSetPrototypeLocalService layoutSetPrototypeLocalService,
+		MimeTypes mimeTypes, Portal portal,
+		PortletPreferencesFactory portletPreferencesFactory,
+		PortletPreferencesLocalService portletPreferencesLocalService,
+		PortletPreferencesTranslator portletPreferencesTranslator,
+		Map<String, PortletPreferencesTranslator> portletPreferencesTranslators,
+		RepositoryLocalService repositoryLocalService, SAXReader saxReader,
+		ThemeLocalService themeLocalService) {
+
+		super(
+			assetTagLocalService, ddmFormJSONDeserializer,
+			ddmFormXSDDeserializer, ddmStructureLocalService,
+			ddmTemplateLocalService, ddmxml, dlAppLocalService,
+			dlFileEntryLocalService, dlFolderLocalService, indexStatusManager,
+			indexerRegistry, journalArticleLocalService, layoutLocalService,
+			layoutPrototypeLocalService, layoutSetLocalService,
+			layoutSetPrototypeLocalService, mimeTypes, portal,
+			portletPreferencesFactory, portletPreferencesLocalService,
+			portletPreferencesTranslator, portletPreferencesTranslators,
+			repositoryLocalService, saxReader, themeLocalService);
+	}
 
 	@Override
 	public void importResources() throws Exception {
@@ -54,15 +110,8 @@ public class ResourceImporter extends FileSystemImporter {
 			String parentDirName, String dirName, long classNameId)
 		throws Exception {
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(resourcesDir);
-		sb.append(parentDirName);
-		sb.append("/");
-		sb.append(dirName);
-
 		Set<String> resourcePaths = servletContext.getResourcePaths(
-			sb.toString());
+			_getResourcePath(parentDirName) + StringPool.SLASH + dirName);
 
 		if (resourcePaths == null) {
 			return;
@@ -94,15 +143,8 @@ public class ResourceImporter extends FileSystemImporter {
 			groupId, PortalUtil.getClassNameId(DDLRecordSet.class),
 			ddmStructureKey);
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(resourcesDir);
-		sb.append(dirName);
-		sb.append(StringPool.SLASH);
-		sb.append(fileName);
-
 		Set<String> resourcePaths = servletContext.getResourcePaths(
-			sb.toString());
+			_getResourcePath(dirName) + StringPool.SLASH + fileName);
 
 		if (resourcePaths == null) {
 			return;
@@ -135,15 +177,8 @@ public class ResourceImporter extends FileSystemImporter {
 			groupId, PortalUtil.getClassNameId(DDLRecordSet.class),
 			ddmStructureKey);
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(resourcesDir);
-		sb.append(dirName);
-		sb.append(StringPool.SLASH);
-		sb.append(fileName);
-
 		Set<String> resourcePaths = servletContext.getResourcePaths(
-			sb.toString());
+			_getResourcePath(dirName) + StringPool.SLASH + fileName);
 
 		if (resourcePaths == null) {
 			return;
@@ -170,7 +205,7 @@ public class ResourceImporter extends FileSystemImporter {
 	@Override
 	protected void addDDLStructures(String dirName) throws Exception {
 		Set<String> resourcePaths = servletContext.getResourcePaths(
-			resourcesDir.concat(dirName));
+			_getResourcePath(dirName));
 
 		if (resourcePaths == null) {
 			return;
@@ -194,7 +229,7 @@ public class ResourceImporter extends FileSystemImporter {
 		throws Exception {
 
 		Set<String> resourcePaths = servletContext.getResourcePaths(
-			resourcesDir.concat(dirName));
+			_getResourcePath(dirName));
 
 		if (resourcePaths == null) {
 			return;
@@ -221,7 +256,7 @@ public class ResourceImporter extends FileSystemImporter {
 		throws Exception {
 
 		Set<String> resourcePaths = servletContext.getResourcePaths(
-			resourcesDir.concat(dirName));
+			_getResourcePath(dirName));
 
 		if (resourcePaths == null) {
 			return;
@@ -246,7 +281,7 @@ public class ResourceImporter extends FileSystemImporter {
 	@Override
 	protected void addDLFileEntries(String dirName) throws Exception {
 		Set<String> resourcePaths = servletContext.getResourcePaths(
-			resourcesDir.concat(dirName));
+			_getResourcePath(dirName));
 
 		if (resourcePaths == null) {
 			return;
@@ -315,7 +350,7 @@ public class ResourceImporter extends FileSystemImporter {
 		throws Exception {
 
 		Set<String> resourcePaths = servletContext.getResourcePaths(
-			resourcesDir.concat(dirName));
+			_getResourcePath(dirName));
 
 		if (resourcePaths == null) {
 			return;
@@ -341,7 +376,7 @@ public class ResourceImporter extends FileSystemImporter {
 	@Override
 	protected void addLayoutPrototype(String dirName) throws Exception {
 		Set<String> resourcePaths = servletContext.getResourcePaths(
-			resourcesDir.concat(dirName));
+			_getResourcePath(dirName));
 
 		if (resourcePaths == null) {
 			return;
@@ -364,7 +399,7 @@ public class ResourceImporter extends FileSystemImporter {
 
 	@Override
 	protected InputStream getInputStream(String fileName) throws Exception {
-		URL url = servletContext.getResource(resourcesDir.concat(fileName));
+		URL url = servletContext.getResource(_getResourcePath(fileName));
 
 		if (url == null) {
 			return null;
@@ -373,6 +408,16 @@ public class ResourceImporter extends FileSystemImporter {
 		URLConnection urlConnection = url.openConnection();
 
 		return urlConnection.getInputStream();
+	}
+
+	private String _getResourcePath(String dirName) {
+		if (resourcesDir.endsWith(StringPool.SLASH) &&
+			dirName.startsWith(StringPool.SLASH)) {
+
+			return resourcesDir.concat(dirName.substring(1, dirName.length()));
+		}
+
+		return resourcesDir.concat(dirName);
 	}
 
 	private final Map<String, Long> _folderIds = new HashMap<>();

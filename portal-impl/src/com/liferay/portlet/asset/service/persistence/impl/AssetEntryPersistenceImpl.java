@@ -42,12 +42,13 @@ import com.liferay.portal.kernel.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.service.persistence.impl.TableMapper;
 import com.liferay.portal.kernel.service.persistence.impl.TableMapperFactory;
+import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.kernel.util.Validator;
 
 import com.liferay.portlet.asset.model.impl.AssetEntryImpl;
 import com.liferay.portlet.asset.model.impl.AssetEntryModelImpl;
@@ -63,6 +64,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -1716,8 +1718,7 @@ public class AssetEntryPersistenceImpl extends BasePersistenceImpl<AssetEntry>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (AssetEntry assetEntry : list) {
-					if (!Validator.equals(publishDate,
-								assetEntry.getPublishDate())) {
+					if (!Objects.equals(publishDate, assetEntry.getPublishDate())) {
 						list = null;
 
 						break;
@@ -2262,7 +2263,7 @@ public class AssetEntryPersistenceImpl extends BasePersistenceImpl<AssetEntry>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (AssetEntry assetEntry : list) {
-					if (!Validator.equals(expirationDate,
+					if (!Objects.equals(expirationDate,
 								assetEntry.getExpirationDate())) {
 						list = null;
 
@@ -2803,7 +2804,7 @@ public class AssetEntryPersistenceImpl extends BasePersistenceImpl<AssetEntry>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (AssetEntry assetEntry : list) {
-					if (!Validator.equals(layoutUuid, assetEntry.getLayoutUuid())) {
+					if (!Objects.equals(layoutUuid, assetEntry.getLayoutUuid())) {
 						list = null;
 
 						break;
@@ -3279,8 +3280,8 @@ public class AssetEntryPersistenceImpl extends BasePersistenceImpl<AssetEntry>
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchEntryException(msg.toString());
@@ -3325,7 +3326,7 @@ public class AssetEntryPersistenceImpl extends BasePersistenceImpl<AssetEntry>
 			AssetEntry assetEntry = (AssetEntry)result;
 
 			if ((groupId != assetEntry.getGroupId()) ||
-					!Validator.equals(classUuid, assetEntry.getClassUuid())) {
+					!Objects.equals(classUuid, assetEntry.getClassUuid())) {
 				result = null;
 			}
 		}
@@ -3540,8 +3541,8 @@ public class AssetEntryPersistenceImpl extends BasePersistenceImpl<AssetEntry>
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchEntryException(msg.toString());
@@ -3960,8 +3961,8 @@ public class AssetEntryPersistenceImpl extends BasePersistenceImpl<AssetEntry>
 					primaryKey);
 
 			if (assetEntry == null) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+				if (_log.isDebugEnabled()) {
+					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchEntryException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
@@ -4245,8 +4246,8 @@ public class AssetEntryPersistenceImpl extends BasePersistenceImpl<AssetEntry>
 		AssetEntry assetEntry = fetchByPrimaryKey(primaryKey);
 
 		if (assetEntry == null) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+			if (_log.isDebugEnabled()) {
+				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
 			throw new NoSuchEntryException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
@@ -4775,10 +4776,8 @@ public class AssetEntryPersistenceImpl extends BasePersistenceImpl<AssetEntry>
 			companyId = assetEntry.getCompanyId();
 		}
 
-		for (long assetCategoryPK : assetCategoryPKs) {
-			assetEntryToAssetCategoryTableMapper.addTableMapping(companyId, pk,
-				assetCategoryPK);
-		}
+		assetEntryToAssetCategoryTableMapper.addTableMappings(companyId, pk,
+			assetCategoryPKs);
 	}
 
 	/**
@@ -4790,21 +4789,9 @@ public class AssetEntryPersistenceImpl extends BasePersistenceImpl<AssetEntry>
 	@Override
 	public void addAssetCategories(long pk,
 		List<com.liferay.asset.kernel.model.AssetCategory> assetCategories) {
-		long companyId = 0;
-
-		AssetEntry assetEntry = fetchByPrimaryKey(pk);
-
-		if (assetEntry == null) {
-			companyId = companyProvider.getCompanyId();
-		}
-		else {
-			companyId = assetEntry.getCompanyId();
-		}
-
-		for (com.liferay.asset.kernel.model.AssetCategory assetCategory : assetCategories) {
-			assetEntryToAssetCategoryTableMapper.addTableMapping(companyId, pk,
-				assetCategory.getPrimaryKey());
-		}
+		addAssetCategories(pk,
+			ListUtil.toLongArray(assetCategories,
+				com.liferay.asset.kernel.model.AssetCategory.CATEGORY_ID_ACCESSOR));
 	}
 
 	/**
@@ -4850,10 +4837,8 @@ public class AssetEntryPersistenceImpl extends BasePersistenceImpl<AssetEntry>
 	 */
 	@Override
 	public void removeAssetCategories(long pk, long[] assetCategoryPKs) {
-		for (long assetCategoryPK : assetCategoryPKs) {
-			assetEntryToAssetCategoryTableMapper.deleteTableMapping(pk,
-				assetCategoryPK);
-		}
+		assetEntryToAssetCategoryTableMapper.deleteTableMappings(pk,
+			assetCategoryPKs);
 	}
 
 	/**
@@ -4865,10 +4850,9 @@ public class AssetEntryPersistenceImpl extends BasePersistenceImpl<AssetEntry>
 	@Override
 	public void removeAssetCategories(long pk,
 		List<com.liferay.asset.kernel.model.AssetCategory> assetCategories) {
-		for (com.liferay.asset.kernel.model.AssetCategory assetCategory : assetCategories) {
-			assetEntryToAssetCategoryTableMapper.deleteTableMapping(pk,
-				assetCategory.getPrimaryKey());
-		}
+		removeAssetCategories(pk,
+			ListUtil.toLongArray(assetCategories,
+				com.liferay.asset.kernel.model.AssetCategory.CATEGORY_ID_ACCESSOR));
 	}
 
 	/**
@@ -4887,10 +4871,8 @@ public class AssetEntryPersistenceImpl extends BasePersistenceImpl<AssetEntry>
 
 		removeAssetCategoryPKsSet.removeAll(newAssetCategoryPKsSet);
 
-		for (long removeAssetCategoryPK : removeAssetCategoryPKsSet) {
-			assetEntryToAssetCategoryTableMapper.deleteTableMapping(pk,
-				removeAssetCategoryPK);
-		}
+		assetEntryToAssetCategoryTableMapper.deleteTableMappings(pk,
+			ArrayUtil.toLongArray(removeAssetCategoryPKsSet));
 
 		newAssetCategoryPKsSet.removeAll(oldAssetCategoryPKsSet);
 
@@ -4905,10 +4887,8 @@ public class AssetEntryPersistenceImpl extends BasePersistenceImpl<AssetEntry>
 			companyId = assetEntry.getCompanyId();
 		}
 
-		for (long newAssetCategoryPK : newAssetCategoryPKsSet) {
-			assetEntryToAssetCategoryTableMapper.addTableMapping(companyId, pk,
-				newAssetCategoryPK);
-		}
+		assetEntryToAssetCategoryTableMapper.addTableMappings(companyId, pk,
+			ArrayUtil.toLongArray(newAssetCategoryPKsSet));
 	}
 
 	/**
@@ -5101,10 +5081,8 @@ public class AssetEntryPersistenceImpl extends BasePersistenceImpl<AssetEntry>
 			companyId = assetEntry.getCompanyId();
 		}
 
-		for (long assetTagPK : assetTagPKs) {
-			assetEntryToAssetTagTableMapper.addTableMapping(companyId, pk,
-				assetTagPK);
-		}
+		assetEntryToAssetTagTableMapper.addTableMappings(companyId, pk,
+			assetTagPKs);
 	}
 
 	/**
@@ -5116,21 +5094,9 @@ public class AssetEntryPersistenceImpl extends BasePersistenceImpl<AssetEntry>
 	@Override
 	public void addAssetTags(long pk,
 		List<com.liferay.asset.kernel.model.AssetTag> assetTags) {
-		long companyId = 0;
-
-		AssetEntry assetEntry = fetchByPrimaryKey(pk);
-
-		if (assetEntry == null) {
-			companyId = companyProvider.getCompanyId();
-		}
-		else {
-			companyId = assetEntry.getCompanyId();
-		}
-
-		for (com.liferay.asset.kernel.model.AssetTag assetTag : assetTags) {
-			assetEntryToAssetTagTableMapper.addTableMapping(companyId, pk,
-				assetTag.getPrimaryKey());
-		}
+		addAssetTags(pk,
+			ListUtil.toLongArray(assetTags,
+				com.liferay.asset.kernel.model.AssetTag.TAG_ID_ACCESSOR));
 	}
 
 	/**
@@ -5175,9 +5141,7 @@ public class AssetEntryPersistenceImpl extends BasePersistenceImpl<AssetEntry>
 	 */
 	@Override
 	public void removeAssetTags(long pk, long[] assetTagPKs) {
-		for (long assetTagPK : assetTagPKs) {
-			assetEntryToAssetTagTableMapper.deleteTableMapping(pk, assetTagPK);
-		}
+		assetEntryToAssetTagTableMapper.deleteTableMappings(pk, assetTagPKs);
 	}
 
 	/**
@@ -5189,10 +5153,9 @@ public class AssetEntryPersistenceImpl extends BasePersistenceImpl<AssetEntry>
 	@Override
 	public void removeAssetTags(long pk,
 		List<com.liferay.asset.kernel.model.AssetTag> assetTags) {
-		for (com.liferay.asset.kernel.model.AssetTag assetTag : assetTags) {
-			assetEntryToAssetTagTableMapper.deleteTableMapping(pk,
-				assetTag.getPrimaryKey());
-		}
+		removeAssetTags(pk,
+			ListUtil.toLongArray(assetTags,
+				com.liferay.asset.kernel.model.AssetTag.TAG_ID_ACCESSOR));
 	}
 
 	/**
@@ -5211,10 +5174,8 @@ public class AssetEntryPersistenceImpl extends BasePersistenceImpl<AssetEntry>
 
 		removeAssetTagPKsSet.removeAll(newAssetTagPKsSet);
 
-		for (long removeAssetTagPK : removeAssetTagPKsSet) {
-			assetEntryToAssetTagTableMapper.deleteTableMapping(pk,
-				removeAssetTagPK);
-		}
+		assetEntryToAssetTagTableMapper.deleteTableMappings(pk,
+			ArrayUtil.toLongArray(removeAssetTagPKsSet));
 
 		newAssetTagPKsSet.removeAll(oldAssetTagPKsSet);
 
@@ -5229,10 +5190,8 @@ public class AssetEntryPersistenceImpl extends BasePersistenceImpl<AssetEntry>
 			companyId = assetEntry.getCompanyId();
 		}
 
-		for (long newAssetTagPK : newAssetTagPKsSet) {
-			assetEntryToAssetTagTableMapper.addTableMapping(companyId, pk,
-				newAssetTagPK);
-		}
+		assetEntryToAssetTagTableMapper.addTableMappings(companyId, pk,
+			ArrayUtil.toLongArray(newAssetTagPKsSet));
 	}
 
 	/**

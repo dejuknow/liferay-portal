@@ -1,8 +1,8 @@
 <definition>
 	<command name="addCategoryLogLevels">
-		<execute function="AssertClick" locator1="NavTab#LOG_LEVELS" value1="Log Levels" />
+		<execute function="AssertClick" locator1="NavBar#LOG_LEVELS" value1="Log Levels" />
 
-		<execute function="AssertClick" locator1="NavTab#ADD_CATEGORY" value1="Add Category" />
+		<execute function="AssertClick" locator1="NavBar#ADD_CATEGORY" value1="Add Category" />
 
 		<execute function="Type" locator1="ServerAdministrationLogLevels#ADD_CATEGORY_NAME_FIELD" value1="${catagoryName}" />
 		<execute function="Select" locator1="ServerAdministrationLogLevels#ADD_CATEGORY_PRIORITY_SELECT" value1="${categoryPriority}" />
@@ -79,7 +79,7 @@
 		<execute function="Check" locator1="ServerAdministrationMail#INCOMING_SECURE_NETWORK_CONNECTION_CHECKBOX" />
 
 		<if>
-			<equals arg1="needsReply" arg2="true" />
+			<equals arg1="${needsReply}" arg2="true" />
 			<then>
 				<execute function="Type" locator1="ServerAdministrationMail#INCOMING_USER_NAME" value1="recent:${userName}" />
 			</then>
@@ -94,7 +94,7 @@
 		<execute function="Check" locator1="ServerAdministrationMail#OUTGOING_SECURE_CONNECTION_CHECKBOX" />
 
 		<if>
-			<equals arg1="needsReply" arg2="true" />
+			<equals arg1="${needsReply}" arg2="true" />
 			<then>
 				<execute function="Type" locator1="ServerAdministrationMail#OUTGOING_USER_NAME" value1="recent:${userName}" />
 			</then>

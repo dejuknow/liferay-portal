@@ -1,0 +1,10 @@
+;
+; Do not manually edit this file. See
+; https://github.com/git-commands/git-subrepo#readme for more information.
+;
+[subrepo]
+	cmdver = liferay
+	commit = 1b193b85d147cf03d578c214a3bf6f9023024ac1
+	mode = push
+	parent = 2c7de63e46e9ea8723d9c938dfc8ff781a248d83
+	remote = git@github.com:liferay/com-liferay-mobile-device-rules.git

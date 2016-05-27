@@ -18,7 +18,7 @@ import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.storage.Fields;
-import com.liferay.frontend.taglib.web.servlet.taglib.ManagementBarFilterItem;
+import com.liferay.frontend.taglib.servlet.taglib.ManagementBarFilterItem;
 import com.liferay.journal.constants.JournalPortletKeys;
 import com.liferay.journal.constants.JournalWebKeys;
 import com.liferay.journal.model.JournalArticle;
@@ -85,6 +85,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.portlet.PortletException;
 import javax.portlet.PortletPreferences;
@@ -234,6 +235,28 @@ public class JournalDisplayContext {
 		}
 
 		return _ddmStructureName;
+	}
+
+	public long getDDMStructurePrimaryKey() throws PortalException {
+		String ddmStructureKey = getDDMStructureKey();
+
+		if (Validator.isNull(ddmStructureKey)) {
+			return 0;
+		}
+
+		ThemeDisplay themeDisplay = (ThemeDisplay)_request.getAttribute(
+			WebKeys.THEME_DISPLAY);
+
+		DDMStructure ddmStructure = DDMStructureLocalServiceUtil.fetchStructure(
+			themeDisplay.getSiteGroupId(),
+			PortalUtil.getClassNameId(JournalArticle.class),
+			getDDMStructureKey(), true);
+
+		if (ddmStructure == null) {
+			return 0;
+		}
+
+		return ddmStructure.getPrimaryKey();
 	}
 
 	public String getDDMTemplateKey() {
@@ -471,6 +494,23 @@ public class JournalDisplayContext {
 		return portletURL;
 	}
 
+	public int getRestrictionType() throws PortalException {
+		if (_restrictionType != null) {
+			return _restrictionType;
+		}
+
+		JournalFolder folder = getFolder();
+
+		if (folder != null) {
+			_restrictionType = folder.getRestrictionType();
+		}
+		else {
+			_restrictionType = JournalFolderConstants.RESTRICTION_TYPE_INHERIT;
+		}
+
+		return _restrictionType;
+	}
+
 	public ArticleSearch getSearchContainer() throws PortalException {
 		ThemeDisplay themeDisplay = (ThemeDisplay)_request.getAttribute(
 			WebKeys.THEME_DISPLAY);
@@ -595,16 +635,16 @@ public class JournalDisplayContext {
 			if (journalWebConfiguration.journalArticlesSearchWithIndex()) {
 				boolean orderByAsc = false;
 
-				if (Validator.equals(getOrderByType(), "asc")) {
+				if (Objects.equals(getOrderByType(), "asc")) {
 					orderByAsc = true;
 				}
 
 				Sort sort = null;
 
-				if (Validator.equals(getOrderByCol(), "display-date")) {
+				if (Objects.equals(getOrderByCol(), "display-date")) {
 					sort = new Sort("displayDate", Sort.LONG_TYPE, orderByAsc);
 				}
-				else if (Validator.equals(getOrderByCol(), "modified-date")) {
+				else if (Objects.equals(getOrderByCol(), "modified-date")) {
 					sort = new Sort(
 						Field.MODIFIED_DATE, Sort.LONG_TYPE, orderByAsc);
 				}
@@ -696,15 +736,15 @@ public class JournalDisplayContext {
 
 			boolean orderByAsc = false;
 
-			if (Validator.equals(getOrderByType(), "asc")) {
+			if (Objects.equals(getOrderByType(), "asc")) {
 				orderByAsc = true;
 			}
 
-			if (Validator.equals(getOrderByCol(), "display-date")) {
+			if (Objects.equals(getOrderByCol(), "display-date")) {
 				folderOrderByComparator =
 					new FolderArticleDisplayDateComparator(orderByAsc);
 			}
-			else if (Validator.equals(getOrderByCol(), "modified-date")) {
+			else if (Objects.equals(getOrderByCol(), "modified-date")) {
 				folderOrderByComparator =
 					new FolderArticleModifiedDateComparator(orderByAsc);
 			}
@@ -786,7 +826,7 @@ public class JournalDisplayContext {
 	}
 
 	public boolean isNavigationHome() {
-		if (Validator.equals(getNavigation(), "all")) {
+		if (Objects.equals(getNavigation(), "all")) {
 			return true;
 		}
 
@@ -794,7 +834,7 @@ public class JournalDisplayContext {
 	}
 
 	public boolean isNavigationMine() {
-		if (Validator.equals(getNavigation(), "mine")) {
+		if (Objects.equals(getNavigation(), "mine")) {
 			return true;
 		}
 
@@ -802,7 +842,7 @@ public class JournalDisplayContext {
 	}
 
 	public boolean isNavigationRecent() {
-		if (Validator.equals(getNavigation(), "recent")) {
+		if (Objects.equals(getNavigation(), "recent")) {
 			return true;
 		}
 
@@ -810,7 +850,7 @@ public class JournalDisplayContext {
 	}
 
 	public boolean isNavigationStructure() {
-		if (Validator.equals(getNavigation(), "structure")) {
+		if (Objects.equals(getNavigation(), "structure")) {
 			return true;
 		}
 
@@ -1044,6 +1084,7 @@ public class JournalDisplayContext {
 	private final PortalPreferences _portalPreferences;
 	private final PortletPreferences _portletPreferences;
 	private final HttpServletRequest _request;
+	private Integer _restrictionType;
 	private Boolean _showEditActions;
 	private Integer _status;
 

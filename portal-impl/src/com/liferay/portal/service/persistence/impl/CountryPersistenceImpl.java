@@ -37,7 +37,6 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.impl.CountryImpl;
 import com.liferay.portal.model.impl.CountryModelImpl;
 
@@ -49,6 +48,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -116,8 +116,8 @@ public class CountryPersistenceImpl extends BasePersistenceImpl<Country>
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchCountryException(msg.toString());
@@ -158,7 +158,7 @@ public class CountryPersistenceImpl extends BasePersistenceImpl<Country>
 		if (result instanceof Country) {
 			Country country = (Country)result;
 
-			if (!Validator.equals(name, country.getName())) {
+			if (!Objects.equals(name, country.getName())) {
 				result = null;
 			}
 		}
@@ -347,8 +347,8 @@ public class CountryPersistenceImpl extends BasePersistenceImpl<Country>
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchCountryException(msg.toString());
@@ -389,7 +389,7 @@ public class CountryPersistenceImpl extends BasePersistenceImpl<Country>
 		if (result instanceof Country) {
 			Country country = (Country)result;
 
-			if (!Validator.equals(a2, country.getA2())) {
+			if (!Objects.equals(a2, country.getA2())) {
 				result = null;
 			}
 		}
@@ -578,8 +578,8 @@ public class CountryPersistenceImpl extends BasePersistenceImpl<Country>
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchCountryException(msg.toString());
@@ -620,7 +620,7 @@ public class CountryPersistenceImpl extends BasePersistenceImpl<Country>
 		if (result instanceof Country) {
 			Country country = (Country)result;
 
-			if (!Validator.equals(a3, country.getA3())) {
+			if (!Objects.equals(a3, country.getA3())) {
 				result = null;
 			}
 		}
@@ -1512,8 +1512,8 @@ public class CountryPersistenceImpl extends BasePersistenceImpl<Country>
 			Country country = (Country)session.get(CountryImpl.class, primaryKey);
 
 			if (country == null) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+				if (_log.isDebugEnabled()) {
+					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchCountryException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
@@ -1666,8 +1666,8 @@ public class CountryPersistenceImpl extends BasePersistenceImpl<Country>
 		Country country = fetchByPrimaryKey(primaryKey);
 
 		if (country == null) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+			if (_log.isDebugEnabled()) {
+				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
 			throw new NoSuchCountryException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +

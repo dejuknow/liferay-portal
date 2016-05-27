@@ -225,6 +225,17 @@ if (showSource) {
 
 		var editorConfig = <%= Validator.isNotNull(editorConfigJSONObject) %> ? <%= editorConfigJSONObject %> : {};
 
+		if (editorConfig.extraPlugins) {
+			editorConfig.extraPlugins = A.Array.filter(
+				editorConfig.extraPlugins.split(','),
+				function(item) {
+					return item !== 'ae_embed';
+				}
+			).join(',');
+		}
+
+		editorConfig.removePlugins = editorConfig.removePlugins ? editorConfig.removePlugins + ',ae_embed' : 'ae_embed';
+
 		editorConfig = A.merge(
 			{
 				title: '<%= LanguageUtil.get(resourceBundle, "rich-text-editor") %>'

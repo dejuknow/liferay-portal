@@ -63,6 +63,11 @@ public class TaskCacheApplicator {
 
 			upToDate = true;
 		}
+		else if (taskCache.isDisabled()) {
+			if (_logger.isLifecycleEnabled()) {
+				_logger.lifecycle("Cache for " + task + " is disabled");
+			}
+		}
 		else {
 			String cachedDigest = getCachedDigest(taskCache);
 
@@ -217,6 +222,10 @@ public class TaskCacheApplicator {
 				continue;
 			}
 
+			if (".DS_Store".equals(testFile.getName())) {
+				continue;
+			}
+
 			sb.append(FileUtil.getDigest(testFile));
 			sb.append(_DIGEST_SEPARATOR);
 		}
@@ -241,7 +250,7 @@ public class TaskCacheApplicator {
 
 		Set<Object> taskDependencies = task.getDependsOn();
 
-		Set<Task> skippedTaskDependencies =
+		Set<Object> skippedTaskDependencies =
 			taskCache.getSkippedTaskDependencies();
 
 		if (skippedTaskDependencies.isEmpty()) {
@@ -252,11 +261,14 @@ public class TaskCacheApplicator {
 			}
 		}
 		else {
-			for (Task taskDependency : skippedTaskDependencies) {
+			for (Object taskDependency : skippedTaskDependencies) {
 				boolean removed = taskDependencies.remove(taskDependency);
 
-				if (!removed) {
-					removed = taskDependencies.remove(taskDependency.getName());
+				if (!removed && (taskDependency instanceof Task)) {
+					Task taskDependencyTask = (Task)taskDependency;
+
+					removed = taskDependencies.remove(
+						taskDependencyTask.getName());
 				}
 
 				if (removed) {
@@ -269,7 +281,7 @@ public class TaskCacheApplicator {
 				else if (_logger.isWarnEnabled()) {
 					_logger.warn(
 						"Unable to remove skipped task dependency " +
-							taskDependency.getPath());
+							taskDependency);
 				}
 			}
 		}

@@ -165,6 +165,17 @@ public class JavaSourceProcessorTest extends BaseSourceProcessorTestCase {
 	}
 
 	@Test
+	public void testIncorrectParameterNames() throws Exception {
+		test(
+			"IncorrectParameterNames.testjava",
+			new String[] {
+				"Parameter StringMap should not start with uppercase:",
+				"Parameter TestString should not start with uppercase:"
+			},
+			new Integer[] {24, 28});
+	}
+
+	@Test
 	public void testIncorrectTabs() throws Exception {
 		test(
 			"IncorrectTabs.testjava",
@@ -185,6 +196,15 @@ public class JavaSourceProcessorTest extends BaseSourceProcessorTestCase {
 			},
 			new Integer[] {22, 28});
 		test("IncorrectVariableNames2.testjava");
+		test(
+			"IncorrectVariableNames3.testjava",
+			new String[] {
+				"Variable TestMapWithARatherLongName should not start with " +
+					"uppercase:",
+				"Variable TestString should not start with uppercase:"
+			},
+			new Integer[] {26, 29});
+
 	}
 
 	@Test
@@ -291,6 +311,7 @@ public class JavaSourceProcessorTest extends BaseSourceProcessorTestCase {
 		test("SortJavaTerms1.testjava");
 		test("SortJavaTerms2.testjava");
 		test("SortJavaTerms3.testjava");
+		test("SortJavaTerms4.testjava");
 	}
 
 	@Test

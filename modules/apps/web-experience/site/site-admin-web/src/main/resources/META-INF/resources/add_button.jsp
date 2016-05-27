@@ -31,26 +31,18 @@
 	</liferay-portlet:renderURL>
 
 	<%
-	boolean hasAddLayoutSetPrototypePermission = PortalPermissionUtil.contains(permissionChecker, ActionKeys.ADD_LAYOUT_SET_PROTOTYPE);
 	List<LayoutSetPrototype> layoutSetPrototypes = LayoutSetPrototypeServiceUtil.search(company.getCompanyId(), Boolean.TRUE, null);
 	%>
 
 	<liferay-frontend:add-menu>
 		<c:choose>
-			<c:when test="<%= !hasAddLayoutSetPrototypePermission && layoutSetPrototypes.isEmpty() %>">
+			<c:when test="<%= layoutSetPrototypes.isEmpty() %>">
 				<liferay-frontend:add-menu-item title='<%= LanguageUtil.get(request, "add") %>' url="<%= addSiteURL.toString() %>" />
 			</c:when>
 			<c:otherwise>
-
-				<%
-				addSiteURL.setParameter("showPrototypes", "0");
-				%>
-
 				<liferay-frontend:add-menu-item title='<%= LanguageUtil.get(request, "blank-site") %>' url="<%= addSiteURL.toString() %>" />
 
 				<%
-				addSiteURL.setParameter("showPrototypes", "1");
-
 				for (LayoutSetPrototype layoutSetPrototype : layoutSetPrototypes) {
 					addSiteURL.setParameter("layoutSetPrototypeId", String.valueOf(layoutSetPrototype.getLayoutSetPrototypeId()));
 				%>
@@ -61,20 +53,6 @@
 				}
 				%>
 
-				<c:if test="<%= hasAddLayoutSetPrototypePermission %>">
-					<portlet:renderURL var="viewSitesURL" />
-
-					<%
-					Map<String, Object> anchorData = new HashMap<>();
-
-					PortletURL manageSiteTemplateURL = PortletProviderUtil.getPortletURL(request, LayoutSetPrototype.class.getName(), PortletProvider.Action.VIEW);
-
-					manageSiteTemplateURL.setParameter("redirect", viewSitesURL);
-					manageSiteTemplateURL.setParameter("backURL", viewSitesURL);
-					%>
-
-					<liferay-frontend:add-menu-item anchorData="<%= anchorData %>" title='<%= LanguageUtil.get(request, "manage-site-template") %>' url="<%= manageSiteTemplateURL.toString() %>" />
-				</c:if>
 			</c:otherwise>
 		</c:choose>
 	</liferay-frontend:add-menu>

@@ -56,6 +56,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -199,7 +200,7 @@ public class AddressPersistenceImpl extends BasePersistenceImpl<Address>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (Address address : list) {
-					if (!Validator.equals(uuid, address.getUuid())) {
+					if (!Objects.equals(uuid, address.getUuid())) {
 						list = null;
 
 						break;
@@ -755,7 +756,7 @@ public class AddressPersistenceImpl extends BasePersistenceImpl<Address>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (Address address : list) {
-					if (!Validator.equals(uuid, address.getUuid()) ||
+					if (!Objects.equals(uuid, address.getUuid()) ||
 							(companyId != address.getCompanyId())) {
 						list = null;
 
@@ -4729,8 +4730,8 @@ public class AddressPersistenceImpl extends BasePersistenceImpl<Address>
 			Address address = (Address)session.get(AddressImpl.class, primaryKey);
 
 			if (address == null) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+				if (_log.isDebugEnabled()) {
+					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchAddressException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
@@ -5066,8 +5067,8 @@ public class AddressPersistenceImpl extends BasePersistenceImpl<Address>
 		Address address = fetchByPrimaryKey(primaryKey);
 
 		if (address == null) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+			if (_log.isDebugEnabled()) {
+				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
 			throw new NoSuchAddressException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +

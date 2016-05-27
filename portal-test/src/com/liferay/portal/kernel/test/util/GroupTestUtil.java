@@ -34,6 +34,8 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 
+import java.io.Serializable;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Locale;
@@ -161,6 +163,12 @@ public class GroupTestUtil {
 	}
 
 	public static void enableLocalStaging(Group group) throws Exception {
+		enableLocalStaging(group, TestPropsValues.getUserId());
+	}
+
+	public static void enableLocalStaging(Group group, long userId)
+		throws Exception {
+
 		ServiceContext serviceContext =
 			ServiceContextTestUtil.getServiceContext();
 
@@ -168,23 +176,20 @@ public class GroupTestUtil {
 		serviceContext.setAddGuestPermissions(true);
 		serviceContext.setScopeGroupId(group.getGroupId());
 
-		Map<String, String[]> parameters =
-			ExportImportConfigurationParameterMapFactory.buildParameterMap();
+		Map<String, Serializable> attributes = serviceContext.getAttributes();
 
-		parameters.put(
+		attributes.putAll(
+			ExportImportConfigurationParameterMapFactory.buildParameterMap());
+
+		attributes.put(
 			PortletDataHandlerKeys.PORTLET_CONFIGURATION_ALL,
 			new String[] {Boolean.FALSE.toString()});
-		parameters.put(
+		attributes.put(
 			PortletDataHandlerKeys.PORTLET_DATA_ALL,
 			new String[] {Boolean.FALSE.toString()});
 
-		for (String parameterName : parameters.keySet()) {
-			serviceContext.setAttribute(
-				parameterName, parameters.get(parameterName)[0]);
-		}
-
 		StagingLocalServiceUtil.enableLocalStaging(
-			TestPropsValues.getUserId(), group, false, false, serviceContext);
+			userId, group, false, false, serviceContext);
 	}
 
 	public static Group updateDisplaySettings(

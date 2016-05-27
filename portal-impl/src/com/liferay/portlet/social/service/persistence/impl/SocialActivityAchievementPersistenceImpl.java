@@ -35,7 +35,6 @@ import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.Validator;
 
 import com.liferay.portlet.social.model.impl.SocialActivityAchievementImpl;
 import com.liferay.portlet.social.model.impl.SocialActivityAchievementModelImpl;
@@ -52,6 +51,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -1276,7 +1276,7 @@ public class SocialActivityAchievementPersistenceImpl
 			if ((list != null) && !list.isEmpty()) {
 				for (SocialActivityAchievement socialActivityAchievement : list) {
 					if ((groupId != socialActivityAchievement.getGroupId()) ||
-							!Validator.equals(name,
+							!Objects.equals(name,
 								socialActivityAchievement.getName())) {
 						list = null;
 
@@ -2352,8 +2352,8 @@ public class SocialActivityAchievementPersistenceImpl
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchActivityAchievementException(msg.toString());
@@ -2402,7 +2402,7 @@ public class SocialActivityAchievementPersistenceImpl
 
 			if ((groupId != socialActivityAchievement.getGroupId()) ||
 					(userId != socialActivityAchievement.getUserId()) ||
-					!Validator.equals(name, socialActivityAchievement.getName())) {
+					!Objects.equals(name, socialActivityAchievement.getName())) {
 				result = null;
 			}
 		}
@@ -3386,8 +3386,8 @@ public class SocialActivityAchievementPersistenceImpl
 					primaryKey);
 
 			if (socialActivityAchievement == null) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+				if (_log.isDebugEnabled()) {
+					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchActivityAchievementException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
@@ -3632,8 +3632,8 @@ public class SocialActivityAchievementPersistenceImpl
 		SocialActivityAchievement socialActivityAchievement = fetchByPrimaryKey(primaryKey);
 
 		if (socialActivityAchievement == null) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+			if (_log.isDebugEnabled()) {
+				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
 			throw new NoSuchActivityAchievementException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +

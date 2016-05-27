@@ -100,7 +100,7 @@ String selectStyle = (String)request.getAttribute("configuration.jsp-selectStyle
 						<liferay-ui:input-move-boxes
 							leftBoxName="currentClassNameIds"
 							leftList="<%= typesLeftList %>"
-							leftReorder="true"
+							leftReorder="<%= Boolean.TRUE.toString() %>"
 							leftTitle="selected"
 							rightBoxName="availableClassNameIds"
 							rightList="<%= typesRightList %>"
@@ -220,7 +220,7 @@ String selectStyle = (String)request.getAttribute("configuration.jsp-selectStyle
 								<liferay-ui:input-move-boxes
 									leftBoxName='<%= className + "currentClassTypeIds" %>'
 									leftList="<%= subtypesLeftList %>"
-									leftReorder="true"
+									leftReorder="<%= Boolean.TRUE.toString() %>"
 									leftTitle="selected"
 									rightBoxName='<%= className + "availableClassTypeIds" %>'
 									rightList="<%= subtypesRightList %>"
@@ -454,7 +454,7 @@ String selectStyle = (String)request.getAttribute("configuration.jsp-selectStyle
 								List<AssetVocabulary> assetVocabularies = AssetVocabularyLocalServiceUtil.getGroupVocabularies(scopeGroupId, false);
 
 								if (!assetVocabularies.isEmpty()) {
-								%>
+							%>
 
 									<optgroup label="<liferay-ui:message key="vocabularies" />">
 
@@ -471,7 +471,7 @@ String selectStyle = (String)request.getAttribute("configuration.jsp-selectStyle
 
 									</optgroup>
 
-								<%
+							<%
 								}
 							}
 							%>
@@ -781,13 +781,3 @@ String selectStyle = (String)request.getAttribute("configuration.jsp-selectStyle
 		$('#<portlet:namespace />' + className + 'ddmStructureFieldMessage').html(_.escape(message));
 	}
 </aui:script>
-
-<%!
-private String _getSectionId(String name) {
-	return TextFormatter.format(name, TextFormatter.M);
-}
-
-private String _getSectionJsp(String name) {
-	return TextFormatter.format(name, TextFormatter.N);
-}
-%>

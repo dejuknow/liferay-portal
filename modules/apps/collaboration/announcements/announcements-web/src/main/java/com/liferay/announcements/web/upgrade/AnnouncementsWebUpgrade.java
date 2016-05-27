@@ -14,11 +14,11 @@
 
 package com.liferay.announcements.web.upgrade;
 
+import com.liferay.portal.kernel.upgrade.BaseReplacePortletId;
 import com.liferay.portal.kernel.upgrade.DummyUpgradeStep;
+import com.liferay.portal.kernel.upgrade.UpgradeStep;
 import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.upgrade.registry.UpgradeStepRegistrator;
-import com.liferay.portal.upgrade.util.ReplacePortletId;
-import com.liferay.portal.upgrade.util.UpgradePortletId;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -31,10 +31,10 @@ public class AnnouncementsWebUpgrade implements UpgradeStepRegistrator {
 	@Override
 	public void register(Registry registry) {
 		registry.register(
-			"com.liferay.announcements.web", "0.0.0", "1.0.0",
+			"com.liferay.announcements.web", "0.0.0", "1.0.1",
 			new DummyUpgradeStep());
 
-		UpgradePortletId upgradePortletId = new ReplacePortletId() {
+		UpgradeStep upgradePortletId = new BaseReplacePortletId() {
 
 			@Override
 			protected String[][] getRenamePortletIdsArray() {
@@ -50,7 +50,13 @@ public class AnnouncementsWebUpgrade implements UpgradeStepRegistrator {
 		};
 
 		registry.register(
-			"com.liferay.announcements.web", "0.0.1", "1.0.0",
+			"com.liferay.announcements.web", "0.0.1", "1.0.1",
+			upgradePortletId);
+
+		// See LPS-65946
+
+		registry.register(
+			"com.liferay.announcements.web", "1.0.0", "1.0.1",
 			upgradePortletId);
 	}
 

@@ -57,6 +57,7 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import java.io.Serializable;
 
 import java.util.Locale;
+import java.util.Objects;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
@@ -83,6 +84,20 @@ public class DDLRecordIndexer extends BaseIndexer<DDLRecord> {
 	@Override
 	public String getClassName() {
 		return CLASS_NAME;
+	}
+
+	@Override
+	public BooleanFilter getFacetBooleanFilter(
+			String className, SearchContext searchContext)
+		throws Exception {
+
+		BooleanFilter booleanFilter = super.getFacetBooleanFilter(
+			DDLRecordSet.class.getName(), searchContext);
+
+		booleanFilter.addTerm(
+			Field.ENTRY_CLASS_NAME, DDLRecord.class.getName());
+
+		return booleanFilter;
 	}
 
 	@Override
@@ -197,7 +212,7 @@ public class DDLRecordIndexer extends BaseIndexer<DDLRecord> {
 		Document document = getDocument(ddlRecord);
 
 		if (!recordVersion.isApproved()) {
-			if (Validator.equals(
+			if (Objects.equals(
 					recordVersion.getVersion(),
 					DDLRecordConstants.VERSION_DEFAULT)) {
 

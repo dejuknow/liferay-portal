@@ -92,7 +92,7 @@ public class LayoutRevisionLocalServiceImpl
 		layoutRevision.setThemeId(themeId);
 		layoutRevision.setColorSchemeId(colorSchemeId);
 		layoutRevision.setCss(css);
-		layoutRevision.setStatus(WorkflowConstants.STATUS_DRAFT);
+		layoutRevision.setStatus(WorkflowConstants.STATUS_APPROVED);
 		layoutRevision.setStatusDate(serviceContext.getModifiedDate(now));
 
 		layoutRevisionPersistence.update(layoutRevision);
@@ -107,6 +107,12 @@ public class LayoutRevisionLocalServiceImpl
 
 		copyPortletPreferences(layoutRevision, portletPreferencesPlid);
 
+		boolean major = ParamUtil.getBoolean(serviceContext, "major");
+
+		if (major || !isWorkflowEnabled(plid)) {
+			updateMajor(layoutRevision);
+		}
+
 		// Workflow
 
 		if (isWorkflowEnabled(plid)) {
@@ -117,8 +123,6 @@ public class LayoutRevisionLocalServiceImpl
 				serviceContext);
 		}
 		else {
-			updateMajor(layoutRevision);
-
 			updateStatus(
 				userId, layoutRevisionId, WorkflowConstants.STATUS_APPROVED,
 				serviceContext);
@@ -169,12 +173,10 @@ public class LayoutRevisionLocalServiceImpl
 		recentLayoutRevisionLocalService.deleteRecentLayoutRevisions(
 			layoutRevision.getLayoutRevisionId());
 
-		if (layoutRevision.isPending()) {
-			workflowInstanceLinkLocalService.deleteWorkflowInstanceLink(
-				layoutRevision.getCompanyId(), layoutRevision.getGroupId(),
-				LayoutRevision.class.getName(),
-				layoutRevision.getLayoutRevisionId());
-		}
+		workflowInstanceLinkLocalService.deleteWorkflowInstanceLink(
+			layoutRevision.getCompanyId(), layoutRevision.getGroupId(),
+			LayoutRevision.class.getName(),
+			layoutRevision.getLayoutRevisionId());
 
 		return layoutRevisionPersistence.remove(layoutRevision);
 	}

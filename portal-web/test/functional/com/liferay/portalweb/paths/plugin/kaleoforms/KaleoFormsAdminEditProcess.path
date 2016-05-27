@@ -35,43 +35,13 @@
 </tr>
 <!--FORM_NAVIGATOR-->
 <tr>
-	<td>FORM_NAVIGATOR_1</td>
-	<td>//ul[contains(@class,'nav-list')]//span[contains(.,'1')]</td>
+	<td>FORM_NAVIGATOR_PROGRESS_BAR_NAME</td>
+	<td>//ul[contains(@class,'nav-list')]/li[contains(@id,'${key_kfProgressName}Tab')]//div[@class='progress-bar-title']</td>
 	<td></td>
 </tr>
 <tr>
-	<td>FORM_NAVIGATOR_DETAILS</td>
-	<td>//ul[contains(@class,'nav-list')]//span[contains(.,'Details')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>FORM_NAVIGATOR_2</td>
-	<td>//ul[contains(@class,'nav-list')]//span[contains(.,'2')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>FORM_NAVIGATOR_FIELD_SET</td>
-	<td>//ul[contains(@class,'nav-list')]//span[contains(.,'Fields')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>FORM_NAVIGATOR_3</td>
-	<td>//ul[contains(@class,'nav-list')]//span[contains(.,'3')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>FORM_NAVIGATOR_WORKFLOW</td>
-	<td>//ul[contains(@class,'nav-list')]//span[contains(.,'Workflow')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>FORM_NAVIGATOR_4</td>
-	<td>//ul[contains(@class,'nav-list')]//span[contains(.,'4')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>FORM_NAVIGATOR_FORMS</td>
-	<td>//ul[contains(@class,'nav-list')]//span[contains(.,'Forms')]</td>
+	<td>FORM_NAVIGATOR_PROGRESS_BAR_STEP</td>
+	<td>//ul[contains(@class,'nav-list')]/li[contains(@id,'${key_kfProgressName}Tab')]//div[@class='progress-bar-step']</td>
 	<td></td>
 </tr>
 <tr>
@@ -103,7 +73,7 @@
 <!--FIELD_SET-->
 <tr>
 	<td>SELECTED_FIELD_SET</td>
-	<td>//div[contains(.,'Selected Field Set')]//span[contains(@id,'kaleoformsportlet_ddmStructureDisplay')]</td>
+	<td>//div[contains(@class,'ddm-field-group')]/a[contains(.,'${key_kfFieldSetName}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -117,6 +87,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>SAVE_BUTTON</td>
+	<td>//div[contains(@id,'DMPortlet')]//button[contains(.,'Save')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td></td>
 	<td></td>
 	<td></td>
@@ -124,12 +99,12 @@
 <!--FIELD_SET_TABLE-->
 <tr>
 	<td>FIELD_SET_TABLE_NAME</td>
-	<td>xpath=(//div[contains(@id,'kaleoformsportlet_ddmStructures')]//tr[contains(.,'${key_kfFieldSetName}')]/td[1])[1]</td>
+	<td>//tr[contains(.,'${key_kfFieldSetName}')]/td[contains(.,'${key_kfFieldSetName}')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>FIELD_SET_TABLE_ACTIONS</td>
-	<td>xpath=(//div[contains(@id,'kaleoformsportlet_ddmStructures')]//tr[contains(.,'${key_kfFieldSetName}')]/td[4]//div/a[@title='Actions'])[1]</td>
+	<td>//tr[contains(.,'${key_kfFieldSetName}')]//a[contains(@class,'dropdown-toggle')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -231,12 +206,12 @@
 <!--WORKFLOW_TABLE-->
 <tr>
 	<td>WORKFLOW_TABLE_TITLE</td>
-	<td>//div[contains(@id,'kaleoformsportlet_workflowDefinitions')]//tr[contains(.,'${key_workflowDefinitionTitle}')]/td[1]</td>
+	<td>//tr[contains(.,'${key_workflowDefinitionTitle}')]/td[contains(.,'${key_workflowDefinitionTitle}')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>WORKFLOW_TABLE_ACTIONS</td>
-	<td>//div[contains(@id,'kaleoformsportlet_workflowDefinitions')]//tr[contains(.,'${key_workflowDefinitionTitle}')]/td[3]//div/a[@title='Actions']</td>
+	<td>//tr[contains(.,'${key_workflowDefinitionTitle}')]//a[contains(@class,'dropdown-toggle')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -305,7 +280,7 @@
 </tr>
 <tr>
 	<td>FORMS_TABLE_ASSIGN_FORM_BUTTON</td>
-	<td>//div[contains(@id,'kaleoformsportlet_taskForm')]//tr[contains(.,'${key_workflowTask}')]/td[3]//button</td>
+	<td>//tr[contains(.,'${key_workflowTask}')]//span[contains(.,'Assign Form')]</td>
 	<td></td>
 </tr>
 </tbody>

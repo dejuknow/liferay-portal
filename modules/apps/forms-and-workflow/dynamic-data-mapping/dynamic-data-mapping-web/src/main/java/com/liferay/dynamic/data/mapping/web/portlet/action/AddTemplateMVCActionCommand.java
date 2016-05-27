@@ -94,7 +94,7 @@ public class AddTemplateMVCActionCommand extends DDMBaseMVCActionCommand {
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(
 			DDMTemplate.class.getName(), uploadPortletRequest);
 
-		return _ddmTemplateService.addTemplate(
+		return ddmTemplateService.addTemplate(
 			groupId, classNameId, classPK, resourceClassNameId, templateKey,
 			nameMap, descriptionMap, type, mode, language, script, cacheable,
 			smallImage, smallImageURL, smallImageFile, serviceContext);
@@ -108,6 +108,8 @@ public class AddTemplateMVCActionCommand extends DDMBaseMVCActionCommand {
 		DDMTemplate template = addTemplate(actionRequest);
 
 		updatePortletPreferences(actionRequest, template);
+
+		addSuccessMessage(actionRequest, actionResponse);
 
 		setRedirectAttribute(actionRequest, template);
 	}
@@ -162,9 +164,9 @@ public class AddTemplateMVCActionCommand extends DDMBaseMVCActionCommand {
 	protected void setDDMTemplateService(
 		DDMTemplateService ddmTemplateService) {
 
-		_ddmTemplateService = ddmTemplateService;
+		this.ddmTemplateService = ddmTemplateService;
 	}
 
-	private DDMTemplateService _ddmTemplateService;
+	protected DDMTemplateService ddmTemplateService;
 
 }

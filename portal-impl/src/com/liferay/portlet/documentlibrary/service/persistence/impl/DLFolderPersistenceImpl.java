@@ -43,7 +43,9 @@ import com.liferay.portal.kernel.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.service.persistence.impl.TableMapper;
 import com.liferay.portal.kernel.service.persistence.impl.TableMapperFactory;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.CharPool;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringBundler;
@@ -64,6 +66,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -208,7 +211,7 @@ public class DLFolderPersistenceImpl extends BasePersistenceImpl<DLFolder>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (DLFolder dlFolder : list) {
-					if (!Validator.equals(uuid, dlFolder.getUuid())) {
+					if (!Objects.equals(uuid, dlFolder.getUuid())) {
 						list = null;
 
 						break;
@@ -681,8 +684,8 @@ public class DLFolderPersistenceImpl extends BasePersistenceImpl<DLFolder>
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchFolderException(msg.toString());
@@ -726,7 +729,7 @@ public class DLFolderPersistenceImpl extends BasePersistenceImpl<DLFolder>
 		if (result instanceof DLFolder) {
 			DLFolder dlFolder = (DLFolder)result;
 
-			if (!Validator.equals(uuid, dlFolder.getUuid()) ||
+			if (!Objects.equals(uuid, dlFolder.getUuid()) ||
 					(groupId != dlFolder.getGroupId())) {
 				result = null;
 			}
@@ -1019,7 +1022,7 @@ public class DLFolderPersistenceImpl extends BasePersistenceImpl<DLFolder>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (DLFolder dlFolder : list) {
-					if (!Validator.equals(uuid, dlFolder.getUuid()) ||
+					if (!Objects.equals(uuid, dlFolder.getUuid()) ||
 							(companyId != dlFolder.getCompanyId())) {
 						list = null;
 
@@ -4841,8 +4844,8 @@ public class DLFolderPersistenceImpl extends BasePersistenceImpl<DLFolder>
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchFolderException(msg.toString());
@@ -5696,7 +5699,7 @@ public class DLFolderPersistenceImpl extends BasePersistenceImpl<DLFolder>
 			if ((list != null) && !list.isEmpty()) {
 				for (DLFolder dlFolder : list) {
 					if ((parentFolderId != dlFolder.getParentFolderId()) ||
-							!Validator.equals(name, dlFolder.getName())) {
+							!Objects.equals(name, dlFolder.getName())) {
 						list = null;
 
 						break;
@@ -7195,8 +7198,8 @@ public class DLFolderPersistenceImpl extends BasePersistenceImpl<DLFolder>
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchFolderException(msg.toString());
@@ -7244,7 +7247,7 @@ public class DLFolderPersistenceImpl extends BasePersistenceImpl<DLFolder>
 
 			if ((groupId != dlFolder.getGroupId()) ||
 					(parentFolderId != dlFolder.getParentFolderId()) ||
-					!Validator.equals(name, dlFolder.getName())) {
+					!Objects.equals(name, dlFolder.getName())) {
 				result = null;
 			}
 		}
@@ -12474,8 +12477,8 @@ public class DLFolderPersistenceImpl extends BasePersistenceImpl<DLFolder>
 					primaryKey);
 
 			if (dlFolder == null) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+				if (_log.isDebugEnabled()) {
+					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchFolderException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
@@ -12905,8 +12908,8 @@ public class DLFolderPersistenceImpl extends BasePersistenceImpl<DLFolder>
 		DLFolder dlFolder = fetchByPrimaryKey(primaryKey);
 
 		if (dlFolder == null) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+			if (_log.isDebugEnabled()) {
+				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
 			throw new NoSuchFolderException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
@@ -13433,10 +13436,8 @@ public class DLFolderPersistenceImpl extends BasePersistenceImpl<DLFolder>
 			companyId = dlFolder.getCompanyId();
 		}
 
-		for (long dlFileEntryTypePK : dlFileEntryTypePKs) {
-			dlFolderToDLFileEntryTypeTableMapper.addTableMapping(companyId, pk,
-				dlFileEntryTypePK);
-		}
+		dlFolderToDLFileEntryTypeTableMapper.addTableMappings(companyId, pk,
+			dlFileEntryTypePKs);
 	}
 
 	/**
@@ -13448,21 +13449,9 @@ public class DLFolderPersistenceImpl extends BasePersistenceImpl<DLFolder>
 	@Override
 	public void addDLFileEntryTypes(long pk,
 		List<com.liferay.document.library.kernel.model.DLFileEntryType> dlFileEntryTypes) {
-		long companyId = 0;
-
-		DLFolder dlFolder = fetchByPrimaryKey(pk);
-
-		if (dlFolder == null) {
-			companyId = companyProvider.getCompanyId();
-		}
-		else {
-			companyId = dlFolder.getCompanyId();
-		}
-
-		for (com.liferay.document.library.kernel.model.DLFileEntryType dlFileEntryType : dlFileEntryTypes) {
-			dlFolderToDLFileEntryTypeTableMapper.addTableMapping(companyId, pk,
-				dlFileEntryType.getPrimaryKey());
-		}
+		addDLFileEntryTypes(pk,
+			ListUtil.toLongArray(dlFileEntryTypes,
+				com.liferay.document.library.kernel.model.DLFileEntryType.FILE_ENTRY_TYPE_ID_ACCESSOR));
 	}
 
 	/**
@@ -13508,10 +13497,8 @@ public class DLFolderPersistenceImpl extends BasePersistenceImpl<DLFolder>
 	 */
 	@Override
 	public void removeDLFileEntryTypes(long pk, long[] dlFileEntryTypePKs) {
-		for (long dlFileEntryTypePK : dlFileEntryTypePKs) {
-			dlFolderToDLFileEntryTypeTableMapper.deleteTableMapping(pk,
-				dlFileEntryTypePK);
-		}
+		dlFolderToDLFileEntryTypeTableMapper.deleteTableMappings(pk,
+			dlFileEntryTypePKs);
 	}
 
 	/**
@@ -13523,10 +13510,9 @@ public class DLFolderPersistenceImpl extends BasePersistenceImpl<DLFolder>
 	@Override
 	public void removeDLFileEntryTypes(long pk,
 		List<com.liferay.document.library.kernel.model.DLFileEntryType> dlFileEntryTypes) {
-		for (com.liferay.document.library.kernel.model.DLFileEntryType dlFileEntryType : dlFileEntryTypes) {
-			dlFolderToDLFileEntryTypeTableMapper.deleteTableMapping(pk,
-				dlFileEntryType.getPrimaryKey());
-		}
+		removeDLFileEntryTypes(pk,
+			ListUtil.toLongArray(dlFileEntryTypes,
+				com.liferay.document.library.kernel.model.DLFileEntryType.FILE_ENTRY_TYPE_ID_ACCESSOR));
 	}
 
 	/**
@@ -13545,10 +13531,8 @@ public class DLFolderPersistenceImpl extends BasePersistenceImpl<DLFolder>
 
 		removeDLFileEntryTypePKsSet.removeAll(newDLFileEntryTypePKsSet);
 
-		for (long removeDLFileEntryTypePK : removeDLFileEntryTypePKsSet) {
-			dlFolderToDLFileEntryTypeTableMapper.deleteTableMapping(pk,
-				removeDLFileEntryTypePK);
-		}
+		dlFolderToDLFileEntryTypeTableMapper.deleteTableMappings(pk,
+			ArrayUtil.toLongArray(removeDLFileEntryTypePKsSet));
 
 		newDLFileEntryTypePKsSet.removeAll(oldDLFileEntryTypePKsSet);
 
@@ -13563,10 +13547,8 @@ public class DLFolderPersistenceImpl extends BasePersistenceImpl<DLFolder>
 			companyId = dlFolder.getCompanyId();
 		}
 
-		for (long newDLFileEntryTypePK : newDLFileEntryTypePKsSet) {
-			dlFolderToDLFileEntryTypeTableMapper.addTableMapping(companyId, pk,
-				newDLFileEntryTypePK);
-		}
+		dlFolderToDLFileEntryTypeTableMapper.addTableMappings(companyId, pk,
+			ArrayUtil.toLongArray(newDLFileEntryTypePKsSet));
 	}
 
 	/**

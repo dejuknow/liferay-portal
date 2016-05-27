@@ -14,14 +14,16 @@
 
 package com.liferay.portal.configuration.cluster.internal.messaging;
 
+import com.liferay.portal.configuration.cluster.constants.ConfigurationClusterDestinationNames;
 import com.liferay.portal.configuration.cluster.internal.ConfigurationThreadLocal;
-import com.liferay.portal.configuration.cluster.messaging.DestinationNames;
 import com.liferay.portal.configuration.persistence.ReloadablePersistenceManager;
 import com.liferay.portal.kernel.messaging.BaseMessageListener;
 import com.liferay.portal.kernel.messaging.Destination;
 import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.messaging.MessageListener;
 import com.liferay.portal.kernel.util.StringBundler;
+
+import java.util.Dictionary;
 
 import org.osgi.framework.Constants;
 import org.osgi.service.cm.Configuration;
@@ -35,7 +37,7 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	immediate = true,
-	property = {"destination.name=" + DestinationNames.CONFIGURATION},
+	property = {"destination.name=" + ConfigurationClusterDestinationNames.CONFIGURATION},
 	service = MessageListener.class
 )
 public class ConfigurationMessageListener extends BaseMessageListener {
@@ -74,6 +76,9 @@ public class ConfigurationMessageListener extends BaseMessageListener {
 
 		_reloadablePersistenceManager.reload(pid);
 
+		Dictionary<String, ?> properties = _reloadablePersistenceManager.load(
+			pid);
+
 		try {
 			ConfigurationThreadLocal.setLocalUpdate(true);
 
@@ -91,7 +96,7 @@ public class ConfigurationMessageListener extends BaseMessageListener {
 					configuration.delete();
 				}
 				else {
-					configuration.update();
+					configuration.update(properties);
 				}
 			}
 		}
@@ -108,7 +113,7 @@ public class ConfigurationMessageListener extends BaseMessageListener {
 	}
 
 	@Reference(
-		target = "(destination.name=" + DestinationNames.CONFIGURATION + ")",
+		target = "(destination.name=" + ConfigurationClusterDestinationNames.CONFIGURATION + ")",
 		unbind = "-"
 	)
 	protected void setDestination(Destination destination) {

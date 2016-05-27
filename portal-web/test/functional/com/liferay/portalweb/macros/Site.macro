@@ -188,7 +188,6 @@
 
 		<execute function="Click" locator1="Button#PLUS" />
 
-		<execute function="AssertElementPresent" locator1="Button#ADD" />
 		<execute function="AssertVisible" locator1="Button#DONE" />
 
 		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
@@ -442,21 +441,29 @@
 		<var name="key_userScreenName" value="${userScreenName}" />
 
 		<execute function="AssertTextEquals" locator1="UsersAndOrganizations#USER_TABLE_SCREEN_NAME" value1="${userScreenName}" />
+
 		<execute function="AssertClick" locator1="UsersAndOrganizations#USER_TABLE_SCREEN_NAME" value1="${userScreenName}" />
+
 		<execute macro="Panel#expandPanel">
 			<var name="panelHeading" value="Sites" />
 		</execute>
 
 		<execute function="AssertClick" locator1="UsersAndOrganizationsEditUser#SITES_SELECT_LINK" value1="Select" />
+
 		<execute function="SelectFrame" locator1="CPUsersandorganizationsUser#SITES_SELECT_IFRAME" />
 
 		<var name="key_siteName" value="${siteName}" />
 
 		<execute function="Type" locator1="CPUsersandorganizationsUser#SITES_SELECT_SEARCH_FIELD" value1="${siteName}" />
+
 		<execute function="KeyPress" locator1="CPUsersandorganizationsUser#SITES_SELECT_SEARCH_FIELD" value1="\RETURN" />
-		<execute function="AssertTextEquals" locator1="CPUsersandorganizationsUser#SITES_SELECT_TABLE_NAME" value1="${siteName}" />
+
+		<execute function="AssertTextEquals#assertPartialText" locator1="CPUsersandorganizationsUser#SITES_SELECT_TABLE_NAME" value1="${siteName}" />
+
 		<execute function="Click" locator1="SitesSelectSite#SITES_TABLE_CHOOSE_SITE_LINK" />
+
 		<execute function="SelectFrame" value1="relative=top" />
+
 		<execute macro="PortletEntry#save" />
 	</command>
 
@@ -489,7 +496,9 @@
 					<var name="currentSiteLanguage" value="${currentSiteLanguage}" />
 
 					<execute function="Select" locator1="SiteSettingsDisplaySettings#AVAILABLE_LANGUAGES_AVAILABLE_SELECT" value1="${currentSiteLanguage}" />
+
 					<execute function="Click" locator1="SiteSettingsDisplaySettings#MOVE_AVAILABLE_TO_CURRENT_BUTTON" />
+
 					<execute function="AssertTextEquals#assertPartialText" locator1="SiteSettingsDisplaySettings#AVAILABLE_LANGUAGES_CURRENT_SELECT" value1="${currentSiteLanguage}" />
 				</for>
 			</then>
@@ -625,7 +634,7 @@
 	</command>
 
 	<command name="gotoManageSitesTemplatesViaAddDropdown">
-		<execute function="Click" locator1="Button#PLUS" />
+		<execute function="Click" locator1="Icon#HEADER_VERTICAL_ELLIPSIS" />
 		<execute function="AssertClick" locator1="MenuItem#MANAGE_SITES_TEMPLATES" value1="Manage Sites Templates" />
 	</command>
 
@@ -703,8 +712,9 @@
 
 					<execute macro="Button#clickSave" />
 
-					<execute macro="Alert#viewSuccessMessage" />
 					<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS_1" value1="Your request was sent. You will receive a reply by email." />
+
+					<execute macro="Alert#viewSuccessMessage" />
 
 					<execute function="Click" locator1="Icon#BODY_VERTICAL_ELLIPSIS_2" />
 
@@ -1027,7 +1037,7 @@
 		<var name="key_siteName" value="${siteName}" />
 
 		<execute function="AssertElementPresent" locator1="Sites#SITE_TABLE_CHECKBOX" value1="${siteName}" />
-		<execute function="AssertTextEquals" locator1="Sites#SITE_TABLE_NAME" value1="${siteName}" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Sites#SITE_TABLE_NAME" value1="${siteName}" />
 		<execute function="AssertTextEquals" locator1="Sites#SITE_TABLE_TYPE" value1="${siteType}" />
 
 		<if>
@@ -1038,8 +1048,6 @@
 		</if>
 
 		<execute function="AssertTextEquals" locator1="Sites#SITE_TABLE_ACTIVE" value1="Yes" />
-		<execute function="AssertTextEquals" locator1="Sites#SITE_TABLE_PENDING_REQUESTS" value1="" />
-		<execute function="AssertTextEquals" locator1="Sites#SITE_TABLE_TAGS" value1="" />
 		<execute function="AssertElementPresent" locator1="Sites#SITE_TABLE_ACTIONS" />
 	</command>
 
@@ -1189,8 +1197,6 @@
 		<execute function="AssertTextEquals" locator1="Sites#SITE_TABLE_NAME" value1="${siteName}" />
 		<execute function="AssertTextEquals" locator1="Sites#SITE_TABLE_TYPE" value1="${siteType}" />
 		<execute function="AssertTextEquals" locator1="Sites#SITE_TABLE_ACTIVE" value1="Yes" />
-		<execute function="AssertTextEquals" locator1="Sites#SITE_TABLE_PENDING_REQUESTS" value1="" />
-		<execute function="AssertTextEquals" locator1="Sites#SITE_TABLE_TAGS" value1="" />
 		<execute function="AssertVisible" locator1="Sites#SITE_TABLE_ACTIONS" />
 	</command>
 

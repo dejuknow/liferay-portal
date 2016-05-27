@@ -150,8 +150,8 @@ public class ShoppingUtil {
 		// alternative shipping and shipping price is greater than 0
 
 		if ((shoppingGroupServiceOverriddenConfiguration != null) &&
-			shoppingGroupServiceOverriddenConfiguration.useAlternativeShipping(
-				) &&
+			shoppingGroupServiceOverriddenConfiguration.
+				useAlternativeShipping() &&
 			(shipping > 0)) {
 
 			double altShippingDelta = 0.0;

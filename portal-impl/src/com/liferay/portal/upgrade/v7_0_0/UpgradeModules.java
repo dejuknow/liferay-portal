@@ -27,9 +27,17 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 
 /**
- * @author Miguel Pastor
+ * @author Roberto Díaz
  */
 public class UpgradeModules extends UpgradeProcess {
+
+	public String[] getBundleSymbolicNames() {
+		return _BUNDLE_SYMBOLIC_NAMES;
+	}
+
+	public String[][] getConvertedLegacyModules() {
+		return _CONVERTED_LEGACY_MODULES;
+	}
 
 	protected void addRelease(String... bundleSymbolicNames)
 		throws SQLException {
@@ -96,7 +104,7 @@ public class UpgradeModules extends UpgradeProcess {
 		throws IOException, SQLException {
 
 		try (LoggingTimer loggingTimer = new LoggingTimer()) {
-			for (String[] convertedLegacyModule : _convertedLegacyModules) {
+			for (String[] convertedLegacyModule : getConvertedLegacyModules()) {
 				String oldServletContextName = convertedLegacyModule[0];
 				String newServletContextName = convertedLegacyModule[1];
 				String buildNamespace = convertedLegacyModule[2];
@@ -125,7 +133,7 @@ public class UpgradeModules extends UpgradeProcess {
 
 	protected void updateExtractedModules() throws SQLException {
 		try (LoggingTimer loggingTimer = new LoggingTimer()) {
-			addRelease(_bundleSymbolicNames);
+			addRelease(getBundleSymbolicNames());
 		}
 	}
 
@@ -139,7 +147,7 @@ public class UpgradeModules extends UpgradeProcess {
 					oldServletContextName + "'");
 	}
 
-	private static final String[] _bundleSymbolicNames = new String[] {
+	private static final String[] _BUNDLE_SYMBOLIC_NAMES = new String[] {
 		"com.liferay.amazon.rankings.web", "com.liferay.asset.browser.web",
 		"com.liferay.asset.categories.navigation.web",
 		"com.liferay.asset.publisher.web",
@@ -173,11 +181,12 @@ public class UpgradeModules extends UpgradeProcess {
 		"com.liferay.portal.scheduler.quartz", "com.liferay.portal.search.web",
 		"com.liferay.portal.settings.web",
 		"com.liferay.portlet.configuration.css.web",
-		"com.liferay.portlet.configuration.web", "com.liferay.quick.note.web",
-		"com.liferay.ratings.page.ratings.web", "com.liferay.rss.web",
-		"com.liferay.server.admin.web", "com.liferay.shopping.service",
-		"com.liferay.shopping.web", "com.liferay.site.browser.web",
-		"com.liferay.site.my.sites.web",
+		"com.liferay.portlet.configuration.web",
+		"com.liferay.product.navigation.product.menu.web",
+		"com.liferay.quick.note.web", "com.liferay.ratings.page.ratings.web",
+		"com.liferay.rss.web", "com.liferay.server.admin.web",
+		"com.liferay.shopping.service", "com.liferay.shopping.web",
+		"com.liferay.site.browser.web", "com.liferay.site.my.sites.web",
 		"com.liferay.site.navigation.breadcrumb.web",
 		"com.liferay.site.navigation.directory.web",
 		"com.liferay.site.navigation.language.web",
@@ -192,27 +201,24 @@ public class UpgradeModules extends UpgradeProcess {
 		"com.liferay.wiki.service", "com.liferay.wiki.web",
 		"com.liferay.xsl.content.web"
 	};
-	private static final String[][] _convertedLegacyModules = {
+
+	private static final String[][] _CONVERTED_LEGACY_MODULES = {
+		{"calendar-portlet", "com.liferay.calendar.service", "Calendar"},
 		{
-			"calendar-portlet", "com.liferay.calendar.service", "Calendar"
+			"kaleo-designer-portlet",
+			"com.liferay.portal.workflow.kaleo.designer.web", "KaleoDesigner"
 		},
 		{
-			"kaleo-web", "com.liferay.portal.workflow.kaleo.service", "Kaleo"
+			"kaleo-forms-portlet",
+			"com.liferay.portal.workflow.kaleo.forms.web", "KaleoForms"
 		},
+		{"kaleo-web", "com.liferay.portal.workflow.kaleo.service", "Kaleo"},
 		{
 			"marketplace-portlet", "com.liferay.marketplace.service",
 			"Marketplace"
 		},
-		{
-			"microblogs-portlet", "com.liferay.microblogs.service", "Microblogs"
-		},
-		{
-			"notifications-portlet", "com.liferay.notifications.web",
-			"Notifications"
-		},
-		{
-			"so-portlet", "com.liferay.invitation.invite.members.service", "SO"
-		},
+		{"microblogs-portlet", "com.liferay.microblogs.service", "Microblogs"},
+		{"so-portlet", "com.liferay.invitation.invite.members.service", "SO"},
 		{
 			"social-networking-portlet",
 			"com.liferay.social.networking.service", "SN"

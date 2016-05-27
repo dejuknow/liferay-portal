@@ -1,4 +1,5 @@
 <definition component-name="portal-user-management-and-portal-configuration">
+	<property name="portal.release" value="true" />
 	<property name="testray.main.component.name" value="Roles" />
 
 	<set-up>
@@ -304,7 +305,7 @@
 
 		<execute macro="Bookmark#addPG">
 			<var name="bookmarkName" value="Test Bookmark1 Name" />
-			<var name="bookmarkURL" value="http://www.liferay.com" />
+			<var name="bookmarkURL" value="https://www.liferay.com" />
 			<var name="bookmarkViewableBy" value="Owner" />
 		</execute>
 
@@ -406,12 +407,12 @@
 
 		<execute macro="Bookmark#gotoPG">
 			<var name="bookmarkName" value="Test Bookmark1 Name" />
-			<var name="bookmarkURL" value="http://www.liferay.com" />
+			<var name="bookmarkURL" value="https://www.liferay.com" />
 		</execute>
 
 		<execute macro="Bookmark#viewEntry">
 			<var name="bookmarkName" value="Test Bookmark1 Name" />
-			<var name="bookmarkURL" value="http://www.liferay.com" />
+			<var name="bookmarkURL" value="https://www.liferay.com" />
 		</execute>
 
 		<execute macro="Navigator#gotoSitePage">
@@ -1233,7 +1234,7 @@
 			<var name="pageName" value="Documents and Media Page" />
 		</execute>
 
-		<execute function="AssertTextEquals" locator1="Message#INFO" value1="There are no documents or media files in this folder." />
+		<execute function="AssertTextEquals" locator1="Message#EMPTY_INFO" value1="There are no documents or media files in this folder." />
 
 		<execute macro="Search#searchNoPG">
 			<var name="searchAssetTitle" value="Test Document" />
@@ -1968,6 +1969,10 @@
 
 		<execute macro="Navigator#openURL" />
 
+		<execute macro="Portlet#addPG">
+			<var name="portletName" value="Sign In" />
+		</execute>
+
 		<execute macro="PermissionsInline#gotoConfigurationPG">
 			<var name="portletName" value="Sign In" />
 		</execute>
@@ -2014,7 +2019,7 @@
 
 		<execute macro="Bookmark#addPG">
 			<var name="bookmarkName" value="Test Bookmark Name" />
-			<var name="bookmarkURL" value="http://www.liferay.com" />
+			<var name="bookmarkURL" value="https://www.liferay.com" />
 			<var name="bookmarkViewableBy" value="Owner" />
 		</execute>
 
@@ -2056,7 +2061,7 @@
 
 		<execute macro="Bookmark#viewNoPG">
 			<var name="bookmarkName" value="Test Bookmark Name" />
-			<var name="bookmarkURL" value="http://www.liferay.com" />
+			<var name="bookmarkURL" value="https://www.liferay.com" />
 		</execute>
 
 		<execute macro="User#logoutPG" />
@@ -2088,7 +2093,7 @@
 
 		<execute macro="Bookmark#viewBookmark">
 			<var name="bookmarkName" value="Test Bookmark Name" />
-			<var name="bookmarkURL" value="http://www.liferay.com" />
+			<var name="bookmarkURL" value="https://www.liferay.com" />
 		</execute>
 
 		<execute macro="User#logoutPG" />
@@ -2271,7 +2276,7 @@
 		</execute>
 
 		<execute macro="Role#viewPermissionCP">
-			<var name="permissionDefinitionValue" value="Go to Site Administration" />
+			<var name="permissionDefinitionValue" value="View Site Administration Menu" />
 			<var name="permissionNavigationValue" value="Site Memberships > Site" />
 		</execute>
 	</command>

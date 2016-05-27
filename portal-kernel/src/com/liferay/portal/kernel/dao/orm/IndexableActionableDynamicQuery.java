@@ -38,15 +38,6 @@ public class IndexableActionableDynamicQuery
 			return;
 		}
 
-		if (_documents == null) {
-			if (isParallel()) {
-				_documents = new ConcurrentLinkedDeque<>();
-			}
-			else {
-				_documents = new ArrayList<>();
-			}
-		}
-
 		for (Document document : documents) {
 			if (document != null) {
 				_documents.add(document);
@@ -76,6 +67,19 @@ public class IndexableActionableDynamicQuery
 			_count = _total;
 
 			sendStatusMessage();
+		}
+	}
+
+	@Override
+	public void setParallel(boolean parallel) {
+		if (isParallel() == parallel) {
+			return;
+		}
+
+		super.setParallel(parallel);
+
+		if (parallel) {
+			_documents = new ConcurrentLinkedDeque<>();
 		}
 	}
 
@@ -145,7 +149,7 @@ public class IndexableActionableDynamicQuery
 	private static final long _STATUS_INTERVAL = 1000;
 
 	private long _count;
-	private Collection<Document> _documents;
+	private Collection<Document> _documents = new ArrayList<>();
 	private String _searchEngineId;
 	private long _total;
 

@@ -18,6 +18,7 @@ import com.liferay.document.library.kernel.model.DLFolderConstants;
 import com.liferay.document.library.web.constants.DLPortletKeys;
 import com.liferay.document.library.web.display.context.logic.FileEntryDisplayContextHelper;
 import com.liferay.document.library.web.portlet.action.ActionUtil;
+import com.liferay.document.library.web.util.DLTrashUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.portlet.configuration.icon.BasePortletConfigurationIcon;
@@ -27,7 +28,6 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.trash.kernel.util.TrashUtil;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.PortletRequest;
@@ -54,15 +54,26 @@ public class DeleteFileEntryPortletConfigurationIcon
 	public String getMessage(PortletRequest portletRequest) {
 		String key = "delete";
 
-		ThemeDisplay themeDisplay = (ThemeDisplay)portletRequest.getAttribute(
-			WebKeys.THEME_DISPLAY);
+		try {
+			ThemeDisplay themeDisplay =
+				(ThemeDisplay)portletRequest.getAttribute(
+					WebKeys.THEME_DISPLAY);
 
-		if (isTrashEnabled(themeDisplay.getScopeGroupId())) {
-			key = "move-to-the-recycle-bin";
+			FileEntry fileEntry = ActionUtil.getFileEntry(portletRequest);
+
+			if (isTrashEnabled(
+					themeDisplay.getScopeGroupId(),
+					fileEntry.getRepositoryId())) {
+
+				key = "move-to-the-recycle-bin";
+			}
+
+			return LanguageUtil.get(
+				getResourceBundle(getLocale(portletRequest)), key);
 		}
-
-		return LanguageUtil.get(
-			getResourceBundle(getLocale(portletRequest)), key);
+		catch (PortalException pe) {
+			throw new RuntimeException(pe);
+		}
 	}
 
 	@Override
@@ -79,7 +90,18 @@ public class DeleteFileEntryPortletConfigurationIcon
 		ThemeDisplay themeDisplay = (ThemeDisplay)portletRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
-		if (isTrashEnabled(themeDisplay.getScopeGroupId())) {
+		FileEntry fileEntry = null;
+
+		try {
+			fileEntry = ActionUtil.getFileEntry(portletRequest);
+		}
+		catch (PortalException pe) {
+			throw new RuntimeException(pe);
+		}
+
+		if (isTrashEnabled(
+				themeDisplay.getScopeGroupId(), fileEntry.getRepositoryId())) {
+
 			portletURL.setParameter(Constants.CMD, Constants.MOVE_TO_TRASH);
 		}
 		else {
@@ -89,15 +111,6 @@ public class DeleteFileEntryPortletConfigurationIcon
 		PortletURL redirectURL = PortalUtil.getControlPanelPortletURL(
 			portletRequest, DLPortletKeys.DOCUMENT_LIBRARY_ADMIN,
 			PortletRequest.RENDER_PHASE);
-
-		FileEntry fileEntry = null;
-
-		try {
-			fileEntry = ActionUtil.getFileEntry(portletRequest);
-		}
-		catch (Exception e) {
-			return null;
-		}
 
 		long folderId = fileEntry.getFolderId();
 
@@ -127,10 +140,11 @@ public class DeleteFileEntryPortletConfigurationIcon
 
 	@Override
 	public boolean isShow(PortletRequest portletRequest) {
-		ThemeDisplay themeDisplay = (ThemeDisplay)portletRequest.getAttribute(
-			WebKeys.THEME_DISPLAY);
-
 		try {
+			ThemeDisplay themeDisplay =
+				(ThemeDisplay)portletRequest.getAttribute(
+					WebKeys.THEME_DISPLAY);
+
 			FileEntry fileEntry = ActionUtil.getFileEntry(portletRequest);
 
 			FileEntryDisplayContextHelper fileEntryDisplayContextHelper =
@@ -139,26 +153,22 @@ public class DeleteFileEntryPortletConfigurationIcon
 
 			return fileEntryDisplayContextHelper.isFileEntryDeletable();
 		}
-		catch (Exception e) {
+		catch (PortalException pe) {
+			throw new RuntimeException(pe);
 		}
-
-		return false;
 	}
 
 	public boolean isToolTip() {
 		return false;
 	}
 
-	protected boolean isTrashEnabled(long groupId) {
+	protected boolean isTrashEnabled(long groupId, long repositoryId) {
 		try {
-			if (TrashUtil.isTrashEnabled(groupId)) {
-				return true;
-			}
+			return DLTrashUtil.isTrashEnabled(groupId, repositoryId);
 		}
 		catch (PortalException pe) {
+			throw new RuntimeException(pe);
 		}
-
-		return false;
 	}
 
 }

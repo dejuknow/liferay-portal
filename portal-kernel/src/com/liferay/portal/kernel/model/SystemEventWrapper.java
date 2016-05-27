@@ -19,13 +19,13 @@ import aQute.bnd.annotation.ProviderType;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Serializable;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * <p>
@@ -170,14 +170,68 @@ public class SystemEventWrapper implements SystemEvent,
 	}
 
 	@Override
-	public java.lang.Object clone() {
-		return new SystemEventWrapper((SystemEvent)_systemEvent.clone());
+	public CacheModel<SystemEvent> toCacheModel() {
+		return _systemEvent.toCacheModel();
 	}
 
 	@Override
-	public int compareTo(
-		com.liferay.portal.kernel.model.SystemEvent systemEvent) {
+	public SystemEvent toEscapedModel() {
+		return new SystemEventWrapper(_systemEvent.toEscapedModel());
+	}
+
+	@Override
+	public SystemEvent toUnescapedModel() {
+		return new SystemEventWrapper(_systemEvent.toUnescapedModel());
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _systemEvent.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _systemEvent.isEscapedModel();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _systemEvent.isNew();
+	}
+
+	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _systemEvent.getExpandoBridge();
+	}
+
+	@Override
+	public int compareTo(SystemEvent systemEvent) {
 		return _systemEvent.compareTo(systemEvent);
+	}
+
+	/**
+	* Returns the type of this system event.
+	*
+	* @return the type of this system event
+	*/
+	@Override
+	public int getType() {
+		return _systemEvent.getType();
+	}
+
+	@Override
+	public int hashCode() {
+		return _systemEvent.hashCode();
+	}
+
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _systemEvent.getPrimaryKeyObj();
+	}
+
+	@Override
+	public java.lang.Object clone() {
+		return new SystemEventWrapper((SystemEvent)_systemEvent.clone());
 	}
 
 	/**
@@ -188,6 +242,71 @@ public class SystemEventWrapper implements SystemEvent,
 	@Override
 	public java.lang.String getClassName() {
 		return _systemEvent.getClassName();
+	}
+
+	/**
+	* Returns the class uuid of this system event.
+	*
+	* @return the class uuid of this system event
+	*/
+	@Override
+	public java.lang.String getClassUuid() {
+		return _systemEvent.getClassUuid();
+	}
+
+	/**
+	* Returns the extra data of this system event.
+	*
+	* @return the extra data of this system event
+	*/
+	@Override
+	public java.lang.String getExtraData() {
+		return _systemEvent.getExtraData();
+	}
+
+	@Override
+	public java.lang.String getReferrerClassName() {
+		return _systemEvent.getReferrerClassName();
+	}
+
+	/**
+	* Returns the user name of this system event.
+	*
+	* @return the user name of this system event
+	*/
+	@Override
+	public java.lang.String getUserName() {
+		return _systemEvent.getUserName();
+	}
+
+	/**
+	* Returns the user uuid of this system event.
+	*
+	* @return the user uuid of this system event
+	*/
+	@Override
+	public java.lang.String getUserUuid() {
+		return _systemEvent.getUserUuid();
+	}
+
+	@Override
+	public java.lang.String toString() {
+		return _systemEvent.toString();
+	}
+
+	@Override
+	public java.lang.String toXmlString() {
+		return _systemEvent.toXmlString();
+	}
+
+	/**
+	* Returns the create date of this system event.
+	*
+	* @return the create date of this system event
+	*/
+	@Override
+	public Date getCreateDate() {
+		return _systemEvent.getCreateDate();
 	}
 
 	/**
@@ -211,16 +330,6 @@ public class SystemEventWrapper implements SystemEvent,
 	}
 
 	/**
-	* Returns the class uuid of this system event.
-	*
-	* @return the class uuid of this system event
-	*/
-	@Override
-	public java.lang.String getClassUuid() {
-		return _systemEvent.getClassUuid();
-	}
-
-	/**
 	* Returns the company ID of this system event.
 	*
 	* @return the company ID of this system event
@@ -228,31 +337,6 @@ public class SystemEventWrapper implements SystemEvent,
 	@Override
 	public long getCompanyId() {
 		return _systemEvent.getCompanyId();
-	}
-
-	/**
-	* Returns the create date of this system event.
-	*
-	* @return the create date of this system event
-	*/
-	@Override
-	public Date getCreateDate() {
-		return _systemEvent.getCreateDate();
-	}
-
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _systemEvent.getExpandoBridge();
-	}
-
-	/**
-	* Returns the extra data of this system event.
-	*
-	* @return the extra data of this system event
-	*/
-	@Override
-	public java.lang.String getExtraData() {
-		return _systemEvent.getExtraData();
 	}
 
 	/**
@@ -295,16 +379,6 @@ public class SystemEventWrapper implements SystemEvent,
 		return _systemEvent.getPrimaryKey();
 	}
 
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _systemEvent.getPrimaryKeyObj();
-	}
-
-	@Override
-	public java.lang.String getReferrerClassName() {
-		return _systemEvent.getReferrerClassName();
-	}
-
 	/**
 	* Returns the referrer class name ID of this system event.
 	*
@@ -336,16 +410,6 @@ public class SystemEventWrapper implements SystemEvent,
 	}
 
 	/**
-	* Returns the type of this system event.
-	*
-	* @return the type of this system event
-	*/
-	@Override
-	public int getType() {
-		return _systemEvent.getType();
-	}
-
-	/**
 	* Returns the user ID of this system event.
 	*
 	* @return the user ID of this system event
@@ -353,46 +417,6 @@ public class SystemEventWrapper implements SystemEvent,
 	@Override
 	public long getUserId() {
 		return _systemEvent.getUserId();
-	}
-
-	/**
-	* Returns the user name of this system event.
-	*
-	* @return the user name of this system event
-	*/
-	@Override
-	public java.lang.String getUserName() {
-		return _systemEvent.getUserName();
-	}
-
-	/**
-	* Returns the user uuid of this system event.
-	*
-	* @return the user uuid of this system event
-	*/
-	@Override
-	public java.lang.String getUserUuid() {
-		return _systemEvent.getUserUuid();
-	}
-
-	@Override
-	public int hashCode() {
-		return _systemEvent.hashCode();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _systemEvent.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _systemEvent.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _systemEvent.isNew();
 	}
 
 	@Override
@@ -611,31 +635,6 @@ public class SystemEventWrapper implements SystemEvent,
 	}
 
 	@Override
-	public CacheModel<com.liferay.portal.kernel.model.SystemEvent> toCacheModel() {
-		return _systemEvent.toCacheModel();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.model.SystemEvent toEscapedModel() {
-		return new SystemEventWrapper(_systemEvent.toEscapedModel());
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _systemEvent.toString();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.model.SystemEvent toUnescapedModel() {
-		return new SystemEventWrapper(_systemEvent.toUnescapedModel());
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _systemEvent.toXmlString();
-	}
-
-	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
@@ -647,7 +646,7 @@ public class SystemEventWrapper implements SystemEvent,
 
 		SystemEventWrapper systemEventWrapper = (SystemEventWrapper)obj;
 
-		if (Validator.equals(_systemEvent, systemEventWrapper._systemEvent)) {
+		if (Objects.equals(_systemEvent, systemEventWrapper._systemEvent)) {
 			return true;
 		}
 

@@ -19,12 +19,12 @@ import aQute.bnd.annotation.ProviderType;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Serializable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * <p>
@@ -122,14 +122,78 @@ public class RecentLayoutRevisionWrapper implements RecentLayoutRevision,
 	}
 
 	@Override
+	public CacheModel<RecentLayoutRevision> toCacheModel() {
+		return _recentLayoutRevision.toCacheModel();
+	}
+
+	@Override
+	public RecentLayoutRevision toEscapedModel() {
+		return new RecentLayoutRevisionWrapper(_recentLayoutRevision.toEscapedModel());
+	}
+
+	@Override
+	public RecentLayoutRevision toUnescapedModel() {
+		return new RecentLayoutRevisionWrapper(_recentLayoutRevision.toUnescapedModel());
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _recentLayoutRevision.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _recentLayoutRevision.isEscapedModel();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _recentLayoutRevision.isNew();
+	}
+
+	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _recentLayoutRevision.getExpandoBridge();
+	}
+
+	@Override
+	public int compareTo(RecentLayoutRevision recentLayoutRevision) {
+		return _recentLayoutRevision.compareTo(recentLayoutRevision);
+	}
+
+	@Override
+	public int hashCode() {
+		return _recentLayoutRevision.hashCode();
+	}
+
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _recentLayoutRevision.getPrimaryKeyObj();
+	}
+
+	@Override
 	public java.lang.Object clone() {
 		return new RecentLayoutRevisionWrapper((RecentLayoutRevision)_recentLayoutRevision.clone());
 	}
 
+	/**
+	* Returns the user uuid of this recent layout revision.
+	*
+	* @return the user uuid of this recent layout revision
+	*/
 	@Override
-	public int compareTo(
-		com.liferay.portal.kernel.model.RecentLayoutRevision recentLayoutRevision) {
-		return _recentLayoutRevision.compareTo(recentLayoutRevision);
+	public java.lang.String getUserUuid() {
+		return _recentLayoutRevision.getUserUuid();
+	}
+
+	@Override
+	public java.lang.String toString() {
+		return _recentLayoutRevision.toString();
+	}
+
+	@Override
+	public java.lang.String toXmlString() {
+		return _recentLayoutRevision.toXmlString();
 	}
 
 	/**
@@ -140,11 +204,6 @@ public class RecentLayoutRevisionWrapper implements RecentLayoutRevision,
 	@Override
 	public long getCompanyId() {
 		return _recentLayoutRevision.getCompanyId();
-	}
-
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _recentLayoutRevision.getExpandoBridge();
 	}
 
 	/**
@@ -207,11 +266,6 @@ public class RecentLayoutRevisionWrapper implements RecentLayoutRevision,
 		return _recentLayoutRevision.getPrimaryKey();
 	}
 
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _recentLayoutRevision.getPrimaryKeyObj();
-	}
-
 	/**
 	* Returns the recent layout revision ID of this recent layout revision.
 	*
@@ -230,36 +284,6 @@ public class RecentLayoutRevisionWrapper implements RecentLayoutRevision,
 	@Override
 	public long getUserId() {
 		return _recentLayoutRevision.getUserId();
-	}
-
-	/**
-	* Returns the user uuid of this recent layout revision.
-	*
-	* @return the user uuid of this recent layout revision
-	*/
-	@Override
-	public java.lang.String getUserUuid() {
-		return _recentLayoutRevision.getUserUuid();
-	}
-
-	@Override
-	public int hashCode() {
-		return _recentLayoutRevision.hashCode();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _recentLayoutRevision.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _recentLayoutRevision.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _recentLayoutRevision.isNew();
 	}
 
 	@Override
@@ -398,31 +422,6 @@ public class RecentLayoutRevisionWrapper implements RecentLayoutRevision,
 	}
 
 	@Override
-	public CacheModel<com.liferay.portal.kernel.model.RecentLayoutRevision> toCacheModel() {
-		return _recentLayoutRevision.toCacheModel();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.model.RecentLayoutRevision toEscapedModel() {
-		return new RecentLayoutRevisionWrapper(_recentLayoutRevision.toEscapedModel());
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _recentLayoutRevision.toString();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.model.RecentLayoutRevision toUnescapedModel() {
-		return new RecentLayoutRevisionWrapper(_recentLayoutRevision.toUnescapedModel());
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _recentLayoutRevision.toXmlString();
-	}
-
-	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
@@ -434,7 +433,7 @@ public class RecentLayoutRevisionWrapper implements RecentLayoutRevision,
 
 		RecentLayoutRevisionWrapper recentLayoutRevisionWrapper = (RecentLayoutRevisionWrapper)obj;
 
-		if (Validator.equals(_recentLayoutRevision,
+		if (Objects.equals(_recentLayoutRevision,
 					recentLayoutRevisionWrapper._recentLayoutRevision)) {
 			return true;
 		}

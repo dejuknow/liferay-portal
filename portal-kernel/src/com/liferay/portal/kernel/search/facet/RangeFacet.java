@@ -61,11 +61,11 @@ public class RangeFacet extends BaseFacet {
 			end = range[1];
 		}
 
-		String rangeParam = GetterUtil.getString(
+		String rangeString = GetterUtil.getString(
 			searchContext.getAttribute(getFieldId()));
 
-		if (!isStatic() && Validator.isNotNull(rangeParam)) {
-			String[] range = RangeParserUtil.parserRange(rangeParam);
+		if (!isStatic() && Validator.isNotNull(rangeString)) {
+			String[] range = RangeParserUtil.parserRange(rangeString);
 
 			start = range[0];
 			end = range[1];

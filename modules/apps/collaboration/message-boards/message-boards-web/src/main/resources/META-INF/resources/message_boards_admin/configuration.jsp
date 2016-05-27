@@ -83,7 +83,7 @@ mbGroupServiceSettings = MBGroupServiceSettings.getInstance(themeDisplay.getSite
 
 					<aui:input name="preferences--threadAsQuestionByDefault--" type="checkbox" value="<%= threadAsQuestionByDefault %>" />
 
-					<aui:select label="show-recent-posts-from-last" name="preferences--recentPostsDateOffset--" value="<%= recentPostsDateOffset %>">
+					<aui:select label="show-recent-posts-from-last" name="preferences--recentPostsDateOffset--" value="<%= mbGroupServiceSettings.getRecentPostsDateOffset() %>">
 						<aui:option label='<%= LanguageUtil.format(request, "x-hours", "24", false) %>' value="1" />
 						<aui:option label='<%= LanguageUtil.format(request, "x-days", "7", false) %>' value="7" />
 						<aui:option label='<%= LanguageUtil.format(request, "x-days", "30", false) %>' value="30" />
@@ -157,7 +157,6 @@ mbGroupServiceSettings = MBGroupServiceSettings.getInstance(themeDisplay.getSite
 		</liferay-ui:section>
 
 		<liferay-ui:section>
-
 			<div class="alert alert-info">
 				<liferay-ui:message key="enter-the-name,-image,-and-priority-level-in-descending-order" />
 			</div>
@@ -173,16 +172,16 @@ mbGroupServiceSettings = MBGroupServiceSettings.getInstance(themeDisplay.getSite
 								<aui:select label="localized-language" name="prioritiesLanguageId" onChange='<%= renderResponse.getNamespace() + "updatePrioritiesLanguage();" %>' showEmptyOption="<%= true %>">
 
 									<%
-										for (Locale curLocale : locales) {
-											if (curLocale.equals(defaultLocale)) {
-												continue;
-											}
+									for (Locale curLocale : locales) {
+										if (curLocale.equals(defaultLocale)) {
+											continue;
+										}
 									%>
 
-									<aui:option label="<%= curLocale.getDisplayName(locale) %>" selected="<%= currentLanguageId.equals(LocaleUtil.toLanguageId(curLocale)) %>" value="<%= LocaleUtil.toLanguageId(curLocale) %>" />
+										<aui:option label="<%= curLocale.getDisplayName(locale) %>" selected="<%= currentLanguageId.equals(LocaleUtil.toLanguageId(curLocale)) %>" value="<%= LocaleUtil.toLanguageId(curLocale) %>" />
 
 									<%
-										}
+									}
 									%>
 
 								</aui:select>

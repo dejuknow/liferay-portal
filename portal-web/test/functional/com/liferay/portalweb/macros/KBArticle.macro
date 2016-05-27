@@ -28,7 +28,7 @@
 			</then>
 			<else>
 				<execute function="AssertClick" locator1="KnowledgeBase#MENUBAR_ADD" value1="Add" />
-				<execute function="AssertClick" locator1="MenuItem#ADD_ARTICLE" value1="Add Article" />
+				<execute function="AssertClick" locator1="MenuItem#BASIC_ARTICLE" value1="Basic Article" />
 			</else>
 		</if>
 
@@ -153,7 +153,7 @@
 	<command name="addCPWithInvalidAttachmentSize">
 		<execute function="AssertClick" locator1="KnowledgeBase#MENUBAR_ADD" value1="Add" />
 
-		<execute function="AssertClick" locator1="MenuItem#ADD_ARTICLE" value1="Add Article" />
+		<execute function="AssertClick" locator1="MenuItem#BASIC_ARTICLE" value1="Basic Article" />
 
 		<execute function="Type" locator1="TextInput#TITLE" value1="${kbArticleTitle}" />
 
@@ -170,7 +170,7 @@
 
 	<command name="addCPWithInvalidTitle">
 		<execute function="AssertClick" locator1="KnowledgeBase#MENUBAR_ADD" value1="Add" />
-		<execute function="AssertClick" locator1="MenuItem#ADD_ARTICLE" value1="Add Article" />
+		<execute function="AssertClick" locator1="MenuItem#BASIC_ARTICLE" value1="Basic Article" />
 
 		<execute function="Type" locator1="TextInput#TITLE" value1="${kbArticleTitle}" />
 		<execute function="Type#typeCKEditorWaitForCKEditor" locator1="CKEditor#BODY_FIELD" value1="${kbArticleContent}" />
@@ -181,7 +181,8 @@
 
 	<command name="configureEmailCP">
 		<execute function="Click" locator1="BasePortlet#OPTIONS_ICON" />
-		<execute function="AssertClick" locator1="BasePortlet#OPTIONS_MENULIST_CONFIGURATION" value1="Configuration" />
+
+		<execute function="AssertClick" locator1="MenuItem#CONFIGURATION" value1="Configuration" />
 
 		<execute function="SelectFrame" locator1="KnowledgeBaseConfiguration#IFRAME" />
 
@@ -663,9 +664,9 @@
 		<execute function="AssertTextEquals" locator1="Portlet#H3_HEADER" value1="${kbArticleTitle}" />
 		<execute function="AssertTextEquals" locator1="PGKnowledgebasedisplayMoveArticle#CURRENT_PARENT_TITLE_LABEL" value1="Current Parent" />
 		<execute function="AssertTextEquals" locator1="KnowledgeBase#MOVE_CURRENT_PARENT_TITLE_FIELD" value1="(None)" />
-		<execute function="AssertTextEquals" locator1="PGKnowledgebasedisplayMoveArticle#CURRENT_PARENT_PRIORITY_LABEL" value1="Priority" />
-		<execute function="AssertTextEquals" locator1="PGKnowledgebasedisplayMoveArticle#NEW_PARENT_TITLE_LABEL" value1="New Parent" />
-		<execute function="AssertTextEquals" locator1="PGKnowledgebasedisplayMoveArticle#NEW_PARENT_PRIORITY_LABEL" value1="Priority" />
+		<execute function="AssertTextEquals" locator1="KnowledgeBase#MOVE_CURRENT_PARENT_PRIORITY_LABEL" value1="Priority" />
+		<execute function="AssertTextEquals" locator1="KnowledgeBase#MOVE_NEW_PARENT_TITLE_LABEL" value1="New Parent" />
+		<execute function="AssertTextEquals" locator1="KnowledgeBase#MOVE_NEW_PARENT_PRIORITY_LABEL" value1="Priority" />
 		<execute function="AssertClick" locator1="Button#SELECT" value1="Select" />
 	</command>
 
@@ -839,9 +840,9 @@
 	<command name="selectScopePG">
 		<execute function="SelectFrame" locator1="KnowledgeBaseConfiguration#IFRAME" />
 
-		<execute function="AssertClick" locator1="KnowledgeBaseConfiguration#SECTION_SCOPE" value1="Scope" />
+		<execute function="AssertClick" locator1="NavBar#SCOPE" value1="Scope" />
 
-		<execute function="Select" locator1="KnowledgeBaseConfiguration#SCOPE_SELECTION" value1="${newKBPageScope}" />
+		<execute function="Select" locator1="Select#SCOPE" value1="${newKBPageScope}" />
 
 		<execute macro="PortletEntry#save" />
 
@@ -878,7 +879,9 @@
 
 		<execute function="Click" locator1="KnowledgeBase#SCOPE_DROPDOWN" />
 
-		<execute function="AssertClick" locator1="KnowledgeBase#SCOPE" value1="${kbPageScope}" />
+		<var name="key_scopeSelection" value="${kbPageScope}" />
+
+		<execute function="AssertClick#assertPartialTextClickAt" locator1="MenuItem#SCOPE_SELECTION" value1="${kbPageScope}" />
 	</command>
 
 	<command name="subscribeCP">

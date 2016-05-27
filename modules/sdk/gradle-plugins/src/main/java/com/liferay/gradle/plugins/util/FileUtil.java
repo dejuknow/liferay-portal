@@ -19,6 +19,7 @@ import com.liferay.gradle.util.ArrayUtil;
 import groovy.lang.Closure;
 
 import java.io.File;
+import java.io.FileFilter;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -39,8 +40,24 @@ import org.gradle.api.tasks.TaskInputs;
  */
 public class FileUtil extends com.liferay.gradle.util.FileUtil {
 
+	public static File[] getDirectories(File dir) {
+		return dir.listFiles(
+			new FileFilter() {
+
+				@Override
+				public boolean accept(File file) {
+					if (file.isDirectory()) {
+						return true;
+					}
+
+					return false;
+				}
+
+			});
+	}
+
 	public static FileTree getJarsFileTree(
-		Project project, File dir, String ... excludes) {
+		Project project, File dir, String... excludes) {
 
 		Map<String, Object> args = new HashMap<>();
 
@@ -75,7 +92,7 @@ public class FileUtil extends com.liferay.gradle.util.FileUtil {
 		return true;
 	}
 
-	public static FileCollection join(FileCollection ... fileCollections) {
+	public static FileCollection join(FileCollection... fileCollections) {
 		FileCollection joinedFileCollection = null;
 
 		for (FileCollection fileCollection : fileCollections) {
@@ -100,7 +117,7 @@ public class FileUtil extends com.liferay.gradle.util.FileUtil {
 	}
 
 	public static void touchFiles(
-		Project project, File dir, long time, String ... includes) {
+		Project project, File dir, long time, String... includes) {
 
 		Map<String, Object> args = new HashMap<>();
 

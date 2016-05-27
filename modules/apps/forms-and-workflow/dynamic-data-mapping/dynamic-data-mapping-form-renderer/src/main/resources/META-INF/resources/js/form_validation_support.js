@@ -9,6 +9,14 @@ AUI.add(
 		};
 
 		FormValidationSupport.ATTRS = {
+			evaluation: {
+				value: null
+			},
+
+			evaluatorURL: {
+				value: ''
+			},
+
 			evaluator: {
 				valueFn: '_valueEvaluator'
 			}
@@ -86,11 +94,9 @@ AUI.add(
 						if (pageNode.contains(field.get('container'))) {
 							field.processValidation(result);
 
-							if (field.hasErrors()) {
+							if (field.hasErrors() && !fieldToFocus) {
 								fieldToFocus = field;
 							}
-
-							return !!fieldToFocus;
 						}
 					}
 				);
@@ -109,11 +115,9 @@ AUI.add(
 					function(field) {
 						field.processValidation(result);
 
-						if (field.hasErrors()) {
+						if (field.hasErrors() && !fieldToFocus) {
 							fieldToFocus = field;
 						}
-
-						return !!fieldToFocus;
 					}
 				);
 

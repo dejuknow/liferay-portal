@@ -29,11 +29,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>ADD_CATEGORY</td>
-	<td>//ul[contains(@class,'nav-tabs')]/li/a[contains(.,'Add Category')]</td>
-	<td></td>
-</tr>
-<tr>
 	<td>ALL_ORGANIZATIONS</td>
 	<td>//ul[contains(@class,'nav-tabs')]/li/a[contains(.,'All Organizations')]</td>
 	<td></td>
@@ -109,6 +104,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>FILE_INFO</td>
+	<td>//ul[contains(@class,'nav-tabs')]/li/a[contains(.,'File Info')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>GENERAL</td>
 	<td>//ul[contains(@class,'nav-tabs')]/li/a[contains(.,'General')]</td>
 	<td></td>
@@ -121,11 +121,6 @@
 <tr>
 	<td>LDAP</td>
 	<td>//ul[contains(@class,'nav-tabs')]/li/a[contains(.,'LDAP')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>LOG_LEVELS</td>
-	<td>//ul[contains(@class,'nav-tabs')]/li/a[contains(.,'Log Levels')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -145,7 +140,7 @@
 </tr>
 <tr>
 	<td>OPEN_SSO</td>
-	<td>//ul[contains(@class,'nav-tabs')]/li/a[contains(.,'Open SSO')]</td>
+	<td>//ul[contains(@class,'nav-tabs')]/li/a[contains(.,'OpenSSO')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -251,6 +246,11 @@
 <tr>
 	<td>USER_GROUPS</td>
 	<td>//ul[contains(@class,'nav-tabs')]/li/a[contains(.,'User Groups')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>VERSION</td>
+	<td>//ul[contains(@class,'nav-tabs')]/li/a[contains(.,'Version')]</td>
 	<td></td>
 </tr>
 <tr>

@@ -63,6 +63,7 @@ import java.io.Serializable;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -1625,8 +1626,14 @@ public class LanguageImpl implements Language, Serializable {
 		Cookie languageIdCookie = new Cookie(
 			CookieKeys.GUEST_LANGUAGE_ID, languageId);
 
-		languageIdCookie.setPath(StringPool.SLASH);
+		String domain = CookieKeys.getDomain(request);
+
+		if (Validator.isNotNull(domain)) {
+			languageIdCookie.setDomain(domain);
+		}
+
 		languageIdCookie.setMaxAge(CookieKeys.MAX_AGE);
+		languageIdCookie.setPath(StringPool.SLASH);
 
 		CookieKeys.addCookie(request, response, languageIdCookie);
 	}
@@ -1856,7 +1863,7 @@ public class LanguageImpl implements Language, Serializable {
 		}
 
 		public Set<Locale> getAvailableLocales() {
-			return new HashSet<>(_languageIdLocalesMap.values());
+			return _availableLocales;
 		}
 
 		public Locale getByLanguageCode(String languageCode) {
@@ -1911,12 +1918,19 @@ public class LanguageImpl implements Language, Serializable {
 					LocaleUtil.fromLanguageId(languageId, false));
 			}
 
-			_supportedLocalesSet = new HashSet<>(
+			_availableLocales = Collections.unmodifiableSet(
+				new HashSet<>(_languageIdLocalesMap.values()));
+
+			Set<Locale> supportedLocalesSet = new HashSet<>(
 				_languageIdLocalesMap.values());
 
-			_supportedLocalesSet.removeAll(_localesBetaSet);
+			supportedLocalesSet.removeAll(_localesBetaSet);
+
+			_supportedLocalesSet = Collections.unmodifiableSet(
+				supportedLocalesSet);
 		}
 
+		private final Set<Locale> _availableLocales;
 		private final Set<String> _duplicateLanguageCodes = new HashSet<>();
 		private final Map<String, Locale> _languageCodeLocalesMap =
 			new HashMap<>();

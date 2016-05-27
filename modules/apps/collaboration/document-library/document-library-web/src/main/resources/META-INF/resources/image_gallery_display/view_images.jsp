@@ -30,7 +30,6 @@ DLPortletInstanceSettingsHelper dlPortletInstanceSettingsHelper = new DLPortletI
 		className="Object"
 		modelVar="result"
 	>
-
 		<%@ include file="/document_library/cast_result.jspf" %>
 
 		<c:choose>
@@ -83,6 +82,8 @@ DLPortletInstanceSettingsHelper dlPortletInstanceSettingsHelper = new DLPortletI
 						}
 					}
 				}
+
+				row.setCssClass("lfr-asset-item");
 				%>
 
 				<liferay-ui:search-container-column-text>
@@ -118,6 +119,10 @@ DLPortletInstanceSettingsHelper dlPortletInstanceSettingsHelper = new DLPortletI
 					<portlet:param name="redirect" value="<%= currentURL %>" />
 					<portlet:param name="folderId" value="<%= String.valueOf(curFolder.getFolderId()) %>" />
 				</portlet:renderURL>
+
+				<%
+				row.setCssClass("lfr-asset-folder");
+				%>
 
 				<liferay-ui:search-container-column-text>
 					<liferay-frontend:horizontal-card

@@ -20,12 +20,12 @@ import com.liferay.expando.kernel.model.ExpandoBridge;
 
 import com.liferay.portal.kernel.model.ModelWrapper;
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Serializable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * <p>
@@ -106,23 +106,63 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 	}
 
 	@Override
-	public java.lang.Object clone() {
-		return new ModuleWrapper((Module)_module.clone());
+	public Module toEscapedModel() {
+		return new ModuleWrapper(_module.toEscapedModel());
 	}
 
 	@Override
-	public int compareTo(com.liferay.marketplace.model.Module module) {
+	public Module toUnescapedModel() {
+		return new ModuleWrapper(_module.toUnescapedModel());
+	}
+
+	@Override
+	public boolean isBundle() {
+		return _module.isBundle();
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _module.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _module.isEscapedModel();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _module.isNew();
+	}
+
+	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _module.getExpandoBridge();
+	}
+
+	@Override
+	public com.liferay.portal.kernel.model.CacheModel<Module> toCacheModel() {
+		return _module.toCacheModel();
+	}
+
+	@Override
+	public int compareTo(Module module) {
 		return _module.compareTo(module);
 	}
 
-	/**
-	* Returns the app ID of this module.
-	*
-	* @return the app ID of this module
-	*/
 	@Override
-	public long getAppId() {
-		return _module.getAppId();
+	public int hashCode() {
+		return _module.hashCode();
+	}
+
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _module.getPrimaryKeyObj();
+	}
+
+	@Override
+	public java.lang.Object clone() {
+		return new ModuleWrapper((Module)_module.clone());
 	}
 
 	/**
@@ -155,9 +195,34 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 		return _module.getContextName();
 	}
 
+	/**
+	* Returns the uuid of this module.
+	*
+	* @return the uuid of this module
+	*/
 	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _module.getExpandoBridge();
+	public java.lang.String getUuid() {
+		return _module.getUuid();
+	}
+
+	@Override
+	public java.lang.String toString() {
+		return _module.toString();
+	}
+
+	@Override
+	public java.lang.String toXmlString() {
+		return _module.toXmlString();
+	}
+
+	/**
+	* Returns the app ID of this module.
+	*
+	* @return the app ID of this module
+	*/
+	@Override
+	public long getAppId() {
+		return _module.getAppId();
 	}
 
 	/**
@@ -178,46 +243,6 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 	@Override
 	public long getPrimaryKey() {
 		return _module.getPrimaryKey();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _module.getPrimaryKeyObj();
-	}
-
-	/**
-	* Returns the uuid of this module.
-	*
-	* @return the uuid of this module
-	*/
-	@Override
-	public java.lang.String getUuid() {
-		return _module.getUuid();
-	}
-
-	@Override
-	public int hashCode() {
-		return _module.hashCode();
-	}
-
-	@Override
-	public boolean isBundle() {
-		return _module.isBundle();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _module.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _module.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _module.isNew();
 	}
 
 	@Override
@@ -271,14 +296,14 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
-		_module.setExpandoBridgeAttributes(baseModel);
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
+		_module.setExpandoBridgeAttributes(expandoBridge);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
-		_module.setExpandoBridgeAttributes(expandoBridge);
+	public void setExpandoBridgeAttributes(
+		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
+		_module.setExpandoBridgeAttributes(baseModel);
 	}
 
 	@Override
@@ -327,31 +352,6 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 	}
 
 	@Override
-	public com.liferay.portal.kernel.model.CacheModel<com.liferay.marketplace.model.Module> toCacheModel() {
-		return _module.toCacheModel();
-	}
-
-	@Override
-	public com.liferay.marketplace.model.Module toEscapedModel() {
-		return new ModuleWrapper(_module.toEscapedModel());
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _module.toString();
-	}
-
-	@Override
-	public com.liferay.marketplace.model.Module toUnescapedModel() {
-		return new ModuleWrapper(_module.toUnescapedModel());
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _module.toXmlString();
-	}
-
-	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
@@ -363,7 +363,7 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 
 		ModuleWrapper moduleWrapper = (ModuleWrapper)obj;
 
-		if (Validator.equals(_module, moduleWrapper._module)) {
+		if (Objects.equals(_module, moduleWrapper._module)) {
 			return true;
 		}
 

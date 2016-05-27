@@ -57,6 +57,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -205,7 +206,7 @@ public class JournalFolderPersistenceImpl extends BasePersistenceImpl<JournalFol
 
 			if ((list != null) && !list.isEmpty()) {
 				for (JournalFolder journalFolder : list) {
-					if (!Validator.equals(uuid, journalFolder.getUuid())) {
+					if (!Objects.equals(uuid, journalFolder.getUuid())) {
 						list = null;
 
 						break;
@@ -678,8 +679,8 @@ public class JournalFolderPersistenceImpl extends BasePersistenceImpl<JournalFol
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchFolderException(msg.toString());
@@ -723,7 +724,7 @@ public class JournalFolderPersistenceImpl extends BasePersistenceImpl<JournalFol
 		if (result instanceof JournalFolder) {
 			JournalFolder journalFolder = (JournalFolder)result;
 
-			if (!Validator.equals(uuid, journalFolder.getUuid()) ||
+			if (!Objects.equals(uuid, journalFolder.getUuid()) ||
 					(groupId != journalFolder.getGroupId())) {
 				result = null;
 			}
@@ -1018,7 +1019,7 @@ public class JournalFolderPersistenceImpl extends BasePersistenceImpl<JournalFol
 
 			if ((list != null) && !list.isEmpty()) {
 				for (JournalFolder journalFolder : list) {
-					if (!Validator.equals(uuid, journalFolder.getUuid()) ||
+					if (!Objects.equals(uuid, journalFolder.getUuid()) ||
 							(companyId != journalFolder.getCompanyId())) {
 						list = null;
 
@@ -3818,8 +3819,8 @@ public class JournalFolderPersistenceImpl extends BasePersistenceImpl<JournalFol
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchFolderException(msg.toString());
@@ -3864,7 +3865,7 @@ public class JournalFolderPersistenceImpl extends BasePersistenceImpl<JournalFol
 			JournalFolder journalFolder = (JournalFolder)result;
 
 			if ((groupId != journalFolder.getGroupId()) ||
-					!Validator.equals(name, journalFolder.getName())) {
+					!Objects.equals(name, journalFolder.getName())) {
 				result = null;
 			}
 		}
@@ -4619,8 +4620,8 @@ public class JournalFolderPersistenceImpl extends BasePersistenceImpl<JournalFol
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchFolderException(msg.toString());
@@ -4669,7 +4670,7 @@ public class JournalFolderPersistenceImpl extends BasePersistenceImpl<JournalFol
 
 			if ((groupId != journalFolder.getGroupId()) ||
 					(parentFolderId != journalFolder.getParentFolderId()) ||
-					!Validator.equals(name, journalFolder.getName())) {
+					!Objects.equals(name, journalFolder.getName())) {
 				result = null;
 			}
 		}
@@ -7552,8 +7553,8 @@ public class JournalFolderPersistenceImpl extends BasePersistenceImpl<JournalFol
 					primaryKey);
 
 			if (journalFolder == null) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+				if (_log.isDebugEnabled()) {
+					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchFolderException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
@@ -7844,8 +7845,8 @@ public class JournalFolderPersistenceImpl extends BasePersistenceImpl<JournalFol
 		JournalFolder journalFolder = fetchByPrimaryKey(primaryKey);
 
 		if (journalFolder == null) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+			if (_log.isDebugEnabled()) {
+				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
 			throw new NoSuchFolderException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +

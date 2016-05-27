@@ -59,69 +59,70 @@ BackgroundTask lastCompletedInitialPublicationBackgroundTask = BackgroundTaskMan
 			</portlet:renderURL>
 
 			<aui:form action="<%= editStagingConfigurationURL %>" method="post" name="fm" onSubmit='<%= "event.preventDefault(); " + renderResponse.getNamespace() + "saveGroup();" %>'>
-			<aui:input name="redirect" type="hidden" value="<%= redirectURL %>" />
-			<aui:input name="groupId" type="hidden" value="<%= liveGroupId %>" />
-			<aui:input name="liveGroupId" type="hidden" value="<%= liveGroupId %>" />
-			<aui:input name="stagingGroupId" type="hidden" value="<%= stagingGroupId %>" />
-			<aui:input name="forceDisable" type="hidden" value="<%= false %>" />
+				<aui:input name="redirect" type="hidden" value="<%= redirectURL %>" />
+				<aui:input name="groupId" type="hidden" value="<%= liveGroupId %>" />
+				<aui:input name="liveGroupId" type="hidden" value="<%= liveGroupId %>" />
+				<aui:input name="stagingGroupId" type="hidden" value="<%= stagingGroupId %>" />
+				<aui:input name="forceDisable" type="hidden" value="<%= false %>" />
 
-			<c:if test="<%= (lastCompletedInitialPublicationBackgroundTask != null) && (lastCompletedInitialPublicationBackgroundTask.getStatus() == BackgroundTaskConstants.STATUS_FAILED) %>">
-				<div class="alert alert-danger">
-					<liferay-ui:message key="an-unexpected-error-occurred-with-the-initial-staging-publication" />
+				<c:if test="<%= (lastCompletedInitialPublicationBackgroundTask != null) && (lastCompletedInitialPublicationBackgroundTask.getStatus() == BackgroundTaskConstants.STATUS_FAILED) %>">
+					<div class="alert alert-danger">
+						<liferay-ui:message key="an-unexpected-error-occurred-with-the-initial-staging-publication" />
 
-					<portlet:actionURL name="deleteBackgroundTask" var="deleteBackgroundTaskURL">
-						<portlet:param name="redirect" value="<%= currentURL %>" />
-						<portlet:param name="backgroundTaskId" value="<%= String.valueOf(lastCompletedInitialPublicationBackgroundTask.getBackgroundTaskId()) %>" />
-					</portlet:actionURL>
+						<portlet:actionURL name="deleteBackgroundTask" var="deleteBackgroundTaskURL">
+							<portlet:param name="redirect" value="<%= currentURL %>" />
+							<portlet:param name="backgroundTaskId" value="<%= String.valueOf(lastCompletedInitialPublicationBackgroundTask.getBackgroundTaskId()) %>" />
+						</portlet:actionURL>
 
-					<liferay-ui:icon-delete
-						confirmation="are-you-sure-you-want-to-remove-the-initial-staging-publication"
-						label="<%= true %>"
-						message="clear"
-						url="<%= deleteBackgroundTaskURL %>"
-					/>
-				</div>
+						<liferay-ui:icon-delete
+							confirmation="are-you-sure-you-want-to-remove-the-initial-staging-publication"
+							label="<%= true %>"
+							message="clear"
+							url="<%= deleteBackgroundTaskURL %>"
+						/>
+					</div>
 
-				<liferay-util:include page="/publish_process_message_task_details.jsp" servletContext="<%= application %>">
-					<liferay-util:param name="backgroundTaskId" value="<%= String.valueOf(lastCompletedInitialPublicationBackgroundTask.getBackgroundTaskId()) %>" />
-				</liferay-util:include>
-			</c:if>
+					<liferay-util:include page="/publish_process_message_task_details.jsp" servletContext="<%= application %>">
+						<liferay-util:param name="backgroundTaskId" value="<%= String.valueOf(lastCompletedInitialPublicationBackgroundTask.getBackgroundTaskId()) %>" />
+					</liferay-util:include>
+				</c:if>
 
-			<c:if test="<%= stagedLocally && (BackgroundTaskManagerUtil.getBackgroundTasksCount(liveGroupId, BackgroundTaskExecutorNames.LAYOUT_STAGING_BACKGROUND_TASK_EXECUTOR, false) > 0) %>">
-				<div class="alert alert-warning">
-					<liferay-ui:message key="an-inital-staging-publication-is-in-progress" />
+				<c:if test="<%= stagedLocally && (BackgroundTaskManagerUtil.getBackgroundTasksCount(liveGroupId, BackgroundTaskExecutorNames.LAYOUT_STAGING_BACKGROUND_TASK_EXECUTOR, false) > 0) %>">
+					<div class="alert alert-warning">
+						<liferay-ui:message key="an-inital-staging-publication-is-in-progress" />
 
-					<a id="<portlet:namespace />publishProcessesLink"><liferay-ui:message key="the-status-of-the-publication-can-be-checked-on-the-publish-screen" /></a>
-				</div>
+						<a id="<portlet:namespace />publishProcessesLink"><liferay-ui:message key="the-status-of-the-publication-can-be-checked-on-the-publish-screen" /></a>
+					</div>
 
-				<aui:script>
-					AUI.$('#<portlet:namespace />publishProcessesLink').on(
-						'click',
-						function(event) {
-							Liferay.Util.openWindow(
-								{
-									id: 'publishProcesses',
-									title: '<liferay-ui:message key="initial-publication" />',
+					<aui:script>
+						AUI.$('#<portlet:namespace />publishProcessesLink').on(
+							'click',
+							function(event) {
+								Liferay.Util.openWindow(
+									{
+										id: 'publishProcesses',
+										title: '<liferay-ui:message key="initial-publication" />',
 
-									<liferay-portlet:renderURL portletName="<%= PortletKeys.EXPORT_IMPORT %>" var="publishProcessesURL" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
-										<portlet:param name="mvcRenderCommandName" value="publishLayouts" />
-										<portlet:param name="<%= Constants.CMD %>" value="view_processes" />
-										<portlet:param name="<%= SearchContainer.DEFAULT_CUR_PARAM %>" value="<%= ParamUtil.getString(request, SearchContainer.DEFAULT_CUR_PARAM) %>" />
-										<portlet:param name="<%= SearchContainer.DEFAULT_DELTA_PARAM %>" value="<%= ParamUtil.getString(request, SearchContainer.DEFAULT_DELTA_PARAM) %>" />
-										<portlet:param name="groupId" value="<%= String.valueOf(stagingGroupId) %>" />
-										<portlet:param name="liveGroupId" value="<%= String.valueOf(liveGroupId) %>" />
-										<portlet:param name="localPublishing" value="<%= String.valueOf(stagedLocally) %>" />
-									</liferay-portlet:renderURL>
+										<liferay-portlet:renderURL portletName="<%= PortletKeys.EXPORT_IMPORT %>" var="publishProcessesURL" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
+											<portlet:param name="mvcRenderCommandName" value="publishLayouts" />
+											<portlet:param name="<%= Constants.CMD %>" value="view_processes" />
+											<portlet:param name="<%= SearchContainer.DEFAULT_CUR_PARAM %>" value="<%= ParamUtil.getString(request, SearchContainer.DEFAULT_CUR_PARAM) %>" />
+											<portlet:param name="<%= SearchContainer.DEFAULT_DELTA_PARAM %>" value="<%= ParamUtil.getString(request, SearchContainer.DEFAULT_DELTA_PARAM) %>" />
+											<portlet:param name="groupId" value="<%= String.valueOf(stagingGroupId) %>" />
+											<portlet:param name="liveGroupId" value="<%= String.valueOf(liveGroupId) %>" />
+											<portlet:param name="localPublishing" value="<%= String.valueOf(stagedLocally) %>" />
+										</liferay-portlet:renderURL>
 
-									uri: '<%= HtmlUtil.escapeJS(publishProcessesURL.toString()) %>'
-								}
-							);
-						}
-					);
-				</aui:script>
-			</c:if>
+										uri: '<%= HtmlUtil.escapeJS(publishProcessesURL.toString()) %>'
+									}
+								);
+							}
+						);
+					</aui:script>
+				</c:if>
 
-			<liferay-ui:error-marker key="<%= WebKeys.ERROR_SECTION %>" value="staging" />
+				<liferay-ui:error-marker key="<%= WebKeys.ERROR_SECTION %>" value="staging" />
+
 				<c:if test="<%= privateLayoutSet.isLayoutSetPrototypeLinkActive() || publicLayoutSet.isLayoutSetPrototypeLinkActive() %>">
 					<div class="alert alert-info">
 						<liferay-ui:message key="staging-cannot-be-used-for-this-site-because-the-propagation-of-changes-from-the-site-template-is-enabled" />
@@ -156,7 +157,8 @@ BackgroundTask lastCompletedInitialPublicationBackgroundTask = BackgroundTaskMan
 					<liferay-ui:message key="<%= se.getMessage() %>" />
 				</liferay-ui:error>
 
-				<aui:fieldset-group markupView="lexicon">
+				<c:if test="<%= !privateLayoutSet.isLayoutSetPrototypeLinkActive() && !publicLayoutSet.isLayoutSetPrototypeLinkActive() %>">
+					<aui:fieldset-group markupView="lexicon">
 						<aui:fieldset>
 							<div id="<portlet:namespace />stagingTypes">
 								<aui:input checked="<%= !liveGroup.isStaged() %>" id="none" label="none" name="stagingType" type="radio" value="<%= StagingConstants.TYPE_NOT_STAGED %>" />
@@ -263,7 +265,7 @@ BackgroundTask lastCompletedInitialPublicationBackgroundTask = BackgroundTaskMan
 									<liferay-ui:message key="staged-portlets-alert" />
 								</p>
 
-								<aui:input disabled="<%= liveGroupRemoteStaging || liveGroup.isStaged() %>" id="selectAllCheckbox" label="select-all" name="selectAll" type="checkbox" />
+								<aui:input disabled="<%= (liveGroupRemoteStaging && liveGroup.isStagedRemotely()) || liveGroup.isStaged() %>" id="selectAllCheckbox" label="select-all" name="selectAll" type="checkbox" />
 
 								<ul class="list-group staging-configuration-list" id="stagingConfigurationControls">
 
@@ -288,7 +290,11 @@ BackgroundTask lastCompletedInitialPublicationBackgroundTask = BackgroundTaskMan
 											continue;
 										}
 
-										boolean staged = GetterUtil.getBoolean(liveGroupTypeSettings.getProperty(StagingUtil.getStagedPortletId(curPortlet.getRootPortletId())), portletDataHandler.isPublishToLiveByDefault());
+										boolean staged = portletDataHandler.isPublishToLiveByDefault();
+
+										if (stagingGroup != null) {
+											staged = stagingGroup.isStagedPortlet(StagingUtil.getStagedPortletId(curPortlet.getRootPortletId()));
+										}
 									%>
 
 										<li class="flex-container list-group-item">
@@ -297,7 +303,7 @@ BackgroundTask lastCompletedInitialPublicationBackgroundTask = BackgroundTaskMan
 											</span>
 
 											<span class="staging-configuration-control-toggle">
-												<aui:input disabled="<%= liveGroupRemoteStaging || liveGroup.isStaged() %>" label="<%= StringPool.BLANK %>" name="<%= StagingConstants.STAGED_PREFIX + StagingUtil.getStagedPortletId(curPortlet.getRootPortletId()) + StringPool.DOUBLE_DASH %>" type="toggle-switch" value="<%= staged %>" />
+												<aui:input disabled="<%= (liveGroupRemoteStaging && liveGroup.isStagedRemotely()) || liveGroup.isStaged() %>" label="<%= StringPool.BLANK %>" name="<%= StagingConstants.STAGED_PREFIX + StagingUtil.getStagedPortletId(curPortlet.getRootPortletId()) + StringPool.DOUBLE_DASH %>" type="toggle-switch" value="<%= staged %>" />
 											</span>
 										</li>
 
@@ -310,32 +316,31 @@ BackgroundTask lastCompletedInitialPublicationBackgroundTask = BackgroundTaskMan
 						</div>
 					</aui:fieldset-group>
 
-				<aui:script sandbox="<%= true %>">
-					var remoteStagingOptions = $('#<portlet:namespace />remoteStagingOptions');
-					var stagedPortlets = $('#<portlet:namespace />stagedPortlets');
+					<aui:script sandbox="<%= true %>">
+						var remoteStagingOptions = $('#<portlet:namespace />remoteStagingOptions');
+						var stagedPortlets = $('#<portlet:namespace />stagedPortlets');
 
-					var stagingTypes = $('#<portlet:namespace />stagingTypes');
+						var stagingTypes = $('#<portlet:namespace />stagingTypes');
 
-					stagingTypes.on(
-						'click',
-						'input',
-						function(event) {
-							var value = $(event.currentTarget).val();
+						stagingTypes.on(
+							'click',
+							'input',
+							function(event) {
+								var value = $(event.currentTarget).val();
 
-							stagedPortlets.toggleClass('hide', value == '<%= StagingConstants.TYPE_NOT_STAGED %>');
+								stagedPortlets.toggleClass('hide', value == '<%= StagingConstants.TYPE_NOT_STAGED %>');
 
-							remoteStagingOptions.toggleClass('hide', value != '<%= StagingConstants.TYPE_REMOTE_STAGING %>');
-						}
-					);
-				</aui:script>
+								remoteStagingOptions.toggleClass('hide', value != '<%= StagingConstants.TYPE_REMOTE_STAGING %>');
+							}
+						);
+					</aui:script>
 
-				<c:if test="<%= !privateLayoutSet.isLayoutSetPrototypeLinkActive() && !publicLayoutSet.isLayoutSetPrototypeLinkActive() %>">
 					<aui:button-row>
-						<aui:button cssClass="btn-lg btn-primary" type="submit" />
+						<aui:button cssClass="btn-lg" type="submit" />
 					</aui:button-row>
 				</c:if>
-		</aui:form>
-	</div>
+			</aui:form>
+		</div>
 	</c:when>
 	<c:otherwise>
 		<div class="alert alert-info">
@@ -402,12 +407,13 @@ BackgroundTask lastCompletedInitialPublicationBackgroundTask = BackgroundTaskMan
 
 <aui:script sandbox="<%= true %>">
 	var stagingConfigurationControls = $('#stagingConfigurationControls');
+
 	var allCheckboxes = stagingConfigurationControls.find('input[type=checkbox]');
 
 	$('#<portlet:namespace />selectAllCheckbox').on(
 		'change',
 		function() {
-			allCheckboxes.prop("checked", this.checked);
+			allCheckboxes.prop('checked', this.checked);
 		}
 	);
 </aui:script>

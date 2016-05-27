@@ -31,6 +31,8 @@ import com.liferay.journal.service.JournalArticleServiceUtil;
 import com.liferay.journal.service.JournalFolderLocalServiceUtil;
 import com.liferay.journal.transformer.JournalTransformer;
 import com.liferay.journal.util.comparator.ArticleVersionComparator;
+import com.liferay.petra.collection.stack.FiniteUniqueStack;
+import com.liferay.petra.xml.XMLUtil;
 import com.liferay.portal.kernel.configuration.Filter;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.diff.CompareVersionsException;
@@ -94,8 +96,6 @@ import com.liferay.portal.kernel.xml.Node;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.liferay.portal.kernel.xml.XPath;
 import com.liferay.portal.util.PropsUtil;
-import com.liferay.util.FiniteUniqueStack;
-import com.liferay.util.xml.XMLUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -939,9 +939,11 @@ public class JournalUtil {
 				"available-locales");
 
 			if (availableLocalesAttribute == null) {
-				availableLocalesAttribute =
-					(Attribute)newRootElement.addAttribute(
-						"available-locales", StringPool.BLANK);
+				newRootElement = newRootElement.addAttribute(
+					"available-locales", StringPool.BLANK);
+
+				availableLocalesAttribute = newRootElement.attribute(
+					"available-locales");
 			}
 
 			String defaultImportLanguageId = LocaleUtil.toLanguageId(
@@ -971,8 +973,11 @@ public class JournalUtil {
 				"default-locale");
 
 			if (defaultLocaleAttribute == null) {
-				defaultLocaleAttribute = (Attribute)newRootElement.addAttribute(
+				newRootElement = newRootElement.addAttribute(
 					"default-locale", StringPool.BLANK);
+
+				defaultLocaleAttribute = newRootElement.attribute(
+					"default-locale");
 			}
 
 			Locale defaultContentLocale = LocaleUtil.fromLanguageId(

@@ -117,7 +117,7 @@
 
 		<execute macro="PortletEntry#publish" />
 
-		<execute function="Click" locator1="Icon#BACK" />
+		<execute function="Click" locator1="Icon#ANGLE_LEFT_BACK" />
 
 		<execute macro="MessageboardsThread#viewMarkedAsQuestionPG">
 			<var name="threadSubject" value="${threadSubject}" />
@@ -1209,7 +1209,7 @@
 		<execute function="AssertTextEquals" locator1="MessageBoardsStatistics#GENERAL_NUMBER_OF_CATEGORIES" value1="0" />
 		<execute function="AssertTextEquals" locator1="MessageBoardsStatistics#GENERAL_NUMBER_OF_POSTS" value1="0" />
 		<execute function="AssertTextEquals" locator1="MessageBoardsStatistics#GENERAL_NUMBER_OF_PARTICIPANTS" value1="0" />
-		<execute function="AssertTextEquals" locator1="Message#NO_TOP_POSTERS" value1="There are no top posters." />
+		<execute function="AssertTextEquals" locator1="Message#EMPTY_INFO" value1="There are no top posters." />
 	</command>
 
 	<command name="viewStatisticsPostsCountPG">

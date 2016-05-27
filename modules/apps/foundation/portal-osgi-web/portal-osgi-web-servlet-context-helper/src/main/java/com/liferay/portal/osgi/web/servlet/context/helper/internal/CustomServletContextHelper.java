@@ -16,11 +16,17 @@ package com.liferay.portal.osgi.web.servlet.context.helper.internal;
 
 import com.liferay.osgi.util.BundleUtil;
 import com.liferay.portal.kernel.util.CharPool;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.osgi.web.servlet.context.helper.definition.WebResourceCollectionDefinition;
 
 import java.io.IOException;
 
 import java.net.URL;
+
+import java.util.List;
+import java.util.Objects;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.RequestDispatcher;
@@ -39,11 +45,16 @@ import org.osgi.service.http.context.ServletContextHelper;
 public class CustomServletContextHelper
 	extends ServletContextHelper implements ServletContextListener {
 
-	public CustomServletContextHelper(Bundle bundle, Boolean wabShapedBundle) {
+	public CustomServletContextHelper(
+		Bundle bundle, Boolean wabShapedBundle,
+		List<WebResourceCollectionDefinition>
+			webResourceCollectionDefinitions) {
+
 		super(bundle);
 
 		_bundle = bundle;
 		_wabShapedBundle = wabShapedBundle;
+		_webResourceCollectionDefinitions = webResourceCollectionDefinitions;
 
 		Class<?> clazz = getClass();
 
@@ -62,18 +73,12 @@ public class CustomServletContextHelper
 
 	@Override
 	public String getRealPath(String path) {
-		URL url = getResource(path);
-
-		if (url == null) {
-			return null;
-		}
-
-		return url.toExternalForm();
+		return null;
 	}
 
 	@Override
 	public URL getResource(String name) {
-		if (name == null) {
+		if ((name == null) || name.contains("*")) {
 			return null;
 		}
 
@@ -125,20 +130,102 @@ public class CustomServletContextHelper
 		if (path.startsWith("/META-INF/") || path.startsWith("/OSGI-INF/") ||
 			path.startsWith("/OSGI-OPT/") || path.startsWith("/WEB-INF/")) {
 
-			try {
-				ServletContext servletContext = request.getServletContext();
+			return sendErrorForbidden(request, response, path);
+		}
 
-				servletContext.log(
-					"[WAB ERROR] Attempt to load illegal path " + path +
-						" in " + toString());
+		if (ListUtil.isEmpty(_webResourceCollectionDefinitions)) {
+			return true;
+		}
 
-				response.sendError(HttpServletResponse.SC_FORBIDDEN, path);
+		for (WebResourceCollectionDefinition
+				webResourceCollectionDefinition :
+					_webResourceCollectionDefinitions) {
+
+			boolean forbidden = false;
+
+			for (String urlPattern :
+					webResourceCollectionDefinition.getUrlPatterns()) {
+
+				// Servlet 3 spec 12.2
+
+				if (urlPattern.startsWith("*.")) {
+					String patternExtension = urlPattern.substring(2);
+
+					if (Validator.isNotNull(patternExtension) &&
+						Objects.equals("*", patternExtension)) {
+
+						forbidden = true;
+
+						break;
+					}
+
+					int index = path.lastIndexOf(".");
+
+					String pathExtension = path.substring(index + 1);
+
+					if (Objects.equals(patternExtension, pathExtension)) {
+						forbidden = true;
+
+						break;
+					}
+				}
+				else if (urlPattern.endsWith("/*")) {
+					if (urlPattern.equals("/*")) {
+						forbidden = true;
+
+						break;
+					}
+
+					String subpath = path;
+
+					String urlPatternPath = urlPattern.substring(
+						0, urlPattern.indexOf("/*") +1);
+
+					int index = subpath.lastIndexOf("/");
+
+					if (index > 0) {
+						subpath = subpath.substring(0, index +1);
+					}
+
+					if (Objects.equals(urlPatternPath, subpath)) {
+						forbidden = true;
+
+						break;
+					}
+				}
+				else if (Objects.equals(urlPattern, path)) {
+					forbidden = true;
+
+					break;
+				}
 			}
-			catch (IOException ioe) {
-				response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+
+			if (forbidden) {
+
+				// Servlet 3 spec 13.8.1
+
+				List<String> httpMethods =
+					webResourceCollectionDefinition.getHttpMethods();
+
+				if (ListUtil.isNotEmpty(httpMethods) &&
+					!httpMethods.contains(request.getMethod())) {
+
+					forbidden = false;
+				}
+
+				List<String> httpMethodExceptions =
+					webResourceCollectionDefinition.getHttpMethodExceptions();
+
+				if (ListUtil.isNotEmpty(httpMethodExceptions) &&
+					httpMethodExceptions.contains(request.getMethod())) {
+
+					forbidden = false;
+				}
 			}
 
-			return false;
+			if (forbidden) {
+				return sendErrorForbidden(request, response, path);
+			}
 		}
 
 		return true;
@@ -149,9 +236,30 @@ public class CustomServletContextHelper
 		return _string;
 	}
 
+	protected boolean sendErrorForbidden(
+		HttpServletRequest request, HttpServletResponse response, String path) {
+
+		try {
+			ServletContext servletContext = request.getServletContext();
+
+			servletContext.log(
+				"[WAB ERROR] Attempt to load illegal path " + path + " in " +
+					toString());
+
+			response.sendError(HttpServletResponse.SC_FORBIDDEN, path);
+		}
+		catch (IOException ioe) {
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+		}
+
+		return false;
+	}
+
 	private final Bundle _bundle;
 	private ServletContext _servletContext;
 	private final String _string;
 	private final boolean _wabShapedBundle;
+	private final List<WebResourceCollectionDefinition>
+		_webResourceCollectionDefinitions;
 
 }

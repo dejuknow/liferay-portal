@@ -88,6 +88,7 @@ import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.LocaleThreadLocal;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PortletKeys;
@@ -210,7 +211,7 @@ public class SitesImpl implements Sites {
 		}
 
 		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
-			com.liferay.portal.kernel.util.WebKeys.THEME_DISPLAY);
+			WebKeys.THEME_DISPLAY);
 
 		Group unescapedGroup = group.toUnescapedModel();
 
@@ -242,6 +243,13 @@ public class SitesImpl implements Sites {
 			boolean linkEnabled)
 		throws Exception {
 
+		Locale siteDefaultLocale = LocaleThreadLocal.getSiteDefaultLocale();
+
+		LayoutTypePortlet targetLayoutType =
+			(LayoutTypePortlet)targetLayout.getLayoutType();
+
+		List<String> targetLayoutPortletIds = targetLayoutType.getPortletIds();
+
 		Layout layoutPrototypeLayout = layoutPrototype.getLayout();
 
 		ServiceContext serviceContext =
@@ -251,19 +259,24 @@ public class SitesImpl implements Sites {
 		serviceContext.setAttribute(
 			"layoutPrototypeUuid", layoutPrototype.getUuid());
 
-		LayoutTypePortlet targetLayoutType =
-			(LayoutTypePortlet)targetLayout.getLayoutType();
+		try {
+			Locale targetSiteDefaultLocale = PortalUtil.getSiteDefaultLocale(
+				targetLayout.getGroupId());
 
-		List<String> targetLayoutPortletIds = targetLayoutType.getPortletIds();
+			LocaleThreadLocal.setSiteDefaultLocale(targetSiteDefaultLocale);
 
-		targetLayout = LayoutLocalServiceUtil.updateLayout(
-			targetLayout.getGroupId(), targetLayout.isPrivateLayout(),
-			targetLayout.getLayoutId(), targetLayout.getParentLayoutId(),
-			targetLayout.getNameMap(), targetLayout.getTitleMap(),
-			targetLayout.getDescriptionMap(), targetLayout.getKeywordsMap(),
-			targetLayout.getRobotsMap(), layoutPrototypeLayout.getType(),
-			targetLayout.getHidden(), targetLayout.getFriendlyURLMap(),
-			targetLayout.getIconImage(), null, serviceContext);
+			targetLayout = LayoutLocalServiceUtil.updateLayout(
+				targetLayout.getGroupId(), targetLayout.isPrivateLayout(),
+				targetLayout.getLayoutId(), targetLayout.getParentLayoutId(),
+				targetLayout.getNameMap(), targetLayout.getTitleMap(),
+				targetLayout.getDescriptionMap(), targetLayout.getKeywordsMap(),
+				targetLayout.getRobotsMap(), layoutPrototypeLayout.getType(),
+				targetLayout.getHidden(), targetLayout.getFriendlyURLMap(),
+				targetLayout.getIconImage(), null, serviceContext);
+		}
+		finally {
+			LocaleThreadLocal.setSiteDefaultLocale(siteDefaultLocale);
+		}
 
 		targetLayout = LayoutLocalServiceUtil.updateLayout(
 			targetLayout.getGroupId(), targetLayout.isPrivateLayout(),
@@ -560,17 +573,44 @@ public class SitesImpl implements Sites {
 		LayoutServiceUtil.deleteLayout(
 			groupId, privateLayout, layoutId, serviceContext);
 
-		long newPlid = layout.getParentPlid();
+		long newPlid = LayoutConstants.DEFAULT_PLID;
 
-		if (newPlid <= 0) {
-			LayoutSet layoutSet = layout.getLayoutSet();
+		if (selPlid == themeDisplay.getRefererPlid()) {
+			if (layout.getParentLayoutId() !=
+					LayoutConstants.DEFAULT_PARENT_LAYOUT_ID) {
 
-			Layout firstLayout = LayoutLocalServiceUtil.fetchFirstLayout(
-				layoutSet.getGroupId(), layoutSet.isPrivateLayout(),
-				LayoutConstants.DEFAULT_PARENT_LAYOUT_ID);
+				Layout parentLayout = LayoutLocalServiceUtil.fetchLayout(
+					layout.getGroupId(), layout.isPrivateLayout(),
+					layout.getParentLayoutId());
 
-			if (firstLayout != null) {
-				newPlid = firstLayout.getPlid();
+				if (parentLayout != null) {
+					newPlid = parentLayout.getPlid();
+				}
+			}
+
+			if (newPlid <= 0) {
+				Layout firstLayout = LayoutLocalServiceUtil.fetchFirstLayout(
+					layout.getGroupId(), layout.isPrivateLayout(),
+					LayoutConstants.DEFAULT_PARENT_LAYOUT_ID);
+
+				if ((firstLayout != null) &&
+					(firstLayout.getPlid() != selPlid)) {
+
+					newPlid = firstLayout.getPlid();
+				}
+
+				if (newPlid <= 0) {
+					Layout otherLayoutSetFirstLayout =
+						LayoutLocalServiceUtil.fetchFirstLayout(
+							layout.getGroupId(), !layout.isPrivateLayout(),
+							LayoutConstants.DEFAULT_PARENT_LAYOUT_ID);
+
+					if ((otherLayoutSetFirstLayout != null) &&
+						(otherLayoutSetFirstLayout.getPlid() != selPlid)) {
+
+						newPlid = otherLayoutSetFirstLayout.getPlid();
+					}
+				}
 			}
 		}
 
@@ -711,6 +751,9 @@ public class SitesImpl implements Sites {
 			new String[] {Boolean.FALSE.toString()});
 		parameterMap.put(
 			PortletDataHandlerKeys.LAYOUT_SET_PROTOTYPE_LINK_ENABLED,
+			new String[] {Boolean.TRUE.toString()});
+		parameterMap.put(
+			PortletDataHandlerKeys.LAYOUT_SET_PROTOTYPE_SETTINGS,
 			new String[] {Boolean.TRUE.toString()});
 		parameterMap.put(
 			PortletDataHandlerKeys.LAYOUT_SET_SETTINGS,
@@ -1765,6 +1808,9 @@ public class SitesImpl implements Sites {
 			new String[] {Boolean.TRUE.toString()});
 		parameterMap.put(
 			PortletDataHandlerKeys.LAYOUT_SET_PROTOTYPE_LINK_ENABLED,
+			new String[] {Boolean.TRUE.toString()});
+		parameterMap.put(
+			PortletDataHandlerKeys.LAYOUT_SET_PROTOTYPE_SETTINGS,
 			new String[] {Boolean.TRUE.toString()});
 		parameterMap.put(
 			PortletDataHandlerKeys.LAYOUTS_IMPORT_MODE,

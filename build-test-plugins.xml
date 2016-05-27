@@ -1,17 +1,28 @@
 <?xml version="1.0"?>
 
-<project name="portal-test-plugins" basedir="." default="test" xmlns:antelope="antlib:ise.antelope.tasks">
+<project basedir="." default="test" name="portal-test-plugins" xmlns:antelope="antlib:ise.antelope.tasks">
 	<import file="build-test.xml" />
 
 	<target name="deploy-extra-apps">
-		<fail message="Please set the property ${extra.apps.zip.file.name}" unless="extra.apps.zip.file.name" />
+		<for list="${plugins.includes}" param="plugin">
+			<sequential>
+				<pathconvert pathsep="," property="extraapps.zip" setonempty="false">
+					<path>
+						<fileset
+							dir="extraapps"
+							includes="@{plugin}*"
+						/>
+					</path>
+				</pathconvert>
 
-		<get-auto-deploy-dir />
+				<get-auto-deploy-dir />
 
-		<unzip
-			dest="${auto.deploy.dir}"
-			src="${extra.apps.zip.file.name}"
-		/>
+				<unzip
+					dest="${auto.deploy.dir}"
+					src="${extraapps.zip}"
+				/>
+			</sequential>
+		</for>
 	</target>
 
 	<target name="deploy-simple-server-plugins">
@@ -64,7 +75,7 @@ security-manager-enabled=true</echo>
 		<if>
 			<equals arg1="${liferay.portal.bundle}" arg2="6.1.20" />
 			<then>
-				<echo file="${lp.plugins.dir}/build.${user.name}.properties" append="true">
+				<echo append="true" file="${lp.plugins.dir}/build.${user.name}.properties">
 
 app.server.tomcat.dir=${app.server.parent.dir}/tomcat-7.0.27</echo>
 			</then>
@@ -90,7 +101,7 @@ app.server.tomcat.dir=${app.server.parent.dir}/tomcat-7.0.27</echo>
 				<equals arg1="${liferay.portal.bundle}" arg2="6.2.10.13" />
 			</or>
 			<then>
-				<echo file="${lp.plugins.dir}/build.${user.name}.properties" append="true">
+				<echo append="true" file="${lp.plugins.dir}/build.${user.name}.properties">
 
 app.server.tomcat.dir=${app.server.parent.dir}/tomcat-7.0.42</echo>
 			</then>
@@ -122,7 +133,7 @@ app.server.tomcat.dir=${app.server.parent.dir}/tomcat-7.0.42</echo>
 								</pathconvert>
 
 								<tstamp>
-									<format property="tstamp.value" pattern="yyyyMMddkkmmssSSS" />
+									<format pattern="yyyyMMddkkmmssSSS" property="tstamp.value" />
 								</tstamp>
 
 								<mkdir dir="${tstamp.value}" />
@@ -214,14 +225,14 @@ app.server.tomcat.dir=${app.server.parent.dir}/tomcat-7.0.42</echo>
 				<if>
 					<isset property="plugin.types" />
 					<then>
-						<ant dir="${lp.plugins.dir}/${plugin.types}" target="clean" inheritAll="false" />
+						<ant dir="${lp.plugins.dir}/${plugin.types}" inheritAll="false" target="clean" />
 
-						<ant dir="${lp.plugins.dir}/${plugin.types}" target="deploy" inheritAll="false" />
+						<ant dir="${lp.plugins.dir}/${plugin.types}" inheritAll="false" target="deploy" />
 					</then>
 					<else>
-						<ant dir="${lp.plugins.dir}" target="clean" inheritAll="false" />
+						<ant dir="${lp.plugins.dir}" inheritAll="false" target="clean" />
 
-						<ant dir="${lp.plugins.dir}" target="deploy" inheritAll="false" />
+						<ant dir="${lp.plugins.dir}" inheritAll="false" target="deploy" />
 					</else>
 				</if>
 			</else>
@@ -232,6 +243,8 @@ app.server.tomcat.dir=${app.server.parent.dir}/tomcat-7.0.42</echo>
 	</target>
 
 	<target name="test-plugin">
+		<echo>Compiling ${test.plugin}.</echo>
+
 		<if>
 			<or>
 				<contains string="${test.plugin}" substring="layouttpl" />
@@ -272,15 +285,15 @@ liferay.home=${liferay.home}
 
 plugins.includes=${test.plugin}</echo>
 
-		<ant dir="${lp.plugins.dir}/${test.plugin.type}/${test.plugin}" target="clean" inheritAll="false" />
+		<ant dir="${lp.plugins.dir}/${test.plugin.type}/${test.plugin}" inheritAll="false" target="clean" />
 
 		<if>
 			<contains string="${test.plugin}" substring="portlet" />
 			<then>
-				<ant dir="${lp.plugins.dir}/${test.plugin.type}/${test.plugin}" target="compile-jsp" inheritAll="false" />
+				<ant dir="${lp.plugins.dir}/${test.plugin.type}/${test.plugin}" inheritAll="false" target="compile-jsp" />
 			</then>
 			<else>
-				<ant dir="${lp.plugins.dir}/${test.plugin.type}/${test.plugin}" target="compile" inheritAll="false" />
+				<ant dir="${lp.plugins.dir}/${test.plugin.type}/${test.plugin}" inheritAll="false" target="compile" />
 			</else>
 		</if>
 	</target>
@@ -301,11 +314,64 @@ plugins.includes=${test.plugin}</echo>
 
 		<for list="${test.plugins}" param="test.plugin">
 			<sequential>
-				<antcall target="test-plugin">
-					<param name="test.plugin" value="@{test.plugin}" />
-				</antcall>
+				<trycatch>
+					<try>
+						<antcall target="test-plugin">
+							<param name="test.plugin" value="@{test.plugin}" />
+						</antcall>
+					</try>
+					<catch>
+						<echo append="true" file="plugins-compile-failure">@{test.plugin},</echo>
+					</catch>
+				</trycatch>
 			</sequential>
 		</for>
+
+		<if>
+			<available file="plugins-compile-failure" />
+			<then>
+				<loadfile property="failed.plugins" srcFile="plugins-compile-failure" />
+
+				<beanshell>
+					<![CDATA[
+						StringBuilder sb = new StringBuilder();
+
+						sb.append("\n");
+
+						String failedPluginsString = project.getProperty("failed.plugins");
+
+						String[] failedPlugins = failedPluginsString.split(",");
+
+						sb.append(failedPlugins.length);
+
+						sb.append(" of ");
+
+						String testPluginsString = project.getProperty("test.plugins");
+
+						String[] testPlugins = testPluginsString.split(",");
+
+						sb.append(testPlugins.length);
+
+						sb.append(" plugin");
+
+						if (testPlugins.length != 1) {
+							sb.append("s");
+						}
+
+						sb.append(" failed to compile:\n");
+
+						for (String failedPlugin : failedPlugins) {
+							sb.append(failedPlugin);
+							sb.append("\n");
+						}
+
+						project.setProperty("plugins.failure.message", sb.toString());
+					]]>
+				</beanshell>
+
+				<fail message="${plugins.failure.message}" />
+			</then>
+		</if>
 	</target>
 
 	<target name="test-plugins">

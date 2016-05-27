@@ -37,7 +37,6 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.impl.RegionImpl;
 import com.liferay.portal.model.impl.RegionModelImpl;
 
@@ -49,6 +48,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -1124,8 +1124,8 @@ public class RegionPersistenceImpl extends BasePersistenceImpl<Region>
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchRegionException(msg.toString());
@@ -1170,7 +1170,7 @@ public class RegionPersistenceImpl extends BasePersistenceImpl<Region>
 			Region region = (Region)result;
 
 			if ((countryId != region.getCountryId()) ||
-					!Validator.equals(regionCode, region.getRegionCode())) {
+					!Objects.equals(regionCode, region.getRegionCode())) {
 				result = null;
 			}
 		}
@@ -2060,8 +2060,8 @@ public class RegionPersistenceImpl extends BasePersistenceImpl<Region>
 			Region region = (Region)session.get(RegionImpl.class, primaryKey);
 
 			if (region == null) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+				if (_log.isDebugEnabled()) {
+					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchRegionException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
@@ -2247,8 +2247,8 @@ public class RegionPersistenceImpl extends BasePersistenceImpl<Region>
 		Region region = fetchByPrimaryKey(primaryKey);
 
 		if (region == null) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+			if (_log.isDebugEnabled()) {
+				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
 			throw new NoSuchRegionException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +

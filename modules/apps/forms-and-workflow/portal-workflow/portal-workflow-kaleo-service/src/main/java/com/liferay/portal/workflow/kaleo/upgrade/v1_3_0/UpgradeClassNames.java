@@ -14,12 +14,8 @@
 
 package com.liferay.portal.workflow.kaleo.upgrade.v1_3_0;
 
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
-import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.LoggingTimer;
-import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.upgrade.util.Table;
 import com.liferay.portal.workflow.kaleo.runtime.util.WorkflowContextUtil;
@@ -29,12 +25,7 @@ import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author Lino Alves
@@ -46,58 +37,28 @@ public class UpgradeClassNames extends UpgradeProcess {
 		updateClassName("KaleoInstance", "className");
 		updateClassName("KaleoInstanceToken", "className");
 		updateClassName("KaleoLog", "currentAssigneeClassName");
+		updateClassName("KaleoLog", "previousAssigneeClassName");
+		updateClassName("KaleoNotificationRecipient", "recipientClassName");
+		updateClassName("KaleoTaskAssignment", "assigneeClassName");
+		updateClassName("KaleoTaskAssignmentInstance", "assigneeClassName");
 		updateClassName("KaleoTaskInstanceToken", "className");
 
 		updateWorkflowContextEntryClassName("KaleoInstance", "kaleoInstanceId");
 		updateWorkflowContextEntryClassName("KaleoLog", "kaleoLogId");
 		updateWorkflowContextEntryClassName(
 			"KaleoTaskInstanceToken", "kaleoTaskInstanceTokenId");
-	}
-
-	protected String renamePortalJavaClassNames(String workflowContextJSON) {
-		Matcher matcher = _javaClassPattern.matcher(workflowContextJSON);
-
-		Set<String> oldSubs = new TreeSet<>();
-		Set<String> newSubs = new TreeSet<>();
-
-		while (matcher.find()) {
-			String oldPortalJavaClassName = matcher.group(1);
-
-			if (oldSubs.contains(oldPortalJavaClassName)) {
-				continue;
-			}
-
-			oldSubs.add("\"javaClass\":\"" + oldPortalJavaClassName + "\"");
-
-			String newPortalJavaClassName = StringUtil.replace(
-				oldPortalJavaClassName, "com.liferay.portal",
-				"com.liferay.portal.kernel");
-
-			newSubs.add("\"javaClass\":\"" + newPortalJavaClassName + "\"");
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(
-					String.format(
-						"Workflow context Java class name renamed " +
-							"from \"%s\" to \"%s\"",
-						oldPortalJavaClassName, newPortalJavaClassName));
-			}
-		}
-
-		if (oldSubs.isEmpty()) {
-			return workflowContextJSON;
-		}
-
-		return StringUtil.replace(
-			workflowContextJSON, ArrayUtil.toStringArray(oldSubs),
-			ArrayUtil.toStringArray(newSubs));
+		updateWorkflowContextEntryClassName(
+			"KaleoTimerInstanceToken", "kaleoTimerInstanceTokenId");
 	}
 
 	protected void updateClassName(String tableName, String columnName) {
 		try (LoggingTimer loggingTimer = new LoggingTimer(tableName)) {
 			Table table = new Table(tableName);
 
-			for (Map.Entry<String, String> entry : _classNamesMap.entrySet()) {
+			for (Map.Entry<String, String> entry :
+					_workflowContextUpgradeHelper.
+						getRenamedClassNamesEntrySet()) {
+
 				table.updateColumnValue(
 					columnName, entry.getKey(), entry.getValue());
 			}
@@ -138,27 +99,23 @@ public class UpgradeClassNames extends UpgradeProcess {
 					continue;
 				}
 
-				String updatedWorkflowContextJSON = renamePortalJavaClassNames(
-					workflowContextJSON);
+				String updatedWorkflowContextJSON =
+					_workflowContextUpgradeHelper.renamePortalClassNames(
+						workflowContextJSON);
 
 				Map<String, Serializable> workflowContext =
 					WorkflowContextUtil.convert(updatedWorkflowContextJSON);
 
-				String oldEntryClassName = (String)workflowContext.get(
-					"entryClassName");
-
-				String newEntryClassName = _classNamesMap.get(
-					oldEntryClassName);
-
-				if ((newEntryClassName == null) &&
-					workflowContextJSON.equals(updatedWorkflowContextJSON)) {
+				if (workflowContextJSON.equals(updatedWorkflowContextJSON) &&
+					!_workflowContextUpgradeHelper.isEntryClassNameRenamed(
+						workflowContext)) {
 
 					continue;
 				}
 
-				if (newEntryClassName != null) {
-					workflowContext.put("entryClassName", newEntryClassName);
-				}
+				workflowContext =
+					_workflowContextUpgradeHelper.renameEntryClassName(
+						workflowContext);
 
 				updateWorkflowContext(
 					tableName, primaryKeyName, primaryKeyValue,
@@ -167,50 +124,7 @@ public class UpgradeClassNames extends UpgradeProcess {
 		}
 	}
 
-	private static final Log _log = LogFactoryUtil.getLog(
-		UpgradeClassNames.class);
-
-	private static final Map<String, String> _classNamesMap = new HashMap<>();
-	private static final Pattern _javaClassPattern = Pattern.compile(
-		"\"javaClass\":\"(com.liferay.portal.[^\"]+)\"");
-
-	static {
-		_classNamesMap.put(
-			"com.liferay.portal.model.Company",
-			"com.liferay.portal.kernel.model.Company");
-		_classNamesMap.put(
-			"com.liferay.portal.model.Group",
-			"com.liferay.portal.kernel.model.Group");
-		_classNamesMap.put(
-			"com.liferay.portal.model.LayoutRevision",
-			"com.liferay.portal.kernel.model.LayoutRevision");
-		_classNamesMap.put(
-			"com.liferay.portal.model.Role",
-			"com.liferay.portal.kernel.model.Role");
-		_classNamesMap.put(
-			"com.liferay.portal.model.User",
-			"com.liferay.portal.kernel.model.User");
-		_classNamesMap.put(
-			"com.liferay.portal.model.UserGroup",
-			"com.liferay.portal.kernel.model.UserGroup");
-		_classNamesMap.put(
-			"com.liferay.portlet.blogs.model.BlogsEntry",
-			"com.liferay.blogs.kernel.model.BlogsEntry");
-		_classNamesMap.put(
-			"com.liferay.portlet.documentlibrary.model.DLFileEntry",
-			"com.liferay.document.library.kernel.model.DLFileEntry");
-		_classNamesMap.put(
-			"com.liferay.portlet.dynamicdatalists.model.DDLRecord",
-			"com.liferay.dynamic.data.lists.model.DDLRecord");
-		_classNamesMap.put(
-			"com.liferay.portlet.journal.model.JournalArticle",
-			"com.liferay.journal.model.JournalArticle");
-		_classNamesMap.put(
-			"com.liferay.portlet.messageboards.model.MBMessage",
-			"com.liferay.message.boards.kernel.model.MBMessage");
-		_classNamesMap.put(
-			"com.liferay.portlet.wiki.model.WikiPage",
-			"com.liferay.wiki.model.WikiPage");
-	}
+	private final WorkflowContextUpgradeHelper _workflowContextUpgradeHelper =
+		new WorkflowContextUpgradeHelper();
 
 }

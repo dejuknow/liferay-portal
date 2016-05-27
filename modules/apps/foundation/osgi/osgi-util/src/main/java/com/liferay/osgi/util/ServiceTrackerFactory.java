@@ -71,7 +71,8 @@ public class ServiceTrackerFactory {
 	}
 
 	public static <T> ServiceTracker<T, T> create(Class<T> clazz) {
-		return create(FrameworkUtil.getBundle(clazz), clazz);
+		return create(
+			FrameworkUtil.getBundle(ServiceTrackerFactory.class), clazz);
 	}
 
 	public static <T> ServiceTracker<T, T> open(Bundle bundle, Class<T> clazz) {

@@ -54,6 +54,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -197,7 +198,7 @@ public class MDRActionPersistenceImpl extends BasePersistenceImpl<MDRAction>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (MDRAction mdrAction : list) {
-					if (!Validator.equals(uuid, mdrAction.getUuid())) {
+					if (!Objects.equals(uuid, mdrAction.getUuid())) {
 						list = null;
 
 						break;
@@ -670,8 +671,8 @@ public class MDRActionPersistenceImpl extends BasePersistenceImpl<MDRAction>
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchActionException(msg.toString());
@@ -715,7 +716,7 @@ public class MDRActionPersistenceImpl extends BasePersistenceImpl<MDRAction>
 		if (result instanceof MDRAction) {
 			MDRAction mdrAction = (MDRAction)result;
 
-			if (!Validator.equals(uuid, mdrAction.getUuid()) ||
+			if (!Objects.equals(uuid, mdrAction.getUuid()) ||
 					(groupId != mdrAction.getGroupId())) {
 				result = null;
 			}
@@ -1006,7 +1007,7 @@ public class MDRActionPersistenceImpl extends BasePersistenceImpl<MDRAction>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (MDRAction mdrAction : list) {
-					if (!Validator.equals(uuid, mdrAction.getUuid()) ||
+					if (!Objects.equals(uuid, mdrAction.getUuid()) ||
 							(companyId != mdrAction.getCompanyId())) {
 						list = null;
 
@@ -2175,8 +2176,8 @@ public class MDRActionPersistenceImpl extends BasePersistenceImpl<MDRAction>
 					primaryKey);
 
 			if (mdrAction == null) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+				if (_log.isDebugEnabled()) {
+					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchActionException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
@@ -2404,8 +2405,8 @@ public class MDRActionPersistenceImpl extends BasePersistenceImpl<MDRAction>
 		MDRAction mdrAction = fetchByPrimaryKey(primaryKey);
 
 		if (mdrAction == null) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+			if (_log.isDebugEnabled()) {
+				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
 			throw new NoSuchActionException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +

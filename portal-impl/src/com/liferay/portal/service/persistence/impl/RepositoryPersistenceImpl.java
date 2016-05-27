@@ -56,6 +56,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -199,7 +200,7 @@ public class RepositoryPersistenceImpl extends BasePersistenceImpl<Repository>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (Repository repository : list) {
-					if (!Validator.equals(uuid, repository.getUuid())) {
+					if (!Objects.equals(uuid, repository.getUuid())) {
 						list = null;
 
 						break;
@@ -672,8 +673,8 @@ public class RepositoryPersistenceImpl extends BasePersistenceImpl<Repository>
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchRepositoryException(msg.toString());
@@ -717,7 +718,7 @@ public class RepositoryPersistenceImpl extends BasePersistenceImpl<Repository>
 		if (result instanceof Repository) {
 			Repository repository = (Repository)result;
 
-			if (!Validator.equals(uuid, repository.getUuid()) ||
+			if (!Objects.equals(uuid, repository.getUuid()) ||
 					(groupId != repository.getGroupId())) {
 				result = null;
 			}
@@ -1008,7 +1009,7 @@ public class RepositoryPersistenceImpl extends BasePersistenceImpl<Repository>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (Repository repository : list) {
-					if (!Validator.equals(uuid, repository.getUuid()) ||
+					if (!Objects.equals(uuid, repository.getUuid()) ||
 							(companyId != repository.getCompanyId())) {
 						list = null;
 
@@ -2023,8 +2024,8 @@ public class RepositoryPersistenceImpl extends BasePersistenceImpl<Repository>
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchRepositoryException(msg.toString());
@@ -2071,8 +2072,8 @@ public class RepositoryPersistenceImpl extends BasePersistenceImpl<Repository>
 			Repository repository = (Repository)result;
 
 			if ((groupId != repository.getGroupId()) ||
-					!Validator.equals(name, repository.getName()) ||
-					!Validator.equals(portletId, repository.getPortletId())) {
+					!Objects.equals(name, repository.getName()) ||
+					!Objects.equals(portletId, repository.getPortletId())) {
 				result = null;
 			}
 		}
@@ -2529,8 +2530,8 @@ public class RepositoryPersistenceImpl extends BasePersistenceImpl<Repository>
 					primaryKey);
 
 			if (repository == null) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+				if (_log.isDebugEnabled()) {
+					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchRepositoryException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
@@ -2756,8 +2757,8 @@ public class RepositoryPersistenceImpl extends BasePersistenceImpl<Repository>
 		Repository repository = fetchByPrimaryKey(primaryKey);
 
 		if (repository == null) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+			if (_log.isDebugEnabled()) {
+				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
 			throw new NoSuchRepositoryException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +

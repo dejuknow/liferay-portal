@@ -19,6 +19,8 @@
 <%
 String redirect = ParamUtil.getString(request, "redirect");
 
+MBRequestHelper mbRequestHelper = new MBRequestHelper(request);
+
 MBCategory category = mbRequestHelper.getCategory();
 
 long categoryId = MBUtil.getCategoryId(request, category);
@@ -64,6 +66,8 @@ else {
 
 boolean portletTitleBasedNavigation = GetterUtil.getBoolean(portletConfig.getInitParameter("portlet-title-based-navigation"));
 
+MBHomeDisplayContext mbHomeDisplayContext = mbDisplayContextProvider.getMBHomeDisplayContext(request, response);
+
 if (portletTitleBasedNavigation) {
 	portletDisplay.setShowBackIcon(true);
 	portletDisplay.setURLBack(redirect);
@@ -94,7 +98,6 @@ if (portletTitleBasedNavigation) {
 		<aui:input name="parentCategoryId" type="hidden" value="<%= parentCategoryId %>" />
 
 		<liferay-ui:error exception="<%= CaptchaConfigurationException.class %>" message="a-captcha-error-occurred-please-contact-an-administrator" />
-		<liferay-ui:error exception="<%= CaptchaMaxChallengesException.class %>" message="maximum-number-of-captcha-attempts-exceeded" />
 		<liferay-ui:error exception="<%= CaptchaTextException.class %>" message="text-verification-failed" />
 		<liferay-ui:error exception="<%= CategoryNameException.class %>" message="please-enter-a-valid-name" />
 		<liferay-ui:error exception="<%= MailingListEmailAddressException.class %>" message="please-enter-a-valid-email-address" />

@@ -74,6 +74,8 @@ public class AntiSamySanitizerPublisher {
 	protected void deactivate() {
 		if (_sanitizerServiceRegistration != null) {
 			_sanitizerServiceRegistration.unregister();
+
+			_sanitizerServiceRegistration = null;
 		}
 	}
 

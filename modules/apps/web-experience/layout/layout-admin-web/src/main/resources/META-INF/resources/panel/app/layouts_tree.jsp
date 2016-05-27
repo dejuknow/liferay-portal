@@ -106,7 +106,7 @@ LayoutsTreeDisplayContext layoutsTreeDisplayContext = new LayoutsTreeDisplayCont
 									%>
 
 									<li>
-										<a data-qa-id="editPublicPages" href="<%= editLayoutURL.toString() %>"><liferay-ui:message key="configuration" /></a>
+										<a data-qa-id="editPublicPages" href="<%= editLayoutURL.toString() %>"><liferay-ui:message key="configure" /></a>
 									</li>
 								</c:if>
 
@@ -117,7 +117,6 @@ LayoutsTreeDisplayContext layoutsTreeDisplayContext = new LayoutsTreeDisplayCont
 								</c:if>
 
 								<c:if test="<%= layoutsTreeDisplayContext.isShowAddBothRootLayoutButtons() %>">
-
 									<li class="divider"></li>
 
 									<%
@@ -179,7 +178,7 @@ LayoutsTreeDisplayContext layoutsTreeDisplayContext = new LayoutsTreeDisplayCont
 									%>
 
 									<li>
-										<a data-qa-id="editPrivatePages" href="<%= editLayoutURL.toString() %>"><liferay-ui:message key="configuration" /></a>
+										<a data-qa-id="editPrivatePages" href="<%= editLayoutURL.toString() %>"><liferay-ui:message key="configure" /></a>
 									</li>
 								</c:if>
 
@@ -190,7 +189,6 @@ LayoutsTreeDisplayContext layoutsTreeDisplayContext = new LayoutsTreeDisplayCont
 								</c:if>
 
 								<c:if test="<%= layoutsTreeDisplayContext.isShowAddBothRootLayoutButtons() %>">
-
 									<li class="divider"></li>
 
 									<%
@@ -257,8 +255,8 @@ LayoutsTreeDisplayContext layoutsTreeDisplayContext = new LayoutsTreeDisplayCont
 
 				<li>
 					<a class="layout-tree-edit" data-plid="{plid}" data-qa-id="editPage" data-updateable="{updateable}" data-url="{url}" data-uuid="{uuid}" href="{editLayoutURL}" id="{id}Edit">
-						<span aria-hidden="true"><liferay-ui:message key="edit" /></span>
-						<span class="sr-only"><liferay-ui:message arguments="{label}" key="edit-x" /></span>
+						<span aria-hidden="true"><liferay-ui:message key="configure-page" /></span>
+						<span class="sr-only"><liferay-ui:message arguments="{label}" key="configure-x" /></span>
 					</a>
 				</li>
 
@@ -278,8 +276,8 @@ LayoutsTreeDisplayContext layoutsTreeDisplayContext = new LayoutsTreeDisplayCont
 	String targetNode = "#controlMenuAlertsContainer";
 	%>
 
-	<liferay-ui:success key="layoutAdded" message='<%= LanguageUtil.get(resourceBundle, "the-page-has-been-created-succesfully") %>' targetNode="<%= targetNode %>" />
-	<liferay-ui:success key="layoutDeleted" message='<%= LanguageUtil.get(resourceBundle, "the-page-has-been-deleted-succesfully") %>' targetNode="<%= targetNode %>" />
+	<liferay-ui:success key="layoutAdded" message='<%= LanguageUtil.get(resourceBundle, "the-page-was-created-succesfully") %>' targetNode="<%= targetNode %>" />
+	<liferay-ui:success key="layoutDeleted" message='<%= LanguageUtil.get(resourceBundle, "the-page-was-deleted-succesfully") %>' targetNode="<%= targetNode %>" />
 
 	<%@ include file="/layout_exception.jspf" %>
 
@@ -316,22 +314,7 @@ LayoutsTreeDisplayContext layoutsTreeDisplayContext = new LayoutsTreeDisplayCont
 			if (confirm('<%= UnicodeLanguageUtil.get(resourceBundle, "are-you-sure-you-want-to-delete-the-selected-page") %>')) {
 				var link = event.currentTarget;
 
-				A.io.request(
-					link.attr('href'),
-					{
-						after: {
-							success: function(event, id, obj) {
-								var response = this.get('responseData');
-
-								var container = A.one('#<portlet:namespace/>layoutsTreeContainer');
-
-								container.plug(A.Plugin.ParseContent);
-
-								container.setContent(response);
-							}
-						}
-					}
-				);
+				submitForm(document.hrefFm, link.attr('href'));
 			}
 		},
 		'.layout-tree-delete'

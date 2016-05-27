@@ -21,12 +21,12 @@ import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldType;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.dynamic.data.mapping.storage.FieldConstants;
+import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.Validator;
 
 import java.util.Locale;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 import org.osgi.service.metatype.AttributeDefinition;
@@ -222,7 +222,7 @@ public class ConfigurationModelToDDMFormConverter {
 	protected void setDDMFormFieldDisplayStyle(DDMFormField ddmFormField) {
 		String dataType = ddmFormField.getDataType();
 
-		if (Validator.equals(dataType, FieldConstants.STRING)) {
+		if (Objects.equals(dataType, FieldConstants.STRING)) {
 			ddmFormField.setProperty("displayStyle", "multiline");
 		}
 	}
@@ -260,7 +260,7 @@ public class ConfigurationModelToDDMFormConverter {
 
 		LocalizedValue predefinedValue = new LocalizedValue(_locale);
 
-		predefinedValue.addString(_locale, translate(predefinedValueString));
+		predefinedValue.addString(_locale, predefinedValueString);
 
 		ddmFormField.setPredefinedValue(predefinedValue);
 	}
@@ -301,7 +301,7 @@ public class ConfigurationModelToDDMFormConverter {
 			return key;
 		}
 
-		String value = ResourceBundleUtil.getString(_resourceBundle, key);
+		String value = LanguageUtil.get(_resourceBundle, key);
 
 		if (value == null) {
 			return key;

@@ -20,12 +20,12 @@ import com.liferay.expando.kernel.model.ExpandoBridge;
 
 import com.liferay.portal.kernel.model.ModelWrapper;
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Serializable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * <p>
@@ -107,14 +107,88 @@ public class WikiPageResourceWrapper implements WikiPageResource,
 	}
 
 	@Override
+	public WikiPageResource toEscapedModel() {
+		return new WikiPageResourceWrapper(_wikiPageResource.toEscapedModel());
+	}
+
+	@Override
+	public WikiPageResource toUnescapedModel() {
+		return new WikiPageResourceWrapper(_wikiPageResource.toUnescapedModel());
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _wikiPageResource.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _wikiPageResource.isEscapedModel();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _wikiPageResource.isNew();
+	}
+
+	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _wikiPageResource.getExpandoBridge();
+	}
+
+	@Override
+	public com.liferay.portal.kernel.model.CacheModel<WikiPageResource> toCacheModel() {
+		return _wikiPageResource.toCacheModel();
+	}
+
+	@Override
+	public int compareTo(WikiPageResource wikiPageResource) {
+		return _wikiPageResource.compareTo(wikiPageResource);
+	}
+
+	@Override
+	public int hashCode() {
+		return _wikiPageResource.hashCode();
+	}
+
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _wikiPageResource.getPrimaryKeyObj();
+	}
+
+	@Override
 	public java.lang.Object clone() {
 		return new WikiPageResourceWrapper((WikiPageResource)_wikiPageResource.clone());
 	}
 
+	/**
+	* Returns the title of this wiki page resource.
+	*
+	* @return the title of this wiki page resource
+	*/
 	@Override
-	public int compareTo(
-		com.liferay.wiki.model.WikiPageResource wikiPageResource) {
-		return _wikiPageResource.compareTo(wikiPageResource);
+	public java.lang.String getTitle() {
+		return _wikiPageResource.getTitle();
+	}
+
+	/**
+	* Returns the uuid of this wiki page resource.
+	*
+	* @return the uuid of this wiki page resource
+	*/
+	@Override
+	public java.lang.String getUuid() {
+		return _wikiPageResource.getUuid();
+	}
+
+	@Override
+	public java.lang.String toString() {
+		return _wikiPageResource.toString();
+	}
+
+	@Override
+	public java.lang.String toXmlString() {
+		return _wikiPageResource.toXmlString();
 	}
 
 	/**
@@ -125,11 +199,6 @@ public class WikiPageResourceWrapper implements WikiPageResource,
 	@Override
 	public long getCompanyId() {
 		return _wikiPageResource.getCompanyId();
-	}
-
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _wikiPageResource.getExpandoBridge();
 	}
 
 	/**
@@ -162,11 +231,6 @@ public class WikiPageResourceWrapper implements WikiPageResource,
 		return _wikiPageResource.getPrimaryKey();
 	}
 
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _wikiPageResource.getPrimaryKeyObj();
-	}
-
 	/**
 	* Returns the resource prim key of this wiki page resource.
 	*
@@ -175,46 +239,6 @@ public class WikiPageResourceWrapper implements WikiPageResource,
 	@Override
 	public long getResourcePrimKey() {
 		return _wikiPageResource.getResourcePrimKey();
-	}
-
-	/**
-	* Returns the title of this wiki page resource.
-	*
-	* @return the title of this wiki page resource
-	*/
-	@Override
-	public java.lang.String getTitle() {
-		return _wikiPageResource.getTitle();
-	}
-
-	/**
-	* Returns the uuid of this wiki page resource.
-	*
-	* @return the uuid of this wiki page resource
-	*/
-	@Override
-	public java.lang.String getUuid() {
-		return _wikiPageResource.getUuid();
-	}
-
-	@Override
-	public int hashCode() {
-		return _wikiPageResource.hashCode();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _wikiPageResource.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _wikiPageResource.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _wikiPageResource.isNew();
 	}
 
 	@Override
@@ -238,14 +262,14 @@ public class WikiPageResourceWrapper implements WikiPageResource,
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
-		_wikiPageResource.setExpandoBridgeAttributes(baseModel);
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
+		_wikiPageResource.setExpandoBridgeAttributes(expandoBridge);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
-		_wikiPageResource.setExpandoBridgeAttributes(expandoBridge);
+	public void setExpandoBridgeAttributes(
+		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
+		_wikiPageResource.setExpandoBridgeAttributes(baseModel);
 	}
 
 	@Override
@@ -324,31 +348,6 @@ public class WikiPageResourceWrapper implements WikiPageResource,
 	}
 
 	@Override
-	public com.liferay.portal.kernel.model.CacheModel<com.liferay.wiki.model.WikiPageResource> toCacheModel() {
-		return _wikiPageResource.toCacheModel();
-	}
-
-	@Override
-	public com.liferay.wiki.model.WikiPageResource toEscapedModel() {
-		return new WikiPageResourceWrapper(_wikiPageResource.toEscapedModel());
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _wikiPageResource.toString();
-	}
-
-	@Override
-	public com.liferay.wiki.model.WikiPageResource toUnescapedModel() {
-		return new WikiPageResourceWrapper(_wikiPageResource.toUnescapedModel());
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _wikiPageResource.toXmlString();
-	}
-
-	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
@@ -360,7 +359,7 @@ public class WikiPageResourceWrapper implements WikiPageResource,
 
 		WikiPageResourceWrapper wikiPageResourceWrapper = (WikiPageResourceWrapper)obj;
 
-		if (Validator.equals(_wikiPageResource,
+		if (Objects.equals(_wikiPageResource,
 					wikiPageResourceWrapper._wikiPageResource)) {
 			return true;
 		}

@@ -10,7 +10,7 @@ class LiferayApp extends App {
 	constructor() {
 		super();
 
-		this.blacklist = {};
+		this.portletsBlacklist = {};
 		this.validStatusCodes = [];
 
 		var exceptionsSelector = ':not([target="_blank"]):not([data-senna-off]):not([data-resource-href])';
@@ -36,8 +36,34 @@ class LiferayApp extends App {
 		dom.append(body, '<div class="lfr-spa-loading-bar"></div>');
 	}
 
+	getCacheExpirationTime() {
+		return Liferay.SPA.cacheExpirationTime;
+	}
+
 	getValidStatusCodes() {
 		return this.validStatusCodes;
+	}
+
+	isCacheEnabled() {
+		return this.getCacheExpirationTime() > -1;
+	}
+
+	isInPortletBlacklist(element) {
+		return Object.keys(this.portletsBlacklist).some(
+			(portletId) => {
+				var boundaryId = Utils.getPortletBoundaryId(portletId);
+
+				var portlets = document.querySelectorAll('[id^="' + boundaryId + '"]');
+
+				return Array.prototype.slice.call(portlets).some(portlet => dom.contains(portlet, element));
+			}
+		);
+	}
+
+	isScreenCacheExpired(screen) {
+		var lastModifiedInterval = (new Date()).getTime() - screen.getCacheLastModified();
+
+		return lastModifiedInterval > this.getCacheExpirationTime();
 	}
 
 	onBeforeNavigate(event) {
@@ -55,22 +81,19 @@ class LiferayApp extends App {
 	}
 
 	onDocClickDelegate_(event) {
-		var inBlacklist = false;
-
-		Object.keys(this.blacklist).forEach(
-			(portletId) => {
-				var boundaryId = Utils.getPortletBoundaryId(portletId);
-				var portlets = document.querySelectorAll('[id^="' + boundaryId + '"]');
-
-				inBlacklist = Array.prototype.slice.call(portlets).some(portlet => dom.contains(portlet, event.delegateTarget));
-			}
-		);
-
-		if (inBlacklist) {
+		if (this.isInPortletBlacklist(event.delegateTarget)) {
 			return;
 		}
 
 		super.onDocClickDelegate_(event);
+	}
+
+	onDocSubmitDelegate_(event) {
+		if (this.isInPortletBlacklist(event.delegateTarget)) {
+			return;
+		}
+
+		super.onDocSubmitDelegate_(event);
 	}
 
 	onEndNavigate(event) {
@@ -84,7 +107,7 @@ class LiferayApp extends App {
 		);
 
 		if (event.error) {
-			if (event.error.invalidStatus || event.error.requestError) {
+			if (event.error.invalidStatus || event.error.requestError || event.error.timeout) {
 				if (event.form) {
 					event.form.submit();
 				}
@@ -116,8 +139,8 @@ class LiferayApp extends App {
 		);
 	}
 
-	setBlacklist(blacklist) {
-		this.blacklist = blacklist;
+	setPortletsBlacklist(portletsBlacklist) {
+		this.portletsBlacklist = portletsBlacklist;
 	}
 
 	setValidStatusCodes(validStatusCodes) {

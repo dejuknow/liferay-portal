@@ -14,7 +14,7 @@ AUI.add(
 
 					signInPortlet: {
 						setter: A.one,
-						value: '#p_p_id_58_'
+						value: '#p_p_id_com_liferay_login_web_portlet_LoginPortlet_'
 					}
 				},
 
@@ -47,7 +47,11 @@ AUI.add(
 							if (formNode) {
 								var form = Liferay.Form.get(formNode.attr('id'));
 
-								instance._formValidator = form.formValidator;
+								instance._formValidator = '';
+
+								if (form) {
+									instance._formValidator = form.formValidator;
+								}
 
 								instance._hasSignInForm = formNode.hasClass('sign-in-form');
 							}

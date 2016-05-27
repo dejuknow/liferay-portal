@@ -1,6 +1,6 @@
 Bundle-Name: Liferay Journal Service
 Bundle-SymbolicName: com.liferay.journal.service
-Bundle-Version: 2.0.4
+Bundle-Version: 2.1.0
 Export-Package:\
 	com.liferay.journal.atom,\
 	com.liferay.journal.configuration,\
@@ -8,7 +8,6 @@ Export-Package:\
 	com.liferay.journal.model.impl,\
 	com.liferay.journal.model.listener,\
 	com.liferay.journal.search,\
-	com.liferay.journal.service.configuration.configurator,\
 	com.liferay.journal.service.impl,\
 	com.liferay.journal.service.permission,\
 	com.liferay.journal.service.util,\
@@ -25,8 +24,3 @@ Liferay-Require-SchemaVersion: 1.0.0
 Liferay-Service: true
 Provide-Capability: liferay.resource.bundle;aggregate:String="(bundle.symbolic.name=com.liferay.journal.lang)";baseName="content.Language"
 Require-Capability: liferay.resource.bundle;filter:="(bundle.symbolic.name=com.liferay.journal.lang)"
--liferay-includeresource:\
-	@com.liferay.util.java-*.jar!/com/liferay/util/FiniteUniqueStack.class,\
-	@com.liferay.util.java-*.jar!/com/liferay/util/FiniteStack.class,\
-	@com.liferay.util.java-*.jar!/com/liferay/util/xml/Dom4jUtil.class,\
-	@com.liferay.util.java-*.jar!/com/liferay/util/xml/XMLUtil.class

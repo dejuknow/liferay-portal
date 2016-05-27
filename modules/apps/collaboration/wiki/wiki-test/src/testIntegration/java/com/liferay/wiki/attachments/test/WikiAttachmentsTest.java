@@ -20,6 +20,7 @@ import com.liferay.document.library.kernel.service.DLFileEntryLocalServiceUtil;
 import com.liferay.document.library.kernel.service.DLFolderLocalServiceUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.rule.Sync;
@@ -187,14 +188,21 @@ public class WikiAttachmentsTest {
 
 		foldersCount = DLFolderLocalServiceUtil.getDLFoldersCount();
 
+		Group group = _group;
+
 		_group = null;
 		_node = null;
 		_page = null;
 
-		addWikiPageAttachment();
+		try {
+			addWikiPageAttachment();
 
-		Assert.assertEquals(
-			foldersCount + 3, DLFolderLocalServiceUtil.getDLFoldersCount());
+			Assert.assertEquals(
+				foldersCount + 3, DLFolderLocalServiceUtil.getDLFoldersCount());
+		}
+		finally {
+			GroupLocalServiceUtil.deleteGroup(group);
+		}
 	}
 
 	@Test

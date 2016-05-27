@@ -62,7 +62,7 @@
 								}
 							%>
 
-							<aui:option label="<%= HtmlUtil.escape(layoutSetBranch.getName()) %>" selected="<%= selected %>" value="<%= layoutSetBranch.getLayoutSetBranchId() %>" />
+								<aui:option label="<%= HtmlUtil.escape(layoutSetBranch.getName()) %>" selected="<%= selected %>" value="<%= layoutSetBranch.getLayoutSetBranchId() %>" />
 
 							<%
 							}
@@ -75,7 +75,7 @@
 		</c:if>
 
 		<li class="layout-selector-options">
-			<aui:fieldset label="pages-to-export">
+			<aui:fieldset label='<%= "pages-to-" + action %>'>
 
 				<%
 				long selPlid = ParamUtil.getLong(request, "selPlid", LayoutConstants.DEFAULT_PLID);
@@ -83,12 +83,33 @@
 
 				<c:choose>
 					<c:when test="<%= disableInputs %>">
+						<liferay-util:buffer var="badgeHTML">
+							<span class="badge badge-info">
 
-						<%
-						int layoutsCount = LayoutLocalServiceUtil.getLayoutsCount(group, privateLayout);
-						%>
+								<%
+								int messageKeyLayoutsCount = LayoutLocalServiceUtil.getLayoutsCount(group, privateLayout, selectedLayoutIdsArray);
 
-						<liferay-ui:message arguments="<%= new String[] {String.valueOf(selectedLayoutIdsArray.length), String.valueOf(layoutsCount)} %>" key="x-selected-out-of-x" />
+								int totalLayoutsCount = LayoutLocalServiceUtil.getLayoutsCount(group, privateLayout);
+
+								if (messageKeyLayoutsCount > totalLayoutsCount) {
+									messageKeyLayoutsCount = totalLayoutsCount;
+								}
+								%>
+
+								<c:choose>
+									<c:when test="<%= totalLayoutsCount == 0 %>">
+										<liferay-ui:message key="none" />
+									</c:when>
+									<c:otherwise>
+										<liferay-ui:message arguments='<%= new String[] {"<strong>" + String.valueOf(messageKeyLayoutsCount) + "</strong>", String.valueOf(totalLayoutsCount)} %>' key="x-of-x" />
+									</c:otherwise>
+								</c:choose>
+							</span>
+						</liferay-util:buffer>
+
+						<li class="tree-item">
+							<liferay-ui:message arguments="<%= badgeHTML %>" key="pages-x" />
+						</li>
 					</c:when>
 					<c:otherwise>
 						<div class="pages-selector">
@@ -118,6 +139,8 @@
 				<aui:input disabled="<%= disableInputs %>" label="logo" name="<%= PortletDataHandlerKeys.LOGO %>" type="checkbox" value="<%= MapUtil.getBoolean(parameterMap, PortletDataHandlerKeys.LOGO, ParamUtil.getBoolean(request, PortletDataHandlerKeys.LOGO, true)) %>" />
 
 				<aui:input disabled="<%= disableInputs %>" label="site-pages-settings" name="<%= PortletDataHandlerKeys.LAYOUT_SET_SETTINGS %>" type="checkbox" value="<%= MapUtil.getBoolean(parameterMap, PortletDataHandlerKeys.LAYOUT_SET_SETTINGS, ParamUtil.getBoolean(request, PortletDataHandlerKeys.LAYOUT_SET_SETTINGS, true)) %>" />
+
+				<aui:input disabled="<%= disableInputs %>" label="site-template-settings" name="<%= PortletDataHandlerKeys.LAYOUT_SET_PROTOTYPE_SETTINGS %>" type="checkbox" value="<%= MapUtil.getBoolean(parameterMap, PortletDataHandlerKeys.LAYOUT_SET_PROTOTYPE_SETTINGS, ParamUtil.getBoolean(request, PortletDataHandlerKeys.LAYOUT_SET_PROTOTYPE_SETTINGS, true)) %>" />
 
 				<c:if test="<%= action.equals(Constants.PUBLISH) %>">
 					<aui:input disabled="<%= disableInputs %>" helpMessage="delete-missing-layouts-staging-help" label="delete-missing-layouts" name="<%= PortletDataHandlerKeys.DELETE_MISSING_LAYOUTS %>" type="checkbox" value="<%= MapUtil.getBoolean(parameterMap, PortletDataHandlerKeys.DELETE_MISSING_LAYOUTS, ParamUtil.getBoolean(request, PortletDataHandlerKeys.DELETE_MISSING_LAYOUTS, false)) %>" />

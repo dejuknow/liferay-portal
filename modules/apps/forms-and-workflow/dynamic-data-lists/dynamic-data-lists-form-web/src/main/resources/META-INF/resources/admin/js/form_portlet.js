@@ -23,6 +23,9 @@ AUI.add(
 					editForm: {
 					},
 
+					evaluatorURL: {
+					},
+
 					formBuilder: {
 						valueFn: '_valueFormBuilder'
 					},
@@ -102,7 +105,11 @@ AUI.add(
 
 						editForm.set('onSubmit', A.bind('_onSubmitEditForm', instance));
 
+						var formBuilder = instance.get('formBuilder');
+
 						instance._eventHandlers = [
+							formBuilder._layoutBuilder.after('layout-builder:moveEnd', A.bind(instance._afterFormBuilderLayoutBuilderMoveEnd, instance)),
+							formBuilder._layoutBuilder.after('layout-builder:moveStart', A.bind(instance._afterFormBuilderLayoutBuilderMoveStart, instance)),
 							instance.one('.btn-cancel').on('click', A.bind('_onCancel', instance)),
 							Liferay.on('destroyPortlet', A.bind('_onDestroyPortlet', instance))
 						];
@@ -134,6 +141,38 @@ AUI.add(
 								}
 							);
 						}
+					},
+
+					disableDescriptionEditor: function() {
+						var instance = this;
+
+						var descriptionEditor = CKEDITOR.instances[instance.ns('descriptionEditor')];
+
+						descriptionEditor.setReadOnly(true);
+					},
+
+					disableNameEditor: function() {
+						var instance = this;
+
+						var nameEditor = CKEDITOR.instances[instance.ns('nameEditor')];
+
+						nameEditor.setReadOnly(true);
+					},
+
+					enableDescriptionEditor: function() {
+						var instance = this;
+
+						var descriptionEditor = CKEDITOR.instances[instance.ns('descriptionEditor')];
+
+						descriptionEditor.setReadOnly(false);
+					},
+
+					enableNameEditor: function() {
+						var instance = this;
+
+						var nameEditor = CKEDITOR.instances[instance.ns('nameEditor')];
+
+						nameEditor.setReadOnly(false);
 					},
 
 					getState: function() {
@@ -294,6 +333,20 @@ AUI.add(
 						submitForm(editForm.form);
 					},
 
+					_afterFormBuilderLayoutBuilderMoveEnd: function() {
+						var instance = this;
+
+						instance.enableDescriptionEditor();
+						instance.enableNameEditor();
+					},
+
+					_afterFormBuilderLayoutBuilderMoveStart: function() {
+						var instance = this;
+
+						instance.disableDescriptionEditor();
+						instance.disableNameEditor();
+					},
+
 					_getDescription: function() {
 						var instance = this;
 
@@ -409,6 +462,7 @@ AUI.add(
 							{
 								dataProviders: instance.get('dataProviders'),
 								definition: instance.get('definition'),
+								evaluatorURL: instance.get('evaluatorURL'),
 								pagesJSON: layout.pages,
 								portletNamespace: instance.get('namespace')
 							}

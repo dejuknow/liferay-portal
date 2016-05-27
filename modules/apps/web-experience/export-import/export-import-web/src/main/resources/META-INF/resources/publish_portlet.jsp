@@ -26,7 +26,7 @@ String errorMessageKey = StringPool.BLANK;
 Layout targetLayout = null;
 
 if (!layout.isTypeControlPanel()) {
-	if (liveGroup == null) {
+	if ((liveGroup == null) || (stagingGroup == null) || (group.isLayout() && (stagingGroup.getLiveGroupId() == 0))) {
 		errorMessageKey = "this-portlet-is-placed-in-a-page-that-does-not-exist-in-the-live-site-publish-the-page-first";
 	}
 	else {
@@ -51,8 +51,8 @@ if (!layout.isTypeControlPanel()) {
 		}
 	}
 }
-else if (stagingGroup.isLayout()) {
-	if (liveGroup == null) {
+else if (group.isLayout()) {
+	if ((liveGroup == null) || (stagingGroup == null) || (stagingGroup.getLiveGroupId() == 0)) {
 		errorMessageKey = "a-portlet-is-placed-in-this-page-of-scope-that-does-not-exist-in-the-live-site-publish-the-page-first";
 	}
 	else {
@@ -406,7 +406,7 @@ portletURL.setParameter("tabs3", "current-and-previous");
 
 																							if (ArrayUtil.isNotEmpty(childrenControls)) {
 																								request.setAttribute("render_controls.jsp-controls", childrenControls);
-																							%>
+																						%>
 
 																								<aui:field-wrapper label="content-metadata">
 																									<ul class="lfr-tree list-unstyled">
@@ -414,7 +414,7 @@ portletURL.setParameter("tabs3", "current-and-previous");
 																									</ul>
 																								</aui:field-wrapper>
 
-																							<%
+																						<%
 																							}
 																						}
 																						%>

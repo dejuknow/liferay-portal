@@ -20,7 +20,6 @@ import com.liferay.expando.kernel.model.ExpandoBridge;
 
 import com.liferay.portal.kernel.model.ModelWrapper;
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Serializable;
 
@@ -28,6 +27,7 @@ import java.sql.Blob;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * <p>
@@ -122,14 +122,98 @@ public class DLContentWrapper implements DLContent, ModelWrapper<DLContent> {
 	}
 
 	@Override
+	public DLContent toEscapedModel() {
+		return new DLContentWrapper(_dlContent.toEscapedModel());
+	}
+
+	@Override
+	public DLContent toUnescapedModel() {
+		return new DLContentWrapper(_dlContent.toUnescapedModel());
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _dlContent.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _dlContent.isEscapedModel();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _dlContent.isNew();
+	}
+
+	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _dlContent.getExpandoBridge();
+	}
+
+	@Override
+	public com.liferay.portal.kernel.model.CacheModel<DLContent> toCacheModel() {
+		return _dlContent.toCacheModel();
+	}
+
+	@Override
+	public int compareTo(DLContent dlContent) {
+		return _dlContent.compareTo(dlContent);
+	}
+
+	@Override
+	public int hashCode() {
+		return _dlContent.hashCode();
+	}
+
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _dlContent.getPrimaryKeyObj();
+	}
+
+	@Override
 	public java.lang.Object clone() {
 		return new DLContentWrapper((DLContent)_dlContent.clone());
 	}
 
+	/**
+	* Returns the path of this document library content.
+	*
+	* @return the path of this document library content
+	*/
 	@Override
-	public int compareTo(
-		com.liferay.document.library.kernel.model.DLContent dlContent) {
-		return _dlContent.compareTo(dlContent);
+	public java.lang.String getPath() {
+		return _dlContent.getPath();
+	}
+
+	/**
+	* Returns the version of this document library content.
+	*
+	* @return the version of this document library content
+	*/
+	@Override
+	public java.lang.String getVersion() {
+		return _dlContent.getVersion();
+	}
+
+	@Override
+	public java.lang.String toString() {
+		return _dlContent.toString();
+	}
+
+	@Override
+	public java.lang.String toXmlString() {
+		return _dlContent.toXmlString();
+	}
+
+	/**
+	* Returns the data of this document library content.
+	*
+	* @return the data of this document library content
+	*/
+	@Override
+	public Blob getData() {
+		return _dlContent.getData();
 	}
 
 	/**
@@ -153,21 +237,6 @@ public class DLContentWrapper implements DLContent, ModelWrapper<DLContent> {
 	}
 
 	/**
-	* Returns the data of this document library content.
-	*
-	* @return the data of this document library content
-	*/
-	@Override
-	public Blob getData() {
-		return _dlContent.getData();
-	}
-
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _dlContent.getExpandoBridge();
-	}
-
-	/**
 	* Returns the group ID of this document library content.
 	*
 	* @return the group ID of this document library content
@@ -178,16 +247,6 @@ public class DLContentWrapper implements DLContent, ModelWrapper<DLContent> {
 	}
 
 	/**
-	* Returns the path of this document library content.
-	*
-	* @return the path of this document library content
-	*/
-	@Override
-	public java.lang.String getPath() {
-		return _dlContent.getPath();
-	}
-
-	/**
 	* Returns the primary key of this document library content.
 	*
 	* @return the primary key of this document library content
@@ -195,11 +254,6 @@ public class DLContentWrapper implements DLContent, ModelWrapper<DLContent> {
 	@Override
 	public long getPrimaryKey() {
 		return _dlContent.getPrimaryKey();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _dlContent.getPrimaryKeyObj();
 	}
 
 	/**
@@ -220,36 +274,6 @@ public class DLContentWrapper implements DLContent, ModelWrapper<DLContent> {
 	@Override
 	public long getSize() {
 		return _dlContent.getSize();
-	}
-
-	/**
-	* Returns the version of this document library content.
-	*
-	* @return the version of this document library content
-	*/
-	@Override
-	public java.lang.String getVersion() {
-		return _dlContent.getVersion();
-	}
-
-	@Override
-	public int hashCode() {
-		return _dlContent.hashCode();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _dlContent.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _dlContent.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _dlContent.isNew();
 	}
 
 	@Override
@@ -293,14 +317,14 @@ public class DLContentWrapper implements DLContent, ModelWrapper<DLContent> {
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
-		_dlContent.setExpandoBridgeAttributes(baseModel);
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
+		_dlContent.setExpandoBridgeAttributes(expandoBridge);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
-		_dlContent.setExpandoBridgeAttributes(expandoBridge);
+	public void setExpandoBridgeAttributes(
+		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
+		_dlContent.setExpandoBridgeAttributes(baseModel);
 	}
 
 	@Override
@@ -379,31 +403,6 @@ public class DLContentWrapper implements DLContent, ModelWrapper<DLContent> {
 	}
 
 	@Override
-	public com.liferay.portal.kernel.model.CacheModel<com.liferay.document.library.kernel.model.DLContent> toCacheModel() {
-		return _dlContent.toCacheModel();
-	}
-
-	@Override
-	public com.liferay.document.library.kernel.model.DLContent toEscapedModel() {
-		return new DLContentWrapper(_dlContent.toEscapedModel());
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _dlContent.toString();
-	}
-
-	@Override
-	public com.liferay.document.library.kernel.model.DLContent toUnescapedModel() {
-		return new DLContentWrapper(_dlContent.toUnescapedModel());
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _dlContent.toXmlString();
-	}
-
-	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
@@ -415,7 +414,7 @@ public class DLContentWrapper implements DLContent, ModelWrapper<DLContent> {
 
 		DLContentWrapper dlContentWrapper = (DLContentWrapper)obj;
 
-		if (Validator.equals(_dlContent, dlContentWrapper._dlContent)) {
+		if (Objects.equals(_dlContent, dlContentWrapper._dlContent)) {
 			return true;
 		}
 

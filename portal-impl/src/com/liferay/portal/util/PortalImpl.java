@@ -252,6 +252,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -663,11 +664,31 @@ public class PortalImpl implements Portal {
 
 		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
 
-		String name = WebKeys.PORTLET_BREADCRUMBS;
+		boolean portletBreadcrumbEntry = false;
 
 		if (Validator.isNotNull(portletDisplay.getId()) &&
 			!portletDisplay.isFocused()) {
 
+			portletBreadcrumbEntry = true;
+		}
+
+		addPortletBreadcrumbEntry(
+			request, title, url, null, portletBreadcrumbEntry);
+	}
+
+	@Override
+	public void addPortletBreadcrumbEntry(
+		HttpServletRequest request, String title, String url,
+		Map<String, Object> data, boolean portletBreadcrumbEntry) {
+
+		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
+			WebKeys.THEME_DISPLAY);
+
+		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
+
+		String name = WebKeys.PORTLET_BREADCRUMBS;
+
+		if (portletBreadcrumbEntry) {
 			name += StringPool.UNDERLINE + portletDisplay.getId();
 		}
 
@@ -844,8 +865,8 @@ public class PortalImpl implements Portal {
 			String param = enu.nextElement();
 			String[] values = actionRequest.getParameterValues(param);
 
-			if (renderParameters.get(
-					actionResponse.getNamespace() + param) == null) {
+			if (renderParameters.get(actionResponse.getNamespace() + param) ==
+					null) {
 
 				actionResponse.setRenderParameter(param, values);
 			}
@@ -870,30 +891,45 @@ public class PortalImpl implements Portal {
 			return url;
 		}
 
-		try {
-			String securityMode = PropsValues.REDIRECT_URL_SECURITY_MODE;
+		String securityMode = PropsValues.REDIRECT_URL_SECURITY_MODE;
 
-			if (securityMode.equals("domain")) {
-				String[] allowedDomains =
-					PropsValues.REDIRECT_URL_DOMAINS_ALLOWED;
+		if (securityMode.equals("domain")) {
+			String[] allowedDomains = PropsValues.REDIRECT_URL_DOMAINS_ALLOWED;
 
-				if ((allowedDomains.length > 0) &&
-					!ArrayUtil.contains(allowedDomains, domain)) {
-
-					if (_log.isWarnEnabled()) {
-						_log.warn("Redirect URL " + url + " is not allowed");
-					}
-
-					url = null;
-				}
+			if (allowedDomains.length == 0) {
+				return url;
 			}
-			else if (securityMode.equals("ip")) {
-				String[] allowedIps = PropsValues.REDIRECT_URL_IPS_ALLOWED;
 
-				if (allowedIps.length == 0) {
+			for (String allowedDomain : allowedDomains) {
+				if (allowedDomain.startsWith("*.") &&
+					(allowedDomain.regionMatches(
+						1, domain,
+						domain.length() - (allowedDomain.length() - 1),
+						allowedDomain.length() - 1) ||
+					 allowedDomain.regionMatches(
+						 2, domain, 0, domain.length()))) {
+
 					return url;
 				}
+				else if (allowedDomain.equals(domain)) {
+					return url;
+				}
+			}
 
+			if (_log.isWarnEnabled()) {
+				_log.warn("Redirect URL " + url + " is not allowed");
+			}
+
+			url = null;
+		}
+		else if (securityMode.equals("ip")) {
+			String[] allowedIps = PropsValues.REDIRECT_URL_IPS_ALLOWED;
+
+			if (allowedIps.length == 0) {
+				return url;
+			}
+
+			try {
 				InetAddress inetAddress = InetAddress.getByName(domain);
 
 				String hostAddress = inetAddress.getHostAddress();
@@ -912,13 +948,12 @@ public class PortalImpl implements Portal {
 				if (_log.isWarnEnabled()) {
 					_log.warn("Redirect URL " + url + " is not allowed");
 				}
-
-				url = null;
 			}
-		}
-		catch (UnknownHostException uhe) {
-			if (_log.isDebugEnabled()) {
-				_log.debug("Unable to determine IP for redirect URL " + url);
+			catch (UnknownHostException uhe) {
+				if (_log.isDebugEnabled()) {
+					_log.debug(
+						"Unable to determine IP for redirect URL " + url);
+				}
 			}
 
 			url = null;
@@ -3178,7 +3213,24 @@ public class PortalImpl implements Portal {
 
 	@Override
 	public Locale getLocale(HttpServletRequest request) {
-		return getLocale(request, null, false);
+		Locale locale = (Locale)request.getAttribute(WebKeys.LOCALE);
+
+		if (locale == _NULL_LOCALE) {
+			return null;
+		}
+
+		if (locale == null) {
+			locale = getLocale(request, null, false);
+
+			if (locale == null) {
+				request.setAttribute(WebKeys.LOCALE, _NULL_LOCALE);
+			}
+			else {
+				request.setAttribute(WebKeys.LOCALE, locale);
+			}
+		}
+
+		return locale;
 	}
 
 	@Override
@@ -3273,9 +3325,7 @@ public class PortalImpl implements Portal {
 
 		HttpSession session = request.getSession(false);
 
-		if ((session != null) &&
-			session.getAttribute(Globals.LOCALE_KEY) != null) {
-
+		if (session != null) {
 			locale = (Locale)session.getAttribute(Globals.LOCALE_KEY);
 
 			if (LanguageUtil.isAvailableLocale(groupId, locale)) {
@@ -4133,13 +4183,14 @@ public class PortalImpl implements Portal {
 
 		ResourceBundle resourceBundle = portletConfig.getResourceBundle(locale);
 
-		String portletDescription = ResourceBundleUtil.getString(
+		String portletDescription = LanguageUtil.get(
 			resourceBundle,
 			JavaConstants.JAVAX_PORTLET_DESCRIPTION.concat(
-				StringPool.PERIOD).concat(portlet.getRootPortletId()));
+				StringPool.PERIOD).concat(portlet.getRootPortletId()),
+			null);
 
 		if (Validator.isNull(portletDescription)) {
-			portletDescription = ResourceBundleUtil.getString(
+			portletDescription = LanguageUtil.get(
 				resourceBundle, JavaConstants.JAVAX_PORTLET_DESCRIPTION);
 		}
 
@@ -4432,13 +4483,14 @@ public class PortalImpl implements Portal {
 
 		ResourceBundle resourceBundle = portletConfig.getResourceBundle(locale);
 
-		String portletTitle = ResourceBundleUtil.getString(
+		String portletTitle = LanguageUtil.get(
 			resourceBundle,
 			JavaConstants.JAVAX_PORTLET_TITLE.concat(StringPool.PERIOD).concat(
-				portlet.getRootPortletId()));
+				portlet.getRootPortletId()),
+			null);
 
 		if (Validator.isNull(portletTitle)) {
-			portletTitle = ResourceBundleUtil.getString(
+			portletTitle = LanguageUtil.get(
 				resourceBundle, JavaConstants.JAVAX_PORTLET_TITLE);
 		}
 
@@ -6139,7 +6191,7 @@ public class PortalImpl implements Portal {
 				PropsValues.WEB_SERVER_FORWARDED_PROTOCOL_HEADER);
 
 			if (Validator.isNotNull(forwardedProtocol) &&
-				Validator.equals(Http.HTTPS, forwardedProtocol)) {
+				Objects.equals(Http.HTTPS, forwardedProtocol)) {
 
 				return true;
 			}
@@ -6340,12 +6392,7 @@ public class PortalImpl implements Portal {
 		}
 
 		Portlet portlet = PortletLocalServiceUtil.getPortletById(
-			getCompanyId(httpServletRequest), portletDisplay.getId());
-
-		if (portlet.isSystem() || !portlet.isUseDefaultTemplate()) {
-			return false;
-		}
-
+			group.getCompanyId(), portletDisplay.getId());
 		ServletContext servletContext =
 			(ServletContext)httpServletRequest.getAttribute(WebKeys.CTX);
 
@@ -6365,6 +6412,13 @@ public class PortalImpl implements Portal {
 	public boolean isSkipPortletContentRendering(
 		Group group, LayoutTypePortlet layoutTypePortlet,
 		PortletDisplay portletDisplay, String portletName) {
+
+		Portlet portlet = PortletLocalServiceUtil.getPortletById(
+			group.getCompanyId(), portletDisplay.getId());
+
+		if (portlet.isSystem()) {
+			return false;
+		}
 
 		if (group.isLayoutPrototype() &&
 			layoutTypePortlet.hasPortletId(portletDisplay.getId()) &&
@@ -6632,7 +6686,7 @@ public class PortalImpl implements Portal {
 			redirect = PATH_MAIN + "/portal/status";
 		}
 
-		if (Validator.equals(redirect, request.getRequestURI())) {
+		if (Objects.equals(redirect, request.getRequestURI())) {
 			if (_log.isWarnEnabled()) {
 				_log.warn("Unable to redirect to missing URI: " + redirect);
 			}
@@ -8117,6 +8171,10 @@ public class PortalImpl implements Portal {
 
 	private static final String _LOCALHOST = "localhost";
 
+	private static final Locale _NULL_LOCALE;
+	private static final MethodHandler _resetCDNHostsMethodHandler =
+		new MethodHandler(new MethodKey(PortalUtil.class, "resetCDNHosts"));
+
 	private static final String _PRIVATE_GROUP_SERVLET_MAPPING =
 		PropsValues.LAYOUT_FRIENDLY_URL_PRIVATE_GROUP_SERVLET_MAPPING;
 
@@ -8130,9 +8188,13 @@ public class PortalImpl implements Portal {
 
 	private static final Map<Long, String> _cdnHostHttpMap =
 		new ConcurrentHashMap<>();
-	private static final MethodHandler _resetCDNHostsMethodHandler =
-		new MethodHandler(new MethodKey(PortalUtil.class, "resetCDNHosts"));
 	private static final Date _upTime = new Date();
+
+	static {
+		Locale locale = Locale.getDefault();
+
+		_NULL_LOCALE = (Locale)locale.clone();
+	}
 
 	private final String[] _allSystemGroups;
 	private final String[] _allSystemOrganizationRoles;

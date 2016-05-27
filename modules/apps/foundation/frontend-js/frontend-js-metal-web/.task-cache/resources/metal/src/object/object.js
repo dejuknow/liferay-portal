@@ -1,17 +1,9 @@
-define("frontend-js-metal-web@1.0.6/metal/src/object/object", ['exports', '../core'], function (exports, _core) {
+define("frontend-js-metal-web@1.0.6/metal/src/object/object", ['exports'], function (exports) {
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
-
-	var _core2 = _interopRequireDefault(_core);
-
-	function _interopRequireDefault(obj) {
-		return obj && obj.__esModule ? obj : {
-			default: obj
-		};
-	}
 
 	function _classCallCheck(instance, Constructor) {
 		if (!(instance instanceof Constructor)) {
@@ -36,17 +28,11 @@ define("frontend-js-metal-web@1.0.6/metal/src/object/object", ['exports', '../co
 		};
 
 		object.getObjectByName = function getObjectByName(name, opt_obj) {
+			var scope = opt_obj || window;
 			var parts = name.split('.');
-			var cur = opt_obj || window;
-			var part;
-			while (part = parts.shift()) {
-				if (_core2.default.isDefAndNotNull(cur[part])) {
-					cur = cur[part];
-				} else {
-					return null;
-				}
-			}
-			return cur;
+			return parts.reduce(function (part, key) {
+				return part[key];
+			}, scope);
 		};
 
 		object.map = function map(obj, fn) {
@@ -56,6 +42,25 @@ define("frontend-js-metal-web@1.0.6/metal/src/object/object", ['exports', '../co
 				mappedObj[keys[i]] = fn(keys[i], obj[keys[i]]);
 			}
 			return mappedObj;
+		};
+
+		object.shallowEqual = function shallowEqual(obj1, obj2) {
+			if (obj1 === obj2) {
+				return true;
+			}
+
+			var keys1 = Object.keys(obj1);
+			var keys2 = Object.keys(obj2);
+			if (keys1.length !== keys2.length) {
+				return false;
+			}
+
+			for (var i = 0; i < keys1.length; i++) {
+				if (obj1[keys1[i]] !== obj2[keys1[i]]) {
+					return false;
+				}
+			}
+			return true;
 		};
 
 		return object;

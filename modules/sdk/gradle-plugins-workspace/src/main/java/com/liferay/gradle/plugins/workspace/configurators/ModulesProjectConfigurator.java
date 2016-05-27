@@ -14,8 +14,9 @@
 
 package com.liferay.gradle.plugins.workspace.configurators;
 
-import com.liferay.gradle.plugins.LiferayDefaultsPlugin;
-import com.liferay.gradle.plugins.LiferayPlugin;
+import com.liferay.gradle.plugins.LiferayBasePlugin;
+import com.liferay.gradle.plugins.LiferayOSGiDefaultsPlugin;
+import com.liferay.gradle.plugins.LiferayOSGiPlugin;
 import com.liferay.gradle.plugins.extensions.LiferayExtension;
 import com.liferay.gradle.plugins.poshi.runner.PoshiRunnerPlugin;
 import com.liferay.gradle.plugins.workspace.WorkspaceExtension;
@@ -68,11 +69,12 @@ public class ModulesProjectConfigurator extends BaseProjectConfigurator {
 		WorkspaceExtension workspaceExtension = GradleUtil.getExtension(
 			(ExtensionAware)project.getGradle(), WorkspaceExtension.class);
 
-		GradleUtil.applyPlugin(project, LiferayPlugin.class);
+		GradleUtil.applyPlugin(project, LiferayOSGiPlugin.class);
 		GradleUtil.applyPlugin(project, PoshiRunnerPlugin.class);
 
 		addRepositoryDefault(project, workspaceExtension);
 		configureLiferay(project, workspaceExtension);
+		configureTaskRunPoshi(project);
 
 		configureRootTaskDistBundle(
 			project, RootProjectConfigurator.DIST_BUNDLE_TAR_TASK_NAME);
@@ -110,7 +112,7 @@ public class ModulesProjectConfigurator extends BaseProjectConfigurator {
 					MavenArtifactRepository mavenArtifactRepository) {
 
 					mavenArtifactRepository.setUrl(
-						LiferayDefaultsPlugin.DEFAULT_REPOSITORY_URL);
+						LiferayOSGiDefaultsPlugin.DEFAULT_REPOSITORY_URL);
 				}
 
 			});
@@ -144,6 +146,13 @@ public class ModulesProjectConfigurator extends BaseProjectConfigurator {
 				}
 
 			});
+	}
+
+	protected void configureTaskRunPoshi(Project project) {
+		Task task = GradleUtil.getTask(
+			project, PoshiRunnerPlugin.RUN_POSHI_TASK_NAME);
+
+		task.dependsOn(LiferayBasePlugin.DEPLOY_TASK_NAME);
 	}
 
 	@Override

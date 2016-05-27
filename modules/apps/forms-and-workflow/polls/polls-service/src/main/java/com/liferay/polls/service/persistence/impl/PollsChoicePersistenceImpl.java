@@ -54,6 +54,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -199,7 +200,7 @@ public class PollsChoicePersistenceImpl extends BasePersistenceImpl<PollsChoice>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (PollsChoice pollsChoice : list) {
-					if (!Validator.equals(uuid, pollsChoice.getUuid())) {
+					if (!Objects.equals(uuid, pollsChoice.getUuid())) {
 						list = null;
 
 						break;
@@ -672,8 +673,8 @@ public class PollsChoicePersistenceImpl extends BasePersistenceImpl<PollsChoice>
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchChoiceException(msg.toString());
@@ -717,7 +718,7 @@ public class PollsChoicePersistenceImpl extends BasePersistenceImpl<PollsChoice>
 		if (result instanceof PollsChoice) {
 			PollsChoice pollsChoice = (PollsChoice)result;
 
-			if (!Validator.equals(uuid, pollsChoice.getUuid()) ||
+			if (!Objects.equals(uuid, pollsChoice.getUuid()) ||
 					(groupId != pollsChoice.getGroupId())) {
 				result = null;
 			}
@@ -1010,7 +1011,7 @@ public class PollsChoicePersistenceImpl extends BasePersistenceImpl<PollsChoice>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (PollsChoice pollsChoice : list) {
-					if (!Validator.equals(uuid, pollsChoice.getUuid()) ||
+					if (!Objects.equals(uuid, pollsChoice.getUuid()) ||
 							(companyId != pollsChoice.getCompanyId())) {
 						list = null;
 
@@ -2020,8 +2021,8 @@ public class PollsChoicePersistenceImpl extends BasePersistenceImpl<PollsChoice>
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchChoiceException(msg.toString());
@@ -2066,7 +2067,7 @@ public class PollsChoicePersistenceImpl extends BasePersistenceImpl<PollsChoice>
 			PollsChoice pollsChoice = (PollsChoice)result;
 
 			if ((questionId != pollsChoice.getQuestionId()) ||
-					!Validator.equals(name, pollsChoice.getName())) {
+					!Objects.equals(name, pollsChoice.getName())) {
 				result = null;
 			}
 		}
@@ -2475,8 +2476,8 @@ public class PollsChoicePersistenceImpl extends BasePersistenceImpl<PollsChoice>
 					primaryKey);
 
 			if (pollsChoice == null) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+				if (_log.isDebugEnabled()) {
+					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchChoiceException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
@@ -2699,8 +2700,8 @@ public class PollsChoicePersistenceImpl extends BasePersistenceImpl<PollsChoice>
 		PollsChoice pollsChoice = fetchByPrimaryKey(primaryKey);
 
 		if (pollsChoice == null) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+			if (_log.isDebugEnabled()) {
+				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
 			throw new NoSuchChoiceException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +

@@ -280,7 +280,7 @@ public abstract class CalendarBookingLocalServiceBaseImpl
 	public ActionableDynamicQuery getActionableDynamicQuery() {
 		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
 
-		actionableDynamicQuery.setBaseLocalService(com.liferay.calendar.service.CalendarBookingLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(calendarBookingLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(CalendarBooking.class);
 
@@ -293,7 +293,7 @@ public abstract class CalendarBookingLocalServiceBaseImpl
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
 		IndexableActionableDynamicQuery indexableActionableDynamicQuery = new IndexableActionableDynamicQuery();
 
-		indexableActionableDynamicQuery.setBaseLocalService(com.liferay.calendar.service.CalendarBookingLocalServiceUtil.getService());
+		indexableActionableDynamicQuery.setBaseLocalService(calendarBookingLocalService);
 		indexableActionableDynamicQuery.setClassLoader(getClassLoader());
 		indexableActionableDynamicQuery.setModelClass(CalendarBooking.class);
 
@@ -305,7 +305,7 @@ public abstract class CalendarBookingLocalServiceBaseImpl
 
 	protected void initActionableDynamicQuery(
 		ActionableDynamicQuery actionableDynamicQuery) {
-		actionableDynamicQuery.setBaseLocalService(com.liferay.calendar.service.CalendarBookingLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(calendarBookingLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(CalendarBooking.class);
 
@@ -1247,7 +1247,7 @@ public abstract class CalendarBookingLocalServiceBaseImpl
 	protected CalendarPersistence calendarPersistence;
 	@BeanReference(type = CalendarFinder.class)
 	protected CalendarFinder calendarFinder;
-	@BeanReference(type = com.liferay.calendar.service.CalendarBookingLocalService.class)
+	@BeanReference(type = CalendarBookingLocalService.class)
 	protected CalendarBookingLocalService calendarBookingLocalService;
 	@BeanReference(type = CalendarBookingPersistence.class)
 	protected CalendarBookingPersistence calendarBookingPersistence;

@@ -40,7 +40,6 @@ import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.impl.ReleaseImpl;
 import com.liferay.portal.model.impl.ReleaseModelImpl;
 
@@ -53,6 +52,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -121,8 +121,8 @@ public class ReleasePersistenceImpl extends BasePersistenceImpl<Release>
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchReleaseException(msg.toString());
@@ -164,7 +164,7 @@ public class ReleasePersistenceImpl extends BasePersistenceImpl<Release>
 		if (result instanceof Release) {
 			Release release = (Release)result;
 
-			if (!Validator.equals(servletContextName,
+			if (!Objects.equals(servletContextName,
 						release.getServletContextName())) {
 				result = null;
 			}
@@ -505,8 +505,8 @@ public class ReleasePersistenceImpl extends BasePersistenceImpl<Release>
 			Release release = (Release)session.get(ReleaseImpl.class, primaryKey);
 
 			if (release == null) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+				if (_log.isDebugEnabled()) {
+					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchReleaseException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
@@ -664,8 +664,8 @@ public class ReleasePersistenceImpl extends BasePersistenceImpl<Release>
 		Release release = fetchByPrimaryKey(primaryKey);
 
 		if (release == null) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+			if (_log.isDebugEnabled()) {
+				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
 			throw new NoSuchReleaseException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +

@@ -40,7 +40,7 @@ public class LayoutPrototypeServiceWrapper implements LayoutPrototypeService,
 	public com.liferay.portal.kernel.model.LayoutPrototype addLayoutPrototype(
 		java.util.Map<java.util.Locale, java.lang.String> nameMap,
 		java.lang.String description, boolean active,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _layoutPrototypeService.addLayoutPrototype(nameMap, description,
 			active, serviceContext);
@@ -50,17 +50,10 @@ public class LayoutPrototypeServiceWrapper implements LayoutPrototypeService,
 	public com.liferay.portal.kernel.model.LayoutPrototype addLayoutPrototype(
 		java.util.Map<java.util.Locale, java.lang.String> nameMap,
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
-		boolean active,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		boolean active, ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _layoutPrototypeService.addLayoutPrototype(nameMap,
 			descriptionMap, active, serviceContext);
-	}
-
-	@Override
-	public void deleteLayoutPrototype(long layoutPrototypeId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_layoutPrototypeService.deleteLayoutPrototype(layoutPrototypeId);
 	}
 
 	@Override
@@ -75,6 +68,33 @@ public class LayoutPrototypeServiceWrapper implements LayoutPrototypeService,
 		long layoutPrototypeId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _layoutPrototypeService.getLayoutPrototype(layoutPrototypeId);
+	}
+
+	/**
+	* @deprecated As of 7.0.0, replaced by {@link #updateLayoutPrototype(long,
+	Map, Map, boolean, ServiceContext)}
+	*/
+	@Deprecated
+	@Override
+	public com.liferay.portal.kernel.model.LayoutPrototype updateLayoutPrototype(
+		long layoutPrototypeId,
+		java.util.Map<java.util.Locale, java.lang.String> nameMap,
+		java.lang.String description, boolean active,
+		ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _layoutPrototypeService.updateLayoutPrototype(layoutPrototypeId,
+			nameMap, description, active, serviceContext);
+	}
+
+	@Override
+	public com.liferay.portal.kernel.model.LayoutPrototype updateLayoutPrototype(
+		long layoutPrototypeId,
+		java.util.Map<java.util.Locale, java.lang.String> nameMap,
+		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
+		boolean active, ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _layoutPrototypeService.updateLayoutPrototype(layoutPrototypeId,
+			nameMap, descriptionMap, active, serviceContext);
 	}
 
 	/**
@@ -95,32 +115,10 @@ public class LayoutPrototypeServiceWrapper implements LayoutPrototypeService,
 		return _layoutPrototypeService.search(companyId, active, obc);
 	}
 
-	/**
-	* @deprecated As of 7.0.0, replaced by {@link #updateLayoutPrototype(long,
-	Map, Map, boolean, ServiceContext)}
-	*/
-	@Deprecated
 	@Override
-	public com.liferay.portal.kernel.model.LayoutPrototype updateLayoutPrototype(
-		long layoutPrototypeId,
-		java.util.Map<java.util.Locale, java.lang.String> nameMap,
-		java.lang.String description, boolean active,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+	public void deleteLayoutPrototype(long layoutPrototypeId)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _layoutPrototypeService.updateLayoutPrototype(layoutPrototypeId,
-			nameMap, description, active, serviceContext);
-	}
-
-	@Override
-	public com.liferay.portal.kernel.model.LayoutPrototype updateLayoutPrototype(
-		long layoutPrototypeId,
-		java.util.Map<java.util.Locale, java.lang.String> nameMap,
-		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
-		boolean active,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _layoutPrototypeService.updateLayoutPrototype(layoutPrototypeId,
-			nameMap, descriptionMap, active, serviceContext);
+		_layoutPrototypeService.deleteLayoutPrototype(layoutPrototypeId);
 	}
 
 	@Override

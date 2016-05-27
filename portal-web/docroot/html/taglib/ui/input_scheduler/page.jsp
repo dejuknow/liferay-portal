@@ -48,8 +48,9 @@ int startYear = ParamUtil.get(request, "schedulerStartDateYear", cal.get(Calenda
 
 <aui:fieldset>
 	<aui:field-wrapper label="start-date">
-		<div class="field-row">
+		<div class="flex-container">
 			<liferay-ui:input-date
+				cssClass="form-group form-group-inline"
 				dayParam="schedulerStartDateDay"
 				dayValue="<%= startDay %>"
 				disabled="<%= false %>"
@@ -61,11 +62,12 @@ int startYear = ParamUtil.get(request, "schedulerStartDateYear", cal.get(Calenda
 				yearValue="<%= startYear %>"
 			/>
 
-			&nbsp;
+			<liferay-ui:icon icon="calendar" markupView="lexicon" />
 
 			<liferay-ui:input-time
 				amPmParam="schedulerStartDateAmPm"
 				amPmValue="<%= startAmPm %>"
+				cssClass="form-group form-group-inline"
 				hourParam="schedulerStartDateHour"
 				hourValue="<%= startHour %>"
 				minuteParam="schedulerStartDateMinute"
@@ -79,8 +81,9 @@ int startYear = ParamUtil.get(request, "schedulerStartDateYear", cal.get(Calenda
 		<aui:input checked="<%= true %>" id="schedulerNoEndDate" label="no-end-date" name="endDateType" type="radio" value="0" />
 		<aui:input first="<%= true %>" id="schedulerEndBy" label="end-by" name="endDateType" type="radio" value="1" />
 
-		<div class="field-row hide" id="<portlet:namespace />schedulerEndDateType">
+		<div class="flex-container hide" id="<portlet:namespace />schedulerEndDateType">
 			<liferay-ui:input-date
+				cssClass="form-group form-group-inline"
 				dayParam="schedulerEndDateDay"
 				dayValue="<%= endDay %>"
 				disabled="<%= false %>"
@@ -92,11 +95,12 @@ int startYear = ParamUtil.get(request, "schedulerStartDateYear", cal.get(Calenda
 				yearValue="<%= endYear %>"
 			/>
 
-			&nbsp;
+			<liferay-ui:icon icon="calendar" markupView="lexicon" />
 
 			<liferay-ui:input-time
 				amPmParam="schedulerEndDateAmPm"
 				amPmValue="<%= endAmPm %>"
+				cssClass="form-group form-group-inline"
 				hourParam="schedulerEndDateHour"
 				hourValue="<%= endHour %>"
 				minuteParam="schedulerEndDateMinute"

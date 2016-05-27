@@ -26,7 +26,6 @@
 			<name>label</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
-			<type>java.lang.String</type>
 		</attribute>
 	</tag>
 	<tag>
@@ -39,7 +38,6 @@
 			<name>cmd</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
-			<type>java.lang.String</type>
 		</attribute>
 		<attribute>
 			<description>Whether to disable all the rendered inputs on the screen.</description>
@@ -67,7 +65,6 @@
 			<name>type</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
-			<type>java.lang.String</type>
 		</attribute>
 	</tag>
 	<tag>
@@ -81,7 +78,6 @@
 			<name>portletId</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
-			<type>java.lang.String</type>
 		</attribute>
 	</tag>
 	<tag>
@@ -94,10 +90,9 @@
 			<name>cmd</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
-			<type>java.lang.String</type>
 		</attribute>
 		<attribute>
-			<description>Whether to disable all rendered inputs on the screen.</description>
+			<description>Whether to disable all the rendered inputs on the screen.</description>
 			<name>disableInputs</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -121,7 +116,6 @@
 			<name>cssClass</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
-			<type>java.lang.String</type>
 		</attribute>
 		<attribute>
 			<description>The layout set branch ID to be used.</description>
@@ -162,14 +156,12 @@
 			<name>action</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
-			<type>java.lang.String</type>
 		</attribute>
 		<attribute>
 			<description>The CSS class used to format the Permissions section's description.</description>
 			<name>descriptionCSSClass</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
-			<type>java.lang.String</type>
 		</attribute>
 		<attribute>
 			<description>Whether to disable all the rendered inputs on the screen.</description>
@@ -197,7 +189,6 @@
 			<name>labelCSSClass</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
-			<type>java.lang.String</type>
 		</attribute>
 	</tag>
 	<tag>
@@ -227,7 +218,7 @@
 			<type>java.util.List</type>
 		</attribute>
 		<attribute>
-			<description>Whether to render all available portlets in the portlet list; otherwise, only the portlets that currently have content in them are rendered.</description>
+			<description>Whether to render all the available portlets in the portlet list; otherwise, only the portlets that currently have content in them are rendered.</description>
 			<name>showAllPortlets</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -238,7 +229,33 @@
 			<name>type</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
-			<type>java.lang.String</type>
+		</attribute>
+	</tag>
+	<tag>
+		<description>Renders the remote site options.</description>
+		<name>remote-options</name>
+		<tag-class>com.liferay.staging.taglib.servlet.taglib.RemoteOptionsTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<description>Whether to disable all the rendered inputs on the screen.</description>
+			<name>disableInputs</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>boolean</type>
+		</attribute>
+		<attribute>
+			<description>The ID of the <![CDATA[<code>exportImportConfiguration</code>]]>. If the <![CDATA[<code>exportImportConfigurationId</code>]]> is valid, the content settings are used from the corresponding <![CDATA[<code>exportImportConfiguration</code>]]>.</description>
+			<name>exportImportConfigurationId</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>long</type>
+		</attribute>
+		<attribute>
+			<description>Whether to publish the private pages; otherwise, the public pages are published.</description>
+			<name>privateLayout</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>boolean</type>
 		</attribute>
 	</tag>
 	<tag>
@@ -251,7 +268,6 @@
 			<name>action</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
-			<type>java.lang.String</type>
 		</attribute>
 		<attribute>
 			<description>Whether to disable all the rendered inputs on the screen.</description>
@@ -275,7 +291,7 @@
 			<type>long</type>
 		</attribute>
 		<attribute>
-			<description>Whether to render the private pages; otherwise; the public pages are rendered.</description>
+			<description>Whether to render the private pages; otherwise, the public pages are rendered.</description>
 			<name>privateLayout</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -286,7 +302,6 @@
 			<name>treeId</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
-			<type>java.lang.String</type>
 		</attribute>
 	</tag>
 	<tag>
@@ -299,7 +314,6 @@
 			<name>cssClass</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
-			<type>java.lang.String</type>
 		</attribute>
 		<attribute>
 			<description>The staged model to be used to display the publishing information.</description>

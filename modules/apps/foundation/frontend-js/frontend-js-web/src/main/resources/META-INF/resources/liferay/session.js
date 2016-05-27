@@ -153,8 +153,6 @@ AUI.add(
 					_defActivatedFn: function(event) {
 						var instance = this;
 
-						instance._elapsed = 0;
-
 						instance.set('timestamp');
 
 						if (event.src == SRC) {
@@ -312,15 +310,23 @@ AUI.add(
 						var sessionLength = instance.get('sessionLength');
 						var warningTime = instance.get('warningTime');
 
-						instance._elapsed = 0;
-
 						var registered = instance._registered;
 
 						var interval = 1000;
 
 						instance._intervalId = A.setInterval(
 							function() {
-								var elapsed = instance._elapsed += 1000;
+								var timeOffset;
+
+								var timestamp = instance.get('timestamp');
+
+								var elapsed = sessionLength;
+
+								if (Lang.toInt(timestamp)) {
+									timeOffset = Math.floor((Date.now() - timestamp) / 1000) * 1000;
+
+									elapsed = timeOffset;
+								}
 
 								var extend = false;
 
@@ -334,38 +340,30 @@ AUI.add(
 
 								if (hasWarned) {
 									if (warningMoment || expirationMoment) {
-										var timestamp = instance.get('timestamp');
-
 										if (timestamp == 'expired') {
 											expirationMoment = true;
 											hasExpired = true;
 										}
 										else if (instance.get('autoExtend')) {
+											expirationMoment = false;
+											extend = true;
 											hasExpired = false;
 											hasWarned = false;
-
-											expirationMoment = false;
 											warningMoment = false;
-
-											extend = true;
 										}
-										else {
-											var timeOffset = Math.floor((Date.now() - timestamp) / 1000) * 1000;
-
-											if (timeOffset < warningTime) {
-												instance._elapsed = timeOffset;
-
-												updateSessionState = false;
-												hasWarned = false;
-											}
+										else if (timeOffset < warningTime) {
+											hasWarned = false;
+											updateSessionState = false;
 										}
 									}
 
 									if (updateSessionState) {
-										if (expirationMoment) {
+										var sessionState = instance.get('sessionState');
+
+										if (hasExpired && sessionState != 'expired') {
 											instance.expire();
 										}
-										else if (warningMoment) {
+										else if (hasWarned && !hasExpired && sessionState != 'warned') {
 											instance.warn();
 										}
 										else if (extend) {
@@ -468,9 +466,21 @@ AUI.add(
 
 						var host = instance._host;
 
+						var sessionLength = host.get('sessionLength');
+						var timestamp = host.get('timestamp');
 						var warningLength = host.get('warningLength');
 
-						var remainingTime = warningLength;
+						var elapsed = sessionLength;
+
+						if (Lang.toInt(timestamp)) {
+							elapsed = Math.floor((Date.now() - timestamp) / 1000) * 1000;
+						}
+
+						var remainingTime = sessionLength - elapsed;
+
+						if (remainingTime > warningLength) {
+							remainingTime = warningLength;
+						}
 
 						var banner = instance._getBanner();
 
@@ -493,6 +503,10 @@ AUI.add(
 
 										banner.show();
 									}
+
+									elapsed = Math.floor((Date.now() - timestamp) / 1000) * 1000;
+
+									remainingTime = sessionLength - elapsed;
 
 									instance._uiSetRemainingTime(remainingTime, counterTextNode);
 

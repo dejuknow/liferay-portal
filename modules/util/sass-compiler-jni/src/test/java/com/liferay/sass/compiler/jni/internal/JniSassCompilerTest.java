@@ -15,7 +15,6 @@
 package com.liferay.sass.compiler.jni.internal;
 
 import com.liferay.sass.compiler.SassCompiler;
-import com.liferay.sass.compiler.jni.internal.util.test.JniSassCompilerTestUtil;
 
 import java.io.File;
 
@@ -36,8 +35,6 @@ public class JniSassCompilerTest {
 	@BeforeClass
 	public static void setUpClass() throws Exception {
 		System.setProperty("jna.nosys", Boolean.TRUE.toString());
-
-		JniSassCompilerTestUtil.addSearchPath();
 	}
 
 	@Test
@@ -85,6 +82,32 @@ public class JniSassCompilerTest {
 	}
 
 	@Test
+	public void testCompileFileSassVariableWithUnicode() throws Exception {
+		SassCompiler sassCompiler = new JniSassCompiler();
+
+		Class<?> clazz = getClass();
+
+		URL url = clazz.getResource("dependencies");
+
+		File inputDir = new File(url.toURI());
+
+		File inputFile = new File(inputDir, "/unicode/input.scss");
+
+		String actualOutput = sassCompiler.compileFile(
+			inputFile.getCanonicalPath(), "");
+
+		Assert.assertNotNull(actualOutput);
+
+		File expectedOutputFile = new File(
+			inputDir, "/unicode/expected_output.css");
+
+		String expectedOutput = read(expectedOutputFile.toPath());
+
+		Assert.assertEquals(
+			stripNewLines(expectedOutput), stripNewLines(actualOutput));
+	}
+
+	@Test
 	public void testCompileFileWithSourceMap() throws Exception {
 		SassCompiler sassCompiler = new JniSassCompiler();
 
@@ -126,6 +149,33 @@ public class JniSassCompilerTest {
 		String expectedOutput = "foo { margin: 42px; }";
 		String actualOutput = sassCompiler.compileString(
 			"foo { margin: 21px * 2; }", "");
+
+		Assert.assertEquals(
+			stripNewLines(expectedOutput), stripNewLines(actualOutput));
+	}
+
+	@Test
+	public void testCompileStringSassVariableWithUnicode() throws Exception {
+		SassCompiler sassCompiler = new JniSassCompiler();
+
+		Class<?> clazz = getClass();
+
+		URL url = clazz.getResource("dependencies");
+
+		File inputDir = new File(url.toURI());
+
+		File inputFile = new File(inputDir, "/unicode/input.scss");
+
+		String input = read(inputFile.toPath());
+
+		String actualOutput = sassCompiler.compileString(input, "");
+
+		Assert.assertNotNull(actualOutput);
+
+		File expectedOutputFile = new File(
+			inputDir, "/unicode/expected_output.css");
+
+		String expectedOutput = read(expectedOutputFile.toPath());
 
 		Assert.assertEquals(
 			stripNewLines(expectedOutput), stripNewLines(actualOutput));

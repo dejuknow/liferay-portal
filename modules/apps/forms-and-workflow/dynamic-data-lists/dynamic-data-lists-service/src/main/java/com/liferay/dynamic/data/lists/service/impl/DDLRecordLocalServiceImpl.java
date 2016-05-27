@@ -59,7 +59,6 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.workflow.WorkflowHandlerRegistryUtil;
 import com.liferay.portal.spring.extender.service.ServiceReference;
@@ -71,6 +70,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Provides the local service for accessing, adding, deleting, and updating
@@ -771,17 +771,23 @@ public class DDLRecordLocalServiceImpl extends DDLRecordLocalServiceBaseImpl {
 				DDLRecordConstants.getClassName(scope),
 				recordVersion.getRecordVersionId(), record.getUuid(), 0,
 				assetCategoryIds, assetTagNames, true, false, null, null, null,
-				ContentTypes.TEXT_HTML, title, null, StringPool.BLANK, null,
-				null, 0, 0, priority);
+				null, ContentTypes.TEXT_HTML, title, null, StringPool.BLANK,
+				null, null, 0, 0, priority);
 		}
 		else {
+			Date publishDate = null;
+
+			if (visible) {
+				publishDate = record.getCreateDate();
+			}
+
 			assetEntryLocalService.updateEntry(
 				userId, record.getGroupId(), record.getCreateDate(),
 				record.getModifiedDate(),
 				DDLRecordConstants.getClassName(scope), record.getRecordId(),
 				record.getUuid(), 0, assetCategoryIds, assetTagNames, true,
-				visible, null, null, null, ContentTypes.TEXT_HTML, title, null,
-				StringPool.BLANK, null, null, 0, 0, priority);
+				visible, null, null, publishDate, null, ContentTypes.TEXT_HTML,
+				title, null, StringPool.BLANK, null, null, 0, 0, priority);
 		}
 	}
 
@@ -1017,7 +1023,7 @@ public class DDLRecordLocalServiceImpl extends DDLRecordLocalServiceBaseImpl {
 			}
 		}
 		else {
-			if (Validator.equals(
+			if (Objects.equals(
 					record.getVersion(), recordVersion.getVersion())) {
 
 				String newVersion = DDLRecordConstants.VERSION_DEFAULT;
@@ -1182,7 +1188,7 @@ public class DDLRecordLocalServiceImpl extends DDLRecordLocalServiceBaseImpl {
 			DDLRecordVersion latestRecordVersion, ServiceContext serviceContext)
 		throws PortalException {
 
-		if (Validator.equals(serviceContext.getCommand(), Constants.REVERT)) {
+		if (Objects.equals(serviceContext.getCommand(), Constants.REVERT)) {
 			return false;
 		}
 
@@ -1192,7 +1198,7 @@ public class DDLRecordLocalServiceImpl extends DDLRecordLocalServiceBaseImpl {
 			return false;
 		}
 
-		if (Validator.equals(
+		if (Objects.equals(
 				lastRecordVersion.getVersion(),
 				latestRecordVersion.getVersion())) {
 

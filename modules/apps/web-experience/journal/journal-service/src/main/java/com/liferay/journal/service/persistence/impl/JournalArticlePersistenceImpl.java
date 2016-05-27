@@ -61,6 +61,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -210,7 +211,7 @@ public class JournalArticlePersistenceImpl extends BasePersistenceImpl<JournalAr
 
 			if ((list != null) && !list.isEmpty()) {
 				for (JournalArticle journalArticle : list) {
-					if (!Validator.equals(uuid, journalArticle.getUuid())) {
+					if (!Objects.equals(uuid, journalArticle.getUuid())) {
 						list = null;
 
 						break;
@@ -685,8 +686,8 @@ public class JournalArticlePersistenceImpl extends BasePersistenceImpl<JournalAr
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchArticleException(msg.toString());
@@ -730,7 +731,7 @@ public class JournalArticlePersistenceImpl extends BasePersistenceImpl<JournalAr
 		if (result instanceof JournalArticle) {
 			JournalArticle journalArticle = (JournalArticle)result;
 
-			if (!Validator.equals(uuid, journalArticle.getUuid()) ||
+			if (!Objects.equals(uuid, journalArticle.getUuid()) ||
 					(groupId != journalArticle.getGroupId())) {
 				result = null;
 			}
@@ -1026,7 +1027,7 @@ public class JournalArticlePersistenceImpl extends BasePersistenceImpl<JournalAr
 
 			if ((list != null) && !list.isEmpty()) {
 				for (JournalArticle journalArticle : list) {
-					if (!Validator.equals(uuid, journalArticle.getUuid()) ||
+					if (!Objects.equals(uuid, journalArticle.getUuid()) ||
 							(companyId != journalArticle.getCompanyId())) {
 						list = null;
 
@@ -3511,7 +3512,7 @@ public class JournalArticlePersistenceImpl extends BasePersistenceImpl<JournalAr
 
 			if ((list != null) && !list.isEmpty()) {
 				for (JournalArticle journalArticle : list) {
-					if (!Validator.equals(DDMStructureKey,
+					if (!Objects.equals(DDMStructureKey,
 								journalArticle.getDDMStructureKey())) {
 						list = null;
 
@@ -4383,7 +4384,7 @@ public class JournalArticlePersistenceImpl extends BasePersistenceImpl<JournalAr
 
 			if ((list != null) && !list.isEmpty()) {
 				for (JournalArticle journalArticle : list) {
-					if (!Validator.equals(DDMTemplateKey,
+					if (!Objects.equals(DDMTemplateKey,
 								journalArticle.getDDMTemplateKey())) {
 						list = null;
 
@@ -4939,7 +4940,7 @@ public class JournalArticlePersistenceImpl extends BasePersistenceImpl<JournalAr
 
 			if ((list != null) && !list.isEmpty()) {
 				for (JournalArticle journalArticle : list) {
-					if (!Validator.equals(layoutUuid,
+					if (!Objects.equals(layoutUuid,
 								journalArticle.getLayoutUuid())) {
 						list = null;
 
@@ -9743,7 +9744,7 @@ public class JournalArticlePersistenceImpl extends BasePersistenceImpl<JournalAr
 			if ((list != null) && !list.isEmpty()) {
 				for (JournalArticle journalArticle : list) {
 					if ((groupId != journalArticle.getGroupId()) ||
-							!Validator.equals(articleId,
+							!Objects.equals(articleId,
 								journalArticle.getArticleId())) {
 						list = null;
 
@@ -10751,7 +10752,7 @@ public class JournalArticlePersistenceImpl extends BasePersistenceImpl<JournalAr
 			if ((list != null) && !list.isEmpty()) {
 				for (JournalArticle journalArticle : list) {
 					if ((groupId != journalArticle.getGroupId()) ||
-							!Validator.equals(urlTitle,
+							!Objects.equals(urlTitle,
 								journalArticle.getUrlTitle())) {
 						list = null;
 
@@ -11763,7 +11764,7 @@ public class JournalArticlePersistenceImpl extends BasePersistenceImpl<JournalAr
 			if ((list != null) && !list.isEmpty()) {
 				for (JournalArticle journalArticle : list) {
 					if ((groupId != journalArticle.getGroupId()) ||
-							!Validator.equals(DDMStructureKey,
+							!Objects.equals(DDMStructureKey,
 								journalArticle.getDDMStructureKey())) {
 						list = null;
 
@@ -12784,7 +12785,7 @@ public class JournalArticlePersistenceImpl extends BasePersistenceImpl<JournalAr
 			if ((list != null) && !list.isEmpty()) {
 				for (JournalArticle journalArticle : list) {
 					if ((groupId != journalArticle.getGroupId()) ||
-							!Validator.equals(DDMTemplateKey,
+							!Objects.equals(DDMTemplateKey,
 								journalArticle.getDDMTemplateKey())) {
 						list = null;
 
@@ -13802,7 +13803,7 @@ public class JournalArticlePersistenceImpl extends BasePersistenceImpl<JournalAr
 			if ((list != null) && !list.isEmpty()) {
 				for (JournalArticle journalArticle : list) {
 					if ((groupId != journalArticle.getGroupId()) ||
-							!Validator.equals(layoutUuid,
+							!Objects.equals(layoutUuid,
 								journalArticle.getLayoutUuid())) {
 						list = null;
 
@@ -14795,7 +14796,7 @@ public class JournalArticlePersistenceImpl extends BasePersistenceImpl<JournalAr
 			if ((list != null) && !list.isEmpty()) {
 				for (JournalArticle journalArticle : list) {
 					if ((groupId != journalArticle.getGroupId()) ||
-							Validator.equals(layoutUuid,
+							Objects.equals(layoutUuid,
 								journalArticle.getLayoutUuid())) {
 						list = null;
 
@@ -15529,6 +15530,394 @@ public class JournalArticlePersistenceImpl extends BasePersistenceImpl<JournalAr
 	}
 
 	/**
+	 * Returns all the journal articles that the user has permission to view where groupId = &#63; and layoutUuid &ne; all &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param layoutUuids the layout uuids
+	 * @return the matching journal articles that the user has permission to view
+	 */
+	@Override
+	public List<JournalArticle> filterFindByG_NotL(long groupId,
+		String[] layoutUuids) {
+		return filterFindByG_NotL(groupId, layoutUuids, QueryUtil.ALL_POS,
+			QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the journal articles that the user has permission to view where groupId = &#63; and layoutUuid &ne; all &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link JournalArticleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param layoutUuids the layout uuids
+	 * @param start the lower bound of the range of journal articles
+	 * @param end the upper bound of the range of journal articles (not inclusive)
+	 * @return the range of matching journal articles that the user has permission to view
+	 */
+	@Override
+	public List<JournalArticle> filterFindByG_NotL(long groupId,
+		String[] layoutUuids, int start, int end) {
+		return filterFindByG_NotL(groupId, layoutUuids, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the journal articles that the user has permission to view where groupId = &#63; and layoutUuid &ne; all &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link JournalArticleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param layoutUuids the layout uuids
+	 * @param start the lower bound of the range of journal articles
+	 * @param end the upper bound of the range of journal articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching journal articles that the user has permission to view
+	 */
+	@Override
+	public List<JournalArticle> filterFindByG_NotL(long groupId,
+		String[] layoutUuids, int start, int end,
+		OrderByComparator<JournalArticle> orderByComparator) {
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return findByG_NotL(groupId, layoutUuids, start, end,
+				orderByComparator);
+		}
+
+		if (layoutUuids == null) {
+			layoutUuids = new String[0];
+		}
+		else if (layoutUuids.length > 1) {
+			layoutUuids = ArrayUtil.distinct(layoutUuids,
+					NULL_SAFE_STRING_COMPARATOR);
+
+			Arrays.sort(layoutUuids, NULL_SAFE_STRING_COMPARATOR);
+		}
+
+		StringBundler query = new StringBundler();
+
+		if (getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_JOURNALARTICLE_WHERE);
+		}
+		else {
+			query.append(_FILTER_SQL_SELECT_JOURNALARTICLE_NO_INLINE_DISTINCT_WHERE_1);
+		}
+
+		query.append(_FINDER_COLUMN_G_NOTL_GROUPID_2);
+
+		if (layoutUuids.length > 0) {
+			query.append(StringPool.OPEN_PARENTHESIS);
+
+			for (int i = 0; i < layoutUuids.length; i++) {
+				String layoutUuid = layoutUuids[i];
+
+				if (layoutUuid == null) {
+					query.append(_FINDER_COLUMN_G_NOTL_LAYOUTUUID_1);
+				}
+				else if (layoutUuid.equals(StringPool.BLANK)) {
+					query.append(_FINDER_COLUMN_G_NOTL_LAYOUTUUID_3);
+				}
+				else {
+					query.append(_FINDER_COLUMN_G_NOTL_LAYOUTUUID_2);
+				}
+
+				if ((i + 1) < layoutUuids.length) {
+					query.append(WHERE_AND);
+				}
+			}
+
+			query.append(StringPool.CLOSE_PARENTHESIS);
+		}
+
+		query.setStringAt(removeConjunction(query.stringAt(query.index() - 1)),
+			query.index() - 1);
+
+		if (!getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_JOURNALARTICLE_NO_INLINE_DISTINCT_WHERE_2);
+		}
+
+		if (orderByComparator != null) {
+			if (getDB().isSupportsInlineDistinct()) {
+				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
+					orderByComparator, true);
+			}
+			else {
+				appendOrderByComparator(query, _ORDER_BY_ENTITY_TABLE,
+					orderByComparator, true);
+			}
+		}
+		else {
+			if (getDB().isSupportsInlineDistinct()) {
+				query.append(JournalArticleModelImpl.ORDER_BY_JPQL);
+			}
+			else {
+				query.append(JournalArticleModelImpl.ORDER_BY_SQL);
+			}
+		}
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(query.toString(),
+				JournalArticle.class.getName(),
+				_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+			if (getDB().isSupportsInlineDistinct()) {
+				q.addEntity(_FILTER_ENTITY_ALIAS, JournalArticleImpl.class);
+			}
+			else {
+				q.addEntity(_FILTER_ENTITY_TABLE, JournalArticleImpl.class);
+			}
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(groupId);
+
+			for (String layoutUuid : layoutUuids) {
+				if ((layoutUuid != null) && !layoutUuid.isEmpty()) {
+					qPos.add(layoutUuid);
+				}
+			}
+
+			return (List<JournalArticle>)QueryUtil.list(q, getDialect(), start,
+				end);
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	/**
+	 * Returns all the journal articles where groupId = &#63; and layoutUuid &ne; all &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link JournalArticleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param layoutUuids the layout uuids
+	 * @return the matching journal articles
+	 */
+	@Override
+	public List<JournalArticle> findByG_NotL(long groupId, String[] layoutUuids) {
+		return findByG_NotL(groupId, layoutUuids, QueryUtil.ALL_POS,
+			QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the journal articles where groupId = &#63; and layoutUuid &ne; all &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link JournalArticleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param layoutUuids the layout uuids
+	 * @param start the lower bound of the range of journal articles
+	 * @param end the upper bound of the range of journal articles (not inclusive)
+	 * @return the range of matching journal articles
+	 */
+	@Override
+	public List<JournalArticle> findByG_NotL(long groupId,
+		String[] layoutUuids, int start, int end) {
+		return findByG_NotL(groupId, layoutUuids, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the journal articles where groupId = &#63; and layoutUuid &ne; all &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link JournalArticleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param layoutUuids the layout uuids
+	 * @param start the lower bound of the range of journal articles
+	 * @param end the upper bound of the range of journal articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching journal articles
+	 */
+	@Override
+	public List<JournalArticle> findByG_NotL(long groupId,
+		String[] layoutUuids, int start, int end,
+		OrderByComparator<JournalArticle> orderByComparator) {
+		return findByG_NotL(groupId, layoutUuids, start, end,
+			orderByComparator, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the journal articles where groupId = &#63; and layoutUuid &ne; &#63;, optionally using the finder cache.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link JournalArticleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param layoutUuid the layout uuid
+	 * @param start the lower bound of the range of journal articles
+	 * @param end the upper bound of the range of journal articles (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the ordered range of matching journal articles
+	 */
+	@Override
+	public List<JournalArticle> findByG_NotL(long groupId,
+		String[] layoutUuids, int start, int end,
+		OrderByComparator<JournalArticle> orderByComparator,
+		boolean retrieveFromCache) {
+		if (layoutUuids == null) {
+			layoutUuids = new String[0];
+		}
+		else if (layoutUuids.length > 1) {
+			layoutUuids = ArrayUtil.distinct(layoutUuids,
+					NULL_SAFE_STRING_COMPARATOR);
+
+			Arrays.sort(layoutUuids, NULL_SAFE_STRING_COMPARATOR);
+		}
+
+		if (layoutUuids.length == 1) {
+			return findByG_NotL(groupId, layoutUuids[0], start, end,
+				orderByComparator);
+		}
+
+		boolean pagination = true;
+		Object[] finderArgs = null;
+
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+				(orderByComparator == null)) {
+			pagination = false;
+			finderArgs = new Object[] { groupId, StringUtil.merge(layoutUuids) };
+		}
+		else {
+			finderArgs = new Object[] {
+					groupId, StringUtil.merge(layoutUuids),
+					
+					start, end, orderByComparator
+				};
+		}
+
+		List<JournalArticle> list = null;
+
+		if (retrieveFromCache) {
+			list = (List<JournalArticle>)finderCache.getResult(FINDER_PATH_WITH_PAGINATION_FIND_BY_G_NOTL,
+					finderArgs, this);
+
+			if ((list != null) && !list.isEmpty()) {
+				for (JournalArticle journalArticle : list) {
+					if ((groupId != journalArticle.getGroupId()) ||
+							!ArrayUtil.contains(layoutUuids,
+								journalArticle.getLayoutUuid())) {
+						list = null;
+
+						break;
+					}
+				}
+			}
+		}
+
+		if (list == null) {
+			StringBundler query = new StringBundler();
+
+			query.append(_SQL_SELECT_JOURNALARTICLE_WHERE);
+
+			query.append(_FINDER_COLUMN_G_NOTL_GROUPID_2);
+
+			if (layoutUuids.length > 0) {
+				query.append(StringPool.OPEN_PARENTHESIS);
+
+				for (int i = 0; i < layoutUuids.length; i++) {
+					String layoutUuid = layoutUuids[i];
+
+					if (layoutUuid == null) {
+						query.append(_FINDER_COLUMN_G_NOTL_LAYOUTUUID_1);
+					}
+					else if (layoutUuid.equals(StringPool.BLANK)) {
+						query.append(_FINDER_COLUMN_G_NOTL_LAYOUTUUID_3);
+					}
+					else {
+						query.append(_FINDER_COLUMN_G_NOTL_LAYOUTUUID_2);
+					}
+
+					if ((i + 1) < layoutUuids.length) {
+						query.append(WHERE_AND);
+					}
+				}
+
+				query.append(StringPool.CLOSE_PARENTHESIS);
+			}
+
+			query.setStringAt(removeConjunction(query.stringAt(query.index() -
+						1)), query.index() - 1);
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
+					orderByComparator);
+			}
+			else
+			 if (pagination) {
+				query.append(JournalArticleModelImpl.ORDER_BY_JPQL);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(groupId);
+
+				for (String layoutUuid : layoutUuids) {
+					if ((layoutUuid != null) && !layoutUuid.isEmpty()) {
+						qPos.add(layoutUuid);
+					}
+				}
+
+				if (!pagination) {
+					list = (List<JournalArticle>)QueryUtil.list(q,
+							getDialect(), start, end, false);
+
+					Collections.sort(list);
+
+					list = Collections.unmodifiableList(list);
+				}
+				else {
+					list = (List<JournalArticle>)QueryUtil.list(q,
+							getDialect(), start, end);
+				}
+
+				cacheResult(list);
+
+				finderCache.putResult(FINDER_PATH_WITH_PAGINATION_FIND_BY_G_NOTL,
+					finderArgs, list);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(FINDER_PATH_WITH_PAGINATION_FIND_BY_G_NOTL,
+					finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
+
+	/**
 	 * Removes all the journal articles where groupId = &#63; and layoutUuid &ne; &#63; from the database.
 	 *
 	 * @param groupId the group ID
@@ -15613,6 +16002,104 @@ public class JournalArticlePersistenceImpl extends BasePersistenceImpl<JournalAr
 	}
 
 	/**
+	 * Returns the number of journal articles where groupId = &#63; and layoutUuid &ne; all &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param layoutUuids the layout uuids
+	 * @return the number of matching journal articles
+	 */
+	@Override
+	public int countByG_NotL(long groupId, String[] layoutUuids) {
+		if (layoutUuids == null) {
+			layoutUuids = new String[0];
+		}
+		else if (layoutUuids.length > 1) {
+			layoutUuids = ArrayUtil.distinct(layoutUuids,
+					NULL_SAFE_STRING_COMPARATOR);
+
+			Arrays.sort(layoutUuids, NULL_SAFE_STRING_COMPARATOR);
+		}
+
+		Object[] finderArgs = new Object[] {
+				groupId, StringUtil.merge(layoutUuids)
+			};
+
+		Long count = (Long)finderCache.getResult(FINDER_PATH_WITH_PAGINATION_COUNT_BY_G_NOTL,
+				finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler();
+
+			query.append(_SQL_COUNT_JOURNALARTICLE_WHERE);
+
+			query.append(_FINDER_COLUMN_G_NOTL_GROUPID_2);
+
+			if (layoutUuids.length > 0) {
+				query.append(StringPool.OPEN_PARENTHESIS);
+
+				for (int i = 0; i < layoutUuids.length; i++) {
+					String layoutUuid = layoutUuids[i];
+
+					if (layoutUuid == null) {
+						query.append(_FINDER_COLUMN_G_NOTL_LAYOUTUUID_1);
+					}
+					else if (layoutUuid.equals(StringPool.BLANK)) {
+						query.append(_FINDER_COLUMN_G_NOTL_LAYOUTUUID_3);
+					}
+					else {
+						query.append(_FINDER_COLUMN_G_NOTL_LAYOUTUUID_2);
+					}
+
+					if ((i + 1) < layoutUuids.length) {
+						query.append(WHERE_AND);
+					}
+				}
+
+				query.append(StringPool.CLOSE_PARENTHESIS);
+			}
+
+			query.setStringAt(removeConjunction(query.stringAt(query.index() -
+						1)), query.index() - 1);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(groupId);
+
+				for (String layoutUuid : layoutUuids) {
+					if ((layoutUuid != null) && !layoutUuid.isEmpty()) {
+						qPos.add(layoutUuid);
+					}
+				}
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(FINDER_PATH_WITH_PAGINATION_COUNT_BY_G_NOTL,
+					finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(FINDER_PATH_WITH_PAGINATION_COUNT_BY_G_NOTL,
+					finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	/**
 	 * Returns the number of journal articles that the user has permission to view where groupId = &#63; and layoutUuid &ne; &#63;.
 	 *
 	 * @param groupId the group ID
@@ -15665,6 +16152,98 @@ public class JournalArticlePersistenceImpl extends BasePersistenceImpl<JournalAr
 
 			if (bindLayoutUuid) {
 				qPos.add(layoutUuid);
+			}
+
+			Long count = (Long)q.uniqueResult();
+
+			return count.intValue();
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	/**
+	 * Returns the number of journal articles that the user has permission to view where groupId = &#63; and layoutUuid &ne; all &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param layoutUuids the layout uuids
+	 * @return the number of matching journal articles that the user has permission to view
+	 */
+	@Override
+	public int filterCountByG_NotL(long groupId, String[] layoutUuids) {
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return countByG_NotL(groupId, layoutUuids);
+		}
+
+		if (layoutUuids == null) {
+			layoutUuids = new String[0];
+		}
+		else if (layoutUuids.length > 1) {
+			layoutUuids = ArrayUtil.distinct(layoutUuids,
+					NULL_SAFE_STRING_COMPARATOR);
+
+			Arrays.sort(layoutUuids, NULL_SAFE_STRING_COMPARATOR);
+		}
+
+		StringBundler query = new StringBundler();
+
+		query.append(_FILTER_SQL_COUNT_JOURNALARTICLE_WHERE);
+
+		query.append(_FINDER_COLUMN_G_NOTL_GROUPID_2);
+
+		if (layoutUuids.length > 0) {
+			query.append(StringPool.OPEN_PARENTHESIS);
+
+			for (int i = 0; i < layoutUuids.length; i++) {
+				String layoutUuid = layoutUuids[i];
+
+				if (layoutUuid == null) {
+					query.append(_FINDER_COLUMN_G_NOTL_LAYOUTUUID_1);
+				}
+				else if (layoutUuid.equals(StringPool.BLANK)) {
+					query.append(_FINDER_COLUMN_G_NOTL_LAYOUTUUID_3);
+				}
+				else {
+					query.append(_FINDER_COLUMN_G_NOTL_LAYOUTUUID_2);
+				}
+
+				if ((i + 1) < layoutUuids.length) {
+					query.append(WHERE_AND);
+				}
+			}
+
+			query.append(StringPool.CLOSE_PARENTHESIS);
+		}
+
+		query.setStringAt(removeConjunction(query.stringAt(query.index() - 1)),
+			query.index() - 1);
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(query.toString(),
+				JournalArticle.class.getName(),
+				_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+			q.addScalar(COUNT_COLUMN_NAME,
+				com.liferay.portal.kernel.dao.orm.Type.LONG);
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(groupId);
+
+			for (String layoutUuid : layoutUuids) {
+				if ((layoutUuid != null) && !layoutUuid.isEmpty()) {
+					qPos.add(layoutUuid);
+				}
 			}
 
 			Long count = (Long)q.uniqueResult();
@@ -18348,7 +18927,7 @@ public class JournalArticlePersistenceImpl extends BasePersistenceImpl<JournalAr
 			if ((list != null) && !list.isEmpty()) {
 				for (JournalArticle journalArticle : list) {
 					if ((classNameId != journalArticle.getClassNameId()) ||
-							!Validator.equals(DDMTemplateKey,
+							!Objects.equals(DDMTemplateKey,
 								journalArticle.getDDMTemplateKey())) {
 						list = null;
 
@@ -23829,8 +24408,8 @@ public class JournalArticlePersistenceImpl extends BasePersistenceImpl<JournalAr
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchArticleException(msg.toString());
@@ -23879,7 +24458,7 @@ public class JournalArticlePersistenceImpl extends BasePersistenceImpl<JournalAr
 
 			if ((groupId != journalArticle.getGroupId()) ||
 					(classNameId != journalArticle.getClassNameId()) ||
-					!Validator.equals(DDMStructureKey,
+					!Objects.equals(DDMStructureKey,
 						journalArticle.getDDMStructureKey())) {
 				result = null;
 			}
@@ -24217,7 +24796,7 @@ public class JournalArticlePersistenceImpl extends BasePersistenceImpl<JournalAr
 				for (JournalArticle journalArticle : list) {
 					if ((groupId != journalArticle.getGroupId()) ||
 							(classNameId != journalArticle.getClassNameId()) ||
-							!Validator.equals(DDMTemplateKey,
+							!Objects.equals(DDMTemplateKey,
 								journalArticle.getDDMTemplateKey())) {
 						list = null;
 
@@ -25304,7 +25883,7 @@ public class JournalArticlePersistenceImpl extends BasePersistenceImpl<JournalAr
 				for (JournalArticle journalArticle : list) {
 					if ((groupId != journalArticle.getGroupId()) ||
 							(classNameId != journalArticle.getClassNameId()) ||
-							!Validator.equals(layoutUuid,
+							!Objects.equals(layoutUuid,
 								journalArticle.getLayoutUuid())) {
 						list = null;
 
@@ -26288,8 +26867,8 @@ public class JournalArticlePersistenceImpl extends BasePersistenceImpl<JournalAr
 
 			msg.append(StringPool.CLOSE_CURLY_BRACE);
 
-			if (_log.isWarnEnabled()) {
-				_log.warn(msg.toString());
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
 			}
 
 			throw new NoSuchArticleException(msg.toString());
@@ -26337,7 +26916,7 @@ public class JournalArticlePersistenceImpl extends BasePersistenceImpl<JournalAr
 			JournalArticle journalArticle = (JournalArticle)result;
 
 			if ((groupId != journalArticle.getGroupId()) ||
-					!Validator.equals(articleId, journalArticle.getArticleId()) ||
+					!Objects.equals(articleId, journalArticle.getArticleId()) ||
 					(version != journalArticle.getVersion())) {
 				result = null;
 			}
@@ -26667,7 +27246,7 @@ public class JournalArticlePersistenceImpl extends BasePersistenceImpl<JournalAr
 			if ((list != null) && !list.isEmpty()) {
 				for (JournalArticle journalArticle : list) {
 					if ((groupId != journalArticle.getGroupId()) ||
-							!Validator.equals(articleId,
+							!Objects.equals(articleId,
 								journalArticle.getArticleId()) ||
 							(status != journalArticle.getStatus())) {
 						list = null;
@@ -27727,7 +28306,7 @@ public class JournalArticlePersistenceImpl extends BasePersistenceImpl<JournalAr
 			if ((list != null) && !list.isEmpty()) {
 				for (JournalArticle journalArticle : list) {
 					if ((groupId != journalArticle.getGroupId()) ||
-							!Validator.equals(articleId,
+							!Objects.equals(articleId,
 								journalArticle.getArticleId()) ||
 							!ArrayUtil.contains(statuses,
 								journalArticle.getStatus())) {
@@ -28312,7 +28891,7 @@ public class JournalArticlePersistenceImpl extends BasePersistenceImpl<JournalAr
 			if ((list != null) && !list.isEmpty()) {
 				for (JournalArticle journalArticle : list) {
 					if ((groupId != journalArticle.getGroupId()) ||
-							!Validator.equals(articleId,
+							!Objects.equals(articleId,
 								journalArticle.getArticleId()) ||
 							(status == journalArticle.getStatus())) {
 						list = null;
@@ -29391,7 +29970,7 @@ public class JournalArticlePersistenceImpl extends BasePersistenceImpl<JournalAr
 			if ((list != null) && !list.isEmpty()) {
 				for (JournalArticle journalArticle : list) {
 					if ((groupId != journalArticle.getGroupId()) ||
-							!Validator.equals(urlTitle,
+							!Objects.equals(urlTitle,
 								journalArticle.getUrlTitle()) ||
 							(status != journalArticle.getStatus())) {
 						list = null;
@@ -31212,8 +31791,8 @@ public class JournalArticlePersistenceImpl extends BasePersistenceImpl<JournalAr
 					primaryKey);
 
 			if (journalArticle == null) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+				if (_log.isDebugEnabled()) {
+					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
 				throw new NoSuchArticleException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
@@ -32047,8 +32626,8 @@ public class JournalArticlePersistenceImpl extends BasePersistenceImpl<JournalAr
 		JournalArticle journalArticle = fetchByPrimaryKey(primaryKey);
 
 		if (journalArticle == null) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
+			if (_log.isDebugEnabled()) {
+				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
 			throw new NoSuchArticleException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +

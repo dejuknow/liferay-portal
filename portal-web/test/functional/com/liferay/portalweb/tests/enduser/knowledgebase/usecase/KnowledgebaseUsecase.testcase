@@ -1,6 +1,6 @@
 <definition component-name="portal-knowledge-base">
+	<property name="portal.release" value="true" />
 	<property name="custom.properties" value="default.layout.template.id=1_column" />
-	<property name="portlet.plugins.includes" value="knowledge-base-portlet" />
 	<property name="testray.main.component.name" value="Knowledge Base" />
 
 	<set-up>
@@ -1327,6 +1327,10 @@
 			<var name="columnName" value="1 Column" />
 		</execute>
 
+		<execute macro="Navigator#gotoPage">
+			<var name="pageName" value="Knowledge Base Display Page 1" />
+		</execute>
+
 		<execute macro="Portlet#addPG">
 			<var name="portletName" value="Knowledge Base Display" />
 		</execute>
@@ -1351,6 +1355,10 @@
 
 		<execute macro="Page#editPageLayoutColumn">
 			<var name="columnName" value="1 Column" />
+		</execute>
+
+		<execute macro="Navigator#gotoPage">
+			<var name="pageName" value="Knowledge Base Display Page 2" />
 		</execute>
 
 		<execute macro="Portlet#addPG">
@@ -2626,9 +2634,7 @@
 			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
 		</execute>
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Welcome" />
-		</execute>
+		<execute macro="Navigator#openURL" />
 
 		<execute macro="Page#gotoChildPagePG">
 			<var name="childPageName" value="Knowledge Base Display Page" />

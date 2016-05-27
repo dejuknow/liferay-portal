@@ -307,7 +307,7 @@ AUI.add(
 											'@vocabularyId': '$vocabularies.vocabularyId'
 										},
 
-										'$group[name] = /group/get-group': {
+										'$group[descriptiveName] = /group/get-group': {
 											'@groupId': '$vocabularies.groupId'
 										}
 									}
@@ -332,7 +332,7 @@ AUI.add(
 											'@vocabularyId': '$vocabularies.vocabularyId'
 										},
 
-										'$group[name] = /group/get-group': {
+										'$group[descriptiveName] = /group/get-group': {
 											'@groupId': '$vocabularies.groupId'
 										}
 									}
@@ -623,6 +623,14 @@ AUI.add(
 						);
 					},
 
+					_showPopup: function(event) {
+						var instance = this;
+
+						Liferay.Util.getTop().AUI().use('aui-tree');
+
+						AssetCategoriesSelector.superclass._showPopup.apply(instance, arguments);
+					},
+
 					_showSelectPopup: function(event) {
 						var instance = this;
 
@@ -681,7 +689,7 @@ AUI.add(
 							vocabularyTitle += ' (' + Liferay.Language.get('global') + ')';
 						}
 						else {
-							vocabularyTitle += ' (' + item.group.name + ')';
+							vocabularyTitle += ' (' + item.group.descriptiveName + ')';
 						}
 
 						var treeId = 'vocabulary' + vocabularyId;

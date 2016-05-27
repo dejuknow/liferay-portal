@@ -291,7 +291,7 @@ public abstract class GroupLocalServiceBaseImpl extends BaseLocalServiceImpl
 	public ActionableDynamicQuery getActionableDynamicQuery() {
 		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
 
-		actionableDynamicQuery.setBaseLocalService(com.liferay.portal.kernel.service.GroupLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(groupLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(Group.class);
 
@@ -304,7 +304,7 @@ public abstract class GroupLocalServiceBaseImpl extends BaseLocalServiceImpl
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
 		IndexableActionableDynamicQuery indexableActionableDynamicQuery = new IndexableActionableDynamicQuery();
 
-		indexableActionableDynamicQuery.setBaseLocalService(com.liferay.portal.kernel.service.GroupLocalServiceUtil.getService());
+		indexableActionableDynamicQuery.setBaseLocalService(groupLocalService);
 		indexableActionableDynamicQuery.setClassLoader(getClassLoader());
 		indexableActionableDynamicQuery.setModelClass(Group.class);
 
@@ -315,7 +315,7 @@ public abstract class GroupLocalServiceBaseImpl extends BaseLocalServiceImpl
 
 	protected void initActionableDynamicQuery(
 		ActionableDynamicQuery actionableDynamicQuery) {
-		actionableDynamicQuery.setBaseLocalService(com.liferay.portal.kernel.service.GroupLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(groupLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(Group.class);
 
@@ -413,8 +413,8 @@ public abstract class GroupLocalServiceBaseImpl extends BaseLocalServiceImpl
 	/**
 	 */
 	@Override
-	public void addOrganizationGroups(long organizationId, List<Group> Groups) {
-		organizationPersistence.addGroups(organizationId, Groups);
+	public void addOrganizationGroups(long organizationId, List<Group> groups) {
+		organizationPersistence.addGroups(organizationId, groups);
 	}
 
 	/**
@@ -448,8 +448,8 @@ public abstract class GroupLocalServiceBaseImpl extends BaseLocalServiceImpl
 	/**
 	 */
 	@Override
-	public void deleteOrganizationGroups(long organizationId, List<Group> Groups) {
-		organizationPersistence.removeGroups(organizationId, Groups);
+	public void deleteOrganizationGroups(long organizationId, List<Group> groups) {
+		organizationPersistence.removeGroups(organizationId, groups);
 	}
 
 	/**
@@ -539,8 +539,8 @@ public abstract class GroupLocalServiceBaseImpl extends BaseLocalServiceImpl
 	/**
 	 */
 	@Override
-	public void addRoleGroups(long roleId, List<Group> Groups) {
-		rolePersistence.addGroups(roleId, Groups);
+	public void addRoleGroups(long roleId, List<Group> groups) {
+		rolePersistence.addGroups(roleId, groups);
 	}
 
 	/**
@@ -574,8 +574,8 @@ public abstract class GroupLocalServiceBaseImpl extends BaseLocalServiceImpl
 	/**
 	 */
 	@Override
-	public void deleteRoleGroups(long roleId, List<Group> Groups) {
-		rolePersistence.removeGroups(roleId, Groups);
+	public void deleteRoleGroups(long roleId, List<Group> groups) {
+		rolePersistence.removeGroups(roleId, groups);
 	}
 
 	/**
@@ -663,8 +663,8 @@ public abstract class GroupLocalServiceBaseImpl extends BaseLocalServiceImpl
 	/**
 	 */
 	@Override
-	public void addUserGroupGroups(long userGroupId, List<Group> Groups) {
-		userGroupPersistence.addGroups(userGroupId, Groups);
+	public void addUserGroupGroups(long userGroupId, List<Group> groups) {
+		userGroupPersistence.addGroups(userGroupId, groups);
 	}
 
 	/**
@@ -698,8 +698,8 @@ public abstract class GroupLocalServiceBaseImpl extends BaseLocalServiceImpl
 	/**
 	 */
 	@Override
-	public void deleteUserGroupGroups(long userGroupId, List<Group> Groups) {
-		userGroupPersistence.removeGroups(userGroupId, Groups);
+	public void deleteUserGroupGroups(long userGroupId, List<Group> groups) {
+		userGroupPersistence.removeGroups(userGroupId, groups);
 	}
 
 	/**
@@ -788,8 +788,8 @@ public abstract class GroupLocalServiceBaseImpl extends BaseLocalServiceImpl
 	/**
 	 */
 	@Override
-	public void addUserGroups(long userId, List<Group> Groups) {
-		userPersistence.addGroups(userId, Groups);
+	public void addUserGroups(long userId, List<Group> groups) {
+		userPersistence.addGroups(userId, groups);
 	}
 
 	/**
@@ -823,8 +823,8 @@ public abstract class GroupLocalServiceBaseImpl extends BaseLocalServiceImpl
 	/**
 	 */
 	@Override
-	public void deleteUserGroups(long userId, List<Group> Groups) {
-		userPersistence.removeGroups(userId, Groups);
+	public void deleteUserGroups(long userId, List<Group> groups) {
+		userPersistence.removeGroups(userId, groups);
 	}
 
 	/**
@@ -2705,7 +2705,7 @@ public abstract class GroupLocalServiceBaseImpl extends BaseLocalServiceImpl
 		}
 	}
 
-	@BeanReference(type = com.liferay.portal.kernel.service.GroupLocalService.class)
+	@BeanReference(type = GroupLocalService.class)
 	protected GroupLocalService groupLocalService;
 	@BeanReference(type = GroupPersistence.class)
 	protected GroupPersistence groupPersistence;

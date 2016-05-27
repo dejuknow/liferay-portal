@@ -48,11 +48,11 @@ public interface LayoutBranchService extends BaseService {
 	 */
 	public LayoutBranch addLayoutBranch(long layoutRevisionId,
 		java.lang.String name, java.lang.String description, boolean master,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws PortalException;
+		ServiceContext serviceContext) throws PortalException;
 
-	public void deleteLayoutBranch(long layoutBranchId)
-		throws PortalException;
+	public LayoutBranch updateLayoutBranch(long layoutBranchId,
+		java.lang.String name, java.lang.String description,
+		ServiceContext serviceContext) throws PortalException;
 
 	/**
 	* Returns the OSGi service identifier.
@@ -61,8 +61,6 @@ public interface LayoutBranchService extends BaseService {
 	*/
 	public java.lang.String getOSGiServiceIdentifier();
 
-	public LayoutBranch updateLayoutBranch(long layoutBranchId,
-		java.lang.String name, java.lang.String description,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+	public void deleteLayoutBranch(long layoutBranchId)
 		throws PortalException;
 }

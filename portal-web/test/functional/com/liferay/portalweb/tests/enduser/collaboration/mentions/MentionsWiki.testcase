@@ -1,4 +1,5 @@
 <definition component-name="portal-collaboration">
+	<property name="portal.release" value="true" />
 	<property name="custom.properties" value="default.layout.template.id=1_column" />
 	<property name="testray.main.component.name" value="Mentions" />
 
@@ -56,6 +57,10 @@
 		<execute macro="ServerAdministration#configureMailServerSettings">
 			<var name="userName" property-value="email.address.1" />
 			<var name="userPassword" property-value="email.password.1" />
+		</execute>
+
+		<execute macro="Navigator#gotoPage">
+			<var name="pageName" value="Wiki Page" />
 		</execute>
 
 		<execute macro="ProductMenu#gotoControlPanelConfiguration">

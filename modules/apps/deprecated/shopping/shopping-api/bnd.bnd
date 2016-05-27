@@ -1,8 +1,7 @@
 Bundle-Name: Liferay Shopping API
 Bundle-SymbolicName: com.liferay.shopping.api
-Bundle-Version: 1.0.2
-Export-Package:	\
-	com.liferay.shopping,\
+Bundle-Version: 2.0.0
+Export-Package:\
 	com.liferay.shopping.configuration,\
 	com.liferay.shopping.configuration.definition,\
 	com.liferay.shopping.constants,\

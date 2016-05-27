@@ -436,6 +436,7 @@ public class CompanyModelImpl extends BaseModelImpl<Company>
 		return _system;
 	}
 
+	@JSON
 	@Override
 	public boolean isSystem() {
 		return _system;
@@ -475,6 +476,7 @@ public class CompanyModelImpl extends BaseModelImpl<Company>
 		return _active;
 	}
 
+	@JSON
 	@Override
 	public boolean isActive() {
 		return _active;
@@ -483,6 +485,14 @@ public class CompanyModelImpl extends BaseModelImpl<Company>
 	@Override
 	public void setActive(boolean active) {
 		_active = active;
+	}
+
+	public CompanyImpl.CompanySecurityBag getCompanySecurityBag() {
+		return null;
+	}
+
+	public void setCompanySecurityBag(
+		CompanyImpl.CompanySecurityBag companySecurityBag) {
 	}
 
 	public java.security.Key getKeyObj() {
@@ -615,6 +625,8 @@ public class CompanyModelImpl extends BaseModelImpl<Company>
 
 		companyModelImpl._setOriginalSystem = false;
 
+		setCompanySecurityBag(null);
+
 		setKeyObj(null);
 
 		setVirtualHostname(null);
@@ -671,6 +683,8 @@ public class CompanyModelImpl extends BaseModelImpl<Company>
 		companyCacheModel.maxUsers = getMaxUsers();
 
 		companyCacheModel.active = getActive();
+
+		companyCacheModel._companySecurityBag = getCompanySecurityBag();
 
 		companyCacheModel._keyObj = getKeyObj();
 

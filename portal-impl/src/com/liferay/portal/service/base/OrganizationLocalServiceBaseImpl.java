@@ -276,7 +276,7 @@ public abstract class OrganizationLocalServiceBaseImpl
 	public ActionableDynamicQuery getActionableDynamicQuery() {
 		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
 
-		actionableDynamicQuery.setBaseLocalService(com.liferay.portal.kernel.service.OrganizationLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(organizationLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(Organization.class);
 
@@ -289,7 +289,7 @@ public abstract class OrganizationLocalServiceBaseImpl
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
 		IndexableActionableDynamicQuery indexableActionableDynamicQuery = new IndexableActionableDynamicQuery();
 
-		indexableActionableDynamicQuery.setBaseLocalService(com.liferay.portal.kernel.service.OrganizationLocalServiceUtil.getService());
+		indexableActionableDynamicQuery.setBaseLocalService(organizationLocalService);
 		indexableActionableDynamicQuery.setClassLoader(getClassLoader());
 		indexableActionableDynamicQuery.setModelClass(Organization.class);
 
@@ -301,7 +301,7 @@ public abstract class OrganizationLocalServiceBaseImpl
 
 	protected void initActionableDynamicQuery(
 		ActionableDynamicQuery actionableDynamicQuery) {
-		actionableDynamicQuery.setBaseLocalService(com.liferay.portal.kernel.service.OrganizationLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(organizationLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(Organization.class);
 
@@ -451,8 +451,8 @@ public abstract class OrganizationLocalServiceBaseImpl
 	 */
 	@Override
 	public void addGroupOrganizations(long groupId,
-		List<Organization> Organizations) {
-		groupPersistence.addOrganizations(groupId, Organizations);
+		List<Organization> organizations) {
+		groupPersistence.addOrganizations(groupId, organizations);
 	}
 
 	/**
@@ -487,8 +487,8 @@ public abstract class OrganizationLocalServiceBaseImpl
 	 */
 	@Override
 	public void deleteGroupOrganizations(long groupId,
-		List<Organization> Organizations) {
-		groupPersistence.removeOrganizations(groupId, Organizations);
+		List<Organization> organizations) {
+		groupPersistence.removeOrganizations(groupId, organizations);
 	}
 
 	/**
@@ -579,8 +579,8 @@ public abstract class OrganizationLocalServiceBaseImpl
 	 */
 	@Override
 	public void addUserOrganizations(long userId,
-		List<Organization> Organizations) {
-		userPersistence.addOrganizations(userId, Organizations);
+		List<Organization> organizations) {
+		userPersistence.addOrganizations(userId, organizations);
 	}
 
 	/**
@@ -615,8 +615,8 @@ public abstract class OrganizationLocalServiceBaseImpl
 	 */
 	@Override
 	public void deleteUserOrganizations(long userId,
-		List<Organization> Organizations) {
-		userPersistence.removeOrganizations(userId, Organizations);
+		List<Organization> organizations) {
+		userPersistence.removeOrganizations(userId, organizations);
 	}
 
 	/**
@@ -1608,7 +1608,7 @@ public abstract class OrganizationLocalServiceBaseImpl
 		}
 	}
 
-	@BeanReference(type = com.liferay.portal.kernel.service.OrganizationLocalService.class)
+	@BeanReference(type = OrganizationLocalService.class)
 	protected OrganizationLocalService organizationLocalService;
 	@BeanReference(type = OrganizationPersistence.class)
 	protected OrganizationPersistence organizationPersistence;

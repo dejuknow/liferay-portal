@@ -20,12 +20,12 @@ import com.liferay.expando.kernel.model.ExpandoBridge;
 
 import com.liferay.portal.kernel.model.ModelWrapper;
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Serializable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * <p>
@@ -100,14 +100,64 @@ public class DDMTemplateLinkWrapper implements DDMTemplateLink,
 	}
 
 	@Override
-	public java.lang.Object clone() {
-		return new DDMTemplateLinkWrapper((DDMTemplateLink)_ddmTemplateLink.clone());
+	public DDMTemplate getTemplate()
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _ddmTemplateLink.getTemplate();
 	}
 
 	@Override
-	public int compareTo(
-		com.liferay.dynamic.data.mapping.model.DDMTemplateLink ddmTemplateLink) {
+	public DDMTemplateLink toEscapedModel() {
+		return new DDMTemplateLinkWrapper(_ddmTemplateLink.toEscapedModel());
+	}
+
+	@Override
+	public DDMTemplateLink toUnescapedModel() {
+		return new DDMTemplateLinkWrapper(_ddmTemplateLink.toUnescapedModel());
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _ddmTemplateLink.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _ddmTemplateLink.isEscapedModel();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _ddmTemplateLink.isNew();
+	}
+
+	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _ddmTemplateLink.getExpandoBridge();
+	}
+
+	@Override
+	public com.liferay.portal.kernel.model.CacheModel<DDMTemplateLink> toCacheModel() {
+		return _ddmTemplateLink.toCacheModel();
+	}
+
+	@Override
+	public int compareTo(DDMTemplateLink ddmTemplateLink) {
 		return _ddmTemplateLink.compareTo(ddmTemplateLink);
+	}
+
+	@Override
+	public int hashCode() {
+		return _ddmTemplateLink.hashCode();
+	}
+
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _ddmTemplateLink.getPrimaryKeyObj();
+	}
+
+	@Override
+	public java.lang.Object clone() {
+		return new DDMTemplateLinkWrapper((DDMTemplateLink)_ddmTemplateLink.clone());
 	}
 
 	/**
@@ -118,6 +168,16 @@ public class DDMTemplateLinkWrapper implements DDMTemplateLink,
 	@Override
 	public java.lang.String getClassName() {
 		return _ddmTemplateLink.getClassName();
+	}
+
+	@Override
+	public java.lang.String toString() {
+		return _ddmTemplateLink.toString();
+	}
+
+	@Override
+	public java.lang.String toXmlString() {
+		return _ddmTemplateLink.toXmlString();
 	}
 
 	/**
@@ -150,11 +210,6 @@ public class DDMTemplateLinkWrapper implements DDMTemplateLink,
 		return _ddmTemplateLink.getCompanyId();
 	}
 
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _ddmTemplateLink.getExpandoBridge();
-	}
-
 	/**
 	* Returns the primary key of this d d m template link.
 	*
@@ -163,17 +218,6 @@ public class DDMTemplateLinkWrapper implements DDMTemplateLink,
 	@Override
 	public long getPrimaryKey() {
 		return _ddmTemplateLink.getPrimaryKey();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _ddmTemplateLink.getPrimaryKeyObj();
-	}
-
-	@Override
-	public com.liferay.dynamic.data.mapping.model.DDMTemplate getTemplate()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _ddmTemplateLink.getTemplate();
 	}
 
 	/**
@@ -194,26 +238,6 @@ public class DDMTemplateLinkWrapper implements DDMTemplateLink,
 	@Override
 	public long getTemplateLinkId() {
 		return _ddmTemplateLink.getTemplateLinkId();
-	}
-
-	@Override
-	public int hashCode() {
-		return _ddmTemplateLink.hashCode();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _ddmTemplateLink.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _ddmTemplateLink.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _ddmTemplateLink.isNew();
 	}
 
 	@Override
@@ -262,14 +286,14 @@ public class DDMTemplateLinkWrapper implements DDMTemplateLink,
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
-		_ddmTemplateLink.setExpandoBridgeAttributes(baseModel);
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
+		_ddmTemplateLink.setExpandoBridgeAttributes(expandoBridge);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
-		_ddmTemplateLink.setExpandoBridgeAttributes(expandoBridge);
+	public void setExpandoBridgeAttributes(
+		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
+		_ddmTemplateLink.setExpandoBridgeAttributes(baseModel);
 	}
 
 	@Override
@@ -318,31 +342,6 @@ public class DDMTemplateLinkWrapper implements DDMTemplateLink,
 	}
 
 	@Override
-	public com.liferay.portal.kernel.model.CacheModel<com.liferay.dynamic.data.mapping.model.DDMTemplateLink> toCacheModel() {
-		return _ddmTemplateLink.toCacheModel();
-	}
-
-	@Override
-	public com.liferay.dynamic.data.mapping.model.DDMTemplateLink toEscapedModel() {
-		return new DDMTemplateLinkWrapper(_ddmTemplateLink.toEscapedModel());
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return _ddmTemplateLink.toString();
-	}
-
-	@Override
-	public com.liferay.dynamic.data.mapping.model.DDMTemplateLink toUnescapedModel() {
-		return new DDMTemplateLinkWrapper(_ddmTemplateLink.toUnescapedModel());
-	}
-
-	@Override
-	public java.lang.String toXmlString() {
-		return _ddmTemplateLink.toXmlString();
-	}
-
-	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
@@ -354,7 +353,7 @@ public class DDMTemplateLinkWrapper implements DDMTemplateLink,
 
 		DDMTemplateLinkWrapper ddmTemplateLinkWrapper = (DDMTemplateLinkWrapper)obj;
 
-		if (Validator.equals(_ddmTemplateLink,
+		if (Objects.equals(_ddmTemplateLink,
 					ddmTemplateLinkWrapper._ddmTemplateLink)) {
 			return true;
 		}

@@ -252,7 +252,7 @@ public abstract class CalendarLocalServiceBaseImpl extends BaseLocalServiceImpl
 	public ActionableDynamicQuery getActionableDynamicQuery() {
 		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
 
-		actionableDynamicQuery.setBaseLocalService(com.liferay.calendar.service.CalendarLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(calendarLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(Calendar.class);
 
@@ -265,7 +265,7 @@ public abstract class CalendarLocalServiceBaseImpl extends BaseLocalServiceImpl
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
 		IndexableActionableDynamicQuery indexableActionableDynamicQuery = new IndexableActionableDynamicQuery();
 
-		indexableActionableDynamicQuery.setBaseLocalService(com.liferay.calendar.service.CalendarLocalServiceUtil.getService());
+		indexableActionableDynamicQuery.setBaseLocalService(calendarLocalService);
 		indexableActionableDynamicQuery.setClassLoader(getClassLoader());
 		indexableActionableDynamicQuery.setModelClass(Calendar.class);
 
@@ -276,7 +276,7 @@ public abstract class CalendarLocalServiceBaseImpl extends BaseLocalServiceImpl
 
 	protected void initActionableDynamicQuery(
 		ActionableDynamicQuery actionableDynamicQuery) {
-		actionableDynamicQuery.setBaseLocalService(com.liferay.calendar.service.CalendarLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(calendarLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(Calendar.class);
 
@@ -843,7 +843,7 @@ public abstract class CalendarLocalServiceBaseImpl extends BaseLocalServiceImpl
 		}
 	}
 
-	@BeanReference(type = com.liferay.calendar.service.CalendarLocalService.class)
+	@BeanReference(type = CalendarLocalService.class)
 	protected CalendarLocalService calendarLocalService;
 	@BeanReference(type = CalendarPersistence.class)
 	protected CalendarPersistence calendarPersistence;

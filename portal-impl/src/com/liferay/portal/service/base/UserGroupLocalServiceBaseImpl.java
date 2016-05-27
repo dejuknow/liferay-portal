@@ -260,7 +260,7 @@ public abstract class UserGroupLocalServiceBaseImpl extends BaseLocalServiceImpl
 	public ActionableDynamicQuery getActionableDynamicQuery() {
 		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
 
-		actionableDynamicQuery.setBaseLocalService(com.liferay.portal.kernel.service.UserGroupLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(userGroupLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(UserGroup.class);
 
@@ -273,7 +273,7 @@ public abstract class UserGroupLocalServiceBaseImpl extends BaseLocalServiceImpl
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
 		IndexableActionableDynamicQuery indexableActionableDynamicQuery = new IndexableActionableDynamicQuery();
 
-		indexableActionableDynamicQuery.setBaseLocalService(com.liferay.portal.kernel.service.UserGroupLocalServiceUtil.getService());
+		indexableActionableDynamicQuery.setBaseLocalService(userGroupLocalService);
 		indexableActionableDynamicQuery.setClassLoader(getClassLoader());
 		indexableActionableDynamicQuery.setModelClass(UserGroup.class);
 
@@ -284,7 +284,7 @@ public abstract class UserGroupLocalServiceBaseImpl extends BaseLocalServiceImpl
 
 	protected void initActionableDynamicQuery(
 		ActionableDynamicQuery actionableDynamicQuery) {
-		actionableDynamicQuery.setBaseLocalService(com.liferay.portal.kernel.service.UserGroupLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(userGroupLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(UserGroup.class);
 
@@ -433,8 +433,8 @@ public abstract class UserGroupLocalServiceBaseImpl extends BaseLocalServiceImpl
 	/**
 	 */
 	@Override
-	public void addGroupUserGroups(long groupId, List<UserGroup> UserGroups) {
-		groupPersistence.addUserGroups(groupId, UserGroups);
+	public void addGroupUserGroups(long groupId, List<UserGroup> userGroups) {
+		groupPersistence.addUserGroups(groupId, userGroups);
 	}
 
 	/**
@@ -468,8 +468,8 @@ public abstract class UserGroupLocalServiceBaseImpl extends BaseLocalServiceImpl
 	/**
 	 */
 	@Override
-	public void deleteGroupUserGroups(long groupId, List<UserGroup> UserGroups) {
-		groupPersistence.removeUserGroups(groupId, UserGroups);
+	public void deleteGroupUserGroups(long groupId, List<UserGroup> userGroups) {
+		groupPersistence.removeUserGroups(groupId, userGroups);
 	}
 
 	/**
@@ -558,8 +558,8 @@ public abstract class UserGroupLocalServiceBaseImpl extends BaseLocalServiceImpl
 	/**
 	 */
 	@Override
-	public void addTeamUserGroups(long teamId, List<UserGroup> UserGroups) {
-		teamPersistence.addUserGroups(teamId, UserGroups);
+	public void addTeamUserGroups(long teamId, List<UserGroup> userGroups) {
+		teamPersistence.addUserGroups(teamId, userGroups);
 	}
 
 	/**
@@ -593,8 +593,8 @@ public abstract class UserGroupLocalServiceBaseImpl extends BaseLocalServiceImpl
 	/**
 	 */
 	@Override
-	public void deleteTeamUserGroups(long teamId, List<UserGroup> UserGroups) {
-		teamPersistence.removeUserGroups(teamId, UserGroups);
+	public void deleteTeamUserGroups(long teamId, List<UserGroup> userGroups) {
+		teamPersistence.removeUserGroups(teamId, userGroups);
 	}
 
 	/**
@@ -683,8 +683,8 @@ public abstract class UserGroupLocalServiceBaseImpl extends BaseLocalServiceImpl
 	/**
 	 */
 	@Override
-	public void addUserUserGroups(long userId, List<UserGroup> UserGroups) {
-		userPersistence.addUserGroups(userId, UserGroups);
+	public void addUserUserGroups(long userId, List<UserGroup> userGroups) {
+		userPersistence.addUserGroups(userId, userGroups);
 	}
 
 	/**
@@ -718,8 +718,8 @@ public abstract class UserGroupLocalServiceBaseImpl extends BaseLocalServiceImpl
 	/**
 	 */
 	@Override
-	public void deleteUserUserGroups(long userId, List<UserGroup> UserGroups) {
-		userPersistence.removeUserGroups(userId, UserGroups);
+	public void deleteUserUserGroups(long userId, List<UserGroup> userGroups) {
+		userPersistence.removeUserGroups(userId, userGroups);
 	}
 
 	/**
@@ -1323,7 +1323,7 @@ public abstract class UserGroupLocalServiceBaseImpl extends BaseLocalServiceImpl
 		}
 	}
 
-	@BeanReference(type = com.liferay.portal.kernel.service.UserGroupLocalService.class)
+	@BeanReference(type = UserGroupLocalService.class)
 	protected UserGroupLocalService userGroupLocalService;
 	@BeanReference(type = UserGroupPersistence.class)
 	protected UserGroupPersistence userGroupPersistence;

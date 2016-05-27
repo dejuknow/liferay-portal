@@ -247,7 +247,7 @@ public abstract class TeamLocalServiceBaseImpl extends BaseLocalServiceImpl
 	public ActionableDynamicQuery getActionableDynamicQuery() {
 		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
 
-		actionableDynamicQuery.setBaseLocalService(com.liferay.portal.kernel.service.TeamLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(teamLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(Team.class);
 
@@ -260,7 +260,7 @@ public abstract class TeamLocalServiceBaseImpl extends BaseLocalServiceImpl
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
 		IndexableActionableDynamicQuery indexableActionableDynamicQuery = new IndexableActionableDynamicQuery();
 
-		indexableActionableDynamicQuery.setBaseLocalService(com.liferay.portal.kernel.service.TeamLocalServiceUtil.getService());
+		indexableActionableDynamicQuery.setBaseLocalService(teamLocalService);
 		indexableActionableDynamicQuery.setClassLoader(getClassLoader());
 		indexableActionableDynamicQuery.setModelClass(Team.class);
 
@@ -271,7 +271,7 @@ public abstract class TeamLocalServiceBaseImpl extends BaseLocalServiceImpl
 
 	protected void initActionableDynamicQuery(
 		ActionableDynamicQuery actionableDynamicQuery) {
-		actionableDynamicQuery.setBaseLocalService(com.liferay.portal.kernel.service.TeamLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(teamLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(Team.class);
 
@@ -450,8 +450,8 @@ public abstract class TeamLocalServiceBaseImpl extends BaseLocalServiceImpl
 	/**
 	 */
 	@Override
-	public void addUserTeams(long userId, List<Team> Teams) {
-		userPersistence.addTeams(userId, Teams);
+	public void addUserTeams(long userId, List<Team> teams) {
+		userPersistence.addTeams(userId, teams);
 	}
 
 	/**
@@ -485,8 +485,8 @@ public abstract class TeamLocalServiceBaseImpl extends BaseLocalServiceImpl
 	/**
 	 */
 	@Override
-	public void deleteUserTeams(long userId, List<Team> Teams) {
-		userPersistence.removeTeams(userId, Teams);
+	public void deleteUserTeams(long userId, List<Team> teams) {
+		userPersistence.removeTeams(userId, teams);
 	}
 
 	/**
@@ -574,8 +574,8 @@ public abstract class TeamLocalServiceBaseImpl extends BaseLocalServiceImpl
 	/**
 	 */
 	@Override
-	public void addUserGroupTeams(long userGroupId, List<Team> Teams) {
-		userGroupPersistence.addTeams(userGroupId, Teams);
+	public void addUserGroupTeams(long userGroupId, List<Team> teams) {
+		userGroupPersistence.addTeams(userGroupId, teams);
 	}
 
 	/**
@@ -609,8 +609,8 @@ public abstract class TeamLocalServiceBaseImpl extends BaseLocalServiceImpl
 	/**
 	 */
 	@Override
-	public void deleteUserGroupTeams(long userGroupId, List<Team> Teams) {
-		userGroupPersistence.removeTeams(userGroupId, Teams);
+	public void deleteUserGroupTeams(long userGroupId, List<Team> teams) {
+		userGroupPersistence.removeTeams(userGroupId, teams);
 	}
 
 	/**
@@ -985,7 +985,7 @@ public abstract class TeamLocalServiceBaseImpl extends BaseLocalServiceImpl
 		}
 	}
 
-	@BeanReference(type = com.liferay.portal.kernel.service.TeamLocalService.class)
+	@BeanReference(type = TeamLocalService.class)
 	protected TeamLocalService teamLocalService;
 	@BeanReference(type = TeamPersistence.class)
 	protected TeamPersistence teamPersistence;
