@@ -57,6 +57,32 @@ public interface PropsKeys {
 	public static final String SYNC_LAN_BROADCAST_INTERVAL =
 		"sync.lan.broadcast.interval";
 
+	public static final String SYNC_LAN_ENABLED = "sync.lan.enabled";
+
+	public static final String SYNC_LAN_SESSION_DOWNLOAD_CONNECT_TIMEOUT =
+		"sync.lan.session.download.connect.timeout";
+
+	public static final String SYNC_LAN_SESSION_DOWNLOAD_MAX_PER_ROUTE =
+		"sync.lan.session.download.max.per.route";
+
+	public static final String SYNC_LAN_SESSION_DOWNLOAD_MAX_TOTAL =
+		"sync.lan.session.download.max.total";
+
+	public static final String SYNC_LAN_SESSION_DOWNLOAD_SOCKET_TIMEOUT =
+		"sync.lan.session.download.socket.timeout";
+
+	public static final String SYNC_LAN_SESSION_QUERY_CONNECT_TIMEOUT =
+		"sync.lan.session.query.connect.timeout";
+
+	public static final String SYNC_LAN_SESSION_QUERY_POOL_MAX_SIZE =
+		"sync.lan.session.query.pool.max.size";
+
+	public static final String SYNC_LAN_SESSION_QUERY_SOCKET_TIMEOUT =
+		"sync.lan.session.query.socket.timeout";
+
+	public static final String SYNC_LAN_SESSION_QUERY_TOTAL_TIMEOUT =
+		"sync.lan.session.query.total.timeout";
+
 	public static final String SYNC_LAN_UDP_PORT = "sync.lan.udp.port";
 
 	public static final String SYNC_LOGGER_CONFIGURATION_FILE =
