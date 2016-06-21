@@ -608,6 +608,7 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 			downloadFile(sourceSyncFile, null, 0, false);
 		}
 
+		sourceSyncFile.setKey(targetSyncFile.getKey());
 		sourceSyncFile.setModifiedTime(targetSyncFile.getModifiedTime());
 		sourceSyncFile.setUiEvent(SyncFile.UI_EVENT_MOVED_REMOTE);
 
@@ -798,6 +799,7 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 		sourceSyncFile.setDescription(targetSyncFile.getDescription());
 		sourceSyncFile.setExtension(targetSyncFile.getExtension());
 		sourceSyncFile.setExtraSettings(targetSyncFile.getExtraSettings());
+		sourceSyncFile.setKey(targetSyncFile.getKey());
 		sourceSyncFile.setLockExpirationDate(
 			targetSyncFile.getLockExpirationDate());
 		sourceSyncFile.setLockUserId(targetSyncFile.getLockUserId());

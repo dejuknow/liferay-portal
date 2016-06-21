@@ -40,6 +40,7 @@ public class UpdateFileEntryHandler extends BaseSyncDLObjectHandler {
 
 		processFilePathChange(localSyncFile, remoteSyncFile);
 
+		localSyncFile.setKey(remoteSyncFile.getKey());
 		localSyncFile.setModifiedTime(remoteSyncFile.getModifiedTime());
 		localSyncFile.setParentFolderId(remoteSyncFile.getParentFolderId());
 		localSyncFile.setSize(remoteSyncFile.getSize());
