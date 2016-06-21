@@ -325,6 +325,22 @@ public class SyncFileService {
 		}
 	}
 
+	public static SyncFile fetchSyncFile(
+		long repositoryId, long syncAccountId, long typePK, long versionId) {
+
+		try {
+			return _syncFilePersistence.fetchByR_S_T_V(
+				repositoryId, syncAccountId, typePK, versionId);
+		}
+		catch (SQLException sqle) {
+			if (_logger.isDebugEnabled()) {
+				_logger.debug(sqle.getMessage(), sqle);
+			}
+
+			return null;
+		}
+	}
+
 	public static SyncFile fetchSyncFile(String filePathName) {
 		try {
 			return _syncFilePersistence.fetchByFilePathName(filePathName);

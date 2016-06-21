@@ -163,6 +163,26 @@ public class SyncFilePersistence extends BasePersistenceImpl<SyncFile, Long> {
 		return where.queryForFirst();
 	}
 
+	public SyncFile fetchByR_S_T_V(
+			long repositoryId, long syncAccountId, long typePK, long versionId)
+		throws SQLException {
+
+		QueryBuilder<SyncFile, Long> queryBuilder = queryBuilder();
+
+		queryBuilder.limit(1L);
+
+		Where<SyncFile, Long> where = queryBuilder.where();
+
+		where.eq("repositoryId", repositoryId);
+		where.eq("syncAccountId", syncAccountId);
+		where.eq("typePK", typePK);
+		where.eq("versionId", versionId);
+
+		where.and(4);
+
+		return where.queryForFirst();
+	}
+
 	public SyncFile fetchByR_S_T(
 			long repositoryId, long syncAccountId, long typePK)
 		throws SQLException {

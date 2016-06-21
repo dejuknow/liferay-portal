@@ -179,6 +179,10 @@ public class SyncFile extends StateAwareModel {
 		return filePathName;
 	}
 
+	public String getKey() {
+		return key;
+	}
+
 	public String getLocalExtraSettings() {
 		return localExtraSettings;
 	}
@@ -349,6 +353,10 @@ public class SyncFile extends StateAwareModel {
 		this.filePathName = filePathName;
 	}
 
+	public void setKey(String key) {
+		this.key = key;
+	}
+
 	public void setLocalExtraSetting(String key, Object value)
 		throws IOException {
 
@@ -490,6 +498,9 @@ public class SyncFile extends StateAwareModel {
 
 	@DatabaseField(uniqueIndex = true, useGetSet = true, width = 16777216)
 	protected String filePathName;
+
+	@DatabaseField(useGetSet = true)
+	protected String key;
 
 	@DatabaseField(useGetSet = true, width = 16777216)
 	protected String localExtraSettings;
