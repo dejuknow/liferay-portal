@@ -24,6 +24,7 @@ import com.liferay.sync.engine.document.library.event.DownloadFileEvent;
 import com.liferay.sync.engine.document.library.event.Event;
 import com.liferay.sync.engine.document.library.event.GetAllFolderSyncDLObjectsEvent;
 import com.liferay.sync.engine.document.library.event.GetSyncDLObjectUpdateEvent;
+import com.liferay.sync.engine.document.library.event.LanDownloadFileEvent;
 import com.liferay.sync.engine.document.library.event.MoveFileEntryEvent;
 import com.liferay.sync.engine.document.library.event.MoveFileEntryToTrashEvent;
 import com.liferay.sync.engine.document.library.event.MoveFolderEvent;
@@ -32,8 +33,10 @@ import com.liferay.sync.engine.document.library.event.PatchFileEntryEvent;
 import com.liferay.sync.engine.document.library.event.UpdateFileEntryEvent;
 import com.liferay.sync.engine.document.library.event.UpdateFolderEvent;
 import com.liferay.sync.engine.document.library.handler.GetAllFolderSyncDLObjectsHandler;
+import com.liferay.sync.engine.model.SyncAccount;
 import com.liferay.sync.engine.model.SyncFile;
 import com.liferay.sync.engine.model.SyncSite;
+import com.liferay.sync.engine.service.SyncAccountService;
 import com.liferay.sync.engine.service.SyncFileService;
 import com.liferay.sync.engine.service.SyncSiteService;
 import com.liferay.sync.engine.util.FileUtil;
@@ -51,6 +54,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.commons.lang.StringUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -211,6 +216,12 @@ public class FileEventUtil {
 	public static void downloadFile(
 		long syncAccountId, SyncFile syncFile, boolean batch) {
 
+		downloadFile(syncAccountId, syncFile, batch, true);
+	}
+
+	public static void downloadFile(
+		long syncAccountId, SyncFile syncFile, boolean batch, boolean lan) {
+
 		if (isDownloadInProgress(syncFile)) {
 			return;
 		}
@@ -221,10 +232,22 @@ public class FileEventUtil {
 		parameters.put("patch", false);
 		parameters.put("syncFile", syncFile);
 
-		DownloadFileEvent downloadFileEvent = new DownloadFileEvent(
-			syncAccountId, parameters);
+		Event event = null;
 
-		downloadFileEvent.run();
+		SyncAccount syncAccount = SyncAccountService.fetchSyncAccount(
+			syncAccountId);
+
+		if (lan && syncAccount.isLanEnabled() && PropsValues.SYNC_LAN_ENABLED &&
+			StringUtils.isNotEmpty(syncFile.getKey()) &&
+			(syncFile.getSize() >= syncAccount.getBatchFileMaxSize()/10)) {
+
+			event = new LanDownloadFileEvent(syncAccountId, parameters);
+		}
+		else {
+			event = new DownloadFileEvent(syncAccountId, parameters);
+		}
+
+		event.run();
 	}
 
 	public static void downloadPatch(
