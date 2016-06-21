@@ -16,12 +16,16 @@ package com.liferay.sync.engine.upgrade.util;
 
 import com.liferay.sync.engine.service.SyncAccountService;
 import com.liferay.sync.engine.service.SyncFileService;
+import com.liferay.sync.engine.service.SyncLanClientService;
+import com.liferay.sync.engine.service.SyncLanEndpointService;
 import com.liferay.sync.engine.service.SyncPropService;
 import com.liferay.sync.engine.service.SyncSiteService;
 import com.liferay.sync.engine.service.SyncUserService;
 import com.liferay.sync.engine.service.SyncWatchEventService;
 import com.liferay.sync.engine.service.persistence.SyncAccountPersistence;
 import com.liferay.sync.engine.service.persistence.SyncFilePersistence;
+import com.liferay.sync.engine.service.persistence.SyncLanClientPersistence;
+import com.liferay.sync.engine.service.persistence.SyncLanEndpointPersistence;
 import com.liferay.sync.engine.service.persistence.SyncPropPersistence;
 import com.liferay.sync.engine.service.persistence.SyncSitePersistence;
 import com.liferay.sync.engine.service.persistence.SyncUserPersistence;
@@ -34,6 +38,7 @@ import com.liferay.sync.engine.upgrade.v3_0_5.UpgradeProcess_3_0_5;
 import com.liferay.sync.engine.upgrade.v3_0_8.UpgradeProcess_3_0_8;
 import com.liferay.sync.engine.upgrade.v3_0_9.UpgradeProcess_3_0_9;
 import com.liferay.sync.engine.upgrade.v3_1_0.UpgradeProcess_3_1_0;
+import com.liferay.sync.engine.upgrade.v3_3_0.UpgradeProcess_3_3_0;
 import com.liferay.sync.engine.util.LoggerUtil;
 import com.liferay.sync.engine.util.PropsValues;
 import com.liferay.sync.engine.util.ReleaseInfo;
@@ -107,6 +112,7 @@ public class UpgradeUtil {
 		upgradeProcesses.add(new UpgradeProcess_3_0_10());
 		upgradeProcesses.add(new UpgradeProcess_3_0_11());
 		upgradeProcesses.add(new UpgradeProcess_3_1_0());
+		upgradeProcesses.add(new UpgradeProcess_3_3_0());
 
 		for (UpgradeProcess upgradeProcess : upgradeProcesses) {
 			if (buildNumber < upgradeProcess.getThreshold()) {
@@ -143,6 +149,20 @@ public class UpgradeUtil {
 
 		if (!syncFilePersistence.isTableExists()) {
 			syncFilePersistence.createTable();
+		}
+
+		SyncLanClientPersistence syncLanClientPersistence =
+			SyncLanClientService.getSyncLanClientPersistence();
+
+		if (!syncLanClientPersistence.isTableExists()) {
+			syncLanClientPersistence.createTable();
+		}
+
+		SyncLanEndpointPersistence syncLanEndpointPersistence =
+			SyncLanEndpointService.getSyncLanEndpointPersistence();
+
+		if (!syncLanEndpointPersistence.isTableExists()) {
+			syncLanEndpointPersistence.createTable();
 		}
 
 		SyncPropPersistence syncPropPersistence =
