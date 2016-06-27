@@ -302,7 +302,6 @@ AUI.add(
 						var instance = this;
 
 						var activeTab = event.newVal;
-						var previousTab = event.prevVal;
 
 						var entryId = activeTab.get(ENTRY_ID);
 
@@ -608,8 +607,6 @@ AUI.add(
 
 						instance._searchDialog.destroy();
 
-						var tab = instance._tabViewEditor.getSelectedTab();
-
 						instance._searchEditorButton.toggle();
 					},
 
@@ -783,8 +780,6 @@ AUI.add(
 
 						var entryId = event.entryId;
 
-						var unpublish = STR_EMPTY;
-
 						var node = instance._getNodeFromDataSet(entryId);
 
 						var message;
@@ -827,7 +822,7 @@ AUI.add(
 									return;
 								}
 
-								var tab = instance._tabViewEditor.addExistingDocument(event.entryId, node.get(LABEL), data.content);
+								instance._tabViewEditor.addExistingDocument(event.entryId, node.get(LABEL), data.content);
 
 								node.set(FILE_ENTRY_LOADED, true);
 							};
