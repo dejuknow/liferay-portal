@@ -509,7 +509,10 @@ AUI.add(
 
 						var gadgetId = node.get(GADGET_ID);
 
-						var message = Lang.sub(Liferay.Language.get('are-you-sure-you-want-to-unpublish-the-gadget'), [node.get(LABEL)]);
+						var message = Lang.sub(
+							Liferay.Language.get('are-you-sure-you-want-to-unpublish-the-gadget'),
+							[node.get(LABEL)]
+						);
 
 						instance._showConfirmationDialog(message, instance._unpublishGadget, node, gadgetId);
 					},
@@ -763,7 +766,10 @@ AUI.add(
 						if (tab && tab.get(IS_DIRTY) && !event.noConfirm) {
 							var tabFileName = tab.get('fileName');
 
-							var message = Lang.sub(Liferay.Language.get('has-not-been-saved-are-you-sure-you-want-to-close-the-tab'), [tabFileName]);
+							var message = Lang.sub(
+								Liferay.Language.get('has-not-been-saved-are-you-sure-you-want-to-close-the-tab'),
+								[tabFileName]
+							);
 
 							instance._showConfirmationDialog(message, instance._closeFileEntry, entryId);
 						}
@@ -784,10 +790,16 @@ AUI.add(
 						var message;
 
 						if (node.get(GADGET_ID) > 0) {
-							message = Lang.sub(Liferay.Language.get('are-you-sure-you-want-to-unpublish-and-delete'), [node.get(LABEL)]);
+							message = Lang.sub(
+								Liferay.Language.get('are-you-sure-you-want-to-unpublish-and-delete'),
+								[node.get(LABEL)]
+							);
 						}
 						else {
-							message = Lang.sub(Liferay.Language.get('are-you-sure-you-want-to-delete'), [node.get(LABEL)]);
+							message = Lang.sub(
+								Liferay.Language.get('are-you-sure-you-want-to-delete'),
+								[node.get(LABEL)]
+							);
 						}
 
 						instance._showConfirmationDialog(message, instance._deleteEntry, node, entryId);
@@ -1012,7 +1024,10 @@ AUI.add(
 										failure: function(event) {
 											instance._loadingMask.hide();
 
-											var message = Lang.sub(Liferay.Language.get('request-for-resource-id-failed'), [resourceId]);
+											var message = Lang.sub(
+												Liferay.Language.get('request-for-resource-id-failed'),
+												[resourceId]
+											);
 
 											instance._showErrorDialog(message);
 										}
