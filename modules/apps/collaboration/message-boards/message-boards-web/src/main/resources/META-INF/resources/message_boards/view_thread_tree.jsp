@@ -33,6 +33,8 @@ request.setAttribute(WebKeys.MESSAGE_BOARDS_TREE_INDEX, Integer.valueOf(index));
 if (message.getMessageId() == selMessage.getMessageId()) {
 	request.setAttribute("view_thread_tree.jsp-messageFound", true);
 }
+
+MBMessageDisplay messageDisplay = (MBMessageDisplay)request.getAttribute(WebKeys.MESSAGE_BOARDS_MESSAGE_DISPLAY);
 %>
 
 <c:if test="<%= (message.getMessageId() != selMessage.getMessageId()) || MBUtil.isViewableMessage(themeDisplay, message) %>">
@@ -95,4 +97,12 @@ if (message.getMessageId() == selMessage.getMessageId()) {
 	}
 	%>
 
+	<c:if test="<%= MBCategoryPermission.contains(permissionChecker, scopeGroupId, message.getCategoryId(), ActionKeys.REPLY_TO_MESSAGE) && !thread.isLocked() %>">
+
+		<%
+		long replyToMessageId = message.getMessageId();
+		%>
+
+		<%@ include file="/message_boards/edit_message_quick.jspf" %>
+	</c:if>
 </c:if>

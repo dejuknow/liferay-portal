@@ -457,7 +457,6 @@
 		</execute>
 
 		<execute macro="MessageboardsThread#gotoPG">
-			<var name="categoryDescription" value="MB Category2 Description" />
 			<var name="lastPostUserName" value="Test Test" />
 			<var name="postCount" value="1" />
 			<var name="threadBody" value="MB Root Thread Message Body" />
@@ -530,7 +529,6 @@
 		</execute>
 
 		<execute macro="MessageboardsThread#gotoPG">
-			<var name="categoryDescription" value="MB Category1 Description" />
 			<var name="lastPostUserName" value="Test Test" />
 			<var name="postCount" value="1" />
 			<var name="threadBody" value="MB Thread1 Message Body" />
@@ -553,7 +551,6 @@
 		</execute>
 
 		<execute macro="MessageboardsThread#gotoPG">
-			<var name="categoryDescription" value="MB Category2 Description" />
 			<var name="lastPostUserName" value="Test Test" />
 			<var name="postCount" value="1" />
 			<var name="threadBody" value="MB Thread2 Message Body" />
@@ -599,7 +596,6 @@
 		</execute>
 
 		<execute macro="MessageboardsThread#gotoPG">
-			<var name="categoryDescription" value="MB Category4 Description" />
 			<var name="lastPostUserName" value="Test Test" />
 			<var name="postCount" value="1" />
 			<var name="threadBody" value="MB Root Thread2 Message Body" />
@@ -672,7 +668,6 @@
 		</execute>
 
 		<execute macro="MessageboardsThread#gotoPG">
-			<var name="categoryDescription" value="MB Category3 Description" />
 			<var name="lastPostUserName" value="Test Test" />
 			<var name="postCount" value="1" />
 			<var name="threadBody" value="MB Thread3 Message Body" />
@@ -849,6 +844,8 @@
 			<var name="categoryDescriptionEnabled" value="true" />
 			<var name="categoryName" value="MB Category3 Name" />
 		</execute>
+
+		<execute function="Pause" locator1="5000" />
 
 		<execute macro="MessageboardsThread#viewReplyPG">
 			<var name="mbThreadAttachment" value="Document_4.jpeg" />

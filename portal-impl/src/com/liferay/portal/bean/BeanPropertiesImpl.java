@@ -26,6 +26,7 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 
 import java.io.ObjectInputStream;
@@ -606,6 +607,12 @@ public class BeanPropertiesImpl implements BeanProperties {
 			String name = enu.nextElement();
 
 			String value = request.getParameter(name);
+
+			if (Validator.isNull(value) &&
+				(getObjectSilent(bean, name) instanceof Number)) {
+
+				value = String.valueOf(0);
+			}
 
 			BeanUtil.setPropertyForcedSilent(bean, name, value);
 

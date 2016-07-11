@@ -65,6 +65,7 @@ create table SyncDevice (
 	userName VARCHAR(75) null,
 	createDate DATE null,
 	modifiedDate DATE null,
+	hostName VARCHAR(75) null,
 	type_ VARCHAR(75) null,
 	buildNumber LONG,
 	featureSet INTEGER,

@@ -4,7 +4,7 @@
 ;
 [subrepo]
 	cmdver = liferay
-	commit = 2c3541e3778bb4a1a97d9243da7d21e8d3b80eab
+	commit = cc3a4ecddd76d90b4ea40da62b8c0e18a26f99a8
 	mode = push
-	parent = 97e778b3cc7e148759593459426d929e733d3d46
+	parent = 10ac1f736ce11ed3c91dfca832c620be6e1cf05d
 	remote = git@github.com:liferay/com-liferay-layout.git

@@ -142,6 +142,39 @@
 		</execute>
 	</command>
 
+	<command name="AddPollWithEmptyChoicesAndViewErrorMessage" priority="3">
+		<description message="This is a use case for LPS-66544." />
+
+		<execute macro="Navigator#openURL" />
+
+		<execute macro="ProductMenu#gotoSitesContent">
+			<var name="portlet" value="Polls" />
+		</execute>
+
+		<execute macro="Polls#addPollCP">
+			<var name="pollsQuestion" value="Test Poll Question" />
+			<var name="pollsQuestionChoiceA" value="" />
+			<var name="pollsQuestionChoiceB" value="" />
+			<var name="pollsQuestionTitle" value="Test Poll Title" />
+		</execute>
+
+		<execute macro="Polls#viewEmptyChoiceErrorMessage" />
+
+		<execute macro="Polls#addPollChoice">
+			<var name="choiceField" value="a" />
+			<var name="pollsQuestionChoice" value="Choice A" />
+		</execute>
+
+		<execute macro="Polls#addPollChoice">
+			<var name="choiceField" value="b" />
+			<var name="pollsQuestionChoice" value="Choice B" />
+		</execute>
+
+		<execute macro="Button#clickSave" />
+
+		<execute macro="Alert#viewSuccessMessage" />
+	</command>
+
 	<command name="AddViaPollDisplay" priority="4">
 		<description message="This is a use case for LPS-60143." />
 

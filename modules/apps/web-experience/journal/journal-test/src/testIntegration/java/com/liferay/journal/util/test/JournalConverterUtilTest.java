@@ -18,6 +18,7 @@ import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.document.library.kernel.model.DLFolderConstants;
 import com.liferay.document.library.kernel.service.DLAppLocalServiceUtil;
 import com.liferay.document.library.kernel.util.DLUtil;
+import com.liferay.dynamic.data.mapping.io.DDMFormJSONDeserializer;
 import com.liferay.dynamic.data.mapping.io.DDMFormXSDDeserializer;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
@@ -111,6 +112,7 @@ public class JournalConverterUtilTest {
 
 	@Before
 	public void setUp() throws Exception {
+		setUpDDMFormJSONDeserializer();
 		setUpDDMFormXSDDeserializer();
 		setUpDDMXML();
 
@@ -119,14 +121,14 @@ public class JournalConverterUtilTest {
 		_ddmStructureTestHelper = new DDMStructureTestHelper(
 			PortalUtil.getClassNameId(JournalArticle.class), _group);
 
-		long classNameId = PortalUtil.getClassNameId(JournalArticle.class);
+		_classNameId = PortalUtil.getClassNameId(JournalArticle.class);
 
 		String definition = read("test-ddm-structure-all-fields.xml");
 
 		DDMForm ddmForm = _ddmFormXSDDeserializer.deserialize(definition);
 
 		_ddmStructure = _ddmStructureTestHelper.addStructure(
-			classNameId, null, "Test Structure", ddmForm,
+			_classNameId, null, "Test Structure", ddmForm,
 			StorageType.JSON.getValue(), DDMStructureConstants.TYPE_DEFAULT);
 
 		Registry registry = RegistryUtil.getRegistry();
@@ -768,7 +770,7 @@ public class JournalConverterUtilTest {
 		field.setDDMStructureId(ddmStructureId);
 		field.setName("list");
 
-		field.addValue(_enLocale, "[\"a\"]");
+		field.addValue(_enLocale, "[\"value 01\"]");
 
 		return field;
 	}
@@ -779,7 +781,7 @@ public class JournalConverterUtilTest {
 		field.setDDMStructureId(ddmStructureId);
 		field.setName("multi_list");
 
-		field.addValue(_enLocale, "[\"a\"]");
+		field.addValue(_enLocale, "[\"value 01\",\"value 02\"]");
 
 		return field;
 	}
@@ -959,6 +961,13 @@ public class JournalConverterUtilTest {
 			});
 	}
 
+	protected void setUpDDMFormJSONDeserializer() {
+		Registry registry = RegistryUtil.getRegistry();
+
+		_ddmFormJSONDeserializer = registry.getService(
+			DDMFormJSONDeserializer.class);
+	}
+
 	protected void setUpDDMFormXSDDeserializer() {
 		Registry registry = RegistryUtil.getRegistry();
 
@@ -1044,6 +1053,8 @@ public class JournalConverterUtilTest {
 	private static Locale _enLocale;
 	private static Locale _ptLocale;
 
+	private long _classNameId;
+	private DDMFormJSONDeserializer _ddmFormJSONDeserializer;
 	private DDMFormXSDDeserializer _ddmFormXSDDeserializer;
 	private DDMStructure _ddmStructure;
 	private DDMStructureTestHelper _ddmStructureTestHelper;

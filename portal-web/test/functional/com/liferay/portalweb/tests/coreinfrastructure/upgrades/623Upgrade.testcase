@@ -5,6 +5,13 @@
 	<property name="portal.version" value="6.2.3" />
 	<property name="testray.main.component.name" value="Upgrades" />
 
+	<command name="View623CalendarArchive" priority="3">
+		<property name="portal.upgrades" value="true" />
+		<property name="test.assert.warning.exceptions" value="true" />
+
+		<execute macro="Upgrade#viewCalendar" />
+	</command>
+
 	<command name="View623DataArchive" priority="5">
 		<property name="portal.acceptance" value="true" />
 		<property name="portal.upgrades" value="true" />
@@ -13,5 +20,28 @@
 		<execute macro="Upgrade#viewUpgrade" />
 
 		<execute macro="Upgrade#searchForAssetsAfterUpgrade" />
+	</command>
+
+	<command name="View623PollsArchive" priority="3">
+		<property name="portal.upgrades" value="true" />
+		<property name="test.assert.warning.exceptions" value="true" />
+
+		<execute macro="Upgrade#viewPolls" />
+	</command>
+
+	<command name="View623WebContentArchive" priority="3">
+		<property name="portal.upgrades" value="true" />
+		<property name="test.assert.warning.exceptions" value="true" />
+
+		<execute macro="Upgrade#viewWCStructureAndTemplate" />
+
+		<execute macro="Upgrade#publishWCDraft" />
+	</command>
+
+	<command name="View623WorkflowArchive" priority="4">
+		<property name="portal.upgrades" value="true" />
+		<property name="test.assert.warning.exceptions" value="true" />
+
+		<execute macro="Upgrade#approveWorkflow" />
 	</command>
 </definition>

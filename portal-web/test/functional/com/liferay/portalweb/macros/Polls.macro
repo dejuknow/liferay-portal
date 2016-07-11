@@ -1,4 +1,10 @@
 <definition>
+	<command name="addPollChoice">
+		<var name="key_choiceField" value="${choiceField}" />
+
+		<execute function="Type" locator1="Polls#CHOICE_FIELD" value1="${pollsQuestionChoice}" />
+	</command>
+
 	<command name="addPollCP">
 		<execute function="Click" locator1="Button#PLUS" />
 
@@ -163,6 +169,10 @@
 				<execute function="AssertTextEquals#assertPartialText" locator1="Message#SUCCESS" value1="Your request completed successfully." />
 			</then>
 		</while>
+	</command>
+
+	<command name="viewEmptyChoiceErrorMessage">
+		<execute function="AssertTextEquals" locator1="Message#ERROR" value1="Please enter valid choices." />
 	</command>
 
 	<command name="viewPollAsGuestPG">

@@ -50,7 +50,7 @@
 </tr>
 <tr>
 	<td>WEB_EDITOR</td>
-	<td>//textarea[contains(@id,'editor')]</td>
+	<td>//textarea[contains(@id,'contentEditor')]</td>
 	<td></td>
 </tr>
 </tbody>
