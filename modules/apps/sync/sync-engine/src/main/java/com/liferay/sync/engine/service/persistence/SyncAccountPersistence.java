@@ -74,4 +74,20 @@ public class SyncAccountPersistence
 		return where.queryForFirst();
 	}
 
+	public SyncAccount fetchByFilePathName(String filePathName)
+		throws SQLException {
+
+		QueryBuilder<SyncAccount, Long> queryBuilder = queryBuilder();
+
+		queryBuilder.limit(1L);
+
+		Where<SyncAccount, Long> where = queryBuilder.where();
+
+		where.eq("filePathName", filePathName);
+
+		where.and(1);
+
+		return where.queryForFirst();
+	}
+
 }

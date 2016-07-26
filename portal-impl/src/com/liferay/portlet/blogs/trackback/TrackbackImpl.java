@@ -58,20 +58,23 @@ public class TrackbackImpl implements Trackback {
 
 		String entryURL = buildEntryURL(entry, themeDisplay);
 
-		_linkbackConsumer.addNewTrackback(commentId, url, entryURL);
+		LinkbackConsumerUtil.addNewTrackback(commentId, url, entryURL);
 	}
 
 	/**
-	 * @deprecated As of 7.1.0, with no direct replacement
+	 * @deprecated As of 7.0.0, with no direct replacement
 	 */
 	@Deprecated
 	@Override
 	public void setCommentManager(CommentManager commentManager) {
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, with no direct replacement
+	 */
+	@Deprecated
 	@Override
 	public void setLinkbackConsumer(LinkbackConsumer linkbackConsumer) {
-		_linkbackConsumer = linkbackConsumer;
 	}
 
 	protected String buildBBCodeBody(
@@ -132,8 +135,5 @@ public class TrackbackImpl implements Trackback {
 
 		return sb.toString();
 	}
-
-	private LinkbackConsumer _linkbackConsumer =
-		LinkbackConsumerUtil.getLinkbackConsumer();
 
 }

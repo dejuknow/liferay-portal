@@ -61,7 +61,7 @@ public class AlloyEditorBBCodeConfigContributor
 			requestBackedPortletURLFactory);
 
 		jsonObject.put("allowedContent", Boolean.TRUE);
-		jsonObject.put("enterMode", 2);
+		jsonObject.put("enterMode", 1);
 
 		String extraPlugins = jsonObject.getString("extraPlugins");
 
@@ -69,6 +69,7 @@ public class AlloyEditorBBCodeConfigContributor
 
 		jsonObject.put("extraPlugins", extraPlugins);
 
+		jsonObject.put("forceEnterMode", Boolean.TRUE);
 		jsonObject.put("format_tags", "p;pre");
 		jsonObject.put("lang", getLangJSONObject(inputEditorTaglibAttributes));
 		jsonObject.put("newThreadURL", MBThreadConstants.NEW_THREAD_URL);

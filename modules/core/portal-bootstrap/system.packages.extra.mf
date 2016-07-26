@@ -2070,11 +2070,11 @@ Export-Package: com.liferay.ibm.icu;version="4.0.1",com.liferay.ibm.ic
  ernel.servlet.taglib.ui,com.liferay.portal.kernel.systemevent,com.lif
  eray.portal.kernel.theme,com.liferay.portal.kernel.transaction,com.li
  feray.portal.kernel.util",com.liferay.blogs.kernel.service.persistenc
- e;version="1.0.0";uses:="com.liferay.blogs.kernel.exception,com.lifer
+ e;version="1.1.0";uses:="com.liferay.blogs.kernel.exception,com.lifer
  ay.blogs.kernel.model,com.liferay.portal.kernel.dao.orm,com.liferay.p
  ortal.kernel.service,com.liferay.portal.kernel.service.persistence,co
  m.liferay.portal.kernel.util",com.liferay.blogs.kernel.util.comparato
- r;version="1.0.0";uses:="com.liferay.blogs.kernel.model,com.liferay.p
+ r;version="1.1.0";uses:="com.liferay.blogs.kernel.model,com.liferay.p
  ortal.kernel.util",com.liferay.counter;version="1.0.0",com.liferay.co
  unter.kernel;version="2.2.0",com.liferay.counter.kernel.exception;ver
  sion="1.0.0";uses:="com.liferay.portal.kernel.exception",com.liferay.
@@ -2778,7 +2778,7 @@ Export-Package: com.liferay.ibm.icu;version="4.0.1",com.liferay.ibm.ic
  l.search.filter",com.liferay.portal.kernel.search.facet.collector;ver
  sion="6.3.0",com.liferay.portal.kernel.search.facet.config;version="7
  .0.0";uses:="com.liferay.portal.kernel.json",com.liferay.portal.kerne
- l.search.facet.faceted.searcher;version="1.0.0";uses:="com.liferay.po
+ l.search.facet.faceted.searcher;version="1.1.0";uses:="com.liferay.po
  rtal.kernel.search",com.liferay.portal.kernel.search.facet.util;versi
  on="6.3.0";uses:="com.liferay.portal.kernel.search,com.liferay.portal
  .kernel.search.facet,com.liferay.portal.kernel.search.facet.config",c
@@ -2837,7 +2837,7 @@ Export-Package: com.liferay.ibm.icu;version="4.0.1",com.liferay.ibm.ic
  y.portal.kernel.security.sso;version="1.0.0";uses:="javax.servlet.htt
  p",com.liferay.portal.kernel.security.xml;version="1.0.0";uses:="java
  x.xml.parsers,javax.xml.stream,org.xml.sax",com.liferay.portal.kernel
- .service;version="1.4.0";uses:="com.liferay.announcements.kernel.mode
+ .service;version="1.5.0";uses:="com.liferay.announcements.kernel.mode
  l,com.liferay.expando.kernel.model,com.liferay.exportimport.kernel.la
  r,com.liferay.exportimport.kernel.model,com.liferay.portal.kernel.cac
  he.thread.local,com.liferay.portal.kernel.cluster,com.liferay.portal.
@@ -2939,7 +2939,7 @@ Export-Package: com.liferay.ibm.icu;version="4.0.1",com.liferay.ibm.ic
  portal.kernel.security.permission,com.liferay.portal.kernel.service,c
  om.liferay.portal.kernel.theme,javax.portlet,javax.servlet.http",com.
  liferay.portal.kernel.url;version="1.0.0";uses:="javax.servlet",com.l
- iferay.portal.kernel.util;version="7.4.0";uses:="com.liferay.expando.
+ iferay.portal.kernel.util;version="7.5.0";uses:="com.liferay.expando.
  kernel.model,com.liferay.mail.kernel.model,com.liferay.portal.kernel.
  concurrent,com.liferay.portal.kernel.configuration,com.liferay.portal
  .kernel.dao.jdbc.aop,com.liferay.portal.kernel.dao.search,com.liferay
@@ -3439,7 +3439,7 @@ Export-Package: com.liferay.ibm.icu;version="4.0.1",com.liferay.ibm.ic
  rade.v7_0_2;uses:="com.liferay.portal.kernel.upgrade";version="1.0.0"
  ,com.liferay.portal.upload;version="1.0.2";uses:="com.liferay.portal.
  kernel.servlet,com.liferay.portal.kernel.upload,javax.portlet,javax.s
- ervlet,javax.servlet.http",com.liferay.portal.util;version="1.5.0";us
+ ervlet,javax.servlet.http",com.liferay.portal.util;version="1.6.0";us
  es:="com.liferay.expando.kernel.model,com.liferay.layouts.admin.kerne
  l.util,com.liferay.portal.kernel.configuration,com.liferay.portal.ker
  nel.exception,com.liferay.portal.kernel.json,com.liferay.portal.kerne

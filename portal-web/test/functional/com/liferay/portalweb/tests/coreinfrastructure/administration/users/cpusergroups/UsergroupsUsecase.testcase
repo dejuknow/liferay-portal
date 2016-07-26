@@ -413,6 +413,14 @@
 	</command>
 
 	<command name="UserGroupSiteTemplates" priority="4">
+		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+			<var name="portlet" value="Server Administration" />
+		</execute>
+
+		<execute macro="ServerAdministration#executeServerResourcesActions">
+			<var name="actionsDescription" value="Reindex all search indexes." />
+		</execute>
+
 		<execute macro="ProductMenu#gotoControlPanelUsers">
 			<var name="portlet" value="Users and Organizations" />
 		</execute>
@@ -748,7 +756,7 @@
 
 		<var name="key_roleName" value="Roles Siterole Name" />
 
-		<execute function="SelectFrame" locator1="Permissions#PERMISSIONS_IFRAME" />
+		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
 		<execute function="AssertTextEquals" locator1="Permissions#CONTENT_PERMISSIONS_ROLE_NAME" value1="Roles Siterole Name" />
 	</command>
 </definition>

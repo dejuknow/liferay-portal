@@ -43,29 +43,29 @@ if (layout != null) {
 <c:if test="<%= themeDisplay.isShowStagingIcon() %>">
 
 	<%
-	String liveFriendlyURL = null;
+	String liveURL = null;
 
 	if (liveGroup != null) {
 		liveLayout = LayoutLocalServiceUtil.fetchLayoutByUuidAndGroupId(layout.getUuid(), liveGroup.getGroupId(), layout.isPrivateLayout());
 
 		if (liveLayout != null) {
-			liveFriendlyURL = PortalUtil.getLayoutFriendlyURL(liveLayout, themeDisplay);
+			liveURL = PortalUtil.getLayoutURL(liveLayout, themeDisplay);
 		}
 		else if ((layout.isPrivateLayout() && (liveGroup.getPrivateLayoutsPageCount() > 0)) || (layout.isPublicLayout() && (liveGroup.getPublicLayoutsPageCount() > 0))) {
-			liveFriendlyURL = liveGroup.getDisplayURL(themeDisplay, layout.isPrivateLayout());
+			liveURL = liveGroup.getDisplayURL(themeDisplay, layout.isPrivateLayout());
 		}
 	}
 
-	String stagingFriendlyURL = null;
+	String stagingURL = null;
 
 	if (stagingGroup != null) {
 		Layout stagingLayout = LayoutLocalServiceUtil.fetchLayoutByUuidAndGroupId(layout.getUuid(), stagingGroup.getGroupId(), layout.isPrivateLayout());
 
 		if (stagingLayout != null) {
-			stagingFriendlyURL = PortalUtil.getLayoutFriendlyURL(stagingLayout, themeDisplay);
+			stagingURL = PortalUtil.getLayoutURL(stagingLayout, themeDisplay);
 		}
 		else {
-			stagingFriendlyURL = stagingGroup.getDisplayURL(themeDisplay, layout.isPrivateLayout());
+			stagingURL = stagingGroup.getDisplayURL(themeDisplay, layout.isPrivateLayout());
 		}
 	}
 
@@ -89,7 +89,7 @@ if (layout != null) {
 	<c:if test="<%= liveGroup != null %>">
 		<ul class="control-menu-nav">
 			<li class="control-menu-nav-item dropdown staging-options-toggle visible-xs">
-				<a class="control-menu-icon dropdown-toggle" data-toggle="dropdown" value="staging">
+				<a class="control-menu-icon dropdown-toggle" data-toggle="dropdown" href="javascript:;" value="staging">
 					<span class="control-menu-icon-label">
 						<c:choose>
 							<c:when test="<%= group.isStagingGroup() || group.isStagedRemotely() %>">
@@ -115,7 +115,7 @@ if (layout != null) {
 
 					<c:if test="<%= !group.isStagingGroup() && !group.isStagedRemotely() && (stagingGroup != null) %>">
 						<li>
-							<a href="<%= stagingFriendlyURL %>">
+							<a href="<%= stagingURL %>">
 								<liferay-ui:message key="go-to-staging" />
 							</a>
 						</li>
@@ -130,9 +130,9 @@ if (layout != null) {
 									</a>
 								</li>
 							</c:when>
-							<c:when test="<%= group.isStagingGroup() && Validator.isNotNull(liveFriendlyURL) %>">
+							<c:when test="<%= group.isStagingGroup() && Validator.isNotNull(liveURL) %>">
 								<li>
-									<a href="<%= liveFriendlyURL %>">
+									<a href="<%= liveURL %>">
 										<liferay-ui:message key="go-to-live" />
 									</a>
 								</li>
@@ -154,14 +154,14 @@ if (layout != null) {
 				</c:when>
 				<c:otherwise>
 					<li class="control-menu-link control-menu-nav-item hidden-xs staging-link">
-						<a class="control-menu-icon" href="<%= (layoutSetBranches != null) ? null : stagingFriendlyURL %>" value="staging">
+						<a class="control-menu-icon" href="<%= (layoutSetBranches != null) ? null : stagingURL %>" value="staging">
 							<aui:icon image="staging" label="staging" markupView="lexicon" />
 						</a>
 					</li>
 				</c:otherwise>
 			</c:choose>
 
-			<c:if test="<%= !group.isStagingGroup() || Validator.isNotNull(liveFriendlyURL) %>">
+			<c:if test="<%= !group.isStagingGroup() || Validator.isNotNull(liveURL) %>">
 				<li class="control-menu-nav-item hidden-xs staging-divider">
 					<span> / </span>
 				</li>
@@ -201,9 +201,9 @@ if (layout != null) {
 					</li>
 				</c:when>
 				<c:when test="<%= group.isStagingGroup() %>">
-					<c:if test="<%= Validator.isNotNull(liveFriendlyURL) %>">
+					<c:if test="<%= Validator.isNotNull(liveURL) %>">
 						<li class="control-menu-link control-menu-nav-item hidden-xs live-link">
-							<a class="control-menu-icon" href="<%= liveFriendlyURL %>" value="live">
+							<a class="control-menu-icon" href="<%= liveURL %>" value="live">
 								<aui:icon image="live" label="live" markupView="lexicon" />
 							</a>
 						</li>
@@ -240,7 +240,7 @@ if (layout != null) {
 										request.setAttribute("view.jsp-layoutRevision", layoutRevision);
 										request.setAttribute("view.jsp-layoutSetBranch", layoutSetBranch);
 										request.setAttribute("view.jsp-layoutSetBranches", layoutSetBranches);
-										request.setAttribute("view.jsp-stagingFriendlyURL", stagingFriendlyURL);
+										request.setAttribute("view.jsp-stagingURL", stagingURL);
 										%>
 
 										<c:if test="<%= !layoutRevision.isIncomplete() %>">

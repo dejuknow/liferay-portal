@@ -27,7 +27,6 @@ import com.liferay.portal.kernel.util.LoggingTimer;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portlet.blogs.linkback.LinkbackConsumer;
 import com.liferay.portlet.blogs.linkback.LinkbackConsumerUtil;
 
 import java.util.List;
@@ -100,7 +99,7 @@ public class VerifyBlogsTrackbacks extends VerifyProcess {
 				mbMessage.getCompanyId());
 
 			if (mbMessage.getUserId() == defaultUserId) {
-				_linkbackConsumer.verifyTrackback(
+				LinkbackConsumerUtil.verifyTrackback(
 					mbMessage.getMessageId(), url, entryURL);
 			}
 		}
@@ -108,8 +107,5 @@ public class VerifyBlogsTrackbacks extends VerifyProcess {
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		VerifyBlogsTrackbacks.class);
-
-	private final LinkbackConsumer _linkbackConsumer =
-		LinkbackConsumerUtil.getLinkbackConsumer();
 
 }

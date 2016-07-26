@@ -212,6 +212,8 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 				response, SyncDLObjectUpdate.class);
 		}
 
+		updateSettings(_syncDLObjectUpdate.getSettingsModifiedTimes());
+
 		List<SyncFile> syncFiles = _syncDLObjectUpdate.getSyncFiles();
 
 		if (!syncFiles.isEmpty()) {
@@ -869,6 +871,29 @@ public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 			}
 
 			SyncFileService.update(sourceSyncFile);
+		}
+	}
+
+	protected void updateSettings(Map<String, Long> settingsModifiedTimes) {
+		if (settingsModifiedTimes == null) {
+			return;
+		}
+
+		for (Map.Entry<String, Long> entry : settingsModifiedTimes.entrySet()) {
+			String setting = entry.getKey();
+			long modifiedTime = entry.getValue();
+
+			if (setting.equals(
+					SyncDLObjectUpdate.
+						PREFERENCE_KEY_SYNC_CONTEXT_MODIFIED_TIME)) {
+
+				SyncAccount syncAccount = SyncAccountService.fetchSyncAccount(
+					getSyncAccountId());
+
+				syncAccount.setSyncContextModifiedTime(modifiedTime);
+
+				SyncAccountService.update(syncAccount);
+			}
 		}
 	}
 

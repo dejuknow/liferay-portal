@@ -456,7 +456,7 @@
 
 		<execute function="SelectFrame" value1="relative=top" />
 
-		<execute function="SelectFrame" locator1="DDMSelectStructure#DDM_STRUCTURES_IFRAME" />
+		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
 
 		<var name="key_ddlDataDefinitionName" value="${structureName}" />
 
@@ -605,7 +605,7 @@
 
 				<execute function="Click" locator1="WC#LINK_TO_PAGE_SELECT_PAGE_RADIO" />
 
-				<execute function="Click" locator1="Button#SELECT" />
+				<execute function="ClickNoError" locator1="Button#SELECT" />
 			</then>
 		</if>
 
@@ -1032,7 +1032,7 @@
 
 		<execute function="AssertClick" locator1="MenuItem#PERMISSIONS_LEXICON" value1="Permissions" />
 
-		<execute function="SelectFrame" locator1="Permissions#PERMISSIONS_IFRAME" />
+		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
 	</command>
 
 	<command name="gotoEditDuplicateEntryCP">
@@ -1242,8 +1242,6 @@
 		<execute function="Confirm#assertConfirmationNoWait" value1="Selecting a new template deletes all unsaved content. Do you want to proceed?" />
 
 		<execute macro="IFrame#selectTopFrame" />
-
-		<execute macro="IFrame#selectEditAssetFrame" />
 
 		<execute macro="Panel#expandPanel">
 			<var name="panelHeading" value="Structure and Template" />

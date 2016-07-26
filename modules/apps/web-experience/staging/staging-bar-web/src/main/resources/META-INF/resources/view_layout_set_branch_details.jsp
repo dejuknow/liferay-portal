@@ -20,7 +20,7 @@
 LayoutRevision layoutRevision = (LayoutRevision)request.getAttribute("view.jsp-layoutRevision");
 LayoutSetBranch layoutSetBranch = (LayoutSetBranch)request.getAttribute("view.jsp-layoutSetBranch");
 List<LayoutSetBranch> layoutSetBranches = (List<LayoutSetBranch>)request.getAttribute("view.jsp-layoutSetBranches");
-String stagingFriendlyURL = (String)request.getAttribute("view.jsp-stagingFriendlyURL");
+String stagingURL = (String)request.getAttribute("view.jsp-stagingURL");
 %>
 
 <c:if test="<%= (layoutSetBranches != null) && (layoutSetBranches.size() >= 1) %>">
@@ -44,7 +44,7 @@ String stagingFriendlyURL = (String)request.getAttribute("view.jsp-stagingFriend
 				%>
 
 					<portlet:actionURL name="selectLayoutSetBranch" var="curLayoutSetBranchURL">
-						<portlet:param name="redirect" value="<%= stagingFriendlyURL %>" />
+						<portlet:param name="redirect" value="<%= stagingURL %>" />
 						<portlet:param name="groupId" value="<%= String.valueOf(curLayoutSetBranch.getGroupId()) %>" />
 						<portlet:param name="privateLayout" value="<%= String.valueOf(layout.isPrivateLayout()) %>" />
 						<portlet:param name="layoutSetBranchId" value="<%= String.valueOf(curLayoutSetBranch.getLayoutSetBranchId()) %>" />

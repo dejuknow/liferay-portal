@@ -63,7 +63,7 @@ public class ProxyFactory {
 	}
 
 	/**
-	 * @deprecated As of 7.1.0, replaced by {@link
+	 * @deprecated As of 7.0.0, replaced by {@link
 	 *             #newServiceTrackedInstance(Class, Class, String)}
 	 */
 	@Deprecated
@@ -146,7 +146,7 @@ public class ProxyFactory {
 	}
 
 	/**
-	 * @deprecated As of 7.1.0, replaced by {@link
+	 * @deprecated As of 7.0.0, replaced by {@link
 	 *             #newServiceTrackedInstance(Class, Class, String, String)}
 	 */
 	@Deprecated

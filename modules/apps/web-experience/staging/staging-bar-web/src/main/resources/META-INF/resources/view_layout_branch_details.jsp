@@ -19,7 +19,7 @@
 <%
 LayoutBranch layoutBranch = (LayoutBranch)request.getAttribute("view.jsp-layoutBranch");
 LayoutRevision layoutRevision = (LayoutRevision)request.getAttribute("view.jsp-layoutRevision");
-String stagingFriendlyURL = (String)request.getAttribute("view.jsp-stagingFriendlyURL");
+String stagingURL = (String)request.getAttribute("view.jsp-stagingURL");
 %>
 
 <%
@@ -48,7 +48,7 @@ List<LayoutRevision> layoutRevisions = LayoutRevisionLocalServiceUtil.getChildLa
 			%>
 
 				<portlet:actionURL name="selectLayoutBranch" var="curLayoutBranchURL">
-					<portlet:param name="redirect" value="<%= stagingFriendlyURL %>" />
+					<portlet:param name="redirect" value="<%= stagingURL %>" />
 					<portlet:param name="groupId" value="<%= String.valueOf(curLayoutBranch.getGroupId()) %>" />
 					<portlet:param name="layoutBranchId" value="<%= String.valueOf(curLayoutBranch.getLayoutBranchId()) %>" />
 					<portlet:param name="layoutSetBranchId" value="<%= String.valueOf(curLayoutBranch.getLayoutSetBranchId()) %>" />
