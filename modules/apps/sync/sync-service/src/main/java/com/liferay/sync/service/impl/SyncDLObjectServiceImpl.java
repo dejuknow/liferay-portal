@@ -527,9 +527,9 @@ public class SyncDLObjectServiceImpl extends SyncDLObjectServiceBaseImpl {
 					SyncConstants.SYNC_OAUTH_CONSUMER_SECRET);
 
 				syncContext.setOAuthConsumerSecret(oAuthConsumerSecret);
-			}
 
-			syncContext.setOAuthEnabled(oAuthEnabled);
+				syncContext.setOAuthEnabled(true);
+			}
 
 			syncContext.setPortletPreferencesMap(getPortletPreferencesMap());
 
@@ -538,6 +538,32 @@ public class SyncDLObjectServiceImpl extends SyncDLObjectServiceBaseImpl {
 			syncContext.setPluginVersion(String.valueOf(bundle.getVersion()));
 
 			if (!user.isDefaultUser()) {
+				boolean lanEnabled = PrefsPropsUtil.getBoolean(
+					user.getCompanyId(),
+					SyncServiceConfigurationKeys.SYNC_LAN_ENABLED,
+					SyncServiceConfigurationValues.SYNC_LAN_ENABLED);
+
+				if (lanEnabled) {
+					String lanCertificate = PrefsPropsUtil.getString(
+						user.getCompanyId(),
+						SyncConstants.SYNC_LAN_CERTIFICATE);
+
+					syncContext.setLanCertificate(lanCertificate);
+
+					syncContext.setLanEnabled(true);
+
+					String lanKey = PrefsPropsUtil.getString(
+						user.getCompanyId(), SyncConstants.SYNC_LAN_KEY);
+
+					syncContext.setLanKey(lanKey);
+
+					String lanServerUuid = PrefsPropsUtil.getString(
+						user.getCompanyId(),
+						SyncConstants.SYNC_LAN_SERVER_UUID);
+
+					syncContext.setLanServerUuid(lanServerUuid);
+				}
+
 				syncContext.setPortalBuildNumber(ReleaseInfo.getBuildNumber());
 				syncContext.setUser(user);
 
@@ -588,8 +614,9 @@ public class SyncDLObjectServiceImpl extends SyncDLObjectServiceBaseImpl {
 				lastAccessTime, repositoryId, events);
 
 			if (count == 0) {
-				SyncDLObjectUpdate syncDLObjectUpdate = new SyncDLObjectUpdate(
-					Collections.<SyncDLObject>emptyList(), 0, lastAccessTime);
+				SyncDLObjectUpdate syncDLObjectUpdate = getSyncDLObjectUpdate(
+					Collections.<SyncDLObject>emptyList(), 0, lastAccessTime,
+					lastAccessTime);
 
 				return syncDLObjectUpdate.toString();
 			}
@@ -623,9 +650,9 @@ public class SyncDLObjectServiceImpl extends SyncDLObjectServiceBaseImpl {
 			SyncDLObject syncDLObject = syncDLObjects.get(
 				syncDLObjects.size() - 1);
 
-			SyncDLObjectUpdate syncDLObjectUpdate = new SyncDLObjectUpdate(
+			SyncDLObjectUpdate syncDLObjectUpdate = getSyncDLObjectUpdate(
 				checkSyncDLObjects(syncDLObjects, repositoryId, lastAccessTime),
-				count, syncDLObject.getModifiedTime());
+				count, syncDLObject.getModifiedTime(), lastAccessTime);
 
 			return syncDLObjectUpdate.toString();
 		}
@@ -652,9 +679,10 @@ public class SyncDLObjectServiceImpl extends SyncDLObjectServiceBaseImpl {
 			SyncDLObject syncDLObject = syncDLObjects.get(
 				syncDLObjects.size() - 1);
 
-			SyncDLObjectUpdate syncDLObjectUpdate = new SyncDLObjectUpdate(
+			SyncDLObjectUpdate syncDLObjectUpdate = getSyncDLObjectUpdate(
 				checkSyncDLObjects(syncDLObjects, repositoryId, lastAccessTime),
-				syncDLObjects.size(), syncDLObject.getModifiedTime());
+				syncDLObjects.size(), syncDLObject.getModifiedTime(),
+				lastAccessTime);
 
 			return syncDLObjectUpdate.toString();
 		}
@@ -1054,6 +1082,28 @@ public class SyncDLObjectServiceImpl extends SyncDLObjectServiceBaseImpl {
 		}
 	}
 
+	protected static SyncDLObjectUpdate getSyncDLObjectUpdate(
+		List<SyncDLObject> syncDLObjects, int resultsTotal, long lastAccessTime,
+		long previousLastAccessTime) {
+
+		Map<String, Long> settingsModifiedTimes = new HashMap<>();
+
+		long syncContextModifiedTime = PrefsPropsUtil.getLong(
+			CompanyThreadLocal.getCompanyId(),
+			SyncConstants.SYNC_CONTEXT_MODIFIED_TIME);
+
+		if ((syncContextModifiedTime != 0) &&
+			(syncContextModifiedTime > previousLastAccessTime)) {
+
+			settingsModifiedTimes.put(
+				SyncConstants.SYNC_CONTEXT_MODIFIED_TIME,
+				syncContextModifiedTime);
+		}
+
+		return new SyncDLObjectUpdate(
+			syncDLObjects, resultsTotal, lastAccessTime, settingsModifiedTimes);
+	}
+
 	protected static boolean syncDeviceSupports(int featureSet) {
 		SyncDevice syncDevice = SyncDeviceThreadLocal.getSyncDevice();
 
@@ -1353,7 +1403,14 @@ public class SyncDLObjectServiceImpl extends SyncDLObjectServiceBaseImpl {
 
 		SyncDLObject syncDLObject = SyncUtil.toSyncDLObject(fileEntry, event);
 
-		return checkModifiedTime(syncDLObject, fileEntry.getFileEntryId());
+		checkModifiedTime(syncDLObject, fileEntry.getFileEntryId());
+
+		String lanTokenKey = SyncUtil.getLanTokenKey(
+			syncDLObject.getModifiedTime(), fileEntry.getFileEntryId(), true);
+
+		syncDLObject.setLanTokenKey(lanTokenKey);
+
+		return syncDLObject;
 	}
 
 	protected SyncDLObject toSyncDLObject(Folder folder, String event)

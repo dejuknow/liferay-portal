@@ -77,7 +77,7 @@
 			</else>
 		</if>
 
-		<execute function="Type#sendKeys" locator1="AlloyEditor#TITLE_FIELD" value1="${kbArticleTitle}" />
+		<execute function="Type#typeEditor" locator1="AlloyEditor#TITLE_FIELD" value1="${kbArticleTitle}" />
 
 		<execute macro="Panel#expandPanel">
 			<var name="panelHeading" value="Configuration" />
@@ -102,8 +102,11 @@
 		<if>
 			<equals arg1="${kbArticleAddViaSource}" arg2="true" />
 			<then>
-				<execute function="AssertClick" locator1="Button#SOURCE" value1="Source" />
-				<execute function="Type" locator1="CKEditor#FIELD_SOURCE_ON" value1="${kbArticleContentSource}" />
+				<execute function="Click" locator1="AlloyEditor#CONTENT_FIELD" />
+
+				<execute function="Click" locator1="Button#EDITOR_SWITCH" />
+
+				<execute function="Type#sendKeysAceEditor" locator1="TextArea#ACE_EDITOR" value1="${kbArticleContentSource}" />
 			</then>
 			<else>
 				<execute function="Type#typeEditor" locator1="AlloyEditor#CONTENT_FIELD" value1="${kbArticleContent}" />
@@ -260,10 +263,14 @@
 		<if>
 			<isset var="emailFrom" />
 			<then>
-				<execute function="AssertClick" locator1="CPKnowledgebaseadminConfiguration#NAVIGATION_EMAIL_FROM_TAB" value1="Email From" />
+				<execute function="AssertClick" locator1="KnowledgeBaseConfiguration#NAVIGATION_TAB_EMAIL_FROM" value1="Email From" />
+
 				<execute function="Type" locator1="KnowledgeBaseConfiguration#EMAIL_FROM_NAME_FIELD" value1="${userName}" />
+
 				<execute function="Type" locator1="KnowledgeBaseConfiguration#EMAIL_FROM_ADDRESS_FIELD" value1="${userEmailAddress}" />
+
 				<execute macro="Button#clickSave" />
+
 				<execute macro="Alert#viewSuccessMessage" />
 			</then>
 		</if>
@@ -271,9 +278,18 @@
 		<if>
 			<isset var="suggestionReceived" />
 			<then>
-				<execute function="AssertClick" locator1="CPKnowledgebaseadminConfiguration#NAVIGATION_SUGGESTION_RECEIVED_TAB" value1="Suggestion Received Email" />
-				<execute function="Type" locator1="KnowledgeBaseConfiguration#SUGGESTION_RECEIVED_EMAIL_BODY_FIELD" value1="[$COMMENT_CREATE_DATE$] &lt;a href=&quot;[$ARTICLE_URL$]&quot;&gt;View your received suggestion here&lt;/a&gt;" />
+				<execute function="AssertClick" locator1="KnowledgeBaseConfiguration#NAVIGATION_TAB_SUGGESTION_RECEIVED" value1="Suggestion Received Email" />
+
+				<execute function="SelectFrame" locator1="KnowledgeBaseConfiguration#SUGGESTION_RECEIVED_EMAIL_EDITOR_IFRAME" />
+
+				<execute function="Type" locator1="CKEditor#BODY" value1="[$COMMENT_CREATE_DATE$] &lt;a href=&quot;[$ARTICLE_URL$]&quot;&gt;View your received suggestion here&lt;/a&gt;" />
+
+				<execute function="SelectFrame" value1="relative=top" />
+
+				<execute function="SelectFrame" locator1="KnowledgeBaseConfiguration#IFRAME" />
+
 				<execute macro="Button#clickSave" />
+
 				<execute macro="Alert#viewSuccessMessage" />
 			</then>
 		</if>
@@ -281,9 +297,18 @@
 		<if>
 			<isset var="suggestionInProgress" />
 			<then>
-				<execute function="AssertClick" locator1="CPKnowledgebaseadminConfiguration#NAVIGATION_SUGGESTION_IN_PROGRESS_TAB" value1="Suggestion in Progress Email" />
-				<execute function="Type" locator1="KnowledgeBaseConfiguration#SUGGESTION_IN_PROGRESS_EMAIL_BODY_FIELD" value1="[$COMMENT_CREATE_DATE$] &lt;a href=&quot;[$ARTICLE_URL$]&quot;&gt;View your suggestion that is in progress here&lt;/a&gt;" />
+				<execute function="AssertClick" locator1="KnowledgeBaseConfiguration#NAVIGATION_TAB_SUGGESTION_IN_PROGRESS" value1="Suggestion in Progress Email" />
+
+				<execute function="SelectFrame" locator1="KnowledgeBaseConfiguration#SUGGESTION_IN_PROGRESS_EMAIL_EDITOR_IFRAME" />
+
+				<execute function="Type" locator1="CKEditor#BODY" value1="[$COMMENT_CREATE_DATE$] &lt;a href=&quot;[$ARTICLE_URL$]&quot;&gt;View your suggestion that is in progress here&lt;/a&gt;" />
+
+				<execute function="SelectFrame" value1="relative=top" />
+
+				<execute function="SelectFrame" locator1="KnowledgeBaseConfiguration#IFRAME" />
+
 				<execute macro="Button#clickSave" />
+
 				<execute macro="Alert#viewSuccessMessage" />
 			</then>
 		</if>
@@ -291,9 +316,18 @@
 		<if>
 			<isset var="suggestionResolved" />
 			<then>
-				<execute function="AssertClick" locator1="CPKnowledgebaseadminConfiguration#NAVIGATION_SUGGESTION_RESOLVED_TAB" value1="Suggestion Resolved Email" />
-				<execute function="Type" locator1="KnowledgeBaseConfiguration#SUGGESTION_RESOLVED_EMAIL_BODY_FIELD" value1="[$COMMENT_CREATE_DATE$] &lt;a href=&quot;[$ARTICLE_URL$]&quot;&gt;View your resolved suggestion here&lt;/a&gt;" />
+				<execute function="AssertClick" locator1="KnowledgeBaseConfiguration#NAVIGATION_TAB_SUGGESTION_RESOLVED" value1="Suggestion Resolved Email" />
+
+				<execute function="SelectFrame" locator1="KnowledgeBaseConfiguration#SUGGESTION_RESOLVED_EMAIL_EDITOR_IFRAME" />
+
+				<execute function="Type" locator1="CKEditor#BODY" value1="[$COMMENT_CREATE_DATE$] &lt;a href=&quot;[$ARTICLE_URL$]&quot;&gt;View your resolved suggestion here&lt;/a&gt;" />
+
+				<execute function="SelectFrame" value1="relative=top" />
+
+				<execute function="SelectFrame" locator1="KnowledgeBaseConfiguration#IFRAME" />
+
 				<execute macro="Button#clickSave" />
+
 				<execute macro="Alert#viewSuccessMessage" />
 			</then>
 		</if>
@@ -570,13 +604,6 @@
 		<execute function="AssertTextEquals" locator1="KnowledgeBase#ARTICLE_TABLE_ARTICLE_PRIORITY" value1="${kbNewPriority}" />
 	</command>
 
-	<command name="editKBArticlePriorityViaEnterKeyCP">
-		<var name="key_kbArticleTitle" value="${kbArticleTitle}" />
-
-		<execute function="Type" locator1="KnowledgeBase#ARTICLE_TABLE_ARTICLE_PRIORITY" value1="${kbNewPriority}" />
-		<execute function="KeyPress" locator1="KnowledgeBase#ARTICLE_TABLE_ARTICLE_PRIORITY" value1="\RETURN" />
-	</command>
-
 	<command name="editPGViaKBDisplay">
 		<var name="key_kbTool" value="Edit" />
 
@@ -624,6 +651,12 @@
 
 	<command name="goBackToSearchResultsPG">
 		<execute function="AssertClick" locator1="KnowledgeBaseSearch#SEARCH_BACK_BUTTON" value1="Back" />
+	</command>
+
+	<command name="gotoChildArticleDescriptiveDetails">
+		<var name="key_kbArticleTitle" value="${kbArticleTitle}" />
+
+		<execute function="AssertClick#assertPartialTextClickAt" locator1="KnowledgeBase#DESCRIPTIVE_VIEW_CHILD_ARTICLE_DETAILS" value1="Child Article" />
 	</command>
 
 	<command name="gotoCP">
@@ -728,10 +761,10 @@
 		<if>
 			<equals arg1="${applyNumericalPrefix}" arg2="true" />
 			<then>
-				<execute function="Check" locator1="CPKnowledgebaseadminUploadZipFile#PRIORITIZATION_STRATEGY_CHECKBOX" />
+				<execute function="Check" locator1="Checkbox#PRIORITIZATION_STRATEGY" />
 			</then>
 			<else>
-				<execute function="Uncheck" locator1="CPKnowledgebaseadminUploadZipFile#PRIORITIZATION_STRATEGY_CHECKBOX" />
+				<execute function="Uncheck" locator1="Checkbox#PRIORITIZATION_STRATEGY" />
 			</else>
 		</if>
 
@@ -861,7 +894,7 @@
 			</then>
 		</if>
 
-		<execute function="AssertClick" locator1="CPKnowledgebaseadminAddarticle#CATEGORIZATION_SELECT_BUTTON" value1="Select" />
+		<execute function="AssertClick" locator1="Button#SELECT_VOCABULARY" value1="Select" />
 		<execute function="AssertClick" locator1="CPKnowledgebaseadminAddarticle#CATEGORIES_CATEGORY_UNSELECTED" value1="${categoryName}" />
 		<execute function="AssertElementPresent" locator1="CPKnowledgebaseadminAddarticle#CATEGORIES_CATEGORY_SELECTED" value1="${categoryName}" />
 		<execute function="Click" locator1="CPKnowledgebaseadminAddarticle#CATEGORIES_CLOSE_BUTTON" />
@@ -900,7 +933,7 @@
 			<var name="portletOption" value="Configuration" />
 		</execute>
 
-		<execute function="SelectFrame" locator1="Configuration#CONFIGURATION_IFRAME" />
+		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
 
 		<execute function="AssertClick" locator1="Button#SELECT" value1="Select" />
 
@@ -914,7 +947,7 @@
 
 		<execute function="SelectFrame" value1="relative=top" />
 
-		<execute function="SelectFrame" locator1="Configuration#CONFIGURATION_IFRAME" />
+		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
 
 		<execute macro="Button#clickSave" />
 
@@ -985,11 +1018,11 @@
 	</command>
 
 	<command name="subscribeCP">
-		<execute function="AssertClick" locator1="KnowledgeBase#LINK_SUBSCRIBE" value1="Subscribe" />
+		<execute function="Click" locator1="Icon#HEADER_VERTICAL_ELLIPSIS" />
+
+		<execute function="AssertClick" locator1="MenuItem#SUBSCRIBE" value1="Subscribe" />
 
 		<execute macro="Alert#viewSuccessMessage" />
-
-		<execute function="AssertElementPresent" locator1="KnowledgeBase#LINK_UNSUBSCRIBE" />
 	</command>
 
 	<command name="tearDownCP">
@@ -1096,7 +1129,7 @@
 
 		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
 
-		<execute function="AssertClick" locator1="MenuItem#EDIT" value1="EDIT" />
+		<execute function="AssertClick" locator1="MenuItem#EDIT" value1="Edit" />
 
 		<execute function="AssertClick" locator1="KnowledgeBaseArticle#ATTACHMENTS_HEADER_COLLAPSED" value1="Attachments" />
 		<execute function="AssertElementPresent" locator1="KnowledgeBaseArticle#ATTACHMENTS_SAVED_ATTACHMENTS_CONTAINER" />
@@ -1204,6 +1237,15 @@
 				<execute function="AssertAlertNotPresent" locator1="KnowledgeBaseArticle#ATTACHMENTS_SAVED_ATTACHMENTS_CONTAINER" />
 			</then>
 		</if>
+	</command>
+
+	<command name="viewCPWithHTML">
+		<var name="key_kbArticleTitle" value="${kbArticleTitle}" />
+
+		<execute function="AssertClick" locator1="KnowledgeBase#DESCRIPTIVE_VIEW_ARTICLE_TITLE" value1="${kbArticleTitle}" />
+
+		<execute function="AssertTextEquals" locator1="KnowledgeBaseArticle#TITLE" value1="${kbArticleTitle}" />
+		<execute function="AssertTextEquals" locator1="KnowledgeBaseArticle#HTML_BOLD_CONTENT" value1="${kbArticleContent}" />
 	</command>
 
 	<command name="viewDefaultCP">

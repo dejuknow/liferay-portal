@@ -160,7 +160,7 @@
 </tr>
 <tr>
 	<td>CANCEL</td>
-	<td>//a[contains(@class,'cancel') and contains(@class,'btn')] | //button[contains(.,'Cancel')]</td>
+	<td>//a[contains(@class,'cancel') and contains(@class,'btn')] | //button[contains(.,'Cancel')] | //a[contains(@class,'btn') and contains(.,'Cancel')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -646,6 +646,11 @@
 <tr>
 	<td>SELECT_SCOPE</td>
 	<td>//div[contains(@class,'btn-group')]/a[@title='Default']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SELECT_VOCABULARY</td>
+	<td>//button[contains(@title,'Select Vocabulary')]</td>
 	<td></td>
 </tr>
 <tr>

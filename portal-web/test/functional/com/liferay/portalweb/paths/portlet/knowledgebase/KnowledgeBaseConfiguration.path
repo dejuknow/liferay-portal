@@ -176,8 +176,8 @@
 </tr>
 <!--SUGGESTION_RECEIVED_EMAIL-->
 <tr>
-	<td>SUGGESTION_RECEIVED_EMAIL_BODY_FIELD</td>
-	<td>//div/textarea[contains(@id,'emailKBArticleSuggestionReceivedBody')]</td>
+	<td>SUGGESTION_RECEIVED_EMAIL_EDITOR_IFRAME</td>
+	<td>//li[@class='tab active' and contains(.,'Suggestion Received Email')]/../..//div[contains(@id,'SuggestionReceived')]//div[contains(@class,'cke_inner')]//iframe</td>
 	<td></td>
 </tr>
 <tr>
@@ -187,8 +187,8 @@
 </tr>
 <!--SUGGESTION_IN_PROGRESS_EMAIL-->
 <tr>
-	<td>SUGGESTION_IN_PROGRESS_EMAIL_BODY_FIELD</td>
-	<td>//div/textarea[contains(@id,'emailKBArticleSuggestionInProgress')]</td>
+	<td>SUGGESTION_IN_PROGRESS_EMAIL_EDITOR_IFRAME</td>
+	<td>//li[@class='tab active' and contains(.,'Suggestion in Progress Email')]/../..//div[contains(@id,'SuggestionInProgress')]//div[contains(@class,'cke_inner')]//iframe</td>
 	<td></td>
 </tr>
 <tr>
@@ -198,8 +198,8 @@
 </tr>
 <!--SUGGESTION_RESOLVED_EMAIL-->
 <tr>
-	<td>SUGGESTION_RESOLVED_EMAIL_BODY_FIELD</td>
-	<td>//div/textarea[contains(@id,'emailKBArticleSuggestionResolved')]</td>
+	<td>SUGGESTION_RESOLVED_EMAIL_EDITOR_IFRAME</td>
+	<td>//li[@class='tab active' and contains(.,'Suggestion Resolved Email')]/../..//div[contains(@id,'SuggestionResolved')]//div[contains(@class,'cke_inner')]//iframe</td>
 	<td></td>
 </tr>
 </tbody>

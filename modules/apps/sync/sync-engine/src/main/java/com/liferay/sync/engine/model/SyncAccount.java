@@ -41,6 +41,8 @@ public class SyncAccount extends StateAwareModel {
 
 	public static final int UI_EVENT_SYNC_ACCOUNT_NOT_ACTIVE = 8;
 
+	public static final int UI_EVENT_SYNC_ACCOUNT_WIPED = 9;
+
 	public static final int UI_EVENT_SYNC_SERVICES_NOT_ACTIVE = 6;
 
 	public static final int UI_EVENT_SYNC_WEB_MISSING = 4;
@@ -137,6 +139,10 @@ public class SyncAccount extends StateAwareModel {
 
 	public long getSyncAccountId() {
 		return syncAccountId;
+	}
+
+	public long getSyncContextModifiedTime() {
+		return syncContextModifiedTime;
 	}
 
 	public boolean getTrustSelfSigned() {
@@ -246,6 +252,10 @@ public class SyncAccount extends StateAwareModel {
 		this.syncAccountId = syncAccountId;
 	}
 
+	public void setSyncContextModifiedTime(long syncContextModifiedTime) {
+		this.syncContextModifiedTime = syncContextModifiedTime;
+	}
+
 	public void setTrustSelfSigned(boolean trustSelfSigned) {
 		this.trustSelfSigned = trustSelfSigned;
 	}
@@ -311,6 +321,9 @@ public class SyncAccount extends StateAwareModel {
 
 	@DatabaseField(generatedId = true, useGetSet = true)
 	protected long syncAccountId;
+
+	@DatabaseField(useGetSet = true)
+	protected long syncContextModifiedTime;
 
 	@DatabaseField(useGetSet = true)
 	protected boolean trustSelfSigned;

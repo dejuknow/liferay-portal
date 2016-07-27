@@ -1,6 +1,6 @@
 Bundle-Name: Liferay Sync Service
 Bundle-SymbolicName: com.liferay.sync.service
-Bundle-Version: 1.1.0
+Bundle-Version: 1.2.0
 Export-Package:\
 	com.liferay.sync.service.configuration,\
 	com.liferay.sync.util
@@ -8,3 +8,7 @@ Liferay-Releng-Module-Group-Description:
 Liferay-Releng-Module-Group-Title: Sync Connector
 Liferay-Require-SchemaVersion: 1.0.3
 Liferay-Service: true
+-includeresource:\
+	@bcpg-jdk15on-[0-9]*.jar,\
+	@bcpkix-jdk15on-[0-9]*.jar,\
+	@bcprov-jdk15on-[0-9]*.jar

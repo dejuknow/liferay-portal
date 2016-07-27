@@ -161,8 +161,8 @@ public class LiferaySeleniumHelper {
 
 		if (!pattern.equals(confirmation)) {
 			throw new Exception(
-				"Pattern \"" + pattern + "\" does not match \"" + confirmation +
-					"\"");
+				"Expected text \"" + pattern +
+					"\" does not match actual text \"" + confirmation + "\"");
 		}
 	}
 
@@ -606,8 +606,9 @@ public class LiferaySeleniumHelper {
 			String text = liferaySelenium.getSelectedLabel(selectLocator);
 
 			throw new Exception(
-				"Pattern \"" + pattern + "\" does not match \"" + text +
-					"\" at \"" + selectLocator + "\"");
+				"Expected text \"" + pattern +
+					"\" does not match actual text \"" + text + "\" at \"" +
+						selectLocator + "\"");
 		}
 	}
 
@@ -621,8 +622,9 @@ public class LiferaySeleniumHelper {
 			String text = liferaySelenium.getText(locator);
 
 			throw new Exception(
-				"Pattern \"" + pattern + "\" does not match \"" + text +
-					"\" at \"" + locator + "\"");
+				"Expected text \"" + pattern +
+					"\" does not match actual text \"" + text + "\" at \"" +
+						locator + "\"");
 		}
 	}
 
@@ -654,8 +656,9 @@ public class LiferaySeleniumHelper {
 			String value = liferaySelenium.getElementValue(locator);
 
 			throw new Exception(
-				"Pattern \"" + pattern + "\" does not match \"" + value +
-					"\" at \"" + locator + "\"");
+				"Expected text \"" + pattern +
+					"\" does not match actual text \"" + value + "\" at \"" +
+						locator + "\"");
 		}
 	}
 
@@ -1536,8 +1539,21 @@ public class LiferaySeleniumHelper {
 			LiferaySelenium liferaySelenium, String locator)
 		throws Exception {
 
+		liferaySelenium.waitForElementNotPresent(locator, null);
+	}
+
+	public static void waitForElementNotPresent(
+			LiferaySelenium liferaySelenium, String locator, String timeout)
+		throws Exception {
+
+		int wait = PropsValues.TIMEOUT_EXPLICIT_WAIT;
+
+		if (Validator.isNotNull(timeout)) {
+			wait = GetterUtil.getInteger(timeout);
+		}
+
 		for (int second = 0;; second++) {
-			if (second >= PropsValues.TIMEOUT_EXPLICIT_WAIT) {
+			if (second >= wait) {
 				liferaySelenium.assertElementNotPresent(locator);
 			}
 
@@ -1557,8 +1573,21 @@ public class LiferaySeleniumHelper {
 			LiferaySelenium liferaySelenium, String locator)
 		throws Exception {
 
+		liferaySelenium.waitForElementPresent(locator, null);
+	}
+
+	public static void waitForElementPresent(
+			LiferaySelenium liferaySelenium, String locator, String timeout)
+		throws Exception {
+
+		int wait = PropsValues.TIMEOUT_EXPLICIT_WAIT;
+
+		if (Validator.isNotNull(timeout)) {
+			wait = GetterUtil.getInteger(timeout);
+		}
+
 		for (int second = 0;; second++) {
-			if (second >= PropsValues.TIMEOUT_EXPLICIT_WAIT) {
+			if (second >= wait) {
 				liferaySelenium.assertElementPresent(locator);
 			}
 

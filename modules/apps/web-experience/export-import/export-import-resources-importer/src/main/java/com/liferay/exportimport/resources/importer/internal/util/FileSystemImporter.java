@@ -224,7 +224,7 @@ public class FileSystemImporter extends BaseImporter {
 					getKey(fileName), getMap(name), null,
 					DDMTemplateConstants.TEMPLATE_TYPE_DISPLAY,
 					StringPool.BLANK, getDDMTemplateLanguage(file.getName()),
-					script, false, false, StringPool.BLANK, null,
+					script, true, false, StringPool.BLANK, null,
 					serviceContext);
 			}
 			else {
@@ -233,7 +233,7 @@ public class FileSystemImporter extends BaseImporter {
 					ddmTemplate.getClassPK(), getMap(name), null,
 					DDMTemplateConstants.TEMPLATE_TYPE_DISPLAY,
 					StringPool.BLANK, getDDMTemplateLanguage(file.getName()),
-					script, false, serviceContext);
+					script, ddmTemplate.getCacheable(), serviceContext);
 			}
 		}
 		catch (PortalException pe) {
@@ -604,7 +604,7 @@ public class FileSystemImporter extends BaseImporter {
 					portal.getClassNameId(DDMStructure.class), ddmStructureId,
 					portal.getClassNameId(JournalArticle.class),
 					getKey(fileName), getMap(name), null, type, mode, language,
-					script, false, false, StringPool.BLANK, null,
+					script, true, false, StringPool.BLANK, null,
 					serviceContext);
 			}
 			else {
@@ -612,7 +612,8 @@ public class FileSystemImporter extends BaseImporter {
 					userId, ddmTemplate.getTemplateId(),
 					portal.getClassNameId(DDMStructure.class), getMap(name),
 					null, DDMTemplateConstants.TEMPLATE_TYPE_DISPLAY, null,
-					language, script, false, false, null, null, serviceContext);
+					language, script, ddmTemplate.getCacheable(),
+					serviceContext);
 			}
 		}
 		catch (PortalException pe) {
@@ -698,7 +699,7 @@ public class FileSystemImporter extends BaseImporter {
 					portal.getClassNameId(JournalArticle.class),
 					getKey(fileName), getMap(name), null,
 					DDMTemplateConstants.TEMPLATE_TYPE_DISPLAY, null, language,
-					replaceFileEntryURL(script), false, false, null, null,
+					replaceFileEntryURL(script), true, false, null, null,
 					serviceContext);
 			}
 			else {
@@ -706,8 +707,8 @@ public class FileSystemImporter extends BaseImporter {
 					userId, ddmTemplate.getTemplateId(),
 					portal.getClassNameId(DDMStructure.class), getMap(name),
 					null, DDMTemplateConstants.TEMPLATE_TYPE_DISPLAY, null,
-					language, replaceFileEntryURL(script), false, false, null,
-					null, serviceContext);
+					language, replaceFileEntryURL(script),
+					ddmTemplate.getCacheable(), serviceContext);
 			}
 		}
 		catch (PortalException pe) {

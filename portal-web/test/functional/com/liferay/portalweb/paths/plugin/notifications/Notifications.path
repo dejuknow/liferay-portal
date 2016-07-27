@@ -41,7 +41,7 @@
 <!--NOTIFICATIONS-->
 <tr>
 	<td>MARK_AS_READ</td>
-	<td>//span[contains(.,'Mark as Read')]</td>
+	<td>//a[contains(.,'Mark as Read')]/span[1]</td>
 	<td></td>
 </tr>
 <tr>

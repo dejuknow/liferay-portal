@@ -214,29 +214,6 @@
 		</for>
 	</command>
 
-	<command name="CancelKBArticleSuggestion" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticleSuggestion#cancelSuggestionPG">
-			<var name="kbArticleContent" value="Knowledge Base Article Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-			<var name="kbSuggestionBody" value="Knowledge Base Article Suggestion" />
-		</execute>
-	</command>
-
 	<command name="CannotViewDuplicateBreadcrumbsWhenAddingParentArticle" priority="3" >
 		<execute macro="Navigator#openURL" />
 
@@ -611,45 +588,6 @@
 			<var name="kbArticleTitle" value="KB Article Title Edit" />
 			<var name="kbArticleTitleAddedDiff" value="Edit" />
 			<var name="viewNoXMLInTitle" value="true" />
-		</execute>
-	</command>
-
-	<command name="ViewKBArticleByPriority" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article1 Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article1 Title" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article2 Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article2 Title" />
-		</execute>
-
-		<execute macro="KBArticle#setPriorityCP">
-			<var name="kbArticleContent" value="Knowledge Base Article2 Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article2 Title" />
-			<var name="kbPriority" value="1.0" />
-		</execute>
-
-		<execute macro="KBArticle#setPriorityCP">
-			<var name="kbArticleContent" value="Knowledge Base Article1 Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article1 Title" />
-			<var name="kbPriority" value="2.0" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticle#viewViaKBDisplayPG">
-			<var name="kbArticleContent" value="Knowledge Base Article2 Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article2 Title" />
 		</execute>
 	</command>
 

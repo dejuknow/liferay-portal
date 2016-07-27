@@ -4,7 +4,7 @@
 ;
 [subrepo]
 	cmdver = liferay
-	commit = c70296cae780048640c91ac3bd37a24903d0f228
+	commit = 6e3837e9458f6f650d5b42090c6ab4a0c037368d
 	mode = push
-	parent = 44addd9cbf0cc11b3e1199f871c167c8d5a00704
+	parent = 4e0440189c32e27ad40e4c33fbab6bb87c6426b4
 	remote = git@github.com:liferay/com-liferay-item-selector.git

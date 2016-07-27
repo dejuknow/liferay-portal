@@ -40,6 +40,11 @@ public class PortletKeys {
 
 	public static final String CALENDAR = "8";
 
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link
+	 *             com.liferay.chat.constants.ChatPortletKeys#CHAT}
+	 */
+	@Deprecated
 	public static final String CHAT = "1_WAR_chatportlet";
 
 	public static final String DIRECTORY =
@@ -83,7 +88,8 @@ public class PortletKeys {
 	public static final String LOGIN =
 		"com_liferay_login_web_portlet_LoginPortlet";
 
-	public static final String MAIL = "1_WAR_mailportlet";
+	public static final String MAIL =
+		"com_liferay_mail_web_portlet_MailPortlet";
 
 	public static final String MARKETPLACE_APP_MANAGER =
 		"3_WAR_marketplaceportlet";

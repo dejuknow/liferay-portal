@@ -234,6 +234,17 @@ public class BaseJSONHandler extends BaseHandler {
 			retryServerConnection(SyncAccount.UI_EVENT_SYNC_ACCOUNT_NOT_ACTIVE);
 		}
 		else if (exception.endsWith("SyncDeviceWipeException")) {
+			if (_logger.isDebugEnabled()) {
+				_logger.debug("Wiping Sync account {}", getSyncAccountId());
+			}
+
+			SyncAccount syncAccount = SyncAccountService.fetchSyncAccount(
+				getSyncAccountId());
+
+			syncAccount.setUiEvent(SyncAccount.UI_EVENT_SYNC_ACCOUNT_WIPED);
+
+			SyncAccountService.update(syncAccount);
+
 			SyncAccountService.deleteSyncAccount(getSyncAccountId(), false);
 		}
 		else if (exception.endsWith("SyncServicesUnavailableException")) {

@@ -4,6 +4,8 @@
 			<var name="panelHeading" value="Repository Configuration" />
 		</execute>
 
+		<execute function="Select" locator1="DocumentsAndMediaEditRepository#REPOSITORY_TYPE_SELECT" value1="Documentum" />
+
 		<execute function="Type" locator1="DocumentsAndMediaEditRepository#CABINET_FIELD" value1="${dmCabinetName}" />
 		<execute function="Type" locator1="DocumentsAndMediaEditRepository#REPOSITORY_FIELD" value1="${dmRepositoryFieldName}" />
 	</command>
