@@ -118,6 +118,8 @@ public class SyncDLObjectServiceImpl extends SyncDLObjectServiceBaseImpl {
 
 			checkFolder(folderId);
 
+			SyncUtil.setFileEntryType(repositoryId, folderId, serviceContext);
+
 			if (!group.isUser() &&
 				ArrayUtil.isEmpty(serviceContext.getGroupPermissions())) {
 
@@ -303,6 +305,8 @@ public class SyncDLObjectServiceImpl extends SyncDLObjectServiceBaseImpl {
 			SyncUtil.checkSyncEnabled(group.getGroupId());
 
 			checkFolder(folderId);
+
+			SyncUtil.setFileEntryType(repositoryId, folderId, serviceContext);
 
 			FileEntry sourceFileEntry = dlAppLocalService.getFileEntry(
 				sourceFileEntryId);
@@ -767,6 +771,9 @@ public class SyncDLObjectServiceImpl extends SyncDLObjectServiceBaseImpl {
 			SyncUtil.checkSyncEnabled(fileEntry.getGroupId());
 
 			checkFileEntry(fileEntry);
+
+			SyncUtil.setFileEntryType(
+				fileEntry.getGroupId(), newFolderId, serviceContext);
 
 			fileEntry = dlAppService.moveFileEntry(
 				fileEntryId, newFolderId, serviceContext);
