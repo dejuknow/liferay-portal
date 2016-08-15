@@ -25,4 +25,7 @@ public class SyncPortletKeys {
 	public static final String SYNC_DEVICES_PORTLET =
 		"com_liferay_sync_web_portlet_SyncDevicesPortlet";
 
+	public static final String SYNC_FILE_PORTLET =
+		"com_liferay_sync_web_portlet_SyncFilePortlet";
+
 }

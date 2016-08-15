@@ -114,7 +114,8 @@ public class SyncRedirectServlet extends HttpServlet {
 
 	protected boolean isValidRedirect(String path) {
 		if (path.equals("document_library/find_folder") ||
-			path.equals("document_library/find_file_entry")) {
+			path.equals("document_library/find_file_entry") ||
+			path.equals("sync/find_sync_file")) {
 
 			return true;
 		}
