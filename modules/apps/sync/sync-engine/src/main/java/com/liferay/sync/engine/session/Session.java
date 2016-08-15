@@ -363,6 +363,10 @@ public class Session {
 		return _httpClient;
 	}
 
+	public String getSyncJWT() {
+		return _headers.get("Sync-JWT");
+	}
+
 	public int getUploadRate() {
 		return _uploadRate;
 	}
