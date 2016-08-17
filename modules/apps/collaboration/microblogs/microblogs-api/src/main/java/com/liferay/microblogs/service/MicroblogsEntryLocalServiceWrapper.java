@@ -198,12 +198,49 @@ public class MicroblogsEntryLocalServiceWrapper
 	}
 
 	@Override
+	public int getMicroblogsEntriesCount(long companyId,
+		long creatorClassNameId, java.lang.String assetTagName) {
+		return _microblogsEntryLocalService.getMicroblogsEntriesCount(companyId,
+			creatorClassNameId, assetTagName);
+	}
+
+	@Override
+	public int getMicroblogsEntriesCount(long companyId,
+		long creatorClassNameId, long creatorClassPK) {
+		return _microblogsEntryLocalService.getMicroblogsEntriesCount(companyId,
+			creatorClassNameId, creatorClassPK);
+	}
+
+	@Override
+	public int getMicroblogsEntriesCount(long companyId,
+		long creatorClassNameId, long creatorClassPK, int type) {
+		return _microblogsEntryLocalService.getMicroblogsEntriesCount(companyId,
+			creatorClassNameId, creatorClassPK, type);
+	}
+
+	@Override
+	public int getMicroblogsEntriesCount(long companyId,
+		long creatorClassNameId, long creatorClassPK,
+		java.lang.String assetTagName, boolean andOperator) {
+		return _microblogsEntryLocalService.getMicroblogsEntriesCount(companyId,
+			creatorClassNameId, creatorClassPK, assetTagName, andOperator);
+	}
+
+	/**
+	* @deprecated As of 7.0.0
+	*/
+	@Deprecated
+	@Override
 	public int getMicroblogsEntriesCount(long creatorClassNameId,
 		java.lang.String assetTagName) {
 		return _microblogsEntryLocalService.getMicroblogsEntriesCount(creatorClassNameId,
 			assetTagName);
 	}
 
+	/**
+	* @deprecated As of 7.0.0
+	*/
+	@Deprecated
 	@Override
 	public int getMicroblogsEntriesCount(long creatorClassNameId,
 		long creatorClassPK) {
@@ -211,6 +248,10 @@ public class MicroblogsEntryLocalServiceWrapper
 			creatorClassPK);
 	}
 
+	/**
+	* @deprecated As of 7.0.0
+	*/
+	@Deprecated
 	@Override
 	public int getMicroblogsEntriesCount(long creatorClassNameId,
 		long creatorClassPK, int type) {
@@ -218,6 +259,10 @@ public class MicroblogsEntryLocalServiceWrapper
 			creatorClassPK, type);
 	}
 
+	/**
+	* @deprecated As of 7.0.0
+	*/
+	@Deprecated
 	@Override
 	public int getMicroblogsEntriesCount(long creatorClassNameId,
 		long creatorClassPK, java.lang.String assetTagName, boolean andOperator) {
@@ -333,12 +378,61 @@ public class MicroblogsEntryLocalServiceWrapper
 
 	@Override
 	public java.util.List<com.liferay.microblogs.model.MicroblogsEntry> getMicroblogsEntries(
+		long companyId, long creatorClassNameId, int type, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator obc) {
+		return _microblogsEntryLocalService.getMicroblogsEntries(companyId,
+			creatorClassNameId, type, start, end, obc);
+	}
+
+	@Override
+	public java.util.List<com.liferay.microblogs.model.MicroblogsEntry> getMicroblogsEntries(
+		long companyId, long creatorClassNameId, java.lang.String assetTagName,
+		int start, int end) {
+		return _microblogsEntryLocalService.getMicroblogsEntries(companyId,
+			creatorClassNameId, assetTagName, start, end);
+	}
+
+	@Override
+	public java.util.List<com.liferay.microblogs.model.MicroblogsEntry> getMicroblogsEntries(
+		long companyId, long creatorClassNameId, long creatorClassPK,
+		int start, int end) {
+		return _microblogsEntryLocalService.getMicroblogsEntries(companyId,
+			creatorClassNameId, creatorClassPK, start, end);
+	}
+
+	@Override
+	public java.util.List<com.liferay.microblogs.model.MicroblogsEntry> getMicroblogsEntries(
+		long companyId, long creatorClassNameId, long creatorClassPK, int type,
+		int start, int end) {
+		return _microblogsEntryLocalService.getMicroblogsEntries(companyId,
+			creatorClassNameId, creatorClassPK, type, start, end);
+	}
+
+	@Override
+	public java.util.List<com.liferay.microblogs.model.MicroblogsEntry> getMicroblogsEntries(
+		long companyId, long creatorClassNameId, long creatorClassPK,
+		java.lang.String assetTagName, boolean andOperator, int start, int end) {
+		return _microblogsEntryLocalService.getMicroblogsEntries(companyId,
+			creatorClassNameId, creatorClassPK, assetTagName, andOperator,
+			start, end);
+	}
+
+	/**
+	* @deprecated As of 7.0.0
+	*/
+	@Deprecated
+	@Override
+	public java.util.List<com.liferay.microblogs.model.MicroblogsEntry> getMicroblogsEntries(
 		long creatorClassNameId, int type, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator obc) {
 		return _microblogsEntryLocalService.getMicroblogsEntries(creatorClassNameId,
 			type, start, end, obc);
 	}
 
+	/**
+	* @deprecated As of 7.0.0
+	*/
+	@Deprecated
 	@Override
 	public java.util.List<com.liferay.microblogs.model.MicroblogsEntry> getMicroblogsEntries(
 		long creatorClassNameId, java.lang.String assetTagName, int start,
@@ -347,6 +441,10 @@ public class MicroblogsEntryLocalServiceWrapper
 			assetTagName, start, end);
 	}
 
+	/**
+	* @deprecated As of 7.0.0
+	*/
+	@Deprecated
 	@Override
 	public java.util.List<com.liferay.microblogs.model.MicroblogsEntry> getMicroblogsEntries(
 		long creatorClassNameId, long creatorClassPK, int start, int end) {
@@ -354,6 +452,10 @@ public class MicroblogsEntryLocalServiceWrapper
 			creatorClassPK, start, end);
 	}
 
+	/**
+	* @deprecated As of 7.0.0
+	*/
+	@Deprecated
 	@Override
 	public java.util.List<com.liferay.microblogs.model.MicroblogsEntry> getMicroblogsEntries(
 		long creatorClassNameId, long creatorClassPK, int type, int start,
@@ -362,6 +464,10 @@ public class MicroblogsEntryLocalServiceWrapper
 			creatorClassPK, type, start, end);
 	}
 
+	/**
+	* @deprecated As of 7.0.0
+	*/
+	@Deprecated
 	@Override
 	public java.util.List<com.liferay.microblogs.model.MicroblogsEntry> getMicroblogsEntries(
 		long creatorClassNameId, long creatorClassPK,

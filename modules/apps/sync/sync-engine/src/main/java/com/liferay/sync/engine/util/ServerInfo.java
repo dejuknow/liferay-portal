@@ -47,6 +47,10 @@ public class ServerInfo {
 		return isCompatible(syncAccountId, "1.0.0", "6.2.0.5");
 	}
 
+	public static boolean supportsRedirect(long syncAccountId) {
+		return isCompatible(syncAccountId, "1.2.0", "6.2.0.8");
+	}
+
 	public static boolean supportsRetrieveFromCache(long syncAccountId) {
 		return isCompatible(syncAccountId, "1.0.0", "6.2.0.5");
 	}

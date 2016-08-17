@@ -21,4 +21,6 @@ public interface SyncWebKeys {
 
 	public static final String IP_GEOCODER = "IP_GEOCODER";
 
+	public static final String STORAGE_ENGINE = "STORAGE_ENGINE";
+
 }

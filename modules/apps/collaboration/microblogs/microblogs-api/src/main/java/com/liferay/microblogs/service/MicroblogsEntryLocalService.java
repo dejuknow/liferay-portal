@@ -171,17 +171,50 @@ public interface MicroblogsEntryLocalService extends BaseLocalService,
 	public int getMicroblogsEntriesCount();
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getMicroblogsEntriesCount(long companyId,
+		long creatorClassNameId, java.lang.String assetTagName);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getMicroblogsEntriesCount(long companyId,
+		long creatorClassNameId, long creatorClassPK);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getMicroblogsEntriesCount(long companyId,
+		long creatorClassNameId, long creatorClassPK, int type);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getMicroblogsEntriesCount(long companyId,
+		long creatorClassNameId, long creatorClassPK,
+		java.lang.String assetTagName, boolean andOperator);
+
+	/**
+	* @deprecated As of 7.0.0
+	*/
+	@java.lang.Deprecated
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getMicroblogsEntriesCount(long creatorClassNameId,
 		java.lang.String assetTagName);
 
+	/**
+	* @deprecated As of 7.0.0
+	*/
+	@java.lang.Deprecated
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getMicroblogsEntriesCount(long creatorClassNameId,
 		long creatorClassPK);
 
+	/**
+	* @deprecated As of 7.0.0
+	*/
+	@java.lang.Deprecated
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getMicroblogsEntriesCount(long creatorClassNameId,
 		long creatorClassPK, int type);
 
+	/**
+	* @deprecated As of 7.0.0
+	*/
+	@java.lang.Deprecated
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getMicroblogsEntriesCount(long creatorClassNameId,
 		long creatorClassPK, java.lang.String assetTagName, boolean andOperator);
@@ -261,21 +294,65 @@ public interface MicroblogsEntryLocalService extends BaseLocalService,
 	public List<MicroblogsEntry> getMicroblogsEntries(int start, int end);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<MicroblogsEntry> getMicroblogsEntries(long companyId,
+		long creatorClassNameId, int type, int start, int end,
+		OrderByComparator obc);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<MicroblogsEntry> getMicroblogsEntries(long companyId,
+		long creatorClassNameId, java.lang.String assetTagName, int start,
+		int end);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<MicroblogsEntry> getMicroblogsEntries(long companyId,
+		long creatorClassNameId, long creatorClassPK, int start, int end);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<MicroblogsEntry> getMicroblogsEntries(long companyId,
+		long creatorClassNameId, long creatorClassPK, int type, int start,
+		int end);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<MicroblogsEntry> getMicroblogsEntries(long companyId,
+		long creatorClassNameId, long creatorClassPK,
+		java.lang.String assetTagName, boolean andOperator, int start, int end);
+
+	/**
+	* @deprecated As of 7.0.0
+	*/
+	@java.lang.Deprecated
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<MicroblogsEntry> getMicroblogsEntries(long creatorClassNameId,
 		int type, int start, int end, OrderByComparator obc);
 
+	/**
+	* @deprecated As of 7.0.0
+	*/
+	@java.lang.Deprecated
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<MicroblogsEntry> getMicroblogsEntries(long creatorClassNameId,
 		java.lang.String assetTagName, int start, int end);
 
+	/**
+	* @deprecated As of 7.0.0
+	*/
+	@java.lang.Deprecated
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<MicroblogsEntry> getMicroblogsEntries(long creatorClassNameId,
 		long creatorClassPK, int start, int end);
 
+	/**
+	* @deprecated As of 7.0.0
+	*/
+	@java.lang.Deprecated
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<MicroblogsEntry> getMicroblogsEntries(long creatorClassNameId,
 		long creatorClassPK, int type, int start, int end);
 
+	/**
+	* @deprecated As of 7.0.0
+	*/
+	@java.lang.Deprecated
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<MicroblogsEntry> getMicroblogsEntries(long creatorClassNameId,
 		long creatorClassPK, java.lang.String assetTagName,
