@@ -16,15 +16,16 @@ package com.liferay.sync.constants;
 
 /**
  * @author Shinn Lok
- * @deprecated As of 7.0.0, replaced by {@link SyncPortletKeys}
  */
-@Deprecated
-public class SyncAdminPortletKeys {
+public class SyncPortletKeys {
 
 	public static final String SYNC_ADMIN_PORTLET =
-		"com_liferay_sync_connector_web_portlet_SyncAdminPortlet";
+		"com_liferay_sync_web_portlet_SyncAdminPortlet";
 
 	public static final String SYNC_DEVICES_PORTLET =
-		"com_liferay_sync_connector_web_portlet_SyncDevicesPortlet";
+		"com_liferay_sync_web_portlet_SyncDevicesPortlet";
+
+	public static final String SYNC_FILE_PORTLET =
+		"com_liferay_sync_web_portlet_SyncFilePortlet";
 
 }
