@@ -17,6 +17,7 @@ package com.liferay.petra.json.web.service.client;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 
+import java.net.ProxySelector;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
@@ -82,6 +83,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.client.ProxyAuthenticationStrategy;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
@@ -97,6 +99,8 @@ public class JSONWebServiceClientImpl implements JSONWebServiceClient {
 
 	public void afterPropertiesSet() {
 		HttpClientBuilder httpClientBuilder = HttpClients.custom();
+
+		httpClientBuilder = httpClientBuilder.useSystemProperties();
 
 		HttpClientConnectionManager httpClientConnectionManager =
 			getPoolingHttpClientConnectionManager();
@@ -134,7 +138,13 @@ public class JSONWebServiceClientImpl implements JSONWebServiceClient {
 		}
 
 		try {
-			setProxyHost(httpClientBuilder);
+			if (_proxySelector != null) {
+				httpClientBuilder.setRoutePlanner(
+					new SystemDefaultRoutePlanner(_proxySelector));
+			}
+			else {
+				setProxyHost(httpClientBuilder);
+			}
 
 			_closeableHttpClient = httpClientBuilder.build();
 
@@ -431,6 +441,10 @@ public class JSONWebServiceClientImpl implements JSONWebServiceClient {
 		_proxyPassword = proxyPassword;
 	}
 
+	public void setProxySelector(ProxySelector proxySelector) {
+		_proxySelector = proxySelector;
+	}
+
 	protected void addHeaders(
 		HttpMessage httpMessage, Map<String, String> headers) {
 
@@ -661,6 +675,7 @@ public class JSONWebServiceClientImpl implements JSONWebServiceClient {
 	private int _proxyHostPort;
 	private String _proxyLogin;
 	private String _proxyPassword;
+	private ProxySelector _proxySelector;
 
 	private class HttpRequestRetryHandlerImpl
 		implements HttpRequestRetryHandler {

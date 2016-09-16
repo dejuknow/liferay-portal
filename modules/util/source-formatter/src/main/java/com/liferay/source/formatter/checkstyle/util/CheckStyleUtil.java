@@ -15,6 +15,7 @@
 package com.liferay.source.formatter.checkstyle.util;
 
 import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayOutputStream;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.source.formatter.SourceFormatterMessage;
@@ -32,8 +33,8 @@ import com.puppycrawl.tools.checkstyle.api.FilterSet;
 import java.io.File;
 import java.io.OutputStream;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.xml.sax.InputSource;
 
@@ -42,15 +43,15 @@ import org.xml.sax.InputSource;
  */
 public class CheckStyleUtil {
 
-	public static List<SourceFormatterMessage> process(
-			List<File> files, String baseDirAbsolutePath)
+	public static Set<SourceFormatterMessage> process(
+			Set<File> files, String baseDirAbsolutePath)
 		throws Exception {
 
 		_sourceFormatterMessages.clear();
 
 		Checker checker = _getChecker(baseDirAbsolutePath);
 
-		checker.process(files);
+		checker.process(ListUtil.fromCollection(files));
 
 		return _sourceFormatterMessages;
 	}
@@ -72,8 +73,7 @@ public class CheckStyleUtil {
 		checker.addFilter(filterSet);
 
 		Configuration configuration = ConfigurationLoader.loadConfiguration(
-			new InputSource(
-				classLoader.getResourceAsStream("checkstyle.xml")),
+			new InputSource(classLoader.getResourceAsStream("checkstyle.xml")),
 			new PropertiesExpander(System.getProperties()), false);
 
 		checker.configure(configuration);
@@ -85,6 +85,9 @@ public class CheckStyleUtil {
 
 		return checker;
 	}
+
+	private static final Set<SourceFormatterMessage> _sourceFormatterMessages =
+		new TreeSet<>();
 
 	private static class SourceFormatterLogger extends DefaultLogger {
 
@@ -116,8 +119,5 @@ public class CheckStyleUtil {
 		private final String _baseDirAbsolutePath;
 
 	}
-
-	private static List<SourceFormatterMessage> _sourceFormatterMessages =
-		new ArrayList<>();
 
 }

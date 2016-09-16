@@ -46,8 +46,7 @@
 	</tear-down>
 
 	<command name="AddRSSADTViaPortletConfiguration" priority="5">
-		<property name="portal.acceptance" value="false" />
-		<property name="portal.acceptance.quarantine" value="true" />
+		<property name="portal.acceptance" value="true" />
 
 		<execute macro="Navigator#gotoSitePage">
 			<var name="pageName" value="ADT Test Page" />
@@ -698,7 +697,7 @@
 			<var name="siteName" value="Test Site Name" />
 		</execute>
 
-		<execute macro="Tag#addMultipleViaBlogsPG">
+		<execute macro="Blogs#addEntryWithTags">
 			<var name="entryContent" value="Entry Content" />
 			<var name="entryTitle" value="Entry Title" />
 			<var name="tagNameList" value="tag name 1,tag name 2,tag name 3" />
@@ -709,7 +708,7 @@
 			<var name="siteName" value="Test Site Name" />
 		</execute>
 
-		<execute macro="Tag#addMultipleViaBlogsPG">
+		<execute macro="Blogs#addEntryWithTags">
 			<var name="entryContent" value="Entry Content" />
 			<var name="entryTitle" value="Entry Title" />
 			<var name="tagNameList" value="tag name 2,tag name 3" />
@@ -720,7 +719,7 @@
 			<var name="siteName" value="Test Site Name" />
 		</execute>
 
-		<execute macro="Tag#addMultipleViaBlogsPG">
+		<execute macro="Blogs#addEntryWithTags">
 			<var name="entryContent" value="Entry Content" />
 			<var name="entryTitle" value="Entry Title" />
 			<var name="tagNameList" value="tag name 3" />

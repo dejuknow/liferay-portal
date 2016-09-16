@@ -26,6 +26,7 @@ import java.io.Serializable;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -66,10 +67,22 @@ public class ExportImportContentProcessorController {
 			ExportImportContentProcessorRegistryUtil.
 				getExportImportContentProcessors(stagedModelClass.getName());
 
-		return exportImportContentProcessors.stream().map(
-			this::_castExportImportContentProcessor).filter(
-				Objects::nonNull).allMatch(
-					eicp -> eicp.validateContentReferences(groupId, content));
+		Stream<ExportImportContentProcessor<?, ?>>
+			exportImportContentProcessorsStream =
+				exportImportContentProcessors.stream();
+
+		Stream<ExportImportContentProcessor<S, T>>
+			castedExportImportContentProcessorsStream =
+				exportImportContentProcessorsStream.map(
+					this::_castExportImportContentProcessor);
+
+		castedExportImportContentProcessorsStream =
+			castedExportImportContentProcessorsStream.filter(Objects::nonNull);
+
+		return castedExportImportContentProcessorsStream.allMatch(
+			exportImportContentProcessor ->
+				exportImportContentProcessor.validateContentReferences(
+					groupId, content));
 	}
 
 	protected <S extends StagedModel, T extends Serializable> T

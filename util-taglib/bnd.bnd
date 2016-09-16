@@ -70,4 +70,4 @@ Provide-Capability:\
 		osgi.extender="jsp.taglib";\
 		uri="http://liferay.com/tld/util";\
 		version:Version="${Bundle-Version}"
--baseline: *;file=${project.dir}/.bnd/ant-baseline-cache/com.liferay.util.taglib-2.4.0.jar
+-baseline: *;file=${project.dir}/.bnd/ant-baseline-cache/com.liferay.util.taglib-2.4.1.jar

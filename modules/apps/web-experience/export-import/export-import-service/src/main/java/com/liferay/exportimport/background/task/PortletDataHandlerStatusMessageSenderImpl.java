@@ -14,6 +14,7 @@
 
 package com.liferay.exportimport.background.task;
 
+import com.liferay.exportimport.kernel.lar.ExportImportClassedModelUtil;
 import com.liferay.exportimport.kernel.lar.ManifestSummary;
 import com.liferay.exportimport.kernel.lar.PortletDataHandler;
 import com.liferay.exportimport.kernel.lar.PortletDataHandlerStatusMessageSender;
@@ -43,7 +44,7 @@ public class PortletDataHandlerStatusMessageSenderImpl
 	implements PortletDataHandlerStatusMessageSender {
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #sendStatusMessage(String,
+	 * @deprecated As of 3.0.0, replaced by {@link #sendStatusMessage(String,
 	 *             String[], ManifestSummary)}
 	 */
 	@Deprecated
@@ -115,7 +116,7 @@ public class PortletDataHandlerStatusMessageSenderImpl
 		StagedModelDataHandler<T> stagedModelDataHandler =
 			(StagedModelDataHandler<T>)
 				StagedModelDataHandlerRegistryUtil.getStagedModelDataHandler(
-					stagedModel.getModelClassName());
+					ExportImportClassedModelUtil.getClassName(stagedModel));
 
 		message.put(
 			"stagedModelName",

@@ -419,7 +419,7 @@ public class ServicePreAction extends Action {
 				sb.append("User ");
 				sb.append(user.getUserId());
 				sb.append(" is not allowed to access the ");
-				sb.append(layout.isPrivateLayout() ? "private": "public");
+				sb.append(layout.isPrivateLayout() ? "private" : "public");
 				sb.append(" pages of group ");
 				sb.append(layout.getGroupId());
 
@@ -546,11 +546,6 @@ public class ServicePreAction extends Action {
 
 			plid = layout.getPlid();
 
-			// Updates to shared layouts are not reflected until the next time
-			// the user logs in because group layouts are cached in the session
-
-			layout = (Layout)layout.clone();
-
 			layoutTypePortlet = (LayoutTypePortlet)layout.getLayoutType();
 
 			boolean customizable = layoutTypePortlet.isCustomizable();
@@ -668,6 +663,7 @@ public class ServicePreAction extends Action {
 				ColorSchemeFactoryUtil.getDefaultRegularColorSchemeId();
 
 			theme = ThemeLocalServiceUtil.getTheme(companyId, themeId);
+
 			colorScheme = ThemeLocalServiceUtil.getColorScheme(
 				companyId, theme.getThemeId(), colorSchemeId);
 

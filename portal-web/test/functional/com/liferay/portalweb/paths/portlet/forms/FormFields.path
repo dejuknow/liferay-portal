@@ -14,11 +14,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>ADVANCED_FIELD_SETTINGS_TOGGLE</td>
-	<td>//button[contains(@class,'settings-toggler')]</td>
-	<td></td>
-</tr>
-<tr>
 	<td>FIELD_ADD</td>
 	<td>//div[contains(@class,'form-field-repeatable-toolbar')]//a[contains(@class,'add-button')]</td>
 	<td></td>
@@ -60,8 +55,13 @@
 	<td></td>
 </tr>
 <tr>
+	<td>CHECKBOX_OPTION</td>
+	<td>//label[contains(.,'${key_checkboxOption}')]/input[@type='checkbox' and contains(@name,'${key_fieldName}')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>CHECKBOX_LABEL</td>
-	<td>//input[@type='checkbox' and contains(@id,'${key_fieldName}')]/../../label</td>
+	<td>//div[contains(@data-fieldname,'${key_fieldName}')]//label[contains(.,'${key_fieldLabel}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -259,7 +259,12 @@
 </tr>
 <tr>
 	<td>SWITCHER_LABEL</td>
-	<td>//div[contains(@data-fieldname,'${key_fieldName}')]//label</td>
+	<td>//div[contains(@data-fieldname,'${key_fieldName}')]//label[contains(.,'${key_fieldLabel}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SWITCHER_OPTION</td>
+	<td>//div[contains(@data-fieldname,'${key_fieldName}')]//label[contains(@class,'${key_switcherOption}')]//span[@class='toggle-switch-bar']</td>
 	<td></td>
 </tr>
 <!--VALIDATION-->
@@ -307,6 +312,12 @@
 <tr>
 	<td></td>
 	<td></td>
+	<td></td>
+</tr>
+<!--AUTOCOMPLETE-->
+<tr>
+	<td>AUTOCOMPLETE_OPTION</td>
+	<td>//li[@data-text='${key_autocompleteOption}']</td>
 	<td></td>
 </tr>
 </tbody>

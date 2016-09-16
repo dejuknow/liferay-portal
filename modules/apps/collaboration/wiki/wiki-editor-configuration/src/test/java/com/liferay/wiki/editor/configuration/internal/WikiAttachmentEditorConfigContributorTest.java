@@ -16,7 +16,10 @@ package com.liferay.wiki.editor.configuration.internal;
 
 import com.liferay.item.selector.ItemSelector;
 import com.liferay.item.selector.ItemSelectorCriterion;
+import com.liferay.portal.configuration.ConfigurationFactoryImpl;
 import com.liferay.portal.json.JSONFactoryImpl;
+import com.liferay.portal.kernel.configuration.ConfigurationFactoryUtil;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
@@ -25,6 +28,9 @@ import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactory;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.language.LanguageImpl;
 import com.liferay.wiki.constants.WikiPortletKeys;
+import com.liferay.wiki.model.WikiPage;
+import com.liferay.wiki.model.impl.WikiPageImpl;
+import com.liferay.wiki.service.WikiPageLocalService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -69,25 +75,6 @@ public class WikiAttachmentEditorConfigContributorTest extends PowerMockito {
 			mock(LiferayPortletURL.class)
 		);
 
-		PortletURL itemSelectorPortletURL = mock(PortletURL.class);
-
-		when(
-			itemSelectorPortletURL.toString()
-		).thenReturn(
-			"itemSelectorPortletURLWithWikiImageUrlAndUploadSelectionViews"
-		);
-
-		when(
-			_itemSelector.getItemSelectorURL(
-				Mockito.any(RequestBackedPortletURLFactory.class),
-				Mockito.anyString(), Mockito.any(ItemSelectorCriterion.class),
-				Mockito.any(ItemSelectorCriterion.class),
-				Mockito.any(ItemSelectorCriterion.class),
-				Mockito.any(ItemSelectorCriterion.class))
-		).thenReturn(
-			itemSelectorPortletURL
-		);
-
 		_inputEditorTaglibAttributes.put(
 			"liferay-ui:input-editor:name", "testEditor");
 	}
@@ -115,16 +102,41 @@ public class WikiAttachmentEditorConfigContributorTest extends PowerMockito {
 			jsonObject, _inputEditorTaglibAttributes, _themeDisplay,
 			_requestBackedPortletURLFactory);
 
+		JSONObject expectedJSONObject = JSONFactoryUtil.createJSONObject(
+			originalJSONObject.toJSONString());
+
+		expectedJSONObject.put("removePlugins", "plugin1,ae_addimages");
+
 		JSONAssert.assertEquals(
-			originalJSONObject.toJSONString(), jsonObject.toJSONString(), true);
+			expectedJSONObject.toJSONString(), jsonObject.toJSONString(), true);
 	}
 
 	@Test
-	public void testItemSelectorURLWhenAllowBrowseAndValidWikiPage()
+	public void testItemSelectorURLWhenAllowBrowseAndValidCreoleWikiPage()
 		throws Exception {
 
 		setAllowBrowseDocuments(true);
 		setWikiPageResourcePrimKey(1);
+
+		mockWikiPageLocalService(1, "creole");
+
+		PortletURL creoleEngineItemSelectorPortletURL = mock(PortletURL.class);
+
+		when(
+			creoleEngineItemSelectorPortletURL.toString()
+		).thenReturn(
+			"itemSelectorPortletURLWithWikiUrlAndUploadSelectionViews"
+		);
+
+		when(
+			_itemSelector.getItemSelectorURL(
+				Mockito.any(RequestBackedPortletURLFactory.class),
+				Mockito.anyString(), Mockito.any(ItemSelectorCriterion.class),
+				Mockito.any(ItemSelectorCriterion.class),
+				Mockito.any(ItemSelectorCriterion.class))
+		).thenReturn(
+			creoleEngineItemSelectorPortletURL
+		);
 
 		JSONObject jsonObject = getJSONObjectWithDefaultItemSelectorURL();
 
@@ -133,6 +145,66 @@ public class WikiAttachmentEditorConfigContributorTest extends PowerMockito {
 				new WikiAttachmentEditorConfigContributor();
 
 		wikiAttachmentEditorConfigContributor.setItemSelector(_itemSelector);
+
+		wikiAttachmentEditorConfigContributor.setWikiPageLocalService(
+			_wikiPageLocalService);
+
+		wikiAttachmentEditorConfigContributor.populateConfigJSONObject(
+			jsonObject, _inputEditorTaglibAttributes, _themeDisplay,
+			_requestBackedPortletURLFactory);
+
+		JSONObject expectedJSONObject = JSONFactoryUtil.createJSONObject();
+
+		expectedJSONObject.put(
+			"filebrowserImageBrowseLinkUrl",
+			"itemSelectorPortletURLWithWikiUrlAndUploadSelectionViews");
+		expectedJSONObject.put(
+			"filebrowserImageBrowseUrl",
+			"itemSelectorPortletURLWithWikiUrlAndUploadSelectionViews");
+		expectedJSONObject.put("removePlugins", "plugin1,ae_addimages");
+
+		JSONAssert.assertEquals(
+			expectedJSONObject.toJSONString(), jsonObject.toJSONString(), true);
+	}
+
+	@Test
+	public void testItemSelectorURLWhenAllowBrowseAndValidHtmlWikiPage()
+		throws Exception {
+
+		setAllowBrowseDocuments(true);
+		setWikiPageResourcePrimKey(1);
+
+		mockWikiPageLocalService(1, "html");
+
+		PortletURL htmlEngineItemSelectorPortletURL = mock(PortletURL.class);
+
+		when(
+			htmlEngineItemSelectorPortletURL.toString()
+		).thenReturn(
+			"itemSelectorPortletURLWithWikiImageUrlAndUploadSelectionViews"
+		);
+
+		when(
+			_itemSelector.getItemSelectorURL(
+				Mockito.any(RequestBackedPortletURLFactory.class),
+				Mockito.anyString(), Mockito.any(ItemSelectorCriterion.class),
+				Mockito.any(ItemSelectorCriterion.class),
+				Mockito.any(ItemSelectorCriterion.class),
+				Mockito.any(ItemSelectorCriterion.class))
+		).thenReturn(
+			htmlEngineItemSelectorPortletURL
+		);
+
+		JSONObject jsonObject = getJSONObjectWithDefaultItemSelectorURL();
+
+		WikiAttachmentEditorConfigContributor
+			wikiAttachmentEditorConfigContributor =
+				new WikiAttachmentEditorConfigContributor();
+
+		wikiAttachmentEditorConfigContributor.setItemSelector(_itemSelector);
+
+		wikiAttachmentEditorConfigContributor.setWikiPageLocalService(
+			_wikiPageLocalService);
 
 		wikiAttachmentEditorConfigContributor.populateConfigJSONObject(
 			jsonObject, _inputEditorTaglibAttributes, _themeDisplay,
@@ -146,6 +218,7 @@ public class WikiAttachmentEditorConfigContributorTest extends PowerMockito {
 		expectedJSONObject.put(
 			"filebrowserImageBrowseUrl",
 			"itemSelectorPortletURLWithWikiImageUrlAndUploadSelectionViews");
+		expectedJSONObject.put("removePlugins", "plugin1,ae_addimages");
 
 		JSONAssert.assertEquals(
 			expectedJSONObject.toJSONString(), jsonObject.toJSONString(), true);
@@ -174,8 +247,13 @@ public class WikiAttachmentEditorConfigContributorTest extends PowerMockito {
 			jsonObject, _inputEditorTaglibAttributes, _themeDisplay,
 			_requestBackedPortletURLFactory);
 
+		JSONObject expectedJSONObject = JSONFactoryUtil.createJSONObject(
+			originalJSONObject.toJSONString());
+
+		expectedJSONObject.put("removePlugins", "plugin1,ae_addimages");
+
 		JSONAssert.assertEquals(
-			originalJSONObject.toJSONString(), jsonObject.toJSONString(), true);
+			expectedJSONObject.toJSONString(), jsonObject.toJSONString(), true);
 	}
 
 	@Test
@@ -201,8 +279,13 @@ public class WikiAttachmentEditorConfigContributorTest extends PowerMockito {
 			jsonObject, _inputEditorTaglibAttributes, _themeDisplay,
 			_requestBackedPortletURLFactory);
 
+		JSONObject expectedJSONObject = JSONFactoryUtil.createJSONObject(
+			originalJSONObject.toJSONString());
+
+		expectedJSONObject.put("removePlugins", "plugin1,ae_addimages");
+
 		JSONAssert.assertEquals(
-			originalJSONObject.toJSONString(), jsonObject.toJSONString(), true);
+			expectedJSONObject.toJSONString(), jsonObject.toJSONString(), true);
 	}
 
 	protected JSONObject getJSONObjectWithDefaultItemSelectorURL()
@@ -214,8 +297,29 @@ public class WikiAttachmentEditorConfigContributorTest extends PowerMockito {
 			"filebrowserImageBrowseLinkUrl", "defaultItemSelectorPortletURL");
 		jsonObject.put(
 			"filebrowserImageBrowseUrl", "defaultItemSelectorPortletURL");
+		jsonObject.put("removePlugins", "plugin1");
 
 		return jsonObject;
+	}
+
+	protected void mockWikiPageLocalService(long primKey, String format) {
+		ConfigurationFactoryUtil.setConfigurationFactory(
+			new ConfigurationFactoryImpl());
+
+		WikiPage wikiPage = new WikiPageImpl();
+
+		wikiPage.setFormat(format);
+
+		try {
+			when(
+				_wikiPageLocalService.getPage(primKey)
+			).thenReturn(
+				wikiPage
+			);
+		}
+		catch (PortalException pe) {
+			pe.printStackTrace();
+		}
 	}
 
 	protected void setAllowBrowseDocuments(boolean allowBrowseDocuments) {
@@ -244,5 +348,8 @@ public class WikiAttachmentEditorConfigContributorTest extends PowerMockito {
 
 	@Mock
 	private ThemeDisplay _themeDisplay;
+
+	@Mock
+	private WikiPageLocalService _wikiPageLocalService;
 
 }

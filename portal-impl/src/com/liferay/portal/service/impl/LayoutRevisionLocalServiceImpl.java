@@ -92,7 +92,7 @@ public class LayoutRevisionLocalServiceImpl
 		layoutRevision.setThemeId(themeId);
 		layoutRevision.setColorSchemeId(colorSchemeId);
 		layoutRevision.setCss(css);
-		layoutRevision.setStatus(WorkflowConstants.STATUS_APPROVED);
+		layoutRevision.setStatus(WorkflowConstants.STATUS_DRAFT);
 		layoutRevision.setStatusDate(serviceContext.getModifiedDate(now));
 
 		layoutRevisionPersistence.update(layoutRevision);

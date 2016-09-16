@@ -18,9 +18,12 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.model.ClassedModel;
+import com.liferay.portal.kernel.model.ResourcedModel;
 import com.liferay.portal.kernel.search.Bufferable;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
+import com.liferay.portal.kernel.service.PersistedModelLocalService;
+import com.liferay.portal.kernel.service.PersistedModelLocalServiceRegistry;
 import com.liferay.portal.kernel.util.MethodKey;
 import com.liferay.portal.search.buffer.IndexerRequest;
 import com.liferay.portal.search.buffer.IndexerRequestBuffer;
@@ -43,11 +46,14 @@ public class BufferedIndexerInvocationHandler implements InvocationHandler {
 
 	public BufferedIndexerInvocationHandler(
 		Indexer<?> indexer, IndexStatusManager indexStatusManager,
-		IndexerRegistryConfiguration indexerRegistryConfiguration) {
+		IndexerRegistryConfiguration indexerRegistryConfiguration,
+		PersistedModelLocalServiceRegistry persistedModelLocalServiceRegistry) {
 
 		_indexer = indexer;
 		_indexStatusManager = indexStatusManager;
 		_indexerRegistryConfiguration = indexerRegistryConfiguration;
+		_persistedModelLocalServiceRegistry =
+			persistedModelLocalServiceRegistry;
 	}
 
 	@Override
@@ -96,7 +102,21 @@ public class BufferedIndexerInvocationHandler implements InvocationHandler {
 			return method.invoke(_indexer, args);
 		}
 
-		if (args[0] instanceof ClassedModel) {
+		if (args[0] instanceof ResourcedModel &&
+			args[0] instanceof ClassedModel &&
+			Objects.equals(method.getName(), "reindex")) {
+
+			MethodKey methodKey = new MethodKey(
+				Indexer.class, method.getName(), String.class, Long.TYPE);
+
+			ClassedModel classedModel = (ClassedModel)args[0];
+			ResourcedModel resourcedModel = (ResourcedModel)args[0];
+
+			bufferRequest(
+				methodKey, classedModel.getModelClassName(),
+				resourcedModel.getResourcePrimKey(), indexerRequestBuffer);
+		}
+		else if (args[0] instanceof ClassedModel) {
 			MethodKey methodKey = new MethodKey(
 				Indexer.class, method.getName(), Object.class);
 
@@ -108,6 +128,26 @@ public class BufferedIndexerInvocationHandler implements InvocationHandler {
 
 			String className = (String)args[0];
 			Long classPK = (Long)args[1];
+
+			PersistedModelLocalService persistedModelLocalService =
+				_persistedModelLocalServiceRegistry.
+					getPersistedModelLocalService(className);
+
+			try {
+				Object obj = persistedModelLocalService.getPersistedModel(
+					classPK);
+
+				if (obj instanceof ResourcedModel) {
+					ResourcedModel resourcedModel = (ResourcedModel)obj;
+
+					classPK = resourcedModel.getResourcePrimKey();
+				}
+			}
+			catch (Exception e) {
+				if (_log.isDebugEnabled()) {
+					_log.debug("Unable to get resource primary key", e);
+				}
+			}
 
 			bufferRequest(methodKey, className, classPK, indexerRequestBuffer);
 		}
@@ -200,5 +240,7 @@ public class BufferedIndexerInvocationHandler implements InvocationHandler {
 	private volatile IndexerRequestBufferOverflowHandler
 		_indexerRequestBufferOverflowHandler;
 	private final IndexStatusManager _indexStatusManager;
+	private final PersistedModelLocalServiceRegistry
+		_persistedModelLocalServiceRegistry;
 
 }

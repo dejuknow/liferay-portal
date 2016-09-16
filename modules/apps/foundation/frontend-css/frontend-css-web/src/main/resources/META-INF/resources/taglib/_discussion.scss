@@ -6,7 +6,7 @@
 		min-height: 90px;
 
 		p {
-			margin-bottom : 0;
+			margin-bottom: 0;
 		}
 	}
 
@@ -21,7 +21,7 @@
 			border-left: 2px solid transparent;
 
 			p {
-				margin-bottom : 10px;
+				margin-bottom: 10px;
 			}
 		}
 	}
@@ -35,8 +35,6 @@
 		overflow: hidden;
 
 		.lfr-discussion-message {
-			@include word-wrap(break-all);
-
 			.lfr-discussion-message-author {
 				margin-bottom: 12px;
 

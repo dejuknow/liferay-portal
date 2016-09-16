@@ -21,23 +21,20 @@ import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
 import com.liferay.exportimport.content.processor.ExportImportContentProcessorController;
+import com.liferay.exportimport.data.handler.base.BaseStagedModelDataHandler;
 import com.liferay.exportimport.kernel.lar.ExportImportPathUtil;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.exportimport.kernel.lar.PortletDataException;
 import com.liferay.exportimport.kernel.lar.StagedModelDataHandler;
 import com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil;
 import com.liferay.exportimport.kernel.lar.StagedModelModifiedDateComparator;
-import com.liferay.exportimport.lar.BaseStagedModelDataHandler;
 import com.liferay.journal.internal.exportimport.content.processor.JournalArticleExportImportContentProcessor;
 import com.liferay.journal.internal.exportimport.creation.strategy.JournalCreationStrategy;
-import com.liferay.journal.internal.exportimport.creation.strategy.JournalCreationStrategyFactory;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.model.JournalArticleConstants;
-import com.liferay.journal.model.JournalArticleImage;
 import com.liferay.journal.model.JournalArticleResource;
 import com.liferay.journal.model.JournalFolder;
 import com.liferay.journal.model.JournalFolderConstants;
-import com.liferay.journal.service.JournalArticleImageLocalService;
 import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.journal.service.JournalArticleResourceLocalService;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
@@ -447,10 +444,7 @@ public class JournalArticleStagedModelDataHandler
 
 		long userId = portletDataContext.getUserId(article.getUserUuid());
 
-		JournalCreationStrategy creationStrategy =
-			JournalCreationStrategyFactory.getInstance();
-
-		long authorId = creationStrategy.getAuthorUserId(
+		long authorId = _journalCreationStrategy.getAuthorUserId(
 			portletDataContext, article);
 
 		if (authorId != JournalCreationStrategy.USE_DEFAULT_USER_ID_STRATEGY) {
@@ -502,7 +496,7 @@ public class JournalArticleStagedModelDataHandler
 
 		article.setContent(content);
 
-		String newContent = creationStrategy.getTransformedContent(
+		String newContent = _journalCreationStrategy.getTransformedContent(
 			portletDataContext, article);
 
 		if (newContent != JournalCreationStrategy.ARTICLE_CONTENT_UNCHANGED) {
@@ -711,10 +705,12 @@ public class JournalArticleStagedModelDataHandler
 
 			String articleURL = null;
 
-			boolean addGroupPermissions = creationStrategy.addGroupPermissions(
-				portletDataContext, article);
-			boolean addGuestPermissions = creationStrategy.addGuestPermissions(
-				portletDataContext, article);
+			boolean addGroupPermissions =
+				_journalCreationStrategy.addGroupPermissions(
+					portletDataContext, article);
+			boolean addGuestPermissions =
+				_journalCreationStrategy.addGuestPermissions(
+					portletDataContext, article);
 
 			ServiceContext serviceContext =
 				portletDataContext.createServiceContext(article);
@@ -888,15 +884,6 @@ public class JournalArticleStagedModelDataHandler
 		}
 	}
 
-	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
-	 */
-	@Deprecated
-	protected void exportArticleImage(
-		PortletDataContext portletDataContext, JournalArticleImage articleImage,
-		JournalArticle article, Element articleElement) {
-	}
-
 	protected JournalArticle fetchExistingArticle(
 		String articleResourceUuid, long groupId, String articleId,
 		String newArticleId, boolean preloaded) {
@@ -988,15 +975,6 @@ public class JournalArticleStagedModelDataHandler
 			journalArticleExportImportContentProcessor) {
 	}
 
-	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
-	 */
-	@Deprecated
-	@Reference(unbind = "-")
-	protected void setJournalArticleImageLocalService(
-		JournalArticleImageLocalService journalArticleImageLocalService) {
-	}
-
 	@Reference(unbind = "-")
 	protected void setJournalArticleLocalService(
 		JournalArticleLocalService journalArticleLocalService) {
@@ -1010,6 +988,13 @@ public class JournalArticleStagedModelDataHandler
 
 		_journalArticleResourceLocalService =
 			journalArticleResourceLocalService;
+	}
+
+	@Reference(unbind = "-")
+	protected void setJournalCreationStrategy(
+		JournalCreationStrategy journalCreationStrategy) {
+
+		_journalCreationStrategy = journalCreationStrategy;
 	}
 
 	@Reference(unbind = "-")
@@ -1053,6 +1038,7 @@ public class JournalArticleStagedModelDataHandler
 	private JournalArticleLocalService _journalArticleLocalService;
 	private JournalArticleResourceLocalService
 		_journalArticleResourceLocalService;
+	private JournalCreationStrategy _journalCreationStrategy;
 	private UserLocalService _userLocalService;
 
 }

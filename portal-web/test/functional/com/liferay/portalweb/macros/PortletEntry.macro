@@ -9,8 +9,20 @@
 		<execute function="AssertClick" locator1="MenuItem#MOVE_TO_THE_RECYCLE_BIN" value1="Move to the Recycle Bin" />
 	</command>
 
+	<command name="inputName">
+		<execute function="Type" locator1="TextInput#NAME" value1="${name}" />
+	</command>
+
 	<command name="publish">
 		<execute macro="Button#clickPublish" />
+
+		<execute macro="Alert#viewSuccessMessage" />
+	</command>
+
+	<command name="publishAndWait">
+		<execute macro="Button#clickPublish" />
+
+		<execute function="Pause" locator1="5000" />
 
 		<execute macro="Alert#viewSuccessMessage" />
 	</command>

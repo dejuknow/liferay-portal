@@ -20,6 +20,7 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.tools.ToolsUtil;
 
 import java.io.File;
 
@@ -80,10 +81,20 @@ public class JSONSourceProcessor extends BaseSourceProcessor {
 
 		if (matcher.find()) {
 			processMessage(
-				fileName, "line break", getLineCount(content, matcher.start()));
+				fileName, "There should be a line break after '}'",
+				getLineCount(content, matcher.start()));
 		}
 		else {
 			content = sort(content);
+		}
+
+		matcher = _missingWhitespacePattern.matcher(content);
+
+		while (matcher.find()) {
+			if (!ToolsUtil.isInsideQuotes(content, matcher.start())) {
+				return StringUtil.insert(
+					content, StringPool.SPACE, matcher.start() + 1);
+			}
 		}
 
 		return content;
@@ -154,5 +165,6 @@ public class JSONSourceProcessor extends BaseSourceProcessor {
 		"\t[\\}\\]]{2}");
 	private final Pattern _leadingSpacesPattern = Pattern.compile(
 		"(^[\t ]*)(  )([^ ])");
+	private final Pattern _missingWhitespacePattern = Pattern.compile(":\\S");
 
 }

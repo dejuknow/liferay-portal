@@ -18,8 +18,6 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.model.PortletApp;
-import com.liferay.portal.kernel.portlet.PortletBag;
-import com.liferay.portal.kernel.portlet.PortletBagPool;
 import com.liferay.portal.kernel.portlet.PortletContextFactory;
 import com.liferay.portal.security.lang.DoPrivilegedUtil;
 
@@ -58,22 +56,7 @@ public class PortletContextFactoryImpl implements PortletContextFactory {
 		PortletApp portletApp = portlet.getPortletApp();
 
 		if (portletApp.isWARFile()) {
-			PortletBag portletBag = PortletBagPool.get(
-				portlet.getRootPortletId());
-
-			if (portletBag == null) {
-				_log.error(
-					"Portlet " + portlet.getRootPortletId() +
-						" has a null portlet bag");
-			}
-
-			//String mainPath = (String)ctx.getAttribute(WebKeys.MAIN_PATH);
-
-			servletContext = portletBag.getServletContext();
-
-			// Context path for the portal must be passed to individual portlets
-
-			//ctx.setAttribute(WebKeys.MAIN_PATH, mainPath);
+			servletContext = portletApp.getServletContext();
 		}
 
 		portletContext = new PortletContextImpl(portlet, servletContext);

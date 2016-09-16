@@ -16,6 +16,7 @@ package com.liferay.sync.internal.upgrade.v1_0_2;
 
 import com.liferay.document.library.kernel.model.DLFileEntryConstants;
 import com.liferay.document.library.kernel.service.DLSyncEventLocalService;
+import com.liferay.portal.dao.orm.common.SQLTransformer;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBManagerUtil;
 import com.liferay.portal.kernel.dao.jdbc.AutoBatchPreparedStatementUtil;
@@ -235,9 +236,11 @@ public class UpgradeSyncDLObject extends UpgradeProcess {
 		sb.append("Lock_.userName, DLFileVersion.fileEntryId from ");
 		sb.append("DLFileVersion, Lock_ where DLFileVersion.version = '");
 		sb.append(DLFileEntryConstants.PRIVATE_WORKING_COPY_VERSION);
-		sb.append("' and DLFileVersion.fileEntryId = Lock_.key_");
+		sb.append("' and CAST_TEXT(DLFileVersion.fileEntryId) = Lock_.key_");
 
-		try (PreparedStatement ps1 = connection.prepareStatement(sb.toString());
+		String sql = SQLTransformer.transform(sb.toString());
+
+		try (PreparedStatement ps1 = connection.prepareStatement(sql);
 			PreparedStatement ps2 =
 				AutoBatchPreparedStatementUtil.concurrentAutoBatch(
 					connection,

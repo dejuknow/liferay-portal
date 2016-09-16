@@ -17,9 +17,8 @@
 	}
 
 	.portlet-body,
+	.portlet-boundary,
 	.portlet-column,
-	.portlet-configuration,
-	.portlet-export-import,
 	.portlet-layout {
 		height: 100%;
 	}
@@ -56,6 +55,15 @@
 		-webkit-overflow-scrolling: touch;
 	}
 
+	.management-bar-default,
+	.navbar-default {
+		border-left-width: 0;
+		border-radius: 0;
+		border-right-width: 0;
+		border-top-width: 0;
+		margin-bottom: 0;
+	}
+
 	.navbar ~ .portlet-configuration-setup,
 	.portlet-export-import-container {
 		height: calc(100% - #{$dialog-navbar-height});
@@ -64,6 +72,22 @@
 		@include sm {
 			height: calc(100% - #{$dialog-desktop-navbar-height});
 		}
+	}
+
+	.panel-group .panel {
+		border-left-width: 0;
+		border-radius: 0;
+		border-right-width: 0;
+	}
+
+	.panel-group .panel + .panel {
+		border-top-width: 0;
+		margin-top: 0;
+	}
+
+	.panel-heading {
+		border-top-left-radius: 0;
+		border-top-right-radius: 0;
 	}
 
 	.portlet-configuration-setup {
@@ -106,9 +130,14 @@
 .dialog-with-footer {
 	.button-holder {
 		&.dialog-footer {
-			background-color: #FFF;
-			border-top: 1px solid #E5E5E5;
+			background-color: $dialog-footer-bg;
+			border-top: 1px solid $dialog-footer-border-color;
 			bottom: 0;
+
+			@if (variable-exists(dialog-footer-box-shadow)) {
+				box-shadow: $dialog-footer-box-shadow;
+			}
+
 			left: 0;
 			margin: 0;
 			padding: 10px 15px;
@@ -116,6 +145,7 @@
 			width: 100%;
 
 			@include sm {
+				background-color: $dialog-desktop-footer-bg;
 				padding: $dialog-footer-padding;
 			}
 		}

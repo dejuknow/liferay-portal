@@ -39,8 +39,17 @@ if (portletTitleBasedNavigation) {
 }
 %>
 
+<c:if test="<%= !portletTitleBasedNavigation %>">
+	<liferay-ui:header
+		backURL="<%= redirect %>"
+		localizeTitle="<%= false %>"
+		title="<%= kbArticle.getTitle() %>"
+	/>
+</c:if>
+
 <liferay-portlet:renderURL varImpl="compareVersionsURL">
 	<portlet:param name="mvcPath" value='<%= templatePath + "history.jsp" %>' />
+	<portlet:param name="redirect" value="<%= redirect %>" />
 	<portlet:param name="resourcePrimKey" value="<%= String.valueOf(kbArticle.getResourcePrimKey()) %>" />
 	<portlet:param name="status" value="<%= String.valueOf(status) %>" />
 </liferay-portlet:renderURL>

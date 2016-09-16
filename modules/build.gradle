@@ -1,6 +1,3 @@
-import com.liferay.gradle.plugins.node.tasks.DownloadNodeTask
-import com.liferay.gradle.plugins.node.tasks.ExecuteNodeTask
-import com.liferay.gradle.plugins.node.tasks.ExecuteNpmTask
 import com.liferay.gradle.util.FileUtil
 import com.liferay.gradle.util.GradleUtil
 
@@ -31,6 +28,24 @@ if (Boolean.getBoolean("build.bnd.print.enabled") && System.getenv("JENKINS_HOME
 }
 
 buildDir = new File(rootDir.parentFile, "build")
+
+for (String gradleVersion in ["2.5", "2.14"]) {
+	String gradleDistributionURL = "https://services.gradle.org/distributions/gradle-${gradleVersion}-bin.zip"
+	String suffix = gradleVersion.replace('.', '')
+
+	tasks.create(name: "extractGradleApi${suffix}", type: Copy) {
+		description = "Extracts the Gradle ${gradleVersion} JAR files into a temporary directory."
+
+		from {
+			zipTree(FileUtil.get(project, gradleDistributionURL))
+		}
+
+		include "gradle-${gradleVersion}/lib/**/*.jar"
+
+		includeEmptyDirs = false
+		into buildDir
+	}
+}
 
 gradle.beforeProject {
 	Project project ->
@@ -124,35 +139,6 @@ gradle.beforeProject {
 
 				startTestableTomcat {
 					deleteLiferayHome = false
-				}
-			}
-		}
-
-		if (System.getenv("JENKINS_HOME")) {
-			pluginManager.withPlugin("com.liferay.theme.plugin") {
-				npmInstall {
-					nodeModulesCacheDir = new File(System.properties["user.home"], ".liferay/node-modules-cache")
-					removeShrinkwrappedUrls = true
-				}
-			}
-
-			tasks.withType(DownloadNodeTask) {
-				doFirst {
-					if (plugins.hasPlugin("com.liferay.cache")) {
-						throw new GradleException("Unable to use Node.js on CI, please configure com.liferay.cache or update the cache")
-					}
-				}
-			}
-
-			tasks.withType(ExecuteNodeTask) {
-				npmInstallRetries = 3
-			}
-
-			String ciRegistry = project.properties["nodejs.npm.ci.registry"]
-
-			if (ciRegistry) {
-				tasks.withType(ExecuteNpmTask) {
-					registry = ciRegistry
 				}
 			}
 		}

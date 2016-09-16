@@ -23,19 +23,6 @@ import org.junit.Test;
 public class UnicodePropertiesTest {
 
 	@Test
-	public void testLength() throws Exception {
-		String key = "hello";
-		String value = "world";
-
-		UnicodeProperties props = new UnicodeProperties();
-
-		props.setProperty(key, value);
-		props.remove(key);
-
-		Assert.assertEquals(0, props.getToStringLength());
-	}
-
-	@Test
 	public void testSetNullProperty() throws Exception {
 		UnicodeProperties props = new UnicodeProperties();
 

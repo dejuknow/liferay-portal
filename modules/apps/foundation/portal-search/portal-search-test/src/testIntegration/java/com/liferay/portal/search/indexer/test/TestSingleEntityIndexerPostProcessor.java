@@ -42,6 +42,9 @@ public class TestSingleEntityIndexerPostProcessor
 		throws Exception {
 	}
 
+	/**
+	 * @deprecated As of 1.0.0
+	 */
 	@Deprecated
 	@Override
 	public void postProcessContextQuery(
@@ -67,6 +70,9 @@ public class TestSingleEntityIndexerPostProcessor
 		throws Exception {
 	}
 
+	/**
+	 * @deprecated As of 1.0.0
+	 */
 	@Deprecated
 	@Override
 	public void postProcessSearchQuery(

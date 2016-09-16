@@ -105,7 +105,7 @@ public class DLAppServiceUtil {
 	* @param inheritable whether the lock must propagate to descendants
 	* @param expirationTime the time in milliseconds before the lock expires.
 	If the value is <code>0</code>, the default expiration time will
-	be used from <code>portal.properties>.
+	be used from <code>portal.properties</code>.
 	* @return the lock object
 	*/
 	public static com.liferay.portal.kernel.lock.Lock lockFolder(
@@ -125,7 +125,7 @@ public class DLAppServiceUtil {
 	* @param companyId the primary key of the file entry's company
 	* @param expirationTime the time in milliseconds before the lock expires.
 	If the value is <code>0</code>, the default expiration time will
-	be used from <code>portal.properties>.
+	be used from <code>portal.properties</code>.
 	* @return the lock object
 	*/
 	public static com.liferay.portal.kernel.lock.Lock refreshFileEntryLock(
@@ -143,7 +143,7 @@ public class DLAppServiceUtil {
 	* @param companyId the primary key of the file entry's company
 	* @param expirationTime the time in milliseconds before the lock expires.
 	If the value is <code>0</code>, the default expiration time will
-	be used from <code>portal.properties>.
+	be used from <code>portal.properties</code>.
 	* @return the lock object
 	*/
 	public static com.liferay.portal.kernel.lock.Lock refreshFolderLock(
@@ -356,7 +356,7 @@ public class DLAppServiceUtil {
 	<code>null</code>)
 	* @param expirationTime the time in milliseconds before the lock expires.
 	If the value is <code>0</code>, the default expiration time will
-	be used from <code>portal.properties>.
+	be used from <code>portal.properties</code>.
 	* @param serviceContext the service context to be applied
 	* @return the file entry
 	* @see #cancelCheckOut(long)

@@ -33,9 +33,21 @@ public class UnstableMessageUtil {
 				buildURL + "testReport/api/json"));
 
 		int failCount = testReportJSONObject.getInt("failCount");
-		int totalCount = testReportJSONObject.getInt("totalCount");
+		int passCount = 0;
+		int totalCount = 0;
 
-		int passCount = totalCount - failCount;
+		if (!testReportJSONObject.has("passCount") &&
+			testReportJSONObject.has("totalCount")) {
+
+			totalCount = testReportJSONObject.getInt("totalCount");
+
+			passCount = totalCount - failCount;
+		}
+		else {
+			passCount = testReportJSONObject.getInt("passCount");
+
+			totalCount = failCount + passCount;
+		}
 
 		sb.append("<h6>Job Results:</h6><p>");
 		sb.append(passCount);

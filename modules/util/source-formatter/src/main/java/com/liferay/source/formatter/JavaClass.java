@@ -26,6 +26,7 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Tuple;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.tools.ToolsUtil;
+import com.liferay.source.formatter.util.FileUtil;
 
 import com.thoughtworks.qdox.JavaDocBuilder;
 import com.thoughtworks.qdox.model.JavaMethod;
@@ -111,7 +112,6 @@ public class JavaClass {
 			_formatReturnStatements(javaTerm);
 
 			if (javaTerm.isMethod() || javaTerm.isConstructor()) {
-				checkChaining(javaTerm);
 				checkLineBreak(javaTerm);
 			}
 
@@ -248,34 +248,21 @@ public class JavaClass {
 			if (!matcher.find()) {
 				_javaSourceProcessor.processMessage(
 					_fileName,
-					"LPS-36303: Incorrect method name '" + methodName + "'");
+					"Incorrect method name '" + methodName +
+						"', see LPS-36303");
 			}
 			else if (javaTerm.getType() != requiredMethodType) {
 				_javaSourceProcessor.processMessage(
 					_fileName,
-					"LPS-36303: Incorrect method type for '" + methodName +
-						"'");
+					"Incorrect method type for '" + methodName +
+						"', see LPS-36303");
 			}
 		}
 		else if (matcher.find() && !javaTerm.hasAnnotation("Override")) {
 			_javaSourceProcessor.processMessage(
 				_fileName,
 				"Annotation @" + annotation + " required for '" + methodName +
-					"'");
-		}
-	}
-
-	protected void checkChaining(JavaTerm javaTerm) {
-		Matcher matcher = _chainingPattern.matcher(javaTerm.getContent());
-
-		while (matcher.find()) {
-			int lineCount =
-				javaTerm.getLineCount() +
-					_javaSourceProcessor.getLineCount(
-						javaTerm.getContent(), matcher.end()) - 1;
-
-			_javaSourceProcessor.processMessage(
-				_fileName, "chaining", lineCount);
+					"', see LPS-36303");
 		}
 	}
 
@@ -304,7 +291,8 @@ public class JavaClass {
 
 		if (!setVariableCommand.contains(" =")) {
 			setVariableCommand = StringUtil.replaceLast(
-				setVariableCommand, ";", " = " + defaultValue + ";");
+				setVariableCommand, CharPool.SEMICOLON,
+				" = " + defaultValue + ";");
 		}
 
 		setVariableCommand = StringUtil.replace(
@@ -327,7 +315,8 @@ public class JavaClass {
 		if (!matcher.find()) {
 			_javaSourceProcessor.processMessage(
 				_fileName,
-				"LPS-66242: Initial value differs from value in cleanUp method",
+				"Initial value differs from value in cleanUp method, see " +
+					"LPS-66242",
 				javaTerm.getLineCount());
 		}
 	}
@@ -421,7 +410,9 @@ public class JavaClass {
 
 			if (previousPos > pos) {
 				_javaSourceProcessor.processMessage(
-					_fileName, "Constructor parameter order " + parameterName);
+					_fileName,
+					"Follow constructor parameter order '" + parameterName +
+						"'");
 
 				return;
 			}
@@ -560,8 +551,8 @@ public class JavaClass {
 
 			_javaSourceProcessor.processMessage(
 				_fileName,
-				"Create a new var for " + StringUtil.trim(matcher.group(1)) +
-					" for better readability",
+				"Create a new var for '" + StringUtil.trim(matcher.group(1)) +
+					"' for better readability",
 				lineCount);
 		}
 	}
@@ -581,8 +572,8 @@ public class JavaClass {
 
 			_javaSourceProcessor.processMessage(
 				_fileName,
-				"LPS-65690 Use Collator for locale-sensitive String " +
-					"comparison");
+				"Use Collator for locale-sensitive String comparison, see " +
+					"LPS-65690");
 		}
 	}
 
@@ -606,7 +597,7 @@ public class JavaClass {
 
 		String newJavaTermContent = StringUtil.replaceFirst(
 			javaTermContent, "{\n",
-			"{\n" + javaTerm.getIndent() + "\t" + superMethodCall  + "\n\n");
+			"{\n" + javaTerm.getIndent() + "\t" + superMethodCall + "\n\n");
 
 		_classContent = StringUtil.replace(
 			_classContent, javaTermContent, newJavaTermContent);
@@ -768,7 +759,7 @@ public class JavaClass {
 		while (leadingTabCount != expectedTabCount) {
 			if (leadingTabCount > expectedTabCount) {
 				newLine = StringUtil.replaceFirst(
-					newLine, StringPool.TAB, StringPool.BLANK);
+					newLine, CharPool.TAB, StringPool.BLANK);
 
 				leadingTabCount--;
 			}
@@ -994,6 +985,47 @@ public class JavaClass {
 		return line.substring(x + 1);
 	}
 
+	protected String getCustomSQLContent() throws Exception {
+		if (_javaSourceProcessor.portalSource &&
+			!_javaSourceProcessor.isModulesFile(_absolutePath)) {
+
+			return _javaSourceProcessor.getPortalCustomSQLContent();
+		}
+
+		if (_customSQLContent != null) {
+			return _customSQLContent;
+		}
+
+		int i = _fileName.lastIndexOf("/src/");
+
+		if (i == -1) {
+			return null;
+		}
+
+		File customSQLFile = new File(
+			_fileName.substring(0, i) + "/src/custom-sql/default.xml");
+
+		if (!customSQLFile.exists()) {
+			customSQLFile = new File(
+				_fileName.substring(0, i) +
+					"/src/main/resources/META-INF/custom-sql/default.xml");
+		}
+
+		if (!customSQLFile.exists()) {
+			customSQLFile = new File(
+				_fileName.substring(0, i) +
+					"/src/main/resources/custom-sql/default.xml");
+		}
+
+		if (!customSQLFile.exists()) {
+			return null;
+		}
+
+		_customSQLContent = FileUtil.read(customSQLFile);
+
+		return _customSQLContent;
+	}
+
 	protected JavaTerm getJavaTerm(
 			String name, int type, int startPos, int endPos)
 		throws Exception {
@@ -1009,7 +1041,13 @@ public class JavaClass {
 		}
 
 		JavaTerm javaTerm = new JavaTerm(
-			name, type, javaTermContent, lineCount, _indent);
+			name, type, javaTermContent, _fileName, lineCount, _indent);
+
+		if (_fileName.contains("persistence") &&
+			_fileName.endsWith("FinderImpl.java")) {
+
+			javaTerm.setCustomSQLContent(getCustomSQLContent());
+		}
 
 		if (javaTerm.isConstructor()) {
 			_constructorCount++;
@@ -1446,31 +1484,7 @@ public class JavaClass {
 			return;
 		}
 
-		if (previousJavaTerm.getLineCount() <= javaTerm.getLineCount()) {
-			return;
-		}
-
-		String previousJavaTermName = previousJavaTerm.getName();
-
-		String javaTermNameLowerCase = StringUtil.toLowerCase(javaTermName);
-		String previousJavaTermNameLowerCase = StringUtil.toLowerCase(
-			previousJavaTermName);
-
-		if (_fileName.contains("persistence") &&
-			((previousJavaTermName.startsWith("doCount") &&
-			  javaTermName.startsWith("doCount")) ||
-			 (previousJavaTermName.startsWith("doFind") &&
-			  javaTermName.startsWith("doFind")) ||
-			 (previousJavaTermNameLowerCase.startsWith("count") &&
-			  javaTermNameLowerCase.startsWith("count")) ||
-			 (previousJavaTermNameLowerCase.startsWith("filter") &&
-			  javaTermNameLowerCase.startsWith("filter")) ||
-			 (previousJavaTermNameLowerCase.startsWith("find") &&
-			  javaTermNameLowerCase.startsWith("find")) ||
-			 (previousJavaTermNameLowerCase.startsWith("join") &&
-			  javaTermNameLowerCase.startsWith("join")))) {
-		}
-		else {
+		if (previousJavaTerm.getLineCount() > javaTerm.getLineCount()) {
 			_classContent = StringUtil.replaceFirst(
 				_classContent, "\n" + javaTerm.getContent(),
 				"\n" + previousJavaTerm.getContent());
@@ -1769,11 +1783,10 @@ public class JavaClass {
 				"boolean", "false", "char", "'\\\\0'", "byte", "0", "double",
 				"0\\.0", "float", "0\\.0", "int", "0", "long", "0", "short", "0"
 			});
+
 	private final String _absolutePath;
 	private final Pattern _booleanPattern = Pattern.compile(
 		"\n(\t+)boolean (\\w+) =(.*?);\n", Pattern.DOTALL);
-	private final Pattern _chainingPattern = Pattern.compile(
-		"^((?!this\\().)*\\WgetClass\\(\\)\\..", Pattern.DOTALL);
 	private String _classContent;
 	private final Pattern _classPattern = Pattern.compile(
 		"(private|protected|public) ((abstract|static) )*" +
@@ -1781,6 +1794,7 @@ public class JavaClass {
 	private String _cleanUpMethodContent;
 	private int _constructorCount;
 	private final String _content;
+	private String _customSQLContent;
 	private final Pattern _enumTypePattern = Pattern.compile(
 		"\t[A-Z0-9]+[ _,;\\(\n]");
 	private final File _file;

@@ -45,6 +45,7 @@ import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.ObjectValuePair;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.webserver.WebServerServletTokenUtil;
@@ -383,7 +384,11 @@ public class UserThreadLocalServiceImpl extends UserThreadLocalServiceBaseImpl {
 			group.getGroupId(), true,
 			PrivateMessagingPortletKeys.PRIVATE_MESSAGING);
 
-		Layout layout = layoutLocalService.getLayout(plid);
+		Layout layout = layoutLocalService.fetchLayout(plid);
+
+		if (layout == null) {
+			return StringPool.BLANK;
+		}
 
 		String privateMessageURL = PortalUtil.getLayoutFullURL(
 			layout, themeDisplay, false);
@@ -454,6 +459,7 @@ public class UserThreadLocalServiceImpl extends UserThreadLocalServiceBaseImpl {
 		long portraitId = sender.getPortraitId();
 		String tokenId = WebServerServletTokenUtil.getToken(
 			sender.getPortraitId());
+
 		String portraitURL =
 			themeDisplay.getPortalURL() + themeDisplay.getPathImage() +
 				"/user_" + (sender.isFemale() ? "female" : "male") +

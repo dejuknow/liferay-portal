@@ -1,10 +1,9 @@
 ;
-; Do not manually edit this file. See
-; https://github.com/git-commands/git-subrepo#readme for more information.
+; Do not manually edit this file.
 ;
 [subrepo]
 	cmdver = liferay
-	commit = ee65d3f721803c0823b473d6853efa160a03c10b
+	commit = 5c64a6d58a02389ef0927147f72dbef27f65e86e
 	mode = push
-	parent = 5b0129b2c5d42464f563712c831e15b665332d36
+	parent = ae9bcc0d4defbc313e38e36169bcb9aef3b54fa1
 	remote = git@github.com:liferay/com-liferay-portal-language.git

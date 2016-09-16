@@ -1,10 +1,9 @@
 ;
-; Do not manually edit this file. See
-; https://github.com/git-commands/git-subrepo#readme for more information.
+; Do not manually edit this file.
 ;
 [subrepo]
 	cmdver = liferay
-	commit = edf16094caac004459d9a5e4f7e5ad98888dbd36
+	commit = ae926bd1ea37a24efa4013bfab276e59f01b4eed
 	mode = push
-	parent = 923652ba367fe8c718a83d7238b77273f63bf7d8
+	parent = 25ee2b24e1495f46353db6456122801ac704a7c1
 	remote = git@github.com:liferay/com-liferay-nested-portlets.git

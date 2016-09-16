@@ -45,6 +45,7 @@ import java.io.InputStream;
 import java.lang.ref.Reference;
 
 import java.net.InetAddress;
+import java.net.ProxySelector;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -95,8 +96,10 @@ import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.pool.PoolStats;
+import org.apache.http.util.EntityUtils;
 
 /**
  * @author Brian Wing Shun Chan
@@ -149,6 +152,11 @@ public class HttpImpl implements Http {
 
 		httpClientBuilder.setDefaultRequestConfig(requestConfig);
 
+		SystemDefaultRoutePlanner systemDefaultRoutePlanner =
+			new SystemDefaultRoutePlanner(ProxySelector.getDefault());
+
+		httpClientBuilder.setRoutePlanner(systemDefaultRoutePlanner);
+
 		_closeableHttpClient = httpClientBuilder.build();
 
 		if (!hasProxyConfig() || Validator.isNull(_PROXY_USERNAME)) {
@@ -180,6 +188,8 @@ public class HttpImpl implements Http {
 		}
 
 		HttpClientBuilder proxyHttpClientBuilder = HttpClientBuilder.create();
+
+		proxyHttpClientBuilder.setRoutePlanner(systemDefaultRoutePlanner);
 
 		proxyHttpClientBuilder.setConnectionManager(
 			_poolingHttpClientConnectionManager);
@@ -454,6 +464,7 @@ public class HttpImpl implements Http {
 			int x =
 				sb.indexOf(Http.PROTOCOL_DELIMITER) +
 					Http.PROTOCOL_DELIMITER.length();
+
 			int y = sb.indexOf(StringPool.SLASH, x);
 
 			sb.insert(y, proxyPath);
@@ -1070,35 +1081,63 @@ public class HttpImpl implements Http {
 			return url;
 		}
 
-		Matcher matcher = _relativeURLPattern.matcher(url);
+		url = url.trim();
 
-		if (matcher.lookingAt()) {
+		// "/[a-zA-Z0-9]+" is considered as valid relative URL
+
+		if ((url.length() >= 2) && (url.charAt(0) == CharPool.SLASH) &&
+			_isLetterOrNumber(url.charAt(1))) {
+
 			return url;
 		}
 
-		boolean modified = false;
+		int pos = 0;
 
-		do {
-			modified = false;
+		protocol:
+		while (true) {
 
-			matcher = _absoluteURLPattern.matcher(url);
+			// Find and skip all valid protocol "[a-zA-Z0-9]+://" headers
 
-			if (matcher.lookingAt()) {
-				url = url.substring(matcher.end());
+			int index = url.indexOf(Http.PROTOCOL_DELIMITER, pos);
 
-				modified = true;
+			if (index > 0) {
+				boolean hasProtocol = true;
+
+				for (int i = pos; i < index; i++) {
+					if (!_isLetterOrNumber(url.charAt(i))) {
+						hasProtocol = false;
+
+						break;
+					}
+				}
+
+				if (hasProtocol) {
+					pos = index + Http.PROTOCOL_DELIMITER.length();
+
+					continue;
+				}
 			}
 
-			matcher = _protocolRelativeURLPattern.matcher(url);
+			// Ignore all "[\\\\/]+" after valid protocol header
 
-			if (matcher.lookingAt()) {
-				url = url.substring(matcher.end());
+			for (int i = pos; i < url.length(); i++) {
+				char c = url.charAt(i);
 
-				modified = true;
+				if ((c != CharPool.SLASH) && (c != CharPool.BACK_SLASH)) {
+					if (i != pos) {
+						pos = i;
+
+						continue protocol;
+					}
+
+					break;
+				}
 			}
-		} while (modified);
 
-		return url;
+			// Chop off protocol and return
+
+			return url.substring(pos);
+		}
 	}
 
 	@Override
@@ -1743,6 +1782,8 @@ public class HttpImpl implements Http {
 		}
 
 		BasicCookieStore basicCookieStore = null;
+		CloseableHttpResponse closeableHttpResponse = null;
+		HttpEntity httpEntity = null;
 
 		try {
 			_cookies.set(null);
@@ -1872,8 +1913,10 @@ public class HttpImpl implements Http {
 
 			requestBuilder.setConfig(requestConfigBuilder.build());
 
-			CloseableHttpResponse closeableHttpResponse = httpClient.execute(
+			closeableHttpResponse = httpClient.execute(
 				targetHttpHost, requestBuilder.build(), httpClientContext);
+
+			httpEntity = closeableHttpResponse.getEntity();
 
 			response.setResponseCode(
 				closeableHttpResponse.getStatusLine().getStatusCode());
@@ -1881,21 +1924,23 @@ public class HttpImpl implements Http {
 			Header locationHeader = closeableHttpResponse.getFirstHeader(
 				"location");
 
-			String locationHeaderValue = locationHeader.getValue();
+			if (locationHeader != null) {
+				String locationHeaderValue = locationHeader.getValue();
 
-			if ((locationHeader != null) &&
-				!locationHeaderValue.equals(location)) {
+				if (!locationHeaderValue.equals(location)) {
+					if (followRedirects) {
+						EntityUtils.consumeQuietly(httpEntity);
 
-				if (followRedirects) {
-					closeableHttpResponse.close();
+						closeableHttpResponse.close();
 
-					return URLtoInputStream(
-						locationHeaderValue, Http.Method.GET, headers, cookies,
-						auth, body, fileParts, parts, response, followRedirects,
-						timeout);
-				}
-				else {
-					response.setRedirect(locationHeaderValue);
+						return URLtoInputStream(
+							locationHeaderValue, Http.Method.GET, headers,
+							cookies, auth, body, fileParts, parts, response,
+							followRedirects, timeout);
+					}
+					else {
+						response.setRedirect(locationHeaderValue);
+					}
 				}
 			}
 
@@ -1930,8 +1975,6 @@ public class HttpImpl implements Http {
 			for (Header header : closeableHttpResponse.getAllHeaders()) {
 				response.addHeader(header.getName(), header.getValue());
 			}
-
-			HttpEntity httpEntity = closeableHttpResponse.getEntity();
 
 			InputStream inputStream = httpEntity.getContent();
 
@@ -1970,6 +2013,24 @@ public class HttpImpl implements Http {
 
 			};
 		}
+		catch (Exception e) {
+			if (httpEntity != null) {
+				EntityUtils.consumeQuietly(httpEntity);
+			}
+
+			if (closeableHttpResponse != null) {
+				try {
+					closeableHttpResponse.close();
+				}
+				catch (IOException ioe) {
+					if (_log.isWarnEnabled()) {
+						_log.warn("Unable to close response", e);
+					}
+				}
+			}
+
+			throw new IOException(e);
+		}
 		finally {
 			try {
 				if (basicCookieStore != null) {
@@ -1981,6 +2042,17 @@ public class HttpImpl implements Http {
 				_log.error(e, e);
 			}
 		}
+	}
+
+	private boolean _isLetterOrNumber(char c) {
+		if (((CharPool.NUMBER_0 <= c) && (c <= CharPool.NUMBER_9)) ||
+			((CharPool.UPPER_CASE_A <= c) && (c <= CharPool.UPPER_CASE_Z)) ||
+			((CharPool.LOWER_CASE_A <= c) && (c <= CharPool.LOWER_CASE_Z))) {
+
+			return true;
+		}
+
+		return false;
 	}
 
 	private static final String _DEFAULT_USER_AGENT =
@@ -2028,18 +2100,12 @@ public class HttpImpl implements Http {
 
 	private static final ThreadLocal<Cookie[]> _cookies = new ThreadLocal<>();
 
-	private final Pattern _absoluteURLPattern = Pattern.compile(
-		"^[a-zA-Z0-9]+://");
 	private final CloseableHttpClient _closeableHttpClient;
 	private final Pattern _nonProxyHostsPattern;
 	private final PoolingHttpClientConnectionManager
 		_poolingHttpClientConnectionManager;
-	private final Pattern _protocolRelativeURLPattern = Pattern.compile(
-		"^[\\s\\\\/]+");
 	private final List<String> _proxyAuthPrefs = new ArrayList<>();
 	private final CloseableHttpClient _proxyCloseableHttpClient;
 	private final Credentials _proxyCredentials;
-	private final Pattern _relativeURLPattern = Pattern.compile(
-		"^\\s*/[a-zA-Z0-9]+");
 
 }

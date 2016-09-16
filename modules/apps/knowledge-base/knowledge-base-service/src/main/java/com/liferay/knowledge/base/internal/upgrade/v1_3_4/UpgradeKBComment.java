@@ -16,6 +16,7 @@ package com.liferay.knowledge.base.internal.upgrade.v1_3_4;
 
 import com.liferay.knowledge.base.constants.KBCommentConstants;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
+import com.liferay.portal.kernel.util.StringUtil;
 
 /**
  * @author Adolfo Pérez
@@ -24,6 +25,11 @@ public class UpgradeKBComment extends UpgradeProcess {
 
 	@Override
 	protected void doUpgrade() throws Exception {
+		upgradeSchema();
+		upgradeKBComments();
+	}
+
+	protected void upgradeKBComments() throws Exception {
 		if (!hasColumn("KBComment", "helpful")) {
 			return;
 		}
@@ -38,6 +44,14 @@ public class UpgradeKBComment extends UpgradeProcess {
 					" where helpful = FALSE");
 
 		runSQL("alter table KBComment drop column helpful");
+	}
+
+	protected void upgradeSchema() throws Exception {
+		String template = StringUtil.read(
+			UpgradeKBComment.class.getResourceAsStream(
+				"dependencies/update.sql"));
+
+		runSQLTemplateString(template, false, false);
 	}
 
 }

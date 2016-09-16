@@ -73,8 +73,7 @@ public class PropsValues {
 	public static final String[] FIXED_ISSUES = StringUtil.split(
 		PropsUtil.get("fixed.issues"));
 
-	public static final String GOOGLE_API_KEY = PropsUtil.get(
-		"google.api.key");
+	public static final String GOOGLE_API_KEY = PropsUtil.get("google.api.key");
 
 	public static final String GOOGLE_CLIENT_ID = PropsUtil.get(
 		"google.client.id");
@@ -137,13 +136,13 @@ public class PropsValues {
 	public static final String SELENIUM_DESIRED_CAPABILITIES_PLATFORM =
 		PropsUtil.get("selenium.desired.capabilities.platform");
 
-	public static final String SELENIUM_EXECUTABLE_DIR_NAME =
-		PropsUtil.get("selenium.executable.dir.name");
+	public static final String SELENIUM_EXECUTABLE_DIR_NAME = PropsUtil.get(
+		"selenium.executable.dir.name");
 
 	public static final String SELENIUM_HOST = PropsUtil.get("selenium.host");
 
-	public static final String SELENIUM_IE_DRIVER_EXECUTABLE =
-		PropsUtil.get("selenium.ie.driver.executable");
+	public static final String SELENIUM_IE_DRIVER_EXECUTABLE = PropsUtil.get(
+		"selenium.ie.driver.executable");
 
 	public static final String SELENIUM_IMPLEMENTATION = PropsUtil.get(
 		"selenium.implementation");
@@ -157,8 +156,8 @@ public class PropsValues {
 	public static final boolean SELENIUM_REMOTE_DRIVER_ENABLED =
 		GetterUtil.getBoolean(PropsUtil.get("selenium.remote.driver.enabled"));
 
-	public static final String SELENIUM_REMOTE_DRIVER_HUB =
-		PropsUtil.get("selenium.remote.driver.hub");
+	public static final String SELENIUM_REMOTE_DRIVER_HUB = PropsUtil.get(
+		"selenium.remote.driver.hub");
 
 	public static final String TCAT_ADMIN_REPOSITORY = PropsUtil.get(
 		"tcat.admin.repository");
@@ -193,6 +192,9 @@ public class PropsValues {
 	public static final String[] TEST_BATCH_PROPERTY_NAMES = StringUtil.split(
 		PropsUtil.get("test.batch.property.names"));
 
+	public static final String TEST_BATCH_PROPERTY_QUERY = PropsUtil.get(
+		"test.batch.property.query");
+
 	public static final String[] TEST_BATCH_PROPERTY_VALUES = StringUtil.split(
 		PropsUtil.get("test.batch.property.values"));
 
@@ -220,6 +222,8 @@ public class PropsValues {
 	public static final String[] TEST_INCLUDE_DIR_NAMES = StringUtil.split(
 		PropsUtil.get("test.include.dir.names"));
 
+	public static final String TEST_NAME = PropsUtil.get("test.name");
+
 	public static final String TEST_NAME_SKIP_PORTAL_INSTANCE = PropsUtil.get(
 		"test.name.skip.portal.instance");
 
@@ -235,13 +239,17 @@ public class PropsValues {
 	public static final int TEST_RETRY_COMMAND_WAIT_TIME =
 		GetterUtil.getInteger(PropsUtil.get("test.retry.command.wait.time"));
 
+	public static final String TEST_RUN_ENVIRONMENT = PropsUtil.get(
+		"test.run.environment");
+
 	public static final boolean TEST_RUN_LOCALLY = GetterUtil.getBoolean(
 		PropsUtil.get("test.run.locally"));
 
-	public static final String TEST_NAME = PropsUtil.get("test.name");
-
 	public static final boolean TEST_SKIP_TEAR_DOWN = GetterUtil.getBoolean(
 		PropsUtil.get("test.skip.tear.down"));
+
+	public static final String[] TEST_TOGGLE_FILE_NAMES = StringUtil.split(
+		PropsUtil.get("test.toggle.file.names"));
 
 	public static final boolean TESTING_CLASS_METHOD = GetterUtil.getBoolean(
 		PropsUtil.get("testing.class.method"));

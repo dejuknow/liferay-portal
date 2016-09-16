@@ -24,6 +24,7 @@ import com.liferay.gradle.plugins.change.log.builder.ChangeLogBuilderPlugin;
 import com.liferay.gradle.plugins.defaults.LiferayOSGiDefaultsPlugin;
 import com.liferay.gradle.plugins.defaults.LiferayThemeDefaultsPlugin;
 import com.liferay.gradle.plugins.defaults.internal.util.FileUtil;
+import com.liferay.gradle.plugins.defaults.internal.util.GitUtil;
 import com.liferay.gradle.plugins.defaults.internal.util.GradleUtil;
 import com.liferay.gradle.plugins.defaults.tasks.PrintArtifactPublishCommandsTask;
 import com.liferay.gradle.plugins.defaults.tasks.ReplaceRegexTask;
@@ -32,9 +33,9 @@ import com.liferay.gradle.util.Validator;
 
 import groovy.lang.Closure;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 
 import java.lang.reflect.Method;
 
@@ -69,7 +70,6 @@ import org.gradle.api.tasks.Copy;
 import org.gradle.api.tasks.TaskContainer;
 import org.gradle.api.tasks.Upload;
 import org.gradle.api.tasks.bundling.AbstractArchiveTask;
-import org.gradle.process.ExecSpec;
 
 /**
  * @author Andrea Di Giorgi
@@ -99,8 +99,7 @@ public class LiferayRelengPlugin implements Plugin<Project> {
 	}
 
 	public static File getRelengDir(Project project) {
-		File rootDir = GradleUtil.getRootDir(
-			project.getRootProject(), ".releng");
+		File rootDir = GradleUtil.getRootDir(project, ".releng");
 
 		if (rootDir == null) {
 			return null;
@@ -180,6 +179,8 @@ public class LiferayRelengPlugin implements Plugin<Project> {
 			projectPath.startsWith(":private:apps:")) {
 
 			configureTaskEnabledIfLeaf(printArtifactPublishCommandsTask);
+			_configureTaskEnabledIfDependenciesArePublished(
+				printArtifactPublishCommandsTask);
 		}
 
 		GradleUtil.withPlugin(
@@ -302,7 +303,7 @@ public class LiferayRelengPlugin implements Plugin<Project> {
 
 				@Override
 				public String call() throws Exception {
-					return getGitResult(
+					return GitUtil.getGitResult(
 						writePropertiesTask.getProject(), "rev-parse", "HEAD");
 				}
 
@@ -606,27 +607,6 @@ public class LiferayRelengPlugin implements Plugin<Project> {
 		return sb.toString();
 	}
 
-	protected String getGitResult(Project project, final Object... args) {
-		final ByteArrayOutputStream byteArrayOutputStream =
-			new ByteArrayOutputStream();
-
-		project.exec(
-			new Action<ExecSpec>() {
-
-				@Override
-				public void execute(ExecSpec execSpec) {
-					execSpec.args(args);
-					execSpec.setExecutable("git");
-					execSpec.setStandardOutput(byteArrayOutputStream);
-				}
-
-			});
-
-		String result = byteArrayOutputStream.toString();
-
-		return result.trim();
-	}
-
 	protected boolean isStale(
 		final Project project, Properties artifactProperties) {
 
@@ -643,7 +623,7 @@ public class LiferayRelengPlugin implements Plugin<Project> {
 			return true;
 		}
 
-		String result = getGitResult(
+		String result = GitUtil.getGitResult(
 			project, "log", "--format=%s", artifactGitId + "..HEAD", ".");
 
 		String[] lines = result.split("\\r?\\n");
@@ -686,6 +666,32 @@ public class LiferayRelengPlugin implements Plugin<Project> {
 		}
 
 		return false;
+	}
+
+	private void _configureTaskEnabledIfDependenciesArePublished(Task task) {
+		task.onlyIf(
+			new Spec<Task>() {
+
+				@Override
+				public boolean isSatisfiedBy(Task task) {
+					try {
+						Project project = task.getProject();
+
+						if (FileUtil.contains(
+								project.getBuildFile(),
+								"version: \"default\"")) {
+
+							return false;
+						}
+
+						return true;
+					}
+					catch (IOException ioe) {
+						throw new UncheckedIOException(ioe);
+					}
+				}
+
+			});
 	}
 
 }

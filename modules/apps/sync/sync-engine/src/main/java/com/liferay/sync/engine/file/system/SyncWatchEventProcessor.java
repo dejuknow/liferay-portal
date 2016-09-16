@@ -767,7 +767,9 @@ public class SyncWatchEventProcessor implements Runnable {
 				syncWatchEvent.getFilePathName());
 		}
 
-		syncWatchEvents.add(syncWatchEvent);
+		if (!syncWatchEvents.contains(syncWatchEvent)) {
+			syncWatchEvents.add(syncWatchEvent);
+		}
 	}
 
 	protected void renameFile(SyncWatchEvent syncWatchEvent) throws Exception {

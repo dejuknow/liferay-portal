@@ -1,25 +1,35 @@
 <definition>
-	<command name="addAssociatedAssetTypeViaVocabularyCP">
-		<var name="key_vocabularyName" value="${vocabularyName}" />
-
-		<execute function="AssertTextEquals" locator1="Categories#VOCABULARY_ENTRY" value1="${vocabularyName}" />
-
-		<var name="key_rowEntry" value="${vocabularyName}" />
-
-		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" value1="${vocabularyName}" />
-		<execute function="AssertClick" locator1="MenuItem#EDIT" value1="Edit" />
-
+	<command name="addAssociatedAssetType">
 		<execute macro="Panel#expandPanel">
 			<var name="panelHeading" value="Associated Asset Types" />
 		</execute>
 
-		<execute function="Click" locator1="CategoriesEditVocabulary#ASSOCIATED_ASSET_TYPES_ADD_BUTTON" />
-		<execute function="Select" locator1="CategoriesEditVocabulary#ASSOCIATED_ASSET_TYPES_SELECT_2" value1="${vocabularyAssociatedAssetType2}" />
-		<execute macro="PortletEntry#save" />
+		<if>
+			<not>
+				<isset var="rowNumber" />
+			</not>
+			<then>
+				<var name="rowNumber" value="1" />
+			</then>
+		</if>
+
+		<execute function="Select" locator1="CategoriesEditVocabulary#ASSOCIATED_ASSET_TYPES_SELECT_N" value1="${assetType}">
+			<var name="key_rowNumber" value="${rowNumber}" />
+		</execute>
+
+		<if>
+			<equals arg1="${required}" arg2="true" />
+			<then>
+				<var name="key_rowNumber" value="${rowNumber}" />
+
+				<execute function="Check#checkToggleSwitch" locator1="ToggleSwitch#REQUIRED" />
+			</then>
+		</if>
 	</command>
 
 	<command name="addCP" summary="Add a vocabulary named '${vocabularyName}'">
 		<execute function="Click" locator1="Button#PLUS" />
+
 		<execute function="Type" locator1="TextInput#NAME" value1="${vocabularyName}" />
 
 		<if>
@@ -42,6 +52,7 @@
 				<var name="key_localizationName" value="${localizationNameKey}" />
 
 				<execute function="Click" locator1="CategoriesEditVocabulary#LOCALIZATION_NAME" />
+
 				<execute function="Type" locator1="TextInput#NAME" value1="${localizationName}" />
 			</then>
 		</if>
@@ -52,6 +63,7 @@
 				<var name="key_localizationName" value="${localization2NameKey}" />
 
 				<execute function="Click" locator1="CategoriesEditVocabulary#LOCALIZATION_NAME" />
+
 				<execute function="Type" locator1="TextInput#NAME" value1="${localization2Name}" />
 			</then>
 		</if>
@@ -69,6 +81,7 @@
 		</execute>
 
 		<execute function="Select" locator1="CategoriesEditVocabulary#PERMISSIONS_VIEWABLE_BY_SELECT" value1="${viewableBy}" />
+
 		<execute macro="PortletEntry#save" />
 
 		<var name="key_vocabularyName" value="${vocabularyName}" />
@@ -78,34 +91,30 @@
 
 	<command name="addVocabularyWithNullTitle">
 		<execute function="Click" locator1="Button#PLUS" />
+
 		<execute function="Type" locator1="TextInput#NAME" value1=" " />
 
 		<execute macro="Button#clickSave" />
+
 		<execute function="AssertTextEquals" locator1="Message#ERROR_FIELD_REQUIRED" value1="This field is required." />
 	</command>
 
 	<command name="addWithAssociatedAssetTypeCP">
 		<execute function="Click" locator1="Button#PLUS" />
+
 		<execute function="Type" locator1="TextInput#NAME" value1="${vocabularyName}" />
 
-		<execute macro="Panel#expandPanel">
-			<var name="panelHeading" value="Associated Asset Types" />
+		<execute macro="Vocabulary#addAssociatedAssetType">
+			<var name="assetType" value="${assetType}" />
+			<var name="required" value="${required}" />
+			<var name="rowNumber" value="${rowNumber}" />
 		</execute>
-
-		<execute function="Select" locator1="CategoriesEditVocabulary#ASSOCIATED_ASSET_TYPES_SELECT" value1="${vocabularyAssociatedAssetType}" />
-
-		<if>
-			<equals arg1="${required}" arg2="true" />
-			<then>
-				<execute function="Check#checkToggleSwitch" locator1="CategoriesEditVocabulary#REQUIRED_CHECKBOX" />
-			</then>
-		</if>
 
 		<execute macro="PortletEntry#save" />
 
-		<var name="key_vocabularyName" value="${vocabularyName}" />
-
-		<execute function="AssertTextEquals" locator1="Categories#VOCABULARY_ENTRY" value1="${vocabularyName}" />
+		<execute function="AssertTextEquals" locator1="Categories#VOCABULARY_ENTRY" value1="${vocabularyName}">
+			<var name="key_vocabularyName" value="${vocabularyName}" />
+		</execute>
 	</command>
 
 	<command name="deleteAssociatedAssetTypeViaVocabularyCP">
@@ -116,6 +125,7 @@
 		<var name="key_rowEntry" value="${vocabularyName}" />
 
 		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+
 		<execute function="AssertClick" locator1="MenuItem#EDIT" value1="Edit" />
 
 		<execute macro="Panel#expandPanel">
@@ -123,6 +133,7 @@
 		</execute>
 
 		<execute function="Click" locator1="CategoriesEditVocabulary#ASSOCIATED_ASSET_TYPES_DELETE_BUTTON_2" />
+
 		<execute macro="PortletEntry#save" />
 	</command>
 
@@ -130,10 +141,15 @@
 		<var name="key_vocabularyName" value="${vocabularyName}" />
 
 		<execute function="AssertTextEquals" locator1="Categories#VOCABULARY_ENTRY" value1="${vocabularyName}" />
+
 		<execute function="Check#checkAll" locator1="Checkbox#SELECT_ALL" />
+
 		<execute function="ClickNoError" locator1="Icon#DELETE" />
+
 		<execute function="Confirm" value1="Are you sure you want to delete this? It will be deleted immediately." />
+
 		<execute macro="Alert#viewSuccessMessage" />
+
 		<execute function="AssertTextNotPresent" value1="${vocabularyName}" />
 	</command>
 
@@ -145,11 +161,13 @@
 		<var name="key_rowEntry" value="${vocabularyName}" />
 
 		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+
 		<execute function="AssertClickNoError" locator1="MenuItem#DELETE" value1="Delete" />
 
 		<execute function="Confirm" value1="Are you sure you want to delete this? It will be deleted immediately." />
 
 		<execute macro="Alert#viewSuccessMessage" />
+
 		<execute function="AssertTextNotPresent" locator1="Categories#VOCABULARY_ENTRY" value1="${vocabularyName}" />
 	</command>
 
@@ -161,6 +179,7 @@
 		<var name="key_rowEntry" value="${vocabularyName}" />
 
 		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+
 		<execute function="AssertClick" locator1="MenuItem#EDIT" value1="Edit" />
 
 		<if>
@@ -197,6 +216,7 @@
 
 	<command name="searchCP">
 		<execute function="Type" locator1="TextInput#SEARCH" value1="${vocabularySearchEntry}" />
+
 		<execute function="Click" locator1="Icon#BASIC_SEARCH" />
 	</command>
 
@@ -211,7 +231,9 @@
 			<condition function="IsElementPresent" locator1="Checkbox#SELECT_ALL" />
 			<then>
 				<execute function="Check#checkAll" locator1="Checkbox#SELECT_ALL" />
+
 				<execute function="ClickNoError" locator1="Icon#DELETE" />
+
 				<execute function="Confirm" value1="Are you sure you want to delete this? It will be deleted immediately." />
 			</then>
 		</if>
@@ -228,7 +250,9 @@
 				<var name="key_rowEntry" value="${vocabularyName}" />
 
 				<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+
 				<execute function="AssertClick" locator1="MenuItem#EDIT" value1="Edit" />
+
 				<execute function="AssertNotChecked#assertNotCheckedToggleSwitch" locator1="CategoriesEditVocabulary#ALLOW_MULTIPLE_CATEGORIES_TOGGLE_SWITCH" />
 			</then>
 		</if>
@@ -273,6 +297,7 @@
 		<var name="key_rowEntry" value="${vocabularyName}" />
 
 		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+
 		<execute function="AssertClick" locator1="MenuItem#PERMISSIONS_LEXICON" value1="Permissions" />
 
 		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
@@ -307,6 +332,7 @@
 		<var name="key_rowEntry" value="${vocabularyName}" />
 
 		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+
 		<execute function="AssertClick" locator1="MenuItem#EDIT" value1="Edit" />
 
 		<execute macro="Panel#expandPanel">

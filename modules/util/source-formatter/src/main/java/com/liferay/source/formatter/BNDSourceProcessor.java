@@ -58,21 +58,38 @@ public class BNDSourceProcessor extends BaseSourceProcessor {
 
 		int y = absolutePath.lastIndexOf(StringPool.SLASH, x - 1);
 
-		String dirName = absolutePath.substring(y + 1, x);
+		String moduleName = absolutePath.substring(y + 1, x);
 
-		if (dirName.endsWith("-taglib-web")) {
-			String newDirName = dirName.substring(0, dirName.length() - 4);
+		if (absolutePath.matches(".*/apps(/.*){3,}")) {
+			int z = absolutePath.lastIndexOf(StringPool.SLASH, y - 1);
+
+			String applicationName = absolutePath.substring(z + 1, y);
+
+			if (!moduleName.startsWith(applicationName)) {
+				processMessage(
+					fileName,
+					"Module '" + moduleName + "' should start with '" +
+						applicationName + "'");
+			}
+		}
+
+		if (moduleName.endsWith("-taglib-web")) {
+			String newModuleName = moduleName.substring(
+				0, moduleName.length() - 4);
 
 			processMessage(
 				fileName,
-				"Rename module '" + dirName + "' to '" + newDirName + "'");
+				"Rename module '" + moduleName + "' to '" + newModuleName +
+					"'");
 		}
 
 		Matcher matcher = _bundleNamePattern.matcher(content);
 
 		if (matcher.find()) {
+			String bundleName = matcher.group(1);
+
 			String strippedBundleName = StringUtil.removeChars(
-				matcher.group(1), CharPool.DASH, CharPool.SPACE);
+				bundleName, CharPool.DASH, CharPool.SPACE);
 
 			strippedBundleName = strippedBundleName.replaceAll(
 				"Implementation$", "Impl");
@@ -80,14 +97,19 @@ public class BNDSourceProcessor extends BaseSourceProcessor {
 				"Utilities$", "Util");
 
 			String expectedBundleName =
-				"liferay" + StringUtil.removeChars(dirName, CharPool.DASH);
+				"liferay" + StringUtil.removeChars(moduleName, CharPool.DASH);
 
-			if (!strippedBundleName.equalsIgnoreCase(expectedBundleName)) {
-				processMessage(fileName, "Bundle-Name");
+			if (!StringUtil.equalsIgnoreCase(
+					strippedBundleName, expectedBundleName)) {
+
+				processMessage(
+					fileName, "Incorrect Bundle-Name '" + bundleName + "'");
 			}
 		}
 
-		if (dirName.contains("-import-") || dirName.contains("-private-")) {
+		if (moduleName.contains("-import-") ||
+			moduleName.contains("-private-")) {
+
 			return;
 		}
 
@@ -99,12 +121,15 @@ public class BNDSourceProcessor extends BaseSourceProcessor {
 			String expectedBundleSymbolicName =
 				"com.liferay." +
 					StringUtil.replace(
-						dirName, StringPool.DASH, StringPool.PERIOD);
+						moduleName, CharPool.DASH, CharPool.PERIOD);
 
-			if (!bundleSymbolicName.equalsIgnoreCase(
-					expectedBundleSymbolicName)) {
+			if (!StringUtil.equalsIgnoreCase(
+					bundleSymbolicName, expectedBundleSymbolicName)) {
 
-				processMessage(fileName, "Bundle-SymbolicName");
+				processMessage(
+					fileName,
+					"Incorrect Bundle-SymbolicName '" + bundleSymbolicName +
+						"'");
 			}
 		}
 
@@ -113,8 +138,10 @@ public class BNDSourceProcessor extends BaseSourceProcessor {
 		if (matcher.find()) {
 			String webContextPath = matcher.group(1);
 
-			if (!webContextPath.equals("/" + dirName)) {
-				processMessage(fileName, "Web-ContextPath");
+			if (!webContextPath.equals("/" + moduleName)) {
+				processMessage(
+					fileName,
+					"Incorrect Web-ContextPath '" + webContextPath + "'");
 			}
 		}
 	}

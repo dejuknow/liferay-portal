@@ -24,7 +24,7 @@
 			<var name="fieldValue" value="Text Field" />
 		</execute>
 
-		<execute macro="FormFields#save" />
+		<execute macro="Form#closeSidebar" />
 
 		<execute macro="Form#save" />
 
@@ -413,7 +413,7 @@
 		</execute>
 	</command>
 
-	<command name="searchForAssetsAfterUpgrade">
+	<command name="reindexSearches">
 		<execute macro="Navigator#openURL" />
 
 		<execute macro="ProductMenu#gotoControlPanelConfiguration">
@@ -435,7 +435,9 @@
 		</execute>
 
 		<execute function="Pause" locator1="10000" />
+	</command>
 
+	<command name="searchForAssetsAfterUpgrade">
 		<execute macro="Navigator#openURL" />
 
 		<execute macro="Search#searchPG">
@@ -495,7 +497,7 @@
 
 		<var name="key_portletName" value="Asset Publisher" />
 
-		<execute function="AssertTextEquals" locator1="BasePortlet#TITLE" value1="Asset Publisher" />
+		<execute function="AssertTextEquals" locator1="Portlet#TITLE" value1="Asset Publisher" />
 
 		<execute macro="WebContent#viewPGViaAP">
 			<var name="webContentContent" value="Web Content Content" />
@@ -558,7 +560,7 @@
 
 		<var name="key_portletName" value="Nested Portlets" />
 
-		<execute function="AssertTextEquals" locator1="BasePortlet#TITLE" value1="Nested Portlets" />
+		<execute function="AssertTextEquals" locator1="Portlet#TITLE" value1="Nested Portlets" />
 
 		<execute function="AssertTextNotEquals" locator1="Message#INFO" value1="Drag portlets below to nest them." />
 

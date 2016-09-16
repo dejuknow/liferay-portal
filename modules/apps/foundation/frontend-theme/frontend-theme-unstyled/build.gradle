@@ -13,8 +13,8 @@ task buildLexiconIcons(type: Copy)
 task buildTheme
 task publishNodeModule(type: PublishNodeModuleTask)
 
-String alloyUIVersion = "3.0.3-deprecated.39"
-String lexiconVersion = "1.0.4"
+String alloyUIVersion = "3.1.0-deprecated.1"
+String lexiconVersion = "1.0.8"
 
 File themeDestinationDir = file("src/main/resources/META-INF/resources/_unstyled");
 
@@ -63,6 +63,7 @@ buildLexicon {
 					line = """\
 @import \"../../liferay_variables_custom\";
 @import \"../../liferay_variables\";
+@import \"bourbon\";
 @import \"../../aui_custom\";
 @import \"../../liferay_custom\";"""
 				}

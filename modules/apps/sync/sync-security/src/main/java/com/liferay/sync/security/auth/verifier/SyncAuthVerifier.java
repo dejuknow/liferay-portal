@@ -188,6 +188,10 @@ public class SyncAuthVerifier implements AuthVerifier {
 
 		String token = request.getHeader(_TOKEN_HEADER);
 
+		if (Validator.isNull(token)) {
+			token = request.getParameter(_TOKEN_HEADER);
+		}
+
 		if (Validator.isNotNull(token)) {
 			String userId = getUserId(token);
 

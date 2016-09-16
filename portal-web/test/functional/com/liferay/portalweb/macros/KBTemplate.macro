@@ -6,8 +6,11 @@
 
 		<execute function="Click" locator1="Button#PLUS" />
 
-		<execute function="Type#typeEditor" locator1="AlloyEditor#TITLE_FIELD" value1="${kbTemplateTitle}" />
-		<execute function="Type#typeEditor" locator1="AlloyEditor#CONTENT_FIELD" value1="${kbTemplateContent}" />
+		<execute macro="AlloyEditor#addTitleAndContent">
+			<var name="content" value="${kbTemplateContent}" />
+			<var name="title" value="${kbTemplateTitle}" />
+		</execute>
+
 		<execute macro="PortletEntry#publish" />
 	</command>
 
@@ -19,6 +22,7 @@
 		<var name="key_rowEntry" value="${kbTemplateTitle}" />
 
 		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
+
 		<execute function="AssertClick" locator1="MenuItem#VIEW" value1="View" />
 	</command>
 
@@ -29,14 +33,19 @@
 			<var name="portlet" value="Knowledge Base" />
 		</execute>
 
-		<execute function="AssertClick" locator1="KnowledgeBase#ADMIN_TABS_TEMPLATES" value1="Templates" />
+		<execute function="Click" locator1="Icon#HEADER_VERTICAL_ELLIPSIS" />
+
+		<execute function="AssertClick" locator1="MenuItem#TEMPLATES" value1="Templates" />
 
 		<if>
-			<condition function="IsElementPresent" locator1="KnowledgeBaseTemplate#TEMPLATE_TABLE_SELECT_ALL_CHECKBOX" />
+			<condition function="IsElementPresent" locator1="ContentRow#ENTRY_CONTENT_ROW_1" />
 			<then>
-				<execute function="Check" locator1="KnowledgeBaseTemplate#TEMPLATE_TABLE_SELECT_ALL_CHECKBOX" />
+				<execute function="Check#checkAll" locator1="Checkbox#SELECT_ALL" />
+
 				<execute function="AssertClickNoError" locator1="Button#DELETE" value1="Delete" />
+
 				<execute function="Confirm" value1="Are you sure you want to delete the selected templates?" />
+
 				<execute macro="Alert#viewSuccessMessage" />
 			</then>
 		</if>

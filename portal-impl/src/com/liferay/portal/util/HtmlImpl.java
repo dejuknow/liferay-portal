@@ -621,7 +621,6 @@ public class HtmlImpl implements Html {
 
 		while (y != -1) {
 			sb.append(text.substring(x, y));
-			sb.append(StringPool.SPACE);
 
 			// Look for text enclosed by <abc></abc>
 
@@ -783,7 +782,7 @@ public class HtmlImpl implements Html {
 	}
 
 	protected int stripTag(char[] tag, String text, int pos) {
-		int x = pos + _TAG_SCRIPT.length;
+		int x = pos + tag.length;
 
 		// Find end of the tag
 
@@ -795,7 +794,7 @@ public class HtmlImpl implements Html {
 
 		// Check if preceding character is / (i.e. is this instance of <abc/>)
 
-		if (text.charAt(x-1) == '/') {
+		if (text.charAt(x - 1) == '/') {
 			return pos;
 		}
 

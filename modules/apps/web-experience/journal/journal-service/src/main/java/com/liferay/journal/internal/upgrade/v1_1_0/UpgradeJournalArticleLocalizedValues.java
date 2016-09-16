@@ -19,7 +19,6 @@ import com.liferay.portal.kernel.dao.db.DBManagerUtil;
 import com.liferay.portal.kernel.dao.jdbc.AutoBatchPreparedStatementUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.upgrade.UpgradeMVCCVersion;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
@@ -137,11 +136,33 @@ public class UpgradeJournalArticleLocalizedValues extends UpgradeProcess {
 				localeSet.addAll(descriptionMap.keySet());
 
 				for (Locale locale : localeSet) {
+					String localizedTitle = titleMap.get(locale);
+					String localizedDescription = descriptionMap.get(locale);
+
+					if ((localizedTitle != null) &&
+						(localizedTitle.length() > _MAX_LENGTH_TITLE)) {
+
+						localizedTitle = localizedTitle.substring(
+							0, _MAX_LENGTH_TITLE);
+
+						_log(articleId, "title");
+					}
+
+					if ((localizedDescription != null) &&
+						(localizedDescription.length() >
+							_MAX_LENGTH_DESCRIPTION)) {
+
+						localizedDescription = localizedDescription.substring(
+							0, _MAX_LENGTH_DESCRIPTION);
+
+						_log(articleId, "description");
+					}
+
 					ps2.setLong(1, _increment());
 					ps2.setLong(2, companyId);
 					ps2.setLong(3, articleId);
-					ps2.setString(4, titleMap.get(locale));
-					ps2.setString(5, descriptionMap.get(locale));
+					ps2.setString(4, localizedTitle);
+					ps2.setString(5, localizedDescription);
 					ps2.setString(6, LocaleUtil.toLanguageId(locale));
 
 					ps2.addBatch();
@@ -158,8 +179,6 @@ public class UpgradeJournalArticleLocalizedValues extends UpgradeProcess {
 				"dependencies/update.sql"));
 
 		runSQLTemplateString(template, false, false);
-
-		upgrade(UpgradeMVCCVersion.class);
 	}
 
 	private static long _increment() {
@@ -167,6 +186,20 @@ public class UpgradeJournalArticleLocalizedValues extends UpgradeProcess {
 
 		return db.increment();
 	}
+
+	private void _log(long articleId, String columnName) {
+		if (!_log.isWarnEnabled()) {
+			return;
+		}
+
+		_log.warn(
+			"Truncated the " + columnName + " value for article " + articleId +
+				" because it is too long");
+	}
+
+	private static final int _MAX_LENGTH_DESCRIPTION = 4000;
+
+	private static final int _MAX_LENGTH_TITLE = 400;
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		UpgradeJournalArticleLocalizedValues.class);

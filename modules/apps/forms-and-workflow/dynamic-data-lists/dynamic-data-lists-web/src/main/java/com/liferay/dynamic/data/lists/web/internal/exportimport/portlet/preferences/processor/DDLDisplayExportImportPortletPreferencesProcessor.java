@@ -89,7 +89,7 @@ public class DDLDisplayExportImportPortletPreferencesProcessor
 
 		String portletId = portletDataContext.getPortletId();
 
-		final long recordSetId = GetterUtil.getLong(
+		long recordSetId = GetterUtil.getLong(
 			portletPreferences.getValue("recordSetId", null));
 
 		if (recordSetId == 0) {
@@ -110,26 +110,8 @@ public class DDLDisplayExportImportPortletPreferencesProcessor
 				portletDataContext, portletId, recordSet);
 
 			ActionableDynamicQuery recordActionableDynamicQuery =
-				_ddlRecordStagedModelRepository.getExportActionableDynamicQuery(
-					portletDataContext);
-
-			final ActionableDynamicQuery.AddCriteriaMethod addCriteriaMethod =
-				recordActionableDynamicQuery.getAddCriteriaMethod();
-
-			recordActionableDynamicQuery.setAddCriteriaMethod(
-				new ActionableDynamicQuery.AddCriteriaMethod() {
-
-					@Override
-					public void addCriteria(DynamicQuery dynamicQuery) {
-						addCriteriaMethod.addCriteria(dynamicQuery);
-
-						Property property = PropertyFactoryUtil.forName(
-							"recordSetId");
-
-						dynamicQuery.add(property.eq(recordSetId));
-					}
-
-				});
+				getRecordActionableDynamicQuery(
+					portletDataContext, recordSet, portletId);
 
 			try {
 				recordActionableDynamicQuery.performActions();
@@ -211,6 +193,48 @@ public class DDLDisplayExportImportPortletPreferencesProcessor
 		}
 
 		return portletPreferences;
+	}
+
+	protected ActionableDynamicQuery getRecordActionableDynamicQuery(
+		final PortletDataContext portletDataContext,
+		final DDLRecordSet recordSet, final String portletId) {
+
+		ActionableDynamicQuery recordActionableDynamicQuery =
+			_ddlRecordStagedModelRepository.getExportActionableDynamicQuery(
+				portletDataContext);
+
+		final ActionableDynamicQuery.AddCriteriaMethod addCriteriaMethod =
+			recordActionableDynamicQuery.getAddCriteriaMethod();
+
+		recordActionableDynamicQuery.setAddCriteriaMethod(
+			new ActionableDynamicQuery.AddCriteriaMethod() {
+
+				@Override
+				public void addCriteria(DynamicQuery dynamicQuery) {
+					addCriteriaMethod.addCriteria(dynamicQuery);
+
+					Property property = PropertyFactoryUtil.forName(
+						"recordSetId");
+
+					dynamicQuery.add(property.eq(recordSet.getRecordSetId()));
+				}
+
+			});
+		recordActionableDynamicQuery.setGroupId(recordSet.getGroupId());
+		recordActionableDynamicQuery.setPerformActionMethod(
+			new ActionableDynamicQuery.PerformActionMethod<DDLRecord>() {
+
+				@Override
+				public void performAction(DDLRecord record)
+					throws PortalException {
+
+					StagedModelDataHandlerUtil.exportReferenceStagedModel(
+						portletDataContext, portletId, record);
+				}
+
+			});
+
+		return recordActionableDynamicQuery;
 	}
 
 	@Reference(unbind = "-")

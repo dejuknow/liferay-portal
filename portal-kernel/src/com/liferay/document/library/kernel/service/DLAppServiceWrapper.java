@@ -100,7 +100,7 @@ public class DLAppServiceWrapper implements DLAppService,
 	* @param inheritable whether the lock must propagate to descendants
 	* @param expirationTime the time in milliseconds before the lock expires.
 	If the value is <code>0</code>, the default expiration time will
-	be used from <code>portal.properties>.
+	be used from <code>portal.properties</code>.
 	* @return the lock object
 	*/
 	@Override
@@ -120,7 +120,7 @@ public class DLAppServiceWrapper implements DLAppService,
 	* @param companyId the primary key of the file entry's company
 	* @param expirationTime the time in milliseconds before the lock expires.
 	If the value is <code>0</code>, the default expiration time will
-	be used from <code>portal.properties>.
+	be used from <code>portal.properties</code>.
 	* @return the lock object
 	*/
 	@Override
@@ -139,7 +139,7 @@ public class DLAppServiceWrapper implements DLAppService,
 	* @param companyId the primary key of the file entry's company
 	* @param expirationTime the time in milliseconds before the lock expires.
 	If the value is <code>0</code>, the default expiration time will
-	be used from <code>portal.properties>.
+	be used from <code>portal.properties</code>.
 	* @return the lock object
 	*/
 	@Override
@@ -356,7 +356,7 @@ public class DLAppServiceWrapper implements DLAppService,
 	<code>null</code>)
 	* @param expirationTime the time in milliseconds before the lock expires.
 	If the value is <code>0</code>, the default expiration time will
-	be used from <code>portal.properties>.
+	be used from <code>portal.properties</code>.
 	* @param serviceContext the service context to be applied
 	* @return the file entry
 	* @see #cancelCheckOut(long)
