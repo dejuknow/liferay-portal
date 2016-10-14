@@ -113,7 +113,7 @@ public interface DLAppService extends BaseService {
 	* @param inheritable whether the lock must propagate to descendants
 	* @param expirationTime the time in milliseconds before the lock expires.
 	If the value is <code>0</code>, the default expiration time will
-	be used from <code>portal.properties>.
+	be used from <code>portal.properties</code>.
 	* @return the lock object
 	*/
 	public Lock lockFolder(long repositoryId, long folderId,
@@ -128,7 +128,7 @@ public interface DLAppService extends BaseService {
 	* @param companyId the primary key of the file entry's company
 	* @param expirationTime the time in milliseconds before the lock expires.
 	If the value is <code>0</code>, the default expiration time will
-	be used from <code>portal.properties>.
+	be used from <code>portal.properties</code>.
 	* @return the lock object
 	*/
 	public Lock refreshFileEntryLock(java.lang.String lockUuid, long companyId,
@@ -142,7 +142,7 @@ public interface DLAppService extends BaseService {
 	* @param companyId the primary key of the file entry's company
 	* @param expirationTime the time in milliseconds before the lock expires.
 	If the value is <code>0</code>, the default expiration time will
-	be used from <code>portal.properties>.
+	be used from <code>portal.properties</code>.
 	* @return the lock object
 	*/
 	public Lock refreshFolderLock(java.lang.String lockUuid, long companyId,
@@ -324,7 +324,7 @@ public interface DLAppService extends BaseService {
 	<code>null</code>)
 	* @param expirationTime the time in milliseconds before the lock expires.
 	If the value is <code>0</code>, the default expiration time will
-	be used from <code>portal.properties>.
+	be used from <code>portal.properties</code>.
 	* @param serviceContext the service context to be applied
 	* @return the file entry
 	* @see #cancelCheckOut(long)

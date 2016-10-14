@@ -281,6 +281,12 @@
 		<execute function="AssertElementNotPresent" locator1="MessageBoards#THREAD_LIST_THREAD" />
 	</command>
 
+	<command name="downloadAttachmentPG">
+		<execute function="Click" locator1="MessageBoardsThread#MESSAGE_BODY_ATTACHMENT_1" />
+
+		<execute function="DownloadTempFile" />
+	</command>
+
 	<command name="editCP">
 		<execute macro="PortletEntry#clickEditFromEllipsis" />
 
@@ -930,11 +936,15 @@
 	</command>
 
 	<command name="viewMarkAsQuestionCheckedCP">
+		<var name="key_threadSubject" value="${threadSubject}" />
+
 		<execute function="Click" locator1="Button#PLUS" />
 
 		<execute function="AssertClick" locator1="MenuItem#THREAD" value1="Thread" />
 
 		<execute function="AssertVisible" locator1="Button#PUBLISH" />
+
+		<execute function="Type#mouseOverFocusType" locator1="TextInput#SUBJECT" value1="${threadSubject}" />
 
 		<execute macro="Panel#expandPanel">
 			<var name="panelHeading" value="More Settings" />
@@ -946,11 +956,15 @@
 	</command>
 
 	<command name="viewMarkAsQuestionNotCheckedCP">
+		<var name="key_threadSubject" value="${threadSubject}" />
+
 		<execute function="Click" locator1="Button#PLUS" />
 
 		<execute function="AssertClick" locator1="MenuItem#THREAD" value1="Thread" />
 
 		<execute function="AssertVisible" locator1="Button#PUBLISH" />
+
+		<execute function="Type#mouseOverFocusType" locator1="TextInput#SUBJECT" value1="${threadSubject}" />
 
 		<execute macro="Panel#expandPanel">
 			<var name="panelHeading" value="More Settings" />

@@ -157,7 +157,6 @@
 	}
 
 	.kb-attachments {
-		display: inline-block;
 		margin: 20px 0 0;
 
 		& > div {
@@ -307,10 +306,25 @@
 	.kb-select-article-breadcrumbs {
 		margin: 0 0 5px;
 	}
+
+	.lfr-dynamic-uploader {
+		position: relative;
+		top: 0;
+	}
 }
 
 #wrapper .knowledge-base-portlet .card-horizontal.main-content-card {
 	min-height: 0;
+}
+
+.firefox .knowledge-base-portlet {
+	fieldset {
+		display: table-cell;
+	}
+
+	.kbarticle-navigation a {
+		word-wrap: break-word;
+	}
 }
 
 /* Skin */

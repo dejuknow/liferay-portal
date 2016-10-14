@@ -522,8 +522,8 @@ public class DefaultPortalLDAP implements PortalLDAP {
 			if (ldapContext == null) {
 				if (_log.isDebugEnabled()) {
 					_log.debug(
-						"No LDAP server configuration available for " +
-							"LDAP server " + ldapServerId + " and company " +
+						"No LDAP server configuration available for LDAP " +
+							"server " + ldapServerId + " and company " +
 								companyId);
 				}
 
@@ -1094,6 +1094,7 @@ public class DefaultPortalLDAP implements PortalLDAP {
 		}
 		else {
 			int y = attributeId.indexOf(CharPool.EQUAL, x);
+
 			int z = attributeId.indexOf(CharPool.DASH, y);
 
 			originalAttributeId = attributeId.substring(0, x);

@@ -23,7 +23,6 @@ DDLRecord record = (DDLRecord)request.getAttribute(DDLWebKeys.DYNAMIC_DATA_LISTS
 
 long recordId = BeanParamUtil.getLong(record, request, "recordId");
 
-long groupId = BeanParamUtil.getLong(record, request, "groupId", scopeGroupId);
 long recordSetId = BeanParamUtil.getLong(record, request, "recordSetId");
 
 long formDDMTemplateId = ParamUtil.getLong(request, "formDDMTemplateId");
@@ -164,7 +163,7 @@ else {
 		<aui:form action="<%= (record == null) ? addRecordURL : updateRecordURL %>" cssClass="container-fluid-1280" enctype="multipart/form-data" method="post" name="fm">
 			<aui:input name="redirect" type="hidden" value="<%= redirect %>" />
 			<aui:input name="recordId" type="hidden" value="<%= recordId %>" />
-			<aui:input name="groupId" type="hidden" value="<%= groupId %>" />
+			<aui:input name="groupId" type="hidden" value="<%= recordSet.getGroupId() %>" />
 			<aui:input name="recordSetId" type="hidden" value="<%= recordSetId %>" />
 			<aui:input name="formDDMTemplateId" type="hidden" value="<%= formDDMTemplateId %>" />
 			<aui:input name="defaultLanguageId" type="hidden" value="<%= defaultLanguageId %>" />

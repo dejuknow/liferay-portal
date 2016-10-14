@@ -90,7 +90,7 @@ public class AssetPublisherDisplayContext {
 	};
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link
+	 * @deprecated As of 2.0.0, replaced by {@link
 	 *             #AssetPublisherDisplayContext(PortletRequest,
 	 *             PortletResponse, PortletPreferences)}
 	 */
@@ -752,7 +752,7 @@ public class AssetPublisherDisplayContext {
 		// the view counter breaks
 
 		if ((assetEntry == null) || assetEntry.isNew() ||
-			!assetEntry.isVisible() ||!isEnableViewCountIncrement()) {
+			!assetEntry.isVisible() || !isEnableViewCountIncrement()) {
 
 			return assetEntry;
 		}
@@ -1258,6 +1258,7 @@ public class AssetPublisherDisplayContext {
 			AssetPublisherUtil.encodeName(
 				classTypeField.getClassTypeId(), getDDMStructureFieldName(),
 				locale));
+
 		assetEntryQuery.setAttribute(
 			"ddmStructureFieldValue", getDDMStructureFieldValue());
 	}

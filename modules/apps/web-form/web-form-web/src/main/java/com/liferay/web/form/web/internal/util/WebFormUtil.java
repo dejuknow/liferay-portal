@@ -175,12 +175,14 @@ public class WebFormUtil {
 		}
 		else {
 			int offset = 0;
+
 			int pos = s.indexOf(delimiter, offset);
 
 			while (pos != -1) {
 				nodeValues.add(new String(s.substring(offset, pos)));
 
 				offset = pos + delimiter.length();
+
 				pos = s.indexOf(delimiter, offset);
 			}
 		}
@@ -215,6 +217,7 @@ public class WebFormUtil {
 				new String[] {"\\n", "\\n", "\\n"});
 
 			sb.append(HtmlUtil.escapeJS(value));
+
 			sb.append("';\n");
 		}
 

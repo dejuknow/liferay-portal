@@ -15,7 +15,9 @@
 package com.liferay.portal.deploy.hot;
 
 import com.liferay.portal.kernel.bean.ClassLoaderBeanHandler;
+import com.liferay.portal.kernel.module.framework.service.IdentifiableOSGiService;
 import com.liferay.portal.kernel.service.ServiceWrapper;
+import com.liferay.portal.kernel.util.AggregateClassLoader;
 import com.liferay.portal.kernel.util.ProxyUtil;
 
 import java.lang.reflect.InvocationHandler;
@@ -40,20 +42,35 @@ public class ServiceBag<V> {
 		if (!(previousService instanceof ServiceWrapper)) {
 			Class<?> previousServiceClass = previousService.getClass();
 
-			ClassLoader previousServiceClassLoader =
-				previousServiceClass.getClassLoader();
+			AggregateClassLoader previousServiceAggregateClassLoader =
+				new AggregateClassLoader(previousServiceClass.getClassLoader());
+
+			previousServiceAggregateClassLoader.addClassLoader(
+				IdentifiableOSGiService.class.getClassLoader());
 
 			previousService = ProxyUtil.newProxyInstance(
-				previousServiceClassLoader, new Class<?>[] {serviceTypeClass},
+				previousServiceAggregateClassLoader,
+				new Class<?>[] {
+					serviceTypeClass, IdentifiableOSGiService.class
+				},
 				new ClassLoaderBeanHandler(
-					previousService, previousServiceClassLoader));
+					previousService, previousServiceAggregateClassLoader));
 
 			serviceWrapper.setWrappedService((V)previousService);
 		}
 
+		AggregateClassLoader newServiceAggregateClassLoader =
+			new AggregateClassLoader(serviceTypeClass.getClassLoader());
+
+		newServiceAggregateClassLoader.addClassLoader(
+			IdentifiableOSGiService.class.getClassLoader());
+
 		Object nextTarget = ProxyUtil.newProxyInstance(
-			serviceTypeClass.getClassLoader(),
-			new Class<?>[] {serviceTypeClass, ServiceWrapper.class},
+			newServiceAggregateClassLoader,
+			new Class<?>[] {
+				serviceTypeClass, ServiceWrapper.class,
+				IdentifiableOSGiService.class
+			},
 			new ClassLoaderBeanHandler(serviceWrapper, classLoader));
 
 		TargetSource nextTargetSource = new SingletonTargetSource(nextTarget) {
@@ -75,6 +92,7 @@ public class ServiceBag<V> {
 		TargetSource targetSource = _advisedSupport.getTargetSource();
 
 		Object currentService = targetSource.getTarget();
+
 		ServiceWrapper<T> previousService = null;
 
 		// Loop through services

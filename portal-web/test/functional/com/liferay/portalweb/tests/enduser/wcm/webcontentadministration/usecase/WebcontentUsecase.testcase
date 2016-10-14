@@ -184,7 +184,7 @@
 				<var name="portlet" value="Site Memberships" />
 			</execute>
 
-			<execute macro="Site#addMemberCP">
+			<execute macro="Site#assignUserAsMemberCP">
 				<var name="userFirstName" value="userfn${number}" />
 				<var name="userLastName" value="userln${number}" />
 				<var name="userScreenName" value="usersn${number}" />
@@ -270,7 +270,7 @@
 
 		<execute macro="ServerAdministration#configureExternalServices">
 			<var name="installXuggler" value="true" />
-			<var name="xugglerJarFile" value="Linux 64-bit JVM (with GNU libc v6) (xuggle-xuggler-arch-x86_64-pc-linux-gnu.jar)" />
+			<var name="xugglerJarFile" value="Linux 32-bit JVM (with GNU libc v6) (xuggle-xuggler-arch-i686-pc-linux-gnu.jar)" />
 		</execute>
 
 		<execute macro="Portlet#shutdownServer" />
@@ -305,7 +305,7 @@
 			<var name="dmDocumentTitle" value="Document_1.mp3" />
 		</execute>
 
-		<execute function="AssertClick" locator1="Link#URL" value1="URL" />
+		<execute macro="DMNavigator#gotoURLDetail" />
 
 		<var method="selenium#getElementValue('//input[contains(@id,\'url\')]')" name="dmDocumentURL" />
 
@@ -356,6 +356,8 @@
 	</command>
 
 	<command name="AddEmbeddedPortletFreemarkerTemplate" priority="3">
+		<property name="osgi.modules.includes" value="currency-converter-web" />
+
 		<execute macro="ProductMenu#gotoControlPanelSites">
 			<var name="portlet" value="Sites" />
 		</execute>
@@ -448,6 +450,8 @@
 	</command>
 
 	<command name="AddEmbeddedPortletVelocityTemplate" priority="3">
+		<property name="osgi.modules.includes" value="currency-converter-web" />
+
 		<execute macro="ProductMenu#gotoControlPanelSites">
 			<var name="portlet" value="Sites" />
 		</execute>
@@ -698,7 +702,7 @@
 
 		<var name="key_portletTitleName" value="Web Content Display" />
 
-		<execute function="AssertTextNotPresent" locator1="BasePortlet#SPECIFIC_TITLE" value1="Web Content Display" />
+		<execute function="AssertTextNotPresent" locator1="Portlet#SPECIFIC_TITLE" value1="Web Content Display" />
 
 		<execute function="AssertTextNotPresent" locator1="WCD#WEB_CONTENT_CONTENT" value1="WC WebContent Content" />
 	</command>
@@ -874,19 +878,19 @@
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
-		<execute macro="Site#addMemberCP">
-			<var name="siteName" value="Liferay" />
+		<execute macro="Site#assignUserAsMemberCP">
 			<var name="userFirstName" value="test1" />
 			<var name="userLastName" value="test1" />
 			<var name="userScreenName" value="test1test" />
 		</execute>
 
-		<execute macro="Site#assignRoleCP">
+		<execute macro="ProductMenu#gotoSitesMembers">
+			<var name="portlet" value="Site Memberships" />
+		</execute>
+
+		<execute macro="Site#assignSiteRoleCP">
+			<var name="resourceName" value="test1 test1" />
 			<var name="roleName" value="Site Administrator" />
-			<var name="siteName" value="Liferay" />
-			<var name="userFirstName" value="test1" />
-			<var name="userLastName" value="test1" />
-			<var name="userScreenName" value="test1test" />
 		</execute>
 
 		<execute macro="User#logoutAndLoginPG">

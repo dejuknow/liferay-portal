@@ -100,19 +100,25 @@ public class UserGroupsAdminPortlet extends MVCPortlet {
 
 		UserGroup userGroup = null;
 
-		if (userGroupId <= 0) {
+		try (ProxyModeThreadLocalCloseable proxyModeThreadLocalCloseable =
+				new ProxyModeThreadLocalCloseable()) {
 
-			// Add user group
+			ProxyModeThreadLocal.setForceSync(true);
 
-			userGroup = _userGroupService.addUserGroup(
-				name, description, serviceContext);
-		}
-		else {
+			if (userGroupId <= 0) {
 
-			// Update user group
+				// Add user group
 
-			userGroup = _userGroupService.updateUserGroup(
-				userGroupId, name, description, serviceContext);
+				userGroup = _userGroupService.addUserGroup(
+					name, description, serviceContext);
+			}
+			else {
+
+				// Update user group
+
+				userGroup = _userGroupService.updateUserGroup(
+					userGroupId, name, description, serviceContext);
+			}
 		}
 
 		// Layout set prototypes

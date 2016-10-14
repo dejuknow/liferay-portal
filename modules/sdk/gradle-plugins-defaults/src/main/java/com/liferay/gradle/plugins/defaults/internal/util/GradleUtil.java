@@ -14,7 +14,11 @@
 
 package com.liferay.gradle.plugins.defaults.internal.util;
 
+import com.liferay.gradle.util.Validator;
+
 import java.io.File;
+
+import java.lang.reflect.Method;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -27,6 +31,7 @@ import java.util.Set;
 
 import org.gradle.StartParameter;
 import org.gradle.api.Action;
+import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
@@ -48,6 +53,8 @@ public class GradleUtil extends com.liferay.gradle.util.GradleUtil {
 
 	public static final String SNAPSHOT_PROPERTY_NAME = "snapshot";
 
+	public static final String SNAPSHOT_VERSION_SUFFIX = "-SNAPSHOT";
+
 	public static <T extends Task> T addTask(
 		Project project, String name, Class<T> clazz, boolean overwrite) {
 
@@ -60,7 +67,7 @@ public class GradleUtil extends com.liferay.gradle.util.GradleUtil {
 	}
 
 	public static String getArchivesBaseName(Project project) {
-		BasePluginConvention basePluginConvention = GradleUtil.getConvention(
+		BasePluginConvention basePluginConvention = getConvention(
 			project, BasePluginConvention.class);
 
 		return basePluginConvention.getArchivesBaseName();
@@ -74,6 +81,48 @@ public class GradleUtil extends com.liferay.gradle.util.GradleUtil {
 		}
 
 		return null;
+	}
+
+	public static Object getProperty(Object object, String name) {
+		try {
+			Class<?> clazz = object.getClass();
+
+			Method hasPropertyMethod = clazz.getMethod(
+				"hasProperty", String.class);
+
+			boolean hasProperty = (boolean)hasPropertyMethod.invoke(
+				object, name);
+
+			if (!hasProperty) {
+				return null;
+			}
+
+			Method getPropertyMethod = clazz.getMethod(
+				"getProperty", String.class);
+
+			Object value = getPropertyMethod.invoke(object, name);
+
+			if ((value instanceof String) && Validator.isNull((String)value)) {
+				value = null;
+			}
+
+			return value;
+		}
+		catch (ReflectiveOperationException roe) {
+			throw new GradleException("Unable to get property", roe);
+		}
+	}
+
+	public static String getProperty(
+		Object object, String name, String defaultValue) {
+
+		Object value = getProperty(object, name);
+
+		if (value == null) {
+			return defaultValue;
+		}
+
+		return toString(value);
 	}
 
 	public static File getRootDir(File dir, String markerFileName) {
@@ -153,25 +202,38 @@ public class GradleUtil extends com.liferay.gradle.util.GradleUtil {
 	public static boolean isSnapshot(Project project) {
 		String version = String.valueOf(project.getVersion());
 
-		if (version.endsWith(_SNAPSHOT_VERSION_SUFFIX)) {
+		if (version.endsWith(SNAPSHOT_VERSION_SUFFIX)) {
 			return true;
 		}
 
 		return false;
 	}
 
-	public static void setProjectSnapshotVersion(Project project) {
+	public static void setProjectSnapshotVersion(
+		Project project, String... propertyNames) {
+
 		boolean snapshot = false;
 
 		if (project.hasProperty(SNAPSHOT_PROPERTY_NAME)) {
-			snapshot = GradleUtil.getProperty(
-				project, SNAPSHOT_PROPERTY_NAME, true);
+			snapshot = getProperty(project, SNAPSHOT_PROPERTY_NAME, true);
+		}
+
+		if (!snapshot) {
+			for (String propertyName : propertyNames) {
+				if (project.hasProperty(propertyName) &&
+					getProperty(project, propertyName, true)) {
+
+					snapshot = true;
+
+					break;
+				}
+			}
 		}
 
 		String version = String.valueOf(project.getVersion());
 
-		if (snapshot && !version.endsWith(_SNAPSHOT_VERSION_SUFFIX)) {
-			project.setVersion(version + _SNAPSHOT_VERSION_SUFFIX);
+		if (snapshot && !version.endsWith(SNAPSHOT_VERSION_SUFFIX)) {
+			project.setVersion(version + SNAPSHOT_VERSION_SUFFIX);
 		}
 	}
 
@@ -182,7 +244,5 @@ public class GradleUtil extends com.liferay.gradle.util.GradleUtil {
 
 		pluginContainer.withType(pluginClass, action);
 	}
-
-	private static final String _SNAPSHOT_VERSION_SUFFIX = "-SNAPSHOT";
 
 }

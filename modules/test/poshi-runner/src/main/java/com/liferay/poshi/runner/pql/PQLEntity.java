@@ -15,6 +15,7 @@
 package com.liferay.poshi.runner.pql;
 
 import java.util.Properties;
+import java.util.Set;
 
 /**
  * @author Michael Hashimoto
@@ -29,12 +30,12 @@ public abstract class PQLEntity {
 				break;
 			}
 
-			String subPQL = pql.substring(1, pql.length() - 1);
+			String subpql = pql.substring(1, pql.length() - 1);
 
 			int parenthesisCount = 0;
 
-			for (int i = 0; i < subPQL.length(); i++) {
-				char c = subPQL.charAt(i);
+			for (int i = 0; i < subpql.length(); i++) {
+				char c = subpql.charAt(i);
 
 				if (c == '(') {
 					parenthesisCount++;
@@ -53,7 +54,19 @@ public abstract class PQLEntity {
 				return pql.trim();
 			}
 
-			pql = subPQL;
+			pql = subpql;
+		}
+
+		return pql.trim();
+	}
+
+	public static String removeModifierFromPQL(String pql) {
+		pql = fixPQL(pql);
+
+		String modifier = _getModifierFromPQL(pql);
+
+		if (modifier != null) {
+			pql = pql.substring(modifier.length());
 		}
 
 		return pql.trim();
@@ -62,9 +75,17 @@ public abstract class PQLEntity {
 	public PQLEntity(String pql) throws Exception {
 		if (pql != null) {
 			pql = fixPQL(pql);
+
+			_setModifierFromPQL(pql);
+
+			pql = removeModifierFromPQL(pql);
 		}
 
 		_pql = pql;
+	}
+
+	public PQLModifier getPQLModifier() {
+		return _pqlModifier;
 	}
 
 	public abstract Object getPQLResult(Properties properties) throws Exception;
@@ -73,6 +94,34 @@ public abstract class PQLEntity {
 		return _pql;
 	}
 
+	private static String _getModifierFromPQL(String pql) {
+		pql = fixPQL(pql);
+
+		Set<String> availableModifiers = PQLModifier.getAvailableModifiers();
+
+		for (String modifier : availableModifiers) {
+			if (pql.startsWith(modifier)) {
+				return modifier;
+			}
+		}
+
+		return null;
+	}
+
+	private void _setModifierFromPQL(String pql) throws Exception {
+		pql = fixPQL(pql);
+
+		String modifier = _getModifierFromPQL(pql);
+
+		if (modifier != null) {
+			_pqlModifier = PQLModifierFactory.newPQLModifier(modifier);
+		}
+		else {
+			_pqlModifier = null;
+		}
+	}
+
 	private final String _pql;
+	private PQLModifier _pqlModifier;
 
 }

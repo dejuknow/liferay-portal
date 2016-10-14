@@ -36,6 +36,8 @@ import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.test.rule.AdviseWith;
 import com.liferay.portal.test.rule.AspectJNewEnvTestRule;
 import com.liferay.portal.util.FileImpl;
+import com.liferay.registry.BasicRegistryImpl;
+import com.liferay.registry.RegistryUtil;
 
 import java.io.Serializable;
 
@@ -101,6 +103,8 @@ public class IntrabandProxyInstallationUtilTest {
 		_stubProxyMethodSignatures =
 			IntrabandProxyUtil.getProxyMethodSignatures(
 				IntrabandProxyUtil.getStubClass(TestClass.class, "skeletonId"));
+
+		RegistryUtil.setRegistry(new BasicRegistryImpl());
 	}
 
 	@NewEnv(type = NewEnv.Type.NONE)

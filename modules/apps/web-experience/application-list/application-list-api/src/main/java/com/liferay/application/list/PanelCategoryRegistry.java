@@ -37,6 +37,11 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 
 /**
+ * Provides methods for retrieving application category instances defined by
+ * {@link PanelCategory} implementations. The Application Categories Registry is
+ * an OSGi component. Application categories used within the registry should
+ * also be OSGi components in order to be registered.
+ *
  * @author Adolfo Pérez
  */
 @Component(immediate = true, service = PanelCategoryRegistry.class)

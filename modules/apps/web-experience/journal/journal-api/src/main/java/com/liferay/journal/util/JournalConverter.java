@@ -42,20 +42,20 @@ public interface JournalConverter {
 		throws PortalException;
 
 	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
+	 * @deprecated As of 3.0.0, with no direct replacement
 	 */
 	@Deprecated
 	public String getDDMXSD(String journalXSD) throws Exception;
 
 	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
+	 * @deprecated As of 3.0.0, with no direct replacement
 	 */
 	@Deprecated
 	public String getDDMXSD(String journalXSD, Locale defaultLocale)
 		throws Exception;
 
 	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
+	 * @deprecated As of 3.0.0, with no direct replacement
 	 */
 	@Deprecated
 	public String getJournalXSD(String ddmXSD) throws Exception;

@@ -146,6 +146,7 @@ public class LocalizationImplTest {
 
 		String languageIdsFromDoc = LocalizationUtil.getDefaultLanguageId(
 			document);
+
 		String languageIdsFromXml = LocalizationUtil.getDefaultLanguageId(_xml);
 
 		Assert.assertEquals(
@@ -192,7 +193,7 @@ public class LocalizationImplTest {
 
 		for (Locale locale : LanguageUtil.getAvailableLocales()) {
 			Assert.assertTrue(
-				"Key for " +locale + "included in XML",
+				"Key for " + locale + "included in XML",
 				xml.contains(
 					"<key language-id=\"" + locale + "\">defaultValue</key>"));
 		}

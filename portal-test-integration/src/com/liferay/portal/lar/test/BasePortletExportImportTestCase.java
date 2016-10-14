@@ -450,8 +450,8 @@ public abstract class BasePortletExportImportTestCase
 		throws Exception {
 
 		String portletId = LayoutTestUtil.addPortletToLayout(
-			TestPropsValues.getUserId(), this.layout, getPortletId(),
-			"column-1", preferenceMap);
+			TestPropsValues.getUserId(), layout, getPortletId(), "column-1",
+			preferenceMap);
 
 		exportImportPortlet(portletId);
 
@@ -517,7 +517,9 @@ public abstract class BasePortletExportImportTestCase
 
 		TemplateHandler templateHandler = portlet.getTemplateHandlerInstance();
 
-		if (templateHandler == null) {
+		if ((templateHandler == null) ||
+			!templateHandler.isDisplayTemplateHandler()) {
+
 			Assert.assertTrue("This test does not apply", true);
 
 			return;

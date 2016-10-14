@@ -27,7 +27,28 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * Provides a skeletal implementation of the {@link PanelCategory} with JSP
+ * support to minimize the effort required to implement this interface.
+ *
+ * <p>
+ * To implement a JSP application category, this class should be extended and
+ * {@link #getJspPath()} should be implemented, which returns a path for the
+ * main JSP application category view in the current servlet context. The
+ * servlet context should also be set using {@link
+ * #setServletContext(ServletContext)}, which uses the appropriate servlet
+ * context for JSP pages. If the servlet context is not set, {@link
+ * #include(HttpServletRequest, HttpServletResponse)} will throw a
+ * <code>NullPointerException</code>.
+ * </p>
+ *
+ * <p>
+ * JSP application categories include JSP applications defined by {@link
+ * BaseJSPPanelApp} implementations.
+ * </p>
+ *
  * @author Eudaldo Alonso
+ * @see    BasePanelCategory
+ * @see    PanelCategory
  */
 public abstract class BaseJSPPanelCategory extends BasePanelCategory {
 

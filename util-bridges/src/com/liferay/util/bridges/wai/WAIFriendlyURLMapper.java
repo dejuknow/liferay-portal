@@ -86,6 +86,7 @@ public class WAIFriendlyURLMapper implements FriendlyURLMapper {
 		Map<String, Object> requestContext) {
 
 		int x = friendlyURLPath.indexOf(_MAPPING);
+
 		int y = friendlyURLPath.indexOf(
 			CharPool.SLASH, x + _MAPPING.length() + 1);
 
@@ -98,6 +99,7 @@ public class WAIFriendlyURLMapper implements FriendlyURLMapper {
 		String portletId = prefix + PortletConstants.WAR_SEPARATOR + prefix;
 
 		parameterMap.put("p_p_id", new String[] {portletId});
+
 		parameterMap.put("p_p_lifecycle", new String[] {"0"});
 
 		if (hasBinaryExtension(friendlyURLPath)) {

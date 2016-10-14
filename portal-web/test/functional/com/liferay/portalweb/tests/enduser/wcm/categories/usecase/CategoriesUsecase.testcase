@@ -90,9 +90,7 @@
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
-		<execute macro="Site#addMemberCP">
-			<var name="siteName" value="${siteName}" />
-			<var name="siteScopeName" value="Liferay" />
+		<execute macro="Site#assignUserAsMemberCP">
 			<var name="userFirstName" value="userfn" />
 			<var name="userLastName" value="userln" />
 			<var name="userScreenName" value="usersn" />
@@ -181,15 +179,12 @@
 	</command>
 
 	<command name="AddCategorywithSiteRole" priority="4">
-		<var name="pageName" value="Test Page Name" />
-		<var name="siteName" value="Test Site Name" />
-
 		<execute macro="ProductMenu#gotoControlPanelSites">
 			<var name="portlet" value="Sites" />
 		</execute>
 
 		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="${siteName}" />
+			<var name="siteName" value="Test Site Name" />
 		</execute>
 
 		<execute macro="ProductMenu#gotoControlPanelSites">
@@ -197,8 +192,8 @@
 		</execute>
 
 		<execute macro="Page#add">
-			<var name="pageName" value="${pageName}" />
-			<var name="siteName" value="${siteName}" />
+			<var name="pageName" value="Test Page Name" />
+			<var name="siteName" value="Test Site Name" />
 		</execute>
 
 		<execute macro="ProductMenu#gotoControlPanelUsers">
@@ -227,16 +222,14 @@
 		</execute>
 
 		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="${siteName}" />
+			<var name="site" value="Test Site Name" />
 		</execute>
 
 		<execute macro="ProductMenu#gotoSitesMembers">
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
-		<execute macro="Site#addMemberCP">
-			<var name="siteName" value="${siteName}" />
-			<var name="siteScopeName" value="${siteName}" />
+		<execute macro="Site#assignUserAsMemberCP">
 			<var name="userFirstName" value="userfn" />
 			<var name="userLastName" value="userln" />
 			<var name="userScreenName" value="usersn" />
@@ -331,8 +324,8 @@
 		</execute>
 
 		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="${pageName}" />
-			<var name="siteName" value="${siteName}" />
+			<var name="pageName" value="Test Page Name" />
+			<var name="siteName" value="Test Site Name" />
 		</execute>
 
 		<execute macro="ProductMenu#gotoSitesContent">
@@ -344,8 +337,8 @@
 		</execute>
 
 		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="${pageName}" />
-			<var name="siteName" value="${siteName}" />
+			<var name="pageName" value="Test Page Name" />
+			<var name="siteName" value="Test Site Name" />
 		</execute>
 
 		<execute macro="ProductMenu#gotoSitesContent">
@@ -360,6 +353,56 @@
 		<execute macro="User#logoutAndLoginPG">
 			<var name="userLoginEmailAddress" value="test@liferay.com" />
 			<var name="userLoginFullName" value="Test Test" />
+		</execute>
+	</command>
+
+	<command name="AddPageWithRequiredVocabulary" priority="4">
+		<execute macro="Navigator#openURL" />
+
+		<execute macro="ProductMenu#gotoSitesContent">
+			<var name="portlet" value="Categories" />
+		</execute>
+
+		<execute macro="Vocabulary#addWithAssociatedAssetTypeCP">
+			<var name="assetType" value="Page" />
+			<var name="required" value="true" />
+			<var name="vocabularyName" value="Vocabulary Name" />
+		</execute>
+
+		<execute macro="Navigator#openURL" />
+
+		<execute macro="ProductMenu#gotoSitesContent">
+			<var name="portlet" value="Categories" />
+		</execute>
+
+		<execute macro="Category#addCP">
+			<var name="categoryName" value="Category Name" />
+			<var name="vocabularyName" value="Vocabulary Name" />
+		</execute>
+
+		<execute macro="Navigator#openURL" />
+
+		<execute macro="SitePageNavigator#gotoAddPage" />
+
+		<execute macro="Page#addPageTitle">
+			<var name="pageName" value="Page Category" />
+		</execute>
+
+		<execute macro="Panel#expandPanel">
+			<var name="panelHeading" value="Categorization" />
+		</execute>
+
+		<execute macro="AssetCategorization#addCategory">
+			<var name="categoryName" value="Category Name" />
+			<var name="vocabularyName" value="Vocabulary Name" />
+		</execute>
+
+		<execute macro="Page#saveAddPage" />
+
+		<execute macro="Navigator#openURL" />
+
+		<execute macro="Page#viewSpecificPG">
+			<var name="pageNameList" value="Page Category" />
 		</execute>
 	</command>
 
@@ -408,6 +451,66 @@
 		</execute>
 	</command>
 
+	<command name="AddVocabularyWithMultipleAssetTypes" priority="4">
+		<execute macro="Navigator#openURL" />
+
+		<execute macro="ProductMenu#gotoSitesContent">
+			<var name="portlet" value="Categories" />
+		</execute>
+
+		<execute macro="VocabularyNavigator#gotoAdd" />
+
+		<execute macro="PortletEntry#inputName">
+			<var name="name" value="Vocabulary Name" />
+		</execute>
+
+		<execute macro="Vocabulary#addAssociatedAssetType">
+			<var name="assetType" value="Blogs Entry" />
+			<var name="required" value="true" />
+		</execute>
+
+		<execute macro="Button#clickAddRow" />
+
+		<execute macro="Vocabulary#addAssociatedAssetType">
+			<var name="assetType" value="Web Content Article" />
+			<var name="required" value="true" />
+			<var name="rowNumber" value="2" />
+		</execute>
+
+		<execute macro="Button#clickSave" />
+
+		<execute macro="Navigator#openURL" />
+
+		<execute macro="ProductMenu#gotoSitesContent">
+			<var name="portlet" value="Categories" />
+		</execute>
+
+		<execute macro="Category#addCP">
+			<var name="categoryName" value="Category Name" />
+			<var name="vocabularyName" value="Vocabulary Name" />
+		</execute>
+
+		<execute macro="Navigator#openURL" />
+
+		<execute macro="ProductMenu#gotoSitesContent">
+			<var name="portlet" value="Web Content" />
+		</execute>
+
+		<execute macro="WebContentNavigator#gotoAddCP" />
+
+		<execute macro="WebContent#addWithCategoryCP">
+			<var name="categoryName" value="Category Name" />
+			<var name="vocabularyName" value="Vocabulary Name" />
+			<var name="webContentContent" value="Web Content Content" />
+			<var name="webContentTitle" value="Web Content Title" />
+		</execute>
+
+		<execute macro="Page#viewNoSelectCategory">
+			<var name="pageName" value="page Name" />
+			<var name="vocabularyName" value="Vocabulary Name" />
+		</execute>
+	</command>
+
 	<command name="AddWCFailWithRequiredVocabularyAssetType" priority="3">
 		<execute macro="Navigator#openURL" />
 
@@ -416,8 +519,8 @@
 		</execute>
 
 		<execute macro="Vocabulary#addWithAssociatedAssetTypeCP">
+			<var name="assetType" value="Web Content Article" />
 			<var name="required" value="true" />
-			<var name="vocabularyAssociatedAssetType" value="Web Content Article" />
 			<var name="vocabularyName" value="Vocabulary Name" />
 		</execute>
 
@@ -477,7 +580,7 @@
 		</execute>
 
 		<execute macro="Vocabulary#addWithAssociatedAssetTypeCP">
-			<var name="vocabularyAssociatedAssetType" value="Web Content Article" />
+			<var name="assetType" value="Web Content Article" />
 			<var name="vocabularyName" value="Vocabulary Name" />
 		</execute>
 
@@ -580,9 +683,7 @@
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
-		<execute macro="Site#addMemberCP">
-			<var name="siteName" value="Liferay" />
-			<var name="siteScopeName" value="Liferay" />
+		<execute macro="Site#assignUserAsMemberCP">
 			<var name="userFirstName" value="userfn" />
 			<var name="userLastName" value="userln" />
 			<var name="userScreenName" value="usersn" />
@@ -776,11 +877,6 @@
 	</command>
 
 	<command name="DuplicateCategoriesViaWebContentCopy" priority="3">
-		<var name="categoryName" value="Category Name" />
-		<var name="vocabularyName" value="Vocabulary Name" />
-		<var name="webContentContent" value="Web Content Content" />
-		<var name="webContentTitle" value="Web Content Title" />
-
 		<execute macro="Navigator#openURL" />
 
 		<execute macro="ProductMenu#gotoSitesContent">
@@ -788,7 +884,7 @@
 		</execute>
 
 		<execute macro="Vocabulary#addCP">
-			<var name="vocabularyName" value="${vocabularyName}" />
+			<var name="vocabularyName" value="Vocabulary Name" />
 		</execute>
 
 		<execute macro="Navigator#openURL" />
@@ -798,8 +894,8 @@
 		</execute>
 
 		<execute macro="Category#addCP">
-			<var name="categoryName" value="${categoryName}" />
-			<var name="vocabularyName" value="${vocabularyName}" />
+			<var name="categoryName" value="Category Name" />
+			<var name="vocabularyName" value="Vocabulary Name" />
 		</execute>
 
 		<execute macro="Navigator#openURL" />
@@ -811,22 +907,22 @@
 		<execute macro="WebContentNavigator#gotoAddCP" />
 
 		<execute macro="WebContent#addWithCategoryCP">
-			<var name="categoryName" value="${categoryName}" />
-			<var name="vocabularyName" value="${vocabularyName}" />
-			<var name="webContentContent" value="${webContentContent}" />
-			<var name="webContentTitle" value="${webContentTitle}" />
+			<var name="categoryName" value="Category Name" />
+			<var name="vocabularyName" value="Vocabulary Name" />
+			<var name="webContentContent" value="Web Content Content" />
+			<var name="webContentTitle" value="Web Content Title" />
 		</execute>
 
 		<execute macro="WebContentNavigator#gotoEditCP">
-			<var name="webContentTitle" value="${webContentTitle}" />
+			<var name="webContentTitle" value="Web Content Title" />
 		</execute>
 
 		<execute macro="WebContent#viewCategorizationVocabularyCP">
-			<var name="vocabularyNameList" value="${vocabularyName}" />
+			<var name="vocabularyNameList" value="Vocabulary Name" />
 		</execute>
 
 		<execute macro="WebContent#viewCategorizationCategoryCP">
-			<var name="categoryNameList" value="${categoryName}" />
+			<var name="categoryNameList" value="Category Name" />
 		</execute>
 
 		<execute macro="ProductMenu#gotoSitesContent">
@@ -834,22 +930,22 @@
 		</execute>
 
 		<execute macro="WebContent#copyCP">
-			<var name="webContentTitle" value="${webContentTitle}" />
+			<var name="webContentTitle" value="Web Content Title" />
 		</execute>
 
 		<execute macro="WebContent#gotoEditDuplicateEntryCP" />
 
 		<execute macro="WebContent#viewCP">
-			<var name="webContentContent" value="${webContentContent}" />
-			<var name="webContentTitle" value="${webContentTitle}" />
+			<var name="webContentContent" value="Web Content Content" />
+			<var name="webContentTitle" value="Web Content Title" />
 		</execute>
 
 		<execute macro="WebContent#viewCategorizationVocabularyCP">
-			<var name="vocabularyNameList" value="${vocabularyName}" />
+			<var name="vocabularyNameList" value="Vocabulary Name" />
 		</execute>
 
 		<execute macro="WebContent#viewCategorizationCategoryCP">
-			<var name="categoryNameList" value="${categoryName}" />
+			<var name="categoryNameList" value="Category Name" />
 		</execute>
 	</command>
 

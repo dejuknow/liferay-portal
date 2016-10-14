@@ -20,12 +20,12 @@ import com.liferay.calendar.model.CalendarBooking;
 import com.liferay.calendar.model.CalendarBookingConstants;
 import com.liferay.calendar.service.CalendarBookingLocalService;
 import com.liferay.calendar.workflow.CalendarBookingWorkflowConstants;
+import com.liferay.exportimport.data.handler.base.BaseStagedModelDataHandler;
 import com.liferay.exportimport.kernel.lar.ExportImportPathUtil;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.exportimport.kernel.lar.StagedModelDataHandler;
 import com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil;
 import com.liferay.exportimport.kernel.lar.StagedModelModifiedDateComparator;
-import com.liferay.exportimport.lar.BaseStagedModelDataHandler;
 import com.liferay.message.boards.kernel.model.MBMessage;
 import com.liferay.message.boards.kernel.service.MBMessageLocalService;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
@@ -206,7 +206,9 @@ public class CalendarBookingStagedModelDataHandler
 				importedCalendarBooking =
 					_calendarBookingLocalService.addCalendarBooking(
 						userId, calendarId, new long[0],
-						parentCalendarBookingId, calendarBooking.getTitleMap(),
+						parentCalendarBookingId,
+						calendarBooking.getRecurringCalendarBookingId(),
+						calendarBooking.getTitleMap(),
 						calendarBooking.getDescriptionMap(),
 						calendarBooking.getLocation(),
 						calendarBooking.getStartTime(),
@@ -241,6 +243,7 @@ public class CalendarBookingStagedModelDataHandler
 			importedCalendarBooking =
 				_calendarBookingLocalService.addCalendarBooking(
 					userId, calendarId, new long[0], parentCalendarBookingId,
+					calendarBooking.getRecurringCalendarBookingId(),
 					calendarBooking.getTitleMap(),
 					calendarBooking.getDescriptionMap(),
 					calendarBooking.getLocation(),

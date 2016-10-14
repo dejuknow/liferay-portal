@@ -16,7 +16,7 @@ package com.liferay.dynamic.data.lists.form.web.internal.exportimport.data.handl
 
 import com.liferay.dynamic.data.lists.exportimport.staged.model.repository.DDLRecordSetStagedModelRepository;
 import com.liferay.dynamic.data.lists.exportimport.staged.model.repository.DDLRecordStagedModelRepository;
-import com.liferay.dynamic.data.lists.form.web.internal.constants.DDLFormPortletKeys;
+import com.liferay.dynamic.data.lists.form.web.constants.DDLFormPortletKeys;
 import com.liferay.dynamic.data.lists.model.DDLRecord;
 import com.liferay.dynamic.data.lists.model.DDLRecordSet;
 import com.liferay.dynamic.data.lists.model.DDLRecordSetConstants;
@@ -89,16 +89,25 @@ public class DDLFormAdminPortletDataHandler extends BasePortletDataHandler {
 				DDLRecord.class.getName()));
 	}
 
+	/**
+	 * @deprecated As of 1.1.0
+	 */
 	@Deprecated
 	protected DynamicQuery createRecordSetDynamicQuery() {
 		return null;
 	}
 
+	/**
+	 * @deprecated As of 1.1.0
+	 */
 	@Deprecated
 	protected DynamicQuery createRecordVersionDynamicQuery() {
 		return null;
 	}
 
+	/**
+	 * @deprecated As of 1.1.0
+	 */
 	@Deprecated
 	protected void deleteRecordSets(PortletDataContext portletDataContext)
 		throws PortalException {
@@ -237,6 +246,9 @@ public class DDLFormAdminPortletDataHandler extends BasePortletDataHandler {
 		recordActionableDynamicQuery.performCount();
 	}
 
+	/**
+	 * @deprecated As of 1.1.0
+	 */
 	@Deprecated
 	protected ActionableDynamicQuery getRecordActionableDynamicQuery(
 		final PortletDataContext portletDataContext) {
@@ -245,6 +257,9 @@ public class DDLFormAdminPortletDataHandler extends BasePortletDataHandler {
 			portletDataContext, DDLRecordSetConstants.SCOPE_FORMS);
 	}
 
+	/**
+	 * @deprecated As of 1.1.0
+	 */
 	@Deprecated
 	protected ActionableDynamicQuery getRecordSetActionableDynamicQuery(
 		final PortletDataContext portletDataContext) {
@@ -254,11 +269,17 @@ public class DDLFormAdminPortletDataHandler extends BasePortletDataHandler {
 				portletDataContext, DDLRecordSetConstants.SCOPE_FORMS);
 	}
 
+	/**
+	 * @deprecated As of 1.1.0
+	 */
 	@Deprecated
 	protected void setDDLRecordLocalService(
 		DDLRecordLocalService ddlRecordLocalService) {
 	}
 
+	/**
+	 * @deprecated As of 1.1.0
+	 */
 	@Deprecated
 	protected void setDDLRecordSetLocalService(
 		DDLRecordSetLocalService ddlRecordSetLocalService) {
@@ -284,6 +305,9 @@ public class DDLFormAdminPortletDataHandler extends BasePortletDataHandler {
 		_ddlRecordStagedModelRepository = ddlRecordStagedModelRepository;
 	}
 
+	/**
+	 * @deprecated As of 1.1.0
+	 */
 	@Deprecated
 	protected void setDDMStructureLocalService(
 		DDMStructureLocalService ddmStructureLocalService) {

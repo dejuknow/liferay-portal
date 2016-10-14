@@ -77,8 +77,8 @@ public class UpgradePortalPreferences extends UpgradeProcess {
 			PreparedStatement ps2 =
 				AutoBatchPreparedStatementUtil.concurrentAutoBatch(
 					connection,
-					"update PortalPreferences set preferences = ? " +
-						"where portalPreferencesId = ?")) {
+					"update PortalPreferences set preferences = ? where " +
+						"portalPreferencesId = ?")) {
 
 			while (rs.next()) {
 				long portalPreferencesId = rs.getLong("portalPreferencesId");
@@ -86,6 +86,7 @@ public class UpgradePortalPreferences extends UpgradeProcess {
 				String preferences = rs.getString("preferences");
 
 				ps2.setString(1, convertStagingPreferencesToJSON(preferences));
+
 				ps2.setLong(2, portalPreferencesId);
 
 				ps2.addBatch();

@@ -33,7 +33,6 @@ AUI.add(
 					},
 
 					value: {
-						repaint: false,
 						value: []
 					}
 				},
@@ -49,6 +48,7 @@ AUI.add(
 						var sortableList = instance.get('sortableList');
 
 						instance._eventHandlers.push(
+							instance.after('*:valueChanged', A.bind('_afterOptionValueChanged', instance)),
 							sortableList.after('drag:end', A.bind('_afterSortableListDragEnd', instance)),
 							sortableList.after('drag:start', A.bind('_afterSortableListDragStart', instance))
 						);
@@ -67,6 +67,8 @@ AUI.add(
 						instance._renderOptionUI(repeatedOption);
 						instance._syncOptionUI(repeatedOption);
 						instance._syncOptionUI(lastOption);
+
+						repeatedOption.addTarget(instance);
 
 						instance.fire('addOption');
 
@@ -240,7 +242,13 @@ AUI.add(
 						mainOption.set('errorMessage', event.newVal);
 					},
 
-					_afterRender: function(option) {
+					_afterOptionValueChanged: function() {
+						var instance = this;
+
+						instance.evaluate();
+					},
+
+					_afterRenderOption: function(option) {
 						var instance = this;
 
 						instance._bindListEvents();
@@ -267,6 +275,8 @@ AUI.add(
 							);
 
 							instance.moveOption(option, dragStartIndex, dragEndIndex);
+
+							instance.evaluate();
 						}
 					},
 
@@ -305,9 +315,11 @@ AUI.add(
 					_bindOptionUI: function(option) {
 						var instance = this;
 
-						option.after('render', A.bind('_afterRender', instance, option));
+						option.after('render', A.bind('_afterRenderOption', instance, option));
 
 						option.bindContainerEvent('click', A.bind('_onOptionClickClose', instance, option), '.close');
+
+						option.on('destroy', A.bind('_onDestroyOption', instance, option));
 						option.on('valueChanged', A.bind('_onOptionValueChange', instance));
 					},
 
@@ -343,6 +355,8 @@ AUI.add(
 
 						instance._mainOption = new Liferay.DDM.Field.KeyValue(config);
 
+						instance._mainOption.addTarget(instance);
+
 						instance._bindOptionUI(instance._mainOption);
 					},
 
@@ -362,6 +376,12 @@ AUI.add(
 						var container = instance.get('container');
 
 						return container.one('.options');
+					},
+
+					_onDestroyOption: function(option) {
+						var instance = this;
+
+						A.DD.DDM.getDrag(option.get('container')).destroy();
 					},
 
 					_onFocusOption: function(event) {

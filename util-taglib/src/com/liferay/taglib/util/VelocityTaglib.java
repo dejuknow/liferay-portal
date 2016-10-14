@@ -26,8 +26,6 @@ import com.liferay.taglib.ui.BreadcrumbTag;
 import com.liferay.taglib.ui.DiscussionTag;
 import com.liferay.taglib.ui.IconTag;
 import com.liferay.taglib.ui.JournalArticleTag;
-import com.liferay.taglib.ui.MySitesTag;
-import com.liferay.taglib.ui.PngImageTag;
 import com.liferay.taglib.ui.RatingsTag;
 
 import javax.portlet.PortletURL;
@@ -121,11 +119,19 @@ public interface VelocityTaglib {
 
 	public JournalArticleTag getJournalArticleTag() throws Exception;
 
-	public MySitesTag getMySitesTag() throws Exception;
+	/**
+	 * @deprecated As of 7.0.0, with no direct replacement
+	 */
+	@Deprecated
+	public com.liferay.taglib.ui.MySitesTag getMySitesTag() throws Exception;
 
 	public PageContext getPageContext();
 
-	public PngImageTag getPngImageTag() throws Exception;
+	/**
+	 * @deprecated As of 7.0.0, with no direct replacement
+	 */
+	@Deprecated
+	public com.liferay.taglib.ui.PngImageTag getPngImageTag() throws Exception;
 
 	public RatingsTag getRatingsTag() throws Exception;
 

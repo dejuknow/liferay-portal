@@ -62,9 +62,12 @@ public class PortletServletRequest extends HttpServletRequestWrapper {
 		super(request);
 
 		_request = request;
+
 		_portletRequest = portletRequest;
+
 		_portletRequestImpl = PortletRequestImpl.getPortletRequestImpl(
 			_portletRequest);
+
 		_pathInfo = pathInfo;
 		_queryString = queryString;
 		_requestURI = GetterUtil.getString(requestURI);
@@ -496,7 +499,7 @@ public class PortletServletRequest extends HttpServletRequestWrapper {
 			jettyHttpSessionWrapperClass.getConstructor(
 				new Class[] {HttpSession.class});
 
-		return(HttpSession)constructor.newInstance(new Object[] {session});
+		return (HttpSession)constructor.newInstance(new Object[] {session});
 	}
 
 	private ClientDataRequest _getClientDataRequest() {

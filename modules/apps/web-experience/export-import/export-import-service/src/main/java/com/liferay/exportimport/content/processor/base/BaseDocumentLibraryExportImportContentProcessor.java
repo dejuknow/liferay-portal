@@ -14,6 +14,8 @@
 
 package com.liferay.exportimport.content.processor.base;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.document.library.kernel.exception.NoSuchFileEntryException;
 import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.document.library.kernel.service.DLAppLocalServiceUtil;
@@ -54,6 +56,7 @@ import java.util.Map;
 /**
  * @author Mate Thurzo
  */
+@ProviderType
 public abstract class BaseDocumentLibraryExportImportContentProcessor
 	<S extends StagedModel> implements ExportImportContentProcessor<S, String> {
 
@@ -511,7 +514,9 @@ public abstract class BaseDocumentLibraryExportImportContentProcessor
 			FileEntry fileEntry = getFileEntry(dlReferenceParameters);
 
 			if (fileEntry == null) {
-				throw new NoSuchFileEntryException();
+				throw new NoSuchFileEntryException(
+					"File entry reference parameters: " +
+						MapUtil.toString(dlReferenceParameters));
 			}
 
 			endPos = beginPos - 1;

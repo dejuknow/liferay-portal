@@ -21,6 +21,7 @@ import com.liferay.gradle.plugins.source.formatter.SourceFormatterPlugin;
 import com.liferay.gradle.util.Validator;
 
 import org.gradle.api.Action;
+import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.tasks.TaskContainer;
 
@@ -31,16 +32,37 @@ import org.gradle.api.tasks.TaskContainer;
 public class SourceFormatterDefaultsPlugin
 	extends BasePortalToolDefaultsPlugin<SourceFormatterPlugin> {
 
+	public static final Plugin<Project> INSTANCE =
+		new SourceFormatterDefaultsPlugin();
+
 	@Override
 	protected void configureDefaults(
 		Project project, SourceFormatterPlugin sourceFormatterPlugin) {
 
 		super.configureDefaults(project, sourceFormatterPlugin);
 
-		configureTasksFormatSource(project);
+		_configureTasksFormatSource(project);
 	}
 
-	protected void configureTasksFormatSource(
+	@Override
+	protected Class<SourceFormatterPlugin> getPluginClass() {
+		return SourceFormatterPlugin.class;
+	}
+
+	@Override
+	protected String getPortalToolConfigurationName() {
+		return SourceFormatterPlugin.CONFIGURATION_NAME;
+	}
+
+	@Override
+	protected String getPortalToolName() {
+		return _PORTAL_TOOL_NAME;
+	}
+
+	private SourceFormatterDefaultsPlugin() {
+	}
+
+	private void _configureTasksFormatSource(
 		FormatSourceTask formatSourceTask) {
 
 		String gitWorkingBranchName = GradleUtil.getProperty(
@@ -49,6 +71,15 @@ public class SourceFormatterDefaultsPlugin
 
 		if (Validator.isNotNull(gitWorkingBranchName)) {
 			formatSourceTask.setGitWorkingBranchName(gitWorkingBranchName);
+		}
+
+		String includeSubrepositories = GradleUtil.getProperty(
+			formatSourceTask.getProject(),
+			"source.formatter.include.subrepositories", (String)null);
+
+		if (Validator.isNotNull(includeSubrepositories)) {
+			formatSourceTask.setIncludeSubrepositories(
+				Boolean.parseBoolean(includeSubrepositories));
 		}
 
 		String maxLineLength = GradleUtil.getProperty(
@@ -69,7 +100,7 @@ public class SourceFormatterDefaultsPlugin
 		}
 	}
 
-	protected void configureTasksFormatSource(Project project) {
+	private void _configureTasksFormatSource(Project project) {
 		TaskContainer taskContainer = project.getTasks();
 
 		taskContainer.withType(
@@ -78,25 +109,10 @@ public class SourceFormatterDefaultsPlugin
 
 				@Override
 				public void execute(FormatSourceTask formatSourceTask) {
-					configureTasksFormatSource(formatSourceTask);
+					_configureTasksFormatSource(formatSourceTask);
 				}
 
 			});
-	}
-
-	@Override
-	protected Class<SourceFormatterPlugin> getPluginClass() {
-		return SourceFormatterPlugin.class;
-	}
-
-	@Override
-	protected String getPortalToolConfigurationName() {
-		return SourceFormatterPlugin.CONFIGURATION_NAME;
-	}
-
-	@Override
-	protected String getPortalToolName() {
-		return _PORTAL_TOOL_NAME;
 	}
 
 	private static final String _PORTAL_TOOL_NAME =

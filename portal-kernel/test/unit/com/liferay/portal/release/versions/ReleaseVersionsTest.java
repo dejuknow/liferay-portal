@@ -136,10 +136,10 @@ public class ReleaseVersionsTest {
 
 		Assert.assertEquals(bundleSymbolicName, otherBundleSymbolicName);
 
-		String bundleVersion = bndProperties.getProperty(
-			Constants.BUNDLE_VERSION);
-		String otherBundleVersion = otherBndProperties.getProperty(
-			Constants.BUNDLE_VERSION);
+		String bundleVersion = _getVersion(
+			bndBndPath.getParent(), bndProperties);
+		String otherBundleVersion = _getVersion(
+			otherBndBndPath.getParent(), otherBndProperties);
 
 		Version masterVersion;
 		Version releaseVersion;
@@ -166,25 +166,61 @@ public class ReleaseVersionsTest {
 			}
 		}
 
-		boolean allowedDelta = false;
+		if ((delta != 0) && (delta != 1)) {
+			StringBundler sb = new StringBundler(9);
 
-		if ((delta == 0) || (delta == 1)) {
-			allowedDelta = true;
+			sb.append("Difference in ");
+			sb.append(Constants.BUNDLE_VERSION);
+			sb.append(" for ");
+			sb.append(relativePath);
+			sb.append(" between master (");
+			sb.append(masterVersion);
+			sb.append(") and release (");
+			sb.append(releaseVersion);
+			sb.append(") branches is not allowed");
+
+			Assert.fail(sb.toString());
+		}
+	}
+
+	private String _getVersion(Path dirPath, Properties bndProperties)
+		throws IOException {
+
+		Path versionOverridePath = _getVersionOverrideFile(dirPath);
+
+		if (versionOverridePath != null) {
+			Properties versionOverrides = _loadProperties(versionOverridePath);
+
+			String version = versionOverrides.getProperty(
+				Constants.BUNDLE_VERSION);
+
+			if (Validator.isNotNull(version)) {
+				return version;
+			}
 		}
 
-		StringBundler sb = new StringBundler(9);
+		return bndProperties.getProperty(Constants.BUNDLE_VERSION);
+	}
 
-		sb.append("Difference in ");
-		sb.append(Constants.BUNDLE_VERSION);
-		sb.append(" for ");
-		sb.append(relativePath);
-		sb.append(" between master (");
-		sb.append(masterVersion);
-		sb.append(") and release (");
-		sb.append(releaseVersion);
-		sb.append(") branches is not allowed");
+	private Path _getVersionOverrideFile(Path dirPath) {
+		Path dirNamePath = dirPath.getFileName();
 
-		Assert.assertTrue(sb.toString(), allowedDelta);
+		String fileName =
+			".version-override-" + dirNamePath.toString() + ".properties";
+
+		while (true) {
+			Path path = dirPath.resolve(fileName);
+
+			if (Files.exists(path)) {
+				return path;
+			}
+
+			dirPath = dirPath.getParent();
+
+			if (dirPath == null) {
+				return null;
+			}
+		}
 	}
 
 	private boolean _isRelease(Path path) {

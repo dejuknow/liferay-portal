@@ -232,6 +232,7 @@ public class UnsyncCharArrayReaderTest {
 		Assert.assertEquals(size, unsyncCharArrayReader.skip(size));
 		Assert.assertEquals(size, unsyncCharArrayReader.index);
 		Assert.assertEquals(_SIZE - size, unsyncCharArrayReader.skip(size));
+
 		Assert.assertEquals(_SIZE, unsyncCharArrayReader.index);
 	}
 
@@ -242,7 +243,7 @@ public class UnsyncCharArrayReaderTest {
 
 	static {
 		for (int i = 0; i < _SIZE; i++) {
-			_BUFFER[i] = (char) ('a' + i);
+			_BUFFER[i] = (char)('a' + i);
 		}
 	}
 

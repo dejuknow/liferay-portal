@@ -194,6 +194,7 @@ public class UpgradePortletId extends UpgradeProcess {
 					portletId, oldRootPortletId, newRootPortletId);
 
 				ps2.setString(1, newPortletId);
+
 				ps2.setLong(2, portletPreferencesId);
 
 				ps2.addBatch();
@@ -249,8 +250,8 @@ public class UpgradePortletId extends UpgradeProcess {
 		throws Exception {
 
 		String sql =
-			"update LayoutRevision set typeSettings = ? " +
-				"where layoutRevisionId = " + layoutRevisionId;
+			"update LayoutRevision set typeSettings = ? where " +
+				"layoutRevisionId = " + layoutRevisionId;
 
 		try (PreparedStatement ps = connection.prepareStatement(sql)) {
 			ps.setString(1, typeSettings);
@@ -444,7 +445,7 @@ public class UpgradePortletId extends UpgradeProcess {
 
 		runSQL(
 			"update UserNotificationDelivery set portletId = '" + newPortletId +
-				"' where portletId = '" + oldPortletId +"'");
+				"' where portletId = '" + oldPortletId + "'");
 	}
 
 	protected void updateUserNotificationEvent(

@@ -15,7 +15,7 @@
 </tr>
 <tr>
 	<td>KB_TOOLS</td>
-	<td>//div[@class='kb-tools']//span[contains(.,'${key_kbTool}')]/a/span</td>
+	<td>//div[@class='kb-tools']//span[.='${key_kbTool}']</td>
 	<td></td>
 </tr>
 <tr>
@@ -184,7 +184,7 @@
 	<td></td>
 </tr>
 <tr>
-	<td>DESCRIPTIVE_VIEW_CHILD_ARTICLE_DETAILS</td>
+	<td>DESCRIPTIVE_VIEW_CHILD_ARTICLE_LINK</td>
 	<td>//li[contains(.,'${key_kbArticleTitle}')]//a[contains(.,'Child Article')]</td>
 	<td></td>
 </tr>

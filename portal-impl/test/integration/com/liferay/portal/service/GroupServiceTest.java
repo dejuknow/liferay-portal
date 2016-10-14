@@ -296,7 +296,7 @@ public class GroupServiceTest {
 			initialTagsCount + 1,
 			AssetTagLocalServiceUtil.getGroupTagsCount(group.getGroupId()));
 
-		User user = UserTestUtil.addUser(group.getGroupId());
+		UserTestUtil.addUser(group.getGroupId());
 
 		GroupLocalServiceUtil.deleteGroup(group.getGroupId());
 
@@ -408,6 +408,7 @@ public class GroupServiceTest {
 
 		Assert.assertEquals(1, groups.size());
 		Assert.assertEquals(group, groups.get(0));
+
 		Assert.assertEquals(
 			1, GroupLocalServiceUtil.getRoleGroupsCount(roleId));
 

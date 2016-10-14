@@ -32,8 +32,8 @@ import java.util.List;
  * handling of, trash handling of, and updating blog entries. Its methods
  * include permission checks.
  *
- * @author Brian Wing Shun Chan
- * @author Mate Thurzo
+ * @author     Brian Wing Shun Chan
+ * @author     Mate Thurzo
  * @deprecated As of 7.0.0, replaced by {@link
  *             com.liferay.blogs.service.impl.BlogsEntryServiceImpl}
  */
@@ -41,6 +41,7 @@ import java.util.List;
 public class BlogsEntryServiceImpl extends BlogsEntryServiceBaseImpl {
 
 	/**
+	 * @throws     PortalException
 	 * @deprecated As of 7.0.0, replaced by {@link #addEntry(String, String,
 	 *             String, String, int, int, int, int, int, boolean, boolean,
 	 *             String[], String, ImageSelector, ImageSelector,
@@ -62,6 +63,9 @@ public class BlogsEntryServiceImpl extends BlogsEntryServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public BlogsEntry addEntry(
 			String title, String subtitle, String description, String content,
@@ -78,6 +82,9 @@ public class BlogsEntryServiceImpl extends BlogsEntryServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public void deleteEntry(long entryId) throws PortalException {
 		throw new UnsupportedOperationException(
@@ -85,6 +92,9 @@ public class BlogsEntryServiceImpl extends BlogsEntryServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public List<BlogsEntry> getCompanyEntries(
 			long companyId, Date displayDate, int status, int max)
@@ -95,6 +105,9 @@ public class BlogsEntryServiceImpl extends BlogsEntryServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public String getCompanyEntriesRSS(
 			long companyId, Date displayDate, int status, int max, String type,
@@ -107,6 +120,9 @@ public class BlogsEntryServiceImpl extends BlogsEntryServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public BlogsEntry getEntry(long entryId) throws PortalException {
 		throw new UnsupportedOperationException(
@@ -114,6 +130,9 @@ public class BlogsEntryServiceImpl extends BlogsEntryServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public BlogsEntry getEntry(long groupId, String urlTitle)
 		throws PortalException {
@@ -183,6 +202,9 @@ public class BlogsEntryServiceImpl extends BlogsEntryServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public String getGroupEntriesRSS(
 			long groupId, Date displayDate, int status, int max, String type,
@@ -195,6 +217,9 @@ public class BlogsEntryServiceImpl extends BlogsEntryServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public List<BlogsEntry> getGroupsEntries(
 			long companyId, long groupId, Date displayDate, int status, int max)
@@ -241,6 +266,9 @@ public class BlogsEntryServiceImpl extends BlogsEntryServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public List<BlogsEntry> getOrganizationEntries(
 			long organizationId, Date displayDate, int status, int max)
@@ -251,6 +279,9 @@ public class BlogsEntryServiceImpl extends BlogsEntryServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public String getOrganizationEntriesRSS(
 			long organizationId, Date displayDate, int status, int max,
@@ -263,6 +294,9 @@ public class BlogsEntryServiceImpl extends BlogsEntryServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public BlogsEntry moveEntryToTrash(long entryId) throws PortalException {
 		throw new UnsupportedOperationException(
@@ -270,6 +304,9 @@ public class BlogsEntryServiceImpl extends BlogsEntryServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public void restoreEntryFromTrash(long entryId) throws PortalException {
 		throw new UnsupportedOperationException(
@@ -277,6 +314,9 @@ public class BlogsEntryServiceImpl extends BlogsEntryServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public void subscribe(long groupId) throws PortalException {
 		throw new UnsupportedOperationException(
@@ -284,6 +324,9 @@ public class BlogsEntryServiceImpl extends BlogsEntryServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public void unsubscribe(long groupId) throws PortalException {
 		throw new UnsupportedOperationException(
@@ -292,6 +335,7 @@ public class BlogsEntryServiceImpl extends BlogsEntryServiceBaseImpl {
 	}
 
 	/**
+	 * @throws     PortalException
 	 * @deprecated As of 7.0.0, replaced by {@link #updateEntry(long, String,
 	 *             String, String, String, int, int, int, int, int, boolean,
 	 *             boolean, String[], String, ImageSelector, ImageSelector,
@@ -313,6 +357,9 @@ public class BlogsEntryServiceImpl extends BlogsEntryServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public BlogsEntry updateEntry(
 			long entryId, String title, String subtitle, String description,

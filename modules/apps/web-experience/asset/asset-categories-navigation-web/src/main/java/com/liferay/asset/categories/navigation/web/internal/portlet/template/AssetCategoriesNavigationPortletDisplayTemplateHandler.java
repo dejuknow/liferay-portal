@@ -44,7 +44,7 @@ import org.osgi.service.component.annotations.Component;
 @Component(
 	immediate = true,
 	property = {
-		"javax.portlet.name="+ AssetCategoriesNavigationPortletKeys.ASSET_CATEGORIES_NAVIGATION
+		"javax.portlet.name=" + AssetCategoriesNavigationPortletKeys.ASSET_CATEGORIES_NAVIGATION
 	},
 	service = TemplateHandler.class
 )
@@ -115,8 +115,8 @@ public class AssetCategoriesNavigationPortletDisplayTemplateHandler
 
 	@Override
 	protected String getTemplatesConfigPath() {
-		return "com/liferay/asset/categories/navigation/web/portlet/template/" +
-			"dependencies/portlet-display-templates.xml";
+		return "com/liferay/asset/categories/navigation/web/portlet/template" +
+			"/dependencies/portlet-display-templates.xml";
 	}
 
 }

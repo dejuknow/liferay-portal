@@ -72,6 +72,7 @@ import java.util.concurrent.Future;
 
 import javax.naming.Context;
 
+import org.junit.Assume;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.Result;
@@ -93,6 +94,8 @@ public class PACLAggregateTest extends AutoBalanceTestCase {
 
 		try {
 			List<Class<?>> classes = scanTestClasses();
+
+			Assume.assumeFalse("No PACL tests available", classes.isEmpty());
 
 			ProcessChannel<Result> processChannel =
 				localProcessExecutor.execute(
@@ -120,6 +123,7 @@ public class PACLAggregateTest extends AutoBalanceTestCase {
 		URL url = PACLAggregateTest.class.getResource("security.policy");
 
 		arguments.add("-Djava.security.policy==" + url.getFile());
+
 		arguments.add("-Dliferay.mode=test");
 
 		boolean junitDebug = Boolean.getBoolean("jvm.debug");
@@ -225,7 +229,7 @@ public class PACLAggregateTest extends AutoBalanceTestCase {
 					uri.getHost() + StringPool.COLON + uri.getPort())) {
 
 				return Collections.singletonList(
-					new Proxy(Type.SOCKS, new InetSocketAddress(0)));
+					new Proxy(Type.HTTP, new InetSocketAddress(0)));
 			}
 
 			return Collections.singletonList(Proxy.NO_PROXY);

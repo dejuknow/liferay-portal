@@ -70,6 +70,7 @@ public class ReleaseLocalServiceImpl extends ReleaseLocalServiceBaseImpl {
 
 		release.setCreateDate(now);
 		release.setModifiedDate(now);
+
 		release.setServletContextName(servletContextName);
 		release.setBuildNumber(buildNumber);
 
@@ -104,6 +105,7 @@ public class ReleaseLocalServiceImpl extends ReleaseLocalServiceBaseImpl {
 
 		release.setCreateDate(now);
 		release.setModifiedDate(now);
+
 		release.setServletContextName(servletContextName);
 		release.setSchemaVersion(schemaVersion);
 
@@ -323,10 +325,12 @@ public class ReleaseLocalServiceImpl extends ReleaseLocalServiceBaseImpl {
 		int buildNumber = GetterUtil.getInteger(
 			unfilteredPortalProperties.getProperty(
 				PropsKeys.RELEASE_INFO_BUILD_NUMBER));
+
 		int previousBuildNumber = GetterUtil.getInteger(
 			unfilteredPortalProperties.getProperty(
 				PropsKeys.RELEASE_INFO_PREVIOUS_BUILD_NUMBER),
 			buildNumber);
+
 		boolean indexOnUpgrade = GetterUtil.getBoolean(
 			unfilteredPortalProperties.getProperty(PropsKeys.INDEX_ON_UPGRADE),
 			PropsValues.INDEX_ON_UPGRADE);

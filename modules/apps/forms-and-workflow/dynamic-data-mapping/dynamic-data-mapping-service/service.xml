@@ -203,6 +203,7 @@
 
 		<!-- References -->
 
+		<reference entity="DDMDataProviderInstance" package-path="com.liferay.dynamic.data.mapping" />
 		<reference entity="DDMDataProviderInstanceLink" package-path="com.liferay.dynamic.data.mapping" />
 		<reference entity="DDMStructureLayout" package-path="com.liferay.dynamic.data.mapping" />
 		<reference entity="DDMStructureLink" package-path="com.liferay.dynamic.data.mapping" />
@@ -515,6 +516,7 @@
 		<exception>ContentData</exception>
 		<exception>ContentName</exception>
 		<exception>DataProviderInstanceName</exception>
+		<exception>InvalidParentStructure</exception>
 		<exception>InvalidStructureVersion</exception>
 		<exception>InvalidTemplateVersion</exception>
 		<exception>RequiredStructure</exception>

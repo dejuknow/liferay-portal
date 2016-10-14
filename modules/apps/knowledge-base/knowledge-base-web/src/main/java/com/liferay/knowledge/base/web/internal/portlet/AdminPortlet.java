@@ -250,14 +250,38 @@ public class AdminPortlet extends BaseKBPortlet {
 
 			KBArticle kbArticle = null;
 
+			String cmd = ParamUtil.getString(renderRequest, Constants.CMD);
+
 			long kbArticleClassNameId = PortalUtil.getClassNameId(
 				KBArticleConstants.getClassName());
 
 			long resourceClassNameId = ParamUtil.getLong(
 				renderRequest, "resourceClassNameId", kbArticleClassNameId);
+
 			long resourcePrimKey = ParamUtil.getLong(
 				renderRequest, "resourcePrimKey");
 			int status = WorkflowConstants.STATUS_ANY;
+
+			if (Validator.isNotNull(cmd) && cmd.equals("compareVersions")) {
+				double sourceVersion = ParamUtil.getDouble(
+					renderRequest, "sourceVersion");
+				double targetVersion = ParamUtil.getDouble(
+					renderRequest, "targetVersion");
+
+				String diffHtmlResults = null;
+
+				try {
+					diffHtmlResults = AdminUtil.getKBArticleDiff(
+						resourcePrimKey, GetterUtil.getInteger(sourceVersion),
+						GetterUtil.getInteger(targetVersion), "content");
+				}
+				catch (Exception e) {
+					throw new PortletException(e);
+				}
+
+				renderRequest.setAttribute(
+					WebKeys.DIFF_HTML_RESULTS, diffHtmlResults);
+			}
 
 			if ((resourcePrimKey > 0) &&
 				(resourceClassNameId == kbArticleClassNameId)) {
@@ -278,6 +302,7 @@ public class AdminPortlet extends BaseKBPortlet {
 			long parentResourceClassNameId = ParamUtil.getLong(
 				renderRequest, "parentResourceClassNameId",
 				kbFolderClassNameId);
+
 			long parentResourcePrimKey = ParamUtil.getLong(
 				renderRequest, "parentResourcePrimKey");
 

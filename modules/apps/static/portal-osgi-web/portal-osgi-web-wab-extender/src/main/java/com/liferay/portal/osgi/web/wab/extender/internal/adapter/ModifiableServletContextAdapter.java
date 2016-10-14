@@ -96,6 +96,7 @@ public class ModifiableServletContextAdapter
 		Class<? extends Filter> filterClass = filter.getClass();
 
 		filterRegistrationImpl.setClassName(filterClass.getName());
+
 		filterRegistrationImpl.setName(filterName);
 		filterRegistrationImpl.setInstance(filter);
 
@@ -169,6 +170,7 @@ public class ModifiableServletContextAdapter
 		Class<? extends Servlet> servetClass = servlet.getClass();
 
 		servletRegistrationImpl.setClassName(servetClass.getName());
+
 		servletRegistrationImpl.setName(servletName);
 		servletRegistrationImpl.setInstance(servlet);
 
@@ -518,6 +520,7 @@ public class ModifiableServletContextAdapter
 			Method equalsHandlerMethod =
 				ModifiableServletContextAdapter.class.getMethod(
 					"equals", Object.class);
+
 			methods.put(equalsMethod, equalsHandlerMethod);
 
 			Method hashCodeMethod = Object.class.getMethod(
@@ -526,6 +529,7 @@ public class ModifiableServletContextAdapter
 			Method hashCodeHandlerMethod =
 				ModifiableServletContextAdapter.class.getMethod(
 					"hashCode", (Class<?>[])null);
+
 			methods.put(hashCodeMethod, hashCodeHandlerMethod);
 		}
 		catch (NoSuchMethodException nsme) {

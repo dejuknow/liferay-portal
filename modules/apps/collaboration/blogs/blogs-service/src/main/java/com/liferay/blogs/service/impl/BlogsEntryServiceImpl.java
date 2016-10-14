@@ -78,7 +78,7 @@ import java.util.List;
 public class BlogsEntryServiceImpl extends BlogsEntryServiceBaseImpl {
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #addEntry(String, String,
+	 * @deprecated As of 1.1.0, replaced by {@link #addEntry(String, String,
 	 *             String, String, int, int, int, int, int, boolean, boolean,
 	 *             String[], String, ImageSelector, ImageSelector,
 	 *             ServiceContext)}
@@ -236,6 +236,7 @@ public class BlogsEntryServiceImpl extends BlogsEntryServiceBaseImpl {
 		Company company = companyPersistence.findByPrimaryKey(companyId);
 
 		String name = company.getName();
+
 		List<BlogsEntry> blogsEntries = getCompanyEntries(
 			companyId, displayDate, status, max);
 
@@ -355,6 +356,7 @@ public class BlogsEntryServiceImpl extends BlogsEntryServiceBaseImpl {
 		Group group = groupPersistence.findByPrimaryKey(groupId);
 
 		String name = group.getDescriptiveName();
+
 		List<BlogsEntry> blogsEntries = getGroupEntries(
 			groupId, displayDate, status, max);
 
@@ -504,6 +506,7 @@ public class BlogsEntryServiceImpl extends BlogsEntryServiceBaseImpl {
 			organizationId);
 
 		String name = organization.getName();
+
 		List<BlogsEntry> blogsEntries = getOrganizationEntries(
 			organizationId, displayDate, status, max);
 
@@ -545,7 +548,7 @@ public class BlogsEntryServiceImpl extends BlogsEntryServiceBaseImpl {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #updateEntry(long, String,
+	 * @deprecated As of 1.1.0, replaced by {@link #updateEntry(long, String,
 	 *             String, String, String, int, int, int, int, int, boolean,
 	 *             boolean, String[], String, ImageSelector, ImageSelector,
 	 *             ServiceContext)}

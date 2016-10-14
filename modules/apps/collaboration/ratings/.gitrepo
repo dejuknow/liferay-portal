@@ -1,10 +1,9 @@
 ;
-; Do not manually edit this file. See
-; https://github.com/git-commands/git-subrepo#readme for more information.
+; Do not manually edit this file.
 ;
 [subrepo]
 	cmdver = liferay
-	commit = 8d924287b3a276fed25ad30ebb531bb529055b17
+	commit = 0b709eec75ac14bdfcb80e650bf99ae5cd218a16
 	mode = push
-	parent = 03587be97a77d4362c547e2528d4f416a2674be7
+	parent = 14f203a6a6ae1e3e2ab446fb41ca3c7f4349e595
 	remote = git@github.com:liferay/com-liferay-ratings.git

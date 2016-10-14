@@ -114,6 +114,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>GENERIC</td>
+	<td>//div[contains(@class,'alert')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>INFO</td>
 	<td>//div[contains(@class,'alert alert-info') and not(contains(@class,'hide'))]</td>
 	<td></td>
@@ -171,6 +176,11 @@
 <tr>
 	<td>NO_ENTRIES</td>
 	<td>//div[contains(@id,'Empty') and contains(.,'No entries were found')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PORTAL_LOCALIZATION</td>
+	<td>//div[contains(@class,'portal-message') and contains(@class,'alert-info')]</td>
 	<td></td>
 </tr>
 <tr>

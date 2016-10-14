@@ -236,6 +236,7 @@ public class JenkinsPerformanceDataUtil {
 			int x = _className.lastIndexOf(".");
 
 			sb.append(_className.substring(0, x));
+
 			sb.append("/");
 			sb.append(_className.substring(x + 1));
 			sb.append("/");
@@ -343,9 +344,9 @@ public class JenkinsPerformanceDataUtil {
 			return;
 		}
 
-		List<?> subList = list.subList(maxSize, list.size());
+		List<?> sublist = list.subList(maxSize, list.size());
 
-		subList.clear();
+		sublist.clear();
 	}
 
 	private static boolean _broken;

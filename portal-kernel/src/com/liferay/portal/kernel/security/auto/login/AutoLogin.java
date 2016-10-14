@@ -36,6 +36,10 @@ public interface AutoLogin {
 	public static final String AUTO_LOGIN_REDIRECT_AND_CONTINUE =
 		"AUTO_LOGIN_REDIRECT_AND_CONTINUE";
 
+	/**
+	 * @deprecated As of 7.0.0, with no direct replacement
+	 */
+	@Deprecated
 	public String[] handleException(
 			HttpServletRequest request, HttpServletResponse response,
 			Exception e)

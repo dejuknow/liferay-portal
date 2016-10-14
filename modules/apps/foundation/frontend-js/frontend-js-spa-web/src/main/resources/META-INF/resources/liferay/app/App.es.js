@@ -13,6 +13,11 @@ class LiferayApp extends App {
 		this.portletsBlacklist = {};
 		this.validStatusCodes = [];
 
+		this.setShouldUseFacade(true);
+
+		this.timeout = Math.max(Liferay.SPA.requestTimeout, 0) || Utils.getMaxTimeout();
+		this.timeoutAlert = null;
+
 		var exceptionsSelector = ':not([target="_blank"]):not([data-senna-off]):not([data-resource-href])';
 
 		this.setFormSelector('form' + exceptionsSelector);
@@ -70,8 +75,8 @@ class LiferayApp extends App {
 		return lastModifiedInterval > this.getCacheExpirationTime();
 	}
 
-	onBeforeNavigate(event) {
-		if (Liferay.SPA.clearScreensCache || event.form) {
+	onBeforeNavigate(data, event) {
+		if (Liferay.SPA.clearScreensCache || data.form) {
 			this.clearScreensCache();
 		}
 
@@ -79,7 +84,8 @@ class LiferayApp extends App {
 			'beforeNavigate',
 			{
 				app: this,
-				path: event.path
+				originalEvent: event,
+				path: data.path
 			}
 		);
 	}
@@ -109,6 +115,11 @@ class LiferayApp extends App {
 				path: event.path
 			}
 		);
+
+		if (!this.pendingNavigate) {
+			this._clearRequestTimer();
+			this._hideTimeoutAlert();
+		}
 
 		if (event.error) {
 			if (event.error.invalidStatus || event.error.requestError || event.error.timeout) {
@@ -141,6 +152,8 @@ class LiferayApp extends App {
 				path: event.path
 			}
 		);
+
+		this._startRequestTimer(event.path);
 	}
 
 	setPortletsBlacklist(portletsBlacklist) {
@@ -149,6 +162,66 @@ class LiferayApp extends App {
 
 	setValidStatusCodes(validStatusCodes) {
 		this.validStatusCodes = validStatusCodes;
+	}
+
+	_clearRequestTimer() {
+		if (this.requestTimer) {
+			clearTimeout(this.requestTimer);
+		}
+	}
+
+	_createTimeoutNotification() {
+		var instance = this;
+
+		AUI().use(
+			'liferay-notification',
+			() => {
+				instance.timeoutAlert = new Liferay.Notification(
+					{
+						closeable: true,
+						delay: {
+							hide: 0,
+							show: 0
+						},
+						duration: 500,
+						message: Liferay.SPA.userNotification.message,
+						title: Liferay.SPA.userNotification.title,
+						type: 'warning'
+					}
+				).render('body');
+			}
+		);
+	}
+
+	_hideTimeoutAlert() {
+		if (this.timeoutAlert) {
+			this.timeoutAlert.hide();
+		}
+	}
+
+	_startRequestTimer(path) {
+		this._clearRequestTimer();
+
+		if (Liferay.SPA.userNotification.timeout > 0) {
+			this.requestTimer = setTimeout(
+				() => {
+					Liferay.fire(
+						'spaRequestTimeout',
+						{
+							path: path
+						}
+					);
+
+					if (!this.timeoutAlert) {
+						this._createTimeoutNotification();
+					}
+					else {
+						this.timeoutAlert.show();
+					}
+				},
+				Liferay.SPA.userNotification.timeout
+			);
+		}
 	}
 }
 

@@ -58,8 +58,8 @@ public class UpgradeModules extends UpgradeProcess {
 		throws SQLException {
 
 		try (PreparedStatement ps = connection.prepareStatement(
-				"select serviceComponentId from ServiceComponent " +
-					"where buildNamespace = ?")) {
+				"select serviceComponentId from ServiceComponent where " +
+					"buildNamespace = ?")) {
 
 			ps.setString(1, buildNamespace);
 
@@ -83,8 +83,8 @@ public class UpgradeModules extends UpgradeProcess {
 				String buildNamespace = convertedLegacyModule[2];
 
 				try (PreparedStatement ps = connection.prepareStatement(
-						"select servletContextName, buildNumber from Release_" +
-							" where servletContextName = ?")) {
+						"select servletContextName, buildNumber from " +
+							"Release_ where servletContextName = ?")) {
 
 					ps.setString(1, oldServletContextName);
 

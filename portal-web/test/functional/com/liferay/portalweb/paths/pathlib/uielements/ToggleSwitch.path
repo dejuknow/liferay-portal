@@ -69,6 +69,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>REQUIRED</td>
+	<td>xpath=(//div[contains(@class,'form-row')])[${key_rowNumber}]//input[@type='checkbox']</td>
+	<td></td>
+</tr>
+<tr>
 	<td>SET_AS_THE_DEFAULT_ASSET_PUBLISHER_FOR_THIS_PAGE</td>
 	<td>//label[contains(.,'Set as the Default Asset Publisher for This Page')]/input[@type='checkbox']/../span[2]/span</td>
 	<td></td>
@@ -76,6 +81,11 @@
 <tr>
 	<td>SHOW_SPECIFIC_TOGGLE_SWITCH</td>
 	<td>//label[contains(.,'${key_checkSetupName}')]/input[contains(@class,'field') and contains(@class,'toggle-switch')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>USE_CUSTOM_TITLE</td>
+	<td>//label[contains(.,'Use Custom Title')]/input[@type='checkbox']</td>
 	<td></td>
 </tr>
 </tbody>

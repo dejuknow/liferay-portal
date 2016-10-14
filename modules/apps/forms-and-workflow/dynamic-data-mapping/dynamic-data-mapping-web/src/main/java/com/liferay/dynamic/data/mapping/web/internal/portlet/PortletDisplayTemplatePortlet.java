@@ -54,6 +54,7 @@ import org.osgi.service.component.annotations.Modified;
 		"javax.portlet.init-param.template-path=/",
 		"javax.portlet.init-param.view-template=/view_template.jsp",
 		"javax.portlet.name=" + PortletKeys.PORTLET_DISPLAY_TEMPLATE,
+		"javax.portlet.resource-bundle=content.Language",
 		"javax.portlet.security-role-ref=administrator",
 		"javax.portlet.supports.mime-type=text/html"
 	},
@@ -65,7 +66,7 @@ public class PortletDisplayTemplatePortlet extends DDMPortlet {
 	@Modified
 	@Override
 	protected void activate(Map<String, Object> properties) {
-		this.ddmWebConfiguration = ConfigurableUtil.createConfigurable(
+		ddmWebConfiguration = ConfigurableUtil.createConfigurable(
 			DDMWebConfiguration.class, properties);
 	}
 

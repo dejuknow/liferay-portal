@@ -63,7 +63,7 @@ public class SyncFileService {
 
 		// Local sync file
 
-		if (Files.notExists(filePath)) {
+		if (FileUtil.notExists(filePath)) {
 			return null;
 		}
 
@@ -93,7 +93,7 @@ public class SyncFileService {
 
 		// Local sync file
 
-		if (Files.notExists(filePath)) {
+		if (FileUtil.notExists(filePath)) {
 			return null;
 		}
 
@@ -208,7 +208,7 @@ public class SyncFileService {
 
 		// Local sync file
 
-		if (Files.notExists(filePath)) {
+		if (FileUtil.notExists(filePath)) {
 			return null;
 		}
 
@@ -315,6 +315,22 @@ public class SyncFileService {
 		try {
 			return _syncFilePersistence.fetchByR_S_T(
 				repositoryId, syncAccountId, typePK);
+		}
+		catch (SQLException sqle) {
+			if (_logger.isDebugEnabled()) {
+				_logger.debug(sqle.getMessage(), sqle);
+			}
+
+			return null;
+		}
+	}
+
+	public static SyncFile fetchSyncFile(
+		long repositoryId, long syncAccountId, long typePK, long versionId) {
+
+		try {
+			return _syncFilePersistence.fetchByR_S_T_V(
+				repositoryId, syncAccountId, typePK, versionId);
 		}
 		catch (SQLException sqle) {
 			if (_logger.isDebugEnabled()) {
@@ -494,9 +510,9 @@ public class SyncFileService {
 		}
 	}
 
-	public static long getSyncFilesCount(int uiEvent) {
+	public static long getSyncFilesCount(Integer... uiEvents) {
 		try {
-			return _syncFilePersistence.countByUIEvent(uiEvent);
+			return _syncFilePersistence.countByUIEvents(uiEvents);
 		}
 		catch (SQLException sqle) {
 			if (_logger.isDebugEnabled()) {
@@ -808,7 +824,7 @@ public class SyncFileService {
 			SyncFileService.update(syncFile);
 
 			if (isAncestorInList(syncFile, unsyncedSyncFileIds) ||
-				!Files.exists(Paths.get(syncFile.getFilePathName()))) {
+				!FileUtil.exists(Paths.get(syncFile.getFilePathName()))) {
 
 				continue;
 			}
@@ -881,7 +897,7 @@ public class SyncFileService {
 			Path filePath, long syncAccountId, SyncFile syncFile)
 		throws Exception {
 
-		if (Files.notExists(filePath)) {
+		if (FileUtil.notExists(filePath)) {
 			return null;
 		}
 
@@ -965,6 +981,7 @@ public class SyncFileService {
 		String targetFilePathName = filePath.toString();
 
 		syncFile.setFilePathName(targetFilePathName);
+
 		syncFile.setLocalSyncTime(System.currentTimeMillis());
 		syncFile.setName(String.valueOf(filePath.getFileName()));
 		syncFile.setParentFolderId(parentFolderId);

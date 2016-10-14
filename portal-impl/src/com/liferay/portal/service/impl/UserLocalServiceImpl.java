@@ -204,8 +204,11 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 
 		long creatorUserId = 0;
 		boolean autoPassword = false;
+
 		String password1 = PropsValues.DEFAULT_ADMIN_PASSWORD;
+
 		String password2 = password1;
+
 		boolean autoScreenName = false;
 
 		screenName = getLogin(screenName);
@@ -1322,7 +1325,9 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 
 		if (failedLoginAttempts > 0) {
 			long failedLoginTime = user.getLastFailedLoginDate().getTime();
+
 			long elapsedTime = now.getTime() - failedLoginTime;
+
 			long requiredElapsedTime =
 				passwordPolicy.getResetFailureCount() * 1000;
 
@@ -1339,7 +1344,9 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 
 		if (user.isLockout()) {
 			long lockoutTime = user.getLockoutDate().getTime();
+
 			long elapsedTime = now.getTime() - lockoutTime;
+
 			long requiredElapsedTime =
 				passwordPolicy.getLockoutDuration() * 1000;
 
@@ -1588,6 +1595,7 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 		}
 
 		String userPassword = user.getPassword();
+
 		String encPassword = PasswordEncryptorUtil.encrypt(
 			password, userPassword);
 
@@ -2740,6 +2748,7 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 			}
 
 			long passwordStartTime = user.getPasswordModifiedDate().getTime();
+
 			long elapsedTime = now.getTime() - passwordStartTime;
 
 			if (elapsedTime > (passwordPolicy.getMaxAge() * 1000)) {
@@ -2778,6 +2787,7 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 			}
 
 			long timeModified = user.getPasswordModifiedDate().getTime();
+
 			long passwordExpiresOn =
 				(passwordPolicy.getMaxAge() * 1000) + timeModified;
 
@@ -3526,11 +3536,16 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 				TicketConstants.TYPE_PASSWORD, null, expirationDate,
 				serviceContext);
 
-			passwordResetURL =
-				serviceContext.getPortalURL() + serviceContext.getPathMain() +
-					"/portal/update_password?p_l_id="+
-						serviceContext.getPlid() + "&ticketKey=" +
-							ticket.getKey();
+			StringBundler sb = new StringBundler(6);
+
+			sb.append(serviceContext.getPortalURL());
+			sb.append(serviceContext.getPathMain());
+			sb.append("/portal/update_password?p_l_id=");
+			sb.append(serviceContext.getPlid());
+			sb.append("&ticketKey=");
+			sb.append(ticket.getKey());
+
+			passwordResetURL = sb.toString();
 		}
 		else {
 			if (!Objects.equals(
@@ -3567,6 +3582,8 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 
 					passwordReset = true;
 				}
+
+				trackPassword(user);
 
 				user.setPassword(PasswordEncryptorUtil.encrypt(newPassword));
 				user.setPasswordUnencrypted(newPassword);
@@ -4243,6 +4260,7 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 
 			if ((password1 == null) || (password2 == null)) {
 				password1 = PwdGenerator.getPassword();
+
 				password2 = password1;
 			}
 
@@ -4631,12 +4649,8 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 
 		if (!silentUpdate) {
 			validatePassword(user.getCompanyId(), userId, password1, password2);
-		}
 
-		String oldEncPwd = user.getPassword();
-
-		if (!user.isPasswordEncrypted()) {
-			oldEncPwd = PasswordEncryptorUtil.encrypt(user.getPassword());
+			trackPassword(user);
 		}
 
 		String newEncPwd = PasswordEncryptorUtil.encrypt(password1);
@@ -4693,8 +4707,6 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 
 		if (!silentUpdate) {
 			user.setPasswordModified(false);
-
-			passwordTrackerLocalService.trackPassword(userId, oldEncPwd);
 		}
 
 		if (!silentUpdate && (PrincipalThreadLocal.getUserId() != userId)) {
@@ -5762,6 +5774,7 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 				user = userPersistence.fetchByPrimaryKey(user.getUserId());
 
 				int failedLoginAttempts = user.getFailedLoginAttempts();
+
 				int maxFailures = passwordPolicy.getMaxFailure();
 
 				if ((failedLoginAttempts >= maxFailures) &&
@@ -6087,6 +6100,16 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 
 		user.setEmailAddress(emailAddress);
 		user.setDigest(StringPool.BLANK);
+	}
+
+	protected void trackPassword(User user) throws PortalException {
+		String oldEncPwd = user.getPassword();
+
+		if (!user.isPasswordEncrypted()) {
+			oldEncPwd = PasswordEncryptorUtil.encrypt(user.getPassword());
+		}
+
+		passwordTrackerLocalService.trackPassword(user.getUserId(), oldEncPwd);
 	}
 
 	protected void updateGroups(

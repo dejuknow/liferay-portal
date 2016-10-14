@@ -192,7 +192,7 @@ if (Validator.isNotNull(keywords)) {
 
 								<liferay-ui:icon
 									message="export"
-									method="post"
+									method="get"
 									url="<%= exportURL %>"
 								/>
 							</c:if>

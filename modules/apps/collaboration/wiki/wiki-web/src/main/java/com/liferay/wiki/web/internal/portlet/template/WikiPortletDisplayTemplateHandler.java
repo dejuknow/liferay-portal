@@ -40,7 +40,7 @@ import org.osgi.service.component.annotations.Component;
  * @author Juan Fernández
  */
 @Component(
-	immediate = true, property = {"javax.portlet.name="+ WikiPortletKeys.WIKI},
+	immediate = true, property = {"javax.portlet.name=" + WikiPortletKeys.WIKI},
 	service = TemplateHandler.class
 )
 public class WikiPortletDisplayTemplateHandler
@@ -108,8 +108,8 @@ public class WikiPortletDisplayTemplateHandler
 
 	@Override
 	protected String getTemplatesConfigPath() {
-		return "com/liferay/wiki/web/portlet/template/dependencies/" +
-			"portlet-display-templates.xml";
+		return "com/liferay/wiki/web/portlet/template/dependencies" +
+			"/portlet-display-templates.xml";
 	}
 
 }

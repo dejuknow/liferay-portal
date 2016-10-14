@@ -133,15 +133,18 @@ public class LARImporter extends BaseImporter {
 		parameters.put(
 			PortletDataHandlerKeys.LAYOUTS_IMPORT_MODE,
 			new String[] {
-				PortletDataHandlerKeys.
-					LAYOUTS_IMPORT_MODE_MERGE_BY_LAYOUT_UUID
+				PortletDataHandlerKeys.LAYOUTS_IMPORT_MODE_MERGE_BY_LAYOUT_UUID
 			});
 		parameters.put(
 			PortletDataHandlerKeys.LOGO,
 			new String[] {Boolean.TRUE.toString()});
-		parameters.put(
-			PortletDataHandlerKeys.PERMISSIONS,
-			new String[] {Boolean.TRUE.toString()});
+
+		if (!targetClassName.equals(LayoutSetPrototype.class.getName())) {
+			parameters.put(
+				PortletDataHandlerKeys.PERMISSIONS,
+				new String[] {Boolean.TRUE.toString()});
+		}
+
 		parameters.put(
 			PortletDataHandlerKeys.PORTLET_ARCHIVED_SETUPS,
 			new String[] {Boolean.TRUE.toString()});

@@ -27,6 +27,7 @@ import java.sql.SQLException;
 
 /**
  * @author Joan Kim
+ * @author Ryan Park
  */
 public class UpgradeModule extends UpgradeProcess {
 
@@ -35,7 +36,7 @@ public class UpgradeModule extends UpgradeProcess {
 		updateModules();
 	}
 
-	protected void updateModules() {
+	protected void updateModules() throws Exception {
 		try (PreparedStatement ps = connection.prepareStatement(
 				"select moduleId, contextName from Marketplace_Module");
 			ResultSet rs = ps.executeQuery()) {

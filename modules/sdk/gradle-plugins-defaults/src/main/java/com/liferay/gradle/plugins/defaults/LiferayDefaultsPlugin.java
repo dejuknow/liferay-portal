@@ -15,8 +15,10 @@
 package com.liferay.gradle.plugins.defaults;
 
 import com.liferay.gradle.plugins.LiferayPlugin;
+import com.liferay.gradle.plugins.defaults.internal.LiferayCIPlugin;
 import com.liferay.gradle.plugins.defaults.internal.LiferayRelengPlugin;
-import com.liferay.gradle.plugins.defaults.internal.util.GradleUtil;
+import com.liferay.gradle.plugins.defaults.internal.NodeDefaultsPlugin;
+import com.liferay.gradle.util.Validator;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -30,7 +32,12 @@ public class LiferayDefaultsPlugin extends LiferayPlugin {
 	public void apply(Project project) {
 		super.apply(project);
 
-		GradleUtil.applyPlugin(project, LiferayRelengPlugin.class);
+		if (_isRunningInCIEnvironment()) {
+			LiferayCIPlugin.INSTANCE.apply(project);
+		}
+
+		LiferayRelengPlugin.INSTANCE.apply(project);
+		NodeDefaultsPlugin.INSTANCE.apply(project);
 	}
 
 	@Override
@@ -46,6 +53,14 @@ public class LiferayDefaultsPlugin extends LiferayPlugin {
 	@Override
 	protected Class<? extends Plugin<Project>> getThemePluginClass() {
 		return LiferayThemeDefaultsPlugin.class;
+	}
+
+	private boolean _isRunningInCIEnvironment() {
+		if (Validator.isNotNull(System.getenv("JENKINS_HOME"))) {
+			return true;
+		}
+
+		return false;
 	}
 
 }

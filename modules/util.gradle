@@ -12,6 +12,7 @@ buildscript {
 
 task buildFixPackChangeLog(type: BuildChangeLogTask)
 task cleanReleng
+task cleanVersionOverride
 task setUpPortalTools
 task wrapper(type: Wrapper)
 
@@ -54,6 +55,22 @@ cleanReleng << {
 	}
 }
 
+cleanVersionOverride << {
+	String gitRepoPath = project.properties["gitRepoPath"]
+
+	if (!gitRepoPath) {
+		throw new GradleException("Please set the property \"-PgitRepoPath\".")
+	}
+
+	File gitRepoDir = file(gitRepoPath)
+
+	FileTree bndBndFileTree = fileTree(dir: gitRepoDir, include : "**/bnd.bnd")
+
+	delete bndBndFileTree.collect {
+		new File(gitRepoDir.parentFile, ".version-override-${it.parentFile.name}.properties")
+	}
+}
+
 repositories {
 	mavenLocal()
 
@@ -71,17 +88,17 @@ wrapper {
 		ant.replace(file: new File(wrapperDir, "gradlew")) {
 			replacefilter token: '# Split up the JVM_OPTS And GRADLE_OPTS values into an array, following the shell quoting and substitution rules', value: '''\
 # Split up the JVM_OPTS And GRADLE_OPTS values into an array, following the shell quoting and substitution rules
-DEFAULT_JVM_OPTS="$DEFAULT_JVM_OPTS -Dgradle.user.home=$APP_HOME/.gradle"'''
+DEFAULT_JVM_OPTS="$DEFAULT_JVM_OPTS \\\"-Dgradle.user.home=$APP_HOME/.gradle\\\""'''
 
-			replacefilter token: 'org.gradle.wrapper.GradleWrapperMain "$@"', value: 'org.gradle.wrapper.GradleWrapperMain --init-script=$APP_HOME/modules/init.gradle "$@"'
+			replacefilter token: 'org.gradle.wrapper.GradleWrapperMain "$@"', value: 'org.gradle.wrapper.GradleWrapperMain "--init-script=$APP_HOME/modules/init.gradle" "$@"'
 		}
 
 		ant.replace(file: new File(wrapperDir, "gradlew.bat")) {
 			replacefilter token: '@rem Setup the command line', value: '''\
 @rem Setup the command line
-set DEFAULT_JVM_OPTS=%DEFAULT_JVM_OPTS% -Dgradle.user.home=%APP_HOME%\\.gradle'''
+set DEFAULT_JVM_OPTS=%DEFAULT_JVM_OPTS% "-Dgradle.user.home=%APP_HOME%\\.gradle"'''
 
-			replacefilter token: 'org.gradle.wrapper.GradleWrapperMain %CMD_LINE_ARGS%', value: 'org.gradle.wrapper.GradleWrapperMain --init-script=%APP_HOME%\\modules\\init.gradle %CMD_LINE_ARGS%'
+			replacefilter token: 'org.gradle.wrapper.GradleWrapperMain %CMD_LINE_ARGS%', value: 'org.gradle.wrapper.GradleWrapperMain "--init-script=%APP_HOME%\\modules\\init.gradle" %CMD_LINE_ARGS%'
 		}
 	}
 
@@ -101,32 +118,32 @@ private void _createSetUpTasks() {
 
 		File portalToolDir = ivyXmlFile.parentFile
 
-		String portalToolName = portalToolDir.name
-
-		String portalToolSuffix = _getPortalToolSuffix(portalToolName)
-		String portalToolVersion = PortalTools.getVersion(project, portalToolName)
+		String portalToolSuffix = _getPortalToolSuffix(portalToolDir.name)
 
 		Configuration portalToolConfiguration = configurations.create("portalTools" + portalToolSuffix)
 
 		portalToolConfiguration.exclude group: "com.liferay.portal"
 
-		if (portalToolVersion) {
-			dependencies.add portalToolConfiguration.name, "com.liferay:${portalToolName}:${portalToolVersion}"
-		}
-		else {
-			def ivyModuleNode = xmlSlurper.parse(ivyXmlFile)
+		def ivyModuleNode = xmlSlurper.parse(ivyXmlFile)
 
-			def dependencyNodes = ivyModuleNode.dependencies.children()
+		def dependencyNodes = ivyModuleNode.dependencies.children()
 
-			dependencyNodes.each {
-				String conf = it.@conf
+		dependencyNodes.each {
+			String dependencyConf = it.@conf
 
-				if (conf) {
-					return
-				}
-
-				dependencies.add portalToolConfiguration.name, "${it.@org}:${it.@name}:${it.@rev}"
+			if (dependencyConf) {
+				return
 			}
+
+			String dependencyGroup = it.@org
+			String dependencyName = it.@name
+			String dependencyVersion = PortalTools.getVersion(project, dependencyName)
+
+			if (!dependencyVersion) {
+				dependencyVersion = it.@rev
+			}
+
+			dependencies.add portalToolConfiguration.name, "${dependencyGroup}:${dependencyName}:${dependencyVersion}"
 		}
 
 		Task portalToolTask = tasks.create(name: "setUp" + portalToolSuffix, type: Copy) {

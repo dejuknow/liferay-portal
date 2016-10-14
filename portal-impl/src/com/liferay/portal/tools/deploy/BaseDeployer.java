@@ -239,16 +239,6 @@ public class BaseDeployer implements AutoDeployer, Deployer {
 		}
 
 		if (Validator.isNull(appServerType)) {
-			String appServerType2 = ServerDetector.getServerId();
-
-			ServerDetector.init(StringPool.BLANK);
-
-			String appServerType3 = ServerDetector.getServerId();
-
-			_log.error(
-				"App server type: " + appServerType + ", app server type 2: " +
-					appServerType2 + ", app server type 3: " + appServerType3);
-
 			throw new IllegalArgumentException(
 				"The system property deployer.app.server.type is not set");
 		}
@@ -883,6 +873,7 @@ public class BaseDeployer implements AutoDeployer, Deployer {
 		String specifiedContext = autoDeploymentContext.getContext();
 
 		String displayName = specifiedContext;
+
 		boolean overwrite = false;
 		String preliminaryContext = specifiedContext;
 
@@ -2042,6 +2033,7 @@ public class BaseDeployer implements AutoDeployer, Deployer {
 
 		if ((x == -1) || (y == -1)) {
 			x = webXmlContent.lastIndexOf("</display-name>") + 15;
+
 			y = x;
 		}
 		else {

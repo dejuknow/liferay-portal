@@ -6,12 +6,12 @@
 	<command name="addCP">
 		<execute function="Click" locator1="Button#PLUS" />
 
-		<execute function="Type#clickAtSendKeys" locator1="TextInput#NAME" value1="${ddlListName}" />
+		<execute function="Type#clickAtType" locator1="TextInput#NAME" value1="${ddlListName}" />
 
 		<if>
 			<isset var="ddlListDescription" />
 			<then>
-				<execute function="Type#clickAtSendKeys" locator1="TextArea#DESCRIPTION" value1="${ddlListDescription}" />
+				<execute function="Type#clickAtType" locator1="TextArea#DESCRIPTION" value1="${ddlListDescription}" />
 			</then>
 		</if>
 
@@ -27,6 +27,8 @@
 
 	<command name="addViaDDLDisplayPG">
 		<execute function="Click" locator1="DDL#PORTLET_ACTIONS_ADD_LIST" value1="Add List" />
+
+		<execute function="AssertTextEquals" locator1="Portlet#H3_MODAL_TITLE" value1="Add List" />
 
 		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
 
@@ -96,12 +98,12 @@
 
 		<execute function="AssertClick" locator1="MenuItem#EDIT" value1="Edit" />
 
-		<execute function="Type#clickAtSendKeys" locator1="TextInput#NAME" value1="${ddlListNameEdit}" />
+		<execute function="Type#clickAtType" locator1="TextInput#NAME" value1="${ddlListNameEdit}" />
 
 		<if>
 			<isset var="ddlListDescriptionEdit" />
 			<then>
-				<execute function="Type#clickAtSendKeys" locator1="TextArea#DESCRIPTION" value1="${ddlListDescriptionEdit}" />
+				<execute function="Type#clickAtType" locator1="TextArea#DESCRIPTION" value1="${ddlListDescriptionEdit}" />
 			</then>
 		</if>
 

@@ -142,6 +142,7 @@ public class GitHubMessageUtil {
 				project.getProperty("top.level.fail.count")) + 1;
 
 			sb.append(topLevelFailCount);
+
 			sb.append(" Job");
 
 			if (topLevelFailCount != 1) {
@@ -196,8 +197,9 @@ public class GitHubMessageUtil {
 	}
 
 	protected static boolean isHighPriorityJobFailure(String content) {
-		String[] contentFlags =
-			new String[] {"compileJSP", "Unable to compile JSPs"};
+		String[] contentFlags = new String[] {
+			"compileJSP", "SourceFormatterTest", "Unable to compile JSPs"
+		};
 
 		for (String contentFlag : contentFlags) {
 			if (content.contains(contentFlag)) {

@@ -17,6 +17,7 @@ package com.liferay.source.formatter;
 import com.liferay.portal.kernel.io.unsync.UnsyncBufferedReader;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringReader;
 import com.liferay.portal.kernel.util.CharPool;
+import com.liferay.portal.kernel.util.NaturalOrderStringComparator;
 import com.liferay.portal.kernel.util.PropertiesUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringBundler;
@@ -251,7 +252,8 @@ public class XMLSourceProcessor extends BaseSourceProcessor {
 		String projectName = rootElement.attributeValue("name");
 
 		if (!projectName.equals(expectedProjectName)) {
-			processMessage(fileName, "incorrect project name");
+			processMessage(
+				fileName, "Incorrect project name '" + projectName + "'");
 		}
 	}
 
@@ -275,7 +277,8 @@ public class XMLSourceProcessor extends BaseSourceProcessor {
 
 			if (!file.exists()) {
 				processMessage(
-					fileName, "Incorrect import file: " + matcher.group(1));
+					fileName,
+					"Incorrect import file '" + matcher.group(1) + "'");
 			}
 		}
 	}
@@ -413,13 +416,17 @@ public class XMLSourceProcessor extends BaseSourceProcessor {
 			newContent = formatDDLStructuresXML(newContent);
 		}
 		else if (fileName.endsWith("routes.xml")) {
-			newContent = formatFriendlyURLRoutesXML(fileName, newContent);
+			newContent = formatFriendlyURLRoutesXML(
+				fileName, absolutePath, newContent);
 		}
 		else if (fileName.endsWith("-hbm.xml")) {
 			formatHBMXML(fileName, newContent);
 		}
 		else if (fileName.endsWith("-log4j.xml")) {
 			formatLog4jXML(fileName, newContent);
+		}
+		else if (fileName.endsWith("-look-and-feel.xml")) {
+			formatLookAndFeelXML(fileName, newContent);
 		}
 		else if (fileName.endsWith("-model-hints.xml")) {
 			formatModelHintsXML(fileName, newContent);
@@ -665,17 +672,17 @@ public class XMLSourceProcessor extends BaseSourceProcessor {
 			fileName, document.getRootElement(), "target", null,
 			new ElementComparator());
 
-		int x = content.lastIndexOf("</macrodef>");
-		int y = content.indexOf("<process-ivy");
+		int x = content.lastIndexOf("\n\t</macrodef>");
+		int y = content.indexOf("\n\t<process-ivy");
 
 		if ((y != -1) && (x > y)) {
-			processMessage(fileName, "macrodefs go before process-ivy");
+			processMessage(fileName, "Macrodefs go before process-ivy");
 		}
 
-		int z = content.indexOf("</target>");
+		int z = content.indexOf("\n\t</target>");
 
 		if ((z != -1) && (x > z)) {
-			processMessage(fileName, "macrodefs go before targets");
+			processMessage(fileName, "Macrodefs go before targets");
 		}
 
 		checkImportFiles(fileName, newContent);
@@ -708,8 +715,8 @@ public class XMLSourceProcessor extends BaseSourceProcessor {
 
 		processMessage(
 			fileName,
-			"LPS-51315 Avoid using WHERE ... NOT IN: " +
-				content.substring(y + 1, z));
+			"Avoid using WHERE ... NOT IN: " + content.substring(y + 1, z) +
+				", see LPS-51315");
 	}
 
 	protected String formatDDLStructuresXML(String content) throws Exception {
@@ -741,7 +748,8 @@ public class XMLSourceProcessor extends BaseSourceProcessor {
 		return Dom4jUtil.toString(document);
 	}
 
-	protected String formatFriendlyURLRoutesXML(String fileName, String content)
+	protected String formatFriendlyURLRoutesXML(
+			String fileName, String absolutePath, String content)
 		throws Exception {
 
 		Document document = readXML(content);
@@ -773,7 +781,7 @@ public class XMLSourceProcessor extends BaseSourceProcessor {
 		StringBundler sb = new StringBundler(9);
 
 		ComparableVersion mainReleaseComparableVersion =
-			getMainReleaseComparableVersion();
+			getMainReleaseComparableVersion(fileName, absolutePath, false);
 
 		String mainReleaseVersion = mainReleaseComparableVersion.toString();
 
@@ -810,6 +818,28 @@ public class XMLSourceProcessor extends BaseSourceProcessor {
 		checkOrder(
 			fileName, document.getRootElement(), "category", null,
 			new ElementComparator(true));
+	}
+
+	protected void formatLookAndFeelXML(String fileName, String content)
+		throws Exception {
+
+		Document document = readXML(content);
+
+		Element rootElement = document.getRootElement();
+
+		List<Element> themeElements = rootElement.elements("theme");
+
+		for (Element themeElement : themeElements) {
+			checkOrder(
+				fileName, themeElement, "portlet-decorator", null,
+				new ElementComparator("id"));
+
+			Element settingsElement = themeElement.element("settings");
+
+			checkOrder(
+				fileName, settingsElement, "setting", null,
+				new ElementComparator("key"));
+		}
 	}
 
 	protected void formatModelHintsXML(String fileName, String content)
@@ -869,7 +899,8 @@ public class XMLSourceProcessor extends BaseSourceProcessor {
 				if (!Validator.isNumber(portletNameText)) {
 					processMessage(
 						fileName,
-						"nonstandard portlet-name element " + portletNameText);
+						"Nonstandard portlet-name element '" + portletNameText +
+							"'");
 				}
 			}
 
@@ -1245,19 +1276,18 @@ public class XMLSourceProcessor extends BaseSourceProcessor {
 
 		String moduleOrPluginFolder = fileName.substring(0, pos);
 
-		if (portalSource) {
+		tablesContent = FileUtil.read(
+			new File(
+				moduleOrPluginFolder +
+					"/src/main/resources/META-INF/sql/tables.sql"));
+
+		if (tablesContent == null) {
 			tablesContent = FileUtil.read(
 				new File(
-					moduleOrPluginFolder +
-						"/src/main/resources/META-INF/sql/tables.sql"));
-
-			if (tablesContent == null) {
-				tablesContent = FileUtil.read(
-					new File(
-						moduleOrPluginFolder + "/src/META-INF/sql/tables.sql"));
-			}
+					moduleOrPluginFolder + "/src/META-INF/sql/tables.sql"));
 		}
-		else {
+
+		if (tablesContent == null) {
 			tablesContent = FileUtil.read(
 				new File(moduleOrPluginFolder + "/sql/tables.sql"));
 		}
@@ -1270,17 +1300,22 @@ public class XMLSourceProcessor extends BaseSourceProcessor {
 	}
 
 	protected List<String> getTargetNames(
-			String buildfileName, String fileName, List<String> targetNames,
+			String buildFileName, String fileName, List<String> targetNames,
 			boolean importFile)
 		throws Exception {
 
-		File file = new File(buildfileName);
+		if (buildFileName.contains(StringPool.OPEN_CURLY_BRACE)) {
+			return null;
+		}
+
+		File file = new File(buildFileName);
 
 		if (!file.exists()) {
 			if (!importFile) {
 				processMessage(
 					fileName,
-					"ant element pointing to non-existing " + buildfileName);
+					"Ant element points to non-existing build file '" +
+						buildFileName + "'");
 			}
 
 			return null;
@@ -1303,8 +1338,8 @@ public class XMLSourceProcessor extends BaseSourceProcessor {
 		List<Element> importElements = rootElement.elements("import");
 
 		for (Element importElement : importElements) {
-			String buildDirName = buildfileName.substring(
-				0, buildfileName.lastIndexOf(CharPool.SLASH) + 1);
+			String buildDirName = buildFileName.substring(
+				0, buildFileName.lastIndexOf(CharPool.SLASH) + 1);
 
 			String importFileName =
 				buildDirName + importElement.attributeValue("file");
@@ -1694,17 +1729,62 @@ public class XMLSourceProcessor extends BaseSourceProcessor {
 			String sqlElementName1 = getElementName(sqlElement1);
 			String sqlElementName2 = getElementName(sqlElement2);
 
-			if ((sqlElementName1 == null) || (sqlElementName2 == null)) {
+			String finderObjectName1 = _getFinderObjectName(sqlElementName1);
+			String finderObjectName2 = _getFinderObjectName(sqlElementName2);
+
+			if ((finderObjectName1 == null) || (finderObjectName2 == null)) {
 				return 0;
 			}
 
-			return sqlElementName1.compareToIgnoreCase(sqlElementName2);
+			int value = finderObjectName1.compareToIgnoreCase(
+				finderObjectName2);
+
+			if (value != 0) {
+				return value;
+			}
+
+			String finderKeyName1 = _getFinderKeyName(sqlElementName1);
+			String finderKeyName2 = _getFinderKeyName(sqlElementName2);
+
+			int startsWithWeight = StringUtil.startsWithWeight(
+				finderKeyName1, finderKeyName2);
+
+			if (startsWithWeight == 0) {
+				return finderKeyName1.compareTo(finderKeyName2);
+			}
+
+			String startFinder = finderKeyName1.substring(0, startsWithWeight);
+
+			if (!startFinder.contains("By")) {
+				NaturalOrderStringComparator comparator =
+					new NaturalOrderStringComparator();
+
+				return comparator.compare(finderKeyName1, finderKeyName2);
+			}
+
+			int columnCount1 = StringUtil.count(
+				sqlElementName1, CharPool.UNDERLINE);
+			int columnCount2 = StringUtil.count(
+				sqlElementName2, CharPool.UNDERLINE);
+
+			return columnCount1 - columnCount2;
 		}
 
-		@Override
-		protected String getElementName(Element element) {
-			String elementName = element.attributeValue(getNameAttribute());
+		private String _getFinderKeyName(String elementName) {
+			if (Validator.isNull(elementName)) {
+				return null;
+			}
 
+			int pos = elementName.lastIndexOf(StringPool.PERIOD);
+
+			if (pos == -1) {
+				return null;
+			}
+
+			return elementName.substring(pos + 1);
+		}
+
+		private String _getFinderObjectName(String elementName) {
 			if (Validator.isNull(elementName)) {
 				return null;
 			}

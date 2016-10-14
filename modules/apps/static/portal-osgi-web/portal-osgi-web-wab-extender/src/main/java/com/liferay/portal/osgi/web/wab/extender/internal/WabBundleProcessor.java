@@ -88,6 +88,7 @@ public class WabBundleProcessor {
 		BundleWiring bundleWiring = _bundle.adapt(BundleWiring.class);
 
 		_bundleClassLoader = bundleWiring.getClassLoader();
+
 		_bundleContext = _bundle.getBundleContext();
 	}
 
@@ -430,8 +431,7 @@ public class WabBundleProcessor {
 				HttpWhiteboardConstants.HTTP_WHITEBOARD_CONTEXT_SELECT,
 				_contextName);
 			properties.put(
-				HttpWhiteboardConstants.
-					HTTP_WHITEBOARD_FILTER_ASYNC_SUPPORTED,
+				HttpWhiteboardConstants.HTTP_WHITEBOARD_FILTER_ASYNC_SUPPORTED,
 				filterDefinition.isAsyncSupported());
 			properties.put(
 				HttpWhiteboardConstants.HTTP_WHITEBOARD_FILTER_DISPATCHER,

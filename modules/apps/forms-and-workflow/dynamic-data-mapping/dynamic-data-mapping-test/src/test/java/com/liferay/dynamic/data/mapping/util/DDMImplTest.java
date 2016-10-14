@@ -506,6 +506,7 @@ public class DDMImplTest extends BaseDDMTestCase {
 		Assert.assertNotNull(fieldsDisplayField);
 
 		String fieldsDisplayValue = (String)fieldsDisplayField.getValue();
+
 		String[] fieldsDisplayValues = StringUtil.split(fieldsDisplayValue);
 
 		testValues(
@@ -659,6 +660,7 @@ public class DDMImplTest extends BaseDDMTestCase {
 
 		Assert.assertEquals(
 			expectedDDMFormFieldName, actualDDMFormFieldNames.get(0));
+
 		Assert.assertEquals(
 			DDMFormLayoutColumn.FULL, actualDDMFormLayoutColumn.getSize());
 	}

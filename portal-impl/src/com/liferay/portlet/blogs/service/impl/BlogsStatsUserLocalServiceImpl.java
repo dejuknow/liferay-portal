@@ -23,8 +23,8 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * @author Brian Wing Shun Chan
- * @author Mate Thurzo
+ * @author     Brian Wing Shun Chan
+ * @author     Mate Thurzo
  * @deprecated As of 7.0.0, replaced by {@link
  *             com.liferay.blogs.service.impl.BlogsStatsUserLocalServiceImpl}
  */
@@ -40,6 +40,9 @@ public class BlogsStatsUserLocalServiceImpl
 					"BlogsStatsUserLocalServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public void deleteStatsUser(long statsUserId) throws PortalException {
 		throw new UnsupportedOperationException(
@@ -161,6 +164,9 @@ public class BlogsStatsUserLocalServiceImpl
 					"BlogsStatsUserLocalServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public BlogsStatsUser getStatsUser(long groupId, long userId)
 		throws PortalException {
@@ -171,6 +177,9 @@ public class BlogsStatsUserLocalServiceImpl
 					"BlogsStatsUserLocalServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public void updateStatsUser(long groupId, long userId)
 		throws PortalException {
@@ -181,6 +190,9 @@ public class BlogsStatsUserLocalServiceImpl
 					"BlogsStatsUserLocalServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public void updateStatsUser(long groupId, long userId, Date displayDate)
 		throws PortalException {

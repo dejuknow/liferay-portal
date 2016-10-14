@@ -3,9 +3,15 @@
 		<execute function="AssertClick" locator1="NavTab#GOOGLE" value1="Google" />
 	</command>
 
-	<command name="gotoMenuAuthentication">
+	<command name="gotoAuthenticationLDAP">
+		<execute function="AssertClick" locator1="NavTab#LDAP" value1="LDAP" />
+	</command>
+
+	<command name="gotoLDAP">
 		<execute macro="Panel#expandPanel">
 			<var name="panelHeading" value="Authentication" />
 		</execute>
+
+		<execute macro="PortalSettingsNavigator#gotoAuthenticationLDAP" />
 	</command>
 </definition>

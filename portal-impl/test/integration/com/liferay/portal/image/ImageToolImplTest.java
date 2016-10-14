@@ -148,8 +148,8 @@ public class ImageToolImplTest {
 
 	protected File getFile(String fileName) {
 		fileName =
-			"portal-impl/test/integration/com/liferay/portal/image/" +
-				"dependencies/" + fileName;
+			"portal-impl/test/integration/com/liferay/portal/image" +
+				"/dependencies/" + fileName;
 
 		return new File(fileName);
 	}
@@ -191,6 +191,7 @@ public class ImageToolImplTest {
 
 		Assert.assertTrue(
 			StringUtil.equalsIgnoreCase(expectedType, resultType));
+
 		Assert.assertTrue(
 			expectedDataBuffer instanceof DataBufferByte ||
 			expectedDataBuffer instanceof DataBufferInt);

@@ -95,7 +95,7 @@ public class LiferayTemplateClassResolverTest {
 
 	@After
 	public void tearDown() throws Exception {
-		_freemarkerTemplateConfiguration.update(_properties);
+		_updateProperties(_properties);
 	}
 
 	@Test

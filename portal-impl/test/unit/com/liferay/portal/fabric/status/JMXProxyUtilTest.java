@@ -430,7 +430,8 @@ public class JMXProxyUtilTest {
 							return _testClassObjectName;
 						}
 
-					}}));
+					}
+				}));
 	}
 
 	@Test
@@ -489,6 +490,7 @@ public class JMXProxyUtilTest {
 		testClassMXBean.setName(newName);
 
 		Assert.assertEquals(newName, testClassMXBean.getName());
+
 		Assert.assertEquals(
 			"doSomething", testClassMXBean.doSomething("doSomething"));
 	}
@@ -554,6 +556,7 @@ public class JMXProxyUtilTest {
 				_testClassObjectName, "NameX", "newName", true);
 
 		Assert.assertNull(setAttributeProcessCallable.call());
+
 		Assert.assertEquals(oldName, _testClass.getName());
 	}
 
@@ -587,6 +590,7 @@ public class JMXProxyUtilTest {
 				_testClassObjectName, "Name", newName, true);
 
 		Assert.assertNull(setAttributeProcessCallable.call());
+
 		Assert.assertEquals(newName, _testClass.getName());
 	}
 

@@ -38,6 +38,15 @@ public class PortalPreferencesLocalServiceImpl
 	public PortalPreferences addPortalPreferences(
 		long ownerId, int ownerType, String defaultPreferences) {
 
+		PortalPreferences previousPortalPreferences =
+			portalPreferencesPersistence.fetchByO_O(ownerId, ownerType);
+
+		if (previousPortalPreferences != null) {
+			throw new IllegalArgumentException(
+				"Duplicate owner ID and owner type exists in " +
+					previousPortalPreferences);
+		}
+
 		PortalPreferencesWrapperCacheUtil.remove(ownerId, ownerType);
 
 		long portalPreferencesId = counterLocalService.increment();

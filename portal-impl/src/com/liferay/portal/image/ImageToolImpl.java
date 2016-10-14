@@ -632,6 +632,7 @@ public class ImageToolImpl implements ImageTool {
 		double factor = (double)width / imageWidth;
 
 		int scaledHeight = (int)Math.round(factor * imageHeight);
+
 		int scaledWidth = width;
 
 		return doScale(renderedImage, scaledHeight, scaledWidth);
@@ -770,6 +771,7 @@ public class ImageToolImpl implements ImageTool {
 		}
 
 		int numBitsLeft = numBits;
+
 		byte[] multiBytes = new byte[(numBitsLeft + 6) / 7];
 
 		int maxIndex = multiBytes.length - 1;

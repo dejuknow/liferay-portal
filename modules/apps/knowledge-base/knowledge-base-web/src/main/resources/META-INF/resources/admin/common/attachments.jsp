@@ -53,7 +53,7 @@ if (kbArticle != null) {
 				<div id="<portlet:namespace />fileEntryIdWrapper<%= fileEntry.getFileEntryId() %>">
 
 					<%
-					String clipURL = DLUtil.getPreviewURL(fileEntry, fileEntry.getFileVersion(), themeDisplay, StringPool.BLANK);
+					String rowURL = PortletFileRepositoryUtil.getDownloadPortletFileEntryURL(themeDisplay, fileEntry, "status=" + WorkflowConstants.STATUS_APPROVED);
 					%>
 
 					<liferay-ui:icon
@@ -61,7 +61,7 @@ if (kbArticle != null) {
 						label="<%= true %>"
 						message='<%= fileEntry.getTitle() + " (" + TextFormatter.formatStorageSize(fileEntry.getSize(), locale) + ")" %>'
 						method="get"
-						url="<%= clipURL %>"
+						url="<%= rowURL %>"
 					/>
 
 					<%
@@ -69,7 +69,7 @@ if (kbArticle != null) {
 					%>
 
 					<liferay-ui:icon-delete
-						label="<%= false %>"
+						label="<%= true %>"
 						url="<%= taglibURL %>"
 					/>
 				</div>

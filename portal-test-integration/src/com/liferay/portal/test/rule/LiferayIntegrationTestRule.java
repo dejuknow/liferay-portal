@@ -23,10 +23,10 @@ import com.liferay.portal.kernel.test.rule.callback.DeleteAfterTestRunTestCallba
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
-import com.liferay.portal.kernel.util.ServerDetector;
 import com.liferay.portal.kernel.util.SystemProperties;
 import com.liferay.portal.test.rule.callback.CITimeoutTestCallback;
 import com.liferay.portal.test.rule.callback.ClearThreadLocalTestCallback;
+import com.liferay.portal.test.rule.callback.HotDeployAwaitTestCallback;
 import com.liferay.portal.test.rule.callback.LogAssertionTestCallback;
 import com.liferay.portal.test.rule.callback.MainServletTestCallback;
 import com.liferay.portal.test.rule.callback.SybaseDumpTransactionLogTestCallback;
@@ -67,6 +67,7 @@ public class LiferayIntegrationTestRule extends AggregateTestRule {
 		testRules.add(_clearThreadLocalTestRule);
 		testRules.add(_uniqueStringRandomizerBumperTestRule);
 		testRules.add(_mainServletTestRule);
+		testRules.add(_hotDeployAwaitTestRule);
 		testRules.add(_companyProviderTestRule);
 		testRules.add(_deleteAfterTestRunTestRule);
 
@@ -81,6 +82,8 @@ public class LiferayIntegrationTestRule extends AggregateTestRule {
 		CompanyProviderTestCallback.INSTANCE);
 	private static final TestRule _deleteAfterTestRunTestRule =
 		new BaseTestRule<>(DeleteAfterTestRunTestCallback.INSTANCE);
+	private static final TestRule _hotDeployAwaitTestRule = new BaseTestRule<>(
+		HotDeployAwaitTestCallback.INSTANCE);
 	private static final TestRule _mainServletTestRule = new BaseTestRule<>(
 		MainServletTestCallback.INSTANCE);
 
@@ -96,8 +99,6 @@ public class LiferayIntegrationTestRule extends AggregateTestRule {
 					@Override
 					public void evaluate() throws Throwable {
 						if (!InitUtil.isInitialized()) {
-							ServerDetector.init(ServerDetector.TOMCAT_ID);
-
 							List<String> configLocations = ListUtil.fromArray(
 								PropsUtil.getArray(PropsKeys.SPRING_CONFIGS));
 

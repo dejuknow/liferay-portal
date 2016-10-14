@@ -63,7 +63,7 @@ public class GitHubJobMessageUtil {
 					String runBuildURL = runsJSONObject.getString("url");
 
 					if (!runBuildURL.endsWith(
-							"/"+ jsonObject.get("number") + "/")) {
+							"/" + jsonObject.get("number") + "/")) {
 
 						continue;
 					}
@@ -138,7 +138,8 @@ public class GitHubJobMessageUtil {
 			}
 		}
 		else if (result.equals("UNSTABLE")) {
-			sb.append(UnstableMessageUtil.getUnstableMessage(buildURL));
+			sb.append(
+				UnstableMessageUtil.getUnstableMessage(project, buildURL));
 		}
 		else if (javacOutputFile.exists()) {
 			sb.append("<h6>Job Results:</h6>");

@@ -320,12 +320,6 @@ public class ExportImportDateUtil {
 		StagedGroupedModel stagedGroupedModel, DateRange dateRange,
 		Date lastPublishDate) {
 
-		Date originalLastPublishDate = stagedGroupedModel.getLastPublishDate();
-
-		if (!isValidDateRange(dateRange, originalLastPublishDate)) {
-			return;
-		}
-
 		if (lastPublishDate == null) {
 			lastPublishDate = new Date();
 		}
@@ -357,8 +351,7 @@ public class ExportImportDateUtil {
 			if (_log.isDebugEnabled()) {
 				_log.debug(
 					"Not updating the portlet setup for " + portletId +
-						" because no setup was returned for the current " +
-							"page");
+						" because no setup was returned for the current page");
 			}
 		}
 		catch (Exception e) {

@@ -56,7 +56,7 @@
 		[$PORTAL_URL$]
 	</dt>
 	<dd>
-		<%= company.getVirtualHostname() %>
+		<%= company.getPortalURL(GroupConstants.DEFAULT_PARENT_GROUP_ID) %>
 	</dd>
 	<dt class="password-changed-notification">
 		[$REMOTE_ADDRESS$]

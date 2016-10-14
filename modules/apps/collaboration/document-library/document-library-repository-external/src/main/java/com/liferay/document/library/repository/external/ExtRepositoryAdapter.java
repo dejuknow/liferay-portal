@@ -320,7 +320,7 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 			_toExtRepositoryObjectAdapters(
 				ExtRepositoryObjectAdapterType.FILE, extRepositoryFileEntries);
 
-		return _subList(extRepositoryFileEntryAdapters, start, end, obc);
+		return _sublist(extRepositoryFileEntryAdapters, start, end, obc);
 	}
 
 	@Override
@@ -358,7 +358,7 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 		extRepositoryFileEntryAdapters = _filterByMimeType(
 			extRepositoryFileEntryAdapters, mimeTypes);
 
-		return _subList(extRepositoryFileEntryAdapters, start, end, obc);
+		return _sublist(extRepositoryFileEntryAdapters, start, end, obc);
 	}
 
 	@Override
@@ -532,7 +532,7 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 			_toExtRepositoryObjectAdapters(
 				ExtRepositoryObjectAdapterType.FOLDER, extRepositoryFolders);
 
-		return _subList(extRepositoryFolderAdapters, start, end, obc);
+		return _sublist(extRepositoryFolderAdapters, start, end, obc);
 	}
 
 	@Override
@@ -551,7 +551,7 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 					ExtRepositoryObjectAdapterType.OBJECT,
 					extRepositoryObjects);
 
-			return _subList(
+			return _sublist(
 				extRepositoryObjectAdapters, start, end,
 				(OrderByComparator<Object>)obc);
 		}
@@ -579,7 +579,7 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 		extRepositoryObjectAdapters = _filterByMimeType(
 			extRepositoryObjectAdapters, mimeTypes);
 
-		return _subList(
+		return _sublist(
 			extRepositoryObjectAdapters, start, end,
 			(OrderByComparator<Object>)obc);
 	}
@@ -1005,50 +1005,61 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 			ServiceContext serviceContext)
 		throws PortalException {
 
+		boolean needsCheckIn = false;
+
 		String extRepositoryFileEntryKey = getExtRepositoryObjectKey(
 			fileEntryId);
 
-		ExtRepositoryFileEntry extRepositoryFileEntry =
-			_extRepository.getExtRepositoryObject(
-				ExtRepositoryObjectType.FILE, extRepositoryFileEntryKey);
+		try {
+			ExtRepositoryFileEntry extRepositoryFileEntry =
+				_extRepository.getExtRepositoryObject(
+					ExtRepositoryObjectType.FILE, extRepositoryFileEntryKey);
 
-		boolean needsCheckIn = false;
+			if (!isCheckedOut(extRepositoryFileEntry)) {
+				_extRepository.checkOutExtRepositoryFileEntry(
+					extRepositoryFileEntryKey);
 
-		if (!isCheckedOut(extRepositoryFileEntry)) {
-			_extRepository.checkOutExtRepositoryFileEntry(
-				extRepositoryFileEntryKey);
+				needsCheckIn = true;
+			}
 
-			needsCheckIn = true;
+			if (inputStream != null) {
+				extRepositoryFileEntry =
+					_extRepository.updateExtRepositoryFileEntry(
+						extRepositoryFileEntryKey, mimeType, inputStream);
+			}
+
+			if (!title.equals(extRepositoryFileEntry.getTitle())) {
+				ExtRepositoryFolder folder =
+					_extRepository.getExtRepositoryParentFolder(
+						extRepositoryFileEntry);
+
+				extRepositoryFileEntry = _extRepository.moveExtRepositoryObject(
+					ExtRepositoryObjectType.FILE, extRepositoryFileEntryKey,
+					folder.getExtRepositoryModelKey(), title);
+
+				ExtRepositoryAdapterCache extRepositoryAdapterCache =
+					ExtRepositoryAdapterCache.getInstance();
+
+				extRepositoryAdapterCache.clear();
+			}
+
+			if (needsCheckIn) {
+				_extRepository.checkInExtRepositoryFileEntry(
+					extRepositoryFileEntryKey, majorVersion, changeLog);
+
+				needsCheckIn = false;
+			}
+
+			return _toExtRepositoryObjectAdapter(
+				ExtRepositoryObjectAdapterType.FILE, extRepositoryFileEntry);
 		}
+		catch (PortalException | SystemException e) {
+			if (needsCheckIn) {
+				_extRepository.cancelCheckOut(extRepositoryFileEntryKey);
+			}
 
-		if (inputStream != null) {
-			extRepositoryFileEntry =
-				_extRepository.updateExtRepositoryFileEntry(
-					extRepositoryFileEntryKey, mimeType, inputStream);
+			throw e;
 		}
-
-		if (!title.equals(extRepositoryFileEntry.getTitle())) {
-			ExtRepositoryFolder folder =
-				_extRepository.getExtRepositoryParentFolder(
-					extRepositoryFileEntry);
-
-			extRepositoryFileEntry = _extRepository.moveExtRepositoryObject(
-				ExtRepositoryObjectType.FILE, extRepositoryFileEntryKey,
-				folder.getExtRepositoryModelKey(), title);
-
-			ExtRepositoryAdapterCache extRepositoryAdapterCache =
-				ExtRepositoryAdapterCache.getInstance();
-
-			extRepositoryAdapterCache.clear();
-		}
-
-		if (needsCheckIn) {
-			_extRepository.checkInExtRepositoryFileEntry(
-				extRepositoryFileEntryKey, majorVersion, changeLog);
-		}
-
-		return _toExtRepositoryObjectAdapter(
-			ExtRepositoryObjectAdapterType.FILE, extRepositoryFileEntry);
 	}
 
 	@Override
@@ -1284,7 +1295,7 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 		return false;
 	}
 
-	private <T, V extends T> List<T> _subList(
+	private <T, V extends T> List<T> _sublist(
 		List<V> list, int start, int end, OrderByComparator<T> obc) {
 
 		if (obc != null) {

@@ -16,6 +16,7 @@ package com.liferay.portal.tools.data.partitioning.sql.builder.exporter;
 
 import com.liferay.portal.tools.data.partitioning.sql.builder.exporter.context.ExportContext;
 import com.liferay.portal.tools.data.partitioning.sql.builder.internal.exporter.ExportProcess;
+import com.liferay.portal.tools.data.partitioning.sql.builder.internal.exporter.SQLBuilder;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -24,15 +25,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +46,11 @@ public abstract class BaseDataPartitioningExporter
 	implements DataPartitioningExporter, DBExporter, DBProvider {
 
 	public BaseDataPartitioningExporter() {
+		_sqlBuilder = new InsertSQLBuilder();
+	}
+
+	public BaseDataPartitioningExporter(SQLBuilder sqlBuilder) {
+		_sqlBuilder = sqlBuilder;
 	}
 
 	@Override
@@ -77,48 +78,18 @@ public abstract class BaseDataPartitioningExporter
 	}
 
 	@Override
-	public String getDateTimeFormat() {
-		return "YYYY-MM-DD HH:MM:SS";
-	}
-
-	@Override
 	public int getFetchSize() {
 		return 0;
 	}
 
 	@Override
-	public List<String> getPartitionedTableNames(ExportContext exportContext) {
-		return getTableNames(getPartitionedTableNamesSQL(exportContext));
+	public String getOutputFileExtension() {
+		return ".sql";
 	}
 
 	@Override
-	public String serializeTableField(Object field) {
-		StringBuilder sb = new StringBuilder();
-
-		if (field == null) {
-			sb.append("null");
-		}
-		else if ((field instanceof Date) || (field instanceof Timestamp)) {
-			sb.append("'");
-			sb.append(formatDateTime(field));
-			sb.append("'");
-		}
-		else if (field instanceof String) {
-			String value = (String)field;
-
-			value = value.replace("'", "''");
-
-			sb.append("'");
-			sb.append(value);
-			sb.append("'");
-		}
-		else {
-			sb.append("'");
-			sb.append(field);
-			sb.append("'");
-		}
-
-		return sb.toString();
+	public List<String> getPartitionedTableNames(ExportContext exportContext) {
+		return getTableNames(getPartitionedTableNamesSQL(exportContext));
 	}
 
 	@Override
@@ -146,10 +117,13 @@ public abstract class BaseDataPartitioningExporter
 				String[] fields = new String[columnCount];
 
 				for (int i = 0; i < columnCount; i++) {
-					fields[i] = serializeTableField(resultSet.getObject(i + 1));
+					fields[i] = _sqlBuilder.buildField(
+						resultSet.getObject(i + 1));
 				}
 
-				generateInsertSQL(outputStream, tableName, fields);
+				String insertSQL = _sqlBuilder.buildInsert(tableName, fields);
+
+				outputStream.write(insertSQL.getBytes());
 			}
 		}
 		catch (IOException | SQLException e) {
@@ -174,7 +148,7 @@ public abstract class BaseDataPartitioningExporter
 		try (Connection connection = dataSource.getConnection();
 			PreparedStatement preparedStatement = buildPreparedStatement(
 				connection,
-				"select count(1) from " + tableName +" where companyId = ?",
+				"select count(1) from " + tableName + " where companyId = ?",
 				companyId);
 			ResultSet resultSet = preparedStatement.executeQuery()) {
 
@@ -208,43 +182,6 @@ public abstract class BaseDataPartitioningExporter
 		}
 
 		return preparedStatement;
-	}
-
-	protected String formatDateTime(Object date) {
-		DateFormat dateFormat = new SimpleDateFormat(getDateTimeFormat());
-
-		return dateFormat.format(date);
-	}
-
-	protected void generateInsertSQL(
-			OutputStream outputStream, String tableName, String[] fields)
-		throws IOException {
-
-		if ((fields == null) || (fields.length == 0)) {
-			throw new IllegalArgumentException("Fields are null");
-		}
-
-		StringBuilder sb = new StringBuilder();
-
-		sb.append("insert into ");
-		sb.append(tableName);
-		sb.append(" values (");
-
-		for (int i = 0; i < fields.length; i++) {
-			String field = fields[i];
-
-			sb.append(field);
-
-			if (i != (fields.length - 1)) {
-				sb.append(", ");
-			}
-		}
-
-		sb.append(")");
-
-		String sql = sb.toString() + ";\n";
-
-		outputStream.write(sql.getBytes());
 	}
 
 	protected abstract String getControlTableNamesSQL(
@@ -285,5 +222,6 @@ public abstract class BaseDataPartitioningExporter
 		BaseDataPartitioningExporter.class);
 
 	private DataSource _dataSource;
+	private final SQLBuilder _sqlBuilder;
 
 }

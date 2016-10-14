@@ -15,11 +15,11 @@
 package com.liferay.source.formatter.checkstyle.util;
 
 import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayOutputStream;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.source.formatter.SourceFormatterMessage;
 import com.liferay.source.formatter.checkstyle.Checker;
-import com.liferay.source.formatter.checkstyle.SuppressionsLoader;
 
 import com.puppycrawl.tools.checkstyle.ConfigurationLoader;
 import com.puppycrawl.tools.checkstyle.DefaultLogger;
@@ -27,13 +27,14 @@ import com.puppycrawl.tools.checkstyle.PropertiesExpander;
 import com.puppycrawl.tools.checkstyle.api.AuditEvent;
 import com.puppycrawl.tools.checkstyle.api.AuditListener;
 import com.puppycrawl.tools.checkstyle.api.Configuration;
-import com.puppycrawl.tools.checkstyle.api.FilterSet;
+import com.puppycrawl.tools.checkstyle.filters.SuppressionsLoader;
 
 import java.io.File;
 import java.io.OutputStream;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.xml.sax.InputSource;
 
@@ -42,20 +43,22 @@ import org.xml.sax.InputSource;
  */
 public class CheckStyleUtil {
 
-	public static List<SourceFormatterMessage> process(
-			List<File> files, String baseDirAbsolutePath)
+	public static Set<SourceFormatterMessage> process(
+			Set<File> files, List<File> suppressionsFiles,
+			String baseDirAbsolutePath)
 		throws Exception {
 
 		_sourceFormatterMessages.clear();
 
-		Checker checker = _getChecker(baseDirAbsolutePath);
+		Checker checker = _getChecker(suppressionsFiles, baseDirAbsolutePath);
 
-		checker.process(files);
+		checker.process(ListUtil.fromCollection(files));
 
 		return _sourceFormatterMessages;
 	}
 
-	private static Checker _getChecker(String baseDirAbsolutePath)
+	private static Checker _getChecker(
+			List<File> suppressionsFiles, String baseDirAbsolutePath)
 		throws Exception {
 
 		Checker checker = new Checker();
@@ -64,16 +67,14 @@ public class CheckStyleUtil {
 
 		checker.setModuleClassLoader(classLoader);
 
-		FilterSet filterSet = SuppressionsLoader.loadSuppressions(
-			new InputSource(
-				classLoader.getResourceAsStream(
-					"checkstyle-suppressions.xml")));
-
-		checker.addFilter(filterSet);
+		for (File suppressionsFile : suppressionsFiles) {
+			checker.addFilter(
+				SuppressionsLoader.loadSuppressions(
+					suppressionsFile.getAbsolutePath()));
+		}
 
 		Configuration configuration = ConfigurationLoader.loadConfiguration(
-			new InputSource(
-				classLoader.getResourceAsStream("checkstyle.xml")),
+			new InputSource(classLoader.getResourceAsStream("checkstyle.xml")),
 			new PropertiesExpander(System.getProperties()), false);
 
 		checker.configure(configuration);
@@ -85,6 +86,9 @@ public class CheckStyleUtil {
 
 		return checker;
 	}
+
+	private static final Set<SourceFormatterMessage> _sourceFormatterMessages =
+		new TreeSet<>();
 
 	private static class SourceFormatterLogger extends DefaultLogger {
 
@@ -116,8 +120,5 @@ public class CheckStyleUtil {
 		private final String _baseDirAbsolutePath;
 
 	}
-
-	private static List<SourceFormatterMessage> _sourceFormatterMessages =
-		new ArrayList<>();
 
 }

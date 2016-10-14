@@ -446,10 +446,10 @@ public interface SocialActivityCounterLocalService extends BaseLocalService,
 	/**
 	* Adds or increments activity counters related to an activity.
 	*
-	* </p>
+	* <p>
 	* This method is called asynchronously from the social activity service
 	* when the user performs an activity defined in
-	* </code>liferay-social.xml</code>.
+	* <code>liferay-social.xml</code>.
 	* </p>
 	*
 	* <p>

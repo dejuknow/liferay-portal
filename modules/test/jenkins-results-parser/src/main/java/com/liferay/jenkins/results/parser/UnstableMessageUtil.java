@@ -17,6 +17,8 @@ package com.liferay.jenkins.results.parser;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.tools.ant.Project;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -25,7 +27,9 @@ import org.json.JSONObject;
  */
 public class UnstableMessageUtil {
 
-	public static String getUnstableMessage(String buildURL) throws Exception {
+	public static String getUnstableMessage(Project project, String buildURL)
+		throws Exception {
+
 		StringBuilder sb = new StringBuilder();
 
 		JSONObject testReportJSONObject = JenkinsResultsParserUtil.toJSONObject(
@@ -33,9 +37,22 @@ public class UnstableMessageUtil {
 				buildURL + "testReport/api/json"));
 
 		int failCount = testReportJSONObject.getInt("failCount");
-		int totalCount = testReportJSONObject.getInt("totalCount");
 
-		int passCount = totalCount - failCount;
+		int passCount = 0;
+		int totalCount = 0;
+
+		if (!testReportJSONObject.has("passCount") &&
+			testReportJSONObject.has("totalCount")) {
+
+			totalCount = testReportJSONObject.getInt("totalCount");
+
+			passCount = totalCount - failCount;
+		}
+		else {
+			passCount = testReportJSONObject.getInt("passCount");
+
+			totalCount = failCount + passCount;
+		}
 
 		sb.append("<h6>Job Results:</h6><p>");
 		sb.append(passCount);
@@ -90,7 +107,7 @@ public class UnstableMessageUtil {
 			runBuildURLs.add(buildURL);
 		}
 
-		int failureCount = _getUnstableMessage(runBuildURLs, sb);
+		int failureCount = _getUnstableMessage(project, runBuildURLs, sb);
 
 		sb.append("</ol>");
 
@@ -135,8 +152,33 @@ public class UnstableMessageUtil {
 		sb.append("</li>");
 	}
 
+	private static String _getLogURL(
+			String jobVariant, Project project,
+			JSONObject runBuildURLJSONObject)
+		throws Exception {
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(project.getProperty("log.base.url"));
+		sb.append("/");
+		sb.append(project.getProperty("env.MASTER_HOSTNAME"));
+		sb.append("/");
+		sb.append(project.getProperty("env.TOP_LEVEL_START_TIME"));
+		sb.append("/");
+		sb.append(project.getProperty("env.JOB_NAME"));
+		sb.append("/");
+		sb.append(project.getProperty("env.BUILD_NUMBER"));
+		sb.append("/");
+		sb.append(jobVariant);
+		sb.append("/");
+		sb.append(
+			JenkinsResultsParserUtil.getAxisVariable(runBuildURLJSONObject));
+
+		return sb.toString();
+	}
+
 	private static int _getUnstableMessage(
-			List<String> runBuildURLs, StringBuilder sb)
+			Project project, List<String> runBuildURLs, StringBuilder sb)
 		throws Exception {
 
 		int failureCount = 0;
@@ -242,45 +284,51 @@ public class UnstableMessageUtil {
 					sb.append(testMethodNameURL);
 
 					sb.append("\">");
-					sb.append(testSimpleClassName);
-					sb.append(".");
-					sb.append(testMethodName);
 
 					String jobVariant = JenkinsResultsParserUtil.getJobVariant(
 						runBuildURLJSONObject);
 
-					if (jobVariant.contains("functional") &&
-						testClassName.contains("EvaluateLogTest")) {
-
-						sb.append("[");
-						sb.append(
-							JenkinsResultsParserUtil.getAxisVariable(
-								runBuildURLJSONObject));
-						sb.append("]");
-					}
-
-					sb.append("</a>");
-
 					if (jobVariant.contains("functional")) {
-						sb.append(" - ");
+						String testName = testMethodName.substring(
+							5, testMethodName.length() - 1);
 
-						String description = runBuildURLJSONObject.getString(
-							"description");
+						sb.append(testName);
 
-						x = description.indexOf(">Jenkins Report<") + 22;
-
-						if (description.length() > x) {
-							description = description.substring(x);
-
-							description = description.replace("\"", "\"");
-
-							sb.append(description);
-							sb.append(" - ");
-						}
-
+						sb.append("</a> - ");
 						sb.append("<a href=\"");
-						sb.append(runBuildURL);
-						sb.append("/console\">Console Output</a>");
+
+						String logURL = _getLogURL(
+							jobVariant, project, runBuildURLJSONObject);
+
+						sb.append(logURL);
+
+						sb.append("/");
+						sb.append(testName.replace("#", "_"));
+						sb.append("/index.html.gz\">Poshi Report</a> - ");
+						sb.append("<a href=\"");
+						sb.append(logURL);
+						sb.append("/");
+						sb.append(testName.replace("#", "_"));
+						sb.append("/summary.html.gz\">Poshi Summary</a> - ");
+						sb.append("<a href=\"");
+						sb.append(logURL);
+						sb.append(
+							"/jenkins-console.txt.gz\">Console Output</a>");
+
+						if (Boolean.parseBoolean(
+								project.getProperty("record.liferay.log"))) {
+
+							sb.append(" - ");
+							sb.append("<a href=\"");
+							sb.append(logURL);
+							sb.append("/liferay-log.txt.gz\">Liferay Log</a>");
+						}
+					}
+					else {
+						sb.append(testSimpleClassName);
+						sb.append(".");
+						sb.append(testMethodName);
+						sb.append("</a>");
 					}
 
 					sb.append("</li>");

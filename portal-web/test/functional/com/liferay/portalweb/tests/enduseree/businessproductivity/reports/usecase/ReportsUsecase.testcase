@@ -1,8 +1,5 @@
 <definition component-name="portal-business-productivity-ee">
-	<property name="portal.release" value="true" />
-	<property name="portlet.plugins.includes" value="reports-portlet" />
 	<property name="testray.main.component.name" value="Reports" />
-	<property name="web.plugins.includes" value="jasperreports-web" />
 
 	<set-up>
 		<execute macro="TestCase#setUpPortalInstance" />
@@ -35,7 +32,7 @@
 		<execute macro="Navigator#openURL" />
 
 		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Reports Admin" />
+			<var name="portlet" value="Report Admin" />
 		</execute>
 
 		<execute macro="ReportsAdmin#gotoDefinitions" />
@@ -53,7 +50,7 @@
 		<execute macro="Navigator#openURL" />
 
 		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Reports Admin" />
+			<var name="portlet" value="Report Admin" />
 		</execute>
 
 		<execute macro="ReportsAdmin#gotoDefinitions" />
@@ -77,7 +74,7 @@
 		</execute>
 
 		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Reports Display" />
+			<var name="portletName" value="Report Display" />
 		</execute>
 
 		<execute macro="ReportsDisplayPortlet#viewReportEntry">
@@ -96,7 +93,7 @@
 		<execute macro="Navigator#openURL" />
 
 		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Reports Admin" />
+			<var name="portlet" value="Report Admin" />
 		</execute>
 
 		<for list="1,2,3,4,5,6" param="number">
@@ -152,7 +149,7 @@
 		<execute macro="Navigator#openURL" />
 
 		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Reports Admin" />
+			<var name="portlet" value="Report Admin" />
 		</execute>
 
 		<execute macro="ReportsAdmin#gotoConfiguration" />
@@ -189,7 +186,7 @@ Thanks,<br/>
 		<execute macro="Navigator#openURL" />
 
 		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Reports Admin" />
+			<var name="portlet" value="Report Admin" />
 		</execute>
 
 		<execute macro="ReportsAdmin#gotoDefinitions" />
@@ -220,10 +217,7 @@ Thanks,<br/>
 		<execute macro="Gmail#viewMail">
 			<var name="emailFromUserName" value="Liferay QA" />
 			<var name="gmailAssetType" value="New Report From QA: reports_admin_template_source_sample_class_name.pdf" />
-			<var name="gmailMailTableMessageTitle" value="New Report From QA: reports_admin_template_source_sample_class_name.pdf" />
 			<var name="gmailMessageBody" value="You have a new report from your friends in QA." />
-			<var name="gmailMessageBodyClosing" value="Thanks, Liferay QA ${emailAddress1}" />
-			<var name="gmailMessageBodyGreeting" value="Dear ${emailAddress4}," />
 			<var name="gmailMessageTitle" value="New Report From QA: reports_admin_template_source_sample_class_name.pdf" />
 		</execute>
 
@@ -242,12 +236,9 @@ Thanks,<br/>
 		<execute macro="Gmail#viewMail">
 			<var name="emailFromUserName" value="Liferay QA" />
 			<var name="gmailAssetType" value="New Report From QA: reports_admin_template_source_sample_class_name.pdf" />
-			<var name="gmailMailTableMessageTitle" value="New Report From QA: reports_admin_template_source_sample_class_name.pdf" />
+			<var name="gmailMessageAttachment" value="reports_admin_template_source_sample_class_name.pdf" />
 			<var name="gmailMessageBody" value="Please review the attached report from your friends in QA!" />
-			<var name="gmailMessageBodyClosing" value="Thank You, Liferay QA ${emailAddress1}" />
-			<var name="gmailMessageBodyGreeting" value="Dear ${emailAddress2}," />
 			<var name="gmailMessageTitle" value="New Report From QA: reports_admin_template_source_sample_class_name.pdf" />
-			<var name="gmailMesssageAttachment" value="reports_admin_template_source_sample_class_name.pdf" />
 		</execute>
 
 		<execute macro="Gmail#tearDown">
@@ -260,7 +251,7 @@ Thanks,<br/>
 		<execute macro="Navigator#openURL" />
 
 		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Reports Admin" />
+			<var name="portlet" value="Report Admin" />
 		</execute>
 
 		<execute macro="ReportsAdmin#tearDownConfiguration" />
@@ -270,7 +261,7 @@ Thanks,<br/>
 		<execute macro="Navigator#openURL" />
 
 		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Reports Admin" />
+			<var name="portlet" value="Report Admin" />
 		</execute>
 
 		<execute macro="ReportsAdmin#gotoDefinitions" />
@@ -294,7 +285,7 @@ Thanks,<br/>
 		</execute>
 
 		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Reports Display" />
+			<var name="portletName" value="Report Display" />
 		</execute>
 
 		<execute macro="ReportsDisplayPortlet#viewReportEntry">

@@ -431,6 +431,7 @@ if (!portletName.equals(PortletKeys.SERVER_ADMIN)) {
 
 		form.fm('redirect').val('<%= HtmlUtil.escapeJS(portletURL.toString()) %>');
 		form.fm('selectedTargets').val(Liferay.Util.listCheckedExcept(form, '<portlet:namespace />allRowIds'));
+		form.fm('unselectedTargets').val(Liferay.Util.listUncheckedExcept(form, '<portlet:namespace />allRowIds'));
 
 		submitForm(form);
 	}

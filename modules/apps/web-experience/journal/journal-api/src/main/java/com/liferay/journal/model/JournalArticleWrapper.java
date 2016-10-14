@@ -496,7 +496,7 @@ public class JournalArticleWrapper implements JournalArticle,
 	}
 
 	/**
-	* @deprecated As of 7.0.0, with no direct replacement
+	* @deprecated As of 4.0.0, with no direct replacement
 	*/
 	@Deprecated
 	@Override
@@ -735,7 +735,7 @@ public class JournalArticleWrapper implements JournalArticle,
 	}
 
 	/**
-	* @deprecated As of 7.0.0
+	* @deprecated As of 4.0.0
 	*/
 	@Deprecated
 	@Override
@@ -744,7 +744,7 @@ public class JournalArticleWrapper implements JournalArticle,
 	}
 
 	/**
-	* @deprecated As of 7.0.0
+	* @deprecated As of 4.0.0
 	*/
 	@Deprecated
 	@Override
@@ -789,7 +789,7 @@ public class JournalArticleWrapper implements JournalArticle,
 	}
 
 	/**
-	* @deprecated As of 7.0.0, replaced by {@link #getDDMStructureKey()}
+	* @deprecated As of 4.0.0, replaced by {@link #getDDMStructureKey()}
 	*/
 	@Deprecated
 	@Override
@@ -798,7 +798,7 @@ public class JournalArticleWrapper implements JournalArticle,
 	}
 
 	/**
-	* @deprecated As of 7.0.0, replaced by {@link #getDDMTemplateKey()}
+	* @deprecated As of 4.0.0, replaced by {@link #getDDMTemplateKey()}
 	*/
 	@Deprecated
 	@Override
@@ -1005,13 +1005,6 @@ public class JournalArticleWrapper implements JournalArticle,
 	@Override
 	public Map<java.util.Locale, java.lang.String> getTitleMap() {
 		return _journalArticle.getTitleMap();
-	}
-
-	@Override
-	public long getArticleImageId(java.lang.String elInstanceId,
-		java.lang.String elName, java.lang.String languageId) {
-		return _journalArticle.getArticleImageId(elInstanceId, elName,
-			languageId);
 	}
 
 	/**
@@ -1245,7 +1238,7 @@ public class JournalArticleWrapper implements JournalArticle,
 	}
 
 	/**
-	* @deprecated As of 7.0.0
+	* @deprecated As of 4.0.0
 	*/
 	@Deprecated
 	@Override
@@ -1501,7 +1494,7 @@ public class JournalArticleWrapper implements JournalArticle,
 	}
 
 	/**
-	* @deprecated As of 7.0.0, replaced by {@link #setDDMStructureKey(String)}
+	* @deprecated As of 4.0.0, replaced by {@link #setDDMStructureKey(String)}
 	*/
 	@Deprecated
 	@Override
@@ -1510,7 +1503,7 @@ public class JournalArticleWrapper implements JournalArticle,
 	}
 
 	/**
-	* @deprecated As of 7.0.0, replaced by {@link #setDDMTemplateKey(String)}
+	* @deprecated As of 4.0.0, replaced by {@link #setDDMTemplateKey(String)}
 	*/
 	@Deprecated
 	@Override
@@ -1519,7 +1512,7 @@ public class JournalArticleWrapper implements JournalArticle,
 	}
 
 	/**
-	* @deprecated As of 7.0.0
+	* @deprecated As of 4.0.0
 	*/
 	@Deprecated
 	@Override

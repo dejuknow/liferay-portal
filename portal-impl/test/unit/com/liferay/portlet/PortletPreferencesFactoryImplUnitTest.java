@@ -144,6 +144,7 @@ public class PortletPreferencesFactoryImplUnitTest {
 
 		Assert.assertEquals(1, values.length);
 		Assert.assertEquals("", values[0]);
+
 		Assert.assertFalse(preference.isReadOnly());
 
 		// Empty
@@ -152,8 +153,11 @@ public class PortletPreferencesFactoryImplUnitTest {
 
 		Assert.assertNotNull(preference);
 		Assert.assertEquals("name1", preference.getName());
+
 		values = preference.getValues();
+
 		Assert.assertEquals(0, values.length);
+
 		Assert.assertFalse(preference.isReadOnly());
 
 		// Multiple
@@ -168,6 +172,7 @@ public class PortletPreferencesFactoryImplUnitTest {
 		Assert.assertEquals(2, values.length);
 		Assert.assertEquals("", values[0]);
 		Assert.assertEquals("value1", values[1]);
+
 		Assert.assertFalse(preference.isReadOnly());
 
 		// Read only
@@ -182,6 +187,7 @@ public class PortletPreferencesFactoryImplUnitTest {
 		Assert.assertEquals(2, values.length);
 		Assert.assertEquals("value2", values[0]);
 		Assert.assertEquals("value3", values[1]);
+
 		Assert.assertTrue(preference.isReadOnly());
 	}
 

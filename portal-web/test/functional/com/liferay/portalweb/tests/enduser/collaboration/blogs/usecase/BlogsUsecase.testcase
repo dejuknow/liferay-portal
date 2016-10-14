@@ -103,7 +103,7 @@
 			<var name="uploadFileName" value="Document_1.jpg" />
 		</execute>
 
-		<execute macro="BlogsEntry#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
@@ -725,8 +725,6 @@
 	<command name="RestoreBlogsEntry" priority="5">
 		<property name="portal.acceptance" value="true" />
 
-		<var name="assetRestoreLocation" value="Blogs" />
-
 		<execute macro="Navigator#openURL" />
 
 		<execute macro="ProductMenu#gotoSitesContent">
@@ -757,8 +755,7 @@
 
 		<execute macro="RecycleBin#restoreCP">
 			<var name="assetName" value="Blogs Entry Title" />
-			<var name="assetRestoreLocation" value="${assetRestoreLocation}" />
-			<var name="assetRestoreType" value="${assetRestoreType}" />
+			<var name="assetRestoreLocation" value="Blogs" />
 			<var name="assetType" value="Blogs Entry" />
 		</execute>
 
@@ -1698,7 +1695,7 @@
 			<var name="uploadFileName" value="Document_1.jpg" />
 		</execute>
 
-		<execute macro="BlogsEntry#publish" />
+		<execute macro="PortletEntry#publish" />
 
 		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Blogs Page" />
@@ -1869,7 +1866,7 @@
 
 		<execute macro="BlogsEntry#viewNoEntryViaBlogsAggregatorPG" />
 
-		<execute function="Pause" locator1="120000" />
+		<execute function="Pause" locator1="180000" />
 
 		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Blogs Aggregator Page" />
@@ -1918,7 +1915,7 @@
 		</execute>
 
 		<execute macro="DMDocument#addCP">
-			<var name="dmDocumentDescription" value="${dmDocumentDescription}" />
+			<var name="dmDocumentDescription" value="DM Document Description" />
 			<var name="dmDocumentFile" value="Document_2.jpg" />
 			<var name="dmDocumentTitle" value="Document_2.jpg" />
 		</execute>
@@ -2005,7 +2002,7 @@
 			<var name="uploadFileName" value="Document_1.jpg" />
 		</execute>
 
-		<execute macro="BlogsEntry#publish" />
+		<execute macro="PortletEntry#publishAndWait" />
 
 		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Blogs Page" />
@@ -2035,6 +2032,8 @@
 			<var name="portletName" value="${portletName}" />
 			<var name="portletOption" value="Configuration" />
 		</execute>
+
+		<var name="key_portletName" value="Blogs Aggregator" />
 
 		<execute function="AssertTextPresent" locator1="Portlet#TITLE" value1="Blogs Aggregator" />
 

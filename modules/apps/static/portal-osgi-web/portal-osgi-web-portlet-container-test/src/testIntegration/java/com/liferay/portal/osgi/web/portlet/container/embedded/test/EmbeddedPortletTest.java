@@ -92,7 +92,7 @@ public class EmbeddedPortletTest {
 
 			_layout = LayoutTestUtil.addLayout(_group);
 
-			_layoutTypePortlet = (LayoutTypePortlet) _layout.getLayoutType();
+			_layoutTypePortlet = (LayoutTypePortlet)_layout.getLayoutType();
 
 			_layoutStaticPortletsAll = PropsValues.LAYOUT_STATIC_PORTLETS_ALL;
 		}
@@ -400,6 +400,7 @@ public class EmbeddedPortletTest {
 				portletURL.toString());
 
 			Assert.assertEquals(200, response.getCode());
+
 			Assert.assertTrue(testPortlet.isCalledRender());
 			Assert.assertTrue(testRuntimePortlet.isCalledRuntime());
 		}
@@ -481,6 +482,7 @@ public class EmbeddedPortletTest {
 				portletURL.toString());
 
 			Assert.assertEquals(200, response.getCode());
+
 			Assert.assertTrue(testPortlet.isCalledServeResource());
 			Assert.assertTrue(testRuntimePortlet.isCalledRuntime());
 		}

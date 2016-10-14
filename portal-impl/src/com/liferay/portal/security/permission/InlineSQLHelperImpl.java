@@ -665,6 +665,49 @@ public class InlineSQLHelperImpl implements InlineSQLHelper {
 
 		sb.append("))");
 
+		StringBundler groupAdminResourcePermissionSB = new StringBundler(3);
+
+		if (Validator.isNotNull(groupIdField) && (groupIds.length > 1)) {
+			boolean groupAdmin = false;
+
+			StringBundler sb1 = new StringBundler(4);
+
+			sb1.append("(ResourcePermission.primKeyId = 0) AND ");
+			sb1.append("(ResourcePermission.roleId = ");
+			sb1.append(permissionChecker.getOwnerRoleId());
+			sb1.append(")");
+
+			StringBundler sb2 = new StringBundler(groupIds.length);
+
+			sb2.append(groupIdField);
+			sb2.append(" IN (");
+
+			for (int i = 0; i < groupIds.length; i++) {
+				if (!isEnabled(0, groupIds[i])) {
+					sb2.append(groupIds[i]);
+					sb2.append(", ");
+
+					groupAdmin = true;
+				}
+			}
+
+			sb2.setIndex(sb2.index() - 1);
+
+			sb2.append(")");
+
+			if (groupAdmin) {
+				groupAdminResourcePermissionSB.append(sb1);
+				groupAdminResourcePermissionSB.append(" AND ");
+				groupAdminResourcePermissionSB.append(sb2);
+			}
+			else {
+				groupAdminResourcePermissionSB.append("[$FALSE$] <> [$FALSE$]");
+			}
+		}
+		else {
+			groupAdminResourcePermissionSB.append("[$FALSE$] <> [$FALSE$]");
+		}
+
 		String roleIdsOrOwnerIdSQL = getRoleIdsOrOwnerIdSQL(
 			permissionChecker, groupIds, userIdField);
 
@@ -673,11 +716,13 @@ public class InlineSQLHelperImpl implements InlineSQLHelper {
 		permissionJoin = StringUtil.replace(
 			permissionJoin,
 			new String[] {
-				"[$CLASS_NAME$]", "[$COMPANY_ID$]", "[$PRIM_KEYS$]",
+				"[$CLASS_NAME$]", "[$COMPANY_ID$]",
+				"[$GROUP_ADMIN_RESOURCE_PERMISSION$]", "[$PRIM_KEYS$]",
 				"[$RESOURCE_SCOPE_INDIVIDUAL$]", "[$ROLE_IDS_OR_OWNER_ID$]"
 			},
 			new String[] {
-				className, String.valueOf(companyId), sb.toString(),
+				className, String.valueOf(companyId),
+				groupAdminResourcePermissionSB.toString(), sb.toString(),
 				String.valueOf(scope), roleIdsOrOwnerIdSQL
 			});
 

@@ -811,8 +811,8 @@ public class DLAppLocalServiceWrapper implements DLAppLocalService,
 	}
 
 	/**
-	* Deprecated as of 7.0.0, replaced by {@link #updateFileShortcuts(long,
-	* long)}
+	* @deprecated As of 7.0.0, replaced by {@link #updateFileShortcuts(long,
+	long)}
 	*/
 	@Deprecated
 	@Override

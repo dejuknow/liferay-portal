@@ -55,7 +55,7 @@ public class DirectDeployTask extends BasePortalToolsTask {
 	public List<String> getArgs() {
 		List<String> args = new ArrayList<>(3);
 
-		File appServerLibPortalDir = getAppServerLibPortalDir();
+		File appServerLibPortalDir = _getAppServerLibPortalDir();
 
 		String path = appServerLibPortalDir.getAbsolutePath();
 
@@ -82,11 +82,11 @@ public class DirectDeployTask extends BasePortalToolsTask {
 		jvmArgs.add("-Ddeployer.file.pattern=" + webAppFile.getName());
 		jvmArgs.add("-Ddeployer.unpack.war=" + isUnpackWar());
 		jvmArgs.add(
-			"-Dexternal-properties=com/liferay/portal/tools/dependencies/" +
-				"portal-tools.properties");
+			"-Dexternal-properties=com/liferay/portal/tools/dependencies" +
+				"/portal-tools.properties");
 		jvmArgs.add(
 			"-Dliferay.lib.portal.dir=" +
-				FileUtil.getAbsolutePath(getAppServerLibPortalDir()));
+				FileUtil.getAbsolutePath(_getAppServerLibPortalDir()));
 
 		String webAppType = getWebAppType();
 
@@ -122,8 +122,8 @@ public class DirectDeployTask extends BasePortalToolsTask {
 				"-Ddeployer.security.taglib.dtd=" + tldPath +
 					"/liferay-security.tld");
 			jvmArgs.add(
-				"-Ddeployer.staging.taglib.dtd=util-taglib/classes/META-INF/" +
-					"liferay-staging.tld");
+				"-Ddeployer.staging.taglib.dtd=util-taglib/classes/META-INF" +
+					"/liferay-staging.tld");
 			jvmArgs.add(
 				"-Ddeployer.util.taglib.dtd=" + tldPath + "/liferay-util.tld");
 		}
@@ -206,13 +206,13 @@ public class DirectDeployTask extends BasePortalToolsTask {
 		configuration.extendsFrom(portalConfiguration);
 	}
 
-	protected File getAppServerLibPortalDir() {
-		return new File(getAppServerPortalDir(), "WEB-INF/lib");
-	}
-
 	@Override
 	protected String getToolName() {
 		return "Deployer";
+	}
+
+	private File _getAppServerLibPortalDir() {
+		return new File(getAppServerPortalDir(), "WEB-INF/lib");
 	}
 
 	private Object _appServerDeployDir;

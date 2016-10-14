@@ -66,7 +66,7 @@
 </tr>
 <tr>
 	<td>DESCRIPTIVE_VIEW_ENTRY_OPTIONS_DROPDOWN</td>
-	<td>//div[contains(@id,'blogEntriesSearchContainer') and contains(.,'${key_entryTitle}')]//span/*[name()='svg'][contains(@class,'icon-ellipsis-v')]</td>
+	<td>//li[@data-qa-id='row' and contains(.,'${key_entryTitle}')]/div//span/*[name()='svg'][contains(@class,'icon-ellipsis-v')]</td>
 	<td></td>
 </tr>
 <tr>

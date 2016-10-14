@@ -69,6 +69,7 @@ public class JournalFolderFinderTest {
 		_group = GroupTestUtil.addGroup();
 
 		_folder1 = JournalTestUtil.addFolder(_group.getGroupId(), "Folder 1");
+
 		_folder2 = JournalTestUtil.addFolder(
 			_group.getGroupId(), _folder1.getFolderId(), "Folder 2");
 

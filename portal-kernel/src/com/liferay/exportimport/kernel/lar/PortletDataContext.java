@@ -309,6 +309,10 @@ public interface PortletDataContext extends Serializable {
 
 	public Element getImportDataStagedModelElement(StagedModel stagedModel);
 
+	public long[] getLayoutIds();
+
+	public String getLayoutSetPrototypeUuid();
+
 	public Map<String, Lock> getLocks();
 
 	public ManifestSummary getManifestSummary();
@@ -419,6 +423,8 @@ public interface PortletDataContext extends Serializable {
 	public long getSourceUserPersonalSiteGroupId();
 
 	public Date getStartDate();
+
+	public String getType();
 
 	public long getUserId(String userUuid);
 
@@ -557,6 +563,10 @@ public interface PortletDataContext extends Serializable {
 
 	public void setImportDataRootElement(Element importDataRootElement);
 
+	public void setLayoutIds(long[] layoutIds);
+
+	public void setLayoutSetPrototypeUuid(String layoutSetPrototypeUuid);
+
 	public void setManifestSummary(ManifestSummary manifestSummary);
 
 	public void setMissingReferencesElement(Element missingReferencesElement);
@@ -596,6 +606,8 @@ public interface PortletDataContext extends Serializable {
 		long sourceUserPersonalSiteGroupId);
 
 	public void setStartDate(Date startDate);
+
+	public void setType(String type);
 
 	public void setUserIdStrategy(UserIdStrategy userIdStrategy);
 

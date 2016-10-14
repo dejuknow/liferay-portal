@@ -15,6 +15,7 @@
 package com.liferay.item.selector.taglib.servlet.taglib;
 
 import com.liferay.item.selector.ItemSelectorReturnType;
+import com.liferay.item.selector.ItemSelectorReturnTypeResolver;
 import com.liferay.item.selector.constants.ItemSelectorPortletKeys;
 import com.liferay.item.selector.taglib.ItemSelectorRepositoryEntryBrowserReturnTypeUtil;
 import com.liferay.item.selector.taglib.internal.servlet.ServletContextUtil;
@@ -44,6 +45,10 @@ public class RepositoryEntryBrowserTag extends IncludeTag {
 	public static final String[] DISPLAY_STYLES =
 		new String[] {"icon", "descriptive", "list"};
 
+	/**
+	 * @deprecated As of 1.1.0, with no direct replacement
+	 */
+	@Deprecated
 	public void setDesiredItemSelectorReturnTypes(
 		List<ItemSelectorReturnType> desiredItemSelectorReturnTypes) {
 
@@ -60,6 +65,12 @@ public class RepositoryEntryBrowserTag extends IncludeTag {
 
 	public void setItemSelectedEventName(String itemSelectedEventName) {
 		_itemSelectedEventName = itemSelectedEventName;
+	}
+
+	public void setItemSelectorReturnTypeResolver(
+		ItemSelectorReturnTypeResolver itemSelectorReturnTypeResolver) {
+
+		_itemSelectorReturnTypeResolver = itemSelectorReturnTypeResolver;
 	}
 
 	public void setMaxFileSize(long maxFileSize) {
@@ -166,16 +177,24 @@ public class RepositoryEntryBrowserTag extends IncludeTag {
 			"liferay-item-selector:repository-entry-browser:" +
 				"emptyResultsMessage",
 			_getEmptyResultsMessage(request));
-		request.setAttribute(
-			"liferay-item-selector:repository-entry-browser:" +
-				"existingFileEntryReturnType",
-			ItemSelectorRepositoryEntryBrowserReturnTypeUtil.
-				getFirstAvailableExistingFileEntryReturnType(
-					_desiredItemSelectorReturnTypes));
+
+		if (_desiredItemSelectorReturnTypes != null) {
+			request.setAttribute(
+				"liferay-item-selector:repository-entry-browser:" +
+					"existingFileEntryReturnType",
+				ItemSelectorRepositoryEntryBrowserReturnTypeUtil.
+					getFirstAvailableExistingFileEntryReturnType(
+						_desiredItemSelectorReturnTypes));
+		}
+
 		request.setAttribute(
 			"liferay-item-selector:repository-entry-browser:" +
 				"itemSelectedEventName",
 			_itemSelectedEventName);
+		request.setAttribute(
+			"liferay-item-selector:repository-entry-browser:" +
+				"itemSelectorReturnTypeResolver",
+			_itemSelectorReturnTypeResolver);
 		request.setAttribute(
 			"liferay-item-selector:repository-entry-browser:maxFileSize",
 			_maxFileSize);
@@ -215,6 +234,7 @@ public class RepositoryEntryBrowserTag extends IncludeTag {
 	private String _displayStyle;
 	private String _emptyResultsMessage;
 	private String _itemSelectedEventName;
+	private ItemSelectorReturnTypeResolver _itemSelectorReturnTypeResolver;
 	private long _maxFileSize =
 		PropsValues.UPLOAD_SERVLET_REQUEST_IMPL_MAX_SIZE;
 	private PortletURL _portletURL;

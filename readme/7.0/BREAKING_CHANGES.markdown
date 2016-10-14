@@ -20,7 +20,7 @@ feature or API will be dropped in an upcoming version.
 replaces an old API, in spite of the old API being kept in Liferay Portal for
 backwards compatibility.
 
-*This document has been reviewed through commit `fe73d38`.*
+*This document has been reviewed through commit `b6a7500`.*
 
 ## Breaking Changes Contribution Guidelines
 
@@ -4158,5 +4158,32 @@ For audio/video reproduction, you should update your code to use
 
 This change removes outdated code no longer being used in the platform. In
 addition, this change avoids future security issues from outdated flash movies.
+
+---------------------------------------
+
+### Moved Journal Portlet Properties to OSGi Configuration
+- **Date:** 2016-Jul-29
+- **JIRA Ticket:** LPS-58672
+
+#### What changed?
+
+All Journal portlet properties have been moved to an OSGI configuration.
+
+#### Who is affected?
+
+This affects anyone who is overriding the Journal portlet's `portlet.properties`
+file.
+
+#### How should I update my code?
+
+Instead of overriding the Journal portlet's `portlet.properties` file, you can
+manage the properties from Portal's configuration administrator. This can be
+accessed by navigating to Liferay's Control Panel &rarr; *System Settings*
+&rarr; *Web Experience* and selecting the appropriate Web Content category.
+
+#### Why was this change made?
+
+This change was made as part of modularization efforts to ease portlet
+configuration changes.
 
 ---------------------------------------

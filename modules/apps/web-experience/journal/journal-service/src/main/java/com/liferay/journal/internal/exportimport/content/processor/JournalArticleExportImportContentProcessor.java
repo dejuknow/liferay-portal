@@ -17,7 +17,7 @@ package com.liferay.journal.internal.exportimport.content.processor;
 /**
  * @author Gergely Mathe
  * @author Mate Thurzo
- * @deprecated As of 7.0.0
+ * @deprecated As of 4.0.0
  */
 @Deprecated
 public class JournalArticleExportImportContentProcessor {

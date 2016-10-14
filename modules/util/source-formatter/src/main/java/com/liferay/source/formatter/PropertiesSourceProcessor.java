@@ -100,11 +100,11 @@ public class PropertiesSourceProcessor extends BaseSourceProcessor {
 		String[] includes = new String[] {"**/Language_*.properties"};
 
 		List<String> translationFileNames = getFileNames(
-			dirName, null, new String[0], includes);
+			dirName, null, new String[0], includes, true);
 
 		for (String translationFileName : translationFileNames) {
 			translationFileName = StringUtil.replace(
-				translationFileName, StringPool.BACK_SLASH, StringPool.SLASH);
+				translationFileName, CharPool.BACK_SLASH, CharPool.SLASH);
 
 			File translationFile = new File(translationFileName);
 
@@ -287,34 +287,6 @@ public class PropertiesSourceProcessor extends BaseSourceProcessor {
 			matcher.start());
 	}
 
-	protected String getTranslatedKey(String content, String key) {
-		if (content.startsWith(key + "=")) {
-			int x = content.indexOf("\n");
-
-			if (x == -1) {
-				return content.substring(key.length() + 1);
-			}
-
-			return content.substring(key.length() + 1, x);
-		}
-
-		int x = content.indexOf("\n" + key + "=");
-
-		if (x == -1) {
-			return null;
-		}
-
-		int y = x + key.length() + 2;
-
-		int z = content.indexOf("\n", y);
-
-		if (z == -1) {
-			return content.substring(y);
-		}
-
-		return content.substring(y, z);
-	}
-
 	protected void formatDuplicateLanguageKeys() throws Exception {
 		if (_duplicateFileLanguageKeysMap.isEmpty()) {
 			return;
@@ -404,7 +376,10 @@ public class PropertiesSourceProcessor extends BaseSourceProcessor {
 				}
 
 				if (pos < previousPos) {
-					processMessage(fileName, "sort", lineCount);
+					processMessage(
+						fileName,
+						"Follow order as in portal-impl/src/portal.properties",
+						lineCount);
 				}
 
 				previousPos = pos;
@@ -417,8 +392,7 @@ public class PropertiesSourceProcessor extends BaseSourceProcessor {
 
 		if (!content.contains("include-and-override=portlet-ext.properties")) {
 			content =
-				"include-and-override=portlet-ext.properties" + "\n\n" +
-					content;
+				"include-and-override=portlet-ext.properties\n\n" + content;
 		}
 
 		if (!portalSource) {
@@ -465,7 +439,9 @@ public class PropertiesSourceProcessor extends BaseSourceProcessor {
 				if (Validator.isNotNull(previousProperty) &&
 					(previousProperty.compareToIgnoreCase(property) > 0)) {
 
-					processMessage(fileName, "sort", lineCount);
+					processMessage(
+						fileName, "Unsorted property '" + property + "'",
+						lineCount);
 				}
 
 				previousProperty = property;
@@ -520,15 +496,9 @@ public class PropertiesSourceProcessor extends BaseSourceProcessor {
 			String fileName, String content)
 		throws Exception {
 
-		String path = StringPool.BLANK;
-
-		int pos = fileName.lastIndexOf(CharPool.SLASH);
-
-		if (pos != -1) {
-			path = fileName.substring(0, pos + 1);
-		}
-
 		boolean hasPrivateAppsDir = false;
+
+		int level = PLUGINS_MAX_DIR_LEVEL;
 
 		if (portalSource) {
 			File privateAppsDir = getFile(
@@ -537,6 +507,8 @@ public class PropertiesSourceProcessor extends BaseSourceProcessor {
 			if (privateAppsDir != null) {
 				hasPrivateAppsDir = true;
 			}
+
+			level = PORTAL_MAX_DIR_LEVEL;
 		}
 
 		Properties properties = new Properties();
@@ -565,30 +537,27 @@ public class PropertiesSourceProcessor extends BaseSourceProcessor {
 				value, StringPool.COMMA);
 
 			for (String propertyFileName : propertyFileNames) {
-				if (propertyFileName.startsWith("**") ||
-					propertyFileName.endsWith("**")) {
+				if (propertyFileName.contains(StringPool.STAR) ||
+					propertyFileName.endsWith("-ext.properties") ||
+					(portalSource && !hasPrivateAppsDir &&
+					 propertyFileName.contains("/private/apps/"))) {
 
 					continue;
 				}
 
-				pos = propertyFileName.indexOf(CharPool.AT);
+				int pos = propertyFileName.indexOf(CharPool.AT);
 
 				if (pos != -1) {
 					propertyFileName = propertyFileName.substring(0, pos);
 				}
 
-				if (portalSource && !hasPrivateAppsDir &&
-					propertyFileName.contains("/private/apps/")) {
+				File file = getFile(propertyFileName, level);
 
-					continue;
-				}
-
-				File file = new File(path + propertyFileName);
-
-				if (!file.exists()) {
+				if (file == null) {
 					processMessage(
 						fileName,
-						"Incorrect property value: " + propertyFileName);
+						"Property value '" + propertyFileName +
+							"' points to file that does not exist");
 				}
 			}
 		}
@@ -656,6 +625,34 @@ public class PropertiesSourceProcessor extends BaseSourceProcessor {
 		return _portalPortalPropertiesContent;
 	}
 
+	protected String getTranslatedKey(String content, String key) {
+		if (content.startsWith(key + "=")) {
+			int x = content.indexOf("\n");
+
+			if (x == -1) {
+				return content.substring(key.length() + 1);
+			}
+
+			return content.substring(key.length() + 1, x);
+		}
+
+		int x = content.indexOf("\n" + key + "=");
+
+		if (x == -1) {
+			return null;
+		}
+
+		int y = x + key.length() + 2;
+
+		int z = content.indexOf("\n", y);
+
+		if (z == -1) {
+			return content.substring(y);
+		}
+
+		return content.substring(y, z);
+	}
+
 	protected void populateLanguagePropertiesMap() throws Exception {
 		Map<String, Properties> languagePropertiesMap =
 			new ConcurrentHashMap<>();
@@ -663,8 +660,8 @@ public class PropertiesSourceProcessor extends BaseSourceProcessor {
 		String[] includes = new String[] {"**/Language.properties"};
 
 		List<String> modulesLanguagePropertiesNames = getFileNames(
-			sourceFormatterArgs.getBaseDirName(), null, new String[0],
-			includes);
+			sourceFormatterArgs.getBaseDirName(), null, new String[0], includes,
+			true);
 
 		for (String fileName : modulesLanguagePropertiesNames) {
 			Properties properties = new Properties();
@@ -748,8 +745,9 @@ public class PropertiesSourceProcessor extends BaseSourceProcessor {
 		StringBundler sb = new StringBundler();
 
 		if (processMessage) {
-			sb.append("The following language keys were used in multiple modules ");
-			sb.append("and have been consolidated, or they already existed in ");
+			sb.append("The following language keys were used in multiple ");
+			sb.append("modules and have been consolidated, or they already ");
+			sb.append("existed in ");
 			sb.append("portal-impl\\src\\content\\Language.properties:");
 			sb.append("\n");
 		}
@@ -786,12 +784,10 @@ public class PropertiesSourceProcessor extends BaseSourceProcessor {
 		processFormattedFile(
 			languagePropertiesFile, "portal-impl/src/content/" + fileName,
 			languagePropertiesContent, newLanguagePropertiesContent);
-
 	}
 
 	private final Map<String, Map<String, String>>
-		_duplicateFileLanguageKeysMap =
-			new ConcurrentHashMap<>();
+		_duplicateFileLanguageKeysMap = new ConcurrentHashMap<>();
 	private Map<String, Properties> _languagePropertiesMap;
 	private final Pattern _licensesPattern = Pattern.compile(
 		"\nlicenses=(\\w+)\n");

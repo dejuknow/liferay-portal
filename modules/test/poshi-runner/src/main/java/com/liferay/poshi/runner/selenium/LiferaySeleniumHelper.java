@@ -109,8 +109,7 @@ public class LiferaySeleniumHelper {
 			LiferaySelenium liferaySelenium, String fileName, String target)
 		throws Exception {
 
-		AntCommands antCommands = new AntCommands(
-			liferaySelenium, fileName, target);
+		AntCommands antCommands = new AntCommands(fileName, target);
 
 		ExecutorService executorService = Executors.newCachedThreadPool();
 
@@ -190,6 +189,7 @@ public class LiferaySeleniumHelper {
 		Element rootElement = document.getRootElement();
 
 		List<Element> eventElements = rootElement.elements("event");
+
 		List<Exception> exceptions = new ArrayList<>();
 
 		for (Element eventElement : eventElements) {
@@ -419,6 +419,7 @@ public class LiferaySeleniumHelper {
 				Exception exception = _javaScriptExceptions.get(i);
 
 				sb.append(exception.getMessage());
+
 				sb.append("\n");
 			}
 
@@ -449,6 +450,7 @@ public class LiferaySeleniumHelper {
 				Exception exception = _liferayExceptions.get(i);
 
 				sb.append(exception.getMessage());
+
 				sb.append("\n");
 			}
 
@@ -1155,8 +1157,8 @@ public class LiferaySeleniumHelper {
 		}
 
 		captureScreen(
-			_CURRENT_DIR_NAME + "test-results/functional/screenshots/" +
-				"ScreenshotBeforeAction" + _screenshotErrorCount + ".jpg");
+			_CURRENT_DIR_NAME + "test-results/functional/screenshots" +
+				"/ScreenshotBeforeAction" + _screenshotErrorCount + ".jpg");
 	}
 
 	public static void selectFieldText() {
@@ -1384,23 +1386,36 @@ public class LiferaySeleniumHelper {
 
 		Keyboard keyboard = new DesktopKeyboard();
 
-		keyboard.keyDown(Key.CTRL);
-
-		keyboard.type("a");
-
-		keyboard.keyUp(Key.CTRL);
-
 		String filePath =
 			FileUtil.getSeparator() + _TEST_DEPENDENCIES_DIR_NAME +
 				FileUtil.getSeparator() + value;
 
 		filePath = getSourceDirFilePath(filePath);
 
-		if (OSDetector.isWindows()) {
-			filePath = StringUtil.replace(filePath, "/", "\\");
-		}
+		filePath = StringUtil.replace(filePath, "/", FileUtil.getSeparator());
 
-		sikuliType(liferaySelenium, image, filePath);
+		if (OSDetector.isApple()) {
+			keyboard.keyDown(Key.CMD);
+			keyboard.keyDown(Key.SHIFT);
+
+			keyboard.type("g");
+
+			keyboard.keyUp(Key.CMD);
+			keyboard.keyUp(Key.SHIFT);
+
+			sikuliType(liferaySelenium, image, filePath);
+
+			keyboard.type(Key.ENTER);
+		}
+		else {
+			keyboard.keyDown(Key.CTRL);
+
+			keyboard.type("a");
+
+			keyboard.keyUp(Key.CTRL);
+
+			sikuliType(liferaySelenium, image, filePath);
+		}
 
 		keyboard.type(Key.ENTER);
 	}
@@ -1491,6 +1506,7 @@ public class LiferaySeleniumHelper {
 		String idAttribute = liferaySelenium.getAttribute(locator + "@id");
 
 		int x = idAttribute.indexOf("cke__");
+
 		int y = idAttribute.indexOf("cke__", x + 1);
 
 		if (y == -1) {

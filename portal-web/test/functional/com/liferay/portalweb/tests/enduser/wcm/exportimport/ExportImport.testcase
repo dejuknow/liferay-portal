@@ -130,6 +130,7 @@
 		</execute>
 
 		<execute macro="LAR#configureExportTemplateCP">
+			<var name="checkContentNameList" value="Web Content" />
 			<var name="uncheckContentNameList" value="Blogs" />
 		</execute>
 
@@ -170,6 +171,8 @@
 		<execute macro="ProductMenu#gotoSitesContent">
 			<var name="portlet" value="Web Content" />
 		</execute>
+
+		<execute function="Pause" locator1="3000" />
 
 		<execute macro="WebContentNavigator#gotoEditCP">
 			<var name="webContentTitle" value="Web Content Title" />
@@ -371,8 +374,6 @@
 		<execute macro="ProductMenu#gotoSitesContent">
 			<var name="portlet" value="Documents and Media" />
 		</execute>
-
-		<execute macro="Navigator#openURL" />
 
 		<execute macro="DMFolder#addCP">
 			<var name="dmFolderDescription" value="DM Folder Description" />

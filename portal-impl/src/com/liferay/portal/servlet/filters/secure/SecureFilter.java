@@ -190,7 +190,9 @@ public class SecureFilter extends BasePortalFilter {
 	protected void initThreadLocals(User user) throws Exception {
 		CompanyThreadLocal.setCompanyId(user.getCompanyId());
 
-		PrincipalThreadLocal.setName(user.getUserId());
+		long userId = user.getUserId();
+
+		PrincipalThreadLocal.setName(userId);
 
 		if (!_usePermissionChecker) {
 			return;
@@ -199,7 +201,9 @@ public class SecureFilter extends BasePortalFilter {
 		PermissionChecker permissionChecker =
 			PermissionThreadLocal.getPermissionChecker();
 
-		if (permissionChecker != null) {
+		if ((permissionChecker != null) &&
+			(permissionChecker.getUserId() == userId)) {
+
 			return;
 		}
 
@@ -317,6 +321,7 @@ public class SecureFilter extends BasePortalFilter {
 		request = new ProtectedServletRequest(request, userIdString, authType);
 
 		session.setAttribute(_AUTHENTICATED_USER, userIdString);
+
 		session.setAttribute(WebKeys.USER, user);
 
 		initThreadLocals(request);

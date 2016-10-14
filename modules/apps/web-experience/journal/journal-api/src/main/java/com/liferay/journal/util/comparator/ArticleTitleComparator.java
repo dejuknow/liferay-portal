@@ -20,7 +20,7 @@ import com.liferay.portal.kernel.util.StringUtil;
 
 /**
  * @author Brian Wing Shun Chan
- * @deprecated As of 7.0.0, with no direct replacement
+ * @deprecated As of 3.0.0, with no direct replacement
  */
 @Deprecated
 public class ArticleTitleComparator extends OrderByComparator<JournalArticle> {

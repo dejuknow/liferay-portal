@@ -38,14 +38,17 @@ public class ThreadLocalCacheAdvice
 	extends AnnotationChainableMethodAdvice<ThreadLocalCachable> {
 
 	@Override
-	public void afterReturning(MethodInvocation methodInvocation, Object result)
-		throws Throwable {
+	public ThreadLocalCachable getNullAnnotation() {
+		return _nullThreadLocalCacheable;
+	}
 
+	@Override
+	public Object invoke(MethodInvocation methodInvocation) throws Throwable {
 		ThreadLocalCachable threadLocalCachable = findAnnotation(
 			methodInvocation);
 
 		if (threadLocalCachable == _nullThreadLocalCacheable) {
-			return;
+			return methodInvocation.proceed();
 		}
 
 		Serializable cacheName = _getCacheName(methodInvocation);
@@ -56,46 +59,33 @@ public class ThreadLocalCacheAdvice
 
 		String cacheKey = _getCacheKey(methodInvocation.getArguments());
 
+		Object value = threadLocalCache.get(cacheKey);
+
+		if (value != null) {
+			if (value == nullResult) {
+				return null;
+			}
+
+			return value;
+		}
+
+		Object result = methodInvocation.proceed();
+
 		if (result == null) {
 			threadLocalCache.put(cacheKey, nullResult);
 		}
 		else {
 			threadLocalCache.put(cacheKey, result);
 		}
-	}
 
-	@Override
-	public Object before(MethodInvocation methodInvocation) throws Throwable {
-		ThreadLocalCachable threadLocalCachable = findAnnotation(
-			methodInvocation);
-
-		if (threadLocalCachable == _nullThreadLocalCacheable) {
-			return null;
-		}
-
-		Serializable cacheName = _getCacheName(methodInvocation);
-
-		ThreadLocalCache<?> threadLocalCache =
-			ThreadLocalCacheManager.getThreadLocalCache(
-				threadLocalCachable.scope(), cacheName);
-
-		String cacheKey = _getCacheKey(methodInvocation.getArguments());
-
-		Object value = threadLocalCache.get(cacheKey);
-
-		if (value == nullResult) {
-			return null;
-		}
-
-		return value;
-	}
-
-	@Override
-	public ThreadLocalCachable getNullAnnotation() {
-		return _nullThreadLocalCacheable;
+		return result;
 	}
 
 	private String _getCacheKey(Object[] arguments) {
+		if (arguments.length == 1) {
+			return StringUtil.toHexString(arguments[0]);
+		}
+
 		StringBundler sb = new StringBundler(arguments.length * 2 - 1);
 
 		for (int i = 0; i < arguments.length; i++) {

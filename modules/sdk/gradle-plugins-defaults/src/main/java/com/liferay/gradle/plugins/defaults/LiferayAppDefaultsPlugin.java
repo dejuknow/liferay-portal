@@ -20,18 +20,20 @@ import com.liferay.gradle.plugins.defaults.internal.LiferayRelengPlugin;
 import com.liferay.gradle.plugins.defaults.internal.util.FileUtil;
 import com.liferay.gradle.plugins.defaults.internal.util.GradleUtil;
 import com.liferay.gradle.plugins.defaults.tasks.WritePropertiesTask;
+import com.liferay.gradle.plugins.tlddoc.builder.AppTLDDocBuilderPlugin;
 import com.liferay.gradle.util.Validator;
 
 import groovy.lang.Closure;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 
 import java.util.Properties;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.UncheckedIOException;
+import org.gradle.api.specs.Spec;
 import org.gradle.api.tasks.TaskContainer;
 import org.gradle.api.tasks.javadoc.Javadoc;
 
@@ -70,7 +72,9 @@ public class LiferayAppDefaultsPlugin implements Plugin<Project> {
 			throw new UncheckedIOException(ioe);
 		}
 
-		GradleUtil.applyPlugin(project, AppJavadocBuilderPlugin.class);
+		_applyPlugins(project);
+
+		LiferayOSGiDefaultsPlugin.configureRepositories(project);
 
 		configureAppJavadocBuilder(project);
 		configureProject(project, appDescription, appVersion);
@@ -80,6 +84,30 @@ public class LiferayAppDefaultsPlugin implements Plugin<Project> {
 	protected void configureAppJavadocBuilder(Project project) {
 		AppJavadocBuilderExtension appJavadocBuilderExtension =
 			GradleUtil.getExtension(project, AppJavadocBuilderExtension.class);
+
+		appJavadocBuilderExtension.onlyIf(
+			new Spec<Project>() {
+
+				@Override
+				public boolean isSatisfiedBy(Project project) {
+					TaskContainer taskContainer = project.getTasks();
+
+					WritePropertiesTask recordArtifactTask =
+						(WritePropertiesTask)taskContainer.findByName(
+							LiferayRelengPlugin.RECORD_ARTIFACT_TASK_NAME);
+
+					if (recordArtifactTask != null) {
+						File outputFile = recordArtifactTask.getOutputFile();
+
+						if (outputFile.exists()) {
+							return true;
+						}
+					}
+
+					return false;
+				}
+
+			});
 
 		appJavadocBuilderExtension.setGroupNameClosure(
 			new Closure<String>(project) {
@@ -147,12 +175,25 @@ public class LiferayAppDefaultsPlugin implements Plugin<Project> {
 				String moduleName = artifactURL.substring(start, pos);
 				String moduleVersion = artifactURL.substring(pos + 1, end);
 
-				groupName =
-					moduleName + ' ' + moduleVersion + " - " + groupName;
+				StringBuilder sb = new StringBuilder();
+
+				sb.append("Module ");
+				sb.append(moduleName);
+				sb.append(' ');
+				sb.append(moduleVersion);
+				sb.append(" - ");
+				sb.append(groupName);
+
+				groupName = sb.toString();
 			}
 		}
 
 		return groupName;
+	}
+
+	private void _applyPlugins(Project project) {
+		GradleUtil.applyPlugin(project, AppJavadocBuilderPlugin.class);
+		GradleUtil.applyPlugin(project, AppTLDDocBuilderPlugin.class);
 	}
 
 }

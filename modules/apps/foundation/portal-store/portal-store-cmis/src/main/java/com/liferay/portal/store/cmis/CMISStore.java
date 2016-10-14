@@ -91,13 +91,13 @@ public class CMISStore extends BaseStore {
 		String[] dirNames = StringUtil.split(dirName, CharPool.SLASH);
 
 		for (String curDirName : dirNames) {
-			Folder subFolder = getFolder(folder, curDirName);
+			Folder subfolder = getFolder(folder, curDirName);
 
-			if (subFolder == null) {
-				subFolder = createFolder(folder, curDirName);
+			if (subfolder == null) {
+				subfolder = createFolder(folder, curDirName);
 			}
 
-			folder = subFolder;
+			folder = subfolder;
 		}
 	}
 
@@ -236,10 +236,10 @@ public class CMISStore extends BaseStore {
 
 		Folder directory = getRepositoryFolder(companyId, repositoryId);
 
-		String[] subFolderNames = StringUtil.split(dirName, StringPool.SLASH);
+		String[] subfolderNames = StringUtil.split(dirName, StringPool.SLASH);
 
-		for (String subFolderName : subFolderNames) {
-			directory = getFolder(directory, subFolderName);
+		for (String subfolderName : subfolderNames) {
+			directory = getFolder(directory, subfolderName);
 
 			if (directory == null) {
 				return new String[0];
@@ -511,7 +511,7 @@ public class CMISStore extends BaseStore {
 
 		ObjectId objectId = _session.createFolder(properties, parentFolderId);
 
-		return (Folder) _session.getObject(objectId);
+		return (Folder)_session.getObject(objectId);
 	}
 
 	protected OperationContextImpl createOperationContext() {
@@ -569,6 +569,7 @@ public class CMISStore extends BaseStore {
 			SessionParameter.LOCALE_ISO3166_COUNTRY, locale.getCountry());
 		parameters.put(
 			SessionParameter.LOCALE_ISO639_LANGUAGE, locale.getLanguage());
+
 		parameters.put(
 			SessionParameter.PASSWORD,
 			cmisStoreConfiguration.credentialsPassword());
@@ -615,17 +616,17 @@ public class CMISStore extends BaseStore {
 
 		if (ListUtil.isNotEmpty(folders)) {
 			for (Folder curFolder : folders) {
-				String subDirName = null;
+				String subdirName = null;
 
 				if (Validator.isBlank(dirName)) {
-					subDirName = curFolder.getName();
+					subdirName = curFolder.getName();
 				}
 				else {
-					subDirName =
+					subdirName =
 						dirName + StringPool.SLASH + curFolder.getName();
 				}
 
-				doGetFileNames(fileNames, subDirName, curFolder);
+				doGetFileNames(fileNames, subdirName, curFolder);
 			}
 		}
 		else if (Validator.isNotNull(dirName)) {
@@ -733,13 +734,13 @@ public class CMISStore extends BaseStore {
 		String[] dirNames = StringUtil.split(fileName, CharPool.SLASH);
 
 		for (String dirName : dirNames) {
-			Folder subFolder = getFolder(versioningFolder, dirName);
+			Folder subfolder = getFolder(versioningFolder, dirName);
 
-			if (create && (subFolder == null)) {
-				subFolder = createFolder(versioningFolder, dirName);
+			if (create && (subfolder == null)) {
+				subfolder = createFolder(versioningFolder, dirName);
 			}
 
-			versioningFolder = subFolder;
+			versioningFolder = subfolder;
 		}
 
 		return versioningFolder;

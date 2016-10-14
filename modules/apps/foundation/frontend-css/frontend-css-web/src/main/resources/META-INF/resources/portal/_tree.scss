@@ -14,11 +14,7 @@
 		}
 
 		&.tree-node .tree-node-content {
-			@include ellipsis;
-
-			.tree-label {
-				display: inline;
-			}
+			display: block;
 		}
 
 		&.tree-item {

@@ -291,6 +291,7 @@
 		</attributes>
 	</component>
 	<component name="Component">
+		<description>Deprecated as of 7.0.0, with no direct replacement.</description>
 		<attributes>
 			<attribute>
 				<name>defineVar</name>
@@ -774,13 +775,6 @@
 				<outputType>java.lang.String</outputType>
 			</attribute>
 			<attribute>
-				<description>Whether to translate the label's text into the user's language. The default value is <![CDATA[<code>true</code>]]>.</description>
-				<name>localizeLabel</name>
-				<inputType>boolean</inputType>
-				<outputType>boolean</outputType>
-				<defaultValue>true</defaultValue>
-			</attribute>
-			<attribute>
 				<name>languageId</name>
 				<inputType>java.lang.String</inputType>
 				<outputType>java.lang.String</outputType>
@@ -798,8 +792,22 @@
 				<outputType>boolean</outputType>
 			</attribute>
 			<attribute>
+				<description>Whether to translate the label's text into the user's language. The default value is <![CDATA[<code>true</code>]]>.</description>
+				<name>localizeLabel</name>
+				<inputType>boolean</inputType>
+				<outputType>boolean</outputType>
+				<defaultValue>true</defaultValue>
+			</attribute>
+			<attribute>
 				<description>The maximum value for the input if its <![CDATA[<code>type</code>]]> is <![CDATA[<code>number</code>]]> or <![CDATA[<code>range</code>]]>. Note that the max value is inclusive if the input's <![CDATA[<code>type</code>]]> is <![CDATA[<code>range</code>]]>.</description>
 				<name>max</name>
+				<inputType>java.lang.Object</inputType>
+				<outputType>java.lang.Number</outputType>
+				<defaultValue>null</defaultValue>
+			</attribute>
+			<attribute>
+				<description>The minimum value for the input if its <![CDATA[<code>type</code>]]> is <![CDATA[<code>number</code>]]> or <![CDATA[<code>range</code>]]>. Note that the min value is inclusive if the input's <![CDATA[<code>type</code>]]> is <![CDATA[<code>range</code>]]>.</description>
+				<name>min</name>
 				<inputType>java.lang.Object</inputType>
 				<outputType>java.lang.Number</outputType>
 				<defaultValue>null</defaultValue>
@@ -809,13 +817,6 @@
 				<name>model</name>
 				<inputType><![CDATA[java.lang.Class<?>]]></inputType>
 				<outputType><![CDATA[java.lang.Class<?>]]></outputType>
-			</attribute>
-			<attribute>
-				<description>The minimum value for the input if its <![CDATA[<code>type</code>]]> is <![CDATA[<code>number</code>]]> or <![CDATA[<code>range</code>]]>. Note that the min value is inclusive if the input's <![CDATA[<code>type</code>]]> is <![CDATA[<code>range</code>]]>.</description>
-				<name>min</name>
-				<inputType>java.lang.Object</inputType>
-				<outputType>java.lang.Number</outputType>
-				<defaultValue>null</defaultValue>
 			</attribute>
 			<attribute>
 				<name>multiple</name>
@@ -1032,13 +1033,13 @@
 				<outputType>java.lang.String</outputType>
 			</attribute>
 			<attribute>
-				<description>An ID for the component instance.</description>
-				<name>id</name>
+				<name>file</name>
 				<inputType>java.lang.String</inputType>
 				<outputType>java.lang.String</outputType>
 			</attribute>
 			<attribute>
-				<name>file</name>
+				<description>An ID for the component instance.</description>
+				<name>id</name>
 				<inputType>java.lang.String</inputType>
 				<outputType>java.lang.String</outputType>
 			</attribute>
@@ -1249,6 +1250,7 @@
 		</attributes>
 	</component>
 	<component bodyContent="true" dynamicAttributes="false" name="Panel">
+		<description>Deprecated as of 7.0.0, with no direct replacement.</description>
 		<attributes>
 			<attribute>
 				<name>collapsed</name>
@@ -1307,15 +1309,15 @@
 				<settable>false</settable>
 			</attribute>
 			<attribute>
+				<name>require</name>
+				<inputType>java.lang.String</inputType>
+				<outputType>java.lang.String</outputType>
+			</attribute>
+			<attribute>
 				<name>sandbox</name>
 				<inputType>boolean</inputType>
 				<outputType>boolean</outputType>
 				<defaultValue>false</defaultValue>
-			</attribute>
-			<attribute>
-				<name>require</name>
-				<inputType>java.lang.String</inputType>
-				<outputType>java.lang.String</outputType>
 			</attribute>
 			<attribute>
 				<description>AlloyUI modules to be used in the script. Names of multiple modules must be separated by commas.</description>
@@ -1517,7 +1519,7 @@
 		</attributes>
 	</component>
 	<component dynamicAttributes="false" name="Spacer" parentClass="com.liferay.taglib.TagSupport" writeBaseClass="false" writeJSP="false">
-		<description>Creates a spacer component that enables JSP 2.1 server-side trimming of white spaces.</description>
+		<description>Deprecated as of 7.0.0, with no direct replacement. Creates a spacer component that enables JSP 2.1 server-side trimming of white spaces.</description>
 	</component>
 	<component dynamicAttributes="false" name="TranslationManager">
 		<description>Creates a UI component for managing translation of associated content.</description>

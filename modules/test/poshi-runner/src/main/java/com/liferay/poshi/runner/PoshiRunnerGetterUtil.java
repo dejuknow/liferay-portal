@@ -260,6 +260,7 @@ public class PoshiRunnerGetterUtil {
 
 				if (!tagIsReservedTag) {
 					int x = line.indexOf("<");
+
 					int y = line.indexOf(" ", x);
 
 					if (y == -1) {
@@ -413,11 +414,15 @@ public class PoshiRunnerGetterUtil {
 				Throwable throwable = e1.getCause();
 
 				if (throwable instanceof StaleElementReferenceException) {
-					System.out.println(
-						"\nElement turned stale while running " + commandName +
-							". Retrying in " +
-								PropsValues.TEST_RETRY_COMMAND_WAIT_TIME +
-									"seconds.");
+					StringBuilder sb = new StringBuilder();
+
+					sb.append("\nElement turned stale while running ");
+					sb.append(commandName);
+					sb.append(". Retrying in ");
+					sb.append(PropsValues.TEST_RETRY_COMMAND_WAIT_TIME);
+					sb.append("seconds.");
+
+					System.out.println(sb.toString());
 
 					try {
 						returnObject = method.invoke(
@@ -451,9 +456,9 @@ public class PoshiRunnerGetterUtil {
 			"and", "arg", "body", "case", "command", "condition", "contains",
 			"default", "definition", "description", "echo", "else", "elseif",
 			"equals", "execute", "fail", "for", "if", "head", "html", "isset",
-			"not", "or", "property", "return", "set-up", "table",
+			"not", "off", "on", "or", "property", "return", "set-up", "table",
 			"take-screenshot", "task", "tbody", "td", "tear-down", "thead",
-			"then", "title", "tr", "var", "while"
+			"then", "title", "toggle", "tr", "var", "while"
 		});
 	private static final Pattern _tagPattern = Pattern.compile("<[a-z\\-]+");
 

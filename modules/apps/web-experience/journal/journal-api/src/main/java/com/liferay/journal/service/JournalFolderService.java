@@ -172,7 +172,7 @@ public interface JournalFolderService extends BaseService {
 		throws PortalException;
 
 	/**
-	* @deprecated As of 7.0.0, replaced by {@link #getSubfolderIds(List, long,
+	* @deprecated As of 4.0.0, replaced by {@link #getSubfolderIds(List, long,
 	long, boolean)}
 	*/
 	@java.lang.Deprecated

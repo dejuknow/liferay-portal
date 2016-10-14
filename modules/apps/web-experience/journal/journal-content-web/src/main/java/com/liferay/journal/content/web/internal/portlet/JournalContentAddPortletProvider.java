@@ -96,7 +96,7 @@ public class JournalContentAddPortletProvider
 	}
 
 	/**
-	 * @deprecated As of 7.0.0
+	 * @deprecated As of 1.1.0
 	 */
 	@Deprecated
 	@Override

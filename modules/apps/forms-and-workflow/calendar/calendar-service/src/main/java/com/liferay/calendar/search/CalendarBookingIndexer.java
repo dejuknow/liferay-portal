@@ -98,6 +98,9 @@ public class CalendarBookingIndexer extends BaseIndexer<CalendarBooking> {
 		return booleanFilter;
 	}
 
+	/**
+	 * @deprecated As of 2.1.0
+	 */
 	@Deprecated
 	@Override
 	public boolean hasPermission(

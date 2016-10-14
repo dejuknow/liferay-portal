@@ -14,6 +14,10 @@
 
 package com.liferay.source.formatter;
 
+import com.liferay.portal.kernel.test.ReflectionTestUtil;
+import com.liferay.portal.kernel.util.ReleaseInfo;
+
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -63,6 +67,19 @@ public class SourceFormatterTest {
 		SourceFormatter sourceFormatter = new SourceFormatter(
 			sourceFormatterArgs);
 
+		String name = ReleaseInfo.getName();
+
+		if (!name.contains(" DXP ")) {
+			List<String> defaultExcludes = new ArrayList<>(
+				ReflectionTestUtil.<List<String>>getFieldValue(
+					SourceFormatter.class, "_defaultExcludes"));
+
+			defaultExcludes.add("modules/private/**");
+
+			ReflectionTestUtil.setFieldValue(
+				SourceFormatter.class, "_defaultExcludes", defaultExcludes);
+		}
+
 		try {
 			sourceFormatter.format();
 		}
@@ -78,7 +95,7 @@ public class SourceFormatterTest {
 				if (message.length() >= _MAX_MESSAGE_SIZE) {
 					message =
 						"Truncated message :\n" +
-						message.substring(0, _MAX_MESSAGE_SIZE);
+							message.substring(0, _MAX_MESSAGE_SIZE);
 
 					throw new AssertionError(message, ae.getCause());
 				}

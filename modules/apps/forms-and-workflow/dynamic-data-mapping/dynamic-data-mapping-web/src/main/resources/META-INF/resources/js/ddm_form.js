@@ -1011,6 +1011,8 @@ AUI.add(
 					getDocumentLibraryURL: function(criteria) {
 						var instance = this;
 
+						var container = instance.get('container');
+
 						var portletNamespace = instance.get('portletNamespace');
 
 						var portletURL = Liferay.PortletURL.createURL(themeDisplay.getURLControlPanel());
@@ -1018,6 +1020,7 @@ AUI.add(
 						portletURL.setDoAsGroupId(instance.get('doAsGroupId'));
 						portletURL.setParameter('criteria', criteria);
 						portletURL.setParameter('itemSelectedEventName', portletNamespace + 'selectDocumentLibrary');
+						portletURL.setParameter('p_p_auth', container.getData('itemSelectorAuthToken'));
 
 						var criterionJSON = {
 							desiredItemSelectorReturnTypes: 'com.liferay.item.selector.criteria.FileEntryItemSelectorReturnType,com.liferay.item.selector.criteria.FileEntryItemSelectorReturnType'
@@ -1194,10 +1197,15 @@ AUI.add(
 					},
 
 					getWebContentSelectorURL: function() {
+						var instance = this;
+
+						var container = instance.get('container');
+
 						var url = Liferay.PortletURL.createURL(themeDisplay.getURLControlPanel());
 
 						url.setParameter('eventName', 'selectContent');
 						url.setParameter('groupId', themeDisplay.getScopeGroupId());
+						url.setParameter('p_p_auth', container.getData('assetBrowserAuthToken'));
 						url.setParameter('selectedGroupIds', themeDisplay.getScopeGroupId());
 						url.setParameter('showNonindexable', true);
 						url.setParameter('showScheduled', true);
@@ -1371,6 +1379,8 @@ AUI.add(
 						instance._loadingAnimationNode = A.Node.create(TPL_LOADER);
 
 						instance._cache = {};
+
+						instance._clearedModal = false;
 
 						instance.after('selectedLayoutChange', instance._afterSelectedLayoutChange);
 						instance.after('selectedLayoutPathChange', instance._afterSelectedLayoutPathChange);
@@ -1658,6 +1668,10 @@ AUI.add(
 					_handleClearButtonClick: function() {
 						var instance = this;
 
+						instance._clearedModal = true;
+
+						instance._navbar.one('.active').removeClass('active');
+
 						instance.setValue('');
 
 						instance.set('selectedLayout', instance.get('selectedLayoutPath')[0]);
@@ -1795,6 +1809,8 @@ AUI.add(
 
 						currentTarget.addClass('active');
 
+						instance._currentParentLayoutId = 0;
+
 						instance._cleanSelectedLayout();
 
 						var privateLayout = currentTarget.test('.private');
@@ -1876,21 +1892,13 @@ AUI.add(
 
 							listNode.on('scroll', instance._handleModalScroll, instance);
 						}
-						else {
-							var path = instance.get('selectedLayoutPath');
+						else if (instance._clearedModal) {
+							var activeClass = privateLayout ? '.private' : '.public';
 
-							instance.set(
-								'selectedLayout',
-								{
-									groupId: value.groupId,
-									label: value.label,
-									layoutId: value.layoutId,
-									path: path.slice(),
-									privateLayout: privateLayout
-								}
-							);
-
+							instance._navbar.one(activeClass).addClass('active');
+							instance._resetBreadcrumb(privateLayout);
 							instance._renderLayoutsList(privateLayout);
+							instance._clearedModal = false;
 						}
 
 						modal.show();
@@ -2325,6 +2333,8 @@ AUI.add(
 					getDocumentLibraryURL: function(criteria) {
 						var instance = this;
 
+						var container = instance.get('container');
+
 						var parsedValue = instance.getParsedValue(ImageField.superclass.getValue.apply(instance, arguments));
 
 						var portletNamespace = instance.get('portletNamespace');
@@ -2334,6 +2344,7 @@ AUI.add(
 						portletURL.setDoAsGroupId(instance.get('doAsGroupId'));
 						portletURL.setParameter('criteria', criteria);
 						portletURL.setParameter('itemSelectedEventName', portletNamespace + 'selectDocumentLibrary');
+						portletURL.setParameter('p_p_auth', container.getData('itemSelectorAuthToken'));
 
 						var journalCriterionJSON = {
 							desiredItemSelectorReturnTypes: 'com.liferay.item.selector.criteria.FileEntryItemSelectorReturnType,com.liferay.item.selector.criteria.FileEntryItemSelectorReturnType',

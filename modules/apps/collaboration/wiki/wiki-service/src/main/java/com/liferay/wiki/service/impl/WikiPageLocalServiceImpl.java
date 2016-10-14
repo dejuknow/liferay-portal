@@ -441,7 +441,7 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0 replaced by {@link #addTempFileEntry(long, long,
+	 * @deprecated As of 1.2.0, replaced by {@link #addTempFileEntry(long, long,
 	 *             String, String, InputStream, String)}
 	 */
 	@Deprecated
@@ -490,6 +490,7 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 
 		double version = page.getVersion();
 		String content = page.getContent();
+
 		String summary = serviceContext.translate(
 			"changed-parent-from-x", originalParentTitle);
 		boolean minorEdit = false;
@@ -498,22 +499,11 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 
 		populateServiceContext(serviceContext, page);
 
-		page = updatePage(
+		serviceContext.setCommand(Constants.CHANGE_PARENT);
+
+		return updatePage(
 			userId, nodeId, title, version, content, summary, minorEdit, format,
 			newParentTitle, redirectTitle, serviceContext);
-
-		List<WikiPage> oldPages = wikiPagePersistence.findByN_T_H(
-			nodeId, title, false);
-
-		for (WikiPage oldPage : oldPages) {
-			if (!WorkflowThreadLocal.isEnabled()) {
-				oldPage.setParentTitle(originalParentTitle);
-
-				wikiPagePersistence.update(oldPage);
-			}
-		}
-
-		return page;
 	}
 
 	@Override
@@ -1535,7 +1525,7 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #renamePage(long, long,
+	 * @deprecated As of 1.2.0, replaced by {@link #renamePage(long, long,
 	 *             String, String, ServiceContext)}
 	 */
 	@Deprecated
@@ -1600,7 +1590,7 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #movePageFromTrash(long,
+	 * @deprecated As of 1.2.0, replaced by {@link #movePageFromTrash(long,
 	 *             long, String, long, String)} *
 	 */
 	@Deprecated
@@ -2045,7 +2035,7 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #updateStatus(long, WikiPage,
+	 * @deprecated As of 1.2.0, replaced by {@link #updateStatus(long, WikiPage,
 	 *             int, ServiceContext, Map)}
 	 */
 	@Deprecated
@@ -2084,7 +2074,17 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 			String cmd = GetterUtil.getString(
 				workflowContext.get(WorkflowConstants.CONTEXT_COMMAND));
 
-			if (cmd.equals(Constants.RENAME)) {
+			if (cmd.equals(Constants.CHANGE_PARENT)) {
+				List<WikiPage> pageVersions = wikiPagePersistence.findByN_T(
+					page.getNodeId(), page.getTitle());
+
+				for (WikiPage pageVersion : pageVersions) {
+					pageVersion.setParentTitle(page.getParentTitle());
+
+					wikiPagePersistence.update(pageVersion);
+				}
+			}
+			else if (cmd.equals(Constants.RENAME)) {
 				long resourcePrimKey = page.getResourcePrimKey();
 
 				WikiPage oldPage = getPage(resourcePrimKey, true);
@@ -2237,7 +2237,7 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0 replaced by {@link
+	 * @deprecated As of 1.2.0, replaced by {@link
 	 *             WikiPageTitleValidator#validate(String)}
 	 */
 	@Deprecated
@@ -2305,7 +2305,9 @@ public class WikiPageLocalServiceImpl extends WikiPageLocalServiceBaseImpl {
 		String format = page.getFormat();
 		boolean head = true;
 		String parentTitle = page.getParentTitle();
+
 		String redirectTitle = page.getTitle();
+
 		String content =
 			StringPool.DOUBLE_OPEN_BRACKET + redirectTitle +
 				StringPool.DOUBLE_CLOSE_BRACKET;

@@ -374,6 +374,7 @@ public class DLFileEntryLocalServiceImpl
 				dlFileEntry, majorVersion, serviceContext.getWorkflowAction());
 
 			latestDLFileVersion.setVersion(version);
+
 			latestDLFileVersion.setChangeLog(changeLog);
 
 			dlFileVersionPersistence.update(latestDLFileVersion);
@@ -1601,8 +1602,8 @@ public class DLFileEntryLocalServiceImpl
 	}
 
 	/**
-	 * As of 7.0.0, replaced by {@link #isKeepFileVersionLabel(long, boolean,
-	 * ServiceContext)}
+	 * @deprecated As of 7.0.0, replaced by {@link #isKeepFileVersionLabel(long,
+	 * boolean, ServiceContext)}
 	 */
 	@Deprecated
 	@Override

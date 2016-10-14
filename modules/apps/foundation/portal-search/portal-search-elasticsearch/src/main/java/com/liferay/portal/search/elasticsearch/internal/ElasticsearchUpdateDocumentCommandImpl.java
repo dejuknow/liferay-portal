@@ -123,6 +123,7 @@ public class ElasticsearchUpdateDocumentCommandImpl
 			elasticsearchDocumentFactory.getElasticsearchDocument(document);
 
 		updateRequestBuilder.setDoc(elasticSearchDocument);
+
 		updateRequestBuilder.setDocAsUpsert(true);
 		updateRequestBuilder.setRetryOnConflict(
 			_elasticsearchConfiguration.retryOnConflict());
@@ -160,7 +161,7 @@ public class ElasticsearchUpdateDocumentCommandImpl
 				bulkRequestBuilder.add(updateRequestBuilder);
 			}
 
-			if (PortalRunMode.isTestMode()||
+			if (PortalRunMode.isTestMode() ||
 				searchContext.isCommitImmediately()) {
 
 				bulkRequestBuilder.setRefresh(true);

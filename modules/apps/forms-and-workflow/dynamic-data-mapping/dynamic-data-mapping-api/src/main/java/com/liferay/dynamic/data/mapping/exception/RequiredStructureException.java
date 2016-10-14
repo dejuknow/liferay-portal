@@ -22,20 +22,35 @@ import com.liferay.portal.kernel.exception.PortalException;
  */
 public class RequiredStructureException extends PortalException {
 
+	/**
+	 * @deprecated As of 3.4.0
+	 */
 	@Deprecated
 	public static final int REFERENCED_STRUCTURE = 1;
 
+	/**
+	 * @deprecated As of 3.4.0
+	 */
 	@Deprecated
 	public static final int REFERENCED_STRUCTURE_LINK = 2;
 
+	/**
+	 * @deprecated As of 3.4.0
+	 */
 	@Deprecated
 	public static final int REFERENCED_TEMPLATE = 3;
 
+	/**
+	 * @deprecated As of 3.4.0
+	 */
 	@Deprecated
 	public RequiredStructureException(int type) {
 		_type = type;
 	}
 
+	/**
+	 * @deprecated As of 3.4.0
+	 */
 	@Deprecated
 	public int getType() {
 		return _type;
@@ -49,8 +64,8 @@ public class RequiredStructureException extends PortalException {
 
 			super(
 				String.format(
-					"Structure %s cannot be deleted because it is " +
-						"referenced by one or more structure links",
+					"Structure %s cannot be deleted because it is referenced " +
+						"by one or more structure links",
 					structureId),
 				REFERENCED_STRUCTURE_LINK);
 
@@ -67,8 +82,8 @@ public class RequiredStructureException extends PortalException {
 		public MustNotDeleteStructureReferencedByTemplates(long structureId) {
 			super(
 				String.format(
-					"Structure %s cannot be deleted because it is " +
-						"referenced by one or more templates",
+					"Structure %s cannot be deleted because it is referenced " +
+						"by one or more templates",
 					structureId),
 				REFERENCED_TEMPLATE);
 

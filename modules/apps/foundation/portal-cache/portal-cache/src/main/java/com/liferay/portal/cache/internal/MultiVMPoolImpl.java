@@ -51,7 +51,7 @@ public class MultiVMPoolImpl implements MultiVMPool {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #getPortalCache(String)}
+	 * @deprecated As of 2.1.0, replaced by {@link #getPortalCache(String)}
 	 */
 	@Deprecated
 	@Override
@@ -62,7 +62,7 @@ public class MultiVMPoolImpl implements MultiVMPool {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #getPortalCache(String,
+	 * @deprecated As of 2.1.0, replaced by {@link #getPortalCache(String,
 	 *             boolean)}
 	 */
 	@Deprecated
@@ -74,7 +74,7 @@ public class MultiVMPoolImpl implements MultiVMPool {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #getPortalCacheManager()}
+	 * @deprecated As of 2.1.0, replaced by {@link #getPortalCacheManager()}
 	 */
 	@Deprecated
 	@Override
@@ -99,6 +99,14 @@ public class MultiVMPoolImpl implements MultiVMPool {
 	}
 
 	@Override
+	public PortalCache<? extends Serializable, ? extends Serializable>
+		getPortalCache(String portalCacheName, boolean blocking, boolean mvcc) {
+
+		return _portalCacheManager.getPortalCache(
+			portalCacheName, blocking, mvcc);
+	}
+
+	@Override
 	public PortalCacheManager<? extends Serializable, ? extends Serializable>
 		getPortalCacheManager() {
 
@@ -106,7 +114,7 @@ public class MultiVMPoolImpl implements MultiVMPool {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #removePortalCache(String)}
+	 * @deprecated As of 2.1.0, replaced by {@link #removePortalCache(String)}
 	 */
 	@Deprecated
 	@Override

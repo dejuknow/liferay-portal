@@ -127,6 +127,7 @@ public class VerifyAuditedModel extends VerifyProcess {
 					}
 					else {
 						userId = rs.getLong("userId");
+
 						userName = getUserName(con, userId);
 					}
 
@@ -151,8 +152,8 @@ public class VerifyAuditedModel extends VerifyProcess {
 		throws Exception {
 
 		try (PreparedStatement ps = con.prepareStatement(
-				"select userId, firstName, middleName, lastName from User_" +
-					" where companyId = ? and defaultUser = ?")) {
+				"select userId, firstName, middleName, lastName from User_ " +
+					"where companyId = ? and defaultUser = ?")) {
 
 			ps.setLong(1, companyId);
 			ps.setBoolean(2, true);
@@ -284,8 +285,7 @@ public class VerifyAuditedModel extends VerifyProcess {
 					AutoBatchPreparedStatementUtil.autoBatch(
 						_createPreparedStatement(
 							con, verifiableAuditedModel.getTableName(),
-							verifiableAuditedModel.
-								getPrimaryKeyColumnName(),
+							verifiableAuditedModel.getPrimaryKeyColumnName(),
 							verifiableAuditedModel.isUpdateDates()))) {
 
 				while (rs.next()) {

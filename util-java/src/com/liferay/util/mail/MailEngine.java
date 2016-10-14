@@ -308,6 +308,7 @@ public class MailEngine {
 					DataSource dataSource = new FileDataSource(file);
 
 					mimeBodyPart.setDataHandler(new DataHandler(dataSource));
+
 					mimeBodyPart.setDisposition(Part.ATTACHMENT);
 
 					if (fileAttachment.getFileName() != null) {
@@ -600,13 +601,14 @@ public class MailEngine {
 			if (me.getNextException() instanceof SocketException) {
 				if (_log.isWarnEnabled()) {
 					_log.warn(
-						"Failed to connect to a valid mail server. Please " +
-							"make sure one is properly configured. " +
+						"Unable to connect to a valid mail server. Please " +
+							"make sure one is properly configured: " +
 								me.getMessage());
 				}
 			}
 			else {
-				LogUtil.log(_log, me);
+				LogUtil.log(
+					_log, me, "Unable to send message: " + me.getMessage());
 			}
 
 			if (_isThrowsExceptionOnFailure()) {

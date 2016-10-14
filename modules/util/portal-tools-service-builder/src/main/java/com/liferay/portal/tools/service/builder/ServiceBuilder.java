@@ -232,95 +232,178 @@ public class ServiceBuilder {
 				ServiceBuilderArgs.OUTPUT_KEY_MODIFIED_FILES,
 				modifiedFileNames);
 		}
-		catch (Throwable t) {
-			String message =
-				"Please set these arguments. Sample values are:\n" +
-				"\n" +
-				"\tservice.api.dir=${basedir}/../portal-kernel/src\n" +
-				"\tservice.auto.import.default.references=true\n" +
-				"\tservice.auto.namespace.tables=false\n" +
-				"\tservice.bean.locator.util=com.liferay.portal.kernel.bean.PortalBeanLocatorUtil\n" +
-				"\tservice.build.number=1\n" +
-				"\tservice.build.number.increment=true\n" +
-				"\tservice.hbm.file=${basedir}/src/META-INF/portal-hbm.xml\n" +
-				"\tservice.impl.dir=${basedir}/src\n" +
-				"\tservice.input.file=${service.file}\n" +
-				"\tservice.model.hints.configs=" + StringUtil.merge(ServiceBuilderArgs.MODEL_HINTS_CONFIGS) + "\n" +
-				"\tservice.model.hints.file=${basedir}/src/META-INF/portal-model-hints.xml\n" +
-				"\tservice.osgi.module=false\n" +
-				"\tservice.plugin.name=\n" +
-				"\tservice.props.util=com.liferay.portal.util.PropsUtil\n" +
-				"\tservice.read.only.prefixes=" + StringUtil.merge(ServiceBuilderArgs.READ_ONLY_PREFIXES) + "\n" +
-				"\tservice.resource.actions.configs=" + StringUtil.merge(ServiceBuilderArgs.RESOURCE_ACTION_CONFIGS) + "\n" +
-				"\tservice.resources.dir=${basedir}/src\n" +
-				"\tservice.spring.file=${basedir}/src/META-INF/portal-spring.xml\n" +
-				"\tservice.spring.namespaces=beans\n" +
-				"\tservice.sql.dir=${basedir}/../sql\n" +
-				"\tservice.sql.file=portal-tables.sql\n" +
-				"\tservice.sql.indexes.file=indexes.sql\n" +
-				"\tservice.sql.sequences.file=sequences.sql\n" +
-				"\tservice.target.entity.name=${service.target.entity.name}\n" +
-				"\tservice.test.dir=${basedir}/test/integration\n" +
-				"\n" +
-				"You can also customize the generated code by overriding the default templates with these optional system properties:\n" +
-				"\n" +
-				"\t-Dservice.tpl.bad_alias_names=" + _TPL_ROOT + "bad_alias_names.txt\n"+
-				"\t-Dservice.tpl.bad_column_names=" + _TPL_ROOT + "bad_column_names.txt\n"+
-				"\t-Dservice.tpl.bad_json_types=" + _TPL_ROOT + "bad_json_types.txt\n"+
-				"\t-Dservice.tpl.bad_table_names=" + _TPL_ROOT + "bad_table_names.txt\n"+
-				"\t-Dservice.tpl.base_mode_impl=" + _TPL_ROOT + "base_mode_impl.ftl\n"+
-				"\t-Dservice.tpl.blob_model=" + _TPL_ROOT + "blob_model.ftl\n"+
-				"\t-Dservice.tpl.copyright.txt=copyright.txt\n"+
-				"\t-Dservice.tpl.ejb_pk=" + _TPL_ROOT + "ejb_pk.ftl\n"+
-				"\t-Dservice.tpl.exception=" + _TPL_ROOT + "exception.ftl\n"+
-				"\t-Dservice.tpl.extended_model=" + _TPL_ROOT + "extended_model.ftl\n"+
-				"\t-Dservice.tpl.extended_model_base_impl=" + _TPL_ROOT + "extended_model_base_impl.ftl\n"+
-				"\t-Dservice.tpl.extended_model_impl=" + _TPL_ROOT + "extended_model_impl.ftl\n"+
-				"\t-Dservice.tpl.finder=" + _TPL_ROOT + "finder.ftl\n"+
-				"\t-Dservice.tpl.finder_base_impl=" + _TPL_ROOT + "finder_base_impl.ftl\n"+
-				"\t-Dservice.tpl.finder_util=" + _TPL_ROOT + "finder_util.ftl\n"+
-				"\t-Dservice.tpl.hbm_xml=" + _TPL_ROOT + "hbm_xml.ftl\n"+
-				"\t-Dservice.tpl.json_js=" + _TPL_ROOT + "json_js.ftl\n"+
-				"\t-Dservice.tpl.json_js_method=" + _TPL_ROOT + "json_js_method.ftl\n"+
-				"\t-Dservice.tpl.model=" + _TPL_ROOT + "model.ftl\n"+
-				"\t-Dservice.tpl.model_cache=" + _TPL_ROOT + "model_cache.ftl\n"+
-				"\t-Dservice.tpl.model_hints_xml=" + _TPL_ROOT + "model_hints_xml.ftl\n"+
-				"\t-Dservice.tpl.model_impl=" + _TPL_ROOT + "model_impl.ftl\n"+
-				"\t-Dservice.tpl.model_soap=" + _TPL_ROOT + "model_soap.ftl\n"+
-				"\t-Dservice.tpl.model_wrapper=" + _TPL_ROOT + "model_wrapper.ftl\n"+
-				"\t-Dservice.tpl.persistence=" + _TPL_ROOT + "persistence.ftl\n"+
-				"\t-Dservice.tpl.persistence_impl=" + _TPL_ROOT + "persistence_impl.ftl\n"+
-				"\t-Dservice.tpl.persistence_util=" + _TPL_ROOT + "persistence_util.ftl\n"+
-				"\t-Dservice.tpl.props=" + _TPL_ROOT + "props.ftl\n"+
-				"\t-Dservice.tpl.service=" + _TPL_ROOT + "service.ftl\n"+
-				"\t-Dservice.tpl.service_base_impl=" + _TPL_ROOT + "service_base_impl.ftl\n"+
-				"\t-Dservice.tpl.service_clp=" + _TPL_ROOT + "service_clp.ftl\n"+
-				"\t-Dservice.tpl.service_clp_invoker=" + _TPL_ROOT + "service_clp_invoker.ftl\n"+
-				"\t-Dservice.tpl.service_clp_message_listener=" + _TPL_ROOT + "service_clp_message_listener.ftl\n"+
-				"\t-Dservice.tpl.service_clp_serializer=" + _TPL_ROOT + "service_clp_serializer.ftl\n"+
-				"\t-Dservice.tpl.service_http=" + _TPL_ROOT + "service_http.ftl\n"+
-				"\t-Dservice.tpl.service_impl=" + _TPL_ROOT + "service_impl.ftl\n"+
-				"\t-Dservice.tpl.service_props_util=" + _TPL_ROOT + "service_props_util.ftl\n"+
-				"\t-Dservice.tpl.service_soap=" + _TPL_ROOT + "service_soap.ftl\n"+
-				"\t-Dservice.tpl.service_util=" + _TPL_ROOT + "service_util.ftl\n"+
-				"\t-Dservice.tpl.service_wrapper=" + _TPL_ROOT + "service_wrapper.ftl\n"+
-				"\t-Dservice.tpl.spring_xml=" + _TPL_ROOT + "spring_xml.ftl\n"+
-				"\t-Dservice.tpl.spring_xml_session=" + _TPL_ROOT + "spring_xml_session.ftl";
-
-			if (t instanceof ServiceBuilderException) {
-				ServiceBuilderException serviceBuilderException =
-					(ServiceBuilderException)t;
-
-				System.err.println(serviceBuilderException.getMessage());
-			}
-			else if (t instanceof Exception) {
-				System.out.println(message);
-
-				ArgumentsUtil.processMainException(arguments, (Exception)t);
+		catch (Exception e) {
+			if (e instanceof ServiceBuilderException) {
+				System.err.println(e.getMessage());
 			}
 			else {
-				t.printStackTrace();
+				StringBundler sb = new StringBundler(160);
+
+				sb.append("Please set these arguments. Sample values are:\n");
+				sb.append("\n");
+				sb.append("\tservice.api.dir=${basedir}/../portal-kernel/src\n");
+				sb.append("\tservice.auto.import.default.references=true\n");
+				sb.append("\tservice.auto.namespace.tables=false\n");
+				sb.append("\tservice.bean.locator.util=com.liferay.portal.kernel.bean.PortalBeanLocatorUtil\n");
+				sb.append("\tservice.build.number=1\n");
+				sb.append("\tservice.build.number.increment=true\n");
+				sb.append("\tservice.hbm.file=${basedir}/src/META-INF/portal-hbm.xml\n");
+				sb.append("\tservice.impl.dir=${basedir}/src\n");
+				sb.append("\tservice.input.file=${service.file}\n");
+				sb.append("\tservice.model.hints.configs=");
+				sb.append(StringUtil.merge(ServiceBuilderArgs.MODEL_HINTS_CONFIGS));
+				sb.append("\n");
+				sb.append("\tservice.model.hints.file=${basedir}/src/META-INF/portal-model-hints.xml\n");
+				sb.append("\tservice.osgi.module=false\n");
+				sb.append("\tservice.plugin.name=\n");
+				sb.append("\tservice.props.util=com.liferay.portal.util.PropsUtil\n");
+				sb.append("\tservice.read.only.prefixes=");
+				sb.append(StringUtil.merge(ServiceBuilderArgs.READ_ONLY_PREFIXES));
+				sb.append("\n");
+				sb.append("\tservice.resource.actions.configs=");
+				sb.append(StringUtil.merge(ServiceBuilderArgs.RESOURCE_ACTION_CONFIGS));
+				sb.append("\n");
+				sb.append("\tservice.resources.dir=${basedir}/src\n");
+				sb.append("\tservice.spring.file=${basedir}/src/META-INF/portal-spring.xml\n");
+				sb.append("\tservice.spring.namespaces=beans\n");
+				sb.append("\tservice.sql.dir=${basedir}/../sql\n");
+				sb.append("\tservice.sql.file=portal-tables.sql\n");
+				sb.append("\tservice.sql.indexes.file=indexes.sql\n");
+				sb.append("\tservice.sql.sequences.file=sequences.sql\n");
+				sb.append("\tservice.target.entity.name=${service.target.entity.name}\n");
+				sb.append("\tservice.test.dir=${basedir}/test/integration\n");
+				sb.append("\n");
+				sb.append("You can also customize the generated code by overriding the default templates with these optional system properties:\n");
+				sb.append("\n");
+				sb.append("\t-Dservice.tpl.bad_alias_names=");
+				sb.append(_TPL_ROOT);
+				sb.append("bad_alias_names.txt\n");
+				sb.append("\t-Dservice.tpl.bad_column_names=");
+				sb.append(_TPL_ROOT);
+				sb.append("bad_column_names.txt\n");
+				sb.append("\t-Dservice.tpl.bad_json_types=");
+				sb.append(_TPL_ROOT);
+				sb.append("bad_json_types.txt\n");
+				sb.append("\t-Dservice.tpl.bad_table_names=");
+				sb.append(_TPL_ROOT);
+				sb.append("bad_table_names.txt\n");
+				sb.append("\t-Dservice.tpl.base_mode_impl=");
+				sb.append(_TPL_ROOT);
+				sb.append("base_mode_impl.ftl\n");
+				sb.append("\t-Dservice.tpl.blob_model=");
+				sb.append(_TPL_ROOT);
+				sb.append("blob_model.ftl\n");
+				sb.append("\t-Dservice.tpl.copyright.txt=copyright.txt\n");
+				sb.append("\t-Dservice.tpl.ejb_pk=");
+				sb.append(_TPL_ROOT);
+				sb.append("ejb_pk.ftl\n");
+				sb.append("\t-Dservice.tpl.exception=");
+				sb.append(_TPL_ROOT);
+				sb.append("exception.ftl\n");
+				sb.append("\t-Dservice.tpl.extended_model=");
+				sb.append(_TPL_ROOT);
+				sb.append("extended_model.ftl\n");
+				sb.append("\t-Dservice.tpl.extended_model_base_impl=");
+				sb.append(_TPL_ROOT);
+				sb.append("extended_model_base_impl.ftl\n");
+				sb.append("\t-Dservice.tpl.extended_model_impl=");
+				sb.append(_TPL_ROOT);
+				sb.append("extended_model_impl.ftl\n");
+				sb.append("\t-Dservice.tpl.finder=");
+				sb.append(_TPL_ROOT);
+				sb.append("finder.ftl\n");
+				sb.append("\t-Dservice.tpl.finder_base_impl=");
+				sb.append(_TPL_ROOT);
+				sb.append("finder_base_impl.ftl\n");
+				sb.append("\t-Dservice.tpl.finder_util=");
+				sb.append(_TPL_ROOT);
+				sb.append("finder_util.ftl\n");
+				sb.append("\t-Dservice.tpl.hbm_xml=");
+				sb.append(_TPL_ROOT);
+				sb.append("hbm_xml.ftl\n");
+				sb.append("\t-Dservice.tpl.json_js=");
+				sb.append(_TPL_ROOT);
+				sb.append("json_js.ftl\n");
+				sb.append("\t-Dservice.tpl.json_js_method=");
+				sb.append(_TPL_ROOT);
+				sb.append("json_js_method.ftl\n");
+				sb.append("\t-Dservice.tpl.model=");
+				sb.append(_TPL_ROOT);
+				sb.append("model.ftl\n");
+				sb.append("\t-Dservice.tpl.model_cache=");
+				sb.append(_TPL_ROOT);
+				sb.append("model_cache.ftl\n");
+				sb.append("\t-Dservice.tpl.model_hints_xml=");
+				sb.append(_TPL_ROOT);
+				sb.append("model_hints_xml.ftl\n");
+				sb.append("\t-Dservice.tpl.model_impl=");
+				sb.append(_TPL_ROOT);
+				sb.append("model_impl.ftl\n");
+				sb.append("\t-Dservice.tpl.model_soap=");
+				sb.append(_TPL_ROOT);
+				sb.append("model_soap.ftl\n");
+				sb.append("\t-Dservice.tpl.model_wrapper=");
+				sb.append(_TPL_ROOT);
+				sb.append("model_wrapper.ftl\n");
+				sb.append("\t-Dservice.tpl.persistence=");
+				sb.append(_TPL_ROOT);
+				sb.append("persistence.ftl\n");
+				sb.append("\t-Dservice.tpl.persistence_impl=");
+				sb.append(_TPL_ROOT);
+				sb.append("persistence_impl.ftl\n");
+				sb.append("\t-Dservice.tpl.persistence_util=");
+				sb.append(_TPL_ROOT);
+				sb.append("persistence_util.ftl\n");
+				sb.append("\t-Dservice.tpl.props=");
+				sb.append(_TPL_ROOT);
+				sb.append("props.ftl\n");
+				sb.append("\t-Dservice.tpl.service=");
+				sb.append(_TPL_ROOT);
+				sb.append("service.ftl\n");
+				sb.append("\t-Dservice.tpl.service_base_impl=");
+				sb.append(_TPL_ROOT);
+				sb.append("service_base_impl.ftl\n");
+				sb.append("\t-Dservice.tpl.service_clp=");
+				sb.append(_TPL_ROOT);
+				sb.append("service_clp.ftl\n");
+				sb.append("\t-Dservice.tpl.service_clp_invoker=");
+				sb.append(_TPL_ROOT);
+				sb.append("service_clp_invoker.ftl\n");
+				sb.append("\t-Dservice.tpl.service_clp_message_listener=");
+				sb.append(_TPL_ROOT);
+				sb.append("service_clp_message_listener.ftl\n");
+				sb.append("\t-Dservice.tpl.service_clp_serializer=");
+				sb.append(_TPL_ROOT);
+				sb.append("service_clp_serializer.ftl\n");
+				sb.append("\t-Dservice.tpl.service_http=");
+				sb.append(_TPL_ROOT);
+				sb.append("service_http.ftl\n");
+				sb.append("\t-Dservice.tpl.service_impl=");
+				sb.append(_TPL_ROOT);
+				sb.append("service_impl.ftl\n");
+				sb.append("\t-Dservice.tpl.service_props_util=");
+				sb.append(_TPL_ROOT);
+				sb.append("service_props_util.ftl\n");
+				sb.append("\t-Dservice.tpl.service_soap=");
+				sb.append(_TPL_ROOT);
+				sb.append("service_soap.ftl\n");
+				sb.append("\t-Dservice.tpl.service_util=");
+				sb.append(_TPL_ROOT);
+				sb.append("service_util.ftl\n");
+				sb.append("\t-Dservice.tpl.service_wrapper=");
+				sb.append(_TPL_ROOT);
+				sb.append("service_wrapper.ftl\n");
+				sb.append("\t-Dservice.tpl.spring_xml=");
+				sb.append(_TPL_ROOT);
+				sb.append("spring_xml.ftl\n");
+				sb.append("\t-Dservice.tpl.spring_xml_session=");
+				sb.append(_TPL_ROOT);
+				sb.append("spring_xml_session.ftl");
+
+				System.out.println(sb.toString());
 			}
+
+			ArgumentsUtil.processMainException(arguments, e);
 		}
 
 		try {
@@ -940,32 +1023,36 @@ public class ServiceBuilder {
 		}
 
 		if (name.equals("boolean")) {
-			return sb.append("Z").toString();
+			sb.append("Z");
 		}
 		else if (name.equals("byte")) {
-			return sb.append("B").toString();
+			sb.append("B");
 		}
 		else if (name.equals("char")) {
-			return sb.append("C").toString();
+			sb.append("C");
 		}
 		else if (name.equals("double")) {
-			return sb.append("D").toString();
+			sb.append("D");
 		}
 		else if (name.equals("float")) {
-			return sb.append("F").toString();
+			sb.append("F");
 		}
 		else if (name.equals("int")) {
-			return sb.append("I").toString();
+			sb.append("I");
 		}
 		else if (name.equals("long")) {
-			return sb.append("J").toString();
+			sb.append("J");
 		}
 		else if (name.equals("short")) {
-			return sb.append("S").toString();
+			sb.append("S");
 		}
 		else {
-			return sb.append("L").append(name).append(";").toString();
+			sb.append("L");
+			sb.append(name);
+			sb.append(";");
 		}
+
+		return sb.toString();
 	}
 
 	public String getCreateMappingTableSQL(EntityMapping entityMapping)
@@ -1075,6 +1162,7 @@ public class ServiceBuilder {
 
 		if (!refFile.exists()) {
 			refFileName = String.valueOf(System.currentTimeMillis());
+
 			refFile = new File(_TMP_DIR, refFileName);
 
 			Class<?> clazz = getClass();
@@ -1901,7 +1989,8 @@ public class ServiceBuilder {
 					col.getMethodName() + "BlobModel.java");
 
 			ToolsUtil.writeFile(
-				blobModelFile, content, _author, _modifiedFileNames);
+				blobModelFile, content, _author, _jalopySettings,
+				_modifiedFileNames);
 		}
 	}
 
@@ -1926,7 +2015,8 @@ public class ServiceBuilder {
 			_serviceOutputPath + "/service/persistence/" +
 				entity.getPKClassName() + ".java");
 
-		ToolsUtil.writeFile(ejbFile, content, _author, _modifiedFileNames);
+		ToolsUtil.writeFile(
+			ejbFile, content, _author, _jalopySettings, _modifiedFileNames);
 	}
 
 	private void _createExceptions(List<String> exceptions) throws Exception {
@@ -2089,7 +2179,8 @@ public class ServiceBuilder {
 		File modelFile = new File(
 			_serviceOutputPath + "/model/" + entity.getName() + ".java");
 
-		ToolsUtil.writeFile(modelFile, content, _author, _modifiedFileNames);
+		ToolsUtil.writeFile(
+			modelFile, content, _author, _jalopySettings, _modifiedFileNames);
 	}
 
 	private void _createExtendedModelBaseImpl(Entity entity) throws Exception {
@@ -2111,7 +2202,8 @@ public class ServiceBuilder {
 		File modelFile = new File(
 			_outputPath + "/model/impl/" + entity.getName() + "BaseImpl.java");
 
-		ToolsUtil.writeFile(modelFile, content, _author, _modifiedFileNames);
+		ToolsUtil.writeFile(
+			modelFile, content, _author, _jalopySettings, _modifiedFileNames);
 	}
 
 	private void _createExtendedModelImpl(Entity entity) throws Exception {
@@ -2140,7 +2232,8 @@ public class ServiceBuilder {
 		}
 		else {
 			ToolsUtil.writeFile(
-				modelFile, content, _author, _modifiedFileNames);
+				modelFile, content, _author, _jalopySettings,
+				_modifiedFileNames);
 		}
 	}
 
@@ -2172,7 +2265,8 @@ public class ServiceBuilder {
 			_serviceOutputPath + "/service/persistence/" + entity.getName() +
 				"Finder.java");
 
-		ToolsUtil.writeFile(ejbFile, content, _author, _modifiedFileNames);
+		ToolsUtil.writeFile(
+			ejbFile, content, _author, _jalopySettings, _modifiedFileNames);
 	}
 
 	private void _createFinderBaseImpl(Entity entity) throws Exception {
@@ -2222,7 +2316,8 @@ public class ServiceBuilder {
 			_outputPath + "/service/persistence/impl/" + entity.getName() +
 				"FinderBaseImpl.java");
 
-		ToolsUtil.writeFile(ejbFile, content, _author, _modifiedFileNames);
+		ToolsUtil.writeFile(
+			ejbFile, content, _author, _jalopySettings, _modifiedFileNames);
 	}
 
 	private void _createFinderUtil(Entity entity) throws Exception {
@@ -2253,7 +2348,8 @@ public class ServiceBuilder {
 			_serviceOutputPath + "/service/persistence/" + entity.getName() +
 				"FinderUtil.java");
 
-		ToolsUtil.writeFile(ejbFile, content, _author, _modifiedFileNames);
+		ToolsUtil.writeFile(
+			ejbFile, content, _author, _jalopySettings, _modifiedFileNames);
 	}
 
 	private void _createHbm(Entity entity) {
@@ -2290,6 +2386,7 @@ public class ServiceBuilder {
 		String content = _processTemplate(_tplHbmXml, context);
 
 		int lastImportStart = content.lastIndexOf("<import class=");
+
 		int lastImportEnd = content.indexOf("/>", lastImportStart) + 3;
 
 		String imports = content.substring(0, lastImportEnd);
@@ -2299,17 +2396,21 @@ public class ServiceBuilder {
 		File xmlFile = new File(_hbmFileName);
 
 		if (!xmlFile.exists()) {
-			String xml =
-				"<?xml version=\"1.0\"?>\n" +
-				"<!DOCTYPE hibernate-mapping PUBLIC \"-//Hibernate/Hibernate Mapping DTD 3.0//EN\" \"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd\">\n" +
-				"\n" +
-				"<hibernate-mapping auto-import=\"false\" default-lazy=\"false\">\n" +
-				"</hibernate-mapping>";
+			StringBundler sb = new StringBundler(5);
+
+			sb.append("<?xml version=\"1.0\"?>\n");
+			sb.append("<!DOCTYPE hibernate-mapping PUBLIC \"-//Hibernate/Hibernate Mapping DTD 3.0//EN\" \"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd\">\n");
+			sb.append("\n");
+			sb.append("<hibernate-mapping auto-import=\"false\" default-lazy=\"false\">\n");
+			sb.append("</hibernate-mapping>");
+
+			String xml = sb.toString();
 
 			_write(xmlFile, xml);
 		}
 
 		String oldContent = _read(xmlFile);
+
 		String newContent = _fixHbmXml(oldContent);
 
 		int firstImport = newContent.indexOf(
@@ -2432,7 +2533,8 @@ public class ServiceBuilder {
 		File modelFile = new File(
 			_serviceOutputPath + "/model/" + entity.getName() + "Model.java");
 
-		ToolsUtil.writeFile(modelFile, content, _author, _modifiedFileNames);
+		ToolsUtil.writeFile(
+			modelFile, content, _author, _jalopySettings, _modifiedFileNames);
 	}
 
 	private void _createModelCache(Entity entity) throws Exception {
@@ -2456,7 +2558,8 @@ public class ServiceBuilder {
 			_outputPath + "/model/impl/" + entity.getName() +
 				"CacheModel.java");
 
-		ToolsUtil.writeFile(modelFile, content, _author, _modifiedFileNames);
+		ToolsUtil.writeFile(
+			modelFile, content, _author, _jalopySettings, _modifiedFileNames);
 	}
 
 	private void _createModelClp(Entity entity) throws Exception {
@@ -2498,6 +2601,7 @@ public class ServiceBuilder {
 			}
 
 			superClass = javaClass.getSuperClass();
+
 			superClassValue = superClass.getValue();
 		}
 
@@ -2515,7 +2619,8 @@ public class ServiceBuilder {
 		File modelFile = new File(
 			_serviceOutputPath + "/model/" + entity.getName() + "Clp.java");
 
-		ToolsUtil.writeFile(modelFile, content, _author, _modifiedFileNames);
+		ToolsUtil.writeFile(
+			modelFile, content, _author, _jalopySettings, _modifiedFileNames);
 	}
 
 	private void _createModelHintsXml() throws Exception {
@@ -2530,16 +2635,13 @@ public class ServiceBuilder {
 		File xmlFile = new File(_modelHintsFileName);
 
 		if (!xmlFile.exists()) {
-			String xml =
-				"<?xml version=\"1.0\"?>\n" +
-				"\n" +
-				"<model-hints>\n" +
-				"</model-hints>";
-
-			_write(xmlFile, xml);
+			_write(
+				xmlFile,
+				"<?xml version=\"1.0\"?>\n\n<model-hints>\n</model-hints>");
 		}
 
 		String oldContent = _read(xmlFile);
+
 		String newContent = oldContent;
 
 		int firstModel = newContent.indexOf(
@@ -2593,7 +2695,8 @@ public class ServiceBuilder {
 		File modelFile = new File(
 			_outputPath + "/model/impl/" + entity.getName() + "ModelImpl.java");
 
-		ToolsUtil.writeFile(modelFile, content, _author, _modifiedFileNames);
+		ToolsUtil.writeFile(
+			modelFile, content, _author, _jalopySettings, _modifiedFileNames);
 	}
 
 	private void _createModelSoap(Entity entity) throws Exception {
@@ -2615,7 +2718,8 @@ public class ServiceBuilder {
 
 		// Write file
 
-		ToolsUtil.writeFile(modelFile, content, _author, _modifiedFileNames);
+		ToolsUtil.writeFile(
+			modelFile, content, _author, _jalopySettings, _modifiedFileNames);
 	}
 
 	private void _createModelWrapper(Entity entity) throws Exception {
@@ -2652,7 +2756,8 @@ public class ServiceBuilder {
 		File modelFile = new File(
 			_serviceOutputPath + "/model/" + entity.getName() + "Wrapper.java");
 
-		ToolsUtil.writeFile(modelFile, content, _author, _modifiedFileNames);
+		ToolsUtil.writeFile(
+			modelFile, content, _author, _jalopySettings, _modifiedFileNames);
 	}
 
 	private void _createPersistence(Entity entity) throws Exception {
@@ -2677,7 +2782,8 @@ public class ServiceBuilder {
 			_serviceOutputPath + "/service/persistence/" + entity.getName() +
 				"Persistence.java");
 
-		ToolsUtil.writeFile(ejbFile, content, _author, _modifiedFileNames);
+		ToolsUtil.writeFile(
+			ejbFile, content, _author, _jalopySettings, _modifiedFileNames);
 	}
 
 	private void _createPersistenceImpl(Entity entity) throws Exception {
@@ -2701,7 +2807,8 @@ public class ServiceBuilder {
 			_outputPath + "/service/persistence/impl/" + entity.getName() +
 				"PersistenceImpl.java");
 
-		ToolsUtil.writeFile(ejbFile, content, _author, _modifiedFileNames);
+		ToolsUtil.writeFile(
+			ejbFile, content, _author, _jalopySettings, _modifiedFileNames);
 
 		ejbFile = new File(
 			_outputPath + "/service/persistence/" + entity.getName() +
@@ -2734,7 +2841,8 @@ public class ServiceBuilder {
 			_testOutputPath + "/service/persistence/test/" + entity.getName() +
 				"PersistenceTest.java");
 
-		ToolsUtil.writeFile(ejbFile, content, _author, _modifiedFileNames);
+		ToolsUtil.writeFile(
+			ejbFile, content, _author, _jalopySettings, _modifiedFileNames);
 
 		ejbFile = new File(
 			_testOutputPath + "/service/persistence/" + entity.getName() +
@@ -2769,7 +2877,8 @@ public class ServiceBuilder {
 			_serviceOutputPath + "/service/persistence/" + entity.getName() +
 				"Util.java");
 
-		ToolsUtil.writeFile(ejbFile, content, _author, _modifiedFileNames);
+		ToolsUtil.writeFile(
+			ejbFile, content, _author, _jalopySettings, _modifiedFileNames);
 	}
 
 	private void _createPool(Entity entity) {
@@ -2892,7 +3001,8 @@ public class ServiceBuilder {
 			_serviceOutputPath + "/service/" + entity.getName() +
 				_getSessionTypeName(sessionType) + "Service.java");
 
-		ToolsUtil.writeFile(ejbFile, content, _author, _modifiedFileNames);
+		ToolsUtil.writeFile(
+			ejbFile, content, _author, _jalopySettings, _modifiedFileNames);
 	}
 
 	private void _createServiceBaseImpl(Entity entity, int sessionType)
@@ -2924,7 +3034,8 @@ public class ServiceBuilder {
 			_outputPath + "/service/base/" + entity.getName() +
 				_getSessionTypeName(sessionType) + "ServiceBaseImpl.java");
 
-		ToolsUtil.writeFile(ejbFile, content, _author, _modifiedFileNames);
+		ToolsUtil.writeFile(
+			ejbFile, content, _author, _jalopySettings, _modifiedFileNames);
 	}
 
 	private void _createServiceClp(Entity entity, int sessionType)
@@ -2956,7 +3067,8 @@ public class ServiceBuilder {
 			_serviceOutputPath + "/service/" + entity.getName() +
 				_getSessionTypeName(sessionType) + "ServiceClp.java");
 
-		ToolsUtil.writeFile(ejbFile, content, _author, _modifiedFileNames);
+		ToolsUtil.writeFile(
+			ejbFile, content, _author, _jalopySettings, _modifiedFileNames);
 	}
 
 	private void _createServiceClpInvoker(Entity entity, int sessionType)
@@ -3005,7 +3117,8 @@ public class ServiceBuilder {
 			_outputPath + "/service/base/" + entity.getName() +
 				_getSessionTypeName(sessionType) + "ServiceClpInvoker.java");
 
-		ToolsUtil.writeFile(ejbFile, content, _author, _modifiedFileNames);
+		ToolsUtil.writeFile(
+			ejbFile, content, _author, _jalopySettings, _modifiedFileNames);
 	}
 
 	private void _createServiceClpMessageListener() throws Exception {
@@ -3027,7 +3140,8 @@ public class ServiceBuilder {
 		File ejbFile = new File(
 			_serviceOutputPath + "/service/messaging/ClpMessageListener.java");
 
-		ToolsUtil.writeFile(ejbFile, content, _author, _modifiedFileNames);
+		ToolsUtil.writeFile(
+			ejbFile, content, _author, _jalopySettings, _modifiedFileNames);
 	}
 
 	private void _createServiceClpSerializer(List<String> exceptions)
@@ -3051,7 +3165,8 @@ public class ServiceBuilder {
 		File ejbFile = new File(
 			_serviceOutputPath + "/service/ClpSerializer.java");
 
-		ToolsUtil.writeFile(ejbFile, content, _author, _modifiedFileNames);
+		ToolsUtil.writeFile(
+			ejbFile, content, _author, _jalopySettings, _modifiedFileNames);
 	}
 
 	private void _createServiceFactory(Entity entity, int sessionType) {
@@ -3099,7 +3214,8 @@ public class ServiceBuilder {
 			_outputPath + "/service/http/" + entity.getName() +
 				"ServiceHttp.java");
 
-		ToolsUtil.writeFile(ejbFile, content, _author, _modifiedFileNames);
+		ToolsUtil.writeFile(
+			ejbFile, content, _author, _jalopySettings, _modifiedFileNames);
 	}
 
 	private void _createServiceImpl(Entity entity, int sessionType)
@@ -3121,7 +3237,8 @@ public class ServiceBuilder {
 				_getSessionTypeName(sessionType) + "ServiceImpl.java");
 
 		if (!ejbFile.exists()) {
-			ToolsUtil.writeFile(ejbFile, content, _author, _modifiedFileNames);
+			ToolsUtil.writeFile(
+				ejbFile, content, _author, _jalopySettings, _modifiedFileNames);
 		}
 	}
 
@@ -3145,7 +3262,8 @@ public class ServiceBuilder {
 
 		String content = _processTemplate(_tplServicePropsUtil, context);
 
-		ToolsUtil.writeFile(file, content, _modifiedFileNames);
+		ToolsUtil.writeFile(
+			file, content, AUTHOR, _jalopySettings, _modifiedFileNames);
 	}
 
 	private void _createServiceSoap(Entity entity) throws Exception {
@@ -3170,7 +3288,8 @@ public class ServiceBuilder {
 			_outputPath + "/service/http/" + entity.getName() +
 				"ServiceSoap.java");
 
-		ToolsUtil.writeFile(ejbFile, content, _author, _modifiedFileNames);
+		ToolsUtil.writeFile(
+			ejbFile, content, _author, _jalopySettings, _modifiedFileNames);
 	}
 
 	private void _createServiceUtil(Entity entity, int sessionType)
@@ -3198,7 +3317,8 @@ public class ServiceBuilder {
 			_serviceOutputPath + "/service/" + entity.getName() +
 				_getSessionTypeName(sessionType) + "ServiceUtil.java");
 
-		ToolsUtil.writeFile(ejbFile, content, _author, _modifiedFileNames);
+		ToolsUtil.writeFile(
+			ejbFile, content, _author, _jalopySettings, _modifiedFileNames);
 	}
 
 	private void _createServiceWrapper(Entity entity, int sessionType)
@@ -3226,7 +3346,8 @@ public class ServiceBuilder {
 			_serviceOutputPath + "/service/" + entity.getName() +
 				_getSessionTypeName(sessionType) + "ServiceWrapper.java");
 
-		ToolsUtil.writeFile(ejbFile, content, _author, _modifiedFileNames);
+		ToolsUtil.writeFile(
+			ejbFile, content, _author, _jalopySettings, _modifiedFileNames);
 	}
 
 	private void _createSpringXml() throws Exception {
@@ -3244,16 +3365,21 @@ public class ServiceBuilder {
 
 		File xmlFile = new File(_springFileName);
 
-		String xml =
-			"<?xml version=\"1.0\"?>\n" +
-			"\n" +
-			"<beans\n" +
-			"\tdefault-destroy-method=\"destroy\"\n" +
-			"\tdefault-init-method=\"afterPropertiesSet\"\n" +
-			_getSpringNamespacesDeclarations() +
-			"\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
-			"\txsi:schemaLocation=\"" + _getSpringSchemaLocations() + "\">\n" +
-			"</beans>";
+		StringBundler sb = new StringBundler(11);
+
+		sb.append("<?xml version=\"1.0\"?>\n\n");
+		sb.append("<beans\n");
+		sb.append("\tdefault-destroy-method=\"destroy\"\n");
+		sb.append("\tdefault-init-method=\"afterPropertiesSet\"\n");
+		sb.append(_getSpringNamespacesDeclarations());
+		sb.append("\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
+		sb.append("\n");
+		sb.append("\txsi:schemaLocation=\"");
+		sb.append(_getSpringSchemaLocations());
+		sb.append("\">\n");
+		sb.append("</beans>");
+
+		String xml = sb.toString();
 
 		if (!xmlFile.exists()) {
 			_write(xmlFile, xml);
@@ -3463,6 +3589,7 @@ public class ServiceBuilder {
 
 		int x = content.indexOf(
 			_SQL_CREATE_TABLE + entityMapping.getTable() + " (");
+
 		int y = content.indexOf(");", x);
 
 		if (x != -1) {
@@ -3488,6 +3615,7 @@ public class ServiceBuilder {
 				while ((line = unsyncBufferedReader.readLine()) != null) {
 					if (appendNewTable && line.startsWith(_SQL_CREATE_TABLE)) {
 						x = _SQL_CREATE_TABLE.length();
+
 						y = line.indexOf(" ", x);
 
 						String tableName = line.substring(x, y);
@@ -3672,6 +3800,7 @@ public class ServiceBuilder {
 		String content = _read(sqlFile);
 
 		int x = content.indexOf(_SQL_CREATE_TABLE + entity.getTable() + " (");
+
 		int y = content.indexOf(");", x);
 
 		if (x != -1) {
@@ -3697,6 +3826,7 @@ public class ServiceBuilder {
 				while ((line = unsyncBufferedReader.readLine()) != null) {
 					if (appendNewTable && line.startsWith(_SQL_CREATE_TABLE)) {
 						x = _SQL_CREATE_TABLE.length();
+
 						y = line.indexOf(" ", x);
 
 						String tableName = line.substring(x, y);
@@ -3807,6 +3937,7 @@ public class ServiceBuilder {
 			comment = comment.replaceAll("(?m)^", indentation + " * ");
 
 			sb.append(comment);
+
 			sb.append("\n");
 
 			if (tags.length > 0) {
@@ -5588,6 +5719,8 @@ public class ServiceBuilder {
 	private static Pattern _getterPattern = Pattern.compile(
 		"public .* get.*" + Pattern.quote("(") + "|public boolean is.*" +
 			Pattern.quote("("));
+	private static final Map<String, Object> _jalopySettings =
+		Collections.singletonMap("failOnFormatError", (Object)Boolean.TRUE);
 	private static Pattern _setterPattern = Pattern.compile(
 		"public void set.*" + Pattern.quote("("));
 

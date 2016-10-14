@@ -29,8 +29,6 @@
 	<command name="AddMBCategory" priority="5">
 		<property name="portal.acceptance" value="true" />
 
-		<var name="categoryName" value="MB Category Name" />
-
 		<execute macro="Navigator#openURL" />
 
 		<execute macro="ProductMenu#gotoSitesContent">
@@ -38,21 +36,17 @@
 		</execute>
 
 		<execute macro="MessageboardsCategory#addCP">
-			<var name="categoryName" value="${categoryName}" />
+			<var name="categoryName" value="MB Category Name" />
 		</execute>
 
 		<execute macro="MessageboardsCategory#viewCP">
-			<var name="categoryName" value="${categoryName}" />
+			<var name="categoryName" value="MB Category Name" />
 			<var name="subcategoriesNumber" value="0" />
 			<var name="threadsNumber" value="0" />
 		</execute>
 	</command>
 
 	<command name="AddMBCategorySubcategory" priority="4">
-		<var name="categoryName" value="MB Category Name" />
-		<var name="subCategoryDescription" value="MB Subcategory Description" />
-		<var name="subCategoryName" value="MB Subcategory Name" />
-
 		<execute macro="Navigator#openURL" />
 
 		<execute macro="ProductMenu#gotoSitesContent">
@@ -60,7 +54,7 @@
 		</execute>
 
 		<execute macro="MessageboardsCategory#addCP">
-			<var name="categoryName" value="${categoryName}" />
+			<var name="categoryName" value="MB Category Name" />
 		</execute>
 
 		<execute macro="Navigator#openURL" />
@@ -70,16 +64,13 @@
 		</execute>
 
 		<execute macro="MessageboardsCategory#addSubcategoryCP">
-			<var name="categoryName" value="${categoryName}" />
-			<var name="subCategoryDescription" value="${subCategoryDescription}" />
-			<var name="subCategoryName" value="${subCategoryName}" />
+			<var name="categoryName" value="MB Category Name" />
+			<var name="subCategoryDescription" value="MB Subcategory Description" />
+			<var name="subCategoryName" value="MB Subcategory Name" />
 		</execute>
 	</command>
 
 	<command name="AddMBThread" priority="5">
-		<var name="threadBody" value="MB Thread Message Body" />
-		<var name="threadSubject" value="MB Thread Message Subject" />
-
 		<execute macro="Navigator#openURL" />
 
 		<execute macro="ProductMenu#gotoSitesContent">
@@ -87,8 +78,8 @@
 		</execute>
 
 		<execute macro="MessageboardsThread#addCP">
-			<var name="threadBody" value="${threadBody}" />
-			<var name="threadSubject" value="${threadSubject}" />
+			<var name="threadBody" value="MB Thread Message Body" />
+			<var name="threadSubject" value="MB Thread Message Subject" />
 		</execute>
 
 		<execute macro="Navigator#openURL" />
@@ -99,17 +90,15 @@
 
 		<execute macro="MessageboardsThread#viewCP">
 			<var name="postsNumber" value="1" />
-			<var name="threadBody" value="${threadBody}" />
-			<var name="threadSubject" value="${threadSubject}" />
+			<var name="threadBody" value="MB Thread Message Body" />
+			<var name="threadSubject" value="MB Thread Message Subject" />
 		</execute>
 	</command>
 
 	<command name="DeleteMBCategories" priority="4">
-		<var name="categoryNameList" value="MB Category1 Name,MB Category2 Name,MB Category3 Name" />
-
 		<execute macro="Navigator#openURL" />
 
-		<for list="${categoryNameList}" param="categoryName" >
+		<for list="MB Category1 Name,MB Category2 Name,MB Category3 Name" param="categoryName" >
 			<execute macro="ProductMenu#gotoSitesContent">
 				<var name="portlet" value="Message Boards" />
 			</execute>
@@ -128,6 +117,55 @@
 		</execute>
 
 		<execute function="AssertTextEquals#assertText" locator1="Message#EMPTY_INFO" value1="There are no threads nor categories." />
+	</command>
+
+	<command name="DeleteMBThreadWithAttachment" priority="3">
+		<property name="custom.properties" value="trash.entry.check.interval=1${line.separator}trash.entries.max.age=1" />
+
+		<execute macro="ProductMenu#gotoControlPanelSites">
+			<var name="portlet" value="Sites" />
+		</execute>
+
+		<execute macro="Site#addBlankCP">
+			<var name="siteName" value="Site Name" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoSite">
+			<var name="site" value="Site Name" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoSitesContent">
+			<var name="portlet" value="Message Boards" />
+		</execute>
+
+		<execute macro="MessageboardsThread#addCPWithAttachment">
+			<var name="mbAttachmentFile" value="Document_1.doc" />
+			<var name="threadBody" value="MB Body" />
+			<var name="threadSubject" value="MB Subject" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoSite">
+			<var name="site" value="Site Name" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoSitesContent">
+			<var name="portlet" value="Message Boards" />
+		</execute>
+
+		<execute macro="MessageboardsThread#moveToRecycleBinCP">
+			<var name="threadSubject" value="MB Subject" />
+		</execute>
+
+		<execute function="Pause" locator1="120000" />
+
+		<execute function="AssertConsoleTextNotPresent" value1="MessageListenerException" />
+		<execute function="AssertConsoleTextNotPresent" value1="com.liferay.portlet.documentlibrary.NoSuchFileEntryException" />
+
+		<execute macro="ProductMenu#gotoSitesContent">
+			<var name="portlet" value="Recycle Bin" />
+		</execute>
+
+		<execute function="AssertTextEquals" locator1="Message#EMPTY_INFO" value1="The Recycle Bin is empty." />
 	</command>
 
 	<command name="EditMBThreadBody" priority="5">
@@ -250,10 +288,6 @@
 
 	<command name="MoveToRecycleBinMBThread" priority="5">
 		<property name="portal.acceptance" value="true" />
-		<property name="portal.acceptance.quarantine" value="false" />
-
-		<var name="threadBody" value="MB Thread Message Body" />
-		<var name="threadSubject" value="MB Thread Message Subject" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -262,8 +296,8 @@
 		</execute>
 
 		<execute macro="MessageboardsThread#addCP">
-			<var name="threadBody" value="${threadBody}" />
-			<var name="threadSubject" value="${threadSubject}" />
+			<var name="threadBody" value="MB Thread Message Body" />
+			<var name="threadSubject" value="MB Thread Message Subject" />
 		</execute>
 
 		<execute macro="Navigator#openURL" />
@@ -273,7 +307,7 @@
 		</execute>
 
 		<execute macro="MessageboardsThread#moveToRecycleBinCP">
-			<var name="threadSubject" value="${threadSubject}" />
+			<var name="threadSubject" value="MB Thread Message Subject" />
 		</execute>
 
 		<execute macro="Navigator#openURL" />
@@ -283,7 +317,7 @@
 		</execute>
 
 		<execute macro="MessageboardsThread#viewDefaultCP">
-			<var name="threadSubject" value="${threadSubject}" />
+			<var name="threadSubject" value="MB Thread Message Subject" />
 		</execute>
 	</command>
 
@@ -324,13 +358,10 @@
 	</command>
 
 	<command name="ViewBBCodeNoXSS" priority="4">
-		<var name="font" value="5" />
-		<var name="portletName" value="Message Boards" />
-
 		<execute macro="Navigator#openURL" />
 
 		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="${portletName}" />
+			<var name="portlet" value="Message Boards" />
 		</execute>
 
 		<execute macro="MessageboardsPortlet#configureGeneralCP">
@@ -341,7 +372,7 @@
 		<execute macro="Navigator#openURL" />
 
 		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="${portletName}" />
+			<var name="portlet" value="Message Boards" />
 		</execute>
 
 		<execute macro="MessageboardsThread#addCP">
@@ -355,7 +386,7 @@
 		<execute macro="Navigator#openURL" />
 
 		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="${portletName}" />
+			<var name="portlet" value="Message Boards" />
 		</execute>
 
 		<execute macro="MessageboardsThread#viewCP">
@@ -367,20 +398,20 @@
 		<execute macro="Navigator#openURL" />
 
 		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="${portletName}" />
+			<var name="portlet" value="Message Boards" />
 		</execute>
 
 		<execute macro="MessageboardsThread#addCP">
 			<var name="fontSize" value="24" />
 			<var name="source" value="true" />
-			<var name="threadBody" value="[size=${font}]Thread Body[/size]" />
+			<var name="threadBody" value="[size=5]Thread Body[/size]" />
 			<var name="threadSubject" value="New Thread Subject 2" />
 		</execute>
 
 		<execute macro="Navigator#openURL" />
 
 		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="${portletName}" />
+			<var name="portlet" value="Message Boards" />
 		</execute>
 
 		<execute macro="MessageboardsThread#viewCP">

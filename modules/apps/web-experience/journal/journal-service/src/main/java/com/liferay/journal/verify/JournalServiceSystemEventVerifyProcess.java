@@ -40,7 +40,7 @@ import java.util.List;
 public class JournalServiceSystemEventVerifyProcess extends VerifyProcess {
 
 	/**
-	 * @deprecated As of 7.0.0
+	 * @deprecated As of 4.0.0
 	 */
 	@Deprecated
 	public JournalServiceSystemEventVerifyProcess() {
@@ -66,7 +66,7 @@ public class JournalServiceSystemEventVerifyProcess extends VerifyProcess {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0
+	 * @deprecated As of 4.0.0
 	 */
 	@Deprecated
 	protected void setJournalArticleLocalService(
@@ -74,7 +74,7 @@ public class JournalServiceSystemEventVerifyProcess extends VerifyProcess {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0
+	 * @deprecated As of 4.0.0
 	 */
 	@Deprecated
 	protected void setJournalArticleResourceLocalService(
@@ -82,7 +82,7 @@ public class JournalServiceSystemEventVerifyProcess extends VerifyProcess {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0
+	 * @deprecated As of 4.0.0
 	 */
 	@Deprecated
 	protected void setSystemEventLocalService(

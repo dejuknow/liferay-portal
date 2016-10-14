@@ -20,6 +20,10 @@ import com.liferay.portal.kernel.cache.thread.local.Lifecycle;
 import com.liferay.portal.kernel.cache.thread.local.ThreadLocalCachable;
 import com.liferay.portal.kernel.cache.thread.local.ThreadLocalCache;
 import com.liferay.portal.kernel.cache.thread.local.ThreadLocalCacheManager;
+import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.dao.orm.ProjectionFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.Property;
+import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.exception.DuplicateRoleException;
 import com.liferay.portal.kernel.exception.NoSuchRoleException;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -119,7 +123,9 @@ public class RoleLocalServiceImpl extends RoleLocalServiceBaseImpl {
 		// Role
 
 		User user = userPersistence.findByPrimaryKey(userId);
+
 		className = GetterUtil.getString(className);
+
 		long classNameId = classNameLocalService.getClassNameId(className);
 
 		long roleId = counterLocalService.increment();
@@ -572,6 +578,64 @@ public class RoleLocalServiceImpl extends RoleLocalServiceBaseImpl {
 		}
 
 		return roleLocalService.loadFetchRole(companyId, name);
+	}
+
+	@Override
+	public int getAssigneesTotal(long roleId) throws PortalException {
+		int assigneesTotal = 0;
+
+		Role role = getRole(roleId);
+
+		int type = role.getType();
+
+		if (type == RoleConstants.TYPE_REGULAR) {
+			assigneesTotal += groupLocalService.getRoleGroupsCount(roleId);
+			assigneesTotal += userLocalService.getRoleUsersCount(roleId);
+		}
+
+		if (type == RoleConstants.TYPE_SITE) {
+			DynamicQuery userGroupGroupRoleDynamicQuery =
+				userGroupGroupRoleLocalService.dynamicQuery();
+
+			Property property = PropertyFactoryUtil.forName(
+				"primaryKey.roleId");
+
+			userGroupGroupRoleDynamicQuery.add(property.eq(roleId));
+
+			userGroupGroupRoleDynamicQuery.setProjection(
+				ProjectionFactoryUtil.countDistinct("primaryKey.userGroupId"));
+
+			List<?> list = userGroupRoleLocalService.dynamicQuery(
+				userGroupGroupRoleDynamicQuery);
+
+			Long count = (Long)list.get(0);
+
+			assigneesTotal += count.intValue();
+		}
+
+		if ((type == RoleConstants.TYPE_SITE) ||
+			(type == RoleConstants.TYPE_ORGANIZATION)) {
+
+			DynamicQuery userGroupRoleDynamicQuery =
+				userGroupRoleLocalService.dynamicQuery();
+
+			Property property = PropertyFactoryUtil.forName(
+				"primaryKey.roleId");
+
+			userGroupRoleDynamicQuery.add(property.eq(roleId));
+
+			userGroupRoleDynamicQuery.setProjection(
+				ProjectionFactoryUtil.countDistinct("primaryKey.userId"));
+
+			List<?> list = userGroupRoleLocalService.dynamicQuery(
+				userGroupRoleDynamicQuery);
+
+			Long count = (Long)list.get(0);
+
+			assigneesTotal += count.intValue();
+		}
+
+		return assigneesTotal;
 	}
 
 	/**

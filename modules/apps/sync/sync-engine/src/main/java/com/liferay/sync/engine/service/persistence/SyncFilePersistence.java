@@ -42,12 +42,12 @@ public class SyncFilePersistence extends BasePersistenceImpl<SyncFile, Long> {
 		super(SyncFile.class);
 	}
 
-	public long countByUIEvent(int uiEvent) throws SQLException {
+	public long countByUIEvents(Integer... uiEvents) throws SQLException {
 		QueryBuilder<SyncFile, Long> queryBuilder = queryBuilder();
 
 		Where<SyncFile, Long> where = queryBuilder.where();
 
-		where.eq("uiEvent", uiEvent);
+		where.in("uiEvent", uiEvents);
 
 		return where.countOf();
 	}
@@ -135,6 +135,7 @@ public class SyncFilePersistence extends BasePersistenceImpl<SyncFile, Long> {
 			parentFilePathName + fileSystem.getSeparator(), "\\", "\\\\");
 
 		where.like("filePathName", new SelectArg(parentFilePathName + "%"));
+
 		where.eq("state", state);
 		where.ne("uiEvent", SyncFile.UI_EVENT_DELETED_LOCAL);
 		where.ne("uiEvent", SyncFile.UI_EVENT_DELETED_REMOTE);
@@ -159,6 +160,26 @@ public class SyncFilePersistence extends BasePersistenceImpl<SyncFile, Long> {
 		where.eq("uiEvent", uiEvent);
 
 		where.and(2);
+
+		return where.queryForFirst();
+	}
+
+	public SyncFile fetchByR_S_T_V(
+			long repositoryId, long syncAccountId, long typePK, long versionId)
+		throws SQLException {
+
+		QueryBuilder<SyncFile, Long> queryBuilder = queryBuilder();
+
+		queryBuilder.limit(1L);
+
+		Where<SyncFile, Long> where = queryBuilder.where();
+
+		where.eq("repositoryId", repositoryId);
+		where.eq("syncAccountId", syncAccountId);
+		where.eq("typePK", typePK);
+		where.eq("versionId", versionId);
+
+		where.and(4);
 
 		return where.queryForFirst();
 	}
@@ -219,6 +240,7 @@ public class SyncFilePersistence extends BasePersistenceImpl<SyncFile, Long> {
 			parentFilePathName + fileSystem.getSeparator(), "\\", "\\\\");
 
 		where.like("filePathName", new SelectArg(parentFilePathName + "%"));
+
 		where.lt("localSyncTime", localSyncTime);
 		where.or(
 			where.eq("state", SyncFile.STATE_SYNCED),

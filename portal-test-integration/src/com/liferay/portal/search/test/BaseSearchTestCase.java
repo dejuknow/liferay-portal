@@ -612,6 +612,7 @@ public abstract class BaseSearchTestCase {
 
 		searchContext.setFolderIds(
 			new long[] {(Long)parentBaseModel1.getPrimaryKeyObj()});
+
 		searchContext.setKeywords(getSearchKeywords());
 
 		int initialBaseModelsSearchCount = 0;
@@ -699,13 +700,13 @@ public abstract class BaseSearchTestCase {
 
 		searchContext.setKeywords(
 			RandomTestUtil.randomString() + " \"" + keyword2 + " " + keyword3 +
-				"\"" + " " + keyword5);
+				"\" " + keyword5);
 
 		assertBaseModelsCount(initialBaseModelsSearchCount + 1, searchContext);
 
 		searchContext.setKeywords(
 			RandomTestUtil.randomString() + " \"" + keyword2 + " " + keyword5 +
-				"\"" + " " + RandomTestUtil.randomString());
+				"\" " + RandomTestUtil.randomString());
 
 		assertBaseModelsCount(initialBaseModelsSearchCount, searchContext);
 	}

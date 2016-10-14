@@ -136,7 +136,7 @@
 <!--CONTROL_PANEL_USERS_ROLES_GENERAL_PERMISSIONS-->
 <tr>
 	<td>CONTROL_PANEL_USERS_ROLES_GENERAL_PERMISSIONS_ACCESS_IN_CONTROL_PANEL_CHECKBOX</td>
-	<td>//input[contains(@value,'ACCESS_IN_CONTROL_PANEL')]</td>
+	<td>//input[contains(@value,'RolesAdminPortletACCESS_IN_CONTROL_PANEL')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -629,6 +629,11 @@
 	<td></td>
 </tr>
 <!--SITE_ADMIN_CONTENT_KALEO_FORMS_ADMIN_GENERAL_PERMISSIONS-->
+<tr>
+	<td>SITE_ADMIN_CONTENT_KALEO_FORMS_ADMIN_GENERAL_PERMISSIONS_ACCESS_IN_SITE_ADMINISTRATION</td>
+	<td>//input[contains(@value,'KaleoFormsAdminPortletACCESS_IN_CONTROL_PANEL')]</td>
+	<td></td>
+</tr>
 <tr>
 	<td>SITE_ADMIN_CONTENT_KALEO_FORMS_ADMIN_GENERAL_PERMISSIONS_ACTION_CHECKBOX</td>
 	<td>//input[contains(@name,'allRowIds')]</td>

@@ -103,7 +103,7 @@
 
 		<execute function="SelectFrame" locator1="IFrame#MODAL_IFRAME" />
 
-		<execute function="Type#clickAtSendKeys" locator1="TextInput#NAME" value1="Template Edit" />
+		<execute function="Type#clickAtType" locator1="TextInput#NAME" value1="Template Edit" />
 
 		<if>
 			<isset var="templateScript" />
@@ -334,10 +334,10 @@
 		<if>
 			<equals arg1="${scopeSelectionDefault}" arg2="true" />
 			<then>
-				<execute function="AssertTextEquals" locator1="BasePortlet#TITLE" value1="Web Content Display" />
+				<execute function="AssertTextEquals" locator1="Portlet#TITLE" value1="Web Content Display" />
 			</then>
 			<else>
-				<execute function="AssertTextEquals" locator1="BasePortlet#TITLE" value1="Web Content Display (${scopeSelection})" />
+				<execute function="AssertTextEquals" locator1="Portlet#TITLE" value1="Web Content Display (${scopeSelection})" />
 			</else>
 		</if>
 

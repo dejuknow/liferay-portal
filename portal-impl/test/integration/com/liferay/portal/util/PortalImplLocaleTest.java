@@ -80,6 +80,7 @@ public class PortalImplLocaleTest {
 		LanguageResources.getSuperLocale(LocaleUtil.US);
 
 		_group = GroupTestUtil.addGroup();
+
 		_layout = LayoutTestUtil.addLayout(_group);
 
 		List<Locale> availableLocales = Arrays.asList(
@@ -142,7 +143,7 @@ public class PortalImplLocaleTest {
 
 		MockHttpServletRequest mockHttpServletRequest =
 			new MockHttpServletRequest(
-				servletContext, HttpMethods.GET, servletPath+pathInfo);
+				servletContext, HttpMethods.GET, servletPath + pathInfo);
 
 		mockHttpServletRequest.setPathInfo(pathInfo);
 		mockHttpServletRequest.setServletPath(servletPath);

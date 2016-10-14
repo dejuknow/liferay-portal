@@ -25,6 +25,7 @@ import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.expando.kernel.model.ExpandoColumn;
 import com.liferay.expando.kernel.model.ExpandoColumnConstants;
 import com.liferay.expando.kernel.model.ExpandoValue;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -40,7 +41,9 @@ import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.kernel.workflow.WorkflowThreadLocal;
 import com.liferay.portal.service.test.ServiceTestUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portlet.expando.util.test.ExpandoTestUtil;
@@ -52,7 +55,11 @@ import com.liferay.wiki.model.WikiPage;
 import com.liferay.wiki.service.WikiPageLocalServiceUtil;
 import com.liferay.wiki.util.test.WikiTestUtil;
 
+import java.io.Serializable;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -115,8 +122,108 @@ public class WikiPageLocalServiceTest {
 	}
 
 	@Test
+	public void testChangeParentChangesAllWikiPageVersionsParentTitle()
+		throws Exception {
+
+		WikiTestUtil.addPage(
+			TestPropsValues.getUserId(), _group.getGroupId(), _node.getNodeId(),
+			"ParentPage1", true);
+		WikiTestUtil.addPage(
+			TestPropsValues.getUserId(), _group.getGroupId(), _node.getNodeId(),
+			"ParentPage2", true);
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(_group.getGroupId());
+
+		WikiPage childPage = WikiTestUtil.addPage(
+			TestPropsValues.getUserId(), _node.getNodeId(), "ChildPage",
+			RandomTestUtil.randomString(), "ParentPage1", true, serviceContext);
+
+		WikiTestUtil.updatePage(
+			childPage, TestPropsValues.getUserId(), StringUtil.randomString(),
+			serviceContext);
+
+		WikiPageLocalServiceUtil.changeParent(
+			TestPropsValues.getUserId(), _node.getNodeId(),
+			childPage.getTitle(), "ParentPage2", serviceContext);
+
+		List<WikiPage> pages = WikiPageLocalServiceUtil.getPages(
+			childPage.getNodeId(), childPage.getTitle(), QueryUtil.ALL_POS,
+			QueryUtil.ALL_POS);
+
+		Assert.assertEquals(3, pages.size());
+
+		for (WikiPage curWikiPage : pages) {
+			Assert.assertEquals("ParentPage2", curWikiPage.getParentTitle());
+		}
+	}
+
+	@Test
 	public void testChangeParentWithExpando() throws Exception {
 		testChangeParent(true);
+	}
+
+	@Test
+	public void testChangeParentWithWorkflowChangesParentAfterUpdateStatus()
+		throws Exception {
+
+		WikiTestUtil.addPage(
+			TestPropsValues.getUserId(), _group.getGroupId(), _node.getNodeId(),
+			"ParentPage1", true);
+		WikiTestUtil.addPage(
+			TestPropsValues.getUserId(), _group.getGroupId(), _node.getNodeId(),
+			"ParentPage2", true);
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(_group.getGroupId());
+
+		WikiPage childPage = WikiTestUtil.addPage(
+			TestPropsValues.getUserId(), _node.getNodeId(), "ChildPage",
+			RandomTestUtil.randomString(), "ParentPage1", true, serviceContext);
+
+		boolean workflowEnabled = WorkflowThreadLocal.isEnabled();
+
+		try {
+			WorkflowThreadLocal.setEnabled(true);
+
+			serviceContext = (ServiceContext)serviceContext.clone();
+
+			serviceContext.setWorkflowAction(
+				WorkflowConstants.ACTION_SAVE_DRAFT);
+
+			WikiPage pendingChildPage = WikiPageLocalServiceUtil.changeParent(
+				TestPropsValues.getUserId(), _node.getNodeId(),
+				childPage.getTitle(), "ParentPage2", serviceContext);
+
+			childPage = WikiPageLocalServiceUtil.getPage(
+				_node.getNodeId(), childPage.getTitle(), true);
+
+			Assert.assertEquals("ParentPage1", childPage.getParentTitle());
+
+			Map<String, Serializable> workflowContext = new HashMap<>();
+
+			workflowContext.put(
+				WorkflowConstants.CONTEXT_COMMAND, serviceContext.getCommand());
+
+			WikiPageLocalServiceUtil.updateStatus(
+				TestPropsValues.getUserId(), pendingChildPage,
+				WorkflowConstants.STATUS_APPROVED, serviceContext,
+				workflowContext);
+
+			List<WikiPage> pages = WikiPageLocalServiceUtil.getPages(
+				childPage.getNodeId(), childPage.getTitle(), QueryUtil.ALL_POS,
+				QueryUtil.ALL_POS);
+
+			Assert.assertEquals(2, pages.size());
+
+			for (WikiPage curWikiPage : pages) {
+				Assert.assertEquals(
+					"ParentPage2", curWikiPage.getParentTitle());
+			}
+		}
+		finally {
+			WorkflowThreadLocal.setEnabled(workflowEnabled);
+		}
 	}
 
 	@Test
@@ -160,6 +267,34 @@ public class WikiPageLocalServiceTest {
 		WikiPageLocalServiceUtil.deletePage(page);
 
 		WikiPageLocalServiceUtil.getPage(page.getResourcePrimKey());
+	}
+
+	@Test
+	public void testDeleteParentPageWithChangedParentChild() throws Exception {
+		WikiTestUtil.addPage(
+			TestPropsValues.getUserId(), _group.getGroupId(), _node.getNodeId(),
+			"ParentPage1", true);
+		WikiTestUtil.addPage(
+			TestPropsValues.getUserId(), _group.getGroupId(), _node.getNodeId(),
+			"ParentPage2", true);
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(_group.getGroupId());
+
+		WikiPage childPage = WikiTestUtil.addPage(
+			TestPropsValues.getUserId(), _node.getNodeId(), "ChildPage",
+			RandomTestUtil.randomString(), "ParentPage1", true, serviceContext);
+
+		WikiPageLocalServiceUtil.changeParent(
+			TestPropsValues.getUserId(), _node.getNodeId(),
+			childPage.getTitle(), "ParentPage2", serviceContext);
+
+		WikiPageLocalServiceUtil.deletePage(_node.getNodeId(), "ParentPage1");
+
+		childPage = WikiPageLocalServiceUtil.getPage(
+			_node.getNodeId(), childPage.getTitle());
+
+		Assert.assertEquals("ChildPage", childPage.getTitle());
 	}
 
 	@Test

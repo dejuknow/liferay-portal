@@ -454,6 +454,14 @@ CommentSectionDisplayContext commentSectionDisplayContext = CommentDisplayContex
 
 				editorInstance.dispose();
 			}
+
+			<%
+			String messageId = ParamUtil.getString(request, "messageId");
+			%>
+
+			<c:if test="<%= Validator.isNotNull(messageId) %>">
+				<%= randomNamespace %>scrollIntoView(<%= messageId %>);
+			</c:if>
 		</aui:script>
 
 		<aui:script sandbox="<%= true %>">

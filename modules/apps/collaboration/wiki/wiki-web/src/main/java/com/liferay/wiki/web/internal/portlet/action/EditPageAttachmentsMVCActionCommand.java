@@ -274,6 +274,7 @@ public class EditPageAttachmentsMVCActionCommand extends BaseMVCActionCommand {
 						(AntivirusScannerException)e;
 
 					errorMessage = themeDisplay.translate(ase.getMessageKey());
+
 					errorType =
 						ServletResponseConstants.SC_FILE_ANTIVIRUS_EXCEPTION;
 				}
@@ -308,8 +309,8 @@ public class EditPageAttachmentsMVCActionCommand extends BaseMVCActionCommand {
 					}
 
 					errorMessage = themeDisplay.translate(
-						"please-enter-a-file-with-a-valid-file-size-no-larger" +
-							"-than-x",
+						"please-enter-a-file-with-a-valid-file-size-no-" +
+							"larger-than-x",
 						TextFormatter.formatStorageSize(
 							fileMaxSize, themeDisplay.getLocale()));
 

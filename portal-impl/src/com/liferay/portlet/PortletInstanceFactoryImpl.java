@@ -209,6 +209,7 @@ public class PortletInstanceFactoryImpl implements PortletInstanceFactory {
 			portlet, servletContext);
 
 		PortletContext portletContext = portletConfig.getPortletContext();
+
 		boolean checkAuthToken = rootInvokerPortletInstance.isCheckAuthToken();
 		boolean facesPortlet = rootInvokerPortletInstance.isFacesPortlet();
 		boolean strutsPortlet = rootInvokerPortletInstance.isStrutsPortlet();
@@ -280,7 +281,12 @@ public class PortletInstanceFactoryImpl implements PortletInstanceFactory {
 		PortletContext portletContext = portletConfig.getPortletContext();
 
 		InvokerFilterContainer invokerFilterContainer =
-			new InvokerFilterContainerImpl(portlet, portletContext);
+			InvokerFilterContainerImpl.EMPTY_INVOKER_FILTER_CONTAINER;
+
+		if (!portlet.isUndeployedPortlet()) {
+			invokerFilterContainer = new InvokerFilterContainerImpl(
+				portlet, portletContext);
+		}
 
 		InvokerPortlet invokerPortlet = _invokerPortletFactory.create(
 			portlet, portletInstance, portletContext, invokerFilterContainer);

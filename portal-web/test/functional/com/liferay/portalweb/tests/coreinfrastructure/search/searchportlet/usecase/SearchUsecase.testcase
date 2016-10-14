@@ -2,9 +2,6 @@
 	<property name="portal.release" value="true" />
 	<property name="testray.main.component.name" value="Web Search" />
 
-	<var name="searchPageName" value="Search Page" />
-	<var name="searchPortletName" value="Search" />
-
 	<set-up>
 		<execute macro="TestCase#setUpPortalInstance" />
 
@@ -246,8 +243,6 @@
 	</command>
 
 	<command name="SearchEntriesByPortletsAndModifiedRangeFacet" priority="4">
-		<var name="searchTerm"><![CDATA["AssetContent"]]></var>
-
 		<execute macro="Navigator#openURL" />
 
 		<execute macro="ProductMenu#gotoSitesContent">
@@ -284,6 +279,10 @@
 		</execute>
 
 		<execute macro="PortletEntry#publish" />
+
+		<execute macro="Portlet#changeDisplayStyle">
+			<var name="displayStyle" value="Descriptive" />
+		</execute>
 
 		<execute macro="WebContent#viewTitle">
 			<var name="webContentTitle" value="WC WebContent1 Title" />
@@ -358,15 +357,15 @@
 		<execute macro="Navigator#openURL" />
 
 		<execute macro="Page#add">
-			<var name="pageName" value="${searchPageName}" />
+			<var name="pageName" value="Search Page" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${searchPageName}" />
+			<var name="pageName" value="Search Page" />
 		</execute>
 
 		<execute macro="Search#searchPG">
-			<var name="searchTerm" value="${searchTerm}" />
+			<var name="searchTerm"><![CDATA["AssetContent"]]></var>
 		</execute>
 
 		<for list="Blogs Entry1 Title,WC WebContent2 Title,Wiki Page2 Title,DM Document Title" param="searchAssetTitle">
@@ -387,9 +386,7 @@
 			<var name="searchAssetType" value="Wiki Page" />
 		</execute>
 
-		<execute macro="Search#removeFacetValuePG">
-			<var name="searchFacetValue" value="Wiki Page" />
-		</execute>
+		<execute macro="Search#unscopeAssetFacetPG" />
 
 		<execute macro="Search#gotoModifiedRangeFacetPG">
 			<var name="searchModifiedRange" value="Past Month" />
@@ -458,9 +455,7 @@
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
-		<execute macro="Site#addMemberCP">
-			<var name="siteName" value="Site Name" />
-			<var name="siteScopeName" value="Site Name" />
+		<execute macro="Site#assignUserAsMemberCP">
 			<var name="userFirstName" value="userfn1" />
 			<var name="userLastName" value="userln1" />
 			<var name="userScreenName" value="usersn1" />
@@ -572,9 +567,7 @@
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
-		<execute macro="Site#addMemberCP">
-			<var name="siteName" value="Site Name" />
-			<var name="siteScopeName" value="Site Name" />
+		<execute macro="Site#assignUserAsMemberCP">
 			<var name="userFirstName" value="userfn1" />
 			<var name="userLastName" value="userln1" />
 			<var name="userScreenName" value="usersn1" />
@@ -695,9 +688,7 @@
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
-		<execute macro="Site#addMemberCP">
-			<var name="siteName" value="Site Name" />
-			<var name="siteScopeName" value="Site Name" />
+		<execute macro="Site#assignUserAsMemberCP">
 			<var name="userFirstName" value="userfn1" />
 			<var name="userLastName" value="userln1" />
 			<var name="userScreenName" value="usersn1" />
@@ -820,9 +811,7 @@
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
-		<execute macro="Site#addMemberCP">
-			<var name="siteName" value="Site Name" />
-			<var name="siteScopeName" value="Site Name" />
+		<execute macro="Site#assignUserAsMemberCP">
 			<var name="userFirstName" value="userfn1" />
 			<var name="userLastName" value="userln1" />
 			<var name="userScreenName" value="usersn1" />
@@ -936,15 +925,15 @@
 		<execute macro="Navigator#openURL" />
 
 		<execute macro="Page#add">
-			<var name="pageName" value="${searchPageName}" />
+			<var name="pageName" value="Search Page" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${searchPageName}" />
+			<var name="pageName" value="Search Page" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${searchPageName}" />
+			<var name="pageName" value="Search Page" />
 		</execute>
 
 		<execute macro="Search#searchPG">

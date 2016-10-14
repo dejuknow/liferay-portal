@@ -1,7 +1,7 @@
 # Lang Builder Gradle Plugin
 
-The Lang Builder Gradle plugin allows you to run the Liferay Lang Builder tool
-in order to sort and translate the language keys in your project.
+The Lang Builder Gradle plugin lets you run the [Liferay Lang Builder](https://github.com/liferay/liferay-portal/tree/master/modules/util/lang-builder)
+tool in order to sort and translate the language keys in your project.
 
 ## Usage
 
@@ -98,6 +98,6 @@ manually adding a dependency to the `langBuilder` configuration:
 
 ```gradle
 dependencies {
-	langBuilder group: "com.liferay", name: "com.liferay.lang.builder", version: "1.0.9"
+	langBuilder group: "com.liferay", name: "com.liferay.lang.builder", version: "1.0.10"
 }
 ```

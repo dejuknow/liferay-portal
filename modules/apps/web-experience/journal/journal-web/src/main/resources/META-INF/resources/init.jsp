@@ -59,7 +59,6 @@ page import="com.liferay.item.selector.ItemSelector" %><%@
 page import="com.liferay.item.selector.ItemSelectorReturnType" %><%@
 page import="com.liferay.item.selector.criteria.UUIDItemSelectorReturnType" %><%@
 page import="com.liferay.journal.configuration.JournalGroupServiceConfiguration" %><%@
-page import="com.liferay.journal.configuration.JournalServiceConfigurationValues" %><%@
 page import="com.liferay.journal.constants.JournalConstants" %><%@
 page import="com.liferay.journal.constants.JournalPortletKeys" %><%@
 page import="com.liferay.journal.constants.JournalWebKeys" %><%@
@@ -178,7 +177,6 @@ page import="com.liferay.trash.kernel.util.TrashUtil" %>
 <%@ page import="java.text.Format" %>
 
 <%@ page import="java.util.ArrayList" %><%@
-page import="java.util.Arrays" %><%@
 page import="java.util.Collections" %><%@
 page import="java.util.Date" %><%@
 page import="java.util.HashMap" %><%@

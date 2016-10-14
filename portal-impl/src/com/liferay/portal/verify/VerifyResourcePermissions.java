@@ -116,7 +116,9 @@ public class VerifyResourcePermissions extends VerifyProcess {
 			long ownerId, int cur, int total)
 		throws Exception {
 
-		if (_log.isInfoEnabled() && ((cur % 100) == 0)) {
+		if (_log.isInfoEnabled() && (((cur + 1) % 100) == 0)) {
+			cur++;
+
 			_log.info(
 				"Processed " + cur + " of " + total + " resource permissions " +
 					"for company = " + companyId + " and model " + modelName);
@@ -181,41 +183,44 @@ public class VerifyResourcePermissions extends VerifyProcess {
 		try (LoggingTimer loggingTimer = new LoggingTimer(
 				verifiableResourcedModel.getTableName());
 			Connection con = DataAccess.getUpgradeOptimizedConnection();
-			PreparedStatement ps1 = con.prepareStatement(
+			PreparedStatement ps = con.prepareStatement(
 				"select count(*) from " +
 					verifiableResourcedModel.getTableName() +
 						" where companyId = " + role.getCompanyId());
-			ResultSet rs1 = ps1.executeQuery()) {
+			ResultSet rs = ps.executeQuery()) {
 
-			if (rs1.next()) {
-				total = rs1.getInt(1);
+			if (rs.next()) {
+				total = rs.getInt(1);
 			}
+		}
 
-			StringBundler sb = new StringBundler(8);
+		StringBundler sb = new StringBundler(8);
 
-			sb.append("select ");
-			sb.append(verifiableResourcedModel.getPrimaryKeyColumnName());
-			sb.append(", ");
-			sb.append(verifiableResourcedModel.getUserIdColumnName());
-			sb.append(" from ");
-			sb.append(verifiableResourcedModel.getTableName());
-			sb.append(" where companyId = ");
-			sb.append(role.getCompanyId());
+		sb.append("select ");
+		sb.append(verifiableResourcedModel.getPrimaryKeyColumnName());
+		sb.append(", ");
+		sb.append(verifiableResourcedModel.getUserIdColumnName());
+		sb.append(" from ");
+		sb.append(verifiableResourcedModel.getTableName());
+		sb.append(" where companyId = ");
+		sb.append(role.getCompanyId());
 
-			try (PreparedStatement ps2 = con.prepareStatement(sb.toString());
-				ResultSet rs2 = ps2.executeQuery()) {
+		try (LoggingTimer loggingTimer = new LoggingTimer(
+				verifiableResourcedModel.getTableName());
+			Connection con = DataAccess.getUpgradeOptimizedConnection();
+			PreparedStatement ps = con.prepareStatement(sb.toString());
+			ResultSet rs = ps.executeQuery()) {
 
-				for (int i = 0; rs2.next(); i++) {
-					long primKey = rs2.getLong(
-						verifiableResourcedModel.getPrimaryKeyColumnName());
-					long userId = rs2.getLong(
-						verifiableResourcedModel.getUserIdColumnName());
+			for (int i = 0; rs.next(); i++) {
+				long primKey = rs.getLong(
+					verifiableResourcedModel.getPrimaryKeyColumnName());
+				long userId = rs.getLong(
+					verifiableResourcedModel.getUserIdColumnName());
 
-					verifyResourcedModel(
-						role.getCompanyId(),
-						verifiableResourcedModel.getModelName(), primKey, role,
-						userId, i, total);
-				}
+				verifyResourcedModel(
+					role.getCompanyId(),
+					verifiableResourcedModel.getModelName(), primKey, role,
+					userId, i, total);
 			}
 		}
 	}

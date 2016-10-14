@@ -1251,6 +1251,11 @@
 			var dialog = event.dialog;
 
 			iframeBody.addClass('dialog-iframe-popup');
+
+			if (iframeBody.one('.lfr-form-content') && iframeBody.one('.button-holder.dialog-footer')) {
+				iframeBody.addClass('dialog-with-footer');
+			}
+
 			iframeBody.addClass(dialog.iframeConfig.bodyCssClass);
 
 			var detachEventHandles = function() {
@@ -1841,6 +1846,7 @@
 		DROP_POSITION: 450,
 		MENU: 5000,
 		OVERLAY: 1000,
+		POPOVER: 1060,
 		TOOLTIP: 10000,
 		WINDOW: 1200
 	};

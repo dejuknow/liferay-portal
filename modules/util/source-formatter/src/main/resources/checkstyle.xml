@@ -10,6 +10,9 @@
 		<module name="AvoidStarImport" />
 		<module name="DefaultComesLast" />
 		<module name="GenericWhitespace" />
+		<module name="JavadocStyle">
+			<property name="checkFirstSentence" value="false" />
+		</module>
 		<module name="LocalFinalVariableName">
 			<property name="format" value="^[a-z0-9][_a-zA-Z0-9]*$" />
 			<message key="name.invalidPattern" value="Local final variable ''{0}'' must match pattern ''{1}''" />
@@ -31,10 +34,13 @@
 			<message key="name.invalidPattern" value="Private non-static field ''{0}'' must match pattern ''{1}''" />
 		</module>
 		<module name="MethodParamPad" />
+		<module name="MissingDeprecated" />
 		<module name="ModifierOrder" />
 		<module name="MultipleVariableDeclarations" />
 		<module name="NoLineWrap" />
-		<module name="NoWhitespaceAfter" />
+		<module name="NoWhitespaceAfter">
+			<property name="tokens" value="ARRAY_DECLARATOR, ARRAY_INIT, BNOT, DEC, DOT, INC, INDEX_OP, LNOT, TYPECAST, UNARY_MINUS, UNARY_PLUS" />
+		</module>
 		<module name="NoWhitespaceBefore" />
 		<module name="OneStatementPerLine" />
 		<module name="PackageName" />
@@ -60,40 +66,86 @@
 			<message key="name.invalidPattern" value="Class, interface, enum or annotation ''{0}'' must match pattern ''{1}''" />
 		</module>
 		<module name="UpperEll" />
+		<module name="WhitespaceAfter">
+			<property name="tokens" value="COMMA, SEMI" />
+		</module>
+		<module name="WhitespaceAround">
+			<property name="allowEmptyTypes" value="true" />
+		</module>
 
 		<!-- Custom checks -->
 
+		<module name="com.liferay.source.formatter.checkstyle.checks.AnnotationParameterOrder">
+			<message key="annotation.unsortedParameter" value="Annotation parameter ''{0}'' is not sorted alphabetically" />
+		</module>
+		<module name="com.liferay.source.formatter.checkstyle.checks.Chaining">
+			<property name="chainingAllowedFormat" value="(^|.*\.)(bind|stream)\..*" />
+			<message key="chaining.avoid" value="Avoid chaining on method ''{0}'" />
+			<message key="chaining.avoid.multiple" value="Avoid multiple chaining on method ''{0}'" />
+			<message key="concat.avoid.too.many" value="Use StringBundler instead of chaining concat when there is more than 3 parts" />
+		</module>
 		<module name="com.liferay.source.formatter.checkstyle.checks.ConstantName">
 			<message key="name.invalidPrivatePattern" value="Private constant ''{0}'' must match pattern ''{1}''" />
 			<message key="name.invalidProtectedPublicPattern" value="Protected or public constant ''{0}'' must match pattern ''{1}''" />
 			<message key="name.collectionPrivatePattern" value="Private collection ''{0}'' must match pattern ''{1}''" />
 			<message key="name.collectionProtectedPublicPattern" value="Protected or public collection ''{0}'' must match pattern ''{1}''" />
 		</module>
-		<module name="com.liferay.source.formatter.checkstyle.checks.LocalPatternCheck">
+		<module name="com.liferay.source.formatter.checkstyle.checks.Javadoc">
+			<message key="javadoc.empty.line" value="First or last line in javadoc should not be empty" />
+			<message key="javadoc.incorrect.first.line" value="Javadoc should start with ''/**''" />
+			<message key="javadoc.incorrect.last.line" value="Javadoc should end with ''*/''" />
+			<message key="javadoc.multiple" value="''{0}'' has multiple javadocs" />
+		</module>
+		<module name="com.liferay.source.formatter.checkstyle.checks.LocalPattern">
 			<message key="pattern.local" value="Create a global variable for Pattern ''{0}''" />
 		</module>
-		<module name="com.liferay.source.formatter.checkstyle.checks.LPS42924Check">
+		<module name="com.liferay.source.formatter.checkstyle.checks.LPS42924">
 			<message key="lps42924" value="Use ''classNameLocalService.getClassNameId'' instead of ''PortalUtil.getClassName''" />
 		</module>
-		<module name="com.liferay.source.formatter.checkstyle.checks.MethodNameCheck">
+		<module name="com.liferay.source.formatter.checkstyle.checks.MethodName">
 			<property name="applyToPackage" value="false" />
 			<property name="applyToPrivate" value="false" />
 			<property name="format" value="^[a-z0-9][_a-zA-Z0-9]*$" />
 			<message key="name.invalidPattern" value="Protected or public method ''{0}'' must match pattern ''{1}''" />
 		</module>
-		<module name="com.liferay.source.formatter.checkstyle.checks.MethodNameCheck">
+		<module name="com.liferay.source.formatter.checkstyle.checks.MethodName">
 			<property name="applyToProtected" value="false" />
 			<property name="applyToPublic" value="false" />
+			<property name="checkDoMethodName" value="true" />
 			<property name="format" value="^_[a-z0-9][_a-zA-Z0-9]*$|readObject|writeObject" />
+			<message key="method.rename" value="Rename method ''{0}'' to ''{1}''" />
 			<message key="name.invalidPattern" value="Private method ''{0}'' must match pattern ''{1}''" />
 		</module>
-		<module name="com.liferay.source.formatter.checkstyle.checks.MissingModifierCheck">
+		<module name="com.liferay.source.formatter.checkstyle.checks.MissingAuthor">
+			<message key="author.missing" value="Missing author" />
+		</module>
+		<module name="com.liferay.source.formatter.checkstyle.checks.MissingEmptyLine">
+			<message key="empty.line.missing.after.variable.reference" value="There should be an empty line before line ''{0}'', as we finished referencing variable ''{1}''" />
+			<message key="empty.line.missing.before.variable.use" value="There should be an empty line between assigning and using variable ''{0}''" />
+		</module>
+		<module name="com.liferay.source.formatter.checkstyle.checks.MissingModifier">
 			<message key="modifier.missing" value="Missing modifier for ''{0}''" />
 		</module>
-		<module name="com.liferay.source.formatter.checkstyle.checks.UnusedParameterCheck">
+		<module name="com.liferay.source.formatter.checkstyle.checks.NotRequireThis">
+			<message key="variable.not.require.this" value="Reference to variable ''{0}'' does not need ''.this''" />
+		</module>
+		<module name="com.liferay.source.formatter.checkstyle.checks.PlusStatement">
+			<property name="maxLineLength" value="80" />
+			<message key="end.character.invalid" value="When concatenating multiple literal strings using '+', only the last literal string can end with ''{0}''" />
+			<message key="literal.string.combine" value="Combine the literal strings ''{0}'' and ''{1}''" />
+			<message key="literal.string.move" value="Add the string ''{0}'' to the previous literal string" />
+			<message key="plus.statement.too.long" value="Use StringBuilder/StringBundler instead of concatenating over more than 3 lines" />
+			<message key="start.character.invalid" value="When concatenating multiple literal strings using '+', only the first literal string can start with ''{0}''" />
+		</module>
+		<module name="com.liferay.source.formatter.checkstyle.checks.Subname">
+			<message key="method.invalidName" value="'sub' should be followed by a lowercase character for method ''{0}''" />
+			<message key="parameter.invalidName" value="'sub' should be followed by a lowercase character for parameter ''{0}''" />
+			<message key="variable.invalidName" value="'sub' should be followed by a lowercase character for variable ''{0}''" />
+		</module>
+		<module name="com.liferay.source.formatter.checkstyle.checks.UnusedParameter">
 			<message key="parameter.unused" value="Parameter ''{0}'' is unused" />
 		</module>
-		<module name="com.liferay.source.formatter.checkstyle.checks.ValidatorIsNullCheck">
+		<module name="com.liferay.source.formatter.checkstyle.checks.ValidatorIsNull">
 			<message key="method.invalidName" value="Avoid using method ''{0}''" />
 		</module>
 	</module>

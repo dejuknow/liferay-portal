@@ -24,8 +24,10 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * @author Daniel Kocsis
+ * @author     Daniel Kocsis
+ * @deprecated As of 7.0.0
  */
+@Deprecated
 public class StagedGroupImpl extends GroupImpl implements StagedGroup {
 
 	public StagedGroupImpl(Group group) {

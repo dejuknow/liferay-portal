@@ -413,10 +413,9 @@
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
-		<execute macro="Site#assignRoleCP">
-			<var name="userLoginEmailAddress" value="${adminEmailAddress}" />
-			<var name="userMiddleName" value="${userMiddleName}" />
-			<var name="userScreenName" value="${userScreenName}" />
+		<execute macro="Site#assignSiteRoleCP">
+			<var name="resourceName" value="${userFirstName} ${userLastName}" />
+			<var name="roleName" value="${roleName}" />
 		</execute>
 
 		<execute macro="User#logoutAndLoginPG">
@@ -1042,10 +1041,9 @@
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
-		<execute macro="Site#assignRoleCP">
-			<var name="userLoginEmailAddress" value="${adminEmailAddress}" />
-			<var name="userMiddleName" value="${userMiddleName}" />
-			<var name="userScreenName" value="${userScreenName}" />
+		<execute macro="Site#assignSiteRoleCP">
+			<var name="resourceName" value="${userFirstName} ${userLastName}" />
+			<var name="roleName" value="${roleName}" />
 		</execute>
 
 		<execute macro="User#logoutAndLoginPG">
@@ -1465,10 +1463,9 @@
 			<var name="portlet" value="Site Memberships" />
 		</execute>
 
-		<execute macro="Site#assignRoleCP">
-			<var name="userLoginEmailAddress" value="${adminEmailAddress}" />
-			<var name="userMiddleName" value="${userMiddleName}" />
-			<var name="userScreenName" value="${userScreenName}" />
+		<execute macro="Site#assignSiteRoleCP">
+			<var name="resourceName" value="${userFirstName} ${userLastName}" />
+			<var name="roleName" value="${roleName" />
 		</execute>
 
 		<execute macro="User#logoutAndLoginPG">
@@ -1641,10 +1638,7 @@
 		<execute macro="Gmail#viewMail">
 			<var name="emailFromUserName" value="Joe Bloggs" />
 			<var name="gmailAssetType" value="Blogs" />
-			<var name="gmailMailTableMessageTitle" value="New Blogs Post" />
 			<var name="gmailMessageBody" value="${adminName} created a new blog entry." />
-			<var name="gmailMessageBodyClosing" value="Sincerely" />
-			<var name="gmailMessageBodyGreeting" value="Dear ${userName}" />
 			<var name="gmailMessageTitle" value="New Blogs Post by ${adminName}" />
 		</execute>
 
@@ -1756,10 +1750,7 @@
 		<execute macro="Gmail#viewMail">
 			<var name="emailFromUserName" value="Joe Bloggs" />
 			<var name="gmailAssetType" value="Inappropriate Content Flagged" />
-			<var name="gmailMailTableMessageTitle" value="Inappropriate Content Flagged in ${siteName}" />
 			<var name="gmailMessageBody" value="You are receiving this email because you are administrator of ${siteName}. Please review the content in this site." />
-			<var name="gmailMessageBodyClosing" value="Sincerely" />
-			<var name="gmailMessageBodyGreeting" value="Dear {adminName}," />
 			<var name="gmailMessageTitle" value="Inappropriate Content Flagged in ${siteName}" />
 		</execute>
 

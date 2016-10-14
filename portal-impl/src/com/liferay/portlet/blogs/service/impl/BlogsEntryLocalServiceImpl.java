@@ -38,18 +38,21 @@ import java.util.Map;
  * Provides the local service for accessing, adding, checking, deleting,
  * subscription handling of, trash handling of, and updating blog entries.
  *
- * @author Brian Wing Shun Chan
- * @author Wilson S. Man
- * @author Raymond Augé
- * @author Thiago Moreira
- * @author Juan Fernández
- * @author Zsolt Berentey
+ * @author     Brian Wing Shun Chan
+ * @author     Wilson S. Man
+ * @author     Raymond Augé
+ * @author     Thiago Moreira
+ * @author     Juan Fernández
+ * @author     Zsolt Berentey
  * @deprecated As of 7.0.0, replaced by {@link
  *             com.liferay.blogs.service.impl.BlogsEntryLocalServiceImpl}
  */
 @Deprecated
 public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public Folder addAttachmentsFolder(long userId, long groupId)
 		throws PortalException {
@@ -59,6 +62,9 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryLocalServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public void addCoverImage(long entryId, ImageSelector imageSelector)
 		throws PortalException {
@@ -68,6 +74,9 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryLocalServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public BlogsEntry addEntry(
 			long userId, String title, String content, Date displayDate,
@@ -79,6 +88,9 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryLocalServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public BlogsEntry addEntry(
 			long userId, String title, String content,
@@ -91,6 +103,7 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 	}
 
 	/**
+	 * @throws     PortalException
 	 * @deprecated As of 7.0.0, replaced by {@link #addEntry(long, String,
 	 *             String, String, String, int, int, int, int, int, boolean,
 	 *             boolean, String[], String, ImageSelector, ImageSelector,
@@ -112,6 +125,9 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryLocalServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public BlogsEntry addEntry(
@@ -128,6 +144,9 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryLocalServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public BlogsEntry addEntry(
 			long userId, String title, String subtitle, String description,
@@ -145,6 +164,9 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryLocalServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public void addEntryResources(
 			BlogsEntry entry, boolean addGroupPermissions,
@@ -156,6 +178,9 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryLocalServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public void addEntryResources(
 			BlogsEntry entry, ModelPermissions modelPermissions)
@@ -166,6 +191,9 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryLocalServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public void addEntryResources(
 			long entryId, boolean addGroupPermissions,
@@ -177,6 +205,9 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryLocalServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public void addEntryResources(
 			long entryId, ModelPermissions modelPermissions)
@@ -187,6 +218,9 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryLocalServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public long addOriginalImageFileEntry(
 			long userId, long groupId, long entryId,
@@ -198,6 +232,9 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryLocalServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public void addSmallImage(long entryId, ImageSelector imageSelector)
 		throws PortalException {
@@ -207,6 +244,9 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryLocalServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public void checkEntries() throws PortalException {
 		throw new UnsupportedOperationException(
@@ -214,6 +254,9 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryLocalServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public void deleteEntries(long groupId) throws PortalException {
 		throw new UnsupportedOperationException(
@@ -221,6 +264,9 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryLocalServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
 	@SystemEvent(type = SystemEventConstants.TYPE_DELETE)
@@ -230,6 +276,9 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryLocalServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public void deleteEntry(long entryId) throws PortalException {
 		throw new UnsupportedOperationException(
@@ -264,6 +313,9 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryLocalServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public BlogsEntry[] getEntriesPrevAndNext(long entryId)
 		throws PortalException {
@@ -273,6 +325,9 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryLocalServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public BlogsEntry getEntry(long entryId) throws PortalException {
 		throw new UnsupportedOperationException(
@@ -280,6 +335,9 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryLocalServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public BlogsEntry getEntry(long groupId, String urlTitle)
 		throws PortalException {
@@ -384,6 +442,9 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryLocalServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public void moveEntriesToTrash(long groupId, long userId)
 		throws PortalException {
@@ -400,6 +461,7 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 	 * @param  userId the primary key of the user moving the blogs entry
 	 * @param  entry the blogs entry to be moved
 	 * @return the moved blogs entry
+	 * @throws PortalException
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
@@ -417,6 +479,7 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 	 * @param  userId the primary key of the user moving the blogs entry
 	 * @param  entryId the primary key of the blogs entry to be moved
 	 * @return the moved blogs entry
+	 * @throws PortalException
 	 */
 	@Override
 	public BlogsEntry moveEntryToTrash(long userId, long entryId)
@@ -434,6 +497,7 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 	 * @param  userId the primary key of the user restoring the blogs entry
 	 * @param  entryId the primary key of the blogs entry to be restored
 	 * @return the restored blogs entry from the recycle bin
+	 * @throws PortalException
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
@@ -445,6 +509,9 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryLocalServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public void subscribe(long userId, long groupId) throws PortalException {
 		throw new UnsupportedOperationException(
@@ -452,6 +519,9 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryLocalServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public void unsubscribe(long userId, long groupId) throws PortalException {
 		throw new UnsupportedOperationException(
@@ -459,6 +529,9 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryLocalServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public void updateAsset(
 			long userId, BlogsEntry entry, long[] assetCategoryIds,
@@ -470,6 +543,9 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryLocalServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public BlogsEntry updateEntry(
 			long userId, long entryId, String title, String content,
@@ -482,6 +558,7 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 	}
 
 	/**
+	 * @throws     PortalException
 	 * @deprecated As of 7.0.0, replaced by {@link #updateEntry(long, long,
 	 *             String, String, String, String, int, int, int, int, int,
 	 *             boolean, boolean, String[], String, ImageSelector,
@@ -504,6 +581,9 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryLocalServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public BlogsEntry updateEntry(
@@ -521,6 +601,9 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryLocalServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public BlogsEntry updateEntry(
 			long userId, long entryId, String title, String subtitle,
@@ -538,6 +621,9 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryLocalServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public void updateEntryResources(
 			BlogsEntry entry, ModelPermissions modelPermissions)
@@ -548,6 +634,9 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryLocalServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public void updateEntryResources(
 			BlogsEntry entry, String[] groupPermissions,
@@ -560,6 +649,7 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 	}
 
 	/**
+	 * @throws     PortalException
 	 * @deprecated As of 7.0.0, replaced by {@link #updateStatus(long, long,
 	 *             int, ServiceContext, Map)}
 	 */
@@ -575,6 +665,9 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 				"com.liferay.blogs.service.impl.BlogsEntryLocalServiceImpl");
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public BlogsEntry updateStatus(

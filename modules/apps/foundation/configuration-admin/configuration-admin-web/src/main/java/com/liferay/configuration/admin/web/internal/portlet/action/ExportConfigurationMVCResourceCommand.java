@@ -19,6 +19,7 @@ import com.liferay.configuration.admin.web.internal.model.ConfigurationModel;
 import com.liferay.configuration.admin.web.internal.util.AttributeDefinitionUtil;
 import com.liferay.configuration.admin.web.internal.util.ConfigurationModelRetriever;
 import com.liferay.portal.configuration.metatype.definitions.ExtendedAttributeDefinition;
+import com.liferay.portal.configuration.metatype.definitions.ExtendedObjectClassDefinition;
 import com.liferay.portal.kernel.portlet.PortletResponseUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCResourceCommand;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -124,6 +125,7 @@ public class ExportConfigurationMVCResourceCommand
 
 				for (ConfigurationModel factoryInstance : factoryInstances) {
 					String curPid = factoryInstance.getID();
+
 					String curFileName = getFileName(curFactoryPid, curPid);
 
 					zipWriter.addEntry(
@@ -134,6 +136,7 @@ public class ExportConfigurationMVCResourceCommand
 			}
 			else if (configurationModel.hasConfiguration()) {
 				String curPid = configurationModel.getID();
+
 				String curFileName = getFileName(null, curPid);
 
 				zipWriter.addEntry(
@@ -176,6 +179,7 @@ public class ExportConfigurationMVCResourceCommand
 
 		for (ConfigurationModel factoryInstance : factoryInstances) {
 			String curPid = factoryInstance.getID();
+
 			String curFileName = getFileName(null, curPid);
 
 			zipWriter.addEntry(
@@ -251,8 +255,12 @@ public class ExportConfigurationMVCResourceCommand
 			return properties;
 		}
 
+		ExtendedObjectClassDefinition extendedObjectClassDefinition =
+			configurationModel.getExtendedObjectClassDefinition();
+
 		ExtendedAttributeDefinition[] attributeDefinitions =
-			configurationModel.getAttributeDefinitions(ConfigurationModel.ALL);
+			extendedObjectClassDefinition.getAttributeDefinitions(
+				ConfigurationModel.ALL);
 
 		for (AttributeDefinition attributeDefinition : attributeDefinitions) {
 			String[] values = AttributeDefinitionUtil.getProperty(

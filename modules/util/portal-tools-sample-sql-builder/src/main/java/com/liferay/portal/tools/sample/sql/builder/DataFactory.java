@@ -890,6 +890,7 @@ public class DataFactory {
 		sb.append("</name></root>");
 
 		_defaultDLFileEntryTypeModel.setName(sb.toString());
+
 		_defaultDLFileEntryTypeModel.setLastPublishDate(nextFutureDate());
 
 		_defaultDLDDMStructureModel = newDDMStructureModel(
@@ -1245,6 +1246,7 @@ public class DataFactory {
 			userModel.getLastName());
 
 		contactModel.setUserName(fullName);
+
 		contactModel.setCreateDate(new Date());
 		contactModel.setModifiedDate(new Date());
 		contactModel.setClassNameId(getClassNameId(User.class));
@@ -1870,6 +1872,7 @@ public class DataFactory {
 			typeSettingsProperties.toString(), '\n', "\\n");
 
 		layoutModel.setTypeSettings(typeSettings);
+
 		layoutModel.setLastPublishDate(new Date());
 
 		return layoutModel;
@@ -2427,7 +2430,7 @@ public class DataFactory {
 		return newSocialActivityModel(
 			blogsEntryModel.getGroupId(), getClassNameId(BlogsEntry.class),
 			blogsEntryModel.getEntryId(), BlogsActivityKeys.ADD_ENTRY,
-			"{\"title\":\""+ blogsEntryModel.getTitle() +"\"}");
+			"{\"title\":\"" + blogsEntryModel.getTitle() + "\"}");
 	}
 
 	public SocialActivityModel newSocialActivityModel(
@@ -2454,7 +2457,7 @@ public class DataFactory {
 			journalArticleModel.getGroupId(),
 			getClassNameId(JournalArticle.class),
 			journalArticleModel.getResourcePrimKey(), type,
-			"{\"title\":\""+ journalArticleModel.getUrlTitle() +"\"}");
+			"{\"title\":\"" + journalArticleModel.getUrlTitle() + "\"}");
 	}
 
 	public SocialActivityModel newSocialActivityModel(
@@ -2519,6 +2522,7 @@ public class DataFactory {
 
 		for (int i = 0; i < _maxUserCount; i++) {
 			String[] userName = nextUserName(i);
+
 			userModels.add(
 				newUserModel(
 					_counter.get(), userName[0], userName[1],

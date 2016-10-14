@@ -764,6 +764,7 @@ public class UIItemsBuilder {
 
 			_fileEntryDisplayContextHelper = new FileEntryDisplayContextHelper(
 				_themeDisplay.getPermissionChecker(), _fileEntry);
+
 			_fileVersionDisplayContextHelper =
 				new FileVersionDisplayContextHelper(fileVersion);
 		}
@@ -833,7 +834,7 @@ public class UIItemsBuilder {
 	}
 
 	private LiferayPortletRequest _getLiferayPortletRequest() {
-		PortletRequest portletRequest = (PortletRequest) _request.getAttribute(
+		PortletRequest portletRequest = (PortletRequest)_request.getAttribute(
 			JavaConstants.JAVAX_PORTLET_REQUEST);
 
 		return PortalUtil.getLiferayPortletRequest(portletRequest);
@@ -841,7 +842,7 @@ public class UIItemsBuilder {
 
 	private LiferayPortletResponse _getLiferayPortletResponse() {
 		PortletResponse portletResponse =
-			(PortletResponse) _request.getAttribute(
+			(PortletResponse)_request.getAttribute(
 				JavaConstants.JAVAX_PORTLET_RESPONSE);
 
 		return PortalUtil.getLiferayPortletResponse(portletResponse);

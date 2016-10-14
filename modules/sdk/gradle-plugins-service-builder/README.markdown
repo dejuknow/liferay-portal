@@ -11,7 +11,7 @@ To use the plugin, include it in your build script:
 ```gradle
 buildscript {
 	dependencies {
-		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.service.builder", version: "1.0.10"
+		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.service.builder", version: "1.0.13"
 	}
 
 	repositories {
@@ -27,9 +27,10 @@ apply plugin: "com.liferay.portal.tools.service.builder"
 The Service Builder plugin automatically applies the [`java`](https://docs.gradle.org/current/userguide/java_plugin.html)
 plugin.
 
-Since the plugin automatically resolves the Liferay Service Builder library as a
-dependency, you have to configure a repository that hosts the library
-and its transitive dependencies. The Liferay CDN repository hosts them all:
+Since the plugin automatically resolves the [Liferay Service Builder](https://github.com/liferay/liferay-portal/tree/master/modules/util/portal-tools-service-builder)
+library as a dependency, you have to configure a repository that hosts the
+library and its transitive dependencies. The Liferay CDN repository hosts them
+all:
 
 ```gradle
 repositories {
@@ -143,6 +144,6 @@ manually adding a dependency to the `serviceBuilder` configuration:
 
 ```gradle
 dependencies {
-	serviceBuilder group: "com.liferay", name: "com.liferay.portal.tools.service.builder", version: "1.0.123"
+	serviceBuilder group: "com.liferay", name: "com.liferay.portal.tools.service.builder", version: "1.0.128"
 }
 ```

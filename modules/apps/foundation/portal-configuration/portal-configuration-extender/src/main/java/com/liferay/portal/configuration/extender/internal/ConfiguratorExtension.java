@@ -20,6 +20,7 @@ import com.liferay.portal.configuration.extender.FactoryConfigurationDescription
 import com.liferay.portal.configuration.extender.NamedConfigurationContent;
 import com.liferay.portal.configuration.extender.SingleConfigurationDescription;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Supplier;
 
 import java.io.IOException;
@@ -136,7 +137,8 @@ public class ConfiguratorExtension implements Extension {
 		}
 
 		Configuration configuration =
-			_configurationAdmin.createFactoryConfiguration(factoryPid, null);
+			_configurationAdmin.createFactoryConfiguration(
+				factoryPid, StringPool.QUESTION);
 
 		Dictionary<String, Object> properties = null;
 
@@ -150,8 +152,7 @@ public class ConfiguratorExtension implements Extension {
 			_logger.log(
 				Logger.LOG_WARNING,
 				"Supplier from factory configuration description " +
-					factoryConfigurationDescription + " threw an " +
-						"exception: ",
+					factoryConfigurationDescription + " threw an exception: ",
 				t);
 
 			return;
@@ -172,7 +173,7 @@ public class ConfiguratorExtension implements Extension {
 		}
 
 		Configuration configuration = _configurationAdmin.getConfiguration(
-			pid, null);
+			pid, StringPool.QUESTION);
 
 		Dictionary<String, Object> properties = null;
 
@@ -185,8 +186,8 @@ public class ConfiguratorExtension implements Extension {
 		catch (Throwable t) {
 			_logger.log(
 				Logger.LOG_WARNING,
-				"Supplier from description " + description + " threw " +
-					" an exception: ",
+				"Supplier from description " + description + " threw an " +
+					"exception: ",
 				t);
 
 			return;

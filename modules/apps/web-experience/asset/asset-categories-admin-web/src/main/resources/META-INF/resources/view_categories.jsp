@@ -26,7 +26,10 @@ AssetCategoryUtil.addPortletBreadcrumbEntry(assetCategoriesDisplayContext.getVoc
 %>
 
 <aui:nav-bar cssClass="collapse-basic-search" markupView="lexicon">
-	<portlet:renderURL var="mainURL" />
+	<portlet:renderURL var="mainURL">
+		<portlet:param name="mvcPath" value="/view_categories.jsp" />
+		<portlet:param name="vocabularyId" value="<%= String.valueOf(assetCategoriesDisplayContext.getVocabularyId()) %>" />
+	</portlet:renderURL>
 
 	<aui:nav cssClass="navbar-nav">
 		<aui:nav-item href="<%= mainURL.toString() %>" label="categories" selected="<%= true %>" />
@@ -112,6 +115,10 @@ AssetCategoryUtil.addPortletBreadcrumbEntry(assetCategoriesDisplayContext.getVoc
 				<portlet:param name="vocabularyId" value="<%= String.valueOf(curCategory.getVocabularyId()) %>" />
 			</portlet:renderURL>
 
+			<%
+			int subcategoriesCount = AssetCategoryLocalServiceUtil.getChildCategoriesCount(curCategory.getCategoryId());
+			%>
+
 			<c:choose>
 				<c:when test='<%= Objects.equals(assetCategoriesDisplayContext.getDisplayStyle(), "descriptive") %>'>
 					<liferay-ui:search-container-column-icon
@@ -132,6 +139,10 @@ AssetCategoryUtil.addPortletBreadcrumbEntry(assetCategoriesDisplayContext.getVoc
 
 						<h6 class="text-default">
 							<%= HtmlUtil.escape(curCategory.getDescription(locale)) %>
+						</h6>
+
+						<h6 class="text-default">
+							<liferay-ui:message arguments="<%= subcategoriesCount %>" key="x-subcategories" />
 						</h6>
 					</liferay-ui:search-container-column-text>
 
@@ -159,6 +170,10 @@ AssetCategoryUtil.addPortletBreadcrumbEntry(assetCategoriesDisplayContext.getVoc
 							<liferay-frontend:vertical-card-header>
 								<liferay-ui:message arguments="<%= LanguageUtil.getTimeDescription(request, System.currentTimeMillis() - curCategory.getCreateDate().getTime(), true) %>" key="x-ago" translateArguments="<%= false %>" />
 							</liferay-frontend:vertical-card-header>
+
+							<liferay-frontend:vertical-card-footer>
+								<liferay-ui:message arguments="<%= subcategoriesCount %>" key="x-subcategories" />
+							</liferay-frontend:vertical-card-footer>
 						</liferay-frontend:icon-vertical-card>
 					</liferay-ui:search-container-column-text>
 				</c:when>
@@ -174,6 +189,12 @@ AssetCategoryUtil.addPortletBreadcrumbEntry(assetCategoriesDisplayContext.getVoc
 						cssClass="table-cell-content"
 						name="description"
 						value="<%= HtmlUtil.escape(curCategory.getDescription(locale)) %>"
+					/>
+
+					<liferay-ui:search-container-column-text
+						cssClass="table-cell-content"
+						name="subcategories"
+						value="<%= String.valueOf(subcategoriesCount) %>"
 					/>
 
 					<liferay-ui:search-container-column-date

@@ -25,9 +25,13 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharsetEncoder;
+import java.nio.charset.CoderResult;
 import java.nio.charset.CodingErrorAction;
+import java.nio.charset.MalformedInputException;
+import java.nio.charset.UnmappableCharacterException;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Assert;
 import org.junit.ClassRule;
@@ -44,15 +48,62 @@ public class OutputStreamWriterTest {
 
 	@Test
 	public void testClose() throws IOException {
+
+		// Normal close
+
 		MarkerOutputStream markerOutputStream = new MarkerOutputStream();
 
 		try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(
 				markerOutputStream)) {
 
 			Assert.assertFalse(markerOutputStream._closed);
+
+			outputStreamWriter.close();
+
+			Assert.assertTrue(markerOutputStream._closed);
+
+			markerOutputStream._closed = false;
+
+			try {
+				outputStreamWriter.write(0);
+
+				Assert.fail();
+			}
+			catch (IOException ioe) {
+				Assert.assertEquals("Stream closed", ioe.getMessage());
+			}
 		}
 
-		Assert.assertTrue(markerOutputStream._closed);
+		Assert.assertFalse(markerOutputStream._closed);
+
+		// Exception close
+
+		final IOException ioException = new IOException();
+
+		OutputStreamWriter outputStreamWriter = new OutputStreamWriter(
+			new UnsyncByteArrayOutputStream() {
+
+				@Override
+				public void close() throws IOException {
+					throw ioException;
+				}
+
+			});
+
+		// First close
+
+		try {
+			outputStreamWriter.close();
+
+			Assert.fail();
+		}
+		catch (IOException ioe) {
+			Assert.assertSame(ioe, ioException);
+		}
+
+		// Second close to check first close indeed changed the state
+
+		outputStreamWriter.close();
 	}
 
 	@Test
@@ -64,6 +115,7 @@ public class OutputStreamWriterTest {
 
 		Assert.assertSame(
 			dummyOutputStream, _getOutputStream(outputStreamWriter));
+
 		Assert.assertSame(
 			StringPool.DEFAULT_CHARSET_NAME, outputStreamWriter.getEncoding());
 		Assert.assertEquals(
@@ -112,7 +164,7 @@ public class OutputStreamWriterTest {
 		Assert.assertSame(
 			dummyOutputStream, _getOutputStream(outputStreamWriter));
 		Assert.assertSame(encoding, outputStreamWriter.getEncoding());
-		Assert.assertEquals(1, _getInputBufferSize(outputStreamWriter));
+		Assert.assertEquals(2, _getInputCharBufferSize(outputStreamWriter));
 		Assert.assertEquals(32, _getOutputBufferSize(outputStreamWriter));
 		Assert.assertFalse(_isAutoFlush(outputStreamWriter));
 
@@ -122,7 +174,7 @@ public class OutputStreamWriterTest {
 		Assert.assertSame(
 			dummyOutputStream, _getOutputStream(outputStreamWriter));
 		Assert.assertSame(encoding, outputStreamWriter.getEncoding());
-		Assert.assertEquals(1, _getInputBufferSize(outputStreamWriter));
+		Assert.assertEquals(2, _getInputCharBufferSize(outputStreamWriter));
 		Assert.assertEquals(32, _getOutputBufferSize(outputStreamWriter));
 		Assert.assertTrue(_isAutoFlush(outputStreamWriter));
 
@@ -158,13 +210,72 @@ public class OutputStreamWriterTest {
 	}
 
 	@Test
+	public void testFlushEncoder() throws IOException {
+		MarkerOutputStream markerOutputStream = new MarkerOutputStream();
+
+		OutputStreamWriter outputStreamWriter = new OutputStreamWriter(
+			markerOutputStream);
+
+		// Flush encoder overflow
+
+		final AtomicInteger flushCounter = new AtomicInteger();
+
+		ReflectionTestUtil.setFieldValue(
+			outputStreamWriter, "_charsetEncoder",
+			new CharsetEncoderWrapper(
+				ReflectionTestUtil.getFieldValue(
+					outputStreamWriter, "_charsetEncoder")) {
+
+				@Override
+				protected CoderResult implFlush(ByteBuffer out) {
+					int count = flushCounter.getAndIncrement();
+
+					if (count == 0) {
+						return CoderResult.OVERFLOW;
+					}
+
+					return super.implFlush(out);
+				}
+
+			});
+
+		outputStreamWriter.close();
+
+		Assert.assertEquals(2, flushCounter.get());
+
+		// Flush encoder error
+
+		outputStreamWriter = new OutputStreamWriter(markerOutputStream);
+
+		ReflectionTestUtil.setFieldValue(
+			outputStreamWriter, "_charsetEncoder",
+			new CharsetEncoderWrapper(
+				ReflectionTestUtil.getFieldValue(
+					outputStreamWriter, "_charsetEncoder")) {
+
+				@Override
+				protected CoderResult implFlush(ByteBuffer out) {
+					return CoderResult.malformedForLength(1);
+				}
+
+			});
+
+		try {
+			outputStreamWriter.close();
+		}
+		catch (MalformedInputException mie) {
+			Assert.assertEquals(1, mie.getInputLength());
+		}
+	}
+
+	@Test
 	public void testWriteCharArray() throws IOException {
 		_testWriteCharArray(false);
 		_testWriteCharArray(true);
 	}
 
 	@Test
-	public void testWriteError() {
+	public void testWriteError() throws IOException {
 		OutputStreamWriter outputStreamWriter = new OutputStreamWriter(
 			new DummyOutputStream(), "US-ASCII");
 
@@ -178,9 +289,8 @@ public class OutputStreamWriterTest {
 
 			Assert.fail();
 		}
-		catch (IOException ioe) {
-			Assert.assertEquals(
-				"Unexcepted coder result UNMAPPABLE[1]", ioe.getMessage());
+		catch (UnmappableCharacterException uce) {
+			Assert.assertEquals(1, uce.getInputLength());
 		}
 	}
 
@@ -201,6 +311,42 @@ public class OutputStreamWriterTest {
 	}
 
 	@Test
+	public void testWriteIntUnicodeSurrogatePair() throws IOException {
+
+		// writeInt + writeInt
+
+		_testUnicodeSurrogatePair(
+			(outputStreamWriter, surrogatePair) -> {
+				outputStreamWriter.write(surrogatePair[0]);
+				outputStreamWriter.write(surrogatePair[1]);
+			});
+
+		// writeInt + writeCharArray
+
+		_testUnicodeSurrogatePair(
+			(outputStreamWriter, surrogatePair) -> {
+				outputStreamWriter.write(surrogatePair[0]);
+				outputStreamWriter.write(new char[] {surrogatePair[1]});
+			});
+
+		// writeCharArray + writeInt
+
+		_testUnicodeSurrogatePair(
+			(outputStreamWriter, surrogatePair) -> {
+				outputStreamWriter.write(new char[] {surrogatePair[0]});
+				outputStreamWriter.write(surrogatePair[1]);
+			});
+
+		// writeCharArray + writeCharArray
+
+		_testUnicodeSurrogatePair(
+			(outputStreamWriter, surrogatePair) -> {
+				outputStreamWriter.write(new char[] {surrogatePair[0]});
+				outputStreamWriter.write(new char[] {surrogatePair[1]});
+			});
+	}
+
+	@Test
 	public void testWriteString() throws IOException {
 		_testWriteString(false);
 		_testWriteString(true);
@@ -211,7 +357,7 @@ public class OutputStreamWriterTest {
 			OutputStreamWriter.class, "_DEFAULT_OUTPUT_BUFFER_SIZE");
 	}
 
-	private int _getInputBufferSize(OutputStreamWriter outputStreamWriter) {
+	private int _getInputCharBufferSize(OutputStreamWriter outputStreamWriter) {
 		CharBuffer inputCharBuffer = ReflectionTestUtil.getFieldValue(
 			outputStreamWriter, "_inputCharBuffer");
 
@@ -235,6 +381,30 @@ public class OutputStreamWriterTest {
 	private boolean _isAutoFlush(OutputStreamWriter outputStreamWriter) {
 		return ReflectionTestUtil.getFieldValue(
 			outputStreamWriter, "_autoFlush");
+	}
+
+	private void _testUnicodeSurrogatePair(
+			SurrogatePairConsumer surrogatePairConsumer)
+		throws IOException {
+
+		UnsyncByteArrayOutputStream unsyncByteArrayOutputStream =
+			new UnsyncByteArrayOutputStream();
+
+		OutputStreamWriter outputStreamWriter = new OutputStreamWriter(
+			unsyncByteArrayOutputStream, "UTF-8");
+
+		char[] surrogatePair = Character.toChars(0x2363A);
+
+		Assert.assertEquals(2, surrogatePair.length);
+
+		surrogatePairConsumer.accept(outputStreamWriter, surrogatePair);
+
+		outputStreamWriter.flush();
+
+		String decodedString = new String(
+			unsyncByteArrayOutputStream.toByteArray(), "UTF-8");
+
+		Assert.assertArrayEquals(surrogatePair, decodedString.toCharArray());
 	}
 
 	private void _testWriteCharArray(boolean autoFlush) throws IOException {
@@ -366,6 +536,52 @@ public class OutputStreamWriterTest {
 			unsyncByteArrayOutputStream.toByteArray());
 	}
 
+	private static class CharsetEncoderWrapper extends CharsetEncoder {
+
+		@Override
+		public boolean canEncode(char c) {
+			return _charsetEncoder.canEncode(c);
+		}
+
+		@Override
+		public boolean canEncode(CharSequence cs) {
+			return _charsetEncoder.canEncode(cs);
+		}
+
+		@Override
+		public boolean isLegalReplacement(byte[] replacement) {
+			return true;
+		}
+
+		@Override
+		public CodingErrorAction malformedInputAction() {
+			return _charsetEncoder.malformedInputAction();
+		}
+
+		@Override
+		public CodingErrorAction unmappableCharacterAction() {
+			return _charsetEncoder.unmappableCharacterAction();
+		}
+
+		@Override
+		protected CoderResult encodeLoop(CharBuffer in, ByteBuffer out) {
+			return ReflectionTestUtil.invoke(
+				_charsetEncoder, "encodeLoop",
+				new Class<?>[] {CharBuffer.class, ByteBuffer.class}, in, out);
+		}
+
+		private CharsetEncoderWrapper(CharsetEncoder charsetEncoder) {
+			super(
+				charsetEncoder.charset(), charsetEncoder.averageBytesPerChar(),
+				charsetEncoder.maxBytesPerChar(), charsetEncoder.replacement());
+
+			_charsetEncoder = charsetEncoder;
+		}
+
+		private final CharsetEncoder _charsetEncoder;
+
+	}
+
 	private static class MarkerOutputStream extends OutputStream {
 
 		@Override
@@ -394,6 +610,14 @@ public class OutputStreamWriterTest {
 		private boolean _flushed;
 		private int _length;
 		private int _offset;
+
+	}
+
+	private interface SurrogatePairConsumer {
+
+		public void accept(
+				OutputStreamWriter outputStreamWriter, char[] surrogatePair)
+			throws IOException;
 
 	}
 

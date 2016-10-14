@@ -1230,13 +1230,13 @@ public class SyncDLObjectServiceImpl extends SyncDLObjectServiceBaseImpl {
 				repositoryId, userId, ArrayUtil.toLongArray(typePKs));
 		}
 		else {
-			List<Long> subListTypePKs = typePKs.subList(
+			List<Long> sublistTypePKs = typePKs.subList(
 				0, _SQL_DATA_MAX_PARAMETERS);
 
 			List<Long> checkedTypePKs = syncDLObjectFinder.filterFindByR_U_T(
-				repositoryId, userId, ArrayUtil.toLongArray(subListTypePKs));
+				repositoryId, userId, ArrayUtil.toLongArray(sublistTypePKs));
 
-			subListTypePKs.clear();
+			sublistTypePKs.clear();
 
 			checkedTypePKs.addAll(checkTypePKs(repositoryId, userId, typePKs));
 
@@ -1266,6 +1266,15 @@ public class SyncDLObjectServiceImpl extends SyncDLObjectServiceBaseImpl {
 		portletPreferencesMap.put(
 			SyncServiceConfigurationKeys.SYNC_CLIENT_BATCH_FILE_MAX_SIZE,
 			String.valueOf(batchFileMaxSize));
+
+		boolean forceSecurityMode = PrefsPropsUtil.getBoolean(
+			user.getCompanyId(),
+			SyncServiceConfigurationKeys.SYNC_CLIENT_FORCE_SECURITY_MODE,
+			SyncServiceConfigurationValues.SYNC_CLIENT_FORCE_SECURITY_MODE);
+
+		portletPreferencesMap.put(
+			SyncServiceConfigurationKeys.SYNC_CLIENT_FORCE_SECURITY_MODE,
+			String.valueOf(forceSecurityMode));
 
 		int maxConnections = PrefsPropsUtil.getInteger(
 			user.getCompanyId(),

@@ -103,7 +103,7 @@ import org.osgi.service.component.annotations.Reference;
 		"javax.portlet.portlet-info.short-title=Web Form",
 		"javax.portlet.portlet-info.title=Web Form",
 		"javax.portlet.preferences=classpath:/META-INF/portlet-preferences/default-portlet-preferences.xml",
-		"javax.portlet.resource-bundle=contnt.Language",
+		"javax.portlet.resource-bundle=content.Language",
 		"javax.portlet.security-role-ref=administrator,guest,power-user,user",
 		"javax.portlet.supports.mime-type=text/html"
 	},
@@ -316,6 +316,7 @@ public class WebFormPortlet extends MVCPortlet {
 			String fieldValue = fieldsMap.get(fieldLabel);
 
 			sb.append(getCSVFormattedValue(fieldValue));
+
 			sb.append(_webFormGroupServiceConfiguration.csvSeparator());
 		}
 
@@ -382,6 +383,7 @@ public class WebFormPortlet extends MVCPortlet {
 						fieldName, row.getClassPK(), StringPool.BLANK);
 
 					sb.append(getCSVFormattedValue(data));
+
 					sb.append(_webFormGroupServiceConfiguration.csvSeparator());
 				}
 
@@ -567,8 +569,10 @@ public class WebFormPortlet extends MVCPortlet {
 		for (int i = 0; i < fieldsMap.size(); i++) {
 			String fieldType = preferences.getValue(
 				"fieldType" + (i + 1), StringPool.BLANK);
+
 			String fieldLabel = preferences.getValue(
 				"fieldLabel" + (i + 1), StringPool.BLANK);
+
 			String fieldValue = fieldsMap.get(fieldLabel);
 
 			boolean fieldOptional = GetterUtil.getBoolean(

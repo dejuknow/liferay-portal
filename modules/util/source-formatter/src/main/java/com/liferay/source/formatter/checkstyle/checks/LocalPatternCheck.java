@@ -14,14 +14,14 @@
 
 package com.liferay.source.formatter.checkstyle.checks;
 
-import java.util.List;
-
 import com.liferay.source.formatter.checkstyle.util.DetailASTUtil;
 
 import com.puppycrawl.tools.checkstyle.api.AbstractCheck;
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
 import com.puppycrawl.tools.checkstyle.api.TokenTypes;
 import com.puppycrawl.tools.checkstyle.utils.ScopeUtils;
+
+import java.util.List;
 
 /**
  * @author Hugo Huijser
@@ -55,7 +55,7 @@ public class LocalPatternCheck extends AbstractCheck {
 		DetailAST expressionAST = elistAST.findFirstToken(TokenTypes.EXPR);
 
 		List<DetailAST> childASTList = DetailASTUtil.getAllChildTokens(
-			expressionAST, DetailASTUtil.ALL_TYPES, true);
+			expressionAST, true, DetailASTUtil.ALL_TYPES);
 
 		for (DetailAST childAST : childASTList) {
 			if ((childAST.getType() != TokenTypes.PLUS) &&

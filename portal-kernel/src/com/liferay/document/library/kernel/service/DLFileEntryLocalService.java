@@ -94,8 +94,8 @@ public interface DLFileEntryLocalService extends BaseLocalService,
 		throws PortalException;
 
 	/**
-	* As of 7.0.0, replaced by {@link #isKeepFileVersionLabel(long, boolean,
-	* ServiceContext)}
+	* @deprecated As of 7.0.0, replaced by {@link #isKeepFileVersionLabel(long,
+	boolean, ServiceContext)}
 	*/
 	@java.lang.Deprecated
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)

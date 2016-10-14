@@ -923,12 +923,18 @@ public class CMISRepository extends BaseCmisRepository {
 		}
 	}
 
+	/**
+	 * @deprecated As of 2.0.0
+	 */
 	@Deprecated
 	@Override
 	public String[] getSupportedConfigurations() {
 		return _cmisRepositoryHandler.getSupportedConfigurations();
 	}
 
+	/**
+	 * @deprecated As of 2.0.0
+	 */
 	@Deprecated
 	@Override
 	public String[][] getSupportedParameters() {
@@ -1032,7 +1038,13 @@ public class CMISRepository extends BaseCmisRepository {
 
 			validateTitle(session, newFolderId, document.getName());
 
-			String oldFolderObjectId = document.getParents().get(0).getId();
+			List<org.apache.chemistry.opencmis.client.api.Folder>
+				parentFolders = document.getParents();
+
+			org.apache.chemistry.opencmis.client.api.Folder oldFolder =
+				parentFolders.get(0);
+
+			String oldFolderObjectId = oldFolder.getId();
 
 			if (oldFolderObjectId.equals(newFolderObjectId)) {
 				return toFileEntry(document);
@@ -1828,6 +1840,7 @@ public class CMISRepository extends BaseCmisRepository {
 			String objectId = toFolderId(session, folderId);
 
 			sb.append(StringUtil.quote(objectId));
+
 			sb.append(StringPool.CLOSE_PARENTHESIS);
 		}
 
@@ -1866,7 +1879,7 @@ public class CMISRepository extends BaseCmisRepository {
 		}
 		catch (CmisObjectNotFoundException confe) {
 			throw new NoSuchFileEntryException(
-				"No CMIS file entry with {fileEntryId=" + fileEntryId+ "}",
+				"No CMIS file entry with {fileEntryId=" + fileEntryId + "}",
 				confe);
 		}
 	}
@@ -1906,6 +1919,7 @@ public class CMISRepository extends BaseCmisRepository {
 			String objectId = toFolderId(session, folderId);
 
 			sb.append(StringUtil.quote(objectId));
+
 			sb.append(StringPool.CLOSE_PARENTHESIS);
 		}
 

@@ -27,7 +27,7 @@ AssetEntry assetEntry = AssetEntryLocalServiceUtil.fetchEntry(className, classPK
 	<liferay-ui:search-container-column-text>
 		<liferay-ui:user-portrait
 			cssClass="user-icon-lg"
-			userId="<%= assetEntry.getUserId() %>"
+			userId="<%= Objects.equals(assetEntry.getClassName(), User.class.getName()) ? assetEntry.getClassPK() : assetEntry.getUserId() %>"
 		/>
 	</liferay-ui:search-container-column-text>
 </c:if>

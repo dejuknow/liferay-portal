@@ -92,7 +92,6 @@
 
 	<command name="DeleteMessageboardsThread" priority="5">
 		<property name="portal.acceptance" value="true" />
-		<property name="portal.acceptance.quarantine" value="false" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -181,8 +180,7 @@
 
 		<execute macro="RecycleBin#restoreCP">
 			<var name="assetName" value="MB Thread Message Subject" />
-			<var name="assetRestoreLocation" value="${assetRestoreLocation}" />
-			<var name="assetRestoreType" value="${assetRestoreType}" />
+			<var name="assetRestoreLocation" value="Home" />
 			<var name="assetType" value="Message Boards Thread" />
 		</execute>
 
@@ -211,11 +209,11 @@
 
 	<command name="SearchMessageBoardsAttachment" priority="3">
 		<execute macro="Page#add">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="SitePageNavigator#gotoEditPage">
-			<var name="page" value="${pageName}" />
+			<var name="page" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="Page#editPageLayoutColumn">
@@ -223,15 +221,15 @@
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="Portlet#addPG">
-			<var name="portletName" value="${portletName}" />
+			<var name="portletName" value="Message Boards" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="MessageboardsThread#addPGWithAttachment">
@@ -241,7 +239,7 @@
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="MessageboardsPortlet#searchPG">
@@ -333,11 +331,11 @@
 
 	<command name="ViewCategoriesAndThreadsOnTwoScopes" priority="3">
 		<execute macro="Page#add">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="SitePageNavigator#gotoEditPage">
-			<var name="page" value="${pageName}" />
+			<var name="page" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="Page#editPageLayoutColumn">
@@ -345,11 +343,11 @@
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="Portlet#addPG">
-			<var name="portletName" value="${portletName}" />
+			<var name="portletName" value="Message Boards" />
 		</execute>
 
 		<execute macro="Page#add">
@@ -369,7 +367,7 @@
 		</execute>
 
 		<execute macro="Portlet#addPG">
-			<var name="portletName" value="${portletName}" />
+			<var name="portletName" value="Message Boards" />
 		</execute>
 
 		<execute macro="MessageboardsPortlet#configureScopePG">
@@ -381,7 +379,7 @@
 		</execute>
 
 		<execute macro="Portlet#viewPG">
-			<var name="portletName" value="${portletName} (Message Boards Page 2)" />
+			<var name="portletName" value="Message Boards (Message Boards Page 2)" />
 		</execute>
 
 		<execute macro="Page#add">
@@ -401,7 +399,7 @@
 		</execute>
 
 		<execute macro="Portlet#addPG">
-			<var name="portletName" value="${portletName}" />
+			<var name="portletName" value="Message Boards" />
 		</execute>
 
 		<execute macro="MessageboardsPortlet#configureScopePG">
@@ -413,11 +411,11 @@
 		</execute>
 
 		<execute macro="Portlet#viewPG">
-			<var name="portletName" value="${portletName} (Message Boards Page 2)" />
+			<var name="portletName" value="Message Boards (Message Boards Page 2)" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="MessageboardsThread#addPG">
@@ -426,7 +424,7 @@
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="MessageboardsCategory#addPG">
@@ -436,7 +434,7 @@
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="MessageboardsCategory#addPG">
@@ -446,7 +444,7 @@
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="MessageboardsThread#gotoPG">
@@ -462,7 +460,7 @@
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="MessageboardsCategory#viewPG">
@@ -472,7 +470,7 @@
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="MessageboardsCategory#viewPG">
@@ -482,7 +480,7 @@
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="MessageboardsCategory#gotoPG">
@@ -497,7 +495,7 @@
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="MessageboardsCategory#gotoPG">
@@ -512,7 +510,7 @@
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="MessageboardsCategory#gotoPG">
@@ -534,7 +532,7 @@
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="MessageboardsCategory#gotoPG">
@@ -901,7 +899,7 @@
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="MessageboardsPortlet#searchPG">
@@ -915,7 +913,7 @@
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="MessageboardsPortlet#searchPG">
@@ -929,7 +927,7 @@
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="MessageboardsPortlet#searchPG">
@@ -941,7 +939,7 @@
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="MessageboardsPortlet#searchPG">
@@ -1100,11 +1098,11 @@
 		<execute macro="Navigator#openURL" />
 
 		<execute macro="Page#add">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="SitePageNavigator#gotoEditPage">
-			<var name="page" value="${pageName}" />
+			<var name="page" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="Page#editPageLayoutColumn">
@@ -1112,11 +1110,11 @@
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="Portlet#addPG">
-			<var name="portletName" value="${portletName}" />
+			<var name="portletName" value="Message Boards" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
@@ -1135,7 +1133,7 @@
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="MessageboardsCategory#gotoPG">
@@ -1152,7 +1150,7 @@
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="MessageboardsCategory#gotoPG">
@@ -1176,10 +1174,7 @@
 		<execute macro="Gmail#viewMail">
 			<var name="emailFromUserName" value="Test Test" />
 			<var name="gmailAssetType" value="MB Category Name New Message" />
-			<var name="gmailMailTableMessageTitle" value="MB Thread Message Subject" />
 			<var name="gmailMessageBody" value="MB Thread Message Body" />
-			<var name="gmailMessageBodyClosing" value="Liferay Message Boards" />
-			<var name="gmailMessageBodyGreeting" value="MB Thread Message Body" />
 			<var name="gmailMessageTitle" value="MB Category Name New Message: MB Thread Message Subject" />
 		</execute>
 
@@ -1196,7 +1191,7 @@
 		<execute function="AssertVisible" locator1="Notifications#PROFILE_BADGE_COUNT" />
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="MessageboardsCategory#gotoPG">
@@ -1219,11 +1214,11 @@
 
 	<command name="ViewMessageBoardsBannedUsers" priority="3">
 		<execute macro="Page#add">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="SitePageNavigator#gotoEditPage">
-			<var name="page" value="${pageName}" />
+			<var name="page" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="Page#editPageLayoutColumn">
@@ -1231,15 +1226,15 @@
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="Portlet#addPG">
-			<var name="portletName" value="${portletName}" />
+			<var name="portletName" value="Message Boards" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="ProductMenu#gotoControlPanelUsers">
@@ -1283,7 +1278,7 @@
 		</execute>
 
 		<execute macro="PermissionsInline#gotoMessageBoardsPG">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<for list="INLINE_PERMISSIONS_REPLY_TO_MESSAGE_CHECKBOX,INLINE_PERMISSIONS_VIEW_CHECKBOX" param="permissionDefinitionKey" >
@@ -1294,7 +1289,7 @@
 		</for>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="MessageboardsThread#addPG">
@@ -1310,7 +1305,7 @@
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="MessageboardsThread#replyPG">
@@ -1326,7 +1321,7 @@
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="MessageboardsThread#replyPG">
@@ -1339,7 +1334,7 @@
 		<execute macro="User#loginPG" />
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="MessageboardsThread#gotoPG">
@@ -1355,7 +1350,7 @@
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="MessageboardsThread#gotoPG">
@@ -1371,7 +1366,7 @@
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="MessageboardsPortlet#viewBannedUserPG">
@@ -1379,7 +1374,7 @@
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="MessageboardsPortlet#viewBannedUserPG">
@@ -1388,19 +1383,12 @@
 	</command>
 
 	<command name="ViewMessageBoardsThreadStatistics" priority="4">
-		<var name="threadBody" value="MB Thread1 Message Body" />
-		<var name="threadBody2" value="MB Thread2 Message Body" />
-		<var name="threadBodyEdit" value="MB Thread1 Message Body Edit" />
-		<var name="threadSubject" value="MB Thread1 Message Subject" />
-		<var name="threadSubject2" value="MB Thread2 Message Subject" />
-		<var name="threadSubjectEdit" value="MB Thread1 Message Subject Edit" />
-
 		<execute macro="Page#add">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="SitePageNavigator#gotoEditPage">
-			<var name="page" value="${pageName}" />
+			<var name="page" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="Page#editPageLayoutColumn">
@@ -1408,24 +1396,24 @@
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="Portlet#addPG">
-			<var name="portletName" value="${portletName}" />
+			<var name="portletName" value="Message Boards" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="MessageboardsThread#addPG">
-			<var name="threadBody" value="${threadBody}" />
-			<var name="threadSubject" value="${threadSubject}" />
+			<var name="threadBody" value="MB Thread1 Message Body" />
+			<var name="threadSubject" value="MB Thread1 Message Subject" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="MessageboardsThread#viewStatisticsPostsCountPG">
@@ -1440,30 +1428,30 @@
 		<execute macro="MessageboardsThread#gotoPG">
 			<var name="lastPostUserName" value="Test Test" />
 			<var name="postCount" value="1" />
-			<var name="threadBody" value="${threadBody}" />
-			<var name="threadSubject" value="${threadSubject}" />
+			<var name="threadBody" value="MB Thread1 Message Body" />
+			<var name="threadSubject" value="MB Thread1 Message Subject" />
 		</execute>
 
 		<execute macro="MessageboardsThread#editPG">
 			<var name="saveAsDraft" value="true" />
-			<var name="threadBodyEdit" value="${threadBodyEdit}" />
-			<var name="threadSubject" value="${threadSubject}" />
-			<var name="threadSubjectEdit" value="${threadSubjectEdit}" />
+			<var name="threadBodyEdit" value="MB Thread1 Message Body Edit" />
+			<var name="threadSubject" value="MB Thread1 Message Subject" />
+			<var name="threadSubjectEdit" value="MB Thread1 Message Subject Edit" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="MessageboardsThread#viewStatisticsPostsCountDefaultPG" />
 
 		<execute macro="MessageboardsThread#editViaMyPosts">
-			<var name="threadSubject" value="${threadSubjectEdit}" />
+			<var name="threadSubject" value="MB Thread1 Message Subject Edit" />
 			<var name="threadSubjectEdit" value="true" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="MessageboardsThread#viewStatisticsPostsCountPG">
@@ -1473,16 +1461,16 @@
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="MessageboardsThread#addPG">
-			<var name="threadBody" value="${threadBody2}" />
-			<var name="threadSubject" value="${threadSubject2}" />
+			<var name="threadBody" value="MB Thread2 Message Body" />
+			<var name="threadSubject" value="MB Thread2 Message Subject" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="MessageboardsThread#viewStatisticsPostsCountPG">
@@ -1492,11 +1480,11 @@
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="MessageboardsThread#deletePG">
-			<var name="threadSubject" value="${threadSubject2}" />
+			<var name="threadSubject" value="MB Thread2 Message Subject" />
 		</execute>
 
 		<execute macro="MessageboardsThread#viewStatisticsPostsCountPG">
@@ -1506,15 +1494,12 @@
 	</command>
 
 	<command name="ViewNoMBThreadXSS" priority="4">
-		<var name="threadBody" value="[img]asd[font= onerror=alert(/This is an XSS Message/.source)//]FF[/font][/img]" />
-		<var name="threadSubject" value="MB Thread Message Subject" />
-
 		<execute macro="Page#add">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="SitePageNavigator#gotoEditPage">
-			<var name="page" value="${pageName}" />
+			<var name="page" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="Page#editPageLayoutColumn">
@@ -1522,42 +1507,36 @@
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="Portlet#addPG">
-			<var name="portletName" value="${portletName}" />
+			<var name="portletName" value="Message Boards" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="MessageboardsThread#addPG">
-			<var name="source" value="${source}" />
-			<var name="threadBody" value="${threadBody}" />
-			<var name="threadSubject" value="${threadSubject}" />
+			<var name="source" value="true" />
+			<var name="threadBody" value="[img]asd[font= onerror=alert(/This is an XSS Message/.source)//]FF[/font][/img]" />
+			<var name="threadSubject" value="MB Thread Message Subject" />
 		</execute>
 
 		<execute macro="MessageboardsThread#viewNoXSSPG">
-			<var name="threadBody" value="${threadBody}" />
-			<var name="threadSubject" value="${threadSubject}" />
+			<var name="threadBody" value="[img]asd[font= onerror=alert(/This is an XSS Message/.source)//]FF[/font][/img]" />
+			<var name="threadSubject" value="MB Thread Message Subject" />
 		</execute>
 	</command>
 
 	<command name="ViewNoSubscribeLinksNoWithEmailNotificationsDisabled" priority="4">
-		<var name="categoryName" value="MB Category Name" />
-		<var name="messageAddedEmailEnabled" value="false" />
-		<var name="messageUpdatedEmailEnabled" value="false" />
-		<var name="threadBody" value="MB Thread Message Body" />
-		<var name="threadSubject" value="MB Thread Message Subject" />
-
 		<execute macro="Page#add">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="SitePageNavigator#gotoEditPage">
-			<var name="page" value="${pageName}" />
+			<var name="page" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="Page#editPageLayoutColumn">
@@ -1565,83 +1544,83 @@
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="Portlet#addPG">
-			<var name="portletName" value="${portletName}" />
+			<var name="portletName" value="Message Boards" />
 		</execute>
 
 		<execute macro="MessageboardsCategory#addPG">
-			<var name="categoryName" value="${categoryName}" />
-			<var name="threadBody" value="${threadBody}" />
-			<var name="threadSubject" value="${threadSubject}" />
+			<var name="categoryName" value="MB Category Name" />
+			<var name="threadBody" value="MB Thread Message Body" />
+			<var name="threadSubject" value="MB Thread Message Subject" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="MessageboardsThread#addPG">
-			<var name="threadBody" value="${threadBody}" />
-			<var name="threadSubject" value="${threadSubject}" />
+			<var name="threadBody" value="MB Thread Message Body" />
+			<var name="threadSubject" value="MB Thread Message Subject" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
-		<var name="key_categoryName" value="${categoryName}" />
-		<var name="key_threadSubject" value="${threadSubject}" />
+		<var name="key_categoryName" value="MB Category Name" />
+		<var name="key_threadSubject" value="MB Thread Message Subject" />
 
 		<execute function="AssertTextEquals" locator1="MessageBoards#SUBSCRIBE_LINK" value1="Subscribe" />
 		<execute function="Click" locator1="MessageBoards#CATEGORY_LIST_ACTIONS" />
 		<execute function="AssertTextEquals" locator1="MenuItem#SUBSCRIBE" value1="Subscribe" />
-		<execute function="AssertClick" locator1="MessageBoards#CATEGORY_LIST_CATEGORY" value1="${categoryName}" />
+		<execute function="AssertClick" locator1="MessageBoards#CATEGORY_LIST_CATEGORY" value1="MB Category Name" />
 		<execute function="AssertTextEquals" locator1="Link#SUBSCRIBE" value1="Subscribe" />
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute function="Click" locator1="MessageBoards#VERTICAL_ELLIPSIS" />
 		<execute function="AssertTextEquals" locator1="MenuItem#UNSUBSCRIBE" value1="Unsubscribe" />
-		<execute function="AssertClick" locator1="MessageBoards#THREAD_LIST_THREAD" value1="${threadSubject}" />
+		<execute function="AssertClick" locator1="MessageBoards#THREAD_LIST_THREAD" value1="MB Thread Message Subject" />
 		<execute function="AssertTextEquals" locator1="MessageBoardsThread#THREAD_ACTIONS_UNSUBSCRIBE" value1="Unsubscribe" />
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="MessageboardsPortlet#configureMessageAddedEmailCP">
-			<var name="messageAddedEmailEnabled" value="${messageAddedEmailEnabled}" />
+			<var name="messageAddedEmailEnabled" value="false" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="MessageboardsPortlet#configureMessageUpdatedEmailCP">
-			<var name="messageUpdatedEmailEnabled" value="${messageUpdatedEmailEnabled}" />
+			<var name="messageUpdatedEmailEnabled" value="false" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute function="AssertElementNotPresent" locator1="MessageBoards#SUBSCRIBE_LINK" />
 		<execute function="Click" locator1="MessageBoards#CATEGORY_LIST_ACTIONS" />
 		<execute function="AssertElementNotPresent" locator1="MenuItem#SUBSCRIBE" />
-		<execute function="AssertClick" locator1="MessageBoards#CATEGORY_LIST_CATEGORY" value1="${categoryName}" />
+		<execute function="AssertClick" locator1="MessageBoards#CATEGORY_LIST_CATEGORY" value1="MB Category Name" />
 		<execute function="AssertElementNotPresent" locator1="Link#SUBSCRIBE" value1="Subscribe" />
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute function="Click" locator1="MessageBoards#VERTICAL_ELLIPSIS" />
 		<execute function="AssertElementNotPresent" locator1="MenuItem#UNSUBSCRIBE" />
-		<execute function="AssertClick" locator1="MessageBoards#THREAD_LIST_THREAD" value1="${threadSubject}" />
+		<execute function="AssertClick" locator1="MessageBoards#THREAD_LIST_THREAD" value1="MB Thread Message Subject" />
 		<execute function="AssertElementNotPresent" locator1="MessageBoardsThread#THREAD_ACTIONS_UNSUBSCRIBE" value1="Unsubscribe" />
 	</command>
 
@@ -1689,7 +1668,7 @@
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
+			<var name="pageName" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="MessageboardsThread#gotoPG">
@@ -1735,7 +1714,7 @@
 		</execute>
 
 		<execute macro="SitePageNavigator#gotoEditPage">
-			<var name="page" value="${pageName}" />
+			<var name="page" value="Message Boards Page" />
 		</execute>
 
 		<execute macro="Page#editPageLayoutColumn">
@@ -1756,7 +1735,9 @@
 			<var name="portlet" value="Message Boards" />
 		</execute>
 
-		<execute macro="MessageboardsThread#viewMarkAsQuestionNotCheckedCP" />
+		<execute macro="MessageboardsThread#viewMarkAsQuestionNotCheckedCP" >
+			<var name="threadSubject" value="Thread Subject" />
+		</execute>
 
 		<execute macro="MessageboardsPortlet#configureGeneralCP">
 			<var name="threadAsQuestionByDefaultEnabled" value="true" />
@@ -1768,7 +1749,9 @@
 			<var name="portlet" value="Message Boards" />
 		</execute>
 
-		<execute macro="MessageboardsThread#viewMarkAsQuestionCheckedCP" />
+		<execute macro="MessageboardsThread#viewMarkAsQuestionCheckedCP" >
+			<var name="threadSubject" value="Thread Subject" />
+		</execute>
 
 		<execute macro="MessageboardsThread#addCP">
 			<var name="threadBody" value="Thread Body" />

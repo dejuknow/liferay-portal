@@ -31,12 +31,8 @@ import javax.servlet.http.HttpServlet;
  */
 public class JspServletWrapper extends HttpServlet {
 
-	public JspServletWrapper() {
-		this(null);
-	}
-
 	public JspServletWrapper(String jspFile) {
-		this.jspFile = jspFile;
+		_jspFile = jspFile;
 	}
 
 	@Override
@@ -62,8 +58,8 @@ public class JspServletWrapper extends HttpServlet {
 		String curJspFile = (String)servletRequest.getAttribute(
 			JspServlet.JSP_FILE);
 
-		if (jspFile != null) {
-			servletRequest.setAttribute(JspServlet.JSP_FILE, jspFile);
+		if (_jspFile != null) {
+			servletRequest.setAttribute(JspServlet.JSP_FILE, _jspFile);
 		}
 
 		try {
@@ -74,8 +70,7 @@ public class JspServletWrapper extends HttpServlet {
 		}
 	}
 
-	protected String jspFile;
-
+	private final String _jspFile;
 	private final Servlet _servlet = new JspServlet();
 
 }

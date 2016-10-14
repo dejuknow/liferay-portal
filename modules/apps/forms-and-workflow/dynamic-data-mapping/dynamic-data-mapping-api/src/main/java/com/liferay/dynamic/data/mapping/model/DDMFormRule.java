@@ -14,14 +14,21 @@
 
 package com.liferay.dynamic.data.mapping.model;
 
+import aQute.bnd.annotation.ProviderType;
+
+import com.liferay.portal.kernel.util.HashUtil;
+
 import java.io.Serializable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Leonardo Barros
  */
+@ProviderType
 public class DDMFormRule implements Serializable {
 
 	public DDMFormRule() {
@@ -38,8 +45,30 @@ public class DDMFormRule implements Serializable {
 		_actions = actions;
 	}
 
-	public void addAction(String action) {
-		_actions.add(action);
+	public DDMFormRule(String condition, String... actions) {
+		this(condition, Arrays.asList(actions));
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+
+		if (!(obj instanceof DDMFormRule)) {
+			return false;
+		}
+
+		DDMFormRule ddmFormRule = (DDMFormRule)obj;
+
+		if (Objects.equals(_actions, ddmFormRule._actions) &&
+			Objects.equals(_condition, ddmFormRule._condition) &&
+			Objects.equals(_enabled, ddmFormRule._enabled)) {
+
+			return true;
+		}
+
+		return false;
 	}
 
 	public List<String> getActions() {
@@ -48,6 +77,15 @@ public class DDMFormRule implements Serializable {
 
 	public String getCondition() {
 		return _condition;
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = HashUtil.hash(0, _actions);
+
+		hash = HashUtil.hash(hash, _condition);
+
+		return HashUtil.hash(hash, _enabled);
 	}
 
 	public boolean isEnabled() {

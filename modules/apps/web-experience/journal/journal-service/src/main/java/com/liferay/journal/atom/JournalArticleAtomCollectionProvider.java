@@ -242,6 +242,7 @@ public class JournalArticleAtomCollectionProvider
 			indexable, articleURL, serviceContext);
 
 		double version = journalArticle.getVersion();
+
 		int status = WorkflowConstants.STATUS_APPROVED;
 
 		journalArticle = _journalArticleService.updateStatus(

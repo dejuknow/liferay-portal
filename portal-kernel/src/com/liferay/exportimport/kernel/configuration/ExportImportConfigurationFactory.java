@@ -197,6 +197,9 @@ public class ExportImportConfigurationFactory {
 		parameterMap.put(
 			ExportImportDateUtil.RANGE,
 			new String[] {ExportImportDateUtil.RANGE_FROM_LAST_PUBLISH_DATE});
+		parameterMap.put(
+			PortletDataHandlerKeys.THEME_REFERENCE,
+			new String[] {Boolean.TRUE.toString()});
 
 		return parameterMap;
 	}

@@ -390,6 +390,9 @@ public class ContactsCenterPortlet extends MVCPortlet {
 
 			if (socialRelationLocalService.hasRelation(
 					userId, themeDisplay.getUserId(),
+					SocialRelationConstants.TYPE_BI_CONNECTION) ||
+				socialRelationLocalService.hasRelation(
+					userId, themeDisplay.getUserId(),
 					SocialRelationConstants.TYPE_UNI_ENEMY) ||
 				socialRequestLocalService.hasRequest(
 					themeDisplay.getUserId(), User.class.getName(),
@@ -590,7 +593,7 @@ public class ContactsCenterPortlet extends MVCPortlet {
 				message = "please-enter-a-valid-email-address";
 			}
 			else if (e instanceof NoSuchCountryException) {
-				message ="please-select-a-country";
+				message = "please-select-a-country";
 			}
 			else if (e instanceof NoSuchListTypeException) {
 				message = "please-select-a-type";

@@ -29,11 +29,11 @@ public class DDMFormEvaluationResult {
 	public DDMFormFieldEvaluationResult geDDMFormFieldEvaluationResult(
 		String fieldName, String instanceId) {
 
-		String key = _getKey(fieldName, instanceId);
-
 		Map<String, DDMFormFieldEvaluationResult>
 			ddmFormFieldEvaluationResultsMap =
 				getDDMFormFieldEvaluationResultsMap();
+
+		String key = _getKey(fieldName, instanceId);
 
 		return ddmFormFieldEvaluationResultsMap.get(key);
 	}
@@ -45,6 +45,7 @@ public class DDMFormEvaluationResult {
 		return _ddmFormFieldEvaluationResults;
 	}
 
+	@JSON(include = false)
 	public Map<String, DDMFormFieldEvaluationResult>
 		getDDMFormFieldEvaluationResultsMap() {
 
