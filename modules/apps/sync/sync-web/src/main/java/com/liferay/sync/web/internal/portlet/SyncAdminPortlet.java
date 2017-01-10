@@ -141,7 +141,7 @@ public class SyncAdminPortlet extends BaseSyncPortlet {
 		boolean lanEnabled = ParamUtil.getBoolean(actionRequest, "lanEnabled");
 
 		if (lanEnabled) {
-			SyncUtil.enableLanSync(CompanyThreadLocal.getCompanyId());
+			_syncUtil.enableLanSync(CompanyThreadLocal.getCompanyId());
 		}
 
 		portletPreferences.setValue(
@@ -217,5 +217,8 @@ public class SyncAdminPortlet extends BaseSyncPortlet {
 
 	private GroupLocalService _groupLocalService;
 	private SyncOAuthHelperUtil _syncOAuthHelperUtil;
+
+	@Reference
+	private SyncUtil _syncUtil;
 
 }
