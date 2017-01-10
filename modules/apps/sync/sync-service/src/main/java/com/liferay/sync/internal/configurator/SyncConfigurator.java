@@ -58,7 +58,7 @@ public class SyncConfigurator extends BasePortalInstanceLifecycleListener {
 
 		if (lanEnabled) {
 			try {
-				SyncUtil.enableLanSync(company.getCompanyId());
+				_syncUtil.enableLanSync(company.getCompanyId());
 			}
 			catch (Exception e) {
 				_log.error(e, e);
@@ -162,5 +162,8 @@ public class SyncConfigurator extends BasePortalInstanceLifecycleListener {
 
 	private ServiceRegistration<Destination>
 		_syncMaintenanceProcessorServiceRegistration;
+
+	@Reference
+	private SyncUtil _syncUtil;
 
 }
