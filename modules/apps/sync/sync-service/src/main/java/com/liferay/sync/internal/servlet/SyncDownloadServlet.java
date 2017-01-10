@@ -173,7 +173,7 @@ public class SyncDownloadServlet extends HttpServlet {
 
 				Group group = _groupLocalService.fetchGroup(groupId);
 
-				if ((group == null) || !SyncUtil.isSyncEnabled(group)) {
+				if ((group == null) || !_syncUtil.isSyncEnabled(group)) {
 					response.setHeader(
 						_ERROR_HEADER,
 						SyncSiteUnavailableException.class.getName());
@@ -263,7 +263,7 @@ public class SyncDownloadServlet extends HttpServlet {
 		File targetFile = _dlFileEntryLocalService.getFile(
 			userId, fileEntryId, targetDLFileVersion.getVersion(), false);
 
-		return SyncUtil.getFileDelta(sourceFile, targetFile);
+		return _syncUtil.getFileDelta(sourceFile, targetFile);
 	}
 
 	protected DownloadServletInputStream getFileDownloadServletInputStream(
@@ -486,7 +486,7 @@ public class SyncDownloadServlet extends HttpServlet {
 
 			Group group = _groupLocalService.fetchGroup(groupId);
 
-			if ((group == null) || !SyncUtil.isSyncEnabled(group)) {
+			if ((group == null) || !_syncUtil.isSyncEnabled(group)) {
 				processException(
 					zipFileId, SyncSiteUnavailableException.class.getName(),
 					errorsJSONObject);
@@ -601,6 +601,9 @@ public class SyncDownloadServlet extends HttpServlet {
 
 	@Reference
 	private Portal _portal;
+
+	@Reference
+	private SyncUtil _syncUtil;
 
 	private UserLocalService _userLocalService;
 
