@@ -138,9 +138,7 @@ public class DLSyncEventMessageListener extends BaseMessageListener {
 			deleteDLSyncEvent(modifiedTime, syncEventId, typePK);
 		}
 		catch (Exception e) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(e, e);
-			}
+			_log.error(e, e);
 		}
 	}
 
@@ -167,7 +165,7 @@ public class DLSyncEventMessageListener extends BaseMessageListener {
 				return;
 			}
 
-			syncDLObject = SyncUtil.toSyncDLObject(
+			syncDLObject = _syncUtil.toSyncDLObject(
 				dlFileEntry, event, !dlFileEntry.isInTrash());
 
 			if (event.equals(SyncDLObjectConstants.EVENT_TRASH)) {
@@ -175,21 +173,21 @@ public class DLSyncEventMessageListener extends BaseMessageListener {
 			}
 
 			syncDLObject.setLanTokenKey(
-				SyncUtil.getLanTokenKey(modifiedTime, typePK, false));
+				_syncUtil.getLanTokenKey(modifiedTime, typePK, false));
 		}
 		else {
 			DLFolder dlFolder = _dlFolderLocalService.fetchDLFolder(typePK);
 
-			if ((dlFolder == null) || !SyncUtil.isSupportedFolder(dlFolder)) {
+			if ((dlFolder == null) || !_syncUtil.isSupportedFolder(dlFolder)) {
 				return;
 			}
 
-			syncDLObject = SyncUtil.toSyncDLObject(dlFolder, event);
+			syncDLObject = _syncUtil.toSyncDLObject(dlFolder, event);
 		}
 
 		syncDLObject.setModifiedTime(modifiedTime);
 
-		SyncUtil.addSyncDLObject(syncDLObject);
+		_syncUtil.addSyncDLObject(syncDLObject);
 	}
 
 	@Reference(unbind = "-")
@@ -241,5 +239,8 @@ public class DLSyncEventMessageListener extends BaseMessageListener {
 	private DLFileEntryLocalService _dlFileEntryLocalService;
 	private DLFolderLocalService _dlFolderLocalService;
 	private DLSyncEventLocalService _dlSyncEventLocalService;
+
+	@Reference
+	private SyncUtil _syncUtil;
 
 }
