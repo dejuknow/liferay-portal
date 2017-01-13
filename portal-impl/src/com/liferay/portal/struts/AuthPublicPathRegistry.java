@@ -37,33 +37,10 @@ import java.util.Set;
 public class AuthPublicPathRegistry {
 
 	public static boolean contains(String path) {
-		return _instance._contains(path);
-	}
-
-	public static void register(String... paths) {
-		_instance._register(paths);
-	}
-
-	public static void unregister(String... paths) {
-		_instance._unregister(paths);
-	}
-
-	private AuthPublicPathRegistry() {
-		Registry registry = RegistryUtil.getRegistry();
-
-		_serviceTracker = registry.trackServices(
-			registry.getFilter(
-				"(&(auth.public.path=*)(objectClass=java.lang.Object))"),
-			new AuthPublicTrackerCustomizer());
-
-		_serviceTracker.open();
-	}
-
-	private boolean _contains(String path) {
 		return _paths.contains(path);
 	}
 
-	private void _register(String... paths) {
+	public static void register(String... paths) {
 		Registry registry = RegistryUtil.getRegistry();
 
 		for (String path : paths) {
@@ -80,7 +57,7 @@ public class AuthPublicPathRegistry {
 		}
 	}
 
-	private void _unregister(String... paths) {
+	public static void unregister(String... paths) {
 		for (String path : paths) {
 			ServiceRegistration<Object> serviceRegistration =
 				_serviceRegistrations.remove(path);
@@ -91,15 +68,12 @@ public class AuthPublicPathRegistry {
 		}
 	}
 
-	private static final AuthPublicPathRegistry _instance =
-		new AuthPublicPathRegistry();
+	private static final Set<String> _paths = new ConcurrentHashSet<>();
+	private static final StringServiceRegistrationMap<Object>
+		_serviceRegistrations = new StringServiceRegistrationMapImpl<>();
+	private static final ServiceTracker<Object, Object> _serviceTracker;
 
-	private final Set<String> _paths = new ConcurrentHashSet<>();
-	private final StringServiceRegistrationMap<Object> _serviceRegistrations =
-		new StringServiceRegistrationMapImpl<>();
-	private final ServiceTracker<Object, Object> _serviceTracker;
-
-	private class AuthPublicTrackerCustomizer
+	private static class AuthPublicTrackerCustomizer
 		implements ServiceTrackerCustomizer<Object, Object> {
 
 		@Override
@@ -133,6 +107,17 @@ public class AuthPublicPathRegistry {
 			}
 		}
 
+	}
+
+	static {
+		Registry registry = RegistryUtil.getRegistry();
+
+		_serviceTracker = registry.trackServices(
+			registry.getFilter(
+				"(&(auth.public.path=*)(objectClass=java.lang.Object))"),
+			new AuthPublicTrackerCustomizer());
+
+		_serviceTracker.open();
 	}
 
 }

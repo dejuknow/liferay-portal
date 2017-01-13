@@ -13,5 +13,17 @@ localization mechanism in the generated `.soy.js` files by replacing
 - [LPS-67573]: Move `BuildSoyTask` from the `com.liferay.gradle.plugins.soy`
 package to the `com.liferay.gradle.plugins.soy.tasks` package.
 
+## 3.0.0 - 2017-01-12
+
+### Added
+- [LPS-70092]: Support translation replacement for version 2 of the
+[Command Line Tools for Metal.js].
+
+### Removed
+- [LPS-67573]: Remove deprecated `BuildSoyTask` class from the
+`com.liferay.gradle.plugins.soy` package.
+
+[Command Line Tools for Metal.js]: https://github.com/metal/metal-cli
 [LPS-67573]: https://issues.liferay.com/browse/LPS-67573
 [LPS-67766]: https://issues.liferay.com/browse/LPS-67766
+[LPS-70092]: https://issues.liferay.com/browse/LPS-70092

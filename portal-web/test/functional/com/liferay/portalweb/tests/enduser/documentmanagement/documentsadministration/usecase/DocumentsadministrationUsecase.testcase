@@ -258,6 +258,8 @@
 
 			<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
 
+			<execute function="Pause" locator1="10000" />
+
 			<execute macro="Navigator#gotoPage">
 				<var name="pageName" value="Documents and Media Page" />
 			</execute>

@@ -39,42 +39,6 @@ import org.apache.struts.action.Action;
 public class StrutsActionRegistryUtil {
 
 	public static Action getAction(String path) {
-		return _instance._getAction(path);
-	}
-
-	public static Map<String, Action> getActions() {
-		return _instance._getActions();
-	}
-
-	public static void register(String path, StrutsAction strutsAction) {
-		_instance._register(path, strutsAction);
-	}
-
-	public static void register(
-		String path, StrutsPortletAction strutsPortletAction) {
-
-		_instance._register(path, strutsPortletAction);
-	}
-
-	public static void unregister(String path) {
-		_instance._unregister(path);
-	}
-
-	private StrutsActionRegistryUtil() {
-		Registry registry = RegistryUtil.getRegistry();
-
-		Filter filter = registry.getFilter(
-			"(&(|(objectClass=" + StrutsAction.class.getName() +
-				")(objectClass=" + StrutsPortletAction.class.getName() +
-					"))(path=*))");
-
-		_serviceTracker = registry.trackServices(
-			filter, new ActionServiceTrackerCustomizer());
-
-		_serviceTracker.open();
-	}
-
-	private Action _getAction(String path) {
 		Action action = _actions.get(path);
 
 		if (action != null) {
@@ -90,11 +54,11 @@ public class StrutsActionRegistryUtil {
 		return null;
 	}
 
-	private Map<String, Action> _getActions() {
+	public static Map<String, Action> getActions() {
 		return _actions;
 	}
 
-	private void _register(String path, StrutsAction strutsAction) {
+	public static void register(String path, StrutsAction strutsAction) {
 		Registry registry = RegistryUtil.getRegistry();
 
 		Map<String, Object> properties = new HashMap<>();
@@ -108,7 +72,7 @@ public class StrutsActionRegistryUtil {
 		_strutsActionServiceRegistrations.put(path, serviceRegistration);
 	}
 
-	private void _register(
+	public static void register(
 		String path, StrutsPortletAction strutsPortletAction) {
 
 		Registry registry = RegistryUtil.getRegistry();
@@ -124,7 +88,7 @@ public class StrutsActionRegistryUtil {
 		_strutsPortletActionServiceRegistrations.put(path, serviceRegistration);
 	}
 
-	private void _unregister(String path) {
+	public static void unregister(String path) {
 		ServiceRegistration<?> serviceRegistration =
 			_strutsActionServiceRegistrations.remove(path);
 
@@ -140,19 +104,17 @@ public class StrutsActionRegistryUtil {
 		}
 	}
 
-	private static final StrutsActionRegistryUtil _instance =
-		new StrutsActionRegistryUtil();
-
-	private final Map<String, Action> _actions = new ConcurrentHashMap<>();
-	private final ServiceTracker<?, Action> _serviceTracker;
-	private final StringServiceRegistrationMap<StrutsAction>
+	private static final Map<String, Action> _actions =
+		new ConcurrentHashMap<>();
+	private static final ServiceTracker<?, Action> _serviceTracker;
+	private static final StringServiceRegistrationMap<StrutsAction>
 		_strutsActionServiceRegistrations =
 			new StringServiceRegistrationMapImpl<>();
-	private final StringServiceRegistrationMap<StrutsPortletAction>
+	private static final StringServiceRegistrationMap<StrutsPortletAction>
 		_strutsPortletActionServiceRegistrations =
 			new StringServiceRegistrationMapImpl<>();
 
-	private class ActionServiceTrackerCustomizer
+	private static class ActionServiceTrackerCustomizer
 		implements ServiceTrackerCustomizer<Object, Action> {
 
 		@Override
@@ -210,6 +172,20 @@ public class StrutsActionRegistryUtil {
 			}
 		}
 
+	}
+
+	static {
+		Registry registry = RegistryUtil.getRegistry();
+
+		Filter filter = registry.getFilter(
+			"(&(|(objectClass=" + StrutsAction.class.getName() +
+				")(objectClass=" + StrutsPortletAction.class.getName() +
+					"))(path=*))");
+
+		_serviceTracker = registry.trackServices(
+			filter, new ActionServiceTrackerCustomizer());
+
+		_serviceTracker.open();
 	}
 
 }

@@ -58,7 +58,7 @@
 							/>
 
 							<#list hintElements as hintElement>
-								<#if hintElement.name == "hint">
+								<#if stringUtil.equals(hintElement.name, "hint")>
 									<hint name="${hintElement.attributeValue("name")}">${hintElement.text}</hint>
 								<#elseif hintElement.name == "hint-collection">
 									<hint-collection name="${hintElement.attributeValue("name")}" />
@@ -80,22 +80,22 @@
 						<#if modelHintsUtil.getValidators(modelName, column.name)??>
 							<#assign validators = modelHintsUtil.getValidators(modelName, column.name) />
 
-							<#list validators as validator>
+							<#list validators as curValidator>
 								<#assign
-									validatorName = validator.getObject(1)
-									validatorErrorMessage = validator.getObject(2)
-									validatorValue = validator.getObject(3)
+									validatorName = curValidator.getObject(1)
+									validatorErrorMessage = curValidator.getObject(2)
+									validatorValue = curValidator.getObject(3)
 								/>
 
 								<validator
 
-								<#if validatorErrorMessage != "">
+								<#if validator.isNotNull(validatorErrorMessage)>
 									error-message="${validatorErrorMessage}"
 								</#if>
 
 								name="${validatorName}"
 
-								<#if validatorValue != "">
+								<#if validator.isNotNull(validatorValue)>
 									>
 										${validatorValue}
 									</validator>
