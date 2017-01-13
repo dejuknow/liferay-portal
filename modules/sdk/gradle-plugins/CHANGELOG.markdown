@@ -969,6 +969,21 @@ version 2.0.0.
 - [LPS-70084]: Update the [Liferay Gradle Plugins Source Formatter] dependency
 to version 1.0.73.
 
+## 3.1.0 - 2017-01-12
+
+### Added
+- [LPS-69926]: Add the ability to automatically include one or more
+dependencies in the final OSGi bundle via the `compileInclude` configuration.
+
+### Changed
+- [LPS-69926]: Update the [Gradle Bundle Plugin] dependency to version 0.9.0.
+- [LPS-69980]: Update the [Liferay Source Formatter] dependency to version
+1.0.341.
+- [LPS-69980]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 1.0.74.
+- [LPS-70092]: Update the [Liferay Gradle Plugins Soy] dependency to version
+3.0.0.
+
 [Gradle Bundle Plugin]: https://github.com/TomDmitriev/gradle-bundle-plugin
 [Liferay Ant BND]: https://github.com/liferay/liferay-portal/tree/master/modules/sdk/ant-bnd
 [Liferay CSS Builder]: https://github.com/liferay/liferay-portal/tree/master/modules/util/css-builder
@@ -980,6 +995,7 @@ to version 1.0.73.
 [Liferay Gradle Plugins Javadoc Formatter]: https://github.com/liferay/liferay-portal/tree/master/modules/sdk/gradle-plugins-javadoc-formatter
 [Liferay Gradle Plugins Service Builder]: https://github.com/liferay/liferay-portal/tree/master/modules/sdk/gradle-plugins-service-builder
 [Liferay Gradle Plugins Source Formatter]: https://github.com/liferay/liferay-portal/tree/master/modules/sdk/gradle-plugins-source-formatter
+[Liferay Gradle Plugins Soy]: https://github.com/liferay/liferay-portal/tree/master/modules/sdk/gradle-plugins-soy
 [Liferay Gradle Plugins Test Integration]: https://github.com/liferay/liferay-portal/tree/master/modules/sdk/gradle-plugins-test-integration
 [Liferay Gradle Plugins Theme Builder]: https://github.com/liferay/liferay-portal/tree/master/modules/sdk/gradle-plugins-theme-builder
 [Liferay Gradle Plugins Upgrade Table Builder]: https://github.com/liferay/liferay-portal/tree/master/modules/sdk/gradle-plugins-upgrade-table-builder
@@ -1054,6 +1070,9 @@ to version 1.0.73.
 [LPS-69838]: https://issues.liferay.com/browse/LPS-69838
 [LPS-69899]: https://issues.liferay.com/browse/LPS-69899
 [LPS-69920]: https://issues.liferay.com/browse/LPS-69920
+[LPS-69926]: https://issues.liferay.com/browse/LPS-69926
+[LPS-69980]: https://issues.liferay.com/browse/LPS-69980
 [LPS-70060]: https://issues.liferay.com/browse/LPS-70060
 [LPS-70084]: https://issues.liferay.com/browse/LPS-70084
+[LPS-70092]: https://issues.liferay.com/browse/LPS-70092
 [LRDOCS-3023]: https://issues.liferay.com/browse/LRDOCS-3023

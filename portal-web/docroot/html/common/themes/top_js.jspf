@@ -397,11 +397,9 @@
 		<c:if test="<%= layoutTypePortlet != null %>">
 
 			<%
-			List<Portlet> allPortlets = layoutTypePortlet.getAllPortlets(true);
+			StringBundler sb = new StringBundler(portlets.size() * 2);
 
-			StringBundler sb = new StringBundler(allPortlets.size() * 2);
-
-			for (Portlet portlet : allPortlets) {
+			for (Portlet portlet : portlets) {
 				if (portlet.isActive() && portlet.isReady() && !portlet.isUndeployedPortlet()) {
 					sb.append(HtmlUtil.escapeJS(portlet.getPortletId()));
 					sb.append("', '");

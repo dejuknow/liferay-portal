@@ -153,9 +153,9 @@ public class PortalRequestProcessor extends TilesRequestProcessor {
 		ActionMapping actionMapping =
 			(ActionMapping)moduleConfig.findActionConfig(path);
 
-		Action action = StrutsActionRegistryUtil.getAction(path);
+		if ((actionMapping == null) &&
+			(StrutsActionRegistryUtil.getAction(path) == null)) {
 
-		if ((actionMapping == null) && (action == null)) {
 			String lastPath = getLastPath(request);
 
 			if (_log.isDebugEnabled()) {
@@ -675,29 +675,27 @@ public class PortalRequestProcessor extends TilesRequestProcessor {
 			return _PATH_PORTAL_LAYOUT;
 		}
 
-		// Authenticated users can always log out
+		if ((remoteUser != null) || (user != null)) {
 
-		if (((remoteUser != null) || (user != null)) &&
-			path.equals(_PATH_PORTAL_LOGOUT)) {
+			// Authenticated users can always log out
 
-			return path;
-		}
+			if (path.equals(_PATH_PORTAL_LOGOUT)) {
+				return path;
+			}
 
-		// Authenticated users can always extend or confirm their session
+			// Authenticated users can always extend or confirm their session
 
-		if (((remoteUser != null) || (user != null)) &&
-			(path.equals(_PATH_PORTAL_EXPIRE_SESSION) ||
-			 path.equals(_PATH_PORTAL_EXTEND_SESSION))) {
+			if (path.equals(_PATH_PORTAL_EXPIRE_SESSION) ||
+				path.equals(_PATH_PORTAL_EXTEND_SESSION)) {
 
-			return path;
-		}
+				return path;
+			}
 
-		// Authenticated users can always agree to terms of use
+			// Authenticated users can always agree to terms of use
 
-		if (((remoteUser != null) || (user != null)) &&
-			path.equals(_PATH_PORTAL_UPDATE_TERMS_OF_USE)) {
-
-			return path;
+			if (path.equals(_PATH_PORTAL_UPDATE_TERMS_OF_USE)) {
+				return path;
+			}
 		}
 
 		// Authenticated users must still exist in the system
@@ -706,89 +704,86 @@ public class PortalRequestProcessor extends TilesRequestProcessor {
 			return _PATH_PORTAL_LOGOUT;
 		}
 
-		// Authenticated users must be active
-
-		if ((user != null) && !user.isActive()) {
-			SessionErrors.add(request, UserActiveException.class.getName());
-
-			return _PATH_PORTAL_ERROR;
-		}
-
 		long companyId = PortalUtil.getCompanyId(request);
 		String portletId = ParamUtil.getString(request, "p_p_id");
 
-		if (!path.equals(_PATH_PORTAL_JSON_SERVICE) &&
-			!path.equals(_PATH_PORTAL_RENDER_PORTLET) &&
-			!ParamUtil.getBoolean(request, "wsrp") &&
-			!themeDisplay.isImpersonated() &&
-			!InterruptedPortletRequestWhitelistUtil.
-				isPortletInvocationWhitelisted(
-					companyId, portletId,
-					PortalUtil.getStrutsAction(request))) {
+		// Authenticated users must be active
 
-			// Authenticated users should agree to Terms of Use
+		if (user != null) {
+			if (!user.isActive()) {
+				SessionErrors.add(session, UserActiveException.class.getName());
 
-			if ((user != null) && !user.isTermsOfUseComplete()) {
-				return _PATH_PORTAL_TERMS_OF_USE;
+				return _PATH_PORTAL_ERROR;
 			}
 
-			// Authenticated users should have a verified email address
+			if (!path.equals(_PATH_PORTAL_JSON_SERVICE) &&
+				!path.equals(_PATH_PORTAL_RENDER_PORTLET) &&
+				!ParamUtil.getBoolean(request, "wsrp") &&
+				!themeDisplay.isImpersonated() &&
+				!InterruptedPortletRequestWhitelistUtil.
+					isPortletInvocationWhitelisted(
+						companyId, portletId,
+						PortalUtil.getStrutsAction(request))) {
 
-			if ((user != null) && !user.isEmailAddressVerificationComplete()) {
-				if (path.equals(_PATH_PORTAL_UPDATE_EMAIL_ADDRESS)) {
-					return _PATH_PORTAL_UPDATE_EMAIL_ADDRESS;
+				// Authenticated users should agree to Terms of Use
+
+				if (!user.isTermsOfUseComplete()) {
+					return _PATH_PORTAL_TERMS_OF_USE;
 				}
 
-				return _PATH_PORTAL_VERIFY_EMAIL_ADDRESS;
-			}
+				// Authenticated users should have a verified email address
 
-			// Authenticated users must have a current password
+				if (!user.isEmailAddressVerificationComplete()) {
+					if (path.equals(_PATH_PORTAL_UPDATE_EMAIL_ADDRESS)) {
+						return _PATH_PORTAL_UPDATE_EMAIL_ADDRESS;
+					}
 
-			if ((user != null) && user.isPasswordReset()) {
-				try {
-					PasswordPolicy passwordPolicy = user.getPasswordPolicy();
+					return _PATH_PORTAL_VERIFY_EMAIL_ADDRESS;
+				}
 
-					if ((passwordPolicy == null) ||
-						passwordPolicy.isChangeable()) {
+				// Authenticated users must have a current password
+
+				if (user.isPasswordReset()) {
+					try {
+						PasswordPolicy passwordPolicy =
+							user.getPasswordPolicy();
+
+						if ((passwordPolicy == null) ||
+							passwordPolicy.isChangeable()) {
+
+							return _PATH_PORTAL_UPDATE_PASSWORD;
+						}
+					}
+					catch (Exception e) {
+						_log.error(e, e);
 
 						return _PATH_PORTAL_UPDATE_PASSWORD;
 					}
 				}
-				catch (Exception e) {
-					_log.error(e, e);
+				else if (path.equals(_PATH_PORTAL_UPDATE_PASSWORD)) {
+					return _PATH_PORTAL_LAYOUT;
+				}
 
-					return _PATH_PORTAL_UPDATE_PASSWORD;
+				// Authenticated users must have an email address
+
+				if (!user.isEmailAddressComplete()) {
+					return _PATH_PORTAL_UPDATE_EMAIL_ADDRESS;
+				}
+
+				// Authenticated users should have a reminder query
+
+				if (!user.isDefaultUser() && !user.isReminderQueryComplete()) {
+					return _PATH_PORTAL_UPDATE_REMINDER_QUERY;
 				}
 			}
-			else if ((user != null) && !user.isPasswordReset() &&
-					 path.equals(_PATH_PORTAL_UPDATE_PASSWORD)) {
-
-				return _PATH_PORTAL_LAYOUT;
-			}
-
-			// Authenticated users must have an email address
-
-			if ((user != null) && !user.isEmailAddressComplete()) {
-				return _PATH_PORTAL_UPDATE_EMAIL_ADDRESS;
-			}
-
-			// Authenticated users should have a reminder query
-
-			if ((user != null) && !user.isDefaultUser() &&
-				!user.isReminderQueryComplete()) {
-
-				return _PATH_PORTAL_UPDATE_REMINDER_QUERY;
-			}
 		}
+		else if (!isPublicPath(path)) {
 
-		// Users must sign in
+			// Users must sign in
 
-		if (!isPublicPath(path)) {
-			if (user == null) {
-				SessionErrors.add(request, PrincipalException.class.getName());
+			SessionErrors.add(session, PrincipalException.class.getName());
 
-				return _PATH_PORTAL_LOGIN;
-			}
+			return _PATH_PORTAL_LOGIN;
 		}
 
 		ActionMapping actionMapping =
@@ -838,7 +833,7 @@ public class PortalRequestProcessor extends TilesRequestProcessor {
 		// Authenticated users must have access to at least one layout
 
 		if (SessionErrors.contains(
-				request, LayoutPermissionException.class.getName())) {
+				session, LayoutPermissionException.class.getName())) {
 
 			return _PATH_PORTAL_ERROR;
 		}

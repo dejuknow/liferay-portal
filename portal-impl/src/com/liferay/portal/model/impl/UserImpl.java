@@ -145,7 +145,11 @@ public class UserImpl extends UserBaseImpl {
 	 */
 	@Override
 	public Contact getContact() throws PortalException {
-		return ContactLocalServiceUtil.getContact(getContactId());
+		if (_contact == null) {
+			_contact = ContactLocalServiceUtil.getContact(getContactId());
+		}
+
+		return _contact;
 	}
 
 	/**
@@ -493,15 +497,10 @@ public class UserImpl extends UserBaseImpl {
 
 	@Override
 	public String getInitials() {
-		StringBundler sb = new StringBundler(2);
+		String firstInitial = StringUtil.shorten(getFirstName(), 1);
+		String lastInitial = StringUtil.shorten(getLastName(), 1);
 
-		String[] names = new String[] {getFirstName(), getLastName()};
-
-		for (String name : names) {
-			sb.append(StringUtil.toUpperCase(StringUtil.shorten(name, 1)));
-		}
-
-		return sb.toString();
+		return StringUtil.toUpperCase(firstInitial.concat(lastInitial));
 	}
 
 	@Override
@@ -972,6 +971,7 @@ public class UserImpl extends UserBaseImpl {
 	private static final boolean _hasUsersProfileFriendlyURL = Validator.isNull(
 		PropsValues.USERS_PROFILE_FRIENDLY_URL);
 
+	private Contact _contact;
 	private Locale _locale;
 	private boolean _passwordModified;
 	private PasswordPolicy _passwordPolicy;
