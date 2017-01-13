@@ -138,9 +138,7 @@ public class DLSyncEventMessageListener extends BaseMessageListener {
 			deleteDLSyncEvent(modifiedTime, syncEventId, typePK);
 		}
 		catch (Exception e) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(e, e);
-			}
+			_log.error(e, e);
 		}
 	}
 
