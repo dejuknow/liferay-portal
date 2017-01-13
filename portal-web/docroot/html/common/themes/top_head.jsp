@@ -69,12 +69,14 @@ long cssLastModifiedTime = PortalWebResourcesUtil.getLastModified(PortalWebResou
 <%
 List<Portlet> portlets = null;
 
+if (layoutTypePortlet != null) {
+	portlets = layoutTypePortlet.getAllPortlets();
+}
+
 if (layout != null) {
 	String ppid = ParamUtil.getString(request, "p_p_id");
 
 	if (layout.isTypeEmbedded() || layout.isTypePortlet()) {
-		portlets = layoutTypePortlet.getAllPortlets();
-
 		if (themeDisplay.isStateMaximized() || themeDisplay.isStatePopUp()) {
 			if (Validator.isNotNull(ppid)) {
 				Portlet portlet = PortletLocalServiceUtil.getPortletById(company.getCompanyId(), ppid);

@@ -754,7 +754,7 @@ public class CustomSQL {
 	protected String[] getConfigs() {
 		ClassLoader classLoader = CustomSQL.class.getClassLoader();
 
-		if (PortalClassLoaderUtil.getClassLoader() == classLoader) {
+		if (PortalClassLoaderUtil.isPortalClassLoader(classLoader)) {
 			Properties propsUtil = PortalUtil.getPortalProperties();
 
 			return StringUtil.split(
