@@ -19,7 +19,7 @@ import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.document.library.kernel.model.DLFileEntryConstants;
 import com.liferay.document.library.kernel.model.DLFileVersion;
 import com.liferay.document.library.kernel.model.DLFolder;
-import com.liferay.document.library.kernel.service.DLFileVersionLocalServiceUtil;
+import com.liferay.document.library.kernel.service.DLFileVersionLocalService;
 import com.liferay.petra.io.delta.ByteChannelReader;
 import com.liferay.petra.io.delta.ByteChannelWriter;
 import com.liferay.petra.io.delta.DeltaUtil;
@@ -36,7 +36,7 @@ import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.security.SecureRandom;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
-import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
+import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.Base64;
 import com.liferay.portal.kernel.util.ClassUtil;
@@ -60,7 +60,6 @@ import com.liferay.sync.constants.SyncPermissionsConstants;
 import com.liferay.sync.model.SyncDLObject;
 import com.liferay.sync.model.SyncDevice;
 import com.liferay.sync.model.impl.SyncDLObjectImpl;
-import com.liferay.sync.service.SyncDLObjectLocalServiceUtil;
 import com.liferay.sync.service.configuration.SyncServiceConfigurationKeys;
 import com.liferay.sync.service.configuration.SyncServiceConfigurationValues;
 
@@ -98,46 +97,17 @@ import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 /**
  * @author Dennis Ju
  */
+@Component(immediate = true, service = SyncUtil.class)
 public class SyncUtil {
 
 	public static void addSyncDLObject(SyncDLObject syncDLObject)
 		throws PortalException {
-
-		String event = syncDLObject.getEvent();
-
-		if (event.equals(SyncDLObjectConstants.EVENT_DELETE) ||
-			event.equals(SyncDLObjectConstants.EVENT_TRASH)) {
-
-			SyncDLObjectLocalServiceUtil.addSyncDLObject(
-				0, syncDLObject.getUserId(), syncDLObject.getUserName(),
-				syncDLObject.getModifiedTime(), 0, 0,
-				syncDLObject.getTreePath(), StringPool.BLANK, StringPool.BLANK,
-				StringPool.BLANK, StringPool.BLANK, StringPool.BLANK,
-				StringPool.BLANK, StringPool.BLANK, 0, 0, StringPool.BLANK,
-				event, StringPool.BLANK, null, 0, StringPool.BLANK,
-				syncDLObject.getType(), syncDLObject.getTypePK(),
-				StringPool.BLANK);
-		}
-		else {
-			SyncDLObjectLocalServiceUtil.addSyncDLObject(
-				syncDLObject.getCompanyId(), syncDLObject.getUserId(),
-				syncDLObject.getUserName(), syncDLObject.getModifiedTime(),
-				syncDLObject.getRepositoryId(),
-				syncDLObject.getParentFolderId(), syncDLObject.getTreePath(),
-				syncDLObject.getName(), syncDLObject.getExtension(),
-				syncDLObject.getMimeType(), syncDLObject.getDescription(),
-				syncDLObject.getChangeLog(), syncDLObject.getExtraSettings(),
-				syncDLObject.getVersion(), syncDLObject.getVersionId(),
-				syncDLObject.getSize(), syncDLObject.getChecksum(),
-				syncDLObject.getEvent(), syncDLObject.getLanTokenKey(),
-				syncDLObject.getLockExpirationDate(),
-				syncDLObject.getLockUserId(), syncDLObject.getLockUserName(),
-				syncDLObject.getType(), syncDLObject.getTypePK(),
-				syncDLObject.getTypeUuid());
-		}
 	}
 
 	public static String buildExceptionMessage(Throwable throwable) {
@@ -216,7 +186,7 @@ public class SyncUtil {
 			return;
 		}
 
-		Group group = GroupLocalServiceUtil.fetchGroup(groupId);
+		Group group = _groupLocalService.fetchGroup(groupId);
 
 		if ((group == null) || !isSyncEnabled(group)) {
 			throw new SyncSiteUnavailableException();
@@ -556,14 +526,14 @@ public class SyncUtil {
 		Lock lock = dlFileEntry.getLock();
 
 		if ((lock == null) || excludeWorkingCopy) {
-			dlFileVersion = DLFileVersionLocalServiceUtil.getFileVersion(
+			dlFileVersion = _dlFileVersionLocalService.getFileVersion(
 				dlFileEntry.getFileEntryId(), dlFileEntry.getVersion());
 
 			type = SyncDLObjectConstants.TYPE_FILE;
 		}
 		else {
 			try {
-				dlFileVersion = DLFileVersionLocalServiceUtil.getFileVersion(
+				dlFileVersion = _dlFileVersionLocalService.getFileVersion(
 					dlFileEntry.getFileEntryId(),
 					DLFileEntryConstants.PRIVATE_WORKING_COPY_VERSION);
 
@@ -584,7 +554,7 @@ public class SyncUtil {
 				// get the staged file entry's lock even though the live
 				// file entry is not checked out
 
-				dlFileVersion = DLFileVersionLocalServiceUtil.getFileVersion(
+				dlFileVersion = _dlFileVersionLocalService.getFileVersion(
 					dlFileEntry.getFileEntryId(), dlFileEntry.getVersion());
 
 				type = SyncDLObjectConstants.TYPE_FILE;
@@ -699,8 +669,22 @@ public class SyncUtil {
 		throw new PortalException("Folder must be an instance of DLFolder");
 	}
 
+	@Reference(unbind = "-")
+	protected void setDLFileVersionLocalService(
+		DLFileVersionLocalService dlFileVersionLocalService) {
+
+		_dlFileVersionLocalService = dlFileVersionLocalService;
+	}
+
+	@Reference(unbind = "-")
+	protected void setGroupLocalService(GroupLocalService groupLocalService) {
+		_groupLocalService = groupLocalService;
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(SyncUtil.class);
 
+	private static DLFileVersionLocalService _dlFileVersionLocalService;
+	private static GroupLocalService _groupLocalService;
 	private static final Map<String, String> _lanTokenKeys =
 		new ConcurrentHashMap<>();
 	private static final Provider _provider = new BouncyCastleProvider();
