@@ -60,7 +60,6 @@ import com.liferay.sync.constants.SyncPermissionsConstants;
 import com.liferay.sync.model.SyncDLObject;
 import com.liferay.sync.model.SyncDevice;
 import com.liferay.sync.model.impl.SyncDLObjectImpl;
-import com.liferay.sync.service.SyncDLObjectLocalService;
 import com.liferay.sync.service.configuration.SyncServiceConfigurationKeys;
 import com.liferay.sync.service.configuration.SyncServiceConfigurationValues;
 
@@ -109,39 +108,6 @@ public class SyncUtil {
 
 	public static void addSyncDLObject(SyncDLObject syncDLObject)
 		throws PortalException {
-
-		String event = syncDLObject.getEvent();
-
-		if (event.equals(SyncDLObjectConstants.EVENT_DELETE) ||
-			event.equals(SyncDLObjectConstants.EVENT_TRASH)) {
-
-			_syncDLObjectLocalService.addSyncDLObject(
-				0, syncDLObject.getUserId(), syncDLObject.getUserName(),
-				syncDLObject.getModifiedTime(), 0, 0,
-				syncDLObject.getTreePath(), StringPool.BLANK, StringPool.BLANK,
-				StringPool.BLANK, StringPool.BLANK, StringPool.BLANK,
-				StringPool.BLANK, StringPool.BLANK, 0, 0, StringPool.BLANK,
-				event, StringPool.BLANK, null, 0, StringPool.BLANK,
-				syncDLObject.getType(), syncDLObject.getTypePK(),
-				StringPool.BLANK);
-		}
-		else {
-			_syncDLObjectLocalService.addSyncDLObject(
-				syncDLObject.getCompanyId(), syncDLObject.getUserId(),
-				syncDLObject.getUserName(), syncDLObject.getModifiedTime(),
-				syncDLObject.getRepositoryId(),
-				syncDLObject.getParentFolderId(), syncDLObject.getTreePath(),
-				syncDLObject.getName(), syncDLObject.getExtension(),
-				syncDLObject.getMimeType(), syncDLObject.getDescription(),
-				syncDLObject.getChangeLog(), syncDLObject.getExtraSettings(),
-				syncDLObject.getVersion(), syncDLObject.getVersionId(),
-				syncDLObject.getSize(), syncDLObject.getChecksum(),
-				syncDLObject.getEvent(), syncDLObject.getLanTokenKey(),
-				syncDLObject.getLockExpirationDate(),
-				syncDLObject.getLockUserId(), syncDLObject.getLockUserName(),
-				syncDLObject.getType(), syncDLObject.getTypePK(),
-				syncDLObject.getTypeUuid());
-		}
 	}
 
 	public static String buildExceptionMessage(Throwable throwable) {
@@ -715,13 +681,6 @@ public class SyncUtil {
 		_groupLocalService = groupLocalService;
 	}
 
-	@Reference(unbind = "-")
-	protected void setSyncDLObjectLocalService(
-		SyncDLObjectLocalService syncDLObjectLocalService) {
-
-		_syncDLObjectLocalService = syncDLObjectLocalService;
-	}
-
 	private static final Log _log = LogFactoryUtil.getLog(SyncUtil.class);
 
 	private static DLFileVersionLocalService _dlFileVersionLocalService;
@@ -729,6 +688,5 @@ public class SyncUtil {
 	private static final Map<String, String> _lanTokenKeys =
 		new ConcurrentHashMap<>();
 	private static final Provider _provider = new BouncyCastleProvider();
-	private static SyncDLObjectLocalService _syncDLObjectLocalService;
 
 }
