@@ -17,9 +17,13 @@ package com.liferay.sync.util;
 import com.liferay.document.library.kernel.exception.NoSuchFileVersionException;
 import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.document.library.kernel.model.DLFileEntryConstants;
+import com.liferay.document.library.kernel.model.DLFileEntryType;
 import com.liferay.document.library.kernel.model.DLFileVersion;
 import com.liferay.document.library.kernel.model.DLFolder;
+import com.liferay.document.library.kernel.model.DLFolderConstants;
+import com.liferay.document.library.kernel.service.DLFileEntryTypeServiceUtil;
 import com.liferay.document.library.kernel.service.DLFileVersionLocalServiceUtil;
+import com.liferay.document.library.kernel.service.DLFolderLocalServiceUtil;
 import com.liferay.petra.io.delta.ByteChannelReader;
 import com.liferay.petra.io.delta.ByteChannelWriter;
 import com.liferay.petra.io.delta.DeltaUtil;
@@ -44,6 +48,7 @@ import com.liferay.portal.kernel.util.Digester;
 import com.liferay.portal.kernel.util.DigesterUtil;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PrefsPropsUtil;
 import com.liferay.portal.kernel.util.PwdGenerator;
 import com.liferay.portal.kernel.util.StreamUtil;
@@ -86,6 +91,7 @@ import java.security.Provider;
 import java.security.cert.X509Certificate;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -410,6 +416,27 @@ public class SyncUtil {
 		return deltaFile;
 	}
 
+	public static List<DLFileEntryType> getFileEntryTypes(
+			long groupId, long folderId)
+		throws PortalException {
+
+		boolean inherited = true;
+
+		if (folderId != DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
+			DLFolder folder = DLFolderLocalServiceUtil.getFolder(folderId);
+
+			if (folder.getRestrictionType() !=
+					DLFolderConstants.RESTRICTION_TYPE_INHERIT) {
+
+				inherited = false;
+			}
+		}
+
+		return DLFileEntryTypeServiceUtil.getFolderFileEntryTypes(
+			PortalUtil.getCurrentAndAncestorSiteGroupIds(groupId), folderId,
+			inherited);
+	}
+
 	public static String getLanTokenKey(
 		long modifiedTime, long typePK, boolean addToMap) {
 
@@ -504,6 +531,28 @@ public class SyncUtil {
 			StreamUtil.cleanUp(patchedWritableByteChannel);
 			StreamUtil.cleanUp(deltaReadableByteChannel);
 		}
+	}
+
+	public static void setFileEntryType(
+			long groupId, long folderId, ServiceContext serviceContext)
+		throws PortalException {
+
+		List<DLFileEntryType> fileEntryTypes = getFileEntryTypes(
+			groupId, folderId);
+
+		if ((fileEntryTypes == null) || (fileEntryTypes.size() != 1)) {
+			return;
+		}
+
+		DLFileEntryType fileEntryType = fileEntryTypes.get(0);
+
+		serviceContext.setAttribute(
+			"fileEntryTypeId", fileEntryType.getFileEntryTypeId());
+
+		PermissionChecker permissionChecker =
+			PermissionThreadLocal.getPermissionChecker();
+
+		serviceContext.setUserId(permissionChecker.getUserId());
 	}
 
 	public static void setFilePermissions(
