@@ -22,9 +22,6 @@ import com.liferay.document.library.kernel.service.DLFileEntryLocalService;
 import com.liferay.document.library.kernel.service.DLFolderLocalService;
 import com.liferay.document.library.kernel.service.DLSyncEventLocalService;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
-import com.liferay.portal.kernel.dao.orm.DynamicQuery;
-import com.liferay.portal.kernel.dao.orm.Property;
-import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -39,7 +36,6 @@ import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.sync.constants.SyncDLObjectConstants;
 import com.liferay.sync.model.SyncDLObject;
 import com.liferay.sync.model.impl.SyncDLObjectImpl;
-import com.liferay.sync.service.SyncDLObjectLocalService;
 import com.liferay.sync.util.SyncUtil;
 
 import org.osgi.service.component.annotations.Activate;
@@ -60,21 +56,6 @@ public class DLSyncEventMessageListener extends BaseMessageListener {
 	protected void activate() {
 		ActionableDynamicQuery actionableDynamicQuery =
 			_dlSyncEventLocalService.getActionableDynamicQuery();
-
-		actionableDynamicQuery.setAddCriteriaMethod(
-			new ActionableDynamicQuery.AddCriteriaMethod() {
-
-				@Override
-				public void addCriteria(DynamicQuery dynamicQuery) {
-					Property modifiedTimeProperty = PropertyFactoryUtil.forName(
-						"modifiedTime");
-
-					dynamicQuery.add(
-						modifiedTimeProperty.gt(
-							_syncDLObjectLocalService.getLatestModifiedTime()));
-				}
-
-			});
 
 		actionableDynamicQuery.setPerformActionMethod(
 			new ActionableDynamicQuery.PerformActionMethod<DLSyncEvent>() {
@@ -148,7 +129,7 @@ public class DLSyncEventMessageListener extends BaseMessageListener {
 				return;
 			}
 
-			syncDLObject = SyncUtil.toSyncDLObject(
+			syncDLObject = _syncUtil.toSyncDLObject(
 				dlFileEntry, event, !dlFileEntry.isInTrash());
 
 			if (event.equals(SyncDLObjectConstants.EVENT_TRASH)) {
@@ -156,21 +137,21 @@ public class DLSyncEventMessageListener extends BaseMessageListener {
 			}
 
 			syncDLObject.setLanTokenKey(
-				SyncUtil.getLanTokenKey(modifiedTime, typePK, false));
+				_syncUtil.getLanTokenKey(modifiedTime, typePK, false));
 		}
 		else {
 			DLFolder dlFolder = _dlFolderLocalService.fetchDLFolder(typePK);
 
-			if ((dlFolder == null) || !SyncUtil.isSupportedFolder(dlFolder)) {
+			if ((dlFolder == null) || !_syncUtil.isSupportedFolder(dlFolder)) {
 				return;
 			}
 
-			syncDLObject = SyncUtil.toSyncDLObject(dlFolder, event);
+			syncDLObject = _syncUtil.toSyncDLObject(dlFolder, event);
 		}
 
 		syncDLObject.setModifiedTime(modifiedTime);
 
-		SyncUtil.addSyncDLObject(syncDLObject);
+		_syncUtil.addSyncDLObject(syncDLObject);
 	}
 
 	@Reference(unbind = "-")
@@ -199,13 +180,6 @@ public class DLSyncEventMessageListener extends BaseMessageListener {
 		ModuleServiceLifecycle moduleServiceLifecycle) {
 	}
 
-	@Reference(unbind = "-")
-	protected void setSyncDLObjectLocalService(
-		SyncDLObjectLocalService syncDLObjectLocalService) {
-
-		_syncDLObjectLocalService = syncDLObjectLocalService;
-	}
-
 	protected void setUser(SyncDLObject syncDLObject) {
 		PermissionChecker permissionChecker =
 			PermissionThreadLocal.getPermissionChecker();
@@ -224,6 +198,8 @@ public class DLSyncEventMessageListener extends BaseMessageListener {
 	private DLFileEntryLocalService _dlFileEntryLocalService;
 	private DLFolderLocalService _dlFolderLocalService;
 	private DLSyncEventLocalService _dlSyncEventLocalService;
-	private SyncDLObjectLocalService _syncDLObjectLocalService;
+
+	@Reference
+	private SyncUtil _syncUtil;
 
 }
