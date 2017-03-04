@@ -36,6 +36,7 @@ import java.util.zip.ZipInputStream;
 
 import org.apache.commons.io.input.CloseShieldInputStream;
 import org.apache.commons.io.input.CountingInputStream;
+import org.apache.http.ConnectionClosedException;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -133,13 +134,19 @@ public class DownloadFilesHandler extends BaseHandler {
 					break;
 				}
 
-				DownloadFileHandler downloadFileHandler = handlers.remove(
+				DownloadFileHandler downloadFileHandler = handlers.get(
 					zipEntryName);
+
+				if (downloadFileHandler == null) {
+					continue;
+				}
 
 				SyncFile syncFile =
 					(SyncFile)downloadFileHandler.getParameterValue("syncFile");
 
 				if (downloadFileHandler.isUnsynced(syncFile)) {
+					handlers.remove(zipEntryName);
+
 					continue;
 				}
 
@@ -166,6 +173,8 @@ public class DownloadFilesHandler extends BaseHandler {
 					}
 				}
 				finally {
+					handlers.remove(zipEntryName);
+
 					downloadFileHandler.removeEvent();
 				}
 			}
