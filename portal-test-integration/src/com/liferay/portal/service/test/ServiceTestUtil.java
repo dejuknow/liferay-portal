@@ -241,12 +241,15 @@ public class ServiceTestUtil {
 				DestinationNames.DOCUMENT_LIBRARY_PDF_PROCESSOR);
 			Filter rawMetaDataProcessorFilter = _registerDestinationFilter(
 				DestinationNames.DOCUMENT_LIBRARY_RAW_METADATA_PROCESSOR);
+			Filter syncEventProcessorFilter = _registerDestinationFilter(
+				DestinationNames.DOCUMENT_LIBRARY_SYNC_EVENT_PROCESSOR);
 			Filter videoProcessorFilter = _registerDestinationFilter(
 				DestinationNames.DOCUMENT_LIBRARY_VIDEO_PROCESSOR);
 
 			serviceDependencyManager.registerDependencies(
 				audioProcessorFilter, imageProcessFilter, pdfProcessorFilter,
-				rawMetaDataProcessorFilter, videoProcessorFilter);
+				rawMetaDataProcessorFilter, syncEventProcessorFilter,
+				videoProcessorFilter);
 
 			serviceDependencyManager.waitForDependencies();
 
