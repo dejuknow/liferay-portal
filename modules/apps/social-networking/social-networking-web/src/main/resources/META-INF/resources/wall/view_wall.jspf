@@ -41,7 +41,9 @@
 
 			<aui:model-context bean="<%= null %>" model="<%= WallEntry.class %>" />
 
-			<aui:input name="comments" />
+			<aui:input name="comments">
+				<aui:validator name="required" />
+			</aui:input>
 
 			<aui:button-row>
 				<aui:button cssClass="btn-lg" type="submit" value="post" />

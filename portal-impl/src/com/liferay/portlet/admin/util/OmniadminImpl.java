@@ -88,7 +88,7 @@ public class OmniadminImpl implements Omniadmin {
 				RoleConstants.ADMINISTRATOR, true);
 		}
 		catch (Exception e) {
-			_log.error(e);
+			_log.error("Unable to check if a user is an omniadmin", e);
 
 			return false;
 		}

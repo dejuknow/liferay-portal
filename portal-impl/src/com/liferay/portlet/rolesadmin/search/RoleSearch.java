@@ -123,7 +123,7 @@ public class RoleSearch extends SearchContainer<Role> {
 			setOrderByComparator(orderByComparator);
 		}
 		catch (Exception e) {
-			_log.error(e);
+			_log.error("Unable to initialize role search", e);
 		}
 	}
 

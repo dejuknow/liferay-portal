@@ -108,7 +108,7 @@ public class UserGroupSearch extends SearchContainer<UserGroup> {
 			setOrderByComparator(orderByComparator);
 		}
 		catch (Exception e) {
-			_log.error(e);
+			_log.error("Unable to initialize user group search", e);
 		}
 	}
 

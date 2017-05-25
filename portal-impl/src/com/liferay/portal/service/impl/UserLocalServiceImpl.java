@@ -1575,7 +1575,7 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 			}
 		}
 		catch (Exception e) {
-			_log.error(e);
+			_log.error("Unable to authenticate for JAAS", e);
 		}
 
 		return false;

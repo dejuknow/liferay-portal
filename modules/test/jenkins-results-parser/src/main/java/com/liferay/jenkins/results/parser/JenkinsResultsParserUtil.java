@@ -52,6 +52,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.codec.binary.Base64;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -739,6 +741,20 @@ public class JenkinsResultsParserUtil {
 		return getSlaves(getBuildProperties(), masterPatternString);
 	}
 
+	public static String merge(String... strings) {
+		StringBuilder sb = new StringBuilder();
+
+		for (int i = 0; i < strings.length; i++) {
+			sb.append(strings[i]);
+
+			if (i < (strings.length - 1)) {
+				sb.append(",");
+			}
+		}
+
+		return sb.toString();
+	}
+
 	public static String read(File file) throws IOException {
 		return new String(Files.readAllBytes(Paths.get(file.toURI())));
 	}
@@ -1143,6 +1159,14 @@ public class JenkinsResultsParserUtil {
 			_RETRY_PERIOD_DEFAULT, _TIMEOUT_DEFAULT);
 	}
 
+	public static void turnSlavesOff(String master, String... slaves) {
+		_setSlaveStatus(master, true, slaves);
+	}
+
+	public static void turnSlavesOn(String master, String... slaves) {
+		_setSlaveStatus(master, false, slaves);
+	}
+
 	public static void write(File file, String content) throws IOException {
 		if (debug) {
 			System.out.println(
@@ -1217,8 +1241,77 @@ public class JenkinsResultsParserUtil {
 		return duration;
 	}
 
+	private static void _executeJenkinsScript(String master, String script) {
+		try {
+			URL urlObject = new URL(
+				fixURL(getLocalURL("http://" + master + "/script")));
+
+			HttpURLConnection httpURLConnection =
+				(HttpURLConnection)urlObject.openConnection();
+
+			httpURLConnection.setDoOutput(true);
+			httpURLConnection.setRequestMethod("POST");
+
+			Properties buildProperties = getBuildProperties();
+
+			String authorizationString =
+				buildProperties.getProperty("jenkins.admin.user.name") + ":" +
+					buildProperties.getProperty("jenkins.admin.user.token");
+
+			String encodedAuthorizationString = Base64.encodeBase64String(
+				authorizationString.getBytes());
+
+			httpURLConnection.setRequestProperty(
+				"Authorization", "Basic " + encodedAuthorizationString);
+
+			try (OutputStream outputStream =
+					httpURLConnection.getOutputStream()) {
+
+				outputStream.write(script.getBytes("UTF-8"));
+
+				outputStream.flush();
+			}
+
+			httpURLConnection.connect();
+
+			System.out.println(
+				"Response from " + urlObject + ": " +
+					httpURLConnection.getResponseCode() + " " +
+						httpURLConnection.getResponseMessage());
+		}
+		catch (IOException ioe) {
+			System.out.println("Unable to execute Jenkins script");
+		}
+	}
+
 	private static String _getRedactTokenKey(int index) {
 		return "github.message.redact.token[" + index + "]";
+	}
+
+	private static void _setSlaveStatus(
+		String master, boolean offlineStatus, String... slaves) {
+
+		try {
+			String script = "script=";
+
+			Class<?> clazz = JenkinsResultsParserUtil.class;
+
+			script += readInputStream(
+				clazz.getResourceAsStream(
+					"dependencies/set-slave-status.groovy"));
+
+			script = script.replace("${slaves}", merge(slaves));
+			script = script.replace(
+				"${offline.status}", String.valueOf(offlineStatus));
+
+			_executeJenkinsScript(master, script);
+		}
+		catch (IOException ioe) {
+			System.out.println(
+				"Unable to set the status for slaves: " + slaves);
+
+			ioe.printStackTrace();
+		}
 	}
 
 	private static final long _BASH_COMMAND_TIMEOUT_DEFAULT = 1000 * 60 * 60;

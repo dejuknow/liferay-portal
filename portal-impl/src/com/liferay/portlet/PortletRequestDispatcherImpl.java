@@ -259,10 +259,10 @@ public class PortletRequestDispatcherImpl
 		}
 		catch (ServletException se) {
 			if (_log.isDebugEnabled()) {
-				_log.debug(se);
+				_log.debug("Unable to dispatch request", se);
 			}
 
-			_log.error(se.getMessage());
+			_log.error("Unable to dispatch request: " + se.getMessage());
 
 			throw new PortletException(se);
 		}

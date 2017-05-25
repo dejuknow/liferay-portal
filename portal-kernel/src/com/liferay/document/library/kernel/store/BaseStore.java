@@ -99,7 +99,7 @@ public abstract class BaseStore implements Store {
 			throw new SystemException(fnfe);
 		}
 		catch (IOException ioe) {
-			_log.error(ioe);
+			_log.error("Unable to add file", ioe);
 		}
 	}
 
@@ -488,7 +488,7 @@ public abstract class BaseStore implements Store {
 				companyId, repositoryId, fileName, versionLabel, fnfe);
 		}
 		catch (IOException ioe) {
-			_log.error(ioe);
+			_log.error("Unable to update file", ioe);
 		}
 	}
 

@@ -859,7 +859,7 @@ public class PortletURLImpl
 				sb.append(StringPool.AMPERSAND);
 			}
 			catch (Exception e) {
-				_log.error(e);
+				_log.error("Unable to get company", e);
 			}
 		}
 		else {
@@ -1322,7 +1322,7 @@ public class PortletURLImpl
 			}
 		}
 		catch (Exception e) {
-			_log.error(e);
+			_log.error("Unable to get company key", e);
 		}
 
 		return null;

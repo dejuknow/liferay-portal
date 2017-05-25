@@ -1,0 +1,24 @@
+task copyLibClasses(type: Copy)
+
+classes {
+	dependsOn copyLibClasses
+}
+
+copyLibClasses {
+	exclude "META-INF/MANIFEST.MF"
+	exclude "javax/mail/"
+
+	from {
+		configurations.provided.collect {
+			zipTree(it)
+		}
+	}
+
+	into {
+		compileJava.destinationDir
+	}
+}
+
+dependencies {
+	provided group: "com.github.fge", name: "json-schema-validator", version: "2.2.3"
+}

@@ -163,6 +163,7 @@ public class CalendarBookingAssetRenderer
 			return portletURL.toString();
 		}
 		catch (Exception e) {
+			_log.error("Unable to get view in context URL", e);
 		}
 
 		return null;
@@ -191,7 +192,7 @@ public class CalendarBookingAssetRenderer
 			calendar = _calendarBooking.getCalendar();
 		}
 		catch (Exception e) {
-			_log.error(e);
+			_log.error("Unable to get calendar", e);
 		}
 
 		return CalendarPermission.contains(
@@ -206,7 +207,7 @@ public class CalendarBookingAssetRenderer
 			calendar = _calendarBooking.getCalendar();
 		}
 		catch (Exception e) {
-			_log.error(e);
+			_log.error("Unable to get calendar", e);
 		}
 
 		return CalendarPermission.contains(
@@ -233,7 +234,7 @@ public class CalendarBookingAssetRenderer
 			return calendar.isEnableComments();
 		}
 		catch (Exception e) {
-			_log.error(e);
+			_log.error("Unable to check commentable", e);
 		}
 
 		return false;
@@ -252,7 +253,7 @@ public class CalendarBookingAssetRenderer
 			return calendar.isEnableRatings();
 		}
 		catch (Exception e) {
-			_log.error(e);
+			_log.error("Unable to check ratable", e);
 		}
 
 		return false;

@@ -38,12 +38,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 
@@ -57,14 +62,49 @@ public class DeployUtil {
 			Map<String, String> filterMap, boolean overwrite)
 		throws Exception {
 
-		File file = new File(getResourcePath(fileName));
 		File targetFile = new File(targetDir, targetFileName);
 
 		if (!targetFile.exists()) {
+			Set<Path> tempPaths = new HashSet<>();
+
+			File file = new File(getResourcePath(tempPaths, fileName));
+
 			CopyTask.copyFile(
 				file, new File(targetDir), targetFileName, filterMap, overwrite,
 				true);
+
+			for (Path tempPath : tempPaths) {
+				deletePath(tempPath);
+			}
 		}
+	}
+
+	public static void deletePath(Path tempPath) throws IOException {
+		Files.walkFileTree(
+			tempPath,
+			new SimpleFileVisitor<Path>() {
+
+				@Override
+				public FileVisitResult postVisitDirectory(
+						Path dirPath, IOException ioe)
+					throws IOException {
+
+					Files.delete(dirPath);
+
+					return FileVisitResult.CONTINUE;
+				}
+
+				@Override
+				public FileVisitResult visitFile(
+						Path filePath, BasicFileAttributes basicFileAttributes)
+					throws IOException {
+
+					Files.delete(filePath);
+
+					return FileVisitResult.CONTINUE;
+				}
+
+			});
 	}
 
 	public static String getAutoDeployDestDir() throws Exception {
@@ -107,8 +147,19 @@ public class DeployUtil {
 		return destDir;
 	}
 
+	public static String getResourcePath(Set<Path> tempPaths, String resource)
+		throws Exception {
+
+		return _instance._getResourcePath(tempPaths, resource);
+	}
+
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link #getResourcePath(
+	 *			   Set, String)}
+	 */
+	@Deprecated
 	public static String getResourcePath(String resource) throws Exception {
-		return _instance._getResourcePath(resource);
+		return _instance._getResourcePath(new HashSet<>(), resource);
 	}
 
 	public static void redeployJetty(String context) throws Exception {
@@ -256,7 +307,9 @@ public class DeployUtil {
 	private DeployUtil() {
 	}
 
-	private String _getResourcePath(String resource) throws IOException {
+	private String _getResourcePath(Set<Path> tempDirPaths, String resource)
+		throws IOException {
+
 		Class<?> clazz = getClass();
 
 		InputStream inputStream = clazz.getResourceAsStream(
@@ -268,6 +321,8 @@ public class DeployUtil {
 
 		Path tempDirPath = Files.createTempDirectory(
 			Paths.get(SystemProperties.get(SystemProperties.TMP_DIR)), null);
+
+		tempDirPaths.add(tempDirPath);
 
 		File file = new File(
 			tempDirPath + "/liferay/com/liferay/portal/deploy/dependencies/" +

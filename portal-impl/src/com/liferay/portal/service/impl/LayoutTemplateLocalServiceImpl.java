@@ -494,7 +494,7 @@ public class LayoutTemplateLocalServiceImpl
 			return ListUtil.sort(processor.getColumns());
 		}
 		catch (Exception e) {
-			_log.error(e);
+			_log.error("Unable to get layout template columns", e);
 
 			return new ArrayList<>();
 		}

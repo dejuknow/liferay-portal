@@ -106,7 +106,7 @@ public class PasswordPolicySearch extends SearchContainer<PasswordPolicy> {
 			setOrderByComparator(orderByComparator);
 		}
 		catch (Exception e) {
-			_log.error(e);
+			_log.error("Unable to initialize password policy search", e);
 		}
 	}
 

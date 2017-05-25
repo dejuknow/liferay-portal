@@ -90,7 +90,7 @@ public class PortletRequestProcessor extends TilesRequestProcessor {
 			return portletReqProcessor;
 		}
 		catch (Exception e) {
-			_log.error(e);
+			_log.error("Unable to get a portlet request processor", e);
 
 			return new PortletRequestProcessor(servlet, moduleConfig);
 		}

@@ -182,10 +182,10 @@ public class SiteAdministrationPanelCategoryDisplayContext {
 			}
 			catch (PortalException pe) {
 				if (_log.isDebugEnabled()) {
-					_log.debug(pe);
+					_log.debug("Unable to get live group URL", pe);
 				}
 
-				_log.error(pe.getMessage());
+				_log.error("Unable to get live group URL: " + pe.getMessage());
 			}
 		}
 		else if (group.isStagingGroup()) {

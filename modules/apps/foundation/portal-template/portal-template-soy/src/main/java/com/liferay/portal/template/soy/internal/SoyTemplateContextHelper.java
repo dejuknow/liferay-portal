@@ -17,9 +17,7 @@ package com.liferay.portal.template.soy.internal;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.template.TemplateContextContributor;
-import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.SetUtil;
-import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.template.TemplateContextHelper;
 
 import java.util.Collections;
@@ -67,12 +65,6 @@ public class SoyTemplateContextHelper extends TemplateContextHelper {
 	public void prepare(
 		Map<String, Object> contextObjects, HttpServletRequest request) {
 
-		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
-			WebKeys.THEME_DISPLAY);
-
-		contextObjects.put("locale", themeDisplay.getLocale());
-		contextObjects.put("themeDisplay", themeDisplay);
-
 		// Custom template context contributors
 
 		for (TemplateContextContributor templateContextContributor :
@@ -86,7 +78,7 @@ public class SoyTemplateContextHelper extends TemplateContextHelper {
 		cardinality = ReferenceCardinality.MULTIPLE,
 		policy = ReferencePolicy.DYNAMIC,
 		policyOption = ReferencePolicyOption.GREEDY,
-		target = "(type=" + TemplateContextContributor.TYPE_GLOBAL + ")",
+		target = "(&(lang.type=" + TemplateConstants.LANG_TYPE_SOY + ")(type=" + TemplateContextContributor.TYPE_GLOBAL + "))",
 		unbind = "unregisterTemplateContextContributor"
 	)
 	protected void registerTemplateContextContributor(

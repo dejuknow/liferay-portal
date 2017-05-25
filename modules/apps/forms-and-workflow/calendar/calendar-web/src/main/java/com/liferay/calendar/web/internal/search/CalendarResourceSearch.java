@@ -121,7 +121,7 @@ public class CalendarResourceSearch extends SearchContainer<CalendarResource> {
 			setOrderByComparator(orderByComparator);
 		}
 		catch (Exception e) {
-			_log.error(e);
+			_log.error("Unable to initialize calendar resource search", e);
 		}
 	}
 

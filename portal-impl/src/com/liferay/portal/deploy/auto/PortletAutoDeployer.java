@@ -42,16 +42,20 @@ public class PortletAutoDeployer
 				PropsValues.AUTO_DEPLOY_DEPLOY_DIR);
 			destDir = DeployUtil.getAutoDeployDestDir();
 			appServerType = ServerDetector.getServerId();
-			auiTaglibDTD = DeployUtil.getResourcePath("liferay-aui.tld");
+			auiTaglibDTD = DeployUtil.getResourcePath(
+				tempDirPaths, "liferay-aui.tld");
 			portletTaglibDTD = DeployUtil.getResourcePath(
-				"liferay-portlet.tld");
+				tempDirPaths, "liferay-portlet.tld");
 			portletExtTaglibDTD = DeployUtil.getResourcePath(
-				"liferay-portlet-ext.tld");
+				tempDirPaths, "liferay-portlet-ext.tld");
 			securityTaglibDTD = DeployUtil.getResourcePath(
-				"liferay-security.tld");
-			themeTaglibDTD = DeployUtil.getResourcePath("liferay-theme.tld");
-			uiTaglibDTD = DeployUtil.getResourcePath("liferay-ui.tld");
-			utilTaglibDTD = DeployUtil.getResourcePath("liferay-util.tld");
+				tempDirPaths, "liferay-security.tld");
+			themeTaglibDTD = DeployUtil.getResourcePath(
+				tempDirPaths, "liferay-theme.tld");
+			uiTaglibDTD = DeployUtil.getResourcePath(
+				tempDirPaths, "liferay-ui.tld");
+			utilTaglibDTD = DeployUtil.getResourcePath(
+				tempDirPaths, "liferay-util.tld");
 			unpackWar = PrefsPropsUtil.getBoolean(
 				PropsKeys.AUTO_DEPLOY_UNPACK_WAR,
 				PropsValues.AUTO_DEPLOY_UNPACK_WAR);

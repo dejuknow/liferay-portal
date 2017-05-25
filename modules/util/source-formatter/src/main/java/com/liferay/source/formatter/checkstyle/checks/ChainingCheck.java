@@ -121,12 +121,16 @@ public class ChainingCheck extends AbstractCheck {
 
 				String classOrVariableName = nameAST.getText();
 
+				if (classOrVariableName.matches(".*[Bb]uilder")) {
+					continue outerLoop;
+				}
+
 				String variableType = _getVariableType(
 					detailAST, classOrVariableName);
 
 				if (variableType != null) {
 					for (String allowedClassName : _allowedClassNames) {
-						if (classOrVariableName.matches(allowedClassName)) {
+						if (variableType.matches(allowedClassName)) {
 							continue outerLoop;
 						}
 					}

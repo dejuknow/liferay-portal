@@ -2428,19 +2428,7 @@ information. Make sure to commit in all build services results.
 			<try>
 				<move file="${module.base.dir}/settings.gradle" tofile="${module.base.dir}/settings.gradle.temp" />
 
-				<local name="tasks.output" />
-
-				<gradle-execute dir="${module.base.dir}" outputproperty="tasks.output" task="tasks" />
-
-				<if>
-					<contains string="${tasks.output}" substring="assemble" />
-					<then>
-						<gradle-execute dir="${module.base.dir}" task="assemble" />
-					</then>
-					<else>
-						<gradle-execute dir="${module.base.dir}" task="jar" />
-					</else>
-				</if>
+				<gradle-execute checktask="true" dir="${module.base.dir}" task="assemble" />
 			</try>
 			<catch>
 				<fail message="${failure.property}" />
@@ -2470,7 +2458,7 @@ information. Make sure to commit in all build services results.
 			<try>
 				<move file="${module.base.dir}/settings.gradle" tofile="${module.base.dir}/settings.gradle.temp" />
 
-				<gradle-execute dir="${module.base.dir}" task="pmdMain">
+				<gradle-execute checktask="true" dir="${module.base.dir}" task="pmdMain">
 					<arg value="pmdTest" />
 					<arg value="pmdTestIntegration" />
 				</gradle-execute>
@@ -2501,11 +2489,12 @@ information. Make sure to commit in all build services results.
 		<echo file="build.${user.name}.properties">baseline.jar.report.level=persist</echo>
 
 		<echo>Executing baseline on ${module.base.dir}.</echo>
+
 		<trycatch property="failure.property">
 			<try>
 				<move file="${module.base.dir}/settings.gradle" tofile="${module.base.dir}/settings.gradle.temp" />
 
-				<gradle-execute dir="${module.base.dir}" forcedcacheenabled="false" task="baseline" />
+				<gradle-execute checktask="true" dir="${module.base.dir}" forcedcacheenabled="false" task="baseline" />
 			</try>
 			<catch>
 				<fail message="${failure.property}" />
@@ -2575,7 +2564,7 @@ information. Make sure to commit in all build services results.
 			<try>
 				<move file="${module.base.dir}/settings.gradle" tofile="${module.base.dir}/settings.gradle.temp" />
 
-				<gradle-execute dir="${module.base.dir}" task="test" />
+				<gradle-execute checktask="true" dir="${module.base.dir}" forcedcacheenabled="false" task="test" />
 			</try>
 			<catch>
 				<fail message="${failure.property}" />
