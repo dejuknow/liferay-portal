@@ -67,10 +67,17 @@ public class SyncWatchEventProcessor implements Runnable {
 
 				@Override
 				public void onRemove(SyncFile syncFile) {
-					_dependentSyncWatchEventsMaps.remove(
-						syncFile.getFilePathName());
+					if (FileUtil.exists(
+							Paths.get(syncFile.getFilePathName()))) {
 
-					_pendingTypePKSyncFileIds.remove(syncFile.getTypePK());
+						doUpdate(syncFile);
+					}
+					else {
+						_dependentSyncWatchEventsMaps.remove(
+							syncFile.getFilePathName());
+
+						_pendingTypePKSyncFileIds.remove(syncFile.getTypePK());
+					}
 				}
 
 				@Override
@@ -85,6 +92,10 @@ public class SyncWatchEventProcessor implements Runnable {
 						return;
 					}
 
+					doUpdate(syncFile);
+				}
+
+				protected void doUpdate(SyncFile syncFile) {
 					List<SyncWatchEvent> syncWatchEvents =
 						_dependentSyncWatchEventsMaps.remove(
 							syncFile.getFilePathName());
@@ -102,7 +113,8 @@ public class SyncWatchEventProcessor implements Runnable {
 						try {
 							if (_logger.isDebugEnabled()) {
 								_logger.debug(
-									"Processing queued event {} {}",
+									"Processing queued event {} {} {}",
+									syncWatchEvent.getSyncWatchEventId(),
 									syncWatchEvent.getFilePathName(),
 									syncWatchEvent.getEventType());
 							}
@@ -802,7 +814,8 @@ public class SyncWatchEventProcessor implements Runnable {
 
 		if (_logger.isDebugEnabled()) {
 			_logger.debug(
-				"Queueing event {} {}", syncWatchEvent.getEventType(),
+				"Queueing event {} {} {}", syncWatchEvent.getSyncWatchEventId(),
+				syncWatchEvent.getEventType(),
 				syncWatchEvent.getFilePathName());
 		}
 
