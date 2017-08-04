@@ -20,6 +20,7 @@ import com.liferay.sync.engine.model.SyncFile;
 import com.liferay.sync.engine.service.SyncAccountService;
 import com.liferay.sync.engine.service.SyncFileService;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -72,22 +73,40 @@ public class FileUtil {
 
 			_checkInProgressFilePathNames.add(filePath.toString());
 
-			while (true) {
-				long size1 = FileUtils.sizeOf(filePath.toFile());
+			File file = filePath.toFile();
 
-				if (size1 == 0) {
-					Thread.sleep(50);
+			while (true) {
+				if (OSDetector.isWindows()) {
+					boolean renamed = file.renameTo(file);
+
+					if (!renamed) {
+						Thread.sleep(50);
+					}
+					else {
+						_checkInProgressFilePathNames.remove(
+							filePath.toString());
+
+						return true;
+					}
 				}
 				else {
-					Thread.sleep(size1 / 1048576);
-				}
+					long size1 = FileUtils.sizeOf(filePath.toFile());
 
-				long size2 = FileUtils.sizeOf(filePath.toFile());
+					if (size1 == 0) {
+						Thread.sleep(50);
+					}
+					else {
+						Thread.sleep(size1 / 1048576);
+					}
 
-				if (size1 == size2) {
-					_checkInProgressFilePathNames.remove(filePath.toString());
+					long size2 = FileUtils.sizeOf(filePath.toFile());
 
-					return true;
+					if (size1 == size2) {
+						_checkInProgressFilePathNames.remove(
+							filePath.toString());
+
+						return true;
+					}
 				}
 			}
 		}

@@ -580,7 +580,10 @@ public class SyncWatchEventProcessor implements Runnable {
 			return;
 		}
 
-		SyncFileService.updateFileSyncFile(filePath, _syncAccountId, syncFile);
+		if (FileUtil.checkFilePath(filePath)) {
+			SyncFileService.updateFileSyncFile(
+				filePath, _syncAccountId, syncFile);
+		}
 	}
 
 	protected void moveFile(SyncWatchEvent syncWatchEvent) throws Exception {
