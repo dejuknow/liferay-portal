@@ -14,6 +14,10 @@
 
 package com.liferay.sync.internal.model.listener;
 
+import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
+import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.dao.orm.Property;
+import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.ModelListenerException;
 import com.liferay.portal.kernel.model.ModelListener;
@@ -66,20 +70,48 @@ public class UserModelListener extends SyncBaseModelListener<User> {
 			return;
 		}
 
-		List<ResourcePermission> resourcePermissions =
-			resourcePermissionLocalService.getRoleResourcePermissions(
-				(Long)associationClassPK);
+		ActionableDynamicQuery actionableDynamicQuery =
+			resourcePermissionLocalService.getActionableDynamicQuery();
 
-		for (ResourcePermission resourcePermission : resourcePermissions) {
-			if (resourcePermission.hasActionId(ActionKeys.VIEW)) {
-				SyncDLObject syncDLObject = getSyncDLObject(resourcePermission);
+		actionableDynamicQuery.setAddCriteriaMethod(
+			new ActionableDynamicQuery.AddCriteriaMethod() {
 
-				if (syncDLObject == null) {
-					continue;
+				@Override
+				public void addCriteria(DynamicQuery dynamicQuery) {
+					Property roleIdProperty = PropertyFactoryUtil.forName(
+						"roleId");
+
+					dynamicQuery.add(roleIdProperty.eq(associationClassPK));
 				}
 
-				updateSyncDLObject(syncDLObject);
-			}
+			});
+		actionableDynamicQuery.setPerformActionMethod(
+			new ActionableDynamicQuery.
+				PerformActionMethod<ResourcePermission>() {
+
+				@Override
+				public void performAction(
+					ResourcePermission resourcePermission) {
+
+					if (resourcePermission.hasActionId(ActionKeys.VIEW)) {
+						SyncDLObject syncDLObject = getSyncDLObject(
+							resourcePermission);
+
+						if (syncDLObject == null) {
+							return;
+						}
+
+						updateSyncDLObject(syncDLObject);
+					}
+				}
+
+			});
+
+		try {
+			actionableDynamicQuery.performActions();
+		}
+		catch (Exception e) {
+			throw new ModelListenerException(e);
 		}
 	}
 
@@ -93,25 +125,54 @@ public class UserModelListener extends SyncBaseModelListener<User> {
 			return;
 		}
 
-		List<ResourcePermission> resourcePermissions =
-			resourcePermissionLocalService.getRoleResourcePermissions(
-				(Long)associationClassPK);
+		ActionableDynamicQuery actionableDynamicQuery =
+			resourcePermissionLocalService.getActionableDynamicQuery();
 
-		for (ResourcePermission resourcePermission : resourcePermissions) {
-			if (resourcePermission.hasActionId(ActionKeys.VIEW)) {
-				SyncDLObject syncDLObject = getSyncDLObject(resourcePermission);
+		actionableDynamicQuery.setAddCriteriaMethod(
+			new ActionableDynamicQuery.AddCriteriaMethod() {
 
-				if (syncDLObject == null) {
-					continue;
+				@Override
+				public void addCriteria(DynamicQuery dynamicQuery) {
+					Property roleIdProperty = PropertyFactoryUtil.forName(
+						"roleId");
+
+					dynamicQuery.add(roleIdProperty.eq(associationClassPK));
 				}
 
-				Date date = new Date();
+			});
+		actionableDynamicQuery.setPerformActionMethod(
+			new ActionableDynamicQuery.
+				PerformActionMethod<ResourcePermission>() {
 
-				syncDLObject.setModifiedTime(date.getTime());
-				syncDLObject.setLastPermissionChangeDate(date);
+				@Override
+				public void performAction(
+					ResourcePermission resourcePermission) {
 
-				syncDLObjectLocalService.updateSyncDLObject(syncDLObject);
-			}
+					if (resourcePermission.hasActionId(ActionKeys.VIEW)) {
+						SyncDLObject syncDLObject = getSyncDLObject(
+							resourcePermission);
+
+						if (syncDLObject == null) {
+							return;
+						}
+
+						Date date = new Date();
+
+						syncDLObject.setModifiedTime(date.getTime());
+						syncDLObject.setLastPermissionChangeDate(date);
+
+						syncDLObjectLocalService.updateSyncDLObject(
+							syncDLObject);
+					}
+				}
+
+			});
+
+		try {
+			actionableDynamicQuery.performActions();
+		}
+		catch (Exception e) {
+			throw new ModelListenerException(e);
 		}
 	}
 
