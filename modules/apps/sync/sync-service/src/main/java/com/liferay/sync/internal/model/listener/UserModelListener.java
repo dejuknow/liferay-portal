@@ -74,33 +74,8 @@ public class UserModelListener extends SyncBaseModelListener<User> {
 		}
 
 		ActionableDynamicQuery actionableDynamicQuery =
-			resourcePermissionLocalService.getActionableDynamicQuery();
+			_getActionableDynamicQuery(associationClassPK);
 
-		actionableDynamicQuery.setAddCriteriaMethod(
-			new ActionableDynamicQuery.AddCriteriaMethod() {
-
-				@Override
-				public void addCriteria(DynamicQuery dynamicQuery) {
-					Property nameProperty = PropertyFactoryUtil.forName("name");
-					Property roleIdProperty = PropertyFactoryUtil.forName(
-						"roleId");
-					Property viewActionIdProperty = PropertyFactoryUtil.forName(
-						"viewActionId");
-
-					Disjunction disjunction =
-						RestrictionsFactoryUtil.disjunction();
-
-					disjunction.add(
-						nameProperty.eq(DLFileEntry.class.getName()));
-					disjunction.add(nameProperty.eq(DLFolder.class.getName()));
-
-					dynamicQuery.add(disjunction);
-
-					dynamicQuery.add(roleIdProperty.eq(associationClassPK));
-					dynamicQuery.add(viewActionIdProperty.eq(true));
-				}
-
-			});
 		actionableDynamicQuery.setPerformActionMethod(
 			new ActionableDynamicQuery.
 				PerformActionMethod<ResourcePermission>() {
@@ -140,33 +115,8 @@ public class UserModelListener extends SyncBaseModelListener<User> {
 		}
 
 		ActionableDynamicQuery actionableDynamicQuery =
-			resourcePermissionLocalService.getActionableDynamicQuery();
+			_getActionableDynamicQuery(associationClassPK);
 
-		actionableDynamicQuery.setAddCriteriaMethod(
-			new ActionableDynamicQuery.AddCriteriaMethod() {
-
-				@Override
-				public void addCriteria(DynamicQuery dynamicQuery) {
-					Property nameProperty = PropertyFactoryUtil.forName("name");
-					Property roleIdProperty = PropertyFactoryUtil.forName(
-						"roleId");
-					Property viewActionIdProperty = PropertyFactoryUtil.forName(
-						"viewActionId");
-
-					Disjunction disjunction =
-						RestrictionsFactoryUtil.disjunction();
-
-					disjunction.add(
-						nameProperty.eq(DLFileEntry.class.getName()));
-					disjunction.add(nameProperty.eq(DLFolder.class.getName()));
-
-					dynamicQuery.add(disjunction);
-
-					dynamicQuery.add(roleIdProperty.eq(associationClassPK));
-					dynamicQuery.add(viewActionIdProperty.eq(true));
-				}
-
-			});
 		actionableDynamicQuery.setPerformActionMethod(
 			new ActionableDynamicQuery.
 				PerformActionMethod<ResourcePermission>() {
@@ -233,6 +183,41 @@ public class UserModelListener extends SyncBaseModelListener<User> {
 		catch (Exception e) {
 			throw new ModelListenerException(e);
 		}
+	}
+
+	private ActionableDynamicQuery _getActionableDynamicQuery(
+		final Object roleId) {
+
+		ActionableDynamicQuery actionableDynamicQuery =
+			resourcePermissionLocalService.getActionableDynamicQuery();
+
+		actionableDynamicQuery.setAddCriteriaMethod(
+			new ActionableDynamicQuery.AddCriteriaMethod() {
+
+				@Override
+				public void addCriteria(DynamicQuery dynamicQuery) {
+					Property nameProperty = PropertyFactoryUtil.forName("name");
+					Property roleIdProperty = PropertyFactoryUtil.forName(
+						"roleId");
+					Property viewActionIdProperty = PropertyFactoryUtil.forName(
+						"viewActionId");
+
+					Disjunction disjunction =
+						RestrictionsFactoryUtil.disjunction();
+
+					disjunction.add(
+						nameProperty.eq(DLFileEntry.class.getName()));
+					disjunction.add(nameProperty.eq(DLFolder.class.getName()));
+
+					dynamicQuery.add(disjunction);
+
+					dynamicQuery.add(roleIdProperty.eq(roleId));
+					dynamicQuery.add(viewActionIdProperty.eq(true));
+				}
+
+			});
+
+		return actionableDynamicQuery;
 	}
 
 	@Reference
