@@ -14,13 +14,20 @@
 
 package com.liferay.sync.internal.model.listener;
 
+import com.liferay.document.library.kernel.model.DLFileEntry;
+import com.liferay.document.library.kernel.model.DLFolder;
+import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
+import com.liferay.portal.kernel.dao.orm.Disjunction;
+import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.dao.orm.Property;
+import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.exception.ModelListenerException;
 import com.liferay.portal.kernel.model.ModelListener;
 import com.liferay.portal.kernel.model.ResourcePermission;
 import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.sync.constants.SyncDeviceConstants;
 import com.liferay.sync.model.SyncDLObject;
@@ -66,20 +73,34 @@ public class UserModelListener extends SyncBaseModelListener<User> {
 			return;
 		}
 
-		List<ResourcePermission> resourcePermissions =
-			resourcePermissionLocalService.getRoleResourcePermissions(
-				(Long)associationClassPK);
+		ActionableDynamicQuery actionableDynamicQuery =
+			_getActionableDynamicQuery(associationClassPK);
 
-		for (ResourcePermission resourcePermission : resourcePermissions) {
-			if (resourcePermission.hasActionId(ActionKeys.VIEW)) {
-				SyncDLObject syncDLObject = getSyncDLObject(resourcePermission);
+		actionableDynamicQuery.setPerformActionMethod(
+			new ActionableDynamicQuery.
+				PerformActionMethod<ResourcePermission>() {
 
-				if (syncDLObject == null) {
-					continue;
+				@Override
+				public void performAction(
+					ResourcePermission resourcePermission) {
+
+					SyncDLObject syncDLObject = getSyncDLObject(
+						resourcePermission);
+
+					if (syncDLObject == null) {
+						return;
+					}
+
+					updateSyncDLObject(syncDLObject);
 				}
 
-				updateSyncDLObject(syncDLObject);
-			}
+			});
+
+		try {
+			actionableDynamicQuery.performActions();
+		}
+		catch (Exception e) {
+			throw new ModelListenerException(e);
 		}
 	}
 
@@ -93,25 +114,39 @@ public class UserModelListener extends SyncBaseModelListener<User> {
 			return;
 		}
 
-		List<ResourcePermission> resourcePermissions =
-			resourcePermissionLocalService.getRoleResourcePermissions(
-				(Long)associationClassPK);
+		ActionableDynamicQuery actionableDynamicQuery =
+			_getActionableDynamicQuery(associationClassPK);
 
-		for (ResourcePermission resourcePermission : resourcePermissions) {
-			if (resourcePermission.hasActionId(ActionKeys.VIEW)) {
-				SyncDLObject syncDLObject = getSyncDLObject(resourcePermission);
+		actionableDynamicQuery.setPerformActionMethod(
+			new ActionableDynamicQuery.
+				PerformActionMethod<ResourcePermission>() {
 
-				if (syncDLObject == null) {
-					continue;
+				@Override
+				public void performAction(
+					ResourcePermission resourcePermission) {
+
+					SyncDLObject syncDLObject = getSyncDLObject(
+						resourcePermission);
+
+					if (syncDLObject == null) {
+						return;
+					}
+
+					Date date = new Date();
+
+					syncDLObject.setModifiedTime(date.getTime());
+					syncDLObject.setLastPermissionChangeDate(date);
+
+					syncDLObjectLocalService.updateSyncDLObject(syncDLObject);
 				}
 
-				Date date = new Date();
+			});
 
-				syncDLObject.setModifiedTime(date.getTime());
-				syncDLObject.setLastPermissionChangeDate(date);
-
-				syncDLObjectLocalService.updateSyncDLObject(syncDLObject);
-			}
+		try {
+			actionableDynamicQuery.performActions();
+		}
+		catch (Exception e) {
+			throw new ModelListenerException(e);
 		}
 	}
 
@@ -148,6 +183,41 @@ public class UserModelListener extends SyncBaseModelListener<User> {
 		catch (Exception e) {
 			throw new ModelListenerException(e);
 		}
+	}
+
+	private ActionableDynamicQuery _getActionableDynamicQuery(
+		final Object roleId) {
+
+		ActionableDynamicQuery actionableDynamicQuery =
+			resourcePermissionLocalService.getActionableDynamicQuery();
+
+		actionableDynamicQuery.setAddCriteriaMethod(
+			new ActionableDynamicQuery.AddCriteriaMethod() {
+
+				@Override
+				public void addCriteria(DynamicQuery dynamicQuery) {
+					Property nameProperty = PropertyFactoryUtil.forName("name");
+					Property roleIdProperty = PropertyFactoryUtil.forName(
+						"roleId");
+					Property viewActionIdProperty = PropertyFactoryUtil.forName(
+						"viewActionId");
+
+					Disjunction disjunction =
+						RestrictionsFactoryUtil.disjunction();
+
+					disjunction.add(
+						nameProperty.eq(DLFileEntry.class.getName()));
+					disjunction.add(nameProperty.eq(DLFolder.class.getName()));
+
+					dynamicQuery.add(disjunction);
+
+					dynamicQuery.add(roleIdProperty.eq(roleId));
+					dynamicQuery.add(viewActionIdProperty.eq(true));
+				}
+
+			});
+
+		return actionableDynamicQuery;
 	}
 
 	@Reference
