@@ -100,7 +100,7 @@ renderResponse.setTitle(StringBundler.concat(selectedUser.getFullName(), " - ", 
 					cssClass="text-success"
 					iconCssClass="icon-ok-sign"
 					label="<%= true %>"
-					message="personal-site-was-successfully-forgotten"
+					message="personal-site-was-successfully-deleted"
 				/>
 			</c:if>
 		</div>
