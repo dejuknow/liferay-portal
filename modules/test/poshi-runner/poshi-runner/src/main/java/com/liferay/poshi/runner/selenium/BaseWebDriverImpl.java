@@ -2497,7 +2497,7 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 			imageTarget);
 
 		ScreenRegion imageTargetScreenRegion = imageTargetScreenRegions.get(
-			Integer.parseInt(index));
+			GetterUtil.getInteger(index));
 
 		if (imageTargetScreenRegion != null) {
 			mouse.click(imageTargetScreenRegion.getCenter());

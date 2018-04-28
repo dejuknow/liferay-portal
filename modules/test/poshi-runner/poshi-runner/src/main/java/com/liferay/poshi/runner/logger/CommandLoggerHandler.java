@@ -20,6 +20,7 @@ import com.liferay.poshi.runner.PoshiRunnerStackTraceUtil;
 import com.liferay.poshi.runner.PoshiRunnerVariablesUtil;
 import com.liferay.poshi.runner.exception.PoshiRunnerLoggerException;
 import com.liferay.poshi.runner.selenium.LiferaySeleniumHelper;
+import com.liferay.poshi.runner.util.GetterUtil;
 import com.liferay.poshi.runner.util.HtmlUtil;
 import com.liferay.poshi.runner.util.StringUtil;
 import com.liferay.poshi.runner.util.Validator;
@@ -615,7 +616,8 @@ public final class CommandLoggerHandler {
 			"data-functionlinkid");
 
 		if (functionLinkID != null) {
-			_functionLinkId = Integer.parseInt(functionLinkID.substring(15));
+			_functionLinkId = GetterUtil.getInteger(
+				functionLinkID.substring(15));
 		}
 
 		xmlLoggerElement.setAttribute(

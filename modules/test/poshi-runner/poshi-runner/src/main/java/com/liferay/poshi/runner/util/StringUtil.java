@@ -434,7 +434,7 @@ public class StringUtil {
 	}
 
 	public static String randomString(String length) {
-		int lengthInt = Integer.parseInt(length);
+		int lengthInt = GetterUtil.getInteger(length);
 
 		StringBuilder sb = new StringBuilder();
 

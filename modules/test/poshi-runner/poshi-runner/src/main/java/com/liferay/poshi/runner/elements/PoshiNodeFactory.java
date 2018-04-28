@@ -14,18 +14,17 @@
 
 package com.liferay.poshi.runner.elements;
 
+import com.google.common.reflect.ClassPath;
+
 import com.liferay.poshi.runner.util.Dom4JUtil;
 import com.liferay.poshi.runner.util.FileUtil;
 
 import java.io.File;
 import java.io.IOException;
 
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.lang.reflect.Modifier;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.dom4j.Comment;
@@ -167,33 +166,21 @@ public abstract class PoshiNodeFactory {
 
 	static {
 		try {
-			URL url = PoshiNode.class.getResource(
-				PoshiNode.class.getSimpleName() + ".class");
+			ClassPath classPath = ClassPath.from(
+				PoshiNode.class.getClassLoader());
 
-			File poshiNodeClassFile = new File(url.toURI());
+			for (ClassPath.ClassInfo classInfo :
+					classPath.getTopLevelClasses(
+						"com.liferay.poshi.runner.elements")) {
 
-			File dir = poshiNodeClassFile.getParentFile();
+				Class<?> clazz = classInfo.load();
 
-			List<File> dirFiles = Arrays.asList(dir.listFiles());
-
-			Collections.sort(dirFiles);
-
-			for (File file : dirFiles) {
-				String fileName = file.getName();
-
-				if (fileName.startsWith("Base") ||
-					fileName.startsWith("Poshi")) {
+				if (Modifier.isAbstract(clazz.getModifiers()) ||
+					!(PoshiComment.class.isAssignableFrom(clazz) ||
+					PoshiElement.class.isAssignableFrom(clazz))) {
 
 					continue;
 				}
-
-				Package pkg = PoshiNode.class.getPackage();
-
-				int index = fileName.indexOf(".");
-
-				String className = fileName.substring(0, index);
-
-				Class<?> clazz = Class.forName(pkg.getName() + "." + className);
 
 				PoshiNode<?, ?> poshiNode =
 					(PoshiNode<?, ?>)clazz.newInstance();
@@ -209,8 +196,8 @@ public abstract class PoshiNodeFactory {
 				}
 			}
 		}
-		catch (ClassNotFoundException | IllegalAccessException |
-			   InstantiationException | URISyntaxException e) {
+		catch (IllegalAccessException | InstantiationException |
+			   IOException e) {
 
 			throw new RuntimeException(e);
 		}
