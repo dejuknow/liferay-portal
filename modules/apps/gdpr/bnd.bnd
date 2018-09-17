@@ -1,0 +1,4 @@
+Bundle-Name: GDPR Cookie Demo
+Bundle-SymbolicName: com.liferay.gdpr.cookie.demo.web
+Bundle-Version: 1.0.0
+Web-ContextPath: /gdpr_cookie_demo-web

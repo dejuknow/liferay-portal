@@ -1,0 +1,25 @@
+.cookie-acceptance {
+	bottom: 0;
+	left: 50%;
+	max-width: 976px;
+	padding: 0 16px;
+	position: fixed;
+	transform: translate(-50%, 0);
+	width: 100%;
+	z-index: 99;
+}
+
+.cookie-acceptance-container {
+	background-color: #FFF;
+	border-radius: 8px 8px 0 0;
+	box-shadow: 0 4px 32px -12px rgba(0, 0, 0, 0.4);
+	padding: 16px;
+}
+
+.cookie-acceptance-btn {
+	margin: 0;
+}
+
+.cookie-acceptance-container .button-wrapper {
+	text-align: right;
+}
