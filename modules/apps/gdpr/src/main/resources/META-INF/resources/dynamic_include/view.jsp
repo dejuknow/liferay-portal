@@ -34,11 +34,23 @@ window.addEventListener(
 
 					document.cookie = 'GDPR_ACCEPTED=true; expires=' + expirationDate.toUTCString();
 
-					cookieAcceptance.classList.add('hide');
+					cookieAcceptance.classList.add('slide-down');
+
+					//Hide the modal after it has gone off screen and clean the slide classes
+					setTimeout(function() {
+						cookieAcceptance.classList.remove('slide-down');
+						cookieAcceptance.classList.remove('slide-up');
+						cookieAcceptance.classList.add('hide');
+					}, 400);
 				}
 			);
 
 			cookieAcceptance.classList.remove('hide');
+
+			//We need to set a delay here otherwise the animation won't work
+			setTimeout(function() {
+				cookieAcceptance.classList.add('slide-up');
+			}, 500);
 		}
 	}
 );
