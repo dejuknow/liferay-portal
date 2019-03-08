@@ -26,7 +26,7 @@ import org.osgi.service.component.annotations.Component;
 @Component(
 	immediate = true,
 	property = {
-		"filter.init.auth.verifier.OAuthVerifier.urls.includes=/sync/download/*",
+		"filter.init.auth.verifier.OAuthVerifier.urls.includes=/sync/download/*,/sync/redirect/*",
 		"filter.init.auth.verifier.SyncAuthVerifier.urls.includes=/sync/download/*,/sync/redirect/*",
 		"osgi.http.whiteboard.filter.name=com.liferay.sync.internal.servlet.filter.SyncAuthVerifierFilter",
 		"osgi.http.whiteboard.filter.pattern=/sync/*"

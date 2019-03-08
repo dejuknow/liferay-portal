@@ -27,6 +27,8 @@ import com.liferay.portal.kernel.security.auth.verifier.AuthVerifier;
 import com.liferay.portal.kernel.security.auth.verifier.AuthVerifierResult;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.servlet.HttpHeaders;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PwdGenerator;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -117,7 +119,7 @@ public class SyncAuthVerifier implements AuthVerifier {
 
 		String uri = (String)request.getAttribute(WebKeys.INVOKER_FILTER_URI);
 
-		if (uri.startsWith("/download/")) {
+		if (uri.startsWith("/download/") || uri.startsWith("/redirect/")) {
 			String contextPath = request.getContextPath();
 
 			if (!contextPath.equals("/o/sync")) {
@@ -234,6 +236,31 @@ public class SyncAuthVerifier implements AuthVerifier {
 				return new String[] {userId, null};
 			}
 		}
+
+
+//
+//
+//		String authorization = httpServletRequest.getHeader(
+//			HttpHeaders.AUTHORIZATION);
+//
+//		if (Validator.isBlank(authorization)) {
+//			return null;
+//		}
+//
+//		String[] authorizationParts = authorization.split("\\s");
+//
+//		String scheme = authorizationParts[0];
+//
+//		if (StringUtil.equalsIgnoreCase(
+//			scheme, "OAuth")) {
+//
+//			return parseBasic(
+//				httpServletRequest, authorization, authorizationParts);
+//		}
+//
+//
+//
+
 
 		HttpAuthorizationHeader httpAuthorizationHeader =
 			HttpAuthManagerUtil.parse(request);
