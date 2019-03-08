@@ -386,6 +386,10 @@ public class Session {
 		return _httpClient;
 	}
 
+	public String getSyncJWT() {
+		return _headers.get("Sync-JWT");
+	}
+
 	public int getUploadRate() {
 		return _uploadRate;
 	}
@@ -660,13 +664,7 @@ public class Session {
 		}
 
 		for (Map.Entry<String, String> entry : _headers.entrySet()) {
-			String key = entry.getKey();
-
-			if (_oAuthEnabled && key.equals("Sync-JWT")) {
-				continue;
-			}
-
-			httpRequest.setHeader(key, entry.getValue());
+			httpRequest.setHeader(entry.getKey(), entry.getValue());
 		}
 	}
 
