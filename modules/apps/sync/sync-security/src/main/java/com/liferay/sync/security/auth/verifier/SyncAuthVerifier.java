@@ -217,6 +217,52 @@ public class SyncAuthVerifier implements AuthVerifier {
 		}
 	}
 
+	protected String[] getCredentials(
+			HttpServletRequest request, HttpServletResponse response)
+		throws Exception {
+
+		String token = request.getHeader(_TOKEN_HEADER);
+
+		if (Validator.isNull(token)) {
+			token = request.getParameter(_TOKEN_HEADER);
+		}
+
+		if (Validator.isNotNull(token)) {
+			String userId = getUserId(token);
+
+			if (userId != null) {
+				return new String[] {userId, null};
+			}
+		}
+
+		HttpAuthorizationHeader httpAuthorizationHeader =
+			HttpAuthManagerUtil.parse(request);
+
+		if (httpAuthorizationHeader == null) {
+			return null;
+		}
+
+		long userId = HttpAuthManagerUtil.getBasicUserId(request);
+
+		if (userId <= 0) {
+			throw new AuthException();
+		}
+
+		token = createToken(userId);
+
+		if (token != null) {
+			response.addHeader(_TOKEN_HEADER, token);
+		}
+
+		String[] credentials = new String[2];
+
+		credentials[0] = String.valueOf(userId);
+		credentials[1] = httpAuthorizationHeader.getAuthParameter(
+			HttpAuthorizationHeader.AUTH_PARAMETER_NAME_PASSWORD);
+
+		return credentials;
+	}
+
 	protected JsonTokenParser getJsonTokenParser() throws Exception {
 		if (_jsonTokenParser != null) {
 			return _jsonTokenParser;
