@@ -36,6 +36,7 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.jsonwebservice.NoSuchJSONWebServiceException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.Organization;
@@ -49,8 +50,12 @@ import com.liferay.portal.kernel.security.access.control.AccessControlled;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUtil;
+import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.permission.ModelPermissions;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.Constants;
@@ -58,6 +63,7 @@ import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.MapUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PrefsPropsUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
@@ -65,10 +71,12 @@ import com.liferay.portal.kernel.util.ReleaseInfo;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.util.comparator.GroupNameComparator;
 import com.liferay.portal.kernel.zip.ZipReader;
 import com.liferay.portal.kernel.zip.ZipReaderFactoryUtil;
 import com.liferay.portal.spring.extender.service.ServiceReference;
+import com.liferay.portal.theme.ThemeDisplayFactory;
 import com.liferay.sync.constants.SyncConstants;
 import com.liferay.sync.constants.SyncDLObjectConstants;
 import com.liferay.sync.constants.SyncDeviceConstants;
@@ -96,6 +104,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
 
 import jodd.bean.BeanUtil;
 
@@ -1480,6 +1490,87 @@ public class SyncDLObjectServiceImpl extends SyncDLObjectServiceBaseImpl {
 		return true;
 	}
 
+	protected ThemeDisplay initThemeDisplay(
+		HttpServletRequest request,
+		JSONWebServiceActionParametersMap jsonWebServiceActionParametersMap) {
+
+		ThemeDisplay themeDisplay = null;
+
+		try {
+			if (request == null) {
+				return null;
+			}
+
+			themeDisplay = ThemeDisplayFactory.create();
+
+			themeDisplay.setRequest(request);
+
+			long companyId = -1;
+			long groupId = -1;
+
+			if (MapUtil.getLong(
+					jsonWebServiceActionParametersMap, "fileEntryId") > 0) {
+
+				FileEntry fileEntry = dlAppLocalService.getFileEntry(
+					MapUtil.getLong(
+						jsonWebServiceActionParametersMap, "fileEntryId"));
+
+				companyId = fileEntry.getCompanyId();
+				groupId = fileEntry.getGroupId();
+			}
+			else if (MapUtil.getLong(
+						jsonWebServiceActionParametersMap, "folderId") > 0) {
+
+				Folder folder = dlAppLocalService.getFolder(
+					MapUtil.getLong(
+						jsonWebServiceActionParametersMap, "folderId"));
+
+				companyId = folder.getCompanyId();
+				groupId = folder.getGroupId();
+			}
+			else if (MapUtil.getLong(
+						jsonWebServiceActionParametersMap, "parentFolderId") >
+							0) {
+
+				Folder parentFolder = dlAppLocalService.getFolder(
+					MapUtil.getLong(
+						jsonWebServiceActionParametersMap, "parentFolderId"));
+
+				companyId = parentFolder.getCompanyId();
+				groupId = parentFolder.getGroupId();
+			}
+			else {
+				return null;
+			}
+
+			Company company = _companyLocalService.getCompany(companyId);
+
+			themeDisplay.setCompany(company);
+
+			themeDisplay.setSiteGroupId(groupId);
+			themeDisplay.setScopeGroupId(groupId);
+
+			User user = getGuestOrUser();
+
+			PermissionChecker permissionChecker =
+				PermissionCheckerFactoryUtil.create(user);
+
+			themeDisplay.setPermissionChecker(permissionChecker);
+
+			themeDisplay.setPlid(
+				PortalUtil.getControlPanelPlid(company.getCompanyId()));
+		}
+		catch (Exception e) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(e.getMessage(), e);
+			}
+
+			return null;
+		}
+
+		return themeDisplay;
+	}
+
 	protected SyncDLObject toSyncDLObject(FileEntry fileEntry, String event)
 		throws PortalException {
 
@@ -1524,6 +1615,31 @@ public class SyncDLObjectServiceImpl extends SyncDLObjectServiceBaseImpl {
 
 		ServiceContext serviceContext = new ServiceContext();
 
+		String urlPath = MapUtil.getString(
+			jsonWebServiceActionParametersMap, "urlPath");
+
+		if (urlPath.endsWith("/add-file-entry") ||
+			urlPath.endsWith("/update-file-entry")) {
+
+			ServiceContext serviceContextThreadLocal =
+				ServiceContextThreadLocal.getServiceContext();
+
+			if (serviceContextThreadLocal != null) {
+				HttpServletRequest request =
+					serviceContextThreadLocal.getRequest();
+
+				ThemeDisplay themeDisplay = initThemeDisplay(
+					request, jsonWebServiceActionParametersMap);
+
+				if (themeDisplay != null) {
+					request.setAttribute(WebKeys.THEME_DISPLAY, themeDisplay);
+
+					serviceContext.setRequest(request);
+					serviceContext.setCompanyId(themeDisplay.getCompanyId());
+				}
+			}
+		}
+
 		List<NameValue<String, Object>> innerParameters =
 			jsonWebServiceActionParametersMap.getInnerParameters(
 				"serviceContext");
@@ -1542,9 +1658,6 @@ public class SyncDLObjectServiceImpl extends SyncDLObjectServiceBaseImpl {
 				}
 			}
 		}
-
-		String urlPath = MapUtil.getString(
-			jsonWebServiceActionParametersMap, "urlPath");
 
 		if (urlPath.endsWith("/add-file-entry")) {
 			long repositoryId = MapUtil.getLong(
@@ -1743,6 +1856,9 @@ public class SyncDLObjectServiceImpl extends SyncDLObjectServiceBaseImpl {
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		SyncDLObjectServiceImpl.class);
+
+	@ServiceReference(type = CompanyLocalService.class)
+	private CompanyLocalService _companyLocalService;
 
 	@ServiceReference(type = DLSyncEventLocalService.class)
 	private DLSyncEventLocalService _dlSyncEventLocalService;
