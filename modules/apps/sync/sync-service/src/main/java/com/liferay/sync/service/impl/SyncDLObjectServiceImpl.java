@@ -36,12 +36,17 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.jsonwebservice.NoSuchJSONWebServiceException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
+import com.liferay.portal.kernel.model.LayoutConstants;
 import com.liferay.portal.kernel.model.Organization;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.RoleConstants;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.portlet.PortletProvider;
+import com.liferay.portal.kernel.portlet.PortletProviderUtil;
+import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portal.kernel.repository.model.Folder;
@@ -49,8 +54,12 @@ import com.liferay.portal.kernel.security.access.control.AccessControlled;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUtil;
+import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.permission.ModelPermissions;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.Constants;
@@ -58,6 +67,7 @@ import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.MapUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PrefsPropsUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
@@ -65,10 +75,12 @@ import com.liferay.portal.kernel.util.ReleaseInfo;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.util.comparator.GroupNameComparator;
 import com.liferay.portal.kernel.zip.ZipReader;
 import com.liferay.portal.kernel.zip.ZipReaderFactoryUtil;
 import com.liferay.portal.spring.extender.service.ServiceReference;
+import com.liferay.portal.theme.ThemeDisplayFactory;
 import com.liferay.sync.constants.SyncConstants;
 import com.liferay.sync.constants.SyncDLObjectConstants;
 import com.liferay.sync.constants.SyncDeviceConstants;
@@ -96,6 +108,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.portlet.PortletRequest;
+import javax.portlet.PortletURL;
+
+import javax.servlet.http.HttpServletRequest;
 
 import jodd.bean.BeanUtil;
 
@@ -1343,6 +1360,86 @@ public class SyncDLObjectServiceImpl extends SyncDLObjectServiceBaseImpl {
 		return checkedTypePKs;
 	}
 
+	protected String getEntryURL(
+		HttpServletRequest request,
+		JSONWebServiceActionParametersMap jsonWebServiceActionParametersMap) {
+
+		String entryURL = StringPool.BLANK;
+
+		try {
+			if (MapUtil.getLong(
+					jsonWebServiceActionParametersMap, "fileEntryId") <= 0) {
+
+				return entryURL;
+			}
+
+			FileEntry fileEntry = dlAppLocalService.getFileEntry(
+				MapUtil.getLong(
+					jsonWebServiceActionParametersMap, "fileEntryId"));
+
+			long companyId = fileEntry.getCompanyId();
+
+			Company company = _companyLocalService.getCompany(companyId);
+
+			long groupId = fileEntry.getGroupId();
+
+			long plid = PortalUtil.getControlPanelPlid(companyId);
+
+			long controlPanelPlid = PortalUtil.getControlPanelPlid(companyId);
+
+			String portletId = PortletProviderUtil.getPortletId(
+				FileEntry.class.getName(), PortletProvider.Action.VIEW);
+
+			ThemeDisplay themeDisplay = ThemeDisplayFactory.create();
+
+			themeDisplay.setRequest(request);
+			themeDisplay.setCompany(company);
+			themeDisplay.setSiteGroupId(groupId);
+			themeDisplay.setScopeGroupId(groupId);
+
+			User user = getGuestOrUser();
+
+			PermissionChecker permissionChecker =
+				PermissionCheckerFactoryUtil.create(user);
+
+			themeDisplay.setPermissionChecker(permissionChecker);
+
+			themeDisplay.setPlid(
+				PortalUtil.getControlPanelPlid(company.getCompanyId()));
+
+			request.setAttribute(WebKeys.THEME_DISPLAY, themeDisplay);
+
+			PortletURL portletURL = null;
+
+			if ((plid == controlPanelPlid) ||
+				(plid == LayoutConstants.DEFAULT_PLID)) {
+
+				portletURL = PortalUtil.getControlPanelPortletURL(
+					request, portletId, PortletRequest.RENDER_PHASE);
+			}
+			else {
+				portletURL = PortletURLFactoryUtil.create(
+					request, portletId, plid, PortletRequest.RENDER_PHASE);
+			}
+
+			portletURL.setParameter(
+				"mvcRenderCommandName", "/document_library/view_file_entry");
+			portletURL.setParameter(
+				"fileEntryId", String.valueOf(fileEntry.getFileEntryId()));
+
+			if (portletURL != null) {
+				entryURL = portletURL.toString();
+			}
+		}
+		catch (Exception e) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(e.getMessage(), e);
+			}
+		}
+
+		return entryURL;
+	}
+
 	protected Map<String, String> getPortletPreferencesMap()
 		throws PortalException {
 
@@ -1523,6 +1620,20 @@ public class SyncDLObjectServiceImpl extends SyncDLObjectServiceBaseImpl {
 		throws Exception {
 
 		ServiceContext serviceContext = new ServiceContext();
+
+		ServiceContext serviceContextThreadLocal =
+			ServiceContextThreadLocal.getServiceContext();
+
+		if (serviceContextThreadLocal != null) {
+			HttpServletRequest request = serviceContextThreadLocal.getRequest();
+
+			String entryURL = getEntryURL(
+				request, jsonWebServiceActionParametersMap);
+
+			if (Validator.isNotNull(entryURL)) {
+				serviceContext.setAttribute("entryURL", entryURL);
+			}
+		}
 
 		List<NameValue<String, Object>> innerParameters =
 			jsonWebServiceActionParametersMap.getInnerParameters(
@@ -1743,6 +1854,9 @@ public class SyncDLObjectServiceImpl extends SyncDLObjectServiceBaseImpl {
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		SyncDLObjectServiceImpl.class);
+
+	@ServiceReference(type = CompanyLocalService.class)
+	private CompanyLocalService _companyLocalService;
 
 	@ServiceReference(type = DLSyncEventLocalService.class)
 	private DLSyncEventLocalService _dlSyncEventLocalService;
