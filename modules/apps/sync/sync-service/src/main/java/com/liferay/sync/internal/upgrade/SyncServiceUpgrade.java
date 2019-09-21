@@ -47,8 +47,8 @@ public class SyncServiceUpgrade implements UpgradeStepRegistrator {
 			"1.0.3", "1.0.4",
 			new com.liferay.sync.internal.upgrade.v1_0_4.UpgradeSchema());
 
-		// SYNC-1807 The following upgrade steps populate the SyncDLObject table
-		// for first time installations but not for upgrades.
+		// Populate the SyncDLObject table for first time installations. See
+		// SYNC-1807 for more information.
 
 		registry.register("1.0.4", "1.0.6", new DummyUpgradeStep());
 
