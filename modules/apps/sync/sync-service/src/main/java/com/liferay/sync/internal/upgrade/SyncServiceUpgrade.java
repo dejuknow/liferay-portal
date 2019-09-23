@@ -18,7 +18,7 @@ import com.liferay.document.library.sync.service.DLSyncEventLocalService;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.upgrade.DummyUpgradeStep;
 import com.liferay.portal.upgrade.registry.UpgradeStepRegistrator;
-import com.liferay.sync.internal.upgrade.v1_x_x.UpgradeSyncDLObject;
+import com.liferay.sync.internal.upgrade.v1_0_2.UpgradeSyncDLObject;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -49,15 +49,7 @@ public class SyncServiceUpgrade implements UpgradeStepRegistrator {
 			"1.0.3", "1.0.4",
 			new com.liferay.sync.internal.upgrade.v1_0_4.UpgradeSchema());
 
-		// SYNC-1807 The following upgrade steps populate the SyncDLObject table
-		// for first time installations but not for upgrades.
-
 		registry.register("1.0.4", "1.0.6", new DummyUpgradeStep());
-
-		registry.register(
-			"1.0.5", "1.0.6",
-			new UpgradeSyncDLObject(
-				_dlSyncEventLocalService, _groupLocalService));
 	}
 
 	@Reference(unbind = "-")
