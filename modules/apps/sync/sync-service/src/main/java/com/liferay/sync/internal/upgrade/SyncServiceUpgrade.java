@@ -23,7 +23,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 /**
- * @author Shinn Lok
+ * @author Shinn Lok2
  */
 @Component(immediate = true, service = UpgradeStepRegistrator.class)
 public class SyncServiceUpgrade implements UpgradeStepRegistrator {
