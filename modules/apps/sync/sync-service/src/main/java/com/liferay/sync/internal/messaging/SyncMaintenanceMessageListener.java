@@ -56,7 +56,7 @@ public class SyncMaintenanceMessageListener extends BaseMessageListener {
 		String className = clazz.getName();
 
 		Trigger trigger = _triggerFactory.createTrigger(
-			className, className, null, null, 1, TimeUnit.HOUR);
+			className, className, null, null, 2, TimeUnit.HOUR);
 
 		SchedulerEntry schedulerEntry = new SchedulerEntryImpl(
 			className, trigger);
