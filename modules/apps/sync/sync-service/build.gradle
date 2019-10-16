@@ -4,9 +4,9 @@ buildService {
 }
 
 dependencies {
-	compileInclude group: "org.bouncycastle", name: "bcpg-jdk15on", version: "1.54"
-	compileInclude group: "org.bouncycastle", name: "bcpkix-jdk15on", version: "1.54"
-	compileInclude group: "org.bouncycastle", name: "bcprov-jdk15on", version: "1.54"
+	compileInclude group: "org.bouncycastle", name: "bcpg-jdk15on", version: "1.64"
+	compileInclude group: "org.bouncycastle", name: "bcpkix-jdk15on", version: "1.64"
+	compileInclude group: "org.bouncycastle", name: "bcprov-jdk15on", version: "1.64"
 
 	compileOnly group: "com.googlecode.jsontoken", name: "jsontoken", version: "1.1"
 	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.impl", version: "default"
