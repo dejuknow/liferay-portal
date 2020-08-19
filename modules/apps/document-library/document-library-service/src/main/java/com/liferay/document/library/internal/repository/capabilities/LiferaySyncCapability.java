@@ -17,7 +17,6 @@ package com.liferay.document.library.internal.repository.capabilities;
 import com.liferay.document.library.sync.constants.DLSyncConstants;
 import com.liferay.document.library.sync.model.DLSyncEvent;
 import com.liferay.document.library.sync.service.DLSyncEventLocalService;
-import com.liferay.portal.kernel.change.tracking.CTCollectionThreadLocal;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.DestinationNames;
@@ -118,8 +117,7 @@ public class LiferaySyncCapability
 		String event, FileEntry fileEntry) {
 
 		if (isStagingGroup(fileEntry.getGroupId()) ||
-			!(fileEntry instanceof LiferayFileEntry) ||
-			!CTCollectionThreadLocal.isProductionMode()) {
+			!(fileEntry instanceof LiferayFileEntry)) {
 
 			return;
 		}
@@ -141,8 +139,7 @@ public class LiferaySyncCapability
 
 	protected void registerDLSyncEventCallback(String event, Folder folder) {
 		if (isStagingGroup(folder.getGroupId()) ||
-			!(folder instanceof LiferayFolder) ||
-			!CTCollectionThreadLocal.isProductionMode()) {
+			!(folder instanceof LiferayFolder)) {
 
 			return;
 		}

@@ -239,7 +239,9 @@ public class DefaultMessageBus implements ManagedServiceFactory, MessageBus {
 
 		message.setDestinationName(destinationName);
 
-		if (message.get("companyId") == null) {
+		Long companyId = (Long)message.get("companyId");
+
+		if (companyId == null) {
 			Long[] companyIds = (Long[])message.get("companyIds");
 
 			if (companyIds != null) {

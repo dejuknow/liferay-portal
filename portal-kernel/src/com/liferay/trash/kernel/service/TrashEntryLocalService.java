@@ -16,7 +16,6 @@ package com.liferay.trash.kernel.service;
 
 import org.osgi.annotation.versioning.ProviderType;
 
-import com.liferay.portal.kernel.change.tracking.CTAware;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
@@ -58,7 +57,6 @@ import java.util.List;
            com.liferay.trash.service.impl.TrashEntryLocalServiceImpl}
  * @generated
  */
-@CTAware
 @Deprecated
 @ProviderType
 @Transactional(isolation = Isolation.PORTAL, rollbackFor =  {
